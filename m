@@ -1,108 +1,190 @@
-Return-Path: <linux-kernel+bounces-171634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2998BE6B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:56:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA75A8BE6B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297CD1C23632
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:56:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FB4CB220D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEB1160880;
-	Tue,  7 May 2024 14:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94791607A2;
+	Tue,  7 May 2024 14:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DN3fyCly"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PrqCTgKv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE42615F414
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6388716078B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 14:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093778; cv=none; b=VvCaxMtuGuuPDjb49H7Xbb5I5Qi30cXqhS6K+VqZGJMgCzjLI2HJUtKvT0cU6jxbSmi/xw6kmEpqxA8N6OwTsvbZn5OK0/4eVAtvKNEIBwoHiBJIo4nLZWn8CGmur82CBTChPSzu/qjb6g2JU7DGN0Lp8HvM8EyGEyfFrWWLm80=
+	t=1715093906; cv=none; b=lxzPiM6eR9JxtpnMbzTLdR0Tq51A3DSlxWOueo2KUNn9lDfT2AiutqUJcRQ+sUdkid2HHOc+bQ3J6lkC1Sxce1BOkFdpjewwclHUmOtYUHQNufIhQ8/KTlKBSgcRnmfYwQRw6vl31tJVtxkNcbusfkfF4Q9LNGk5X6bmbtpVfeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093778; c=relaxed/simple;
-	bh=U3aPuCdf8BbTSweuMDZBoEtz3ysiU7++KCuwqbH6O1w=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=eGEwgDcd0/g2iuhKqjUwxipHgp3oOErBGK05BUpsoXAIAMXX6iRgQcRfo3b82tv1fSrPB3xCbOE9By+XkUf9XNVEbuL2spdQhaHbg++OsEOFiCKO8pJpNT4h3/H+nCqvkrrzwZ5TpSajYDqNlYHogQFUZCzlzRa0Nud2dkddJ94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DN3fyCly; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7928c5cb63fso230362085a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 07:56:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715093775; x=1715698575; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dAG7TUb5hoiO+hKAcnLS9PzWLaNdTanXbfa2plm364c=;
-        b=DN3fyClytqoCR4cfD3WOtNU+djSVllhQO5tGwqPEIt0ipIqZSK+d0Y5MviA/Yp39PA
-         ZI6e/YWKRN+f8o11TMzv7+6DamdydPOJ9Dg8gmiuPVLwsewKoGEME9ECawBu+0CZ0NLM
-         qkyZQoCDT72LxXWdGzj/zOzf0pVjQ5qDi8mShWxTOvOROuYcHgNV63iODnNteDIj29XP
-         OmNftbCk95mqCYVAYhSSPlpRHsZpajCXUuFrdF0rQTUHI1yj++J0g47QBPNnsdkl6ypR
-         hsM7guqSL5/o9L2bLT9fWKiZyu3HoLc2ItlYlFjUyAJJo40nu5N7Ic7659+Mv2acIAD6
-         YTAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715093775; x=1715698575;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dAG7TUb5hoiO+hKAcnLS9PzWLaNdTanXbfa2plm364c=;
-        b=A3szPeh4qaZQIHit6RNA7fGm8P6suBosmrY9FMfsJv8dyEafooNJH5UMxyhdogxLMh
-         2Nqf3eSF6puRLGWJb65PM+8moqXLcPNq3FLJZg2rzKaJ98fr+Uuhie0yROYKGNtQujZt
-         z95EP56E3J1x3tmKZSeVu1kIGlEn9t2MqQ4YvOpIJRur/k6tIu2N4VZ/0GtGDt+RlfON
-         heI6B8JpZV4iyCLntBaNJsAzLNuBnb/y0Py6sZmS0Hw0RDiYXCzW+79XYbr7c0+547OU
-         l859KmABqrWsSxtNZHxSdSmklPHOy+nGLtJ4CwiIEMcHlCcbm4ErpBcOQRbLMcN2rROT
-         Yo0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWy4v8hotjokEHYcKFm/b+MTH8rpaBaUllnQy3HmoVFyPobIMR9lycY+Mo2SkFxbJnyFtEpKYaLhrid5qfFrxfVFgI6p22tRKM15fZ0
-X-Gm-Message-State: AOJu0YzgJyhr/M2j5k1DycbtkF2my1XMRy8SNNAVnRbs98Q6TlmMTwCe
-	x2wi77PLx8n62DOlI9yCqc/6870GQw5CtQNOcd6Y2Q+D5TnrJ9AVQVPquqS9sg==
-X-Google-Smtp-Source: AGHT+IFJ9/XdlpsfijSJp8NgxZMyJgNfVe9RyIheVG2oMchZOjGjf2Ye6/u1d77c4EA1le1mWmQnVg==
-X-Received: by 2002:ae9:f443:0:b0:792:92cc:41f6 with SMTP id af79cd13be357-792b24c8372mr3784685a.17.1715093774767;
-        Tue, 07 May 2024 07:56:14 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 11-20020a05620a04cb00b0079293ebf935sm2562969qks.54.2024.05.07.07.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 07:56:14 -0700 (PDT)
-Date: Tue, 07 May 2024 10:56:13 -0400
-Message-ID: <06a6ed315cacd41043f9f9e67ea379af@paul-moore.com>
+	s=arc-20240116; t=1715093906; c=relaxed/simple;
+	bh=BoniYdVi6dZzCpHSJPcK6578i3gt0JCIXLT1l4PMHsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fr8A0ymAmKoEwNXfT92O4gqOSE1B4tfMZZAqgMvu8Qbmw+jcRdsvY9oB8vBs3ZeEocTggFhLPevytd372se9us8uazZGPh3Xdm5uc4et8aEag+q0hpV7gv7fjGlBxGNWer7cPncZFZHcm40Ph9qu1DNzyXaUVgzhPrCFmmFaCKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PrqCTgKv; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715093904; x=1746629904;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BoniYdVi6dZzCpHSJPcK6578i3gt0JCIXLT1l4PMHsA=;
+  b=PrqCTgKvMVw+vn7QaeEDgZn+WFkCp/dFyNN2E9SEGr1gFSK2d2Vqd4ND
+   m5q9UJrqdf196kCE6mSCNhEyieg5Eth9y6ue4wbPJSN7jkE7J2zAqgTNe
+   H4WtiH8CUfH6khzrNaiV5AgBgWElmdpO8Rfq+qGcYTvbXVnhPi00t1qXC
+   tRqqInJObIBfqVOBmjCUcpNudmROz02CMmFWLiu0+DEjegOHL3SNnHAq4
+   AoVRRrmrl4RpFwe8wkjZfg+KmQB2f+b1YmszWrvqL3W28pEx7ll/Om1An
+   1Fx2dbFxPiyl4a0uq1kR5TmkpYQs2RKowcKKStViuT4dGzmwMwMAhQZs+
+   A==;
+X-CSE-ConnectionGUID: 0zQDDlPoR4esKTX/mhuumg==
+X-CSE-MsgGUID: ZH8ksL/TRX+vH/X26OS4qQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10827524"
+X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
+   d="scan'208";a="10827524"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 07:58:24 -0700
+X-CSE-ConnectionGUID: ZTAuw5s8QYS94ZZgR+7DDA==
+X-CSE-MsgGUID: uBftWuxfScWPw1YcL5CBow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,142,1712646000"; 
+   d="scan'208";a="29063162"
+Received: from bwkammey-mobl2.amr.corp.intel.com (HELO [10.125.19.152]) ([10.125.19.152])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 07:58:23 -0700
+Message-ID: <ab3e92eb-d35e-4f5a-8e99-10b3ccb7c2cf@linux.intel.com>
+Date: Tue, 7 May 2024 07:58:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Lukas Bulwahn <lbulwahn@redhat.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: repair file entry in SECURITY SUBSYSTEM
-References: <20240507140122.176304-1-lukas.bulwahn@redhat.com>
-In-Reply-To: <20240507140122.176304-1-lukas.bulwahn@redhat.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, KP Singh <kpsingh@kernel.org>,
+ Waiman Long <longman@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@kernel.org>, Maksim Davydov <davydov-max@yandex-team.ru>
+References: <cover.1715059256.git.jpoimboe@kernel.org>
+ <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
+Content-Language: en-US
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+In-Reply-To: <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On May  7, 2024 Lukas Bulwahn <lbulwahn@redhat.com> wrote:
+On 5/6/24 22:30, Josh Poimboeuf wrote:
+> In cloud environments it can be useful to *only* enable the vmexit
+> mitigation and leave syscalls vulnerable.  Add that as an option.
 > 
-> Commit 67889688e05b ("MAINTAINERS: update the LSM file list") adds a few
-> file entries to lsm-related header files. Among them, there is a reference
-> to include/security.h. However, security.h is located in include/linux/,
-> not in include/.
+> This is similar to the old spectre_bhi=auto option which was removed
+> with the following commit:
 > 
-> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about a
-> broken reference.
+>   36d4fe147c87 ("x86/bugs: Remove CONFIG_BHI_MITIGATION_AUTO and spectre_bhi=auto")
 > 
-> Repair this new file entry in the SECURITY SUBSYSTEM section.
+> with the main difference being that this has a more descriptive name and
+> is disabled by default.
 > 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Requested-by: Maksim Davydov <davydov-max@yandex-team.ru>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
 > ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-My mistake, thanks for the fix Lukas; merged into lsm/dev.
+Does the KConfig option need to be updated to support this as well? Other than
+that,
+Reviewed-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
 
---
-paul-moore.com
+>  Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++---
+>  arch/x86/kernel/cpu/bugs.c                      | 16 +++++++++++-----
+>  2 files changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 213d0719e2b7..9c1f63f04502 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6072,9 +6072,15 @@
+>  			deployment of the HW BHI control and the SW BHB
+>  			clearing sequence.
+>  
+> -			on   - (default) Enable the HW or SW mitigation
+> -			       as needed.
+> -			off  - Disable the mitigation.
+> +			on     - (default) Enable the HW or SW mitigation as
+> +				 needed.  This protects the kernel from
+> +				 both syscalls and VMs.
+> +			vmexit - On systems which don't have the HW mitigation
+> +				 available, enable the SW mitigation on vmexit
+> +				 ONLY.  On such systems, the host kernel is
+> +				 protected from VM-originated BHI attacks, but
+> +				 may still be vulnerable to syscall attacks.
+> +			off    - Disable the mitigation.
+>  
+>  	spectre_v2=	[X86,EARLY] Control mitigation of Spectre variant 2
+>  			(indirect branch speculation) vulnerability.
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index ab18185894df..6974c8c9792d 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -1625,6 +1625,7 @@ static bool __init spec_ctrl_bhi_dis(void)
+>  enum bhi_mitigations {
+>  	BHI_MITIGATION_OFF,
+>  	BHI_MITIGATION_ON,
+> +	BHI_MITIGATION_VMEXIT_ONLY,
+>  };
+>  
+>  static enum bhi_mitigations bhi_mitigation __ro_after_init =
+> @@ -1639,6 +1640,8 @@ static int __init spectre_bhi_parse_cmdline(char *str)
+>  		bhi_mitigation = BHI_MITIGATION_OFF;
+>  	else if (!strcmp(str, "on"))
+>  		bhi_mitigation = BHI_MITIGATION_ON;
+> +	else if (!strcmp(str, "vmexit"))
+> +		bhi_mitigation = BHI_MITIGATION_VMEXIT_ONLY;
+>  	else
+>  		pr_err("Ignoring unknown spectre_bhi option (%s)", str);
+>  
+> @@ -1659,19 +1662,22 @@ static void __init bhi_select_mitigation(void)
+>  			return;
+>  	}
+>  
+> +	/* Mitigate in hardware if supported */
+>  	if (spec_ctrl_bhi_dis())
+>  		return;
+>  
+>  	if (!IS_ENABLED(CONFIG_X86_64))
+>  		return;
+>  
+> -	/* Mitigate KVM by default */
+> -	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+> -	pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit\n");
+> +	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
+> +		pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit only\n");
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+> +		return;
+> +	}
+>  
+> -	/* Mitigate syscalls when the mitigation is forced =on */
+> +	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and vm exit\n");
+>  	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
+> -	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall\n");
+> +	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+>  }
+>  
+>  static void __init spectre_v2_select_mitigation(void)
+
 
