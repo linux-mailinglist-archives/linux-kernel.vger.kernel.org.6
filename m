@@ -1,122 +1,159 @@
-Return-Path: <linux-kernel+bounces-171935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55EA8BEAE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837778BEAE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999DD1F22382
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51881C23F13
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449BD16C878;
-	Tue,  7 May 2024 17:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCB816C878;
+	Tue,  7 May 2024 17:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WGKgC/qL"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCs90TDy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E22715D5BB
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD0016C857;
+	Tue,  7 May 2024 17:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104558; cv=none; b=lTqo4pRdCocV5PliaCUcU4y6Ma0Kh8k/7b7tTIdWIgo4o09l0pPkxgdxuJgi4DYZD9kAi7sdDBB5L9yJ7CO/zgE2E+REsxkG1E2i+WGW4u5xOUSOW0q2m/iCj8jQc/V3e5LJwQvBOrd+a051an8YGdDoNfYpUBAIqOZeBaxxvB4=
+	t=1715104575; cv=none; b=gLIuCMFEpN1Cgm6WNdsvOsWv3N5OHtOdTT9ic6DsX4PPMxBKaNkfep535uVQpulXP/LBj1buhnMGhvCsqkh/lu2omrOmAm/rdLJgbZreJxRvo35yrZ9zrz3Cc9whothZAPDHACk+BGw0dUKMPp9+AYZflTMngcSDsNZfwTH5t2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104558; c=relaxed/simple;
-	bh=i1B0BczLSo3SWF7MKkmZ007UspXePFGAXjtEUDsAbtE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kMJ3yrVhElhjd7SAxsBi239phZ8Q+GYIgL31clJlk0DovMpS+p3I4QEYt6UvKXz8G/oNdqrGbNicFYgDpt5pZKSVWys4tbvLJE2/gT1thMq9poHoEKNdsGC0AAurSNiBdXbg7PKBcGEnyGMGnT4JGS9qhBfZ2AV9/MqegZ4x1YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WGKgC/qL; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-5d8dd488e09so4193866a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715104557; x=1715709357; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/zdljaT58TeUovqBD+WPeAJgx4d8t4+C/lLtRXXISU=;
-        b=WGKgC/qLLGDzqckkvrqP7f1LsoRyBJ91zHpkQ75EQG/sElibpIdyYY7zGP23rKsK7X
-         YbR1/n4r2qJjORhPoCGFAC+WoMhQUStqt68dt0l8U0LwkDQGz3yHS4eWHGuqTGG2B72k
-         NL4OhYBy0Imjefoo9mC7p/5hEIF2yzH8HWGmD6Fjfv4tcLpe5lwGlnera88zxYWyRUs6
-         M1BS2OtHx23GDzJ1Z3/0kh9zRX3kaP+UD9rO4MycvZYvzPHeVJdTmwxIQcmXCsfWE+RC
-         1yM39swBkFGQpZ0iorAU7aWCQR5TRwUbCetfw7VkWGNYP28f7Bklsu657QI+9vL1GLWy
-         t4oA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715104557; x=1715709357;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/zdljaT58TeUovqBD+WPeAJgx4d8t4+C/lLtRXXISU=;
-        b=hwd9LTMmH9a+8WuTkbJasuRXl2iBwWdKkpBsosn+QlbNzKRTBXql2mUNayE8LfV9aT
-         STHo6Wmm71cRvzMZ5XRzso1uvjKUYgK2rheNNTILhFM4JqWiwhR/DGW/q3GRmzT/bUZL
-         YkCyVF+GAO5qzfDCULwlq1Jv3qQt7AgXZwjIKEsayXrXZ8T6kBo1gRZb75VaY0+A+dnv
-         sV6cEo+VEsvzxTlsmQHwhdpz+DifuAXDGAw3qkYQgvxtVaFFc9op1khtOfV0gHcSrU9l
-         FT5dhu2eAa8jnm/bLvRcrZfFPHIwpu6XGwlEUIXr0O1oaY8QvWtAB8VxBjqKaLKzG7kj
-         tWSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzwKD+NWUexZsdw+M00wlJWKbydd0/UQj8RJ0riRv+O0KN/ddUqTKQzJ8VZmZCQ/D6GbF7WvT+oqaSOEMtvirxH/sbEJdIIBLNi/+N
-X-Gm-Message-State: AOJu0YwpO3RzO8Sb1P/FEN2Ax52kFrJIBuh6mCsGNqCv0nSVX21l0FtY
-	bCmEsuWMZ/4+UFCXPwXAbdfLX8x3RIypZccLQlWPJQN8VeU8U62h0/2oBvFylXZB9lWMIGixXFO
-	eHA==
-X-Google-Smtp-Source: AGHT+IFeM0B7my9SeMqYR5n+RtBG5AhiHXPGjV0Tz0oCPILMUffxAWA/E9oddAskv4XRf7h+1SVeBgTe8hc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:3ecb:0:b0:5f7:fca4:6d2f with SMTP id
- 41be03b00d2f7-62f24b1978bmr1264a12.7.1715104556721; Tue, 07 May 2024 10:55:56
- -0700 (PDT)
-Date: Tue, 7 May 2024 10:55:54 -0700
-In-Reply-To: <3b2c222b-9ef7-43e2-8ab3-653a5ee824d4@paulmck-laptop>
+	s=arc-20240116; t=1715104575; c=relaxed/simple;
+	bh=7vP8j6DVRtxLzZgNQl7oooXokBXhH16yTi4+Bilnelo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSVkvMRlipubU7roGxVl/ohSHGQL1hGlwAFYZqwVxhOBUuv5gGLjjyacrqMt9C2zEi77koytvna2lko6drohb+qUYupBrcKinZFJ0kf8SrcHfm6rMA6eG/T0gitYaDAPz1z84m4ZRMDKfU8jpuql0jM5kbN5wkrwERKgCt40btE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCs90TDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2882DC2BBFC;
+	Tue,  7 May 2024 17:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715104575;
+	bh=7vP8j6DVRtxLzZgNQl7oooXokBXhH16yTi4+Bilnelo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KCs90TDyslyU+o0zAPC/FcymE8ykJh48djflVZPXK/dyFC2AkC1GlOXS1lItHn55y
+	 lqETo8ShtgbldxtGPqr+3BR4+QsxlleaDore6eHTZiOmmYVH/sapZjlb1W9YNJv1az
+	 ZI8Q7i4H142m9nZKsfQE/+eoqJe3UXmg/zzuGdF3Zbcmv1ZH4GnvzAnUTHIqnHbF9T
+	 Kx4yTRx225NL2gMFA95S1Dwhzr/gWcx5a05lEQgbe/otGcd9rykhUizINo1afsOGsu
+	 yQXFii/ahAN1H/zmWE/6fS1PdNe9u1bMsnH+faJHWAR73vA02IMMLYgMRSyiR4f1BH
+	 yWRVf720y6BHw==
+Date: Tue, 7 May 2024 10:56:13 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: tytso@mit.edu, jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fscrypto: try to avoid refing parent dentry in
+ fscrypt_file_open
+Message-ID: <20240507175613.GA25966@sol.localdomain>
+References: <20240507093653.297402-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240328171949.743211-1-leobras@redhat.com> <ZgsXRUTj40LmXVS4@google.com>
- <ZjUwHvyvkM3lj80Q@LeoBras> <ZjVXVc2e_V8NiMy3@google.com> <3b2c222b-9ef7-43e2-8ab3-653a5ee824d4@paulmck-laptop>
-Message-ID: <ZjprKm5jG3JYsgGB@google.com>
-Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
-From: Sean Christopherson <seanjc@google.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Leonardo Bras <leobras@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <quic_neeraju@quicinc.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
-	Zqiang <qiang.zhang1211@gmail.com>, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507093653.297402-1-mjguzik@gmail.com>
 
-On Fri, May 03, 2024, Paul E. McKenney wrote:
-> On Fri, May 03, 2024 at 02:29:57PM -0700, Sean Christopherson wrote:
-> > So if we're comfortable relying on the 1 second timeout to guard against a
-> > misbehaving userspace, IMO we might as well fully rely on that guardrail.  I.e.
-> > add a generic PF_xxx flag (or whatever flag location is most appropriate) to let
-> > userspace communicate to the kernel that it's a real-time task that spends the
-> > overwhelming majority of its time in userspace or guest context, i.e. should be
-> > given extra leniency with respect to rcuc if the task happens to be interrupted
-> > while it's in kernel context.
+[+linux-fsdevel]
+
+Thanks!  The general concept looks good.  A few nits below:
+
+On Tue, May 07, 2024 at 11:36:53AM +0200, Mateusz Guzik wrote:
+> fscrypto: try to avoid refing parent dentry in fscrypt_file_open
+
+fscrypt, not fscrypto
+
+> Merely checking if the directory is encrypted happens for every open
+> when using ext4, at the moment refing and unrefing the parent, costing 2
+> atomics and serializing opens of different files.
 > 
-> But if the task is executing in host kernel context for quite some time,
-> then the host kernel's RCU really does need to take evasive action.
-
-Agreed, but what I'm saying is that RCU already has the mechanism to do so in the
-form of the 1 second timeout.
-
-And while KVM does not guarantee that it will immediately resume the guest after
-servicing the IRQ, neither does the existing userspace logic.  E.g. I don't see
-anything that would prevent the kernel from preempting the interrupt task.
-
-> On the other hand, if that task is executing in guest context (either
-> kernel or userspace), then the host kernel's RCU can immediately report
-> that task's quiescent state.
+> The most common case of encryption not being used can be checked for
+> with RCU instead.
 > 
-> Too much to ask for the host kernel's RCU to be able to sense the
-> difference?  ;-)
+> Sample result from open1_processes -t 20 ("Separate file open/close") from
 
-KVM already notifies RCU when its entering/exiting an extended quiescent state,
-via __ct_user_{enter,exit}().
+Overly long line above
 
-When handling an IRQ that _probably_ triggered an exit from the guest, the CPU
-has already exited the quiescent state.  And AFAIK, that can't be safely changed,
-i.e. KVM must note the context switch before enabling IRQs.
+> will-it-scale on Sapphire Rapids (ops/s):
+> before:	12539898
+> after:	25575494 (+103%)
+> 
+> Arguably a vfs helper would be nice here.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>  fs/crypto/hooks.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+> index 104771c3d3f6..16328ec14266 100644
+> --- a/fs/crypto/hooks.c
+> +++ b/fs/crypto/hooks.c
+> @@ -30,21 +30,32 @@
+>  int fscrypt_file_open(struct inode *inode, struct file *filp)
+>  {
+>  	int err;
+> -	struct dentry *dir;
+> +	struct dentry *dentry, *dentry_parent;
+> +	struct inode *inode_parent;
+>  
+>  	err = fscrypt_require_key(inode);
+>  	if (err)
+>  		return err;
+>  
+> -	dir = dget_parent(file_dentry(filp));
+> -	if (IS_ENCRYPTED(d_inode(dir)) &&
+> -	    !fscrypt_has_permitted_context(d_inode(dir), inode)) {
+> +	dentry = file_dentry(filp);
+> +	rcu_read_lock();
+> +	dentry_parent = READ_ONCE(dentry->d_parent);
+> +	inode_parent = d_inode_rcu(dentry_parent);
+> +	if (inode_parent != NULL && !IS_ENCRYPTED(inode_parent)) {
+> +		rcu_read_unlock();
+> +		return 0;
+> +	}
+> +	rcu_read_unlock();
+
+It would be helpful for there to be a comment here that explains the
+optimization.  How about something like the following?
+
+	/*
+	 * Getting a reference to the parent dentry is needed for the actual
+	 * encryption policy comparison, but it's expensive on multi-core
+	 * systems.  Since this function runs on unencrypted files too, start
+	 * with a lightweight RCU-mode check for the parent directory being
+	 * unencrypted (in which case it's fine for the child to be either
+	 * unencrypted, or encrypted with any policy).  Only continue on to the
+	 * full policy check if the parent directory is actually encrypted.
+	 */
+
+	dentry = file_dentry(filp);
+	rcu_read_lock();
+        ...
+
+> +
+> +	dentry_parent = dget_parent(dentry);
+> +	if (IS_ENCRYPTED(d_inode(dentry_parent)) &&
+> +	    !fscrypt_has_permitted_context(d_inode(dentry_parent), inode)) {
+>  		fscrypt_warn(inode,
+>  			     "Inconsistent encryption context (parent directory: %lu)",
+> -			     d_inode(dir)->i_ino);
+> +			     d_inode(dentry_parent)->i_ino);
+>  		err = -EPERM;
+>  	}
+> -	dput(dir);
+> +	dput(dentry_parent);
+>  	return err;
+
+The IS_ENCRYPTED() check above can be removed, because it becomes redundant due
+to this patch.  I think it was intended to optimize the case of unencrypted
+files, like your patch does.  But clearly it wasn't too effective, as it was
+after the dget_parent().
+
+- Eric
 
