@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-171681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C17C8BE75D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:24:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97F5D8BE744
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5EDB26ABA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:19:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C98D31C23EB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D41165FD4;
-	Tue,  7 May 2024 15:19:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCBE1635AD;
-	Tue,  7 May 2024 15:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F061635BA;
+	Tue,  7 May 2024 15:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="AZpy448d"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C67161327
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715095172; cv=none; b=MUa9YvvciFrYdGvDrmrrCwvZs945sKL2JNHkYabz/18ZOWq1kxbc9jxNZTzo3BiPK4ZgaIsrrwDgX2DI3J3AiOVkaYrtvGS3CjfBiLskfAnR8anPqQcfElkKXsB22jDLuD1JSXXeD/ihJsbbOB4W4Tsho+y4zMwUutzBjokUzrg=
+	t=1715095213; cv=none; b=JtFu5eFzn65bmyR+KJ0sKSJk/bIOu+jCfo11N8izWxpuwKElsoXKzB+rEeyK8RcOxB0NCG1VlyIgCDtveWLoJG04//OWW5xlHojjfdi9pqt6bG/NelNrwU+SIiGu3ZkaxcsZlSSJU6xoOqsCn1z/wtG5+VUWCJx01lLzV0Y3u+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715095172; c=relaxed/simple;
-	bh=HCiNuMOgUWLAa2QGV+NRM5PIIgw4/qkm4rQshhilttE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFq+e7vbzuhUL183fepk5cpq+0/21LRea4QI6SFqHRoYaNjJngwtzu88a9FJ4rA/Voa8ZXmrb/mMYPcZ+c6LXyRtZTN8sp2f6VqD4XiwNxfG5Ut/hs11QH5vOcCR0TduimtFjg5jwlspHjLGPiqGWg4it7fwRiahaHVXL0vW11k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1F1A1063;
-	Tue,  7 May 2024 08:19:51 -0700 (PDT)
-Received: from [10.1.34.28] (e133047.arm.com [10.1.34.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4F3D23F587;
-	Tue,  7 May 2024 08:19:22 -0700 (PDT)
-Message-ID: <80da988f-899e-4b93-a648-ffd0680d4000@arm.com>
-Date: Tue, 7 May 2024 16:19:20 +0100
+	s=arc-20240116; t=1715095213; c=relaxed/simple;
+	bh=7wzzu5+Dyb2zQQ/BBHzdLsyJSaQZyO4yWyaBmCt+pjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qa1bnqMKTezV/nVSW+kmIiWIj14oEy5tlRgvj3IbWMh/6LqhfAvsaCBCjZ8qc5M+18a/ApsIn6BeJfgLZMxYjNDCyjI65hglhX0RbQi33SG+j/l7pifKTW5dYv+Iwbjwc4UcoYZxOtaKMCiQEoQhkw7MQw68mdSCcPk0JMt9aqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=AZpy448d; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7d9c2096c29so175748039f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:20:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715095211; x=1715700011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3612MOIikzCEeo+mwv3X2VMyaMFpK5mgqqdWHRbusjg=;
+        b=AZpy448doK/iK5AlReaECWW6bd//Oaw7EGEdbohJSOqAKh27gKenJwqvtXN9XdI0le
+         HgIlnPjfT/Lo3TwaTZs790v7YwUThuNJMbgkFqqHWc9ByBUmQNwOmpa7HrB99UuQdKOO
+         Cgj/mW+hrl7x4OwtpeD32neluhU/oep+HYl4ZqwZoHmNOiuNAGvI1QEbfkZRVSIzn/Jd
+         oTPEL77Eg6Y4S8pB7Dv4Rw4GAUb1dvTAKjDckx5wu2vwClgIB9yGpZ4sYZFvX79FbVXQ
+         eqd2PzeT6z15mK+eHoUPtFsj4U4g7f2aerz9fCdYOMwdc2i09zIovaWP1K7uavdTnGVQ
+         bjdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715095211; x=1715700011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3612MOIikzCEeo+mwv3X2VMyaMFpK5mgqqdWHRbusjg=;
+        b=R6UjG3X95F16LvYOSPb4N9pLGnBjLuFF3bomnqmo/SPkhVpf4lqtG/mKoyMB8+mWej
+         wIro/V4y2MWZsvPR9lPfC/8jdK74VlptyEBEKWw0e7JUHaJegtis3Txn+xfHQJ933uHY
+         TV5G6HmvLf1k4NKBJZmK/2REWC2Ftfwl/blWKKocKWPG2zq+eBACrq9NPnElIU4BAjfg
+         +XuzRRuDgHnetnpaVHtsfs9L4qkR/7AVVresmlQb1ivJ1UX9RLb0vol9DM22XwwwrsBz
+         JzjhNkRIaKP+RtHWFxYGJxyw++X8dehq9k5CnGmhrpV+BYPyMcswLjq3Sgo9lyxg2gPv
+         6VFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVozNFk4z9LcyotIo9dKzI9t5vuKj6Nd/AbUNkroZBGnq6B4AW8kwYYst0M7IRSXFJkGYiyptxXTOJsFzvzrsMcuWnlyC7gqzQ0N6zn
+X-Gm-Message-State: AOJu0YxOL4OXiymvVbGP1RRMmL7H6WCp1Fsf7ZErD/QDhrC1105Vs++Q
+	acX7dXpNpNXY1nR7WufK8AI6ej03bsGa9RdbMa1ZB50BKydEmQRqWIQPjkVY/IwOFLRwuXdSid4
+	CHAvVXPm7jIt3aSpuCtSnEkO6Ib24v6bYXQR2bQ==
+X-Google-Smtp-Source: AGHT+IFHKLBV5UyA+nE/FKsONZhELrkveEhHfV9QMKA63cqAy8XVSr7F4OwiQdsFr0lrM8BGsK3l5VTeIv2rndOqxu4=
+X-Received: by 2002:a05:6602:f08:b0:7de:ac01:4224 with SMTP id
+ hl8-20020a0566020f0800b007deac014224mr15044010iob.1.1715095210897; Tue, 07
+ May 2024 08:20:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] cpufreq/schedutil: Remove iowait boost
-To: Qais Yousef <qyousef@layalina.io>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com,
- dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org,
- Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org,
- andres@anarazel.de, asml.silence@gmail.com, linux-pm@vger.kernel.org,
- linux-block@vger.kernel.org, io-uring@vger.kernel.org
-References: <20240304201625.100619-1-christian.loehle@arm.com>
- <20240304201625.100619-3-christian.loehle@arm.com>
- <CAJZ5v0gMni0QJTBJXoVOav=kOtQ9W--NyXAgq+dXA+m-bciG8w@mail.gmail.com>
- <5060c335-e90a-430f-bca5-c0ee46a49249@arm.com>
- <CAJZ5v0janPrWRkjcLkFeP9gmTC-nVRF-NQCh6CTET6ENy-_knQ@mail.gmail.com>
- <20240325023726.itkhlg66uo5kbljx@airbuntu>
- <d99fd27a-dac5-4c71-b644-1213f51f2ba0@arm.com>
- <20240429111816.mqok5biihvy46eba@airbuntu>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240429111816.mqok5biihvy46eba@airbuntu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240507142600.23844-1-zong.li@sifive.com> <20240507142600.23844-5-zong.li@sifive.com>
+ <20240507145456.GH901876@ziepe.ca>
+In-Reply-To: <20240507145456.GH901876@ziepe.ca>
+From: Zong Li <zong.li@sifive.com>
+Date: Tue, 7 May 2024 23:19:58 +0800
+Message-ID: <CANXhq0ptCxyUc==oCG8MgLOCdF7Z=KRW4pct62BCSgsB_9hQkQ@mail.gmail.com>
+Subject: Re: [PATCH RFC RESEND 4/6] iommu/riscv: support nested iommu for
+ getting iommu hardware information
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
+	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, kevin.tian@intel.com, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/04/2024 12:18, Qais Yousef wrote:
-> On 04/19/24 14:42, Christian Loehle wrote:
-> 
->>> I think the major thing we need to be careful about is the behavior when the
->>> task is sleeping. I think the boosting will be removed when the task is
->>> dequeued and I can bet there will be systems out there where the BLOCK softirq
->>> being boosted when the task is sleeping will matter.
->>
->> Currently I see this mainly protected by the sugov rate_limit_us.
->> With the enqueue's being the dominating cpufreq updates it's not really an
->> issue, the boost is expected to survive the sleep duration, during which it
->> wouldn't be active.
->> I did experiment with some sort of 'stickiness' of the boost to the rq, but
->> it is somewhat of a pain to deal with if we want to remove it once enqueued
->> on a different rq. A sugov 1ms timer is much simpler of course.
->> Currently it's not necessary IMO, but for the sake of being future-proof in
->> terms of more frequent freq updates I might include it in v2.
-> 
-> Making sure things work with purpose would be really great. This implicit
-> dependency is not great IMHO and make both testing and reasoning about why
-> things are good or bad harder when analysing real workloads. Especially by non
-> kernel developers.
+On Tue, May 7, 2024 at 10:54=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Tue, May 07, 2024 at 10:25:58PM +0800, Zong Li wrote:
+> > +{
+> > +     struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
+> > +     struct iommu_hw_info_riscv_iommu *info;
+> > +
+> > +     if (!iommu)
+> > +             return ERR_PTR(-ENODEV);
+>
+> This is not possible, don't include impossible checks like this.
 
-Agreed.
-Even without your proposed changes [1] relying on sugov rate_limit_us is
-unfortunate.
-There is a problem with an arbitrarily low rate_limit_us more generally, not
-just because we kind of rely on the CPU being boosted right before the task is
-actually enqueued (for the interrupt/softirq part of it), but also because of
-the latency from requested frequency improvement to actually running on that
-frequency. If the task is 90% done by the time it sees the improvement and
-the frequency will be updated (back to a lower one) before the next enqueue,
-then that's hardly worth the effort.
-Currently this is covered by rate_limit_us probabillistically and that seems
-to be good enough in practice, but it's not very pleasing (and also EAS can't
-take it into consideration).
-That's not just exclusive for iowait wakeup tasks of course, but in theory any
-that is off the rq frequently (and still requests a higher frequency than it can
-realistically build up through util_avg like through uclamp_min).
+Thanks for pointing this out, I will remove it in the next version.
 
->>>
->>> FWIW I do have an implementation for per-task iowait boost where I went a step
->>> further and converted intel_pstate too and like Christian didn't notice
->>> a regression. But I am not sure (rather don't think) I triggered this use case.
->>> I can't tell when the systems truly have per-cpu cpufreq control or just appear
->>> so and they are actually shared but not visible at linux level.
->>
->> Please do share your intel_pstate proposal!
-> 
-> This is what I had. I haven't been working on this for the past few months, but
-> I remember tried several tests on different machines then without a problem.
-> I tried to re-order patches at some point though and I hope I didn't break
-> something accidentally and forgot the state.
-> 
-> https://github.com/torvalds/linux/compare/master...qais-yousef:linux:uclamp-max-aggregation
-> 
+>
+> > +     info =3D kzalloc(sizeof(*info), GFP_KERNEL);
+> > +     if (!info)
+> > +             return ERR_PTR(-ENOMEM);
+> > +
+> > +     info->capability =3D iommu->caps;
+> > +     info->fctl =3D riscv_iommu_readl(iommu, RISCV_IOMMU_REG_FCTL);
+> > +
+> > +     *length =3D sizeof(*info);
+> > +     *type =3D IOMMU_HW_INFO_TYPE_RISCV_IOMMU;
+> > +
+> > +     return info;
+> > +}
+> > +
+> >  static int riscv_iommu_device_domain_type(struct device *dev)
+> >  {
+> >       return 0;
+> > @@ -1560,6 +1582,7 @@ static void riscv_iommu_release_device(struct dev=
+ice *dev)
+> >  static const struct iommu_ops riscv_iommu_ops =3D {
+> >       .pgsize_bitmap =3D SZ_4K,
+> >       .of_xlate =3D riscv_iommu_of_xlate,
+> > +     .hw_info =3D riscv_iommu_hw_info,
+> >       .identity_domain =3D &riscv_iommu_identity_domain,
+> >       .blocked_domain =3D &riscv_iommu_blocking_domain,
+> >       .release_domain =3D &riscv_iommu_blocking_domain,
+> > diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.=
+h
+> > index 1dfeaa2e649e..ec9aafd7d373 100644
+> > --- a/include/uapi/linux/iommufd.h
+> > +++ b/include/uapi/linux/iommufd.h
+> > @@ -475,15 +475,28 @@ struct iommu_hw_info_vtd {
+> >       __aligned_u64 ecap_reg;
+> >  };
+> >
+> > +/**
+> > + * struct iommu_hw_info_riscv_iommu - RISCV IOMMU hardware information
+> > + *
+> > + * @capability: Value of RISC-V IOMMU capability register
+> > + * @fctl: Value of RISC-V IOMMU feature control register
+> > + */
+>
+> Please call out explictly what spec these values come from.
 
-Thanks for sharing, that looks reasonable with consolidating it into uclamp_min.
-Couple of thoughts on yours, I'm sure you're aware, but consider it me thinking out
-loud:
-- iowait boost is taken into consideration for task placement, but with just the
-4 steps that made it more aggressive on HMP. (Potentially 2-3 consecutive iowait
-wakeups to land on the big instead of running at max OPP of a LITTLE).
-- If the current iowait boost decay is sensible is questionable, but there should
-probably be some decay. Taken to the extreme this would mean something
-like blk_wait_io() demands 1024 utilization, if it waits for a very long time.
-Repeating myself here, but iowait wakeups itself is tricky to work with (and I
-try to work around that).
-- The intel_pstate solution will increase boost even if
-previous_wakeup->iowait_boost > current->iowait_boost
-right? But using current->iowait_boost is a clever idea.
+Let me add the description for the section that defines them.
 
-[1]
-https://lore.kernel.org/lkml/ZgKFT5b423hfQdl9@gmail.com/T/
+>
+> > +struct iommu_hw_info_riscv_iommu {
+> > +     __aligned_u64 capability;
+> > +     __u32 fctl;
+> > +};
+>
+> Add explicit padding here
 
-Kind Regards,
-Christian
+Add a u32 reserve here in the next version. Thanks
+
+>
+> Jason
 
