@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-171398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2FE8BE41F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:33:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5328F8BE3D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37C49B299DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E68D28AAB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CF716D308;
-	Tue,  7 May 2024 13:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E8F16DEDA;
+	Tue,  7 May 2024 13:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KBC519u0"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JFt4TNkp"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8912D16D309
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824B116D4D5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715087919; cv=none; b=ulUxRKfATn2daIESsSLiEB/zTEmJy44dKuPKhm+5cfXQwqAYfDDcPWkgAnNqKQCDu02NxhPM/rbfw9Qv84Cmf/XlmR6te17C5gioxo9XveafheKfJr3vD7WyDpI+Y6BsVsi85asujgjgHDCLsQM83CvIrZgeL88tZMQLiWTaQuI=
+	t=1715087920; cv=none; b=V/N0N/brgblugJGB9GvMM/4SZ88ZgO91/kNqg1ngvHoWpc0gpqDiivP68SfB39N+rmOUGpBkBd8GWBPIf7KZ2rFVC9Ec/5WQ+pTicvxcTcBywnpUi2s35DlDeYpD3ZsCsYBY7JZZBRtf5bCHz09OSor/EfNZ1gO/HYxakJGZZ/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715087919; c=relaxed/simple;
-	bh=ENYjVBtJ4EPS9w/ftPm8y0fja8ouSlg/VUcwtfy4KyM=;
+	s=arc-20240116; t=1715087920; c=relaxed/simple;
+	bh=3FQmdzC7rLah5bHXqxL1pjRWMb/l2vnOq/dIwPsVxiM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bFc+Pk//34pY0Tb5ThoIsX+Y/y1kJyf5t7svlNCtOhdfkIk5uDMo8gMx2w+dtKyt1hAeR4AfdcafLWiiSWmIIfznjNe8sdXNmzSmWk9lSUR6eNwTBfcqcg0MZpjOF6+BxbOTNpPiVE8Cu2q6xbEk8lCTYWVLZ00jkkiCpeiMIys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KBC519u0; arc=none smtp.client-ip=209.85.167.172
+	 In-Reply-To:To:Cc; b=EduBW3xnVHHa6c6LYAdUmB2CFwDs2CStwSMqfmlow8vReT2n26FkJKw3I9CFG73g9Hzxg1BZRHSqG/HHqjiscTmD2l4Sx6bL5dboZfpij7VcjWd74rCMWISkIykgNdRZi/CqLHS3AicurfJmPrJYoJU/yY5nlpznjGs9JjpIPDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JFt4TNkp; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c86f066256so1750135b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:18:37 -0700 (PDT)
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-69b50b8239fso29890776d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715087916; x=1715692716; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715087917; x=1715692717; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bajBIKBKiGkzVrECr+DrCDdr2oyOzpQYYR0WAIoyaos=;
-        b=KBC519u0YUZRmCX814fdQKpA9DlYSwz1bySNckmrtHfZxffY9CGzwwo3nEWshOn0lS
-         8v9an28RN3ZuLUZoNoPCjNSUaymk5IwXUr1AI4Qmfzc6ZauF9dmvpstHrufZVgY5PRuy
-         ZmGawl0KywrAVsBanr0/J+DjkUIek1bN8rc0o=
+        bh=JKfhOSoHE1VqyRhgB0xYInvnK6a8zz5LZUqmCULZe+M=;
+        b=JFt4TNkpMT5jL5IFAYGuw28lBWwu84Ak+EoHQOC6AlPJzZQOXDDwp2LfLftQDkcI48
+         kePHAN4Bhd5TFp56PnCYmL0IjqhZvKlhNTePDpTlPyuZOgFXVPm3H+gBFvSW2TKQP2V5
+         t4vOxqEd9Db93cAxWnLWBikZe5wQjTQDdToXE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715087916; x=1715692716;
+        d=1e100.net; s=20230601; t=1715087917; x=1715692717;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bajBIKBKiGkzVrECr+DrCDdr2oyOzpQYYR0WAIoyaos=;
-        b=T15TLIRZIEzwM2J8I27YDnfo7iBPMrt1WsCAqJ5fnU27877Ej/iMZ0PJDnhBNAlvGk
-         zeeRVK69+9hAQJAk4yCr0aWLSJutOTkhcK/h2njcVeEFxkK8+QnQ8hMW74aI7mfiR1f1
-         7dq6yra1sPxUXVBuSOcZM2/p71Yb6c1Njv65Av3JVa7AX8nMs62WL/388ngV6ajEe3rg
-         WluBguNxNO8hZlI6POJvq8cmY/eAHFVtwrZq+JggSaQvoLy2UF9mSXDKUBFZvuh/2NT4
-         TwcadoixG97seonhDBOJ1/4TAVD2xUrwJlx7GTC9tpljje319uVq+QV+Oxkr1y6reNy5
-         4KDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgnE9R1FEDUAtJxQs5LdY4PF1NgmD9Zb/FiSLJD75XHFLtsXdkZ89JAyzN2Q6mvbQCTphzudmR2rw3Dpw+dw00zqAeoIG2HaSRUzAq
-X-Gm-Message-State: AOJu0Yzj0hF+3a9iFvcktwy4ejmLq6GB8hX0OX9kamAI0F2CEkgzKZ3G
-	db0TR561PYq5ncsEQWpewJzDKNTRnhEFxVmVoQ8Nd8uVV1Zo6BpTymsm50f2jg==
-X-Google-Smtp-Source: AGHT+IEfgZc+3NqAZNZgDbuMWn1SodDQc1fgSaycXBKpVQJhCw/vqcobpSG60CD78oLq4SUhp6OVxQ==
-X-Received: by 2002:a54:4195:0:b0:3c9:6e70:cf99 with SMTP id 21-20020a544195000000b003c96e70cf99mr5053014oiy.57.1715087916576;
-        Tue, 07 May 2024 06:18:36 -0700 (PDT)
+        bh=JKfhOSoHE1VqyRhgB0xYInvnK6a8zz5LZUqmCULZe+M=;
+        b=GFNlVcgTHoM9d7tpWaLSK/O6JxukV+432U4h4oYQzV8+1UKIQXwmHnzsM8yufjjygW
+         2WdKhDjvAPIeyRT6E94G2h07ovR7MckgsM5pNA0kb5hllRM4TEjR/Z2ZSpAsWIaAHuOw
+         jFYCikhhOESN6yBg5MUB/vClrQxs1ydZAcl5VRWtp/h8s6CGtqMR6K6g2geODBnoM38W
+         tZjsFcNR6Jzd6rd6+ftefX8BqfYEDfGYNxY38uTdmx2YtsoTk5iOktPaWgIshy7u12Z1
+         Xx4ICZ78taB9WWnd4kqb6lpHFw4OpFcWSwIKnlopRnGGwVjm6jfmXpGJVCGFFfjLQcRu
+         om+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXT2hlO0brhX36ixDuS8nkfYa3W0bMc7A+xX0pKtvE5p0CcinZbW1mZZAIhGUXGebdAwTwndOIVp7r7Vj0px4Z7kdJ822rt60gTkcEG
+X-Gm-Message-State: AOJu0YyuR0tUFc/zhJIwpKtJ7xRFX8gIYCv48UzUtpeTW+7d7fH7Rgi4
+	n7yshfR2WS28KMni70v3qm4o3jlD/XwayPDhijsywczhCkqidlPHWFmQDNfXnsZ15dtWSTkb9+x
+	Lag==
+X-Google-Smtp-Source: AGHT+IFKliypIzu0YjFcg14a69MBEAau+ZXpSAYRUE5dq1ueGc4ePsCBbZXpGGTph+KzlVWTljAkDg==
+X-Received: by 2002:a0c:e082:0:b0:6a0:f637:667 with SMTP id 6a1803df08f44-6a14600e407mr45875746d6.12.1715087917380;
+        Tue, 07 May 2024 06:18:37 -0700 (PDT)
 Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id t15-20020a05621405cf00b006a0d19c3139sm4655105qvz.118.2024.05.07.06.18.35
+        by smtp.gmail.com with ESMTPSA id t15-20020a05621405cf00b006a0d19c3139sm4655105qvz.118.2024.05.07.06.18.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 06:18:35 -0700 (PDT)
+        Tue, 07 May 2024 06:18:36 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 07 May 2024 13:18:33 +0000
-Subject: [PATCH 07/18] media: siano: Remove unused structures
+Date: Tue, 07 May 2024 13:18:34 +0000
+Subject: [PATCH 08/18] media: siano: Use flex arrays for sms_firmware
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +75,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240507-cocci-flexarray-v1-7-4a421c21fd06@chromium.org>
+Message-Id: <20240507-cocci-flexarray-v1-8-4a421c21fd06@chromium.org>
 References: <20240507-cocci-flexarray-v1-0-4a421c21fd06@chromium.org>
 In-Reply-To: <20240507-cocci-flexarray-v1-0-4a421c21fd06@chromium.org>
 To: Michael Tretter <m.tretter@pengutronix.de>, 
@@ -93,43 +94,35 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.4
 
-These structs are not used in the code, remove them.
+Replace old style single array member, with flex array.
 
-This fixes the following cocci warning:
+The struct is allocated, but it seems like there was an over allocation
+error:
 
-drivers/media/common/siano/smscoreapi.h:1049:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/common/siano/smscoreapi.h:1055:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+fw_buf = kmalloc(ALIGN(fw->size + sizeof(struct sms_firmware),
+		SMS_ALLOC_ALIGNMENT), GFP_KERNEL | coredev->gfp_buf_flags);
+
+This change fixes this cocci warning:
+drivers/media/common/siano/smscoreapi.h:669:6-13: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/common/siano/smscoreapi.h | 14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/media/common/siano/smscoreapi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/media/common/siano/smscoreapi.h b/drivers/media/common/siano/smscoreapi.h
-index 46dc74ac9318..bc61bc8b9ea9 100644
+index bc61bc8b9ea9..82d9f8a64d99 100644
 --- a/drivers/media/common/siano/smscoreapi.h
 +++ b/drivers/media/common/siano/smscoreapi.h
-@@ -1042,20 +1042,6 @@ struct sms_srvm_signal_status {
- 	u32 request_id;
+@@ -666,7 +666,7 @@ struct sms_firmware {
+ 	u32			check_sum;
+ 	u32			length;
+ 	u32			start_address;
+-	u8			payload[1];
++	u8			payload[];
  };
  
--struct sms_i2c_req {
--	u32	device_address; /* I2c device address */
--	u32	write_count; /* number of bytes to write */
--	u32	read_count; /* number of bytes to read */
--	u8	Data[1];
--};
--
--struct sms_i2c_res {
--	u32	status; /* non-zero value in case of failure */
--	u32	read_count; /* number of bytes read */
--	u8	Data[1];
--};
--
--
- struct smscore_config_gpio {
- #define SMS_GPIO_DIRECTION_INPUT  0
- #define SMS_GPIO_DIRECTION_OUTPUT 1
+ /* statistics information returned as response for
 
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
