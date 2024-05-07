@@ -1,180 +1,160 @@
-Return-Path: <linux-kernel+bounces-170627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A3A8BD9E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4498BD9E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 035B61C2208E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:54:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F252836F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5461C1D524;
-	Tue,  7 May 2024 03:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69B542AAE;
+	Tue,  7 May 2024 03:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="pj4SQWVJ"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="RDJpjWhb"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413D3FBA2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9D654BCA
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715054032; cv=none; b=d0M++khrb6omoEfoTUTg6UgeYFwunCssnqfaRGy8Opn5QHPGtRrkUPP3fPNaM32XQR/mFFViFrlCmO8TYhi9yyGd6UAFI6K8+usXZlRRAve/Qpu9Vc/KkeaYmgSz2Ki0XNqe1zqThC+2LHAAQN0ctVFV0fVb/BKMtmC913NW+Ow=
+	t=1715054120; cv=none; b=f0uLSFBitrj1vT3ndzz8HtkGvzbiNoGpr8D+GHNrmHyY16+xIHOOpY0AXlJw/eUR8rVYePOcszZNMTuGez6tv5HTMBh3oTMkkI3diO5u2Xq978jrXZFmoJXbE3bdJk/t6Bqj1s80k5+d+F5vyTong05t3ZxVIVvnLQ7MK1AfRiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715054032; c=relaxed/simple;
-	bh=tsOaVF+iFdOoeubnHXAxYCPcXOkgBthMQC/BpJg6mDU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=hCIjJz5I/D0Mo/mBfFy9f+7AvDtCFiGBw8K8E6dtqrg1udvSYY1CX8GeGz/+4mX1lRUUJxugRexsjxC+ksbu82RpBE1n9OEf3ogbF33kMeLGm9zYHj6l9JUIv5Tb87BKzgu0oxgdat9b5os2Wo+dJRWSLsFgXNyC4xws9GoANTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pj4SQWVJ; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de0b4063e59so2352770276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 20:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715054030; x=1715658830; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xtepmuyQ0j0fsK9BoVO4wO3hfVCGXVxAllLwZnrs0Ig=;
-        b=pj4SQWVJ5b9orFmM1v2RvXO8mz8U3qmQ9EVLPGEUXeLH5zS/f0u44/Uxs08d09xsBu
-         BZ0J/Pw8/BLAmcPClu3XRD52gsfi5UaY/iYh8wNZkhVGFQUwSMEKblkvVJFA1hnCidM7
-         Sqyq+PpUiQLW9nxcoKFuwPcgZc0GM/X5bwOPUQ+7Kp/wdARuC0Xoeedte8qC/fr4yYKh
-         f7mnMMuow5goUDCgTXUORRhCU6R+TiCDMwqdH1lAZ5hal0HK44Zg2VsUmtnMh834r1qT
-         GLRSi7Xg/2RypZ3/3DcUE+oQhdOtsWPxllvrdsC8JH8JHvjr0HgSvp5+8zXLBmM6OLoY
-         DxPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715054030; x=1715658830;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xtepmuyQ0j0fsK9BoVO4wO3hfVCGXVxAllLwZnrs0Ig=;
-        b=OmYp/fgR3f4bp292phIsQ4N2IGbUAY7VSoOYGa0D0ibfQ/n70sCWH7fDRWHDQJyGGT
-         iuzA64Mp4n2gc/G8/rJXNaGhMB6hjrMqrHRoD/iQXyCGby0qBUbhDP17y9lHcr9TNBaH
-         xEMYdizAtRlXeDIlCo6G+nwZEZCN1lJZPhX0WyEbP3vYoJOFl/clIcrvSgu/cMfRuily
-         qQIhnsBP8uSO0dKD3u95VaDn+EIs+qRS+tyFXt2kz2Tue/YVhR0m4WShdxwyQzxQ0x79
-         wNPIYS+pVF0U4cEkfaISYuH/Vapk1qPpM2TW0kj3HHiEjxXgvs3Nvwsmfi3+1aN/sDGx
-         nnAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNklSMxgx3SbgzKMPzfdBNn9M9EW+ifKPrdLYcVn4z/S1vV/+5ZCPreFLR974kI36enK4tNg2Z50e8yyQepsoqJYauvw2c7+05Z2WM
-X-Gm-Message-State: AOJu0YwLu3wBm38igEfHDwpbrl7MHySppxTYCZoblfrKrke/mpUlxA8q
-	mGdSytpx7B8gX23OaTYMaseIPks1uSt+VTIDKhfWtTdZRcm1R4yVK2v+U3y+4NdSmDBX37+PfGC
-	Zn7b/S3BCK49sSfEfH+dKHg==
-X-Google-Smtp-Source: AGHT+IE9JqdbYYGhT5dM3MiTfDeGoOhvE3xQLWEsDBrRVm7M4ik9C0WBPWd/yifRjOzvgqJjjFlZ+qdE5R2kEIGQjA==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:6902:1889:b0:de6:16d6:2f34 with
- SMTP id cj9-20020a056902188900b00de616d62f34mr4167590ybb.1.1715054030102;
- Mon, 06 May 2024 20:53:50 -0700 (PDT)
-Date: Tue, 07 May 2024 03:53:49 +0000
+	s=arc-20240116; t=1715054120; c=relaxed/simple;
+	bh=6BmP39qRpEEc80LOA77CqS1rXn96VFp5nZ6GI++nr+I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QUTEAATU8IMxrNvGrRqEPZjc7hB/plLE2ic4+QREJc7DGsNHNQgGgofVGh6IhazweYvD6V5aZNf3WXBLUhdbgArghE292RKt1RkGcUFoXvK9NBOUTT9cbRERdFLTj5HT4CSIOk2EJEQxaG8utWfT8ULuo7o9ymxPfTQMe2mmpnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=RDJpjWhb; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1715054116;
+	bh=6BmP39qRpEEc80LOA77CqS1rXn96VFp5nZ6GI++nr+I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=RDJpjWhbaAmmj1aWNTXszCuxtC45rb7rDobToUAAyKi/hsNG3FAfFrM36wL8wt1Jp
+	 IL/dpcJITfF5jU2EHf81tlcDVqhQyCjP3AlWMCpYh6u/vpTRpELreDXXe0nUn2Skd1
+	 sexfXdsnYir/HZRjfGyaeMd75TxsEYf+y5iBj3yE=
+Received: from [IPv6:240e:358:116c:3f00:dc73:854d:832e:6] (unknown [IPv6:240e:358:116c:3f00:dc73:854d:832e:6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id E8DF567594;
+	Mon,  6 May 2024 23:55:12 -0400 (EDT)
+Message-ID: <cf5df629b88fe38ae04cfa5714b9de2a44792704.camel@xry111.site>
+Subject: Re: [PATCH] LoongArch: Update the flush cache policy
+From: Xi Ruoyao <xry111@xry111.site>
+To: lijun <lijun01@kylinos.cn>, chenhuacai@kernel.org, kernel@xen0n.name, 
+	lvjianmin@loongson.cn, dongbiao@loongson.cn, zhangbaoqi@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Tue, 07 May 2024 11:55:08 +0800
+In-Reply-To: <8809f5a7-de6e-0794-feab-726c26f87344@kylinos.cn>
+References: <20240506092419.4109941-1-lijun01@kylinos.cn>
+	 <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
+	 <cbb24599-8b40-cd27-6ce7-215476c0ddf4@kylinos.cn>
+	 <cbd6ed9d5be1d7112d69117a72e0cb0081f9b64b.camel@xry111.site>
+	 <8809f5a7-de6e-0794-feab-726c26f87344@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAMylOWYC/33NwQ6CMAwG4FchO1uzjSHGk+9hPEDXQSMys5FFQ
- 3h3BydNjL39zd+vs4gUmKI4FbMIlDiyH3Mod4XAvhk7ArY5Cy21kZU8QGsgd6AdPN6APU4D1Ed
- ytjbaOWdEPnwEcvzc0Ms1557j5MNr+5HUuv3LJQUKbFOVFaLU0uK5874baI/+LlYv6U+j/mnob JDKUzbUKum+jGVZ3saeDbT5AAAA
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715054029; l=4424;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=tsOaVF+iFdOoeubnHXAxYCPcXOkgBthMQC/BpJg6mDU=; b=U4yDqR/Ij+0HPgX8SfS3YkJfZ7uQewzFArl33ppZN2YGNOdQ//XyIk2iFqRLOnLag5yuQAUQ2
- n4AEYLAQ7XTDYQZ2X6qpTa1o8h/6Z6RNblBtIZfdrfZYShLu3kAhwer
-X-Mailer: b4 0.12.3
-Message-ID: <20240507-b4-sio-block-ioctl-v3-1-ba0c2b32275e@google.com>
-Subject: [PATCH v3] block/ioctl: prefer different overflow check
-From: Justin Stitt <justinstitt@google.com>
-To: Jens Axboe <axboe@kernel.dk>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 
-Running syzkaller with the newly reintroduced signed integer overflow
-sanitizer shows this report:
+On Tue, 2024-05-07 at 08:53 +0800, lijun wrote:
+> The value of addr changes very very quickly, and 'volatile' ensures that=
+=20
+> every change can be read
 
-[   62.982337] ------------[ cut here ]------------
-[   62.985692] cgroup: Invalid name
-[   62.986211] UBSAN: signed-integer-overflow in ../block/ioctl.c:36:46
-[   62.989370] 9pnet_fd: p9_fd_create_tcp (7343): problem connecting socket to 127.0.0.1
-[   62.992992] 9223372036854775807 + 4095 cannot be represented in type 'long long'
-[   62.997827] 9pnet_fd: p9_fd_create_tcp (7345): problem connecting socket to 127.0.0.1
-[   62.999369] random: crng reseeded on system resumption
-[   63.000634] GUP no longer grows the stack in syz-executor.2 (7353): 20002000-20003000 (20001000)
-[   63.000668] CPU: 0 PID: 7353 Comm: syz-executor.2 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
-[   63.000677] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   63.000682] Call Trace:
-[   63.000686]  <TASK>
-[   63.000731]  dump_stack_lvl+0x93/0xd0
-[   63.000919]  __get_user_pages+0x903/0xd30
-[   63.001030]  __gup_longterm_locked+0x153e/0x1ba0
-[   63.001041]  ? _raw_read_unlock_irqrestore+0x17/0x50
-[   63.001072]  ? try_get_folio+0x29c/0x2d0
-[   63.001083]  internal_get_user_pages_fast+0x1119/0x1530
-[   63.001109]  iov_iter_extract_pages+0x23b/0x580
-[   63.001206]  bio_iov_iter_get_pages+0x4de/0x1220
-[   63.001235]  iomap_dio_bio_iter+0x9b6/0x1410
-[   63.001297]  __iomap_dio_rw+0xab4/0x1810
-[   63.001316]  iomap_dio_rw+0x45/0xa0
-[   63.001328]  ext4_file_write_iter+0xdde/0x1390
-[   63.001372]  vfs_write+0x599/0xbd0
-[   63.001394]  ksys_write+0xc8/0x190
-[   63.001403]  do_syscall_64+0xd4/0x1b0
-[   63.001421]  ? arch_exit_to_user_mode_prepare+0x3a/0x60
-[   63.001479]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
-[   63.001535] RIP: 0033:0x7f7fd3ebf539
-[   63.001551] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-[   63.001562] RSP: 002b:00007f7fd32570c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   63.001584] RAX: ffffffffffffffda RBX: 00007f7fd3ff3f80 RCX: 00007f7fd3ebf539
-[   63.001590] RDX: 4db6d1e4f7e43360 RSI: 0000000020000000 RDI: 0000000000000004
-[   63.001595] RBP: 00007f7fd3f1e496 R08: 0000000000000000 R09: 0000000000000000
-[   63.001599] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-[   63.001604] R13: 0000000000000006 R14: 00007f7fd3ff3f80 R15: 00007ffd415ad2b8
-..
-[   63.018142] ---[ end trace ]---
+No, volatile has nothing to do with changing quickly or not.
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang; It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
+It's only useful when the compiler cannot know the change, for example
+it's changed by the hardware or another thread.
 
-Let's rework this overflow checking logic to not actually perform an
-overflow during the check itself, thus avoiding the UBSAN splat.
+And in the Linux kernel memory model for the hardware change you should
+use READ_ONCE/WRITE_ONCE instead (they are actually wrappers of volatile
+so in the kernel you should almost never need to directly use volatile),
+for the change from another thread using volatile is just wrong and you
+should use some atomic or locked operation instead.
 
-[1]: https://github.com/llvm/llvm-project/pull/82432
+See
+https://www.kernel.org/doc/html/latest/process/volatile-considered-harmful.=
+html.
 
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
-Changes in v3:
-- move first line of commit body down one to avoid its inclusion in
-  subject line
-- Link to v2: https://lore.kernel.org/r/20240507-b4-sio-block-ioctl-v2-1-e11113aeb10f@google.com
+In this case I'd like to ask first: why won't a simple addr +=3D cdesc-
+>linesz * cdesc->sets * cdesc->ways * 3 work?  Which value(s) of addr,
+cdesc, or cdesc->{linesz,sets,ways} may change w/o the compiler's
+knowledge?
 
-Changes in v2:
-- don't use check_add_overflow as I accidentally was writing to p.start
-  and the alternative of using a dummy (unused) variable does not seem great.
-- Link to v1: https://lore.kernel.org/r/20240506-b4-sio-block-ioctl-v1-1-da535cc020dc@google.com
----
- block/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> =E5=9C=A8 2024/5/6 18:17, Xi Ruoyao =E5=86=99=E9=81=93:
+> > On Mon, 2024-05-06 at 18:08 +0800, lijun wrote:
+> > > volatile prevents compiler optimization by allowing the compiler
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0to reread the address value of addr every time
+> > But why is this ever needed?=C2=A0 What's wrong if the compiler optimiz=
+es
+> > it?
+> >=20
+> > If the problem is the compiler may optimize it to cdesc->ways * 3 *
+> > cdesc->sets * cdesc->linesz, unknowing cdesc->ways etc may magically
+> > change, you should use READ_ONCE(cdesc->ways) etc.
+> >=20
+> > I.e. use READ_ONCE on the expression which may magically change,
+> > instead
+> > of hacking addr.=C2=A0 addr won't magically change.
+> >=20
+> > > =E5=9C=A8 2024/5/6 17:28, Xi Ruoyao =E5=86=99=E9=81=93:
+> > > > On Mon, 2024-05-06 at 17:24 +0800, Li Jun wrote:
+> > > > > fix when LoongArch s3 resume, Can't find image information
+> > > > >=20
+> > > > > Signed-off-by: Li Jun <lijun01@kylinos.cn>
+> > > > > Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
+> > > > > Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+> > > > > Signed-off-by: Biao Dong <dongbiao@loongson.cn>
+> > > > > ---
+> > > > > =C2=A0=C2=A0=C2=A0arch/loongarch/mm/cache.c | 24 ++++++++++++++++=
++++++++-
+> > > > > =C2=A0=C2=A0=C2=A01 file changed, 23 insertions(+), 1 deletion(-)
+> > > > >=20
+> > > > > diff --git a/arch/loongarch/mm/cache.c
+> > > > > b/arch/loongarch/mm/cache.c
+> > > > > index 6be04d36ca07..52872fa0e5d8 100644
+> > > > > --- a/arch/loongarch/mm/cache.c
+> > > > > +++ b/arch/loongarch/mm/cache.c
+> > > > > @@ -63,6 +63,28 @@ static void flush_cache_leaf(unsigned int
+> > > > > leaf)
+> > > > > =C2=A0=C2=A0=C2=A0	} while (--nr_nodes > 0);
+> > > > > =C2=A0=C2=A0=C2=A0}
+> > > > > =C2=A0=C2=A0=20
+> > > > > +static void flush_cache_last_level(unsigned int leaf)
+> > > > > +{
+> > > > > +	u64 addr;
+> > > > > +	int i, j, nr_nodes, way_size;
+> > > > > +	struct cache_desc *cdesc =3D
+> > > > > current_cpu_data.cache_leaves
+> > > > > +
+> > > > > leaf;
+> > > > > +
+> > > > > +	nr_nodes =3D loongson_sysconf.nr_nodes;
+> > > > > +
+> > > > > +	addr =3D CSR_DMW1_BASE;
+> > > > > +	iocsr_write32(0x1, 0x280);
+> > > > > +	way_size =3D cdesc->sets * cdesc->linesz;
+> > > > > +	do {
+> > > > > +		for (i =3D 0; i < (cdesc->ways * 3); i++) {
+> > > > > +			for (j =3D 0; j < (cdesc->sets); j++) {
+> > > > > +				*(volatile u32 *)addr;
+> > > > ??? what does this line do?
+> > > >=20
+>=20
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index f505f9c341eb..2639ce9df385 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -33,7 +33,7 @@ static int blkpg_do_ioctl(struct block_device *bdev,
- 	if (op == BLKPG_DEL_PARTITION)
- 		return bdev_del_partition(disk, p.pno);
- 
--	if (p.start < 0 || p.length <= 0 || p.start + p.length < 0)
-+	if (p.start < 0 || p.length <= 0 || LLONG_MAX - p.length < p.start)
- 		return -EINVAL;
- 	/* Check that the partition is aligned to the block size */
- 	if (!IS_ALIGNED(p.start | p.length, bdev_logical_block_size(bdev)))
-
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240506-b4-sio-block-ioctl-78efd742fff4
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
