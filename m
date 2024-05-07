@@ -1,159 +1,215 @@
-Return-Path: <linux-kernel+bounces-170731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE588BDB36
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:14:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F187C8BDB3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A9E2830E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21DB2B22651
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECE46F086;
-	Tue,  7 May 2024 06:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42626F505;
+	Tue,  7 May 2024 06:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kPWR4mPQ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jh+gmYi2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C66C6EB5C;
-	Tue,  7 May 2024 06:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA5E6EB5C;
+	Tue,  7 May 2024 06:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062461; cv=none; b=SosBfxTJfPa6esifNmIXiBD2j795v8f6faqivEXhih0rpsa0umL8cg1SULmFTzwqB5MR9eVp8ZV10m8kZZSlcnGuLleH7fpGDY9gLBvY06hDc9dXfkaDe1CgDqssEA+W1hURouw8EW99ybDOq9ougbpihUQyTKzaZdkidwmJlsw=
+	t=1715062756; cv=none; b=Wzp266MlqYE8rpH1i0sSblHNOmiw6PDulBB+v1rIYIP7i19TyRLoAzgSSzyQgIHZqOIxZ/RIz6SJ12S2XNDy4/A17ELZi3aTVI2DM6OlCU8A/vPlaU1epcibRnA0txEcCnr9G8Iro+KH6yXROL1Iqpv2kMnItDSsFSWG7cZo48g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062461; c=relaxed/simple;
-	bh=EmVKuHIG1qVj2sl/trhl0C36sPde+5ySI5j8DvJuNRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DB4XuiF1moxEGggB5yIEOsIOm+66klEUmazSFaBRJ9G/7ltJ7fcCtWmSocd6yfo1J9zvFZhj1XxVOOFt5hiCqopn9lkMqafk3fE3WarrAfLWiW25x8vhIktGyiJ4DTtIa7xwe3uJAATDohsuMFuR+Kh/5q/YNtuCXgQJlVBsU9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kPWR4mPQ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f2ebbd8a7so3232683e87.2;
-        Mon, 06 May 2024 23:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715062458; x=1715667258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QZE+J4EECA+d/Zj0mE5FgYZ0iAZh5ZeMzHClQWAKGuI=;
-        b=kPWR4mPQQugxCjjEwcnpT8cPKuOgbiQPHrtPrlTRmkQRU/eCPB/b0CqWtP+iAdyew7
-         c5HTfBdgwc6uu0pGblDREa53aAat07zumn9fT74/SuNbaNCYhkQ/OrHleZwkpzDFyeeV
-         hPcS51OPpNiRq5ZNcbWMfwkVUa3GPKcMz23HpR98yJ/fJWTTfWq3zPLiFMJ2+4eodHrB
-         o30lPlvqGMK9jgzea2Q9FbpJWc1QaG17dzhayZ0vmNq3TBkqY3JTVLEkmNHb4bKVOn1X
-         gEHWopFNPcFsVRYUX272vEvSukGDp3vzVoaYpEUPZPJ4uhM8P8VM95jkg3ICwe5kcUU3
-         Mb5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715062458; x=1715667258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QZE+J4EECA+d/Zj0mE5FgYZ0iAZh5ZeMzHClQWAKGuI=;
-        b=ZFg+q7YwlDXKkrLMmIxHEwfeZQzMkCcpHJvOWtBgAs0gTI8E5haJ99dexPFdTvl3ed
-         b+hGTiXFu6zIGvm/X000ozU5gx1NvU9S3INyyl8M4cB7EyKw/B6lIKgKPKTdhdWhXjPj
-         NKhYNBLuN/v6EcFuYARHxVgx+p19tFTqc7zf1nKDNJ5BdjGB+td+zycKSCdc7m7wHO/+
-         bcph4FId10W/bY3l6iDO/GMksZRN1+xl88uH7ebINwa3qvysPc1txRB+tBrtyYpGntc0
-         jJX6+HIaI2sPQ4Z2iGvw0QvS0DRP6osgoJEMi3MfyMzLw+XjQZ42N7B9Ktf17KZ2COzw
-         kSSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWzj3iasC73wDfv8mw5mguFRBwHCEeCTbqNFMcovbPD1uYhiia7X7DQW7/Dhp1wyPOLBEjDNjZV3l+IDrqA6m0zqYLV28IuG7ARW/w3hLyrPBPWjov8s0vWOryhstujXTtETPxAP5cP
-X-Gm-Message-State: AOJu0YwgLjTMwowbdaju0C/KMs/E5xZbqm+Fh68stHhLbA3BnsQD0BD6
-	PWNH5aA1DeMykF4jnWOt2Je44zheEtDt+jsHTRXR+3DbPArLh3RQ
-X-Google-Smtp-Source: AGHT+IE4hKBngpalF7FA7kUYM9A2AplAqSDEVTUEwbrmYQ7f2oQmGqbzcgAu32InHfQd01pk2PKh5Q==
-X-Received: by 2002:a19:7704:0:b0:51f:d790:2462 with SMTP id s4-20020a197704000000b0051fd7902462mr5847044lfc.39.1715062457324;
-        Mon, 06 May 2024 23:14:17 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id f13-20020a05651232cd00b005214c195501sm22003lfg.277.2024.05.06.23.14.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 23:14:16 -0700 (PDT)
-Message-ID: <f5215081-c993-4147-8c50-fba1f56279b4@gmail.com>
-Date: Tue, 7 May 2024 09:14:15 +0300
+	s=arc-20240116; t=1715062756; c=relaxed/simple;
+	bh=iaZ2BMDeNoeIPBrEjGkR8jv5Pwu9igYECttuPc3fJY0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=d3C8V1s02sYLWIOoVz1RbgyEqHv2MztIkklY2KvWs9e3VBh/wpi36GfHFTdclbtI9miCfhtXBM4p/NN+VrgeIo5QAhYc684xXO2WsqCS9iYM02dgiGOCEDE1BXI9cwfE1oUNM7P9g36S52GRPtUkX9QYepOY0xYMw03wQu1lpxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jh+gmYi2; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715062754; x=1746598754;
+  h=from:to:cc:subject:date:message-id;
+  bh=iaZ2BMDeNoeIPBrEjGkR8jv5Pwu9igYECttuPc3fJY0=;
+  b=Jh+gmYi2oiBhFGwP8lnfCPCe5+T3LoYqmUou9qdLFy6PchgwcY/TahzE
+   gPRfet3duTJ/FSwT+5z9EIBZ0UkUXaVW6bU4IL4XMk8+QtulzNxhYxWwL
+   YUdQvF+EQTE/VWqrfxoB6V4DnSRQ5MXBiGw2/LTENRUL/iamVl27RfOpT
+   1rCWzJE6AoL/QXtpq5xH0625OjM1ckhEwVOGcuWew464Tb2qFAaEp0fAu
+   Po9QiGyHyqKbsJiaRjqMY+zZ8f4chdMFopMun+SBLc2O2Exe4mOH0Napi
+   G9Z614x4FCAyN/X6NeeGiVU0uADNPhIze4ikJMYUc1XJGJDlv/IwNp/45
+   w==;
+X-CSE-ConnectionGUID: imv3xiiWT4S1M9fO2oCBrg==
+X-CSE-MsgGUID: nvg9xBbvSGGZfzcFvm7EVA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10959867"
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="10959867"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:19:07 -0700
+X-CSE-ConnectionGUID: K3mnPjYqRI2ryvq1sHWuxQ==
+X-CSE-MsgGUID: q4DDVl/dRzapz5IkroCiBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,260,1708416000"; 
+   d="scan'208";a="28804352"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2024 23:19:02 -0700
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	alex.williamson@redhat.com,
+	jgg@nvidia.com,
+	kevin.tian@intel.com
+Cc: iommu@lists.linux.dev,
+	pbonzini@redhat.com,
+	seanjc@google.com,
+	dave.hansen@linux.intel.com,
+	luto@kernel.org,
+	peterz@infradead.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	hpa@zytor.com,
+	corbet@lwn.net,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	baolu.lu@linux.intel.com,
+	yi.l.liu@intel.com,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [PATCH 0/5] Enforce CPU cache flush for non-coherent device assignment
+Date: Tue,  7 May 2024 14:18:02 +0800
+Message-Id: <20240507061802.20184-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Fix the iio-gts-helpers available times table
- sorting
-Content-Language: en-US, en-GB
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chenyuan Yang <chenyuan0y@gmail.com>
-References: <cover.1714480171.git.mazziesaccount@gmail.com>
- <20240505185027.18809bfd@jic23-huawei>
- <11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
- <20240506135356.7babe20f@jic23-huawei>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240506135356.7babe20f@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 5/6/24 15:53, Jonathan Cameron wrote:
-> On Mon, 6 May 2024 08:09:27 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> On 5/5/24 20:50, Jonathan Cameron wrote:
->>> On Tue, 30 Apr 2024 15:44:26 +0300
->>> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->>>    
->>>> Fix the available times table sorting in iio-gts-helpers
->>>>
->>>> This series contains a fix and test for the sorting of the available times in
->>>> IIO-gts helpers. Fix was originally developed and posted by Chenyuan Yang.
->>>>
->>>> Revision history:
->>>> 	v1 => v2:
->>>> 	  - Fix the sender for patch 1/2 (Sic!)
->>>> 	  - Fix Co-Developed-by tag (drop this from Chenyuan who
->>>> 	    is the original author)
->>>> 	  - Fix the From: tag as instructed in:
->>>> 	    https://www.kernel.org/doc/html/latest/process/submitting-patches.html
->>>
->>> Am I right in thinking this doesn't matter for existing drivers?
->>
->> I think this is right. Only couple of in-tree drivers are using these
->> helpers for now, and all of them sorted the tables already in driver.
->>
->>> As such not high priority for back porting?
->>
->> The bug is pretty nasty as it causes invalid memory accesses. Hence I'd
->> like to see this landing in the longterm kernels. It seems to me the GTS
->> helpers got merged in 6.4, so getting the fix backported to 6.6 might
->> make sense.
->>
->>> I'll assume that and queue it up for 6.11. If someone shouts I can pull the fix
->>> forwards, but then we have the mess of chasing the testing in later.
->>
->> I am sorry Jonathan but I'm not quite sure what you mean by "pulling fix
->> forward", or what is the "mess of chasing the testing in later" :)
-> 
-> Hmm. That was an odd choice of words :)  I just meant that I could send
-> the fix in the first set of fixes after 6.10-rc1 rather than waiting for 6.11.
+This is a follow-up series to fix the security risk for non-coherent device
+assignment raised by Jason in [1].
 
-Oh, right :)
+When IOMMU does not enforce cache coherency, devices are allowed to perform
+non-coherent DMAs (DMAs that lack CPU cache snooping). This scenario poses
+a risk of information leakage when the device is assigned into a VM.
+Specifically, a malicious guest could potentially retrieve stale host data
+through non-coherent DMA reads of physical memory, while data initialized
+by host (e.g., zeros) still resides in the cache.
 
-> For now I'll leave it queued for 6.11 on the basis there are a lot of ways
-> a driver writer can cause similar out of bounds accesses and they should
-> notice it not working during testing.  So it 'should' not be a problem to
-> not rush this in.
-> 
+Furthermore, host kernel (e.g. a ksm thread) might encounter inconsistent
+data between the CPU cache and physical memory (left by a malicious guest)
+after a page is unpinned for DMA but before the page is recycled.
 
-I guess this means the 6.10 won't have the fix? I believe this is fine - 
-assuming the 6.10 is not going to be an LTS. Thanks for taking care of 
-this! :)
+Therefore, a mitigation in VFIO/IOMMUFD is required to flush CPU caches on
+pages involved in non-coherent DMAs prior to or following their mapping or
+unmapping to or from the IOMMU.
 
-Yours,
-	-- Matti
+The mitigation is not implemented in DMA API layer, so as to avoid slowing
+down the DMA API users. Users of the DMA API are expected to take care of
+CPU cache flushing in one of two ways: (a) by using the DMA API which is
+aware of the non-coherence and does the flushes internally or (b) be aware
+of its flushing needs and handle them on its own if they are overriding the
+platform using no-snoop. A general mitigation in DMA API layer will only
+come when non-coherent DMAs are common, which, however, is not the case
+(now only Intel GPU and some ARM devices).
+
+Also the mitigation is not implemented in IOMMU core for VMs exclusively,
+because it would make a large IOTLB flush range being split due to the
+absence of information regarding to IOVA-PFN relationship in IOMMU core.
+
+Given non-coherent devices exist both on x86 and ARM, this series
+introduces an arch helper to flush CPU caches for non-coherent DMAs which
+is available for both VFIO and IOMMUFD, though current only implementation
+for x86 is provided.
 
 
+Series Layout:
+
+Patch 1 first fixes an error in pat_pfn_immune_to_uc_mtrr() which always
+        returns WB for untracked PAT ranges. This error leads to KVM
+        treating all PFNs within these untracked PAT ranges as cacheable
+        memory types, even when a PFN's MTRR type is UC. (An example is for
+        VGA range from 0xa0000-0xbffff).
+        Patch 3 will use pat_pfn_immune_to_uc_mtrr() to determine
+        uncacheable PFNs.
+
+Patch 2 is a side fix in KVM to prevent guest cacheable access to PFNs
+        mapped as UC in host.
+
+Patch 3 introduces and exports an arch helper arch_clean_nonsnoop_dma() to
+        flush CPU cachelines. It takes physical address and size as inputs
+        and provides a implementation for x86.
+        Given that executing CLFLUSH on certain MMIO ranges on x86 can be
+        problematic, potentially causing machine check exceptions on some
+        platforms, while flushing is necessary on some other MMIO ranges
+        (e.g., some MMIO ranges for PMEM), this patch determines
+        cacheability by consulting the PAT (if enabled) or MTRR type (if
+        PAT is disabled). It assesses whether a PFN is considered as
+        uncacheable by the host. For reserved pages or !pfn_valid() PFN,
+        CLFLUSH is avoided if the PFN is recognized as uncacheable on the
+        host.
+
+Patch 4/5 implement a mitigation in vfio/iommufd to flush CPU caches
+         - before a page is accessible to non-coherent DMAs,
+         - after the page is inaccessible to non-coherent DMAs, and right
+           before it's unpinned for DMAs.
+
+
+Performance data:
+
+The overhead of flushing CPU caches is measured below:
+CPU MHz:4494.377, 4 vCPU, 8G guest memory
+Pass-through GPU: 1G aperture
+
+Across each VM boot up and tear down,
+
+IOMMUFD     |     Map        |   Unmap        | Teardown 
+------------|----------------|----------------|-------------
+w/o clflush | 1167M          |   40M          |  201M
+w/  clflush | 2400M (+1233M) |  276M (+236M)  | 1160M (+959M)
+
+Map = total cycles of iommufd_ioas_map() during VM boot up
+Unmap = total cycles of iommufd_ioas_unmap() during VM boot up
+Teardown = total cycles of iommufd_hwpt_paging_destroy() at VM teardown
+
+VFIO        |     Map        |   Unmap        | Teardown 
+------------|----------------|----------------|-------------
+w/o clflush | 3058M          |  379M          |  448M
+w/  clflush | 5664M (+2606M) | 1653M (+1274M) | 1522M (+1074M)
+
+Map = total cycles of vfio_dma_do_map() during VM boot up
+Unmap = total cycles of vfio_dma_do_unmap() during VM boot up
+Teardown = total cycles of vfio_iommu_type1_detach_group() at VM teardown
+
+[1] https://lore.kernel.org/lkml/20240109002220.GA439767@nvidia.com
+
+Yan Zhao (5):
+  x86/pat: Let pat_pfn_immune_to_uc_mtrr() check MTRR for untracked PAT
+    range
+  KVM: x86/mmu: Fine-grained check of whether a invalid & RAM PFN is
+    MMIO
+  x86/mm: Introduce and export interface arch_clean_nonsnoop_dma()
+  vfio/type1: Flush CPU caches on DMA pages in non-coherent domains
+  iommufd: Flush CPU caches on DMA pages in non-coherent domains
+
+ arch/x86/include/asm/cacheflush.h       |  3 +
+ arch/x86/kvm/mmu/spte.c                 | 14 +++-
+ arch/x86/mm/pat/memtype.c               | 12 +++-
+ arch/x86/mm/pat/set_memory.c            | 88 +++++++++++++++++++++++++
+ drivers/iommu/iommufd/hw_pagetable.c    | 19 +++++-
+ drivers/iommu/iommufd/io_pagetable.h    |  5 ++
+ drivers/iommu/iommufd/iommufd_private.h |  1 +
+ drivers/iommu/iommufd/pages.c           | 44 ++++++++++++-
+ drivers/vfio/vfio_iommu_type1.c         | 51 ++++++++++++++
+ include/linux/cacheflush.h              |  6 ++
+ 10 files changed, 237 insertions(+), 6 deletions(-)
+
+
+base-commit: e67572cd2204894179d89bd7b984072f19313b03
 -- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+2.17.1
 
 
