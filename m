@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-171955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF18B8BEB25
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:08:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB8788BEB2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C7DFB26D36
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:08:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8531C21B66
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEAA16D4F0;
-	Tue,  7 May 2024 18:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BC816DEC7;
+	Tue,  7 May 2024 18:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EHV4qBW9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WcXysAcJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F86416C870
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FEC16D317
 	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715105257; cv=none; b=Uuz/cXZzCkJEB5R1cWkmMMrboNZt8TRVfdRsV7Q4VfjPiaKs+d/I3DmEZVGLxLhYmSeiDFv6mgKbReQ2O8eF4TSXw8mSXurjvuDXpZa3YeiW9mLcRKF+E2l38t/GB7yzlAE3SAI++shhQkrFm5h5fvRi3HGKsrm55LiTBJI/+C0=
+	t=1715105258; cv=none; b=OHOldJJVZxHnaJomMQrAQmyhCC01WAOAzYHB9MX48S9AGaIVFdYXRESzO7Y4S/1NXcj0XEmMWOFt32srLdM4tIw9WqAu5jLM50RpFazGKaCnr7Hu6P0VBFsfdH4KMwE0Zew8a5TTHqe6xQMcQCCgbbMwubSHy5a8Enr8bTVT06Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715105257; c=relaxed/simple;
-	bh=ncuQ1t7V7AqiuABGSuceVYtvt0SUfikgICT9ePcTLnA=;
+	s=arc-20240116; t=1715105258; c=relaxed/simple;
+	bh=hVFNZWdC9DOlDIg8Up+tLBUHcZP6ppMY7wF+VHGHOKk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F3yrT2bLNpttu+vd84o64rKhJfYm6ZO9hmkd5qlXaIIy+r0ZKcNxcRVPQj7dG0UxlPlWU42VA/WG56RzEbrodBXApcRmiLTug3zSUd5BQEYLzT2ZjfFw98Qd5KmNTlDDVvLz7HgPWTIB+j2zm/S4CspC48ZbtF3uCLtg7x6vkIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EHV4qBW9; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=PIv81MGutGMs/64YYGm7LlsQySWGYv11uUNqWBgItiqrwQinVBYGWuKD5Gi+vjRUvTL2+oTtwcyjKshlvcsC/VaeUHgCShtMIIvSSCGOADKLAU5pTRqsWvZIR3ViRYwI+5sJnQgN2i+isQjf9VGJQ3NkGNzu1sFTYZa4bpRFlS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WcXysAcJ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -36,23 +36,23 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=POOqEjjvAisilBRWkZv/6Psur3AbWbqixz2YRu4q4B8=;
-	b=EHV4qBW9aTAtqFoxEKsfT+ndzkuynSAP7XRSOEYHBwKq6F0ApgtChXhUOvbbK0YQEiPLL+
-	Z9L1RKsEmtmQH1Q4NPboKBtDNekX1wdLIzikmu1bFVelPUqD75JlO4k/YGP1zlDC+gB64o
-	iC0n4Eh2XbK5K6pvfZ2wmWw+G/LqCvE=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-yZBbjYNhNH6xlKT3EqkXqw-1; Tue,
- 07 May 2024 14:07:31 -0400
-X-MC-Unique: yZBbjYNhNH6xlKT3EqkXqw-1
+	bh=gHuV5lFHC0UB6R5XPoecvLq/6suqEUmHMMZiSdK/AsE=;
+	b=WcXysAcJ/oYrXV42onvZ/n8Am01Bom+jCUebho7reWIemIE6ofU4zeyDH1Y9/GmofBF8xU
+	T3X0JTbuUv9A9/GIoApdoSDzoNCMjEVTa9kcEShhuaCusHTTuHKIhDqz9HfOC3FDO3E8eW
+	Eb12p7Jr2XBQWEz57G3JQiPQlMOqQ0s=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-120-kJxJYozMOuOAWSI42hlSTw-1; Tue, 07 May 2024 14:07:31 -0400
+X-MC-Unique: kJxJYozMOuOAWSI42hlSTw-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6CB793C3D0CB;
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BD98C85A58C;
 	Tue,  7 May 2024 18:07:30 +0000 (UTC)
 Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 216FA40C6EB7;
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 76BC040C6EB7;
 	Tue,  7 May 2024 18:07:30 +0000 (UTC)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
@@ -65,11 +65,10 @@ Cc: vbabka@suse.cz,
 	rick.p.edgecombe@intel.com,
 	michael.roth@amd.com,
 	yilun.xu@intel.com,
-	Matthew Wilcox <willy@infradead.org>,
 	linux-mm@kvack.org
-Subject: [PATCH 1/9] mm: Introduce AS_INACCESSIBLE for encrypted/confidential memory
-Date: Tue,  7 May 2024 14:07:21 -0400
-Message-ID: <20240507180729.3975856-2-pbonzini@redhat.com>
+Subject: [PATCH 2/9] KVM: guest_memfd: Use AS_INACCESSIBLE when creating guest_memfd inode
+Date: Tue,  7 May 2024 14:07:22 -0400
+Message-ID: <20240507180729.3975856-3-pbonzini@redhat.com>
 In-Reply-To: <20240507180729.3975856-1-pbonzini@redhat.com>
 References: <20240507180729.3975856-1-pbonzini@redhat.com>
 Precedence: bulk
@@ -84,62 +83,47 @@ X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
 From: Michael Roth <michael.roth@amd.com>
 
-filemap users like guest_memfd may use page cache pages to
-allocate/manage memory that is only intended to be accessed by guests
-via hardware protections like encryption. Writes to memory of this sort
-in common paths like truncation may cause unexpected behavior such as
-writing garbage instead of zeros when attempting to zero pages, or
-worse, triggering hardware protections that are considered fatal as far
-as the kernel is concerned.
+truncate_inode_pages_range() may attempt to zero pages before truncating
+them, and this will occur before arch-specific invalidations can be
+triggered via .invalidate_folio/.free_folio hooks via kvm_gmem_aops. For
+AMD SEV-SNP this would result in an RMP #PF being generated by the
+hardware, which is currently treated as fatal (and even if specifically
+allowed for, would not result in anything other than garbage being
+written to guest pages due to encryption). On Intel TDX this would also
+result in undesirable behavior.
 
-Introduce a new address_space flag, AS_INACCESSIBLE, and use this
-initially to prevent zero'ing of pages during truncation, with the
-understanding that it is up to the owner of the mapping to handle this
-specially if needed.
+Set the AS_INACCESSIBLE flag to prevent the MM from attempting
+unexpected accesses of this sort during operations like truncation.
 
-This is admittedly a rather blunt solution, but it seems like
-there are no other places that should take into account the
-flag to keep its promise.
+This may also in some cases yield a decent performance improvement for
+guest_memfd userspace implementations that hole-punch ranges immediately
+after private->shared conversions via KVM_SET_MEMORY_ATTRIBUTES, since
+the current implementation of truncate_inode_pages_range() always ends
+up zero'ing an entire 4K range if it is backing by a 2M folio.
 
 Link: https://lore.kernel.org/lkml/ZR9LYhpxTaTk6PJX@google.com/
-Cc: Matthew Wilcox <willy@infradead.org>
 Cc: linux-mm@kvack.org
 Suggested-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Michael Roth <michael.roth@amd.com>
-Message-ID: <20240329212444.395559-5-michael.roth@amd.com>
+Message-ID: <20240329212444.395559-6-michael.roth@amd.com>
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- include/linux/pagemap.h | 1 +
- mm/truncate.c           | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ virt/kvm/guest_memfd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 2df35e65557d..f879c1d54da7 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -207,6 +207,7 @@ enum mapping_flags {
- 	AS_STABLE_WRITES,	/* must wait for writeback before modifying
- 				   folio contents */
- 	AS_UNMOVABLE,		/* The mapping cannot be moved, ever */
-+	AS_INACCESSIBLE,	/* Do not attempt direct R/W access to the mapping */
- };
- 
- /**
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 725b150e47ac..c501338c7ebd 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -233,7 +233,8 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
- 	 * doing a complex calculation here, and then doing the zeroing
- 	 * anyway if the page split fails.
- 	 */
--	folio_zero_range(folio, offset, length);
-+	if (!(folio->mapping->flags & AS_INACCESSIBLE))
-+		folio_zero_range(folio, offset, length);
- 
- 	if (folio_has_private(folio))
- 		folio_invalidate(folio, offset, length);
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 0f4e0cf4f158..5a929536ecf2 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -357,6 +357,7 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 	inode->i_private = (void *)(unsigned long)flags;
+ 	inode->i_op = &kvm_gmem_iops;
+ 	inode->i_mapping->a_ops = &kvm_gmem_aops;
++	inode->i_mapping->flags |= AS_INACCESSIBLE;
+ 	inode->i_mode |= S_IFREG;
+ 	inode->i_size = size;
+ 	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
 -- 
 2.43.0
 
