@@ -1,138 +1,223 @@
-Return-Path: <linux-kernel+bounces-170858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC498BDD05
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:16:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC648BDD08
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE6F7B211D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:16:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4731C231BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8C813C8F7;
-	Tue,  7 May 2024 08:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDD113C902;
+	Tue,  7 May 2024 08:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z56JTiuB"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZfKEVUD"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A7F73530
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F194D73530;
+	Tue,  7 May 2024 08:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069777; cv=none; b=m9TqDC/I4GU0/TUbfyOjngjRsvlhRbvRZO+PQ57OSdvwaQpRZwPIPcJndO2xFNU7i4JvwAU17+gA3SeKb/6/DY2N3skkawyHuG5KukLDD79AKbcuXgHvyr7IMc/xrdOqTx7Z+4lFzG7cmzE8Q/7lAQg2fDAXlAe6G59PcInSvO4=
+	t=1715069812; cv=none; b=Ky1gwL0shFRN2GjKEJCEa0F62ofocmfAkquWIdnMC6qBJBpiLYKDmKznUmZxmt5ej7FJE1PFzpQ5ViG7THBbN7xqC9s5oGFskZASVZj50VX8aI6jJ+2EiJb4Gtzrj6nSrYYIhaznd2lWxYrKSDm6bUgcgScoLy/DFZXJmwvNh3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069777; c=relaxed/simple;
-	bh=2+y64KNlfoCsF/eTA3qhiajZ6xhZj0/yNaz4WIzLHRA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IRQtQFmyfjezfcQdvXYd0ZKXD3mrM/8jhbk6TsajPjzjf0aJ3IiJ8ulzt7FEvGkojzlPz7vAoi9OCSyP51URICAiYlhXfL2chw4HJLif6giLRa+dpbGFBUFNviu50OVYr7Zl/wxx6Y5nFTn0Cs2fFwKbSETfzz91Too15ewtXMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z56JTiuB; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34e663aa217so2186657f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:16:14 -0700 (PDT)
+	s=arc-20240116; t=1715069812; c=relaxed/simple;
+	bh=TBYk1hqbWT/AZ3S/6TKTtK/W2HY/XNM/rZYM5H7/Tz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f1PDKM3OUZ8iXk48YTiSutjg0LiZrBGucoxZUQ0PNL7jZSiGsIPWqvOyiMmNOPwL/fnmuWYa8FL3sK2+tvfwFbqQeYG8t+vGVWXYQnE2b9WjN65RdfUqjzYQLnODyqFed0w5BOOPHe3U/Q9Sq/dZCIy61TuQTlFt45mZo9RAfvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZfKEVUD; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59ce1e8609so289436766b.0;
+        Tue, 07 May 2024 01:16:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715069773; x=1715674573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5t5Ex3m1EQ6i6GNox3M/TDaitl0owauxMfmQZyI69Cg=;
-        b=Z56JTiuB+QFXq/gyYD9zyl696GXZmThals3rtjUVUELvlGtT/fdVdt6M07BYCO3KYs
-         7HK7QLu4Q5grMolW1S9hm1A1E74lQRc0FsVghOqeK6IQ+D7M14umtn9sREcB+2/8NuX7
-         /TVApXI0u+1040ARGNXHltMyJ9IcjikHhHzuXSBYNn181OuDap2pTcCLBxxrv77Gc8jf
-         BEdE80AiUY59RElTGI3P4uPtkl2zhn8ttwDziy1cSFoaIJJOy3GwREzpW3WTiwC3BIj8
-         RepKsIOQ5GAHX4n9o8UDKV7BNfEYGqOUH1DJyIdslbZ+Ul8/FcLGML67t6T5yJRyVzT/
-         pGaA==
+        d=gmail.com; s=20230601; t=1715069809; x=1715674609; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=maPe74un1UQbFXNUNtNwtmyr5vBb7tDiWAcBESvmSQ4=;
+        b=eZfKEVUDO2pNYhb12pOShKDLJ6xFGD+3thA2oRHQiwj9PI9R1XvBxBS5ZT3PQ1ptao
+         CW3VAnetszWKGeH8tNhTqsi8GNUFHUCpAuBIBwsxQtl2S1clNFJKu5oVPW9/4eq26Ll1
+         9zZdBnw+vLq/PqRZXvKjgYJWaBYoBBSa+J53VJ6l5+vaup1B+vg9xxFo2z9lC9s1ssj9
+         hAHclsJNJsvlwo8czIZUZ90kjNg/Df0FvnHg/C27hRRz47DLvXVBGvhoH0qKo6oIQiPH
+         R7c6ddcSodf4avEs9jBR59Djw4+U9/EWt3Id6lNpgcDrVXmfl5F6yTS5x+0igWqgtlsp
+         TMcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715069773; x=1715674573;
-        h=content-transfer-encoding:mime-version:user-agent:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5t5Ex3m1EQ6i6GNox3M/TDaitl0owauxMfmQZyI69Cg=;
-        b=b7UQd7ys/1zDA3pSL4j6kAoC1E4tvL3JOiRnxmihck2udDpJ8PqzNJbWBX6PXh0oy1
-         mVbnHQkwbbmWNjb5owBXBH/SGAom3n8uB56QQ7JsR3XVwFzMD572ZHmyA0x73PCiil2I
-         HLYx4MVJaGS9s7q/aNL4NjiGylTTevvC5nccOpfeU80no9G8gzR3hl3DwY48WWWmKDPz
-         OwUvStrr5t8dmOeeTA4TDkeQ2rBrngjBLQbhsgJQCxzVFIJQi3afPwKloBJbWz14TrLh
-         j4SO+6wFWF05o+u5ZbRhmeukO2dgBan1ruWf9Krq8t3YAmfr5FFUXyuAtkaiHeBYxV6H
-         GAlw==
-X-Gm-Message-State: AOJu0YypHiOszEzkoWELTVxqiITxwIO7JJs0y52HLniXYO9BZ3SDtoZw
-	7+9f9r6InxyPftB/h/TK+eKv5E1Ov9N/pSmk3pDW/vmJSvenSqY9EprU1SgN6ZY=
-X-Google-Smtp-Source: AGHT+IEpUA4cqxmGgkDKa//PHTAzrHuZJT0OjTd7fUBCCEX0BhVaON+3vxbkZLf0uAV0uuPXmCDUwg==
-X-Received: by 2002:a05:6000:e4d:b0:34a:e884:fd71 with SMTP id dy13-20020a0560000e4d00b0034ae884fd71mr7916638wrb.29.1715069773121;
-        Tue, 07 May 2024 01:16:13 -0700 (PDT)
-Received: from ?IPv6:2a01:e0a:1d:5380:6cdc:9dff:7d8c:ff76? ([2a01:e0a:1d:5380:6cdc:9dff:7d8c:ff76])
-        by smtp.gmail.com with ESMTPSA id q15-20020a5d658f000000b0034ddf05a3e6sm12427966wru.76.2024.05.07.01.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 01:16:12 -0700 (PDT)
-Message-ID: <5305f69bd74d4d4ecff518b42287fbc4b9204918.camel@suse.com>
-Subject: Re: [PATCH] firmware: dmi: Add info message for number of populated
- and total memory slots
-From: Jean DELVARE <jdelvare@suse.com>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date: Tue, 07 May 2024 10:16:11 +0200
-In-Reply-To: <b1d69d07-14a9-4f10-9155-a0a46d8ea872@gmail.com>
-References: <b1d69d07-14a9-4f10-9155-a0a46d8ea872@gmail.com>
-Organization: SUSE Linux
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        d=1e100.net; s=20230601; t=1715069809; x=1715674609;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=maPe74un1UQbFXNUNtNwtmyr5vBb7tDiWAcBESvmSQ4=;
+        b=Jsnb0IHu3Ftk03kbR9UzE8pdCw3ifOrWExyrKH4aMZ6dEYtH7cZSSi8WjzR6Zlqwrb
+         pITVf60f7Q+8UMN1QeSzdn+4x1xzXfhKT2vetbOYxBA+qV75ChrJz7gh6XoG9cF02GYA
+         kK4piDP/bLExDuPXdMZaRyczk0n8vqrCAcVx9x9g/OsY4GUAGRbYb3QGv3wFemorYCjN
+         T+OJoGfvWF2JqNfd7dwX21TUyX2FhFgX4tzJ6Zm6EjQWmIDZk0lvOCqdFvnJrYQ074qc
+         0PenpwFf8snsW09Y3niss1A6MJ8tak+lUXQyZ8ugrNlMNzBV5WxbrfLzzH0RWCkFjMaE
+         CxCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBjJgwVHkzX/OP3vFql9uwemdhejc9s/n0fjPb+FT3MZSCGtiGSpsdYOrQFdADBRUJ6FtlAA8AHiJF9tzEArgdd/hlN6F5X3M6wFjl5Gt7v1sXKhWa158lED8zwVhgr5E8gzw9yCtE8Q==
+X-Gm-Message-State: AOJu0YyiA7/7ZpIedtOVLriHlISc+iclyOj9U8a8FS68BLW21HatGaYh
+	Tikas9YqbnAWnLJScZRP/5oLkREG8Tuq68surIFS0nSXv8Xf975G
+X-Google-Smtp-Source: AGHT+IGguKbFCboPibTCI7Xs36D/0JStkhieejoqZsvCp1T4ZXAkr3vT0GKhxI2ErSNLSH3s+TcQWw==
+X-Received: by 2002:a17:906:2c49:b0:a55:b67c:bd04 with SMTP id a640c23a62f3a-a59e4cbc8femr160702266b.4.1715069809147;
+        Tue, 07 May 2024 01:16:49 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id dx3-20020a170906a84300b00a58e8d08b40sm6062079ejb.21.2024.05.07.01.16.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 07 May 2024 01:16:48 -0700 (PDT)
+Date: Tue, 7 May 2024 08:16:47 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, arnd@arndb.de, rppt@kernel.org,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] mm/memblock: discard .text/.data if
+ CONFIG_ARCH_KEEP_MEMBLOCK not set
+Message-ID: <20240507081647.2x2l7fwjnyiud6ee@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240506012104.10864-1-richard.weiyang@gmail.com>
+ <5f9e5d19-8a38-4e98-8cbb-e5501c76f740@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f9e5d19-8a38-4e98-8cbb-e5501c76f740@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hi Heiner,
+On Mon, May 06, 2024 at 03:30:54PM +0530, Anshuman Khandual wrote:
+>
+>On 5/6/24 06:51, Wei Yang wrote:
+>> When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
+>> code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
+>> neither.
+>
+>When CONFIG_ARCH_KEEP_MEMBLOCK is not set memblock information both for
+>normal and reserved memory get freed up but should the memblock related
+>code and data also be freed up as well ? Then I would also believe such
 
-On Tue, 2024-03-05 at 21:55 +0100, Heiner Kallweit wrote:
-> As part of adding support for calling i2c_register_spd() on muxed SMBUS
-> segments the same message has been removed from i2c_register_spd().
-> However users may find it useful, therefore reintroduce it as part of
-> the DMI scan code.
-> 
-> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-> ---
->  drivers/firmware/dmi_scan.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-> index 015c95a82..2c682b580 100644
-> --- a/drivers/firmware/dmi_scan.c
-> +++ b/drivers/firmware/dmi_scan.c
-> @@ -42,6 +42,7 @@ static struct dmi_memdev_info {
->         u8 type;                /* DDR2, DDR3, DDR4 etc */
->  } *dmi_memdev;
->  static int dmi_memdev_nr;
-> +static int dmi_memdev_populated_nr;
->  
->  static const char * __init dmi_string_nosave(const struct dmi_header *dm, u8 s)
->  {
-> @@ -448,6 +449,9 @@ static void __init save_mem_devices(const struct dmi_header *dm, void *v)
->         else
->                 bytes = (u64)get_unaligned((u32 *)&d[0x1C]) << 20;
->  
-> +       if (bytes)
-> +               dmi_memdev_populated_nr++;
-> +
->         dmi_memdev[nr].size = bytes;
->         nr++;
->  }
-> @@ -824,6 +828,8 @@ void __init dmi_setup(void)
->                 return;
->  
->         dmi_memdev_walk();
-> +       pr_info("DMI: Memory slots populated: %d/%d\n",
-> +               dmi_memdev_populated_nr, dmi_memdev_nr);
->         dump_stack_set_arch_desc("%s", dmi_ids_string);
->  }
->  
+If not freed, those functions would access unpredictable area.
 
-Applied, thanks.
+>memory saving will be very minimal given CONFIG_ARCH_KEEP_MEMBLOCK code
+>is too limited scoped in the tree.
+
+Not very much, it shows 12K more in it.
+
+>
+>Also could you please explain how it is related to CONFIG_MEMORY_HOTPLUG
+>config being set or not.
+>
+
+This is in file include/asm-generic/vmlinux.lds.h.
+
+MEM_KEEP/MEM_DISCARD is conditionally defined by CONFIG_MEMORY_HOTPLUG.
+So even __init_memblock is defined as __meminit when CONFIG_ARCH_KEEP_MEMBLOCK
+not set, it is not discarded.
+                    
+>>                  
+>> This patch puts memblock's .text/.data into its own section, so that it
+>> only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
+>> data. After this, init size increase from 2420K to 2432K.
+>
+>Is not this memory size saving some what insignificant to warrant a code
+>change ? Also is this problem applicable only to CONFIG_ARCH_KEEP_MEMBLOCK
+
+Yes, this is not significant.
+
+>config. Could you also provide details on how did you measure these numbers ?
+>
+
+Kernel print related info in mem_init_print_info(). One of is it
+init size, which includes init_data and init_text.
+
+>> 
+>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>> ---
+>>  include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
+>>  include/linux/memblock.h          |  8 ++++----
+>>  2 files changed, 17 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+>> index f7749d0f2562..775c5eedb9e6 100644
+>> --- a/include/asm-generic/vmlinux.lds.h
+>> +++ b/include/asm-generic/vmlinux.lds.h
+>> @@ -147,6 +147,14 @@
+>>  #define MEM_DISCARD(sec) *(.mem##sec)
+>>  #endif
+>>  
+>> +#if defined(CONFIG_ARCH_KEEP_MEMBLOCK)
+>> +#define MEMBLOCK_KEEP(sec)    *(.mb##sec)
+>> +#define MEMBLOCK_DISCARD(sec)
+>> +#else
+>> +#define MEMBLOCK_KEEP(sec)
+>> +#define MEMBLOCK_DISCARD(sec) *(.mb##sec)
+>> +#endif
+>> +
+>>  #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>>  #define KEEP_PATCHABLE		KEEP(*(__patchable_function_entries))
+>>  #define PATCHABLE_DISCARDS
+>> @@ -356,6 +364,7 @@
+>>  	*(.ref.data)							\
+>>  	*(.data..shared_aligned) /* percpu related */			\
+>>  	MEM_KEEP(init.data*)						\
+>> +	MEMBLOCK_KEEP(init.data*)					\
+>>  	*(.data.unlikely)						\
+>>  	__start_once = .;						\
+>>  	*(.data.once)							\
+>> @@ -573,6 +582,7 @@
+>>  		*(.ref.text)						\
+>>  		*(.text.asan.* .text.tsan.*)				\
+>>  	MEM_KEEP(init.text*)						\
+>> +	MEMBLOCK_KEEP(init.text*)					\
+>>  
+>>  
+>>  /* sched.text is aling to function alignment to secure we have same
+>> @@ -680,6 +690,7 @@
+>>  	KEEP(*(SORT(___kentry+*)))					\
+>>  	*(.init.data .init.data.*)					\
+>>  	MEM_DISCARD(init.data*)						\
+>> +	MEMBLOCK_DISCARD(init.data*)					\
+>>  	KERNEL_CTORS()							\
+>>  	MCOUNT_REC()							\
+>>  	*(.init.rodata .init.rodata.*)					\
+>> @@ -706,7 +717,8 @@
+>>  #define INIT_TEXT							\
+>>  	*(.init.text .init.text.*)					\
+>>  	*(.text.startup)						\
+>> -	MEM_DISCARD(init.text*)
+>> +	MEM_DISCARD(init.text*)						\
+>> +	MEMBLOCK_DISCARD(init.text*)
+>>  
+>>  #define EXIT_DATA							\
+>>  	*(.exit.data .exit.data.*)					\
+>> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>> index e2082240586d..3e1f1d42dde7 100644
+>> --- a/include/linux/memblock.h
+>> +++ b/include/linux/memblock.h
+>> @@ -100,13 +100,13 @@ struct memblock {
+>>  
+>>  extern struct memblock memblock;
+>>  
+>> +#define __init_memblock        __section(".mbinit.text") __cold notrace \
+>> +						  __latent_entropy
+>> +#define __initdata_memblock    __section(".mbinit.data")
+>> +
+>>  #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
+>> -#define __init_memblock __meminit
+>> -#define __initdata_memblock __meminitdata
+>>  void memblock_discard(void);
+>>  #else
+>> -#define __init_memblock
+>> -#define __initdata_memblock
+>>  static inline void memblock_discard(void) {}
+>>  #endif
+>>  
 
 -- 
-Jean Delvare
-SUSE L3 Support
+Wei Yang
+Help you, Help me
 
