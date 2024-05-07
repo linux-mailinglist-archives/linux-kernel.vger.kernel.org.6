@@ -1,159 +1,87 @@
-Return-Path: <linux-kernel+bounces-172188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8FF8BEE99
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D772A8BEE97
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098F41F23743
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:06:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8FE1F26102
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAF97316F;
-	Tue,  7 May 2024 21:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB3E7316E;
+	Tue,  7 May 2024 21:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fkmyOVhS"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QcIX9YCC"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2E8187353;
-	Tue,  7 May 2024 21:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23A8187353
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 21:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115959; cv=none; b=XJCCbEzyphFQMWWh7Pny5VOAMEAS+xl7Xs6vA7fvN/tuJt5eACKANLjfHOGYtNwKvZpf1v96F46wY32LPtRgtuEJe3pN9JwhnL/A299nuBH8xQnZ4TYAyKuvtnqDB0zTaELnazZpgYqrRTe1Z9jXgn2cfmeGgq3y9fvqmkBhu3s=
+	t=1715115950; cv=none; b=iGy14lgRQXWa7A+GRG0wVjgdJyYLbS9lZNxaPfBrNy8wG7VMrTzSpdOTFZdYdH4OIkT+WdcCYfYczjTHe0wZy1vbFUDcJf0dDUeCw21LFi4tLFVAzRbb3Nj4l34w1hUEIBDzMRR2rEnsRvOoWoTquFwRpCHO4ZjDWHF1wLyoomI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115959; c=relaxed/simple;
-	bh=eETH8qyLZaEqH0jAscPRS9ATGH9bfwR8HhG7OFw2pEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iULKKoCpSjARI6az3xDQCyoNUnQRPmUUQdUmzXvh99Q731yHE6KCWRBsyDCXprliBhPdL+8Ts2UnozBsdPrtKuiealLYxpF7rKOvqDCSCIsGCkb9hZ5wbAgfbgz2JCiTTZrKMhCuvCS7xI3q3JhaRuX2fhtkZwZoMAYLHq6JXQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fkmyOVhS; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e22a1bed91so47999291fa.0;
-        Tue, 07 May 2024 14:05:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715115956; x=1715720756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ef/OTw1FTNHv7I5hPzJjnHJ7ssdwk8G3HA7pFWiHOs=;
-        b=fkmyOVhSpq30fxaVZF35CHYrIdhVf63/OzaOys7u8nGP/uva+8JtHlJqTMsK9xCg/A
-         VJgFeltcOczLES/TQdJoZlhdDIn+eb05NV2XqmEpnAeDucPzoqE1FVMPRDyZvPWeW6W/
-         dt20Qfz8/nORVQSivqR9nEsYVyGzHkuUPTkgJwqXSTi5trS8TzaUyKn+xDQ2eOqf61SN
-         1Z1asqXbUpC5obCvrLVVxkP16JQdvALaIEPRK0OIdJZTcQi9ocb2oxZ913F5TVDF2DT5
-         7TDvM2evGc0QCKUKvK5nJhJr71srsg5N8GUIITxXI9UpSRMc/UvV8etwXfQE48LB797A
-         5XWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715115956; x=1715720756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ef/OTw1FTNHv7I5hPzJjnHJ7ssdwk8G3HA7pFWiHOs=;
-        b=r2OWQIm7bCy3LOF+KxyXNZPCdXNcYOhUheQogYyClUvQYK6T0QifwrgrAm6mdjFQpb
-         +ZPHSr+FC+bysW8BK1ltwp3UzWwEJJc2+r8iu9QPmFT43EmlFqWjpjPMyunsU4GvlsOp
-         TF9bBETXCgxDrSMfNtYt2M7E+1V6H9jsBAWlStybwT6eukgyJVUyxKrzUDe5IpppzYLz
-         bFqVadozXk5mCoP6H9MWJ0Qdo48mjF9GPFWBJDZVvuOQuLw6eeeODeypL323zR7gz88a
-         z44KJ0eYfFMKF4ECdxYsM4bqgO2q53bAS7E9ytQqKPVccsgXTCpeFrYD+15kVX+1bgVP
-         xdEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ4gAN6kSnJFA8uJ0UTnhNiDCmymG3XPKFEDnCWbxytMwP5Fq2bCD/rhMriSNgP6XKyW5RIdp+XaKezif/Vv9qg2A4NjkUR6u0q9eedb+E8s4sTCM0E1HvSW90zbIeHskkwKph/XaaE+E=
-X-Gm-Message-State: AOJu0YwF18jv86VGjSbcQQGjJsp4ZGNO7CmGeGL88TmfjMewxcYa70PL
-	FEi+dyHQfplDc/UdTzuVOS6k5OJzey/RcBcElSmYwftznBEHOIab773Cde4sOCCwWyXkYn0KO67
-	HDarWHBhZApSbySWVi7eKN6eL1wY=
-X-Google-Smtp-Source: AGHT+IEIPqLuIXqUPlxdyHE8emQsQqvKcbB68EsssulBsPpJLcFAWFAY6+qF2e0EvPA5ZpCevCys7JBbmezZOATtWNk=
-X-Received: by 2002:ac2:520b:0:b0:51d:4472:c3f8 with SMTP id
- 2adb3069b0e04-5217c667418mr362253e87.35.1715115955829; Tue, 07 May 2024
- 14:05:55 -0700 (PDT)
+	s=arc-20240116; t=1715115950; c=relaxed/simple;
+	bh=Ub8SD0s+2tvcifJmcjiOPb2uacBifFRvgRPVoMUlAig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PH8FPb+nd8M/VeVRQ7xEPULvkk5y71Z0RXJATsaV+utn+Z4LqTLDO7aC79PMmZwsozKjH+EWghBq0hg3m+pROxIZjMftJ1Y4X8ZO8cmu5+vV5cgxUC0ZTuDJhkpNprOwBfszBkEXMLAL7omytXb2wO4CcNn/0kL0McoX3SdTsCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QcIX9YCC; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id CADD940002;
+	Tue,  7 May 2024 21:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715115941;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=frZQIdG72+aRABW5Ri2Oocaq5EiG3vpALSpmJr9JuLA=;
+	b=QcIX9YCC1pc/tqho9bJXaBf3Z37vqTFgJ77Vgw9TXWAWSSa4Y+9EADooYCx2csW745N5ZB
+	BxTWGjEyA0BzpTW9kFppGsBQWejTkLm1cTM4TSpquTqV2j422JDfUQpehy9GbNTVacsjjg
+	zyAjxABNulzBSK6aJvB6Q+uyfimoR5zJDiCQUhXf1nWtfoB5B6t9SMuHuoYtwMK/jpa0ik
+	kBnfAOEMmcJ61Ns7lSR4XFgR3c5nds52F9oBuxr82j2euUub/1nyeBnzKn5VMPRpgWgy4C
+	eZHGdJ0SkkhbGGpCZZjjcPMOg5D5LlXtujZOcvWVjbrssYWv+BYqMYQ7HeUS0g==
+Date: Tue, 7 May 2024 23:05:40 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: andersson@kernel.org, vkoul@kernel.org,
+	manivannan.sadhasivam@linaro.org
+Subject: Re: [PATCH v1] i3c: master: Enable runtime PM for master controller
+Message-ID: <171511593074.988529.13434042703638402613.b4-ty@bootlin.com>
+References: <20240228093407.4038399-1-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507142454.3344-1-konishi.ryusuke@gmail.com> <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Wed, 8 May 2024 06:05:39 +0900
-Message-ID: <CAKFNMonSDOWt20nq6UngSO1_7L-DLRMiAbcKXmquF04qbfC55Q@mail.gmail.com>
-Subject: Re: [PATCH -mm] nilfs2: Use __field_struct() for a bitwise field
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Bart Van Assche <bvanassche@acm.org>, 
-	linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240228093407.4038399-1-quic_msavaliy@quicinc.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, May 8, 2024 at 1:25=E2=80=AFAM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, 7 May 2024 at 07:25, Ryusuke Konishi <konishi.ryusuke@gmail.com> =
-wrote:
-> >
-> >    Despite that change, sparse complains when
-> > passing a bitwise type to is_signed_type(). It is not clear to me why.
->
-> Bah. The reason is this:
->
->    #define is_signed_type(type) (((type)(-1)) < (__force type)1)
->
-> Basically, the way "is_signed_type()" works is that it casts a
-> negative integer to the type, and checks to see if the value has now
-> become a large value.
->
-> Now, it looks odd, because only one of those casts has a "__force" on
-> it, but the reason for that is that casting all-ones and all-zeroes is
-> ok for bitwise types (think of bitwise types as being a "collection of
-> bits" - so all bits set or all bits clear are sane concepts regardless
-> of any other semantics).
->
-> So it's not the casts themselves that are problematic: that part works fi=
-ne.
->
-> But you cannot compare a random collection of bits for greater than or
-> lesser than.
->
-> Think of things like byte orders: you can compare two values for
-> _equality_ even if they are in the wrong byte order, but you can't
-> compare them for "larger than" unless you turn them into the right CPU
-> byte order.
->
-> Basically, a "collection of bits" doesn't have an ordering in itself,
-> even if equality comparisons are ok.
->
-> So yeah, is_signed_type() doesn't work for bitwise types.
->
-> And I don't see a sane way to make "is_signed_type()" to work for
-> bitwise types - the whole concept of signedness of "bunch of bits" is
-> kind of nonsensical - so I suspect your workaround is the best we can
-> do (alternatively, tracing would have to figure out a different way to
-> test for signedness).
->
->                  Linus
+On Wed, 28 Feb 2024 15:04:07 +0530, Mukesh Kumar Savaliya wrote:
+> Enable runtime PM for i3c master node during master registration time.
+> 
+> Sometimes i3c client device driver may want to control the PM of the
+> parent (master) to perform the transactions and save the power in an
+> efficient way by controlling the session. Hence device can call PM
+> APIs by passing the parent node.
+> 
+> [...]
 
-Linus, thank you very much for your detailed explanation.
+Applied, thanks!
 
-I would like to edit the quoted part of his commit message
+[1/1] i3c: master: Enable runtime PM for master controller
+      https://git.kernel.org/abelloni/c/fe23b69d78d7
 
-> >    Despite that change, sparse complains when
-> > passing a bitwise type to is_signed_type(). It is not clear to me why.
+Best regards,
 
-as follows:
-
- Despite that change, sparse complains when passing a bitwise type
- to is_signed_type().  The reason is that in its definition below, a
- comparison will be made against bitwise types, which are
- random collections of bits (the casts to bitwise types themselves
- are semantically valid and are not problematic):
-
-  #define is_signed_type(type) (((type)(-1)) < (__force type)1)
-
- So, as a workaround, fix the warnings by using __field_struct() macro
- that doesn't use is_signed_type() instead of __field().
- ...
-
-I will try to resend the patch later unless there's a misunderstanding or
-I'm missing too many points.
-
-Thanks,
-Ryusuke Konishi
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
