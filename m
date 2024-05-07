@@ -1,253 +1,112 @@
-Return-Path: <linux-kernel+bounces-171844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79FC8BE960
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:41:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5542C8BE8D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832D41C23CF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DFA1F21C8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FE216D324;
-	Tue,  7 May 2024 16:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D698E16C44A;
+	Tue,  7 May 2024 16:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HrddjrBT"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="LzrbxRXH"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268FF180A94;
-	Tue,  7 May 2024 16:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3E616190C
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099713; cv=none; b=ADK09wUCIiqK+t2ELpN8gE13kuzc8Wam9dgUGxGoIfnOQFNRZ65HvUGqed5IIFsUhqA6l+CFm013mhvvKBV5hoAWxEOCEs31jsg+VR9ZErLWHWnNMPAbuUe2n8wk/g1pdip9RI8A35nPMUF6gM1vq6vpU9jzeNBziT4W4Z66tmg=
+	t=1715099226; cv=none; b=sTallpQL6YC/bWyCDTVdhMVNphnJTNDpzesHwFBTAqQrsdAmZ8YPtXluyCuVJxMRg90XUPeYV874KpM+CDeGczVXK0PlitpNFOEM3J40ncowbqg/VTuT5L/3BBnuVlIJk0GaqabIXD6Om1JjAYje1WBtZ6SEM9N2G4NibKUrr7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099713; c=relaxed/simple;
-	bh=DPO19saSRN9Lr/ZlxmpldjvftdAMtvY2eyxdGYxJ72o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WsX1gQ0fOzAuR/Ibzee9MjOVk5doYrV9jX3I+SBY92vzg8c4iXeQgCVWYoRxTwrzLnG6+3Eq5Exup9e5/WLUlAPc9i8HJHJuQ92w1TH2Zdx/3YxCRntoV1P9WpTMbJDoOTUp82En4rnecIX++uBvSXncZjzzjhMURjiiBHfEKIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HrddjrBT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447GT26c011816;
-	Tue, 7 May 2024 16:35:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=pp1;
- bh=Ed3ABSWcS7HI/jvRWt0bJ9U+N+WC/8SToS21v9IJLHM=;
- b=HrddjrBTsJdUEYGW6DqCP1vK7fXsQsXyTkwws8PD/srSexdr7bgmgzOCzMbvBv0QU99T
- G2+D1pitFWbyybUPcfCfAiDGp3cJKLEZ1+N6RY1IMY3iIrpz6CMFtpFxcD4hdZtCJw0I
- 2yn9Yjte43gEGXXg6OE/U1vjS4mj7n65WO7YNCE18FRo+sMAA2D1fBFHVAsrCkOb97PU
- +NBaUB24igsL6Zoe+QtAMBDM0hUKsnxOd0O6IAddtLlRNA3W4cI9rnnuK49WTsTMIBKG
- tMbZ6pbt3b5/VICVlQDGGtQ0tlJ/E0LPhTNVf4S8rHuQ71YZqVXdtanDxUmZrXq+ykzR tg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqup80g7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:08 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447GZ81t021994;
-	Tue, 7 May 2024 16:35:08 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqup80g5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:07 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447E4GMI005886;
-	Tue, 7 May 2024 16:35:07 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xx5yh5w2x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:07 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447GZ18655706066
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 16:35:03 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C75620043;
-	Tue,  7 May 2024 16:35:01 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 48B5C20040;
-	Tue,  7 May 2024 16:35:01 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 16:35:01 +0000 (GMT)
-Date: Tue, 7 May 2024 18:26:19 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>,
-        Matthew Wilcox
- <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH v2 08/10] s390/uv: convert
- uv_convert_owned_from_secure() to uv_convert_from_secure_(folio|pte)()
-Message-ID: <20240507182619.2846ea8f@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240412142120.220087-9-david@redhat.com>
-References: <20240412142120.220087-1-david@redhat.com>
-	<20240412142120.220087-9-david@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715099226; c=relaxed/simple;
+	bh=/fHOaF8n/tPSfg+d3vJ0ysOAwjqElmfYyxoyclsGm40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLBdppXKSW5o/IMCoeo0LWqIIE8VWyEO++6vaZHQnQj1IISib0DSbXL8kgfSc+TF9SG26fHBGiqFjiJzG0HSQ2i0W28TJzwOr1ws7XQTISDwHgr228BqlImzhaEVMZATvzEf9NAhPJaPGOYOseO2Dx1de8V/GqyEF0uCYjhgOwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=LzrbxRXH; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7928c5cb63fso241046685a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1715099224; x=1715704024; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E9cKDESKTiP97lhdcYXkoeInlU7bxEYJkwQ3k3Yr+CA=;
+        b=LzrbxRXHnHw4fDaTWQcR2CKcmwALEXwb9a1EMB8NCyTYCm0qik8rWJE39+xzi2NEUs
+         ZCnG0quFnpLMeX1HTlya2Az4OyIzd3BJN2cREazNA3SWxvTj+vj4oQqAMNyD+buKnMbT
+         dj85R0zzDv3/xT/UNyIJ+Y0dyuaJlhWCvKiQPjJPu/262g050/QBeOpdlbCXRLVnDdhK
+         McHbp8ZNB04aoAXf2HTrWIjOsPT564yZe38CBfqI7u0hvXtB4kQKAKA76F2LGEi5lzGS
+         k2CIsZys17gpq0crMnzIHLZ8VA6r84c5q5RXkv9DQWjcAfHi+lXw3lSeg5VBmt24RdIT
+         hx4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715099224; x=1715704024;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E9cKDESKTiP97lhdcYXkoeInlU7bxEYJkwQ3k3Yr+CA=;
+        b=qf0jIMh2077sqX5ZJD7LqX1ZPU3Io/2/S/RmFnrg1AN3nLcbMYQnfSZgAMbI88TQ/h
+         iQjZC/tFrQscLnrk498ax13uKciQkmisoGuhMuC9OaYvMf54pAyulknUEiZQuPhPPIR3
+         nMNZgFg7FYM/JSQsQs0wGBpncB8Kop5iROLgCJ3FDr55Z/RpHRXcMlsaKc4HfL4wE9jH
+         VHjN3J/KXtByZZwfE9EJQ1SCAxVmiMsjGoKbvwYHpXbrL3apChw7rjRbDm+A+SabJIAp
+         of6y/re1aQDSfeYEbm5w8QhwDXE8jhoaXRzmt/SVk+ibpXUP8UlepOJzgk24yyGgeK5W
+         YAzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbKf5csHg9gFcGaTRvNnNvdgh+Ss/rP0Qq6iT/mpqxU0CVW3YX/IZTNTd6BD/AMGC+ftHEX49cklg4rBgjcD68Wlg5X2JJjU/T+Wek
+X-Gm-Message-State: AOJu0YxsmUq7i+tKI48ah34QF1gOwdn5dvdKITwEAKKPPwWs6j891Vfg
+	Kj6GruXaJjvqQPi43+dPaami35AjcM+B918ivBOLJU7AjTv7RjLfmokxf7YFEjI=
+X-Google-Smtp-Source: AGHT+IFHOfTfE3EmH2freuJBBL04oEuzM8UFJjSGZkYvzSYQQYKXpHT2OlnFg74U2ZgMJcQo58TcyQ==
+X-Received: by 2002:a05:620a:e85:b0:790:9e84:9b75 with SMTP id af79cd13be357-792b247fbdcmr40793185a.12.1715099223899;
+        Tue, 07 May 2024 09:27:03 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id g15-20020a05620a13cf00b007929f035e9asm1688278qkl.109.2024.05.07.09.27.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 09:27:02 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s4Neg-0001SK-Do;
+	Tue, 07 May 2024 13:27:02 -0300
+Date: Tue, 7 May 2024 13:27:02 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Zong Li <zong.li@sifive.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, kevin.tian@intel.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH RFC RESEND 6/6] iommu/riscv: support nested iommu for
+ flushing cache
+Message-ID: <20240507162702.GC4718@ziepe.ca>
+References: <20240507142600.23844-1-zong.li@sifive.com>
+ <20240507142600.23844-7-zong.li@sifive.com>
+ <20240507150829.GJ901876@ziepe.ca>
+ <CANXhq0rnWUT4ia-cUoTbSyEQUeCcmC9bC7HHru6Se-1K-PZRDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: crRXsyOa-oSrtq_E7AGyOl_OsN77sIgP
-X-Proofpoint-GUID: RKe4jzWmdoY5D01NMa7mcD3-5zrYeetO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_09,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 priorityscore=1501 adultscore=0 clxscore=1015
- impostorscore=0 phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405070112
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANXhq0rnWUT4ia-cUoTbSyEQUeCcmC9bC7HHru6Se-1K-PZRDQ@mail.gmail.com>
 
-On Fri, 12 Apr 2024 16:21:18 +0200
-David Hildenbrand <david@redhat.com> wrote:
+On Tue, May 07, 2024 at 11:35:16PM +0800, Zong Li wrote:
+> > > +     default:
+> > > +             pr_warn("The user command: 0x%x is not supported\n", opcode);
+> > > +             return -EOPNOTSUPP;
+> >
+> > No userspace triggerable warnings.
+> 
+> I don't complete understand about this. Could I know whether we should
+> suppress the message and return the error directly, or if we should
+> convert the warning to an error (i.e. pr_err)?
 
-> Let's do the same as we did for uv_destroy_(folio|pte)() and
-> have the following variants:
-> 
-> (1) uv_convert_from_secure(): "low level" helper that operates on paddr
-> and does not mess with folios.
-> 
-> (2) uv_convert_from_secure_folio(): Consumes a folio to which we hold a
-> reference.
-> 
-> (3) uv_convert_from_secure_pte(): Consumes a PTE that holds a reference
-> through the mapping.
-> 
-> Unfortunately we need uv_convert_from_secure_pte(), because pfn_folio()
-> and friends are not available in pgtable.h.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+A userspace system call should never print to dmesg. Return an error
+code. Put a pr_debug if you really care.
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-
-> ---
->  arch/s390/include/asm/pgtable.h |  6 +++---
->  arch/s390/include/asm/uv.h      |  4 ++--
->  arch/s390/kernel/uv.c           | 18 +++++++++++++-----
->  3 files changed, 18 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-> index 97e040617c29..5ffc4828c25a 100644
-> --- a/arch/s390/include/asm/pgtable.h
-> +++ b/arch/s390/include/asm/pgtable.h
-> @@ -1149,7 +1149,7 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
->  	res = ptep_xchg_lazy(mm, addr, ptep, __pte(_PAGE_INVALID));
->  	/* At this point the reference through the mapping is still present */
->  	if (mm_is_protected(mm) && pte_present(res))
-> -		uv_convert_owned_from_secure(pte_val(res) & PAGE_MASK);
-> +		uv_convert_from_secure_pte(res);
->  	return res;
->  }
->  
-> @@ -1167,7 +1167,7 @@ static inline pte_t ptep_clear_flush(struct vm_area_struct *vma,
->  	res = ptep_xchg_direct(vma->vm_mm, addr, ptep, __pte(_PAGE_INVALID));
->  	/* At this point the reference through the mapping is still present */
->  	if (mm_is_protected(vma->vm_mm) && pte_present(res))
-> -		uv_convert_owned_from_secure(pte_val(res) & PAGE_MASK);
-> +		uv_convert_from_secure_pte(res);
->  	return res;
->  }
->  
-> @@ -1206,7 +1206,7 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
->  	 * if this is not a mm teardown, the slower export is used as
->  	 * fallback instead.
->  	 */
-> -	uv_convert_owned_from_secure(pte_val(res) & PAGE_MASK);
-> +	uv_convert_from_secure_pte(res);
->  	return res;
->  }
->  
-> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-> index a1bef30066ef..0679445cac0b 100644
-> --- a/arch/s390/include/asm/uv.h
-> +++ b/arch/s390/include/asm/uv.h
-> @@ -485,7 +485,7 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb);
->  int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr);
->  int uv_destroy_folio(struct folio *folio);
->  int uv_destroy_pte(pte_t pte);
-> -int uv_convert_owned_from_secure(unsigned long paddr);
-> +int uv_convert_from_secure_pte(pte_t pte);
->  int gmap_convert_to_secure(struct gmap *gmap, unsigned long gaddr);
->  
->  void setup_uv(void);
-> @@ -508,7 +508,7 @@ static inline int uv_destroy_pte(pte_t pte)
->  	return 0;
->  }
->  
-> -static inline int uv_convert_owned_from_secure(unsigned long paddr)
-> +static inline int uv_convert_from_secure_pte(pte_t pte)
->  {
->  	return 0;
->  }
-> diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-> index 61c1ce51c883..b456066d72da 100644
-> --- a/arch/s390/kernel/uv.c
-> +++ b/arch/s390/kernel/uv.c
-> @@ -178,11 +178,10 @@ static int uv_convert_from_secure(unsigned long paddr)
->  }
->  
->  /*
-> - * The caller must already hold a reference to the page
-> + * The caller must already hold a reference to the folio.
->   */
-> -int uv_convert_owned_from_secure(unsigned long paddr)
-> +static int uv_convert_from_secure_folio(struct folio *folio)
->  {
-> -	struct folio *folio = phys_to_folio(paddr);
->  	int rc;
->  
->  	/* See gmap_make_secure(): large folios cannot be secure */
-> @@ -190,13 +189,22 @@ int uv_convert_owned_from_secure(unsigned long paddr)
->  		return 0;
->  
->  	folio_get(folio);
-> -	rc = uv_convert_from_secure(paddr);
-> +	rc = uv_convert_from_secure(folio_to_phys(folio));
->  	if (!rc)
->  		clear_bit(PG_arch_1, &folio->flags);
->  	folio_put(folio);
->  	return rc;
->  }
->  
-> +/*
-> + * The present PTE still indirectly holds a folio reference through the mapping.
-> + */
-> +int uv_convert_from_secure_pte(pte_t pte)
-> +{
-> +	VM_WARN_ON(!pte_present(pte));
-> +	return uv_convert_from_secure_folio(pfn_folio(pte_pfn(pte)));
-> +}
-> +
->  /*
->   * Calculate the expected ref_count for a folio that would otherwise have no
->   * further pins. This was cribbed from similar functions in other places in
-> @@ -481,7 +489,7 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
->  	 * we instead try to export the page.
->  	 */
->  	if (rc)
-> -		rc = uv_convert_owned_from_secure(page_to_phys(page));
-> +		rc = uv_convert_from_secure_folio(folio);
->  	folio_put(folio);
->  out:
->  	mmap_read_unlock(gmap->mm);
-
+Jason
 
