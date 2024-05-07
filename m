@@ -1,155 +1,137 @@
-Return-Path: <linux-kernel+bounces-171664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2628BE710
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:11:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C7B8BE70E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FFA283A17
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A78C1C23B4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80831161906;
-	Tue,  7 May 2024 15:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D3C16192D;
+	Tue,  7 May 2024 15:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QPc2lD4J"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LDn3C9Gm"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4059A1EB3F;
-	Tue,  7 May 2024 15:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16F2160785
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715094663; cv=none; b=iGjlbOXmpSQRUQI1vwtfSLRUW/YxrhIH46WMbeZT3TqEeLIEbib77mPghIPa9vJf9hErm5tuDFQrS52Am644qPgi2lJ2Ozc0McApNNji/ni3WmyIOXOhdcOq7jpH5sRiY1MXUUabIapSCzY1/9KodNnne1+1kfPd1TA61yt3yA4=
+	t=1715094652; cv=none; b=gTun9VZ+cne1hoa4sRIS2Habl4JGkjE/gOHOEiZc4j+TkAokzaw0GpGBgMy9jNvJGf6Y0Ccu+OGdaOi5AuomMkFCL2ht0q/J1wt1OvOJlCjqpkmB58rfGNpUp8Jlk4sC4iZe2L674DboWum8SXdKo8H88Vs451Dhacmk4i+OVSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715094663; c=relaxed/simple;
-	bh=VMnu+pDmL+oYK7xiki7kzb8soYvaBtZJpE+R7cKcFxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LadJ00ZzYx54aipe8GmeWztEnviAWA4pcemXtzvmHT6t04yUlwUGBD2+4c2+8hck8f+Eo7he9OetB+VjDDi5XxlCTgun3gc+ay1eQVe0WK7nGvqm28yNRUhhTmMBnpoXzjcZwYgZKx0IxBfz0G7HPJAZ7IcDZkTML00Z7KuyJ5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QPc2lD4J; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447Em1DS018420;
-	Tue, 7 May 2024 15:10:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=VMnu+pDmL+oYK7xiki7kzb8soYvaBtZJpE+R7cKcFxY=;
- b=QPc2lD4JTvtN0dOCusf02LiAEeVIKQODE0mSW35TJxQ5vrTqx+UMkAh0gmsf73NJ73ng
- WlXvDL5yZGwnzPar137I8oybZ29oTtih3lLodvw++S3HycN+Si2MTycqZLyGlKQaXmf0
- K8OxXGJkfwXOhKdBJCXmVHHuTIQjHIX+AlOxRul/MoDEnstoIuttFFlerjIOXEfpzPtE
- 5qvPgsB7tUkJEyXa4/LDoFCcA7K6lVFPTeYOfD7wKJHsnyeN37RCkyFC+fQcqzi/c12p
- kQuyiHpLdGVaQDPX9JJzXqLM8XzK4BbH1WO34z2kwpObYPBeSp5x/kcVqmV3GONr10wL jQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xypc6g25h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 15:10:35 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447FAYij024802;
-	Tue, 7 May 2024 15:10:35 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xypc6g25d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 15:10:34 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447Eg5bt028576;
-	Tue, 7 May 2024 15:10:33 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xwyr070js-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 15:10:33 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447FAR8820906388
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 15:10:29 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B3D8820043;
-	Tue,  7 May 2024 15:10:27 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E7E782004E;
-	Tue,  7 May 2024 15:10:23 +0000 (GMT)
-Received: from [9.79.183.213] (unknown [9.79.183.213])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 15:10:23 +0000 (GMT)
-Message-ID: <1c277ae0-14cc-4d79-a7a1-455ed996b67a@linux.ibm.com>
-Date: Tue, 7 May 2024 20:40:23 +0530
+	s=arc-20240116; t=1715094652; c=relaxed/simple;
+	bh=V+S2qM1dz5fAisMdCHHRofI9ko5Z8Y95GSiwB94PLxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQWOnP3h9yOL/+hCTSLkPENPZhTTU/GaFO2GLYPJEkRhz96HznWHowxXRE0KAkgNAt5fC0GzVG2Lt6MfNVATMoxTnrRrL9tSxmNAFdV6xQ0lNEHbc8pgaHe9uPM2y+Rdr1zwc2dNJhoeJU2zk7cagS+bp7w8aLkO4d2LS0d1XnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LDn3C9Gm; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 7 May 2024 11:10:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715094647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WvrXXR4AzK2MTWLrKNYWr8Cf39vw5dHBPWvT1LSDqnw=;
+	b=LDn3C9Gm5K06A74oA5w+Cql7aY5vRPu5Jbh8NZqeH3V2MhW+YNcm0qfze7cEOEqAnOelkf
+	HhPs5XaaoerLfq+scwxoaDWPDaUA4LfuxYO+wBrfRSgBsNubTR0hBMCM0sKCvqmdxQCWe+
+	sv/mnuzmEjWe01MtzpMIR03Zgr6gGKw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.9
+Message-ID: <4u2imuisg3sxaomerwbss6p22vxyc2lk6esyn5asybytwgrhe3@tccxjeu5hqmq>
+References: <3x4p5h5f4itasrdylf5cldow6anxie6ixop3o4iaqcucqi7ob4@7ewzp7azzj7i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/6] powerpc: pSeries: vfio: iommu: Re-enable
- support for SPAPR TCE VFIO
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Alexey Kardashevskiy <aik@amd.com>, mpe@ellerman.id.au,
-        tpearson@raptorengineering.com, alex.williamson@redhat.com,
-        linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
-        naveen.n.rao@linux.ibm.com, gbatra@linux.vnet.ibm.com,
-        brking@linux.vnet.ibm.com, aik@ozlabs.ru, ruscur@russell.cc,
-        robh@kernel.org, linux-kernel@vger.kernel.org, joel@jms.id.au,
-        kvm@vger.kernel.org, msuchanek@suse.de, oohall@gmail.com,
-        mahesh@linux.ibm.com, jroedel@suse.de, vaibhav@linux.ibm.com,
-        svaidy@linux.ibm.com
-References: <171450753489.10851.3056035705169121613.stgit@linux.ibm.com>
- <20240501140942.GA1723318@ziepe.ca>
- <703f15b0-d895-4518-9886-0827a6c4e769@amd.com>
- <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
- <20240506174357.GF901876@ziepe.ca>
-From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-In-Reply-To: <20240506174357.GF901876@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: J4Gsgo8V3_3M_QYRnBmu-upxnqO-CmvX
-X-Proofpoint-ORIG-GUID: TasHpAtQk2MCFNjakLGTISoKhTN09Sii
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_08,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- spamscore=0 suspectscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 mlxlogscore=960
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405070104
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3x4p5h5f4itasrdylf5cldow6anxie6ixop3o4iaqcucqi7ob4@7ewzp7azzj7i>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jason,
+On Tue, May 07, 2024 at 10:43:11AM -0400, Kent Overstreet wrote:
+> Hi Linus, another stack of fixes for you.
 
+I have a report from a user that the sb-downgrade validation has an
+issue, so that's been yanked.
 
-On 5/6/24 23:13, Jason Gunthorpe wrote:
-> On Sat, May 04, 2024 at 12:33:53AM +0530, Shivaprasad G Bhat wrote:
->> We have legacy workloads using VFIO in userspace/kvm guests running
->> on downstream distro kernels. We want these workloads to be able to
->> continue running on our arch.
-> It has been broken since 2018, I don't find this reasoning entirely
-> reasonable :\
+The following changes since commit c258c08add1cc8fa7719f112c5db36c08c507f1e:
 
-Though upstream has been broken since 2018 for pSeries, the breaking
+  bcachefs: fix integer conversion bug (2024-04-28 21:34:29 -0400)
 
-patches got trickled into downstream distro kernels only in the last few
+are available in the Git repository at:
 
-years. The legacy workloads that were running on PowerNV with these
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-05-07.2
 
-downstream distros are now broken on the pSeries logical partitions
+for you to fetch changes up to 6e297a73bccf852e7716207caa8eb868737c7155:
 
-without the fixes in this series.
+  bcachefs: Add missing sched_annotate_sleep() in bch2_journal_flush_seq_async() (2024-05-07 11:02:37 -0400)
 
->> I firmly believe the refactoring in this patch series is a step in
->> that direction.
-> But fine, as long as we are going to fix it. PPC really needs this to
-> be resolved to keep working.
+----------------------------------------------------------------
+bcachefs fixes for 6.9
 
-Thanks, We are working on it.
+- Various syzbot fixes; mainly small gaps in validation
+- Fix an integer overflow in fiemap() which was preventing filefrag from
+  returning the full list of extents
+- Fix a refcounting bug on the device refcount, turned up by new
+  assertions in the development branch
+- Fix a device removal/readd bug; write_super() was repeatedly dropping
+  and retaking bch_dev->io_ref references
 
+----------------------------------------------------------------
+Kent Overstreet (19):
+      bcachefs: Fix a scheduler splat in __bch2_next_write_buffer_flush_journal_buf()
+      bcachefs: don't free error pointers
+      bcachefs: bucket_pos_to_bp_noerror()
+      bcachefs: Fix early error path in bch2_fs_btree_key_cache_exit()
+      bcachefs: Inodes need extra padding for varint_decode_fast()
+      bcachefs: Fix refcount put in sb_field_resize error path
+      bcachefs: Initialize bch_write_op->failed in inline data path
+      bcachefs: Fix bch2_dev_lookup() refcounting
+      bcachefs: Fix lifetime issue in device iterator helpers
+      bcachefs: Add a better limit for maximum number of buckets
+      bcachefs: Fix assert in bch2_alloc_v4_invalid()
+      bcachefs: Add missing validation for superblock section clean
+      bcachefs: Guard against unknown k.k->type in __bkey_invalid()
+      bcachefs: Fix shift-by-64 in bformat_needs_redo()
+      bcachefs: Fix snapshot_t() usage in bch2_fs_quota_read_inode()
+      bcachefs: Add missing skcipher_request_set_callback() call
+      bcachefs: BCH_SB_LAYOUT_SIZE_BITS_MAX
+      bcachefs: Fix race in bch2_write_super()
+      bcachefs: Add missing sched_annotate_sleep() in bch2_journal_flush_seq_async()
 
-Regards,
+Reed Riley (1):
+      bcachefs: fix overflow in fiemap
 
-Shivaprasad
-
->
-> Jason
+ fs/bcachefs/alloc_background.c |  4 ++--
+ fs/bcachefs/alloc_background.h |  8 +++++--
+ fs/bcachefs/backpointers.c     |  2 +-
+ fs/bcachefs/backpointers.h     | 14 ++++++++----
+ fs/bcachefs/bcachefs_format.h  |  8 +++++++
+ fs/bcachefs/bkey_methods.c     |  4 ++--
+ fs/bcachefs/btree_key_cache.c  | 16 +++++++------
+ fs/bcachefs/checksum.c         |  1 +
+ fs/bcachefs/errcode.h          |  1 +
+ fs/bcachefs/fs.c               |  2 +-
+ fs/bcachefs/io_write.c         | 30 ++++++++++++++++---------
+ fs/bcachefs/journal.c          |  8 +++++++
+ fs/bcachefs/move.c             | 22 +++++++++++-------
+ fs/bcachefs/quota.c            |  8 +++----
+ fs/bcachefs/recovery.c         |  3 ++-
+ fs/bcachefs/sb-clean.c         | 14 ++++++++++++
+ fs/bcachefs/sb-members.c       |  6 ++---
+ fs/bcachefs/sb-members.h       |  4 ++--
+ fs/bcachefs/super-io.c         | 51 ++++++++++++++++++++++++++++--------------
+ fs/bcachefs/super.c            | 15 ++++++++-----
+ 20 files changed, 150 insertions(+), 71 deletions(-)
 
