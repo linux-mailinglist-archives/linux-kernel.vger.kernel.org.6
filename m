@@ -1,217 +1,101 @@
-Return-Path: <linux-kernel+bounces-170567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9B28BD92B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86DC68BD92E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899061F237B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F632281317
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 01:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597FE4688;
-	Tue,  7 May 2024 01:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5051441D;
+	Tue,  7 May 2024 01:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GT5PSfIF"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=overdrivepizza-com.20230601.gappssmtp.com header.i=@overdrivepizza-com.20230601.gappssmtp.com header.b="X6+FYG+r"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6021FA5;
-	Tue,  7 May 2024 01:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E81139F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 01:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715046273; cv=none; b=ZOPqWunBXV2z+X7oBcPtgRXzw5EPMOAKiNUbIFv45XpecND6Vc30jLs+TLsHKfelpAm8QMkJn+iy0LAtnvY5zTvr5QKoOWnnrTnxhdYUWDv/P2ywmt+Osin+8L35Ef7hQahB1p1EQRgBj8D8NRF+GGWgeJ99ubym+OOZ74o3ito=
+	t=1715046374; cv=none; b=EMwpNgec0hphnfZA0ChlsSEDL4P+IdFphqVujgAaHSLD2hHdupAKso5Fuuq2q+REFs3nPLvn6Ly7UynMiNQhaP8V/3GHMpfewh+vb1XgJTyNkuPuz//no8ik6F990J4Q1fCI/nwGvO4iHBPcaNs54+AMxYx2kNwfS/S2YQU52xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715046273; c=relaxed/simple;
-	bh=GOGHL38ffib/o7LaVGYCmdwvUjQDOC/zJ9wOAixz0iM=;
+	s=arc-20240116; t=1715046374; c=relaxed/simple;
+	bh=HMrJCBdbVu5eCAW3kNgFMcuiHmo+pZkfoo7wgBF+rxQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vxnls9k2AtuWhAvqsG8m5jJ/q1dZzAJm9jENGF4yUnX+9O2BR9enx/kgMEtZMHAvQwfljmCzRHsTTmr0DDBY1NZRH0GyBpPTqv+xRBX4lWd+3sZ1BmGGjuSVDV8czKFCi0FMcRIUrVilbVqQqisNFdxth33MacXYzjTq4/nOoFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GT5PSfIF; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7e180e2b288so14570439f.3;
-        Mon, 06 May 2024 18:44:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=JzEi3z04K2P04nNl/UtVT+gUqVVxNEDeKQrBWAUae3wkVQ3cy6fcxy5OuePWpECcKhueM7+kVSLEoPlbKy5wVnCvot6cGa3G7PxZbbzMFSEklYiOCBCIy+rXbWJ1/I6Kmm0KaqdziSTrDP+ak+jMZJNyjv1u/OavYWaSHOQVR48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=overdrivepizza.com; spf=fail smtp.mailfrom=overdrivepizza.com; dkim=pass (2048-bit key) header.d=overdrivepizza-com.20230601.gappssmtp.com header.i=@overdrivepizza-com.20230601.gappssmtp.com header.b=X6+FYG+r; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=overdrivepizza.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=overdrivepizza.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-51f45104ef0so2780377e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 18:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715046271; x=1715651071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ky75HWr31501QQG1ye0i+4CoK8ksVSqE+DxrjhamMLE=;
-        b=GT5PSfIFar1VXHYiXGZVjDpJB+yAtYjdwWQ1sxNZlhqcX2XEd6H5BX1dMOfhxJYiCU
-         WtSSZamMbLA2kvXFl6hiPHiQo6PD60gXQ+Mhserfl8emZwNj0ZtxZ8WVn9CqVVJbZsyK
-         GEBw442jCHEynd1BTqS8X2rWUFbxfPwW9aPBeTK/OKjmEWscT6tH8TYUh2XNY5AiZySe
-         dW0SmYIqY8QgEt5YeImko3QRRAVFDRZpNFckTQA7y/onwMB+t4lxSYS/H4I6UTzlseb6
-         UjE9CmLr3nXAR1ENUZzZnJmcbe1gP1y97miQ/WDZ9G//CaMZ8yyWoeicg9F3UpYMLEaq
-         bS1w==
+        d=overdrivepizza-com.20230601.gappssmtp.com; s=20230601; t=1715046370; x=1715651170; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HMrJCBdbVu5eCAW3kNgFMcuiHmo+pZkfoo7wgBF+rxQ=;
+        b=X6+FYG+rdpb0ox1vwOog+F6T8sO1YfD/lldST/5aIH5JaFUTwIHeJjzCnDEJR4YvK2
+         KDnJ156YvV27NEz+pxZZt9xQs2oSOB/IcaP8HWu5L2H6qslRbHXJoVgL9eUPcLbGMK0U
+         ST/zBOQerF6F1hzivWP5uFEnDzyqReypKymo+ENVh9lP/R1NNk5NWg1zXCW5GPkPFEcl
+         GEO+81tOjF5E9GqlgNE9RKZ7t375NmGYm4bYU7dH9KAQ+KGdhwXIgmlNHuMbvZNNSva0
+         A3hptaWTv2Crn+QCq5sXz3oXodbzkw5P3pvTUcJ72ktkP0xvNdxR78YYPDsDQmhFM/Y+
+         GE7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715046271; x=1715651071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ky75HWr31501QQG1ye0i+4CoK8ksVSqE+DxrjhamMLE=;
-        b=cu+wR+xaLZkqFlwakSghX+N7s5LuVqaFYSy7bEdswJ3cNW3IzX8B8ttL7f0gB24Zfb
-         /2A/XEMSuXN++DrZtgXGjAg7e2uE/ud6TXCfLnuXy1nDeF4IgT574lx2C6OuCCXABtlP
-         O5rXdA7zOkbvyVXeDOVWDq+NzhgCO03gD3CGg3pH052U1M/tEmtXch2MN/4gYpVLL99Q
-         xi8KVJjhkiXvY6p2WBv9RtLj9YaQV/qYXONsd8XIuatO2yMnw9E/4AGBwM+Cs9Gt2SmD
-         GTaY4z4xzWkljGdfgXhm5N2PfQx1XBvXiAZ7K4XdXTjL/ccxG6JPEYcMzBVfoWTGnWvT
-         R0fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdjPyY4GNnn0h4vHzZtOqqBakKJaufmtNj/PmPtPLucitpjKKOGDtvrKVO5R/dYt3SNaAqYwwrqZVP9ZHXKfObaq1nu/4yAVF34v/gGENCzuCiOMUAu2GuUjBC4Uw6ecrfis9g1cbb
-X-Gm-Message-State: AOJu0YyvKs6etM+UOd1iQRQfkt91ZZTdeD0MApu8NWJzvhLcDr8cPGYN
-	i6EBlIZhbq7QK2Vb5V4bs2fmLCqqNXnFpvDUcA6VM3R5ywlOccKsPNEa/SxJmprrkppBcRXqDaf
-	+0j65FCP+ou+JH+mb81B3W6GOj1k=
-X-Google-Smtp-Source: AGHT+IEd2Ds7p6zFIeJ3Zt2IcQyXeyogm3Bmd77Yt9ncqHDjhYK2lyKYF9xAdHbacWf9YqJ8IlHhk23dNqUYyqjZohs=
-X-Received: by 2002:a05:6e02:1541:b0:36a:199f:345e with SMTP id
- j1-20020a056e02154100b0036a199f345emr14054732ilu.7.1715046270846; Mon, 06 May
- 2024 18:44:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715046370; x=1715651170;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HMrJCBdbVu5eCAW3kNgFMcuiHmo+pZkfoo7wgBF+rxQ=;
+        b=HmNpV63jJFcx6Wqq045QobTpH2ZWlhN0eVavFfRt7An8dbyW3HNCcPPIcFFbxJDv3D
+         9TT5VQ6XzkhZBwzSYqd+a1hECSgYf6h3/a/sljQyyZlJih5s7Kmn2tnWFKfm83c2e/es
+         S9PwndCCXGdheY+dwCj42Sxf+RkHnnoHm8VyDziQp9ef2dTn6PoaVAbV4XLDJnBl4ewj
+         l02Sp7+IuZuXr2VcByi/y/3J4/9qLAAqln1JBcVsK/CXCra06OgdBEJuryg9wStULAul
+         lZUTcJrExdr97ivKy1CTFtLnGb+Wk4gMfVPYl1e/JKC4WXbZUmBpHU+JH/7YlFxpoDvw
+         gj+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWKLn9+O7mNgSLk9d+mWb5xHIMU1xw6J2m/CQKlJvnqw6fL9wRg1zi+U6c/w/yOI1SCahDQiy22PfFUicNypktsKK2nB6F2gm9fUkWZ
+X-Gm-Message-State: AOJu0YwPkLgAfQzmot76Vz+om1Ka2Wro4CUq9HmKbqq4yWJaMZwIcF9a
+	Vks15tIFOBhor/gNBtNeqeByQOH5/I5YeWSO6z9yW5wZw+woEegw0Z/Ybfg/VEpMNY6N5b8cBpw
+	GARAufuX9mhPRNBjO2OI3NvFssxXl8KFDerYgAw==
+X-Google-Smtp-Source: AGHT+IH2xFh1IbDHPJXhq9DdKIT6y/sMxSsAgrmSD2IV2zJ1UbyUN8w8wSFc2uqITr+uKlNm7sGmfTKvBYiPai5RVCE=
+X-Received: by 2002:a19:434c:0:b0:513:1a9c:ae77 with SMTP id
+ m12-20020a19434c000000b005131a9cae77mr6561094lfj.52.1715046369463; Mon, 06
+ May 2024 18:46:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1714966502-27784-1-git-send-email-shengjiu.wang@nxp.com> <Zjkftwr4/6KV39sD@lizhi-Precision-Tower-5810>
-In-Reply-To: <Zjkftwr4/6KV39sD@lizhi-Precision-Tower-5810>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 7 May 2024 09:44:19 +0800
-Message-ID: <CAA+D8AN9kFdgojkrR0ORUyrtOW=JOn0AfbXFTJ70RE7JxgA2pA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx: imx8mp: Add delay after power up
-To: Frank Li <Frank.li@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	imx@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <Y06rtoE9BsERG9uv@hirez.programming.kicks-ass.net>
+ <202210181020.79AF7F7@keescook> <Y08H8zJ5lQ62jel5@hirez.programming.kicks-ass.net>
+ <c561dd8ec384bfc77998a6db6ed824e7@overdrivepizza.com> <Y08M4+GxoqvuZ+bq@hirez.programming.kicks-ass.net>
+ <d219d61420c48a90a2e8bdc29cb8a579@overdrivepizza.com> <202210182218.56AD2871@keescook>
+ <baced047981ff5fce633156e3e374dfd@overdrivepizza.com> <202211011437.F82B61B8C@keescook>
+ <1f6069657f4630c36d60baab2e9b3d10@overdrivepizza.com> <202405061031.43EE1C4@keescook>
+In-Reply-To: <202405061031.43EE1C4@keescook>
+From: Joao Moreira <joao@overdrivepizza.com>
+Date: Mon, 6 May 2024 18:45:59 -0700
+Message-ID: <CAKUFkX0K1+U==xjvJEhLn+0p6iZH9=z=48eMMRnVrX7O6zeRcw@mail.gmail.com>
+Subject: Re: [PATCH] x86/ibt: Implement FineIBT
+To: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, linux-kernel@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, Josh Poimboeuf <jpoimboe@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 2:22=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+> I can't find a PR for your NOP->INT3 patch:
+> https://github.com/lvwr/llvm-project/commit/ca9029c4536d0544e35dff85e4806803e256841f
 >
-> On Mon, May 06, 2024 at 11:35:02AM +0800, Shengjiu Wang wrote:
-> > According to comments in drivers/pmdomain/imx/gpcv2.c:
-> >
-> >       /* request the ADB400 to power up */
-> >       if (domain->bits.hskreq) {
-> >               regmap_update_bits(domain->regmap, domain->regs->hsk,
-> >                                  domain->bits.hskreq, domain->bits.hskr=
-eq);
-> >
-> >               /*
-> >                * ret =3D regmap_read_poll_timeout(domain->regmap, domai=
-n->regs->hsk, reg_val,
-> >                *                                (reg_val & domain->bits=
-hskack), 0,
-> >                *                                USEC_PER_MSEC);
-> >                * Technically we need the commented code to wait handsha=
-ke. But that needs
-> >                * the BLK-CTL module BUS clk-en bit being set.
-> >                *
-> >                * There is a separate BLK-CTL module and we will have su=
-ch a driver for it,
-> >                * that driver will set the BUS clk-en bit and handshake =
-will be triggered
-> >                * automatically there. Just add a delay and suppose the =
-handshake finish
-> >                * after that.
-> >                */
-> >       }
-> >
-> > The BLK-CTL module needs to add delay to wait for a handshake request f=
-inished
-> > before accessing registers, which is just after the enabling of the pow=
-er domain.
-> >
-> > Otherwise there is error:
-> >
-> > [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrup=
-t
-> > [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5=
--next-20240424-00003-g21cec88845c6 #171
-> > [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
-> > [    2.181050] Workqueue: events_unbound deferred_probe_work_func
-> > [    2.181064] Call trace:
-> > [...]
-> > [    2.181142]  arm64_serror_panic+0x6c/0x78
-> > [    2.181149]  do_serror+0x3c/0x70
-> > [    2.181157]  el1h_64_error_handler+0x30/0x48
-> > [    2.181164]  el1h_64_error+0x64/0x68
-> > [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
-> > [    2.181183]  __genpd_runtime_resume+0x30/0x80
-> > [    2.181195]  genpd_runtime_resume+0x110/0x244
-> > [    2.181205]  __rpm_callback+0x48/0x1d8
-> > [    2.181213]  rpm_callback+0x68/0x74
-> > [    2.181224]  rpm_resume+0x468/0x6c0
-> > [    2.181234]  __pm_runtime_resume+0x50/0x94
-> > [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
-> > [    2.181258]  __driver_probe_device+0x48/0x12c
-> > [    2.181268]  driver_probe_device+0xd8/0x15c
-> > [    2.181278]  __device_attach_driver+0xb8/0x134
-> > [    2.181290]  bus_for_each_drv+0x84/0xe0
-> > [    2.181302]  __device_attach+0x9c/0x188
-> > [    2.181312]  device_initial_probe+0x14/0x20
-> > [    2.181323]  bus_probe_device+0xac/0xb0
-> > [    2.181334]  deferred_probe_work_func+0x88/0xc0
-> > [    2.181344]  process_one_work+0x150/0x290
-> > [    2.181357]  worker_thread+0x2f8/0x408
-> > [    2.181370]  kthread+0x110/0x114
-> > [    2.181381]  ret_from_fork+0x10/0x20
-> > [    2.181391] SMP: stopping secondary CPUs
-> >
-> > Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for powe=
-r saving")
-> > Reported-by: Francesco Dolcini <francesco@dolcini.it>
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > Revewied-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > changes in v2:
-> > - reduce size of panic log in commit message
-> >
-> >  drivers/clk/imx/clk-imx8mp-audiomix.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/cl=
-k-imx8mp-audiomix.c
-> > index b381d6f784c8..ae2c0f254225 100644
-> > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > @@ -6,6 +6,7 @@
-> >   */
-> >
-> >  #include <linux/clk-provider.h>
-> > +#include <linux/delay.h>
-> >  #include <linux/device.h>
-> >  #include <linux/io.h>
-> >  #include <linux/mod_devicetable.h>
-> > @@ -360,6 +361,12 @@ static int clk_imx8mp_audiomix_runtime_suspend(str=
-uct device *dev)
-> >
-> >  static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
-> >  {
-> > +     /*
-> > +      * According to the drivers/pmdomain/imx/gpcv2.c
-> > +      * need to wait for handshake request to propagate
-> > +      */
-> > +     udelay(5);
-> > +
+> Are you able to get this refreshed and landed?
 >
-> Did you address the issue I comments at v1?
-> It should not fix at here, I think it should be gpcv2.c to delay 5us.
+I can't recall if I ever pushed it anywhere.
 
-Other BLK CTRL drivers already delay 5us in its own drivers, if
-add delay in gpcv2.c, for these drivers, it will delay 10us totally.
+Still, I can look at it again, for sure. I'm a little bit swamped this
+week, but I'll give it a spin in the next few weeks!
 
-Best regards
-Shengjiu Wang
-
-
-
->
-> Frank
->
-> >       clk_imx8mp_audiomix_save_restore(dev, false);
-> >
-> >       return 0;
-> > --
-> > 2.34.1
-> >
+Tks,
+Joao
 
