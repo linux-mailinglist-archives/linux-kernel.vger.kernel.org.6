@@ -1,180 +1,95 @@
-Return-Path: <linux-kernel+bounces-172149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA088BEE1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2C38BEE22
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC95C1C20CA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44EE7284DE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC7118734C;
-	Tue,  7 May 2024 20:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8597350C;
+	Tue,  7 May 2024 20:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/7Z6wOs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRL1jzm6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20F1187331;
-	Tue,  7 May 2024 20:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE52187331;
+	Tue,  7 May 2024 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715113718; cv=none; b=WDYUAGz6i6brvSu1vzuLJJtOpi6xRnAMMUrUbCau9vjJLe5gMhCLx9KhhWYuwbnv6H6ZMi9NVGrntzVJ6DrsXQ6u9m93UQ/hY36P/UIUznQ/doF2fKJzjc9QVAwjuiakzDD6yy3u2YPwzdCuerDCBOf9Kq96pQiV3Ue4I8WypQY=
+	t=1715113722; cv=none; b=c5ozP3JB0y8UQ4fTf2XjJPo+fiuPMV6nWrYYyO440lZ/MVmsna9Y2a/tP8p+CP95gZRnjGeI3KcFED2QyYi7QGfl+SR+qPDI9LCWJli02c/HC35zKg75atnJjYTy8iP7QesFRgBADzZeIVA60U/5Ff8JBxnunCbR02bEDmXTttE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715113718; c=relaxed/simple;
-	bh=TCF7hOj8TOI1UmjmvR3q0z4EpIMUXu7CfZrmz7GNu74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oueZSEHCOCwuQB3Poy+iXLqLqc06di5zZ/HiMnWG2jvJoktQJDWaJ9+gGvSew6hlEUFOv/Syek/lrkSH4U+8nZ/tNz2LW6ZTDrzFgLYehSfoVrXTTMGacqu9AzvlqB4ouvh7zzglBOYfVeRoLRhTr3NFxs6Kp4BObd8fXvkMRcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/7Z6wOs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD7FC2BBFC;
-	Tue,  7 May 2024 20:28:37 +0000 (UTC)
+	s=arc-20240116; t=1715113722; c=relaxed/simple;
+	bh=O+b6rMU8nBnrcErDZTJYAs1xK22Mbc0hwJnw71xIx2w=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=P+mOCkR8weJAgOhuBfYSiJnbdZiYPy5fJuHjer1W+8bMj9SXhu4JlbDm45+DSbVzdY5BCOXiT0OIPZbYrYnom9IsA3ZcewwmuQJaI2gvpgO5oEzr2kUQwfswA1DNSaBVscRsFReAIgvl2lIiDX7V/2yJf+6G90jNcGPdL1P4cQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRL1jzm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B24C2BBFC;
+	Tue,  7 May 2024 20:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715113718;
-	bh=TCF7hOj8TOI1UmjmvR3q0z4EpIMUXu7CfZrmz7GNu74=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s/7Z6wOsYQeEg/baJMeFadmC3zvVzz2BSK+Ay9HgDzGibFrhHxxlM11/WYZnhIh4p
-	 0PD9QrrfR1KEkjXnOcNwgNf+/RmqTZ6NKoqNJZjbAtBA+vZGHTpunRuQqDyZi6knoC
-	 WOjIK42YJOnIk2VNva+KVBUSwdvDJZzoiYfXqV1pk1E8/sI9cWCBaiepHZzw2cDtEE
-	 A1CORuNuRBxuMEQ+6ue9qY9jJzjYieLKHsQ3SI5vxdHT7BT5Bur/tHhLfE3lLmrWLe
-	 8VwHu9kmqIJXTSyDXuBnHcHV6ihNU7fAmedPF7X07estjZELV33Sxd3GWQc/xSbwr3
-	 3RgrJAdZOKBZw==
-Date: Tue, 7 May 2024 15:28:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>,
-	Tommaso Merciai <tommaso.merciai@amarulasolutions.com>
-Subject: Re: [PATCH 1/5] dt-bindings: display: panel: mipi-dbi-spi: Add a
- pixel format property
-Message-ID: <20240507202836.GA997432-robh@kernel.org>
-References: <20240507-panel-mipi-dbi-rgb666-v1-0-6799234afa3e@tronnes.org>
- <20240507-panel-mipi-dbi-rgb666-v1-1-6799234afa3e@tronnes.org>
+	s=k20201202; t=1715113722;
+	bh=O+b6rMU8nBnrcErDZTJYAs1xK22Mbc0hwJnw71xIx2w=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=XRL1jzm6UDXsbnhoXOg5hrJWNhQFT08J2n9CRAaOo/wcSZYfByN4zJ8Sc0/ibjGSB
+	 oe2/Z+30Mj/qIoZi4xcK+99iCqOrCNpnRah1lM4Y5K/iaA7J53Ypm7vmUO0UiGUMqH
+	 kzSdBSnxh+6NpZGHnKNjLfmyQOEM1GhEqj0EhyVqfce59lsnq+Xx/ijZfpNUOqONH0
+	 AaHmHVTJehNRW/P8v/24p+v/i9ViSeGjYkYOEDBgF0/AgU3b37AYLsZlR2QozXBeZo
+	 LTZikVVzANBIgoMAEzRPkq4JFzihEe0DOHrDiRKNj0Pm+75VC+YJtemYd/rQ1dFlcj
+	 K1kdEWSAxAj7Q==
+Message-ID: <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240507-panel-mipi-dbi-rgb666-v1-1-6799234afa3e@tronnes.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
+References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org> <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org> <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org> <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org> <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on gcc_sdcc2_apps_clk_src
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
+Date: Tue, 07 May 2024 13:28:40 -0700
+User-Agent: alot/0.10
 
-On Tue, May 07, 2024 at 11:57:26AM +0200, Noralf Trønnes wrote:
-> The MIPI DBI 2.0 specification (2005) lists only two pixel formats for
-> the Type C Interface (SPI) and that is 3-bits/pixel RGB111 with
-> 2 options for bit layout.
-> 
-> For Type A and B (parallel) the following formats are listed: RGB332,
-> RGB444, RGB565, RGB666 and RGB888 (some have 2 options for the bit layout).
-> 
-> Many MIPI DBI compatible controllers support all interface types on the
-> same chip and often the manufacturers have chosen to provide support for
-> the Type A/B interface pixel formats also on the Type C interface.
-> 
-> Some chips provide many pixel formats with optional bit layouts over SPI,
-> but the most common by far are RGB565 and RGB666. So even if the
-> specification doesn't list these formats for the Type C interface, the
-> industry has chosen to include them.
-> 
-> The MIPI DCS specification lists the standard commands that can be sent
-> over the MIPI DBI interface. The set_address_mode (36h) command has one
-> bit in the parameter that controls RGB/BGR order:
->     This bit controls the RGB data latching order transferred from the
->     peripheral’s frame memory to the display device.
-> This means that each supported RGB format also has a BGR variant.
-> 
-> Based on this rationale document the following pixel formats describing
-> the bit layout going over the wire:
-> - RGB111 (option 1): x2r1g1b1r1g1b1 (2 pixels per byte)
-> - BGR111 (option 1): x2b1g1r1b1g1r1 (2 pixels per byte)
-> - RGB111 (option 2): x1r1g1b1x1r1g1b1 (2 pixels per byte)
-> - BGR111 (option 2): x1b1g1r1x1b1g1r1 (2 pixels per byte)
-> - RGB565: r5g6b5 (2 bytes)
-> - BGR565: b5g6r5 (2 bytes)
-> - RGB666: r6x2g6x2b6x2 (3 bytes)
-> - BGR666: b6x2g6x2r6x2 (3 bytes)
-> (x: don't care)
-> 
-> Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-> ---
->  .../bindings/display/panel/panel-mipi-dbi-spi.yaml | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml b/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
-> index e808215cb39e..dac8f9af100e 100644
-> --- a/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/panel-mipi-dbi-spi.yaml
-> @@ -50,6 +50,12 @@ description: |
->        |        Command or data         |
->        |<D7><D6><D5><D4><D3><D2><D1><D0>|
->  
-> +  The standard defines one pixel format for type C: RGB111. The industry
-> +  however has decided to provide the type A/B interface pixel formats also on
-> +  the Type C interface and most common among these are RGB565 and RGB666.
-> +  The MIPI DCS command set_address_mode (36h) has one bit that controls RGB/BGR
-> +  order. This gives each supported RGB format a BGR variant.
-> +
->    The panel resolution is specified using the panel-timing node properties
->    hactive (width) and vactive (height). The other mandatory panel-timing
->    properties should be set to zero except clock-frequency which can be
-> @@ -90,6 +96,29 @@ properties:
->  
->    spi-3wire: true
->  
-> +  format:
-> +    description: >
-> +      Pixel format in bit order as going on the wire:
-> +        * `x2r1g1b1r1g1b1` - RGB111, 2 pixels per byte
-> +        * `x2b1g1r1b1g1r1` - BGR111, 2 pixels per byte
-> +        * `x1r1g1b1x1r1g1b1` - RGB111, 2 pixels per byte
-> +        * `x1b1g1r1x1b1g1r1` - BGR111, 2 pixels per byte
-> +        * `r5g6b5` - RGB565, 2 bytes
-> +        * `b5g6r5` - BGR565, 2 bytes
-> +        * `r6x2g6x2b6x2` - RGB666, 3 bytes
-> +        * `b6x2g6x2r6x2` - BGR666, 3 bytes
-> +      This property is optional for backwards compatibility and `r5g6b5` is
-> +      assumed in its absence.
+Quoting Konrad Dybcio (2024-05-07 06:51:04)
+>=20
+> without PARENT_OPS_ENABLE:
+>=20
+> [    3.326891] sdhci_msm 8804000.mmc: Got CD GPIO
+> [    3.336839] scsi host0: ufshcd
+> [    3.337105] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
+> [    3.346339] ------------[ cut here ]------------
+> [    3.351093] gcc_sdcc2_apps_clk_src: rcg didn't update its configuratio=
+n.
+> [    3.351114] WARNING: CPU: 1 PID: 11 at drivers/clk/qcom/clk-rcg2.c:133=
+ update_config+0xc8/0xd8
+>=20
+> [...]
+>=20
+> [    3.610523] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+>=20
+>=20
+> with PARENT_OPS_ENABLE:
+>=20
+> [    3.331419] sdhci_msm 8804000.mmc: Got CD GPIO
+> [    3.336569] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
+> [    3.344795] scsi host0: ufshcd
+> [    3.355122] qcrypto 1dfa000.crypto: Adding to iommu group 5
+> [    3.363567] remoteproc remoteproc0: 2400000.remoteproc is available
+> [    3.364729] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+>=20
+> after testing it both ways, I realized it wasn't supposed to make a
+> difference in this regard, but I suppose I can paste both results anyway..
+>=20
 
-Use schemas, not free form text:
-
-default: r5g6b5
-
-> +    enum:
-> +      - x2r1g1b1r1g1b1
-> +      - x2b1g1r1b1g1r1
-> +      - x1r1g1b1x1r1g1b1
-> +      - x1b1g1r1x1b1g1r1
-> +      - r5g6b5
-> +      - b5g6r5
-> +      - r6x2g6x2b6x2
-> +      - b6x2g6x2r6x2
-> +
->  required:
->    - compatible
->    - reg
-> @@ -116,6 +145,8 @@ examples:
->              reset-gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
->              write-only;
->  
-> +            format = "r5g6b5";
-> +
->              backlight = <&backlight>;
->  
->              width-mm = <35>;
-> 
-> -- 
-> 2.45.0
-> 
+Can you share your patch that prints the message? What bit are you
+checking in the hardware to determine if the RCG is enabled? Do you also
+print the enable count in software?
 
