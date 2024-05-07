@@ -1,78 +1,85 @@
-Return-Path: <linux-kernel+bounces-172183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488078BEE8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:04:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620EB8BEE96
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B302A1F233F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3A528327C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3022E7316F;
-	Tue,  7 May 2024 21:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D860D73511;
+	Tue,  7 May 2024 21:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EXyyqppP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cYq7jawS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA9218733E;
-	Tue,  7 May 2024 21:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEEC71B4C;
+	Tue,  7 May 2024 21:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115836; cv=none; b=S2Xom2y/XN9jocpoy2DzUKnV5fENPC7AHA9oTEUKYdV6WRrTsFYgzpa3mzmvsTthh4UR0WgA/xaoJ5Ncew5KIhR1CmbwoAz8rudw4a0YwzJ5jZc8jd0uFIfrgh2owfHiS4lKM+YbaVxrBRy1t5CNj2mn7+yMHGqxUu6tU+Qel2o=
+	t=1715115916; cv=none; b=pc0fEyLv0QojeMgKGE779nnHYAMj4snsXmJjsGC7mdfjDbcKpq5p4nmDpF7yHJ/5JwYcvlAhFyLlOGFG3iAJ7IikcrWHimwIZ9i4pDplE241MJD9NfRWS+rRBrRGeWdilJxaQXD5SuxUDpIwSMTh0DbsuV5W0/oD1cxIo9R+okg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115836; c=relaxed/simple;
-	bh=uZ71m/kwDwRcripH7bKNsl6xLu8fmn/hVKonljdgE9U=;
+	s=arc-20240116; t=1715115916; c=relaxed/simple;
+	bh=yL7SPd/Z+l9glPuW2PWEe52G5klrbEChtwcCMsumYCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAH8hdfZ6VhwvoJzQ+YxSlqkKXwbjq9QYGBQ00JwYG/1btvxZ5XQPywmt9L8csIaHq59Dkhm7FbydyvEI8KiH7ClOoOeT0BXAYfVKoDu32xelIbOAgj446OU8+k5stgN4wvj2E35/W4wvVGDIps0B59U5pMRJxoMzrnKAyJ1bT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EXyyqppP; arc=none smtp.client-ip=198.175.65.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGjvDgUv+R4bTbeM3T1A/x9AV/x+LGN875fN5iLRsNLvHtCAJHr6z2QCHR1CMf7mCXw1iFAzMDb032Vpp8WFmuGdyttnm0hxBeFNrVr6gJJKoLfw9HWmgQIm+AM10fCYRvGErcBuKiIbOJa2hayi4QMUmY5PS09MuNglTIgS5SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cYq7jawS; arc=none smtp.client-ip=192.198.163.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715115834; x=1746651834;
+  t=1715115914; x=1746651914;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=uZ71m/kwDwRcripH7bKNsl6xLu8fmn/hVKonljdgE9U=;
-  b=EXyyqppPHYi1Qnooq1wGzDj5YEfxHuTgAQXBOFwY4UKzP1ja84weDhGE
-   hdljMbASp6tpMLRFwKDM0LUr2jhqX+DFopORBPdfLkDXq1mW8+KbakJxZ
-   ynttMFnS082hXMHU0VUuEl30WWsVTTQIOM4cVqy5/FC7MbQd4WbMF1UAo
-   ucdZ7+ESoXu7R71dJh23oduPkPmf94lhurzV+YDufHsJ3snzykVHZtPvK
-   1d586bO2dN6NzjTkFWsYmZTaMhZFn3CS1AFtxliuoL5qShThzKTT0cObZ
-   j7iBqjV3se0iftIRkOUbL2d3vlXH9YqfT0MOeNngHRpW3dHtQCHmfiZTx
-   g==;
-X-CSE-ConnectionGUID: YeIt3wINSe+aiw7IYxgnxA==
-X-CSE-MsgGUID: 39ifkPcMQt2HtrqVaSkq3Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21501920"
+  bh=yL7SPd/Z+l9glPuW2PWEe52G5klrbEChtwcCMsumYCU=;
+  b=cYq7jawS10DmQQNcLcflLUThlT5khwYwXJvAZiSD6G4m50wU/gQ2pNjY
+   sgEF/HWzeCL8i0JCyR5pwd/18mnIQlA6cT5mBpcq0nL9XAf7Jhq+51iyw
+   bhA9yOcO3CbBE47ybzVlmdVyqPkaPJPpfE2b1k+zxkBNL6RH75+ybzESM
+   In88r7mFtExqW6vFencxrMPJRGC9fKs2rC/kRgQreyeq1dR8NeXLV0AQL
+   tqv0QME0Fp+7Oy64HaH48QxMjmGJusivmcKPeFqtV10V/cbWWrisThXMp
+   QCuqbj4ur4P6gTmsXVfHjB6XyMgynov+fXLM8bE7+RUVxMdyHqoh7J1R2
+   A==;
+X-CSE-ConnectionGUID: YscN/smtQISMNr9B7j2iMw==
+X-CSE-MsgGUID: AeCZlkQ0QzqKGcs2YE3MRQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21613617"
 X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="21501920"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 14:03:53 -0700
-X-CSE-ConnectionGUID: 14eykIzKTU+9AHBltx9qaA==
-X-CSE-MsgGUID: eA/kVNQTRA2X46TcXvJQ3Q==
+   d="scan'208";a="21613617"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 14:03:54 -0700
+X-CSE-ConnectionGUID: EdySXaasTj2nzIjcY31PIA==
+X-CSE-MsgGUID: u4wKf0RIRd6hD7WFn21Oig==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="33465546"
+   d="scan'208";a="28750477"
 Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 07 May 2024 14:03:49 -0700
+  by fmviesa010.fm.intel.com with ESMTP; 07 May 2024 14:03:49 -0700
 Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1s4RyV-0002dE-0S;
+	id 1s4RyV-0002dG-0W;
 	Tue, 07 May 2024 21:03:47 +0000
-Date: Wed, 8 May 2024 05:02:50 +0800
+Date: Wed, 8 May 2024 05:02:51 +0800
 From: kernel test robot <lkp@intel.com>
-To: Perry Yuan <perry.yuan@amd.com>, rafael.j.wysocki@intel.com,
-	Mario.Limonciello@amd.com, viresh.kumar@linaro.org,
-	Ray.Huang@amd.com, gautham.shenoy@amd.com, Borislav.Petkov@amd.com
-Cc: oe-kbuild-all@lists.linux.dev, Alexander.Deucher@amd.com,
-	Xinmei.Huang@amd.com, Xiaojian.Du@amd.com, Li.Meng@amd.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] cpufreq: amd-pstate: optimiza the initial
- frequency values verification
-Message-ID: <202405080431.BPU6Yg9s-lkp@intel.com>
-References: <0049ad44052b051cf57d1059bf71b7ce227a5f21.1715065568.git.perry.yuan@amd.com>
+To: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
+	jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+	manivannan.sadhasivam@linaro.org, andersson@kernel.org,
+	agross@kernel.org, konrad.dybcio@linaro.org, mani@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_msarkar@quicinc.com,
+	quic_kraravin@quicinc.com,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] PCI: qcom: Refactor common code
+Message-ID: <202405080444.RUQms5qs-lkp@intel.com>
+References: <20240501163610.8900-2-quic_schintav@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,129 +88,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0049ad44052b051cf57d1059bf71b7ce227a5f21.1715065568.git.perry.yuan@amd.com>
+In-Reply-To: <20240501163610.8900-2-quic_schintav@quicinc.com>
 
-Hi Perry,
+Hi Shashank,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge next-20240507]
-[cannot apply to tip/x86/core linus/master v6.9-rc7]
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.9-rc7 next-20240507]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Perry-Yuan/cpufreq-amd-pstate-optimiza-the-initial-frequency-values-verification/20240507-151930
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/0049ad44052b051cf57d1059bf71b7ce227a5f21.1715065568.git.perry.yuan%40amd.com
-patch subject: [PATCH 01/11] cpufreq: amd-pstate: optimiza the initial frequency values verification
-config: x86_64-randconfig-102-20240507 (https://download.01.org/0day-ci/archive/20240508/202405080431.BPU6Yg9s-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080431.BPU6Yg9s-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Shashank-Babu-Chinta-Venkata/PCI-qcom-Refactor-common-code/20240502-003801
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20240501163610.8900-2-quic_schintav%40quicinc.com
+patch subject: [PATCH v4 1/3] PCI: qcom: Refactor common code
+config: mips-randconfig-r112-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080444.RUQms5qs-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240508/202405080444.RUQms5qs-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080431.BPU6Yg9s-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405080444.RUQms5qs-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+sparse warnings: (new ones prefixed by >>)
+>> drivers/pci/controller/dwc/pcie-qcom-common.c:25:31: sparse: sparse: incorrect type in return expression (different base types) @@     expected struct icc_path * @@     got long @@
+   drivers/pci/controller/dwc/pcie-qcom-common.c:25:31: sparse:     expected struct icc_path *
+   drivers/pci/controller/dwc/pcie-qcom-common.c:25:31: sparse:     got long
 
-   drivers/cpufreq/amd-pstate.c: In function 'amd_pstate_cpu_init':
->> drivers/cpufreq/amd-pstate.c:899:33: warning: variable 'nominal_freq' set but not used [-Wunused-but-set-variable]
-     899 |         int min_freq, max_freq, nominal_freq, ret;
-         |                                 ^~~~~~~~~~~~
-   drivers/cpufreq/amd-pstate.c: In function 'amd_pstate_epp_cpu_init':
-   drivers/cpufreq/amd-pstate.c:1350:33: warning: variable 'nominal_freq' set but not used [-Wunused-but-set-variable]
-    1350 |         int min_freq, max_freq, nominal_freq, ret;
-         |                                 ^~~~~~~~~~~~
+vim +25 drivers/pci/controller/dwc/pcie-qcom-common.c
 
-
-vim +/nominal_freq +899 drivers/cpufreq/amd-pstate.c
-
-5547c0ebfc2efd Perry Yuan        2024-04-25  896  
-ec437d71db77a1 Huang Rui         2021-12-24  897  static int amd_pstate_cpu_init(struct cpufreq_policy *policy)
-ec437d71db77a1 Huang Rui         2021-12-24  898  {
-5c3fd1edaa8b4c Perry Yuan        2024-04-30 @899  	int min_freq, max_freq, nominal_freq, ret;
-ec437d71db77a1 Huang Rui         2021-12-24  900  	struct device *dev;
-ec437d71db77a1 Huang Rui         2021-12-24  901  	struct amd_cpudata *cpudata;
-ec437d71db77a1 Huang Rui         2021-12-24  902  
-919f4557696939 Wyes Karny        2022-11-17  903  	/*
-919f4557696939 Wyes Karny        2022-11-17  904  	 * Resetting PERF_CTL_MSR will put the CPU in P0 frequency,
-919f4557696939 Wyes Karny        2022-11-17  905  	 * which is ideal for initialization process.
-919f4557696939 Wyes Karny        2022-11-17  906  	 */
-919f4557696939 Wyes Karny        2022-11-17  907  	amd_perf_ctl_reset(policy->cpu);
-ec437d71db77a1 Huang Rui         2021-12-24  908  	dev = get_cpu_device(policy->cpu);
-ec437d71db77a1 Huang Rui         2021-12-24  909  	if (!dev)
-ec437d71db77a1 Huang Rui         2021-12-24  910  		return -ENODEV;
-ec437d71db77a1 Huang Rui         2021-12-24  911  
-ec437d71db77a1 Huang Rui         2021-12-24  912  	cpudata = kzalloc(sizeof(*cpudata), GFP_KERNEL);
-ec437d71db77a1 Huang Rui         2021-12-24  913  	if (!cpudata)
-ec437d71db77a1 Huang Rui         2021-12-24  914  		return -ENOMEM;
-ec437d71db77a1 Huang Rui         2021-12-24  915  
-ec437d71db77a1 Huang Rui         2021-12-24  916  	cpudata->cpu = policy->cpu;
-ec437d71db77a1 Huang Rui         2021-12-24  917  
-f3a052391822b7 Meng Li           2024-01-19  918  	amd_pstate_init_prefcore(cpudata);
-f3a052391822b7 Meng Li           2024-01-19  919  
-ec437d71db77a1 Huang Rui         2021-12-24  920  	ret = amd_pstate_init_perf(cpudata);
-ec437d71db77a1 Huang Rui         2021-12-24  921  	if (ret)
-41271016dfa4a0 Huang Rui         2021-12-24  922  		goto free_cpudata1;
-ec437d71db77a1 Huang Rui         2021-12-24  923  
-5547c0ebfc2efd Perry Yuan        2024-04-25  924  	ret = amd_pstate_init_freq(cpudata);
-5547c0ebfc2efd Perry Yuan        2024-04-25  925  	if (ret)
-5547c0ebfc2efd Perry Yuan        2024-04-25  926  		goto free_cpudata1;
-5547c0ebfc2efd Perry Yuan        2024-04-25  927  
-3cbbe8871a2fb8 Gautham R. Shenoy 2024-04-25  928  	min_freq = READ_ONCE(cpudata->min_freq);
-3cbbe8871a2fb8 Gautham R. Shenoy 2024-04-25  929  	max_freq = READ_ONCE(cpudata->max_freq);
-3cbbe8871a2fb8 Gautham R. Shenoy 2024-04-25  930  	nominal_freq = READ_ONCE(cpudata->nominal_freq);
-ec437d71db77a1 Huang Rui         2021-12-24  931  
-069a2bb8c48c43 Perry Yuan        2024-04-25  932  	policy->cpuinfo.transition_latency = amd_pstate_get_transition_latency(policy->cpu);
-069a2bb8c48c43 Perry Yuan        2024-04-25  933  	policy->transition_delay_us = amd_pstate_get_transition_delay_us(policy->cpu);
-ec437d71db77a1 Huang Rui         2021-12-24  934  
-ec437d71db77a1 Huang Rui         2021-12-24  935  	policy->min = min_freq;
-ec437d71db77a1 Huang Rui         2021-12-24  936  	policy->max = max_freq;
-ec437d71db77a1 Huang Rui         2021-12-24  937  
-ec437d71db77a1 Huang Rui         2021-12-24  938  	policy->cpuinfo.min_freq = min_freq;
-ec437d71db77a1 Huang Rui         2021-12-24  939  	policy->cpuinfo.max_freq = max_freq;
-ec437d71db77a1 Huang Rui         2021-12-24  940  
-ec437d71db77a1 Huang Rui         2021-12-24  941  	/* It will be updated by governor */
-ec437d71db77a1 Huang Rui         2021-12-24  942  	policy->cur = policy->cpuinfo.min_freq;
-ec437d71db77a1 Huang Rui         2021-12-24  943  
-e059c184da47e9 Huang Rui         2021-12-24  944  	if (boot_cpu_has(X86_FEATURE_CPPC))
-1d215f0319c206 Huang Rui         2021-12-24  945  		policy->fast_switch_possible = true;
-1d215f0319c206 Huang Rui         2021-12-24  946  
-41271016dfa4a0 Huang Rui         2021-12-24  947  	ret = freq_qos_add_request(&policy->constraints, &cpudata->req[0],
-41271016dfa4a0 Huang Rui         2021-12-24  948  				   FREQ_QOS_MIN, policy->cpuinfo.min_freq);
-41271016dfa4a0 Huang Rui         2021-12-24  949  	if (ret < 0) {
-41271016dfa4a0 Huang Rui         2021-12-24  950  		dev_err(dev, "Failed to add min-freq constraint (%d)\n", ret);
-41271016dfa4a0 Huang Rui         2021-12-24  951  		goto free_cpudata1;
-41271016dfa4a0 Huang Rui         2021-12-24  952  	}
-41271016dfa4a0 Huang Rui         2021-12-24  953  
-41271016dfa4a0 Huang Rui         2021-12-24  954  	ret = freq_qos_add_request(&policy->constraints, &cpudata->req[1],
-41271016dfa4a0 Huang Rui         2021-12-24  955  				   FREQ_QOS_MAX, policy->cpuinfo.max_freq);
-41271016dfa4a0 Huang Rui         2021-12-24  956  	if (ret < 0) {
-41271016dfa4a0 Huang Rui         2021-12-24  957  		dev_err(dev, "Failed to add max-freq constraint (%d)\n", ret);
-41271016dfa4a0 Huang Rui         2021-12-24  958  		goto free_cpudata2;
-41271016dfa4a0 Huang Rui         2021-12-24  959  	}
-41271016dfa4a0 Huang Rui         2021-12-24  960  
-febab20caebac9 Wyes Karny        2023-11-17  961  	cpudata->max_limit_freq = max_freq;
-febab20caebac9 Wyes Karny        2023-11-17  962  	cpudata->min_limit_freq = min_freq;
-ec437d71db77a1 Huang Rui         2021-12-24  963  
-ec437d71db77a1 Huang Rui         2021-12-24  964  	policy->driver_data = cpudata;
-ec437d71db77a1 Huang Rui         2021-12-24  965  
-41271016dfa4a0 Huang Rui         2021-12-24  966  	amd_pstate_boost_init(cpudata);
-abd61c08ef349a Perry Yuan        2023-01-31  967  	if (!current_pstate_driver->adjust_perf)
-abd61c08ef349a Perry Yuan        2023-01-31  968  		current_pstate_driver->adjust_perf = amd_pstate_adjust_perf;
-41271016dfa4a0 Huang Rui         2021-12-24  969  
-ec437d71db77a1 Huang Rui         2021-12-24  970  	return 0;
-ec437d71db77a1 Huang Rui         2021-12-24  971  
-41271016dfa4a0 Huang Rui         2021-12-24  972  free_cpudata2:
-41271016dfa4a0 Huang Rui         2021-12-24  973  	freq_qos_remove_request(&cpudata->req[0]);
-41271016dfa4a0 Huang Rui         2021-12-24  974  free_cpudata1:
-ec437d71db77a1 Huang Rui         2021-12-24  975  	kfree(cpudata);
-ec437d71db77a1 Huang Rui         2021-12-24  976  	return ret;
-ec437d71db77a1 Huang Rui         2021-12-24  977  }
-ec437d71db77a1 Huang Rui         2021-12-24  978  
+    15	
+    16	#define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
+    17			Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
+    18	
+    19	struct icc_path *qcom_pcie_common_icc_get_resource(struct dw_pcie *pci, const char *path)
+    20	{
+    21		struct icc_path *icc_mem_p;
+    22	
+    23		icc_mem_p = devm_of_icc_get(pci->dev, path);
+    24		if (IS_ERR_OR_NULL(icc_mem_p))
+  > 25			return PTR_ERR(icc_mem_p);
+    26		return icc_mem_p;
+    27	}
+    28	EXPORT_SYMBOL_GPL(qcom_pcie_common_icc_get_resource);
+    29	
 
 -- 
 0-DAY CI Kernel Test Service
