@@ -1,186 +1,189 @@
-Return-Path: <linux-kernel+bounces-171215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDEBF8BE14A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2368BE150
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733A1281333
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3E91C21515
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C7D152DEB;
-	Tue,  7 May 2024 11:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437A3155357;
+	Tue,  7 May 2024 11:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FLTe9Fpj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="l25KanTb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CvmzHek6"
+Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185B6152DEA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C421015252F;
+	Tue,  7 May 2024 11:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715082246; cv=none; b=n/myauhCfNrGcnwZMuidpuDvkS4OMHsuNHaugOFgzeQ9CUwFtip8Z6etq+HZx+Nf9VIM5iwfVwQEpTn9unwfJt07FkmU+mdySjYDqJlVYtyZ8NG62rmEYyXcH8TphLyX1G8an5EETnlo2sNKrYni1vG4AP33Qqu/W7eq7L+Bg5k=
+	t=1715082295; cv=none; b=QixejoTgCCiv6H7aKiPF9PItUSCVzGTEdUmvQfnqhrdiCCEGq4zcgGn5xTfwJf4ZwvZ9frkgd3oBGTA/wZU6tYeUG479jYawZ92lDORiqYflPxBYFzuc5R2BJ9jH9H+k3ZGmbvzoQA+GHnli6O0AcTnUEchcF+PuSRSs9e3XrtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715082246; c=relaxed/simple;
-	bh=zeSc0zMRaHwEe3WALkGgrfChiRHog7dzLDFVfwgftZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G5dx/Qh+fWNpfkwW641M1tyyG/AML/mgEUctvmWNy2sPLvx9732hGZQROBCDSY3RQrg8XTOM75o4N6hy0SkahE4fp5++3ZLclOTz/zTSxIhZx8TG1A7qxviXQzPwJoWHV4wYkD3WlbVHHqn0wWH6ec6VtaO7hHVxJRqCCXOENJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FLTe9Fpj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715082243;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nUVaoXiu44BiAXrCqxjBhtMw9DuZOXrqazpAQ7VM7I8=;
-	b=FLTe9FpjUwbd53JyQKuTy2Br6dJX/iL3HZnU0IakaySak6FmZXnDndQwex9Dd3wNoTOOY6
-	gS1QPRxIAaurGK75pjviSZUPx5vEnynUuVUZU9PkqFVlsebPKw1+k4bDG4aBIJNxN1CDOP
-	+5pB6AG5j09ZFLTmw3rOJXpe8IeZMs8=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-DqLPgC7IPPijUX7Lee0nYQ-1; Tue, 07 May 2024 07:44:02 -0400
-X-MC-Unique: DqLPgC7IPPijUX7Lee0nYQ-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2e0b3a7ffbeso28408971fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:44:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715082241; x=1715687041;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nUVaoXiu44BiAXrCqxjBhtMw9DuZOXrqazpAQ7VM7I8=;
-        b=rjLV4Eihh27EvvRlt1v2V+PO6HLLdk2I3H4hmqsh3qo8rs9QeVkncc6Svrwgy5SC+v
-         E05E8negUf/z3a1gcolHmJoCMVywgl+A0VmuDYC2xhatsiEy38gvZDQflAdEPxVhyMaU
-         wJMGJCE0lDsurwMwOXaYqU3z5iN5gnK9az9BtNMxJZ7l+XWtRwDRmz9QSP5A5P/c4bcz
-         J5W/tYjYxjcUzYMCJCY+iq+Ffxn/YCSRy4QdPVPedoHWeKXu/lbYcP38c6expqaBBXjM
-         KrT++LPxryLjEcKgn6D86Byyi7w0mkcHqnZq+sqkf+yO3AsR/nqQ1VJk+OV0kvK+qA0v
-         PqAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJh7dQHToWtbUbu10PrUh1z3HpMP+YI9dPeCEEhTnXArtBBg8zUGbpsbJfvCAByN2qSHZ//ya7G9buvgbZ0bnPxnvIH/+fcVTKIYex
-X-Gm-Message-State: AOJu0YyZrQSMQd73UrnixpS57fvxRBsdqjPkqamQsXcuqCXkQSl/xKRZ
-	SWLaAnOYNPKIDlD2MrM8Rc1ROT0D5N6rt2SWZUcsLBGYcTJv1ltmW/jdBlmESxoKGXJRqlMol55
-	zz1SvSkkG5tlOo/UJhQ5Y/Ep4L1xtiz4jAcEtN/sFurvk9wsp0AcjYA3z3DeWYw==
-X-Received: by 2002:a2e:bc17:0:b0:2e0:ffea:4282 with SMTP id b23-20020a2ebc17000000b002e0ffea4282mr12472816ljf.38.1715082241120;
-        Tue, 07 May 2024 04:44:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXiobUMXBsnzvzTaRV2RyJbn/Jcl7YQwJTWJBf7/3DtlmUbe5NKbis1Ej662Ax3vTU437XmA==
-X-Received: by 2002:a2e:bc17:0:b0:2e0:ffea:4282 with SMTP id b23-20020a2ebc17000000b002e0ffea4282mr12472794ljf.38.1715082240635;
-        Tue, 07 May 2024 04:44:00 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id r13-20020a05600c35cd00b0041bf45c0665sm23129210wmq.15.2024.05.07.04.43.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 04:44:00 -0700 (PDT)
-Message-ID: <d6763648-86fd-40d2-b261-eb59a4721d91@redhat.com>
-Date: Tue, 7 May 2024 13:43:59 +0200
+	s=arc-20240116; t=1715082295; c=relaxed/simple;
+	bh=5l9Z1Urm/BZzymLPMlD2GWT3dGvV7j51ig+v/GSYq6w=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=a+95Pzi8BR0MNFVjMnMxvl05Nf25CTilgnjycV8pGegwJZr7pCPjPZt14zqGf8cU/AYyS4LGMpFlm+GfMqZFtM3HnXQMOV/kNpuU+miH6RPBPS12B3NwUefsF8leh16wJxYH8ZP8aeaGbbepndU/tQ0a6n6pmhws/psfIPqk/DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=l25KanTb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CvmzHek6; arc=none smtp.client-ip=64.147.123.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 3F9F31C00142;
+	Tue,  7 May 2024 07:44:50 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 07 May 2024 07:44:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715082289; x=1715168689; bh=ecSzO7Aiwn
+	igNqU/smd06vR9/fdGnYG1J6IeAomF44c=; b=l25KanTbH8tO7kcr9GFjrecLwg
+	Z38jY6q5DqfCawwG5fjpy8zcT/YNv1FhdSFBn+VSbhay0UEAYYF+9+MIHVx+3f9C
+	4h6XRq0bAZmviePUd5dJP1sVV9/dygg3z5csVujvGnhCQTNlM8n/AuKojBdeFEHY
+	BX5RMoRXi01OS4CtRsyfoAIWsevQ6wJw0IMoOLMMIExjcIgtPMOANt763ap7/O9O
+	Rs/IqGa6U92qQ4VglQJG+QMV3gPLwuzI83jO7xK8CdY1nt0dKsorDO90Pg4nFlsJ
+	lNXSLxvh8RPdN8add2Vu1dKs90ijc8FNUtyqZPOzozXvZ6uaLk/bs1V9CqMg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715082289; x=1715168689; bh=ecSzO7AiwnigNqU/smd06vR9/fdG
+	nYG1J6IeAomF44c=; b=CvmzHek6TFypfJ1RPBnToLT7kzymcthSWcUJhd7JnfZ3
+	hi956ge5sXR7a6ozc+SdLsCthpzzBYholC7g/eOPqD6phpCm94RYhqyutTGOFvo1
+	CJZtKJCf5HRY9etbVeUyInoik5gIFJ/fz3V8wBR71p3QLzGzrPRr3c7pD/Y8txlM
+	R0VgJah6C68E6gB0NdcgF24qDOoF3/FiJL3jSZcZb2kqzZP4aEEAXIhKCYBu35yN
+	U6MAULIlG+u3s5gmQRkzmgMcYBxURcDhUvsADnbDpgsB5h6fNpwYKkG9seCJTli1
+	V2YJ0G7gLKPAjViF+AHsn90PqMK4gmSvqU4qcTJ6/Q==
+X-ME-Sender: <xms:MRQ6ZrAGja7cwKav-14qSh78VkHNmbwbMbQmkRXLP4MgUSUJGaHVAQ>
+    <xme:MRQ6ZhgVRBjVtvxLB6_-nP57D1fpRZINSUsOO7UjLsG-9fNw7otV7iGG-bZ29kRQN
+    RcYNIbwcEnQKuYSeuI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedggedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepleehueefffevveejgfelveeiuedutdevtdfhtdevveelgfevuedtkeeiffei
+    geffnecuffhomhgrihhnpehgohhoghhlvghsohhurhgtvgdrtghomhenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdr
+    uggv
+X-ME-Proxy: <xmx:MRQ6ZmnjcLkaFldQNiLDyzPzJnD5Gddm6M1Jc4ttt89PRmFoEganhA>
+    <xmx:MRQ6ZtyVEFmcby4FEwu1Licg7YFNX1HbfCYP1rbOsIOMVfsCKyRfhw>
+    <xmx:MRQ6ZgQ7x_0f1vfI8n93hKIWYCUk2Cwsg-9hdPAhVaKSgnea0FkFOg>
+    <xmx:MRQ6ZgZVcG0-mi-NqiXX4vKIBIh9oLhJoPnkzQUPOKk-Jex0-g0e_Q>
+    <xmx:MRQ6ZjF4s5pRzqUx7PzFMR6biDCDifQj0LniQvsif9cEsJpA1QjtO-wL>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 55BF9B6008D; Tue,  7 May 2024 07:44:49 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] arm64/mm: Move PTE_PRESENT_INVALID to overlay
- PTE_NG
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Joey Gouly <joey.gouly@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Peter Xu <peterx@redhat.com>,
- Mike Rapoport <rppt@linux.ibm.com>, Shivansh Vij <shivanshvij@outlook.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240503144604.151095-1-ryan.roberts@arm.com>
- <20240503144604.151095-4-ryan.roberts@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240503144604.151095-4-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-Id: <41191296-0aa0-4010-b70f-efa80b9200d4@app.fastmail.com>
+In-Reply-To: <ZjoMI5bJSlqhtOy1@phenom.ffwll.local>
+References: <20240503192858.103640-1-florian.fainelli@broadcom.com>
+ <8e1867fc-34da-457c-b95a-2d51ea97336a@app.fastmail.com>
+ <05a5e893-12f7-49fd-9a9a-abd387571f9b@broadcom.com>
+ <ZjjXtEwWWZX43c6l@phenom.ffwll.local>
+ <47c63c4c-c657-4210-b476-c91c4f192483@app.fastmail.com>
+ <ZjoMI5bJSlqhtOy1@phenom.ffwll.local>
+Date: Tue, 07 May 2024 13:44:29 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Daniel Vetter" <daniel@ffwll.ch>
+Cc: "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ linux-kernel@vger.kernel.org, "Helge Deller" <deller@gmx.de>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Javier Martinez Canillas" <javierm@redhat.com>,
+ "Sam Ravnborg" <sam@ravnborg.org>,
+ "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+ "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
+Content-Type: text/plain
 
-On 03.05.24 16:46, Ryan Roberts wrote:
-> PTE_PRESENT_INVALID was previously occupying bit 59, which when a PTE is
-> valid can either be IGNORED, PBHA[0] or AttrIndex[3], depending on the
-> HW configuration. In practice this is currently not a problem because
-> PTE_PRESENT_INVALID can only be 1 when PTE_VALID=0 and upstream Linux
-> always requires the bit set to 0 for a valid pte.
-> 
-> However, if in future Linux wants to use the field (e.g. AttrIndex[3])
-> then we could end up with confusion when PTE_PRESENT_INVALID comes along
-> and corrupts the field - we would ideally want to preserve it even for
-> an invalid (but present) pte.
-> 
-> The other problem with bit 59 is that it prevents the offset field of a
-> swap entry within a swap pte from growing beyond 51 bits. By moving
-> PTE_PRESENT_INVALID to a low bit we can lay the swap pte out so that the
-> offset field could grow to 52 bits in future.
-> 
-> So let's move PTE_PRESENT_INVALID to overlay PTE_NG (bit 11).
-> 
-> There is no need to persist NG for a present-invalid entry; it is always
-> set for user mappings and is not used by SW to derive any state from the
-> pte. PTE_NS was considered instead of PTE_NG, but it is RES0 for
-> non-secure SW, so there is a chance that future architecture may
-> allocate the bit and we may therefore need to persist that bit for
-> present-invalid ptes.
-> 
-> These are both marginal benefits, but make things a bit tidier in my
-> opinion.
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+On Tue, May 7, 2024, at 13:10, Daniel Vetter wrote:
+> On Mon, May 06, 2024 at 04:53:47PM +0200, Arnd Bergmann wrote:
+>> On Mon, May 6, 2024, at 15:14, Daniel Vetter wrote:
+>> > On Fri, May 03, 2024 at 01:22:10PM -0700, Florian Fainelli wrote:
+>> >> On 5/3/24 12:45, Arnd Bergmann wrote:
+>> 
+>> This is the current Android GKI config:
+>> https://android.googlesource.com/kernel/common.git/+/refs/heads/android-mainline/arch/arm64/configs/gki_defconfig
+>> where I can see that CONFIG_DRM is built-in, but DRM_FBDEV_EMULATION
+>> CONFIG_VT, CONFIG_FRAMEBUFFER_CONSOLE, CONFIG_FB_DEVICE and
+>> CONFIG_FB_CORE are all disabled.
+>> 
+>> So the console won't work at all,I think this means that there
+>> is no way to get the console working, but building a fb.ko module
+>> allows using /dev/fb with simplefb.ko (or any other one) happens
+>> to almost work, but only by dumb luck rather than by design.
+>
+> So using /dev/fb chardev without fbcon is very much a real idea. This way
+> you should be able to run old userspace that uses fbdev directly for
+> drawing, but your console needs are served by a userspace console running
+> on top of drm.
+>
+> vt switching gets a bit more entertaining, but I thought logind has all
+> the glue already to make that happen. Worst case you need a tiny launcher
+> tool to get your userspace console out of the way while you launch a fbdev
+> using application, but I think correctly implement the vt ioctls to switch
+> to graphics mode /should/ work automatically.
+>
+> I do agree that this is only really a good idea with drm drivers, since
+> those do not rely on any of the fbdev infrastructure like the notifier
+> under discussion.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+I'm pretty sure what Florian is looking for has no dependency
+on VT, fbcon or logind, but I'm only guessing based on the
+information I see in the public Android source trees.
 
--- 
-Cheers,
+My understanding is that the Android recovery application is a
+graphical tool that accesses the framebuffer directly and
+is controlled using the volume and power buttons on a phone.
 
-David / dhildenb
+>> I suppose making CONFIG_FB_NOTIFIER optional for FB (on by
+>> default if any of the consumers of the notification are turned
+>> on) would not be a bad direction to go in general and also
+>> address Florian's link error, but that doesn't solve the
+>> more general concern about a third-party fb.ko module on a
+>> kernel that was explicitly built with FB disabled.
+>> 
+>> The GKI defconfig was initially done at a time where one could
+>> not have CONFIG_FBDEV_EMULATION and CONFIG_FB_DEVICE without
+>> pulling in the entire fbdev module, but now that is possible.
+>> Maybe that is something that Android could now include?
+>> 
+>> Alternatively, I wonder if that recovery image could be changed
+>> to access the screen through the /dev/dri/ interfaces? I have
+>> no experience in using those without Xorg or Wayland, is that
+>> a sensible thing to do?
+>
+> Uh ... I think I'm confused about the requirements. Does android's
+> recovery image need fbdev (meaning /dev/fb chardevs), or does it need
+> fbcon?
+>
+> Note that fbcon runs (or well, should run) totally fine on top of drm
+> drivers without the fb notifier. This wasn't the case a few years ago
+> (because fbcon also used that notifier), but nowadays fb notifiers are
+> only needed for legacy fbdev drivers. So could it be that this "need fb
+> notifier" requirement is a leftover from rather old kernel versions and
+> not actually needed anymore?
+>
+> I think we should nail the actual requirements here first before jumping
+> to solutions ...
 
+Right, let's wait for Florian to reply. From what he said earlier
+though, the only reason that the notifiers are getting in the
+way is the link error you get from trying to load a separately
+built fb.ko module on a kernel that was built with FB=n / FB_CORE=n,
+so I don't think he even cares about notifiers, only about
+allowing the recovery application to mmap() the framebuffer.
+
+     Arnd
 
