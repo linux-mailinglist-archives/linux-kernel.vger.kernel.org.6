@@ -1,272 +1,259 @@
-Return-Path: <linux-kernel+bounces-171495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07BB88BE517
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:03:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E0E8BE51E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A1431C240E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC44128C843
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F03715F3EA;
-	Tue,  7 May 2024 14:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D85615F3E9;
+	Tue,  7 May 2024 14:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jUAHuDB8"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4vH887Zu"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2073.outbound.protection.outlook.com [40.107.92.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADC015E5A2;
-	Tue,  7 May 2024 14:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715090614; cv=none; b=Rh/Esz1Kg3EsfgVYJh11N+65J4TtscmTwjShFWhAQdrrS3p/3G66i9TPj02bBrwfIMlLA6XkMQrzpcAflFuDEifPaTYSNLvw6sdyfiPzmVeng/OsW3IX32EqnFed+Zgza9KUctZv8/pUY74fxJuKHpvIVbI5vCNECfXpXPYb3gc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715090614; c=relaxed/simple;
-	bh=4uyjjtLlvy23G4uGT8iYgbWNw67cUrp97HGC7a98lzs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UXp9PHn9Ggqti5dcoZ0fTeFf8q9NxY5wFO3CofJL7T3co3HIqNsKg97NRRJygzNQgA3iQl2keABEnlNndx/PJsMOs7tRHhjJ0VaswJpyHIX+Io2K45QuQr6la5dy6SJcSZcFdF0xYrMGLmYZnGO+sGLAjMBcOh7uFCiBOLOflRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jUAHuDB8; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41b782405bbso22166335e9.1;
-        Tue, 07 May 2024 07:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715090611; x=1715695411; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ACRiFz5JMT7HATdqtB6Qwjpz19aIG/dJdFvDLMioqk4=;
-        b=jUAHuDB8C2IvnGI+LejGLv2ZCa1Cxf+Jvt3LPY0ufErLQRCp2xjoQfji15ANOLzp/A
-         xtVMmhS+womnTuKrlU6fbi0Z5kyUnESdV2qpm2iPw1xd7Q3HNCiguR4iM28jsT1lKr8G
-         jPN7ehMVTTT13ZTIPSJ4qnxVSAdU7/fPwN/spaIcDIpNtLEtrxZ+WL4XJSnJrgZtNySB
-         6qB1NVLR1aeRmhf/sszC4/l6JEhfH5RtdjfYggJWYalVEru+lueo5jCjgEXcfpaNEqdf
-         GeVFvRoNfNOYTSmMbykq+sJo0XNdymGBUN3/rWSzhxxtIy+1PEtyIgIczAMETmMQozM0
-         46xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715090611; x=1715695411;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ACRiFz5JMT7HATdqtB6Qwjpz19aIG/dJdFvDLMioqk4=;
-        b=VjixlTZ+Rg03VTmlPeLP1W3+tOAVExsyeEU/rvDzW458OQBfPM8A3SlC0vCaGMTlGY
-         WW6DQiFm4CChGHSgTRXwGky35xfMyusXHklANDr4+rLxI9uTW8wUKIW+VF/qlSWjkzUK
-         nTX6TO06bA3cTEBnaSK//olrC0AjAjY2q6kTlwQ14bRXEWWgO7pSQ/AzC7k34xMWqev7
-         L+7cpYD8qAFt2yPoqB1gHQu9MPSyOm11oZk9Ep14aDJl028hEPpPvJFtQYlh9o/I3mIw
-         5EK18xDkyDw3WupTEcyBq0PwCS8ztVqcAQSL82Gu2k4UKd/fyVRumWNj1Hk/ZGm+R/nX
-         JBzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKYnrHB/OH5lBuC2b9b67kEmd/CmQ3mOzWY8NljKXJDfgUZ19foV3+vPqkjdA4oKU9sOngdxQmlRXNNQAFWqjWbUy5d1xydMxzJDb5U6qn2MLrGH0fNEkRJ8Nrb5wYaXu3JrcZyms+yxhODbFHOVVp309JhL5fdMfUTfTbEQO5vU7kEhaGD9ZQtayA9VX1sXDPc8P5UhEG
-X-Gm-Message-State: AOJu0Yyns0kRVEc4cX0o9FtPUn21QJ41LFDnOPmFgDp2+0ZK+vAc11en
-	D5sfDzgdJr9ePMoIqNN8pWOo71lO/QPve9rIzZ/SqzBlQcyndxyU
-X-Google-Smtp-Source: AGHT+IHBxCIKJZOjU+GXnLH3UtwF/07SzqBHvP3On8U6hnAh099ag9MfwbvP7+0U55XvbNa/LQfHlg==
-X-Received: by 2002:a05:600c:3150:b0:41b:3e4e:bd99 with SMTP id h16-20020a05600c315000b0041b3e4ebd99mr9641420wmo.12.1715090610529;
-        Tue, 07 May 2024 07:03:30 -0700 (PDT)
-Received: from ?IPv6:2001:8a0:e622:f700:855f:a005:34c7:4367? ([2001:8a0:e622:f700:855f:a005:34c7:4367])
-        by smtp.gmail.com with ESMTPSA id c1-20020a05600c0a4100b0041bf3a716b9sm19768132wmq.34.2024.05.07.07.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 07:03:30 -0700 (PDT)
-Message-ID: <6c8bf4a2cb2c9494d1a7325d4ca6adb72aad93fa.camel@gmail.com>
-Subject: Re: [PATCH v4] can: mcp251xfd: fix infinite loop when xmit fails
-From: Vitor Soares <ivitro@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp
- <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Vitor Soares <vitor.soares@toradex.com>,
- linux-can@vger.kernel.org,  netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Tue, 07 May 2024 15:03:28 +0100
-In-Reply-To: <20240506-bronze-snake-of-imagination-1db027-mkl@pengutronix.de>
-References: <20240506144918.419536-1-ivitro@gmail.com>
-	 <20240506-bronze-snake-of-imagination-1db027-mkl@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6942B29CFE;
+	Tue,  7 May 2024 14:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715090693; cv=fail; b=TPjEuexA2Q3qddLv5iApQzu9nVmTUOd7RTkzcTB9vWywPVgr7Vu9vVrNee7wgtdpIRTCuWy02D6WMbuDX3k6ZSLUR/HQtPZ1vDP66nQ4xeTLwnglGrijqn+A/EwiMLs51K47QwpsNQidqwfyEU5PTFlIZsWPrQkp4nibvTtjCaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715090693; c=relaxed/simple;
+	bh=0ytNjyOKeUSsgUEjDDcC7TTHzECHuQkTbwdFXIXCHbE=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RcvoXk6dr6N+Mky1zXXM8tOWwz7w7Qwit4nVrvDXiRaS/yCSVoWTEFCpkpfK83d92hi2LpA5SuzKZk7aEi/1Gsktz7YQETGOeeTfU9YL03ylKQY02h8dJqFJ3n4wyHV86Iobpnw/nswSGvD0djYPLiPbtwPNB8gwgo8KKdZaEic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4vH887Zu; arc=fail smtp.client-ip=40.107.92.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hmmkbw3iBXW25YXgyndBO+CQcv5afIIlLShcQlMUQMSkdAW6y8mj5IC93MgOKJbMpeiF8F1ZIo+kxhbBQFlW03D+1NTd+35y9bYFfQvHeNI3R6fU2+DcViJ+c4KCMG9TqZerzEYghCgc3cO2iA7Cd73cbHl9TPD+64rVuZcDNyXpYq40kIDjTCSog6PgybaE4nUoDzxogFmdvkkAoYCI9qu0bbgdzvrRY1CrkzcVFo3i0DnVRsYSYID2C/UdRmXWY4FTGliwIaMoEbs8LscxfjKankMlRKa9yBmc/X5MefJSwRsCrzuDJcvHx9kaS9gjU/aNfmE1IdwgbJ6TzPrDDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X90qCJWxjQS9HCRtm3K99keskZEFkbPEufIUCKHY90U=;
+ b=CTVR76EptxF871WCeAJN6UujD1MKwElLNopeUrZdSgObLvzLooPvPqdY6zOR51GScOh4Udxizcq5gjNg74MJmg3BeClVhE9QVmSXJWVR3QMqCcSo6eg6SBnyHh/QDbxqavRYOmyRP5cuBSwyE9z1mDxIHKXdhSnC4MSJpBalyZnmPVpqNDZtyILEs6IMyZ7gjA+7e0X5KU4IeSCi9iCSsi7AciVAvXoyrYuIliinAO0KTrfMDm8M6lQ6H2P2LHsgaEQ9B9xrkRDR7zpMWcug2rwLiKQgmtvipuzqrDdrt0Ulhw79YgOiUyRPpQHxU8KsITQLQVhxBN8QNsnonucxoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X90qCJWxjQS9HCRtm3K99keskZEFkbPEufIUCKHY90U=;
+ b=4vH887Zuu71Nq2kieT0yZiL1HOEa92aqlyvoc8gGn1apKPqxbTBoAOrHMeP9vXN4XvWlc/2mgga1EG/jqHmdFOFcauiJtY0OwU6NdxktF2sI0oYJMhpNuR2ntggh6Z+jYavcI661g7fYCWRAg6II2jWDVqJABu1tPvu7Tseu9tM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by SN7PR12MB8004.namprd12.prod.outlook.com (2603:10b6:806:341::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
+ 2024 14:04:47 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 14:04:47 +0000
+Message-ID: <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
+Date: Tue, 7 May 2024 16:04:41 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmabuf: fix dmabuf file poll uaf issue
+To: "T.J. Mercier" <tjmercier@google.com>,
+ Charan Teja Kalla <quic_charante@quicinc.com>,
+ zhiguojiang <justinjiang@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
+ <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com>
+ <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
+ <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com>
+ <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
+ <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
+ <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com>
+ <83605228-92ee-b666-d894-1c145af2e5ab@quicinc.com>
+ <CABdmKX2MWU9-9YN46PXx-Jy-O9CHMv8hCkvArd7BbWUBs=GPnw@mail.gmail.com>
+ <8915fcc1-d8f1-48c2-9e51-65159aaa5a3b@amd.com>
+ <ZjovD5WaWjknd-qv@phenom.ffwll.local>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <ZjovD5WaWjknd-qv@phenom.ffwll.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR3P281CA0034.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:1c::20) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SN7PR12MB8004:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8608fa8f-002e-4791-9728-08dc6e9ea79d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b05OUkZMK0lDZlpTVFN4d2ZVc3NMSkxyTVhnck9nVlhtQkE4dHg1WUJTelV4?=
+ =?utf-8?B?Wno4a3AxcGJLa0Y2Y3cwK2hjR0xWaVk2azVwd3N1a05OclRvZmhrdk1WdDBV?=
+ =?utf-8?B?Rkp6RVZUZFdXRXdoaHo5VHJBb0o4c2xOUXZ1MFFpSThxZVV2ZUhQYjl1WjlV?=
+ =?utf-8?B?RmZ6dURNTklRWTE3STVSOTFKcVRZSzRUTSs2SGIyb0V5M2VDTjlKODhXaXgy?=
+ =?utf-8?B?QmJUMmYwQ0kxOHBxTmJub241ZFBOM3A2NC9WUnFlNFNzQU12bjlQQjA5dHdS?=
+ =?utf-8?B?cXVmYmllNjd3ZW15b2RsN2pDME8xdVlKQXdGWER6NzlFYnVTWGNqbFBMaFBa?=
+ =?utf-8?B?UFZkRFlRL2JNcDcwNktxMUY5UlBBN2p0L0hDY1pJTWp6K3Y5RlFlak9YelZ0?=
+ =?utf-8?B?VTRaR3FrcEVzdzduVUFsWDQzUGhCRHdFcFBPenY2Y1YxUWdnS0ZXNFF3N0F4?=
+ =?utf-8?B?SS9GZGNWN0lsQ2xkOUxqanQwL1RBVXg4S2lZbXU3Q2FHUXFmY0FQQm45cUwr?=
+ =?utf-8?B?VHlKdFk4V2hkR0E3SlRUMkR4cG85MGZXdkJaMDNpSzRIaWZzWSt3VEtwdGtu?=
+ =?utf-8?B?UU9Uc1NQVlowM0Rsd0dRSCtXUXYvTzZsME5LbVB2UU44QVRybmhrb012SlBn?=
+ =?utf-8?B?bXZST1lpWGRnRWUrTC8zUnZscUVHZUliZ3NwTWNudGprZzBON1BPZ3ZnUGta?=
+ =?utf-8?B?M0xmRmljTTBTQ0NDMU85RjN5ZWRxamxBUDQwUWhpVUM5MldEbEFCSzRvWExD?=
+ =?utf-8?B?VUFWcGJ3RHFIemdidUZ2cVVYN29oaDVlcUhzcmZaTGVUQ2tSSm1BbmxqS3Rh?=
+ =?utf-8?B?YmxIamE3M2YwUHA1Y1gyZm1mR2s3Qm1zOXBta2FKQ1lwZTJMdjVESlJkQ2RZ?=
+ =?utf-8?B?Rk95akk0SlNYTFVFa2pxTXZFRmZTNWhTWGpiQ3V4eWhtSkFrWER3R29GU2Ux?=
+ =?utf-8?B?WFFPRXJDR2s2aFZOV0tOckNNcXdVNURFaDhGZ1hPQ3d4MXU2ck5OUDhOTFVw?=
+ =?utf-8?B?QjlHNmhQcVoreGtxYXJ1eS9lZW1mamxyUWZ0OWV5MHBXak1GaWdaVlhkMnJF?=
+ =?utf-8?B?eHh4aElERXluYU9tTmYwSU9LQXhrRENIZlVWTUg1bjhpQ3NhNzBjUnBNUGtl?=
+ =?utf-8?B?UXVtYy9Yd2hMR2VJa0NUV0owZXZlQ1RsTTV2b0ZlWE1ObnBCOHNQU2tPV3o5?=
+ =?utf-8?B?M1J0VnhLNktmTWwrTC9xWUVJUzVWL3FJUkdaWVQxTXdaRStKaVFMRHd3NmU0?=
+ =?utf-8?B?TnRvZ05pVkZXalJDWTZoaDF6dTRHNHM5Qk1WcFJoeWZMOHBlSlRIZXlwRmxF?=
+ =?utf-8?B?V09mYVdrRkp5UU96YmV2cWZFWEJSOWVaQ1hwcHNGZUVsMjlHUU1ZSU90Ny9Y?=
+ =?utf-8?B?YnNsK0tzNzdLVDQybjFEcjJEdWtsVHhoV3VLTG1LUGhUSzc4dVc2QS9GQ0Iw?=
+ =?utf-8?B?bm1ITEFWdWRQT0JtKzdwbUtrR2x4NTcybmlKb1BhSE9JZ2cxQ0hsTWZueS9M?=
+ =?utf-8?B?ZlFOWVpUZ25odGx0VmFUREdJQU1IZ1ZSeUJ4T0RXMzhhcGpQV1RlZEYvQVNO?=
+ =?utf-8?B?OTRDNG5HQlA1bjJHWW92WGtMZG9RdXhoSlNXT2djd3owN1VhMTBsWjJPQ1gv?=
+ =?utf-8?Q?WkW8VzFvUW0C4ICID8YEiE95E4UAPFD6h2QCiduBmRy4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S2Y3Qzl4R1JESTZUVDB1U0FrMTRLYlJXWGV6OWpsK2lzR3VZVTd1a1d1UzU5?=
+ =?utf-8?B?ZkpkaGVFcHVEUlpOK1A2MzBEd0tSYitKY0xxZnp4SWh2Z01MMzhYZ1AvV1Fw?=
+ =?utf-8?B?aEgyejZ1MENEaUpqb3VwV3VUYmVtNk10Zzk0b1lxandXeFZGZUZUbWZnamNK?=
+ =?utf-8?B?NWN1RFhIMjJ6K0VBdnhzS3IrYUphMHVmbHBWcjRtaFp4Q05YVmJ6dzEvRXIy?=
+ =?utf-8?B?WUk1RmRNR1YyaUUrRmo5cHdXZllySG1CeFJZTFk4VWFVNWtoYVpPbXRJdWk1?=
+ =?utf-8?B?cm9ZS0pqaFk1MVVZenRrdmxMM0g2cGRyY2Y1d0lEclZ1dkFnTzZORFRmQVd1?=
+ =?utf-8?B?ZmxMQUJBYmJ1SitkdmZvM1ZFcnQzTlBqRGgxelFyK2hwSytISFpOMGhOa0tL?=
+ =?utf-8?B?ejBzcXJYaG1tM095WHZDRUxCd3BOUFV4U3B2Y0FXb2tQYThqWlI0M3FZb0Z6?=
+ =?utf-8?B?Umx1azVyUUxKd2c3SHdLM08vSmh4RzVlb2pFaW9OWU5hWnNQb21XZDBHaWpK?=
+ =?utf-8?B?ZGkyQS9RbzV1M3ByaG9sMVZhMktpNDI3cEhLWlJiek9wV0dMT0dDZXRxcWhT?=
+ =?utf-8?B?QWRKS3NWWEZmcFAwNEZPOTV6VWl0Tkg1b05GMWlCSHNZWDVCQU5rU3dyMkUv?=
+ =?utf-8?B?cXIxVzNLSVpRZG9zS3ZIV0NuSi9jVWg3T1pwam1SV0tWMlNWQmk5NnU4Rk9q?=
+ =?utf-8?B?VmlNcGhFNlF3aTdaTWtEZVB3RytlREFDeU1BNkkzeDBSMUEzaEttWTd6Yndm?=
+ =?utf-8?B?eXUvMFlwTWx5cXc2RFdZM0h1NE9LdDZlTzVyeDBsdXhxdWtqbFdXcTNRbVB3?=
+ =?utf-8?B?QkJwOUxISTVuYjk3T2lKS0ZiSHZyWmJ5UHZ1MTJ4dVJpTlZFZUwwd0U2dFYz?=
+ =?utf-8?B?TWs1bEx4UVNuV0psc3BkZHRvcnZXN08yaVBJSy9TUmNpdUN4bnNBSE4xc2lk?=
+ =?utf-8?B?VzVSV243amNPNVJtNTZaaEdBUmZxL2QraERVeHhnS2pnZHEwT0QxR0dUR0hs?=
+ =?utf-8?B?enVPRmdHVmRYSU1yWW8wY3pSQWZiZTZGRy9GM2NNZVpFeEpoZUc5cmtoakI2?=
+ =?utf-8?B?Y0ZYQmhDMjZOL3E1cjBtUUZFOU1CUzhVNFV6cWZ4c2s0dGVPUE9WRzBDTzJI?=
+ =?utf-8?B?OEszUjJPM2lBY1JZOGoyTG5zMDVPQVdJT2dHMFozNkJVQ1dCYkkrTmxzY2hn?=
+ =?utf-8?B?Y0hQZXB0ZmU4S0ZjdEZmQlJsVXlCZEU1UHppM0JUTUQ5dW03akRjdXhtN3RM?=
+ =?utf-8?B?NHU4S0kxS1Z6ZytnRWRqQkNlMDdtT2VVYTJ5eTZ3aVhBNS8xRHZlSzFyZlY5?=
+ =?utf-8?B?NFJKQUZabXRzTHM4ckExeVdyY0diemgyWnhLR3dTYUdXOVE5T0NEckxha0ZT?=
+ =?utf-8?B?L1V6bUdWeEZiS2RzRlE4UVA1bUV0aExHOExxRStWRndVazJhczZYSGNFMjUw?=
+ =?utf-8?B?cE8xd0dkbjc4SkZSNS9xbHdxYTJyZlJoTHYyMktNQUE1cTNQM3BxTTMrVzE3?=
+ =?utf-8?B?YThXNllKSGMxdDNJMXBmWXZyK0xPNUtuRjUrZGdvT20xK0dkQW1aOG04OXlD?=
+ =?utf-8?B?dEs0UElGU0FJQThjdi91d0VuUm1HMUh6eUM2cHBLeVNQNHVsUTV6MTMreHdE?=
+ =?utf-8?B?T1grRmxQQ3lxd1Vmbm9SWVY0dVNqVkVoODFzWHFTNjNRLzhtayttSFFDYzRV?=
+ =?utf-8?B?MWo5RG12WkwyM2l1bWNJbXV0Y1l2Yk5oZGZRRE4xN3JBYnBOWDVHRnpGUVlT?=
+ =?utf-8?B?QzlOKytBYXR4Z0N3TGJMNjVyWThhbjhqZ3VJZWVwNFJTYktEamE4elVYYkJQ?=
+ =?utf-8?B?RzRVQWwxRmp6RmdXeUNiWERKNlNneklMTlpBUUZIM2lUY25WQVB4ZWNBZ3ZI?=
+ =?utf-8?B?cHE4ZXNkTjFSWHQ4WUNzRXFXRVhOK1JjTE9FOHhJVVlKNVZVekF1UGVvVlNk?=
+ =?utf-8?B?UTFydXljZUhvUDE4cnJONFBBM01TMDJnYjd6OFpia1hZaFhmb2hrVzVhajBI?=
+ =?utf-8?B?T3RkRE5aaG0rbnA1RFVWREJtQmhXd1Axb09INGUwaThQbGRNS3BTblFheFZp?=
+ =?utf-8?B?U01IR3kxYU9RbmdtZkFxeDh0TFE0OU43R0FiZXA1UGF3aklOYy9rNXNlbkU5?=
+ =?utf-8?Q?f1/dX7naIW1DEjdrCseVg783t?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8608fa8f-002e-4791-9728-08dc6e9ea79d
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 14:04:47.6947
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8RKJfiC1PojGimgTWwauNQYI403kO+QbuIlLsiXuGs+QxtBbqGIcPynoc2E7qX2d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8004
 
-Hi Marc,
+Am 07.05.24 um 15:39 schrieb Daniel Vetter:
+> On Tue, May 07, 2024 at 12:10:07PM +0200, Christian König wrote:
+>> Am 06.05.24 um 21:04 schrieb T.J. Mercier:
+>>> On Mon, May 6, 2024 at 2:30 AM Charan Teja Kalla
+>>> <quic_charante@quicinc.com> wrote:
+>>>> Hi TJ,
+>>>>
+>>>> Seems I have got answers from [1], where it is agreed upon epoll() is
+>>>> the source of issue.
+>>>>
+>>>> Thanks a lot for the discussion.
+>>>>
+>>>> [1] https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
+>>>>
+>>>> Thanks
+>>>> Charan
+>>> Oh man, quite a set of threads on this over the weekend. Thanks for the link.
+>> Yeah and it also has some interesting side conclusion: We should probably
+>> tell people to stop using DMA-buf with epoll.
+>>
+>> The background is that the mutex approach epoll uses to make files disappear
+>> from the interest list on close results in the fact that each file can only
+>> be part of a single epoll at a time.
+>>
+>> Now since DMA-buf is build around the idea that we share the buffer
+>> representation as file between processes it means that only one process at a
+>> time can use epoll with each DMA-buf.
+>>
+>> So for example if a window manager uses epoll everything is fine. If a
+>> client is using epoll everything is fine as well. But if *both* use epoll at
+>> the same time it won't work.
+>>
+>> This can lead to rather funny and hard to debug combinations of failures and
+>> I think we need to document this limitation and explicitly point it out.
+> Ok, I tested this with a small C program, and you're mixing things up.
+> Here's what I got
+>
+> - You cannot add a file twice to the same epoll file/fd. So that part is
+>    correct, and also my understanding from reading the kernel code.
+>
+> - You can add the same file to two different epoll file instaces. Which
+>    means it's totally fine to use epoll on a dma_buf in different processes
+>    like both in the compositor and in clients.
 
-On Mon, 2024-05-06 at 17:14 +0200, Marc Kleine-Budde wrote:
-> On 06.05.2024 15:49:18, Vitor Soares wrote:
-> > From: Vitor Soares <vitor.soares@toradex.com>
-> >=20
-> > When the mcp251xfd_start_xmit() function fails, the driver stops
-> > processing messages, and the interrupt routine does not return,
-> > running indefinitely even after killing the running application.
-> >=20
-> > Error messages:
-> > [=C2=A0 441.298819] mcp251xfd spi2.0 can0: ERROR in mcp251xfd_start_xmi=
-t: -16
-> > [=C2=A0 441.306498] mcp251xfd spi2.0 can0: Transmit Event FIFO buffer n=
-ot empty.
-> > (seq=3D0x000017c7, tef_tail=3D0x000017cf, tef_head=3D0x000017d0,
-> > tx_head=3D0x000017d3).
-> > ... and repeat forever.
-> >=20
-> > The issue can be triggered when multiple devices share the same
-> > SPI interface. And there is concurrent access to the bus.
-> >=20
-> > The problem occurs because tx_ring->head increments even if
-> > mcp251xfd_start_xmit() fails. Consequently, the driver skips one
-> > TX package while still expecting a response in
-> > mcp251xfd_handle_tefif_one().
-> >=20
-> > This patch resolves the issue by decreasing tx_ring->head and removing
-> > the skb from the echo stack if mcp251xfd_start_xmit() fails.
-> > Consequently, the package is dropped not been possible to re-transmit.
-> >=20
-> > Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxF=
-D SPI
-> > CAN")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-> > ---
-> > With this approach, some packages get lost in concurrent SPI bus access
-> > due to can_put_echo_skb() being called before mcp251xfd_tx_obj_write().
-> > The can_put_echo_skb() calls can_create_echo_skb() that consumes the
-> > original skb
-> > resulting in a Kernel NULL pointer dereference error if return
-> > NETDEV_TX_BUSY on
-> > mcp251xfd_tx_obj_write() failure.
-> > A potential solution would be to change the code to use spi_sync(), whi=
-ch
-> > would
-> > wait for SPI bus to be unlocked. Any thoughts about this?
->=20
-> This is not an option. I think you need a echo_skb function that does
-> the necessary cleanup, something like:
->=20
-> void can_remove_echo_skb(struct net_device *dev, unsigned int idx)
-> {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct can_priv *priv =3D=
- netdev_priv(dev);
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->echo_skb[idx] =3D NULL;
-> }
->=20
-> I think you can open-code the "priv->echo_skb[idx] =3D NULL;" directly in
-> the driver.
->=20
-> And you have to take care of calling netdev_completed_queue(priv->ndev,
-> 1, frame_len);
+Ah! Than I misunderstood that comment in the discussion. Thanks for 
+clarifying that.
 
-I have tried this approach and got the following trace:
+>
+> - Substantially more entertaining, you can nest epoll instances, and e.g.
+>    add a 2nd epoll file as an event to the first one. That way you can add
+>    the same file to both epoll fds, and so end up with the same file
+>    essentially being added twice to the top-level epoll file. So even
+>    within one application there's no real issue when e.g. different
+>    userspace drivers all want to use epoll on the same fd, because you can
+>    just throw in another level of epoll and it's fine again and you won't
+>    get an EEXISTS on EPOLL_CTL_ADD.
+>
+>    But I also don't think we have this issue right now anywhere, since it's
+>    kinda a general epoll issue that happens with any duplicated file.
 
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 0 PID: 858 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0=
-x144
-Modules linked in: can_raw can tpm_tis_spi tpm_tis_core 8021q garp stp mrp =
-llc
-rf6
-CPU: 0 PID: 858 Comm: cansend Not tainted 6.9.0-rc6-00132-g31a65174a15c-dir=
-ty
-#16
-Hardware name: Toradex Verdin iMX8M Mini WB on Verdin Development Board (DT=
-)
-pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-pc : refcount_warn_saturate+0xf4/0x144
-lr : refcount_warn_saturate+0xf4/0x144
-sp : ffff800080003cc0
-x29: ffff800080003cc0 x28: 0000000000000101 x27: ffff0000060ba0ac
-x26: 0000000000000000 x25: 0000000000000000 x24: ffff800080003ea4
-x23: ffff8000816f9000 x22: 0000000000000000 x21: 0000000000000000
-x20: ffff000009e8196c x19: ffff000009e81800 x18: 0000000000000006
-x17: ffff7ffffe6dc000 x16: ffff800080000000 x15: 072007200720072e
-x14: 0765076507720766 x13: ffff8000817124e0 x12: 000000000000056a
-x11: 00000000000001ce x10: ffff80008176a4e0 x9 : ffff8000817124e0
-x8 : 00000000ffffefff x7 : ffff80008176a4e0 x6 : 80000000fffff000
-x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff000003754500
-Call trace
-refcount_warn_saturate+0xf4/0x144
-sock_wfree+0x158/0x248
-skb_release_head_state+0x2c/0x144
-kfree_skb_reason+0x30/0xb0
-can_dropped_invalid_skb+0x3c/0x17c [can_dev]
-mcp251xfd_start_xmit+0x78/0x4e0 [mcp251xfd]
-dev_hard_start_xmit+0x98/0x118
-sch_direct_xmit+0x88/0x37c
-__qdisc_run+0x118/0x66c
-net_tx_action+0x158/0x218
-__do_softirq+0x10c/0x264
-____do_softirq+0x10/0x1c
-call_on_irq_stack+0x24/0x4c
-do_softirq_own_stack+0x1c/0x28
-do_softirq+0x54/0x6c
-__local_bh_enable_ip+0x8c/0x98
-__dev_queue_xmit+0x224/0xd84
-can_send+0xd4/0x2a4 [can
-raw_sendmsg+0x270/0x3a0 [can_raw]
-sock_write_iter+0xa4/0x110
-vfs_write+0x2f0/0x358
-ksys_write+0xe8/0x104
-__arm64_sys_write+0x1c/0x28
-invoke_syscall+0x48/0x118
-el0_svc_common.constprop.0+0xc0/0xe0
-do_el0_svc+0x1c/0x28
-el0_svc+0x34/0xdc
-el0t_64_sync_handler+0x100/0x12c
-el0t_64_sync+0x190/0x194
---[ end trace 0000000000000000 ]---
+I actually have been telling people to (ab)use the epoll behavior to 
+check if two file descriptors point to the same underlying file when 
+KCMP isn't available.
 
-My understanding is that can_create_echo_skb() does consume_skb(), which fr=
-ees
-the original skb and when the stack retry to transmit again it is not there=
-.
+Some environments (Android?) disable KCMP because they see it as 
+security problem.
 
-In consequence of this, I moved the consume_skb() from can_create_echo_skb(=
-) to
-the driver and I could do can_free_echo_skb() and return NETDEV_TX_BUSY wit=
-hout
-issues on my tests.
+> So I don't think there's any reasons to recommend against using epoll on
+> dma-buf fd (or sync_file or drm_syncobj or any of the sharing primitives
+> we have really).
 
-..
-err =3D mcp251xfd_tx_obj_write(priv, tx_obj);
-if (err) {
-	tx_ring->head--;
+No, that indeed seems to be fine then.
 
-	if (!echo_err) {
-		can_free_echo_skb(ndev, tx_head, &frame_len);
-		netdev_completed_queue(ndev, 1, frame_len);
-	}
+Thanks,
+Christian.
 
-	if (mcp251xfd_get_tx_free(tx_ring))
-		netif_wake_queue(ndev);
-
-	if (err =3D=3D -EBUSY)
-		return NETDEV_TX_BUSY;
-
-	stats->tx_dropped++;
-	if (net_ratelimit())
-		netdev_err(priv->ndev,
-				"ERROR in %s: %d\n", __func__, err);
-}
-
-consume_skb(skb);
-..
-
-
->=20
-> Another option would be to start a workqueue and use spi_sync() in case
-> the spi_async() is busy.
->=20
-> regards,
-> Marc
->=20
-
-Meanwhile, I wonder if there is anything to add to the current patch so I c=
-an
-address this topic in another patchset.
-
-Best regards,
-Vitor Soares
+>
+> Cheers, Sima
 
 
