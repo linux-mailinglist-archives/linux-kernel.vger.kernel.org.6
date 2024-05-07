@@ -1,92 +1,172 @@
-Return-Path: <linux-kernel+bounces-171578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4558BE5E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0D68BE5E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFEF0B2C590
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:27:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFAA1F23581
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39E615FCF0;
-	Tue,  7 May 2024 14:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEDA15FA67;
+	Tue,  7 May 2024 14:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzhZpYxx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KoH6ZvPO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jG/kf6O1"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0366715FA63;
-	Tue,  7 May 2024 14:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6C8152196;
+	Tue,  7 May 2024 14:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092016; cv=none; b=P6yxXRpCEgjBcm+fR2uGiJjRDzc/46DKnxIc6FeaTIu8mG61jdl+ooxO/V1S6Kjqqrw1KAE1/2ZlfsPx9mLq78xw0JNNIP08hJ+clIIiZG9ejZXrL1qzYaDiadkexotiT4cIvdPo5n1MeCnreLFT09AQbvWnL3LtO491dDr4dfQ=
+	t=1715092070; cv=none; b=SYMvlfk5ErxYVpAvZA9uy9Ot/jVB9bM1ITrSRZyPjkWpoZh+1ky3fTa6CWfJgbCEVVL1M7q25Ki4dmUVHmUedsPRH4V3NfkUVOvn3uqhlPhP5XB0ihfC3JBNcFvhItU6X21A8OhRv0iFLerryoPbtwJRg8NuypWx7pRo+DXIJL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092016; c=relaxed/simple;
-	bh=lYrQrnCSDVMAZMcY6WaFG+KBzi8OpV4qLgKv1Deazgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ePCEZ8z66EBxGWXQpewPB2R4+NUGjtXhkG0jsHKhUSDB1oUSH+XfcGfq6i9xzKOc7yEV2qVFM31S4yj3nwt9wgEkDT7Y7BNMpFCDx+NZSQYEybNe9Xonzz34mYEH2+zwbQabAGkU+7cbAH5n9wwW68zQ69SlXWAo5IKKp7BEY9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzhZpYxx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90007C2BBFC;
-	Tue,  7 May 2024 14:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715092015;
-	bh=lYrQrnCSDVMAZMcY6WaFG+KBzi8OpV4qLgKv1Deazgw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QzhZpYxxRD7X41gFhOocwbf9cskiPbVsNmPoadZK2uRX/1ukfzajz9KEmN7IfvQS5
-	 Cd1bWG/YcHCiZVpgKs5mqQu2B117nTRvKc9mbrvUyZeuEveKT/QffiBSUPQ3SaNvqN
-	 5wHINKJ+2PJcdVbAy3KuuXk4DJ1t0NB+MIMXwoXdlwjCPsMpAwPqCALE7iPJxsoHa6
-	 EEmjBtRFDFdM9ME4cMa5vxBvL7RGePSSRcw2+BNhNqG/mMSCGt8uXF/ZSsVJS4kKvq
-	 iAEunH9gr1S5neq0Iy4faWnd21ZhNRKMOAaQ67Qv13ZNPtWqEWDe8oPsfDZny+iXfs
-	 J2wNkPM6ybvIQ==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f4d2676d1so3582893e87.3;
-        Tue, 07 May 2024 07:26:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGOVXyLJiT/B8GKgUVVIYTNoM5ieeuBZQozYNC9IV0apwBGD7UIsmfKchx5EfcPQLc3ArXGUAOX2v3G5ooDxWoS0me7EDGnb9vkry9GibRfDJ2fD+PBGqaAAoUSfr2P4ccE59XvI3OLD63
-X-Gm-Message-State: AOJu0YxNDO2ZAnZzd8gqW7Fw0Z2zrrG77qSrfkXhC5uqwygvWBEmgB4v
-	pXvKEBEUYJlp3Fh8p6mpx8c5EPPyv6VKE7WZnU725YtC2m0GIRmqZJM7Iynoa/pepcl5b/uwYt0
-	cz74JCzbcCdtqSz8RfXb4tjVT7A4=
-X-Google-Smtp-Source: AGHT+IHs4kKfrAUEx7t0s1MVsgWGje/LfqkGEHnXw4rWGq9/3VHuD/mMGzeQ5DHF1TvYMzSpucR1cpweLSSuqCMr4RI=
-X-Received: by 2002:a05:6512:3da3:b0:521:684:ce1b with SMTP id
- k35-20020a0565123da300b005210684ce1bmr2905088lfv.20.1715092014346; Tue, 07
- May 2024 07:26:54 -0700 (PDT)
+	s=arc-20240116; t=1715092070; c=relaxed/simple;
+	bh=+Q+NydcMUcdWT3YLnEE9ECpiROxo2MNZO2wKlTzIxKg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GmKA+2xmdOLmVdEpbhi3FAimG0q1PVcOyPQHbghW+6sHcLvO3RU3H3X8vOXZG/xI45m0WNFNwl5s9HCBGEUZb7r074ny69tyvx8gGeWDWPvp4mStc5o4nPtETaoiPda0ZECfFnOFFV57ZREPk0FwKAuqAsp5UsvGecwDkxzcm0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KoH6ZvPO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jG/kf6O1; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 7 May 2024 16:27:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715092063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ier8OnNlqjn0MPQE8OdCNPD0vTSAJTNYuTmOd4uysZs=;
+	b=KoH6ZvPOGTAyZDMzUG7afOw8y0vbaZ2v8oF3PQFd/JkOoZVNrNI1Qr5k9tLeEyV2+GCmI1
+	WwH/COAuU5Rzg+wTlY3l9lgcNqH5y20UUOu9MsokhVfNzKQp4/IqpWEOwG0tqdrBBiI00z
+	LbAV8cSlcJZXs8itB/mO6sGtcLkNouKLBWDLMGbiCtu9VlG+K/ySEHZMb6ERFI+qohWFUx
+	meV2bltRzScpy5hVl0QqsP4l4mKB1okiDXiRb3D4S/vLYKVK4li1EE8hHapFkGiX1BYWs7
+	PhWhP5aj5pvd8SHRcHnzRXf6xSl+uiZG3qBglC7FJUG0Fjkym9Z7j75uwriGcQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715092063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ier8OnNlqjn0MPQE8OdCNPD0vTSAJTNYuTmOd4uysZs=;
+	b=jG/kf6O1dnlSfxsyOeqDhN+H2QhwbzS2XJILX2slkvUQs6+2YzwFwqpGbvF4NDOO9IdnZp
+	PS94V4+zbTcAbCCg==
+From: Nam Cao <namcao@linutronix.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Yinghai Lu <yinghai@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Abort hot-plug if
+ pci_hp_add_bridge() fails
+Message-ID: <20240507142738.wyj19VVh@linutronix.de>
+References: <cover.1714838173.git.namcao@linutronix.de>
+ <f3db713f4a737756782be6e94fcea3eda352e39f.1714838173.git.namcao@linutronix.de>
+ <Zjcc6Suf5HmmZVM9@wunner.de>
+ <20240505071451.df3l6mdK@linutronix.de>
+ <20240506083701.NZNifFGn@linutronix.de>
+ <ZjkxTGaAc48jPzqC@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504193446.196886-1-emil.renner.berthing@canonical.com> <20240504193446.196886-3-emil.renner.berthing@canonical.com>
-In-Reply-To: <20240504193446.196886-3-emil.renner.berthing@canonical.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 7 May 2024 23:26:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ30jMv9FUQaf5kGRG+FTsn0pB=ydeMUPTxbZ2aSHZ4LQ@mail.gmail.com>
-Message-ID: <CAK7LNAQ30jMv9FUQaf5kGRG+FTsn0pB=ydeMUPTxbZ2aSHZ4LQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] riscv: show help string for riscv-specific targets
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Nick Terrell <terrelln@fb.com>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjkxTGaAc48jPzqC@wunner.de>
 
-On Sun, May 5, 2024 at 4:34=E2=80=AFAM Emil Renner Berthing
-<emil.renner.berthing@canonical.com> wrote:
->
-> Define the archhelp variable so that 'make ACRH=3Driscv help' will show
-> the targets specific to building a RISC-V kernel like other
-> architectures.
->
-> Tested-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> ---
+On Mon, May 06, 2024 at 09:36:44PM +0200, Lukas Wunner wrote:
+> On Mon, May 06, 2024 at 10:37:01AM +0200, Nam Cao wrote:
+> > I just discovered a new crash scenario with shpchp:
+> > 
+> > First, hot-add a bridge:
+> > (qemu) device_add pci-bridge,id=br2,bus=br1,chassis_nr=1,addr=1
+> > 
+> > But with the current patch, the hot-plug is still successful, just that the
+> > bridge is not properly configured:
+> > $ lspci -t
+> > -[0000:00]-+-00.0
+> >            +-01.0
+> >            +-02.0
+> >            +-03.0-[01-02]----00.0-[02]----01.0--  <-- new hot-added bridge
+> >            +-1f.0
+> >            +-1f.2
+> >            \-1f.3
+> > 
+> > But! Now I leave the hot-added bridge as is, and hot-add an ethernet card:
+> > (qemu) device_add e1000,bus=br1,id=eth0,addr=2
+> > 
+> > this command crashes the kernel (full crash log below).
+> > 
+> > The problem is because during hot-plugging of this ethernet card,
+> > pci_bus_add_devices() is invoked and the previously hot-plugged bridge hasn't
+> > been marked as "added" yet, so the driver attempts to add this bridge
+> > again, leading to the crash.
+> > 
+> > Now for pciehp, this scenario cannot happen, because there is only a single
+> > slot, so we cannot hot-plug another device. But still, this makes me think
+> > perhaps we shouldn't leave the hot-plugged bridge in a improperly-configured
+> > state as this patch is doing. I cannot think of a scenario that would crash pciehp
+> > similarly to shpchp. But that's just me, maybe there is a rare scenario
+> > that can crash pciehp, but I just haven't seen yet.
+> > 
+> > My point is: better safe than sorry. I propose going back to the original
+> > solution: calling pci_stop_and_remove_bus_device() and return a negative
+> > error, and get rid of this improperly configured bridge. It is useless
+> > anyways without a subordinate bus number.
+> > 
+> > What do you think?
+> 
+> When the kernel runs out of BAR address space for devices downstream of
+> a bridge, it doesn't de-enumerate the bridge.  The devices are just
+> unusable.
+> 
+> So my first intuition is that running out of bus numbers shouldn't result
+> in de-enumeration either.
 
-Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+The BAR case is a bit different: it is a legal configuration for a bridge
+to have no address space downstream: we can configure the bridge with
+limit<base to indicate that there is no downstream addresses. There is
+nothing similar for secondary bus number: there is no legal bus number
+configuration for the bridge in this case.
 
+> Remind me, how exactly does the NULL pointer deref occur?  I think it's
+> because no struct pci_bus was allocated for the subordinate bus of the
+> hot-plugged bridge, right?  Because AFAICS that would happen in
+> 
+> pci_hp_add_bridge()
+>   pci_can_bridge_extend()
+>     pci_add_new_bus()
+>       pci_alloc_child_bus()
+> 
+> but we never get that far because pci_hp_add_bridge() bails out with -1.
+> So the subordinate pointer remains a NULL pointer.
 
---=20
-Best Regards
-Masahiro Yamada
+This is correct. NULL deference happens due to subordinate pointer being
+NULL.
+ 
+> Perhaps we should allocate an empty struct pci_bus instead.
+
+This feels a bit hacky. What bus number could we set to this struct? And I
+doubt that the PCI subsystem is written with the expectation that struct pci_bus
+can be a dummy one, so I would guess that the probability of breaking thing
+is high with this approach.
+
+> Or check for a NULL subordinate pointer instead of crashing.
+
+I think this is a possible solution, but it is a bit complicated: all usage
+of subordinate pointers will need to be looked at. Further more, secondary bus
+number being zero is currently taken as unconfigured/invalid (for example
+in pci_scan_bridge_extend()), that needs to be changed as well. Doing this
+has a good chance of breaking things.
+ 
+I don't really see the upside of the above, compared to just deleting this
+bridge. It is not really counter-intuitive that the OS rejects a
+hot-plugged device that cannot be configured, right? Also this solution is
+wayyy simpler. Unless there is problem with this that I am not seeing?
+
+Best regards,
+Nam
 
