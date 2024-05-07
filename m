@@ -1,279 +1,124 @@
-Return-Path: <linux-kernel+bounces-171887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BBF8BE9F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:00:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A8D8BEA05
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309B81F21CA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 278C21F21D60
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A4F54BD3;
-	Tue,  7 May 2024 17:00:24 +0000 (UTC)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A920548FE;
+	Tue,  7 May 2024 17:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NP1Jd2E4"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092E144C6F;
-	Tue,  7 May 2024 17:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8F1B672
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715101223; cv=none; b=ibnScLM+98R8zpXKIVz+LntGeQQFff5BbqFGTOs16F/e7TQqSquG2Dix/6ZQwUlhqgWJs4n2Nz/2R+C0ZJiDghOw6xDcxIScpMqj08gMccMFm8XSWGNlDZ6896uMCgns8R7hv2VavDvxmBpYvsihntQs4Ve1Hgp+apFxVNgHTMk=
+	t=1715101499; cv=none; b=VOt3RSC1M3X1g05bVaXw3NDgCubx+/FcRPysfpfmkcE35+UXfVVcixLvJ+tv9wzjE+R6QD3zgOp2S580cbAqhmy7bqsV4vGBjnqZM5ZcxN9z4lalYUlToMU9cRj/SRmRzaoyQ7BrF6DgdH/Zy38ZLD/6tgpWcweU+CVG+22XY6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715101223; c=relaxed/simple;
-	bh=t1RIG4lFlJ2bVFn7HFt/zInC8yyYV3aSCcHDk0NkM5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lT1lEBJet+8Tcr3Y75snDQCqiXaJiBsUWEbWXg1BlcKDDiGEk1FVdSo3hdwDlubBs90ANp56XRToAhXpv91Krj+JrbiY40i8UqrI2MHOZM120Fduc8HD2jAZqy1a02mMJWDgAppFDDWYq1CmYH9+pfYrAXEvk+/AkzIlt3rLyJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e3fa13f018so10802851fa.3;
-        Tue, 07 May 2024 10:00:21 -0700 (PDT)
+	s=arc-20240116; t=1715101499; c=relaxed/simple;
+	bh=UZKao+sUmzHhKthGvkHfgeitNibMH3RZ6Xh64koB+Lw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dGk3E37uPy9hibjKhjHKeQjX0d4F+r2D08X7Ac1WaQD/aCXZjOP9q4PFMJD3JugR29y6NyRbiKBPeZqY9EtcwWg2rz7LgfwWTwnP3VsQmx3/tgpuQG2QBVgCw6FaP9zt8vEK+h+YNLyiA5X5+5Vk1PmIZ074Hwk7xM2QijOjbmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NP1Jd2E4; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b4a7671abaso2277653a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715101498; x=1715706298; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1VvOdta0CTNgaMD1FjE1RDD1M1Oa41gzPaIknnALqmo=;
+        b=NP1Jd2E4RmBIJlrelGZ/+76ImElVUG9DMF4wvsPa44lLlWeKXFAG9mcMYCoGvODY6V
+         m5PwkefrpLYqCjXzZu5sF60KYaQjXPy0HfaT1C0PS67PEeX07+KP4QbpiSZFWciSwb4q
+         q3WRp77Kh2zijIaM3/9r/gJcKTGjaCY6wc0kw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715101220; x=1715706020;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LItJ7IjSKA5TzTyJS4gjTEq76An66N3HomKKKz8MeuA=;
-        b=YQajUb+8LrSoddlNecbdjMX/qSO0ZNfAc29Jw7n5eP4ET8HWjyyEfpQCO2mCjTPDxr
-         H2yyV2Un/EjPjfHRRjvi0jCmdOEkMI4c7OzNseym4JNdBcigFGETu9U7Wv7vQbZU8DLz
-         a5rle25jm4V0U8J4yuOpltJrKj0LEA5nii4bm7goV9Zq+yrTyYkOTMuO7oDpG8Wkoxe4
-         /2PPnWuOCQ7T0F34BZQ1cYhPVVnOQ30WJnO3DwJ4kEW105rUuUsLAFIIYhRetklS7X7U
-         W2LbP32Q9uzpKGgxjlqzgMCgkMDOOO/HS3MZGxyIWKT3o4a0TOgeJNPv/Jq2xXQ+R8yS
-         m7Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVU8tP2qIzSyuFK4/8VPYa69bkfagR5IGSWuQzKrBlkywQ06bUT4teMtXVd4YJ2aAw1CJGuPWSyYLL7GqlKjnop2M2cjKZBPh05KBituBQeou/Udqj5ACt/VfZx0JQFvJ/r4aIgbFE=
-X-Gm-Message-State: AOJu0YzTSh+ohIuT7M4HBT9NGEPeR9ry52q8vHoA+tTH8yzaTSBatjym
-	UTYuJwwuJxb4iGcmRn2vIcyNodZS/79NwudV9HW8Z5FUIRP4+UFf
-X-Google-Smtp-Source: AGHT+IHnC7yjAY4z54ZWvxpVYv0mtgDIh5GTyFxC3vHHPoxRa/lBuvTBxApS3uWYctsKvE8dQmpjVw==
-X-Received: by 2002:a19:ee14:0:b0:520:76d0:b054 with SMTP id 2adb3069b0e04-5217cd4b0d8mr69069e87.57.1715101219912;
-        Tue, 07 May 2024 10:00:19 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id l20-20020aa7cad4000000b00572e91cf988sm3771430edt.93.2024.05.07.10.00.19
+        d=1e100.net; s=20230601; t=1715101498; x=1715706298;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1VvOdta0CTNgaMD1FjE1RDD1M1Oa41gzPaIknnALqmo=;
+        b=OaHMPjcsJRuLdXJM/cyUB22ghBN440fKFm/F6zGEnZ5aEs8q/WPji3tFhPE8xbQXbC
+         cJb0ufWzzN+dT5EU0urL1YQzGnq9OWBYl2YcrPnUxOsx4eoksTnGaXwaV07goOEKyYdJ
+         oUe8+mTFSoGUdluYpIYF+z2PWqC1LrsKuZifyAVXGS/0CVXyxyjnvZYYrqKieJKbrP80
+         ata/ETv4p6z4Og+igFy+VU0A70LKrOAqrzy5uCOgKspLpJpiVCaJ1A3MZtPgnNBDmTsC
+         0luTz/dOzzMcYbsenmdTC+d6fX70uy6wLkPpVKRevWST5+wOR+yZfh6lOKxx38//VxNq
+         mj+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWhP52Bwh4OanFzPcwyKHjEibNANU/oUy45jdl64up7m7CV+y91EWOPcPeoOKtFojKNi/4x5b5NZEnUMfOdx3JszVcEtDhG2yO+clCn
+X-Gm-Message-State: AOJu0Ywn09aEks2L+2QlAsLm8qW/4dHZRSaK9yLWXZl6wjZgINYB+lcR
+	WXD4g4LUQXM+f9TV0AT7KhbpiSkGc4FkecKQWNjW2l5wTDZOARpFkaRx5vuJCg==
+X-Google-Smtp-Source: AGHT+IF6VIPpzWidq8Xhn8vQ5vy8+tHIstOIQn9hSeNKvmfkqoOMJtcT7bQA79cHqdnrlPj9ICle8g==
+X-Received: by 2002:a17:90b:1889:b0:2b1:74ad:e252 with SMTP id 98e67ed59e1d1-2b6166c9f85mr157870a91.28.1715101496921;
+        Tue, 07 May 2024 10:04:56 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id sj16-20020a17090b2d9000b002b27eb61901sm11927831pjb.21.2024.05.07.10.04.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 10:00:19 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>
-Cc: christophe.jaillet@wanadoo.fr,
-	paulmck@kernel.org,
-	io-uring@vger.kernel.org (open list:IO_URING),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] io_uring/io-wq: Use set_bit() and test_bit() at worker->flags
-Date: Tue,  7 May 2024 10:00:01 -0700
-Message-ID: <20240507170002.2269003-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+        Tue, 07 May 2024 10:04:56 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: linux-fsdevel@vger.kernel.org,
+	Allen Pais <apais@linux.microsoft.com>
+Cc: Kees Cook <keescook@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	ebiederm@xmission.com,
+	mcgrof@kernel.org,
+	j.granados@samsung.com,
+	allen.lkml@gmail.com
+Subject: Re: [PATCH v4] fs/coredump: Enable dynamic configuration of max file note size
+Date: Tue,  7 May 2024 10:02:53 -0700
+Message-Id: <171510137055.3977159.13112533071742599257.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240506193700.7884-1-apais@linux.microsoft.com>
+References: <20240506193700.7884-1-apais@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Utilize set_bit() and test_bit() on worker->flags within io_uring/io-wq
-to address potential data races.
+On Mon, 06 May 2024 19:37:00 +0000, Allen Pais wrote:
+> Introduce the capability to dynamically configure the maximum file
+> note size for ELF core dumps via sysctl.
+> 
+> Why is this being done?
+> We have observed that during a crash when there are more than 65k mmaps
+> in memory, the existing fixed limit on the size of the ELF notes section
+> becomes a bottleneck. The notes section quickly reaches its capacity,
+> leading to incomplete memory segment information in the resulting coredump.
+> This truncation compromises the utility of the coredumps, as crucial
+> information about the memory state at the time of the crash might be
+> omitted.
+> 
+> [...]
 
-The structure io_worker->flags may be accessed through various data
-paths, leading to concurrency issues. When KCSAN is enabled, it reveals
-data races occurring in io_worker_handle_work and
-io_wq_activate_free_worker functions.
+I adjusted file names, but put it in -next. I had given some confusing
+feedback on v3, but I didn't realize until later; apologies for that! The
+end result is the sysctl is named kernel.core_file_note_size_limit and
+the internal const min/max variables have the _min and _max suffixes.
 
-	 BUG: KCSAN: data-race in io_worker_handle_work / io_wq_activate_free_worker
-	 write to 0xffff8885c4246404 of 4 bytes by task 49071 on cpu 28:
-	 io_worker_handle_work (io_uring/io-wq.c:434 io_uring/io-wq.c:569)
-	 io_wq_worker (io_uring/io-wq.c:?)
-<snip>
+Applied to for-next/execve, thanks!
 
-	 read to 0xffff8885c4246404 of 4 bytes by task 49024 on cpu 5:
-	 io_wq_activate_free_worker (io_uring/io-wq.c:? io_uring/io-wq.c:285)
-	 io_wq_enqueue (io_uring/io-wq.c:947)
-	 io_queue_iowq (io_uring/io_uring.c:524)
-	 io_req_task_submit (io_uring/io_uring.c:1511)
-	 io_handle_tw_list (io_uring/io_uring.c:1198)
-<snip>
+[1/1] fs/coredump: Enable dynamic configuration of max file note size
+      https://git.kernel.org/kees/c/81e238b1299e
 
-Line numbers against commit 18daea77cca6 ("Merge tag 'for-linus' of
-git://git.kernel.org/pub/scm/virt/kvm/kvm").
+Take care,
 
-These races involve writes and reads to the same memory location by
-different tasks running on different CPUs. To mitigate this, refactor
-the code to use atomic operations such as set_bit(), test_bit(), and
-clear_bit() instead of basic "and" and "or" operations. This ensures
-thread-safe manipulation of worker flags.
-
-Also, move `create_index` to avoid holes in the structure.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-v3:
-  * Use BIT() helpers when calling set_mask_bits()
-v2:
-  * Moved `create_index` to avoid holes in the struct.
-  * Use set_mask_bits() as suggested by Christophe JAILLET.
-  * https://lore.kernel.org/all/20240507150506.1748059-1-leitao@debian.org/
-v1:
-  * https://lore.kernel.org/all/20240503173711.2211911-1-leitao@debian.org/
-
----
- io_uring/io-wq.c | 47 ++++++++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 23 deletions(-)
-
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index d7fc6f6d4477..d1c47a9d9215 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -25,10 +25,10 @@
- #define WORKER_IDLE_TIMEOUT	(5 * HZ)
- 
- enum {
--	IO_WORKER_F_UP		= 1,	/* up and active */
--	IO_WORKER_F_RUNNING	= 2,	/* account as running */
--	IO_WORKER_F_FREE	= 4,	/* worker on free list */
--	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
-+	IO_WORKER_F_UP		= 0,	/* up and active */
-+	IO_WORKER_F_RUNNING	= 1,	/* account as running */
-+	IO_WORKER_F_FREE	= 2,	/* worker on free list */
-+	IO_WORKER_F_BOUND	= 3,	/* is doing bounded work */
- };
- 
- enum {
-@@ -44,7 +44,8 @@ enum {
-  */
- struct io_worker {
- 	refcount_t ref;
--	unsigned flags;
-+	int create_index;
-+	unsigned long flags;
- 	struct hlist_nulls_node nulls_node;
- 	struct list_head all_list;
- 	struct task_struct *task;
-@@ -57,7 +58,6 @@ struct io_worker {
- 
- 	unsigned long create_state;
- 	struct callback_head create_work;
--	int create_index;
- 
- 	union {
- 		struct rcu_head rcu;
-@@ -164,7 +164,7 @@ static inline struct io_wq_acct *io_work_get_acct(struct io_wq *wq,
- 
- static inline struct io_wq_acct *io_wq_get_acct(struct io_worker *worker)
- {
--	return io_get_acct(worker->wq, worker->flags & IO_WORKER_F_BOUND);
-+	return io_get_acct(worker->wq, test_bit(IO_WORKER_F_BOUND, &worker->flags));
- }
- 
- static void io_worker_ref_put(struct io_wq *wq)
-@@ -224,7 +224,7 @@ static void io_worker_exit(struct io_worker *worker)
- 	wait_for_completion(&worker->ref_done);
- 
- 	raw_spin_lock(&wq->lock);
--	if (worker->flags & IO_WORKER_F_FREE)
-+	if (test_bit(IO_WORKER_F_FREE, &worker->flags))
- 		hlist_nulls_del_rcu(&worker->nulls_node);
- 	list_del_rcu(&worker->all_list);
- 	raw_spin_unlock(&wq->lock);
-@@ -409,7 +409,7 @@ static void io_wq_dec_running(struct io_worker *worker)
- 	struct io_wq_acct *acct = io_wq_get_acct(worker);
- 	struct io_wq *wq = worker->wq;
- 
--	if (!(worker->flags & IO_WORKER_F_UP))
-+	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
- 		return;
- 
- 	if (!atomic_dec_and_test(&acct->nr_running))
-@@ -429,8 +429,8 @@ static void io_wq_dec_running(struct io_worker *worker)
-  */
- static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
- {
--	if (worker->flags & IO_WORKER_F_FREE) {
--		worker->flags &= ~IO_WORKER_F_FREE;
-+	if (test_bit(IO_WORKER_F_FREE, &worker->flags)) {
-+		clear_bit(IO_WORKER_F_FREE, &worker->flags);
- 		raw_spin_lock(&wq->lock);
- 		hlist_nulls_del_init_rcu(&worker->nulls_node);
- 		raw_spin_unlock(&wq->lock);
-@@ -443,8 +443,8 @@ static void __io_worker_busy(struct io_wq *wq, struct io_worker *worker)
- static void __io_worker_idle(struct io_wq *wq, struct io_worker *worker)
- 	__must_hold(wq->lock)
- {
--	if (!(worker->flags & IO_WORKER_F_FREE)) {
--		worker->flags |= IO_WORKER_F_FREE;
-+	if (!test_bit(IO_WORKER_F_FREE, &worker->flags)) {
-+		set_bit(IO_WORKER_F_FREE, &worker->flags);
- 		hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
- 	}
- }
-@@ -632,7 +632,8 @@ static int io_wq_worker(void *data)
- 	bool exit_mask = false, last_timeout = false;
- 	char buf[TASK_COMM_LEN];
- 
--	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
-+	set_mask_bits(&worker->flags, 0,
-+		      BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING));
- 
- 	snprintf(buf, sizeof(buf), "iou-wrk-%d", wq->task->pid);
- 	set_task_comm(current, buf);
-@@ -696,11 +697,11 @@ void io_wq_worker_running(struct task_struct *tsk)
- 
- 	if (!worker)
- 		return;
--	if (!(worker->flags & IO_WORKER_F_UP))
-+	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
- 		return;
--	if (worker->flags & IO_WORKER_F_RUNNING)
-+	if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
- 		return;
--	worker->flags |= IO_WORKER_F_RUNNING;
-+	set_bit(IO_WORKER_F_RUNNING, &worker->flags);
- 	io_wq_inc_running(worker);
- }
- 
-@@ -714,12 +715,12 @@ void io_wq_worker_sleeping(struct task_struct *tsk)
- 
- 	if (!worker)
- 		return;
--	if (!(worker->flags & IO_WORKER_F_UP))
-+	if (!test_bit(IO_WORKER_F_UP, &worker->flags))
- 		return;
--	if (!(worker->flags & IO_WORKER_F_RUNNING))
-+	if (!test_bit(IO_WORKER_F_RUNNING, &worker->flags))
- 		return;
- 
--	worker->flags &= ~IO_WORKER_F_RUNNING;
-+	clear_bit(IO_WORKER_F_RUNNING, &worker->flags);
- 	io_wq_dec_running(worker);
- }
- 
-@@ -733,7 +734,7 @@ static void io_init_new_worker(struct io_wq *wq, struct io_worker *worker,
- 	raw_spin_lock(&wq->lock);
- 	hlist_nulls_add_head_rcu(&worker->nulls_node, &wq->free_list);
- 	list_add_tail_rcu(&worker->all_list, &wq->all_list);
--	worker->flags |= IO_WORKER_F_FREE;
-+	set_bit(IO_WORKER_F_FREE, &worker->flags);
- 	raw_spin_unlock(&wq->lock);
- 	wake_up_new_task(tsk);
- }
-@@ -839,7 +840,7 @@ static bool create_io_worker(struct io_wq *wq, int index)
- 	init_completion(&worker->ref_done);
- 
- 	if (index == IO_WQ_ACCT_BOUND)
--		worker->flags |= IO_WORKER_F_BOUND;
-+		set_bit(IO_WORKER_F_BOUND, &worker->flags);
- 
- 	tsk = create_io_thread(io_wq_worker, worker, NUMA_NO_NODE);
- 	if (!IS_ERR(tsk)) {
-@@ -925,8 +926,8 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
- void io_wq_enqueue(struct io_wq *wq, struct io_wq_work *work)
- {
- 	struct io_wq_acct *acct = io_work_get_acct(wq, work);
-+	unsigned long work_flags = work->flags;
- 	struct io_cb_cancel_data match;
--	unsigned work_flags = work->flags;
- 	bool do_create;
- 
- 	/*
 -- 
-2.43.0
+Kees Cook
 
 
