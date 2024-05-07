@@ -1,148 +1,149 @@
-Return-Path: <linux-kernel+bounces-172375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B47B8BF1A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:30:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6041B8BF2CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07477281E10
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:30:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2B4CB27936
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE23143C7E;
-	Tue,  7 May 2024 23:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD35E13AA54;
+	Tue,  7 May 2024 23:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X0KEDMGR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="MOaqecEa"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FECF142E79;
-	Tue,  7 May 2024 23:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8433212B148;
+	Tue,  7 May 2024 23:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123344; cv=none; b=jRS5ZOecUdWhEecLYMgHcCMa6Xk+pPokAYTx6Vd7MBtEfBC75Aqo+oNMYlr1RJGWR6p0KPl9Vfxt49MqtK/toyKj6Yb6sJYehB59D0+X1SQLkzJDonNPee+Xxz2NapfDr4poKGwR2HovPrlMX+7p0NqzZPBEENB20QCgMAYHfLg=
+	t=1715124007; cv=none; b=rI5vxonSf0NCMU9VXfjbYZ3be+ns5cVLRIhaSPl4RbX9fyl4lPAU4/t+A29kAIK4SXV0YvF3YBhgBr70R5dmXR9iqIWpFxqNY8RxTZgfWb3c7jlkwWWBk+1iHscUWD1v8S2CEMNx8m04zAx0n/tROJpkheQSq7nnvVlMd1EbLFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123344; c=relaxed/simple;
-	bh=sbBCo2A1xLZ0vOXmtjRmskZzILCS1fwj9Xtelg+/+co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0k5Epvj9PlxM623iB1nfjIgB4KEz9LfhkFxWwRw9jnhYjZ9kYFRwZ+EmgbeBZ+uZeeQNI5tyPTyu+DKh8SHGi217DfOqyOD+Igv/oe0dlA23Jmx2bIfrsTsuMIl3rY7D1089R6SFUwwcJQQAKP312Jv8cZKi/IHQ+vRD6QFd90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X0KEDMGR; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715123341; x=1746659341;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sbBCo2A1xLZ0vOXmtjRmskZzILCS1fwj9Xtelg+/+co=;
-  b=X0KEDMGRgyzKg8DoCh4Rp18rOYNySsYSKplat1Ez+uU9KoSh0BM4Zfxu
-   3Oh1y2jSjyzXzE2pqzTJmub/22yXbQI+ZqlJNWlM0vVnvud/erblqancR
-   wBPbvOoIUT865fni+SWMk///aSulPo/W4+bOW6k7FIedo2Mi7r5tAZREz
-   mXBFY4vV3GB+IGnYX6OShQN79RqGWMiKjkMfRDbiChZfKyhtzVopEu3Il
-   D0LIM3S08TFr7ECbqf9R45dgtd2NdlrNzqCw7RX06+Am8vZr2hRLzvc4Z
-   e93+DNWJW94lxSXKZ3YkrEfz6svwJuWI2lzONQ/Ouj86d4FDlTSYYx1PO
-   A==;
-X-CSE-ConnectionGUID: Jq1kagcoT7+Dwi0wMNgi1Q==
-X-CSE-MsgGUID: HUMzRYzXQXORvj9PeU1D+g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11113109"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="11113109"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:09:00 -0700
-X-CSE-ConnectionGUID: dGaliaqjQ72/tYjH1V1Nfg==
-X-CSE-MsgGUID: pJeQw4WkSaSxWq4X0sagaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="66110058"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 07 May 2024 16:08:55 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4TvY-0002iq-0A;
-	Tue, 07 May 2024 23:08:52 +0000
-Date: Wed, 8 May 2024 07:08:43 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
-Cc: oe-kbuild-all@lists.linux.dev,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>
-Subject: Re: [PATCH net-next 2/2] net: phy: phy_link_topology:
- Lazy-initialize the link topology
-Message-ID: <202405080732.pSwJSarc-lkp@intel.com>
-References: <20240507102822.2023826-3-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1715124007; c=relaxed/simple;
+	bh=b/0FkzHkilB95lUbP7MEunDu86ZpEsqHeKZVNfq+xIQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MXKKs87FIjwrV8lqELe+BqW0DDvAlK/FPyKjJSM/vDVHuuD3Pw49k6aPw3JLfte9mkAzzQipLH5tJrUxWpKM9U/fHbvGBvSSJTJiEOOkbY29n+EVBCuOcMfY1KiezzsZmaueSVUYVtUOGdH+16o/3E8wLCj14V5RQJ/VeHfFspY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=MOaqecEa; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 99472120005;
+	Wed,  8 May 2024 02:19:59 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 99472120005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715123999;
+	bh=FTEc3DcCrnODzUlI904uenRxffR/nTndkV7UF8lCKs0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=MOaqecEa7KzpL1uHnPOVQMAfm++G+nohFnyBcWYFaRlh/G0AO9QWjk82Et1kkHApv
+	 YDOkYJZt5Aar9dxZo5Cy2Hms33xkHc+AGcUS07i8C2OSlSQGZTiB8KaZtJUSzTqAnG
+	 OP7pLGOXuyUQ8V9w/tThPVtkNlrt7QEDoOyC8izhFQzAodLGoiZjafSqOEXq98jBqd
+	 R0zSh/eyDeuDttGiM+DeL9OoAXyWWIyJ/OxNWSfbvEaCbYwvkHHey23l5Sv1ktgK8P
+	 2vy/Cz2tPB5M2HcbRB7gN+zCXH6TuwS+v+TtKXddyXVo+uzjmJJ4g14mGMg2FjlDwx
+	 FvZ2+VVkv5mMA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed,  8 May 2024 02:19:59 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 8 May 2024 02:19:58 +0300
+From: Arseniy Krasnov <avkrasnov@salutedevices.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>
+CC: <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <oxffffaa@gmail.com>,
+	<kernel@sberdevices.ru>, Arseniy Krasnov <avkrasnov@salutedevices.com>
+Subject: [PATCH v6 0/3] Meson: R/W support for pages used by boot ROM
+Date: Wed, 8 May 2024 02:09:00 +0300
+Message-ID: <20240507230903.3399594-1-avkrasnov@salutedevices.com>
+X-Mailer: git-send-email 2.35.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507102822.2023826-3-maxime.chevallier@bootlin.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185123 [May 07 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: avkrasnov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/07 17:58:00 #25118681
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Maxime,
+Amlogic's boot ROM code needs that some pages on NAND must be written
+in special "short" ECC mode with scrambling enabled. Such pages:
+1) Contain some metadata about hardware.
+2) Located with some interval starting from 0 offset, until some
+   specified offset. Interval and second offset are set in the
+   device tree.
 
-kernel test robot noticed the following build warnings:
+This patchset adds R/W support for such pages. To enable it we can setup
+it in dts:
 
-[auto build test WARNING on net-next/main]
+    nand-is-boot-medium;
+    amlogic,boot-pages = <1024>;
+    amlogic,boot-page-step = <128>;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Chevallier/net-phy-phy_link_topology-Pass-netdevice-to-phy_link_topo-helpers/20240507-183130
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240507102822.2023826-3-maxime.chevallier%40bootlin.com
-patch subject: [PATCH net-next 2/2] net: phy: phy_link_topology: Lazy-initialize the link topology
-config: parisc-defconfig (https://download.01.org/0day-ci/archive/20240508/202405080732.pSwJSarc-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080732.pSwJSarc-lkp@intel.com/reproduce)
+It means that each 128th page in range 0 to 1024 pages will be accessed
+in special mode ("short" ECC + scrambling). In practice this feature is
+needed when we want to update first block of NAND - driver will enable
+required mode by itself using value from device tree.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080732.pSwJSarc-lkp@intel.com/
+Changelog:
+ v1 -> v2:
+  * Rename 'meson,boot-page-XXX' -> 'amlogic,boot-page-XXX'.
+  * Add words that 'amlogic,boot-page-step' is measured in pages.
+  * Remove words that 'amlogic,boot-page-XXX' depends on 'nand-is-boot-medium'.
+  * Make both 'amlogic,boot-page-XXX' depend on each other also, in
+    addition to 'nand-is-boot-medium' dependency.
+ v2 -> v3:
+  * Add quotes to 0001 in dependencies. This fixes 'make dt_binding_check'
+    warning.
+ v3 -> v4:
+  * Rename 'amlogic,boot-page-last' to 'amlogic,boot-pages'.
+ v4 -> v5:
+  * Update 'description' fields in bindings.
+ v5 -> v6:
+  * Split patch for meson_nand.c to 2 patches: first is refactoring of
+    scrambling mode handling, another is support for special pages for
+    boot ROM.
+  * Update description and commit message in the bindings patch.
 
-All warnings (new ones prefixed by >>):
+Arseniy Krasnov (3):
+  dt-bindings: mtd: amlogic,meson-nand: support fields for boot ROM code
+  mtd: rawnand: meson: refactor use of 'meson_nfc_cmd_access()'
+  mtd: rawnand: meson: read/write access for boot ROM pages
 
->> net/core/dev.c:10276:13: warning: 'netdev_free_phy_link_topology' defined but not used [-Wunused-function]
-   10276 | static void netdev_free_phy_link_topology(struct net_device *dev)
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/netdev_free_phy_link_topology +10276 net/core/dev.c
-
- 10275	
- 10276	static void netdev_free_phy_link_topology(struct net_device *dev)
- 10277	{
- 10278		struct phy_link_topology *topo = dev->link_topo;
- 10279	
- 10280		if (!topo)
- 10281			return;
- 10282	
- 10283		xa_destroy(&topo->phys);
- 10284		kfree(topo);
- 10285		dev->link_topo = NULL;
- 10286	}
- 10287	
+ .../bindings/mtd/amlogic,meson-nand.yaml      | 18 ++++
+ drivers/mtd/nand/raw/meson_nand.c             | 86 +++++++++++++------
+ 2 files changed, 77 insertions(+), 27 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.35.0
+
 
