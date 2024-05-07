@@ -1,148 +1,178 @@
-Return-Path: <linux-kernel+bounces-170843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAE78BDCCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:58:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D98A78BDCD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAE61F24CEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:58:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD819B228BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC30613C91A;
-	Tue,  7 May 2024 07:58:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC57713C81E;
+	Tue,  7 May 2024 08:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BygZ6Mnl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vylrPXx6"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B22213C900
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 07:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00613C3FA
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715068712; cv=none; b=ilJqsdlNQ30u1HyXkH6C5eLJyuIB7hECGZujh4I5QanhwLJjO3B98ELNsXCXQah4YPxID9/qlTNnnmte0jR4PW/6ZiTjMmASNIVdPexVsvkDkv6UHQHfNvTemNfZH1MHKeS19F9Qex/I5LI0SrEtLdacqIOyGRUGa/p64TceOGo=
+	t=1715068841; cv=none; b=YIYfniwsDOsqOYEoq8ZchtqKn3i4AGZm+VCweg2loRfsZLI/MnELgORJ9IbtyU+YfP8Touof8cZ8jG21/YCNA961PXgXhh4Uqk48NbKMPA7tQUjxwO9irYW1RawA3FGe56rf+6Kn/nnMsdGMUuDazLEKXMMA2g+bD8l4P7hGmZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715068712; c=relaxed/simple;
-	bh=89t9B5VtRJzNfp6Wda6X2h6J58Yiwx7TQOCpbZd8Iu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cjhxf48ikjayABm3/j3E8KViL3euubVgn/6IOJB8bncsKO6y9Da2nVY4wcU62N/Z32pLon0M3UZl3IqIvc7vunMP19ogvje/6WubyBScU/tQPAi2qVNcfSoufUxTDA6SiIkvBHEzPseJsQ71QmlfwHBN25TxVzrVK7QPGCP440E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BygZ6Mnl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5447AC4AF63;
-	Tue,  7 May 2024 07:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715068711;
-	bh=89t9B5VtRJzNfp6Wda6X2h6J58Yiwx7TQOCpbZd8Iu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BygZ6Mnl8LUBUOC0U0HyPNQ4qRDxoGM3qPH2R+ejDkRM3cBW88z5gVKCk0E/JcVE0
-	 d4PZQQmhV6iWOR0xAT5gUVEXZB553khNpiLpHtl8aRl30G39M0zySiT5koWYH7aX8Q
-	 E+ngcLyNg0lAVjttos/kNMyxcRrFRlfj6V/vTF1sk3VkmLBEIdp55uGvVBy+/G7eB5
-	 9sffzofGRbfxw/72ttntxOnV0GjldoUc8i/ItJ9lCs+EXAyOL/wnaeaA7RslA97NSz
-	 KL17gfTXiW60Yp5QqfU9nrj6Edvy16th/Fil0CDZ5u1WJ/3Wzr8qu/+sxw+q4h/e3e
-	 UT5h4HK/u9Peg==
-Date: Tue, 7 May 2024 09:58:25 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Michal Simek <michal.simek@amd.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG] drm: zynqmp_dp: Lockup in zynqmp_dp_bridge_detect when
- device is unbound
-Message-ID: <20240507-shiny-sophisticated-mustang-bf2d2e@houat>
-References: <4d8f4c9b-2efb-4774-9a37-2f257f79b2c9@linux.dev>
- <20240504122118.GB24548@pendragon.ideasonboard.com>
- <20240506-charcoal-griffin-of-tact-174dde@houat>
- <20240506073531.GA10260@pendragon.ideasonboard.com>
- <97811bfe-a1fb-419c-a148-74e3d84aa0e2@linux.dev>
- <20240506165057.GD29108@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1715068841; c=relaxed/simple;
+	bh=9z8qkYCt734Wk64SXvM0Q3JE7RXJ/y4qVPiSWdenxAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lIYAcn4MwVWFNsJBBz6HXi9X2nMf0wh6JU5wLsoqDMP4mov3AP1xsU7EUdtL/EbDmt/vcH8+OXW3g8x6+i0fxMSkzkYmQdcCP8L9H4qpihT5t6unhQVeDjSC5vAjV/4xsy21gW8Y2V6oJMun1VcNF5BM4A8KMiB4LQmQTuzxV84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vylrPXx6; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51ab4ee9df8so3435711e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 01:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715068838; x=1715673638; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oPMzg+hqVpMnTKbLeT3z8nihOwZGBSuxBb1mszthdMc=;
+        b=vylrPXx62NZctszrwnpBuiYNXdwhyJgLKbTGgZKbb+F4D9VpOyZ1lwCAzEJp54lZFL
+         5o9XUZ3AQxkeOEffl1iTKWRdu2+PsfBURo9YFFQdScUL1kS2Y1e3ewJQ4TjruoQIAD4c
+         gM1kWLoBTpd5SDKEgqqABqiZIxHRzb0lk5ZyiL3CI7Dt3imH4oIhr8eEuk5E5qJhFzQ2
+         GzPUAsRNKQv5EzfvCJqokik3h7MGccWa72qRAw3eUfT8lFP7uCNAH/zAs+7UCgVXCjfN
+         zQ+pdjtCDJmM7S+fIXM6o8RNDjPB66Mhiykmv6ttLCCcLBeswBgF7yUUR2h7NplMIDc6
+         Aiaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715068838; x=1715673638;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oPMzg+hqVpMnTKbLeT3z8nihOwZGBSuxBb1mszthdMc=;
+        b=OLLi6bY4VrfLj5c/UJ1DW1NPNFf2u04KlIsyKrDHs8rTkDi22t+Yu0Vm5RHgKof6kY
+         hITzVbR+6MSuROxsUO/3Ub+fNRsAOdnn/brB1SNmM59LdCw5OsjacP63/6R0FJdIYJl/
+         GkoKISWeUEoJIyEu4Sc6qzEtrxuao6SOr2YzoFjy2oNF7hCFNCNLUJv+yjRGTKBlraQb
+         7jf6kTvNKvhThHzAFLu3VzZISbVbdeAfzDt2H1stWlYwFeGIydMvi1bY5njfiSR/WR35
+         d9cpYvFlBNtBYIZmRkD88mZPXk/JJZnT/DU4Yra47Z2426S0TQfo44SGVQuYmkq7u95G
+         wwZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRuj9KinABQNaPT3o3BMlG6H0mm7JsksAaEHU0q+IUIxhTtkdMELrFO2D7AHUDkiXdrujBR1AGHJZXVZiaO2p5CT8eG8iH5+qnKieF
+X-Gm-Message-State: AOJu0Yyr1rbpyRlUYvUcMMUgOLfOivG0kDE4xQHnJsFx6UIWOJXLDYzp
+	TI5Y/M3TNOj82PSDFydAJD7ozadm9JJK3xeubRsRoJCB5ggKgGXX58Im7QFoPfy+fPvDfTdGVYk
+	uWManucrk9xck5IsCM6ccEmsBW5CUW9QL5hbjRQ==
+X-Google-Smtp-Source: AGHT+IF0K0GgauIGvcleWp9kmdj/PO9XRepXqzT2/sVoIO9r+x8Ax+dJkKhL5UtA5BGQ9GhNnlymd4HorrgXzaz9TqY=
+X-Received: by 2002:a05:6512:472:b0:51f:5853:14e3 with SMTP id
+ x18-20020a056512047200b0051f585314e3mr9087924lfd.25.1715068837789; Tue, 07
+ May 2024 01:00:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="b3imapilpypz3bfe"
-Content-Disposition: inline
-In-Reply-To: <20240506165057.GD29108@pendragon.ideasonboard.com>
-
-
---b3imapilpypz3bfe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240505141156.2944912-1-quic_zhonhan@quicinc.com>
+In-Reply-To: <20240505141156.2944912-1-quic_zhonhan@quicinc.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 7 May 2024 10:00:25 +0200
+Message-ID: <CAMRc=MdmOg6pJ7hvKSpkoTKjQny8xL5BFT2HNzgKgnjsCuwhwQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpiolib: cdev: Fix use after free in lineinfo_changed_notify
+To: Zhongqiu Han <quic_zhonhan@quicinc.com>
+Cc: warthog618@gmail.com, linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 06, 2024 at 07:50:57PM GMT, Laurent Pinchart wrote:
-> On Mon, May 06, 2024 at 10:57:17AM -0400, Sean Anderson wrote:
-> > On 5/6/24 03:35, Laurent Pinchart wrote:
-> > > On Mon, May 06, 2024 at 09:29:36AM +0200, Maxime Ripard wrote:
-> > >> Hi Laurent, Sean,
-> > >>=20
-> > >> On Sat, May 04, 2024 at 03:21:18PM GMT, Laurent Pinchart wrote:
-> > >> > On Fri, May 03, 2024 at 05:54:32PM -0400, Sean Anderson wrote:
-> > >> > > I have discovered a bug in the displayport driver on drm-misc-ne=
-xt. To
-> > >> > > trigger it, run
-> > >> > >=20
-> > >> > > echo fd4a0000.display > /sys/bus/platform/drivers/zynqmp-dpsub/u=
-nbind
-> > >> > >=20
-> > >> > > The system will become unresponsive and (after a bit) splat with=
- a hard
-> > >> > > LOCKUP. One core will be unresponsive at the first zynqmp_dp_rea=
-d in
-> > >> > > zynqmp_dp_bridge_detect.
-> > >> > >=20
-> > >> > > I believe the issue is due the registers being unmapped and the =
-block
-> > >> > > put into reset in zynqmp_dp_remove instead of zynqmp_dpsub_relea=
-se.
-> > >> >=20
-> > >> > That is on purpose. Drivers are not allowed to access the device a=
-t all
-> > >> > after .remove() returns.
-> > >>=20
-> > >> It's not "on purpose" no. Drivers indeed are not allowed to access t=
-he
-> > >> device after remove, but the kernel shouldn't crash. This is exactly
-> > >> why we have drm_dev_enter / drm_dev_exit.
-> > >=20
-> > > I didn't mean the crash was on purpose :-) It's the registers being
-> > > unmapped that is, as nothing should touch those registers after
-> > > .remove() returns.
-> >=20
-> > OK, so then we need to have some kind of flag in the driver or in the d=
-rm
-> > subsystem so we know not to access those registers.
->=20
-> To avoid race conditions, the .remove() function should mark the device
-> as removed, wait for all ongoing access from userspace to be complete,
-> and then proceed to unmapping registers and doing other cleanups.
-> Userspace may still have open file descriptors to the device at that
-> point. Any new userspace access should be disallowed (by checking the
-> removed flag), with the only userspace-initiated operations that still
-> need to run being the release-related operations (unmapping memory,
-> closing file descriptors, ...).
+On Sun, May 5, 2024 at 4:12=E2=80=AFPM Zhongqiu Han <quic_zhonhan@quicinc.c=
+om> wrote:
+>
+> The use-after-free issue occurs as follows: when the GPIO chip device fil=
+e
+> is being closed by invoking gpio_chrdev_release(), watched_lines is freed
+> by bitmap_free(), but the unregistration of lineinfo_changed_nb notifier
+> chain failed due to waiting write rwsem. Additionally, one of the GPIO
+> chip's lines is also in the release process and holds the notifier chain'=
+s
+> read rwsem. Consequently, a race condition leads to the use-after-free of
+> watched_lines.
+>
+> Here is the typical stack when issue happened:
+>
+> [free]
+> gpio_chrdev_release()
+>   --> bitmap_free(cdev->watched_lines)                  <-- freed
+>   --> blocking_notifier_chain_unregister()
+>     --> down_write(&nh->rwsem)                          <-- waiting rwsem
+>           --> __down_write_common()
+>             --> rwsem_down_write_slowpath()
+>                   --> schedule_preempt_disabled()
+>                     --> schedule()
+>
 
-And for the record, this is exactly what drm_dev_unplug and
-drm_dev_enter/drm_dev_exit does.
+The rwsem has been removed in v6.9-rc1. I assume you're targeting
+stable branches with this change? Or does it still occur with the
+recent SRCU rework? This is important to know before I send it
+upstream.
 
-Maxime
+Bart
 
---b3imapilpypz3bfe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZjnfHAAKCRAnX84Zoj2+
-dt4DAX99RTnsezwYkS/RSibP1NcxpL4CCKZoY9wdmzD1LxPobMHewTlZzvejJrXZ
-QgpabNMBgLzWSoWR5Wi5zbucVnQobQJp7d2zppixk1EbwNiUsNOS+Z9XcAL4Dkfe
-DWQ6ip9F1w==
-=oZkN
------END PGP SIGNATURE-----
-
---b3imapilpypz3bfe--
+> [use]
+> st54spi_gpio_dev_release()
+>   --> gpio_free()
+>     --> gpiod_free()
+>       --> gpiod_free_commit()
+>         --> gpiod_line_state_notify()
+>           --> blocking_notifier_call_chain()
+>             --> down_read(&nh->rwsem);                  <-- held rwsem
+>             --> notifier_call_chain()
+>               --> lineinfo_changed_notify()
+>                 --> test_bit(xxxx, cdev->watched_lines) <-- use after fre=
+e
+>
+> The side effect of the use-after-free issue is that a GPIO line event is
+> being generated for userspace where it shouldn't. However, since the chrd=
+ev
+> is being closed, userspace won't have the chance to read that event anywa=
+y.
+>
+> To fix the issue, call the bitmap_free() function after the unregistratio=
+n
+> of lineinfo_changed_nb notifier chain.
+>
+> Fixes: 51c1064e82e7 ("gpiolib: add new ioctl() for monitoring changes in =
+line info")
+> Signed-off-by: Zhongqiu Han <quic_zhonhan@quicinc.com>
+> ---
+> v1 -> v2:
+> - Drop the excessive stack log from commit message to make it more readab=
+le.
+> - Add a note regarding the side effects of the use-after-free on commit m=
+essage.
+> - Link to v1: https://lore.kernel.org/lkml/20240501022612.1787143-1-quic_=
+zhonhan@quicinc.com/
+>
+>  drivers/gpio/gpiolib-cdev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index d09c7d728365..6b3a43e3ba47 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -2799,11 +2799,11 @@ static int gpio_chrdev_release(struct inode *inod=
+e, struct file *file)
+>         struct gpio_chardev_data *cdev =3D file->private_data;
+>         struct gpio_device *gdev =3D cdev->gdev;
+>
+> -       bitmap_free(cdev->watched_lines);
+>         blocking_notifier_chain_unregister(&gdev->device_notifier,
+>                                            &cdev->device_unregistered_nb)=
+;
+>         blocking_notifier_chain_unregister(&gdev->line_state_notifier,
+>                                            &cdev->lineinfo_changed_nb);
+> +       bitmap_free(cdev->watched_lines);
+>         gpio_device_put(gdev);
+>         kfree(cdev);
+>
+> --
+> 2.25.1
+>
 
