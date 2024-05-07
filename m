@@ -1,91 +1,154 @@
-Return-Path: <linux-kernel+bounces-171562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0487B8BE5C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AB38BE5C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E9128CD1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8D128CDDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE81B16C444;
-	Tue,  7 May 2024 14:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="SAnUNbzE"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BED16C68B;
+	Tue,  7 May 2024 14:21:16 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE30316C434;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DFB516C42C;
 	Tue,  7 May 2024 14:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091674; cv=none; b=lNmHN0w69Q+KJ38+n0nuj+oBSzw3iukiuxSeUdI7AJy4kwy29sX0LoAQzJ0XkkFxv3SbAMdaXqi8lzuUNqwnbE2i8yB49xhPxU5Br0ObMG6bHQsO0BFetlgcqIdrOct0EekCpa8BzXoiVbiZZBBoKkDbTKucqoR6gdMNVU8DKKc=
+	t=1715091675; cv=none; b=KCo/NYnSb3FdNRzVaQRqvJ4dBAlk59CR+mKWhx48/o2nvXqiiPX1Bh8c/+ZEztM3xBN4voLmGeELoAvelIhol02cr+fOfKR8459xPe21F+zUMhCaXm5fs/xVODxnc9YJ+B5T/fuHbaBUpNVmNxnWbtx0XAt+vfXgsUFWllpJ7Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091674; c=relaxed/simple;
-	bh=KuPguweerCAeDeFcHUy2Ym+qHGosgURq8HC0Jlhat0k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FC2gyQNIdPT1FsaXiLcTX0M7Hd8pHJc5votZxQQCvZo6rY2WFJVtBcC3y66cfV7vqtXFNrAczlSWqS0gn0gPiaXGD/2+k4tKX2gH9m9PLElKISw6kgln/vniadR8EzBqD/NbTDaBMEcbwxEr5ecNijuoqjE/ynwGo9hbgAGyXTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=SAnUNbzE; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1715091664;
-	bh=KuPguweerCAeDeFcHUy2Ym+qHGosgURq8HC0Jlhat0k=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SAnUNbzEABYCaE148HVT/5Kc4c/5dt5/BW8DXzOR1++aF+l+/mjwKH+6T7FEc3FIp
-	 T9BRfDKtYojdJP+XCKnBUJCMq8+Y6QmdObldwQCWw/KfSZyHXblBYUrnCpHV4WH7H9
-	 olguVMaRtysU2TO3gu3pLu1vDfFeanhezIxj2Wiw=
-Received: from [IPv6:240e:456:1030:3f01:af89:88e3:556c:eacb] (unknown [IPv6:240e:456:1030:3f01:af89:88e3:556c:eacb])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id DFBE266916;
-	Tue,  7 May 2024 10:20:48 -0400 (EDT)
-Message-ID: <a0a896fef1aca8958a190801ab5355e22373081d.camel@xry111.site>
-Subject: Re: [PATCH 2/2] Loongarch:Support loongarch avec
-From: Xi Ruoyao <xry111@xry111.site>
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org, 
-	kernel@xen0n.name, tglx@linutronix.de, jiaxun.yang@flygoat.com, 
-	gaoliang@loongson.cn, wangliupu@loongson.cn, lvjianmin@loongson.cn, 
-	yijun@loongson.cn, mhocko@suse.com, akpm@linux-foundation.org, 
-	dianders@chromium.org, maobibo@loongson.cn, zhaotianrui@loongson.cn, 
-	nathan@kernel.org, yangtiezhu@loongson.cn, zhoubinbin@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 07 May 2024 22:20:42 +0800
-In-Reply-To: <20240507125953.9117-1-zhangtianyang@loongson.cn>
-References: <20240507125953.9117-1-zhangtianyang@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	s=arc-20240116; t=1715091675; c=relaxed/simple;
+	bh=0U/Vfm/yvxpigNc8T6MOlV5eg/rpc7P11b5fh/7/Dg4=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=b15ocH2/gOlIahNrcFYL0zMC3jGRy8X5NAnKdlK74Tbo2BufQSvv8fQra4SE+avp+TOeAWX850OQjdmpunLi1VLw4rWXXvLJDTQvGJ3WRvdiiEdX6cze+IBNk8aXNx0jI41O+NStIGABe/TjYi3uS1UvqidfDP7asfrCWXeFFN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VYgN857cPztT3W;
+	Tue,  7 May 2024 22:17:44 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (unknown [7.185.36.236])
+	by mail.maildlp.com (Postfix) with ESMTPS id DDE1F14022D;
+	Tue,  7 May 2024 22:21:09 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 22:21:09 +0800
+Received: from [10.67.121.229] (10.67.121.229) by
+ dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 22:21:09 +0800
+Subject: Re: [PATCH for-next] RDMA/hns: Support flexible WQE buffer page size
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240430092845.4058786-1-huangjunxian6@hisilicon.com>
+ <20240430134113.GU231144@ziepe.ca>
+ <fac4927b-16ed-d801-fb47-182f2aca355c@huawei.com>
+ <20240506151112.GE901876@ziepe.ca>
+CC: Junxian Huang <huangjunxian6@hisilicon.com>, <leon@kernel.org>,
+	<linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>
+From: Chengchang Tang <tangchengchang@huawei.com>
+Message-ID: <90d51f0f-724f-fbba-9519-1c022c65c5e2@huawei.com>
+Date: Tue, 7 May 2024 22:21:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240506151112.GE901876@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
 
-On Tue, 2024-05-07 at 20:59 +0800, Tianyang Zhang wrote:
-> +static inline void loongarch_avec_ack_irq(struct irq_data *d)
-> +{
-> +}
-> +
-> +static inline void loongarch_avec_unmask_irq(struct irq_data *d)
-> +{
-> +}
-> +
-> +static inline void loongarch_avec_mask_irq(struct irq_data *d)
-> +{
-> +}
 
-"inline" has no use here because these functions are only called via
-function pointers, thus such calls cannot be inline-able.  I'd suggest
-to remove "inline" for them.
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+On 2024/5/6 23:11, Jason Gunthorpe wrote:
+> On Mon, May 06, 2024 at 02:47:01PM +0800, Chengchang Tang wrote:
+>>
+>>
+>> On 2024/4/30 21:41, Jason Gunthorpe wrote:
+>>> On Tue, Apr 30, 2024 at 05:28:45PM +0800, Junxian Huang wrote:
+>>>> From: Chengchang Tang <tangchengchang@huawei.com>
+>>>>
+>>>> Currently, driver fixedly allocates 4K pages for userspace WQE buffer
+>>>> and results in HW reading WQE with a granularity of 4K even in a 64K
+>>>> system. HW has to switch pages every 4K, leading to a loss of performance.
+>>>
+>>>> In order to improve performance, add support for userspace to allocate
+>>>> flexible WQE buffer page size between 4K to system PAGESIZE.
+>>>> @@ -90,7 +90,8 @@ struct hns_roce_ib_create_qp {
+>>>>  	__u8    log_sq_bb_count;
+>>>>  	__u8    log_sq_stride;
+>>>>  	__u8    sq_no_prefetch;
+>>>> -	__u8    reserved[5];
+>>>> +	__u8    pageshift;
+>>>> +	__u8    reserved[4];
+>>>
+>>> It doesn't make any sense to pass in a pageshift from userspace.
+>>>
+>>> Kernel should detect whatever underlying physical contiguity userspace
+>>> has been able to create and configure the hardware optimally. The umem
+>>> already has all the tools to do this trivially.
+>>>
+>>> Why would you need to specify anything?
+>>>
+>>
+>> For hns roce, QPs requires three wqe buffers, namely SQ wqe buffer, RQ wqe
+>> buffer and EXT_SGE buffer.  Due to HW constraints, they need to be configured
+>> with the same page size. The memory of these three buffers is allocated by
+>> the user-mode driver now. The user-mode driver will calculate the size of
+>> each region and align them to the page size. Finally, the driver will merge
+>> the memories of these three regions together, apply for a memory with
+>> continuous virtual addresses, and send the address to the kernel-mode driver
+>> (during this process, the user-mode driver and the kernel-mode driver only
+>> exchange addresses, but not the the sizes of these three areas or other
+>> information).
+> 
+> So you get a umem and the driver is slicing it up. What is the
+> problem? The kernel has the umem and the kernel knows the uniform page
+> size of that umem.
+
+Currently, because the user-mode driver and the kernel-mode driver only
+exchange addresses, from the perspective of the kernel-mode driver, if the
+page size is not negotiated, it cannot even calculate the size of each region,
+and thus cannot complete ib_umem_get().
+
+Of course, we can add some information to be passed to the kernel mode driver,
+such as size and offset of each region, but is there any essential difference
+between this and directly passing page shift?
+> 
+> 
+>> Since the three regions share one umem, through umem's tools, such as
+>> ib_umem_find_best_pgsz(), they will eventually calculate the best page size
+>> of the entire umem, not each region. 
+> 
+> That is what you want, you said? Each region has to have the same page
+> size. So the global page size of the umem is the correct one?
+
+No, the global page size may be bigger than the page size of each region.
+If we use the global page size, the hardware may have out-of-bounds access.
+> 
+>> For this reason, coupled with the fact
+>> that currently only the address is passed when the kernel mode driver interacts
+>> with the user mode driver, and no other information is passed, it makes it more
+>> difficult to calculate the page size used by the user mode driver from the
+>> kernel mode driver. 
+> 
+> Even if it is difficult, this has to be done like this. You can't pass
+> a page size in from userspace, there is no good way for userspace to
+> do this correctly in all cases.
+
+Userspace may indeed go wrong, but in the current scenario, the page size is
+only set within the allowed range [4k, 64k], and its errors only affects the
+current QP. Is this acceptable?
+
+Chengchang
 
