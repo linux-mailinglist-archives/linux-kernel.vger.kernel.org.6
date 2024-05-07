@@ -1,174 +1,168 @@
-Return-Path: <linux-kernel+bounces-170761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4718BDBA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8868BDBA9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D7C281E13
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5840928416F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA7B73504;
-	Tue,  7 May 2024 06:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdTY2SBZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CBD78274;
+	Tue,  7 May 2024 06:38:32 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691132EB08;
-	Tue,  7 May 2024 06:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7AA757E4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063859; cv=none; b=CP/xAHG1aG4sKypD423ECaZt82L0o+pWtMsodPjZRLZUZyIl2t+9iHOjpAnMvbsZFboZrg98HcG88JNLJQBErpSCN4xRi19E85uetwKEl+ZHt9bYFxCotvjPlKOAPFc2XreeX4u+Y7wkLv0g41xMp8YRmypf39nSDknABTXMUi4=
+	t=1715063912; cv=none; b=Q7p40Gzquaui5cZvblVFcF5wpNDbNMJjjUYw+BLeC2VGKw4vmpkR7lHICLFyzEY2bkXLOEYgG0alzTPkrU4Lu7AYMPePluPcGr539TBd0ZESL+yHsl8yPzeQ+LrAYoIma5ogwNf2DoeGce8b5R5BK2XBnsNyIyh3TyaWDv57S9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063859; c=relaxed/simple;
-	bh=So5cWA9X/plmkFRBimltC9aU3la3EuxEVdH1kzJTYmE=;
+	s=arc-20240116; t=1715063912; c=relaxed/simple;
+	bh=dEp3R47T5tHK8UzsdRnd6Hp9PzXbWW/9+dURtHMSmZ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZSwyF+zS3R19osSsY0dQVeD2dVrXJR71l64ICAExBpOFhy0uwtP2942k/51gEMhKf7vgK1rkF44fg1bR0uyYEllWTXCSexRTQ3pez43p7KvgAcASZqw0/1ZcIot/vu6VPr+ADGnZwJVX9My0Ol/QgwRSZCNjjd2oOZu9t434VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdTY2SBZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91D5C4AF63;
-	Tue,  7 May 2024 06:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715063858;
-	bh=So5cWA9X/plmkFRBimltC9aU3la3EuxEVdH1kzJTYmE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DdTY2SBZ5TwZQSl3KEq39YQvqzELf14NOBJg+qVN3UILiefALRvquwFcp1oePXPVI
-	 XRZN8WUR3lUl87s0KT/rfwVzAxq9iSQJu67hfYTmjMprz3n+DZakLzXMsIEhEUuqD5
-	 bWcexrvgfMLz0HWvep7i93EUsLDHKt0Z3W3bzy3mGKH2pM+1fRMXR8TbFMzL4mAxno
-	 6B0lNUnQr70OisPBstXNqklz+3oCI9J/7WzYrbWpdzP4d6WoSw8E1nB9y3BX4p4NtL
-	 2hvjunY3VFlp7VzwPGBu4vZRJbimIkM8/tHWeE5jqOEsvzgAoS4nUs6CPY9NU7XE4M
-	 ecaWtAvsGgWYQ==
-Message-ID: <321b9a79-e4d1-4cdc-80ba-c226a6b2cdb4@kernel.org>
-Date: Tue, 7 May 2024 08:37:30 +0200
+	 In-Reply-To:Content-Type; b=UjmKNBWPAP40+gvSNJWDJfGSVHzLBp0QzGvYF+gklf8DWz7n/VboxoHDJCxJXpggaaCjhMpgc3j1Ma1FAFiCosz1EwdN9iy4eI9l3w/vowWONZbM+3UU+cWDJE8NSIJzq+tjiAkIn5qxlRyAPfcOuTf7V2HNURa58f7bVavaLyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6508af400c3c11ef9305a59a3cc225df-20240507
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.37,REQID:9e0df8ec-e169-4d7f-bc05-3f8e2edcf482,IP:25,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:16
+X-CID-INFO: VERSION:1.1.37,REQID:9e0df8ec-e169-4d7f-bc05-3f8e2edcf482,IP:25,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:16
+X-CID-META: VersionHash:6f543d0,CLOUDID:c6ffa1d6dfb8b6ea58f8b2298f38ddf0,BulkI
+	D:240506172954AHTO5EQK,BulkQuantity:6,Recheck:0,SF:17|19|43|74|64|66|38|24
+	|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,
+	TF_CID_SPAM_FAS
+X-UUID: 6508af400c3c11ef9305a59a3cc225df-20240507
+X-User: lijun01@kylinos.cn
+Received: from [172.30.60.202] [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <lijun01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1905821853; Tue, 07 May 2024 14:38:20 +0800
+Message-ID: <18342368-ce79-9820-26be-01834876fc9e@kylinos.cn>
+Date: Tue, 7 May 2024 14:38:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 09/11] sdhci: dt-bindings: configuration settings
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
- andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
- ulf.hansson@linaro.org, adrian.hunter@intel.com, digetx@gmail.com,
- ldewangan@nvidia.com, mkumard@nvidia.com
-References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
- <20240506225139.57647-10-kyarlagadda@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH] LoongArch: Update the flush cache policy
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240506225139.57647-10-kyarlagadda@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Xi Ruoyao <xry111@xry111.site>, chenhuacai@kernel.org, kernel@xen0n.name,
+ lvjianmin@loongson.cn, dongbiao@loongson.cn, zhangbaoqi@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240506092419.4109941-1-lijun01@kylinos.cn>
+ <8a8135eb0f1dc724cfbb4402dc6daf08db5b0bc7.camel@xry111.site>
+ <cbb24599-8b40-cd27-6ce7-215476c0ddf4@kylinos.cn>
+ <cbd6ed9d5be1d7112d69117a72e0cb0081f9b64b.camel@xry111.site>
+ <8809f5a7-de6e-0794-feab-726c26f87344@kylinos.cn>
+ <cf5df629b88fe38ae04cfa5714b9de2a44792704.camel@xry111.site>
+From: lijun <lijun01@kylinos.cn>
+In-Reply-To: <cf5df629b88fe38ae04cfa5714b9de2a44792704.camel@xry111.site>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 07/05/2024 00:51, Krishna Yarlagadda wrote:
-> SDHCI vendor tuning registers are configured using config setting
-> framework. Document available config for Tegra SDHCI controllers.
-> 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> ---
->  .../bindings/mmc/nvidia,tegra20-sdhci.yaml    | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
-> index 72987f0326a1..002bc1ffc156 100644
-> --- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.yaml
-> @@ -177,6 +177,37 @@ properties:
->        operates at a 1.8 V fixed I/O voltage.
->      $ref: /schemas/types.yaml#/definitions/flag
->  
-> +  config:
+I guess, final the value of addr is not important, just all of addr must 
+read once is very important,
 
-No. This node does not re
+so use two 'for()' and 'volatile' to flush all of addr  's cache, 
+exactly as the name of the function is
 
+"flush_cache_last_level".
 
-> +    description: Config settings for SDHCI devices.
-> +      Config setting is the configuration based on chip/board/system
-> +      characterization on interface/controller settings. This is needed for
-> +      - making the controller internal configuration to better perform
-> +      - making the interface to work proper by setting drive strength, slew
-> +        rates etc
-> +      - making the low power leakage.
-> +      SDHCI has configuration based on device speed modes.
-> +      - common is set on all speeds and can be overridden by speed mode.
-> +      - List of speed modes and their config name
-> +        "default", /* MMC_TIMING_LEGACY */
-> +        "sd-mmc-highspeed", /* MMC_TIMING_MMC_HS */
-> +        "sd-mmc-highspeed", /* MMC_TIMING_SD_HS */
-> +        "uhs-sdr12", /* MMC_TIMING_UHS_SDR12 */
-> +        "uhs-sdr25", /* MMC_TIMING_UHS_SDR25 */
-> +        "uhs-sdr50", /* MMC_TIMING_UHS_SDR50 */
-> +        "uhs-sdr104", /* MMC_TIMING_UHS_SDR104 */
-> +        "uhs-ddr52", /* MMC_TIMING_UHS_DDR50 */
-> +        "uhs-ddr52", /* MMC_TIMING_MMC_DDR52 */
-> +        "mmc-hs200", /* MMC_TIMING_MMC_HS200 */
-> +        "mmc-hs400", /* MMC_TIMING_MMC_HS400 */
-> +    type: object
-> +    unevaluatedProperties: true
-
-NAK.
-
-> +    properties:
-> +      nvidia,num-tuning-iter:
-> +        description: Specify DQS trim value for HS400 timing.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 0xffff
-
-"iterations" is decimal value. How it can be 0? 0 tries to time?
-
-
-Best regards,
-Krzysztof
-
+在 2024/5/7 11:55, Xi Ruoyao 写道:
+> On Tue, 2024-05-07 at 08:53 +0800, lijun wrote:
+>> The value of addr changes very very quickly, and 'volatile' ensures that
+>> every change can be read
+> No, volatile has nothing to do with changing quickly or not.
+>
+> It's only useful when the compiler cannot know the change, for example
+> it's changed by the hardware or another thread.
+>
+> And in the Linux kernel memory model for the hardware change you should
+> use READ_ONCE/WRITE_ONCE instead (they are actually wrappers of volatile
+> so in the kernel you should almost never need to directly use volatile),
+> for the change from another thread using volatile is just wrong and you
+> should use some atomic or locked operation instead.
+>
+> See
+> https://www.kernel.org/doc/html/latest/process/volatile-considered-harmful.html.
+>
+> In this case I'd like to ask first: why won't a simple addr += cdesc-
+>> linesz * cdesc->sets * cdesc->ways * 3 work?  Which value(s) of addr,
+> cdesc, or cdesc->{linesz,sets,ways} may change w/o the compiler's
+> knowledge?
+>
+>> 在 2024/5/6 18:17, Xi Ruoyao 写道:
+>>> On Mon, 2024-05-06 at 18:08 +0800, lijun wrote:
+>>>> volatile prevents compiler optimization by allowing the compiler
+>>>>
+>>>>     to reread the address value of addr every time
+>>> But why is this ever needed?  What's wrong if the compiler optimizes
+>>> it?
+>>>
+>>> If the problem is the compiler may optimize it to cdesc->ways * 3 *
+>>> cdesc->sets * cdesc->linesz, unknowing cdesc->ways etc may magically
+>>> change, you should use READ_ONCE(cdesc->ways) etc.
+>>>
+>>> I.e. use READ_ONCE on the expression which may magically change,
+>>> instead
+>>> of hacking addr.  addr won't magically change.
+>>>
+>>>> 在 2024/5/6 17:28, Xi Ruoyao 写道:
+>>>>> On Mon, 2024-05-06 at 17:24 +0800, Li Jun wrote:
+>>>>>> fix when LoongArch s3 resume, Can't find image information
+>>>>>>
+>>>>>> Signed-off-by: Li Jun <lijun01@kylinos.cn>
+>>>>>> Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
+>>>>>> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+>>>>>> Signed-off-by: Biao Dong <dongbiao@loongson.cn>
+>>>>>> ---
+>>>>>>     arch/loongarch/mm/cache.c | 24 +++++++++++++++++++++++-
+>>>>>>     1 file changed, 23 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/loongarch/mm/cache.c
+>>>>>> b/arch/loongarch/mm/cache.c
+>>>>>> index 6be04d36ca07..52872fa0e5d8 100644
+>>>>>> --- a/arch/loongarch/mm/cache.c
+>>>>>> +++ b/arch/loongarch/mm/cache.c
+>>>>>> @@ -63,6 +63,28 @@ static void flush_cache_leaf(unsigned int
+>>>>>> leaf)
+>>>>>>     	} while (--nr_nodes > 0);
+>>>>>>     }
+>>>>>>     
+>>>>>> +static void flush_cache_last_level(unsigned int leaf)
+>>>>>> +{
+>>>>>> +	u64 addr;
+>>>>>> +	int i, j, nr_nodes, way_size;
+>>>>>> +	struct cache_desc *cdesc =
+>>>>>> current_cpu_data.cache_leaves
+>>>>>> +
+>>>>>> leaf;
+>>>>>> +
+>>>>>> +	nr_nodes = loongson_sysconf.nr_nodes;
+>>>>>> +
+>>>>>> +	addr = CSR_DMW1_BASE;
+>>>>>> +	iocsr_write32(0x1, 0x280);
+>>>>>> +	way_size = cdesc->sets * cdesc->linesz;
+>>>>>> +	do {
+>>>>>> +		for (i = 0; i < (cdesc->ways * 3); i++) {
+>>>>>> +			for (j = 0; j < (cdesc->sets); j++) {
+>>>>>> +				*(volatile u32 *)addr;
+>>>>> ??? what does this line do?
+>>>>>
 
