@@ -1,247 +1,299 @@
-Return-Path: <linux-kernel+bounces-171139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B13C8BE022
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:50:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F898BE025
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBDC1C234EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:50:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D3E1F235EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AF9152E0E;
-	Tue,  7 May 2024 10:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hI775dL/"
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF6155357
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4A51509A2;
+	Tue,  7 May 2024 10:49:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C7114F9E7;
+	Tue,  7 May 2024 10:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715078897; cv=none; b=rrVfstKml+8KQVF3GyUmLQv57S5mFhCoHBKWRqii/1pYpYiusQgkC7aPnCgq2LdGOpv0MOqTqktrcTLMhlNSw0xL8cKwtL6cSYzwHbo07gLsxt2QBAxFruwM8uRd3iOKrUhjUnuyZ6r5QaK/pFBchcUF0fHIY7ZaHBWjfXgnAac=
+	t=1715078978; cv=none; b=hjoWMPGH4jYWfEY88fZIE6dcIOKrAy+DAYMCoDfJKcUdM2/ehDp9x6cXZXUHNHXtjORRqqf/nq3FTWKddFoIGQux6s8IkzMZ3rGLrcqjwmwjjmlw//AG7nc0zdxhHcWkdaaEAnr2Dr9b/TRDS0UBw8WLeC7EhJBTpf1f2NWUjgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715078897; c=relaxed/simple;
-	bh=gr6MCpczg12et+FBMDjyCUfNDicp71lojIb2Pw4ZPGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SK40ziRwATuX9/XKs1gKyOHPb3Wr4EhkLqj5PFXO08NFJt7kkGnU5nqEsQvRToDaz7SuZvi9+khS+xBSLv+FcZFEN9R0mDcOtduhpQcrbexyknOksyB7FYbZce+HSF38PsKjruXM8E4Z0Dc1OsCHXjhavaSj45mnrqnm0Gbb3MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hI775dL/; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-47ef107b07fso1578422137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715078895; x=1715683695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8LWXi1t+lE6KI0eavFtHLY+RQwXGx7aET3nURSVgDQU=;
-        b=hI775dL/nyzZpi8lC88ZoN00fZ5w5N1nupUOP35BMC0eEOwDxenh5SxDgb5m6b6eTs
-         gdn0LFxAwgTx/6/SbuGZrLqfdizyeb8/Z5yRvjgEI8bBfsm44M82kAzqkj6dxuCo18G8
-         KvUsNTkrC/SSqZkdR6zyyXaUdSxV+Edxc/NIl3foCc952PgMsG+R/XRiRFWyye12UKKN
-         oVKFMz4SqrLi0ldOxwXP2aosyqQZSsgyDUm8K0epooaOaz8ErBs7OVIv047sbAHHYlDQ
-         b02F77PtK5avE5gVx4eFk5OZbFnHL4jPo2gKmKBbDZk8dKNgmDAW7lddTa2YkXNne6ha
-         JKvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715078895; x=1715683695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8LWXi1t+lE6KI0eavFtHLY+RQwXGx7aET3nURSVgDQU=;
-        b=L1Eqw8X7LX/TG3fQwj4tIC8ed/NVY4T8oiSL+iwnD4DWPXlowrhDSNgLf/uzN76RAq
-         TFkZZ1zO0k5deTcBcuwr1BYDzk4f6vo93URoVI3ykcA3jng5va3bVBPXZiZQmxzBoIdA
-         v9krvrZjs9pnYEqAuEPCq8Wo+7fCDgqYykN71bCcBCsWM8id88J6HiEPX8Jtne6E5pBW
-         5mYBMzmgXaawGNmuW4bbErWe/S6Hcwbm98GGGAzmn3vIXUcnblZ189rxjkV7Wi0Nrk4d
-         B96li0HhZEQ22OtzA6mrJcE6U/5UG8q3Ktgouj6lYPivgAWYvwXJdzRyoiJ/2GPLnmAu
-         fnLA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8xW/2ebvIqdw9bh6U17NS+/FDAQLX/5DyPccFnHuWWabAQQSRa4QmH9TnRhJ/1IpfCHEggPLzjR2kvXJRwiD4sJwo/fAgC+BnN8t
-X-Gm-Message-State: AOJu0YxDKspcP8EzRqtPZRAt79uW4LsTfck9xxSe7K6lNu1FEWsNWfPT
-	D9j56LYI7geB/SQCP3QKT9lPWej03sYixgH+O4Ldme9uc4xqz6n1VeQ3efJZy30IplqJnylguWF
-	YTKHUaQYEt+LVhuo1fEbljYTjO+k=
-X-Google-Smtp-Source: AGHT+IGIQBgQs0/0XUDNmD2dno2WAe2gtY1HXhGqpZCxiIFvub8VoZsh8lfP2ESItgpq0YzJYUMQuR9NE9/ZfyctA4I=
-X-Received: by 2002:a67:f658:0:b0:47b:bda4:c30d with SMTP id
- u24-20020a67f658000000b0047bbda4c30dmr1839721vso.3.1715078894913; Tue, 07 May
- 2024 03:48:14 -0700 (PDT)
+	s=arc-20240116; t=1715078978; c=relaxed/simple;
+	bh=+Z+G07YAt/8fet4+ZD77VYBWfm572qjuibLJIAMZq9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cAJhxBstu/mRY0wUoXHV7fk2xzyNrCAIIGFaCvpZ28zyRwUNtP1ucgKApwVwV0Hl0jNBWlodg/+PbV5/rt2GqDcSB5Zefxd8E5S72Vm2RuDnrwYENtaHNGa6HVb3EQQa4Oqqj4QreMpmBTSDpSdfgnbTldL/uQffmi3U3p+xbs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB93E1063;
+	Tue,  7 May 2024 03:50:01 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC5D93F587;
+	Tue,  7 May 2024 03:49:32 -0700 (PDT)
+Message-ID: <6d426e77-8d74-40d5-88c9-e590de07141c@arm.com>
+Date: Tue, 7 May 2024 11:49:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503005023.174597-1-21cnbao@gmail.com> <20240503005023.174597-7-21cnbao@gmail.com>
- <0b4d4d4b-91d8-4fd5-af4e-aebe9ee08b89@arm.com> <CAGsJ_4wm6v+xgh4jQ+u2-EzOXCLsz6L6nRJi_=FfWuGDUjxRYg@mail.gmail.com>
- <ff5b371a-16f6-4d03-b80d-b56af0f488c3@redhat.com> <CAGsJ_4z93FwPZx7w2VuCEkHP_JCwkO0whKwymonRJ9bSiKMVyQ@mail.gmail.com>
- <CAGsJ_4xssg3CcjifePMmgk4aqLO+iAon0YdT9p=Uq-D8vFMxyQ@mail.gmail.com>
- <5b770715-7516-42a8-9ea0-3f61572d92af@redhat.com> <CAGsJ_4xP1jPjH-SH7BgnFHiT4m+2gB0tP7ie_cUFynVpD_zpxQ@mail.gmail.com>
- <7dc2084e-d8b1-42f7-b854-38981839f82e@redhat.com> <CAGsJ_4w4vDu4p-ALrTSKMZhGKDK6TpyDLrAyvY4vkPJEJ3N5Lw@mail.gmail.com>
- <099a2c9e-f85e-4fe7-99dd-81b61115935c@redhat.com> <CAGsJ_4wNTgkP7An7ofXkfyhRpF=J-OLWTW7e5hOFef5-CxZe4Q@mail.gmail.com>
- <41c1bd1f-b1d7-4faf-a422-1eff7425b35c@redhat.com>
-In-Reply-To: <41c1bd1f-b1d7-4faf-a422-1eff7425b35c@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 7 May 2024 18:48:03 +0800
-Message-ID: <CAGsJ_4whPN91m0v_=TtnnQN8y1CQgau+4F40q1vkrRUFK5t0wA@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] mm: swap: entirely map large folios found in swapcache
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, chrisl@kernel.org, hanchuanhua@oppo.com, 
-	hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, xiang@kernel.org, ying.huang@intel.com, 
-	yosryahmed@google.com, yuzhao@google.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/17] coresight: Pass trace ID map into source enable
+To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
+ coresight@lists.linaro.org, mike.leach@linaro.org
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, John Garry
+ <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+ Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+References: <20240429152207.479221-1-james.clark@arm.com>
+ <20240429152207.479221-15-james.clark@arm.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20240429152207.479221-15-james.clark@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 7, 2024 at 6:39=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 07.05.24 11:24, Barry Song wrote:
-> > On Tue, May 7, 2024 at 8:59=E2=80=AFPM David Hildenbrand <david@redhat.=
-com> wrote:
-> >>
-> >>>> Let's assume a single subpage of a large folio is no longer mapped.
-> >>>> Then, we'd have:
-> >>>>
-> >>>> nr_pages =3D=3D folio_nr_pages(folio) - 1.
-> >>>>
-> >>>> You could simply map+reuse most of the folio without COWing.
-> >>>
-> >>> yes. This is good but the pte which is no longer mapped could be
-> >>> anyone within the nr_pages PTEs. so it could be quite tricky for
-> >>> set_ptes.
-> >>
-> >> The swap batching logic should take care of that, otherwise it would b=
-e
-> >> buggy.
-> >
-> > When you mention "it would be buggy," are you also referring to the cur=
-rent
-> > fallback approach? or only refer to the future patch which might be abl=
-e
-> > to map/reuse "nr_pages - 1" pages?
->
-> swap_pte_batch() should not skip any holes. So consequently, set_ptes()
-> should do the right thing. (regarding your comment "could be quite ricky
-> for set_ptes")
->
-> So I think that should be working as expected.
+Hi James
 
-maybe not. take a look at my current code, I am goto check_folio with
-nr_pages =3D 1
-if  swap_pte_batch(folio_ptep, nr, folio_pte) !=3D folio_nr_pages(folio).
+On 29/04/2024 16:21, James Clark wrote:
+> This will allow Perf mode to pass in per-sink maps. System sources
+> allocate IDs on probe so they don't use this and it's __maybe_unused.
 
-+       nr_pages =3D 1;
-+       ...
-+       if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-+               int nr =3D folio_nr_pages(folio);
-+               ...
-+               if (!pte_same(folio_pte,
-pte_move_swp_offset(vmf->orig_pte, -idx)) ||
-+                   swap_pte_batch(folio_ptep, nr, folio_pte) !=3D nr)
-+                       goto check_folio; /* read here, i am falling
-back nr_pages =3D 1 */
-+
-+
-+               ...
-+               nr_pages =3D nr;
+I am wondering if we need this change ? We have event_data associated 
+with each event and we allocate the traceid from the sink map at 
+setup_aux. So, why not set the traceid or even link the id_map in the 
+event_data ?
 
-The fallback(=3D1) works. but it seems you are proposing set nr_pages =3D
-swap_pte_batch(folio_ptep, nr, folio_pte)
-if (swap_pte_batch(folio_ptep, nr, folio_pte) > 1 &&
-swap_pte_batch(folio_ptep, nr, folio_pte) <
-nr_pages) ?
+something like:
 
->
-> >
-> > The current patch falls back to setting nr_pages =3D 1 without mapping =
-or
-> > reusing nr_pages - 1. I feel your concern doesn't refer to this fallbac=
-k?
-> >
-> >>
-> >>>
-> >>>>
-> >>>> Once we support COW reuse of PTE-mapped THP we'd do the same. Here, =
-it's
-> >>>> just easy to detect that the folio is exclusive (folio_ref_count(fol=
-io)
-> >>>> =3D=3D 1 before mapping anything).
-> >>>>
-> >>>> If you really want to mimic what do_wp_page() currently does, you sh=
-ould
-> >>>> have:
-> >>>>
-> >>>> exclusive || (folio_ref_count(folio) =3D=3D 1 && !folio_test_large(f=
-olio))
-> >>>
-> >>> I actually dislike the part that do_wp_page() handles the reuse of a =
-large
-> >>> folio which is entirely mapped. For example, A forks B, B exit, we wr=
-ite
-> >>> A's large folio, we get nr_pages CoW of small folios. Ideally, we can
-> >>> reuse the whole folios for writing.
-> >>
-> >> Yes, see the link I shared to what I am working on. There isn't really=
- a
-> >> question if what we do right now needs to be improved and all these
-> >> scenarios are pretty obvious clear.
-> >
-> > Great! I plan to dedicate more time to reviewing your work.
->
-> Nice! And there will be a lot of follow-up optimization work I won't
-> tackle immediately regarding COW (COW-reuse around, maybe sometimes we
-> want to COW bigger chunks).
->
-> I still have making PageAnonExclusive a per-folio flag on my TODO list,
-> that will help the COW-reuse around case a lot.
->
-> >
-> >>
-> >>>
-> >>>>
-> >>>> Personally, I think we should keep it simple here and use:
-> >>>>
-> >>>> exclusive || folio_ref_count(folio) =3D=3D 1
-> >>>
-> >>> I feel this is still better than
-> >>> exclusive || (folio_ref_count(folio) =3D=3D 1 && !folio_test_large(fo=
-lio))
-> >>> as we reuse the whole large folio. the do_wp_page() behaviour
-> >>> doesn't have this.
-> >>
-> >> Yes, but there is the comment "Same logic as in do_wp_page();". We
-> >> already ran into issues having different COW reuse logic all over the
-> >> place. For this case here, I don't care if we leave it as
-> >>
-> >> "exclusive || folio_ref_count(folio) =3D=3D 1"
-> >
-> > I'm perfectly fine with using the code for this patchset and maybe
-> > looking for other
-> > opportunities for potential optimization as an incremental patchset,
-> > for example,
-> > reusing the remaining PTEs as suggested by you -  "simply map+reuse mos=
-t of
-> > the folio without COWing."
-> >
-> >>
-> >> But let's not try inventing new stuff here.
-> >
-> > It seems you ignored and snipped my "16 + 14" pages and "15" pages
-> > example though. but once we support "simply map+reuse most of the
-> > folio without COWing", the "16+14" problem can be resolved, instead,
-> > we consume 16 pages.
->
->
-> Oh, sorry for skipping that, for me it was rather clear: the partially
-> mapped folios will be on the deferred split list and the excess memory
-> can (and will be) reclaimed when there is need. So this temporary memory
-> consumption is usually not a problem in practice. But yes, something to
-> optimize (just like COW reuse in general).
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+struct etm_event_data { 
+
+         struct work_struct work; 
+
+         cpumask_t mask; 
+
+         cpumask_t aux_hwid_done; 
+
+         void *snk_config; 
+
+         u32 cfg_hash; 
+
+         struct list_head * __percpu *path;
++	u8 __percpu *traceid;
+};
+
+
+See my comment in the other patch.
+
+Suzuki
+
+
+
+
+> 
+> Sysfs mode also has the global map hard coded in various places, so pass
+> in NULL when enabling for sysfs. We could bubble the global map all the
+> way down to where it's used, but it wouldn't have any functional
+> difference, so it's probably not worth the code churn.
+> 
+
+
+> Signed-off-by: James Clark <james.clark@arm.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-dummy.c      |  3 ++-
+>   drivers/hwtracing/coresight/coresight-etm-perf.c   |  3 ++-
+>   drivers/hwtracing/coresight/coresight-etm3x-core.c | 10 +++++-----
+>   drivers/hwtracing/coresight/coresight-etm4x-core.c | 10 +++++-----
+>   drivers/hwtracing/coresight/coresight-stm.c        |  3 ++-
+>   drivers/hwtracing/coresight/coresight-sysfs.c      |  3 ++-
+>   drivers/hwtracing/coresight/coresight-tpdm.c       |  3 ++-
+>   include/linux/coresight.h                          |  2 +-
+>   8 files changed, 21 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
+> index ac70c0b491be..1f1b9ad160f6 100644
+> --- a/drivers/hwtracing/coresight/coresight-dummy.c
+> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
+> @@ -21,7 +21,8 @@ DEFINE_CORESIGHT_DEVLIST(source_devs, "dummy_source");
+>   DEFINE_CORESIGHT_DEVLIST(sink_devs, "dummy_sink");
+>   
+>   static int dummy_source_enable(struct coresight_device *csdev,
+> -			       struct perf_event *event, enum cs_mode mode)
+> +			       struct perf_event *event, enum cs_mode mode,
+> +			       __maybe_unused struct coresight_trace_id_map *id_map)
+>   {
+>   	dev_dbg(csdev->dev.parent, "Dummy source enabled\n");
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> index 25f1f87c90d1..177cecae38d9 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+> @@ -496,7 +496,8 @@ static void etm_event_start(struct perf_event *event, int flags)
+>   		goto fail_end_stop;
+>   
+>   	/* Finally enable the tracer */
+> -	if (source_ops(csdev)->enable(csdev, event, CS_MODE_PERF))
+> +	if (source_ops(csdev)->enable(csdev, event, CS_MODE_PERF,
+> +				      coresight_trace_id_map_default()))
+>   		goto fail_disable_path;
+>   
+>   	/*
+> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> index b21f5ad94e63..b310bdf19038 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
+> @@ -482,7 +482,8 @@ void etm_release_trace_id(struct etm_drvdata *drvdata)
+>   }
+>   
+>   static int etm_enable_perf(struct coresight_device *csdev,
+> -			   struct perf_event *event)
+> +			   struct perf_event *event,
+> +			   struct coresight_trace_id_map *id_map)
+>   {
+>   	struct etm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>   	int trace_id;
+> @@ -501,8 +502,7 @@ static int etm_enable_perf(struct coresight_device *csdev,
+>   	 * with perf locks - we know the ID cannot change until perf shuts down
+>   	 * the session
+>   	 */
+> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
+> -						  coresight_trace_id_map_default());
+> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu, id_map);
+>   	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>   		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
+>   			dev_name(&drvdata->csdev->dev), drvdata->cpu);
+> @@ -555,7 +555,7 @@ static int etm_enable_sysfs(struct coresight_device *csdev)
+>   }
+>   
+>   static int etm_enable(struct coresight_device *csdev, struct perf_event *event,
+> -		      enum cs_mode mode)
+> +		      enum cs_mode mode, struct coresight_trace_id_map *id_map)
+>   {
+>   	int ret;
+>   	struct etm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> @@ -570,7 +570,7 @@ static int etm_enable(struct coresight_device *csdev, struct perf_event *event,
+>   		ret = etm_enable_sysfs(csdev);
+>   		break;
+>   	case CS_MODE_PERF:
+> -		ret = etm_enable_perf(csdev, event);
+> +		ret = etm_enable_perf(csdev, event, id_map);
+>   		break;
+>   	default:
+>   		ret = -EINVAL;
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index d16d6efb26fa..02dbb6c4daf5 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -753,7 +753,8 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>   }
+>   
+>   static int etm4_enable_perf(struct coresight_device *csdev,
+> -			    struct perf_event *event)
+> +			    struct perf_event *event,
+> +			    struct coresight_trace_id_map *id_map)
+>   {
+>   	int ret = 0, trace_id;
+>   	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+> @@ -776,8 +777,7 @@ static int etm4_enable_perf(struct coresight_device *csdev,
+>   	 * with perf locks - we know the ID cannot change until perf shuts down
+>   	 * the session
+>   	 */
+> -	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu,
+> -						  coresight_trace_id_map_default());
+> +	trace_id = coresight_trace_id_read_cpu_id(drvdata->cpu, id_map);
+>   	if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>   		dev_err(&drvdata->csdev->dev, "Failed to set trace ID for %s on CPU%d\n",
+>   			dev_name(&drvdata->csdev->dev), drvdata->cpu);
+> @@ -839,7 +839,7 @@ static int etm4_enable_sysfs(struct coresight_device *csdev)
+>   }
+>   
+>   static int etm4_enable(struct coresight_device *csdev, struct perf_event *event,
+> -		       enum cs_mode mode)
+> +		       enum cs_mode mode, struct coresight_trace_id_map *id_map)
+>   {
+>   	int ret;
+>   
+> @@ -853,7 +853,7 @@ static int etm4_enable(struct coresight_device *csdev, struct perf_event *event,
+>   		ret = etm4_enable_sysfs(csdev);
+>   		break;
+>   	case CS_MODE_PERF:
+> -		ret = etm4_enable_perf(csdev, event);
+> +		ret = etm4_enable_perf(csdev, event, id_map);
+>   		break;
+>   	default:
+>   		ret = -EINVAL;
+> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+> index e1c62820dfda..a80ad1de4c23 100644
+> --- a/drivers/hwtracing/coresight/coresight-stm.c
+> +++ b/drivers/hwtracing/coresight/coresight-stm.c
+> @@ -194,7 +194,8 @@ static void stm_enable_hw(struct stm_drvdata *drvdata)
+>   }
+>   
+>   static int stm_enable(struct coresight_device *csdev, struct perf_event *event,
+> -		      enum cs_mode mode)
+> +		      enum cs_mode mode,
+> +		      __maybe_unused struct coresight_trace_id_map *trace_id)
+>   {
+>   	struct stm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-sysfs.c b/drivers/hwtracing/coresight/coresight-sysfs.c
+> index 1e67cc7758d7..a01c9e54e2ed 100644
+> --- a/drivers/hwtracing/coresight/coresight-sysfs.c
+> +++ b/drivers/hwtracing/coresight/coresight-sysfs.c
+> @@ -9,6 +9,7 @@
+>   #include <linux/kernel.h>
+>   
+>   #include "coresight-priv.h"
+> +#include "coresight-trace-id.h"
+>   
+>   /*
+>    * Use IDR to map the hash of the source's device name
+> @@ -63,7 +64,7 @@ static int coresight_enable_source_sysfs(struct coresight_device *csdev,
+>   	 */
+>   	lockdep_assert_held(&coresight_mutex);
+>   	if (coresight_get_mode(csdev) != CS_MODE_SYSFS) {
+> -		ret = source_ops(csdev)->enable(csdev, data, mode);
+> +		ret = source_ops(csdev)->enable(csdev, data, mode, NULL);
+>   		if (ret)
+>   			return ret;
+>   	}
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+> index a9708ab0d488..0376ad326a2f 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+> @@ -439,7 +439,8 @@ static void __tpdm_enable(struct tpdm_drvdata *drvdata)
+>   }
+>   
+>   static int tpdm_enable(struct coresight_device *csdev, struct perf_event *event,
+> -		       enum cs_mode mode)
+> +		       enum cs_mode mode,
+> +		       __maybe_unused struct coresight_trace_id_map *id_map)
+>   {
+>   	struct tpdm_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>   
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index 7d62b88bfb5c..3a678e5425dc 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -384,7 +384,7 @@ struct coresight_ops_link {
+>   struct coresight_ops_source {
+>   	int (*cpu_id)(struct coresight_device *csdev);
+>   	int (*enable)(struct coresight_device *csdev, struct perf_event *event,
+> -		      enum cs_mode mode);
+> +		      enum cs_mode mode, struct coresight_trace_id_map *id_map);
+>   	void (*disable)(struct coresight_device *csdev,
+>   			struct perf_event *event);
+>   };
+
 
