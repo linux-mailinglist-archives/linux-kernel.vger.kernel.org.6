@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-171818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457808BE919
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751C88BE91A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF54E282792
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9851F1C20AD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C6E16D301;
-	Tue,  7 May 2024 16:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E7316D31E;
+	Tue,  7 May 2024 16:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PX3/bUqx"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2040.outbound.protection.outlook.com [40.107.244.40])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PbmBmYoD"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2079.outbound.protection.outlook.com [40.107.102.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E89816C453;
-	Tue,  7 May 2024 16:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A5916D302
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.79
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099310; cv=fail; b=WEz8sFidsSjacZ5MmcTlVGKQExuuvC87EXLZQelQshbA6v+63IHFzaSUPN42HjA7QNpkQfBBMKC+NvvFs8i2QvNd19Jvr4q8dWvG3EX2Z/R2pX3WPil60mhnmFE0DrjzShmKS3QwoJ5SbZVLdftinIWzQVMlWUlb4SfoNqL+LoE=
+	t=1715099327; cv=fail; b=ixqWbscrq2s0Pd8KRxW+aP3v4auOaMTeYc0vkwzgt8z9pkDlzHAlPSn7uR5JT0JVqI+Wr0y+hNqvEEoaIi/y7khxDd9LCJ55PTjJg97oU6HXr16U/fcwNcZDgEoqLunLNloQVe1qkHqHPKFn3NhLjJCSjseO+5zielV+8HpRQxc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099310; c=relaxed/simple;
-	bh=xB0AS24RAJmnKV2LhSkEVd+F5bhjvoo8S9ifWpwQNeI=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CVS6jgH9MYzwtSyAf2XaCJJVAR7LDiYoHNplHRiPc8kZrrgjvOVNFBgHdVkPvpUdmD4d5zqB6mCetYfal3x2A08+wcYyYoN7pHV49fMxomIPim728gEdvXu5P9DsVeOMXvnHeOizSAWRhY6y356T5u9XiJUcFBA9lHIr6A2KMdk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PX3/bUqx; arc=fail smtp.client-ip=40.107.244.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1715099327; c=relaxed/simple;
+	bh=YNY7sJd8LxqbnuSsgq5TSbRnCMeee5l/x1+PQjOjUF8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sOeZkVrMM3g8lcLYW1MSWhYggF5hv7zdVehF7jo/BDyX0wruy/7BezTUpyZnogK2z1fs1Z25ratChu2bcU1b3NQyIe9VoWdQ24yLxTElLykqm1PRvFAmA8fVFF5ybaVgZZyKw69UdkOCrg2CJEC5GNSokdI71xqhgtLX3twQFNk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PbmBmYoD; arc=fail smtp.client-ip=40.107.102.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ODnCX3sFRPO5ImqdM5Mm4I3ESFdaAp72rRaf5PXOvzzaGiaxdFN1LZ7mAGAdMO8ti8rQ+kmGZOHYgWhesmePK0Xh/fegKwpU0erS0rPCtb/WW7Y5+ogr3JkNnCWr6A2Rv7LIuRnX2hp/pswN2dJHdBCyAlPTsoU+yBih+81OkG+scf7A1y2XHjsiy56vHw4yThLDR04aGfn/uBSAgdYgItRtmzgNj3A0BlvJPD1bBjUskdNCGhyqlmXsLvhtRqWYGfO52SA5YSUl/lTu9OQHZjt4N6ustUh0NaLy1ablx1nc97rVAhmScl1dSqcEa55nSnVQz+WbHQlU7k6NL5nhLQ==
+ b=HrGT5xpav/FNqFNm2GCNtKaDRpzxARXSmECD/r6dKsWuNLdQh58IYNrhconozQX1l72nmDa8ZIktfjt9GO2I2BoKCbO3UDpEuvYYgOU81LBv4Aq4qbpHMKsPQx+fUTIm9URUwN4u6AkJycV8XCULX1nPEfN1uAqYbnY5C2v8ZAU8Mope9enUCTZ7fX/l2fZASqKWPAn3kSzYEWJEbAhum17YPVp58B/HB6jsH35n8ABk6OtyNBYgSLuFTUtSR5qfPtoPHoL1eH3ClVgia9mnu6svoLv8xxEwcRMc+Wa5rePPKJh/V4PzzIF57ofiFflY5cU27DbgxsTmnf1dkaKsfA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dbo3X8GyWl7M1x/kj1phUGkDFRlbo3wfVanUB6S8No4=;
- b=Ni5ruVO1ybO6TonjCJnWZTopv/FSWB2XCZc+elFN9MfWAJ4U63/nXSh4wZo6v/WbXGbk5mgUDTTlDJC58JXE++RqTIOdpJ2KB+hh67AqnoOtYJBF467oC0nXgOiTRxNkmzXRSqTnkvkLQuSrzJ2kyWra4fg3MO66txN4tOlPM3K/cXeeKQqRcYAFh/y3wUuA2Hgc8soaSRIofjosEoiaz+TXMjHc3WkPR+dyv9k7LGEL9fwsWVFH4JOZoLe0XXdgCJHFwFXN6o/GITqA0Eecztj7huJeos7wlNTC5pW/RzYVYWefoG6IFRQiTmW8pASjoeeoSC2QgiKaGjl4vTFOGw==
+ bh=MPolYrSEfKTT6LLHz10WmO4L3kB5TFUp75T3mMLXB/w=;
+ b=G0YddfCI0VUWIS80Y05cmUktk6SDZuQCjT3RBEo+tCYmTLGu21LHNGtjEVXBgxyh9RhPnzRbjAu0fkP48V+POK7oWBIC/Fs+IbDFt8wnAxWwtFnW+nwbDemVGCPGu06+pJDmvQWagcNqhMjcXJH6HeslaGfU5p17y3BXV5L/DwpGAB9/NcNTQjI52UyVqQrNqw24lp+ZXxEiLgc8CPkcvxuXTYfCAgXAhLLnnyVMoHzrriFzkj+nipoMcHrR0jCXRAdba3FhiotZL8jYRlo843Y03lIMA60RZyDC49M0YXga0VLUwv3Ur1nOtc5ikftVrdQa57OW/jbRUlA76cxMcg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dbo3X8GyWl7M1x/kj1phUGkDFRlbo3wfVanUB6S8No4=;
- b=PX3/bUqxcjwrfH2oOpV10XZKoWFOQ+M1B4ZAj2i3hCiRae6Lhn8lnqyadJCLl1EaRcC4jKIvwSeb1p38yKCMj/JFfWcr+IepleUewO7VMh6HSziT0DdV7X0uzSjmCoWivQmeHV+McRz3UoZoUX7F4Fh1vKoYKg+IAxzHpvc/f5E=
+ bh=MPolYrSEfKTT6LLHz10WmO4L3kB5TFUp75T3mMLXB/w=;
+ b=PbmBmYoDpTxkfUz427cRessfAyRiE3UmPraM5UYQbQQ/Vx6Qxsl16zhhkFb5eq6Y4yUFL74a1E5fkXa1n7IDBuVDcDENoFry9pc29p0qxr2WQwQ9BuJZLE/X2dG1Pv7XGN+FFy3NHpU8oA22rMIX12MEXpfMTv3aYXcACIQ8kRGlkqt8E44b/WyIzn50YQcLaBsIGSQ/ANG4Yv8djC4p+o3HcEqLwhMBrvmVWqsBBf1qDH/VL3cTWdDh63coG7gM4hsJPAqdU6f1iGwUp0GGEqCRM08KcYft2ku1kduj1nYd6hgqisaVn7FS4ya74v9KDu6H47vDDESLZkk3PQA5ow==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by DS0PR12MB7702.namprd12.prod.outlook.com (2603:10b6:8:130::13) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB4140.namprd12.prod.outlook.com (2603:10b6:5:221::13)
+ by SA0PR12MB4432.namprd12.prod.outlook.com (2603:10b6:806:98::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Tue, 7 May
- 2024 16:28:25 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.7544.041; Tue, 7 May 2024
- 16:28:24 +0000
-Message-ID: <086a6c59-f617-4714-b91a-2b1deae8e33e@amd.com>
-Date: Tue, 7 May 2024 11:28:20 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Tue, 7 May
+ 2024 16:28:41 +0000
+Received: from DM6PR12MB4140.namprd12.prod.outlook.com
+ ([fe80::5b0:8154:dfef:2cac]) by DM6PR12MB4140.namprd12.prod.outlook.com
+ ([fe80::5b0:8154:dfef:2cac%3]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 16:28:41 +0000
+Message-ID: <302d50ac-45ff-470e-90a0-b349821706a6@nvidia.com>
+Date: Tue, 7 May 2024 09:28:29 -0700
 User-Agent: Mozilla Thunderbird
-From: "Moger, Babu" <babu.moger@amd.com>
-Subject: Re: [RFC PATCH v3 05/17] x86/resctrl: Introduce the interface to
- display the assignment state
-Reply-To: babu.moger@amd.com
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1711674410.git.babu.moger@amd.com>
- <e50e1e55c2ef4f5e1609960e573b30a125a59e5c.1711674410.git.babu.moger@amd.com>
- <9fd1c700-fa24-4290-aa77-a6eda9758ace@intel.com>
+Subject: Re: [PATCH] x86/fault: speed up uffd-unit-test by 10x: rate-limit
+ "MCE: Killing" logs
+To: David Hildenbrand <david@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+ LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+ Peter Xu <peterx@redhat.com>, Axel Rasmussen <axelrasmussen@google.com>
+References: <20240507022939.236896-1-jhubbard@nvidia.com>
+ <016d8cff-efc3-4ef1-9aff-7c21c48f2d69@redhat.com>
 Content-Language: en-US
-In-Reply-To: <9fd1c700-fa24-4290-aa77-a6eda9758ace@intel.com>
-Content-Type: text/plain; charset=UTF-8
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <016d8cff-efc3-4ef1-9aff-7c21c48f2d69@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR01CA0015.prod.exchangelabs.com (2603:10b6:805:b6::28)
- To MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+X-ClientProxiedBy: BY5PR13CA0006.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::19) To DM6PR12MB4140.namprd12.prod.outlook.com
+ (2603:10b6:5:221::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,239 +85,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|DS0PR12MB7702:EE_
-X-MS-Office365-Filtering-Correlation-Id: ec8b2fdb-12b0-48d5-20bc-08dc6eb2b7b6
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4140:EE_|SA0PR12MB4432:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4d18185-f1cb-40ca-b140-08dc6eb2c18f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|376005|366007;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|376005|1800799015|366007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QXpBbXFmdVZJOHRxK0IyTThCczV6c0RxKy96MDAwSmFQQnBObHYwUkp3bGYy?=
- =?utf-8?B?Q3hxUWxFL2QyNVpZNENWMk11aU03ZUw5TDN3RXRDUWhkSHN5RWx0eHFzck0r?=
- =?utf-8?B?eGh0ZWZ3RzZnckdrYnZ3UWwxYm9GWWJHWUd5Ti90VHd0VVlQRkxodno4UVp0?=
- =?utf-8?B?YmQ1N3VzNVc5NFQ3d3QvVXdXRGVtQzU3dFUwM2hXN0Q4M3I2RVVHVEpacTlC?=
- =?utf-8?B?bVo2aXlhSHl2ZFhkMUlUanR3MUZSVEpSaitzbGZ1VWQrNTFKWHBRTnJ2b0lD?=
- =?utf-8?B?dTFEdElnMU53Y3JaR2ZrMkNqVHppK0UrSGVjRG9JNTJaNnVtYUgzZjZqRmJ2?=
- =?utf-8?B?ZThsN1lHcEpIZytvNXRrUklDZjRobU1PTWx2Ykt3Vk5UeTdMTCszTjY5Zzk1?=
- =?utf-8?B?S1FxWW5lTmFGajh2b0pPUzJrZFl5VGFXc1dkWk4vaURLVmJPeGg4L2Y1cGFK?=
- =?utf-8?B?NDZLL0UyMDBlRVJWekRyMk4vbEx3OStPa2s0eTN2OUFJclBwL2VVTkk4ekZF?=
- =?utf-8?B?ampUUjRoenpscXZwWVBPTWJ4SHZrdURtS1VvTEIwdkFrK2FsbUp1YzZpUjFF?=
- =?utf-8?B?RmRldmxJUTZMSmZVVnZRSUlldUoyOW9lQklrV29rV2kyZVh0QmlKYXVqOW5j?=
- =?utf-8?B?QlJUaE1JMTJPcnEyMFNKR2VoWm11U2FoejdDOTArVzdublJ2SURCaXVhM1Yw?=
- =?utf-8?B?TFErdlhuMitxRzRybk45blFENElEaHNYRzhYNHNkK0sweEQrZ0prT0NTWkly?=
- =?utf-8?B?UDhzckpJTnFsanFzb1NURnY1LzlTaGhOMHdveG9JMTBYUXBZamlQTlFhcW5W?=
- =?utf-8?B?WWpYV1NiK1FwNG8vZzB5K1dFWnJpdUpFNU4vcnVGQ0VxbXMrMkltWkFabTJZ?=
- =?utf-8?B?THhCYkZxVW9nYmx6ZFFzMUYrSEtpYUhVRUU5ZlNHZ2MvTVY0SXdNSWhRNTAv?=
- =?utf-8?B?SWNUcnNkdlVEU0s0UnNWeWhIK1VwUUlNVHdscEZSR3NuTlJDbE4vWkE4RUoy?=
- =?utf-8?B?STUyTUoveEVucVRSVWRMUjJZY2pCNm9kNjJPWnVFQ0JYS1M5MjBBVXc2RlU5?=
- =?utf-8?B?R0F2M2JObFZJaUI3cnAzaG1QdVdLWGwvS2YzdXB6VXpZTGVESy8vWGNZc0V6?=
- =?utf-8?B?bkNJUXBiQkR0Mlp2MmI3TEJtRkxwam05ZHdTYVBHTXJCeitlWXhHS056SnRv?=
- =?utf-8?B?aEhLRCt5YnZqY3ozSTRPTFV6VjM1eHJsMmwrc2JCUVEyRXpUWnJsNGlzQW5N?=
- =?utf-8?B?OEJKRU42VTRDZ3FBdlcrKzZFV3NVM1lJZGdkc29VQnJJSGhyaVRLV0diY1hB?=
- =?utf-8?B?Wlo5UFpnRjJLb1VTMTJSWjZzUEFYVE9WODZpMkF4VFZkaERFUkVBZlptUlZs?=
- =?utf-8?B?QXg3VE5sV1I2ejJSbUtERzFGRXJBblptZjZrM0RlcU1pSjlNcDJhcTRxT0Vw?=
- =?utf-8?B?QzBaYXJCSkNjdUprVjVObGUxV0ZIOUNHZXEwaTJDU3RkckRjaEdtVVVuYldD?=
- =?utf-8?B?UGlwamdCdnlMUmwyemFNbUtKSFlhNUxPZ0JaT29ORlplVXkzOE8yR3F2YUxO?=
- =?utf-8?B?YTFHa1JTbEZVdzVuRjdYdUJZR1RjaVB0R25jT1U3UjdXVjg5a3FRL2Q1Z1JJ?=
- =?utf-8?Q?hAq36FKVfanBlAwJNwlD8S4hkFd+Yr8E6Lgp6kEGbpPE=3D?=
+	=?utf-8?B?TjhlcHVJeTJuQTJjN3B0UEY0N0k1WlNKOFMwZm1EMzQ1WFNJT3Rlc0d6MHVx?=
+ =?utf-8?B?emdPU2t6eFl0S2pmVXBtWjh1ODB0TUFhQTdJMmJPelhyemRYVmJSNVZmNlQ0?=
+ =?utf-8?B?eVhkeFViYnNDa25qd1NWOCtQUFlvSjRoKzZ6K0taZEI2R1pkalZKbE54UHFz?=
+ =?utf-8?B?aG1nWUdhaTFJak5scStid0s2UmF5L0xDbGZCWFJJUVBsMFVtVzRyQ01CUVZq?=
+ =?utf-8?B?SUw1eXhwZFpjVTE4L015ejRqSW5TbWJyR2ZlajJtcHZxV25ZUjZNQlcvWVJt?=
+ =?utf-8?B?SkNrMFF4c0JiaXZsM252UWlrb0F3WDU5cGJxbEpKSU5pVVVBc01nbE1Nd3By?=
+ =?utf-8?B?NGhHY2hoVnFiR3VBOUdQMThXQXRXclN4aTd2YW1qVGNhQkhqdEtPNlR0S3U0?=
+ =?utf-8?B?WVZ2S1EyK01CZ1JMd1Nya0d2QUxUTnVLUWVTV1E2MVVGRHFkQVpLSnpwRi9W?=
+ =?utf-8?B?WUxxYTFMbTMrbkJBMGxFUmF4RnprSEtYMDlkRGY5REM0VU9MZU5Tekl4K2F3?=
+ =?utf-8?B?WjRFRVVCNzFpMThuenRjSittYUkycWVENFdKS1MzcHBUTmd0WXVBUGJaa3Zx?=
+ =?utf-8?B?NC9vOU1ZeWhFSSt2QmYrNjlETllMWVpTb2I0QWpBd1hLQXNkNGZRUEg0OUcz?=
+ =?utf-8?B?amlRNXpxR1c1N2IrZjZmTDFaVFc1OTFYSzM3aU0xYzFkRU5PbTh6VHlXdkZW?=
+ =?utf-8?B?NkhtL3o2Uk9xZHpEUmhFVURTdXZQTnlSNlFwYnF4cTBRN2E4N2ZHMjRhNnJM?=
+ =?utf-8?B?SHF5QmJhNDkwU0hyU29ZZDN0emJHbXJBdkc5T2VlRTdqWmdxL050SnVIRVZE?=
+ =?utf-8?B?eFF5dmpxSHNSdkhtRTE1L0ZoUzdxWVJpWGw0d2xrZ2owUWRkeVRORS81cFpD?=
+ =?utf-8?B?NEUwOW9BNUlUNHc3bEY3LzZVUTgxTXBrazUrZEZydnlCK0c5L0NkQklqSFo0?=
+ =?utf-8?B?SzJTdWpBQ0FUaFNLampObVIrdHpOekxzN09wbGtUOHAvNFJweGE5QjFGSXF4?=
+ =?utf-8?B?NStLSDJjVlZJYVpzQmt4N0cxSnM4eUQ1OWRCWTJXRjVLc2dJcXR1U0htN2wr?=
+ =?utf-8?B?aFArNmdadVpjOFExWnA3OVplMjd0azVwQlJZa3p4MCsraWNUUStiWlYyQVlk?=
+ =?utf-8?B?WTBudE41SW5nYmlTYUIxdVYyNUh3Y1hvQUd3WEtyUVo0S2ZVTjRMa1NwcDRn?=
+ =?utf-8?B?VmZxWGZkZDRTeXZnU1UvMHgxdEo0cGV5MngzbDUzbmhtS2hzUlczRmQ3aGZB?=
+ =?utf-8?B?TTVrajE0WFViR3haQzc5WGhyQ3ZodVpkZjl2QTNQQitCbzJMbm5YZjhWM3Nv?=
+ =?utf-8?B?ekpjMkZ4S3A3bzA3SzFFY2ZRMXZrUWdOejVRMWp5eHVoTmJzY1dtR2hYK3Ju?=
+ =?utf-8?B?WkVVVlp1amI4YWE3ZXhLZEp6SEpqbzBNaktCVU9YWlJjTXVKYjJra0dteE80?=
+ =?utf-8?B?YjY4MnM2aDcxVm9OcVdtUGlxWWIzdUJGTmJ1RzNqRlM0Z29GS1BhUStVbDRD?=
+ =?utf-8?B?RjRGUlRpbHJzR01UanVlTFZBREpMOTdrYU8xdCsyY2FtTjdIM0FiYm80cERJ?=
+ =?utf-8?B?ZVB6dVhReFgyT3BDLzdWdUgxcnA4UDZneUJyYjBQaGkrWDhZZndiTFk5VHJH?=
+ =?utf-8?B?ZU5sUG1tbHgrNWxTUmZkMk5LTzRrYlBpVExsbFBzUUQzNXdSMU5jdksrcEtx?=
+ =?utf-8?B?SVB5ck9FSFhPWllrNjZnVGlLQStJM2tSc2QyK1RFcHl0YjNsTjZsVjZ3PT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4140.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WDJLUmdFWGw3OEt1MUpXUzNvSEFHcWo5dlp1b0VYSmhvNkVGK1EyRks2aVFD?=
- =?utf-8?B?ZTdwSlk2TW1TWEpTckw3dm9TNDRuVmR3U1kweHRxckJHUFR0TzgvNzlReFB1?=
- =?utf-8?B?dGdpY0dLMjFxeGMxeXQ1Z0NDVWM5UHEzMG9RQnF5VFVKb0RYWkVDa2xSYmt6?=
- =?utf-8?B?bVhQZnJKSElzQVcwWFVQeVh0eHBPL0M1V2NoREZGM0hFdHJlQTR3V1hpbUJI?=
- =?utf-8?B?Mmg2SXpOL0FXSm9LOVJwTGdQc2h5TGx2UzNBcXRjUDYxSjA1bGo5VjFOdExr?=
- =?utf-8?B?bmlGTjE1d0pnY0ZBUHpLdG4ySy8wV0Myc0dSYlBnMXFLMHVZK1hpQm04Vm1R?=
- =?utf-8?B?M3A3MVJKZ0FaUGQwOE5rR05pVWRZOXc5d2owL2dhc1VyeC9DUXNaZFlXbEw2?=
- =?utf-8?B?WFBISmFJWFBzQkowYnN2M3p0S1VFYys2MVdLMDVxN2RPbWxydkhLNE1OWC8r?=
- =?utf-8?B?VkZrZ1ZscWZSUWg3NjRKb1V4M0ZuTTRaZVR3a00xOVpnVUwyd2VtaTdJcEhh?=
- =?utf-8?B?UjgwVFNEQUxOOGlGaWM5RHBNYzE5WWhEM0JodkNGVlNqeGU5WWt0U3BUYTNR?=
- =?utf-8?B?cmF4YkVjRndiUGNrWEYwdGRrbEZCZjVUVEQrUXdnMkc1b1hIb1UzKzlvWWts?=
- =?utf-8?B?d3N0N3ZLWERLSUw5VmtPcmZvTzgvRTFJTVlBNWtDcmtWNjdlVndZT2doSkhn?=
- =?utf-8?B?T2NyZ1pVK05BU1BXdUxoREwzQmJzQ0JsSWEycExtaDZoN1ppNms4K0FSYzA2?=
- =?utf-8?B?eEhuMjJ1cTJDYUlSYkdZZTVrdGt2L05NZGdqNSsybGJidE1lMmhjbGRtaTJh?=
- =?utf-8?B?Z09BL2E3SXArMCtpS3B1RGYxQXFwQmppU2V1SjZ2dE9kdVo2OGQ2d0FkMjFB?=
- =?utf-8?B?TjE1ZkNTaE52cXRkRVIyNmkzb1ZmMTFhRzRsbTFJdzU3elZjZjJxVjdnQTg1?=
- =?utf-8?B?Y3lHSXNreHlRbGc1U0huTkJudUNqeWRXVHA0aCtzODlxOStUd283NzBWYUJJ?=
- =?utf-8?B?U0JXVThKcStlK3J6T2o3dVlQdlNtN3gycnJOYzhzYTZlZXhFYXE1RzU4MmNP?=
- =?utf-8?B?V3BxeVVoOHgvQVBLczhiWWQ1NGpnVUw5WFJBZ2tnM2JiT1o4NFluSUJMTzh0?=
- =?utf-8?B?ZlFkaCtVVGwrOWtaTklsYkRvWEs0aThRNlVTM25mem9rOU9RNFNlWWNqa25F?=
- =?utf-8?B?aWtnVmp3QUU3cGkxZG1tamZoVTFRdHUrK2hvNDJha2pKRTdFdzBTWEFMUitP?=
- =?utf-8?B?WW5KYXo1Q3N5OFNzZExDUGtPbVBvZ1I5eXFLdUNuUGl0VzBEYitTdXh1RnJD?=
- =?utf-8?B?OS82bW9uVUQ5dU9sUmY0VDNTUEtjVlJSOWxTcmlqSUxSd2tIY3U5b0UrU2lR?=
- =?utf-8?B?b3IzdU9pa1Q5czcxZFhFSHBTM0JPUzgyb0t3bjd2bTBHdEJ4R0dVamhtYzUw?=
- =?utf-8?B?QVdJRm1hcFNGeHpjRUNIbzdiVHVlbUEreXdLVEo3Ly91UjVZYU85YlZ4bEFp?=
- =?utf-8?B?RlRvU1hkY3p5eTRyU3N3S0laRjJhSEdnTHdSQ1dTY0hybGtNSnFydC80clds?=
- =?utf-8?B?dWVBUEg1SE5GUllRcHRsTU1vcmRQa2JtNEE4aWYzVHFDbVpPOVprcUhySndP?=
- =?utf-8?B?NlowSUtkSHhJM3hJK3RKWHB1QVBEc0hSaFhNdHI1aGR6c1V4aVdJQVNMcjU2?=
- =?utf-8?B?eTFpNmxLSU9CNXFwS25zNUxIR0dZNWluZ3o5VEYxWVVpNlBtVzVaL2xoRERK?=
- =?utf-8?B?NnhkcGlFa3ZaeEV0dzVYOGI1bFdDK0tqbThCYlpZOEZ2WEJ1bUF3QmRNMkRK?=
- =?utf-8?B?U2hKWmJJbGtPR1VTb3BJUGxyUmUycEVDalpLaUZsT0ZVWFAzell6bUVSQURO?=
- =?utf-8?B?L2FhSkx4dGNMWmQxRUFXQlp6SmdUZFo5dGhUa09Tek9vMDErRE1OYTRISWl0?=
- =?utf-8?B?aUhyTlJ1eDh1QWdZaUZXMlMrK0d1WGF2K2lZMVB3TlVnQ0pYTGxHSWdNUTRD?=
- =?utf-8?B?cmtHcjBoVmlUaytlM2g0ZXh5S01XTVJVWHArR0RubWNKZTEwR1pzODBJU2xW?=
- =?utf-8?B?YmFmbG1rN1BhRThMTVF3UTBpRGRRQWZWNGZzRDN1ZG9NVlcxaTFid2RoeTRx?=
- =?utf-8?Q?uKSM=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec8b2fdb-12b0-48d5-20bc-08dc6eb2b7b6
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+	=?utf-8?B?bnZPOWIvRTZPbzlWR0NvRUE5dk5CV0c1c2lvWHE3OUMzWHFnU0hlYTBvTksv?=
+ =?utf-8?B?azE3NEpYU3k5UVQvbGhYKzRFSTNQS3VPM2hnSnE1cStIZHl3K25tbnZmUXdC?=
+ =?utf-8?B?TkN4ZVQ1ODVMMFFkUVpacXB2bWFwYUE0K2JJZDJ2eFZTZWw4bXY5eXIxOU40?=
+ =?utf-8?B?NWRhSE5Zc1FvK2RtRzlCMVVSTXhhY2xmMFIzV2JyVWljcW5DbHc5Tjc5UEts?=
+ =?utf-8?B?bGxERU9kU2NZOGxxSXdTOHROVGRBZWZ1KzI3aTl5emRvYzJJZ2pUblNGaXpX?=
+ =?utf-8?B?YUorUkk0NSs5NG9IOVZVR1QrYnY3eXFyZ0p3eHpFSlRDcFNvemt4WWdSM2da?=
+ =?utf-8?B?Qi92UXVPZGlFdTVyamQ0UlNUTGE1ZE0yNjJUQk10ekJCcVZINEhxRXhlem1k?=
+ =?utf-8?B?NjJkRzIzV05NTVBPT29nWUl2YWx3cXZBRzBUTEF5SzJ2MGlLK2ZrdEJHTXB2?=
+ =?utf-8?B?M2pqMFcwcWpRVGc2ZVJ0NEhzNW5udVZUODdLMTIwbWZNRjk0UlVCbHFnWkly?=
+ =?utf-8?B?Z05jZG5HUEUvalpnZTA5QTViTmRBZUVIY3A1M1FUb0lGK3BDMnI4citvVVhy?=
+ =?utf-8?B?YWJxYXNqbDFKVjkxQVNDTkNNdkZRUU9mb3NabkNjSng0ei9mdUlUUFc0S3Q1?=
+ =?utf-8?B?Z2VJZUtTWHJWWWtNUm5USk9ua0NjaklMaG9OR1pVUi84VjlLRHBFS3FoSW5m?=
+ =?utf-8?B?d0ZFL1I0aGRZYXpPSVljRzVlU1FLb1ZDRjQyYTNxSEljZmtmMGFqUXpZbHFh?=
+ =?utf-8?B?blJCeTdHTDRyU29VZ253c3l5L2dXN2JVMVcvdDFWeFk4eXVZb2cyWWRpZjlm?=
+ =?utf-8?B?VHZtMFAwSVFFY0xmVXpQUTNSd0hMY25QR2lpeXN4UGJXcUw3QWpuMnIxYUF0?=
+ =?utf-8?B?czZoaVRDVGhkOTNGUU4vdnJaN0s2NHNHOXJlR3REdms2T09kQUFqcDBNb210?=
+ =?utf-8?B?M2QzdFM2RmpyLzE1ZXJhQmJsSlI2eUZ2dmZNdEVIOFp3aml5RXROS2dVNUF3?=
+ =?utf-8?B?WFJFWWJvTlNqRTliSENUa0EvOEQvMTcyak03NDVaUVQvT2dSRzRFSVkzRURO?=
+ =?utf-8?B?V2JvV1JucGdBZXpVVEJ3VGRFUFNheW43MlN4b2FGcms3U1kxYXAyM1F6aVVa?=
+ =?utf-8?B?Qml1bWFTYnlWZ3ZkbzNxNEkvdGYvdmlUWlh4ZWJ6MkJjTHZZTi9HMmdBZno5?=
+ =?utf-8?B?UXBRSXd6RmxBWGZDd2F5Wjh4emtyeEJ0bm5JRWFKOS9nb0pFOTdFZ1Qzcllr?=
+ =?utf-8?B?UlpuRzNialdBa1NjamtoK0ZPZXlJYUw3WHBXcmx5Mmw3RHdlei8wL0htL05D?=
+ =?utf-8?B?bVRmUlFmZloxcWZyZ3p1blFNTkNVcWVjcXBOb2dQeEFhR0pMSWF4ZUw1R3VG?=
+ =?utf-8?B?cEhsYkI3N2k3QlVvNnljdHArYUNvUDBMRFlaaVFlcEVvYTdicGlWc2dkeEJp?=
+ =?utf-8?B?ekRMY2I2OWhxMTQ3L0RWUlJnSUlub2JEZXNOV01SeHlxVnVmUXdqRUJvd3hK?=
+ =?utf-8?B?TUlmM0VkektCUC9sZ2JXMkh1R1RtcFJpb2RrSUx3N2lYZGZXQkNKTUl0QktL?=
+ =?utf-8?B?TkNGZTdyZUhHME5FTWNBekpxSG53Q2daelBVV01KOGd5VjEweDhoR1ZVeWxt?=
+ =?utf-8?B?UTNGaythdTFPc2F1NTE0NEpNRUFMS1ZsRFZuVThjTXFaRWwrdWtjQlRxTWU2?=
+ =?utf-8?B?bkNpUDVXN0swc1lWeXVtYUhDdExwL0w0ZUdCYTA0eUlEdDRSUm9NajhLM1Z5?=
+ =?utf-8?B?N2UyM0RuWllsU0tFSVlCRlVmemJqZXpLTWF3cytQbXBNdkQ0am9VSDJtYnFG?=
+ =?utf-8?B?akFHTGNYakNMK2JVeDdHS0wxVVE0V3RKMDRnbjYrV0dXRHlpN255a3VIVEJN?=
+ =?utf-8?B?bjhCdExYQ3VSWGVCalhHWjl5cUwzdmJUTXhLNTVpTFhHNm5UdmcxbHRoanQr?=
+ =?utf-8?B?L0RielVyUEEzKy9jcDBqYllpcFNubDdrdktJVkZjM3lQc0JoM21mMHY5S3Jo?=
+ =?utf-8?B?UnQ0MUtCWGl5U1dpZk1zaUxSamlxS1dEcnZMUm9iZzhtNk52a05qWXdJeUsw?=
+ =?utf-8?B?NjAwZlVBZmxoc1dOWC90ZXZmOGpySXFHeXJGTkl6NC9KUGUwU0twVE4xUU9I?=
+ =?utf-8?B?ZThaa1NJODFnbWtGT3o3cWJ0N0FvMm15dExCVXdLMVlDQUt5VktDb2YyYTdv?=
+ =?utf-8?Q?S7s8U+ns5kZLV6bcQftsV6M=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4d18185-f1cb-40ca-b140-08dc6eb2c18f
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4140.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 16:28:24.6956
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 16:28:41.1545
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: m+wUdHyKesTyDiBoJ48q8HngkJ8al9pbwNVcTF0Dc0XMOhDypo6Ps56hgeLnuuLW
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7702
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0txLQCQpCkmCSxv1ZZCfFWZJW9GYn3v71r3cJDa1H7Jt81Ai47BajMkGj2ozPM4CYbcZHI5hd8TxhtPPM/vD8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4432
 
-Hi Reinette,
+On 5/7/24 1:13 AM, David Hildenbrand wrote:
+> The patch subject is misleading. This should be "don't flood the system 
 
-On 5/3/24 18:28, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 3/28/2024 6:06 PM, Babu Moger wrote:
->> The ABMC feature provides an option to the user to assign an RMID
->> to the hardware counter and monitor the bandwidth for a longer duration.
->> System can be in only one mode at a time (Legacy Monitor mode or ABMC
->> mode). By default, ABMC mode is disabled.
-> 
-> "By default, ABMC mode is disabled." seems to contradict later work.
+I went back and forth on that subject line. :)
 
-Yes. Will correct it.
+> log". Nobody cares about the speed of a unittest ;)
 
-> 
->>
->> Provide an interface to display the monitor mode on the system.
->>     $cat /sys/fs/resctrl/info/L3_MON/mbm_assign
->>     abmc
-> 
-> This example seems to contradict earlier statements in two ways:
-> (a) it only shows one mode vs. there are two modes (legacy or ABMC)
-> (b) there is no active mode vs. one mode is always active.
+Yes they do. People should actually run the selftests, which in turn have
+enshrined their guidelines in kernel doc. See dev-tools/kselftest.rst,
+"Contributing new tests", which says, as you would hope, "Don't take
+too long".
 
-I need to correct the commit messages. At this point this interface is
-read-only. I will move some of this commit message to patch 15/17.
+It's important. Tests need to be quick, and having one out of 50 that
+blows it up is worth fixing.
 
 > 
->>
->> When the feature is enabled
->>     $cat /sys/fs/resctrl/info/L3_MON/mbm_assign
->>     [abmc]
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
->> v3: New patch to display ABMC capability.
->> ---
->>  Documentation/arch/x86/resctrl.rst     |  5 +++++
->>  arch/x86/kernel/cpu/resctrl/monitor.c  |  4 +++-
->>  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 17 +++++++++++++++++
->>  3 files changed, 25 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/arch/x86/resctrl.rst b/Documentation/arch/x86/resctrl.rst
->> index 68df7751d1f5..cd973a013525 100644
->> --- a/Documentation/arch/x86/resctrl.rst
->> +++ b/Documentation/arch/x86/resctrl.rst
->> @@ -257,6 +257,11 @@ with the following files:
->>  	    # cat /sys/fs/resctrl/info/L3_MON/mbm_local_bytes_config
->>  	    0=0x30;1=0x30;3=0x15;4=0x15
->>  
->> +"mbm_assign":
->> +	Available when assignable monitoring features are supported.
->> +	Reports the list of assignable features supported and the enclosed brackets
->> +	indicate the feature is enabled.
+> On 07.05.24 04:29, John Hubbard wrote:
+>> If a system experiences a lot of memory failures, then any associated
+>> printk() output really needs to be rate-limited. I noticed this while
+>> running selftests/mm/uffd-unit-tests, which logs 12,305 lines of output,
+>> adding (on my system) an extra 97 seconds of runtime due to printk time.
 > 
-> "indicate the feature is enabled" -> "indicate which feature is enabled" or
-> "indicates the currently enabled feature" or ...?
-
-This looks good.
-
+> Recently discussed:
 > 
->> +
->>  "max_threshold_occupancy":
->>  		Read/write file provides the largest value (in
->>  		bytes) at which a previously used LLC_occupancy
->> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
->> index 735b449039c1..48d1957ea5a3 100644
->> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
->> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
->> @@ -1058,8 +1058,10 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
->>  						 RFTYPE_MON_INFO | RFTYPE_RES_CACHE);
->>  		}
->>  
->> -		if (resctrl_arch_has_abmc(r))
->> +		if (resctrl_arch_has_abmc(r)) {
->>  			r->mbm_assign_capable = ABMC_ASSIGN;
->> +			resctrl_file_fflags_init("mbm_assign", RFTYPE_MON_INFO);
+> https://lkml.kernel.org/r/a9e3120d-8b79-4435-b113-ceb20aa45ee2@alu.unizg.hr
 > 
-> I think this will need some more thought when considering the fs/arch split.
-> The architecture can be expected to set r->mbm_assign_capable as above but
-> having the architecture meddle with the fs flags does not seem like the right
-> thing to do. I think that RFTYPE_MON_INFO may not be accessible to arch code
-> anyway.
-
-It is accessible to both arch and fs code per latest code.
-https://lore.kernel.org/lkml/20240426150904.8854-33-Dave.Martin@arm.com/
-
+> See the pros/cons of using ratelimiting, and what an alternative for 
+> uffd is that Axel is working on.
 > 
->> +		}
->>  	}
->>  
->>  	l3_mon_evt_init(r);
->> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> index dda71fb6c10e..5ec807e8dd38 100644
->> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->> @@ -846,6 +846,17 @@ static int rdtgroup_rmid_show(struct kernfs_open_file *of,
->>  	return ret;
->>  }
->>  
->> +static int rdtgroup_mbm_assign_show(struct kernfs_open_file *of,
->> +				    struct seq_file *s, void *v)
->> +{
->> +	struct rdt_resource *r = of->kn->parent->priv;
->> +
->> +	if (r->mbm_assign_capable)
->> +		seq_puts(s, "abmc\n");
->> +
->> +	return 0;
->> +}
-> 
-> Should it print "legacy" if not mbm_assign_capable? Or actually, I think
-> the expectation is that this file will only be accessible if 
-> r->mbm_assign_capable is true ... so having that if (r->mbm_assign_capable)
-
-Correct. I need to move code from patch 7/17 here to correct this.
-
-
-> check is not clear to me ... if that is false then it would be a kernel
-> bug, no?
-
-Yes. This is not correct. I need to fix this.
-
-> 
->> +
->>  #ifdef CONFIG_PROC_CPU_RESCTRL
->>  
->>  /*
->> @@ -1903,6 +1914,12 @@ static struct rftype res_common_files[] = {
->>  		.seq_show	= mbm_local_bytes_config_show,
->>  		.write		= mbm_local_bytes_config_write,
->>  	},
->> +	{
->> +		.name		= "mbm_assign",
->> +		.mode		= 0444,
->> +		.kf_ops		= &rdtgroup_kf_single_ops,
->> +		.seq_show	= rdtgroup_mbm_assign_show,
->> +	},
->>  	{
->>  		.name		= "cpus",
->>  		.mode		= 0644,
-> 
-> Reinette
+> (CCing Peter and Axel)
 > 
 
+That thread seems to have stalled. I *do* have MCE experience (writing a 
+handler,
+dealing with MCEs and related bugs), and what they wrote so far is exactly
+correct: if you were going to flood the log, then no, we don't need to see
+every single line printed. The first 10 or so, plus the fact that rate 
+limiting
+kicked in, is sufficient to proceed with debugging and/or hardware 
+replacement.
+
+I'd like to just do this patch almost as-is, just with a fixed up subject,
+perhaps:
+
+     x86/fault: rate-limit to avoid flooding dmesg with "MCE: Killing" 
+reports
+
+Yes?
+
+thanks,
 -- 
-Thanks
-Babu Moger
+John Hubbard
+NVIDIA
+
 
