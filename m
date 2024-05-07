@@ -1,114 +1,187 @@
-Return-Path: <linux-kernel+bounces-171937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC78BEAE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD5D8BEAF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0FBE1F22B81
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7958281DEE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1823816C871;
-	Tue,  7 May 2024 17:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC6716D339;
+	Tue,  7 May 2024 17:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtxI4VSX"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lIpXG8KP"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297471607A7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378B616C84E
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104594; cv=none; b=aJBbobs6YtcsVUlUZe4i3dEVeB2Ln+QnYamfxjaZAS3PqF0t4rXj7EKAJ41sPhkoW+OgIfe7JKmIgjY8AkHE28SHGN5l1hYc7kCoFdtbms2xCcai4D1JF+lSVjelcRR1jPZw6Y0Kh3xVZkkYo7GSTWrchlp6ZMBZPm57OvDWBGQ=
+	t=1715104608; cv=none; b=EToaXrQglby2iKRYckFEqaOdBEUsHG7sZekZhx9BS3n7fdQIeu6rjp1DrXUH+5qJjXEak8GGae65RyttqJyehoztx9o4rUcK0wsN+CxSfdE817NaAlfFtG4b30mHp8RtVl5gSLMlOsJUwoMlHddaSc/Tjo5RfuReIImqNRRQxRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104594; c=relaxed/simple;
-	bh=l50Vqp2ua5FSimEFnJjrmoroRGW3yD9rBbW6y+IZyMI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dQKtgrP7Mzj9rbHs5gzHr6oP+DVAkHo+DeUiAkwmtQXGbR1xUDBgd+VByuWRMazPpXnn/MIvMlLbtYoVXkFu4WDzUkoaygN0iTLlpLMkObJNR3mOr7xZ8qCac50g0qOM4aWo71WIZ4+iTKn9EezAKcPDKTwbD3P3kxTtRLHMhrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtxI4VSX; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so2703881b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:56:32 -0700 (PDT)
+	s=arc-20240116; t=1715104608; c=relaxed/simple;
+	bh=2WVuSd42XVbejvGzvbE/XdmU6u71Lu82dpSc5WCFvqQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c5t7JwkK3F4dpKelvzPAePt1ZIt8An/QNx0gg1NW5FRA7ncS0JkZ+Ulj5/3bRll39eVP2wYFRANO7N0IX7uQm6w/oEO21y40Uh3jYE18n4fDSR7OMOkgvYAs3ktYC3urFSUAsSwHPepBdiegqlCS/rnNDOgIGQ/ZfOidOA7+Vsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lIpXG8KP; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7928c54e945so284683785a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:56:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715104592; x=1715709392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ive3waDoK8gwDGEBUE2bkX5N+SnSEytp7ihvp6Bzhck=;
-        b=gtxI4VSX1hXW/2317mYablrhK7oeHe3wvtpEgmLxhc6oUEJQys5oMkAN1ICtRV1u+n
-         tPzeIJh2dT2E3xKTW9bpHNp81eBd1++444vft3Be+LlMLjjCdSvlwjMhJUKO32Stb2St
-         ASao/nYPuSQY2t9wA85ji2GdoANszh6t83XiTrNm+W9omAZGkGFjXrUauxRO/Y1ZE8uS
-         Fn+9qQcdGGa1o/dlwy2dimDpuiZO8hcY/AxDhZOOJI7uneayWD6TomDSWuF0gtOShu0D
-         JZQhzvW4wNe3FhtKrB+GqV9lA4Enw8wXEmtSbts4KHj2DajlDUZmTL05tvLPTvl+4hxl
-         aKdg==
+        d=ziepe.ca; s=google; t=1715104606; x=1715709406; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wu9WbbBrtYOSeavstfMRlNJlMm/0/4MuzUdv+q+e+RU=;
+        b=lIpXG8KPmCMXpUh7JZ5V/2Srhwf1899y4M6b9Z4m2rUYLhAVXEKRAj2RbS/QyN5GNf
+         2R8Y4+kgBdJGnCvROMTlZNIII1WTss+Y5khV/PgrQo+7sFWO045oo8Cqya9djusUOWdw
+         LjZeH6XKCmyZLORSKOBUwlvwrfH4qmIGzYQkzC0FW+KOzcd1qDlIaV378bwVFn5loS4F
+         wqiIsJ0r9R80fgWfGYfaMSewGq3VGJUQqs2m7pEBn1QuVVPuWPc+JHx7ApEjyrIF6254
+         hWGm76/BZ+9Oo3kYlmqV0lfJs1bxJo0/Ebfpx75oRZa2ZnfSRTfebpn97TzpAwwECN+Z
+         +lTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715104592; x=1715709392;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ive3waDoK8gwDGEBUE2bkX5N+SnSEytp7ihvp6Bzhck=;
-        b=ooIzJLrVy230aqQWhWr9gAlAV8/rVbWFm0UQegCJF1t1bv5lAQ6bCpDEgAh/SZlFgp
-         iBvPzyeyEBK4do0Oqmq98dFgkKM61pDkZWf2zgrwsKQRk7zMLUAnUo1cZPVNmt6r3YcK
-         qOldS+x29dJHSZDWWchABKEaw2cAU2B5BsDwBKQbieT1s29QygTIYuazkwKh3pSBKyO4
-         qYf0z7dDA7GZB9an0J+Hu7IB8vbKZlT3wm6AtyhiPxbhKWn76viYguxmVpi4qO//ssV+
-         g8so4GPunD960RST5bZUtIoC3iD6ORB8NgR9x9JzajzUnF3gLxRXZqSFfI3XqduMex7C
-         IZvw==
-X-Gm-Message-State: AOJu0YyOWFrjf3P0N9N6nSEV7zmcxyb+5runDAkavGVslt1AScqPi8sc
-	Y4bpheY1vmYOv+MDPcnYxbUVYF+PCDuS4eeOdRCWJiaP/lemXn4/XBpEpA==
-X-Google-Smtp-Source: AGHT+IEjfRxzUs2wpGVAcI782dPodkBNSPfsWEd5VtY3GAR+bB9Wpak17hBN3oRvPuKogBnyQFbt9Q==
-X-Received: by 2002:a05:6a00:3a98:b0:6ea:d114:5ea1 with SMTP id d2e1a72fcca58-6f49c236254mr358654b3a.17.1715104592171;
-        Tue, 07 May 2024 10:56:32 -0700 (PDT)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2620:0:1000:8411:1c98:67c4:cc33:3971])
-        by smtp.gmail.com with ESMTPSA id fc16-20020a056a002e1000b006f4596a2753sm6269387pfb.40.2024.05.07.10.56.31
+        d=1e100.net; s=20230601; t=1715104606; x=1715709406;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wu9WbbBrtYOSeavstfMRlNJlMm/0/4MuzUdv+q+e+RU=;
+        b=uNX/tUDrhufzzMYzPl0RknOpEiXaCBF1N9h0DMpNV2M5G27Av/0kYire0NSa4kMKFu
+         7QmcFGFciQD6eCF3Mt+ihFj2QCTLbrshhljxBJ5ueDHsVcU+kjOmMuhyp+Ai2M32rmnC
+         0ehJNe7EwPr/TAdK3qJKRr+AaN+wJhKOQtdbvws4RnQGfY1XEu8bhX5DKLggSrgAAxRn
+         TGj3JkBEFkUrRzKfCK8nxTZlFKPBngv7YU/e1kBmz3Og6B0307luDpLNPqsV03Vmj0+r
+         is5wmrWiZuraRVSXZYawXCisdGRmp9JCtMJKOs4K3thAj1pgRFBoVlcZqPn5GGrtk0zV
+         RxMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUx1kU698zxm78SxM+Kb6csXlzhzvc3dYx+eBuXopM4p7B2jtdyFxBAmrP+3eisfQx5A0tCvYc68Fp1LRpyEtvFRYTitVK96+XeWov0
+X-Gm-Message-State: AOJu0Yze66ladGWIz1gpLAajg7XFglnScJWRXJPFV+vysQA8nM3lW51c
+	qAvPQIco6pxckZTvWgBfigLlOElzaqS+jr9341c3L+jedDCG40kTlLW1guB4LXs=
+X-Google-Smtp-Source: AGHT+IGCzj6XuEJPrKRVtB6HNDvjYgTlCCuf3Mc1RlNFJ90uDv9nZUQTLULizJXrrgrWoRFfeuAAuA==
+X-Received: by 2002:a05:620a:5a4b:b0:790:7345:2791 with SMTP id af79cd13be357-792b274eabbmr46464985a.56.1715104606118;
+        Tue, 07 May 2024 10:56:46 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id bm34-20020a05620a19a200b0078ec3aa9cc7sm5127446qkb.25.2024.05.07.10.56.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 10:56:31 -0700 (PDT)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH] f2fs: allow dirty sections with zero valid block for checkpoint disabled
-Date: Tue,  7 May 2024 10:56:28 -0700
-Message-ID: <20240507175628.2460390-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+        Tue, 07 May 2024 10:56:45 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s4P3U-00022m-Vn;
+	Tue, 07 May 2024 14:56:44 -0300
+Date: Tue, 7 May 2024 14:56:44 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>,
+	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	David Ahern <dsahern@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Amritha Nambiar <amritha.nambiar@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Kaiyuan Zhang <kaiyuanz@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Florian Westphal <fw@strlen.de>,
+	Yunsheng Lin <linyunsheng@huawei.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
+	Arseniy Krasnov <avkrasnov@salutedevices.com>,
+	Aleksander Lobakin <aleksander.lobakin@intel.com>,
+	Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Richard Gobert <richardbgobert@gmail.com>,
+	Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Abel Wu <wuyun.abel@bytedance.com>,
+	Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
+	Shailend Chand <shailend@google.com>,
+	Harshitha Ramamurthy <hramamurthy@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>
+Subject: Re: [RFC PATCH net-next v8 02/14] net: page_pool: create hooks for
+ custom page providers
+Message-ID: <20240507175644.GJ4718@ziepe.ca>
+References: <20240403002053.2376017-3-almasrymina@google.com>
+ <ZjH1QaSSQ98mw158@infradead.org>
+ <CAHS8izM0=xc2UhUxhnF_BixuFs5VaDV9W1jbso1K+Rg=35NzeA@mail.gmail.com>
+ <ZjjHUh1eINPg1wkn@infradead.org>
+ <20b1c2d9-0b37-414c-b348-89684c0c0998@gmail.com>
+ <20240507161857.GA4718@ziepe.ca>
+ <ZjpVfPqGNfE5N4bl@infradead.org>
+ <CAHS8izPH+sRLSiZ7vbrNtRdHrFEf8XQ61XAyHuxRSL9Jjy8YbQ@mail.gmail.com>
+ <20240507164838.GG4718@ziepe.ca>
+ <0d5da361-cc7b-46e9-a635-9a7a4c208444@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d5da361-cc7b-46e9-a635-9a7a4c208444@gmail.com>
 
-From: Daeho Jeong <daehojeong@google.com>
+On Tue, May 07, 2024 at 06:25:52PM +0100, Pavel Begunkov wrote:
+> On 5/7/24 17:48, Jason Gunthorpe wrote:
+> > On Tue, May 07, 2024 at 09:42:05AM -0700, Mina Almasry wrote:
+> > 
+> > > 1. Align with devmem TCP to use udmabuf for your io_uring memory. I
+> > > think in the past you said it's a uapi you don't link but in the face
+> > > of this pushback you may want to reconsider.
+> > 
+> > dmabuf does not force a uapi, you can acquire your pages however you
+> > want and wrap them up in a dmabuf. No uapi at all.
+> > 
+> > The point is that dmabuf already provides ops that do basically what
+> > is needed here. We don't need ops calling ops just because dmabuf's
+> > ops are not understsood or not perfect. Fixup dmabuf.
+> 
+> Those ops, for example, are used to efficiently return used buffers
+> back to the kernel, which is uapi, I don't see how dmabuf can be
+> fixed up to cover it.
 
-Following the semantic for dirty segments in checkpoint disabled mode,
-apply the same rule to dirty sections.
+Sure, but that doesn't mean you can't use dma buf for the other parts
+of the flow. The per-page lifetime is a different topic than the
+refcounting and access of the entire bulk of memory.
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fs/f2fs/segment.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 6474b7338e81..2463398b243f 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -771,8 +771,11 @@ static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
- 			block_t valid_blocks =
- 				get_valid_blocks(sbi, segno, true);
- 
--			f2fs_bug_on(sbi, unlikely(!valid_blocks ||
--					valid_blocks == CAP_BLKS_PER_SEC(sbi)));
-+			if (!is_sbi_flag_set(sbi, SBI_CP_DISABLED))
-+				f2fs_bug_on(sbi, unlikely(!valid_blocks));
-+
-+			f2fs_bug_on(sbi, unlikely(valid_blocks ==
-+					CAP_BLKS_PER_SEC(sbi)));
- 
- 			if (!IS_CURSEC(sbi, secno))
- 				set_bit(secno, dirty_i->dirty_secmap);
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
+Jason
 
