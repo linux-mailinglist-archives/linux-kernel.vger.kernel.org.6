@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-171208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673048BE13F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C068BE142
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F041C21A5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:41:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8A11F219F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BD71591E0;
-	Tue,  7 May 2024 11:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C411A152DEA;
+	Tue,  7 May 2024 11:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PvP8F+JB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NyrbP9HJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC18B152E17
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E206F525
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715082060; cv=none; b=S0zUMbsnElYXIxBlOvmPK3C0Qjl/SmGboX+izeb7ngMOEmiPCDMd6yLrfqrefCGXHCkEGGNlXqRvLv9TBbz6GXURxe+ZEedfCxkbMIz3PC336DL8Wcf7uPF364YlerGmRuuygkmlCXii9ehCkW4UqBulqSANPBLmsLnhb/jSaVQ=
+	t=1715082165; cv=none; b=kz/+ZCGVt4/Z53Hccp2cMdeqQJPQBtsxU4nmSrTFgA0ulqAT0ZRuA60TVce0ntVmpJ60y1wdATEnc6ZAdBBO/UpQDI20kxGlqh9rg2P7EZ57bay2Kkc91Vr8XD/1Mzu862Z7WUMriIs/MR2Ciit0G8MrsSFemcNTsJLx6DVVJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715082060; c=relaxed/simple;
-	bh=IAaOaBe9HKl/3bBlkSAJiMu+9MBbtwV4jSprGToYaOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fKu69PoQd0pFBc+GGNtHE9oQLTp3+bZ0erG6iwWcg6gi5Fq8/R8REP9OodDjFasLwZGU/gEA/+URvHjUm2X5Usm5rey2SmPGPHqBATMRNS0cLHo9sAiLqtovS+ltTlS7DF3R6/jOxLU+/2csItVdMPHek6UDtKQn9cCBhBS0WrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PvP8F+JB; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1715082165; c=relaxed/simple;
+	bh=9WvnFyNuQ4U1cXH4W2mfSfQq2or6ycC8wjnRBp3cTak=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KyyamxlmfexlP95FS5h884sbwZH+E8trVdfEy3eT52EoldI78CFXBAlFT+Q2x+OCux0hj5HMT1zaE6wPskwF2EK8rAVTGNFr3vy5AuWm0RAdcFwG+9h+fOEBNYYztwgHzee7WlgezNpguZP5GWCxQyW6U9hqlKQjOjk/qvd3SSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NyrbP9HJ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715082057;
+	s=mimecast20190719; t=1715082163;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wPrd6Q/4h/14dxOUmXqg/1waGBKdKBBCP/xB+C/HFi8=;
-	b=PvP8F+JBn/OUBX9+wFq/V+vAvsGWR9nnGg/zJfUFN/+naFRCP8lK60AsRDW6qPVWeIEDyC
-	7+MZ56RE/uENs8JCOLIJ979sd+2udsxE8V9jhmAlo+zeNAoQNMLaIP1EHYF27hr3FLnloh
-	Si1F286wGgJ8zlsOecYmH8mBufw3R1E=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=jPRYoMgnpo20fT3iCSoSZIvouquMcyBtOuWF7MTQKrM=;
+	b=NyrbP9HJ7XJoPcfQ13GGBZBMwbMwTn/YdyvGZ+gtDZSXTyxuUztoJb/BQyCmPWOMFFkMQE
+	TohloMe2E/ip4lhYFuxaIa37dMIJaZH7G83wtUJ2Q6ogeJobMgpxkdVyvBRiyvgdt4cJEQ
+	lI+/g3VjHtZetk2XaghdUJJrjfssOQw=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-443-UckAUssVO8WtvHK-EObXNQ-1; Tue, 07 May 2024 07:40:56 -0400
-X-MC-Unique: UckAUssVO8WtvHK-EObXNQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-51fa9758a71so2711661e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:40:55 -0700 (PDT)
+ us-mta-54-M_LjhinMOpmDMa2K8IjNng-1; Tue, 07 May 2024 07:42:41 -0400
+X-MC-Unique: M_LjhinMOpmDMa2K8IjNng-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-349fbb7ab16so2032847f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:42:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715082055; x=1715686855;
+        d=1e100.net; s=20230601; t=1715082160; x=1715686960;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
+         :content-language:references:cc:to:from:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=wPrd6Q/4h/14dxOUmXqg/1waGBKdKBBCP/xB+C/HFi8=;
-        b=UsvwUlGzXMj1wFw1fISqOW0fCQdcMtViep4f6aDX4EYnT4wgy3tpqVjuLkaMdTMXVj
-         vPcXLizHe4cQo4QtNV6YwnAwvJYStsD7qHf5fRyRv7TbNwnDtQ+y8wAFKwhAQG90AwkE
-         lKj4ORhgYrrtVP025H4ru6zrWsHZeVI9Lr/YO1q/qzQ17fqKIlVbLe61P8il1KFXi2tA
-         meVTwWKFYq9a1/wEecR4fcD70Up3v3REgb3RAgMytf8Lrt7b512Ni+24zl47N+bqbQEO
-         2cVEPhhFDCaf60w83CtFR0wjCsZo6vJkYjfPgHEh+lXj/5xJ27ovUJiHUQd1lHIphJMr
-         toDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfH4oEjlO1ON7JydZnEZWTQ42JlHt21mgf0PdBT56lgZiXizCIjUaqHuGpJCEIdY5islW/8heIBGcW6vCKUsUjs10qFmsiLw9P+wQ+
-X-Gm-Message-State: AOJu0YyWDykwU3uJq6iBtj/7iitxYLBP2GktfROpoaP8NZ2d4fhcc7o0
-	smrLoN5AV+16qhw6AhCFbIBwYAr4iOcL273Pc5u6epQksBHjYvWtsHNwoVZxTCcL5l/yzuAZVo9
-	0wPuK+sB+wuGMeqg4mA93frZ37yxEPQ0xawFQM8gsONBd0BzGLsiM8RDLuUBJqA==
-X-Received: by 2002:a05:6512:3108:b0:51d:4260:4bf8 with SMTP id n8-20020a056512310800b0051d42604bf8mr8629747lfb.35.1715082054720;
-        Tue, 07 May 2024 04:40:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG4hXSV5LqPLeIpWFEX4rkTKoBwuzoDnQsCGmR2OdZAQs/M5k2xY8xrSE4ntx++j7hWn170Hg==
-X-Received: by 2002:a05:6512:3108:b0:51d:4260:4bf8 with SMTP id n8-20020a056512310800b0051d42604bf8mr8629728lfb.35.1715082054206;
-        Tue, 07 May 2024 04:40:54 -0700 (PDT)
+        bh=jPRYoMgnpo20fT3iCSoSZIvouquMcyBtOuWF7MTQKrM=;
+        b=ktMLeTWxKMNQHJGJJTJogBaXLobpbPun7U3FACg+y+cC0keyZa0D8jIQgaOt2wigtS
+         7s9voKABDTefRGxa13vEhMxmyrjTa5lIuxEX9HZ3jFL7bkKFX/t0hApO5omzrZcbqfFj
+         UzNqrEGHImPQ+BxHr+Q45xDjm2KxZU//YDzU0Z1CJ60HJTYR9MDPRBA+EtWEDzIenQKZ
+         M/EP882KdWzcg4scx8Bk7ZBrILDG7jc9mmzNTYqPUNTgTg9IMpm3Qfd7bx9Ppf1+ZUKL
+         EGPegJS8R7hmBQWfS5BLx8nP+tb0+zWBnitNqlXGvDpnXMAnrc/z5n5zPiDNSRo5dr8H
+         R1Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsHfgSr7RJYrZZHeaRperxqhanEtKk1guBbRNGBpz7Wtsb/15Mi0HvbWeU3JJxWQE+/hhSlDwycNmn1m3qUkrYZ2YF9ithcjQwryDd
+X-Gm-Message-State: AOJu0YwC/zpQUWK64OIQSWtvzqTCqnQAvRYvMEc3cQY+KyiHVYuRpLH4
+	4b/bFGIBTI760vRUmjYkcH/NNHH14FCM8gr46+hcz8BANzWhuUB8I3CZxWQOuaTavYLPMK8nKjZ
+	sT4fnulOZymilmbGzUbo0ObNr9tO7oBLZeW3kr5IuJmu1NzU0Azeuul+UTW8YWQ==
+X-Received: by 2002:a5d:4681:0:b0:343:e52a:f51e with SMTP id u1-20020a5d4681000000b00343e52af51emr8296787wrq.47.1715082160560;
+        Tue, 07 May 2024 04:42:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESeSNqcQIHzk1ErFvIeBHGLDQr/04N51XuBaeu1HoaBLFdx8kWZGQAD/9HQIw5flvl8pBWjg==
+X-Received: by 2002:a5d:4681:0:b0:343:e52a:f51e with SMTP id u1-20020a5d4681000000b00343e52af51emr8296773wrq.47.1715082160083;
+        Tue, 07 May 2024 04:42:40 -0700 (PDT)
 Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id s8-20020adfecc8000000b0034dda041ccasm12814656wro.102.2024.05.07.04.40.53
+        by smtp.gmail.com with ESMTPSA id s8-20020adfecc8000000b0034dda041ccasm12818039wro.102.2024.05.07.04.42.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 04:40:53 -0700 (PDT)
-Message-ID: <3f16a4e0-fb84-451b-ab80-f38c463d30d0@redhat.com>
-Date: Tue, 7 May 2024 13:40:52 +0200
+        Tue, 07 May 2024 04:42:39 -0700 (PDT)
+Message-ID: <adc6ac88-8fb8-44ad-abe6-9e9f9e4017e3@redhat.com>
+Date: Tue, 7 May 2024 13:42:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,17 +82,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] arm64/mm: Remove PTE_PROT_NONE bit
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Joey Gouly <joey.gouly@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Peter Xu <peterx@redhat.com>,
- Mike Rapoport <rppt@linux.ibm.com>, Shivansh Vij <shivanshvij@outlook.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240503144604.151095-1-ryan.roberts@arm.com>
- <20240503144604.151095-3-ryan.roberts@arm.com>
+Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
+ boundaries
 From: David Hildenbrand <david@redhat.com>
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Yang Shi <yang@os.amperecomputing.com>, riel@surriel.com, cl@linux.com,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Ze Zuo <zuoze1@huawei.com>
+References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
+ <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
+ <Zav3UK7ESNxCMjyP@casper.infradead.org>
+ <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
+ <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
+ <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
+ <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
+ <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
+ <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
+ <1dc9a561-55f7-4d65-8b86-8a40fa0e84f9@arm.com>
+ <6016c0e9-b567-4205-8368-1f1c76184a28@huawei.com>
+ <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
+ <4e7ce57f-cad1-44d5-a1d8-4cd47683a358@arm.com>
+ <9ce8a0f4-d1af-44ea-87b5-57ebdb3d2910@arm.com>
+ <dbeda3dd-900a-4362-886e-d9aaa58ca525@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -139,42 +152,35 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240503144604.151095-3-ryan.roberts@arm.com>
+In-Reply-To: <dbeda3dd-900a-4362-886e-d9aaa58ca525@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 03.05.24 16:46, Ryan Roberts wrote:
-> Currently the PTE_PRESENT_INVALID and PTE_PROT_NONE functionality
-> explicitly occupy 2 bits in the PTE when PTE_VALID/PMD_SECT_VALID is
-> clear. This has 2 significant consequences:
+On 07.05.24 13:34, David Hildenbrand wrote:
+> On 07.05.24 13:26, Ryan Roberts wrote:
+>> On 07/05/2024 12:14, Ryan Roberts wrote:
+>>> On 07/05/2024 12:13, David Hildenbrand wrote:
+>>>>
+>>>>> https://github.com/intel/lmbench/blob/master/src/lat_mem_rd.c#L95
+>>>>>
+>>>>>> suggest. If you want to try something semi-randomly; it might be useful to rule
+>>>>>> out the arm64 contpte feature. I don't see how that would be interacting here if
+>>>>>> mTHP is disabled (is it?). But its new for 6.9 and arm64 only. Disable with
+>>>>>> ARM64_CONTPTE (needs EXPERT) at compile time.
+>>>>> I don't enabled mTHP, so it should be not related about ARM64_CONTPTE,
+>>>>> but will have a try.
+>>>>
+>>>> cont-pte can get active if we're just lucky when allocating pages in the right
+>>>> order, correct Ryan?
+>>>
+>>> No it shouldn't do; it requires the pages to be in the same folio.
 > 
->    - PTE_PROT_NONE consumes a precious SW PTE bit that could be used for
->      other things.
->    - The swap pte layout must reserve those same 2 bits and ensure they
->      are both always zero for a swap pte. It would be nice to reclaim at
->      least one of those bits.
-> 
-> But PTE_PRESENT_INVALID, which since the previous patch, applies
-> uniformly to page/block descriptors at any level when PTE_VALID is
-> clear, can already give us most of what PTE_PROT_NONE requires: If it is
-> set, then the pte is still considered present; pte_present() returns
-> true and all the fields in the pte follow the HW interpretation (e.g. SW
-> can safely call pte_pfn(), etc). But crucially, the HW treats the pte as
-> invalid and will fault if it hits.
-> 
-> So let's remove PTE_PROT_NONE entirely and instead represent PROT_NONE
-> as a present but invalid pte (PTE_VALID=0, PTE_PRESENT_INVALID=1) with
-> PTE_USER=0 and PTE_UXN=1. This is a unique combination that is not used
-> anywhere else.
-> 
-> The net result is a clearer, simpler, more generic encoding scheme that
-> applies uniformly to all levels. Additionally we free up a PTE SW bit
-> and a swap pte bit (bit 58 in both cases).
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Ah, my memory comes back. That's also important for folio_pte_batch() to
+> currently work as expected I think. We could change that, though, and
+> let cont-pte batch across folios.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Thinking about it (and trying to refresh my memories), access/dirty bits 
+might be why we don't want to do that.
 
 -- 
 Cheers,
