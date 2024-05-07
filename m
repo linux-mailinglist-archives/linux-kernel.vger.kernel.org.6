@@ -1,166 +1,147 @@
-Return-Path: <linux-kernel+bounces-172051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775E88BEC74
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:18:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DF18BEC73
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE4F9B22815
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A416289401
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A4716E88D;
-	Tue,  7 May 2024 19:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E753416DED3;
+	Tue,  7 May 2024 19:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="R10zG5mD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fbz7ouKb"
-Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMkVTNNv"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C5216E86F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9D81E534;
+	Tue,  7 May 2024 19:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109508; cv=none; b=WVxLFKghKQdZL3THW4MDn2tmGabvE7U2ZHMeSc2wqYO8P/nOccH78uKsUBgFmc7LWgkc/2pBKcM351rwZpnhBcF5J4k61hAMockVTVIGUdFxrZyAunxBH65W2jNoRX83CTn2kUQalqG0MslBEuquDoIbJ7+f67jy2zT2VhQ4bjg=
+	t=1715109505; cv=none; b=HnA+vyea6UVEn5i3ObIZ7H9DOTgMTXmKHE9fYzLHB3G+ktNMqPxbCLTNiJL81coRtrhKUEks4W3yca6ii9aAfMBpEm24awb2Vf1NjoU72HZIKwbgAeTXS0/pTEGtYF/YUf0oKorVrIwYqsttRt1ow8xCyQlx/Jh8GMxuZXVba0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109508; c=relaxed/simple;
-	bh=1m7qQGZDZTwTSY4qQAcqlU7hls2n11/gIl5PoQLknYw=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=U53JPehcFLEMaaFpPrWL/kDH8C+Dr0AeTKq5t4du1/Fv9Iv2MiFpyUHRgam3HH936aSIsFZyEJk8I6N1LrzKxSDjPmye5B+o49d7nsafHlmYu5iZUBUrKa72xpgFjF2DxnnUJi6J4HVXzSvA42QYb/Uuj/PFuIHYKGX4iVQSQ/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=R10zG5mD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fbz7ouKb; arc=none smtp.client-ip=64.147.123.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 5C08F180009D;
-	Tue,  7 May 2024 15:18:25 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 07 May 2024 15:18:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1715109504; x=1715195904; bh=qkhcd0EzeV
-	RqNWjeFD7V/543NgW+3/vWJ3D7DjxHkY8=; b=R10zG5mD6DDA3k1WaN+hNv87QW
-	KFA8VvdXQpoo4uPKw9UgkIe3QINtIxxhEi+OsAoStZO6ZprhThuwHoJby9jjkhrB
-	mgCOyiKdQslP1F3i6UYM9byTVBkwInj+jUJhaSbks+x8qyW/O7DmLR3UGEKZ5IpV
-	Lj4wm3uSe+u+4V7HwOiAE7edq+eN6rO0D7RTqVzbNO4Bty4ha9ZobvXSOWzRABz4
-	6DFviYfPfC529g/wfACCzFOzyVbzLsaqUlcrTNSlWX7t8BsO345/IA0Kdwgs0imN
-	zWcq4+dWlMYbdtOQIPSHimM7dv6zm8pESUY/BE0V4wtAZ4EUdUxMA26Mw4hQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715109504; x=1715195904; bh=qkhcd0EzeVRqNWjeFD7V/543NgW+
-	3/vWJ3D7DjxHkY8=; b=fbz7ouKbnJEHtfOXPzYP0wrmae673QspVK8efMRUfkgs
-	qNbjAV6FgkcghfLm/Bs07i8UIuTYrmDX+foLi4tyXuRhMaZe/Pf3PyaV1V5+bDSF
-	1OTVaALKTwS2eDNESdtxm572oJVDpv0/tH0adrYnepLzxBCTzXZYXQW6LBDWq4/x
-	EGVl80yrZTXwZzZPfo//nnv5RD2Cvj4LwyTiM2cnqm+BkaMN4EBlUVisoG2Ft1zG
-	OlABPS52FO+j9e6KahseYyRPYeV8S4fRv8DEltcr7ttVPJhYpJncOesbxXfVSntT
-	Smgejlzx+gBZNUHNu9vravuF74A1hm/mHinMWe59UA==
-X-ME-Sender: <xms:gH46Zn-wWj9o1JLRyPxAhiqYFSVdPneqEYqBMX-jvONFaJlygJPr8Q>
-    <xme:gH46ZjtcOZOV_MeGGPrBeNoUEhUUlagMDdbSMVd7OqAtZ5j7cGgkXeHRLl-IK1ChB
-    WXnggmbVceQpRlTolY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgudeffecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpedvffdtteekfeeikeegheeigffgffdvkeehteekhfeghfduteeltdevueff
-    leejhfenucffohhmrghinhepphihthhhohhnrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:gH46ZlCfDWCxDOEZfLvkr81sZ13anO3xlEhUGPDcH72Rh66VSd-emw>
-    <xmx:gH46ZjchkqWiSDusGSsK7zi8wok0DeWDyeew1Ka88KbTMiClPJ7eSQ>
-    <xmx:gH46ZsNSB1bcYToYMXf6pKGWCJykOY1Y_V7kCCwjsgj9BfZs459dCw>
-    <xmx:gH46ZlkLJBz4SkPEeIXY7We4aoXIktTYWrV6-TnZVl7MCyku5qPcHQ>
-    <xmx:gH46ZoAzYRAEKwQZ8ejHfem_wqTi3t3tjwwBgHB5tp1QppINQZUii2RL>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A883BB6008D; Tue,  7 May 2024 15:18:24 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715109505; c=relaxed/simple;
+	bh=L10iW1XnYAr019F5MAAWEsx7pIjc8LRWcQ1HoQdQV0g=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=uyksxJ6wAEcleK6aRAKsyjTm8Qbv/tsTqILVFctzaGDYgtIiDX+cy9np+hyVEgJVfqIQfTNaP18jkMQyTbxhJVMIFfJl2epcz2CxsSlTdYEUy8xQZwoZaSm79SFttJaCXDd0pHodMGYaWkUkVbR2ePLkzZSZEk4cCQIFYwRhA00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMkVTNNv; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-434c3d21450so12950791cf.0;
+        Tue, 07 May 2024 12:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715109503; x=1715714303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YnFaPLp90E21WYAiuGhKeevnSOSTstIAB4WFXm8KCZo=;
+        b=kMkVTNNvhX+rL3ttTKaWtaADU29HSWVG6r6usyE2INyEWZbaYTa0Zgwf7kzgm7D2EH
+         IpeqFJ5GevugKUn6nDbsucdpiwT7piCIK/Ytn8yF0DQbSHzwAU6QmS9a/+3K8dUo5Z3v
+         bjEOupREQ5iEab+BXfgdZa3/b6UjSebK7JAsYMjpFZuTAYAh++dp3NQNeAjGL/x2CuCa
+         GrqXnGj9M9HpzyUj0AgMsWyMeiYMS0n1Uqa5ipZf6HhXb6YUxH+5dDWsR/+iNjk/DCx2
+         /UiMWoltmnS7Jx00/C6bOPURB7Y5DxUBWnrxEuRAQ8HwE0+OIX73j/dMiCX5kQsgAFgF
+         1Q9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715109503; x=1715714303;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YnFaPLp90E21WYAiuGhKeevnSOSTstIAB4WFXm8KCZo=;
+        b=aPWD0SwMGHIEFUHa/vWK+Mc+MXOBYADEZN8zTiIbsEFAH0L8Xw1DaT+oozo8aY+Dkx
+         oT9c8kS+Msoy5Xlufbj5FUd6K+dZunGymojULK4/uKkRPMv6moCJX7dz13RHRlaXUsk6
+         /08FzExpRbKJ2BEeBaBhpvxgeYgAdqxnWcD+8KwpqkLMLGMB02fRJCTCP9mIhEwHhLg7
+         vnZhYl9VuUSsWNu6y+t7rAF/ogGYwwhKhMo0E54CBn1ObuVwXwwEGvm1dGmNXOnxSHst
+         ah8EpCMLDEHjqcr/+fDl3TDsoVXVtny5+jE729+4z6O9kfLgzng6kZvGnDN6+pGLuuMQ
+         LUJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjd5x2E5Rd0wjD7JzZTFagyoFWM6KDOW1xi0jqkvnkQR2MfTmbVpIKMc89dnUafFRf45AfjfIjakmmgIlTZB9gAJY72tHnSdPvI1wtOUtX/eUFA+h1tDAfzdVFokrJ3vA3vREGC88eLNhGa9oBtGxR2JjuEF8cwOIE
+X-Gm-Message-State: AOJu0Yx990DFa0EEs7W0qI45sxBz0axcuYi/A8l1v2XGKghTH/mvbMWi
+	vX/TWpv6GjCvi8yjxN332IiCDouHpc6hSY1v4dx37sdf9RBn/FAX
+X-Google-Smtp-Source: AGHT+IGBAmYjbwhToFiq6jwky+6txEoPz0UEsWtAY2wtqPyg7rJlQlTyID7vMECvdG4ZSAxrXQREfA==
+X-Received: by 2002:ac8:5805:0:b0:437:9875:9905 with SMTP id d75a77b69052e-43dbf5101a4mr6806571cf.27.1715109502847;
+        Tue, 07 May 2024 12:18:22 -0700 (PDT)
+Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
+        by smtp.gmail.com with ESMTPSA id hh10-20020a05622a618a00b00436510ddc5esm6695624qtb.34.2024.05.07.12.18.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 12:18:22 -0700 (PDT)
+Date: Tue, 07 May 2024 15:18:22 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andrew Halaney <ahalaney@redhat.com>, 
+ Martin KaFai Lau <martin.lau@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ bpf <bpf@vger.kernel.org>, 
+ kernel@quicinc.com
+Message-ID: <663a7e7e1f5b5_cc75c294c0@willemb.c.googlers.com.notmuch>
+In-Reply-To: <fc8334a6-6961-41f4-affc-28bdfc3dd697@quicinc.com>
+References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
+ <20240504031331.2737365-3-quic_abchauha@quicinc.com>
+ <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
+ <663a12f089b81_726ea29426@willemb.c.googlers.com.notmuch>
+ <fc8334a6-6961-41f4-affc-28bdfc3dd697@quicinc.com>
+Subject: Re: [RFC PATCH bpf-next v6 2/3] net: Add additional bit to support
+ clockid_t timestamp type
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <c3013f57-0d0b-4e3c-9658-7cc989b77c73@app.fastmail.com>
-In-Reply-To: 
- <CAA8EJpp5TO9CkwWCUy_OL5T4px9gTjmB-pKPr1dNPgudVc78Tg@mail.gmail.com>
-References: 
- <CA+G9fYs1ZN2K=UHOjrwRR2JNE-M0nf9iW_Q-YPzVgmW+9daU4Q@mail.gmail.com>
- <CA+G9fYs1F=kO11-+DtAOsNwZGEd8mmojXEfXfg431JG=Spubcg@mail.gmail.com>
- <CAA8EJpoMwy2w3a9VF3ejGkcxFK905DCczZOdD4k-cd7ouKHYcA@mail.gmail.com>
- <CA+G9fYuGLz76C9F=onq6u2hk9_YYHhyjT+bvwXmeN8U6bhejNQ@mail.gmail.com>
- <CAA8EJpp5TO9CkwWCUy_OL5T4px9gTjmB-pKPr1dNPgudVc78Tg@mail.gmail.com>
-Date: Tue, 07 May 2024 21:17:44 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>
-Cc: lkft-triage@lists.linaro.org,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "open list" <linux-kernel@vger.kernel.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>
-Subject: Re: arm64: defconfig: gcc-8: failed: AttributeError: module 'argparse' has no
- attribute 'BooleanOptionalAction'
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 7, 2024, at 20:19, Dmitry Baryshkov wrote:
-> On Tue, 7 May 2024 at 21:06, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->> On Tue, 7 May 2024 at 20:58, Dmitry Baryshkov
->> <dmitry.baryshkov@linaro.org> wrote:
->> >
->> > On Tue, 7 May 2024 at 16:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->> > >
->> > > On Tue, 7 May 2024 at 17:13, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->> > > >
->> > > > The arm and arm64 with gcc-8 builds failed on Linux next-20240507 tag
->> > > > with gcc-8 due to following warnings / errors.
->> > > >
->> > > > arm64 and arm:
->> > > >   defconfig - gcc-8 - failed
->> > >
->> > > Anders bisected this build problem and found the first bad commit:
->> > >
->> > > 07a2f8716c41 drm/msm/gen_header: allow skipping the validation
->> > >
->> > > Steps to reproduce:
->> > > -----
->> > > # tuxmake --runtime podman --target-arch arm64 --toolchain gcc-8
->> > > --kconfig defconfig
->> >
->> > What is the python version on that platform / system?
->>
->> # python --version
->>  Python 3.7.3
->
-> EOL.
-> I'll check what we can do, but please consider updating the platform.
+Abhishek Chauhan (ABC) wrote:
+> 
+> 
+> On 5/7/2024 4:39 AM, Willem de Bruijn wrote:
+> > Martin KaFai Lau wrote:
+> >> On 5/3/24 8:13 PM, Abhishek Chauhan wrote:
+> >>> diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
+> >>> index fe86cadfa85b..c3d852eecb01 100644
+> >>> --- a/net/ipv4/ip_output.c
+> >>> +++ b/net/ipv4/ip_output.c
+> >>> @@ -1457,7 +1457,10 @@ struct sk_buff *__ip_make_skb(struct sock *sk,
+> >>>   
+> >>>   	skb->priority = (cork->tos != -1) ? cork->priority: READ_ONCE(sk->sk_priority);
+> >>>   	skb->mark = cork->mark;
+> >>> -	skb->tstamp = cork->transmit_time;
+> >>> +	if (sk_is_tcp(sk))
+> >>
+> >> This seems not catching all IPPROTO_TCP case. In particular, the percpu 
+> >> "ipv4_tcp_sk" is SOCK_RAW. sk_is_tcp() is checking SOCK_STREAM:
+> >>
+> >> void __init tcp_v4_init(void)
+> >> {
+> >>
+> >> 	/* ... */
+> >> 	res = inet_ctl_sock_create(&sk, PF_INET, SOCK_RAW,
+> >> 				   IPPROTO_TCP, &init_net);
+> >>
+> >> 	/* ... */
+> >> }
+> >>
+> >> "while :; do ./test_progs -t tc_redirect/tc_redirect_dtime || break; done" 
+> >> failed pretty often exactly in this case.
+> >>
+> > 
+> > Interesting. The TCP stack opens non TCP sockets.
+> > 
+> > Initializing sk->sk_clockid for this socket should address that.
+> > 
+> Willem, Are you suggesting your point from the previous patch ? 
+> 
 
-I don't think we can rely on everyone to have 3.9, 3.8
-is not EOL yet, and we do want to still test in distros with
-older compilers that may also come with old python.
-
-It should just work with a regular optional argument instead
-of the BooleanOptionalAction (without the --no-validate flag):
-
-https://docs.python.org/3/howto/argparse.html#introducing-optional-arguments
-
-> @@ -538,6 +538,9 @@ class Parser(object):
->  		self.variants.add(reg.domain)
->  
->  	def do_validate(self, schemafile):
-> +		if self.validate == False:
-> +			return
-> +
->  		try:
-> 			from lxml import etree
-
-This bit may have to become 'if not self.validate',
-since the flag in this case is None rather than equal
-to False. This also improves readability.
-
-     Arnd
+No, just for this custom socket to initialize the sk_clockid. It is
+not a TCP socket, but only used by TCP.
 
