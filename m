@@ -1,253 +1,104 @@
-Return-Path: <linux-kernel+bounces-171286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 391048BE239
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:35:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAA28BE23B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8412847F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:35:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF51B1C238A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BBC15CD52;
-	Tue,  7 May 2024 12:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6DB15D5BD;
+	Tue,  7 May 2024 12:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="wnRbNvKU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Vy6SA7G+"
-Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fcmKxLe1"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD24A15749B;
-	Tue,  7 May 2024 12:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9D315B0F0
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085286; cv=none; b=Jpgv8VzpbU9RiuKg7qFgTHmzCAbpHoOUYRhaZS/AXQdh7jpz0hRXR0/kXUhYPIufkZ5HpJeTOPtDnV7f/Fv6OsaY8Z9O0Uo3fnVAAfT6V+d6Afoedy+hm9yPScaX5jbpMTDnzWgJ5teG/8/4zmWhTMV36DJJJ0xa6WSP8rxFYgo=
+	t=1715085287; cv=none; b=APBXA00lFIC2fELTf6+vGX9gE1+jNxwbKs/9rHIXa+rpzL7jseaX9WScoaax/dpWvxIYZdlHdewRcnME3HvQQ+D543hKP67SHDL7G4PisuXCyj9c+7TtZQ2dhz1EGrtjgNGRLm0SPXcDlzqDpGndxvvjIc6MXtGp0QiOKJa5jxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715085286; c=relaxed/simple;
-	bh=iL6GI7aV2jfgN0Ty0EEFCb0zJ1lztC2ii8V+5S1hoV8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Wq/UcZuPGGQgmsC+ajQ3d4sCd/JPyOFTw+cD99GHsjRLxFCGNDBnUNb47OEVu9fYVCZt0NRwFURmaAXmWlfPF4OWQWyucM58Gs3l6mIVQ9SEop60syZ+wnIOZDpobU8QEt7WhwLdM80gayx6d26QVGRUuxdesZj9/V33Ke7rK88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=wnRbNvKU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Vy6SA7G+; arc=none smtp.client-ip=64.147.123.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfout.west.internal (Postfix) with ESMTP id 77BE41C00161;
-	Tue,  7 May 2024 08:34:43 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 07 May 2024 08:34:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1715085283; x=1715171683; bh=U1
-	dkwENjcmwwYQ8mV+eWVW+5rVqPT400QM8JICAKW8I=; b=wnRbNvKUtTDASqFeE1
-	q1xBat7Q3A3bqjIPrkX8O3bJ6AepKUgEQxjAP4xduMEUXvcSF73dgtyfIUbM6mI5
-	sVBHsrHSkljMD8hClP3LoqktLrA6r1okfcQEIrw9YPJIQ9ekS9wJz2AEe4Pe/kpt
-	Son6pSDWRDQfrqeVVUIOvCLP/dg4FUQKZ3xtqmWAW01rqRBQp1YIx46NabGlUMv5
-	PKroQFFLoCxSyoH4vnrVDWkPVMJE7iZfCUaDZeG0/nxjq0niSKinmlPx2NkyJEek
-	5/KMTyS6NGak7aIgxmrVmMDJVYLC2W0ar6p1hDHUeLHZdgqomCwfshUCnMbmGJGi
-	f2xg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1715085283; x=1715171683; bh=U1dkwENjcmwwY
-	Q8mV+eWVW+5rVqPT400QM8JICAKW8I=; b=Vy6SA7G+AlbAwtPQV9oygCTpBP/7+
-	DcF8MyHt0hooyYSx2e3gUvnzpJGo9iiJlguQsjKxLz7f6JDclNek4K9wUwMaWQte
-	THQ2w5DD/ulnMns+ztxfqOAm6dl19stv1mDIhW+Ip1hMN0gV+dCzKQN4uSXwVwYv
-	gocn4bDhkVvnAkI6v0fANh3hVLSc7TNGvP4g/x0crS8wj/cqPgY9oFGI9ThjDfYN
-	ZCAzRx0cda2iDkwtMH2aWu3wueMoNfHkgh/Eexdc7K8gxXvEl0C2+spPxFQ/o25s
-	kWPjoDY1T+GYLlDR8kMePJi/encOxW/UBIb5KuJfXrQiviMAHG6HmO45w==
-X-ME-Sender: <xms:4h86ZmAIWOgZUeHHWauojVlJww50TiWbYWpPfvm4mGas7dsTpYLSvw>
-    <xme:4h86Zgjtd0Uvd9h9Gbf1AlKDhwFp_l1rHh_5E3PAzHZ69o-xgQ35_Zt3WZE5B0He7
-    hDxL7TZhGALP-popE0>
-X-ME-Received: <xmr:4h86Zpl0xb1sFhqQBT6vqiHq-_Md3I6A32wuDL6kVDOZLtzZ0hMK8vQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpeflihgrgihu
-    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
-    ftrfgrthhtvghrnhepffetueegkedtgfejveeuvdfghfegtddvgfehudeghfegheetuedu
-    heduveejtefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:4h86ZkyHw6MHdrgfyB3ZNrga1CxqFoPbghq_5qGIQVGtyY0F0zKZrg>
-    <xmx:4h86ZrSnIkQJ7Cbt2FKqH-8hTAujL6XVsW-ch6InTi37ituOMp5wUw>
-    <xmx:4h86Zva7Q1hXyq6lkKRvGLjvbbiX9SJz2yFNlr9_8uSO6qMBJD3gUw>
-    <xmx:4h86ZkSdG30cI8O6xlL7xdWPVqXAkTyq3frceMcwzu2C0PgEEs2P4A>
-    <xmx:4x86ZqFFWCUWzbXW9cunocsY8O3wxTJj3ENF_KgdquLiGCODIEuF21vg>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 May 2024 08:34:41 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Tue, 07 May 2024 13:34:40 +0100
-Subject: [PATCH] MIPS: Implement ieee754 NAN2008 emulation mode
+	s=arc-20240116; t=1715085287; c=relaxed/simple;
+	bh=4qhhVrDLgvjiR3qGhTOs9uM3suWa+tgK/JAtQej9lNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hWaxVze+H0jvdRF+OS40K2jWFSqLkL0r03sj/kLJJFAdLabUN7NSAwT9UNi1cIcEt0hrBLguutEwB8xfhOYSpBof61ypAQVHXtEd5BuXad7Bu0KTMxEJ6kpYauccPrMw9AE8OVT6BiX2AcGzg+hdjKfZUcTg7IDHstqwUQlVW3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fcmKxLe1; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f17ac14daso3320547e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715085284; x=1715690084; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fb7T1C3RqLm2Zber0tc50ZaqTjghpLq4bIRrAurD6qU=;
+        b=fcmKxLe1yEnewMPMZr2Jz5huoki3cxRFB1ASj9i3UrylKgFQeMPskQlJR+HsMozAdA
+         BEOxvKgvw/XakEiklmC0WLDdBqVGBRIU/cO3JBIhqpKYBumsSSOJNHCtFpOfoZHpcwlq
+         lOBoMxCmgOX8I1brp+fnl7dx8lAwuR8TnNfnTAsUcl9VpOXHMTkVR5/rR1LdaFH6clT2
+         HX1RDLlopDkXQkKUSjKYIP7Bngj0S/k0ZXdIiq1sFJr+8kGvE0FLIGln2vPgfjUh2ZSx
+         /LRVzyrScZ5gZWX0rkHIhePHs0VSFZp4ZbEVIcWbXelnyTIU3wXB+G445ULtFydRT02S
+         o0dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715085284; x=1715690084;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fb7T1C3RqLm2Zber0tc50ZaqTjghpLq4bIRrAurD6qU=;
+        b=NsNmHmEr4klDBZMQaROUb7+Z2Rwo8qvgFNKBTOIQh5JixTy8fy2l2nuvQTqUqocaox
+         ssN9Jj7kxHnL2yWnXI+E4HtIUdWEBDQ7pHDCxZ5+r4CmJh0s5hz1y2r7We6jeWaKNFne
+         2yg7mHD0Tdc+tbLCNxXp39eaKEjpf+ytBHvCTqY3qCP4M7ShV3T+eugPRIxhJyJyNWZR
+         5YfJQpHNgFFu8u1YMPVDe2QPs0btQdYkhexa7IEsw7Xf5HE0zPJtUw8t8EeSkx9BBQHT
+         YxYFZpLlvmm+JJF6bPUxKb78BQTClj9HRD223b+6DRmVMA+GJ8zCcajehYeX6raUkrSs
+         6JAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvUe5H/SZIi3UaYxKoyXX3/rVm2HjIhtBJLf0/ZTZcs1U2ZkwCNftStYiqrcXisH7h4g5PSkFwk7eAth/trGSYpMXilD2PxuHwVL31
+X-Gm-Message-State: AOJu0Yyc0RbI+fQkoOE0IeC7IWxTGKr3H2kWr9zJocOYgPoryfuEgMs9
+	Uu5q4MxC6ttJ1wrgV+fDaMlE7yxeJ9oxYt8yxAzxZYRQzHVUl8iFKoikZqx9/TY=
+X-Google-Smtp-Source: AGHT+IFuuNXxRqEhhogyMFo8s4Muv03vq4OxYhgbMjSC8e3E/QpWVHqtClYBhR+3fXlxPsxYgDYrZg==
+X-Received: by 2002:a19:2d51:0:b0:51a:e21c:109c with SMTP id t17-20020a192d51000000b0051ae21c109cmr7768074lft.14.1715085283574;
+        Tue, 07 May 2024 05:34:43 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id j15-20020a05600c190f00b0041bf512f85bsm23047532wmq.14.2024.05.07.05.34.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 05:34:43 -0700 (PDT)
+Date: Tue, 7 May 2024 14:34:41 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: zhangwarden@gmail.com
+Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] livepatch: Rename KLP_* to KLP_TRANSITION_*
+Message-ID: <Zjof4QzDQ2unnjVn@pathway.suse.cz>
+References: <20240507050111.38195-1-zhangwarden@gmail.com>
+ <20240507050111.38195-2-zhangwarden@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com>
-X-B4-Tracking: v=1; b=H4sIAN8fOmYC/x3MSwqAIBRG4a3EHSdYaFZbiYjI37rQC6UIwr0nD
- b/BOS8FeEagNnvJ4+bAx55Q5BlNy7jPEGyTqZSlkloasfEZBgZgtBqwXauwhakr7WxTG0mpOz0
- cP/+z62P8AKGTj5VjAAAA
-To: Jonathan Corbet <corbet@lwn.net>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4991;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=iL6GI7aV2jfgN0Ty0EEFCb0zJ1lztC2ii8V+5S1hoV8=;
- b=owGbwMvMwCHmXMhTe71c8zDjabUkhjQr+cczVHdFsE48dsojZR1joJjhtomfhb6asR4Vf7zr7
- d0n09k+dJSyMIhxMMiKKbKECCj1bWi8uOD6g6w/MHNYmUCGMHBxCsBEqjQY/sf/zI/y61G4zu6n
- YOS1rPaa8GqX+Ie5Xw2OcX1+3vbyhADD/zqLBtZ/QVwyC0XEe1POXOJavst28ZJphxuSxFg825P
- t+AE=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507050111.38195-2-zhangwarden@gmail.com>
 
-Implement ieee754 NAN2008 emulation mode.
+On Tue 2024-05-07 13:01:11, zhangwarden@gmail.com wrote:
+> From: Wardenjohn <zhangwarden@gmail.com>
+> 
+> The original macros of KLP_* is about the state of the transition.
+> Rename macros of KLP_* to KLP_TRANSITION_* to fix the confusing
+> description of klp transition state.
+> 
+> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
 
-When this mode is enabled, kernel will accept ELF file
-compiled for both NaN 2008 and NaN legacy, but if hardware
-does not have capability to match ELF's NaN mode, __own_fpu
-will fail for corresponding thread and fpuemu will then kick
-in.
+Looks good to me:
 
-This mode trade performance for corretness, while maintaining
-support for both NaN mode regardless of hardware capability.
-It is useful for multilib installation that have both types
-of binary exist in system.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Tested-by: Petr Mladek <pmladek@suse.com>
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  4 +++-
- arch/mips/include/asm/fpu.h                     | 15 +++++++++++++++
- arch/mips/kernel/elf.c                          |  4 ++++
- arch/mips/kernel/fpu-probe.c                    | 10 +++++++++-
- 4 files changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 500cfa776225..dee487b03c9d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2000,7 +2000,7 @@
- 			for the device. By default it is set to false (0).
- 
- 	ieee754=	[MIPS] Select IEEE Std 754 conformance mode
--			Format: { strict | legacy | 2008 | relaxed }
-+			Format: { strict | legacy | 2008 | relaxed | emulated }
- 			Default: strict
- 
- 			Choose which programs will be accepted for execution
-@@ -2020,6 +2020,8 @@
- 				by the FPU
- 			relaxed	accept any binaries regardless of whether
- 				supported by the FPU
-+			emulated accept any binaries but enable FPU emulator
-+				if binary mode is unsupported by the FPU.
- 
- 			The FPU emulator is always able to support both NaN
- 			encodings, so if no FPU hardware is present or it has
-diff --git a/arch/mips/include/asm/fpu.h b/arch/mips/include/asm/fpu.h
-index 86310d6e1035..bc5ac9887d09 100644
---- a/arch/mips/include/asm/fpu.h
-+++ b/arch/mips/include/asm/fpu.h
-@@ -129,6 +129,18 @@ static inline int __own_fpu(void)
- 	if (ret)
- 		return ret;
- 
-+	if (current->thread.fpu.fcr31 & FPU_CSR_NAN2008) {
-+		if (!cpu_has_nan_2008) {
-+			ret = SIGFPE;
-+			goto failed;
-+		}
-+	} else {
-+		if (!cpu_has_nan_legacy) {
-+			ret = SIGFPE;
-+			goto failed;
-+		}
-+	}
-+
- 	KSTK_STATUS(current) |= ST0_CU1;
- 	if (mode == FPU_64BIT || mode == FPU_HYBRID)
- 		KSTK_STATUS(current) |= ST0_FR;
-@@ -137,6 +149,9 @@ static inline int __own_fpu(void)
- 
- 	set_thread_flag(TIF_USEDFPU);
- 	return 0;
-+failed:
-+	__disable_fpu();
-+	return ret;
- }
- 
- static inline int own_fpu_inatomic(int restore)
-diff --git a/arch/mips/kernel/elf.c b/arch/mips/kernel/elf.c
-index 7aa2c2360ff6..f0e7fe85a42a 100644
---- a/arch/mips/kernel/elf.c
-+++ b/arch/mips/kernel/elf.c
-@@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
- 	t->thread.fpu.fcr31 = c->fpu_csr31;
- 	switch (state->nan_2008) {
- 	case 0:
-+		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
-+			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
-+		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
-+			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
- 		break;
- 	case 1:
- 		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
-diff --git a/arch/mips/kernel/fpu-probe.c b/arch/mips/kernel/fpu-probe.c
-index e689d6a83234..4b4804bb0c0f 100644
---- a/arch/mips/kernel/fpu-probe.c
-+++ b/arch/mips/kernel/fpu-probe.c
-@@ -144,7 +144,7 @@ static void cpu_set_fpu_2008(struct cpuinfo_mips *c)
-  * IEEE 754 conformance mode to use.  Affects the NaN encoding and the
-  * ABS.fmt/NEG.fmt execution mode.
-  */
--static enum { STRICT, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
-+static enum { STRICT, EMULATED, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
- 
- /*
-  * Set the IEEE 754 NaN encodings and the ABS.fmt/NEG.fmt execution modes
-@@ -160,6 +160,7 @@ static void cpu_set_nofpu_2008(struct cpuinfo_mips *c)
- 
- 	switch (ieee754) {
- 	case STRICT:
-+	case EMULATED:
- 		if (c->isa_level & (MIPS_CPU_ISA_M32R1 | MIPS_CPU_ISA_M64R1 |
- 				    MIPS_CPU_ISA_M32R2 | MIPS_CPU_ISA_M64R2 |
- 				    MIPS_CPU_ISA_M32R5 | MIPS_CPU_ISA_M64R5 |
-@@ -204,6 +205,11 @@ static void cpu_set_nan_2008(struct cpuinfo_mips *c)
- 		mips_use_nan_legacy = !cpu_has_nan_2008;
- 		mips_use_nan_2008 = !!cpu_has_nan_2008;
- 		break;
-+	case EMULATED:
-+		/* Pretend ABS2008/NAN2008 options are dynamic */
-+		c->fpu_msk31 &= ~FPU_CSR_NAN2008;
-+		c->fpu_csr31 &= ~FPU_CSR_ABS2008;
-+		fallthrough;
- 	case RELAXED:
- 		mips_use_nan_legacy = true;
- 		mips_use_nan_2008 = true;
-@@ -226,6 +232,8 @@ static int __init ieee754_setup(char *s)
- 		return -1;
- 	else if (!strcmp(s, "strict"))
- 		ieee754 = STRICT;
-+	else if (!strcmp(s, "emulated"))
-+		ieee754 = EMULATED;
- 	else if (!strcmp(s, "legacy"))
- 		ieee754 = LEGACY;
- 	else if (!strcmp(s, "2008"))
-
----
-base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
-change-id: 20240507-mips_ieee754_emul-d17865fd9870
-
-Best regards,
--- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
-
+Best Regards,
+Petr
 
