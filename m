@@ -1,225 +1,163 @@
-Return-Path: <linux-kernel+bounces-171182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF55F8BE0C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A33E8BE0FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0741F225EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106041F22277
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAD7152176;
-	Tue,  7 May 2024 11:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Lw0aGt4j"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA1715219B;
+	Tue,  7 May 2024 11:25:10 +0000 (UTC)
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA18914F109
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF5D522E;
+	Tue,  7 May 2024 11:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715080533; cv=none; b=VlyI8Q9vrG5oa3PgQhuoLhf/EKiq3p3OEH8JEFBKniBZnjyCqXOXGa7eZ2jRwWIUnkpC8U6V29Oc4oJ6qqfcmDuNNhGFu4ZEKoouwQ9NWpN7uGTta3vodhYTMcX+xp+0D6zbQNJWyyVbLBP/Xd50ViwxDtUT0bYGfNTYgZctkV8=
+	t=1715081109; cv=none; b=fGPEozFYCw0N3JWJotrafzrZIAjzptxrJLtwzsCpN0C72eBSrS+WiCxuCkW79hpvRJ2Sf26jSv1U72clk3ik3XyHpEd0zTPFkBNUIBYdoe/cbPUITMKOr2WD/ZtdG0FdbUhTxL8VDOkQfJ/J+q4brc8PxnK/8ZObSMCTOCM45LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715080533; c=relaxed/simple;
-	bh=cg+Ro88ytJjd/fd08mRf8Cz6ImUq4vWBcpmoLF+uj6s=;
+	s=arc-20240116; t=1715081109; c=relaxed/simple;
+	bh=bwWzxT3pcIW6avQmLLAcKFb0553T2UiC6CDbQwNPuRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NicfVnbMKgYSCbTIlgXxe4+I93ycv6xdZvlUKN4+1vjfD/i7n5g70/kF583NCL1U9X19dIhvfxrl5zYIlwzTQ4++VWnunCAiVhaAZFkdsHW3a1meqXkWHpCQOf7XGzwPlOjS454V14H50WF6BRb96uf0uz7NjztRmeovwLcW+m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Lw0aGt4j; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-346407b8c9aso905205f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:15:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715080530; x=1715685330; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wXHaXKdqUHwPFQAJMHKHEEcPt9R1JT6UoeAkdx1FiUQ=;
-        b=Lw0aGt4jy3dTDdTuxyoeQT/ZRaFMncE8c0QbvGvgLoK1CPB8glR2J60YilKswlABWL
-         7BJxnW7VY61EI2+jJMoxpnpDe54lryiracbplfdT+MuP/4wUkzk4XRT8elRMTSoBdA57
-         sis0nq4I/80RNmGHtYDIGpSllvfFyZ7E1hK7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715080530; x=1715685330;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wXHaXKdqUHwPFQAJMHKHEEcPt9R1JT6UoeAkdx1FiUQ=;
-        b=lF+28lMmYjdTDl0PFhuIxx8m6BEDjGHf6LhTiEabth9aOs0cGad1js3RS0W81CDHNM
-         K4CraKNmadARy0oD2lyXLuWcJvvf00XpJz7N9bRmdc8slmonHLSJnnUAVAa2HsxYM/81
-         FPg9zJN5Uy+ifMKYZsrEKcGKm44ElDZU1pemDwE29uPsARbMpBVNGb57kuRt6lN8AMIW
-         zer8VvA0U3TkLKUy4r2bsvZSv57CN4mVi8iJMp6rv400hqailErptJjOg17rENRxQ0rX
-         nQoRanshZHuHlAzEuoGxbnQHGfd0bWTLMlYZtzkmb1OT5GWpkQ2Z5lemep+M3Pp+t89J
-         SEoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU+JhvIOMWTV/9Cyx/cvINfxZ/d6k6PBov/GdSRzg8wRkkQ5tYHrPXp9tksyhAWQ9FNk/hg28VPBkxv3APLqhjF8HBXxdc5jUNPXE4
-X-Gm-Message-State: AOJu0YzYHs9kaG1r+9iywNe/6sY7BGRLNQEJeO/e4n4TeTTb/JehVXro
-	XvsRSXhcTBuhsfzLbLQkC7i7MePHPOF1Z6sB1cBcPK4E+A2+Jy9EjNq53m2GLmc=
-X-Google-Smtp-Source: AGHT+IGEfDP7fiY2wy+u7QVPwRVnfgZKbf0WPVJ5yp1DcSn44Sb5FY9EGhKJ+yzn6ZLbDpYvJ3fvPw==
-X-Received: by 2002:a05:600c:3b02:b0:41a:c4fe:b0a5 with SMTP id m2-20020a05600c3b0200b0041ac4feb0a5mr8937623wms.4.1715080530250;
-        Tue, 07 May 2024 04:15:30 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id d10-20020a05600c3aca00b00418e4cc9de7sm22960582wms.7.2024.05.07.04.15.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 04:15:29 -0700 (PDT)
-Date: Tue, 7 May 2024 13:15:27 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Maxime Ripard <mripard@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <ZjoNTw-TkPnnWLTG@phenom.ffwll.local>
-Mail-Followup-To: Hans de Goede <hdegoede@redhat.com>,
-	Maxime Ripard <mripard@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat>
- <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
- <cbe5a743-d8be-4b0e-99c4-e804fbadc099@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uP8ntR0HNAC1wN/LJp9GITP+o3uDlUDNcSaKSxStzQ2KXI1q/5tgdoRYrK8+UKRcMivDpI53hb3gfM8qXYf4YxdkfCr52Pawp6n1O2r5T8+ovS837tOg1ItAvTSBl5nH3ktaN2DnvlxigXJi3DPAuZLxIx+mkwCUtXydp584yx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Tue,  7 May 2024 13:15:53 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 11300806B0;
+	Tue,  7 May 2024 13:15:56 +0200 (CEST)
+Received: by buildd.core.avm.de (Postfix, from userid 1000)
+	id 00D0A182C00; Tue,  7 May 2024 13:15:55 +0200 (CEST)
+Date: Tue, 7 May 2024 13:15:55 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH 2/2] kbuild: add 'private' to target-specific variables
+Message-ID: <ZjoNa434si-Hk0Cs@buildd.core.avm.de>
+References: <20240427153253.2809911-1-masahiroy@kernel.org>
+ <20240427153253.2809911-2-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cbe5a743-d8be-4b0e-99c4-e804fbadc099@redhat.com>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+In-Reply-To: <20240427153253.2809911-2-masahiroy@kernel.org>
+X-purgate-ID: 149429::1715080554-4379CE42-DC1AD1A7/0/0
+X-purgate-type: clean
+X-purgate-size: 3145
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-On Mon, May 06, 2024 at 04:01:42PM +0200, Hans de Goede wrote:
-> Hi Sima,
+On Sun, Apr 28, 2024 at 12:32:53AM +0900, Masahiro Yamada wrote:
+> Currently, Kbuild produces inconsistent results in some cases.
 > 
-> On 5/6/24 3:38 PM, Daniel Vetter wrote:
-> > On Mon, May 06, 2024 at 02:05:12PM +0200, Maxime Ripard wrote:
-> >> Hi,
-> >>
-> >> On Mon, May 06, 2024 at 01:49:17PM GMT, Hans de Goede wrote:
-> >>> Hi dma-buf maintainers, et.al.,
-> >>>
-> >>> Various people have been working on making complex/MIPI cameras work OOTB
-> >>> with mainline Linux kernels and an opensource userspace stack.
-> >>>
-> >>> The generic solution adds a software ISP (for Debayering and 3A) to
-> >>> libcamera. Libcamera's API guarantees that buffers handed to applications
-> >>> using it are dma-bufs so that these can be passed to e.g. a video encoder.
-> >>>
-> >>> In order to meet this API guarantee the libcamera software ISP allocates
-> >>> dma-bufs from userspace through one of the /dev/dma_heap/* heaps. For
-> >>> the Fedora COPR repo for the PoC of this:
-> >>> https://hansdegoede.dreamwidth.org/28153.html
-> >>
-> >> For the record, we're also considering using them for ARM KMS devices,
-> >> so it would be better if the solution wasn't only considering v4l2
-> >> devices.
-> >>
-> >>> I have added a simple udev rule to give physically present users access
-> >>> to the dma_heap-s:
-> >>>
-> >>> KERNEL=="system", SUBSYSTEM=="dma_heap", TAG+="uaccess"
-> >>>
-> >>> (and on Rasperry Pi devices any users in the video group get access)
-> >>>
-> >>> This was just a quick fix for the PoC. Now that we are ready to move out
-> >>> of the PoC phase and start actually integrating this into distributions
-> >>> the question becomes if this is an acceptable solution; or if we need some
-> >>> other way to deal with this ?
-> >>>
-> >>> Specifically the question is if this will have any negative security
-> >>> implications? I can certainly see this being used to do some sort of
-> >>> denial of service attack on the system (1). This is especially true for
-> >>> the cma heap which generally speaking is a limited resource.
-> >>
-> >> There's plenty of other ways to exhaust CMA, like allocating too much
-> >> KMS or v4l2 buffers. I'm not sure we should consider dma-heaps
-> >> differently than those if it's part of our threat model.
-> > 
-> > So generally for an arm soc where your display needs cma, your render node
-> > doesn't. And user applications only have access to the later, while only
-> > the compositor gets a kms fd through logind. At least in drm aside from
-> > vc4 there's really no render driver that just gives you access to cma and
-> > allows you to exhaust that, you need to be a compositor with drm master
-> > access to the display.
-> > 
-> > Which means we're mostly protected against bad applications, and that's
-> > not a threat the "user physically sits in front of the machine accounts
-> > for", and which giving cma access to everyone would open up. And with
-> > flathub/snaps/... this is very much an issue.
+> You can do an interesting experiment using the --shuffle option, which
+> is supported by GNU Make 4.4 or later.
 > 
-> I agree that bad applications are an issue, but not for the flathub / snaps
-> case. Flatpacks / snaps run sandboxed and don't have access to a full /dev
-> so those should not be able to open /dev/dma_heap/* independent of
-> the ACLs on /dev/dma_heap/*. The plan is for cameras using the
-> libcamera software ISP to always be accessed through pipewire and
-> the camera portal, so in this case pipewere is taking the place of
-> the compositor in your kms vs render node example.
+> Set CONFIG_KVM_INTEL=y and CONFIG_KVM_AMD=m (or vice versa), and repeat
+> incremental builds w/wo --shuffle=reverse.
+> 
+>   $ make
+>     [ snip ]
+>     CC      arch/x86/kvm/kvm-asm-offsets.s
+> 
+>   $ make --shuffle=reverse
+>     [ snip ]
+>     CC [M]  arch/x86/kvm/kvm-asm-offsets.s
+> 
+>   $ make
+>     [ snip ]
+>     CC      arch/x86/kvm/kvm-asm-offsets.s
+> 
+> arch/x86/kvm/kvm-asm-offsets.s is rebuilt every time w/wo the [M] marker.
+> 
+> arch/x86/kvm/kvm-asm-offsets.s is built as built-in when it is built as
+> a prerequisite of arch/x86/kvm/kvm-intel.o, which is built-in.
+> 
+> arch/x86/kvm/kvm-asm-offsets.s is built as modular when it is built as
+> a prerequisite of arch/x86/kvm/kvm-amd.o, which is a module.
+> 
+> Another odd example is single target builds.
+> 
+> When CONFIG_LKDTM=m, drivers/misc/lkdtm/rodata.o can be built as
+> built-in or modular, depending on how it is built.
+> 
+>   $ make drivers/misc/lkdtm/lkdtm.o
+>     [ snip ]
+>     CC [M]  drivers/misc/lkdtm/rodata.o
+> 
+>   $ make drivers/misc/lkdtm/rodata.o
+>     [ snip ]
+>     CC      drivers/misc/lkdtm/rodata.o
+> 
+> drivers/misc/lkdtm/rodata.o is built as modular when it is built as a
+> prerequisite of another, but built as built-in when it is a final
+> target.
+> 
+> The same thing happens to drivers/memory/emif-asm-offsets.s when
+> CONFIG_TI_EMIF_SRAM=m.
+> 
+>   $ make drivers/memory/ti-emif-sram.o
+>     [ snip ]
+>     CC [M]  drivers/memory/emif-asm-offsets.s
+> 
+>   $ make drivers/memory/emif-asm-offsets.s
+>     [ snip ]
+>     CC      drivers/memory/emif-asm-offsets.s
+> 
+> This is because the part-of-module=y flag defined for the modules is
+> inherited by its prerequisites.
+> 
+> Target-specific variables are likely intended only for local use.
+> This commit adds 'private' to them.
+> 
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-Yeah essentially if you clarify to "set the permissions such that pipewire
-can do allocations", then I think that makes sense. And is at the same
-level as e.g. drm kms giving compsitors (but _only_ compositors) special
-access rights.
+uh, thanks for fixing this!  (And for the bug documentation, as always!)
 
-> So this reduces the problem to bad apps packaged by regular distributions
-> and if any of those misbehave the distros should fix that.
-> 
-> So I think that for the denial of service side allowing physical
-> present users (but not sandboxed apps running as those users) to
-> access /dev/dma_heap/* should be ok.
-> 
-> My bigger worry is if dma_heap (u)dma-bufs can be abused in other
-> ways then causing a denial of service.
-> 
-> I guess that the answer there is that causing other security issues
-> should not be possible ?
+I have just one question below.
 
-Well pinned memory exhaustion is a very useful tool to make all kinds of
-other kernel issues exploitable. Like if you have that you can weaponize
-all kinds of kmalloc error paths (and since it's untracked memory the oom
-killer will not get you of these issuees).
+> 
+>  Makefile               | 8 ++++----
+>  scripts/Makefile.build | 6 +++---
+>  2 files changed, 7 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index 62557fabfee5..25dcc7ead330 100644
+> --- a/Makefile
+> +++ b/Makefile
+[...]
+> @@ -1500,7 +1500,7 @@ MRPROPER_FILES += include/config include/generated          \
+>  
+>  # clean - Delete most, but leave enough to build external modules
+>  #
+> -clean: rm-files := $(CLEAN_FILES)
+> +clean: private rm-files := $(CLEAN_FILES)
 
-I think for the pipewire based desktop it'd be best if you only allow
-pipewire to get at an fd for allocating from dma-heaps, kinda like logind
-furnishes the kms master fd ... Still has the issue that you can't nuke
-these buffers, but that's for another day. But at least from a "limit
-attack surface" design pov I think this would be better than just handing
-out access to the current user outright. But that's also not the worst
-option I guess, as long as snaps/flatpacks only go through the pipewire
-service.
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Did you leave 'clean: rm-files := $(KBUILD_EXTMOD)/...' for oot kmods
+the way it is (w/o 'private') by intention?
+
+Even though I cannot think of a possible problem without the 'private',
+I think it makes sense to change the line as well.
+
+W/ or w/o the 'clean'-update for oot kmods:
+
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
+
+Kind regards,
+Nicolas
 
