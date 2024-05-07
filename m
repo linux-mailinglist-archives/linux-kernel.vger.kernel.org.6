@@ -1,56 +1,82 @@
-Return-Path: <linux-kernel+bounces-171272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65F218BE20C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:26:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AD68BE20D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0611B1F25E03
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:26:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7C361C2357A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D8815B0E8;
-	Tue,  7 May 2024 12:25:59 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C9F15B140;
+	Tue,  7 May 2024 12:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YawRCEnO"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4D156F29;
-	Tue,  7 May 2024 12:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C96158A21
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715084759; cv=none; b=bP6tA2DF02IXQ2ZNNtqHUyTTRTqYK4k2eoXiA6UgM30BqiS/H41CshjoAbahOYjkM3qPIUbAxQovDPQluo8L7PeNu4cE6Q/vX185Zdy+8w+RO571A3jWoaSbxxnj4CrlzP9IJyYD2T8TINdEzFbhuL1chN2rH0MPTNMvnMw5eqc=
+	t=1715084775; cv=none; b=tubUHbZhw0EUlnkaPIMAPD0XI/sutS1QrPbXM16uE1hoyodLRz2Tw5Dl+y5Vp1vCwwZMOGc068qylDACaqqnhKMUYHBjpUk5FKTxoG3qnyFKRxV3H3qWS0M9PVt5NFsaNrzgmKehUEdAkpiW1N4zK2/TkyH1nS8+PaN12lWPttA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715084759; c=relaxed/simple;
-	bh=hfuT7WNUoZz0JVxXMhFVmQ3qWpZaycbTaEqiWpyZtnw=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2CirK5ssppmlPqze9aROWAy2HKo5buwS8ZJVXhVqalJ71cty1Yi8qleMIL2Knfy3EWG5gsMyWmzxcW8lnD2noLBf5iGKJjOdj2h3wm+uXmX0CwAhEo/z0ZGHvvjETDQ3TE1Xyp3WIGm/fhWk5aiU0vckjQqF82HqViAPzR2LFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1s4JtI-0000000049d-2mRN;
-	Tue, 07 May 2024 12:25:52 +0000
-Date: Tue, 7 May 2024 13:25:46 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH net v2 2/2] net: ethernet: mediatek: use ADMAv1 instead of
- ADMAv2.0 on MT7981 and MT7986
-Message-ID: <9a694114ffbbf5f03384b0cbf0c27b9528c94576.1715084578.git.daniel@makrotopia.org>
-References: <6747c038f4fc3b490e1b7a355cdaaf361e359def.1715084578.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1715084775; c=relaxed/simple;
+	bh=8lHEWT43b1TQQJQ7gtYNPKOiSkUZSJWBKflmzAhzO/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eeYXQd++K4skNXKz+gaVnwFHQdUtP31dqZsXE6BlY/PloL3WWisn9sjf4+34XgFIkUjdrnB+quapDUlrK7vpYbYrLPuzaaZ8spF8fRpZ9uhRvzAPMF6pCEI6aSioxaCD1C+xtoNel6mW9Xz9XpKGPRkhZ5/VBGHjQoWSnkK1JtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YawRCEnO; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e8so19533395e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715084772; x=1715689572; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yDaM1ir+QOt4ToI6xBZrtMJ0TzMiOebYUPJjumxSyiI=;
+        b=YawRCEnOLgKsfBdN8UIThvrk4l+3HY9wkW43AalIn+9QaGOEjj9bLGJKSsS/U9Mo55
+         HsylFph4L8jwdMqx+bvh4tSEab0tAvzYSu9FWKYgo17JhDMZbnafN4irrQZF3n7tFjHo
+         n7G1XQ5eBW+7CmE8s1HMk3HvAoxKyKgqqzv2q0gI56LqIK7HpR7g0S88Rzh48CRt7pn0
+         4ATYDFRnCKXHB+W4a+0FcaANqYwBuL3j+JJq4perYp03hLyJMOfCsDxz+BzV8bQHAhYH
+         0iI9tmwwqQv7T9yULJCcv7S23K2fbp+JXwatHDD8xUcr0K4iWIWBD8tzkcduP0JjR7a1
+         Wzvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715084772; x=1715689572;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yDaM1ir+QOt4ToI6xBZrtMJ0TzMiOebYUPJjumxSyiI=;
+        b=g19iEiW9u0lCrt3bHBu6LnIry80ZQ5PK9YONgRHdWXczZwfkhav4Ww3oviVrxAUmUa
+         MkgWaAYpoqU/Czq+ZA/OEhkEA2rK5XBKNyN9+kB5a+/7VhmToGYTF/FYizY3V0VXNTv/
+         1v0CjJAS4Z8PaMqhLkdtAUD1gtQF/YrI0HX2o8Abr4x0TJMPE6/yZz76DwgYQSTg84nc
+         ewONT0WHdE1P4uxbVbCyhvyHH/IIzEi7NszzrT60hVrJerS7YuncLwkz58kvmpc/A2dF
+         SpLiGaDSD9ellvijohKFMB5SF6F46WNHZcirIUdkjRWKDpFC9I105APTmi6tCUjFa1k5
+         UMyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUm0MD5GQo3gNkYcNTbnA9ebdYCa5Zqg0KmPBAmpdDKJnPc5WLXQ2Qp7suj7t9mESCobCAtyMLN3NJPzdizo1bhKS47p/y9xMBxI67q
+X-Gm-Message-State: AOJu0YwH9S68dothKZfcnA8wgeAFzi03qVb/C8HJ+HmeFC1ZVzlOzIWA
+	D8oNMeMuLBX5gHbP5ffBxWjlHJzjrkGaJvlqoTlL2zu6Rg44XOwxSSbXzOEiGok=
+X-Google-Smtp-Source: AGHT+IH/W3h7SkQrx8dopWzH6l+ZGPqolpDYANr7C1AhRrXQ5G2FNyXCVDi9dk5ynJB/JBtFeX1vzQ==
+X-Received: by 2002:a05:600c:45cc:b0:418:fe93:22d0 with SMTP id s12-20020a05600c45cc00b00418fe9322d0mr9996486wmo.11.1715084771827;
+        Tue, 07 May 2024 05:26:11 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id bi9-20020a05600c3d8900b00418db9e4228sm19546930wmb.29.2024.05.07.05.26.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 05:26:11 -0700 (PDT)
+Date: Tue, 7 May 2024 14:26:10 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v5 05/30] printk: nbcon: Add detailed doc for
+ write_atomic()
+Message-ID: <Zjod4hNh7YNiUj24@pathway.suse.cz>
+References: <20240502213839.376636-1-john.ogness@linutronix.de>
+ <20240502213839.376636-6-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,132 +85,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6747c038f4fc3b490e1b7a355cdaaf361e359def.1715084578.git.daniel@makrotopia.org>
+In-Reply-To: <20240502213839.376636-6-john.ogness@linutronix.de>
 
-ADMAv2.0 is plagued by RX hangs which can't easily detected and happen upon
-receival of a corrupted Ethernet frame.
+On Thu 2024-05-02 23:44:14, John Ogness wrote:
+> The write_atomic() callback has special requirements and is
+> allowed to use special helper functions. Provide detailed
+> documentation of the callback so that a developer has a
+> chance of implementing it correctly.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
 
-Use ADMAv1 instead which is also still present and usable, and doesn't
-suffer from that problem.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Fixes: 197c9e9b17b1 ("net: ethernet: mtk_eth_soc: introduce support for mt7986 chipset")
-Co-developed-by: Lorenzo Bianconi <lorenzo@kernel.org>
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
-v2: improve commit message
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 46 ++++++++++-----------
- 1 file changed, 23 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 3eefb735ce19..d7d73295f0dc 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -110,16 +110,16 @@ static const struct mtk_reg_map mt7986_reg_map = {
- 	.tx_irq_mask		= 0x461c,
- 	.tx_irq_status		= 0x4618,
- 	.pdma = {
--		.rx_ptr		= 0x6100,
--		.rx_cnt_cfg	= 0x6104,
--		.pcrx_ptr	= 0x6108,
--		.glo_cfg	= 0x6204,
--		.rst_idx	= 0x6208,
--		.delay_irq	= 0x620c,
--		.irq_status	= 0x6220,
--		.irq_mask	= 0x6228,
--		.adma_rx_dbg0	= 0x6238,
--		.int_grp	= 0x6250,
-+		.rx_ptr		= 0x4100,
-+		.rx_cnt_cfg	= 0x4104,
-+		.pcrx_ptr	= 0x4108,
-+		.glo_cfg	= 0x4204,
-+		.rst_idx	= 0x4208,
-+		.delay_irq	= 0x420c,
-+		.irq_status	= 0x4220,
-+		.irq_mask	= 0x4228,
-+		.adma_rx_dbg0	= 0x4238,
-+		.int_grp	= 0x4250,
- 	},
- 	.qdma = {
- 		.qtx_cfg	= 0x4400,
-@@ -1107,7 +1107,7 @@ static bool mtk_rx_get_desc(struct mtk_eth *eth, struct mtk_rx_dma_v2 *rxd,
- 	rxd->rxd1 = READ_ONCE(dma_rxd->rxd1);
- 	rxd->rxd3 = READ_ONCE(dma_rxd->rxd3);
- 	rxd->rxd4 = READ_ONCE(dma_rxd->rxd4);
--	if (mtk_is_netsys_v2_or_greater(eth)) {
-+	if (mtk_is_netsys_v3_or_greater(eth)) {
- 		rxd->rxd5 = READ_ONCE(dma_rxd->rxd5);
- 		rxd->rxd6 = READ_ONCE(dma_rxd->rxd6);
- 	}
-@@ -2028,7 +2028,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
- 			break;
- 
- 		/* find out which mac the packet come from. values start at 1 */
--		if (mtk_is_netsys_v2_or_greater(eth)) {
-+		if (mtk_is_netsys_v3_or_greater(eth)) {
- 			u32 val = RX_DMA_GET_SPORT_V2(trxd.rxd5);
- 
- 			switch (val) {
-@@ -2140,7 +2140,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
- 		skb->dev = netdev;
- 		bytes += skb->len;
- 
--		if (mtk_is_netsys_v2_or_greater(eth)) {
-+		if (mtk_is_netsys_v3_or_greater(eth)) {
- 			reason = FIELD_GET(MTK_RXD5_PPE_CPU_REASON, trxd.rxd5);
- 			hash = trxd.rxd5 & MTK_RXD5_FOE_ENTRY;
- 			if (hash != MTK_RXD5_FOE_ENTRY)
-@@ -2690,7 +2690,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
- 
- 		rxd->rxd3 = 0;
- 		rxd->rxd4 = 0;
--		if (mtk_is_netsys_v2_or_greater(eth)) {
-+		if (mtk_is_netsys_v3_or_greater(eth)) {
- 			rxd->rxd5 = 0;
- 			rxd->rxd6 = 0;
- 			rxd->rxd7 = 0;
-@@ -3893,7 +3893,7 @@ static int mtk_hw_init(struct mtk_eth *eth, bool reset)
- 	else
- 		mtk_hw_reset(eth);
- 
--	if (mtk_is_netsys_v2_or_greater(eth)) {
-+	if (mtk_is_netsys_v3_or_greater(eth)) {
- 		/* Set FE to PDMAv2 if necessary */
- 		val = mtk_r32(eth, MTK_FE_GLO_MISC);
- 		mtk_w32(eth,  val | BIT(4), MTK_FE_GLO_MISC);
-@@ -5169,11 +5169,11 @@ static const struct mtk_soc_data mt7981_data = {
- 		.dma_len_offset = 8,
- 	},
- 	.rx = {
--		.desc_size = sizeof(struct mtk_rx_dma_v2),
--		.irq_done_mask = MTK_RX_DONE_INT_V2,
-+		.desc_size = sizeof(struct mtk_rx_dma),
-+		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
--		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
--		.dma_len_offset = 8,
-+		.dma_max_len = MTK_TX_DMA_BUF_LEN,
-+		.dma_len_offset = 16,
- 	},
- };
- 
-@@ -5195,11 +5195,11 @@ static const struct mtk_soc_data mt7986_data = {
- 		.dma_len_offset = 8,
- 	},
- 	.rx = {
--		.desc_size = sizeof(struct mtk_rx_dma_v2),
--		.irq_done_mask = MTK_RX_DONE_INT_V2,
-+		.desc_size = sizeof(struct mtk_rx_dma),
-+		.irq_done_mask = MTK_RX_DONE_INT,
- 		.dma_l4_valid = RX_DMA_L4_VALID_V2,
--		.dma_max_len = MTK_TX_DMA_BUF_LEN_V2,
--		.dma_len_offset = 8,
-+		.dma_max_len = MTK_TX_DMA_BUF_LEN,
-+		.dma_len_offset = 16,
- 	},
- };
- 
--- 
-2.45.0
-
+Best Regards,
+Petr
 
