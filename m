@@ -1,283 +1,119 @@
-Return-Path: <linux-kernel+bounces-171717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC58F8BE7B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:47:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F5E8BE7BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC531C23845
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:46:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03B61B250E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DEA16ABD5;
-	Tue,  7 May 2024 15:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FA31649CC;
+	Tue,  7 May 2024 15:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bBuUQ+Ey"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="G6pP4JHw"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840DF16C847
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715096710; cv=none; b=bPaLMSDfj4VuBg0oqUP8DClu3/vUH9fJniznr0Xr4B+yn9icXzYhvLZbJChGpJs7qzXBdfwmH7jIe0CbBlAmpxshk/hV8iuPES94IIkdn9ld6LE9OXFPMlF5eZX4ovOiODxcQ1XIVMokGEiqhUtD+SEhtZsvFDES2WwOTYj9nM0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715096710; c=relaxed/simple;
-	bh=L3kGN8uyw/Ew7Q01CNgiHp9NV1lLvt9g54vof/4wKgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PJMLAYouGVM5eY8pN40I6piw0uEEHVQcZQeVbdreZvc4gGkOp6GAnH7JERFNsCIcvw/q1e6FeGLWl2hKzeKMtUQsSqf3HvQGQT3gdWHd1JWEJK8RHMDmI42DecFkM3kU0CBIigJLgACoFkAhHuI0BxGiApXukgqhfJS5f0VR2ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bBuUQ+Ey; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715096707;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0651635CF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715096810; cv=pass; b=gF0W0EJBLSEpk5cAXy0tzZOib5lY2G/rj1WiWxrmy6lLxj+OBb0StPoBkys+8VpndG9ujQzi+Lmf/yh6QA3s4zeDvm+bnA16cjql//BrEa5k0LqJuBeyByU8dF56UVuaVsnLDFtd4RYT8GtDl1w8iY0XiucG9M85vVWoLmpIM6c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715096810; c=relaxed/simple;
+	bh=5KJcdFFNPo7Xz5KJ9wNhtqFPiCRb1O2wlvRY/A+22iQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BTnjWjH+9zCCwPAc9WyUc8S8iNkYKeEhuxqr+o5o5efnGbS975Ft+ZT4RlEHfckVw0DhtayZWvCsfmYY9wUW/2WQMdc+GoQr09Eb4NGVul8Td9gDB0ySUUlPKNpzx30D5gDM49aaSvIRdBc8YmzLWFXol3h7pDrRO/fFVIeSKdU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=G6pP4JHw; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from mail.home (82-181-196-180.bb.dnainternet.fi [82.181.196.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: timo.lindfors)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4VYjLp08KxzyYP;
+	Tue,  7 May 2024 18:46:41 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1715096803;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DEGWSMU46Vtho/KF+via1nc+bZYocNO5WGIxzuJ1CSE=;
-	b=bBuUQ+Ey+LkdTKFVLK8bVVY+LfHeDSPjfoeAcr60hzuNwLXHSPaANO1vHW18QB+OfDXac6
-	pfCDLDDhuyd9D7aSkmWMBz/zQ4PerqMrrDqTbipWNYmqxjPAmnMxM+vJfAU2Yk0voYWGJB
-	DPRe30z8rFakdNrPiAn2d0+dAVleoY4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-642-F8TAFoFqM4KhUeU4rQv1Yw-1; Tue, 07 May 2024 11:45:02 -0400
-X-MC-Unique: F8TAFoFqM4KhUeU4rQv1Yw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E4453101A55E;
-	Tue,  7 May 2024 15:45:01 +0000 (UTC)
-Received: from virtlab701.virt.lab.eng.bos.redhat.com (virtlab701.virt.lab.eng.bos.redhat.com [10.19.152.228])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id C8A67C154E5;
-	Tue,  7 May 2024 15:45:01 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: [PATCH 7/7] KVM: VMX: Introduce test mode related to EPT violation VE
-Date: Tue,  7 May 2024 11:44:59 -0400
-Message-ID: <20240507154459.3950778-8-pbonzini@redhat.com>
-In-Reply-To: <20240507154459.3950778-1-pbonzini@redhat.com>
-References: <20240507154459.3950778-1-pbonzini@redhat.com>
+	bh=0blk/HJMbG1YRLdL/uOzQXbl8TjW5wKbD1aD2iGM4w4=;
+	b=G6pP4JHwf9x8Ub2mDvIdjlOGZLegKBJrBHGO5Uwd06+UmCDAb6fsIEcZd7vGs2mXRJzcPG
+	S+e6UjU+3aOM9NAR5FOWuDXfOoFBpgrvy7/Oo7q/hE19Gt3vvVGiwfuT6AVboLwnkBP+7L
+	MBr1H1qeDdZTR/0bVrbkFVhhPhxD/L8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1715096803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0blk/HJMbG1YRLdL/uOzQXbl8TjW5wKbD1aD2iGM4w4=;
+	b=D8MUWi3haejgIjSynxdUhNlixs5+zvsAsSW2jF2wtd8zxJDft1YrIMyeRer0fuKUuwMH+u
+	hDrft436l6dzCsRbi4Tk7MxT9ixGJq8YEPRyOyOfPyUkfUt4DTBnicFKYEyGU3AH3bcs/D
+	naj+EOjNDoXall/2+2+Eqo4kIGB0FAI=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=timo.lindfors smtp.mailfrom=timo.lindfors@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1715096803; a=rsa-sha256; cv=none;
+	b=J51sS74+MRNqBrnsDBLpcrw42iVYpeqTbOhYXU0vRXZ6wl+/1CfE76bsCc3nQRT8dzovmf
+	hDveUlf+NV8MtHYr8l/5r0LDMLDV8/D3ebqAXAyT8P8cOnASaLe2jf6cwYjgLJ3UhyuSNs
+	ZykUUazwnstLpbJ6LLgKNGibcQP+SmA=
+Received: from localhost ([127.0.0.1])
+	by mail.home with esmtp (Exim 4.89)
+	(envelope-from <timo.lindfors@iki.fi>)
+	id 1s4N1d-0005WA-HE; Tue, 07 May 2024 18:46:41 +0300
+Date: Tue, 7 May 2024 18:46:41 +0300 (EEST)
+From: Timo Lindfors <timo.lindfors@iki.fi>
+To: Gerd Hoffmann <kraxel@redhat.com>
+cc: Timo Lindfors <timo.lindfors@iki.fi>, David Airlie <airlied@redhat.com>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, 
+    Maxime Ripard <mripard@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    Alex Constantino <dreaming.about.electric.sheep@gmail.com>, 
+    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+    Thomas Zimmermann <tzimmermann@suse.de>, Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [BUG][v6.9-rc6] Deadlock with: Revert "drm/qxl: simplify
+ qxl_fence_wait"
+In-Reply-To: <obume4wdvgxc3zljnelhpwrg2rouae322nak5jy3s4hsruoddd@stoopms6fo2a>
+Message-ID: <alpine.DEB.2.20.2405071833510.21166@mail.home>
+References: <20240502081641.457aa25f@gandalf.local.home> <20240504043957.417aa98c@rorschach.local.home> <20240506-cuddly-elated-agouti-be981d@houat> <CAHk-=wiS70D1sbhsvNfR0e5YjfG2NV0cVKWz9vp=_F_wkw3j9Q@mail.gmail.com> <CAMwc25qMXOFOfKsa7BRi3dz125PDyvVtgTty0Q4bkAFftJDLqQ@mail.gmail.com>
+ <alpine.DEB.2.20.2405070933070.20162@mail.home> <obume4wdvgxc3zljnelhpwrg2rouae322nak5jy3s4hsruoddd@stoopms6fo2a>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
+On Tue, 7 May 2024, Gerd Hoffmann wrote:
+> Worth trying: use vnc.  The qemu vnc server will skip updates when the
+> network pipeline is full.  That throttles the frame rate, but also
+> reduces the display update latency.
 
-To support TDX, KVM is enhanced to operate with #VE.  For TDX, KVM uses the
-suppress #VE bit in EPT entries selectively, in order to be able to trap
-non-present conditions.  However, #VE isn't used for VMX and it's a bug
-if it happens.  To be defensive and test that VMX case isn't broken
-introduce an option ept_violation_ve_test and when it's set, BUG the vm.
+With Debian 12 it seems that the virtio + vnc + firefox combination 
+results in a black firefox window. Adding MOZ_ENABLE_WAYLAND=1 makes
+the browser visible but I still see the constant redraw behavior when scrolling.
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Message-Id: <d6db6ba836605c0412e166359ba5c46a63c22f86.1705965635.git.isaku.yamahata@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/Kconfig    | 13 ++++++++++
- arch/x86/kvm/vmx/vmcs.h |  5 ++++
- arch/x86/kvm/vmx/vmx.c  | 53 ++++++++++++++++++++++++++++++++++++++---
- arch/x86/kvm/vmx/vmx.h  |  6 ++++-
- 4 files changed, 73 insertions(+), 4 deletions(-)
+The qxl + spice + firefox combination scrolls smoothly even if I force 
+firefox to use wayland. I suppose I could write a more synthetic test if
+it would be useful? With systemtap I can trace what happens during a single
+scroll event.
 
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 0ebdd088f28b..d64fb2b3eb69 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -95,6 +95,19 @@ config KVM_INTEL
- 	  To compile this as a module, choose M here: the module
- 	  will be called kvm-intel.
- 
-+config KVM_INTEL_PROVE_VE
-+        bool "Check that guests do not receive #VE exceptions"
-+        default KVM_PROVE_MMU || DEBUG_KERNEL
-+        depends on KVM_INTEL
-+        help
-+
-+          Checks that KVM's page table management code will not incorrectly
-+          let guests receive a virtualization exception.  Virtualization
-+          exceptions will be trapped by the hypervisor rather than injected
-+          in the guest.
-+
-+          If unsure, say N.
-+
- config X86_SGX_KVM
- 	bool "Software Guard eXtensions (SGX) Virtualization"
- 	depends on X86_SGX && KVM_INTEL
-diff --git a/arch/x86/kvm/vmx/vmcs.h b/arch/x86/kvm/vmx/vmcs.h
-index 7c1996b433e2..b25625314658 100644
---- a/arch/x86/kvm/vmx/vmcs.h
-+++ b/arch/x86/kvm/vmx/vmcs.h
-@@ -140,6 +140,11 @@ static inline bool is_nm_fault(u32 intr_info)
- 	return is_exception_n(intr_info, NM_VECTOR);
- }
- 
-+static inline bool is_ve_fault(u32 intr_info)
-+{
-+	return is_exception_n(intr_info, VE_VECTOR);
-+}
-+
- /* Undocumented: icebp/int1 */
- static inline bool is_icebp(u32 intr_info)
- {
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index d780eee9b697..f4644f61d770 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -869,6 +869,12 @@ void vmx_update_exception_bitmap(struct kvm_vcpu *vcpu)
- 
- 	eb = (1u << PF_VECTOR) | (1u << UD_VECTOR) | (1u << MC_VECTOR) |
- 	     (1u << DB_VECTOR) | (1u << AC_VECTOR);
-+	/*
-+	 * #VE isn't used for VMX.  To test against unexpected changes
-+	 * related to #VE for VMX, intercept unexpected #VE and warn on it.
-+	 */
-+	if (IS_ENABLED(CONFIG_KVM_INTEL_PROVE_VE))
-+		eb |= 1u << VE_VECTOR;
- 	/*
- 	 * Guest access to VMware backdoor ports could legitimately
- 	 * trigger #GP because of TSS I/O permission bitmap.
-@@ -2602,6 +2608,9 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 					&_cpu_based_2nd_exec_control))
- 			return -EIO;
- 	}
-+	if (!IS_ENABLED(CONFIG_KVM_INTEL_PROVE_VE))
-+		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
-+
- #ifndef CONFIG_X86_64
- 	if (!(_cpu_based_2nd_exec_control &
- 				SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES))
-@@ -2626,6 +2635,7 @@ static int setup_vmcs_config(struct vmcs_config *vmcs_conf,
- 			return -EIO;
- 
- 		vmx_cap->ept = 0;
-+		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
- 	}
- 	if (!(_cpu_based_2nd_exec_control & SECONDARY_EXEC_ENABLE_VPID) &&
- 	    vmx_cap->vpid) {
-@@ -4588,6 +4598,7 @@ static u32 vmx_secondary_exec_control(struct vcpu_vmx *vmx)
- 		exec_control &= ~SECONDARY_EXEC_ENABLE_VPID;
- 	if (!enable_ept) {
- 		exec_control &= ~SECONDARY_EXEC_ENABLE_EPT;
-+		exec_control &= ~SECONDARY_EXEC_EPT_VIOLATION_VE;
- 		enable_unrestricted_guest = 0;
- 	}
- 	if (!enable_unrestricted_guest)
-@@ -4711,8 +4722,12 @@ static void init_vmcs(struct vcpu_vmx *vmx)
- 
- 	exec_controls_set(vmx, vmx_exec_control(vmx));
- 
--	if (cpu_has_secondary_exec_ctrls())
-+	if (cpu_has_secondary_exec_ctrls()) {
- 		secondary_exec_controls_set(vmx, vmx_secondary_exec_control(vmx));
-+		if (vmx->ve_info)
-+			vmcs_write64(VE_INFORMATION_ADDRESS,
-+				     __pa(vmx->ve_info));
-+	}
- 
- 	if (cpu_has_tertiary_exec_ctrls())
- 		tertiary_exec_controls_set(vmx, vmx_tertiary_exec_control(vmx));
-@@ -5200,6 +5215,9 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
- 	if (is_invalid_opcode(intr_info))
- 		return handle_ud(vcpu);
- 
-+	if (KVM_BUG_ON(is_ve_fault(intr_info), vcpu->kvm))
-+		return -EIO;
-+
- 	error_code = 0;
- 	if (intr_info & INTR_INFO_DELIVER_CODE_MASK)
- 		error_code = vmcs_read32(VM_EXIT_INTR_ERROR_CODE);
-@@ -6409,8 +6427,22 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
- 		pr_err("Virtual processor ID = 0x%04x\n",
- 		       vmcs_read16(VIRTUAL_PROCESSOR_ID));
- 	if (secondary_exec_control & SECONDARY_EXEC_EPT_VIOLATION_VE) {
--		pr_err("VE info address = 0x%016llx\n",
--		       vmcs_read64(VE_INFORMATION_ADDRESS));
-+		struct vmx_ve_information *ve_info = vmx->ve_info;
-+		u64 ve_info_pa = vmcs_read64(VE_INFORMATION_ADDRESS);
-+
-+		/*
-+		 * If KVM is dumping the VMCS, then something has gone wrong
-+		 * already.  Derefencing an address from the VMCS, which could
-+		 * very well be corrupted, is a terrible idea.  The virtual
-+		 * address is known so use it.
-+		 */
-+		pr_err("VE info address = 0x%016llx%s\n", ve_info_pa,
-+		       ve_info_pa == __pa(ve_info) ? "" : "(corrupted!)");
-+		pr_err("ve_info: 0x%08x 0x%08x 0x%016llx 0x%016llx 0x%016llx 0x%04x\n",
-+		       ve_info->exit_reason, ve_info->delivery,
-+		       ve_info->exit_qualification,
-+		       ve_info->guest_linear_address,
-+		       ve_info->guest_physical_address, ve_info->eptp_index);
- 	}
- }
- 
-@@ -7466,6 +7498,7 @@ void vmx_vcpu_free(struct kvm_vcpu *vcpu)
- 	free_vpid(vmx->vpid);
- 	nested_vmx_free_vcpu(vcpu);
- 	free_loaded_vmcs(vmx->loaded_vmcs);
-+	free_page((unsigned long)vmx->ve_info);
- }
- 
- int vmx_vcpu_create(struct kvm_vcpu *vcpu)
-@@ -7559,6 +7592,20 @@ int vmx_vcpu_create(struct kvm_vcpu *vcpu)
- 			goto free_vmcs;
- 	}
- 
-+	err = -ENOMEM;
-+	if (vmcs_config.cpu_based_2nd_exec_ctrl & SECONDARY_EXEC_EPT_VIOLATION_VE) {
-+		struct page *page;
-+
-+		BUILD_BUG_ON(sizeof(*vmx->ve_info) > PAGE_SIZE);
-+
-+		/* ve_info must be page aligned. */
-+		page = alloc_page(GFP_KERNEL_ACCOUNT | __GFP_ZERO);
-+		if (!page)
-+			goto free_vmcs;
-+
-+		vmx->ve_info = page_to_virt(page);
-+	}
-+
- 	if (vmx_can_use_ipiv(vcpu))
- 		WRITE_ONCE(to_kvm_vmx(vcpu->kvm)->pid_table[vcpu->vcpu_id],
- 			   __pa(&vmx->pi_desc) | PID_TABLE_ENTRY_VALID);
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 65786dbe7d60..0da79a386825 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -362,6 +362,9 @@ struct vcpu_vmx {
- 		DECLARE_BITMAP(read, MAX_POSSIBLE_PASSTHROUGH_MSRS);
- 		DECLARE_BITMAP(write, MAX_POSSIBLE_PASSTHROUGH_MSRS);
- 	} shadow_msr_intercept;
-+
-+	/* ve_info must be page aligned. */
-+	struct vmx_ve_information *ve_info;
- };
- 
- struct kvm_vmx {
-@@ -574,7 +577,8 @@ static inline u8 vmx_get_rvi(void)
- 	 SECONDARY_EXEC_ENABLE_VMFUNC |					\
- 	 SECONDARY_EXEC_BUS_LOCK_DETECTION |				\
- 	 SECONDARY_EXEC_NOTIFY_VM_EXITING |				\
--	 SECONDARY_EXEC_ENCLS_EXITING)
-+	 SECONDARY_EXEC_ENCLS_EXITING |					\
-+	 SECONDARY_EXEC_EPT_VIOLATION_VE)
- 
- #define KVM_REQUIRED_VMX_TERTIARY_VM_EXEC_CONTROL 0
- #define KVM_OPTIONAL_VMX_TERTIARY_VM_EXEC_CONTROL			\
--- 
-2.43.0
+> In general the trend seems to be to move to in-guest remote desktop
+> solutions.  Do NOT make VMs a special case with a special solution,
+> instead handle VMs like bare metal.  Commercial solutions exist for a
+> while, some of them are doing hardware-assisted video encoding to send
+> the display as video stream to the remote end.  gnome+rdp is a new
+> player here, clearly worth a try.
 
+Yes this makes sense. I'm definitely not trying to stick to a particular 
+technology but instead try to find the best FOSS solution for the use case 
+of hosting linux desktops on a server.
+
+-Timo
 
