@@ -1,151 +1,91 @@
-Return-Path: <linux-kernel+bounces-172148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5420A8BEE1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6717C8BEE16
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD83284E53
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AEB1F21601
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D900121373;
-	Tue,  7 May 2024 20:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851D418734C;
+	Tue,  7 May 2024 20:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r9sTzlzC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OuWLybSp"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73453187320;
-	Tue,  7 May 2024 20:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227F618733B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 20:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715113708; cv=none; b=PYoo4tCfuFXZ7wglfcQTdWXr0m42VVk57mFHL7OXLy8EuKiXyZwlAg0Q/ZISuzFQDDnaiMuPGlX3pyPeCpUK+fKwfmlbfoDt2Cnvg6Kp7j6s5ZkVvGawygMTjfR4Keign9SOOZWbHSvD7rvpkjTzRhfHgBi2D+Z5i4bQUPfZKsU=
+	t=1715113685; cv=none; b=pz++Gl4TW4RwPvx+HyuveNCqS01ux+FI5g0of/jnAk0Zs4y/HEH3Y9OT85+QbzIuKLHBRrYmLPmMt9Ri1K8mthKTAFmDcMhxuwcZdY3sxWLUOw7MdjmZdFMLqKOuqWQan0sFSVHvPfBHRG+AfGUWgjDQF2XiZdgkbOAEBQ808lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715113708; c=relaxed/simple;
-	bh=x1GHjcPDDJTl+ZsQCF/flnxznBJUw6U2MMSDZ/gOtY0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=kYwiTxnN6t/ols3EZRmc031e9GOh9SIXo5gFDtmfsYMm0rlQrMcfmJiEyPmJz0HNTykercqXpmgEQkaViJU5TMfOlUjpqGbFHE1UuiSPGHMOySd5v4hwchIlOzTHrUJN6bLOPaQFwlA403/hFuW+rxdfFpa0SAgN+QMJynrD6QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r9sTzlzC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447KPtZg014781;
-	Tue, 7 May 2024 20:27:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=idlRHBWRT8oxEc2fgBMDrdVapLVifpy7E0T+mI4TCgQ=;
- b=r9sTzlzC20dBN0730gS45SxoLTg3UYYGGzZvkAR04Nr8EHvnrzT8iJd7Bm+SE35Bjzi5
- iUzlsAG/I7QQosztWusqrjQaSIZhbDVu3TNqpIodqix7LElBld1jloLHHuf/mXFqWPTg
- +I9DBa2bAnjQEY1b0bvH1UCdj2esAwrhnUWTgaD6Kw5sYuqhuduUdHMmP3oX9ODEIb4y
- i+VDKwd8Zb1di/+VmFXu+drqbL2jQZDNrZQJbD62t5axRqTMX6mAdZ9b6wfAH6VB5EAO
- E7jUdTC50OugLsbLQ7zR+fUHMPl+pW0vq4gRWZ1iPdHqWwuqNPM4sPtj8BAYh5MQfhB2 8A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyua3r0ma-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 20:27:53 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447KRr7C017939;
-	Tue, 7 May 2024 20:27:53 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyua3r0m8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 20:27:53 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447IJhib009488;
-	Tue, 7 May 2024 20:27:52 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xysfx8mt9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 20:27:52 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447KRnEp21430898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 20:27:52 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C27D25805A;
-	Tue,  7 May 2024 20:27:49 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C2EA158051;
-	Tue,  7 May 2024 20:27:48 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.watson.ibm.com (unknown [9.31.110.109])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 20:27:48 +0000 (GMT)
-Message-ID: <cc11e15bdbfbb36415b36a796387e130b764fd6a.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH] ima: Use sequence number to wait for policy updates
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, john.johansen@canonical.com,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        eparis@redhat.com
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, guozihua@huawei.com, omosnace@redhat.com,
-        audit@vger.kernel.org, apparmor@lists.ubuntu.com,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Tue, 07 May 2024 16:27:33 -0400
-In-Reply-To: <e6e2b31983610bf566d8046edbac0e00c8453233.camel@huaweicloud.com>
-References: <20240507092831.3590793-1-roberto.sassu@huaweicloud.com>
-	 <e6e2b31983610bf566d8046edbac0e00c8453233.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
+	s=arc-20240116; t=1715113685; c=relaxed/simple;
+	bh=IYIjBvEOG2icV9qUDpX5BGX4FUW/MIUSLmjw/3yIVgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uCpJdUzeW4b+QiFWxIT7NvCCl8rZSyGjDJI3Lv1gxwAc/KI0jAAvPrX33/WyAp0UVi66VOfTVn+ZQAbbChEsxcG3Jy8vmn2VH/5rge1WM4VO4300CpWdDBUZA+Ep9Yt0U1vbYDs0S5Q6EiKs9E+e3LYxhmPkwqp3xcN7UbguWso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OuWLybSp; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A8372FF805;
+	Tue,  7 May 2024 20:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715113675;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GnYuaSYVTcxIbkjcD6lKwaRFkflKMhkDDqSPD7vAAvQ=;
+	b=OuWLybSpTWH0HHcK1Ox+v0oS2lcDSwQZ8pfq62CKC2VDoMypz57Wr9S0G6UrxQZQFtaXeY
+	KfEzriTwq0HJhOgrtbbrqEl66qcu76jgW7r4iky2lNkeN46FOOlK8JZCxwiomqWhsQsJn3
+	ijAinSkGboLigff9z7OjmnuqRkuANElLZ4ylq4WlyNEqb98Tn/ZqwGy2QZwgYXcO/s14b+
+	bzK1sODj6tlqvhi06+hk+SDzh/9SIZ/DTr9i4xsM0IdVttSsFW4q4PShlDFla/PprT9BHQ
+	LAPZTbfN+woImLj/XebviOl/thEZNygDrtQiwXUzoSX6saapIjHIW30xThyRyw==
+Date: Tue, 7 May 2024 22:27:54 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: miquel.raynal@bootlin.com, Frank Li <Frank.Li@nxp.com>
+Cc: conor.culhane@silvaco.com, imx@lists.linux.dev,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] i3c: Add comment for -EAGAIN in
+ i3c_device_do_priv_xfers()
+Message-ID: <171511365446.810643.1784657313942616005.b4-ty@bootlin.com>
+References: <20240506164009.21375-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DQc8ykwpdROiUFHjkXQPSgVcCkMS1H8j
-X-Proofpoint-ORIG-GUID: kZPJ7Ktfupkc_F6AbfPESwKX_GFbzKBl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_12,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 suspectscore=0 clxscore=1011 lowpriorityscore=0 bulkscore=0
- impostorscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=987
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405070143
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506164009.21375-1-Frank.Li@nxp.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Roberto,
-
-On Tue, 2024-05-07 at 11:32 +0200, Roberto Sassu wrote:
-> On Tue, 2024-05-07 at 11:28 +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Maintain a global sequence number, and set it to individual policy rules,
-> > when they are created.
+On Mon, 06 May 2024 12:40:07 -0400, Frank Li wrote:
+> In accordance with I3C spec ver 1.1.1 09-Jun-2021, section: 5.1.2.2.3, if
+> a target requests hot join (HJ), In-Band Interrupt (IBI), or controller
+> role request (CRR) during the emission of an I3C address in
+> i3c_device_do_priv_xfers(), the target may win bus arbitration. In such
+> cases, it is imperative to notify the I3C client driver and retry
+> i3c_device_do_priv_xfers() after some delay.
 > 
-> Just did an attempt, to see if this path is viable.
-> 
-> This patch would be an alternative to:
-> 
-> [PATCH v3] ima: Avoid blocking in RCU read-side critical section
+> [...]
 
-Stephen had said,
-   "Sidebar: the refactoring of the SELinux policy loading logic may have
-   made it possible to revisit the approaches here to permit holding a
-   reference to the policy from which the rule was derived so that we
-   don't have to return -ESTALE in this scenario."
+Applied, thanks!
 
-Removing -ESTALE would be the best solution.  We could then remove the -ESTALE
-detection.
+[1/3] i3c: Add comment for -EAGAIN in i3c_device_do_priv_xfers()
+      https://git.kernel.org/abelloni/c/5e45614ef8ae
+[2/3] i3c: master: svc: change ENXIO to EAGAIN when IBI occurs during start frame
+      https://git.kernel.org/abelloni/c/75cb32046b5d
+[3/3] i3c: master: svc: fix invalidate IBI type and miss call client IBI handler
+      https://git.kernel.org/abelloni/c/677a7b0e3ae4
 
-I assume the change would be in selinux_policy_commit(). Instead of freeing the
-old policy, define and increment a per policy reference count for each
-registered notifier callback.
+Best regards,
 
-        /* Free the old policy */
-        synchronize_rcu();
-        selinux_policy_free(oldpolicy);
-        kfree(load_state->convert_data);
-
-        /* Notify others of the policy change */
-        selinux_notify_policy_change(seqno);
-
-Mimi
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
