@@ -1,180 +1,105 @@
-Return-Path: <linux-kernel+bounces-171176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79968BE0B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:11:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6388BE0BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA7A61C239D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:11:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2361F25923
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735F11514F0;
-	Tue,  7 May 2024 11:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DA4152537;
+	Tue,  7 May 2024 11:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nAemReb/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wjevTgEp";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNzi4kVX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LBHNSDSO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="lhjEK3p5"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D569914D422;
-	Tue,  7 May 2024 11:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF68215250D;
+	Tue,  7 May 2024 11:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715080299; cv=none; b=jM24PzCwdjOCNHndEFIns4c36gtyFqHwmO2Zh0tPsYj6MEIgNrzMUx3oqtDuhuKeBE0YWAl1tjAPZ9/hwWqEohWafFTwIUseDBV+fxQ5WGtv3iKHaXNfGpjMTyGPIDgygU5Ewnwmo5xZl95jYk6ctW8wAo9civUy1YO1Xup6v+c=
+	t=1715080308; cv=none; b=S+tCr7HwK4ukEYBpURhzkXdTi56bKq4ldF2AsVpMVR5cwcFFjNhovc9slPnHQ3OK50+XZstlLqPfBVFsZIEsQXySuJjLQtc9/7GF3aIP9KtWpNl7h4m6u6iMHyA9tW2pdnaJHVuRHAFg8ymlW9A2Xl9XfgS53A/JLcXsNENoBMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715080299; c=relaxed/simple;
-	bh=EPXcVGr6PwUD5WRAgidbvP7YMy/o/6CVibICU7SLOn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lXguKlcyKg+wBo9tq/tkK882SIH7VK4BYNhbIzYHJa0qeTNfnwXVdiwaiqmSEJVadlnDvGV6pxc92GBK1Z3Ido1bGPiniwl/yKxG/IP/a1tr6CzfOzlM7gGD4GSMS9jysgEcFeOlt2e9F7QsTrnseOHYeEX060Z4vlO7UHLTA0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nAemReb/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wjevTgEp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNzi4kVX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LBHNSDSO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8D61A20872;
-	Tue,  7 May 2024 11:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715080289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cj2y7/ZChHRcGGAkj7MJnNzcMCYrE/qSziKzgQGJwow=;
-	b=nAemReb/sccs0n4omRlAj9Cz38UdlYA0nxSrerEsLIKn03VteA+kKQvD35b3xYzBun3Z8w
-	3cw8mCLiMuVJJ51nAj/bgvnjRyQc1bTjNqOZ5tVlqfWBBoFLPWitiVBTCCfuY+OYxVql9Z
-	XfW5vgdFUc6vbo6om1gJT9TZvsYScdA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715080289;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cj2y7/ZChHRcGGAkj7MJnNzcMCYrE/qSziKzgQGJwow=;
-	b=wjevTgEpUnUCtj7EiW48wxK0gY4WxMdVgmtU3YQB+di694IIqJiKjeQYUIpaHlYX2fAr/p
-	njUrZGT20qIuV6Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715080288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cj2y7/ZChHRcGGAkj7MJnNzcMCYrE/qSziKzgQGJwow=;
-	b=lNzi4kVXPlUmDHChd7wQvSpk7qQ1MQLLZYERbB8MkdHbKxDnB750hIfPr9Do76HK96ZMfb
-	Svex3W2pFWqPvZ4iL7tQXom7U1hvBXiDXBw0+ebrDMrmdLDq2O8Gi0VGGOhHBIwIPf5L4H
-	tT8lg56mZ48YREMCmOq9P2CjkNwCrD0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715080288;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=cj2y7/ZChHRcGGAkj7MJnNzcMCYrE/qSziKzgQGJwow=;
-	b=LBHNSDSOqX01lHn+/3vWNN+eB0IbjJxqQpJEL2GCuDIjNxkIjI5lK6R4vMnf1SjZhuGk6C
-	q0MA6Ly7DXspbLDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50601139CB;
-	Tue,  7 May 2024 11:11:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0JBnEWAMOmazdQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 07 May 2024 11:11:28 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: linux-bcachefs@vger.kernel.org
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Su Yue <l@damenly.org>,
-	Brian Foster <bfoster@redhat.com>,
-	Coly Li <colyli@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC to UAPI magic.h
-Date: Tue,  7 May 2024 13:11:24 +0200
-Message-ID: <20240507111124.118520-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715080308; c=relaxed/simple;
+	bh=ugirj27XhqixAq69VU9txIVOtc8CmdlxXWxSRutQCds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=krbMElN2NnfUmcFTmP9YCNr7h0GcWZH2VPSIjpQ3nppdnRir9HMHcD4tXg+K97JwWBLkc22KYWrrEwMbG1Q+dI7Pp4/qP/QrrNkU+gYkr75u/FzEmkHpdwpXGnjA5rKwD+O2wqLHql35czuCFnPkrJoQQ2IR5Qs3PHHu/bh5nrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=lhjEK3p5; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E847DB3F7;
+	Tue,  7 May 2024 13:11:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1715080297; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=lhggNZcChQN1+cSOoBexSrlJQQ7dgudKQ/bV9WGXnRI=;
+	b=lhjEK3p5hYOrmqFxzDCYlQQffO8sEE+WO8L+WpKZpWx9Cai9ulv0qsq9H2ZNOqPxRZCLDi
+	Y6Pdw3Gazkcwsvv5pp4qB+sinzjEJnknjTHKsJcPiIKAe+orXLRk0ZLQzCVdqlRygF8d6V
+	4v4h7NXO9P7cCG0NLQ2VTrV8e8yc3EvHQW2jDALWuTpGIzF3bMI+GmndryiRlkjxU0s0WT
+	TedNrkpYt5mVagcdhFcTnLw7aBQoWepx/0WTy8YkNRWsoMelZaq+qIkrPAHkFnx3nmt15W
+	RzuyScHpgJCapEG1pb6fHx3JEJsD8H4pJpiJpO8CRMl4UasMYvddtCZXGJu5qA==
+Date: Tue, 7 May 2024 13:11:31 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, linux-rt-users@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, Tom Zanussi <tom.zanussi@linux.intel.com>, 
+	Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH RT 0/1] Linux v4.19.312-rt134-rc2
+Message-ID: <6irersxerqltgzv63uis2rint4ycugtr7uve7j4bbvaccogxf6@qvfg6plzrvsx>
+References: <20240506104602.16972-1-wagi@monom.org>
+ <5c3ff133-6953-448b-a1e1-6bacbc210e4d@monom.org>
+ <20240507095407.jAjEuCJ8@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,damenly.org:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_ALL(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507095407.jAjEuCJ8@linutronix.de>
+X-Last-TLS-Session-Version: TLSv1.3
 
-There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
-which use UUID_INIT() and are used only in libbcachefs. Therefore move
-to <linux/magic.h> only BCACHEFS_STATFS_MAGIC, which can be used outside
-of libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
+Hi Sebastian,
 
-Keeping non-standard name BCACHEFS_STATFS_MAGIC instead of renaming it
-to more generic BCACHEFS_MAGIC to not confuse with the other bcachefs
-definitions.
+On Tue, May 07, 2024 at 11:54:07AM GMT, Sebastian Andrzej Siewior wrote:
+> I compared mine outcome vs v4.19-rt-next and the diff at the bottom came
+> out:
+> 
+> - timer_delete_sync() used to have "#if 0" block around
+>   lockdep_assert_preemption_enabled() because the function is not part
+>   of v4.19. You ended up with might_sleep() which is a minor change.
+>   Your queue as of a previous release had the if0 block (in
+>   __del_timer_sync()).
+>   I would say this is minor but looks like a miss-merge. Therefore I
+>   would say it should go back for consistency vs previous release and
+>   not change it due to conflicts.
 
-Suggested-by: Su Yue <l@damenly.org>
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- fs/bcachefs/bcachefs_format.h | 2 --
- fs/bcachefs/fs.c              | 1 +
- include/uapi/linux/magic.h    | 2 ++
- 3 files changed, 3 insertions(+), 2 deletions(-)
+Makes sense.
 
-diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-index f7fbfccd2b1e..52e03f13b780 100644
---- a/fs/bcachefs/bcachefs_format.h
-+++ b/fs/bcachefs/bcachefs_format.h
-@@ -1275,8 +1275,6 @@ enum bch_compression_opts {
- 	UUID_INIT(0xc68573f6, 0x66ce, 0x90a9,				\
- 		  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
- 
--#define BCACHEFS_STATFS_MAGIC		0xca451a4e
--
- #define JSET_MAGIC		__cpu_to_le64(0x245235c1a3625032ULL)
- #define BSET_MAGIC		__cpu_to_le64(0x90135c78b99e07f5ULL)
- 
-diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-index fce690007edf..1c856ae2b0e2 100644
---- a/fs/bcachefs/fs.c
-+++ b/fs/bcachefs/fs.c
-@@ -27,6 +27,7 @@
- #include "super.h"
- #include "xattr.h"
- 
-+#include <uapi/linux/magic.h>
- #include <linux/aio.h>
- #include <linux/backing-dev.h>
- #include <linux/exportfs.h>
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index 1b40a968ba91..45c8f4916167 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -103,4 +103,6 @@
- #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
- #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
- 
-+#define BCACHEFS_STATFS_MAGIC		0xca451a4e
-+
- #endif /* __LINUX_MAGIC_H__ */
--- 
-2.43.0
+> - The timer_delete_sync() is structured differently with
+>   __del_timer_sync(). That function invokes timer_sync_wait_running()
+>   which drops two locks which are not acquired. That is wrong. It should
+>   have been del_timer_wait_running().
 
+Understood. I was a bit strungling here. Glad you caught this error.
+
+> I suggest you apply the diff below to align it with later versions. It
+> also gets rid of the basep argument in __try_to_del_timer_sync() which
+> is not really used.
+
+Will do.
+
+> As an alternative I can send you my rebased queue if this makes it
+> easier for you.
+
+Yes please, this makes it easy to sync the rebase branch.
+
+Thanks a lot!
+
+Cheers,
+Daniel
 
