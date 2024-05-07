@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-171316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCC58BE28C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:52:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6457D8BE293
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 562D928C81B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E261C20C7D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781315CD70;
-	Tue,  7 May 2024 12:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E176F15CD5A;
+	Tue,  7 May 2024 12:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGPbKqa1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Oj1I7pDB"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976D315B12B;
-	Tue,  7 May 2024 12:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6942C53E18;
+	Tue,  7 May 2024 12:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715086315; cv=none; b=EJ7vIS8n6pddTFFIJWMYOgskVHeR2ivq0ibgYbgx0KrvGhLgTaOn8t8lxm2l5PuAoOJfmEl2r1dZ0ZfFPvYdHZ+bBfkF0j6WQ9t14J5HfO6sibpC9rkx68ZXQV4zPHDpbbJINp4Yk1Cjt3UDt6Rsi+dn8xNONnWFEYKt57K6Di0=
+	t=1715086426; cv=none; b=MIw909k2SaAO0d0YhsloVwMOUnn6vYc6OC+NyiBd/CFDojhQ4mNKuZN/Q/atqEMX8VziV5LIQLOW8DmV3udRkLK+qQlq8S5YQ65WzgPVyQn0ptccZm6APbxBRATiezwfo5JDXENQkCiYQ9ew4uAyTI8BmgTqFtnezxVUYI/iLNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715086315; c=relaxed/simple;
-	bh=YkrG41OUg30UlrJKdM2bXKdavDQXZarnRBrRAJenv4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMYeNzV63szQv+ZoaQ9fzc6TdJMniSSdwgGVn75+TJoMphCrm+JRI0oYMN8Rm6n37tb+PRgvQLs9PzLAsR6vRs2aQOFXWdM3QKLEAUz5SjgY3J/fIwwD1hFcTLDAPoXu56Mt/COfjjAkkq6nPskdirzuYNsnUOJD+5SY4+yP6sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGPbKqa1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23982C2BBFC;
-	Tue,  7 May 2024 12:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715086315;
-	bh=YkrG41OUg30UlrJKdM2bXKdavDQXZarnRBrRAJenv4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tGPbKqa1QRN6Q8vFBcvwfLx5Wt0iXO2sD7KX/SqIxxdt7QCFRTz59ORppTJzP/E5E
-	 E+o5R2lTJKTnve0vuPp7cVVXZpzmLKXIOrZArK+Q6i6BeGTxTLNoaeobynnF1zW6pa
-	 pM1WTbYOysJHbgGRcD6z3H5idi+XFleUZu9ys5UFfGq503If2Ob2d2b7XpQsPM3a/a
-	 8q7Dj6g32Y+2DS+lXznIz4TvIhD3GdvEFdo5CyO1TwZs8vZxnqlpsymVbhUdvB7Lqk
-	 3fyNLOhyfENEckwYD0ia99Ne2XOAtcLZPo/G7tTHXEx474rUyeyQnlHsdZ7DosI1LZ
-	 LXSrzSxeS8jnw==
-Date: Tue, 7 May 2024 07:51:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
-Subject: Re: [PATCH v2 03/11] dt-bindings: soc: mobileye: add EyeQ OLB system
- controller
-Message-ID: <20240507125152.GA38845-robh@kernel.org>
-References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
- <20240503-mbly-olb-v2-3-95ce5a1e18fe@bootlin.com>
+	s=arc-20240116; t=1715086426; c=relaxed/simple;
+	bh=Yxnfyeh2IaAdO4T8qDfP6RexxVdxlIo3CQDZRvPFWAU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FodTaw06kIZ7JGgDWU9BHZxpmcERybVKaDCHL7Rv27GziomL/+tvAs+SQFTmKqJVdRY41tml1g607FPKHwWfQwgtmw/eXkZCKQbMRSS8/9JhWw7ri7OCQK+iGoecU7r34DqouFRvGM4EZBBMvNYrUcD/mVughDwFFJgETbZQF9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Oj1I7pDB; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715086414; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=+8CSt1B3wcEFd+rtPMw0xXAdxHRKF4spwCM9JWpEye4=;
+	b=Oj1I7pDBJ4R+a1Zd1TZG5Q6iCAdoJIhz7GZ1dEIylwO0kg6i4owFl+Ys+eUmAg+8k5HJ3RoZl3SBDuBiKwC4i7UAGylLpvTee5CN90MUbzpzaD/c4iWk66mckjJ0OT3oZNz+k8WaLBIVEqGLKWPwHe6dmzLDRuFcumgpc2Z+kog=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R261e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=guwen@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W607thJ_1715086411;
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0W607thJ_1715086411)
+          by smtp.aliyun-inc.com;
+          Tue, 07 May 2024 20:53:33 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: kgraul@linux.ibm.com,
+	alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2] net/smc: fix neighbour and rtable leak in smc_ib_find_route()
+Date: Tue,  7 May 2024 20:53:31 +0800
+Message-Id: <20240507125331.2808-1-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240503-mbly-olb-v2-3-95ce5a1e18fe@bootlin.com>
 
-On Fri, May 03, 2024 at 04:20:48PM +0200, Théo Lebrun wrote:
-> Add documentation to describe the "Other Logic Block" system-controller.
-> It deals with three platforms: EyeQ5, EyeQ6L and EyeQ6H. First two have
-> a single instance, whereas EyeQ6H has seven named instances.
-> 
-> Features provided are:
->  - Clocks, children to main crystal. Some PLLs and divider clocks.
->  - Resets. EyeQ6H central, south, DDR0 and DDR1 do not have resets.
->  - Pinctrl. Only EyeQ5 has such feature.
-> 
-> Those are NOT the only registers exposed in OLB system-controllers! Many
-> individual registers, related to IP block integration, can be found.
-> 
-> We simplify devicetree references to OLB in two ways:
->  - Compatibles exposing a single clock do not ask for a index argument.
->  - Compatibles exposing a single reset domain do not ask for a domain
->    index, only a reset index.
-> 
-> About pinctrl subnodes: all pins have two functionality, either GPIO or
-> something-else. The latter is pin dependent, we express constraints
-> using many if-then.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> ---
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 375 +++++++++++++++++++++
->  MAINTAINERS                                        |   2 +
->  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 ++
->  3 files changed, 398 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-> new file mode 100644
-> index 000000000000..bbd75b81166e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
-> @@ -0,0 +1,375 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Mobileye EyeQ SoC system controller
-> +
-> +maintainers:
-> +  - Grégory Clement <gregory.clement@bootlin.com>
-> +  - Théo Lebrun <theo.lebrun@bootlin.com>
-> +  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
-> +
-> +description:
-> +  OLB ("Other Logic Block") is a hardware block grouping smaller blocks. Clocks,
-> +  resets, pinctrl are being handled from here. EyeQ5 and EyeQ6L host a single
-> +  instance. EyeQ6H hosts seven instances.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - mobileye,eyeq5-olb
-> +          - mobileye,eyeq6l-olb
-> +          - mobileye,eyeq6h-acc-olb
-> +          - mobileye,eyeq6h-central-olb
-> +          - mobileye,eyeq6h-east-olb
-> +          - mobileye,eyeq6h-west-olb
-> +          - mobileye,eyeq6h-south-olb
-> +          - mobileye,eyeq6h-ddr0-olb
-> +          - mobileye,eyeq6h-ddr1-olb
-> +      - const: syscon
-> +      - const: simple-mfd
+In smc_ib_find_route(), the neighbour found by neigh_lookup() and rtable
+resolved by ip_route_output_flow() are not released or put before return.
+It may cause the refcount leak, so fix it.
 
-You are getting rid of the child nodes, so you shouldn't need simple-mfd 
-any more.
+Link: https://lore.kernel.org/r/20240506015439.108739-1-guwen@linux.alibaba.com
+Fixes: e5c4744cfb59 ("net/smc: add SMC-Rv2 connection establishment")
+Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+---
+v2->v1
+- call ip_rt_put() to release rt as well.
+---
+ net/smc/smc_ib.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-Rob
+diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
+index 97704a9e84c7..9297dc20bfe2 100644
+--- a/net/smc/smc_ib.c
++++ b/net/smc/smc_ib.c
+@@ -209,13 +209,18 @@ int smc_ib_find_route(struct net *net, __be32 saddr, __be32 daddr,
+ 	if (IS_ERR(rt))
+ 		goto out;
+ 	if (rt->rt_uses_gateway && rt->rt_gw_family != AF_INET)
+-		goto out;
+-	neigh = rt->dst.ops->neigh_lookup(&rt->dst, NULL, &fl4.daddr);
+-	if (neigh) {
+-		memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
+-		*uses_gateway = rt->rt_uses_gateway;
+-		return 0;
+-	}
++		goto out_rt;
++	neigh = dst_neigh_lookup(&rt->dst, &fl4.daddr);
++	if (!neigh)
++		goto out_rt;
++	memcpy(nexthop_mac, neigh->ha, ETH_ALEN);
++	*uses_gateway = rt->rt_uses_gateway;
++	neigh_release(neigh);
++	ip_rt_put(rt);
++	return 0;
++
++out_rt:
++	ip_rt_put(rt);
+ out:
+ 	return -ENOENT;
+ }
+-- 
+2.32.0.3.g01195cf9f
+
 
