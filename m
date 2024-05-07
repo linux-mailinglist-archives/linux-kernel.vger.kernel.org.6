@@ -1,214 +1,97 @@
-Return-Path: <linux-kernel+bounces-171084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D8A8BDF9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:23:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC1C8BDF8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1B221F23704
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CAE61F23702
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E050514F104;
-	Tue,  7 May 2024 10:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A89F14EC6E;
+	Tue,  7 May 2024 10:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pbGgIpxH"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LeAc4xYv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IFhfTbr7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA6814E2DE;
-	Tue,  7 May 2024 10:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EC514EC4A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715077401; cv=none; b=lel0Xj1or3miA9T9jvpDq5D4V/s3WJCkzrjm03XALp+Tsl343KDB2Rez1romslBXoU0qQ+cQ57p5Xx1kNlYpfvTxkN3eBXBPa4jNCzvNkLHjTgZ6xTCnTLjDQGDXPrmQ//IkU4rvBW0te1JOTjC5Q2NJ7mXsbc2/BlO3lX2HInk=
+	t=1715077250; cv=none; b=jAwuayytrTpr4UrSdopP9SotwSpeJiRvcJa2FYMVte0kMCBJKTZXmrgjzSmufxTxhX4W2S5YQD/v5yFQUqHqBSfqojtQngbl700KwT35mndJ0i6ta8y+kjZMxDC/GYlbiUR8iM7Bt6aVc8FKsLxr2FvVTrGWpaIKv7RSUXoqvks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715077401; c=relaxed/simple;
-	bh=Gm4GceuR5OxITl9PR6JnqdjWWBcG7QBtr441NLfsuNM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nk1+22No+A5rKTOUQFZ/QUG3EKuf4pCAYjBQGbZyvf/i1lR5nQybTrStAU4A2Sb++4lxE9WYa8arFi4ZmDJcKhzz1k8TTuDzciqwu0uNPe1+QaYxx2ev2vVat3QWlTiGGk+qe/nNqtSIEDX1cjhjkjfG9VrQofYfUd9WVsxbLQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pbGgIpxH; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715077399; x=1746613399;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Gm4GceuR5OxITl9PR6JnqdjWWBcG7QBtr441NLfsuNM=;
-  b=pbGgIpxH03gmNP8gc/c5PY7HXRsj6cv+skanUy7tk7Z7BC4QrVLuctar
-   4D6IOKbzoool62aJZippxfz7hRdF+Mvo8dZvqv7Ane4oZ9CRrv/7gBlbm
-   9cFUt8/Htc5jivIWffw30IuXI5JpZh0BiBKXslLhK1SusbgIArBs7k4tU
-   UFo7nZHiBv8dzp9y8X7x7gRps8C/vsHxesxD4CKzJFakpBbASX+DUQ0tF
-   BwLmmsCPRF93hPAOGTGXnn7hfk8VPBN3sI6z3YhPKYXHjVXLEF4jvRXFg
-   M5YNTvlgFC3KIz1qS3jXbDCNBYmuelAa0H2/bdxQQeQgMSO+ZFLu4NsQJ
-   Q==;
-X-CSE-ConnectionGUID: AI7nB1djQrayuS0RCqpZ+Q==
-X-CSE-MsgGUID: m//drMMAT1yv2KkxmHgjVA==
-X-IronPort-AV: E=Sophos;i="6.07,261,1708412400"; 
-   d="scan'208";a="26124008"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 May 2024 03:23:17 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 7 May 2024 03:23:07 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 7 May 2024 03:23:07 -0700
-Date: Tue, 7 May 2024 15:50:39 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Andrew Lunn <andrew@lunn.ch>, Raju Lakkaraju
-	<Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<lxu@maxlinear.com>, <hkallweit1@gmail.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net-next] net: phy: add wol config options in phy device
-Message-ID: <ZjoAd2vsiqGhCVCv@HYD-DK-UNGSW21.microchip.com>
-References: <20240430050635.46319-1-Raju.Lakkaraju@microchip.com>
- <7fe419b2-fc73-4584-ae12-e9e313d229c3@lunn.ch>
- <ZjO4VrYR+FCGMMSp@shell.armlinux.org.uk>
+	s=arc-20240116; t=1715077250; c=relaxed/simple;
+	bh=F4mEaspsKH+C3SRbI+tnMOWwoo2Lhi0QrK0rMcAr70w=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cr5A6G2A+plSH8QKrlc5MtPubNe4HJWMWHh9J512sdsmNtXjdyNfZI8g6nk64WaYef2pgliu/qeCXl9xCAUOlxZ2W3JJhu75LaeOzm63ymjO6H9CvV1CwBD135gf8OqEcDL6LeMMho3ewKpHFTTOXIj5+4g/j7wqiKZFBK7Sl1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LeAc4xYv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IFhfTbr7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715077247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XhEN/ky7pbyVwbgnC9pAsY2qwoBMWLKX+rA0d7wKphA=;
+	b=LeAc4xYvuqRyPDjZNgFLwy+p6uWE1mzlysZJ7qLSBgAnSVqhNhCue6MpxfCKTJ27X6ZdYp
+	NpWJXBUr7xT2XJATVp0S3pf39Sl9M88CFtz1qDb0QdTQ7mxj/OzII9pEMx4I0UxumiOSi6
+	QOIsSyVAtaywdlnSKwbmbPcHdzl4AFjOnw/Bo7Bt9r0HSTrakw/4MA3gALTjIQtpqC6vNk
+	6v/Ye/yyyeosn7GJu1ESJLfj4HJ1vnQV5wCEdPU5ZiuJTOizacXLT4i8Nim/cscv7RY+MW
+	vwzoYrje9R9hU8DaJJoyphxHfQS2QfhFuOshGJ1UgmUio5T9qEtFyricTcjDXA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715077247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XhEN/ky7pbyVwbgnC9pAsY2qwoBMWLKX+rA0d7wKphA=;
+	b=IFhfTbr7iOTQuSa3OVjBVUfyeOPHy9ewZ8aQYlsjcm8WczKXzLkTumecJi+Vqg5USo0lFb
+	wL3ik5chp0oP0uDw==
+To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] genirq: Simplify the check for __irq_get_desc_lock()
+In-Reply-To: <a75c2818-11eb-3f78-1699-94a5b10ef232@huawei.com>
+References: <20240506125057.307586-1-ruanjinjie@huawei.com>
+ <87seyurfk7.ffs@tglx> <a75c2818-11eb-3f78-1699-94a5b10ef232@huawei.com>
+Date: Tue, 07 May 2024 12:20:46 +0200
+Message-ID: <87bk5hrkht.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <ZjO4VrYR+FCGMMSp@shell.armlinux.org.uk>
+Content-Type: text/plain
 
-Hi Russell King,
+On Tue, May 07 2024 at 09:16, Jinjie Ruan wrote:
+> On 2024/5/7 1:55, Thomas Gleixner wrote:
+>>>  	if (desc) {
+>>>  		if (check & _IRQ_DESC_CHECK) {
+>>> -			if ((check & _IRQ_DESC_PERCPU) &&
+>>> -			    !irq_settings_is_per_cpu_devid(desc))
+>>> -				return NULL;
+>>> -
+>>> -			if (!(check & _IRQ_DESC_PERCPU) &&
+>>> +			if (!!(check & _IRQ_DESC_PERCPU) !=
+>>>  			    irq_settings_is_per_cpu_devid(desc))
+>>>  				return NULL;
+>> 
+>> The existing code is readable and obvious. This is not.
+>
+> Thank you for your review. The existing code is indeed clear, but it
+> seems that both judgments are checking whether the percpu flags are
+> consistent.
 
-Sorry for late response
+The code checks whether the descriptor is marked as per CPU devid if and
+only if the caller requested it.
 
-The 05/02/2024 16:59, Russell King (Oracle) wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> On Thu, May 02, 2024 at 04:51:42PM +0200, Andrew Lunn wrote:
-> > On Tue, Apr 30, 2024 at 10:36:35AM +0530, Raju Lakkaraju wrote:
-> > > Introduce a new member named 'wolopts' to the 'phy_device' structure to
-> > > store the user-specified Wake-on-LAN (WOL) settings. Update this member
-> > > within the phy driver's 'set_wol()' function whenever the WOL configuration
-> > > is modified by the user.
-> > >
-> > > Currently, when the system resumes from sleep, the 'phy_init_hw()' function
-> > > resets the PHY's configuration and interrupts, which leads to problems upon
-> > > subsequent WOL attempts. By retaining the desired WOL settings in 'wolopts',
-> > > we can ensure that the PHY's WOL configuration is correctly reapplied
-> > > through 'phy_ethtool_set_wol()' before a system suspend, thereby resolving
-> > > the issue
-> >
-> > Sorry it took a white to review this.
-> >
-> > >
-> > > Signed-off-by: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-> > > ---
-> > >  drivers/net/phy/mxl-gpy.c    | 5 +++++
-> > >  drivers/net/phy/phy_device.c | 5 +++++
-> > >  include/linux/phy.h          | 2 ++
-> > >  3 files changed, 12 insertions(+)
-> > >
-> > > diff --git a/drivers/net/phy/mxl-gpy.c b/drivers/net/phy/mxl-gpy.c
-> > > index b2d36a3a96f1..6edb29a1d77e 100644
-> > > --- a/drivers/net/phy/mxl-gpy.c
-> > > +++ b/drivers/net/phy/mxl-gpy.c
-> > > @@ -680,6 +680,7 @@ static int gpy_set_wol(struct phy_device *phydev,
-> > >     struct net_device *attach_dev = phydev->attached_dev;
-> > >     int ret;
-> > >
-> > > +   phydev->wolopts = 0;
-> >
-> > Is this specific to mlx-gpy?
-> >
-> > You should be trying to solve the problem for all PHYs which support
-> > WoL. So i expect the core to be doing most of the work. In fact, i
-> > don't think there is any need for driver specific code.
-> 
-> It would be good to hear exactly why its necessary for phylib to track
-> this state,
+As the code exactly doing that, what is the point of changing it to
+something incomprehensible?
 
-Andrew suggested that if PHY device support WOL, Ethernet MAC device should be in
-sleep expect interrrupt handling functionality.
+Thanks,
 
-To achive this, if we have phy device's wolopts, based on user configuration,
-we can configure phy WOL or Ethernet MAC WOL.
-
-PCI11x1x chip MAC can support WOL (i.e. WAKE_MAGIC, WAKE_SECURE, WAKE_UCAST,
-WAKE_MCAST, WAKE_BCAST, WAKE_PHY)
-
-GPY211C PHY connect as External PHY to PCI11x1x ethernet device to achive
-2.5G/1G/100M/10Mpbs with either SGMII or 2500Base-X mode. GPY211C PHY can
-support WOL (i.e. WAKE_PHY or WAKE_MAGIC).
-
-Similarly, KSZ91931 PHY connect as External PHY to PCI11x1x ethernet device to
-achive 1G/100M/10Mbps with RGMII or GMII mode. But, KSZ9131 PHY driver does
-not support WOL.
-
-If we have phy's wolopts which holds the user configuration, Ethernet MAC
-device can configure Power Manager's WOL registers whether handle only 
-PHY interrupts or MAC's WOL functionality.
-
-In existing code, we don't have any information about PHY's user configure to
-configure the PM mode
-
-> and why the PHY isn't retaining it.
-> 
-
-mxl-gpy driver does not have soft_reset( ) function.
-In resume sequence, mxl-gpy driver is clearing the WOL configuration and interrupt
-i.e.
-gpy_config_init( ) and gpy_config_intr( )
-
-> I suspect this may have something to do with resets - the PHY being
-> hardware reset when coming out of resume (resulting in all state
-> being lost.) What's resetting it would also be good to track down
-> (as in hardware, firmware, or the kernel.)
-> 
-In case of resume, the following sequence executes:
-
-pci_pm_resume( )
---> lan743x_pm_resume()
-   --> lan743x_netdev_open( )
-      --> phy_connect_direct( )
-         --> phy_attach_direct( )
-	     --> phy_init_hw( )
-	        --> gpy_config_init( )
-		--> gpy_config_intr( )
-
-In existing gpy_config_init( ) and gpy_config_intr( ) function don't have any
-indication about whether execute in initial operation or WOL's resume
-operation.
-
-If we avoid clearing Interrupts in WOL's resume case, we need not re-configure
-the WOL on PHY. 
-
-I add the following code and test.  It's working as expected.
-
-In File: drivers/net/phy/mxl-gpy.c
-In gpy_config_init( ) function:
-
-+       if (!phydev->wolopts) {
-               /* Mask all interrupts */
-               ret = phy_write(phydev, PHY_IMASK, 0);
-               if (ret)
-                       return ret;
-+       }
-
-In gpy_config_intr( ) function:
-
-+       if (phydev->wolopts)
-+               mask |= (phy_read(phydev, PHY_IMASK) &
-+                        (PHY_IMASK_WOL | PHY_IMASK_LSTC));
-+
-
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
-
--- 
-Thanks,                                                                         
-Raju
+        tglx
 
