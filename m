@@ -1,203 +1,199 @@
-Return-Path: <linux-kernel+bounces-172023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BBA8BEC1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E4B8BEC1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BC8D1C221C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:01:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCB421F235C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32B716D9DD;
-	Tue,  7 May 2024 19:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C1116D9DF;
+	Tue,  7 May 2024 19:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+eHcQj4"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F9A16D9A7;
-	Tue,  7 May 2024 19:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BUPpBvir"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2116D9A7;
+	Tue,  7 May 2024 19:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715108457; cv=none; b=dR+BN/Z87aqPl4CURGeKet1K2zUUPrq7ug+PzBk8RYQDtULZM0TRkSHT0S48UR68O0h89zLBadKcyhfMLWOW1hKZFmTjUWprhthWiXwwd5Va2+OhweexNhTF97ZjJNnl765esanPExiZNN6O65P8AB1TwsmHDFN7fVaxIG4Urhc=
+	t=1715108478; cv=none; b=PJro4YcPNXzD6jUurmyjruHo8vHqF01APRL0Bo45xCv7LNAMYTYgqB6vNQNckWOrnNNkS/ajPHcmgt+9YBop8Eujkyh60DA7szubqUyUUrNJfynblYS1XaAbUYqWFLfcyOPppyl7uz5ADuJZF2vJQRbYq/csSduLhJ2Udr+sj10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715108457; c=relaxed/simple;
-	bh=rjW0aJYCQXlLoIVRfa20c0SWs8WgYyCfnharYbOdUC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ltrj+TEy/cci047hGHWP0yNDzhVMAtZSxTP6MBYbbq7boEOxq9s+XgKTkfXHrEeSJwwCUHvtFGkEZIkLHu6UxQD3ODH13xHDU1n2T2KZ33j8t8JSejeS6kZF4yr38peWv/HT4a14RSUHVAQ2iV5iKqdbGFHcOngOIdyYjFiIaG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+eHcQj4; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2b537cd50f9so2056195a91.3;
-        Tue, 07 May 2024 12:00:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715108456; x=1715713256; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4OvlLYZXntZzsYVWsX3vkaZCqsGmHPgXcCmkgTW2W9E=;
-        b=V+eHcQj44/xMBJE+vR56QVmQK0b+Yu2UwJNH+wk2H1ZQwe06GecTh3mF5ZYPgHoVHT
-         53G7BdYcPF17L7CWBYb/jI1LA+jB9EQ2oCr/GTjQ3x7xLOjWUOypIrv6t3ju3Ujf3bNV
-         2PdhJRTaMBdCVvVWd6XwtoNYPm+RKgHa8UbudCcegHr0OpKfz6+9SBTn2+Cdh2KRcvmx
-         /8j88Jm72/Cso1PGhtwqR68tg6OBF/2Cky4zDVSOxCy7vCiIjFr7qpOkh8EFF5TqqR1O
-         vZmkBMWB5tKX2kog2gsBguigZbVYRk2dm8HeSw/1N5+OZXSC0zacaylF29c+eqhwzDkX
-         zTZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715108456; x=1715713256;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4OvlLYZXntZzsYVWsX3vkaZCqsGmHPgXcCmkgTW2W9E=;
-        b=qi6Nq4LvjdN1zwERDve3tHU4Ia068fxXEMTiCtC43iJdblscUhckJuiUbaNelnPOrn
-         8mpg694f9qIfBYWXqGJlj8jp7oKOWVTm2W1McwZsD47p3LjL6X2acm5yle+uU73rDpHJ
-         7cykdAWRhq9BQR9ly/ZTscRPQMjv/sppj2r8hhiC4QO5dfbdyMPaTLo2UmAk1tl3U2XA
-         Rh3DWLf9RnRmqXiu10MLlYYap2QXZhSOVwW/YNWGGZAMyVJeV+n+d7WNjbcs14tDwkZG
-         bEruv1G6o6xow8E+GGm/7/0oCsOgBXkBTVt85dE86+STZrtzjvWAFmwpzqKdVwZXt6LX
-         QR0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmenXmVuPN5+4gybI59IMRZ4utVQdNDKRa8e45tSG2NF+ZTWIyS/eEW0R0yFhCGzw/P2uFe0ZukERR4lhEG6oVYTefH65d6c3cDOwWyHzjrnBWKGllp5OaTT0N3NxSgDu0tOFalJMmewOXlNRkGvirtM9/jU/zL48bJMp/QvgMZw==
-X-Gm-Message-State: AOJu0YxqSBJND/C8DSVl0D48S9EEqX3g55u0zXqFyPmdjJmDxXVoGzpV
-	0TCThkwF1rua7Xg+G0TyXSjpv4zN99ckLS3n6YP4hQtdoFHG3a/TcSDNMD8Ni029oE7tDW4H+UO
-	i9uRTtF3ozvQ5zTRi2epk20Vbjr8=
-X-Google-Smtp-Source: AGHT+IHVOh+tTSIletV6uuObJeEpe5Vf6lzC+JSmOXbOZaf7RJB/Yn/F9mCqn8ZACFRRLCBq0s8A4fvmflw4nxbjKzI=
-X-Received: by 2002:a17:90b:b17:b0:2b4:36d7:b6ad with SMTP id
- 98e67ed59e1d1-2b61639c45dmr482630a91.4.1715108455583; Tue, 07 May 2024
- 12:00:55 -0700 (PDT)
+	s=arc-20240116; t=1715108478; c=relaxed/simple;
+	bh=g1veQz9dJ3sVo0hMDOXcpFezi7Iobr9bX5G1zVUCr2s=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=imZZucoDpcIDsqWHkVP5dF96HrH27uz+tS1OaVRJbIYeGQcImUxCRnaYRz6Ex61kATBOiHHJi32rGTnJYPLODWol1o+tKASsIhLHfrCmJVXbCzQRxEGm7ZseFxBH4bts0ff93ARohdgn2iiseG5zPuztSrAlWCsH0Y2Cg0gVSgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BUPpBvir; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from apais-vm1.0synte4vioeebbvidf5q0vz2ua.xx.internal.cloudapp.net (unknown [52.183.86.224])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BFE4A20B2C82;
+	Tue,  7 May 2024 12:01:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BFE4A20B2C82
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715108476;
+	bh=VWE6ZXP3AIBJkn4ZrcnxCPzQUxLvW0RGUuO+DHKq/oQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BUPpBvirSU0EX4pKl+Phr89hCZNIv0k0Az22vm7KuGi0USH0e7qWgzZ6Udw0XYCc1
+	 f8c0XlYsrfpY1Wu1Ayb0yKlIz14J+IO8Qd/dOrTV+O1rq/zlwl5rywcIUO15zHBLb9
+	 uqJP7Ip9O/vzxFMcysGpkWIAo+IBXQpmPcE44qGY=
+From: Allen Pais <apais@linux.microsoft.com>
+To: netdev@vger.kernel.org
+Cc: jes@trained-monkey.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	kda@linux-powerpc.org,
+	cai.huoqing@linux.dev,
+	dougmill@linux.ibm.com,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com,
+	nnac123@linux.ibm.com,
+	tlfalcon@linux.ibm.com,
+	cooldavid@cooldavid.org,
+	marcin.s.wojtas@gmail.com,
+	linux@armlinux.org.uk,
+	mlindner@marvell.com,
+	stephen@networkplumber.org,
+	nbd@nbd.name,
+	sean.wang@mediatek.com,
+	Mark-MC.Lee@mediatek.com,
+	lorenzo@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	borisp@nvidia.com,
+	bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	louis.peens@corigine.com,
+	richardcochran@gmail.com,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acenic@sunsite.dk,
+	linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-mediatek@lists.infradead.org,
+	oss-drivers@corigine.com,
+	linux-net-drivers@amd.com
+Subject: [PATCH 0/1] Convert tasklets to BH workqueues in ethernet drivers
+Date: Tue,  7 May 2024 19:01:10 +0000
+Message-Id: <20240507190111.16710-1-apais@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
- <2024050425-setting-enhance-3bcd@gregkh> <CAEf4BzbiTQk6pLPQj=p9d18YW4fgn9k2V=zk6nUYAOK975J=xg@mail.gmail.com>
- <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
- <CAEf4BzZQexjTvROUMkNb2MMB2scmjJHNRunA-NqeNzfo-yYh9g@mail.gmail.com> <qa3ffj62mrdrskqg33atupnphc6il6ygdzbtknpky4xfhilqg2@mqojpw2vwbul>
-In-Reply-To: <qa3ffj62mrdrskqg33atupnphc6il6ygdzbtknpky4xfhilqg2@mqojpw2vwbul>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 7 May 2024 12:00:43 -0700
-Message-ID: <CAEf4Bzap9QkdQqxwE4_yjYJ4V-QVnwyCXaOChDswFwmaGJUvig@mail.gmail.com>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>, 
-	Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 11:06=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240507 12:28]:
-> > On Tue, May 7, 2024 at 8:49=E2=80=AFAM Liam R. Howlett <Liam.Howlett@or=
-acle.com> wrote:
-> > >
-> > > .. Adding Suren & Willy to the Cc
-> > >
-> > > * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240504 18:14]:
-> > > > On Sat, May 4, 2024 at 8:32=E2=80=AFAM Greg KH <gregkh@linuxfoundat=
-ion.org> wrote:
-> > > > >
-> > > > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
-> > > > > > I also did an strace run of both cases. In text-based one the t=
-ool did
-> > > > > > 68 read() syscalls, fetching up to 4KB of data in one go.
-> > > > >
-> > > > > Why not fetch more at once?
-> > > > >
-> > > >
-> > > > I didn't expect to be interrogated so much on the performance of th=
-e
-> > > > text parsing front, sorry. :) You can probably tune this, but where=
- is
-> > > > the reasonable limit? 64KB? 256KB? 1MB? See below for some more
-> > > > production numbers.
-> > >
-> > > The reason the file reads are limited to 4KB is because this file is
-> > > used for monitoring processes.  We have a significant number of
-> > > organisations polling this file so frequently that the mmap lock
-> > > contention becomes an issue. (reading a file is free, right?)  People
-> > > also tend to try to figure out why a process is slow by reading this
-> > > file - which amplifies the lock contention.
-> > >
-> > > What happens today is that the lock is yielded after 4KB to allow tim=
-e
-> > > for mmap writes to happen.  This also means your data may be
-> > > inconsistent from one 4KB block to the next (the write may be around
-> > > this boundary).
-> > >
-> > > This new interface also takes the lock in do_procmap_query() and does
-> > > the 4kb blocks as well.  Extending this size means more time spent
-> > > blocking mmap writes, but a more consistent view of the world (less
-> > > "tearing" of the addresses).
-> >
-> > Hold on. There is no 4KB in the new ioctl-based API I'm adding. It
-> > does a single VMA look up (presumably O(logN) operation) using a
-> > single vma_iter_init(addr) + vma_next() call on vma_iterator.
->
-> Sorry, I read this:
->
-> +       if (usize > PAGE_SIZE)
-> +               return -E2BIG;
->
-> And thought you were going to return many vmas in that buffer.  I see
-> now that you are doing one copy at a time.
->
-> >
-> > As for the mmap_read_lock_killable() (is that what we are talking
-> > about?), I'm happy to use anything else available, please give me a
-> > pointer. But I suspect given how fast and small this new API is,
-> > mmap_read_lock_killable() in it is not comparable to holding it for
-> > producing /proc/<pid>/maps contents.
->
-> Yes, mmap_read_lock_killable() is the mmap lock (formally known as the
-> mmap sem).
->
-> You can see examples of avoiding the mmap lock by use of rcu in
-> mm/memory.c lock_vma_under_rcu() which is used in the fault path.
-> userfaultfd has an example as well. But again, remember that not all
-> archs have this functionality, so you'd need to fall back to full mmap
-> locking.
+This series focuses on converting the existing implementation of
+tasklets to bottom half (BH) workqueues across various Ethernet
+drivers under drivers/net/ethernet/*.
 
-Thanks for the pointer (didn't see email when replying on the other thread)=
-.
+Impact:
+ The conversion is expected to maintain or improve the performance
+of the affected drivers. It also improves the maintainability and
+readability of the driver code.
 
-I looked at lock_vma_under_rcu() quickly, and seems like it's designed
-to find VMA that covers given address, but not the next closest one.
-So it's a bit problematic for the API I'm adding, as
-PROCFS_PROCMAP_EXACT_OR_NEXT_VMA (which I can rename to
-COVERING_OR_NEXT_VMA, if necessary), is quite important for the use
-cases we have. But maybe some variation of lock_vma_under_rcu() can be
-added that would fit this case?
+Testing:
+ - Conducted standard network throughput and latency benchmarks
+   to ensure performance parity or improvement.
+ - Ran kernel regression tests to verify that changes do not introduce new issues.
 
->
-> Certainly a single lookup and copy will be faster than a 4k buffer
-> filling copy, but you will be walking the tree O(n) times, where n is
-> the vma count.  This isn't as efficient as multiple lookups in a row as
-> we will re-walk from the top of the tree. You will also need to contend
-> with the fact that the chance of the vmas changing between calls is much
-> higher here too - if that's an issue. Neither of these issues go away
-> with use of the rcu locking instead of the mmap lock, but we can be
-> quite certain that we won't cause locking contention.
+I appreciate your review and feedback on this patch series.
+And additional tested would be really helpful.
 
-You are right about O(n) times, but note that for symbolization cases
-I'm describing, this n will be, generally, *much* smaller than a total
-number of VMAs within the process. It's a huge speed up in practice.
-This is because we pre-sort addresses in user-space, and then we query
-VMA for the first address, but then we quickly skip all the other
-addresses that are already covered by this VMA, and so the next
-request will query a new VMA that covers another subset of addresses.
-This way we'll get the minimal number of VMAs that cover captured
-addresses (which in the case of stack traces would be a few VMAs
-belonging to executable sections of process' binary plus a bunch of
-shared libraries).
+Allen Pais (1):
+  [RFC] ethernet: Convert from tasklet to BH workqueue
 
->
-> Thanks,
-> Liam
->
+ drivers/infiniband/hw/mlx4/cq.c               |  2 +-
+ drivers/infiniband/hw/mlx5/cq.c               |  2 +-
+ drivers/net/ethernet/alteon/acenic.c          | 26 +++----
+ drivers/net/ethernet/alteon/acenic.h          |  7 +-
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c      | 30 ++++----
+ drivers/net/ethernet/amd/xgbe/xgbe-i2c.c      | 16 ++---
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c     | 16 ++---
+ drivers/net/ethernet/amd/xgbe/xgbe-pci.c      |  4 +-
+ drivers/net/ethernet/amd/xgbe/xgbe.h          | 11 +--
+ drivers/net/ethernet/broadcom/cnic.c          | 19 ++---
+ drivers/net/ethernet/broadcom/cnic.h          |  2 +-
+ drivers/net/ethernet/cadence/macb.h           |  3 +-
+ drivers/net/ethernet/cadence/macb_main.c      | 10 +--
+ .../net/ethernet/cavium/liquidio/lio_core.c   |  4 +-
+ .../net/ethernet/cavium/liquidio/lio_main.c   | 25 +++----
+ .../ethernet/cavium/liquidio/lio_vf_main.c    | 10 +--
+ .../ethernet/cavium/liquidio/octeon_droq.c    |  4 +-
+ .../ethernet/cavium/liquidio/octeon_main.h    |  5 +-
+ .../net/ethernet/cavium/octeon/octeon_mgmt.c  | 12 ++--
+ drivers/net/ethernet/cavium/thunder/nic.h     |  5 +-
+ .../net/ethernet/cavium/thunder/nicvf_main.c  | 24 +++----
+ .../ethernet/cavium/thunder/nicvf_queues.c    |  5 +-
+ .../ethernet/cavium/thunder/nicvf_queues.h    |  3 +-
+ drivers/net/ethernet/chelsio/cxgb/sge.c       | 19 ++---
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4.h    |  9 +--
+ .../net/ethernet/chelsio/cxgb4/cxgb4_main.c   |  2 +-
+ .../ethernet/chelsio/cxgb4/cxgb4_tc_mqprio.c  |  4 +-
+ .../net/ethernet/chelsio/cxgb4/cxgb4_uld.c    |  2 +-
+ drivers/net/ethernet/chelsio/cxgb4/sge.c      | 41 +++++------
+ drivers/net/ethernet/chelsio/cxgb4vf/sge.c    |  6 +-
+ drivers/net/ethernet/dlink/sundance.c         | 41 +++++------
+ .../net/ethernet/huawei/hinic/hinic_hw_cmdq.c |  2 +-
+ .../net/ethernet/huawei/hinic/hinic_hw_eqs.c  | 17 +++--
+ .../net/ethernet/huawei/hinic/hinic_hw_eqs.h  |  2 +-
+ drivers/net/ethernet/ibm/ehea/ehea.h          |  3 +-
+ drivers/net/ethernet/ibm/ehea/ehea_main.c     | 14 ++--
+ drivers/net/ethernet/ibm/ibmvnic.c            | 24 +++----
+ drivers/net/ethernet/ibm/ibmvnic.h            |  2 +-
+ drivers/net/ethernet/jme.c                    | 72 +++++++++----------
+ drivers/net/ethernet/jme.h                    |  9 +--
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   |  2 +-
+ drivers/net/ethernet/marvell/skge.c           | 12 ++--
+ drivers/net/ethernet/marvell/skge.h           |  3 +-
+ drivers/net/ethernet/mediatek/mtk_wed_wo.c    | 12 ++--
+ drivers/net/ethernet/mediatek/mtk_wed_wo.h    |  3 +-
+ drivers/net/ethernet/mellanox/mlx4/cq.c       | 42 +++++------
+ drivers/net/ethernet/mellanox/mlx4/eq.c       | 10 +--
+ drivers/net/ethernet/mellanox/mlx4/mlx4.h     | 11 +--
+ drivers/net/ethernet/mellanox/mlx5/core/cq.c  | 38 +++++-----
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c  | 12 ++--
+ .../ethernet/mellanox/mlx5/core/fpga/conn.c   | 15 ++--
+ .../ethernet/mellanox/mlx5/core/fpga/conn.h   |  3 +-
+ .../net/ethernet/mellanox/mlx5/core/lib/eq.h  | 11 +--
+ drivers/net/ethernet/mellanox/mlxsw/pci.c     | 29 ++++----
+ drivers/net/ethernet/micrel/ks8842.c          | 29 ++++----
+ drivers/net/ethernet/micrel/ksz884x.c         | 37 +++++-----
+ drivers/net/ethernet/microchip/lan743x_ptp.c  |  2 +-
+ drivers/net/ethernet/natsemi/ns83820.c        | 10 +--
+ drivers/net/ethernet/netronome/nfp/nfd3/dp.c  |  7 +-
+ .../net/ethernet/netronome/nfp/nfd3/nfd3.h    |  2 +-
+ drivers/net/ethernet/netronome/nfp/nfdk/dp.c  |  6 +-
+ .../net/ethernet/netronome/nfp/nfdk/nfdk.h    |  3 +-
+ drivers/net/ethernet/netronome/nfp/nfp_net.h  |  4 +-
+ .../ethernet/netronome/nfp/nfp_net_common.c   | 12 ++--
+ .../net/ethernet/netronome/nfp/nfp_net_dp.h   |  4 +-
+ drivers/net/ethernet/ni/nixge.c               | 19 ++---
+ drivers/net/ethernet/qlogic/qed/qed.h         |  2 +-
+ drivers/net/ethernet/qlogic/qed/qed_int.c     |  6 +-
+ drivers/net/ethernet/qlogic/qed/qed_int.h     |  4 +-
+ drivers/net/ethernet/qlogic/qed/qed_main.c    | 20 +++---
+ drivers/net/ethernet/sfc/falcon/farch.c       |  4 +-
+ drivers/net/ethernet/sfc/falcon/net_driver.h  |  2 +-
+ drivers/net/ethernet/sfc/falcon/selftest.c    |  2 +-
+ drivers/net/ethernet/sfc/net_driver.h         |  2 +-
+ drivers/net/ethernet/sfc/selftest.c           |  2 +-
+ drivers/net/ethernet/sfc/siena/farch.c        |  4 +-
+ drivers/net/ethernet/sfc/siena/net_driver.h   |  2 +-
+ drivers/net/ethernet/sfc/siena/selftest.c     |  2 +-
+ drivers/net/ethernet/silan/sc92031.c          | 47 ++++++------
+ drivers/net/ethernet/smsc/smc91x.c            | 16 ++---
+ drivers/net/ethernet/smsc/smc91x.h            |  3 +-
+ include/linux/mlx4/device.h                   |  2 +-
+ include/linux/mlx5/cq.h                       |  2 +-
+ 83 files changed, 501 insertions(+), 473 deletions(-)
+
+-- 
+2.17.1
+
 
