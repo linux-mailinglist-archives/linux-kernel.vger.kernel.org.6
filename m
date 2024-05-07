@@ -1,133 +1,289 @@
-Return-Path: <linux-kernel+bounces-171794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920F58BE8CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B258BE94E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD3F28455F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B32E291BE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5F816C43E;
-	Tue,  7 May 2024 16:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7045E16D9AA;
+	Tue,  7 May 2024 16:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="L3FruZzs"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SbBm54P5"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311CC16ABD8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD1915FA70;
+	Tue,  7 May 2024 16:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099131; cv=none; b=tYsUK4BLvJuViINMo1Ykf9hs/XyOvxJnyfQ2CAtQPACv1scbi72X9j4Q8moKZBpmFE7Mbnwi1nLwa76S7Nc9+iDoES7fSCwQ0BOcbxFwhsovZ78SJK/ZeY+kRyFbubS9MFsA8b0KyjvTLtYN3HuabLL5Myxx7JhJU97huxRCuPM=
+	t=1715099707; cv=none; b=Ti+JQlBKkVjx9YzV9ZTfFZJk4/G6rYDEYOPt/1RW03eF/nW369FEfffNDvnOzs4SLS1HuQZhmlAR5YIANzaUOjfOp2wsBSquhouFAQZu1IzcOgTgxLkAydzFJjEnWC0kzT1QWlh1t9z+CoPvsKNDLmiiqx9OKfeKS1EK5YvwSg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099131; c=relaxed/simple;
-	bh=5/4nUFGzVCKyh1B64hVam6vzkGBnCWQpN7HzGYdQUhw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gTqBXAjEOq+sRLOKGKaK+zOIXn741cq3Ow4ZwWE6pBx/oi6v224ual9Gc1dcwJtSc7svaMctXF09YrbmS8PH11mWzwBvaef0t9fkTwZR4KvqegTY8xrLeLx5TiXQoYvDYSF/gikdWp5p4BP8EHo/j+IAkca0QCxMgtn7Xk4E/L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=L3FruZzs; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59cc765c29so579998366b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715099127; x=1715703927; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qsg2qiI3lz3EhCF2HZdFnC7wmOTqjTes666QVJJQB9w=;
-        b=L3FruZzs0HaKvGnuQxR0jF7PdeALJRIlGBpcLZKx5sBfxRv+ySo1LK/iknCVL889sG
-         LRlC0oy/r4BhvJzSwY1b1UKkI0/rr3RuEjYewtz1p3m4FY6wvFzlu3pbwaG3TyRHVKD9
-         j3pm3lg06DYdNbM5B796G77pqKRQQ8eEApFBA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099127; x=1715703927;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qsg2qiI3lz3EhCF2HZdFnC7wmOTqjTes666QVJJQB9w=;
-        b=IZJ/iovAm8eE7c9M/2C/OEo7Xn0598P4SKzYQEymqhWUUaNw2sa2zw3EuxS31fH/Tr
-         y4oJcGwk3PM9YirSRMPEKAIdhG9g3/bJuPPPDH5Cl+MyPp6StnKmlQJBoyKqNjvCWW1q
-         RKlbKDLmDy7PtcEESMZdFcn/erGol7Zxq3+OcY5q0/+rwyVYbf3sGPi57wQhPN2vDVqL
-         tycLIJGC6Z5bKUE38vlWHi4qzYwOGENJ22/2v29EMXSMzldRMflo+jsZ7kpVrlfcc1vS
-         SPUoLbCt0etmCuhQXMAleFpN2otH0diVYyTh8coiwEVnkbOoUEF2jwJ5Nya5MJLYXrps
-         7WrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3cwU9kJnNaKUXZ8tL9U+uYKqpzBpRosuLJOcTjDMN6NwmXqd+bG55hrZ6YD4YmkkjGJy4kRDDr+A7Q9xspkUA8EIIeCLfnHD3M1//
-X-Gm-Message-State: AOJu0YyjqRvk5eUgtj6izWHAQUCOkiu2+WlZI83/UY9sLYvtxcEs36WH
-	yNqsFg/70A3fZW689+oMSIKTrWjE2a1ERV1UE9dRY9PuzeU8HTpZgIXiYkxXq2sAUXBFgrzlEv3
-	D7sb1vw==
-X-Google-Smtp-Source: AGHT+IHMKQSiQS8NmoukPblHClZUc7lupBU1TnHwMwcYdXz2R6Z9rOH0uw0j8kNI1tiLabYMoMAwgQ==
-X-Received: by 2002:a50:8711:0:b0:56e:5735:db2b with SMTP id 4fb4d7f45d1cf-5731da81938mr154899a12.29.1715099127371;
-        Tue, 07 May 2024 09:25:27 -0700 (PDT)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id l11-20020a056402028b00b00572bba6745esm6467712edv.81.2024.05.07.09.25.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 09:25:26 -0700 (PDT)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59a0e4b773so804812466b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:25:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWkqzDGVDE9047kziGr3k9GRDkX/8tZuKtOlJfkCzTatVZlp+Zoj8rDN9OXKuQRrjmnm+bBT4X/6saaPdj35HgwoSUHQyqRH5NXtM1Q
-X-Received: by 2002:a17:906:7804:b0:a59:f380:1821 with SMTP id
- u4-20020a170906780400b00a59f3801821mr1149640ejm.69.1715099125946; Tue, 07 May
- 2024 09:25:25 -0700 (PDT)
+	s=arc-20240116; t=1715099707; c=relaxed/simple;
+	bh=lfScHmvdqPaBXlvaQ/bWWDypFh9amox+v4VqxmSQXYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Anjdy/KM+B42BmHO5l65opclZ/vApNOUPMfMz2c8ieuwG0zy3l7ondNdqC/GVGMnZadvuRIi6xhrveF0Tt7RVb7xShgVNr1eOInKvEZGZ3rBYNmHN9qhoPH9jura6/seX/ELfxP3T1dBtgMQF8iRVl14dDPrtwP8ZhhDO7+Su4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SbBm54P5; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447G7Iq8016296;
+	Tue, 7 May 2024 16:34:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=0g2Y1HrdZhlmW9KUaTvwqMGRRwkTNvfztHJ1kclu0Gs=;
+ b=SbBm54P53l6zmjOw7F3mI5njHXS3ZlF2JxwnOas5/alRvfX5UxH8VCPyJFEIrNEIOX4U
+ Qxg+tCP5UmRqA4XiBURj78mNHP6YXrziNxLB2EVmuHalrQgt3+NZOba+ABYmabzQCBBl
+ p/EjuX6GarkYwD2eELiSR58Z0dtZUqiWlPG0ITvCElTHIcSfWkNVwWmrZaCVHa7QuC5/
+ K1vxc3KultgN1yzfliFjaH+Z7qh1TEp9E30YshSjQPkucYCiLhmv5IEPFlM5pememZOl
+ PKEC4zduwsqA5qFg5VgNRW2weyZViPcWSweTqHOlyM7WYJAX6QtuKy9qCyGFdDRzuG+6 6A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqhr81s5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 16:34:56 +0000
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447GYtwa025401;
+	Tue, 7 May 2024 16:34:55 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqhr81s2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 16:34:55 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447E9Wsr013959;
+	Tue, 7 May 2024 16:34:54 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xx222xvqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 May 2024 16:34:54 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447GYniC47448406
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 7 May 2024 16:34:51 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 128912004E;
+	Tue,  7 May 2024 16:34:49 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C939C2004D;
+	Tue,  7 May 2024 16:34:48 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  7 May 2024 16:34:48 +0000 (GMT)
+Date: Tue, 7 May 2024 18:25:15 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily
+ Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Gerald
+ Schaefer <gerald.schaefer@linux.ibm.com>,
+        Matthew Wilcox
+ <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
+Subject: Re: [PATCH v2 07/10] s390/uv: convert uv_destroy_owned_page() to
+ uv_destroy_(folio|pte)()
+Message-ID: <20240507182515.0ce19da5@p-imbrenda.boeblingen.de.ibm.com>
+In-Reply-To: <20240412142120.220087-8-david@redhat.com>
+References: <20240412142120.220087-1-david@redhat.com>
+	<20240412142120.220087-8-david@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507142454.3344-1-konishi.ryusuke@gmail.com>
-In-Reply-To: <20240507142454.3344-1-konishi.ryusuke@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 7 May 2024 09:25:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
-Message-ID: <CAHk-=wgogPoSdCYw9jhc2Zm=BaE19nXYwFn_F9SwD2C-DyrmCw@mail.gmail.com>
-Subject: Re: [PATCH -mm] nilfs2: Use __field_struct() for a bitwise field
-To: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-nilfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Gy31hXtW57XyqcX0sZhg-EMLdzCls9Qj
+X-Proofpoint-GUID: BbCVk9QsfWD0wnuk-eB_b9oO3gnVttpe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_10,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2404010000 definitions=main-2405070113
 
-On Tue, 7 May 2024 at 07:25, Ryusuke Konishi <konishi.ryusuke@gmail.com> wrote:
->
->    Despite that change, sparse complains when
-> passing a bitwise type to is_signed_type(). It is not clear to me why.
+On Fri, 12 Apr 2024 16:21:17 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
-Bah. The reason is this:
+> Let's have the following variants for destroying pages:
+> 
+> (1) uv_destroy(): Like uv_pin_shared() and uv_convert_from_secure(),
+> "low level" helper that operates on paddr and doesn't mess with folios.
+> 
+> (2) uv_destroy_folio(): Consumes a folio to which we hold a reference.
+> 
+> (3) uv_destroy_pte(): Consumes a PTE that holds a reference through the
+> mapping.
+> 
+> Unfortunately we need uv_destroy_pte(), because pfn_folio() and
+> friends are not available in pgtable.h.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-   #define is_signed_type(type) (((type)(-1)) < (__force type)1)
+Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 
-Basically, the way "is_signed_type()" works is that it casts a
-negative integer to the type, and checks to see if the value has now
-become a large value.
+> ---
+>  arch/s390/include/asm/pgtable.h |  2 +-
+>  arch/s390/include/asm/uv.h      | 10 ++++++++--
+>  arch/s390/kernel/uv.c           | 24 +++++++++++++++++-------
+>  arch/s390/mm/gmap.c             |  6 ++++--
+>  4 files changed, 30 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+> index 60950e7a25f5..97e040617c29 100644
+> --- a/arch/s390/include/asm/pgtable.h
+> +++ b/arch/s390/include/asm/pgtable.h
+> @@ -1199,7 +1199,7 @@ static inline pte_t ptep_get_and_clear_full(struct mm_struct *mm,
+>  	 * The notifier should have destroyed all protected vCPUs at this
+>  	 * point, so the destroy should be successful.
+>  	 */
+> -	if (full && !uv_destroy_owned_page(pte_val(res) & PAGE_MASK))
+> +	if (full && !uv_destroy_pte(res))
+>  		return res;
+>  	/*
+>  	 * If something went wrong and the page could not be destroyed, or
+> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
+> index d2205ff97007..a1bef30066ef 100644
+> --- a/arch/s390/include/asm/uv.h
+> +++ b/arch/s390/include/asm/uv.h
+> @@ -483,7 +483,8 @@ static inline int is_prot_virt_host(void)
+>  int uv_pin_shared(unsigned long paddr);
+>  int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb);
+>  int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr);
+> -int uv_destroy_owned_page(unsigned long paddr);
+> +int uv_destroy_folio(struct folio *folio);
+> +int uv_destroy_pte(pte_t pte);
+>  int uv_convert_owned_from_secure(unsigned long paddr);
+>  int gmap_convert_to_secure(struct gmap *gmap, unsigned long gaddr);
+>  
+> @@ -497,7 +498,12 @@ static inline int uv_pin_shared(unsigned long paddr)
+>  	return 0;
+>  }
+>  
+> -static inline int uv_destroy_owned_page(unsigned long paddr)
+> +static inline int uv_destroy_folio(struct folio *folio)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int uv_destroy_pte(pte_t pte)
+>  {
+>  	return 0;
+>  }
+> diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
+> index 3d3250b406a6..61c1ce51c883 100644
+> --- a/arch/s390/kernel/uv.c
+> +++ b/arch/s390/kernel/uv.c
+> @@ -110,7 +110,7 @@ EXPORT_SYMBOL_GPL(uv_pin_shared);
+>   *
+>   * @paddr: Absolute host address of page to be destroyed
+>   */
+> -static int uv_destroy_page(unsigned long paddr)
+> +static int uv_destroy(unsigned long paddr)
+>  {
+>  	struct uv_cb_cfs uvcb = {
+>  		.header.cmd = UVC_CMD_DESTR_SEC_STOR,
+> @@ -131,11 +131,10 @@ static int uv_destroy_page(unsigned long paddr)
+>  }
+>  
+>  /*
+> - * The caller must already hold a reference to the page
+> + * The caller must already hold a reference to the folio
+>   */
+> -int uv_destroy_owned_page(unsigned long paddr)
+> +int uv_destroy_folio(struct folio *folio)
+>  {
+> -	struct folio *folio = phys_to_folio(paddr);
+>  	int rc;
+>  
+>  	/* See gmap_make_secure(): large folios cannot be secure */
+> @@ -143,13 +142,22 @@ int uv_destroy_owned_page(unsigned long paddr)
+>  		return 0;
+>  
+>  	folio_get(folio);
+> -	rc = uv_destroy_page(paddr);
+> +	rc = uv_destroy(folio_to_phys(folio));
+>  	if (!rc)
+>  		clear_bit(PG_arch_1, &folio->flags);
+>  	folio_put(folio);
+>  	return rc;
+>  }
+>  
+> +/*
+> + * The present PTE still indirectly holds a folio reference through the mapping.
+> + */
+> +int uv_destroy_pte(pte_t pte)
+> +{
+> +	VM_WARN_ON(!pte_present(pte));
+> +	return uv_destroy_folio(pfn_folio(pte_pfn(pte)));
+> +}
+> +
+>  /*
+>   * Requests the Ultravisor to encrypt a guest page and make it
+>   * accessible to the host for paging (export).
+> @@ -437,6 +445,7 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  {
+>  	struct vm_area_struct *vma;
+>  	unsigned long uaddr;
+> +	struct folio *folio;
+>  	struct page *page;
+>  	int rc;
+>  
+> @@ -460,7 +469,8 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  	page = follow_page(vma, uaddr, FOLL_WRITE | FOLL_GET);
+>  	if (IS_ERR_OR_NULL(page))
+>  		goto out;
+> -	rc = uv_destroy_owned_page(page_to_phys(page));
+> +	folio = page_folio(page);
+> +	rc = uv_destroy_folio(folio);
+>  	/*
+>  	 * Fault handlers can race; it is possible that two CPUs will fault
+>  	 * on the same secure page. One CPU can destroy the page, reboot,
+> @@ -472,7 +482,7 @@ int gmap_destroy_page(struct gmap *gmap, unsigned long gaddr)
+>  	 */
+>  	if (rc)
+>  		rc = uv_convert_owned_from_secure(page_to_phys(page));
+> -	put_page(page);
+> +	folio_put(folio);
+>  out:
+>  	mmap_read_unlock(gmap->mm);
+>  	return rc;
+> diff --git a/arch/s390/mm/gmap.c b/arch/s390/mm/gmap.c
+> index 094b43b121cd..0351cb139df4 100644
+> --- a/arch/s390/mm/gmap.c
+> +++ b/arch/s390/mm/gmap.c
+> @@ -2756,13 +2756,15 @@ static const struct mm_walk_ops gather_pages_ops = {
+>   */
+>  void s390_uv_destroy_pfns(unsigned long count, unsigned long *pfns)
+>  {
+> +	struct folio *folio;
+>  	unsigned long i;
+>  
+>  	for (i = 0; i < count; i++) {
+> +		folio = pfn_folio(pfns[i]);
+>  		/* we always have an extra reference */
+> -		uv_destroy_owned_page(pfn_to_phys(pfns[i]));
+> +		uv_destroy_folio(folio);
+>  		/* get rid of the extra reference */
+> -		put_page(pfn_to_page(pfns[i]));
+> +		folio_put(folio);
+>  		cond_resched();
+>  	}
+>  }
 
-Now, it looks odd, because only one of those casts has a "__force" on
-it, but the reason for that is that casting all-ones and all-zeroes is
-ok for bitwise types (think of bitwise types as being a "collection of
-bits" - so all bits set or all bits clear are sane concepts regardless
-of any other semantics).
-
-So it's not the casts themselves that are problematic: that part works fine.
-
-But you cannot compare a random collection of bits for greater than or
-lesser than.
-
-Think of things like byte orders: you can compare two values for
-_equality_ even if they are in the wrong byte order, but you can't
-compare them for "larger than" unless you turn them into the right CPU
-byte order.
-
-Basically, a "collection of bits" doesn't have an ordering in itself,
-even if equality comparisons are ok.
-
-So yeah, is_signed_type() doesn't work for bitwise types.
-
-And I don't see a sane way to make "is_signed_type()" to work for
-bitwise types - the whole concept of signedness of "bunch of bits" is
-kind of nonsensical - so I suspect your workaround is the best we can
-do (alternatively, tracing would have to figure out a different way to
-test for signedness).
-
-                 Linus
 
