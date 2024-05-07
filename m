@@ -1,278 +1,150 @@
-Return-Path: <linux-kernel+bounces-171991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7928BEB8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DF38BEB8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6545D1F229E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E9A1C23535
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7033816F0F2;
-	Tue,  7 May 2024 18:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A69116F296;
+	Tue,  7 May 2024 18:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ay1tSMhi"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="X/mgoeSO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD3B16F0DB
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872AB16F274;
+	Tue,  7 May 2024 18:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715106986; cv=none; b=eSjD8NFEe0m4tVHgbI8mdbRttgMOvH2VINRQcurTiii8jFzb0vfXYnTA1fbZMzJO8Qw/YHTrw3JF7DQnrytDKnUkzpZcpD0BXdvMy9tegEYOLUQIgGLrYt+PARdvCX603VJ43r0YiFmU5fArMnwLZ/aRmcEVyV/zOnJIZl+anfI=
+	t=1715106991; cv=none; b=kOx+IkpdwmP9CtwpDJanLWC+0f5mJNddpZjuvytPOqvV9qoeMr4X/Y5XWsmOfQKkoUawmi+9uI7CAQHYDZpspV4po8GVnRio2/oupA05Pl3vv2WH6CcOct01qqWG0dtYGuLyTgTAMO2ucm4SH3Aog0q6KRY0XcqtoRj4QbQQius=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715106986; c=relaxed/simple;
-	bh=CZSkYQ87LqNxKB6+cfjHvCInBypTk1PVj9bAsiWh/bE=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=T6eEDIrjIo9BAajCvtfEHHsGUzxjhcWgnJdZ1VyEcoXycNmo2+DxIqu3+u7pCvT2WyTzXOsl/To++2SVVKJ8NduEGSvJjmyU8khJzbzltlEVx2TouTIqqb5OmHxbbbFrp5WvkD0pWdU8v/Ao724W/t0C3Md+xzAez+c+6x5AMmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ay1tSMhi; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61be452c62bso58694127b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715106984; x=1715711784; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L6D30HL2E3T95rFOwqlYE0nA8a5DhBCmO1MCVWhQ7Mk=;
-        b=Ay1tSMhi21TTlL3dMkSsNI6cn2NMUTKxF67VxgWYUOACov7XLxuf3wOS6m1UrGCGQY
-         0oO5gB8kguHk8LUmqkc7AKkb3m78V+o9lWrFObW/xDmIFlwSeKylS0A4MA5X+3VIw/5Z
-         Rc5UEv2Htr6Cmwtwo2x52wH6OfqAUXyXeKeKGbxGqV2vit3eAkvvdL28haC00mhv8gal
-         Vs97MIdUWywFOj+au74U6XfzI81i4l+uDePd+K8neD3M926ab9l9n/aorIwo6IZz9Jt4
-         0n0iKpPDznKmMZYk+smJH86rmjBPySf3KfrkPTwFRXPxgDGX37xq0usi5jEPxdh5i6IK
-         fu1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715106984; x=1715711784;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L6D30HL2E3T95rFOwqlYE0nA8a5DhBCmO1MCVWhQ7Mk=;
-        b=lVltMBfIjP9Jt1koEtJ3V3bgcS8F4TxU7vaGa6HdYuWFeaATF1Yp5DdUqAB4pahj8m
-         m0X0n64fmYbjWKmDoTv/tgi/p0R4KhDImf7GhUvXIpSb5i6Zjeu++/w39s8bn0hM/vxw
-         tiFmYe6pPfw3oBkIeK9YiZplUUUDxA238lphunBwFNUMyjo0HcAftl/sxEKvduS99Ymo
-         QT59sdlerTfjy+Qs2FpkWFTWZANRYfaxwz/2kIltz2yUn1vMWI/FOSnUkFQI6jxw1R6l
-         72tMygnBI9d8eyUya6Oc01c3r3amyiOKpxd8adL9ZkojWQZkdo++eVICip29p+V6wque
-         /dTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXdykpcmTXOGLCG7WnnC5pvsP3v8KVUFmhQVsH441OU7n2W1k+pN24OnE/OGGDTao1RtML7DmOBs7Jx6SQ2Uvui8WZW18ZKwGrmdtg
-X-Gm-Message-State: AOJu0YwtCK/HL/h18G/sv0LaR/Euj6YPYc5xAt9QbJwRPvhqoFu2Rsly
-	1ow08aFrrSihhHwsh+mTJrizaoZuEZ3zhexTkE5hBTyMeBhoB2nOwBmWmV/4xHXGrE84530qmE8
-	LqnrGeg==
-X-Google-Smtp-Source: AGHT+IF51C/3SpPdz7yAAmpM3m/2eFLFQvf09wiZMfBZyHHt5wFNxaj5W703N9kTg9Oz3vcP8x6FeMr4s8u7
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8095:fd7:9773:b1df])
- (user=irogers job=sendgmr) by 2002:a25:c78d:0:b0:de6:141a:b0de with SMTP id
- 3f1490d57ef6-debb9d887e9mr46121276.10.1715106983803; Tue, 07 May 2024
- 11:36:23 -0700 (PDT)
-Date: Tue,  7 May 2024 11:35:45 -0700
-In-Reply-To: <20240507183545.1236093-1-irogers@google.com>
-Message-Id: <20240507183545.1236093-9-irogers@google.com>
+	s=arc-20240116; t=1715106991; c=relaxed/simple;
+	bh=teQKchOEq9uRazgHEW2r0xLVQ+sR4ZkcVno60PW+UY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mi7o5ztFrzo8ZhojP8RuRWkOnW5ZMfJ83/9kekBnNs2tJ9LnTZbI75BmYzpBqvICap2iEe1sJ0h0dFFG2nS1wFguk49E92sBPJYhCEr0XBYfIoysNx1N0biUDdL+mbySegx/qSyFtmOSgbqjfs638wk6tBkAgzfIHXzc61+JzUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=X/mgoeSO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 728A3904;
+	Tue,  7 May 2024 20:36:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715106979;
+	bh=teQKchOEq9uRazgHEW2r0xLVQ+sR4ZkcVno60PW+UY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X/mgoeSODr0I6iobUNwoM8X5WMzal5pkTvtETqp7JW0yE1ELUfsgZlkItx6WSn1HJ
+	 kzHWjIBCuvr2wAwoOLsnlLqOzbCsETelWIbA77BDOdTVMxL86OdaD3yTc4QfaE4LPe
+	 +7YclK0P+9Me7DLG/h1upYg/q3F1J9HBn0qofRIs=
+Date: Tue, 7 May 2024 21:36:13 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Maxime Ripard <mripard@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+Message-ID: <20240507183613.GB20390@pendragon.ideasonboard.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+ <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+ <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+ <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+ <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507183545.1236093-1-irogers@google.com>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Subject: [PATCH v1 8/8] perf hist: Avoid hist_entry_iter mem_info memory leak
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Clark <james.clark@arm.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Yanteng Si <siyanteng@loongson.cn>, Sun Haiyong <sunhaiyong@loongson.cn>, 
-	Kajol Jain <kjain@linux.ibm.com>, Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>, 
-	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>, Andi Kleen <ak@linux.intel.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
 
-struct mem_info is reference counted while branch_info and he_cache
-are not. Break apart the priv field in hist_entry_iter so that we can
-know which values are owned by the iter and do the appropriate free or
-put. Move hide_unresolved to marginally shrink the size of the now
-grown struct.
+On Tue, May 07, 2024 at 07:36:59PM +0200, Daniel Vetter wrote:
+> On Tue, May 07, 2024 at 04:15:05PM +0100, Bryan O'Donoghue wrote:
+> > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
+> > > Ah, I see. Then why do you require the DMA-ble buffer at all? If you are
+> > > providing data to VPU or DRM, then you should be able to get the buffer
+> > > from the data-consuming device.
+> > 
+> > Because we don't necessarily know what the consuming device is, if any.
+> 
+> Well ... that's an entirely different issue. And it's unsolved.
+> 
+> Currently the approach is to allocate where the constraints are usually
+> most severe (like display, if you need that, or the camera module for
+> input) and then just pray the stack works out without too much copying.
+> All userspace (whether the generic glue or the userspace driver depends a
+> bit upon the exact api) does need to have a copy fallback for these
+> sharing cases, ideally with the copying accelerated by hw.
+> 
+> If you try to solve this by just preemptive allocating everything as cma
+> buffers, then you'll make the situation substantially worse (because now
+> you're wasting tons of cma memory where you might not even need it).
+> And without really solving the problem, since for some gpus that memory
+> might be unusable (because you cannot scan that out on any discrete gpu,
+> and sometimes not even on an integrated one).
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/hist.c | 39 ++++++++++++++-------------------------
- tools/perf/util/hist.h |  8 +++++---
- 2 files changed, 19 insertions(+), 28 deletions(-)
+I think we have a general agreement that the proposed solution is a
+stop-gap measure for an unsolved issue.
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 00814d42d5f1..2e9e193179dd 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -476,13 +476,6 @@ static int hist_entry__init(struct hist_entry *he,
- 		he->branch_info->to.ms.map = map__get(he->branch_info->to.ms.map);
- 	}
- 
--	if (he->mem_info) {
--		mem_info__iaddr(he->mem_info)->ms.map =
--			map__get(mem_info__iaddr(he->mem_info)->ms.map);
--		mem_info__daddr(he->mem_info)->ms.map =
--			map__get(mem_info__daddr(he->mem_info)->ms.map);
--	}
--
- 	if (hist_entry__has_callchains(he) && symbol_conf.use_callchain)
- 		callchain_init(he->callchain);
- 
-@@ -574,7 +567,6 @@ static struct hist_entry *hist_entry__new(struct hist_entry *template,
- 			he = NULL;
- 		}
- 	}
--
- 	return he;
- }
- 
-@@ -747,7 +739,7 @@ __hists__add_entry(struct hists *hists,
- 		.filtered = symbol__parent_filter(sym_parent) | al->filtered,
- 		.hists	= hists,
- 		.branch_info = bi,
--		.mem_info = mi,
-+		.mem_info = mem_info__get(mi),
- 		.kvm_info = ki,
- 		.block_info = block_info,
- 		.transaction = sample->transaction,
-@@ -836,7 +828,7 @@ iter_prepare_mem_entry(struct hist_entry_iter *iter, struct addr_location *al)
- 	if (mi == NULL)
- 		return -ENOMEM;
- 
--	iter->priv = mi;
-+	iter->mi = mi;
- 	return 0;
- }
- 
-@@ -844,7 +836,7 @@ static int
- iter_add_single_mem_entry(struct hist_entry_iter *iter, struct addr_location *al)
- {
- 	u64 cost;
--	struct mem_info *mi = iter->priv;
-+	struct mem_info *mi = iter->mi;
- 	struct hists *hists = evsel__hists(iter->evsel);
- 	struct perf_sample *sample = iter->sample;
- 	struct hist_entry *he;
-@@ -891,12 +883,7 @@ iter_finish_mem_entry(struct hist_entry_iter *iter,
- 	err = hist_entry__append_callchain(he, iter->sample);
- 
- out:
--	/*
--	 * We don't need to free iter->priv (mem_info) here since the mem info
--	 * was either already freed in hists__findnew_entry() or passed to a
--	 * new hist entry by hist_entry__new().
--	 */
--	iter->priv = NULL;
-+	mem_info__zput(iter->mi);
- 
- 	iter->he = NULL;
- 	return err;
-@@ -915,7 +902,7 @@ iter_prepare_branch_entry(struct hist_entry_iter *iter, struct addr_location *al
- 	iter->curr = 0;
- 	iter->total = sample->branch_stack->nr;
- 
--	iter->priv = bi;
-+	iter->bi = bi;
- 	return 0;
- }
- 
-@@ -929,7 +916,7 @@ iter_add_single_branch_entry(struct hist_entry_iter *iter __maybe_unused,
- static int
- iter_next_branch_entry(struct hist_entry_iter *iter, struct addr_location *al)
- {
--	struct branch_info *bi = iter->priv;
-+	struct branch_info *bi = iter->bi;
- 	int i = iter->curr;
- 
- 	if (bi == NULL)
-@@ -958,7 +945,7 @@ iter_add_next_branch_entry(struct hist_entry_iter *iter, struct addr_location *a
- 	int i = iter->curr;
- 	int err = 0;
- 
--	bi = iter->priv;
-+	bi = iter->bi;
- 
- 	if (iter->hide_unresolved && !(bi[i].from.ms.sym && bi[i].to.ms.sym))
- 		goto out;
-@@ -987,7 +974,7 @@ static int
- iter_finish_branch_entry(struct hist_entry_iter *iter,
- 			 struct addr_location *al __maybe_unused)
- {
--	zfree(&iter->priv);
-+	zfree(&iter->bi);
- 	iter->he = NULL;
- 
- 	return iter->curr >= iter->total ? 0 : -1;
-@@ -1055,7 +1042,7 @@ iter_prepare_cumulative_entry(struct hist_entry_iter *iter,
- 	if (he_cache == NULL)
- 		return -ENOMEM;
- 
--	iter->priv = he_cache;
-+	iter->he_cache = he_cache;
- 	iter->curr = 0;
- 
- 	return 0;
-@@ -1068,7 +1055,7 @@ iter_add_single_cumulative_entry(struct hist_entry_iter *iter,
- 	struct evsel *evsel = iter->evsel;
- 	struct hists *hists = evsel__hists(evsel);
- 	struct perf_sample *sample = iter->sample;
--	struct hist_entry **he_cache = iter->priv;
-+	struct hist_entry **he_cache = iter->he_cache;
- 	struct hist_entry *he;
- 	int err = 0;
- 
-@@ -1126,7 +1113,7 @@ iter_add_next_cumulative_entry(struct hist_entry_iter *iter,
- {
- 	struct evsel *evsel = iter->evsel;
- 	struct perf_sample *sample = iter->sample;
--	struct hist_entry **he_cache = iter->priv;
-+	struct hist_entry **he_cache = iter->he_cache;
- 	struct hist_entry *he;
- 	struct hist_entry he_tmp = {
- 		.hists = evsel__hists(evsel),
-@@ -1192,7 +1179,9 @@ static int
- iter_finish_cumulative_entry(struct hist_entry_iter *iter,
- 			     struct addr_location *al __maybe_unused)
- {
--	zfree(&iter->priv);
-+	mem_info__zput(iter->mi);
-+	zfree(&iter->bi);
-+	zfree(&iter->he_cache);
- 	iter->he = NULL;
- 
- 	return 0;
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 5260822b9773..8fb3bdd29188 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -132,18 +132,20 @@ struct hist_entry_iter {
- 	int total;
- 	int curr;
- 
--	bool hide_unresolved;
--
- 	struct evsel *evsel;
- 	struct perf_sample *sample;
- 	struct hist_entry *he;
- 	struct symbol *parent;
--	void *priv;
-+
-+	struct mem_info *mi;
-+	struct branch_info *bi;
-+	struct hist_entry **he_cache;
- 
- 	const struct hist_iter_ops *ops;
- 	/* user-defined callback function (optional) */
- 	int (*add_entry_cb)(struct hist_entry_iter *iter,
- 			    struct addr_location *al, bool single, void *arg);
-+	bool hide_unresolved;
- };
- 
- extern const struct hist_iter_ops hist_iter_normal;
+Note that libcamera is already designed that way. The API is designed to
+import buffers, using dma-buf file handles. If an application has a way
+to allocate dma-buf instances through another means (from the display or
+from a video encoder for instance), it should do so, and use those
+buffers with libcamera.
+
+For applications that don't have an easy way to get hold of dma-buf
+instances, we have a buffer allocator helper as a side component. That
+allocator uses the underlying camera capture device, and allocates
+buffers from the V4L2 video device. It's only on platforms where we have
+no hardware camera processing (or, rather, platforms where the hardware
+vendors doesn't give us access to the camera hardware, such as recent
+Intel SoCs, or Qualcomm SoCs used in ARM laptops) that we need to
+allocate memory elsewhere.
+
+In the long run, I want a centralized memory allocator accessible by
+userspace applications (something similar in purpose to gralloc on
+Android), and I want to get rid of buffer allocation in libcamera (and
+even in V4L2, in the even longer term). That's the long run.
+
+Shorter term, we have a problem to solve, and the best option we have
+found so far is to rely on dma-buf heaps as a backend for the frame
+buffer allocatro helper in libcamera for the use case described above.
+This won't work in 100% of the cases, clearly. It's a stop-gap measure
+until we can do better.
+
+> > Could be VPU, could be Zoom/Hangouts via pipewire, could for argument sake
+> > be GPU or DSP.
+> > 
+> > Also if we introduce a dependency on another device to allocate the output
+> > buffers - say always taking the output buffer from the GPU, then we've added
+> > another dependency which is more difficult to guarantee across different
+> > arches.
+
 -- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+Regards,
 
+Laurent Pinchart
 
