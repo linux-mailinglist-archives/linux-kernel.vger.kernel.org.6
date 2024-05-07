@@ -1,130 +1,174 @@
-Return-Path: <linux-kernel+bounces-172170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C3E8BEE61
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:51:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 957098BEE66
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 22:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78E75B21CB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDBE01C22270
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CE873183;
-	Tue,  7 May 2024 20:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1422D71B3B;
+	Tue,  7 May 2024 20:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd4LdPFK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hivFTRQ1"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ADA18733E;
-	Tue,  7 May 2024 20:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAE6187353;
+	Tue,  7 May 2024 20:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115102; cv=none; b=UAgiXrob9CjW2pYXs+unwarTTYHXnrF4qy4oTSs8swsy4ouPpLEru65xoKc4i6wRd/iK6guDamB4tkAoD0yv4OigL8idpAahx8y/jvHDD9VVDIA+u5KypgeJ/KAJ20C9Mp34CiERTELtHEHX7zsbB2INDM6sJbhsUk7b8yBCC3E=
+	t=1715115124; cv=none; b=T71EJlxTQ32EICOI4wQPRMrjQaV8JZOxT6Ol9INPan+PESGewiarOrQUdC95Hdi6GzYcMTxUXD4g9m4e/hxeVPLacq9giI14L2ZWnlwI+o43nDx3OF5ckvhWakuZ5FUBI1rRv7d5ShadMFlVXMRs3M7xHI0xrAA8y+xPgeVKzEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115102; c=relaxed/simple;
-	bh=z/n9T5ppUUSRMEJ5Mi5N2EZQnWL+K906LwUS78beWj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDeyOww1EnrrOytuFk0cWoMH+0OYt8ZX0yPFIS1iZM1Mvg+eVB92mKWODkMLohjPpbSlWBMOPm6p4vwaDMhKv9W6468sEggxErBfF27IjkmIIpRV4K12ztrR6lM91SC4uo6O+dZWK1Pn36F00/rDd0HDFKfqTwYAi6mhv5slOEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd4LdPFK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09AAC2BBFC;
-	Tue,  7 May 2024 20:51:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715115101;
-	bh=z/n9T5ppUUSRMEJ5Mi5N2EZQnWL+K906LwUS78beWj8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kd4LdPFKe3oIqgyV71D/y1+ZeZ2T9zcbP2X//BfPtTyQ8046hjQhjV03/zzahOOxl
-	 D0blwrUJhhVoHvzFg+KvUbIUGkF3gTRqusOJOcDM/Q1GPiLieVT2ZsS2ZV24s1RE/I
-	 G6joQ5CyKd9Kj/W3X7QC7QRK1JfjenEEETXnoUep4rm++G4UCj0ghQ3gvqkoL6qQ3O
-	 Ma+CGG0o+1Zt20he+L6ZJf5THtuIZH2Ma37bHRzvMcmQXnMq4qrISenf41iOcyKc0k
-	 UKpbLlWcgsrDH7VOweK2jAqnpIMS+ECTE3AVL176gKNtbtZLP7B/kpOSCWuXxBP2wy
-	 gylmsXfYPsxPA==
-Date: Tue, 7 May 2024 17:51:38 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Clark <james.clark@arm.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>, Li Dong <lidong@vivo.com>,
-	Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1 0/8] Address/leak sanitizer clean ups
-Message-ID: <ZjqUWp9gcIKIy24y@x1>
-References: <20240507183545.1236093-1-irogers@google.com>
+	s=arc-20240116; t=1715115124; c=relaxed/simple;
+	bh=b8UZ2RsJ1KvRwNE/4/qun7NqMNi9/Ak7SZwXxlqtD5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J9pRjKyQiNn8dZmoasPGruBMpZlKQ5l9/Y9miIO3QCpTuF0v2y/N+VxxQrNi2OfX33dKUx1uSlyPEoreW1RUKTfBKtkJA3XI3JKhfMQRTpsOfeso6kc9E5zRI70XopSmQOn8tdAiqhqy8XoIUb06L4yY6S3rpWejjbETBsGIdRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hivFTRQ1; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34f0e55787aso1973011f8f.2;
+        Tue, 07 May 2024 13:52:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715115120; x=1715719920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qdcR2a16esVT3UB13Wto/4zRmwQIrll7yYTlz1PQXa8=;
+        b=hivFTRQ1huyE+NCd428B/jvRiaUVey7DtoY4duh1oTE/7nFH3Ke53YiZrFXCpeDLpo
+         xwzhgDoPhnxA5OkXtVqFRyIZ6IZPoFGuMI73TpMzHxHRpcUxdVkrsX2fhTO9TY9YHVeB
+         UI52nlJLt4vX5jCRL45dyHtyBaTkcidP3BKqYXcz4K+OTGK+VTRkpkAjRWihvJH7UdF7
+         YSEeIS9m7/YG+1m+RH25SywwaCNovK+51E8IMhr0C8K+wXs9H42dp+ruDDb2zlsssr4u
+         6OPBN2YR7Bf+Q83/cyS5qxO0u8gHMWdNE+7KN7blntCJ1nZ9iIfEtf4y+T7KYdzFcqYD
+         21tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715115120; x=1715719920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qdcR2a16esVT3UB13Wto/4zRmwQIrll7yYTlz1PQXa8=;
+        b=J4beitXZdLy2O1OKoVaSZTWCadg+ncBVE4g0hIjbZjxDMP+jfEGGqL/oDHzCZC5AtA
+         5aNWWfARRs6Q8olWkh3WdhX9eRCHDDZvvtMwRSQjp4pY47Y24ox6yVjcSi3SFQB4Fe8X
+         ppOBXs2rGxl/w4QgNwACB6frtHWAqwWhMWUV6ds+R/OB5drohJ7RCrQ83B72/bZZk3Lv
+         4h/npxjwDT6zPNDHhCCMBFuSrGaWMxtMjhG5jkSfYLEK9As4tKkk+BZ1rlZRxZrv1LDn
+         HzeaSIF+w3ncufDcjP8HLs43hIqA2kS0rgaIsgEcNYWCp/ji/Gkb4anWqhhWl/6OzNMl
+         q0dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEAJjE1Igtb6yVqoA4DNawhh1E7OIMBldNEcaf7DF/oH4rY5lgA0NsdLBGkyEni29QbkF2kQ5NKugXT+palOJnB5n5hjCJNcleiLlVtWbl8zj/Yodh29+WzJ0zg9D9imlJkIBl7EIfJujAnFyUEgINS9ppNr+1qWk+UG8UkTb6MwsZlBO9ULB+UuTGqMUpliQpLkP2V/E8Md/l
+X-Gm-Message-State: AOJu0YwomNR/mgfvLvQ3pX3Ad/R2DyWhjhsqBZ9OdGmVu93jfIhZO8la
+	QEo6t7yPrYSV73rFwQsrnBUk6D4Dx7PSjCoEaJcI2dWgvIrKhfBMhd79WCZxM/rZLG6W0JO+6ZK
+	FQSG1mJErpf3JCkN9GY3EHtkECJM=
+X-Google-Smtp-Source: AGHT+IEupALi3YmwRAFNO89hfoLq5x2UZOxByq4dlLEg5tUq6l7C9/2mHmwsQr3MawIVxEWxb4cV0A1MmIur9qWOZgc=
+X-Received: by 2002:a5d:6e55:0:b0:34a:3f3d:bb14 with SMTP id
+ ffacd0b85a97d-34fca242709mr600329f8f.27.1715115119939; Tue, 07 May 2024
+ 13:51:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507183545.1236093-1-irogers@google.com>
+References: <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
+ <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-2-e2bcbdf49857@kernel.org>
+ <CAADnVQJ5-APFxMeGsUDSWBsiAbhJGivs=fBUapgYEFNHgnEVeA@mail.gmail.com> <d28dec16-9029-42f5-b979-a0f11656a991@kernel.org>
+In-Reply-To: <d28dec16-9029-42f5-b979-a0f11656a991@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 7 May 2024 13:51:48 -0700
+Message-ID: <CAADnVQJM73g9gTq3GxR-RMmpJPK3DGgzUTQiJXjz_B1G_4JAAw@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: Add RUN_MPTCP_TEST macro
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: MPTCP Upstream <mptcp@lists.linux.dev>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Geliang Tang <tanggeliang@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 11:35:37AM -0700, Ian Rogers wrote:
-> Remove unnecessary reference counts for structs with no gets.  Add
-> reference count checking to comm_str and mem_info.  Fix memory leaks
-> and errors detected on "perf mem report" by address sanitizer and leak
-> sanitizer.
+On Tue, May 7, 2024 at 9:02=E2=80=AFAM Matthieu Baerts <matttbe@kernel.org>=
+ wrote:
+>
+> Hi Alexei,
+>
+> Thank you for the review!
+>
+> On 07/05/2024 16:44, Alexei Starovoitov wrote:
+> > On Tue, May 7, 2024 at 3:53=E2=80=AFAM Matthieu Baerts (NGI0)
+> > <matttbe@kernel.org> wrote:
+> >>
+> >> From: Geliang Tang <tanggeliang@kylinos.cn>
+> >>
+> >> Each MPTCP subtest tests test__start_subtest(suffix), then invokes
+> >> test_suffix(). It makes sense to add a new macro RUN_MPTCP_TEST to
+> >> simpolify the code.
+> >>
+> >> Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> >> Reviewed-by: Mat Martineau <martineau@kernel.org>
+> >> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> >> ---
+> >>  tools/testing/selftests/bpf/prog_tests/mptcp.c | 12 ++++++++----
+> >>  1 file changed, 8 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c b/tools/te=
+sting/selftests/bpf/prog_tests/mptcp.c
+> >> index baf976a7a1dd..9d1b255bb654 100644
+> >> --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> >> +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> >> @@ -347,10 +347,14 @@ static void test_mptcpify(void)
+> >>         close(cgroup_fd);
+> >>  }
+> >>
+> >> +#define RUN_MPTCP_TEST(suffix)                                 \
+> >> +do {                                                           \
+> >> +       if (test__start_subtest(#suffix))                       \
+> >> +               test_##suffix();                                \
+> >> +} while (0)
+> >
+> > Please no.
+> > Don't hide it behind macros.
+>
+> I understand, I'm personally not a big fan of hiding code being a macro
+> too. This one saves only one line. Geliang added a few more tests in our
+> tree [1], for a total of 9, so that's only saving 9 lines.
+>
+> Related to that, if you don't mind, Geliang also added another macro --
+> MPTCP_SCHED_TEST -- for tests that are currently only in our tree [2]
+> (not ready yet). We asked him to reduce the size of this macro to the
+> minimum. We accepted it because it removed quite a lot of similar code
+> with very small differences [3]. Do you think we should revert this
+> modification too?
 
-Applied locally, doing build tests. Will soon go to tmp.perf-tools-next.
+Yeah. Pls don't hide such things in macros.
+Refactor into helper function in normal C.
 
-- Arnaldo
- 
-> Ian Rogers (8):
->   perf ui browser: Don't save pointer to stack memory
->   perf annotate: Fix memory leak in annotated_source
->   perf block-info: Remove unused refcount
->   perf cpumap: Remove refcnt from cpu_aggr_map
->   perf comm: Add reference count checking to comm_str
->   perf mem-info: Move mem-info out of mem-events and symbol
->   perf mem-info: Add reference count checking
->   perf hist: Avoid hist_entry_iter mem_info memory leak
-> 
->  tools/perf/builtin-c2c.c                      |  13 +-
->  tools/perf/builtin-report.c                   |   3 +-
->  tools/perf/builtin-script.c                   |  12 +-
->  tools/perf/builtin-stat.c                     |  16 +-
->  tools/perf/tests/mem.c                        |  11 +-
->  tools/perf/ui/browser.c                       |   4 +-
->  tools/perf/ui/browser.h                       |   2 +-
->  tools/perf/util/Build                         |   1 +
->  tools/perf/util/annotate.c                    |   6 +
->  tools/perf/util/block-info.c                  |  22 +-
->  tools/perf/util/block-info.h                  |  15 +-
->  tools/perf/util/comm.c                        | 196 +++++++++++-------
->  tools/perf/util/cpumap.c                      |   2 -
->  tools/perf/util/cpumap.h                      |   2 -
->  tools/perf/util/hist.c                        |  62 +++---
->  tools/perf/util/hist.h                        |   8 +-
->  tools/perf/util/machine.c                     |   7 +-
->  tools/perf/util/mem-events.c                  |  36 ++--
->  tools/perf/util/mem-events.h                  |  29 +--
->  tools/perf/util/mem-info.c                    |  35 ++++
->  tools/perf/util/mem-info.h                    |  54 +++++
->  .../scripting-engines/trace-event-python.c    |  12 +-
->  tools/perf/util/sort.c                        |  69 +++---
->  tools/perf/util/symbol.c                      |  26 +--
->  tools/perf/util/symbol.h                      |  12 --
->  25 files changed, 370 insertions(+), 285 deletions(-)
->  create mode 100644 tools/perf/util/mem-info.c
->  create mode 100644 tools/perf/util/mem-info.h
-> 
-> -- 
-> 2.45.0.rc1.225.g2a3ae87e7f-goog
+But, what do you mean "in your tree" ?
+That's your development tree and you plan to send all that
+properly as patches to bpf-next someday?
+
+>
+> [1]
+> https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961a=
+c0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L578-L5=
+95
+>
+> [2]
+> https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961a=
+c0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L559-L5=
+76
+>
+> [3]
+> https://lore.kernel.org/mptcp/cover.1713321357.git.tanggeliang@kylinos.cn=
+/T/#m0b9c14f1cbae8653c6fd119f6b71d1797961d6ba
+>
+> Cheers,
+> Matt
+> --
+> Sponsored by the NGI0 Core fund.
+>
 
