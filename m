@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-170688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E238E8BDAA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B788BDAA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F32E2B22E64
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:24:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7B99B22F88
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A096BFA4;
-	Tue,  7 May 2024 05:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8C96BFA7;
+	Tue,  7 May 2024 05:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qL2BIh1h"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQTFJMPy"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024E86BB4E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59613D0BD;
+	Tue,  7 May 2024 05:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715059440; cv=none; b=cw1gcr+90SayAL/Q8EwllbvUw9siXAVSKrNEw3Cvq5OzpQNXOewa/lLmzgecVN9FrosIXzbJqUSNy95+NPucIoo/TOby7SiNgPE1UnAGuVipZb7ouVEGePZoNe+PWrXB03X49e89oVsvkkFoPplsyFoBzbeOTOy9urzFhehViQQ=
+	t=1715059523; cv=none; b=sUSmf71HGxB1y78GtXOO0uR2utpxR6tLnovHzYQKLRFSA9TDHzivr9WzXqH37hRj3HvjN1bYsWX2vLzPfg3tP6JMlNjrgJv6b/iK9ZfAKbUFCnyx4Zdw3DzfvqpnsJs/+WA6/sbA+Fl77MgEUDBQGvZKvgm0gcfXKTHpIaKqX8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715059440; c=relaxed/simple;
-	bh=rw1WD8iW0Gin6xrr/ze+7VZddUt6rFngb7Xf/Hf/NyU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=mnMcfRDCMPs0QOLB87OFyvLFGEZVlrvigHWXqqbXvMHi8XB1lzBbGkPe+EKnCZ7n59Wgye3a5N7tdGFtN9i18ajitxgsIgVAVRyC1A+cw0L8MpVlRi81BPDlAMi7M+WSyUI+5b9UdXLTjA3oN9ENlRNNkt57q+G/Xk5UNjj6z1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qL2BIh1h; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240507052349epoutp01c67f7853fcce86e2779fe86abd214477~NHXbufxJV0306303063epoutp01I
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:23:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240507052349epoutp01c67f7853fcce86e2779fe86abd214477~NHXbufxJV0306303063epoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715059429;
-	bh=eLSWL99Uk2hAz/dS69zc+plpzQva2XWJGmy85zm1bw4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qL2BIh1h16G9HTz2nd1pylvnymLz0PDVPwidNxOG6BNKGiOepmJ4NXbexkI3H1iB3
-	 RN++JVBBOJwxc3wfQjPXaoccqt0gLtRaIc7g0eSmAJaByyQqHsN8Htgb3D8ReTQ9RU
-	 YJF6tl62DMayR2jpdZljxWj4SFeDiRtUYAxmoXi8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240507052349epcas5p46bd9f56be2888b628cd91add6763f454~NHXbV55eN0641106411epcas5p4I;
-	Tue,  7 May 2024 05:23:49 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4VYRX40d2cz4x9QF; Tue,  7 May
-	2024 05:23:48 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	DB.96.09665.3EAB9366; Tue,  7 May 2024 14:23:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c~NHWCwn0zA2998529985epcas5p3f;
-	Tue,  7 May 2024 05:22:14 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240507052214epsmtrp2e601e6ceb4c3eddd58d0bb9ddc50a35e~NHWCv7nyU0876208762epsmtrp2t;
-	Tue,  7 May 2024 05:22:14 +0000 (GMT)
-X-AuditID: b6c32a4b-5cdff700000025c1-e7-6639bae3e951
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	66.D4.08390.68AB9366; Tue,  7 May 2024 14:22:14 +0900 (KST)
-Received: from testpc118124.samsungds.net (unknown [109.105.118.124]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240507052213epsmtip21f1e5c1752b1be67e1da93dc2a912ef9~NHWB2xYii1163211632epsmtip2X;
-	Tue,  7 May 2024 05:22:13 +0000 (GMT)
-From: Chenliang Li <cliang01.li@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, cliang01.li@samsung.com, gost.dev@samsung.com,
-	io-uring@vger.kernel.org, joshi.k@samsung.com, kundan.kumar@samsung.com,
-	linux-kernel@vger.kernel.org, peiwei.li@samsung.com
-Subject: Re: [PATCH] io_uring/rsrc: Add support for multi-folio buffer
- coalescing
-Date: Tue,  7 May 2024 13:22:03 +0800
-Message-Id: <20240507052203.67459-1-cliang01.li@samsung.com>
+	s=arc-20240116; t=1715059523; c=relaxed/simple;
+	bh=Lz9upKnBUWSJCR3radsm+C5q/ZD++lGHXzZbSNDY3Jc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thLnSrIBIZ6B798XXk0rnSQQxlPw66poijIQ0ayEG4TMVUdydD5aREBtZM7688zl+qD32m0EsrakNCboL7luTc5ZxYa6AzFTAI8EIQBydLTL3RXTpT0EXG4zMumg8TAdCqkgtfSz2xccR/GH0TEpVJ9VeAOojURHHOPw4c0KbYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQTFJMPy; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f45f1179c3so1868136b3a.3;
+        Mon, 06 May 2024 22:25:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715059521; x=1715664321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VotM072PU5f1ynFHubhbSZEV9Z58k4OS4yjrvCyi/KU=;
+        b=GQTFJMPyJvWhVAMxZ3EoPKFdbuGzAlfArcsSDVHj3fi+FWsGf8X4EtdcAr/71WFQcT
+         vpoGpbJGTZUl4HjBxJC0LsAfgu1AIKjOWzVuKRmezqnmhSV/l9TdS6026t+VGyWzyCXS
+         iBscroP/vSuaMfBeEdpS9ZOoDKeWexl0LQpodlEUNUAKVtQy/4wfDfbYp/W6gmKnPfYj
+         nyxt9/ZDQUPRKMsch/a9jNqE/sbMHMS03ufQEFKYrF4fyUrmLIJj7MYbq8CTU1HLV6Fi
+         F1YQoN0UhubVrsEaOO+ryTd3zqpPs2JDVCZJQUT+FgBDc7JAy1WyoRRoIlabX5fqUzym
+         FDAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715059521; x=1715664321;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VotM072PU5f1ynFHubhbSZEV9Z58k4OS4yjrvCyi/KU=;
+        b=Kd31m4z5NJ0ak3b+h6bLFzLaHDjEg4YcJGqEI4HQXeWP6gHUBCL3Yt9Ij7sx5/refc
+         StERAX4tN+3R2BEnUzR3RA3pVRftHDEGpEI1oQCyQofrt5I5Bqu4q9jnG7qeCEsUzAaJ
+         z7oBCtLAyEdvzSCJ992Ua6Lhhcd5mDepbVoyptCP+zo3+L7cg9Gji3KtdIt1Y7PY7laO
+         5ecOIk4PsnN+s2rigE1IqqYW8uJDSlex/0r5xePFm3RwgueqshDcgAf0BvkjZHU9riro
+         ijuTlDgehMDLQrM/bTikg+5x3AcVhUMe3IFWF7vvn49lETMUEq3/7bn1887z50D897jc
+         jigw==
+X-Forwarded-Encrypted: i=1; AJvYcCVk8T5rxvW0OcZiGM6P+U30v0KIkizu/JxZCSWRWEpYWiITsnPEGRvdbEEEXraaPelrTyMlnBzjaeMCeh2xuKuqTfSWkvhgthb3ut7UqWVgrrI9cVruAt0jFX/sb7JBwR5NqeWkwTVzN+8=
+X-Gm-Message-State: AOJu0YymR4YJjWDKw4iG5iyjZcQ30gI0g2jRAKWlxkRlFYiRHEQyKSgJ
+	dmNfdRCn1CnyiEaDIFne0pO0h1C5zU70JzT+OYDe2MBTbHPMfogD
+X-Google-Smtp-Source: AGHT+IEXAeBUuXaJ5L39BPGwF3v+uLqY+hCMwjgssXQL5Lk+kDguAle74Rzr9m631YM+fytEf0u6EA==
+X-Received: by 2002:a05:6a00:3910:b0:6f3:86ac:5eae with SMTP id fh16-20020a056a00391000b006f386ac5eaemr14548559pfb.28.1715059520934;
+        Mon, 06 May 2024 22:25:20 -0700 (PDT)
+Received: from ubuntukernelserver.. ([110.44.116.44])
+        by smtp.gmail.com with ESMTPSA id it21-20020a056a00459500b006f4401df6c9sm8276063pfb.113.2024.05.06.22.25.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 May 2024 22:25:20 -0700 (PDT)
+From: Roshan Khatri <topofeverest8848@gmail.com>
+To: hdegoede@redhat.com,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	hpa@redhat.com,
+	hverkuil-cisco@xs4all.nl,
+	gregkh@linuxfoundation.org
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: atomisp: Fix spelling mistakes in sh_css_sp.c
+Date: Tue,  7 May 2024 11:10:12 +0545
+Message-Id: <20240507052512.7296-1-topofeverest8848@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <71c1f01f-f740-43b0-9962-afcf08cab686@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,71 +86,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmpu7jXZZpBvseyVvMWbWN0WL13X42
-	i9N/H7NY3Dywk8niXes5Fouj/9+yWWz98pXV4vKuOWwWz/ZyOnB67Jx1l93j8tlSj74tqxg9
-	Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvM
-	AbpESaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeXWmJlaGBg
-	ZApUmJCd0bRrL2tBG0fF1Fvn2RsYl7B1MXJwSAiYSLw6qdjFyMUhJLCbUeLO/p/sEM4nRomu
-	s0fZIJxvjBJHd85jhel4eIwLIr6XUeLI/2tQHb8YJSbO+MfUxcjJwSagI/F7xS8WEFtEQFhi
-	f0crC0gRs8BpRol9R3+wgSSEBYIlDrW/ALNZBFQlep6tB2vmFbCRaGvYDBaXEJCX2H/wLDOI
-	zSlgK7H1z2d2iBpBiZMzn4AtYAaqad46mxlkgYTAR3aJVb19TBDNLhIzHx6HGiQs8er4FnYI
-	W0ri87u90AAolli2Tg6it4VR4v27OYwQNdYS/67sYQGpYRbQlFi/Sx8iLCsx9dQ6Joi9fBK9
-	v59AreKV2DEPxlaVuHBwG9QqaYm1E7YyQ9geEouX34EG6QRGiaU991gnMCrMQvLPLCT/zEJY
-	vYCReRWjZGpBcW56arFpgXFeajk8lpPzczcxglOnlvcOxkcPPugdYmTiYDzEKMHBrCTCe7Td
-	PE2INyWxsiq1KD++qDQntfgQoykwwCcyS4km5wOTd15JvKGJpYGJmZmZiaWxmaGSOO/r1rkp
-	QgLpiSWp2ampBalFMH1MHJxSDUw6DWvfa/IkSTbd9nRUi7vyokz65Iq6yx/PZirdEZ6YpdpV
-	ss9HY97jTltp/8/1lQ7tB8sn3/zo4LYgba2AqXmVyIkv6st8F7RO2h/DzXEnd9kjNxWeg0/b
-	mg+wT/tnvW/S1IuTdkz7Ylk/OdT3+u5Zxq9UrszWYrdNVXqblGDclf/3x2H/f89254tM5lsu
-	r/9w/6WYuez3J0cvTeg8Ld1s6bNSzXplXsy660x988IrFz76Pudx3qqwyG3ySbemdnr+5Lqw
-	ZNNKjbKQHWquIvt2z2fukP08Wdwx5VBB/GF+DZfzRh4Lb15M12va9W7ajV83niyrO7Lj9IlF
-	8bN/LOotmbKsq2li86uV7o43vjx/pcRSnJFoqMVcVJwIAJpWiH0mBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJLMWRmVeSWpSXmKPExsWy7bCSvG7bLss0g2NHWCzmrNrGaLH6bj+b
-	xem/j1ksbh7YyWTxrvUci8XR/2/ZLLZ++cpqcXnXHDaLZ3s5HTg9ds66y+5x+WypR9+WVYwe
-	nzfJBbBEcdmkpOZklqUW6dslcGU07drLWtDGUTH11nn2BsYlbF2MHBwSAiYSD49xdTFycQgJ
-	7GaU6J63gLGLkRMoLi3RcaiVHcIWllj57zmYLSTwg1Hi3TJREJtNQEfi94pfLCC2CFDN/o5W
-	FpBBzAJXGSW2nlnLBpIQFgiUWPLzPzOIzSKgKtHzbD0TiM0rYCPR1rCZDWKBvMT+g2fBajgF
-	bCW2/vkMtcxG4t3WQ8wQ9YISJ2c+AVvGDFTfvHU28wRGgVlIUrOQpBYwMq1ilEwtKM5Nzy02
-	LDDKSy3XK07MLS7NS9dLzs/dxAgObS2tHYx7Vn3QO8TIxMF4iFGCg1lJhPdou3maEG9KYmVV
-	alF+fFFpTmrxIUZpDhYlcd5vr3tThATSE0tSs1NTC1KLYLJMHJxSDUzHFu5VZM7eNU9gzp+P
-	qrzWyzJUWc5r9NUvm8CwY/YR12u3uk152JYWHNqY0Cem6xSTXNh7UGPtpbqNC5jzPzY+nvH5
-	qNKC4pW9wUsL46doVOj+c3I2TWDYH7KC/+C/afVXlhmIVf49OX/K1CdhVa2syY+c3P/Nr7wT
-	8+7q5jm5B2cdXNq8I3TZ9P+eNzf3f4idccrhT4Kw/8l253tHNpfMX/0kwej0mXveP1n1rTqO
-	6M69HB6XdGBK5o8eZpe6sN9cMjWb/Z6aPmYI2nRs18tMvWvnlUuX5NZ63bzcpPPlzutVy5ya
-	/q3eZJMY0qP58/7X4y+zql55yGWm2f26UZp8STfZSt+2tr3yh9bUSUdilFiKMxINtZiLihMB
-	IMa+5twCAAA=
-X-CMS-MailID: 20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c
-References: <71c1f01f-f740-43b0-9962-afcf08cab686@kernel.dk>
-	<CGME20240507052214epcas5p351e1ff563e3d62bf1fff305dccc1905c@epcas5p3.samsung.com>
 
-On 5/6/24 6:57 AM, Jens Axboe wrote:
-> Can you add some justification to this commit message? A good commit
-> message should basically be the WHY of why this commit exists in the
-> first place. Your commit message just explains what the patch does,
-> which I can just read the code to see for myself.
-> 
-> As it stands, it's not clear to me or anyone casually reading this
-> commit message why the change is being done in the first place.
+Codespell reported misspelled fields,suppress,separately and offset in
+file sh_css_sp.c. This patch fixes the misspellings.
 
-Thank you for the instruction. I'll submit a V2 patchset with better
-commit message.
+Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/sh_css_sp.c | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> Outside of that, you probably want to split this into two parts - one
-> that adds the helper for the existing code, then one that modifies it
-> for your change. We need this to be as simple as possible to review, as
-> we've had a security issue with page coalescing in this code in the
-> past.
+diff --git a/drivers/staging/media/atomisp/pci/sh_css_sp.c b/drivers/staging/media/atomisp/pci/sh_css_sp.c
+index cd7f5a3fecaa..9da89290c954 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css_sp.c
++++ b/drivers/staging/media/atomisp/pci/sh_css_sp.c
+@@ -1038,7 +1038,7 @@ sh_css_sp_init_stage(struct ia_css_binary *binary,
+ 	if (binary->info->sp.pipeline.mode == IA_CSS_BINARY_MODE_PREVIEW &&
+ 	    (binary->vf_downscale_log2 > 0)) {
+ 		/* TODO: Remove this after preview output decimation is fixed
+-		 * by configuring out&vf info fiels properly */
++		 * by configuring out&vf info fields properly */
+ 		sh_css_sp_stage.frames.out[0].info.padded_width
+ 		<<= binary->vf_downscale_log2;
+ 		sh_css_sp_stage.frames.out[0].info.res.width
+@@ -1333,7 +1333,7 @@ bool sh_css_write_host2sp_command(enum host2sp_commands host2sp_command)
+ 			      host2sp_command)
+ 			      / sizeof(int);
+ 	enum host2sp_commands last_cmd = host2sp_cmd_error;
+-	(void)HIVE_ADDR_host_sp_com; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_host_sp_com; /* Suppress warnings in CRUN */
+ 
+ 	/* Previous command must be handled by SP (by design) */
+ 	last_cmd = load_sp_array_uint(host_sp_com, offset);
+@@ -1351,7 +1351,7 @@ sh_css_read_host2sp_command(void)
+ 	unsigned int HIVE_ADDR_host_sp_com = sh_css_sp_fw.info.sp.host_sp_com;
+ 	unsigned int offset = (unsigned int)offsetof(struct host_sp_communication, host2sp_command)
+ 	/ sizeof(int);
+-	(void)HIVE_ADDR_host_sp_com; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_host_sp_com; /* Suppress warnings in CRUN */
+ 	return (enum host2sp_commands)load_sp_array_uint(host_sp_com, offset);
+ }
+ 
+@@ -1359,7 +1359,7 @@ sh_css_read_host2sp_command(void)
+  * Frame data is no longer part of the sp_stage structure but part of a
+  * separate structure. The aim is to make the sp_data struct static
+  * (it defines a pipeline) and that the dynamic (per frame) data is stored
+- * separetly.
++ * separately.
+  *
+  * This function must be called first every where were you start constructing
+  * a new pipeline by defining one or more stages with use of variable
+@@ -1372,7 +1372,7 @@ sh_css_init_host2sp_frame_data(void)
+ 	/* Clean table */
+ 	unsigned int HIVE_ADDR_host_sp_com = sh_css_sp_fw.info.sp.host_sp_com;
+ 
+-	(void)HIVE_ADDR_host_sp_com; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_host_sp_com; /* Suppress warnings in CRUN */
+ 	/*
+ 	 * rvanimme: don't clean it to save static frame info line ref_in
+ 	 * ref_out, and tnr_frames. Once this static data is in a
+@@ -1551,7 +1551,7 @@ ia_css_pipe_set_irq_mask(struct ia_css_pipe *pipe,
+ 	 * - different assert for Linux and Windows
+ 	 */
+ 
+-	(void)HIVE_ADDR_host_sp_com; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_host_sp_com; /* Suppress warnings in CRUN */
+ 
+ 	IA_CSS_LOG("or_mask=%x, and_mask=%x", or_mask, and_mask);
+ 	event_irq_mask.or_mask  = (uint16_t)or_mask;
+@@ -1580,7 +1580,7 @@ ia_css_event_get_irq_mask(const struct ia_css_pipe *pipe,
+ 	struct sh_css_event_irq_mask event_irq_mask;
+ 	unsigned int pipe_num;
+ 
+-	(void)HIVE_ADDR_host_sp_com; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_host_sp_com; /* Suppress warnings in CRUN */
+ 
+ 	IA_CSS_ENTER_LEAVE("");
+ 
+@@ -1630,7 +1630,7 @@ sh_css_sp_start_isp(void)
+ 	if (sp_running)
+ 		return;
+ 
+-	(void)HIVE_ADDR_sp_sw_state; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_sp_sw_state; /* Suppress warnings in CRUN */
+ 
+ 	/* no longer here, sp started immediately */
+ 	/*ia_css_debug_pipe_graph_dump_epilogue();*/
+@@ -1669,7 +1669,7 @@ ia_css_isp_has_started(void)
+ {
+ 	const struct ia_css_fw_info *fw = &sh_css_sp_fw;
+ 	unsigned int HIVE_ADDR_ia_css_ispctrl_sp_isp_started = fw->info.sp.isp_started;
+-	(void)HIVE_ADDR_ia_css_ispctrl_sp_isp_started; /* Suppres warnings in CRUN */
++	(void)HIVE_ADDR_ia_css_ispctrl_sp_isp_started; /* Suppress warnings in CRUN */
+ 
+ 	return (bool)load_sp_uint(ia_css_ispctrl_sp_isp_started);
+ }
+@@ -1724,7 +1724,7 @@ sh_css_sp_set_dma_sw_reg(int dma_id,
+ 	sw_reg =
+ 	    sh_css_sp_group.debug.dma_sw_reg;
+ 
+-	/* get the offest of the target bit */
++	/* get the offset of the target bit */
+ 	bit_offset = (8 * request_type) + channel_id;
+ 
+ 	/* clear the value of the target bit */
+-- 
+2.34.1
 
-Will split this in V2.
-
-> Minor comments below, will wait with a full review until this is split
-> to be more easily reviewable.
-
-Thank you for the comments. Will address them in V2.
 
