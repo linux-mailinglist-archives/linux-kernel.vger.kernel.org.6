@@ -1,82 +1,57 @@
-Return-Path: <linux-kernel+bounces-171587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7E78BE613
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:35:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72D868BE616
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 895E21C223EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:35:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46CF1C22A03
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32FF15FA7D;
-	Tue,  7 May 2024 14:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5322115F326;
+	Tue,  7 May 2024 14:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsh4qTC5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aPqSizRO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03170154BFC;
-	Tue,  7 May 2024 14:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958D615FCF6;
+	Tue,  7 May 2024 14:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715092503; cv=none; b=A1pZZX+PduMimOklglXLEpz1FRfHXePpEdRBgXUOMQ4utjG7hJn7hi6Qcm37sVwEiaWa1HXuypugSunKLN3ne0c1e7R/QcS1ZTb7URx+41d1/P47hyulrxjJwPDCrGWUMZtNHm5Xc8PP/yQaELaqxToK+iGcauZgv5GMA7A4kIw=
+	t=1715092505; cv=none; b=MyeCcAEXkYzovtVSVp1K+Mph0Xa3bdf6UZqIU/01fQGgGVBumbjkE8PmLu+v7gwIAuHXRdI/NtIIX3FQhF2+upftDVoxaXWvldjy8BUJYDZz9YD5pKkCyH8idJNxea/+ZyHV7ztEhQ4uH15oSEOqXQeR5Hi2S4fO24Z068BO3Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715092503; c=relaxed/simple;
-	bh=y6WKrVLOQiWpSilDvghHWU2H2C7Bg6g2vDY3+N3fXQ4=;
+	s=arc-20240116; t=1715092505; c=relaxed/simple;
+	bh=N0nCKnQCByT3IK3m7wyeGknqiLgIC3cuB/Cu7ARwNXk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JS5F2yhufBoNmq+GPCtWYF4iJDnYlF42vwV+f1NNRW9NAhdc6VpUj+IMPfsFKf4RDn908vNjfdIOJGoEU4QdaZgALZTHCSXzu8ScyoEE/Jxn8Cj/ydQSriWtytd0FURBPb4beu4QLfiHw5MjXnq9hf73CFYjFq3SWyWT0A/ZBs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsh4qTC5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16855C2BBFC;
-	Tue,  7 May 2024 14:34:52 +0000 (UTC)
+	 MIME-Version:Content-Type; b=jJ3JR07A05PNrLUCHiF58jib12QSKCKE4AJ8FxtkRj6FC/gwVBwhRPZ5BnBLemXmiFLnBZJtJ5LEj2NafM9O+zUA0pqhdWWO+tFN4V7lffCuazdkwAePzlsGlr9A/bHupiiIDMUFfJ6ipoTZib8gZzy8oYqDsakUYzKDYZzumGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aPqSizRO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37C8DC4DDE2;
+	Tue,  7 May 2024 14:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715092502;
-	bh=y6WKrVLOQiWpSilDvghHWU2H2C7Bg6g2vDY3+N3fXQ4=;
+	s=k20201202; t=1715092505;
+	bh=N0nCKnQCByT3IK3m7wyeGknqiLgIC3cuB/Cu7ARwNXk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jsh4qTC5gVZ7sYBPuy5NlWFptghPLLD48L0GvjH4JiS3kx7qOWhxE7m21fp7sfw5c
-	 OZfXdkbVtD4CmIf0rWQc/ADEFT+DencCfMXoMCOMYluT7CnDXVqh+Po/Z45ToGLJ4N
-	 q/GfiRzpjYDI+kuA54dDD4j/cOQ6T81YZvpCLOiTrXY8Rsqbr2u3Pt4dWloOqnbdmK
-	 dEF17UfmRG74qkmmf4YzoCKy1/QtSvaWf3ESfV5psZBtE0MmNvwqoDLyERgaX9ZgtU
-	 ZOs30E1pnraWOyvvVNTqrFU7qisbhaGsGF5Z+19N7FUZM8OUy3ExYFzba4k3X0v+0X
-	 dOQVG31vmlkFA==
+	b=aPqSizROc6nkC1M30JjjYa4TqcuN2LVFmDCEX1yiBaD4A67donhVsuOX9Ts5WoG3v
+	 W7M1GDOTWsOl0Bufm3yPAxx/uyA+mDq9vY5n37fGNLecNUa6gaXx4VBEN7YCBbahCG
+	 Njp9f9QREQYHjfJmdBJw16zMIroiBGhcw7e8bg8ysTCzgsgqnILvLaAi9LnOvR6e+x
+	 5aC0qnj4STAmYHg+/nHDJKCeOfrAvZNJCIfBluGe6zFo1PqLTpQliUBvK3T308ncrg
+	 wqERY3tSpi/Q5NktzUyTtltwJYK8JrQac3n8CNEbTXAtzWS9nd7i9Q3jVJxFImCOyL
+	 7QpsuHopMIsDw==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
- Jarkko Nikula <jarkko.nikula@bitmer.com>, Daniel Mack <daniel@zonque.org>, 
- Haojian Zhuang <haojian.zhuang@gmail.com>, 
- Robert Jarzmik <robert.jarzmik@free.fr>, 
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Ban Tao <fengzheng923@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev, 
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-sunxi@lists.linux.dev
-In-Reply-To: <20240430-asoc-snd-substream-clean-v1-0-6f8a8902b479@linaro.org>
-References: <20240430-asoc-snd-substream-clean-v1-0-6f8a8902b479@linaro.org>
-Subject: Re: [PATCH 00/13] ASoC: Use snd_soc_substream_to_rtd() for
- accessing private_data
-Message-Id: <171509249287.1985791.3932273255744591305.b4-ty@kernel.org>
-Date: Tue, 07 May 2024 23:34:52 +0900
+To: alsa-devel@alsa-project.org, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ patches@opensource.cirrus.com, Takashi Iwai <tiwai@suse.com>
+In-Reply-To: <20240430115438.29134-1-wsa+renesas@sang-engineering.com>
+References: <20240430115438.29134-1-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 0/4] ASoC: use 'time_left' instead of 'timeout' with
+ wait_for_*() functions
+Message-Id: <171509250290.1985791.3642675927789530835.b4-ty@kernel.org>
+Date: Tue, 07 May 2024 23:35:02 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,14 +62,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev
 
-On Tue, 30 Apr 2024 16:02:09 +0200, Krzysztof Kozlowski wrote:
-> Do not open-code snd_soc_substream_to_rtd() when accessing
-> snd_pcm_substream->private_data.  This makes code more consistent with
-> rest of ASoC and allows in the future to move the field to any other
-> place or add additional checks in snd_soc_substream_to_rtd().
+On Tue, 30 Apr 2024 13:54:33 +0200, Wolfram Sang wrote:
+> There is a confusing pattern in the kernel to use a variable named 'timeout' to
+> store the result of wait_for_*() functions causing patterns like:
 > 
-> Best regards,
-> Krzysztof
+>         timeout = wait_for_completion_timeout(...)
+>         if (!timeout) return -ETIMEDOUT;
+> 
+> with all kinds of permutations. Use 'time_left' as a variable to make the code
+> obvious and self explaining.
 > 
 > [...]
 
@@ -104,32 +80,14 @@ Applied to
 
 Thanks!
 
-[01/13] ASoC: qcom: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 77678a25d1ecf70dc1d7ea2c0ab7609af15b83d3
-[02/13] ASoC: tegra: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 3beb985abbf29e660edd1708f8a120ae9bbbddc3
-[03/13] ASoC: ti: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 72a666f47f958a57db16b6bdd9ed385674069693
-[04/13] ASoC: arm: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: a80f2f8443a4ae10c568566f57fe704ea52c5bdb
-[05/13] ASoC: amd: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: a84d84077512fc64cf1fc2292a3638690a026737
-[06/13] ASoC: fsl: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: b695d8be5bba9897ee670ec102ca608ecaf625c4
-[07/13] ASoC: img: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 3b62178720594e08bdf8a87515ccca0328fe41fe
-[08/13] ASoC: kirkwood: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: fe42c3b75b93dee9a4010e2297f1783e48684af7
-[09/13] ASoC: loongson: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: ffad75cebb865fef6f8e40f921c08c79a8faf7e3
-[10/13] ASoC: mediatek: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 410a45140fb76709cf2bbad84bc8a731acf632c8
-[11/13] ASoC: meson: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 22f5680a9cbc7388f97e5386c15c325d6961b958
-[12/13] ASoC: samsung: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 3e726593107d134221f666b4f2be612b278c3ddb
-[13/13] ASoC: sunxi: Use snd_soc_substream_to_rtd() for accessing private_data
-        commit: 47aa51677c975a5f66bc93d1c527e8878cf34d6c
+[1/4] ASoC: codecs: wm8962: use 'time_left' variable with wait_for_completion_timeout()
+      commit: cfcd957e63506273dc54f34b320172c8709244c7
+[2/4] ASoC: codecs: wm8993: use 'time_left' variable with wait_for_completion_timeout()
+      commit: 0800660d8c59539b628f5a6646bb63091d58152f
+[3/4] ASoC: codecs: wm8994: use 'time_left' variable with wait_for_completion_timeout()
+      commit: 19c70b4668306632d3cbbecdf5fea98b528e873e
+[4/4] ASoC: codecs: wm8996: use 'time_left' variable with wait_for_completion_timeout()
+      commit: 4e1f953a4a447b5e001655b453505c4c15904c61
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
