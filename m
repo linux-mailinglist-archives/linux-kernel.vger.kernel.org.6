@@ -1,116 +1,206 @@
-Return-Path: <linux-kernel+bounces-171299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEDC8BE25E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:41:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77D98BE261
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1AF01C236FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5F128C1C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA3315B111;
-	Tue,  7 May 2024 12:41:52 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711E415CD51;
+	Tue,  7 May 2024 12:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgT2vZTb"
+Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFE26CDB1;
-	Tue,  7 May 2024 12:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05337158A2D;
+	Tue,  7 May 2024 12:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085712; cv=none; b=fNcDGDBDexuZnavXrBdnY56kvZ3O8B2vc68k2ZJZFV8rvvp7HCYPInBC8N8aNFuKvOCSZGNiNJJqgaaRzInUnoqGUfCAKTtKtXRiaa0Sn/UZQZJqOYaULRq8C+jdO13gFuSiPeEV3m9DIMIdDGaEFNEo5nphpZkbA14+a+B2Xhg=
+	t=1715085782; cv=none; b=jjeOjkcDLumMY/tNO06GWDrujnvv6Cze4fwxF8QaRbdGTJ+oc0pBG+XicK0qsEbIViMGakPdxcpydo7/paljlcVoMEKiRgDwggAEuPbozK3Ys0oeifUFTzgT+qekWT2dKKWPYuwBv7B/ANkxIdFBXqcs+54Dh9tXKt3302knMwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715085712; c=relaxed/simple;
-	bh=7KEcsbmaA7aD57rmrMuDbLkNyccMo7sXPpbR11JklnE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ura5Ldm43iNBNP6vztFQk3JeEeYuUd2WnHjEROCF7FopELbjpul6v+7axVnWCvBlBjwmIm1gBvAY8St/kKkiH5L6Ri6zb+RXqPULpxzTuUtNCJWR1h+MgOujp++x5k9aJYkU9YH7X9oC6uwCQnrmQgyMufxyTA32EK7xQwuis/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VYdFF1c3Yz4f3jXg;
-	Tue,  7 May 2024 20:41:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 767DC1A0572;
-	Tue,  7 May 2024 20:41:45 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAXPA+HITpmNyEvMQ--.45588S3;
-	Tue, 07 May 2024 20:41:45 +0800 (CST)
-Subject: Re: [PATCH 4/9] jbd2: move repeat tag around to remove a repeat check
- of b_frozen_data
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
- <20240506141801.1165315-5-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <b2fa97c7-3f1c-321d-038e-7fb46420d24b@huaweicloud.com>
-Date: Tue, 7 May 2024 20:41:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715085782; c=relaxed/simple;
+	bh=pQ0VyLEWPbTzv8ueT/SYA25grM78ReWuMdOeMbNrUDg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qrKCUkKjAQWylYT75GwZyZEkw5J9d6b8NMP51bGz1+gPfaQKkKZIdnITI+b1EljUIzn0n0ONClJlL0AxdhL1QIntnU042YzNAsMG6wXu0UlC2rlfP9eYkVYngDUfle5Bh1UHa9zxjfBa+DLk+Ok7MHYE5Rr6i6uZrs7P3fV1rVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AgT2vZTb; arc=none smtp.client-ip=209.85.221.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-34d8f6cfe5bso2136927f8f.3;
+        Tue, 07 May 2024 05:43:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715085779; x=1715690579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UeeAUA+M1CrSeGLqCio6FXkyYBfV90EEN3G250oeFOA=;
+        b=AgT2vZTb2uIjxuY7UvG1xtj1dcxwuDtSqq0xonzoR11Z7jelq6oe5iWv2yTyYqenrv
+         /kK2edpOwdLgT0ohHRLyQy2E4W0XJ5VJF1sluCFv4X60owkl5fgXOmc620TRLG/nhmw7
+         uHTajN7Hy7lqjxfMHDSQtEQoXLJnG3PHU+Na72rBgILztYd/VuO/x2YUtklk953E4ekX
+         yXbKq+sE0AvgnZWFdmN9oGZp/XkZwb3AK0R6ZqJy9fSEBG/5ug7itGqvSvN1su9JiyVm
+         +SWeopoir7y2xpIzCizi9dFCAq8jC3PXIJsSyvlLGeD2qm00TJxr9fKWghKuJX+vBQLn
+         oUBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715085779; x=1715690579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UeeAUA+M1CrSeGLqCio6FXkyYBfV90EEN3G250oeFOA=;
+        b=wrzmaMKzS+jVbgNjnLkNq3/GqWHaXutd+eXeBGZ9Ti0vHmNcTjp90KwLQLsdnN+F69
+         7QrVGf+8TY5+ekcfT4gjdrqTnhaJb8dhv27OExPfLLwgdWLf6gT3K4RFQbe4hEjYBABc
+         gLIoWRIN3p/9ks95WjO2Dv+JAwHFQSjxh+mdeMAJn1ka2SxsiSUqTMbA2BCdvxGSB6yG
+         KMmQyXjknO5YYX+KGr5m/u9XnMDtM1K6ZAQoOHrtJuX4dhTmFPOkdjrVzPqQMH0XsY/h
+         dWD05NJlDVoHeiwhMw+j17O81rBBMcmPt8ZBkQRaU+L9Bs1jCcCLeuRIbDL/hdZikIlV
+         U1EA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+uE6uyYCUpk/8Ij6F5qHDWIbwbDF3FxFYstHGglacgRW8XEnURLjfOPPq0cpDf5QKLrxO8WLuNu3Hc7hp+QZCwH3Y3eCMqkTg6FMi+7w0Vpeo31sSDyoJuow2PS0V58XZIHP3
+X-Gm-Message-State: AOJu0Yy3SWnl5OmaxticlcFEW+9tEtAUe/Fj26FiHHg+3STrgV+huzYA
+	Q1seyyvJXU0OfW+VcKpaaNNwL8nc5Rh18TT8ZUfDFlS/47guSQW7
+X-Google-Smtp-Source: AGHT+IGCppBeEMOhD2xrR4PCOwGHoUpQx6Wz2LFnJVIyZ0e9u1sGi4E1te2Y5/irFZXNAMndMk5ROA==
+X-Received: by 2002:a5d:5242:0:b0:347:d352:d5c2 with SMTP id k2-20020a5d5242000000b00347d352d5c2mr9870799wrc.13.1715085779100;
+        Tue, 07 May 2024 05:42:59 -0700 (PDT)
+Received: from localhost ([45.130.85.2])
+        by smtp.gmail.com with ESMTPSA id b12-20020a5d4d8c000000b0034e65b8b43fsm10915955wru.8.2024.05.07.05.42.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 05:42:58 -0700 (PDT)
+From: Leone Fernando <leone4fernando@gmail.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	willemb@google.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Leone Fernando <leone4fernando@gmail.com>
+Subject: [PATCH net-next v2 0/4] net: route: improve route hinting
+Date: Tue,  7 May 2024 14:42:25 +0200
+Message-Id: <20240507124229.446802-1-leone4fernando@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240506141801.1165315-5-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAXPA+HITpmNyEvMQ--.45588S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Wr4fCrW3Kr4UXrW3CFW7urg_yoW8Jr1xpr
-	93KF1jkFyvg3s2yFs7ua1DuFy09ws5WFy8KFnxCr1ayay3Xw1xWryjvw15Kw12yrZ7G3y8
-	Zryq93yxW3ZIvFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUzsqWUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/6 22:17, Kemeng Shi wrote:
-> We make sure b_frozen_data is not NULL before jump to "repeat" tag, move
-> "repeat" tag around to remove repeat check of b_frozen_data.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  fs/jbd2/journal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 9a35d0c5b38c..77fcdc76fdfd 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -353,12 +353,12 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	atomic_set(&new_bh->b_count, 1);
->  
->  	spin_lock(&jh_in->b_state_lock);
-> -repeat:
->  	/*
->  	 * If a new transaction has already done a buffer copy-out, then
->  	 * we use that version of the data for the commit.
->  	 */
->  	if (jh_in->b_frozen_data) {
-> +repeat:
->  		done_copy_out = 1;
->  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
-> 
+In 2017, Paolo Abeni introduced the hinting mechanism [1] to the routing
+sub-system. The hinting optimization improves performance by reusing
+previously found dsts instead of looking them up for each skb.
 
-I suppose we could drop the repeat tag entirely, just set the new_folio and
-new_offset, and then goto handle do_escape. We don't need to call
-jbd2_buffer_frozen_trigger() and check for escaping again, is that right?
+This patch series introduces a generalized version of the hinting mechanism that
+can "remember" a larger number of dsts. This reduces the number of dst
+lookups for frequently encountered daddrs.
 
-Thanks,
-Yi.
+Before diving into the code and the benchmarking results, it's important
+to address the deletion of the old route cache [2] and why
+this solution is different. The original cache was complicated,
+vulnerable to DOS attacks and had unstable performance.
+
+The new input dst_cache is much simpler thanks to its lazy approach,
+improving performance without the overhead of the removed cache
+implementation. Instead of using timers and GC, the deletion of invalid
+entries is performed lazily during their lookups.
+The dsts are stored in a simple, lightweight, static hash table. This
+keeps the lookup times fast yet stable, preventing DOS upon cache misses.
+The new input dst_cache implementation is built over the existing
+dst_cache code which supplies a fast lockless percpu behavior.
+
+The measurement setup is comprised of 2 machines with mlx5 100Gbit NIC.
+I sent small UDP packets with 5000 daddrs (10x of cache size) from one
+machine to the other while also varying the saddr and the tos. I set
+an iptables rule to drop the packets after routing. the receiving
+machine's CPU (i9) was saturated. 
+
+Thanks a lot to David Ahern for all the help and guidance!
+
+I measured the rx PPS using ifpps and the per-queue PPS using ethtool -S.
+These are the results:
+
+Total PPS:
+mainline              patched                   delta
+  Kpps                  Kpps                      %
+  6903                  8105                    17.41
+
+Per-Queue PPS:
+Queue          mainline         patched
+  0             345775          411780
+  1             345252          414387
+  2             347724          407501
+  3             346232          413456
+  4             347271          412088
+  5             346808          400910
+  6             346243          406699
+  7             346484          409104
+  8             342731          404612
+  9             344068          407558
+  10            345832          409558
+  11            346296          409935
+  12            346900          399084
+  13            345980          404513
+  14            347244          405136
+  15            346801          408752
+  16            345984          410865
+  17            346632          405752
+  18            346064          407539
+  19            344861          408364
+ total          6921182         8157593
+
+I also verified that the number of packets caught by the iptables rule
+matches the measured PPS.
+
+TCP throughput was not affected by the patch, below is iperf3 output:
+       mainline                                     patched 
+15.4 GBytes 13.2 Gbits/sec                  15.5 GBytes 13.2 Gbits/sec
+
+[1] https://lore.kernel.org/netdev/cover.1574252982.git.pabeni@redhat.com/
+[2] https://lore.kernel.org/netdev/20120720.142502.1144557295933737451.davem@davemloft.net/
+
+v1->v2:
+- fix bitwise cast warning
+- improved measurements setup
+
+v1:
+- fix typo while allocating per-cpu cache
+- while using dst from the dst_cache set IPSKB_DOREDIRECT correctly
+- always compile dst_cache
+
+RFC-v2:
+- remove unnecessary macro
+- move inline to .h file
+
+RFC-v1: https://lore.kernel.org/netdev/d951b371-4138-4bda-a1c5-7606a28c81f0@gmail.com/
+RFC-v2: https://lore.kernel.org/netdev/3a17c86d-08a5-46d2-8622-abc13d4a411e@gmail.com/
+
+Leone Fernando (4):
+  net: route: expire rt if the dst it holds is expired
+  net: dst_cache: add input_dst_cache API
+  net: route: always compile dst_cache
+  net: route: replace route hints with input_dst_cache
+
+ drivers/net/Kconfig        |   1 -
+ include/net/dst_cache.h    |  68 +++++++++++++++++++
+ include/net/dst_metadata.h |   2 -
+ include/net/ip_tunnels.h   |   2 -
+ include/net/route.h        |   6 +-
+ net/Kconfig                |   4 --
+ net/core/Makefile          |   3 +-
+ net/core/dst.c             |   4 --
+ net/core/dst_cache.c       | 132 +++++++++++++++++++++++++++++++++++++
+ net/ipv4/Kconfig           |   1 -
+ net/ipv4/ip_input.c        |  58 ++++++++--------
+ net/ipv4/ip_tunnel_core.c  |   4 --
+ net/ipv4/route.c           |  75 +++++++++++++++------
+ net/ipv4/udp_tunnel_core.c |   4 --
+ net/ipv6/Kconfig           |   4 --
+ net/ipv6/ip6_udp_tunnel.c  |   4 --
+ net/netfilter/nft_tunnel.c |   2 -
+ net/openvswitch/Kconfig    |   1 -
+ net/sched/act_tunnel_key.c |   2 -
+ 19 files changed, 291 insertions(+), 86 deletions(-)
+
+-- 
+2.34.1
 
 
