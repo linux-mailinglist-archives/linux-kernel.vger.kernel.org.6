@@ -1,128 +1,207 @@
-Return-Path: <linux-kernel+bounces-171816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD908BE911
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:32:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C3F8BE916
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7B761F23016
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C87528CF0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E59017F398;
-	Tue,  7 May 2024 16:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567C416C85B;
+	Tue,  7 May 2024 16:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kijo11kH"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBMwDUYA"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F9A171085
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 16:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3F316C447;
+	Tue,  7 May 2024 16:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099247; cv=none; b=KYOgIk86xSGMw/oKhjsEqB90Ql8vYZfoeoTXjSfPcFSq21icAPyTyG8XAm8hrDw/3qseHm9a2AQJOY4GtjKYKPQEPwgb4EEcXgWyS6CVjEH2TriRzFEdoA+p204A6Hl/yxCdB0xUqbrvDJfJxgYx7gXfmnczOWKqGEA2HcPU9d0=
+	t=1715099283; cv=none; b=fLUIhsFmVC/gSKOO2nDxIBY043tJw93y/ZZrcuFaKkq06OBvfnV+ZAhLw7B9U30+PrJ3rmJ3YFO0h03Xpem4RMvzbnezRQDx0bwHz6Dv2eJqBvXnXf4mDRxkWxTL06ggqBFOkNn8An8qyA+5TNHZy/g9O3YTJVfhYotjQ0IniGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099247; c=relaxed/simple;
-	bh=xx+wxFNs3ZuqK7Hxds/mLdbM5HIFghI8UQG5DaBamLQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D6FwvxWYF61XDaeKAVP1Exwq+Ha0RKEVflZXGUQahvhZ9COncD7cYNKorkiSP3oYcsgUlR+uV7XGref/RWJGPUDXDtWCm0qsfx1D6e2DWLnF4OvWf/H76map7h/UDMIufeTlqW3FeXjdW9s/G1z13vkR2vHhSSDm8M575yRXOoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kijo11kH; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43d4a2d0a0bso16204511cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 09:27:25 -0700 (PDT)
+	s=arc-20240116; t=1715099283; c=relaxed/simple;
+	bh=hD+M8iZyRZ2U9jnt01xrNmHVdD1Kc6oVV4hfl9YcSjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=r2IdKelf98fJTD4rxOepQwLJtlhRh2Ii59hAO1mAZqmC077Gb9L++NtqLYBHQ0m9SkKqFMU8NWbT45RSl3oodkPuIS3LZFY3K7EfaKGKVocZ/E+dJ3qdfK4o/orC2ACDK3lCp+yMIzUSELi8XDANA0TZl8uqMB0Poxe9rI/XVNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBMwDUYA; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so726402966b.0;
+        Tue, 07 May 2024 09:28:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715099245; x=1715704045; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=24yjDTHuOCF+C8SbX9O7bVVIA87jnk99ezK2b/3Gma4=;
-        b=kijo11kHp2VAvCMSD4iUw/+pq4P4CA+f7MIsCw0/FUSb+XujX+hkKeCu264OA5aDBA
-         5wdUM8cO+wONlCxMUKFSKDh721ktw7XSngbs7+Rd90021jKDJMZvbRBUegNR6CIVvnz2
-         Rkgqrs9ZYugnUb5sh1vbaYj7t8FOMVc1EvYRk=
+        d=gmail.com; s=20230601; t=1715099280; x=1715704080; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rICwxurU6A+ycOmFzrxmjMEY+vAR/gQDdccoIGBtMqA=;
+        b=bBMwDUYAyCNo3SnY7dqiYWGUDAvA5KOLaMSiryJybhsYi6F3uv8Dk1M503llh38mDi
+         HIgw8yvrsBjKH1NCuwmy4VO6VuR1keoV7U0KfmGiM4fcjPwaNyvSi++I7Utb/B8Knpz1
+         n5d1HVwXE4Moa3MzBmlh3nunz1R3I9EDHHlxEQtZejf4zCbGFOMQR0qhVydp9YbSw1qh
+         ++QsvpHuvU2mNYohr+R71VP4K0qusnci6AHhqG4yMKnJX3DzsaJE3gEKuDgGA9ADDTTF
+         NF6cZWDsEOYSz4ul7WzUnSeHxRVwuvHQYaEsFgQobQwmtmNDYhz2+cXxjC4lKvqnSHx+
+         qESQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715099245; x=1715704045;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715099280; x=1715704080;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=24yjDTHuOCF+C8SbX9O7bVVIA87jnk99ezK2b/3Gma4=;
-        b=eF5sWtqtq/ByPc8Bs0k7EAJsdmB7/6EDtWgfPUDQX8lahjpzZ4U0/oHLXhIdTdvdmK
-         hu6b1Z4UKOboFsM1D/gvsLYEZdSG5WXPgu7dCMszrtHGP2OOovBN57gl7whfGSg9glQF
-         RIeb/QqfblJ2jjLMx7I13wsIpneGHfCX1I6tMZFDkwcwaDyMmNSIRReOpqEoDuJTwNFQ
-         NK8wAWf3NZ5pobHpvuofiaKxYExToo/TiwrsjjEZ0/oBVPaMGrmRTOV5ZL9NZumw2/8n
-         BNGcrU8P+6uw/tCHsHwupUQxOoKqKCWZdk4YnJ0DRreGSXQJT18VvNIyWJsOfxUsPwur
-         y6Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGnP36hHimAfZuL5E0PgMeaV4VbJqVSfob+gygiKpwlJTUHp0CaiMcsYUdI0VmkZGbqEtlKQRVRZH/9uUSgjy1wR5ZQPIPBNGeIFub
-X-Gm-Message-State: AOJu0Yx+b9r1TTpvKJw4KIrsX1v9+JJA6u9AXERvRilI4SUpmPp4aOkd
-	5tugbJknfyXC31mhZthTrIfATBIaNPyYCTYYQ2DxJqdiuDALTWDoAqcIXdyr3g==
-X-Google-Smtp-Source: AGHT+IFXk9TiPGkyPd47b/0bfL7TWw3sW2kfDIDAt+NnUsqL7Hhdu3EhERFFZlCigfyFh6dM5Cuiow==
-X-Received: by 2002:ac8:7e8b:0:b0:439:dfc7:aca4 with SMTP id d75a77b69052e-43dbf868fd7mr1746031cf.63.1715099244908;
-        Tue, 07 May 2024 09:27:24 -0700 (PDT)
-Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id hf23-20020a05622a609700b0043d1fc9b7d9sm4160597qtb.48.2024.05.07.09.27.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 09:27:24 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 07 May 2024 16:27:23 +0000
-Subject: [PATCH v2 18/18] media: venus: Refactor
- hfi_buffer_alloc_mode_supported
+        bh=rICwxurU6A+ycOmFzrxmjMEY+vAR/gQDdccoIGBtMqA=;
+        b=uvjLqg/D1zzLa7UnQK+qUpfKKyW1p6XrvMNCi/egzMMEqF8iVvJjaXFgGrrKyeSDbN
+         jx947CcEYNwBb2zW3+k/oJlW/5j1kk2Wq+jMN4JCZFC4AWfefszUsXlwWe1iOJnMmxkS
+         sq6VEqW2aLE9WEBaaoMdnqwpSyM6s1hAReYig72oV9coPTsddNeN2ILymeW7yxsNe1LB
+         djGaJZl/WuqzhbcYDWYSX0GBQHidEg2J/1//OJW8beQuMXQlNNu7wyrH5ra/x8CvSlSE
+         c41YVN6MHDCSj/3GOQ+0ztRl9uaC6Nt4zyCMszCwSbDpfR77WMI+Hl+jn8Qk7gRK0Lvy
+         uZtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/S9cMRb/1qZlxyNA7JLDHukaAvAecZPcIVUKxj5wAEHfyDeJfhecT7M8OmenhDopbxf072CFSHxnzcE+dRUmnroLe+GNoh7S6clgjR039gxAS76ij57C/qzAJoX9iowlpOfgTNPiO74wcHN5DFxK5mf6igbBBoiPnE+qnfj08GA==
+X-Gm-Message-State: AOJu0YyfMgjkZ6H3IjrIxEAt1oa9K+fij8zYzj0lnjEHTpeBTaj8VJT9
+	Ve+t2L7cZiYlO7KMG9508x0vegDlkrDpaoiZznt4s3oOFQcypwUcRUpvSx61Lx9uzQKixQsSLaL
+	wOECtEdA66lfHU+BJpmyEsIkE7R0=
+X-Google-Smtp-Source: AGHT+IFn3p6+IU8MNAx4QtWppQukiCZTYwwesAVqUICe2KaycZuCykzGNsekqL7kux4xcd7LRFMUFDcyPHBLQ7Tec6w=
+X-Received: by 2002:a17:907:3f9a:b0:a59:c5c2:a31c with SMTP id
+ hr26-20020a1709073f9a00b00a59c5c2a31cmr8176135ejc.33.1715099279965; Tue, 07
+ May 2024 09:27:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240507-cocci-flexarray-v2-18-7aea262cf065@chromium.org>
-References: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
-In-Reply-To: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
-To: Michael Tretter <m.tretter@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Michal Simek <michal.simek@amd.com>, Andy Walls <awalls@md.metrocast.net>, 
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.12.4
+References: <20240504003006.3303334-1-andrii@kernel.org> <20240504003006.3303334-6-andrii@kernel.org>
+ <2024050425-setting-enhance-3bcd@gregkh> <CAEf4BzbiTQk6pLPQj=p9d18YW4fgn9k2V=zk6nUYAOK975J=xg@mail.gmail.com>
+ <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
+In-Reply-To: <cgpi2vaxveiytrtywsd4qynxnm3qqur3xlmbzcqqgoap6oxcjv@wjxukapfjowc>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 7 May 2024 09:27:44 -0700
+Message-ID: <CAEf4BzZQexjTvROUMkNb2MMB2scmjJHNRunA-NqeNzfo-yYh9g@mail.gmail.com>
+Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
+ /proc/<pid>/maps APIs
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org, Suren Baghdasaryan <surenb@google.com>, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace the old style single element array at the end of the struct with
-a flex array.
+On Tue, May 7, 2024 at 8:49=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracle=
+com> wrote:
+>
+> .. Adding Suren & Willy to the Cc
+>
+> * Andrii Nakryiko <andrii.nakryiko@gmail.com> [240504 18:14]:
+> > On Sat, May 4, 2024 at 8:32=E2=80=AFAM Greg KH <gregkh@linuxfoundation.=
+org> wrote:
+> > >
+> > > On Fri, May 03, 2024 at 05:30:06PM -0700, Andrii Nakryiko wrote:
+> > > > I also did an strace run of both cases. In text-based one the tool =
+did
+> > > > 68 read() syscalls, fetching up to 4KB of data in one go.
+> > >
+> > > Why not fetch more at once?
+> > >
+> >
+> > I didn't expect to be interrogated so much on the performance of the
+> > text parsing front, sorry. :) You can probably tune this, but where is
+> > the reasonable limit? 64KB? 256KB? 1MB? See below for some more
+> > production numbers.
+>
+> The reason the file reads are limited to 4KB is because this file is
+> used for monitoring processes.  We have a significant number of
+> organisations polling this file so frequently that the mmap lock
+> contention becomes an issue. (reading a file is free, right?)  People
+> also tend to try to figure out why a process is slow by reading this
+> file - which amplifies the lock contention.
+>
+> What happens today is that the lock is yielded after 4KB to allow time
+> for mmap writes to happen.  This also means your data may be
+> inconsistent from one 4KB block to the next (the write may be around
+> this boundary).
+>
+> This new interface also takes the lock in do_procmap_query() and does
+> the 4kb blocks as well.  Extending this size means more time spent
+> blocking mmap writes, but a more consistent view of the world (less
+> "tearing" of the addresses).
 
-The code does not allocate this structure, so the size change should not
-be a problem.
+Hold on. There is no 4KB in the new ioctl-based API I'm adding. It
+does a single VMA look up (presumably O(logN) operation) using a
+single vma_iter_init(addr) + vma_next() call on vma_iterator.
 
-This fixes the following cocci warning:
-drivers/media/platform/qcom/venus/hfi_helper.h:1233:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+As for the mmap_read_lock_killable() (is that what we are talking
+about?), I'm happy to use anything else available, please give me a
+pointer. But I suspect given how fast and small this new API is,
+mmap_read_lock_killable() in it is not comparable to holding it for
+producing /proc/<pid>/maps contents.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/hfi_helper.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> We are working to reduce these issues by switching the /proc/<pid>/maps
+> file to use rcu lookup.  I would recommend we do not proceed with this
+> interface using the old method and instead, implement it using rcu from
+> the start - if it fits your use case (or we can make it fit your use
+> case).
+>
+> At least, for most page faults, we can work around the lock contention
+> (since v6.6), but not all and not on all archs.
+>
+> ...
+>
+> >
+> > > > In comparison,
+> > > > ioctl-based implementation had to do only 6 ioctl() calls to fetch =
+all
+> > > > relevant VMAs.
+> > > >
+> > > > It is projected that savings from processing big production applica=
+tions
+> > > > would only widen the gap in favor of binary-based querying ioctl AP=
+I, as
+> > > > bigger applications will tend to have even more non-executable VMA
+> > > > mappings relative to executable ones.
+> > >
+> > > Define "bigger applications" please.  Is this some "large database
+> > > company workload" type of thing, or something else?
+> >
+> > I don't have a definition. But I had in mind, as one example, an
+> > ads-serving service we use internally (it's a pretty large application
+> > by pretty much any metric you can come up with). I just randomly
+> > picked one of the production hosts, found one instance of that
+> > service, and looked at its /proc/<pid>/maps file. Hopefully it will
+> > satisfy your need for specifics.
+> >
+> > # cat /proc/1126243/maps | wc -c
+> > 1570178
+> > # cat /proc/1126243/maps | wc -l
+> > 28875
+> > # cat /proc/1126243/maps | grep ' ..x. ' | wc -l
+> > 7347
+>
+> We have distributions increasing the map_count to an insane number to
+> allow games to work [1].  It is, unfortunately, only a matter of time unt=
+il
+> this is regularly an issue as it is being normalised and allowed by an
+> increased number of distributions (fedora, arch, ubuntu).  So, despite
+> my email address, I am not talking about large database companies here.
+>
+> Also, note that applications that use guard VMAs double the number for
+> the guards.  Fun stuff.
+>
+> We are really doing a lot in the VMA area to reduce the mmap locking
+> contention and it seems you have a use case for a new interface that can
+> leverage these changes.
+>
+> We have at least two talks around this area at LSF if you are attending.
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index dee439ea4d2e..9545c964a428 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -1230,7 +1230,7 @@ struct hfi_interlace_format_supported {
- struct hfi_buffer_alloc_mode_supported {
- 	u32 buffer_type;
- 	u32 num_entries;
--	u32 data[1];
-+	u32 data[];
- };
- 
- struct hfi_metadata_pass_through {
+I am attending LSFMM, yes, I'll try to not miss them.
 
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
+>
+> Thanks,
+> Liam
+>
+> [1] https://lore.kernel.org/linux-mm/8f6e2d69-b4df-45f3-aed4-5190966e2dea=
+@valvesoftware.com/
+>
 
