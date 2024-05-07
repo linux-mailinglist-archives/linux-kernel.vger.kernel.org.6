@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-171985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447AE8BEB85
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:36:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E76F8BEB87
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 757851C22BF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:36:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EAB628494C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4983C16DEB6;
-	Tue,  7 May 2024 18:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47CD16E86E;
+	Tue,  7 May 2024 18:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XvBeZ3Ig"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JpM5tV+P"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E0C16D9C2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8072116DEB5
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715106970; cv=none; b=GJGqClbodiA1qHmI/Hw0vXss4462nmMHv2I7/Vi7UIdXq/fFTcRX82k0n2016JqrIBX20cICPXHkpR93qxNyVpteE37QiKDUnHzawO3f30Q4ClZR5WeG1VVhFXk7/1cjFwgVgFZDTuq2iw9Pz0XskB9gz2aExqKy/Iao3eVOges=
+	t=1715106973; cv=none; b=Yi1SWoJSKkv4qfLzLsHUioNWDwfIvfP7yNtt72w0wxryoqq2ToWJajjrOokzITIK7WtG9cqlHcnGaWszzWh3i0ZjhwW24eY5MjtF/Hl/JB/aiK92AsuY92Kxx/zz3OaH1iVMJd6H8a1z3FVXt5FaH25S4B59AXlPe0tJMA8hO68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715106970; c=relaxed/simple;
-	bh=yi0IGqXPFHWkzbXpu9EOHF2YNWNnFamLHfIdbg0rgmA=;
+	s=arc-20240116; t=1715106973; c=relaxed/simple;
+	bh=e/wJkPb6Up6/3AXzG8MatkSdBcxmtGosq5+MGZvNwTg=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=oY1HYt0SNFDRahtSmE09vfDaIErbMo9bHcsJuZYwTtxyq4GJzVKy+ggsSTmNK5EfKMTMJe0iaysRW0yF/HpO5q9f5JgBVCNBvIXbxWjFrbpq8aVCc34WRxvSlNpQhCsUEfsAznvMouIEn7N8V0/0Iu3MTS5aKZPkLVAsa0iV+GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XvBeZ3Ig; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=QCZlJmx2ecXee9r53FsdsqvaASJp74amBIewg+NUwtjBztWnN5cSWFPSJCnRLuMQUDPU6xkkApmTkOcCoNDlc1xcN7b8eYQdyvChBjrBcImehviZ6zIyR6ngby5YcOijzfs5E/GrWoTKzcF7R5H1gvABXWGeDHhDmZwUoC8x4Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JpM5tV+P; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61e0c1f7169so594567b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:36:09 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de603db5d6aso7220952276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:36:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715106968; x=1715711768; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715106970; x=1715711770; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nAyKMenex+5IJfc1qyffLzQhoa2twNpQD9DTMrkElUs=;
-        b=XvBeZ3IgMzbSraWpzC4SXqHxAJ+8KWOPUSLhnknV1nVdBYsyCthNUQlUwdQ25BJPDF
-         8bvoCHNmJXQBhs7FLNygCaB4ENU4tVMDuNGYRj9xVycZxOQIwPReANoWhmXWadQhxCEZ
-         TT+/qI2q/ok6RKmxHD9J585AhGFj29mlA4BkurJUTCNIVXybrcZtJDSFk1CC4snvZdEH
-         hiVqJpX8pID1xdQquDLOfRKccKkc8uZbjEoEmM+qlCAjUHwgP6OiPQOZu0Hi9+NJ9IJe
-         a32a3KtxqEjKv+rvPL06pkBZPpUJcpqL+TFCCvH0gz7mcLo0Y6xZm1mplWP1OqpNeyNv
-         vLGw==
+        bh=GO0hb7v7nG6Id0cJK33WHU2z0Rs2/LAXioCEoSvIAik=;
+        b=JpM5tV+P3A+GurGJU8USFa2nRLFzOk6oI1bsorF+oNV500tuVNYYRgTsSWPecf3BoN
+         hiMTdWPIEHeaK3WF9LoEukIcToQB7o1OulAeS2raOGiRDNUftE/02r7S7aVn66RIzKJo
+         0DK4e5gkW38VO1Yz05VM3TT3N6o/+ZoQqDlEmTkdPvpbOHcQ5ey8Vz7tKraflNwzcb4y
+         UpFU1zqHyrqT8zkk0nigF+L5JDldqygvmpjRyAr9tU+duTUiqFV03IxHeg1KsegtKO5V
+         iLj7C92CnwsYlXeUiCALI0UWWK9xoj6SB8NMcDT0yyzfoUpof+EV6+46DnQfWg5dWtr8
+         PeCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715106968; x=1715711768;
+        d=1e100.net; s=20230601; t=1715106970; x=1715711770;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAyKMenex+5IJfc1qyffLzQhoa2twNpQD9DTMrkElUs=;
-        b=kvuy89j81AK2a1T6mNAw/l03K0geKJWRxN0S/8sg76IzpZwhGQHFCd1boBqF8ylmJ1
-         lUT7rX0pm/QYe/bI9Qqt8gJmqjjim1KaiIVIZJ0nakXgvNfiAQYDVCZydtXXsQCnSP3u
-         /FbyDoVY1NmsZGuFncYlgu+x9D66KoRZmUpLF8mtCSQgi8Z+P1HntXWWS/4Z8CQhvpad
-         U6DNgTJ/00kj3Q/9GBz4GCOMdXvxiH66a4iKkH0q7oyICxl14sR9QwHB5K6oNphI5MeR
-         o1Gz3AE+5Hp6HUo18zwGTICN2HXV4yr+4QhVek65fzbZYLxjiSOhoVlVW7DlkcsOlDjd
-         7SAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvIPp0+yfHH4KPAzu6yWVXnFoQX/pcLn51RYf4qqd5AtL1CUYVuDjDuirMpYi4zXlMtDsbXZLr4Zod5wKdVd0tNTQpUTpTa6PF4IGw
-X-Gm-Message-State: AOJu0Yxn8g7N6rc1rxzLoQ6woj2Gl+EDsAgMV74kvC5gvDy7IJ1mMjbK
-	jqqxVtoHTY/bgPSV02ET3egRMcz0X3wbOJiRPArQg0/pieOqVkkv4/opxrDf8o/2MzGAG1df+Xi
-	WrUGbcw==
-X-Google-Smtp-Source: AGHT+IEFrS6qRkXP2QGeiHghu5TLySBp1SQLXJbuHHXRZt5Be0phxkIoQ4y4pZwWsNfw8wrjcT+hJQqVxhIh
+        bh=GO0hb7v7nG6Id0cJK33WHU2z0Rs2/LAXioCEoSvIAik=;
+        b=qdv6N5AiQ5UsXFSH6ItqMuFGzg0I24wuBZLJobq5eZPArikw4a/fTe0RFO2EdzB2bF
+         xOz9kDhJwPFW4bQvNSr471vcM4SUhPru+NmTBsWjepW2vXVLWPnsUFk0htE1XRy2Z23U
+         M7QfaW/e1OsE6Rwuf/MqCx6Tz7rgjekMe19Uu2ouV6ZBDAcbTDz1D23GR45cPOFObAT8
+         RTakk7zueXoLfYL85Qxa10qFrThan/7/szYOGC8/vYe1mofF507XIqPyqknf9U0F7eT8
+         abfAQXmP9/FOdtbpe4ySs5Oc7Islzunh6CzZ+n2YqsjNQRNh8qvPLUlCLE1j+81NBe/2
+         xqQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbZ7K6YWFYpVGYSlU3fTmlnQeUAb8PsDwbV6FxJ0QZxyf2i8YtuWBVhhQA4oakaQXs6dWIJoWFT5MkTnr2MKaMtIDaxLNGoEpAlqEn
+X-Gm-Message-State: AOJu0YzlDWPB9+AYExsvSqfP2UEAHjchx57XMTZxAXsKdimGxFSJ5xIl
+	iaEvdOVzPuKuZx9XuDmE2azot9b7mFLsGzfEv5eJ1mH4ozVAFzFEUouJnwsu87pTnhyRRXDUnW4
+	USgLlHw==
+X-Google-Smtp-Source: AGHT+IH0+iGDT60xNzG68p+EHdgJrLMckET3iqNIC7831kCnZaCBN3MiSLXMejQERNtTr9eu3idrl3ZvXb4B
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8095:fd7:9773:b1df])
- (user=irogers job=sendgmr) by 2002:a81:a7c6:0:b0:618:9348:6b92 with SMTP id
- 00721157ae682-6207652d8a9mr8590217b3.1.1715106968260; Tue, 07 May 2024
- 11:36:08 -0700 (PDT)
-Date: Tue,  7 May 2024 11:35:39 -0700
+ (user=irogers job=sendgmr) by 2002:a05:6902:100e:b0:dd9:1db5:8348 with SMTP
+ id 3f1490d57ef6-debb9e41975mr129612276.8.1715106970500; Tue, 07 May 2024
+ 11:36:10 -0700 (PDT)
+Date: Tue,  7 May 2024 11:35:40 -0700
 In-Reply-To: <20240507183545.1236093-1-irogers@google.com>
-Message-Id: <20240507183545.1236093-3-irogers@google.com>
+Message-Id: <20240507183545.1236093-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240507183545.1236093-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Subject: [PATCH v1 2/8] perf annotate: Fix memory leak in annotated_source
+Subject: [PATCH v1 3/8] perf block-info: Remove unused refcount
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,35 +91,123 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Freeing hash map doesn't free the entries added to the hashmap, add
-missing free.
+block_info__get has no callers so the refcount is only ever one. As
+such remove the reference counting logic and turn puts to deletes.
 
-Fixes: d3e7cad6f36d ("perf annotate: Add a hashmap for symbol histogram")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/annotate.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/util/block-info.c | 22 +++++-----------------
+ tools/perf/util/block-info.h | 15 +--------------
+ tools/perf/util/hist.c       |  4 ++--
+ 3 files changed, 8 insertions(+), 33 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index d7d55263fc91..a83722f32d6b 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -107,9 +107,15 @@ static struct annotated_source *annotated_source__new(void)
+diff --git a/tools/perf/util/block-info.c b/tools/perf/util/block-info.c
+index 895ee8adf3b3..04068d48683f 100644
+--- a/tools/perf/util/block-info.c
++++ b/tools/perf/util/block-info.c
+@@ -43,26 +43,14 @@ static struct block_header_column {
+ 	}
+ };
  
- static __maybe_unused void annotated_source__delete(struct annotated_source *src)
+-struct block_info *block_info__get(struct block_info *bi)
+-{
+-	if (bi)
+-		refcount_inc(&bi->refcnt);
+-	return bi;
+-}
+-
+-void block_info__put(struct block_info *bi)
++struct block_info *block_info__new(void)
  {
-+	struct hashmap_entry *cur;
-+	size_t bkt;
-+
- 	if (src == NULL)
- 		return;
+-	if (bi && refcount_dec_and_test(&bi->refcnt))
+-		free(bi);
++	return zalloc(sizeof(struct block_info));
+ }
  
-+	hashmap__for_each_entry(src->samples, cur, bkt)
-+		zfree(&cur->pvalue);
-+
- 	hashmap__free(src->samples);
- 	zfree(&src->histograms);
- 	free(src);
+-struct block_info *block_info__new(void)
++void block_info__delete(struct block_info *bi)
+ {
+-	struct block_info *bi = zalloc(sizeof(*bi));
+-
+-	if (bi)
+-		refcount_set(&bi->refcnt, 1);
+-	return bi;
++	free(bi);
+ }
+ 
+ int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right)
+@@ -148,7 +136,7 @@ int block_info__process_sym(struct hist_entry *he, struct block_hist *bh,
+ 			he_block = hists__add_entry_block(&bh->block_hists,
+ 							  &al, bi);
+ 			if (!he_block) {
+-				block_info__put(bi);
++				block_info__delete(bi);
+ 				return -1;
+ 			}
+ 		}
+diff --git a/tools/perf/util/block-info.h b/tools/perf/util/block-info.h
+index 96f53e89795e..0b9e1aad4c55 100644
+--- a/tools/perf/util/block-info.h
++++ b/tools/perf/util/block-info.h
+@@ -3,7 +3,6 @@
+ #define __PERF_BLOCK_H
+ 
+ #include <linux/types.h>
+-#include <linux/refcount.h>
+ #include "hist.h"
+ #include "symbol.h"
+ #include "sort.h"
+@@ -19,7 +18,6 @@ struct block_info {
+ 	u64			total_cycles;
+ 	int			num;
+ 	int			num_aggr;
+-	refcount_t		refcnt;
+ };
+ 
+ struct block_fmt {
+@@ -48,19 +46,8 @@ struct block_report {
+ 	int			nr_fmts;
+ };
+ 
+-struct block_hist;
+-
+ struct block_info *block_info__new(void);
+-struct block_info *block_info__get(struct block_info *bi);
+-void   block_info__put(struct block_info *bi);
+-
+-static inline void __block_info__zput(struct block_info **bi)
+-{
+-	block_info__put(*bi);
+-	*bi = NULL;
+-}
+-
+-#define block_info__zput(bi) __block_info__zput(&bi)
++void block_info__delete(struct block_info *bi);
+ 
+ int64_t __block_info__cmp(struct hist_entry *left, struct hist_entry *right);
+ 
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 55ea6afcc437..b8a508cd0b14 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -631,7 +631,7 @@ static struct hist_entry *hists__findnew_entry(struct hists *hists,
+ 			 */
+ 			mem_info__zput(entry->mem_info);
+ 
+-			block_info__zput(entry->block_info);
++			block_info__delete(entry->block_info);
+ 
+ 			kvm_info__zput(entry->kvm_info);
+ 
+@@ -1341,7 +1341,7 @@ void hist_entry__delete(struct hist_entry *he)
+ 	}
+ 
+ 	if (he->block_info)
+-		block_info__zput(he->block_info);
++		block_info__delete(he->block_info);
+ 
+ 	if (he->kvm_info)
+ 		kvm_info__zput(he->kvm_info);
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
