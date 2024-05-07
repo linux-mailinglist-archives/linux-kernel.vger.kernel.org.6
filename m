@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-171114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918D28BDFE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:40:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74F18BDFD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E5F3289E2E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:40:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECE3CB21908
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A13514F12C;
-	Tue,  7 May 2024 10:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C4614EC76;
+	Tue,  7 May 2024 10:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b="tkRxsuVy"
-Received: from phoenix.uberspace.de (phoenix.uberspace.de [95.143.172.135])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hjm5bEU8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC0A14E2D0
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.172.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F57450E2;
+	Tue,  7 May 2024 10:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715078398; cv=none; b=mjSo97Mn4z6JYDQTLqlg7693GdiV/huxgo8SVDU0oLpgWLGr1S5powbLvThDF0KRwcerN1K3pKhBAPoc+0k3RFtkq/xbGTG8ZpKfHd9iXQQUWOhiDT1cB9LvCLIhbTQX0q51htbxWqOgftcWLl/GOkkbauM8W2j00kLrBMwUZTE=
+	t=1715078226; cv=none; b=UXT903db4q0SXCZCOYdcROS+fQ5fdWNj++qFtcLJrC1cGWcC2TpBDbkvzXp99bZUEeZZS/xgEXVUgxgKlVVXX1jwjxNfHGRn3lRnvvSVaP12B+aVy7oTq8F+Qhy3QFyZkzKJy99uoc/Jw4eXEz0eO00Kqx1XQUSItRAHMMGcY/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715078398; c=relaxed/simple;
-	bh=QNnIOUmGw+/4sKtvKLRny0R9Qjd8tUiqHl1cHAokzNs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pPKK8t4p1sH5XyjMNZXjo7JpDPYumKJ0yyKFDyiWRr5E0OPBrLF2TUOYrlynCMTAWbsYV7jwNwntUcEfipFJAg2YBQU4Mp0+Uqg6qdmWjN06ZaD15WipUYfQvsdPwesgppOdnHVj7mIhN8vbB2vP6LXgKu1ePL6QQEN05oBOl9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com; spf=pass smtp.mailfrom=yshyn.com; dkim=pass (2048-bit key) header.d=yshyn.com header.i=@yshyn.com header.b=tkRxsuVy; arc=none smtp.client-ip=95.143.172.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yshyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yshyn.com
-Received: (qmail 8221 invoked by uid 988); 7 May 2024 10:39:53 -0000
-Authentication-Results: phoenix.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by phoenix.uberspace.de (Haraka/3.0.1) with ESMTPSA; Tue, 07 May 2024 12:39:53 +0200
-From: Illia Ostapyshyn <illia@yshyn.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Illia Ostapyshyn <illia@yshyn.com>
-Subject: [PATCH v2] docs: cgroup-v1: Update page cache removal functions
-Date: Tue,  7 May 2024 12:34:27 +0200
-Message-Id: <20240507103426.544488-1-illia@yshyn.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715078226; c=relaxed/simple;
+	bh=M2c72z9VDtx2Xhtw/P3InupAnKn0oF978VyL0WkulAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcYpcQz9WjT4t0AsRn3x676L1BbzwBUPsIGVK0hmPT14/i54zw3oUYKcujEyS8YKIDBWP/AE2Kza3hxuhiU+KGj+H6pJd5GIYj9ZE9YASYRErxdOB8lrbLmTO6c6HsxHmj1o3WUcNI9S/yIez7+9vErWMnPIz+aFLgoKrJlDGVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hjm5bEU8; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715078222; x=1746614222;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=M2c72z9VDtx2Xhtw/P3InupAnKn0oF978VyL0WkulAE=;
+  b=hjm5bEU8eb+cMHnEE+BRFTmV+s9IsEWZFEQGSntBTCh/nA3gXf3dR0ew
+   gIL+aBjrLrqfNt7TrNhnakX9kzi9JRbRNQCFErG3lnH9MsR70cquVG/33
+   mgvwz8vhKrMydiPk2gq40GUxk0fWYJpP/Zz0pXgNxQnT2rhdWkNmhTuar
+   gXhVGy+9m81HD+gV4An/4+YoVY+GW0s9djCw/35F0rpn7RFvtpPie2JC6
+   923rYknN80p2Db25axX4bOWXOlf5giN3g8OVZ+UoQpwKXzN4eYL22/dFK
+   i6+jJ2fl/FwsaocE2HOc5PigYgklMqXyS3d/SjPJoaD+TME8gLF1NJ+fB
+   Q==;
+X-CSE-ConnectionGUID: pGk/LiaJRHejpPOYkXTogQ==
+X-CSE-MsgGUID: Jj06BBsvS4epfPfuZoIoEg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="11018774"
+X-IronPort-AV: E=Sophos;i="6.07,261,1708416000"; 
+   d="scan'208";a="11018774"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 03:37:01 -0700
+X-CSE-ConnectionGUID: QviMUWFgQAir8cM99ZWv9A==
+X-CSE-MsgGUID: RmBeIrrfQTqkxddJ4gbDVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,261,1708416000"; 
+   d="scan'208";a="28455316"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 07 May 2024 03:36:58 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0228B27F; Tue, 07 May 2024 13:36:56 +0300 (EEST)
+Date: Tue, 7 May 2024 13:36:56 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Igor Mammedov <imammedo@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] PCI: Make minimum bridge window alignment
+ reference more obvious
+Message-ID: <20240507103656.GA4162345@black.fi.intel.com>
+References: <20240507102523.57320-1-ilpo.jarvinen@linux.intel.com>
+ <20240507102523.57320-8-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: ++
-X-Rspamd-Report: SUSPICIOUS_RECIPS(1.5) BAYES_HAM(-0.000492) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: 2.899507
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=yshyn.com; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=QNnIOUmGw+/4sKtvKLRny0R9Qjd8tUiqHl1cHAokzNs=;
-	b=tkRxsuVy35OnSL57/lXDwilDdQpvmsMNSOyBf4sDPYWRdUOP6xXPBo/5SA8Ny1M5jmFBhhBAg5
-	wLEBo8hUTQJGaWTcNRf++3hvEoOJ/RIqCmv9zZMgoXp9Bg0HaoAoLf/J7L7ESXaFcomgnyelqTcS
-	BAU/mmwBImm9lWTJpoXJi6Mrj1Cqnxv5kAj2F8uKa0+uG/+7EszpFwD5329lPvH5F3B/HBVP+r3u
-	HjHT4SN8q/K+vK3icC6YecyYXCwSvU9NsBid1UkJyuo97FdtoScD2TR6aTh9LO6LqUsWbh0dERm4
-	x4fcKnCGuyvj9V5efTvNuJZXJzkgBwY/5k6vM7tg==
+In-Reply-To: <20240507102523.57320-8-ilpo.jarvinen@linux.intel.com>
 
-Commit 452e9e6992fe ("filemap: Add filemap_remove_folio and
-__filemap_remove_folio") reimplemented __delete_from_page_cache() as
-__filemap_remove_folio() and delete_from_page_cache() as
-filemap_remove_folio().  The compatibility wrappers were finally removed
-in ece62684dcfb ("hugetlbfs: convert hugetlb_delete_from_page_cache() to
-use folios") and 6ffcd825e7d0 ("mm: Remove __delete_from_page_cache()").
+On Tue, May 07, 2024 at 01:25:22PM +0300, Ilpo Järvinen wrote:
+> Calculations related to bridge window size contain literal 20 that is
+> the minimum alignment for a bridge window. Make the code more obvious
+> by converting the literal 20 to __ffs(SZ_1MB).
 
-Update the remaining references to dead functions in the memcg
-implementation memo.
+I think that's SZ_1M not SZ_1MB :)
 
-Signed-off-by: Illia Ostapyshyn <illia@yshyn.com>
----
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-Changes in v2:
- * filemap_free_folio() was meant to be filemap_remove_folio(). Sorry.
+Looks good, may be even add a #define for this but either way,
 
- Documentation/admin-guide/cgroup-v1/memcg_test.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/cgroup-v1/memcg_test.rst b/Documentation/admin-guide/cgroup-v1/memcg_test.rst
-index 1f128458ddea..9f8e27355cba 100644
---- a/Documentation/admin-guide/cgroup-v1/memcg_test.rst
-+++ b/Documentation/admin-guide/cgroup-v1/memcg_test.rst
-@@ -102,7 +102,7 @@ Under below explanation, we assume CONFIG_SWAP=y.
- 	The logic is very clear. (About migration, see below)
- 
- 	Note:
--	  __remove_from_page_cache() is called by remove_from_page_cache()
-+	  __filemap_remove_folio() is called by filemap_remove_folio()
- 	  and __remove_mapping().
- 
- 6. Shmem(tmpfs) Page Cache
--- 
-2.39.2
-
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
