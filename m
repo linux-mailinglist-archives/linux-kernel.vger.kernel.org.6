@@ -1,102 +1,174 @@
-Return-Path: <linux-kernel+bounces-170623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E42C8BD9D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:48:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80A188BD9D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 351912839A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:47:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A19E51C22064
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 03:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0C042AAE;
-	Tue,  7 May 2024 03:47:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0117B642;
-	Tue,  7 May 2024 03:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2010C4C618;
+	Tue,  7 May 2024 03:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="zHOTh7I1"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8E3FBA2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 03:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715053672; cv=none; b=kk8pMMwPcW7PGjcU670vL7gdKOvZhlT/65HNlWoPgDDXL/MwSN2wJqBSbaChdbZ1e5LZhhvkQJGtNVk3CHtmSHFwtoKu8zuN0W3dS7QQUUrW3WQLJJKiIS8bC9arjAXaJDsWxApf5rjpLrKito1scleom5WXlleS7ifpqGGVG38=
+	t=1715053706; cv=none; b=r73JOv61m26HR15rUn6QPUhKlnqM/AURsW3JKRU1AdmbZs23zp67r3ImVs9bsrjhdn7aOzQVj5CoLXniAASclnpC7zgAflj2jf/N5JC3aVAm3Z7t1vk2wkVXcSAnITsxO3qS3TgJFXO9NUZsFPD6DbMjATBGqKyg5tsQEbkunaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715053672; c=relaxed/simple;
-	bh=kFOM3iy7Z7jag75KzlVF383Urq+3zzDGTWrSzDmdSmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TLmH0/q+lxiXyfNhNyz+DfK63v65KCRTGLnAHGnkWjL/+ApoVfQ0t+t4zinjarMkErJmxLTWpN+h6QXhYckBRFmLW6VupPt0ibjC2oCjM+bJAPcvh0LLOe8sky6tvh/6Nhl34UpS/zVcICjDCG/lJeIiyeNW7vkCAqDdV0lO4Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3D56B106F;
-	Mon,  6 May 2024 20:48:09 -0700 (PDT)
-Received: from [10.163.33.37] (unknown [10.163.33.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 21AB23F762;
-	Mon,  6 May 2024 20:47:34 -0700 (PDT)
-Message-ID: <08bcd616-5006-45df-b8cc-45cf3a1dd762@arm.com>
-Date: Tue, 7 May 2024 09:17:36 +0530
+	s=arc-20240116; t=1715053706; c=relaxed/simple;
+	bh=m/879LQuL8JXETpqluE9o4A4OYLRvuKZ6yO7+lbGxZ8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DfLs9M4bFZ2/sLncH1xD4ad3IfdSw0q/96+Sqi2zOhOLtKxzCkHEOYxvw4i8jM92r5G0xQe0EZ3c3ZmOYRAh6qwUwe41aE7T+wjs77cHbHln/FEU4F6buO1r6W/oIP7lLMj6CGWiYYeirZrhhP1WlDlC+oZAvr6O8S0+GAqBOeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zHOTh7I1; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7e181fffeb6so28418539f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 20:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715053703; x=1715658503; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Rj2jBFPI6Z7ZTex3xlLubFd8OE8ofA5lm6spLyhQDT8=;
+        b=zHOTh7I1pAPZbfbiooyT/yNoGtGkTpA2TKSEBjS2zhuvtDNWEyvNwecvVPS08WvvA0
+         dK7Nqaps5QGoShtKi6RMxQUPYIcVJCOFAnxpaFCsCuYsonRPiFBjl8nhWWoFDHMf2322
+         tRKDdsxU5jfLDkmgWxufwqWiwVipcLr04tQq71n2Cj72JP9G90n02slkuuxhqQPMYJCH
+         Eas1kg6L1rvXd0ZnVoymMg/u6Oar6zIICIDP9L/ytDPn5I+gkNlmM/mst3ZNajSda2xI
+         6ykFoQPIvB65aC3Rws6pyQB7/dRxWNcHBhm0RxeL/YVrBr4kfnnj3mMELqov1cPdK7nH
+         tspA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715053703; x=1715658503;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rj2jBFPI6Z7ZTex3xlLubFd8OE8ofA5lm6spLyhQDT8=;
+        b=aS1rYoEKJ/yYHV/HMBCb3/YwPIJRlpNHrr0ubDPUopuwEOnidYGID+W0d7qqeC7b7f
+         mg3hLraTbRSEwFvQkyggv1rdS+lQTN12QbP6gZYBhJsKD1Cbq35tyntj1yYo9ikdOg2Z
+         LVR23jUOuV2clnmLBjKQRgkosUrs1HXFKMnpevZVQSpK1jKSechxDXouxSKDKwAzljxc
+         JTEMsKOWEMLkl5uc1ddY7OPAJjcrq9/RqA7OgU7YdWy0ET/RXDFW5Sd+yhKVBkrKCUhe
+         3nyRP5pHnP7riwDU1QJyrcYQ/nW4S18W8pAP39IoNfBicZkKTvLLnhbBd0N7dV4VJPFg
+         PWOA==
+X-Forwarded-Encrypted: i=1; AJvYcCX462helc6x7cicqLziUVJMXxvgVpp6aomLzKy+QSLcaqGeBnS3zmQnBOhYAxcTlP4eQCwl7rdj+kJD1Tc05HMJ5F6xoW06MbT3YUlY
+X-Gm-Message-State: AOJu0YzwoXgvX3aWHItdNm6Bbe7HbY/KqTooICDgmOWcjZXj9X4jqp9p
+	D275/lFr0CgPCMF6V3Xx1Zdi1lJKiSAkJNcdssyjJRy/OAYvZuio0P+F1tGR3he7ZeXGVX8io3G
+	w3GAnh7maAUKgUy7jZtTvAg==
+X-Google-Smtp-Source: AGHT+IF9pz2j6uD0BOLZD3RuF1fODTXrHqY0ZFsVdk4z478cCgDWlZtMQ9jc/1kwXxkxEg9w0eiXgsxELlaELuV1Eg==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6602:6c19:b0:7de:de58:3b1f with
+ SMTP id ik25-20020a0566026c1900b007dede583b1fmr446358iob.4.1715053702950;
+ Mon, 06 May 2024 20:48:22 -0700 (PDT)
+Date: Tue, 07 May 2024 03:48:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/17] perf cs-etm: Print error for new
- PERF_RECORD_AUX_OUTPUT_HW_ID versions
-To: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, scclevenger@os.amperecomputing.com,
- coresight@lists.linaro.org, suzuki.poulose@arm.com, mike.leach@linaro.org
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20240429152207.479221-1-james.clark@arm.com>
- <20240429152207.479221-2-james.clark@arm.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240429152207.479221-2-james.clark@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAISkOWYC/32NQQ6CMBBFr0Jm7ZhSixhX3sOwgOkUJiJjWkI0h
+ LtbOYDL9/P/+yskjsIJrsUKkRdJolMGeyiAhnbqGcVnBmusM5U5Y+cwd7AblR4oSvOI9YWDr50
+ NITjIw1fkIO9dem8yD5JmjZ/9Yyl/6V/dUmKJvq1OFZGxxtOtV+1HPpI+odm27QuXpL1dtQAAA A==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715053701; l=4122;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=m/879LQuL8JXETpqluE9o4A4OYLRvuKZ6yO7+lbGxZ8=; b=WlDNs6XesT9Dq9XcqMxvRoN4jY5WbclObVpngRPBmNc3EItY3fQdpDx6cG5UAUPiIKoksAwrO
+ 8xLeNDKGNkgBXSrd6KG2KSVE7A647d8GfbwEWE1svFm6xamRks5l0/a
+X-Mailer: b4 0.12.3
+Message-ID: <20240507-b4-sio-block-ioctl-v2-1-e11113aeb10f@google.com>
+Subject: [PATCH v2] block/ioctl: prefer different overflow check Running
+ syzkaller with the newly reintroduced signed integer overflow sanitizer shows
+ this report:
+From: Justin Stitt <justinstitt@google.com>
+To: Jens Axboe <axboe@kernel.dk>, Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
+[   62.982337] ------------[ cut here ]------------
+[   62.985692] cgroup: Invalid name
+[   62.986211] UBSAN: signed-integer-overflow in ../block/ioctl.c:36:46
+[   62.989370] 9pnet_fd: p9_fd_create_tcp (7343): problem connecting socket to 127.0.0.1
+[   62.992992] 9223372036854775807 + 4095 cannot be represented in type 'long long'
+[   62.997827] 9pnet_fd: p9_fd_create_tcp (7345): problem connecting socket to 127.0.0.1
+[   62.999369] random: crng reseeded on system resumption
+[   63.000634] GUP no longer grows the stack in syz-executor.2 (7353): 20002000-20003000 (20001000)
+[   63.000668] CPU: 0 PID: 7353 Comm: syz-executor.2 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+[   63.000677] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   63.000682] Call Trace:
+[   63.000686]  <TASK>
+[   63.000731]  dump_stack_lvl+0x93/0xd0
+[   63.000919]  __get_user_pages+0x903/0xd30
+[   63.001030]  __gup_longterm_locked+0x153e/0x1ba0
+[   63.001041]  ? _raw_read_unlock_irqrestore+0x17/0x50
+[   63.001072]  ? try_get_folio+0x29c/0x2d0
+[   63.001083]  internal_get_user_pages_fast+0x1119/0x1530
+[   63.001109]  iov_iter_extract_pages+0x23b/0x580
+[   63.001206]  bio_iov_iter_get_pages+0x4de/0x1220
+[   63.001235]  iomap_dio_bio_iter+0x9b6/0x1410
+[   63.001297]  __iomap_dio_rw+0xab4/0x1810
+[   63.001316]  iomap_dio_rw+0x45/0xa0
+[   63.001328]  ext4_file_write_iter+0xdde/0x1390
+[   63.001372]  vfs_write+0x599/0xbd0
+[   63.001394]  ksys_write+0xc8/0x190
+[   63.001403]  do_syscall_64+0xd4/0x1b0
+[   63.001421]  ? arch_exit_to_user_mode_prepare+0x3a/0x60
+[   63.001479]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+[   63.001535] RIP: 0033:0x7f7fd3ebf539
+[   63.001551] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+[   63.001562] RSP: 002b:00007f7fd32570c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   63.001584] RAX: ffffffffffffffda RBX: 00007f7fd3ff3f80 RCX: 00007f7fd3ebf539
+[   63.001590] RDX: 4db6d1e4f7e43360 RSI: 0000000020000000 RDI: 0000000000000004
+[   63.001595] RBP: 00007f7fd3f1e496 R08: 0000000000000000 R09: 0000000000000000
+[   63.001599] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+[   63.001604] R13: 0000000000000006 R14: 00007f7fd3ff3f80 R15: 00007ffd415ad2b8
+..
+[   63.018142] ---[ end trace ]---
 
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang; It being re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-On 4/29/24 20:51, James Clark wrote:
-> The likely fix for this is to update Perf so print a helpful message.
-> 
-> Signed-off-by: James Clark <james.clark@arm.com>
-> ---
->  tools/perf/util/cs-etm.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index d65d7485886c..32818bd7cd17 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -335,8 +335,11 @@ static int cs_etm__process_aux_output_hw_id(struct perf_session *session,
->  	trace_chan_id = FIELD_GET(CS_AUX_HW_ID_TRACE_ID_MASK, hw_id);
->  
->  	/* check that we can handle this version */
-> -	if (version > CS_AUX_HW_ID_CURR_VERSION)
-> +	if (version > CS_AUX_HW_ID_CURR_VERSION) {
-> +		pr_err("CS ETM Trace: PERF_RECORD_AUX_OUTPUT_HW_ID version %d not supported. Please update Perf.\n",
+Let's rework this overflow checking logic to not actually perform an
+overflow during the check itself, thus avoiding the UBSAN splat.
 
-Is not this bit misleading ? PERF_RECORD_AUX_OUTPUT_HW_ID is just the perf record
-format identifier. The record version here, is derived from the platform specific
-hardware ID information embedded in this perf record.
+[1]: https://github.com/llvm/llvm-project/pull/82432
 
-Should not this be just s/PERF_RECORD_AUX_OUTPUT_HW_ID/hardware ID/ instead ?
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- don't use check_add_overflow as I accidentally was writing to p.start
+  and the alternative of using a dummy (unused) variable does not seem great.
+- Link to v1: https://lore.kernel.org/r/20240506-b4-sio-block-ioctl-v1-1-da535cc020dc@google.com
+---
+ block/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +		       version);
->  		return -EINVAL;
-> +	}
->  
->  	/* get access to the etm metadata */
->  	etm = container_of(session->auxtrace, struct cs_etm_auxtrace, auxtrace);
+diff --git a/block/ioctl.c b/block/ioctl.c
+index f505f9c341eb..2639ce9df385 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -33,7 +33,7 @@ static int blkpg_do_ioctl(struct block_device *bdev,
+ 	if (op == BLKPG_DEL_PARTITION)
+ 		return bdev_del_partition(disk, p.pno);
+ 
+-	if (p.start < 0 || p.length <= 0 || p.start + p.length < 0)
++	if (p.start < 0 || p.length <= 0 || LLONG_MAX - p.length < p.start)
+ 		return -EINVAL;
+ 	/* Check that the partition is aligned to the block size */
+ 	if (!IS_ALIGNED(p.start | p.length, bdev_logical_block_size(bdev)))
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240506-b4-sio-block-ioctl-78efd742fff4
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
