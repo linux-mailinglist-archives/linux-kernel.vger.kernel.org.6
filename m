@@ -1,197 +1,135 @@
-Return-Path: <linux-kernel+bounces-171841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634A48BE958
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EFE48BE941
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85F4D1C23D86
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D531C217D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 922C916DED3;
-	Tue,  7 May 2024 16:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7E916C846;
+	Tue,  7 May 2024 16:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G9VhPaYv"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DThB9SCa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6DF16D324;
-	Tue,  7 May 2024 16:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA7916C6A1;
+	Tue,  7 May 2024 16:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099708; cv=none; b=PU/WDqv6mTei5ru2FcWihbahFLUkA3t4SOL19n+kmegFlhGn6UQVfBdFk+1KKwK4PS+UeLZGviEGcgQneH3A1jKghpKayb6XSYH3drerA5lnCjCDeM6v7VbZVS5Mo5NuLss1bHg0P5NloWtCv56yO+Nha7aHY7CNfdVm55gBFrU=
+	t=1715099600; cv=none; b=kwkdmKC0/Qck9XS8A2JXdtlnDIcfeHYFrVMhDg7UgC0AEgkjEovHilcyZWMvqCQp1f+zpd3KlC+ZxtDgCIMI+7qixmMZJ5vJiimHuBH8FyJ+jGHolgm3zJeBqfQE6GiqFEHeE16/Rn1kJK7HGJM+SmYMFFqDBcnEOAkQPHhxYm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099708; c=relaxed/simple;
-	bh=NjDWS2e4urHOZKxzJetAdtuFJD2CgyrBwJ5bZQD66To=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dDCTJ9WoWW9CipGMl+xAnCSSTm+93ayyMdbsEtN5jYFkfLsiTHK4kE3KyfJSTW2MiB2YrzP/7ekgrdr4FzJzefzESt0UN9qRWUVfm5BjuaxKjTy72NFuwsW6GH1ZZteAthXtq2QrvfCZJdsvtEcmC+oZAJiBJ4NxT655W67e33g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G9VhPaYv; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447GOPG4001337;
-	Tue, 7 May 2024 16:35:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=pp1;
- bh=Vef/B1jTE04cYAPD3j1lZ9mGWWo9zBLDBTYaEHdtAhw=;
- b=G9VhPaYvWhD5qO3TKy0IS3BGTNT5As6lu+HA3X9X49CxR6iEAIPQqawWv6rODK6qT71F
- gISOhzTc4hWp1qSWjcOQ+A5oTjzObI2BjDUiPIr5M0K5fzFCZjDNydM2TnEg9dc8Og5U
- x12dq2fmVB5QxiQRPbEL6FQG+S1UNRAsB9KI+/X6jIh0fyrc7KUq8wVpgqgF4/G7gVpm
- 2EG0O095rv4rizF3VF7KLPrfFJ9uBKd/UUivP8Df+uGQiXSJmN5rG/kJgDnPPPGGe7wI
- zX9OMN/VNXrIroHsOK+L0ttJMXYWymBA+hfsUSeOfYw/n7HuRNxeVtS1cNQHRYOGG08Z qA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqpv012g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:03 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447GZ3Pi019449;
-	Tue, 7 May 2024 16:35:03 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqpv012c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:03 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447EZ7Qs030920;
-	Tue, 7 May 2024 16:35:02 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xwybtyj37-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:02 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447GYubk53543318
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 16:34:59 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DC77D2004F;
-	Tue,  7 May 2024 16:34:56 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9E92C20040;
-	Tue,  7 May 2024 16:34:56 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 16:34:56 +0000 (GMT)
-Date: Tue, 7 May 2024 18:33:07 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily
- Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>,
-        Matthew Wilcox
- <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH v2 10/10] s390/hugetlb: convert PG_arch_1 code to work
- on folio->flags
-Message-ID: <20240507183307.3336dabc@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240412142120.220087-11-david@redhat.com>
-References: <20240412142120.220087-1-david@redhat.com>
-	<20240412142120.220087-11-david@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715099600; c=relaxed/simple;
+	bh=4HiJms5M5hQwpyB05lhvUuD9PuV/187jPsAb+jO8nmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CifGEZEDiHo8+Mypcq0T+6YjXiGKW2asNV6eCIks+wzFjq9HZ1u0sti/UaNf4vZUiMn5c+2ow4dnm1UJ6jU46kvZZG+R/d09ASX8/ZcC9Fqopq3UKhC3CsCC1GGkTEW66GiD+w+9Ns8RdxWOqPCnzZqyxXUejgTtZOZdZZml2RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DThB9SCa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05A7CC2BBFC;
+	Tue,  7 May 2024 16:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715099599;
+	bh=4HiJms5M5hQwpyB05lhvUuD9PuV/187jPsAb+jO8nmo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DThB9SCaaZTikfmQTN7szbt1csD26aPMZptIBbYHWnRzgGq/KOHhxVt8D7aeqcrYQ
+	 pLdeTGRn/cMGj4aN/7t3Av88TL4ikuYzWcgVeHpDxo7lQvRheic1m5ivYNiGZ+++zl
+	 AvhPgx/TeoHWRm2iGnKiyIaJ+KNGiMFuKfXTKBpriVZ2YWzdpauLCYkz3M5QrkLUCS
+	 SN+gaTcYdJn9FGrHDOeS2AYm/DoKxO5jqkY3J4+pbo5AJmSWJMRcquTYBOfwyATqR/
+	 rvLcpRtJRxpOsaJ63HfdeONGGepbsqx070AY6oxOY52yij4ai/y+awATHA2Pk0tiZn
+	 M3Dgi0AVZo+Nw==
+Date: Tue, 7 May 2024 17:33:14 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch,
+	dianders@chromium.org, linus.walleij@linaro.org,
+	krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+	conor+dt@kernel.org, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xuxinxiong@huaqin.corp-partner.google.com
+Subject: Re: [PATCH v4 4/7] dt-bindings: display: panel: Add compatible for
+ BOE nv110wum-l60
+Message-ID: <20240507-sponsor-outrank-354086fe1492@spud>
+References: <20240507135234.1356855-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240507135234.1356855-5-yangcong5@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Iiz6veNj8m8Ui57Lj9a9hJIPjnkuk3__
-X-Proofpoint-ORIG-GUID: VrB8HqYh09u_Zqzs8sklBI0m0zW6Z4Un
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_10,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405070113
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="J/R2mCHLi4D2gWEX"
+Content-Disposition: inline
+In-Reply-To: <20240507135234.1356855-5-yangcong5@huaqin.corp-partner.google.com>
 
-On Fri, 12 Apr 2024 16:21:20 +0200
-David Hildenbrand <david@redhat.com> wrote:
 
-> Let's make it clearer that we are always working on folio flags and
-> never page flags of tail pages.
+--J/R2mCHLi4D2gWEX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-please be a little more verbose, and explain what you are doing (i.e.
-converting usages of page flags to folio flags), not just why.
+On Tue, May 07, 2024 at 09:52:31PM +0800, Cong Yang wrote:
+> The BOE nv110wum-l60 is a 11.0" WUXGA TFT LCD panel with himax-hx83102
+> controller. Hence, we add a new compatible with panel specific config.
+>=20
+> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
 
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-with a few extra words in the description:
-
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cheers,
+Conor.
 
 > ---
->  arch/s390/mm/gmap.c        | 4 ++--
->  arch/s390/mm/hugetlbpage.c | 8 ++++----
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/s390/mm/gmap.c b/arch/s390/mm/gmap.c
-> index 0351cb139df4..9eea05cd93b7 100644
-> --- a/arch/s390/mm/gmap.c
-> +++ b/arch/s390/mm/gmap.c
-> @@ -2648,7 +2648,7 @@ static int __s390_enable_skey_hugetlb(pte_t *pte, unsigned long addr,
->  {
->  	pmd_t *pmd = (pmd_t *)pte;
->  	unsigned long start, end;
-> -	struct page *page = pmd_page(*pmd);
-> +	struct folio *folio = page_folio(pmd_page(*pmd));
->  
->  	/*
->  	 * The write check makes sure we do not set a key on shared
-> @@ -2663,7 +2663,7 @@ static int __s390_enable_skey_hugetlb(pte_t *pte, unsigned long addr,
->  	start = pmd_val(*pmd) & HPAGE_MASK;
->  	end = start + HPAGE_SIZE - 1;
->  	__storage_key_init_range(start, end);
-> -	set_bit(PG_arch_1, &page->flags);
-> +	set_bit(PG_arch_1, &folio->flags);
->  	cond_resched();
->  	return 0;
->  }
-> diff --git a/arch/s390/mm/hugetlbpage.c b/arch/s390/mm/hugetlbpage.c
-> index c2e8242bd15d..a32047315f9a 100644
-> --- a/arch/s390/mm/hugetlbpage.c
-> +++ b/arch/s390/mm/hugetlbpage.c
-> @@ -121,7 +121,7 @@ static inline pte_t __rste_to_pte(unsigned long rste)
->  
->  static void clear_huge_pte_skeys(struct mm_struct *mm, unsigned long rste)
->  {
-> -	struct page *page;
-> +	struct folio *folio;
->  	unsigned long size, paddr;
->  
->  	if (!mm_uses_skeys(mm) ||
-> @@ -129,16 +129,16 @@ static void clear_huge_pte_skeys(struct mm_struct *mm, unsigned long rste)
->  		return;
->  
->  	if ((rste & _REGION_ENTRY_TYPE_MASK) == _REGION_ENTRY_TYPE_R3) {
-> -		page = pud_page(__pud(rste));
-> +		folio = page_folio(pud_page(__pud(rste)));
->  		size = PUD_SIZE;
->  		paddr = rste & PUD_MASK;
->  	} else {
-> -		page = pmd_page(__pmd(rste));
-> +		folio = page_folio(pmd_page(__pmd(rste)));
->  		size = PMD_SIZE;
->  		paddr = rste & PMD_MASK;
->  	}
->  
-> -	if (!test_and_set_bit(PG_arch_1, &page->flags))
-> +	if (!test_and_set_bit(PG_arch_1, &folio->flags))
->  		__storage_key_init_range(paddr, paddr + size - 1);
->  }
->  
+> Chage since V4:
+>=20
+> - No change.
+>=20
+> V3: https://lore.kernel.org/all/20240424023010.2099949-5-yangcong5@huaqin=
+=2Ecorp-partner.google.com
+>=20
+> Chage since V3:
+>=20
+> - Update commit message.
+>=20
+> V2: https://lore.kernel.org/all/20240422090310.3311429-5-yangcong5@huaqin=
+=2Ecorp-partner.google.com
+>=20
+> ---
+>  .../devicetree/bindings/display/panel/himax,hx83102.yaml        | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx8310=
+2.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml
+> index 7cd720eb4981..53a6ace75ada 100644
+> --- a/Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/himax,hx83102.yaml
+> @@ -16,6 +16,8 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          # Boe nv110wum-l60 11.0" WUXGA TFT LCD panel
+> +          - boe,nv110wum-l60
+>            # STARRY himax83102-j02 10.51" WUXGA TFT LCD panel
+>            - starry,himax83102-j02
+>        - const: himax,hx83102
+> --=20
+> 2.25.1
+>=20
 
+--J/R2mCHLi4D2gWEX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjpXygAKCRB4tDGHoIJi
+0lY8AP9J/7fYRiI1uUY4RsRlNMljvE0OzLfPALpJk//EPuOgPQEAr3Nt2x2b9xf7
+4z0WKSF8s7jkjEYCj9derRqlZWvRnw4=
+=qRFp
+-----END PGP SIGNATURE-----
+
+--J/R2mCHLi4D2gWEX--
 
