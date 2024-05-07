@@ -1,90 +1,210 @@
-Return-Path: <linux-kernel+bounces-171566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9428BE5CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AE28BE5D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A0A1C20B36
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F41CD1C21F9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A81D15F30F;
-	Tue,  7 May 2024 14:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C9615FD0D;
+	Tue,  7 May 2024 14:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="YNkxBBZt"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tj8C9NPF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F4A15FA79;
-	Tue,  7 May 2024 14:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD15A15F417;
+	Tue,  7 May 2024 14:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715091803; cv=none; b=lt0a0ZrgJuEWGSLHRUhpoPDD5DoWKv7OQosHkR2Pa6w2Y5kcOGouBELZ4S6IaqrK5S8Q5KZ0O5/U1O3lZ2lOJFz7qzL/edQIJOCOxriX2map52i9+216cP+SRPRbueFI7DjI2E9M5M0Ky2c/rL86JQDxJ8iRvOaH8yeHzLJRk5o=
+	t=1715091854; cv=none; b=W58cYllsnQEZ5Y/qcqpI2g6a/lybGGUQCNGt7JfItk7W+2KR72RQxd0+Jugs0FsU1bzPWbVLOFHpAiOrT7OCVndEm8eee0VJhKpbil7ZGI1KwVkVv4Hx4W+0xBx2UDwTAeXdcavNmghROAFkNdjPbHITAfb1ryzC5l5wwa/FNfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715091803; c=relaxed/simple;
-	bh=z1JhMXdOjLsfkUP8OGJnR28LCIOXgCXVet23oeOhiGA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YHnW5MDHr/RoMy1l7/HfIk2qzK6pZantwAKg27WB8WsNu0H/USJ0OsQWqAgEDDxGkzZzR6HLKrjLsRzqjeYEcdflE/la3MdqUHhSoOuOhQTiLBD7b9G+OWsg9F7K7SZJdXdcqkn1z53BuFz+mfdkAk8IKsU7c+YSVyOg5dKec4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=YNkxBBZt; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5A44147C32
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1715091801; bh=wPvOCynBdMR4ObPxz+E/9jMUOCmN2pJgbpqr8bZceXI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YNkxBBZtSdOJzFmSHblVsGEy3am9towDVGl6CPC2sx0YFKNh5RGdTPsA/dm3WU9bl
-	 5ZCp8s9ry0+5b2oTmBhfu4HlQT8qSoLfk4XMl5Qw6qT3n1WTnWZhwnG9WdSJgcoUmm
-	 Ca0AzpWtR6Zhi49bNLeNXWbHEFR3IwuebtRR95XaGSHwaiHKdAD74rz+1sdE2lCCPL
-	 +XyCgecqElahsOAhJ9ScTw+P+ZQjMQfaHQ4t+1aLduy4Wc6pf7Q76g/9OKHDoQUs06
-	 MkZLDzGDYdxxm9mFDMqaZoMxiz4GGO5cSZcSSIvdF/jyTb/CdAfaQR5MI/DLOuWVPL
-	 ESAvVOOEEHgiw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625:67c:16ff:fe81:5f9b])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 5A44147C32;
-	Tue,  7 May 2024 14:23:21 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Utkarsh Tripathi <utripathi2002@gmail.com>, akiyks@gmail.com
-Cc: Utkarsh Tripathi <utripathi2002@gmail.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-Subject: Re: [PATCH v3] kernel-doc: Added "*" in $type_constants2 to fix
- 'make htmldocs' warning.
-In-Reply-To: <20240503182650.7761-1-utripathi2002@gmail.com>
-References: <20240503182650.7761-1-utripathi2002@gmail.com>
-Date: Tue, 07 May 2024 08:23:20 -0600
-Message-ID: <87v83pg0pz.fsf@meer.lwn.net>
+	s=arc-20240116; t=1715091854; c=relaxed/simple;
+	bh=Zp41r/yYmWHwZsrp8pLB9sTFQRfp3NwkITAqbXQDiSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cS/VfPyVONB1tRgHOAv6Srp8kaXjU5xFsp/b/6dOeXMhIAFS9nE//ar26W9IX/dhoWXY7plXOvsTHhyYEmBkOeWYHEaZqM8PLRpMS9rD48HhefZSOZmJ0icQ1bwy0dmj6mlz8fDfJ9Dl/H8/Me8DrXmS+Mhf1e0u945Tt7da8MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tj8C9NPF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 615FBC2BBFC;
+	Tue,  7 May 2024 14:24:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715091854;
+	bh=Zp41r/yYmWHwZsrp8pLB9sTFQRfp3NwkITAqbXQDiSU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Tj8C9NPF1Ns9iCUnWotpt1qn0fdCPefMgCAZ/4hxDQ6Gb/c3+r6bTxekCJe3Rh9x0
+	 PKR3LWbXCksqpwY9bbOObzd26dixMWFjtoNJcWPNaLo3wMCZmP7zmDTkwffRRX8SFt
+	 QDBFlMHMNrqtTCI+EOSed54Z5TSFyOBCB3czHtseUzYO8xXtSOGHPSzBQckaJvlxaO
+	 sBXCZpPzabwdL+VE9emrPflwh5OmvcLYtwq+YFi0991I3yun6BWA+bRiM3oMmCb481
+	 Gu0fw/njd9xKaG3wbFccid+f3bRstjRu3p0bPVQrqpiAWZKLhoio1sciBZFNKST1LV
+	 m38WWOdUnGWfQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0596ACE12BD; Tue,  7 May 2024 07:24:14 -0700 (PDT)
+Date: Tue, 7 May 2024 07:24:14 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] gpiolib: fix the speed of descriptor label setting with
+ SRCU
+Message-ID: <597f5da2-71be-4144-a570-fdc4f06c4cc6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240507121346.16969-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507121346.16969-1-brgl@bgdev.pl>
 
-Utkarsh Tripathi <utripathi2002@gmail.com> writes:
+On Tue, May 07, 2024 at 02:13:46PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Commit 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
+> caused a massive drop in performance of requesting GPIO lines due to the
+> call to synchronize_srcu() on each label change. Rework the code to not
+> wait until all read-only users are done with reading the label but
+> instead atomically replace the label pointer and schedule its release
+> after all read-only critical sections are done.
+> 
+> To that end wrap the descriptor label in a struct that also contains the
+> rcu_head struct required for deferring tasks using call_srcu() and stop
+> using kstrdup_const() as we're required to allocate memory anyway. Just
+> allocate enough for the label string and rcu_head in one go.
+> 
+> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Closes: https://lore.kernel.org/linux-gpio/CAMRc=Mfig2oooDQYTqo23W3PXSdzhVO4p=G4+P8y1ppBOrkrJQ@mail.gmail.com/
+> Fixes: 1f2bcb8c8ccd ("gpio: protect the descriptor label with SRCU")
+> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> Fixed: WARNING: Inline literal start-string without end-string in 
-> Documentation/core-api/workqueue.rst
->
-> Added "*" in $type_constants2 in kernel-doc script to include "*" in the
-> conversion to hightlights.
-> Previously: %WQ_* -->  ``WQ_``*
-> After Changes: %WQ_* -->  ``WQ_*``
-> Need for the fix: ``* is not recognized as a valid end-string for inline literal.
->
->> The kernel-doc script uses the $type_constant2 variable to match
->> expressions used to find embedded type information.
+Looks good to me!
 
-I've applied this.  I made a changelog tweak, in that this line:
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
 
-> v1 and v2 discussions: https://lore.kernel.org/linux-doc/640114d2-5780-48c3-a294-c0eba230f984@gmail.com
+One semi-related question...  Why the per-descriptor srcu_struct?
+Please see below for more on this question.
 
-..should really just be a Link: tag rather than something special.
+							Thanx, Paul
 
-Thanks,
+> ---
+>  drivers/gpio/gpiolib.c | 31 ++++++++++++++++++++++++-------
+>  drivers/gpio/gpiolib.h |  7 ++++++-
+>  2 files changed, 30 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 94903fc1c145..2fa3756c9073 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -101,6 +101,7 @@ static bool gpiolib_initialized;
+>  
+>  const char *gpiod_get_label(struct gpio_desc *desc)
+>  {
+> +	struct gpio_desc_label *label;
+>  	unsigned long flags;
+>  
+>  	flags = READ_ONCE(desc->flags);
+> @@ -108,23 +109,36 @@ const char *gpiod_get_label(struct gpio_desc *desc)
+>  	    !test_bit(FLAG_REQUESTED, &flags))
+>  		return "interrupt";
+>  
+> -	return test_bit(FLAG_REQUESTED, &flags) ?
+> -			srcu_dereference(desc->label, &desc->srcu) : NULL;
+> +	if (!test_bit(FLAG_REQUESTED, &flags))
+> +		return NULL;
+> +
+> +	label = srcu_dereference_check(desc->label, &desc->srcu,
+> +				       srcu_read_lock_held(&desc->srcu));
+> +
+> +	return label->str;
+> +}
+> +
+> +static void desc_free_label(struct rcu_head *rh)
+> +{
+> +	kfree(container_of(rh, struct gpio_desc_label, rh));
+>  }
+>  
+>  static int desc_set_label(struct gpio_desc *desc, const char *label)
+>  {
+> -	const char *new = NULL, *old;
+> +	struct gpio_desc_label *new = NULL, *old;
+>  
+>  	if (label) {
+> -		new = kstrdup_const(label, GFP_KERNEL);
+> +		new = kzalloc(struct_size(new, str, strlen(label) + 1),
+> +			      GFP_KERNEL);
+>  		if (!new)
+>  			return -ENOMEM;
+> +
+> +		strcpy(new->str, label);
+>  	}
+>  
+>  	old = rcu_replace_pointer(desc->label, new, 1);
+> -	synchronize_srcu(&desc->srcu);
+> -	kfree_const(old);
+> +	if (old)
+> +		call_srcu(&desc->srcu, &old->rh, desc_free_label);
+>  
+>  	return 0;
+>  }
+> @@ -697,8 +711,11 @@ static void gpiodev_release(struct device *dev)
+>  	struct gpio_device *gdev = to_gpio_device(dev);
+>  	unsigned int i;
+>  
+> -	for (i = 0; i < gdev->ngpio; i++)
+> +	for (i = 0; i < gdev->ngpio; i++) {
+> +		/* Free pending label. */
+> +		synchronize_srcu(&gdev->descs[i].srcu);
+>  		cleanup_srcu_struct(&gdev->descs[i].srcu);
+> +	}
 
-jon
+If the srcu_struct was shared among all of these, you could just do one
+synchronize_srcu() and one cleanup_srcu_struct() instead of needing to
+do one per gdev->desc[] entry.
+
+You might be able to go further and have one srcu_struct for all the
+gpio devices.
+
+Or did you guys run tests and find some performance problem with sharing
+srcu_struct structures?   (I wouldn't expect one, but sometimes the
+hardware has a better imagination than I do.)
+
+>  	ida_free(&gpio_ida, gdev->id);
+>  	kfree_const(gdev->label);
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index f67d5991ab1c..69a353c789f0 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -137,6 +137,11 @@ int gpiod_set_transitory(struct gpio_desc *desc, bool transitory);
+>  
+>  void gpiod_line_state_notify(struct gpio_desc *desc, unsigned long action);
+>  
+> +struct gpio_desc_label {
+> +	struct rcu_head rh;
+> +	char str[];
+> +};
+> +
+>  /**
+>   * struct gpio_desc - Opaque descriptor for a GPIO
+>   *
+> @@ -177,7 +182,7 @@ struct gpio_desc {
+>  #define FLAG_EVENT_CLOCK_HTE		19 /* GPIO CDEV reports hardware timestamps in events */
+>  
+>  	/* Connection label */
+> -	const char __rcu	*label;
+> +	struct gpio_desc_label __rcu *label;
+>  	/* Name of the GPIO */
+>  	const char		*name;
+>  #ifdef CONFIG_OF_DYNAMIC
+> -- 
+> 2.40.1
+> 
 
