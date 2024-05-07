@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-170764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE358BDBAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:38:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56D318BDBB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF3B1F232BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B35D3B20DE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 06:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B187A15D;
-	Tue,  7 May 2024 06:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146627CF3E;
+	Tue,  7 May 2024 06:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f5w1405i"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNMp4fVL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0A677F12
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 06:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED9C79DD5;
+	Tue,  7 May 2024 06:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715063913; cv=none; b=YOxN19whk3f9cky1xuifB5xokttD9QK685M+CTf/KjktsJ1z5RkRtaPj7ux0aVlh4zrkBHoi//xw+KvWHKMf8G12Zo1vpJu7WU0BeF6EujOM909fmjK4np910BNcbxRZrhYZQiXm4MTKHLYmAOf1siV/kHsWtmqpVEJZ9Z2240w=
+	t=1715063919; cv=none; b=qchlBIVlaGw71iqi1XaEvmNMA45/9sEe2lXMEf1BIKsK+JoVuPG5gxqrwK/GwSw5BGsQQRUvwlWcWIg/N0+9C50AToI+c82FyuF9TAPhTbCvSGYUFIZXcbirQvZAzFa2OYodmx6KDCVP45ftkqM3otn6JRgerJKEjHi8XhtWotM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715063913; c=relaxed/simple;
-	bh=BKoeohEDZ10JoxgkEHGh6hbaSRwhE+vURlivpEtErJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0FkzqOuEbxpGwUbuKpO/mxkH8Ey5v3GvOLgtYEgYHWcMBMZL4GST2YAn+L77pTBY1JHDHRyuISwC7we+qqIYI5cxqFdXj+SA3bR1in2siatl2pxhpTDgcHR19ZEibhNUzOKt9skSmZ3tKPFb4MD8MPC4J2Bfmta+p5MmIM55nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f5w1405i; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41b79450f78so18504195e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 06 May 2024 23:38:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715063910; x=1715668710; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6aHkDzKF7lg6ebAituhr9z6rljFZ6+hRg0pe8ntw8+I=;
-        b=f5w1405i3JDyMtJDOB4FSsagyo6t5ZwSxMVVethWdqgnUNihxtztuYHo1N7u5L8A4J
-         p71VRwnRZ9F5IZhd+rFwB8bzVlzfA3sxjBiGhNar0ZURcmy2B6tqZ/BjMFP9/iQ+xw5d
-         sA/XIlU0bMnnLIqc2t7VoATXFIn6cC3vcqRaUYhR5o7ZNlaB9TkZ7GMcOyejSIwG3dkF
-         QTtJh2frrqY6pFHy5qnQWZXXYvO+aItujh0rkbAj7zS7dxusMFSXnIQ+b5mtgjBtdnAs
-         AEeO1Jl+MfN04LdSEXUwe505Fkt6hz3Ry4XWJQxIqKe4r5a2NyAMpH/78yaqN97ssDyI
-         rZBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715063910; x=1715668710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6aHkDzKF7lg6ebAituhr9z6rljFZ6+hRg0pe8ntw8+I=;
-        b=S0J0epde1A8WYTRc55XZgwN5t0PBqKukJ5vUZmrswynWk6uYaurWFZbCYxjwYm02cB
-         t/CuBMWQhVxnJl3E3Tb0bqCxLQQGRV0iRh+29VckejwW8f9j8TRFnfgUzLVnR3ykEO7C
-         K09kBQwzpiIQCzXHWzLRG6zHSZmoa7phivHRN52qzDkLsR4EX/fIw8MFplyNps0atoyb
-         +06ybCUX5nehILfdZXz/p8sVOd0+pp4ZqDNd5xPDXVwH6razTe0Kk4II6yKppzxuzKV7
-         CT8UgNRlqdMtae8zQDlCUSv6WpSt5XKGt3LkTe6p5yxomxjD11KFsq3qnX2vLZEeLCZ1
-         PXfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpkQAPEy4I3UDusFd8g7NfdOWiS1u2J8TgFa5Ezk3XbmzjsiaDzCVOe0EaxCa0GJ9YeqRKgSYyokFmq5OfUWAt6Lxa48/q4i78+Q/K
-X-Gm-Message-State: AOJu0YzLh99W78TkOYq9vA7uAqubKgM7UdHdtspThxUUlMrkkCIGzN1k
-	BLjvG9Rq3ddB9Clgf6vgPwxMA2Co8jxnKhhluTQXikN7dztwYlXMFgBSL5wUGN8=
-X-Google-Smtp-Source: AGHT+IEuAJWgnwrL51HjDRkNkuIQnolNDtcX2Dtiv4JArVnt0gU0JFVwrgBNZe8x9Vwq0qUDf0GeOw==
-X-Received: by 2002:a05:600c:4713:b0:41e:62e2:f55f with SMTP id v19-20020a05600c471300b0041e62e2f55fmr9053031wmo.18.1715063909582;
-        Mon, 06 May 2024 23:38:29 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id bd23-20020a05600c1f1700b0041bfb176a87sm22215368wmb.27.2024.05.06.23.38.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 23:38:29 -0700 (PDT)
-Date: Tue, 7 May 2024 09:38:25 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lars Kellogg-Stedman <lars@oddbit.com>
-Cc: Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
-	davem@davemloft.net, jreuter@yaina.de
-Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
-Message-ID: <d117754b-fb7c-4889-a49a-76d64f30a372@moroto.mountain>
-References: <20240501060218.32898-1-duoming@zju.edu.cn>
- <my4l7ljo35dnwxl33maqhyvw7666dmuwtduwtyhnzdlb6bbf5m@5sbp4tvg246f>
- <78ae8aa0-eac5-4ade-8e85-0479a22e98a3@moroto.mountain>
+	s=arc-20240116; t=1715063919; c=relaxed/simple;
+	bh=+jCl/Bk8B/p/WIdgE2PrsvxstUDWmFgiL+fNpMkcHFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PQa19QeYYVEen/ac5Te6yNPbmeO8sAnUVb6bzLUBaT3kecgng8QZd2Sz3zpR1/LLOza+fFd3WK3SSWIeuguKzj9aNbViJBGaFTjaHFxKzNNUY/cWgNJGM6Aa8YY97blA+9atG6E9+gE4s510i6aFIocU0KyW+tYLHCsCwGROXwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNMp4fVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95200C4AF18;
+	Tue,  7 May 2024 06:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715063918;
+	bh=+jCl/Bk8B/p/WIdgE2PrsvxstUDWmFgiL+fNpMkcHFo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KNMp4fVLnSPgfy5ylptuzEO7/8ac7568vebJpzCEw8qkGah60Ks0TizdNiJrZYfN8
+	 OFXd/rwO7kbXAfCTTKga3u3PIqqasgjM639hymnm3+NqGiGCc+GAEeciZC2agY/Rv6
+	 w/YSu8spKVS6c2Mivy6kfLMj4ey41FASJL7tLP52FK0Pe/WKbfW4bLTBTNsRQV9Y5q
+	 bsc5bdwGyEdrSATiKTcldkcUGXBE3BA2ROQQJREl0zsOT9aOWFUlJrTjYXNK8Znx4V
+	 x5sqHNSnwEMbffqlUdGSEbUZ7y32U2b2XkvtPMzcoH7Z7460FrIeIRUBMQ3mWtDRz0
+	 Zoi0cCJ/JOiiA==
+Message-ID: <71c52a0d-b788-4bbd-b409-6e62e6aff222@kernel.org>
+Date: Tue, 7 May 2024 08:38:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78ae8aa0-eac5-4ade-8e85-0479a22e98a3@moroto.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 00/11] Introduce Tegra register config settings
+To: Krishna Yarlagadda <kyarlagadda@nvidia.com>, linux-tegra@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
+ andi.shyti@kernel.org, wsa+renesas@sang-engineering.com,
+ ulf.hansson@linaro.org, adrian.hunter@intel.com, digetx@gmail.com,
+ ldewangan@nvidia.com, mkumard@nvidia.com
+References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240506225139.57647-1-kyarlagadda@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 03, 2024 at 11:36:37PM +0300, Dan Carpenter wrote:
-> Could you test this diff?
-> 
-> regards,
-> dan carpenter
-> 
-> diff --git a/net/ax25/af_ax25.c b/net/ax25/af_ax25.c
-> index 558e158c98d0..a7f96a4ceff4 100644
-> --- a/net/ax25/af_ax25.c
-> +++ b/net/ax25/af_ax25.c
-> @@ -1129,8 +1129,10 @@ static int ax25_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
->  	/*
->  	 * User already set interface with SO_BINDTODEVICE
->  	 */
-> -	if (ax25->ax25_dev != NULL)
-> +	if (ax25->ax25_dev != NULL) {
-> +		ax25_dev_hold(ax25->ax25_dev);
->  		goto done;
-> +	}
+On 07/05/2024 00:51, Krishna Yarlagadda wrote:
 >  
->  	if (addr_len > sizeof(struct sockaddr_ax25) && addr->fsa_ax25.sax25_ndigis == 1) {
->  		if (ax25cmp(&addr->fsa_digipeater[0], &null_ax25_address) != 0 &&
+>  Patch 01: Documentation about the device tree binding for common config framework.
+>  Patch 02: Common parser of the device tree config setting node for Tegra SoC.
+>  Patch 03: Device tree binding documentation for config setting.
+>  Patch 04: Device tree binding documentation for the I2C config setting.
+>  Patch 05: Avoid config settings child node to be treated as I2C device.
+>  Patch 06: Move clock initialization code into new methods
+>  Patch 07: Using config settings in Tegra I2C driver for interface timing registers.
+>  Patch 08: Add Tegra234 I2C config settings in DT.
+>  Patch 09: Device tree binding documentation for the SDHCI config setting.
+>  Patch 10: Using config settings in Tegra SDHCI driver for tuning iteration.
+>  Patch 11: Add Tegra234 SDHCI config settings in DT.
+> 
+> Known Issues:
+>  - DTC warning for config 'missing or empty reg property for I2C nodes'
 
-This commit is wrong.
+Which should stop you from sending buggy code, till you fix it.
 
-regards,
-dan carpenter
+Best regards,
+Krzysztof
+
 
