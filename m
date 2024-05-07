@@ -1,163 +1,128 @@
-Return-Path: <linux-kernel+bounces-171196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A33E8BE0FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:25:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A17ED8BE0BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 106041F22277
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:25:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576601F22170
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA1715219B;
-	Tue,  7 May 2024 11:25:10 +0000 (UTC)
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14916152168;
+	Tue,  7 May 2024 11:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aUQOJyOc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF5D522E;
-	Tue,  7 May 2024 11:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B591514E0;
+	Tue,  7 May 2024 11:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715081109; cv=none; b=fGPEozFYCw0N3JWJotrafzrZIAjzptxrJLtwzsCpN0C72eBSrS+WiCxuCkW79hpvRJ2Sf26jSv1U72clk3ik3XyHpEd0zTPFkBNUIBYdoe/cbPUITMKOr2WD/ZtdG0FdbUhTxL8VDOkQfJ/J+q4brc8PxnK/8ZObSMCTOCM45LI=
+	t=1715080380; cv=none; b=Wtkd7ZAPK3bdRu8R3WNEMuROe4PCKKQuSx62HfsQT+sFUh1aAJaHu1ekpExNfbjBKvfy3VKNGkj2j54O91ylCkowEqH2GL0Kw3wJtOFxhMqpRWn+ofsTbXZgJZjIHPkx43zYs90nQXxTuINUCuEMgqFZVrS82JEL/yxOoRPe2/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715081109; c=relaxed/simple;
-	bh=bwWzxT3pcIW6avQmLLAcKFb0553T2UiC6CDbQwNPuRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uP8ntR0HNAC1wN/LJp9GITP+o3uDlUDNcSaKSxStzQ2KXI1q/5tgdoRYrK8+UKRcMivDpI53hb3gfM8qXYf4YxdkfCr52Pawp6n1O2r5T8+ovS837tOg1ItAvTSBl5nH3ktaN2DnvlxigXJi3DPAuZLxIx+mkwCUtXydp584yx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Tue,  7 May 2024 13:15:53 +0200 (CEST)
-Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
-	by mail-auth.avm.de (Postfix) with ESMTPA id 11300806B0;
-	Tue,  7 May 2024 13:15:56 +0200 (CEST)
-Received: by buildd.core.avm.de (Postfix, from userid 1000)
-	id 00D0A182C00; Tue,  7 May 2024 13:15:55 +0200 (CEST)
-Date: Tue, 7 May 2024 13:15:55 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH 2/2] kbuild: add 'private' to target-specific variables
-Message-ID: <ZjoNa434si-Hk0Cs@buildd.core.avm.de>
-References: <20240427153253.2809911-1-masahiroy@kernel.org>
- <20240427153253.2809911-2-masahiroy@kernel.org>
+	s=arc-20240116; t=1715080380; c=relaxed/simple;
+	bh=vZwwfPun+jcrJFXKdn0WPiO85JreSPpf8VyM/d3hF3Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TnlCVIwWbGZjUHt/idI4jTbu/JVXZtHJW3EiKMn2gtTTYZCOwl6qRUBBDQCSDJGtzDd30oCE9RvBLgrEokP0TXJNBqgRVMbFR0S9AoPT1fXA9WQSCAxY5jUlNzvugEWtvkZDGiHB6DNVK46eKf6705Hq4koySsee3DN/BE1JLxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aUQOJyOc; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715080379; x=1746616379;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vZwwfPun+jcrJFXKdn0WPiO85JreSPpf8VyM/d3hF3Q=;
+  b=aUQOJyOcXuk0xQj101q6BoaPUfOByJZh+GytipbSZR+Zj/W5nO9XlSTe
+   p+T8Kke7C3/0S3f5sUFvyEJ1YWt6gT9e90O5qOsTJ9GErylYQYluTkOol
+   F+MZqaFLzSqOiZjmiw3HNbMG5Sg1VU7VGuhaOQ1cZdLHZs2B/6t27IgbF
+   QlDEom3460hxFO7N/2OJAw5aMRzLDIlSkLGLYVYNwOJ8dx65hm403SJAt
+   bHQzvu1eKeBjntIKAFsy0lGHgbGBxUfgz1QG+oldnqji1xYvBtCp79sfh
+   13FsLzAr2YmOvFfFpN6yQ0OI9l4TKjx/1Nx7EUhL0nFUc9LGc9WcRDViO
+   Q==;
+X-CSE-ConnectionGUID: OxbJEHk3SEmeJnD0JtWWug==
+X-CSE-MsgGUID: 9m2p3pxSRraXkSvZVj495g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10721233"
+X-IronPort-AV: E=Sophos;i="6.07,261,1708416000"; 
+   d="scan'208";a="10721233"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 04:12:58 -0700
+X-CSE-ConnectionGUID: shxD1AQuTimRHOLMV3dpFw==
+X-CSE-MsgGUID: X6ObiS9hTta/WxyGh3BG7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,261,1708416000"; 
+   d="scan'208";a="28462880"
+Received: from xiao-desktop.sh.intel.com ([10.239.46.158])
+  by fmviesa009.fm.intel.com with ESMTP; 07 May 2024 04:12:53 -0700
+From: Xiao Wang <xiao.w.wang@intel.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	luke.r.nels@gmail.com,
+	xi.wang@gmail.com,
+	bjorn@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	pulehui@huawei.com,
+	haicheng.li@intel.com,
+	Xiao Wang <xiao.w.wang@intel.com>
+Subject: [PATCH] riscv, bpf: Fix typo in comment
+Date: Tue,  7 May 2024 19:16:18 +0800
+Message-Id: <20240507111618.437121-1-xiao.w.wang@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240427153253.2809911-2-masahiroy@kernel.org>
-X-purgate-ID: 149429::1715080554-4379CE42-DC1AD1A7/0/0
-X-purgate-type: clean
-X-purgate-size: 3145
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+Content-Transfer-Encoding: 8bit
 
-On Sun, Apr 28, 2024 at 12:32:53AM +0900, Masahiro Yamada wrote:
-> Currently, Kbuild produces inconsistent results in some cases.
-> 
-> You can do an interesting experiment using the --shuffle option, which
-> is supported by GNU Make 4.4 or later.
-> 
-> Set CONFIG_KVM_INTEL=y and CONFIG_KVM_AMD=m (or vice versa), and repeat
-> incremental builds w/wo --shuffle=reverse.
-> 
->   $ make
->     [ snip ]
->     CC      arch/x86/kvm/kvm-asm-offsets.s
-> 
->   $ make --shuffle=reverse
->     [ snip ]
->     CC [M]  arch/x86/kvm/kvm-asm-offsets.s
-> 
->   $ make
->     [ snip ]
->     CC      arch/x86/kvm/kvm-asm-offsets.s
-> 
-> arch/x86/kvm/kvm-asm-offsets.s is rebuilt every time w/wo the [M] marker.
-> 
-> arch/x86/kvm/kvm-asm-offsets.s is built as built-in when it is built as
-> a prerequisite of arch/x86/kvm/kvm-intel.o, which is built-in.
-> 
-> arch/x86/kvm/kvm-asm-offsets.s is built as modular when it is built as
-> a prerequisite of arch/x86/kvm/kvm-amd.o, which is a module.
-> 
-> Another odd example is single target builds.
-> 
-> When CONFIG_LKDTM=m, drivers/misc/lkdtm/rodata.o can be built as
-> built-in or modular, depending on how it is built.
-> 
->   $ make drivers/misc/lkdtm/lkdtm.o
->     [ snip ]
->     CC [M]  drivers/misc/lkdtm/rodata.o
-> 
->   $ make drivers/misc/lkdtm/rodata.o
->     [ snip ]
->     CC      drivers/misc/lkdtm/rodata.o
-> 
-> drivers/misc/lkdtm/rodata.o is built as modular when it is built as a
-> prerequisite of another, but built as built-in when it is a final
-> target.
-> 
-> The same thing happens to drivers/memory/emif-asm-offsets.s when
-> CONFIG_TI_EMIF_SRAM=m.
-> 
->   $ make drivers/memory/ti-emif-sram.o
->     [ snip ]
->     CC [M]  drivers/memory/emif-asm-offsets.s
-> 
->   $ make drivers/memory/emif-asm-offsets.s
->     [ snip ]
->     CC      drivers/memory/emif-asm-offsets.s
-> 
-> This is because the part-of-module=y flag defined for the modules is
-> inherited by its prerequisites.
-> 
-> Target-specific variables are likely intended only for local use.
-> This commit adds 'private' to them.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+We can use either "instruction" or "insn" in the comment.
 
-uh, thanks for fixing this!  (And for the bug documentation, as always!)
+Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+---
+ arch/riscv/net/bpf_jit.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I have just one question below.
+diff --git a/arch/riscv/net/bpf_jit.h b/arch/riscv/net/bpf_jit.h
+index 18a7885ba95e..c1b6b44a2f49 100644
+--- a/arch/riscv/net/bpf_jit.h
++++ b/arch/riscv/net/bpf_jit.h
+@@ -611,7 +611,7 @@ static inline u32 rv_nop(void)
+ 	return rv_i_insn(0, 0, 0, 0, 0x13);
+ }
+ 
+-/* RVC instrutions. */
++/* RVC instructions. */
+ 
+ static inline u16 rvc_addi4spn(u8 rd, u32 imm10)
+ {
+@@ -740,7 +740,7 @@ static inline u16 rvc_swsp(u32 imm8, u8 rs2)
+ 	return rv_css_insn(0x6, imm, rs2, 0x2);
+ }
+ 
+-/* RVZBB instrutions. */
++/* RVZBB instructions. */
+ static inline u32 rvzbb_sextb(u8 rd, u8 rs1)
+ {
+ 	return rv_i_insn(0x604, rs1, 1, rd, 0x13);
+-- 
+2.25.1
 
-> 
->  Makefile               | 8 ++++----
->  scripts/Makefile.build | 6 +++---
->  2 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index 62557fabfee5..25dcc7ead330 100644
-> --- a/Makefile
-> +++ b/Makefile
-[...]
-> @@ -1500,7 +1500,7 @@ MRPROPER_FILES += include/config include/generated          \
->  
->  # clean - Delete most, but leave enough to build external modules
->  #
-> -clean: rm-files := $(CLEAN_FILES)
-> +clean: private rm-files := $(CLEAN_FILES)
-
-Did you leave 'clean: rm-files := $(KBUILD_EXTMOD)/...' for oot kmods
-the way it is (w/o 'private') by intention?
-
-Even though I cannot think of a possible problem without the 'private',
-I think it makes sense to change the line as well.
-
-W/ or w/o the 'clean'-update for oot kmods:
-
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
-
-Kind regards,
-Nicolas
 
