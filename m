@@ -1,105 +1,180 @@
-Return-Path: <linux-kernel+bounces-171177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6388BE0BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:12:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625528BE0BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:12:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2361F25923
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 941821C23AA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69DA4152537;
-	Tue,  7 May 2024 11:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A455152163;
+	Tue,  7 May 2024 11:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="lhjEK3p5"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="EZOphe+l"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF68215250D;
-	Tue,  7 May 2024 11:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8E11514DE;
+	Tue,  7 May 2024 11:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715080308; cv=none; b=S+tCr7HwK4ukEYBpURhzkXdTi56bKq4ldF2AsVpMVR5cwcFFjNhovc9slPnHQ3OK50+XZstlLqPfBVFsZIEsQXySuJjLQtc9/7GF3aIP9KtWpNl7h4m6u6iMHyA9tW2pdnaJHVuRHAFg8ymlW9A2Xl9XfgS53A/JLcXsNENoBMU=
+	t=1715080355; cv=none; b=uaWpyOj7N7Y73w1FVucYUEMmF3liyAesnc5j1qvPmnUf5obhR8td+seWfLM2eYJ5tEYEiOiobkzq1g2MF1xeiqqwZ8lSH0IRWeuDM4mSyiCvCjOiDUjH1Wirp4mWLz+3ICwFeh6OmqQE5YVwzuOtNNghlgOLXMLBNOOd6uLHDEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715080308; c=relaxed/simple;
-	bh=ugirj27XhqixAq69VU9txIVOtc8CmdlxXWxSRutQCds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krbMElN2NnfUmcFTmP9YCNr7h0GcWZH2VPSIjpQ3nppdnRir9HMHcD4tXg+K97JwWBLkc22KYWrrEwMbG1Q+dI7Pp4/qP/QrrNkU+gYkr75u/FzEmkHpdwpXGnjA5rKwD+O2wqLHql35czuCFnPkrJoQQ2IR5Qs3PHHu/bh5nrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=lhjEK3p5; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E847DB3F7;
-	Tue,  7 May 2024 13:11:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1715080297; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=lhggNZcChQN1+cSOoBexSrlJQQ7dgudKQ/bV9WGXnRI=;
-	b=lhjEK3p5hYOrmqFxzDCYlQQffO8sEE+WO8L+WpKZpWx9Cai9ulv0qsq9H2ZNOqPxRZCLDi
-	Y6Pdw3Gazkcwsvv5pp4qB+sinzjEJnknjTHKsJcPiIKAe+orXLRk0ZLQzCVdqlRygF8d6V
-	4v4h7NXO9P7cCG0NLQ2VTrV8e8yc3EvHQW2jDALWuTpGIzF3bMI+GmndryiRlkjxU0s0WT
-	TedNrkpYt5mVagcdhFcTnLw7aBQoWepx/0WTy8YkNRWsoMelZaq+qIkrPAHkFnx3nmt15W
-	RzuyScHpgJCapEG1pb6fHx3JEJsD8H4pJpiJpO8CRMl4UasMYvddtCZXGJu5qA==
-Date: Tue, 7 May 2024 13:11:31 +0200
-From: Daniel Wagner <wagi@monom.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-rt-users@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, Tom Zanussi <tom.zanussi@linux.intel.com>, 
-	Clark Williams <williams@redhat.com>
-Subject: Re: [PATCH RT 0/1] Linux v4.19.312-rt134-rc2
-Message-ID: <6irersxerqltgzv63uis2rint4ycugtr7uve7j4bbvaccogxf6@qvfg6plzrvsx>
-References: <20240506104602.16972-1-wagi@monom.org>
- <5c3ff133-6953-448b-a1e1-6bacbc210e4d@monom.org>
- <20240507095407.jAjEuCJ8@linutronix.de>
+	s=arc-20240116; t=1715080355; c=relaxed/simple;
+	bh=zSxCKA0DoPcq5N5f7sSYXUx1jwib2HFJ6z5toCJG9ic=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RE4nz6P4HF2ZlxY6r7FNjuaHNzruHIXP11NROK8Czh+RyCyoJfGsxrpT1cRTAPYLUoFp8lhzH3SYzUEEdJlIh+at34OyUylHYyNZ8E7AJZ8hgFJR/un1H0B2pysXz3VosooYWSIeb0LnS3OZtd5gnJvCdGsxH+bFIFOvINRkzBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=EZOphe+l; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 7A0F88872F;
+	Tue,  7 May 2024 13:12:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715080352;
+	bh=jN+EFedDRgb8BUKslcDfIzWNN0Nyjd/TLRJiDObOb4A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EZOphe+lgfXkwuYNX/4PmH1PHKP+QI9UBTFYz3eq2wd7wZiKfVnBH+3F+z2/NZWNU
+	 YidvliZOBZWxITzzJ/Y7SQTv1/nE2TCdmdvaxn9WdcyPV+73gq5jjh/yZoyReEcg82
+	 FrZGUEwy457kIu6e5KedOwMRREPVTlZCXro++H+tosO6PgbEMPLYEGOiQgM6YLiic7
+	 NAspXfMR2TZ0GdkmdlzUpCpLWVORm1Y14isoZuvvYFbuX0IBBRUcfUTuVirwcDHnkX
+	 ovDMIJHco8RWvKJcjyecAiQhSpvenl1fDT+EZjJiPptNGl/A6C/G8MPAtAhbg0QIkM
+	 AUhfterVL1Ipg==
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Eric Dumazet <edumazet@google.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Tristram.Ha@microchip.com,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>,
+	Simon Horman <horms@kernel.org>,
+	Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	Murali Karicheri <m-karicheri2@ti.com>,
+	Arvid Brodin <Arvid.Brodin@xdin.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	Casper Andersson <casper.casan@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [net PATCH v2] hsr: Simplify code for announcing HSR nodes timer setup
+Date: Tue,  7 May 2024 13:12:14 +0200
+Message-Id: <20240507111214.3519800-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507095407.jAjEuCJ8@linutronix.de>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi Sebastian,
+Up till now the code to start HSR announce timer, which triggers sending
+supervisory frames, was assuming that hsr_netdev_notify() would be called
+at least twice for hsrX interface. This was required to have different
+values for old and current values of network device's operstate.
 
-On Tue, May 07, 2024 at 11:54:07AM GMT, Sebastian Andrzej Siewior wrote:
-> I compared mine outcome vs v4.19-rt-next and the diff at the bottom came
-> out:
-> 
-> - timer_delete_sync() used to have "#if 0" block around
->   lockdep_assert_preemption_enabled() because the function is not part
->   of v4.19. You ended up with might_sleep() which is a minor change.
->   Your queue as of a previous release had the if0 block (in
->   __del_timer_sync()).
->   I would say this is minor but looks like a miss-merge. Therefore I
->   would say it should go back for consistency vs previous release and
->   not change it due to conflicts.
+This is problematic for a case where hsrX interface is already in the
+operational state when hsr_netdev_notify() is called, so timer is not
+configured to trigger and as a result the hsrX is not sending supervisory
+frames to HSR ring.
 
-Makes sense.
+This error has been discovered when hsr_ping.sh script was run. To be
+more specific - for the hsr1 and hsr2 the hsr_netdev_notify() was
+called at least twice with different IF_OPER_{LOWERDOWN|DOWN|UP} states
+assigned in hsr_check_carrier_and_operstate(hsr). As a result there was
+no issue with sending supervisory frames.
+However, with hsr3, the notify function was called only once with
+operstate set to IF_OPER_UP and timer responsible for triggering
+supervisory frames was not fired.
 
-> - The timer_delete_sync() is structured differently with
->   __del_timer_sync(). That function invokes timer_sync_wait_running()
->   which drops two locks which are not acquired. That is wrong. It should
->   have been del_timer_wait_running().
+The solution is to use netif_oper_up() and netif_running() helper
+functions to assess if network hsrX device is up.
+Only then, when the timer is not already pending, it is started.
+Otherwise it is deactivated.
 
-Understood. I was a bit strungling here. Glad you caught this error.
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
-> I suggest you apply the diff below to align it with later versions. It
-> also gets rid of the basep argument in __try_to_del_timer_sync() which
-> is not really used.
+Fixes: f421436a591d ("net/hsr: Add support for the High-availability Seamless Redundancy protocol (HSRv0)")
+---
+Changes for v2:
 
-Will do.
+- Add extra condition to check if the hsr network device is running
+  (not only up).
 
-> As an alternative I can send you my rebased queue if this makes it
-> easier for you.
+- Only start announce timer when it is not pending (to avoid period
+  shortening/violation)
+---
+ net/hsr/hsr_device.c | 27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
-Yes please, this makes it easy to sync the rebase branch.
+diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
+index e9d45133d641..5afc450d0855 100644
+--- a/net/hsr/hsr_device.c
++++ b/net/hsr/hsr_device.c
+@@ -61,39 +61,36 @@ static bool hsr_check_carrier(struct hsr_port *master)
+ 	return false;
+ }
+ 
+-static void hsr_check_announce(struct net_device *hsr_dev,
+-			       unsigned char old_operstate)
++static void hsr_check_announce(struct net_device *hsr_dev)
+ {
+ 	struct hsr_priv *hsr;
+ 
+ 	hsr = netdev_priv(hsr_dev);
+-
+-	if (READ_ONCE(hsr_dev->operstate) == IF_OPER_UP && old_operstate != IF_OPER_UP) {
+-		/* Went up */
+-		hsr->announce_count = 0;
+-		mod_timer(&hsr->announce_timer,
+-			  jiffies + msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL));
++	if (netif_running(hsr_dev) && netif_oper_up(hsr_dev)) {
++		/* Enable announce timer and start sending supervisory frames */
++		if (!timer_pending(&hsr->announce_timer)) {
++			hsr->announce_count = 0;
++			mod_timer(&hsr->announce_timer, jiffies +
++				  msecs_to_jiffies(HSR_ANNOUNCE_INTERVAL));
++		}
++	} else {
++		/* Deactivate the announce timer  */
++		timer_delete(&hsr->announce_timer);
+ 	}
+-
+-	if (READ_ONCE(hsr_dev->operstate) != IF_OPER_UP && old_operstate == IF_OPER_UP)
+-		/* Went down */
+-		del_timer(&hsr->announce_timer);
+ }
+ 
+ void hsr_check_carrier_and_operstate(struct hsr_priv *hsr)
+ {
+ 	struct hsr_port *master;
+-	unsigned char old_operstate;
+ 	bool has_carrier;
+ 
+ 	master = hsr_port_get_hsr(hsr, HSR_PT_MASTER);
+ 	/* netif_stacked_transfer_operstate() cannot be used here since
+ 	 * it doesn't set IF_OPER_LOWERLAYERDOWN (?)
+ 	 */
+-	old_operstate = READ_ONCE(master->dev->operstate);
+ 	has_carrier = hsr_check_carrier(master);
+ 	hsr_set_operstate(master, has_carrier);
+-	hsr_check_announce(master->dev, old_operstate);
++	hsr_check_announce(master->dev);
+ }
+ 
+ int hsr_get_max_mtu(struct hsr_priv *hsr)
+-- 
+2.20.1
 
-Thanks a lot!
-
-Cheers,
-Daniel
 
