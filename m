@@ -1,103 +1,210 @@
-Return-Path: <linux-kernel+bounces-171428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7BA8BE430
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:35:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F1A8BE435
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 189C91C20AD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:35:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75F5B287856
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DFC31C9ED0;
-	Tue,  7 May 2024 13:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFFD15F316;
+	Tue,  7 May 2024 13:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YwNkzfoV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I9lm/B7J"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF81E15F3F6;
-	Tue,  7 May 2024 13:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CEB15E7E8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 13:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715088011; cv=none; b=jxN3netLzXN4Ct+abGw1bX8elQvg/B+Rk0j8fMZwK5r9tjJXEK4D3mWhIN0AT1+fxBjGXTbChrwaf4JjQsgqDQQiZ9IuyK9toDBU4JvVCxR0tH9uZNxhMjpglqJEGKedcv8/u4zp1E+objfb8JP8+TpnPP43gLXqgD3UUHqH9mw=
+	t=1715088047; cv=none; b=Gr95auxNMhCLSeolmXyK24aK5EWhxhCbRJwmfc/SD+BgI4qb8A2kqyXLC59tRaGtYory7U+vCobqbGccb0i/k41gdr/8819LgYoEOa00QJgVZ+h4KZ1agdmgZa2dRY1HVxt7cE7dWJmJwOM3pe+Bkd1DKKSPPk+g157z2/4XPzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715088011; c=relaxed/simple;
-	bh=ctEUTWkOz0M61/Oed2P4vk68TSJ0CbLXA3dtwZlhqsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bA5bY3r48BS0wKVAPx/fmCxtV36wE028UK2G0brjZ2Xd6j6tH7VSJ5rIypybcJtdshspGW3UpxqfR3e/eMAzwZ/qg9qvNg0kbKhdsrF1VTIiRQMPIYXnN6jPlE6LsIaaZiWz+Cz5nHGRGXu3DpFmeJXa/Z2QQNyfywflfVF2pJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YwNkzfoV; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715088010; x=1746624010;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ctEUTWkOz0M61/Oed2P4vk68TSJ0CbLXA3dtwZlhqsM=;
-  b=YwNkzfoVr9VVFwz+YRLhxl1emRiDzrijYQFRen0nr+l7a5oehjyodY2d
-   ldEGumuoHpz6QH1AEcr6x63LWf7j1PrRiPDMAkjW/whQPTnE6XMfuGIx1
-   +eroYiBSM9vwl8v/VpaWOhVNr9m5ZX3GNp1gKFsPXWC8aEIyNgzMS0TJH
-   jt+qrdMUU6PMZFMqZY6vY4dOZgMpmRJcsblWbg8QljSu263awsnwLzCFq
-   4fuUxEKkUFD+ntZ3nRv8g8SJ1mSWnI9C01FXIGgkDgfFlpayXsqFtIGiA
-   sTmcmy8UGlj3dNOrEN4iyQ1KmOnc3Im+Q5Ks1CBCk/RC/yCJ+UgyJPJI9
-   Q==;
-X-CSE-ConnectionGUID: e9oyy2C0Q+q9rbn2/6xGyg==
-X-CSE-MsgGUID: ml7AxcetS9ek4k6+5SFjPQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="10731907"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="10731907"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:20:09 -0700
-X-CSE-ConnectionGUID: vMnVIVLMTvyiHsGoD8eD/w==
-X-CSE-MsgGUID: dCrFu1KbTR6fIYsba6ab2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="28580029"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 07 May 2024 06:20:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id C98F5178; Tue, 07 May 2024 16:20:06 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v1 1/1] spi: pxa2xx: Drop the stale entry in documentation TOC
-Date: Tue,  7 May 2024 16:20:02 +0300
-Message-ID: <20240507132002.71938-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1715088047; c=relaxed/simple;
+	bh=mamtRdpVuLvc5n7H5rO8CzIxnBOX+3m2jzq6NAnyw8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ksSezIVIrps4I9BBnuog3760FVsyY3A9IgCiJYb4+U4SpQKzVXxrSbYlHmXXGqLm1VyZHYutqeYis2+q5iSgDZAm8z2GEAW3Fi9RT/+X+rvu/XC2fJdoUtoIySqy5g1N0HcPXnk2TCrXa2bjAAlLhUHs9TfeNbo1k7ZgPayXTxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I9lm/B7J; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f29e80800so3441117e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 06:20:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715088044; x=1715692844; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K752O0Pcm3pbK7QoMDyqSQ3O3yzgRSedQhsNAlMKLtQ=;
+        b=I9lm/B7JeM6zCxEnqG9ogfOlR4YvRk2h64PjUiVbUsMyzt+ZHPB5WypBd2ikN44reo
+         YsBaCqBwXU7ixmFaBFPO3AL7Id2DHszD0m9OVnOTNgJquy7zyrlatO7bxBhw1OGcFIa2
+         Rv5u4k0HZOmVPT4JgmEUfe9kgAjkkKVu0+jUzzMPtlTNQIDFOQvGdxl1gynmg0x0H8sj
+         pEgenzVepqG/Ra3EsNvj9qO3XQ0dopJsojfroyat7rOttrl/2QsWEyzk2UJHzOK6r/D9
+         cAcuTadS2+T31PF/c4CvMU2RfTD4QYKnQnIQ9mB1QguqoVVjXWXQJKG3JrpoiI8eCcrh
+         ynfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715088044; x=1715692844;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K752O0Pcm3pbK7QoMDyqSQ3O3yzgRSedQhsNAlMKLtQ=;
+        b=K2PWRJRZSxToTTeaNxVtqrLLIebQjPxl0JPp2wuRSfjyBXCWdkcFGBaEm7N5jkOnwB
+         lysEkiGc8FU7iufnBYZUVaI/asAjcgQgyJnMsL7gT+xk/jhDX6ih1BTp/US8TGDcS7Uq
+         qerJNUeHxrJBs5JERdE442rcw5xiMmbXJ1ICzgTR7yul8OlPWf5RajYC6Y4uqMhsvN5u
+         jk1uyHE1vwPmnS+N66MNqKfx/LSrjtJdX0p78u8iL+d9uV804+sc15+LEq7wQ1CGZdvU
+         uauvqKNgBL7fmHWnBScm3kKg2x9V3O0HJZ8Wne8DZvYUWr47cB5GL1oWWK4g79EC7eIQ
+         adJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvCPu/OfDJ04FWDfMybS0R4Wr5PkSc5U128LBK7lEBqBFRJgM6RvnOAVkS2qaFrLIiz+kCI6cSiWT+ZnkWUV0hqWFe4PDsCZYCpNUB
+X-Gm-Message-State: AOJu0Yw2fzhm+xz26eykRPsLWXpLha31lQwZ8obHUWajzHH8TUxSebML
+	bSj6CdzhW+f2002eUqynXTsx1t7ZdEVNu/Qui4XjAANKGsmbwPqZkNNO5cxnWpA=
+X-Google-Smtp-Source: AGHT+IEGgqheSj5TrFbScUYvwODCUxXLu8LisrOI8dAlAhc9ZxNegHyZOZbMATbWnAgxeOagu8p+xA==
+X-Received: by 2002:ac2:490b:0:b0:51e:fd97:af89 with SMTP id n11-20020ac2490b000000b0051efd97af89mr8145136lfi.16.1715088043422;
+        Tue, 07 May 2024 06:20:43 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id a6-20020a05600c348600b0041c14e42e2bsm19558165wmq.44.2024.05.07.06.20.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 06:20:42 -0700 (PDT)
+Message-ID: <738045d2-a445-4f93-abfd-203348a538d1@linaro.org>
+Date: Tue, 7 May 2024 14:20:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] ASoC: qcom: x1e80100: Correct channel mapping
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ James Schulman <james.schulman@cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org>
+ <20240507-asoc-x1e80100-4-channel-mapping-v1-4-b12c13e0a55d@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20240507-asoc-x1e80100-4-channel-mapping-v1-4-b12c13e0a55d@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The documentation had been removed, so should TOC entry.
+Thanks Krzystof for the patch.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: 2d069c11e822 ("spi: pxa2xx: Remove outdated documentation")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- Documentation/spi/index.rst | 1 -
- 1 file changed, 1 deletion(-)
+On 07/05/2024 11:27, Krzysztof Kozlowski wrote:
+> X1E80100 CRD board comes with four speakers arranged as left front+back
+> and then right front+back.  Using default channel mapping causes front
+> right speaker to play left back stream.
+> 
+> Adjust the channel maps for frontend DAIs to fix stereo and four-channel
+> playback.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>   sound/soc/qcom/x1e80100.c | 37 +++++++++++++++++++++++++++++++++++--
+>   1 file changed, 35 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/qcom/x1e80100.c b/sound/soc/qcom/x1e80100.c
+> index c3c8bf7ffb5b..e90c68815b5c 100644
+> --- a/sound/soc/qcom/x1e80100.c
+> +++ b/sound/soc/qcom/x1e80100.c
+> @@ -12,6 +12,7 @@
+>   
+>   #include "common.h"
+>   #include "qdsp6/q6afe.h"
+> +#include "qdsp6/q6dsp-common.h"
+>   #include "sdw.h"
+>   
+>   struct x1e80100_snd_data {
+> @@ -74,7 +75,7 @@ static int x1e80100_snd_hw_params(struct snd_pcm_substream *substream,
+>   	return qcom_snd_sdw_hw_params(substream, params, &data->sruntime[cpu_dai->id]);
+>   }
+>   
+> -static int x1e80100_snd_prepare(struct snd_pcm_substream *substream)
+> +static int x1e80100_snd_be_prepare(struct snd_pcm_substream *substream)
+>   {
+>   	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+>   	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+> @@ -96,12 +97,34 @@ static int x1e80100_snd_hw_free(struct snd_pcm_substream *substream)
+>   				    &data->stream_prepared[cpu_dai->id]);
+>   }
+>   
+> +static int x1e80100_snd_fe_prepare(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+> +
+> +	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+> +		const unsigned int rx_slot[4] = { PCM_CHANNEL_FL,
+> +						  PCM_CHANNEL_LB,
+> +						  PCM_CHANNEL_FR,
+> +						  PCM_CHANNEL_RB };
+> +
+> +		snd_soc_dai_set_channel_map(cpu_dai, 0, NULL, ARRAY_SIZE(rx_slot),
+> +					    rx_slot);
 
-diff --git a/Documentation/spi/index.rst b/Documentation/spi/index.rst
-index 06c34ea11bcf..824ce42ed4f0 100644
---- a/Documentation/spi/index.rst
-+++ b/Documentation/spi/index.rst
-@@ -10,7 +10,6 @@ Serial Peripheral Interface (SPI)
-    spi-summary
-    spidev
-    butterfly
--   pxa2xx
-    spi-lm70llp
-    spi-sc18is602
- 
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Channel mapping are specific to backend dais rather than front end pcm dais.
 
+This will set all the playback pcms with this channel maps, which is a 
+problem.
+
+example the 2 channel headset we will endup with data of front channel 
+and zeros on the right channel, however a speaker might work as you have 
+4 speakers in your system.
+
+
+So No for this approach.
+
+
+--srini
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static const struct snd_soc_ops x1e80100_be_ops = {
+>   	.startup = qcom_snd_sdw_startup,
+>   	.shutdown = x1e80100_snd_shutdown,
+>   	.hw_params = x1e80100_snd_hw_params,
+>   	.hw_free = x1e80100_snd_hw_free,
+> -	.prepare = x1e80100_snd_prepare,
+> +	.prepare = x1e80100_snd_be_prepare,
+> +};
+> +
+> +static const struct snd_soc_ops x1e80100_fe_ops = {
+> +	.prepare = x1e80100_snd_fe_prepare,
+>   };
+>   
+>   static void x1e80100_add_be_ops(struct snd_soc_card *card)
+> @@ -118,6 +141,15 @@ static void x1e80100_add_be_ops(struct snd_soc_card *card)
+>   	}
+>   }
+>   
+> +static int x1e80100_add_dai_link(struct snd_soc_card *card, struct snd_soc_dai_link *link)
+> +{
+> +	/* Add ops for Frontend DAIs coming from Topology */
+> +	if (link->dynamic && !link->no_pcm && !link->ops)
+> +		link->ops = &x1e80100_fe_ops;
+> +
+> +	return 0;
+> +}
+> +
+>   static int x1e80100_platform_probe(struct platform_device *pdev)
+>   {
+>   	struct snd_soc_card *card;
+> @@ -135,6 +167,7 @@ static int x1e80100_platform_probe(struct platform_device *pdev)
+>   
+>   	card->owner = THIS_MODULE;
+>   	card->dev = dev;
+> +	card->add_dai_link = x1e80100_add_dai_link;
+>   	dev_set_drvdata(dev, card);
+>   	snd_soc_card_set_drvdata(card, data);
+>   
+> 
 
