@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-171940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0888BEAF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:58:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB98D8BEB01
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F76281A39
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:58:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E20285E00
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE58D16D301;
-	Tue,  7 May 2024 17:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D6B16D325;
+	Tue,  7 May 2024 18:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="j/g0CEmr"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fF1pfyVR"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D3F1607A7;
-	Tue,  7 May 2024 17:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F4F10E6
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104707; cv=none; b=VcEJo5OG64Byg/B+LRu1aDj0j42JThpXToWPwdxmABBNdecETfyCN2kORzY1ZtvKVBBPXHyziSPnOYkgI2PP6oIojhu4TWsWGml1uB59jieWpqHCcB2DhwRqTD05MjTMx9OV81WEO2z9zbOwd2f0+CN4owX+i2uXkTah0Jd+60Q=
+	t=1715104850; cv=none; b=OaDpS4wQKdlodklS8NSp1Bzc4oY/CnnK8thc+jJ5GpRM1r/8pWQzEMuCmi34O1EQperl7D5aCLagrGOB3a8GbRU2fjaU7wPY4sk5NiVjJHe60qQUyhcUoXYysIq9NL8VUqnFy5RruTs1OLiCxcjx+1CAGHwWEovI1dKnqdvIXqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104707; c=relaxed/simple;
-	bh=cLhYMUfavX/is8oPA4vFjuYUvx4gHjw9s6GruuvD9E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ceL2kv0ndzEKBWJ1aBZ92mH1vUOch7doof66vQ03WAJbYhDFqioEGP3ytwEPyV0X/uLz0TbzmUVNaj+uBydU/JZsOsiSY8a74AKgRc4QuTWxPk8K/dmyxkhzCuEo191QWQ6AybOzmpP4Ia6fhoMc5FlY8jzmZ0pkO7Afau7fAqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=j/g0CEmr; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jhtPKTCf2rAFUz3lZJnxmPbFv+4BaiLF1W7Jae20gYI=; b=j/g0CEmrxGRCGwQVYvHY/UrX8a
-	XrAAQ9UmOPxMRWI0rhRsrXX0d0Yx5EpPm8YrPkH34Svqe5xREnhckMam2p+ly12QRtE/hj2P03mtW
-	yorPSYlbnkg9sGDE9uPI/af7s7at75lwPgVmv9fwe10NeaFGzw0LNpVa2Qnd9GdyIRv8IoGQpGMrS
-	eIiwZEp98gf05AaM659uXZYcEhw2K9/c0+wO3x8okGCPWuDZ010R2hc1Xh50DLE+SpEfit90FAFVO
-	gKTqREa+2WvZJj3wEwmeNw7qtuGWldAE+/iZ8A7uKgOHS1L6a1EKFzbdeE022S0ggsI0vROkAeM02
-	MEVPSkcg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34370)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s4P50-00047K-0H;
-	Tue, 07 May 2024 18:58:18 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s4P4y-0000Vr-JX; Tue, 07 May 2024 18:58:16 +0100
-Date: Tue, 7 May 2024 18:58:16 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clkdev: fix potential NULL pointer dereference
-Message-ID: <ZjpruBO7iwcrz5ru@shell.armlinux.org.uk>
-References: <CGME20240507064445eucas1p1bfc17da4f824ef46567774634482f12f@eucas1p1.samsung.com>
- <20240507064434.3213933-1-m.szyprowski@samsung.com>
- <e4ad92b88556f0de05b6b7ae03da1e581d688ce5.camel@linaro.org>
+	s=arc-20240116; t=1715104850; c=relaxed/simple;
+	bh=xN1VWl6d7UWw/9znVR7KQPIH2t/Yorb7YaTWcrZ9B2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKhcPCd+4WfrxAhxgH5O8Vp9ARvWDqRsMoEG2esd8HNBD1VPvOCcQkgmThl2h5wsWopGFMK8AZguqvgRWqf7kfZ41oVz3ta7op7cKiSKy+FOEs43XTEF5t7GaYoRDsId4q/uTIl/qe+xqPTqMqx2IT1Sk7PuT3EBLYjb7B9Uxek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fF1pfyVR; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715104845;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3dZRrtiT6u2AQq8yaWtkXaA1FaAqAm5F7GJug5lWD1c=;
+	b=fF1pfyVRJsGtYEYWjlhft20hOLvQU81HyMeiblHpjRdS/UCf5xhyKb218MQmfB+XnCgCS7
+	jNvfMjSlFRYOz7Aqg5x/U5+JObktZdfdxFEFsVvQtRc4WGw4hrhwVObI7qaWdsyJQwol8e
+	Kqz+jsP+03xpnZjnVSr8f5EX5RiauRs=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Andrzej Hajda <andrzej.hajda@intel.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/drm-bridge.c: Drop conditionals around of_node pointers
+Date: Wed,  8 May 2024 02:00:00 +0800
+Message-Id: <20240507180001.1358816-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e4ad92b88556f0de05b6b7ae03da1e581d688ce5.camel@linaro.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 07, 2024 at 05:42:45PM +0100, André Draszik wrote:
-> Hi Marek,
-> 
-> On Tue, 2024-05-07 at 08:44 +0200, Marek Szyprowski wrote:
-> > diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> > index ddacab7863d0..d2801ae70e34 100644
-> > --- a/drivers/clk/clkdev.c
-> > +++ b/drivers/clk/clkdev.c
-> > @@ -194,10 +194,12 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
-> >  	return &cla->cl;
-> >  
-> >  fail:
-> > -	fmt.fmt = dev_fmt;
-> > -	fmt.va = &ap_copy;
-> > -	pr_err("%pV:%s: %s ID is greater than %zu\n",
-> > -	       &fmt, con_id, failure, max_size);
-> > +	if (dev_fmt) {
-> > +		fmt.fmt = dev_fmt;
-> > +		fmt.va = &ap_copy;
-> > +		pr_err("%pV:%s: %s ID is greater than %zu\n",
-> > +		       &fmt, con_id, failure, max_size);
-> > +	}
-> 
-> It might be nice to still print the rest of the error, so it's easier to see which
-> clock is causing trouble.
+Having conditional around the of_node pointer of the drm_bridge structure
+is not necessary, since drm_bridge structure always has the of_node as its
+member.
 
-Good point. I'll fix the patch myself, merging the fix in.
+Let's drop the conditional to get a better looks, please also note that
+this is following the already accepted commitments. see commit d8dfccde2709
+("drm/bridge: Drop conditionals around of_node pointers") for reference.
 
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+---
+ drivers/gpu/drm/drm_bridge.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index 30d66bee0ec6..a6dbe1751e88 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -352,13 +352,8 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
+ 	bridge->encoder = NULL;
+ 	list_del(&bridge->chain_node);
+ 
+-#ifdef CONFIG_OF
+ 	DRM_ERROR("failed to attach bridge %pOF to encoder %s: %d\n",
+ 		  bridge->of_node, encoder->name, ret);
+-#else
+-	DRM_ERROR("failed to attach bridge to encoder %s: %d\n",
+-		  encoder->name, ret);
+-#endif
+ 
+ 	return ret;
+ }
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.34.1
+
 
