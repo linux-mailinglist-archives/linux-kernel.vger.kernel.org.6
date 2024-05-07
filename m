@@ -1,184 +1,286 @@
-Return-Path: <linux-kernel+bounces-171981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B960D8BEB7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEB88BEB80
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6491C2214E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CD3E1F256AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A69D16D9A0;
-	Tue,  7 May 2024 18:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19D416D4DA;
+	Tue,  7 May 2024 18:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a+Bvs9jm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgtYPCVb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8216D4F6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0451C13C825;
+	Tue,  7 May 2024 18:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715106623; cv=none; b=ICm7v935NlEipEj2EadV3xJ8a8Ck5BgnOsD39xTh4OvU8f8NwVp5tNbwElVSASfiKKxdgAl9yKZ94eKQZ7c2NuWX66yGs5ufjiyklIoBgPgq7y1i31jTDCDnyCcvUufx0IAQNa0tzVy8qOXAIIbylRue8oQLPjdlSx11Dm4+39w=
+	t=1715106926; cv=none; b=GmoGkMKD2ygRYSt9eAHdEEmTAk82/fvqZ2QvOAZsBdKiBNPDkzoT6lZuytyRZFOvj91oXtEd45wKyhbrHX9GZXroFZ7doAOjSy7osShKVJTArXbrjei7i6XqDVdQQKcH/l3KdyAyEgU32yD87xLCpRQMtl5xA22VwBEXQYYKXNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715106623; c=relaxed/simple;
-	bh=todgKwr/CScOY+A7F9fkG13fuoc4NybkkFJ51I6dpdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RJVdLFx176Stv/8Z2jfED1kAZ40BFKn20DzG44rbjTPBWUlOeQF+3vgzVATD4Hlgz1Y64Q6W3xmQc7kJIM0RZ66EuFt/tfMs9JR3bcemrVs/5Wpi+b0ODNwgmQWgyyq4dY7muNtSZ2UC8Le3HDUjLYydHiSCmEbC4sXxIQ3tjV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a+Bvs9jm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715106620;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fHPcl5tLAWgsnKeV21CWQ6TvBf3RI38u5xSjGGRjJy4=;
-	b=a+Bvs9jmh0dF5oDW9Y5x0ZIX0TLwCA9L+Gwx77Hi8OqMce6Sm4O28RHXopiR5Ql03Xloa9
-	UZ7AY/nnMIEOQlKA9KlAQ3hvXnfW61DDuohlnzFlNQiATdNRelK0t0Lti7EpXZtiejpP3t
-	GuiLSnibCjGhw0o52xM8kW9MH6IHQis=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-49-sQQIF0nrMXeuYa0zEgLJEw-1; Tue, 07 May 2024 14:30:19 -0400
-X-MC-Unique: sQQIF0nrMXeuYa0zEgLJEw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-346c08df987so19591f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:30:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715106618; x=1715711418;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fHPcl5tLAWgsnKeV21CWQ6TvBf3RI38u5xSjGGRjJy4=;
-        b=Hr4RflGTdqThFVx7qr5O3CyK2wGRGPnksq2+l6nZqlLmfk36hpt3cbez0NKVr4PcTj
-         sP3IWLNsHvBpKjkZfG37DUqJZwTeZaMMtpznLejhV2AigT4sZMiVHHCRC5RI6wGLqFeh
-         qIlF3TFCYZ++SrRMQe4wdOGK+vjAXmDvFrwuF7TOK5xJyrI+R/WnhEAN76FcCujhedZO
-         XucYIP9u4XY5KdZv3/EvTxC71xknZ13yaaIKZCFObMV5gPACaAcj2IctaKwyzLSXOljw
-         nrazRWVE03fYmMLufQpHhdwdTgQ17iOg+Lgkd5TfixXbI6jV1m4XxFeK2vby8Z41yu6Z
-         opig==
-X-Forwarded-Encrypted: i=1; AJvYcCVXGn24xn2eqPGAI/8yiSRYeiW6AkVxcElK61Ol4djTXjLK2l6Fj4vFMfS+DINIflY8GNwF41Ty5HaVzL8oD4345NQigYjIWeLAW5Dt
-X-Gm-Message-State: AOJu0Yy58/AypkVWwVc0PzgI3y+hDk45f3hzF2hJXq6fQ225zBBzkFoD
-	ZV2fNc+x/2Cs8aEYdt5xeXXrJTTK1flJgp00bJ9fKSJeMzDlR81N2qslRpmQm4doXdaCb710W9L
-	aKPU+hRVFVlxC++HuaL1SdWQFmc9IwHwRoMW0B3xeWcwvKgtlCcdkbKipClgWpQ==
-X-Received: by 2002:a05:6000:b86:b0:34d:a0b4:d122 with SMTP id ffacd0b85a97d-34fcaa02533mr490493f8f.30.1715106618051;
-        Tue, 07 May 2024 11:30:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7mf8ds4M054PVWfbTMpVAM2jRSr4JQPHwuncQiXJPbcNLu98xQNw4gNgCjf2Sy6HOkY1HYw==
-X-Received: by 2002:a05:6000:b86:b0:34d:a0b4:d122 with SMTP id ffacd0b85a97d-34fcaa02533mr490463f8f.30.1715106617597;
-        Tue, 07 May 2024 11:30:17 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c744:b500:3f9d:130d:ea00:afc7? (p200300cbc744b5003f9d130dea00afc7.dip0.t-ipconnect.de. [2003:cb:c744:b500:3f9d:130d:ea00:afc7])
-        by smtp.gmail.com with ESMTPSA id o9-20020a5d47c9000000b0034d7a555047sm13456532wrc.96.2024.05.07.11.30.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 11:30:17 -0700 (PDT)
-Message-ID: <86749724-81fe-4d54-b909-e4ca4171c6ce@redhat.com>
-Date: Tue, 7 May 2024 20:30:15 +0200
+	s=arc-20240116; t=1715106926; c=relaxed/simple;
+	bh=TELV8mwIKIxcpUSfKl97kkO2PhVXm6bY9UQzIfbvyME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwMXd0EkXrhTIXuqfryqAhKHlo0Fje85Ob8a3YnhmWCgqaxAYcLXA4JlbBmMhs3+yvmBTQVqRkR2oFPfUhVEpZ9A36TfsnLPr7ObVHULybkioFU6wDXl3TUINzzOTyataeUV/jNntgGe0XPdU2ELWV6SUoocjq0u7oLj23UEhXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgtYPCVb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F710C2BBFC;
+	Tue,  7 May 2024 18:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715106925;
+	bh=TELV8mwIKIxcpUSfKl97kkO2PhVXm6bY9UQzIfbvyME=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=AgtYPCVb8iZvLBsMlqjrcFAH6Ita4rUX/3mRDHYkc/6QjHQTFNibqtIE67w5EeOA+
+	 SiQyd7WHTnCtOvAco/6hGeIHlVy+KZppR3BtFsBY6C7BDXU6Yw6IkEjIG2+eInzUO7
+	 W4LGZC+kwNMUEnctl6dK+Iawra4TlrR2l7aCNxlHy0S9UrFVawwJjfspfS5TfurMY1
+	 oZMeXEi7kvUXbSSWlrqQlCfjSseUK2+Aig7zK4TIwml5scBu0k24JtYJ//DusS82NG
+	 MRGv/eMOcdixi61wHWpGYfi4MzJWItfXXOloauTAzqk2i+eGM88XPhGZHqytJdCfNS
+	 lp3lwv5v20RCg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 1064DCE0C56; Tue,  7 May 2024 11:35:25 -0700 (PDT)
+Date: Tue, 7 May 2024 11:35:25 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kent Gibson <warthog618@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpiolib: use a single SRCU struct for all GPIO
+ descriptors
+Message-ID: <bee9f8b8-2b12-45a0-a440-04ecb71b98bd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240507172414.28513-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, willy@infradead.org,
- sj@kernel.org, maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com,
- 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com,
- zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com,
- libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240501042700.83974-1-ioworker0@gmail.com>
- <20240501042700.83974-3-ioworker0@gmail.com>
- <cc9fd23f-7d87-48a7-a737-acbea8e95fb7@linux.alibaba.com>
- <CAK1f24kyCj2Svguuu07wDuVEWYYbcmRc_18ihgVAzSjoJ9ox2A@mail.gmail.com>
- <a8f7a8da-c2e1-443c-9220-a224d97b1c81@redhat.com>
- <CAK1f24=rWdgscbDa6pMqOmTEDOHVLo5NQ=7jOo9TdyJRXahHZg@mail.gmail.com>
- <20240507102241.0a09db69afd62efb5ce84f17@linux-foundation.org>
- <19645506-f17d-4202-807e-f0e5c99af742@redhat.com>
- <20240507103843.d15414e356d60612f94ec6ce@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240507103843.d15414e356d60612f94ec6ce@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507172414.28513-1-brgl@bgdev.pl>
 
-On 07.05.24 19:38, Andrew Morton wrote:
-> On Tue, 7 May 2024 19:33:05 +0200 David Hildenbrand <david@redhat.com> wrote:
+On Tue, May 07, 2024 at 07:24:14PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
->>> Well, which series are we talking about?  "mm/madvise: enhance
->>> lazyfreeing with mTHP in madvise_free v10" or ""Reclaim lazyfree THP
->>> without splitting v4" or both?
->>
->> See my other mail, "mm/madvise: enhance lazyfreeing with mTHP in
->> madvise_free v10" is all acked/reviewed and good to go.
->>
->>>
->>> And how significant are the needed fixup patches?
->>>
->>> And what is our confidence level after those fixups are in place?
->>
->> I'm afraid I won't have time to review this series this/next week, so I
->> cannot tell. I already assumed this would not be 6.10 material.
+> We used a per-descriptor SRCU struct in order to not impose a wait with
+> synchronize_srcu() for descriptor X on read-only operations of
+> descriptor Y. Now that we no longer call synchronize_srcu() on
+> descriptor label change but only when releasing descriptor resources, we
+> can use a single SRCU structure for all GPIO descriptors in a given chip.
 > 
-> OK, I've dropped the series "Reclaim lazyfree THP without splitting",
-> v4.  Let's revisit in the next cycle.
+> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thanks, should be more than ready by then :)
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
 
--- 
-Cheers,
-
-David / dhildenb
-
+> ---
+>  drivers/gpio/gpiolib-cdev.c |  2 +-
+>  drivers/gpio/gpiolib.c      | 41 +++++++++++++++++--------------------
+>  drivers/gpio/gpiolib.h      | 10 ++++-----
+>  3 files changed, 25 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index d09c7d728365..fea149ae7774 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -2351,7 +2351,7 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
+>  
+>  	dflags = READ_ONCE(desc->flags);
+>  
+> -	scoped_guard(srcu, &desc->srcu) {
+> +	scoped_guard(srcu, &desc->gdev->desc_srcu) {
+>  		label = gpiod_get_label(desc);
+>  		if (label && test_bit(FLAG_REQUESTED, &dflags))
+>  			strscpy(info->consumer, label,
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 2fa3756c9073..fa50db0c3605 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -112,8 +112,8 @@ const char *gpiod_get_label(struct gpio_desc *desc)
+>  	if (!test_bit(FLAG_REQUESTED, &flags))
+>  		return NULL;
+>  
+> -	label = srcu_dereference_check(desc->label, &desc->srcu,
+> -				       srcu_read_lock_held(&desc->srcu));
+> +	label = srcu_dereference_check(desc->label, &desc->gdev->desc_srcu,
+> +				srcu_read_lock_held(&desc->gdev->desc_srcu));
+>  
+>  	return label->str;
+>  }
+> @@ -138,7 +138,7 @@ static int desc_set_label(struct gpio_desc *desc, const char *label)
+>  
+>  	old = rcu_replace_pointer(desc->label, new, 1);
+>  	if (old)
+> -		call_srcu(&desc->srcu, &old->rh, desc_free_label);
+> +		call_srcu(&desc->gdev->desc_srcu, &old->rh, desc_free_label);
+>  
+>  	return 0;
+>  }
+> @@ -709,13 +709,10 @@ EXPORT_SYMBOL_GPL(gpiochip_line_is_valid);
+>  static void gpiodev_release(struct device *dev)
+>  {
+>  	struct gpio_device *gdev = to_gpio_device(dev);
+> -	unsigned int i;
+>  
+> -	for (i = 0; i < gdev->ngpio; i++) {
+> -		/* Free pending label. */
+> -		synchronize_srcu(&gdev->descs[i].srcu);
+> -		cleanup_srcu_struct(&gdev->descs[i].srcu);
+> -	}
+> +	/* Call pending kfree()s for descriptor labels. */
+> +	synchronize_srcu(&gdev->desc_srcu);
+> +	cleanup_srcu_struct(&gdev->desc_srcu);
+>  
+>  	ida_free(&gpio_ida, gdev->id);
+>  	kfree_const(gdev->label);
+> @@ -992,6 +989,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>  	if (ret)
+>  		goto err_remove_from_list;
+>  
+> +	ret = init_srcu_struct(&gdev->desc_srcu);
+> +	if (ret)
+> +		goto err_cleanup_gdev_srcu;
+> +
+>  #ifdef CONFIG_PINCTRL
+>  	INIT_LIST_HEAD(&gdev->pin_ranges);
+>  #endif
+> @@ -999,23 +1000,19 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>  	if (gc->names) {
+>  		ret = gpiochip_set_desc_names(gc);
+>  		if (ret)
+> -			goto err_cleanup_gdev_srcu;
+> +			goto err_cleanup_desc_srcu;
+>  	}
+>  	ret = gpiochip_set_names(gc);
+>  	if (ret)
+> -		goto err_cleanup_gdev_srcu;
+> +		goto err_cleanup_desc_srcu;
+>  
+>  	ret = gpiochip_init_valid_mask(gc);
+>  	if (ret)
+> -		goto err_cleanup_gdev_srcu;
+> +		goto err_cleanup_desc_srcu;
+>  
+>  	for (desc_index = 0; desc_index < gc->ngpio; desc_index++) {
+>  		struct gpio_desc *desc = &gdev->descs[desc_index];
+>  
+> -		ret = init_srcu_struct(&desc->srcu);
+> -		if (ret)
+> -			goto err_cleanup_desc_srcu;
+> -
+>  		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
+>  			assign_bit(FLAG_IS_OUT,
+>  				   &desc->flags, !gc->get_direction(gc, desc_index));
+> @@ -1027,7 +1024,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>  
+>  	ret = of_gpiochip_add(gc);
+>  	if (ret)
+> -		goto err_cleanup_desc_srcu;
+> +		goto err_free_valid_mask;
+>  
+>  	ret = gpiochip_add_pin_ranges(gc);
+>  	if (ret)
+> @@ -1074,10 +1071,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>  	gpiochip_remove_pin_ranges(gc);
+>  err_remove_of_chip:
+>  	of_gpiochip_remove(gc);
+> -err_cleanup_desc_srcu:
+> -	while (desc_index--)
+> -		cleanup_srcu_struct(&gdev->descs[desc_index].srcu);
+> +err_free_valid_mask:
+>  	gpiochip_free_valid_mask(gc);
+> +err_cleanup_desc_srcu:
+> +	cleanup_srcu_struct(&gdev->desc_srcu);
+>  err_cleanup_gdev_srcu:
+>  	cleanup_srcu_struct(&gdev->srcu);
+>  err_remove_from_list:
+> @@ -2407,7 +2404,7 @@ char *gpiochip_dup_line_label(struct gpio_chip *gc, unsigned int offset)
+>  	if (!test_bit(FLAG_REQUESTED, &desc->flags))
+>  		return NULL;
+>  
+> -	guard(srcu)(&desc->srcu);
+> +	guard(srcu)(&desc->gdev->desc_srcu);
+>  
+>  	label = kstrdup(gpiod_get_label(desc), GFP_KERNEL);
+>  	if (!label)
+> @@ -4798,7 +4795,7 @@ static void gpiolib_dbg_show(struct seq_file *s, struct gpio_device *gdev)
+>  	}
+>  
+>  	for_each_gpio_desc(gc, desc) {
+> -		guard(srcu)(&desc->srcu);
+> +		guard(srcu)(&desc->gdev->desc_srcu);
+>  		if (test_bit(FLAG_REQUESTED, &desc->flags)) {
+>  			gpiod_get_direction(desc);
+>  			is_out = test_bit(FLAG_IS_OUT, &desc->flags);
+> diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+> index 69a353c789f0..8e0e211ebf08 100644
+> --- a/drivers/gpio/gpiolib.h
+> +++ b/drivers/gpio/gpiolib.h
+> @@ -31,6 +31,7 @@
+>   * @chip: pointer to the corresponding gpiochip, holding static
+>   * data for this device
+>   * @descs: array of ngpio descriptors.
+> + * @desc_srcu: ensures consistent state of GPIO descriptors exposed to users
+>   * @ngpio: the number of GPIO lines on this GPIO device, equal to the size
+>   * of the @descs array.
+>   * @can_sleep: indicate whether the GPIO chip driver's callbacks can sleep
+> @@ -61,6 +62,7 @@ struct gpio_device {
+>  	struct module		*owner;
+>  	struct gpio_chip __rcu	*chip;
+>  	struct gpio_desc	*descs;
+> +	struct srcu_struct	desc_srcu;
+>  	int			base;
+>  	u16			ngpio;
+>  	bool			can_sleep;
+> @@ -150,7 +152,6 @@ struct gpio_desc_label {
+>   * @label:		Name of the consumer
+>   * @name:		Line name
+>   * @hog:		Pointer to the device node that hogs this line (if any)
+> - * @srcu:		SRCU struct protecting the label pointer.
+>   *
+>   * These are obtained using gpiod_get() and are preferable to the old
+>   * integer-based handles.
+> @@ -188,7 +189,6 @@ struct gpio_desc {
+>  #ifdef CONFIG_OF_DYNAMIC
+>  	struct device_node	*hog;
+>  #endif
+> -	struct srcu_struct	srcu;
+>  };
+>  
+>  #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
+> @@ -256,7 +256,7 @@ static inline int gpio_chip_hwgpio(const struct gpio_desc *desc)
+>  
+>  #define gpiod_err(desc, fmt, ...) \
+>  do { \
+> -	scoped_guard(srcu, &desc->srcu) { \
+> +	scoped_guard(srcu, &desc->gdev->desc_srcu) { \
+>  		pr_err("gpio-%d (%s): " fmt, desc_to_gpio(desc), \
+>  		       gpiod_get_label(desc) ? : "?", ##__VA_ARGS__); \
+>  	} \
+> @@ -264,7 +264,7 @@ do { \
+>  
+>  #define gpiod_warn(desc, fmt, ...) \
+>  do { \
+> -	scoped_guard(srcu, &desc->srcu) { \
+> +	scoped_guard(srcu, &desc->gdev->desc_srcu) { \
+>  		pr_warn("gpio-%d (%s): " fmt, desc_to_gpio(desc), \
+>  			gpiod_get_label(desc) ? : "?", ##__VA_ARGS__); \
+>  	} \
+> @@ -272,7 +272,7 @@ do { \
+>  
+>  #define gpiod_dbg(desc, fmt, ...) \
+>  do { \
+> -	scoped_guard(srcu, &desc->srcu) { \
+> +	scoped_guard(srcu, &desc->gdev->desc_srcu) { \
+>  		pr_debug("gpio-%d (%s): " fmt, desc_to_gpio(desc), \
+>  			 gpiod_get_label(desc) ? : "?", ##__VA_ARGS__); \
+>  	} \
+> -- 
+> 2.40.1
+> 
 
