@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-172061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D2C8BEC90
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:27:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BA58BEC93
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A51B51C23197
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76E0F1F2780C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AE316DEB5;
-	Tue,  7 May 2024 19:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5201B16E883;
+	Tue,  7 May 2024 19:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lxncq+5j"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFewAg00"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4314E16D4E7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 19:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317BE16D4E7;
+	Tue,  7 May 2024 19:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715110034; cv=none; b=CMYgXLUrET4Yd0r/juZWC5QUIybOz7A0EmTVWYEPB6PznigrI4xSDH843HVmNPTcyEtiqxjPzQiXKIFRISJIfKcc6ymbewNLaiT+GT+9S4Jm8wZgLVY8AfVM4JIWDL9b3PPR3GqaGg/URs3jyBwlogQoAVNIrsbanmkNU789bvs=
+	t=1715110043; cv=none; b=P4gOlS99uu+4uHAKRuQTTGz3VjUTPa8EhFHrEuwS0RyRpz6FGVxFKWM5G0ghP+x7cS6tkGYikPitKB5PXKxlurkaWApoFaGQdzjXHr1ZzxJ9qA027syl/TCTuX1xwp4qU3Ps63Sagk5Zb9xs+E1Ob1mifvtBZ5fGQU8cCibPvHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715110034; c=relaxed/simple;
-	bh=WxaNBLrSeN8x4lvPhzVNPKCVxGFum1rUI9B+YBvM5Ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lURyGlKjgAzIJwKJPlYMVcZ2BfOMycrqTo1SqH7B9y5cJ4om/QnLyvMwFmKtzStN9CFa0mWirSPCsD/Uu62rFUuUsId4nCa7kE5DBDe8OsdZ7DiiiqjePmIObh1FPQTx1+vGDJYikfNQRg+X8Eby/gb+uztNmn4pSOXQNuVCDiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lxncq+5j; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8F04D40E01A1;
-	Tue,  7 May 2024 19:27:08 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id pKGFQKbUhIz6; Tue,  7 May 2024 19:27:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715110025; bh=gvTYQvtdmFkBWYBMVhiFfbISKmN7J/FVgrifaFJdSG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lxncq+5jJ2HsvOIS6PnAxN0lAK5rQCznC4CA+Aj7HrvQcnU0HfOqdeHSXaSL7986C
-	 UoYqnj5rD0m6kUyCeE07WuaTWLkbysPSncjw7KmwY+NJQSwIg3ZBSnImCQvluG9XWZ
-	 KUqWkHrx6tiA6jMkrff8jREXK/X7QJsURqn3OZDnKh6t7677hSxmwNUi/v+KsnP8Og
-	 DrBMkpZL0bsWHpEkmN8lNHCuD9lReB7d/p6dljc8JVWW/THA1Kms6EQ/EO40iqLIXh
-	 xLsHy3X/1/lReoeoZMymztUngnKAXzn6Ycf+eYpOWVE9m0dZlCR+9yv4khOhlf+yJd
-	 AvPeUOlYsQAu82diAE6WuBuwa9KDUwiCfa2gA5skkvl+VF6rcZexFw+r46dUfVLhpn
-	 t4F8+rzv7wI7PZZYcqxRQ+YtqTmFkyuIKv8L+P/R/iLkv0+IQAwHvwRXE3jp/FBh5t
-	 X73mAzy4kgjTJZAu0dt5/cHDe32JvSmtr1ur7R+q2JUbmpfXzqJtCnEnQV+J8AdWR7
-	 maQjZgRyJFIOGuW/F/zP89nKrygCyceqZxO7/XsbF2car6dyj1zT2ic/9cCS/uwY4m
-	 DKq3x3BUmCC/SiNoCRxrM62BBonsrxov5VN9MtIYvElXVt2ndt5gap2mMZPsNpBKMJ
-	 kC4mLRfWpNEwotMvaZz3W9ww=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A6DB40E01A3;
-	Tue,  7 May 2024 19:26:55 +0000 (UTC)
-Date: Tue, 7 May 2024 21:26:50 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Andy Lutomirski <luto@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH] x86/fault: speed up uffd-unit-test by 10x: rate-limit
- "MCE: Killing" logs
-Message-ID: <20240507192650.GJZjqAeipgUw2AoCK9@fat_crate.local>
-References: <20240507022939.236896-1-jhubbard@nvidia.com>
+	s=arc-20240116; t=1715110043; c=relaxed/simple;
+	bh=jeEx30xO/x9LOb3Dx3gBRF9zT0JbeISVhGFM0Bk3pUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s7B1nEpMrtzwmCKr6hkuy/qHTphYdIDdbIZvgJs2MlqMS1QuxaMRRa+Q/kCFGJpcdY5iJ36eIqRUaReS8ORjRJmd2HnI6tmm47IrNzcAa954uH/LUyjvPRDHnU0RlLXrNcA5X5dD3546VoQdVz5ZvMQfL2upTEA69GbBWsjaAT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFewAg00; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4df3ad5520aso1249353e0c.0;
+        Tue, 07 May 2024 12:27:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715110041; x=1715714841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zAc3byTNBsHPa+WdoCVtnwL96sJFYPacjsD1Mg7kFVQ=;
+        b=LFewAg00VRBFmXS6C94a7Kp/jKcbCOB5+uexf0NN+R6V19n56nDkkmmyOR/uJRym6U
+         xwzIJaYYvolD4HXpWsPGy+TWu6R4RrwXIUKu9BPK9HiynW8OpKvBPYxcCq0gktttO+H0
+         bVqrtPYP+SYHx7rzgfXFJOHrzymh3r4mThvNSy3ugl/F2q7RMDSfBzllxFfmbd7FwwTI
+         WynC8F4ktAWq3mABm9fR6C7ovrGHD2Dxs+JuZ2YyiQ7+voP5dvQk0s3aHYcDp7IEZ+WJ
+         MbQ1DiKnCuocevPM3HonH3j08PK2AeU9ztD3ZEhHlXG3AkVF+gbiRIIhP//XFvMbrjY6
+         Unuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715110041; x=1715714841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zAc3byTNBsHPa+WdoCVtnwL96sJFYPacjsD1Mg7kFVQ=;
+        b=jH/s8rs/4ofJjbfxJVKiluHusFnm/DQzFLEyBSAf6VHDneoWPh+qaJspllTzqbEWTU
+         EvbjJquCcDhvw6SUSmsRbp6Vf2hFI9nnDmids1stHjOswT2T8x6uJMkUaEJBusfuOzUD
+         hWOIv0cmuAQU0/7rCco6/Vl+m87OFJ5N6hn11Fpvz0rQXJJ49T4p/xYVbj8LL+DBbucj
+         AUOrq/QvKPNDmtij/nV0DfDKQqV7z9ZcNo8trgmd2W6RuIgxiVF5NMSc1IpzeZaGepTi
+         zQRZWaHoa6s+1mjUP7St+4U1f6wJKA5ENNAu2SPEhYZzOJTWIxpwP2pcpuU++oq7lplW
+         x/HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX9pZGwvvj3rEOoifAynXEzl9rb7KcDR5fJOq8Em5VKLVzlbeGxwEs4vB4zZGN8Hd1hO85f/6b7xe3iGNf0ZkIgYmYn8OQBRXqzT+aAeyNum7t0fdeIsq+TAvZEL2VWKopJdF/aWava18GTUUhYzQIS7ELFO151jNKwtpnLBR9SkA==
+X-Gm-Message-State: AOJu0YyfFMfk8/u8WE9d6CiaD8dnMhJ/2ES/sdDgHuEuAoXSaHzBX2Xa
+	dzu6U82LB/8O6AtWf0l6oISUIKiUsqrKuxCw/28JnsZZBsQlb14XZqtYnuSBxNbqETES66i7SNo
+	hVJyUV0gbysZPdsV7f7Ai5yyZtAg=
+X-Google-Smtp-Source: AGHT+IFNdkHpD3Gwn20I/Y7Qjqry/oQQapXeMBHaaXt7fkTgoavVUMdoy9nyAnEFQ2HO1nDpfnp2Y4SnJOqaHSWKU1A=
+X-Received: by 2002:a05:6122:411b:b0:4df:2b08:f217 with SMTP id
+ 71dfb90a1353d-4df69181920mr566063e0c.6.1715110041132; Tue, 07 May 2024
+ 12:27:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240507022939.236896-1-jhubbard@nvidia.com>
+References: <20240507190111.16710-1-apais@linux.microsoft.com>
+ <20240507190111.16710-2-apais@linux.microsoft.com> <Zjp/kgBE2ddjV044@shell.armlinux.org.uk>
+In-Reply-To: <Zjp/kgBE2ddjV044@shell.armlinux.org.uk>
+From: Allen <allen.lkml@gmail.com>
+Date: Tue, 7 May 2024 12:27:10 -0700
+Message-ID: <CAOMdWSKfkT4K9MAOn-rL44pycHPhVDj4CtiYkru5y_s0S-sPeQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] [RFC] ethernet: Convert from tasklet to BH workqueue
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Allen Pais <apais@linux.microsoft.com>, netdev@vger.kernel.org, 
+	jes@trained-monkey.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, kda@linux-powerpc.org, 
+	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com, 
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
+	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
+	stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
+	Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
+	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
+	louis.peens@corigine.com, richardcochran@gmail.com, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acenic@sunsite.dk, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-mediatek@lists.infradead.org, 
+	oss-drivers@corigine.com, linux-net-drivers@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 06, 2024 at 07:29:39PM -0700, John Hubbard wrote:
-> Generating lots of memory poisoning events seems like a valid use case,
-> by which I mean that this is not just a testing artifact. And that's why
-> the fix applies to the code that directly generates the output, rather
-> than the selftest that triggers it.
+On Tue, May 7, 2024 at 12:23=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Tue, May 07, 2024 at 07:01:11PM +0000, Allen Pais wrote:
+> > The only generic interface to execute asynchronously in the BH context =
+is
+> > tasklet; however, it's marked deprecated and has some design flaws. To
+> > replace tasklets, BH workqueue support was recently added. A BH workque=
+ue
+> > behaves similarly to regular workqueues except that the queued work ite=
+ms
+> > are executed in the BH context.
+> >
+> > This patch converts drivers/ethernet/* from tasklet to BH workqueue.
+>
+> I doubt you're going to get many comments on this patch, being so large
+> and spread across all drivers. I'm not going to bother trying to edit
+> this down to something more sensible, I'll just plonk my comment here.
+>
+> For the mvpp2 driver, you're only updating a comment - and looking at
+> it, the comment no longer reflects the code. It doesn't make use of
+> tasklets at all. That makes the comment wrong whether or not it's
+> updated. So I suggest rather than doing a search and replace for
+> "tasklet" to "BH blahblah" (sorry, I don't remember what you replaced
+> it with) just get rid of that bit of the comment.
+>
 
-Sorry, not taking a "fix" for something hypothetical.
+ Thank you Russell.
 
-If this is a real issue on a real system and the printing is the
-*actual* problem at hand in a hw error storm sure, but no, not because
-a selftest runs slower.
+ I will get rid of the comment. If it helps, I can create a patch for each
+driver. We did that in the past, with this series, I thought it would be
+easier to apply one patch.
 
-I'm pretty sure in a hw error storm scenario, printk being slow is the
-least of your problems.
+Thanks,
 
-And in such a scenario the *last* thing you wanna do is ratelimit prints
-so that you can't even get all the logs which is *the* thing you need to
-debug the hw.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+       - Allen
 
