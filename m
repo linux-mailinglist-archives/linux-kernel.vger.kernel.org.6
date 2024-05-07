@@ -1,327 +1,221 @@
-Return-Path: <linux-kernel+bounces-171067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420DB8BDF68
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:08:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F828BDF6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:10:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C198281F56
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F810B243FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5771F14EC49;
-	Tue,  7 May 2024 10:08:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F248F2F2F
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715076496; cv=none; b=ssxeVLJkK/JMy0LpzVQrlhk/kbA3k5IIqHqNqpdZbkRxr+A42Jb3n9FfS5c023m+Dkf7+Y/JPUhu4yE6/hPBXwolUxi9NBnoHLJIpTZi/85Kev7dg0UzXrt7E2n10vfePMldtJRJ7DL0/R1jVn9B7biIeKoVkehrYsDceQxpqq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715076496; c=relaxed/simple;
-	bh=mH+rnRpAmktSVvD6LdRGQDuv9wGU4kt3wjrnPZU0WRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YjGf0sUQIr6yXFzVMCLl5km457hhUCdyXkkSsYGdj6OvbvNVkMRoQx6XMllvm02B/sq/1/JZkaVUYLfTdIaU5FMSXs5oXjve1AKDx8yJn1AnvBMjU1dz7iVD1PmB5vA/vikD0mpbmeeDHLrHSfnU0I1uPm4rCCN6dzawkAXTVQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CEEA1063;
-	Tue,  7 May 2024 03:08:40 -0700 (PDT)
-Received: from [10.1.34.181] (unknown [10.1.34.181])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D32593F587;
-	Tue,  7 May 2024 03:08:12 -0700 (PDT)
-Message-ID: <1dc9a561-55f7-4d65-8b86-8a40fa0e84f9@arm.com>
-Date: Tue, 7 May 2024 11:08:11 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3B314EC51;
+	Tue,  7 May 2024 10:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KVuCKvFI"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2050.outbound.protection.outlook.com [40.107.100.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA5C2F2F;
+	Tue,  7 May 2024 10:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715076625; cv=fail; b=EVqBNiJKi9mg8PFOwEVkaB8XxQyxVdfDqiTmYxA9GYoLNmvZH8f6uhGozqnEsG7sVFmrXgK7O4n+iJX4xQo8C5yQZNAALln2ztJak1pGs2m8aDQZnVkH5ECkp2scPQegMWXMBX21sIj5YimtDRkoSRoGKyxFyIruM0+Mu8Cbehg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715076625; c=relaxed/simple;
+	bh=G+mlJ2GHtRZQksoSa+6V7+ZRuLMx/QZ0KQkBY2kZPwk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=BMTd+TVB8iec5yrD1Q3QRPjkMGbT52ct+guqxpqDKu/95eQ+1NctJzsx/ICtRJ0/icmfEI4CqKDkXPYkMC4bOGQrUtCFhJu/gpflWJ4kuxf4MsHj0fQ3dZxlc8/43XaPlYfC+HOmbF0hmIrmAu+aqHf/5R6gcNzMXEunhPrxHf8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KVuCKvFI; arc=fail smtp.client-ip=40.107.100.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mhj5hA7iY/x/mP5N5V7Njlh+AkiRaKFwPWBbmDMFaKOY1W6Vu2qrHW32knw+i1weCRlr0A6OpgLwXixjPB6e8kuGDXO9Ugdq4Dt2TpTVNn1C/TiC+KU21P1E7uV5oJzSkoow7Hfuc6gH4ETvtybM6L2dPTpe0Io5w+1C8idDUT1p2oKE59KziqP5PSKTcHRzmhuujC2VkXzPYLHQWQH72wV5eALHxA5sO/hyfqUTmmchfhlYCa2k2WVrn2nZBejn63ecHNhcL2K6KhO2QrBEJ0tD4Z0k7SwxRlwxzIbiTaUQQh0738CEwBRBgW86w0daVAD+tNibdilVBp2xtCXqEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QlRLHdWEYeq286nTvaHkjbWHadntriI4JE8Oken86nA=;
+ b=lKWhyzmeZKjdewcAKMLiziL/aZA13s0I3xFhAzf4CgAD9MFWhDxvOXCE4aW1/7EwuTY3CGJ5jDd2A3sGHYzxiBC5BB2Crmv3C6DLrnYP5+QlNZlayX829XE57o89dnIA11gUU8EYNlV+kzNmxm4fM1XBb5vTszVK18LEbEG1kpc/7DrK1f3bjGFw1izz/OUllnli9KBb8/H9vKoBMN23WMv0U+lD8KauZa9XP9xkqBuOenqkGD9qJaLmjhusZ/deA9Ue6rqKaNB1h/hYP9/apDvLdYD0mZNibDdBLG4QCER8sjrF9FHAM5DkybGokBvw1Z8MveBvzClROsRsRghw9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QlRLHdWEYeq286nTvaHkjbWHadntriI4JE8Oken86nA=;
+ b=KVuCKvFIZVASMGjWh8TbzOZE0oxX6UJJ7zHP4/UM3Mo4qxDpeCt0iiBKm4Bt4gW4FPegpjJ4CEKLozxJwyHCx7JLV63nqXpRh8gtxtzD8TdbsnhN44ST8UIMRCOL4SfdFdYfiWjBkCMTlMQcUx2ulHm3MevUMBYDZkxSzhI2vbI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by PH0PR12MB7485.namprd12.prod.outlook.com (2603:10b6:510:1e9::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Tue, 7 May
+ 2024 10:10:19 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.7544.041; Tue, 7 May 2024
+ 10:10:13 +0000
+Message-ID: <8915fcc1-d8f1-48c2-9e51-65159aaa5a3b@amd.com>
+Date: Tue, 7 May 2024 12:10:07 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dmabuf: fix dmabuf file poll uaf issue
+To: "T.J. Mercier" <tjmercier@google.com>,
+ Charan Teja Kalla <quic_charante@quicinc.com>
+Cc: zhiguojiang <justinjiang@vivo.com>, Sumit Semwal
+ <sumit.semwal@linaro.org>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240327022903.776-1-justinjiang@vivo.com>
+ <5cf29162-a29d-4af7-b68e-aac5c862d20e@amd.com>
+ <cc7defae-60c1-4cc8-aee5-475d4460e574@vivo.com>
+ <23375ba8-9558-4886-9c65-af9fe8e8e8b6@amd.com>
+ <CABdmKX2Kf4ZmVzv3LGTz2GyP-9+rAtFY9hSAxdkrwK8mG0gDvQ@mail.gmail.com>
+ <e55cad9b-a361-4d27-a351-f6a4f5b8b734@vivo.com>
+ <40ac02bb-efe2-4f52-a4f2-7b56d9b93d2c@amd.com>
+ <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
+ <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com>
+ <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
+ <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com>
+ <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
+ <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
+ <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com>
+ <83605228-92ee-b666-d894-1c145af2e5ab@quicinc.com>
+ <CABdmKX2MWU9-9YN46PXx-Jy-O9CHMv8hCkvArd7BbWUBs=GPnw@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <CABdmKX2MWU9-9YN46PXx-Jy-O9CHMv8hCkvArd7BbWUBs=GPnw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR3P281CA0044.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::7) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
- boundaries
-Content-Language: en-GB
-To: Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Yang Shi <yang@os.amperecomputing.com>, riel@surriel.com, cl@linux.com,
- akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Ze Zuo <zuoze1@huawei.com>
-References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
- <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
- <Zav3UK7ESNxCMjyP@casper.infradead.org>
- <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
- <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
- <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
- <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
- <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
- <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH0PR12MB7485:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7a0800a4-c938-4a5a-a324-08dc6e7de2b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dGoxSlN1NEh0SUhPVllxbk1TS1dTZERneE5PWjVxdkt4WUc5RTJXdHV5RGp1?=
+ =?utf-8?B?aXFtbTBxaE9KeTN5Vlh3REJld1AzMnBQM2t6V2hLcW93aDlpeXhtSGpGVm1x?=
+ =?utf-8?B?Ky8xN2poNlVpWDlYUFd0Q2hMQ2Foc3FDNG9RaEdLL3J0a00rQ3RxVWRCUUpL?=
+ =?utf-8?B?REJiemFwM0lNd00wMzRmdytrVWxnZVdtd2xzWVdlYXJmWDB2cHN4b3dUdUsr?=
+ =?utf-8?B?NEg0QWplZVBYZ05XcFVBV2ZNcmdRV2x1WjFjRFNZbUlGamhta21ibi9NSGU5?=
+ =?utf-8?B?T3IyQjNJbmkzL2paNHZiVkRCOTlvT2JRbWROeG1tbVBMNCtBQzJ0NnZRSFV5?=
+ =?utf-8?B?Z2h1azBscTBYWVdEbnVCMXhIdDh2TTZnSlVpS2NzVzFZdlNRa296TklBRks4?=
+ =?utf-8?B?Sk15bFRZMGFsUUU0NzZPUWRocTloMXErdmJybGZ3a0hVeTNDQWw1aGRiR2RC?=
+ =?utf-8?B?NFpCQkt2NTdHTWxnWURIcytQZERVQ1lvMGFSZnF1Sms5YlJGMjhqQ3JhcFdv?=
+ =?utf-8?B?TkFhNkcvSmUrTkVPMzNya2xtT2ovbS9rRkpBSW8rRUMrT0Q4SXNzR3FSYVJy?=
+ =?utf-8?B?Q0V2UlQ4Zmttd3ErclhOcWs3dmJlV2xlUjMwR3FldzhVQ1R6azZ6M2FVNVlF?=
+ =?utf-8?B?cTdQK05oUUlBa2NoeCttQmZEaVNLMEhoa2VFWFl4aFRodGFCTHJjMEJldkZX?=
+ =?utf-8?B?d1pUWlZWT0FVcFVqUXRrWkNSWXJKZXk4TGxHc29Wd3BRMVNOZEVuOTFEVGVk?=
+ =?utf-8?B?QzBCTmxiRVh5SXVQRkxHdlFaNTMwQ2tjTDF1OE80QzcrZERSZWJDMk1FOFll?=
+ =?utf-8?B?Y2FkbmlPUG9nNGdRUXVjZG9Kd2Zud1FxSGd2bjV2aFczTjVlSzIyRHU4aVJt?=
+ =?utf-8?B?RWF3eHdOT1poK3dBTFhUVlhqKzMrMGg1VVNtMzlJMFRtRE5MSjRCbWFGdkl4?=
+ =?utf-8?B?b2hKVnBxWWdya2hmZ0pMNnAxMm9UalZZYmQ1ZmFEL3ViWTViaXJ5bFNWdjA1?=
+ =?utf-8?B?NnFqcWZjUkZwc2pRVzltc01rQ0NyMlhRdW83Z0srSWUrdzlPVjAxUE1oQWYz?=
+ =?utf-8?B?NGRHbjN1aHVRMzhTcmkycVR4UFNOWGJHNCtlOFJ3KzdNMS91SXVPK3JYZDZL?=
+ =?utf-8?B?TXRKL2tLTndlczhIVU1ueWZxMmVhRGpVak1oL0R6WXZOM0tXeGpWalN3NGNt?=
+ =?utf-8?B?TjB0NkQxL1NNUDBDSjd3eGY1NVV1bTRxZkZkbElYV0RQUExTeFJuSjJhbTVU?=
+ =?utf-8?B?ZHd4aVJBemlDVHZoZTNKeTZnUkhycHhhY3NMbGp2MlR3L1NMSUFYejZvMTlV?=
+ =?utf-8?B?RENMRjRNOGN5VHZQVW0zQ0M0SDdDOXhaVkR5R1d6emYxNjNvcGVxbUd3c0hr?=
+ =?utf-8?B?MWdWL0NKeGYwRlJvSmhVZ2RBWkx4bzNOaGV2WkNYV0NCM05vMFpHbW5CTEFh?=
+ =?utf-8?B?S1lrZWYvcDlTaHBMV1F0N3B2ZmhNUFdTS3NGWTJnOU1kbkx5SGk3UXRLeVRj?=
+ =?utf-8?B?SWNoUU1sSmhHRkNUcWpPWVhqQS8rUkFYYm5vRlJPQkd0cWcwUTNCdlhnaHRa?=
+ =?utf-8?B?MXlEZU5IWUpYMU9MbEhGQzNhWCtQM2xtTFV4d09Lck1CcUc3RXV2R1NIa28v?=
+ =?utf-8?Q?qy36Zn2hPRRWbhZggDkfu4+eJ0Llp9fmoa0RAG1H64l8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Nm53ZWdiM2hITWJSQnJCeU1GYXg1SnVyV1hLaEFzbi95bkRXS001TzlCWFND?=
+ =?utf-8?B?dHowS2g5SWg5Z2ExZUdaVm96Mzc3SDlCZm8yTlM0ckRFeU5uaGd3dXV6Q2FY?=
+ =?utf-8?B?K1pyUmpiNXBXTFd6ZzNyVThjN0FKd1k0ZjdjQ25JRlc5WDVBb1QzOW1KY0Z6?=
+ =?utf-8?B?U0NqcXVBQzB0L3pvbXBQakxlUmpmVmNwUWg4bXRXTWhvaktPY0Yzc2RGNjVx?=
+ =?utf-8?B?dmZlV1d4YlFFbU1XU2F6aE4vcVJDcEhTeGNlV2lmKzVndkc0NDB1R2gxTFNR?=
+ =?utf-8?B?VStaK3YrTlNxZnlxQzZqcnhYYXFyOWJoN2dORlNubXR2amJUd2ZEck1tZWs2?=
+ =?utf-8?B?Q2ZnREY5OEhqVUdJYUxOYnNIdy9WQVc2YnhUaEliL21Gc0tzZzd5ZFdNTjhP?=
+ =?utf-8?B?eFFKci9pd09YSmFiN3FNZ2ZHUW1vUEhteGJBRjV6c2p6c3R1MUlSYXh4SXNh?=
+ =?utf-8?B?OTdGeUdTM2ZKSmx1WnI0YzVaYTkyL1B1UE9SNzRPQkZSUkd6RGFvQ01lYnFL?=
+ =?utf-8?B?TlkyVTBxZ1pzenI0amZkV3g5bVNDOWl5THk2OTYvcEhyMDU1VHUxQ3FLVHYx?=
+ =?utf-8?B?Nlk2ekNBbkM4UkdTS2dZT2Q4ZlZLZnBZdzUrY0Y2M2JGbEFpckdHKzh6OTJp?=
+ =?utf-8?B?QUlCcmFIYVhRcWFic3lqeGcxS1dqRkhpVHNvTTN3Wm5FY1VuTms0Sy8zbjVm?=
+ =?utf-8?B?TUZsbWlVQ3hjbzNxVnk3aitJclJHVW1GMitMRUEvaTNrRk0rMEtwU2p1d0xl?=
+ =?utf-8?B?NHRCcCt6WFZkZGZ5TjBLQ3FmU2JPMGhoQjNhRXlOVVRPa1JlSnJrRzhCVGpR?=
+ =?utf-8?B?Z05xT0tQdFVpTjROcDlRSTQxeitHeEFhTDU1eENnY01LYkw5c3FBczRkc3NE?=
+ =?utf-8?B?SkNLem1reENqWld6b0p0N2cydGlvSE5xclNTWXBySzlKcTRFR3hKL1QvVkZH?=
+ =?utf-8?B?S0hZTmM0ZzM5Q09BcU1JYUFpTEY2VEJuZlovTXNmejUwL0IyZ2JKRngxSlVk?=
+ =?utf-8?B?bTFlWUNRU21rdzh0M281bFRHTVFIMndHb0t5SW5EYzgzaGxiZTAzd3YxcVo4?=
+ =?utf-8?B?enFRVWxjMDVLTVpVTFh1bmtncllES2pOZW5ib1M1YlpKbmhUZTRBMHhrUTFY?=
+ =?utf-8?B?dmFnMU5kdzJDUWFlOFpqTkkxQ1ZseDVvQjFaL3dmejFDZjczZHVmUzh4WlZJ?=
+ =?utf-8?B?MEhUbnpya1k0OC9TWEpuVE5XNXc3T2FVbmh6RktJMm00d3k2MnN2V25hQnJ5?=
+ =?utf-8?B?Q1pnZlJSa0plMXRJV1VqcTlUeHlwTU1MN1l2RjZnQVE4ZDNnQ0JxQ2NIOEth?=
+ =?utf-8?B?bG5ESStOczdNa0dRMEJOY2FGNS9lOW5CcW12NjdPTXpzbHJuMm1NczVuZWV6?=
+ =?utf-8?B?c3VIMmJVQXpWQ0dRWDVjYllMekw4MERQWHNLOHJjejYvcEp2aEhLVS83T1VD?=
+ =?utf-8?B?czV2T2dpN0Vqbmo1b1BQRzRxTTZUSXcvUlB3WDNzVXlBL2JXYllteUVRL3VQ?=
+ =?utf-8?B?V1NRQW9JR1hzSDB1cGdpYmZLTGhsdDFwYTMzSnJWL0pGRGFEZFM5RmNwZk42?=
+ =?utf-8?B?RXNaUkhYLzk2Rm5nMDNOWUtZUWN2TWg4TFZ6VmlLeW84Q1lxS0w1RGN1SGVi?=
+ =?utf-8?B?NVNVTERjRW1Ed09WdlFmaVBWQzVscVZsdWh2b3VKMVEySlArc25ZSFVCN21o?=
+ =?utf-8?B?ZEhuVWhzQUpCUVFmWTVOalhOSXNrVTJVdUlaZDk0QzNhajNoWmo3Z1Uyd3dz?=
+ =?utf-8?B?VGJSbkQ5V2dYc1h3Q3drWDd0RmxWLzRpaGQ2c1dUL0ZzNnlFeU1CcFlKT2Q4?=
+ =?utf-8?B?SjBuRGJRS2xUUnhXZTNmTVBBQ3RzeW00STVQZUZPMmdUak1WREIzbndMSyt6?=
+ =?utf-8?B?NVg5bndIYk1ZMS9mdDRkaVpwZCs0VlNOU0xjdnNNQ1kvemJwZmw0SDlHN1B6?=
+ =?utf-8?B?T3hTLzltNGd2QkYySExvemFLTnRCYVh0Zngra2lsc0FhR1Bzcm1LK3kxakVl?=
+ =?utf-8?B?L1Y1ZTNUSWREalJtZitGVDlsZ1pUYzEwcjVseVgzSVkzd0U3c2hpc0ZUTnRr?=
+ =?utf-8?B?aEttcVNxMys3TVNkN3Z2a1YydE4vNmtGcHNQeGcrNWFSQVlER0dPZ1crd29k?=
+ =?utf-8?Q?KzJ1dMTjBDGJjZDi8zhvsi9AE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a0800a4-c938-4a5a-a324-08dc6e7de2b4
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 10:10:13.5565
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ekPxnk4+TbKm1ot4/t6MM3XiR5ehHyYThvvbcGVVAxFIpO8Qddja/0TjFHjSkRe5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7485
 
-On 07/05/2024 09:25, Kefeng Wang wrote:
-> Hi Ryan, Yang and all,
-> 
-> We see another regression on arm64(no issue on x86) when test memory
-> latency from lmbench,
-> 
-> ./lat_mem_rd -P 1 512M 128
+Am 06.05.24 um 21:04 schrieb T.J. Mercier:
+> On Mon, May 6, 2024 at 2:30 AM Charan Teja Kalla
+> <quic_charante@quicinc.com> wrote:
+>> Hi TJ,
+>>
+>> Seems I have got answers from [1], where it is agreed upon epoll() is
+>> the source of issue.
+>>
+>> Thanks a lot for the discussion.
+>>
+>> [1] https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google.com/
+>>
+>> Thanks
+>> Charan
+> Oh man, quite a set of threads on this over the weekend. Thanks for the link.
 
-Do you know exectly what this test is doing?
+Yeah and it also has some interesting side conclusion: We should 
+probably tell people to stop using DMA-buf with epoll.
 
-> 
-> memory latency(smaller is better)
-> 
-> MiB     6.9-rc7    6.9-rc7+revert
+The background is that the mutex approach epoll uses to make files 
+disappear from the interest list on close results in the fact that each 
+file can only be part of a single epoll at a time.
 
-And what exactly have you reverted? I'm guessing just commit efa7df3e3bb5 ("mm:
-align larger anonymous mappings on THP boundaries")?
+Now since DMA-buf is build around the idea that we share the buffer 
+representation as file between processes it means that only one process 
+at a time can use epoll with each DMA-buf.
 
-> 0.00049    1.539     1.539
-> 0.00098    1.539     1.539
-> 0.00195    1.539     1.539
-> 0.00293    1.539     1.539
-> 0.00391    1.539     1.539
-> 0.00586    1.539     1.539
-> 0.00781    1.539     1.539
-> 0.01172    1.539     1.539
-> 0.01562    1.539     1.539
-> 0.02344    1.539     1.539
-> 0.03125    1.539     1.539
-> 0.04688    1.539     1.539
-> 0.0625    1.540     1.540
-> 0.09375    3.634     3.086
+So for example if a window manager uses epoll everything is fine. If a 
+client is using epoll everything is fine as well. But if *both* use 
+epoll at the same time it won't work.
 
-So the first regression is for 96K - I'm guessing that's the mmap size? That
-size shouldn't even be affected by this patch, apart from a few adds and a
-compare which determines the size is too small to do PMD alignment for.
+This can lead to rather funny and hard to debug combinations of failures 
+and I think we need to document this limitation and explicitly point it out.
 
-> 0.125   3.874     3.175
-> 0.1875  3.544     3.288
-> 0.25    3.556     3.461
-> 0.375   3.641     3.644
-> 0.5     4.125     3.851
-> 0.75    4.968     4.323
-> 1       5.143     4.686
-> 1.5     5.309     4.957
-> 2       5.370     5.116
-> 3       5.430     5.471
-> 4       5.457     5.671
-> 6       6.100     6.170
-> 8       6.496     6.468
-> 
-> -----------------------s
-> * L1 cache = 8M, it is no big changes below 8M *
-> * but the latency reduce a lot when revert this patch from L2 *
-> 
-> 12      6.917     6.840
-> 16      7.268     7.077
-> 24      7.536     7.345
-> 32      10.723     9.421
-> 48      14.220     11.350
-> 64      16.253     12.189
-> 96      14.494     12.507
-> 128     14.630     12.560
-> 192     15.402     12.967
-> 256     16.178     12.957
-> 384     15.177     13.346
-> 512     15.235     13.233
-> 
-> After quickly check the smaps, but don't find any clues, any suggestion?
-
-Without knowing exactly what the test does, it's difficult to know what to
-suggest. If you want to try something semi-randomly; it might be useful to rule
-out the arm64 contpte feature. I don't see how that would be interacting here if
-mTHP is disabled (is it?). But its new for 6.9 and arm64 only. Disable with
-ARM64_CONTPTE (needs EXPERT) at compile time.
-
-> 
-> Thanks.
-> 
-> On 2024/1/24 1:26, Ryan Roberts wrote:
->> On 23/01/2024 17:14, Yang Shi wrote:
->>> On Tue, Jan 23, 2024 at 1:41 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>
->>>> On 22/01/2024 19:43, Yang Shi wrote:
->>>>> On Mon, Jan 22, 2024 at 3:37 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>>>
->>>>>> On 20/01/2024 16:39, Matthew Wilcox wrote:
->>>>>>> On Sat, Jan 20, 2024 at 12:04:27PM +0000, Ryan Roberts wrote:
->>>>>>>> However, after this patch, each allocation is in its own VMA, and there
->>>>>>>> is a 2M
->>>>>>>> gap between each VMA. This causes 2 problems: 1) mmap becomes MUCH slower
->>>>>>>> because there are so many VMAs to check to find a new 1G gap. 2) It
->>>>>>>> fails once
->>>>>>>> it hits the VMA limit (/proc/sys/vm/max_map_count). Hitting this limit then
->>>>>>>> causes a subsequent calloc() to fail, which causes the test to fail.
->>>>>>>>
->>>>>>>> Looking at the code, I think the problem is that arm64 selects
->>>>>>>> ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT. But __thp_get_unmapped_area()
->>>>>>>> allocates
->>>>>>>> len+2M then always aligns to the bottom of the discovered gap. That
->>>>>>>> causes the
->>>>>>>> 2M hole. As far as I can see, x86 allocates bottom up, so you don't get
->>>>>>>> a hole.
->>>>>>>
->>>>>>> As a quick hack, perhaps
->>>>>>> #ifdef ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
->>>>>>> take-the-top-half
->>>>>>> #else
->>>>>>> current-take-bottom-half-code
->>>>>>> #endif
->>>>>>>
->>>>>>> ?
->>>>>
->>>>> Thanks for the suggestion. It makes sense to me. Doing the alignment
->>>>> needs to take into account this.
->>>>>
->>>>>>
->>>>>> There is a general problem though that there is a trade-off between abutting
->>>>>> VMAs, and aligning them to PMD boundaries. This patch has decided that in
->>>>>> general the latter is preferable. The case I'm hitting is special though, in
->>>>>> that both requirements could be achieved but currently are not.
->>>>>>
->>>>>> The below fixes it, but I feel like there should be some bitwise magic that
->>>>>> would give the correct answer without the conditional - but my head is
->>>>>> gone and
->>>>>> I can't see it. Any thoughts?
->>>>>
->>>>> Thanks Ryan for the patch. TBH I didn't see a bitwise magic without
->>>>> the conditional either.
->>>>>
->>>>>>
->>>>>> Beyond this, though, there is also a latent bug where the offset provided to
->>>>>> mmap() is carried all the way through to the get_unmapped_area()
->>>>>> impelementation, even for MAP_ANONYMOUS - I'm pretty sure we should be
->>>>>> force-zeroing it for MAP_ANONYMOUS? Certainly before this change, for arches
->>>>>> that use the default get_unmapped_area(), any non-zero offset would not have
->>>>>> been used. But this change starts using it, which is incorrect. That said,
->>>>>> there
->>>>>> are some arches that override the default get_unmapped_area() and do use the
->>>>>> offset. So I'm not sure if this is a bug or a feature that user space can
->>>>>> pass
->>>>>> an arbitrary value to the implementation for anon memory??
->>>>>
->>>>> Thanks for noticing this. If I read the code correctly, the pgoff used
->>>>> by some arches to workaround VIPT caches, and it looks like it is for
->>>>> shared mapping only (just checked arm and mips). And I believe
->>>>> everybody assumes 0 should be used when doing anonymous mapping. The
->>>>> offset should have nothing to do with seeking proper unmapped virtual
->>>>> area. But the pgoff does make sense for file THP due to the alignment
->>>>> requirements. I think it should be zero'ed for anonymous mappings,
->>>>> like:
->>>>>
->>>>> diff --git a/mm/mmap.c b/mm/mmap.c
->>>>> index 2ff79b1d1564..a9ed353ce627 100644
->>>>> --- a/mm/mmap.c
->>>>> +++ b/mm/mmap.c
->>>>> @@ -1830,6 +1830,7 @@ get_unmapped_area(struct file *file, unsigned
->>>>> long addr, unsigned long len,
->>>>>                  pgoff = 0;
->>>>>                  get_area = shmem_get_unmapped_area;
->>>>>          } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
->>>>> +               pgoff = 0;
->>>>>                  /* Ensures that larger anonymous mappings are THP aligned. */
->>>>>                  get_area = thp_get_unmapped_area;
->>>>>          }
->>>>
->>>> I think it would be cleaner to just zero pgoff if file==NULL, then it covers
->>>> the
->>>> shared case, the THP case, and the non-THP case properly. I'll prepare a
->>>> separate patch for this.
->>>
->>> IIUC I don't think this is ok for those arches which have to
->>> workaround VIPT cache since MAP_ANONYMOUS | MAP_SHARED with NULL file
->>> pointer is a common case for creating tmpfs mapping. For example,
->>> arm's arch_get_unmapped_area() has:
->>>
->>> if (aliasing)
->>>          do_align = filp || (flags & MAP_SHARED);
->>>
->>> The pgoff is needed if do_align is true. So we should just zero pgoff
->>> iff !file && !MAP_SHARED like what my patch does, we can move the
->>> zeroing to a better place.
->>
->> We crossed streams - I sent out the patch just as you sent this. My patch is
->> implemented as I proposed.
->>
->> I'm not sure I agree with what you are saying. The mmap man page says this:
->>
->>    The  contents  of  a file mapping (as opposed to an anonymous mapping; see
->>    MAP_ANONYMOUS below), are initialized using length bytes starting at offset
->>    offset in the file (or other object) referred to by the file descriptor fd.
->>
->> So that implies offset is only relavent when a file is provided. It then goes on
->> to say:
->>
->>    MAP_ANONYMOUS
->>    The mapping is not backed by any file; its contents are initialized to zero.
->>    The fd argument is ignored; however, some implementations require fd to be -1
->>    if MAP_ANONYMOUS (or MAP_ANON) is specified, and portable applications should
->>    ensure this. The offset argument should be zero.
->>
->> So users are expected to pass offset=0 when mapping anon memory, for both shared
->> and private cases.
->>
->> Infact, in the line above where you made your proposed change, pgoff is also
->> being zeroed for the (!file && (flags & MAP_SHARED)) case.
->>
->>
->>>
->>>>
->>>>
->>>>>
->>>>>>
->>>>>> Finally, the second test failure I reported (ksm_tests) is actually caused
->>>>>> by a
->>>>>> bug in the test code, but provoked by this change. So I'll send out a fix for
->>>>>> the test code separately.
->>>>>>
->>>>>>
->>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>>> index 4f542444a91f..68ac54117c77 100644
->>>>>> --- a/mm/huge_memory.c
->>>>>> +++ b/mm/huge_memory.c
->>>>>> @@ -632,7 +632,7 @@ static unsigned long __thp_get_unmapped_area(struct
->>>>>> file *filp,
->>>>>>   {
->>>>>>          loff_t off_end = off + len;
->>>>>>          loff_t off_align = round_up(off, size);
->>>>>> -       unsigned long len_pad, ret;
->>>>>> +       unsigned long len_pad, ret, off_sub;
->>>>>>
->>>>>>          if (off_end <= off_align || (off_end - off_align) < size)
->>>>>>                  return 0;
->>>>>> @@ -658,7 +658,13 @@ static unsigned long __thp_get_unmapped_area(struct
->>>>>> file *filp,
->>>>>>          if (ret == addr)
->>>>>>                  return addr;
->>>>>>
->>>>>> -       ret += (off - ret) & (size - 1);
->>>>>> +       off_sub = (off - ret) & (size - 1);
->>>>>> +
->>>>>> +       if (current->mm->get_unmapped_area ==
->>>>>> arch_get_unmapped_area_topdown &&
->>>>>> +           !off_sub)
->>>>>> +               return ret + size;
->>>>>> +
->>>>>> +       ret += off_sub;
->>>>>>          return ret;
->>>>>>   }
->>>>>
->>>>> I didn't spot any problem, would you please come up with a formal patch?
->>>>
->>>> Yeah, I'll aim to post today.
->>>
->>> Thanks!
->>>
->>>>
->>>>
->>
->>
-
+Regards,
+Christian.
 
