@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-172537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE3F68BF345
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6340B8BF349
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A5C289C7A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E98228A0AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C6E137C3F;
-	Tue,  7 May 2024 23:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D7B1A2C0B;
+	Tue,  7 May 2024 23:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MuGQFQhe"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROawISFc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4617FBAA;
-	Tue,  7 May 2024 23:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749131A2C05;
+	Tue,  7 May 2024 23:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715126252; cv=none; b=pzXfKCRzkfGC3/p/j4Lf7Ziz7p7tC4sJKa6NKZWcLMBoc9Egxn00SJ2qJ4uNsrCiEE1ovK8c3gptzZGD2VtIWwA/Rqm31ePq/q68oxWbzJStxW+bgmm3OpABbfoKOq7WKHlDmC8vpwba/L91Oh6aMssPbioqWczP+gGK8lvWcr4=
+	t=1715126276; cv=none; b=eBmNx3rIAmWjLXAaxwKooylMs2jPrXG/9qU+R91s6qh99R5EFGe0qZqY0KJeThO3Z8DRmFhkhp0Xse+ATgilHnl/fEOyUJnSvlHCSa5S9aDJLVHcT618JhsM91odD4xfF6BF34MxtdIPHP0ZORZ74H3QHh7jfANe7bcR7A5b2gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715126252; c=relaxed/simple;
-	bh=cDG2NTu1l+v95jsjCWLrQBe1LvPkUx2yO2UGOxzaSdY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dcK81gVDcnbyBfZZ6njG1p3eZr33ANf//LSzzoCuDIHySxDMI9y1KiunLBM+I00spRSY9aUuaRIWNOYNO0mBZCtf6U3Rp9jcUQyFYmYKsPxLQX04qqYh4mmpSmq6M8nAVjaqpyPmSmwooJkR3UXvPcpp8XAsKEFdnREO7Uru/n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MuGQFQhe; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715126247;
-	bh=qonoCRoENSIJHdSmQfdZMP+NYWWbYe2n5F6Tg2fO14c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MuGQFQhezEIVcPbFUCnt1gJMDJ6LnduX2+A0gTiRFOwnjYcN7BpkP8fYbIzGZnkjH
-	 U5ro1Z0hs8toR8EkWR5ELtDD1B1z3bRMW9UbY+NZpXJzs8RCtUe9lUAXO2bKP42zcO
-	 k0qx2IXlmPGGSq0IhLxoo3b5kApn+RfSv+pg0aWaV648RbM6iWv4PYGUwJSHLdHv1t
-	 nFjT66K3Po1h5BqB/ji3PNyudmef+4c5jlP64wX9NNK88zOumty0OFqzxfNk5oOTbD
-	 6cGbGhld44Oe3+cGzoHOtfhrg/5k6iDoOzBBEsO9m6bJ6F/YzRT5DsqmwN/ADUWVa9
-	 ctiJDHP30VnNw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VYwF26Vs2z4x10;
-	Wed,  8 May 2024 09:57:26 +1000 (AEST)
-Date: Wed, 8 May 2024 09:57:26 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Masahiro Yamada
- <masahiroy@kernel.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Jens Remus
- <jremus@linux.ibm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the s390 tree with the kbuild tree
-Message-ID: <20240508095726.32237e53@canb.auug.org.au>
+	s=arc-20240116; t=1715126276; c=relaxed/simple;
+	bh=u4y6bm9T98w2O0nxzxQv6wXthaTemHVgGjKBpl1iA6w=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=O5ErDjH9+SO/W1x1YeOfgJpCBtEBmeq2Wf0G5HbvhKEkrDrSPl7RQETadFWLvSEkGsFJFTHYu/1bZ/8tRRblvCt/1aYYg369w1+ffH7UqKphlWWivZBGhdB6HBgNLOlo3kJqfIbcFVqDneMJ8/uVKxYaWt0OuWMiGpgQfEJe3/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROawISFc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A345C2BBFC;
+	Tue,  7 May 2024 23:57:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715126276;
+	bh=u4y6bm9T98w2O0nxzxQv6wXthaTemHVgGjKBpl1iA6w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ROawISFcDVWDM6CB2v8B6Kf6rcPEdS68hDm1K4EQ6Ao2C8WGuvVDCBcBVlpx3nrP6
+	 CDdaUpYETWj26vVqx0ZJiB4x3jsXQ8kKi/9omhioCmpopL/kIiaYLVWMQkbVtlOBmA
+	 esDvDYxxkvVAS7mFjKqZlNlpQnEfabauWgEXeFtlpk6b0KXKQKAVPv0TUjL7cHgDVL
+	 Rc3evIbaVvvsW/zBvgNcT+2SCSgfaVDZoBVnnyEc8MF+C6HAwitVONt/rVKvw2vPG3
+	 Cws/IbXzJLhpzarrTYtCe3/snSPrm5+xtBbnGZ7PzmJrXEvWy4FTVJZgz977eSobT0
+	 HLQH1UpJFbr1A==
+Date: Wed, 8 May 2024 08:57:51 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers
+ <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] perf dwarf-aux: Print array type name with "[]"
+Message-Id: <20240508085751.a1a5dbd31e1fa7d4e80cdd85@kernel.org>
+In-Reply-To: <20240507041338.2081775-1-namhyung@kernel.org>
+References: <20240507041338.2081775-1-namhyung@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1tp04PMxwjC/1OLuKhc1.jA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/1tp04PMxwjC/1OLuKhc1.jA
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Mon,  6 May 2024 21:13:38 -0700
+Namhyung Kim <namhyung@kernel.org> wrote:
 
-Today's linux-next merge of the s390 tree got a conflict in:
+> It's confusing both pointers and arrays are printed as *.  Let's print
+> array types with [] so that we can identify them easily.  Although it's
+> interchangable, sometimes it can cause confusion with size like in the
+> below example.
+> 
+> Note that it is not the same with C syntax where it goes to the variable
+> names, but we want to have it in the type names (like in Go language).
+> 
+> Before:
+>   mov [20] 0x68(reg5) -> reg0 type='struct page**' size=0x80 (die:0x4e61d32)
+> 
+> After:
+>   mov [20] 0x68(reg5) -> reg0 type='struct page*[]' size=0x80 (die:0x4e61d32)
+> 
 
-  scripts/Makefile.vdsoinst
+Good improvement!
 
-between commit:
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-  d6d223135547 ("kbuild: simplify generic vdso installation code")
+Thank you!
 
-from the kbuild tree and commit:
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/dwarf-aux.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+> index c0a492e65388..ec988f294497 100644
+> --- a/tools/perf/util/dwarf-aux.c
+> +++ b/tools/perf/util/dwarf-aux.c
+> @@ -1110,8 +1110,10 @@ int die_get_typename_from_type(Dwarf_Die *type_die, struct strbuf *buf)
+>  	const char *tmp = "";
+>  
+>  	tag = dwarf_tag(type_die);
+> -	if (tag == DW_TAG_array_type || tag == DW_TAG_pointer_type)
+> +	if (tag == DW_TAG_pointer_type)
+>  		tmp = "*";
+> +	else if (tag == DW_TAG_array_type)
+> +		tmp = "[]";
+>  	else if (tag == DW_TAG_subroutine_type) {
+>  		/* Function pointer */
+>  		return strbuf_add(buf, "(function_type)", 15);
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
 
-  4cfae05eb3aa ("s390/vdso: Create .build-id links for unstripped vdso file=
-s")
 
-from the s390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc scripts/Makefile.vdsoinst
-index bf72880c50d0,a81ca735003e..000000000000
---- a/scripts/Makefile.vdsoinst
-+++ b/scripts/Makefile.vdsoinst
-@@@ -20,8 -21,8 +20,8 @@@ $$(dest): $(1) FORC
-  	$$(call cmd,install)
- =20
-  # Some architectures create .build-id symlinks
-- ifneq ($(filter arm sparc x86, $(SRCARCH)),)
-+ ifneq ($(filter arm s390 sparc x86, $(SRCARCH)),)
- -link :=3D $(install-dir)/.build-id/$$(shell $(READELF) -n $$(src) | sed -=
-n 's@^.*Build ID: \(..\)\(.*\)@\1/\2@p').debug
- +link :=3D $(install-dir)/.build-id/$$(shell $(READELF) -n $(1) | sed -n '=
-s@^.*Build ID: \(..\)\(.*\)@\1/\2@p').debug
- =20
-  __default: $$(link)
-  $$(link): $$(dest) FORCE
-
---Sig_/1tp04PMxwjC/1OLuKhc1.jA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY6v+YACgkQAVBC80lX
-0GxEAQf+LOLDDPPXCsRtyNVh8cGbDdx356TB/E4Pbl/ew3xafjEx/yrPz0QV3YyB
-1L1gikOZ8JK5hlvDVmt33hlmnp+bMt8GrnazdCnarhxfIBZk0XnYTLG9IZRxGpG4
-fq5J16d8hhyvR+9D73TsAv35+EdDT+ju7vRyjjb7OhabYpQ1Rt+npreOBKIgCTzF
-JheE1wkje5sAsfDWIFtid987DW6DuQfIpB9CxGc1XtzkJBanxGRiLZhonz+ILQGD
-QrY/+pJtjyb//Qu+IAq2qsfEFhD8gWnGQt7GNiSzEqF9vw6NvLwqI5crM+qJ8MNO
-MxQFUmoWg66380N2OZZjYtmaJUIIHw==
-=J9g7
------END PGP SIGNATURE-----
-
---Sig_/1tp04PMxwjC/1OLuKhc1.jA--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
