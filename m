@@ -1,132 +1,159 @@
-Return-Path: <linux-kernel+bounces-171723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1CA8BE7CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68B58BE7CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCBE6B21E41
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633291F289D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 15:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C108168AFB;
-	Tue,  7 May 2024 15:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FA4168AEA;
+	Tue,  7 May 2024 15:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMbZQAM4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="D9O+KEzz"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BB615E1E2;
-	Tue,  7 May 2024 15:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682B2155A55
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 15:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715097134; cv=none; b=Jfz3NXRtLINOvL0KN5z5JraXiWhRq4xKKbOVYAk0uuvYLlK/Z+wPdLKiAyTdYk+Phyuf0LxlAR08GmD6PvUpPZIinv1uUSOL1LJ0jpFGvOftM/ZWd9VmvdcVtSMTUzRiX0FABRHiRVAYDraCeglyci8g//ie3wIso6ce+9B60W4=
+	t=1715097148; cv=none; b=er9vMLnB4BFIImNjv3Pp4TIYo+7+CJ/JmDQCLy3EAtoFup/uaOgEoigOSf546EgqQFzktB828NzShNObDQ74EQTTIPc677HwJoYr2BipquXIc9gg/bNKxVAtbvjBK3xsMNXSBKWUg8oUPYgNPYXmRTKZNGLCYllKeWYsmBC8CrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715097134; c=relaxed/simple;
-	bh=P2vSRZtRgkdxOqQUeJVty78/jCAKTgcuzaOvxK4M7eY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EM43cGpNQb3HjyN1+2TqszcWcQVN1pKIQfENJqV/347Avnlm1zinPj7iMcehA8PB5akr7+NpHrMfXqLL8QNZcx+dO90rNLOrCSeUxkqGj4nCecPsZMkH2Nv/t6NTMlSb0lBtF8yBEAsKFBd+wdU0UdcTYXmgx0IIfWVXLZoIFu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMbZQAM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A03C2BBFC;
-	Tue,  7 May 2024 15:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715097134;
-	bh=P2vSRZtRgkdxOqQUeJVty78/jCAKTgcuzaOvxK4M7eY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AMbZQAM4JyVqwNOuBsPbY21+XXdFF5F4D6e9MTQ5hdPTaO2K/2viznyAjPuKKpz1d
-	 bIhCJSPJKicfCGWqEmIimQ8yNs2mKbTKRRrIMQXL4qei7CyESWAKNz8xq4Lz5JJo0M
-	 nAkRko4hFKqJIxL9x/XpfU4++M7+qBYpo5whDIIQVG+yanbNVGzk2p5r8PM8CCnyIq
-	 JIf7/lH0XWXLDS3RblvBugKeDT+o8bJsgs06y6H2K/bGHqfudfneTrD1aLgE1oU6Jw
-	 5KpQyguCsH/xgSyuP/Rr5t0dyPFYtbyxXrzP7wyQgm0s4HlmKJuptqOsvbdi+d0Dr+
-	 4hov+wWA3y01w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1s4N71-0000000057F-3roK;
-	Tue, 07 May 2024 17:52:16 +0200
-Date: Tue, 7 May 2024 17:52:15 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Das Srinagesh <quic_gurus@quicinc.com>,
-	Satya Priya <quic_c_skakit@quicinc.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
-Message-ID: <ZjpOLzG8vSwuDk5k@hovoldconsulting.com>
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-13-johan+linaro@kernel.org>
- <6dc632b0-792c-49c8-9f66-43f7a14789cc@linaro.org>
+	s=arc-20240116; t=1715097148; c=relaxed/simple;
+	bh=1Rv56/oBFuyRJwYgTZCyvFrjtKjGcVyqzKsoClMQ1k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OrfFLIs9CCP00HwrhJTMyfJXd4qI4REKRIwCzRRNq/q8huawmt63ky4wUhndt7kJJbw3gSYte0C+NKw7SIMjfxRiRbysMaaqtMEvJSdLqhen6khuYeX93o/o+nIZQBGwjdYsPyMpZF5TnsWaRqdu0bk0+DT3K24zHQ86n15ZH58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=D9O+KEzz; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e1835a9339so20558239f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 08:52:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715097146; x=1715701946; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MdwrYxvKykWEvU1ciSRbQbFvSgqU+2A+2xiS1iPvfJQ=;
+        b=D9O+KEzzVVmVQHUbR5HU6mdo0t7mCbBTNdJi0ZEchfD/TX6uWe2UEgE6ro7+YjuQcA
+         T8iIxlX+7Qh/3crxvEoSSyyRzDqT269gbkEiZP4mSsW32/pDSR4uigEQebxm/g2Oeicq
+         DWxHralEairhoiyPIZ0+NfcisYCQdIi5vDqMI64wcX3UfOHJ11P3Z/7XvJjqDLY7sjQD
+         +I51Wxop1uGfo64e3NUXrXsBbMsECyF6SVj8Yo2dwJL02ETGpcCOBnOULhHt+M+pER0Q
+         awRvsQNgeGP7oeVo+bVCYfsZt4im48A6F4zLfOb1kjbz9QJ3qS9Vh8ARhdd+fNUu+l4E
+         uUeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715097146; x=1715701946;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MdwrYxvKykWEvU1ciSRbQbFvSgqU+2A+2xiS1iPvfJQ=;
+        b=mdjefqpqW6UocLOG4wBa5fw7okkQtNR75NiPlHsqYR6Sq4LT6w4CdNjwToz3TXFToI
+         BQCABkTNL/8myhMWDGTmIvmqpCZMj0H+5l2+eoGxKj86Qykid2ywdby+IJOVUP4l418m
+         nps/h2WcWUJrrFUbnfdEMZaxbNVQQyJxpZSK1qpF/3i5xIqNj3OqgtdjTm8vtMOTDwC0
+         xd6Rzp+hurI54JFFXzlThT/l8C6lSub4vk7XCCgHUED13Wj89G7XCIP9mRGebXAF5bdB
+         Xb4DrvFCD4E0Nw7jEXjaG9lTRZZic+tsSy5RlauXf+Qs2I1syUOWKXcy8Gk5uy+W49oA
+         XIag==
+X-Forwarded-Encrypted: i=1; AJvYcCVLVMcSS/fEWC9gt8Sua5rukLMnm//ieTOcwjWCOM4qL2BbE/cTWv4swk9EAV7hiih0GlFeQhfDiZ2sKM7WodgkPaKtGYdrFLw1fAFB
+X-Gm-Message-State: AOJu0YxqECCfgtSELd+Fza9+zBx4B8kOwZfC8/j5Q+x7QdF7RdroO0Z8
+	N3CAyXZz+3E55IXkl/Lw9XJqul5jdC7QroUIrBIf7d/ygZGRaaQiDMXY9dMKnqVxlzchbluTA6D
+	1o5ly5NRNxrQw7IsuzdPxl+MIaSiMkCpV8r0SWg==
+X-Google-Smtp-Source: AGHT+IGgeNVgdFJDVuDgv9ivECfpykkOYp4g95K8N5g+DPVmrNpWUToncN7f6H6A1ruTyO44ONnmAEe/3TdfEor5yQg=
+X-Received: by 2002:a5e:db42:0:b0:7de:c47d:a740 with SMTP id
+ ca18e2360f4ac-7e18f722d8amr13408539f.8.1715097146605; Tue, 07 May 2024
+ 08:52:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6dc632b0-792c-49c8-9f66-43f7a14789cc@linaro.org>
+References: <20240507142600.23844-1-zong.li@sifive.com> <20240507142600.23844-4-zong.li@sifive.com>
+ <20240507151516.GK901876@ziepe.ca>
+In-Reply-To: <20240507151516.GK901876@ziepe.ca>
+From: Zong Li <zong.li@sifive.com>
+Date: Tue, 7 May 2024 23:52:15 +0800
+Message-ID: <CANXhq0qLbC2RgW04C5DcuzR-kSmT3hA9rWW=w3e3PKHr+QsyzQ@mail.gmail.com>
+Subject: Re: [PATCH RFC RESEND 3/6] iommu/riscv: support GSCID
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
+	tjeznach@rivosinc.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, kevin.tian@intel.com, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 01:48:30PM +0200, Konrad Dybcio wrote:
-> On 5/6/24 17:08, Johan Hovold wrote:
-> > From: Satya Priya <quic_c_skakit@quicinc.com>
-> > 
-> > Qualcomm Technologies, Inc. PM8008 is an I2C-controlled PMIC containing
-> > seven LDO regulators. Add a PM8008 regulator driver to support PMIC
-> > regulator management via the regulator framework.
-> > 
-> > Note that this driver, originally submitted by Satya Priya [1], has been
-> > reworked to match the new devicetree binding which no longer describes
-> > each regulator as a separate device.
-> > 
-> > This avoids describing internal details like register offsets in the
-> > devicetree and allows for extending the implementation with features
-> > like over-current protection without having to update the binding.
-> > 
-> > Specifically note that the regulator interrupts are shared between all
-> > regulators.
-> > 
-> > Note that the secondary regmap is looked up by name and that if the
-> > driver ever needs to be generalised to support regulators provided by
-> > the primary regmap (I2C address) such information could be added to a
-> > driver lookup table matching on the parent compatible.
-> > 
-> > This also fixes the original implementation, which looked up regulators
-> > by 'regulator-name' property rather than devicetree node name and which
-> > prevented the regulators from being named to match board schematics.
-> > 
-> > [1] https://lore.kernel.org/r/1655200111-18357-8-git-send-email-quic_c_skakit@quicinc.com
-> > 
-> > Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
-> > Cc: Stephen Boyd <swboyd@chromium.org>
-> > [ johan: rework probe to match new binding, amend commit message and
-> >           Kconfig entry]
-> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> > ---
-> 
-> I'm a bit lukewarm on calling this qcom-pm8008-regulator.. But then
-> qcom-i2c-regulator or qpnp-i2c-regulator may bite due to being overly
-> generic.. Would you know whether this code will also be used for e.g.
-> PM8010?
+On Tue, May 7, 2024 at 11:15=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Tue, May 07, 2024 at 10:25:57PM +0800, Zong Li wrote:
+> > @@ -919,29 +924,43 @@ static void riscv_iommu_iotlb_inval(struct riscv_=
+iommu_domain *domain,
+> >       rcu_read_lock();
+> >
+> >       prev =3D NULL;
+> > -     list_for_each_entry_rcu(bond, &domain->bonds, list) {
+> > -             iommu =3D dev_to_iommu(bond->dev);
+> >
+> > -             /*
+> > -              * IOTLB invalidation request can be safely omitted if al=
+ready sent
+> > -              * to the IOMMU for the same PSCID, and with domain->bond=
+s list
+> > -              * arranged based on the device's IOMMU, it's sufficient =
+to check
+> > -              * last device the invalidation was sent to.
+> > -              */
+> > -             if (iommu =3D=3D prev)
+> > -                     continue;
+> > -
+> > -             riscv_iommu_cmd_inval_vma(&cmd);
+> > -             riscv_iommu_cmd_inval_set_pscid(&cmd, domain->pscid);
+> > -             if (len && len >=3D RISCV_IOMMU_IOTLB_INVAL_LIMIT) {
+> > -                     for (iova =3D start; iova < end; iova +=3D PAGE_S=
+IZE) {
+> > -                             riscv_iommu_cmd_inval_set_addr(&cmd, iova=
+);
+> > +     /*
+> > +      * Host domain needs to flush entries in stage-2 for MSI mapping.
+> > +      * However, device is bound to s1 domain instead of s2 domain.
+> > +      * We need to flush mapping without looping devices of s2 domain
+> > +      */
+> > +     if (domain->gscid) {
+> > +             riscv_iommu_cmd_inval_gvma(&cmd);
+> > +             riscv_iommu_cmd_inval_set_gscid(&cmd, domain->gscid);
+> > +             riscv_iommu_cmd_send(iommu, &cmd, 0);
+> > +             riscv_iommu_cmd_iofence(&cmd);
+> > +             riscv_iommu_cmd_send(iommu, &cmd, RISCV_IOMMU_QUEUE_TIMEO=
+UT);
+>
+> Is iommu null here? Where did it come from?
+>
+> This looks wrong too. The "bonds" list is sort of misnamed, it is
+> really a list of invalidation instructions. If you need a special
+> invalidation instruction for this case then you should allocate a
+> memory and add it to the bond list when the attach is done.
+>
+> Invalidation should simply iterate over the bond list and do the
+> instructions it contains, always.
 
-Yes, for any sufficiently similar PMICs, including SPMI ones. So
-'qpnp-regulator' would be a generic name, but only Qualcomm knows what
-PMICs they have and how they are related -- the rest of us is left doing
-tedious code forensics to try to make some sense of this.
+I messed up this piece of code while cleaning it. I will fix it in the
+next version. However, after your tips, it seems to me that we should
+allocate a new bond entry in the s2 domain's list. This is because the
+original bond entry becomes detached from the s2 domain and is
+attached to the s1 domain when the device passes through to the guest,
+if we don't create a new bond in s2 domain, then the list in s2 domain
+would lose it. Let me modify the implementation here. Thanks.
 
-So just like for compatible strings, letting the first supported PMIC
-name the driver makes sense as we don't know when we'll want to add a
-second one for another set of devices (and we don't want to call that
-one 'qpnp-regulator-2'). On the other hand, these names are now mostly
-internal and can more easily be renamed later.
-
-Johan
+>
+> >  static void riscv_iommu_iodir_update(struct riscv_iommu_device *iommu,
+> > -                                  struct device *dev, u64 fsc, u64 ta)
+> > +                                  struct device *dev, u64 fsc, u64 ta,=
+ u64 iohgatp)
+>
+> I think you should make a struct to represent the dc entry.
+>
+> Jason
 
