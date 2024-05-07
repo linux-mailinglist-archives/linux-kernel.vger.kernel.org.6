@@ -1,259 +1,247 @@
-Return-Path: <linux-kernel+bounces-171294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27968BE24E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:38:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EDA8BE259
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6508428A197
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC4428AE49
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C87B158A37;
-	Tue,  7 May 2024 12:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CE715D5CD;
+	Tue,  7 May 2024 12:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hnSzkkOf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BBZ7dYSB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A3C1DA3A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 12:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009F56CDB1;
+	Tue,  7 May 2024 12:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085518; cv=none; b=kaA0lgo1oDoAfgaRvmQ/wFG1mxXWFMkNvDYLMlnYyUgnrCT9XPmlR3Mv4y0ssVULpJEFGlnVeCuP6ZdX98p8nm+aY+aWXIh6AiMWexxP4ELc2+Dl/sgMIDhQa5l3RXCHN+thwxetF9lbbYqoVml/Yd0qzEdZdg4iDzbJ/n4B3BE=
+	t=1715085615; cv=none; b=ep+ZaE8DmVlz8HlmVNVqc73KWqMR4ROtGcdFFP9LSHelVHAcSBfXABzk1r4UgFYOiqHQHQTPaVFJ3zxxWgGN3zohnxiFT3RjTKH/nJsBEwcwDCWNS06HxhaNFjj82zWyYxhqzMGCdX/Cg/3Xw7X4wohiHs4caucavl3VJT0muAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715085518; c=relaxed/simple;
-	bh=N4x7ddF13TSS9Nea4s5diAVC6CLhsJR/c+e98qA9adw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PA5h/cFEZOUTVD2mO0E4+ILYbPfG/zj78RKhqlYMFm9YCIRcIVXQWuxtM9HGz4biNPXp9K8wS9TBwAt6llbw1ePtg+vAWF5Jhejn1iV3AjNb03m345ewmR14mQn2Bcvmd3cBOhTy8USl4JskHJm/cB/LE/KCocw8WJLyunrG/QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hnSzkkOf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715085515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lWPEcqR9ErU9XdKxA7hqSt4OB0qwEGWcYY6ZOijOyEI=;
-	b=hnSzkkOfUVdYZlyG6EAvlA3KFclUf4JgKpPqg8Rj9op7Lg4RHWAOjjlCcSkYYlDH+muIC+
-	pNub+Azj/+HvC+p0BjolcnFq0Za/qJVXS6G+KCYKYXIKS9rNa6QvocASiEag1cpGvGNdnI
-	lwm/5J2E9AAN5WBMIx8ZKetvVtw7oKM=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-DaUQEzgwNf-ZaLZQzJajyA-1; Tue, 07 May 2024 08:38:34 -0400
-X-MC-Unique: DaUQEzgwNf-ZaLZQzJajyA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a599dbd2b6aso181900866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 05:38:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715085513; x=1715690313;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lWPEcqR9ErU9XdKxA7hqSt4OB0qwEGWcYY6ZOijOyEI=;
-        b=OsZRL6kovmwAFJwjoKEkNBNpM7/1iZ/+tNAeTekLfn91D8xxh9FENOHwvN1nn5AcuV
-         JH0EApBHJFhBzRsCYBVpr1wLF5Y6D1j1krP51BMT8NVS3hkVOrp6l+hwvX6Du3LM7bpU
-         bm+UI5mCfCWiOag2aUix7gPuU7AgIP3LdjGRD2IMy4yt+/rvKJyTzbx86fi2HuM3h/EM
-         cro123ExRFJ9H+Fez0lvQm+5nZexMXBq7XFwm347pJSHscP7oDsEcXoSFoL1BMBOLOsb
-         YqUK7Iiutxfuvoz9MZRvh33hdF8oY1lcCtURA1NCVwa6xUw0W+tfEig8m5zEKcGmyLB9
-         8xEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwAZROPE+YGeDHiedIEP/vEf1GVJ3mJk0RCXUCLud1wE83tKMQdPZbxcoTjrLCXKU+COtpHaT3E47vs+OUW1LqL+rl/f8jqQ4NeMvN
-X-Gm-Message-State: AOJu0Ywh2UsH61MgDD/skE4EbnqTputpyNDGZsNR0fO4rLDZE09zOCBI
-	XHikAt+672TtNixJuUR+6fzC66NNtt/f3ZNtRmDQTXFzdg3zzXlrBj5ZzvCEMhe7/aWDo3Sc3sb
-	T7npr2jf2MjpdkincRMySaFpeYRlRXXoCb6tN4NoQjRLie29hU8f5AFkFfcNdkA==
-X-Received: by 2002:a50:ab5e:0:b0:572:3cc4:2dcf with SMTP id t30-20020a50ab5e000000b005723cc42dcfmr8859969edc.14.1715085512806;
-        Tue, 07 May 2024 05:38:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHroxd8bLzrqkFtsPgGzF1TvuHA3TG7s9IGZVCQTAMan3/CD0a4Lwt87DsFEPiKjQIkUlgyMg==
-X-Received: by 2002:a50:ab5e:0:b0:572:3cc4:2dcf with SMTP id t30-20020a50ab5e000000b005723cc42dcfmr8859958edc.14.1715085512396;
-        Tue, 07 May 2024 05:38:32 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id u1-20020aa7d541000000b00572eebbfc61sm3387091edr.35.2024.05.07.05.38.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 05:38:31 -0700 (PDT)
-Message-ID: <3b379071-d5ff-4861-aa38-874e92d4461a@redhat.com>
-Date: Tue, 7 May 2024 14:38:30 +0200
+	s=arc-20240116; t=1715085615; c=relaxed/simple;
+	bh=m6vmFvUAC306G57ZtHT7Z0FTVplNYdcA1oCBDijt3C8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jcbRL6/UUony4ZJYD9wHsAer6UMH+sNF2okxiXDeHyMu2RXoXMBydodAWLFCvTuNV2RChaF9e/e1jf6QgmyBdZX1DGQ5AIwBdytTqQvEy65AvHEXzJU1DA6VtUiFSifoBxH8xgEKYgtT263r+IDoxrdAqxO4W5guHPSYGtybQoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BBZ7dYSB; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715085614; x=1746621614;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=m6vmFvUAC306G57ZtHT7Z0FTVplNYdcA1oCBDijt3C8=;
+  b=BBZ7dYSBYJK9cTxPtb/VS+zpaRlTm9EsRM8QTY/o4FIbC/W61tc/xwJg
+   CNfSbkqASVmJ/U5Npc9jyyDPc+stu5DXpArP2IkkyRTKAH+KFOymChExf
+   zZaSgb9INj1y5QMTjKRRX5h+pTZrxotqQCBBXon3oidKbYLf80UxH9bMJ
+   N62nG83T/Tka+35k6+0Y60HFJbfgBIxI9DicU/A6GTR5jlJjL6AT7B0Ff
+   Xn3REZEN5JWsXhQrsjEZg9LsRz6A66GLJ/wd+MQHEm2ib5wWOG9pAPXsE
+   /U05oj2INjX3J2IJfvTiUihu5i0Nx4lzRfd0RUyt6LReph9okZx2sEVVs
+   g==;
+X-CSE-ConnectionGUID: uiZ8wSb6SIiepOcMNr++tg==
+X-CSE-MsgGUID: rNufxRGWQtuCGXhTl4q8Ew==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="11407721"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="11407721"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 05:40:13 -0700
+X-CSE-ConnectionGUID: 2o0ommHuSKCVMv3q6Pheag==
+X-CSE-MsgGUID: NWIEIjJ4SpmBbSVo3mJiNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="33020096"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by fmviesa003.fm.intel.com with ESMTP; 07 May 2024 05:40:10 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	linux-hardening@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] netdevice: define and allocate &net_device _properly_
+Date: Tue,  7 May 2024 14:39:37 +0200
+Message-ID: <20240507123937.15364-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
- and writing touch IC registers
-To: Charles Wang <charles.goodix@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: hadess@hadess.net, Richard Hughes <hughsient@gmail.com>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- neil.armstrong@linaro.org, Mark Brown <broonie@kernel.org>
-References: <20240506114752.47204-1-charles.goodix@gmail.com>
- <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
- <ZjmOUp725QTHrfcT@google.com> <ZjocV1nvWnxr_qUI@mb-board>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZjocV1nvWnxr_qUI@mb-board>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+In fact, this structure contains a flexible array at the end, but
+historically its size, alignment etc., is calculated manually.
+There are several instances of the structure embedded into other
+structures, but also there's ongoing effort to remove them and we
+could in the meantime declare &net_device properly.
+Declare the array explicitly, use struct_size() and store the array
+size inside the structure, so that __counted_by() can be applied.
+Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
+allocated buffer is aligned to what the user expects.
+Also, change its alignment from %NETDEV_ALIGN to the cacheline size
+as per several suggestions on the netdev ML.
 
-On 5/7/24 2:28 PM, Charles Wang wrote:
-> Hi,
-> 
-> On Tue, May 07, 2024 at 10:25:29AM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 5/7/24 4:13 AM, Dmitry Torokhov wrote:
->>> On Mon, May 06, 2024 at 02:03:13PM +0200, Hans de Goede wrote:
->>>> Hi,
->>>>
->>>> On 5/6/24 1:47 PM, Charles Wang wrote:
->>>>> Export a sysfs interface that would allow reading and writing touchscreen
->>>>> IC registers. With this interface many things can be done in usersapce
->>>>> such as firmware updates. An example tool that utilizes this interface
->>>>> for performing firmware updates can be found at [1].
->>>>
->>>> I'm not sure if I'm a fan of adding an interface to export raw register
->>>> access for fwupdate.
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/input/touchscreen/goodix_fwupload.c
->>>>
->>>> Contains update support for older goodix touchscreens and it is not
->>>> that big. I think it might be better to just have an in kernel fwupdate
->>>> driver for this and have a sysfs file to which to write the new firmware.
->>>>
->>>> Adding Richard Hughes, fwupd maintainer to the Cc. Richard, do you have
->>>> any input on the suggested method for firmware updating ?
->>>>
->>>> If raw register access is seen as a good solution, then I think this
->>>> should use regmap + some generic helpers (to be written) to export
->>>> regmap r/w access to userspace.
->>>
->>> I think the less code we have in kernel the better,
->>
->> Ok.
->>
->>> especially if in
->>> cases where firmware flashing is not essential for device to work (i.e.
->>> it the controller has a flash memory).
->>
->> Right the existing older goodix fw-upload is different because some
->> controllers are flash-less so they need a fw upload every boot.
->>
->>> That said IIRC Mark felt very
->>> strongly about allowing regmap writes from userspace... but maybe he
->>> softened the stance or we could have this functionality opt-in?
->>
->> Right when I was talking about generic helpers that was meant for
->> code re-use purposes. Actually exposing the regmap r/w functionality
->> to userspace is something which should be decided on a case by case
->> basis by the driver (IMHO).
-> 
-> So what's the final conclusion, does the interface need to be modified?
+bloat-o-meter for vmlinux:
 
-I believe that the final conclusion is that the interface is fine.
+free_netdev                                  445     440      -5
+netdev_freemem                                24       -     -24
+alloc_netdev_mqs                            1481    1450     -31
 
-Personally I think if the syfs store/show functions used for this
-could be made into generic regmap helpers and then use those helpers
-in the driver, so that if other drivers want similar functionality
-they can re-use the show / store functions.
+On x86_64 with several NICs of different vendors, I was never able to
+get a &net_device pointer not aligned to the cacheline size after the
+change.
 
-You should be able to use dev_get_regmap() to make the show/store
-functions generic.
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+---
+ include/linux/netdevice.h | 12 +++++++-----
+ net/core/dev.c            | 31 +++++++------------------------
+ net/core/net-sysfs.c      |  2 +-
+ 3 files changed, 15 insertions(+), 30 deletions(-)
 
-Regards,
-
-Hans
-
-
-
-
-
->>>>> ---
->>>>>  drivers/input/touchscreen/goodix_berlin.h     |  2 +
->>>>>  .../input/touchscreen/goodix_berlin_core.c    | 52 +++++++++++++++++++
->>>>>  drivers/input/touchscreen/goodix_berlin_i2c.c |  6 +++
->>>>>  drivers/input/touchscreen/goodix_berlin_spi.c |  6 +++
->>>>>  4 files changed, 66 insertions(+)
->>>>>
->>>>> diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
->>>>> index 1fd77eb69..1741f2d15 100644
->>>>> --- a/drivers/input/touchscreen/goodix_berlin.h
->>>>> +++ b/drivers/input/touchscreen/goodix_berlin.h
->>>>> @@ -19,6 +19,8 @@ struct regmap;
->>>>>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->>>>>  			struct regmap *regmap);
->>>>>  
->>>>> +void goodix_berlin_remove(struct device *dev);
->>>>> +
->>>>>  extern const struct dev_pm_ops goodix_berlin_pm_ops;
->>>>>  
->>>>>  #endif
->>>>> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
->>>>> index e7b41a926..e02160841 100644
->>>>> --- a/drivers/input/touchscreen/goodix_berlin_core.c
->>>>> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
->>>>> @@ -672,6 +672,44 @@ static void goodix_berlin_power_off_act(void *data)
->>>>>  	goodix_berlin_power_off(cd);
->>>>>  }
->>>>>  
->>>>> +static ssize_t goodix_berlin_registers_read(struct file *filp, struct kobject *kobj,
->>>>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
->>>>> +{
->>>>> +	struct goodix_berlin_core *cd;
->>>>> +	struct device *dev;
->>>>> +	int error;
->>>>> +
->>>>> +	dev = kobj_to_dev(kobj);
->>>>> +	cd = dev_get_drvdata(dev);
->>>>> +
->>>>> +	error = regmap_raw_read(cd->regmap, (unsigned int)off,
->>>>> +				buf, count);
->>>>> +
->>>>> +	return error ? error : count;
->>>>> +}
->>>>> +
->>>>> +static ssize_t goodix_berlin_registers_write(struct file *filp, struct kobject *kobj,
->>>>> +	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
->>>>> +{
->>>>> +	struct goodix_berlin_core *cd;
->>>>> +	struct device *dev;
->>>>> +	int error;
->>>>> +
->>>>> +	dev = kobj_to_dev(kobj);
->>>>> +	cd = dev_get_drvdata(dev);
->>>>> +
->>>>> +	error = regmap_raw_write(cd->regmap, (unsigned int)off,
->>>>> +				 buf, count);
->>>>> +
->>>>> +	return error ? error : count;
->>>>> +}
->>>>> +
->>>>> +static struct bin_attribute goodix_berlin_registers_attr = {
->>>>> +	.attr = {.name = "registers", .mode = 0600},
->>>>> +	.read = goodix_berlin_registers_read,
->>>>> +	.write = goodix_berlin_registers_write,
->>>>> +};
->>>>> +
->>>>>  int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->>>>>  			struct regmap *regmap)
->>>>>  {
->>>>> @@ -743,6 +781,14 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
->>>>>  
->>>>>  	dev_set_drvdata(dev, cd);
->>>>>  
->>>>> +	error = sysfs_create_bin_file(&cd->dev->kobj,
->>>>> +				      &goodix_berlin_registers_attr);
->>>
->>> If we want to instantiate attributes from the driver please utilize
->>> dev_groups in respective driver structures to create and remove the
->>> attributes automatically.
->>>
->>> Thanks.
->>>
->>
-> 
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index cf261fb89d73..171d70618a70 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2199,10 +2199,10 @@ struct net_device {
+ 	unsigned short		neigh_priv_len;
+ 	unsigned short          dev_id;
+ 	unsigned short          dev_port;
+-	unsigned short		padded;
++	int			irq;
++	u32			priv_len;
+ 
+ 	spinlock_t		addr_list_lock;
+-	int			irq;
+ 
+ 	struct netdev_hw_addr_list	uc;
+ 	struct netdev_hw_addr_list	mc;
+@@ -2403,7 +2403,10 @@ struct net_device {
+ 	/** @page_pools: page pools created for this netdevice */
+ 	struct hlist_head	page_pools;
+ #endif
+-};
++
++	u8			priv[] ____cacheline_aligned
++				       __counted_by(priv_len);
++} ____cacheline_aligned;
+ #define to_net_dev(d) container_of(d, struct net_device, dev)
+ 
+ /*
+@@ -2593,7 +2596,7 @@ void dev_net_set(struct net_device *dev, struct net *net)
+  */
+ static inline void *netdev_priv(const struct net_device *dev)
+ {
+-	return (char *)dev + ALIGN(sizeof(struct net_device), NETDEV_ALIGN);
++	return (void *)dev->priv;
+ }
+ 
+ /* Set the sysfs physical device reference for the network logical device
+@@ -3123,7 +3126,6 @@ static inline void unregister_netdevice(struct net_device *dev)
+ 
+ int netdev_refcnt_read(const struct net_device *dev);
+ void free_netdev(struct net_device *dev);
+-void netdev_freemem(struct net_device *dev);
+ void init_dummy_netdev(struct net_device *dev);
+ 
+ struct net_device *netdev_get_xmit_slave(struct net_device *dev,
+diff --git a/net/core/dev.c b/net/core/dev.c
+index d6b24749eb2e..38c2e3c2df86 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -10889,13 +10889,6 @@ void netdev_sw_irq_coalesce_default_on(struct net_device *dev)
+ }
+ EXPORT_SYMBOL_GPL(netdev_sw_irq_coalesce_default_on);
+ 
+-void netdev_freemem(struct net_device *dev)
+-{
+-	char *addr = (char *)dev - dev->padded;
+-
+-	kvfree(addr);
+-}
+-
+ /**
+  * alloc_netdev_mqs - allocate network device
+  * @sizeof_priv: size of private data to allocate space for
+@@ -10915,8 +10908,6 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 		unsigned int txqs, unsigned int rxqs)
+ {
+ 	struct net_device *dev;
+-	unsigned int alloc_size;
+-	struct net_device *p;
+ 
+ 	BUG_ON(strlen(name) >= sizeof(dev->name));
+ 
+@@ -10930,21 +10921,13 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 		return NULL;
+ 	}
+ 
+-	alloc_size = sizeof(struct net_device);
+-	if (sizeof_priv) {
+-		/* ensure 32-byte alignment of private area */
+-		alloc_size = ALIGN(alloc_size, NETDEV_ALIGN);
+-		alloc_size += sizeof_priv;
+-	}
+-	/* ensure 32-byte alignment of whole construct */
+-	alloc_size += NETDEV_ALIGN - 1;
+-
+-	p = kvzalloc(alloc_size, GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
+-	if (!p)
++	sizeof_priv = ALIGN(sizeof_priv, SMP_CACHE_BYTES);
++	dev = kvzalloc(struct_size(dev, priv, sizeof_priv),
++		       GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
++	if (!dev)
+ 		return NULL;
+ 
+-	dev = PTR_ALIGN(p, NETDEV_ALIGN);
+-	dev->padded = (char *)dev - (char *)p;
++	dev->priv_len = sizeof_priv;
+ 
+ 	ref_tracker_dir_init(&dev->refcnt_tracker, 128, name);
+ #ifdef CONFIG_PCPU_DEV_REFCNT
+@@ -11034,7 +11017,7 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 	free_percpu(dev->pcpu_refcnt);
+ free_dev:
+ #endif
+-	netdev_freemem(dev);
++	kvfree(dev);
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(alloc_netdev_mqs);
+@@ -11090,7 +11073,7 @@ void free_netdev(struct net_device *dev)
+ 	/*  Compatibility with error handling in drivers */
+ 	if (dev->reg_state == NETREG_UNINITIALIZED ||
+ 	    dev->reg_state == NETREG_DUMMY) {
+-		netdev_freemem(dev);
++		kvfree(dev);
+ 		return;
+ 	}
+ 
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 4c27a360c294..0e2084ce7b75 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -2028,7 +2028,7 @@ static void netdev_release(struct device *d)
+ 	 * device is dead and about to be freed.
+ 	 */
+ 	kfree(rcu_access_pointer(dev->ifalias));
+-	netdev_freemem(dev);
++	kvfree(dev);
+ }
+ 
+ static const void *net_namespace(const struct device *d)
+-- 
+2.45.0
 
 
