@@ -1,145 +1,106 @@
-Return-Path: <linux-kernel+bounces-171839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3909B8BE94F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170AE8BEA15
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3077291BBA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 16:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1F7F1F23133
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDBA16D9B1;
-	Tue,  7 May 2024 16:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD36F16C84C;
+	Tue,  7 May 2024 17:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nr7sLE9O"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F7uOl27M"
+Received: from msa.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E3116D304;
-	Tue,  7 May 2024 16:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4B516C6A0;
+	Tue,  7 May 2024 17:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715099707; cv=none; b=Lq4iR2kpuIWnfI/QWYLohZ/BWK8SFmxPvz77BqCa9p0ptwt/tRSlqiW4wMwZRzMYTvlKzjjJu77/fs/VhvBWM1RQs6bZQ0IsWfC0o6VKMrhWbf3R5PQUIjmUl/a5mlTFifZ4mIo/ZJ4fSyMuLPDbs4/ZrvMqVo9oItVGgnx8gOM=
+	t=1715101712; cv=none; b=pULo1BMxpYO49OLnlgoBQSn3H8wrSHtJv64r/eNerVDVXMb1Y0LWHlkWAIrvJ/qPn3UHiJr+9Ecxd4uvBENiYFrleWlflOhLQiiIxBzddR44+mmafg51c/3giHLY3FsJwO0xhziSi9sJGXmvOPkp3tYbMWurX1t74oLh6KRHeC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715099707; c=relaxed/simple;
-	bh=3zMNh/O1NvS66HKRoTqlD9Jh9hBzUu4UaBBr6ynZF3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gmd3MLgeAqu1YaHiqGY6sr8NUq4oG5HdS11yAKd7VUPc36hmqp9QPyy9/c2tS29NaSYSJprCOoJqF++g6qgY78+NhA3QZb8O+KAT3xK+MpiEC8K3lq/8YFjoyULj/Rg18IOC3av8AxsbKk9cMB0WnqID/ogvC1EG0QFvX9QN4IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nr7sLE9O; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 447GSxEn011653;
-	Tue, 7 May 2024 16:35:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=pp1;
- bh=2JWGsGzPG9xj8K85LWOxfi5vbVOu4GgVaaG+8IQyXuA=;
- b=nr7sLE9Oa+QdhhpHcRhc/cKv7BvVOH+kW6o9LJfP1S8ZnjifgpuggLi47POyg1nAIRbz
- J1E84RROEuo92drfSoQxPHQJWvB84g9i4VXV7sIjGZat9fpOBPyZ208e5wq0BOfNfhAe
- 1CSq6LFFjzTN65gWjk0dLYgLd72i4H286/6NHGTppjyHZeI6l6pX5IvgVLzxgSsGJvbj
- YT+sUMAl+Jnm+GVt3rhph/0FZqJIWIvw63lbaeDo9Eg4C/Ux8MGUrGOxlLGsdkaKCSo2
- uGziJll+eCQ3qZJHWkRimx+oReG/rkolnHxcljNbdGpBEHnvMJfgRZC695DhkViI9tuq Fg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqup80fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:00 +0000
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 447GZ0mk021759;
-	Tue, 7 May 2024 16:35:00 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xyqup80fs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:35:00 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 447Fh7YY010635;
-	Tue, 7 May 2024 16:34:59 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xx0bp7ad0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 16:34:59 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 447GYr4U52560292
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 May 2024 16:34:55 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C58822004B;
-	Tue,  7 May 2024 16:34:53 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8F9D420043;
-	Tue,  7 May 2024 16:34:53 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  7 May 2024 16:34:53 +0000 (GMT)
-Date: Tue, 7 May 2024 18:34:30 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>,
-        Matthew Wilcox
- <willy@infradead.org>, Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH v2 00/10] s390: PG_arch_1+folio cleanups for uv+hugetlb
-Message-ID: <20240507183430.4e956c45@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240506083830.28332-B-hca@linux.ibm.com>
-References: <20240412142120.220087-1-david@redhat.com>
-	<f53a87ed-c3fe-4a60-8723-3eea25189553@redhat.com>
-	<20240506083830.28332-B-hca@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715101712; c=relaxed/simple;
+	bh=YER7gzQN8vR+dUrNqJYh4yp9BQl12GcuPdIaBB/It4E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LWQtKuFOqM2LmM6naweaLiF/pLe72Axmw3uDFK30gJ3qN5elFweg5IveawJgPac63KYJC0NeeqaLkodWX+2YNswx8+r5A/LxbUKs8QVAISOstmgxvYlu9g75+Jk3OGe7dHZ2ZJIvR6MtpK8u8YC8tHuNOgE7PjHr6l0xMjY7G3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F7uOl27M; arc=none smtp.client-ip=80.12.242.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 4NmOsXZ4Obh6Q4NmOsmkDW; Tue, 07 May 2024 18:35:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1715099702;
+	bh=eecUBrjzZFlKhop2/+Jd/2n9Y8uQHQJpZaSD3Xf2tZw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=F7uOl27MZLjpRbpqI/ges5e0txwnLxb+8Y/NjPRIKQqxtuknZkgkgafiD6oxCxGJb
+	 UaTReDfCCUUQuJx0vU3+fkaGcX8kEkD+2E4srW87D16Zio3q3hiv9YI6GxNVUkLljD
+	 P4JnWcyBkMdEprH+JWDEcSg3ulHHX5e+FKdajNKimaTQkpLUzm0j0bd3NeNrM9I9Dy
+	 K8pNXt7x3R98asKxlg5VDCHOWOWizDPnbpCHiKVqu6ChqnxZXtobYsx7f67Ez0vLDK
+	 +jciSdbiXjlQPP/5IH7Su+W5l0yshy41nITwIKYNDXbHjwr7PScpZzFT3FwBD75jGN
+	 /jK6leSYhQBBQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 07 May 2024 18:35:02 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <7ce84a03-d682-45aa-a67c-b789e3e90499@wanadoo.fr>
+Date: Tue, 7 May 2024 18:34:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: vc6hztu4I8AzPgN9plqRzhWW84EkSdue
-X-Proofpoint-GUID: sjrGchoLm2-zoo3bStpdk6fL4JIWnN0c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_09,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=989 priorityscore=1501 adultscore=0 clxscore=1015
- impostorscore=0 phishscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2405070112
+User-Agent: Mozilla Thunderbird
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v2] io_uring/io-wq: Use set_bit() and test_bit() at
+ worker->flags
+To: Jens Axboe <axboe@kernel.dk>, Breno Leitao <leitao@debian.org>,
+ Pavel Begunkov <asml.silence@gmail.com>
+Cc: "open list:IO_URING" <io-uring@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240507150506.1748059-1-leitao@debian.org>
+ <d7d87db7-af34-4d48-8e26-ac13b5abced9@kernel.dk>
+Content-Language: en-MW
+In-Reply-To: <d7d87db7-af34-4d48-8e26-ac13b5abced9@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 6 May 2024 10:38:30 +0200
-Heiko Carstens <hca@linux.ibm.com> wrote:
-
-> On Tue, Apr 30, 2024 at 08:49:31PM +0200, David Hildenbrand wrote:
-> > On 12.04.24 16:21, David Hildenbrand wrote:  
-> > > This is v2 of [1] with changed subject:
-> > >   "[PATCH v1 0/5] s390: page_mapcount(), page_has_private() and PG_arch_1"
-> > > 
-> > > Rebased on s390x/features which contains the page_mapcount() and
-> > > page_has_private() cleanups, and some PG_arch_1 cleanups from Willy. To
-> > > compensate, I added some more cleanups ;)
-> > > 
-> > > One "easy" fix upfront. Another issue I spotted is documented in [1].
-> > > 
-> > > Once this hits upstream, we can remove HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
-> > > from core-mm and s390x, so only the folio variant will remain.  
-> > 
-> > Ping.  
+Le 07/05/2024 à 17:09, Jens Axboe a écrit :
+> On 5/7/24 9:05 AM, Breno Leitao wrote:
+>> @@ -631,7 +631,7 @@ static int io_wq_worker(void *data)
+>>   	bool exit_mask = false, last_timeout = false;
+>>   	char buf[TASK_COMM_LEN];
+>>   
+>> -	worker->flags |= (IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
+>> +	set_mask_bits(&worker->flags, 0, IO_WORKER_F_UP | IO_WORKER_F_RUNNING);
 > 
-> Claudio, Janosch, this series requires your review.
+> This takes a mask, no? I think this should be:
+> 
+> set_mask_bits(&worker->flags, 0, BIT(IO_WORKER_F_UP) | BIT(IO_WORKER_F_RUNNING);
+> 
+> Hmm?
+> 
 
-oops! I had started reviewing it, but then other things got in the
-way...
+Because of that:
 
+  enum {
+-	IO_WORKER_F_UP		= 1,	/* up and active */
+-	IO_WORKER_F_RUNNING	= 2,	/* account as running */
+-	IO_WORKER_F_FREE	= 4,	/* worker on free list */
+-	IO_WORKER_F_BOUND	= 8,	/* is doing bounded work */
++	IO_WORKER_F_UP		= 0,	/* up and active */
++	IO_WORKER_F_RUNNING	= 1,	/* account as running */
++	IO_WORKER_F_FREE	= 2,	/* worker on free list */
++	IO_WORKER_F_BOUND	= 3,	/* is doing bounded work */
+  };
+
+yes, now, BIT() is needed.
+
+
+CJ
 
