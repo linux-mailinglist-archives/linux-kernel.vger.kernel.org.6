@@ -1,124 +1,91 @@
-Return-Path: <linux-kernel+bounces-171284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605B98BE233
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:33:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF448BE256
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 14:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F2A1C232ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BC628AAFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04630158A37;
-	Tue,  7 May 2024 12:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CBsLlqM/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24C0158D9C;
+	Tue,  7 May 2024 12:40:11 +0000 (UTC)
+Received: from mail.avm.de (mail.avm.de [212.42.244.94])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C047471B4F;
-	Tue,  7 May 2024 12:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486946CDB1;
+	Tue,  7 May 2024 12:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085184; cv=none; b=Ow728MQk4lB1Ter7m/gago9tMVreo8j6pQE0wwolUnZ3Yhs7u3GI2ThzpagkUjUny5opClVMW6hYu2KEEA3sSfa1yJX7yW25az6Z1jsE/AYm14QJ3Mmb0SnYZvqK0N6ws7EJUrDA8ZQr7tXHb81neQs76f28/dY17hyIsG3p/SY=
+	t=1715085611; cv=none; b=hH/Jtuk8bhmEIRRuUemAQpSdUR1o+oS+/u5y1XpZTtfkt3sVqmuOwz+a7RFgiCi46dogGdjA/JIodosOGgbXkHOMRThPrGKP1ZqKJQgVBc2gaS2ntz/gyiBiLX+lFAqzZ3gxVhwuJrlwWxu3tUxpymvJ4LDSmeVlQtXVgaTa6sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715085184; c=relaxed/simple;
-	bh=FBgLVaePL2Gdtw0fbAtikW2CKQEyxpnSzxRsSk2iIoY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PoqtQMd9vBpspCMwej7mnNwQXKhCshctpNgBHChyw9pQERei8IV48yddwH7XxzDFUsInjR/MS+6yO5PxfTvdPQXniQwP+nbWE9vSpt354YA0/SgAWwCve2Ot22c2EOgpkE+MQ6FaTn1hOpOp6g4B52fdyyQbs9CGww8kOhvONCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CBsLlqM/; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715085183; x=1746621183;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FBgLVaePL2Gdtw0fbAtikW2CKQEyxpnSzxRsSk2iIoY=;
-  b=CBsLlqM/ruHcJAmbZ9WS2O9HRx3+7kEmnWiqf5Ttv+0hmupKMEAMwaP9
-   /PBfrtvm/gT14zAmq6jjVK0KG0TnB6bKX1ML99AwSuevUbJBsLupmd60P
-   1vyj9a7OX2iXBRd51dyGQmhLXSHScPG9xnRR0yoYySKYVeZaJtCmmXuI7
-   uGHXvC+T8xnOefrVL/hzXVHnNzHngQFf8TK0GSzxCW5TWA6X4b8Ex5cWP
-   LPqiZ8301u7orgL5yWXNHSJ86nM6U85mapM9q+k0b8MooPM6wb/TcPm2N
-   tjPE1kATVhOCf6F5ZtTBFar6hm9UgKVMa2taK10vQ/iA4WgZ6ne92UCWk
-   w==;
-X-CSE-ConnectionGUID: BETuSzTcSdmXkKgwfuG/gQ==
-X-CSE-MsgGUID: +9GwvLSLQca2YOqtVZxMNA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="22269060"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="22269060"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 05:33:02 -0700
-X-CSE-ConnectionGUID: T/GBuz95SmWNcz1x0kGWnw==
-X-CSE-MsgGUID: aM6kxJLXRCGcvtIaxDiuSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="51702787"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 05:32:59 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id CD016120574;
-	Tue,  7 May 2024 15:32:56 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1s4K08-003uYs-2O;
-	Tue, 07 May 2024 15:32:56 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-media@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kent@punajuuri.localdomain,
-	Overstreet@punajuuri.localdomain,
-	kent.overstreet@linux.dev,
-	Suren Baghdasaryan <surenb@google.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH v2 1/1] media: intel/ipu6: explicitly include vmalloc.h
-Date: Tue,  7 May 2024 15:32:46 +0300
-Message-Id: <20240507123246.932398-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240506104953.49666125@canb.auug.org.au>
-References: <20240506104953.49666125@canb.auug.org.au>
+	s=arc-20240116; t=1715085611; c=relaxed/simple;
+	bh=qZ8b0oykuOVN2jQ+TYiBmJil/Vb9AlVKBML2Yxhc79U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPEBilfCYR2mDkVlGMK12qf6ovMBlnh8xTDpM2McdDEZWbVn7csaTpbZILfSdRUfZITKuexBMzhyO01s7r5ubAOVwX4zXUHSiXZGAfjuZWa72G5uQv9vKyhNNJPBss8sT3QlO6ytn9DfdOjbVNPuIP7O1ueEBNaTaSp1OqlA1Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=avm.de; arc=none smtp.client-ip=212.42.244.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+Received: from mail-auth.avm.de (unknown [IPv6:2001:bf0:244:244::71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Tue,  7 May 2024 14:34:10 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 019A880666;
+	Tue,  7 May 2024 14:34:10 +0200 (CEST)
+Received: by buildd.core.avm.de (Postfix, from userid 1000)
+	id E2121181132; Tue,  7 May 2024 14:34:09 +0200 (CEST)
+Date: Tue, 7 May 2024 14:34:09 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Terrell <terrelln@fb.com>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
+Subject: Re: [PATCH v2 1/2] riscv: make image compression configurable
+Message-ID: <ZjofwZDHYg8yYKeK@buildd.core.avm.de>
+References: <20240504193446.196886-1-emil.renner.berthing@canonical.com>
+ <20240504193446.196886-2-emil.renner.berthing@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240504193446.196886-2-emil.renner.berthing@canonical.com>
+X-purgate-ID: 149429::1715085250-25CCED52-3CFB73E6/0/0
+X-purgate-type: clean
+X-purgate-size: 897
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+On Sat, May 04, 2024 at 09:34:38PM +0200, Emil Renner Berthing wrote:
+> Previously the build process would always set KBUILD_IMAGE to the
+> uncompressed Image file (unless XIP_KERNEL or EFI_ZBOOT was enabled) and
+> unconditionally compress it into Image.gz. However there are already
+> build targets for Image.bz2, Image.lz4, Image.lzma, Image.lzo and
+> Image.zstd, so let's make use of those, make the compression method
+> configurable and set KBUILD_IMAGE accordingly so that targets like
+> 'make install' and 'make bindeb-pkg' will use the chosen image.
+> 
+> Tested-by: Björn Töpel <bjorn@rivosinc.com>
+> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> ---
+> Changes in v2:
+> - Rebase on riscv/for-next
+> - Use boot-image-$(CONFIG_..) := assignments rather than ifeq train
+> ---
 
-linux/vmalloc.h needs to be included explicitly nowadays. Do it.
+Looks good to me.
 
-Fixes: 9163d83573e4 ("media: intel/ipu6: add IPU6 DMA mapping API and MMU table")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-since v1:
-
-- Rework the commit message a little.
-
- drivers/media/pci/intel/ipu6/ipu6-mmu.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/pci/intel/ipu6/ipu6-mmu.c b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-index 98a4bf9ca267..c3a20507d6db 100644
---- a/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
-@@ -22,6 +22,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-+#include <linux/vmalloc.h>
- 
- #include "ipu6.h"
- #include "ipu6-dma.h"
--- 
-2.39.2
-
+Reviewed-by: Nicolas Schier <n.schier@avm.de>
 
