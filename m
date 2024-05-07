@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-170686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2752F8BDA9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:16:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C4C8BDAA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2ED1F2502B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD922886C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 05:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A131B6BFA2;
-	Tue,  7 May 2024 05:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4A76BB5B;
+	Tue,  7 May 2024 05:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SRu0NbWK"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmCncGDS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B1E6A8DB;
-	Tue,  7 May 2024 05:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C97454BE4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 05:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715058970; cv=none; b=F2en9R5fwoP1FevybSKhaXrpLJajtq71oQz2ZxsLjAoWfNuh9D6+Zn48pH5wKoyFx8/5amQcJccZGmef6JjgJmZKfyHfTKhj/7pprKDEx8R6gjwExtjDUJHdDXvEqkfxORxR3Jjph42J/5ioPf7iboxwxRhZPBm3UaCjytYzVBI=
+	t=1715059064; cv=none; b=kU6aOCU3uaFd4QkWsZ/VqUyRqXh6cMKAtC2tGp8x/k3g4Dpj+HR/IfpcmxZHrxmBd4eOhJLCES0kc5hocT94Jb4xjOMOeS758yKN8fQir3Dx9/CJyAhSDIQZpwm1/+Bkbn0QoOMMdCFAKpHxhUjWi6jyTRlFTkPPM20G6fgPJEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715058970; c=relaxed/simple;
-	bh=i9DHeWX7KXecasXvAhYHrRVaJGI4UAUdfJll+Nk8yww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ctUEsEa7GElkNlt1npSQRNvBjU94pE0TIaIGqPqR6+k0tGq5p6oI2UQ0Ob+gLYlSl3gMJQugADQEMTJGOyV32GJly7eqLnVA0zsaU8HvjfKSWlmn8QsIrjg9yQx6C5qAs1/vUaI7mYQbz7bcDFeLyrfTymwQD0+N8Gk6thbXR58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SRu0NbWK; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-62036051972so30094297b3.1;
-        Mon, 06 May 2024 22:16:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715058968; x=1715663768; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qRRN/6JR9vsHlrdWS5YE9S6ooRxHV3XoqORdpSSw4eU=;
-        b=SRu0NbWKF5FKvYi8NHOALyopQ3mzhXGZ77ANmfB5DRsmJtVgUOLMhFxw8WIOYwiWna
-         DydkFTUUmjtdtaoVIK1+P43Wg6ZTQB9gj/GLpvacxl+EWxB9iVw2s9nXhAG+Vh+O+y2l
-         kw2th2xq8v8UUC8rGJRdSUkP2D5P+K8Jzj5z78yJMRLf7yJyzeQ5B38e5jZYx1ChRJBU
-         IE3jpFvBxv9R4nfUCu53Pvd3fGs8x7mekH00PAeTkhL/bPGkdRu6EW60iwNQDADDHKY7
-         5xPG1OzgL5OAVQXmEJM7iKif5t0NLRWedPFbxTIis8oYmLA5k26faeoK+j2sbGpFBebc
-         R2QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715058968; x=1715663768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qRRN/6JR9vsHlrdWS5YE9S6ooRxHV3XoqORdpSSw4eU=;
-        b=UIWDxM8qJn63V2DD7wicB26RYhrzaNs0Y95zLOYb+4fpI+x6lw/BqZsfawN2kqEGJp
-         6PwpRCzyoLSHm++h5Wko1kInNwOviRP+IawVHxkpMUR+HX2cNHCcfFxoparotpTEU6jO
-         CFHypeTWXE2yobtyJUnUSgdbPozN39H/ZljrLOML1eqf4gw/5oN9nMd+LTqM98CaMhBB
-         tF57M422L4+ArdYv7yL/XFDy9ujyntuRN0hAF/rO8U3MdJrDRKgKk9gWwAZyluHkDeMo
-         ucb9Ky4r4xQIqMTb7f7o0ALJl323cb1RQ5eScmezJ2JnYPFqWIN5mgklqMLWyNHRTiAU
-         4fXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGJA1T0unrf90Qr7q1tn/vJWQLUwFfu0UknP6A1KCoPwaMzD6qVGCGaTHwZA1JbsUKljLweJ1PNOqbnSbd8+zqIpwj9oXq5tzYrytYYg==
-X-Gm-Message-State: AOJu0YykKb/4qRzRgj4Hgmb+R0HNxSJ0UcTIiwiyvM2B41VJJRyovTpw
-	pJSHdnR13Ye8n91QU660rzH890R755/STBrva1s1n1NnjGDpo7rNiRVWZOjCSYx95dT+IQ7o3KO
-	gqEEd2FsS16VhMFVAD6PRMUWh2UfczA==
-X-Google-Smtp-Source: AGHT+IF1IsOQnyYpiHXGGnDEQACnR+86vly8yM9hSdUsAu3azUm9HfKfMGNWGUCFN0JG/kiZpL4sldEk/1epYvTM/jc=
-X-Received: by 2002:a0d:eb48:0:b0:61e:a62:d8fc with SMTP id
- u69-20020a0deb48000000b0061e0a62d8fcmr11878695ywe.20.1715058967513; Mon, 06
- May 2024 22:16:07 -0700 (PDT)
+	s=arc-20240116; t=1715059064; c=relaxed/simple;
+	bh=MVxJV0DmzBRnFYcte+tBATygTJyvAiF8PMo21+ADg0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m1Hy/aJS348QOKlLDcEF9+/J4viZSAAHb+rmf0q1qDoWyKGHMX85tcXwmT8Zm8nFCpc1IHOfPJKaO1KQD/TfzfIrc4nnpIbmO+Q3u9aFJyUg9NdNmNcmSOoMIbOcVtsZ6Vy+aHZfW7VGbuwhOT+gqSMR5/FYHtBRBh2s5Yzc71A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmCncGDS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE31C2BBFC;
+	Tue,  7 May 2024 05:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715059063;
+	bh=MVxJV0DmzBRnFYcte+tBATygTJyvAiF8PMo21+ADg0k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dmCncGDSSdcfqIIrRxuvPGq8GBzaMWSoFP1+/GbVdC4S+pb6vOXXwwEYHfnHZY8Cn
+	 VTBPcvNG7zAi5DgR4J+25vLRX/APnkwzEXsdfke2GInWIiVzVTsNxBxLQZl0VKUjN3
+	 ZfLTGeOcFKc2Jm5+9m5Q0V3a8bYU3Uurv4a1pnsZEUeC/qWLsHCOoZ5trQaEXR8AiF
+	 KjmaCqd7fPFkQHg5zRuiYiXSkne0H9al2+0X9KcGY6pu2jRj7yjZEH0D4Tv2m9x2bt
+	 QUJttVFp4LpaZ/Ct1npI/v4VKJm6uFhzDVTz0sSjqQElyHYk5v3dSuchc8Q80shHUM
+	 GTANWxXuf7vAg==
+Date: Mon, 6 May 2024 22:17:41 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Yujie Liu <yujie.liu@intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v4 1/5] x86/bugs: Only harden syscalls when needed
+Message-ID: <20240507051741.4crk2pd2fuh4euyd@treble>
+References: <982d05a2f669140f26500bee643011896d661094.1713559768.git.jpoimboe@kernel.org>
+ <ZiYbPZ1biNCEndKZ@yujie-X299>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240417053530.30995-1-wangyao@lemote.com>
-In-Reply-To: <20240417053530.30995-1-wangyao@lemote.com>
-From: Ainux Wang <ainux.wang@gmail.com>
-Date: Tue, 7 May 2024 13:15:31 +0800
-Message-ID: <CAPWE4_yuDpLG7bLywEq7xQwB6+NVCUP0AwE+VgOZ-3hHpRVyUQ@mail.gmail.com>
-Subject: Re: [PATCH] modules: Drop the .export_symbol section from the final modules
-To: mcgrof@kernel.org, masahiroy@kernel.org, Wang Yao <wangyao@lemote.com>, 
-	linux-modules@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZiYbPZ1biNCEndKZ@yujie-X299>
 
-Hi, everyone:
+On Mon, Apr 22, 2024 at 04:09:33PM +0800, Yujie Liu wrote:
+> On Fri, Apr 19, 2024 at 02:09:47PM -0700, Josh Poimboeuf wrote:
+> > Syscall hardening (converting the syscall indirect branch to a series of
+> > direct branches) has shown some performance regressions:
+> >
+> > - Red Hat internal testing showed up to 12% slowdowns in database
+> >   benchmark testing on Sapphire Rapids when the DB was stressed with 80+
+> >   users to cause contention.
+> >
+> > - The kernel test robot's will-it-scale benchmarks showed significant
+> >   regressions on Skylake with IBRS:
+> >   https://lkml.kernel.org/lkml/202404191333.178a0eed-yujie.liu@intel.com
+> 
+> To clarify, we reported a +1.4% improvement (not regression) of
+> will-it-scale futex4 benchmark on Skylake. Meanwhile we did observe some
+> regressions by running other benchmarks on Ice Lake, such as:
+> 
+>     stress-ng.null.ops_per_sec -4.0% regression on Intel Xeon Gold 6346 (Ice Lake)
+>     unixbench.fsbuffer.throughput -1.4% regression on Intel Xeon Gold 6346 (Ice Lake)
 
-Could someone review this patch?
+Thanks for clarifying that.  I'm not sure what I was looking at.
 
-Best regards,
-Ainux Wang.
+I also saw your email where Ice Lake showed a ~10% regression for
+1e3ad78334a6.  Unfortunately my patch wouldn't help with that, as it's
+designed to help with older systems (e.g., Skylake) and newer (e.g.,
+Sapphire Rapids) but not Ice/Cascade Lake.
 
-<wangyao@lemote.com> =E4=BA=8E2024=E5=B9=B44=E6=9C=8817=E6=97=A5=E5=91=A8=
-=E4=B8=89 13:35=E5=86=99=E9=81=93=EF=BC=9A
+Whether 1e3ad78334a6 helps or hurts seems very workload-dependent.
 
->
-> From: Wang Yao <wangyao@lemote.com>
->
-> Commit ddb5cdbafaaa ("kbuild: generate KSYMTAB entries by modpost")
-> forget drop the .export_symbol section from the final modules.
->
-> Signed-off-by: Wang Yao <wangyao@lemote.com>
-> ---
->  scripts/module.lds.S | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/scripts/module.lds.S b/scripts/module.lds.S
-> index bf5bcf2836d8..89ff01a22634 100644
-> --- a/scripts/module.lds.S
-> +++ b/scripts/module.lds.S
-> @@ -13,6 +13,7 @@ SECTIONS {
->         /DISCARD/ : {
->                 *(.discard)
->                 *(.discard.*)
-> +               *(.export_symbol)
->         }
->
->         __ksymtab               0 : { *(SORT(___ksymtab+*)) }
-> --
-> 2.27.0
->
+It would be especially interesting to see if my patch helps on the newer
+systems which have the HW mitigation: Raptor Lake, Meteor Lake, Sapphire
+Rapids, Emerald Rapids.
+
+For now, maybe I'll just table this patch until we have more data.
+
+-- 
+Josh
 
