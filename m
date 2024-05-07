@@ -1,111 +1,132 @@
-Return-Path: <linux-kernel+bounces-171057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E980F8BDF48
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:01:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D684D8BDF4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 12:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA6EB22756
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:01:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1417E1C219D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6822814E2F8;
-	Tue,  7 May 2024 10:01:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C104B14D71E;
-	Tue,  7 May 2024 10:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382C914E2F8;
+	Tue,  7 May 2024 10:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+9WF2m6"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB99614D43A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 10:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715076075; cv=none; b=qWKraPWnCa9asB+o8gjUSQl9mqm2pQPOuC1dU/Vc5DAHtfrkBW36IQ1vzmAlVdjbauLQxt7fM/8zQOXBNuvzxX0Nk3ngmU/V6yJLJlPugXNy3hV/HX6jIm+EU9Oe4wFUwqDyJXQyAun3G0SbUN4FUzpH9OJYfexQsN0E/I5mrgI=
+	t=1715076136; cv=none; b=czy5L9FAnYJbJuHwTCuMMKpr2hNF0j708z0Yj2KVeHN4Nd93VEjVhyCieQvtfUQ9iUJcya/yk3LK4cOyXI97Un04wcSdpVy6pe+UrOpt388aee5Y4UFERnFeysVvVgNlZEnqwpn8S6SM48mHy9Mx7QtLQaT/gEauR0i5ydAmMl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715076075; c=relaxed/simple;
-	bh=w9jRrLGbjxfF2wcuhDg39S1ISD1cICwlpuGu2v10UBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMPc3Q2/QaRy7oR6iLxNb0xUO0gBLG9gPq6Ik9zymJwxVdduuHaLtXImrdtkka8b9IZq6KpmmcPMuu/KRExt2f45mIi4AeXn2lr8cNuqVxyehQX5OD/w8kyDLs+wNWfB9hdbWUow/rniQkq27ps0ty8NBr7YF7FMiv/nSISsBH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F2D51063;
-	Tue,  7 May 2024 03:01:38 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 51D093F587;
-	Tue,  7 May 2024 03:01:09 -0700 (PDT)
-Message-ID: <4ab27bea-ac94-48c3-827c-9f2eddcdd50a@arm.com>
-Date: Tue, 7 May 2024 11:01:07 +0100
+	s=arc-20240116; t=1715076136; c=relaxed/simple;
+	bh=jxrbP51ApwB+nB6k7droxBtoZKEplqH7fzVFkVtvoqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lplcdfc+4uIlVR8pz7js5CW1TdVVJIKAO6H5W92jtkehPNr3hT/t4+1+ldBEnRmU+PhFVq5LbHfiu8KHIB4rDbp/2iYeWquuSXCI9YtSkgGUUjspiC2RdzatUglcco0+K8mV6Fdagk3TuzrE8dcsoXG3Xbu6xNN22xKMtq3mk0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P+9WF2m6; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59a9d66a51so647704766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 03:02:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715076133; x=1715680933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xh7EFY8Q7bV9bAL/jh9gBCI67O6P18pHtiY/L20Df14=;
+        b=P+9WF2m6Emwn3JDxXyLaM8QqaHtR/Q3qWaG9wtr8+XBpY6F2Nyf/vFAZra2GRg9zwN
+         j381UFzEGFY/E6nqKVEMm55v6rBH6s6BM2TK9R2LT5TtbdE38jVonK4sAUtscUnlHcQx
+         xANP19lb8T8eIduQv6PS56zyuSyPJXMGwmhJEQaHq9aLFECScs3UYPUnAeep+pkFTJO/
+         TPN3A92qIwS7ChNl1QWciW3H4JwTmzpGfKBMUIZYUttQJbv0kcgV9v/K3DFTG8bk6T2A
+         5HJuqxJQxahHcfLg2awFxMwjoCZ9gmpy4Ysic9c/tvRbsYUNmmYbu/ZeY1mV9jtbf63S
+         rI5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715076133; x=1715680933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xh7EFY8Q7bV9bAL/jh9gBCI67O6P18pHtiY/L20Df14=;
+        b=T6VBG95/4RhZLS3cIbsuTgmUc1zC3OK4CdBAh/LLO8oJUl0dxN6DtSouS2cc+TZeq/
+         s6jS1T/tscm2NxjY3PH+3Ig80IktQWvoSuXtl//fZu++eRAsOYah7SaBrRJWh8imRg7g
+         gO6SdQMJqvWw+MMgNknF1o0UwRFzQbszmHNmJoTAwMyUc66W3YCnWvS/WYlMg+uoFJ32
+         OPsBIb6O1wpv2FOz192RSzLyld/QUXRkarhxBQNBPawzMaKazhBrVrJ2zGmYFNRALZJZ
+         S7GljW5yNJHOzsL3GCKEtTmLtF06SkZa/DvAX7bV0zSCrYJK65K7lziuSP+pACzE4fia
+         WCXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUITDTlGlkJDZ5PYO/1/bvXlFHdJ5vp27eBLOLvNuLPU7FOJOCpzZg8pr8MsX1FoK5Tc6UL7hCUhnXdhCfaARpfu1PaV5kZVl8+ba2v
+X-Gm-Message-State: AOJu0YyQewdiWcsC+lgKwL9aE5ZURfvYUSzile+ZmFgQWQhYjxVKVphw
+	7aQOy9Xz9nJsZxwqyHJfaDjLq3KhbmnVWPyDnwQZLlQhZynwwyl4mYi6TZ+5EOU=
+X-Google-Smtp-Source: AGHT+IGdTeYrrvQuiHJ267AFGQGOr/InjQ1hSYK78u1GMZuzU7Nd8dK+zAN8gjqU0ku58bn2t42Wow==
+X-Received: by 2002:a17:907:1b06:b0:a59:9a68:7283 with SMTP id mp6-20020a1709071b0600b00a599a687283mr9092604ejc.12.1715076133185;
+        Tue, 07 May 2024 03:02:13 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id qy29-20020a170907689d00b00a59adb12790sm3792651ejc.27.2024.05.07.03.02.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 03:02:12 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Subject: [PATCH] ASoC: qcom: audioreach: Correct mapping of back speakers
+Date: Tue,  7 May 2024 12:02:09 +0200
+Message-ID: <20240507100209.610436-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/17] coresight: Use per-sink trace ID maps for Perf
- sessions
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, gankulkarni@os.amperecomputing.com,
- scclevenger@os.amperecomputing.com, coresight@lists.linaro.org,
- suzuki.poulose@arm.com, mike.leach@linaro.org,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, John Garry
- <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Leo Yan <leo.yan@linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20240429152207.479221-1-james.clark@arm.com>
- <ZjVH118DtAdZKo2v@x1>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <ZjVH118DtAdZKo2v@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Qualcomm DSP, according to downstream sources, expects back speakers to
+be mapped as "back", not "surround".  The surround is used only for 8+
+speakers configuration.
 
+Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Fixes: 3c5fcb20e07e ("ASoC: qcom: audioreach: Add 4 channel support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ sound/soc/qcom/qdsp6/audioreach.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 03/05/2024 21:23, Arnaldo Carvalho de Melo wrote:
-> On Mon, Apr 29, 2024 at 04:21:45PM +0100, James Clark wrote:
->> This will allow sessions with more than CORESIGHT_TRACE_IDS_MAX ETMs
->> as long as there are fewer than that many ETMs connected to each sink.
->>
->> Each sink owns its own trace ID map, and any Perf session connecting to
->> that sink will allocate from it, even if the sink is currently in use by
->> other users. This is similar to the existing behavior where the dynamic
->> trace IDs are constant as long as there is any concurrent Perf session
->> active. It's not completely optimal because slightly more IDs will be
->> used than necessary, but the optimal solution involves tracking the PIDs
->> of each session and allocating ID maps based on the session owner. This
->> is difficult to do with the combination of per-thread and per-cpu modes
->> and some scheduling issues. The complexity of this isn't likely to worth
->> it because even with multiple users they'd just see a difference in the
->> ordering of ID allocations rather than hitting any limits (unless the
->> hardware does have too many ETMs connected to one sink).
->>
->> Per-thread mode works but only until there are any overlapping IDs, at
->> which point Perf will error out. Both per-thread mode and sysfs mode are
->> left to future changes, but both can be added on top of this initial
->> implementation and only sysfs mode requires further driver changes.
->>
->> The HW_ID version field hasn't been bumped in order to not break Perf
->> which already has an error condition for other values of that field.
->> Instead a new minor version has been added which signifies that there
->> are new fields but the old fields are backwards compatible.
-> 
-> I guess I can pick the tooling part now, right? Further reviewing would
-> be nice tho.
-> 
-> - Arnaldo
+diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
+index 5291deac0a0b..c655f0213723 100644
+--- a/sound/soc/qcom/qdsp6/audioreach.c
++++ b/sound/soc/qcom/qdsp6/audioreach.c
+@@ -277,8 +277,8 @@ static void audioreach_set_channel_mapping(u8 *ch_map, int num_channels)
+ 	} else if (num_channels == 4) {
+ 		ch_map[0] =  PCM_CHANNEL_FL;
+ 		ch_map[1] =  PCM_CHANNEL_FR;
+-		ch_map[2] =  PCM_CHANNEL_LS;
+-		ch_map[3] =  PCM_CHANNEL_RS;
++		ch_map[2] =  PCM_CHANNEL_LB;
++		ch_map[3] =  PCM_CHANNEL_RB;
+ 	}
+ }
+ 
+@@ -851,8 +851,8 @@ static int audioreach_mfc_set_media_format(struct q6apm_graph *graph,
+ 	} else if (num_channels == 4) {
+ 		media_format->channel_mapping[0] = PCM_CHANNEL_FL;
+ 		media_format->channel_mapping[1] = PCM_CHANNEL_FR;
+-		media_format->channel_mapping[2] = PCM_CHANNEL_LS;
+-		media_format->channel_mapping[3] = PCM_CHANNEL_RS;
++		media_format->channel_mapping[2] = PCM_CHANNEL_LB;
++		media_format->channel_mapping[3] = PCM_CHANNEL_RB;
+ 	}
+ 
+ 	rc = q6apm_send_cmd_sync(graph->apm, pkt, 0);
+-- 
+2.43.0
 
-Is it ok if we wait for the driver changes to be merged first? There
-might some review comments which need a format change to the packets and
-then a re-write of the tool changes.
-
-You could take 1 and 2 though because they're unrelated.
-
-Thanks
-James
 
