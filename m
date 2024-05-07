@@ -1,227 +1,131 @@
-Return-Path: <linux-kernel+bounces-172048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE8C8BEC6A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:15:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A62E8BEC66
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 21:15:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B8F28835C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC21C1C23CC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69A716DECF;
-	Tue,  7 May 2024 19:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CFB16DEB6;
+	Tue,  7 May 2024 19:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HDG4RCQR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YeXMztK8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310A816E88E;
-	Tue,  7 May 2024 19:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4429116C84E;
+	Tue,  7 May 2024 19:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715109345; cv=none; b=VbU9o3Iv/war8KwDpZrP3YMWRML3awnnH6pa8+wgxntLIE7TF3WhAOiN7WIEfAtbSU3NpzjOstXTN4TBPO+rv5njERWM+JVKRge7uAMjM7lTh0AWlCOguLd/OESESWPPKqW2PJqs9+J6dkdRpD9b9B8KJZcSHqLcwJ2OOjJihpc=
+	t=1715109331; cv=none; b=JKmEJCjQYi3Jzh5AKvoo+oEKGCmw4xz81Mxre1SOOeuXoppqF7ZfjydE/lAMCYHwwX74srg46q/Qk3XxYvKQvZKfCAFSAxz33uDxfuT/AfTAyCuz7uEq0YK+5c9yFidY0KFnuFFtmYFxOSwLTWFT6e9EMMEJqrS/iVw//0mmIQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715109345; c=relaxed/simple;
-	bh=H0OrEbKkNSluiLf/r1ab0wfVjhBJw5DKB5glHgKQknw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qCx5vbnBTSJdTT/B3vLWnw796Pt6uihH0klbnfCxp19u6nhDe9iy+oq4/Rl9U5M2mUfs2pd8XwVcmZ95V/gjW1Exlejs7mgbEHjRsTIB6CdQw4xfuNqP733x1l5Vnfynye46jE683ljF16FP63jfBZofLYjs8BbEuHop5Q4wSos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HDG4RCQR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447IjSBp013292;
-	Tue, 7 May 2024 19:15:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=1ozfY6ERltqf/Cq7PFYWt9JbiYqu96TtyBwLN6d8sHs=; b=HD
-	G4RCQRkTUOY17Aggc4oDtV5vUNg4CZ53qHvHVEAGShQ58AlUsEuIjGVQDCFKd8D1
-	lVvpk9sIj6CIsCKNE86qlCpMuQtbOM6RDHVNIGZFXI+1JbVyPBwL+HzKxeke5qfT
-	eyqpBXxX9CQp5svBWkNKnEZDFWW6GU4S8M7Nw9lgaA2uoq4CPsOrETXRU985F4xT
-	N/+5UoZRHI1xhWqPUb6BYhb4weH7YUXj3mKFlBCb+1iBfB6qVm95AOFqHJitCCkv
-	A3B6Wo+O/9aK10lVscWTKfD4npwX8lUaLUVxYZZ9HZWOkT/lMfj3qTYfv9tW1nn6
-	rlqTmyCZBEE4iNXoRumw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyste024e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 07 May 2024 19:15:22 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 447JFLO6030978
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 7 May 2024 19:15:21 GMT
-Received: from [10.110.127.27] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
- 12:15:18 -0700
-Message-ID: <8569f47c-0c59-49f6-8b93-09bc0defb670@quicinc.com>
-Date: Tue, 7 May 2024 12:15:17 -0700
+	s=arc-20240116; t=1715109331; c=relaxed/simple;
+	bh=0/ri/nVyB1skAAyK4LnIFrNcXIXlUs+7hWnIcd/Le84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nliq/OmEprmkJ4zQ3m+Rpwc6M9dStIxYrXL2bMFVNSMeYdxg2+iVauEk9Bils+5GQD6H88fsiCvbQnFuXogPd4VEcSXDHl8/xhZSOoQDMnamHlkuZua++7CrcqazyUmwPhfT4eiH4ACUwdNUvlUNPQa98+Cd3CFjKVhSiQNw3Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YeXMztK8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9007C2BBFC;
+	Tue,  7 May 2024 19:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715109330;
+	bh=0/ri/nVyB1skAAyK4LnIFrNcXIXlUs+7hWnIcd/Le84=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=YeXMztK88N+kpNF1+Gbn1aa1vUbsn9rdOjjLe92AHx2EgYHYKHNw72me/Pemn5guz
+	 SvH04+N3zxGzuqupc+skL4Uo8qf0Y/Y7qzAo34RKFuHe8Qed2SN/RJ9goxWUifiP38
+	 DsvA9PFtyaLE7Wdy+0hwJ+Nu7NhivTTYlUGaqnML7JvjnJENkKAKj/vHqTBzJrl8T7
+	 PU29tLJ8CHNn04bOlXFiTNf3R5eQYeiOo32lxsb3chrN+PcZOGtzTG9OR5CVGJsGw6
+	 5byoouA7nrYf9me+gdtT7SNRUWwXAuw7VVhZyk6Ybdxb8WdtGwkyALlhQOFTl41dtf
+	 dVb4o6AaezsVg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 660FECE0C56; Tue,  7 May 2024 12:15:30 -0700 (PDT)
+Date: Tue, 7 May 2024 12:15:30 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Leonardo Bras <leobras@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+Message-ID: <663a659d-3a6f-4bec-a84b-4dd5fd16c3c1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240328171949.743211-1-leobras@redhat.com>
+ <ZgsXRUTj40LmXVS4@google.com>
+ <ZjUwHvyvkM3lj80Q@LeoBras>
+ <ZjVXVc2e_V8NiMy3@google.com>
+ <3b2c222b-9ef7-43e2-8ab3-653a5ee824d4@paulmck-laptop>
+ <ZjprKm5jG3JYsgGB@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH bpf-next v6 3/3] selftests/bpf: Handle forwarding of
- UDP CLOCK_TAI packets
-Content-Language: en-US
-To: Martin KaFai Lau <martin.lau@linux.dev>
-CC: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
-        "Martin
- KaFai Lau" <martin.lau@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>,
-        <kernel@quicinc.com>
-References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
- <20240504031331.2737365-4-quic_abchauha@quicinc.com>
- <663929b249143_516de2945@willemb.c.googlers.com.notmuch>
- <d613c5a6-5081-4760-8a86-db1107bdc207@quicinc.com>
- <a4957aaf-6b3f-45e8-8c18-a9f74213d0f3@linux.dev>
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <a4957aaf-6b3f-45e8-8c18-a9f74213d0f3@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: k5pvUtUAARjbwZE0Nl3U4YmBMIwdPprY
-X-Proofpoint-ORIG-GUID: k5pvUtUAARjbwZE0Nl3U4YmBMIwdPprY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_11,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1015
- mlxlogscore=999 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405070134
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjprKm5jG3JYsgGB@google.com>
 
-
-
-On 5/6/2024 5:54 PM, Martin KaFai Lau wrote:
-> On 5/6/24 1:50 PM, Abhishek Chauhan (ABC) wrote:
->>
->>
->> On 5/6/2024 12:04 PM, Willem de Bruijn wrote:
->>> Abhishek Chauhan wrote:
->>>> With changes in the design to forward CLOCK_TAI in the skbuff
->>>> framework,  existing selftest framework needs modification
->>>> to handle forwarding of UDP packets with CLOCK_TAI as clockid.
->>>>
->>>> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
->>>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
->>>> ---
->>>>   tools/include/uapi/linux/bpf.h                | 15 ++++---
->>>>   .../selftests/bpf/prog_tests/ctx_rewrite.c    | 10 +++--
->>>>   .../selftests/bpf/prog_tests/tc_redirect.c    |  3 --
->>>>   .../selftests/bpf/progs/test_tc_dtime.c       | 39 +++++++++----------
->>>>   4 files changed, 34 insertions(+), 33 deletions(-)
->>>>
->>>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
->>>> index 90706a47f6ff..25ea393cf084 100644
->>>> --- a/tools/include/uapi/linux/bpf.h
->>>> +++ b/tools/include/uapi/linux/bpf.h
->>>> @@ -6207,12 +6207,17 @@ union {                    \
->>>>       __u64 :64;            \
->>>>   } __attribute__((aligned(8)))
->>>>   +/* The enum used in skb->tstamp_type. It specifies the clock type
->>>> + * of the time stored in the skb->tstamp.
->>>> + */
->>>>   enum {
->>>> -    BPF_SKB_TSTAMP_UNSPEC,
->>>> -    BPF_SKB_TSTAMP_DELIVERY_MONO,    /* tstamp has mono delivery time */
->>>> -    /* For any BPF_SKB_TSTAMP_* that the bpf prog cannot handle,
->>>> -     * the bpf prog should handle it like BPF_SKB_TSTAMP_UNSPEC
->>>> -     * and try to deduce it by ingress, egress or skb->sk->sk_clockid.
->>>> +    BPF_SKB_TSTAMP_UNSPEC = 0,        /* DEPRECATED */
->>>> +    BPF_SKB_TSTAMP_DELIVERY_MONO = 1,    /* DEPRECATED */
->>>> +    BPF_SKB_CLOCK_REALTIME = 0,
->>>> +    BPF_SKB_CLOCK_MONOTONIC = 1,
->>>> +    BPF_SKB_CLOCK_TAI = 2,
->>>> +    /* For any future BPF_SKB_CLOCK_* that the bpf prog cannot handle,
->>>> +     * the bpf prog can try to deduce it by ingress/egress/skb->sk->sk_clockid.
->>>>        */
->>>>   };
->>>>   diff --git a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
->>>> index 3b7c57fe55a5..71940f4ef0fb 100644
->>>> --- a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
->>>> +++ b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
->>>> @@ -69,15 +69,17 @@ static struct test_case test_cases[] = {
->>>>       {
->>>>           N(SCHED_CLS, struct __sk_buff, tstamp),
->>>>           .read  = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
->>>> -             "w11 &= 3;"
->>>> -             "if w11 != 0x3 goto pc+2;"
->>>> +             "if w11 == 0x4 goto pc+1;"
->>>> +             "goto pc+4;"
->>>> +             "if w11 == 0x3 goto pc+1;"
->>>> +             "goto pc+2;"
->>>
->>> Not an expert on this code, and I see that the existing code already
->>> has this below, but: isn't it odd and unnecessary to jump to an
->>> unconditional jump statement?
->>>
->> I am closely looking into your comment and i will evalute it(Martin can correct me
->> if the jumps are correct or not as i am new to BPF as well) but i found out that
->> JSET = "&" and not "==". So the above two ins has to change from -
+On Tue, May 07, 2024 at 10:55:54AM -0700, Sean Christopherson wrote:
+> On Fri, May 03, 2024, Paul E. McKenney wrote:
+> > On Fri, May 03, 2024 at 02:29:57PM -0700, Sean Christopherson wrote:
+> > > So if we're comfortable relying on the 1 second timeout to guard against a
+> > > misbehaving userspace, IMO we might as well fully rely on that guardrail.  I.e.
+> > > add a generic PF_xxx flag (or whatever flag location is most appropriate) to let
+> > > userspace communicate to the kernel that it's a real-time task that spends the
+> > > overwhelming majority of its time in userspace or guest context, i.e. should be
+> > > given extra leniency with respect to rcuc if the task happens to be interrupted
+> > > while it's in kernel context.
+> > 
+> > But if the task is executing in host kernel context for quite some time,
+> > then the host kernel's RCU really does need to take evasive action.
 > 
-> Yes, this should be bitwise "&" instead of "==".
-> 
-> The bpf CI did report this: https://github.com/kernel-patches/bpf/actions/runs/8947652196/job/24579927178
-> 
-> Please monitor the bpf CI test result.
-> 
-> Do you have issue running the test locally?
-> 
-Yes, To be honest. I am facing compilation issues when i follow the documentation to Make BPF on latest kernel. 
+> Agreed, but what I'm saying is that RCU already has the mechanism to do so in the
+> form of the 1 second timeout.
 
-This is slowing down my development with this patch. 
+Plus RCU will force-enable that CPU's scheduler-clock tick after about
+ten milliseconds of that CPU not being in a quiescent state, with
+the time varying depending on the value of HZ and the number of CPUs.
+After about ten seconds (halfway to the RCU CPU stall warning), it will
+resched_cpu() that CPU every few milliseconds.
 
-Very similar to the problem described here :- https://github.com/jsitnicki/ebpf-summit-2020/issues/1
+> And while KVM does not guarantee that it will immediately resume the guest after
+> servicing the IRQ, neither does the existing userspace logic.  E.g. I don't see
+> anything that would prevent the kernel from preempting the interrupt task.
 
-local/mnt/workspace/kernel_master/linux-next/tools/testing/selftests/bpf/tools/build/bpftool/bootstrap/libbpf/include/bpf/bpf_core_read.h:379:26: note: expanded from macro '___arrow2'
-#define ___arrow2(a, b) a->b
-                        ~^
-skeleton/pid_iter.bpf.c:19:9: note: forward declaration of 'struct bpf_link'
-        struct bpf_link link;
-               ^
-skeleton/pid_iter.bpf.c:105:7: error: incomplete definition of type 'struct bpf_link'
-                if (BPF_CORE_READ(link, type) == bpf_core_enum_value(enum bpf_link_type___local,
-                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+Similarly, the hypervisor could preempt a guest OS's RCU read-side
+critical section or its preempt_disable() code.
 
->>
->> "if w11 == 0x4 goto pc+1;" ==>(needs to be corrected to) "if w11 & 0x4 goto pc+1;"
->>   "if w11 == 0x3 goto pc+1;" ==> (needs to be correct to) "if w11 & 0x3 goto pc+1;"
->>
->>
->>>>                "$dst = 0;"
->>>>                "goto pc+1;"
->>>>                "$dst = *(u64 *)($ctx + sk_buff::tstamp);",
->>>>           .write = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
->>>> -             "if w11 & 0x2 goto pc+1;"
->>>> +             "if w11 & 0x4 goto pc+1;"
->>>>                "goto pc+2;"
->>>> -             "w11 &= -2;"
->>>> +             "w11 &= -3;"
->> Martin,
->> Also i am not sure why the the dissembly complains because the value of SKB_TSTAMP_TYPE_MASK = 3 and we are
->> negating it ~3 = -3.
->>
->>    Can't match disassembly(left) with pattern(right):
->>    r11 = *(u8 *)(r1 +129)  ;  r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset)
->>    if w11 & 0x4 goto pc+1  ;  if w11 & 0x4 goto pc+1
->>    goto pc+2               ;  goto pc+2
->>    w11 &= -4               ;  w11 &= -3
->>
->>>>                "*(u8 *)($ctx + sk_buff::__mono_tc_offset) = r11;"
->>>>                "*(u64 *)($ctx + sk_buff::tstamp) = $src;",
->>>>       },
+Or am I missing your point?
+
+> > On the other hand, if that task is executing in guest context (either
+> > kernel or userspace), then the host kernel's RCU can immediately report
+> > that task's quiescent state.
+> > 
+> > Too much to ask for the host kernel's RCU to be able to sense the
+> > difference?  ;-)
 > 
+> KVM already notifies RCU when its entering/exiting an extended quiescent state,
+> via __ct_user_{enter,exit}().
+> 
+> When handling an IRQ that _probably_ triggered an exit from the guest, the CPU
+> has already exited the quiescent state.  And AFAIK, that can't be safely changed,
+> i.e. KVM must note the context switch before enabling IRQs.
+
+Whew!!!  ;-)
+
+Just to make sure that I understand, is there any part of the problem
+to be solved that does not involve vCPU preemption?
+
+							Thanx, Paul
 
