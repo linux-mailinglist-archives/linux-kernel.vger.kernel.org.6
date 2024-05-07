@@ -1,142 +1,109 @@
-Return-Path: <linux-kernel+bounces-170837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E23B8BDCB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:51:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FDF8BDCBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 09:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9E21F24CC5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:51:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BFCDB2203A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 07:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAD713C81C;
-	Tue,  7 May 2024 07:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FC913C83C;
+	Tue,  7 May 2024 07:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="dCkyrJBG"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="E2iZGMCZ"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57F078274;
-	Tue,  7 May 2024 07:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5465578274;
+	Tue,  7 May 2024 07:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715068282; cv=none; b=mo4qSMbCY2q2lLs/SzkmW7vfa2xjFfd6IqBMIa2JRjP0PNju2LKgTdVTwb5mX3ASmWw/Eg3bNWcSffxgVGl/0aUgmB2bwCb6ORA7uey70ubgGve0npIYPnbi3DIGm5SBZI23st8MAcnnouh6M2wkm4LBgIX16viQnX2pZ+yE2fc=
+	t=1715068400; cv=none; b=VUZmZ3WQ0EkeJL7It9AizT5rDAwwAguVpsCB9wIeKp6nGJ06Ec6yL4eegSiTvRFqtnuCH8HFPXZeBo8GlCXD5OZJ5/1pILRCsCW9lg0j6Q/pDWMJgFIYbr0TOdDf2cEsc3IC1JCxNgB4KZPJvX4zavx6KNwPTY7Y77qCDPGj2sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715068282; c=relaxed/simple;
-	bh=Yt1ERYjJEdTGYm8TRtzABKvuMdbrTzwn9Sc8/9cixag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IvESmCZTO1G/FG6foVNfWGZsZNE8einqZMxrYx2RWEgBYOq085KteR1+q6k9nQWZZKZJHw1lGM1ioPKTKz63MbejxJZosmZDm6LK6XSnVkJ7/3ojVt/dgpsh8UqQEr5VHOiYLYZny3thR02QVJaa4ba6B2c2X6OxsF3qU+VvscE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=dCkyrJBG; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VYVpB3Qxsz9sls;
-	Tue,  7 May 2024 09:51:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1715068274;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yt1ERYjJEdTGYm8TRtzABKvuMdbrTzwn9Sc8/9cixag=;
-	b=dCkyrJBG5z7WLTGoSi3Di7SZ1dymYcoHun/rKWymCVjq6wOgRGVO65Y12Xt1MWmNUsWezI
-	vV424TbvVZnEV6NCJoGw8WpQTDzyR2gzcIqFjQgiF02bZRQITTXUZiJdWtnttUXuBllZEa
-	UdEWR8Z1jhyjoS9s4BRi49T62IoRQelINWy9jUrMK27lchoPA1wNlXKVPrKdIPwnnbhbXq
-	qXVFeA7Cfozrt36mPhtTahiuEVHo8T2+OLR7uZaYwt/Hqa4/hHhu0X0dTAteABkpx/dPPT
-	bNkw1/ynZ+viD6psUfEgo+W3iz/A/U7bQENQbEUC4ubVUYTFOqgLPxe8Dk+QDA==
-Date: Tue, 7 May 2024 17:50:58 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Stas Sergeev <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, Stefan Metzmacher <metze@samba.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Andy Lutomirski <luto@kernel.org>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
-	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian =?utf-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>
-Subject: Re: [PATCH v6 0/3] implement OA2_CRED_INHERIT flag for openat2()
-Message-ID: <20240506.071502-teak.lily.alpine.girls-aiKJgErDohK@cyphar.com>
-References: <20240427112451.1609471-1-stsp2@yandex.ru>
+	s=arc-20240116; t=1715068400; c=relaxed/simple;
+	bh=PdzkpfEmwxK/pzn735F8E3DY8ddcp/oOwhlxuPHUSGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eBA/0fWj1x4i8p8rG6slrt8KskTbHSSPSGiFjvxSP9lOd6GoczhX1ub8NABAGfCQHgLkL6rQ99vCwNS0q87bPxU6fKD3/XmGvuut5NpZP2z9vGJThRkIdaXZg/a/s2LonVPXJYKTe6KZANteczxYvrZYl68NHlPGGFCskPqL+6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=E2iZGMCZ; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715068377; x=1715673177; i=markus.elfring@web.de;
+	bh=PdzkpfEmwxK/pzn735F8E3DY8ddcp/oOwhlxuPHUSGU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=E2iZGMCZNoehF4HYktpIznUiGZj3jSmO4t6J4jrcY/FZHVDGwzjlDU9sQ567F3el
+	 VB92s/8WqNKbA9pgRntlDyMj0VidGfWgZZY4iyzLbXdf/2Tb1/LG3MDRj6p4hOiwh
+	 63VOaCMcy8Q4ZXrBKoFKKwDx/UHhN8kpal1fAEciz5vQnR8PbQJJ8WztuKvgYUjuf
+	 /vZ9pzWm15q63AQ/ACdE7Cs9GfhpDtb9WWpaaZ81gID1OJ9QO+bwXIcfEEBs3zcqJ
+	 gu0S5RmU8AvN/1MSAXboOClBW18c4/xo/9hl134tHmIfVLOzzqp1ONKDxmKR/LncX
+	 3zFTWCWpeXeLK1EewQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFs1t-1rqETP40ch-00FhiB; Tue, 07
+ May 2024 09:52:57 +0200
+Message-ID: <04bb96a0-0561-4583-88e1-d98253e0808a@web.de>
+Date: Tue, 7 May 2024 09:52:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lyexfaaq2zqn7bci"
-Content-Disposition: inline
-In-Reply-To: <20240427112451.1609471-1-stsp2@yandex.ru>
-
-
---lyexfaaq2zqn7bci
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND net v4 1/4] ax25: Use kernel universal linked list
+ to implement ax25_dev_list
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Duoming Zhou <duoming@zju.edu.cn>, linux-hams@vger.kernel.org,
+ netdev@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ =?UTF-8?Q?J=C3=B6rg_Reuter?= <jreuter@yaina.de>,
+ Paolo Abeni <pabeni@redhat.com>, LKML <linux-kernel@vger.kernel.org>,
+ Lars Kellogg-Stedman <lars@oddbit.com>, Simon Horman <horms@kernel.org>
+References: <cover.1715062582.git.duoming@zju.edu.cn>
+ <5022fa6a280c3fa852bf3724149251c41ee8303f.1715062582.git.duoming@zju.edu.cn>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <5022fa6a280c3fa852bf3724149251c41ee8303f.1715062582.git.duoming@zju.edu.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AcxtWcKhsnvM4Wyfr1/gM0nQhuxjagjJQcGnFRWS5hhlpbk2Ks1
+ Vw+MfevEkH8j17232cwi/ClgDR5mP3R+O/ok52USYZlRZmhtcDmdNy4i2aR/3lvJjM/8BOD
+ TR9qj+cHj+53j9ArS1LfWr0hcqFygNjtCNXPZz4RRvlTSo+PpnWtOGvDdGxp50DYRwCXoBN
+ fVBKQeV8Gh8Jg93DEtezw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VAKrZdKyq1I=;NP2PmAgGCC5JpSTHcMAs82hAn/W
+ U8udGfE9bxwjbijcyBZqlvYxXbke/jzqaX2PDyb3Ykh6yDI0FewVACPNDIEulHqnMjkf6snNE
+ mgd1OVwEchChjM0BN14jnHmPlvAnQe2NSb59spCSV7h2JLjab9ZCopamau5kvCzt9qfluNGGh
+ +rbVV9Efay7JjOP1rxYoBJKaDfjQY6S6E2ySq64BTuhCdDeUZwCcWLiW5+MOt7YNIX8R+9I3Z
+ 1xSWMs/e6SqgoH7+N0k8scvQ54ZZzxl5Qw8h4gs93+ueUwTc39t2XFAKcP21W3Ga9K5/WAQ2F
+ X89rBqPuv56GP1wI40b2XCx4UyNEEh/nmwylWV8iaoXEcZZqCRJbDS480KYGRFYNoLE6YiL7N
+ +DgTVNh0s+BCrncN4dlYYTHTcWsC7KUoeOhyrRsThJv4Ug/ccXUiKbFC7AODqk+FiTGVP3wLQ
+ vRD8n9aCBIVYcRkJIrHLKVcASR6h8KAy9AWetbyRdOYfQrWdgGgs7erRz5Q+H1eIfy8QRjHls
+ oRSwa7c9/ibv+qKEKUirhl5fyB3uLRnJo2hA8xajHqYIltS6chbg4y6yteheSc7+vu+HGMTPg
+ dH+VY3e5N+KTnMMLS7YTs52WZ7c0W7ORdb7zpn+KVqcF/u8djoHJI6/hmKFGKhVZSAPioK5NE
+ rLj/C4VDslLT//swIa8Xzzr6m3Xf/Htbm5Y//0vfrx29VVFhcsfIF7AvXwZR7L2GINioWkJyN
+ DdQZ8jTSgwTYJ/Ja7kcvDPBN06Gi9vAbQ5D3tru1mdtCPRYoMvvSNZTfh2zroWy+8EXWZH3cJ
+ BtR4DIe8szbxIKgdws6WeWdcnqfYoQIeIuguqWTj7+LrM=
 
-On 2024-04-27, Stas Sergeev <stsp2@yandex.ru> wrote:
-> This patch-set implements the OA2_CRED_INHERIT flag for openat2() syscall.
-> It is needed to perform an open operation with the creds that were in
-> effect when the dir_fd was opened, if the dir was opened with O_CRED_ALLOW
-> flag. This allows the process to pre-open some dirs and switch eUID
-> (and other UIDs/GIDs) to the less-privileged user, while still retaining
-> the possibility to open/create files within the pre-opened directory set.
->=20
-> The sand-boxing is security-oriented: symlinks leading outside of a
-> sand-box are rejected. /proc magic links are rejected. fds opened with
-> O_CRED_ALLOW are always closed on exec() and cannot be passed via unix
-> socket.
-> The more detailed description (including security considerations)
-> is available in the log messages of individual patches.
+> =E2=80=A6 that need to notice:
 
-(I meant to reply last week but I couldn't get my mail server to send
-mail...)
+I suggest to improve such a wording.
 
-It seems to me that this can already be implemented using
-MOUNT_ATTR_IDMAP, without creating a new form of credential overriding
-within the filesystem (and with such a deceptively simple
-implementation...)
 
-If you are a privileged process which plans to change users, you can
-create a detached tree with a user mapping that gives that user access
-to only that tree. This is far more effective at restricting possible
-attacks because id-mapped mounts don't override credentials during VFS
-operations (meaning that if you miss something, you have a big problem),
-instead they only affect uid-related operations within the filesystem
-for that mount. Since this implementation does no inherit
-CAP_DAC_OVERRIDE, being able to rewrite uid/gids is all you need.
+> [1] We should add a check to judge whether =E2=80=A6
 
-A new attack I just thought of while writing this mail is that because
-there is no RESOLVE_NO_XDEV requirement, it should be possible for the
-process to get an arbitrary write primitive by creating a new
-userns+mountns and then bind-mounting / underneath the directory. Since
-O_CRED_INHERIT uses override_creds, it doesn't care about whether
-something about the O_CRED_ALLOW directory changed afterwards. Yes, you
-can "just fix this" by adding a RESOLVE_NO_XDEV requirement too, but
-given that there have been 2-3 security issues with this design found
-already, it makes me feel really uneasy. Using id-mapped mounts avoids
-this issue because the new mount will not have the id-mapping applied
-and thus there is no security issue.
+Are imperative wordings more desirable for improved change descriptions?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---lyexfaaq2zqn7bci
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZjndYQAKCRAol/rSt+lE
-b2oOAQCmKy2OE9MgmZTVxlKN+/Sdcj0IpZ+qML12Z2Jmhr8r6QD+JguvCHBD2QUw
-5QTi+WIy7+VPoIpn+aXJKiYsm0xm4AU=
-=VQBl
------END PGP SIGNATURE-----
-
---lyexfaaq2zqn7bci--
+Regards,
+Markus
 
