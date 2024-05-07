@@ -1,184 +1,515 @@
-Return-Path: <linux-kernel+bounces-171941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA9DA8BEB00
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:01:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55FF18BEB04
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 20:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078171C2371D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:01:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD9F5B25D82
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 18:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C4C16D30C;
-	Tue,  7 May 2024 18:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5FE16C87F;
+	Tue,  7 May 2024 18:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="GXDI3QbS"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hXIH45EX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B88F16C84E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 18:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587C816C857;
+	Tue,  7 May 2024 18:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104850; cv=none; b=XUbKymnVROob5pPmpH+VOAq2zeDg9pERd4HgXIyzbpNIGONT7K4povAPci4NTDMQNAhbZ6YdF6SlqC+XVHdE9FxIHqLKXUZ92yjtL8jPlAus1PmRD/pIBDwt4ggJBfr3Y+gtt29k9BXSqaIE/RtHy/8az2lrMYpjiIg+0MJMYgk=
+	t=1715104872; cv=none; b=ofckUVGfSrlO4asBovMRQhZJY5uWm4BPSnqFYwAh7GIvaI5dOn/JzJV8auE5hiBPQHV7Rfizrvg6Iq0AcGgA9enYiQst+68MWO/m/wt8n3iFH7D016NEwUrUumvI0M45F07aS+bFZJBlUss1L6iV9/Zh0wnLg9xtKj+EjJWqB0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104850; c=relaxed/simple;
-	bh=SrBJtaDxX4rLGSaJtZXCxh87ShbEo2DG2RkklX3dRTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E6ddNw3PW5pDuOm0k7FHIf3ah/kL/bZ/RFmVMmPmVxHp8y1FkCQBChqk3yw1uFmgWA8IOrECwHwHyjGR1TMcJlNXqYcZhhfp0b/vA/C0fDGZpjMdaUpnXVYrvAHtMECBYqonfmPKCBeQ/TtRs4jm/im5InmMLtbJtF2kRMz6TTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GXDI3QbS; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc236729a2bso3492420276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 11:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715104847; x=1715709647; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HL+ln2vLAazbLqwL47bYmOmnDjxG1bXnX9QaBIaL77Y=;
-        b=GXDI3QbSYwRk8FIum8s2zKXXVIWecjGyLuvqA01wpk2fSUTgfAvlt000rReq3Z+fyC
-         xMquVe9bnNoDKCAMgBy1n9OKFrop8oI3u9TDPCpCCJJQceJFTgjkpcSqAX5a+MXYmXPv
-         4Wb3zTyg64xXJtBoTMHtmcFX204kj+2SWPGD2FjcQi25kvkRWRuxoYV2IyvHOzaxh2U8
-         IBzwJVM75XJv6t7mdYQD+tnH0d23bdOHC+K0EDMLQvo2A0eTBFFZM9TONfzuXjfVTEKo
-         juuX1eWXVxuhy+erZUuFnbbxlhF5aaw5GD/ehlyF4kbHylkAZ89j8hzSDyAI5Lsmigcl
-         PvTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715104847; x=1715709647;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HL+ln2vLAazbLqwL47bYmOmnDjxG1bXnX9QaBIaL77Y=;
-        b=WyBztc5QeUeAExemNgcU9IdxQOveFXTO3p1fmzNbUXcCx2DPz6nVbJgoGmFW5WH3cg
-         DXCwnOGEAPnUFX614tm/4gsMRr0rj7VxQt8y/vNqztBzvcQeA01VNtzCor0vaxH7wL0D
-         HlTwOdWkq4QehvyNf9vQ1OYJuBskxZHl3syn0PGSRlMeCF+PDr0YacZgB9fi+L9ugCZy
-         HRfBZuC/PFpfbWP9MSbR6W96piAW3ft6A8+fLsFFbzXOjiDR3p0xG8euKTyx71lt6M8u
-         uDgVSaM/OdSiyRKGFaNzdGP9ejryOXCE3RwXSB5OmVrtrg2QUdKfXIc9kqAWka++9+B+
-         C7/A==
-X-Forwarded-Encrypted: i=1; AJvYcCX9iPJxKqpElaNeUEGUblXdCj3lHXAHHYkSOVMfSfmzBK1WUKiQvRgF+8msxh302AS/B2owbmWbFU/7qnZUMKIwTje3KKihherCHyaN
-X-Gm-Message-State: AOJu0YwmAFga40Qk4fHvaOX5f5Nsof34NnCw5d/Ptol+FAX7ub54HeTM
-	eJCCQytZXnipt0giniul10eTw5kNmspuIyfqK8hamsr8Ju4qoUf6tfSRj72Qn7b+j4OHeiP2jjE
-	rdIB3e6qBpzENbp1iJ2SLX3ZzHVkGczBb/Vjd
-X-Google-Smtp-Source: AGHT+IGIGFru+LOx4cY9EsrZp/X/+zrxiy5UoCJnZGTW/H4TVQQOuIByLlX2TxCmmFQ9x8W3Bkc7Lsm3wP/ljInKJtk=
-X-Received: by 2002:a25:e303:0:b0:de6:327:fa2 with SMTP id 3f1490d57ef6-debb9d6cdbcmr404346276.8.1715104847273;
- Tue, 07 May 2024 11:00:47 -0700 (PDT)
+	s=arc-20240116; t=1715104872; c=relaxed/simple;
+	bh=n80rU1XO2xaHBq3Pvpo9pJCz1eYmhkEpuzmwc7e+osU=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=hQI5u7YqQtFyyHgNeTiDoaSw+tfO8q888MiBzYbvphQIhE1oywMmW7dXD0jKNUvNJUo3P8F+Kp2+03PblM8gqTHFf+wvGvnI5QwWCWQ/CuvCko1euAI8pE0NWZHoixYWS9ZQdUYYG4mRYJSeZ5AYmH8FaPzXe5rrb70756bXmxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hXIH45EX; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715104870; x=1746640870;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=n80rU1XO2xaHBq3Pvpo9pJCz1eYmhkEpuzmwc7e+osU=;
+  b=hXIH45EXenl94Dh9HuJbnQ/DsPtKC+whGL7mrjWIEaaITNt2ZjitIssp
+   WHV8FY0OLrQ+IUpiRV77EijIF+fHv1B520Xg7cZM902o+fhW0lrUxDCCf
+   nRHmDQv9skFiKms/FcxjiHhi6Y4cX0IHnDmKwcEJxxkiiMsUE8TCC7Syb
+   QKPe41lve59slwbnP/Ptk4iSA1PUrAASbekCG8+slMZBKl/FOZto3jzLx
+   emnLCw16e2xcxwauTH1qg4WGK2ecztdlnmVK37pAtbClZcgABAv5iFpdQ
+   Kh9ug7fZEFGSmzsSKg4BYz4McDU3A12ZsI2E1JWReaHwdUoEok996agEh
+   Q==;
+X-CSE-ConnectionGUID: gslVf1SiRiKPBWoIuntzIg==
+X-CSE-MsgGUID: 5uFFxWRBRuSblw2ZPK/t9g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22333254"
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="22333254"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 11:01:10 -0700
+X-CSE-ConnectionGUID: eaxvEC9PRr6S6DRGojJ6tA==
+X-CSE-MsgGUID: XcNFcKB+TCehOIxd8aLArQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="28491199"
+Received: from sayakray-mobl2.amr.corp.intel.com (HELO debox1-desk4.lan) ([10.212.130.28])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 11:01:10 -0700
+From: "David E. Box" <david.e.box@linux.intel.com>
+To: linux-doc@vger.kernel.org,
+	david.e.box@linux.intel.com,
+	ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH V2 1/3] platform/x86/intel/sdsi: Add ioctl SPDM transport
+Date: Tue,  7 May 2024 11:01:04 -0700
+Message-Id: <20240507180106.5218-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
- <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com> <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
- <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com> <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
- <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
- <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com> <83605228-92ee-b666-d894-1c145af2e5ab@quicinc.com>
- <CABdmKX2MWU9-9YN46PXx-Jy-O9CHMv8hCkvArd7BbWUBs=GPnw@mail.gmail.com>
- <8915fcc1-d8f1-48c2-9e51-65159aaa5a3b@amd.com> <ZjovD5WaWjknd-qv@phenom.ffwll.local>
- <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
-In-Reply-To: <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Tue, 7 May 2024 11:00:35 -0700
-Message-ID: <CABdmKX3SpOk4BQU6i31r8jHc1f-o8sz7rXgtRyhTQZ4GJYHH=Q@mail.gmail.com>
-Subject: Re: [PATCH] dmabuf: fix dmabuf file poll uaf issue
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Charan Teja Kalla <quic_charante@quicinc.com>, zhiguojiang <justinjiang@vivo.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 7, 2024 at 7:04=E2=80=AFAM Christian K=C3=B6nig <christian.koen=
-ig@amd.com> wrote:
->
-> Am 07.05.24 um 15:39 schrieb Daniel Vetter:
-> > On Tue, May 07, 2024 at 12:10:07PM +0200, Christian K=C3=B6nig wrote:
-> >> Am 06.05.24 um 21:04 schrieb T.J. Mercier:
-> >>> On Mon, May 6, 2024 at 2:30=E2=80=AFAM Charan Teja Kalla
-> >>> <quic_charante@quicinc.com> wrote:
-> >>>> Hi TJ,
-> >>>>
-> >>>> Seems I have got answers from [1], where it is agreed upon epoll() i=
-s
-> >>>> the source of issue.
-> >>>>
-> >>>> Thanks a lot for the discussion.
-> >>>>
-> >>>> [1] https://lore.kernel.org/lkml/0000000000002d631f0615918f1e@google=
-com/
-> >>>>
-> >>>> Thanks
-> >>>> Charan
-> >>> Oh man, quite a set of threads on this over the weekend. Thanks for t=
-he link.
-> >> Yeah and it also has some interesting side conclusion: We should proba=
-bly
-> >> tell people to stop using DMA-buf with epoll.
-> >>
-> >> The background is that the mutex approach epoll uses to make files dis=
-appear
-> >> from the interest list on close results in the fact that each file can=
- only
-> >> be part of a single epoll at a time.
-> >>
-> >> Now since DMA-buf is build around the idea that we share the buffer
-> >> representation as file between processes it means that only one proces=
-s at a
-> >> time can use epoll with each DMA-buf.
-> >>
-> >> So for example if a window manager uses epoll everything is fine. If a
-> >> client is using epoll everything is fine as well. But if *both* use ep=
-oll at
-> >> the same time it won't work.
-> >>
-> >> This can lead to rather funny and hard to debug combinations of failur=
-es and
-> >> I think we need to document this limitation and explicitly point it ou=
-t.
-> > Ok, I tested this with a small C program, and you're mixing things up.
-> > Here's what I got
-> >
-> > - You cannot add a file twice to the same epoll file/fd. So that part i=
-s
-> >    correct, and also my understanding from reading the kernel code.
-> >
-> > - You can add the same file to two different epoll file instaces. Which
-> >    means it's totally fine to use epoll on a dma_buf in different proce=
-sses
-> >    like both in the compositor and in clients.
->
-> Ah! Than I misunderstood that comment in the discussion. Thanks for
-> clarifying that.
->
-> >
-> > - Substantially more entertaining, you can nest epoll instances, and e.=
-g.
-> >    add a 2nd epoll file as an event to the first one. That way you can =
-add
-> >    the same file to both epoll fds, and so end up with the same file
-> >    essentially being added twice to the top-level epoll file. So even
-> >    within one application there's no real issue when e.g. different
-> >    userspace drivers all want to use epoll on the same fd, because you =
-can
-> >    just throw in another level of epoll and it's fine again and you won=
-'t
-> >    get an EEXISTS on EPOLL_CTL_ADD.
-> >
-> >    But I also don't think we have this issue right now anywhere, since =
-it's
-> >    kinda a general epoll issue that happens with any duplicated file.
->
-> I actually have been telling people to (ab)use the epoll behavior to
-> check if two file descriptors point to the same underlying file when
-> KCMP isn't available.
->
-> Some environments (Android?) disable KCMP because they see it as
-> security problem.
->
-Didn't know about this so I checked. Our kernel has CONFIG_KCMP, but
-seccomp does look like it's blocking kcmp for apps.
-https://cs.android.com/android/platform/superproject/main/+/main:bionic/lib=
-c/SYSCALLS.TXT
+Intel On Demand adds attestation and firmware measurement retrieval
+services through use of the protocols defined the Security Protocols and
+Data Measurement (SPDM) specification. SPDM messages exchanges are used to
+authenticate On Demand hardware and to retrieve signed measurements of the
+NVRAM state used to track feature provisioning and the NVRAM state used for
+metering services. These allow software to verify the authenticity of the
+On Demand hardware as well as the integrity of the reported silicon
+configuration.
+
+Add an ioctl interface for sending SPDM messages through the On Demand
+mailbox. Provides commands to get a list of SPDM enabled devices, get the
+message size limits for SPDM Requesters and Responders, and perform an SPDM
+message exchange.
+
+Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+Link: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf [1]
+---
+V2
+   - Move size < 4 check into sdsi_spdm_exchange() and add comment
+     clarifying return values of that function.
+   - Use SZ_4K and add helpers
+   - Use devm_kasprintf()
+   - Remove unnecessary parens
+   - Use --attest for long option
+
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ MAINTAINERS                                   |   1 +
+ drivers/platform/x86/intel/sdsi.c             | 210 +++++++++++++++++-
+ include/uapi/linux/intel_sdsi.h               |  81 +++++++
+ 4 files changed, 292 insertions(+), 1 deletion(-)
+ create mode 100644 include/uapi/linux/intel_sdsi.h
+
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index c472423412bf..20dcc2dbcaf6 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -382,6 +382,7 @@ Code  Seq#    Include File                                           Comments
+                                                                      <mailto:mathieu.desnoyers@efficios.com>
+ 0xF8  all    arch/x86/include/uapi/asm/amd_hsmp.h                    AMD HSMP EPYC system management interface driver
+                                                                      <mailto:nchatrad@amd.com>
++0xFC  all    linux/intel_sdsi.h
+ 0xFD  all    linux/dm-ioctl.h
+ 0xFE  all    linux/isst_if.h
+ ====  =====  ======================================================= ================================================================
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 846187625552..060bd3358cec 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11165,6 +11165,7 @@ INTEL SDSI DRIVER
+ M:	David E. Box <david.e.box@linux.intel.com>
+ S:	Supported
+ F:	drivers/platform/x86/intel/sdsi.c
++F:	include/uapi/linux/intel_sdsi.h
+ F:	tools/arch/x86/intel_sdsi/
+ F:	tools/testing/selftests/drivers/sdsi/
+ 
+diff --git a/drivers/platform/x86/intel/sdsi.c b/drivers/platform/x86/intel/sdsi.c
+index 277e4f4b20ac..686dd9e4e026 100644
+--- a/drivers/platform/x86/intel/sdsi.c
++++ b/drivers/platform/x86/intel/sdsi.c
+@@ -11,9 +11,12 @@
+ #include <linux/auxiliary_bus.h>
+ #include <linux/bits.h>
+ #include <linux/bitfield.h>
++#include <linux/cleanup.h>
+ #include <linux/device.h>
+ #include <linux/iopoll.h>
++#include <linux/intel_sdsi.h>
+ #include <linux/kernel.h>
++#include <linux/miscdevice.h>
+ #include <linux/module.h>
+ #include <linux/overflow.h>
+ #include <linux/pci.h>
+@@ -42,6 +45,7 @@
+ 
+ #define SDSI_ENABLED_FEATURES_OFFSET	16
+ #define SDSI_FEATURE_SDSI		BIT(3)
++#define SDSI_FEATURE_ATTESTATION	BIT(12)
+ #define SDSI_FEATURE_METERING		BIT(26)
+ 
+ #define SDSI_SOCKET_ID_OFFSET		64
+@@ -91,6 +95,7 @@ enum sdsi_command {
+ 	SDSI_CMD_PROVISION_CAP		= 0x0008,
+ 	SDSI_CMD_READ_STATE		= 0x0010,
+ 	SDSI_CMD_READ_METER		= 0x0014,
++	SDSI_CMD_ATTESTATION		= 0x1012,
+ };
+ 
+ struct sdsi_mbox_info {
+@@ -109,12 +114,14 @@ struct disc_table {
+ struct sdsi_priv {
+ 	struct mutex		mb_lock;	/* Mailbox access lock */
+ 	struct device		*dev;
++	struct miscdevice	miscdev;
+ 	void __iomem		*control_addr;
+ 	void __iomem		*mbox_addr;
+ 	void __iomem		*regs_addr;
+ 	int			control_size;
+ 	int			maibox_size;
+ 	int			registers_size;
++	int			id;
+ 	u32			guid;
+ 	u32			features;
+ };
+@@ -582,6 +589,97 @@ static const struct attribute_group sdsi_group = {
+ };
+ __ATTRIBUTE_GROUPS(sdsi);
+ 
++/*
++ * SPDM transport
++ * Returns size of the response message or an error code on failure.
++ */
++static int sdsi_spdm_exchange(void *private, const void *request,
++			      size_t request_sz, void *response,
++			      size_t response_sz)
++{
++	struct sdsi_priv *priv = private;
++	struct sdsi_mbox_info info = {};
++	size_t spdm_msg_size, size;
++	int ret;
++
++	/*
++	 * For the attestation command, the mailbox write size is the sum of:
++	 *     Size of the SPDM request payload, padded for qword alignment
++	 *     8 bytes for the mailbox command
++	 *     8 bytes for the actual (non-padded) size of the SPDM request
++	 */
++	if (request_sz > SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64))
++		return -EOVERFLOW;
++
++	info.size = round_up(request_sz, sizeof(u64)) + 2 * sizeof(u64);
++
++	u64 *payload __free(kfree) = kzalloc(info.size, GFP_KERNEL);
++	if (!payload)
++		return -ENOMEM;
++
++	memcpy(payload, request, request_sz);
++
++	/* The non-padded SPDM payload size is the 2nd-to-last qword */
++	payload[(info.size / sizeof(u64)) - 2] = request_sz;
++
++	/* Attestation mailbox command is the last qword of payload buffer */
++	payload[(info.size / sizeof(u64)) - 1] = SDSI_CMD_ATTESTATION;
++
++	info.payload = payload;
++	info.buffer = response;
++
++	ret = mutex_lock_interruptible(&priv->mb_lock);
++	if (ret)
++		return ret;
++	ret = sdsi_mbox_write(priv, &info, &size);
++	mutex_unlock(&priv->mb_lock);
++
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * The read size is the sum of:
++	 *     Size of the SPDM response payload, padded for qword alignment
++	 *     8 bytes for the actual (non-padded) size of the SPDM payload
++	 */
++
++	if (size < sizeof(u64)) {
++		dev_err(priv->dev,
++			"Attestation error: Mailbox reply size, %ld, too small\n",
++			size);
++		return -EPROTO;
++	}
++
++	if (!IS_ALIGNED(size, sizeof(u64))) {
++		dev_err(priv->dev,
++			"Attestation error: Mailbox reply size, %ld, is not aligned\n",
++			size);
++		return -EPROTO;
++	}
++
++	/*
++	 * Get the SPDM response size from the last QWORD and check it fits
++	 * with no more than 7 bytes of padding
++	 */
++	spdm_msg_size = ((u64 *)info.buffer)[(size - sizeof(u64)) / sizeof(u64)];
++	if (!in_range(size - spdm_msg_size - sizeof(u64), 0, 8)) {
++		dev_err(priv->dev,
++			"Attestation error: Invalid SPDM response size, %ld\n",
++			spdm_msg_size);
++		return -EPROTO;
++	}
++
++	if (spdm_msg_size > response_sz || spdm_msg_size < SPDM_HEADER_SIZE) {
++		dev_err(priv->dev, "Attestation error: Expected response size %ld, got %ld\n",
++			response_sz, spdm_msg_size);
++		return -EOVERFLOW;
++	}
++
++	memcpy(response, info.buffer, spdm_msg_size);
++
++	return spdm_msg_size;
++}
++
+ static int sdsi_get_layout(struct sdsi_priv *priv, struct disc_table *table)
+ {
+ 	switch (table->guid) {
+@@ -649,6 +747,92 @@ static int sdsi_map_mbox_registers(struct sdsi_priv *priv, struct pci_dev *paren
+ 	return 0;
+ }
+ 
++#define SDSI_SPDM_DRIVER_VERSION	1
++
++static int sdsi_spdm_get_info(struct sdsi_priv *priv,
++			      struct sdsi_spdm_info __user *argp)
++{
++	struct sdsi_spdm_info info;
++
++	info.driver_version = SDSI_SPDM_DRIVER_VERSION;
++	info.api_version = priv->guid;
++	info.dev_no = priv->id;
++	info.max_request_size = SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64);
++	info.max_response_size = SDSI_SIZE_READ_MSG - sizeof(u64);
++
++	if (copy_to_user(argp, &info, sizeof(info)))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int sdsi_spdm_do_command(struct sdsi_priv *priv,
++				struct sdsi_spdm_command __user *argp)
++{
++	u32 req_size, rsp_size;
++
++	if (get_user(req_size, &argp->size))
++		return -EFAULT;
++
++	if (req_size < 4 || req_size > sizeof(struct sdsi_spdm_message))
++		return -EINVAL;
++
++	struct sdsi_spdm_message *request __free(kfree) =
++		kmalloc(req_size, GFP_KERNEL);
++	if (!request)
++		return -ENOMEM;
++
++	struct sdsi_spdm_command *response __free(kfree) =
++		kmalloc(SDSI_SIZE_READ_MSG, GFP_KERNEL);
++	if (!response)
++		return -ENOMEM;
++
++	if (copy_from_user(request, &argp->message, req_size))
++		return -EFAULT;
++
++	rsp_size = sdsi_spdm_exchange(priv, request, req_size, response,
++				      SDSI_SIZE_READ_MSG);
++	if (rsp_size < 0)
++		return rsp_size;
++
++	if (put_user(rsp_size, &argp->size))
++		return -EFAULT;
++
++	if (copy_to_user(&argp->message, response, rsp_size))
++		return -EFAULT;
++
++	return 0;
++}
++
++static long sdsi_spdm_ioctl(struct file *file, unsigned int cmd,
++			    unsigned long arg)
++{
++	struct sdsi_priv *priv;
++	long ret = -ENOTTY;
++
++	priv = container_of(file->private_data, struct sdsi_priv, miscdev);
++
++	switch (cmd) {
++	case SDSI_IF_SPDM_INFO:
++		ret = sdsi_spdm_get_info(priv,
++				(struct sdsi_spdm_info __user *)arg);
++		break;
++	case SDSI_IF_SPDM_COMMAND:
++		ret = sdsi_spdm_do_command(priv,
++				(struct sdsi_spdm_command __user *)arg);
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
++
++static const struct file_operations sdsi_spdm_ops = {
++	.owner = THIS_MODULE,
++	.unlocked_ioctl = sdsi_spdm_ioctl,
++};
++
+ static int sdsi_probe(struct auxiliary_device *auxdev, const struct auxiliary_device_id *id)
+ {
+ 	struct intel_vsec_device *intel_cap_dev = auxdev_to_ivdev(auxdev);
+@@ -663,6 +847,7 @@ static int sdsi_probe(struct auxiliary_device *auxdev, const struct auxiliary_de
+ 		return -ENOMEM;
+ 
+ 	priv->dev = &auxdev->dev;
++	priv->id = auxdev->id;
+ 	mutex_init(&priv->mb_lock);
+ 	auxiliary_set_drvdata(auxdev, priv);
+ 
+@@ -686,9 +871,32 @@ static int sdsi_probe(struct auxiliary_device *auxdev, const struct auxiliary_de
+ 	if (ret)
+ 		return ret;
+ 
++	/* Attestation miscdevice */
++	if (priv->features & SDSI_FEATURE_ATTESTATION) {
++		priv->miscdev.name = devm_kasprintf(&auxdev->dev, GFP_KERNEL,
++						    "isdsi%d", priv->id);
++		if (!priv->miscdev.name)
++			return -ENOMEM;
++
++		priv->miscdev.minor = MISC_DYNAMIC_MINOR;
++		priv->miscdev.fops = &sdsi_spdm_ops;
++
++		ret = misc_register(&priv->miscdev);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+ 
++static void sdsi_remove(struct auxiliary_device *auxdev)
++{
++	struct sdsi_priv *priv = auxiliary_get_drvdata(auxdev);
++
++	if (priv->features & SDSI_FEATURE_ATTESTATION)
++		misc_deregister(&priv->miscdev);
++}
++
+ static const struct auxiliary_device_id sdsi_aux_id_table[] = {
+ 	{ .name = "intel_vsec.sdsi" },
+ 	{}
+@@ -701,7 +909,7 @@ static struct auxiliary_driver sdsi_aux_driver = {
+ 	},
+ 	.id_table	= sdsi_aux_id_table,
+ 	.probe		= sdsi_probe,
+-	/* No remove. All resources are handled under devm */
++	.remove		= sdsi_remove,
+ };
+ module_auxiliary_driver(sdsi_aux_driver);
+ 
+diff --git a/include/uapi/linux/intel_sdsi.h b/include/uapi/linux/intel_sdsi.h
+new file mode 100644
+index 000000000000..8e28764f4a98
+--- /dev/null
++++ b/include/uapi/linux/intel_sdsi.h
+@@ -0,0 +1,81 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Intel On Demand (SDSi) Interface for SPDM based attestation.
++ * Copyright (c) 2019, Intel Corporation.
++ * All rights reserved.
++ *
++ * Author: David E. Box <david.e.box@linux.intel.com>
++ */
++
++#ifndef __SDSI_H
++#define __SDSI_H
++
++#include <linux/sizes.h>
++#include <linux/types.h>
++
++/**
++ * struct sdsi_spdm_info - Define platform information
++ * @api_version:	Version of the firmware document, which this driver
++ *			can communicate
++ * @driver_version:	Driver version, which will help user to send right
++ *			commands. Even if the firmware is capable, driver may
++ *			not be ready
++ * @dev_no:		Returns the auxiliary device number the corresponding
++ *			sdsi instance
++ * @max_request_size:	Returns the maximum allowed size for SPDM request
++ *			messages
++ * @max_response_size:	Returns the maximum size of an SPDM response message
++ *
++ * Used to return output of IOCTL SDSI_SPDM_INFO. This
++ * information can be used by the user space, to get the driver, firmware
++ * support and also number of commands to send in a single IOCTL request.
++ */
++struct sdsi_spdm_info {
++	__u32 api_version;
++	__u16 driver_version;
++	__u16 dev_no;
++	__u16 max_request_size;
++	__u16 max_response_size;
++};
++
++#define SPDM_HEADER				\
++	struct {				\
++		__u8 spdm_version;		\
++		__u8 request_response_code;	\
++		__u8 param1;			\
++		__u8 param2;			\
++	}
++#define SPDM_HEADER_SIZE	sizeof(SPDM_HEADER)
++
++/**
++ * struct sdsi_spdm_message - The SPDM message sent and received from the device
++ * @spdm_version:		Supported SPDM version
++ * @request_response_code:	The SPDM message code for requests and responses
++ * @param1:			Parameter 1
++ * @param2:			Parameter 2
++ * @buffer:			SDPM message specific buffer
++ *
++ */
++struct sdsi_spdm_message {
++	SPDM_HEADER;
++	__u8 buffer[SZ_4K - SPDM_HEADER_SIZE];
++};
++
++#define SDSI_SPDM_BUF_SIZE	(sizeof(struct sdsi_spdm_message) - SPDM_HEADER_SIZE)
++
++/**
++ * struct sdsi_spdm_command - The SPDM command
++ * @ size:		The size of the SPDM message
++ * @ message:		The SPDM message
++ *
++ * Used to return output of IOCTL SDSI_SPDM_COMMAND.
++ */
++struct sdsi_spdm_command {
++	__u32 size;
++	struct sdsi_spdm_message message;
++};
++
++#define SDSI_IF_MAGIC		0xFC
++#define SDSI_IF_SPDM_INFO	_IOR(SDSI_IF_MAGIC, 0, struct sdsi_spdm_info *)
++#define SDSI_IF_SPDM_COMMAND	_IOWR(SDSI_IF_MAGIC, 1, struct sdsi_spdm_command *)
++#endif
+
+base-commit: 76f09e22027fc0dbec1e9c82898d9059b4455df6
+-- 
+2.34.1
+
 
