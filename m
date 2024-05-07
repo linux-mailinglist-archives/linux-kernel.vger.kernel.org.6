@@ -1,145 +1,136 @@
-Return-Path: <linux-kernel+bounces-170877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-170879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB188BDD31
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:32:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523888BDD38
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 10:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF9B281CDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E9E1F23028
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 08:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60931442F4;
-	Tue,  7 May 2024 08:31:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401CC143C6C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 08:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DAA14D29A;
+	Tue,  7 May 2024 08:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4hpFepO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1EE197;
+	Tue,  7 May 2024 08:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715070717; cv=none; b=V+TVKIPZvocIt11Uay0qqTLenyF9fmkgglcXX7Hkv1wNOcDeIH0Ad17OgYkuMY8HAoKj3ivE26vABNjNFhlp6QOU19em8DSv+htDrMakpSmKrG3i5jIcfpvi5LeB/OYK7WPaDf7WrlmPzYN123WWD2/0XXECD1yg1IAXxK5EYX8=
+	t=1715071059; cv=none; b=h7Yz8k85OokL0wP66LPl3GZjKwzJ4PrdU0sMSiLKS4CDaOeWVO/QoxGV2IzHJqGWpU93UYp1PLHy98gOUsrO6Fg4hCE2hwWEgiHjgrA0Bly5SCwm4Zkt2FnTozdh3QBFwhVs8dQvCboxiod3SJIdhCAcJXDodgHL/XJ//idqfng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715070717; c=relaxed/simple;
-	bh=rxjgmTJY356gbfLe+hoAimBuO98HddJcAQLBx5Oylc0=;
+	s=arc-20240116; t=1715071059; c=relaxed/simple;
+	bh=vi9YOV5qG9HXcW2k/I0KiZGqA7SE9VSwft0G8L/iFhc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rG5iUmPLniM2YduPb6WY5vMuYinyGJFPjXwE8TXHYx8BxS8GEYoQ5xLVzVMn9zbliWqhtvAd6dVKBAYtDoeO6TeSinLZUBZ7gkE9SeiaC8qera+D22Mxm8LONV4aQCsyg2TmOfp6xBHihv4ay3aJFydRTXkkOU7K3BRht9S3CJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81869106F;
-	Tue,  7 May 2024 01:32:18 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC0D53F793;
-	Tue,  7 May 2024 01:31:49 -0700 (PDT)
-Date: Tue, 7 May 2024 10:31:40 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, vincent.guittot@linaro.org,
-	sumitg@nvidia.com, yang@os.amperecomputing.com,
-	lihuisong@huawei.com
-Subject: Re: [PATCH v4 4/4] cpufreq: Use arch specific feedback for
- cpuinfo_cur_freq
-Message-ID: <Zjnm7LzrYLCbz-XX@arm.com>
-References: <20240405133319.859813-1-beata.michalska@arm.com>
- <20240405133319.859813-5-beata.michalska@arm.com>
- <76zutrz47zs6i2cquvjo2qn7myxpq7e3c6alhper7n3wrkhf5h@22l5t5pio2cd>
- <Zh6dSrUnckoa-thV@arm.com>
- <s2bel7fzwpkyfyfkhod4xaihuklsaum75ycbcgmcanqaezxdu7@uxvqdqt3yo7l>
- <ZiuF0zgqkMlmkEZz@arm.com>
- <20240429092515.2ehk4ifcul6mbaxh@vireshk-i7>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMzcgGUIGDje8Z+DQqogPYWd+t6rhdYFkdFdAa+/Aohqu6aJhFNzvRx54tKXfT/TuRRGGE5SMXCH43R0YgPCEVgNBj5zOeCIJAWFtMHSFE3bNJPz2D6KSu8rzqYjAaVpBN41BgKhG2D3eHzW8XqTLmqwE6K5q1ed0B1HAmToHSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4hpFepO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EFDCC2BBFC;
+	Tue,  7 May 2024 08:37:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715071059;
+	bh=vi9YOV5qG9HXcW2k/I0KiZGqA7SE9VSwft0G8L/iFhc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F4hpFepOraGCAv2dQXic6FYIBIztIKWbS33m4jm/h7+ftAUojUVY3FXg6D9ajjXyg
+	 V6IagW7AoMAGy6wlnSuEp703/u8OIm8YV3bRVhu0h7W/Bz50u7+GCAlOh94QM3ED+9
+	 uJLGgLbAXXUWF5znr/cI3DCYNM1B98tJlSitXD0TjyvXCJ05y0x5t/n0Xf71bY6DnJ
+	 ktn4PpGouvMP0m5RJ78J0gevZ/0A1EwErQYOgT90Na9oollfL0mkx4lr/K/YglqjUY
+	 jNWTNcsEXlH2d2PbkEWua99UK/A21+9Q29B7zD0ul0MGq1xwJR4GU6XvJehSe7TRRh
+	 7tM5Z7Q+vKbaQ==
+Date: Tue, 7 May 2024 09:37:35 +0100
+From: Lee Jones <lee@kernel.org>
+To: Joseph Strauss <jstrauss@mailbox.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] Add multicolor support to BlinkM LED driver
+Message-ID: <20240507083735.GV1227636@google.com>
+References: <20240428162309.32111-1-jstrauss@mailbox.org>
+ <20240503085724.GL1227636@google.com>
+ <20240503232636.kbygwgo6h2c5evqc@libretux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240429092515.2ehk4ifcul6mbaxh@vireshk-i7>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240503232636.kbygwgo6h2c5evqc@libretux>
 
-On Mon, Apr 29, 2024 at 02:55:15PM +0530, Viresh Kumar wrote:
-> On 26-04-24, 12:45, Beata Michalska wrote:
-> > It seems that we might need to revisit the discussion we've had around
-> > scaling_cur_freq and cpuinfo_cur_freq and the use of arch_freq_get_on_cpu.
-> > As Vanshi has raised, having both utilizing arch specific feedback for
-> > getting current frequency is bit problematic and might be confusing at best.
-> > As arch_freq_get_on_cpu is already used by show_scaling_cur_freq there are not
-> > many options we are left with, if we want to kee all archs aligned:
-> > we can either try to rework show_scaling_cur_freq and it's use of
-> > arch_freq_get_on_cpu, and move it to cpuinfo_cur_freq, which would align with
-> > relevant docs, though that will not work for x86, or we keep it only there and
-> > skip updating cpuinfo_cur_freq, going against the guidelines. Other options,
-> > purely theoretical, would involve making arch_freq_get_on_cpu aware of type of
-> > the info requested (hw vs sw) or adding yet another arch-specific implementation,
-> > and those are not really appealing alternatives to say at least.
-> > What's your opinion on this one ?
-> 
-> Hi Beata / Vanshidhar,
-> 
-> Lets forget for once what X86 and ARM may have done and think about it
-> once again. I also had a chat with Vincent today about this.
-> 
-> The documentation says it clearly, cpuinfo_cur_freq is the one
-> received from hardware and scaling_cur_freq is the one requested from
-> software.
-> 
-> Now, I know that X86 has made both of them quite similar and I
-> suggested to make them all aligned (and never received a reply on my
-> previous message).
-> 
-> There are few reasons why it may be worth keeping the definition (and
-> behavior) of the sysfs files as is, at least for ARM:
-> - First is that the documentation says so.
-> - There is no point providing the same information via both the
->   interfaces, there are two interfaces here for a reason.
-> - There maybe tools around which depend on the documented behavior.
-> - From userspace, currently there is only one way to know the exact
->   frequency that the cpufreq governors have requested from a platform,
->   i.e. the value from scaling_cur_freq. If we make it similar to
->   cpuinfo_cur_freq, then userspace will never know about the requested
->   frequency and the eventual one and if they are same or different.
-> 
-> Lets keep the behavior as is and update only cpuinfo_cur_freq with
-> arch_freq_get_on_cpu().
-> 
-> Makes sense ?
->
-First of all - apologies for late reply.
+On Fri, 03 May 2024, Joseph Strauss wrote:
 
-It all makes sense, though to clarify things up, for my own benefit, and to
-avoid any potential confusion ....
+> On 24/05/03 09:57AM, Lee Jones wrote:
+> > On Sun, 28 Apr 2024, Joseph Strauss wrote:
+> > 
+> > > Add multicolor support to the BlinkM driver, making it easier to control
+> > > from userspace. The BlinkM LED is a programmable RGB LED. The driver
+> > > currently supports only the regular LED sysfs class, resulting in the
+> > > creation of three distinct classes, one for red, green, and blue. The
+> > > user then has to input three values into the three seperate brightness
+> > > files within those classes. The multicolor LED framework makes the
+> > > device easier to control with the multi_intensity file: the user can
+> > > input three values at once to form a color, while still controlling the
+> > > lightness with the brightness file.
+> > > 
+> > > The main struct blinkm_led has changed slightly. The struct led_classdev
+> > > for the regular sysfs classes remain. The blinkm_probe function checks
+> > > CONFIG_LEDS_BLINKM_MULTICOLOR to decide whether to load the seperate
+> > > sysfs classes or the single multicolor one, but never both. The
+> > > blinkm_set_mc_brightness() function had to be added to calculate the
+> > > three color components and then set the fields of the blinkm_data
+> > > structure accordingly.
+> > > 
+> > > Signed-off-by: Joseph Strauss <jstrauss@mailbox.org>
+> > > ---
+> > > Changes in v2:
+> > > - Replaced instances of the constant 3 with NUM_LEDS, where applicable
+> > > - Fixed formatting errors
+> > > - Replaced loop inside of blinkm_set_mc_brightness() with equivalent
+> > >   statements
+> > > - Changed id of multicolor class from 4 to 3
+> > > - Replaced call to devm_kmalloc_array() with devm_kcalloc()
+> > > Changes in v3:
+> > > - Add CONFIG_LEDS_BLINKM_MULTICOLOR to check whether to use multicolor
+> > >   funcitonality
+> > > - Extend well-known-leds.txt to include standard names for RGB and indicator
+> > >   LEDS
+> > > - Change name of Blinkm sysfs class according to well-known-leds.txt
+> > > - Simplify struct blinkm_led and struct blinkm_data
+> > > - Remove magic numbers
+> > > - Fix formatting errors
+> > > - Remove unrelated changes
+> > > Changes in v4:
+> > > - Fix indentation
+> > > - Add default case to switch statement
+> > > Changes in v5:
+> > > - Fix warnings related to snprintf on s390 architecture, reported by
+> > >   0-DAY CI Kernel Test Service
+> > > Changes in v6:
+> > > - Refactored struct blinkm_led to use a union
+> > > - Refactored blinkm_probe()
+> > > - Clarified documentation
+> > > 
+> > >  Documentation/leds/leds-blinkm.rst     |  31 +++-
+> > >  Documentation/leds/well-known-leds.txt |   8 +
+> > >  drivers/leds/Kconfig                   |   8 +
+> > >  drivers/leds/leds-blinkm.c             | 223 +++++++++++++++++--------
+> > >  4 files changed, 198 insertions(+), 72 deletions(-)
+> > 
+> > Just tried to apply this, but checkpatch.pl has some complaints.
+> > 
+> > Please fix them and resubmit, thanks.
+> > 
+> > -- 
+> > Lee Jones [李琼斯]
+> I fixed the errors and warnings that resulted from my patch, but am I correct in assuming I am not responsible for fixing the warnings from other parts of the file? It would make the patch messier is my concern.
 
-Adding arch_freq_get_on_cpu to cpuinfo_cur_freq does seem to be the right
-approach - no argue on this one. Doing that though means we need a way to
-skip calling arch_freq_get_on_cpu() from show_scaling_cur_freq(), to avoid
-having both providing the same information when that should not be the case.
-In the initial approach [1], that was handled by checking whether the cpufreq
-driver supports 'get' callback (and thus cpuinfo_cur_freq). In case it didn't,
-things remained unchanged for scaling_cur_freq. That does not seem to be a viable
-option though, as there are at least few drivers, that will support both:
-cpuinfo_cur_freq alongside scaling_cur_freq (+ APERF/MPERF) and for those,
-we would hit the initial problem of both relying on arch_freq_get_on_cpu.
-So I guess we need another way of avoiding calling arch_freq_get_on_cpu
-for show_scaling_cur_freq (and most probably avoid calling that one for
-cpuinfo_cur_freq). Quick idea on how to not bring arch specificity into
-cpufreq generic code would be to introduce a new flag for cpufreq drivers though
-that seems a bit stretched. Will ponder a bit about that but in the meantime
-suggestions are more than welcomed.
+[line wrap?]
 
-Aside: I will most probably send the changes separately from this series to not
-mix things any further.
+Yes, you are correct.  It's not on you to fix existing issues.
 
----
-[1] https://lore.kernel.org/all/20230606155754.245998-1-beata.michalska@arm.com/
----
-BR
-Beata
-
-
-> -- 
-> viresh
+-- 
+Lee Jones [李琼斯]
 
