@@ -1,279 +1,148 @@
-Return-Path: <linux-kernel+bounces-171906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8C18BEA5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E82E8BEA63
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 19:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523831C22BA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34E61F24FEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 17:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB0316C6BF;
-	Tue,  7 May 2024 17:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EA916C451;
+	Tue,  7 May 2024 17:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="DbOoRlzU"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XYuITmd/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D7C1635A6
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3A7462
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 17:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715102394; cv=none; b=gFovRFDqFi2IDKH5i+N+PJ5Q1Zj4WuLnJkUK3GYH1+7phnWSWkH1TwcQxOuU76uEDPReZ72LPbOkQWfSSUCuzr4HtGrqjdhhlJdVc3nzwp80VBBmjrJ5ufyfFSKk1GvosYW32wMb9OqyLk+0V7X+5n1cSnKDcoFY48qyNU+714I=
+	t=1715102467; cv=none; b=cLzDgKznCcm8QjlkNbwGy3NnCzXeX1RM6ugrFqgicxzSVsxlWqCQrlJ2P3fw4EPYsv5hfutIvBqYLIOLI/uCKiI25OSiroenZv+2LKRWp/JpC9aAPXPb2+LURsdWo/g865vSTiQoCiLUNFfIDBT8JB6Y0MZiBY/5Ldw1f+gT2tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715102394; c=relaxed/simple;
-	bh=hki5D+Qvj+YNsq8Oqb0RxIzlOFGOD1jr6olQST48t2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpRmK3CGo9eeg2HnNRZM22+djng06IzJotM18yCTclZHMn8uiT7EFzblSG7xM7UOff0+mElYe8f5Zt7oWaRF+BA8nxjylWUrHPzOMQoZtysz4injqGe2XjUSz3IR3FqhbwgpFTmx2GXU7PCSHrTEvuIaVhTe4vmjEkP4e9npUGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=DbOoRlzU; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41bf7889de1so110735e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715102391; x=1715707191; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bM/Dw+slNgawZzGt48alAXy5N8w9IYCinYKDze4Obec=;
-        b=DbOoRlzUXnytxDtn5IiQed5xXYB0O51ofSNRbsp+JOs7CXqXMLIyzOwIJWjhzXYDrN
-         jab9rWWBG2ZgohVzF80qh858zCy5Uaok54YjNATrQYoaVqrfh3kwV4r0mcPk2fNR4Zuo
-         Ypa2f4r6YSgVN8RtieAjGX59c1LrTCnlGhQsI=
+	s=arc-20240116; t=1715102467; c=relaxed/simple;
+	bh=Td1SHhWq6Wvpr0je4B4v22NIo5BXgO45S9j6dXvvWc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IV7I/3DmwuOQ3GoHR39Me7u/CUQRkjtc3j6pM3RnXSYhFBX0GFk3J+S729FzIaAJw/0cY/I2WPeELT1iwylbX9K+3op7wQou959q8GQqN45/r4a2yq2S64ESHa4XDOC96bNqvNBU9XQebz0Ytqv4F5wUgOY9Llu0R9cTpcS9FLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XYuITmd/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715102464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvToZ7WqfcgMTwXbVfEgk8KX+0yA+ouGzL56lXRGL64=;
+	b=XYuITmd/gTiSEb+0SlodyydoJBx26vRqAiVomiyEwOojc3fTifDr47droaZJtOPnLuK3YY
+	dJP6GrRNfdl4LKYGLTf9CdQIkac0F6VrSPRd2bZguuueexkH4c+myLr4kP9vaLey4a+dEy
+	btejP+Qyq/n2hf0/8HTfM4plM23sj80=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-614-7EX72h-aO7m3VFyfko3ujQ-1; Tue, 07 May 2024 13:21:03 -0400
+X-MC-Unique: 7EX72h-aO7m3VFyfko3ujQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34d99cc6c3dso2065790f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 10:21:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715102391; x=1715707191;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bM/Dw+slNgawZzGt48alAXy5N8w9IYCinYKDze4Obec=;
-        b=t9kknHTjwn7MBOp0LaWgrSG37D2TeXtO7MIDVal9SnEPfoYpvFqB0BVrgPqaaPdmCs
-         XYWKz5RYbsk4m5nAJ94e3m4p/QiVjEjoHlbqP1vfLn6cgbJTEdfIhPVeNWBf8Z5NYa63
-         anAXQb81l3FDlxWt4VXloYVlLjRuV+Rskc4WUOm47C3gupU9mZ8n10UNv+XFcmuTkMzu
-         VNpqb/Rt89oZ7D8C5OdntUMa2PMaMO4zW3n2Sl/mhDmoO8MHWtW5c8lM6PkEqvdgzG2J
-         +Rj9KOy93ccSbX7NdfgU6IlNQBGnwTy+Sh+kSbD1admcG+0kGe62JUsC985+Jdyp2F15
-         TRxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtp2oc4Kwtt5wS8L4olzH1nj8QSg9Wzmx5GiG3yx7wKSh0yhNMxBpARvU1MRAL67MnRmYaNkirUN8vk/FhP1Fg9m1Kpx8Bl+0hKukx
-X-Gm-Message-State: AOJu0YxXW/o2LN7ME6PeG4RZ4DvP0QEzYbVbxkPKcddVDzQxCN9WVAgw
-	PvPQSBOZhkNbt9mG9bD9CsQssF5jSu+Sfqtdef8C05mmI5jLwTabzI0+Fb4lztI=
-X-Google-Smtp-Source: AGHT+IGjYrAFJPkOT/+jV38wR5mJiJ3AoSBk6cawRCaea6OsXoRTzzuMP8kcLArTQhqp2IAKTK96/Q==
-X-Received: by 2002:a05:600c:1ca0:b0:41a:bc88:b84 with SMTP id 5b1f17b1804b1-41f71cc26f6mr3013945e9.1.1715102390920;
-        Tue, 07 May 2024 10:19:50 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id c10-20020adfef4a000000b0034a3a0a753asm13300068wrp.100.2024.05.07.10.19.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 10:19:50 -0700 (PDT)
-Date: Tue, 7 May 2024 19:19:46 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mina Almasry <almasrymina@google.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Florian Westphal <fw@strlen.de>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Aleksander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Richard Gobert <richardbgobert@gmail.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>
-Subject: Re: [RFC PATCH net-next v8 02/14] net: page_pool: create hooks for
- custom page providers
-Message-ID: <ZjpisrsAZdqTXuLT@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Mina Almasry <almasrymina@google.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Florian Westphal <fw@strlen.de>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Aleksander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Richard Gobert <richardbgobert@gmail.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>
-References: <20240403002053.2376017-1-almasrymina@google.com>
- <20240403002053.2376017-3-almasrymina@google.com>
- <ZjH1QaSSQ98mw158@infradead.org>
- <CAHS8izM0=xc2UhUxhnF_BixuFs5VaDV9W1jbso1K+Rg=35NzeA@mail.gmail.com>
- <ZjjHUh1eINPg1wkn@infradead.org>
- <20b1c2d9-0b37-414c-b348-89684c0c0998@gmail.com>
- <20240507161857.GA4718@ziepe.ca>
- <ZjpVfPqGNfE5N4bl@infradead.org>
- <CAHS8izPH+sRLSiZ7vbrNtRdHrFEf8XQ61XAyHuxRSL9Jjy8YbQ@mail.gmail.com>
- <20240507164838.GG4718@ziepe.ca>
+        d=1e100.net; s=20230601; t=1715102462; x=1715707262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zvToZ7WqfcgMTwXbVfEgk8KX+0yA+ouGzL56lXRGL64=;
+        b=prBld3OP/0UWGLXGZpA9DFu8FeCc4VUJSG4rx81nThhLV0VuUrw1gmW9c5oSen911N
+         fxp1HG40fwjCvqqjMUbM4d0dS5U9L7VHTN5ApBHm8xHRD29IXA1VZ7ZVrHIOnns2FkQT
+         A4ejMNAXPmN2+PKWAhagPV0bBjf6meymDkyBC4iJb2TaCy1M2txZRojpS/2K0NZaFJHd
+         35LM3u1LNDWQKXb7QTIOsn5hpVtAZBeCERxDJUr9Oyrq2Z7g/UMf7KhzykqRVuHBxgDa
+         uCjEdXOJtZxepXCj0sGp8ENabFkFRtL8XXcUgeTHNJH7p1WKm0R0ozgJins/MrvdtlvD
+         IWsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXORsQZeHSxVliGcHyc8lVdssxEwfAlPEdXiDmkBeQeiUa3DiFGhy6ni2RslEtoCRw4ljx1hwKa9CR8N0KoafOfXK1+kASTdYtKCfTH
+X-Gm-Message-State: AOJu0Yzp9HR5JWVPDL6EqUNXBKycAvWXTWO/917mpOjTOzvG0CDBON4c
+	G//tAiWu/+83rJzNzH4OxUv+dd3uBPl/W7R01JtqiYPgW8HGUEgcD5NOJ02gJvIiVV3CaL0+dEh
+	hBgxyM4hKrMdO0hvHeuKwHw4El176L/SCPU5Ajhq5lvhQlHxEVRJMCNcOlDMXaJ0LwziHJq3/Tt
+	hav+45fso+dG5Qx9wr+8wXqrVS7XbTyyZy0FB6
+X-Received: by 2002:adf:ebcf:0:b0:34d:b243:5415 with SMTP id ffacd0b85a97d-34fcb3abdd8mr272807f8f.70.1715102462520;
+        Tue, 07 May 2024 10:21:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUEYCOfnDHy/EIoxjKGa949EaCj1vuoCQ08bvHLYnStorLuvGOeo1MfLxqAif12vjZfI5TzpEebQUV0rf5pgA=
+X-Received: by 2002:adf:ebcf:0:b0:34d:b243:5415 with SMTP id
+ ffacd0b85a97d-34fcb3abdd8mr272797f8f.70.1715102462154; Tue, 07 May 2024
+ 10:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507164838.GG4718@ziepe.ca>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+References: <20240423165328.2853870-1-seanjc@google.com> <4a66f882-12bf-4a07-a80a-a1600e89a103@intel.com>
+ <ZippEkpjrEsGh5mj@google.com> <7f3001de041334b5c196b5436680473786a21816.camel@intel.com>
+ <ZivMkK5PJbCQXnw2@google.com> <514f75b3-a2c5-4e8f-a98a-1ec54acb10bc@intel.com>
+ <Zi_DNaC4FIIr7bRP@google.com>
+In-Reply-To: <Zi_DNaC4FIIr7bRP@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 7 May 2024 19:20:51 +0200
+Message-ID: <CABgObfYvkT39Msd11uJMZMquOsvNKBa=Z548JQZGfOmCF=TPaA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] KVM: x86: Fix supported VM_TYPES caps
+To: Sean Christopherson <seanjc@google.com>
+Cc: Kai Huang <kai.huang@intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 01:48:38PM -0300, Jason Gunthorpe wrote:
-> On Tue, May 07, 2024 at 09:42:05AM -0700, Mina Almasry wrote:
-> 
-> > 1. Align with devmem TCP to use udmabuf for your io_uring memory. I
-> > think in the past you said it's a uapi you don't link but in the face
-> > of this pushback you may want to reconsider.
-> 
-> dmabuf does not force a uapi, you can acquire your pages however you
-> want and wrap them up in a dmabuf. No uapi at all.
-> 
-> The point is that dmabuf already provides ops that do basically what
-> is needed here. We don't need ops calling ops just because dmabuf's
-> ops are not understsood or not perfect. Fixup dmabuf.
-> 
-> If io_uring wants to take its existing memory pre-registration it can
-> wrap that in a dmbauf, and somehow pass it to the netstack. Userspace
-> doesn't need to know a dmabuf is being used in the background.
+On Mon, Apr 29, 2024 at 5:56=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+> > Perhaps we can make the kvm.ko as a dummy module which only keeps the m=
+odule
+> > parameters for backward compatibility?
+>
+> Keeping parameters in a dummy kvm.ko would largely defeat the purpose of =
+linking
+> everything into vendor modules, i.e. would make it possible for the param=
+eters to
+> hold a stale value.
 
-So roughly the current dma-buf design considerations for the users of the
-dma-api interfaces:
+We have the following read-write params:
 
-- It's a memory buffer of fixed length.
+parm:           nx_huge_pages:bool
+parm:           nx_huge_pages_recovery_ratio:uint
+parm:           nx_huge_pages_recovery_period_ms:uint
+parm:           flush_on_reuse:bool
+parm:           ignore_msrs:bool
+parm:           report_ignored_msrs:bool
+parm:           min_timer_period_us:uint
+parm:           tsc_tolerance_ppm:uint
+parm:           lapic_timer_advance_ns:int
+parm:           force_emulation_prefix:int
+parm:           pi_inject_timer:bint
+parm:           eager_page_split:bool
+parm:           halt_poll_ns:uint
+parm:           halt_poll_ns_grow:uint
+parm:           halt_poll_ns_grow_start:uint
+parm:           halt_poll_ns_shrink:uint
 
-- Either that memory is permanently nailed into place with dma_buf_pin
-  (and if we add more users than just drm display then we should probably
-  figure out the mlock account question for these). For locking hierarchy
-  dma_buf_pin uses dma_resv_lock which nests within mmap_sem/vma locks but
-  outside of any reclaim/alloc contexts.
+Vendor modules do not muck with them (the only one that is exported is
+report_ignored_msrs for which permanency is obviously harmless).
 
-- Or the memory is more dynamic, in which case case you need to be able to
-  dma_resv_lock when you need the memory and make a promise (as a
-  dma_fence) that you'll release the memory within finite time and without
-  any further allocations once you've unlocked the dma_buf (because
-  dma_fence is in GFP_NORECLAIM). That promise can be waiting for memory
-  access to finish, but it can also be a pte invalidate+tlb flush, or some
-  kind of preemption, or whatever your hw can do really.
+And the following read-only params:
 
-  Also, if you do this dynamic model and need to atomically reserve more
-  than one dma_buf, you get to do the wait/wound mutex dance, but that's
-  really just a bunch of funny looking error handling code and not really
-  impacting the overall design or locking hierarchy.
+parm:           tdp_mmu:bool
+parm:           mmio_caching:bool
+parm:           kvmclock_periodic_sync:bool
+parm:           vector_hashing:bool
+parm:           enable_vmware_backdoor:bool
+parm:           enable_pmu:bool
+parm:           mitigate_smt_rsb:bool
 
-Everything else we can adjust, but I think the above three are not really
-changeable or dma-buf becomes unuseable for gpu drivers.
+The only really bad one is tdp_mmu, which can change depending on the
+ept/npt parameters of kvm-intel/kvm-amd; everything else is okay to
+have in a common module.
 
-Note that exporters of dma-buf can pretty much do whatever they feel like,
-including rejecting all the generic interfaces/ops, because we also use
-dma-buf as userspace handles for some really special memory.
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+mitigate_smt_rsb could (should?) move to kvm-amd.ko if the modules
+were unified with kvm.ko as a dummy one.
+
+Paolo
+
 
