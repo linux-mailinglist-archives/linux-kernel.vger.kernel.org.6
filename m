@@ -1,146 +1,115 @@
-Return-Path: <linux-kernel+bounces-172503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A5A8BF2CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B048BF2CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2521281F0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:59:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E529E281512
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 23:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1469012AAE0;
-	Tue,  7 May 2024 23:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7686A13AD05;
+	Tue,  7 May 2024 23:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V2FCgb7a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FB66OVWl"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D21A2C07;
-	Tue,  7 May 2024 23:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8931212BE80;
+	Tue,  7 May 2024 23:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715123999; cv=none; b=AamDgmrvgXQQbW10ixN+gh+Ftb4hhEnIm9ACBJ55HWGy8To9OtlpM05jerRD0MdfUAmbV5p97fzgpja60BAtQnaAqyldMhA8Px7Cjwdws7h6K5Il6ROvT/+jq5VYJDCHH/AF2A+VxxLocPGaiPdQGfKxqJIDZR+IVbVRQUKotf0=
+	t=1715124007; cv=none; b=Pn843AQun5nJK25kzNeZWMsFZymNvPNbut/z21WMujR6VAcp227n1NnGQsd0I+a4wKDgOcAo4pXBlhsuUC1gbgIS8WXtF4OwAv0I5/7JyNxJR0elKBSDuIjeCQBBQxivk9Z6Um2/gIYuY/nbrS85DQv+/N/sCUVoUhq8wLbjexw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715123999; c=relaxed/simple;
-	bh=sEP4iPDmsyjWyHJeI1603Nv4qXSA4IMf9J0xJfpEL7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ib1MTDZF6IrVEewrFPqYjZOWA2t8Akij8LBAcx12f9q2XMFMW5aY5hXutkLq9kQOVJO5wBgKDjbXZiWlwEHM+ydVW7E4rmX6tVFP/nLKbz4WKRr20QwbG8fPp3S/9qTSlcvp1KG98/gQggPwYbl/kFwhKLUZU4SdQwZuKWfEelA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V2FCgb7a; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715123998; x=1746659998;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sEP4iPDmsyjWyHJeI1603Nv4qXSA4IMf9J0xJfpEL7k=;
-  b=V2FCgb7afdzL8lX1CIcx+WfsecRePo6gHYmdVqr3YEwe8p8ujSrMlLyq
-   CG9su5K61m5ohzoyhlQkHs8hJ0xZEKpHcUBMDF0Q+OfwemV/VsFZMOp2+
-   ie332dnCN2RTxr1H3FmT0P4MoZp+J9oNrSLViLyH86gGBohYLDHOQZmaK
-   yRAh9nHoTuFx3DAYgMaJoMvVndqRiq6zJSRw4lFf4XcYCLLB9iwtiG95T
-   7unccrIsgK6g0uGUnLBeieAqpJVUlyijHBbPKpWWeMUThCKpLUptqGmEe
-   vhkyr8aHhdS1K0GLRNp3N0lMbTi9Nd+tqpbkd2fDyquKw1rZw5yFVYGX5
-   w==;
-X-CSE-ConnectionGUID: bKrLbyhzRiSArKinGzKxHA==
-X-CSE-MsgGUID: EhWtermERoK/1zSikXy1ww==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="14744903"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="14744903"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 16:19:57 -0700
-X-CSE-ConnectionGUID: RWIp3qdYRNKzT7LA61w6Rw==
-X-CSE-MsgGUID: tLv2w/CVRwqH9LW0lz7DaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="51886530"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 07 May 2024 16:19:54 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4U6C-0002jk-1t;
-	Tue, 07 May 2024 23:19:52 +0000
-Date: Wed, 8 May 2024 07:18:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, bfoster@redhat.com,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <202405080718.ZRZVFchD-lkp@intel.com>
-References: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+	s=arc-20240116; t=1715124007; c=relaxed/simple;
+	bh=kHS9g9RwmKOf15zpnBSFQy0orV9EnY5jccmGnQvCJl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=etBEq1fwnLcVkOTgDudGLpVyKCxIjj1BnYfJYveoBWvrjG7B0gxlQnY16WTGNseQ4aOcOH2zFyd8gnlBLnrjrK5eLNWPdYMLHwvOAsNUmUHmcr3X4cdJVvHUiM+DKYai8kuyU5ZMoSEf1VgCV2PLxj+mYe8Ep6UuZGoyEh2l+BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FB66OVWl; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715123996; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=e0zrxwPcAb6kwy18tLfS3CmdjXGu2j+7ybZ31BCE1es=;
+	b=FB66OVWllglJrtsVgitdr4BBAFSOJsBaZztYNNhtXW8dxHbHjVUuAsWqekWUXTz3pCER7z9lCNl0lxrDvK160MtUtI1/+OsEI+yk/0tf7V3hCHytjVEztSDPszc58oMe9uiK5sG4CN9CveCAkN1Qzcoth2IuaKHjdBcSVfjVNu4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W61IPVB_1715123993;
+Received: from 30.25.231.12(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W61IPVB_1715123993)
+          by smtp.aliyun-inc.com;
+          Wed, 08 May 2024 07:19:55 +0800
+Message-ID: <aca15d22-e2f9-4d09-b022-f290d9c902c9@linux.alibaba.com>
+Date: Wed, 8 May 2024 07:19:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH AUTOSEL 6.8 26/52] erofs: reliably distinguish block based
+ and fscache mode
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, Baokun Li <libaokun1@huawei.com>,
+ Jingbo Xu <jefflexu@linux.alibaba.com>, Chao Yu <chao@kernel.org>,
+ xiang@kernel.org, linux-erofs@lists.ozlabs.org
+References: <20240507230800.392128-1-sashal@kernel.org>
+ <20240507230800.392128-26-sashal@kernel.org>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240507230800.392128-26-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Edward,
+Hi,
 
-kernel test robot noticed the following build warnings:
+On 2024/5/8 07:06, Sasha Levin wrote:
+> From: Christian Brauner <brauner@kernel.org>
+> 
+> [ Upstream commit 7af2ae1b1531feab5d38ec9c8f472dc6cceb4606 ]
+> 
+> When erofs_kill_sb() is called in block dev based mode, s_bdev may not
+> have been initialised yet, and if CONFIG_EROFS_FS_ONDEMAND is enabled,
+> it will be mistaken for fscache mode, and then attempt to free an anon_dev
+> that has never been allocated, triggering the following warning:
+> 
+> ============================================
+> ida_free called for id=0 which is not allocated.
+> WARNING: CPU: 14 PID: 926 at lib/idr.c:525 ida_free+0x134/0x140
+> Modules linked in:
+> CPU: 14 PID: 926 Comm: mount Not tainted 6.9.0-rc3-dirty #630
+> RIP: 0010:ida_free+0x134/0x140
+> Call Trace:
+>   <TASK>
+>   erofs_kill_sb+0x81/0x90
+>   deactivate_locked_super+0x35/0x80
+>   get_tree_bdev+0x136/0x1e0
+>   vfs_get_tree+0x2c/0xf0
+>   do_new_mount+0x190/0x2f0
+>   [...]
+> ============================================
+> 
+> Now when erofs_kill_sb() is called, erofs_sb_info must have been
+> initialised, so use sbi->fsid to distinguish between the two modes.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> Reviewed-by: Chao Yu <chao@kernel.org>
+> Link: https://lore.kernel.org/r/20240419123611.947084-3-libaokun1@huawei.com
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/bcachefs-fix-oob-in-bch2_sb_clean_to_text/20240507-172635
-base:   linus/master
-patch link:    https://lore.kernel.org/r/tencent_816D842DE96C309554E8E2ED9ACC6078120A%40qq.com
-patch subject: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-config: i386-buildonly-randconfig-005-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080718.ZRZVFchD-lkp@intel.com/config)
-compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080718.ZRZVFchD-lkp@intel.com/reproduce)
+Please help drop this patch for now too, you should backport
+the dependency commit
+07abe43a28b2 ("erofs: get rid of erofs_fs_context") in advance.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080718.ZRZVFchD-lkp@intel.com/
+Otherwise it doesn't work and break the functionality.
 
-All warnings (new ones prefixed by >>):
+Thanks,
+Gao Xiang
 
->> fs/bcachefs/sb-clean.c:296:13: warning: comparison of distinct pointer types ('struct jset_entry *' and 'void *') [-Wcompare-distinct-pointer-types]
-     296 |              entry < vstruct_end(&clean->field);
-         |              ~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +296 fs/bcachefs/sb-clean.c
-
-   283	
-   284	static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
-   285					  struct bch_sb_field *f)
-   286	{
-   287		struct bch_sb_field_clean *clean = field_to_type(f, clean);
-   288		struct jset_entry *entry;
-   289	
-   290		prt_printf(out, "flags:          %x",	le32_to_cpu(clean->flags));
-   291		prt_newline(out);
-   292		prt_printf(out, "journal_seq:    %llu",	le64_to_cpu(clean->journal_seq));
-   293		prt_newline(out);
-   294	
-   295		for (entry = clean->start;
- > 296		     entry < vstruct_end(&clean->field);
-   297		     entry = vstruct_next(entry)) {
-   298			if (entry->type == BCH_JSET_ENTRY_btree_keys &&
-   299			    !entry->u64s)
-   300				continue;
-   301	
-   302			bch2_journal_entry_to_text(out, NULL, entry);
-   303			prt_newline(out);
-   304		}
-   305	}
-   306	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
