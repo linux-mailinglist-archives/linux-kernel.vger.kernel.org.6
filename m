@@ -1,136 +1,206 @@
-Return-Path: <linux-kernel+bounces-171206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-171207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6E68BE118
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:39:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E938BE11A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 13:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1EE285709
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:39:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A19D1C219CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 May 2024 11:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E670152E13;
-	Tue,  7 May 2024 11:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45532152DE3;
+	Tue,  7 May 2024 11:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K6QMOun+"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qBl2uF0W"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E36522E;
-	Tue,  7 May 2024 11:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA5D152188
+	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 11:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715081971; cv=none; b=RXKPuG1qve3GlXBpbCmugbH+z6UN4uaAocsycXpPLitmXJYxE7bOluGh8EfeM1QV0iQlPOXSoaMwhBkUMI96R2QtOecGw4h7hbRT4/WWLAZdSSvX9zBE4XfB9RfAVjZwgoHvngky4Bbgjn/ETqFwvvFDJdIQKucgZQFp8OIu/dw=
+	t=1715081996; cv=none; b=MDtTDJqVCQgHSlMa4pHyHimdX0CFsP+OIJESndnVWZPexQMtjoohi3K6ivy6nu3GFanZRhpH2OrQpTo1MFFWncSFAwmtjSpIgHecIe5xRw+zkvoLe2IGno+nT3AloMLy+R+Is511InOfaKkYSds7J8mnvTLDVGoAuPDSCaHw8Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715081971; c=relaxed/simple;
-	bh=QWRglvQC+Ilxa+wYRcwzz9FMw6bA6Z/0j3tXMZ1TDSM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=Q/lGK1+F7KuF9P0ItlhC1NHUOOKwp1HJbiKGK8DiWgShRsIqPkD0lhtNs0wWXvmVLFV0B+QCm8Y9A+g4qMpc9C6+QYz/VTOr5s3fxxCNnz8J2YpRis4b1ZW7TbUehwAaflV/HAC0qJ/td7+ivTcZ5b8whz0xBUlMzaP8uIL7uTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K6QMOun+; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43b06b803c4so20435271cf.1;
-        Tue, 07 May 2024 04:39:30 -0700 (PDT)
+	s=arc-20240116; t=1715081996; c=relaxed/simple;
+	bh=P5uLisXOuxBxifYghRn6YmN4fZZN3pN3vNnX6Ki7prY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=btAPRbTdLfNSfJjpcvZ+jTXnXe7xLcv4ZRxKfBHDTSyfXAq4dWeBaBEFZbrJfO0NChXndTkgEf0iU+ZFJRoAMp09EQzx7uoeVwCGSQcv8qgKND8mcCF0aWSDJtk8WkN5OekW8uS6N7Ae0mF1CQrUHBwJUxHudMQi1PoSKw1U9wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qBl2uF0W; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f17ac14daso3269678e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 04:39:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715081969; x=1715686769; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bc2Fh6vr9HEHKy+AiZntTDAKa/QuaWvCqXRib6VLhHw=;
-        b=K6QMOun+SSSrGpJzlvMhU23ylUYSG2c0tdyw/O0E3Kwcya2bke5YQazo9EGKSmOe8j
-         6l70QSXWCivLUeeRZtzmpQApXuw9PCbc8HoR1bL8XVEl8Tav1qS78/cHBeUcJtShQ6j5
-         9HWBl82uUVuBU230UfAEZyHGSE25XPvh5P1/Ty0yk77D63VdsRxJpDOfpihnglLoMSsH
-         JRVPcyBg7XFxobjJZsyse55L5esqzJi+IV/tiHDeVCkuaSX9Gcgtx+e7vGT9XLgQ9icV
-         rnDzR9+QVRhf5oRkpgSoLdvoVB6Sh2fGeVwfRv8yElMaz0yUJobZQ1ABDroLFLaANv2p
-         RcYw==
+        d=linaro.org; s=google; t=1715081993; x=1715686793; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eQc6eSsksX0o7pSNc/57Q6qum3aXB90lj21OWn/LIWY=;
+        b=qBl2uF0WstfrsnI66bWBcYYLteYrKMeECLMfRN0cVEbGHN/21bu6ZKH3pvJAMyYcor
+         CVO61eJNiKr/XKrooMSobCkEpoot+bSKxqCrtcMktry012Q2X9qxK5jBcHLcvH3MmwXB
+         bPcRm62JetchpjOySjTa9VdZTADrvrRARmDvdv/Yv2JyUQV+J3ljkO6GOA3i4SYHKWhG
+         x/3HBjhvctbz2TsGoHBN6gkf/vgPZAniue7F5dIEwMRm7/G5THlv/xHTPP5c2wEak3eS
+         689TmALkXfpEIz7sHoqyzKkC3JesMbCD5W0BkImfnT30yud3fLyD2SNi8AcjkXJLS0JH
+         CRqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715081969; x=1715686769;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bc2Fh6vr9HEHKy+AiZntTDAKa/QuaWvCqXRib6VLhHw=;
-        b=i/u69gyZXQuPwmyz/bGLAWutoshkQM7RvSReX6b8QuJJWQ6TqouAP7ue9klaGnco3w
-         JzG2yvAOYgk2JJeDhy+c4G5093TY3/gKGpLy1BgsybiGos6GN6ZX0pZ1aWFWbAOiSekF
-         IWKq9ABw4QyXDdcAingzkLFaBevVtgzutBsuwLTVtzqjwphhAq+kNZPEJuYCPGEgc6m2
-         pjIYBJQgtULobNAnmx37Oua6FW9gYQTwJ2PaRXO4t61QiJfMzLzddvtMGpB73HUL1tGV
-         eQU5BpotFBoCQx48dAiCEbeB6rF01nBXSZBwwhvVxC6b/hbn2wsgvt5tQFLIuPRvhnOJ
-         4+Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG/KuANAgr7rQGxsMBF8MwLOmYbIT5GHjLAUJ7IaRx++jo19qC4X0JjNUaGV4nwtAQzr9HdkXeahGqUNSEICQqd08K6KzX+5f5xgW56DHrKcOdtfiuHpkxLX7VsQG+7C9CNQxLAVJTH/30DLJ5hc/7kEtIuvW50t4y
-X-Gm-Message-State: AOJu0YxTXs8lkR9Xwunj2eZRInZcsl82TYWBYw88NW24WGuQzjJEPdd9
-	pBuSRfy1W/nClOZfGhB8Eg9XQh+dpLtYu7P4ZW5EK3+hGxNDfxd2
-X-Google-Smtp-Source: AGHT+IEYa1mU6Tp3WBhIuUW/Dh9bS9a+VEaM8HEHI4XcFgssU84GL0HCwzAqkeL25nS4PeYPzFRieg==
-X-Received: by 2002:a05:622a:2989:b0:43a:dcd6:6507 with SMTP id hd9-20020a05622a298900b0043adcd66507mr17632581qtb.50.1715081969095;
-        Tue, 07 May 2024 04:39:29 -0700 (PDT)
-Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
-        by smtp.gmail.com with ESMTPSA id er5-20020a05622a5e8500b0043cd93be06asm5598868qtb.62.2024.05.07.04.39.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 04:39:28 -0700 (PDT)
-Date: Tue, 07 May 2024 07:39:28 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Martin KaFai Lau <martin.lau@linux.dev>, 
- Abhishek Chauhan <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Andrew Halaney <ahalaney@redhat.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Martin KaFai Lau <martin.lau@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- bpf <bpf@vger.kernel.org>, 
- kernel@quicinc.com
-Message-ID: <663a12f089b81_726ea29426@willemb.c.googlers.com.notmuch>
-In-Reply-To: <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
-References: <20240504031331.2737365-1-quic_abchauha@quicinc.com>
- <20240504031331.2737365-3-quic_abchauha@quicinc.com>
- <cab0c7ba-90bf-49e2-908d-ecd879160667@linux.dev>
-Subject: Re: [RFC PATCH bpf-next v6 2/3] net: Add additional bit to support
- clockid_t timestamp type
+        d=1e100.net; s=20230601; t=1715081993; x=1715686793;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eQc6eSsksX0o7pSNc/57Q6qum3aXB90lj21OWn/LIWY=;
+        b=rrrNAdqp/R/s7MxOT4FGajNS6PK0q76j9H1Et6IlpmrP7dkVsvaIu8af0DyVTZui/H
+         3J6UUvCk/D2mfg8KpcR+qH0l3kOKcmozAThbz8OgG3nke+uiBuexUMOqjzihbCWTWmyT
+         QFa7XkeH2YO9c6JsrF5N9satnhpQKqM8kaP7ULg3HOERSOe2PxdEZq9Glxmg9W0yzddq
+         DzrzqH7bpQZZyOnBtmRp+rnro6WvbV+g+RRzxnrrXWbAM/dvmR200U3WkHFwDwlCx10M
+         mVH0TWRm3u0MCQprOhNeOSZ80w6sRYYYphcXlr6HVy67fn0eo2Al2O7eDJkPhRZOOQrS
+         yY5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWDZlqz6pf1jnKclEyVPdJqDB67BybfgpDU0rqi7O5iIBKwk40GPMDBrQqrJICv6IWLiWWEnSi8a/ZSxVFcA0XlWOWTI1EGJg2s4ooi
+X-Gm-Message-State: AOJu0YwTGz9xMhkpIEhzg2ODFiTWJ40xtuLHDyj9jzw9pGVrKxrZxztH
+	VyvjV3WNW3IF49XyFnfocSFiG/fhj+7dCX1XZe5hp64T/2V3xm4dfBpF/zPbU7c=
+X-Google-Smtp-Source: AGHT+IEQl+GcEsxQFRjcV6Q20fwLgSVV2rorfeOoqBlHfFGwibG/eWjdLeSZi4NLB5VFWaqx9bzyBg==
+X-Received: by 2002:ac2:434f:0:b0:51e:f68b:cc69 with SMTP id o15-20020ac2434f000000b0051ef68bcc69mr7614847lfl.5.1715081992635;
+        Tue, 07 May 2024 04:39:52 -0700 (PDT)
+Received: from [172.30.205.144] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id a14-20020ac25e6e000000b0051f95499c06sm1772483lfr.285.2024.05.07.04.39.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 04:39:52 -0700 (PDT)
+Message-ID: <247e4ce7-1ba2-43b8-8a11-ec70f99a4fc1@linaro.org>
+Date: Tue, 7 May 2024 13:39:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] slimbus: qcom-ngd-ctrl: Add stream disable support
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andersson@kernel.org,
+ srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com,
+ quic_anupkulk@quicinc.com, quic_cchiluve@quicinc.com
+References: <20240507063004.21853-1-quic_vdadhani@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240507063004.21853-1-quic_vdadhani@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Martin KaFai Lau wrote:
-> On 5/3/24 8:13 PM, Abhishek Chauhan wrote:
-> > diff --git a/net/ipv4/ip_output.c b/net/ipv4/ip_output.c
-> > index fe86cadfa85b..c3d852eecb01 100644
-> > --- a/net/ipv4/ip_output.c
-> > +++ b/net/ipv4/ip_output.c
-> > @@ -1457,7 +1457,10 @@ struct sk_buff *__ip_make_skb(struct sock *sk,
-> >   
-> >   	skb->priority = (cork->tos != -1) ? cork->priority: READ_ONCE(sk->sk_priority);
-> >   	skb->mark = cork->mark;
-> > -	skb->tstamp = cork->transmit_time;
-> > +	if (sk_is_tcp(sk))
-> 
-> This seems not catching all IPPROTO_TCP case. In particular, the percpu 
-> "ipv4_tcp_sk" is SOCK_RAW. sk_is_tcp() is checking SOCK_STREAM:
-> 
-> void __init tcp_v4_init(void)
-> {
-> 
-> 	/* ... */
-> 	res = inet_ctl_sock_create(&sk, PF_INET, SOCK_RAW,
-> 				   IPPROTO_TCP, &init_net);
-> 
-> 	/* ... */
-> }
-> 
-> "while :; do ./test_progs -t tc_redirect/tc_redirect_dtime || break; done" 
-> failed pretty often exactly in this case.
-> 
 
-Interesting. The TCP stack opens non TCP sockets.
 
-Initializing sk->sk_clockid for this socket should address that.
+On 5/7/24 08:30, Viken Dadhaniya wrote:
+> Currently slimbus driver doesn't support stream disable
+> callback, it only supports stream enable callback.
+> 
+> In slimbus usecase, client is switching to new frequency
+> with same channel and calling enable stream callback for
+> new frequency but DSP subsystem is crashing as we are switching
+> to new frequency with same channel without disabling stream
+> for older frequency.
 
+This is very difficult to read
+
+but AFAICU comes down to:
+"Trying to switch frequencies without closing the channel results
+in an attempt to re-enable the channel without a clean shutdown,
+which then leads to a crash on the ADSP."
+
+> 
+> Ideally, before switching to another frequency, client should
+> call disable stream callback and then enable stream for newer frequency.
+> 
+> Hence add support to disable stream via qcom_slim_ngd_disable_stream().
+> 
+> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> ---
+>   drivers/slimbus/qcom-ngd-ctrl.c | 70 +++++++++++++++++++++++++++++++++
+>   drivers/slimbus/slimbus.h       | 13 ++++++
+>   2 files changed, 83 insertions(+)
+> 
+> diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+> index e0b21f0f79c1..d952827d2e12 100644
+> --- a/drivers/slimbus/qcom-ngd-ctrl.c
+> +++ b/drivers/slimbus/qcom-ngd-ctrl.c
+> @@ -1,6 +1,7 @@
+>   // SPDX-License-Identifier: GPL-2.0
+>   // Copyright (c) 2011-2017, The Linux Foundation. All rights reserved.
+>   // Copyright (c) 2018, Linaro Limited
+> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   
+>   #include <linux/irq.h>
+>   #include <linux/kernel.h>
+> @@ -1084,6 +1085,74 @@ static int qcom_slim_ngd_enable_stream(struct slim_stream_runtime *rt)
+>   	return ret;
+>   }
+>   
+> +static int qcom_slim_ngd_disable_stream(struct slim_stream_runtime *rt)
+> +{
+> +	struct slim_device *sdev = rt->dev;
+> +	struct slim_controller *ctrl = sdev->ctrl;
+> +	struct slim_val_inf msg =  {0};
+> +	u8 wbuf[SLIM_MSGQ_BUF_LEN];
+> +	u8 rbuf[SLIM_MSGQ_BUF_LEN];
+> +	struct slim_msg_txn txn = {0,};
+{ 0 } is enough
+
+Also, reverse-Christmas-tre, please
+
+> +	int i, ret;
+> +
+> +	txn.mt = SLIM_MSG_MT_DEST_REFERRED_USER;
+> +	txn.dt = SLIM_MSG_DEST_LOGICALADDR;
+> +	txn.la = SLIM_LA_MGR;
+> +	txn.ec = 0;
+> +	txn.msg = &msg;
+> +	txn.msg->num_bytes = 0;
+> +	txn.msg->wbuf = wbuf;
+> +	txn.msg->rbuf = rbuf;
+> +
+> +	for (i = 0; i < rt->num_ports; i++) {
+> +		struct slim_port *port = &rt->ports[i];
+> +
+> +		if (txn.msg->num_bytes == 0) {
+> +			wbuf[txn.msg->num_bytes++] = (u8)(SLIM_CH_REMOVE << 6)
+> +							| (sdev->laddr & 0x1f);
+
+Add a #define and use FIELD_PREP
+
+> +
+> +			ret = slim_alloc_txn_tid(ctrl, &txn);
+> +			if (ret) {
+> +				dev_err(&sdev->dev, "Fail to allocate TID\n");
+> +				return -ENXIO;
+> +			}
+> +			wbuf[txn.msg->num_bytes++] = txn.tid;
+> +		}
+> +		wbuf[txn.msg->num_bytes++] = port->ch.id;
+> +	}
+> +
+> +	txn.mc = SLIM_USR_MC_CHAN_CTRL;
+> +	txn.rl = txn.msg->num_bytes + 4;
+
+Why +4?
+
+> +	ret = qcom_slim_ngd_xfer_msg_sync(ctrl, &txn);
+> +	if (ret) {
+> +		slim_free_txn_tid(ctrl, &txn);
+> +		dev_err(&sdev->dev, "TX timed out:MC:0x%x,mt:0x%x ret:%d\n",
+
+Please clean this up, add commas to separate all three prints and a
+space after each comma
+
+[...]
+
+>   
+> +/*
+> + * enum slim_ch_control: Channel control.
+> + * Activate will schedule channel and/or group of channels in the TDM frame.
+> + * Suspend will keep the schedule but data-transfer won't happen.
+> + * Remove will remove the channel/group from the TDM frame.
+
+"will" suggests these are not immediate.
+
+Konrad
 
