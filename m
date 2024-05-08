@@ -1,183 +1,128 @@
-Return-Path: <linux-kernel+bounces-173586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EAC8C0275
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9E148C0277
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EC31F250FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03E61F25562
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A4CE57F;
-	Wed,  8 May 2024 17:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A47200CD;
+	Wed,  8 May 2024 17:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfScOLOR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fV0QUJ9Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C847DDDD2;
-	Wed,  8 May 2024 17:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791141CAA9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715187667; cv=none; b=RK3fQAr3g1a43DBktoyW6FAzNoLteq7TkoHtuCKbbPKvPTm4h3FsOtX6zwXQTLGkoIkKz0hfwVFDixfinqTFV8Vg4Abt/32yhaACAw0btG4cJCVRcT5iki00hHWmiZax1I1+G5r3xA8xYxRdpo/Y4lBdqYmI8qtZDxu37fWUAmU=
+	t=1715187674; cv=none; b=PPY7PeV01L/WeUh7NKTZktMWPYJtYFVbG54DH5JVG/baT7zEmdiW965tiGk0Yy5HrQYF5z/oPVeQ5fUl4Jp8noNPzyiswmnNXG3xXqDis/Tp9+7ao/gvzyUGsx2bmL/KSwlNLPiiWndRjtSgPjeK8a/wf/euXGrlyPgHPZ+K/w8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715187667; c=relaxed/simple;
-	bh=STM3fI9GyHweIwkuRf0VR/kVGXkNc6VIGqBgZKTd3ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyIpTt4rZdRoBYgyzhFQrKyu94UiA7JT3PWo4hxLc6eytIXnHiUANh/pwjk1oxPH7KQ/qGzP9MnZlyzB80L/EvnRTtTJ2UODdZV5XXS9bjl5l0E6nd5jkDEvyZ5CcGBXKNv3hsnBzh1LGvJpV5cnPl0+Mi9qDV/nVGgqp7z3CfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfScOLOR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55029C113CC;
-	Wed,  8 May 2024 17:01:05 +0000 (UTC)
+	s=arc-20240116; t=1715187674; c=relaxed/simple;
+	bh=FMJFBDiSCdBsBT2PmQNcWcdKdSkvkpDr0aniji9wYyI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=EAl8TTGeSZ+/dvt9Z7yzIc9P+CJBUVg8yll26A3Aaks+VgXmC+gYQG8C8ISkCLPY2o8pVKpVOcCmUO1USv9UMS5dWy3hvW79GgYG/XS+Cg7upp0g2fS4EOKMsEvtZJePsHE5zzGgj/YWLMXvj2rNk4YtTJeQldcu0AHUljfkMaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fV0QUJ9Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A849C113CC;
+	Wed,  8 May 2024 17:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715187667;
-	bh=STM3fI9GyHweIwkuRf0VR/kVGXkNc6VIGqBgZKTd3ew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MfScOLORS/pkJar9tewfFa5frHmMHnT+LrmuC494vapwjBZ3A7mwT3ApzF/dGf8Jp
-	 0Bpdlnt9bXIYYUHmaZyaehVQUOLa29TK15ziK1WUnGUjEwgyevk6zDhqYPrLSgoZMz
-	 +tQjrlfZZMK4odyzAAAIV3F4SAtosgVNj6YMYg1IOFUVyh41n+84Cx032dYbxvShtC
-	 DWlbbvP/Ug9HWlz/BZpOYBy2TW2yNc30pCPnPffremMMcWUwIPDk1zWcQI7Es2A27i
-	 JwuzxbxvzShmCL3y7A4n734T/GVhQNVE6tHTxSICEF2VT8RpRQ7ujHxqo2339KQ/zt
-	 nmI9TAN/vcxWQ==
-Date: Wed, 8 May 2024 18:01:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: "paulburton@kernel.org" <paulburton@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: mips: Document mti,mips-cm
-Message-ID: <20240508-puzzle-directive-b6f771f92fe9@spud>
-References: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
- <20240507-cm_probe-v1-4-11dbfd598f3c@flygoat.com>
- <20240507-jokester-antelope-808b21b957e6@spud>
- <fbb4b8e2-edf4-4b4e-8b71-154a09f24ccd@app.fastmail.com>
+	s=k20201202; t=1715187674;
+	bh=FMJFBDiSCdBsBT2PmQNcWcdKdSkvkpDr0aniji9wYyI=;
+	h=Date:From:Subject:To:Cc:From;
+	b=fV0QUJ9Q166rd5oWci/0EvcxDBRDGtfLUvgVwuN6jidyqFVoGlPt01PVR7+kKbzFc
+	 L0whluV/mMR79zjqpc2LRE8fho7mrnkdYHGofHJcm4WAeTacGAK1/PY8xRCuB8baj6
+	 KnafL9lfowQKa/dgPD0O+6rQlg4eLGtzWKIJsEiUJyC6ykDB5fePOMNUG1ZO16i8pU
+	 fiLQLCKCPnuVUQWxoCbdzfN0cD7uVSE936fEJrw9ZztpVJMoXY38T2QwiQMSjoUFBo
+	 ZhAT0I52e7LuRlylNfLML3fC1P7dMfsNF9pZfc48J8v36lrrFl0p2PBjx5uk3Na1qn
+	 9kmajbijNxvew==
+Message-ID: <baff2bab-3aad-41a6-a0a9-5be64bb2ef43@kernel.org>
+Date: Thu, 9 May 2024 02:01:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="L+OpDBD0ahnwdeqe"
-Content-Disposition: inline
-In-Reply-To: <fbb4b8e2-edf4-4b4e-8b71-154a09f24ccd@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+From: Chanwoo Choi <chanwoo@kernel.org>
+Content-Language: en-US
+Subject: [GIT PULL] extcon next for v6.10
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Chanwoo Choi <chanwoo@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Dear Greg,
+
+This is extcon-next pull request for v6.10. I add detailed description of
+this pull request on below. Please pull extcon with following updates.
+
+Best Regards,
+Chanwoo Choi
 
 
---L+OpDBD0ahnwdeqe
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
 
-On Tue, May 07, 2024 at 07:16:25PM +0100, Jiaxun Yang wrote:
->=20
->=20
-> =E5=9C=A82024=E5=B9=B45=E6=9C=887=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
-=8D=885:50=EF=BC=8CConor Dooley=E5=86=99=E9=81=93=EF=BC=9A
-> > On Tue, May 07, 2024 at 10:01:52AM +0100, Jiaxun Yang wrote:
-> >> Add devicetree binding documentation for MIPS Coherence Manager.
-> >>=20
-> >> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> >> ---
-> >>  .../devicetree/bindings/mips/mips-cm.yaml          | 37 +++++++++++++=
-+++++++++
-> >>  1 file changed, 37 insertions(+)
-> >>=20
-> >> diff --git a/Documentation/devicetree/bindings/mips/mips-cm.yaml b/Doc=
-umentation/devicetree/bindings/mips/mips-cm.yaml
-> >> new file mode 100644
-> >> index 000000000000..b92b008d7758
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/mips/mips-cm.yaml
-> Hi Cornor,
->=20
-> Thanks for your comments.
->=20
-> >
-> > Filename matching the compatible please.
-> Ok.
->=20
-> >
-> >> @@ -0,0 +1,37 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/mips/mips-cm.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: MIPS Coherence Manager
-> >> +
-> >> +description: |
-> >> +  Defines a location of the MIPS Coherence Manager registers.
-> >> +
-> >> +maintainers:
-> >> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: mti,mips-cm
-> >
-> > Is it actually only available on mips? Google seems to report there
-> > being Coherence Managers on their RISC-V offerings too.
->=20
-> I think for MIPS's RISC-V system, it is only used by SBI and transparent
-> to kernel, so it won't present in DT.=20
+  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
 
-Devicetree isn't just for Linux, things that only the SBI implementation
-cares about should also be documented in bindings - or at least I try to
-get them to be, where I have enough sway to have it happen..
+are available in the Git repository at:
 
-> Register fields for RISC-V system is totally different with MIPS one, and
-> there is no driver to be reused. In MIPS system CM code is highly coupled
-> with arch code, so for RISC-V if we want to expose it to kernel we'll need
-> a new set of driver and a new binding.
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.10
 
-Right, that's a reasonable reason (lol) for having it be declared as
-mips-specific.
+for you to fetch changes up to 3e8e45b65d9f3f1811c020325a306da0f01e485b:
 
-> >> +  reg:
-> >> +    description: |
-> >
-> > The | isn't needed, there's no formatting to preserve.
-> Ok.
->=20
-> >
-> >> +      Base address and size of an unoccupied memory region, which wil=
-l be
-> >> +      used to map the MIPS CM registers block.
-> >
-> > This sounds like it should actually be a memory-region that references
-> > some reserved memory, not a reg, given the description. I think the
-> > commit message here is lacking any information about what the intentions
-> > are for this binding.
-> So it's actually a register block that can be remapped to anywhere in
-> MMIO address space. DeviceTree usually passes firmware's mapping location
-> to kernel.
->=20
-> There are some other similar bindings like mti,mips-cdmm and mti,mips-cpc,
-> I just copied phraseology from them, should I try to explain it more here?
+  extcon: adc-jack: Document missing struct members (2024-05-09 01:03:39 +0900)
 
-The description that you've given here is of something that sounded
-awfully like mapping into a location in DDR etc, is it actually being
-mapped into a non-memory address?
+----------------------------------------------------------------
+Update extcon next for v6.10
 
-Thanks,
-Conor.
+Detailed description for this pull request:
+- Covert to platform remove callback with .remove_new ops
+: extcon-adc-jack.c/extcon-intel-cht-wc.c/extcon-intel-mrfld.c
+: extcon-max3355.c/extcon-max77843.c/extcon-usb-gpio.c/extcon-usbc-cros-ec.c
 
---L+OpDBD0ahnwdeqe
-Content-Type: application/pgp-signature; name="signature.asc"
+- Switch to use dev_err_prove() on extcon-intel-mrfld.c
 
------BEGIN PGP SIGNATURE-----
+- Remove unused of_gpio.h on extcon-rtk-type-c.c
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjuvzwAKCRB4tDGHoIJi
-0hWmAQDczIwGwAw6NKsPZytb5KFOytlrWSv+Tv2mAiWS/KhzmQEAhfoJKb3390mf
-xqMiTAXMuYU+iAjqyZfpWgcymnsVBQY=
-=GnaL
------END PGP SIGNATURE-----
+- Select IRQ_DOMAIN config instead of dependency for extcon-max8997.c
 
---L+OpDBD0ahnwdeqe--
+- Use returned error instead of -ENOMEM for extcon-intel-mrfld.c
+----------------------------------------------------------------
+Andy Shevchenko (3):
+      extcon: intel-mrfld: Switch to use dev_err_probe()
+      extcon: intel-mrfld: Don't shadow error from devm_extcon_dev_allocate()
+      extcon: realtek: Remove unused of_gpio.h
+
+Randy Dunlap (1):
+      extcon: max8997: select IRQ_DOMAIN instead of depending on it
+
+Uwe Kleine-König (7):
+      extcon: adc-jack: Convert to platform remove callback returning void
+      extcon: intel-cht-wc: Convert to platform remove callback returning void
+      extcon: intel-mrfld: Convert to platform remove callback returning void
+      extcon: max3355: Convert to platform remove callback returning void
+      extcon: max77843: Convert to platform remove callback returning void
+      extcon: usb-gpio: Convert to platform remove callback returning void
+      extcon: usbc-cros-ec: Convert to platform remove callback returning void
+
+Yang Li (1):
+      extcon: adc-jack: Document missing struct members
+
+ drivers/extcon/Kconfig               |  3 ++-
+ drivers/extcon/extcon-adc-jack.c     |  8 ++++----
+ drivers/extcon/extcon-intel-cht-wc.c |  6 ++----
+ drivers/extcon/extcon-intel-mrfld.c  | 26 +++++++++-----------------
+ drivers/extcon/extcon-max3355.c      |  6 ++----
+ drivers/extcon/extcon-max77843.c     |  6 ++----
+ drivers/extcon/extcon-rtk-type-c.c   |  1 -
+ drivers/extcon/extcon-usb-gpio.c     |  6 ++----
+ drivers/extcon/extcon-usbc-cros-ec.c |  6 ++----
+ 9 files changed, 25 insertions(+), 43 deletions(-)
 
