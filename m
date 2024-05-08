@@ -1,266 +1,390 @@
-Return-Path: <linux-kernel+bounces-173919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FB98C0785
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:09:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09CE58C078E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CC9A2818B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:09:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7083FB2117F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C004B57C80;
-	Wed,  8 May 2024 23:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FA113343F;
+	Wed,  8 May 2024 23:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="FTVmOisf";
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="BSF3IrN6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="hs3ZwFsX"
-Received: from mx0a-00230701.pphosted.com (mx0a-00230701.pphosted.com [148.163.156.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Iwxf4bkt"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677193A8FF;
-	Wed,  8 May 2024 23:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715209734; cv=fail; b=sMLV1fyMYG2CAwysm+BpA3A+ZytihrKv2xfPweWDLJaIntENf3QMrwtLfrFJmGqJSph9kNuBvDiQXkMd8VD01mibbDfcsotBey49g7J0/08gE8uijf6Mh6D2DcMlv7PrS5lONnlhKxLOVYW6OuZiE9Uldkhx2nZVHHbVsPs11dw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715209734; c=relaxed/simple;
-	bh=8H9vp+TmZTqa26DS39ZIGNG0oOaTetMaNAFUwyGO+7o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FZQFtBlLq1D09tovVH/y7bKaRN8oAcv0S4WZw3KTKkCEbYkJ5zpcgo7aPK8+c0znDCrjnGAYNxkSLYg1EWfJCj/ZUcJtoYVeaHpWy2f0E6dJZaS88XGsNfvsginEwNRc5lgmS/FDQGlDuW+ABwjuldM51PswtaBu4F3uq74VDWs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com; spf=pass smtp.mailfrom=synopsys.com; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=FTVmOisf; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=BSF3IrN6; dkim=fail (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=hs3ZwFsX reason="signature verification failed"; arc=fail smtp.client-ip=148.163.156.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synopsys.com
-Received: from pps.filterd (m0098571.ppops.net [127.0.0.1])
-	by mx0a-00230701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448KYv5A024274;
-	Wed, 8 May 2024 16:08:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com; h=
-	from:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-id:content-transfer-encoding:mime-version;
-	 s=pfptdkimsnps; bh=8H9vp+TmZTqa26DS39ZIGNG0oOaTetMaNAFUwyGO+7o=; b=
-	FTVmOisfVPuglzfb2DerjkhN2DSr6WtLiId9cAsIyfQnterpR3+I1jctS9LRG2sY
-	+OmxxhZCg2VBMHaCObiQaCOLU7BxnOloMXEMgHU80t/72hUBWvnKAj5wjZeKwEiF
-	IUYmUUBoAGzmrXe/rPFV6DxdBSTSqrM4Ycd7n+8xhhP9WnCHnAyxaelRXrSnr4yT
-	4aVQguh8yAf0qsdAOC/YWnFPxM1Xply4eDmlHaTEwbhDn1sraRLRA/GVIC0+6W4g
-	gvlyTSXOOTLag1zZjRtMAFki/4nsBLSBJfwgy+4IXR8mzAp8vVOUF2BXfEjhffOA
-	aCcHK/XAvOJlntrEUuLiJg==
-Received: from smtprelay-out1.synopsys.com (smtprelay-out1.synopsys.com [149.117.73.133])
-	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 3xysf3wxyd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 16:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-	t=1715209728; bh=8H9vp+TmZTqa26DS39ZIGNG0oOaTetMaNAFUwyGO+7o=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=BSF3IrN68UcuGtMkw67XoJVu4xXlRkpCdLCDM9taHL1TRmz6LuvRsuuC1lf+lALcL
-	 2ekfLNNfm7SXMbOVXlKW1UL0gymR6M9481SeRo+B5veFMJXyQkRpTsnOVt9zxNLGsC
-	 1b5exky3LNmA639KyhaYJvHTqw+G/Qz+Kog+r6uta/yRD3rGfsSXtKXBNcIbT8G+KX
-	 6HhAOwyptM1fqnFNLP6vJu0roYoQ+907JDSw6mRjVofmWlK7WnpZZ4mF26EPxrkVao
-	 kSExQ/S4p6bR/ENfK6kvJQeH3WlEDxcKlF44QuBVIS0NGUKCt0sr3GYkTKLIlf5FWv
-	 FCWqK34BoGfQQ==
-Received: from mailhost.synopsys.com (sv1-mailhost1.synopsys.com [10.205.2.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits)
-	 client-signature RSA-PSS (2048 bits))
-	(Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
-	by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5450F40407;
-	Wed,  8 May 2024 23:08:48 +0000 (UTC)
-Received: from o365relay-in.synopsys.com (sv2-o365relay3.synopsys.com [10.202.1.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (verified OK))
-	by mailhost.synopsys.com (Postfix) with ESMTPS id 0D7DBA0062;
-	Wed,  8 May 2024 23:08:47 +0000 (UTC)
-Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com;
-	dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.a=rsa-sha256 header.s=selector1 header.b=hs3ZwFsX;
-	dkim-atps=neutral
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2040.outbound.protection.outlook.com [104.47.51.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
-	by o365relay-in.synopsys.com (Postfix) with ESMTPS id 5FCF740127;
-	Wed,  8 May 2024 23:08:47 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FT4iI++JDYheoc98fNSozBRUwe+/EosJZWL1utrtzNtVvwEp4Qmqr9dWyjxbBDlHwBZ1lzn4aC7PtXDKX3+SedZ32P5+wpt4FlkthGZl4dWtcgpuLh4lw0s5RxtX5dmLAMMSczR8EkMirN0uHxcyJ3SgPbr6nCxnWIOVmEvnsRWmT7MK3mxRhNq/CtrVLAVSaAmk5HwBn+wWjln3zmniQ59yedA4uohAJRIVnjJRryR24vWYaSWfs9FkKIgUlLc9Z1n9dwg5XU4wKh/NYArrK/r+GzL7Y6Wgkb3v3b8JaMw0X1SgbA2UujUlZKNTfOq0kORsIUMHLt6muQsTTYi4Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8H9vp+TmZTqa26DS39ZIGNG0oOaTetMaNAFUwyGO+7o=;
- b=S/tCChUZXyyZ5Jy5v4PH2pnzpsIlF3hN//s/1rFIDGpUPZVPlDm81Fm2Ng6feLV08C4GTzQ5NScZveXpUbcJ80/vrXuvj/6fRgf3bLTBc4PI2Z0+a1JuP771IhBXVbxuSXanDrALoD9ITzkH0eupmnGx7hQ1WJgeQ1hkzwyEvnNAtHjRouC2lcUaIwsw8mT/dahNHzPTbkRTKWkRj362LZryfaOCkZtfCRe977jInh3oyBKEKH5szHvSfbSU3KfV0nlZnrjKraYsdHlXFtiK3cJbD7mncHhGTSYXPZ0LAPySfC36P6jmqmgHGLjvAJ8t3tn/wtSNy0jpHKK/p1yDRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8H9vp+TmZTqa26DS39ZIGNG0oOaTetMaNAFUwyGO+7o=;
- b=hs3ZwFsXISb5y2JuChoTVreHp5MrzoOZbrJqWgYGqmWQ2kfo2i8/R3TjNdVC0x3N2yH8wr5phEBcVleCXEE0BjQlPWgR1uvxoIML2oDH/P4KkhrCiyRWAu/kusOUuxsbZZCVIl5u1G1xsYOaMArykxP3OBFLdyselXeLAGrzGEg=
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16)
- by PH0PR12MB7984.namprd12.prod.outlook.com (2603:10b6:510:26f::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Wed, 8 May
- 2024 23:08:44 +0000
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::7827:b41a:c9d6:8e1d]) by LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::7827:b41a:c9d6:8e1d%7]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 23:08:43 +0000
-X-SNPS-Relay: synopsys.com
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To: Krishna Kurapati <quic_kriskura@quicinc.com>
-CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "quic_ppratap@quicinc.com" <quic_ppratap@quicinc.com>,
-        "quic_jackp@quicinc.com" <quic_jackp@quicinc.com>,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] usb: dwc3: core: Fix unused variable warning in core
- driver
-Thread-Topic: [PATCH v2] usb: dwc3: core: Fix unused variable warning in core
- driver
-Thread-Index: AQHan4oAuvANmhigA0qoHVJuTz57XbGN+j6A
-Date: Wed, 8 May 2024 23:08:43 +0000
-Message-ID: <20240508230839.utioi5i2c5kozm4d@synopsys.com>
-References: <20240506074939.1833835-1-quic_kriskura@quicinc.com>
-In-Reply-To: <20240506074939.1833835-1-quic_kriskura@quicinc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR12MB5990:EE_|PH0PR12MB7984:EE_
-x-ms-office365-filtering-correlation-id: 2fec31f9-91fe-464d-0f33-08dc6fb3cead
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?RXg0SmtDWUFXNzJNRTI3Uk9ZUStVNHZ3Rng3QlM1bHBWbVRLSjNTWEt0amlr?=
- =?utf-8?B?NzIrU0tuUVdabXUzUkxPa2dtZjJSQ2tqZTc5UEY2akJmZFMxb0ZzSEZmUmlL?=
- =?utf-8?B?R2szdHc0NnZvNjBjR0ZucGpIS3BrWGttSzdRbmdjcFNZdk1sRGVzekticUlV?=
- =?utf-8?B?a0xFdzZLOFpFNGt6R0hEeEphL0VkNlFUdlB4bU5tZUZBcmZHR2h4S3I1eEds?=
- =?utf-8?B?MWs2T1BwZFhuTHJPQU82NmM1TFZSdHpLMEJ5ZEtnRFMrZGZPeWN3MXExWnFV?=
- =?utf-8?B?cEJ6bzA3WGpLMk9Fc1JLREl2YktyV3BYeWN3ZVAvNUVWcDQ1cldVRUZZcnly?=
- =?utf-8?B?UDNNOUppT3lIbFVjSGxPOE5YdXpvb3cwZnFleEJwamQ5TFR0eGRpa21xcTN6?=
- =?utf-8?B?ZVpnbWRkSXV0UTk0VEpMc0lTNkNmUjdjYU1EVEFDQWpVVHc4N3NyRWEyUkpu?=
- =?utf-8?B?eUFtMGl1STl6RmRYSGVDMnBRdG9YdDQ2QThmNE9IQUlYRzYvYlV4YVFWMEJS?=
- =?utf-8?B?cFpJLzJOUGtYQXNSSU9vNlh4RWoxeDd2KzRMMTNoWGhpbkN1THllem4rVDh0?=
- =?utf-8?B?TnMvTGdINmlvRlNLY0tWN3daZHYwSWF1THJ1ZDJZRzVuY092eGtURDFBUFcz?=
- =?utf-8?B?dU9GV2JxNVBoaXFhNWxob01iZnBwQW1lQ2RsTzg4c0dWWWc2N254bnVjTnFC?=
- =?utf-8?B?U29sNzNqOEt1Uk05eE03cytGczE3bXRreVpOTWdFbTViOGRjOVVHbEVDMU13?=
- =?utf-8?B?Vkhoc2hVdmVlWDFSQWdtVzdIdzVkblYvYitoOCtHeERuUDBYdGt2YUhoejZ2?=
- =?utf-8?B?Y3duK0k5YWVzUW9MeDlQc0lqOUZqbDE5UW9OT3luYUNjblRIYVA0QU5oN2lu?=
- =?utf-8?B?Y0Y5QmhZd0RSbHhDazlnL0tUazMzKzlQT1pJYmt0RXZsUE9YMEtMMGNGSU5V?=
- =?utf-8?B?U2NxSlM1RnRIYUl1QU1ucmlZVkpER3IrNmJtdm9ydkh3dWtmNU4xa012eU94?=
- =?utf-8?B?K3JyU1k1NGlObDExeHVOV2hFcUF0Q0VjK2tpNFNBMVBnVlJjVzJubE9TSWY3?=
- =?utf-8?B?VGFZMGx0dzZwTnFWeSt3ZXVOUUEybm1jMjJBNDZVdXpCUmdDczNxSmNDMW1U?=
- =?utf-8?B?ZWZlQm5qUnc5U1c0Rmk4cGZCNE1lby9Nb2xkZUh2dFB1c1lmcU0xNDZnRk5M?=
- =?utf-8?B?TFQ4aUpvZEluRkZsYWF2YzJMWGMxVWNOb05HQ1J1RmVyS1dhN25DT0s3c2Zn?=
- =?utf-8?B?OEZEZUxpa2kwSFVQM3d1VjhBWjJBWHhERE9DSXBSWDN1UE9PU0ZMSHE1R0ky?=
- =?utf-8?B?eGd1Y01KM3FzVVhFTTV6UzRpRHlDV3dQdS9CWTdaUm9uNHhpVGdIeGFFdlBN?=
- =?utf-8?B?Vjl1aGtmb1IwL1VyTlF5SW9rbDJVTWQrQ0YwOG5ZN1ZDYTByeW1oYWFIREor?=
- =?utf-8?B?MlZWSUZ3cWZOT2FRVGRTeDd0MVg5c3ZqOEl1bi81UGVWTjRlMGJpckZ0QnlP?=
- =?utf-8?B?VEdJS2FqVzVHUEU0Q1ZuNlRrT3NZempoTGIrRW5KTUs3TWNLUFJ3OFhNTzlP?=
- =?utf-8?B?VGtpMXlXeFBFMW5CV1hQYkRDVm5ka1J6U0VkOUJ1b3JLNFFHRkZGdGlIVnFZ?=
- =?utf-8?B?M2UwTjkvenRTNXkxYUo3VHNISDhxc1A3Wk9VcnQ0QXh2TDJrQisvb3lQTHVy?=
- =?utf-8?B?bjlIV0IyT2xuUXh5Y1g3RGdqcDNjaXpsQVk4dHlLeUNSUGI3ajgvbTVBPT0=?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?cTU2UjVZYWw4ank5N05ySW5rRktRVTBIRmFITzBwNm14VEphZlBIK0NaQlJP?=
- =?utf-8?B?cmZTanUybGJQYnFVL1Mrd1JsTUFDYUJVeER4aTRaeUZaMFhsNFFHL3QvZDdR?=
- =?utf-8?B?WkxJZC9hMURXRmxnL2VqSVVPdm9ab1RKLzhQT250VDRPSGtDT1RRajNhekJJ?=
- =?utf-8?B?ZWlZWkhYRjRBZlZtdWlMVCtobGJtby90bVNSclp6YjBSYm5VM2VxZXVRSXhx?=
- =?utf-8?B?WHk1N2xXREpxeGNXYTA5WEFkRlJES0Z6MWFDN2l6SnFDdFdJQTR2d28xZk5s?=
- =?utf-8?B?S0crdHdIMGVybXc0YjV6VzJIUjFuNFN5S0luMmVLbXFSZ1RhVU96SzFDZSt2?=
- =?utf-8?B?RzJVaUhCbUppY1VETUNWRHNJRVVGNExHRjUwZmhtQysrS3ZtUUhjOHdkU0hl?=
- =?utf-8?B?QlZtK3BvQ01xQkNFejVMa2FQdlVPS05kQllOY3RERzBsWm51czBSVkEwYlV1?=
- =?utf-8?B?aVJXYU93bEpoSUxLci9ERFhpUDZuQ2l0ZFNVQnhBYXIzNGZwd1hCc3RJcm1w?=
- =?utf-8?B?MFRLZ2taalVHWVZ6ckJ5VjNFOVo5b01JNlV2Qmk3Uzl4clVGVGJlcDdrUWhk?=
- =?utf-8?B?bHQ1Mzlmbk1mcitvMjBVelJQMlR0b0hLRVdvWW5qMGNhd2R1TnVEVjRCbXE3?=
- =?utf-8?B?ODdWYkZSUDRHVXZYYmVOU2NTOVBVMWpSeTRwdFdJVnZ3bzBxbURqa1FoWlMy?=
- =?utf-8?B?dHNJaGJTZkhXNFJZb1pQZXVoMUhPdGxiejFBQTBLdXI0Yk1MSlA0d255Q1lO?=
- =?utf-8?B?dTM2ejVuQkQxcGhxRjI2YXoxUmp0U2MydkRvYjhrQWVpYjRSNldFb3NZL0pa?=
- =?utf-8?B?SHE1d2ZaTFRkTkhpRHBLUms5S1BEUXVFMjFreWFHbVI1ZTFXVkh2ekFFR1Uy?=
- =?utf-8?B?eDZVM1dKZVNyd2ZtRDhYbktGUkgzUEQzOVRETkZwYXd2NGtWRGFKV2VqNEhY?=
- =?utf-8?B?VWg2RkxkWGY0MG1pMEozUm4rMXRZSG1HSGRjc1V5WEVpWUVnNkNuTlNHZnE3?=
- =?utf-8?B?algrTUJjY1hGUFlUUWp1YmREa21Bbnp6VTV3aldWaklPeEIrbjhkaUNobUVr?=
- =?utf-8?B?WFR1cklmbUlQa1FLM0d5b0xpUnlidVZ2YUg3NGNuaWxYdG5oblBGMWE3V0Vh?=
- =?utf-8?B?TXRDcERjSjg1bEdJbStTMWVvbnUvbHNsajM2RzhLdUcwemJucWhqYjZxL2dU?=
- =?utf-8?B?cjNKeTlpSlJFQlhKT2JFb0piNEM2YmdGVlhrdmtpaTlxSUxRL2VRSTBoZU1G?=
- =?utf-8?B?b29KVjMwd0FzbWJNOHZ2T1RMK1FFK2h6M1hnYmNKWTh0Y0JScGhaenhRdDJY?=
- =?utf-8?B?MGs0OU1hV051R2RteVBHNnFSY0ZLbXpPYWkzZFNQNFgraElhQlpRY25adHIz?=
- =?utf-8?B?Q3U0TG1MWGFyNkd5TWl3OHJXQ1RyV3owZzBEazVPQ3QreUxzZk8ycHRSM3Q4?=
- =?utf-8?B?RTJuK0xid3FSMnhzUk4velBPcUpzalRLa1FyelRXcCt5blVJNmFPK2NNV0RS?=
- =?utf-8?B?dk9EMFVCeHFmYk9HSDFTbEpnSGlMNDZQa0cxL0xCellGVlJZZ2NPU25VWFV1?=
- =?utf-8?B?OXlReXJrK050eHVVZ2x1VVMrN1J4TElHdktkdTEyZUJLSU5tMEwwamVzUVNG?=
- =?utf-8?B?cTBmS2RFZ1M1SCtEU3FFUm5TQkpkTllEQzlFWHZOZVhxVCsxNjJRNkdEdW8z?=
- =?utf-8?B?b0prVkhieUlUZUZkVCtaamlxcnN5eitoYjJ6NXF0ZEJuL25CS0JxQitXNndh?=
- =?utf-8?B?eFdnQ3B2VXBzUmUzczlzVTZmc3FZajBTdkNEZDIxcmxESE9TODhSejFmNGx3?=
- =?utf-8?B?UTVsdzdkR2JGMUhueEhnUWtnTy8rWlhZZjJ3S0J4VnFTenRPbFl1VFZRMm14?=
- =?utf-8?B?aUdlbWJBZ3JuNmY4RkVTOFBhRmgvUWtOOWdQK0QzMGFNbVNRajJPWHBHQ2o0?=
- =?utf-8?B?NHRjTzBqVm1Sek82WUdsOENUWlhBUWduc1lUNEQxVmV0NVhjcWFnbzRiQlMx?=
- =?utf-8?B?L3BvT0xnV3AwZklvTlJlcHZPTkYvLzBmYkJoM2FWWWxiOHJJRTlmVVdPYklX?=
- =?utf-8?B?KzUxUVgreWdwTDdCRUFpcWV5d1F4NHVXTUdQNVlYWUtvaU9sNjYxdTBsdmtp?=
- =?utf-8?B?MlJsamRDcGRzeGZZamI0blMrcG9jYzJ1b21QN0N0d1Nsemh4NTVxT3R2aFh3?=
- =?utf-8?B?K2c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C13CFE560F34704E9903A32BDB8366C7@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CE04F5EC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715209831; cv=none; b=dDNqTibqdx4a2iILJwIpQc8UGEo8wqclZPUqhstPWgq32DwqbIZ+IdKd+8d7GyjDwQf6gF+O7ayUNdoRWk5S/p2cBuGc+GgtLM9z9jQm5mIrxyYWfnT8VP2bl/p7e+0tKL8SmLbDRCDAyE5lT5NkS6ccNj6Vc0Qawl5l3OBRQbM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715209831; c=relaxed/simple;
+	bh=GLERfbMnsmuFAuMuxywN9iF9fGY0EwPrTh8sSjCh724=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZaMoAsy0x8VBGsw+z8ZQmsxkcwOJwG5aA4yWBhevYmMvOty3aLO/l0O9j4E+S9w3adzOUqJmvEvDg2pyMFvLFNI+mUkFQPBd0bUuh39LU2fGmzhQ51iFUxfV/icqcf9WrSrXbKjIb6J7CuB+FMYV2oRoeLPfsBpJ5DkXukA6z1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Iwxf4bkt; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-36c2cf463e3so241175ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:10:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1715209828; x=1715814628; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xLnlpoMndJv6kXCz+FbZOexc9v1XQ4k/KtWuckbio3c=;
+        b=Iwxf4bktbwUVJx1SVqOyYZgiC3xjRaHoWQbFDzoFSVtJcrruuQ175G6cdb+cZHYURL
+         0/47qBcikRMUvFGRmRJVnDC6TSRjbuyQSTPQBGyq2fp0XIM1NNgiWnKU9TcLiYXVcO1s
+         +2dDcJAiDScGDIug8CCQdqyC+mkoZkE3IxZqc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715209828; x=1715814628;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLnlpoMndJv6kXCz+FbZOexc9v1XQ4k/KtWuckbio3c=;
+        b=q/KDYl1dJuYtbUHjIRtvAG8vq+/3sPYZlFJDJDNwLh2ieRkleIMW0sehtv/l3s3dPb
+         iBN5UdzUDNwwV3xmpNIhNgt5Uod4vFJdKavaJ+aJV3TwJbUE5MhAzLVS2rY5kx5JXcDf
+         yqJUI6OnJOfc5TanAaVev6TgUZdcOWW51+JHGu+H4s2amMRu01dL7Wi3xLwvaCLF2A2/
+         EQPOVBM9XPZThjchzIUiWEyQbH71GqLsLoQHlcaRo1fTZ637317GNFPGUIxeHj0518HK
+         SFzOzDMC0NOICzFB9QQvv6t1Bx0i6xE0Shmi6nD7jGCyLMVwQnrCzsKpxY057306HqAv
+         cavA==
+X-Gm-Message-State: AOJu0YwrnG0Adf9xQFJXERJgY/EvZ/BIjUyHoz2j20Xbbr9aBLXp36HU
+	HywRJ+XMAwbbDIVWyQ3/jnyX+AcxRm6pp5p7VVh8aVqeDuXZM7uLChEyvBubwAM=
+X-Google-Smtp-Source: AGHT+IGjHhKKM24ZUFIVswkuYx3QwGN8iZAP+skToQSUH9ATxlCCLFZFt3zeJLulXQKSKo0MDx46iA==
+X-Received: by 2002:a05:6e02:2193:b0:369:f53b:6c2 with SMTP id e9e14a558f8ab-36caecc858bmr42995245ab.1.1715209827936;
+        Wed, 08 May 2024 16:10:27 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-36cb9e08d92sm170485ab.54.2024.05.08.16.10.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 16:10:27 -0700 (PDT)
+Message-ID: <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
+Date: Wed, 8 May 2024 17:10:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	Y1oem9eL+KPzVT5+F/vUvGhUwTc4RN9jpb1dcyZ53b320qnlFNp3VIlwJEpcxWcq7ew/wk0pHujcSM1Z2eFehadmiji6WkcrceDpv13yPHtadOou/xb3E7DV+YwA+T/dGytJrzXBvz3lVGHMe57Lc49jleJRVe7DuW4ExeYO2ZMuu2XBBfeiyvkOCC9PtAwFlXTucqpMxDinXWp9B1LAiKjBozBXrsBWhelwn2iD3eZbG6/OWT81vDJrYzFzb7wD1emGkLAShbJVL86GjDkKcUkN+R/ESkmL6dSfkVJeaWoYl5GWb2OFCR2V7UkScaiYVmTDCnszcT/xFUONXcWDXVaVhrxdMIup/XOLLCqVtd/5f2dSA2W7qXoHFIdjrWKVOwBiPOyyOFp5DjEJYqjaGMUbsK8vfkVDPoy4V4pdWKHaEPmXz7MVW4gX0xmEqHr+iFVuvMakfKL86l/ppHWhspPhfgGomnrll8oLCF0OUoJrcaBZROWHqZEbbYQZ0o7GIElaFqnsqW75KbPGlNFux5bJuiC7/3Wac8Wx1jQVO93hj4v7yejohHEV3HSWtI62VRXz9098nhvvZRjYKfmKkxIl5oMe5f/J5k5WGuoj4c+qQ1/3OrChp5DpVLzUajXq1rdF0QGOSlI6L/KqnuUHrg==
-X-OriginatorOrg: synopsys.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2fec31f9-91fe-464d-0f33-08dc6fb3cead
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2024 23:08:43.7005
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: N9/9957P/kupRwsv2Mo3C/d8xi6joQ3EESMGa9ws615VF65iIhQ0SUENEput4bJUV5ZtwyKgCOi0nwG4hrbF6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7984
-X-Proofpoint-GUID: iPYjoR4edLHvE9fgTf0uh62kN0AQque2
-X-Proofpoint-ORIG-GUID: iPYjoR4edLHvE9fgTf0uh62kN0AQque2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_active_cloned_notspam policy=outbound_active_cloned score=0
- clxscore=1011 malwarescore=0 mlxlogscore=663 lowpriorityscore=0
- impostorscore=0 suspectscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- mlxscore=0 spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405010000 definitions=main-2405080173
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Christian Brauner
+ <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
+ Kees Cook <keescook@chromium.org>,
+ OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
+ Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
+ Atish Patra <atishp@atishpatra.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
+ <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
+ <afaerber@suse.de>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Fenghua Yu <fenghua.yu@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, linux-sound@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+ linux-input@vger.kernel.org, iommu@lists.linux.dev, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+ linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240507214254.2787305-1-edliaw@google.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240507214254.2787305-1-edliaw@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-T24gTW9uLCBNYXkgMDYsIDIwMjQsIEtyaXNobmEgS3VyYXBhdGkgd3JvdGU6DQo+IFdoaWxlIGZp
-eGluZyBhIG1lcmdlIGNvbmZsaWN0IGluIGxpbnV4LW5leHQsIGh3X21vZGUgdmFyaWFibGUNCj4g
-d2FzIGxlZnQgdW51c2VkLiBSZW1vdmUgdGhlIHVudXNlZCB2YXJpYWJsZSBpbiBoc19waHlfc2V0
-dXAgY2FsbC4NCj4gDQo+IFJlcG9ydGVkLWJ5OiBrZXJuZWwgdGVzdCByb2JvdCA8bGtwQGludGVs
-LmNvbT4NCj4gQ2xvc2VzOiBodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19faHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvYWxsLzIwMjQwNTAzMDQzOS5BSDhOUjBNZy1sa3BAaW50ZWwuY29tL19fOyEh
-QTRGMlI5R19wZyFhWE4xNHR2a3Z3bk5aOU44LUVEaS1TZWVmOWpnWkJLbGtaUllhc0lOUmdUT1Uy
-aWpXYlR2Rkl4a1pJWE9UaEdRUUhtWGMwRmppSlBGSTFjZ2RDT3lBYWZBeEItNzBRJCANCj4gU2ln
-bmVkLW9mZi1ieTogS3Jpc2huYSBLdXJhcGF0aSA8cXVpY19rcmlza3VyYUBxdWljaW5jLmNvbT4N
-Cj4gLS0tDQo+IENoYW5nZXMgaW4gdjI6DQo+IEFkZGVkIHJlcG9ydGVkIGJ5IGFuZCBjbG9zZXMg
-dGFncy4NCj4gDQo+ICBkcml2ZXJzL3VzYi9kd2MzL2NvcmUuYyB8IDMgLS0tDQo+ICAxIGZpbGUg
-Y2hhbmdlZCwgMyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9k
-d2MzL2NvcmUuYyBiL2RyaXZlcnMvdXNiL2R3YzMvY29yZS5jDQo+IGluZGV4IDhiNmY3NzY5ZmNk
-NS4uN2YxNzZiYTI1MzU0IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3VzYi9kd2MzL2NvcmUuYw0K
-PiArKysgYi9kcml2ZXJzL3VzYi9kd2MzL2NvcmUuYw0KPiBAQCAtNjc2LDExICs2NzYsOCBAQCBz
-dGF0aWMgaW50IGR3YzNfc3NfcGh5X3NldHVwKHN0cnVjdCBkd2MzICpkd2MsIGludCBpbmRleCkN
-Cj4gIA0KPiAgc3RhdGljIGludCBkd2MzX2hzX3BoeV9zZXR1cChzdHJ1Y3QgZHdjMyAqZHdjLCBp
-bnQgaW5kZXgpDQo+ICB7DQo+IC0JdW5zaWduZWQgaW50IGh3X21vZGU7DQo+ICAJdTMyIHJlZzsN
-Cj4gIA0KPiAtCWh3X21vZGUgPSBEV0MzX0dIV1BBUkFNUzBfTU9ERShkd2MtPmh3cGFyYW1zLmh3
-cGFyYW1zMCk7DQo+IC0NCj4gIAlyZWcgPSBkd2MzX3JlYWRsKGR3Yy0+cmVncywgRFdDM19HVVNC
-MlBIWUNGRyhpbmRleCkpOw0KPiAgDQo+ICAJLyogU2VsZWN0IHRoZSBIUyBQSFkgaW50ZXJmYWNl
-ICovDQo+IC0tIA0KPiAyLjM0LjENCj4gDQoNCkxvb2tzIGxpa2UgbXkgcmVzcG9uc2UgcmVwb3J0
-aW5nIHRoZSBtZXJnZSBpc3N1ZSB0byBTdGVwaGVuIGZlbGwgdGhyb3VnaA0KdGhlIGNyYWNrcy4N
-Cg0KVGhhbmtzIGZvciB0aGUgcGF0Y2guDQoNCkFja2VkLWJ5OiBUaGluaCBOZ3V5ZW4gPFRoaW5o
-Lk5ndXllbkBzeW5vcHN5cy5jb20+DQoNCkJSLA0KVGhpbmg=
+On 5/7/24 15:38, Edward Liaw wrote:
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
+> 
+> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
+> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+> location.  Remove #define _GNU_SOURCE from source code to resolve
+> redefinition warnings.
+> 
+> Edward Liaw (5):
+>    selftests: Compile kselftest headers with -D_GNU_SOURCE
+>    selftests/sgx: Include KHDR_INCLUDES in Makefile
+
+I appled patches 1/5 and 2.5 - The rest need to be split up.
+
+>    selftests: Include KHDR_INCLUDES in Makefile
+>    selftests: Drop define _GNU_SOURCE
+>    selftests: Drop duplicate -D_GNU_SOURCE
+> 
+
+Please split these patches pwe test directory. Otherwise it will
+cause merge conflicts which can be hard to resolve.
+
+>   tools/testing/selftests/Makefile                              | 4 ++--
+>   tools/testing/selftests/alsa/Makefile                         | 2 +-
+>   tools/testing/selftests/arm64/signal/Makefile                 | 2 +-
+>   tools/testing/selftests/cachestat/test_cachestat.c            | 2 --
+>   tools/testing/selftests/capabilities/test_execve.c            | 2 --
+>   tools/testing/selftests/clone3/clone3.c                       | 2 --
+>   .../testing/selftests/clone3/clone3_cap_checkpoint_restore.c  | 2 --
+>   tools/testing/selftests/clone3/clone3_clear_sighand.c         | 2 --
+>   tools/testing/selftests/clone3/clone3_selftests.h             | 1 -
+>   tools/testing/selftests/clone3/clone3_set_tid.c               | 2 --
+>   tools/testing/selftests/core/close_range_test.c               | 2 --
+>   tools/testing/selftests/drivers/dma-buf/udmabuf.c             | 1 -
+>   tools/testing/selftests/exec/Makefile                         | 2 +-
+>   tools/testing/selftests/fchmodat2/fchmodat2_test.c            | 2 --
+>   tools/testing/selftests/filesystems/binderfs/binderfs_test.c  | 2 --
+>   tools/testing/selftests/filesystems/devpts_pts.c              | 1 -
+>   tools/testing/selftests/filesystems/dnotify_test.c            | 1 -
+>   tools/testing/selftests/filesystems/epoll/epoll_wakeup_test.c | 2 --
+>   tools/testing/selftests/filesystems/eventfd/eventfd_test.c    | 2 --
+>   tools/testing/selftests/filesystems/fat/rename_exchange.c     | 2 --
+>   tools/testing/selftests/filesystems/overlayfs/Makefile        | 2 +-
+>   tools/testing/selftests/filesystems/overlayfs/dev_in_maps.c   | 2 --
+>   .../testing/selftests/filesystems/statmount/statmount_test.c  | 3 ---
+>   tools/testing/selftests/futex/functional/Makefile             | 2 +-
+>   tools/testing/selftests/futex/functional/futex_requeue_pi.c   | 3 ---
+>   tools/testing/selftests/hid/Makefile                          | 2 +-
+>   tools/testing/selftests/iommu/Makefile                        | 2 --
+>   tools/testing/selftests/ipc/msgque.c                          | 1 -
+>   tools/testing/selftests/kcmp/kcmp_test.c                      | 2 --
+>   tools/testing/selftests/kselftest_harness.h                   | 2 +-
+>   tools/testing/selftests/kvm/aarch64/arch_timer.c              | 2 --
+>   tools/testing/selftests/kvm/aarch64/page_fault_test.c         | 1 -
+>   tools/testing/selftests/kvm/aarch64/psci_test.c               | 3 ---
+>   tools/testing/selftests/kvm/aarch64/vgic_init.c               | 1 -
+>   tools/testing/selftests/kvm/arch_timer.c                      | 3 ---
+>   tools/testing/selftests/kvm/demand_paging_test.c              | 3 ---
+>   tools/testing/selftests/kvm/dirty_log_test.c                  | 3 ---
+>   tools/testing/selftests/kvm/guest_memfd_test.c                | 2 --
+>   tools/testing/selftests/kvm/hardware_disable_test.c           | 3 ---
+>   tools/testing/selftests/kvm/include/userfaultfd_util.h        | 3 ---
+>   tools/testing/selftests/kvm/kvm_binary_stats_test.c           | 2 --
+>   tools/testing/selftests/kvm/kvm_create_max_vcpus.c            | 2 --
+>   tools/testing/selftests/kvm/kvm_page_table_test.c             | 3 ---
+>   tools/testing/selftests/kvm/lib/assert.c                      | 3 ---
+>   tools/testing/selftests/kvm/lib/kvm_util.c                    | 2 --
+>   tools/testing/selftests/kvm/lib/memstress.c                   | 2 --
+>   tools/testing/selftests/kvm/lib/test_util.c                   | 2 --
+>   tools/testing/selftests/kvm/lib/userfaultfd_util.c            | 3 ---
+>   tools/testing/selftests/kvm/lib/x86_64/sev.c                  | 1 -
+>   tools/testing/selftests/kvm/max_guest_memory_test.c           | 2 --
+>   .../testing/selftests/kvm/memslot_modification_stress_test.c  | 3 ---
+>   tools/testing/selftests/kvm/riscv/arch_timer.c                | 3 ---
+>   tools/testing/selftests/kvm/rseq_test.c                       | 1 -
+>   tools/testing/selftests/kvm/s390x/cmma_test.c                 | 2 --
+>   tools/testing/selftests/kvm/s390x/sync_regs_test.c            | 2 --
+>   tools/testing/selftests/kvm/set_memory_region_test.c          | 1 -
+>   tools/testing/selftests/kvm/steal_time.c                      | 1 -
+>   tools/testing/selftests/kvm/x86_64/amx_test.c                 | 2 --
+>   .../selftests/kvm/x86_64/exit_on_emulation_failure_test.c     | 3 ---
+>   tools/testing/selftests/kvm/x86_64/hwcr_msr_test.c            | 2 --
+>   tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c             | 2 --
+>   tools/testing/selftests/kvm/x86_64/hyperv_evmcs.c             | 1 -
+>   tools/testing/selftests/kvm/x86_64/hyperv_ipi.c               | 2 --
+>   tools/testing/selftests/kvm/x86_64/hyperv_svm_test.c          | 1 -
+>   tools/testing/selftests/kvm/x86_64/hyperv_tlb_flush.c         | 2 --
+>   tools/testing/selftests/kvm/x86_64/nested_exceptions_test.c   | 2 --
+>   tools/testing/selftests/kvm/x86_64/nx_huge_pages_test.c       | 3 ---
+>   tools/testing/selftests/kvm/x86_64/platform_info_test.c       | 2 --
+>   tools/testing/selftests/kvm/x86_64/pmu_counters_test.c        | 2 --
+>   tools/testing/selftests/kvm/x86_64/pmu_event_filter_test.c    | 3 ---
+>   .../selftests/kvm/x86_64/private_mem_conversions_test.c       | 1 -
+>   tools/testing/selftests/kvm/x86_64/set_boot_cpu_id.c          | 1 -
+>   tools/testing/selftests/kvm/x86_64/set_sregs_test.c           | 1 -
+>   .../selftests/kvm/x86_64/smaller_maxphyaddr_emulation_test.c  | 3 ---
+>   tools/testing/selftests/kvm/x86_64/smm_test.c                 | 1 -
+>   tools/testing/selftests/kvm/x86_64/state_test.c               | 1 -
+>   tools/testing/selftests/kvm/x86_64/sync_regs_test.c           | 2 --
+>   tools/testing/selftests/kvm/x86_64/ucna_injection_test.c      | 2 --
+>   tools/testing/selftests/kvm/x86_64/userspace_msr_exit_test.c  | 2 --
+>   tools/testing/selftests/kvm/x86_64/vmx_dirty_log_test.c       | 3 ---
+>   tools/testing/selftests/kvm/x86_64/vmx_pmu_caps_test.c        | 1 -
+>   .../testing/selftests/kvm/x86_64/vmx_preemption_timer_test.c  | 1 -
+>   tools/testing/selftests/kvm/x86_64/xapic_ipi_test.c           | 2 --
+>   tools/testing/selftests/kvm/x86_64/xapic_state_test.c         | 1 -
+>   tools/testing/selftests/kvm/x86_64/xss_msr_test.c             | 2 --
+>   tools/testing/selftests/landlock/base_test.c                  | 2 --
+>   tools/testing/selftests/landlock/fs_test.c                    | 2 --
+>   tools/testing/selftests/landlock/net_test.c                   | 2 --
+>   tools/testing/selftests/landlock/ptrace_test.c                | 2 --
+>   tools/testing/selftests/lib.mk                                | 2 +-
+>   tools/testing/selftests/lsm/common.c                          | 2 --
+>   tools/testing/selftests/lsm/lsm_get_self_attr_test.c          | 2 --
+>   tools/testing/selftests/lsm/lsm_list_modules_test.c           | 2 --
+>   tools/testing/selftests/lsm/lsm_set_self_attr_test.c          | 2 --
+>   tools/testing/selftests/membarrier/membarrier_test_impl.h     | 1 -
+>   .../selftests/membarrier/membarrier_test_multi_thread.c       | 1 -
+>   .../selftests/membarrier/membarrier_test_single_thread.c      | 1 -
+>   tools/testing/selftests/memfd/common.c                        | 1 -
+>   tools/testing/selftests/memfd/fuse_test.c                     | 2 --
+>   tools/testing/selftests/memfd/memfd_test.c                    | 1 -
+>   tools/testing/selftests/mm/cow.c                              | 1 -
+>   tools/testing/selftests/mm/gup_longterm.c                     | 1 -
+>   tools/testing/selftests/mm/hugepage-mmap.c                    | 1 -
+>   tools/testing/selftests/mm/hugepage-mremap.c                  | 2 --
+>   tools/testing/selftests/mm/hugetlb-madvise.c                  | 2 --
+>   tools/testing/selftests/mm/hugetlb-read-hwpoison.c            | 2 --
+>   tools/testing/selftests/mm/khugepaged.c                       | 1 -
+>   tools/testing/selftests/mm/ksm_functional_tests.c             | 1 -
+>   tools/testing/selftests/mm/madv_populate.c                    | 1 -
+>   tools/testing/selftests/mm/map_populate.c                     | 2 --
+>   tools/testing/selftests/mm/mdwe_test.c                        | 1 -
+>   tools/testing/selftests/mm/memfd_secret.c                     | 2 --
+>   tools/testing/selftests/mm/mlock2-tests.c                     | 1 -
+>   tools/testing/selftests/mm/mrelease_test.c                    | 1 -
+>   tools/testing/selftests/mm/mremap_dontunmap.c                 | 1 -
+>   tools/testing/selftests/mm/mremap_test.c                      | 2 --
+>   tools/testing/selftests/mm/pagemap_ioctl.c                    | 1 -
+>   tools/testing/selftests/mm/pkey-helpers.h                     | 1 -
+>   tools/testing/selftests/mm/protection_keys.c                  | 1 -
+>   tools/testing/selftests/mm/split_huge_page_test.c             | 2 --
+>   tools/testing/selftests/mm/thuge-gen.c                        | 2 --
+>   tools/testing/selftests/mm/uffd-common.h                      | 1 -
+>   tools/testing/selftests/mount_setattr/mount_setattr_test.c    | 1 -
+>   .../move_mount_set_group/move_mount_set_group_test.c          | 1 -
+>   tools/testing/selftests/nci/Makefile                          | 2 +-
+>   tools/testing/selftests/net/af_unix/diag_uid.c                | 2 --
+>   tools/testing/selftests/net/af_unix/scm_pidfd.c               | 1 -
+>   tools/testing/selftests/net/af_unix/unix_connect.c            | 2 --
+>   tools/testing/selftests/net/csum.c                            | 3 ---
+>   tools/testing/selftests/net/gro.c                             | 3 ---
+>   tools/testing/selftests/net/ip_defrag.c                       | 3 ---
+>   tools/testing/selftests/net/ipsec.c                           | 3 ---
+>   tools/testing/selftests/net/ipv6_flowlabel.c                  | 3 ---
+>   tools/testing/selftests/net/ipv6_flowlabel_mgr.c              | 3 ---
+>   tools/testing/selftests/net/mptcp/mptcp_connect.c             | 3 ---
+>   tools/testing/selftests/net/mptcp/mptcp_inq.c                 | 3 ---
+>   tools/testing/selftests/net/mptcp/mptcp_sockopt.c             | 3 ---
+>   tools/testing/selftests/net/msg_zerocopy.c                    | 3 ---
+>   tools/testing/selftests/net/nettest.c                         | 2 --
+>   tools/testing/selftests/net/psock_fanout.c                    | 3 ---
+>   tools/testing/selftests/net/psock_snd.c                       | 3 ---
+>   tools/testing/selftests/net/reuseport_addr_any.c              | 3 ---
+>   tools/testing/selftests/net/reuseport_bpf_cpu.c               | 3 ---
+>   tools/testing/selftests/net/reuseport_bpf_numa.c              | 3 ---
+>   tools/testing/selftests/net/reuseport_dualstack.c             | 3 ---
+>   tools/testing/selftests/net/so_incoming_cpu.c                 | 1 -
+>   tools/testing/selftests/net/so_netns_cookie.c                 | 1 -
+>   tools/testing/selftests/net/so_txtime.c                       | 3 ---
+>   tools/testing/selftests/net/tap.c                             | 3 ---
+>   tools/testing/selftests/net/tcp_ao/Makefile                   | 2 +-
+>   tools/testing/selftests/net/tcp_fastopen_backup_key.c         | 1 -
+>   tools/testing/selftests/net/tcp_inq.c                         | 2 --
+>   tools/testing/selftests/net/tcp_mmap.c                        | 1 -
+>   tools/testing/selftests/net/tls.c                             | 3 ---
+>   tools/testing/selftests/net/toeplitz.c                        | 3 ---
+>   tools/testing/selftests/net/tun.c                             | 3 ---
+>   tools/testing/selftests/net/txring_overwrite.c                | 3 ---
+>   tools/testing/selftests/net/txtimestamp.c                     | 3 ---
+>   tools/testing/selftests/net/udpgso.c                          | 3 ---
+>   tools/testing/selftests/net/udpgso_bench_rx.c                 | 3 ---
+>   tools/testing/selftests/net/udpgso_bench_tx.c                 | 3 ---
+>   tools/testing/selftests/perf_events/remove_on_exec.c          | 2 --
+>   tools/testing/selftests/perf_events/sigtrap_threads.c         | 2 --
+>   tools/testing/selftests/pid_namespace/regression_enomem.c     | 1 -
+>   tools/testing/selftests/pidfd/pidfd.h                         | 1 -
+>   tools/testing/selftests/pidfd/pidfd_fdinfo_test.c             | 2 --
+>   tools/testing/selftests/pidfd/pidfd_getfd_test.c              | 2 --
+>   tools/testing/selftests/pidfd/pidfd_open_test.c               | 2 --
+>   tools/testing/selftests/pidfd/pidfd_poll_test.c               | 2 --
+>   tools/testing/selftests/pidfd/pidfd_setns_test.c              | 2 --
+>   tools/testing/selftests/pidfd/pidfd_test.c                    | 2 --
+>   tools/testing/selftests/pidfd/pidfd_wait.c                    | 2 --
+>   tools/testing/selftests/prctl/Makefile                        | 2 ++
+>   tools/testing/selftests/proc/Makefile                         | 2 +-
+>   tools/testing/selftests/ptrace/get_set_sud.c                  | 1 -
+>   tools/testing/selftests/ptrace/peeksiginfo.c                  | 1 -
+>   tools/testing/selftests/resctrl/Makefile                      | 2 +-
+>   tools/testing/selftests/riscv/mm/Makefile                     | 2 +-
+>   tools/testing/selftests/rseq/basic_percpu_ops_test.c          | 1 -
+>   tools/testing/selftests/rseq/basic_test.c                     | 2 --
+>   tools/testing/selftests/rseq/param_test.c                     | 1 -
+>   tools/testing/selftests/rseq/rseq.c                           | 2 --
+>   tools/testing/selftests/rtc/Makefile                          | 2 +-
+>   tools/testing/selftests/seccomp/seccomp_benchmark.c           | 1 -
+>   tools/testing/selftests/seccomp/seccomp_bpf.c                 | 2 --
+>   tools/testing/selftests/sgx/Makefile                          | 2 +-
+>   tools/testing/selftests/sgx/sigstruct.c                       | 1 -
+>   tools/testing/selftests/tmpfs/Makefile                        | 2 +-
+>   tools/testing/selftests/user_events/abi_test.c                | 2 --
+>   tools/testing/selftests/x86/amx.c                             | 2 --
+>   tools/testing/selftests/x86/check_initial_reg_state.c         | 3 ---
+>   tools/testing/selftests/x86/corrupt_xstate_header.c           | 3 ---
+>   tools/testing/selftests/x86/entry_from_vm86.c                 | 3 ---
+>   tools/testing/selftests/x86/fsgsbase.c                        | 2 --
+>   tools/testing/selftests/x86/fsgsbase_restore.c                | 2 --
+>   tools/testing/selftests/x86/ioperm.c                          | 2 --
+>   tools/testing/selftests/x86/iopl.c                            | 2 --
+>   tools/testing/selftests/x86/lam.c                             | 1 -
+>   tools/testing/selftests/x86/ldt_gdt.c                         | 2 --
+>   tools/testing/selftests/x86/mov_ss_trap.c                     | 2 --
+>   tools/testing/selftests/x86/nx_stack.c                        | 2 --
+>   tools/testing/selftests/x86/ptrace_syscall.c                  | 2 --
+>   tools/testing/selftests/x86/sigaltstack.c                     | 2 --
+>   tools/testing/selftests/x86/sigreturn.c                       | 3 ---
+>   tools/testing/selftests/x86/single_step_syscall.c             | 3 ---
+>   tools/testing/selftests/x86/syscall_arg_fault.c               | 3 ---
+>   tools/testing/selftests/x86/syscall_numbering.c               | 3 ---
+>   tools/testing/selftests/x86/sysret_rip.c                      | 3 ---
+>   tools/testing/selftests/x86/sysret_ss_attrs.c                 | 3 ---
+>   tools/testing/selftests/x86/test_FCMOV.c                      | 4 ----
+>   tools/testing/selftests/x86/test_FCOMI.c                      | 4 ----
+>   tools/testing/selftests/x86/test_FISTTP.c                     | 4 ----
+>   tools/testing/selftests/x86/test_mremap_vdso.c                | 1 -
+>   tools/testing/selftests/x86/test_shadow_stack.c               | 3 ---
+>   tools/testing/selftests/x86/test_syscall_vdso.c               | 4 ----
+>   tools/testing/selftests/x86/test_vsyscall.c                   | 3 ---
+>   tools/testing/selftests/x86/unwind_vdso.c                     | 3 ---
+>   tools/testing/selftests/x86/vdso_restorer.c                   | 3 ---
+>   218 files changed, 20 insertions(+), 426 deletions(-)
+> 
+> --
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
+> 
+
+thanks,
+-- Shuah
 
