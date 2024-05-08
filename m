@@ -1,310 +1,299 @@
-Return-Path: <linux-kernel+bounces-172691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890B18BF583
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:10:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D9F8BF585
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132A0282C01
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5438B1C22D5A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B547A171C1;
-	Wed,  8 May 2024 05:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF89179BC;
+	Wed,  8 May 2024 05:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DNNnz9or"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIT6xoEX"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A5B1A2C15
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E1117597
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715144995; cv=none; b=VqtnCsPRBG6E3ThWnsxMWJ9NW4jALJMdcZ5RuSfrJuS/5CaLnNiUgMwxFIe10jGUY4OcGCndGcdbijclMFde/V83sro1fF8umFEXbOeC8uoZIsfS7w1b5ykRfYsBpFZeHGW1tUt2/UyQ6VbM4vl3pAqVMZ8ruSzcplfhThh6prI=
+	t=1715145283; cv=none; b=LCn2pFRYROPUE/uVfN+azsLl/PjNnP50wAahye7sPEugUjcBNlVSNUcDMo31BwzVkml7CoIvUqfJiTARR/9O0jv7s5arAweJz0R0VlYP2RWQputu6Rk8V5zzCy+ZZKpC6gLrF1ofwe70CYsK0EAMXaS27khZhXlYPSG4ps9P5HA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715144995; c=relaxed/simple;
-	bh=5Z/IQ1AG0LSghMA4nafETdJADGNE+D470yXbhvbV++8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=as6xHGFvIh6LPtIMrm2dK8uTuIQs+DecvUDwsRgaj97Yrn7hpa+TT45ff2tSH+0Po0i/+IQWDVNhS7BEDQ9FRt5BRLFjvdL30u/OB8rjC8Pjr31fhCcwZ7MNXW0OfNACHCMRn3VmxJflKmok2TTtlAwA4/TnOmflRPm5R+C/+GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DNNnz9or; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715144990;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VjOimlkAb10m4KMSg1DOqlHJhsmFxHSlxPO0CJcAMP4=;
-	b=DNNnz9or1n9GKEAfBz8zKYIB5oaHlAnusxCslrNqdIX5XpD1pm/VUIAX5SzSPQOdapR6qp
-	HRMh8QcKD8GYVuOt34zeOt30yZx6W7VqvHrl6+wiADFKhyn1fOZXmGdzgtNGiJlAZTovlf
-	eI3RgpdV8ZbM94DYYsvE8ExFPOFjUqU=
-From: Wen Yang <wen.yang@linux.dev>
-To: Shuah Khan <skhan@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Wen Yang <wen.yang@linux.dev>,
-	SShuah Khan <shuah@kernel.org>,
-	Andrei Vagin <avagin@google.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dave Young <dyoung@redhat.com>,
-	Tim Bird <tim.bird@sony.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] selftests: introduce additional eventfd test coverage
-Date: Wed,  8 May 2024 13:09:04 +0800
-Message-Id: <20240508050904.34493-1-wen.yang@linux.dev>
+	s=arc-20240116; t=1715145283; c=relaxed/simple;
+	bh=dPS0rGrYQUxBpoJN3CR8XFSPSI7eBe4wL3aiWA/H1GE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s59CfNR44eOa4LFD5t06Hoe+3INwbE4V10k3AmF8CH5GQ0SP6rFx2bXYxk5vlME8pYQqoC4GBCACbur2BHQMdMf5XB3k15rQkKQpTazyUtwlEVX293ZBpcZWYZQk92p5qYzo5VjGBjvfaaybEaygT7wXhSj0RpKNdTvEbrb6Nu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIT6xoEX; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-572adaa172cso796082a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715145279; x=1715750079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+LyzSFLYlexgFjtX1X6+Hr5dHIkUV+Eu+niVH388nLk=;
+        b=AIT6xoEXQZP4ca3ezB1x5uh1piz9SiYT7Zhn4SWocfTdDbRnEuD0/1/EZXvfIbSUqP
+         ej7U1k76XFrxmqb7i2kgChD0UmkdTAP02bXhs3Ytbsi5ZWD6+1Ff02IlFKzZvGMV90eQ
+         7DJr/CpE3cMbkwxfnTHkcYk2nE3ioH/kyhfVFebqBQ9lcWH0JZ/xUK3qRa0ZJ9k2QQGz
+         xTJcjDBQyEljrO6I062PfrfYsFvwPO6Hdz7NoxSEdG74sFS0Rr9Mdxaf049DEREO8fRp
+         Nu8y6dNlAebuBCOkDo0mmEBnE0g32q23sM/k0ut+UktVVJvS1rx5jn0u0Jz2ieb2Ghiv
+         DPbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715145279; x=1715750079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+LyzSFLYlexgFjtX1X6+Hr5dHIkUV+Eu+niVH388nLk=;
+        b=m0R8UGMLuLe8svQGnGu9riec4xHerOOF/5PkRfQxddOnkCgTDRiDruV0hqAVEipK6E
+         bvyjzEjFVqZlv2JmIa/S21NXJQkdQ54idlHgGWHfHiX2lJg6nMMl2Q/hJWrgxabbR3s9
+         PTuTyCDIPbXo4pK+8i6J8NOtqOIRzSgqegUK08usQhRWdNNogtWpM7UUTqSD5fLtbiIz
+         eGNYwImDbmFQ6HrWnuuXd3R4+mfweW5SdEjDa3QPUbkabT7cVDnzfOkaxZ4LngBTTmVW
+         vWDHTdHIBXlgH2FIbvURfhhwnn9nYBYuswanHTak8VfK4MPz6rPc0VmUkD3AVzQYNNfI
+         fveQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLPXzGehKjrByDQbFcBxvG6mfuOzArRC12DykXwnnJSgwhmJNo2hCkZEzT7B8GKD2Xe0ghwon3txqJkuxNrCzTsGiLiGPoeWaQDceu
+X-Gm-Message-State: AOJu0Yz21zhvlvzc/8SuFD0Ju5SRUK7D4b2CqwqGx6gQlyuOYo39LMiI
+	Db49MQsEhyQT+pjMH2DG5PUoGwN5Mhg51Pf3HXi9lwmh7kblwkGSpq5Nyf8efeD+LN6ZEaXhdL4
+	tr5tcC1RpLTFpUAwrj4pv6EUnnJc=
+X-Google-Smtp-Source: AGHT+IFSkxSQRrOJtQm4GC5stVxBepUVcQ95xgMMBKbXpuewUwp4OtsPe+AWdwvjRkdFYbk6eeSqSWQT0y344LzC03o=
+X-Received: by 2002:aa7:c2d3:0:b0:572:5122:4845 with SMTP id
+ 4fb4d7f45d1cf-5731101d43fmr3949764a12.4.1715145279143; Tue, 07 May 2024
+ 22:14:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-4-ioworker0@gmail.com>
+ <9BC53B16-A63F-48DF-BE0B-D51E0E82E1B4@nvidia.com>
+In-Reply-To: <9BC53B16-A63F-48DF-BE0B-D51E0E82E1B4@nvidia.com>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Wed, 8 May 2024 13:14:27 +0800
+Message-ID: <CAK1f24m_kfj8bc3VpwX3Y=+=twU17qRtWZQhKRXWJZvQiYv8og@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+To: Zi Yan <ziy@nvidia.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
+	maskray@google.com, ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, 
+	mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
+	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
+	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
+	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add several new test cases which assert corner cases on the eventfd
-mechanism, for example, the supplied buffer is less than 8 bytes,
-attempting to write a value that is too large, etc.
+Hey Zi,
 
-	./eventfd_test
-	# Starting 9 tests from 1 test cases.
-	#  RUN           global.eventfd_check_flag_rdwr ...
-	#            OK  global.eventfd_check_flag_rdwr
-	ok 1 global.eventfd_check_flag_rdwr
-	#  RUN           global.eventfd_check_flag_cloexec ...
-	#            OK  global.eventfd_check_flag_cloexec
-	ok 2 global.eventfd_check_flag_cloexec
-	#  RUN           global.eventfd_check_flag_nonblock ...
-	#            OK  global.eventfd_check_flag_nonblock
-	ok 3 global.eventfd_check_flag_nonblock
-	#  RUN           global.eventfd_chek_flag_cloexec_and_nonblock ...
-	#            OK  global.eventfd_chek_flag_cloexec_and_nonblock
-	ok 4 global.eventfd_chek_flag_cloexec_and_nonblock
-	#  RUN           global.eventfd_check_flag_semaphore ...
-	#            OK  global.eventfd_check_flag_semaphore
-	ok 5 global.eventfd_check_flag_semaphore
-	#  RUN           global.eventfd_check_write ...
-	#            OK  global.eventfd_check_write
-	ok 6 global.eventfd_check_write
-	#  RUN           global.eventfd_check_read ...
-	#            OK  global.eventfd_check_read
-	ok 7 global.eventfd_check_read
-	#  RUN           global.eventfd_check_read_with_nonsemaphore ...
-	#            OK  global.eventfd_check_read_with_nonsemaphore
-	ok 8 global.eventfd_check_read_with_nonsemaphore
-	#  RUN           global.eventfd_check_read_with_semaphore ...
-	#            OK  global.eventfd_check_read_with_semaphore
-	ok 9 global.eventfd_check_read_with_semaphore
-	# PASSED: 9 / 9 tests passed.
-	# Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
+Thanks for taking time to review!
 
-Signed-off-by: Wen Yang <wen.yang@linux.dev>
-Cc: SShuah Khan <shuah@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Andrei Vagin <avagin@google.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Tim Bird <tim.bird@sony.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-v2: use strings which indicate what is being tested, that are useful to a human
+On Wed, May 8, 2024 at 12:20=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 1 May 2024, at 0:27, Lance Yang wrote:
+>
+> > When the user no longer requires the pages, they would use
+> > madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
+> > typically would not re-write to that memory again.
+> >
+> > During memory reclaim, if we detect that the large folio and its PMD ar=
+e
+> > both still marked as clean and there are no unexpected references
+> > (such as GUP), so we can just discard the memory lazily, improving the
+> > efficiency of memory reclamation in this case.  On an Intel i5 CPU, rec=
+laiming 1GiB of lazyfree THPs using
+> > mem_cgroup_force_empty() results in the following runtimes in seconds
+> > (shorter is better):
+> >
+> > --------------------------------------------
+> > |     Old       |      New       |  Change  |
+> > --------------------------------------------
+> > |   0.683426    |    0.049197    |  -92.80% |
+> > --------------------------------------------
+> >
+> > Suggested-by: Zi Yan <ziy@nvidia.com>
+> > Suggested-by: David Hildenbrand <david@redhat.com>
+> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> > ---
+> >  include/linux/huge_mm.h |  9 +++++
+> >  mm/huge_memory.c        | 73 +++++++++++++++++++++++++++++++++++++++++
+> >  mm/rmap.c               |  3 ++
+> >  3 files changed, 85 insertions(+)
+> >
+> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> > index 38c4b5537715..017cee864080 100644
+> > --- a/include/linux/huge_mm.h
+> > +++ b/include/linux/huge_mm.h
+> > @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
+> >
+> >  void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddress,
+> >                          pmd_t *pmd, bool freeze, struct folio *folio);
+> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> > +                        pmd_t *pmdp, struct folio *folio);
+> >
+> >  static inline void align_huge_pmd_range(struct vm_area_struct *vma,
+> >                                       unsigned long *start,
+> > @@ -492,6 +494,13 @@ static inline void align_huge_pmd_range(struct vm_=
+area_struct *vma,
+> >                                       unsigned long *start,
+> >                                       unsigned long *end) {}
+> >
+> > +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
+> > +                                      unsigned long addr, pmd_t *pmdp,
+> > +                                      struct folio *folio)
+> > +{
+> > +     return false;
+> > +}
+> > +
+> >  #define split_huge_pud(__vma, __pmd, __address)      \
+> >       do { } while (0)
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 145505a1dd05..90fdef847a88 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2690,6 +2690,79 @@ static void unmap_folio(struct folio *folio)
+> >       try_to_unmap_flush();
+> >  }
+> >
+> > +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
+> > +                                    unsigned long addr, pmd_t *pmdp,
+> > +                                    struct folio *folio)
+> > +{
+> > +     struct mm_struct *mm =3D vma->vm_mm;
+> > +     int ref_count, map_count;
+> > +     pmd_t orig_pmd =3D *pmdp;
+> > +     struct mmu_gather tlb;
+> > +     struct page *page;
+> > +
+> > +     if (pmd_dirty(orig_pmd) || folio_test_dirty(folio))
+> > +             return false;
+> > +     if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd))=
+)
+> > +             return false;
+> > +
+> > +     page =3D pmd_page(orig_pmd);
+> > +     if (unlikely(page_folio(page) !=3D folio))
+> > +             return false;
+> > +
+> > +     tlb_gather_mmu(&tlb, mm);
+> > +     orig_pmd =3D pmdp_huge_get_and_clear(mm, addr, pmdp);
+> > +     tlb_remove_pmd_tlb_entry(&tlb, pmdp, addr);
+> > +
+> > +     /*
+> > +      * Syncing against concurrent GUP-fast:
+> > +      * - clear PMD; barrier; read refcount
+> > +      * - inc refcount; barrier; read PMD
+> > +      */
+> > +     smp_mb();
+> > +
+> > +     ref_count =3D folio_ref_count(folio);
+> > +     map_count =3D folio_mapcount(folio);
+> > +
+> > +     /*
+> > +      * Order reads for folio refcount and dirty flag
+> > +      * (see comments in __remove_mapping()).
+> > +      */
+> > +     smp_rmb();
+> > +
+> > +     /*
+> > +      * If the PMD or folio is redirtied at this point, or if there ar=
+e
+> > +      * unexpected references, we will give up to discard this folio
+> > +      * and remap it.
+> > +      *
+> > +      * The only folio refs must be one from isolation plus the rmap(s=
+).
+> > +      */
+> > +     if (ref_count !=3D map_count + 1 || folio_test_dirty(folio) ||
+> > +         pmd_dirty(orig_pmd)) {
+> > +             set_pmd_at(mm, addr, pmdp, orig_pmd);
+> > +             return false;
+> > +     }
+> > +
+> > +     folio_remove_rmap_pmd(folio, page, vma);
+> > +     zap_deposited_table(mm, pmdp);
+> > +     add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
+> > +     folio_put(folio);
+> > +
+> > +     return true;
+> > +}
+> > +
+> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> > +                        pmd_t *pmdp, struct folio *folio)
+> > +{
+> > +     VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
+> > +     VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+> > +     VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
+> > +
+> > +     if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
+> > +             return __discard_trans_pmd_locked(vma, addr, pmdp, folio)=
+;
+> > +
+> > +     return false;
+> > +}
+> > +
+> >  static void remap_page(struct folio *folio, unsigned long nr)
+> >  {
+> >       int i =3D 0;
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index 432601154583..1d3d30cb752c 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1675,6 +1675,9 @@ static bool try_to_unmap_one(struct folio *folio,=
+ struct vm_area_struct *vma,
+> >               }
+> >
+> >               if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
+> > +                     if (unmap_huge_pmd_locked(vma, range.start, pvmw.=
+pmd,
+> > +                                               folio))
+> > +                             goto walk_done;
+>
+> You might not need to check (flags & TTU_SPLIT_HUGE_PMD) for
+> unmap_huge_pmd_locked(), since you are unmapping a PMD here.
+> TTU_SPLIT_HUGE_PMD is here because try_to_unmap_one() was not able to unm=
+ap
+> a PMD. You probably can remove it for callers that are unmapping
+> the folio but not the ones are swapping.
 
- .../filesystems/eventfd/eventfd_test.c        | 136 +++++++++++++++++-
- 1 file changed, 131 insertions(+), 5 deletions(-)
+Thanks for the suggestion!
 
-diff --git a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
-index f142a137526c..85acb4e3ef00 100644
---- a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
-+++ b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
-@@ -13,6 +13,8 @@
- #include <sys/eventfd.h>
- #include "../../kselftest_harness.h"
- 
-+#define EVENTFD_TEST_ITERATIONS 100000UL
-+
- struct error {
- 	int  code;
- 	char msg[512];
-@@ -40,7 +42,7 @@ static inline int sys_eventfd2(unsigned int count, int flags)
- 	return syscall(__NR_eventfd2, count, flags);
- }
- 
--TEST(eventfd01)
-+TEST(eventfd_check_flag_rdwr)
- {
- 	int fd, flags;
- 
-@@ -54,7 +56,7 @@ TEST(eventfd01)
- 	close(fd);
- }
- 
--TEST(eventfd02)
-+TEST(eventfd_check_flag_cloexec)
- {
- 	int fd, flags;
- 
-@@ -68,7 +70,7 @@ TEST(eventfd02)
- 	close(fd);
- }
- 
--TEST(eventfd03)
-+TEST(eventfd_check_flag_nonblock)
- {
- 	int fd, flags;
- 
-@@ -83,7 +85,7 @@ TEST(eventfd03)
- 	close(fd);
- }
- 
--TEST(eventfd04)
-+TEST(eventfd_chek_flag_cloexec_and_nonblock)
- {
- 	int fd, flags;
- 
-@@ -161,7 +163,7 @@ static int verify_fdinfo(int fd, struct error *err, const char *prefix,
- 	return 0;
- }
- 
--TEST(eventfd05)
-+TEST(eventfd_check_flag_semaphore)
- {
- 	struct error err = {0};
- 	int fd, ret;
-@@ -183,4 +185,128 @@ TEST(eventfd05)
- 	close(fd);
- }
- 
-+/*
-+ * A write(2) fails with the error EINVAL if the size of the supplied buffer
-+ * is less than 8 bytes, or if an attempt is made to write the value
-+ * 0xffffffffffffffff.
-+ */
-+TEST(eventfd_check_write)
-+{
-+	uint64_t value = 1;
-+	ssize_t size;
-+	int fd;
-+
-+	fd = sys_eventfd2(0, 0);
-+	ASSERT_GE(fd, 0);
-+
-+	size = write(fd, &value, sizeof(int));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	size = write(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, sizeof(value));
-+
-+	value = (uint64_t)-1;
-+	size = write(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	close(fd);
-+}
-+
-+/*
-+ * A read(2) fails with the error EINVAL if the size of the supplied buffer is
-+ * less than 8 bytes.
-+ */
-+TEST(eventfd_check_read)
-+{
-+	uint64_t value;
-+	ssize_t size;
-+	int fd;
-+
-+	fd = sys_eventfd2(1, 0);
-+	ASSERT_GE(fd, 0);
-+
-+	size = read(fd, &value, sizeof(int));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EINVAL);
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, sizeof(value));
-+	EXPECT_EQ(value, 1);
-+
-+	close(fd);
-+}
-+
-+
-+/*
-+ * If EFD_SEMAPHORE was not specified and the eventfd counter has a nonzero
-+ * value, then a read(2) returns 8 bytes containing that value, and the
-+ * counter's value is reset to zero.
-+ * If the eventfd counter is zero at the time of the call to read(2), then the
-+ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
-+ */
-+TEST(eventfd_check_read_with_nonsemaphore)
-+{
-+	uint64_t value;
-+	ssize_t size;
-+	int fd;
-+	int i;
-+
-+	fd = sys_eventfd2(0, EFD_NONBLOCK);
-+	ASSERT_GE(fd, 0);
-+
-+	value = 1;
-+	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
-+		size = write(fd, &value, sizeof(value));
-+		EXPECT_EQ(size, sizeof(value));
-+	}
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, sizeof(uint64_t));
-+	EXPECT_EQ(value, EVENTFD_TEST_ITERATIONS);
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EAGAIN);
-+
-+	close(fd);
-+}
-+
-+/*
-+ * If EFD_SEMAPHORE was specified and the eventfd counter has a nonzero value,
-+ * then a read(2) returns 8 bytes containing the value 1, and the counter's
-+ * value is decremented by 1.
-+ * If the eventfd counter is zero at the time of the call to read(2), then the
-+ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
-+ */
-+TEST(eventfd_check_read_with_semaphore)
-+{
-+	uint64_t value;
-+	ssize_t size;
-+	int fd;
-+	int i;
-+
-+	fd = sys_eventfd2(0, EFD_SEMAPHORE|EFD_NONBLOCK);
-+	ASSERT_GE(fd, 0);
-+
-+	value = 1;
-+	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
-+		size = write(fd, &value, sizeof(value));
-+		EXPECT_EQ(size, sizeof(value));
-+	}
-+
-+	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
-+		size = read(fd, &value, sizeof(value));
-+		EXPECT_EQ(size, sizeof(value));
-+		EXPECT_EQ(value, 1);
-+	}
-+
-+	size = read(fd, &value, sizeof(value));
-+	EXPECT_EQ(size, -1);
-+	EXPECT_EQ(errno, EAGAIN);
-+
-+	close(fd);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.25.1
+Ageed. For unmap_huge_pmd_locked(), there is no need to check the
+TTU_SPLIT_HUGE_PMD flag. We only need to check the flag for
+split_huge_pmd_locked().
 
+Given this, if we fail to remove the PMD mapping and the flag is not set,
+I think we should stop the walk. So we can also remove the
+VM_BUG_ON_FOLIO() below.
+
+/* Unexpected PMD-mapped THP? */
+VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+
+Zi, what do you think?
+
+Thanks,
+Lance
+
+>
+>
+>
+> >                       /*
+> >                        * We temporarily have to drop the PTL and start =
+once
+> >                        * again from that now-PTE-mapped page table.
+> > --
+> > 2.33.1
+>
+>
+> --
+> Best Regards,
+> Yan, Zi
 
