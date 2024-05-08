@@ -1,141 +1,101 @@
-Return-Path: <linux-kernel+bounces-172678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47ADD8BF54A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:44:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07748BF54B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E6D1F24249
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:44:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 903C2B22F53
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75D315E8C;
-	Wed,  8 May 2024 04:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274271400B;
+	Wed,  8 May 2024 04:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y22blxSF"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qLRemblb"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7DC364;
-	Wed,  8 May 2024 04:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D988F54
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 04:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715143469; cv=none; b=C1ySx84fjrKJZ7UwbzpbdlLBG4/aHVef72HYL1rxMUAFsDfse4BNQgUd9LvRQIX/2LWNyGuqFS9ykLBY7Ak56puxRkUVCrbmrXvP3HfzoZppbm4KxjZKeX00gsIG8Abmv7Hyk+l/WicT4srb0dNfZcm+5WSGVBZdR53w370Rh38=
+	t=1715143517; cv=none; b=JDKf3NSX/W9E2Ra3CBuphE6mx4lAO0771v3hNAaqHIA6Hq2pcGvoL0pOkhRHNkTDVa1Rl9Pf/XOqtVpxMnctnP2uWUPIMzp5M4M72GUTmwEEldbN1otSi9mHVdLl+4m1BCZygx0M5b+zF5a3IwSIWWvFbNqFhlnZEXZECx5r1C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715143469; c=relaxed/simple;
-	bh=iOUJ8kYbuUYawD/L951m0iz1DP0bS5YCnIXkJbzD++8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFk1R+26v1m9Yp7fOZczXQ9IJiRM3noKBuLDDQCJ9wAm5/kfFAAi6CR0A3PoBQRa0VyqersZwtlZ90Zg0ttD1IpQv0NMPYpybhCs4B14B4lLSsX+ilk9s+Iq/OOn+ibn7w5/ne44uwL+EuRY5waiXNdRBTai6uQmc06SyH/xsyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y22blxSF; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-deb6495a8c5so13404276.2;
-        Tue, 07 May 2024 21:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715143466; x=1715748266; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W7zDgjfQ9ejdYEtQFd2CZ42/9Zvjl6dq+wJeEOP1/pM=;
-        b=Y22blxSFxRQDlL/3Dx6eV7P0WHgvem1AoS++pZIK0kwSeNtaAwQ4OD3JiGytrPzVJd
-         EmT4yyTYitdxx3GjKaEzyaO1iQb4JBF0gBCQjtkTckGkiXI0pX3tcusuRgPG5rpqoS57
-         eBRA97SaqNfLewXM/2JtupHJmofCNJlGRSy0R0E88vCQ84NoRr07CPPQXAxJ1eQowLvF
-         oRJ5VO9tg3HflyNA4Ff1vw/UmnNrHsxU/kaou6JTw8AQYYxUTg/LW1HWo8arnr0Jph1c
-         xSVz+NLKa8ujIst47Eyyu6tp0GRWasBQqiZXlQ1CtRqD0cruh05yq0KmOVOeyW0GGksW
-         dMuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715143466; x=1715748266;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W7zDgjfQ9ejdYEtQFd2CZ42/9Zvjl6dq+wJeEOP1/pM=;
-        b=ac2fRKE9ntTq312PnjHE93b+z0VIsbGOB9c3PpdXpNdTY5ckAmofdGru6QQmvsSdFm
-         Hp9j3bsxhSWX6RbLw23jdLHUZZ6jlMMMqSlKUhTsYEGhZy6fwgo2+NM0TF25mz+KJi9s
-         anlADvkWa/NzvhwRbY0fAQosTLIWxmutgJD/IBafsGwZ1wFcY/VS4xKQTzcOFa99C76z
-         JWOI5iIBGi6H2ljhgrUlvUZLM5+tk128FxLJYDatI7MbaHqnVLbhse4mVwkiK4eWi2jm
-         VeSkB+GnR/MA3mv9ehA+ER/TKabEEHbm81Owja500L1dsDUk2xBVk1De29C5ftQPr4AK
-         zv4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWk60XQcq/gotC23L8+ZLYMxJ/zXkbnrFa2QS3znyiCMikgSZRUyymClRujFrOPMAQ0taeKm9XMaSuMSg/yxTdHO3z870tMZs/63Tul
-X-Gm-Message-State: AOJu0Yzz9kqkgTP3dqPOBPlalYny3Zgvy/t35MEGjMV8/WLkG/7etcbB
-	5RAu22BlygBbz+/e+sa0ySsNl+Cca5SWPZMN93JzhO81sCfWDzm8mSbEAg==
-X-Google-Smtp-Source: AGHT+IGE4AcWoLxQ3WsFkXQSbENWAJJpe8pMCBqlSyO6HdO1/kFk8awXmWPH4G/IX0ptaHx9IOD9MQ==
-X-Received: by 2002:a25:5855:0:b0:de4:5c38:40b8 with SMTP id 3f1490d57ef6-debb9e5b635mr1313776276.6.1715143466411;
-        Tue, 07 May 2024 21:44:26 -0700 (PDT)
-Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
-        by smtp.gmail.com with ESMTPSA id b3-20020a5b0083000000b00de763b8a696sm2936160ybp.20.2024.05.07.21.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 21:44:25 -0700 (PDT)
-Date: Tue, 7 May 2024 21:44:23 -0700
-From: Richard Cochran <richardcochran@gmail.com>
-To: Mahesh Bandewar <maheshb@google.com>
-Cc: Netdev <netdev@vger.kernel.org>, Linux <linux-kernel@vger.kernel.org>,
-	David Miller <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-	Sagi Maimon <maimon.sagi@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, John Stultz <jstultz@google.com>,
-	Mahesh Bandewar <mahesh@bandewar.net>
-Subject: Re: [PATCHv4 net-next] ptp/ioctl: support MONOTONIC_RAW timestamps
- for PTP_SYS_OFFSET_EXTENDED
-Message-ID: <ZjsDJ-adNCBQIbG1@hoboy.vegasvil.org>
-References: <20240502211047.2240237-1-maheshb@google.com>
+	s=arc-20240116; t=1715143517; c=relaxed/simple;
+	bh=7K/tmlVgXG49MALg2kjDNBRdw0rBc3JcCevvdJGqKtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jaubd6US6UtXZSvPjfh3o28XAA+gSIcmbezOFNyGe1dpd9NzuZGLD9TUT7SaE16Bt1Qw+dacbFf6PDRao0+uxSsckndyo9nkHniSWRPXTXk8DHuy54VLMvxWXcY5iS5HyTu5N9q3TCzNP2QBYMup97m3IdDfepd4Q5lz8iRXP4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qLRemblb; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715143512; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kTucrfHFdxw054v8j1MMXBfCRp3gtNulb6jlF9RCvOo=;
+	b=qLRemblbcNPMdHJAn8m+T0LgHT7ip7s9Ho7fMgAg1V0Qzp6LBdMo6jzd/SrbB/5mnwDlhPCcwZDYfIXein7W17rJSYuLFtZQfnjCfSTFCNI8ySm19USANoNyGBzQJWFdcLdYZWAfUGLy6dX4LIBGG0IAz5b/3361mkKmyZNVtzE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R741e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W62EHYc_1715143509;
+Received: from 30.97.56.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W62EHYc_1715143509)
+          by smtp.aliyun-inc.com;
+          Wed, 08 May 2024 12:45:10 +0800
+Message-ID: <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
+Date: Wed, 8 May 2024 12:45:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240502211047.2240237-1-maheshb@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] mm: shmem: add multi-size THP sysfs interface for
+ anonymous shmem
+To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, david@redhat.com, ioworker0@gmail.com,
+ wangkefeng.wang@huawei.com, ying.huang@intel.com, 21cnbao@gmail.com,
+ shy828301@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <6b4afed1ef26dbd08ae9ec58449b329564dcef3e.1714978902.git.baolin.wang@linux.alibaba.com>
+ <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 02, 2024 at 02:10:47PM -0700, Mahesh Bandewar wrote:
 
-> @@ -457,14 +459,34 @@ static inline ktime_t ptp_convert_timestamp(const ktime_t *hwtstamp,
->  
->  static inline void ptp_read_system_prets(struct ptp_system_timestamp *sts)
->  {
-> -	if (sts)
-> -		ktime_get_real_ts64(&sts->pre_ts);
-> +	if (sts) {
-> +		switch (sts->clockid) {
-> +		case CLOCK_REALTIME:
-> +			ktime_get_real_ts64(&sts->pre_ts);
-> +			break;
-> +		case CLOCK_MONOTONIC_RAW:
-> +			ktime_get_raw_ts64(&sts->pre_ts);
-> +			break;
 
-Why not add CLOCK_MONOTONIC as well?
-That would be useful in many cases.
+On 2024/5/7 18:52, Ryan Roberts wrote:
+> On 06/05/2024 09:46, Baolin Wang wrote:
+>> To support the use of mTHP with anonymous shmem, add a new sysfs interface
+>> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
+>> directory for each mTHP to control whether shmem is enabled for that mTHP,
+>> with a value similar to the top level 'shmem_enabled', which can be set to:
+>> "always", "inherit (to inherit the top level setting)", "within_size", "advise",
+>> "never", "deny", "force". These values follow the same semantics as the top
+>> level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
+>> to 'always' to keep compatibility.
+> 
+> We decided at [1] to not allow 'force' for non-PMD-sizes.
+> 
+> [1]
+> https://lore.kernel.org/linux-mm/533f37e9-81bf-4fa2-9b72-12cdcb1edb3f@redhat.com/
+> 
+> However, thinking about this a bit more, I wonder if the decision we made to
+> allow all hugepages-xxkB/enabled controls to take "inherit" was the wrong one.
+> Perhaps we should have only allowed the PMD-sized enable=inherit (this is just
+> for legacy back compat after all, I don't think there is any use case where
+> changing multiple mTHP size controls atomically is actually useful). Applying
 
-> +/*
-> + * ptp_sys_offset_extended - data structure for IOCTL operation
-> + *			     PTP_SYS_OFFSET_EXTENDED
-> + *
-> + * @n_samples:	Desired number of measurements.
-> + * @clockid:	clockid of a clock-base used for pre/post timestamps.
-> + * @rsv:	Reserved for future use.
-> + * @ts:		Array of samples in the form [pre-TS, PHC, post-TS]. The
-> + *		kernel provides @n_samples.
-> + *
-> + * History:
-> + * v1: Initial implementation.
-> + *
-> + * v2: Use the first word of the reserved-field for @clockid. That's
-> + *     backward compatible since v1 expects all three reserved words
-> + *     (@rsv[3]) to be 0 while the clockid (first word in v2) for
-> + *     CLOCK_REALTIME is '0'.
+Agree. This is also our usage of 'inherit'.
 
-This is not really appropriate for a source code comment.  The
-un-merged patch series iterations are preserved at lore.kernel in case
-someone needs that.
+> that pattern here, it means the top level can always take "force" without any
+> weird error checking. And we would allow "force" on the PMD-sized control but
+> not on the others - again this is easy to error check.
+> 
+> Does this pattern make more sense? If so, is it too late to change
+> hugepages-xxkB/enabled interface?
 
-The "backward compatible" information really wants to be in the commit
-message.
-
-Thanks,
-Richard
-
+IMO, this sounds reasonable to me. Let's see what others think, David?
 
