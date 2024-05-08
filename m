@@ -1,144 +1,100 @@
-Return-Path: <linux-kernel+bounces-172726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAE68BF5D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:00:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1548BF5E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20248B22EB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:00:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B72F4B23002
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25F617BA7;
-	Wed,  8 May 2024 06:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1CF17BCD;
+	Wed,  8 May 2024 06:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VF7TMJq4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ElyOoeBQ"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M0dC76PS"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41DC1A2C15
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 06:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0E08F6C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 06:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715148012; cv=none; b=X/Qc9FXpHrDbuS592Bqbr4JR90oAg6eBQ6K7VG9NjraV5azrJ+SQr71S4bV1FItc8p+jAINms60iUeSuG00db9iynFkGqx5n1nTTkY/PwKY5PawOel8N2kXydmu3Bfc+WLqqprgaTwtgAT7JBiO5Hx/oHJf3cUGRdG12gXe1tuU=
+	t=1715148224; cv=none; b=hKN7d3MA84jeViQL5sDtTIfECPRBIAcyh3Sv81TcAluRDUkWHSfzT5nCm+vSOejk4zyKKP8H9ltGk5yK5cxKsaTZmIgNbhBcvIpGKNXg7CN01ChpUVmhUIpFSGNT1KXgMk1Cezb8OAaafsag8CbcIep9oqu7mAPRvuLlHUNY8cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715148012; c=relaxed/simple;
-	bh=nJBdU/phsT2duo50/TkwO6gg74OzUomF46e0q8KQ18k=;
-	h=MIME-Version:Message-Id:Date:From:To:Cc:Subject:Content-Type; b=jqrRLyv5sGMFyYdeFRNLmxAUmmkhJJYhC8C1sP2FFqpL6ortzdpdsDy/XWzk6nr5Tv9v224jD/xlIjRMBoAhwFp1jHjRmptjEk8SiLHasdWG5jfDNHYbvXkRSDvfmnyXxnq9KfAweGpsD3pL4FDMxdmjevDTh3PrmUMJuND24qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VF7TMJq4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ElyOoeBQ; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B1EC01140373;
-	Wed,  8 May 2024 02:00:08 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 08 May 2024 02:00:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
-	 t=1715148008; x=1715234408; bh=Y8akIGgpPxTEYGPDiQP8mlHmghc/is8+
-	EovMJZsxLNk=; b=VF7TMJq42dxp00WdJGfVmxJ4UqJYlhc9JbCvEQkElPFeu/7p
-	4jDq/ZhHMW18M0S1e6gXQ6ld16kSE7bhAQiK/k7zrpKL4Pw3rbwUjhBfsORl2koW
-	UHgsAnbkP13nWA38irgU47T/yOAV0jAxlPvu0O0iF8tWx9HLXyutzjavTWm6NIyP
-	MNYZCHZs0QTtSqWcNX6/6Io7+NuWCTZGMm/A4dXTHOwOi0W4egFwIWHPLHjSo6M1
-	nIH2mwDDvuFo+gt5DAWX42ok/+4vYfk6HeOGTjJcTPrRUAlOmwMqNcDdH76YgeWs
-	qytz8OnSc1oY6DXTCuFchy1mn4sL29ScvRw1Eg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1715148008; x=1715234408; bh=Y8akIGgpPxTEYGPDiQP8mlHmghc/is8+Eov
-	MJZsxLNk=; b=ElyOoeBQQSPqIpjMinoYoMVhH7Vn5Y0lHFgHYgZ3qPnN+xThFC2
-	ZRp/JLM6tuOhLX/hEo6ZIiwITGTFPtaH/wRZJxjGtZO2RSTVFj2DDnkXLU6hgWt1
-	IoAPo7/m/+M/P+Tbjoeke3BXPwCte6wuiF+5NBB4UbroVqakWoYUvN3o7/kQ3GZL
-	w2uSFpwkCJOMVAPqnQ0SdmUXTidlUqX2VyV2Y5JfZXVyZq27018x7wr6GDYJZiXK
-	+obUDa2yM4qZqF7Lo+pW0DG4JP0cQxTT2ctFYpAvC9TLWcJjst3PFwiyH9OJChXM
-	/dPpHUt6XmiiedSRD6kDwKHl/o2i2+hT3IA==
-X-ME-Sender: <xms:6BQ7Zi5PuRzKr2sE5MYTBRs-IDvt_2ts2XnB_S-K_UicZ4ZsojguAA>
-    <xme:6BQ7Zr4maOLyJ3OVMkOcdk5IG2MVPN8CRoKb-P_4yNAWd9H6Zts2_91p0E7Puq6G8
-    JTU3bJ63nnf8eiusGQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvledgleelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkfffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepfeefuefhkeejvedtvddtleeltddttdejgedvhfdtuddvhfeukeduiefhjeetgfei
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:6BQ7ZheLr2u-9WRhZFrubjPCG18EM0gMC3kBgUDwjbyKCvO_ipBZzQ>
-    <xmx:6BQ7ZvJOzABmXDC7hsvmxId3f7dsOtopN57LLq9UDmFh_81pzK0p9w>
-    <xmx:6BQ7ZmLNRsUzIchIG0r02Y0SO4xEPAMkvpASG7DbC1TxRPeftk40LA>
-    <xmx:6BQ7Zgwb6m5EphtJgLC5brSJZALMNymPvSl2kwl7UIvllPvg5N0IsA>
-    <xmx:6BQ7Zi1WXvVohFQbKF9JYO_DX-P8isnkfpn7ZVfOzf70lpmGWTUtMcUi>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5157DB6008D; Wed,  8 May 2024 02:00:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715148224; c=relaxed/simple;
+	bh=vR8MQjZ4OZFhEHYcpFtvdK1XRggMdo6jqFWufXUb6lw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u1YgxRnA/1jISul7LcTiBrOsvtTtDN+6j+1DIJ34VmWgHKGCVQhD8lUWDV5SKu7zhwgS8j2QeW8nTvTOD7KFgmQb+rc91L8iExw8i51Y+uRBw4P+medsaOrzxaF/Qg315v7kwTjm5t/2rv+zV1Kkfd2ABkTLlr+yBRAFsMHBxyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M0dC76PS; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715148217; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=quezWr5QuXsegJOKyc01UZwoa4UGQB+lMfqaDG5ySt4=;
+	b=M0dC76PSi5EJU+kfyDhPKEE/dF4SPcbeDfaMMu/z14myLJy/Ks0SylhLhtbTlegEv5b1bXKWS+17yLrU1NZrRbKFMfwIFTHIRLyeBeK/eBAXnqSfc9Rnfums6yk6Y+tTuYHR/4ZToXElUsDFleu8vtcysg+p4ubFUfS55orR1cg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0W62W8yi_1715148214;
+Received: from 30.97.56.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W62W8yi_1715148214)
+          by smtp.aliyun-inc.com;
+          Wed, 08 May 2024 14:03:35 +0800
+Message-ID: <4a6c6c90-04bd-4a02-9080-0f98e8cf5ebe@linux.alibaba.com>
+Date: Wed, 8 May 2024 14:03:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <7abb76bb-eb4a-4136-af2f-6b22fbf3d79f@app.fastmail.com>
-Date: Wed, 08 May 2024 08:00:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] ARM SoC fixes for 6.9, part 3
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] mm: shmem: add mTHP support for anonymous shmem
+To: kernel test robot <lkp@intel.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, willy@infradead.org,
+ david@redhat.com, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
+ shy828301@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <adc64bf0f150bdc614c6c06fc313adeef7dbbbff.1714978902.git.baolin.wang@linux.alibaba.com>
+ <202405071820.2KY0UnDu-lkp@intel.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <202405071820.2KY0UnDu-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 14672a9b3ec5c934cf86658328a56207337b54ff:
+Hi,
 
-  Merge tag 'qcom-drivers-fixes-for-6.9' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into for-next (2024-04-26 18:08:02 +0200)
+On 2024/5/7 18:46, kernel test robot wrote:
+>>> mm/shmem.c:1780:10: warning: variable 'folio' is used uninitialized whenever 'while' loop exits because its condition is false [-Wsometimes-uninitialized]
+>      1780 |                 while (suitable_orders) {
+>           |                        ^~~~~~~~~~~~~~~
+>     mm/shmem.c:1795:7: note: uninitialized use occurs here
+>      1795 |         if (!folio)
+>           |              ^~~~~
+>     mm/shmem.c:1780:10: note: remove the condition if it is always true
+>      1780 |                 while (suitable_orders) {
+>           |                        ^~~~~~~~~~~~~~~
+>           |                        1
+>     mm/shmem.c:1750:21: note: initialize the variable 'folio' to silence this warning
+>      1750 |         struct folio *folio;
+>           |                            ^
+>           |                             = NULL
+>     mm/shmem.c:1564:20: warning: unused function 'shmem_show_mpol' [-Wunused-function]
+>      1564 | static inline void shmem_show_mpol(struct seq_file *seq, struct mempolicy *mpol)
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-fixes-6.9-3
-
-for you to fetch changes up to 5549d1e39989e2ba86c4775546d0bd8055746cfa:
-
-  Merge tag 'qcom-arm64-fixes-for-6.9-2' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into arm/fixes (2024-05-07 08:07:06 +0200)
-
-----------------------------------------------------------------
-ARM SoC fixes for 6.9, part 3
-
-These are a couple of last minute fixes that came in over the
-previous week, addressing:
-
- - A pin configuration bug on a qualcomm board that caused
-   issues with ethernet and mmc.
-
- - Two minor code fixes for misleading console output in the
-   microchip firmware driver.
-
- - A build warning in the sifive cache driver
-
-----------------------------------------------------------------
-Arnd Bergmann (3):
-      Merge tag 'mtk-soc-fixes-for-v6.9' of https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux into for-next
-      Merge tag 'riscv-soc-fixes-for-v6.9-rc6' of https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux into arm/fixes
-      Merge tag 'qcom-arm64-fixes-for-6.9-2' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into arm/fixes
-
-Conor Dooley (2):
-      firmware: microchip: don't unconditionally print validation success
-      firmware: microchip: clarify that sizes and addresses are in hex
-
-Samuel Holland (1):
-      cache: sifive_ccache: Silence unused variable warning
-
-Volodymyr Babchuk (1):
-      arm64: dts: qcom: sa8155p-adp: fix SDHC2 CD pin configuration
-
- arch/arm64/boot/dts/qcom/sa8155p-adp.dts      | 30 ++++++++++++---------------
- drivers/cache/sifive_ccache.c                 |  2 +-
- drivers/firmware/microchip/mpfs-auto-update.c |  8 ++++---
- drivers/soc/mediatek/Kconfig                  |  1 +
- drivers/soc/mediatek/mtk-svs.c                |  7 +++++--
- 5 files changed, 25 insertions(+), 23 deletions(-)
+Thanks for reporting. Will add below change to avoid the warning:
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d603e36e0f4f..fd2cb2e73a21 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1747,7 +1747,7 @@ static struct folio 
+*shmem_alloc_and_add_folio(struct vm_fault *vmf,
+         struct shmem_inode_info *info = SHMEM_I(inode);
+         struct vm_area_struct *vma = vmf ? vmf->vma : NULL;
+         unsigned long suitable_orders;
+-       struct folio *folio;
++       struct folio *folio = NULL;
+         long pages;
+         int error, order;
 
