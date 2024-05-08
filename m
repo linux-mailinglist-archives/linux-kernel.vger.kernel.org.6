@@ -1,146 +1,190 @@
-Return-Path: <linux-kernel+bounces-173810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CC28C05D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:45:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54A458C05E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E07F2846AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:45:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787111C21CE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1891131744;
-	Wed,  8 May 2024 20:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA32813175B;
+	Wed,  8 May 2024 20:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ue3R8+yk"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i1t7e66N"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15B51E89A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 20:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B146130ACF
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 20:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715201110; cv=none; b=MxEXJMlt3FU2dvZ5sAYmLgf6qMezXVQjykR7Nj/vEUjSCrMmBL06dK2X8C8pDpqlEpeAGSOWUpb+KKfIVgSXeUfjKvF5RVty16FkkQdfZ2tDOT1LppUPDOe+pU8ZU/5yPBqOocqRMjqyOHMs6uwDBsLzV7cjRXSoyPgdyRFf6Xk=
+	t=1715201596; cv=none; b=lj+5IHXKdPDZHRf99ufDLHbkfKJW8xM2qK5Q0uw6uJN0NO3KbzvpujIr7mXUiTeWkwd0N5G5Wsq5D+d3zuKWVPBEBw2XWfk0F4USvy9vj903XRQD7UiXSDtrwSNEvnNRt5/DMdgXX4qrcBxRu0WiNoqZJhR79g1QKV3LcH/kzNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715201110; c=relaxed/simple;
-	bh=+TrNJxROO7MAmapZhWZcQZNsYA4TI5CqvlqU+QKwtRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fPP9zrDxN4ngFaNrdwac68yujQn5BUuXAXlhtv5ES9o5mSh3t3zPA+IaUhHCDbcy1FLEFA9PwZkwGLwlWP0LusxJoAGIeBnlEX6Ee1eVP+grQYMbcqp/v1D3vEMLp2gJMd17JlCgMDEyM7Jf5v4TOPyYR6jQgZYJGaF9FHDh2KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ue3R8+yk; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-43d361a2124so103211cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 13:45:08 -0700 (PDT)
+	s=arc-20240116; t=1715201596; c=relaxed/simple;
+	bh=5dqI6Q9VRMnPFtj/fULp3IbNjZl7toh/De9ZjCYDd9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=atLhI0I8SzSiTBABI/bRUStRe/5EibPgktPRlki0FO+kPPOrdOyxC/fQrW8lSDeWnnm+UOaUzhw/C1oKB2Wf5luJPRiROBogmFnFSGnAT/86DJ0tQw9AsAwRMOYvN3wdTiVPRkpLAp3aZyu7Ndq0lF9gxMtwK9t+sQoK4q9MP2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i1t7e66N; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b4a7671abaso193863a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 13:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715201108; x=1715805908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zrS4ra5r0MYUhXUqUrqqa9EFMt0orErlafYzq0uBTrk=;
-        b=ue3R8+ykxQxwIVBBXHeVPWoH87ZNdT/hr+LTTSkUo/19PVxv9yd1TzXh8//pQDM2vJ
-         /mJfLmuZw6jdZ95VbTYmD5Tz4SWyqxsXtKXQIEvRMiKm+EEu9y6OL6W3C5HBvO/eWFzj
-         77WNLXeFNduacSPmbMA9ekE8uFQIar0oZoZPx3DTR4PNABcaaQ+OtGJsefoQ+nnszFr9
-         UnIxc3mM93V5YcLXEVTfKVGNaavuRU4vDtPXS86oVUxAKydxSFnIIkgI22sVBqdMUuHZ
-         GjqPkAXslFyvRj4ClCuk2KMBG3sEgeZkE7MlFOroOmFk8R3saAQBtk1RdufPWqpOTRcS
-         np5Q==
+        d=chromium.org; s=google; t=1715201594; x=1715806394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YqkxFBwBCIjXspjTXUzXTZ3b9F2ADVTFncXrWGlr3RY=;
+        b=i1t7e66NzREA+EFdGhzrd3v3nU9VQOzOByNhSseGi+58Zvl/tqb6GhVUEluyxxv505
+         nBGQ51LkcnEAxxbeAalD2fD03mH3b1xB9XunuZhWo3w7rnEtHkFGVJHLZ5sj5lEOUjk5
+         XwUcm9CWH+Lg3RwoIABOKyPmxtJgNH7pDSw7E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715201108; x=1715805908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zrS4ra5r0MYUhXUqUrqqa9EFMt0orErlafYzq0uBTrk=;
-        b=hCluuMPSm0NFLnRkm5JNetdQ1QPgcd5MoJLnERFex1a0608ijdKvquMSYgjOI9NbQ2
-         wXuzPojFsEOQXBWkcytnufP/5bZtdxUjNdAxeSu2uV+cBXswr36wNW7N6ETPnDZp7UXW
-         2W84sGVTavfELAijpyLmgL1sTPTvD18swrMgGNl8WdtxGlRkEIGJxMAc6ow1pgL4sohZ
-         n0jPNxqDusoWKwSwleT6Zs5nYa3JbupXY9qeLl27CRVBdyyHWLSMQXh5gmilvKiaK2wD
-         1JxTuwbhXjx1LwoG3PgbJfdV0cBDuIL7QqO+U6JCdaPvuTO5+geq+Ba9xZHyjPf6PjNY
-         sNrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhGJZlniuFI7U6afWgq60ERl/PZWnGoUXXAqxQSU1/usCN+0jb3tWswi09YtvS6/TQ+gnOkXW96HHzB6EyxrrEAWejWyNnMuWpZFng
-X-Gm-Message-State: AOJu0YwCn8TfGIeNDZEfvfl7ToDos6OZtIGrxRu7poZw0rocGN33KOv6
-	aHFJp1f6WoEC/eYgutt4gyMNh5P5Ux7V1Y0fRQhYkgNWUmZA3LJxPrVnIWEkfE0mcN8hGT+83Cs
-	g0GBTFET4iTp0n5pVIPoigwu2cyOWqLB3hPDh
-X-Google-Smtp-Source: AGHT+IH78yrpGhaO2gSlcGlq7AlTg4g7/GluKLEv+bGcOc0UlkSZjbXsCjMz34xRnP6fjTUeWEdXGxDu/sVE+za7bsk=
-X-Received: by 2002:a05:622a:5786:b0:43a:b51c:46ca with SMTP id
- d75a77b69052e-43df483fa74mr51311cf.29.1715201107528; Wed, 08 May 2024
- 13:45:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715201594; x=1715806394;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YqkxFBwBCIjXspjTXUzXTZ3b9F2ADVTFncXrWGlr3RY=;
+        b=diYPE5FnZCbFBOI8OEE5QJ6M/F/01IMryoxfOZ/CK45jtohpc+CZtJhkL10+8FEE2e
+         FJlXi4MLOdWnoCYnax5FP6RovLCGSM6MepYwqEyyS7/xgOnmh86JsZ/nbFHIc9T/uw7R
+         MNqOM28Uy1Kgb4wQfS9SFxVkpLEeQH2F+lv0GbQPsaKfAS5SCAxFzWTOAwN64MD5/1d4
+         c653J6oSEvX38VDJrfeXMMY2gnZ55dPKv3h+9n375T1uiSs4XAbiDzcQEYyBmjFllaHs
+         0nv4dvnerQ1E38WEkePPEIwFqkmUGxSogtMvhkThvr0dcU7NnCc7DNPJSKviPNKRROQT
+         cUXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2W8Z3VVlrWMbACaBgvFaurXfKR/NdipRJjY3kA05wCPGeR+VJ7xHHXc+N2Kd6alUpEo0Qa4eJn5MvBK8aa5Cp1J5Jo7mf4k++bNEq
+X-Gm-Message-State: AOJu0Yz8d4r2CroyRi2z49224iMZj0o0FooNH4lvlQEVrdhQL+P+DJhh
+	8xdtTX/4kJpGu+OIWrbJb++Hza76dlX3j0o+t890dT+nK0fCpGW85hjsSYJp9A==
+X-Google-Smtp-Source: AGHT+IGiUf19nbv8mVQARWFwlILcfxotMoUSFRx1h7bsJtjkb0vbvYocGef5+88IYl9SHmfxsT4U6w==
+X-Received: by 2002:a17:90b:603:b0:2ac:5a93:636b with SMTP id 98e67ed59e1d1-2b61649d74amr3509508a91.2.1715201593783;
+        Wed, 08 May 2024 13:53:13 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:40f4:feca:59e0:d3ca])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126ad51sm6887a91.25.2024.05.08.13.53.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 13:53:13 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: dri-devel@lists.freedesktop.org
+Cc: lvzhaoxiong@huaqin.corp-partner.google.com,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Hsin-Yi Wang <hsinyi@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Cong Yang <yangcong5@huaqin.corp-partner.google.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Joel Selvaraj <jo@jsfamily.in>,
+	Brian Norris <briannorris@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/9] drm/mipi-dsi: Reduce bloat and add funcs for cleaner init seqs
+Date: Wed,  8 May 2024 13:51:42 -0700
+Message-ID: <20240508205222.2251854-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjssGrj+abyC6mYP@gmail.com>
-In-Reply-To: <ZjssGrj+abyC6mYP@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 8 May 2024 13:44:52 -0700
-Message-ID: <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 8, 2024 at 12:39=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
-e:
->
->
-> So I've been getting this perf build failure for some time:
->
->   kepler:~/tip/tools/perf> make clean
->   Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.=
-  Stop.
->   make: *** [Makefile:90: clean] Error 2
->
-> ... but if I clone a new repository, it works fine, until a point.
->
-> 'make clean' doesn't work - and 'make mrproper' in the main kernel
-> directory doesn't clean up properly.
->
-> Only if I do a brute-force:
->
->         rm -rf tools/
->         git checkout HEAD -f
->
-> does it get resolved.
->
-> The failure condition triggers if I Ctrl-C the following build a couple o=
-f
-> times, without it being finished:
->
->
->    cd tools/perf; make clean install
->    ...
->
->    LD      util/perf-in.o
->    LD      perf-in.o
->    CC      pmu-events/pmu-events.o
->  ^Cmake[3]: *** [pmu-events/Build:43: pmu-events/pmu-events.o] Interrupt
->  make[2]: *** [Makefile.perf:709: pmu-events/pmu-events-in.o] Interrupt
->  make[1]: *** [Makefile.perf:264: sub-make] Interrupt
->  make: *** [Makefile:113: install] Interrupt
->  kepler:~/tip> perfi
->  Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h. =
- Stop.
->  make: *** [Makefile:90: clean] Error 2
+The consensus of many DRM folks is that we want to move away from DSI
+drivers defining tables of init commands. Instead, we want to move to
+init functions that can use common DRM functions. The issue thus far
+has been that using the macros mipi_dsi_generic_write_seq() and
+mipi_dsi_dcs_write_seq() bloats the driver using them.
 
-We have a checked-in vmlinux.h:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/util/bpf_skel/vmlinux/vmlinux.h?h=3Dperf-tools-next
-so this shouldn't have been a problem for a while. bpftool is no
-longer on that line:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/Makefile.perf?h=3Dperf-tools-next#n1149
-so I suspect if you use a newer tree then things will work.
+While trying to solve bloat, we realized that the majority of the it
+was easy to solve. This series solves the bloat for existing drivers
+by moving the printout outside of the macro.
 
-Thanks,
-Ian
+During discussion of my v1 patch to fix the bloat [1], we also decided
+that we really want to change the way that drivers deal with init
+sequences to make it clearer. In addition to being cleaner, a side
+effect of moving drivers to the new style reduces bloat _even more_.
 
-> Thanks,
->
->         Ingo
+This series also contains a few minor fixes / cleanups that I found
+along the way.
+
+This series converts four drivers over to the new
+mipi_dsi_dcs_write_seq_multi() function. Not all conversions have been
+tested, but hopefully they are straightforward enough. I'd appreciate
+testing.
+
+NOTE: In v3 I tried to incorporate the feedback from v2. I also
+converted the other two panels I could find that used table-based
+initialization.
+
+v4 just has a tiny bugfix and collects tags. Assuming no other
+problems are found the plan is to land this series sometime roughly
+around May 16 [2]. Note that unless I get a review/Ack for the patch
+("drm/panel: novatek-nt36672e: Switch to
+mipi_dsi_dcs_write_seq_multi()") then I'll land the series without
+that patch.
+
+[1] https://lore.kernel.org/r/20240424172017.1.Id15fae80582bc74a0d4f1338987fa375738f45b9@changeid
+[2] https://lore.kernel.org/r/35b899d2-fb47-403a-83d2-204c0800d496@linaro.org
+
+Changes in v4:
+- Test to see if init is non-NULL before using it.
+- Update wording as per Linus W.
+
+Changes in v3:
+- ("mipi_dsi_*_write functions don't need to ratelimit...") moved earlier.
+- Add a TODO item for cleaning up the deprecated macros/functions.
+- Fix spacing of init function.
+- Inline kerneldoc comments for struct mipi_dsi_multi_context.
+- Rebased upon patch to remove ratelimit of prints.
+- Remove an unneeded error print.
+- Squash boe-tv101wum-nl6 lowercase patch into main patch
+- Use %zd in print instead of casting errors to int.
+- drm/panel: ili9882t: Don't use a table for initting panels
+- drm/panel: innolux-p079zca: Don't use a table for initting panels
+
+Changes in v2:
+- Add some comments to the macros about printing and returning.
+- Change the way err value is handled in prep for next patch.
+- Modify commit message now that this is part of a series.
+- Rebased upon patches to avoid theoretical int overflow.
+- drm/mipi-dsi: Fix theoretical int overflow in mipi_dsi_dcs_write_seq()
+- drm/mipi-dsi: Fix theoretical int overflow in mipi_dsi_generic_write_seq()
+- drm/mipi-dsi: Introduce mipi_dsi_*_write_seq_multi()
+- drm/mipi-dsi: mipi_dsi_*_write functions don't need to ratelimit prints
+- drm/panel: boe-tv101wum-nl6: Convert hex to lowercase
+- drm/panel: boe-tv101wum-nl6: Don't use a table for initting commands
+- drm/panel: novatek-nt36672e: Switch to mipi_dsi_dcs_write_seq_multi()
+
+Douglas Anderson (9):
+  drm/mipi-dsi: Fix theoretical int overflow in mipi_dsi_dcs_write_seq()
+  drm/mipi-dsi: Fix theoretical int overflow in
+    mipi_dsi_generic_write_seq()
+  drm/mipi-dsi: mipi_dsi_*_write functions don't need to ratelimit
+    prints
+  drm/mipi-dsi: Reduce driver bloat of mipi_dsi_*_write_seq()
+  drm/mipi-dsi: Introduce mipi_dsi_*_write_seq_multi()
+  drm/panel: novatek-nt36672e: Switch to mipi_dsi_dcs_write_seq_multi()
+  drm/panel: boe-tv101wum-nl6: Don't use a table for initting panels
+  drm/panel: ili9882t: Don't use a table for initting panels
+  drm/panel: innolux-p079zca: Don't use a table for initting panels
+
+ Documentation/gpu/todo.rst                    |   18 +
+ drivers/gpu/drm/drm_mipi_dsi.c                |  112 +
+ .../gpu/drm/panel/panel-boe-tv101wum-nl6.c    | 2792 +++++++++--------
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c |  794 +++--
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c |  284 +-
+ .../gpu/drm/panel/panel-novatek-nt36672e.c    |  576 ++--
+ include/drm/drm_mipi_dsi.h                    |  101 +-
+ 7 files changed, 2452 insertions(+), 2225 deletions(-)
+
+-- 
+2.45.0.rc1.225.g2a3ae87e7f-goog
+
 
