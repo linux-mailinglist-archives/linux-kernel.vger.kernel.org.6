@@ -1,278 +1,285 @@
-Return-Path: <linux-kernel+bounces-173186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF778BFCBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:55:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61EFE8BFCBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580481F22D49
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5D1A1F21C38
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC6382D90;
-	Wed,  8 May 2024 11:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A6D82D90;
+	Wed,  8 May 2024 11:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Lq0ap9sG"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2071.outbound.protection.outlook.com [40.107.100.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T1Gc8ykG"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4833E81AD0;
-	Wed,  8 May 2024 11:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715169310; cv=fail; b=Z3MwXYWEQTy3iePI6FP0XAxNjWP5UV3o8wlWg0uVEDM0I6YeXe2yfDjW4wa2UBl0RP6bGGWC7RXe+mUkOy5Izcb2/Rwhx52hdb+PkiXB/GJU97hbzHUvm5fyUrjCqAsxY8ie9Krl4UAxSb+wwyl76Fauxze41B+0dIXLs/Ek9y4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715169310; c=relaxed/simple;
-	bh=4JK7YlbDp3soJFfiKEt0hkgAXdRqIHygGzMCiZmrfkc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rn+7PNWVhdbtJHS+Cup+kEH0bkBsJoaX8o24lkIlhs6k5AmgU0iumefAd1upjn+FJ5QVLu8Y0BCi7IRS6A/xZu23nyVM5JVEnbxqaXZI9hS8LzcW/bMdL26u52eLg8JVOU2jD/EBUd295Prle4Ub38p9QXbkuIYUsR4i6Whf6XE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Lq0ap9sG; arc=fail smtp.client-ip=40.107.100.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jOmBPuCusXJG6lSc24qjZ33teetRCxKyaMeyMIO+VuD+k7sYx5ksYiQlbQ3Zr2XaDSholHDj5z3tuP+ITs4AwzrDRm14MWLFTFbeoETG0zIiSl64BHyu5l7nsN1WVuLpWKU0Sjz4SOmlazWR6DmrC0bKYnMFAmk4QsmK1oGG6zVPZCIhV2AB/vuEPt2uN3FA7g1rpIESOjahWz2urqU1wasATezlDP2JsMIH70kD9ZcFSTZ9fFnMThkh1Sa1/Bp2ZYlZpbjL7i6JuzBivouLqG9hlOj1D6xnhe4hEIHBP1UaL5mLZ7rG1vcmyGbytHks7hlUwgAu40EFKEh2BvED2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BpHSeOSzLROn6ukpnAreaoSVt3qu6FpWK/IOQ/HGnhY=;
- b=jZMNIwTdlJmzHFcJtafX+JHsh4N0fuR0f40Bl2HC5gWOkbevvh/8TA91M4iJN9/yfapvNFH+VbjbfakoSftU0ufnocgBlQLqlpoloQnRQ7mw+1dWHvgYp5HQeDHTaYF532hY6JathdcomL/V96EkRKBRzf/u4d5As/m1kYAhKrVl2vVDcVti/Fbt/25r9E+WJskUaZrVcXWiFvGS30+9e8Mvswa7wpZKAiCqNhvpXvFr5mbIoj/xtWfQX6cPJHnJFjCa/GHgn7XA7ikJDyk7J8/swvsjoLZP57GCDndkHgV9T+ZRq4AVtmEkOEJORTEdVx/wGWMJXrdkLySC0OQx2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BpHSeOSzLROn6ukpnAreaoSVt3qu6FpWK/IOQ/HGnhY=;
- b=Lq0ap9sGu+ruMBVQejo6BaxlVuIiSuWA4D7q4THu3A6Q9UEEQlubk4Hiqmk80GlZoBfz2pS5wIB87T4sxltOTZ9EDeX5oYDXyUk8UCqah0HRoXo1fhJgZwbF9FxANEFOSHbSqxECyuUstim0o5istuCaOFLiZ94liRpQgLE1580=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
- by SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.46; Wed, 8 May
- 2024 11:55:04 +0000
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::c3fc:3be9:dde7:745f]) by SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::c3fc:3be9:dde7:745f%7]) with mapi id 15.20.7544.045; Wed, 8 May 2024
- 11:55:03 +0000
-Message-ID: <d64eb924-0f12-44c2-98e2-5e682292645d@amd.com>
-Date: Wed, 8 May 2024 13:54:58 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] pinctrl: zynqmp: Support muxing individual pins
-To: Sean Anderson <sean.anderson@linux.dev>,
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
- Krishna Potthuri <sai.krishna.potthuri@amd.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org
-References: <20240503162217.1999467-1-sean.anderson@linux.dev>
- <CACRpkdbOAoSDNFhXfz3djUZh1_MQ_T75CC+-LmojRXvyCbUusA@mail.gmail.com>
- <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- xsFNBFFuvDEBEAC9Amu3nk79+J+4xBOuM5XmDmljuukOc6mKB5bBYOa4SrWJZTjeGRf52VMc
- howHe8Y9nSbG92obZMqsdt+d/hmRu3fgwRYiiU97YJjUkCN5paHXyBb+3IdrLNGt8I7C9RMy
- svSoH4WcApYNqvB3rcMtJIna+HUhx8xOk+XCfyKJDnrSuKgx0Svj446qgM5fe7RyFOlGX/wF
- Ae63Hs0RkFo3I/+hLLJP6kwPnOEo3lkvzm3FMMy0D9VxT9e6Y3afe1UTQuhkg8PbABxhowzj
- SEnl0ICoqpBqqROV/w1fOlPrm4WSNlZJunYV4gTEustZf8j9FWncn3QzRhnQOSuzTPFbsbH5
- WVxwDvgHLRTmBuMw1sqvCc7CofjsD1XM9bP3HOBwCxKaTyOxbPJh3D4AdD1u+cF/lj9Fj255
- Es9aATHPvoDQmOzyyRNTQzupN8UtZ+/tB4mhgxWzorpbdItaSXWgdDPDtssJIC+d5+hskys8
- B3jbv86lyM+4jh2URpnL1gqOPwnaf1zm/7sqoN3r64cml94q68jfY4lNTwjA/SnaS1DE9XXa
- XQlkhHgjSLyRjjsMsz+2A4otRLrBbumEUtSMlPfhTi8xUsj9ZfPIUz3fji8vmxZG/Da6jx/c
- a0UQdFFCL4Ay/EMSoGbQouzhC69OQLWNH3rMQbBvrRbiMJbEZwARAQABzSlNaWNoYWwgU2lt
- ZWsgKEFNRCkgPG1pY2hhbC5zaW1la0BhbWQuY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
- CwIEFgIDAQIeAQIXgBYhBGc1DJv1zO6bU2Q1ajd8fyH+PR+RBQJkK9VOBQkWf4AXAAoJEDd8
- fyH+PR+ROzEP/1IFM7J4Y58SKuvdWDddIvc7JXcal5DpUtMdpuV+ZiHSOgBQRqvwH4CVBK7p
- ktDCWQAoWCg0KhdGyBjfyVVpm+Gw4DkZovcvMGUlvY5p5w8XxTE5Xx+cj/iDnj83+gy+0Oyz
- VFU9pew9rnT5YjSRFNOmL2dsorxoT1DWuasDUyitGy9iBegj7vtyAsvEObbGiFcKYSjvurkm
- MaJ/AwuJehZouKVfWPY/i4UNsDVbQP6iwO8jgPy3pwjt4ztZrl3qs1gV1F4Zrak1k6qoDP5h
- 19Q5XBVtq4VSS4uLKjofVxrw0J+sHHeTNa3Qgk9nXJEvH2s2JpX82an7U6ccJSdNLYbogQAS
- BW60bxq6hWEY/afbT+tepEsXepa0y04NjFccFsbECQ4DA3cdA34sFGupUy5h5la/eEf3/8Kd
- BYcDd+aoxWliMVmL3DudM0Fuj9Hqt7JJAaA0Kt3pwJYwzecl/noK7kFhWiKcJULXEbi3Yf/Y
- pwCf691kBfrbbP9uDmgm4ZbWIT5WUptt3ziYOWx9SSvaZP5MExlXF4z+/KfZAeJBpZ95Gwm+
- FD8WKYjJChMtTfd1VjC4oyFLDUMTvYq77ABkPeKB/WmiAoqMbGx+xQWxW113wZikDy+6WoCS
- MPXfgMPWpkIUnvTIpF+m1Nyerqf71fiA1W8l0oFmtCF5oTMkzsFNBFFuvDEBEACXqiX5h4IA
- 03fJOwh+82aQWeHVAEDpjDzK5hSSJZDE55KP8br1FZrgrjvQ9Ma7thSu1mbr+ydeIqoO1/iM
- fZA+DDPpvo6kscjep11bNhVa0JpHhwnMfHNTSHDMq9OXL9ZZpku/+OXtapISzIH336p4ZUUB
- 5asad8Ux70g4gmI92eLWBzFFdlyR4g1Vis511Nn481lsDO9LZhKyWelbif7FKKv4p3FRPSbB
- vEgh71V3NDCPlJJoiHiYaS8IN3uasV/S1+cxVbwz2WcUEZCpeHcY2qsQAEqp4GM7PF2G6gtz
- IOBUMk7fjku1mzlx4zP7uj87LGJTOAxQUJ1HHlx3Li+xu2oF9Vv101/fsCmptAAUMo7KiJgP
- Lu8TsP1migoOoSbGUMR0jQpUcKF2L2jaNVS6updvNjbRmFojK2y6A/Bc6WAKhtdv8/e0/Zby
- iVA7/EN5phZ1GugMJxOLHJ1eqw7DQ5CHcSQ5bOx0Yjmhg4PT6pbW3mB1w+ClAnxhAbyMsfBn
- XxvvcjWIPnBVlB2Z0YH/gizMDdM0Sa/HIz+q7JR7XkGL4MYeAM15m6O7hkCJcoFV7LMzkNKk
- OiCZ3E0JYDsMXvmh3S4EVWAG+buA+9beElCmXDcXPI4PinMPqpwmLNcEhPVMQfvAYRqQp2fg
- 1vTEyK58Ms+0a9L1k5MvvbFg9QARAQABwsF8BBgBCAAmAhsMFiEEZzUMm/XM7ptTZDVqN3x/
- If49H5EFAmQr1YsFCRZ/gFoACgkQN3x/If49H5H6BQ//TqDpfCh7Fa5v227mDISwU1VgOPFK
- eo/+4fF/KNtAtU/VYmBrwT/N6clBxjJYY1i60ekFfAEsCb+vAr1W9geYYpuA+lgR3/BOkHlJ
- eHf4Ez3D71GnqROIXsObFSFfZWGEgBtHBZ694hKwFmIVCg+lqeMV9nPQKlvfx2n+/lDkspGi
- epDwFUdfJLHOYxFZMQsFtKJX4fBiY85/U4X2xSp02DxQZj/N2lc9OFrKmFJHXJi9vQCkJdIj
- S6nuJlvWj/MZKud5QhlfZQsixT9wCeOa6Vgcd4vCzZuptx8gY9FDgb27RQxh/b1ZHalO1h3z
- kXyouA6Kf54Tv6ab7M/fhNqznnmSvWvQ4EWeh8gddpzHKk8ixw9INBWkGXzqSPOztlJbFiQ3
- YPi6o9Pw/IxdQJ9UZ8eCjvIMpXb4q9cZpRLT/BkD4ttpNxma1CUVljkF4DuGydxbQNvJFBK8
- ywyA0qgv+Mu+4r/Z2iQzoOgE1SymrNSDyC7u0RzmSnyqaQnZ3uj7OzRkq0fMmMbbrIvQYDS/
- y7RkYPOpmElF2pwWI/SXKOgMUgigedGCl1QRUio7iifBmXHkRrTgNT0PWQmeGsWTmfRit2+i
- l2dpB2lxha72cQ6MTEmL65HaoeANhtfO1se2R9dej57g+urO9V2v/UglZG1wsyaP/vOrgs+3
- 3i3l5DA=
-In-Reply-To: <06a4e5fd-3d26-4923-bcbf-0bdd66d756c4@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR04CA0015.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::25) To SJ2PR12MB8109.namprd12.prod.outlook.com
- (2603:10b6:a03:4f5::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4913D82C6B
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715169370; cv=none; b=qMBvZy/UwcEWKyhfLtIY1RpUzyuCvXiWHsFUnCEscY6FtHj+VdT3PHkzF43odtmA5p+HX9n84t/vMrGxpjClSP029TQO91RNPm9fghocqmcqU2LET8DkREb9tSPMBnOQTZ5XRI4Kxc+rn4fh7Db5KAKYej0JhAiGHGUGJu2Tj6c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715169370; c=relaxed/simple;
+	bh=VzvbGI1z/xxnxDvk5Jx7lWpmujJ1R8BpP1oWRjAoAkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tq/iLAw0Bop6DHcUEkYm2P5A9fFZtEXGguG8Hku6NW65+x5PR5HaVFXi3+j738WkUfffiWJtiMQ/pjXhi4DtgIvwal5y5vziLGUbOESzSJLWZR9s7gmSmMx3gVcXR1wyhkcDej7KBpe32Z+qQ3K1TDTwWRLL+ZJviM3z1cI8oso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T1Gc8ykG; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6f450f43971so3353853b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715169368; x=1715774168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rzBWZByfqdZx/hPlpPIy1POerUtgZPZjzuSa/z5kMRo=;
+        b=T1Gc8ykGYFdB0OX2VRWqk3XCvtyGRzBkz60wfIeJkhZkImKbQwxXj1T5QPJdu7AhFh
+         HwqwZkY8DnbQEEhOWZZ4YF2IARj+8zVaKYgPVNmkJohmvFW7CLldJf0HSP88XOyCudDa
+         1vmUcg6e7Ha7eZpJ0J9EAJ+/KMKZfJfBVf6M5rTWEhLV6ulCaT+Ez3vvjikyKgsUxFQj
+         9zMSFsQ4uClcDEb4FmdrFrMTzTZwykehB0G+A1wCnve/73j+4SAmeSAyzb1krhWHcmqy
+         SZa6vg98tYdyAwbAr3oucYu/UugFjrJ9Y/1gka7/VJ7sw2EVLYU3famfS7N0urW6+DtH
+         Xl+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715169368; x=1715774168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rzBWZByfqdZx/hPlpPIy1POerUtgZPZjzuSa/z5kMRo=;
+        b=sSSMXlSAiyWZuX/VwJk6Lg49XucVrZDpKYAC4TMAVXi4B9W48GoV38curjX6+eT1ZM
+         efC8mYGkdBcumQ29bqnAfdsDFUUauRxW1gdmGkXsrm/X0jkYbtTJLr434DChk6mAoEwB
+         9/Yht49w/dnQusQvKqvtXki7izmBSNt4M3jn83C+gWCkL9COsch2oxjOw500ce+/EMkJ
+         zVRTAnLaAyDuT0z02tcW/J4V5+GJBNPdifi+NkjmPtpSd5FmeDfaPXA0m5tEma9TiyO5
+         zIHsYqVVHRwdwkdCd9bW/y5K5iyQnlEBaQXETVY6AKKo2lQAx2m36osY99z6h3jX3C3A
+         LSeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGggMsZtP+6VzfK2whF4QFhTGOid0bcf8NjYR3+J3v6kq+x0G9QmT3b0VTZ2hP+EqKq22FldgduBUNGB7+g+nQoH2I71cUgdOLwi/c
+X-Gm-Message-State: AOJu0YxTw70NvHlNd1um/q5nXjwooBE3RWsHJAodW/gqjyqSqJAeA48q
+	xE9N7R9CKHZB5mHIjoHCEo6p3BZw5niPU3N9R8GS3lSAtbnEa1u6J0EmJWy3FU5iYlSwWZL9new
+	wogGt5jSxosHkslp6iAbTvPmNBUzzIq7nWNx0Wg==
+X-Google-Smtp-Source: AGHT+IE4iAufvNLrHlSAWygkM7cmsvfktyL3UoTB3p6BWDfJXKoN/b0exVyFToTRexZifcgUkoKRBcwkpcWi6GUpDBc=
+X-Received: by 2002:a05:6a21:168e:b0:1a3:65af:9baa with SMTP id
+ adf61e73a8af0-1afc8de0229mr2361763637.62.1715169368633; Wed, 08 May 2024
+ 04:56:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|SN7PR12MB8603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 204703cd-65f7-44e7-ade1-08dc6f55b27d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VGoraEoxSVBWcVNxd1RJa09CNUVyVHFVcjBZUTIzM0gzenRSUTJGVzhXSEVZ?=
- =?utf-8?B?RlZJVEE1UGpXdHRTQXZnWkk5RExIZ21jdUIzWTRudk1BMlRpOEhNSW82VnBo?=
- =?utf-8?B?d1k2SVJjYnVXQ3JwQ2FYTDN5Q0JzU252WnJvdDF0bTZsSHgyZjQ2dXl3UDlM?=
- =?utf-8?B?TkVSVEJGTDRiOFhuZERkUGxiblpZVTN3eko2aXdLWGl6T2dqSmh3YUNpdW9G?=
- =?utf-8?B?OFJScVFCbGhtQXJSMGlHYzFPYlROb3l5ZDh6cFVIM29JUmhZTVA1dTVZYWxD?=
- =?utf-8?B?aEdicmFvT0RzZnBUSlJWQXk3eVJiMCtxYjhuNko0Y0piYWxnMGRjOXhjRXdY?=
- =?utf-8?B?ZUVjY2pCL3lMTTF1WlJybkZxeklsL2d0S1U4TzYrVlN5VHVVTW9wSTdQLzl5?=
- =?utf-8?B?VXVSaHNhSm1pSU03SnpVRzJYbDRhS2pna09ZU3p5Q1B6RmZvclBMV0Vpc2hE?=
- =?utf-8?B?VUx2RXBYSDV1bXhTdzl6cElMbHFURm0zT2VRaVBFRFZaWUZlS05Tc0NuckF3?=
- =?utf-8?B?eExyZFhwWDJrWjk1aXoyRTlHNkxOdTdIbFhRU3VRajZ3NXBjRTkwU3lXcXBW?=
- =?utf-8?B?R1cyZW5vR0F3ZEMyT2RrOE1Kd2ZZMmJmSVNuZHIyMHZpMXY3bWNYdHl2T0Y2?=
- =?utf-8?B?RUVNeUlrNHU1dVhvNG1MWXFsbk8zb2p1aDRGamQ3c3d6WlpzZHQ2dmMvbVJ1?=
- =?utf-8?B?MC9RRGx1UzhHeWZydGhzVWZjTGIwcWJJa2llWExBelh3MTF0ejNjTi9LODIr?=
- =?utf-8?B?KzhlV1VLOFdremhIRGY5dlpDWk1ZNWNNTEQ2ZUZ6RzBFVU5zQUFwSGhhdStH?=
- =?utf-8?B?b0tOUHpJTHNpbi85VGxvV1luOWt1anlZSHBONlhqbUUzK2RLWU5SZU9wQ1Rq?=
- =?utf-8?B?dTJEVkdCRXB3NEJBMHVhc3hlSWhGNmhDTkYwYVRhcWl1SG9ESmlpejRFbW9z?=
- =?utf-8?B?eDg4MkFqbGtqZHo0NGVwREtjaHhPeGxPU0xVS1I5Y0JEclVybVYwNHExdVZz?=
- =?utf-8?B?NDNmNG05TjZteGpPZFFQak9JT1FYbGg4N2tIeDJzOUptYnR5QlFRUFFuUDZh?=
- =?utf-8?B?SlpmaWl4SnpQSCt0QUpoaXp3ZUJ4d282VHF2ckFKdFo0ZkFkVkpTdk5CSGgz?=
- =?utf-8?B?aSsvd2dOWUU1Y2JPMDJvUVljaUkwVC8rUXVadjEzUWZYU21tUXhRbnZoOFpH?=
- =?utf-8?B?ZDlsUlJmUFYwbXJIbkZoSTEreVBNS080RUhCdlM2NkMranNCWEVnNEQ1cVRG?=
- =?utf-8?B?T1ZrVmJRMXp5MWVjWjNKTm1VcTJBYTdLSEcxR29MRzhOUFZZTW80ZU51Y3V2?=
- =?utf-8?B?VnlYTGJVQWl0bTkwaCs5UGl2NGpBV0VCNFNNVHFGK3N2UkRHOUNRbCtKZkhW?=
- =?utf-8?B?b2J6OFhsak1mVDhYdFp4UHh4NzNtMXFicVpzekdJdHZnSXI2L09FdW1KdFhX?=
- =?utf-8?B?My9yMmltWnNzOEI4Q3dMcnhzYU45YXJjckhBOStWMWtCeXJ4R3g4U0szKyty?=
- =?utf-8?B?TXFyKzRkSi9TZCsyOFdVS3NUYWRiaHllYi9OcUhtSzlIbGRqbm5mczRGU1cw?=
- =?utf-8?B?SE41Y0pNMDVkVmNldk5nMzdNMGVHUEQwUW5ZSy9BUTdDNU9XWlFYWjloNTMy?=
- =?utf-8?B?Rno1RXdtZ2dCdHBuSTRPcndkYWJkRWc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R0V4ajBpWXc0a1Q5QWxrb3Z4M2dKdUxOK1AyVUV2NDlpb1d1M05EenBzMU04?=
- =?utf-8?B?c2tOY3hNblRFOFJyK1lOQm5EK2RUcEpjeFpMUkJRYmE3T3JXbFFQaGJFSUJq?=
- =?utf-8?B?RE5PZFo0WjZWeEs3QmliZ3JSdysvTTdLNW92UDN4M1A3bkErTkJlUkxlalJi?=
- =?utf-8?B?LzBvZm13RDd3enV3cWFTU01tLzNseEVtR3JETkVZcCtUN00zRExBbGZ5NXdl?=
- =?utf-8?B?RytXK2k1dWxDcGQvSnc2M3hRNld6MU5oTVpyMUNwaFozTDNlOFJpWEhJYW5x?=
- =?utf-8?B?RWNBZ3M2VUhxZUNiZS9lNWdPa09rNkxYczNZQ3FRUGtXTHQ0b0V1am15NEtq?=
- =?utf-8?B?OEVZWnR2TE9rei9ORnlTVUZ5VUZRUmFyV0J2OU1JRWRHZk9udTJaSkNoOVQr?=
- =?utf-8?B?VzAwaWJpa3VEMHMyNmFUUkdiTXd1MzFONmNoUkJlZ0did1NhZjRZOEJTdFZE?=
- =?utf-8?B?SmltaktQRGtwZGVLS2tNeGJEZmpOUTBCMWR1bVRCNE5WQnpDZ2FLLzA1VmYx?=
- =?utf-8?B?eCt1UjZXeGRzK2dxd2F3bWludlFweTA4LzAwNnU1RHRMaXNLY0JmaFRmalB2?=
- =?utf-8?B?OTM4NXFvc2NkRkU5clFLL1lHZ01keVpjR290ZnRzcHhiVVlVcDM2dDlWMjVr?=
- =?utf-8?B?WVFtR1dKSElVNmZXbi9DNzh6Y0U0cVdtMzliL2o5ejBDRkZiVEZZQk0rUzFL?=
- =?utf-8?B?YjhXeXNLRVhPcXAyZHRNSFA3YUFtTEptWEhhTUtrTm5Rd1E1aE52WFRHbWdF?=
- =?utf-8?B?WEcrWHROTUsreWdRaThNY2ExRzgvbmUyRzY1UTFLcVdKVHBETUpCYjU5N0Er?=
- =?utf-8?B?dzN6ckpJMFlOVkczQ25xc0dRc3pEdzFOYjBXRVRMR2o2RVltaDhxQWdCMTMw?=
- =?utf-8?B?b3ZnQjdqYUtvenpQZWNBSDVCNjNuSkVjRVBqYWphNkkycStGbC9JNUVzblBh?=
- =?utf-8?B?SDRmQk84dHlpMk5jMXVZVUdFekdoMG9CeVUwOUlwTEppM1ZoVVFqeEl5cGd3?=
- =?utf-8?B?VWI2cmJJbHRDV1oyVElqakdsd1laOUMwQTNEemJac3dnclF5Y3FHak9wcHJT?=
- =?utf-8?B?RWp2eWVYUm9aMkJRU2JEREl1VmxaWTJ0ZmNqVW0vSE1OTFBPTDhJOUNUUnlP?=
- =?utf-8?B?TW02UTZVRTF0dDljcytPSDlYcGlXa0tpZ3dwZ3BWU00rTWlOamtxUS9KSnV5?=
- =?utf-8?B?czQwbU9TRVpDYnpiR2QxL0lYN1JQRGt0bXdOVHMvQU9BWHBrcjBaQjdWL00z?=
- =?utf-8?B?NHdyaEQvajYyRmVHRzRsZzdOODVpSW90UDk3WkcvWUdWSjZubGhOeHRnM0NM?=
- =?utf-8?B?OHpjNFhFcENBU2pUZy9DT1pQMHE1Vk1hMk1qTlk3YTZRZVhBMDlYempqKzRE?=
- =?utf-8?B?WTRyYTVxNDhIZy9YcEdTR01qc0M4OFpsalRLSnFlMmFVTStRKzE3RWxvcEgw?=
- =?utf-8?B?SXhsdk45b3dqMmhLa0V5OFRvdFUrQW10WVFPcjVYUkNBdUo2ZVV6bU5MMmdN?=
- =?utf-8?B?TWorcEhCaTdqeGZMb2g1SjBJWVRERmpXbTdRbUtEcFVIc1FqZHJ6WkUvak0x?=
- =?utf-8?B?UTh6YzB3QnltZS90OVQ0QVpSdlNXMXN4d2NabHdTYzNCS1Z1ZUJVZS92RDBL?=
- =?utf-8?B?UzBOSVNRRUF0RVhUMWhJa2hLbHZiRitTclVwOHhUek1yL1BPOUtmTE1GV3RS?=
- =?utf-8?B?SlVweUtvNXNNRnp6WDRoL3BjYWdPdmYvSCtQQXMzVFRwMWpVUzY0ZXFGbUtP?=
- =?utf-8?B?WVVTVittOXh5aytpNDRBM1kyRURvRFNjeWdoNzJLRjcxbzN6ZlZBMUt6MERK?=
- =?utf-8?B?cVdwUUNMR0NKRkhYRXNMOTNPYmF4dXhlUXRVTDcxYUR5b0taeFVLZGprY1Rw?=
- =?utf-8?B?VEc2Y0ZNK1V3UXZLOUZkK3ZwQUtDRTVPL0RwdWpsVTFkMFZ6cVhhMTM5YlY0?=
- =?utf-8?B?dGxKa210K2FnR3d1aXJJekZneXprU0tTK09QS1ZUYmVFL3hvYjN1Q25oTHV4?=
- =?utf-8?B?Nmh5RVlPWTlCaGsvWW9wYnVPVHhoeUhxT3RaTUJqWEFtazkvUDhsMDU4dGJq?=
- =?utf-8?B?OUZnV0lxMGZUQjJzY0cvVjQ0WU85NzNVbEt4dWFCSDVnb3JFcytHKzhTdGd2?=
- =?utf-8?Q?ZVO2l6FKqRBTRwcEX4xwBg7K4?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 204703cd-65f7-44e7-ade1-08dc6f55b27d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 11:55:03.8312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ovfpq3+7sXjHXfcVK63C/nuPSO84P7aY1vCZZ+t+0C9VJZctRHjmJeaxGHA2oyfn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
+References: <20240507135234.1356855-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240507135234.1356855-6-yangcong5@huaqin.corp-partner.google.com> <CAD=FV=WR0o1Z4c4+GjrZw8mTJPZnP8uB_gWhX1QuOxxm4qhroA@mail.gmail.com>
+In-Reply-To: <CAD=FV=WR0o1Z4c4+GjrZw8mTJPZnP8uB_gWhX1QuOxxm4qhroA@mail.gmail.com>
+From: cong yang <yangcong5@huaqin.corp-partner.google.com>
+Date: Wed, 8 May 2024 19:55:57 +0800
+Message-ID: <CAHwB_NJHOphvydx8=HjgroE6ZXyJz-MHsJUwiedsMhshG0CMkQ@mail.gmail.com>
+Subject: Re: [PATCH v4 5/7] drm/panel: himax-hx83102: Support for BOE
+ nv110wum-l60 MIPI-DSI panel
+To: Doug Anderson <dianders@chromium.org>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
+	robh+dt@kernel.org, conor+dt@kernel.org, airlied@gmail.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+Doug Anderson <dianders@chromium.org> =E4=BA=8E2024=E5=B9=B45=E6=9C=888=E6=
+=97=A5=E5=91=A8=E4=B8=89 07:35=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi,
+>
+> On Tue, May 7, 2024 at 6:53=E2=80=AFAM Cong Yang
+> <yangcong5@huaqin.corp-partner.google.com> wrote:
+> >
+> > +static int boe_nv110wum_init(struct hx83102 *ctx)
+> > +{
+> > +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi }=
+;
+> > +
+> > +       msleep(60);
+> > +
+> > +       hx83102_enable_extended_cmds(ctx, true);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x2c, =
+0xaf, 0xaf, 0x2b, 0xeb, 0x42,
+> > +                                        0xe1, 0x4d, 0x36, 0x36, 0x36, =
+0x36, 0x1a, 0x8b, 0x11, 0x65, 0x00,
+> > +                                        0x88, 0xfa, 0xff, 0xff, 0x8f, =
+0xff, 0x08, 0x9a, 0x33);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDISP, 0x00, 0=
+x47, 0xb0, 0x80, 0x00, 0x12,
+> > +                                        0x71, 0x3c, 0xa3, 0x11, 0x00, =
+0x00, 0x00, 0x88, 0xf5, 0x22, 0x8f);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x49, 0x=
+49, 0x32, 0x32, 0x14, 0x32,
+> > +                                        0x84, 0x6e, 0x84, 0x6e, 0x01, =
+0x9c);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xcd)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x84);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETVDC, 0x1b, 0x=
+04);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_BE, 0x20=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xfc, 0=
+x84);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSTBA, 0x36, 0=
+x36, 0x22, 0x00, 0x00, 0xa0,
+> > +                                        0x61, 0x08, 0xf5, 0x03);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xcc)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x80);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc6)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETRAMDMY, 0x97)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPWM, 0x00, 0x=
+1e, 0x30, 0xd4, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x08, =
+0x13, 0x07, 0x00, 0x0f, 0x34);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPANEL, 0x02, =
+0x03, 0x44);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc4)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCASCADE, 0x03=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPCTRL, 0x37, =
+0x06, 0x00, 0x02, 0x04, 0x0c, 0xff);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0x1f=
+, 0x11, 0x1f, 0x11);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x06, 0=
+x00, 0x00, 0x00, 0x00, 0x04,
+> > +                                        0x08, 0x04, 0x08, 0x37, 0x37, =
+0x64, 0x4b, 0x11, 0x11, 0x03, 0x03, 0x32,
+> > +                                        0x10, 0x0e, 0x00, 0x0e, 0x32, =
+0x10, 0x0a, 0x00, 0x0a, 0x32, 0x17, 0x98,
+> > +                                        0x07, 0x98, 0x00, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP1, 0x18, 0=
+x18, 0x18, 0x18, 0x1e, 0x1e,
+> > +                                        0x1e, 0x1e, 0x1f, 0x1f, 0x1f, =
+0x1f, 0x24, 0x24, 0x24, 0x24, 0x07, 0x06,
+> > +                                        0x07, 0x06, 0x05, 0x04, 0x05, =
+0x04, 0x03, 0x02, 0x03, 0x02, 0x01, 0x00,
+> > +                                        0x01, 0x00, 0x21, 0x20, 0x21, =
+0x20, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+> > +                                        0x18, 0x18);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xaf, 0=
+xaa, 0xaa, 0xaa, 0xaa, 0xa0,
+> > +                                        0xaf, 0xaa, 0xaa, 0xaa, 0xaa, =
+0xa0);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGMA, 0x00, 0x=
+05, 0x0d, 0x14, 0x1b, 0x2c,
+> > +                                        0x44, 0x49, 0x51, 0x4c, 0x67, =
+0x6c, 0x71, 0x80, 0x7d, 0x84, 0x8d, 0xa0,
+> > +                                        0xa0, 0x4f, 0x58, 0x64, 0x73, =
+0x00, 0x05, 0x0d, 0x14, 0x1b, 0x2c, 0x44,
+> > +                                        0x49, 0x51, 0x4c, 0x67, 0x6c, =
+0x71, 0x80, 0x7d, 0x84, 0x8d, 0xa0, 0xa0,
+> > +                                        0x4f, 0x58, 0x64, 0x73);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x07, 0x=
+10, 0x10, 0x1a, 0x26, 0x9e,
+> > +                                        0x00, 0x53, 0x9b, 0x14, 0x14);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_E1, 0x11=
+, 0x00, 0x00, 0x89, 0x30, 0x80,
+> > +                                        0x07, 0x80, 0x02, 0x58, 0x00, =
+0x14, 0x02, 0x58, 0x02, 0x58, 0x02, 0x00,
+> > +                                        0x02, 0x2c, 0x00, 0x20, 0x02, =
+0x02, 0x00, 0x08, 0x00, 0x0c, 0x05, 0x0e,
+> > +                                        0x04, 0x94, 0x18, 0x00, 0x10, =
+0xf0, 0x03, 0x0c, 0x20, 0x00, 0x06, 0x0b,
+> > +                                        0x0b, 0x33, 0x0e);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xff, 0=
+xff, 0xff, 0xff, 0xfa, 0xa0,
+> > +                                        0xff, 0xff, 0xff, 0xff, 0xfa, =
+0xa0);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x01, =
+0xbf, 0x11);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x86);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0x96=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc9)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x84);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xd1)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_E1, 0xf6=
+, 0x2b, 0x34, 0x2b, 0x74, 0x3b,
+> > +                                        0x74, 0x6b, 0x74);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x02, 0x=
+00, 0x2b, 0x01, 0x7e, 0x0f,
+> > +                                        0x7e, 0x10, 0xa0, 0x00, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x02);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x02, 0x=
+00, 0xbb, 0x11);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xff, 0=
+xaf, 0xff, 0xff, 0xfa, 0xa0,
+> > +                                        0xff, 0xaf, 0xff, 0xff, 0xfa, =
+0xa0);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0xfe, 0x=
+01, 0xfe, 0x01, 0xfe, 0x01,
+> > +                                        0x00, 0x00, 0x00, 0x23, 0x00, =
+0x23, 0x81, 0x02, 0x40, 0x00, 0x20, 0x65,
+> > +                                        0x02, 0x01, 0x00, 0x00, 0x00, =
+0x00, 0x00, 0x00, 0x01, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x03);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xaa, 0=
+xaf, 0xaa, 0xaa, 0xa0, 0x00,
+> > +                                        0xaa, 0xaf, 0xaa, 0xaa, 0xa0, =
+0x00, 0xaa, 0xaf, 0xaa, 0xaa, 0xa0, 0x00,
+> > +                                        0xaa, 0xaf, 0xaa, 0xaa, 0xa0, =
+0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc6)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x03, 0x=
+ff, 0xf8);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_E1, 0x00=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc4)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x96);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc5)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x4f);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
+> > +       hx83102_enable_extended_cmds(ctx, false);
+>
+> It's not super important, but in panel drivers I converted to the
+> mipi_dsi_dcs_write_seq_multi() I checked the "accum_err" and did an
+> early return right before any mdelay() calls. This means that if any
+> of the above failed then we didn't waste time with the mdelay().
 
-On 5/6/24 16:45, Sean Anderson wrote:
-> On 5/6/24 02:43, Linus Walleij wrote:
->> On Fri, May 3, 2024 at 6:22 PM Sean Anderson <sean.anderson@linux.dev> wrote:
->>
->>> This series adds support for muxing individual pins, instead of
->>> requiring groups to be muxed together. See [1] for additional
->>> discussion.
->>>
->>> [1] https://lore.kernel.org/linux-arm-kernel/5bb0dc7e-4c89-4f3d-abc6-41ae9ded5ae9@linux.dev/
->>
->> The way I usually would recommend to solve this would be to
->> define new subgroups, so e.g. for a UARTS:
->>
->> uart0_grp = pin_rx, pin_tx, pin_cts, pin_dts, pin_dcd;
->>
->> And today this would be used like that:
->>
->> mux0:
->>      function = "uart0";
->>      groups = "uart0_grp";
->>
->> Then we realize that not everyone need all the modem
->> control signals provided. What to do. Well this:
->>
->> uart0_rxtx_grp = pin_rx, pin_tx:
->> uart0_modem_grp = pin_cts, pin_dts, pin_dcd;
->>
->> mux0:
->>      function = "uart0";
->>      groups = "uart0_rxtx_grp";
->>
->> Now the CTS, DTS, DCD pins can be reused for something
->> else such as GPIO.
->>
->> I *know* that this breaks ABI: the driver group definitions change
->> and the device tree needs to be changed too.
->>
->> This only matters if the users have a habit of distributing the
->> kernel and DTB separately so a new kernel needs to support
->> and old DTB. This varies in how much control we have but I
->> think for Xilinx systems the kernel and DTB are always updated
->> in lockstep, so it really does not matter?
-> 
-> Well, the pin groups are actually defined in the PMU firmware. And
-> frankly, I don't see the point of pin "groups" when there are not actual
-> pin groups at the hardware level. The pins can all be muxed
-> individually, so there's no point in adding artificial groups on top.
-> Just mux the pins like the hardware allows and everything is easy. Cuts
-> down on the absurd number of strings too.
-
-That Linus example is split which would make sense but as Sean said HW is not 
-really working like this. Because you can actually take tx from group0 and rx 
-from group5. You can't configure it in design tools but you can configure via 
-registers and it will just work fine.
-
-Thanks,
-Michal
-
+Ok, I wiil add check accum_err before calling mdelay in V4.
+Thanks.
+>
+> > +
+> > +       msleep(50);
+> > +
+> > +       return dsi_ctx.accum_err;
+> > +};
 
