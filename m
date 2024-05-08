@@ -1,153 +1,114 @@
-Return-Path: <linux-kernel+bounces-172934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F6F8BF8EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F988BF8F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE3F22814C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0752874A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB755490B;
-	Wed,  8 May 2024 08:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238CF54907;
+	Wed,  8 May 2024 08:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="droVsfqg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZzmm8Ud"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710D54668;
-	Wed,  8 May 2024 08:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EA247A7D;
+	Wed,  8 May 2024 08:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157635; cv=none; b=skeMp75ECAedMIX4oTGTETslgbe+q7OyTDYNlSYjSDhB+fUacn2zPxulMAnjvbs+CjsXZmCYiIpxyrCRjgeFNKsIvZ8+tkRCUM5nqaJFxvVME6WKI2FJb+0lM/bk/6pOUjKws8BC8bu8YN9ZJAlG3bVu2yTHo5rCUhKK/qmlLbI=
+	t=1715157682; cv=none; b=S4CgTA0AowGyQNgQBfAn4UNCtQiyr6CudfdjdJR1+i95vDLdtA4ypUHfVmGLmQfXGPCPxUmVi6Z2/QwIvTpoVLc7HJzPjh7OjnZnzj877g7XwMjkumvuNBMRQUk9YGxt+eE+5wxuYZwElaiX9d7Ls9ioif00Qli5DBHEFrISamE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157635; c=relaxed/simple;
-	bh=7AkH+Cd52kKIzQ6Z1eGmeRFbIVVvMbs2fVbYsa8ENKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdeyJ0zzk7Cm+gAZiyGR0zcIyNROET+/6cvJsp7Sxlh0xtJ3RlxHcmMZwSaPyH+GSxQpSDcQ+VcOxqC0bkctc64npQKAAK6wZIUOFJBbmG6IsPQKlXUl0qcw19/DznLc6rmCtWPoRLts8VGvqf2RDx8G5cTh6HoWBvUh1hp/uwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=droVsfqg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BFB9C113CC;
-	Wed,  8 May 2024 08:40:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715157634;
-	bh=7AkH+Cd52kKIzQ6Z1eGmeRFbIVVvMbs2fVbYsa8ENKE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=droVsfqgQLlY5fn/Vt+M7KFqUK8CKoh3x8pk8O7hiSlH+LLrXoFhbLEOMEBzKSfSJ
-	 RW6Cg0/CXmktZnLv3xWhN3fVBJ0GHSvvmlpJtWA4H2GeFzyd2TaMmkvhYFs6I7gRyC
-	 rjRpZlaVpVWqP/mO7ty8Zv6GgLrUaL4BPgSJbagucUx/5FjvFx00pisN6wobVbxP4L
-	 xBYbs419tu86cidfsKDlkkKF8MPP2vnQ4TW1PnqoHoULcIxlZvJD6OfosCATT8B4Sn
-	 xIe/XRy67//r1SbHqzYJ4KU3oHgU43lmMWtZsMNJAFLJm9QtU5T7btGJRzcIr/3rAF
-	 7w7ZC+2BqY0LA==
-Date: Wed, 8 May 2024 09:40:30 +0100
-From: Simon Horman <horms@kernel.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: "kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"jiri@resnulli.us" <jiri@resnulli.us>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next v17 12/13] realtek: Update the Makefile and
- Kconfig in the realtek folder
-Message-ID: <20240508084030.GP15955@kernel.org>
-References: <20240502091847.65181-1-justinlai0215@realtek.com>
- <20240502091847.65181-13-justinlai0215@realtek.com>
- <20240503083534.GL2821784@kernel.org>
- <1470b2c0983442fcb5078ca510aade35@realtek.com>
+	s=arc-20240116; t=1715157682; c=relaxed/simple;
+	bh=tFrBko3fZ39c5ExxzecBIB9057Bs/91qzrR6wSOjiec=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tJ5pr5Fp4T9aBvytn0h5bfLmc60PFq4YFGhU9FDp6m7AnPjcOS3ni2jGINPJEU/Dd9HkKQCRWYc/E8LHr7dAcQBjhEtn8ziDpOB9D2APYlqGq6yYXQqH+uwTtUZnK2bEdrPDovQszFlFG2gJ+3NyAVOEuSdi8eWVL0IMOQt9YL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZzmm8Ud; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41bab13ca81so42477145e9.1;
+        Wed, 08 May 2024 01:41:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715157679; x=1715762479; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oahqZfDyyAg3+t3i7wWbHAtk2w+BE0/9KN4JkqkuepE=;
+        b=eZzmm8Udekh/RgfmJqoT6pcGhKkn+JDt/1XeAZ6ZzdBh7SfGoeMaJbU54jxgofVDZa
+         0mNZ6auWxISh+9xz4kAtwvUvff/SjNotmVDZHB0mWC956+9oADxKWOL9RL07oYw/4pVl
+         4nQ8UDH4FWF1b4swQn7LSNDfnaW8aKn4u9b1i9rnWp1y0x+DyCLpeqIu9ql9XjqzNsbM
+         OGbaehjPve/LCsQTQdj/aRmPRMCiATbGj6wdnaouAT0NnE9sQ3KABRoES9RXVF4ODW3d
+         APqkke6PiVj9+SIsXVIFXNfXE4HD92I3mr5HhvSngn48suW6LncN7nOeN39melSwGzY3
+         AITw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715157679; x=1715762479;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oahqZfDyyAg3+t3i7wWbHAtk2w+BE0/9KN4JkqkuepE=;
+        b=byc6OLI30TtgZUmnK8zeDBgECKsIqXzkh4C58Up6TB0c1ZTuoORhyH3W61d/y+Fsfn
+         y3gxcFQJ9QoktkxdmuM6AmlLqf0vSpGEQBeTBfw6lhdT+a1FEJg+UL9v6ZGjPTB9aZCZ
+         2L4PDg3znSUtpqshXJYGpcjeK0XsNqg75TIO0YDxT8A6MBvj2ADROeKEubkPZq9x34Bf
+         TYVEDXLQoZxdG01nuZplvzJ3pv5L+M9LHN6S+3eCp5n+RCYpN3B8AhWlPLNir2TvG82q
+         lyQZZ/D6vGJQ/7Gg691IwoUCpxxaig+GFXGjlPkEfD4qizDe2q8odnPJ1GnuVTdbcWmG
+         cWeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyRQMgJSL2frtioO4ngNn8Y/nZaLdcCOqDXSddyWcuYOcN6chr24g1qAOA0Kej5g3r1JEiTKjADVqe+kAYH9BH5bl5qSz9mPx3CA7U33HdB9WM9xwoJ1ll+5lksAV3ma5LQWFiP8lQ8Uos8TSn
+X-Gm-Message-State: AOJu0YwUwszuvHPzYhVDxc7dnVic2KPwJN0DHile/fRaG15zU39dRiRD
+	vZOICG+61YsLo9HybCpbuWmwsXLRHnNSJ7cFGwXlQ/2AuHKs82h+
+X-Google-Smtp-Source: AGHT+IFlZthE/gNpHlsP4PzBCS7/ATHrR1sotaFVQmvVdO9ZDKPaoW32q0ewDHy1qLhhfNuhcB32Bg==
+X-Received: by 2002:a05:600c:3587:b0:41b:fa34:9e48 with SMTP id 5b1f17b1804b1-41f719d6190mr19055165e9.30.1715157679003;
+        Wed, 08 May 2024 01:41:19 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87b26675sm14959835e9.2.2024.05.08.01.41.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:41:18 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kselftest@vger.kernel.org,
+	Benjamin Gray <bgray@linux.ibm.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/powerpc/dexcr: Fix spelling mistake "predicition" -> "prediction"
+Date: Wed,  8 May 2024 09:41:17 +0100
+Message-Id: <20240508084117.2869261-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1470b2c0983442fcb5078ca510aade35@realtek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 07, 2024 at 09:44:14AM +0000, Justin Lai wrote:
-> > On Thu, May 02, 2024 at 05:18:46PM +0800, Justin Lai wrote:
-> > > 1. Add the RTASE entry in the Kconfig.
-> > > 2. Add the CONFIG_RTASE entry in the Makefile.
-> > >
-> > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> > > ---
-> > >  drivers/net/ethernet/realtek/Kconfig  | 17 +++++++++++++++++
-> > > drivers/net/ethernet/realtek/Makefile |  1 +
-> > >  2 files changed, 18 insertions(+)
-> > >
-> > > diff --git a/drivers/net/ethernet/realtek/Kconfig
-> > > b/drivers/net/ethernet/realtek/Kconfig
-> > > index 93d9df55b361..57ef924deebd 100644
-> > > --- a/drivers/net/ethernet/realtek/Kconfig
-> > > +++ b/drivers/net/ethernet/realtek/Kconfig
-> > > @@ -113,4 +113,21 @@ config R8169
-> > >         To compile this driver as a module, choose M here: the module
-> > >         will be called r8169.  This is recommended.
-> > >
-> > > +config RTASE
-> > > +     tristate "Realtek Automotive Switch
-> > 9054/9068/9072/9075/9068/9071 PCIe Interface support"
-> > > +     depends on PCI
-> > > +     select CRC32
-> > 
-> > Hi Justin,
-> > 
-> > I believe that you also need:
-> > 
-> >         select PAGE_POOL
-> > 
-> > As the driver uses page_pool_alloc_pages()
-> > 
-> > FWIIW, I observed this when using a config based on make tinyconfig with PCI
-> > and NET enabled, all WiFi drivers disabled, and only and only this Ethernet
-> > driver enabled.
-> > 
-> > > +     help
-> > > +       Say Y here if you have a Realtek Ethernet adapter belonging to
-> > > +       the following families:
-> > > +       RTL9054 5GBit Ethernet
-> > > +       RTL9068 5GBit Ethernet
-> > > +       RTL9072 5GBit Ethernet
-> > > +       RTL9075 5GBit Ethernet
-> > > +       RTL9068 5GBit Ethernet
-> > > +       RTL9071 5GBit Ethernet
-> > > +
-> > > +       To compile this driver as a module, choose M here: the module
-> > > +       will be called rtase. This is recommended.
-> > 
-> > The advice above to chose Y and M seem to conflict.
-> > Perhaps this can be edited somehow.
-> > 
-> 
-> Hi Simon,
-> I would like to ask if it would be clearer if I changed it to the following?
-> 
-> config RTASE
-> 	tristate "Realtek Automotive Switch 9054/9068/9072/9075/9068/9071 PCIe Interface support"
-> 	depends on PCI
-> 	select CRC32
-> 	select PAGE_POOL
-> 	help
-> 	  Say Y here and it will be compiled and linked with the kernel
-> 	  if you have a Realtek Ethernet adapter belonging to the
-> 	  following families:
-> 	  RTL9054 5GBit Ethernet
-> 	  RTL9068 5GBit Ethernet
-> 	  RTL9072 5GBit Ethernet
-> 	  RTL9075 5GBit Ethernet
-> 	  RTL9068 5GBit Ethernet
-> 	  RTL9071 5GBit Ethernet
->  
-> 	  To compile this driver as a module, choose M here: the module
-> 	  will be called rtase. This is recommended.
+There is a spelling mistake in the help message. Fix it.
 
-Thanks Justin,
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/powerpc/dexcr/chdexcr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, I think that addresses my concern.
+diff --git a/tools/testing/selftests/powerpc/dexcr/chdexcr.c b/tools/testing/selftests/powerpc/dexcr/chdexcr.c
+index bda44630cada..c548d7a5bb9b 100644
+--- a/tools/testing/selftests/powerpc/dexcr/chdexcr.c
++++ b/tools/testing/selftests/powerpc/dexcr/chdexcr.c
+@@ -26,7 +26,7 @@ static void help(void)
+ 	       "\n"
+ 	       "The normal option sets the aspect in the DEXCR. The --no- variant\n"
+ 	       "clears that aspect. For example, --ibrtpd sets the IBRTPD aspect bit,\n"
+-	       "so indirect branch predicition will be disabled in the provided program.\n"
++	       "so indirect branch prediction will be disabled in the provided program.\n"
+ 	       "Conversely, --no-ibrtpd clears the aspect bit, so indirect branch\n"
+ 	       "prediction may occur.\n"
+ 	       "\n"
+-- 
+2.39.2
+
 
