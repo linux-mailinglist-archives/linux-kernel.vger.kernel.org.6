@@ -1,191 +1,253 @@
-Return-Path: <linux-kernel+bounces-172605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB7D8BF42B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94678BF42D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 871D2B22733
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DE51F24030
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9FE168CC;
-	Wed,  8 May 2024 01:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35996944E;
+	Wed,  8 May 2024 01:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vQ1Ztv9e"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KVdwVcqV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0AE12E70
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 01:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715132215; cv=none; b=bMJBVx6kOCa54Xvhnt9qteqBkYOulC3c1M1Ex68MDxUrL+hkZEh1cgLEVYK6nQTKSjoXBBDOz4up9BprU8ci89yPyG74EUl8IsBL8LvMrbztp3QapV5/z3qhARb14KyZr/JWUSM6fWqyeWN6BiJ3AODkhnMM8H6PZl+svLSw928=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715132215; c=relaxed/simple;
-	bh=7B3II1X/5OVe4Mrr/uSiLQQPEgDk0UMK2lq4VVxpgKM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JUpTFuXJMYYmeoa1gY52W5QKB+HBe+1GkaMscfaOorvkyrW+2saEFtKTKdZ2GwYaWaENZW1x97UiG+gmdrS9lxzCCImJoXBtXld3FFQaLW65qEdt0nhi8GiG7287pHwmgLMb6JkshX+EpEf4qOmINB4TStNPzzh7zTYR79ICX5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vQ1Ztv9e; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f28bb6d747so2756322b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 18:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715132213; x=1715737013; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HSebZNH2K21s8abZJ+EPitFsmRQfB0232RHZtpEHlvw=;
-        b=vQ1Ztv9eid0UwJLSrsbdU0A4oB1CdmH2XL6L9wz1mVyY3eELA/EnF8oZfw4qaWrwVi
-         5kucwQdvN2h2LfATn4shur9HNhW0uM0l5H65ep960r3Mwik7Z/bGfReZekjIXp1zQR08
-         DZm4YNzljYb0R+5IYc+IzfC9RWvjriCTMU6LEiDA96wEga7a+wdAJ65gA0MJB4tQeXlw
-         z+h0QdhCUmTMzTQ03Tz7FyNJW+FNFINvhTx+rt8XWb3IS84GAH/tO2oSWihI90aaFVCN
-         kDfnH88GTmWH2J3uDGgBeJW2jL3xq3ZkAtVunsgOWe6n7rT/LaZ418iZf0+70BqxHxKy
-         1EAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715132213; x=1715737013;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HSebZNH2K21s8abZJ+EPitFsmRQfB0232RHZtpEHlvw=;
-        b=WAmZp/VxJy8cUEpV1nnJaji6t352Y+/fmi83Awr1jnxNz1kh9zyTPgFuw6Yy2plG0L
-         DBxk/T3jjzhAz+R0TlkLG9ILXXW5i6/cI75NAImbqBvIYNvDSn7KUfHwt9F65l9r1UVR
-         EvWYAAtKKCobIsItUdkwV4w07HqvLoGkgzY0By+MslqrEgu2p/jJPuhHc0Wiy37lrLb8
-         IJvWB6fDI7dZxjKouGwza2EbAX+1epsdMhjz9Tkvne4v17zK1dC3H5pH981h/Q9yY0/Z
-         VpCgluyXyTQ1qCK3j87zQgxjlSIgRNGzl+rTzdQsLMORPi7HivbB9xrgxULDgs3UlG36
-         raBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwXRShZGVQriDtkeF+freaBXhMDDhOmVjgOZktzIxHxhqNRCkKw4Z7qJBui6n+lW+ceMvN74zDYbao6kMQGoK6FU5UytynS79rW5p9
-X-Gm-Message-State: AOJu0YwXtOPUwrE4fGKe9avm/pujzLFMFGjR8B9ZEIocX9QK3lcRN8SE
-	ky3LaMc+yPBZ0Lq8in+uDXBXsMEnZE+++zSS39eSU14ole4aHNysuiHuN7Gy/zg=
-X-Google-Smtp-Source: AGHT+IHg6ptW80TJdWpfJCJXopHCGmFJ2iuPtPmC3dzzLoosh6XalLDn4t3j0emDTqeCUhoduvuo/g==
-X-Received: by 2002:a05:6a20:1001:b0:1a9:c80a:c152 with SMTP id adf61e73a8af0-1afc8d763c8mr1324536637.21.1715132213554;
-        Tue, 07 May 2024 18:36:53 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62863a265sm171994a91.10.2024.05.07.18.36.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 18:36:52 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Tue, 07 May 2024 18:36:34 -0700
-Subject: [PATCH v2 8/8] riscv: Add PLATFORM_SUPPORTS_RISCV_ISA_ZBS Kconfig
- option
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9859441;
+	Wed,  8 May 2024 01:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715132270; cv=fail; b=br8EQQtITeqVvI7rrWudfs6p5trFoPNXiGHJsfagb1rpD3OmoVOWc4akxqkfp2rtV4ilITYeBl4yQ4zg/Jllu95f4bUdNp/LLoeqZNu3iIUD1KLMjyUOQOSyVUXEqBp1rFqfxag7gwByyNiGuMvT3bR+fGJt9SPEM1jTxifjpBo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715132270; c=relaxed/simple;
+	bh=2EVqEihA/4Mjva0/4l+94uePgFN03r7UTqnN36Q1n60=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=omnmKq6JYicji690pBsLHYZbGGDLNeNNsPu0ZYDnPYvUVa+cT0kS4oJJXOeZAeN+URPJjmhzVES3qTLEYQxhgBcGAdX28Fap1R74PkpaX9wbpt9/VWPt+aRY+fgj/rWvWfEFKF4VR2luQrAd4Dh1Slh48Fpm0/sJQEW3Ectz/+w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KVdwVcqV; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715132269; x=1746668269;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2EVqEihA/4Mjva0/4l+94uePgFN03r7UTqnN36Q1n60=;
+  b=KVdwVcqVHKLd8Vu4FRuOF3cxbfVKvePFesMxRdU3o59tX2x5yGXlEgHr
+   lpTlEjfL72kFSMOwLv/riyKZN3axHEp8/7TuQhAEu5oqZd+oEZPNCrcaj
+   HoBtWqfw1tNDzIv8nrkTH9jTcEj27Bsd6R5OhpM11pPLDwZYMJo715983
+   f0Yo1PQ2j39wf1BS/zra2A5TML62tA2cRW5R7JNWLKH9vA4hEruKgrNkv
+   AK1n0vXfk0r8waogLBJjGEtlUKh1a9zu5NBo5kHZnE0CXQZi/WV/dtNHy
+   d8Gh/e7ysc2Um1djG7tzlfKM3pOBmNH1WFjvzNtOgA/Gkanjng7Uj8z3b
+   g==;
+X-CSE-ConnectionGUID: DeFljejoRMWR0NDjS0j4iw==
+X-CSE-MsgGUID: Gy/0odpUSzuDNzE1SFjFQw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="36345228"
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="36345228"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 18:37:48 -0700
+X-CSE-ConnectionGUID: Flz30q0sRVG/JO7akIMLnQ==
+X-CSE-MsgGUID: KYw1wMOJRrKWWIqZXD67Ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="28703251"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 May 2024 18:37:48 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 7 May 2024 18:37:47 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 7 May 2024 18:37:47 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 7 May 2024 18:37:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VgqtilmLXihrgv2Z4PKZPVf66Cfz4whsnjumL120hNZ23Zw3am8zXKkISGPJjLeu0xOu0mbX9HwcdcynatD+UET2NZcsPL4cDLTLvxb+E3Z85ysNzcddQRsS4qcSg2qiixvkB4bAc/1MSIIo+bIKmHd9ctDOnDP3o4E5K/Hw9jkYc3tkmuPEOZamzSU0+UnX5IR4OjtzTgKUrVIdzylzWktoXUokvhw33mSJZXzDpii1M4M64m1/RlfsDL4dS7RWntKz89EEqeiTCGqc4RXv1hhcwLS4BMxewDzpxGB9gttZHdKeauv1H4FiM3nHPEezDkR1K8GPZJXnT7pAhgu0nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Yiqe857E32KyO+lkrF/R2pj60U7wK64if6BT7aMDQ0E=;
+ b=JxYwlWilSIP0ZJmxywoP5VKkjHfujA/L5J//GsUjsrvuCm+2ohuojsg8v0odYGZ+TuU6JwhjpkH/ujOcl0PAkO5tY7oRks9xMahaor10qrNa8FqPUI6qF20QugnS64lkuXbU+t+p/r5jBwFkNSxiMbElpsmUWH8ZPABC62k2X8SDPlys89ONupN20fIGj6wx6mTlvcSAyVeN8jI2S13ggk6wwcW42e3Q7QsSJDGdAJg63v3AJamaYqSO7B620fZC52MgYO5WqgJ0r6ccmKndir+3u/CxGVWifHBR0i+fKiPiDsPACPFjUxOWoxCLpGtwHjZMsNZPFOg6UvJ6tjuFTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by LV2PR11MB5997.namprd11.prod.outlook.com (2603:10b6:408:17f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Wed, 8 May
+ 2024 01:37:45 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::b394:287f:b57e:2519]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::b394:287f:b57e:2519%4]) with mapi id 15.20.7544.023; Wed, 8 May 2024
+ 01:37:45 +0000
+Message-ID: <076d9990-6253-438d-bc92-70eba6dfbca9@intel.com>
+Date: Tue, 7 May 2024 18:37:42 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/resctrl: fix clang build warnings related to
+ abs(), labs() calls
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+CC: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+	<justinstitt@google.com>, Fenghua Yu <fenghua.yu@intel.com>, Valentin Obst
+	<kernel@valentinobst.de>, <linux-kselftest@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+References: <20240503234051.21217-1-jhubbard@nvidia.com>
+ <9ae11dcb-62e8-4361-9f78-971d4c6e6054@intel.com>
+ <997d7fe0-46c8-4b38-824d-083ab29f54ce@nvidia.com>
+ <d67f4f57-4e9a-4715-b6dd-7b83a240b7dd@intel.com>
+ <7dd4b09e-b9ba-459d-bfa4-150e712f54bc@nvidia.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <7dd4b09e-b9ba-459d-bfa4-150e712f54bc@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR04CA0286.namprd04.prod.outlook.com
+ (2603:10b6:303:89::21) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240507-compile_kernel_with_extensions-v2-8-722c21c328c6@rivosinc.com>
-References: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
-In-Reply-To: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor.dooley@microchip.com>, Song Liu <song@kernel.org>, 
- Xi Wang <xi.wang@gmail.com>, 
- =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@rivosinc.com>, 
- =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <cleger@rivosinc.com>, 
- Jessica Clarke <jrtc27@jrtc27.com>, Andy Chiu <andy.chiu@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715132198; l=3277;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=7B3II1X/5OVe4Mrr/uSiLQQPEgDk0UMK2lq4VVxpgKM=;
- b=BOORKVGo69HF+7q44TCG43/RRTkpsAJGBawNHVFpF9jkZ7wAN2u8vXOHTvuJ13Qg1B+/ol51J
- 6rief9SvltyDHEUzuVdcAQrC2MGCzumWPDi5HvHzyzoB8a1cNpdR4Vo
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|LV2PR11MB5997:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60557a27-4687-469e-64c1-08dc6eff75aa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|7416005|376005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K24wQndKaVVsayt1UUdmSlZ3WTBuUFppNmZxNERsREx1QUp2dGpnanYvY1Ji?=
+ =?utf-8?B?RGY0YlZWQW4wL1M4cGVab2ZkcVN0S3JpaDA0WW16VHlQSzRWSHZ5S2UwN0FP?=
+ =?utf-8?B?Qi9ZRDFIQnMzSG5PRE44dXl3SFp5MTVGNTFkcEsyNjVvbXMwNEN2NkZ3YW5S?=
+ =?utf-8?B?L0JhbnBkT01HZHdhWUFKZXBtUjdxRjdRdTB6U2YrSDJKM0t0ZFRHU0hoM2ty?=
+ =?utf-8?B?UVYzUEVCbHk3bk5WclBrMFpoM3RNcTVCeVQ5M0grTExJQWQ5VjI2T3NVUHJF?=
+ =?utf-8?B?WjRKWGgvWlk0Z0V6NjZsS0xOYk9XK1dsWW1mUU1kVlo3M3htaFRYcU1lU3Ix?=
+ =?utf-8?B?MWlMbXVvY2NGRjQyTjlZU2dpSEMvL2xNM2RIcmw5N3N6TzhUT2lzQjFxWHFK?=
+ =?utf-8?B?SjZJZFdMUDRyVlIwY0dYZzBPMVJDT1RjQTZhdVU1YzRWM1RsRCtwUmZWeEVh?=
+ =?utf-8?B?RURUVXk4R1YrbytvNVZVT05oMVhROXYvVFhmTGo2ZjFJd0lVVmF1UWJrcjFM?=
+ =?utf-8?B?ZjJHWWM3OVREa1p5SDJTK2hOUXZpZ2EvYXRtU2E4QU9PemlYcHFxdmVRbXdF?=
+ =?utf-8?B?Nmd4VmZWcTlTNS96dDdhVklzZkJkNDFsYzhXRzQyaG5lSW95dUZiSk55bXVr?=
+ =?utf-8?B?Unp4eGdQYkpjSCtTb0NTS2RaS1lFc2xFQlB1YjlLbSswaTUydW81RzJTSWVI?=
+ =?utf-8?B?eEN6Y2NJbks4QTRCb3Y5dFhOUnFQb0lYZnp2MlA2SzRnSE41cE1BL0hPaXlN?=
+ =?utf-8?B?Lzd5NWJWcjI1em56dEZ4aWFvVkRIalVLVVI4aEsxOFpyVHlyRklPOWhZU0Zq?=
+ =?utf-8?B?eHlMSmZqdWtzZS9KLy9IQ1RIL1p5WUttSktzRFR4cE1rVGVmN3FvSkZmcUhy?=
+ =?utf-8?B?RDBwVTg0RGU1WXBVWVBoaitVVnlxWTZzRkJ1YkxRSmZBVmQxUjNtNEh2VCtk?=
+ =?utf-8?B?VGxaZ2xEaDJzWnF0WlJZUkkxOEtYVDJ3OGU2UDlGNmcyeFVpdGlsWmNOcjBQ?=
+ =?utf-8?B?T1dHTmpjNUNjQkJDOU5iNkRodkFLU1Z3S05KME5pWkNCOTdBcVh2cm9NZDBa?=
+ =?utf-8?B?QWJyMm1nVG9ldTZYa0JWT0ErNEZXR20zaEFXSzQ2TU5pS25RWnBkZUZtNWs2?=
+ =?utf-8?B?a2p1UEJoTTErUmxVZDNYRGFXa0k2OWQwOWloZWFoOEJwYkpiZWtjd2xvOWJo?=
+ =?utf-8?B?ckVCYnpibEk4VStBWHVZa0JKdXVKaXhadTVBdkhZQ2pTemJMbGNEVGt6ZkM2?=
+ =?utf-8?B?UHNnTVNWanhham9MNEk3SzNFUGphUXVuY01QNmIrT0dKY0NTMDlVK0t1QkNs?=
+ =?utf-8?B?RGpJRmQ4ajcwaHJ1Ti9MdG5rQ3dSekpaOCtWTDZtSFhYa3FVUTdFcCtVcTVL?=
+ =?utf-8?B?UG9KRXBiV3dpV1UxYnY3SFhpVGMzUlhpckFDTm5YWDNnblI0dE4xNndkTmlo?=
+ =?utf-8?B?eXBlWjNsUWpkcDErdXd2cjFQbjZzaXdWMHpNcWltMTNSTDZYajh2SU9vQlVv?=
+ =?utf-8?B?R01yUmE3MEdscCtMeVJlM1o5S3FrOWNXdjB3QUdTYkxXUjI1Y2lkeFNDQnBC?=
+ =?utf-8?B?NlJla0dvWWNZY2JJNjF2YlBnT3lnWmJGbUJLaWRVSEM1eVZWTGJzQXd5N0xT?=
+ =?utf-8?B?eThGSWxlYy91Ync5aTZwV05ZK0xWaVFGckNmSWRrT0ZoeVNzOEVBT0k5aG1B?=
+ =?utf-8?B?TkQyZk0vSGxLQzZSeFQ0ZmRWMzQvWVlTNVducFVhNkh5S1ZOQS8ySk13PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Vk9FemVJaHpvYmxRRXNGeFNkMXB1RkNKLzRkaGRBK090UlpRRW1xS1BzTEdo?=
+ =?utf-8?B?UFdoYi9wVHlxYWI0dDVCTWszWTIyUEc1RVVNSXczbmdqZ0U1MTlvZHJaY1Fz?=
+ =?utf-8?B?cTZlaTZOd2pzWHptWFBkdHJldlhqN1BkYjFIVFJxRGlhVXpPa0V2VFlTTEJy?=
+ =?utf-8?B?T3dmdWRFbGZaRGswdi80VzdwalppVjlCbThnbXFrZGhqOExicEw2bC9nVXlU?=
+ =?utf-8?B?Z0ZGVDkzalUxclgybURwZjdlZnVCbmN5V202R0RpMUdvWFRXS3lldCtmUy93?=
+ =?utf-8?B?b3hDcGJFNWpBTTlUMGZreHZKUEFPN0x5V01ra0dqUERka0Z2WnliTHA4eG11?=
+ =?utf-8?B?MmRKWmZCVytaU0hkTnBIRXhtRzBucWpsaHd2K25PRnV1OExsMzhXUWRFMXFC?=
+ =?utf-8?B?bENCRzlCV0I5c2FSTjBTYXpnUU1GaCtqdzRoRGlDQWh4Sk44N09pVnRpNGt0?=
+ =?utf-8?B?eHZBUk5aeFlVM3VYcFljVlBHQWU1M0h6RGw5c3c1Q0dseHJoNXlWK1hXbHFE?=
+ =?utf-8?B?RWJvRmxtTjZ4WFNURERUSmc2MFJwRk5ISmR1SWRQeGp2QW5hN0pnaUc1RDZL?=
+ =?utf-8?B?ZHVjTENQbE1rTnI4dnVmc2JDTUhuaGpuV3ErSThZS1RpNnExNm0yK29CcDgz?=
+ =?utf-8?B?ckpvTi9SZ2xBSUluakdKTTkyNUtBN0h4dTUxQlZyc3dUUEMvS1Nyby80Yzdm?=
+ =?utf-8?B?OFFYcTBuMUI0emZVYndmdk5ZWjVqbStZVDlCSnNPWWptTnJ0bDQ2RHUxa082?=
+ =?utf-8?B?SEVacVhMWGhzcUNlbi9GWUF4ZG1rZkovY3pRSUgwVzNtRXFiTzNTUThqZTZm?=
+ =?utf-8?B?QlM2Q0N4TXFsMXpWejJscE1taHR2Qy9EUm44SldDQmZOOGtESW54U25pL294?=
+ =?utf-8?B?anhGVllOMk40SnVHZUh2YVc2WlZXZkswN2JSTDlxUnVabng5aXllUXduN3BB?=
+ =?utf-8?B?eFIwQjBCa2lONnAyUDcrM09SVTdwdWZBM3NGQTdkRmNHNTZ4YkRUdS9ycUJJ?=
+ =?utf-8?B?K3lYVWpONWRsS2g1Q1g1TmdpdVhsNjk0QllGREdrMjFRT3JGeGhvZXJSZkMz?=
+ =?utf-8?B?VXE1UWQ2U1hsMnpETnh3QnA4STdIbnoxT0Rkc1FwNFA0RU1BMUx1Yy9rU3NW?=
+ =?utf-8?B?UUtHMzlLTzhYOFZRMGxic250c2RTWlhuVGlnYWN5OTdxMDZuRUk5Z1dlT0Nl?=
+ =?utf-8?B?dU9rNURDcFFhSDhaNzlNczdUNU1FV0UwU2FDVG8yU2x1eWIrSXMvTUZIZTNX?=
+ =?utf-8?B?VlZHcXh5eU0yalliRW5TdnA2S2tvaHp5bExlZVBTYldoTHVZcDF2cUNSUHBy?=
+ =?utf-8?B?Wk5JTUhVek56OVRCQnA2L3ZPRGlWOGJ6L1NLaDJhZTkrMkhWajNpUll4QTNN?=
+ =?utf-8?B?SEZQcFNoM0IwNnV3djNNTmNtaVZMUVZsYTV1eUlzR0s5WEwzenVpeTdmb1NY?=
+ =?utf-8?B?eVQvd0RodllEenJHR2xWRXlGdUhhZCtDUmYzdHNUVEVWN0laRmxaYTYvbDRV?=
+ =?utf-8?B?SndtanltdUpLY0hWMFFvK1hidnNSbFI4UkZNMGRxWHpETC81VjFYL2czWklD?=
+ =?utf-8?B?TUVVN0pMUmE2VUpvL3FwMUZ2Qk5FWFEwQzFib2xxUERMbm9qWWw4RGNXZHdP?=
+ =?utf-8?B?UFB6U3p4VXg0anhud1VrYjVreW9iNFNsY0RwY3NaK2lEMUNycUxjTDl6aENC?=
+ =?utf-8?B?Ylh2eWNWdEFIeW0wTzhMZHY4UHJnMGJtKzRLQnBCdGNidGFSMXlJZEdjcmlW?=
+ =?utf-8?B?WDRrUFNHZTJ6UUtMaXBLK1FIYVEyNEZVM1VySWhDUDBRaDdBTC9HSHRVdjVu?=
+ =?utf-8?B?dWVUMEdMRnlSeC81bFEyNEFYUEFuQlNzWkxrOTdmWWEwaUl3d1oyclduWVpz?=
+ =?utf-8?B?Y1FDeldpeStQcHRXbDRzNXVvNzFGUGFjUENlNnBsMFk3aHI0TUxSVjJlSHJX?=
+ =?utf-8?B?UCsvN1dWa3pWNUxrTlN3dzE2WVI2di96RUZ4eDRXckx1L3lwdHRQUTNXKzBy?=
+ =?utf-8?B?YTlFV2pKcWx0alhzVm9ic1RJSTg0SlpXaGhYd2xTd0E2QVkreEtUZGNNY1lZ?=
+ =?utf-8?B?MG5UNjJTQ1pYM1BHRS8vMENLUmlNRlhTZm1EZXJob3VhZ3UyL0ZCc3gwQ1ox?=
+ =?utf-8?B?MjNWUTJqTSs0OFBYcS9hS05Zd1phUEo2TUg2V2p1dFltNUluRnZLSnBLYXRm?=
+ =?utf-8?B?T3c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60557a27-4687-469e-64c1-08dc6eff75aa
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 01:37:45.0878
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zI2FoHvuaICe6CTIh7aR1ydid8K7r6B4hLwt+JVXuH5+gthnENZH82m3ENk6b7QtzAQ+61wKjnwxBDXFxPr4PVB+WgdUsz3Z1NV1cSW+a2g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB5997
+X-OriginatorOrg: intel.com
 
-Zbs can optimize kernel instruction sequences. Add a config option
-PLATFORM_SUPPORTS_RISCV_ISA_ZBS that allows arbitrary Zbs instruction
-sequences to be emitted by the compiler.
+Hi John,
 
-The existing "RISCV_ISA_ZBS" option is repurposed to be used to by kernel
-code to determine if either PLATFORM_MAY_SUPPORT_RISCV_ISA_ZBS or
-PLATFORM_SUPPORTS_RISCV_ISA_ZBS has been set.
+On 5/7/2024 6:25 PM, John Hubbard wrote:
+> On 5/7/24 6:21 PM, Reinette Chatre wrote:
+>> Hi John,
+> ...
+>>
+>> The following (what was in v1) looks good to me. What am I missing?
+>>
+>> diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
+>> index a81f91222a89..05a241519ae8 100644
+>> --- a/tools/testing/selftests/resctrl/cmt_test.c
+>> +++ b/tools/testing/selftests/resctrl/cmt_test.c
+>> @@ -40,11 +40,11 @@ static int show_results_info(unsigned long sum_llc_val, int no_of_bits,
+>>       int ret;
+>>         avg_llc_val = sum_llc_val / num_of_runs;
+>> -    avg_diff = (long)abs(cache_span - avg_llc_val);
+>> +    avg_diff = (long)(cache_span - avg_llc_val);
+> 
+> This deletes the abs() call, because I incorrectly let clang's warning
+> lead me to believe that the abs() call was a no-op. But both you and Ilpo
+> pointed out that the math breaks if you do that.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- arch/riscv/Kconfig.isa | 51 ++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/riscv/Makefile    |  1 +
- 2 files changed, 52 insertions(+)
+To me the extra abs() was unnecessary anyway ...
 
-diff --git a/arch/riscv/Kconfig.isa b/arch/riscv/Kconfig.isa
-index b7399f236bba..60ae1bf71c70 100644
---- a/arch/riscv/Kconfig.isa
-+++ b/arch/riscv/Kconfig.isa
-@@ -340,3 +340,54 @@ config PLATFORM_SUPPORTS_RISCV_ISA_ZBC
- 	  systems that do not support the Zbc extension.
- 
- endchoice
-+
-+config TOOLCHAIN_HAS_ZBS
-+	bool
-+	default y
-+	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zbs)
-+	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbs)
-+	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-+	depends on AS_HAS_OPTION_ARCH
-+
-+config RISCV_ISA_ZBS
-+	bool
-+
-+choice
-+	prompt "Zbs extension for bit manipulation instructions support"
-+	default PLATFORM_MAY_SUPPORT_RISCV_ISA_ZBS
-+	help
-+	  This selects the level of support for Zbs instructions to be
-+	  built into the Linux Kernel. This does not impact whether Zbs
-+	  instructions are allowed to be emitted by user-space code.
-+
-+	  The Zbs extension provides instructions to accelerate carry-less
-+	  multiplication.
-+
-+config PROHIBIT_RISCV_ISA_ZBS
-+	bool "Prohibit Zbs instruction sequences"
-+	depends on NONPORTABLE
-+	help
-+	  Regardless of if the platform supports Zbs instructions,
-+	  prohibit the kernel from emitting Zbs instructions.
-+
-+config PLATFORM_MAY_SUPPORT_RISCV_ISA_ZBS
-+	bool "Allow Zbs instruction sequences if supported"
-+	depends on TOOLCHAIN_HAS_ZBS
-+	depends on RISCV_ALTERNATIVE
-+	select RISCV_ISA_ZBS
-+	help
-+	  Add support for enabling optimisations in the kernel when the
-+	  Zbs extension is detected at boot.
-+
-+config PLATFORM_SUPPORTS_RISCV_ISA_ZBS
-+	bool "Emit Zbs instructions when building Linux"
-+	depends on TOOLCHAIN_HAS_ZBS
-+	depends on NONPORTABLE
-+	select RISCV_ISA_ZBS
-+	help
-+	  Adds "zbs" to the ISA subsets that the toolchain is allowed to emit
-+	  when building Linux, which results in Zbs instructions in the
-+	  Linux binary. This option produces a kernel that will not run on
-+	  systems that do not support the Zbs extension.
-+
-+endchoice
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index 57457d15e9a4..80ff8503196a 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -69,6 +69,7 @@ riscv-march-$(CONFIG_PLATFORM_SUPPORTS_RISCV_ISA_C)	:= $(riscv-march-y)c
- riscv-march-$(CONFIG_PLATFORM_SUPPORTS_RISCV_ISA_ZBA)	:= $(riscv-march-y)_zba
- riscv-march-$(CONFIG_PLATFORM_SUPPORTS_RISCV_ISA_ZBB)	:= $(riscv-march-y)_zbb
- riscv-march-$(CONFIG_PLATFORM_SUPPORTS_RISCV_ISA_ZBC)	:= $(riscv-march-y)_zbc
-+riscv-march-$(CONFIG_PLATFORM_SUPPORTS_RISCV_ISA_ZBS)	:= $(riscv-march-y)_zbs
- 
- ifdef CONFIG_TOOLCHAIN_NEEDS_OLD_ISA_SPEC
- KBUILD_CFLAGS += -Wa,-misa-spec=2.2
+> 
+>>       diff_percent = ((float)cache_span - avg_llc_val) / cache_span * 100;
+>>         ret = platform && abs((int)diff_percent) > max_diff_percent &&
+>> -          abs(avg_diff) > max_diff;
+>> +          labs(avg_diff) > max_diff;
+> 
 
--- 
-2.44.0
+.. because it is repeated here.
 
+> This hunk is OK.
+> 
+>>         ksft_print_msg("%s Check cache miss rate within %lu%%\n",
+>>                  ret ? "Fail:" : "Pass:", max_diff_percent);
+>>
+>> Reinette
+> 
+> thanks,
+
+Reinette
 
