@@ -1,259 +1,442 @@
-Return-Path: <linux-kernel+bounces-172960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E228BF962
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:13:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 912508BF817
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECAA61C215F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B41051C21DC0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0029B74BF5;
-	Wed,  8 May 2024 09:12:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10043405FC;
+	Wed,  8 May 2024 08:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VcpCYUGm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB05171B49;
-	Wed,  8 May 2024 09:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254CE3FE28
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715159576; cv=none; b=CC90jSLE3u9kYvcajjPU8qrSSdpi4oDBEBhMIHJzoKPT0K71VvEe31toFBcrb5PZqvfIuL50zklBqG8/QA80Ue7OE76BIV5xnjWWWwYwcmsP7eFnSHW9jMzPvmcWqMIPcOZkQ7H7dnfw/BFXL5ZVkBMCYrNxN2H7NrHr4gmz8+8=
+	t=1715155540; cv=none; b=gA1nZ95hCCVrDoPKMTSwUb2XCbyBVtFj052uDZQ4iFDtRx+xoYBHZDXRgKC4txIm1q3MwyBZQEGbOL0TcFprx0JLdh/wHdV0W0YmX2pLkp1JOxGPU/RFmoLY0/A1K2mdyvaK9RZvpDgSjc8nGMPTrNrpkBQxp2Omu34nKZr5+1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715159576; c=relaxed/simple;
-	bh=6XVaT/rOwjD6l7J+zEX/991xLR3yWl6JEhyuKgB9bEE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rn1LU82gR4fozlFHz5/VKh5uWP+W4xvUArSkaYBQWJwwNpMsiZ/mlI7DxBmkgdAiqdxbC2qNiscuiQftVxwjoz3xFYvaHngGhkWwsVigKR8nepcUwkvh3yiuxBFevh8kaLztgdzzXBanek9H8ADqsxPApMcvHbprLPzivoIJrPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZ8VL0CLvz6K63J;
-	Wed,  8 May 2024 17:09:46 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 35040140B2A;
-	Wed,  8 May 2024 17:12:51 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 8 May
- 2024 10:12:50 +0100
-Date: Fri, 3 May 2024 10:52:45 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: John Groves <John@groves.net>
-CC: Dongsheng Yang <dongsheng.yang@easystack.cn>, Gregory Price
-	<gregory.price@memverge.com>, Dan Williams <dan.j.williams@intel.com>,
-	<axboe@kernel.dk>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-Message-ID: <20240503105245.00003676@Huawei.com>
-In-Reply-To: <wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
-References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
-	<66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-	<ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
-	<ZikhwAAIGFG0UU23@memverge.com>
-	<bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
-	<ZiuwyIVaKJq8aC6g@memverge.com>
-	<98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
-	<ZivS86BrfPHopkru@memverge.com>
-	<8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
-	<wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715155540; c=relaxed/simple;
+	bh=Oin8bC0Za+rMSaZA2VNA8QghpWXvOf5fWRKEJceQGUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Afcy15Ucb3UfZpsBDcXs+S/pJegiYlrfsPCnyNOyYot9qon5rxXtJSuOhjlXUbUSjGC5fDIyUgo0MoDg5EneCtJY313g2Pa1lyCEAUJpO9peA8WKl1Afrz+5P1epKYzNL5jTXJB0rUrg/oWRtD9kn9sommUi5bYafLb/RQ48vcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VcpCYUGm; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1406140E0177;
+	Wed,  8 May 2024 08:05:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3bhT1NVtZ5j6; Wed,  8 May 2024 08:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715155530; bh=LNXGTaZk9UkXnDOi5iqZUBv+gZjFYV58YF6GqpPoGg0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VcpCYUGmOQALUrqIltbtk+HitoNd08ST0yGp+lNunM3Tisk64JqvmzPlWgzOufeYw
+	 rsLj5BAuVsLGCuUQm+/Tx4pplFBiMH9jiNMUjKpbhCp5eiFXaQm5ciMjJvGb5CfaDZ
+	 rAQR8307R+l3IlLcElZ4TLBLapNOfqBcJkh06IEBBx3SXez3O2NAsksd+C8haUr77T
+	 dQQr0vkKoYeOwYUOttDgs3QOUgfxmN0Wa+hRouL0EH9y8UXianeBp1Jp70ICzUAiOL
+	 yNSc3DichvjV3N2fhz1lcHmXJlJraVxfTiHeHp5lC8XskgRvCg2ryvKUaFBbmNgMrN
+	 YD3NTV5zPNpMFhtk/yNEkF+sPtonSaoHwQQk8UF+oR/4MXBMpuHsmBOjLciDBWdYqj
+	 WKLncIRplOG3KH4GSedOFl4HyYUotPRYJySES2Fqj9LIg7LlsuW6Czlj7XXmKbfMbt
+	 X+4dvaNVjIQMryva3dFOFplBZeSunHjkqTc5+JQqWyM/yxK0hzwBxLSxp8gJ2pZhYM
+	 p75KUFdQ8rzN8k4nYD4ZILy8q6pGqTERr+q/TtMrw4/TPRgCxLoFm8y2+W68LUjiZk
+	 oL2sx2iciRZ/zg5Nk4RKLj/GQaxJ568FNtceUdgqRODTkD2RiG8W4trK3f5QfuQ149
+	 mALghcqMuX/rBZadaOP5BeJY=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 55E6B40E01A3;
+	Wed,  8 May 2024 08:05:16 +0000 (UTC)
+Date: Wed, 8 May 2024 10:05:09 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-coco@lists.linux.dev, svsm-devel@coconut-svsm.dev,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [PATCH v4 05/15] x86/sev: Use kernel provided SVSM Calling Areas
+Message-ID: <20240508080509.GWZjsyNS0xBXUzKPUG@fat_crate.local>
+References: <cover.1713974291.git.thomas.lendacky@amd.com>
+ <07266b47e749267ef9a9ccbc9e8e9df78ed54857.1713974291.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <07266b47e749267ef9a9ccbc9e8e9df78ed54857.1713974291.git.thomas.lendacky@amd.com>
 
-On Sun, 28 Apr 2024 11:55:10 -0500
-John Groves <John@groves.net> wrote:
+On Wed, Apr 24, 2024 at 10:58:01AM -0500, Tom Lendacky wrote:
+> +static int __svsm_msr_protocol(struct svsm_call *call)
 
-> On 24/04/28 01:47PM, Dongsheng Yang wrote:
-> >=20
-> >=20
-> > =E5=9C=A8 2024/4/27 =E6=98=9F=E6=9C=9F=E5=85=AD =E4=B8=8A=E5=8D=88 12:1=
-4, Gregory Price =E5=86=99=E9=81=93: =20
-> > > On Fri, Apr 26, 2024 at 10:53:43PM +0800, Dongsheng Yang wrote: =20
-> > > >=20
-> > > >=20
-> > > > =E5=9C=A8 2024/4/26 =E6=98=9F=E6=9C=9F=E4=BA=94 =E4=B8=8B=E5=8D=88 =
-9:48, Gregory Price =E5=86=99=E9=81=93: =20
-> > > > >  =20
-> > > >=20
-> > > > In (5) of the cover letter, I mentioned that cbd addresses cache co=
-herence
-> > > > at the software level:
-> > > >=20
-> > > > (5) How do blkdev and backend interact through the channel?
-> > > > 	a) For reader side, before reading the data, if the data in this c=
-hannel
-> > > > may be modified by the other party, then I need to flush the cache =
-before
-> > > > reading to ensure that I get the latest data. For example, the blkd=
-ev needs
-> > > > to flush the cache before obtaining compr_head because compr_head w=
-ill be
-> > > > updated by the backend handler.
-> > > > 	b) For writter side, if the written information will be read by ot=
-hers,
-> > > > then after writing, I need to flush the cache to let the other part=
-y see it
-> > > > immediately. For example, after blkdev submits cbd_se, it needs to =
-update
-> > > > cmd_head to let the handler have a new cbd_se. Therefore, after upd=
-ating
-> > > > cmd_head, I need to flush the cache to let the backend see it.
-> > > >  =20
-> > >=20
-> > > Flushing the cache is insufficient.  All that cache flushing guarante=
-es
-> > > is that the memory has left the writer's CPU cache.  There are potent=
-ially
-> > > many write buffers between the CPU and the actual backing media that =
-the
-> > > CPU has no visibility of and cannot pierce through to force a full
-> > > guaranteed flush back to the media.
-> > >=20
-> > > for example:
-> > >=20
-> > > memcpy(some_cacheline, data, 64);
-> > > mfence();
-> > >=20
-> > > Will not guarantee that after mfence() completes that the remote host
-> > > will have visibility of the data.  mfence() does not guarantee a full
-> > > flush back down to the device, it only guarantees it has been pushed =
-out
-> > > of the CPU's cache.
-> > >=20
-> > > similarly:
-> > >=20
-> > > memcpy(some_cacheline, data, 64);
-> > > mfence();
-> > > memcpy(some_other_cacheline, data, 64);
-> > > mfence()
-> > >=20
-> > > Will not guarantee that some_cacheline reaches the backing media prior
-> > > to some_other_cacheline, as there is no guarantee of write-ordering in
-> > > CXL controllers (with the exception of writes to the same cacheline).
-> > >=20
-> > > So this statement:
-> > >  =20
-> > > > I need to flush the cache to let the other party see it immediately=
- =20
-> > >=20
-> > > Is misleading.  They will not see is "immediately", they will see it
-> > > "eventually at some completely unknowable time in the future". =20
-> >=20
-> > This is indeed one of the issues I wanted to discuss at the RFC stage. =
-Thank
-> > you for pointing it out.
-> >=20
-> > In my opinion, using "nvdimm_flush" might be one way to address this is=
-sue,
-> > but it seems to flush the entire nd_region, which might be too heavy.
-> > Moreover, it only applies to non-volatile memory.
-> >=20
-> > This should be a general problem for cxl shared memory. In theory, FAMFS
-> > should also encounter this issue.
-> >=20
-> > Gregory, John, and Dan, Any suggestion about it?
-> >=20
-> > Thanx a lot =20
-> > >=20
-> > > ~Gregory
-> > >  =20
->=20
-> Hi Dongsheng,
->=20
-> Gregory is right about the uncertainty around "clflush" operations, but
-> let me drill in a bit further.
->=20
-> Say you copy a payload into a "bucket" in a queue and then update an
-> index in a metadata structure; I'm thinking of the standard producer/
-> consumer queuing model here, with one index mutated by the producer and
-> the other mutated by the consumer.=20
->=20
-> (I have not reviewed your queueing code, but you *must* be using this
-> model - things like linked-lists won't work in shared memory without=20
-> shared locks/atomics.)
->=20
-> Normal logic says that you should clflush the payload before updating
-> the index, then update and clflush the index.
->=20
-> But we still observe in non-cache-coherent shared memory that the payload=
-=20
-> may become valid *after* the clflush of the queue index.
->=20
-> The famfs user space has a program called pcq.c, which implements a
-> producer/consumer queue in a pair of famfs files. The only way to=20
-> currently guarantee a valid read of a payload is to use sequence numbers=
-=20
-> and checksums on payloads.  We do observe mismatches with actual shared=20
-> memory, and the recovery is to clflush and re-read the payload from the=20
-> client side. (Aside: These file pairs theoretically might work for CBD=20
-> queues.)
->=20
-> Anoter side note: it would be super-helpful if the CPU gave us an explici=
-t=20
-> invalidate rather than just clflush, which will write-back before=20
-> invalidating *if* the cache line is marked as dirty, even when software
-> knows this should not happen.
->=20
-> Note that CXL 3.1 provides a way to guarantee that stuff that should not
-> be written back can't be written back: read-only mappings. This one of
-> the features I got into the spec; using this requires CXL 3.1 DCD, and=20
-> would require two DCD allocations (i.e. two tagged-capacity dax devices -=
-=20
-> one writable by the server and one by the client).
->=20
-> Just to make things slightly gnarlier, the MESI cache coherency protocol
-> allows a CPU to speculatively convert a line from exclusive to modified,
-> meaning it's not clear as of now whether "occasional" clean write-backs
-> can be avoided. Meaning those read-only mappings may be more important
-> than one might think. (Clean write-backs basically make it
-> impossible for software to manage cache coherency.)
+All those protocol functions need a verb in the name:
 
-My understanding is that clean write backs are an implementation specific
-issue that came as a surprise to some CPU arch folk I spoke to, we will
-need some path for a host to say if they can ever do that.
+__svsm_do_msr_protocol
+__svsm_do_ghcb_protocol
 
-Given this definitely effects one CPU vendor, maybe solutions that
-rely on this not happening are not suitable for upstream.
+or something slicker than the silly "do".
 
-Maybe this market will be important enough for that CPU vendor to stop
-doing it but if they do it will take a while...
+> +{
+> +	u64 val, resp;
+> +	u8 pending;
+> +
+> +	val = sev_es_rd_ghcb_msr();
+> +
+> +	sev_es_wr_ghcb_msr(GHCB_MSR_VMPL_REQ_LEVEL(0));
+> +
+> +	pending = 0;
 
-Flushing in general is as CPU architecture problem where each of the
-architectures needs to be clear what they do / specify that their
-licensees do.
+Do that assignment above, at declaration.
 
-I'm with Dan on encouraging all memory vendors to do hardware coherence!
+> +	issue_svsm_call(call, &pending);
+> +
+> +	resp = sev_es_rd_ghcb_msr();
+> +
+> +	sev_es_wr_ghcb_msr(val);
 
-J
+The MSR SVSM protocol is supposed to restore the MSR? A comment pls.
 
->=20
-> Keep in mind that I don't think anybody has cxl 3 devices or CPUs yet, an=
-d=20
-> shared memory is not explicitly legal in cxl 2, so there are things a cpu=
-=20
-> could do (or not do) in a cxl 2 environment that are not illegal because=
-=20
-> they should not be observable in a no-shared-memory environment.
->=20
-> CBD is interesting work, though for some of the reasons above I'm somewhat
-> skeptical of shared memory as an IPC mechanism.
->=20
-> Regards,
-> John
->=20
->=20
->=20
+> +
+> +	if (pending)
+> +		return -EINVAL;
+> +
+> +	if (GHCB_RESP_CODE(resp) != GHCB_MSR_VMPL_RESP)
+> +		return -EINVAL;
+> +
+> +	if (GHCB_MSR_VMPL_RESP_VAL(resp) != 0)
 
+s/ != 0//
+
+> +		return -EINVAL;
+> +
+> +	return call->rax_out;
+
+rax_out is u64, your function returns int because of the negative
+values. But then it'll truncate the u64 in the success case.
+
+> +}
+> +
+> +static int __svsm_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
+> +{
+> +	struct es_em_ctxt ctxt;
+> +	u8 pending;
+> +
+> +	vc_ghcb_invalidate(ghcb);
+> +
+> +	/* Fill in protocol and format specifiers */
+> +	ghcb->protocol_version = ghcb_version;
+> +	ghcb->ghcb_usage       = GHCB_DEFAULT_USAGE;
+> +
+> +	ghcb_set_sw_exit_code(ghcb, SVM_VMGEXIT_SNP_RUN_VMPL);
+> +	ghcb_set_sw_exit_info_1(ghcb, 0);
+> +	ghcb_set_sw_exit_info_2(ghcb, 0);
+> +
+> +	sev_es_wr_ghcb_msr(__pa(ghcb));
+> +
+> +	pending = 0;
+
+As above.
+
+> +	issue_svsm_call(call, &pending);
+> +
+> +	if (pending)
+> +		return -EINVAL;
+> +
+> +	switch (verify_exception_info(ghcb, &ctxt)) {
+> +	case ES_OK:
+> +		break;
+> +	case ES_EXCEPTION:
+> +		vc_forward_exception(&ctxt);
+> +		fallthrough;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return call->rax_out;
+
+As above.
+
+> +}
+> +
+>  static enum es_result sev_es_ghcb_hv_call(struct ghcb *ghcb,
+>  					  struct es_em_ctxt *ctxt,
+>  					  u64 exit_code, u64 exit_info_1,
+> diff --git a/arch/x86/kernel/sev.c b/arch/x86/kernel/sev.c
+> index a500df807e79..21f3cc40d662 100644
+> --- a/arch/x86/kernel/sev.c
+> +++ b/arch/x86/kernel/sev.c
+> @@ -133,8 +133,13 @@ struct ghcb_state {
+>  	struct ghcb *ghcb;
+>  };
+>  
+> +/* For early boot SVSM communication */
+> +static struct svsm_ca boot_svsm_ca_page __aligned(PAGE_SIZE);
+> +
+>  static DEFINE_PER_CPU(struct sev_es_runtime_data*, runtime_data);
+>  static DEFINE_PER_CPU(struct sev_es_save_area *, sev_vmsa);
+> +static DEFINE_PER_CPU(struct svsm_ca *, svsm_caa);
+> +static DEFINE_PER_CPU(u64, svsm_caa_pa);
+>  
+>  struct sev_config {
+>  	__u64 debug		: 1,
+> @@ -150,6 +155,15 @@ struct sev_config {
+>  	       */
+>  	      ghcbs_initialized	: 1,
+>  
+> +	      /*
+> +	       * A flag used to indicate when the per-CPU SVSM CA is to be
+
+s/A flag used //
+
+and above.
+
+> +	       * used instead of the boot SVSM CA.
+> +	       *
+> +	       * For APs, the per-CPU SVSM CA is created as part of the AP
+> +	       * bringup, so this flag can be used globally for the BSP and APs.
+> +	       */
+> +	      cas_initialized	: 1,
+> +
+>  	      __reserved	: 62;
+>  };
+>  
+> @@ -572,9 +586,42 @@ static enum es_result vc_ioio_check(struct es_em_ctxt *ctxt, u16 port, size_t si
+>  	return ES_EXCEPTION;
+>  }
+>  
+> +static __always_inline void vc_forward_exception(struct es_em_ctxt *ctxt)
+> +{
+> +	long error_code = ctxt->fi.error_code;
+> +	int trapnr = ctxt->fi.vector;
+> +
+> +	ctxt->regs->orig_ax = ctxt->fi.error_code;
+> +
+> +	switch (trapnr) {
+> +	case X86_TRAP_GP:
+> +		exc_general_protection(ctxt->regs, error_code);
+> +		break;
+> +	case X86_TRAP_UD:
+> +		exc_invalid_op(ctxt->regs);
+> +		break;
+> +	case X86_TRAP_PF:
+> +		write_cr2(ctxt->fi.cr2);
+> +		exc_page_fault(ctxt->regs, error_code);
+> +		break;
+> +	case X86_TRAP_AC:
+> +		exc_alignment_check(ctxt->regs, error_code);
+> +		break;
+> +	default:
+> +		pr_emerg("Unsupported exception in #VC instruction emulation - can't continue\n");
+> +		BUG();
+> +	}
+> +}
+> +
+>  /* Include code shared with pre-decompression boot stage */
+>  #include "sev-shared.c"
+>  
+> +static struct svsm_ca *__svsm_get_caa(void)
+
+Why the "__" prefix?
+
+I gon't see a svsm_get_caa() variant...
+
+> +{
+> +	return sev_cfg.cas_initialized ? this_cpu_read(svsm_caa)
+> +				       : boot_svsm_caa;
+> +}
+> +
+>  static noinstr void __sev_put_ghcb(struct ghcb_state *state)
+>  {
+>  	struct sev_es_runtime_data *data;
+> @@ -600,6 +647,42 @@ static noinstr void __sev_put_ghcb(struct ghcb_state *state)
+>  	}
+>  }
+>  
+> +static int svsm_protocol(struct svsm_call *call)
+
+svsm_issue_protocol_call() or whatnot...
+
+Btw, can all this svsm guest gunk live simply in a separate file? Or is
+it going to need a lot of sev.c stuff exported through an internal.h
+header?
+
+Either that or prefix all SVSM handling functions with "svsm_" so that
+there's at least some visibility which is which.
+
+> +{
+> +	struct ghcb_state state;
+> +	unsigned long flags;
+> +	struct ghcb *ghcb;
+> +	int ret;
+> +
+> +	/*
+> +	 * This can be called very early in the boot, use native functions in
+> +	 * order to avoid paravirt issues.
+> +	 */
+> +	flags = native_save_fl();
+> +	if (flags & X86_EFLAGS_IF)
+> +		native_irq_disable();
+
+Uff, conditional locking.
+
+What's wrong with using local_irq_save/local_irq_restore?
+
+> +
+> +	if (sev_cfg.ghcbs_initialized)
+> +		ghcb = __sev_get_ghcb(&state);
+> +	else if (boot_ghcb)
+> +		ghcb = boot_ghcb;
+> +	else
+> +		ghcb = NULL;
+> +
+> +	do {
+> +		ret = ghcb ? __svsm_ghcb_protocol(ghcb, call)
+> +			   : __svsm_msr_protocol(call);
+> +	} while (ret == SVSM_ERR_BUSY);
+> +
+> +	if (sev_cfg.ghcbs_initialized)
+> +		__sev_put_ghcb(&state);
+> +
+> +	if (flags & X86_EFLAGS_IF)
+> +		native_irq_enable();
+> +
+> +	return ret;
+> +}
+
+..
+
+> @@ -2095,6 +2188,50 @@ static __head struct cc_blob_sev_info *find_cc_blob(struct boot_params *bp)
+>  	return cc_info;
+>  }
+>  
+> +static __head void setup_svsm(struct cc_blob_sev_info *cc_info)
+
+svsm_setup
+
+> +{
+> +	struct svsm_call call = {};
+> +	int ret;
+> +	u64 pa;
+> +
+> +	/*
+> +	 * Record the SVSM Calling Area address (CAA) if the guest is not
+> +	 * running at VMPL0. The CA will be used to communicate with the
+> +	 * SVSM to perform the SVSM services.
+> +	 */
+> +	setup_svsm_ca(cc_info);
+> +
+> +	/* Nothing to do if not running under an SVSM. */
+> +	if (!vmpl)
+> +		return;
+
+You set up stuff above and now you bail out?
+
+Judging by setup_svsm_ca() you don't really need that vmpl var but you
+can check
+
+	if (!boot_svsm_caa)
+		return;
+
+to determine whether a SVSM was detected.
+
+> +
+> +	/*
+> +	 * It is very early in the boot and the kernel is running identity
+> +	 * mapped but without having adjusted the pagetables to where the
+> +	 * kernel was loaded (physbase), so the get the CA address using
+
+s/the //
+
+> +	 * RIP-relative addressing.
+> +	 */
+> +	pa = (u64)&RIP_REL_REF(boot_svsm_ca_page);
+> +
+> +	/*
+> +	 * Switch over to the boot SVSM CA while the current CA is still
+> +	 * addressable. There is no GHCB at this point so use the MSR protocol.
+> +	 *
+> +	 * SVSM_CORE_REMAP_CA call:
+> +	 *   RAX = 0 (Protocol=0, CallID=0)
+> +	 *   RCX = New CA GPA
+> +	 */
+> +	call.caa = __svsm_get_caa();
+> +	call.rax = SVSM_CORE_CALL(SVSM_CORE_REMAP_CA);
+> +	call.rcx = pa;
+> +	ret = svsm_protocol(&call);
+> +	if (ret != SVSM_SUCCESS)
+> +		panic("Can't remap the SVSM CA, ret=%#x (%d)\n", ret, ret);
+> +
+> +	boot_svsm_caa = (struct svsm_ca *)pa;
+> +	boot_svsm_caa_pa = pa;
+
+Huh, setup_svsm_ca() already assigned those...
+
+>  bool __head snp_init(struct boot_params *bp)
+>  {
+>  	struct cc_blob_sev_info *cc_info;
+> @@ -2108,12 +2245,7 @@ bool __head snp_init(struct boot_params *bp)
+>  
+>  	setup_cpuid_table(cc_info);
+>  
+> -	/*
+> -	 * Record the SVSM Calling Area address (CAA) if the guest is not
+> -	 * running at VMPL0. The CA will be used to communicate with the
+> -	 * SVSM to perform the SVSM services.
+> -	 */
+> -	setup_svsm_ca(cc_info);
+> +	setup_svsm(cc_info);
+>  
+>  	/*
+>  	 * The CC blob will be used later to access the secrets page. Cache
+> @@ -2306,3 +2438,12 @@ void sev_show_status(void)
+>  	}
+>  	pr_cont("\n");
+>  }
+> +
+> +void __init snp_remap_svsm_ca(void)
+> +{
+> +	if (!vmpl)
+> +		return;
+> +
+> +	/* Update the CAA to a proper kernel address */
+> +	boot_svsm_caa = &boot_svsm_ca_page;
+> +}
+> diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
+> index 422602f6039b..6155020e4d2d 100644
+> --- a/arch/x86/mm/mem_encrypt_amd.c
+> +++ b/arch/x86/mm/mem_encrypt_amd.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * AMD Memory Encryption Support
+>   *
+> - * Copyright (C) 2016 Advanced Micro Devices, Inc.
+> + * Copyright (C) 2016-2024 Advanced Micro Devices, Inc.
+
+Are we doing that now?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
