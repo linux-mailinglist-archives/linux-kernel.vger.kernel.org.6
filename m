@@ -1,140 +1,138 @@
-Return-Path: <linux-kernel+bounces-173617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF658C02FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 857048C0301
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7004E1C21C93
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:21:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73861C21A40
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F1F14A8C;
-	Wed,  8 May 2024 17:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78C88624A;
+	Wed,  8 May 2024 17:21:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fvqjffhJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tNopM4RS"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742F61F93E;
-	Wed,  8 May 2024 17:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198204BA94
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188861; cv=none; b=OnZunb7+4UVWJ5t7fli7vynzGcvVSBK/YgQ8EHxMzMGfjxhvel4e3YP+mC9QabEaxSY82rHD8du6gvX/+rmMJ2bSb4T1tMzAxv629ZGCwO96SHIbl2EANsfDG99g7n8oXw6ztKbN3gya5Lqjcj2zPi7rAGen0wiVd22RQDLXyxM=
+	t=1715188885; cv=none; b=L90HflqVaq+oLxI1V/qr8k4IGX6lQxEusjRzHUVyYqORlk1tqhmHGXmGl++684FJjIHmCk6sgyDbDT7Q4Ltyen+s7zKmcBd7nPUKkfkBQhrKzFZhomiH2aADYIq6OWcyaGDhy4S0rcPcUJz7wbIlLFDiH2oqQoqYDZScC8Uwqy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715188861; c=relaxed/simple;
-	bh=uGhFaz3ZEGmuUrjwQ7teA3UkMKaXftu/gXxtziwAVi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gy9uQpKEjnr2Z6gcjzhEpyBDI14KXSU7MhhM4wutvwR0OUtnxomO51TqGIiY1fceJmw6pT/kjm2E7gyyH0rjkE5e7wLV/TpBXdoVTk8c5CX4rvO9+yPMW4YoaYplgS2EIXUC9CuBfOKgGWr5QJg0YcuWugodqoHDUJ5I37j/nWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fvqjffhJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 68A7E40E01A3;
-	Wed,  8 May 2024 17:20:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id USGIsJ4iRkpo; Wed,  8 May 2024 17:20:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715188851; bh=KEIKoBthxfF5ZooSMkPLx5xV71PW46AVMTRvvSA0KCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fvqjffhJ4M+uThL815dccsH2pTfokSuPemLJ9K88wjkeno5kXDSYVYqvV4vy12x+F
-	 5dIJfz7lIbyBlBWrgS89XaGlSDVfXC6ldrvl3TBbBZgaIdoCm/TZ3I4hgRL8TxvAqy
-	 ajl2E5rAQ/N+b6CqMRFf5PZquChUhaiw/QSdyMtTmgNOAsz7jMlLSnxtLzAmYj7JyP
-	 TNZzjdWKsnh8XogqkTdxWWqtYfi+g9aUQ7P3iRPOWKGyDwO9BR8zQACCZk+EvsGPyA
-	 m8T3OCOV27ci94XB7yvQ0p8Zx24SYDJjA+SHytzrILc90FyNIJwLZzr6Fkrrhyi2mx
-	 Q07aJsfhhUwnplmFknGo7npEpNCjbFYHy97piSZ/XZg478EaQXjFIoVOsSFdSnXGNP
-	 3GZLOpO55/jgiSRB68kwCnFLeuo9BGkZc+5MEXoaWSnlvc/W0LOBI/u9fQG4cVygKS
-	 k9f8v9wS2v3wOqZNsAMdFdV6YFlODYx08HDlpxas8Hmrc3TRYqaS7fI3/Clx9LoF9r
-	 rBKjRKWOkuRpmIC89Q+KkIClvuBUjmLyvtQsDEw0Sef1E0oiKCPidJ8P8nW0SKGr+Q
-	 6W9hKgYUYrM/BtLkDNa9+DHBQMHahxPJRxXVaG9kvoeqC53hRGPteWd/FTCjWP4kOc
-	 oCMcn8MCGejWoT1ELCE0D8fU=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6C5C040E02A6;
-	Wed,  8 May 2024 17:20:09 +0000 (UTC)
-Date: Wed, 8 May 2024 19:20:02 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
-References: <20240419164720.1765-1-shiju.jose@huawei.com>
- <20240419164720.1765-2-shiju.jose@huawei.com>
- <20240425101542.GAZiotThrq7bOE9Ieb@fat_crate.local>
- <63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
- <20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
- <e0ce36eb80054440ab877ccee4e606de@huawei.com>
+	s=arc-20240116; t=1715188885; c=relaxed/simple;
+	bh=m7e9FA+/CGUD8recWszU9j2hn0vK1y2+HNyRsRo6tkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R5rD0DiFX6izspzMHmmrAobilypdCdYFWgvFa2Ydl7NlBIGlMGLZViGjbqFeOm4Vqn66NJMwE6zHDZ8B2yrv3eYxSl3slMG5VrDxRRw813cPvgbqO61t9TB5jtFbxtqIv36NERcwtbJr6DbW6IpRVrbKKInxKQXvrYbAZH82ss4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tNopM4RS; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e0a34b2899so65659741fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:21:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715188881; x=1715793681; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GndLXxg7LjkXPI0lTWLQipONPUywXcP78DbfL7UFwMA=;
+        b=tNopM4RSEclATbqFfhVeOfD60dGsq4TpWdW/GkfDtnb/v113C8d3CbCGmWtiPgMoSl
+         yhmp4fqSZXMva/7+Fmsr0vz+UjPxoiNsXlnSsn1LV36134yige56zIxzkk5TL4GOxmXB
+         UENhFOQ9K1WIUdoVupz768N+3VSzqcRw8cy/AZctN8QWjPyb5FczXj7drRSkv+tEIkOX
+         TgLUjNYF8ErlJS0JZMd3CvddAuFw5SJZ4CLu99KC4zMRiPTgdJnunQ+VGc9bzGhw33rO
+         ixgY67ZuLidRjnAIzXRlBVhBDtiZROAYb/kFjn0YqT6XhGT4VfGITGgHnZ0MchcHFayC
+         ToMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715188881; x=1715793681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GndLXxg7LjkXPI0lTWLQipONPUywXcP78DbfL7UFwMA=;
+        b=rFGwRaS9Ut/hL+YJm7t93CAfvVTvDLuKAvbw6SNBTZRqT3QbjIMaAZdjBHeQGAxzbq
+         05N569+X5xKO8azvUTUChN7agosSpSuVQM/jOAWHC7pEgyp56Fz3X0/nnGZFy06oqFCq
+         v56SqT9INTEcQWnfC5o7irCFpvMo2HqjVxH+yOKrHaeNbxEJRIaW8UDNL28yfjbWlRgQ
+         eUvLgC/m3e0IsRzJC+fs0bF6Yct2JlMIpVvaMsFOh3iV8nBdQEo2SB3ruJVBxzO4EvPj
+         Mcg/4CfmkM9dU23Jz6ChYkM9jwTqtZ+iVmfWsTogYyL9exYRXNdUDSLmeHiqsjoFZ3UV
+         6d9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZVRfOxq+nelwjSbprkHSv0UIlIxOm9OOS/Fzh9KNQxsaebTtU0jTZC3jzDGlvTkOzGmSdYqx56JHBk3bRSkjXcC/EONlQy3NBbscB
+X-Gm-Message-State: AOJu0YyyDqpaoiVplhT6vxWwvE6pdCL28IuDytuRYfdAQbYDqInZemH/
+	TFPGzffetb9FsunDIjiMil/+IaTOxwUDBnv3kVlEEZX8z/tPO8OH0NBpBQ3tWOua62y3Vzbd794
+	FaWg1KUI8w6s/2g1GMRXYXFFLwXnEGJiRsOdbe7bLlFUa3HeFBxw=
+X-Google-Smtp-Source: AGHT+IGEEt/X1HBcZ8GvMPKSAZtaw9oCyg6e6/g625a7K7p6uRZUOzQGv0zldt06N0j06M/4XRIHFuOjDvwph/sOmg4=
+X-Received: by 2002:a2e:91c9:0:b0:2e1:f05f:6424 with SMTP id
+ 38308e7fff4ca-2e446e81666mr25956051fa.15.1715188881132; Wed, 08 May 2024
+ 10:21:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e0ce36eb80054440ab877ccee4e606de@huawei.com>
+References: <20240507-iio-add-support-for-multiple-scan-types-v1-0-95ac33ee51e9@baylibre.com>
+ <20240507-iio-add-support-for-multiple-scan-types-v1-4-95ac33ee51e9@baylibre.com>
+ <20240508124049.00001661@Huawei.com>
+In-Reply-To: <20240508124049.00001661@Huawei.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 8 May 2024 12:21:09 -0500
+Message-ID: <CAMknhBFob4Wd8Gm8W8NKSuL9UbBCY8+fAN_voGPhb4Fy1tAT-w@mail.gmail.com>
+Subject: Re: [PATCH RFC 4/4] iio: adc: ad7380: add support for multiple scan type
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Julien Stephan <jstephan@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 08, 2024 at 04:59:18PM +0000, Shiju Jose wrote:
-> >> I think it happens only when a dependent module as autoloaded based on
-> >> a scrub device existing with exception of memory scrub control built
-> >> in and who would build this in?
+On Wed, May 8, 2024 at 6:40=E2=80=AFAM Jonathan Cameron
+<Jonathan.Cameron@huawei.com> wrote:
+>
+> On Tue,  7 May 2024 14:02:08 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+>
+> > The AD783x chips have a resolution boost feature that allows for 2
+> > extra bits of resolution. Previously, we had to choose a scan type to
+> > fit the largest resolution and manipulate the raw data to fit when the
+> > resolution was lower. This patch adds support for multiple scan types
+> > for the voltage input channels so that we can support both resolutions
+> > without having to manipulate the raw data.
 > >
-> >You think or you know?
-> We know as I had tested.
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+>
+> I'm wondering about the control mechanism.  I was thinking we'd poke
+> the scan type directly but this may well make more sense.
+>
+> This is relying on _scale change to trigger the change in the scan type.
+> That may well be sufficient and I've been over thinking this for far too =
+many
+> years :)
+>
+> It will get messy though in some cases as the device might have a PGA on =
+the
+> front end so we will have a trade off between actual scaling control and
+> resolution related scale changes. We've had a few device where the scale
+> calculation is already complex and involves various different hardware
+> controls, but none have affected the storage format like this.
+>
+> I'll think some more.
+>
 
-Does this thing register successfully on a machine which doesn't have
-those devices?
+Here is some more food for thought. The AD4630 family of chips we are
+working on is similar to this one in that it also has oversampling
+with increased resolution. Except in that case, they are strictly tied
+together. With oversampling disabled, we must only read 24-bits (or 16
+depending on the exact model) and when oversampling is enabled, we
+must read 32-bits (30 real bits with 2-bit shift). So in that case,
+the scan_type would depend only on oversampling ratio > 0. (Writing
+the oversampling ratio attribute would affect scale, but scale
+wouldn't be writable like on ad7380.)
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+It seems more intuitive to me that to enable oversampling, we would
+just write to the oversampling ratio attribute rather than having to
+write to a buffer _type attribute to enable oversampling in the first
+place. And other than requiring reading the documentation it would be
+pretty hard to guess that writing le:s30/32>>2 is what you need to do
+to enable oversampling.
 
