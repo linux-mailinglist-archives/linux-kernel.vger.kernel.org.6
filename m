@@ -1,233 +1,161 @@
-Return-Path: <linux-kernel+bounces-172887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981588BF82F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:10:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901968BF832
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BEAEB209BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:10:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174941F2196D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977F3DB97;
-	Wed,  8 May 2024 08:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bTkOMCKY"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7AA40BE6;
+	Wed,  8 May 2024 08:11:30 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA2336137
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551453FBB1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155832; cv=none; b=SEXtzHM9Jh8OdjOG8nUc8QE/xoF4Bx27j9WnQjixiTTooAbwmKv1lPfApepYsMvP1TU7ZN5YMR8GwutaWArg3wQhf3rSIxoHtJVkWQtW6ZQPBW5mjyu5e1osMykzP9vDGTwuD1grfNa2S5BaZSfcJcnnWwzbfDHdZif9i3Dy58E=
+	t=1715155889; cv=none; b=gs4henUAhv5gwCSnhMveUXEQTBzCiB9T1J8V9xSzjPeYPYw1ahZB+y5SfJ8Kqt6ALQpzfV48a2HDOWjN/XOhl6SjNzNuLdsZI7ruz/cRz6N4PN2LdWYchineWhBstqhKhQfl2lb+Qbp88ZLg2cInMCDFFFf8bdS15CZSNZdPSJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155832; c=relaxed/simple;
-	bh=yDdWDsmhU8mOYZ99K64v5ZtUCmcCbDJ3z/nVF/28VME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=leV+AXUsoJ7k3tkO64+1RU3u9/uIAvYVnLnaG+3v6VcfCzsUFyWhkpasU4uPe8r2OR5GHDfXM3msVa7OShwlsPBnD2sV6stAVzrsa17YTxFUEXN0x7oPYaihYDUHX84qIu9koTek2814Eu2wj/SA58gVNPCLyfs3G6Gp3nW4AwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bTkOMCKY; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-deb65b541faso4021583276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715155830; x=1715760630; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDil2ZnVWcb5vp45cry1hHQo0ylQ9Dttur8ChmQtHdc=;
-        b=bTkOMCKYsk+gYYnKHVYMEdKUHaTSk9qPwcT5Bkxtwq5LQ2rSO0QOmoRfHdqVwXfgAx
-         KPUz49rNSHNXz4Og1SCb/eDaH6n47DrdHIGoPYsTP860Gb4ArLfT5C2TM/ZvQbm2s1Y9
-         bTO/nhXOJYTwT3FmB4DV1o6wX+PzuirJ33jdrb1x0dFZXSURYPapbahQSD/Oy6saZfD+
-         I6DxLOYvXeOoRyudYWMIH5iF9uytiCYyb/gCvZeF0pfA27UGh6TwAYoljgEvLHcsZxJm
-         IP5Wo6Zh+YodvFpamtqJR2zI6mO2QBOmPOvLxHE7mNeV0A0GKbgX0sHA2Sg4kN8G9iRM
-         8ENQ==
+	s=arc-20240116; t=1715155889; c=relaxed/simple;
+	bh=saxFz38dozy1mF1iTqtAanoNI9EUBodlVOT3bIkWB5A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bg2bx4BWYHDqxJVdALLHSQgm24qXGGGKkjJvuLm1BBzTVZsUja9pgP2KqXKJJIlKVYoURkeZS94aQ0lPylHT+HbDTgBI4zx9eJuDguMfn7k6seBRCqRVyHqsP5+idt15Jl9CpwiS1NpIh6zQn5TVud/NPjkHlpu2ndjfz2sWIq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e195fac186so41803639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:11:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715155830; x=1715760630;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hDil2ZnVWcb5vp45cry1hHQo0ylQ9Dttur8ChmQtHdc=;
-        b=HHZffxF+UZvN7y07wUyKaqq26ztW9VCJbNugn8oJ8JmGINV05kxVYvzz2OF/OqKifU
-         lCzYFiIradstdCIr21Pz0Rvu1APO3E62Zq+WV60If2bC68M6uuMC0WG6yRsyIcT8164i
-         cpA+g+Rq73CxTtGrU4G0oI4XR15PHbDHdSRJUs8TZKl4ZMp7Gt4Ld7OQKTp+Nob+Pvk3
-         /S2JmOEDT/+xAIy+F2r3xFriGQ+jjD9sOKf04X0dsV3/XWX8mNCwDiSussLLmKM0Pixa
-         Vb9nOzu9UoloO/fgn27dYXxK6bs5Pzq0WClWt7WRZUpBSTpGT+XNVLwb/22sCA9zAuSp
-         XTZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZJn2PqsJLapgvSHkM9ud3GkfFo7gGLj46+IPYST4Ysg63hzZxF2IpDhCu4+7M9bHyZh4XqCsOh4TMLhejLJWTJ+nRrFoU0xdz1FqM
-X-Gm-Message-State: AOJu0YwswWj5189P6NxuynCNQzidO3CRQaXhhRV88vVhcxiC5npuog/t
-	tE56HIAXJ6TuWe3zSYBCDW4EQCVirnjkGeJpe8OrqJ8tq2c68bkZ+W+dJMuAcJ3fhFrP3UOSpgX
-	0vO5/g/MTKPZTyHyuF57sETHjD/LAP6pb+SVj4g==
-X-Google-Smtp-Source: AGHT+IHCYOkOb4GRkecIOgxE4jNRIrOhLbYw42i8TBkgZ/yh1zPVDtP2VZreSBEEiDOF5QRtA2ZAv967VqXp6nKpg5A=
-X-Received: by 2002:a05:6902:46:b0:de5:a2de:9453 with SMTP id
- 3f1490d57ef6-debb9d4ac68mr2095872276.17.1715155830352; Wed, 08 May 2024
- 01:10:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715155887; x=1715760687;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1TC4P/faER2lAvVgIfDbtDWGEj4zknODtVb17Ze9sQc=;
+        b=RUM5MdEf4MteV3QGr57IqCR18+AKl7KX/RzkpFApvBR+ej8ZxtyfmGY+bx6lCqUfPx
+         CSbVQBHXnYlRgw+YIgBpgrTOYv5E+M4NmpD+fWa7p0Y1MI4KHIgzCRtlhgytdMU1QJPI
+         6ofAnWMhJZkT+wquiFTBl63zlOq97N9/UpklhT2XnAcxG40Kq3VJj30nLehfk0fLBi1Y
+         yePv+YbMY/K1hnUm6mPZJX42NUO7g3ujHY/tL3XK690j31pOxcBCM0zwK+s++lhKMPOD
+         6uQuW/LoBLl0vXTFoVM/ntUg8aGDViUAab9m8uxbQmiggSFPxWR0sN3QABl0Z6QwiD6X
+         ckCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXm/D3rqecos9s/lPY+xIQVTB48Od0jwwKWnANibsVb+GLltoMKesKuJwSUfL1NS7cYf8Tmx+YGmnVnQEEM8p7hABXNrJhtDiBrDxu
+X-Gm-Message-State: AOJu0YxUZlx0xdMQkH0hoWCnksAYZGqtwV3AI0C5FYheTSg74sDWuy51
+	gUy1QRAzdmhZ9WdgZCSNPvOdjIsnDlkJ9A5QknKoXO2Qs7ocPpQehas7fNrIVNlu04ZBJQnRcIj
+	rM9iI2TWxHt4ppixNXF1EpSdd/4DynyAw39BAvQ+MyCaVE4FGDTMAnzc=
+X-Google-Smtp-Source: AGHT+IFgdbj6+sIkAGoToRnJPBmkbWHMq5sVU4eRFthIoz0S0PkhOpDpwMsH0rgxzOLiMI3IvKdgBCzhZ+dNiex9WuLAD5SUsQqj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418092305.2337429-1-quic_varada@quicinc.com>
- <20240418092305.2337429-7-quic_varada@quicinc.com> <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
- <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com> <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
- <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com> <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
- <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
-In-Reply-To: <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 8 May 2024 11:10:18 +0300
-Message-ID: <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, andersson@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+X-Received: by 2002:a05:6638:2389:b0:488:59cc:eb4c with SMTP id
+ 8926c6da1cb9f-488fdd5553amr128283173.3.1715155887604; Wed, 08 May 2024
+ 01:11:27 -0700 (PDT)
+Date: Wed, 08 May 2024 01:11:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006a59f00617ecd989@google.com>
+Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_bkey_format_invalid
+From: syzbot <syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
-> > Hi Varada,
-> >
-> > Thank you for your work on this!
-> >
-> > On 2.05.24 12:30, Varadarajan Narayanan wrote:
-> > > On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
-> > > > On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
-> > > > > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
-> > > > > >
-> > > > > >
-> > > > > > On 4/18/24 11:23, Varadarajan Narayanan wrote:
-> > > > > > > IPQ SoCs dont involve RPM in managing NoC related clocks and
-> > > > > > > there is no NoC scaling. Linux itself handles these clocks.
-> > > > > > > However, these should not be exposed as just clocks and align
-> > > > > > > with other Qualcomm SoCs that handle these clocks from a
-> > > > > > > interconnect provider.
-> > > > > > >
-> > > > > > > Hence include icc provider capability to the gcc node so that
-> > > > > > > peripherals can use the interconnect facility to enable these
-> > > > > > > clocks.
-> > > > > > >
-> > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > > > ---
-> > > > > >
-> > > > > > If this is all you do to enable interconnect (which is not the case,
-> > > > > > as this patch only satisfies the bindings checker, the meaningful
-> > > > > > change happens in the previous patch) and nothing explodes, this is
-> > > > > > an apparent sign of your driver doing nothing.
-> > > > >
-> > > > > It appears to do nothing because, we are just enabling the clock
-> > > > > provider to also act as interconnect provider. Only when the
-> > > > > consumers are enabled with interconnect usage, this will create
-> > > > > paths and turn on the relevant NOC clocks.
-> > > >
-> > > > No, with sync_state it actually does "something" (sets the interconnect
-> > > > path bandwidths to zero). And *this* patch does nothing functionally,
-> > > > it only makes the dt checker happy.
-> > >
-> > > I understand.
-> > >
-> > > > > This interconnect will be used by the PCIe and NSS blocks. When
-> > > > > those patches were posted earlier, they were put on hold until
-> > > > > interconnect driver is available.
-> > > > >
-> > > > > Once this patch gets in, PCIe for example will make use of icc.
-> > > > > Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
-> > > > >
-> > > > > The 'pcieX' nodes will include the following entries.
-> > > > >
-> > > > >         interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-> > > > >                         <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-> > > > >         interconnect-names = "pcie-mem", "cpu-pcie";
-> > > >
-> > > > Okay. What about USB that's already enabled? And BIMC/MEMNOC?
-> > >
-> > > For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
-> > > clock. Hence, interconnect is not specified there.
-> > >
-> > > MEMNOC to System NOC interfaces seem to be enabled automatically.
-> > > Software doesn't have to turn on or program specific clocks.
-> > >
-> > > > > > The expected reaction to "enabling interconnect" without defining the
-> > > > > > required paths for your hardware would be a crash-on-sync_state, as all
-> > > > > > unused (from Linux's POV) resources ought to be shut down.
-> > > > > >
-> > > > > > Because you lack sync_state, the interconnects silently retain the state
-> > > > > > that they were left in (which is not deterministic), and that's precisely
-> > > > > > what we want to avoid.
-> > > > >
-> > > > > I tried to set 'sync_state' to icc_sync_state to be invoked and
-> > > > > didn't see any crash.
-> > > >
-> > > > Have you confirmed that the registers are actually written to, and with
-> > > > correct values?
-> > >
-> > > I tried the following combinations:-
-> > >
-> > > 1. Top of tree linux-next + This patch set
-> > >
-> > >     * icc_sync_state called
-> > >     * No crash or hang observed
-> > >     * From /sys/kernel/debug/clk/clk_summary can see the
-> > >       relevant clocks are set to the expected rates (compared
-> > >       with downstream kernel)
-> > >
-> > > 2. Top of tree linux-next + This patch set + PCIe enablement
-> > >
-> > >     * icc_sync_state NOT called
-> >
-> > If sync_state() is not being called, that usually means that there
-> > are interconnect consumers that haven't probed successfully (PCIe?)
-> > or their dependencies. That can be checked in /sys/class/devlink/.../status
-> > But i am not sure how this works for PCI devices however.
-> >
-> > You can also manually force a call to sync_state by writing "1" to
-> > the interconnect provider's /sys/devices/.../state_synced
-> >
-> > Anyway, the question is if PCIe and NSS work without this driver?
->
-> No.
->
-> > If they work, is this because the clocks are turned on by default
-> > or by the boot loader?
->
-> Initially, the PCIe/NSS driver enabled these clocks directly
-> by having them in their DT nodes itself. Based on community
-> feedback this was removed and after that PCIe/NSS did not work.
->
-> > Then if an interconnect path (clock) gets disabled either when we
-> > reach a sync_state (with no bandwidth requests) or we explicitly
-> > call icc_set_bw() with 0 bandwidth values, i would expect that
-> > these PCIe and NSS devices would not function anymore (it might
-> > save some power etc) and if this is unexpected we should see a
-> > a crash or hang...
-> >
-> > Can you confirm this?
->
-> With ICC enabled, icc_set_bw (with non-zero values) is called by
-> PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
-> values.
->
-> PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
-> NSS:    ppe_icc_init -> icc_set_bw
->
-> I believe sync_state is not getting called since there is a
-> non-zero set bandwidth request. Which seems to be aligned with
-> your explanation.
+Hello,
 
-This doesn't look correct. sync_state is being called once all
-consumers are probed. It doesn't matter whether those consumers have
-non-zero bandwidth requests or no.
+syzbot found the following issue on:
+
+HEAD commit:    9221b2819b8a Add linux-next specific files for 20240503
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=153b20e4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8ab537f51a6a0d98
+dashboard link: https://syzkaller.appspot.com/bug?extid=9833a1d29d4a44361e2c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114b7a50980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b7ae87180000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3e67dbdc3c37/disk-9221b281.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ade618fa19f8/vmlinux-9221b281.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/df12e5073c97/bzImage-9221b281.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d64ba6155455/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 32768
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=compression=lz4,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 7
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/bcachefs/bkey.c:663:22
+shift exponent 254 is too large for 64-bit type 'unsigned long long'
+CPU: 1 PID: 5092 Comm: syz-executor406 Not tainted 6.9.0-rc6-next-20240503-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ bch2_bkey_format_invalid+0x46c/0x5c0 fs/bcachefs/bkey.c:663
+ validate_bset+0x168d/0x25a0 fs/bcachefs/btree_io.c:824
+ bch2_btree_node_read_done+0x20d2/0x5ed0 fs/bcachefs/btree_io.c:1142
+ btree_node_read_work+0x665/0x1300 fs/bcachefs/btree_io.c:1345
+ bch2_btree_node_read+0x2637/0x2c80 fs/bcachefs/btree_io.c:1730
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1769 [inline]
+ bch2_btree_root_read+0x61e/0x970 fs/bcachefs/btree_io.c:1793
+ read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:472
+ bch2_fs_recovery+0x2334/0x36e0 fs/bcachefs/recovery.c:800
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1030
+ bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2105
+ bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa35434c8fa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff2b30e848 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fff2b30e860 RCX: 00007fa35434c8fa
+RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007fff2b30e860
+RBP: 0000000000000010 R08: 00007fff2b30e8a0 R09: 0000000000005d8f
+R10: 0000000000000010 R11: 0000000000000282 R12: 0000000000000004
+R13: 00007fff2b30e8a0 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+---[ end trace ]---
 
 
--- 
-With best wishes
-Dmitry
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
