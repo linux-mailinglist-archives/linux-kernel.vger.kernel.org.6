@@ -1,90 +1,78 @@
-Return-Path: <linux-kernel+bounces-173485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EED8C00F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:28:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0968C00F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5791F28129
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0F01F28405
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81FF1272A3;
-	Wed,  8 May 2024 15:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31A61272A3;
+	Wed,  8 May 2024 15:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZanAVOBC"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="1EKx5BvI"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7419254FA3;
-	Wed,  8 May 2024 15:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E3754FA3;
+	Wed,  8 May 2024 15:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715182112; cv=none; b=YK5Mv6OIrFHgbArPuCPUls4aojok/gtbdmRfXbMGJ3PDL/B4IYOrMe7svuOL7Qkkj1HzYpcG7HZKrm5FqdwDeOMrkGxTEdj4P8yVimBSu5jkN1VJuAH0WQ9fQ28zPXz5J6oScZU89FoWnbU0BSK/KQ4eBPdkMiCvL+C/QQWXa4o=
+	t=1715182168; cv=none; b=s+hVia35ER6rG0GnG5ID+YJLbSBv8b7uYFDR1sZdsYtCCVyS7zVA+nBukg44PfjphT86+8n+uiVja6oAkeLxb0ovSjVGtC8IaKb9GO29k14E6sSvZWxcgxLpj7b6Rxq+yjSkYW6kLgjKrZzUKUJVHc9fSsL9JqG+l++RIs3shJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715182112; c=relaxed/simple;
-	bh=eJdRlKINTI3nwir94KxbYJZKfQ363M1bgd4/u6O/p44=;
+	s=arc-20240116; t=1715182168; c=relaxed/simple;
+	bh=1ktqRneI/xmAzA9v760a5rRiagZx2Ep2uk7aSWIn2To=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7SzgSJQ6tSoIY6PeywEqe6NuJDOVNBKWoBX28aiIUqGZVvxATxi4YxHIG2RQ+xberkpAOSoLBKe5fPdsk5p7Uv/sufx0TgJ65/CcsbkbYo0LeuSM+lPnwu3i/IXqVoxyxooLSKRV0/6V4H1JArpUhGhdpGIMmkxGLQy+KnxBNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZanAVOBC; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572e48f91e9so297122a12.0;
-        Wed, 08 May 2024 08:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715182109; x=1715786909; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=awBb3eNnF3VVi2Uas+dc27Pk+UeJuDW1wWnsL0tI4xc=;
-        b=ZanAVOBC1J/ie8u27+uSKgvFr0U0Qvilc2HtsabQoyyemVvTwy93LShmCaocYKESYK
-         BqzwuPq0klabxRz3WuVPQ3VUbiKhQ+EjSS9EPnY4/LXXPClZIhsFUIJgKNPnqyOhoGVO
-         YCe15ihIO827fFPvH9BN/YE6t1uyDAX3omqfSvYZgowgTSbXqC1tdLADA25tXf8OPNvc
-         cItEzO4Yx2Ce7qAF+H7pvVtF75a1YaC+FVNMNQTd9tmqU8RA/Mo8/0lI+FmgZjY/4fyo
-         726Tv1xqi7z9aQ0JSAolN/pIWRtavPYrnbgSgrYbWP7yum+NIDvbRR2wxhu2cQNXbhwY
-         J/0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715182109; x=1715786909;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=awBb3eNnF3VVi2Uas+dc27Pk+UeJuDW1wWnsL0tI4xc=;
-        b=aIGMda8zqf+v+NGpVlgqawsMJd6v4mudjpT/bIjcIugKUyTUqwER19BXlcpbiGcH/9
-         ZIhHMXIv7/xZIsl4fJl0OSSMNmubLfTG5/wXMsiGQW9VizF0PTsPIcqHgA6TLcdkv9Z1
-         S47HwE9nkSptkXBCwTwBshAMJs/LwFhzz1q7z7d8yzwSo3zGq1++YC9/tjwJNX+jjWre
-         dxVb/gpnKSjCvupeQQnwbeRIyusRJ2+XdlwuYYI4urNXHrXxUKBGk78liKuK+doW151S
-         AnEs4Sf4uMX2kK8gVBe8uSbJ3+HWtzotwIXzXirlJqDrr7N0pljYVrYzmKC6raHT6oiF
-         H76g==
-X-Forwarded-Encrypted: i=1; AJvYcCVqnU231KXfeVKWEt7Hq6zBc2oULNoaIEnM0/DpTns7oi+uPMFE3YK22F52ByE37lu6hZc8mn++OfnF9xcaOsXeuylpHKeTeL8CL/s7gg+H9wzZNYfjXlFJPPscnxy361DqVDhSA/NBEw==
-X-Gm-Message-State: AOJu0YxvTqxTqM4ufBPBRp3NUmmpne/9MmIOy9GN+3GXNkmCl+vmfn2R
-	JXVJg6OdxetT8Xpx6zsmILPSu8+rPA5M4BzR1YU+WJsd3FrZgJup
-X-Google-Smtp-Source: AGHT+IGWqN+QIxf9faE1NevIgjYKVvw9kBJMn0fiVzOWA9Ee8TjRiZGmml19TYo7R5DOZS0n/cU/7A==
-X-Received: by 2002:a50:d685:0:b0:572:6ee9:5a37 with SMTP id 4fb4d7f45d1cf-5731d9b5eaemr2113007a12.11.1715182108540;
-        Wed, 08 May 2024 08:28:28 -0700 (PDT)
-Received: from andrea ([31.189.114.81])
-        by smtp.gmail.com with ESMTPSA id o5-20020aa7c7c5000000b00572c25023b1sm7685797eds.0.2024.05.08.08.28.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 08:28:28 -0700 (PDT)
-Date: Wed, 8 May 2024 17:28:22 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	puranjay12@gmail.com
-Subject: Re: [PATCH] tools/memory-model: Add atomic_and()/or()/xor() and
- add_negative
-Message-ID: <ZjuaFmFMloYqq1PS@andrea>
-References: <20240508143400.36256-1-puranjay@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbZmkm4YgC7IUHWs4zfk1qRmCPuHCzIkUm23ForrzBGtxRyxYcUKVg9bLvWx/NxXH9/qj0PfMIbxhbWXashkoZTB1yuWhv+iDYpdPui+UJvkVV1aGcfsPCU+sVkQInjFryEgNuecflBepRuzGBjVtQPWYWuUhzUj41/emdnlX2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=1EKx5BvI; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355088.ppops.net [127.0.0.1])
+	by m0355088.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 4489oU6U014952;
+	Wed, 8 May 2024 15:29:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=DKIM202306; bh=cGgfm3JhXLARphCYx+vu
+	VE/z5SXwoyLJfxNkrGFGD8w=; b=1EKx5BvIv5YJL/+zjBlp/AACoftJ4JIRtMQk
+	ZfYAceFaoj1RubYf0/oNui357lH6boZ9NI8YO5ADPjPsJ+WiBN8byD+b6HTDbAA7
+	hQ/DeH9vZs0qA1x2wdiKy/51R+TY/3t6mUV9zYBSo4NId/FLkHIWTZzlv40u+b5N
+	Vl2CTEU/IjiSKrhJWwj0uV3hvkMBdjVE8GP+rqX5BOIO1RVfalXF//HqkMgVXPus
+	a89djP6eliWMjf08nC3aGgYUGQkoXeC8lEi2vasr5hCkNvzc2i2Zf7KGpN9X6fUg
+	iT8FUK5OOIi8C2/oZib0MZOELwgTjqO5VDkk/ggo/gtMgYbhZg==
+Received: from va32lpfpp01.lenovo.com ([104.232.228.21])
+	by m0355088.ppops.net (PPS) with ESMTPS id 3xysg1tbuw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 15:29:05 +0000 (GMT)
+Received: from ilclmmrp02.lenovo.com (ilclmmrp02.mot.com [100.65.83.26])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp01.lenovo.com (Postfix) with ESMTPS id 4VZJw014BFzgQ3p;
+	Wed,  8 May 2024 15:29:04 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by ilclmmrp02.lenovo.com (Postfix) with ESMTPSA id 4VZJvz6l6Jz3p6jp;
+	Wed,  8 May 2024 15:29:03 +0000 (UTC)
+Date: Wed, 8 May 2024 10:29:02 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-mm@kvack.org, Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ptdump: add intermediate directory support
+Message-ID: <h4znjkryp5k6sq4by7lgmctbfyhkyzqmm3f7o74ktfy7k3wfkr@s2mktazkcv3k>
+References: <fik5ys53dbkpkl22o4s7sw7cxi6dqjcpm2f3kno5tyms73jm5y@buo4jsktsnrt>
+ <ZjtgCfhQDJus3dqI@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,24 +81,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240508143400.36256-1-puranjay@kernel.org>
+In-Reply-To: <ZjtgCfhQDJus3dqI@arm.com>
+X-Proofpoint-GUID: Pe7vE0fxNa4ELU7UpgxPS46DCDq9E_EK
+X-Proofpoint-ORIG-GUID: Pe7vE0fxNa4ELU7UpgxPS46DCDq9E_EK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 adultscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405080111
 
-On Wed, May 08, 2024 at 02:34:00PM +0000, Puranjay Mohan wrote:
-> Pull-849[1] added the support of '&', '|', and '^' to the herd7 tool's
-> atomics operations.
-> 
-> Use these in linux-kernel.def to implement atomic_and()/or()/xor() with
-> all their ordering variants.
-> 
-> atomic_add_negative() is already available so add its acquire, release,
-> and relaxed ordering variants.
-> 
-> [1] https://github.com/herd/herdtools7/pull/849
-> 
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+On Wed, May 08, 2024 at 12:20:41PM GMT, Catalin Marinas wrote:
+> On Tue, Apr 30, 2024 at 11:05:01AM -0500, Maxwell Bland wrote:
 
-Acked-by: Andrea Parri <parri.andrea@gmail.com>
+> > +		if (st->start_address != addr) {
+> > +			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
+> > +					   st->start_address, addr);
+> > +			delta = (addr - st->start_address);
 
-Thanks,
-  Andrea
+> Should it show a PGD_SIZE * number_of_entries instead?
+
+It should show the full range of memory covered by the PGD's table.
+Will fix, thanks!
+
+r > +	if (st->note_non_leaf && !pgd_leaf(val))
+> > +		st->note_page(st, addr, 0, pgd_val(val));
+> > +
+> >  	if (pgd_leaf(val)) {
+> >  		st->note_page(st, addr, 0, pgd_val(val));
+> >  		walk->action = ACTION_CONTINUE;
+
+> Is the difference between leaf and non-leaf calls only the walk->action?
+> We could have a single call to st->note_page() and keep the walk->action
+> setting separately. Do we also need to set ACTION_SUBTREE in case the
+> entry is a table entry? Or is it done in the caller somewhere? I could
+> not figure out.
+>
+> An alternative would be to have an ARCH_WANT_NON_LEAF_PTDUMP Kconfig
+> option instead of a bool note_non_leaf in struct ptdump_state. This
+> option seems to be entirely static, not sure it's worth a struct member
+> for it. You'd use IS_ENABLED() above instead of st->note_non_leaf.
+
+
+ACTION_SUBTREE seems right, I will look into it. Something like (though
+I'll check to see if it is correct and polish):
+
+  walk_action = (!pgd_leaf) ? ACTION_SUBTREE : ACTION_CONTINUE;
+  if ((IS_ENABLED(...) && !pgd_leaf()) || pgd_leaf())
+  	st->note_page ...
+
+> -- 
+> Catalin
+
+Nice! Thank you for your feedback. I will iterate and also fix up the
+other minor things, e.g. 72 character wrap in doc files.
 
