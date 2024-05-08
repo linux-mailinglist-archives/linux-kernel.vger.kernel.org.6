@@ -1,117 +1,99 @@
-Return-Path: <linux-kernel+bounces-173452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843D58C0096
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:06:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0786C8C0098
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3D21F25456
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 672EFB21091
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D9C86AE2;
-	Wed,  8 May 2024 15:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D13126F05;
+	Wed,  8 May 2024 15:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lC+Akvw8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jJyg5OjN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5C69D29
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A8969D29;
+	Wed,  8 May 2024 15:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715180773; cv=none; b=h2IY4X6SLpoJht80RVMnIwU7ENPn+wIagX/L1S7UKPBMSfTt1aQ4eBDqgkFUF1Zx3aDpx6EPyrDgR4S3RjczlK6Quaft22RyDfDKUOFHOr227qBmSq3wHZ6NPrSmtqIzSV4506t7t9pW9W5+3PjsJgRN3X+hBJ59O64acapA8nk=
+	t=1715180816; cv=none; b=lrocmcDeLXR2dJa/kmzIZ34lzmboxD7SEZUHqs9AbcV7irrTgzak9+qE3eMq+dL8S0pNMm15eNfMA11pfr3l2A1MUD3VTB8AVhmBZGP3ANqmiHokBlAci05+Y0926IfyknySPNUeYv1biQocL+kQneqp4oATYcHtE52ADQMLM30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715180773; c=relaxed/simple;
-	bh=Nz+Ol3vDINwnuP6otiaKVduS2hEYhg4Wrkrvo4FR4qI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uL6bdcs5AT87nzp66IrBVhRGqLj8oG6sjC8c1DUaOJJfDBNSObGyEnxL/tKHV9GXskR07nmLYjhsg0FeHM4f/rVxtl5b6YJEETaj6E5ahR4FvkTvSX/9jzONpAwEEOt3hO0oEEzYbzuOasfJG7JHirQCEFWgINWKMuL0H4gEpf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lC+Akvw8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91BC8C2BD10
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715180772;
-	bh=Nz+Ol3vDINwnuP6otiaKVduS2hEYhg4Wrkrvo4FR4qI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lC+Akvw8dV6t4qfe6Nkt77+WkF/akNWt5CcuHD5E180y42aZOTMqm8X4lBJkm4Isw
-	 HAOSBgxq3QXI1M+ZGdPuHW361X6TC1jJ5PRaVGykyyC5j22gUdqTbuDT96Cijhmkyh
-	 HRTLA0dBHYlFm248NYT/i+NS+AA+++7lbTppiVVugl9b2/R2LhqIywUwKq93Iu29vD
-	 gN/kfPrscSbPQuBSF6qb0XtWHA0mn8iLtAC8Xq30Ak7s1iBcx1GKIqoWBKSsmRZbru
-	 WNyoa9so/QgOr1fNRs/Ep821vi8LGsCxDDMiGo3BqjReCfMCMwGJDs9ZlyWGV+mkxE
-	 mmW54hbAYGwOw==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5b206b78b47so1713722eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:06:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlppiS6TonLvqnE1GfSjPa2cT552twYQWsqxmfBzhEfJ163y7tk/lOpZGcY15j2OlYzkOcjs8PyVnWmELNpibjhwVWL4B5s76k10Ae
-X-Gm-Message-State: AOJu0Yw58Q6jyC0oQCy9BaPUgYVhyw27ExycEaUrpK+Q8gTTGqBP0QpS
-	Fm/3/SJw0E4mLmLCMsPL5uf9j5fIa1FxS+IvJQYdo1HkJWT56qMfwVtN0x1dsbp/Ic+DBS5Xqge
-	6K9aW2pPfE7vzeyK7X3DSpa4FGUc=
-X-Google-Smtp-Source: AGHT+IGg5A2TRMp022OdeUHPWQ5wwCWLuHfL4EJKgMEzNsC2V/Zv/CD4dUXVHjijpf9dHIJlI9dkoi71MMjUiKlZaZk=
-X-Received: by 2002:a4a:8c6b:0:b0:5b2:ef4:873d with SMTP id
- 006d021491bc7-5b24d62e22dmr2550971eaf.4.1715180772008; Wed, 08 May 2024
- 08:06:12 -0700 (PDT)
+	s=arc-20240116; t=1715180816; c=relaxed/simple;
+	bh=v5MiUA9DTlKONnt0SBn4aw4JvqbNC1DtJQVmFvcZPtE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJLhd59feKMlnVpb9kHNTu5aBJbnxFrwaSFOB5veBeumMx0gZF4LPOmJhlmFCFVyWswQoi7olRb0VM3jAOcalbajTBS8zRSa3FV9QmTXelSUvNnJGPlylKlCatBbemC1SPdIUlm/pLsdP3d0QkXyckCsmWX2qA6n+pgSqvrB5Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jJyg5OjN; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715180815; x=1746716815;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v5MiUA9DTlKONnt0SBn4aw4JvqbNC1DtJQVmFvcZPtE=;
+  b=jJyg5OjNQvQvlm3bIZtKVVVK5B5HEmgZSojI91ldbcQqL69FBPxMKLgI
+   vzgGhNKU4++CULtFZWNJcPwYOlz00ErGZGiNFoHv87T+2F6Ed4BZfNCNa
+   MtFiG/p6p85hF0cUBZZZNTST3uFbPyW14UYHPItqrucee6Ivz19splaCW
+   IICogaj5dryQhVAI5+CXBSInUu/fRH8kMkBWrCa09aA6WtlDJ6x/OQpVn
+   BoQxynZZoiHiQOCQ8p5Mvadk9clxxmZa1d9aGcyDblJsMb77N/jjwi/5X
+   t3V3hnqHoiMguPmqyqBbkh6S3M85nu3jzmT9eSUfggqZzTIPssR6DfDSR
+   w==;
+X-CSE-ConnectionGUID: 7opiOhjMSuOjgvVcqS/8/A==
+X-CSE-MsgGUID: uVudBaQoRR6cFxwAp9PxYA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="22441864"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="22441864"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:06:54 -0700
+X-CSE-ConnectionGUID: tGQnIkQQQwuurRWpgH/mpg==
+X-CSE-MsgGUID: SCYgCp7nTxeB0UCGo3Lfxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="33474428"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:06:53 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s4isc-00000005TlZ-3C2a;
+	Wed, 08 May 2024 18:06:50 +0300
+Date: Wed, 8 May 2024 18:06:50 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 1/1] usb: fotg210: Use *-y instead of *-objs in
+ Makefile
+Message-ID: <ZjuVCvQw4aL0x42W@smile.fi.intel.com>
+References: <20240508150406.1378672-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240426100054.61506-1-yang.lee@linux.alibaba.com>
-In-Reply-To: <20240426100054.61506-1-yang.lee@linux.alibaba.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Thu, 9 May 2024 00:05:34 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH3XdVdqhNex7KQ9Asi70naMixYiO6Rd5rfX06dEamJKCw@mail.gmail.com>
-Message-ID: <CAGTfZH3XdVdqhNex7KQ9Asi70naMixYiO6Rd5rfX06dEamJKCw@mail.gmail.com>
-Subject: Re: [PATCH -next] extcon: adc-jack: Document missing struct members
-To: Yang Li <yang.lee@linux.alibaba.com>
-Cc: myungjoo.ham@samsung.com, cw00.choi@samsung.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508150406.1378672-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Apr 26, 2024 at 7:01=E2=80=AFPM Yang Li <yang.lee@linux.alibaba.com=
-> wrote:
->
-> This patch adds kernel-doc comments for the previously undocumented
-> members `dev` and `wakeup_source` in the struct adc_jack_data in
-> adc-jack device driver.
->
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->  drivers/extcon/extcon-adc-jack.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/extcon/extcon-adc-jack.c b/drivers/extcon/extcon-adc=
--jack.c
-> index cf5050a244b2..125016da7fde 100644
-> --- a/drivers/extcon/extcon-adc-jack.c
-> +++ b/drivers/extcon/extcon-adc-jack.c
-> @@ -26,6 +26,7 @@
->
->  /**
->   * struct adc_jack_data - internal data for adc_jack device driver
-> + * @dev:               The device structure associated with the adc_jack=
-.
->   * @edev:              extcon device.
->   * @cable_names:       list of supported cables.
->   * @adc_conditions:    list of adc value conditions.
-> @@ -35,6 +36,7 @@
->   *                     handling at handling_delay jiffies.
->   * @handler:           extcon event handler called by interrupt handler.
->   * @chan:              iio channel being queried.
-> + * @wakeup_source:     Indicates if the device can wake up the system.
->   */
->  struct adc_jack_data {
->         struct device *dev;
-> --
-> 2.20.1.7.g153144c
->
->
+On Wed, May 08, 2024 at 06:04:06PM +0300, Andy Shevchenko wrote:
+> *-objs suffix is reserved rather for (user-space) host programs while
+> usually *-y suffix is used for kernel drivers (although *-objs works
+> for that purpose for now).
+> 
+> Let's correct the old usages of *-objs in Makefiles.
 
-Applied it. Thanks.
+Note, the original approach is weirdest from existing. Only a few
+drivers use this (-objs-y) one most likely by mistake.
 
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
