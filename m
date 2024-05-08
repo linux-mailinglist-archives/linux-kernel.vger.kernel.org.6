@@ -1,92 +1,122 @@
-Return-Path: <linux-kernel+bounces-173081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD3F8BFB41
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:48:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D608BFB45
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B96E1C20DFF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9CA28197A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D4B81751;
-	Wed,  8 May 2024 10:47:59 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A17823AF;
+	Wed,  8 May 2024 10:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ice7gnbB"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A62F2836D;
-	Wed,  8 May 2024 10:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFE481721
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715165279; cv=none; b=MATLTSxwd6RsElsAnXWmxvsqIRljMrD1isVvTCcvI8X6dUdhQ7zaBQOu17xNG9eiHY7+rifV8/zOze1OUzqr8txcknP9ubWAtR2exQ4hre2TWzLbMACEpb2od1+BvPv/VrANOc9Bl64uPGPlUPv+uLbyGkvp6pYMtYveDf9UA70=
+	t=1715165279; cv=none; b=U00uin7wC3SYM8YP2g3MBELxEm2OntQKtMRab+m7uHB5wgWslHLEYph/pNaTpgYsRakGO07di1W6Fth/nqHMCgZi3WeUAeP20mOHSYSdb2W8DeWvQ6vBLj87Xe/6kZmrrozPS2clAAkAzXzxcrNpvtFZy8m5sbtW+zO6/zoz6lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715165279; c=relaxed/simple;
-	bh=+MeneR5VBNEb2SdP/icWDmNsj1Rc5U6B2Yd4fQBwbcc=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=qL9VJj3FoFNDXDtY8bZjFtkxHb7+1YRhiYDkaT0GBnLRQNME0hIMZ7h47rSVWdCYfDIvXCBiN4s1Y8J84+9rM70L3I6cU+fhalJyOvyEk6QkICJstuKQC79E+dII5cgJBzyd+9R+Bqt/KrTThGjwNCuPeWF3bg/17/P5tJiWCcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VZBgN4rRBz8XrSC;
-	Wed,  8 May 2024 18:47:44 +0800 (CST)
-Received: from szxlzmapp02.zte.com.cn ([10.5.231.79])
-	by mse-fl1.zte.com.cn with SMTP id 448AleAv005282;
-	Wed, 8 May 2024 18:47:40 +0800 (+08)
-	(envelope-from cheng.lin130@zte.com.cn)
-Received: from mapi (szxlzmapp04[null])
-	by mapi (Zmail) with MAPI id mid14;
-	Wed, 8 May 2024 18:47:43 +0800 (CST)
-Date: Wed, 8 May 2024 18:47:43 +0800 (CST)
-X-Zmail-TransId: 2b06663b584fffffffff84b-63ef0
-X-Mailer: Zmail v1.0
-Message-ID: <20240508184743778PSWkv_r8dMoye7WmZ7enP@zte.com.cn>
+	bh=vpbiHsnsZyeL5F2e2N4ix1aSqeYmPGen1pGmaZRkQLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ho8dO48c3xS2z6rXEBR0N/WnOLXYAesuLM29KTRRVojWJskCn5mnhbl5C134JTsq/GD3p2df5Uz1040uZt9PPeXM2oGH3FUl0l5afZ0eGYISOSsc1F01JLL/w6TwM7lwurGO0NiDRMwl2KEdkO2z+PPrr108ILs/HxvByljvdv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ice7gnbB; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-de604ca3cfcso4111841276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 03:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715165277; x=1715770077; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eoZX15B6govTZa1crSFZ03U1Z5NpIxQlGrKdNgAOQcI=;
+        b=ice7gnbB6KJJbj+0L9JlGDku5Nnr3B9LNgRo76/G44JSa9uXtlwrehvj5DJNfoLPQv
+         +cwguD53v+58bb4beVa0UOB1dmtG/aOugurMw6442qShzZwRYN7V+5OKBb5Q50Lk35mB
+         j8eFbN5BDpe+CM7BMs9nzEOI3gJsrNHqeV2TY0HCkqVAqvcFHIoHEQic4ms5NOBFnVIz
+         sbtDmBFbaVOyQMuWqhZT/PZ0EfOId+BRPN3PQdzeSJmVbUqWo4AxwheEP3uGP2lSoGc6
+         Nva1LfeZ+8y2EEwyrEcFRrlesVDXsms/z2EKA0LNcCcUGRk+0AotoA9N2u1f7A6fDmkz
+         MWGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715165277; x=1715770077;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eoZX15B6govTZa1crSFZ03U1Z5NpIxQlGrKdNgAOQcI=;
+        b=g8l5Wpwi8lf5BqwmE99kgnNwsbSu0cfVIbNqztzuuJZcffBj8jeIpeAXaU8FaUL1mz
+         f0AQVc/m9VeDBl6oDTdObRmiKbcLrAJ6EujCt3dybJfkJXjQD6SOyloUVvTUkiXgLPQu
+         SHLXVCUpYVS8c4EwDxhtcO38I4vKY9GICQmPwEQleKJ54tj9Ugp3iNGV311JE+oWbU3A
+         hWXCYRCYNN3HW26vCzuCKFIXDVZhzhilOn87Rqa0/GOzQzTF2TDFu0I5A824q85qpXg3
+         YtIJlq2T3usvuz4L9gLACucbwRn2rD8U3KPJcqXQBxeDBfeUT9fw5Bds0BqNitFJ62Xt
+         UQMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl9QeHIbG9oAEsmj0OsgaR1IYwdsZyYOOUokQfw3Z4uI23i8O4uZfXe6erzByjrZtH9jdFMOg+S/Io+b5j65jJnIVNsY3ETpHJMerj
+X-Gm-Message-State: AOJu0YwYrLn8MOwrWB33Pt2EqfVVeybCTebb19B/jc4xxfqWJ6Vea70J
+	ceaTLRPRttgWi+75EXGu6pkl8M5h1vOciOBI6z88//rEUdXV5qKowKT0TV8UiWfNjs6THSvSPXm
+	8bV1wgKGlyaKDMn6HQltN5pWTjdKK2oDSsFeVIQ==
+X-Google-Smtp-Source: AGHT+IEWwosbEieIG3yPj7wVS7/X+26Rl5SJvi7/VdhV3IY6zo46NS8e83824/vbmNXb+zl5PPWRF6ISWsjL+0RJS9M=
+X-Received: by 2002:a5b:9ca:0:b0:de0:f74b:25f3 with SMTP id
+ 3f1490d57ef6-debb9dd9428mr2093299276.60.1715165277491; Wed, 08 May 2024
+ 03:47:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <cheng.lin130@zte.com.cn>
-To: <pbonzini@redhat.com>
-Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jiang.yong5@zte.com.cn>, <wang.liang82@zte.com.cn>,
-        <jiang.xuexin@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBLVk06IGludHJvZHVjZSB2bSdzIG1heF9oYWx0X3BvbGxfbnMgdG8gZGVidWdmcw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 448AleAv005282
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 663B5850.000/4VZBgN4rRBz8XrSC
+MIME-Version: 1.0
+References: <171405653305.2527744.3813895380659072690.robh@kernel.org>
+ <20240426142442.7769-1-quic_vvalluru@quicinc.com> <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
+ <20240508102202.GA28609@hu-vvalluru-hyd.qualcomm.com>
+In-Reply-To: <20240508102202.GA28609@hu-vvalluru-hyd.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 8 May 2024 13:47:46 +0300
+Message-ID: <CAA8EJppiGiaddrNLRGtzjKHfcYYU4LcXLCyOgfy2En7LRggv4A@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
+To: jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc.smtp.subspace.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, robh@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, konrad.dybcio@linaro.org, 
+	krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_abhinavk@quicinc.com, 
+	quic_nankam@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Cheng Lin <cheng.lin130@zte.com.cn>
+On Wed, 8 May 2024 at 13:22, Prahlad Valluru <quic_vvalluru@quicinc.com> wrote:
+>
+> On Mon, May 06, 2024 at 06:14:10PM -0500, Bjorn Andersson wrote:
+> > On Fri, Apr 26, 2024 at 07:54:42PM GMT, Prahlad Valluru wrote:
+> > > From: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
+> > >
+> >
+> > Please don't thread new versions off existing version. b4 helps you with
+> > getting these things right, please check go/upstream for more details.
+>
+> My internal gitconfig is not configured correctly. Fixed in v3.
 
-Introduce vm's max_halt_poll_ns and override_halt_poll_ns to
-debugfs. Provide a way to check and modify them.
+No. V3 was still sent as a reply. Please fix the way you are sending
+the patches. It has nothing to do with the git config.
 
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
----
- virt/kvm/kvm_main.c | 5 +++++
- 1 file changed, 5 insertions(+)
+>
+> >
+> > > Enable lt9611uxc bridge for qcs6490 rb3 gen2 platform.
+> > >
+> >
+> > Even if it's clear what this is, I would prefer if you described the
+> > hardware a little bit in your commit message.
+> > "Rb3Gen2 has a HDMI connector, connected to DSI via a LT on i2cX.... reset and
+> > irq pins comes from x and y. Describe this."
+> >
+>
+> Agreed. Updated the commit text to include bridge details.
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ff0a20565..60dae952c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1151,6 +1151,11 @@ static int kvm_create_vm_debugfs(struct kvm *kvm, const char *fdname)
- 				    &stat_fops_per_vm);
- 	}
+>
 
-+	debugfs_create_bool("override_halt_poll_ns", 0444, kvm->debugfs_dentry,
-+			    &kvm->override_halt_poll_ns);
-+	debugfs_create_u32("max_halt_poll_ns", 0644, kvm->debugfs_dentry,
-+			   &kvm->max_halt_poll_ns);
-+
- 	kvm_arch_create_vm_debugfs(kvm);
- 	return 0;
- out_err:
+
 -- 
-2.18.1
+With best wishes
+Dmitry
 
