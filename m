@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-173173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01BC68BFC8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1AA8BFC8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328C91C23397
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA8528786C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82D382871;
-	Wed,  8 May 2024 11:44:55 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5288288C;
+	Wed,  8 May 2024 11:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2DkkJds"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7F582492
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E48881AD0;
+	Wed,  8 May 2024 11:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168695; cv=none; b=Wm2V2FwIVd9K//oE/dKkpPnCWbl7ZKC6ICYxygr3y2eOcQHmiLn7xYRUGTNcMHM74ChUmnj+4ACu2BZ8thtwoX5rqzKQneb2s9+EQM6Zyeh40f/MZ33OGL/PI1YohDfQKtsxxbpDsFucX1lYI3M/fR+TncZozRzuO/sLNoFOxks=
+	t=1715168726; cv=none; b=MXzaw++NvXtDKz//J5U6qdxu/ldh9OsjQ0hI4PPIuQo1Lb7iFQVc84Lmw8aOXvA0o0riFWmJHBarHzrMuS+DErgYPDIAiqIY5eDjjuQXcowKPCs+eOO5YwNWWCxZ60X/mpGD44DjxYoNixXcFrAKKNDg1DOh4Iylmn0DNVlC4vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168695; c=relaxed/simple;
-	bh=Tji7GiPNotKO9wzv99gLTkUyJlpMOyW/ti0VSFsUCTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Oxo92jSPwXHkXlmb8KfItlnJqe3JNBiXZasZms6ar0ZsBNNDQ7wSsmE+A5aDph57+JxHKl+zo0rOSIcMhU0ozupNU0C4Dy1tVeApBRJbblNoN4YHGni1bChaTZgFYC3kNiSat9uV0XKmKIzFNTRrHDeUe1DcLCVmnAoQkt8MgYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-61be4b9869dso44300267b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:44:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715168692; x=1715773492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tD6uk6nyfWQJri7TBNWjTfNOLRhSaC+EWWwCRebNrC0=;
-        b=HleOvjYbq2FeriwjKgVKntdxnnuNsErTXMjqQWRcPybpOOgsxM8Qfv4H1mVNS5I3B2
-         wntEc0/JUKTYQwOSxxTCxeYexxLfEpvW/xJ4r3zZvWgMcFyd/8kV5xVyQlIHuKyP58Q7
-         kefqwCTspZC9uYMjJ6fG2DdI/VA9DwTPJsWjhKIeXDmebN+jYpskZeuiz6nkGmZ/WZQf
-         BH7neWRQIRvjSOcyhUi8FRiPXEKRgd10zesSeGtL9FHGi3wHXwDBoEUrYDR4V4uDzGpj
-         3lh3dh7NeqLtmj+4MfQPzsfiADUlXCtiwzHjEQNCljueSf+F+7F2HSKj8xpIGCPjWZH+
-         qNFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTBLpnd0+4ceSn97EWWDaE53juxKLP2pedysKOCal/uRvG2lC7sbbPHSrWd2Dz8Ao6QA9wUg5p0buBTBMkJWYCDFMp45y7JD92jzKJ
-X-Gm-Message-State: AOJu0Yzn6ukQq/2GLdWS54wf8u0S4GXoUrsWqDv+vF4IzT6L+vgRJfxn
-	A24lcYmZpwsxhSh2HKpDvMZA1eCK6Qupiay1uzoHaXKDlhN1102ulCaG4i1mxHg=
-X-Google-Smtp-Source: AGHT+IGHYgU++D0fE28KKf4OZsgoVeACDE5sxmMzk6yAHQhP4q3814+oDhHgK3EEZMWd3SspD+lW/w==
-X-Received: by 2002:a0d:d850:0:b0:620:34a3:d8b with SMTP id 00721157ae682-620862f4ec1mr24365947b3.44.1715168691003;
-        Wed, 08 May 2024 04:44:51 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id g125-20020a815283000000b00617c48add4csm3243075ywb.73.2024.05.08.04.44.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 04:44:50 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-de60d05adafso4308804276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:44:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgoXBC4qsxM4kp3UVkmM/kLG27rK0ds/S+TJQ/9zPCj1E4kGWj8zNxJv4br3LfDYjixcnrRUqJGZsPp9mvsimfUFwPg1Owe2spMFd4
-X-Received: by 2002:a25:d352:0:b0:de5:5ba3:c324 with SMTP id
- 3f1490d57ef6-debb9d2dca6mr2272321276.38.1715168690511; Wed, 08 May 2024
- 04:44:50 -0700 (PDT)
+	s=arc-20240116; t=1715168726; c=relaxed/simple;
+	bh=ysQMPzsDmdSKglgataWxi6Vk6YGZw5N5O//e4R4eqdg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h31LE0W5myDk31eLoZ5Ntx2iCc/T8kwULMPHSD1fDDs7yIdr5Ya4ixgTmFm5HyP7ZoYACCRbQ+j9IL5wGLyfq2N6LJU6gxVKWwYlNHh1pYBZguFmzZz5CrN4ulVCXZdADMR8LO5qrlUMOTKgTRd3sUcfAPPjS16lDfqjMdDk53U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2DkkJds; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715168725; x=1746704725;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ysQMPzsDmdSKglgataWxi6Vk6YGZw5N5O//e4R4eqdg=;
+  b=d2DkkJdsdllueGRiR1xNHD2oWYmAgKowBaSWfZ8lF9R/cMyV15d2nOPj
+   mcX/r7PQ+nwOh5vAsJ1Q4JD0+cqfgjqmPdyhtVAj4ayh3LxN9aEF7s7qw
+   f3osq33a1gz1QcHewI4Yz6A5J2rEMlan88JP6C5PlWsuMbyHHHMRj5qUy
+   9laamy2wPGJQW/Zm6jNJAr7NipWNkmmY3Eaz86NvXLXsBkAqs8QosxMTS
+   IflEhgXVXjn2vlEbDrxRn/WO5yKzffiJsf5TDJ+6zlhOaLjFxOElnmMR7
+   Jo0Ml6Nwio9bkyzx/H4/PvcVxug8VbmZHXnSQfBCAnz8N8fGUlCUheLw9
+   A==;
+X-CSE-ConnectionGUID: LGvDU9NdRByURblp/td/sA==
+X-CSE-MsgGUID: 7JXF34PQSgGSVAr66k8Rvw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11234275"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="11234275"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 04:45:25 -0700
+X-CSE-ConnectionGUID: IHQsn8PmQdWC0SWNtEbnJg==
+X-CSE-MsgGUID: NDgYrUWXQdykbmw35d1DeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="33697538"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 08 May 2024 04:45:22 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 892E611F; Wed, 08 May 2024 14:45:21 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH net-next v1 1/1] net: ethernet: adi: adin1110: Replace linux/gpio.h by proper one
+Date: Wed,  8 May 2024 14:45:19 +0300
+Message-ID: <20240508114519.972082-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240403122851.38808-1-schnelle@linux.ibm.com> <20240403122851.38808-2-schnelle@linux.ibm.com>
-In-Reply-To: <20240403122851.38808-2-schnelle@linux.ibm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 May 2024 13:44:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUw86JMgrStxFozDvhCjwynsHgXnPinO4YWXQf_VvWHKA@mail.gmail.com>
-Message-ID: <CAMuHMdUw86JMgrStxFozDvhCjwynsHgXnPinO4YWXQf_VvWHKA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] m68k: Let GENERIC_IOMAP depend on HAS_IOPORT
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: linux-m68k@lists.linux-m68k.org, Arnd Bergmann <arnd@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 3, 2024 at 2:29=E2=80=AFPM Niklas Schnelle <schnelle@linux.ibm.=
-com> wrote:
-> In a future patch HAS_IOPORT=3Dn will disable inb()/outb() and friends at
-> compile time. With that choosing dynamically between I/O port and MMIO
-> access via GNERIC_IOMAP will not work. So only select GENERIC_IOMAP when
-> HAS_IOPORT is selected.
->
-> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+linux/gpio.h is deprecated and subject to remove.
+The driver doesn't use it directly, replace it
+with what is really being used.
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-i.e. will queue in the m68k tree for v6.10.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/net/ethernet/adi/adin1110.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/net/ethernet/adi/adin1110.c b/drivers/net/ethernet/adi/adin1110.c
+index 8b4ef5121308..0713f1e2c7f3 100644
+--- a/drivers/net/ethernet/adi/adin1110.c
++++ b/drivers/net/ethernet/adi/adin1110.c
+@@ -11,10 +11,10 @@
+ #include <linux/crc8.h>
+ #include <linux/etherdevice.h>
+ #include <linux/ethtool.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/if_bridge.h>
+ #include <linux/interrupt.h>
+ #include <linux/iopoll.h>
+-#include <linux/gpio.h>
+ #include <linux/kernel.h>
+ #include <linux/mii.h>
+ #include <linux/module.h>
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
