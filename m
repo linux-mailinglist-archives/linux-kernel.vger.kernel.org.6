@@ -1,79 +1,90 @@
-Return-Path: <linux-kernel+bounces-172559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5830A8BF39F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:23:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD7C8BF3A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98C71F22C72
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:23:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81AEC1C23512
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB04387;
-	Wed,  8 May 2024 00:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7AD38B;
+	Wed,  8 May 2024 00:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UezWsYk8"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="i2pU4XA7"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B36379CC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC48364
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715127831; cv=none; b=P1KurHDLPfBr8uI+O33Ts5TPCeSiFLM+xG6fJdVCrDMoYjv9pfDVOcTdONRNNisCLzghtPXebUGXfEfhUL7dishhGSSkD6sTYPK88cMta+BBLDWWLKh9Z1pR4Cf/bRNHiPRytprRb/eE48k9TffxS4g5Y7H1chSPsslOPh/NeTA=
+	t=1715127911; cv=none; b=DiS8N3vd4sK9aZel1PpqFShNvt5DJVKN/wdmEz58VuL96IBkrQMVmxa2/+KIrbRxij/ZMCjNh0to0BYvMVLHxvQlRH1CeV0yfBMp5dlrtoe6U34EiS/fiRx2P3I2sgzm9JqpSrerm+eQhEb7mnAmmehFdP1wyNzxfGHckZ7DrUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715127831; c=relaxed/simple;
-	bh=1da0pLj5XHUXhL0lSN1ETeHymYQMRKeJgc8KotxtGlM=;
+	s=arc-20240116; t=1715127911; c=relaxed/simple;
+	bh=lwJncAe+bf7pRUOxcV0HmRnNwUlF2rdTBkMOBrZ2rk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkEcjs2jh+90l6sRUv8h+NU3DBW6/b2QAJuNqvgIIOtEtLadZr0FZ9d7nH8rbY2Lx1AlJUJNVTVQY7viFOk9mqgE5Kl759L21oYdWy/dkmu8S1MNjyQeqco4vLNVXkM25fnMmLWrI8102fjY4ZsygI0simca6jwxZ1mgLo55bck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UezWsYk8; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ee7963db64so10306715ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 17:23:50 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRnB95RlZ7JID8yb7Ed8BRUNhUG2zVMaEPKM3FZs5WvHwpirvanKjCDNm8NSv26nZdgo0coCkreAN+WQu98gFltccAFO/z6NRgRLiRmkq1SOEJkAd5egVdQvF6eRLaHErqH7RD+j6hxdIz4sNC3SKD90fPToCWmGGiOeDkzKEnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=i2pU4XA7; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-43ab76cac73so3053461cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 17:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715127829; x=1715732629; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1715127909; x=1715732709; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=09NWd9Q6j/agwIZs1K4w41dSpMpn7Xn/XB8A6O9Z+yU=;
-        b=UezWsYk88NTr0/agSOTLdpAAdm6/305PII96kYf5k1BwMyMGKDXbAgOOLl/uoYr4uf
-         gSbfH1hsUrOnbimylY4521LuSh0w9BXxhzo+FYYBWCfouGdpz0IITOw9xkc8e4D0V4FR
-         kNPmPceMg68hThOBjSRviSaLCtpRgQTf30swA=
+        bh=62oVLAkCTGDCTLLKSqh+lJU6r7gjh1o4XBhOsw5N1rI=;
+        b=i2pU4XA7VRmlZ6DaoQhD603ByDM5kD2do3ORVWa6nse6pn/NsyKnsCsBd9394i8szL
+         Fv8VlLzAxCvFjD55JLp8gbQZE92DbbC/vVAONJbRLT8XQPNcIeJawFry1moe+1fDmDls
+         tjh3ciXL1v7fGqxr4w5vi3nODRUVFQAVJaAqmzP6YEPPXgaTPL822PAPZt9O+7vIfYgH
+         BnqfZ//2PqR8yLjyJuFkhlQUZ8IdS1xr8rFbnRRS50uy8JKo55mdNyGPjq4p7egaf2Ft
+         DpFi0ZbhU5km3StGYBugz95p6HhiXRu+68PB9HgaEzH4+Hngw7T4V5kUdSMah639njc/
+         3hvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715127829; x=1715732629;
+        d=1e100.net; s=20230601; t=1715127909; x=1715732709;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=09NWd9Q6j/agwIZs1K4w41dSpMpn7Xn/XB8A6O9Z+yU=;
-        b=N+TUXdcneHZkAtK4ujwwXiUvCGloai0vrLfqVPKHFxl1QzlctYLOM50/aI6EQH3jIL
-         U7sGp4i8r0t5gEtZGXNTpGGA9+kATi9sIsvI5ndced4qN8tEDUBseB99qniofItOYWJw
-         ReVJwf2GLyhm4VrU43kK1w0HxBlFmPU4+IWQBhDIBPRPOlX039/ql3eEkyN+BZSpRpic
-         fppSVM88ouLY/I/yBc+EKsswiCmsfmns326k7OXzM3JCSRI4r2msMX+tH3IylYbW5JGH
-         maVAmJOTdNZ0YrcrWr7ZFSys2JM36O6C8ViMUykWELC3uoDsfGuqpy+04sSPqy/WGibt
-         Lm1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWAJEbLqvLUDwODpgB5Wea8QubBc7GIwVXh3OnpFvyU78a8GRwMxueqmEtbBMJc90tFYeoCTNlPBfCA7+Y+pOtKkO8AUmULJuSTgKc3
-X-Gm-Message-State: AOJu0YyhmpUJOv9ClM7nV82KadW95mcCI7jf65DeztCQw+FyK1Hssy3I
-	jxfHigssDfhNk97bcjKKDrEiqdcQPXYibrLnza42sUow8ZdOqVqFCxR98BTrhA==
-X-Google-Smtp-Source: AGHT+IHuemiCrxMSHKVE5rfjo+Q/DiytZ800PCNfDHJmUYfSE9kSJVG4tzAseUtRbGaNhTJISUEAdw==
-X-Received: by 2002:a17:903:4286:b0:1e4:6232:367a with SMTP id d9443c01a7336-1eeb01993b8mr12268225ad.22.1715127829507;
-        Tue, 07 May 2024 17:23:49 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id lg6-20020a170902fb8600b001eb7823164esm10550918plb.279.2024.05.07.17.23.48
+        bh=62oVLAkCTGDCTLLKSqh+lJU6r7gjh1o4XBhOsw5N1rI=;
+        b=LjgkGdCfeiXso6dX4EDilN6bwnkXveCT8FcEJFPsZIPNsz4MniT1QGjoZS8YxYCnIA
+         Bpn3hnCdIt7WQ0ZPOYXbPGAsRZD9Blw4wV/RYSyJFqUVISGXFbFUqqhvsqZyftU9mY8F
+         hZAgO+KMCN4sbIFH1u6ZrtEL4LOEs2PZ2ihjcuFdIXHKWBJeBLljU1ZbiTnZe8T0kKBm
+         X2HtunBdKqyndpQYRa5F14xrJiEoX4wW6+fKhO/M/6ywSnqNpAH9c6750a2nK2MVyImB
+         cwvy53C7T1l1SAaWf5zi0niDTNDvJMfeCiKkf2tmbZvbfyU1ff6OXfXw3jGlhDvN5UjH
+         hFqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMjTvWBqkUIUSveWI5qqAzJP7dn76v2rI60P+AnRfISgiCCsbM+loF8KIj1e0k+LwWg8khLuPHmMMuoN+PxsTQTHURRzP67hMRc05j
+X-Gm-Message-State: AOJu0YwoWC87AVd74ZbEgE7XE3aCh9A8Whxpm0YSxo99hDqlLWTaMWpw
+	BlQGodn0Z3x3HFALuJlGbZe+sBTrebt7y3IEeyL05iITA4of1fY0d93x+VcfFdk=
+X-Google-Smtp-Source: AGHT+IFTxEBXk6pFTSfXuSIuCjv+y/O+PL/HIbz5Je8O0KKZUh3tsAMV/ImOlBAPfnNJTqCSHSBJgg==
+X-Received: by 2002:ac8:5e54:0:b0:439:b456:25b6 with SMTP id d75a77b69052e-43d8f7cbbe6mr61262901cf.30.1715127908960;
+        Tue, 07 May 2024 17:25:08 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id hx1-20020a05622a668100b004364d940d3dsm6840475qtb.96.2024.05.07.17.25.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 17:23:49 -0700 (PDT)
-Date: Tue, 7 May 2024 17:23:48 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bill Wendling <morbo@google.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] scsi: sr: fix unintentional arithmetic wraparound
-Message-ID: <202405071715.BD7AA91C2@keescook>
-References: <20240508-b4-b4-sio-sr_select_speed-v1-1-968906b908b7@google.com>
+        Tue, 07 May 2024 17:25:08 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s4V7M-0005JK-22;
+	Tue, 07 May 2024 21:25:08 -0300
+Date: Tue, 7 May 2024 21:25:08 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/9] iommufd: Associate fault object with
+ iommufd_hw_pgtable
+Message-ID: <20240508002508.GQ4718@ziepe.ca>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-8-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,103 +93,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240508-b4-b4-sio-sr_select_speed-v1-1-968906b908b7@google.com>
+In-Reply-To: <20240430145710.68112-8-baolu.lu@linux.intel.com>
 
-On Wed, May 08, 2024 at 12:02:27AM +0000, Justin Stitt wrote:
-> Running syzkaller with the newly reintroduced signed integer overflow
-> sanitizer produces this report:
-> 
-> [   65.194362] ------------[ cut here ]------------
-> [   65.197752] UBSAN: signed-integer-overflow in ../drivers/scsi/sr_ioctl.c:436:9
-> [   65.203607] -2147483648 * 177 cannot be represented in type 'int'
-> [   65.207911] CPU: 2 PID: 10416 Comm: syz-executor.1 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
-> [   65.213585] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   65.219923] Call Trace:
-> [   65.221556]  <TASK>
-> [   65.223029]  dump_stack_lvl+0x93/0xd0
-> [   65.225573]  handle_overflow+0x171/0x1b0
-> [   65.228219]  sr_select_speed+0xeb/0xf0
-> [   65.230786]  ? __pm_runtime_resume+0xe6/0x130
-> [   65.233606]  sr_block_ioctl+0x15d/0x1d0
-> ...
-> 
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang. It was re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
-> 
-> Let's add an extra check to make sure we don't exceed 0xffff/177 (350)
-> since 0xffff is the max speed. This has two benefits: 1) we deal with
-> integer overflow before it happens and 2) we properly respect the max
-> speed of 0xffff. There are some "magic" numbers here but I did not want
-> to change more than what was necessary.
-> 
-> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-> Closes: https://github.com/KSPP/linux/issues/357
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
-> ---
-> Here's the syzkaller reproducer:
-> r0 = openat$cdrom(0xffffffffffffff9c, &(0x7f0000000140), 0x800, 0x0)
-> ioctl$CDROM_SELECT_SPEED(r0, 0x5322, 0x7ee9f7c1)
-> 
-> ... which was used against Kees' tree here (v6.8rc2):
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
-> 
-> ... with this config:
-> https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
-> ---
->  drivers/scsi/sr_ioctl.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
-> index 5b0b35e60e61..2d78bcf68eb3 100644
-> --- a/drivers/scsi/sr_ioctl.c
-> +++ b/drivers/scsi/sr_ioctl.c
-> @@ -430,7 +430,8 @@ int sr_select_speed(struct cdrom_device_info *cdi, int speed)
->  	Scsi_CD *cd = cdi->handle;
->  	struct packet_command cgc;
->  
-> -	if (speed == 0)
-> +	/* avoid exceeding the max speed or overflowing integer bounds */
-> +	if (speed == 0 || speed > 0xffff / 177)
->  		speed = 0xffff;	/* set to max */
->  	else
->  		speed *= 177;	/* Nx to kbyte/s */
+On Tue, Apr 30, 2024 at 10:57:08PM +0800, Lu Baolu wrote:
+>  /**
+> @@ -412,6 +415,9 @@ enum iommu_hwpt_data_type {
+>   * @data_type: One of enum iommu_hwpt_data_type
+>   * @data_len: Length of the type specific data
+>   * @data_uptr: User pointer to the type specific data
+> + * @fault_id: The ID of IOMMUFD_FAULT object. Valid only if flags field of
+> + *            IOMMU_HWPT_FAULT_ID_VALID is set.
+> + * @__reserved2: Padding to 64-bit alignment. Must be 0.
+>   *
+>   * Explicitly allocate a hardware page table object. This is the same object
+>   * type that is returned by iommufd_device_attach() and represents the
+> @@ -442,6 +448,8 @@ struct iommu_hwpt_alloc {
+>  	__u32 data_type;
+>  	__u32 data_len;
+>  	__aligned_u64 data_uptr;
+> +	__u32 fault_id;
+> +	__u32 __reserved2;
+>  };
+>  #define IOMMU_HWPT_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_HWPT_ALLOC)
 
-I didn't see a "speed < 0" check, so I went to check the type on "speed"
-and found it to be "int". So I'd expect such a check, but then I looked at
-the interface: I think it's wrong that "speed" is an int at all. There's
-only 1 caller, and 1 implementation of "select_speed":
+[..]
 
-$ git grep '\.select_speed'
-drivers/scsi/sr.c:      .select_speed           = sr_select_speed,
+> @@ -359,7 +359,7 @@ static const struct iommufd_ioctl_op iommufd_ioctl_ops[] = {
+>  	IOCTL_OP(IOMMU_GET_HW_INFO, iommufd_get_hw_info, struct iommu_hw_info,
+>  		 __reserved),
+>  	IOCTL_OP(IOMMU_HWPT_ALLOC, iommufd_hwpt_alloc, struct iommu_hwpt_alloc,
+> -		 __reserved),
+> +		 __reserved2),
 
-static int cdrom_ioctl_select_speed(struct cdrom_device_info *cdi,
-                unsigned long arg)
-{
-	...
-        return cdi->ops->select_speed(cdi, arg);
-}
+This is now how the back compat mechanism works. The value here is the
+absolute minimum size, it should never increase. The first __reserved
+is always the right value.
 
-And the arg there is unsigned long (?!).
+If you change it then old userspace that doesn't include the fault_id
+will stop working.
 
-So I think probably the prototype should be changed to unsigned long,
-and then it can clamp the "speed" argument:
-
-+	/* avoid exceeding the max speed or overflowing integer bounds */
-+	speed = clamp(0, speed, 0xffff / 177);
- 	if (speed == 0)
-  		speed = 0xffff;	/* set to max */
-  	else
-  		speed *= 177;	/* Nx to kbyte/s */
-
-Then the "negative" values go away are then correctly treated as
-"too big" in the clamping.
-
--Kees
-
--- 
-Kees Cook
+Jason
 
