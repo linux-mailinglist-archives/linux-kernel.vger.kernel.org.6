@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-172641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA268BF4BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:52:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2898BF4C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29DCC282604
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCE81F24D57
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F74712E74;
-	Wed,  8 May 2024 02:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89E715E86;
+	Wed,  8 May 2024 02:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="id37CP6Y"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFB35228;
-	Wed,  8 May 2024 02:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fK6K0Qbc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CCB14003;
+	Wed,  8 May 2024 02:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715136742; cv=none; b=XPaSiv5BSBH+5dcTXoKWjFlBFZGqDcxb00iFylQNpcld/18vfSMnV2i2OuVvEpikf2A5dQAIVBuH1rGTfVrR2BGxh4h1sAaB03JDaVFI/VV70KQvW5dcIyIThR+SdkywPxzBDfhfe5lJkGdZztj++TaOKXckjj/PO2WiOOYifb4=
+	t=1715137078; cv=none; b=S5BBO08m6oydZ1ELyQvOnQJy4y/UgidHh0XrKqgm7b80cDsHIH4SdBqpjnHIAJKBE9Ef6yQhpq9tyfrftqF2iSwPWjNTglFvTLigSjxUVPLDFaBV/6nGVZ0yc4N3l2AKjH2/EiGj5KE3zUpWD4GO40TyUY5pgzlCGP2kCIyboOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715136742; c=relaxed/simple;
-	bh=tsvoE3t4+nq4hodQWrfVGpaWSOPtMpX3lIjRqCsujEM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OSez/8QrUIQlecBVaAEWrqoOeFovNyjU+upkAfSyt/e8BzIfNwBMyXiIbLNSJe99wGMIg84ZWO6iBzB5uzM4CTLQ28T80FlAvKBV8H1q3LiWUy1Swq6rYf0dfvTXnl3CLmhU6JSYVR6uVrKj0/rXx4c6yMn+qF9vDeKMXvm41PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=id37CP6Y; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1715136732;
-	bh=geZdhczy5v3XzQr5jvBujPytnWZIYj7CXxZvY/BFYqI=; l=2046;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=id37CP6YkKhYhgqRjFkjxptdViRINuLDgWY5XIHLuHlIhDH9AC9VsZ+J1yccfFJrv
-	 VkRI2G2LrRGX4SIGLWHBCtzdqNKOvZgXI4hEBfoQhNnV9gKI6oZTOIK7dgPc2SN2RK
-	 8eVufmhDN2MGPgOpycCoGD002U59IN1gLig1DWa7ENX4fkPlLui3IfZCSW+HO8evDy
-	 lyG5DpHAqXbURTHsvX/zjij+OIiM4wXxfDONJlHeVss5VdeRzLwUTmZlGB96A14VaV
-	 Ut3MFWHdXY7zvzyzwJtV19qE6agbi+HGvpheUtP2bV7jBx+tkpRerBjcqop3cP+50H
-	 oRZ4FaMCf5Wzw==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3885196:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Wed, 08 May 2024 10:51:52 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 8 May 2024
- 10:51:51 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 8 May 2024 10:51:51 +0800
-From: <cy_huang@richtek.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Daniel Scally <djrscally@gmail.com>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, Jean-Michel Hautbois
-	<jeanmichel.hautbois@ideasonboard.com>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, ChiYuan Huang <cy_huang@richtek.com>
-Subject: [PATCH] media: v4l: async: Fix NULL pointer when v4l2 flash subdev binding
-Date: Wed, 8 May 2024 10:51:49 +0800
-Message-ID: <e2f9f2b7b7de956d70b8567a2ab285409fff988b.1715136478.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1715137078; c=relaxed/simple;
+	bh=7Fb40uljgKsFnE1FzE9EeCrT6mqgfdQY5bkG3RtT+n0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSXIDtOLhexXPSqwZujs3PHMQxocgCsL616EcqYRIN87mVnm3g/JkGNuBLVkY95j1fLW3j/zK36wTsldQ1Pp4phtru4lMTwewf/DHl6xcUOhyaL4YQiV6srLoOX1zZ2asywyCCGi/yib03E2mGxCwstiHXvR098TjlE8KkLonWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fK6K0Qbc; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715137077; x=1746673077;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7Fb40uljgKsFnE1FzE9EeCrT6mqgfdQY5bkG3RtT+n0=;
+  b=fK6K0Qbc4uz0oW5sTJlmm4SmZVTrgSJP+E90a5X45dzSwXnF/WeFtDBU
+   S5mVFCVc8pMLtywTsqvgNSzZ4RmDTmTBmpi9u4t7x3uPSxCw/MXRXGoZ5
+   Tg3gN/Y4zh8+zx31/viPwKG7P6osqAoAKu30ILUuFW2DtYXEFTcc/S/Lp
+   zSc3IBrNsF08ljT3+CkRfM5vYH/MM2m0hwj1ckJhbsO7vyeL17CrkOZDP
+   m+RLRyb5aAK+yzQ4EMrUJkvOXIZyrHyThqk3EsjzvvO6VceqmhDxA7LKW
+   wY/SPpNdBwR3PH093OkFiuw9IMEXaAQRaHFIXeaWDgyru81SE4qVEaKil
+   g==;
+X-CSE-ConnectionGUID: tuIqC/l+RV2/JCk90SpOTQ==
+X-CSE-MsgGUID: CMd0MxKaTP+9d9m4HDkS1w==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21533526"
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="21533526"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 19:57:56 -0700
+X-CSE-ConnectionGUID: anmJjyLiR6S4ei743rWx4w==
+X-CSE-MsgGUID: SLR/iHPIS5Wre20AGIkdTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="33291964"
+Received: from linux.bj.intel.com ([10.238.157.71])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 19:57:50 -0700
+Date: Wed, 8 May 2024 10:55:05 +0800
+From: Tao Su <tao1.su@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, kvm@vger.kernel.org,
+	netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-sgx@vger.kernel.org, edliaw@google.com,
+	ivan.orlov0322@gmail.com, broonie@kernel.org, perex@perex.cz,
+	tiwai@suse.com, shuah@kernel.org, seanjc@google.com,
+	pbonzini@redhat.com, bongsu.jeon@samsung.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alexandre.belloni@bootlin.com, jarkko@kernel.org,
+	dave.hansen@linux.intel.com
+Subject: Re: [PATCH] selftests: Add _GNU_SOURCE definition when including
+ kselftest_harness.h
+Message-ID: <ZjrpieLKXFhklVwR@linux.bj.intel.com>
+References: <20240507063534.4191447-1-tao1.su@linux.intel.com>
+ <20240507100651.8faca09c7af34de28f830f03@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240507100651.8faca09c7af34de28f830f03@linux-foundation.org>
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+On Tue, May 07, 2024 at 10:06:51AM -0700, Andrew Morton wrote:
+> On Tue,  7 May 2024 14:35:34 +0800 Tao Su <tao1.su@linux.intel.com> wrote:
+> 
+> > asprintf() is declared in stdio.h when defining _GNU_SOURCE, but stdio.h
+> > is so common that many files don’t define _GNU_SOURCE before including
+> > stdio.h, and defining _GNU_SOURCE after including stdio.h will no longer
+> > take effect.
+> > 
+> > Since kselftest_harness.h introduces asprintf(), it is necessary to add
+> > _GNU_SOURCE definition in all selftests including kselftest_harness.h,
+> > otherwise, there will be warnings or even errors during compilation.
+> > There are already many selftests that define _GNU_SOURCE or put the
+> > include of kselftest_harness.h at the very beginning of the .c file, just
+> > add the _GNU_SOURCE definition in the tests that have compilation warnings.
+> 
+> That asprintf() continues to cause problems.  How about we just remove
+> it? Do the malloc(snprintf(str, 0, ...)) separately?
 
-In v4l2_async_create_ancillary_links(), if v4l2 async notifier is
-created from v4l2 device, the v4l2 flash subdev async binding will enter
-the logic to create media link. Due to the subdev of notifier is NULL,
-this will cause NULL pointer to access the subdev entity. Therefore, add
-the check to bypass it.
+Removing asprintf() is indeed an good option, but using snprintf(str, 0, ...)
+to get string size may go against the original intention of commit 38c957f07038.
 
-Fixes: aa4faf6eb271 ("media: v4l2-async: Create links during v4l2_async_match_notify()")
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
-Hi,
-
-  I'm trying to bind the v4l2 subdev for flashlight testing. It seems
-some logic in v4l2 asynd binding is incorrect.
-
-From the change, I modified vim2m as the test driver to bind mt6370 flashlight.
-
-Here's the backtrace log.
-
- vim2m soc:vim2m: bound [white:flash-2]
- Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
- ......skipping
- Call trace:
-  media_create_ancillary_link+0x48/0xd8 [mc]
-  v4l2_async_match_notify+0x17c/0x208 [v4l2_async]
-  v4l2_async_register_subdev+0xb8/0x1d0 [v4l2_async]
-  __v4l2_flash_init.part.0+0x3b4/0x4b0 [v4l2_flash_led_class]
-  v4l2_flash_init+0x28/0x48 [v4l2_flash_led_class]
-  mt6370_led_probe+0x348/0x690 [leds_mt6370_flash]
-
-After tracing the code, it will let the subdev labeled as F_LENS or
-F_FLASH function to create media link. To prevent the NULL pointer
-issue, the simplest way is add a check when 'n->sd' is NULL and bypass
-the later media link creataion.
----
- drivers/media/v4l2-core/v4l2-async.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 3ec323bd528b..9d3161c51954 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -324,6 +324,9 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
- 	    sd->entity.function != MEDIA_ENT_F_FLASH)
- 		return 0;
- 
-+	if (!n->sd)
-+		return 0;
-+
- 	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
- 
- #endif
--- 
-2.34.1
-
+Back to commit 38c957f07038, I don't see any advantage in using LINE_MAX.
+Can we use a fixed value instead of LINE_MAX? E.g., 1024, 2048. Then we
+just need to revert commit 809216233555.
 
