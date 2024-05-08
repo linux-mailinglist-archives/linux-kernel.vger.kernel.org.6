@@ -1,224 +1,146 @@
-Return-Path: <linux-kernel+bounces-173833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B55E8C0625
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:18:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF29F8C0627
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06B5283B77
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735801F23475
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9304A131BB7;
-	Wed,  8 May 2024 21:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 975CE131BC9;
+	Wed,  8 May 2024 21:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pq8dF/JB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9geRoPW";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pq8dF/JB";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9geRoPW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="es0Q55zq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C71D12C497;
-	Wed,  8 May 2024 21:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D71C13119E;
+	Wed,  8 May 2024 21:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715203087; cv=none; b=MwDZwzYo234rnBSgI1GFVQpy62SIMexiazWmf/2LNwwZ/Z1XJhXHKzUV4uyyckM4PaKjtatB0CBRiga+WtyYOlGeBiVQuX7CIoBnXwXArpzdfsOidMYBC/5hjWQcorED3D0p+YVMcY0K1h4dKZfIX3h41mHfBvW8nuDrsjjR38I=
+	t=1715203102; cv=none; b=Fo100IIDQnciOkqaSF7Q2vDDeNMNRL9t86NefqDoLoOPwjHQ3JDHicGLJfCGMquxnud2IFKcszuSZUATZhBnKoSmBs6HXaQGmdU7a9XwuB/Xvf6LqT2FKvGkkPGeJ8LMFUDAhb8iFh92bQT3KKlFbS+YsD5SNLta59+8/ksCfYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715203087; c=relaxed/simple;
-	bh=PPKQ+QxsB1/t58zneH/9FkTgvIO2lVo/8IcKZboomtQ=;
+	s=arc-20240116; t=1715203102; c=relaxed/simple;
+	bh=Jl8a2gzeUWXyecXSjecelhMzBK0892fkGfODCZrcQRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXSbaNXZtwx0RUv55nnQA1jxmawdN2l1BwglCCp5kSc+930X84o5u1vJYCz+0G7F00laarT2gSSWfDWhawCFpqbdLX3DWiAEGvEplvgQ2fkqicat7VU6WoyAhgfApOjb4/nu7BvVBptPAV/K+6avf5t7dn1ojn1afgKWByzL8cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pq8dF/JB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9geRoPW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pq8dF/JB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9geRoPW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2FCDC374DD;
-	Wed,  8 May 2024 21:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715203083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
-	b=pq8dF/JBpC7ZPUK/AauGGYcWQ6JS8LdbDw4GVo8r8qXpFEX7xVcbhIbfm4cJpOXZcBThcs
-	SytEmoyzXKcWe91vaQYbF9Kw6K9pyDNkm+0laah4dUkGyn6MNeQ2PAYRAU2QeJ5UyieUY5
-	G3ftC5RSaeUJTytySMjyMFXSqq8PXKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715203083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
-	b=w9geRoPW8r11T4vW25Og+KGODiMnim95j31+SbAkTqjcTB6TpC8oZsIIBHlbK9jBKExzpz
-	L2umOps0D+WG/6Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="pq8dF/JB";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w9geRoPW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715203083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
-	b=pq8dF/JBpC7ZPUK/AauGGYcWQ6JS8LdbDw4GVo8r8qXpFEX7xVcbhIbfm4cJpOXZcBThcs
-	SytEmoyzXKcWe91vaQYbF9Kw6K9pyDNkm+0laah4dUkGyn6MNeQ2PAYRAU2QeJ5UyieUY5
-	G3ftC5RSaeUJTytySMjyMFXSqq8PXKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715203083;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
-	b=w9geRoPW8r11T4vW25Og+KGODiMnim95j31+SbAkTqjcTB6TpC8oZsIIBHlbK9jBKExzpz
-	L2umOps0D+WG/6Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C6A813A27;
-	Wed,  8 May 2024 21:18:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 44LRCgrsO2ajcgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Wed, 08 May 2024 21:18:02 +0000
-Date: Wed, 8 May 2024 23:17:59 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Glass Su <glass.su@suse.com>
-Cc: linux-bcachefs@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>, Su Yue <l@damenly.org>,
-	Brian Foster <bfoster@redhat.com>, Coly Li <colyli@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC value to
- UAPI magic.h
-Message-ID: <20240508211759.GA209026@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20240507153757.150891-1-pvorel@suse.cz>
- <6D9FCB08-480D-4CA0-82E2-284B1F2BF8FD@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJfXLD+0fN4dU9sSh3c/n1loJlUtGpOqG1xS1TWjOwFk7KYFyexcIDLXTB0K6JqBiPZf07mj6xQjMhekRpglXJaRI43E0U1uBTxRskVEV99aEZO+HW8GiadggeaFAcxpKqshsp9qLvOIK0Pp9hBWPM5DlUUxzYOriIjF0Z1by8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=es0Q55zq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715203101; x=1746739101;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Jl8a2gzeUWXyecXSjecelhMzBK0892fkGfODCZrcQRs=;
+  b=es0Q55zqixAVf9VhmPvuOcurLdNVAl42fzN2g3Ibhn4REdxgYWJ9n8Mk
+   kLSS7nQrZLkgadHrRCpFpdN6RaDEY9nYfK/RlokdtIga61acpMH5aSbXW
+   TpDdvKZeFzP4eN5Zc11xnHEboFjtTu8SUD+CYTT5Ts4AaoTm6fqpdAEHt
+   z353FC+zwq3CLquJ4BkqH9YSdGodJJt1dKuy3scrz+3AbQ5amdj1kF/KO
+   H5dju4KU0qUFygrVRuqZt1NZ99q+Szlc01WNGn5du5BHrOdUzhNLjesJA
+   Hyxeip7Wx2qYgOIc9AqRjsZnejfyY0sK4vALMhnlwJWkekhS1g6iC6jZb
+   w==;
+X-CSE-ConnectionGUID: LnGpM/NgSIiVwoKF+doo8g==
+X-CSE-MsgGUID: AhR8wJY5RtqlioMYGw1ZKw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="28572254"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="28572254"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 14:18:21 -0700
+X-CSE-ConnectionGUID: CaXnspVTR8ifvR6M1dU1eg==
+X-CSE-MsgGUID: OZQ4MhZXRE2PBVEwSznTPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="28993656"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 08 May 2024 14:18:15 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4og0-00047O-2S;
+	Wed, 08 May 2024 21:18:12 +0000
+Date: Thu, 9 May 2024 05:18:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org,
+	kernel@xen0n.name, tglx@linutronix.de, jiaxun.yang@flygoat.com,
+	gaoliang@loongson.cn, wangliupu@loongson.cn, lvjianmin@loongson.cn,
+	yijun@loongson.cn, mhocko@suse.com, akpm@linux-foundation.org,
+	dianders@chromium.org, maobibo@loongson.cn, xry111@xry111.site,
+	zhaotianrui@loongson.cn, nathan@kernel.org, yangtiezhu@loongson.cn,
+	zhoubinbin@loongson.cn
+Cc: oe-kbuild-all@lists.linux.dev, loongarch@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Loongarch:Support loongarch avec
+Message-ID: <202405090438.c1xvjipc-lkp@intel.com>
+References: <20240507125953.9117-1-zhangtianyang@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6D9FCB08-480D-4CA0-82E2-284B1F2BF8FD@suse.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.71
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 2FCDC374DD
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_EQ_FROM(0.00)[]
+In-Reply-To: <20240507125953.9117-1-zhangtianyang@loongson.cn>
 
-HI Su, Kent,
+Hi Tianyang,
 
-> > On May 7, 2024, at 23:37, Petr Vorel <pvorel@suse.cz> wrote:
+kernel test robot noticed the following build warnings:
 
-> > Move BCACHEFS_STATFS_MAGIC value to UAPI <linux/magic.h> under
-> > BCACHEFS_SUPER_MAGIC definition (use common approach for name) and reuse the
-> > definition in bcachefs_format.h BCACHEFS_STATFS_MAGIC.
+[auto build test WARNING on tip/irq/core]
+[also build test WARNING on linus/master v6.9-rc7]
+[cannot apply to next-20240508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> > There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
-> > which use UUID_INIT() and are used only in libbcachefs. Therefore move
-> > only BCACHEFS_STATFS_MAGIC value, which can be used outside of
-> > libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
+url:    https://github.com/intel-lab-lkp/linux/commits/Tianyang-Zhang/Loongarch-Support-loongarch-avec/20240507-210314
+base:   tip/irq/core
+patch link:    https://lore.kernel.org/r/20240507125953.9117-1-zhangtianyang%40loongson.cn
+patch subject: [PATCH 2/2] Loongarch:Support loongarch avec
+config: loongarch-randconfig-r133-20240508 (https://download.01.org/0day-ci/archive/20240509/202405090438.c1xvjipc-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240509/202405090438.c1xvjipc-lkp@intel.com/reproduce)
 
-> > Suggested-by: Su Yue <l@damenly.org>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405090438.c1xvjipc-lkp@intel.com/
 
-> Would you kindly amend it to Su Yue <glass.su@suse.com> or
-> Kent can help if the patch is going to be applied.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/irqchip/irq-loongarch-avec.c:41:3: sparse: sparse: symbol 'loongarch_avec' was not declared. Should it be static?
+   drivers/irqchip/irq-loongarch-avec.c:181:31: sparse: sparse: undefined identifier '__builtin_loongarch_csrrd_d'
+   drivers/irqchip/irq-loongarch-avec.c:181:31: sparse: sparse: cast from unknown type
+   drivers/irqchip/irq-loongarch-avec.c:184:31: sparse: sparse: undefined identifier '__builtin_loongarch_csrrd_d'
+   drivers/irqchip/irq-loongarch-avec.c:184:31: sparse: sparse: cast from unknown type
+   drivers/irqchip/irq-loongarch-avec.c:187:31: sparse: sparse: undefined identifier '__builtin_loongarch_csrrd_d'
+   drivers/irqchip/irq-loongarch-avec.c:187:31: sparse: sparse: cast from unknown type
+   drivers/irqchip/irq-loongarch-avec.c:190:31: sparse: sparse: undefined identifier '__builtin_loongarch_csrrd_d'
+   drivers/irqchip/irq-loongarch-avec.c:190:31: sparse: sparse: cast from unknown type
+   drivers/irqchip/irq-loongarch-avec.c:215:18: sparse: sparse: undefined identifier '__builtin_loongarch_csrrd_d'
+   drivers/irqchip/irq-loongarch-avec.c:215:18: sparse: sparse: cast from unknown type
+   drivers/irqchip/irq-loongarch-avec.c: note: in included file (through include/linux/smp.h, include/linux/percpu.h, include/linux/context_tracking_state.h, ...):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   drivers/irqchip/irq-loongarch-avec.c:164:6: sparse: sparse: context imbalance in 'complete_irq_moving' - different lock contexts for basic block
+   drivers/irqchip/irq-loongarch-avec.c: note: in included file (through arch/loongarch/include/asm/loongarch.h, arch/loongarch/include/asm/cpu-info.h, ...):
+   ../lib/gcc/loongarch64-linux/13.2.0/include/larchintrin.h:294:30: sparse: sparse: undefined identifier '__builtin_loongarch_iocsrrd_d'
+   ../lib/gcc/loongarch64-linux/13.2.0/include/larchintrin.h:294:11: sparse: sparse: cast from unknown type
+   ../lib/gcc/loongarch64-linux/13.2.0/include/larchintrin.h:332:3: sparse: sparse: undefined identifier '__builtin_loongarch_iocsrwr_d'
 
-Unfortunately Kent was faster, it's already merged without your SUSE address
-(and your RBT you added in the end):
+vim +/loongarch_avec +41 drivers/irqchip/irq-loongarch-avec.c
 
-https://evilpiepirate.org/git/bcachefs.git/commit/?h=for-next&id=ce8f9355f23be9756e499682d0d642a741db6c3a
+    35	
+    36	struct loongarch_avec_chip {
+    37		struct fwnode_handle	*fwnode;
+    38		struct irq_domain	*domain;
+    39		struct irq_matrix	*vector_matrix;
+    40		raw_spinlock_t		lock;
+  > 41	} loongarch_avec;
+    42	
 
-@Kent: Maybe it can be even now amended (with Su Yue's RBT).
-
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> > Changes v2->v3:
-> > * Align tab with other entries.
-..
-> > #include <linux/uuid.h>
-> > +#include <uapi/linux/magic.h>
-> > #include "vstructs.h"
-
-> > #ifdef __KERNEL__
-> > @@ -1275,7 +1276,7 @@ enum bch_compression_opts {
-> > UUID_INIT(0xc68573f6, 0x66ce, 0x90a9, \
-> >  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
-
-> > -#define BCACHEFS_STATFS_MAGIC 0xca451a4e
-> > +#define BCACHEFS_STATFS_MAGIC BCACHEFS_SUPER_MAGIC
-
-> > #define JSET_MAGIC __cpu_to_le64(0x245235c1a3625032ULL)
-> > #define BSET_MAGIC __cpu_to_le64(0x90135c78b99e07f5ULL)
-> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> > index 1b40a968ba91..bb575f3ab45e 100644
-> > --- a/include/uapi/linux/magic.h
-> > +++ b/include/uapi/linux/magic.h
-> > @@ -37,6 +37,7 @@
-> > #define HOSTFS_SUPER_MAGIC 0x00c0ffee
-> > #define OVERLAYFS_SUPER_MAGIC 0x794c7630
-> > #define FUSE_SUPER_MAGIC 0x65735546
-> > +#define BCACHEFS_SUPER_MAGIC 0xca451a4e
-
-> IIUC, due to some historical reasons bcachefs used to switched
-> ondisk sb magic from BCACHE_MAGIC to BCHFS_MAGIC.
-> Other major fses uses  *_SUPER_MAGIC both for ondisk 
-> sb magic, kstatfs::f_type and super_block::s_magic.
-> However, for bcacehfs there are three magic numbers.
-
-Thanks for info. But for struct statfs in statfs() or fstatfs() only 0xca451a4e
-is needed, right? I would not expose the other(s) unless it's really needed.
-Also we'd need to backport UUID_INIT() into UAPI :(.
-
-> Anyway, it looks good to me so far:
-> Reviewed-by: Su Yue <glass.su@suse.com> 
-
-And also without your RBT.
-
-Kind regards,
-Petr
-
-> — 
-> Su
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
