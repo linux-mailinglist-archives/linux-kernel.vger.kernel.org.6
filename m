@@ -1,330 +1,101 @@
-Return-Path: <linux-kernel+bounces-173209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016158BFD0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506148BFD12
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690E61F24A2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A441F23C07
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154B84A38;
-	Wed,  8 May 2024 12:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpBilK6E"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3405D83CBA;
-	Wed,  8 May 2024 12:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372084A28;
+	Wed,  8 May 2024 12:22:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8812A83CCF;
+	Wed,  8 May 2024 12:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170880; cv=none; b=CvPgAiUvygvkQzfLVOz6KpovSkCVcu/QNEnxyDI7FqmEqN0fnfEF132aSlN5CNUDGwKwJ140ZKIERufYFKfEga9XGWknQsJTZhUc+z8i+OniSQTFIJ9DZrQvXbaGlkU5NN1004gn3r/gA/qGkMzcDvLi265uLUQiwEIj1qN7xtc=
+	t=1715170939; cv=none; b=RGPuImIywIX7o5bdbpUHDbtu3x8YMdW2+B8veJJVTEt47UZTKZdMDH75VS4VkekS8cZbnM7zihaUleYYKMBWXTv6y2Ac29vPswCdPxJ0uQnI2I4U6uC2pl1iC8/NMOSPBrscqc8iKgYkzzERy8dBkzBiUp6oKywxlAc64j9lACQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170880; c=relaxed/simple;
-	bh=s5sglRjEGV8T9UisIn28YPRQYj1xNgstKEOV3dsMzCs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=VFJ8fYE7dLvUxx4JN0BnRKUFYW2HZXCpsQsuwYyXstcFfuqLjTMNoVzmNh98j+FucUrmT6rzsXP4gj0u9b50IB9GifqB8um5893ftO3agJtnyTpmDHkQxHFZWtXWV93Rg03MbZ4QPWwD5EwTrF257BY3h+MuiRy4cSPRwESms5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpBilK6E; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ed0abbf706so29773205ad.2;
-        Wed, 08 May 2024 05:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715170878; x=1715775678; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Wq2cbWqEeEEeVBqHczsjobIDxQ5lhzHyo4DV/Jjbdk=;
-        b=RpBilK6E4xgM7jONjOA4hyHMUrfyN+aKYVjQ1PyMFAhrmaWseYdcTR/SjZ6NIqJ2wA
-         YnqjZD5HPAs8/V9Gy9wpH9PTKN24jG1cFaefqrRFCd7ICjzg1e1OLtBPnlQufDUR1H5c
-         JcDX17CTQBTMAl1McRlOnnNRuTJweecO5mzwBsVWFHu5QSBvdvQSd02BeXLzbT3n8PGT
-         0f3MbgZseoVCF5d2z8+/StQl5P9RdgVVLmZ0FgGwrhyfTQs6y+RDMeZtARiGe1nJI0P/
-         Lj5vM6ZnsGPhKacvtr0DObcj7CR8RouPUy+gkCEsP8AU+biAeJkzSAnX+wHWfVBXYod+
-         Wprg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715170878; x=1715775678;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8Wq2cbWqEeEEeVBqHczsjobIDxQ5lhzHyo4DV/Jjbdk=;
-        b=CJL6y5PE/Fkm4EnqqkDb59Ovtt9w4qsqiar32Vk2P2UdB8pSUpeXGqaDDWC7i1Y/G6
-         Cx+Mq/vHZWfagCBXAPEJKJ/nWDufs0KEDTeSCbTlO5EQtiKqUYtiimTsIytXK5ZAaofB
-         M+CQfA5OXS+jSXqDPBe9rUZJYnDrGGbWSdt313iRFM6XD885gkWD36k9HVhsM4bJ5a5P
-         sL315IzY1vqwfNBPXZRk5iCHolG+er/53MfQ3Xl6UdhJDeT4gifh+KbupwDpIwhEbmdo
-         Eyxpm5xFpJo10fuMDBCF/ywFyxwE54U6wyS9aHxSXSOIeE5dUB2SJJvW6rn35c7eZ0rd
-         maAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXn/arSCxef9uTcfF/svbIoshvBijUZIJf9ONC9knXB5OIRxvnCwYCz4JFH25inlar6RKmj/VQeAeggau34HbrjRSbo6HNzhp6k85DOsChd8fvv4KAtAwW5vjoYjV9Kigys
-X-Gm-Message-State: AOJu0YyXfijnOK0dWb2qVukBsNWcsz8dTlwYuOfMNupkjYmvgqxKq+tj
-	PIOR+12WvkyI7Y+XCc/YiJYwTyAHFpQPru3sFhtNnnKOY6YKejth
-X-Google-Smtp-Source: AGHT+IGeTD7aFAYoEaI35ZIuWXFJrDZoSQ6AWKyZfB4Eviw4O375tGDyvXRsVtARY4tpMm2+BXL1cg==
-X-Received: by 2002:a17:902:d588:b0:1e4:24cc:e020 with SMTP id d9443c01a7336-1eeb089c231mr34982305ad.67.1715170878308;
-        Wed, 08 May 2024 05:21:18 -0700 (PDT)
-Received: from localhost ([1.146.8.34])
-        by smtp.gmail.com with ESMTPSA id n2-20020a170902d2c200b001eb2e6b14e0sm11694253plc.126.2024.05.08.05.21.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 05:21:17 -0700 (PDT)
+	s=arc-20240116; t=1715170939; c=relaxed/simple;
+	bh=X1S1dzhW3wRfqpB++o89A6VLOtGJiekN3EHOLbW+84E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6SikQK/+cjezFBMcYKuZIhf/pSlseV1QnJDGe11a9uCugIbMdwj/GRZvDvilbq//wPbVxThoR06JpjvRj3ljmNkR4H+7mUJoUA6nVLOG3yNasnfXUC1xTTCUmW4zJFmlXeBF5/cc5gQv41srJxXgCGC8/dSi0e3CZoVVkNPBV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 559B91007;
+	Wed,  8 May 2024 05:22:42 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C7873F587;
+	Wed,  8 May 2024 05:22:14 -0700 (PDT)
+Date: Wed, 8 May 2024 13:22:12 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Aisheng Dong <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v5 0/3] pinctrl: scmi: support i.MX95 OEM extensions
+Message-ID: <ZjtudPS1CUqCJU5v@bogus>
+References: <20240508-pinctrl-scmi-oem-v3-v5-0-6f2b167f71bc@nxp.com>
+ <ZjtCGXgwgtZ4X49v@bogus>
+ <DU0PR04MB94170BB9A2C41DE40C8F575288E52@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 May 2024 22:21:10 +1000
-Message-Id: <D149BWFCJHTP.J7WBZZZHJEGT@gmail.com>
-Subject: Re: [PATCH v6] arch/powerpc/kvm: Add support for reading VPA
- counters for pseries guests
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Gautam Menghani" <gautam@linux.ibm.com>, <mpe@ellerman.id.au>,
- <christophe.leroy@csgroup.eu>, <naveen.n.rao@linux.ibm.com>
-Cc: <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vaibhav Jain" <vaibhav@linux.ibm.com>
-X-Mailer: aerc 0.17.0
-References: <20240506145605.73794-1-gautam@linux.ibm.com>
-In-Reply-To: <20240506145605.73794-1-gautam@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU0PR04MB94170BB9A2C41DE40C8F575288E52@DU0PR04MB9417.eurprd04.prod.outlook.com>
 
-On Tue May 7, 2024 at 12:56 AM AEST, Gautam Menghani wrote:
-> PAPR hypervisor has introduced three new counters in the VPA area of
-> LPAR CPUs for KVM L2 guest (see [1] for terminology) observability - 2
-> for context switches from host to guest and vice versa, and 1 counter
-> for getting the total time spent inside the KVM guest. Add a tracepoint
-> that enables reading the counters for use by ftrace/perf. Note that this
-> tracepoint is only available for nestedv2 API (i.e, KVM on PowerVM).
+On Wed, May 08, 2024 at 09:41:24AM +0000, Peng Fan wrote:
+> Hi Sudeep,
 >
-> [1] Terminology:
-> a. L1 refers to the VM (LPAR) booted on top of PAPR hypervisor
-> b. L2 refers to the KVM guest booted on top of L1.
+> > Subject: Re: [PATCH v5 0/3] pinctrl: scmi: support i.MX95 OEM extensions
+> >
+> > On Wed, May 08, 2024 at 11:32:01AM +0800, Peng Fan (OSS) wrote:
+> > > ARM SCMI v3.2 Table 24 Pin Configuration Type and Enumerations:
+> > > '192 -255 OEM specific units'.
+> > >
+> > > i.MX95 System Manager FW supports SCMI PINCTRL protocol, but it has
+> > > zero functions, groups. So pinctrl-scmi.c could not be reused for i.MX95.
+> > > Because nxp,pin-func, nxp,pin-conf properties are rejected by dt
+> > > maintainers, so use generic property 'pinmux' which requires a new
+> > > driver pinctrl-imx-scmi.c
+> > >
+> >
+> > Not a review in particular, but if we decide to merge this deviation, it must be
+> > under the condition that it can be deleted anytime in the future if this
+> > becomes annoyance(like other vendors using this as a way to deviate from
+> > the specification). If we can't agree with that, then we better not merge this
+> > at all.
 >
-> Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
-> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
-> ---
-> v5 -> v6:
-> 1. Use TRACE_EVENT_FN to enable/disable counters only once.
-> 2. Remove the agg. counters from vcpu->arch.
-> 3. Use PACA to maintain old counter values instead of zeroing on every
-> entry.
-> 4. Simplify variable names
+> It is ok for me. I agree.
+> But actually this driver still follows Spec by using OEM extensions.
 >
-> v4 -> v5:
-> 1. Define helper functions for getting/setting the accumulation counter
-> in L2's VPA
->
-> v3 -> v4:
-> 1. After vcpu_run, check the VPA flag instead of checking for tracepoint
-> being enabled for disabling the cs time accumulation.
->
-> v2 -> v3:
-> 1. Move the counter disabling and zeroing code to a different function.
-> 2. Move the get_lppaca() inside the tracepoint_enabled() branch.
-> 3. Add the aggregation logic to maintain total context switch time.
->
-> v1 -> v2:
-> 1. Fix the build error due to invalid struct member reference.
->
->  arch/powerpc/include/asm/lppaca.h | 11 +++++--
->  arch/powerpc/include/asm/paca.h   |  5 +++
->  arch/powerpc/kvm/book3s_hv.c      | 52 +++++++++++++++++++++++++++++++
->  arch/powerpc/kvm/trace_hv.h       | 27 ++++++++++++++++
->  4 files changed, 92 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/powerpc/include/asm/lppaca.h b/arch/powerpc/include/asm=
-/lppaca.h
-> index 61ec2447dabf..f40a646bee3c 100644
-> --- a/arch/powerpc/include/asm/lppaca.h
-> +++ b/arch/powerpc/include/asm/lppaca.h
-> @@ -62,7 +62,8 @@ struct lppaca {
->  	u8	donate_dedicated_cpu;	/* Donate dedicated CPU cycles */
->  	u8	fpregs_in_use;
->  	u8	pmcregs_in_use;
-> -	u8	reserved8[28];
-> +	u8	l2_counters_enable;  /* Enable usage of counters for KVM guest */
-> +	u8	reserved8[27];
->  	__be64	wait_state_cycles;	/* Wait cycles for this proc */
->  	u8	reserved9[28];
->  	__be16	slb_count;		/* # of SLBs to maintain */
-> @@ -92,9 +93,13 @@ struct lppaca {
->  	/* cacheline 4-5 */
-> =20
->  	__be32	page_ins;		/* CMO Hint - # page ins by OS */
-> -	u8	reserved12[148];
-> +	u8	reserved12[28];
-> +	volatile __be64 l1_to_l2_cs_tb;
-> +	volatile __be64 l2_to_l1_cs_tb;
-> +	volatile __be64 l2_runtime_tb;
 
-I wonder if we shouldn't be moving over to use READ_ONCE for these
-instead of volatile.
+Agreed, but that's what I call as deviations. When such extensions are
+used as baseline implementation, it becomes deviations.
 
-Probably doesn't really matter here. Maybe general audit of volatiles
-in arch/powerpc could be something to put in linuxppc issues.
-
-> +	u8 reserved13[96];
->  	volatile __be64 dtl_idx;	/* Dispatch Trace Log head index */
-> -	u8	reserved13[96];
-> +	u8	reserved14[96];
->  } ____cacheline_aligned;
-> =20
->  #define lppaca_of(cpu)	(*paca_ptrs[cpu]->lppaca_ptr)
-> diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/p=
-aca.h
-> index 1d58da946739..f20ac7a6efa4 100644
-> --- a/arch/powerpc/include/asm/paca.h
-> +++ b/arch/powerpc/include/asm/paca.h
-> @@ -278,6 +278,11 @@ struct paca_struct {
->  	struct mce_info *mce_info;
->  	u8 mce_pending_irq_work;
->  #endif /* CONFIG_PPC_BOOK3S_64 */
-> +#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
-> +	u64 l1_to_l2_cs;
-> +	u64 l2_to_l1_cs;
-> +	u64 l2_runtime_agg;
-> +#endif
->  } ____cacheline_aligned;
-
-I don't think these really need to be in the paca.
-
-paca is for per-cpu stuff that is accessed in real mode, early interrupt
-entry, etc.
-
-> =20
->  extern void copy_mm_to_paca(struct mm_struct *mm);
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 8e86eb577eb8..ed69ad58bd02 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -4108,6 +4108,54 @@ static void vcpu_vpa_increment_dispatch(struct kvm=
-_vcpu *vcpu)
->  	}
->  }
-> =20
-> +static inline int kvmhv_get_l2_counters_status(void)
-> +{
-> +	return get_lppaca()->l2_counters_enable;
-> +}
-> +
-> +static inline void kvmhv_set_l2_counters_status(int cpu, bool status)
-> +{
-> +	if (status)
-> +		lppaca_of(cpu).l2_counters_enable =3D 1;
-> +	else
-> +		lppaca_of(cpu).l2_counters_enable =3D 0;
-> +}
-> +
-> +int kmvhv_counters_tracepoint_regfunc(void)
-> +{
-> +	int cpu;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		kvmhv_set_l2_counters_status(cpu, true);
-> +	}
-> +	return 0;
-> +}
-> +
-> +void kmvhv_counters_tracepoint_unregfunc(void)
-> +{
-> +	int cpu;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		kvmhv_set_l2_counters_status(cpu, false);
-> +	}
-> +}
-> +
-> +static void do_trace_nested_cs_time(struct kvm_vcpu *vcpu)
-> +{
-> +	struct lppaca *lp =3D get_lppaca();
-> +	u64 l1_to_l2_ns, l2_to_l1_ns, l2_runtime_ns;
-> +
-> +	l1_to_l2_ns =3D tb_to_ns(be64_to_cpu(lp->l1_to_l2_cs_tb));
-> +	l2_to_l1_ns =3D tb_to_ns(be64_to_cpu(lp->l2_to_l1_cs_tb));
-> +	l2_runtime_ns =3D tb_to_ns(be64_to_cpu(lp->l2_runtime_tb));
-> +	trace_kvmppc_vcpu_stats(vcpu, l1_to_l2_ns - local_paca->l1_to_l2_cs,
-> +					l2_to_l1_ns - local_paca->l2_to_l1_cs,
-> +					l2_runtime_ns - local_paca->l2_runtime_agg);
-> +	local_paca->l1_to_l2_cs =3D l1_to_l2_ns;
-> +	local_paca->l2_to_l1_cs =3D l2_to_l1_ns;
-> +	local_paca->l2_runtime_agg =3D l2_runtime_ns;
-> +}
-
-So you're just using the per-cpu values to cache the last value
-read so next time you can take a delta.
-
-Could you zero the counters before entry? Or just use local
-variables to read the before values.
-
-If you want to keep the same scheme, I think per-cpu variables
-should work.
-
-Otherwise,
-
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-
-> +
->  static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_lim=
-it,
->  				     unsigned long lpcr, u64 *tb)
->  {
-> @@ -4156,6 +4204,10 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vc=
-pu *vcpu, u64 time_limit,
-> =20
->  	timer_rearm_host_dec(*tb);
-> =20
-> +	/* Record context switch and guest_run_time data */
-> +	if (kvmhv_get_l2_counters_status())
-> +		do_trace_nested_cs_time(vcpu);
-> +
->  	return trap;
->  }
-> =20
-> diff --git a/arch/powerpc/kvm/trace_hv.h b/arch/powerpc/kvm/trace_hv.h
-> index 8d57c8428531..dc118ab88f23 100644
-> --- a/arch/powerpc/kvm/trace_hv.h
-> +++ b/arch/powerpc/kvm/trace_hv.h
-> @@ -238,6 +238,9 @@
->  	{H_MULTI_THREADS_ACTIVE,	"H_MULTI_THREADS_ACTIVE"}, \
->  	{H_OUTSTANDING_COP_OPS,		"H_OUTSTANDING_COP_OPS"}
-> =20
-> +int kmvhv_counters_tracepoint_regfunc(void);
-> +void kmvhv_counters_tracepoint_unregfunc(void);
-> +
->  TRACE_EVENT(kvm_guest_enter,
->  	TP_PROTO(struct kvm_vcpu *vcpu),
->  	TP_ARGS(vcpu),
-> @@ -512,6 +515,30 @@ TRACE_EVENT(kvmppc_run_vcpu_exit,
->  			__entry->vcpu_id, __entry->exit, __entry->ret)
->  );
-> =20
-> +TRACE_EVENT_FN(kvmppc_vcpu_stats,
-> +	TP_PROTO(struct kvm_vcpu *vcpu, u64 l1_to_l2_cs, u64 l2_to_l1_cs, u64 l=
-2_runtime),
-> +
-> +	TP_ARGS(vcpu, l1_to_l2_cs, l2_to_l1_cs, l2_runtime),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(int,		vcpu_id)
-> +		__field(u64,		l1_to_l2_cs)
-> +		__field(u64,		l2_to_l1_cs)
-> +		__field(u64,		l2_runtime)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->vcpu_id  =3D vcpu->vcpu_id;
-> +		__entry->l1_to_l2_cs =3D l1_to_l2_cs;
-> +		__entry->l2_to_l1_cs =3D l2_to_l1_cs;
-> +		__entry->l2_runtime =3D l2_runtime;
-> +	),
-> +
-> +	TP_printk("VCPU %d: l1_to_l2_cs_time=3D%llu ns l2_to_l1_cs_time=3D%llu =
-ns l2_runtime=3D%llu ns",
-> +		__entry->vcpu_id,  __entry->l1_to_l2_cs,
-> +		__entry->l2_to_l1_cs, __entry->l2_runtime),
-> +	kmvhv_counters_tracepoint_regfunc, kmvhv_counters_tracepoint_unregfunc
-> +);
->  #endif /* _TRACE_KVM_HV_H */
-> =20
->  /* This part must be outside protection */
-
+--
+Regards,
+Sudeep
 
