@@ -1,92 +1,118 @@
-Return-Path: <linux-kernel+bounces-172711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6848BF5B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F93C8BF5B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BF97B245F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:46:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5D02820CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C34317BA7;
-	Wed,  8 May 2024 05:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9944D179AF;
+	Wed,  8 May 2024 05:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qOHyCnLz"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="PnhsxJz/"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBD81756A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28931208D1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715147161; cv=none; b=UR3FoPAkWV8sD3l2ZTYJElKoJlH+3hIrTO4TyEMTKNyPLYN5pvUWGahFQhql9bN4ur+zjqT3i9TZEVf1PMFc6ZliDhBmsoWZcaLLG7e6DI8eVXhpmLM8wGaNfv0EoyIhBPSUkcngtcBg9+P8iAfg4s4AtzCqBnI+/9v3TA0rBRo=
+	t=1715147229; cv=none; b=sBuYYG8ZOdSNXSOKyYAYloW5rLX+yp1kz0nkYiemf3Fdd9I4PVzKFzqPDfCshsaRJSH0TBev6AtsRsbcyuRH1dUOptJKY7Id13g8VsDyAPmlOB5y5DX7DohlNxMZWGsCyrvxAo6W/YopK2H9zKPOh+DMYKnae1xOTP2G2El9Yjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715147161; c=relaxed/simple;
-	bh=J21Eo2tKBXr5KMuTKsw0F3/e2fy1RaUgXCNjUlYRb7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tdkXkpdE+cP2QP3gj+7lkRWvTwYpbjCYzw80UlO413odjR37DL+peH5EkmtB3wJI5+x4N47/nZi567TT4Ym/Q+CtldI+Iq3T7OZ0xS9kjPBbRv+FSjOp1j4lDEplc7c+Q6DHCBfCNnDNTIr6+lmsz5PH64lc2JrEm8W8dihvOAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qOHyCnLz; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715147152; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=OzZltckyuroXeYNzcs/5r87Nh20cbeVKjeOhmTiFlQc=;
-	b=qOHyCnLzNHCk1K1DmBY9BaxlaEUIBAfg7Jh4RlWMPPdDR+HW0inxWz0FG2vbneIcGMtEsIYAIHuofHvzEKhCOVpByI4CUwXlJ5XiBzHdtfG4kqM3R1gGf5osqADicxRb7nzcRkJbyfmmslgWgat7U1ErGHk7DRY5GiDvcUQ+UYk=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R431e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W62Fj9e_1715147148;
-Received: from 30.97.56.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W62Fj9e_1715147148)
-          by smtp.aliyun-inc.com;
-          Wed, 08 May 2024 13:45:50 +0800
-Message-ID: <e1e6867f-ed97-49f0-8272-8cdc0f6463b0@linux.alibaba.com>
-Date: Wed, 8 May 2024 13:45:48 +0800
+	s=arc-20240116; t=1715147229; c=relaxed/simple;
+	bh=y+KiVnKXCsbPvzNdODTp1oqWb7A8Ywtkjz6UCYJzfVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=piGCaQrxdb5Wx71GczczgIz1eNhBDCKcldl95MNTWQG8+jod3KCE0+kR19m+S8+ywRHUE76UfjPpFfawXNY6cB3pIclGbc8rytO++ekwgHlJW5h4vVINn8hB62RC1R/nkQ/NtidGo8v3GeK+1x9FumgKsBBfFXwRTmkSSLbfeYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=PnhsxJz/; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7928dae7befso345763685a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1715147227; x=1715752027; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y+KiVnKXCsbPvzNdODTp1oqWb7A8Ywtkjz6UCYJzfVw=;
+        b=PnhsxJz/j1FE2gMOj5zgLj/RHF2FfD14l8FA6R4LL94bwqCHzl9bmIMMrbj2ZNCypd
+         UE22YUJwdX1JApK7ZTG+C3igGr9BmM8+RC0LxaD4tI/hRzSSQshDRyg1Sq5dxhld7/pX
+         7A8ey7HvbJWcWt5l+aWSRTqMaj5603hTXJUVtL5GaF5wTP8RlW5yZlk3lIEguKXxiAzr
+         rSALGfSFjWmrxVcR43cUuf1IxEnQ1OI7sdQnv354zymLy8abzypBUWY5U5TnZ2OTQWtA
+         RqkijhGGt8dRKpuHQr+Y6NtaLE1lsbVPDtvue9hnmpTOoOEolEZEd6Ap+tfwL7E2if1o
+         gHQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715147227; x=1715752027;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+KiVnKXCsbPvzNdODTp1oqWb7A8Ywtkjz6UCYJzfVw=;
+        b=i3bJIelQzyoXYj1BdRkm9Q9/mJGllT47VSJKUYulb/AgfX9RmF1dPHrO5CJ2S+UWMA
+         TCRW/t8xEDIavRHSNseAQjvd67b0qYleaNN+B1hBMs9ZKsGIgZu1nLJMbtoZM1i2gs22
+         7RoCUErT2++nSWPRSG7C3uTYMRCMXiC7XPHaqeGXjbqHq+05lgcewWHkA+hKxmtrgmr7
+         /fFid4xb8AtjifN6XrmEKeaJ/oQdlGSqt/IWP0xF6PHO9BvMbhyMruI7oOHugxI3Z0bO
+         IidCWv1d8kGcpoCspJLM7G/xiasW+rambLesgbjmLBlJgxj9d75Qc+w0NGXi/2SSeFoK
+         begQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPg++8flKd7flXMF+tzVLmtCyK8lwdRxoRX9orDquMaSHP1TkOnARlqVasxhK0m91DMBjkh7KkPGdU6vEtTbbhtTQMrraMwjQP/Lj8
+X-Gm-Message-State: AOJu0YwqzybYdiRVUr+PzECbkk/mw+l7agjGXnVcHQqs/L+Al/84/BvM
+	6BGEftfS+z41f+bs2kvcfLrc7cy0w8fgoYgNdNbOSWaXCaqjRwheYlYl/PZ00LmDuvDXQIPN4VR
+	7rbS6FKQTVsaBTW92JICXLOEaf5nXe3K/6bIRgw==
+X-Google-Smtp-Source: AGHT+IFowOzBUiqN7WcnwrA/LBPZg7N9dHpRdxWUo9yBNCLNtQC6wcuw0TpbjZ6kxNa/4cgHeYqTO5liJl8XTfGujfs=
+X-Received: by 2002:a05:6214:29c2:b0:6a0:c922:5014 with SMTP id
+ 6a1803df08f44-6a151528bbamr23726776d6.21.1715147226926; Tue, 07 May 2024
+ 22:47:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, ioworker0@gmail.com,
- wangkefeng.wang@huawei.com, ying.huang@intel.com, 21cnbao@gmail.com,
- shy828301@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <d887b469-312f-433b-b7a1-a290a381d4d5@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <d887b469-312f-433b-b7a1-a290a381d4d5@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <20240506-dazzling-nippy-rhino-eabccd@houat> <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
+ <cbe5a743-d8be-4b0e-99c4-e804fbadc099@redhat.com> <ZjoNTw-TkPnnWLTG@phenom.ffwll.local>
+In-Reply-To: <ZjoNTw-TkPnnWLTG@phenom.ffwll.local>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 8 May 2024 06:46:53 +0100
+Message-ID: <CAPj87rN3uSZoHpWLSQqz1SW9YMZNj9fkoA_EDEE_bzv-Tw8tSw@mail.gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+To: Hans de Goede <hdegoede@redhat.com>, Maxime Ripard <mripard@redhat.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
+	Sebastien Bacher <sebastien.bacher@canonical.com>, 
+	Linux Media Mailing List <linux-media@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Milan Zamazal <mzamazal@redhat.com>, 
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi,
 
+On Tue, 7 May 2024 at 12:15, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Mon, May 06, 2024 at 04:01:42PM +0200, Hans de Goede wrote:
+> > On 5/6/24 3:38 PM, Daniel Vetter wrote:
+> > I agree that bad applications are an issue, but not for the flathub / snaps
+> > case. Flatpacks / snaps run sandboxed and don't have access to a full /dev
+> > so those should not be able to open /dev/dma_heap/* independent of
+> > the ACLs on /dev/dma_heap/*. The plan is for cameras using the
+> > libcamera software ISP to always be accessed through pipewire and
+> > the camera portal, so in this case pipewere is taking the place of
+> > the compositor in your kms vs render node example.
+>
+> Yeah essentially if you clarify to "set the permissions such that pipewire
+> can do allocations", then I think that makes sense. And is at the same
+> level as e.g. drm kms giving compsitors (but _only_ compositors) special
+> access rights.
 
-On 2024/5/7 18:20, Ryan Roberts wrote:
-> On 06/05/2024 09:46, Baolin Wang wrote:
->> Anonymous pages have already been supported for multi-size (mTHP) allocation
->> through commit 19eaf44954df, that can allow THP to be configured through the
->> sysfs interface located at '/sys/kernel/mm/transparent_hugepage/hugepage-XXkb/enabled'.
->>
->> However, the anonymous shared pages will ignore the anonymous mTHP rule
->> configured through the sysfs interface, and can only use the PMD-mapped
->> THP, that is not reasonable. Many implement anonymous page sharing through
->> mmap(MAP_SHARED | MAP_ANONYMOUS), especially in database usage scenarios,
->> therefore, users expect to apply an unified mTHP strategy for anonymous pages,
->> also including the anonymous shared pages, in order to enjoy the benefits of
->> mTHP. For example, lower latency than PMD-mapped THP, smaller memory bloat
->> than PMD-mapped THP, contiguous PTEs on ARM architecture to reduce TLB miss etc.
->>
->> The primary strategy is similar to supporting anonymous mTHP. Introduce
->> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
->> which can have all the same values as the top-level
-> 
-> Didn't we agree that "force" would not be supported for now, and would return an
-> error when attempting to set for a non-PMD-size hugepage-XXkb/shmem_enabled (or
-> indirectly through inheritance)?
+That would have the unfortunate side effect of making sandboxed apps
+less efficient on some platforms, since they wouldn't be able to do
+direct scanout anymore ...
 
-Yes. Sorry, I did not explain it in detail in the cover letter. Please 
-see patch 5 you already commented.
+Cheers,
+Daniel
 
