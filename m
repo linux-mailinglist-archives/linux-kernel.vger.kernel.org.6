@@ -1,125 +1,150 @@
-Return-Path: <linux-kernel+bounces-172760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A858BF63F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C5D8BF652
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84BAA28AA93
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0722F1F23FCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D491199C7;
-	Wed,  8 May 2024 06:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB79F1EB3F;
+	Wed,  8 May 2024 06:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="UeGH88wy"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g/4ebGJl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF1D17BCD;
-	Wed,  8 May 2024 06:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FB4171B6;
+	Wed,  8 May 2024 06:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149734; cv=none; b=h476j1HzZ27IkZiY3hqu/hfd+M9t/7C0WPyyII9GolJPDcYEl58I4gmBKlz7Ii0OspHGscuzGA8Jc+MGaJT8ALUXAaHwNMfWFFdqywroYBj5z8YWb6TO/av2JsLUUO9D+HtESk4ZNJg2fIDtnp5BQN9bp++8UW4Hypnvs+rL3k8=
+	t=1715150097; cv=none; b=TtMV+08LaZ4JjM5R6kyZXmi3s1ND9Mq2icnTOgRi2tTT1ALEqgAxpg3s0xPCPUKnwe0q6aSXku7nWcT7nRZcGvLVTaJQjYDxrKzI5T54zr40w8EClcJKLuJ+nAhulw6B+3BdV9NC8gWEBbz+gcpRAtryL5jMePi6BiyEJnv7Z6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149734; c=relaxed/simple;
-	bh=ZkivE2M4A6Zyvz5uQplVcUGzvRnrZckW22dCP/IeN7A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=QobxK/cyRp9oG1/H0q/bF5A9SdUTxAMTjT3PmqYISTKzYIRlbjsoaOb56geDBMjH3qqvHPf2z17qIOqtKsvvzRErorYrcbcNaIVerWSfD2XO69f0oq8rYeiHCCpzvWakF4FyPtltCMYdT7cpNp+c5TAYEq4mpcf1RzcN45ehX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=UeGH88wy; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=GRJaxWCDvD8J1e83T9v3/SNwP7m5MLl5o4fjEjGKSVI=;
-  b=UeGH88wyvXZW33eDF+AHzDEjJHgunrhImmEwvB0UqK8Xy1Ek/TPp3Pq/
-   RR+07i94R/ICRrIbuBvF+fdKSL6yTwGfDyszsiU9yR8v5R4etfG3gy569
-   W8Bot+RhvJ1fuRGwYdS9dGvj4730BtKh/ML+2VHsnE/eqliEb2c1Sw9AT
-   A=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.08,144,1712613600"; 
-   d="scan'208";a="164962999"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:28:42 +0200
-Date: Wed, 8 May 2024 08:28:42 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-cc: akari.ailus@linux.intel.com, dave.stevenson@raspberrypi.com, 
-    jacopo@jmondi.org, mchehab@kernel.org, linux-media@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, julia.lawall@inria.fr, 
-    skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH] media: i2c: replacing of_node_put with
- __free(device_node)
-In-Reply-To: <20240508054253.1568781-1-abdulrasaqolawani@gmail.com>
-Message-ID: <alpine.DEB.2.22.394.2405080828330.3563@hadrien>
-References: <20240508054253.1568781-1-abdulrasaqolawani@gmail.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1715150097; c=relaxed/simple;
+	bh=APOtoHE0voeGHGRQZmu8ViVknqEdQFOsrAsV/taQU8o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AgHKO0T6SmBzWyARJKjeYQeLIridGgsD2XGzpeyOAIgHpK1Nia2nv4Tr0k1NC6wFXSZhUwNCS2P7yPyUUEbVvlLrq/QJSvG/yplgAaa0gqS3iA/KjL054KxqAgCznxrrGenzv7JIrd9B0FgX8HtJMHkAe855o2S+Dt7Y3d4Sm+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g/4ebGJl; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715150095; x=1746686095;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=APOtoHE0voeGHGRQZmu8ViVknqEdQFOsrAsV/taQU8o=;
+  b=g/4ebGJlFPrfKb8Ekggc4t+rJFkvcz309/EgzXqAOBKCXuJjm2MHvZUc
+   0n1vKNhbeeO9dl7e9fjyIK7tdfzZzjtWlhrE0cWKM6tiq0qfjUhVOBzfl
+   sYmQpRRmdeSgmvOqM4lCsYYWhkVtAzEe06U9juxQgRz5uLQ9tkBqLcvg0
+   PQpcGj38HtfCGB7yTk4eb+R+32C0cTtZDJh4j2IU9Qo9nUi/rw3+jpxEC
+   OcMXk5B4ZB28XRY99YxsI5g02o6yOgUDei9NzMExtQFgEE1mqDfx3wqz+
+   82ZCxesQAGKizpp+XnKyQv4Yod6jvNlMjBvuscoPDk1zcCG2oxOixGw6M
+   g==;
+X-CSE-ConnectionGUID: JI9di07gTBOUUkFftxH4oQ==
+X-CSE-MsgGUID: YDMy3d7HTHS8nNMaCVJrrA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11112075"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="11112075"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:34:55 -0700
+X-CSE-ConnectionGUID: lwvudA58TuKaK1DXKi7eyA==
+X-CSE-MsgGUID: herrs9BzRNaY5euN0yK5Bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="28875086"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:34:51 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Matthew Wilcox <willy@infradead.org>,  Chris
+ Li <chrisl@kernel.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan Roberts
+ <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
+ <minchan@kernel.org>,  Hugh Dickins <hughd@google.com>,  David Hildenbrand
+ <david@redhat.com>,  Yosry Ahmed <yosryahmed@google.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 10/12] mm: remove page_file_offset and folio_file_pos
+In-Reply-To: <20240502084939.30250-3-ryncsn@gmail.com> (Kairui Song's message
+	of "Thu, 2 May 2024 16:49:37 +0800")
+References: <20240502084609.28376-1-ryncsn@gmail.com>
+	<20240502084939.30250-3-ryncsn@gmail.com>
+Date: Wed, 08 May 2024 14:32:59 +0800
+Message-ID: <87a5l0lso4.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ascii
 
+Kairui Song <ryncsn@gmail.com> writes:
 
-
-On Wed, 8 May 2024, Abdulrasaq Lawani wrote:
-
-> Replaced instance of of_node_put with __free(device_node)
-> and removed goto statement to protect against any memory leaks
-> due to future changes in control flow.
-
-The log message is not very understandable.  "to protect..." goes with
-__free, not with "removed goto statement".  I don't think "removed goto
-statement" is needed at all.
-
-julia
-
-
+> From: Kairui Song <kasong@tencent.com>
 >
-> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+> These two helpers were useful for mixed usage of swap cache and page
+> cache, which help retrieve the corresponding file or swap device offset
+> of a page or folio.
+>
+> They were introduced in commit f981c5950fa8 ("mm: methods for teaching
+> filesystems about PG_swapcache pages") and used in commit d56b4ddf7781
+> ("nfs: teach the NFS client how to treat PG_swapcache pages"), suppose
+> to be used with direct_IO for swap over fs.
+>
+> But after commit e1209d3a7a67 ("mm: introduce ->swap_rw and use it
+> for reads from SWP_FS_OPS swap-space"), swap with direct_IO is no more,
+> and swap cache mapping is never exposed to fs.
+>
+> Now we have dropped all users of page_file_offset and folio_file_pos,
+> so they can be deleted.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+
+LGTM, Thanks!
+
+Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+
 > ---
->  drivers/media/i2c/ov5647.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
+>  include/linux/pagemap.h | 17 -----------------
+>  1 file changed, 17 deletions(-)
 >
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 7e1ecdf2485f..d593dba092e3 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -1360,23 +1360,19 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
->  	struct v4l2_fwnode_endpoint bus_cfg = {
->  		.bus_type = V4L2_MBUS_CSI2_DPHY,
->  	};
-> -	struct device_node *ep;
-> +	struct device_node *ep __free(device_node) = of_graph_get_endpoint_by_regs(np, 0, -1);
->  	int ret;
->
-> -	ep = of_graph_get_endpoint_by_regs(np, 0, -1);
->  	if (!ep)
->  		return -EINVAL;
->
->  	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
->  	if (ret)
-> -		goto out;
-> +		return ret;
->
->  	sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
->  			      V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
->
-> -out:
-> -	of_node_put(ep);
-> -
->  	return ret;
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 850d32057939..a324582ea702 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -918,11 +918,6 @@ static inline loff_t page_offset(struct page *page)
+>  	return ((loff_t)page->index) << PAGE_SHIFT;
 >  }
->
-> --
-> 2.34.1
->
->
+>  
+> -static inline loff_t page_file_offset(struct page *page)
+> -{
+> -	return ((loff_t)page_index(page)) << PAGE_SHIFT;
+> -}
+> -
+>  /**
+>   * folio_pos - Returns the byte position of this folio in its file.
+>   * @folio: The folio.
+> @@ -932,18 +927,6 @@ static inline loff_t folio_pos(struct folio *folio)
+>  	return page_offset(&folio->page);
+>  }
+>  
+> -/**
+> - * folio_file_pos - Returns the byte position of this folio in its file.
+> - * @folio: The folio.
+> - *
+> - * This differs from folio_pos() for folios which belong to a swap file.
+> - * NFS is the only filesystem today which needs to use folio_file_pos().
+> - */
+> -static inline loff_t folio_file_pos(struct folio *folio)
+> -{
+> -	return page_file_offset(&folio->page);
+> -}
+> -
+>  /*
+>   * Get the offset in PAGE_SIZE (even for hugetlb folios).
+>   */
 
