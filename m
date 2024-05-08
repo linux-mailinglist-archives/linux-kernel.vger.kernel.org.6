@@ -1,217 +1,103 @@
-Return-Path: <linux-kernel+bounces-172930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B56A8BF8E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:41:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C774C8BF8E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F5E1C23824
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:41:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E7B1F25B9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522056FE20;
-	Wed,  8 May 2024 08:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2951B745FA;
+	Wed,  8 May 2024 08:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1lkVOCS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndCYK31U"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAA51DA21;
-	Wed,  8 May 2024 08:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EDF535DD;
+	Wed,  8 May 2024 08:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157568; cv=none; b=qOeoV8aHRdVPIr84fewkr8Dzr0iN1X6WWhXoem5Dgz8kwLuIIoxhyaNhRcQRzaf2ZxDQuR+3p5Rtiyg/M045ndEiWDTYskoINKerH++FTszyj7XziEUbMDqmiX9gLG+Pwae8YN3EyljnkbJglRDpOFjQgSGHFTpDPRnvlCypbpA=
+	t=1715157595; cv=none; b=A3A022oMRm2KrJ2RAN3DyC/jFMgpjZb+xPU6BPOUeuqp8uteAe4+wokV6+Xmvp8tpebQNkVirUwxNuVR/v74lA+M9rYBvmZgQ2V6YTqT0qZSqttLrdYIIdeVl241l0CaIrEzzEnMBvWorWcVeWoa6gV6gA1+BQC71DBVfPnQaCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157568; c=relaxed/simple;
-	bh=Az+mUCgN8cLAqPcKX4l3XwNzu3OaAIxFfUYbqtcwBuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4dKT6L1GyGNp3hP+PjxFere+8VOekH9fn0AZhBukeikysZyBglbbbaudEuZvAtUiS7fn5f5OZbC6oJVTk46+5MRLvKJIjlWeEhPeMv0UETxFHBHR+rsO5dGUGmsgFqKT7LX1xxVSdGsh0T3+jqAifY/mfGu7imYJ7jg6mXBck0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1lkVOCS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3FC1C113CC;
-	Wed,  8 May 2024 08:39:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715157568;
-	bh=Az+mUCgN8cLAqPcKX4l3XwNzu3OaAIxFfUYbqtcwBuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E1lkVOCSWSDjLVLMNkECiGVwa6umncB49gFnCQxqigWFKIpPxEKkYqr0QZ3w8N0e3
-	 LS6ql/n22qnxqojctbzGjBExsEeOkfqsuEOlnIc68UZuSFp1fFHVhnBWwe8lXzgmZG
-	 PMmzM/hPwJBWRBbOHa3mq05shSwDOQQYqPWt1GxVMlQ8c2wiY2vV7pErPGNpSt+CLU
-	 fqUfhgmyKKReB1QrrjpgePn9MEJvxnMUTrmNKv6RQdU3VtDdw+ioNIpB2pR9jvk8iA
-	 9Vx2Apak6rHvL1NPb5/wlrcdFPN5vc3Am3vcJq8GiLvG9CWxc738vu7Ln5MsHm+h6z
-	 ycW8hxMGx09yA==
-Date: Wed, 8 May 2024 09:39:23 +0100
-From: Simon Horman <horms@kernel.org>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: "kuba@kernel.org" <kuba@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"jiri@resnulli.us" <jiri@resnulli.us>,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Chiu <larry.chiu@realtek.com>
-Subject: Re: [PATCH net-next v17 01/13] rtase: Add pci table supported in
- this module
-Message-ID: <20240508083923.GO15955@kernel.org>
-References: <20240502091847.65181-1-justinlai0215@realtek.com>
- <20240502091847.65181-2-justinlai0215@realtek.com>
- <20240503093331.GN2821784@kernel.org>
- <14c200b4573b4a60af14b37861ca1727@realtek.com>
+	s=arc-20240116; t=1715157595; c=relaxed/simple;
+	bh=J+PQfd29qCEkIFqLYMfOqB2KUwrBfTwfwKZYBhSKYzc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S5yCoQedA8YtjtHqLkj2q5dlFV5wTUl/no3j+bAlrh8f0oZgZ3G1vVcuVjhUSufTnkCYUuHDOnhcw0mU7sVoWPEpT82hks/Gpw6NkZhm/08MxpGI9hOXpzv3YXB4QACrqW/dlncY7Ta/GfutrGvE6i28ZU7HGb8dZlaP0jo+tYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndCYK31U; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43dda802bb3so246991cf.0;
+        Wed, 08 May 2024 01:39:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715157593; x=1715762393; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J+PQfd29qCEkIFqLYMfOqB2KUwrBfTwfwKZYBhSKYzc=;
+        b=ndCYK31UOffe5aitstDpIoOp5urizJCGFMLMvQv0nxuHWZOaMHOViAM+wvatEjIsNc
+         TUzgVHU9eXf3UG1IGcvi7RN//ee4iEoQB7g2ECWRQUrULWqv1MLabF39MsAVwh9tKB+F
+         3lnyteN7OZbzfh0qadMfDeDOl7JRpiPcp2tqusRaOzEoMgfYjzv++XRmgtsH+GrSvM4E
+         W/Y2eKozKKvgZ24TfJpn+jo4rW9Q/HZjF/OK/AJXvdprKKw0bAZHO4nS0vCNkRKlJgJt
+         SFJD4prW8SSEc94Mz27q6Zmb3XHqOsye+GmT+YWY1bdyGSB8o9cUkbe4+d6YiyMR4sk4
+         /PQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715157593; x=1715762393;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J+PQfd29qCEkIFqLYMfOqB2KUwrBfTwfwKZYBhSKYzc=;
+        b=rQbI1UAGI1cC6BUQE+vPOYE3V85frxxwE5T9177lH5275jVHZncOuwwshlbFe95XNo
+         zlDLUHbWDpRIyn3MRu9h7DyomvloOijwaOBC/H4Ifn+jg1feCaDW476RUcA6gKtm34Lw
+         ede4JAsrcLgUF56U8TLzwWkj0yZAgE7RIFxD6WKZ2JBBNGm+aycyf30XWokV+HFAumZl
+         fvgc9ZvMGRWOlf5FoaaVjwZFKpnZonrIOVzWX2YjKIcTyrAPyFB0l4urev3SeUK2zQ0J
+         syMFLI2GNYZvYx9Aq8+zkUaiG+B8IsYqveR5fMVPpaIcGglClTtKIUS81RTYL+wAWxPF
+         MR8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXDMX0H8O/z+pGKzwiDLM1u/w0p3VcvoChAGnwGgpwu0txtVt5eZMHPXggljwqiwbzH+CBOqGb9v/4Dts/rfNVouj/D05KLXfK8YZa0Loxay8r74jtOtL4J9tbqNzobiLyE3Y95eZMIDbM=
+X-Gm-Message-State: AOJu0YzZMx2Xq1CumzdAC2x3I0XMth9qsP6+oW2kIRAfHV/pCnxdeyV4
+	JDDl8TF0LdB8a8W/6cfubprRggz9bcisQ9OkIhjq2gYobrcnIDlpsqulz2G/pOBAfawTRoIIj3m
+	0bCD8KlEZVlwssHZyjkeciAtzjJc=
+X-Google-Smtp-Source: AGHT+IFbHvBVS6LvE9VyyUxGe4Dx+/5XNZJwJY9GdUXiicZzhTZ+bu9VFrTJNH4aWCT0/TwiOvIkRq5mW32Bb71ptGA=
+X-Received: by 2002:a05:6214:2aac:b0:699:4d3:98dc with SMTP id
+ 6a1803df08f44-6a151418127mr23321276d6.0.1715157593085; Wed, 08 May 2024
+ 01:39:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14c200b4573b4a60af14b37861ca1727@realtek.com>
+References: <20240506114752.47204-1-charles.goodix@gmail.com>
+ <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com> <ZjmOUp725QTHrfcT@google.com>
+ <Zjo8eTQQS1LvzFgZ@finisterre.sirena.org.uk> <ZjpFVGw6PgjRcZY3@nixie71>
+ <ZjqYp1oxPPWcF3jW@google.com> <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
+In-Reply-To: <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
+From: Richard Hughes <hughsient@gmail.com>
+Date: Wed, 8 May 2024 09:39:41 +0100
+Message-ID: <CAD2FfiE+VFa+7sHQg=LGkBy556msNyyFUhmWW_cAfZd0V4DPYQ@mail.gmail.com>
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+To: Mark Brown <broonie@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeff LaBundy <jeff@labundy.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	neil.armstrong@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 06, 2024 at 11:32:38AM +0000, Justin Lai wrote:
-> > 
-> > 
-> > On Thu, May 02, 2024 at 05:18:35PM +0800, Justin Lai wrote:
-> > > Add pci table supported in this module, and implement pci_driver
-> > > function to initialize this driver, remove this driver, or shutdown this driver.
-> > >
-> > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
-> > 
-> > ...
-> > 
-> > > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > new file mode 100644
-> > > index 000000000000..5ddb5f7abfe9
-> > > --- /dev/null
-> > > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-> > > @@ -0,0 +1,618 @@
-> > > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> > > +/*
-> > > + *  rtase is the Linux device driver released for Realtek Automotive
-> > > +Switch
-> > > + *  controllers with PCI-Express interface.
-> > > + *
-> > > + *  Copyright(c) 2023 Realtek Semiconductor Corp.
-> > > + *
-> > > + *  Below is a simplified block diagram of the chip and its relevant
-> > interfaces.
-> > > + *
-> > > + *               *************************
-> > > + *               *                       *
-> > > + *               *  CPU network device   *
-> > > + *               *                       *
-> > > + *               *   +-------------+     *
-> > > + *               *   |  PCIE Host  |     *
-> > > + *               ***********++************
-> > > + *                          ||
-> > > + *                         PCIE
-> > > + *                          ||
-> > > + *      ********************++**********************
-> > > + *      *            | PCIE Endpoint |             *
-> > > + *      *            +---------------+             *
-> > > + *      *                | GMAC |                  *
-> > > + *      *                +--++--+  Realtek         *
-> > > + *      *                   ||     RTL90xx Series  *
-> > > + *      *                   ||                     *
-> > > + *      *     +-------------++----------------+    *
-> > > + *      *     |           | MAC |             |    *
-> > > + *      *     |           +-----+             |    *
-> > > + *      *     |                               |    *
-> > > + *      *     |     Ethernet Switch Core      |    *
-> > > + *      *     |                               |    *
-> > > + *      *     |   +-----+           +-----+   |    *
-> > > + *      *     |   | MAC |...........| MAC |   |    *
-> > > + *      *     +---+-----+-----------+-----+---+    *
-> > > + *      *         | PHY |...........| PHY |        *
-> > > + *      *         +--++-+           +--++-+        *
-> > > + *      *************||****************||***********
-> > 
-> > Thanks for the diagram, I like it a lot :)
-> > 
-> 
-> Thank you for your like :)
-> > > + *
-> > > + *  The block of the Realtek RTL90xx series is our entire chip
-> > > + architecture,
-> > > + *  the GMAC is connected to the switch core, and there is no PHY in
-> > between.
-> > > + *  In addition, this driver is mainly used to control GMAC, but does
-> > > + not
-> > > + *  control the switch core, so it is not the same as DSA.
-> > > + */
-> > 
-> > ...
-> > 
-> > > +static int rtase_alloc_msix(struct pci_dev *pdev, struct
-> > > +rtase_private *tp) {
-> > > +     int ret;
-> > > +     u16 i;
-> > > +
-> > > +     memset(tp->msix_entry, 0x0, RTASE_NUM_MSIX * sizeof(struct
-> > > + msix_entry));
-> > > +
-> > > +     for (i = 0; i < RTASE_NUM_MSIX; i++)
-> > > +             tp->msix_entry[i].entry = i;
-> > > +
-> > > +     ret = pci_enable_msix_exact(pdev, tp->msix_entry, tp->int_nums);
-> > > +     if (!ret) {
-> > 
-> > In Linux Networking code it is an idiomatic practice to keep handle errors in
-> > branches and use the main path of execution for the non error path.
-> > 
-> > In this case I think that would look a bit like this:
-> > 
-> >         ret = pci_enable_msix_exact(pdev, tp->msix_entry, tp->int_nums);
-> >         if (ret)
-> >                 return ret;
-> > 
-> >         ...
-> > 
-> >         return 0;
-> > 
-> > > +
-> > > +             for (i = 0; i < tp->int_nums; i++)
-> > > +                     tp->int_vector[i].irq = pci_irq_vector(pdev, i);
-> > 
-> > pci_irq_vector() can fail, should that be handled here?
-> 
-> Thank you for your feedback, I will confirm this part again.
-> > 
-> > > +     }
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +static int rtase_alloc_interrupt(struct pci_dev *pdev,
-> > > +                              struct rtase_private *tp) {
-> > > +     int ret;
-> > > +
-> > > +     ret = rtase_alloc_msix(pdev, tp);
-> > > +     if (ret) {
-> > > +             ret = pci_enable_msi(pdev);
-> > > +             if (ret)
-> > > +                     dev_err(&pdev->dev,
-> > > +                             "unable to alloc interrupt.(MSI)\n");
-> > 
-> > If an error occurs then it is a good practice to unwind resource allocations
-> > made within the context of this function call, as this leads to more symmetric
-> > unwind paths in callers.
-> > 
-> > In this case I think any resources consumed by rtase_alloc_msix() should be
-> > released if pci_enable_msi fails. Probably using a goto label is appropriate
-> > here.
-> > 
-> > Likewise, I suggest that similar logic applies to errors within
-> > rtase_alloc_msix().
-> > 
-> 
-> Since msi will be enabled only when msix enable fails, when pci_enable_msi fails,
-> there will be no problem of msix-related resources needing to be released,
-> because the msix interrupt has not been successfully allocated.
+On Wed, 8 May 2024 at 03:37, Mark Brown <broonie@kernel.org> wrote:
+> The other model I've seen used BTW is to expose a MTD device, if the
+> device actually looks like a MTD device (perhaps even is just a flash
+> that's fairly directly exposed) that minimises the kernel code quite
+> well.
 
-Thanks, as long as no allocated resources have not been freed in the case of
-returning an error value, then I am happy.
+If it helps, fwupd already uses mtd for other devices too, although at
+the moment we're using it only for system firmware -- e.g. intel-spi
+style. The MTD subsystem doesn't give fwupd much info about the
+{removable} device itself, and that can pose a problem unless you
+start using heuristics about the parent device to match firmware to
+the mtd device.
+
+Richard.
 
