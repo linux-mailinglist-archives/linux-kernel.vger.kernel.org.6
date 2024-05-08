@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-173042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E62A88BFAB1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794BF8BFAB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154351C229E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34692285685
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6972781ADB;
-	Wed,  8 May 2024 10:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEC682492;
+	Wed,  8 May 2024 10:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1ElVR4F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zh/RcZaG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759F081AA2;
-	Wed,  8 May 2024 10:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9990D82487;
+	Wed,  8 May 2024 10:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162945; cv=none; b=DMufwDfTuz5VSi2fWEAEK8sQ+VGcogoDGtusoCEc6j8gr1CFq54sdexvz17giT53M1K7tYEeuRBNYwp2tiXDUlCIciJgEZElvXxNMx9WdJ3EIBlJkg/ahoHyukAq6c624wrEXzZ181Kpvh9aV4A4YPWoFmfiA5sRKP8c1Opy9jA=
+	t=1715163087; cv=none; b=n1Y9Ws63rvGkQkMNwdE38sh8/MSVhqA6TVDfWSDQidDbOjN2WNP/CcJTjh8JD4mzqeD2Wckk+XZjZtPAEeW1SMW7eNJhQuesB2fXoIwliPO47hPVZtrD459RRFH58ovLVNDIGZXhQskUXKbJEXdSlcn5fl7y1ureER7PXH+LBY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162945; c=relaxed/simple;
-	bh=yrabQPbPYvR+JPoitoyg+9RDRV3056ERK0Y8S6+be2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MP4Kfr7Cq8o8REf3FFAXYolEGs74xDmdSopmZ5QbiyG+fStMHonKdIhOG0xexibBfARno75xqZjqQt3Toz1EXzKm3Y2EGhNZrqfYrjLgF5pC6H/Caq0/QMuxStRA+JAkOzQhP0uhXMcIy6OLMQ/MU/vXpTJg32vdb5Do4lWzb84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1ElVR4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A84C113CC;
-	Wed,  8 May 2024 10:09:00 +0000 (UTC)
+	s=arc-20240116; t=1715163087; c=relaxed/simple;
+	bh=O01+4OxDhqfAMNBJajyRNazF4RaEhwcQwMkJgUw3EWY=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZLHs8nI304CGxa4RC1mYUOMwS1NwAUSJnszVHeC/Wl3oaaY3qlQImlFc1GPNaTTOM4yJLQJqLa7uqpF2unbLoXsxXDLvG/To9gj2dUsPgw6Kggup4TIDsE0HCtTUlRYnoQKLvOsxlLZ3TKkqZ0zNdCPADLceogOAImIEL/IL3BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zh/RcZaG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1EEFC4AF17;
+	Wed,  8 May 2024 10:11:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715162945;
-	bh=yrabQPbPYvR+JPoitoyg+9RDRV3056ERK0Y8S6+be2M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g1ElVR4FITT9TalGvuJbfFMESgGVWUWwPh+Jiuy91aSKwAstAfiXyTFlhWpH9rlSj
-	 kfIlOoOJuqfDvOjLN8emFmJHFevm1IH96irYRz+bm+AeV/W55Qd9olPzuGmF9V5muE
-	 pK/1XrE8w15gD5I30PJqCcNALy57CVi2E1HdM889nC0xP/jJoaExLQShGX7lbyi/eh
-	 d+g9d5hbZklc3NXzwARwXdQTzR4cOV7VSYrk3XdlkoSZ9zHOCSHa/wS2X3cAfEkvXt
-	 9fgjkNU9JXabQi2jcGskzOm9saN/97+mE1laXFfa/OtQxkb4aV/+BHhS2K0ZDaDOTM
-	 mD01Fvs9jdnhQ==
-Date: Wed, 8 May 2024 12:08:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240508-risse-fehlpass-895202f594fd@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+	s=k20201202; t=1715163087;
+	bh=O01+4OxDhqfAMNBJajyRNazF4RaEhwcQwMkJgUw3EWY=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=Zh/RcZaGT6E7lVROM1Ix/WzyM9U1WHn89iH+ECtYZyPi325pd5UBnddq6OsgQKhGj
+	 dtgp1emBDcRguH+li8+LQOsvCJHPDTzLgdhPEnO6o2x9HZhEu0bjP2FV3Co8XIFCye
+	 zN4xGHE8nKwPbF0b+AXMC9mFzQqGUrhGjtblR5TjB5mb2wy78uePKX7yUX6LcmK+Bj
+	 EchcG9cYgys2zvHpPQstcBiSX9NWznB/RttR2UazhmwjIa9ODcL4uU00iHqmG+2hdb
+	 wzt2m24Re/wGc58B9JxIG00Be3CU853Cea4h9d6mKsUD2Cdk99oG0QBZqNID/djXMX
+	 O53MvfdTHggLA==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Zi Shen Lim <zlim.lnx@gmail.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mykola Lysenko
+ <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH bpf-next] bpf, arm64: Add support for lse atomics in
+ bpf_arena
+In-Reply-To: <20240426161116.441-1-puranjay@kernel.org>
+References: <20240426161116.441-1-puranjay@kernel.org>
+Date: Wed, 08 May 2024 10:11:23 +0000
+Message-ID: <mb61pzft0zk8k.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+Content-Type: text/plain
 
-On Mon, May 06, 2024 at 04:29:44PM +0200, Christian König wrote:
-> Am 04.05.24 um 20:20 schrieb Linus Torvalds:
-> > On Sat, 4 May 2024 at 08:32, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > > Lookie here, the fundamental issue is that epoll can call '->poll()'
-> > > on a file descriptor that is being closed concurrently.
-> > Thinking some more about this, and replying to myself...
-> > 
-> > Actually, I wonder if we could *really* fix this by simply moving the
-> > eventpoll_release() to where it really belongs.
-> > 
-> > If we did it in file_close_fd_locked(),  it would actually make a
-> > *lot* more sense. Particularly since eventpoll actually uses this:
-> > 
-> >      struct epoll_filefd {
-> >          struct file *file;
-> >          int fd;
-> >      } __packed;
-> > 
-> > ie it doesn't just use the 'struct file *', it uses the 'fd' itself
-> > (for ep_find()).
-> > 
-> > (Strictly speaking, it should also have a pointer to the 'struct
-> > files_struct' to make the 'int fd' be meaningful).
-> 
-> While I completely agree on this I unfortunately have to ruin the idea.
-> 
-> Before we had KCMP some people relied on the strange behavior of eventpoll
-> to compare struct files when the fd is the same.
-> 
-> I just recently suggested that solution to somebody at AMD as a workaround
-> when KCMP is disabled because of security hardening and I'm pretty sure I've
-> seen it somewhere else as well.
-> 
-> So when we change that it would break (undocumented?) UAPI behavior.
+Puranjay Mohan <puranjay@kernel.org> writes:
 
-I've worked on that a bit yesterday and I learned new things about epoll
-and ran into some limitations.
+> When LSE atomics are available, BPF atomic instructions are implemented
+> as single ARM64 atomic instructions, therefore it is easy to enable
+> these in bpf_arena using the currently available exception handling
+> setup.
+>
+> LL_SC atomics use loops and therefore would need more work to enable in
+> bpf_arena.
+>
+> Enable LSE atomics based instructions in bpf_arena and use the
+> bpf_jit_supports_insn() callback to reject atomics in bpf_arena if LSE
+> atomics are not available.
+>
+> All atomics and arena_atomics selftests are passing:
+>
+>   [root@ip-172-31-2-216 bpf]# ./test_progs -a atomics,arena_atomics
+>   #3/1     arena_atomics/add:OK
+>   #3/2     arena_atomics/sub:OK
+>   #3/3     arena_atomics/and:OK
+>   #3/4     arena_atomics/or:OK
+>   #3/5     arena_atomics/xor:OK
+>   #3/6     arena_atomics/cmpxchg:OK
+>   #3/7     arena_atomics/xchg:OK
+>   #3       arena_atomics:OK
+>   #10/1    atomics/add:OK
+>   #10/2    atomics/sub:OK
+>   #10/3    atomics/and:OK
+>   #10/4    atomics/or:OK
+>   #10/5    atomics/xor:OK
+>   #10/6    atomics/cmpxchg:OK
+>   #10/7    atomics/xchg:OK
+>   #10      atomics:OK
+>   Summary: 2/14 PASSED, 0 SKIPPED, 0 FAILED
 
-Like, what happens if process P1 has a file descriptor registered in an
-epoll instance and now P1 forks and creates P2. So every file that P1
-maintains gets copied into a new file descriptor table for P2. And the
-same file descriptors refer to the same files for both P1 and P2.
+Gentle ping about this,
 
-So there's two interesting cases here:
-
-(1) P2 explicitly removes the file descriptor from the epoll instance
-    via epoll_ctl(EPOLL_CTL_DEL). That removal affects both P1 and P2
-    since the <fd, file> pair is only registered once and it isn't
-    marked whether it belongs to P1 and P2 fdtable.
-
-    So effectively fork()ing with epoll creates a weird shared state
-    where removal of file descriptors that were registered before the
-    fork() affects both child and parent.
-
-    I found that surprising even though I've worked with epoll quite
-    extensively in low-level userspace.
-
-(2) P2 doesn't close it's file descriptors. It just exits. Since removal
-    of the file descriptor from the epoll instance isn't done during
-    close() but during last fput() P1's epoll state remains unaffected
-    by P2's sloppy exit because P1 still holds references to all files
-    in its fdtable.
-
-    (Sidenote, if one ends up adding every more duped-fds into epoll
-    instance that one doesn't explicitly close and all of them refer to
-    the same file wouldn't one just be allocating new epitems that
-    are kept around for a really long time?)
-
-So if the removal of the fd would now be done during close() or during
-exit_files() when we call close_files() and since there's currently no
-way of differentiating whether P1 or P2 own that fd it would mean that
-(2) collapses into (1) and we'd always alter (1)'s epoll state. That
-would be a UAPI break.
-
-So say we record the fdtable to get ownership of that file descriptor so
-P2 doesn't close anything in (2) that really belongs to P1 to fix that
-problem.
-
-But afaict, that would break another possible use-case. Namely, where P1
-creates an epoll instance and registeres fds and then fork()s to create
-P2. Now P1 can exit and P2 takes over the epoll loop of P1. This
-wouldn't work anymore because P1 would deregister all fds it owns in
-that epoll instance during exit. I didn't see an immediate nice way of
-fixing that issue.
-
-But note that taking over an epoll loop from the parent doesn't work
-reliably for some file descriptors. Consider man signalfd(2):
-
-   epoll(7) semantics
-       If a process adds (via epoll_ctl(2)) a signalfd file descriptor to an epoll(7) instance,
-       then epoll_wait(2) returns events only for signals sent to that process.  In particular,
-       if  the process then uses fork(2) to create a child process, then the child will be able
-       to read(2) signals that  are  sent  to  it  using  the  signalfd  file  descriptor,  but
-       epoll_wait(2)  will  not  indicate  that the signalfd file descriptor is ready.  In this
-       scenario, a possible workaround is that after the fork(2), the child process  can  close
-       the  signalfd  file descriptor that it inherited from the parent process and then create
-       another signalfd file descriptor and add it to the epoll instance.   Alternatively,  the
-       parent and the child could delay creating their (separate) signalfd file descriptors and
-       adding them to the epoll instance until after the call to fork(2).
-
-So effectively P1 opens a signalfd and registers it in an epoll
-instance. Then it fork()s and creates P2. Now both P1 and P2 call
-epoll_wait(). Since signalfds are always relative to the caller and P1
-did call signalfd_poll() to register the callback only P1 can get
-events. So P2 can't take over signalfds in that epoll loop.
-
-Honestly, the inheritance semantics of epoll across fork() seem pretty
-wonky and it would've been better if an epoll fd inherited across
-would've returned ESTALE or EINVAL or something. And if that inheritance
-of epoll instances would really be a big use-case there'd be some
-explicit way to enable this.
+Thanks,
+Puranjay
 
