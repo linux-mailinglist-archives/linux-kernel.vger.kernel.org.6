@@ -1,67 +1,70 @@
-Return-Path: <linux-kernel+bounces-173352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A468BFF39
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31318BFF3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8D41F28AA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4F61F291D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C3A85627;
-	Wed,  8 May 2024 13:45:27 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9EB84E05;
+	Wed,  8 May 2024 13:46:24 +0000 (UTC)
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5760A85297;
-	Wed,  8 May 2024 13:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEECD78C9B;
+	Wed,  8 May 2024 13:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715175927; cv=none; b=f47YhmyYEZMwRJnUiZ5p0dCrroZ/QWh21Lzb8Vsu7M0FtK/0j13GJNM6seKjZV+tqecGomWKaeAC45TehrAPpU79pSFnHLgRS6KMdQa41Ujp60nlLcv9r+L9oGs/3XOqT7uoDWE6lp1Hn+z4U3MwKt90uztQDV+BR/CJdYQZ1vA=
+	t=1715175984; cv=none; b=Co7QbNJAa33LxlyN9VSxVcRqT0n0vOePNsGhmq5EfmIYIolR3j074BRuqo9Y8xREVN2cP9qyt4YpOunQtRthec6zrAqFWvtyAx0RYuRnBsvB6r/jk3quguC2P7Fj66cYE1XMNY7g91v+RmvzRPmeDowuzo7/aCICEqhNF6iQFj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715175927; c=relaxed/simple;
-	bh=Ur1u2B+jpd4tHUcATtkRNI6HMB0MSenCt3hFfcnI2Mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ewsmlxCNIhfIM9LDgjEiA0pRjscnje5iH9z80VeHglMv8NZW6L7I58znOvkzMn3pFhWNQaL0cwNct6sHXu/1Ugk6L46+jF2J6oJ8NXYppHkelC9I4fEMyROUmHoaKz7evzlpWHOXrta/9Sj2AzxosDX6s3VfRx0bJWXWT5CD9/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9695068BEB; Wed,  8 May 2024 15:45:17 +0200 (CEST)
-Date: Wed, 8 May 2024 15:45:17 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the dma-mapping tree
-Message-ID: <20240508134517.GA8526@lst.de>
-References: <20240508091631.1ec34a25@canb.auug.org.au> <20240508065102.GC10736@lst.de> <cdc6c9e4-d604-4ae5-a56b-d8e9264ce5aa@intel.com>
+	s=arc-20240116; t=1715175984; c=relaxed/simple;
+	bh=PdHakPGfziCL3JETjXF2HpcAQm9uAp9U4XC+GgVdLok=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ktj9gkFkhf/zwCPYbAFDJehsi1KHd0vjrd8pkXGXvcvZLNJ4JsH7uVmcGsqF6q6CMrcPrsiec07JLHa3LywmNj8XOF2jPYlDaeA7Q3HpfrAvkUXj8jAKf8CPhRbWDxIbVzAOWbRahwuy146TfypLY2Fgwry1pxw6ga6ycmCTew4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VZGdS57yFz4x0v;
+	Wed,  8 May 2024 23:46:20 +1000 (AEST)
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Vaibhav Jain <vaibhav@linux.ibm.com>, Kautuk Consul <kconsul@linux.vnet.ibm.com>, Amit Machhiwal <amachhiw@linux.vnet.ibm.com>, Jordan Niethe <jniethe5@gmail.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org
+In-Reply-To: <a7ed4cc12e0a0bbd97fac44fe6c222d1c393ec95.1706441651.git.christophe.jaillet@wanadoo.fr>
+References: <a7ed4cc12e0a0bbd97fac44fe6c222d1c393ec95.1706441651.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] KVM: PPC: Book3S HV nestedv2: Fix an error handling path in gs_msg_ops_kvmhv_nestedv2_config_fill_info()
+Message-Id: <171517595459.167543.3276617285735136069.b4-ty@ellerman.id.au>
+Date: Wed, 08 May 2024 23:45:54 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdc6c9e4-d604-4ae5-a56b-d8e9264ce5aa@intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 10:51:28AM +0200, Alexander Lobakin wrote:
-> I'm verry sorry for that. I had 2 trees, one with const get_dma_addr()
-> and dma-for-next without const, and didn't check it compiles after
-> rebasing >_<
+On Sun, 28 Jan 2024 12:34:25 +0100, Christophe JAILLET wrote:
+> The return value of kvmppc_gse_put_buff_info() is not assigned to 'rc' and
+> 'rc' is uninitialized at this point.
+> So the error handling can not work.
 > 
-> net-next already has this const. We could leave it as in your attached
-> patch, but then there'll be a trivial conflict when merging with
-> net-next. Or I can send an incremental quick fix for dma-for-next, but
-> then 2 commits (one in your tree and one in net-next) will have these
-> changes duplicated.
-> What do you think?
+> Assign the expected value to 'rc' to fix the issue.
+> 
+> 
+> [...]
 
-Let's just add the const annoations after the trees are merged into
-Linus' tree. Nothing really wrong with not having them right now.
+Applied to powerpc/topic/ppc-kvm.
+
+[1/1] KVM: PPC: Book3S HV nestedv2: Fix an error handling path in gs_msg_ops_kvmhv_nestedv2_config_fill_info()
+      https://git.kernel.org/powerpc/c/b52e8cd3f835869370f8540f1bc804a47a47f02b
+
+cheers
 
