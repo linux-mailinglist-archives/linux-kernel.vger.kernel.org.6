@@ -1,273 +1,204 @@
-Return-Path: <linux-kernel+bounces-173126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD498BFBDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:22:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA5A8BFBE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ED25B248E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:21:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006EC282970
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94E68289E;
-	Wed,  8 May 2024 11:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430F9823CA;
+	Wed,  8 May 2024 11:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Hbxv+Jv5"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JSSzMdKe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90958288C;
-	Wed,  8 May 2024 11:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715167267; cv=fail; b=suBgesYHQrQaLvvXhfZ1lWS4ulVHgcyru1JEuB6P9B91MTn2XH/9LOtCMdMK0j7C13XOJC8bBf4Y3jiINRQZUlJFESeblU/B79xN2z1tsEQ+7ihbUCPLMhgeKJPWrB1l9VuwXK94EQUu5scFPfDfSfHOo4NqnEGrB1Kh/C7b5rw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715167267; c=relaxed/simple;
-	bh=TL420BMJZ2zQfoZ8HOZPhTAUrEUTwdLFAMDpAH26BRE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tZA9Y4acPdCJIVVD8YinnDA6/G7hb+XvrqrZaKRlroHrAsYmbxNy9wjPNszzMCYit4aHcKGx+4syNc/WtTP9NpVzrhL5YOLokpDZkOkhcM/z63by9BAb5WMQhHhbVOqCBrqmSCUtHtaSge12LIBD/AOSixyjKHx6jgIiPS67Tt8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Hbxv+Jv5; arc=fail smtp.client-ip=40.107.220.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d7xLQcEnoCSb++PkR6NhWyqr2HYpAR7eVuofbKnyY8rY8aBP0sDIGD0QSGp8jQE7yXR+uAW/AaGbIxq39Yuvp7qGcmBctQmPQrrjnJ2HTrJHdAKeDbjAHtgBuu3Pu66TMdaxHB/WiqKOyPOplVFFc29l4Y6oWaAqFGPJIuk6Jt8J7dniZ5DXDSLiY+Glnxpo26nOuTYO+QvuiwFZ6uAh5/mWEHJYgW54B3G66MPEE7cARqmUjXO/dVulN/CEx1b+JejHOn5rZWDxBh4V7YdLGE61FK+i3Zwc0a0Epem9iwW0B6iHqYzGNgjtDOB6/i8pBFAe3W7ZFfglqJgOLZ7Nhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N1zlAdEao37cTUHiDl2/x0Ii7FMjEKFvNWSih3tJ97g=;
- b=OpwMgeOtfZ7wPWOTdkZW4qLzmWsHOzYMGdri3Hnphf3Ukcf4HgLtvtgzS/+YSImxACGCskY0gIqUtEuRjRvR/aBFqe5QKRiUf4t+UPz2yj/QIwBCwOdrOt6XXi+jRhyyv7ALWt2mKTPAjGeaL7fZw5rKGlkIVAl2lTgyg1IYQaVG8lkPGz1qiumP9Zn4voVvo/se6aiJzdLXxD5GEAmNAUyDpm8vJxHWC+jsfZN8KMTsHLIbzHAWoXciYhi+Par3eijyXEtb82pkg8Zy5a7C8D8/3IXp+GEH6AkdPAfvdKEincDNQL+Fa6A9Am1/klRDERIo8SBr2gKIhKh1hC7Umg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N1zlAdEao37cTUHiDl2/x0Ii7FMjEKFvNWSih3tJ97g=;
- b=Hbxv+Jv5sCT8+p+5NaQd1/agc87y3yv+eDPabkkm/WkkK6FjJ14HVTBhWkwie+o8E9qWdFfq9iz0oklVyu/qUNuhlX7bxudcwk7wYJ/e4uiUkx7r/4ynf6RUBe9o4n2rYLrC7qtxUgOsN4JoF9TQjH7hhFpe9wdLJ0WTihKp/lw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- SN7PR12MB8060.namprd12.prod.outlook.com (2603:10b6:806:343::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Wed, 8 May
- 2024 11:21:01 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::af7d:5f4f:2139:ebd1]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::af7d:5f4f:2139:ebd1%4]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 11:21:01 +0000
-Message-ID: <b6a30d30-95af-465b-9cc1-867c7bfdc519@amd.com>
-Date: Wed, 8 May 2024 16:50:49 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] KVM: x86: Print names of apicv inhibit reasons in
- traces
-To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org,
- seanjc@google.com
-Cc: pbonzini@redhat.com, linux-kernel@vger.kernel.org,
- joao.m.martins@oracle.com, boris.ostrovsky@oracle.com,
- suravee.suthikulpanit@amd.com, mlevitsk@redhat.com
-References: <20240506225321.3440701-1-alejandro.j.jimenez@oracle.com>
- <20240506225321.3440701-2-alejandro.j.jimenez@oracle.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20240506225321.3440701-2-alejandro.j.jimenez@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0167.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:26::22) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371FE8174F;
+	Wed,  8 May 2024 11:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715167412; cv=none; b=gD9e+QM5USsDSREMGIweutA+e2Q6uNMrNAK/VBwCYMoejMwMVcH5osd1Otc1ayEZ3b0lPOF6ejsmwdebK6VDnb3H4oYqK65fIOV/HGaSuJ4OX6Oxel9vJW9HZibvg5raLV/ACJY0LynL1Rq9LJcGC+ye1FtSoBP/tQu/PR8iPWo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715167412; c=relaxed/simple;
+	bh=Cc81Sm9+kFaTqiurwOpfbIBmuCu+bUVjuSjxcgMXyO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=saMRYjPZBSkvBparsXsgnQyPplQMvLtMtssrYuEAbejXRjEQZEzIPrlx5+WW4jyDx8/knVddd7Fl2da6gK/dO4plTK4k4s/7teoAjB2pFO69G17KOVSArT9L23k5bwq54xgv4BQoQMuSMVngZu/kTXtRd/E8a4OxJNbVY7stc+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JSSzMdKe; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715167410; x=1746703410;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Cc81Sm9+kFaTqiurwOpfbIBmuCu+bUVjuSjxcgMXyO4=;
+  b=JSSzMdKebr4EmKplin4OpmBXJnvnVQ8RkQDxdPdzgwf+Cz22OC4UUDAt
+   qSHGWb5HrrLEk6Ph389I0h9kNbwfZUJbERgo/Xm6oyhdndoYsmJi+ofHO
+   AKDN2QyttHqvSD5OYqd/8wGtk/ARDlpKm/0XkqCNrzoXcP0m4f+BbaJT6
+   LJpxqwnxmlUKFbl+aJm+UBly/tWppO2f7TAIXRVsoZvscoe5DMP4Z2XBL
+   VH/2IZ6wm7Fk3gdwTAooz0Oba8hEMaz4uz44KEPP4ziu4eMoR/m+7H/Yu
+   NRnFHMYaAsBnszqRnqdB5D9+6pNZsri/PuvUQRcJC7WtnzJF87KaMXh1F
+   g==;
+X-CSE-ConnectionGUID: 6HmUHXaYS0KiRtTCm4ydTQ==
+X-CSE-MsgGUID: wJ0+xoKjQQWObwgM/jSLow==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22412246"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="22412246"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 04:23:30 -0700
+X-CSE-ConnectionGUID: HQZM8k96QZOhQgZVyNEMJg==
+X-CSE-MsgGUID: dcpymqCtT9uJPwoz8me6EA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="59714775"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 08 May 2024 04:23:26 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4fOO-0003LE-0i;
+	Wed, 08 May 2024 11:23:24 +0000
+Date: Wed, 8 May 2024 19:22:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: sean.wang@kernel.org, marcel@holtmann.org, johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-bluetooth@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get the fw
+ name
+Message-ID: <202405081828.e6IMNKPn-lkp@intel.com>
+References: <965cd14922aea67e2750ff2c2ecad773f8ba485a.1715109394.git.sean.wang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|SN7PR12MB8060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 342df1a6-6639-4bf0-b88c-08dc6f50f0a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UnJmbGxvakVCWElSdE41NEQ4b3VPcXM0QXZPc2RYN2VKNXJrdCszMVVtYWJl?=
- =?utf-8?B?YlFvcUx0cjlDZ1pBL24wdUtrbTZ5UFQwS0lXdW1lTnpEU1ZlaG1ndEtiaUl2?=
- =?utf-8?B?clluZHY4VlZDZjg1WU1mMGNrdFJ0RXhOV2dEVEpOU0Q5RnVCMTdCM1F6Z3ZE?=
- =?utf-8?B?bVdQTzRKeXZjR2xocDZKbEE4UTcwSDBKRXpkQ1RCMjlYeWZPVy9Dd1VZN1pk?=
- =?utf-8?B?N2krY0lrL3k1MzRQK3p4ZUNOZGFwaERJMEh2cEYvOWNDMFRDTjdEL2k1aDR2?=
- =?utf-8?B?S1hIVEt3Mzk5NC9OTkJ2VFpxQmFNdFEzMEd4NlZnTWFaNko0MVBsdWJEYm5K?=
- =?utf-8?B?Szdpb3FUWmRoMmo0OTBOYWRvckpLNHptOStGUStFVkFKaVJCMG9KKzh1Y1pZ?=
- =?utf-8?B?V1hFOUJxUDRsVFk4YlJpdTkyVWxGR3V0cnFSK01HMXdsL0xRRHBMQ0RJNzlp?=
- =?utf-8?B?eWhxQklKc0lYZUwrNW03WHIvNFhGdE9wbTZmaVVzUFFHam95dkdBY1lXMCtU?=
- =?utf-8?B?azBWUlpvaHc2bXc4eXhqK1Y2LzFFTytBUHQxWncxTFF3SXdMWkp2TXZ1N0xI?=
- =?utf-8?B?NUFDKzNZUHlJbW40bW5zT2E2a1pBNUtTZUxQUjNLZytlQW1sdktWYWdrTE1C?=
- =?utf-8?B?V3JDL3BKNDFsY1Zsd0ZoQm9ObU4vcGlxc0ltWnhucm9xMytHOXZnQm1DeGhl?=
- =?utf-8?B?Sy9oOEVmemprbllxK0Y5cllzclQxQkxDS25xWnpuTnhIWFYwdldXUlVyay9F?=
- =?utf-8?B?aTJSeHR4MUtBSG4zZFNtQTYxNXE0NXZhdGJyQVRrMW1HTDNWUDBIR2VhWXIr?=
- =?utf-8?B?d2pSa0s0bzN2dUxlU05sTktIYnZGZTlKcjJTa2RlNW9Sd040Y3dDOG05RzEy?=
- =?utf-8?B?bngzaFpGZGwwdVI5eGsrKzY2dytWR2Mrd1hYTXBsSmhUdUtxNFBaU1F2Nm14?=
- =?utf-8?B?M0U3NVJpRUxXZ2NFNGt6SEhzTnJ0eGNWUmsweGtHR1NFT1hjK3BpZ3cwVUNU?=
- =?utf-8?B?c0dPODRtL2hsWHY1OUxGcHZGQVREcjNIUzlTVFU2cWoxSHpZSnVSUUVoMUls?=
- =?utf-8?B?Yk1SS1JhbFBBTmlzdERwQ2p5MXZyWnBiVjBKV0YyeHhXcDQ0L3BaREZJT3Rp?=
- =?utf-8?B?TFMvRUo4c1k5VnhBU0hSTjY4emJsT3R6QldhTHVBM3Q5UEFoVDVhZGlqemsv?=
- =?utf-8?B?UTh6WjlKQnQ1eUhGSi9rZldmQUdaNGVPUStnRVN3ck1EUk8wVjloQ2lzZ1lP?=
- =?utf-8?B?ckE0UjA5MERmcnJudVIrY1BhbStnajV2d3o2ZFBaTkJ4YVMwWHYySGtnT3FX?=
- =?utf-8?B?bDNiUmtDWkR0WGw4b0VzRFZQUFNtQURVTHA3dElSMWVjd0Nvb0YrQjRjdUpI?=
- =?utf-8?B?VERFc1VDRWQ3OEcwa21BUXhnS3NHT0czWm16b25nYXJGV05adTNLbVpYQmdP?=
- =?utf-8?B?K0U3cGlVSXJXSnlLWDdRQTdFU0VibVJKU1N5eUprSzVVWFhIbm9CVXlrZWln?=
- =?utf-8?B?d2RjNUJlNWF3cHZSZjFKeFZZNjB2SXN3Y0tPZFZ2eDhqTW04akxCWElKVThp?=
- =?utf-8?B?dkQ0cDFmVDBST2lKVVpQUDBtMXZ0K1dsdWRqYllxKzdLN0F0eFJOR2RBUGFw?=
- =?utf-8?B?OUp2MGxtRWlENEwrTnJrYUhiUHIvaWlSVXNWN3gyTTFKZC9rQUx1MjM2ZzZP?=
- =?utf-8?B?RXZvT3FCbmZ1cUhSeGpyOHAvSjdQOS9UWFo3N3d1azFSWTRHaGJCMW1RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UjlnZzJkbCtkUFhCbE0xUE45STZlOS9BNnRPbDNpQXdyZjBxZ3ViTjJGT2NL?=
- =?utf-8?B?Y1E3RElMekgweWNMcFFLV2dNdll3WnZnZnNIaW9SWndVYWRUN2p4VVg2WmNt?=
- =?utf-8?B?bjQ4b1hiRWlBTm5SQU92U3o5T3BYVEdQdEdYbHRmSXlvUzZjODNGVktJK0sw?=
- =?utf-8?B?ZnhEWm05VWpYRmZRd01IZ25RWmFqajhUWFFHVmJlRCszZCt0UkFJY01uVlo0?=
- =?utf-8?B?bkhVWlZkNVZUWW5iN0NZZVkreG5oUW91czhnQ3BnQWE0WTVLUTBmZDJMUjN2?=
- =?utf-8?B?cFM0RWpJK29YZXNzVjBpcm80bTBxWXpoRGtBTUFFZEl6YWNtQ3ViV0JPd0Rz?=
- =?utf-8?B?bEE3VS8reG1rNEVmWUw2cGZLM0w3RXcvcTZOTU42eHZmNlhubzVOVS9md0VW?=
- =?utf-8?B?cGJxbFV6aDhsUWJlUkdGK2YzNzVyTS9seFFnKys5b3ZiNit2V1dXWUZvWUdr?=
- =?utf-8?B?dGJoMU5xSkFxMHFmOTlVSmJiN0lXVFBQVzM2UnJnMEtPNE00QktoZ1V0Yld3?=
- =?utf-8?B?cVd0MVJYc01DZGRVbDhwdGFWQkZ6UXFQblhlZitIa2ZTYTNmeFN2MnFhaW1R?=
- =?utf-8?B?OVl2aXM5VFNVa0p4QTZpL01JTCtjMTY3ZmdVaUpWdE5WWG1kYk5vSlVQTFFW?=
- =?utf-8?B?Y1dYbVFhVUs0MVhJa2dFdkh0OTBuNUxhbHZPZExlN0l6RmtQWWtiZkRtRnli?=
- =?utf-8?B?R0o3RC92MWU3WUR0b25tbWVSb1daSXZyM3UyaWhZckVuZkl4VStiNCtrdXZm?=
- =?utf-8?B?NnNNS1A1dStXWE9RVklEOERpdGlKTjArQVZpcm5TcE5XWi9HUGFmQWlzd29i?=
- =?utf-8?B?Mmd2TTVVZ09CZjc5THpxb1htUmdMdmhoeVFvUjU2ZVpCMlBpZitBdUF1RFhu?=
- =?utf-8?B?ci9UVmtzQnRWeXRDYTBTSzRhOEJSc1BEbU1sS2NORFh1VWwwSk9zZlA0VXdG?=
- =?utf-8?B?RmtuVnF3QzduWFlXdDk3TE8vcU1td09QRUJQTVVlMUliNWdxZ3VONEtzSmxS?=
- =?utf-8?B?SXNoSkZGd1IzMHdFK1hJYWtpRGJTams3cVVvS25oemp4ZTJ0eDVqMDB1SmxI?=
- =?utf-8?B?WjB4WjRwWFJRQWg1UnUyUTNqMFR0dzVjNlJwZnhvWDB4SVF3WXVWTjZ1RnEv?=
- =?utf-8?B?T2ZtdWl0ZElBTnhCUng1blNNZ3M3R3FJYmNzRmRBcHBDWXk2YUV2dmRPdEVC?=
- =?utf-8?B?NnpUZGxCaHl4ZjZWSGdYZW92N2ZCOUExTXp3Y1BoWnhqYmFzOHZ3c2x3TklK?=
- =?utf-8?B?VHJ1SUZaOGc1dVlJNzk1VC9hMXhtRVd6b3ZieUhrMzkybnRHNVZWM0Jhb05m?=
- =?utf-8?B?emZkRnlTWUhXTEVHaUJCQ0paM0hRc2hzOHBUU25oS0pSc2pGSnFhazNpZ0tG?=
- =?utf-8?B?TzdPbWdkZEZ4MXV2RXd6WXV4SElnNGxKOTZ5dXR0M0U0Y0c2Y0ZQaSt3TDF1?=
- =?utf-8?B?MTFLbStDMVlON1RzMGl1NG9Nek1YRFA2OE1WenNTbGFJL3p0aTkrMUpJeHBs?=
- =?utf-8?B?VXJKUzMvSkpVNStVTDFqWTRlZHZQdzdMTXBZVDQ5clQ0SkVYRStLNlNLeDVa?=
- =?utf-8?B?L1A1d2pQazF1MGVnMlNMaVkrZ3Rid1NiVk5SYXRDQnN3Yml4WUszcS9VUjJK?=
- =?utf-8?B?QjArTXFZOXN0T1lYSmNvZ2I4elFRUkFxdUhJZHc0RWhBazVyUGNmOVovYzlW?=
- =?utf-8?B?TmtXTGUvR2c4R1NQMW5LM1R4b2t4K1RUUmc4QSszRjY1bmxIMHVQR0FCeFpO?=
- =?utf-8?B?eVJXTWdGSzlVLzE4RU5NOE95NWdoeEJ1cXl4MDlIS1FEazlkSUVxaS83cG45?=
- =?utf-8?B?MzNvdUx4anlsa3dpV25aai80SXU5czZpdTRENFpyVVF2S21sT0FFaEdaOUZn?=
- =?utf-8?B?Wk1mVC9PMXNWZmFFekJNQjBobmc2am00ZTkwcFRvOXBuVGoxVlZqUTlaUytD?=
- =?utf-8?B?dlZXMmxHVi9sK21UMkJQU3NCVDRZSDFpaDRtNDJQQXBUWldtNFBNMHE5VHhw?=
- =?utf-8?B?ZFJzbEFBSUFKSE1peUVUUkJlQmQzSjJwL0IvNENDZTlTMDZFQVA4L2g2NzJG?=
- =?utf-8?B?ZkF2S2RHTmFsNGljRGYzaURGemtRQlZTQ1JJUlc4NGVnYm5IbTdPY2R2MEx3?=
- =?utf-8?Q?nasqppjeL5cIi8ZLvugreubcF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 342df1a6-6639-4bf0-b88c-08dc6f50f0a3
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 11:21:00.8895
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fzw2eozedeGG4QdDnTel/qrRqYb0JL0q3lFUqghovrqpaTQg0Wd74Tb1DGobGr8zfCyRTNLvhZOGZlSUcD6I4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <965cd14922aea67e2750ff2c2ecad773f8ba485a.1715109394.git.sean.wang@kernel.org>
+
+Hi,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on bluetooth/master]
+[also build test WARNING on bluetooth-next/master linus/master v6.9-rc7 next-20240508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/sean-wang-kernel-org/Bluetooth-btmtk-apply-the-common-btmtk_fw_get_filename/20240508-032333
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
+patch link:    https://lore.kernel.org/r/965cd14922aea67e2750ff2c2ecad773f8ba485a.1715109394.git.sean.wang%40kernel.org
+patch subject: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get the fw name
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240508/202405081828.e6IMNKPn-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 0ab4458df0688955620b72cc2c72a32dffad3615)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405081828.e6IMNKPn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405081828.e6IMNKPn-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/bluetooth/btmtk.c:8:
+   In file included from include/net/bluetooth/bluetooth.h:30:
+   In file included from include/net/sock.h:38:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/bluetooth/btmtk.c:8:
+   In file included from include/net/bluetooth/bluetooth.h:30:
+   In file included from include/net/sock.h:38:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/bluetooth/btmtk.c:8:
+   In file included from include/net/bluetooth/bluetooth.h:30:
+   In file included from include/net/sock.h:38:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/bluetooth/btmtk.c:8:
+   In file included from include/net/bluetooth/bluetooth.h:30:
+   In file included from include/net/sock.h:46:
+   In file included from include/linux/netdevice.h:38:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/bluetooth/btmtk.c:114:3: warning: 'snprintf' will always be truncated; specified size is 4, but format string expands to at least 41 [-Wformat-truncation]
+     114 |                 snprintf(buf, sizeof(size),
+         |                 ^
+   8 warnings generated.
 
 
+vim +/snprintf +114 drivers/bluetooth/btmtk.c
 
-On 5/7/2024 4:23 AM, Alejandro Jimenez wrote:
-> Use the tracing infrastructure helper __print_flags() for printing flag
-> bitfields, to enhance the trace output by displaying a string describing
-> each of the inhibit reasons set.
-> 
-> The kvm_apicv_inhibit_changed tracepoint currently shows the raw bitmap
-> value, requiring the user to consult the source file where the inhibit
-> reasons are defined to decode the trace output.
-> 
-> Co-developed-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+   105	
+   106	void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
+   107				   u32 fw_flavor)
+   108	{
+   109		if (dev_id == 0x7925)
+   110			snprintf(buf, size,
+   111				 "mediatek/mt%04x/BT_RAM_CODE_MT%04x_1_%x_hdr.bin",
+   112				 dev_id & 0xffff, dev_id & 0xffff, (fw_ver & 0xff) + 1);
+   113		else if (dev_id == 0x7961 && fw_flavor)
+ > 114			snprintf(buf, sizeof(size),
+   115				 "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hdr.bin",
+   116				 dev_id & 0xffff, (fw_ver & 0xff) + 1);
+   117		else
+   118			snprintf(buf, size,
+   119				 "mediatek/BT_RAM_CODE_MT%04x_1_%x_hdr.bin",
+   120				 dev_id & 0xffff, (fw_ver & 0xff) + 1);
+   121	}
+   122	EXPORT_SYMBOL_GPL(btmtk_fw_get_filename);
+   123	
 
-Looks good to me.
-
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
-
--Vasant
-
-> ---
->  arch/x86/include/asm/kvm_host.h | 19 +++++++++++++++++++
->  arch/x86/kvm/trace.h            |  9 +++++++--
->  arch/x86/kvm/x86.c              |  4 ++++
->  3 files changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 1d13e3cd1dc5..08f83efd12ff 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1273,8 +1273,27 @@ enum kvm_apicv_inhibit {
->  	 * mapping between logical ID and vCPU.
->  	 */
->  	APICV_INHIBIT_REASON_LOGICAL_ID_ALIASED,
-> +
-> +	NR_APICV_INHIBIT_REASONS,
->  };
->  
-> +#define __APICV_INHIBIT_REASON(reason)			\
-> +	{ BIT(APICV_INHIBIT_REASON_##reason), #reason }
-> +
-> +#define APICV_INHIBIT_REASONS				\
-> +	__APICV_INHIBIT_REASON(DISABLE),		\
-> +	__APICV_INHIBIT_REASON(HYPERV),			\
-> +	__APICV_INHIBIT_REASON(ABSENT),			\
-> +	__APICV_INHIBIT_REASON(BLOCKIRQ),		\
-> +	__APICV_INHIBIT_REASON(PHYSICAL_ID_ALIASED),	\
-> +	__APICV_INHIBIT_REASON(APIC_ID_MODIFIED),	\
-> +	__APICV_INHIBIT_REASON(APIC_BASE_MODIFIED),	\
-> +	__APICV_INHIBIT_REASON(NESTED),			\
-> +	__APICV_INHIBIT_REASON(IRQWIN),			\
-> +	__APICV_INHIBIT_REASON(PIT_REINJ),		\
-> +	__APICV_INHIBIT_REASON(SEV),			\
-> +	__APICV_INHIBIT_REASON(LOGICAL_ID_ALIASED)
-> +
->  struct kvm_arch {
->  	unsigned long n_used_mmu_pages;
->  	unsigned long n_requested_mmu_pages;
-> diff --git a/arch/x86/kvm/trace.h b/arch/x86/kvm/trace.h
-> index 9d0b02ef307e..f23fb9a6776e 100644
-> --- a/arch/x86/kvm/trace.h
-> +++ b/arch/x86/kvm/trace.h
-> @@ -1375,6 +1375,10 @@ TRACE_EVENT(kvm_hv_stimer_cleanup,
->  		  __entry->vcpu_id, __entry->timer_index)
->  );
->  
-> +#define kvm_print_apicv_inhibit_reasons(inhibits)	\
-> +	(inhibits), (inhibits) ? " " : "",		\
-> +	(inhibits) ? __print_flags(inhibits, "|", APICV_INHIBIT_REASONS) : ""
-> +
->  TRACE_EVENT(kvm_apicv_inhibit_changed,
->  	    TP_PROTO(int reason, bool set, unsigned long inhibits),
->  	    TP_ARGS(reason, set, inhibits),
-> @@ -1391,9 +1395,10 @@ TRACE_EVENT(kvm_apicv_inhibit_changed,
->  		__entry->inhibits = inhibits;
->  	),
->  
-> -	TP_printk("%s reason=%u, inhibits=0x%lx",
-> +	TP_printk("%s reason=%u, inhibits=0x%lx%s%s",
->  		  __entry->set ? "set" : "cleared",
-> -		  __entry->reason, __entry->inhibits)
-> +		  __entry->reason,
-> +		  kvm_print_apicv_inhibit_reasons(__entry->inhibits))
->  );
->  
->  TRACE_EVENT(kvm_apicv_accept_irq,
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index b389129d59a9..597ff748f955 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -10011,6 +10011,10 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_apicv_activated);
->  static void set_or_clear_apicv_inhibit(unsigned long *inhibits,
->  				       enum kvm_apicv_inhibit reason, bool set)
->  {
-> +	const struct trace_print_flags apicv_inhibits[] = { APICV_INHIBIT_REASONS };
-> +
-> +	BUILD_BUG_ON(ARRAY_SIZE(apicv_inhibits) != NR_APICV_INHIBIT_REASONS);
-> +
->  	if (set)
->  		__set_bit(reason, inhibits);
->  	else
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
