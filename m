@@ -1,184 +1,155 @@
-Return-Path: <linux-kernel+bounces-173790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2858C0562
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:12:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51608C0568
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11AF1C20D20
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:12:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F453281D23
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9511130E36;
-	Wed,  8 May 2024 20:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726AD130E39;
+	Wed,  8 May 2024 20:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ftTVBurk"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B5912BF23;
-	Wed,  8 May 2024 20:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FlVzvJsU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAB412BF23;
+	Wed,  8 May 2024 20:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715199130; cv=none; b=Sly57k4jCy6jYKzrsxNPRdLfnn0ciEW8NwZqGojV+CUO8wY5autxfCiDqtvz4yTUUYnh2khyS6Ak5HoE+2g9zEgqSJ2o8XSTJ4miszwELxRv/lUr0m/p4b0yZt+h4zWxkcR0aVai8WIo4jgdDNjYsHu/fpRswzE2Owh0vAJh1FM=
+	t=1715199273; cv=none; b=NR0LI2zlaXZv3soC6vAn360pP/Gwm2VydNIqxIQ3bqS9qar2i/QlYjKB4lzWHEcKjSVASPG3glB2HjX4bzYjmUe8cpjzLpKgwwh7jBHImMREaKi2V8jLN6Y324p2iU9tR9K/6Yc1jU+LRGke1Psx4+XPjnuqzvHbZv2EY4W6rA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715199130; c=relaxed/simple;
-	bh=zIydT8YGTS5HHdhFvaY+z2IBXHjQb1KRzSYhyMGehm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jGWzrED/O5xLlAbpmtI6Av5jz5raxaGh57n04v08CNgSIsxvuEhSFeQAa2CzDxQWrnye2u39mcrWUJSHoL0JmXPpHskUtXYMDBjV5wqwq8GmDGe925+RXQ9h/Ipp5Ic3qzfqisahOb0cofIJJRk4LsemAsHjhTxzk173Jok6jbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ftTVBurk; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 53C9B2083CB0;
-	Wed,  8 May 2024 13:12:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 53C9B2083CB0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715199122;
-	bh=YQLVi+zPNdIy/0huyFzR9lAKIP+Jz+4FnUm+Tl+eDcA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ftTVBurkguwhKOiJhK1awfGao4KUzY3bAftTWFWq9LkQH3VQ7WP991P6AE9zwe41s
-	 RMvuQ0BxvO5trYbdHZZazQNmtSwcFlLoafwuffuXrwDd5CYh+2vixLqYJI55BXhKoX
-	 5zYejGwj46nmDpVRiLxKt37iz/NegfHOjWptLljg=
-Message-ID: <2654ad6e-66b7-4698-94da-892cc9d0802c@linux.microsoft.com>
-Date: Wed, 8 May 2024 13:12:00 -0700
+	s=arc-20240116; t=1715199273; c=relaxed/simple;
+	bh=cSANn1r02z11GW7siTDbWe0wORQUwoGGbSwqIt0FLcI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KwwWzE8+Pi+0tt59wcLxnRcWZh7vE8Ek5GOryShYZ2+kVuzuLqty9au5pUvIvdLT8Spe+CtwNGxoa33SsyVtz5XHO/UYam/8Edta8BhzZgHitwQCYTTuqlaQItlFYoxtpQAh+Tp4Ts9EcvixHX92/VmYRdeM9rbJb/SuEN9dpPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FlVzvJsU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F00BEC32782;
+	Wed,  8 May 2024 20:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715199272;
+	bh=cSANn1r02z11GW7siTDbWe0wORQUwoGGbSwqIt0FLcI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=FlVzvJsUILIQP0KBq+N5hgAJgaHSXEMjXDcyqpJy1EieK7aG4r4vxhyX+8s9lTAYe
+	 +kDKa0nFoVnCntiwWxP6gMq9KBuVU0yL8HYWytPYOeezCtn4LvInsgL65QIPKi82bH
+	 prq0oq6yOmrHQAPxBi9Hr/524Ro4hZVTVTnsB+ZRtYHlbeBtJ7HQPby697zmNUoL+X
+	 HA8bKH8Xg6cVKjGU9FbPJKH8DDnNgvT6l2oruCaKoBjidQkIhYveJuEt11ZT0OVOgE
+	 plvu/3bhbWj2hxv7fEYMcegNkHa77rPSIbIDh8YUBlAZ4a325ItEDJ4VMJmvbw8Z0m
+	 SVUXjjo0hJD0Q==
+Date: Wed, 8 May 2024 15:14:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thatchanamurthy Satish <Satish.Thatchanamurt@dell.com>
+Subject: Re: [PATCH v1] PCI/EDR: Align EDR implementation with PCI firmware
+ r3.3 spec
+Message-ID: <20240508201430.GA1785648@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/12] drm/amdgpu, drm/radeon: Make I2C terminology
- more inclusive
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- "open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS"
- <intel-gfx@lists.freedesktop.org>,
- "open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS"
- <intel-xe@lists.freedesktop.org>,
- "open list:DRM DRIVER FOR NVIDIA GEFORCE/QUADRO GPUS"
- <nouveau@lists.freedesktop.org>,
- "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
- "open list:BTTV VIDEO4LINUX DRIVER" <linux-media@vger.kernel.org>,
- "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Evan Quan <evan.quan@amd.com>, Hawking Zhang <Hawking.Zhang@amd.com>,
- Candice Li <candice.li@amd.com>, Ran Sun <sunran001@208suo.com>,
- Alexander Richards <electrodeyt@gmail.com>, Wolfram Sang <wsa@kernel.org>,
- Andi Shyti <andi.shyti@linux.intel.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Heiko Stuebner <heiko@sntech.de>, Heiner Kallweit <hkallweit1@gmail.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>, Ruan Jinjie <ruanjinjie@huawei.com>,
- Aurabindo Pillai <aurabindo.pillai@amd.com>, Wayne Lin <wayne.lin@amd.com>,
- Samson Tam <samson.tam@amd.com>, Alvin Lee <alvin.lee2@amd.com>,
- Sohaib Nadeem <sohaib.nadeem@amd.com>, Charlene Liu <charlene.liu@amd.com>,
- Tom Chung <chiahsuan.chung@amd.com>, Alan Liu <haoping.liu@amd.com>,
- Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
- Meenakshikumar Somasundaram <meenakshikumar.somasundaram@amd.com>,
- George Shen <george.shen@amd.com>, Aric Cyr <aric.cyr@amd.com>,
- Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
- Qingqing Zhuo <Qingqing.Zhuo@amd.com>, Dillon Varone
- <dillon.varone@amd.com>, Lijo Lazar <lijo.lazar@amd.com>,
- Asad kamal <asad.kamal@amd.com>, Kenneth Feng <kenneth.feng@amd.com>,
- Ma Jun <Jun.Ma2@amd.com>, Darren Powell <darren.powell@amd.com>,
- Yang Wang <kevinyang.wang@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Yifan Zhang <yifan1.zhang@amd.com>, Le Ma <Le.Ma@amd.com>,
- "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- Alex Deucher <alexander.deucher@amd.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240503181333.2336999-1-eahariha@linux.microsoft.com>
- <20240503181333.2336999-2-eahariha@linux.microsoft.com>
- <0a6d4fa9-169f-425b-93d6-04314c617090@linux.microsoft.com>
- <CADnq5_NpxPM-FTcCchdBMRng=6xdM03s93XEX2_8fx44MRVYag@mail.gmail.com>
-Content-Language: en-CA
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <CADnq5_NpxPM-FTcCchdBMRng=6xdM03s93XEX2_8fx44MRVYag@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240501022543.1626025-1-sathyanarayanan.kuppuswamy@linux.intel.com>
 
-On 5/8/2024 7:53 AM, Alex Deucher wrote:
-> On Tue, May 7, 2024 at 2:32 PM Easwar Hariharan
-> <eahariha@linux.microsoft.com> wrote:
->>
->> On 5/3/2024 11:13 AM, Easwar Hariharan wrote:
->>> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
->>> with more appropriate terms. Inspired by and following on to Wolfram's
->>> series to fix drivers/i2c/[1], fix the terminology for users of
->>> I2C_ALGOBIT bitbanging interface, now that the approved verbiage exists
->>> in the specification.
->>>
->>> Compile tested, no functionality changes intended
->>>
->>> [1]: https://lore.kernel.org/all/20240322132619.6389-1-wsa+renesas@sang-engineering.com/
->>>
->>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->>> ---
->>>  .../gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c  |  8 +++---
->>>  drivers/gpu/drm/amd/amdgpu/amdgpu_i2c.c       | 10 +++----
->>>  drivers/gpu/drm/amd/amdgpu/atombios_i2c.c     |  8 +++---
->>>  drivers/gpu/drm/amd/amdgpu/atombios_i2c.h     |  2 +-
->>>  drivers/gpu/drm/amd/amdgpu/smu_v11_0_i2c.c    | 20 ++++++-------
->>>  .../gpu/drm/amd/display/dc/bios/bios_parser.c |  2 +-
->>>  .../drm/amd/display/dc/bios/bios_parser2.c    |  2 +-
->>>  .../drm/amd/display/dc/core/dc_link_exports.c |  4 +--
->>>  drivers/gpu/drm/amd/display/dc/dc.h           |  2 +-
->>>  drivers/gpu/drm/amd/display/dc/dce/dce_i2c.c  |  4 +--
->>>  .../display/include/grph_object_ctrl_defs.h   |  2 +-
->>>  drivers/gpu/drm/amd/include/atombios.h        |  2 +-
->>>  drivers/gpu/drm/amd/include/atomfirmware.h    | 26 ++++++++---------
->>>  .../powerplay/hwmgr/vega20_processpptables.c  |  4 +--
->>>  .../amd/pm/powerplay/inc/smu11_driver_if.h    |  2 +-
->>>  .../inc/pmfw_if/smu11_driver_if_arcturus.h    |  2 +-
->>>  .../inc/pmfw_if/smu11_driver_if_navi10.h      |  2 +-
->>>  .../pmfw_if/smu11_driver_if_sienna_cichlid.h  |  2 +-
->>>  .../inc/pmfw_if/smu13_driver_if_aldebaran.h   |  2 +-
->>>  .../inc/pmfw_if/smu13_driver_if_v13_0_0.h     |  2 +-
->>>  .../inc/pmfw_if/smu13_driver_if_v13_0_7.h     |  2 +-
->>>  .../gpu/drm/amd/pm/swsmu/smu11/arcturus_ppt.c |  4 +--
->>>  .../amd/pm/swsmu/smu11/sienna_cichlid_ppt.c   |  8 +++---
->>>  drivers/gpu/drm/radeon/atombios.h             | 16 +++++------
->>>  drivers/gpu/drm/radeon/atombios_i2c.c         |  4 +--
->>>  drivers/gpu/drm/radeon/radeon_combios.c       | 28 +++++++++----------
->>>  drivers/gpu/drm/radeon/radeon_i2c.c           | 10 +++----
->>>  drivers/gpu/drm/radeon/radeon_mode.h          |  6 ++--
->>>  28 files changed, 93 insertions(+), 93 deletions(-)
->>>
->>
->> <snip>
->>
->> Hello Christian, Daniel, David, others,
->>
->> Could you re-review v2 since the feedback provided in v0 [1] has now been addressed? I can send v3 with
->> all other feedback and signoffs from the other maintainers incorporated when I have something for amdgpu
->> and radeon.
+On Wed, May 01, 2024 at 02:25:43AM +0000, Kuppuswamy Sathyanarayanan wrote:
+> During the Error Disconnect Recover (EDR) spec transition from r3.2 ECN
+> to PCI firmware spec r3.3, improvements were made to definitions of
+> EDR_PORT_DPC_ENABLE_DSM (0x0C) and EDR_PORT_LOCATE_DSM(0x0D) _DSMs.
 > 
-> This seems like a lot of churn.  Additionally, a bunch of these
-> headers are shared with other OSes, so it's possible some of the
-> changes may end up getting reverted accidently when we sync up or we
-> may add new headers in new code with the old nomenclature and then
-> we'd need to make sure to adjust it to make sure everything was
-> aligned again.  I would just as soon leave things as is, but I'm open
-> to acking them if there is a strong desire to update things.
+> Specifically,
 > 
-> Alex
+> * EDR_PORT_DPC_ENABLE_DSM _DSM version changed from 5 to 6, and
+>   arg4 is now a package type instead of an integer in version 5.
+> * EDR_PORT_LOCATE_DSM _DSM uses BIT(31) to return the status of the
+>   operation.
+> 
+> Ensure _DSM implementation aligns with PCI firmware r3.3 spec
+> recommendation. More details about the EDR_PORT_DPC_ENABLE_DSM and
+> EDR_PORT_LOCATE_DSM _DSMs can be found in PCI firmware specification,
+> r3.3, sec 4.6.12 and sec 4.6.13.
+> 
+> While at it, fix a typo in EDR_PORT_LOCATE_DSM comments.
+> 
+> Fixes: ac1c8e35a326 ("PCI/DPC: Add Error Disconnect Recover (EDR) support")
+> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-The way I see it, this is a small downpayment on the debt we have built up so far. Internship
-programs like LF Outreachy to get more underrepresented groups involved in open source are trying to 
-change the open source community culture to be more inclusive, but simultaneously rely on the culture
-being welcoming enough as well.
+I split this into two patches and applied them to pci/edr for v6.10,
+thanks!
 
-I do see the challenge involved in preserving the changes and ensuring no new code is added with
-outdated nomenclature (but see [1]), but culture changes one person at a time, and I'd encourage the community
-to do the work needed so we can move past our (mostly) inadvertent role in perpetuating it.
+Take a look here:
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=edr
+and make sure I didn't mess it up (only differences are comments and
+commit logs).
 
-That's my 2c (or your sub-unit currency of choice).
-
-Easwar
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=49decddd39e5f6132ccd7d9fdc3d7c470b0061bb
+> ---
+>  drivers/pci/pcie/edr.c | 23 +++++++++++++++++------
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/edr.c b/drivers/pci/pcie/edr.c
+> index 5f4914d313a1..fea098e22e3e 100644
+> --- a/drivers/pci/pcie/edr.c
+> +++ b/drivers/pci/pcie/edr.c
+> @@ -35,7 +35,7 @@ static int acpi_enable_dpc(struct pci_dev *pdev)
+>  	 * Behavior when calling unsupported _DSM functions is undefined,
+>  	 * so check whether EDR_PORT_DPC_ENABLE_DSM is supported.
+>  	 */
+> -	if (!acpi_check_dsm(adev->handle, &pci_acpi_dsm_guid, 5,
+> +	if (!acpi_check_dsm(adev->handle, &pci_acpi_dsm_guid, 6,
+>  			    1ULL << EDR_PORT_DPC_ENABLE_DSM))
+>  		return 0;
+>  
+> @@ -47,11 +47,11 @@ static int acpi_enable_dpc(struct pci_dev *pdev)
+>  	argv4.package.elements = &req;
+>  
+>  	/*
+> -	 * Per Downstream Port Containment Related Enhancements ECN to PCI
+> -	 * Firmware Specification r3.2, sec 4.6.12, EDR_PORT_DPC_ENABLE_DSM is
+> -	 * optional.  Return success if it's not implemented.
+> +	 * Per PCI Firmware Specification r3.3, sec 4.6.12,
+> +	 * EDR_PORT_DPC_ENABLE_DSM is optional. Return success if it's not
+> +	 * implemented.
+>  	 */
+> -	obj = acpi_evaluate_dsm(adev->handle, &pci_acpi_dsm_guid, 5,
+> +	obj = acpi_evaluate_dsm(adev->handle, &pci_acpi_dsm_guid, 6,
+>  				EDR_PORT_DPC_ENABLE_DSM, &argv4);
+>  	if (!obj)
+>  		return 0;
+> @@ -86,7 +86,7 @@ static struct pci_dev *acpi_dpc_port_get(struct pci_dev *pdev)
+>  
+>  	/*
+>  	 * Behavior when calling unsupported _DSM functions is undefined,
+> -	 * so check whether EDR_PORT_DPC_ENABLE_DSM is supported.
+> +	 * so check whether EDR_PORT_LOCATE_DSM is supported.
+>  	 */
+>  	if (!acpi_check_dsm(adev->handle, &pci_acpi_dsm_guid, 5,
+>  			    1ULL << EDR_PORT_LOCATE_DSM))
+> @@ -103,6 +103,17 @@ static struct pci_dev *acpi_dpc_port_get(struct pci_dev *pdev)
+>  		return NULL;
+>  	}
+>  
+> +	/*
+> +	 * Per PCI Firmware Specification r3.3, sec 4.6.13, bit 31 represents
+> +	 * the success/failure of the operation. If bit 31 is set, the operation
+> +	 * is failed.
+> +	 */
+> +	if (obj->integer.value & BIT(31)) {
+> +		ACPI_FREE(obj);
+> +		pci_err(pdev, "Locate Port _DSM failed\n");
+> +		return NULL;
+> +	}
+> +
+>  	/*
+>  	 * Firmware returns DPC port BDF details in following format:
+>  	 *	15:8 = bus
+> -- 
+> 2.25.1
+> 
 
