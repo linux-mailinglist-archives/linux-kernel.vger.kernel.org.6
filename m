@@ -1,226 +1,224 @@
-Return-Path: <linux-kernel+bounces-173832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69CB8C061E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B55E8C0625
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E179283AF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06B5283B77
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF8131BBD;
-	Wed,  8 May 2024 21:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9304A131BB7;
+	Wed,  8 May 2024 21:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kxuxpqp8"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pq8dF/JB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9geRoPW";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pq8dF/JB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w9geRoPW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF60130E24
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C71D12C497;
+	Wed,  8 May 2024 21:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715202905; cv=none; b=KoC9/g/eGilsGgOX6Zi/R3/w3QbrU/JrQh65jCSqr8miny1HAlVAB1SikZLe27pNzZyzKLoMhE9uUfzv7VPTDyt7EkX4feaQHP+DaHK1pKqw9XW/5OMeBqADmWa23fwj4Abiy+XFEt0G8leTvcGkHpjiNvoTRc+DLpILgjoPrTQ=
+	t=1715203087; cv=none; b=MwDZwzYo234rnBSgI1GFVQpy62SIMexiazWmf/2LNwwZ/Z1XJhXHKzUV4uyyckM4PaKjtatB0CBRiga+WtyYOlGeBiVQuX7CIoBnXwXArpzdfsOidMYBC/5hjWQcorED3D0p+YVMcY0K1h4dKZfIX3h41mHfBvW8nuDrsjjR38I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715202905; c=relaxed/simple;
-	bh=ZAY9OmGIvyuKXyebqDh1IRclz4/RXSUx0T+wrGSqSIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rol6ii73esrVw3GAgukzXVkagsi2x+Ib+tBm85F6DXXF3LedwWxkZPslEJBKiLT2EdH01HLZXNF9oOHoOLvS++C3TOrwDKkSAR1QfivtOQIxrOY1QaAqYbTOIwLi/MuTpLc0a51wNSIORpQpNmI/NCeWJFhP2tjQpxSlTNCZGek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kxuxpqp8; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c969fa8fd2so152196b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:15:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715202901; x=1715807701; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=buSNW1rXJ5tp0mHF2b1c12zxGyNSJnH+cWUgnRIBSqA=;
-        b=Kxuxpqp8c24qcvc4ShwzWdwy1bdADPCCWE/3rBmWfhiQl6hmu0NdmIbHyO8NB8+22V
-         T1AKHck2Z/tvmPyshjvk2+2JGaFhz/d59CmLU5kYFec3BAR0eclD2vwZGFpBSnY8R0DQ
-         pOxGVSom0MfMQBZNbGBcdViJYzUQdo2vhLahY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715202901; x=1715807701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=buSNW1rXJ5tp0mHF2b1c12zxGyNSJnH+cWUgnRIBSqA=;
-        b=LaZEWfssmsrJM0RfrqyXNV9SrSFGHqHobGA3yvNgiMpwTOphPT0nHvwfFwQKPyBrc6
-         icQHiNreAgSm3KnYz60kLBLxBXqNvAndcOIbnP5sN/t5peX+oMXDyanYroP+3Cl6Qkxq
-         G2oVJIOLhcql0zRwYHVyQ4+0qSSwdstlvKy6uEN2R2FZ6zfJk2tuEnWXomU78/dOjDv0
-         C6xLAwZHb6G5RlaGz1GrwPR/kjA0C9L9d9xNQXd9p9eaAhJzzkaht8L3wQ79c6B3a2b8
-         LbdjYs9nQ8ZZa37OJM2tzY0gbNAhxNYl/NlaigGUS7x38RuTdvHw+m7GdlV/rYqNfZBj
-         TnWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR7qQ8wV6AU5P8IyVHiKEoNnaxu+3ZM9MAqz0wCttSefKFDDtuGvO/stXpdMPvAhooi2o580R6pSREMiLT4XdN8TxqAFRaY1g4IKET
-X-Gm-Message-State: AOJu0Yxo+iOM2KFyG++L1n7BYJZN7M9SA2PEJkLaYQQk0Yi7A1w9UQ8V
-	tiSzS7oY6mO0nVFD4n+nbDcZXm2OPERqcGKQaAekKE1TpnGXPlfD9ovujwKClvGPS2H1dJvuNvQ
-	=
-X-Google-Smtp-Source: AGHT+IFv6xGirBnyCIMeN/JrTkUQJvNBCiOS6MZNF12+ENLhoNMZNmPdghedZfb9aUXy6B2Rc/asCQ==
-X-Received: by 2002:a05:6808:418c:b0:3c9:6f6d:2e72 with SMTP id 5614622812f47-3c98532acbbmr4281556b6e.56.1715202900539;
-        Wed, 08 May 2024 14:15:00 -0700 (PDT)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
-        by smtp.gmail.com with ESMTPSA id bi27-20020a05620a319b00b0078d631f35c2sm6249125qkb.24.2024.05.08.14.15.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 14:15:00 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-439b1c72676so47171cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:15:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWmoxIhwE9AXpq2I4K7XbdEqWbQU1NeJrSsL9PWFgvR/ZW8I0nvMDY8WWKcJFF2OvevAY5wJCSn9sx845PGs9EflY5UMY0ushwWllAE
-X-Received: by 2002:a05:622a:1c0d:b0:43a:c1cd:2f4c with SMTP id
- d75a77b69052e-43df44dc04cmr169931cf.5.1715202879034; Wed, 08 May 2024
- 14:14:39 -0700 (PDT)
+	s=arc-20240116; t=1715203087; c=relaxed/simple;
+	bh=PPKQ+QxsB1/t58zneH/9FkTgvIO2lVo/8IcKZboomtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXSbaNXZtwx0RUv55nnQA1jxmawdN2l1BwglCCp5kSc+930X84o5u1vJYCz+0G7F00laarT2gSSWfDWhawCFpqbdLX3DWiAEGvEplvgQ2fkqicat7VU6WoyAhgfApOjb4/nu7BvVBptPAV/K+6avf5t7dn1ojn1afgKWByzL8cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pq8dF/JB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9geRoPW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pq8dF/JB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w9geRoPW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2FCDC374DD;
+	Wed,  8 May 2024 21:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715203083;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
+	b=pq8dF/JBpC7ZPUK/AauGGYcWQ6JS8LdbDw4GVo8r8qXpFEX7xVcbhIbfm4cJpOXZcBThcs
+	SytEmoyzXKcWe91vaQYbF9Kw6K9pyDNkm+0laah4dUkGyn6MNeQ2PAYRAU2QeJ5UyieUY5
+	G3ftC5RSaeUJTytySMjyMFXSqq8PXKs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715203083;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
+	b=w9geRoPW8r11T4vW25Og+KGODiMnim95j31+SbAkTqjcTB6TpC8oZsIIBHlbK9jBKExzpz
+	L2umOps0D+WG/6Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="pq8dF/JB";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=w9geRoPW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715203083;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
+	b=pq8dF/JBpC7ZPUK/AauGGYcWQ6JS8LdbDw4GVo8r8qXpFEX7xVcbhIbfm4cJpOXZcBThcs
+	SytEmoyzXKcWe91vaQYbF9Kw6K9pyDNkm+0laah4dUkGyn6MNeQ2PAYRAU2QeJ5UyieUY5
+	G3ftC5RSaeUJTytySMjyMFXSqq8PXKs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715203083;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Q5SQ6cqLhRKayLQGjy5PeZI4TAB9vgmPlhyLHGGpl8=;
+	b=w9geRoPW8r11T4vW25Og+KGODiMnim95j31+SbAkTqjcTB6TpC8oZsIIBHlbK9jBKExzpz
+	L2umOps0D+WG/6Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4C6A813A27;
+	Wed,  8 May 2024 21:18:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 44LRCgrsO2ajcgAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Wed, 08 May 2024 21:18:02 +0000
+Date: Wed, 8 May 2024 23:17:59 +0200
+From: Petr Vorel <pvorel@suse.cz>
+To: Glass Su <glass.su@suse.com>
+Cc: linux-bcachefs@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>, Su Yue <l@damenly.org>,
+	Brian Foster <bfoster@redhat.com>, Coly Li <colyli@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC value to
+ UAPI magic.h
+Message-ID: <20240508211759.GA209026@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20240507153757.150891-1-pvorel@suse.cz>
+ <6D9FCB08-480D-4CA0-82E2-284B1F2BF8FD@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503213441.177109-1-dianders@chromium.org> <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com>
-In-Reply-To: <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 8 May 2024 14:14:22 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WoYm43SzrdrSZ1Np58iQ4nMwF0u6uamOAnZc4pqmBpsg@mail.gmail.com>
-Message-ID: <CAD=FV=WoYm43SzrdrSZ1Np58iQ4nMwF0u6uamOAnZc4pqmBpsg@mail.gmail.com>
-Subject: Re: [RFT PATCH v2 00/48] drm/panel: Remove most store/double-check of
- prepared/enabled state
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
-	Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Ondrej Jirman <megi@xff.cz>, 
-	Purism Kernel Team <kernel@puri.sm>, Robert Chiras <robert.chiras@nxp.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Stefan Mavrodiev <stefan@olimex.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6D9FCB08-480D-4CA0-82E2-284B1F2BF8FD@suse.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.71
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 2FCDC374DD
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.71 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	REPLYTO_EQ_FROM(0.00)[]
 
-Hi,
+HI Su, Kent,
 
-On Sun, May 5, 2024 at 11:52=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-org> wrote:
->
-> On Fri, May 3, 2024 at 11:36=E2=80=AFPM Douglas Anderson <dianders@chromi=
-um.org> wrote:
->
-> > As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-> > prepared/enabled in drm_panel"), we want to remove needless code from
-> > panel drivers that was storing and double-checking the
-> > prepared/enabled state. Even if someone was relying on the
-> > double-check before, that double-check is now in the core and not
-> > needed in individual drivers.
-> >
-> > This series attempts to do just that. While the original grep, AKA:
-> >   git grep 'if.*>prepared' -- drivers/gpu/drm/panel
-> >   git grep 'if.*>enabled' -- drivers/gpu/drm/panel
-> > ...still produces a few hits after my series, they are _mostly_ all
-> > gone. The ones that are left are less trivial to fix.
-> >
-> > One of the main reasons that many panels probably needed to store and
-> > double-check their prepared/enabled appears to have been to handle
-> > shutdown and/or remove. Panels drivers often wanted to force the power
-> > off for panels in these cases and this was a good reason for the
-> > double-check.
-> >
-> > In response to my V1 series [1] we had much discussion of what to
-> > do. The conclusion was that as long as DRM modeset drivers properly
-> > called drm_atomic_helper_shutdown() that we should be able to remove
-> > the explicit shutdown/remove handling in the panel drivers. Most of
-> > the patches to improve DRM modeset drivers [2] [3] [4] have now
-> > landed.
-> >
-> > In contrast to my V1 series, I broke the V2 series up a lot
-> > more. Since a few of the panel drivers in V1 already landed, we had
-> > fewer total drivers and so we could devote a patch to each panel.
-> > Also, since we were now relying on DRM modeset drivers I felt like we
-> > should split the patches for each panel into two: one that's
-> > definitely safe and one that could be reverted if we found a
-> > problematic DRM modeset driver that we couldn't fix.
-> >
-> > Sorry for the large number of patches. I've set things to mostly just
-> > CC people on the cover letter and the patches that are relevant to
-> > them. I've tried to CC people on the whole series that have shown
-> > interest in this TODO item.
-> >
-> > As patches in this series are reviewed and/or tested they could be
-> > landed. There's really no ordering requirement for the series unless
-> > patches touch the same driver.
-> >
-> > NOTE: this touches _a lot_ of drivers, is repetitive, and is not
-> > really possible to generate automatically. That means it's entirely
-> > possible that my eyes glazed over and I did something wrong. Please
-> > double-check me and don't assume that I got everything perfect, though
-> > I did my best. I have at least confirmed that "allmodconfig" for arm64
-> > doesn't fall on its face with this series. I haven't done a ton of
-> > other testing.
-> >
-> > [1] https://lore.kernel.org/r/20230804140605.RFC.4.I930069a32baab6faf46=
-d6b234f89613b5cec0f14@changeid
-> > [2] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium=
-org
-> > [3] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium=
-org
-> > [4] https://lore.kernel.org/r/20230921192749.1542462-1-dianders@chromiu=
-m.org
->
-> This is the right thing to do, thanks for looking into this!
->
-> As for the behaviour of .remove() I doubt whether in many cases
-> the original driver authors have even tested this themselves.
+> > On May 7, 2024, at 23:37, Petr Vorel <pvorel@suse.cz> wrote:
 
-Yeah, I'd tend to agree.
+> > Move BCACHEFS_STATFS_MAGIC value to UAPI <linux/magic.h> under
+> > BCACHEFS_SUPER_MAGIC definition (use common approach for name) and reuse the
+> > definition in bcachefs_format.h BCACHEFS_STATFS_MAGIC.
 
+> > There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
+> > which use UUID_INIT() and are used only in libbcachefs. Therefore move
+> > only BCACHEFS_STATFS_MAGIC value, which can be used outside of
+> > libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
 
-> I would say we should just apply the series as soon as it's non-RFC
+> > Suggested-by: Su Yue <l@damenly.org>
 
-It's not actually RFC now, but "RFT" (request for testing). I don't
-_think_ there's any need to send a version without the RFT tag before
-landing unless someone really feels strongly about it.
+> Would you kindly amend it to Su Yue <glass.su@suse.com> or
+> Kent can help if the patch is going to be applied.
 
+Unfortunately Kent was faster, it's already merged without your SUSE address
+(and your RBT you added in the end):
 
-> after the next merge window
+https://evilpiepirate.org/git/bcachefs.git/commit/?h=for-next&id=ce8f9355f23be9756e499682d0d642a741db6c3a
 
-With drm-misc there's not really any specific reason to wait for the
-merge window to open/close as we can land in drm-misc-next at any time
-regardless of the merge window. drm-misc-next will simply stop feeding
-linuxnext for a while.
+@Kent: Maybe it can be even now amended (with Su Yue's RBT).
 
-That all being said, I'm happy to delay landing this until after the
-next -rc1 comes out if people would prefer that. If I don't hear
-anything, I guess I'll just wait until -rc1 before landing any of
-these.
+> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > ---
+> > Changes v2->v3:
+> > * Align tab with other entries.
+..
+> > #include <linux/uuid.h>
+> > +#include <uapi/linux/magic.h>
+> > #include "vstructs.h"
 
+> > #ifdef __KERNEL__
+> > @@ -1275,7 +1276,7 @@ enum bch_compression_opts {
+> > UUID_INIT(0xc68573f6, 0x66ce, 0x90a9, \
+> >  0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
 
-> and see what happens. I doubt it
-> will cause much trouble.
+> > -#define BCACHEFS_STATFS_MAGIC 0xca451a4e
+> > +#define BCACHEFS_STATFS_MAGIC BCACHEFS_SUPER_MAGIC
 
-I can land the whole series if that's what everyone agrees on. As I
-mentioned above, I'm at least slightly worried that I did something
-stupid _somewhere_ in this series since no automation was possible and
-with repetitive tasks like this it's super easy to flub something up.
-It's _probably_ fine, but I guess I still have the worry in the back
-of my mind.
+> > #define JSET_MAGIC __cpu_to_le64(0x245235c1a3625032ULL)
+> > #define BSET_MAGIC __cpu_to_le64(0x90135c78b99e07f5ULL)
+> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> > index 1b40a968ba91..bb575f3ab45e 100644
+> > --- a/include/uapi/linux/magic.h
+> > +++ b/include/uapi/linux/magic.h
+> > @@ -37,6 +37,7 @@
+> > #define HOSTFS_SUPER_MAGIC 0x00c0ffee
+> > #define OVERLAYFS_SUPER_MAGIC 0x794c7630
+> > #define FUSE_SUPER_MAGIC 0x65735546
+> > +#define BCACHEFS_SUPER_MAGIC 0xca451a4e
 
-If folks think I should just apply the whole series then I'm happy to
-do that. If folks think I should just land parts of the series as they
-are reviewed/tested I can do that as well. Let me know. If I don't
-hear anything I'd tend to just land patches that are reviewed/tested.
-Then after a month or so (hopefully) I'd send out a v2 with anything
-left.
+> IIUC, due to some historical reasons bcachefs used to switched
+> ondisk sb magic from BCACHE_MAGIC to BCHFS_MAGIC.
+> Other major fses uses  *_SUPER_MAGIC both for ondisk 
+> sb magic, kstatfs::f_type and super_block::s_magic.
+> However, for bcacehfs there are three magic numbers.
 
+Thanks for info. But for struct statfs in statfs() or fstatfs() only 0xca451a4e
+is needed, right? I would not expose the other(s) unless it's really needed.
+Also we'd need to backport UUID_INIT() into UAPI :(.
 
-> The series:
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Anyway, it looks good to me so far:
+> Reviewed-by: Su Yue <glass.su@suse.com> 
 
-Thanks!
+And also without your RBT.
 
--Doug
+Kind regards,
+Petr
+
+> — 
+> Su
 
