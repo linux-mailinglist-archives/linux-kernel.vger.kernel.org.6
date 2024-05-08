@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-173407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FFC8C0013
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:35:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA128C0015
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F01A1F26EF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11301C23444
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100EF126F27;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EB61272BF;
 	Wed,  8 May 2024 14:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="fiG++FY1"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sb49OlRC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970C186254;
-	Wed,  8 May 2024 14:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050186630;
+	Wed,  8 May 2024 14:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715178878; cv=none; b=ENvFJLlYQoBXDdvpT+y+rjZQ5rXtLH12hItyn67VocswYFCEuLSWSnrUvvTkvKyFO9dpMpugUznKB27Ea21SXHK/IHd85pNsln+sEKEV5RybxU3kMZ9WnRuS6S9sAOz6KcFi7YoxvDYYdsBmCEi1vIljN6RSpVasZOSPD63hVIQ=
+	t=1715178878; cv=none; b=j9LWj7Z3H5AlQHVwE2gaEeFyJDPxwL0nc4P8anPxHcNb7BZLkaQK7s3VY9euKZUfOmxcDwxjpjqprVZ/v6TY8Ns6ybLQsloa9iWu+AWQwAxYoBok4Ikl3jpxFzyPu0COJMtAf2Bc03h/Tphg2963DDQTbym/8inUCTL0H+HN6F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715178878; c=relaxed/simple;
-	bh=SkoT0Uk0es2G81IY4lemOptjyc0r3NPOQ9SxNmgHgUo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TcYWx3Qgq9bu2cZUI3VBIj0uX83Fj8JDuYJeYpIXbowt0zpwwzSbh0g3oS2KsEwM/q+vgigslS1KjNPEQvRKLb4MOT6Zz8wHZ264xZW/6rUfZc8v5NFOQMpjxTaXcU/GhXYmwiB9etnmhLdxNQmtITAh9yWdWMOklGHm2a6qqD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=fiG++FY1; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 961A7600DC;
-	Wed,  8 May 2024 14:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1715178869;
-	bh=SkoT0Uk0es2G81IY4lemOptjyc0r3NPOQ9SxNmgHgUo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fiG++FY1HFrnr8wnRZb5PucCL/uuXFhWSXsqPWx4rR+J9vrdCQZ2SCMdujUkHDZMY
-	 1pw/58E+pCe0TsE3jik9EyMQWCSPj8P8Lk8SJpbT3XTSdN8LRpDW61UDSsBpNxfDF7
-	 UGad2IJ5QnF/iWHqP9rNWav6RV4kec+x6R5BTOxNRRMKg0QKe65pII9OGhdMxj2FEi
-	 fYW1NiPUd9D7n6Nk/ozjuGoVtXyRJvx12BImpidhwapQTuGd5l3G/CHqwDdn/mF6Wf
-	 jORdob/eHPul0z5wdWa+3g2M7PyHIgkQlFmeDu4VMbTEXm8Yl3AUJgPr122vanYEoV
-	 7WXcf8kiITIGQ==
-Received: by x201s (Postfix, from userid 1000)
-	id 480FC208F1D; Wed, 08 May 2024 14:34:07 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: netdev@vger.kernel.org
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	bh=LkpImf7Xtegq1U9a+QMyUfSZIIkF8bJjQH28HZhVga0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pdRCfcv5oTyl47h97jD2+zBB//BWUfyGxzN/JHMRA63zqMzmsd8XXJgp2YOos9gxQPswB5P68PIAr4l16JldOGvZH1fG7pfMjB/Mh/pDzWR7Gxnu+Mg4EKwyAO7detugQjJuMnELoA52vA0vqg+EekQqZepF/prwpffV4LZQ8r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sb49OlRC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C1CC32783;
+	Wed,  8 May 2024 14:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715178877;
+	bh=LkpImf7Xtegq1U9a+QMyUfSZIIkF8bJjQH28HZhVga0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Sb49OlRC1SeN2Z3yjggk5qbbS+bA9/SmtwkeG/4KATklP+CJdtZ2EXsJCcgoPI19L
+	 u00EsvbrMumHLyBDeGfjvZMtz5Xlg44JC9XWF4fVhkhcfrAawWN9/dNRayNeU7A8OT
+	 IboYGxypuslUkGCdY7BipEsqI0msBln/hKwRHdcFa4Tx65YBxL69IfAmf/9aAdL4SR
+	 stdL30hqMNFSAWipoYsCjisjsHFhc0VipbCbJfw3mKqTPdYnu0R38pxOTljGKceX3t
+	 glP/6q93MgUdFh3SxLtg6Hfa2J2yVvx3E2/bW0omYLgFQk3agx1Qf4+XKmMyv4xZLp
+	 qBNgO1v+I/6oA==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
 	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: [PATCH net-next v2 12/14] net: qede: use faked extack in qede_flow_spec_to_rule()
+	linux-arch@vger.kernel.org
+Cc: puranjay12@gmail.com
+Subject: [PATCH] tools/memory-model: Add atomic_and()/or()/xor() and add_negative
 Date: Wed,  8 May 2024 14:34:00 +0000
-Message-ID: <20240508143404.95901-13-ast@fiberby.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240508143404.95901-1-ast@fiberby.net>
-References: <20240508143404.95901-1-ast@fiberby.net>
+Message-Id: <20240508143400.36256-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Since qede_parse_flow_attr() now does error reporting
-through extack, then give it a fake extack and extract the
-error message afterwards if one was set.
+Pull-849[1] added the support of '&', '|', and '^' to the herd7 tool's
+atomics operations.
 
-The extracted error message is then passed on through
-DP_NOTICE(), including messages that was earlier issued
-with DP_INFO().
+Use these in linux-kernel.def to implement atomic_and()/or()/xor() with
+all their ordering variants.
 
-This fake extack approach is already used by
-mlxsw_env_linecard_modules_power_mode_apply() in
-drivers/net/ethernet/mellanox/mlxsw/core_env.c
+atomic_add_negative() is already available so add its acquire, release,
+and relaxed ordering variants.
 
-Only compile tested.
+[1] https://github.com/herd/herdtools7/pull/849
 
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
 ---
-Note:
-Even through _msg is marked in include/linux/netlink.h as
-"don't access directly, use NL_SET_ERR_MSG", then the comment
-above NL_SET_ERR_MSG, seams to indicate that it should be fine
-to access it directly if for reading, as is done other places.
-I could also add a NL_GET_ERR_MSG but I would rather not do that
-in this series.
----
- drivers/net/ethernet/qlogic/qede/qede_filter.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/memory-model/linux-kernel.def | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_filter.c b/drivers/net/ethernet/qlogic/qede/qede_filter.c
-index 8c1c15b73125..b83432744a03 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
-@@ -1990,6 +1990,7 @@ static int qede_flow_spec_to_rule(struct qede_dev *edev,
- {
- 	struct ethtool_rx_flow_spec_input input = {};
- 	struct ethtool_rx_flow_rule *flow;
-+	struct netlink_ext_ack extack;
- 	__be16 proto;
- 	int err;
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index 88a39601f525..d1f11930ec51 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -65,6 +65,9 @@ atomic_set_release(X,V) { smp_store_release(X,V); }
  
-@@ -2017,7 +2018,7 @@ static int qede_flow_spec_to_rule(struct qede_dev *edev,
- 	if (IS_ERR(flow))
- 		return PTR_ERR(flow);
+ atomic_add(V,X) { __atomic_op(X,+,V); }
+ atomic_sub(V,X) { __atomic_op(X,-,V); }
++atomic_and(V,X) { __atomic_op(X,&,V); }
++atomic_or(V,X)  { __atomic_op(X,|,V); }
++atomic_xor(V,X) { __atomic_op(X,^,V); }
+ atomic_inc(X)   { __atomic_op(X,+,1); }
+ atomic_dec(X)   { __atomic_op(X,-,1); }
  
--	err = qede_parse_flow_attr(proto, flow->rule, t, NULL);
-+	err = qede_parse_flow_attr(proto, flow->rule, t, &extack);
- 	if (err)
- 		goto err_out;
+@@ -77,6 +80,21 @@ atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{once}(X,+,V)
+ atomic_fetch_add_acquire(V,X) __atomic_fetch_op{acquire}(X,+,V)
+ atomic_fetch_add_release(V,X) __atomic_fetch_op{release}(X,+,V)
  
-@@ -2025,6 +2026,8 @@ static int qede_flow_spec_to_rule(struct qede_dev *edev,
- 	err = qede_flow_spec_validate(edev, &flow->rule->action, t,
- 				      fs->location);
- err_out:
-+	if (extack._msg)
-+		DP_NOTICE(edev, "%s\n", extack._msg);
- 	ethtool_rx_flow_rule_destroy(flow);
- 	return err;
- 
++atomic_fetch_and(V,X) __atomic_fetch_op{mb}(X,&,V)
++atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{once}(X,&,V)
++atomic_fetch_and_acquire(V,X) __atomic_fetch_op{acquire}(X,&,V)
++atomic_fetch_and_release(V,X) __atomic_fetch_op{release}(X,&,V)
++
++atomic_fetch_or(V,X) __atomic_fetch_op{mb}(X,|,V)
++atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{once}(X,|,V)
++atomic_fetch_or_acquire(V,X) __atomic_fetch_op{acquire}(X,|,V)
++atomic_fetch_or_release(V,X) __atomic_fetch_op{release}(X,|,V)
++
++atomic_fetch_xor(V,X) __atomic_fetch_op{mb}(X,^,V)
++atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{once}(X,^,V)
++atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{acquire}(X,^,V)
++atomic_fetch_xor_release(V,X) __atomic_fetch_op{release}(X,^,V)
++
+ atomic_inc_return(X) __atomic_op_return{mb}(X,+,1)
+ atomic_inc_return_relaxed(X) __atomic_op_return{once}(X,+,1)
+ atomic_inc_return_acquire(X) __atomic_op_return{acquire}(X,+,1)
+@@ -117,3 +135,6 @@ atomic_sub_and_test(V,X) __atomic_op_return{mb}(X,-,V) == 0
+ atomic_dec_and_test(X)  __atomic_op_return{mb}(X,-,1) == 0
+ atomic_inc_and_test(X)  __atomic_op_return{mb}(X,+,1) == 0
+ atomic_add_negative(V,X) __atomic_op_return{mb}(X,+,V) < 0
++atomic_add_negative_relaxed(V,X) __atomic_op_return{once}(X,+,V) < 0
++atomic_add_negative_acquire(V,X) __atomic_op_return{acquire}(X,+,V) < 0
++atomic_add_negative_release(V,X) __atomic_op_return{release}(X,+,V) < 0
 -- 
-2.43.0
+2.40.1
 
 
