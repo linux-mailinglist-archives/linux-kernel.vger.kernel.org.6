@@ -1,167 +1,108 @@
-Return-Path: <linux-kernel+bounces-173176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B102A8BFC91
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:46:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2488BFC94
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1944EB2176D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6408D1F2550F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFA282876;
-	Wed,  8 May 2024 11:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB26D82899;
+	Wed,  8 May 2024 11:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="QDBh2tlZ"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dtgqzpIj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E26823C3;
-	Wed,  8 May 2024 11:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31ED3823C3;
+	Wed,  8 May 2024 11:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168771; cv=none; b=i5+fC51NbtxGJh9kw4qlChGQJVmKtYzJejDZotD7+7VALWyP9TK9Z1g8zN+Ua4rmdBqTx1zNKksaZj+S8WFSbtPkUPRDH8Ff6nMmxouoxkcwV+Kblv06J1O0qdxX42Ar51aDpk+Rrm+phrI4PtaoeRVtWlXdHJUJtALYAi3b8Wk=
+	t=1715168796; cv=none; b=aD7fDByacJMlKtnj3CR58amHyOv7PaJbqZfz3gBlbp8rvVz3EXeuzOurqzYfr4UnoihMe2BJBTwPTCJ8XUbMuQaGxrBH4RG8Dim/I+XYAgPqitmrKbxYfSGzIOrxs6WXcuhzpjV01UL2wNK/FFMWKtL7FhlZsggOno8QaMY9EvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168771; c=relaxed/simple;
-	bh=4MAkzDnIXfPA6ZFoEIGx5FodE3S9b44f4RuxYQaB8IU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=UEJmztPiRE1r7XIFT3ksC0LD2NgorzxAwA6aQyGGQj013JOwiPkxQoz4H8A5y1YX922LusgNFpRAfxBMW2P0+TDBXZUh9Qaajr5I41Fh6x4QI2gVi/wLMDA0je9+LbZOjw6ML6swoRMl/dtGVZjIAsmVsvp3aB4YVrN0aDiBPGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=QDBh2tlZ; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1715168796; c=relaxed/simple;
+	bh=TyI9PDUN23refC5Yl9B3tTTd61cXkwqe/5CzWO9+Ja8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvjyzxfVGo480qKx7zxBI7fJD7KNTao8JsHR1xXemxf2AtrL0UD9et8yXZadGJXb9aZAPOcDzqp8ubU6jrQYa3bHW0Mo6dyGr6m559q6wfWsS4lWR2B7cp3qDPooKqsiHE2hbPOwlW7rQ+Mma1JAp2dUlySoaL23Rr5NqfeqwRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dtgqzpIj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64463C3277B;
+	Wed,  8 May 2024 11:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715168795;
+	bh=TyI9PDUN23refC5Yl9B3tTTd61cXkwqe/5CzWO9+Ja8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dtgqzpIjFXC+l1oBCLqKEUaaY805cb13bUVRM7Ctsqpjm3TMb1UNdY1TBkjsfR0fh
+	 8Sg+YFrv8dGcEMBjR9G0ppEpNlzuNXo55nT+adqsIiszTlwtXM94ySZoXvUgATbqYq
+	 jZRooDptxFG1hYbeLLhPmfAKvNCl+jqM50ru88bDpoeUjiGWmH8jCPYusyzps68p/T
+	 jgLlLTaQPgmV2voo4qDSDGkyiUKbez/y2vyW0NC6/2T17MGx6YmbK3Ay4xICI+SuVg
+	 1bLFXIV1DiBOcRrnBi7WuvjBrqvMKe9//JQCCJ30Yz7B0+UDlfC7eSUjOQ4Wn9259g
+	 FgfAPa75Co8zg==
+Date: Wed, 8 May 2024 20:46:33 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"pthombar@cadence.com" <pthombar@cadence.com>,
+	Piyush Malgujar <pmalgujar@marvell.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v3 4/5] spi: cadence: Allow to read basic
+ xSPI configuration from ACPI
+Message-ID: <ZjtmGTRce1605Cc0@finisterre.sirena.org.uk>
+References: <20240329194849.25554-1-wsadowski@marvell.com>
+ <20240418011353.1764672-1-wsadowski@marvell.com>
+ <20240418011353.1764672-5-wsadowski@marvell.com>
+ <16a4a58c-cae6-4b62-859b-3661c052468a@linaro.org>
+ <CO6PR18MB40989F97F92C9A37C6BA896DB01B2@CO6PR18MB4098.namprd18.prod.outlook.com>
+ <2dc18bdd-0c82-47a2-b87d-b69028f3b251@linaro.org>
+ <CO6PR18MB40988BB723DB7576F5C25155B0E52@CO6PR18MB4098.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1715168767;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/7KXEahwdtvUHXhII1BOAbQafO3CV4psWNz/FLhIG2g=;
-	b=QDBh2tlZN0XdVR745PuNwmWJC81aogbhng6PQhi+qBJqxqGUGmC/52WntbUpuDCRS7Q1rJ
-	qpyGLnZv9v/rePHAR/gDp30SXIk8+DSC5TOPtgFYCxoasYkLMniuupOWuE3WcfrEUYdnvb
-	iJK34MVophrNrh0fei13bBCDKN48ECL5q/DjXqTakJ1wF/zJ17M3LQyjQZkqW6KOlMLK4d
-	ieaFbxtAx75tFD/QWjRLux7J6Zf9sRUW3ZWzp6MbwpJHPWjDM3/emsJ5vyZBizH8VCHtvf
-	3vDyP87b1LjoTrQf3evKXqaO4jYE5EY9RPYtfjGblH3ctfOp2MrxxMl8FhBiKA==
-Date: Wed, 08 May 2024 13:46:06 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Alexey Charkov <alchark@gmail.com>, Diederik de Haas
- <didi.debian@cknow.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu
- Tsai <wens@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
- all RK3588 boards
-In-Reply-To: <CANAwSgTU7UF_RaNnVSZR7SehQqC7Eo6D=JqT11gN7jK2diN_Ug@mail.gmail.com>
-References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com>
- <2543817.5xW6y1K4kI@bagend>
- <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
- <CANAwSgTU7UF_RaNnVSZR7SehQqC7Eo6D=JqT11gN7jK2diN_Ug@mail.gmail.com>
-Message-ID: <a1fb157c88f420cd85d56edff2a4d85b@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="or8cy3D/AkHUwjHd"
+Content-Disposition: inline
+In-Reply-To: <CO6PR18MB40988BB723DB7576F5C25155B0E52@CO6PR18MB4098.namprd18.prod.outlook.com>
+X-Cookie: Accuracy, n.:
 
-Hello Anand,
 
-On 2024-05-08 13:40, Anand Moon wrote:
-> On Mon, 6 May 2024 at 18:24, Alexey Charkov <alchark@gmail.com> wrote:
->> On Mon, May 6, 2024 at 4:29 PM Diederik de Haas 
->> <didi.debian@cknow.org> wrote:
->> > On Monday, 6 May 2024 11:36:33 CEST Alexey Charkov wrote:
->> > > This enables the on-chip thermal monitoring sensor (TSADC) on all
->> > > RK3588(s) boards that don't have it enabled yet. It provides temperature
->> > > monitoring for the SoC and emergency thermal shutdowns, and is thus
->> > > important to have in place before CPU DVFS is enabled, as high CPU
->> > > operating performance points can overheat the chip quickly in the
->> > > absence of thermal management.
->> > >
->> > > Signed-off-by: Alexey Charkov <alchark@gmail.com>
->> > > ---
->> > >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4 ++++
->> > >  8 files changed, 32 insertions(+)
->> > >
->> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
->> > > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
->> > > b8e15b76a8a6..21e96c212dd8 100644
->> > > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
->> > > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
->> > > @@ -742,6 +742,10 @@ regulator-state-mem {
->> > >       };
->> > >  };
->> > >
->> > > +&tsadc {
->> > > +     status = "okay";
->> > > +};
->> > > +
->> > >  &uart2 {
->> > >       pinctrl-0 = <&uart2m0_xfer>;
->> > >       status = "okay";
->> >
->> > I built a kernel with v3 of your patch set and someone tested it on a ROCK 5B
->> > 'for me' and it had the following line in dmesg:
->> >
->> > rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
->> >
->> > I'm guessing that turned up due to enabling tsadc, but (also) in v4 I didn't
->> > see a change wrt "rockchip,grf".
->> > Should that be done? (asking; I don't know)
->> 
->> I'm getting the same. Neither the mainline TSADC driver [1], nor the
->> downstream one [2] seems to use the grf pointer on RK3588 at all. It
->> still works in spite of that warning, although I can't see how (or if)
->> it configures the reset mechanism without those GRF registers.
->> 
->> Best regards,
->> Alexey
->> 
->> [1] 
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/thermal/rockchip_thermal.c#n818
->> [2] 
->> https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/thermal/rockchip_thermal.c#L961
->> 
-> 
-> If the following changes fix the warning.
-> 
-> Checking the Rockchip RK3588 TRM V1.0-Part1-20220309.pdf
-> PMU1GRF_SOC_CON3 which has tsadc_shut_reset_trigger_en bit
-> to control the Enable TSADC shut reset trigger for DDR fail safe.
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> index 85c25d5efdad..5490a44e093e 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> @@ -2662,6 +2662,7 @@ tsadc: tsadc@fec00000 {
->                 rockchip,hw-tshut-temp = <120000>;
->                 rockchip,hw-tshut-mode = <0>; /* tshut mode 0:CRU 
-> 1:GPIO */
->                 rockchip,hw-tshut-polarity = <0>; /* tshut polarity
-> 0:LOW 1:HIGH */
-> +               rockchip,pmu = <&pmu1grf>;
->                 pinctrl-0 = <&tsadc_gpio_func>;
->                 pinctrl-1 = <&tsadc_shut>;
->                 pinctrl-names = "gpio", "otpout";
+--or8cy3D/AkHUwjHd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Basically, the rockchip_thermal driver doesn't use GRF at all on
-the RK3588(s), so virtually any value specified as "rockchip,pmu"
-can eliminate the warning.
+On Wed, May 08, 2024 at 08:04:49AM +0000, Witold Sadowski wrote:
 
-I'm already working on a rather large device-tree cleanup series,
-and this is already fixed in it.  Are you fine with dropping your
-patch as a separate one, and I'll tag you with Co-developed-by in
-the relevant patch from my series?
+>=20
+> I have come up with solution, as I wasn't able to find similar function t=
+hat
+> will work with ACPI and dtb on the same time:
+
+The usual thing would just be to try both an ACPI match and an OF match.
+
+--or8cy3D/AkHUwjHd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY7ZhgACgkQJNaLcl1U
+h9CDcwf/YEDOkFv7u+d6NHQPNN4I08X1iuI+znmRZ2CrWTp46NeDTqkU3Xa2z4Hz
+gMwJQ5NlIZCiK5hYKQyuNqQUcZgMp/5RSygz4WeRhCeNOTu+Zv6WUDygJzIf3sfe
+doGB2Va1FWvYGa8rPmaZsh4nhv+8NgcbVATzt4v0pYGfO473Mkvj0qDGSmF1o7Yn
+Wx4TQxk9//8Vj5H3XWCW+vcx7+9Z1sq6ZTphvhwRDIWEBc37G3Tufu+5Z9CS9a81
+/w0XnpZa1dTt4S+w95f0k9XN8YioDxVdOAVZ4UjgOnSFcrT63JWY19mRxPYk5jHU
+fndYdIC8y//lvoMfx2xxjge3S/Hu0A==
+=MFOi
+-----END PGP SIGNATURE-----
+
+--or8cy3D/AkHUwjHd--
 
