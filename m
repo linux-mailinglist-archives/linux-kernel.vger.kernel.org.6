@@ -1,134 +1,108 @@
-Return-Path: <linux-kernel+bounces-173179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72628BFCA2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:47:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0964F8BFCA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69A681F21BA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA6F1C20B8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C806823D1;
-	Wed,  8 May 2024 11:46:50 +0000 (UTC)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA8D81AD0;
+	Wed,  8 May 2024 11:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzMa+iHl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767B282C6C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4DC82492;
+	Wed,  8 May 2024 11:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168809; cv=none; b=JkKEyJ0tHsW3glKwmP5ERsJqGBhhwDfa8M7a16x6dUnArATsNFcCpeH0oneLXWGR5AYLqS01AOeGsrEriul/YC4pkYC4HExWWvrdWwuy381qcu+z0i4RfUpRXpO4ZhY8j7WWsTU4uBqV0HsPtHNfVhP6fthv2+tGBFZfqBwg31A=
+	t=1715168874; cv=none; b=OeQxuHfqMNroZFyBFTLWZra98e72ImojDfuN3bGHV6TE70/Zo2ZmHThD1uce0uVT8DbqRdJR3DwDNqKnD1mvu/bnDdsSTShBFMmHckzdPgcGK2cnjTthWbK9bbPHwxujYz00LIaP8+HrmAbufrY32BS9lZJvlaJlLl+ZKqrLd2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168809; c=relaxed/simple;
-	bh=SAlKIWE//lHoA+nc7JO13tI8bPAbZw4MA+BMyr36N8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ayv2llBI2p38r4vIQT69UTuXbm2ffxOtD91Px7DxsL/TbwHWGc+5EqLNqTyQrSj2qgjscoVhx8QSorKrZ48LRgtthHs5p3K27FrD7FDSnL1E1guV/NTAm9Cl8PfJzXw7DTZgeALXKykiZG6EC9VZPcl8vCCNrJKnfmX21A8W0Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-61bed738438so45181367b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:46:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715168807; x=1715773607;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1UIM/QXFLV/zOyVSdM/iHxl0eTqhK78DGC/2DFVqdW8=;
-        b=GN2Xp8haHj5LPRisZitZZ1d5wajU54Jop2GJWDABFm0ensBePCTTkYKAcp0b+wUcBy
-         j+XHMM2E+HtKuy5sEpepi6INA8DjqJaz2BJjPQzOjeP7VUKAIz7HSsPYJ3Jov+2FxECG
-         JRnj3AYcuRf5LkkcCfKjsAhvFzNE1C03VGpIpOGkMViIyrPrjzH7c3RAgzey7KaLiiXT
-         EQwmqyVnW8pnTM8ejLC7RQE97uzasPjulUWVw3/KeOJH0UMyJZZrpKCgLpfnmAlJWq7K
-         gMy325kXq3pWBfi43aXM86u8yrV0eZOCgSYVcwyAeSweP6xJh0u76cBtg6uuqmui3ADX
-         WV9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsm0JxlakeWspClhJ2QGJOTK3hr/oUNeISj2RSOFjz2Z8emhl7WX2zMhEq5vt+t5CLy5Wz9H1jgfnsP6fGmuXHRKGxP87iwhrNV2Nv
-X-Gm-Message-State: AOJu0YxqLONSvqs8UAkpS26BQcVROVo6vZUaKoaJkNXpvc2+5SnlGm2q
-	61lFPZi2PJajSkf06WyRt/jzpzYPVsFHzNWoFK5rofEOCo0hIEWbPdjmiJpxnSA=
-X-Google-Smtp-Source: AGHT+IF+G5TDpWvU0UE8D+cdVBNoaMwYfDjBAfyWOM2oS+eoQe8o+6zbKk2CW/5qdIK2Iv3tgzK0mg==
-X-Received: by 2002:a81:b045:0:b0:615:1413:95c1 with SMTP id 00721157ae682-6208624132emr21298787b3.19.1715168807102;
-        Wed, 08 May 2024 04:46:47 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id q13-20020a81430d000000b0061adccb38ecsm3257313ywa.10.2024.05.08.04.46.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 04:46:46 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dcd7c526cc0so4760395276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:46:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1vwlKmP89/7w0MC9Z7rb6uJ18FfFQP6PVpc177+Nx0/MEkUUhDZMAWonek2Y78eSKT2UCNZx5fDmuLm9SPgif1Xf7qD2GVXCRJrBD
-X-Received: by 2002:a25:8050:0:b0:de5:53c0:b9e5 with SMTP id
- 3f1490d57ef6-debb9d96d92mr2346115276.40.1715168806721; Wed, 08 May 2024
- 04:46:46 -0700 (PDT)
+	s=arc-20240116; t=1715168874; c=relaxed/simple;
+	bh=uDG480PUhwe0ESIDmugza7mKOq0B7fW09PsYqfZWf+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OQD9hDbdereDTM4di/juqy383T6o6AEYOO0uPzbYwWZV4P1iYhXH4XWMkHKiLcIMRUsFW0dg1ipHig8LBdX7lCAYmGT8TiJZEn2Tlx3YRjfuM0lduX7llgSU6KK2lqO7qa0a3t248pbypCVtlShdK0q8wihPCYQGm6/TiC9eYII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzMa+iHl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB8DC113CC;
+	Wed,  8 May 2024 11:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715168874;
+	bh=uDG480PUhwe0ESIDmugza7mKOq0B7fW09PsYqfZWf+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PzMa+iHlmGnMVBsjCPWjPeHvQZtIFYHrHr70MzejGo9K494+r1vUTzSegQVW8tQe5
+	 4sUy59+h9vZq4b9MeGcfSzeIbX1WFy2YC0l0twTGv1vU2MrnxQRTW5TftBIgr+Ikyx
+	 bldlW9k2RqgO/E7/oVymFWM+DbeXyUNgCQBfgjmfsvG3zXvMvV6fV1itm5qze0o1fv
+	 +NIH/NEeG5uUqyX/2ThBI7VfoU9JRN+Y6mEQvXUYb3ypEsGepAqWZaka9YXE7/C1Nd
+	 8xgXxwAY0Ay/0FQQvw6wthkJUVAUxbxCbUlEm3xRjDvRl2YOIZFymdHNUzdw2wF8U2
+	 Z6jj9cQfnDiMg==
+Date: Wed, 8 May 2024 20:47:51 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Richard Hughes <hughsient@gmail.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Jeff LaBundy <jeff@labundy.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	neil.armstrong@linaro.org
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+Message-ID: <ZjtmZ6Jrj6vn6sv3@finisterre.sirena.org.uk>
+References: <20240506114752.47204-1-charles.goodix@gmail.com>
+ <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+ <ZjmOUp725QTHrfcT@google.com>
+ <Zjo8eTQQS1LvzFgZ@finisterre.sirena.org.uk>
+ <ZjpFVGw6PgjRcZY3@nixie71>
+ <ZjqYp1oxPPWcF3jW@google.com>
+ <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
+ <CAD2FfiE+VFa+7sHQg=LGkBy556msNyyFUhmWW_cAfZd0V4DPYQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <480ebd1249d229c6dc1f3f1c6d599b8505483fd8.1714797072.git.fthain@linux-m68k.org>
-In-Reply-To: <480ebd1249d229c6dc1f3f1c6d599b8505483fd8.1714797072.git.fthain@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 8 May 2024 13:46:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVUWZcP1E-T7mu7txYODhRK0vmBRXXTs51vuBewZQj_kA@mail.gmail.com>
-Message-ID: <CAMuHMdVUWZcP1E-T7mu7txYODhRK0vmBRXXTs51vuBewZQj_kA@mail.gmail.com>
-Subject: Re: [PATCH] m68k/mac: Fix reboot hang on Mac IIci
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Joshua Thompson <funaho@jurai.org>, Stan Johnson <userm57@yahoo.com>, linux-m68k@lists.linux-m68k.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nDq691KZs7iF1YOg"
+Content-Disposition: inline
+In-Reply-To: <CAD2FfiE+VFa+7sHQg=LGkBy556msNyyFUhmWW_cAfZd0V4DPYQ@mail.gmail.com>
+X-Cookie: Accuracy, n.:
 
-On Sat, May 4, 2024 at 6:43=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> w=
-rote:
-> Calling mac_reset() on a Mac IIci does reset the system, but what
-> follows is a POST failure that requires a manual reset to resolve.
-> Avoid that by using the 68030 asm implementation instead of the C
-> implementation.
->
-> Apparently the SE/30 has a similar problem as it has used the asm
-> implementation since before git. This patch extends that solution to
-> other systems with a similar ROM.
->
-> After this patch, the only systems still using the C implementation are
-> 68040 systems where adb_type is either MAC_ADB_IOP or MAC_ADB_II. This
-> implies a 1 MiB Quadra ROM.
->
-> This now includes the Quadra 900/950, which previously fell through to
-> the "should never get here" catch-all.
->
-> Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-> ---
-> Tested on Mac IIci & IIfx, Quadra 630 & 650, Daystar Mac II, QEMU.
->
-> Some corner cases remain problematic. For example, a stock Mac II or
-> a Mac IIci with a 68040 accelerator will still use the C routine, because
-> mac_reset() lacks an asm implementation for '020 and '040 systems.
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-i.e. will queue in the m68k tree for v6.10.
+--nDq691KZs7iF1YOg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> However, amiga_reset(), atari_reset() and mac_reset() do have a lot in
-> common, which suggests that a generic asm reset function parameterized by
-> final JMP location may be a useful refactoring. This would provide the
-> '020 and '040 handling missing here and could potentially replace
-> hp300_reset(), dn_dummy_reset() and q40_reset().
+On Wed, May 08, 2024 at 09:39:41AM +0100, Richard Hughes wrote:
 
-Sounds like a good idea!
+> If it helps, fwupd already uses mtd for other devices too, although at
+> the moment we're using it only for system firmware -- e.g. intel-spi
+> style. The MTD subsystem doesn't give fwupd much info about the
+> {removable} device itself, and that can pose a problem unless you
+> start using heuristics about the parent device to match firmware to
+> the mtd device.
 
-Gr{oetje,eeting}s,
+FWIW I know SolareFlare network cards used to do this too, though I
+don't know about current products.
 
-                        Geert
+--nDq691KZs7iF1YOg
+Content-Type: application/pgp-signature; name="signature.asc"
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY7ZmcACgkQJNaLcl1U
+h9Bivgf8C+o2DfqpMLI8yUtww0Hmq/ALfX3f27DBHJBMrIuD/k475jxEPHnIbIJH
+lzizEAs4ZZW+LU5Yl+kmdYikVAv3pelrRnjHlEI5TL47wypIft3/Nh3iRHMflPkt
+oskqPewUw52nQVijTLjXeT+lDPt5WhtVPohVTZPOqAeF/Gq+hen059KvvizBF6id
+f6iGzbZuNTGuCOJ6xrysqjZtK+7nZxqHyhRhG2+GjV2Dxri6YQEETSCc//Nl+o2D
+PE5gJ4YPIIuscbi0BINKgiYa/mIB4/HkOK2cG/lvLM1UCMWeX7uZ1GllSp5KC49q
+DDYFT4Gih3hzgVzilxTxF+XKGS1D4g==
+=XTWh
+-----END PGP SIGNATURE-----
+
+--nDq691KZs7iF1YOg--
 
