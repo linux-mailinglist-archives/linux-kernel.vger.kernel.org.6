@@ -1,121 +1,207 @@
-Return-Path: <linux-kernel+bounces-173074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB5AE8BFB2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:42:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871D08BFB37
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4D81C2116E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:42:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDF0DB2351B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9C07D07F;
-	Wed,  8 May 2024 10:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z3FgsNNT"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E49381748;
+	Wed,  8 May 2024 10:43:45 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543088061B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8708121A;
+	Wed,  8 May 2024 10:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715164930; cv=none; b=FAzR1wo5j5b9/viXfI0aSbSTl4a07CSsR3omMr49PG07zZhTQ/SbBOYsv7g4Fw5Ue7jTffGn0XHfSlyNx66RmxGcqX87KRzR4dXBUJWtJyZfRTPjdoEnahR0OKPXiaxqgSDC9Ayrh+6TQPIXtngWBRJMCoRwERoSwgzlUOecsIQ=
+	t=1715165024; cv=none; b=bjuTwtfvDSMqmCMqI5Zgw/GCynyIYF9sbPV+K7/iCbjO27iLihc4PeBYZeHuh8a+eV+Yd+u1vu6HSaGErDRy1q9ueRgIOoF4SYD0dXsLk/9AwnP/NDqgHJWkb9qQvVQorkv/VddEKlMvUF9bTgsbOA3FAuCwSj8goxgx0xTlJJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715164930; c=relaxed/simple;
-	bh=msFOWMMZAv+nOcQqKV5mzuGZJ+dqXm8YAjq5UYtYae0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qns9jUInvIOhbRaonPahKN9YVT7eF2qFu8vXPD6BSfw8or6Yu9zsZlrDHPFJ3tMgvsmVwEUdJB6R/5UhynWLffBHpLb+C6t86GjT6HuQZ7XK1bJ/KXQX++ALZqvq+PO5cDtvNru2VMBC+FJwNpHD3zLAefwyVfz63o166BBKgMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z3FgsNNT; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-61be674f5d1so43317157b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 03:42:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715164928; x=1715769728; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SCNZSYQEn9C0yYifJvIKeqaC0I3ddBBIVvQAOJJfdew=;
-        b=Z3FgsNNTxk1w3eCb/U+dIqo+fSnddur6Kj3Hjwm6PWw6J43QdXoqeyT9WmkuZsv2Fn
-         r0CglCSOtTjn42IStELQLTUfutMDTHCLcjU7Xv9xg0rZExtbqIQLsgy+7rKvINYWrjr3
-         mpdFacD3PlzYQKEt0u4BXc6JzQs8LEQjpOU0pyERqcnGVQJqam7XE69WSpuRL07S+eMF
-         8UOwMlMZPVNNO0MtG3MSzXrNLqYVpOcQ9By2Rf+4C9CaYhcWQ1vYd5xPF98wCF6TtCM5
-         QhLhFYECHfF6Cpj66Bvzue9MmTZucTPd1gd8CXiZSy7hhEj2vRMqYGZQ71X1My/ETTNL
-         JGRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715164928; x=1715769728;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SCNZSYQEn9C0yYifJvIKeqaC0I3ddBBIVvQAOJJfdew=;
-        b=OvKa3+cm851LGRBAtP+DS2hCheUVV7qxf9eVqKKOZvM1yAot9n1DJ/bL3DLPjAn1P3
-         UT2Rfnz8Hefov2FfL/oZg1ky3tFHCLNK/peAdbySJY4wxCo8uxEbEe+jM/kNR824RLHv
-         Z2jYjVlgn2TCT3OdT2m9XHWdUlhCPAfV36zlevgbjiMZ6H5Fr3eWgE8Imrme5Gx+iJnN
-         e62+uZ7vJl+hEMxmCdv73xKbFLMwxZEN2FaWqq/yUraYsOCsTzpuGi9Gor1448cahWRd
-         f9sVHRXGFTvGXybDsDFoyuXeZvAJNqWo+hFmJH4OA0Xh2ToDzNne7z+KuTD32zSQQIUx
-         QOWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsDUC5ckFFnYRJtpwa1Ip1F3R4JqZ9jPYwYypefvXApGMlXwmOgfEZZrrnYpikXYCJYnHEZ9YN2WvrDKaz7+REU89/b4465EzHRh4b
-X-Gm-Message-State: AOJu0YxLIeuE/JYxKvQWIA0gwLy2huK5SzUj2xIDyF3zDAQNl7dPJVf1
-	lr2BNnylybinrr+BWKnZ+E0227me2ZzrNeTeY+DrQEnVPknhJ87HPskS5G1IGwpuAdsGkLUWbFi
-	JfipB89tptbgrVB5tIhC/d2Eva+GiYjRbfQFylA==
-X-Google-Smtp-Source: AGHT+IG/YkpxJFnMtp9np4dGXgtlpi8FQCo5Um1fohI6F0WuAx9qFoD5jZyRnJpee9YYAVFVuPsAG5b/WQKuWWsqGYM=
-X-Received: by 2002:a81:844c:0:b0:61a:db67:b84f with SMTP id
- 00721157ae682-62085da981emr27885857b3.27.1715164928430; Wed, 08 May 2024
- 03:42:08 -0700 (PDT)
+	s=arc-20240116; t=1715165024; c=relaxed/simple;
+	bh=4kEk/+lJ061tISvnU8C3DinplnN17yBiPWG18m1vvrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Th7DZdgaKVKjjBx6H/R1bljSXtemqeDXbRasEs5iz+RkmcNWy7ojCBBt9Z6Ywi2JvRA2/Y1D/MSFO5aIAJ2LMHT7mD1tqxJcOwUr7i2IzPp7hsrNA2D3FQOuJBVijxen725+/fr553b5uMwZXYNe3AwLAv780V3s3g+JLZEqPhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DD2DC1BF204;
+	Wed,  8 May 2024 10:43:28 +0000 (UTC)
+Message-ID: <d14c1d04-2fd9-4c9b-affb-f4335bd7e6fc@ghiti.fr>
+Date: Wed, 8 May 2024 12:43:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMSo37UN11V8UeDM4cyD+iXyRR1Us53a00e34wTy+zP6vx935A@mail.gmail.com>
- <20240508075658.7164-1-jtornosm@redhat.com>
-In-Reply-To: <20240508075658.7164-1-jtornosm@redhat.com>
-From: Yongqin Liu <yongqin.liu@linaro.org>
-Date: Wed, 8 May 2024 18:41:57 +0800
-Message-ID: <CAMSo37XddAvE199QpA_WR5uwQUjzemF8GxqoWfETUNtFw6iCrg@mail.gmail.com>
-Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address
- before first reading
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: amit.pundir@linaro.org, davem@davemloft.net, edumazet@google.com, 
-	inventor500@vivaldi.net, jarkko.palviainen@gmail.com, jstultz@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
-	sumit.semwal@linaro.org, vadim.fedorenko@linux.dev, vmartensson@google.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/9] riscv: smp: fail booting up smp if inconsistent
+ vlen is detected
+To: Andy Chiu <andy.chiu@sifive.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor.dooley@microchip.com>, Heiko Stuebner <heiko@sntech.de>,
+ Guo Ren <guoren@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Jonathan Corbet <corbet@lwn.net>, Evan Green <evan@rivosinc.com>,
+ =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>,
+ Shuah Khan <shuah@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+ Vincent Chen <vincent.chen@sifive.com>,
+ Greentime Hu <greentime.hu@sifive.com>, devicetree@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240412-zve-detection-v4-0-e0c45bb6b253@sifive.com>
+ <20240412-zve-detection-v4-2-e0c45bb6b253@sifive.com>
+ <4acc62d0-d62b-4d42-805b-0bc7f663a81c@ghiti.fr>
+ <CABgGipXcjY9KDU=fN6KtER3mPbxsQdb+Y5Czhq7QDBFFc6p__w@mail.gmail.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CABgGipXcjY9KDU=fN6KtER3mPbxsQdb+Y5Czhq7QDBFFc6p__w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hi, Jose
+Hi Andy,
 
-On Wed, 8 May 2024 at 15:57, Jose Ignacio Tornos Martinez
-<jtornosm@redhat.com> wrote:
+On 08/05/2024 10:21, Andy Chiu wrote:
+> On Thu, Apr 25, 2024 at 4:01 AM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>> Hi Andy,
+>>
+>> On 12/04/2024 08:48, Andy Chiu wrote:
+>>> Currently we only support Vector for SMP platforms, that is, all SMP
+>>> cores have the same vlenb. If we happen to detect a mismatching vlen, it
+>>> is better to just fail bootting it up to prevent further race/scheduling
+>>> issues.
+>>>
+>>> Also, move .Lsecondary_park forward and chage `tail smp_callin` into a
+>>> regular call in the early assembly. So a core would be parked right
+>>> after a return from smp_callin. Note that a successful smp_callin
+>>> does not return.
+>>>
+>>> Fixes: 7017858eb2d7 ("riscv: Introduce riscv_v_vsize to record size of Vector context")
+>>> Reported-by: Conor Dooley <conor.dooley@microchip.com>
+>>> Closes: https://lore.kernel.org/linux-riscv/20240228-vicinity-cornstalk-4b8eb5fe5730@spud/
+>>> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
+>>> ---
+>>> Changelog v4:
+>>>    - update comment also in the assembly code (Yunhui)
+>>> Changelog v2:
+>>>    - update commit message to explain asm code change (Conor)
+>>> ---
+>>>    arch/riscv/kernel/head.S    | 19 ++++++++++++-------
+>>>    arch/riscv/kernel/smpboot.c | 14 +++++++++-----
+>>>    2 files changed, 21 insertions(+), 12 deletions(-)
+>>>
+>>> diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+>>> index 4236a69c35cb..a00f7523cb91 100644
+>>> --- a/arch/riscv/kernel/head.S
+>>> +++ b/arch/riscv/kernel/head.S
+>>> @@ -165,9 +165,20 @@ secondary_start_sbi:
+>>>    #endif
+>>>        call .Lsetup_trap_vector
+>>>        scs_load_current
+>>> -     tail smp_callin
+>>> +     call smp_callin
+>>>    #endif /* CONFIG_SMP */
+>>>
+>>> +.align 2
+>>> +.Lsecondary_park:
+>>> +     /*
+>>> +      * Park this hart if we:
+>>> +      *  - have too many harts on CONFIG_RISCV_BOOT_SPINWAIT
+>>> +      *  - receive an early trap, before setup_trap_vector finished
+>>> +      *  - fail in smp_callin(), as a successful one wouldn't return
+>>> +      */
+>>> +     wfi
+>>> +     j .Lsecondary_park
+>>> +
+>>>    .align 2
+>>>    .Lsetup_trap_vector:
+>>>        /* Set trap vector to exception handler */
+>>> @@ -181,12 +192,6 @@ secondary_start_sbi:
+>>>        csrw CSR_SCRATCH, zero
+>>>        ret
+>>>
+>>> -.align 2
+>>> -.Lsecondary_park:
+>>> -     /* We lack SMP support or have too many harts, so park this hart */
+>>> -     wfi
+>>> -     j .Lsecondary_park
+>>> -
+>>>    SYM_CODE_END(_start)
+>>>
+>>>    SYM_CODE_START(_start_kernel)
+>>> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+>>> index d41090fc3203..673437ccc13d 100644
+>>> --- a/arch/riscv/kernel/smpboot.c
+>>> +++ b/arch/riscv/kernel/smpboot.c
+>>> @@ -214,6 +214,15 @@ asmlinkage __visible void smp_callin(void)
+>>>        struct mm_struct *mm = &init_mm;
+>>>        unsigned int curr_cpuid = smp_processor_id();
+>>>
+>>> +     if (has_vector()) {
+>>> +             /*
+>>> +              * Return as early as possible so the hart with a mismatching
+>>> +              * vlen won't boot.
+>>> +              */
+>>> +             if (riscv_v_setup_vsize())
+>>> +                     return;
+>>> +     }
+>>> +
+>>>        /* All kernel threads share the same mm context.  */
+>>>        mmgrab(mm);
+>>>        current->active_mm = mm;
+>>> @@ -226,11 +235,6 @@ asmlinkage __visible void smp_callin(void)
+>>>        numa_add_cpu(curr_cpuid);
+>>>        set_cpu_online(curr_cpuid, 1);
+>>>
+>>> -     if (has_vector()) {
+>>> -             if (riscv_v_setup_vsize())
+>>> -                     elf_hwcap &= ~COMPAT_HWCAP_ISA_V;
+>>> -     }
+>>> -
+>>>        riscv_user_isa_enable();
+>>>
+>>>        /*
+>>>
+>> So this should go into -fixes, would you mind sending a single patch for
+>> this fix?
+> I thought it would be magically picked up by a bot as long as we have
+> a fix tag. Am I assuming something wrong?
+
+
+It gets backported to stable when it is merged, but then it is missing 
+from the first stable releases (as long as it is not merged).
+
+But anyway, 6.9 fixes are all out, so let's hope this series makes it to 
+6.10.
+
+Thanks,
+
+Alex
+
+
 >
-> Hello Yongqin,
+>> Your patch 8 is actually already fixed by Clement's patch
+>> https://lore.kernel.org/linux-riscv/20240409143839.558784-1-cleger@rivosinc.com/
+> Okay, I will drop it at the next revision.
 >
-> Sorry for the inconveniences.
+>> and I already mentioned this one to Palmer.
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+> Thanks,
+> Andy
 >
-> I don't have the db845c, could you provide information about the type of
-> device and protocol used?
-
-The db845c uses an RJ45 as the physical interface.
-It has the translation from PCIe0 to USB and USB to Gigabit Ethernet controller.
-
-For details, maybe you could check the hardware details from the documents here:
-    https://www.96boards.org/documentation/consumer/dragonboard/dragonboard845c/hardware-docs/
-
-> Related driver logs would be very helpful for this.
-
-Here is the log from the serial console side:
-    https://gist.github.com/liuyq/809247d8a12aa1d9e03058e8371a4d44
-
-Please let me know if I could try and provide more information for the
-investigation.
-
--- 
-Best Regards,
-Yongqin Liu
----------------------------------------------------------------
-#mailing list
-linaro-android@lists.linaro.org
-http://lists.linaro.org/mailman/listinfo/linaro-android
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
