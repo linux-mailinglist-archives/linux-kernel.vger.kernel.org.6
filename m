@@ -1,116 +1,156 @@
-Return-Path: <linux-kernel+bounces-173700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5914A8C0456
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:29:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767FF8C0458
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0862D2869A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175551F24AC1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7653612CDB0;
-	Wed,  8 May 2024 18:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ACB12D754;
+	Wed,  8 May 2024 18:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPuir/jw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g1qgpnqR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89EE54FAA
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D485812D76E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715192946; cv=none; b=U0wKFDpEbrplR/Y2scPc1i5LpBvriEmxDezW9iRFZdt2coNGKMKpf+Qf9AlNP67vY0LlzjtovonYn8AXm+KMzbSc7I6+CKR0/0JPa9u9E/h7L2H1hOuWOS+tFD9dTvwwFwQOLtfiZlsPQDtyN9D+n6bdodQbd35eY+QaeIp9wh0=
+	t=1715193005; cv=none; b=nAao54gJNCBA+bJOyH24Yf9YuPHa8z4WaDY9OQKXtQ4TuPzWAuKfb9q2PsUR/DuB5GdY0BjlIMlDFXComJSVP6xfR1Uc7z8wKoig958PBHKRqFX6FeBFphqJ9bQcOZwLTS5PtqDxBB9hX9A258+pgJwOFlThR0lFbG2+H4Dm0SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715192946; c=relaxed/simple;
-	bh=w3kZgmXnnJRsJLju+dT3OUItaJu9Z1c9zg2md9E1tiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6am5Kh+aQ5NPtEgsx51bZ5WosH3Y+si/Ljk43DxDFsc8BQ4fBxHNDTl51/01CKVkEm1bwTImhOvyvTx4svUyzoN4omz+XWN1KJMoE8RHP6AAzqQfHlFfdWQljlbJL3ysQ9fofe0jMCkyFfUSx5xCeJoo876d96uNwk4SslXEdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CPuir/jw; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715192945; x=1746728945;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w3kZgmXnnJRsJLju+dT3OUItaJu9Z1c9zg2md9E1tiA=;
-  b=CPuir/jw0T5x0y3CwrqVYvfxvjS6ekUJpVKa38FPCoUBfaOFNPA86yTR
-   gzq4W76NDcj/WN8rpbPDUZWyamSUAa/z2ZD7uVzE29wu5uO7EjPZ7xQ7C
-   PSHmgGzbWNyLVeGLgOhqDKD9ZulN7w+MxHJiUcI0eR4kdGbvbPIdp2ztT
-   MzMHzT1pPoEagvGWiSogjJTsytphZ8fhIdTovBiBZiDB71BZcYgshzyi8
-   2SATfLD6f+9e4HJCkiHrL5EdVCLPK+AcA2ZHwQI7LlQyvuJ3rNHdKEL34
-   QBQMyqSCtbemWmpvQ1XYKPDSqAMMq1eMFTbArvi/P4HynNgr542T17yXv
-   w==;
-X-CSE-ConnectionGUID: hzJ94pHHToyv0X9zxn+6Tg==
-X-CSE-MsgGUID: OA8u0srZTFy7SpDXvfSMsQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11231592"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="11231592"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 11:29:04 -0700
-X-CSE-ConnectionGUID: y332NT5ATcS/PqALfhLjhA==
-X-CSE-MsgGUID: GaWUBkhQQbq3B1arheGwqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="59840609"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 11:29:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1s4m2E-00000005XVd-3wSo;
-	Wed, 08 May 2024 21:28:58 +0300
-Date: Wed, 8 May 2024 21:28:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 2/2] eeprom: 93xx46: drop unneeded MODULE_ALIAS
-Message-ID: <ZjvEam5paLD0Iv6V@smile.fi.intel.com>
-References: <20240414154957.127113-1-krzk@kernel.org>
- <20240414154957.127113-3-krzk@kernel.org>
- <Zju8HpBCiOjjIZ1j@smile.fi.intel.com>
- <6599e2a3-3b04-4ea2-aa5c-a916b66c8009@kernel.org>
+	s=arc-20240116; t=1715193005; c=relaxed/simple;
+	bh=Af8N4wZvAUQNJQSK6fWTOSDCmGwfI/n8jS+x3krwiAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OdN7DjNp/BLTImlr5eCGfpHBWeSBD/GZ/udyX8qDkloIRWC9yMvBc4nGa0g2P7K1j70tFc6zm5FQkieqDjB66k6lmWe/ie7Fi0imn3ZeGrIlDEa4mV7QCKV2oxx9oSQ22KskTSg5O8YWUMq/bgJh39UUtBs7IRYNsAG4/54AHKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g1qgpnqR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715193002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ZRQClyq6NCq+r6tZYqc96Ix/EYxfWTPYPd8njOlX/60=;
+	b=g1qgpnqRqg1FEXop8OmnzKciXLR1HJYn6jqih4Arge+pa0+H44eUFYy6HkhVO0bT0DA9cw
+	1PcAY3uXem4rJjw+VVRMwuUIG/DHaJE7OTi2lCEY1xeDGHb+CzCeJaJJLiBQvd26NuNLTJ
+	CJmQan3oHG3Pwc5PqvIqMbIKzmKOPg0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-249-m407-a4UOv6tTjIN-Jxvqw-1; Wed, 08 May 2024 14:29:59 -0400
+X-MC-Unique: m407-a4UOv6tTjIN-Jxvqw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1198C8007BC;
+	Wed,  8 May 2024 18:29:59 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.192.63])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4D36510000AD;
+	Wed,  8 May 2024 18:29:56 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Huth <thuth@redhat.com>
+Subject: [PATCH v3 00/10] s390: PG_arch_1+folio cleanups for uv+hugetlb
+Date: Wed,  8 May 2024 20:29:45 +0200
+Message-ID: <20240508182955.358628-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6599e2a3-3b04-4ea2-aa5c-a916b66c8009@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Wed, May 08, 2024 at 08:15:00PM +0200, Krzysztof Kozlowski wrote:
-> On 08/05/2024 19:53, Andy Shevchenko wrote:
-> > On Sun, Apr 14, 2024 at 05:49:57PM +0200, Krzysztof Kozlowski wrote:
-> >> The ID table already has respective entry and MODULE_DEVICE_TABLE and
-> >> creates proper alias for SPI driver.  Having another MODULE_ALIAS causes
-> >> the alias to be duplicated.
+Rebased on 390x/features. Cleanups around PG_arch_1 and folio handling
+in UV and hugetlb code.
 
-..
+One "easy" fix upfront. Another issue I spotted is documented in [1].
 
-> >>  MODULE_ALIAS("spi:93xx46");
-> > 
-> > I was stumbled over this (leftover?).
-> > Commit message doesn't elaborate this bit.
-> > Any comments?
-> 
-> It is not present in ID table and commit msg removes only duplicated
-> aliases. That alias has meaning - someone might be actually relying on it.
+Once this hits upstream, we can remove HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
+from core-mm and s390x, so only the folio variant will remain.
 
-It seems no users for it. The only user of platform data of this EEPROM uses
-board files which AFAIU bypasses modalias matching.
+Compile tested, but not runtime tested with UV, I'll appreciate some
+testing help from people with UV access and experience.
+
+[1] https://lkml.kernel.org/r/20240404163642.1125529-1-david@redhat.com
+
+v2 -> v3:
+* "s390/uv: split large folios in gmap_make_secure()"
+ -> Spelling fix
+* "s390/hugetlb: convert PG_arch_1 code to work on folio->flags"
+ -> Extended patch description
+
+v1 -> v2:
+* Rebased on s390x/features:
+* "s390/hugetlb: convert PG_arch_1 code to work on folio->flags"
+ -> pmd_folio() not available on s390x/features
+* "s390/uv: don't call folio_wait_writeback() without a folio reference"
+ -> Willy's folio conversion is in s390x/features
+* "s390/uv: convert PG_arch_1 users to only work on small folios"
+ -> Add comments
+* Rearrange code and handle split_folio() return values properly. New
+  patches to handle splitting:
+ -> "s390/uv: gmap_make_secure() cleanups for further changes"
+ -> "s390/uv: split large folios in gmap_make_secure()"
+* Added more cleanups:
+ -> "s390/uv: make uv_convert_from_secure() a static function"
+ -> "s390/uv: convert uv_destroy_owned_page() to uv_destroy_(folio|pte)()"
+ -> "s390/uv: convert uv_convert_owned_from_secure() to
+     uv_convert_from_secure_(folio|pte)()"
+ -> "s390/mm: implement HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE"
+
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>
+Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Thomas Huth <thuth@redhat.com>
+
+David Hildenbrand (10):
+  s390/uv: don't call folio_wait_writeback() without a folio reference
+  s390/uv: gmap_make_secure() cleanups for further changes
+  s390/uv: split large folios in gmap_make_secure()
+  s390/uv: convert PG_arch_1 users to only work on small folios
+  s390/uv: update PG_arch_1 comment
+  s390/uv: make uv_convert_from_secure() a static function
+  s390/uv: convert uv_destroy_owned_page() to uv_destroy_(folio|pte)()
+  s390/uv: convert uv_convert_owned_from_secure() to
+    uv_convert_from_secure_(folio|pte)()
+  s390/uv: implement HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
+  s390/hugetlb: convert PG_arch_1 code to work on folio->flags
+
+ arch/s390/include/asm/page.h    |   5 +
+ arch/s390/include/asm/pgtable.h |   8 +-
+ arch/s390/include/asm/uv.h      |  12 +-
+ arch/s390/kernel/uv.c           | 207 +++++++++++++++++++++-----------
+ arch/s390/mm/fault.c            |  14 ++-
+ arch/s390/mm/gmap.c             |  10 +-
+ arch/s390/mm/hugetlbpage.c      |   8 +-
+ 7 files changed, 172 insertions(+), 92 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.0
 
 
