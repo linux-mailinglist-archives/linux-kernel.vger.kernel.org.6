@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-173079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8768BFB3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:46:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCC98BFB48
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9F45281998
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8F0281F7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5240F81737;
-	Wed,  8 May 2024 10:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B43E81748;
+	Wed,  8 May 2024 10:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzvgD9XB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gbs/8Hvy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A107B3FD;
-	Wed,  8 May 2024 10:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1C012E7C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715165209; cv=none; b=jtq4INf5Y6rTzgllMi0jwlsRzEwoszy3OKa0trKoZc1EOdS2rg5m0HnIE0ePrMelE7dnQCAOaaL31cTxX3q4ydTbFyXJNTCTZXOLUzNCXGqO96B3HQDqpqI8QnzwgE8SEFE5LgSH2oarHwFINNIvmWN5TTmWlIYFZnPoiMVobcM=
+	t=1715165334; cv=none; b=H+jPajDsOtzGPRze3184WbUngwuSmpIG67up4znILzqcmgF7nM8UAcdhUeMo4bT5RDdtq1KREcZMt2iekLLq9jw95GRZ4+BDnV+6G9PA18AaYvbUkTzvHXEfgdXe6oW4VTv1uUuDpbQdedDVj6h4Y2Lk2pIxPyyRDIDIBz59vBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715165209; c=relaxed/simple;
-	bh=Z00YMdAglgEZkAiou630en9bCthfc63+DSDxO/Ruiec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrWTIFJsREhRSsDn8w6PHLPmkB4SxuWd1od3Z277Qv/SyhuKJY+RRbGTFO8rVVkrrW4T41YdYt+HIB8ESacevWG7p6EyBA8exPz1Qw/GO0aPWPX4lIWWVT8+FPBGGhoFPKNj4owpRFRWLoPdQHOOgRBqcEHdA6+W93cRN3Z/bUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzvgD9XB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDA8BC113CC;
-	Wed,  8 May 2024 10:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715165209;
-	bh=Z00YMdAglgEZkAiou630en9bCthfc63+DSDxO/Ruiec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jzvgD9XBXwxg2y4Wq5EK0VwSa9QkJLBEIxZBYBDPJr+ObyM1aZytNk6UpZdJJLPIw
-	 OB7t/LNNfskMdmb/hRr7xPC5+AYqp9Km8DTvwixubv0wovCu+rpCKZ7Cx1iYS5tpgp
-	 IjqyYsIj0pvZGGTfoTXpuQAHBCVebas45b0a6CneS0UZ7e1PIQzqBwOaC2uED+tSZR
-	 ReXK2hirK5Pjr2vwnYUcQ4SxX52kNSVWP9LHRtMHhP02mq+OeJnjTshguLg8Uv4hmr
-	 C+HAAGn5GW1IDSLAYP7QAqLUGro91L94GpmWsH/ZGJxckDN7rIglOyTpPo2/nyixxs
-	 VGRToiQ53QIJQ==
-Date: Wed, 8 May 2024 12:46:46 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v2 17/27] rcu: Rename rcu_dynticks_in_eqs() into
- rcu_watching_in_eqs()
-Message-ID: <ZjtYFsRz_qX_CzMZ@localhost.localdomain>
-References: <20240430091740.1826862-1-vschneid@redhat.com>
- <20240430091740.1826862-18-vschneid@redhat.com>
- <ZjotdJwp3RXkrA7S@localhost.localdomain>
- <xhsmh34qtipxf.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1715165334; c=relaxed/simple;
+	bh=0C5AgGV462+lOg51Wn/vGwtPYKFzY44U3qnezUNglsI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IJnCOi8yp1KdEjwflE3LjTb75ryYtSoY/IEYSgBM140rzl/pbWBDrlGEnJdWFm6+4C0WX6BakFepB36SZH5sQQbOMDurr1Nagef/GnBbAUmimD4mcBH6iPnCurTJuZTXT9sRBEnCgVjiGP5joaHYmpIzxPy0Jlv3+GxZlzTmKeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gbs/8Hvy; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715165334; x=1746701334;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0C5AgGV462+lOg51Wn/vGwtPYKFzY44U3qnezUNglsI=;
+  b=gbs/8HvyBmzJdYSyiCsETi1+kZQTOwNMfNDf7z2lSiADhdc1Zf4wUJmb
+   +EdY7rcqIPEIFpDOF2/vtf2eFa+uWi6Q94xmucHubeVgnEEDRyqVTEUlN
+   0IrFTuqQhufHbjXKWcL1l+XjNeYrzHitCesIkJMHicx2x+6yAvEnlBYCe
+   g5NqbVH5+PemFdI02OtZwhMO+QQ9vYU1FifZKZFhTKR+UBwy+vlzpetmi
+   OCk50w3O7L0EnLdEpORo01ZL4VkF88da4DNwRVO6jG2etDDjul1ii/tsH
+   1hqpTQSV+MTWCal3t/PgDSKvg9YApy2P3zRVpT/f2jJMDH1JQnupWmObN
+   g==;
+X-CSE-ConnectionGUID: CRLtsAbZQv2ZYXBdqfCj/w==
+X-CSE-MsgGUID: iWeIZse0QkizaycgLwgQsw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="14834627"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="14834627"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 03:48:53 -0700
+X-CSE-ConnectionGUID: 2KeLlfaMRg24192bx6+kvQ==
+X-CSE-MsgGUID: F81GQKA7RwukcTaD0egj9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="33319270"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 08 May 2024 03:48:52 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 16571109; Wed, 08 May 2024 13:48:49 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH v1 0/2] mfd: lm3533: Get rid of legacy GPIO APIs
+Date: Wed,  8 May 2024 13:46:47 +0300
+Message-ID: <20240508104848.846580-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <xhsmh34qtipxf.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-Le Tue, May 07, 2024 at 05:48:12PM +0200, Valentin Schneider a écrit :
-> On 07/05/24 15:32, Frederic Weisbecker wrote:
-> > Le Tue, Apr 30, 2024 at 11:17:21AM +0200, Valentin Schneider a écrit :
-> >> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
-> >> RCU_WATCHING, reflect that change in the related helpers.
-> >>
-> >> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> >> ---
-> >>  kernel/rcu/tree.c       | 8 ++++----
-> >>  kernel/rcu/tree_exp.h   | 2 +-
-> >>  kernel/rcu/tree_stall.h | 2 +-
-> >>  3 files changed, 6 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> >> index 857c2565efeac..d772755ccd564 100644
-> >> --- a/kernel/rcu/tree.c
-> >> +++ b/kernel/rcu/tree.c
-> >> @@ -308,9 +308,9 @@ static int rcu_watching_snap(int cpu)
-> >>
-> >>  /*
-> >>   * Return true if the snapshot returned from rcu_watching_snap()
-> >> - * indicates that RCU is in an extended quiescent state.
-> >> + * indicates that RCU in an extended quiescent state (not watching).
-> >
-> > *is in
-> >
-> 
-> Oh, thanks!
-> 
-> >>   */
-> >> -static bool rcu_dynticks_in_eqs(int snap)
-> >> +static bool rcu_watching_in_eqs(int snap)
-> >
-> > I would be tempted to propose rcu_watching_snap_in_eqs() but the
-> > purpose is not to dissuade people from intoning RCU code after all.
-> >
-> 
-> I've struggled with finding something sensible for the snapshot helpers; I
-> think I prefer your suggestion, that way we can have a common prefix for
-> all snapshot-related helpers. Also I keep reading rcu_watching_in_eqs() as
-> "is RCU watching while being in EQS?" which is nonsense.
+Driver is quite outdated from Linux kernel internal APIs perspective.
+Update the GPIO part in this miniseries.
 
-Works for me!
+The first patch to make sure noone is going to use legacy platform data.
+An alternative approach is to remove completely these family of drivers.
 
-Thanks.
+Andy Shevchenko (2):
+  mfd: lm3533: Hide legacy platform data in the driver
+  mfd: lm3533: Move to new GPIO descriptor-based APIs
 
-> 
-> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> 
+ drivers/mfd/lm3533-core.c  | 45 +++++++++++++++++++-------------------
+ include/linux/mfd/lm3533.h | 18 ++-------------
+ 2 files changed, 25 insertions(+), 38 deletions(-)
+
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
