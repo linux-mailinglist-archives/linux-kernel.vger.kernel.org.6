@@ -1,345 +1,253 @@
-Return-Path: <linux-kernel+bounces-172939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0D58BF90A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:52:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356208BF90D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98AD1F216D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B4C1C228A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F7E535D5;
-	Wed,  8 May 2024 08:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CBF53E3F;
+	Wed,  8 May 2024 08:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nf3H4UFo"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m967mPfM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8982BB00
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715158321; cv=none; b=L1p8t/21RgAXoI6hLjcsTylyiKVPgm4lz8rJIArZm+Qj6hgEt52KBjxZPE3rCHaUYPq2LwCl+mAZ5J5QcicP0uJbjgGs2DOvy04qBkz5LTuNtIi3GHlsr4Xznr0xqk5TapYMOPG7FA94sDZwipiKe0UPFk5H9qVSqdp6dAi43Qg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715158321; c=relaxed/simple;
-	bh=HYXrsynpcK3FfS90LJUxK131eceRUH60ncTBYzhRG/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZAi/VmkCca9bleyDXhftOyU9h0C7rjgCEADQGodC248YgfDSlaRE/gT/XWRJPp++6niajypt73Q5+QcTs8IxJKW0BZ2QEN8qoLigXT9U4fhmR3b+1V1NCRbjXSMSQ+vj8RAjBc5e2pCkSfatK1MEKjBGprz83WXHdxlKX/DCffQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Nf3H4UFo; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dbed0710c74so3543328276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715158318; x=1715763118; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=in3B+Ik46blXOXrKxuDpO2qCSaCcioDyNF0gWPJLAiA=;
-        b=Nf3H4UFoBQ1WAmEVKExG48LdK0jQkC2Dkc8Q1BpaUykOofG5uW9BIAp6LATVisiJF2
-         Q0EVm+dKR7azlwrPnCCN7Jm6Ud9d4/XfDn5FrWo3FKBvQC7v2kD7XIBjEyElAQrCrPsQ
-         WkDcWvSe7Wx9JpSsnscB7dp55SzKhQUfu2QdzFDWBDVaBgvhcevfkmWGj/JPAdX23Ywo
-         twIZmRf/+616iyrsick3MUKZYAfjKO4GnUnb4biv5GyGeEFuJu9BDwDUYkOLI0tQT3T4
-         wWI5OvzpqvZVKMPtgtQC5Y4nb7gTf1Jha3Rog0xt2NpwZIu4PI6v3u0GDQufZ/g6JocW
-         u0Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715158318; x=1715763118;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=in3B+Ik46blXOXrKxuDpO2qCSaCcioDyNF0gWPJLAiA=;
-        b=i5b35LP3H2g4fKaQW93d1A41kh195ap6OqKbDyTkDEDmzEsEeoeJZ4eQd2jwByZUgp
-         O4W/7JC4rH6v50AielmgFtZpkRown9aN1mNVxzVlsllq/RPrZJ+Rjbb7y9A2LWlv1WTa
-         z8Bo31wOzxp4SoemtvsWLlvJJG0LYs9A3P3vERdvFfArE48VD5ZgtdntE6p252KTFF6C
-         BuPpbffNwdZmetVSBQecuCB8zOoEflOi9FIvyoA/QD4bpRvJSPqiBuf0u7v9VU0mraj7
-         68phhUo82qf1h7i2/EmTItXQiw5MCxlP/+w5NhitASW5lbc1XXaJf20+Tcnv8drypMqb
-         hmnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPJL3EyHzudDFh4JFdFolcjINZRwngfBTgo1uDPJJJ13kh66uFTpAC9fPJbdUohYT6kXikR2P2JQdUNeyUbHFO5nHbYF5+Yj2cp0EP
-X-Gm-Message-State: AOJu0YxFBefwJKF5ogsQDA90+RtzI/a0/XkCfjwyXmfjz8EiQgnTj1Zm
-	S1Eo7YDkAR85gZyc3gXA7C4DHPvsIsijHDg+lxiXOgV41bTo+WaxSJIuBSyMcjAiWrWGL+CJLXI
-	Ht31j8gsUPO93pJuzDS+lZCqQUbdoZ/TCO9gSdA==
-X-Google-Smtp-Source: AGHT+IGp6X2BhJs6wlRjN0lKnBeuPzHxeGy1JNrO+idMaCicMZwZ+qafrVrFGUQyhDqFhR8iHEcNxFj2A7rIXMXNbRc=
-X-Received: by 2002:a25:ac56:0:b0:de5:5706:b958 with SMTP id
- 3f1490d57ef6-debb9dbc831mr2100582276.38.1715158318252; Wed, 08 May 2024
- 01:51:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAC01757D;
+	Wed,  8 May 2024 08:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715158322; cv=fail; b=YZXj56CRM1k+BzP5gqzf3KtNxgNMxF/HBOWBWo4KscDeLX3e37F68RACJlPpdzt2Io85TK70DQA4TA6BPgXVKy6KHCO3FxBgg4YJFyXoCSbhBfll0wL0MLs26Omx/b8CCWWOtj7TTJFbPNt7MOTp76qG8WJbyidMd1pOO8V82A8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715158322; c=relaxed/simple;
+	bh=zDCxzzwhxvqj2R0664qOIVaN2j3Ao1paxs47pBIFxo4=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=P//5HQGgIsuCzNzGxye7ud3GntcDNcDXaIL5DlBCtFsiifERWPRTsi0/+vWXd+g9CBNElxnieKOY3xS2BLF7k4LrAdreZvR6sZa4LHCp7hJdr2AhjzQSZ9M9jO+hYAMRXYUYNAbzBdrrNn1mZWW4wJmSlJiLu9BJXAIGDAU+wkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m967mPfM; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715158321; x=1746694321;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zDCxzzwhxvqj2R0664qOIVaN2j3Ao1paxs47pBIFxo4=;
+  b=m967mPfMkK1mWaC9lTMuOBD8KrTdH9S0VHos/+i3L9Aso2/L46f+JVyG
+   RhqjrUDqkgHLCPS6xaJvm+DM5unMJF32HgzEuGq5Omvj6ASaUFf/Oxk6i
+   6aHnd4jOGHs1+nIDeo4VDb/BrNwoptosEsfT8LmP0jykO5pv2xTfCBGqY
+   26G5RxA4acJ28TYMsCxf3KdIKVULnASNK0gn63PMexj9Ed7s0h98sZXBh
+   2GgfALYFzUgIcYMTu9qyB29IqN9/Bw+xxjShikkU5cpfHFF54hBW84Gg2
+   ETxp5GeX90tVLN1MVk4O8pcB/+Y601lLH5rYAA2n8+EiK+TEXntOZtf3t
+   g==;
+X-CSE-ConnectionGUID: TqFheeksSni015NxE9LgmA==
+X-CSE-MsgGUID: 0Zusl/J1QU6K5XfRKR5c4A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="14798182"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="14798182"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:52:00 -0700
+X-CSE-ConnectionGUID: gQZYj7YZTPicwI5XM1afNQ==
+X-CSE-MsgGUID: vJ2iuseBSLKcEUj3Xw/Mvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="28908528"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 May 2024 01:52:00 -0700
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 8 May 2024 01:51:59 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Wed, 8 May 2024 01:51:59 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 8 May 2024 01:51:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aVtFlL8tRlaUMl4jNekKR3ip/Fk+kmy7NBjQVXt/pe8yXvqnqDf2qZqKETupLVKF7mDg8aRoYOwxpK/XHh+fOiwgtoX3eYNvXSio64xmhFlxjkNJLb6qRsy8CnZbJiXDzGx+VfMnhLX3yEuZHHK6P+kUhm2pEqjnnC5j+5BeaItO0wmuv16cueKvtF9DIv87LhSnwXZnhoULXPx9xO6a6cXAEaywYcbUYiVSWMx1qikM5CgAnBm5g41TLKuj+4GSfHZ9cO66VbhvkPbPWdNsgxITiDitJMAsHYit+jqoEvd/Zmt6sKD0FwRRo3tWjTTdicdciOryeCmqkB8jGsXsnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OCYn7V8c2cWrhNBXasO2LcU9vc28bIZ3hlvF1QBn6eY=;
+ b=SMSRtpd5xfECXencBzYqGAMe17JhhQ6bUhSNA/aiCUuTfmxskU8P2Moz3eZGXXqEQEM7L7uFpY3N4nrATS1wIcnAs7MeLdqQh7TQK2z22bgzHq1tnLv0SPkfKU2DdEFcNvP6cfZleKRoxu+zvWkNl8n+myYBt3Md9LC5PmZEunUnRyidKsfqXjRRh4skCLmOhFFZZrr/SncCATDz39Jw/nUlkk+7IX6tLq0kB0YWW5sV5jAersS+LcbHckomXBcaagFGtrosqLkWR9JPmqp1mg1aHqgd49oI3aOewBwKRly6CRS0u8jhMipdd1upmludupknGsoMjSh3toMYuj/Nbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by CY5PR11MB6138.namprd11.prod.outlook.com (2603:10b6:930:2a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Wed, 8 May
+ 2024 08:51:56 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.7544.041; Wed, 8 May 2024
+ 08:51:56 +0000
+Message-ID: <cdc6c9e4-d604-4ae5-a56b-d8e9264ce5aa@intel.com>
+Date: Wed, 8 May 2024 10:51:28 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the dma-mapping tree
+To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Linux Next
+ Mailing List" <linux-next@vger.kernel.org>
+References: <20240508091631.1ec34a25@canb.auug.org.au>
+ <20240508065102.GC10736@lst.de>
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240508065102.GC10736@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR2P278CA0019.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:46::14) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240423200234.21480-1-kamal.dasu@broadcom.com>
- <CAPDyKFqLqbRx3gWCqT4G6mUVeMDWyA_f8T2_iYt07r_Ffqaaow@mail.gmail.com>
- <3f69d64e-7c41-48de-a7a0-42ab99cd7e7d@intel.com> <CAKekbev6YG+yVnX-n9tsQSwujj5mD-vpJXrd+xwcF-K=z45q+w@mail.gmail.com>
- <CAPDyKFoE4+sQ3D-9SKtFcksQQ88GyYd_P88dVOj9SYyVFqLxig@mail.gmail.com>
- <a55e1bdc-7c6a-4720-b941-0ddfd764b87e@arm.com> <CAKekbes-X-nnksQLjrGaZJOXZ7dCYos0_2cd1GukBc2KWh0KJg@mail.gmail.com>
-In-Reply-To: <CAKekbes-X-nnksQLjrGaZJOXZ7dCYos0_2cd1GukBc2KWh0KJg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 8 May 2024 10:51:21 +0200
-Message-ID: <CAPDyKFpBPMxrt7T5UTZzjtco_41FPToztGqWgWTRNQd4YAn-ZQ@mail.gmail.com>
-Subject: Re: [PATCH v1] mmc: core: check R1_STATUS for erase/trim/discard
-To: Kamal Dasu <kamal.dasu@broadcom.com>
-Cc: Christian Loehle <christian.loehle@arm.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, ludovic.barre@st.com, 
-	f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|CY5PR11MB6138:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6abd8d34-2032-436a-ef76-08dc6f3c1d33
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?SzdFUGl6cHFJU3dWMnFrOGtLRE9QWllGZGZUK3A5NXJZUjBnb1pCRTJOQy9O?=
+ =?utf-8?B?Z0RJeUxLN250NHF4eW5tY0d4Ny9WUXV4bkM0ek56NjFrTFoyZHFaTUNjWUI0?=
+ =?utf-8?B?WldpcHljVDA5ei9nRUl4czZxR0Eva0JQb05FVXlUQTExTG5peDF2MWROOURN?=
+ =?utf-8?B?MEhMN3NIVTlKWHQ2cVVtbkgvN0RSR3lQaGdpZ0VGaWhLcUlxbkNsRlM0dlpS?=
+ =?utf-8?B?NGlwOHlzT0FWTVpkbmhEcDRTN1ByYVVEZUs5MWZyOFhWZUMrdzJDMWIzQi9C?=
+ =?utf-8?B?SXZJZjNudWp2OUsxbHllVFl6Ri90T1J6OHoyNTZIZGFJVTN1NnNCWHFDRnRW?=
+ =?utf-8?B?TlhOS1NlVHBvMHpQZ0FNcmErYWVSM1BDRXhpbTdRN1p0b2pBb3VJU1FBaGFZ?=
+ =?utf-8?B?NHp1YlhzQzJ2V3I5S09LaWpVSVRtcU5yTVhyMnlUREJ2SFd1eWJQWGRwYmNv?=
+ =?utf-8?B?MFkvcVUyMUtJVHpLT1M2cExreC94ZGlENzdGaVBNTUVocWR3U0tTREd6RFhG?=
+ =?utf-8?B?czREMXd5R291aitnM3g4eUlUc25aaW9Kbm9DWVFYTmx5YkdLYmMrR3E1a0dZ?=
+ =?utf-8?B?cFloODY0a1ZzWUM2UTZPWlZubURvN2dPV3VTcmh0QldsUCtNWHdONEZCZnpN?=
+ =?utf-8?B?Z20wNndKekFjK1VSWi9WNXFyLzhITk9Manh1Q3g5WC90THBYeUNGbkFHeWp0?=
+ =?utf-8?B?WGlnVkFZNE5kNnlqZ2c3TXpoNkxHVDVRRnB1WUU4R0NlMVlrWEo0NEZLbUZI?=
+ =?utf-8?B?WkRwelBYTFI0YVJkbHVxR1JSczlKbmc1OHFGTXNVTzhJVGhCMmJzY0RhSHVC?=
+ =?utf-8?B?enFpUVN2cW82Nlc0SFRXQzV3TDBKWnNVY0hQTERRYTl0TmxGYnBsUnQ3V00y?=
+ =?utf-8?B?THhJdmI0QmEwM1hzU3MwZk8yUUZ0aXJCTFQ5VUtzNERyR0lsRkVVcmE4THcw?=
+ =?utf-8?B?NWxjZDlaRzRKRUVKZFJiSnJMUTVzTnRiNmFjb09zbEVsTVVQRDNOTmJycFRQ?=
+ =?utf-8?B?NHBIY1ZMdSttckI0R2prbmU1a2lTMmVBUTN6Q3hYNlJMUlZveWVFbGdWOUZz?=
+ =?utf-8?B?R3dlVFM4YWVWQXBUM3VEOGtrT1dVS0pBL2R4Ri9QZG5ocVlwRkdSeXJ3Nmxm?=
+ =?utf-8?B?Rzg4OUFncjdJWk1kblMzYjRjdUJ2TEF2SHFKbGQ3YVpLcUZqaGZVeUZtOEt5?=
+ =?utf-8?B?cnNFc1dWTStBcEFSLzh0OXY0UitsSGdwU2JiOWhwR1RGSDF6NmNEQnJoK09R?=
+ =?utf-8?B?TFFTUHBSQ1I2L0hoN0RRc2N4NFRCSGZKaW90VWRjbzVITS82ZWpuQTBWRG5Q?=
+ =?utf-8?B?emNJbE0rb25tK2s1dzRRaWZBQTF3V1BEdWMrQXpNR2MzUjJFYXJsZGpLSkVD?=
+ =?utf-8?B?eUpiWEIyd2hUZVEvZjZMUHVmYVZKMVM3S2puWXBXS2NkUDNmd1pOYzRIN1hQ?=
+ =?utf-8?B?eFc4OGJqbS9vNnJUZDlmQ2JGcWhVZVlkenRJNk1NdkxNTVQwMjVOTHQ3YXVu?=
+ =?utf-8?B?UWpDSkl1dGZCZnlZditVU2VGbllyMnZHOW8yNGVjYWNwVWsxOHh0Z2Y2ZEM1?=
+ =?utf-8?B?OVBJVzhtOVFrZ3B2dno3WkJybmpkVnJibkNsWWlSaVcrRDdJbmhiWkkyN05i?=
+ =?utf-8?B?aDVEdkZvSElyUmpQTXV0Wi9Ec3E2Tlh0SzcxTDV0aWwvUnNyS2daeHpFSEUv?=
+ =?utf-8?B?QldpNUFkT3hLZCtLTWtydVJBMXo2MWRkZXEzUjNtT2VHZDM4MmNDRlJnPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eVMwaXc1TnRORVdNOFc3WG0rcEVzaXpMSVV4UWVNRzhWR2Y3SkRzOEc2YTla?=
+ =?utf-8?B?cmFhak1Jd2VZeXFTcUtnYk5jTGJvUURUZGkwNlo4YnpFNGFTbUFYTGQ4ZVh5?=
+ =?utf-8?B?eW11c0M5aXNtendhb2IvaTU4b3V0eWc3V2VLU1MwWnZtcFhscFhyUkMzT1R1?=
+ =?utf-8?B?bTREUXNPODQvaDRMZVNQc2o5OFdiN0VJM1VWRHpXbGdwZlJ3KytncmUvSjFo?=
+ =?utf-8?B?dmFCS2FoUmljNjh1cVZUeVpJRTFXSmI4dmFSQ1BDbWRWdHRMeWttZnRtdis0?=
+ =?utf-8?B?TzREYldzQSs0QmQvSnp3clhOaVpqWXpVRmUxeGJhUjgxK0pBZ3V6YXorQkVa?=
+ =?utf-8?B?NzNKcUZTWnJQM005SEhSWiszeVUwWVhuYU43bVY4V3J1T0RjQkJkRkFVL3Jq?=
+ =?utf-8?B?Snc4eTZaT1dsdllhSHRRekwzVHFTV09rTllPUnY3NFN4QkNuS0Q0b3k0NGcw?=
+ =?utf-8?B?bllBd0dMekNZcUJnNVhBMk1uM0Q3UXlnUU5QcnFzOWpaMXZLNkpkMUdwdStu?=
+ =?utf-8?B?ajRxU2VsTTlZL2UwQkMxblZNU0oybERTMi8xVWF4TjducTlSZ0ZGd0VjcXJC?=
+ =?utf-8?B?WnpaOXluQjkvU2N6bHFhZ0s4enFPTlB0aUNsRXBHSEtoYTZncStCNzJ1RFB1?=
+ =?utf-8?B?Ukw3bExVZUsxSk9KdlE4RmtLL2JOd2ZLcTBXU0hRQ28vZlZJanF4TXRuUVQy?=
+ =?utf-8?B?bGJOSmFHQ3h0Sk9hbzZ4ZnFjMDJmcGk3ZlRna1FrVVNyZnB3bkRNbExKcnNv?=
+ =?utf-8?B?dFRxNkcyeCs2RGtHaVJYWFdJanQvcUJNeUZJOWV1V0s3eFNXYkZNaEZSelBl?=
+ =?utf-8?B?aytqRUJvcTJZVWhuaGtCMGRrMkhDaXBHamNST0R0VU9aYnZqNGtta3h3aWpl?=
+ =?utf-8?B?TXZvN0pVeWczZ0hvb2cvTmVFbXZ1WkQvNzBtNzlUQUFoUVVTbFpZcWlaTVd6?=
+ =?utf-8?B?WmlZa0Q2OS9YczFxa1JOaXQzTTA3eWZYbnJKT1dXaXNCZ3FLWjNEZDg3Qkkx?=
+ =?utf-8?B?cGdnU1QzSkwxaGxJQWRrWTRxTHB0cERvT3hLeEtlYmVCanhFZm03dU5GanN1?=
+ =?utf-8?B?VU1wbXdqK0F1YXVqSm5SR01BWUV2Ky9RdE9jZEJ5aGN6aFRZald2MmpNTDVR?=
+ =?utf-8?B?bVU2bUJpQ2xZT3B0UkcrdU8xVTRzL2VZM3hNaFFqaWlZNXAyZ1VlNUs1OEZs?=
+ =?utf-8?B?eGpIc0xWdWk2eFRESEJ0Y2VHamhXMHJDY3BQUS9qUlRZYm5UalZtL1lvdy9B?=
+ =?utf-8?B?Uk1rYTJaSUdzYjc2TUhDSmRLWkczNVdjTFR2YXA4ZlE2MUsxTFZsRm1hcDRU?=
+ =?utf-8?B?ZlFTQTZiZm5Mbmh3Qncva0pXMnFsM2xvYjlPY0UyTFpvNndqZ0ljNmlNZDVN?=
+ =?utf-8?B?M3cyWlZoWUR1bUdSaTNwT0dscFlqOXptV1B1OWxPT1NXN0RiT2ZDdks5S2Rq?=
+ =?utf-8?B?Y0tIYXpxdk9OQUdjZVFzdTNBSHdvQUlZNHBWMVVHc0ZHSk9aRnFFMUNGaHRE?=
+ =?utf-8?B?TXV3VTNHRnB3YityTUxOeDdUMWl3TEk3VnY5OWlkWkk0OFBjWHFOaE43YklB?=
+ =?utf-8?B?bUNGZEF4K2JsTFZGeGFXTkxQN2VHNE83SDFCZlZ3ZmZiNnBURE5PRnpZMDVh?=
+ =?utf-8?B?TVlEejQyR01idHY0MVNVYm1SQmc1OGJWSEErTnRrODFlWUlFTmJmOUtmSytw?=
+ =?utf-8?B?NmhjaUllL3p3WDRNcmVSa0h6RXYyTitqWVBJdVlFN3N3bEEzWUNNNE11Y2hV?=
+ =?utf-8?B?YXlUaHRvMzUxMDV3Vm94Y1E5Z2hSMjVNdVdEVXZiQm5wZzJqRzB4RC93WkM1?=
+ =?utf-8?B?dXgrS3Qwc25Vc01jSEZ2OVpuLzZCaW9tR1JUeUhMb0RIZVMrb05nTmduUkcr?=
+ =?utf-8?B?NGFVbEJ6WkdlbmdJcFo4V0R2Y3h1bWJTRlNaRVhibzZ4a09pUlNVakpxUmV6?=
+ =?utf-8?B?L0pJYWFxUjhaYlBMQ2FIWDkwTHlXbDhDbmtMd2NCU3piaWUrS0RFZnNTSG9m?=
+ =?utf-8?B?YWlqREVxemoyWFpQK0dKNUlWRFVRcXRFL0tXOFpEblEvdWlUeko3eHVDdFVI?=
+ =?utf-8?B?VEwycUZBcW5sZEgveGxGdUNuakc0SUZWdHBUbG1LK3lpK0Z3Q3dnamJNYXBr?=
+ =?utf-8?B?Y0FvSU44b1NQa1JQVDRjQWlyQ0FvMUN0YmVUY0hDTTlrVDIwdnZqNVQ4dFJz?=
+ =?utf-8?B?S1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6abd8d34-2032-436a-ef76-08dc6f3c1d33
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 08:51:56.1043
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4g1TsKmS/O5kNpF+Vt9t7uR/o/rbQxUevxLM4auMTRNh7/IN68kwG8mc5tFFKBAuvZtu7SOfwNJOLxDLq5c9bigESK+53NTF5QFen3TLh1o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6138
+X-OriginatorOrg: intel.com
 
-On Mon, 6 May 2024 at 20:39, Kamal Dasu <kamal.dasu@broadcom.com> wrote:
->
-> I was testing with different.
->
-> On Fri, May 3, 2024 at 9:55=E2=80=AFAM Christian Loehle
-> <christian.loehle@arm.com> wrote:
-> >
-> > On 03/05/2024 14:09, Ulf Hansson wrote:
-> > > On Fri, 26 Apr 2024 at 17:11, Kamal Dasu <kamal.dasu@broadcom.com> wr=
-ote:
-> > >>
-> > >> On Fri, Apr 26, 2024 at 2:17=E2=80=AFAM Adrian Hunter <adrian.hunter=
-@intel.com> wrote:
-> > >>>
-> > >>> On 25/04/24 19:18, Ulf Hansson wrote:
-> > >>>> + Wolfram, Adrian (to see if they have some input)
-> > >>>>
-> > >>>> On Tue, 23 Apr 2024 at 22:02, Kamal Dasu <kamal.dasu@broadcom.com>=
- wrote:
-> > >>>>>
-> > >>>>> When erase/trim/discard completion was converted to mmc_poll_for_=
-busy(),
-> > >>>>> optional ->card_busy() host ops support was added. sdhci card->bu=
-sy()
-> > >>>>> could return busy for long periods to cause mmc_do_erase() to blo=
-ck during
-> > >>>>> discard operation as shown below during mkfs.f2fs :
-> > >>>>>
-> > >>>>> Info: [/dev/mmcblk1p9] Discarding device
-> > >>>>> [   39.597258] sysrq: Show Blocked State
-> > >>>>> [   39.601183] task:mkfs.f2fs       state:D stack:0     pid:1561 =
- tgid:1561  ppid:1542   flags:0x0000000d
-> > >>>>> [   39.610609] Call trace:
-> > >>>>> [   39.613098]  __switch_to+0xd8/0xf4
-> > >>>>> [   39.616582]  __schedule+0x440/0x4f4
-> > >>>>> [   39.620137]  schedule+0x2c/0x48
-> > >>>>> [   39.623341]  schedule_hrtimeout_range_clock+0xe0/0x114
-> > >>>>> [   39.628562]  schedule_hrtimeout_range+0x10/0x18
-> > >>>>> [   39.633169]  usleep_range_state+0x5c/0x90
-> > >>>>> [   39.637253]  __mmc_poll_for_busy+0xec/0x128
-> > >>>>> [   39.641514]  mmc_poll_for_busy+0x48/0x70
-> > >>>>> [   39.645511]  mmc_do_erase+0x1ec/0x210
-> > >>>>> [   39.649237]  mmc_erase+0x1b4/0x1d4
-> > >>>>> [   39.652701]  mmc_blk_mq_issue_rq+0x35c/0x6ac
-> > >>>>> [   39.657037]  mmc_mq_queue_rq+0x18c/0x214
-> > >>>>> [   39.661022]  blk_mq_dispatch_rq_list+0x3a8/0x528
-> > >>>>> [   39.665722]  __blk_mq_sched_dispatch_requests+0x3a0/0x4ac
-> > >>>>> [   39.671198]  blk_mq_sched_dispatch_requests+0x28/0x5c
-> > >>>>> [   39.676322]  blk_mq_run_hw_queue+0x11c/0x12c
-> > >>>>> [   39.680668]  blk_mq_flush_plug_list+0x200/0x33c
-> > >>>>> [   39.685278]  blk_add_rq_to_plug+0x68/0xd8
-> > >>>>> [   39.689365]  blk_mq_submit_bio+0x3a4/0x458
-> > >>>>> [   39.693539]  __submit_bio+0x1c/0x80
-> > >>>>> [   39.697096]  submit_bio_noacct_nocheck+0x94/0x174
-> > >>>>> [   39.701875]  submit_bio_noacct+0x1b0/0x22c
-> > >>>>> [   39.706042]  submit_bio+0xac/0xe8
-> > >>>>> [   39.709424]  blk_next_bio+0x4c/0x5c
-> > >>>>> [   39.712973]  blkdev_issue_secure_erase+0x118/0x170
-> > >>>>> [   39.717835]  blkdev_common_ioctl+0x374/0x728
-> > >>>>> [   39.722175]  blkdev_ioctl+0x8c/0x2b0
-> > >>>>> [   39.725816]  vfs_ioctl+0x24/0x40
-> > >>>>> [   39.729117]  __arm64_sys_ioctl+0x5c/0x8c
-> > >>>>> [   39.733114]  invoke_syscall+0x68/0xec
-> > >>>>> [   39.736839]  el0_svc_common.constprop.0+0x70/0xd8
-> > >>>>> [   39.741609]  do_el0_svc+0x18/0x20
-> > >>>>> [   39.744981]  el0_svc+0x68/0x94
-> > >>>>> [   39.748107]  el0t_64_sync_handler+0x88/0x124
-> > >>>>> [   39.752455]  el0t_64_sync+0x168/0x16c
-> > >>>>
-> > >>>> Thanks for the detailed log!
-> > >>>>
-> > >>>>>
-> > >>>>> Fix skips the card->busy() and uses MMC_SEND_STATUS and R1_STATUS
-> > >>>>> check for MMC_ERASE_BUSY busy_cmd case in the mmc_busy_cb() funct=
-ion.
-> > >>>>>
-> > >>>>> Fixes: 0d84c3e6a5b2 ("mmc: core: Convert to mmc_poll_for_busy() f=
-or erase/trim/discard")
-> > >>>>> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
-> > >>>>> ---
-> > >>>>>  drivers/mmc/core/mmc_ops.c | 3 ++-
-> > >>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >>>>>
-> > >>>>> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_op=
-s.c
-> > >>>>> index 3b3adbddf664..603fbd78c342 100644
-> > >>>>> --- a/drivers/mmc/core/mmc_ops.c
-> > >>>>> +++ b/drivers/mmc/core/mmc_ops.c
-> > >>>>> @@ -464,7 +464,8 @@ static int mmc_busy_cb(void *cb_data, bool *b=
-usy)
-> > >>>>>         u32 status =3D 0;
-> > >>>>>         int err;
-> > >>>>>
-> > >>>>> -       if (data->busy_cmd !=3D MMC_BUSY_IO && host->ops->card_bu=
-sy) {
-> > >>>>> +       if (data->busy_cmd !=3D MMC_BUSY_IO &&
-> > >>>>> +           data->busy_cmd !=3D MMC_BUSY_ERASE && host->ops->card=
-_busy) {
-> > >>>>>                 *busy =3D host->ops->card_busy(host);
-> > >>>>>                 return 0;
-> > >>>>>         }
-> > >>>>
-> > >>>> So it seems like the ->card_busy() callback is broken in for your =
-mmc
-> > >>>> host-driver and platform. Can you perhaps provide the information
-> > >>>> about what HW/driver you are using?
-> > >>>>
-> > >>
-> > >> Using the sdhci-brcmstb driver on a Broadcom Settop based SoC.
-> > >>
-> > >>>> The point with using the ->card_busy() callback, is to avoid sendi=
-ng
-> > >>>> the CMD13. Ideally it should be cheaper/faster and in most cases i=
-t
-> > >>>> translates to a read of a register. For larger erases, we would
-> > >>>> probably end up sending the CMD13 periodically every 32-64 ms, whi=
-ch
-> > >>>> shouldn't be a problem. However, for smaller erases and discards, =
-we
-> > >>>> may want the benefit the ->card_busy() callback provides us.
-> > >>>>
-> > >>
-> > >> I have tested two scenarios. One is like the mkfs.f2fs app that call=
-s :
-> > >> ioctl(fd, BLKSECDISCARD, &range);
-> > >>
-> > >> This has the following CMD and completion sequence:
-> > >> {CMD35->CMD36->CMD38} and poll for  DAT0  signal via card->busy .
-> > >> CMD38 has a response of R1b. The DAT0 (Busy line) will be driven by =
-the device.
-> > >> Busy (DAT0  =3D 0) is asserted by a device for  erasing blocks. Stay=
-s
-> > >> busy in brcmstb sdhci controller.
-> > >
-> > > How big is the "range"?
-> > >
->
-> The task just blocks here. I have attached the stack.
->
-> > > Just so I get this right, it stays busy and we are waiting for the
-> > > timeout to fire? And ideally you think we should not be busy for that
-> > > long, right?
-> > >
-> The timeout does not fire.
->
-> > >>
-> > >> With the additional change followed by CMD13 (response of R1), which
-> > >> returns the device status, the
-> > >> DAT0 will be pulled-up and next time we read the BUSY status it will
-> > >> indicate it is not busy.
-> > >
-> > > So you are referring to read the BUSY status with you ->card_busy()
-> > > callback? Or did you actually verify that this is true from an
-> > > electrical point of view, by monitoring the DAT0 signal?
-> > >
-> > > If the latter, perhaps it's the card that is failing and simply
-> > > requires CMD13 to be used to poll for busy. What card is this?
-> > >
-> > > Have you tried different cards with the same platform/driver?
-> > >
-> Yes, I have tried Micron and Sandisk 8GB cards with the same platform
-> with the same results.
+From: Christoph Hellwig <hch@lst.de>
+Date: Wed, 8 May 2024 08:51:02 +0200
 
-Okay, so it sounds like it's the ->card_busy() callback that may not
-work as expected after all.
+> On Wed, May 08, 2024 at 09:16:31AM +1000, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the dma-mapping tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+> 
+> Thanks.  I'll fold in the patch below to drop two consts for now.
+> Alexander, if you want to pass the consts through we'll also need to
+> modify page_pool_get_dma_addr, which looks doable.  If you want that,
+> please send an incremental patch.
 
-Do we have an SD card slot on this platform that we can try to run
-similar tests for but with an SD card instead?
+I'm verry sorry for that. I had 2 trees, one with const get_dma_addr()
+and dma-for-next without const, and didn't check it compiles after
+rebasing >_<
 
->
-> > >>
-> > >> Also I tried the mmc util and that does not show the same issue with
-> > >> exactly the same ranges, however in that case there are some
-> > >> differences in the way the CMD sequence is sent for the entire disca=
-rd
-> > >> operation.
-> > >> # mmc erase discard 0x000087a4 0x002effff /dev/mmcblk1
-> > >> /* send erase cmd with multi-cmd */
-> > >> ret =3D ioctl(dev_fd, MMC_IOC_MULTI_CMD, multi_cmd);
-> > >>
-> > >> CMD35->CMD13->CMD36->CMD13->CMD38->CMD13
-> > >> I do not see any hang in all the erase options discard, legacy, trim=
-, trim2,
-> > >> secure-trim used here with mmc util .
-> > >
-> > > So CMD13 seems to do the trick for you. Although, I think we need to
-> > > figure out if this a special "broken" card or if the problem is with
-> > > the ->card_busy() implementation for your platform.
-> > >
-> > >>
-> > >> Also looking at JEDEC Standard No. 84-B51 Page 276, 277
-> > >> "Once the erase groups are selected the host will send an ERASE
-> > >> (CMD38) command. It is recom-
-> > >> mended that the host terminates the sequence with a SEND_STATUS
-> > >> (CMD13) to poll any additional
-> > >> status information the Device may have (e.g., WP_ERASE_SKIP, etc.)."
-> > >
-> > > Isn't that exactly what is being done? After the card has stopped
-> > > signaling busy, we send a CMD13 in mmc_busy_cb() to read the
-> > > additional status information.
-> >
-> Yes, that is what the fix does. However in the original if
-> ->card->busy() is being used we do not send the CMD13.
+net-next already has this const. We could leave it as in your attached
+patch, but then there'll be a trivial conflict when merging with
+net-next. Or I can send an incremental quick fix for dma-for-next, but
+then 2 commits (one in your tree and one in net-next) will have these
+changes duplicated.
+What do you think?
 
-We are not sending CMD13 to poll for busy, but we are indeed sending a
-CMD13 *after* the card has stopped signal busy, to read the additional
-status information.
+> 
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index 8836aaaf23855f..4f9d1bd7f4d187 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -399,7 +399,7 @@ static struct page *__page_pool_get_cached(struct page_pool *pool)
+>  }
+>  
+>  static void __page_pool_dma_sync_for_device(const struct page_pool *pool,
+> -					    const struct page *page,
+> +					    struct page *page,
+>  					    u32 dma_sync_size)
+>  {
+>  #if defined(CONFIG_HAS_DMA) && defined(CONFIG_DMA_NEED_SYNC)
+> @@ -413,7 +413,7 @@ static void __page_pool_dma_sync_for_device(const struct page_pool *pool,
+>  
+>  static __always_inline void
+>  page_pool_dma_sync_for_device(const struct page_pool *pool,
+> -			      const struct page *page,
+> +			      struct page *page,
+>  			      u32 dma_sync_size)
+>  {
+>  	if (pool->dma_sync && dma_dev_need_sync(pool->p.dev))
 
-This seems to be according to the spec.
-
->
-> > Agreed with your interpretation FWIW.
-> >
-> > >
-> > > I don't get it, why should the card stop signal busy, just because we
-> > > send a CMD13. If so, the card should probably be considered broken.
-> > > For broken cards, we can try to use a card-quirk instead - to enforce
-> > > CMD13 polling.
-> >
-> Yes  would be one of the solutions that can be considered. Would open
-> to any suggestion on what card-quirk to use.
-
-As you have tested different cards, it's more likely to be a problem
-with the platform/HW and the ->card_busy() callback.
-
->
-> > I'll mention it here, I've seen some broken IP out there where the card=
-'s
-> > FSM (including busy-signalling) was dependent on the host providing the
-> > CLK, can't remember which one it was, though.
-> > Anyway for Kamal, it might be interesting to know if your host controll=
-er
-> > autostops the CLK (which it is allowed to) during the busy-signalling a=
-nd
-> > if not stopping it also works around the problem.
-> >
-> The host controller is not stopping the clock. Also stopping the clock
-> does not work around the problem. host is expecting the device FSM
-> pull up the busy line.
->
-> At this point I can either do this when  adding host:
-> +       /* we dont use busy signal */
-> +       host->mmc_host_ops.card_busy =3D NULL;
-
-Looks like this is the best option, unless we can figure out why the
-->card_busy() callback doesn't work as expected.
-
->
-> Or introduce a card-quirk for this situation.
->
-> Kamal
-
-Kind regards
-Uffe
+Thanks,
+Olek
 
