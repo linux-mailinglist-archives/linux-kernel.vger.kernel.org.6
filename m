@@ -1,179 +1,249 @@
-Return-Path: <linux-kernel+bounces-173835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC51F8C0628
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:19:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86468C062C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8CE283B61
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336F71F22B41
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D99131BC9;
-	Wed,  8 May 2024 21:19:09 +0000 (UTC)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9E9131BCA;
+	Wed,  8 May 2024 21:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VnCDWlGr"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232F12C497;
-	Wed,  8 May 2024 21:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA6312C497;
+	Wed,  8 May 2024 21:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715203148; cv=none; b=fyVUyKs/J6nTIFuWnbNcPZ99OvrP07kF+fmmVouyWbdcFJ/KQwb2UTAksF//1vs38eR9k6QF7sFtIC+tTRBFmZ7Kgy04njOP9jY6wgcX3EM/d30oUrd64TtbSJlHysDSIIfoY2degE1ZqMmYeR20skEpDIQnyKCrlfb7cNAdHCY=
+	t=1715203346; cv=none; b=Z5VxVwBXWAw0RFF6c4by1JYTVJCYzLGjeSo52s3oTs0FI+/f9h8l6a7lYuHAxioQ8Y04++g79YsvyPdL7XYVFFmEW2Clpm+epm4wAzQSAEvh6yk0ZW6fPP+hMC7i22SQjt8CPRXDpWEUK5dW6miIcj92Mtv8Yp9cv0lxkNu5y4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715203148; c=relaxed/simple;
-	bh=LZaTxpcC6rDlaczxIBkXQsVl/n555uhdZA29kcRqL1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mAUuKL6tHMr7aPSxp3+YB5GLp01w05Ohi2ptsWiPPlqD2XdoOLUhG56HB/ngqMd/H1+siXBlEYIm9nrLeuiIF1TakaJo/KQeBsGADhzJmqwAUc0oKnrIYl3srwaugr0JVEgUJAIeCK66SGS/fknymmTPjoCYGv6R8NUQIo22loo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1715203346; c=relaxed/simple;
+	bh=e9USpes2DzX9zdYg/vrpyLlR/1aUhbsBA0KXXm0Gero=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K1D1/03jQCY0slE/7oeAqGgz2sco492NMPXW04llXDWk5f7YCpl0JrM8vqJOsbOIJ8vS1pp6Xrk2yJmZLlC6bSX2bEDufyqoUSLCWGibCeAjkdC8IhQaZUf0TzR49S50AEgJz+zAk28ajH8VvfLpWgQ2mwP1uEorcnkz2aO0pvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VnCDWlGr; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b4348fa971so195600a91.1;
-        Wed, 08 May 2024 14:19:07 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-78f0e3b6feeso8183685a.1;
+        Wed, 08 May 2024 14:22:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715203344; x=1715808144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=EF6kiOxUxjMHaMOZEZWN8I3r+QaY2TVkICy8VZIjNZc=;
+        b=VnCDWlGrBWlFOoUoqn5GudK6RcqRzTy13jb82cKsQBLnQf6W3pkDjv6+Dmjygg7bbA
+         gyID3qm6sBdn54Ju3055D0O+IxAcHyu2BQ+F+9WqRFxllaGl/tp4RSto8/aOEtvZay89
+         eGtvtObVBToAiXLLCa8Su1pyotRX8DgrKJUth6Sk7uF+pQPWfUO30ZiTz8q68UKRp3hS
+         PJnjia+baufbZrd1oCb+hJHmp0Bbv7QEJpYFNDjoGkbU+dWCuvdrAU7bFcb/xR01rFK7
+         q/5mx+Sv0co+3l3kK3EKiGNB/SmJyHc8/e1WzlZejz8FYLHDAAe7JcLnxQ3Hwck8sm7q
+         3IeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715203147; x=1715807947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iH/sB0aLG2WmibnGzHehJ6oJYqkz2Fm71FR2/jk70jg=;
-        b=V8yVYeuGKmPnll8KVt5B9y3lMF3Aq1aFdoEFI2adltzpi9+s5iccPoAyIDMILrv408
-         vJTdxKvF7o0w080djTFdYdQq9X32j0Xz1yZJ1H2D+tRoULOf0PhYIQYnOVeX9Rs149Yp
-         Feim4IcmAlThBgAkb0vz8E+y0OOHbP8i/enwkeuCioSGnC6Ay2RIn1vfapvvtBKddVMa
-         tD9N2d1piVGQSDl2oKZhhcSaq1yL0w4RqBwFy/uXVP6G3Jl0+WM78swng9HquoleapoG
-         tF1XAqG9jgZp5Mkjax4mxlQpPR3+vdosewVO+E0YNHd1ve0DwyUKU8Hp1f6HmMF3OnCq
-         R24w==
-X-Forwarded-Encrypted: i=1; AJvYcCW/OHNKjg9M1gl6iJ4HYBMUAkOkkyouqcPo0fgzjxGUqL+mAq2RoB38YdMaLBhK7pmkGB3soEJkAE9kQduIi9lGq/4iYGOk2HvncIKFeyt/5A==
-X-Gm-Message-State: AOJu0YxGo7N0iy3JcSa0uO2QcK9n1xOCUcN03kK7vFXsbMBXPOGw0mLi
-	tz2W0V6mXbhENAbBRV5/BzfuK3SIudeQMANO8FXskXyeErzZpEzS1ysduZ1nteCydvU1+gSoKwx
-	WC4YUI93xjqqwsREj+iLtFRklmUw=
-X-Google-Smtp-Source: AGHT+IH+t++T544tPgXHpsm0a1tOuiLQCQxEAsmohdvIVYxfAQt0ye/thNzXQuR0DBvAYffz/QdOdsHhrcWb0fzJRx8=
-X-Received: by 2002:a17:90b:358c:b0:2b4:39cd:250c with SMTP id
- 98e67ed59e1d1-2b6163a26d2mr3978862a91.8.1715203146579; Wed, 08 May 2024
- 14:19:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715203344; x=1715808144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EF6kiOxUxjMHaMOZEZWN8I3r+QaY2TVkICy8VZIjNZc=;
+        b=YDIn63f6zbmwj7VOQCaf03Zfe5NXVBRLnjwJSRhOGzrsmK3VHp5UzYJE2KynBoKzeQ
+         5tdoKvGKvVR87FY8rpW96ej7GuJfc2LtIv62PF2eVy9YKeQ9noG78prWpxPdcxfUlhw+
+         PdNBAHvki6HkDtO6hqtXJsAlN5zHtrnxOd25Cw58t64TMZ7nGosiRAR2oEW2X3wTa43c
+         BwVPwMWdxWn5DfbvDoxQN77ULtHh9x2iNz503obzh2o3CPSvTNdnXa5ij2lV/0LCHAKi
+         p00lHZjSFQlaIw+uIPcq4HjuGwX+tqu4joYHRwbASMl5zvtt0IOtXBTKvYgfhjrlrDyS
+         lVZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXb09koDBbSnXKoW58JAEb0gPT/RlUDSkVZpDf2+HiBSZBKlwiC/EKZdxKbA+tATbj3yO6awxSqVumrq6OB3dg3aX3RXSeCJzqWRhdDPovcqyOJvhdLgt3kq+PZTCKWKgrzvfUjnCxTJM4fk3cPiz4=
+X-Gm-Message-State: AOJu0Yw6kzp5DZHM5rhOtkj78xbLiP7McE7xgJfQ8MYBD+uyVvjj3tJV
+	leN84DVVOJkIm05KeTIbHKUX8/0FkY8Nobzp3qrMMclbpYDO/6Ym
+X-Google-Smtp-Source: AGHT+IEkYkR/8Y3Nk2iLGt8MFsDJ4syw93kCnUnOc5c78ck1kRsRAQrpnX86L0tY1UlArCiHrMfztA==
+X-Received: by 2002:a05:620a:5608:b0:790:c017:89e2 with SMTP id af79cd13be357-792b26ae15dmr475307685a.16.1715203344170;
+        Wed, 08 May 2024 14:22:24 -0700 (PDT)
+Received: from fionn.redhat.com ([74.12.5.183])
+        by smtp.gmail.com with ESMTPSA id op3-20020a05620a534300b0079071ee067fsm6265258qkn.31.2024.05.08.14.22.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 14:22:23 -0700 (PDT)
+Sender: John Kacur <jkacur@gmail.com>
+From: John Kacur <jkacur@redhat.com>
+To: Daniel Bristot de Oliveria <bristot@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	linux-trace-devel@vger.kernel.org
+Cc: John Kacur <jkacur@redhat.com>
+Subject: [PATCH] rtla: Fix -t/--trace[=file]
+Date: Wed,  8 May 2024 17:21:55 -0400
+Message-ID: <20240508212155.71946-1-jkacur@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508134259.24413-1-nick.forrington@arm.com> <20240508134259.24413-2-nick.forrington@arm.com>
-In-Reply-To: <20240508134259.24413-2-nick.forrington@arm.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 8 May 2024 14:18:54 -0700
-Message-ID: <CAM9d7ciQ5idMLWO51JrpNEbFtdtrgz3o0qashX5dL2y1d1MRyw@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf lock info: Display both map and thread by default
-To: Nick Forrington <nick.forrington@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Normally with a short option we don't provide an equals sign like this
+-tfile.txt
+-t file.txt
 
-On Wed, May 8, 2024 at 6:46=E2=80=AFAM Nick Forrington <nick.forrington@arm=
-com> wrote:
->
-> Change "perf lock info" argument handling to:
->
-> Display both map and thread info (rather than an error) when neither are
-> specified.
->
-> Display both map and thread info (rather than just thread info) when
-> both are requested.
->
-> Signed-off-by: Nick Forrington <nick.forrington@arm.com>
-> ---
->  tools/perf/Documentation/perf-lock.txt |  4 ++--
->  tools/perf/builtin-lock.c              | 22 +++++++++++++++++-----
->  2 files changed, 19 insertions(+), 7 deletions(-)
->
-> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Document=
-ation/perf-lock.txt
-> index f5938d616d75..57a940399de0 100644
-> --- a/tools/perf/Documentation/perf-lock.txt
-> +++ b/tools/perf/Documentation/perf-lock.txt
-> @@ -111,11 +111,11 @@ INFO OPTIONS
->
->  -t::
->  --threads::
-> -       dump thread list in perf.data
-> +       dump only the thread list in perf.data
->
->  -m::
->  --map::
-> -       dump map of lock instances (address:name table)
-> +       dump only the map of lock instances (address:name table)
->
->
->  CONTENTION OPTIONS
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 230461280e45..d0b8645487ad 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -1483,11 +1483,16 @@ static int dump_info(void)
->
->         if (info_threads)
->                 dump_threads();
-> -       else if (info_map)
-> +
-> +       if (info_map) {
-> +               if (info_threads)
-> +                       fputc('\n', lock_output);
+But we do provide an equals sign with the long option like this
+--trace=file.txt
 
-it seems you need pr_info("\n").  Where does lock_output come from?
+Also, a good parser should work with a space instead of an equals sign
+--trace file.txt
 
+Most of these are broken!
 
->                 dump_map();
-> -       else {
-> +       }
-> +
-> +       if (!info_threads && !info_map) {
->                 rc =3D -1;
-> -               pr_err("Unknown type of information\n");
-> +               pr_err("No lock info specified\n");
->         }
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
+Saving trace to ile.txt
+File name truncated
 
-I think we can remove this block now.
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
+Saving trace to timerlat_trace.txt
+Default file name used instead of the requested one.
 
-Thanks,
-Namhyung
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
+Saving trace to file.txt
+This works, but people normally don't use '=' with a short option
 
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
+Saving trace to ile.txt
+File name truncated
 
->
->         return rc;
-> @@ -2578,9 +2583,9 @@ int cmd_lock(int argc, const char **argv)
->
->         const struct option info_options[] =3D {
->         OPT_BOOLEAN('t', "threads", &info_threads,
-> -                   "dump thread list in perf.data"),
-> +                   "dump the thread list in perf.data"),
->         OPT_BOOLEAN('m', "map", &info_map,
-> -                   "map of lock instances (address:name table)"),
-> +                   "dump the map of lock instances (address:name table)"=
-),
->         OPT_PARENT(lock_options)
->         };
->
-> @@ -2694,6 +2699,13 @@ int cmd_lock(int argc, const char **argv)
->                         if (argc)
->                                 usage_with_options(info_usage, info_optio=
-ns);
->                 }
-> +
-> +               /* If neither threads nor map requested, display both */
-> +               if (!info_threads && !info_map) {
-> +                       info_threads =3D true;
-> +                       info_map =3D true;
-> +               }
-> +
->                 /* recycling report_lock_ops */
->                 trace_handler =3D &report_lock_ops;
->                 rc =3D __cmd_report(true);
-> --
-> 2.44.0
->
->
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
+timerlat_trace.txt
+Default file name used instead of the requested one.
+
+After the fix
+
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
+Saving trace to file.txt
+
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
+Saving trace to file.txt
+
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
+Saving trace to file.txt
+
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
+Saving trace to file.txt
+
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
+Saving trace to file.txt
+
+I also tested -t and --trace without providing a file name both as the
+last requested option and with a following long and short option
+
+For example
+
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t -u
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace -u
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t
+/rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace
+
+And all correctly do Saving trace to timerlat_trace.txt as expected
+
+This fix is applied to both timerlat top and hist
+and to osnoise top and hist
+
+Signed-off-by: John Kacur <jkacur@redhat.com>
+---
+ tools/tracing/rtla/src/osnoise_hist.c  | 11 ++++++++---
+ tools/tracing/rtla/src/osnoise_top.c   | 11 ++++++++---
+ tools/tracing/rtla/src/timerlat_hist.c | 11 ++++++++---
+ tools/tracing/rtla/src/timerlat_top.c  | 11 ++++++++---
+ 4 files changed, 32 insertions(+), 12 deletions(-)
+
+diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
+index 01870d50942a..8ff1c816eb6a 100644
+--- a/tools/tracing/rtla/src/osnoise_hist.c
++++ b/tools/tracing/rtla/src/osnoise_hist.c
+@@ -640,9 +640,14 @@ static struct osnoise_hist_params
+ 			params->threshold = get_llong_from_str(optarg);
+ 			break;
+ 		case 't':
+-			if (optarg)
+-				/* skip = */
+-				params->trace_output = &optarg[1];
++			if (optarg) {
++				if (optarg[0] == '=')
++					params->trace_output = &optarg[1];
++				else
++					params->trace_output = &optarg[0];
++			}
++			else if (optind < argc && argv[optind][0] != '0')
++				params->trace_output = argv[optind];
+ 			else
+ 				params->trace_output = "osnoise_trace.txt";
+ 			break;
+diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
+index 457360db0767..c685d881daf1 100644
+--- a/tools/tracing/rtla/src/osnoise_top.c
++++ b/tools/tracing/rtla/src/osnoise_top.c
+@@ -480,9 +480,14 @@ struct osnoise_top_params *osnoise_top_parse_args(int argc, char **argv)
+ 			params->stop_total_us = get_llong_from_str(optarg);
+ 			break;
+ 		case 't':
+-			if (optarg)
+-				/* skip = */
+-				params->trace_output = &optarg[1];
++			if (optarg){
++				if (optarg[0] == '=')
++					params->trace_output = &optarg[1];
++				else
++					params->trace_output = &optarg[0];
++			}
++			else if (optind < argc && argv[optind][0] != '-')
++				params->trace_output = argv[optind];
+ 			else
+ 				params->trace_output = "osnoise_trace.txt";
+ 			break;
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index 8bd51aab6513..d2a639d3c02c 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -720,9 +720,14 @@ static struct timerlat_hist_params
+ 			params->stop_total_us = get_llong_from_str(optarg);
+ 			break;
+ 		case 't':
+-			if (optarg)
+-				/* skip = */
+-				params->trace_output = &optarg[1];
++			if (optarg) {
++				if (optarg[0] == '=')
++					params->trace_output = &optarg[1];
++				else
++					params->trace_output = &optarg[0];
++			}
++			else if (optind < argc && argv[optind][0] != '-')
++				params->trace_output = argv[optind];
+ 			else
+ 				params->trace_output = "timerlat_trace.txt";
+ 			break;
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index 8a3fa64319c6..e6e75937832e 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -547,9 +547,14 @@ static struct timerlat_top_params
+ 			params->stop_total_us = get_llong_from_str(optarg);
+ 			break;
+ 		case 't':
+-			if (optarg)
+-				/* skip = */
+-				params->trace_output = &optarg[1];
++			if (optarg) {
++				if (optarg[0] == '=')
++					params->trace_output = &optarg[1];
++				else
++					params->trace_output = &optarg[0];
++			}
++			else if (optind < argc && argv[optind][0] != '-')
++				params->trace_output = argv[optind];
+ 			else
+ 				params->trace_output = "timerlat_trace.txt";
+ 
+-- 
+2.44.0
+
 
