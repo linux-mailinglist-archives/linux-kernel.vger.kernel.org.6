@@ -1,365 +1,337 @@
-Return-Path: <linux-kernel+bounces-173435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85AB8C0063
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E902F8C005D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4861C219B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 192131C21DFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C970126F39;
-	Wed,  8 May 2024 14:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="TCjirRsj"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7A686AC8;
+	Wed,  8 May 2024 14:43:32 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CA4126F04;
-	Wed,  8 May 2024 14:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BC186621;
+	Wed,  8 May 2024 14:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715179418; cv=none; b=su9h3t6nquw/wRqOzL1qBZh4ZFBOEFf9G718y2vnYJXVbebI6y4OUQbCR4y8loaq9ndt40CifniVAsFtkJnVB4R+aZaTDzs+TtOYkb/xSufkKYL3dwjXOHq7pqZrVf8UoP6rLzoNxpOWMhSt8Uop3ihroOgqGCKh5MF9MFYpIzg=
+	t=1715179411; cv=none; b=rTCn2sAJUEaxqB/WjQ/Bnb88W8fGPGEvEPccr7BgnzY0+Uksd5j1t4AF2+AFvCPjxJPQwbaNw582C5r+fB/ImWG9aw8ehdNq2xMF7DPXPnxsb2Odbotl4b9SC7Qr5XzCFfGOzWH63xWk8mR+gxtLysLlyLFb0+xtRA6uMUeMCqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715179418; c=relaxed/simple;
-	bh=/pNaP8r6O2rjSOvzUu0ZGpBl9BRmepDAtoRZE0MNbQI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oPYP1WwaF7KCKHeSPYyMrpujvwJZ9IZS08Kg8ZwJq7D6HTm0CX5L0AxT/wJBZE0kanEiQGhkbeysW8sLErAsLI5YsgAV3AI8KVffA4N/BXjiTOYFqFWAdExbIrHRjd+V11HD0agrGtzqcsqu580u+gRJujrYpFhy8qYSRyJBImk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=TCjirRsj; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 9A259100009;
-	Wed,  8 May 2024 17:43:31 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9A259100009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715179411;
-	bh=/t4T1Gn29xONtCijQdxW+FDrT/VMYNoKocb3bZHcjMw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=TCjirRsj402OcLnAi9D1jkkL7ixsg3iEaMa0Dko1BqB6GsRsE8prLuxj5hmOIpm9K
-	 b37rp6j/18RJ3Yg6hMb0goZZ5zZWUCPTYil6PtsRMjeKNHslRhfOM4pg/Jo6Ad67Zi
-	 pRDEkGB9cZYwgLGiXR+9Ed/A5tXUSSZBLwJy20IyV7n/fSUYiCzkVVXTUFm3P3/TRg
-	 PcRGLt55tCKeAVATk8eDL9BfjVT/PfwuVCm9ieYQk/ZOKibAVrE4TCbDNX7ATCcVNH
-	 cL95iobbS+qv1lfC8GZA9EGc6acOP/J5+HQFC9nZqssqkmFh0six+fV6eFyhyXnT8s
-	 wtBs93V/REw4A==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed,  8 May 2024 17:43:31 +0300 (MSK)
-Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 8 May 2024 17:43:31 +0300
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
- Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [APPROACH 2 2/2] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
-Date: Wed, 8 May 2024 17:42:59 +0300
-Message-ID: <20240508144259.191843-4-jan.dakinevich@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
-References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
+	s=arc-20240116; t=1715179411; c=relaxed/simple;
+	bh=5cvfBGfQ1cSzb6/XP5aipsaEXZK9rqKx7tJpGXt/ljM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UNZwcJJZlhDqCs8LiIWxVVYSsH2/mInM6cHmhHR51pTwdTsgyXTCJ8yrfvyvFvZZ7C/o0DGftUTTL8iF+Q2Iqzsy7TqnjuGzI8mw9HbeVYhzZJN86k8tWb+81MOJ2UITRqlkzEdQqUm/OLujpzxWLndsGoLPeqI2bhvD+z93ce0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZHqq6GpDz6JBD7;
+	Wed,  8 May 2024 22:40:23 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 962D3140A36;
+	Wed,  8 May 2024 22:43:23 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 8 May
+ 2024 15:43:23 +0100
+Date: Wed, 8 May 2024 15:43:21 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Chris Mason <clm@fb.com>, Josef Bacik
+	<josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH 00/26] DCD: Add support for Dynamic Capacity Devices
+ (DCD)
+Message-ID: <20240508154321.00002073@Huawei.com>
+In-Reply-To: <66385b6eb5f54_25842129416@iweiny-mobl.notmuch>
+References: <20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com>
+	<20240404184901.00002104@Huawei.com>
+	<6632d503f3ae5_e1f58294df@iweiny-mobl.notmuch>
+	<20240503102051.00004a99@Huawei.com>
+	<66385b6eb5f54_25842129416@iweiny-mobl.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185143 [May 08 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;devicetree.org:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/05/08 13:27:00
-X-KSMG-LinksScanning: Clean, bases: 2024/05/08 13:27:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/08 09:52:00 #25122865
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Convert Amlogic AXG Audio Clock Controller binding to yaml.
+On Sun, 5 May 2024 21:24:14 -0700
+Ira Weiny <ira.weiny@intel.com> wrote:
 
-Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
-Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
----
- .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 ------
- .../clock/amlogic,axg-audio-clkc.yaml         | 181 ++++++++++++++++++
- 2 files changed, 181 insertions(+), 59 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> Jonathan Cameron wrote:
+> > On Wed, 1 May 2024 16:49:24 -0700
+> > Ira Weiny <ira.weiny@intel.com> wrote:
+> >   
+> > > Jonathan Cameron wrote:  
+> > > >     
+> > > > > 
+> > > > > Fan Ni's latest v5 of Qemu DCD was used for testing.[2]    
+> > > > Hi Ira, Navneet.    
+> > > > > 
+> > > > > Remaining work:
+> > > > > 
+> > > > > 	1) Integrate the QoS work from Dave Jiang
+> > > > > 	2) Interleave support    
+> > > > 
+> > > > 
+> > > > More flag.  This one I think is potentially important and don't
+> > > > see any handling in here.    
+> > > 
+> > > Nope I admit I missed the spec requirement.
+> > >   
+> > > > 
+> > > > Whilst an FM could in theory be careful to avoid sending a
+> > > > sparse set of extents, if the device is managing the memory range
+> > > > (which is possible all it supports) and the FM issues an Initiate Dynamic
+> > > > Capacity Add with Free (again may be all device supports) then we
+> > > > can't stop the device issuing a bunch of sparse extents.
+> > > > 
+> > > > Now it won't be broken as such without this, but every time we
+> > > > accept the first extent that will implicitly reject the rest.
+> > > > That will look very ugly to an FM which has to poke potentially many
+> > > > times to successfully allocate memory to a host.    
+> > > 
+> > > This helps me to see see why the more bit is useful.
+> > >   
+> > > > 
+> > > > I also don't think it will be that hard to support, but maybe I'm
+> > > > missing something?     
+> > > 
+> > > Just a bunch of code and refactoring busy work.  ;-)  It's not rocket
+> > > science but does fundamentally change the arch again.
+> > >   
+> > > > 
+> > > > My first thought is it's just a loop in cxl_handle_dcd_add_extent()
+> > > > over a list of extents passed in then slightly more complex response
+> > > > generation.    
+> > > 
+> > > Not exactly 'just a loop'.  No matter how I work this out there is the
+> > > possibility that some extents get surfaced and then the kernel tries to
+> > > remove them because it should not have.  
+> > 
+> > Lets consider why it might need to back out.
+> > 1) Device sends an invalid set of extents - so maybe one in a later message
+> >    overlaps with an already allocated extent.   Device bug, handling can
+> >    be extremely inelegant - up to crashing the kernel.  Worst that happens
+> >    due to race is probably a poison storm / machine check fun?  Not our
+> >    responsibility to deal with something that broken (in my view!) Best effort
+> >    only.
+> > 
+> > 2) Host can't handle the extent for some reason and didn't know that until
+> >    later - can just reject the ones it can't handle.   
+> 
+> 3) Something in the host fails like ENOMEM on a later extent surface which
+>    requires the host to back out of all of them.
+> 
+> 3 should be rare and I'm working toward it.  But it is possible this will
+> happen.
+> 
+> If you have a 'prepare' notify it should avoid most of these because the
+> extents will be mostly formed.  But there are some error paths on the actual
+> surface code path.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-deleted file mode 100644
-index 3a8948c04bc9..000000000000
---- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
-+++ /dev/null
-@@ -1,59 +0,0 @@
--* Amlogic AXG Audio Clock Controllers
--
--The Amlogic AXG audio clock controller generates and supplies clock to the
--other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
--devices.
--
--Required Properties:
--
--- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D,
--		  "amlogic,g12a-audio-clkc" for G12A,
--		  "amlogic,sm1-audio-clkc" for S905X3.
--- reg		: physical base address of the clock controller and length of
--		  memory mapped region.
--- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
--		  in clock-names.
--- clock-names	: must contain the following:
--		  * "pclk" - Main peripheral bus clock
--		  may contain the following:
--		  * "mst_in[0-7]" - 8 input plls to generate clock signals
--		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
--				      components.
--		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
--				       components.
--- resets	: phandle of the internal reset line
--- #clock-cells	: should be 1.
--- #reset-cells  : should be 1 on the g12a (and following) soc family
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. All available clocks are defined as
--preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
--used in device tree sources.
--
--Example:
--
--clkc_audio: clock-controller@0 {
--	compatible = "amlogic,axg-audio-clkc";
--	reg = <0x0 0x0 0x0 0xb4>;
--	#clock-cells = <1>;
--
--	clocks = <&clkc CLKID_AUDIO>,
--		 <&clkc CLKID_MPLL0>,
--		 <&clkc CLKID_MPLL1>,
--		 <&clkc CLKID_MPLL2>,
--		 <&clkc CLKID_MPLL3>,
--		 <&clkc CLKID_HIFI_PLL>,
--		 <&clkc CLKID_FCLK_DIV3>,
--		 <&clkc CLKID_FCLK_DIV4>,
--		 <&clkc CLKID_GP0_PLL>;
--	clock-names = "pclk",
--		      "mst_in0",
--		      "mst_in1",
--		      "mst_in2",
--		      "mst_in3",
--		      "mst_in4",
--		      "mst_in5",
--		      "mst_in6",
--		      "mst_in7";
--	resets = <&reset RESET_AUDIO>;
--};
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-new file mode 100644
-index 000000000000..9704bb78fca2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-@@ -0,0 +1,181 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic AXG Audio Clock Controller
-+
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+  - Jerome Brunet <jbrunet@baylibre.com>
-+
-+description:
-+  The Amlogic AXG audio clock controller generates and supplies clock to the
-+  other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
-+  devices.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - amlogic,axg-audio-clkc
-+      - amlogic,g12a-audio-clkc
-+      - amlogic,sm1-audio-clkc
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: main peripheral bus clock
-+      - description: input plls to generate clock signals N0
-+      - description: input plls to generate clock signals N1
-+      - description: input plls to generate clock signals N2
-+      - description: input plls to generate clock signals N3
-+      - description: input plls to generate clock signals N4
-+      - description: input plls to generate clock signals N5
-+      - description: input plls to generate clock signals N6
-+      - description: input plls to generate clock signals N7
-+      - description: slave bit clock N0 provided by external components
-+      - description: slave bit clock N1 provided by external components
-+      - description: slave bit clock N2 provided by external components
-+      - description: slave bit clock N3 provided by external components
-+      - description: slave bit clock N4 provided by external components
-+      - description: slave bit clock N5 provided by external components
-+      - description: slave bit clock N6 provided by external components
-+      - description: slave bit clock N7 provided by external components
-+      - description: slave bit clock N8 provided by external components
-+      - description: slave bit clock N9 provided by external components
-+      - description: slave sample clock N0 provided by external components
-+      - description: slave sample clock N1 provided by external components
-+      - description: slave sample clock N2 provided by external components
-+      - description: slave sample clock N3 provided by external components
-+      - description: slave sample clock N4 provided by external components
-+      - description: slave sample clock N5 provided by external components
-+      - description: slave sample clock N6 provided by external components
-+      - description: slave sample clock N7 provided by external components
-+      - description: slave sample clock N8 provided by external components
-+      - description: slave sample clock N9 provided by external components
-+
-+  clock-names:
-+    items:
-+      - const: pclk
-+      - const: mst_in0
-+      - const: mst_in1
-+      - const: mst_in2
-+      - const: mst_in3
-+      - const: mst_in4
-+      - const: mst_in5
-+      - const: mst_in6
-+      - const: mst_in7
-+      - const: slv_sclk0
-+      - const: slv_sclk1
-+      - const: slv_sclk2
-+      - const: slv_sclk3
-+      - const: slv_sclk4
-+      - const: slv_sclk5
-+      - const: slv_sclk6
-+      - const: slv_sclk7
-+      - const: slv_sclk8
-+      - const: slv_sclk9
-+      - const: slv_lrclk0
-+      - const: slv_lrclk1
-+      - const: slv_lrclk2
-+      - const: slv_lrclk3
-+      - const: slv_lrclk4
-+      - const: slv_lrclk5
-+      - const: slv_lrclk6
-+      - const: slv_lrclk7
-+      - const: slv_lrclk8
-+      - const: slv_lrclk9
-+
-+  resets:
-+    description: internal reset line
-+
-+required:
-+  - compatible
-+  - '#clock-cells'
-+  - reg
-+  - clocks
-+  - clock-names
-+  - resets
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - amlogic,g12a-audio-clkc
-+              - amlogic,sm1-audio-clkc
-+    then:
-+      required:
-+        - '#reset-cells'
-+    else:
-+      properties:
-+        '#reset-cells': false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/axg-clkc.h>
-+    #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
-+    apb {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        clkc_audio: clock-controller@0 {
-+            compatible = "amlogic,axg-audio-clkc";
-+            reg = <0x0 0x0 0x0 0xb4>;
-+            #clock-cells = <1>;
-+
-+            clocks = <&clkc CLKID_AUDIO>,
-+                     <&clkc CLKID_MPLL0>,
-+                     <&clkc CLKID_MPLL1>,
-+                     <&clkc CLKID_MPLL2>,
-+                     <&clkc CLKID_MPLL3>,
-+                     <&clkc CLKID_HIFI_PLL>,
-+                     <&clkc CLKID_FCLK_DIV3>,
-+                     <&clkc CLKID_FCLK_DIV4>,
-+                     <&clkc CLKID_GP0_PLL>,
-+                     <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-+                     <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
-+            clock-names = "pclk",
-+                          "mst_in0",
-+                          "mst_in1",
-+                          "mst_in2",
-+                          "mst_in3",
-+                          "mst_in4",
-+                          "mst_in5",
-+                          "mst_in6",
-+                          "mst_in7",
-+                          "slv_sclk0",
-+                          "slv_sclk1",
-+                          "slv_sclk2",
-+                          "slv_sclk3",
-+                          "slv_sclk4",
-+                          "slv_sclk5",
-+                          "slv_sclk6",
-+                          "slv_sclk7",
-+                          "slv_sclk8",
-+                          "slv_sclk9",
-+                          "slv_lrclk0",
-+                          "slv_lrclk1",
-+                          "slv_lrclk2",
-+                          "slv_lrclk3",
-+                          "slv_lrclk4",
-+                          "slv_lrclk5",
-+                          "slv_lrclk6",
-+                          "slv_lrclk7",
-+                          "slv_lrclk8",
-+                          "slv_lrclk9";
-+            resets = <&reset RESET_AUDIO>;
-+        };
-+    };
--- 
-2.34.1
+True. If these are really small allocations then elegant handling feels like
+a nice to have rather than a requirement.
+
+> 
+> >   
+> > > 
+> > > To be most safe the cxl core is going to have to make 2 round trips to the
+> > > cxl region layer for each extent.  The first determines if the extent is
+> > > valid and creates the extent as much as possible.  The second actually
+> > > surfaces the extents.  However, if the surface fails then you might not
+> > > get the extents back.  So now we are in an invalid state.  :-/  WARN and
+> > > continue I guess?!??!  
+> > 
+> > Yes. Orchestrator can decide how to handle - probably reboot server in as
+> > gentle a fashion as possible.
+> >   
+> 
+> Ok
+> 
+> >   
+> > > 
+> > > I think the safest way to handle this is add a new kernel notify event
+> > > called 'extent create' which stops short of surfacing the extent.  [I'm
+> > > not 100% sure how this is going to affect interleave.]
+> > > 
+> > > I think the safest logic for add is something like:
+> > > 
+> > > 	cxl_handle_dcd_add_event()
+> > > 		add_extent(squirl_list, extent);
+> > > 
+> > > 		if (more bit) /* wait for more */
+> > > 			return;
+> > > 
+> > > 		/* Create extents to hedge the bets against failure */
+> > > 		for_each(squirl_list)
+> > > 			if (notify 'extent create' != ok)
+> > > 				send_response(fail);
+> > > 				return;
+> > > 		
+> > > 		for_each(squirl_list)
+> > > 			if (notify 'surface' != ok)
+> > > 				/*
+> > > 				 * If the more bit was set, some extents
+> > > 				 * have been surfaced and now need to be
+> > > 				 * removed...
+> > > 				 *
+> > > 				 * Try to remove them and hope...
+> > > 				 */  
+> > 
+> > If we failed to surface them all another option is just tell the device
+> > that.   Responds with the extents that successfully surfaced and reject
+> > all others (or all after the one that failed?)  So for the lower layers
+> > send the device a response that says "thanks but I only took these ones"
+> > and for the upper layers pretend "I was only offered these ones"
+> >   
+> 
+> But doesn't that basically break the more bit?  I'm willing to do that as it is
+> easier for the host.
+
+Don't think so.  We can always accept part of the offered extents in same
+way we can accept part of a single offered extent if we like.
+The more flag just means we only get to do that communication of what
+we accepted once. So we have to reply with what we want and don't set
+more flag in last message - thus indicating we don't want the rest.
+(making sure we also tidy up the log for the ones we rejected)
+
+> 
+> > > 				WARN_ON('surface extents failed');
+> > > 				for_each(squirl_list)
+> > > 					notify 'remove without response'
+> > > 				send_response(fail);
+> > > 				return;
+> > > 
+> > > 		send_response(squirl_list, accept);
+> > > 
+> > > The logic for remove is not changed AFAICS because the device must allow
+> > > for memory to be released at any time so the host is free to release each
+> > > of the extents individually despite the 'more' bit???  
+> > 
+> > Yes, but only after it accepted them - which needs to be done in one go.
+> > So you can't just send releases before that (the device will return an
+> > error and keep them in the pending list I think...)  
+> 
+> :-(  OK so this more bit is really more...  no pun intended.  Because this
+> breaks the entire model I have if I have to treat these as a huge atomic unit.
+> 
+> Let me think on that a bit more.  Obviously it is just tagging an iterating the
+> extents to find those associated with a more bit on accept.  But it will take
+> some time to code up.
+
+The ability to give up at any point (though you need to read and clear the extents
+that are left) should get around a lot of the complexity but sure it's
+not a trivial thing to support.
+
+I'd flip a 'something went wrong flag' on the the first failure, carry on the
+walk not surfacing anything else, but clearing the logs etc, then finally reply
+with what succeeded before that 'went wrong' flag was set.
+
+> 
+> >   
+> > >   
+> > > > 
+> > > > I don't want this to block getting initial DCD support in but it
+> > > > will be a bit ugly if we quickly support the more flag and then end
+> > > > up with just one kernel that an FM has to be careful with...    
+> > > 
+> > > I'm not sure which is worse.  Given your use case above it seems like the
+> > > more bit may be more important for 'dumb' devices which want to add
+> > > extents in blocks before responding to the FM.  Thus complicating the FM.
+> > > 
+> > > It seems 'smarter' devices which could figure this out (not requiring the
+> > > more bit) are the ones which will be developed later.  So it seems the use
+> > > case time line is the opposite of what we need right now.  
+> > 
+> > Once we hit shareable capacity (which the smarter devices will use) then
+> > this become the dominant approach to non contiguous allocations because
+> > you can't add extents with a given tag in multiple goes.  
+> 
+> Why not?  Sharing is going to require some synchronization with the
+> orchestrator and can't the user app just report it did not get all it's memory
+> and wait for more?  With the same tag?
+
+Hmm. I was sure the spec said sharing did not allow addition of capacity after
+first creation, but now can't find it.  If you did do it though, fun
+occurs when you then pass it on to the second device because you have
+to do that via tag alone.
+
+I believe this is about simplification on the device side because
+offers of extents to other hosts are done by tag. If you allow extra ones
+to turn up there are race conditions to potentially deal with.
+
+7.6.7.6.5 Initiate Dynamic Capacity add.
+
+"Enable shared Access" Enable access to extents previously added to another
+host in a DC region that reports the "sharable" flag, as designated by the
+specific tag value.
+
+Note it is up to the device to offer the same capacity to all hosts for
+which this is issued.  There is no extent list or length provided.
+
+
+> 
+> > 
+> > So I'd expect the more flag to be more common not less over time.  
+> > > 
+> > > For that reason I'm inclined to try and get this in.
+> > >   
+> > 
+> > Great - but I'd not worry too much about bad effects if you get invalid
+> > lists from the device.  If the only option is shout and panic, then fine
+> > though I'd imagine we can do slightly better than that, so maybe warn
+> > extensively and don't let the region be used.  
+> 
+> It is not just about invalid lists.  It is that setting up the extent devices
+> may fail and waiting for the devices to be set up means that they are user
+> visible.  So that is the chicken and the egg...
+> 
+> This is unlikely and perhaps the partials should just be surfaced and accept
+> whatever works.  Then let it all tear down later if it does not all go.
+> 
+> But I was trying to honor the accept 'all or nothing' as that is what has been
+> stated as the requirement of the more bit.
+
+That's not quite true - for shared it is all or nothing (after first host anyway) but
+for other capacity it is 'accept X and reject Y in one go'.  You don't need to
+take it all but you only get one go to say what you did accept.
+
+> 
+> But it seems that it does not __have__ to be atomic.  Or at least the partials
+> can be cleaned up and all tried again.
+
+With care you can accept up to a point, then give those back if you like - or
+carry on and use them.
+
+Jonathan
+
+> 
+> Ira
+> 
+> > 
+> > Jonathan
+> >   
+> > > Ira
+> > >   
+> >   
+> 
+> 
+> 
 
 
