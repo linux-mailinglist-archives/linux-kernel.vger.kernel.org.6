@@ -1,164 +1,170 @@
-Return-Path: <linux-kernel+bounces-173220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BE68BFD36
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:34:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4795B8BFD40
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 079D3B21A23
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:34:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61ED1F23F33
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EE854BCB;
-	Wed,  8 May 2024 12:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D92655E6C;
+	Wed,  8 May 2024 12:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rH3cCnAv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="I6+XFoN1";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rH3cCnAv";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="I6+XFoN1"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KI1vs2J/"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384C254BE2;
-	Wed,  8 May 2024 12:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4C554FBE;
+	Wed,  8 May 2024 12:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715171646; cv=none; b=NTeMJIKwj8qA+HvagJfgdCYJLH/K46X4543vF36YolGHKCmzbBNCA2EsQTe23rGPu2NepfeteRNcxnbs2KmO0gQOjixj8W5iyux8aR41a9aRXuBRRa7y0s/aCgvgg1LhN4kSnhF5kh6LvW/nrg5xHk7ubW+WEKcSQYk1bUFVaUM=
+	t=1715171718; cv=none; b=cEGHQE+6gZakRXAtZoxpOMCiNkGeDVqeFGXduRnkIX6HpKKVtG4DV8i6bkW7ESU2+rPxMGH1VDt/PDOmmBV3QFunO3tclTBvfWDVrJIPiTq/BsTCeOdzjEYfApTj40TlxQWW1eWD91n6zsSEBg+xlOaDo+h55l/cKMgRNSvXEHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715171646; c=relaxed/simple;
-	bh=yYslb0OUmSwvxLA6zHbTZpvzOahjKxA4E3PzATeflR8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WdDmUbBX1yykKR+/sA2w7yRHb9/DQQxBY/1vJHIzSbibLpkzYT2nr2kzgfRxrQuO7QB6ghyeiBp7nDlycAmZ/bf94V9QQMRj4xL8mHInuIAzdwL6NCzIvPlOc+sHhtjUiV6L5/4lK4h0D5+cGVq840GGUEY129yoPMEraArkQf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rH3cCnAv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=I6+XFoN1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rH3cCnAv; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=I6+XFoN1; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 78B3C5C9BD;
-	Wed,  8 May 2024 12:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715171643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TqlxnX8S/G0wOUmeXETdKPJLjbdsBZmj/P2uIy6RbuQ=;
-	b=rH3cCnAvOurWLBC9fK4xwW3YeG2TvJcshPbiBoDDW+2xM6+K8fAha+WcEq56X1NW8FTVfy
-	/0MDS+kplPZpWk4KExGerT6G62xEgNcNukoOjqx6ADRIcCeJxASqjaDdhYJ2u/azYXaP2G
-	nSnU0Avt5bMVnxqisEBbAEcAcCOGOLY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715171643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TqlxnX8S/G0wOUmeXETdKPJLjbdsBZmj/P2uIy6RbuQ=;
-	b=I6+XFoN1josjzaLN35NdNh34BJPm4OMmjdktprYpl+CghV4ZdrWyE5FRr03wZKp9QLxlOi
-	TR4ophO8Vq7fx5CQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rH3cCnAv;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=I6+XFoN1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715171643; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TqlxnX8S/G0wOUmeXETdKPJLjbdsBZmj/P2uIy6RbuQ=;
-	b=rH3cCnAvOurWLBC9fK4xwW3YeG2TvJcshPbiBoDDW+2xM6+K8fAha+WcEq56X1NW8FTVfy
-	/0MDS+kplPZpWk4KExGerT6G62xEgNcNukoOjqx6ADRIcCeJxASqjaDdhYJ2u/azYXaP2G
-	nSnU0Avt5bMVnxqisEBbAEcAcCOGOLY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715171643;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TqlxnX8S/G0wOUmeXETdKPJLjbdsBZmj/P2uIy6RbuQ=;
-	b=I6+XFoN1josjzaLN35NdNh34BJPm4OMmjdktprYpl+CghV4ZdrWyE5FRr03wZKp9QLxlOi
-	TR4ophO8Vq7fx5CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4DBB21386E;
-	Wed,  8 May 2024 12:34:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IfvVETtxO2ZAXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 08 May 2024 12:34:03 +0000
-Date: Wed, 08 May 2024 14:34:18 +0200
-Message-ID: <8734qscwj9.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-sound@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hda: cs35l56: Fix lifetime of cs_dsp instance
-In-Reply-To: <20240508100811.49514-1-rf@opensource.cirrus.com>
-References: <20240508100811.49514-1-rf@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1715171718; c=relaxed/simple;
+	bh=2Etf+3oMm8wPJG4pw3INs5sFZubsOVqMVAIhncRw1Tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dy9eVk8Uz7IjYixhD+Mj0MWdbUBuUWKkTQSMj+bfWG2N0f+k4GKbnpL65d4vuoK/MY6jTI5wGifbaParTRNLr3VqURhAvgB5RhI9aKhZEH8Xa00z+DPnsdWWXjI+EtgNvPIoK9b3j1V0gXa/xfQCCaivgchhMTJeB0i1myv2hkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KI1vs2J/; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 448CYwNu024030;
+	Wed, 8 May 2024 07:34:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715171698;
+	bh=yHR2bzsPIYHNIgrn3KJGdKIw3Nu3pQhsAXQh/+rbFXs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=KI1vs2J/Q6NjOdoLtKFjUeMz6uru7mGS+xEBTOidoKQ5yxO86IEdoN+H5PAxJeQcb
+	 d+B4T3N0KZkQquLc4VCX1AySyJ4jnoUYPI3JtP+1XGTa7piHlagyR8ve5pIcrn6cUC
+	 aaIt/tXw2Sfap3wRhtvCrUiQdLAyqYYs/JDOy/cI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 448CYwCe025812
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 8 May 2024 07:34:58 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 8
+ May 2024 07:34:58 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 8 May 2024 07:34:58 -0500
+Received: from [172.24.227.88] (uda0500640.dhcp.ti.com [172.24.227.88])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 448CYsH3086002;
+	Wed, 8 May 2024 07:34:55 -0500
+Message-ID: <588e4d0a-78c6-553f-3c40-0d248f4c92f9@ti.com>
+Date: Wed, 8 May 2024 18:04:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.05
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 78B3C5C9BD
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.05 / 50.00];
-	BAYES_HAM(-2.54)[97.93%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,cirrus.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-
-On Wed, 08 May 2024 12:08:11 +0200,
-Richard Fitzgerald wrote:
-> 
-> The cs_dsp instance is initialized in the driver probe() so it
-> should be freed in the driver remove(). Also fix a missing call
-> to cs_dsp_remove() in the error path of cs35l56_hda_common_probe().
-> 
-> The call to cs_dsp_remove() was being done in the component unbind
-> callback cs35l56_hda_unbind(). This meant that if the driver was
-> unbound and then re-bound it would be using an uninitialized cs_dsp
-> instance.
-> 
-> It is best to initialize the cs_dsp instance in probe() so that it
-> can return an error if it fails. The component binding API doesn't
-> have any error handling so there's no way to handle a failure if
-> cs_dsp was initialized in the bind.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Fixes: 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic CS35L56 amplifier")
-
-Applied now.  Thanks.
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-j722s: Add support for SERDES0
+Content-Language: en-US
+To: Roger Quadros <rogerq@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <srk@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Ravi
+ Gunasekaran <r-gunasekaran@ti.com>
+References: <20240429120932.11456-1-r-gunasekaran@ti.com>
+ <20240429120932.11456-2-r-gunasekaran@ti.com>
+ <41047a89-2787-422f-a643-3e2d850da6dd@kernel.org>
+From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+In-Reply-To: <41047a89-2787-422f-a643-3e2d850da6dd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-Takashi
+
+On 5/8/24 5:29 PM, Roger Quadros wrote:
+> 
+> 
+> On 29/04/2024 15:09, Ravi Gunasekaran wrote:
+>> Add SERDES0 and its wrapper description to support USB3
+>> and SGMII interfaces.
+>>
+>> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+>> ---
+>>  arch/arm64/boot/dts/ti/k3-j722s.dtsi | 54 ++++++++++++++++++++++++++++
+>>  1 file changed, 54 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+>> index c75744edb143..beba5a3ea6cc 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+>> @@ -9,6 +9,7 @@
+>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>> +#include <dt-bindings/phy/phy-ti.h>
+>>  
+>>  #include "k3-am62p5.dtsi"
+>>  
+>> @@ -75,6 +76,50 @@
+>>  			 <0x00 0x78000000 0x00 0x78000000 0x00 0x00008000>,
+>>  			 <0x00 0x78100000 0x00 0x78100000 0x00 0x00008000>;
+>>  	};
+>> +
+>> +	serdes_refclk: clock-cmnrefclk {
+> 
+> What could be the generic name here?
+> 
+
+How about phy-clk or serdes-clk?
+I searched for "fixed-clock" and wide range of naming conventions is followed.
+
+>> +		compatible = "fixed-clock";
+>> +		#clock-cells = <0>;
+>> +		clock-frequency = <0>;
+>> +	};
+>> +
+>> +	serdes_wiz0: wiz@f000000 {
+> 
+> Should generic name be phy?
+
+Since serdes is used for both USB and PCIe,
+I can go with "phy".
+
+> 
+>> +		compatible = "ti,am64-wiz-10g";
+>> +		ranges = <0x0f000000 0x0 0x0f000000 0x00010000>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		power-domains = <&k3_pds 279 TI_SCI_PD_EXCLUSIVE>;
+>> +		clocks = <&k3_clks 279 0>, <&k3_clks 279 1>, <&serdes_refclk>;
+>> +		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
+>> +		num-lanes = <1>;
+>> +		#reset-cells = <1>;
+>> +		#clock-cells = <1>;
+>> +
+>> +		assigned-clocks = <&k3_clks 279 1>;
+>> +		assigned-clock-parents = <&k3_clks 279 5>;
+>> +
+>> +		serdes0: serdes@f000000 {
+> 
+> here too?
+
+I could use "phy" here as well. 
+https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/qcom/sa8775p.dtsi#L1853
+https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/renesas/r8a779f0.dtsi#L563
+
+> 
+>> +			compatible = "ti,j721e-serdes-10g";
+
+[...]
+
+> 
+
+-- 
+Regards,
+Ravi
 
