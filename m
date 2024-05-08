@@ -1,172 +1,163 @@
-Return-Path: <linux-kernel+bounces-172893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8C18BF83D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F6C8BF841
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F952B24662
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:14:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91A01B20FF4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E32446D5;
-	Wed,  8 May 2024 08:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5103FBBD;
+	Wed,  8 May 2024 08:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SdMWU51v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjdvZsSX"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B543D96D;
-	Wed,  8 May 2024 08:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98024502A;
+	Wed,  8 May 2024 08:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715156045; cv=none; b=UdpJYmLAup3ncp05TV6S/T5LT0rAkjdw1LlOuH7DGcRmPfCFP4Gm6LaET1Tu9HCBdyZOEQLeZyoDKq+cTACi3P/dggofDlrTAcVMXbmWgVY37LHe2e7Xp1WyQ2UOmJ84Rv+ri1fIOpuYgAUe9QktM6CCRJZQ96FYAZRq/ehzfz0=
+	t=1715156100; cv=none; b=Uv7ClyXaG4gUROL24F3v2up6ycEl5abOz0SxTvJ33N/jSyXbKoNUybyuRtpZqQFRks5CR3uh/A4AGE8CKoNzKF9DfPuMpsOHUen9zMKyiM7y4O7sGEr5ZKwt3ZjaFIiZners9XT5hpApESuKVJaVK9yzw0t21ggP1GZZwyh7bW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715156045; c=relaxed/simple;
-	bh=o6dYzqcug6bjp99QH0Xc2b/Mh3Ae4lgbbIbqMs9s1So=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oh3Wv60PYCNrWL8DeU+8+cxpLs8UR75geEpMBfGvwedwFTVP+WPcwLcqQl/lXzoVcw+W6TqUvz2QR4yQb/VjyateSFZtNIWXxeYjoj+iilryLMuFshwZhtjRBz1VE3Ma4ZQyDhyleoGdc3sDyO6joNBUpHSvmefHTzA79+NCARo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SdMWU51v; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715156044; x=1746692044;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=o6dYzqcug6bjp99QH0Xc2b/Mh3Ae4lgbbIbqMs9s1So=;
-  b=SdMWU51vcGdHM1Fu0VptfM0VidftdSgDWsvc0BsKsSHeN+i0HOhv+3NQ
-   jWtgQs/iO+iBHgDVlM2SeWNdfHSVdMNN50UMoGKhKcRpdegG8POHMLQZM
-   8NkEWJx8eSqL62QCisRw4m1goj5isl5FG5KjlImYvjhZZwkv37PRpmaeG
-   5PXk49Kw/+lP0GdZF0rJ1Ss7U+A29rWw05C6rDLzPc0vgGkHmHVItMQMH
-   +Riyk5QekICnDombbGfBWShIO0jtRTQHJYqEH53cyMdx+dDhMA5EA4LNu
-   Nr3hLzR1F2FRwjAImnJo1+s0woqI3XRSTUyumWWIeHkebv91yG/D8jylW
-   A==;
-X-CSE-ConnectionGUID: zsA1Mx7nRme6e3JDu9f9Eg==
-X-CSE-MsgGUID: srTM+5bFQaO9GcL9da2dKA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="28474497"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="28474497"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:14:04 -0700
-X-CSE-ConnectionGUID: aABURBGITHyA0xz96lfbdA==
-X-CSE-MsgGUID: 8uRx8TfuRU256ZN4Nutk6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="59662273"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:13:57 -0700
-Message-ID: <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
-Date: Wed, 8 May 2024 10:13:55 +0200
+	s=arc-20240116; t=1715156100; c=relaxed/simple;
+	bh=lGZ43BLAjq7zd/fsmMu7JBwCQg2TGtkHhkMNyb0g4dQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o+t69/fhYUfk0r50OH3lh3kGGmX3MFDaamoBUAOcARFtOPZdqlY9mVNxUOUIBGjXxi4ssY3zkRWS+fwv/GExQLCxRPtXr8JxnQGVB5V5UI9slyMtWFlO2WclU6ornyWL9xcTUiE81PZ684GJ9tJmrOImtKkuOQCoxGqh/Q3Yvi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjdvZsSX; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a4702457ccbso1060847566b.3;
+        Wed, 08 May 2024 01:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715156096; x=1715760896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yxjVgqQ8RzjwngaiN/l2Vqbmt62iFzpTBxTJvkY2rMg=;
+        b=KjdvZsSXGUMKlIFuyMIXjASgQeNM09Tf4CtigxJbJbOsbyHPR4fdSQUvlAFtS+lXq7
+         n5GX2kvuLOTxFzIBdLcaG5JQ1Ryvq/7lzOKPOtLXymoW3qtp9gItyAH3RdfNsllbdd7A
+         V6Y+ycCpWJ7sWRsSfMEtkwOVwZLGPNvdHZvdZoEHjMeZybrWzuHDfD5kNjEYTGtGmVKU
+         Do1llcdQl3ZaA5r+j7vXMGiTBCh33DP5PtPGyRxQt32dTzkbvX7LJUWL/Hbu2T0SmrMo
+         ALfOt+SGbcMlttYY0eIRkD0sbhocOug0p8xm1Nka2frfLQwgHrMOgazv6640M9cAZ8Su
+         n1mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715156096; x=1715760896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yxjVgqQ8RzjwngaiN/l2Vqbmt62iFzpTBxTJvkY2rMg=;
+        b=h/OYY7LF7ipJS1ZRWRGA4vpWkCuFpkGpTNLQ3hQuuAd4MxPFZGLeMfcjTTN8RcIIqi
+         yRBKmqM/N502kevn6S+AiNoI8Fz9e06q7pmWU89C58q9vHpHfgsqYA+WTb67+f/tDj+5
+         ZPwW7IWwQDSTOz2O6+UMklSdmlgDwFuZeStA3YkbXFm2MOfXOvrv9vrgjghQ851rAEhG
+         iaPPAWii4gmp7a8NMHvzOqt1B/0V26gmRhpyKWcp0eO+FVg2kEDTqGjvzEYeAeDQY6bd
+         vZa4o48t2W/00jQSUy3HzhISX5xAGgq3kI0kIfpEP6alJgYdkthExuAH5IDpxBoMC3gX
+         pnlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhjd4yRHzbms/sLeDA1Eo7CDUfYo4S4DNE0YmO4BuN1IGZX2mNYovU3CFpwUftKkccNr+SjrDWZ4rAw1o6Efeqp7i7cZKpkv5WHhTH0e18AIe6+euUUjC8nybnNnqDTb8g4gW99KDBI1FuGhpIIeYiGTbgR7TC+RweW2LbKWJX9R8QKkah9MouWPE=
+X-Gm-Message-State: AOJu0YzQRlclCx9U/342cq9rGaIxYSmPRhrQ+hN6csASAx6lDmxV01mP
+	tS7pjturRqevVWKqyZrXtNJGj/elFY4CEmeAC2ALAAjDJ4gpS1df
+X-Google-Smtp-Source: AGHT+IGnFUooBbakpfrg5iOFqgOgrCXPDzfgHvZfxhfFrMhgLRcEHfnWTA5EM1tmh6auEv0eg8pPEA==
+X-Received: by 2002:a17:906:ce26:b0:a59:9b75:b84 with SMTP id a640c23a62f3a-a59fb95d551mr116933466b.35.1715156095580;
+        Wed, 08 May 2024 01:14:55 -0700 (PDT)
+Received: from f.. (cst-prg-20-30.cust.vodafone.cz. [46.135.20.30])
+        by smtp.gmail.com with ESMTPSA id mf1-20020a170906cb8100b00a55778c1af7sm7505684ejb.11.2024.05.08.01.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:14:55 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: ebiggers@kernel.org
+Cc: tytso@mit.edu,
+	jaegeuk@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] fscrypt: try to avoid refing parent dentry in fscrypt_file_open
+Date: Wed,  8 May 2024 10:14:00 +0200
+Message-ID: <20240508081400.422212-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-Content-Language: en-US
-To: Hans Verkuil <hverkuil@xs4all.nl>, Shengjiu Wang
- <shengjiu.wang@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
- tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
- <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
- <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
- <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
- <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
- <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
- <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
- <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 5/8/2024 10:00 AM, Hans Verkuil wrote:
-> On 06/05/2024 10:49, Shengjiu Wang wrote:
->> On Fri, May 3, 2024 at 4:42 PM Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
->>>
->>> Em Fri, 3 May 2024 10:47:19 +0900
->>> Mark Brown <broonie@kernel.org> escreveu:
->>>
->>>> On Thu, May 02, 2024 at 10:26:43AM +0100, Mauro Carvalho Chehab wrote:
->>>>> Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
->>>>
->>>>>> There are still time control associated with it, as audio and video
->>>>>> needs to be in sync. This is done by controlling the buffers size
->>>>>> and could be fine-tuned by checking when the buffer transfer is done.
->>>>
->>>> ...
->>>>
->>>>> Just complementing: on media, we do this per video buffer (or
->>>>> per half video buffer). A typical use case on cameras is to have
->>>>> buffers transferred 30 times per second, if the video was streamed
->>>>> at 30 frames per second.
->>>>
->>>> IIRC some big use case for this hardware was transcoding so there was a
->>>> desire to just go at whatever rate the hardware could support as there
->>>> is no interactive user consuming the output as it is generated.
->>>
->>> Indeed, codecs could be used to just do transcoding, but I would
->>> expect it to be a border use case. See, as the chipsets implementing
->>> codecs are typically the ones used on mobiles, I would expect that
->>> the major use cases to be to watch audio and video and to participate
->>> on audio/video conferences.
->>>
->>> Going further, the codec API may end supporting not only transcoding
->>> (which is something that CPU can usually handle without too much
->>> processing) but also audio processing that may require more
->>> complex algorithms - even deep learning ones - like background noise
->>> removal, echo detection/removal, volume auto-gain, audio enhancement
->>> and such.
->>>
->>> On other words, the typical use cases will either have input
->>> or output being a physical hardware (microphone or speaker).
->>>
->>
->> All, thanks for spending time to discuss, it seems we go back to
->> the start point of this topic again.
->>
->> Our main request is that there is a hardware sample rate converter
->> on the chip, so users can use it in user space as a component like
->> software sample rate converter. It mostly may run as a gstreamer plugin.
->> so it is a memory to memory component.
->>
->> I didn't find such API in ALSA for such purpose, the best option for this
->> in the kernel is the V4L2 memory to memory framework I found.
->> As Hans said it is well designed for memory to memory.
->>
->> And I think audio is one of 'media'.  As I can see that part of Radio
->> function is in ALSA, part of Radio function is in V4L2. part of HDMI
->> function is in DRM, part of HDMI function is in ALSA...
->> So using V4L2 for audio is not new from this point of view.
->>
->> Even now I still think V4L2 is the best option, but it looks like there
->> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
->> a duplication of code (bigger duplication that just add audio support
->> in V4L2 I think).
-> 
-> After reading this thread I still believe that the mem2mem framework is
-> a reasonable option, unless someone can come up with a method that is
-> easy to implement in the alsa subsystem. From what I can tell from this
-> discussion no such method exists.
-> 
+Merely checking if the directory is encrypted happens for every open
+when using ext4, at the moment refing and unrefing the parent, costing 2
+atomics and serializing opens of different files.
 
-Hi,
+The most common case of encryption not being used can be checked for
+with RCU instead.
 
-my main question would be how is mem2mem use case different from 
-loopback exposing playback and capture frontends in user space with DSP 
-(or other piece of HW) in the middle?
+Sample result from open1_processes -t 20 ("Separate file open/close")
+from will-it-scale on Sapphire Rapids (ops/s):
+before:	12539898
+after:	25575494 (+103%)
 
-Amadeusz
+v2:
+- add a comment justifying rcu usage, submitted by Eric Biggers
+- whack spurious IS_ENCRYPTED check from the refed case
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+ fs/crypto/hooks.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/fs/crypto/hooks.c b/fs/crypto/hooks.c
+index 104771c3d3f6..d8d5049b8fe1 100644
+--- a/fs/crypto/hooks.c
++++ b/fs/crypto/hooks.c
+@@ -30,21 +30,41 @@
+ int fscrypt_file_open(struct inode *inode, struct file *filp)
+ {
+ 	int err;
+-	struct dentry *dir;
++	struct dentry *dentry, *dentry_parent;
++	struct inode *inode_parent;
+ 
+ 	err = fscrypt_require_key(inode);
+ 	if (err)
+ 		return err;
+ 
+-	dir = dget_parent(file_dentry(filp));
+-	if (IS_ENCRYPTED(d_inode(dir)) &&
+-	    !fscrypt_has_permitted_context(d_inode(dir), inode)) {
++	dentry = file_dentry(filp);
++
++	/*
++	 * Getting a reference to the parent dentry is needed for the actual
++	 * encryption policy comparison, but it's expensive on multi-core
++	 * systems.  Since this function runs on unencrypted files too, start
++	 * with a lightweight RCU-mode check for the parent directory being
++	 * unencrypted (in which case it's fine for the child to be either
++	 * unencrypted, or encrypted with any policy).  Only continue on to the
++	 * full policy check if the parent directory is actually encrypted.
++	 */
++	rcu_read_lock();
++	dentry_parent = READ_ONCE(dentry->d_parent);
++	inode_parent = d_inode_rcu(dentry_parent);
++	if (inode_parent != NULL && !IS_ENCRYPTED(inode_parent)) {
++		rcu_read_unlock();
++		return 0;
++	}
++	rcu_read_unlock();
++
++	dentry_parent = dget_parent(dentry);
++	if (!fscrypt_has_permitted_context(d_inode(dentry_parent), inode)) {
+ 		fscrypt_warn(inode,
+ 			     "Inconsistent encryption context (parent directory: %lu)",
+-			     d_inode(dir)->i_ino);
++			     d_inode(dentry_parent)->i_ino);
+ 		err = -EPERM;
+ 	}
+-	dput(dir);
++	dput(dentry_parent);
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(fscrypt_file_open);
+-- 
+2.39.2
 
 
