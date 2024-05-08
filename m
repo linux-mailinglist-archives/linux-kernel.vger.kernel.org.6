@@ -1,137 +1,199 @@
-Return-Path: <linux-kernel+bounces-173457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC48C00A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C2E8C00A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184D4287DC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BE62853F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D40126F02;
-	Wed,  8 May 2024 15:08:41 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A713126F1F;
+	Wed,  8 May 2024 15:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CBz097kq"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9D786AF4
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FDD84A23
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715180921; cv=none; b=fzSVHj7EStvsb9k8mHRy8o/eZOvEk5R/Jj2lA02WyzOhx+KOUFnlN0xmX0Se/1qemDQ5wzG7umTgVBqJ5Zn4TOarNds5CVG6DqMX859UWYJSCETt8rXsBPhmodsTtMPoDRfOoC37dAX6iZhHVT/gFge2ZTYK5nv6GQfbP4YhAyA=
+	t=1715181027; cv=none; b=YiHsO2eGxwfEfINlT6ssx189MZy1EWFpzsc1o1c/Q4PyEYWDMGctBZNdDfr//zznHJq2e93MjtEA+aiIzXTeuz2n5oYHy9NHHyK7iAiH3QFUxA/CSo5uqfpnroxEoZ8+qOYWOzOiSTF/jEmfnHi9fRq5YWiNVlqGNbrVlg0Qvw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715180921; c=relaxed/simple;
-	bh=161ZuY3jnwSeQoNq2VqCX+V2ZPrIv4TSXdvXeRn4YvE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UiX91QTcOadvB5OUocn3F/vtKymNXGSXbWn4ziq/vfpTLjP9iISU+HQqkHnkKtsZfnmenud/z3jWdZVlSuLuGzA4s+XfJR6KbaqafXfYaM+KvEmFRFsU+SKkd8L/dzV1najFLRDXrDVBSTwDhNZQj+1fuEkYzfvkob4URbcvgDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36c8c30f0e6so32296925ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:08:39 -0700 (PDT)
+	s=arc-20240116; t=1715181027; c=relaxed/simple;
+	bh=VEMPM4831Yj1mWl6Y2OapJ4pASPVcWMeWjUTlVs+ecU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uzx9c+44K9ce7Dg+gqyKUH0XK8jKIfAwme7yFu8dX9A3mNM5q2kizMv2F7lJMfcdvfLHc8iuo7vJEbmGHOzbod8EloGMtSbznMUuOaoDx9UYkKzLeXOUME1G2LKh1ZV7mzNsDi15urCatdRt2LZvnrwVYvw/URiWEl59bc9kMfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CBz097kq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41c7ac71996so35140785e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:10:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715181023; x=1715785823; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QAXL1b6MFJI6dsIBdZB/KbdribzTrFdzVHtNl6cgpaw=;
+        b=CBz097kqREo35rf7NVNz6TFzncGctCpJAr/ULtcWpXj2Zz8Lb4e0OiYN0CbZREYbPU
+         cDyb+vasHV9dd644cIwbV+sbEZr3ikmUtoKog5W0d9aP9Icra1ISnvpaZXUeDPc1/iT0
+         vDdb6AX0xZOJyCW8KHguPHwSltntW6XdwKJjTJTGP6kZa1pmd5+RPNB2VRoKI0d18rs5
+         4/4ZUzfhiyjUz3GacC+o4FcE1YMCGb8YqUOa3jPOPOKbl9F53MtkgHa+qaS8xHZfHYk+
+         vG+gbCHXec9kRI4mIOuMDuUYmtmJBr/kA1WC3VZ6DbJMq0uHsj3/CO7NA0A0CCTdQFoV
+         5D6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715180919; x=1715785719;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1715181023; x=1715785823;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1CKzmGEpM47UrDpXRyGdxNnm6GGo6oIhorDllVcQeEw=;
-        b=gm42WsZMahnbPO//zcvGX2HH/0LJJ0RU4I8/5YU2njUSWr+2vf3RA5ElI1ZYyG2+/c
-         4Puk/8HRyRxI8tYfFN+1qF+gw86HhAZ9IZh2kU9kGY6WSnL2NS2EwlRuj59NtUUj67In
-         heO+kCMuLqN3NVKmsfFYkPHwbM25/05zzNkz26nfkRtIPfrEbHBLaPueK76GfBePxM+n
-         EWuZTunQg8lfr8HfObuxVmyNLPpIV1LQO7wQrNVpC2ntsOmDekdAJahxZ/QZcr4r5PRL
-         0MGF6gA8HH06o2IwI31J/h1V3JVNS+oCyexWgxa3sqssccKEW5lhsVwVwSF1mAIF3YvA
-         FHNA==
-X-Gm-Message-State: AOJu0YyWEUAy98zbrAl3DvjpaMlKuIKyQbmcQXBFZLNUunK45CHD4Zd5
-	B2vgCMmb0JQ8hFnDPdIQ2aehXWlH04kxZVgXrGxluEOQRw1JRuKvrg3ls4NlZ4hCjSA4uCsFl//
-	XD8qocma2Gv7qpquBATFv4poLf8G7aqdbvvf9qFZmsbSttb2yQI4nScw=
-X-Google-Smtp-Source: AGHT+IFYjlVBIzh7QmewuXkJ5e0cgziLWNcZ1h/pJrDX0O/Sl9AVE8KYq/vRoZyRy4vQwJlAUZ31rqgPFh/sIwPtPyI90pa4tENt
+        bh=QAXL1b6MFJI6dsIBdZB/KbdribzTrFdzVHtNl6cgpaw=;
+        b=tm84omsr3JGshkVSLrLvUltVhUOYXO7gV7FsVTt7dJwJG5hQusU3mvDgDo/t+fNNxk
+         FmzB84A6nLQL/uQRJeFiWlJH2pW9ARQvNcTlMy9ga+UavD60ywpurHShZxsxSzmAGfLi
+         hWywalFRqGFlp4Hge1EhtZYSPsfkZ0c51LYaI580+AIMYlo0NYSYBn9yFtl6iQLIEGtL
+         fycreNtVc3ByxEHObe1C/09nPNpVNH2AABKQwXeHpup2Bg4usWlGZvvO7WfQYWQy2Wp+
+         EJSng6JywOsTxxqqJjo2bf7Yc4RwRGDG9B9h9ctGn305u1o2p65YreeJqB0oZZge9zIF
+         FOKw==
+X-Gm-Message-State: AOJu0YwrpYV9XNWayYADBivGsc/qyOhTPukSe0ZfOMc9DskHPJH+MgsW
+	qiYRDI4+JwcSPLiJ71gywYSlFiFtLWXmKz9X5ObZifdWsLG+TGUqv4nhgUDyeDU=
+X-Google-Smtp-Source: AGHT+IEPMAgMDoouzWaIFjjAkaC34sekBpC6BFD8EA8rEQhOebxrTWw/s2JrH4szPKAj/L6y+eTRwQ==
+X-Received: by 2002:a05:600c:458d:b0:41c:503:9a01 with SMTP id 5b1f17b1804b1-41f71ecb256mr21203985e9.25.1715181023244;
+        Wed, 08 May 2024 08:10:23 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7315:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7315:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f88110f3esm26144295e9.29.2024.05.08.08.10.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 08:10:23 -0700 (PDT)
+Message-ID: <f48601e1-e8a6-4161-9a77-32ad10c887de@suse.com>
+Date: Wed, 8 May 2024 18:10:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20e4:b0:36c:4a99:1f8f with SMTP id
- e9e14a558f8ab-36caed2d604mr1115905ab.4.1715180919213; Wed, 08 May 2024
- 08:08:39 -0700 (PDT)
-Date: Wed, 08 May 2024 08:08:39 -0700
-In-Reply-To: <00000000000003b4af060de27f6b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006a631e0617f2ad33@google.com>
-Subject: Re: [syzbot] [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, KP Singh <kpsingh@kernel.org>,
+ Waiman Long <longman@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@kernel.org>, Maksim Davydov <davydov-max@yandex-team.ru>
+References: <cover.1715059256.git.jpoimboe@kernel.org>
+ <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
 
-Subject: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-Author: ryasuoka@redhat.com
+On 7.05.24 г. 8:30 ч., Josh Poimboeuf wrote:
+> In cloud environments it can be useful to *only* enable the vmexit
+> mitigation and leave syscalls vulnerable.  Add that as an option.
+> 
+> This is similar to the old spectre_bhi=auto option which was removed
+> with the following commit:
+> 
+>    36d4fe147c87 ("x86/bugs: Remove CONFIG_BHI_MITIGATION_AUTO and spectre_bhi=auto")
+> 
+> with the main difference being that this has a more descriptive name and
+> is disabled by default.
+> 
+> Requested-by: Maksim Davydov <davydov-max@yandex-team.ru>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>   Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++---
+>   arch/x86/kernel/cpu/bugs.c                      | 16 +++++++++++-----
+>   2 files changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 213d0719e2b7..9c1f63f04502 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6072,9 +6072,15 @@
+>   			deployment of the HW BHI control and the SW BHB
+>   			clearing sequence.
+>   
+> -			on   - (default) Enable the HW or SW mitigation
+> -			       as needed.
+> -			off  - Disable the mitigation.
+> +			on     - (default) Enable the HW or SW mitigation as
+> +				 needed.  This protects the kernel from
+> +				 both syscalls and VMs.
+> +			vmexit - On systems which don't have the HW mitigation
+> +				 available, enable the SW mitigation on vmexit
+> +				 ONLY.  On such systems, the host kernel is
+> +				 protected from VM-originated BHI attacks, but
+> +				 may still be vulnerable to syscall attacks.
+> +			off    - Disable the mitigation.
+>   
+>   	spectre_v2=	[X86,EARLY] Control mitigation of Spectre variant 2
+>   			(indirect branch speculation) vulnerability.
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index ab18185894df..6974c8c9792d 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -1625,6 +1625,7 @@ static bool __init spec_ctrl_bhi_dis(void)
+>   enum bhi_mitigations {
+>   	BHI_MITIGATION_OFF,
+>   	BHI_MITIGATION_ON,
+> +	BHI_MITIGATION_VMEXIT_ONLY,
+>   };
+>   
+>   static enum bhi_mitigations bhi_mitigation __ro_after_init =
+> @@ -1639,6 +1640,8 @@ static int __init spectre_bhi_parse_cmdline(char *str)
+>   		bhi_mitigation = BHI_MITIGATION_OFF;
+>   	else if (!strcmp(str, "on"))
+>   		bhi_mitigation = BHI_MITIGATION_ON;
+> +	else if (!strcmp(str, "vmexit"))
+> +		bhi_mitigation = BHI_MITIGATION_VMEXIT_ONLY;
+>   	else
+>   		pr_err("Ignoring unknown spectre_bhi option (%s)", str);
+>   
+> @@ -1659,19 +1662,22 @@ static void __init bhi_select_mitigation(void)
+>   			return;
+>   	}
+>   
+> +	/* Mitigate in hardware if supported */
+>   	if (spec_ctrl_bhi_dis())
+>   		return;
+>   
+>   	if (!IS_ENABLED(CONFIG_X86_64))
+>   		return;
+>   
+> -	/* Mitigate KVM by default */
+> -	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+> -	pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit\n");
+> +	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
+> +		pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit only\n");
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+> +		return;
+> +	}
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git master
+nit: How about setting CLEAR_BHB_LOOP_ON_VMEXIT unconditionally, then 
+afterwards checking if MITIGATION_VMEXIT_ONLY is set and if yes simply 
+return, that way you don't duplicate the setup of the VMEXIT code
 
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index b133dc55304c..cd2d54168a8e 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
- 				 ndev->ops->n_core_ops);
- }
- 
-+static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
-+{
-+	if (skb->len < header_size ||
-+	    !nci_plen(skb->data) ||
-+	    skb->len < header_size + nci_plen(skb->data)) {
-+		return false;
-+	}
-+	return true;
-+}
-+
- /* ---- NCI TX Data worker thread ---- */
- 
- static void nci_tx_work(struct work_struct *work)
-@@ -1516,23 +1526,34 @@ static void nci_rx_work(struct work_struct *work)
- 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
- 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
- 
--		if (!nci_plen(skb->data)) {
-+		if (!skb->len) {
- 			kfree_skb(skb);
--			kcov_remote_stop();
--			break;
-+			continue;
- 		}
- 
- 		/* Process frame */
- 		switch (nci_mt(skb->data)) {
- 		case NCI_MT_RSP_PKT:
-+			if (!nci_valid_size(skb, NCI_CTRL_HDR_SIZE)) {
-+				kfree_skb(skb);
-+				break;
-+			}
- 			nci_rsp_packet(ndev, skb);
- 			break;
- 
- 		case NCI_MT_NTF_PKT:
-+			if (!nci_valid_size(skb, NCI_CTRL_HDR_SIZE)) {
-+				kfree_skb(skb);
-+				break;
-+			}
- 			nci_ntf_packet(ndev, skb);
- 			break;
- 
- 		case NCI_MT_DATA_PKT:
-+			if (!nci_valid_size(skb, NCI_DATA_HDR_SIZE)) {
-+				kfree_skb(skb);
-+				break;
-+			}
- 			nci_rx_data_packet(ndev, skb);
- 			break;
- 
-
+>   
+> -	/* Mitigate syscalls when the mitigation is forced =on */
+> +	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and vm exit\n");
+>   	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
+> -	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall\n");
+> +	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+>   }
+>   
+>   static void __init spectre_v2_select_mitigation(void)
 
