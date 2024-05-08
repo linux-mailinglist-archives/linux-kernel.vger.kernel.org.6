@@ -1,108 +1,86 @@
-Return-Path: <linux-kernel+bounces-173456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6F38C00A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:08:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1858C009B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CC71F23312
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:08:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0641F23446
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3A8127E37;
-	Wed,  8 May 2024 15:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4E9126F04;
+	Wed,  8 May 2024 15:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kqmfmjgz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c06nezEY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16DC127E21
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7328662F;
+	Wed,  8 May 2024 15:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715180887; cv=none; b=u4rNVD937Dq0kH1vttPN07tObwA5kfYIUWsfTQ0ZGBotuQo6DcjC54iQVjh0YgD7YBy6Hd/DLBs/mDMnof+2rn1UN4X0y27Qp4sjp8EaWVNjRdsnaj1q8LqKtPoaaKO6dDrlhF3jylSDDvNseB4mgGzmMCgSuCW7v1Qp/crc4Rs=
+	t=1715180879; cv=none; b=CL9aiJwIyo+T2VrgcmdhkK3EYP+wpp8rlEZxgqnpNBp5EY2HxdMDBoCSG7tnhmVIa8pQTUvV42UdinayqRviLNeIXBafJhOU8Q9Llqgx4xgRtJVgFYpXLh7unxBcSyYRzzHZxmxtPZy4FrKAHyI6M2WX/d0OMuFTBe73VhkVX08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715180887; c=relaxed/simple;
-	bh=fk7GxC1PPEc7qrUG7K+DrVTUtdnP9TQkDTTKR3NFiQ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ozoumkEuUCBSBAJAacSm2AyUIdCh+YNZT4YGgbp4v2gS00KWFgVxBN2nDkXPAJzcZkEwvmaCtlSIksPfvIu9mCAdAG9Rbh/JGahZznk+wlftXkiZUWGBCsG9QAW6cJgOG3kB0hu8NzWwa37zf3v3RcPxQJ57TpeHzNoCKEpmVOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kqmfmjgz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9900DC4AF09
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:08:06 +0000 (UTC)
+	s=arc-20240116; t=1715180879; c=relaxed/simple;
+	bh=GciHj+oZ2fXP+d0t8BBXmVMu4hdURU+8gmHOXySA124=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YrG4ejC1OcC6XvAfgwTMTwKjH1RBDTDai/oL8CdMkJz4KxWrYRWcKADKge/sMxMjUCKZuqqZqG1CBio7T7aBSXoQr/B1tVkVDh07sSc+KxUnFVmgwuXt7CC5bE/i1AZ09N/F1vtQb5k07A9oEDdJJgRX2hs0OT4fcOrUUN64Jlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c06nezEY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E00C6C2BD10;
+	Wed,  8 May 2024 15:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715180886;
-	bh=fk7GxC1PPEc7qrUG7K+DrVTUtdnP9TQkDTTKR3NFiQ0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KqmfmjgzfA7SCpd2skvs5EweP4UWYpe/EgQw5Lblio/1CGIa1/NkjQS6dEbb7S39u
-	 yQncy7lQGMK+0nszk3GR6UszEIjI3jjl1CbKuGm6RbpPInIpWfB90wJOi5EzNj6I4V
-	 00Exk/vWptXodaaUrIPT1HnDfYj9wCjwQl8Cizzfdl3d6rL2fHlNAoEfFrN4lc/J6S
-	 isItL+ip8wu+UDzsAnTQLHxZAHvSTneo17zvkmSGSJeOE7Pfwsy1jAFfocjGEZs9DB
-	 dzNvwUME9rt/OxHUTKsXegGfuDiKTQRJum/VCBfdCZOumi5ZePTTNgm8KlFnSTYMS+
-	 FCljcJbpxqrwA==
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b20318a866so2319721eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:08:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXnjFYO9Cw8pSqaZIvq7nka4d3z/zLiUce1xV2WB6rLPrPhVOdZ/zEGt4AOipzU754ye2dH/WE1LOl5cBt8Z6aPWkzpl6QzvEkYCA5p
-X-Gm-Message-State: AOJu0YwS8MNtpmqupbiLxbjHrKlS6d2PDSE9LoMxTd8Z/P5PNDPiKi5H
-	W1g4K4+KvGMZdygE/PsFDxsPeViV1Q394bEvxQbLWdPHnfpUkIxHaw378rizAImj1exlWB2v7GA
-	ds9uMmUT69nMOdlUfDbu3FRqAT7o=
-X-Google-Smtp-Source: AGHT+IFz6Ek/HKY5LqapHYp2J3UPciEFtCHWRtdaW10My+nmaYFrHG+n4/M/edgWSE1MPtgvRcB47UJ6HiFsKanjCPQ=
-X-Received: by 2002:a4a:aa86:0:b0:5aa:4a0c:d99e with SMTP id
- 006d021491bc7-5b24d75c1b8mr2668167eaf.8.1715180886050; Wed, 08 May 2024
- 08:08:06 -0700 (PDT)
+	s=k20201202; t=1715180879;
+	bh=GciHj+oZ2fXP+d0t8BBXmVMu4hdURU+8gmHOXySA124=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c06nezEYl1LdgI3waamrNIV13kQ53qXqYx967MvYOeHk107qc5SkaRxjYeubzP6ie
+	 hz+werFguJaxK+lyztT54imHkGIhQ27D/vzyOHxjGr39zwc9G9k4UoimMndoRNkNgk
+	 zFDPHho/FwqxAgVDQHFk6N+l1HwmE2RalfF7gwtFIBuSQEAPWSikKTZkqjFcZBlX5I
+	 vqM8k2tGwchCeEptTRpVQjIG5nGpj6qms6RZ3kzHZ+bYynoTks4CwZSQC+D4dYwVIP
+	 yeOldfvyAMSs6Fhy3tO+XJm44g7N1fzoT2TaY7b87b/eukvuHH0IHf5xCUmUOB6KUu
+	 cJI2tBOpR7zAA==
+Date: Wed, 8 May 2024 08:07:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/5] rxrpc: Miscellaneous fixes
+Message-ID: <20240508080757.5022b867@kernel.org>
+In-Reply-To: <1478421.1715176828@warthog.procyon.org.uk>
+References: <20240507194447.20bcfb60@kernel.org>
+	<20240503150749.1001323-1-dhowells@redhat.com>
+	<1478421.1715176828@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240416211941.9369-1-tony.luck@intel.com> <20240416212214.9586-1-tony.luck@intel.com>
-In-Reply-To: <20240416212214.9586-1-tony.luck@intel.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Thu, 9 May 2024 00:07:29 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH3UTdOVd+RAY6jTVHWFRgsFNCoTM7g0TLaL8GQqVTM86Q@mail.gmail.com>
-Message-ID: <CAGTfZH3UTdOVd+RAY6jTVHWFRgsFNCoTM7g0TLaL8GQqVTM86Q@mail.gmail.com>
-Subject: Re: [PATCH v3 49/74] x86/cpu/vfm: Update drivers/extcon/extcon-axp288.c
-To: Tony Luck <tony.luck@intel.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Chen-Yu Tsai <wens@csie.org>, Hans de Goede <hdegoede@redhat.com>, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 17, 2024 at 6:31=E2=80=AFAM Tony Luck <tony.luck@intel.com> wro=
-te:
->
-> New CPU #defines encode vendor and family as well as model.
->
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  drivers/extcon/extcon-axp288.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp28=
-8.c
-> index a703a8315634..d3bcbe839c09 100644
-> --- a/drivers/extcon/extcon-axp288.c
-> +++ b/drivers/extcon/extcon-axp288.c
-> @@ -108,7 +108,7 @@ struct axp288_extcon_info {
->  };
->
->  static const struct x86_cpu_id cherry_trail_cpu_ids[] =3D {
-> -       X86_MATCH_INTEL_FAM6_MODEL(ATOM_AIRMONT,        NULL),
-> +       X86_MATCH_VFM(INTEL_ATOM_AIRMONT,       NULL),
->         {}
->  };
->
-> --
-> 2.44.0
->
->
+On Wed, 08 May 2024 15:00:28 +0100 David Howells wrote:
+> Jakub Kicinski <kuba@kernel.org> wrote:
+> 
+> > Looks like these got marked as Rejected in patchwork.
+> > I think either because lore is confused and attaches an exchange with
+> > DaveM from 2022 to them (?) or because I mentioned to DaveM that I'm
+> > not sure these are fixes. So let me ask - on a scale of 1 to 10, how
+> > convinced are you that these should go to Linus this week rather than
+> > being categorized as general improvements and go during the merge
+> > window (without the Fixes tags)?  
+> 
+> Ah, sorry.  I marked them rejected as I put myself as cc: not S-o-b on one of
+> them, but then got distracted and didn't get around to reposting them.  And
+> Jeff mentioned that the use of the MORE-PACKETS flag is not exactly
+> consistent between various implementations.
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Ah, mystery solved :)
 
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+> So if you could take just the first two for the moment?
+
+Done!
 
