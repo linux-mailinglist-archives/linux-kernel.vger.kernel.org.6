@@ -1,184 +1,241 @@
-Return-Path: <linux-kernel+bounces-172884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692778BF823
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:09:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5E18BF82A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045671F2188D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A421BB25A4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3974086F;
-	Wed,  8 May 2024 08:09:04 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CF94E1CA;
+	Wed,  8 May 2024 08:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhRf6AyW"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E323D54C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB37B4D59F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155744; cv=none; b=Iu9jWpYUKMwqSmGPNdLDM/Fs9emNW/TOgD2HDlgdSckOHVp4mnqschjCqh6jn2WhL5Q0iWQvr0hjG5eB2ijENeks4wovS5Q/T6ag4rxP5HDrQwhPisXp4B7cI/k5YsQrrFVDMfe8O8aYH2/4oK4fsLxw99IgM7UYRfCl7asAGZ4=
+	t=1715155751; cv=none; b=c4yBknuWq7eiObrq1rkiw/+jYJgocwIgfFIR58bQonbTl7bYHaTzrDnIZHS7JYCzNOdZYQKAvzGpI+dJ7SlzNAb1OWJcWUfxACTiWMgzpjMeFIQz1X5xyurE6f/GONAv4Z+e/pCpuylRr+a+htvRS4pG2QjEIoJfZhjdoUv4dHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155744; c=relaxed/simple;
-	bh=YqU6NUyQwCBam3pepetRF32JefjW5JkXKhMbIyObFY4=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uEC+fXEedW2YMmk1wW8cYB+D6jHo05sEQlMuBFJO/Cw/U4dTolzBZ+xh/7IQJtFvQAt03+rc8YjrJebaXNtp4qwtAi0KU0e+D+cdh/yiNIM7b49puAkV/RAZMRpzISuoY3YgfW73j+2B9knchSIIzfAx42CJ5EucPPUGVc9rTrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZ74J6jHrzvRMS;
-	Wed,  8 May 2024 16:05:36 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id C0BA9180065;
-	Wed,  8 May 2024 16:08:56 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 8 May 2024 16:08:56 +0800
-Subject: Re: [PATCH 3/3] mm/memory-failure: send SIGBUS in the event of thp
- split fail
-To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240501232458.3919593-1-jane.chu@oracle.com>
- <20240501232458.3919593-4-jane.chu@oracle.com>
- <038cffc0-e027-b518-460f-40099819c588@huawei.com>
- <c172fa3d-d4a4-4605-8f39-df0536718bd5@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <b6c1b513-4470-4721-120c-1b1c813b2680@huawei.com>
-Date: Wed, 8 May 2024 16:08:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715155751; c=relaxed/simple;
+	bh=x2v9F1VDhB91ey8gDsIzGFW7qT7YEX73UMWKN8WTf4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MhH4RGt1JNAOeMNbEC0tuq/xCPEQULSW48oc/PXF6NpeJ0yaydrwz+hCpduOhwHD0FFx0ZmgW/p+3XNxVX8ZQEHm9A1J3bPe5L8X2Um95g9zt+lYQLz4ZvIJdvOeDsMGIHiuDKuGRZjxuFnFeGwOI5YBEGHYD4lRE+G5eiLWL9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XhRf6AyW; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-de45dba15feso4285453276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:09:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715155749; x=1715760549; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YyPej1pI/oVXVkHLEEGi3mJmmE4iMy2MyP2y6dxfKZ0=;
+        b=XhRf6AyWzL/+kQeMN23EWXf/rpMX3gv4W40NJmIHkJ42uMfbsfurV50JiholzzQHix
+         tOpU8O6kahS44hL4gq9xM9H7IRLtiVr6doR2+xJTVgyA8BK6zUmRa39zCbwwTEgmpoVy
+         JV1VDaQ1gaLB8m6bzy3rEvIgb6BJx5u91xlEAsFQ/U2IfcLqZTnqxMFtmDU0KT9sCCVJ
+         xXCuOXVqEIui4R8vbyMPa6p/pS0h8Tx0QYAUcX4NLwAWZhPGx73RGBdjsn9uhcE90urU
+         Pzgop5gNKQam0fXhd6ltGLbOfolwdyF3kymyf2hiMcJP5kQD5yfr2YSjxVLLWmUTJru2
+         77/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715155749; x=1715760549;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YyPej1pI/oVXVkHLEEGi3mJmmE4iMy2MyP2y6dxfKZ0=;
+        b=qI6+s6/LLayGPWb+5RTt15X6h/OaYfgBwtHU3NT1l0vbuiL2RbUswIMewe/pjC1NRA
+         5IVV5rQalYGQrhgSdXgH5IiOnsBwoqxgzrtNJBNC0bojTYtzk5g8HMvgQd2e6u5P9mse
+         IQxA3UWaTFOHvZ1vJGM1tI0cN20AhFGTSJ46XAK5OwCNAk+9C6WEFa6GJHH/hdcOWWpp
+         MFni1Zd6aAv8//Km0RrIXcz1O106n/kvB0IQ36u0wae5CN0qQGmFH8AD3QpvP7ws15xg
+         siAHx6psUhuL74Ddv5DThsXGTfnQbs45B+yDj7GE6vLMXwjtGkg/bbNaNYPnG6NNj3CB
+         FViw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/5rkKRTIF9AKqqNB6JgJ6ZXMQbTWhYxlF+IbJVhC1zh9zOUuygZFiT11gfBK68AJv3ii3OQycZgRR3vblW9VgZgU8GTgmTCb+zkap
+X-Gm-Message-State: AOJu0Yy5In1e6o7E+aDpi1aPNW0YJ2ZjDMgrAKbvI92Xm7aIbngEVsKv
+	OIwhXqQpbzGysFBN436a8fx964chGTc1FTBwu0joDxTrd25Qd0UHzQnjhVwuJtG2Mc4KdAHyxwZ
+	sItccgzr75YpISZk0UvfTTiCLN2HwkdcQ9AiWjw==
+X-Google-Smtp-Source: AGHT+IG+Ka6XHmtx1m9DEXkQI65DTYddxM7NeYZJRMR7V9qR3AtwZaFiJJeSQAcC1WQ+BpJYbi2S6eFyvsVDWAZxTV8=
+X-Received: by 2002:a25:dc4c:0:b0:dcb:f7a0:b031 with SMTP id
+ 3f1490d57ef6-debb9e3d259mr2017607276.50.1715155748788; Wed, 08 May 2024
+ 01:09:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c172fa3d-d4a4-4605-8f39-df0536718bd5@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500002.china.huawei.com (7.192.104.244)
+References: <20240502090326.21489-1-quic_kbajaj@quicinc.com>
+ <CAA8EJprPLqj7GQM0vmN25U2+3kDow=NH8=-VC2N-0p92Ub3iCA@mail.gmail.com>
+ <5134c012-60b1-4c07-9e1f-c48c3d88d404@quicinc.com> <CAA8EJppK7fMmX_cePhaK4Xy-+gfZfYZSWJDbEnVvq_60B32Rig@mail.gmail.com>
+ <737b595c-3433-8ad8-ca89-7af77098f589@quicinc.com>
+In-Reply-To: <737b595c-3433-8ad8-ca89-7af77098f589@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 8 May 2024 11:08:57 +0300
+Message-ID: <CAA8EJppshtYL0O=C5FAGNRfEnxZohWjW69P9YV=gw_ira-AANQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] Add devicetree support of USB for QDU/QRU1000
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: Krishna Kurapati PSSNV <quic_kriskura@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, quic_wcheng@quicinc.com, 
+	quic_ppratap@quicinc.com, Jack Pham <quic_jackp@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/7 4:26, Jane Chu wrote:
-> On 5/5/2024 12:00 AM, Miaohe Lin wrote:
-> 
->> On 2024/5/2 7:24, Jane Chu wrote:
->>> When handle hwpoison in a GUP longterm pin'ed thp page,
->>> try_to_split_thp_page() will fail. And at this point, there is little else
->>> the kernel could do except sending a SIGBUS to the user process, thus
->>> give it a chance to recover.
->>>
->>> Signed-off-by: Jane Chu <jane.chu@oracle.com>
->> Thanks for your patch. Some comments below.
->>
->>> ---
->>>   mm/memory-failure.c | 36 ++++++++++++++++++++++++++++++++++++
->>>   1 file changed, 36 insertions(+)
->>>
->>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>> index 7fcf182abb96..67f4d24a98e7 100644
->>> --- a/mm/memory-failure.c
->>> +++ b/mm/memory-failure.c
->>> @@ -2168,6 +2168,37 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->>>       return rc;
->>>   }
->>>   +/*
->>> + * The calling condition is as such: thp split failed, page might have
->>> + * been GUP longterm pinned, not much can be done for recovery.
->>> + * But a SIGBUS should be delivered with vaddr provided so that the user
->>> + * application has a chance to recover. Also, application processes'
->>> + * election for MCE early killed will be honored.
->>> + */
->>> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
->>> +            struct page *hpage)
->>> +{
->>> +    struct folio *folio = page_folio(hpage);
->>> +    LIST_HEAD(tokill);
->>> +    int res = -EHWPOISON;
->>> +
->>> +    /* deal with user pages only */
->>> +    if (PageReserved(p) || PageSlab(p) || PageTable(p) || PageOffline(p))
->>> +        res = -EBUSY;
->>> +    if (!(PageLRU(hpage) || PageHuge(p)))
->>> +        res = -EBUSY;
->> Above checks seems unneeded. We already know it's thp?
-> 
-> Agreed.
-> 
-> I  lifted these checks from hwpoison_user_mapping() with a hope to make kill_procs_now() more generic,
-> 
-> such as, potentially replacing kill_accessing_processes() for re-accessing hwpoisoned page.
-> 
-> But I backed out at last, due to concerns that my tests might not have covered sufficient number of scenarios.
-> 
->>
->>> +
->>> +    if (res == -EHWPOISON) {
->>> +        collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
->>> +        kill_procs(&tokill, true, pfn, flags);
->>> +    }
->>> +
->>> +    if (flags & MF_COUNT_INCREASED)
->>> +        put_page(p);
->> This if block is broken. put_page() has been done when try_to_split_thp_page() fails?
-> 
-> put_page() has not been done if try_to_split_thp_page() fails, and I think it should.
+On Wed, 8 May 2024 at 09:12, Komal Bajaj <quic_kbajaj@quicinc.com> wrote:
+>
+>
+>
+> On 5/2/2024 5:14 PM, Dmitry Baryshkov wrote:
+> > On Thu, 2 May 2024 at 12:48, Krishna Kurapati PSSNV
+> > <quic_kriskura@quicinc.com> wrote:
+> >>
+> >>
+> >>
+> >> On 5/2/2024 2:39 PM, Dmitry Baryshkov wrote:
+> >>> On Thu, 2 May 2024 at 12:04, Komal Bajaj <quic_kbajaj@quicinc.com> wrote:
+> >>>>
+> >>>> This series adds devicetree nodes to support interconnects and usb for qdu/qru1000.
+> >>>> This is based on previously sent driver series[1].
+> >>>>
+> >>>> ------
+> >>>> Changes in v3:
+> >>>> * As per comments on upstream[2], to get role-switch working on QDU/QRU1000, it was recommended to
+> >>>>     use the actual TI switch driver. Since driver doesn't have the functionality to provide role-switch
+> >>>>     based on gpio, thus reverting back USB dr_mode to peripheral and removed the remote end-point nodes
+> >>>>     and usb-conn-gpio based role switch functionality.
+> >>>
+> >>> This is not correct. The recommendation was to describe hardware properly.
+> >>> Which means adding schema description, adding  ti,your-switch
+> >>> compatible to the usb-conn-gpio.c driver, etc.
+> >>>
+> >>
+> >> Hi Dmitry,
+> >>
+> >>    Sorry for the confusion. In the comments [1],
+> >>
+> >> "So the compatible string should be "ti,hd3ss3220". Which is fine to be
+> >> used in the platform driver. Just describe the differences in the
+> >> schema."
+> >>
+> >> The compatible "ti,hd3ss3220" is already associated with a TI switch
+> >> driver [2]. But it works based on I2C. So we assumed you wanted us to
+> >> make changes to [2] by adding GPIO functionality (which usb-conn-gpio
+> >> exactly does), since the compatible you suggested matched with the TI
+> >> driver.
+> >
+> > First of all, please don't make assumptions. It's better to ask rather
+> > than making assumptions which turn up to be incorrect.
+> >
+> > Compatibles describe hardware. DT describes hardware. There are no
+> > drivers in question (yet).
+> > You have TI switch on your board, so you have to use "ti,hd3ss3220" to
+> > describe it.
+> >
+> > Existing schema describes it as an I2C device. You have to extend the
+> > schema to allow non-i2c attachment. Describe GPIOs, make reg optional.
+> > Make this description purely from the datasheet and usb-c-connector
+> > point of view.
+> >
+> >> If it was to add compatible in usb-conn-gpio, then we can support OTG
+> >> functionality with no schema changes I believe, but the compatible
+> >> string might need a different name to avoid clashing with the name in [2].
+> >
+> > And this is the second, largely independent question. The
+> > usb-conn-gpio driver is a platform driver.The existing hd3ss3220.c
+> > driver is an I2C one. There is no clash between them.
+> >
+> > Note, unlike plain gpio-b-connector, the switch supports more pins and
+> > actually provides USB-C information to the host even when used in the
+> > dumb mode. Thus it might be better to add a separate driver that
+> > registers typec port and reports USB-C events.
+>
+> Hi Dmitry,
+>
+> Regarding the comment:
+> "Note, unlike plain gpio-b-connector, the switch supports more pins and
+> actually provides USB-C information to the host even when used in the
+> dumb mode. Thus it might be better to add a separate driver that
+> registers typec port and reports USB-C events."
+>
+> We are also aligned with your statement of expressing the hardware
+> correctly. Since this needs quite a bit of effort to write a new driver
+> for TI switch or modifying existing TI driver to add GPIO support, can't
+> we go ahead with peripheral support only since the driver support is
+> absent currently.
 
-In try_to_split_thp_page(), if split_huge_page fails, i.e. ret != 0, put_page() is called. See below:
+I think you are again mixing things here. You don't have to use the
+existing TI driver. Instead you can start with the
+gpio-b-usb-connector driver and later push a new driver for the switch
+instead. This has nothing to do with the hardware description of the
+device.
 
-static int try_to_split_thp_page(struct page *page)
-{
-	int ret;
+>
+> We will plan to submit the patches in upcoming days for this. Since we
+> usually enable USB in peripheral mode so that USB debug (adb) will work,
+> I am thinking we can merge this and take up the OTG/host mode
+> separately. Please let me know your feedback on this.
 
-	lock_page(page);
-	ret = split_huge_page(page);
-	unlock_page(page);
+Well, granted that we are now close to the release, you can not merge
+anything. So you have about three weeks before the next patches can
+hit Bjorn's tree. I think this leaves plenty of time to develop a
+proper solution.
 
-	if (unlikely(ret))
-		put_page(page);
-	^^^^^^^^^^^^^^^^^^^^^^^
-	return ret;
-}
+>
+> Thanks
+> Komal
+>
+> >
+> >>
+> >> [1]:
+> >> https://lore.kernel.org/all/CAA8EJppNZrLzT=vGS0NXnKJT_wL+bMB9jFhJ9K7b7FPgFQbcig@mail.gmail.com/
+> >>
+> >> [2]:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/typec/hd3ss3220.c?h=v6.9-rc2
+> >>
+> >> Regards,
+> >> Krishna,
+> >>
+> >>>> * Link to v2: https://lore.kernel.org/linux-arm-msm/20240319091020.15137-1-quic_kbajaj@quicinc.com/
+> >>>>
+> >>>> Changes in v2:
+> >>>> * Changes qmpphy node name
+> >>>> * Changes dr_mode to otg and added USB-B port USB role switch
+> >>>> * Dropped maximum-speed property from usb dwc3 node
+> >>>> * Link to v1: https://lore.kernel.org/linux-arm-msm/20240311120859.18489-1-quic_kbajaj@quicinc.com/
+> >>>>
+> >>>> [1] https://lore.kernel.org/linux-arm-msm/20240502082017.13777-1-quic_kbajaj@quicinc.com/
+> >>>> [2] https://lore.kernel.org/all/CAA8EJppNZrLzT=vGS0NXnKJT_wL+bMB9jFhJ9K7b7FPgFQbcig@mail.gmail.com/
+> >>>> ------
+> >>>>
+> >>>> Komal Bajaj (3):
+> >>>>     arm64: dts: qcom: qdu1000: Add USB3 and PHY support
+> >>>>     arm64: dts: qcom: qdu1000-idp: enable USB nodes
+> >>>>     arm64: dts: qcom: qru1000-idp: enable USB nodes
+> >>>>
+> >>>>    arch/arm64/boot/dts/qcom/qdu1000-idp.dts |  23 +++++
+> >>>>    arch/arm64/boot/dts/qcom/qdu1000.dtsi    | 120 +++++++++++++++++++++++
+> >>>>    arch/arm64/boot/dts/qcom/qru1000-idp.dts |  23 +++++
+> >>>>    3 files changed, 166 insertions(+)
+> >>>>
+> >>>> --
+> >>>> 2.42.0
+> >>>>
+> >>>>
+> >>>
+> >>>
+> >
+> >
+> >
 
-Or am I miss something?
 
-> 
-> I will revise the code so that put_page() is called regardless MF_ACTION_REQUIRED is set or not.
-> 
->>
->>> +
->> action_result is missing?
-> 
-> Indeed,  action_result() isn't always called, referring to the re-accessing hwpoison scenarios.
-> 
-> In this case, I think the reason  is that, we just killed the process and there is nothing
-> 
-> else to do or to report.
-> 
->>
->>> +    return res;
->>> +}
->>> +
->>>   /**
->>>    * memory_failure - Handle memory failure of a page.
->>>    * @pfn: Page Number of the corrupted page
->>> @@ -2297,6 +2328,11 @@ int memory_failure(unsigned long pfn, int flags)
->>>            */
->>>           SetPageHasHWPoisoned(hpage);
->>>           if (try_to_split_thp_page(p) < 0) {
->> Should hwpoison_filter() be called in this case?
-> Yes, it should. I will add the hwpoison_filter check.
->>
->>> +            if (flags & MF_ACTION_REQUIRED) {
 
-Only in MF_ACTION_REQUIRED case, SIGBUS is sent to processes when thp split failed. Any reson under it?
-
-Thanks.
-.
+-- 
+With best wishes
+Dmitry
 
