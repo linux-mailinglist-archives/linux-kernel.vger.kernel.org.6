@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-173138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044448BFC13
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:31:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF15C8BFC16
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:31:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2601F22628
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:31:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F11EA1C21710
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFE983A17;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E307183CBB;
 	Wed,  8 May 2024 11:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEKPGAi+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMeOaKTw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA62C8248D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E4D824AF;
 	Wed,  8 May 2024 11:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715167829; cv=none; b=suzjQ9BJbOEv720fkTWsngB7fgXCKOZSA+mrRIzhkuiC6qr6daAcaW06Y47j+qANeKADFhihIuUU+UPxD4eNWT7Fy03O8pkIhEf47YJrmQ2ZEVj2VDN2e9k/Ia88+i1AN6TI2k0xQnTo6o2+ywxWeYuFM/7QGe2k+aE9k+VNtpk=
+	t=1715167829; cv=none; b=fnCtXrBGhnf7PO6UnBHmyzU0Kj2jpGyOK+x64HeDhOXjPCMFr2URd65zYklU+SgPPDPr3cwdpmpV7n1Rm0VWh5LZ3QH4EX0pgcYCj8m+QX+Txd3ZcxrtHnyszkHSMaF/W02w3mb1axbzPGhCr/46iB0aMhLP6N5qgIsLcS2EpBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715167829; c=relaxed/simple;
-	bh=axHrUToPoL787w2hxsBZe3Z6MmWMNp4EPGZTDCBJPl4=;
+	bh=JplgA3sOoAVitsl+Ba7UDOQPODwGUUkz1NsrTl0hLEE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MDm117fZKH6hjqxzJvhG+WkMz9/BCsWSiqyUgzDF9RAhNlyppfOxobhH1MBmG26JQMsADw7rsQOakqYMxdfZD3Ko5s1YrG/ErMxDFcvhAcuW4b924S3MrZ5OKOD/9L86OwWfmr1MQv5MDk+Dtg9M//d9FTWfsqKgSFhlVyEuubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEKPGAi+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ADF13C4AF18;
+	 In-Reply-To:To:Cc; b=e/9cZzhvFXZswC46J5bnATK7KPQHLDcJTuobPViwT9zUBsu91eaVXsVa25cV3EdFzLP092s+D4gSD21WKmbHtyYvxVJuryods60JRhbSRIZKJBWkQ8ko0in9GnxUXjX/9c3B2qT6/X0t3FcLcRNXueJ+6WLqiyPM0bxhutLKQzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMeOaKTw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B95A4C4DDE7;
 	Wed,  8 May 2024 11:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715167828;
-	bh=axHrUToPoL787w2hxsBZe3Z6MmWMNp4EPGZTDCBJPl4=;
+	bh=JplgA3sOoAVitsl+Ba7UDOQPODwGUUkz1NsrTl0hLEE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AEKPGAi+YpkuKFQljES739yUDjh3q9jmTkCisXmC+T0r4YCapun/EatCG8NSYuJTX
-	 FLvyPzR5FVlZGN9ncgnkS++gXNsoJHdhrsEG2oknpvg3btc3xK+P42RudyqZJtSMsU
-	 FKPVP7+pVesAR9K+QsqIGaCAICE1QrHa9CJcAGx+vDUjw0YmReDA1Rvvk4C/xAhruz
-	 OUvcjruGXohs/alDi9iFTdvvRAu3rEr67224uMT+qoD2kzQeXidqG/HT4VKFR0NuaC
-	 gu4dcaZEg3FGa8di+US6Jv40PeW81VTXkQfxQDsqIbcIh6HiGWI4PTGCpOahgCmjBN
-	 2vrVqhw0htlVA==
+	b=XMeOaKTw9qZBqxZJ1u1IXitPaUkLmyrU0U/oIhNh+zqMJ8Ej1iXUrlODKuPia5MoT
+	 w8eCFCwo8PK7Bx+zp8M0EQiFSTCrzXoym8dcwMjyz2QVdv4gsLnbBY3EDvXmDFWelW
+	 sd3OshvIAUZR+UnjUKlFbW/WcOkYNG1X5l09kDRB6TA34D8o8F9hjuewZ62TTdav0s
+	 bDqhe0gdgcpxopBk0AhvfkcJoVmyqyEPISfcV5b96CBJ/D4wyR7UNkbbRECBCFr5o6
+	 FxJiw3ogarNXW5L/zjGy0eJ/fT4fyJyJUFb1kn6ecauyedcFBclRK6cJph2ECebEuF
+	 UpkgXsOruEK4g==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9E997C54BB1;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A74A9C54BB0;
 	Wed,  8 May 2024 11:30:28 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH] test: hsr: Call cleanup_all_ns when hsr_redbox.sh
- script exits
+Subject: Re: [net-next PATCH] net: stmmac: dwmac-ipq806x: account for
+ rgmii-txid/rxid/id phy-mode
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171516782864.10113.4815978135761063766.git-patchwork-notify@kernel.org>
+ <171516782868.10113.14186792810495215260.git-patchwork-notify@kernel.org>
 Date: Wed, 08 May 2024 11:30:28 +0000
-References: <20240507091155.3504198-1-lukma@denx.de>
-In-Reply-To: <20240507091155.3504198-1-lukma@denx.de>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240506123248.17740-1-ansuelsmth@gmail.com>
+In-Reply-To: <20240506123248.17740-1-ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by David S. Miller <davem@davemloft.net>:
 
-On Tue,  7 May 2024 11:11:55 +0200 you wrote:
-> Without this change the created netns instances are not cleared after
-> this script execution. To fix this problem the cleanup_all_ns function
-> from ../lib.sh is called.
+On Mon,  6 May 2024 14:32:46 +0200 you wrote:
+> Currently the ipq806x dwmac driver is almost always used attached to the
+> CPU port of a switch and phy-mode was always set to "rgmii" or "sgmii".
 > 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
-> ---
->  tools/testing/selftests/net/hsr/hsr_redbox.sh | 2 ++
->  1 file changed, 2 insertions(+)
+> Some device came up with a special configuration where the PHY is
+> directly attached to the GMAC port and in those case phy-mode needs to
+> be set to "rgmii-id" to make the PHY correctly work and receive packets.
+> 
+> [...]
 
 Here is the summary with links:
-  - [net-next] test: hsr: Call cleanup_all_ns when hsr_redbox.sh script exits
-    https://git.kernel.org/netdev/net-next/c/252aa6d53931
+  - [net-next] net: stmmac: dwmac-ipq806x: account for rgmii-txid/rxid/id phy-mode
+    https://git.kernel.org/netdev/net-next/c/abb45a2477f5
 
 You are awesome, thank you!
 -- 
