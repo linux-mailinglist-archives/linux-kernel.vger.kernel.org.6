@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-172717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066F58BF5C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:55:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 878118BF5C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392F51C22981
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:55:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97AC1C22EA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA0517C60;
-	Wed,  8 May 2024 05:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27EE179AF;
+	Wed,  8 May 2024 05:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyI3Q/ax"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfKigFzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4514AB0;
-	Wed,  8 May 2024 05:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14ED2171B0
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715147713; cv=none; b=qLgYvedKfO+uDb9jYN4fHylA7vjKeIi8LZilJPc1xAyn1IOgNv6FtFr7/MxHQAsK2kYQdZV+nvzbkmkXPF8jKsxBZyFd7w6ofnDcYcFMp5LqFhnr17eFum499KoE+2c2PKvcaTloyOWPtlK9yOvWPKUhQ6ixpEnikJCHP96IeIQ=
+	t=1715147748; cv=none; b=WnqIHMzzLOBlpbw50YYPQ9p0s5WsT7cgzICZyYzgN8IRn+4EoiAzYBKT/PZOl75ME/QdMj3VTVRceiw3d6KpSHid8c+xBF7DeHAm8u6T/u9Z95sVOujQeJSRBDB0OuAOaprJgttJydivP0qKKwkZXY0BTsR9T3cJRsv1Sme3F8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715147713; c=relaxed/simple;
-	bh=lO89aVQfFs/6jUDErPkGkXAH9K4sksZShIR9DhCcgkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e8ERk4tuTpXzhE1rxChbn9HTVjBW6sAzcLAoqwDNp+LahrWhXC9o6/SiW/MzOT9SLaaHQedggA3+j4son6fVBJrHgv1vrHOZOmqK4iDeu8kEzYMwxprbexTWF4perfXpnfBnjoNMUvWA7rdZDYRKD2wrmSK0uPy9bvIwWe+QJ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyI3Q/ax; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-34da04e44a2so2220844f8f.1;
-        Tue, 07 May 2024 22:55:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715147710; x=1715752510; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2kECfVH61gVXoLyEKuVmIWZjf9iy/udsb4pKdELyNgI=;
-        b=TyI3Q/axaPMnsKWjrLW1k5s+i7XNf++8A5vw98l7hRFVSEHJclBPqXh3gF2ae4iN8y
-         X6llgcEJpqI+aVujppjMwj4twoMI5TtXBxQMV2J0nnX2wObShvSYk/wPLINjMsSCZIy0
-         lRPlrtQZB5OdN8TbbIeT5injUDcAkYp7zFa/pJEcWzZZbTFrtkMRd1OCIX8ILuLs9ys6
-         IMEATsFeifo/PK2wiORJY3VsCwtM78LIUKvdCEnrtjNbDxiKnuGpcTkz2Dxkgy/zbCgW
-         hHf4TZ8LsDwzCLNSP8hAXuoHvasnwemDFCeRLoOuk0X31x1H7Zz1jRFYceZtiExDRe3A
-         zpbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715147710; x=1715752510;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kECfVH61gVXoLyEKuVmIWZjf9iy/udsb4pKdELyNgI=;
-        b=aZuA6OsLh1yxlQBhwiEJbnzz8Q3CC/ef0ClhaR/hzZQqLcVSgN3lNCZjZmZoDfOpM7
-         JSwnWX9KEDFkHtemw6L9rvCi5KGyozGgiYkE3uCAUQRUv3Q6dxy/C8ZE1J43V2pcL8AE
-         5Q4gZdrcS2oiUO5lXW4hpMtJjYskoz2lqs+Iwid/LDQsGAZyi+23vng08/RK6IkgHVAj
-         h/ic733Mo1rE/CIY3TzUGLoOh8pOb/Q75jV1VCqQvsz1BNrONfodtViSlFcBNyizIVjy
-         x60WHrptoNYwmRmAaZzjSolRWiAioegqzFIVTLfOly7z8OEir0zddSK5dU230p3M1U8F
-         wUQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1A/o+3RGzPCNj1u5vkAz6k2z0VU3LrjfCmua/6s++RXjGrUbrvzSXwW7I+tzZtW5v74eZmxqO8QHq3/uqDFAbGTlVjomFzWzE7rnGsxO1no5QF/57Tas58ZC9ONhMRQ766G0xMmDtTfHN4puQGdqdtbQdefnqWSWNs5JIGFoDPrYdnJ/mn4VMJ8cV8jqSPhnB+jfRQVAqsei22XZwPmI6uE4=
-X-Gm-Message-State: AOJu0Yyy5ToTFjfHvkWiPD20ZN5dhpEpHL5YHMXJ0fos+0bQK6e3iW8F
-	QAhTILDBkfPZlTREGOx6+3CpEfvxN+lcI0/pil2nPq2vedUD/KX8
-X-Google-Smtp-Source: AGHT+IGmRYQwYE5GKCP4nHrkMb9CRMRKCaP4q6oTy76fGgGdxl/Be2mRpgRLYl8OhhNTkkldystArg==
-X-Received: by 2002:adf:f0c8:0:b0:34e:3cb3:6085 with SMTP id ffacd0b85a97d-34fca81043amr1370408f8f.62.1715147710492;
-        Tue, 07 May 2024 22:55:10 -0700 (PDT)
-Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id w6-20020adfcd06000000b0034dcb22d82fsm14415768wrm.20.2024.05.07.22.55.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 22:55:10 -0700 (PDT)
-Message-ID: <040b32b8-c4df-4121-bb0d-f0c6ee9e123d@gmail.com>
-Date: Wed, 8 May 2024 07:55:08 +0200
+	s=arc-20240116; t=1715147748; c=relaxed/simple;
+	bh=9YJ4ItsN3hjrsW/K8yCf69qg1uB1he350g1oi/io63c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIaJDssweDN3/91HDJR6kIwR6nVtUeRq+A8pKMr8vCwYtUTePlpw5crhDhcdPNKwQek209w+U+R22G34z1HNEMxC4hoG6aObLtu1Wi8LJXnVx/Y41hExvXNQyEWEm3Joo084vBRAqY8FcfEgdbiem7ioqXlDCuffPhHIWDqoXqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfKigFzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 091BDC113CC;
+	Wed,  8 May 2024 05:55:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715147747;
+	bh=9YJ4ItsN3hjrsW/K8yCf69qg1uB1he350g1oi/io63c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TfKigFzLDTwhTj6bFuleDfnO1Iccp1SD3JqxhbkSaPbpt39peuDA7EegDtvGdzr3O
+	 g7Whbdcf/0kfJ8Gva5irrESFJ4SKHNz90FHAU4b99dGicwvm5sBnwy/cxupI6yW3xh
+	 gGVrLw+MNCtaRDebURgwAFGrqB6+TqugybucPTMuqjguJE7zV9aLteGjTd9PdKqXDN
+	 ikcwQ/d89Z6GnDcO/iM0o+O1+VA0fbAUYq/ZAsQFcJkBTKWtTm8rFg6HW2YSp7XFj8
+	 /UsUARfcWb9hTdAljsoP81PP4ehYCKjupWH0Hq2x49MAfEoo5mJ9ahJsuHhbh4c4H7
+	 H3lIWntyCFWgw==
+Date: Tue, 7 May 2024 22:55:45 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v5 2/3] x86/bugs: Remove duplicate Spectre cmdline option
+ descriptions
+Message-ID: <20240508055545.eix25ok3wvv6gcpg@treble>
+References: <cover.1715059256.git.jpoimboe@kernel.org>
+ <cdfe36cf9c8b6cd98eb0f32b798d5af1af95cb2c.1715059256.git.jpoimboe@kernel.org>
+ <d0079f0c-3be8-484b-9c67-f08d6a1fb31e@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: Simon Ser <contact@emersion.fr>,
- Pekka Paalanen <pekka.paalanen@collabora.com>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com,
- dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
- laura@labbott.name, linaro-mm-sig@lists.linaro.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, minhquangbui99@gmail.com,
- sumit.semwal@linaro.org,
- syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d0079f0c-3be8-484b-9c67-f08d6a1fb31e@linux.intel.com>
 
-Am 07.05.24 um 21:07 schrieb Linus Torvalds:
-> On Tue, 7 May 2024 at 11:04, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
->>
->>> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
->>> too, if this is possibly a more common thing. and not just DRM wants
->>> it.
->>>
->>> Would something like that work for you?
->> Yes.
->>
->> Adding Simon and Pekka as two of the usual suspects for this kind of
->> stuff. Also example code (the int return value is just so that callers know
->> when kcmp isn't available, they all only care about equality):
->>
->> https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
-> That example thing shows that we shouldn't make it a FISAME ioctl - we
-> should make it a fcntl() instead, and it would just be a companion to
-> F_DUPFD.
->
-> Doesn't that strike everybody as a *much* cleaner interface? I think
-> F_ISDUP would work very naturally indeed with F_DUPFD.
->
-> Yes? No?
+On Tue, May 07, 2024 at 08:04:37AM -0700, Daniel Sneddon wrote:
+> I love the idea here, but
+> 
+> >  	nospectre_v2
+> > +	spectre_v2={option}
+> > +	spectre_v2_user={option}
+> > +	spectre_bhi={option}
+> >  
+> 
+> this comes out as just a single line when I run make htmldocs.
 
-Sounds absolutely sane to me.
+Thanks, the below turns it into a bulleted list:
 
-Christian.
-
->
->                         Linus
-
+diff --git a/Documentation/admin-guide/hw-vuln/spectre.rst b/Documentation/admin-guide/hw-vuln/spectre.rst
+index f9797ab6b38f..132e0bc6007e 100644
+--- a/Documentation/admin-guide/hw-vuln/spectre.rst
++++ b/Documentation/admin-guide/hw-vuln/spectre.rst
+@@ -598,11 +598,11 @@ current CPU.
+ Spectre default mitigations can be disabled or changed at the kernel
+ command line with the following options:
+ 
+-	nospectre_v1
+-	nospectre_v2
+-	spectre_v2={option}
+-	spectre_v2_user={option}
+-	spectre_bhi={option}
++	- nospectre_v1
++	- nospectre_v2
++	- spectre_v2={option}
++	- spectre_v2_user={option}
++	- spectre_bhi={option}
+ 
+ For more details on the available options, refer to Documentation/admin-guide/kernel-parameters.txt
+ 
 
