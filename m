@@ -1,163 +1,106 @@
-Return-Path: <linux-kernel+bounces-173827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77C28C060B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:08:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BE388C060D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20BF7B21EF6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:08:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14AC4B2298E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD58131BAE;
-	Wed,  8 May 2024 21:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5E614A9F;
+	Wed,  8 May 2024 21:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KiKw0h67"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NKzU9+SN"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9DB13175C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2466612C497
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715202492; cv=none; b=lX3AQUdTDKEDaSfca7y1R6uXcQ/GyB2FSps4v8aKThxe0jOTe7dKljphXHMpwNvB3yLtW5Pa2dKmbtrO7Hky7Xg5Vabjp+LeP7Ycdg3oTW5Zku45i0TXbkiOqKPOwJpWRxJRr6s4haRjzwv6uTuwzRCzP49F+KDrCqgqKZB7Vwk=
+	t=1715202603; cv=none; b=TPzaSDN++oDN/Vb4HxVnbrIAEu52Go8waRj1mMleb4T/XQVzjkIB+B/3f92a/UivqWmnkdxw6Qsd8J/K1GCmJwINC8jbG84PwsVkpMZknMW3NcnW74TyFFUFdX4EgKZn0xa/CWS+fchbFLyCSYxV1dQbRUgT02F/qknFzU9Hu5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715202492; c=relaxed/simple;
-	bh=LKGV7xc5nr9ry+yJYOSLrex6y//3fq+gaLwkrTGdTHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e1kzY8i5bDtsVpnTfSjz9I3IlAOoGRZEhfNlyaXDZiUwR2Bc49i7wX0gdXd38jYWqQDrzY8OHIzRDf/p8UovwOWE9KhtGmFDiF5qiz1Q6pcBdXaJejJzDrqpbilN4UvE7B7bWpvObvOvoLVPV53eW2g0gCBZf0HYdosfTsoBNE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KiKw0h67; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de60a51fe21so237252276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:08:09 -0700 (PDT)
+	s=arc-20240116; t=1715202603; c=relaxed/simple;
+	bh=vFL4B3wK6V0zyeCGMUE/eo8ppygLhYYUWQCOaznNGKA=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d6Ye5T1a4qkR2a7POL09PID9E1K1umfUVxNWM4oH8gL+JXesiijUVXQIVtEt58OOztCiRrOPVdf6ZOE5tNCQf0E9+r/YAVQlMmWhsU3zRHSk/zTNKXJ3JS51F4D9x2ppQsISQ4J67H+PqQX096s6zEtyLnOvS3/EsZiDo3IIqS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NKzU9+SN; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3c97a485733so151795b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:10:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715202488; x=1715807288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uysWUhd+mFP/8DQDYwRCph49GuPMOosAxVLVtOn+vxk=;
-        b=KiKw0h67mgg/iES4fpkMXS4Kqd5ZsF9spsrAzS+GRxhjCiWzx1u21mMk4RHGCkOPhL
-         tdgPHZ4burejA7Le+BIPYZ8QB62B+eJzWigjo6NueGUOh9BAFBhqp5qIG1hKgchKjPaW
-         eLOTbzmoG+SvbPeVjyOLq/EbBH54OF+oRlnAMXhL/BKdTNYFomSWTV87HRIy6rFIIVQB
-         JskLBSfUX7chADfyf9DUo9cxG9yg3Bh1sICn7CMG8OHvZDWt4D0A6FpjWPBdmbNv/FLR
-         rAv9z/2W5BprkG8+8pr6ih7Z3c1HhrA4OjAmPGywvO8Wy5UpgHOLmsVw09uFs+gG9dEn
-         u8Zg==
+        d=chromium.org; s=google; t=1715202601; x=1715807401; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=malKjFparRZHby6p2gcvIikID9eemr65ODf87siiN6w=;
+        b=NKzU9+SNHU4gmkfECNrn+IB9sOoXSd4NtcHgBrmp+w2E2ynUDHqRVS/FaGLIPaEt7e
+         wS+uFPZAepuSK4ldrMU2CrhXGDNuDPxFn6bBOEIpoq6ylGyxuDDK402Jy6Xa+07XVwZS
+         bRQgd0aaOjXzg0sQlp67b0n+PAtyFq4sRMWlI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715202488; x=1715807288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uysWUhd+mFP/8DQDYwRCph49GuPMOosAxVLVtOn+vxk=;
-        b=fnNB3p6zAwUr1OCBgYeQawywsp12b3ywIM5iu+t/4JWiR7+3ADFEgRnxyHilfSnsgn
-         pRaBuS0zKK0JGH2VLt0IMRVMW19bKAB/UY85tMGbZ8+FLydZUaqOEBlKDoJykfaeOWya
-         FvTHj6IH325Zbk5X84yDLy6nMCzmN0SoiPEGpnWRKVqRLtbhttE2ecOOPCIZOAjDpx8C
-         uzNv3FZ9QfQeeaUjowTQYhEIrX2VEDXoT8GP3ATFUnhlAIo4CNLzBsfQIvCZ/gJaN6Vi
-         Tw4jQFKswVF6CDAs6td3k8RJ8MsOo1WHTNVkRD4thcwbEq5NdcGpI+uFl8yqpYp7JiXq
-         Jz2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzFWY+4Y2K3VfETQKGNzzXOo74zaN0EqGilC9aud1SJINbB/aqTsfZtOQbHUSQqSqXDZ/MfMBaCxXszBGykKhCs4/3iE+x/MXb738f
-X-Gm-Message-State: AOJu0Yx891dVx2GSIDUYh+BuF/IRkDYKhD+WTxjWErciCo/D1FDy1vA4
-	HLfmvGDm1CB25mKLg8qtul1xmcBMx85N+48A0LCxabO4Utt+LyAxBViqVGx54BWrdtmqq2V726I
-	P+syVLkyUQ2F6I2cHvrdQLrblKnF5Cqfsm5V5ng==
-X-Google-Smtp-Source: AGHT+IFDV9vpign+J+3aFpHjnKGm0GBvz+bXhGRnYqw8oJbUWijE1ChetzcaM/anIQ6KxPCGeplsDlczILq+pqIYhcI=
-X-Received: by 2002:a5b:811:0:b0:de5:4bb4:25b9 with SMTP id
- 3f1490d57ef6-debb9ce095dmr4532379276.12.1715202488456; Wed, 08 May 2024
- 14:08:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715202601; x=1715807401;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=malKjFparRZHby6p2gcvIikID9eemr65ODf87siiN6w=;
+        b=oFAuQXE/CUaxh4PnUt1mFxT4w71shvsQngNE2bd+F0b5J8x1KzV6uLevPDsrHMBO6g
+         YdlUCjMjoldmtXaDLUIuHS1AQVZzozauBk/uO1vxzP9OOJ9JtDnxu70ekCScPqeRO6OD
+         SPDve5A26Tly/D8qKhxNOOgDziUpt+RaYb2YlleH1YbOHFrLdLARPPxyynz1t2U5CrJq
+         WRQ6GsLP2u7DxJoVsCu41S8uwWFBwRg4RAvkm5p0AzZ2NJzki3TN2rX4V2s7gboq52JA
+         bTNA7h6edqsVXxyihgMBOeWsfZhQvnTrNMcYYq8OHxIhR/+iLpk8g0RMTOvqbrDu2mH3
+         m31g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYua36W28/C32eDC3DJDAoy5DhNzdwyu0JZOTu0WKr1rITsnGZ6GE/VLW6lWJigNOYWk6s42dw7z4DAOc3n/BQMflDCHJx8oJWFBx1
+X-Gm-Message-State: AOJu0Yx+dubvzYKG7ZJ/nUixw/uVMsU3VZsG/bqwIsdeqQyKjImt4ifP
+	z9Ro2T+b0DzTSTcsBo0bWFwYA5RzGhH/SHVgG2NcqSHCNZRtLfq8KPLVELInMO4/L2oB+jD6nmA
+	+mrhERU43K+cRuAdbgcKuO9pD4c3IB4QGBAh5ty2K2BndVWo=
+X-Google-Smtp-Source: AGHT+IEdt693kG5CsvJhhJKxEwutqN4U04lOEMxarSx84uS+eZ/8glpfYJEhQ71dRPpHXu+PbW6nNTnvO6fe3wEXqgw=
+X-Received: by 2002:a54:4604:0:b0:3c9:6cfb:bf4e with SMTP id
+ 5614622812f47-3c9852927aamr4063549b6e.7.1715202601233; Wed, 08 May 2024
+ 14:10:01 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 May 2024 17:10:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com> <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-In-Reply-To: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 8 May 2024 16:07:57 -0500
-Message-ID: <CAPLW+4=D_31Fy_W_7+_ko22y9_-8rZ9Logh6KyW8UPM3q58J0A@mail.gmail.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20240503171847.68267-1-puranjay@kernel.org>
+References: <20240503171847.68267-1-puranjay@kernel.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Wed, 8 May 2024 17:10:00 -0400
+Message-ID: <CAE-0n50Pcmjq7b3F7OiU066FR3vk9avU22H0OEcoGcbGVd14dw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] arm64/arch_timer: include <linux/percpu.h>
+To: Catalin Marinas <catalin.marinas@arm.com>, Douglas Anderson <dianders@chromium.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Puranjay Mohan <puranjay@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, bpf@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: puranjay12@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 3:26=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
-e:
+Quoting Puranjay Mohan (2024-05-03 10:18:46)
+> arch_timer.h includes linux/smp.h since the commit:
 >
-> Quoting Arnd Bergmann (2024-05-07 00:44:15)
-> > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
-> > > The WinLink E850-96 board boot failed with Linux next-20240506 but th=
-ere
-> > > is no kernel crash log on the serial [1].
-> > >
-> > > Anders bisection results pointing to this commit,
-> > > # first bad commit:
-> > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
-> > >   clkdev: report over-sized strings when creating clkdev entrie
-> > >
-> > > After reverting the above patch the boot test passed [2].
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > >
+>   6acc71ccac7187fc ("arm64: arch_timer: Allows a CPU-specific erratum to only affect a subset of CPUs")
 >
-> There are two fixes on the list: [1] and [2]. Perhaps one of those
-> resolves this?
+> It was included to use DEFINE_PER_CPU(), etc. But It should have
+> included <linux/percpu.h> rather than <linux/smp.h>. It worked because
+> smp.h includes percpu.h.
 >
-> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsu=
-ng.com
-> [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsu=
-ng.com
+> The next commit will remove percpu.h from smp.h and it will break this
+> usage.
 >
+> Explicitly include percpu.h and remove smp.h
+>
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> ---
 
-Late to the party, but FWIW here is my two cents. E850-96 board
-crashes on boot when running next-20240508. Enabling earlycon reveals
-the details. Here is the relevant excerpt from the backtrace:
-
-8<-------------------------------------------------------------------->8
-    Unable to handle kernel NULL pointer dereference
-    at virtual address 0000000000000000
-
-    Call trace:
-     vsnprintf+0x64/0x724
-     ...
-     _printk+0x60/0x84
-     vclkdev_alloc+0x118/0x13c
-     clkdev_hw_create+0x64/0x9c
-     do_clk_register_clkdev+0x58/0x7c
-     clk_hw_register_clkdev+0x30/0x54
-     samsung_clk_register_fixed_rate+0xac/0x104
-     samsung_cmu_register_clocks+0x78/0xb0
-     samsung_cmu_register_one+0x48/0xa4
-     exynos_arm64_register_cmu+0x3c/0x70
-     exynos850_cmu_probe+0x2c/0x40
-     ...
-8<-------------------------------------------------------------------->8
-
-'addr2line' points at the end of vclkdev_alloc():
-
-    pr_err("%pV:%s: %s ID is greater than %zu\n",
-           &fmt, con_id, failure, max_size);
-
-Applying the forementioned patch [2] ("clkdev: fix potential NULL
-pointer dereference") fixes the boot for me.
-
-I can also observe a couple of warnings like these in the kernel log:
-
-    samsung_clk_register_fixed_rate: failed to register clock lookup
-for clk_rco_i3c_pmic
-    samsung_clk_register_fixed_rate: failed to register clock lookup
-for clk_rco_apm__alv
-    ...
-
-The patch [1] ("clk: samsung: Don't register clkdev lookup for the
-fixed rate clocks") fixes those. I think both have to be applied ASAP.
-In case of E850-96, I guess [1] is more critical.
-
-Thanks!
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
