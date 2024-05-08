@@ -1,127 +1,264 @@
-Return-Path: <linux-kernel+bounces-173242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73888BFD7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D8418BFD82
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5B28B2263C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:44:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8083B257AA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D5E54FAA;
-	Wed,  8 May 2024 12:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C8054FBD;
+	Wed,  8 May 2024 12:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMqHaLHI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0dlrTVYw"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD226F068;
-	Wed,  8 May 2024 12:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2D36A8A4
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715172245; cv=none; b=VuZpWnPdkQ/wV5EiFRO2KunPaFpI2zL9rqoxIBUHV0wlh+h9GTfuBcGlpZNfveNeHyiYulWj+fzFiPqLrzaKQjILa4MjS8+K/9JSwbhanV8rAjnDhLfLX4GxhuzHMefFlK6ge+gOxyd+O1nBZDEJXI73Wd+TVjK+tEfoK7hdlTI=
+	t=1715172278; cv=none; b=aIq27TtmTRwSFf9q3rcFNVOPd1q+qAcKeXD+gjDgIakDM2JoJ16SRZOkWZuflMLndAqNqyRmsJTJpH1364X4BHrsE0O7WOGrOquJj/k3500rUuIaIqMRfyefSGmGESaXIoxXrtZ8ZucYcxiIalMfKfU3QoeN6slpvYqkQCjjK30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715172245; c=relaxed/simple;
-	bh=D/MdFRhwmEy4kwhpm2dB7s4ocO/FTSaGT0pU8iZ/zdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WeRkjDm1PcSH/FRUcUMhjopwOKD31r1wKBBsMaABv2QX+L4iRDJAf5q/LB90MEtBmo6TjW9frleFg05eUGf40pO5NcvimEqCrIZdkodfeGbo73c6TMAGaITthCZWeY/KUy9R6zXTq0hyRkt74sWpw7/3/2Ulla3NsQY7Yb/gb5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMqHaLHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB38FC113CC;
-	Wed,  8 May 2024 12:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715172245;
-	bh=D/MdFRhwmEy4kwhpm2dB7s4ocO/FTSaGT0pU8iZ/zdg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sMqHaLHIOUTJC21oahLKMiVt2A2dBKLs/VMXaV9KeWKBqfivSLtUqXe3iQIvUxHky
-	 Ziku1RlKVNgkAWcT3SqlLfO0wtrFhKY2/SHDmu22Fs2rtGXxVCtNs5zQQKCohv0Y3N
-	 n9C1d8OuYDmEkYzc+AHi3ZPsyPMsfsqrnd/5CYg+FFHoS0Ouw5V/es1kebzvew+du0
-	 8sE6wqM0gKmEbBv+6jqV7WqVbB6r07bHkPlNimO5jLElCVdPgBEkfLo6I6wFY/TNuE
-	 eU2P3wrqNzyL3CExm422j1H2JJXfUtQn5bbKZnCsbJ7x5npm41jw0DxJp0MgXAgJk/
-	 MjfQcWDZ0E0oQ==
-Date: Wed, 8 May 2024 13:44:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Markus Schneider-Pargmann <msp@baylibre.com>,
-	linux-can@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] can: m_can: don't enable transceiver when probing
-Message-ID: <20240508124400.GE1736038@kernel.org>
-References: <20240501124204.3545056-1-martin@geanix.com>
+	s=arc-20240116; t=1715172278; c=relaxed/simple;
+	bh=zmA2+tCDw16RjR/3j2+3tT2/AoPS7qyS7V4GhqwgqXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U5cI9NRNAnww7JbxpO0AiqCE9Sq9WdZW6wshiuP9xIotVGRiYFCRVMtAbPJsU5FEnuPOQCddkj5R5mUBsstPXzKaFZ6M4fAewLTUCuvBfgPk/Fb/4V6B1FBbIl3gY4OQqp2ig3WaD6ZIXObCaaaH1vMz5Y6l7v8eCBYSrDisRGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0dlrTVYw; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715172274;
+	bh=zmA2+tCDw16RjR/3j2+3tT2/AoPS7qyS7V4GhqwgqXw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=0dlrTVYwZFLMOymDDPlJgMbxax0vrGgshPR1ATXjluKj3gCwGqOe5vshSy1Ca1D90
+	 f2l0qTwdyAXKnHmvaT5ORfPUx3ApHfGv4O1Uc9V6fcDd8LU47uHDPX3W4y6qaTgTYA
+	 WBdL/E2V5xvnWpUTjf0ZGE5l/wfenCVvMY7Czjgkdl14CsdLp9eM36npJVbV56HSqF
+	 YPK2E6LM0FudDvRLGaOHGhLh1QGENj7rSoSL2RqZNJvaYR4K/cIQIoXRmwfo5EgVRg
+	 AgwV+NQhFNE2JtQmEKzkAY6jF+apNbGMD09fq1NgcerZdL3UsPDXaKE2EsfCqf16Io
+	 0UCnpCetXVo6A==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C7A863782112;
+	Wed,  8 May 2024 12:44:33 +0000 (UTC)
+Message-ID: <5de7d6af-54ac-49b7-b5c2-fa9381310288@collabora.com>
+Date: Wed, 8 May 2024 14:44:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240501124204.3545056-1-martin@geanix.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mailbox: mtk-cmdq: Fix sleeping function called from
+ invalid context
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Alexandre Mergnat <amergnat@baylibre.com>,
+ Jason-ch Chen <jason-ch.chen@mediatek.com>,
+ Johnson Wang <johnson.wang@mediatek.com>,
+ Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
+ Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Fei Shao <fshao@chromium.org>
+References: <20240508095143.12023-1-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240508095143.12023-1-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 01, 2024 at 02:42:03PM +0200, Martin Hundebøll wrote:
-> The m_can driver sets and clears the CCCR.INIT bit during probe (both
-> when testing the NON-ISO bit, and when configuring the chip). After
-> clearing the CCCR.INIT bit, the transceiver enters normal mode, where it
-> affects the CAN bus (i.e. it ACKs frames). This can cause troubles when
-> the m_can node is only used for monitoring the bus, as one cannot setup
-> listen-only mode before the device is probed.
+Il 08/05/24 11:51, Jason-JH.Lin ha scritto:
+> When we run kernel with lockdebug option, we will get the BUG below:
+> [  106.692124] BUG: sleeping function called from invalid context at drivers/base/power/runtime.c:1164
+> [  106.692190] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 3616, name: kworker/u17:3
+> [  106.692226] preempt_count: 1, expected: 0
+> [  106.692254] RCU nest depth: 0, expected: 0
+> [  106.692282] INFO: lockdep is turned off.
+> [  106.692306] irq event stamp: 0
+> [  106.692331] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+> [  106.692376] hardirqs last disabled at (0): [<ffffffee15d37fa0>] copy_process+0xc90/0x2ac0
+> [  106.692429] softirqs last  enabled at (0): [<ffffffee15d37fc4>] copy_process+0xcb4/0x2ac0
+> [  106.692473] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [  106.692513] CPU: 1 PID: 3616 Comm: kworker/u17:3 Not tainted 6.1.87-lockdep-14133-g26e933aca785 #1 6839942e1cf34914b0a366137843dd2366f52aa9
+> [  106.692556] Hardware name: Google Ciri sku0/unprovisioned board (DT)
+> [  106.692586] Workqueue: imgsys_runner imgsys_runner_func
+> [  106.692638] Call trace:
+> [  106.692662]  dump_backtrace+0x100/0x120
+> [  106.692702]  show_stack+0x20/0x2c
+> [  106.692737]  dump_stack_lvl+0x84/0xb4
+> [  106.692775]  dump_stack+0x18/0x48
+> [  106.692809]  __might_resched+0x354/0x4c0
+> [  106.692847]  __might_sleep+0x98/0xe4
+> [  106.692883]  __pm_runtime_resume+0x70/0x124
+> [  106.692921]  cmdq_mbox_send_data+0xe4/0xb1c
+> [  106.692964]  msg_submit+0x194/0x2dc
+> [  106.693003]  mbox_send_message+0x190/0x330
+> [  106.693043]  imgsys_cmdq_sendtask+0x1618/0x2224
+> [  106.693082]  imgsys_runner_func+0xac/0x11c
+> [  106.693118]  process_one_work+0x638/0xf84
+> [  106.693158]  worker_thread+0x808/0xcd0
+> [  106.693196]  kthread+0x24c/0x324
+> [  106.693231]  ret_from_fork+0x10/0x20
 > 
-> Rework the probe flow, so that the CCCR.INIT bit is only cleared when
-> upping the device. First, the tcan4x5x driver is changed to stay in
-> standby mode during/after probe. This in turn requires changes when
-> setting bits in the CCCR register, as its CSR and CSA bits are always
-> high in standby mode.
+> We found that there is a spin_lock_irqsave protection in msg_submit()
+> of mailbox.c and it is in the atomic context.
+> So when cmdq driver calls pm_runtime_get_sync() in cmdq_mbox_send_data(),
+> it will get this BUG report.
 > 
-> Signed-off-by: Martin Hundebøll <martin@geanix.com>
+> 1. Change pm_runtime_get_sync() to pm_runtime_get() to avoid using sleep
+>     in atomic context.
+> 2. Move clk_bulk_enable() outside cmdq_runtime_resume() to ensure GCE
+>     clocks are enabled before configuring GCE register.
+> 3. Add used_count to avoid cmdq_runtime_suspend() being called before
+>     calling cmdq_runtime_resume().
+> 
+> Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM with autosuspend")
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 > ---
+>   drivers/mailbox/mtk-cmdq-mailbox.c | 24 +++++++++++++++---------
+>   1 file changed, 15 insertions(+), 9 deletions(-)
 > 
-> Changes since v1:
->  * Implement Markus review comments:
->    - Rename m_can_cccr_wait_bits() to m_can_cccr_update_bits()
->    - Explicitly set CCCR_INIT bit in m_can_dev_setup()
->    - Revert to 5 timeouts/tries to 10
->    - Use m_can_config_{en|dis}able() in m_can_niso_supported()
->    - Revert move of call to m_can_enable_all_interrupts()
->    - Return -EBUSY on failure to enter normal mode
->    - Use tcan4x5x_clear_interrupts() in tcan4x5x_can_probe()
-> 
->  drivers/net/can/m_can/m_can.c         | 131 +++++++++++++++-----------
->  drivers/net/can/m_can/tcan4x5x-core.c |  13 ++-
->  2 files changed, 85 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+> index 033aff11f87c..b50f42e69aab 100644
+> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> @@ -82,6 +82,7 @@ struct cmdq {
+>   	const struct gce_plat	*pdata;
+>   	struct cmdq_thread	*thread;
+>   	struct clk_bulk_data	clocks[CMDQ_GCE_NUM_MAX];
+> +	atomic_t		used_count;
+>   	bool			suspended;
+>   };
+>   
+> @@ -317,14 +318,21 @@ static int cmdq_runtime_resume(struct device *dev)
+>   {
+>   	struct cmdq *cmdq = dev_get_drvdata(dev);
+>   
+> -	return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
+> +	atomic_inc(&cmdq->used_count);
+> +	return 0;
+>   }
+>   
+>   static int cmdq_runtime_suspend(struct device *dev)
+>   {
+>   	struct cmdq *cmdq = dev_get_drvdata(dev);
+>   
+> +	if (atomic_read(&cmdq->used_count) == 0) {
+> +		dev_warn(dev, "%s when used_count is 0!", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+>   	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
+> +	atomic_dec(&cmdq->used_count);
+>   	return 0;
+>   }
+>   
+> @@ -392,9 +400,8 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+>   	/* Client should not flush new tasks if suspended. */
+>   	WARN_ON(cmdq->suspended);
+>   
+> -	ret = pm_runtime_get_sync(cmdq->mbox.dev);
+> -	if (ret < 0)
+> -		return ret;
+> +	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
 
-..
+That's a bit sketchy, and I'm afraid that this will break in some other ways.
 
-> @@ -1694,8 +1708,12 @@ static int m_can_dev_setup(struct m_can_classdev *cdev)
->  		return -EINVAL;
->  	}
->  
-> -	if (cdev->ops->init)
-> -		cdev->ops->init(cdev);
-> +	/* Forcing standby mode should be redunant, as the chip should be in
+We could - again - simply change the msg_submit() function in mailbox.c, so that
+it takes into account that a driver may need PM done.
 
-Hi Martin,
+A low effort example (which may be good enough or not) is:
 
-A minor nit, to consider fixing if you send a v3 for some other reason:
-redunant -> redundant.
+static void msg_submit(struct mbox_chan *chan)
+{
+	unsigned count, idx;
+	unsigned long flags;
+	void *data;
+	int err;
 
-> +	 * standby after a reset. Write the INIT bit anyways, should the chip
-> +	 * be configured by previous stage.
-> +	 */
-> +	if (!m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT))
-> +		return -EBUSY;
->  
->  	return 0;
->  }
+	if (chan->mbox->ops->pm_off) {
+		err = chan->mbox->ops->pm_on();
+		if (err)
+			return err;
+	}
 
-..
+	spin_lock_irqsave(&chan->lock, flags);
+
+	if (!chan->msg_count || chan->active_req) {
+		err = -EBUSY;
+		goto exit;
+	}
+
+	......
+
+	exit:
+	spin_unlock_irqrestore(&chan->lock, flags);
+
+	if (!err && (chan->txdone_method & TXDONE_BY_POLL)) {
+		/* kick start the timer immediately to avoid delays */
+		spin_lock_irqsave(&chan->mbox->poll_hrt_lock, flags);
+		hrtimer_start(&chan->mbox->poll_hrt, 0, HRTIMER_MODE_REL);
+		spin_unlock_irqrestore(&chan->mbox->poll_hrt_lock, flags);
+	}
+
+/* I guess setting it OFF can't fail anyway, so this would be a void function */
+	if (chan->mbox->ops->pm_off)
+		chan->mbox->ops->pm_off();
+}
+
+
+Then we can wire up the two functions in the MediaTek driver - where our mailbox
+only simply needs pm_runtime_get_sync() and pm_runtime_put().
+
+The reason why I'm suggesting a callback is that this would catch the case of
+mailboxes that need "more complicated" flows for ON/OFF.
+
+Jassi, do you like the idea?
+
+If you do, I can eventually go for a real commit with better names than pm_off/on
+if I can find any - so that then Jason can go on with his mtk-cmdq fix on top of
+that.
+
+Cheers,
+Angelo
+
+> +	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+>   
+>   	task = kzalloc(sizeof(*task), GFP_ATOMIC);
+>   	if (!task) {
+> @@ -465,7 +472,8 @@ static void cmdq_mbox_shutdown(struct mbox_chan *chan)
+>   	struct cmdq_task *task, *tmp;
+>   	unsigned long flags;
+>   
+> -	WARN_ON(pm_runtime_get_sync(cmdq->mbox.dev) < 0);
+> +	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
+> +	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+>   
+>   	spin_lock_irqsave(&thread->chan->lock, flags);
+>   	if (list_empty(&thread->task_busy_list))
+> @@ -507,11 +515,9 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
+>   	struct cmdq_task *task, *tmp;
+>   	unsigned long flags;
+>   	u32 enable;
+> -	int ret;
+>   
+> -	ret = pm_runtime_get_sync(cmdq->mbox.dev);
+> -	if (ret < 0)
+> -		return ret;
+> +	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
+> +	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+>   
+>   	spin_lock_irqsave(&thread->chan->lock, flags);
+>   	if (list_empty(&thread->task_busy_list))
+
 
