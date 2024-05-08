@@ -1,140 +1,180 @@
-Return-Path: <linux-kernel+bounces-173004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7228BF9E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:57:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1448BF9E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F861F215CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A79287661
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9577F7DD;
-	Wed,  8 May 2024 09:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7DD79B8E;
+	Wed,  8 May 2024 09:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kjcNAsj1"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jd3/3MUB"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8A67F470
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12629BA27;
+	Wed,  8 May 2024 09:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162202; cv=none; b=K255udX1fGlqMXLa0csu9YpbTKgA/AqRzU9KTrLiv5mOrZaay+79ksa1dcBLop8YgiWV3mhGW1p1Fqvtb9tma9dcev1uDXEYR1Wl1LSwqCWiTZkDNBhyZrOalXHubKKpv/eaAIUUrim8ay7+TgkUVHbwBF/bB1fs+KkYEsv1DX0=
+	t=1715162176; cv=none; b=Pz6i54+NKCI9IfuUjRPWphLtuUl0O8BK/yIX9UNm41i9A8APNL7lgIeVc06zMoI6giWzRolKS+cUiEyVKGz6O97cWUUEN6t1MHxS1iREQlT8BiebhmGe0RgVJMZJfJQDHffgprOd1oxQIGAuM+oRcEpq9WPMboADkKmIr2qOEF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162202; c=relaxed/simple;
-	bh=ss7DfeQ3iIOHVfPafgYrAJPDTsUQSQx+kzwMyH5OwKo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M4+sQaJ3msLKEBFEm2BVb4/68Mtjn12yjWYfYEi533tfclgZz61dgo1o30tevf0OQ+jdnrn+5enrv4b7oy388dvX+jqUZL5iHS7JBQWLH+qYNUitKPLJDoD2YdCPJYL4uvTaTScI1611sQb30+b1z7j5ZqapEdvHZD5GpzmXFQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kjcNAsj1; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715162198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FsicJzPzSYjb9EaWqN7pAslrOCGTYHDq5WxD1KJCe/4=;
-	b=kjcNAsj1cuN9Enofn4z93wcbSAjYLywjhJjN77ua1sIREN682XM4/TUP7KT8khp+C1Lxo9
-	/sUFpeSD3NLJqtnOZwJbyj9x/lzghKhbvs6VQjYNuH7/a4A3y3fzWLWWbcQd8hcfO2GpIG
-	/os+5isiO/1zThfvmUzmeT4jB804zKw=
-From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Wed, 08 May 2024 17:55:41 +0800
-Subject: [PATCH 4/4] mm/ksm: calculate general_profit more accurately
+	s=arc-20240116; t=1715162176; c=relaxed/simple;
+	bh=L58OHrtgnGvD6BMHNnxub1BnLgpGqwKlRG8lHbKfkmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GC8pjJpz1PRBh5kMy6oFDC1bNd9VX4jf4l6oDfs77hFPJjDHY9Gv6mw9RIcPFAwhx1eD6ZLqM1kvywsd2pSc1Jc4Gk/voQFxd+FCZVfNx/orSWfQbeOSe+rHFnjUzD5ctmIoxTdOWB+uPpjCURj4sWGZCFo6h2+gWkmoo/exiqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jd3/3MUB; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f71e4970bso4934972e87.2;
+        Wed, 08 May 2024 02:56:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715162173; x=1715766973; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=io8fmhR7P9iwCv/52XS5SThweh8W+4/Do9egkjm9CcM=;
+        b=Jd3/3MUBTiSrw/xZ5I3Q4pNQBXsBYWyDUVofdyQ9yeEPFWuPpNjYV1NxSwb+WMstj7
+         8chDKeCC3Zh7cxgO4CU2BW68SGm7R7nfpGfDovlhH5jmpBL02Y6J2fq1rzi/XQiOG2Mj
+         UKRu/fal++BMgtrH/TkGsblpCE7VGRKa5Be0GWI6vKQjZ1gIhvN5NN9kMei6Z8jrPT+q
+         Jmble/hOmxwlVMZnAKp3MxPb7aJ8uKnNtum0CjfP7Pjly9u9UhY7Q3yF/79AQpG2Zf3+
+         jcikFhLP2kE2Yam9zDlFFUen9cr9w2MGRYRcbBDMFTw+OcYiKzsT2RjMMCtufc2MgrI5
+         5qng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715162173; x=1715766973;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=io8fmhR7P9iwCv/52XS5SThweh8W+4/Do9egkjm9CcM=;
+        b=tW0DWys1Ie2mgXDdv8oV9o1iDhE0Cbc6DvOc8DanDyZQ5BV+jo70OJbPg6l+WIotBN
+         YVV+BaHEpCxO6q/Wp4CJYs+1B7pB8DUac20augfRNZOP/HRX913BGUDdypOS9JhO37ZD
+         q6AcC6Dd3/qplK2nkQIXrhtn7kOAlewK9Klsp1iEpQDPUySYsXLix1/RkQpS5tFVuz7e
+         NMWrR2+qpQaubTrqYyJdPMBeX42ZxxkaDlpoSmwQUqs6fWgh4uW6o35jjCOswcMCk3NC
+         MKU8cNfcGw8g3YtsbKdbJ+5ds2pln6pxt9WHDD08SudKkv+NnlqDmW05GH3zORYd31Im
+         dAVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQqPGyyUf1wZrESi+/OWVpNTZhruI6DcoK8YFcnuztT/r9lNOYsJoaG+p+oeyekMuqXvdegUu0ovhUoaK88LKwxPwwz/b/E09xeY0mx+nWdSJjy5cNC2tHvq+D+B1woSDLzXyV
+X-Gm-Message-State: AOJu0YxZIqonjy2o2qj4L4XGcFrHTyOpHM59AFFfvKHAsQjAd124n7HF
+	QlJH5/beFPIkF41GV96fLdJUMBzGO1APq+dQmb9C/gnIDIqE5dbk
+X-Google-Smtp-Source: AGHT+IFSg3ipoB9x/q9K5s3nqoZPNbvUw9v4r5YNPaHHmzhGDbABkPL44NPpL7eQYgs74L94b0SGPg==
+X-Received: by 2002:a05:6512:3157:b0:518:eef0:45c0 with SMTP id 2adb3069b0e04-5217cc520d0mr1791398e87.48.1715162172805;
+        Wed, 08 May 2024 02:56:12 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id o3-20020ac24943000000b0051e12a2c07bsm2475872lfi.20.2024.05.08.02.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 02:56:12 -0700 (PDT)
+Date: Wed, 8 May 2024 12:56:09 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	mcoquelin.stm32@gmail.com, richardcochran@gmail.com, bartosz.golaszewski@linaro.org, 
+	horms@kernel.org, ahalaney@redhat.com, rohan.g.thomas@intel.com, 
+	j.zink@pengutronix.de, rmk+kernel@armlinux.org.uk, leong.ching.swee@intel.com, 
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] net: stmmac: move the lock to struct
+ plat_stmmacenet_data
+Message-ID: <dvtilkr2ho5yy56fii6voglgu3tnopmoy556vrdo4evlynet5g@lnrlv73a27hm>
+References: <20240508045257.2470698-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240508-b4-ksm-counters-v1-4-e2a9b13f70c5@linux.dev>
-References: <20240508-b4-ksm-counters-v1-0-e2a9b13f70c5@linux.dev>
-In-Reply-To: <20240508-b4-ksm-counters-v1-0-e2a9b13f70c5@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, Stefan Roesch <shr@devkernel.io>, 
- xu xin <xu.xin16@zte.com.cn>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715162174; l=2381;
- i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
- bh=ss7DfeQ3iIOHVfPafgYrAJPDTsUQSQx+kzwMyH5OwKo=;
- b=X6wGm8B+bjpFtCP8g73w6XczYKdiMwJ0vj812mxv/NkXQMbGzsqKeRNtJg3TU4ZL32DX+qm6z
- RzE/1RA0jgRBfO4CzfzJYEvfQ2HcOnx7ltDIHCHSXi8xkvh4KwjavFh
-X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
- pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508045257.2470698-1-xiaolei.wang@windriver.com>
 
-The memory resource of KSM is mainly ksm_rmap_item, which has to allocate
-for each anon page that mm has mapped on. Another memory resource is the
-ksm_stable_node, which is much less than the ksm_rmap_item.
+On Wed, May 08, 2024 at 12:52:57PM +0800, Xiaolei Wang wrote:
+> Reinitialize the whole est structure would also reset the mutex lock
+> which is embedded in the est structure, and then trigger the following
+> warning. To address this, move the lock to struct plat_stmmacenet_data.
+> We also need to require the mutex lock when doing this initialization.
+> 
+> DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+> WARNING: CPU: 3 PID: 505 at kernel/locking/mutex.c:587 __mutex_lock+0xd84/0x1068
+>  Modules linked in:
+>  CPU: 3 PID: 505 Comm: tc Not tainted 6.9.0-rc6-00053-g0106679839f7-dirty #29
+>  Hardware name: NXP i.MX8MPlus EVK board (DT)
+>  pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>  pc : __mutex_lock+0xd84/0x1068
+>  lr : __mutex_lock+0xd84/0x1068
+>  sp : ffffffc0864e3570
+>  x29: ffffffc0864e3570 x28: ffffffc0817bdc78 x27: 0000000000000003
+>  x26: ffffff80c54f1808 x25: ffffff80c9164080 x24: ffffffc080d723ac
+>  x23: 0000000000000000 x22: 0000000000000002 x21: 0000000000000000
+>  x20: 0000000000000000 x19: ffffffc083bc3000 x18: ffffffffffffffff
+>  x17: ffffffc08117b080 x16: 0000000000000002 x15: ffffff80d2d40000
+>  x14: 00000000000002da x13: ffffff80d2d404b8 x12: ffffffc082b5a5c8
+>  x11: ffffffc082bca680 x10: ffffffc082bb2640 x9 : ffffffc082bb2698
+>  x8 : 0000000000017fe8 x7 : c0000000ffffefff x6 : 0000000000000001
+>  x5 : ffffff8178fe0d48 x4 : 0000000000000000 x3 : 0000000000000027
+>  x2 : ffffff8178fe0d50 x1 : 0000000000000000 x0 : 0000000000000000
+>  Call trace:
+>   __mutex_lock+0xd84/0x1068
+>   mutex_lock_nested+0x28/0x34
+>   tc_setup_taprio+0x118/0x68c
+>   stmmac_setup_tc+0x50/0xf0
+>   taprio_change+0x868/0xc9c
+> 
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
+> v1 -> v2:
+>  - move the lock to struct plat_stmmacenet_data
+> v2 -> v3:
+>  - Add require the mutex lock for reinitialization
+> 
+>  .../net/ethernet/stmicro/stmmac/stmmac_ptp.c   |  8 ++++----
+>  .../net/ethernet/stmicro/stmmac/stmmac_tc.c    | 18 ++++++++++--------
+>  include/linux/stmmac.h                         |  2 +-
+>  3 files changed, 15 insertions(+), 13 deletions(-)
+> 
+> [...]
+>
+> diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
+> index dfa1828cd756..316ff7eb8b33 100644
+> --- a/include/linux/stmmac.h
+> +++ b/include/linux/stmmac.h
+> @@ -117,7 +117,6 @@ struct stmmac_axi {
+>  
+>  #define EST_GCL		1024
+>  struct stmmac_est {
+> -	struct mutex lock;
+>  	int enable;
+>  	u32 btr_reserve[2];
+>  	u32 btr_offset[2];
+> @@ -246,6 +245,7 @@ struct plat_stmmacenet_data {
+>  	struct fwnode_handle *port_node;
+>  	struct device_node *mdio_node;
+>  	struct stmmac_dma_cfg *dma_cfg;
+> +	struct mutex lock;
+>  	struct stmmac_est *est;
+>  	struct stmmac_fpe_cfg *fpe_cfg;
+>  	struct stmmac_safety_feature_cfg *safety_feat_cfg;
 
-We can account it easily to make general_profit calculation more accurate.
-This is important when max_page_sharing is limited and so we have more
-chained nodes.
+Seeing you are going to move things around I suggest to move the
+entire stmmac_est instance out of the plat_stmmacenet_data structure
+and place it in the stmmac_priv instead. Why? Because the EST configs
+don't look as the platform config, but EST is enabled in runtime with
+the settings retrieved for the TC TAPRIO feature also in runtime. So
+it's better to have the EST-data preserved in the driver private date
+instead of the platform data storage. You could move the structure
+there and place the lock aside of it. Field name like "est_lock" might
+be most suitable to be looking unified with the "ptp_lock" or
+"aux_ts_lock".
 
-Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- mm/ksm.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+* The same, but with no lock-related thing should be done for the
+* stmmac_safety_feature_cfg structure,
+but it's unrelated to the subject...
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 87ffd228944c..a9ce17e6814d 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -267,6 +267,9 @@ static unsigned long ksm_pages_unshared;
- /* The number of rmap_items in use: to calculate pages_volatile */
- static unsigned long ksm_rmap_items;
- 
-+/* The number of stable_node */
-+static unsigned long ksm_stable_nodes;
-+
- /* The number of stable_node chains */
- static unsigned long ksm_stable_node_chains;
- 
-@@ -584,12 +587,17 @@ static inline void free_rmap_item(struct ksm_rmap_item *rmap_item)
- 
- static inline struct ksm_stable_node *alloc_stable_node(void)
- {
-+	struct ksm_stable_node *node;
-+
- 	/*
- 	 * The allocation can take too long with GFP_KERNEL when memory is under
- 	 * pressure, which may lead to hung task warnings.  Adding __GFP_HIGH
- 	 * grants access to memory reserves, helping to avoid this problem.
- 	 */
--	return kmem_cache_alloc(stable_node_cache, GFP_KERNEL | __GFP_HIGH);
-+	node = kmem_cache_alloc(stable_node_cache, GFP_KERNEL | __GFP_HIGH);
-+	if (likely(node))
-+		ksm_stable_nodes++;
-+	return node;
- }
- 
- static inline void free_stable_node(struct ksm_stable_node *stable_node)
-@@ -597,6 +605,7 @@ static inline void free_stable_node(struct ksm_stable_node *stable_node)
- 	VM_BUG_ON(stable_node->rmap_hlist_len &&
- 		  !is_stable_node_chain(stable_node));
- 	kmem_cache_free(stable_node_cache, stable_node);
-+	ksm_stable_nodes--;
- }
- 
- /*
-@@ -3671,7 +3680,8 @@ static ssize_t general_profit_show(struct kobject *kobj,
- 	long general_profit;
- 
- 	general_profit = (ksm_pages_sharing + get_ksm_zero_pages()) * PAGE_SIZE -
--				ksm_rmap_items * sizeof(struct ksm_rmap_item);
-+				ksm_rmap_items * sizeof(struct ksm_rmap_item) -
-+				ksm_stable_nodes * sizeof(struct ksm_stable_node);
- 
- 	return sysfs_emit(buf, "%ld\n", general_profit);
- }
+-Serge(y)
 
--- 
-2.45.0
-
+> -- 
+> 2.25.1
+> 
+> 
 
