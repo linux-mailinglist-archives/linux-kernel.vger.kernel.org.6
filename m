@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-173273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585CB8BFE0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:10:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858DE8BFE0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A75D3B21E3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:10:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A077285C15
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172126BFC5;
-	Wed,  8 May 2024 13:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094AF6A8D2;
+	Wed,  8 May 2024 13:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="RxSJb7Sp"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zli46Lmz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5614256454;
-	Wed,  8 May 2024 13:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DBF55E58
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 13:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715173801; cv=none; b=DGbv3BriERxDFsSnR/ybIiMZbSkKcg5XigHr/65CHzSKYupmKzZ3syG+z7y9kuCUoS8FYD3nPEKETv52bJvT2FCHENOBI0FJ6Hk6AaYQjKTwKmjBzEsh8kgwsNupzQpyIRz69pimxkeS0eSK+V0zBGFDadIfyYYCvS0fvyNLykk=
+	t=1715173930; cv=none; b=JaKnBnhX70yhuyG/+XwtchAiEzhmftNJCB7ArpqZi5oiKYiZ++VMd6RYtNwQNZIJIwy5riOUUB7bpldHEKyKinpLXKsTk/20r5rQ7bu3AVdROwDWeVtg1tC541lJ/sZAwcKb6wofWmD/Sif8FxuFn2SYXf/ux83LtfEu20uHT5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715173801; c=relaxed/simple;
-	bh=9nupFW/QjOyvBp4lXy18CeJ4uCNVsZ8k/Rv/E8n9eP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sLchTOUjkA8pxQM0wncQbkGfWfAivfs0mitZdYjoCfrtUpDB2n+W8Er4YFupGaGXo8XEmJMgWqTHvDlUahGN/cfkmdirU887rNJNCgwtZxytE+ATR/lsBlgqLYbu+hya2Ui7KyE1xtjIZdx/DFWRWZ4GgGjjqTg84J0StU1boXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=RxSJb7Sp; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rlmkt8g9gLz2FbVYrvJA9JT7otm1jUX7lKLhqslbHGI=; b=RxSJb7Sp74qndsfLvvKEIOPdMa
-	KiM42boTGqab+gwvAILrvWeEgwiUvELAV9UohU9tBo+KLYB9Bi/BfXaH8X2T/DtUVugFGs6dDb0RK
-	ENFqOb70DXPSiab+XKPwcLEP+OOr1zUF1h0/Fu3qoY6iaCXOeDx7LlBR/adnjPC/eB+6OqqTM7Az5
-	gIrFB7py2+qzhy/7DTOthu2CnbU69O3Vk3XCFvxD6BK65qPLiGGKemYc34cRtBSWKiRZAelFFn/Lm
-	zEJ7yxsL1sWRX0JI6WxfgLPVSQUEnDn4wpPGxGlpPaz4+qIQ5f5539AOQn5V0PqO3xzJadUtFB3Mu
-	xWRQjYCA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39206)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s4h39-0005FO-0X;
-	Wed, 08 May 2024 14:09:35 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s4h34-0001OL-HC; Wed, 08 May 2024 14:09:30 +0100
-Date: Wed, 8 May 2024 14:09:30 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Daniel Golle <daniel@makrotopia.org>,
-	Sky Huang <SkyLake.Huang@mediatek.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Qingfang Deng <dqfext@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [PATCH 2/3] net: phy: mediatek: Add mtk phy lib for token ring
- access & LED/other manipulations
-Message-ID: <Zjt5iobHklvrVgtB@shell.armlinux.org.uk>
-References: <20240425023325.15586-1-SkyLake.Huang@mediatek.com>
- <20240425023325.15586-3-SkyLake.Huang@mediatek.com>
- <Zjo9SZiGKDUf2Kwx@makrotopia.org>
- <a005409e-255e-4633-a58c-6c29e6708b34@lunn.ch>
+	s=arc-20240116; t=1715173930; c=relaxed/simple;
+	bh=B3TgV7Y3rTI5Noe3tkOwqLHVTgwR6y+7ORa3V8o6LiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rFbjsqZEcdclAhI2nDAB8L/1l2SoIXMmicalBG8umMl8vn1/ya0dIbGdgnHtlORor7++wl34GCVj/r5+MFg9s2kTlxU398mRRUobFWuRLKgVzw8k2EzDge3m9iLAULak5qhJIGJWGAUAJxpFKzL2hF6zUMjJRJfd9DvomNiESSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zli46Lmz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2004C113CC;
+	Wed,  8 May 2024 13:12:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715173929;
+	bh=B3TgV7Y3rTI5Noe3tkOwqLHVTgwR6y+7ORa3V8o6LiE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zli46LmzOgx3rEIiaYn6jn7kCfP0tbqiDDeP6vtA4+26SLGK5dLwu1hROw3mYGJ0f
+	 ZRMgeugngdrCNOA6oyS92bQAhpfT499itVEHiXvg+KkQeqLSa7dO3UPgvnVVamFa4U
+	 UKZ6/9A6gddDJHKet34th+2MyHYNbMUjYz/s+r4YeZpFTU7mZc4FEZlG7w2CHkNEef
+	 Uzcl5LYbZ+qQxPFuXOUgaCVIwtRn4v8Z6ieEtJt05LK0dDpIpcaIOeynKPmWbDFUJP
+	 x8TYG/YVTUX+keDYnNIS2SBjvGsQNH1eCxysaCR53TRQeHIXSi3ZjkwEb/m/5+t6lJ
+	 2K0KorBaXLr5A==
+Message-ID: <39cc1370-a80b-427d-86e7-6903ed1ce868@kernel.org>
+Date: Wed, 8 May 2024 21:12:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a005409e-255e-4633-a58c-6c29e6708b34@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: Zstandard compression support
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240508090346.2992116-1-hsiangkao@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240508090346.2992116-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 02:25:56PM +0200, Andrew Lunn wrote:
-> On Tue, May 07, 2024 at 03:40:09PM +0100, Daniel Golle wrote:
-> > Could you create this helper library in a way that it would be useful
-> > also for the otherwise identical LED controller of the Airoha EN8811H,
-> > ie. supporting both variants with LED_ON_LINK2500 at BIT(7) as well as
-> > BIT(8) would be worth it imho as all the rest could be shared.
+On 2024/5/8 17:03, Gao Xiang wrote:
+> Add Zstandard compression as the 4th supported algorithm since it
+> becomes more popular now and some end users have asked this for
+> quite a while [1][2].
 > 
-> Please trim the email when replying to just what is relevant. If i
-> need to page down lots of time to find a comment it is possible i will
-> skip write passed a comment...
+> Each EROFS physical cluster contains only one valid standard
+> Zstandard frame as described in [3] so that decompression can be
+> performed on a per-pcluster basis independently.
+> 
+> Currently, it just leverages multi-call stream decompression APIs with
+> internal sliding window buffers.  One-shot or bufferless decompression
+> could be implemented later for even better performance if needed.
+> 
+> [1] https://github.com/erofs/erofs-utils/issues/6
+> [2] https://lore.kernel.org/r/Y08h+z6CZdnS1XBm@B-P7TQMD6M-0146.lan
+> [3] https://www.rfc-editor.org/rfc/rfc8478.txt
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-+1. There are _too_ _many_ people on netdev who just don't bother to do
-this, and it's getting to the point where if people can't be bothered
-to make it easier for me to engage with them, I'm just not going to be
-bothered engaging with them. People need to realise that this is a two-
-way thing, and stop making reviewers have extra work trying to find
-their one or two line comment buried in a few hundred lines of irrevant
-content. I might just send a reply, top posting, stating I can't be
-bothered to read their email.
+Acked-by: Chao Yu <chao@kernel.org>
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks,
 
