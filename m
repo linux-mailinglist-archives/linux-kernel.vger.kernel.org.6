@@ -1,181 +1,260 @@
-Return-Path: <linux-kernel+bounces-173806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0688C05C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:38:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9AE8C05CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE3471C21B87
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74BB12853F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCDD131757;
-	Wed,  8 May 2024 20:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED77E131749;
+	Wed,  8 May 2024 20:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBNAqTg4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="S4J4JgYk"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2052.outbound.protection.outlook.com [40.107.220.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5C421373;
-	Wed,  8 May 2024 20:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715200707; cv=none; b=aDCeQYooxkQ/XAB0vR+s7Potm4witx7P6sYzyvNcX08i9rvwvLcQtUmo2b8waWohO9k0lzXOKRn8I+91j0z4ptDb11FH/ooQAXezi4P7bs34yNgI4iyYDKowZYQMwbH3YpwjI95xkjoXcqd+pOvbIJT+d+PkLsD4Fsy+Z/Iunvw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715200707; c=relaxed/simple;
-	bh=iELKPKEBdzp99N3dT3F0Gig++k6H1GB9X40m4RmGOXA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYdE9qB14Qf44qjx91M9s2bf2uClj6qmtTjyhwga2zYdPG604hV/lwrz/WTCfR/molBbANymgbPdGtoQtWm4ZuP3ETKsdOEnzOBklFeZKUkH7yMgiQxBxQCN4Jo4psUq1/Kt+VoEg9kxiJMRgh5rqSJo2h2EvHOxrv0qxNeTeh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBNAqTg4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59EABC32781;
-	Wed,  8 May 2024 20:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715200707;
-	bh=iELKPKEBdzp99N3dT3F0Gig++k6H1GB9X40m4RmGOXA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kBNAqTg4HplcgEYFfj01exaT7HAJ7N+FPWaC/TIuRtChjY8DK2FRDaX93GhxSEBw7
-	 FAqPYf0Z18yxPQAcd9/CTsXCX3Iu9+hhdjy2Bw+6EehEFvSs0k/YeYRowDbHru8Stb
-	 MdErkMNhjlkl+hEmuA9AgEQ8V0nS8H+G5C+FWaD/c1iH9sBWOReEbWP4GrqW7VmnZ5
-	 DNuz5abzNzoJPXy3uXPuJNUpC4KgjvtX4pUNY+0OaQIMsU3ww6uMWEsn9Hn2OibqCt
-	 JFqASvEe7AAt9FyFBGujWXAB5TJF2A/wWAlcHSz/kj3VrEB+8Xnh+7pbYPcfdlq6w+
-	 +X3hN60qFmhfA==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a0906a7aso4850866b.1;
-        Wed, 08 May 2024 13:38:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWAijkNLekEGLzMvNPljSC2ZTHkH4+REHzUGN2DJEi6330ZtFx24cOeiwuJFQdK0PklMlT1dDzy3Yr9XsqeJoXUtHm6evkf5uOkrYZzCv87Ej4lPcpbosKS7JazcHF31fD0hufWX67KNye4U9vL
-X-Gm-Message-State: AOJu0YySI0rWf4wM7UwJa5KSV1BlSmt2KBo78LkRaskr4hCex/elJoC8
-	uCdXPjdvVaZhy7qzp0FdEu3dhoup5McFsSWCZOu7/WKefo3P7X+BZe3e+UIYdM+E6CTD7tZYfUc
-	N5e0C4OK4bVNKpBu7vy75jnFdR2s=
-X-Google-Smtp-Source: AGHT+IGl3o8/eHyjVt0T4UwXGfTaWvH2xFalvsf84UytUpmXoRi9teX9R7b2iY+GS6HtUaWKgNUfBGoI1uT+V5ZO1m8=
-X-Received: by 2002:a17:906:df14:b0:a59:bce9:8454 with SMTP id
- a640c23a62f3a-a59fb94f6d3mr232661766b.1.1715200705917; Wed, 08 May 2024
- 13:38:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D7F225D9;
+	Wed,  8 May 2024 20:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715200869; cv=fail; b=f5eFe7+C0TG8JKPlykbS2PcPCgj6yw1C0xzpOMUx+pJlVJmJ7/NhuW+JU+lpJ6r0Hi+InasOThF0Vh/kuvSthy/syWrdsBdH+t66FYyXLAP/FMGEZxQoBUxmceeFrhDmOpH4vnzPZP51njYl7JmndgJgXFDKcJzPG/m3Dm9c8bo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715200869; c=relaxed/simple;
+	bh=6I/7UqVjwA+snHwbZXefxxrCaYbneFpqVQTnDQNLM/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TiZZi9aFuZc4hAXl4zqHrOUImQAcXL7Hhu3tE+wJU4XvBkgArzDAG+xiDigF4MN6OWLrsW+sB0pt/I/asPJKWR9njgm3f4DND/hHa6y6W8mxiWoRFYjwdnanrNy77CRRHOnOTM+NIuQ2ih29tWxkYNBi64hmSxu13Z/JrNNti3I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=S4J4JgYk; arc=fail smtp.client-ip=40.107.220.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LuiJ+rOTIjaxMHj2oCyYlh1WkR6TbfF2/sOWBjJDvYTjxk8H5onaxmjpce37vEl/9naIF4B/Z0gknTXjDVwV20P8pwcNHNgSQFAq1UCiLKGK19nkoMon194slmi2CxweAFxghX8VVIYu/EcL6iY+T0Jvn9QTUMyD9nAVIUQM3ZWFfXYloYRA7/rd+KOH9BWbDPyJxOpdkBJbRip2/Vt5B7VEDSguDpVIYnDn1Q1N9YP2SMVyCGgX1s0lrLwD35xKX5MSS5qIWDIvtP/a1WD7OAbD5m8EPD7WzN8bw3bBzZSYOpxRe7VqPlXE9anSfUtFEJdKwDkloqzZDN+fj87lxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DD/lFxLf2LFO94FzGaqfGfKiDFEvpFbehGYAWrRa9kU=;
+ b=Gw54CfEkAPmjS5B20T35KCLr+QgO+2WGd4j03+0mmVvhKz/384mlLEjUIqOYKQXHYk6HFBNly5IzZDf5+hlzqCDlBpFsXfK76PESN9We6CMxQVkJo7Zty4VFaRm/1pQImPNfSgTpSDEs2QGmtb7cwyf1cNW3oLfmTnlenfjDHjRKioqlYBql80EDKiJG87BGSwHfkiAURR0GCWNVXkPi4l3rrbYwFB5/SV7zCaDpXRRgNhQBxeawtbpFBjcvn7tEcOMV2i17dOdQhXUNT3VbYShdjrEPSGpwW/7lyItEaj95tSvi8YtQkfrIRal0oxeesu7w6544bKoC2FP5pUyZAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DD/lFxLf2LFO94FzGaqfGfKiDFEvpFbehGYAWrRa9kU=;
+ b=S4J4JgYkFd3PIuFJ/AJZYQ8eAqe65M3/2eEr6WTY2P5rffoJ/FNwjAs6XzngvKkB7QaigwroimJTK0X4y0ODckESqAJDriJn0B/VQGhJMdexUANVfgdEufgCcq6gs0+i8LIkGBw9dIN+eHKFfXuNLwVq7fQEniM8FB8gnBTcQxP6VO3LE1yq2VrddTPLqjlXhRNZ8sx098jhjLO/Ro8ks6N9UCS4YawpxDsZFdwCHx5INEN34W+mcHgV9DAdXOHP4hQ8x1J0sQolU2Xc4L/lSCY/oNZBLnC0LPyX1hmoCPW3Ef2epRQvU8zFt2Qc8yuUxs/RXpRisJBfxS+33ARg0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
+ by CY8PR12MB7586.namprd12.prod.outlook.com (2603:10b6:930:99::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Wed, 8 May
+ 2024 20:41:05 +0000
+Received: from BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
+ ([fe80::2cf4:5198:354a:cd07%4]) with mapi id 15.20.7544.041; Wed, 8 May 2024
+ 20:41:05 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Shuah Khan <shuah@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kselftest@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	llvm@lists.linux.dev,
+	John Hubbard <jhubbard@nvidia.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v4] selftests/resctrl: fix clang build warnings related to abs(), labs() calls
+Date: Wed,  8 May 2024 13:41:01 -0700
+Message-ID: <20240508204101.277146-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.45.0
+Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BYAPR04CA0017.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::30) To BY5PR12MB4130.namprd12.prod.outlook.com
+ (2603:10b6:a03:20b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <965cd14922aea67e2750ff2c2ecad773f8ba485a.1715109394.git.sean.wang@kernel.org>
- <202405081456.v2MvcQ0P-lkp@intel.com> <CABBYNZLH7mGdP7AcdHnY8q=3i=Lupk-D2Af4G5X4o1_XdbTfVw@mail.gmail.com>
-In-Reply-To: <CABBYNZLH7mGdP7AcdHnY8q=3i=Lupk-D2Af4G5X4o1_XdbTfVw@mail.gmail.com>
-From: Sean Wang <sean.wang@kernel.org>
-Date: Wed, 8 May 2024 13:38:13 -0700
-X-Gmail-Original-Message-ID: <CAGp9LzrNE9Hi-a9y8oQMXmug44k7VUsmcDiAiXgbFu8bLbtFTg@mail.gmail.com>
-Message-ID: <CAGp9LzrNE9Hi-a9y8oQMXmug44k7VUsmcDiAiXgbFu8bLbtFTg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get the fw name
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, marcel@holtmann.org, johan.hedberg@gmail.com, 
-	oe-kbuild-all@lists.linux.dev, linux-bluetooth@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Sean Wang <sean.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|CY8PR12MB7586:EE_
+X-MS-Office365-Filtering-Correlation-Id: e95c536c-b83c-45f8-067d-08dc6f9f2e75
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|7416005|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ejRhdHZrT0VqQWZwQTVta3BVSCtzSDJKN3ZrZFFiMDRVdlllWmdialppbVNw?=
+ =?utf-8?B?RHE5RTFyVy9YQjBLc1M2a1Z4YStQWEwwQURSQzRmT01iUnNXeDcveDBnYlRs?=
+ =?utf-8?B?RjlRVm9HMFk1WGwvUDk4akFDNlRqeE9XMmhvb0l5b2dnUlhicjM3WmtXOGtx?=
+ =?utf-8?B?SkNsY0VjRk5pVlVUNEtvMWUreDZtUTNKRFAyZE1JWE4xNGl1Z2pNdXpDWjBF?=
+ =?utf-8?B?MlFSZk5JdXJKZ3FRV0U0T2ZMakIrMzRCVmh3UzRZOXl0NmZOQW1TWE93WkJ6?=
+ =?utf-8?B?TWFrNjlOTW1OYVR4cUU0RjljQ0ZxaHdmM2VJMHBwL1RUdExFLzZQQ09pQU0y?=
+ =?utf-8?B?dDV3NVVoLzk4TVNxSURoTzg3OTBQL1g4TFRUQ1FIWjh6cDJpUG9MbEkxQ3kv?=
+ =?utf-8?B?dkFLRkZKeUI0ZVNhMHFESVJxOG91QlpsNWZmNGpwd1hJcXlFWnppblBpTUIy?=
+ =?utf-8?B?N05lMFl0TjgveUczb0lLNWJVTnA4Y0t0K1JuQUZtMlNycWVVL3k4ZTJhc3p1?=
+ =?utf-8?B?K2NzMFBJYUREOWtPbUVIaTZkcUJKbWJ6WmZ6aTc3Y25qdkdxbFhaZW1MMUh6?=
+ =?utf-8?B?a09QV3hOQlNtc1ZaeGlRdTRsQVhKajdPU3pVUnhmNFZJUCtvU09sZmh1UVor?=
+ =?utf-8?B?ZUdmWTN4dTB4RUFBaG9CREhCMVB2L096UEtxazNjZ1dORjhMUGZOY2NyYWVP?=
+ =?utf-8?B?RS8zczR4R0pQN3R0OTRuenpwWENiOGRHeFFzNFhMRFlqQkYxWWtrM2dJK3lV?=
+ =?utf-8?B?NFdVakdLK2lQTllBMDFzNFQreEN0MnJEUGxIbjNFeFRvMlFiZ0hBR1lnSm1B?=
+ =?utf-8?B?QmVSZTZIdzE0ZVd6SkphVENHTC9hSkFKdjhueU16U09BdWtzejltRnN0QjFk?=
+ =?utf-8?B?dHJhTWtONnZNMU01QjA1SmFya2txTU10Skg3TWtZaktoUXVyZTg1SzBJK1dD?=
+ =?utf-8?B?N3hBUENaRDFVc1JjcDk4VUFTOUVhVWh4c0tNdHliZ0g5RHhPR2xYZXpUVWVC?=
+ =?utf-8?B?cFl0bVRXK2R0MnBWOEtHMnlhNm11UzJJbEVybVhQTytqZVh6ZmF1WTdBSjBj?=
+ =?utf-8?B?cUtRV2VCRWllTXUrOTlLeGJ5NDFwS29McHhiRGpKVE9CTm5lK0ZPeERMYTJw?=
+ =?utf-8?B?aDFQRWtibGR5Y05adkVwM3RENHZrbHF1Rlp1SXN5bWhwRlVCdXNWemxOb3Nx?=
+ =?utf-8?B?d2h5elg5YnJWdmV6OHNiQlRMRUF5cXZQY2x5cDVkSUZzeGFwejgvREpJN1lj?=
+ =?utf-8?B?ZGVoWUtobUlZOERwQ0VNTjdmU2N3YzJCU1FFcExrNEpURDcxMUJvc2FPN2R4?=
+ =?utf-8?B?ei94WTNIQjZ4dTZiYTlwZjdjNndPZEsvMG1zdGl5L3IwWU9CeWJoU2VSSlZE?=
+ =?utf-8?B?cHcrNXFVeFRMaWtWVE00UFo0TmFYNVlBTE1nOTBSVFpLNUtDL2tiV0dtV2gr?=
+ =?utf-8?B?cjlCdC9WSk9ZMjNZek1Yb1Y1OS9EeHI4MlA5em04THN3V3RJWlpabVpraVVC?=
+ =?utf-8?B?bXkxM2s0Y29YdXpEY1oxSHVuaDUzcUQyM0w2dU1EWmNOMFFYZTVsNnVEampL?=
+ =?utf-8?B?MUd6TTNRRXY3VHEvelJzQ3BXaE5zS0FqWmVLWTJpTHAyYjdhOWtKT29RQkNT?=
+ =?utf-8?B?K1ZhamtMaHNZeUp4M3hWQnNxRUYyWjAwR1ZVeFlKdlFwMWM5MGszRTlSWWxJ?=
+ =?utf-8?B?MFZoeHVYaHNpWkJKbUhubjlLOVY0b0luaVdJbHYvbWF3UHRqUmJXTERRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OWpua1hFdDlGd0t1bkF5YnJLRUlOb29KWFVyVVU1NG9rTVNNUkpDTGZjQmQy?=
+ =?utf-8?B?VW5NV2hKR3oxMTJOcEZJUS82bkg3dldZYW9pYXI4Y2l1cDl0S04zOTRaaXMz?=
+ =?utf-8?B?TWRoT202eVJueEErTy9hVkR0a1NWZlFydE1ndzE4MHhEOHg5WWpmZVNhbVU2?=
+ =?utf-8?B?eVBUL25zbVJBVHNIaXdvTkJTS3BSeWw2OWpmeGJmWXNYcGpucHdnUlNrUUQz?=
+ =?utf-8?B?VWFmaVJzYitzMzFSaEdUc2JaODZpYm85WjFJSnhNUzZvZit4clQ4ejN1YnZH?=
+ =?utf-8?B?bVhnUmVZRktYQkRNVnJYWTJjZ0gvajZOOE1OZUdhOTB4VXZWMGJ4dXZpUnkr?=
+ =?utf-8?B?amt2YzNPeU5rdDVhVFpaNjdGRVdSNHFUb0p1U2kxSi92SFhIanhiUjZhdDZk?=
+ =?utf-8?B?VWk5c0x6aGFjSXR6T0dONzZrWWdNMkFGV2xQZk51Z0tzeVR6MWNUUDl0VjVs?=
+ =?utf-8?B?d2ZwbFdobEJpYmNLWmxXQlIvd21pVFhHU0c3ZVgzS2o0MWlCRTZHRS9SSHNE?=
+ =?utf-8?B?RDFWcnd4cWxHaW1DcHhxRXlDb3RRbGlkWVVkQ25pem9GR1lCL0tXSVdYeWlQ?=
+ =?utf-8?B?TWZLTENTREU1N0wvOFB1RTBpbnd0dkt1andsNm5SQTFwbUFZSDVXNGd1eGRj?=
+ =?utf-8?B?Vzh5TmtVQjB3ZmZjQStXR2ROT2UrV2h2bTR3Wm1oblBlQXpoTzQrSFZrZlF3?=
+ =?utf-8?B?SjJ5VVBZSFdVVnptUnpURkNVRmNYajBUdXpiUG9aMXgwVkpaZHMzT0ZqQTZ5?=
+ =?utf-8?B?dEN5ZHRPNnN4WEdxUnZqR2QrVmJMMWtCYmFpeHdiZWxJZ2E3azhoSWc0Z2lr?=
+ =?utf-8?B?RDMzdVhYK0lRcEk0MWZ2TUM1c056akRZRjZlVm5oQVRvMjdqdjNvcnlVeGFC?=
+ =?utf-8?B?WVVSU3JVZGdXcTlRVmtmRHN1d0diYlF1YnBOSTRIMEt2Y3EwV1Bod0o1aUFE?=
+ =?utf-8?B?Vlh1RzM4cW5QK3U2T1dCbEtkVkxNbmlRVU9oNW1GaXJwUHpTWnNmWStnNlFh?=
+ =?utf-8?B?UGdsRllQUnBtRVlXU0ZqbFc5N2dzTTZFOVJJQmtQZHNyM3RJRHNJbjBxZEtB?=
+ =?utf-8?B?UUVaV3lKTTZBN3VoTW9HM3BuaXlVMnpSRGgzK2hUMkFNUUg1NHl1WjFySHpO?=
+ =?utf-8?B?a1Yxa2tMd0JiZEhlaXlKUlRCUDVtMWJBV1orM3d5MFAyRFJvNVVyV1dOSUh0?=
+ =?utf-8?B?WHVRbDVwRmRkT0lCZ1ZvTVVMLzIrcWpWekpDNzhQSERLN1dHaUMrVy9kMHIz?=
+ =?utf-8?B?VmVPbnh0eXVBdTJydXJvK3BZR1FKZFRQU1ZwOGlwZFJ3MzkyMXNGT2JvdFRr?=
+ =?utf-8?B?SlpVT2Y5TGljamkyakMxUGV0bUN0aEdoTlRzU3NwSkRYUHlQN29WTmpjNGc3?=
+ =?utf-8?B?eVFNLytUSlZiZUYycWpNRmFXRitjcFVuVXBWWlZzamVyT01idE82aGdUamdQ?=
+ =?utf-8?B?LzlZaWlFOExUenNhcmp6VUxDRDlIazZ5LzA1KzF0WGpKMzd1YWFKWG0yMHJr?=
+ =?utf-8?B?Y1R6NkNvalN0dzlRN0plK2dpZjhFYnpJYkttRG1IcWxKbitjWU9PU2FYcGd5?=
+ =?utf-8?B?dmgxM1FnTU5vZUltN0VWTEJZUkV2bXVPRFQ3L2xFZnFSMUNGYjVyMStqV2RO?=
+ =?utf-8?B?OWI1UWJIUHJ4bWNLK0ZDY0R2V2FEbnI4VHp5dW94cXBxdmwzc0dqZkhEQWxl?=
+ =?utf-8?B?RTBBWnpyR05RbksvNnZDOU9MejZKTFI1NTJocSt4RFhtalZqaUNxS3lBbENo?=
+ =?utf-8?B?aW9JazlCUDlDYzh1Ky9RSHVxelJySXQyci9mLzQxZHJqNEVYVmJ2QlNVSjV3?=
+ =?utf-8?B?Y2oxR1Vjcys0ZGZoUnIzUjhrSjU4MElCTDZYeTFJZ1NDZGpLZHJFMTR6bzho?=
+ =?utf-8?B?WUxFcjJ2a1hmYVN6OWFKTkNUSUEwTGtzU0ZqalprS1FOSXphZm1oWTFGTXgr?=
+ =?utf-8?B?SHZUQTB6eVRzd1E1QWtGWHhBb20wUzZvSmxLZGNLdlRRRko1eWphM0VVSVAv?=
+ =?utf-8?B?NnRNMGoxUDlydVRVYUZaN1A0N2NDeTBOYWZPL09lb3gvOXpmNmhLZVRyVnY2?=
+ =?utf-8?B?YnppQVFIQ2F1R28rOU9KUVlVMmNaVTY3UHBJZkY4MXF6Q2dCU1RyWG9ZRUtv?=
+ =?utf-8?Q?JNhh3ecga1YCe0Wzvn+Ad9Jmu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e95c536c-b83c-45f8-067d-08dc6f9f2e75
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 20:41:05.0569
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n+0Z4MapgZXm0wd/hZ2DiB06p4wujaLYWWMbUK5N9TmtJhSD0oo1uSx2Rz4oa7f8jeZoidgBxwgHjrBuX9qz6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7586
 
-Hi,
+When building with clang, via:
 
-On Wed, May 8, 2024 at 7:37=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Sean,
->
-> On Wed, May 8, 2024 at 3:13=E2=80=AFAM kernel test robot <lkp@intel.com> =
-wrote:
-> >
-> > Hi,
-> >
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on bluetooth/master]
-> > [also build test WARNING on bluetooth-next/master linus/master v6.9-rc7=
- next-20240507]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/sean-wang-kernel=
--org/Bluetooth-btmtk-apply-the-common-btmtk_fw_get_filename/20240508-032333
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluet=
-ooth.git master
-> > patch link:    https://lore.kernel.org/r/965cd14922aea67e2750ff2c2ecad7=
-73f8ba485a.1715109394.git.sean.wang%40kernel.org
-> > patch subject: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get=
- the fw name
-> > config: arm64-defconfig (https://download.01.org/0day-ci/archive/202405=
-08/202405081456.v2MvcQ0P-lkp@intel.com/config)
-> > compiler: aarch64-linux-gcc (GCC) 13.2.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20240508/202405081456.v2MvcQ0P-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202405081456.v2MvcQ0P-l=
-kp@intel.com/
-> >
-> > All warnings (new ones prefixed by >>):
-> >
-> >    drivers/bluetooth/btmtk.c: In function 'btmtk_fw_get_filename':
-> > >> drivers/bluetooth/btmtk.c:115:35: warning: 'mediatek/BT_RAM_CODE_MT'=
- directive output truncated writing 23 bytes into a region of size 8 [-Wfor=
-mat-truncation=3D]
-> >      115 |                          "mediatek/BT_RAM_CODE_MT%04x_1a_%x_=
-hdr.bin",
-> >          |                           ~~~~~~~~^~~~~~~~~~~~~~~
-> >    drivers/bluetooth/btmtk.c:115:26: note: directive argument in the ra=
-nge [1, 256]
-> >      115 |                          "mediatek/BT_RAM_CODE_MT%04x_1a_%x_=
-hdr.bin",
-> >          |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~
-> >    drivers/bluetooth/btmtk.c:114:17: note: 'snprintf' output between 41=
- and 43 bytes into a destination of size 8
-> >      114 |                 snprintf(buf, sizeof(size),
-> >          |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >      115 |                          "mediatek/BT_RAM_CODE_MT%04x_1a_%x_=
-hdr.bin",
-> >          |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~
-> >      116 |                          dev_id & 0xffff, (fw_ver & 0xff) + =
-1);
-> >          |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~
-> >
-> >
-> > vim +115 drivers/bluetooth/btmtk.c
-> >
-> >    105
-> >    106  void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, =
-u32 fw_ver,
-> >    107                             u32 fw_flavor)
-> >    108  {
-> >    109          if (dev_id =3D=3D 0x7925)
-> >    110                  snprintf(buf, size,
-> >    111                           "mediatek/mt%04x/BT_RAM_CODE_MT%04x_1_=
-%x_hdr.bin",
-> >    112                           dev_id & 0xffff, dev_id & 0xffff, (fw_=
-ver & 0xff) + 1);
-> >    113          else if (dev_id =3D=3D 0x7961 && fw_flavor)
-> >    114                  snprintf(buf, sizeof(size),
-> >  > 115                           "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hdr=
-bin",
-> >    116                           dev_id & 0xffff, (fw_ver & 0xff) + 1);
-> >    117          else
-> >    118                  snprintf(buf, size,
-> >    119                           "mediatek/BT_RAM_CODE_MT%04x_1_%x_hdr.=
-bin",
-> >    120                           dev_id & 0xffff, (fw_ver & 0xff) + 1);
-> >    121  }
-> >    122  EXPORT_SYMBOL_GPL(btmtk_fw_get_filename);
-> >    123
->
-> Could you please fix the above?
+    make LLVM=1 -C tools/testing/selftests
 
-No problem, I'll take care of it and send it over later.
+..two types of warnings occur:
 
-                 Sean
->
-> --
-> Luiz Augusto von Dentz
+    warning: absolute value function 'abs' given an argument of type
+    'long' but has parameter of type 'int' which may cause truncation of
+    value
+
+    warning: taking the absolute value of unsigned type 'unsigned long'
+    has no effect
+
+Fix these by:
+
+a) using labs() in place of abs(), when long integers are involved, and
+
+b) Change to use signed integer data types, in places where subtraction
+   is used (and could end up with negative values).
+
+c) Remove a duplicate abs() call in cmt_test.c.
+
+Cc: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ tools/testing/selftests/resctrl/cmt_test.c | 4 ++--
+ tools/testing/selftests/resctrl/mba_test.c | 2 +-
+ tools/testing/selftests/resctrl/mbm_test.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
+index a81f91222a89..05a241519ae8 100644
+--- a/tools/testing/selftests/resctrl/cmt_test.c
++++ b/tools/testing/selftests/resctrl/cmt_test.c
+@@ -40,11 +40,11 @@ static int show_results_info(unsigned long sum_llc_val, int no_of_bits,
+ 	int ret;
+ 
+ 	avg_llc_val = sum_llc_val / num_of_runs;
+-	avg_diff = (long)abs(cache_span - avg_llc_val);
++	avg_diff = (long)(cache_span - avg_llc_val);
+ 	diff_percent = ((float)cache_span - avg_llc_val) / cache_span * 100;
+ 
+ 	ret = platform && abs((int)diff_percent) > max_diff_percent &&
+-	      abs(avg_diff) > max_diff;
++	      labs(avg_diff) > max_diff;
+ 
+ 	ksft_print_msg("%s Check cache miss rate within %lu%%\n",
+ 		       ret ? "Fail:" : "Pass:", max_diff_percent);
+diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
+index 7946e32e85c8..8fd16b117092 100644
+--- a/tools/testing/selftests/resctrl/mba_test.c
++++ b/tools/testing/selftests/resctrl/mba_test.c
+@@ -60,8 +60,8 @@ static bool show_mba_info(unsigned long *bw_imc, unsigned long *bw_resc)
+ 	/* Memory bandwidth from 100% down to 10% */
+ 	for (allocation = 0; allocation < ALLOCATION_MAX / ALLOCATION_STEP;
+ 	     allocation++) {
+-		unsigned long avg_bw_imc, avg_bw_resc;
+ 		unsigned long sum_bw_imc = 0, sum_bw_resc = 0;
++		long avg_bw_imc, avg_bw_resc;
+ 		int avg_diff_per;
+ 		float avg_diff;
+ 
+diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
+index d67ffa3ec63a..252c94ff2a3d 100644
+--- a/tools/testing/selftests/resctrl/mbm_test.c
++++ b/tools/testing/selftests/resctrl/mbm_test.c
+@@ -17,8 +17,8 @@
+ static int
+ show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
+ {
+-	unsigned long avg_bw_imc = 0, avg_bw_resc = 0;
+ 	unsigned long sum_bw_imc = 0, sum_bw_resc = 0;
++	long avg_bw_imc = 0, avg_bw_resc = 0;
+ 	int runs, ret, avg_diff_per;
+ 	float avg_diff = 0;
+ 
+
+base-commit: 45db3ab70092637967967bfd8e6144017638563c
+prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
+prerequisite-patch-id: 8d96c4b8c3ed6d9ea2588ef7f594ae0f9f83c279
+-- 
+2.45.0
+
 
