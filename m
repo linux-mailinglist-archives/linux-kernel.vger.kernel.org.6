@@ -1,101 +1,120 @@
-Return-Path: <linux-kernel+bounces-173210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506148BFD12
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:22:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D24E8BFD14
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A441F23C07
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B739D1F234EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D372084A28;
-	Wed,  8 May 2024 12:22:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8812A83CCF;
-	Wed,  8 May 2024 12:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2336184A23;
+	Wed,  8 May 2024 12:23:14 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F0545024
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170939; cv=none; b=RGPuImIywIX7o5bdbpUHDbtu3x8YMdW2+B8veJJVTEt47UZTKZdMDH75VS4VkekS8cZbnM7zihaUleYYKMBWXTv6y2Ac29vPswCdPxJ0uQnI2I4U6uC2pl1iC8/NMOSPBrscqc8iKgYkzzERy8dBkzBiUp6oKywxlAc64j9lACQ=
+	t=1715170993; cv=none; b=r7MlpKHdI4NGpQsahEhtZC8ACNQnTDbHmMiBgOo9yhFIlHqYzSwe/0TvH3i+KJWH8ydH2Emf9yj+jJfPIakGLG9155JyFXPo9ztCPG28OmuSp2Fdk3W0tPGreLkfvB5adA+H/qTQcwJ0+t1ozY3fMKW3uDIZw1QBj3dIIs29SjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170939; c=relaxed/simple;
-	bh=X1S1dzhW3wRfqpB++o89A6VLOtGJiekN3EHOLbW+84E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K6SikQK/+cjezFBMcYKuZIhf/pSlseV1QnJDGe11a9uCugIbMdwj/GRZvDvilbq//wPbVxThoR06JpjvRj3ljmNkR4H+7mUJoUA6nVLOG3yNasnfXUC1xTTCUmW4zJFmlXeBF5/cc5gQv41srJxXgCGC8/dSi0e3CZoVVkNPBV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 559B91007;
-	Wed,  8 May 2024 05:22:42 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C7873F587;
-	Wed,  8 May 2024 05:22:14 -0700 (PDT)
-Date: Wed, 8 May 2024 13:22:12 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Aisheng Dong <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	s=arc-20240116; t=1715170993; c=relaxed/simple;
+	bh=SCE5JWU4nqxphECUgDgRgi0LtZaDC5XX2+xe9FqzcBs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=cSwSg5LfrfcN9yEqvJVfPg5cQ78z+bxLLwf0bAgebzJv73utPbodRoI4BECFjUjVfGIjwbtXjACp2Y4VUIUGZReHshjT28eFuvsa+KdQrzvMqTdu96fLg8rFVnWVf5TO+4meYfwpAInV8Cwt48CtnubpcYHEKK2Oo4uYkB4CWlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-172-HAljp3vRPtmBU0n87pTUDQ-1; Wed, 08 May 2024 13:23:09 +0100
+X-MC-Unique: HAljp3vRPtmBU0n87pTUDQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 8 May
+ 2024 13:22:38 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 8 May 2024 13:22:38 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Kees Cook' <keescook@chromium.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+CC: Justin Stitt <justinstitt@google.com>, Peter Zijlstra
+	<peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v5 0/3] pinctrl: scmi: support i.MX95 OEM extensions
-Message-ID: <ZjtudPS1CUqCJU5v@bogus>
-References: <20240508-pinctrl-scmi-oem-v3-v5-0-6f2b167f71bc@nxp.com>
- <ZjtCGXgwgtZ4X49v@bogus>
- <DU0PR04MB94170BB9A2C41DE40C8F575288E52@DU0PR04MB9417.eurprd04.prod.outlook.com>
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: RE: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Topic: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Index: AQHaoNrkK91jQ1nmYEmzGISNIfAGlrGNP8bg
+Date: Wed, 8 May 2024 12:22:38 +0000
+Message-ID: <e777a057e8d246efbc90381c2988b9b2@AcuMS.aculab.com>
+References: <202404291502.612E0A10@keescook>
+In-Reply-To: <202404291502.612E0A10@keescook>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB94170BB9A2C41DE40C8F575288E52@DU0PR04MB9417.eurprd04.prod.outlook.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 08, 2024 at 09:41:24AM +0000, Peng Fan wrote:
-> Hi Sudeep,
->
-> > Subject: Re: [PATCH v5 0/3] pinctrl: scmi: support i.MX95 OEM extensions
-> >
-> > On Wed, May 08, 2024 at 11:32:01AM +0800, Peng Fan (OSS) wrote:
-> > > ARM SCMI v3.2 Table 24 Pin Configuration Type and Enumerations:
-> > > '192 -255 OEM specific units'.
-> > >
-> > > i.MX95 System Manager FW supports SCMI PINCTRL protocol, but it has
-> > > zero functions, groups. So pinctrl-scmi.c could not be reused for i.MX95.
-> > > Because nxp,pin-func, nxp,pin-conf properties are rejected by dt
-> > > maintainers, so use generic property 'pinmux' which requires a new
-> > > driver pinctrl-imx-scmi.c
-> > >
-> >
-> > Not a review in particular, but if we decide to merge this deviation, it must be
-> > under the condition that it can be deleted anytime in the future if this
-> > becomes annoyance(like other vendors using this as a way to deviate from
-> > the specification). If we can't agree with that, then we better not merge this
-> > at all.
->
-> It is ok for me. I agree.
-> But actually this driver still follows Spec by using OEM extensions.
->
+From: Kees Cook
+> Sent: 08 May 2024 00:28
+>=20
+> Over the last decade or so, our work hardening against weaknesses
+> in various kernel APIs and eliminating the ambiguities in C language
+> semantics have traditionally been somewhat off in one corner or another
+> of the Linux codebase. This topic is going to be much different as
+> it is ultimately about the C type system, which is rather front and
+> center. So, hold on to your hats while I try to explain what's desired
+> here. Please try to reserve judgement until the end; as we've explored
+> the topic we've found a lot of nuances, which I've tried to touch on
+> below. I'm hoping folks can have an open mind about all this and not
+> jump to any conclusions without first hearing me out. :)
+>=20
+>=20
+> Problem to Solve
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> The Linux kernel has consistently suffered from unexpected arithmetic
+> overflow bugs. These lead to any number of exploitable conditions[0].
+> Our continuing efforts to improve things (refcount_t, alloc_size(),
+> etc) have helped in some specific areas, but on the whole, we've had a
+> relatively unchanged count of serious arithmetic overflow flaws over the
+> life of the project[1]. This is not tolerable, and we should, all of us,
+> make the effort needed to put an end to it in a systematic way.
 
-Agreed, but that's what I call as deviations. When such extensions are
-used as baseline implementation, it becomes deviations.
+Is it April 1?
 
---
-Regards,
-Sudeep
+Have you estimated the performance cost of checking the result of
+all integer arithmetic.
+
+If you have a cpu with 'signed/unsigned add(etc) with trap on overflow'
+instructions then maybe you could use them to panic the kernel.
+But otherwise you'll need a conditional branch after pretty much
+every arithmetic instruction.
+As well as the code bloat there is likely to be a 50% chance they
+are mis-predicted slowing things down a lot more.
+IIRC at least some x86 cpu do not default to static prediction (eg
+backwards taken forwards not) but always use data from the branch
+prediction logic - so the first time a branch is seen it is predicted
+randomly.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
