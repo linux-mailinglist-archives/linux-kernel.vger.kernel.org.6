@@ -1,225 +1,182 @@
-Return-Path: <linux-kernel+bounces-173951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B3A98C0824
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C18CB8C0826
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F463B21CEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:54:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C28282766
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54B31339AB;
-	Wed,  8 May 2024 23:54:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6881133997;
+	Wed,  8 May 2024 23:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mRT8jxVP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D13D1327F2
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DBB34CDD
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715212440; cv=none; b=VP/J+oA/VV88/vXR7fkTIGtSAdMUvC/BpMpAoZSD9udq8o1+1S9VX4bCN2YTlwh0+573l674n4uX26IhE/zdGfavrYFnvP7BoodSrfVslr2ctCkjJjiuVHqP3HY6NuFdY6lYhxpw1IFYQ+bkBoK7kXNq7B5K4zhPEDCfQb3pq3k=
+	t=1715212555; cv=none; b=KVg5t1cFIXu5n2tXx6QrpCqeckMJ7oKYltsDdfyVf/qa8mhrXNUxtwka2fNXbDYgbTCnriZZxmdgdYza0g79KF7zNq2yx6iZJ3Px6w9X5uSfb33S+Dfa+xZFaU2kez7Uu9wKv3gYZyYfNkDNoMM27fN74tijFi3GAkwx37SO1/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715212440; c=relaxed/simple;
-	bh=sw7/cyRA0+8F6bdwISmbc5OkCJdAWouQOnOBHriBSbY=;
+	s=arc-20240116; t=1715212555; c=relaxed/simple;
+	bh=9rINs3VyCm6tAEZfoaCS30hypmdP4mKel8NcCO8rrfs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U1bigjxPxlaEub296MMBRVlzrFizJ2PNtGbVB1oQ51WTAqmNHfFQIKqjmjiFFP10SUDDu64Dmb5K2ktkhNapdZLGqAJR1w0tfNidn2utnM4/Xj0uOMKO3Zaak8jZu77P01WYzfQ/4Y2ZKT2nMT2KpJuXl4WCCEq04Ush3pkJ4u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s4r6f-00032N-MT; Thu, 09 May 2024 01:53:53 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s4r6f-000MDQ-2h; Thu, 09 May 2024 01:53:53 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s4r6f-002HCQ-00;
-	Thu, 09 May 2024 01:53:53 +0200
-Date: Thu, 9 May 2024 01:53:52 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] usb: dwc3: gadget: check drained isoc ep
-Message-ID: <ZjwQkIBUlhl-4ScO@pengutronix.de>
-References: <20240307-dwc3-gadget-complete-irq-v2-1-8c5e9b35f7b9@pengutronix.de>
- <20240402230555.xgt5uilc42diyr4m@synopsys.com>
- <20240402231848.4hzzrxegjrcmdab2@synopsys.com>
- <20240404002906.wk6xbz2wp2tf2xwn@synopsys.com>
- <Zie5sN473m2rgNTK@pengutronix.de>
- <20240424015059.w7hsee4tt2ixkp5y@synopsys.com>
- <ZjbIeib2UMta7FbY@pengutronix.de>
- <20240508230252.wauttsgkp63fpife@synopsys.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=k8hCZ44nQ5WHByRhtCiUGrmeXkNc7thxy4fZciiQy39cIG+qiO1OkqgPzI8NkuKTqufe5pNBifQeiy+LSwFhaOoBV4KCCyMpscNEAHH3D12n93nieAG4/Gs+4STQW7cIQajZ0o7pUXr1kA9Y0EjMj5lo/e76/PHLOGn9L4QWSVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mRT8jxVP; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715212552; x=1746748552;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9rINs3VyCm6tAEZfoaCS30hypmdP4mKel8NcCO8rrfs=;
+  b=mRT8jxVPPJ0MTZwryu8M2YteIB4z8p/RHW4fqJ+8jvlDJqiK3nAbUm90
+   53S9YIwjpgFGprn0cWf90EDipX0DoEHrKrS0Mg1B+zgjoIimueTndW6wD
+   IbXYTxR7/d13tCkzSlM7DYv8a6w1dP/CIZN6H23ysmEHBlwiYMgzV2qsK
+   BHPCHrTG54+EG4nFcbauPSbnOT0btw536fc5gadDeSBRq7GpwOFfWHq5p
+   UxQiw2JRwQHwI/5nrUleCq2Z+VwowFlwCYICb6x7mmHT+EIYgBLOeqGpO
+   M+/ECX+6J2GQ6g3eo9ZyWV52c+p9sKjBo1CZqdW8zUh4CQR5i7fxeyH7Z
+   A==;
+X-CSE-ConnectionGUID: VHtqR5FLRHWBAdy2ogIQSA==
+X-CSE-MsgGUID: O8kVFuAdSZq234m8vBCbfw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="10956797"
+X-IronPort-AV: E=Sophos;i="6.08,146,1712646000"; 
+   d="scan'208";a="10956797"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 16:55:52 -0700
+X-CSE-ConnectionGUID: X/OteO3aRomYYA8wFp2YLg==
+X-CSE-MsgGUID: f5oQNoN6QmeVs2GRYmxOeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,146,1712646000"; 
+   d="scan'208";a="28936000"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 08 May 2024 16:55:48 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4r8T-0004F6-1w;
+	Wed, 08 May 2024 23:55:45 +0000
+Date: Thu, 9 May 2024 07:55:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Weishi Li <liweishi@kylinos.cn>, airlied@redhat.com, kraxel@redhat.com,
+	gurchetansingh@chromium.org, olvaffe@gmail.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, daniel@ffwll.ch
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org, liweishi@kylinos.cn
+Subject: Re: [PATCH] [PATCH RESEND] drm/virtio: fix memory leak of vbuf
+Message-ID: <202405090747.y8ofUE7r-lkp@intel.com>
+References: <20240507033814.57906-1-liweishi@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Z7LlYPAU/B3cdMx8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240508230252.wauttsgkp63fpife@synopsys.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20240507033814.57906-1-liweishi@kylinos.cn>
+
+Hi Weishi,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on drm/drm-next linus/master v6.9-rc7 next-20240508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Weishi-Li/drm-virtio-fix-memory-leak-of-vbuf/20240507-114452
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240507033814.57906-1-liweishi%40kylinos.cn
+patch subject: [PATCH] [PATCH RESEND] drm/virtio: fix memory leak of vbuf
+config: i386-buildonly-randconfig-001-20240508 (https://download.01.org/0day-ci/archive/20240509/202405090747.y8ofUE7r-lkp@intel.com/config)
+compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405090747.y8ofUE7r-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405090747.y8ofUE7r-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpu/drm/virtio/virtgpu_vq.c:474:13: warning: variable 'notify' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     474 |         } else if (ret < 0) {
+         |                    ^~~~~~~
+   drivers/gpu/drm/virtio/virtgpu_vq.c:487:6: note: uninitialized use occurs here
+     487 |         if (notify)
+         |             ^~~~~~
+   drivers/gpu/drm/virtio/virtgpu_vq.c:474:9: note: remove the 'if' if its condition is always false
+     474 |         } else if (ret < 0) {
+         |                ^~~~~~~~~~~~~~
+     475 |                 free_vbuf(vgdev, vbuf);
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~
+     476 |         } else {
+         |         ~~~~~~
+   drivers/gpu/drm/virtio/virtgpu_vq.c:455:13: note: initialize the variable 'notify' to silence this warning
+     455 |         bool notify;
+         |                    ^
+         |                     = 0
+   1 warning generated.
 
 
---Z7LlYPAU/B3cdMx8
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+vim +474 drivers/gpu/drm/virtio/virtgpu_vq.c
 
-On Wed, May 08, 2024 at 11:03:00PM +0000, Thinh Nguyen wrote:
->On Sun, May 05, 2024, Michael Grzeschik wrote:
->> On Wed, Apr 24, 2024 at 01:51:01AM +0000, Thinh Nguyen wrote:
->> > >
->> >
->> > Right. Unfortunately, dwc3 can only "guess" when UVC function stops
->> > pumping more request or whether it's due to some large latency. The
->> > logic to workaround this underrun issue will not be foolproof. Perhaps
->> > we can improve upon it, but the solution is better implement at the UVC
->> > function driver.
->>
->> Yes, the best way to solve this is in the uvc driver.
->>
->> > I thought we have the mechanism in UVC function now to ensure queuing
->> > enough zero-length requests to account for underrun/latency issue?
->> > What's the issue now?
->>
->> This is actually only partially true. Even with the zero-length packages
->> it is possible that we run into underruns. This is why we implemented
->> this patch. This has happened because another interrupt thread with the
->> same prio on the same CPU as this interrupt thread was keeping the CPU
->
->Do you have the data on the worst latency?
+   448	
+   449	static void virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
+   450					    struct virtio_gpu_vbuffer *vbuf)
+   451	{
+   452		struct virtqueue *vq = vgdev->cursorq.vq;
+   453		struct scatterlist *sgs[1], ccmd;
+   454		int idx, ret, outcnt;
+   455		bool notify;
+   456	
+   457		if (!drm_dev_enter(vgdev->ddev, &idx)) {
+   458			free_vbuf(vgdev, vbuf);
+   459			return;
+   460		}
+   461	
+   462		sg_init_one(&ccmd, vbuf->buf, vbuf->size);
+   463		sgs[0] = &ccmd;
+   464		outcnt = 1;
+   465	
+   466		spin_lock(&vgdev->cursorq.qlock);
+   467	retry:
+   468		ret = virtqueue_add_sgs(vq, sgs, outcnt, 0, vbuf, GFP_ATOMIC);
+   469		if (ret == -ENOSPC) {
+   470			spin_unlock(&vgdev->cursorq.qlock);
+   471			wait_event(vgdev->cursorq.ack_queue, vq->num_free >= outcnt);
+   472			spin_lock(&vgdev->cursorq.qlock);
+   473			goto retry;
+ > 474		} else if (ret < 0) {
+   475			free_vbuf(vgdev, vbuf);
+   476		} else {
+   477			vbuf->seqno = ++vgdev->cursorq.seqno;
+   478			trace_virtio_gpu_cmd_queue(vq,
+   479				virtio_gpu_vbuf_ctrl_hdr(vbuf),
+   480				vbuf->seqno);
+   481	
+   482			notify = virtqueue_kick_prepare(vq);
+   483		}
+   484	
+   485		spin_unlock(&vgdev->cursorq.qlock);
+   486	
+   487		if (notify)
+   488			virtqueue_notify(vq);
+   489	
+   490		drm_dev_exit(idx);
+   491	}
+   492	
 
-It was something a bit more then around 2ms AFAIR. Since with one frame
-enqueued we only trigger the interrupt every 16 requests (16*125us =3D 2ms)
-
-So with at least 2ms latency we did hit the sweet spot in several cases.
-
->Can this other interrupt thread lower its priority relative to UVC? For
->isoc endpoint, data is time critical.
-
-The details are not that important. Sure the is a bug, that needed to be
-solved. But all I wanted is to improve the overal dwc3 driver.
-
->Currently dwc3 can have up to 255 TRBs per endpoint, potentially 255
->zero-length requests. That's 255 uframe, or roughly ~30ms. Is your worst
->latency more than 30ms? ie. no handling of transfer completion and
->ep_queue for the whole 255 intervals or 30ms. If that's the case, we
->have problems that cannot just be solved in dwc3.
-
-Yes. But as mentioned above, this was not the case. Speaking of, there
-is currently a bug in the uvc_video driver, that is not taking into
-acount that actually every zero-length request should without exception
-need to trigger an interrupt. Currently we also only scatter them over
-the 16ms period, like with the actual payload. But since we feed the
-video stream with the interrupts, we loose 2ms of potential ep_queue
-calls with actual payload in the worst case.
-
-My patch is already in the stack and will be send today.
-
->> busy. As the dwc3 interrupt thread get to its call, the time was already
->> over and the hw was already drained, although the started list was not
->> yet empty, which was causing the next queued requests to be queued to
->> late. (zero length or not)
->>
->> Yes, this needed to be solved on the upper level first, by moving the
->> long running work of the other interrupt thread to another thread or
->> even into the userspace.
->
->Right.
->
->>
->> However I thought it would be great if we could somehow find out in
->> the dwc3 core and make the pump mechanism more robust against such
->> late enqueues.
->
->The dwc3 core handling of events and ep_queue is relatively quick. I'm
->all for any optimization in the dwc3 core for performance. However, I
->don't want to just continue looking for workaround in the dwc3 core
->without looking to solve the issue where it should be. I don't want to
->sacrifice complexity and/or performance to other applications for just
->UVC.
-
-I totally understand this. And as we already found out more and more
-about the underlying complexity of the dwc3 driver I see more and more
-clearer how we have to handle the corner cases. I just started this
-conversation with Avichal and you in the other thread.
-
-https://lore.kernel.org/all/17192e0f-7f18-49ae-96fc-71054d46f74a@google.com/
-
-I think there is some work to come. As to be sure that everybody is on
-the same page I will prepare a roadmap on how to proceed and what to
-discuss. There are many cases interfering with each other which make the
-solution pretty complex.
-
->> This all started with that series.
->>
->> https://lore.kernel.org/all/20240307-dwc3-gadget-complete-irq-v1-0-4fe9a=
-c0ba2b7@pengutronix.de/
->>
->> And patch 2 of this series did work well so far. The next move was this
->> patch.
->>
->> Since the last week debugging we found out that it got other issues.
->> It is not allways save to read the HWO bit, from the driver.
->>
->> Turns out that after an new TRB was prepared with the HWO bit set
->> it is not save to read immideatly back from that value as the hw
->> will be doing some operations on that exactly new prepared TRB.
->>
->> We ran into this problem when applying this patch. The trb buffer list
->> was actually filled but we hit a false positive where the latest HWO bit
->> was 0 (probably due to the hw action in the background) and therefor
->> went into end transfer.
->>
->
->Thanks for the update.
-
-Thanks,
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---Z7LlYPAU/B3cdMx8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmY8EI4ACgkQC+njFXoe
-LGS01hAAhUG5/Of+XNj3OmLS7wXs3oYCQEAwjttD8+FrH2GTe8qIZ6R9WziBRQ68
-nmT4o9NbmADJ7a8wjLxUNZGhUANm5OVnRfc/bo4OP90/nR1FnREDpBPZC2gL7b1G
-hvhPhRVOcHdGoJ50c/kgW5KczOUwDunhZx+r6n8SZ74MH3KvbExJMMCk+782YpqD
-Ky7hxxx338OsnC4cNNX5w3CNSmG5JmUGja96ygvuM31s89kqzEPQVqrMlE0ycq09
-54xvHkzo4P3h9FYAJ+LW16U520IIMqezc+b7LLjgQQAlOm7G1gWCxaWt2Pm0un8f
-8opE8V2/lxr/bLbUjnN7q8bCjB0HTbtwcIUszxDU1gcyi2QHk59M2KwIAHA29RBK
-Y9bo6qmlix9GRs74kMFHFiszV+lm/+FQ+td7U6HYeiXWlPmlCTc2yI5cKrMVP9WU
-3zCBZv0x1QOkXmOiDTa+2gHxyOmB0AONo60wnrFMLIjgTOfHcDROmTLL1M8Wsbrc
-0W63gguIHEcYn3g7vA2+hqnGT+B0CB8TCr4DgqiteLacUQFeTcC/qvC1Cd0Gw3K7
-3rkJVI8m5/bEmwon8DvE0nAF7I21X23i6YDEoGrTWxXbz3+xssjAi4I93rzmSGOk
-oCyBGJRyUDYiFVDOUAaUrNxklFUm/QIB3SRQaxPlumgbXLtkCB4=
-=YPfe
------END PGP SIGNATURE-----
-
---Z7LlYPAU/B3cdMx8--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
