@@ -1,129 +1,172 @@
-Return-Path: <linux-kernel+bounces-172892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF608BF83A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:13:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8C18BF83D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89EDF281F6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F952B24662
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68460405FC;
-	Wed,  8 May 2024 08:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E32446D5;
+	Wed,  8 May 2024 08:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BCVIhN5w"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SdMWU51v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423023FE28
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B543D96D;
+	Wed,  8 May 2024 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155995; cv=none; b=MfvTiYM7UfntnOf5eNb/jzqOBtMZ6itWRHpGHe6afEuV/tX9STp9KEgg7RV5ZWFD1VUXY85LrV7WHKNoST9sjr+hCqjTOEydYnJEGZhFCrMckeZkSpu3HLCDUGjn4CnKvfq1esmEllBGXmvCsRQPVOO/KWB+afww/ygJC4xiJ3U=
+	t=1715156045; cv=none; b=UdpJYmLAup3ncp05TV6S/T5LT0rAkjdw1LlOuH7DGcRmPfCFP4Gm6LaET1Tu9HCBdyZOEQLeZyoDKq+cTACi3P/dggofDlrTAcVMXbmWgVY37LHe2e7Xp1WyQ2UOmJ84Rv+ri1fIOpuYgAUe9QktM6CCRJZQ96FYAZRq/ehzfz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155995; c=relaxed/simple;
-	bh=4PVm2LyYfgqp37dC83Q9wyTFTyUznQflMCTahRI//js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RQkzd860ybenI6355LtR7eXUWmmXk6zwdagkCz1FgyrTFNjbe9XvDp7XaILHIAmKTuMqgzl6r9ZAVHjc7wgRBJ/5oFCUXMhkai+K1PAWpg1oGR+Ctbd1GXeVm4VaCV1dQrHZE99U6YSmc+7ez4lSEtDeGwNJ0CvDM9eYQnHZjX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BCVIhN5w; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so2527402276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715155993; x=1715760793; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=puLE1Zg7Tugm85ah5txGvDIp6d9WRoi8iEtayWchHKs=;
-        b=BCVIhN5wlrZvJLMIFiPSptCWElAXyIZw6uqQgyur1+HsUX2wKt50c6TyV5HZ+amxAc
-         7SIHS+FzRzbPvNb2qcffEbqDU03ONdqPQnI0tVyDI88nwz1jdI5ybrqndgwWd/Sr1KPR
-         jspk5zmoNI8VZ1z0fuO2QAfmCZondkfJXomD3qpFu1ZvRSxGrkP1ajIJInhgFA0XPEWc
-         3W+d/AxljfZ71oUgPvq3V6xo/YalDaE7uarpI0K62qIwfwxVVcjZOxqVBhCsoFntEDW5
-         GHMJ8gjLCcg+YgMrlHYqvOjWsw4hO1UwhW5Oaskkz/I5R286nQDzlXwAZ8gPrK1oimVN
-         DBrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715155993; x=1715760793;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=puLE1Zg7Tugm85ah5txGvDIp6d9WRoi8iEtayWchHKs=;
-        b=GExRX6bdE3psMEoFPgeGOZLOHFd3v1kqW8azWIfrA8uDGktkpzf7mqaV9lhzvk7CmZ
-         ItqlfY+XInKEy5Gw979iZ1a8JLxGGJT3tOzkV2e+BUvFKic1npppTUQ04as/Xlye1yin
-         91EV1WmLvfzUn5OeMqSjG0AOXmxl2dhCy1wgkVP67n5wvERRJcMZmIztyYpdn8DxrTdu
-         yU282ya6yGCTK7UWRxFFAefrRTdmE+pe7XteFWkjLZtSOkpnS78JxI4HEQEfiHfL2q6W
-         /TQiuxdATh4mclWdSNujahQQvJvXMjzAOnUnh4FLzyNX9Xp9wfcQRqKWybduQEycfR4E
-         YryA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2CWJYdQSMLL3HOZtn8i8l5XFi01SzpMqTC37j6HvDtj6fCH/J4PF1r4ezX/r2C2OPkrrG8Ec3tZNq6iKQvJh4DpGtt8V/o5cqOf1T
-X-Gm-Message-State: AOJu0Yzg2+Mczxe4zWqqWZqj83oMoLajlg1VMQ0A293f/eT1yuDPicAV
-	HGDkW77phAUP9DRGfMbyF3v3hddr4+bvcGwDAg4B5U9PsjD76HaJmIzP3dHJfS/dCEaBRm/JTyn
-	UazLaEv4kCwMDnNq88QuKLkT48DeTfkO88jQ5QA==
-X-Google-Smtp-Source: AGHT+IGiGE5GHUo5l/95wVUKEmw86j/q2tCCfdaBRCiX6QhdkAu1EGGSOCWnLkMYiuAqFqLivwHuIgoneeJYpP7/ivs=
-X-Received: by 2002:a25:8f88:0:b0:dd1:48c9:53f3 with SMTP id
- 3f1490d57ef6-debb9e4f729mr1819039276.60.1715155993253; Wed, 08 May 2024
- 01:13:13 -0700 (PDT)
+	s=arc-20240116; t=1715156045; c=relaxed/simple;
+	bh=o6dYzqcug6bjp99QH0Xc2b/Mh3Ae4lgbbIbqMs9s1So=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oh3Wv60PYCNrWL8DeU+8+cxpLs8UR75geEpMBfGvwedwFTVP+WPcwLcqQl/lXzoVcw+W6TqUvz2QR4yQb/VjyateSFZtNIWXxeYjoj+iilryLMuFshwZhtjRBz1VE3Ma4ZQyDhyleoGdc3sDyO6joNBUpHSvmefHTzA79+NCARo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SdMWU51v; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715156044; x=1746692044;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=o6dYzqcug6bjp99QH0Xc2b/Mh3Ae4lgbbIbqMs9s1So=;
+  b=SdMWU51vcGdHM1Fu0VptfM0VidftdSgDWsvc0BsKsSHeN+i0HOhv+3NQ
+   jWtgQs/iO+iBHgDVlM2SeWNdfHSVdMNN50UMoGKhKcRpdegG8POHMLQZM
+   8NkEWJx8eSqL62QCisRw4m1goj5isl5FG5KjlImYvjhZZwkv37PRpmaeG
+   5PXk49Kw/+lP0GdZF0rJ1Ss7U+A29rWw05C6rDLzPc0vgGkHmHVItMQMH
+   +Riyk5QekICnDombbGfBWShIO0jtRTQHJYqEH53cyMdx+dDhMA5EA4LNu
+   Nr3hLzR1F2FRwjAImnJo1+s0woqI3XRSTUyumWWIeHkebv91yG/D8jylW
+   A==;
+X-CSE-ConnectionGUID: zsA1Mx7nRme6e3JDu9f9Eg==
+X-CSE-MsgGUID: srTM+5bFQaO9GcL9da2dKA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="28474497"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="28474497"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:14:04 -0700
+X-CSE-ConnectionGUID: aABURBGITHyA0xz96lfbdA==
+X-CSE-MsgGUID: 8uRx8TfuRU256ZN4Nutk6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="59662273"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:13:57 -0700
+Message-ID: <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
+Date: Wed, 8 May 2024 10:13:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
- <20240507163045.28450-1-quic_vvalluru@quicinc.com> <a32fa81d-bd70-4dfa-b512-e2adce4f8c35@linaro.org>
- <9a48b0a8-d1d7-8e2d-dafa-47e136a46c99@quicinc.com> <2f810036-1832-42ef-b896-e9470f469029@linaro.org>
-In-Reply-To: <2f810036-1832-42ef-b896-e9470f469029@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 8 May 2024 11:13:02 +0300
-Message-ID: <CAA8EJpqG7k2+eEyndzrGgF4YqSOhD-kKfaj93PLhitcku1B6tw@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>, andersson@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, konrad.dybcio@linaro.org, 
-	krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_nankam@quicinc.com, robh@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
+Content-Language: en-US
+To: Hans Verkuil <hverkuil@xs4all.nl>, Shengjiu Wang
+ <shengjiu.wang@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
+ tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
+ <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
+ <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
+ <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
+ <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
+ <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
+ <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 8 May 2024 at 10:38, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 07/05/2024 21:20, Abhinav Kumar wrote:
-> >
-> >
-> > On 5/7/2024 9:35 AM, Krzysztof Kozlowski wrote:
-> >> On 07/05/2024 18:30, Venkata Prahlad Valluru wrote:
-> >>> Rb3Gen2 has a lt9611uxc DSI-to-HDMI bridge on i2c0, with
-> >>> reset gpio from pm7250b gpio2 and irq gpio from tlmm gpio24.
-> >>> Bridge supplies are Vdd connected to input supply directly
-> >>> and vcc to L11c. Enable HDMI output, bridge and corresponding
-> >>> DSI output.
-> >>>
-> >>> Signed-off-by: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
-> >>> ---
-> >>> v3: - Updated commit text
-> >>>      - Arranged nodes in alphabetical order
-> >>>      - Fixed signoff
-> >>>      - Fixed drive strength for lt9611_irq_pin
-> >>>      - Removed 'label' from hdmi-connector, which is optional
-> >>
-> >> Please respond to each Bjorn comment and explain how did you implement it...
-> >>
-> >
-> > Yes, agreed. Even though it seems like you mostly just agreed to mine
-> > and Bjorn's suggestions and decided to implement all those in v3 , it
-> > would have been better to explicitly ack them or tell why you agreed or
-> > what went wrong that you had not done it in v2 itself to close the loop.
->
-> The problem is that one or more were ignored... By responding to each of
-> them, I hope they will be finally read and understood instead of
-> repeating the same mistake three times.
+On 5/8/2024 10:00 AM, Hans Verkuil wrote:
+> On 06/05/2024 10:49, Shengjiu Wang wrote:
+>> On Fri, May 3, 2024 at 4:42 PM Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
+>>>
+>>> Em Fri, 3 May 2024 10:47:19 +0900
+>>> Mark Brown <broonie@kernel.org> escreveu:
+>>>
+>>>> On Thu, May 02, 2024 at 10:26:43AM +0100, Mauro Carvalho Chehab wrote:
+>>>>> Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
+>>>>
+>>>>>> There are still time control associated with it, as audio and video
+>>>>>> needs to be in sync. This is done by controlling the buffers size
+>>>>>> and could be fine-tuned by checking when the buffer transfer is done.
+>>>>
+>>>> ...
+>>>>
+>>>>> Just complementing: on media, we do this per video buffer (or
+>>>>> per half video buffer). A typical use case on cameras is to have
+>>>>> buffers transferred 30 times per second, if the video was streamed
+>>>>> at 30 frames per second.
+>>>>
+>>>> IIRC some big use case for this hardware was transcoding so there was a
+>>>> desire to just go at whatever rate the hardware could support as there
+>>>> is no interactive user consuming the output as it is generated.
+>>>
+>>> Indeed, codecs could be used to just do transcoding, but I would
+>>> expect it to be a border use case. See, as the chipsets implementing
+>>> codecs are typically the ones used on mobiles, I would expect that
+>>> the major use cases to be to watch audio and video and to participate
+>>> on audio/video conferences.
+>>>
+>>> Going further, the codec API may end supporting not only transcoding
+>>> (which is something that CPU can usually handle without too much
+>>> processing) but also audio processing that may require more
+>>> complex algorithms - even deep learning ones - like background noise
+>>> removal, echo detection/removal, volume auto-gain, audio enhancement
+>>> and such.
+>>>
+>>> On other words, the typical use cases will either have input
+>>> or output being a physical hardware (microphone or speaker).
+>>>
+>>
+>> All, thanks for spending time to discuss, it seems we go back to
+>> the start point of this topic again.
+>>
+>> Our main request is that there is a hardware sample rate converter
+>> on the chip, so users can use it in user space as a component like
+>> software sample rate converter. It mostly may run as a gstreamer plugin.
+>> so it is a memory to memory component.
+>>
+>> I didn't find such API in ALSA for such purpose, the best option for this
+>> in the kernel is the V4L2 memory to memory framework I found.
+>> As Hans said it is well designed for memory to memory.
+>>
+>> And I think audio is one of 'media'.  As I can see that part of Radio
+>> function is in ALSA, part of Radio function is in V4L2. part of HDMI
+>> function is in DRM, part of HDMI function is in ALSA...
+>> So using V4L2 for audio is not new from this point of view.
+>>
+>> Even now I still think V4L2 is the best option, but it looks like there
+>> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
+>> a duplication of code (bigger duplication that just add audio support
+>> in V4L2 I think).
+> 
+> After reading this thread I still believe that the mem2mem framework is
+> a reasonable option, unless someone can come up with a method that is
+> easy to implement in the alsa subsystem. From what I can tell from this
+> discussion no such method exists.
+> 
 
-I found a mistake that was repeated two times. This leaves me
-wondering which mistake was repeated three times.
+Hi,
 
+my main question would be how is mem2mem use case different from 
+loopback exposing playback and capture frontends in user space with DSP 
+(or other piece of HW) in the middle?
 
--- 
-With best wishes
-Dmitry
+Amadeusz
+
 
