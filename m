@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-173604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A428C02C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:14:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66E78C02C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4CAB24639
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:14:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 045491C21AA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92BA12B14B;
-	Wed,  8 May 2024 17:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B1D12B169;
+	Wed,  8 May 2024 17:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="bF31rzb+"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wPoCaEd6"
 Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D819128829
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D78F128815
 	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188456; cv=none; b=aWL3cIxTgo2x/DyaQk8tycU5N6VIVIYRYq4sH9B0M17CPAoKjCb3QUDiuFQM8ny59grfHFC7hjwbjI7SWw8rmSFSR9PEjV4u/5LoF+DblP+ClCVpPBqqFJQloyTBIfQSmRK1MvBfY9e9PVrt1LVAqHGA3RuAlEV9yjUd19fNK8c=
+	t=1715188456; cv=none; b=aq1I28lzOke+EnxSEzRFZOuZ5xMNViFIbsy+Ym9h6FwkLx8ovuUGGfxHBNLL/x/5izbWiITQyrbBG5rC4X83bwrLoINVReSctWgnf7S05jAIC1aFOLdJT4Vh0RZdnBVq0k3haAY773EvVaxmHzgLohbdXWIvx60kgHo004tVJ3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715188456; c=relaxed/simple;
-	bh=IYjtQTAzRs1RtcfgocV5XwZyEpEUX5EMrwnW6fF/sao=;
+	bh=wBIe8L/kzS+iFaHUIe5MJ34qQDJlShFdBDx5Aipq6MI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LKbMv9QyuoTFCKYW4ubfpE2ud9ezd92ou6ogtUdG8KKgKUYtxbvN0bvb+HVkbil1jW2VazF61zV0tkzxY7O3dUKbcJIraA2tFpwcKr0Ps0Fw5isPV6z9ZeiZZt5ZHEI+EpThy0Tc7rHyAcpU2+niRteqfzONyeEeXPzt9wnd5M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=bF31rzb+; arc=none smtp.client-ip=202.36.163.20
+	 MIME-Version; b=n6+nJF/Btcf2LamuCmsPWzqF2p9hYZfDwuL9kx8n2H5/w+WKc1YJCcAB/QubLIUcSWGu8OZPY/GN82kPC8faHpWlSNBLFxiK9fxNmhawyU8uXpN1wv3/ok8xIBO+6+A1lMvCfIHGUY+4VWT4yGGLXvt6+/OD3fgd4SwGIPp4pro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wPoCaEd6; arc=none smtp.client-ip=202.36.163.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
 Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 205C32C01BD;
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 21CDD2C0240;
 	Thu,  9 May 2024 05:05:48 +1200 (NZST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
 	s=mail181024; t=1715187948;
-	bh=DVXNJSLG09bJ3kApB+BghaNalIu/DwTPBx5KTlb7z1I=;
+	bh=0z3I4FWLpGwn1DF7NS3tZlEXDhBmoqyxj/U0Pm5RNgE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bF31rzb+lLKjwch6xGOI+cXGf277+pQIdUdqeBl92K1WNnZSoY6SZylqtLW4M13gW
-	 7TRfFLPSIcvaONEKZdiF0yEq9Z3+qkCZNwbhMJ4C17Fw6VjYHGWAtYCSccsAvX+Abe
-	 YLb/ATVslQbeqyqECpUTwY0VYcNqEtjLwsJAeO/5EHD+oUn3Ey8v44ckaySxyfNRs+
-	 ytPjxytiaNXPw7WuIGlAiQ/sUKtJDVK74zp9fO1ciHprfaC4Yd4ESnpGO4uU1or0/o
-	 oDjR+ttfI54PSOVA+Bda32htvJZTMsZsgnAs637eJrfu9ZaXSv3LboS5iDarT03BgZ
-	 mJ0Iu2FCkJueQ==
+	b=wPoCaEd6WxiHVoe20gXL4BVy/S+3W1Dh05IEZh+wZm7X/7GDC4i2Mi9WY7wy3Td/n
+	 +UsMSbt9UgrWoSVl3ou+ySJq37rJ+RkGyD1vUg8SLZN+Hbx0pxfov+VQA0FQxHjIwJ
+	 d2v1MIumAgz1xMuYsEnXb3CQm1meC7VeEsPkT5NXkxomGn389j76P6g3b7AyjHoybf
+	 43aW1ZyKdlrW9pba2BUNwJg+skpCr5K3Qnn4sCBf5A3V34Tv5mifzCIzPobfzptwcl
+	 i6i6N8G770K6RaD2KrrPwEVPavfYgwDJk0zweAU4VkT78xUXhO3NeKTBX2RoFOHBvR
+	 QMgt2FfIb0uMg==
 Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B663bb0eb0001>; Thu, 09 May 2024 05:05:47 +1200
+	id <B663bb0eb0002>; Thu, 09 May 2024 05:05:47 +1200
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id C7F1213EE52;
+	by pat.atlnz.lc (Postfix) with ESMTP id CCFD713EE83;
 	Thu,  9 May 2024 05:05:47 +1200 (NZST)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id C3A97280461; Thu,  9 May 2024 05:05:47 +1200 (NZST)
+	id C9D5C280461; Thu,  9 May 2024 05:05:47 +1200 (NZST)
 From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 To: jdelvare@suse.com,
 	linux@roeck-us.net,
@@ -63,9 +63,9 @@ Cc: linux-hwmon@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 1/2] dt-bindings: hwmon: Document adt7475 PWM initial duty cycle
-Date: Thu,  9 May 2024 05:05:42 +1200
-Message-ID: <20240508170544.263059-2-chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH 2/2] hwmon: (adt7475) Add support for configuring initial PWM duty cycle
+Date: Thu,  9 May 2024 05:05:43 +1200
+Message-ID: <20240508170544.263059-3-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.43.2
 In-Reply-To: <20240508170544.263059-1-chris.packham@alliedtelesis.co.nz>
 References: <20240508170544.263059-1-chris.packham@alliedtelesis.co.nz>
@@ -76,74 +76,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=MfrPuI/f c=1 sm=1 tr=0 ts=663bb0eb a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=TpHVaj0NuXgA:10 a=asi1NR3yGO4WnsI8QEMA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=MfrPuI/f c=1 sm=1 tr=0 ts=663bb0eb a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=TpHVaj0NuXgA:10 a=62ePmnuN2cZSMFv3--EA:9 a=3ZKOabzyN94A:10
 X-SEG-SpamProfiler-Score: 0
 x-atlnz-ls: pat
 
-Add documentation for the pwm-initial-duty-cycle and
-pwm-initial-frequency properties. These allow the starting state of the
-PWM outputs to be set to cater for hardware designs where undesirable
-amounts of noise is created by the default hardware state.
+By default the PWM duty cycle in hardware is 100%. On some systems this
+can cause unwanted fan noise. Add the ability to take an initial PWM
+duty cycle and frequency via device properties.
 
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- .../devicetree/bindings/hwmon/adt7475.yaml    | 26 ++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ drivers/hwmon/adt7475.c | 56 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Docum=
-entation/devicetree/bindings/hwmon/adt7475.yaml
-index 051c976ab711..3de300c9da2a 100644
---- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-@@ -51,6 +51,29 @@ properties:
-       enum: [0, 1]
-       default: 1
+diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+index 4224ffb30483..b0c7c1a95897 100644
+--- a/drivers/hwmon/adt7475.c
++++ b/drivers/hwmon/adt7475.c
+@@ -1662,6 +1662,54 @@ static int adt7475_set_pwm_polarity(struct i2c_cli=
+ent *client)
+ 	return 0;
+ }
 =20
-+  adi,pwm-initial-duty-cycle:
-+    description: |
-+      Configures the initial duty cycle for the PWM outputs. The hardwar=
-e
-+      default is 100% but this may cause unwanted fan noise at startup. =
-Set
-+      this to a value from 0 (0% duty cycle) to 255 (100% duty cycle).
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 3
-+    maxItems: 3
-+    items:
-+      minimum: 0
-+      maximum: 255
-+      default: 255
++static int adt7475_set_pwm_initial_freq(struct i2c_client *client)
++{
++	int ret, out, i;
++	u32 freqs[ADT7475_PWM_COUNT];
++	int data;
 +
-+  adi,pwm-initial-frequency:
-+    description: |
-+      Configures the initial frequency for the PWM outputs.
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 3
-+    maxItems: 3
-+    items:
-+      enum: [11, 14, 22, 29, 35, 44, 58, 88, 22500]
-+      default: 35
++	ret =3D device_property_read_u32_array(&client->dev,
++					     "pwm-initial-frequency", freqs,
++					     ARRAY_SIZE(freqs));
++	if (ret)
++		return ret;
 +
- patternProperties:
-   "^adi,bypass-attenuator-in[0-4]$":
-     description: |
-@@ -80,7 +103,6 @@ patternProperties:
-       - therm#
-       - smbalert#
-       - gpio
--
- required:
-   - compatible
-   - reg
-@@ -99,6 +121,8 @@ examples:
-         adi,bypass-attenuator-in0 =3D <1>;
-         adi,bypass-attenuator-in1 =3D <0>;
-         adi,pwm-active-state =3D <1 0 1>;
-+        adi,pwm-initial-duty-cycle =3D <128 0 128>;
-+        adi,pwm-initial-frequency =3D <22500 0 22500>;
-         adi,pin10-function =3D "smbalert#";
-         adi,pin14-function =3D "tach4";
-       };
++	for (i =3D 0; i < ADT7475_PWM_COUNT; i++) {
++		out =3D find_closest(freqs[i], pwmfreq_table, ARRAY_SIZE(pwmfreq_table=
+));
++		data =3D adt7475_read(TEMP_TRANGE_REG(i));
++		if (data < 0)
++			return data;
++		data &=3D ~0xf;
++		data |=3D out;
++
++		ret =3D i2c_smbus_write_byte_data(client, TEMP_TRANGE_REG(i), data);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++static int adt7475_set_pwm_initial_duty(struct i2c_client *client)
++{
++	int ret, i;
++	u32 dutys[ADT7475_PWM_COUNT];
++
++	ret =3D device_property_read_u32_array(&client->dev,
++					     "adi,pwm-initial-duty-cycle", dutys,
++					     ARRAY_SIZE(dutys));
++	if (ret)
++		return ret;
++
++	for (i =3D 0; i < ADT7475_PWM_COUNT; i++) {
++		ret =3D i2c_smbus_write_byte_data(client, PWM_MAX_REG(i), dutys[i] & 0=
+xff);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static int adt7475_probe(struct i2c_client *client)
+ {
+ 	enum chips chip;
+@@ -1778,6 +1826,14 @@ static int adt7475_probe(struct i2c_client *client=
+)
+ 	if (ret && ret !=3D -EINVAL)
+ 		dev_warn(&client->dev, "Error configuring pwm polarity\n");
+=20
++	ret =3D adt7475_set_pwm_initial_freq(client);
++	if (ret)
++		return ret;
++
++	ret =3D adt7475_set_pwm_initial_duty(client);
++	if (ret)
++		return ret;
++
+ 	/* Start monitoring */
+ 	switch (chip) {
+ 	case adt7475:
 --=20
 2.43.2
 
