@@ -1,113 +1,73 @@
-Return-Path: <linux-kernel+bounces-172631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534FD8BF4A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE52A8BF4A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7DA285264
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8601C2342F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0300211CB4;
-	Wed,  8 May 2024 02:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE6411CB4;
+	Wed,  8 May 2024 02:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuiAqF3B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIDOKnkJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4137BEAD0;
-	Wed,  8 May 2024 02:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D452D14A90;
+	Wed,  8 May 2024 02:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715135868; cv=none; b=Yr6/dSBg4s50qkJtcudJQjgUsTYAZV/aAyAZpK0yh/6qsJTiJv+XL1Qi5BC4BanqacLR4zN7j9gfzbpeBj+Ks+fcXNSQUu1k/mQST13gYgW5H/xtvfKisVJ775WPkT11R8Ckdcn11/C4nVvHpA6brbKogeX4MajnGxUNBamGqLc=
+	t=1715135890; cv=none; b=tuy3QlRrQzOnlGY2SXwwulbgL/F8BEpP6aewyS7g6IbjP+6zkO1RknNA3imhI+91vNfYGhZ4bnS2u/doDRtHKbOlYlEpcVc0cxD3501zFSPkf+n5hF9MIRJeAuibcCVP5T5iAOd2LLJA69LBrT8fzxmkD/tyOdw779RzPBkXXTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715135868; c=relaxed/simple;
-	bh=ABIHuAol1RkqvO67SLAalaYd+ekF8teyJLNahtOn3xQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cg/Wt3HQ/khCaNDmteNMArG4bi3fMmHokzcO8aS76Vvl1bcjy3D3nZARv1n9O6eU3bs1XdigiGdrj5n31936tSYbLVErlnO0hnTDwS6KORZpf6HU+TYhMH7pyKinhOxR49/L7gvMiVNk4CvUPUNUcvNvmjRnVww1QGZ+px+3f6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EuiAqF3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8BAC2BBFC;
-	Wed,  8 May 2024 02:37:47 +0000 (UTC)
+	s=arc-20240116; t=1715135890; c=relaxed/simple;
+	bh=dsBL6HgegF48D35JstK0cIlIlZdFApTieo0cYPVr5Ac=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kX5jDdVXgUmbkezxMrPQwX9Je6XEF8s90akLuuZCIL2/uLLxYGlpzEeIwbeKi6FajbnxAw2Mhaod4u1Gijf0oEFRtbDaDX4NfFtnvBkpNlVAK2AlrQn8J0cUSm4jOFbq0EMOMZaJTa8zJJEhvwmRiEX4+ZG/I3MojC0YB+8V9/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIDOKnkJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0ABC2BBFC;
+	Wed,  8 May 2024 02:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715135867;
-	bh=ABIHuAol1RkqvO67SLAalaYd+ekF8teyJLNahtOn3xQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EuiAqF3BdoPrwlz++LYhqIM49/GJvGRGrQQIVXUnAmQxZie7fmk8uEUjCDyMTTazl
-	 5CDNXr0lrGrh8jqEKIfSSN7B7JXDdq+IOq0Or2lxPjIrkH5ZauuRWzXKjoQIrl67UW
-	 1hZ7Qp36DSrxugHVWBWFkUwhM1rCHOg5FSeKaLNRufQI/AnsRJMTHAt+UP72eIn/A7
-	 6OlACuIRdCRjN22ovlMKdx+BC4u6IJq6aMf+2X21mcGBXYnhr570zIKyL5OMnMPbNn
-	 BbfxEHqdbCeknorwM3D2XEp/Yoz3lcDkSjjpYaSyPQyp7x/VMAblhlsxJYf5lMgtcW
-	 V2LEXsiAeDebw==
-Date: Wed, 8 May 2024 11:37:45 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Jeff LaBundy <jeff@labundy.com>, Hans de Goede <hdegoede@redhat.com>,
-	Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
-	Richard Hughes <hughsient@gmail.com>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neil.armstrong@linaro.org
-Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
- and writing touch IC registers
-Message-ID: <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
-References: <20240506114752.47204-1-charles.goodix@gmail.com>
- <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
- <ZjmOUp725QTHrfcT@google.com>
- <Zjo8eTQQS1LvzFgZ@finisterre.sirena.org.uk>
- <ZjpFVGw6PgjRcZY3@nixie71>
- <ZjqYp1oxPPWcF3jW@google.com>
+	s=k20201202; t=1715135890;
+	bh=dsBL6HgegF48D35JstK0cIlIlZdFApTieo0cYPVr5Ac=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HIDOKnkJrbXtr5wXd5qa/3nTHY8MTVQaCBT47zw2bi1QGaHwkpkW+xVOzUHgkFhnb
+	 5aOtKLnMFQy02o2kFA/0daAvjMhFNghFtH3dVhfgsPHAfZjBk+HEakb4xPAkiPvfaF
+	 kfYcwGMdQRgr0ptNia/iVPZj+Qvd2RBlsT3X3EYE1ClGMXj6MIqiY5Biv3ht8WyyLb
+	 ru8joIQlImeO1TwjC6gmVd8YjxDWF5OJe1PWHJ4FoTu986bXv2Ijw6BJet5dasYJ1q
+	 4/YNwI1d/88AXFBwH8g0u2s6BciUoJ4Lv3D4+FKY+dulaYObF0GkhXqtsLENZ2mfiH
+	 rK2wnuyAcqz1g==
+Date: Tue, 7 May 2024 19:38:08 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, Mark
+ Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net v2 1/2] net: ethernet: mediatek: split tx and rx
+ fields in mtk_soc_data struct
+Message-ID: <20240507193808.36a2ba37@kernel.org>
+In-Reply-To: <6747c038f4fc3b490e1b7a355cdaaf361e359def.1715084578.git.daniel@makrotopia.org>
+References: <6747c038f4fc3b490e1b7a355cdaaf361e359def.1715084578.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7rZlMyEu+j77dzs2"
-Content-Disposition: inline
-In-Reply-To: <ZjqYp1oxPPWcF3jW@google.com>
-X-Cookie: Accuracy, n.:
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 7 May 2024 13:24:28 +0100 Daniel Golle wrote:
+> Subject: [PATCH net v2 2/2] net: ethernet: mediatek: use ADMAv1 instead of ADMAv2.0 on
+>  MT7981 and MT7986
 
---7rZlMyEu+j77dzs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, May 07, 2024 at 02:09:59PM -0700, Dmitry Torokhov wrote:
-> On Tue, May 07, 2024 at 10:14:28AM -0500, Jeff LaBundy wrote:
-
-> > For example, many devices must be placed in a bootloader mode during
-> > the FW update, and may clamp or toggle an interrupt pin during this
-> > mode switch. If user space initiates this sequence while the driver is
-> > unaware of this process, it may attempt to read status registers from
-> > an I2C address that is temporarily offline.
-
-> And yet we have i2c-dev and hidraw that are often successfully used to
-> flash the firmware, do diagnostics, etc. without encumbering the kernel.
-
-Yeah, those seem like a reasonable enough model for safer devices - they
-do the exclusion thing so you don't have a real driver running at the
-same time.  For things like PMICs there's some concerns of course.
-
-The other model I've seen used BTW is to expose a MTD device, if the
-device actually looks like a MTD device (perhaps even is just a flash
-that's fairly directly exposed) that minimises the kernel code quite
-well.
-
---7rZlMyEu+j77dzs2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY65XgACgkQJNaLcl1U
-h9BwWAf/UP+aNwRClILavfD13cThg00n7zwWD9uhBnaRChYB9X1iTj6+IoVXwHRW
-gO4qxaTP/uzc+Q4vahodQjkHIe3l3t4pegJ/+BKursC9ACilGMPLuf1KBnJIQRfZ
-i/4n2DqCOVXj7AYTl52TJWwzv85l9b1sbvkhFHRPFTQCNcUWZhL6H7q2XuQJWsTo
-zDHOqqE9vcAEkzPJJEbr1wWfCcJRZ9bE+cHJgNJfXU2izOily6RfiJ9uFcWtaehD
-oHYYdBe6YbnwyPkorEqIRhRTO5D2snGctfbUnfxCmGbIuR8Ob+rIbIxd3siJDu5y
-vb5eJWjLE+iXONTQ3zx6HWctftpcuA==
-=+Mn4
------END PGP SIGNATURE-----
-
---7rZlMyEu+j77dzs2--
+Please repost without the second patch inline after the first :)
 
