@@ -1,148 +1,77 @@
-Return-Path: <linux-kernel+bounces-172693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851B68BF587
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF668BF588
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126641F25E80
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38378282EB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07A61755A;
-	Wed,  8 May 2024 05:14:51 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2E917559;
+	Wed,  8 May 2024 05:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="hxHzpwBa"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21943182C5;
-	Wed,  8 May 2024 05:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8D716419
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715145291; cv=none; b=iv6XLQSoRVqEz4ezY8xBBaoXKcUcDGXerH2xHIZy8utZiub80gWdtR2AQTXbmSQOty5HXGG8wFZzy/PQv1EmicS/5JF9a7kspjB5AeAfKgEJ1dfqDC87h2mksySSqXCGl4GTSl84LP1zG++kzM/M0YOrJpyHZb9fVJFh4q/b9Bc=
+	t=1715145322; cv=none; b=igvlcmSBdnOXZ87SgxrgkCwy8hwIJMmjA7HcMBTR2zev6LJUPyQmn8jNbSrMva6mPulCeJUmVUU630CxPE5jp9J207M9/oesGdO7Pyf0SofMk7IS7jdZg4ioHaXXywWgKl11p1Qv+d0RzkvdtEPx6l1EDhkYd+bpYg1JwhIo+4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715145291; c=relaxed/simple;
-	bh=/YST7JttZYUhFEhxiwIV1PLpBD/c9+ByZTl2gJ9FNTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jZW9qPvK0sxR3Pd4In7sl8swDHUKfnpJSGkEJRbjOvNYz6hQ96B+AZ8exwg/VOdhaSw3tKSOkQ+YUMSyxAgv9S+omH52DBTj56FC1cvTMOMYMird6HdOLEBPCwSOCfHi3wrrNT5+pB0GF+taZfZVMQ9PtDnUZda6dPJcidcWk88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 28390101EB72D;
-	Wed,  8 May 2024 07:14:38 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id A9A594FB157; Wed,  8 May 2024 07:14:37 +0200 (CEST)
-Date: Wed, 8 May 2024 07:14:37 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Esther Shimanovich <eshimanovich@chromium.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-Message-ID: <ZjsKPSgV39SF0gdX@wunner.de>
-References: <CA+Y6NJF6+s5zUZeaWtagpMt8Qu0a1oE+3re3c6EsppH+ZsuMRQ@mail.gmail.com>
- <20240419044945.GR112498@black.fi.intel.com>
- <CA+Y6NJEpWpfPqHO6=Z1XFCXZDUq1+g6EFryB+Urq1=h0PhT+fg@mail.gmail.com>
- <7d68a112-0f48-46bf-9f6d-d99b88828761@amd.com>
- <20240423053312.GY112498@black.fi.intel.com>
- <7197b2ce-f815-48a1-a78e-9e139de796b7@amd.com>
- <20240424085608.GE112498@black.fi.intel.com>
- <CA+Y6NJFyi6e7ype6dTAjxsy5aC80NdVOt+Vg-a0O0y_JsfwSGg@mail.gmail.com>
- <Zi0VLrvUWH6P1_or@wunner.de>
- <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
+	s=arc-20240116; t=1715145322; c=relaxed/simple;
+	bh=CwILteTVVFdjDNg5dCjfA2fIF8UfjEGWlYTGc9Dqf/8=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=B9YRDHiHPzTLYKVXy9/hwHyfAyR2HTGqtqXy3LCRO2dwmQn2/jKy0xZ5uJdCpz95JEQpb43WIttTNQZN1OecY6r3C9SBS3i6KGF0O1fCnvtKVGvAi6dWG+xFeKl/f/gpWKBp1oTVWds6RTjU2SaSeH5Nokxf69TnxEwZ5uyK2vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=hxHzpwBa; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
+	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=T0nX+BOlNNNrGDbMsnqBa7iQmBBTghYYCUKH0RzmnK4=; b=hxHzpwBam2l/L8J7OKIq8TMdi1
+	pvmu+N9HidsatesOBPhl9W8NhBM99Ku1DlyBTf9tzhMnQYdgTlVPNj+/b8Rfj/tGRXlqEK9c4F8N6
+	5Mi4LL/j6N5elYBxyQoZJ7Af8tUoHb8uPTnKcMlm2Bne3iKBb5ZwwJYTlxpLUwk7MVmJtaH0uvCJD
+	ypFiKoG5Xwso2/qldybbu+Nw76g6OIbKz4xtEBiXn19n7maFgkVsJuZtjksgQFhCeqlD/9hx2T8DW
+	xZvb2iDtOPo/br33NkNkYFlQncGmdk6YWUkM5N+bZNab6gnsn3b1Nzrjm4crB25ArK2gd3vOjkVDz
+	7UCXjEQA==;
+Received: from [2a02:fe1:7001:f100:4137:fb70:1484:5def] (port=64842)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <ywe_caerlyn@bit-x.org>)
+	id 1s4Ze4-00DVJA-70
+	for linux-kernel@vger.kernel.org;
+	Wed, 08 May 2024 07:15:12 +0200
+Message-ID: <e3b3b8a8-061b-45e7-95d0-1ff02282247d@bit-x.org>
+Date: Wed, 8 May 2024 07:15:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
+Subject: Bit X; Bit/Bi/IT
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 01, 2024 at 06:23:28PM -0400, Esther Shimanovich wrote:
-> On Sat, Apr 27, 2024 at 3:17AM Lukas Wunner <lukas@wunner.de> wrote:
-> That is correct, when the user-visible issue occurs, no driver is
-> bound to the NHI and XHCI. The discrete JHL chip is not permitted to
-> attach to the external-facing root port because of the security
-> policy, so the NHI and XHCI are not seen by the computer.
+Yes, Bit X, seems much a perfected concept.
 
-Could you rework your patch to only rectify the NHI's and XHCI's
-device properties and leave the bridges untouched?
+Many people wonder about related culture such as Bi, which it is fully 
+compliant with, which many gay follow also. And ofcourse IT which is a 
+related term aswell.
 
-The thunderbolt driver will then rectify the bridge's properties
-using the patches on this branch (particularly the one named
-"thunderbolt: Mark PCIe Adapters on Root Switch as non-removable"):
+I invite everyone to read my summary on https://bit-x.org/BIT/BIT.html 
+which includes a little graphics on my research aswell.
 
-https://github.com/l1k/linux/commits/thunderbolt_associate_v1
-
-This approach keeps most of the code in the thunderbolt driver
-(which has a very clear picture which PCI bridges belong to the
-Host Router and which to Device Routers).  The footprint in the
-PCI core is thus kept minimal, which increases upstream
-acceptability of your patch.
-
-You can match the NHI using DECLARE_PCI_FIXUP_CLASS_FINAL():
-
-* Search for PCI_CLASS_SERIAL_USB_USB4 with class shift 0
-  to match a USB4 Host Interface from any vendor.
-* Seach for PCI_CLASS_SYSTEM_OTHER with class shift 8
-  to match a Thunderbolt 1 to 3 Host Interface.
-  I recommend checking the is_thunderbolt bit on those devices
-  to avoid matching a non-NHI.
-
-Then fixup the device properties of the NHI so that it can bind.
-
-To also rectify the properties of the XHCI, you'd have to use
-pci_upstream_bridge() to find the Downstream Port above, check
-whether that's non-NULL.  The bus on which the Downstream Port
-resides is pdev->bus.  On all Host Routers I know, the XHCI is
-below slot 02.0 on that bus, so you could use pci_get_slot()
-to find that Downstream Port, then use pci_get_slot() again
-to find slot 00.0 on that bridge's subordinate bus.  If that
-device has class PCI_CLASS_SERIAL_USB_XHCI, you've found the
-XHCI and can rectify its properties.  Device references acquired
-with pci_get_*() need to be returned with pci_dev_put().
-
-The quirk should be #ifdef'ed to CONFIG_ACPI.  Alternatively,
-it could be declared in pci-acpi.c near pci_acpi_set_external_facing().
-
-
-> > However that doesn't appear to be sufficient:  I notice that in your
-> > patch, you're also clearing the external_facing bit on the Root Port
-> > above the discrete host controller.
-> 
-> Rajat (rajatja@google.com) in an internal review had suggested I add
-> that, and leave it up to kernel maintainers to decide if it's strictly
-> necessary.
-
-I'd recommend to leave the Root Port's properties untouched
-unless that's necessary.
-
-
-> I don???t have this device available at my office. I just saw that
-> StarTech sells a universal laptop docking station with chipset-id
-> Intel - Alpine Ridge DSL6540. Then I looked up the device, and found
-> it here: https://linux-hardware.org/?id=pci:8086-1577-8086-0000
-> 
-> Therefore, I concluded that the DSL6540 has an NHI component.
-> 
-> If these logs are important, I could probably make a case to purchase
-> that docking station and get the info that you need. Please let me
-> know!
-
-Never mind, this scenario is being tested internally at Intel
-and the above-linked branch contains a commit to avoid binding
-to a Host Interface exposed by a Device Router.
-
-Thanks,
-
-Lukas
+The Light Be With You.
+Ywe.
 
