@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-173531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4B88C01D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:20:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C728C01D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3999E2882FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:20:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31233285F97
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF41129A69;
-	Wed,  8 May 2024 16:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1617012A169;
+	Wed,  8 May 2024 16:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/6te9oQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdK4UBEe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2348A12AADB
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F76F83A19;
+	Wed,  8 May 2024 16:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715185223; cv=none; b=nprc6nBN9wr2rg9b2XJpYIxAycZFAsWtKbP+PoafABmDSYk/I72cecXXSR1nXVAZQ3AnTQH2ipbs95keEc+6h/ZOLVjv9NgeAb311BFkygJ4n0kRDlfnHbuwPTnk/3EppDUHT/dSlgrtksBu3MHRlDAi095np3imUM/y1z1BngQ=
+	t=1715185218; cv=none; b=SJdTn66RZztQnVcjL1GK+qOoUEEuidxWt1fAD2i3DUMlkavLH3BIDyXsPuFo7twU9EcqDx7/EOxqJO+exPDJQdCrPH+42FCIHsWWy4U0+wWwX1ZDFS/nTHVZ5iR3q86EgnY6a1IqUlxkw+aJelDzj9pRSjRZtKIEYp4ZKrhn+3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715185223; c=relaxed/simple;
-	bh=VFTWjNc7CfBH+j1nLVY9KpvEluTYazFHI8P3hoMa65M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lincjjJh8l8ut5t6sIqJVc2fiedEqDjf7s5AK4I9UQ3imjoT+Et/jn0JtpCfHjSF7xjHoFCX0IIKGAM43uM/CU0dDsschiIYv9gyJN5PEUf++mQvh3PrETIRqoSCabJWbweaq6tDhvNUmnR6pJisDCC4Ehk4ZcXrFVHexnwCeVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/6te9oQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC486C113CC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:20:22 +0000 (UTC)
+	s=arc-20240116; t=1715185218; c=relaxed/simple;
+	bh=7Bcs9egzutasXmQ3GODsdhVNrBN1zsWCrT3shblN2JM=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=F9LFIwiIy5IFcUfdXuOx+y+GtGrp4YzfgytRrDLZK3l+zR/+Y/nP1hb5T9F/kpRHh5STszlVJxcmehxIg3Gcv7k8zuWraQ5dwo7WTvSyJO+EMzPq8GrsTUgSXANU3CFk+0fm6ygh53Z5nEZNPEE8NF6NHCxzrv1koZBSO4lGaRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdK4UBEe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9E39C113CC;
+	Wed,  8 May 2024 16:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715185222;
-	bh=VFTWjNc7CfBH+j1nLVY9KpvEluTYazFHI8P3hoMa65M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r/6te9oQEBUQ64u1jGdLmh+nPW01uTSYTe6pkPFJqn2vSSHre79PGFdXPJsgQvIlJ
-	 tQCEPqgcHnczPly1CeGzXOsfeT03PECA6ttd/a7rkEbL0g6SmDyyBXHkAhW+DFP4Da
-	 dDx9Ai4fcjuXzjF58J4Z2fegZBPnFuM7su5ClVVqNfSRzsUq84RT0v/n7lCLIRxuSj
-	 gtX63iJwehZlpnVDt9pzcwIuI56rxakUM6bq1RXgaFBVzvHLOuuyWOMb3UL72FZ4yc
-	 +37e4qBGjKQfu/1Y3wKn6fQ9eKeH9spI+1fuh+0VIBaPfKIwrRd7OxMtMqBhc2azDE
-	 WQ71BClBDR6nA==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5b257462fc1so179250eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 09:20:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV9XzXeQWM09/LavXWWGvn1GivuVu8PzevzN6wTHggflM3BjR8AWkRcwIo+iL9AHPYEWU0+csVlgYWnywONR1r0j51BN2A9pM9wUTLX
-X-Gm-Message-State: AOJu0YzKtiIEBspVfx09KZWVgGRnfHq+2xwRF/vERK2AM2OfiF8C5KMU
-	FJsSkqUGIfqU7Oz1q+OKRFBtUPT9tDyU3vPBesRD62SrYrD8yLW2yas47dBoRiedyYiRrRUFeB8
-	iMGO85YlhNPjt+7g2bQx+0aILlII=
-X-Google-Smtp-Source: AGHT+IGohKM9uTiY3cn/2Db3LYCqThxHpYKA2zM0cCLaTQE+uSugHOwufZZN2WRU8iGn/FY0M6/sUnVRii2rDiARjNI=
-X-Received: by 2002:a05:6820:1f92:b0:5ac:6fc1:c2cb with SMTP id
- 006d021491bc7-5b24caad211mr2874839eaf.0.1715185221956; Wed, 08 May 2024
- 09:20:21 -0700 (PDT)
+	s=k20201202; t=1715185218;
+	bh=7Bcs9egzutasXmQ3GODsdhVNrBN1zsWCrT3shblN2JM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=HdK4UBEeqasVn1Z9Gn+ouAO3JvJmVmtdl++v4Hzvmibx+MGABOUUfOwptnu2av+eO
+	 /Mpj+/zadxpDUBDMuTiYbJ+CdfFNdftsoqN+mrw6FbW3jdXLaLSGcw1pcYY4A+sGkK
+	 Hq2WZkkoVZCwCwqtgM46GE0hBmXcWXkq3K2zzzi+9DXmylBY+QtELrshQWlPDDagem
+	 k3UJN75Vif1TOkRW+WmD+INlP7qFLGOfOIBMbULDsOh99gXZmy+EXb1GpC/TC+IG5J
+	 UMGMnD5c7+lIeV1FmocU45NIUCod+sSWhgJ9TyclaSvLrWpLc3If9mCik8XY57KXoe
+	 91iPEBxTpbNEg==
+Date: Wed, 08 May 2024 11:20:16 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2089edf5-0257-47ec-82b8-ee61c9430241@kernel.org>
-In-Reply-To: <2089edf5-0257-47ec-82b8-ee61c9430241@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 8 May 2024 18:20:10 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ivaEgwvK9hbxPCbDNFLLvB+-oo+t=NgNca3YXfdX2reA@mail.gmail.com>
-Message-ID: <CAJZ5v0ivaEgwvK9hbxPCbDNFLLvB+-oo+t=NgNca3YXfdX2reA@mail.gmail.com>
-Subject: Re: [GIT PULL] devfreq next for 6.10
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Herring <robh+dt@kernel.org>, linux-amlogic@lists.infradead.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+In-Reply-To: <20240508144259.191843-4-jan.dakinevich@salutedevices.com>
+References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
+ <20240508144259.191843-4-jan.dakinevich@salutedevices.com>
+Message-Id: <171518521621.2161709.4756483901685009302.robh@kernel.org>
+Subject: Re: [APPROACH 2 2/2] dt-bindings: clock: meson: Convert
+ axg-audio-clkc to YAML format
 
-Hi,
 
-On Wed, May 8, 2024 at 6:00=E2=80=AFPM Chanwoo Choi <chanwoo@kernel.org> wr=
-ote:
->
-> Dear Rafael,
->
-> This is devfreq-next pull request for v6.10. I add detailed description o=
-f
-> this pull request on the following tag. Please pull devfreq with
-> following updates.
->
-> Best Regards,
-> Chanwoo Choi
->
->
-> The following changes since commit dd5a440a31fae6e459c0d6271dddd628255053=
-61:
->
->   Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/de=
-vfreq-next-for-6.10
->
-> for you to fetch changes up to ccad360a2d415447bd6f0de9e873eec05442d159:
->
->   PM / devfreq: exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions (20=
-24-05-09 00:30:37 +0900)
->
-> ----------------------------------------------------------------
-> Update devfreq next for v6.10
->
-> Detailed description for this pull request:
-> - Convert to platfrom remove callback to .remove_new ops for following dr=
-ivers
-> : exyno-nocp.c/exynos-ppmu.c/mtk-cci-devfreq.c/sun8i-a33-mbus.c/rk3399_dm=
-c.c
->
-> - Use DEFINE_SIMPLE_PM_OPS for exyno-bus.c driver
-> ----------------------------------------------------------------
-> Anand Moon (1):
->       PM / devfreq: exynos: Use DEFINE_SIMPLE_DEV_PM_OPS for PM functions
->
-> Uwe Kleine-K=C3=B6nig (5):
->       PM / devfreq: exynos-nocp: Convert to platform remove callback retu=
-rning void
->       PM / devfreq: exynos-ppmu: Convert to platform remove callback retu=
-rning void
->       PM / devfreq: mtk-cci: Convert to platform remove callback returnin=
-g void
->       PM / devfreq: sun8i-a33-mbus: Convert to platform remove callback r=
-eturning void
->       PM / devfreq: rk3399_dmc: Convert to platform remove callback retur=
-ning void
->
->  drivers/devfreq/event/exynos-nocp.c | 6 ++----
->  drivers/devfreq/event/exynos-ppmu.c | 6 ++----
->  drivers/devfreq/exynos-bus.c        | 9 +++------
->  drivers/devfreq/mtk-cci-devfreq.c   | 6 ++----
->  drivers/devfreq/rk3399_dmc.c        | 6 ++----
->  drivers/devfreq/sun8i-a33-mbus.c    | 6 ++----
->  6 files changed, 13 insertions(+), 26 deletions(-)
+On Wed, 08 May 2024 17:42:59 +0300, Jan Dakinevich wrote:
+> Convert Amlogic AXG Audio Clock Controller binding to yaml.
+> 
+> Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> ---
+>  .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 ------
+>  .../clock/amlogic,axg-audio-clkc.yaml         | 181 ++++++++++++++++++
+>  2 files changed, 181 insertions(+), 59 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> 
 
-Pulled and added to the linux-next branch in linux-pm.git.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks!
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.example.dtb: clock-controller@0: clocks: [[4294967295, 35], [4294967295, 11], [4294967295, 12], [4294967295, 13], [4294967295, 14], [4294967295, 69], [4294967295, 3], [4294967295, 4], [4294967295, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240508144259.191843-4-jan.dakinevich@salutedevices.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
