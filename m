@@ -1,162 +1,186 @@
-Return-Path: <linux-kernel+bounces-173939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E28F8C07EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:43:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC27C8C07EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C9B283FC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A871F21ECB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC8413329F;
-	Wed,  8 May 2024 23:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB73133401;
+	Wed,  8 May 2024 23:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nuLXf9VV"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D221BC40
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BamIr16Q"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7641BC40;
+	Wed,  8 May 2024 23:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715211811; cv=none; b=MOZ1Ijy7He0T6hfeWehSWnDjMJFTXQR3iM2d4atzcX1jzM10lYdLZfqgDSRB2RDNmtW6Tk/riNjSeWWU67P7KSkpRbch+BYZJMv7YfCNV/FsLQIUc8oirABecdx7DUEZHpFkwUzloq1jR2CcI/lljDndljtM+OEsRXASqEP9yGA=
+	t=1715211857; cv=none; b=rHqed0SZ3hEpnjwCSNgJW7owwPASkEvguOlw68cpZMIfH9+ZIP+UdY6Ab52WphG5GQJoaDRq0+lgBOUEfm7z7HwWHhP3pTiF6OzKbvtMsLtrq317Q+JttcSZTi2wBwFz7srJWm0I9SbZzNUasvk9xNoCn4ucMsQqB94kRpKX/9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715211811; c=relaxed/simple;
-	bh=y1HGQWnW087ryWPapOIDF4ENmKxgHtUhDXYwnbKJErw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5neZeKbGMkZizsGzMAUZ3l1VCL/AcD7C7jqZdTZ3htGh8ebxothZ/In3f0fpRqDa1i0upoDLopkoqT/xTA3Jp1CW/iOJZmd9FeESvh5WMWjI6y0KNZoJhHxdoHELapgmFScUh0HNN1e/kSUCGKzueM6gFtuctspXdIPvaEINtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nuLXf9VV; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ecd9a81966so10551015ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:43:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715211809; x=1715816609; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4aOUo+Ox29GhQhR4ZuEuFwhEG4wIeHKCaf3AQBwPEAY=;
-        b=nuLXf9VVy3cdEJc2X0CWWl0m3aKyXQLggY3J6tZjbSZkNN3zqtvULVXqQlaAV1mGuV
-         kHul54MHVfiTswM2HR/n0KVStc/Q+9AYO1/xJa6NhHBZ+WWS8qJS2NyX6mVu4wRjsSX4
-         MS7HlviY2mkWBiJP1nhq97eUqhys+SzQM2hb0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715211809; x=1715816609;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4aOUo+Ox29GhQhR4ZuEuFwhEG4wIeHKCaf3AQBwPEAY=;
-        b=aNyJnmHWJgsBd9AIxHLZq48NsUlFPvV5ZVxAVoWul69P7k/T1IXinY8BcoQLkuPADp
-         LfM0r5ullP/sU6XJX2R+A0IkajFJGV/QuOQJYRgk9Bmps2obonZAdq8fMKPBFLiLRG8o
-         CVE+VwgbVOXJCwF2dtru3l4r+LBUZ7gMOPmKVkNbWUqDydvDobuhAbILt/NI88ONwEEv
-         ntgRuWE8jWrdM3obHA2knc1eOr3D4udM2D4A0XVj6dCMhZeOOZqDG3Lg3+7E6zUeBsa3
-         sintD22F21seDk29wDwoj2hjf84LTIQY4raoYCugvZqP4SN0GX/h6KEhxF1fZ3w43aF5
-         5QvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpuTxrQsMFef6oFDOi2itMeacUK74qCxc3dCss688e1PFbxtj3kgoJzSmvlibe3/p6eI5pe+JEz3Vn37idWuJIC7h+EZz6PQf0I/k3
-X-Gm-Message-State: AOJu0Yx30TlC/zVG0Aj0RcaQ4Q0hOBreXUoZXLTKXuSn2NEZkwSSDtgs
-	DLoz3zwVq8GRIXGrUVVV2gsPmYrqI7TDTEQMdk9yH3ufauT2MYwdz3zBb764mw==
-X-Google-Smtp-Source: AGHT+IF8F9eYSrfhWch2mudjIXjyH4c0O/q8Qefji8NxXLaBVZvd08ca3pmytlTZPjibFtmrd/seMA==
-X-Received: by 2002:a17:903:32cf:b0:1e0:ab65:85e5 with SMTP id d9443c01a7336-1eef9f4181fmr16879805ad.1.1715211809118;
-        Wed, 08 May 2024 16:43:29 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30b22sm1013945ad.180.2024.05.08.16.43.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 16:43:28 -0700 (PDT)
-Date: Wed, 8 May 2024 16:43:27 -0700
-From: Kees Cook <keescook@chromium.org>
-To: David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <202405081035.6B1A791B@keescook>
-References: <202404291502.612E0A10@keescook>
- <e777a057e8d246efbc90381c2988b9b2@AcuMS.aculab.com>
+	s=arc-20240116; t=1715211857; c=relaxed/simple;
+	bh=ktC2fvamxrSMpcKsCts4msoVkWQf/rwHIzfIq7Bihbk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O+44raY71/3q07LjqxAz0z9Hh6Y+CxxEFwULehE1vLSGZiy66dX8Je0Sl1R2SVJNaSYHdFPiJwdnh/AUQsgmMCbnY1zuq5LVYQmCUBKfS6U7zxe5esiQvywXGvXggluuXKbDU2OlgnHOE7G1HvOb4LuaskLSd5fYKC8TXhuQEcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BamIr16Q; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from rrs24-12-35.corp.microsoft.com (unknown [131.107.1.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3B9FE20B2C80;
+	Wed,  8 May 2024 16:44:15 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B9FE20B2C80
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715211855;
+	bh=DF7oas6Ze/ofrM1Ufk53x5tUhtGT0vgqHoDJGFpQ8Bo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BamIr16Q6J0BggUhKZgYCrBfWOqQ7WiMRcdSaKL/3Kj50NloboDKEPh1xJpU900eZ
+	 /Isdi3ZIUvvUxmPiTLnIJZlI6rDVQkOrdoH1OieQ87HFPVSobJcZIhpDnb8ghfM8Db
+	 03A4cc1HbTX2IZcg6Fl4JzD+EmjsCgzm59tavtUw=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+To: 
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	intel-gfx@lists.freedesktop.org (open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS),
+	intel-xe@lists.freedesktop.org (open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS),
+	linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM HOST DRIVERS),
+	linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER),
+	Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH v3 0/6] Make I2C terminology more inclusive for I2C Algobit and consumers
+Date: Wed,  8 May 2024 23:43:36 +0000
+Message-Id: <20240508234342.2927398-1-eahariha@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e777a057e8d246efbc90381c2988b9b2@AcuMS.aculab.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 08, 2024 at 12:22:38PM +0000, David Laight wrote:
-> Have you estimated the performance cost of checking the result of
-> all integer arithmetic.
+I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
+with more appropriate terms. Inspired by and following on to Wolfram's
+series to fix drivers/i2c/[1], fix the terminology for users of the
+I2C_ALGOBIT bitbanging interface, now that the approved verbiage exists
+in the specification.
 
-I hadn't included that in my already very long email as performance is
-somewhat secondary to the correctness goals. Perhaps that was a mistake,
-as it is going to be everyone's first question anyway. :) But yes,
-I did have an initial analysis:
+Compile tested, no functionality changes intended
+
+Please chime in with your opinions and suggestions.
+
+This series is based on v6.9-rc7
+
+[1]: https://lore.kernel.org/all/20240322132619.6389-1-wsa+renesas@sang-engineering.com/
+----
+
+changelog:
+v2->v3:
+- v2 link: https://lore.kernel.org/all/20240503181333.2336999-1-eahariha@linux.microsoft.com/
+- Drop drivers/media patches [Mauro]
+- Pick up Acked-by Alex (modulo typo correction, hope you don't mind) [amdgpu, radeon]
+- Pick up Acked-by Thomas [smscufx, viafb]
+- Revert eDP change in drm/i915 [Jani, Rodrigo, Andi]
+
+v1->v2:
+- v1 link: https://lore.kernel.org/all/20240430173812.1423757-1-eahariha@linux.microsoft.com/ 
+- Switch to specification verbiage master->controller, slave->target,
+  drop usage of host/client [Thomas]
+- Pick up Reviewed-bys and Acked-bys from Rodrigo, Zhi, and Thomas [gma500, i915]
+- Fix up some straggler master/slave terms in amdgpu, cx25821, ivtv,
+  cx23885
+
+v0->v1:
+- v0 link: https://lore.kernel.org/all/20240329170038.3863998-1-eahariha@linux.microsoft.com/
+- Drop drivers/infiniband patches [Leon, Dennis]
+- Switch to specification verbiage master->controller, slave->target,
+  drop usage of client [Andi, Ville, Jani, Christian]
+- Add I3C specification version in commit messages [Andi]
+- Pick up Reviewed-bys from Martin and Simon [sfc]
+- Drop i2c/treewide patch to make this series independent from Wolfram's
+  ([1]) [Wolfram]
+- Split away drm/nouveau patch to allow expansion into non-I2C
+  non-inclusive terms
+----
+
+Easwar Hariharan (6):
+  drm/amdgpu, drm/radeon: Make I2C terminology more inclusive
+  drm/gma500: Make I2C terminology more inclusive
+  drm/i915: Make I2C terminology more inclusive
+  sfc: falcon: Make I2C terminology more inclusive
+  fbdev/smscufx: Make I2C terminology more inclusive
+  fbdev/viafb: Make I2C terminology more inclusive
+
+ .../gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c  |  8 ++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_i2c.c       | 10 +++----
+ drivers/gpu/drm/amd/amdgpu/atombios_i2c.c     |  8 ++---
+ drivers/gpu/drm/amd/amdgpu/atombios_i2c.h     |  2 +-
+ drivers/gpu/drm/amd/amdgpu/smu_v11_0_i2c.c    | 20 ++++++-------
+ .../gpu/drm/amd/display/dc/bios/bios_parser.c |  2 +-
+ .../drm/amd/display/dc/bios/bios_parser2.c    |  2 +-
+ .../drm/amd/display/dc/core/dc_link_exports.c |  4 +--
+ drivers/gpu/drm/amd/display/dc/dc.h           |  2 +-
+ drivers/gpu/drm/amd/display/dc/dce/dce_i2c.c  |  4 +--
+ .../display/include/grph_object_ctrl_defs.h   |  2 +-
+ drivers/gpu/drm/amd/include/atombios.h        |  2 +-
+ drivers/gpu/drm/amd/include/atomfirmware.h    | 26 ++++++++--------
+ .../powerplay/hwmgr/vega20_processpptables.c  |  4 +--
+ .../amd/pm/powerplay/inc/smu11_driver_if.h    |  2 +-
+ .../inc/pmfw_if/smu11_driver_if_arcturus.h    |  2 +-
+ .../inc/pmfw_if/smu11_driver_if_navi10.h      |  2 +-
+ .../pmfw_if/smu11_driver_if_sienna_cichlid.h  |  2 +-
+ .../inc/pmfw_if/smu13_driver_if_aldebaran.h   |  2 +-
+ .../inc/pmfw_if/smu13_driver_if_v13_0_0.h     |  2 +-
+ .../inc/pmfw_if/smu13_driver_if_v13_0_7.h     |  2 +-
+ .../gpu/drm/amd/pm/swsmu/smu11/arcturus_ppt.c |  4 +--
+ .../amd/pm/swsmu/smu11/sienna_cichlid_ppt.c   |  8 ++---
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c       |  2 +-
+ drivers/gpu/drm/gma500/intel_bios.c           | 22 +++++++-------
+ drivers/gpu/drm/gma500/intel_bios.h           |  4 +--
+ drivers/gpu/drm/gma500/intel_gmbus.c          |  2 +-
+ drivers/gpu/drm/gma500/psb_drv.h              |  2 +-
+ drivers/gpu/drm/gma500/psb_intel_drv.h        |  2 +-
+ drivers/gpu/drm/gma500/psb_intel_lvds.c       |  4 +--
+ drivers/gpu/drm/gma500/psb_intel_sdvo.c       | 26 ++++++++--------
+ drivers/gpu/drm/i915/display/dvo_ch7017.c     | 14 ++++-----
+ drivers/gpu/drm/i915/display/dvo_ch7xxx.c     | 18 +++++------
+ drivers/gpu/drm/i915/display/dvo_ivch.c       | 16 +++++-----
+ drivers/gpu/drm/i915/display/dvo_ns2501.c     | 18 +++++------
+ drivers/gpu/drm/i915/display/dvo_sil164.c     | 18 +++++------
+ drivers/gpu/drm/i915/display/dvo_tfp410.c     | 18 +++++------
+ drivers/gpu/drm/i915/display/intel_bios.c     | 22 +++++++-------
+ .../gpu/drm/i915/display/intel_display_core.h |  2 +-
+ drivers/gpu/drm/i915/display/intel_dsi.h      |  2 +-
+ drivers/gpu/drm/i915/display/intel_dsi_vbt.c  | 20 ++++++-------
+ drivers/gpu/drm/i915/display/intel_dvo.c      | 14 ++++-----
+ drivers/gpu/drm/i915/display/intel_dvo_dev.h  |  2 +-
+ drivers/gpu/drm/i915/display/intel_gmbus.c    |  4 +--
+ drivers/gpu/drm/i915/display/intel_sdvo.c     | 30 +++++++++----------
+ drivers/gpu/drm/i915/display/intel_vbt_defs.h |  4 +--
+ drivers/gpu/drm/i915/gvt/edid.c               | 28 ++++++++---------
+ drivers/gpu/drm/i915/gvt/edid.h               |  4 +--
+ drivers/gpu/drm/i915/gvt/opregion.c           |  2 +-
+ drivers/gpu/drm/radeon/atombios.h             | 16 +++++-----
+ drivers/gpu/drm/radeon/atombios_i2c.c         |  4 +--
+ drivers/gpu/drm/radeon/radeon_combios.c       | 28 ++++++++---------
+ drivers/gpu/drm/radeon/radeon_i2c.c           | 10 +++----
+ drivers/gpu/drm/radeon/radeon_mode.h          |  6 ++--
+ drivers/net/ethernet/sfc/falcon/falcon.c      |  2 +-
+ drivers/video/fbdev/smscufx.c                 |  4 +--
+ drivers/video/fbdev/via/chip.h                |  8 ++---
+ drivers/video/fbdev/via/dvi.c                 | 24 +++++++--------
+ drivers/video/fbdev/via/lcd.c                 |  6 ++--
+ drivers/video/fbdev/via/via_aux.h             |  2 +-
+ drivers/video/fbdev/via/via_i2c.c             | 12 ++++----
+ drivers/video/fbdev/via/vt1636.c              |  6 ++--
+ 62 files changed, 275 insertions(+), 275 deletions(-)
 
 
-Performance Considerations
-==========================
-Adding arithmetic overflow checks, regardless of implementation,
-will add more cycles. The good news is that the overflow outcome can
-be pessimized, and checking the overflow bit on most architectures is
-extraordinarily fast. Regardless, for many Linux deployments, the cost
-of this correctness is seen as acceptable, though all users will benefit
-from the fixing of bugs that the mitigation will find.
-
-Looking specifically at proposal #1 below, we can do some estimations. For
-a defconfig+kvm+FORTIFY config on v6.9-rc2 x86_64, the signed integer
-overflow (SIO) checking is added in 21,552 places. The unsigned integer
-overflow (UIO) checking is around 55,000 (though I would expect a good
-portion of these to be eliminated as they are shown to be "wrap-around
-expected"). Running with SIO enabled is mostly flawless, though a long
-tail of false positives is expected. Running with UIO is not ready for
-general consumption, and performing benchmarking there is not going to
-give useful numbers. However, we can at least attempt to extrapolate from
-an SIO build how a full SIO+UIO build would behave. For example, based
-on instance counts, we could maybe assume SIO+UIO to be ~3x compared to
-SIO. This could easily be an over or under estimation, though. Regardless,
-some rough draft comparisons:
-
-Image size
-       Stock	60197540
-    SIO,warn	60299436 +0.169%
-    SIO,trap    60195567 -0.003% (trap mode probably found code to drop)
-
-Kernel build 10x benchmark	Avg(s)		Std Dev
-                     Stock	439.58		1.68
-                  SIO,warn	444.20 (+1.00%)	1.35
-                  SIO,trap      442.10 (+0.57%) 1.52
-
-> If you have a cpu with 'signed/unsigned add(etc) with trap on overflow'
-> instructions then maybe you could use them to panic the kernel.
-> But otherwise you'll need a conditional branch after pretty much
-> every arithmetic instruction.
-
-Yes. This would be true for any implementation. Thankfully in some
-places where bounds checking has already happened manually, the added
-instrumentation checks will have been optimized away. But yes, turning
-such a mitigation on isn't without impact. :) But a significant install
-base is interested in correctness within a reasonable performance
-budget. And some will take correctness over all other considerations.
-
-> As well as the code bloat there is likely to be a 50% chance they
-> are mis-predicted slowing things down a lot more.
-> IIRC at least some x86 cpu do not default to static prediction (eg
-> backwards taken forwards not) but always use data from the branch
-> prediction logic - so the first time a branch is seen it is predicted
-> randomly.
-
-Sure, though I think the nuances of CPU design are somewhat tangential
-to the overall topic: how do we provide a way for Linux to gain this
-correctness coverage? It's accepted that there will be a non-trivial
-impact, and I agree we can start to consider how to optimize
-implementations. But for now I'd like to solve for how to even represent
-arithmetic overflow intent at the source level.
-
--Kees
-
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
 -- 
-Kees Cook
+2.34.1
+
 
