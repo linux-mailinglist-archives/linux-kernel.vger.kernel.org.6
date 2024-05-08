@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-173759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50E78C04F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A90B8C0500
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C283285EBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C17283726
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E974A131184;
-	Wed,  8 May 2024 19:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF350130E20;
+	Wed,  8 May 2024 19:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Vf1rcuPT"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="uDgDcuRt"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDCC130E2B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 19:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF41C130AFC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 19:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715196407; cv=none; b=LuxMH5iUOUimwiWDa7J15oOOXpsS+W7v+UI8iXUbq/MTJovZ1ru+KUVoJGkm/Y/u7/TmH1FHLAaQ3cHu5KxPFxmZrsqWcK2OgDEOtDmzp9g7hk9NcWKGgH2P7RPcLSOc/cya7LdB+cfBVRqp1ObEo0qVPwNAUf6VM+QkBdAav4Q=
+	t=1715196468; cv=none; b=Q7qnY4U4P8d3MH2XJDkZJEj8l6eudTj3/FVksb/h60W2Tld4cLxfPM3Za2/JvGHvivDFYpIppcx5hdeu/JNq1107SyIFxsejwiewv1YRS7J1TN8fcsDukP8NeInOi8O41EnOSa1/QrEN3nSbWBwLaFp9LaWGMscMn0ARJo+oD54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715196407; c=relaxed/simple;
-	bh=QAMm7iDD+RVBgL6xWmp2oKGGqUu8F8yMrpYtOKhCup4=;
+	s=arc-20240116; t=1715196468; c=relaxed/simple;
+	bh=fOzCgUszZM7Ia/o3+z4qKk//tXf0jL7dlyhhquBMlIU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ngIDdABb2JEO/n0RyJDYiQTiqcoC+3yS08r3pOVrBzepQcM0+LQ+JSOpQLZbEYzLqDTaJsaKRSxahuj1ni1YgAef9wYsxGgGSrdUqD84kncPIrnYUNgkt7c+5U9p/Jw1EL7Mxp+XIXTNtox1hl37uwCkvQFdQh5mQAlJ2e/Mun4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Vf1rcuPT; arc=none smtp.client-ip=209.85.221.50
+	 MIME-Version; b=l4rcvY+uuPzAvf0V8vr0fjSidm0BxHIkwyWaed4pjfw8bqTtc++/Xco738/NqStpLboyaSnJ9L1pzdqs5WPfA1bm123K8Rlr88PZb5DFynrw1UMWcWipmYpOlveVyKtSek9FO+vk4mTGd9TS0GaMSU+uHUlJhmOL2hWts4m0j+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=uDgDcuRt; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-34d99ec52e1so25837f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 12:26:45 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41ebcf01013so899265e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 12:27:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715196404; x=1715801204; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715196465; x=1715801265; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7NXxlYw1RM9+WdFNtDaqsh0kbg9AU8PQDaN/vzezo7A=;
-        b=Vf1rcuPT6YthWxYLpMow8FQkLZ4hfLIwlRMMpix+rec3eLkd53bePAfi8LRrG9B54k
-         /bBRyveG9AweqpHzqf3gQQ6psbw7JelZpsV0lfgYQ0sh5dPwyKOYhyb542mp0wkON2ya
-         NL3Lv2uIv6rjX3YUWGgxVgUz1VoYk57cxQzmzVnQbpZrYWfZHLAz4BfTw7fhAZILZaa4
-         n/aIVDlJ9oWhXwmVUTSDzxY5ZDbug/y+B8vaJPHVOPkA1lUQC+mdfd+sYsgIU+EzEgnh
-         1o48/3cC91GTdsNKtcTGlhWjhy0D1sVAkfbbPBsBQLVIF6QHjjOp9FgnH34K8KpngZ7L
-         iYmA==
+        bh=jcfQWqIQyCa6XQTZ9KciN3KqArzYv/m686IwSCSxNEA=;
+        b=uDgDcuRtTvm9m3D+w86APkoYdhYqkvs6RxZh4OeLBg18aFyr23xmNblQ8aApDQ6PXg
+         Dl6ARNN9s2UQb/Gu94FASDY/ISLfl+e4u1JrjwAZE4+k6ubUr0/ALvNq5SbkZtZG3C1H
+         Xm/GcjWUhiLGVWaurHbONDYNeM5FuCabausMVIj+4sVe9skWpam5XFYYpICr2S9eAurs
+         LdY3qAC8kqFx8p6kkmCez6RVJjB9FO/NEseDzvPmveDC1v5PswWcq0VNUv0iHjNr4Szk
+         kYoKQ864g20JH2q+bTpoRpY/tf1CfFbVAtTyu0Fq6fzoX46FI72n9wqLhW8SkCf7V5cc
+         l69A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715196404; x=1715801204;
+        d=1e100.net; s=20230601; t=1715196465; x=1715801265;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7NXxlYw1RM9+WdFNtDaqsh0kbg9AU8PQDaN/vzezo7A=;
-        b=F9jY/GjenuIXY6AUDFBsTY2Bdtw1+uXl6A+mBA+m5Cn86qDOb/FmFBUtxGNfObI0dx
-         /YxB9yWtv9GmD0Vq+04MxmPfTbDWRsw6kD3ufU6owuvgOC57jSN+kGaUqIbHPJhsui7W
-         jOZSijF24cjy8ElP3Hl+nizefKhAwUy66YyhUKfP5zgAP/JI0RT5u6yE8Z0esWHuLqxX
-         97MkwfURALJUBC5I/a3sSbIE3ZobmGfJV8cFNvmNiYZjnCSmUGC31rugqOZd/XhY6gfd
-         +gLJ3jGDAelZREMdk/ZC4dv8Q7JKmCZjZsOBAa7T2nFVy+QKe85zX/Q5rv4ZbzHDda7N
-         LA4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVnrTgTItdqMe0zdL0RZcdkrzacLpBHyMo6dQTJQT+rWmWZYWe6ko/SkLqXO3ghares3NFYu9jtK6o6apG2mceCsLyLgIT+QaS5GpVI
-X-Gm-Message-State: AOJu0Yxx2mzF4cCZNnJa+K6oSEcX3a3qOqMg4y2QE1MQFkGeZ0m0NiUK
-	kdA2rlOFhnHNbrTyvbBWRe3w0DkvRpZFWo6f8VWp0zv+b3vJfAB+zstNaxbU22U=
-X-Google-Smtp-Source: AGHT+IGACzzezThLxVMxwcYVQ6pqU/BhrbSjplAZdXD5UPpMsvfoJ1LwcNLet4jFhPFrbMRRJqyyWw==
-X-Received: by 2002:a5d:4522:0:b0:34c:bb79:452b with SMTP id ffacd0b85a97d-34fca62159dmr2733749f8f.52.1715196403826;
-        Wed, 08 May 2024 12:26:43 -0700 (PDT)
+        bh=jcfQWqIQyCa6XQTZ9KciN3KqArzYv/m686IwSCSxNEA=;
+        b=mx/v1WdqXETF8ePlIW7TVYuYR0nRmB9E/l8zlTcQGOkWLT4DbCou9nWr5VlrDa6pXO
+         DrZU1GE03kbA9gCnZd312xuWQDX/WRI1GfuU9aO8jGuo96qfAdY6e4b0zNDkC8omQ/R/
+         D+p8E/U69ztHsdIySkMbuPeOx/d92lmXMpP8Q8sxFnfD9T80asVq/Y5IFV33I0u70G+X
+         9sfblU1g1Ouv0rXpeEu9xaFs66WQjkMspQ/Qz9dhKVM1jNsgRPBMyDTUaIPalHOMsRNd
+         w8LPndyHcGMA3tsQ2RlEVfTxjvEteARE0ebcpE63NKBkfjLoPLTvem2nrthWNXbMz5hE
+         VAng==
+X-Forwarded-Encrypted: i=1; AJvYcCUqEa9WHmvFT/ly6T2PqTiAUDpDnqU9GSTLAXF4H7GQqmdhqIYILpcyRLJzMxsFHrrAj6AyK//hpWUNzJqojsyiQq/Njag3lWCgCw07
+X-Gm-Message-State: AOJu0YzSPP3mvzVF69yl8F0yZpF6t8U3PExh3POVYd+yenadycepWJvp
+	U2WB6/7LMbhV6WNLg0BjBeYsnNtAI+Qw22dZLF6VjF61T6ohWOgRMokN3tMcUuc=
+X-Google-Smtp-Source: AGHT+IG713uLBQWbwM0MRsX1LOPSAYD3hwSeYc9+OS0/mfL1VayM0FBzmqDZCPlWciEj7G1Kaomx7g==
+X-Received: by 2002:a05:600c:3103:b0:41b:f43b:e263 with SMTP id 5b1f17b1804b1-41fbc12bdcbmr5274575e9.0.1715196465070;
+        Wed, 08 May 2024 12:27:45 -0700 (PDT)
 Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id o16-20020adfcf10000000b0034b1bd76d30sm15921429wrj.28.2024.05.08.12.26.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87c24f8fsm33175985e9.15.2024.05.08.12.27.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 12:26:43 -0700 (PDT)
+        Wed, 08 May 2024 12:27:44 -0700 (PDT)
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
 To: Ryan Roberts <ryan.roberts@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
@@ -92,9 +92,9 @@ To: Ryan Roberts <ryan.roberts@arm.com>,
 	kvm-riscv@lists.infradead.org,
 	linux-mm@kvack.org
 Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH 07/12] mm, riscv, arm64: Use common ptep_get_and_clear() function
-Date: Wed,  8 May 2024 21:19:26 +0200
-Message-Id: <20240508191931.46060-8-alexghiti@rivosinc.com>
+Subject: [PATCH 08/12] mm, riscv, arm64: Use common ptep_test_and_clear_young() function
+Date: Wed,  8 May 2024 21:19:27 +0200
+Message-Id: <20240508191931.46060-9-alexghiti@rivosinc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240508191931.46060-1-alexghiti@rivosinc.com>
 References: <20240508191931.46060-1-alexghiti@rivosinc.com>
@@ -106,84 +106,230 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make riscv use the contpte aware ptep_get_and_clear() function from arm64.
+Make riscv use the contpte aware ptep_test_and_clear_young() function from
+arm64.
 
 Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/arm64/include/asm/pgtable.h | 8 ++------
- arch/riscv/include/asm/pgtable.h | 7 +++++--
- mm/contpte.c                     | 8 ++++++++
- 3 files changed, 15 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/pgtable.h | 14 ++----------
+ arch/arm64/mm/contpte.c          | 25 --------------------
+ arch/riscv/include/asm/pgtable.h | 12 ++++++----
+ arch/riscv/kvm/mmu.c             |  2 +-
+ arch/riscv/mm/pgtable.c          |  2 +-
+ include/linux/contpte.h          |  2 ++
+ mm/contpte.c                     | 39 ++++++++++++++++++++++++++++++++
+ 7 files changed, 53 insertions(+), 43 deletions(-)
 
 diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 74e582f2884f..ff7fe1d9cabe 100644
+index ff7fe1d9cabe..9a8702d1ad00 100644
 --- a/arch/arm64/include/asm/pgtable.h
 +++ b/arch/arm64/include/asm/pgtable.h
-@@ -1473,12 +1473,8 @@ static inline pte_t get_and_clear_full_ptes(struct mm_struct *mm,
- }
- 
- #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
--static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
--				unsigned long addr, pte_t *ptep)
--{
--	contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
--	return __ptep_get_and_clear(mm, addr, ptep);
--}
-+extern pte_t ptep_get_and_clear(struct mm_struct *mm,
-+				unsigned long addr, pte_t *ptep);
+@@ -1389,8 +1389,6 @@ extern void contpte_clear_full_ptes(struct mm_struct *mm, unsigned long addr,
+ extern pte_t contpte_get_and_clear_full_ptes(struct mm_struct *mm,
+ 				unsigned long addr, pte_t *ptep,
+ 				unsigned int nr, int full);
+-extern int contpte_ptep_test_and_clear_young(struct vm_area_struct *vma,
+-				unsigned long addr, pte_t *ptep);
+ extern int contpte_ptep_clear_flush_young(struct vm_area_struct *vma,
+ 				unsigned long addr, pte_t *ptep);
+ extern void contpte_wrprotect_ptes(struct mm_struct *mm, unsigned long addr,
+@@ -1477,16 +1475,8 @@ extern pte_t ptep_get_and_clear(struct mm_struct *mm,
+ 				unsigned long addr, pte_t *ptep);
  
  #define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
- static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+-static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+-				unsigned long addr, pte_t *ptep)
+-{
+-	pte_t orig_pte = __ptep_get(ptep);
+-
+-	if (likely(!pte_valid_cont(orig_pte)))
+-		return __ptep_test_and_clear_young(vma, addr, ptep);
+-
+-	return contpte_ptep_test_and_clear_young(vma, addr, ptep);
+-}
++extern int ptep_test_and_clear_young(struct vm_area_struct *vma,
++				unsigned long addr, pte_t *ptep);
+ 
+ #define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
+ static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
+diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+index 5e9e40145085..9bf471633ca4 100644
+--- a/arch/arm64/mm/contpte.c
++++ b/arch/arm64/mm/contpte.c
+@@ -45,31 +45,6 @@ pte_t contpte_get_and_clear_full_ptes(struct mm_struct *mm,
+ }
+ EXPORT_SYMBOL_GPL(contpte_get_and_clear_full_ptes);
+ 
+-int contpte_ptep_test_and_clear_young(struct vm_area_struct *vma,
+-					unsigned long addr, pte_t *ptep)
+-{
+-	/*
+-	 * ptep_clear_flush_young() technically requires us to clear the access
+-	 * flag for a _single_ pte. However, the core-mm code actually tracks
+-	 * access/dirty per folio, not per page. And since we only create a
+-	 * contig range when the range is covered by a single folio, we can get
+-	 * away with clearing young for the whole contig range here, so we avoid
+-	 * having to unfold.
+-	 */
+-
+-	int young = 0;
+-	int i;
+-
+-	ptep = arch_contpte_align_down(ptep);
+-	addr = ALIGN_DOWN(addr, CONT_PTE_SIZE);
+-
+-	for (i = 0; i < CONT_PTES; i++, ptep++, addr += PAGE_SIZE)
+-		young |= __ptep_test_and_clear_young(vma, addr, ptep);
+-
+-	return young;
+-}
+-EXPORT_SYMBOL_GPL(contpte_ptep_test_and_clear_young);
+-
+ int contpte_ptep_clear_flush_young(struct vm_area_struct *vma,
+ 					unsigned long addr, pte_t *ptep)
+ {
 diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 41534f4b8a6d..03cd640137ed 100644
+index 03cd640137ed..d39cb24c6c4a 100644
 --- a/arch/riscv/include/asm/pgtable.h
 +++ b/arch/riscv/include/asm/pgtable.h
-@@ -794,6 +794,9 @@ extern void set_pte(pte_t *ptep, pte_t pte);
- #define set_pte set_pte
- extern void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
- #define pte_clear pte_clear
-+#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
-+extern pte_t ptep_get_and_clear(struct mm_struct *mm,
-+				unsigned long addr, pte_t *ptep);
+@@ -739,8 +739,7 @@ static inline void __pte_clear(struct mm_struct *mm,
+ 
+ extern int __ptep_set_access_flags(struct vm_area_struct *vma, unsigned long address,
+ 				   pte_t *ptep, pte_t entry, int dirty);
+-#define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG	/* defined in mm/pgtable.c */
+-extern int ptep_test_and_clear_young(struct vm_area_struct *vma, unsigned long address,
++extern int __ptep_test_and_clear_young(struct vm_area_struct *vma, unsigned long address,
+ 				     pte_t *ptep);
+ 
+ static inline pte_t __ptep_get_and_clear(struct mm_struct *mm,
+@@ -778,7 +777,7 @@ static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
+ 	 * shouldn't really matter because there's no real memory
+ 	 * pressure for swapout to react to. ]
+ 	 */
+-	return ptep_test_and_clear_young(vma, address, ptep);
++	return __ptep_test_and_clear_young(vma, address, ptep);
+ }
+ 
+ #ifdef CONFIG_THP_CONTPTE
+@@ -797,6 +796,9 @@ extern void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
+ #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+ extern pte_t ptep_get_and_clear(struct mm_struct *mm,
+ 				unsigned long addr, pte_t *ptep);
++#define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
++extern int ptep_test_and_clear_young(struct vm_area_struct *vma,
++				     unsigned long addr, pte_t *ptep);
  
  #else /* CONFIG_THP_CONTPTE */
  
-@@ -801,11 +804,11 @@ extern void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
- #define set_ptes		__set_ptes
- #define set_pte			__set_pte
+@@ -806,6 +808,8 @@ extern pte_t ptep_get_and_clear(struct mm_struct *mm,
  #define pte_clear		__pte_clear
-+#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
-+#define ptep_get_and_clear	__ptep_get_and_clear
+ #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+ #define ptep_get_and_clear	__ptep_get_and_clear
++#define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
++#define ptep_test_and_clear_young	__ptep_test_and_clear_young
  
  #endif /* CONFIG_THP_CONTPTE */
  
--#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
--#define ptep_get_and_clear	__ptep_get_and_clear
- #define __HAVE_ARCH_PTEP_SET_ACCESS_FLAGS
- #define ptep_set_access_flags	__ptep_set_access_flags
- #define __HAVE_ARCH_PTEP_SET_WRPROTECT
+@@ -987,7 +991,7 @@ static inline int pmdp_set_access_flags(struct vm_area_struct *vma,
+ static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
+ 					unsigned long address, pmd_t *pmdp)
+ {
+-	return ptep_test_and_clear_young(vma, address, (pte_t *)pmdp);
++	return __ptep_test_and_clear_young(vma, address, (pte_t *)pmdp);
+ }
+ 
+ #define __HAVE_ARCH_PMDP_HUGE_GET_AND_CLEAR
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index 1ee6139d495f..554926e33760 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -585,7 +585,7 @@ bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+ 				   &ptep, &ptep_level))
+ 		return false;
+ 
+-	return ptep_test_and_clear_young(NULL, 0, ptep);
++	return __ptep_test_and_clear_young(NULL, 0, ptep);
+ }
+ 
+ bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
+diff --git a/arch/riscv/mm/pgtable.c b/arch/riscv/mm/pgtable.c
+index 5756bde9eb42..5f31d0594109 100644
+--- a/arch/riscv/mm/pgtable.c
++++ b/arch/riscv/mm/pgtable.c
+@@ -18,7 +18,7 @@ int __ptep_set_access_flags(struct vm_area_struct *vma,
+ 	return true;
+ }
+ 
+-int ptep_test_and_clear_young(struct vm_area_struct *vma,
++int __ptep_test_and_clear_young(struct vm_area_struct *vma,
+ 			      unsigned long address,
+ 			      pte_t *ptep)
+ {
+diff --git a/include/linux/contpte.h b/include/linux/contpte.h
+index 01da4bfc3af6..38092adbe0d4 100644
+--- a/include/linux/contpte.h
++++ b/include/linux/contpte.h
+@@ -19,5 +19,7 @@ void contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
+ 			pte_t *ptep, pte_t pte);
+ void contpte_set_ptes(struct mm_struct *mm, unsigned long addr,
+ 		      pte_t *ptep, pte_t pte, unsigned int nr);
++int contpte_ptep_test_and_clear_young(struct vm_area_struct *vma,
++				      unsigned long addr, pte_t *ptep);
+ 
+ #endif /* _LINUX_CONTPTE_H */
 diff --git a/mm/contpte.c b/mm/contpte.c
-index c9eff6426ca0..5bf939639233 100644
+index 5bf939639233..220e9d81f401 100644
 --- a/mm/contpte.c
 +++ b/mm/contpte.c
-@@ -46,6 +46,7 @@
-  *   - ptep_get_lockless()
+@@ -47,6 +47,7 @@
   *   - set_pte()
   *   - pte_clear()
-+ *   - ptep_get_and_clear()
+  *   - ptep_get_and_clear()
++ *   - ptep_test_and_clear_young()
   */
  
  pte_t huge_ptep_get(pte_t *ptep)
-@@ -682,4 +683,11 @@ void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
+@@ -690,4 +691,42 @@ pte_t ptep_get_and_clear(struct mm_struct *mm,
  	contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
- 	__pte_clear(mm, addr, ptep);
+ 	return __ptep_get_and_clear(mm, addr, ptep);
  }
 +
-+pte_t ptep_get_and_clear(struct mm_struct *mm,
-+			 unsigned long addr, pte_t *ptep)
++int contpte_ptep_test_and_clear_young(struct vm_area_struct *vma,
++				      unsigned long addr, pte_t *ptep)
 +{
-+	contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
-+	return __ptep_get_and_clear(mm, addr, ptep);
++	/*
++	 * ptep_clear_flush_young() technically requires us to clear the access
++	 * flag for a _single_ pte. However, the core-mm code actually tracks
++	 * access/dirty per folio, not per page. And since we only create a
++	 * contig range when the range is covered by a single folio, we can get
++	 * away with clearing young for the whole contig range here, so we avoid
++	 * having to unfold.
++	 */
++
++	size_t pgsize;
++	int young = 0;
++	int i, ncontig;
++
++	ptep = arch_contpte_align_down(ptep);
++	ncontig = arch_contpte_get_num_contig(vma->vm_mm, addr, ptep, 0, &pgsize);
++	addr = ALIGN_DOWN(addr, ncontig * pgsize);
++
++	for (i = 0; i < ncontig; i++, ptep++, addr += pgsize)
++		young |= __ptep_test_and_clear_young(vma, addr, ptep);
++
++	return young;
++}
++EXPORT_SYMBOL_GPL(contpte_ptep_test_and_clear_young);
++
++__always_inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
++					      unsigned long addr, pte_t *ptep)
++{
++	pte_t orig_pte = __ptep_get(ptep);
++
++	if (likely(!pte_valid_cont(orig_pte)))
++		return __ptep_test_and_clear_young(vma, addr, ptep);
++
++	return contpte_ptep_test_and_clear_young(vma, addr, ptep);
 +}
  #endif /* CONFIG_THP_CONTPTE */
 -- 
