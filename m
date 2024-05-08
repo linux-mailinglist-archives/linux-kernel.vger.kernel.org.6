@@ -1,151 +1,103 @@
-Return-Path: <linux-kernel+bounces-173871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986A68C0707
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAAA8C070A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F57A2832BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548881F23306
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EE51332A5;
-	Wed,  8 May 2024 21:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669D8130E4B;
+	Wed,  8 May 2024 22:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i7sNgSIV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nDogj2yk"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838F413329E;
-	Wed,  8 May 2024 21:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4974E823B8
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715205580; cv=none; b=MUau+vm1Mi3J1xhCBbgO+2DgOu8VKle81GBs7ZvI2pEcBkvTguw8VCKWn9p3huEFHudPleq6boWtDpvpwK5TmxYu8BqcAwF9MSqghtaBBEmwpmgibShVAbKP11u9/0roTK5ZrA169jQpZvidxziHrxkvMbgjjbl23QaVU+SQFec=
+	t=1715205629; cv=none; b=LUHaAlAb8c99g9SyHuyNZ/BwGj9hiyS3+J8qs2LiAMu7tX8QMHy1+T5BdmHns1yJL5gVjSJfdfjbKGUtypH6El9It81CCNlbMSqsg4ZlPi61u5TrOSa/r563A9MA/YwWtGrzDJQ+AbTZqTvBU+pDwcwjwn8c24VAwNyaewQLoU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715205580; c=relaxed/simple;
-	bh=pnFOD9IX//ofvuncrblliTyUlG1w100hGR9knvZhZXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EiOAmL1U5zVo1p6NfKhVpG/IWxyrSJOC+zg8GzHlYbmViZhymRrFSlzOt/4Nv3hO55O4B1DeLCyyAl+YBtE9sfbkIFav/yXUzuzXFMIfCZnfeYmcG6TGTzK6m5TwNNQM0A7N8sR/Gio1Y4JB8h8/muDZbakEdhRE+bQqBbq512Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i7sNgSIV; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715205577; x=1746741577;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pnFOD9IX//ofvuncrblliTyUlG1w100hGR9knvZhZXk=;
-  b=i7sNgSIV8f7sdH1aB618Fbc8he+3gmydSVVq2nmfjjLkpPcDiZzBh5q4
-   OYoVe9ClyxvxU32aodR3KevYdKzCistQED7hGkHlWBCksgc3XwvMD4v0N
-   reJZJVoxKUX4wShYE3RNpBxa3FlChzcplylJusEudwRhIdkTu7toXWuLj
-   BIMTShLpNvyblzet3obpqFkzE6D+wezgEEptSpO2PMu/fLq4YbAAFjX79
-   V2AYKL1jGnPp2yVODZ8JTtE9K0S1u1ZBrlDFXJ1Y1trnJMPAtYfVbq+bp
-   VZ4t5xX7v/xMgiSzuie4xMUOp6a3fG3vrkydHwDwuhYT9/VMWJGOaHOTZ
-   A==;
-X-CSE-ConnectionGUID: IGmSuFltSaOpMpwVP21kfQ==
-X-CSE-MsgGUID: FqcNKXJDQ8GjeD7H7i4WWA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="36476923"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="36476923"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 14:59:37 -0700
-X-CSE-ConnectionGUID: OBZ7gJWjRU6dx7I2duYT0g==
-X-CSE-MsgGUID: cGj9tXwVSUed+lE7Fh8jyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="29120162"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 08 May 2024 14:59:35 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4pK0-00049W-2T;
-	Wed, 08 May 2024 21:59:32 +0000
-Date: Thu, 9 May 2024 05:59:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>,
-	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/5] misc: fastrpc: Add static PD restart support
-Message-ID: <202405090528.O8hhDGHk-lkp@intel.com>
-References: <20240508054250.2922-6-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1715205629; c=relaxed/simple;
+	bh=j/kLQd0cbrp1oqeSRoP/JS2lmoMLaylq5Y+PhH7Jb3w=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BcooGV9SU7ftii7Pu4r/VhMGUEudXIec/mwRPv3unDNlRy4cZ+X87PkCFy4s7c9dl1vI+dPI3BnwRxROVU1Bm7y9TFBInd2Qe+20T2vqbgMcxetcNOwuLnXhAPmDncF0q14RnILshRFCpCQPKP8yucSCD0rfhldJVW28B4gEfm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nDogj2yk; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-792bcfde2baso11399785a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715205627; x=1715810427; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j/kLQd0cbrp1oqeSRoP/JS2lmoMLaylq5Y+PhH7Jb3w=;
+        b=nDogj2ykG5WBXYRZxYQUI/bXNGRmJVSxzwhzJuC+a6+x0sZ5N71FiMwUrsORnSBmd3
+         6hgDhCggYTfpdCE0SPD9u9RMfc9I6QODWqiXXtkln1sIxQzvJDJ/WxPndGkGIvGxiPCk
+         CT/CEVdfm+0POe2OVE44OWC4u6UVvAX9w9WE0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715205627; x=1715810427;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j/kLQd0cbrp1oqeSRoP/JS2lmoMLaylq5Y+PhH7Jb3w=;
+        b=fg+OIvHtYvvJ30Z3b6PIHZ33vY8EllPvIStgxozwSJBHMV150KJKkrZ6lgifQ23uFi
+         iNvpjn+bFMuHhwc//7oGA3qMlhoNa14W5cyizZ0XvhqVZ5uRtihjNNzRd+5XnGu5z4Xy
+         UNLFEY2hBv6ih0vrNSgHhz5CYhUPtKJadE+KgnzadsPLBC2PbMekfoyJWwtgbg+/BHhz
+         yYbaRZX7lsWE/CK4F9G8GRWHgkpbr0QaoFjTdksQyB4HDVAiIzGPqHZgHiQnMq5TJncX
+         E7OD2vH+Bz67cZeuFNPx5S12jHPqgn89JCYRYbm0nUEYkgYGu7V4Kn3VGm8Ic/iI2WyL
+         JB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0vlxhfWyTQkwYXI+w1v5S7tPaR50+d+R7bihcKyUSDLHkc2RRsIYkQnO2OVNULFyFH6aBlQru5HWh/F3X12ni8diHlhI6znXH3s3h
+X-Gm-Message-State: AOJu0YwF+Jf1IjekQFbp970UQJKutTJtObiM1lYGZs2kVbSWrR2M3yMK
+	HQntDe3K91oML0Ksv5DTRwZd0SVzudDroHDZrXawPK/vu24zDss9zG1kmWnUYCgkXNqTfIQpjJz
+	T2jU30PSs7D5MOebqO+rVJ7a4MsxvHpNnVT03
+X-Google-Smtp-Source: AGHT+IGWqLU1ICb4oSoi/9XAMgJVPuBLEWgl/SHPBap7kXqtX8RC2o95pm9Fnnk+3bonio7wO95HePihNpjGcIn3FZg=
+X-Received: by 2002:a05:620a:3721:b0:792:b938:7769 with SMTP id
+ af79cd13be357-792b9387953mr305283485a.11.1715205627263; Wed, 08 May 2024
+ 15:00:27 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 May 2024 18:00:26 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508054250.2922-6-quic_ekangupt@quicinc.com>
+In-Reply-To: <87a5l0lmlv.fsf@intel.com>
+References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com> <87a5l0lmlv.fsf@intel.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Wed, 8 May 2024 18:00:26 -0400
+Message-ID: <CAE-0n50O22Mn0N4jMUAK6YMRJiDvuW9VhPnLg=TLV-SecS3p6w@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Jani Nikula <jani.nikula@linux.intel.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>, 
+	Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org, seanpaul@chromium.org, 
+	quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ekansh,
+Quoting Jani Nikula (2024-05-08 01:43:56)
+> On Tue, 07 May 2024, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> > Since commit 5acf49119630 ("drm/msm: import gen_header.py script from Mesa"),
+> > compilation is broken on machines having python versions older than 3.9
+> > due to dependency on argparse.BooleanOptionalAction.
+>
+> Is it now okay to require Python for the build? Not listed in
+> Documentation/process/changes.rst.
+>
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.9-rc7 next-20240508]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ekansh-Gupta/misc-fastrpc-Redesign-remote-heap-management/20240508-134613
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20240508054250.2922-6-quic_ekangupt%40quicinc.com
-patch subject: [PATCH v1 5/5] misc: fastrpc: Add static PD restart support
-config: i386-buildonly-randconfig-001-20240509 (https://download.01.org/0day-ci/archive/20240509/202405090528.O8hhDGHk-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405090528.O8hhDGHk-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405090528.O8hhDGHk-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_get_domain_list':
->> pdr_interface.c:(.text+0x22b): undefined reference to `qmi_txn_init'
->> ld: pdr_interface.c:(.text+0x261): undefined reference to `qmi_send_request'
->> ld: pdr_interface.c:(.text+0x275): undefined reference to `qmi_txn_wait'
->> ld: pdr_interface.c:(.text+0x2ad): undefined reference to `qmi_txn_cancel'
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_restart_pd':
-   pdr_interface.c:(.text+0x451): undefined reference to `qmi_txn_init'
-   ld: pdr_interface.c:(.text+0x48d): undefined reference to `qmi_send_request'
-   ld: pdr_interface.c:(.text+0x4a7): undefined reference to `qmi_txn_wait'
-   ld: pdr_interface.c:(.text+0x58f): undefined reference to `qmi_txn_cancel'
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_register_listener.constprop.0':
-   pdr_interface.c:(.text+0x746): undefined reference to `qmi_txn_init'
-   ld: pdr_interface.c:(.text+0x796): undefined reference to `qmi_send_request'
-   ld: pdr_interface.c:(.text+0x7aa): undefined reference to `qmi_txn_wait'
-   ld: pdr_interface.c:(.text+0x7fd): undefined reference to `qmi_txn_cancel'
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_send_indack_msg.isra.0':
-   pdr_interface.c:(.text+0x9df): undefined reference to `qmi_txn_init'
-   ld: pdr_interface.c:(.text+0xa33): undefined reference to `qmi_send_request'
-   ld: pdr_interface.c:(.text+0xa3e): undefined reference to `qmi_txn_cancel'
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_locator_work':
->> pdr_interface.c:(.text+0xdf4): undefined reference to `qmi_add_lookup'
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_handle_alloc.part.0':
->> pdr_interface.c:(.text+0x1159): undefined reference to `qmi_handle_init'
->> ld: pdr_interface.c:(.text+0x1177): undefined reference to `qmi_add_lookup'
->> ld: pdr_interface.c:(.text+0x119b): undefined reference to `qmi_handle_init'
->> ld: pdr_interface.c:(.text+0x11a8): undefined reference to `qmi_handle_release'
-   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_handle_release':
->> pdr_interface.c:(.text+0x1567): undefined reference to `qmi_handle_release'
-   ld: pdr_interface.c:(.text+0x1572): undefined reference to `qmi_handle_release'
->> ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0xd8): undefined reference to `qmi_response_type_v01_ei'
-   ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0x1f8): undefined reference to `qmi_response_type_v01_ei'
-   ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0x278): undefined reference to `qmi_response_type_v01_ei'
-   ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0x358): undefined reference to `qmi_response_type_v01_ei'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for QCOM_PDR_HELPERS
-   Depends on [n]: NET [=n]
-   Selected by [y]:
-   - QCOM_FASTRPC [=y] && (ARCH_QCOM || COMPILE_TEST [=y]) && RPMSG [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I doubt it is ok. Perl scripts have been replaced with shell scripts in
+the past to speed up the build process. See commit e0e2fa4b515c
+("headers_install.pl: convert to headers_install.sh") as an example.
 
