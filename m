@@ -1,130 +1,200 @@
-Return-Path: <linux-kernel+bounces-172969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1D08BF98B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C956F8BF98E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF7E283A78
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6873D1F23FDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECF75803;
-	Wed,  8 May 2024 09:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="yI4LvrKF"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D13757E7;
+	Wed,  8 May 2024 09:30:16 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [194.107.17.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2A971753;
-	Wed,  8 May 2024 09:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20395338A;
+	Wed,  8 May 2024 09:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715160588; cv=none; b=s7Dw6EcCfG1wHXMt7BthOmO78ISE7yZDz6zvWli6DqJ54fVY5h2Exozx+553MHX7X9jVyrz99aKTSzwGbbXGeTgST9wKEHHEf2BPy1qFABVK3ciKptOuOR0B9YFuYbPPwQ1KD6NFHH9sRuUJ4dxdqcPho3mfkrDgVZoHgIWI5fU=
+	t=1715160616; cv=none; b=BOGlZMnvMep3GH0nnKka1woQX4+z5vzxOcrEWEo1pFwfcr3Cw9/lqik0Um7Ydh8n1tIzGyO1b+TnIgJFC+G9ssGcgNCuPeOykQ11hxL/qJDOMWGr/u0bQbnnSELee350EONbe/mXSXwyesa3pSDj/3wHw3+3AadE0OONj56p/QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715160588; c=relaxed/simple;
-	bh=CyUA6ks1HsLglg9cdqivgokq0SYSLKF5yuxVYskxaFY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=unJMbanPABl4VVNXLwyBwZSFRf2yiGynpdVfl37E6fKHi1l853yiGtDFsrg4OTHJNm6BY+AuG8JUiuJ+nfTvFHt6aL4OtYUndbVumoDhjB4vmnxyrk2S7r+sag6+BStJJFt700q2F6RwVd14v2ZF27Kx8LzWgF/2n4bOAiF1dJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=yI4LvrKF; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1715160616; c=relaxed/simple;
+	bh=c4hP47PEyo99rjBVhRg7TCURkjQeGtkuWHONiZoyZqk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O6gTOCqoENuc0sMqkVOVPhmyUfNpYtcasdKCxWJrnbSppqx2NjKhFyXyraacUcD0DK0ENo1PyCzgDLHdjrS7pDNt3556YsxbtJLgJmsymp7Jc632sFCAg+cNc77rgkl9ACiLWjilov7zXJv01iKiPLewMov+dbYlXRovLGyP1wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: by air.basealt.ru (Postfix, from userid 490)
+	id 4FA662F20247; Wed,  8 May 2024 09:30:08 +0000 (UTC)
+X-Spam-Level: 
+Received: from altlinux.malta.altlinux.ru (obninsk.basealt.ru [217.15.195.17])
+	by air.basealt.ru (Postfix) with ESMTPSA id DB0C82F20242;
+	Wed,  8 May 2024 09:30:07 +0000 (UTC)
+From: kovalev@altlinux.org
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: lvc-project@linuxtesting.org,
+	dutyrok@altlinux.org,
+	oficerovas@altlinux.org,
+	Vasiliy Kovalev <kovalev@altlinux.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] tty: Fix possible deadlock in tty_buffer_flush
+Date: Wed,  8 May 2024 12:30:05 +0300
+Message-Id: <20240508093005.1044815-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1715160582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JL7Cqc7rpixgBgbCXhIQMAAO82vWRkxls15BxMKvRjg=;
-	b=yI4LvrKFeze38qylAOEwDE+u0aDLwijFZ11pRQXLtPq+5cRr4L29GioAoB+XHJJDyJS4SF
-	dYIhMJAXL01yhOISHYCff80gnsnbRlJjsKG6TCf4LS1ODA4AJ9t67oUGzH4ISIZDALxboo
-	gdoTbP5qvSjdWBwukr/zNQnLi6bvSeISFQ6/PHSSCnZ08BywqcGtOG8PJtO84fGlMs1fSD
-	snRkHQU1XjAAncDkgSsXaoQVWdgM9rBRrTVmCn+3xTLCgHk1394fEio19jL9iJEsXEUw01
-	ts0CTGePsVsnx/F2vIjQY0+BetXaqSm0qvR9tqLxnXB4gwwNq+qMV6QRH7xSvg==
-Date: Wed, 08 May 2024 11:29:41 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Alexey Charkov <alchark@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu
- Tsai <wens@kernel.org>, Diederik de Haas <didi.debian@cknow.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Kever Yang
- <kever.yang@rock-chips.com>
-Subject: Re: [PATCH v4 6/6] arm64: dts: rockchip: Add OPP data for CPU cores
- on RK3588
-In-Reply-To: <e220061e-0bb5-4fa4-9a91-aefd81e6636c@cherry.de>
-References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <20240506-rk-dts-additions-v4-6-271023ddfd40@gmail.com>
- <e220061e-0bb5-4fa4-9a91-aefd81e6636c@cherry.de>
-Message-ID: <dd9c76519ee0eee177528488a4946056@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: 8bit
 
-Hello Quentin,
+From: Vasiliy Kovalev <kovalev@altlinux.org>
 
-On 2024-05-08 11:12, Quentin Schulz wrote:
-> On 5/6/24 11:36 AM, Alexey Charkov wrote:
->> By default the CPUs on RK3588 start up in a conservative performance
->> mode. Add frequency and voltage mappings to the device tree to enable
->> dynamic scaling via cpufreq.
->> 
->> OPP values are adapted from Radxa's downstream kernel for Rock 5B [1],
->> stripping them down to the minimum frequency and voltage combinations
->> as expected by the generic upstream cpufreq-dt driver, and also 
->> dropping
->> those OPPs that don't differ in voltage but only in frequency (keeping
->> the top frequency OPP in each case).
->> 
->> Note that this patch ignores voltage scaling for the CPU memory
->> interface which the downstream kernel does through a custom cpufreq
->> driver, and which is why the downstream version has two sets of 
->> voltage
->> values for each OPP (the second one being meant for the memory
->> interface supply regulator). This is done instead via regulator
->> coupling between CPU and memory interface supplies on affected boards.
-> 
-> I'm not sure this is everything we need though.
-> 
-> For the LITTLE cores cluster, all OPPs up to 1.416GHz are using the
-> same opp-supported-hw, however the ones above, aren't.
-> 
-> 1.608GHz, 1.704GHz and 1.8GHz are all using different opp-supported-hw.
-> 
-> Similarly, for the big cores clusters, all OPPs up to 1.608GHz are
-> using the same opp-supported-hw, but not the ones above.
-> 
-> 1.8GHz and 2.016GHz, 2.208GHz, 2.256GHz, 2.304GHz, 2.352GHz and 2.4GHz
-> all have a different opp-supported-hw.
-> 
-> The values in that array are coming from cpu leakage (different for
-> LITTLE, big0 and big1 clusters) and "specification serial number"
-> (whatever that means), those are coming from the SoC OTP. In the
-> downstream kernel from Rockchip, the former value is called "SoC
-> Version" and the latter "Speed Grade".
-> 
-> I think this may have something to do with "binning" and I would see
-> the ones above the "common" OPPs as "overclocking". Not all CPUs would
-> support them and some may not run stable at some lower frequency than
-> their stable max. Adding Kever from Rockchip in Cc to have some input
-> on the need to support those.
+A possible scenario in which a deadlock may occur is as follows:
 
-Good point.  We should remove the OPPs for both clusters that aren't
-supported by all RK3588(s) binnings, to be on the safe side.
+flush_to_ldisc() {
 
-I'll hopefully dive into supporting different Rockchip binnings rather
-soon.  There's even more about that, and not just with the RK3588(s),
-which I think I'll get all covered.
+  mutex_lock(&buf->lock);
+
+  tty_port_default_receive_buf() {
+    tty_ldisc_receive_buf() {
+      n_tty_receive_buf2() {
+	n_tty_receive_buf_common() {
+	  n_tty_receive_char_special() {
+	    isig() {
+	      tty_driver_flush_buffer() {
+		pty_flush_buffer() {
+		  tty_buffer_flush() {
+
+		    mutex_lock(&buf->lock); (DEADLOCK)
+
+flush_to_ldisc() and tty_buffer_flush() functions they use the same mutex
+(&buf->lock), but not necessarily the same struct tty_bufhead object.
+However, you should probably use a separate mutex for the
+tty_buffer_flush() function to exclude such a situation.
+
+Found by Syzkaller:
+======================================================
+WARNING: possible circular locking dependency detected
+5.10.213-std-def-alt1 #1 Not tainted
+------------------------------------------------------
+kworker/u6:8/428 is trying to acquire lock:
+ffff88810c3498b8 (&buf->lock){+.+.}-{3:3},
+        at: tty_buffer_flush+0x7b/0x2b0 drivers/tty/tty_buffer.c:228
+
+but task is already holding lock:
+ffff888114dca2e8 (&o_tty->termios_rwsem/1){++++}-{3:3},
+        at: isig+0xef/0x440 drivers/tty/n_tty.c:1127
+
+which lock already depends on the new lock.
+
+Chain exists of:
+  &buf->lock --> &port->buf.lock/1 --> &o_tty->termios_rwsem/1
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&o_tty->termios_rwsem/1);
+                               lock(&port->buf.lock/1);
+                               lock(&o_tty->termios_rwsem/1);
+  lock(&buf->lock);
+
+stack backtrace:
+CPU: 0 PID: 428 Comm: kworker/u6:8 Not tainted 5.10.213-std-def-alt1 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+                BIOS 1.16.0-alt1 04/01/2014
+Workqueue: events_unbound flush_to_ldisc
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x19b/0x203 lib/dump_stack.c:118
+ print_circular_bug.cold+0x162/0x171 kernel/locking/lockdep.c:2002
+ check_noncircular+0x263/0x2e0 kernel/locking/lockdep.c:2123
+ check_prev_add kernel/locking/lockdep.c:2988 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3113 [inline]
+ validate_chain kernel/locking/lockdep.c:3729 [inline]
+ __lock_acquire+0x298f/0x5500 kernel/locking/lockdep.c:4955
+ lock_acquire kernel/locking/lockdep.c:5566 [inline]
+ lock_acquire+0x1fe/0x550 kernel/locking/lockdep.c:5531
+ __mutex_lock_common kernel/locking/mutex.c:968 [inline]
+ __mutex_lock+0x142/0x10c0 kernel/locking/mutex.c:1109
+ mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:1124
+ tty_buffer_flush+0x7b/0x2b0 drivers/tty/tty_buffer.c:228
+ pty_flush_buffer+0x4e/0x170 drivers/tty/pty.c:222
+ tty_driver_flush_buffer+0x65/0x80 drivers/tty/tty_ioctl.c:96
+ isig+0x1e4/0x440 drivers/tty/n_tty.c:1138
+ n_tty_receive_signal_char+0x24/0x160 drivers/tty/n_tty.c:1239
+ n_tty_receive_char_special+0x1261/0x2a70 drivers/tty/n_tty.c:1285
+ n_tty_receive_buf_fast drivers/tty/n_tty.c:1606 [inline]
+ __receive_buf drivers/tty/n_tty.c:1640 [inline]
+ n_tty_receive_buf_common+0x1e76/0x2b60 drivers/tty/n_tty.c:1738
+ n_tty_receive_buf2+0x34/0x40 drivers/tty/n_tty.c:1773
+ tty_ldisc_receive_buf+0xb1/0x1a0 drivers/tty/tty_buffer.c:441
+ tty_port_default_receive_buf+0x73/0xa0 drivers/tty/tty_port.c:39
+ receive_buf drivers/tty/tty_buffer.c:461 [inline]
+ flush_to_ldisc+0x21c/0x400 drivers/tty/tty_buffer.c:513
+ process_one_work+0x9ae/0x14b0 kernel/workqueue.c:2282
+ worker_thread+0x622/0x1320 kernel/workqueue.c:2428
+ kthread+0x396/0x470 kernel/kthread.c:313
+ ret_from_fork+0x22/0x30 arch/x86/entry/entry_64.S:299
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+ drivers/tty/tty_buffer.c   | 5 +++--
+ include/linux/tty_buffer.h | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index 79f0ff94ce00da..e777bd5f3a2fca 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -226,7 +226,7 @@ void tty_buffer_flush(struct tty_struct *tty, struct tty_ldisc *ld)
+ 
+ 	atomic_inc(&buf->priority);
+ 
+-	mutex_lock(&buf->lock);
++	mutex_lock(&buf->flush_mtx);
+ 	/* paired w/ release in __tty_buffer_request_room; ensures there are
+ 	 * no pending memory accesses to the freed buffer
+ 	 */
+@@ -241,7 +241,7 @@ void tty_buffer_flush(struct tty_struct *tty, struct tty_ldisc *ld)
+ 		ld->ops->flush_buffer(tty);
+ 
+ 	atomic_dec(&buf->priority);
+-	mutex_unlock(&buf->lock);
++	mutex_unlock(&buf->flush_mtx);
+ }
+ 
+ /**
+@@ -577,6 +577,7 @@ void tty_buffer_init(struct tty_port *port)
+ {
+ 	struct tty_bufhead *buf = &port->buf;
+ 
++	mutex_init(&buf->flush_mtx);
+ 	mutex_init(&buf->lock);
+ 	tty_buffer_reset(&buf->sentinel, 0);
+ 	buf->head = &buf->sentinel;
+diff --git a/include/linux/tty_buffer.h b/include/linux/tty_buffer.h
+index 31125e3be3c55e..cea4eacc3b70d3 100644
+--- a/include/linux/tty_buffer.h
++++ b/include/linux/tty_buffer.h
+@@ -35,6 +35,7 @@ static inline u8 *flag_buf_ptr(struct tty_buffer *b, unsigned int ofs)
+ struct tty_bufhead {
+ 	struct tty_buffer *head;	/* Queue head */
+ 	struct work_struct work;
++	struct mutex	   flush_mtx;	/* For use in tty_buffer_flush() */
+ 	struct mutex	   lock;
+ 	atomic_t	   priority;
+ 	struct tty_buffer sentinel;
+-- 
+2.33.8
+
 
