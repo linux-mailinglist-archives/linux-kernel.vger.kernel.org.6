@@ -1,201 +1,198 @@
-Return-Path: <linux-kernel+bounces-172590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFACB8BF40E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:25:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBA18BF410
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40BCB21305
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:25:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2C17B2123D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F419A8F68;
-	Wed,  8 May 2024 01:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D579441;
+	Wed,  8 May 2024 01:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="N27i5ZAW"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lw+oum2U"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747D08BE7
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 01:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715131500; cv=none; b=o9WulNp0QjLA/T2xul0aUP/aszkq/SxOm09LqJiliiMedpWlEpr+6PAMOgdRw+bn6mjcCD7YIGZln8z1zu50tHqovlmmUWcDqWd06vTjanC6xZIhvGzroyRzDopZ3T3BKTFCIRmyZaeNpoVMbnoPWvSOJKil93kPzVOxH+Eh2Y0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715131500; c=relaxed/simple;
-	bh=zeogVsJrho8qDV1JQGMwDiQiX7yUyyHMWiodEJaTABI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dScO7IC6K+GHC9oikuZ7FvpNE0875lasLz3Cl3FY9a4VT+GgxJ+Q9wo8Zs1xZCu8wQTwCWlPBiXfTwLWuJeCvFLb7ogtnNiAtQNV7E6W58+ucLCfc7GXL9mS59IjMuc2xEtihtuTCGlRZHUqbYoVQvNgljQpeqohN0HIV/XLsiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=N27i5ZAW; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f4178aec15so3270676b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 18:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715131498; x=1715736298; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IhsVJPabx4zntlcqdXyDkSXBtwoq5OQdKJovK8JOcUw=;
-        b=N27i5ZAWAUnaRbIteZPPe5oWq3XRknM1V5IwqIqelb0aWTNHxVwqzZsPae2K3Qg43H
-         tSgZJk3ABYKYFXvOyn+v5MXpGLKSPySeA4xqgIKKk3ah70HwyMc5syabl5mbc4q23/ZM
-         ArtjK0mZ8jYL6xiN0TQrTRthxCC4+6ehDSnaV94w+rhxCZ0Pr1OHs4tDjENh1uErz51v
-         dVa4qajfGhrRemZwUp7hD3IMzPwzJCjGKKSjKS9Dk10V7iZrzkg/u1pmpTsqQQakbxx1
-         LwpfDBPx/1IB4HgJvuaocerxOOSQL2WinDjT0tpW6wlhBTQZMUqapnmkfCd5jcKJ5F23
-         2ZQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715131498; x=1715736298;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IhsVJPabx4zntlcqdXyDkSXBtwoq5OQdKJovK8JOcUw=;
-        b=qrnIirikQxfklAMFQSRGre89LDC1aMqDEU4xEkfUqbtCX/D41mJrGUiLgJw598+lZp
-         deDl/gmsKDst+ybjlPw0FoPbzt9SXK1R9zgHR8NstnDyBetdhcdvEUoTjCFwTIwX9Cgz
-         z3zDTUapFSn2DxA8+B90px2wtPXoV6CphcpA+fvFSLkDVIbzT/qqkBFCzFYrqztEvflY
-         8ZdrYsIBOEZO/65qq3vJW3xgYSFWEnHh1nZiiAoiwJHppF4Vu6M6Fh3thOZ8NRGV5Yvf
-         srI3JV+kkXcUnYqnODhgAnieKdv4Th/4pBrORfuUAgI9IezBW/AhtI+poRYBbWYhpy6r
-         dUIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXum1ng1Ig+GjbWDbq4QUMEXf1wQbfXwrvTulKG7x9BJup4kpVTZ7Vbp3pB62MzzzOKZX8qJBDgG7jM1jgaL2djH+BmdLwjXcprzA35
-X-Gm-Message-State: AOJu0Yz5DQ9Ya8VEe+GJFIQ6TK/nDE6i8sme/qR4lgZEpMKqc+c/3MPc
-	muOxbHhJw/xh8T9daOPMbFbOfG3tbkd3Cyrf/eLjjeBbsMnGU/4nlPhK/n7kBXstr2oNuNJa7dG
-	Z
-X-Google-Smtp-Source: AGHT+IGxrKToRQGeaQOwoFRE1tTJUZMCY6maIjnf3I2s/xOfXSlGbLBrlOsT6whlD51sZanOujXO3g==
-X-Received: by 2002:a05:6a20:7f9d:b0:1ad:7e4d:2ea6 with SMTP id adf61e73a8af0-1afc8d39d69mr1707444637.20.1715131497690;
-        Tue, 07 May 2024 18:24:57 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:cc75:5174:3d13:7280])
-        by smtp.gmail.com with ESMTPSA id y9-20020a17090a1f4900b002b15a672805sm191510pjy.23.2024.05.07.18.24.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 18:24:57 -0700 (PDT)
-Date: Tue, 7 May 2024 18:24:55 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Jessica Clarke <jrtc27@jrtc27.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Song Liu <song@kernel.org>, Xi Wang <xi.wang@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	linux-riscv <linux-riscv@lists.infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/8] riscv: Add PLATFORM_MAY_SUPPORT_RISCV_ISA_SVPBMT
- Kconfig option
-Message-ID: <ZjrUZ9y45zL7yqex@ghost>
-References: <20240506-compile_kernel_with_extensions-v1-0-5c25c134c097@rivosinc.com>
- <20240506-compile_kernel_with_extensions-v1-4-5c25c134c097@rivosinc.com>
- <11F5B269-05DD-448E-9F85-878E84A5654F@jrtc27.com>
- <ZjqRcsheypWX14yy@ghost>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719182563;
+	Wed,  8 May 2024 01:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715131567; cv=fail; b=YLDZLjdHzxDCWWPJ587H6Kj/M96q19ECMomyCiKgMWkPX9WYRFpv/hMUC4m7UtxlCQNpVjxkS+FCI9Y/fQj7tQ7gYBOlfPxBnYeuGlT+OkPdImAzCZnbV++KF3lTjaiS5MKvxB/bLdo2zIHihH98iiOFJb/cXX3VRllgEJuDiKY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715131567; c=relaxed/simple;
+	bh=ZxXQuSjp9BSREaCVICTAKTEegXEMbcRm3yt1+ObnJ9Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PfD7l33o2ympN+H+xdaW2toDnHdVJ/jq7L4waevgePSy3dqSC6krZZ1oiHQRZTF4SUVnTdy6zq4vqR5UEWNG1kf77isS7E7V2jdkq4MJt89MnIE6eLENoQirlU2c+BA36gl2FqAIwBSgLM911kZ8AD9t17MhyGJpEozQtWsc7XI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lw+oum2U; arc=fail smtp.client-ip=40.107.243.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hrfb0K76c6bm1ZaRDcjfDZ4qlFmWLY2yg8XD5n2vAK7FUwC5v6+gtdaqlDf7522rrW1w6htX25s3jXHuC9z+2Thz98/8czO2Jzi+P3CzdYuxCHUFaLYcK5NE6koLekZOnRFS9z6fmbfVkZmWCzg3XkdOPDzT9F+Ch6Cj6qVQkeFTQq5zmL4zp4JFdMQg0ziihChO+2d5qxycm6cp1eRPHoK5yqEskItSJhpGKTWK8K1EN4L4j7i2EnoZFfMDtRNSp4qUJ98Vh+FGIlv1pre2pWm4M5HL/9VghzN581PE/1lEEwSWXMx1+soXJA+BF8omu6gnIQ100HHPAm+PHvnMnQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KrAnSojX4cjaiRBhd4cJ+Z13qRmE4DdA+Ijj1iFiKPw=;
+ b=k3YmCEEJVqVv6PbLYTCUnp7P9INQEBJACEM4s8maDksDE3k0D5OpXLTs+gUhsdU6wONLSOwnqqw8bAECFJJ9wiFdlQpo7T9sFpnJx4WMsvmJrBeIZHmMDresD/GgjF65PjKs1gAsUdPvdssQ/Qb/DHcINyOUJRvNkeUX94F43cGddSoWoKpxNEMktXI4DnH04ZD5FRXJ35OTSmeCGBs6f0V3QCO4vjRgquen1z4Ai94FfGJq/IAjpYIjlS2yEfHP6XPVziK+lNzHxuPUjXfXUZo5xBKu4HxbKLuRHIDYBfDG2Sp07vsY779QenEsGtGqB2rZUlPltBUAaWvNTzQZmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KrAnSojX4cjaiRBhd4cJ+Z13qRmE4DdA+Ijj1iFiKPw=;
+ b=lw+oum2UJhN2puo5dyfZEd01IJv7on+g+JkSvKnMulcBvJoh98HStsd/YlUTHcaBmrTVUrdGgK68c/ykgx5qAO3Ah0OfxYn4UVi2UV8Tw0F5fT+GIjTnMHfTyNPJOeYTt33tWnxqZQUQZ6G8cOoQUTh9+8o3Jx1NgH2qdZwEN0IGktoNObS8SA5OCQLlQeKqETDLci00I6poIZsFUMB7w9PpAjdJsIhz9AVbaKy9llEwD+Qo3gJNJihLnruNOqSyEKZw3HRIBK4DuexaNAxyyJOVJDjUdYvbw89DxdLnTxx5c9KMAVQ0wAgyoh+VjzT5turGAU/wPDCsSBLGRAM5Dw==
+Received: from DM5PR07CA0081.namprd07.prod.outlook.com (2603:10b6:4:ad::46) by
+ CY8PR12MB8243.namprd12.prod.outlook.com (2603:10b6:930:78::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.45; Wed, 8 May 2024 01:26:03 +0000
+Received: from CH1PEPF0000AD7E.namprd04.prod.outlook.com
+ (2603:10b6:4:ad:cafe::d9) by DM5PR07CA0081.outlook.office365.com
+ (2603:10b6:4:ad::46) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43 via Frontend
+ Transport; Wed, 8 May 2024 01:26:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CH1PEPF0000AD7E.mail.protection.outlook.com (10.167.244.87) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Wed, 8 May 2024 01:26:03 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 7 May 2024
+ 18:25:44 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 7 May 2024
+ 18:25:43 -0700
+Message-ID: <7dd4b09e-b9ba-459d-bfa4-150e712f54bc@nvidia.com>
+Date: Tue, 7 May 2024 18:25:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjqRcsheypWX14yy@ghost>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/resctrl: fix clang build warnings related to
+ abs(), labs() calls
+To: Reinette Chatre <reinette.chatre@intel.com>, Shuah Khan <shuah@kernel.org>
+CC: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+	<justinstitt@google.com>, Fenghua Yu <fenghua.yu@intel.com>, Valentin Obst
+	<kernel@valentinobst.de>, <linux-kselftest@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+References: <20240503234051.21217-1-jhubbard@nvidia.com>
+ <9ae11dcb-62e8-4361-9f78-971d4c6e6054@intel.com>
+ <997d7fe0-46c8-4b38-824d-083ab29f54ce@nvidia.com>
+ <d67f4f57-4e9a-4715-b6dd-7b83a240b7dd@intel.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <d67f4f57-4e9a-4715-b6dd-7b83a240b7dd@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7E:EE_|CY8PR12MB8243:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a4bc995-fd5e-487d-2a75-08dc6efdd38e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|36860700004|7416005|1800799015|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OCtrcWNZQi9RSWViOEdjR3JSeDQybEd4RVR2akNhOXB6ZE4xQzZDb0tPZUJq?=
+ =?utf-8?B?Mmc3dXlqZzdFaGc3UHJEejkzeDRQb0thT1lZNCtUK0ZvZEhXcExjbURaaHdi?=
+ =?utf-8?B?RXpsUVp3OWJHRkh3SmU3N3BIMktDVitmYkFaNDJtamJFUmZvdGUySlNma3Ry?=
+ =?utf-8?B?WHc2Mlo3WW4zekN5bW1sWktacFgrNnNHeTRpcjgyQUVTRzVkNUxvVW1vVk01?=
+ =?utf-8?B?bnRyZHJucGdkVXVQeisrWWlTdFgwRnJEOXQ3RkxmenFqckcrOWFkMndERVhW?=
+ =?utf-8?B?c2Jia3RZY2NRdmF2WmVUTVZTaXY3NGhOR0VnTlNCNm5FQ1hkMms3YUExSm1O?=
+ =?utf-8?B?V3l2MnduUjcwcXlyNVJjdFpkVDh4RnlQZmM4VnBuRk1yRHF3Mks1dmhDTHJW?=
+ =?utf-8?B?Zll0VFU2UThyK3RFQ0Z2UXk4MFh3RXJxWGoycStzNitkYkFhTTZkUTVLcjQx?=
+ =?utf-8?B?N3dDTlJmQVNYLzNzSXE3VVUwSnYraCthTXJBQ1liSnVvdXQ0ZTV3NE1zNFRB?=
+ =?utf-8?B?QUFpU1NjaWVUNWJ0NEQ1WHUrSUtsdXVuZExOSk9CeDZPKytqcE5ncDNTVjlM?=
+ =?utf-8?B?a1ZoRjVybG1hZVNJMWZ4ZHAzMWhIQU9lcUVpd0t1VkkzUmpabWlrREtPOUp3?=
+ =?utf-8?B?c2Z6S3d6d01JU3o1REtQM2hwQW53dEtXWTZCQnIvdzQyb0dqMDZneFoxVmNY?=
+ =?utf-8?B?UkNJMlpubEZlTkszaDFCSDlodEZxV0ozbWdsRU9VTE9GeGYyWGs2VHRLNFdM?=
+ =?utf-8?B?ZkVBem10YkUwTDB6YnN0OVUwZ1Zkc2JaWTJLZUZSNFhuT085QWE4OVUxZTJa?=
+ =?utf-8?B?QVdGT1lmZ0UzZGwxcXczSVd4VGZaamxJTmRuVnlFbGdmd3dKMldvVkw0eEVZ?=
+ =?utf-8?B?LytFOW42MjFxZkZGaHkveklkZFNWbEVvbmdqVjE1V3lMejNESzIwR2RXZnRz?=
+ =?utf-8?B?T05mSGs3TjhLdXRSZHhjbFF6ZVozMHVCdmJPRDhna0QySXlUVUt0SklUL2J1?=
+ =?utf-8?B?NVE0SDdJVHJYUXp1SENjelREVFR0OG9mc0JpZzhBTi96dzBrRVlrQ201MDN0?=
+ =?utf-8?B?LzhwYmUrWmJ0cmsvamxpY1lWODBHaVJ6dERDUWcva1dWZGVVS0VleDF0KzZM?=
+ =?utf-8?B?eWZLNWZrUmtqc2RteG1EdjRzVzhwdkJmUENaWlp1TDVWcEU4UTIzSm9MTzVv?=
+ =?utf-8?B?S2hzeUhabkFuN2Z0ZHo0dzA1THlEMUxua0pwVVFvcDdnUjlkSktYZThLblRW?=
+ =?utf-8?B?T2czQ1FtTzN2Yk13U0NCYkgzZGJKZ1dLSkNkNlpvcG5VeDl4VURNYVZRRjRT?=
+ =?utf-8?B?bUpCWEhPOEZDT0JBNzNjRFhyNWtkcUpLeFJpMjNBMUVCRWhZK0UyTG5rS044?=
+ =?utf-8?B?eTlTaklNY0Q5MW1qVzVqMlU5dnJ2dytlL05USk9FbnE0N0ZmalppVkE1K1Q1?=
+ =?utf-8?B?YnJBZGplMStTRThjczNTbG1PZjFmV1F5TE9WUU9TTjJoMDdCOTZmTzdWUzNP?=
+ =?utf-8?B?SVdSd2Z4UUZyd3IwekpneDhtR3hDRUZYSmNCM1RoNTFZNFZ3eVNKTkdwZ1p5?=
+ =?utf-8?B?V3ZBNVR6Uko0UVlzMllOL1V1azE1UVNQd2R2UmlFR0hPSmkySTdTbUt1SS9v?=
+ =?utf-8?B?akNLL2MzYjUvVU42RURUMmRJY1Q0SzBXTU8wU2t0amIxUjE3NmFUKzJrYUpL?=
+ =?utf-8?B?OUpmRGlSeDUyckJFWmd2WmlEc2tIUDJITkc4T0dEaGxQWitBaS83QW1kWmFx?=
+ =?utf-8?B?SThIbTdhOWxnMFo1d0xQY2YyV3VTNCsyZW5pcUIrVzVqRUlIdVlTUm5iN3cx?=
+ =?utf-8?Q?vcikY9x8aPuXgsf84UrZNZQBxn4yhcIeiRkXI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(7416005)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 01:26:03.3138
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a4bc995-fd5e-487d-2a75-08dc6efdd38e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7E.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8243
 
-On Tue, May 07, 2024 at 01:39:14PM -0700, Charlie Jenkins wrote:
-> On Tue, May 07, 2024 at 06:40:52AM +0100, Jessica Clarke wrote:
-> > On 7 May 2024, at 02:40, Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > > 
-> > > Svpbmt would not benefit from having PLATFORM_SUPPORTS_RISCV_ISA_SVPBMT
-> > > so just rename RISCV_ISA_SVPBMT to PLATFORM_MAY_SUPPORT_RISCV_ISA_SVPBMT
-> > > and move the definition to Kconfig.isa.
-> > > 
-> > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > ---
-> > > arch/riscv/Kconfig     | 17 -----------------
-> > > arch/riscv/Kconfig.isa | 17 +++++++++++++++++
-> > > 2 files changed, 17 insertions(+), 17 deletions(-)
-> > > 
-> > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > index 9c3a4347953b..22303a3ab59e 100644
-> > > --- a/arch/riscv/Kconfig
-> > > +++ b/arch/riscv/Kconfig
-> > > @@ -484,23 +484,6 @@ config RISCV_ALTERNATIVE_EARLY
-> > > help
-> > >  Allows early patching of the kernel for special errata
-> > > 
-> > > -config RISCV_ISA_SVPBMT
-> > > - bool "Svpbmt extension support for supervisor mode page-based memory types"
-> > > - depends on 64BIT && MMU
-> > > - depends on RISCV_ALTERNATIVE
-> > > - default y
-> > > - help
-> > > -   Add support for the Svpbmt ISA-extension (Supervisor-mode:
-> > > -   page-based memory types) in the kernel when it is detected at boot.
-> > > -
-> > > -   The memory type for a page contains a combination of attributes
-> > > -   that indicate the cacheability, idempotency, and ordering
-> > > -   properties for access to that page.
-> > > -
-> > > -   The Svpbmt extension is only available on 64-bit cpus.
-> > > -
-> > > -   If you don't know what to do here, say Y.
-> > > -
-> > > config TOOLCHAIN_HAS_ZBB
-> > > bool
-> > > default y
-> > > diff --git a/arch/riscv/Kconfig.isa b/arch/riscv/Kconfig.isa
-> > > index 37585bcd763e..50e217dc5719 100644
-> > > --- a/arch/riscv/Kconfig.isa
-> > > +++ b/arch/riscv/Kconfig.isa
-> > > @@ -168,3 +168,20 @@ config PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT
-> > >  not support Svnapot.
-> > > 
-> > > endchoice
-> > > +
-> > > +config RISCV_ISA_SVPBMT
-> > 
-> > Hi Charlie,
-> > Despite the subject and body you haven’t renamed it in this patch?
+On 5/7/24 6:21 PM, Reinette Chatre wrote:
+> Hi John,
+..
 > 
-> I didn't do a good job at explaining exactly what's happening here. The
-> config option "PLATFORM_MAY_SUPPORT_RISCV_ISA_SVPBMT" most closely
-> follows the semantics of what "RISCV_ISA_SVPBMT" previously was. This
-> patch changes "RISCV_ISA_SVPBMT" to mean that either
-> PLATFORM_MAY_SUPPORT_RISCV_ISA_SVPBMT or
-> PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT was selected.
-
-Disregard what I said... I was thinking about the other extensions and
-forgot this one was different. Thank you for pointing this out! I need
-to change this description to just say that the definition moved to
-Kconfig.isa.
-
-- Charlie
-
+> The following (what was in v1) looks good to me. What am I missing?
 > 
-> - Charlie
+> diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
+> index a81f91222a89..05a241519ae8 100644
+> --- a/tools/testing/selftests/resctrl/cmt_test.c
+> +++ b/tools/testing/selftests/resctrl/cmt_test.c
+> @@ -40,11 +40,11 @@ static int show_results_info(unsigned long sum_llc_val, int no_of_bits,
+>   	int ret;
+>   
+>   	avg_llc_val = sum_llc_val / num_of_runs;
+> -	avg_diff = (long)abs(cache_span - avg_llc_val);
+> +	avg_diff = (long)(cache_span - avg_llc_val);
+
+This deletes the abs() call, because I incorrectly let clang's warning
+lead me to believe that the abs() call was a no-op. But both you and Ilpo
+pointed out that the math breaks if you do that.
+
+>   	diff_percent = ((float)cache_span - avg_llc_val) / cache_span * 100;
+>   
+>   	ret = platform && abs((int)diff_percent) > max_diff_percent &&
+> -	      abs(avg_diff) > max_diff;
+> +	      labs(avg_diff) > max_diff;
+
+This hunk is OK.
+
+>   
+>   	ksft_print_msg("%s Check cache miss rate within %lu%%\n",
+>   		       ret ? "Fail:" : "Pass:", max_diff_percent);
 > 
-> > 
-> > Jess
-> > 
-> > > + bool "Svpbmt extension support for supervisor mode page-based memory types"
-> > > + depends on 64BIT && MMU
-> > > + depends on RISCV_ALTERNATIVE
-> > > + default y
-> > > + help
-> > > +   Add support for the Svpbmt ISA-extension (Supervisor-mode:
-> > > +   page-based memory types) in the kernel when it is detected at boot.
-> > > +
-> > > +   The memory type for a page contains a combination of attributes
-> > > +   that indicate the cacheability, idempotency, and ordering
-> > > +   properties for access to that page.
-> > > +
-> > > +   The Svpbmt extension is only available on 64-bit cpus.
-> > > +
-> > > +   If you don't know what to do here, say Y.
-> > > 
-> > > -- 
-> > > 2.44.0
-> > > 
-> > > 
-> > > _______________________________________________
-> > > linux-riscv mailing list
-> > > linux-riscv@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> > 
+> Reinette
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
 
