@@ -1,184 +1,141 @@
-Return-Path: <linux-kernel+bounces-173419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDBB8C0034
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D037E8C0035
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED9D1C23FD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2371F241AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEA58662B;
-	Wed,  8 May 2024 14:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8986AFC;
+	Wed,  8 May 2024 14:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPaVK6mG"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uPtt3h1P"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1711D8288C;
-	Wed,  8 May 2024 14:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672B084E14
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 14:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715179073; cv=none; b=ZBbeVEUb/YmWnUHz2azvXaIMac9DbyYDBksTgkcSwdgq8Nsy5ulrbz2V00p2T72nBxSa00sb0IeO2yUp8GzS0cIGFRPXXCTZG6pyrB9llw/lSu6btr+pf/LzAdSM6dI9gw0uCxX1dXO0mEVSjO6QLv2srPacVUp2mHApw+95U/I=
+	t=1715179095; cv=none; b=O6NR10f5rkX+OZt7JJJJPLDDyStOyfndakYGL2qgry64ZLRU/BxLKCq0RgRqZI5Hf1g2tGfDq2BNM6DjKWlK/jWhwJ1cWhbnfJw7Y4GWjG/IuqjvCLhWr1JojAERQCm+jgbGhzTGhCwpFR1nOa3PKvZRZkRrnVn8gJbPQSn9bSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715179073; c=relaxed/simple;
-	bh=LFoKAKHXamXRmqSY6b64pUE2lvxxq13VyPY4udQ2bbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QPQQptxVbn8XSr58SMpedDQyuvJBcOkV22cMkFa7Nvoz+0ERLRcn8CEjqswOiSmgl/K6f4fKnrhYGKYmuF6IW1Pklo/NHe1FprUT1r28BpARpREovS3aAyDX3uOcEfVgv86w8fZK9TegjMlQaj8R1QEJIl9CLc1fmvnlYwG0YGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lPaVK6mG; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e22a1bed91so57599371fa.0;
-        Wed, 08 May 2024 07:37:51 -0700 (PDT)
+	s=arc-20240116; t=1715179095; c=relaxed/simple;
+	bh=aFboWOrm7H2FhmOYJG+9bfDnrcpnZ8PDxm7a8GEEJ4g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kbPhN2p2RDFU2Vk7IxgDz6D6oD2bhbY2WacF2Tkb+bUJzSc1unh6Tm+5IVCFEO6TpRDo0QzG/n489S7FnwBzek44RkAEFyjryectwlp1hyIqzvRVCYuZ7DF/uxyK+pYnFNnxDnDsDHQTus6KG8BdMcHuXEKM574A8+9ScOmDJ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uPtt3h1P; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-6f44b2e0bf2so4189246b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 07:38:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715179070; x=1715783870; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0xEsgtjhIb67o8dmnbn0ijNuUBqVJ1mlV7N11u3Yqj0=;
-        b=lPaVK6mGBGDcdxJvx4fRyexeKQFXBCcXjhFpgWnOP/YjwTDDN2VUSmjkUoaFzYeIXh
-         K7gzGnNVbLb60wqCcaNsfECVzu8/ZfYxQQQdx7/82f8XYGJnoY5kbh0MVzf7JlSLUjQf
-         xiefnwfvVtzkobYSXdK3ctJuEFfdwc6qrtAkJHvP4SFpifoObKHWCDSN1M1orFFQ17Bf
-         au6CQZM6Ww7SoerdxhRdw82w2jXSWTx241L4cwm7mi3qaS+mN+qhcaC/z8c8TNY0Mh0H
-         EWbHM+zkoJ6BbFFIkcbmwTTeUOnd6PISeb8Mkz0rxPHkowHn9LFczlMvZFVOaq//ndHO
-         p9kg==
+        d=google.com; s=20230601; t=1715179094; x=1715783894; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5RcWN2WrSwXdTO88vEMTaGe9Rxg692ER5j0jmQd42is=;
+        b=uPtt3h1PkOXIdJcvlsb/xZ1fOtiQrUwJ0XHavUZuG4P0COu80adKXoIuF5A4NZdETE
+         qJBtAZ1A9iwWBXKRwBo8//GWhu08ddvLcB2Z1MDDdVRdmfFD/AzGmjJl1M5XCya9RI8m
+         pwIAfQLmE3vFVgGTJsdQmMowIMt0dgULbJixJn4hAQt3dnQHoFpqQ04pcxrh3z/N16ga
+         9qPyCc6+KnlhrGgAMu2fY+JwoBLOPq/a05Ft77aJgavaA6ecZACQQ76DV/lGGZ906dkp
+         bnoH1Vwsrh099J84CJvvsldAM75/N7RLnluJ58QoJYi4l3b7rB0O8eHzr/1SHgle9s0i
+         5O9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715179070; x=1715783870;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0xEsgtjhIb67o8dmnbn0ijNuUBqVJ1mlV7N11u3Yqj0=;
-        b=wyP/a89eihh8ks74hJIDLd7G31XixcFztK67ggbi6lgHd38cwyA5lHo7qt+CzqJMCN
-         znYahvJ7MaSn5vQn/4DgaBF2vQQ8Ca5K+FwY4uwg88IlQyWHVrNQArwwuyVrgccOSz7L
-         Rc5NAOjfp1ql3pfvtb/8mxS50im4c6+5GKAXPbDSeRuTKpRGmlTY7MLzwSy2q+Kng5Fp
-         whRKxwiAPhcd2E1jpBJ+DjZAF6kEIDBUM48sc+qWuErzbHGreOtM2GY2rvWOYd8sR+RV
-         /djokfQgRize9BqAbCQTHfbmq8jogrmK8YRAXs1eZeIklkg6zzJMSbwBuoOhbeDq3XuZ
-         7hnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+tO3cJphZqjSpKtgt6RPW4BoQgdU3VgBfpGE4kgPL4ylo+lY08P6oTOskeiLh80eY2hxY3zvbYsxAtW5lwUOWQlcud18xn3pbFWubrPdoEc98T5SuyDEVCA2nXbHfQ8yo6oBXy5uncZ9NGnoF
-X-Gm-Message-State: AOJu0YzWvzOV4vRuMPzMdsGKqJFU+gEGVlxUMRccVg3uw0ZTYRvKolIZ
-	ufduEx/sp/KDThBLLBJAw1d9FkR6tlWH1Ds+VTxu/KnhUoX3w4gmNsZfJVKsrknqyghBaxR9YT0
-	8rTEpGy+JLA3j7IXfcDcAh/Opze4=
-X-Google-Smtp-Source: AGHT+IEtd4mai1/RSnx1sodt2ztNxupN11yzK5OtIGIUAo2B68m7Slrvnzjv8SPPecfS9DsZKTC378UPvuO26tKadCs=
-X-Received: by 2002:a2e:2286:0:b0:2e1:691b:da0b with SMTP id
- 38308e7fff4ca-2e446f772cemr17059791fa.12.1715179070238; Wed, 08 May 2024
- 07:37:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715179094; x=1715783894;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5RcWN2WrSwXdTO88vEMTaGe9Rxg692ER5j0jmQd42is=;
+        b=IXrDhuw1Tha85BntjKJ4FzBGKkP2QgPq5Uc4AKJ6eV9Wa1qe0LQ7y0oh+0/jEQ9I78
+         05KVYYIakVRGvDfbsLIGuSD78iqUMZvUGDwzWtFVQELdmpje4xeCcOEU8dAVuFmJeIf3
+         3KyqBt99og/m5RE/+DdWd1p2GAZJfx8jtxQAyEcfDMhFv80ZXM0RLogJ2wuH3H0Syr/b
+         o8hKKOpehupXPrZT/l1q6gw/ERjrnbNKoxXiii2dV0Q4BgmZJomIuSDX1CZwUX5Axbr4
+         tpBa7TMD6qiaQC2ENz+rLIcUydSVksoCUJRKq3JWgHsGgkj4mxvdxt0anmAOr3O/rzJZ
+         yzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQLgYI5ysuHZ+RbN9EZ4ozL6O3tgB2GRlxX5gWSuu5Q6R/ZKdH16jxd733JV/i68rezg2hohLTIGsZjPlVZIW9zxVqQEnkouBZXtA5
+X-Gm-Message-State: AOJu0YzWiLt1Jyx7Mhkw2JPBNuvrnFYmEUbCRswMdRhcO/RXlckJacrO
+	qKCEmnYA6G+fRu/fz6EMcYC8kV6zfQlSkE2orarXNOm0aN3yp8tkaboB2m8Zdk0XoY0EayuNKp0
+	f4A==
+X-Google-Smtp-Source: AGHT+IFb9xiTfYWH9jIPK1qzK+/iXw5uiqVvO4vj4lyx5XChVOy/r2TZEomHsvP4cE1UI2BIBiEewlzEsxU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:1414:b0:6ea:ad01:358f with SMTP id
+ d2e1a72fcca58-6f49c30dd08mr57761b3a.6.1715179093524; Wed, 08 May 2024
+ 07:38:13 -0700 (PDT)
+Date: Wed, 8 May 2024 07:38:11 -0700
+In-Reply-To: <2c8cf51456efab39beb8b4af75fc0331d7902542.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <965cd14922aea67e2750ff2c2ecad773f8ba485a.1715109394.git.sean.wang@kernel.org>
- <202405081456.v2MvcQ0P-lkp@intel.com>
-In-Reply-To: <202405081456.v2MvcQ0P-lkp@intel.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 8 May 2024 10:37:37 -0400
-Message-ID: <CABBYNZLH7mGdP7AcdHnY8q=3i=Lupk-D2Af4G5X4o1_XdbTfVw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get the fw name
-To: kernel test robot <lkp@intel.com>
-Cc: sean.wang@kernel.org, marcel@holtmann.org, johan.hedberg@gmail.com, 
-	oe-kbuild-all@lists.linux.dev, linux-bluetooth@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Sean Wang <sean.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240404121327.3107131-1-pbonzini@redhat.com> <20240404121327.3107131-8-pbonzini@redhat.com>
+ <43d1ade0461868016165e964e2bc97f280aee9d4.camel@intel.com>
+ <ZhSYEVCHqSOpVKMh@google.com> <b4892d4cb7fea466fd82bcaf72ad3b29d28ce778.camel@intel.com>
+ <ZjrFblWaPNwXe0my@google.com> <2c8cf51456efab39beb8b4af75fc0331d7902542.camel@intel.com>
+Message-ID: <ZjuOUzhVIgkAQXmf@google.com>
+Subject: Re: [PATCH v5 07/17] KVM: x86: add fields to struct kvm_arch for CoCo features
+From: Sean Christopherson <seanjc@google.com>
+To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Sean,
+On Wed, May 08, 2024, Rick P Edgecombe wrote:
+> On Tue, 2024-05-07 at 17:21 -0700, Sean Christopherson wrote:
+> > > Can you elaborate on the reason for a per-memslot flag? We are discus=
+sing
+> > > this
+> > > design point internally, and also the intersection with the previous
+> > > attempts to
+> > > do something similar with a per-vm flag[0].
+> > >=20
+> > > I'm wondering if the intention is to try to make a memslot flag, so i=
+t can
+> > > be
+> > > expanded for the normal VM usage.
+> >=20
+> > Sure, I'll go with that answer.=C2=A0 Like I said, off-the-cuff.
+> >=20
+> > There's no concrete motiviation, it's more that _if_ we're going to exp=
+ose
+> > a knob to userspace, then I'd prefer to make it as precise as possible =
+to
+> > minimize the changes of KVM ending up back in ABI hell again.
+> >=20
+> > > Because the discussion on the original attempts, it seems safer to ke=
+ep this
+> > > behavior more limited (TDX only) for now.=C2=A0 And for TDX's usage a=
+ struct kvm
+> > > bool fits best because all memslots need to be set to zap_leafs_only =
+=3D true,
+> > > anyway.
+> >=20
+> > No they don't.=C2=A0 They might be set that way in practice for QEMU, b=
+ut it's
+> > not strictly required.=C2=A0 E.g. nothing would prevent a VMM from expo=
+sing a
+> > shared- only memslot to a guest.=C2=A0 The memslots that burned KVM the=
+ first
+> > time around were related to VFIO devices, and I wouldn't put it past
+> > someone to be crazy enough
+> > to expose an passhtrough an untrusted device to a TDX guest.
+>=20
+> Ok, thanks for clarification. So it's more of a strategic thing to move m=
+ore
+> zapping logic into userspace so the logic can change without introducing =
+kernel
+> regressions.
 
-On Wed, May 8, 2024 at 3:13=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> Hi,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on bluetooth/master]
-> [also build test WARNING on bluetooth-next/master linus/master v6.9-rc7 n=
-ext-20240507]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/sean-wang-kernel-o=
-rg/Bluetooth-btmtk-apply-the-common-btmtk_fw_get_filename/20240508-032333
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetoo=
-th.git master
-> patch link:    https://lore.kernel.org/r/965cd14922aea67e2750ff2c2ecad773=
-f8ba485a.1715109394.git.sean.wang%40kernel.org
-> patch subject: [PATCH v4 1/5] Bluetooth: btmtk: add the function to get t=
-he fw name
-> config: arm64-defconfig (https://download.01.org/0day-ci/archive/20240508=
-/202405081456.v2MvcQ0P-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20240508/202405081456.v2MvcQ0P-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405081456.v2MvcQ0P-lkp=
-@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->    drivers/bluetooth/btmtk.c: In function 'btmtk_fw_get_filename':
-> >> drivers/bluetooth/btmtk.c:115:35: warning: 'mediatek/BT_RAM_CODE_MT' d=
-irective output truncated writing 23 bytes into a region of size 8 [-Wforma=
-t-truncation=3D]
->      115 |                          "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hd=
-r.bin",
->          |                           ~~~~~~~~^~~~~~~~~~~~~~~
->    drivers/bluetooth/btmtk.c:115:26: note: directive argument in the rang=
-e [1, 256]
->      115 |                          "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hd=
-r.bin",
->          |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~
->    drivers/bluetooth/btmtk.c:114:17: note: 'snprintf' output between 41 a=
-nd 43 bytes into a destination of size 8
->      114 |                 snprintf(buf, sizeof(size),
->          |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->      115 |                          "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hd=
-r.bin",
->          |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~
->      116 |                          dev_id & 0xffff, (fw_ver & 0xff) + 1)=
-;
->          |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
->
-> vim +115 drivers/bluetooth/btmtk.c
->
->    105
->    106  void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u3=
-2 fw_ver,
->    107                             u32 fw_flavor)
->    108  {
->    109          if (dev_id =3D=3D 0x7925)
->    110                  snprintf(buf, size,
->    111                           "mediatek/mt%04x/BT_RAM_CODE_MT%04x_1_%x=
-_hdr.bin",
->    112                           dev_id & 0xffff, dev_id & 0xffff, (fw_ve=
-r & 0xff) + 1);
->    113          else if (dev_id =3D=3D 0x7961 && fw_flavor)
->    114                  snprintf(buf, sizeof(size),
->  > 115                           "mediatek/BT_RAM_CODE_MT%04x_1a_%x_hdr.b=
-in",
->    116                           dev_id & 0xffff, (fw_ver & 0xff) + 1);
->    117          else
->    118                  snprintf(buf, size,
->    119                           "mediatek/BT_RAM_CODE_MT%04x_1_%x_hdr.bi=
-n",
->    120                           dev_id & 0xffff, (fw_ver & 0xff) + 1);
->    121  }
->    122  EXPORT_SYMBOL_GPL(btmtk_fw_get_filename);
->    123
-
-Could you please fix the above?
-
---=20
-Luiz Augusto von Dentz
+You're _really_ reading too much into my suggestion.  As above, my suggesti=
+on
+was very spur of the momemnt.  I haven't put much thought into the tradeoff=
+s and
+side effects.
 
