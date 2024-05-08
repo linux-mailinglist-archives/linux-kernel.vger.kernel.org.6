@@ -1,338 +1,418 @@
-Return-Path: <linux-kernel+bounces-173267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B600C8BFDE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:03:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE988BFDE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2EB11C210F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007571F2377D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550F76A343;
-	Wed,  8 May 2024 13:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679346BFB3;
+	Wed,  8 May 2024 13:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VRkJfiJf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4GTCzv/Z"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um8A1+Gb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3AE79DD5;
-	Wed,  8 May 2024 13:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072FF7E57F;
+	Wed,  8 May 2024 13:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715173387; cv=none; b=L1mOJ4XlvEvRv03tgGY5bl8q3KNYYuHVITbU/xB4trVbTxszbsTJbCsoICMkegCAbPrAkpvTgZyryZ4j9CaCb5kBuGipKt+pwBMCaUnPh1xQ+D9+N8AAEnZFEoWPKNiLNQFlR7kIwFhL43VLmQYDCiFHc3DSMo2CYhrON7C46EE=
+	t=1715173384; cv=none; b=vEUlIuox9GiLfacL6Mm22X7Vr5ueW/h/5V/dqbsfbJZhOiERdj3M/z9w9S1Xf1lHOqTA5bCv5rHVxHhc6oU1ePvT2jTY2d/mMOnX7Du1ogO1oxWyHFxNBO5ENSUnYPAa2k+gp3libp5Cy/h7GKNPTxPjoQV1rr+AMGGw7s6mp/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715173387; c=relaxed/simple;
-	bh=A5opIo9FDKeD8ue/wvAEY7f6wkl1IuKrnCZpbn1EUaE=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=o5UYbs+LM8LuazimlzU9UsYfgD8aYoYQUT3unCqLlGKfphL/3agGNN91xwDNeuEHcqigrsHVCXPd8Fk+fYQoDOXI5vd0BGoMKpAqhgNdOXWr/OWSA+HemGrv5XN6hI+ogmV7hsMKyyYzu9XEIn1K57voL2frUcaY3kZbeuNx4xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VRkJfiJf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4GTCzv/Z; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715173375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=9VFXYNnmWVAd3Sn8DKCZ8yiqWzSwEdQ+Pabjj2q4hB0=;
-	b=VRkJfiJfWZ6AookMVOKv9e9HzbGtO1L0xsXLM+GqeVg04zUbQMgxteMJClaRvAfOdTALkg
-	O9e4scpjuaBKPVzCRsySOt2lcD/606KGBScnWIFENihZmILKnD8lPngsC4/1t7lLE3EQtQ
-	WqCSYCpDoVPzPxiwh7uI/C2lO0S/rW6cs0YHp0w/d1kqCl/FWExNg8YEtVfO5e6ojMBhcg
-	Yh/9LNILDkGQV9e8JyAZH3hTuwDmYPp5+7K8FYP17a9Sp/Qkc5sxOc1Plgtp+ZAvkpERQa
-	fj3HGUhWKvZhW6RRYmpeTusXkOdHJgvak/KrTiZacBCE3zHNRbq0UyyEQ0DxRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715173375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=9VFXYNnmWVAd3Sn8DKCZ8yiqWzSwEdQ+Pabjj2q4hB0=;
-	b=4GTCzv/ZQ4stwae37N//lUQMPYDxwL6kuSxLgbdpRlqjBvrmic4aq21mLw+5OMsTsGEaq/
-	AXZPI3MF3nY9IhDw==
-To: Vignesh Balasubramanian <vigbalas@amd.com>,
- linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com,
- ebiederm@xmission.com, keescook@chromium.org, x86@kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, bpetkov@amd.com,
- jinisusan.george@amd.com, matz@suse.de, binutils@sourceware.org,
- jhb@FreeBSD.org, felix.willgerodt@intel.com, Vignesh Balasubramanian
- <vigbalas@amd.com>
-Subject: Re: [PATCH v2 1/1] x86/elf: Add a new .note section containing
- Xfeatures information to x86 core files
-In-Reply-To: <20240507095330.2674-2-vigbalas@amd.com>
-Date: Wed, 08 May 2024 15:02:55 +0200
-Message-ID: <87wmo4o3r4.ffs@tglx>
+	s=arc-20240116; t=1715173384; c=relaxed/simple;
+	bh=01LJvPegPkRkhZihRNl/WMO4vMJyZSWpYYOjBKJ/LDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y5lXfTvdOaq/PBayPRAltMCgu3EiggO7QhP2ai1j4Qw6l7hU73/VBmeAb0/RyLyoaf5kIj254e4FpCJ7vlzNCbxNfojppwXcNakDN1yTuSMGD9efxS9WIzapdfSuaAZe0ok6eFoT1FL8j/eH83meWTnm0IXorr/2f62gCa2buv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um8A1+Gb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6CFC4AF66;
+	Wed,  8 May 2024 13:03:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715173383;
+	bh=01LJvPegPkRkhZihRNl/WMO4vMJyZSWpYYOjBKJ/LDE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=um8A1+GbLmhUZSQa/iVdTWhjZAyH/DLQiN13SIfEp0+dr+oDxeCY7uQPvwuAghMET
+	 8qGPJkH5kf19Lc/ciZohALp6Y+3Ng4i3iYHXXgDgDwF9/XZfwRjlK+0kP4dKf5BT08
+	 1LsIYL3u47plEZhSJg/CsDqmoU4TlhwLKraezgeZUs+lhL+JIDgTg0eXVG5NTXj/3n
+	 bNCJhAaDHay8CchQXlbtuBcwv3m9aASsIUT26ig7euHW3+i13lq5dCBp0whdKHb9Rd
+	 k/u9pudGHgBEsXUiBmZ72N9rTk6b/MIXCedKeOuwV3aOq1IGw1Ygh1Ia27bcuZ/H+c
+	 7PxsqKiO5FOFw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so7288129e87.1;
+        Wed, 08 May 2024 06:03:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVH7LM8KPg0I/g33/UW2ozI6Xn3K3eEK9SWTZKeUyQLLqlcGSD+TJnqfr0bzkE4uuomHbY3LpMi8ZeX7XlyXsyl/5OhuEyIlpQuamU/R5m3PnoCKJGeRQCy+Ayz4+4wUJQciVhIKVN+TnvyC8HKZw==
+X-Gm-Message-State: AOJu0Yz2IDYhjQDtauisMRrusoU5uLIPvJ5/Y23DpXM/HkgLC0TtZHZU
+	0hwlgMqCepRzGZFooMF7GyrzIqQ7N49Nnq48863zRUPbID8+T1xl5EW0voJB/AipNzQELHkfepp
+	jjv3wdHJl3vDt2cIVb3A3jwkUUcE=
+X-Google-Smtp-Source: AGHT+IG+00kY9mpFe8s5aIyse0mMpyW1ULwLO8p3m8f7XlHKxR6q519vRQk49KDn8ns8Dfm0olRbRGNIY8yAzjGtAVQ=
+X-Received: by 2002:a19:ad06:0:b0:51d:a208:2282 with SMTP id
+ 2adb3069b0e04-5217cd49611mr2247119e87.51.1715173381671; Wed, 08 May 2024
+ 06:03:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240411121047.2005033-1-maobibo@loongson.cn> <db839f86-6749-e15b-a084-d8a4a6735f1c@loongson.cn>
+In-Reply-To: <db839f86-6749-e15b-a084-d8a4a6735f1c@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Wed, 8 May 2024 21:02:55 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4MucyKrQdxBtoh7PJZDiWo1kB-9TP2L-x0tw8vh=ypNQ@mail.gmail.com>
+Message-ID: <CAAhV-H4MucyKrQdxBtoh7PJZDiWo1kB-9TP2L-x0tw8vh=ypNQ@mail.gmail.com>
+Subject: Re: [PATCH v3] perf kvm: Add kvm-stat for loongarch64
+To: maobibo <maobibo@loongson.cn>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ian Rogers <irogers@google.com>, 
+	Ming Wang <wangming01@loongson.cn>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07 2024 at 15:23, Vignesh Balasubramanian wrote:
-> +struct xfeat_component {
-> +	u32 xfeat_type;
-> +	u32 xfeat_sz;
-> +	u32 xfeat_off;
-> +	u32 xfeat_flags;
-> +} __packed;
+On Tue, May 7, 2024 at 2:11=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote:
+>
+> Hi Peter/Ian/Huacai,
+>
+> This patch stays one month without response, I know you are busy and
+> look through thousands of patch every day.
+>
+> Just one question, who has permission to merge perf kvm patch for
+> LoongArch. Is it LoongArch maintainer or perf kvm maintainer?
+It should probably go to perf tree, but if it is allowed, maybe I can
+try to merge into LoongArch tree.
 
-Why repeating xfeat_ for all member names?
 
-    u32       type;
-    u32       size;
-    u32       offset;
-    u32       flags;
-
-is sufficient and obvious, no?
-
-> +enum custom_feature {
-> +	FEATURE_XSAVE_FP = 0,
-> +	FEATURE_XSAVE_SSE = 1,
-> +	FEATURE_XSAVE_YMM = 2,
-> +	FEATURE_XSAVE_BNDREGS = 3,
-> +	FEATURE_XSAVE_BNDCSR = 4,
-> +	FEATURE_XSAVE_OPMASK = 5,
-> +	FEATURE_XSAVE_ZMM_Hi256 = 6,
-> +	FEATURE_XSAVE_Hi16_ZMM = 7,
-> +	FEATURE_XSAVE_PT = 8,
-> +	FEATURE_XSAVE_PKRU = 9,
-> +	FEATURE_XSAVE_PASID = 10,
-> +	FEATURE_XSAVE_CET_USER = 11,
-> +	FEATURE_XSAVE_CET_SHADOW_STACK = 12,
-> +	FEATURE_XSAVE_HDC = 13,
-> +	FEATURE_XSAVE_UINTR = 14,
-> +	FEATURE_XSAVE_LBR = 15,
-> +	FEATURE_XSAVE_HWP = 16,
-> +	FEATURE_XSAVE_XTILE_CFG = 17,
-> +	FEATURE_XSAVE_XTILE_DATA = 18,
-> +	FEATURE_MAX,
-> +	FEATURE_XSAVE_EXTENDED_START = FEATURE_XSAVE_YMM,
-> +	FEATURE_XSAVE_EXTENDED_END = FEATURE_XSAVE_XTILE_DATA,
-> +};
-
-Why can't this use the existing 'enum xfeature' which is providing
-exactly the same information already?
-
-> +#ifdef CONFIG_COREDUMP
-> +static int get_sub_leaf(int custom_xfeat)
-> +{
-> +	switch (custom_xfeat) {
-> +	case FEATURE_XSAVE_YMM:			return XFEATURE_YMM;
-> +	case FEATURE_XSAVE_BNDREGS:		return XFEATURE_BNDREGS;
-> +	case FEATURE_XSAVE_BNDCSR:		return XFEATURE_BNDCSR;
-> +	case FEATURE_XSAVE_OPMASK:		return XFEATURE_OPMASK;
-> +	case FEATURE_XSAVE_ZMM_Hi256:		return XFEATURE_ZMM_Hi256;
-> +	case FEATURE_XSAVE_Hi16_ZMM:		return XFEATURE_Hi16_ZMM;
-> +	case FEATURE_XSAVE_PT:			return XFEATURE_PT_UNIMPLEMENTED_SO_FAR;
-> +	case FEATURE_XSAVE_PKRU:		return XFEATURE_PKRU;
-> +	case FEATURE_XSAVE_PASID:		return XFEATURE_PASID;
-> +	case FEATURE_XSAVE_CET_USER:		return XFEATURE_CET_USER;
-> +	case FEATURE_XSAVE_CET_SHADOW_STACK:	return XFEATURE_CET_KERNEL_UNUSED;
-> +	case FEATURE_XSAVE_HDC:			return XFEATURE_RSRVD_COMP_13;
-> +	case FEATURE_XSAVE_UINTR:		return XFEATURE_RSRVD_COMP_14;
-> +	case FEATURE_XSAVE_LBR:			return XFEATURE_LBR;
-> +	case FEATURE_XSAVE_HWP:			return XFEATURE_RSRVD_COMP_16;
-> +	case FEATURE_XSAVE_XTILE_CFG:		return XFEATURE_XTILE_CFG;
-> +	case FEATURE_XSAVE_XTILE_DATA:		return XFEATURE_XTILE_DATA;
-> +	default:
-> +		pr_warn_ratelimited("Not a valid XSAVE Feature.");
-> +		return 0;
-> +	}
-> +}
-
-This function then maps the identical enums one to one. The only actual
-"functionality" is the default case and that's completely pointless.
-
-> +/*
-> + * Dump type, size, offset and flag values for every xfeature that is present.
-> + */
-> +static int dump_xsave_layout_desc(struct coredump_params *cprm)
-> +{
-> +	u32 supported_features = 0;
-> +	struct xfeat_component xc;
-> +	u32 eax, ebx, ecx, edx;
-> +	int num_records = 0;
-> +	int sub_leaf = 0;
-> +	int i;
-> +
-> +	/* Find supported extended features */
-> +	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
-> +	supported_features = eax;
-
-Why does this need to re-evaluate CPUID instead of just using the
-existing fpu_user_cfg.max_features?
-
-> +	for (i = FEATURE_XSAVE_EXTENDED_START;
-> +			i <= FEATURE_XSAVE_EXTENDED_END; i++) {
-
-Please use the full 100 character line width.
-
-> +		sub_leaf = get_sub_leaf(i);
-> +		if (!sub_leaf)
-> +			continue;
-> +		if (supported_features & (1U << sub_leaf)) {
-> +			cpuid_count(XSTATE_CPUID, sub_leaf, &eax, &ebx, &ecx, &edx);
-> +			xc.xfeat_type = i;
-> +			xc.xfeat_sz = eax;
-> +			xc.xfeat_off = ebx;
-> +			/* Reserved for future use */
-> +			xc.xfeat_flags = 0;
-> +
-> +			if (!dump_emit(cprm, &xc,
-> +				       sizeof(struct xfeat_component)))
-
-sizeof(xc), no?
-
-> +				return 0;
-> +			num_records++;
-> +		}
-> +	}
-
-This whole thing can be written as:
-
-	for_each_extended_xfeature(i, fpu_user_cfg.max_features) {
-		struct xfeat_component xc = {
-                	.type	= i,
-                        .size	= xstate_sizes[i],
-                        .offset	= xstate_offsets[i],
-		};
-
-		if (!dump_emit(cprm, &xc, sizeof(xc)))
-			return 0;
-                num_records++;
-	}
-
-It omits the features which are supported by the CPU, but not enabled by
-the kernel. That's perfectly fine because:
-
-  1) the corresponding xfeature bits of those component in the actual
-     XSAVE dump are guaranteed to be zero
-
-  2) the corresponding regions in the actual XSAVE dump are zeroed
-
-So there is absolutely no point in having notes for the not enabled
-features at all.
-
-Hmm?
-
-> +
-> +	return num_records;
-> +}
-> +
-> +static int get_xsave_desc_size(void)
-> +{
-> +	int supported_features = 0;
-> +	int xfeatures_count = 0;
-> +	u32 eax, ebx, ecx, edx;
-> +	int sub_leaf = 0;
-> +	int i;
-> +
-> +	/* Find supported extended features */
-> +	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
-> +	supported_features = eax;
-> +
-> +	for (i = FEATURE_XSAVE_EXTENDED_START;
-> +			i <= FEATURE_XSAVE_EXTENDED_END; i++) {
-> +		sub_leaf = get_sub_leaf(i);
-> +		if (!sub_leaf)
-> +			continue;
-> +		if (supported_features & (1U << sub_leaf))
-> +			xfeatures_count++;
-> +	}
-> +	return xfeatures_count * (sizeof(struct xfeat_component));
-
-Then this can be replaced by:
-
-	int i, cnt = 0;
-
-	for_each_extended_xfeature(i, fpu_user_cfg.max_features)
-        	cnt++;
-
-        return cnt * sizeof(struct xfeat_component);
-
-In fact the number of extended features can be calculated once during
-boot during xstate initialization.
-
-No?
-
-> +}
-> +
-> +int elf_coredump_extra_notes_write(struct coredump_params *cprm)
-> +{
-> +	int num_records = 0;
-> +	struct elf_note en;
-> +
-> +	en.n_namesz = sizeof(owner_name);
-> +	en.n_descsz = get_xsave_desc_size();
-> +	en.n_type = NT_X86_XSAVE_LAYOUT;
-> +
-> +	if (!dump_emit(cprm, &en, sizeof(en)))
-> +		return 1;
-> +	if (!dump_emit(cprm, owner_name, en.n_namesz))
-> +		return 1;
-> +	if (!dump_align(cprm, 4))
-> +		return 1;
-> +
-> +	num_records = dump_xsave_layout_desc(cprm);
-> +	if (!num_records) {
-> +		pr_warn_ratelimited("Error adding XSTATE layout ELF note. XSTATE buffer in the core file will be unparseable.");
-> +		return 1;
-
-This is going to trigger on all systems which do not support XSAVE. So
-why emitting this note in the first place on such systems?
-
-The function should have
-
-	if (!fpu_kernel_cfg.max_features)
-        	return 0;
-
-right at the beginning.
-
-Aside of that, these warnings are pointless noise in the case that
-dump_emit() caused the function to return early. Dumps can be truncated.
-
-> +/*
-> + * Return the size of new note.
-
-Which new note? This is extra notes, no?
-
-> + */
-> +int elf_coredump_extra_notes_size(void)
-> +{
-> +	int size = 0;
-
-	int size;
-
-> +
-> +	/* NOTE Header */
-
-  Note header ?
-
-> +	size += sizeof(struct elf_note);
-
-	size = ....
-
-> +	/* name + align */
-
-  Name plus alignment to 4 bytes ?
-
-> +	size += roundup(sizeof(owner_name), 4);
-> +	size += get_xsave_desc_size();
-> +
-> +	return size;
-> +}
-
-And like the write function this wants:
-
-	if (!fpu_kernel_cfg.max_features)
-        	return 0;
-
-at the beginning. No point in emitting useless notes and headers.
-
-Thanks,
-
-        tglx
+Huacai
+>
+> Regards
+> Bibo Mao
+>
+>
+> On 2024/4/11 =E4=B8=8B=E5=8D=888:10, Bibo Mao wrote:
+> > Add support for 'perf kvm stat' on loongarch64 platform, now only
+> > kvm exit event is supported.
+> >
+> > Here is example output about "perf kvm --host stat report" command
+> >
+> >     Event name   Samples   Sample%     Time (ns)   Time%   Mean Time (n=
+s)
+> >      Mem store     83969    51.00%     625697070   8.00%             74=
+51
+> >       Mem read     37641    22.00%     112485730   1.00%             29=
+88
+> >      Interrupt     15542     9.00%      20620190   0.00%             13=
+26
+> >          Iocsr     15207     9.00%      94296190   1.00%             62=
+00
+> >      Hypercall      4873     2.00%      12265280   0.00%             25=
+16
+> >           Idle      3713     2.00%    6322055860  87.00%          17026=
+81
+> >            FPU      1819     1.00%       2750300   0.00%             15=
+11
+> >         Ifecth       502     0.00%       1341740   0.00%             26=
+72
+> >     Mem modify       324     0.00%        602240   0.00%             18=
+58
+> >         Cpucfg        55     0.00%         77610   0.00%             14=
+11
+> >            Csr        12     0.00%         19690   0.00%             16=
+40
+> >           LASX         3     0.00%          4870   0.00%             16=
+23
+> >            LSX         2     0.00%          2100   0.00%             10=
+50
+> >
+> > Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> > ---
+> > v2 --- v3:
+> >    1. Add NULL check with cpuid in function get_cpuid()
+> >    2. Add example output from /proc/cpuinfo before function get_cpuid()
+> > v1 --- v2:
+> >    1. Add child_ops for kvm exit event, split kvm:kvm_exit_gspr events
+> > into cpucfg/csr/iocsr/idle child events by decoding detailed gspr
+> > instruction.
+> >    2. Remove some exception code type which does not happen in current
+> > kvm implementation, such as meomry NR/NX/priviledge exception.
+> > ---
+> >   tools/perf/arch/loongarch/Makefile        |   1 +
+> >   tools/perf/arch/loongarch/util/Build      |   2 +
+> >   tools/perf/arch/loongarch/util/header.c   |  88 ++++++++++++++
+> >   tools/perf/arch/loongarch/util/kvm-stat.c | 135 +++++++++++++++++++++=
++
+> >   4 files changed, 226 insertions(+)
+> >   create mode 100644 tools/perf/arch/loongarch/util/header.c
+> >   create mode 100644 tools/perf/arch/loongarch/util/kvm-stat.c
+> >
+> > diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loong=
+arch/Makefile
+> > index 3992a67a87d9..c89d6bb6b184 100644
+> > --- a/tools/perf/arch/loongarch/Makefile
+> > +++ b/tools/perf/arch/loongarch/Makefile
+> > @@ -4,6 +4,7 @@ PERF_HAVE_DWARF_REGS :=3D 1
+> >   endif
+> >   PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET :=3D 1
+> >   PERF_HAVE_JITDUMP :=3D 1
+> > +HAVE_KVM_STAT_SUPPORT :=3D 1
+> >
+> >   #
+> >   # Syscall table generation for perf
+> > diff --git a/tools/perf/arch/loongarch/util/Build b/tools/perf/arch/loo=
+ngarch/util/Build
+> > index d776125a2d06..b12d374d7096 100644
+> > --- a/tools/perf/arch/loongarch/util/Build
+> > +++ b/tools/perf/arch/loongarch/util/Build
+> > @@ -1,5 +1,7 @@
+> > +perf-y +=3D header.o
+> >   perf-y +=3D perf_regs.o
+> >
+> >   perf-$(CONFIG_DWARF)     +=3D dwarf-regs.o
+> >   perf-$(CONFIG_LOCAL_LIBUNWIND) +=3D unwind-libunwind.o
+> >   perf-$(CONFIG_LIBDW_DWARF_UNWIND) +=3D unwind-libdw.o
+> > +perf-$(CONFIG_LIBTRACEEVENT) +=3D kvm-stat.o
+> > diff --git a/tools/perf/arch/loongarch/util/header.c b/tools/perf/arch/=
+loongarch/util/header.c
+> > new file mode 100644
+> > index 000000000000..a4ed732b49c6
+> > --- /dev/null
+> > +++ b/tools/perf/arch/loongarch/util/header.c
+> > @@ -0,0 +1,88 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Implementation of get_cpuid().
+> > + *
+> > + * Author: Nikita Shubin <n.shubin@yadro.com>
+> > + */
+> > +
+> > +#include <stdio.h>
+> > +#include <stdlib.h>
+> > +#include <api/fs/fs.h>
+> > +#include <errno.h>
+> > +#include "util/debug.h"
+> > +#include "util/header.h"
+> > +
+> > +/*
+> > + * Output example from /proc/cpuinfo
+> > + *   CPU Family              : Loongson-64bit
+> > + *   Model Name              : Loongson-3C5000
+> > + *   CPU Revision            : 0x11
+> > + */
+> > +#define CPUINFO_MODEL        "Model Name"
+> > +#define CPUINFO              "/proc/cpuinfo"
+> > +static char *_get_field(const char *line)
+> > +{
+> > +     char *line2, *nl;
+> > +
+> > +     line2 =3D strrchr(line, ' ');
+> > +     if (!line2)
+> > +             return NULL;
+> > +
+> > +     line2++;
+> > +     nl =3D strrchr(line, '\n');
+> > +     if (!nl)
+> > +             return NULL;
+> > +
+> > +     return strndup(line2, nl - line2);
+> > +}
+> > +
+> > +static char *__get_cpuid(void)
+> > +{
+> > +     char *line, *model, *cpuid;
+> > +     unsigned long line_sz;
+> > +     FILE *file;
+> > +
+> > +     file =3D fopen(CPUINFO, "r");
+> > +     if (file =3D=3D NULL)
+> > +             return cpuid;
+> > +
+> > +     line =3D model =3D cpuid =3D NULL;
+> > +     while (getline(&line, &line_sz, file) !=3D -1) {
+> > +             if (strncmp(line, CPUINFO_MODEL, strlen(CPUINFO_MODEL)))
+> > +                     continue;
+> > +
+> > +             model =3D _get_field(line);
+> > +             if (!model)
+> > +                     goto free;
+> > +             break;
+> > +     }
+> > +
+> > +     if (model && (asprintf(&cpuid, "%s", model) < 0))
+> > +             cpuid =3D NULL;
+> > +
+> > +free:
+> > +     fclose(file);
+> > +     free(model);
+> > +     return cpuid;
+> > +}
+> > +
+> > +int get_cpuid(char *buffer, size_t sz)
+> > +{
+> > +     char *cpuid =3D __get_cpuid();
+> > +     int ret =3D 0;
+> > +
+> > +     if (!cpuid)
+> > +             return EINVAL;
+> > +
+> > +     if (sz >=3D strlen(cpuid))
+> > +             scnprintf(buffer, sz, "%s", cpuid);
+> > +     else
+> > +             ret =3D ENOBUFS;
+> > +     free(cpuid);
+> > +     return ret;
+> > +}
+> > +
+> > +char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+> > +{
+> > +     return __get_cpuid();
+> > +}
+> > diff --git a/tools/perf/arch/loongarch/util/kvm-stat.c b/tools/perf/arc=
+h/loongarch/util/kvm-stat.c
+> > new file mode 100644
+> > index 000000000000..cc50adb0835a
+> > --- /dev/null
+> > +++ b/tools/perf/arch/loongarch/util/kvm-stat.c
+> > @@ -0,0 +1,135 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +#include <errno.h>
+> > +#include <memory.h>
+> > +#include <errno.h>
+> > +#include "util/kvm-stat.h"
+> > +#include "util/parse-events.h"
+> > +#include "util/debug.h"
+> > +#include "util/evsel.h"
+> > +#include "util/evlist.h"
+> > +#include "util/pmus.h"
+> > +
+> > +#define LOONGARCH_EXCEPTION_INT              0
+> > +#define LOONGARCH_EXCEPTION_PIL              1
+> > +#define LOONGARCH_EXCEPTION_PIS              2
+> > +#define LOONGARCH_EXCEPTION_PIF              3
+> > +#define LOONGARCH_EXCEPTION_PME              4
+> > +#define LOONGARCH_EXCEPTION_FPD              15
+> > +#define LOONGARCH_EXCEPTION_SXD              16
+> > +#define LOONGARCH_EXCEPTION_ASXD     17
+> > +#define LOONGARCH_EXCEPTION_GSPR     22
+> > +#define  LOONGARCH_EXCEPTION_CPUCFG  100
+> > +#define  LOONGARCH_EXCEPTION_CSR     101
+> > +#define  LOONGARCH_EXCEPTION_IOCSR   102
+> > +#define  LOONGARCH_EXCEPTION_IDLE    103
+> > +#define  LOONGARCH_EXCEPTION_OTHERS  104
+> > +#define LOONGARCH_EXCEPTION_HVC              23
+> > +
+> > +#define loongarch_exception_type                             \
+> > +     {LOONGARCH_EXCEPTION_INT,  "Interrupt" },               \
+> > +     {LOONGARCH_EXCEPTION_PIL,  "Mem read" },                \
+> > +     {LOONGARCH_EXCEPTION_PIS,  "Mem store" },               \
+> > +     {LOONGARCH_EXCEPTION_PIF,  "Ifecth" },                  \
+> > +     {LOONGARCH_EXCEPTION_PME,  "Mem modify" },              \
+> > +     {LOONGARCH_EXCEPTION_FPD,  "FPU" },                     \
+> > +     {LOONGARCH_EXCEPTION_SXD,  "LSX" },                     \
+> > +     {LOONGARCH_EXCEPTION_ASXD, "LASX" },                    \
+> > +     {LOONGARCH_EXCEPTION_GSPR, "Privilege Error" },         \
+> > +     {LOONGARCH_EXCEPTION_HVC,  "Hypercall" },               \
+> > +     {LOONGARCH_EXCEPTION_CPUCFG, "Cpucfg" },                \
+> > +     {LOONGARCH_EXCEPTION_CSR,    "Csr" },                   \
+> > +     {LOONGARCH_EXCEPTION_IOCSR,  "Iocsr" },                 \
+> > +     {LOONGARCH_EXCEPTION_IDLE,   "Idle" },                  \
+> > +     {LOONGARCH_EXCEPTION_OTHERS, "Others" }
+> > +
+> > +define_exit_reasons_table(loongarch_exit_reasons, loongarch_exception_=
+type);
+> > +
+> > +const char *vcpu_id_str =3D "vcpu_id";
+> > +const char *kvm_exit_reason =3D "reason";
+> > +const char *kvm_entry_trace =3D "kvm:kvm_enter";
+> > +const char *kvm_reenter_trace =3D "kvm:kvm_reenter";
+> > +const char *kvm_exit_trace =3D "kvm:kvm_exit";
+> > +const char *kvm_events_tp[] =3D {
+> > +     "kvm:kvm_enter",
+> > +     "kvm:kvm_reenter",
+> > +     "kvm:kvm_exit",
+> > +     "kvm:kvm_exit_gspr",
+> > +     NULL,
+> > +};
+> > +
+> > +static bool event_end(struct evsel *evsel,
+> > +             struct perf_sample *sample __maybe_unused,
+> > +             struct event_key *key __maybe_unused)
+> > +{
+> > +     /*
+> > +      * LoongArch kvm is different with other architectures
+> > +      *
+> > +      * There is kvm:kvm_reenter or kvm:kvm_enter event adjacent with
+> > +      * kvm:kvm_exit event.
+> > +      *   kvm:kvm_reenter means returning to guest immediately
+> > +      *   kvm:kvm_enter   means returning to vmm and then to guest
+> > +      */
+> > +     return evsel__name_is(evsel, kvm_entry_trace) ||
+> > +             evsel__name_is(evsel, kvm_reenter_trace);
+> > +}
+> > +
+> > +static void event_gspr_get_key(struct evsel *evsel,
+> > +                     struct perf_sample *sample,
+> > +                     struct event_key *key)
+> > +{
+> > +     unsigned int insn;
+> > +
+> > +     key->key =3D LOONGARCH_EXCEPTION_OTHERS;
+> > +     insn =3D evsel__intval(evsel, sample, "inst_word");
+> > +     switch (insn >> 24) {
+> > +     case 0:
+> > +             /* cpucfg inst trap */
+> > +             if ((insn >> 10) =3D=3D 0x1b)
+> > +                     key->key =3D LOONGARCH_EXCEPTION_CPUCFG;
+> > +             break;
+> > +     case 4:
+> > +             /* csr inst trap */
+> > +             key->key =3D LOONGARCH_EXCEPTION_CSR;
+> > +             break;
+> > +     case 6:
+> > +             /* iocsr inst trap */
+> > +             if ((insn >> 15) =3D=3D 0xc90)
+> > +                     key->key =3D LOONGARCH_EXCEPTION_IOCSR;
+> > +             else if ((insn >> 15) =3D=3D 0xc91)
+> > +                     /* idle inst trap */
+> > +                     key->key =3D LOONGARCH_EXCEPTION_IDLE;
+> > +             break;
+> > +     default:
+> > +             key->key =3D LOONGARCH_EXCEPTION_OTHERS;
+> > +             break;
+> > +     }
+> > +}
+> > +
+> > +static struct child_event_ops child_events[] =3D {
+> > +     { .name =3D "kvm:kvm_exit_gspr", .get_key =3D event_gspr_get_key =
+},
+> > +     { NULL, NULL },
+> > +};
+> > +
+> > +static struct kvm_events_ops exit_events =3D {
+> > +     .is_begin_event =3D exit_event_begin,
+> > +     .is_end_event =3D event_end,
+> > +     .child_ops =3D child_events,
+> > +     .decode_key =3D exit_event_decode_key,
+> > +     .name =3D "VM-EXIT"
+> > +};
+> > +
+> > +struct kvm_reg_events_ops kvm_reg_events_ops[] =3D {
+> > +     { .name =3D "vmexit", .ops =3D &exit_events, },
+> > +     { NULL, NULL },
+> > +};
+> > +
+> > +const char * const kvm_skip_events[] =3D {
+> > +     NULL,
+> > +};
+> > +
+> > +int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_=
+unused)
+> > +{
+> > +     kvm->exit_reasons_isa =3D "loongarch64";
+> > +     kvm->exit_reasons =3D loongarch_exit_reasons;
+> > +     return 0;
+> > +}
+> >
+> > base-commit: 2c71fdf02a95b3dd425b42f28fd47fb2b1d22702
+> >
+>
 
