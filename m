@@ -1,302 +1,160 @@
-Return-Path: <linux-kernel+bounces-173492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134DB8C0119
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:35:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F608C011D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C0CDB270AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:35:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D13CB272EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3717A1292E4;
-	Wed,  8 May 2024 15:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D817127E3C;
+	Wed,  8 May 2024 15:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Cs/W2GsW"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xd8NFkCc"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1935F127E21
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9FA1272A0
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715182480; cv=none; b=MRjnCC52uCxzaBc5UTfjZX3t6yPKqrZ3vN7pBSwk3C+JeDvQmAijHmM8GZbal2q/7GGV/u2LvA8s3M6v3gpDi1F3ISCKqW8zaryjiFwjS413KRoSSlUMskZJwDSDIEk0bzxX6442Q5o/eIOzric0XjFFQgTK6cJn13Jxpvlpk5o=
+	t=1715182507; cv=none; b=e1HYEQIsXsOrvdkcD8IONYP+BmPG7X7gtXyJMRDH3sOHw3Wfm9mNRLPbdBeBsNPdelREXHLLrDNzb5rK8npIZN+kYm2z8r3ckmXixVnJzUy0Z6GsQRci203ZGlcfvHTKdl5y8ue6GLiWDb2RiD+hFFonfWLIh8dgJyb4Lua2Bi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715182480; c=relaxed/simple;
-	bh=OM1eAfRhyV3Y6xgWugPNvS9Olp1YXcsXIUwGaArq1gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHJAdtd4ECQJ32nVmDSujblHlxSneCVN8EJ8B0o1VAorFiUyhdD1XiANYSiU+9twkOyBCimfBODks6ULN/g1xkxjM6XV7DhHARv+WhjuID/qmgqaGfOiJLVFSy9F4BIpeeoDCzqhwxHGLSCdn4TqEyanj6M12t9FIy3g1YAkEKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Cs/W2GsW; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f929b9f10so972298e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:34:37 -0700 (PDT)
+	s=arc-20240116; t=1715182507; c=relaxed/simple;
+	bh=YNwnw7x/Uo6NlKxdHmJmjTkvzz/xc3NOR1EbfVQ1Qdk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bxW69+BnqnIFhOhMDKo8X3WWL9Yg/UdPPhhEgnn88eKC+gS73XxEldlrIOMCTkKNJke67W1K0WnaY1hYBqwQh162IF03cpquwu7Nw6fdM5A8YZkIYxgQqoBI8HN9Cy4/03s67U0tDictxYk2ZlzmQ2PkX7HFvuIMs9tWf3hXvpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xd8NFkCc; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-61c943c18a8so4449801a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:35:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715182476; x=1715787276; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YzSCOae2a+QPgOLUGTOQmc4nIRcoyi9N83mBQKVx8Xg=;
-        b=Cs/W2GsW4Akw5wpqOChNN54DDMID8THeUpU383oFyAk7zS0GvirQzNO+qXLQi9sRBa
-         wpNWf0/qeC1tTYWo/4yaTC/RLvnGWvqpH8cKnxy29uy6ElLVTj9yTHdQgn6ZI1K4Cnel
-         sHfjaq1P0Wnaz4xn87oQ/JsgLFISqcGIkKIQQ=
+        d=google.com; s=20230601; t=1715182505; x=1715787305; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zgF+FfCyif5jmmQvrN+Ij7wj3+WZfQYjh63u9JDeBL0=;
+        b=xd8NFkCc5uRmmg9BWiGkeXd81FmeWv95bsD91ua9LNqd2BJOus1sHuHAWNJjNo9jdR
+         1A0/j6lIji3UVVlW7RJTknyiVNHm1KHCSQ0EwMFbPsY9J8DLZqc63C+MBJf5SEPA6PuA
+         1IUIKKz5cHMucshl4W4bDv5Ukk95HANWdTI3fOd1Zq6r0r+fybv6d+3aua1CFAHmcdrb
+         EPPJCoPkAwWILLodkqCV668AL5PBygrQL5Po4dIt7OmBn/mOS6rkJ5nSHiQxKt1hD24B
+         gH2kVJd4Boc5vmQLyDvNt1O7HXQ6eyWhL+dbZFOMjFT3UN7VhUERJNrEGZaTUEHy5L/Q
+         2SKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715182476; x=1715787276;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YzSCOae2a+QPgOLUGTOQmc4nIRcoyi9N83mBQKVx8Xg=;
-        b=FHNTCWVqwEGv4yvPIqHinWiaaZLEQ3ndkijpF12MZT6KkkaNP/GP0OLJ/PehlaR7d4
-         hXc/oR7XW2c5VU76YrqyMDSBMlQh/TeF4kEXMee/dw5icClDpWKhSoV+56mBpYFjzeG/
-         K9fG9jtw8Rrw1lGGTd6dnKgl6TE1H9n9kKjIhCY9wfMDEQoWCRe2xM3IQC+2acUTr3Of
-         YWkYSaOsltLSX7apNKzm3d8OaIzi6FncAgmm0A47OqGWI3WdtfVl956o5gSVodK4ink/
-         NGDughydpxYD4nshTeFHL0Of0XL7ofglZz2OY5TaMEoP3XcYHd9qUJaJHwg3ro7Fj0AI
-         FT5w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFisilcTWdLk1n2Dc7zeAE+ag1jooDgeilq67E7KlgrW0noXzGuPLk6c2cknr98Hu3QoSvUtSz82+4kwCtd75LvHTbl9eikgys0+k7
-X-Gm-Message-State: AOJu0Yzd8HL0GX5ORcLMNJgUsQIl2LReIG/vvzcOKACFwl6e2PAGd+5c
-	qIPhTq5XWRnY6XdWYvOiw1zzPxUTYqiBOxySTbM6m0n331Ttp9GQ/DfZMHA5h2o=
-X-Google-Smtp-Source: AGHT+IHZ7XK1ZuxPGd8HrjDaMtETjtJJqnKQXRun5AIyHliGUeKgct7es+zl9WyQAXcwu+/5tIrqpw==
-X-Received: by 2002:a05:6512:532:b0:51f:8ad:673f with SMTP id 2adb3069b0e04-5217d0487a6mr1735900e87.5.1715182476038;
-        Wed, 08 May 2024 08:34:36 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id n4-20020aa7d044000000b005720e083878sm7657018edo.49.2024.05.08.08.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 08:34:35 -0700 (PDT)
-Date: Wed, 8 May 2024 17:34:32 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Mina Almasry <almasrymina@google.com>,
-	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Florian Westphal <fw@strlen.de>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Aleksander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Richard Gobert <richardbgobert@gmail.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>
-Subject: Re: [RFC PATCH net-next v8 02/14] net: page_pool: create hooks for
- custom page providers
-Message-ID: <ZjubiL4nkULP9nyV@phenom.ffwll.local>
-Mail-Followup-To: Pavel Begunkov <asml.silence@gmail.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Mina Almasry <almasrymina@google.com>,
-	Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	David Ahern <dsahern@kernel.org>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Florian Westphal <fw@strlen.de>,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
-	Arseniy Krasnov <avkrasnov@salutedevices.com>,
-	Aleksander Lobakin <aleksander.lobakin@intel.com>,
-	Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Richard Gobert <richardbgobert@gmail.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
-	Shailend Chand <shailend@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>
-References: <20240507161857.GA4718@ziepe.ca>
- <ZjpVfPqGNfE5N4bl@infradead.org>
- <CAHS8izPH+sRLSiZ7vbrNtRdHrFEf8XQ61XAyHuxRSL9Jjy8YbQ@mail.gmail.com>
- <20240507164838.GG4718@ziepe.ca>
- <0d5da361-cc7b-46e9-a635-9a7a4c208444@gmail.com>
- <20240507175644.GJ4718@ziepe.ca>
- <6a50d01a-b5b9-4699-9d58-94e5f8f81c13@gmail.com>
- <20240507233247.GK4718@ziepe.ca>
- <Zjsm3vO6rIY_sw5A@phenom.ffwll.local>
- <1e2823db-504b-4829-856f-3f45a45ccada@gmail.com>
+        d=1e100.net; s=20230601; t=1715182505; x=1715787305;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zgF+FfCyif5jmmQvrN+Ij7wj3+WZfQYjh63u9JDeBL0=;
+        b=IazCzwNKzxM1dTwTMdTWFKo7XXl0EomMLanhKUmzokqU8BeJx0c8Fy1Gybh9sGWkYc
+         QpoJMqqU0YRaYow8Nomtp/F3wU7OV3tDggyL8aGfeK2SZ11q+Jq7OeUs+YrhpZZgwNXe
+         c8Azss5zk23sn09jh38doGUvnJKTEj2wvhrytZinTociIIBQvSI7F0JqUTSoTijQ+5Qb
+         4hqjWR80PmLMrRGsE1ioEeslOLPwJT6VVg40QrkWxQMybMh4bNpCdDsbSZOfo2aQgpOK
+         OgdheZIpbu/zoexHvo/9pNu93oYCgStc1L2scepZnCEYFz84sJMQM/PkGnOmsWc0bZfx
+         oVCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/EKrT2uvFLX0Sfj232yKlRgt7iWOGz1n+B4PI/xQxQqzg1aiVkR7XZFHiYGTzVQe7fjBcD1MbUK+apgdjanXXN0qyO1Va6soezOlU
+X-Gm-Message-State: AOJu0YxvrzzimWEl9hwwZRJcIJb8ancOlnxqDBVBvMoi2MwNIh1S2aJS
+	1yzz2v1BBPKsVj9k9NCb2sMbnOTc3n+FgjDnUA5c8PYHhJUuJzH3ogUHkzrENx3l+xMmp4CeCTl
+	wUw==
+X-Google-Smtp-Source: AGHT+IGnMl8b2DL5U8JgKn7vuhtLw31dGCqH0NqCNx0jQuIgeqpJ7VJDjS8TlyGz9TbXKbQbvpZPAFH5nNw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:65c1:0:b0:5dc:af76:f57d with SMTP id
+ 41be03b00d2f7-62f223af825mr37896a12.7.1715182505319; Wed, 08 May 2024
+ 08:35:05 -0700 (PDT)
+Date: Wed, 8 May 2024 08:35:03 -0700
+In-Reply-To: <ac66bb23-2955-41bf-b1f0-85adcc4628a0@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e2823db-504b-4829-856f-3f45a45ccada@gmail.com>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+Mime-Version: 1.0
+References: <ZjUwHvyvkM3lj80Q@LeoBras> <ZjVXVc2e_V8NiMy3@google.com>
+ <3b2c222b-9ef7-43e2-8ab3-653a5ee824d4@paulmck-laptop> <ZjprKm5jG3JYsgGB@google.com>
+ <663a659d-3a6f-4bec-a84b-4dd5fd16c3c1@paulmck-laptop> <ZjqWXPFuoYWWcxP3@google.com>
+ <0e239143-65ed-445a-9782-e905527ea572@paulmck-laptop> <Zjq9okodmvkywz82@google.com>
+ <ZjrClk4Lqw_cLO5A@google.com> <ac66bb23-2955-41bf-b1f0-85adcc4628a0@paulmck-laptop>
+Message-ID: <Zjubp36yHVf01C16@google.com>
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+From: Sean Christopherson <seanjc@google.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Leonardo Bras <leobras@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <quic_neeraju@quicinc.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, May 08, 2024 at 12:35:52PM +0100, Pavel Begunkov wrote:
-> On 5/8/24 08:16, Daniel Vetter wrote:
-> > On Tue, May 07, 2024 at 08:32:47PM -0300, Jason Gunthorpe wrote:
-> > > On Tue, May 07, 2024 at 08:35:37PM +0100, Pavel Begunkov wrote:
-> > > > On 5/7/24 18:56, Jason Gunthorpe wrote:
-> > > > > On Tue, May 07, 2024 at 06:25:52PM +0100, Pavel Begunkov wrote:
-> > > > > > On 5/7/24 17:48, Jason Gunthorpe wrote:
-> > > > > > > On Tue, May 07, 2024 at 09:42:05AM -0700, Mina Almasry wrote:
-> > > > > > > 
-> > > > > > > > 1. Align with devmem TCP to use udmabuf for your io_uring memory. I
-> > > > > > > > think in the past you said it's a uapi you don't link but in the face
-> > > > > > > > of this pushback you may want to reconsider.
-> > > > > > > 
-> > > > > > > dmabuf does not force a uapi, you can acquire your pages however you
-> > > > > > > want and wrap them up in a dmabuf. No uapi at all.
-> > > > > > > 
-> > > > > > > The point is that dmabuf already provides ops that do basically what
-> > > > > > > is needed here. We don't need ops calling ops just because dmabuf's
-> > > > > > > ops are not understsood or not perfect. Fixup dmabuf.
-> > > > > > 
-> > > > > > Those ops, for example, are used to efficiently return used buffers
-> > > > > > back to the kernel, which is uapi, I don't see how dmabuf can be
-> > > > > > fixed up to cover it.
-> > > > > 
-> > > > > Sure, but that doesn't mean you can't use dma buf for the other parts
-> > > > > of the flow. The per-page lifetime is a different topic than the
-> > > > > refcounting and access of the entire bulk of memory.
+On Tue, May 07, 2024, Paul E. McKenney wrote:
+> On Tue, May 07, 2024 at 05:08:54PM -0700, Sean Christopherson wrote:
+> > > > This is admittedly a bit indirect, but then again this is Linux-kernel
+> > > > RCU that we are talking about.
 > > > > 
-> > > > Ok, so if we're leaving uapi (and ops) and keep per page/sub-buffer as
-> > > > is, the rest is resolving uptr -> pages, and passing it to page pool in
-> > > > a convenient to page pool format (net_iov).
+> > > > > And I'm arguing that, since the @user check isn't bombproof, there's no reason to
+> > > > > try to harden against every possible edge case in an equivalent @guest check,
+> > > > > because it's unnecessary for kernel safety, thanks to the guardrails.
+> > > > 
+> > > > And the same argument above would also apply to an equivalent check for
+> > > > execution in guest mode at the time of the interrupt.
 > > > 
-> > > I'm not going to pretend to know about page pool details, but dmabuf
-> > > is the way to get the bulk of pages into a pool within the net stack's
-> > > allocator and keep that bulk properly refcounted while.
+> > > This is partly why I was off in the weeds.  KVM cannot guarantee that the
+> > > interrupt that leads to rcu_pending() actually interrupted the guest.  And the
+> > > original patch didn't help at all, because a time-based check doesn't come
+> > > remotely close to the guarantees that the @user check provides.
+> 
+> Nothing in the registers from the interrupted context permits that
+> determination?
+
+No, because the interrupt/call chain that reaches rcu_pending() actually originates
+in KVM host code, not guest code.  I.e. the eventual IRET will return control to
+KVM, not to the guest.
+
+On AMD, the interrupt quite literally interrupts the host, not the guest.  AMD
+CPUs don't actually acknowledge/consume the physical interrupt when the guest is
+running, the CPU simply generates a VM-Exit that says "there's an interrupt pending".
+It's up to software, i.e. KVM, to enable IRQs and handle (all!) pending interrupts.
+
+Intel CPUs have a mode where the CPU fully acknowledges the interrupt and reports
+the exact vector that caused the VM-Exit, but it's still up to software to invoke
+the interrupt handler, i.e. the interrupt trampolines through KVM.
+
+And before handling/forwarding the interrupt, KVM exits its quiescent state,
+leaves its no-instrumention region, invokes tracepoitnes, etc.  So even my PF_VCPU
+idea is _very_ different than the user/idle scenarios, where the interrupt really
+truly does original from an extended quiescent state.
+
+> > > > But if we do need RCU to be more aggressive about treating guest execution as
+> > > > an RCU quiescent state within the host, that additional check would be an
+> > > > excellent way of making that happen.
 > > > 
-> > > An object like dmabuf is needed for the general case because there are
-> > > not going to be per-page references or otherwise available.
-> > > 
-> > > What you seem to want is to alter how the actual allocation flow works
-> > > from that bulk of memory and delay the free. It seems like a different
-> > > topic to me, and honestly hacking into the allocator free function
-> > > seems a bit weird..
-> > 
-> > Also I don't see how it's an argument against dma-buf as the interface for
+> > > It's not clear to me that being more agressive is warranted.  If my understanding
+> > > of the existing @user check is correct, we _could_ achieve similar functionality
+> > > for vCPU tasks by defining a rule that KVM must never enter an RCU critical section
+> > > with PF_VCPU set and IRQs enabled, and then rcu_pending() could check PF_VCPU.
+> > > On x86, this would be relatively straightforward (hack-a-patch below), but I've
+> > > no idea what it would look like on other architectures.
 > 
-> It's not, neither I said it is, but it is an argument against removing
-> the network's page pool ops.
+> At first glance, this looks plausible.  I would guess that a real patch
+> would have to be architecture dependent, and that could simply involve
+> a Kconfig option (perhaps something like CONFIG_RCU_SENSE_GUEST), so
+> that the check you add to rcu_pending is conditioned on something like
+> IS_ENABLED(CONFIG_RCU_SENSE_GUEST).
 > 
-> > all these, because e.g. ttm internally does have a page pool because
-> > depending upon allocator, that's indeed beneficial. Other drm drivers have
-> > more buffer-based concepts for opportunistically memory around, usually
-> > by marking buffers that are just kept as cache as purgeable (which is a
-> > concept that goes all the way to opengl/vulkan).
+> There would also need to be a similar check in rcu_sched_clock_irq(),
+> or maybe in rcu_flavor_sched_clock_irq(), to force a call to rcu_qs()
+> in this situation.
 > 
-> Because in this case it solves nothing and helps with nothing, quite
-> the opposite. Just as well we can ask why NVMe doesn't wrap user pages
-> into a dmabuf while doing IO.
+> > > But the value added isn't entirely clear to me, probably because I'm still missing
+> > > something.  KVM will have *very* recently called __ct_user_exit(CONTEXT_GUEST) to
+> > > note the transition from guest to host kernel.  Why isn't that a sufficient hook
+> > > for RCU to infer grace period completion?
+> 
+> Agreed, unless we are sure we need the change, we should not make it.
 
-Because the rules around memory reclaim, gfp nesting and guaranteed
-forward progress don't match up for block i/o. I looked quite a bit into
-gluing direct i/o into dma-buf because there's vulkan extensions for that,
-and it's an absolute mess.
--Sima
-
-> 
-> > But these are all internals of the dma-buf exporter, the dma-buf api users
-> > don't ever need to care.
-> > -Sima
-> 
-> -- 
-> Pavel Begunkov
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
++1.  And your comments about tracepoints, instrumentions, etc. makes me think
+that trying to force the issue with PF_VCPU would be a bad idea.
 
