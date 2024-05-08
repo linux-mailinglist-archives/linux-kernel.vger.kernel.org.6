@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-173870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40028C0705
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:00:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 986A68C0707
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6040428307E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F57A2832BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32DB1353E0;
-	Wed,  8 May 2024 21:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EE51332A5;
+	Wed,  8 May 2024 21:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsA3Ez9Q"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i7sNgSIV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B96134CD2;
-	Wed,  8 May 2024 21:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838F413329E;
+	Wed,  8 May 2024 21:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715205565; cv=none; b=p6u88cAJwAsWxOUq9pEpjeG1hHL0F10HZx2XcDFzQGvUBfqbzTP9JjesVGj9g+hLaCSvl3Hj97EtvfAgeMo05goBJ0XA/cIeL/YCQyirhh3NEAwPz0sf6/dUqotBdjhN5j5F+j8zHrEG7aK+0PCrMVeVXtvmRpWakeYg2Bb+hHc=
+	t=1715205580; cv=none; b=MUau+vm1Mi3J1xhCBbgO+2DgOu8VKle81GBs7ZvI2pEcBkvTguw8VCKWn9p3huEFHudPleq6boWtDpvpwK5TmxYu8BqcAwF9MSqghtaBBEmwpmgibShVAbKP11u9/0roTK5ZrA169jQpZvidxziHrxkvMbgjjbl23QaVU+SQFec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715205565; c=relaxed/simple;
-	bh=nByr3jM+Y3NxC0MP1AcoNq5+7invfqX5YpdGYrcZgC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HmuUBcW46sZ+NcDhzGciLazvDySHsDzYzNIuxPoXmHRy5pIPo61m0dtLyV48leWIJl+xCU9z74Xp2n9usH62pZljEXKNLJXmjXtuNhYVgCzQZJzrSog4xRJWKM52Nkb6xy9onvKp4MLsuSsfti90LixMZ3axaIcBwWOwsB4E7o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsA3Ez9Q; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f44881ad9eso248779b3a.3;
-        Wed, 08 May 2024 14:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715205563; x=1715810363; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AMw/YrYkp2g/WGx6rK85U9z1vCqgtkkofZwvEj3MD6Q=;
-        b=bsA3Ez9Q9UyQuPb/zRzp4IwvSX8JEdL4a1QxoAJx9UcYdqj9lpU2WjV5wefxCzknX5
-         o92PNjBY3Wpy5kDRsMrQxNfUuUrrWjQau/0DN4wMZAlIwaUdso+Q2E83qJDNKsqGZ0fH
-         2BUSBUeoWGvuGQJxyGavW40Kq5bkIB+Jj25h3hHFbJK/fcZ5nla6EQqS478MMFweyWZp
-         iJeuSkCmlt+gGMrnkCdDE1jphm8450jW9diQvWPK9CgoyXxJ+4FLOMJak2dAcsB0rKIC
-         LAVUxYV8RcKh/4UxCnjcUBDeEcYMRzV26xMqGuQxJk4AukA5TLZnVqIqUvuYQd6DQbne
-         ZD6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715205563; x=1715810363;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AMw/YrYkp2g/WGx6rK85U9z1vCqgtkkofZwvEj3MD6Q=;
-        b=kJTYuBiUuGBObIajJNQkN6/Sb6/b2il5opTBL0HlKUE46hKQ3Yz23ccoW7EjQxQgvc
-         uMrCikpZOw0ufeghSa+BDud8pKqhNP1iSbnLmQzmd4whRUGCIpCYwEAQqsiB+4sbXNE+
-         IgH84lpQlSupkQT0bsBWYE7DRYdwmYPzBO8PzbDI0wKxEEBsmhsXdt5jXUKv9rm4eNeT
-         yNVNNCAQyHVcgIZGTLEqq8gsqHxiy59T9ce8eqOHz+mD7DVQOOpMVYMZpxeHn4dgB1Ki
-         C2a6laFmjghRqeXQRFQeUc12p2CUS/llPwxVImg8yQ3sHowt0KfHkB8kZDOjQzHDOk3y
-         0RGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKfpFbZGg4GXMwv5C/T/Dc3wTIqj7kyq1t5dHD7UPmiPxMjdu3QUbJK5/9Oy0GdUmBk3SBG/QEfZpo0VeTSRY+CHWsCzEEU96KhBF7VRbJ6XweW7KkB2+hFkxnEcKLdvdpcOgKGHPvfw==
-X-Gm-Message-State: AOJu0YxLRIETObrXfHPG58V4iZ1zeBorvJwZk5kdj6CJW3wXemqnK4z+
-	ruYgKEjLqD8DprA0WJh58EJgmnNUbUtQO/D2GpjuNzD2MSL9qVym
-X-Google-Smtp-Source: AGHT+IH6ZtjPHc9UBBw6l0sdQtIObxtxJJX/ZreuxvxkaqtJ0nTOTorxkq5Pbek0/nk0E0D2THWLdw==
-X-Received: by 2002:a05:6a00:2f0d:b0:6f3:ebb3:6bc6 with SMTP id d2e1a72fcca58-6f49c20e6afmr4041629b3a.10.1715205562906;
-        Wed, 08 May 2024 14:59:22 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a66585sm62052b3a.10.2024.05.08.14.59.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 14:59:22 -0700 (PDT)
-Message-ID: <7e7167fd-cf4d-4d8b-bd83-d9fe8887dbae@gmail.com>
-Date: Thu, 9 May 2024 06:59:17 +0900
+	s=arc-20240116; t=1715205580; c=relaxed/simple;
+	bh=pnFOD9IX//ofvuncrblliTyUlG1w100hGR9knvZhZXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EiOAmL1U5zVo1p6NfKhVpG/IWxyrSJOC+zg8GzHlYbmViZhymRrFSlzOt/4Nv3hO55O4B1DeLCyyAl+YBtE9sfbkIFav/yXUzuzXFMIfCZnfeYmcG6TGTzK6m5TwNNQM0A7N8sR/Gio1Y4JB8h8/muDZbakEdhRE+bQqBbq512Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i7sNgSIV; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715205577; x=1746741577;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pnFOD9IX//ofvuncrblliTyUlG1w100hGR9knvZhZXk=;
+  b=i7sNgSIV8f7sdH1aB618Fbc8he+3gmydSVVq2nmfjjLkpPcDiZzBh5q4
+   OYoVe9ClyxvxU32aodR3KevYdKzCistQED7hGkHlWBCksgc3XwvMD4v0N
+   reJZJVoxKUX4wShYE3RNpBxa3FlChzcplylJusEudwRhIdkTu7toXWuLj
+   BIMTShLpNvyblzet3obpqFkzE6D+wezgEEptSpO2PMu/fLq4YbAAFjX79
+   V2AYKL1jGnPp2yVODZ8JTtE9K0S1u1ZBrlDFXJ1Y1trnJMPAtYfVbq+bp
+   VZ4t5xX7v/xMgiSzuie4xMUOp6a3fG3vrkydHwDwuhYT9/VMWJGOaHOTZ
+   A==;
+X-CSE-ConnectionGUID: IGmSuFltSaOpMpwVP21kfQ==
+X-CSE-MsgGUID: FqcNKXJDQ8GjeD7H7i4WWA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="36476923"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="36476923"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 14:59:37 -0700
+X-CSE-ConnectionGUID: OBZ7gJWjRU6dx7I2duYT0g==
+X-CSE-MsgGUID: cGj9tXwVSUed+lE7Fh8jyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="29120162"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 08 May 2024 14:59:35 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4pK0-00049W-2T;
+	Wed, 08 May 2024 21:59:32 +0000
+Date: Thu, 9 May 2024 05:59:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] misc: fastrpc: Add static PD restart support
+Message-ID: <202405090528.O8hhDGHk-lkp@intel.com>
+References: <20240508054250.2922-6-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Add atomic_and()/or()/xor() and
- add_negative
-To: Boqun Feng <boqun.feng@gmail.com>, Puranjay Mohan <puranjay@kernel.org>,
- Luc Maranget <luc.maranget@inria.fr>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
- Andrea Parri <parri.andrea@gmail.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Nicholas Piggin <npiggin@gmail.com>,
- David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
- "Paul E. McKenney" <paulmck@kernel.org>, Daniel Lustig <dlustig@nvidia.com>,
- Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, puranjay12@gmail.com,
- Akira Yokosawa <akiyks@gmail.com>
-References: <20240508143400.36256-1-puranjay@kernel.org>
- <ZjvXZZiew_shyQA3@boqun-archlinux>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <ZjvXZZiew_shyQA3@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508054250.2922-6-quic_ekangupt@quicinc.com>
 
-On Wed, 8 May 2024 12:49:57 -0700, Boqun Feng wrote:
-> On Wed, May 08, 2024 at 02:34:00PM +0000, Puranjay Mohan wrote:
->> Pull-849[1] added the support of '&', '|', and '^' to the herd7 tool's
->> atomics operations.
->>
->> Use these in linux-kernel.def to implement atomic_and()/or()/xor() with
->> all their ordering variants.
->>
->> atomic_add_negative() is already available so add its acquire, release,
->> and relaxed ordering variants.
->>
->> [1] https://github.com/herd/herdtools7/pull/849
-> 
-> A newer version of herd is required for this feature, right?
+Hi Ekansh,
 
-Yes, this requires building herd7 from latest source.
+kernel test robot noticed the following build errors:
 
-herdtools7 7.57 (released recently) happened before pull 849.
+[auto build test ERROR on char-misc/char-misc-testing]
+[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.9-rc7 next-20240508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Luc, what is your plan on a next release (7.57.1?) ?
+url:    https://github.com/intel-lab-lkp/linux/commits/Ekansh-Gupta/misc-fastrpc-Redesign-remote-heap-management/20240508-134613
+base:   char-misc/char-misc-testing
+patch link:    https://lore.kernel.org/r/20240508054250.2922-6-quic_ekangupt%40quicinc.com
+patch subject: [PATCH v1 5/5] misc: fastrpc: Add static PD restart support
+config: i386-buildonly-randconfig-001-20240509 (https://download.01.org/0day-ci/archive/20240509/202405090528.O8hhDGHk-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405090528.O8hhDGHk-lkp@intel.com/reproduce)
 
->                                                               So please
-> also do a change in tools/memory-model/README "REQUIREMENTS" session
-> when the new version released.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405090528.O8hhDGHk-lkp@intel.com/
 
-Puranjay, it would be great if you add some litmus tests which use
-additional atomic primitives under tools/memory-model/litmus-tests/
-as well.
+All errors (new ones prefixed by >>):
 
-        Thanks, Akira
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_get_domain_list':
+>> pdr_interface.c:(.text+0x22b): undefined reference to `qmi_txn_init'
+>> ld: pdr_interface.c:(.text+0x261): undefined reference to `qmi_send_request'
+>> ld: pdr_interface.c:(.text+0x275): undefined reference to `qmi_txn_wait'
+>> ld: pdr_interface.c:(.text+0x2ad): undefined reference to `qmi_txn_cancel'
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_restart_pd':
+   pdr_interface.c:(.text+0x451): undefined reference to `qmi_txn_init'
+   ld: pdr_interface.c:(.text+0x48d): undefined reference to `qmi_send_request'
+   ld: pdr_interface.c:(.text+0x4a7): undefined reference to `qmi_txn_wait'
+   ld: pdr_interface.c:(.text+0x58f): undefined reference to `qmi_txn_cancel'
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_register_listener.constprop.0':
+   pdr_interface.c:(.text+0x746): undefined reference to `qmi_txn_init'
+   ld: pdr_interface.c:(.text+0x796): undefined reference to `qmi_send_request'
+   ld: pdr_interface.c:(.text+0x7aa): undefined reference to `qmi_txn_wait'
+   ld: pdr_interface.c:(.text+0x7fd): undefined reference to `qmi_txn_cancel'
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_send_indack_msg.isra.0':
+   pdr_interface.c:(.text+0x9df): undefined reference to `qmi_txn_init'
+   ld: pdr_interface.c:(.text+0xa33): undefined reference to `qmi_send_request'
+   ld: pdr_interface.c:(.text+0xa3e): undefined reference to `qmi_txn_cancel'
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_locator_work':
+>> pdr_interface.c:(.text+0xdf4): undefined reference to `qmi_add_lookup'
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_handle_alloc.part.0':
+>> pdr_interface.c:(.text+0x1159): undefined reference to `qmi_handle_init'
+>> ld: pdr_interface.c:(.text+0x1177): undefined reference to `qmi_add_lookup'
+>> ld: pdr_interface.c:(.text+0x119b): undefined reference to `qmi_handle_init'
+>> ld: pdr_interface.c:(.text+0x11a8): undefined reference to `qmi_handle_release'
+   ld: drivers/soc/qcom/pdr_interface.o: in function `pdr_handle_release':
+>> pdr_interface.c:(.text+0x1567): undefined reference to `qmi_handle_release'
+   ld: pdr_interface.c:(.text+0x1572): undefined reference to `qmi_handle_release'
+>> ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0xd8): undefined reference to `qmi_response_type_v01_ei'
+   ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0x1f8): undefined reference to `qmi_response_type_v01_ei'
+   ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0x278): undefined reference to `qmi_response_type_v01_ei'
+   ld: drivers/soc/qcom/pdr_interface.o:(.rodata+0x358): undefined reference to `qmi_response_type_v01_ei'
 
-> Boqun
-> 
->>
->> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
->> ---
->>  tools/memory-model/linux-kernel.def | 21 +++++++++++++++++++++
->>  1 file changed, 21 insertions(+)
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for QCOM_PDR_HELPERS
+   Depends on [n]: NET [=n]
+   Selected by [y]:
+   - QCOM_FASTRPC [=y] && (ARCH_QCOM || COMPILE_TEST [=y]) && RPMSG [=y]
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
