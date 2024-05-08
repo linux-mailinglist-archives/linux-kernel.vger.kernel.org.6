@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-173199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58578BFCE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6BF8BFCE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9DB282716
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042251C2183B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3456382C6C;
-	Wed,  8 May 2024 12:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138FD83A0D;
+	Wed,  8 May 2024 12:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MlCVQ+rl"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NC5Xd5Cf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5581ACC;
-	Wed,  8 May 2024 12:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D2480C13;
+	Wed,  8 May 2024 12:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170069; cv=none; b=fBC+SIXIjgcWhigaJKk39i6K7+JJJiofCVAKSVNQM813LdGBjtVZNmtwZijLUT/NVedBMeTKO/ktBSHUapOr0EoX3LFC0w1jh+6hy9NAPOC4GGAU6mxeTbU7uN+7tkrXKAhCRhnAoNAI5kgxQZMOOS3+alpJF8DmoxfJGjB+m8w=
+	t=1715170097; cv=none; b=uzb1GsCs/Lum9jrzbcPyjXZyKzPKC26bLRmZBct6zo4EAAKyMAiyCUpMWDMCMGFpEma0Y+h2UZ9jckv2kQ6LQ3eCamPb1Ntj8mGyyNKbyfPb13DlmC+rJQ45axnkCsq2S1Le7/Uhwukibpg0NieL59yD+lvIPLqxtY3ql+jHQaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170069; c=relaxed/simple;
-	bh=ktcidu+FHa+WtZ/ugeKJFFvB5nUAHpFhqK+OYz1rTOI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=uyD5tu2h0DGP2A5J3s3jkwUq5IuJjlrsp1Le3magzZin4pRvJGtLMgeiF+Qq66YDyRhvp6kuypZfflwDkdj9T8dR7jUwKGvZvLFMEnzl6s2ndwpqN6IkWyh0yFHtoohIB8LcRlvyz5UgqW+MnelAR5CTFTE7C6IR/fpDPOQKvMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MlCVQ+rl; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715170047; x=1715774847; i=markus.elfring@web.de;
-	bh=ktcidu+FHa+WtZ/ugeKJFFvB5nUAHpFhqK+OYz1rTOI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MlCVQ+rlY8lr8z1PVLklKJH0zc1LcmooWgSG3eywkoYgEPjGfpCPZOdhMXvZcOor
-	 YNzniVuKXdwO7OlI8wHAjYTBt3fET8srJO+Sfr5KEBRzfZFvgZPMRWfad7vSllnfC
-	 vfz4NJ6JVCjHQtVrrlEw9kCwsYHyWFHY5OsJ05sLv78CiDO8XGp9/TKgflL3BHWPH
-	 t207QCfkMi4fkjjVnJ0JA5CKqrHF4Xdq4axZHHCpSZCL/J5abtFz/JXYq/HdIhorb
-	 8btcy+JUCRkmj2jmLwOFLPRF+ooXKlswHHTyfgVYZ9HPQBOns//uv6H664blPnNM0
-	 n6Bu6u8biYQrwOncXA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6pf-1spEHY1yCF-016g89; Wed, 08
- May 2024 14:07:27 +0200
-Message-ID: <f10e8993-3b99-4fde-b7e6-cc459b7b6021@web.de>
-Date: Wed, 8 May 2024 14:07:18 +0200
+	s=arc-20240116; t=1715170097; c=relaxed/simple;
+	bh=F/Fq/N/68SnaZ8R4mJ1tyObNOmUjEpjh7AcSnPN0obA=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ASn+f2kL0ec32+yhTh8tJUbVU2flk8qkdyBIYOHQk3TTcWdfTjlwHJUm5MN264D1NU4lAFDJXomZ292J0Tpdr/KfZSw5oGmtuPm2DyQ3T9ri8UW6zPdgT2tc2P4M5BfWo1fhX7zW1ngU9ji+Ks+UPsigAiJYNlkFNwSkCFs7XWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NC5Xd5Cf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6FFC113CC;
+	Wed,  8 May 2024 12:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715170096;
+	bh=F/Fq/N/68SnaZ8R4mJ1tyObNOmUjEpjh7AcSnPN0obA=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=NC5Xd5CfeOO+dJBMxiHw7QzfEb4/B3lVkd+5YHLC810wGeSOeteHhTWW9Z72wy2lH
+	 mgTQYdiLYHiN0yt3+EH1ZZNHaI0iNvPd/N+HaoOnnzvQm1TSGu0XdNkLF+ZnRMBdzt
+	 4uYN4UT3WRuqZUwWCBHv+qtfd9RRJmhK+7odClxYdXrpPJ0frNTkXcUQv7guUTKRg3
+	 q6zYmCmxVELmRSz3ypLbwrnf2a5G76e5IESLwGXkU0qjJTinQseNLUX8LT6nGys1im
+	 ifKCAQWrLzuUOwei2opUvIgjQFooHCtnzy1yL4MuWc/LvF1scm1cguS1zHwXFpX6Fj
+	 candrmx61KD8A==
+From: Mark Brown <broonie@kernel.org>
+To: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
+References: <20240507201028.564630-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] spi: Remove unneded check for orig_nents
+Message-Id: <171517009614.2014074.15995946356965034064.b4-ty@kernel.org>
+Date: Wed, 08 May 2024 21:08:16 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ziwei Xiao <ziweixiao@google.com>, netdev@vger.kernel.org,
- kernel-janitors@vger.kernel.org,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jeroen de Borst <jeroendb@google.com>,
- John Fraker <jfraker@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Shailend Chand <shailend@google.com>, rushilg@google.com
-References: <20240507225945.1408516-2-ziweixiao@google.com>
-Subject: Re: [PATCH net-next 1/5] gve: Add adminq mutex lock
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240507225945.1408516-2-ziweixiao@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:FOFIB3IXAeSXdWvJtGDw20e63TAhcSPqs2ZAKkOBk0aJPgwCJJx
- 62wjyB0bWpmuWgKAdRcSFAcTsBFz+QxTjdheKq6I9PWn4iVCIafKdyUMPgYDtiv5osRNvqL
- 0x6KT2x73iXSvLv2lj9XOWcuIwZ5JnguGaVrDZxxzqFjAorNkBKJeOLIOEF4e+t2UiJmyEX
- 3OjAC2pZoXBvX0Gpi3I9A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZezT6UXmAkM=;6PZqZF92EhoPAFXEZwGOb8JPglj
- yBAvDsZVMfjWy7n7LevkqvPrc7s6pT/uw9BQ1Zm5ghTZBasNkSaJaNSYh62p/Q75zBW2xzFEY
- VMQZrcKo6ASRdBgdk3roQSDTOAbGtHV0ZCFKoyXv3I1sbB4noClijgGf8nXYmukEj5488v/uR
- KfkTiODu+qposlhyd1dHjhqJAwJPQ7Ygjn8rU5SMdscYRoflSH4bqLZ1WlOEYcAlwmYbKePxx
- +rzLXFjbT1pToNyBt0d1UXfyRjdzf0bag+FQuIhQonQx/lFZpdX3nt5eFepJ5sC9H8BYBAYlD
- 6Xjx2daR7VpnFTlxZ5GN6EYZt3N8FyQ3unBXGHgUa6UCGXN9jLSTOM3gLLOkJ+I+rTFDFAglk
- qVx/b/+eCj5Yq8Wd3JQdrHW1Q3XRD0+jEZKLLpv92wWU4cYqMLs5agvX88h4i+q9w26YqG1lo
- cS8jmZe1ATsnhB+/DCij/CxBvX0tpUhH1yP3V8YKRH+EiGdJ6Mgj4U1Knl+XjDmf7MZ+3tnNf
- TC4H3YrwL36Vce8yMpGYMeX78Mjx+/qvRjBAFqIHE9EXCNdBqphb0Pgnm8RwbKEtpq1KUxTVb
- Ik2Gco25ZoW8EhSWGQQB+xloDOeiN1HqlRkhBGyii40J1eTW1+Az1jJzkJm9jFjXmCHkbqCa6
- oP61e8iUACXY5quT/W74GjPCI1T2BTClX2/T9wkaOltdDVoTikNmfb++ke0oFFGkXzlHgI+Ff
- Vc9P6lkwWpjl6yq5RhdtAAZ3Cb7O3PUV+o/ehDpR6fbFX8Uyqk55ThqwuvdcoLh1bW68aXUNn
- YFiIXYOsSVICdX2mGFOJvaqL4a7o7VihWzQxdkGWjsh94=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-=E2=80=A6
-> the rtnl_lock, such as the upcoming flow steering operations. For such
-> situations, it can temporarily drop the rtnl_lock, and replace it for
-> these operations with a new adminq lock, which can ensure the adminq
-> command execution to be thread-safe.
+On Tue, 07 May 2024 23:10:27 +0300, Andy Shevchenko wrote:
+> Both dma_unmap_sgtable() and sg_free_table() in spi_unmap_buf_attrs()
+> have checks for orig_nents against 0. No need to duplicate this.
+> All the same applies to other DMA mapping API calls.
+> 
+> Also note, there is no other user in the kernel that does this kind of
+> checks.
+> 
+> [...]
 
-Would you like to use imperative wordings for an improved change descripti=
-on?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+Applied to
 
-Regards,
-Markus
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: Remove unneded check for orig_nents
+      commit: 8cc3bad9d9d6a4735a8c8998c6daa1ef31cbf708
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
