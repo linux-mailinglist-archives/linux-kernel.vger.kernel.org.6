@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-173082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D608BFB45
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:48:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72108BFB47
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9CA28197A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B81BB248A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A17823AF;
-	Wed,  8 May 2024 10:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ice7gnbB"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFE481721
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7608172A;
+	Wed,  8 May 2024 10:48:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFD512E7C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715165279; cv=none; b=U00uin7wC3SYM8YP2g3MBELxEm2OntQKtMRab+m7uHB5wgWslHLEYph/pNaTpgYsRakGO07di1W6Fth/nqHMCgZi3WeUAeP20mOHSYSdb2W8DeWvQ6vBLj87Xe/6kZmrrozPS2clAAkAzXzxcrNpvtFZy8m5sbtW+zO6/zoz6lw=
+	t=1715165323; cv=none; b=HlUYXpnjBX3V66RQJN0EbZ2ip5FunqggTCFYtim321YGJDhe38Fijrxzl/9QZkJmnmvre8SMovkLvwEuwnggRGlQK70QDFuUR9YdI4MMUf32grhUQwZTTCiAqAKNEuqDaIvVoZWEEQlpuZBKSq9EybIZRMD0YzgPryUw/IGv+ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715165279; c=relaxed/simple;
-	bh=vpbiHsnsZyeL5F2e2N4ix1aSqeYmPGen1pGmaZRkQLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ho8dO48c3xS2z6rXEBR0N/WnOLXYAesuLM29KTRRVojWJskCn5mnhbl5C134JTsq/GD3p2df5Uz1040uZt9PPeXM2oGH3FUl0l5afZ0eGYISOSsc1F01JLL/w6TwM7lwurGO0NiDRMwl2KEdkO2z+PPrr108ILs/HxvByljvdv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ice7gnbB; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-de604ca3cfcso4111841276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 03:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715165277; x=1715770077; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eoZX15B6govTZa1crSFZ03U1Z5NpIxQlGrKdNgAOQcI=;
-        b=ice7gnbB6KJJbj+0L9JlGDku5Nnr3B9LNgRo76/G44JSa9uXtlwrehvj5DJNfoLPQv
-         +cwguD53v+58bb4beVa0UOB1dmtG/aOugurMw6442qShzZwRYN7V+5OKBb5Q50Lk35mB
-         j8eFbN5BDpe+CM7BMs9nzEOI3gJsrNHqeV2TY0HCkqVAqvcFHIoHEQic4ms5NOBFnVIz
-         sbtDmBFbaVOyQMuWqhZT/PZ0EfOId+BRPN3PQdzeSJmVbUqWo4AxwheEP3uGP2lSoGc6
-         Nva1LfeZ+8y2EEwyrEcFRrlesVDXsms/z2EKA0LNcCcUGRk+0AotoA9N2u1f7A6fDmkz
-         MWGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715165277; x=1715770077;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eoZX15B6govTZa1crSFZ03U1Z5NpIxQlGrKdNgAOQcI=;
-        b=g8l5Wpwi8lf5BqwmE99kgnNwsbSu0cfVIbNqztzuuJZcffBj8jeIpeAXaU8FaUL1mz
-         f0AQVc/m9VeDBl6oDTdObRmiKbcLrAJ6EujCt3dybJfkJXjQD6SOyloUVvTUkiXgLPQu
-         SHLXVCUpYVS8c4EwDxhtcO38I4vKY9GICQmPwEQleKJ54tj9Ugp3iNGV311JE+oWbU3A
-         hWXCYRCYNN3HW26vCzuCKFIXDVZhzhilOn87Rqa0/GOzQzTF2TDFu0I5A824q85qpXg3
-         YtIJlq2T3usvuz4L9gLACucbwRn2rD8U3KPJcqXQBxeDBfeUT9fw5Bds0BqNitFJ62Xt
-         UQMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXl9QeHIbG9oAEsmj0OsgaR1IYwdsZyYOOUokQfw3Z4uI23i8O4uZfXe6erzByjrZtH9jdFMOg+S/Io+b5j65jJnIVNsY3ETpHJMerj
-X-Gm-Message-State: AOJu0YwYrLn8MOwrWB33Pt2EqfVVeybCTebb19B/jc4xxfqWJ6Vea70J
-	ceaTLRPRttgWi+75EXGu6pkl8M5h1vOciOBI6z88//rEUdXV5qKowKT0TV8UiWfNjs6THSvSPXm
-	8bV1wgKGlyaKDMn6HQltN5pWTjdKK2oDSsFeVIQ==
-X-Google-Smtp-Source: AGHT+IEWwosbEieIG3yPj7wVS7/X+26Rl5SJvi7/VdhV3IY6zo46NS8e83824/vbmNXb+zl5PPWRF6ISWsjL+0RJS9M=
-X-Received: by 2002:a5b:9ca:0:b0:de0:f74b:25f3 with SMTP id
- 3f1490d57ef6-debb9dd9428mr2093299276.60.1715165277491; Wed, 08 May 2024
- 03:47:57 -0700 (PDT)
+	s=arc-20240116; t=1715165323; c=relaxed/simple;
+	bh=A5qQlIijoeLOoPvuKXsRqwEGEPoVXglckbxb80njhNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqoaBTdtNt4BYVrwIg9MhHCJ9NdydqAKAVNqUN4pPJUPIdCvJ1axTluotFms8wbnz2tf0kCcKQgWMgco+cihLZAXloA0sgDGZhX97Ii+WAz7Vk789nMIP3+5AQCzLINIGa474iDf8r9992DelrEGejE6SyTkxP78uYlcHHk/rWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE1A91063;
+	Wed,  8 May 2024 03:49:06 -0700 (PDT)
+Received: from [10.57.67.194] (unknown [10.57.67.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 576633F587;
+	Wed,  8 May 2024 03:48:39 -0700 (PDT)
+Message-ID: <f6844b9d-378f-4743-a71d-d5b7cd921946@arm.com>
+Date: Wed, 8 May 2024 11:48:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <171405653305.2527744.3813895380659072690.robh@kernel.org>
- <20240426142442.7769-1-quic_vvalluru@quicinc.com> <jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc>
- <20240508102202.GA28609@hu-vvalluru-hyd.qualcomm.com>
-In-Reply-To: <20240508102202.GA28609@hu-vvalluru-hyd.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 8 May 2024 13:47:46 +0300
-Message-ID: <CAA8EJppiGiaddrNLRGtzjKHfcYYU4LcXLCyOgfy2En7LRggv4A@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: enable hdmi bridge
-To: jr3ble6sxr5mr6cvm6ldvpyk5j4rucj3xy6vbha6ttoecte3d7@llu6qf6oasuc.smtp.subspace.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, robh@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, konrad.dybcio@linaro.org, 
-	krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_abhinavk@quicinc.com, 
-	quic_nankam@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] mm: shmem: add multi-size THP sysfs interface for
+ anonymous shmem
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <6b4afed1ef26dbd08ae9ec58449b329564dcef3e.1714978902.git.baolin.wang@linux.alibaba.com>
+ <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
+ <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
+ <cb458b62-e27d-47d6-8efd-bacdb9da7530@redhat.com>
+ <ff1908f8-0887-403b-8d2a-d83a17895523@redhat.com>
+ <eb3aa3dc-42ee-475a-8b95-d27951c362a1@arm.com>
+ <5b23a706-5fb3-41b4-ba2e-d38a29b51820@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <5b23a706-5fb3-41b4-ba2e-d38a29b51820@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 8 May 2024 at 13:22, Prahlad Valluru <quic_vvalluru@quicinc.com> wrote:
->
-> On Mon, May 06, 2024 at 06:14:10PM -0500, Bjorn Andersson wrote:
-> > On Fri, Apr 26, 2024 at 07:54:42PM GMT, Prahlad Valluru wrote:
-> > > From: Venkata Prahlad Valluru <quic_vvalluru@quicinc.com>
-> > >
-> >
-> > Please don't thread new versions off existing version. b4 helps you with
-> > getting these things right, please check go/upstream for more details.
->
-> My internal gitconfig is not configured correctly. Fixed in v3.
+On 08/05/2024 10:56, Baolin Wang wrote:
+> 
+> 
+> On 2024/5/8 17:02, Ryan Roberts wrote:
+>> On 08/05/2024 08:12, David Hildenbrand wrote:
+>>> On 08.05.24 09:08, David Hildenbrand wrote:
+>>>> On 08.05.24 06:45, Baolin Wang wrote:
+>>>>>
+>>>>>
+>>>>> On 2024/5/7 18:52, Ryan Roberts wrote:
+>>>>>> On 06/05/2024 09:46, Baolin Wang wrote:
+>>>>>>> To support the use of mTHP with anonymous shmem, add a new sysfs interface
+>>>>>>> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
+>>>>>>> directory for each mTHP to control whether shmem is enabled for that mTHP,
+>>>>>>> with a value similar to the top level 'shmem_enabled', which can be set to:
+>>>>>>> "always", "inherit (to inherit the top level setting)", "within_size",
+>>>>>>> "advise",
+>>>>>>> "never", "deny", "force". These values follow the same semantics as the top
+>>>>>>> level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
+>>>>>>> to 'always' to keep compatibility.
+>>>>>>
+>>>>>> We decided at [1] to not allow 'force' for non-PMD-sizes.
+>>>>>>
+>>>>>> [1]
+>>>>>> https://lore.kernel.org/linux-mm/533f37e9-81bf-4fa2-9b72-12cdcb1edb3f@redhat.com/
+>>>>>>
+>>>>>> However, thinking about this a bit more, I wonder if the decision we made to
+>>>>>> allow all hugepages-xxkB/enabled controls to take "inherit" was the wrong
+>>>>>> one.
+>>>>>> Perhaps we should have only allowed the PMD-sized enable=inherit (this is
+>>>>>> just
+>>>>>> for legacy back compat after all, I don't think there is any use case where
+>>>>>> changing multiple mTHP size controls atomically is actually useful). Applying
+>>>>>
+>>>>> Agree. This is also our usage of 'inherit'.
+>>>
+>>> Missed that one: there might be use cases in the future once we would start
+>>> defaulting to "inherit" for all knobs (a distro might default to that) and
+>>> default-enable THP in the global knob. Then, it would be easy to disable any THP
+>>> by disabling the global knob. (I think that's the future we're heading to, where
+>>> we'd have an "auto" mode that can be set on the global toggle).
+>>>
+>>> But I am just making up use cases ;) I think it will be valuable and just doing
+>>> it consistently now might be cleaner.
+>>
+>> I agree that consistency between enabled and shmem_enabled is top priority. And
+>> yes, I had forgotten about the glorious "auto" future. So probably continuing
+>> all sizes to select "inherit" is best.
+>>
+>> But for shmem_enabled, that means we need the following error checking:
+>>
+>>   - It is an error to set "force" for any size except PMD-size
+>>
+>>   - It is an error to set "force" for the global control if any size except PMD-
+>>     size is set to "inherit"
+>>
+>>   - It is an error to set "inherit" for any size except PMD-size if the global
+>>     control is set to "force".
+>>
+>> Certainly not too difficult to code and prove to be correct, but not the nicest
+>> UX from the user's point of view when they start seeing errors.
+>>
+>> I think we previously said this would likely be temporary, and if/when tmpfs
+>> gets mTHP support, we could simplify and allow all sizes to be set to "force".
+>> But I wonder if tmpfs would ever need explicit mTHP control? Maybe it would be
+>> more suited to the approach the page cache takes to transparently ramp up the
+>> folio size as it faults more in. (Just saying there is a chance that this error
+>> checking becomes permanent).
+> 
+> The strategy for tmpfs supporting mTHP will require more discussions and
+> evaluations in the future. However, regardless of the strategy (explicit mTHP
+> control or page cache control), I think it would be possible to use 'force' to
+> override previous strategies for some testing purposes. This appears to be
+> permissible according to the explanation in the current documentation: "force
+> the huge option on for all - very useful for testing". So it seems not permanent?
 
-No. V3 was still sent as a reply. Please fix the way you are sending
-the patches. It has nothing to do with the git config.
+Yeah ok, makes sense to me.
 
->
-> >
-> > > Enable lt9611uxc bridge for qcs6490 rb3 gen2 platform.
-> > >
-> >
-> > Even if it's clear what this is, I would prefer if you described the
-> > hardware a little bit in your commit message.
-> > "Rb3Gen2 has a HDMI connector, connected to DSI via a LT on i2cX.... reset and
-> > irq pins comes from x and y. Describe this."
-> >
->
-> Agreed. Updated the commit text to include bridge details.
-
->
-
-
--- 
-With best wishes
-Dmitry
 
