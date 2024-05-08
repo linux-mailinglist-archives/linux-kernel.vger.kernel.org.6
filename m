@@ -1,156 +1,139 @@
-Return-Path: <linux-kernel+bounces-173793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4D18C056E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:17:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813188C0573
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E781A1F22F18
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:17:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D075281675
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07FC130E31;
-	Wed,  8 May 2024 20:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2720130E34;
+	Wed,  8 May 2024 20:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G3CeZyZ4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSZyA/tB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A969A130A63;
-	Wed,  8 May 2024 20:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1116E131183;
+	Wed,  8 May 2024 20:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715199422; cv=none; b=ajGpBYv1o62XaWDvovitHCvJ08ZeT8dVioa1lH2u8qcTRMFNGfCCLK3Lr6jFdHFepPWPpI6FCMthHwDkDNBucR53I0TfnMd98lixzpEMc0nCttIPXAO7+eWwDqqc+iTQjKslZ7AkoqDkhacpKLXV5z9gkEfdMNIScmuXiQvkrIA=
+	t=1715199425; cv=none; b=aLbd8WPsstjTjZGQ/GUSLvw3uSkyI4LVRn6RzDXzmliLGEHFvyAq0hLk79gx6U/CVlKjqKTO5OOKMJGw5Wcjt98sSVzG5Q0OHqQA9dvzZzLCZ6tgNp6vk+wBRWt5hQodhCw7TOqa/nM8El+QfIRi05x1DYBQ4dukOfTHjyd68sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715199422; c=relaxed/simple;
-	bh=U09Rnr9ntnBO7MwvNoJCHqyP9+H/89CU40V7dG6FWYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dT+VK+sWJvRGD0GJo9mY4tL0TN2L6YPen4AICLvg7hFWcrMw8AOVqwMHkM0My3skr/qKyGCL6XThUbHkOFoucdklrO4OOmsWuIAxVR7C/etilZq5PJv4kkCCnOP3FbSW/3G2e0jEatTe2K51Tn5ZSDMuCiQpD3BAk7BmtsXffWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G3CeZyZ4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448Ae8bk004926;
-	Wed, 8 May 2024 20:16:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=/h/CzWxCJAWdECYePSx/kcEaFq6W4rE/eXk8NJV+0HY=; b=G3
-	CeZyZ4ePRk73R5cwnSmeBM0urCxyVcmWeyXqhE8ksxx8PFJfRosXjZCP+ZyMToPN
-	uNqBaQVN5NKDYn1Dfoxe6mKwRQYhcJit7YwGf0fDPpfUVCAEWutXU2pYwv7fXVo1
-	GCpYVr/RvAJv72ihoMCpzkzPYc62Z9OHZMoQafRrIv/K40lutuUFCvNN5Ek8cuoW
-	jbTh2fT7eTfHETpiR0Ubw7N9LetZy5ZU4w1/Lnm3GrS9UO13cuTMDMyC+h+5e6uL
-	PwiYxnkOw4+sNSb2BUjPYJazkYjT1xstgNZFALufEONUoZ5sWvfiemtT0iKE8l3w
-	OfadCVyIIsNml6LKrMVQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07u999yg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 20:16:40 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 448KGdbW007663
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 20:16:39 GMT
-Received: from [10.110.126.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 8 May 2024
- 13:16:38 -0700
-Message-ID: <106711dc-0250-4d07-254d-2829f89e0a5d@quicinc.com>
-Date: Wed, 8 May 2024 13:16:38 -0700
+	s=arc-20240116; t=1715199425; c=relaxed/simple;
+	bh=AeePNuL7SFwUOG4gPSg8rwAm8IPCSABF4FYA1EDT90I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVrTaJ82txG5Q7Jv5Zyw3s7BVZlRFhvMLQ3RcCuGwPFkOUaxtGGQW498PvPOl5oGxoZaBBIGHOaS+avYEGRRUBIDWrRNxSMyBgzBKPbkjI6aDWx/Nlr9JUh7Rk5wOmZpP7BQp7pPELf3Y33l7Iu2IL8vQKo8Fq7IyXjSqpN204w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSZyA/tB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13308C113CC;
+	Wed,  8 May 2024 20:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715199424;
+	bh=AeePNuL7SFwUOG4gPSg8rwAm8IPCSABF4FYA1EDT90I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OSZyA/tB5lOjpS4LC/9SY0EU+oSR2ADLqzy+2Oxxm/z6SO+lSeYqArptx9zIchIXk
+	 UiNicWJF1t0rqW+/75aVsY9qju7Ua4/12VQZiJiUlaEiH4nP7dtm6m8nHPMJVkL/e7
+	 dT4l7ucoWkMp4DEZQmkg02x4F/I3bajuOdqHxt96PxG7vcQGPSxmIVSWWk4UWM2Npy
+	 5j8C7jHMtngGG50t8cy9/OfatYDYYOm8fCYKK5P4uKlv6Q2FcvJcfql94ojXTASiir
+	 Unt1u5D51eAHSMTj76PGlYkMWXCG+OJIRRO2EgobbMJJ0WcJKSBDeElVhnooiXnVGX
+	 evN2ku1af2CsA==
+Date: Wed, 8 May 2024 21:16:54 +0100
+From: Simon Horman <horms@kernel.org>
+To: Allen <allen.lkml@gmail.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Allen Pais <apais@linux.microsoft.com>, netdev@vger.kernel.org,
+	jes@trained-monkey.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, kda@linux-powerpc.org,
+	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+	tlfalcon@linux.ibm.com, cooldavid@cooldavid.org,
+	marcin.s.wojtas@gmail.com, mlindner@marvell.com,
+	stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com,
+	Mark-MC.Lee@mediatek.com, lorenzo@kernel.org,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	borisp@nvidia.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, louis.peens@corigine.com,
+	richardcochran@gmail.com, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acenic@sunsite.dk,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mediatek@lists.infradead.org, oss-drivers@corigine.com,
+	linux-net-drivers@amd.com
+Subject: Re: [PATCH 1/1] [RFC] ethernet: Convert from tasklet to BH workqueue
+Message-ID: <20240508201654.GA2248333@kernel.org>
+References: <20240507190111.16710-1-apais@linux.microsoft.com>
+ <20240507190111.16710-2-apais@linux.microsoft.com>
+ <Zjp/kgBE2ddjV044@shell.armlinux.org.uk>
+ <CAOMdWSKfkT4K9MAOn-rL44pycHPhVDj4CtiYkru5y_s0S-sPeQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v21 07/39] ASoC: Add SOC USB APIs for adding an USB
- backend
-Content-Language: en-US
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <lgirdwood@gmail.com>, <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
-        <broonie@kernel.org>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <bagasdotme@gmail.com>, <robh@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-8-quic_wcheng@quicinc.com>
- <507953f7-c4da-499b-bcd7-76be0e04b766@linux.intel.com>
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <507953f7-c4da-499b-bcd7-76be0e04b766@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RJxVdkI85z4HvNEsdpbVz7wQbcrOhP3J
-X-Proofpoint-ORIG-GUID: RJxVdkI85z4HvNEsdpbVz7wQbcrOhP3J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- spamscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405080149
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMdWSKfkT4K9MAOn-rL44pycHPhVDj4CtiYkru5y_s0S-sPeQ@mail.gmail.com>
 
-Hi Pierre,
+On Tue, May 07, 2024 at 12:27:10PM -0700, Allen wrote:
+> On Tue, May 7, 2024 at 12:23 PM Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Tue, May 07, 2024 at 07:01:11PM +0000, Allen Pais wrote:
+> > > The only generic interface to execute asynchronously in the BH context is
+> > > tasklet; however, it's marked deprecated and has some design flaws. To
+> > > replace tasklets, BH workqueue support was recently added. A BH workqueue
+> > > behaves similarly to regular workqueues except that the queued work items
+> > > are executed in the BH context.
+> > >
+> > > This patch converts drivers/ethernet/* from tasklet to BH workqueue.
+> >
+> > I doubt you're going to get many comments on this patch, being so large
+> > and spread across all drivers. I'm not going to bother trying to edit
+> > this down to something more sensible, I'll just plonk my comment here.
+> >
+> > For the mvpp2 driver, you're only updating a comment - and looking at
+> > it, the comment no longer reflects the code. It doesn't make use of
+> > tasklets at all. That makes the comment wrong whether or not it's
+> > updated. So I suggest rather than doing a search and replace for
+> > "tasklet" to "BH blahblah" (sorry, I don't remember what you replaced
+> > it with) just get rid of that bit of the comment.
+> >
+> 
+>  Thank you Russell.
+> 
+>  I will get rid of the comment. If it helps, I can create a patch for each
+> driver. We did that in the past, with this series, I thought it would be
+> easier to apply one patch.
 
-On 5/7/2024 1:26 PM, Pierre-Louis Bossart wrote:
-> 
->> +const char *snd_soc_usb_get_components_tag(bool playback)
->> +{
->> +	if (playback)
->> +		return "usbplaybackoffload: 1";
->> +	else
->> +		return "usbcaptureoffload : 1";
-> 
-> why are there different spaces and do we need spaces in the first place?
-> 
+Hi Allen and Russell,
 
-Will remove these spaces once we clarify if this is still needed.
+My 2c worth:
 
->> +int snd_soc_usb_add_port(struct snd_soc_usb *usb)
->> +{
->> +	mutex_lock(&ctx_mutex);
->> +	list_add_tail(&usb->list, &usb_ctx_list);
->> +	mutex_unlock(&ctx_mutex);
->> +
->> +	return 0;
-> 
-> make the function return void?
-> 
+* In general non bug-fix patches for networking code should be targeted at
+  net-next. This means that they should include net-next in the subject,
+  and be based on that tree.
 
-Ack.
+  Subject: [PATCH net-next] ...
 
->> +int snd_soc_usb_remove_port(struct snd_soc_usb *usb)
->> +{
->> +	struct snd_soc_usb *ctx, *tmp;
->> +
->> +	mutex_lock(&ctx_mutex);
->> +	list_for_each_entry_safe(ctx, tmp, &usb_ctx_list, list) {
->> +		if (ctx == usb) {
->> +			list_del(&ctx->list);
->> +			break;
->> +		}
->> +	}
->> +	mutex_unlock(&ctx_mutex);
->> +
->> +	return 0;
-> 
-> make this return void?
-> 
-> 
+* This series does not appear to apply to net-next
 
-Ack.
+* This series appears to depend on code which is not present in net-next.
+  f.e. disable_work_sync
 
-Thanks
-Wesley Cheng
+* The Infiniband patches should probably be submitted separately
+  to the relevant maintainers
+
+* As this patch seems to involve many non-trivial changes
+  it seems to me that it would be best to break it up somehow.
+  To allow proper review.
+
+* Patch-sets for net-next should be limited to 15 patches,
+  so perhaps multiple sequential batches would be a way forwards.
+
+Link: https://docs.kernel.org/process/maintainer-netdev.html
 
