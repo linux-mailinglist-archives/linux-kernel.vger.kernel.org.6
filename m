@@ -1,309 +1,243 @@
-Return-Path: <linux-kernel+bounces-173566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2393B8C0244
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE838C0247
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B900B2240C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F879282ABA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507D879F6;
-	Wed,  8 May 2024 16:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139C88F62;
+	Wed,  8 May 2024 16:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wf5Jz71+"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RikjX0DZ";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tDLypvdf"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D103D6D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715186986; cv=none; b=UrjINW1IAbdsUhn/q8Qh9nW/03NkFPGceCM3z6NBb98CXD1C2BghwywvLKTgw5H0y7fvSEQykZSn5Bc66btLtzTJyxM36+ovkJ4Qzjlx9C7O8PLKkUZOVAV0tPr1l/oIdfp/5Fkvdj4LFr/aEyArBjbSIeq9Ag5/D/pgxgzLRYg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715186986; c=relaxed/simple;
-	bh=yAUwyyi//6rQZ6TQYRDK+pCV/Cnv8ejSWJjTbvPw8Jo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0ForQvRhthuPlilitZ7IxKVREbL04cfRfVVXdmRUadhO3fZ8XWSyfJ2SeuKHjVnDx7KFk6Atpu5XOmMJwOSCkadRFWaDJDB8wARilOgwD9WQU7f+p3kzNlEklU9tKAROwdAcOZo37ZCGwprmHO3Zzi1ICAdrzbQF4QlqKssdxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wf5Jz71+; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59a934ad50so1093655666b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 09:49:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2A865C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715187133; cv=fail; b=UUq7EUfJheacOp7soaQXefPM3Hxj1vI1yJR/Tv2HuPIk5m0MxI0XSEreKeCyQEa8/6I/7W8IqaR4mtuMlHzFNkZrsXYJE3ta5+zMbsQzvZBoCWaeJc9GHKK8kLKO192ioOr/FUDGQSVd8sK4u9O53wnXFEFZYEkWBvAZhcCW9ow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715187133; c=relaxed/simple;
+	bh=FC8IblqvYP+9iqd3ZZZSJa7XPXcmSt4XyPvweeNKE/A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HbdaZ2k7uXuswczT5JLQ09s4spy82uDABKj/b1FMXMRbiz5R1tIsahe0Kc50lMW05FoGHRw+ThNTFVlRTDrPoj2rwy6x2irGF39gWAD+it90G4YFGsXslj+uXYAh0K/YN+cn2UW9y09grqagSJUM90kSY5ZmvtL8JSAL2nsG1N0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=RikjX0DZ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tDLypvdf; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 448CPTUH008192;
+	Wed, 8 May 2024 16:51:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=TMQB2Jk23FAHBgsk+nRxhw4k16zi+SVwjm3Yjr5VPZw=;
+ b=RikjX0DZhVdwbMXx2O7ZCS52Eg2H1pndR73x4g0ffVm2FXDHOe9v8/7V01KXaJQgK0Cp
+ OqXvnlLqjP7SqAU89diHspji9ofeQ33GMjbDulmNJkDjoJ9CEzA0iahOWX5TKFWAGAil
+ N7FRSSGh+oxI8nIC9sCa8ZC1TDqxMphEBXOoW6yeBJYGZmPgQjSiyHQh0wIzPZpRoXfD
+ 6Ci4Cn2o7vIiKgInFaixMMV7vNlcNTsiAz+qVtgSFbg1UBUi/JwLRDvUHTqvxWD+VG6i
+ fAXD/Mu49fc9vzb+lMK5TOwy8CLZTSpoNuBGiMR1nxrShnynAC1BEr4blFtkLYI7SFzg RQ== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3xysfya94k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 08 May 2024 16:51:58 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 448G31sl019091;
+	Wed, 8 May 2024 16:51:58 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfkwf0p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 08 May 2024 16:51:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BCbkjFP0wkp6HZ7tWtLLdIewQw9X7xvNdxUZpMJdm+ZLWnwEdDxhRBJXxujT/xCYAsOzSDmf5/NYujcL67aZWRkWxkhHYrEnBgqlHm9a8dOdMpY3xs+RA8a7fllkp0f/TaIGci5bASvFWy4TaXh5q4Oonf6vdtdntOx7biewzDXzFSkPr2+EgqpIHTjqrkH3Rf0YdQ9tX3oEYuk8S7NxHgEPilO4z98yPzEOhKxKwrZy7RM50kKIODJ0Z3JIbsExTMJ5+brzt8L2odWbXkrlM4lG5AEl/7hqeRGOrx6p/5/GU38AmrnsVKY8QHvAIC6zmA4FK3sbl1ez3y0QCyiRCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TMQB2Jk23FAHBgsk+nRxhw4k16zi+SVwjm3Yjr5VPZw=;
+ b=IO+FIHBkxfQBZAE7YKCnzCNNlvLBczZPAUgLdh/Bw8Xixd/9mqiVWgfbKXc7DNCYAyxsGIiAxKzjFGuxubG8jpZJpxLX1qiq/TnjMMPZEYqg0d+VdYXtqNJQ6Uy7+t9mPhKioDWKqcarnBtqJrodOteT9Rp1ZGfDO94CqU3rVkMLXrsPnc0ae8qGcVD1M8A7BVBWsqOlmVRSB0+4/B9D9WfsRpl2xe8WYG2abnpzQ11RUHhH5f8gVgBy+mBexMSVNx7cMttI5v4D7KFDRdpKM2FDq5nJUl5kAOdje/D8q3GQHMt5lzxlTvI+3BQqbUVfETf89V0fog9mOVKa6Y+zcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715186983; x=1715791783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eqiY82pP+oUOkFDwK0rSdutI8cJvBxh2Jo3lnsppe7k=;
-        b=wf5Jz71+CwfNXzEZtCXA3mLF+cdGpDpWAyT+b15L9iN43WBvsgWDG0MU26VgwZfjLU
-         4arW7y4jkurYrqxjUNQI4DoN3x4ZEqigt0jukWRz9kFbKeAKtivjjd/5eWmVKeHQVxXn
-         oiIXwRTvPy0jmyQqZXpQIjM/oud5tKCH3H4Qm+OKyWCfxTcTFI03Y5zZ6mNg+uA+nsJr
-         DnEpzDAR5KOKQ68RuCciw54uk06fSJdFz+qVUEXJaaa3qrcccdnyKjyCt7o7b2o+R9zf
-         LqzlDSovoPnPrRPOTE1cij11r100GG99eFq5yKowf0K+rsuatQ7FjlKuI5W5iQouOId1
-         IxCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715186983; x=1715791783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eqiY82pP+oUOkFDwK0rSdutI8cJvBxh2Jo3lnsppe7k=;
-        b=H0sCgGuGZL16Nrdc4Z3sPO0DyhODkqXO7sjMxZGXmHpjC2ZK1XgGe9gvTwTIrBoPOz
-         iVk8e+UJbOU5ikro7ZPZFM3QWYdTl+II6lQDkPxKgotm740W4WibPPOursbqpWxFtudX
-         +w/3eqnciXRda2kd6Hh362KJSATsXn0xS+a2CzKAmLiKY9IsC+nBGUZtSqixvepIO22+
-         NFEZzeb3SPy+SMZWJY4WJ7U3rBrkP3J4GcgTlQ8P7I1CDMzH5Hz4WQUyqA+FgHduy/VQ
-         IzmNqWzw92Ud0wUvHy+HdDTTXzJru0NxF6xgoA5/y9gitnRc+wmgPwZfEPPKK6evro/y
-         ge5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVldhu1hWZ8jFgOe5Yd7EN4fMMOKPselJY/fmGxW2YECTuds1M5LeMoubJJEA3hN3h1zQ8NeWioWxaEnSVwiV71cWZvcGohLilzJSuK
-X-Gm-Message-State: AOJu0YyLnO/0gx2+adybEdTbbMGt5hv6dmk1DwIHjQnl37CzWwTmsrrT
-	xwuTH2YJ767CcJ+pUZAE3sWXhu8kOEUK9J9VIaEjgdANQoB426oPoAgb/bodpNaJxKAqcwMct46
-	iGJQ+4kdQA7mvqFHO1OeCIVEn4JA1qaxmWPcO
-X-Google-Smtp-Source: AGHT+IGylNLJehM/FOKtigjjdYwggjBh2t+TVlXasYlgbtfZnEPnX/eY/4zlcTXlMuGNKTOtkKB3pmH3Ddf2g4jqwlw=
-X-Received: by 2002:a17:906:c78c:b0:a59:ced4:25af with SMTP id
- a640c23a62f3a-a59fb95d55cmr183230266b.41.1715186982572; Wed, 08 May 2024
- 09:49:42 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TMQB2Jk23FAHBgsk+nRxhw4k16zi+SVwjm3Yjr5VPZw=;
+ b=tDLypvdf6FQF9p1430O/thtKthyzV6OGz4T2QDY38qGJovpgyIaZBzpLPELaEc+oaQDxxnLk3lxzGfPFtXDEs1lRLO0oGR5ZOP2lFvC0R3HAp8Cf9St+Ct7HkyEn2vWKRenV3lQ3Efyw2lDHag+nWavXdvYtNegIL+4NwAzAZqQ=
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
+ by IA0PR10MB6867.namprd10.prod.outlook.com (2603:10b6:208:433::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Wed, 8 May
+ 2024 16:51:55 +0000
+Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::f5b:648d:5d73:dd03]) by SJ0PR10MB4429.namprd10.prod.outlook.com
+ ([fe80::f5b:648d:5d73:dd03%7]) with mapi id 15.20.7544.041; Wed, 8 May 2024
+ 16:51:55 +0000
+Message-ID: <7fd20d16-066d-4ec3-9ca1-e99ff39d3d86@oracle.com>
+Date: Wed, 8 May 2024 09:51:51 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] mm/memory-failure: try to send SIGBUS even if unmap
+ failed
+To: Oscar Salvador <osalvador@suse.de>
+Cc: linmiaohe@huawei.com, nao.horiguchi@gmail.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240501232458.3919593-1-jane.chu@oracle.com>
+ <20240501232458.3919593-2-jane.chu@oracle.com>
+ <ZjnuJgUVVnwYrr5p@localhost.localdomain>
+ <2f965887-19b5-47bf-98ca-d40b3ec05e75@oracle.com>
+ <Zjtqqs_ImPIn7I-B@localhost.localdomain>
+Content-Language: en-US
+From: Jane Chu <jane.chu@oracle.com>
+In-Reply-To: <Zjtqqs_ImPIn7I-B@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BY5PR03CA0030.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::40) To SJ0PR10MB4429.namprd10.prod.outlook.com
+ (2603:10b6:a03:2d1::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508102222.4001882-1-usamaarif642@gmail.com>
-In-Reply-To: <20240508102222.4001882-1-usamaarif642@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 8 May 2024 09:49:05 -0700
-Message-ID: <CAJD7tkYrYOqfNELGWmXq+BTy8FYNbpR92QFtO8VtBcD3avB=CA@mail.gmail.com>
-Subject: Re: [PATCH v4] selftests: cgroup: add tests to verify the zswap
- writeback path
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, nphamcs@gmail.com, 
-	chengming.zhou@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB4429:EE_|IA0PR10MB6867:EE_
+X-MS-Office365-Filtering-Correlation-Id: 68454f81-36e7-49d3-33c1-08dc6f7f2abe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?SlJVbkU2Y29mbHRJOGhDZTlIK0FxS082dTNpR0MvS3l4cmcwK25PbUUxNDk0?=
+ =?utf-8?B?WCtvTTVCeWRJbkYrOGpTUEFpRWJ2dE43REVpYXF3Vjg2bHAzTDl5cm5aS1pX?=
+ =?utf-8?B?NWkyNWhpWUNPNTc4a0RGSHNGbDN2TXduQVNQWUpSZVdZT0lyd1FKazh1RG5t?=
+ =?utf-8?B?YTBuU0NTNUJ1QnkzUjZ0WGoxK3E3eHk5SmhIRkQvTVhRL1NqT0dJN2JrSjdZ?=
+ =?utf-8?B?aHFCdks4d1NMd3VydEcvSTJCaTBVdXZ5enh0VzluRWdQcDZnd08yVmF0dm9O?=
+ =?utf-8?B?VDZvcTVlbEk3dUVQKzlBaElteDNJbEt1OGdIeVluQWF5S3RnVG5CNXZQZ1dx?=
+ =?utf-8?B?UDh5MXJZSzBtZGM0ZW5kd3ZVMkpPOGVySk13ZVpKbjhaMkVyNFU2UUJ5Ykc4?=
+ =?utf-8?B?aldtK0M4NE5MenNYZFNtby9xblJFUHJGOC9QaXNzaGJZOVExRGNTNGhLaEVB?=
+ =?utf-8?B?VHQvTHowYThZcm9XQUZVK2p1aXMxbWQxU3dOOFFXZXA3aFBnZXF5U0FHNHRN?=
+ =?utf-8?B?aUNoYnNwTDI3OWJ6dVU3WTVWOHJCdkIzWjliNHBjWGdibUxZYWVIZUhieWwy?=
+ =?utf-8?B?Wm9HbFFmb3FML29nL0x4OXlPRFlYS2IxNUljNWNaZXB6UzdWWTNWcyttZWV1?=
+ =?utf-8?B?K3dGVWxwek85d0tFa0tXTXp0emorVTlxc0NDa3lDeGwzeTl5Wnl0b3B2N3hy?=
+ =?utf-8?B?L0xkdVpSMGtGMTNXekp3TFJ0cGszUjh1TzNDQTRWalBsSHlmYk92YUhxRzda?=
+ =?utf-8?B?WEh1eVRGcG5zV21ZWkRWRG1pS25Mc05BdXBkK05CcXZGMkorL1hTeCtqNjdm?=
+ =?utf-8?B?c2prWGUwTTRCYm5JYUVwTFpSK01qK3BYVEl4NTk4ejFoakQrOXRiQy9MdUV3?=
+ =?utf-8?B?NWFOUVdqUDBPQ0RucUdxWFhDMFhkRnlrYy9QcFhTTGoxREhCdlpkQjhjYU10?=
+ =?utf-8?B?cEQxS2VTRXU0NHptYXQ5Vmp4czVGR1RmdmY3d1VYS1NyLzFxRVlrK2ZabC9U?=
+ =?utf-8?B?SU1RRmp3T0Z5SjlVYkpTTjZOZXNxVVBwZngwK3VIWE4ySnRwZjMvWGJhWC9y?=
+ =?utf-8?B?bk1mRlNQY201WnJxMk9xWklWWHU4U05ESGZjZkgzdElUdUN5MGJVNlJrV1dY?=
+ =?utf-8?B?NDhwWmRuRytHWVdvTFhKREsza1Q1YTU3YzN1WSthZUhOVUcvcDlaUnFGQ0sz?=
+ =?utf-8?B?d0pkV1hUNlUwdDFHVS9xeUJpdWIzUzg2SFZSMEFhQkRWMWtLbjAwNlZYNFdR?=
+ =?utf-8?B?UU1ZSHhRc2ZrTXRobEIwSGxlNXZrOCt4aU5WVTIwcFdvZ1NoM0xaVWozOFZV?=
+ =?utf-8?B?dnFuK0Y5YUVKZWlYamFhME1KZ1JqZFVyNEx2ZGwvWnVGakxHMUN1QjBsZ2Fr?=
+ =?utf-8?B?TlJjZ0hHMGlpaXhKTkI5TnY3L1Z1YkRqR3YveGZRN0tNT0FrU1U5emFUSlFU?=
+ =?utf-8?B?OUJJcGJiY1dPQkptaFVXMFhZODhCVWh5YzlZZENTMXpja3BGQTdmTjJZTzVz?=
+ =?utf-8?B?MnVlUjFJMDViT2hLV212aGRYdVoxRHlrVkp4Q0FROVBBcG9qZnR0aDZUNnJq?=
+ =?utf-8?B?Y29kSTNkbmR3NDZrbmhoRVZsdWRabWtXa1NUbGplOUhaOGRSVy84VnRpMi81?=
+ =?utf-8?B?YzM1Y1pib2I5czFuSzYrRnVxdmF4SkpkdktxUlJKR0VWSTVVdU4zNFM5bjNN?=
+ =?utf-8?B?SzNNelBMaWRNQ3JnV1ViMWNQTkp2S3lpWmU2Y24zZ3NEQVM3cmxKeGhnPT0=?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?dGp0UUpHUlkvQWZ0NExvdTVvdXk0R2I3dG91ODJVQ3F5Q0dwVlVxbElnV1Nz?=
+ =?utf-8?B?M2FTanliWWpyaVBRdGtrdy9WSzNjUXA0dmFUMHkrTGFCTHRGalN4ZlBFbWtP?=
+ =?utf-8?B?TEVvRkxCdG5PYklQckxUMHhNcWpiYzNaTTBBdElNTFA5RlJpOUR4MDhkbUUy?=
+ =?utf-8?B?R2YyM1FIY3ZvZlFRaWxLM1BkbGtIRXFvNzA1VkNZdmhSMEVNL2YrTjRhRHgw?=
+ =?utf-8?B?algzeFc2VzhCRCtRbUN3ZGtxM2JLaDZLOTNxN1Z6RWJCaS9FOEZPNmJSNnFw?=
+ =?utf-8?B?YUM1V2Q1aHg0aWovbzQ2NVZ6djZNUC8reHgzL1dkeXBySHNNMXhsMjVvcVJj?=
+ =?utf-8?B?ZEczV1lpM05iaEhHV2tVazNZMGN6WG9CTVpBRU96Z3hxckZldSsremRjZG9m?=
+ =?utf-8?B?dTd1SVZZenhleTdCQ002WStKeUc0T1RadXdvZlJZVG9VeDl4Zm5VVExTYndO?=
+ =?utf-8?B?dWdzbkxqdVg3UnZlQ2Y5eFpBdUE3NHgxSEp6ZG03U1g2MXpSckIyRUl6Vm5N?=
+ =?utf-8?B?b25RbzBybjNENm0vbm9EVTE0UXQ1b3Z0RUZsMXQ1bXFLWkFkUkRuVUtxUzdx?=
+ =?utf-8?B?a3R2Si9mUGJoaW0rTnN1bGIveWtHSmVZZ3JkOVp6OXorcWxmTHJETGU3cFgv?=
+ =?utf-8?B?OU9mWlo0dE05Q2dVYWhXUWl5eHdTT1ZtVWdMbHgvQjR3U1Q4U2tkNVBqM0ZP?=
+ =?utf-8?B?eGlncWMxeU5DY2FjVUY1Wno4SzNLSmNhb3VPSW5jQWJ4VEkrbXpFc2p2bkVY?=
+ =?utf-8?B?dUFMK0JreThYSzRtN3pCdy90TkpCK2pOU2JTUUVmUXRGS2cxN2Q5UkJvdTQ1?=
+ =?utf-8?B?STFGbGYreUdnUG0rdThMcGpnYy8vSkJuSXlhWkVTNTlyenphdU5xL1lxOTYx?=
+ =?utf-8?B?Nm9acmVDMlF2ejdBWlJoZWw2QUNDTUxwWTNGT0lhbzQrc2ZqR2FSd2ZYbTFw?=
+ =?utf-8?B?Qmp2bzVOU1d0MVJvK2Y2cDFBMmgzVnNUMVpidXdDT3l5Tk94d1psOFVtTk05?=
+ =?utf-8?B?M2Jxc2xCdmxJTUg1ZUIyUVk4Z1RVc3RvNElOTk13M1V1Uzlad2g1dkthTE03?=
+ =?utf-8?B?eVduSHZLVjdrdW1RYXROWFdibHlHa3piQmxGc2pqbmNWTitici9VaDV5dEJj?=
+ =?utf-8?B?UHBEaTR6cVA2UFo0TlMxdFpwZFJTQXgwTWFaNGlObkdQcEdYaStNVWN0eDNq?=
+ =?utf-8?B?YTF5L0R0UGhEU0E4Y2Noc3AxcnpOVC9pVXlFRGwvRkpleWZFMHhwSFRDdXpk?=
+ =?utf-8?B?MVlNMVpXVW1mWWR3WlFPNG1kZzBOcHJzQzZuTHFMS2hqSlN1eUEwSXd3VHVP?=
+ =?utf-8?B?RFpuNHlYc05JV2NacFIvamZ3NTYvU0syR0dQYzBFdU5OTFFyMWQrdTk4K1lE?=
+ =?utf-8?B?L3Ewd0VmZFJSRUVLeW5INVJTMWpHcUJ2RnJtbzdzSXJTalZRZ3N6ZmtRWmd3?=
+ =?utf-8?B?eHk5VzNvdWlURHpTc0xsbG03T0FtR0lLRVlJQVlKa1RLN2JoMCtMMEg2T0tU?=
+ =?utf-8?B?K01Ga3JtbEtHUUczbTVuVjh3Y3p4OXkxaW5tNnoyc0hEY1JsZDJRTUR6L2p2?=
+ =?utf-8?B?RjJ4R1o5RFYvYTFtZ1AwcHJkMjcySzhEd0VIbGE1a25oQW9iT0VzaEl2VGx4?=
+ =?utf-8?B?ZlpPRDh1NGV4TlhCdFdsT05GQ05McnZtQmpqdVVybGoyci9qV2F4NGVBQk5t?=
+ =?utf-8?B?bVhqZ09XZ09EY3JCQzRTNklTMjloZFc0cGVYSUJ4Q1dsaWVweFNudXdDVUgv?=
+ =?utf-8?B?TndGanFLeHp4L0JuWkcvcjkzS25ocnZMbW1ablVYQ2xLVzdvZFU2VzZ4V2ta?=
+ =?utf-8?B?b1F0RWVhdXcrMGMzUzJISllwUkwxdXMvckJVMU9uYmZ3WjF6RW5SUzdFZnVY?=
+ =?utf-8?B?WGNYNENWTkcrbmhtSzhFWktNSnRUWDc4dDBYeHpVVE4zbml3Z0xXNDhzZ1p0?=
+ =?utf-8?B?RTN5UjMwbXJxVU5rb3Q1TEJHZlFud3VsWTkwdW5memN3Ujl1QUhTNmUyQ0NQ?=
+ =?utf-8?B?U1lWNXJuaS91QnVtWExJL3BrQ0tFS2o3eUg4MDVpdkpkeCs5Slk1WTljdmhE?=
+ =?utf-8?B?Tld5YlNpeGY3cGdHZnh4SHM2R0JnTDZRS0Jqd0pXT0dtTUt1K2FGS3hjaThx?=
+ =?utf-8?Q?OCuRuSZpVRfoHJvTWeJkHdBfm?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	D9gc4/DBolSqgGHlc/VVUdjWmlaELvXPcKIR7pkIfQ/++4Of6XszEhrA8jG8VfU1mCkNSF3+Zpjv6osnLZcaWQrdhg1eNKFcG+tTgJfhOxln8XHbQTAudsm6e6kBisNiLtERBE/xI86PeuQ6OLoXlgZ4wghswEan+VT5Ur1BvR+WVPIPR40JcyDBORWMYA/0nEFRw3Y+fo6zJ5351AUO9mmM/Fsnd6a8BStoAIEPx7fDRMBXB/zv9hGxjgXww2Jt0sIRRBMI4Yqbd2kIUNdluXXDfGt+I4A8qHTmLE6fVS9KqXAAoyPJ1MsD3EiOzLNgCvQSsUURJM+0fXCOP/U/y02bjzj+a9sbBMO5xzi1dCT9MdNI7HI4fxVAELNGYPag/ZOeQ4vLeQOBKNMXvtkt+mXL5QVis9+3PW5RKucdiJHtQ6phYkouuV1DHdDqNiBQ0JIXrF0fdn4smgn05tAtB3e8rM4R5pkk48MgnYXJnxhzM1IMt5CH9NlPangYgMhoqap0eescgPLp2j7cW2E2l23y4gv+F3htpv4rq29MJ52UOWuXzXs2vlxOR8ix4e/Arq4vQL4jx1RKjU2+bZ+kidpLIkJpliyuG75HWihBgZE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68454f81-36e7-49d3-33c1-08dc6f7f2abe
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 16:51:55.0444
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Lbgc26fWWr4+J0eKZ8zkpbcarFXfS5Smxm4pQ1OKjdNXjOu3iyPAZV7Sr0jsmpSCl5XFgzGYfHyOZ152MELwiA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6867
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 mlxlogscore=945 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405080122
+X-Proofpoint-GUID: YYbBqB1m4wlmLcdF8WfLksrNqy_MFXMG
+X-Proofpoint-ORIG-GUID: YYbBqB1m4wlmLcdF8WfLksrNqy_MFXMG
 
-On Wed, May 8, 2024 at 3:22=E2=80=AFAM Usama Arif <usamaarif642@gmail.com> =
-wrote:
->
-> Attempt writeback with the below steps and check using
-> memory.stat.zswpwb if zswap writeback occurred:
-> 1. Allocate memory.
-> 2. Reclaim memory equal to the amount that was allocated in step 1.
->    This will move it into zswap.
-> 3. Save current zswap usage.
-> 4. Move the memory allocated in step 1 back in from zswap.
-> 5. Set zswap.max to half the amount that was recorded in step 3.
-> 6. Attempt to reclaim memory equal to the amount that was allocated,
->    this will either trigger writeback if it's enabled, or reclamation
->    will fail if writeback is disabled as there isn't enough zswap
->    space.
->
-> Suggested-by: Nhat Pham <nphamcs@gmail.com>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->
-> v3 -> v4 (Yosry Ahmed):
-> - Use a fixed page-sized buffer for filling and checking memory when
->   attempting writeback
-> - Use cg_write_numeric instead of cg_write for memory.reclaim
-> - Improved error checking for zswpwb_before and zswpwb_after
->
-> v2 -> v3:
-> - Remove memory.max (Yosry Ahmed)
-> - change from random allocation of memory to increasing and 0 allocation
->   (Yosry Ahmed)
-> - stricter error checking when writeback is disabled (Yosry Ahmed)
-> - Ensure zswpwb_before =3D=3D 0 (Yosry Ahmed)
-> - Variable definition reorder, function name change (Yosry Ahmed)
->
-> v1 -> v2:
-> - Change method of causing writeback from limit zswap to memory reclaim.
->   (Further described in commit message) (Yosry Ahmed)
-> - Document why using random memory (Nhat Pham)
-> ---
->  tools/testing/selftests/cgroup/test_zswap.c | 130 +++++++++++++++++++-
->  1 file changed, 129 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/=
-selftests/cgroup/test_zswap.c
-> index f0e488ed90d8..beab9b979957 100644
-> --- a/tools/testing/selftests/cgroup/test_zswap.c
-> +++ b/tools/testing/selftests/cgroup/test_zswap.c
-> @@ -50,7 +50,7 @@ static int get_zswap_stored_pages(size_t *value)
->         return read_int("/sys/kernel/debug/zswap/stored_pages", value);
->  }
->
-> -static int get_cg_wb_count(const char *cg)
-> +static long get_cg_wb_count(const char *cg)
->  {
->         return cg_read_key_long(cg, "memory.stat", "zswpwb");
->  }
-> @@ -248,6 +248,132 @@ static int test_zswapin(const char *root)
->         return ret;
->  }
->
-> +/*
-> + * Attempt writeback with the following steps:
-> + * 1. Allocate memory.
-> + * 2. Reclaim memory equal to the amount that was allocated in step 1.
-> +      This will move it into zswap.
-> + * 3. Save current zswap usage.
-> + * 4. Move the memory allocated in step 1 back in from zswap.
-> + * 5. Set zswap.max to half the amount that was recorded in step 3.
-> + * 6. Attempt to reclaim memory equal to the amount that was allocated,
-> +      this will either trigger writeback if it's enabled, or reclamation
-> +      will fail if writeback is disabled as there isn't enough zswap spa=
-ce.
-> + */
-> +static int attempt_writeback(const char *cgroup, void *arg)
-> +{
-> +       long pagesize =3D sysconf(_SC_PAGESIZE);
-> +       char *test_group =3D arg;
-> +       size_t memsize =3D MB(4);
-> +       char buf[pagesize];
-> +       long zswap_usage;
-> +       bool wb_enabled;
-> +       int ret =3D -1;
-> +       char *mem;
-> +
-> +       wb_enabled =3D cg_read_long(test_group, "memory.zswap.writeback")=
-;
-> +       mem =3D (char *)malloc(memsize);
-> +       if (!mem)
-> +               return ret;
-> +
-> +       /*
-> +        * Fill half of each page with increasing data, and keep other
-> +        * half empty, this will result in data that is still compressibl=
-e
-> +        * and ends up in zswap, with material zswap usage.
-> +        */
-> +       for (int i =3D 0; i < pagesize; i++)
-> +               buf[i] =3D i < pagesize/2 ? (char) i : 0;
-> +
-> +       for (int i =3D 0; i < memsize; i +=3D pagesize)
-> +               memcpy(&mem[i], buf, pagesize);
-> +
-> +       /* Try and reclaim allocated memory */
-> +       if (cg_write_numeric(test_group, "memory.reclaim", memsize)) {
-> +               ksft_print_msg("Failed to reclaim all of the requested me=
-mory\n");
-> +               goto out;
-> +       }
-> +
-> +       zswap_usage =3D cg_read_long(test_group, "memory.zswap.current");
-> +
-> +       /* zswpin */
-> +       for (int i =3D 0; i < memsize; i +=3D pagesize) {
-> +               if (memcmp(&mem[i], buf, pagesize)) {
-> +                       ksft_print_msg("invalid memory\n");
-> +                       goto out;
-> +               }
-> +       }
-> +
-> +       if (cg_write_numeric(test_group, "memory.zswap.max", zswap_usage/=
-2))
-> +               goto out;
-> +
-> +       /*
-> +        * If writeback is enabled, trying to reclaim memory now will tri=
-gger a
-> +        * writeback as zswap.max is half of what was needed when reclaim=
- ran the first time.
-> +        * If writeback is disabled, memory reclaim will fail as zswap is=
- limited and
-> +        * it can't writeback to swap.
-> +        */
-> +       ret =3D cg_write(test_group, "memory.reclaim", "4M");
+On 5/8/2024 5:06 AM, Oscar Salvador wrote:
 
-We need cg_write_numeric(.., memsize) here as well.
+> On Tue, May 07, 2024 at 10:54:10AM -0700, Jane Chu wrote:
+>> I actually managed to hit the re-access case with an older version of Linux
+>> -
+>>
+>> MCE occurred, but unmap failed,  no SIGBUS and test process re-access
+>>
+>> the same address over and over (hence MCE after MCE), as the CPU
+>>
+>> was unable to make forward progress.   In reality, this issue is fixed with
+>>
+>> kill_accessing_processes().  The comment for this patch refers to comment
+>> made
+> So we get a faulty page and we try to unmap it from all processes that
+> might have it mapped in their pgtables.
+> Prior to this patch we would kill the processes right away and now we
+> deliver a SIGBUS.
+>
+> Seems safe as upon-reaccesing kill_accessing_process() will be called
+> for already hwpoisoned pages.
+>
+> I think the changelog could be made more explicit about this scenario
+> and state the role of kill_accessing_process more clear.
+>
+> With that: Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>   
 
-Otherwise, this LGTM. After fixing this, feel free to add:
+I will revise the changelog and mention kill_accessing_process().
 
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
+Thanks!
 
-> +       if (!wb_enabled)
-> +               ret =3D (ret =3D=3D -EAGAIN) ? 0 : -1;
-> +
-> +out:
-> +       free(mem);
-> +       return ret;
-> +}
-> +
-> +/* Test to verify the zswap writeback path */
-> +static int test_zswap_writeback(const char *root, bool wb)
-> +{
-> +       long zswpwb_before, zswpwb_after;
-> +       int ret =3D KSFT_FAIL;
-> +       char *test_group;
-> +
-> +       test_group =3D cg_name(root, "zswap_writeback_test");
-> +       if (!test_group)
-> +               goto out;
-> +       if (cg_create(test_group))
-> +               goto out;
-> +       if (cg_write(test_group, "memory.zswap.writeback", wb ? "1" : "0"=
-))
-> +               goto out;
-> +
-> +       zswpwb_before =3D get_cg_wb_count(test_group);
-> +       if (zswpwb_before !=3D 0) {
-> +               ksft_print_msg("zswpwb_before =3D %ld instead of 0\n", zs=
-wpwb_before);
-> +               goto out;
-> +       }
-> +
-> +       if (cg_run(test_group, attempt_writeback, (void *) test_group))
-> +               goto out;
-> +
-> +       /* Verify that zswap writeback occurred only if writeback was ena=
-bled */
-> +       zswpwb_after =3D get_cg_wb_count(test_group);
-> +       if (zswpwb_after < 0)
-> +               goto out;
-> +
-> +       if (wb !=3D !!zswpwb_after) {
-> +               ksft_print_msg("zswpwb_after is %ld while wb is %s",
-> +                               zswpwb_after, wb ? "enabled" : "disabled"=
-);
-> +               goto out;
-> +       }
-> +
-> +       ret =3D KSFT_PASS;
-> +
-> +out:
-> +       cg_destroy(test_group);
-> +       free(test_group);
-> +       return ret;
-> +}
-> +
-> +static int test_zswap_writeback_enabled(const char *root)
-> +{
-> +       return test_zswap_writeback(root, true);
-> +}
-> +
-> +static int test_zswap_writeback_disabled(const char *root)
-> +{
-> +       return test_zswap_writeback(root, false);
-> +}
-> +
->  /*
->   * When trying to store a memcg page in zswap, if the memcg hits its mem=
-ory
->   * limit in zswap, writeback should affect only the zswapped pages of th=
-at
-> @@ -425,6 +551,8 @@ struct zswap_test {
->         T(test_zswap_usage),
->         T(test_swapin_nozswap),
->         T(test_zswapin),
-> +       T(test_zswap_writeback_enabled),
-> +       T(test_zswap_writeback_disabled),
->         T(test_no_kmem_bypass),
->         T(test_no_invasive_cgroup_shrink),
->  };
-> --
-> 2.43.0
+-jane
+
 >
 
