@@ -1,82 +1,151 @@
-Return-Path: <linux-kernel+bounces-173754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5D28C04E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706E78C04F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F6C285158
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:24:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286D3286182
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9BE130A5B;
-	Wed,  8 May 2024 19:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E368130A7E;
+	Wed,  8 May 2024 19:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ci0gTTo6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fx6/uGoa"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C44B39AD6;
-	Wed,  8 May 2024 19:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E4839AD6;
+	Wed,  8 May 2024 19:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715196280; cv=none; b=LuEPh7uicQohgH6ltatAEfUUIPtvVzdnFC6boZyNOxShfSIHj7vOW1MbritfxcC9ucF3SSWr7lyzdHL5fMvJmpoLs+p1whK5BU9/gumZVACRpTHPiGPjJfO+vO86DaBBcpweiczMv+hCuQY7YG4mN9DL7HyrYuhfkffnBc/gcxo=
+	t=1715196403; cv=none; b=Vy2oDGxnc8G9xOw0bwoNXEenDhIimRXUWqGx2zv8p47/WkXEmwgtVopCadejdkcIRmmWhsxW9UXVuUiRgmuTYSW8zhgfP0fs05imOK3kKyJcnGIE0iyPlANBLuGwCkX+mcvf5NF60B1WYM+bDNqlt/faFPyLu0vGXYwNi22yE6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715196280; c=relaxed/simple;
-	bh=IxQvgPmgqvt1W2MNYCF0styePJc7qBXetU2bWXytcRU=;
+	s=arc-20240116; t=1715196403; c=relaxed/simple;
+	bh=AQ4aj6+Lyl30KBT589y0Wg9owBgdJw7PaStUeDorEOI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dj4N6X9ovskBU48SGC5Nj7yYgQzYaCJaZIpFhktZee2LVssRLEA0Y8r5d0tAxQfXRnPgBxXjdLIbiIjY4I6H9SZjnKvCLZAnn418OKxsjXqFyCDYkz1YbpmQ9cjI5Q4A/g7L65zuYyuPQQEYUyyQ0dQAoeDZyW6kb5As6cBYl80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ci0gTTo6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=ulrzSmrw7Zq83YaNo/M6D4Z0aXmFCdVRkIPUItHKpVw=; b=Ci0gTTo6WXYrQq3a6RTj09QWEP
-	Cy9kD+wEfpeCxP97h2gcknIMQw+psyT3U6g+sojclEo3mEgsxMgOIPaD4WvQcTn/XJJb9ek9o4GMM
-	RIrefovBeaeCxJhs56J2qydxEPy62I1KibtpV+0z4t2ltyan6I0HcDFS1LDYZgl0Phs9EgyPk6QBn
-	/hdIV18jxz8bFOT3jYaqzCdtLDqXGOaP9SSpAP/3UGjOsBtGmdqZf8w5mUqp3G+Za727q+c1NuBy7
-	AAONB1e9jzEaMdCYyV0C7Wq9uwBFtc+iUwZiQW31rMaFNbDt13z7RyWo8fKjkJJhQSUoJog4bxFNX
-	yEEx0c+A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4mu4-0000000Gihs-0dBn;
-	Wed, 08 May 2024 19:24:36 +0000
-Date: Wed, 8 May 2024 12:24:36 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Joel Granados <j.granados@samsung.com>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] seccomp: Constify sysctl subhelpers
-Message-ID: <ZjvRdASCXUpgHANU@bombadil.infradead.org>
-References: <20240508171337.work.861-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIfZGCUBroqe8ggeWgXYQwzn5pVpGEdiM5cvBBi3Wa2juUQtQRBsjJ+0td8XZRg12LlpzCDowkE7Xfpuv48b1wxXeZOJRmu5x47quoh/BnwtEtLmXAKyeBbrWPcgPG1LNnd+KUFwbbNWbYiHYVGvLTefN932Pz7dZfiZf2gFCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fx6/uGoa; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7D6BC40E0177;
+	Wed,  8 May 2024 19:26:37 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FJBrvZdqr9td; Wed,  8 May 2024 19:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715196394; bh=MmARqp4eGq04zOmDOAjY3swGyB0SboUexwrUO+pYtb0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fx6/uGoa2vQ7dKihmWFq8nD+Z7Wd+e9d/4odS4YYXLjbSee3L+gS6hSdpGMC4UQMu
+	 aqCpPUpuCkFK2/uubhzOWl1CnYB4wCz2aeD8RgqUEfO16eWC0hWu9wSx7T48I7XSGt
+	 nXesYrDt48iheoRGqCESLoUTOKf6BL8qh87w1ViWwttCPP+chEYhkc5U1L25f+7je7
+	 n91teh1XUP8tuTlH+udSxGMS0QmC/nGr8vgXTAtJy0DNeG1y8kkev3ZS9s7IidWXGN
+	 TW0Fk6Mj1el9/f049O5DwZmq1zEoz6yl7t49yocPaf0ilbbxqG+DuzCcFLDAwP3e4k
+	 eLU/02AS8X76gLrPv+ZdqC6iDZsar/B9qWiiXwKO7B3wXaQVBGXa3GwZ69iAX/7wH6
+	 tr+s75mn6L050ZWYGRnUjsENqEtqWK+VXifF15RP0na4dC00Z+aoxMFUpLavKBA7M9
+	 b25V9A8dCTJhew6e60OiD2d+5QdVlZ+p/eS/2h58MArcaxAuTSd61UxkVC57O7NmtY
+	 XxkQtXWTVnk3/0MCmsXDxu1khQM99af0zaHJQzAEOTNdjaXS1jVCez2s9/UPxlPdwD
+	 DThHPSggIeJJY1FAddNQkYuDNe+Pwp2nXHB/fDs9rrESC7mNy6QZ/rE9xaTys4edad
+	 d+KdXyZpBf72VCLFq0CV0IYE=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C481F40E01A3;
+	Wed,  8 May 2024 19:25:51 +0000 (UTC)
+Date: Wed, 8 May 2024 21:25:46 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Shiju Jose <shiju.jose@huawei.com>
+Cc: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+	"dave@stgolabs.net" <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+	"ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
+	"leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>,
+	"jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
+	"erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>,
+	"mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
+	"gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+	tanxiaofei <tanxiaofei@huawei.com>,
+	"Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
+	wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Message-ID: <20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
+References: <20240419164720.1765-1-shiju.jose@huawei.com>
+ <20240419164720.1765-2-shiju.jose@huawei.com>
+ <20240425101542.GAZiotThrq7bOE9Ieb@fat_crate.local>
+ <63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
+ <20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
+ <e0ce36eb80054440ab877ccee4e606de@huawei.com>
+ <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
+ <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240508171337.work.861-kees@kernel.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
 
-On Wed, May 08, 2024 at 10:13:41AM -0700, Kees Cook wrote:
-> The read_actions_logged() and write_actions_logged() helpers called by the
-> sysctl proc handler seccomp_actions_logged_handler() are already expecting
-> their sysctl table argument to be read-only. Actually mark the argument
-> as const in preparation[1] for global constification of the sysctl tables.
-> 
-> Suggested-by: "Thomas Weiﬂschuh" <linux@weissschuh.net>
-> Link: https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-11-e0beccb836e2@weissschuh.net/ [1]
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Wed, May 08, 2024 at 05:44:03PM +0000, Shiju Jose wrote:
+> I mean scrub subsystem module is not loaded and initialzed until
+> a dependent  device module is loaded and a device does not get
+> registered with the scrub subsystem on a machine which doesn't have
+> the corresponding scrub features.
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Stop this rambling blabla please. This should *not* happen:
 
-  Luis
+# insmod ./memory_scrub.ko
+# echo $?
+0
+# lsmod
+Module                  Size  Used by
+memory_scrub           12288  0
+
+This is on a silly guest which has none of those dependent devices crap.
+
+Your scrub module should load only on a machine which has the hardware
+- not just for fun and on anything.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
