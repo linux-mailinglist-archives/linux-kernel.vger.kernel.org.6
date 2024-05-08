@@ -1,120 +1,107 @@
-Return-Path: <linux-kernel+bounces-173385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8518BFFBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:09:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA888BFFBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D82C1C21335
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8E91F220E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87978562E;
-	Wed,  8 May 2024 14:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC30185293;
+	Wed,  8 May 2024 14:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mIeKFqpB"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfK55lXI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE1B5228;
-	Wed,  8 May 2024 14:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C295228;
+	Wed,  8 May 2024 14:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715177369; cv=none; b=pU5aEclfeBPxGTKR/acDwNSdhz7WDdAboKz9wSUneD6z/TO360uMPYe93QR9g5nEFW/UHRcbCsv1MdtdZLnBxUhCirElfBIKo9TDpqsTwIY0ocDqtwBswRlsp2JhAcJn4zNyr2wjJsw8cEkGer3INcMYPClYZJw/7Cynj4BGsc8=
+	t=1715177354; cv=none; b=Y4lMY81mzoq1zqlS9d+5JbDHWJbNez+aFUxWurRF1JftTT0uHqo/MtqY66g/KoWjarZqkiuGVUKSr+ogKe9K/V+8F9WsqoO1lWnJvsITX7kfI+eTN1JxU7ZiOtJUThdi61EmLReJXuerDIVlfm8KKWajlporz0gH2S+X+42yUUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715177369; c=relaxed/simple;
-	bh=fzgy4+mHXCfyJ5AoicOHwibfr+aeCNSgI8of7qlT1Ww=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ng1xxEEusGPLDj2XDUZSo+4PQi07b8VJKxvXuXpXTcm8HmvzUIhw+txGrw+aqGZya9QNpsp4bemmKyd5aoVOAOPr8o6XIhPssAoaeBBywgz9M9UPzYyvmldaHsDjU+ewX7eA9Pg3iiOjArtOxmVZ0bDiN03M4ikA6fu3PL3xEb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mIeKFqpB; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715177342; x=1715782142; i=markus.elfring@web.de;
-	bh=Ci8HjQX8tPorewOGkgAMjFb6w69V1gUEGyVbNhMY+G8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mIeKFqpB9OvrKQ6L34lq2gak9fr5qc1aYD9MuZFHrCYfG4PbW+eaKWX7CBeOzdEe
-	 e1xxubPCFrWfUo5qEWaz5ukZ3njIp+QrOrBBsJVVjEpqUPcl3ldtgbtjA6DoYwCKm
-	 NiqbsHPYMf0V2TL71V2wgY6V4khDBLE2EjmUwN3aRSt2dLaWrTvYzdqfvOubUJFCV
-	 6yr8g25YMeKjOz9S2YDbQf2JzLjkoxhqOQLNmMzTvE/C6ABEu9aDJc8PdXa32hvvk
-	 oQ0dBQeeda66bgzcK5aGZDTsRZAEGsFAabbazKrK00Idi46Oa7cuPUE2F+y3DqcIH
-	 NSNcjHWiwobFUICfog==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MD5nx-1rvfQ70jE9-001vPi; Wed, 08
- May 2024 16:09:02 +0200
-Message-ID: <3e10ff86-902d-45ed-8671-6544ac4b3930@web.de>
-Date: Wed, 8 May 2024 16:09:00 +0200
+	s=arc-20240116; t=1715177354; c=relaxed/simple;
+	bh=VZyUtgn7CSrqZqD2WXaMMzb6R5zKmx5KV+opHAphR2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1jZev/pUNnUbrBWZki8gY6ACd0v3prXb3Q4yzfAZZ1p0mnVXVinzu/UxNHMFl1BeEBAWSB3KA1YBx3AHAJpmLPKW/5ICvgPC5tvI6FoCheRuUh6ZzUwqHsoqXT47fr2tBaWC82vzqVw1WLlYMrfUT3YqV13e6nvKpEsS7C3AY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfK55lXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E100C113CC;
+	Wed,  8 May 2024 14:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715177353;
+	bh=VZyUtgn7CSrqZqD2WXaMMzb6R5zKmx5KV+opHAphR2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FfK55lXIxxm/5TEJWNmw3vYYan6hnJpce8FOxpJnul6TMsmsdOk7CmNCaHYXaOobc
+	 pa5rpx0Jd0c5mg/SyIYRivD8ofsnFlUBpyE2Va4NH7ZxymuNaGhwpUxSZYfB2RJ7sI
+	 KbvYvutvUYdtmv3zLRpKMUjZ1/X17Sm5tqd9VhkCKU0tiUJF6o8N+yIDi1t8q1a48O
+	 51vQYjhGDcswN4zd/4iBPrFuD5lQb/DSm0ULYs9ytwRvV1f7S9cAmunIAilmKkYN3s
+	 8/aDsad/YDxVTA4PmV5g3jydDY5244NkvnQdQAeWt2kv+k8lGqmPn5/9E5NPaqdong
+	 avbGNizqPHUMQ==
+Date: Wed, 8 May 2024 09:09:11 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Arseniy Krasnov <avkrasnov@salutedevices.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>, devicetree@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>, linux-mtd@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, oxffffaa@gmail.com,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, kernel@sberdevices.ru,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v6 1/3] dt-bindings: mtd: amlogic,meson-nand: support
+ fields for boot ROM code
+Message-ID: <171517732606.1572649.16193191353725811830.robh@kernel.org>
+References: <20240507230903.3399594-1-avkrasnov@salutedevices.com>
+ <20240507230903.3399594-2-avkrasnov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jeroen de Borst <jeroendb@google.com>, Ziwei Xiao <ziweixiao@google.com>,
- netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, John Fraker <jfraker@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Shailend Chand <shailend@google.com>, rushilg@google.com
-References: <20240507225945.1408516-6-ziweixiao@google.com>
-Subject: Re: [PATCH net-next 5/5] gve: Add flow steering ethtool support
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240507225945.1408516-6-ziweixiao@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:K4H+6zwfaC+6QAg16E2784YO4mIc0G2T9mui64mzKlR5zfH5yzA
- 8qc/hLuQqUwRCNv5bxB4odN7DfmMAtVDuieZKYMcqYjXlbIsovXbSlBSYmWHX70uKihg4Us
- EjVSUaMIrPyE3OkGOW5kg9VmFGkR1rDJcLzLpbEvFPGAoWT7+ukvyuHN+E65A5WllIDKILp
- xHdaz1KZ7xT6zewdHpQ+w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:37HGseiCCJg=;Bo90SZctH6Pl03ncbBVsfMAV1TL
- xCSXsrtfkfVPuudD6KhmGQGRFt84YDQHeoLhxC0r7UqZdEauv57IzzcxAwa3CFjXvYv2Xlc3q
- /j6nK1BYRbzIILfaUSaTbFgF/YvjEgy3PEkIXfXea5atvoaTCwzfKESJdzSUB3M6x2Ki/I5Ev
- 6hxeEsRfY/eaJbzgnaZ1pvjVnNmbCF+eryh3mMNd6wnMGpLZK1fl8JG33dez4NnZV8sLMOODa
- BrbwlTw5vlwVoLiQF13v8a1wWiZCR5QndoqzdKD2fh3afkNyb3xF7RZ+gkIEMETVprJTqUR2H
- g80V8oPO5uIDKIN04d1StpO8safJjD4T9+kkJwOmXr4TcfIefhHr7dSFA4I3csCVug4ZZHcSF
- Ka9dChBRLffkYdnQOMrgn27L3favwBGyWQiqsuOTwFS4of/tq9zd9fC8x76DGrfQcnqAr9bPz
- i1S2pP3J3EdxPJ4SEVFnUyt2uQY7kX/md7nHIeKBZk8UIQFu0YCJtXjHXP00FxyZ6HTRthvf9
- roL/h09cG5v1RH0io7CefP+nEugOUOnRqT92aaylI4l0ooZl9k+i4kKRHzT0FXA7FiYp/IM6p
- LuZoiK0VZbaNU3OBGSyfIutiQ74lYuvnTe0xSVI6HCB71WECE1TssdvVDu2clWb0KNi3Ft03b
- 9QKu3k2TXnLjasZLZokB55HaDFMqp0g4hykoQx9scDB3RxRukwtSeIeqsB6+Ml8e0R7nUQzs5
- 1o5xWj6KeIDRw7KBVBW0FEU9oJjsx0T58zjxSquuhmzV768jcWW8t+66OmUgDSSNoUWVQIJ0q
- qroxQRLRYfj4UFHDCB+FMTYSiCt7s+v4vmu0XXDrai8C4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507230903.3399594-2-avkrasnov@salutedevices.com>
 
-=E2=80=A6
-> +++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-=E2=80=A6
-> +static int gve_get_rxnfc(struct net_device *netdev, struct ethtool_rxnf=
-c *cmd, u32 *rule_locs)
-> +{
-> +	struct gve_priv *priv =3D netdev_priv(netdev);
-> +	int err =3D 0;
-> +
-> +	dev_hold(netdev);
-> +	rtnl_unlock();
-=E2=80=A6
-> +out:
-> +	rtnl_lock();
-> +	dev_put(netdev);
-> +	return err;
-> +}
-=E2=80=A6
 
-How do you think about to increase the application of scope-based resource=
- management
-at such source code places?
+On Wed, 08 May 2024 02:09:01 +0300, Arseniy Krasnov wrote:
+> Boot ROM code on Meson requires that some pages on NAND must be written
+> in special mode: "short" ECC mode where each block is 384 bytes and
+> scrambling mode is on. Such pages are located on the chip in the
+> following way (for example):
+> 
+> [ p0 ][ p1 ][ p2 ][ p3 ][ p4 ][ p5 ][ p6 ][ p7 ] ... [ pN ]
+>   ^           ^           ^           ^
+> 
+> pX is page number "X". "^" means "special" page used by boot ROM - e.g.
+> every 2nd page in the range of [0, 7]. Step (2 in example is set by
+> 'amlogic,boot-page-step' field. Last page in range (7 in example) is
+> set by 'amlogic,boot-pages' field.
+> 
+> Signed-off-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
+> ---
+>  .../bindings/mtd/amlogic,meson-nand.yaml       | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
 
-Regards,
-Markus
+
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
+
+Missing tags:
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+
+
 
