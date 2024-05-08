@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-173606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66E78C02C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:14:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C558C0295
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 045491C21AA5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F07D82814BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B1D12B169;
-	Wed,  8 May 2024 17:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7871CD25;
+	Wed,  8 May 2024 17:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wPoCaEd6"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+4hYmbz"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D78F128815
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973D36FD0;
+	Wed,  8 May 2024 17:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188456; cv=none; b=aq1I28lzOke+EnxSEzRFZOuZ5xMNViFIbsy+Ym9h6FwkLx8ovuUGGfxHBNLL/x/5izbWiITQyrbBG5rC4X83bwrLoINVReSctWgnf7S05jAIC1aFOLdJT4Vh0RZdnBVq0k3haAY773EvVaxmHzgLohbdXWIvx60kgHo004tVJ3U=
+	t=1715188061; cv=none; b=R+Z+b7JRA4lTq8xn2R1u0cDQlakwp8W+ENNj273akAlgyBi/j+aLcznR861Crok/QDSYWECSpLoSgpEgp+CSkLPT3jg/BvBQl9vy5w86gaGLLjE+wbQgOYersu54QifV3y2ZvFf/07BbIxr63UdYYH8VZCdjwEpz15SAzBMN6lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715188456; c=relaxed/simple;
-	bh=wBIe8L/kzS+iFaHUIe5MJ34qQDJlShFdBDx5Aipq6MI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n6+nJF/Btcf2LamuCmsPWzqF2p9hYZfDwuL9kx8n2H5/w+WKc1YJCcAB/QubLIUcSWGu8OZPY/GN82kPC8faHpWlSNBLFxiK9fxNmhawyU8uXpN1wv3/ok8xIBO+6+A1lMvCfIHGUY+4VWT4yGGLXvt6+/OD3fgd4SwGIPp4pro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wPoCaEd6; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 21CDD2C0240;
-	Thu,  9 May 2024 05:05:48 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1715187948;
-	bh=0z3I4FWLpGwn1DF7NS3tZlEXDhBmoqyxj/U0Pm5RNgE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=wPoCaEd6WxiHVoe20gXL4BVy/S+3W1Dh05IEZh+wZm7X/7GDC4i2Mi9WY7wy3Td/n
-	 +UsMSbt9UgrWoSVl3ou+ySJq37rJ+RkGyD1vUg8SLZN+Hbx0pxfov+VQA0FQxHjIwJ
-	 d2v1MIumAgz1xMuYsEnXb3CQm1meC7VeEsPkT5NXkxomGn389j76P6g3b7AyjHoybf
-	 43aW1ZyKdlrW9pba2BUNwJg+skpCr5K3Qnn4sCBf5A3V34Tv5mifzCIzPobfzptwcl
-	 i6i6N8G770K6RaD2KrrPwEVPavfYgwDJk0zweAU4VkT78xUXhO3NeKTBX2RoFOHBvR
-	 QMgt2FfIb0uMg==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B663bb0eb0002>; Thu, 09 May 2024 05:05:47 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id CCFD713EE83;
-	Thu,  9 May 2024 05:05:47 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id C9D5C280461; Thu,  9 May 2024 05:05:47 +1200 (NZST)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: jdelvare@suse.com,
-	linux@roeck-us.net,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: linux-hwmon@vger.kernel.org,
+	s=arc-20240116; t=1715188061; c=relaxed/simple;
+	bh=TgcdtXtxI62R95H5BWg8ywLoEwBFqq2ooZE9ZRACGBc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kCR+Erjq2Vng/3rIS4NmQ8OD6yqKaK6VXiVjgBrfgDzIuf1aXhoj84Ce1qzPlgd51E+x8aTivJK8WhPyICGG2ixTdd/3o/c4c4Dzh9mapq8GkKIYx5Nxj5hPxmBpt2pnF3v822aUJVvKTRRIpa0ZXk0H+nvTkS0KuTeDNq3SpM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+4hYmbz; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-34e0d8b737eso666760f8f.1;
+        Wed, 08 May 2024 10:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715188058; x=1715792858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iywJHAkcG7tFG6+CpLm9F2F3QcvXhajnNv1XCFGvzA=;
+        b=P+4hYmbzSGSz7c+sX6fNA382SgdBZjft8Q0Lmi6lO900rVFcm2nX0rdNcgrsoNTfF2
+         txpmlOagdwEGaxJ8vBsMDlM/XqEWdQKQPQL4sLboWoDANS5HI7JvRbbTkb3RZQLttbpN
+         P311P+ta+TfjyiYwhgF0NZVtSxH4NExy52BeCGMeXBSkmmkU7mrU2clzZnotvj8Kbjjb
+         dVZAThSIfmH3sykhVSpMjvLImS7l38DrUoTwd1QWPSjN8tk+pXv1lDWpvtIhXos9dcwN
+         EuWJagmSVsIucX9CrADjzyFkqpoybOPC+ifyq0f9DNmQj80Al0GLfVtWv2KXdx5CJJSl
+         nr/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715188058; x=1715792858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iywJHAkcG7tFG6+CpLm9F2F3QcvXhajnNv1XCFGvzA=;
+        b=U2BNolMHAb8JVEMdNtcRf10xTHt/4V1NinioduyVYZggjdkGInwwT07sEj1hjYq4KF
+         kaTI4Y1owSerUznlPQmbk7xfI0LoktTUDsHSQOvfX89jacuTV1DVW2/RqPYjGeV3367G
+         7qLCLmGLd040iPGMUMVuslNeg0eZnl+sIjwr++7eAus2YaUMdP+Ahk5vLSc5Nib9nskJ
+         86SeQZIJz03t12LPP/jefQCZohJ8/HgyqrwmlVvzCSDR4AZvIYtgnj+qncg64rLDDkql
+         uVQstfhgpm0Z0nQQqAcG11AqiPZ2o7HLIviQ7RbQpOjQpP0dgd+dmH+bXkSVg5JXE9ir
+         RK0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWrTTTWjfiUGMfFjYDqimu64HfTjdW/vZEie9ge7aOZ25uMyv8GL5zcYW517n+gqA1q4m9bwaAPBtlhr68GKVdZtdqF1NOzxV4sXFvnJKfSDYNj2mZTr0FCD6JNksFfljZ6C4GO+0pqDSHX8IlvUv7jpQyXMqg4SbzBbFp+8jGt9RC8OFE=
+X-Gm-Message-State: AOJu0YyireNA+IH4ulwbwJ/PmJYljQrkej5Whjq44cAdwugOr4tOZk63
+	GDNJ2IAN7Bm+5FaN/g1ey7VJZrnYSRsoE31VnPqR9O2xCVqRTeWo
+X-Google-Smtp-Source: AGHT+IFouGf4+90tc1Nrm7lSg3uMFWPHIRxmbr/6ZfKwQ2Yieyl8tIMsjGqkbdJlAumP9prWdrCnFw==
+X-Received: by 2002:adf:e58e:0:b0:34d:8206:e76b with SMTP id ffacd0b85a97d-35018117631mr207032f8f.9.1715188057526;
+        Wed, 08 May 2024 10:07:37 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id fk12-20020a05600c0ccc00b0041c130520fbsm2921555wmb.46.2024.05.08.10.07.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 10:07:36 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-mips@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH 2/2] hwmon: (adt7475) Add support for configuring initial PWM duty cycle
-Date: Thu,  9 May 2024 05:05:43 +1200
-Message-ID: <20240508170544.263059-3-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240508170544.263059-1-chris.packham@alliedtelesis.co.nz>
-References: <20240508170544.263059-1-chris.packham@alliedtelesis.co.nz>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] mips: bmips: improve handling of RAC and CBR addr
+Date: Wed,  8 May 2024 19:07:16 +0200
+Message-ID: <20240508170721.3023-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=MfrPuI/f c=1 sm=1 tr=0 ts=663bb0eb a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=TpHVaj0NuXgA:10 a=62ePmnuN2cZSMFv3--EA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-By default the PWM duty cycle in hardware is 100%. On some systems this
-can cause unwanted fan noise. Add the ability to take an initial PWM
-duty cycle and frequency via device properties.
+Hi,
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
- drivers/hwmon/adt7475.c | 56 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+this simple series improve handling of RAC and CBR address and try to
+upstream these simple patch we have in OpenWrt for a while.
 
-diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
-index 4224ffb30483..b0c7c1a95897 100644
---- a/drivers/hwmon/adt7475.c
-+++ b/drivers/hwmon/adt7475.c
-@@ -1662,6 +1662,54 @@ static int adt7475_set_pwm_polarity(struct i2c_cli=
-ent *client)
- 	return 0;
- }
-=20
-+static int adt7475_set_pwm_initial_freq(struct i2c_client *client)
-+{
-+	int ret, out, i;
-+	u32 freqs[ADT7475_PWM_COUNT];
-+	int data;
-+
-+	ret =3D device_property_read_u32_array(&client->dev,
-+					     "pwm-initial-frequency", freqs,
-+					     ARRAY_SIZE(freqs));
-+	if (ret)
-+		return ret;
-+
-+	for (i =3D 0; i < ADT7475_PWM_COUNT; i++) {
-+		out =3D find_closest(freqs[i], pwmfreq_table, ARRAY_SIZE(pwmfreq_table=
-));
-+		data =3D adt7475_read(TEMP_TRANGE_REG(i));
-+		if (data < 0)
-+			return data;
-+		data &=3D ~0xf;
-+		data |=3D out;
-+
-+		ret =3D i2c_smbus_write_byte_data(client, TEMP_TRANGE_REG(i), data);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int adt7475_set_pwm_initial_duty(struct i2c_client *client)
-+{
-+	int ret, i;
-+	u32 dutys[ADT7475_PWM_COUNT];
-+
-+	ret =3D device_property_read_u32_array(&client->dev,
-+					     "adi,pwm-initial-duty-cycle", dutys,
-+					     ARRAY_SIZE(dutys));
-+	if (ret)
-+		return ret;
-+
-+	for (i =3D 0; i < ADT7475_PWM_COUNT; i++) {
-+		ret =3D i2c_smbus_write_byte_data(client, PWM_MAX_REG(i), dutys[i] & 0=
-xff);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static int adt7475_probe(struct i2c_client *client)
- {
- 	enum chips chip;
-@@ -1778,6 +1826,14 @@ static int adt7475_probe(struct i2c_client *client=
-)
- 	if (ret && ret !=3D -EINVAL)
- 		dev_warn(&client->dev, "Error configuring pwm polarity\n");
-=20
-+	ret =3D adt7475_set_pwm_initial_freq(client);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D adt7475_set_pwm_initial_duty(client);
-+	if (ret)
-+		return ret;
-+
- 	/* Start monitoring */
- 	switch (chip) {
- 	case adt7475:
---=20
-2.43.2
+The first patch fix a straight kernel panic where some Bootloader might
+enable RAC but misconfigure the CBR address. The current logic only
+check if RAC is enabled but doesn't verify if the CBR address is usable.
+
+The DMA sync function cause a kernel panic for invalid write. (as CBR is
+0 or something like 0xa)
+
+The second is preparation for making the CBR address configurable in DT.
+Since this address doesn't change, we can cache it and reference it with
+a local variable instead of calling the register to access the value.
+
+The 4th patch make it configurable with 2 DT property, one to actually
+set the reg and the other to force set it.
+
+The first property is used when CBR is set to 0. The second property is
+to force it if the Bootloader sets it to something wrong.
+
+If the CBR value is not 0 and is not forced with the second property a
+WARN is printed and the DT value is ignored.
+
+The 4th patch enable RAC on BMIPS4350.
+
+These has been tested on BCM6358 (HG556a) and BCM6368 (VH4032N) and
+reported correct functionality.
+
+Changes v3:
+- Drop broken-cbr-reg property
+- Fix anyOf+const with enum
+Changes v2:
+- Prefix brcm vendor in the added property
+- Drop last patch (cpu switch from DMA sync)
+- Validate CBR addr from DT to be outside DRAM
+- Reduce indentation in DT CBR check
+- Reduce delta and use local variable for CBR where possible
+- Fix and improve typo and spelling mistake
+- Use 0xf instead of 0xa for BCM6358 RAC enable
+
+Christian Marangi (3):
+  mips: bmips: rework and cache CBR addr handling
+  dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
+  mips: bmips: setup: make CBR address configurable
+
+Daniel González Cabanelas (1):
+  mips: bmips: enable RAC on BMIPS4350
+
+ .../devicetree/bindings/mips/brcm/soc.yaml    | 23 +++++++++++++
+ arch/mips/bmips/dma.c                         |  2 +-
+ arch/mips/bmips/setup.c                       | 34 +++++++++++++++++--
+ arch/mips/include/asm/bmips.h                 |  1 +
+ arch/mips/kernel/smp-bmips.c                  | 21 ++++++++++--
+ 5 files changed, 76 insertions(+), 5 deletions(-)
+
+-- 
+2.43.0
 
 
