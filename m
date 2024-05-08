@@ -1,184 +1,142 @@
-Return-Path: <linux-kernel+bounces-173667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6838C03A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED63F8C03B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808FD1C24817
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C612284748
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC4D12AAEF;
-	Wed,  8 May 2024 17:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D18D12E1C8;
+	Wed,  8 May 2024 17:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuTHulvN"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="EXe2OJUg"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB8112A17D;
-	Wed,  8 May 2024 17:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFA612BF29
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715190477; cv=none; b=aMdF9xSKqPRPyBHF3PuJgcKicpF0nmgtFhEqJRLW7YZ5JBTO546aeLQW9bd9psfnfmuURpT4KgmUCEJ7/kSGf8Lo3lbDIBPx0WgH6cAAaCHZ4X0UrY2rr0zS5w7cp1WM2PY4u7vEC0ldegOJnBHKefqSQ8luxPDZDSuh8di4srQ=
+	t=1715190601; cv=none; b=fwCT/hGlcn8XNeVyetNtdd/Edib1k0TZafdYhX49garn16nCwWqRn8USLsp16wa5z8uIA0h9AUEct5sYjl9MVpOdtdZrcyU4I9y07B9T4mbAAeGZ38Wd9DubIAVjJmNJXGywww2Qp2Fag/R/0ITXs5myvwTMAu4U/fNSLumjM4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715190477; c=relaxed/simple;
-	bh=NIDVWllLarpxWInOUxzM8dpHdna/DzDLUzvnxbWU01g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I7uI9aw8e2m+yWghhC9SRsqhVxUzumlM+dWBAJATGaU0kS1ztv5M0lOs+PkqUYE6cPYuwVVG2aL60YlH2DvrkYp80aRoObgisBPXaa2fN86WL7NuMM5oul2gf+c5Acb8vguJrn14ih5CZQ8OnFOlfxJuKf8aANmYEoPpdiTx4pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuTHulvN; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-de5a7b18acdso20022276.3;
-        Wed, 08 May 2024 10:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715190474; x=1715795274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=04e9lsEENEtBo6Y1Ejz9Hf/22A/cgbyXH7aOe7PkMlI=;
-        b=RuTHulvNKeCiHfJi7meJRQA5KizwX3s3ijSZBpVHu41tLa8Bj+u+bZXdIDsSllJVEq
-         scU8i9/1DcdsiCWj1Sdp8eYe0vw+klD8K8w9PZoyawJ8PJzuQ8rlAsJotW16+sIcjRF9
-         SftU7d3q9Y00jkrwc/Ooro/zgN5Kb5vnAprlVpU25IBSrf1K1PUZx1HBgP9hBZBIvByq
-         d30wj2xnc0K6bkjHAi0iIrHpV6B6R47tbklnr/ot3r3aG7Qg7i91ilk5T87ka7adjt3E
-         N6GLjncYNjZ77rR+Buv9aEn7qxmpbdXOWwcU778QyaMKA+0+K10ZmS99xkWZpz0T7H+B
-         IQug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715190474; x=1715795274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=04e9lsEENEtBo6Y1Ejz9Hf/22A/cgbyXH7aOe7PkMlI=;
-        b=m/SRiTVvim7JJSFbaKUfgaC3T788o9R1O6QMwPdApXr1c/6qvSl9nRT1lzXz6ctFzQ
-         BWHGBwyfOyAZE+1HDhhcybZ2SNGgPCUuQl8duMXSxKp37JAjQfWgIT/VlCd7ui7d1hcf
-         9+TUtjA+kWRDRQrACeHVS9uogoPjnlB5Nluucr+wBdtzrtngO2UpXG0n9Iz5bYD0FFKM
-         AZuxljHpYJfKlvsb847Y722CqI9NblQTTNHAePnFcPZL6A6r2DZkS618HXKeAddLCaMb
-         PN/baWpUb0zN62hHlGqvCbFKMEe9iLNjFgKSoFAjRmBJSmtvqNIp7DJQV1Vo/8H8Vh1j
-         YaBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXP4s+p4nHWRwGth4vJnF0Y3Vt0CkYLhq6y91FnvDZmPo8lviOksbX1qFgHsoyU1DRtn+/1MlBwWiOfDzPXd6dHbLeRoM45K/o5t+gydGnRHyGArszG5XB5fhGSAdmUHtARjUCIDr0=
-X-Gm-Message-State: AOJu0Yz904UbM7Z0nxPjunJsGOXSWFzQBUlCW9DZdPiRg8OzbSbTG6b9
-	V/F9W7LbzCju+tIAqULCPckRC77sCzVuS1opfOaZ0dkE4NP07fnDGWsQTj7+oIToKR1g81EAaJd
-	7HxNBahrkNUAmh6XScDayDGaTkl1xoA==
-X-Google-Smtp-Source: AGHT+IEqDuf6npYt7VEKOfS3+IldIr1XFvhfpyFy1EIIxsihAUcRdMjYbWrSBteTu6lo4K6q6rBf6MjFuFXKEqlq8JI=
-X-Received: by 2002:a5b:609:0:b0:de5:4b1f:7e00 with SMTP id
- 3f1490d57ef6-debb9d27bc8mr3109777276.15.1715190474410; Wed, 08 May 2024
- 10:47:54 -0700 (PDT)
+	s=arc-20240116; t=1715190601; c=relaxed/simple;
+	bh=V2Q4pwpdjqg9xxAMMtcZVQYSQ96Q+Kp2F4ha6okEb84=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XxHqWwzpYrpUrEFyMYWyB87mf876LWAaztfJbBDI+A9vXC5S8DVWXXu3kUAWwdxaQkL7kxZxVVBclHhS2EUZ7QWecytAVCviTF4aCnhs/wzg2Ge/teqi0Q1FqN/0qAPwTbpFy9K2fu8U+gXja1fJXN1A5Btq6yvdytQ9AJy4pgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=EXe2OJUg; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id A47EE2C01BD;
+	Thu,  9 May 2024 05:49:49 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1715190589;
+	bh=V2Q4pwpdjqg9xxAMMtcZVQYSQ96Q+Kp2F4ha6okEb84=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=EXe2OJUgIDR0A/GXHnI7+K/re/H5RaiZg7ypj2E/FEa0S9/Fj7Rbe0oZuKXcvW8w6
+	 JOxGHJP87Bf4XG3FoUFNdIiFH9HpS9YeDqfa7FhXArkmomWy7SOFBkdNAGrt3E6NHe
+	 vY+5eG+4Fjf43jgGWAMDPTiPMMjNE/9JiZhgbgYFa3sYUt/17mDtyINikp+m4Iv+Tz
+	 ltXtYS34HsWH5RKc8ZGZBS32vwEypsZjTePspzZOiRfqbY5IzPVefiZp+o/5117OHK
+	 jLawqAMe22A8lFIkZHDXoMz66zq65eyoWRBsrnTEdNMwgGyCGCTcq4Vf2YDNmZ3TR7
+	 24eCNYlRBnMfQ==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B663bbb3d0001>; Thu, 09 May 2024 05:49:49 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Thu, 9 May 2024 05:49:49 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
+ SMTP Server (TLS) id 15.0.1497.48; Thu, 9 May 2024 05:49:49 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Thu, 9 May 2024 05:49:49 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: "jdelvare@suse.com" <jdelvare@suse.com>, "linux@roeck-us.net"
+	<linux@roeck-us.net>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>
+CC: "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] hwmon: (adt7475) Add support for configuring initial
+ PWM duty cycle
+Thread-Topic: [PATCH 2/2] hwmon: (adt7475) Add support for configuring initial
+ PWM duty cycle
+Thread-Index: AQHaoWn5Wh+pud+mHku8vdrDvQZJzLGM1D2A
+Date: Wed, 8 May 2024 17:49:49 +0000
+Message-ID: <7cb45e90-659e-4caa-8e10-be52e1c969c6@alliedtelesis.co.nz>
+References: <20240508170544.263059-1-chris.packham@alliedtelesis.co.nz>
+ <20240508170544.263059-3-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240508170544.263059-3-chris.packham@alliedtelesis.co.nz>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AAC0F0B1DB31164DA0FEF15AFD7CAA09@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fccbb040330a706a4f7b34875db1d896a0bf81c8.camel@gmail.com>
- <4e781d80fbec0db13555456ab8af6bdae6dee168.camel@gmail.com>
- <CAHCN7xJF1=BNgh=wpsyd6WP=haOq2UdCYEt2AaL7rGfhDUh6CQ@mail.gmail.com> <8636fb8d9809aaafbd8274ec0dbfc250e1113c73.camel@pengutronix.de>
-In-Reply-To: <8636fb8d9809aaafbd8274ec0dbfc250e1113c73.camel@pengutronix.de>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 8 May 2024 12:47:41 -0500
-Message-ID: <CAHCN7x+L1RzT5EmOLaFcHmkSMS2pG0NVyWnRo-ZqhLpLEftBSg@mail.gmail.com>
-Subject: Re: iMX8M Mini suspend/resume hanging on imx8m_blk_ctrl_power_on()
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: vitor <ivitro@gmail.com>, linux-pm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	vitor.soares@toradex.com, ulf.hansson@linaro.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	rafael@kernel.org, geert+renesas@glider.be, peng.fan@nxp.com, 
-	linus.walleij@linaro.org, u.kleine-koenig@pengutronix.de, marex@denx.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=MfrPuI/f c=1 sm=1 tr=0 ts=663bbb3d a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=gnXwXUZvAAwXd9gAzRcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-On Wed, May 8, 2024 at 12:45=E2=80=AFPM Lucas Stach <l.stach@pengutronix.de=
-> wrote:
->
-> Hi Adam,
->
-> Am Mittwoch, dem 08.05.2024 um 12:30 -0500 schrieb Adam Ford:
-> > On Fri, Apr 5, 2024 at 10:09=E2=80=AFAM vitor <ivitro@gmail.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Thu, 2024-04-04 at 16:53 +0100, vitor wrote:
-> > > > Greetings,
-> > > >
-> > > > I'm trying to suspend/resume our Verdin iMX8M Mini with VPU IP usin=
-g
-> > > > the latest 6.9.0-rc2 Kernel. While the system can suspend without
-> > > > issues, it hangs on the resume routine. After some investigation, I
-> > > > can
-> > > > see the Kernel hanging on imx8m_blk_ctrl_power_on()[1] while resumi=
-ng
-> > > > the hantro-vpu power domain.
-> > > >
-> > > > Any hint about that?
-> > > >
-> > > > [1]
-> > > > https://elixir.bootlin.com/linux/v6.9-rc2/source/drivers/pmdomain/i=
-mx
-> > > > /imx8m-blk-ctrl.c#L101
-> > > >
-> > >
-> > + Lucas
-> >
-> > > Looking at other child nodes of the pgc node, pgc_vpu_[g1|g2|h1] seem=
-s
-> > > to be nested into pgc_vpumix.
-> > >
-> >
-> > On the surface, that's how it appears and it would be consistent with
-> > how the GPU's work with the GPC's for each GPU calling the gpumix.
-> > However, the VPU's all reference the vpu_blk_ctrl which itself
-> > references the vpumix.
-> >
-> > Lucas,
-> >
-> > You seem to know this driver pretty well.  Do you expect the G1, G2,
-> > and H1 PGC's to all reference the vpumix, or do you expect the
-> > vpu_blk_ctrl to enable/disable the vpumix?
-> >
-> Nope, that's incorrect, as discussed here:
-> https://lore.kernel.org/all/9ce35b9bb5a15891f6bd01bd54b7dc84b3ba4021.came=
-l@pengutronix.de/
-
-That's what I thought.
->
-> >
-> >
-> > > After applying the following changes to imx8mm.dtsi, the suspend/resu=
-me
-> > > is working.
-> > >
-> > >
-> > > @@ -739,16 +739,19 @@ pgc_vpumix: power-domain@6 {
-> > >         pgc_vpu_g1: power-domain@7 {
-> > >                 #power-domain-cells =3D <0>;
-> > >                 reg =3D <IMX8MM_POWER_DOMAIN_VPUG1>;
-> > > +               power-domains =3D <&pgc_vpumix>;
-> > >         };
-> > >
-> > >         pgc_vpu_g2: power-domain@8 {
-> > >                 #power-domain-cells =3D <0>;
-> > >                 reg =3D <IMX8MM_POWER_DOMAIN_VPUG2>;
-> > > +               power-domains =3D <&pgc_vpumix>;
-> > >         };
-> > >
-> > >         pgc_vpu_h1: power-domain@9 {
-> > >                 #power-domain-cells =3D <0>;
-> > >                 reg =3D <IMX8MM_POWER_DOMAIN_VPUH1>;
-> > > +               power-domains =3D <&pgc_vpumix>;
-> > >         };
-> > >
-> > >
-> > > I will prepare the patch to send in the next couple of days.
-> >
-> > Please CC me when post the patch, and I can run some tests on my hardwa=
-re.
->
-> The correct patch is already out:
-> https://lore.kernel.org/all/20240418155151.355133-1-ivitro@gmail.com/
-
-Thanks.
->
-> Regards,
-> Lucas
+DQpPbiA5LzA1LzI0IDA1OjA1LCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPiBCeSBkZWZhdWx0IHRo
+ZSBQV00gZHV0eSBjeWNsZSBpbiBoYXJkd2FyZSBpcyAxMDAlLiBPbiBzb21lIHN5c3RlbXMgdGhp
+cw0KPiBjYW4gY2F1c2UgdW53YW50ZWQgZmFuIG5vaXNlLiBBZGQgdGhlIGFiaWxpdHkgdG8gdGFr
+ZSBhbiBpbml0aWFsIFBXTQ0KPiBkdXR5IGN5Y2xlIGFuZCBmcmVxdWVuY3kgdmlhIGRldmljZSBw
+cm9wZXJ0aWVzLg0KPg0KPiBTaWduZWQtb2ZmLWJ5OiBDaHJpcyBQYWNraGFtIDxjaHJpcy5wYWNr
+aGFtQGFsbGllZHRlbGVzaXMuY28ubno+DQo+IC0tLQ0KPiAgIGRyaXZlcnMvaHdtb24vYWR0NzQ3
+NS5jIHwgNTYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gICAx
+IGZpbGUgY2hhbmdlZCwgNTYgaW5zZXJ0aW9ucygrKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9od21vbi9hZHQ3NDc1LmMgYi9kcml2ZXJzL2h3bW9uL2FkdDc0NzUuYw0KPiBpbmRleCA0MjI0
+ZmZiMzA0ODMuLmIwYzdjMWE5NTg5NyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9od21vbi9hZHQ3
+NDc1LmMNCj4gKysrIGIvZHJpdmVycy9od21vbi9hZHQ3NDc1LmMNCj4gQEAgLTE2NjIsNiArMTY2
+Miw1NCBAQCBzdGF0aWMgaW50IGFkdDc0NzVfc2V0X3B3bV9wb2xhcml0eShzdHJ1Y3QgaTJjX2Ns
+aWVudCAqY2xpZW50KQ0KPiAgIAlyZXR1cm4gMDsNCj4gICB9DQo+ICAgDQo+ICtzdGF0aWMgaW50
+IGFkdDc0NzVfc2V0X3B3bV9pbml0aWFsX2ZyZXEoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCkN
+Cj4gK3sNCj4gKwlpbnQgcmV0LCBvdXQsIGk7DQo+ICsJdTMyIGZyZXFzW0FEVDc0NzVfUFdNX0NP
+VU5UXTsNCj4gKwlpbnQgZGF0YTsNCj4gKw0KPiArCXJldCA9IGRldmljZV9wcm9wZXJ0eV9yZWFk
+X3UzMl9hcnJheSgmY2xpZW50LT5kZXYsDQo+ICsJCQkJCSAgICAgInB3bS1pbml0aWFsLWZyZXF1
+ZW5jeSIsIGZyZXFzLA0KPiArCQkJCQkgICAgIEFSUkFZX1NJWkUoZnJlcXMpKTsNCj4gKwlpZiAo
+cmV0KQ0KPiArCQlyZXR1cm4gcmV0Ow0KPiArDQo+ICsJZm9yIChpID0gMDsgaSA8IEFEVDc0NzVf
+UFdNX0NPVU5UOyBpKyspIHsNCj4gKwkJb3V0ID0gZmluZF9jbG9zZXN0KGZyZXFzW2ldLCBwd21m
+cmVxX3RhYmxlLCBBUlJBWV9TSVpFKHB3bWZyZXFfdGFibGUpKTsNCj4gKwkJZGF0YSA9IGFkdDc0
+NzVfcmVhZChURU1QX1RSQU5HRV9SRUcoaSkpOw0KPiArCQlpZiAoZGF0YSA8IDApDQo+ICsJCQly
+ZXR1cm4gZGF0YTsNCj4gKwkJZGF0YSAmPSB+MHhmOw0KPiArCQlkYXRhIHw9IG91dDsNCj4gKw0K
+PiArCQlyZXQgPSBpMmNfc21idXNfd3JpdGVfYnl0ZV9kYXRhKGNsaWVudCwgVEVNUF9UUkFOR0Vf
+UkVHKGkpLCBkYXRhKTsNCj4gKwkJaWYgKHJldCkNCj4gKwkJCXJldHVybiByZXQ7DQo+ICsJfQ0K
+PiArDQo+ICsJcmV0dXJuIDA7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBpbnQgYWR0NzQ3NV9zZXRf
+cHdtX2luaXRpYWxfZHV0eShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50KQ0KPiArew0KPiArCWlu
+dCByZXQsIGk7DQo+ICsJdTMyIGR1dHlzW0FEVDc0NzVfUFdNX0NPVU5UXTsNCj4gKw0KPiArCXJl
+dCA9IGRldmljZV9wcm9wZXJ0eV9yZWFkX3UzMl9hcnJheSgmY2xpZW50LT5kZXYsDQo+ICsJCQkJ
+CSAgICAgImFkaSxwd20taW5pdGlhbC1kdXR5LWN5Y2xlIiwgZHV0eXMsDQo+ICsJCQkJCSAgICAg
+QVJSQVlfU0laRShkdXR5cykpOw0KPiArCWlmIChyZXQpDQo+ICsJCXJldHVybiByZXQ7DQo+ICsN
+Cj4gKwlmb3IgKGkgPSAwOyBpIDwgQURUNzQ3NV9QV01fQ09VTlQ7IGkrKykgew0KPiArCQlyZXQg
+PSBpMmNfc21idXNfd3JpdGVfYnl0ZV9kYXRhKGNsaWVudCwgUFdNX01BWF9SRUcoaSksIGR1dHlz
+W2ldICYgMHhmZik7DQo+ICsJCWlmIChyZXQpDQo+ICsJCQlyZXR1cm4gcmV0Ow0KPiArCX0NCj4g
+Kw0KPiArCXJldHVybiAwOw0KPiArfQ0KPiArDQo+ICAgc3RhdGljIGludCBhZHQ3NDc1X3Byb2Jl
+KHN0cnVjdCBpMmNfY2xpZW50ICpjbGllbnQpDQo+ICAgew0KPiAgIAllbnVtIGNoaXBzIGNoaXA7
+DQo+IEBAIC0xNzc4LDYgKzE4MjYsMTQgQEAgc3RhdGljIGludCBhZHQ3NDc1X3Byb2JlKHN0cnVj
+dCBpMmNfY2xpZW50ICpjbGllbnQpDQo+ICAgCWlmIChyZXQgJiYgcmV0ICE9IC1FSU5WQUwpDQo+
+ICAgCQlkZXZfd2FybigmY2xpZW50LT5kZXYsICJFcnJvciBjb25maWd1cmluZyBwd20gcG9sYXJp
+dHlcbiIpOw0KPiAgIA0KPiArCXJldCA9IGFkdDc0NzVfc2V0X3B3bV9pbml0aWFsX2ZyZXEoY2xp
+ZW50KTsNCj4gKwlpZiAocmV0KQ0KPiArCQlyZXR1cm4gcmV0Ow0KDQpXaG9vcHMgSSBtZWFudCB0
+byBzZW5kIHRoZSB2ZXJzaW9uIHRoYXQgaGFuZGxlcyAtRUlOVkFMLiB2MiB3aWxsIGhhbmRsZSAN
+CmVycm9ycyB0aGUgc2FtZSB3YXkgYXMgcHdtX3BvbGFyaXR5IGFib3ZlLiBJJ2xsIHdhaXQgZm9y
+IGEgYml0IGJlZm9yZSANCnNlbmRpbmcgdGhhdCBvdXQuDQoNCj4gKw0KPiArCXJldCA9IGFkdDc0
+NzVfc2V0X3B3bV9pbml0aWFsX2R1dHkoY2xpZW50KTsNCj4gKwlpZiAocmV0KQ0KPiArCQlyZXR1
+cm4gcmV0Ow0KPiArDQo+ICAgCS8qIFN0YXJ0IG1vbml0b3JpbmcgKi8NCj4gICAJc3dpdGNoIChj
+aGlwKSB7DQo+ICAgCWNhc2UgYWR0NzQ3NTo=
 
