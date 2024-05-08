@@ -1,124 +1,310 @@
-Return-Path: <linux-kernel+bounces-172690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D412C8BF56D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:06:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890B18BF583
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 734171F25F13
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132A0282C01
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A1E17C8D;
-	Wed,  8 May 2024 05:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B547A171C1;
+	Wed,  8 May 2024 05:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="afORrE3T"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DNNnz9or"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8CE17559;
-	Wed,  8 May 2024 05:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A5B1A2C15
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715144746; cv=none; b=FvDztn8FQC1qHpkMobaKGFkgNHzpaSn2B4lpQDg2iTfmsKh+e56jQsAq4wzXibjs+W9cPglf/Jvmhi2eAVmdxIXjU+7yONMkslGcL11iLVktOM6vXdtq/hDNrlaNqO13q5fpFkShYpuQruq+cvm+dq3Eoo2qLdMpYAb4wnHdI34=
+	t=1715144995; cv=none; b=VqtnCsPRBG6E3ThWnsxMWJ9NW4jALJMdcZ5RuSfrJuS/5CaLnNiUgMwxFIe10jGUY4OcGCndGcdbijclMFde/V83sro1fF8umFEXbOeC8uoZIsfS7w1b5ykRfYsBpFZeHGW1tUt2/UyQ6VbM4vl3pAqVMZ8ruSzcplfhThh6prI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715144746; c=relaxed/simple;
-	bh=8tlkHKRM2YMJamihFiXet8yEil9oqOy2oa3BI13SVkk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bpqkM9OlvE6mxn0yVsvTTDmy0lMzYgny10oThQF/swO6FwkmEoBeW5MCgUxUJMY1Fn27yL+dNUA94TF2NmpVo78TrPqvuIkFgOXhabl5fRPJNDLGVaAxcJGa65Zl+toLvhRPv9gVORqPPjwygblhoSsDCtaDeHk/iRnD0YIIb2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=afORrE3T; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1715144741;
-	bh=qDxi+XXbzr8mIuwlB1aliy4UlEscitEJu0tfYntXSqk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=afORrE3T6fm9owzOay6Q4EjIov5tp69f4yV6zWLQdPsWDile3ZCCvtHhzO2PqLNhY
-	 m+q7v/FoA8SLQDfn596Zo1eZM+hR6/YdWkcLKevLwwEApws3ePuCppayzHHPscXyJF
-	 TvBQUdEABHJNrqArtC95+goi1c4tXk3VHRtSchfW2Fvwvkx7nbQaM69bjdX40GStHi
-	 sswR2je3OJ6aclZFJUTBI6AB57hHjLBZkIb72MLcLpFHfZFymMKkfdhI1OB7cMBOgs
-	 X2mfW+XeE/gaofip2NTMzaeOv5sbyT2gLUkqkWyl5VgYm4tFgR3AvFayfeeXD22ujL
-	 DGyduQoKPLUuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VZ34h4KM9z4wc1;
-	Wed,  8 May 2024 15:05:40 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Puranjay Mohan <puranjay@kernel.org>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, "Naveen N. Rao"
- <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>,
- bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Cc: puranjay12@gmail.com
-Subject: Re: [PATCH bpf] powerpc/bpf: enforce full ordering for ATOMIC
- operations with BPF_FETCH
-In-Reply-To: <20240507175439.119467-1-puranjay@kernel.org>
-References: <20240507175439.119467-1-puranjay@kernel.org>
-Date: Wed, 08 May 2024 15:05:40 +1000
-Message-ID: <87o79gopuj.fsf@mail.lhotse>
+	s=arc-20240116; t=1715144995; c=relaxed/simple;
+	bh=5Z/IQ1AG0LSghMA4nafETdJADGNE+D470yXbhvbV++8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=as6xHGFvIh6LPtIMrm2dK8uTuIQs+DecvUDwsRgaj97Yrn7hpa+TT45ff2tSH+0Po0i/+IQWDVNhS7BEDQ9FRt5BRLFjvdL30u/OB8rjC8Pjr31fhCcwZ7MNXW0OfNACHCMRn3VmxJflKmok2TTtlAwA4/TnOmflRPm5R+C/+GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DNNnz9or; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715144990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=VjOimlkAb10m4KMSg1DOqlHJhsmFxHSlxPO0CJcAMP4=;
+	b=DNNnz9or1n9GKEAfBz8zKYIB5oaHlAnusxCslrNqdIX5XpD1pm/VUIAX5SzSPQOdapR6qp
+	HRMh8QcKD8GYVuOt34zeOt30yZx6W7VqvHrl6+wiADFKhyn1fOZXmGdzgtNGiJlAZTovlf
+	eI3RgpdV8ZbM94DYYsvE8ExFPOFjUqU=
+From: Wen Yang <wen.yang@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	SShuah Khan <shuah@kernel.org>,
+	Andrei Vagin <avagin@google.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dave Young <dyoung@redhat.com>,
+	Tim Bird <tim.bird@sony.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] selftests: introduce additional eventfd test coverage
+Date: Wed,  8 May 2024 13:09:04 +0800
+Message-Id: <20240508050904.34493-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Puranjay Mohan <puranjay@kernel.org> writes:
-> The Linux Kernel Memory Model [1][2] requires RMW operations that have a
-> return value to be fully ordered.
->
-> BPF atomic operations with BPF_FETCH (including BPF_XCHG and
-> BPF_CMPXCHG) return a value back so they need to be JITed to fully
-> ordered operations. POWERPC currently emits relaxed operations for
-> these.
+Add several new test cases which assert corner cases on the eventfd
+mechanism, for example, the supplied buffer is less than 8 bytes,
+attempting to write a value that is too large, etc.
 
-Thanks for catching this.
+	./eventfd_test
+	# Starting 9 tests from 1 test cases.
+	#  RUN           global.eventfd_check_flag_rdwr ...
+	#            OK  global.eventfd_check_flag_rdwr
+	ok 1 global.eventfd_check_flag_rdwr
+	#  RUN           global.eventfd_check_flag_cloexec ...
+	#            OK  global.eventfd_check_flag_cloexec
+	ok 2 global.eventfd_check_flag_cloexec
+	#  RUN           global.eventfd_check_flag_nonblock ...
+	#            OK  global.eventfd_check_flag_nonblock
+	ok 3 global.eventfd_check_flag_nonblock
+	#  RUN           global.eventfd_chek_flag_cloexec_and_nonblock ...
+	#            OK  global.eventfd_chek_flag_cloexec_and_nonblock
+	ok 4 global.eventfd_chek_flag_cloexec_and_nonblock
+	#  RUN           global.eventfd_check_flag_semaphore ...
+	#            OK  global.eventfd_check_flag_semaphore
+	ok 5 global.eventfd_check_flag_semaphore
+	#  RUN           global.eventfd_check_write ...
+	#            OK  global.eventfd_check_write
+	ok 6 global.eventfd_check_write
+	#  RUN           global.eventfd_check_read ...
+	#            OK  global.eventfd_check_read
+	ok 7 global.eventfd_check_read
+	#  RUN           global.eventfd_check_read_with_nonsemaphore ...
+	#            OK  global.eventfd_check_read_with_nonsemaphore
+	ok 8 global.eventfd_check_read_with_nonsemaphore
+	#  RUN           global.eventfd_check_read_with_semaphore ...
+	#            OK  global.eventfd_check_read_with_semaphore
+	ok 9 global.eventfd_check_read_with_semaphore
+	# PASSED: 9 / 9 tests passed.
+	# Totals: pass:9 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-> diff --git a/arch/powerpc/net/bpf_jit_comp32.c b/arch/powerpc/net/bpf_jit_comp32.c
-> index 2f39c50ca729..b635e5344e8a 100644
-> --- a/arch/powerpc/net/bpf_jit_comp32.c
-> +++ b/arch/powerpc/net/bpf_jit_comp32.c
-> @@ -853,6 +853,15 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
->  			/* Get offset into TMP_REG */
->  			EMIT(PPC_RAW_LI(tmp_reg, off));
->  			tmp_idx = ctx->idx * 4;
-> +			/*
-> +			 * Enforce full ordering for operations with BPF_FETCH by emitting a 'sync'
-> +			 * before and after the operation.
-> +			 *
-> +			 * This is a requirement in the Linux Kernel Memory Model.
-> +			 * See __cmpxchg_u64() in asm/cmpxchg.h as an example.
-> +			 */
-> +			if (imm & BPF_FETCH)
-> +				EMIT(PPC_RAW_SYNC());
->  			/* load value from memory into r0 */
->  			EMIT(PPC_RAW_LWARX(_R0, tmp_reg, dst_reg, 0));
->  
-> @@ -905,6 +914,8 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
->  
->  			/* For the BPF_FETCH variant, get old data into src_reg */
->  			if (imm & BPF_FETCH) {
-> +				/* Emit 'sync' to enforce full ordering */
-> +				EMIT(PPC_RAW_SYNC());
->  				EMIT(PPC_RAW_MR(ret_reg, ax_reg));
->  				if (!fp->aux->verifier_zext)
->  					EMIT(PPC_RAW_LI(ret_reg - 1, 0)); /* higher 32-bit */
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: SShuah Khan <shuah@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Andrei Vagin <avagin@google.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Tim Bird <tim.bird@sony.com>
+Cc: linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v2: use strings which indicate what is being tested, that are useful to a human
 
-On 32-bit there are non-SMP systems where those syncs will probably be expensive.
+ .../filesystems/eventfd/eventfd_test.c        | 136 +++++++++++++++++-
+ 1 file changed, 131 insertions(+), 5 deletions(-)
 
-I think just adding an IS_ENABLED(CONFIG_SMP) around the syncs is
-probably sufficient. Christophe?
+diff --git a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
+index f142a137526c..85acb4e3ef00 100644
+--- a/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
++++ b/tools/testing/selftests/filesystems/eventfd/eventfd_test.c
+@@ -13,6 +13,8 @@
+ #include <sys/eventfd.h>
+ #include "../../kselftest_harness.h"
+ 
++#define EVENTFD_TEST_ITERATIONS 100000UL
++
+ struct error {
+ 	int  code;
+ 	char msg[512];
+@@ -40,7 +42,7 @@ static inline int sys_eventfd2(unsigned int count, int flags)
+ 	return syscall(__NR_eventfd2, count, flags);
+ }
+ 
+-TEST(eventfd01)
++TEST(eventfd_check_flag_rdwr)
+ {
+ 	int fd, flags;
+ 
+@@ -54,7 +56,7 @@ TEST(eventfd01)
+ 	close(fd);
+ }
+ 
+-TEST(eventfd02)
++TEST(eventfd_check_flag_cloexec)
+ {
+ 	int fd, flags;
+ 
+@@ -68,7 +70,7 @@ TEST(eventfd02)
+ 	close(fd);
+ }
+ 
+-TEST(eventfd03)
++TEST(eventfd_check_flag_nonblock)
+ {
+ 	int fd, flags;
+ 
+@@ -83,7 +85,7 @@ TEST(eventfd03)
+ 	close(fd);
+ }
+ 
+-TEST(eventfd04)
++TEST(eventfd_chek_flag_cloexec_and_nonblock)
+ {
+ 	int fd, flags;
+ 
+@@ -161,7 +163,7 @@ static int verify_fdinfo(int fd, struct error *err, const char *prefix,
+ 	return 0;
+ }
+ 
+-TEST(eventfd05)
++TEST(eventfd_check_flag_semaphore)
+ {
+ 	struct error err = {0};
+ 	int fd, ret;
+@@ -183,4 +185,128 @@ TEST(eventfd05)
+ 	close(fd);
+ }
+ 
++/*
++ * A write(2) fails with the error EINVAL if the size of the supplied buffer
++ * is less than 8 bytes, or if an attempt is made to write the value
++ * 0xffffffffffffffff.
++ */
++TEST(eventfd_check_write)
++{
++	uint64_t value = 1;
++	ssize_t size;
++	int fd;
++
++	fd = sys_eventfd2(0, 0);
++	ASSERT_GE(fd, 0);
++
++	size = write(fd, &value, sizeof(int));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	size = write(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(value));
++
++	value = (uint64_t)-1;
++	size = write(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	close(fd);
++}
++
++/*
++ * A read(2) fails with the error EINVAL if the size of the supplied buffer is
++ * less than 8 bytes.
++ */
++TEST(eventfd_check_read)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++
++	fd = sys_eventfd2(1, 0);
++	ASSERT_GE(fd, 0);
++
++	size = read(fd, &value, sizeof(int));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EINVAL);
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(value));
++	EXPECT_EQ(value, 1);
++
++	close(fd);
++}
++
++
++/*
++ * If EFD_SEMAPHORE was not specified and the eventfd counter has a nonzero
++ * value, then a read(2) returns 8 bytes containing that value, and the
++ * counter's value is reset to zero.
++ * If the eventfd counter is zero at the time of the call to read(2), then the
++ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
++ */
++TEST(eventfd_check_read_with_nonsemaphore)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++	int i;
++
++	fd = sys_eventfd2(0, EFD_NONBLOCK);
++	ASSERT_GE(fd, 0);
++
++	value = 1;
++	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
++		size = write(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++	}
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, sizeof(uint64_t));
++	EXPECT_EQ(value, EVENTFD_TEST_ITERATIONS);
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EAGAIN);
++
++	close(fd);
++}
++
++/*
++ * If EFD_SEMAPHORE was specified and the eventfd counter has a nonzero value,
++ * then a read(2) returns 8 bytes containing the value 1, and the counter's
++ * value is decremented by 1.
++ * If the eventfd counter is zero at the time of the call to read(2), then the
++ * call fails with the error EAGAIN if the file descriptor has been made nonblocking.
++ */
++TEST(eventfd_check_read_with_semaphore)
++{
++	uint64_t value;
++	ssize_t size;
++	int fd;
++	int i;
++
++	fd = sys_eventfd2(0, EFD_SEMAPHORE|EFD_NONBLOCK);
++	ASSERT_GE(fd, 0);
++
++	value = 1;
++	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
++		size = write(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++	}
++
++	for (i = 0; i < EVENTFD_TEST_ITERATIONS; i++) {
++		size = read(fd, &value, sizeof(value));
++		EXPECT_EQ(size, sizeof(value));
++		EXPECT_EQ(value, 1);
++	}
++
++	size = read(fd, &value, sizeof(value));
++	EXPECT_EQ(size, -1);
++	EXPECT_EQ(errno, EAGAIN);
++
++	close(fd);
++}
++
+ TEST_HARNESS_MAIN
+-- 
+2.25.1
 
-cheers
 
