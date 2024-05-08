@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-173355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504BC8BFF51
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:48:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F848BFF55
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066E6289842
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:48:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E319B210E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3EA85649;
-	Wed,  8 May 2024 13:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA1F7D401;
+	Wed,  8 May 2024 13:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bPR2FNMY"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhNgJ0Cu"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4626D84E0B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 13:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAA1182CC;
+	Wed,  8 May 2024 13:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715176027; cv=none; b=D2F+oyO8MIanh5tFdbMd7Udec5kXbWAqIh+fa+1pVbFavzmPUoSCIm4ChOWPq/lh3Uq48VuZUWLb99MG4ptkoB7sgcwsq6sTvp6EKdAxzkZaVAm7bLsv1a/W05VX0/FAIM4BTTYm+vaxC0CZaeQJje97DgRfrU8BKnosddfBMwc=
+	t=1715176040; cv=none; b=e+Lnqnu4B7Bk3mKUPvUNRX1rvqBlGlqqiM9d8PnJe8aXBUC57q/TenufrwXwF9UY6RqQd8PTXHAr1SroQu5pWxV3NsHAyos5wCX79HpZtryx4iYrPM8QQldI4FQSKpy8G3nSMo0chnm51k2RUMo2yaPmJ4nfXTsHIUqd1uOC8sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715176027; c=relaxed/simple;
-	bh=u6EyzHXd27fFGrN9Et656hCo/08PPyT+hT+CjlkxkTU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ilLRk3tfjWXSZ785bdz7ERh0jzlT32LyB3dEWbS5a5NG/D7UmJMyufz4ZlCm9CZDsgbdYTaXE+Xc1J6xeRbkfFTo6oEQ6F2IJ7YyYCF76NpK6On75+k4W7ahv+iiew2RsLKiMFXdKt4nfAs3zAkQfNbDzKlpYQs/g50tY8gdbVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bPR2FNMY; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b2a8bd5ee0so3637206a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 06:47:05 -0700 (PDT)
+	s=arc-20240116; t=1715176040; c=relaxed/simple;
+	bh=UJoC/0p60SVk+M5ckNWwXHQLVKtSVLLfbm9KWYn/b20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=krveNA0+rWZ0w+1tLmgY/Ip/qg51Txcr0Hut8sv7/5Ovsww4ILaIvF7JmLZ3b4EMpAsP/nFc/tSwAlZpdaG/lpUg/FtJGKcJH7qvBQ1ozNK/qXFqDNtFOEWW+g0c+kqp9AOAyrtFIZ3tDKaawYTi0oLKyRbbQq9a6Y55vKMs+38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhNgJ0Cu; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a0e4b773so1059441566b.2;
+        Wed, 08 May 2024 06:47:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715176025; x=1715780825; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Cy96MEbs4JLv+XlnJDrNT2CJ2qEQRDaH5Qu53Pf8ZU=;
-        b=bPR2FNMYRrL08LQZsHzX4L6KUGDoby1D7kq9CdVilnTl6CW9lrBNQYoFJsegU0aGHp
-         4Rvak8c4UmtoXc6S3fFjOZBo01YZflQzqFYbXxLIMfFX6eOvhYD8CtmBrq+Mb4rYJAd4
-         2TsYLBRRZ5lpklLD11TRJUBP059D2HhrmxyI4sMyN7bd6vthUJHtxs4RdEeGguR3wo9D
-         30qJITdawJLGFg0swiui7xrCU72XGr5q34hiCJUVBCjHrubNk4EFfWZpBaPVUzsm1Ifx
-         +T4FgDSpNbi6t6XMJh7DSzyQHM216u9cGZYXYgPB8SaOhyO6WycTJJETY3cK0TX2A9N0
-         gIog==
+        d=gmail.com; s=20230601; t=1715176037; x=1715780837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wteB/wo3Zzx+FC62Ax47MWkRwTrlGJK2z3q3lgZSSCU=;
+        b=WhNgJ0Cu39Mft0lkpmyyx7Vn5k+vwVmlMLWNFBZAE8q3IEBn643ppF9IMd7mamX5ey
+         xj4CXzfPZ17+74Hm52BFSnTzee1loz5sXaKN+TJPTbbPq6tmPjj8nyByj0WZCgrbpyix
+         b/uNGFhmitFFuuYwEVLvvUIPc94aYuUxvCLrM2ryDnLohrUDpnpIvvxZpp/CrKOFHvAg
+         XlVNVOv7GENpgQXJKQSkYVkYIOX2427lkwMPvhnh6Rf8yhBw96XbLgfbPSzjcI6BUFMv
+         m8bZqBaBuxyWK/hoQgIYUlLp1oSzFyR3GlngRD9RSaZsOSCMylogoR4YF6GQ+WepzsuO
+         RfgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715176025; x=1715780825;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Cy96MEbs4JLv+XlnJDrNT2CJ2qEQRDaH5Qu53Pf8ZU=;
-        b=XPBEovYnMRmH3hJtZ/DPWvFo/yaJJYx0Hh6+nCFCKUYg/xr/OrXnOSEgVJrx4Dsh8i
-         s+2Ot3MCEEcg4R8pWZKAfXlbl6AYANKh0E0BUkPvThkZ01OCCZZip/i8xAFCZUzsC2H1
-         K0L4g5IeUj2QPhYq2Dpd2CNUPBrk9uakbDiYyRW+Sh88TUQJ35lSgy6jj3z/LTnYmQv4
-         NqtOEQKxBU5iWPLJH9HkOg5ztHBkHdhhbQhUZTo5Vik9JSV77rICauOk4zau+UJRdGzR
-         wGcCEcO3O5gIlTxvd1mm4FKF/eOdGYt4LzlHeMjaOgaHjedGwNAcraOVpFduP+LDxgHk
-         7yQA==
-X-Forwarded-Encrypted: i=1; AJvYcCV626aJu95nyuNjD3NWUg3KkIg5sYMXct56Bc/NV3Jgza4cQq0LfL9Jshq5E2bPIxdx8gFpDUiZT07XB47AnynnEZSeYBhltxLYhf7h
-X-Gm-Message-State: AOJu0Yz/6qEUwYqZwtm3cTO3LA8LdIOqvR+QFKF8u1mOhsW/7EjaU86r
-	YyoZg7vhCKMCUpU7DOGDINJ3cYa/ycYskriSPVgGV1zAwBt8LiqL0CgIL/L+ebPqZkQffXWfEfu
-	upg==
-X-Google-Smtp-Source: AGHT+IGkEzt3rrLCYEAc2MIkDJ4rSudkNPJV/ZI7YDr6FjDNwR59XbPWzyPuXmQfxq7n/1Jp45z9S3futCA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:128d:b0:2b4:32ae:483e with SMTP id
- 98e67ed59e1d1-2b61638c780mr8658a91.2.1715176024465; Wed, 08 May 2024 06:47:04
- -0700 (PDT)
-Date: Wed, 8 May 2024 06:47:03 -0700
-In-Reply-To: <20240507214254.2787305-1-edliaw@google.com>
+        d=1e100.net; s=20230601; t=1715176037; x=1715780837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wteB/wo3Zzx+FC62Ax47MWkRwTrlGJK2z3q3lgZSSCU=;
+        b=GjD5ojRdT3BV37Vnm0wAj8n5HJdmDCEfCBRP4uTJcGPWYRtxqNd/xT3c0pGgUc37fQ
+         o0bbd2WVU7/zwWsYVsRmF43oniTggoODXIEbnmd625WPNoO8oMIiAoFRQD5kUsSmhrlf
+         d1HY9kM/nnis5bYGgkfajF7PwgGHjFOOKiR2U1vHmxrtwwwF3KrUpvQuywf5Y5jmlnKc
+         z1km0Hbcg2nLe9gfQRFs1soY1h0g+len7Ft8wnuqHLuec31Vu74eyvehtit5tsFjppRh
+         Mjjya1fDBYV/hoLhgmgWSYBFO05yRZ6OB0AYgfixfsviSuStGUDphSbJqkWcKoKLp8A6
+         vsIA==
+X-Forwarded-Encrypted: i=1; AJvYcCViBgTdl+VYDFbFdqcXtVWld1POmTP2yOkwyXMzjropCHiCcVjNNXmbPDhwyBcEBty4M3ydnCQQvYte5V3H3vHe1YKI6pfg4jeJ/EiysNOeOcLz8CNYTmv6OeG2HoYL/sLUyEx2I8nY
+X-Gm-Message-State: AOJu0YwxFGMW4nyYu1UvF6QNef49hFcVmvauGobeqByRwRYSUR5A7lgx
+	4q9YxXPrIO7nxcURwTdvmxuC8DX5UXXJlDISzS6crmKQ3Extuef6hseBpKd0DQZF3+NQ7MHKdaM
+	Ogx7eGiQWKcJ68wulyJoS04lhwtA=
+X-Google-Smtp-Source: AGHT+IE5JFtWo9bv5vXjP6j99UVH5GVAS8+biVz3lUNc0nsLzBwhrFsERrL36KOrYWpA0PTfFNxIvjT2wgJwEyoH4eU=
+X-Received: by 2002:a17:906:ad6:b0:a59:c367:560c with SMTP id
+ a640c23a62f3a-a59fb9dc564mr151760366b.60.1715176037437; Wed, 08 May 2024
+ 06:47:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240507214254.2787305-1-edliaw@google.com>
-Message-ID: <ZjuA3aY_iHkjP7bQ@google.com>
-Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
-From: Sean Christopherson <seanjc@google.com>
-To: Edward Liaw <edliaw@google.com>
-Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, "=?utf-8?B?QW5kcsOp?= Almeida" <andrealmeid@igalia.com>, 
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	David Hildenbrand <david@redhat.com>, "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Seth Forshee <sforshee@kernel.org>, 
-	Bongsu Jeon <bongsu.jeon@samsung.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"Andreas =?utf-8?Q?F=C3=A4rber?=" <afaerber@suse.de>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
-	Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240506154520.3886867-1-marc.ferland@sonatest.com> <h6mggdcri53rq65jzi5ov6n7oqdvaldtpofh6eina6gos2wyyw@crjmnmfpynw4>
+In-Reply-To: <h6mggdcri53rq65jzi5ov6n7oqdvaldtpofh6eina6gos2wyyw@crjmnmfpynw4>
+From: Marc Ferland <marc.ferland@gmail.com>
+Date: Wed, 8 May 2024 09:47:05 -0400
+Message-ID: <CAMRMzCC2YwHeizCacEW6MVPpS-nP14ev_ZHUW0rWjJaJHeAO2g@mail.gmail.com>
+Subject: Re: [PATCH] i2c: xiic: print error code when xiic_start_xfer fails
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: michal.simek@amd.com, linux-arm-kernel@lists.infradead.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Marc Ferland <marc.ferland@sonatest.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024, Edward Liaw wrote:
-> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> _GNU_SOURCE to either be defined prior to including headers or with the
-> -D_GNU_SOURCE flag passed to the compiler.
-> 
-> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
-> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
-> location.  Remove #define _GNU_SOURCE from source code to resolve
-> redefinition warnings.
-> 
-> Edward Liaw (5):
->   selftests: Compile kselftest headers with -D_GNU_SOURCE
->   selftests/sgx: Include KHDR_INCLUDES in Makefile
->   selftests: Include KHDR_INCLUDES in Makefile
->   selftests: Drop define _GNU_SOURCE
->   selftests: Drop duplicate -D_GNU_SOURCE
+On Wed, May 8, 2024 at 8:51=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> w=
+rote:
+>
+> Hi Marc,
+>
+> On Mon, May 06, 2024 at 11:45:20AM -0400, marc.ferland@gmail.com wrote:
+> > From: Marc Ferland <marc.ferland@sonatest.com>
+> >
+> > xiic_start_xfer can fail for different reasons:
+> >
+> > - EBUSY: bus is busy or i2c messages still in tx_msg or rx_msg
+> > - ETIMEDOUT: timed-out trying to clear the RX fifo
+>
+> Wolfram has recently removed all the error printouts caused by
+> etimedout.
+>
+> > - EINVAL: wrong clock settings
+> >
+> > Printing the error code helps identifying the root cause.
+> >
+> > Signed-off-by: Marc Ferland <marc.ferland@sonatest.com>
+> > ---
+> >  drivers/i2c/busses/i2c-xiic.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xii=
+c.c
+> > index 71391b590ada..73729f0180a1 100644
+> > --- a/drivers/i2c/busses/i2c-xiic.c
+> > +++ b/drivers/i2c/busses/i2c-xiic.c
+> > @@ -1165,7 +1165,7 @@ static int xiic_xfer(struct i2c_adapter *adap, st=
+ruct i2c_msg *msgs, int num)
+> >
+> >       err =3D xiic_start_xfer(i2c, msgs, num);
+> >       if (err < 0) {
+> > -             dev_err(adap->dev.parent, "Error xiic_start_xfer\n");
+> > +             dev_err(adap->dev.parent, "Error xiic_start_xfer: %d\n", =
+err);
+>
+> I don't see the end user being interested in having the error
+> number printed in the dmesg. In fact, I doubt the end user is
+> interested in this message at all.
+>
+> We could print the debug messages (or warnings) where the actual
+> failure occurs. For example, in the setclk case, a warning is
+> already being printed, and I don't see why we should also print
+> an error here.
+>
+> Does that make sense?
+>
+Yeah, it makes sense. My goal here is to add a bit more context when
+things go wrong.
 
-Can you rebase this on top of linux-next?  I have a conflicting fix[*] for the
-KVM selftests queued for 6.10, and I would prefer not to drop that commit at
-this stage as it would require a rebase of a pile of other commits.
+I've been having these _very_ rare failures with this i2c adapter and
+the only trace I am getting is this "Error xiic_start_xfer" message in
+the kernel logs. So it seemed like a good idea to just print the error
+code along with the message.
 
-And I doubt KVM is the only subsystem that has a targeted fix for the _GNU_SOURCE
-mess.
+I'll resend a v2 with your suggestions.
 
-If we want/need to get a fix into 6.9, then IMO we should just revert 809216233555
-("selftests/harness: remove use of LINE_MAX"), as that came in quite late in the
-6.9 cycle, and I don't think it's feasible to be 100% confident that globally
-defining _GNU_SOURCE works for all selftests, i.e. we really should have a full
-cycle for folks to test.
+Regards,
 
-[*] https://github.com/kvm-x86/linux/commit/730cfa45b5f4
+Marc
 
