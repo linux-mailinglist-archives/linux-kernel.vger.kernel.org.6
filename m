@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-172861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025BB8BF7BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:52:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDC58BF7C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E521F21892
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D63331F226CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E515E3D96D;
-	Wed,  8 May 2024 07:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CA14597F;
+	Wed,  8 May 2024 07:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="KvvUOWbo"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sOUQHNNS"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCA836B00;
-	Wed,  8 May 2024 07:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FD1450FA;
+	Wed,  8 May 2024 07:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715154695; cv=none; b=O+7TnW4TsVOpk4IImZW2Nh+qJjeZLu9/46iYWBLwRhdfgO+IqdqmBTGrbeqThf61WdX+vNyR5tAp7R1/bXX2eNOo4ydQQH0XrrjnGcahk2EwQHrw+KvioeLF0tyCo/vC62Hm3jM36/PvKearCRtqXiH0P8fYeDxLaK98DC0Z7E4=
+	t=1715154703; cv=none; b=VM8wFJB1ujQpeEJPXh+r4kzxVW1GoMXjDWEM6FHoS1w+iwksAIFhlQwVBRlYTKFK4Wma6Nzk5bSDimSBWjnWNcht5++FpX90zSJx9Lf89BPBSpI9CxSFKi7ExTsCoqqz7cRFZfunj0PVR1L4QEvkJsg9gYxm3wHSWDa5ExYaRcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715154695; c=relaxed/simple;
-	bh=o2qpCjMzog+vEoHz/oDlZEdsgwifD8WLuTbmMXmjILQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=d3h/DpMIFyVtBiU/fFyz2TZPyy9BGI2bdKUwKlPNxJXv9k0BTM84ATtZ0MRdKOP/VAPa40cXGOzBbzXXEY7lToIFZbT3Uw7v7PyI7QKawmw2MIkEtSEUoEE4vhXIUjecow+2s4DNAfsdOQYqAPxT7SZnggHjgdb1w9n26ibUX0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=KvvUOWbo; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4VZ6lv0ll0z9spf;
-	Wed,  8 May 2024 09:51:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1715154683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=seqGXW7fWjnxdTfmzUCRIjDohlKE9YFEMwzBlrsD9vw=;
-	b=KvvUOWboNt1gLqyxi7HHWFVIEJEoREy4Lyw3eNMtTycPAtUOHCKfylR/+SGakz9tQsRsWj
-	P5tdtWoHN3mZ4L/NQTCVQa3mG5vjEz4jbPWHB/sqrRy8ELoCb1EAgTWP7hmfdHWAL9EK4V
-	dWkU3/NeXvdZO0C0UsKdYxJp7/KLHWuVnUPXWUr6nJzRlTsxW6wxGitGktjUkB7GGf1KSM
-	WX9tC592UcG5FQ9+Uj+dVzh9Z5Vb+UVwMNji89xLZm2LbzW+SxD9jYstAM50q722ksvZLv
-	r7Kd89iS+1Zta7mZzfExJBUH7c4xj99CxFMonw/Rclw83vRIBF+eYqtbkSrKcA==
-Message-ID: <36169520-56e4-4a01-a467-051a94c7f810@mailbox.org>
-Date: Wed, 8 May 2024 09:51:19 +0200
+	s=arc-20240116; t=1715154703; c=relaxed/simple;
+	bh=A1cL+trfWd+1YzVAvl7toR22FR7A/lXoS2Ld4mzp0Qs=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Nv04dBiXO07XsaOVuMHtyZFnjkhrq+I6ypOji2598QnHwdDqJY9Cg5Rxx+fpFgl5tnGT+JaAgMaycWn4mvJMuqrmZQyTny679RKc+Z5Xl9OYt66UtM7WlbAPel5By+87nuT4c319/j6kpjwiQQZF/l9u1JgPYE+5gEady463LW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sOUQHNNS; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715154690; x=1715759490; i=markus.elfring@web.de;
+	bh=A1cL+trfWd+1YzVAvl7toR22FR7A/lXoS2Ld4mzp0Qs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sOUQHNNSFahruIAWs+7seJXeu3bOUjNFMuyGGkmy4GOcD8jE3NiQEmDpgvI1F/Rq
+	 St4dOslJc4cV2ifTRq7ls2xvFDTHDlrhD2+oAAHQ4o2pM1dMdLZZXX6kO+rPIpzjK
+	 9S4bfjCwZUijdJqTBNB78tVW8QJErXmur+N0JrgrpXL7WqnVEZ4UedOaF4OVtvdSv
+	 PhgXGj57Ca4GyNP843+SHkalMwVmZDy53C2ZXmRkjTlhMCNPleFLqYaKLF33w9etX
+	 4VNnRaoTNHwuISQD0Pha2gT2ChSicLr92w7vWzsL3/J6SZ0O7l5NIeCHaHhdLoLBD
+	 CH2DCJgqQcQQy80KoA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mfc4q-1sXMGg0Vo0-00mBl9; Wed, 08
+ May 2024 09:51:30 +0200
+Message-ID: <0fdad323-ff72-4e20-8fb9-65d4181b1ae0@web.de>
+Date: Wed, 8 May 2024 09:51:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com,
- dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz,
- laura@labbott.name, linaro-mm-sig@lists.linaro.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, minhquangbui99@gmail.com,
- sumit.semwal@linaro.org,
- syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA, de-CH-frami
-In-Reply-To: <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Caleb Connolly <caleb.connolly@linaro.org>,
+ ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alexander Martinz <amartinz@shiftphones.com>,
+ Luca Weiss <luca.weiss@fairphone.com>
+References: <20240508-otter-bringup-v1-2-c807d3d931f6@linaro.org>
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: add QCM6490 SHIFTphone 8
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240508-otter-bringup-v1-2-c807d3d931f6@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 9swp1jw5c6zi83pbktm1xw4d3s3f1o5r
-X-MBO-RS-ID: b22b617ddbdc3eec153
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zH6xSo4N3GyqA27EDnWMOXSunaYdn47GzAB4KMzYHxNZIje+UeK
+ ncRl2LUHJPnjqGP6t3q1OoAG/7SmTZRNbA8vV0vH8KlwSrR2cr9MHVvoJ6VUfGd1him8Zcp
+ P0DnUQBlQ0VjCxFmdo+LYb7tmowsYfWtprQ9agF/oNQTz+zOeD1tztBIp+CNviO/i8CHPEf
+ A44mw4j+p6K7oJtyqDwNw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+EdKx6qCwV0=;/dqqmM23NDee+dzZ/yCQZuHuAyh
+ pAFHPaTaZe1iuEcVp3gv3AcPsTFwSP0ss5HnNCC5Edw49QMgDPesmbZB+OLsFnLyGGnUotjxF
+ Tsx3HiaN92bDOBn4RfaiNGMmd1ArF4C+KGG8pZ++Gyy2nOVaI1Ueg9rqzT2MHvyM6geT/5qs8
+ 70VPlXTRxE3w4fyoa8xKiP9zAsI1em3wF50uTEY9MgWhd3Ej/v82mYxjgkHMarZeT5IMqe5I/
+ PJMDRGyQ4QVE8ICOmPe60GsON+xjFIRbEvGYj5tnTk2sGz6k2Jeh4pX9PiHCPpaw4uvkJvWnr
+ 7XcRCxkOf3pGjItbJM+ZDpMY9RUzI2n8+2FST4KRdSiuX6O1L3te+6cUu05WEIHE5rSxUZvCN
+ nK9ClzHp4OdJdg+hOXIOIn506Ytw/EXSVF83Tbvtpi+4Obj4JYFhf0NuG4SOCyesB2BuwFeIp
+ 6TtcLxnxqGpiVOBvC/iUYAdsnFeU9HC1Q5sPvKDK59PfJeCqG1MRrDGZvKJxMDhwFiFiqXucy
+ KaSXO/A41g2OA5YSMQz2T55lw34UiUBuNKeuHO5+HJrbtHAwgjHpcUomVc/WQAnwDtwLqe5AQ
+ iJ4xCe+FuM5H2FReTKjVKVjzttwBOcNkxjiaqf4MxWpEfyCTcuLeFYy+q8eQ+7jxsmFR/yOTi
+ 8+hAY+CYlzkqTjTdL6Do2ODbtwbqvmOx2LUNewUpZfaMCp44RjGHJhDAowfD+IK3r0H+3QBxg
+ gcmyi2DT0amJmztMZB5YtbU2BLhVk8hp/9vq8StQjNjm/z8bweNGtF6TJ2C78/vuNl89ALgh2
+ 0RwPbfdEr3NqWdbvhn1M4KyeblSTNBK/Ap2bCV/VxU1E4=
 
-On 2024-05-07 19:45, Christian König wrote:
-> Am 07.05.24 um 18:46 schrieb Linus Torvalds:
->>
->> Just what are the requirements for the GPU stack? Is one of the file
->> descriptors "trusted", IOW, you know what kind it is?
->>
->> Because dammit, it's *so* easy to do. You could just add a core DRM
->> ioctl for it. Literally just
->>
->>          struct fd f1 = fdget(fd1);
->>          struct fd f2 = fdget(fd2);
->>          int same;
->>
->>          same = f1.file && f1.file == f2.file;
->>          fdput(fd1);
->>          fdput(fd2);
->>          return same;
->>
->> where the only question is if you also woudl want to deal with O_PATH
->> fd's, in which case the "fdget()" would be "fdget_raw()".
->>
->> Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
->> less hacky than relying on EPOLL or KCMP.
->>
->> I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
->> too, if this is possibly a more common thing. and not just DRM wants
->> it.
->>
->> Would something like that work for you?
-> 
-> Well the generic approach yes, the DRM specific one maybe. IIRC we need to be able to compare both DRM as well as DMA-buf file descriptors.
-> 
-> The basic problem userspace tries to solve is that drivers might get the same fd through two different code paths.
-> 
-> For example application using OpenGL/Vulkan for rendering and VA-API for video decoding/encoding at the same time.
-> 
-> Both APIs get a fd which identifies the device to use. It can be the same, but it doesn't have to.
-> 
-> If it's the same device driver connection (or in kernel speak underlying struct file) then you can optimize away importing and exporting of buffers for example.
+=E2=80=A6
+> Initial support includes:
+=E2=80=A6
 
-It's not just about optimization. Mesa needs to know this for correct tracking of GEM handles. If it guesses incorrectly, there can be misbehaviour.
+How do you think about to use imperative wordings for improved change desc=
+riptions?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
-
--- 
-Earthling Michel Dänzer            |                  https://redhat.com
-Libre software enthusiast          |         Mesa and Xwayland developer
-
+Regards,
+Markus
 
