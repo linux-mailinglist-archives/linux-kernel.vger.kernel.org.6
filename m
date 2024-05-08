@@ -1,130 +1,204 @@
-Return-Path: <linux-kernel+bounces-172825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D7F8BF735
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:39:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC79F8BF738
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:39:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3DB1F240D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:39:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33FD2B224F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3EC3A1C5;
-	Wed,  8 May 2024 07:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC26374F9;
+	Wed,  8 May 2024 07:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+IoIWuH"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CetLzvWV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87F83612D;
-	Wed,  8 May 2024 07:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3796A3E493
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 07:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715153953; cv=none; b=DNt15qnUt50TX85M0TAFoNOL8r+tbRu9H9hCIjqOSzqm1QmTYHG+AspOpELx5Z2clMuqYwIgVZLKH9bzFRv5dnUgOlgRkB9se5BfY9PyUhx0OqMktaZfeChBpNSijsfY2eT3++lkSRobw5bncN/DM2JQyrcW/YUPMyh0bXh1koo=
+	t=1715153958; cv=none; b=V4yb865k7x5EPYySBUoDMzBVUnYuYcCQXbdq2fxyYY6a0C0NubXERfCBunFxF7vBQS/SqEDySlRIAt/vwZ0BGlWZsjG/lx+6cSFiFxrE2HbUxPKOGl+F3+0n2SkuJ0QWuMix5YU/vpDnPpP/DzMa4F8Lqac8EW3nmZ1sImDN2Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715153953; c=relaxed/simple;
-	bh=f3LK0ObLAJurfNRZdpJ4wptu0daiM/YkDVKRX3RKV1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KP2NDvth4YP0c8BupXcDeNNNzYEaEZQr+4LCqlDQvY0autsrFKhngP6IsJci/ImuDGXVfwdxhthpuHeb2qQWAR1b5GJZarPx1MSGz2b2uzFusCAPS1FhicHBlHrH6RntO3T716fWInF6E+EdFw2CI9qXnUBO25s34KWDcU0CsK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+IoIWuH; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f3761c96aso5193446e87.3;
-        Wed, 08 May 2024 00:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715153950; x=1715758750; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQn9AgRFMdHrqQQjouGtyxcYjF50ckhpwWQdA7LsrIo=;
-        b=Q+IoIWuHnRMmiDmQTcp8jyTlj6gIj2HIKxvYilxhTwWrpkTEZMaSnFUsWwouyp2XHw
-         N2+ml2E+xSN5Hx73KmkRhVWU/US07nnSw6JXxv20kEBV/VZW0weJmdSQ9lSSRecsF8Io
-         o06IPjMCyEp/ZHp02FqzfnGezqMNuvUdOHgwe6qRmjC/zEVDAt0+rv2QrSk4JhSM5Ih2
-         dzlBiRKj0WUHVe5+CZBO2kfCXQl2bMkfzn/dSaKL6/RSMs11jJWQZoIF8//IfC+PiyJQ
-         lhD0JBZ4F9gA+0LU+Q1TpSlZDAcBbJudKf1/70nzpJb4sdi7WMDKWp4+vFnLTy5luir1
-         we+Q==
+	s=arc-20240116; t=1715153958; c=relaxed/simple;
+	bh=0Y+cdAgVJ5Wzm/Bku8fZNhaN9C0JgQPsf4IAnxXoyhg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqMLhHBpcrAYZJR2EEcvKlqt3lLTEaW3aWvW6a7JzAu1E4XmbgpzuJz6pVXWBT54X88HWbOpdhIt5OyrMERW9eofDtJSmBT2ilr0UB8PlGxsIoTLHf+6SPoZHUW2E30nTKSsdYp8zpQAtT+k167xW2gQt6SkEIj4lgjqSdSQIgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CetLzvWV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715153955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=FVpdoIP5MsYXu7rCIo+E46n/SCgmwnPBP9uox/R7iyQ=;
+	b=CetLzvWVVdgP3y8/0UBS7cjydgDjZ3BQihZu1oY80/0j1kH9VlpykYYXe++28vNuUT/Nr+
+	nZflPywS64PZPUPpJS/3vZsxZY6Qm8zqKke6zxkSr1BId4cOoAsDXOttg99M4X0nnpYSmN
+	5hPU87+8AluwvPbfnvFIAUy3bESzEag=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-449-_6AkJaxtOEWhMxrFNssiDQ-1; Wed, 08 May 2024 03:39:13 -0400
+X-MC-Unique: _6AkJaxtOEWhMxrFNssiDQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34dc6410028so2104108f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 00:39:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715153950; x=1715758750;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HQn9AgRFMdHrqQQjouGtyxcYjF50ckhpwWQdA7LsrIo=;
-        b=r8orGBLHyWifQ7WCMir0J/E7TtxaJxWqs+iySAnXr5w1aWTuukvGgTe84ekeI3ow9k
-         U/e4/VGklG9wtJrVWY3ixCC4CEJH6yG8EwteO09CMQFhyQQhLvH4vHnKsyX0C7uZHPgd
-         eVFp/eO6s1dwYi2Tt/5wDWqriZym4TylVzw0juiDeukACH5iWHB//jy79pVl35TBESYu
-         Wma9BdP3yc7xkgqjcQzZAOvk9jwLlqwWUt1yoajXuT1p+GLHty3YYpYIuxXq//ZpM/ct
-         2Q5tO0zN7gu8o0Q85vTB92Tvb2D4iyFhkLBKenmAeJadvwohmh9jHe1mkW/LHPudT9V0
-         ApPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/48CW23wr1d6O1ejm3Tq7+LfQTMZOwBR4bBaQ6kOc309Q4md4qQpf16KRQWo2V4nHXJhN8NSzyPzBrwUZ1Y0A7NLHONQ3gEBQoex3YF5UKi0qPgmTCnx8aUOTpOsLMK2yIn97VX0W96l1oUVmcw==
-X-Gm-Message-State: AOJu0YyXEL51cBqS/rDM1XmOk9tqc1nOgvyBzAlnHOxKaQPg4JTV2yi8
-	9aCUdAm3W0XnrYmORc8uGvG8+ObfmTK9qXsmmgMnBbHwJNcs5Pp9bN2Ns7yj
-X-Google-Smtp-Source: AGHT+IFpFo8eT1Te9z3lKdN3VNhEIZaSFYvju61jJNNZjUVEuLpM4ZukvEkmhQvpPaRHFMkzaPibIQ==
-X-Received: by 2002:a05:6512:3b28:b0:51d:1d42:3eef with SMTP id 2adb3069b0e04-5217c6673f2mr2056665e87.29.1715153949372;
-        Wed, 08 May 2024 00:39:09 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87c254bfsm12859855e9.17.2024.05.08.00.39.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 00:39:08 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Wed, 8 May 2024 09:39:06 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h.  Stop.
-Message-ID: <ZjssGrj+abyC6mYP@gmail.com>
+        d=1e100.net; s=20230601; t=1715153952; x=1715758752;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FVpdoIP5MsYXu7rCIo+E46n/SCgmwnPBP9uox/R7iyQ=;
+        b=kcCQHswPoDODNYdtt5Xr4D502N26mGCNrEpdWzaeang+sPMeJQa5MLsj+pNZxllmqo
+         ftBcXH7nL4BInpNlkRF7GiPZEzGFJ03iRu+xo0gUKLCl+ZOhkWiYQ/hNF3E8m4X/AokX
+         8fDemet9qEu6GCbIh3XHsDC33++xPhOsgXRpeYMwC04k7qUKcLk/TDkzyEPW/THZg3et
+         FcrmlP+m4CUZq3k0KNAv3R2W++/GOeeBTEkPQsTKJ3tVuU/p02T7RkU0QN47qG4eeKPX
+         TXEjjxgnIQcsQEvQMCi1A6+SkE4O/0ZVJH/2QBb5tRodDPApd+vKevCue/gztGNn55tO
+         P0Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVDt0sZRTTy7m4pJlfuGJG8HGrzh65gd9AvWMOYF5jPXP2hNg1bsCNFU0wJpSI+SF5RRHWPM26C2kY2hOUzFOPOvqdr3KebJsq3V/7W
+X-Gm-Message-State: AOJu0Yw358J6F3uEgMMtyUURK1JHD7WQdGZNsZ4Gv0Aod5XCjjXN+A/T
+	pUEtIQARSoQ2osXh4AfhtRzveZc6Wlg4Dc1pZiabSKRC+1KwB/nYj3yKVBH8f4xkNlNaHJ+dROm
+	KfxcXrfMoRtuzOLvKlgA8xUxNMqJbCS708/Hjm1A07/jbGjkOS5Gtbja167GpDQ==
+X-Received: by 2002:a05:6000:4599:b0:34a:5d79:dfe2 with SMTP id ffacd0b85a97d-34fca054a97mr1258204f8f.13.1715153952355;
+        Wed, 08 May 2024 00:39:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTOmHrKa5pFWDvRNcu/CVISPqg6g122HMr+o9Dj0SfD8mYWtCmGCyLsjc6SMQ+kU1VxmAlIw==
+X-Received: by 2002:a05:6000:4599:b0:34a:5d79:dfe2 with SMTP id ffacd0b85a97d-34fca054a97mr1258175f8f.13.1715153951852;
+        Wed, 08 May 2024 00:39:11 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:3100:35c3:fc4b:669f:9ff9? (p200300cbc707310035c3fc4b669f9ff9.dip0.t-ipconnect.de. [2003:cb:c707:3100:35c3:fc4b:669f:9ff9])
+        by smtp.gmail.com with ESMTPSA id f6-20020a5d58e6000000b0034dd063e8dasm14604835wrd.86.2024.05.08.00.39.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 00:39:11 -0700 (PDT)
+Message-ID: <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com>
+Date: Wed, 8 May 2024 09:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
+To: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, akpm@linux-foundation.org, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org, raquini@redhat.com,
+ Peter Xu <peterx@redhat.com>
+References: <20240507195510.283744-1-audra@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240507195510.283744-1-audra@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 07.05.24 21:55, Audra Mitchell wrote:
+> Currently if we request a feature that is not set in the Kernel
+> config we fail silently and return the available features. However, the
+> documentation indicates we should return an EINVAL.
 
-So I've been getting this perf build failure for some time:
+I assume you are referencing
 
-  kepler:~/tip/tools/perf> make clean
-  Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
-  make: *** [Makefile:90: clean] Error 2
+"EINVAL The API version requested in the api field is not supported by 
+this kernel, or  the  features  field passed to the kernel includes 
+feature bits that are not supported by the current kernel version."
 
-.. but if I clone a new repository, it works fine, until a point.
+and
 
-'make clean' doesn't work - and 'make mrproper' in the main kernel 
-directory doesn't clean up properly.
+"To  enable  userfaultfd features the application should set a bit 
+corresponding to each feature it wants to enable in the features field. 
+If the kernel supports all the requested features it will enable them. 
+Otherwise it will zero out the returned uffdio_api structure and return 
+EINVAL.
+"
 
-Only if I do a brute-force:
+in which case I agree.
 
-	rm -rf tools/
-	git checkout HEAD -f
+> 
+> We need to fix this issue since we can end up with a Kernel warning
+> should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
+> a kernel with the config not set with this feature.
 
-does it get resolved.
+Can you mention which exact one? Is it a WARN* or a pr_warn() ?
 
-The failure condition triggers if I Ctrl-C the following build a couple of 
-times, without it being finished:
+Likely we want "Fixes:" here.
 
+> 
+> Signed-off-by: Audra Mitchell <audra@redhat.com>
+> ---
+>   fs/userfaultfd.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index 60dcfafdc11a..17210558de79 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -2073,6 +2073,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+>   	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+>   	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+>   #endif
+> +
+> +	ret = -EINVAL;
+> +	if (features & ~uffdio_api.features)
+> +		goto err_out;
+> +
+>   	uffdio_api.ioctls = UFFD_API_IOCTLS;
+>   	ret = -EFAULT;
+>   	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
 
-   cd tools/perf; make clean install
-   ...
+CCing Peter.
 
-   LD      util/perf-in.o
-   LD      perf-in.o
-   CC      pmu-events/pmu-events.o
- ^Cmake[3]: *** [pmu-events/Build:43: pmu-events/pmu-events.o] Interrupt
- make[2]: *** [Makefile.perf:709: pmu-events/pmu-events-in.o] Interrupt
- make[1]: *** [Makefile.perf:264: sub-make] Interrupt
- make: *** [Makefile:113: install] Interrupt
- kepler:~/tip> perfi
- Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
- make: *** [Makefile:90: clean] Error 2
+-- 
+Cheers,
 
-Thanks,
+David / dhildenb
 
-	Ingo
 
