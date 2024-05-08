@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-172668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DABED8BF514
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:53:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB9DD8BF515
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77EE4B23C17
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665C7284FEA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F1217BA5;
-	Wed,  8 May 2024 03:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B33225D9;
+	Wed,  8 May 2024 03:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EV57yJwD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3XEOkwvE"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7930A17756
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 03:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07651AAA5
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 03:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715140399; cv=none; b=fpf0EJrARcvg3VTbr50uXs7Az5Z3ia2LSZX+9udaIjDv6IMq5TJs12pJ8hUam4G0BdwTrxuSwCLGoTmbpLitDte3tpm2T7imOWaK2dIKOV6CxdSoRCAlTYpvcostXRZx2nrkvheyxGgX+B9pVfQuvUvG9I2V9xyq5sE3HE9+QlI=
+	t=1715140402; cv=none; b=DyB9RGCCyCAK8rfP3a8tPpFNmIcJZ+NL58jmN3hjuuYzj/txggiC9utTrxF3Eqk4YeFCVxyOcrAMRsYIMngmGHdT4ICCCjOGewV7ZFyU04T2kJOhWG7hmZLDo4XZPTzmLNs2dwVzV6qy0RrJFqd+k5m4Ki3Vd2iUp4cB8uoUDv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715140399; c=relaxed/simple;
-	bh=1gjiKx8CEp6GLpjJeA3XOWVnAQEoANQb0FbmONXrbR0=;
+	s=arc-20240116; t=1715140402; c=relaxed/simple;
+	bh=PkE9IXfyXZEZClS9BF4vcd5Nh75l4NFqr0xzo5i+yl8=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=sJOzPQxBawHNJqWMRzPuxlZ4DINnx20dOSw9f/HRVjCcLGkmWjkJbHdNEfeBPBy4o+UJ6LlxwLzkdg0G3oTmKrT8iC6srRL9Tn5e0p8XU4cGQTOnHxvjthUsz88GfvjomFrvlVNPrPktgQO40vt88oF/r2uIFxiI1DNP8F7bRw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EV57yJwD; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=fNi7I/Hs6KnnS107QHeNUO5JniEQsDrb5mErC23N5QCgkruenePlQKhcANRpl6ExRh0lNlq3Twt19pFqx9BknAdVgrX3MN7tuTZnC6FEGXI9cGBAC8dq8LyhFQrlNI+uXrQx78RTRiMhZWWKI18y3cWreFcY2m0s1I2hB9YC7Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3XEOkwvE; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61bed763956so80589987b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 20:53:18 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61be25000a4so79091187b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 20:53:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715140398; x=1715745198; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715140400; x=1715745200; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=evqEKyKRq93CW7bOGoBWyVHoXocBvIcKIjPummzTEM4=;
-        b=EV57yJwDSoR3biBtmfXMvv3nRCD6OLGkeKIYBrsECK7VOqUarkS8pdRGyfBa4H36x8
-         5+XABmOQh7dwRaISHOXyPIstAUcwh6xnScsObUsNGglUel+l3IJRMUN+bkO1ykHO7O20
-         HzgzFi0IKefZ26F0gy2PAIpARoiSrD2eEJb5w8DvfplWYQNVr80c6IwBhO5fG4eQfZjs
-         g3pnEIUoOPk3V6Mzji8XvM+QQmEwM183xSUBIrbi7vh13qLxQX0KBF1Juk5nyJAUMzQP
-         2hsaRLyDrati/MvtiM6VxEhMEKwnKoze7Wsr+5poCHXPFw99L5xdsrNE6BByDLAMEWpV
-         Kkiw==
+        bh=T9iBFcMYRLjKmNtSCKVfZQuec+4vBM7qEYaLGnQMh1Q=;
+        b=3XEOkwvEZuu8BWnxgUf9tbmWEEV7zqlQkXMWj0609iuJc22PdaMlbNUjOEoOalQJik
+         LCZ7vvbIDAi+CxoN9dm3pEYj486FGS8u7kfUxVDnjceuLnD0bF20rlI6IrGS0VjNfGSZ
+         Wnm7u5hz5oUbG2Bl0PLM4XG5O9LJtt+2aXsFVsKk2zpCBhVuu+pmToCrL4brUEVhJwzG
+         Sbti/bIy4wnoY3B54A20hsJkmVGF/51GKkKwsHMA6c/7c/DMIrmWU7cqioldqMDET1CL
+         Xxk6z0fe1mncODy1IcPOS0p+i+Pue5HP4TnCczVQM26cFeUG0lCZm/2Z/2DkQgFilvEh
+         XHhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715140398; x=1715745198;
+        d=1e100.net; s=20230601; t=1715140400; x=1715745200;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=evqEKyKRq93CW7bOGoBWyVHoXocBvIcKIjPummzTEM4=;
-        b=ixCX/imFjOJLbr9t7VVVL4WGhzg+QDcGi+bZyo3jhYIs93gFZl3eF359z5MbhQgTG3
-         znxk32wOPkhyuvQsHSM2OoXiDtABTTWRNdgCwLorzsr/vWA8sT5CVRsrgrPT2bU1CRGn
-         TTBMmN7r6tq97Gzd/ivvnHHd1P2WBdyUIKttxkMYsDeQplYgoQ1jucXdSTdvvLMnfGxR
-         uvOUdtguMrM7H95W5d9lhKVNuyeJX5p0Bt1FZKUSu9rBGkuL+r80irTIjaRwse868GfY
-         dRFrMdBG/HtvIhc3zb6J1wOyKo3Y6WMXCPmvvXZDZV6QuL/OlhlqvoPfsRQZ2sQPccdA
-         m9eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0YA6AFQvJ1hfCtj/rjAUGDMxFjwkQgIRHfICRlDdyY2ZYIf50Tj263noVFnnWjL9AQZwKTmLKnatLd7w+7E94Q6JTtin3OO3qVGqQ
-X-Gm-Message-State: AOJu0YznMiuEcjE8+2XQShRW/sgW4ghsLCJokClPeWzkOJa8yxaQIMBW
-	vVjX5Hl2seFoFBJ2gI2bBfxQSGnHbRWUfxtyXsAAIv92BGDp780Rz6vfRd26UuuUjh6jpQUjEKU
-	s5s+xBA==
-X-Google-Smtp-Source: AGHT+IFFi6TPEZBiQZat0J8wPmQsKgf7WRxfdVdZ6yCN7mIOFkHcTAwrw61sUraFs85lMk8PIkUKfpdUg5AT
+        bh=T9iBFcMYRLjKmNtSCKVfZQuec+4vBM7qEYaLGnQMh1Q=;
+        b=TWn1gifimmPwnRUEzO+jcIWwlu/dBkwqzCxmeMSB25MFiTnGqdBmzmWLT/jlo13eUo
+         gY3GGaFtmsQWyMiz0dUyX0ffRHicSKmuVJ6EPDVprJUElSK1wCG+JgjP6bWfVWG5REpS
+         ZHPeaFlMoFsR8/RknUiqEK1I0awOWjZBtZi5xMPTVp+1xRwtaHPykGNXKKzlMkXmCy+t
+         cbwaMxSqB/9ms6sW2Ip/mkYrjbe0RHKvgROsNbV5egahETRM00rjYL89kYsVl6oQ300Q
+         5Ui0Lbmji0yx1ZV23QJoCkXgxgwPMdN2WZHaoOIdF1+vIzlhUCB/ZyOt/WK1mHfe4gGC
+         AIjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTLDBWQKCC3Cp3YAHZkECQlwkPfSbm26lTaeLa43OCzzQokFuiHFyqIfqenazW+/5re2BoQLjsvrOelg8rEkvGGpiI+NtW5qM8uFfE
+X-Gm-Message-State: AOJu0YyUi3r/P0nkhvYghvwghzOGLjOBTJKXozHEfdSAcIqYkRvpDDHw
+	Rbj2iPtAETVASq6OPXp+0VgCu+YgMX1j4onLcvtkoYU1jO9i5MBxTy2Q/yCqzBzKgFI+v7lwkz/
+	HM2+97A==
+X-Google-Smtp-Source: AGHT+IEbnEA/r7BoFjsBedSpafR2wTGgrqS1AfAn8vl+1v8boeuvJ0jCqkgJ+FlT5VbqFtGmUa+pyGS+jfPj
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:56f9:40dc:113f:ba3])
- (user=irogers job=sendgmr) by 2002:a05:6902:1083:b0:de5:5225:c3a4 with SMTP
- id 3f1490d57ef6-debb9d3d713mr439844276.7.1715140397650; Tue, 07 May 2024
- 20:53:17 -0700 (PDT)
-Date: Tue,  7 May 2024 20:53:00 -0700
+ (user=irogers job=sendgmr) by 2002:a81:4807:0:b0:61b:e1f6:2098 with SMTP id
+ 00721157ae682-62085a6966emr4506397b3.3.1715140399912; Tue, 07 May 2024
+ 20:53:19 -0700 (PDT)
+Date: Tue,  7 May 2024 20:53:01 -0700
 In-Reply-To: <20240508035301.1554434-1-irogers@google.com>
-Message-Id: <20240508035301.1554434-4-irogers@google.com>
+Message-Id: <20240508035301.1554434-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240508035301.1554434-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Subject: [PATCH v1 3/4] perf report: Avoid segv in report__setup_sample_type
+Subject: [PATCH v1 4/4] perf thread: Fixes to thread__new
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,28 +86,60 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-In some cases evsel->name is lazily initialized in evsel__name. If not
-initialized passing NULL to strstr leads to a segv.
+Freeing the thread on failure won't work with reference count
+checking, use thread__delete. Don't allocate the comm_str, use a stack
+allocation instead.
 
-Fixes: ccb17caecfbd ("perf report: Set PERF_SAMPLE_DATA_SRC bit for Arm SPE event")
+Fixes: f6005cafebab ("perf thread: Add reference count checking")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-report.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/thread.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 0892b6e3e5e7..69618fb0110b 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -429,7 +429,7 @@ static int report__setup_sample_type(struct report *rep)
- 		 * compatibility, set the bit if it's an old perf data file.
- 		 */
- 		evlist__for_each_entry(session->evlist, evsel) {
--			if (strstr(evsel->name, "arm_spe") &&
-+			if (strstr(evsel__name(evsel), "arm_spe") &&
- 				!(sample_type & PERF_SAMPLE_DATA_SRC)) {
- 				evsel->core.attr.sample_type |= PERF_SAMPLE_DATA_SRC;
- 				sample_type |= PERF_SAMPLE_DATA_SRC;
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index 0a473112f881..87c59aa9fe38 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -39,12 +39,13 @@ int thread__init_maps(struct thread *thread, struct machine *machine)
+ 
+ struct thread *thread__new(pid_t pid, pid_t tid)
+ {
+-	char *comm_str;
+-	struct comm *comm;
+ 	RC_STRUCT(thread) *_thread = zalloc(sizeof(*_thread));
+ 	struct thread *thread;
+ 
+ 	if (ADD_RC_CHK(thread, _thread) != NULL) {
++		struct comm *comm;
++		char comm_str[32];
++
+ 		thread__set_pid(thread, pid);
+ 		thread__set_tid(thread, tid);
+ 		thread__set_ppid(thread, -1);
+@@ -56,13 +57,8 @@ struct thread *thread__new(pid_t pid, pid_t tid)
+ 		init_rwsem(thread__namespaces_lock(thread));
+ 		init_rwsem(thread__comm_lock(thread));
+ 
+-		comm_str = malloc(32);
+-		if (!comm_str)
+-			goto err_thread;
+-
+-		snprintf(comm_str, 32, ":%d", tid);
++		snprintf(comm_str, sizeof(comm_str), ":%d", tid);
+ 		comm = comm__new(comm_str, 0, false);
+-		free(comm_str);
+ 		if (!comm)
+ 			goto err_thread;
+ 
+@@ -76,7 +72,7 @@ struct thread *thread__new(pid_t pid, pid_t tid)
+ 	return thread;
+ 
+ err_thread:
+-	free(thread);
++	thread__delete(thread);
+ 	return NULL;
+ }
+ 
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
