@@ -1,184 +1,132 @@
-Return-Path: <linux-kernel+bounces-172996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105AA8BF9DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:54:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073C98BF9D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 415391C21C3D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64830286171
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB4F7C097;
-	Wed,  8 May 2024 09:54:37 +0000 (UTC)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBAA7440B;
+	Wed,  8 May 2024 09:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="EOzF3R/6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZJwH4v8v"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080ED54679;
-	Wed,  8 May 2024 09:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C83054679
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162076; cv=none; b=hbkiy7mhRIlKA9t5amG8Tt00jVGjdVAdxnIzuXUuP2ISx85j9atNDRB153iwQdIUA9dxZQQu2HsixLYxkCDUvNaxGWYJMHqQnalpjuNXHarq91y89GpmsPiXmgKEX7wLhvJGF6VzibalrYQ4aOcxQxLidFp+amjAUUQhfb8WpvY=
+	t=1715162067; cv=none; b=MCoOneztLKytYGJkvyy2GrCjlParezPwuw0WRdeEaZQiEbIOkyxJIdinXzvIEwHYmBO6gb6AWHGVtjNlur+pqYOLN3R9PMciTRDPpiw9j0RKNMRqexVv57id6jwBTAVbZnCVL/H2pER4X9QrgvKoeEgTjI76RUKliYqigwKk1rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162076; c=relaxed/simple;
-	bh=FfA5dF31garZW/tk3DQl+spTHY7RrowSCt5gDZ9Om5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EL3URdUFxNswfWu89eqgUIrgtfQ/sJ6hROy9rHX5NYs3BShUlm6JeUzTEPWLbbemddnMzGsyJcgM4DwAotsg0V07awZEfniFke+DkzHomIm2EzzcbDHelPnrVD2KMJ93ARL4yIvL8RZU9cgCb8ByllPQgl5Zf9UwsYIbzIURu0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f3761c96aso5359673e87.3;
-        Wed, 08 May 2024 02:54:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715162073; x=1715766873;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sD2/6sPlr7JEw5uhBN364YYJFLTnmVMqOaL4BzfWeD8=;
-        b=JK9dtjL3KcLGjrM7+kmQQsDY0Y5AqzmConde9oSepmQmv7OIfQymaJjU+w/+DUJa+v
-         Z5hghzEAynwFe1JwOL/AHM9ObQDy7TFA1W/nOUPf4UK6+BfIfRb8DsjZu3NqUNTDOb49
-         JC7R0Gf/Tg2ggCWgFBTO4Pl0//WFlxiiuhyYxs71tDYhZZsWFFZ36MD3hHXnrIJSn9pq
-         7oxrWUt86U63tv+YLjwfOc640O4umls3wXNIHGxOk2i0dnjHfoq94zk5VrYjBAhnawsh
-         kzMQUNVn5a/9ofUMsObz2uh7zRAelLAYlDwrwyFgtY4zCI1OGQXqpovH5mID27mlpTXm
-         yRgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaVnDQcksz/jsxekU//CEQIjcPRMYzjSX4DPSmHhWS9NjEtnX92F+JvAGCk+bTPFPdOm000lC6pm9wCh984+xGwsQxIFsSigPKIFdD/LUqlxMKwtIlYOgYi0lZAPysEHNEtYlVELVL7yUah44=
-X-Gm-Message-State: AOJu0YywGncSVmDtpr54G2+potKreOQsD2wQQa8aMZ8KRG2H4T2sLXBh
-	yv0j3HRGEbJnYZfyD2XB/DAFuhl6Z02Mf8jAnnbBynvcpRM+NsvTmMgtPg==
-X-Google-Smtp-Source: AGHT+IHmCf5LAkl84GP171Zeb9C+hU+YlcxP1NLnZdtmzr65qLJvoOCAVJfs5QJwFe5Cm/IGPVi37w==
-X-Received: by 2002:ac2:5929:0:b0:51d:a1ab:98bc with SMTP id 2adb3069b0e04-5217c3733cfmr1876163e87.2.1715162072909;
-        Wed, 08 May 2024 02:54:32 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-119.fbsv.net. [2a03:2880:30ff:77::face:b00c])
-        by smtp.gmail.com with ESMTPSA id d19-20020a17090648d300b00a5a06effd3fsm379569ejt.221.2024.05.08.02.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 02:54:32 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: horms@kernel.org,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS)),
-	ath12k@lists.infradead.org (open list:QUALCOMM ATH12K WIRELESS DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH wireless-next v2] wifi: ath12k: allocate dummy net_device dynamically
-Date: Wed,  8 May 2024 02:54:09 -0700
-Message-ID: <20240508095410.1923198-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715162067; c=relaxed/simple;
+	bh=UmEryDPKqCzmLaa7zf8PbJnXXv0HOPRm8AWkF9fYbgg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQ6FBQbzGucZ3JpHh6X224uEvFn8YkXzadfu1V3YvW66y+6cpyrge6OAAEQ+BZpCb5lwOCxkLGNZXhggOq1bzszHVvbP6MRQgklVw4evtKda+JjVVaQSLipOtazNYoEcP8jPnmo3i7Dtz1NZ8vlXAO4DeRcSxJlccwQl0zcfRIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=EOzF3R/6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZJwH4v8v; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 128D91380FEC;
+	Wed,  8 May 2024 05:54:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 08 May 2024 05:54:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1715162064; x=
+	1715248464; bh=h2YNeouZG7QNm2DhbCVNKqFB+E2lilrvJm0btMHZ2I0=; b=E
+	OzF3R/6jG1MR/oLES9tVrSzHl+ypqLU9jDCGweC6ywIsUKlz6u3Phda8J9ueXlF2
+	En/NFenspOZv6DCzEOESyZy4D2Anlf/6e/d4Xc/TVFNoqRto1wk7OMvSbUZ8cpJi
+	ki/+w/9ZFeXyn2CbmOkVx9aIAzsy/tAr4ykX/4v6jEub5nhlD2VDsVb5xviNV6/S
+	st+FodVGYgdowhjGe/IXSts7/XiIrKZt/Dnh2xjo08I+XlD5k/pK+O1O9Woxmw5c
+	wJ4u+v7nZ6Y9GqNB2K6kW4m2EGTiN62iIYg6k9PUIWi8EYTMRkoeA+REU0QlsmGj
+	F2YpE4wWjknHISGWIcWdw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715162064; x=1715248464; bh=h2YNeouZG7QNm2DhbCVNKqFB+E2l
+	ilrvJm0btMHZ2I0=; b=ZJwH4v8vAuHiIiGRN8hB/brgPp/5gmqApA3O9yqqhrF5
+	tAT3U3r6e81taaRxYSNSmZArnySyxnDmG1JYLsbJMRDtD8RG55bV2OEZ+1orWDw2
+	uANOPDJrx0MEwPZyQFLWWEturpJxnN5PyzLX1VLvMvdORnDForxs0dWrTmKk6K9g
+	P42aueKLiIq1CeUylCMWF1WdqsqzO+i6S1vd6/O8Alt5hg8yomfgKCmFnHF0PLy8
+	s5hBVSh0qeAfUzCilbFHoVARXoSozV935M4ovbZgLj+4J1JpW+jPSIroVBvUktm9
+	7JnOhXwYQ7SaqQxH+kToNjliOL1HJJDKLt/W6JZlrQ==
+X-ME-Sender: <xms:z0s7ZgLNIUHOekJkbE_U7gT8hTXineLm4kGgAoTnxFvqHqnGN6Xo4w>
+    <xme:z0s7ZgIyYht92PR0cIwcfxh5ZTkfepXW2ZA1RaSTKfTxz01cACzrziRD47zf0djf8
+    AsFbfVZibk-A0kdMCM>
+X-ME-Received: <xmr:z0s7Zgtv9a5PYuYNsUJ92lhI9WzOpgrawxTS1T0aJL0HqJSMtb1ZF1zyKp5ifkfxXWA3nKBBGKUWhSLoFoKDXYP7leWoSnisvRE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeftddgvddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
+    ertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
+    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhte
+    etgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
+    hsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:z0s7ZtaVSy3gwRvUu4yHbasR0-Ua5GhNL75gSmnN457aJ3KHqP4z6Q>
+    <xmx:z0s7ZnbUWCNvwbjV63qXyl7RE5HrrPF7md487K4cB-x4xtqieP53Qw>
+    <xmx:z0s7ZpAWY40rZL2UrRs8WUZaD4IwB_mjjo23aBAR2b-FzugXiSVCdw>
+    <xmx:z0s7ZtaM01iqAZ1NvnxSogf2gObfzjuLOaUT4HgBAkAyYyMSKNpg5w>
+    <xmx:0Es7Zmm6QXat8w3_x8aWsGyW6P-DEdPPpYX3_Cz_JJ4NBVd1abmOzeeH>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 May 2024 05:54:22 -0400 (EDT)
+Date: Wed, 8 May 2024 18:54:19 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firewire: core: fix type of timestamp for
+ async_inbound_template tracepoints events
+Message-ID: <20240508095419.GA433207@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+References: <20240506082154.396077-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506082154.396077-1-o-takashi@sakamocchi.jp>
 
-Embedding net_device into structures prohibits the usage of flexible
-arrays in the net_device structure. For more details, see the discussion
-at [1].
+On Mon, May 06, 2024 at 05:21:53PM +0900, Takashi Sakamoto wrote:
+> The type of time stamp should be u16, instead of u8.
+> 
+> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+> ---
+>  include/trace/events/firewire.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
+> index cd6931b134ee..d695a560673f 100644
+> --- a/include/trace/events/firewire.h
+> +++ b/include/trace/events/firewire.h
+> @@ -106,7 +106,7 @@ DECLARE_EVENT_CLASS(async_inbound_template,
+>  		__field(u8, generation)
+>  		__field(u8, scode)
+>  		__field(u8, status)
+> -		__field(u8, timestamp)
+> +		__field(u16, timestamp)
+>  		__array(u32, header, ASYNC_HEADER_QUADLET_COUNT)
+>  		__dynamic_array(u32, data, data_count)
+>  	),
+> -- 
+> 2.43.0
 
-Un-embed the net_device from struct ath12k_ext_irq_grp by converting it
-into a pointer. Then use the leverage alloc_netdev_dummy() to allocate
-the net_device object at ath12k_pci_ext_irq_config().
+Applied to for-next branch.
 
-The free of the device occurs at ath12k_pci_free_ext_irq().
 
-[1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
+Regards
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
- v2:
-	* Free all the allocated dummy devices if one of them fails to
-	  be allocated (in ath12k_pci_ext_irq_config()), as
-	  pointed by by Simon Horman.
----
- drivers/net/wireless/ath/ath12k/core.h |  2 +-
- drivers/net/wireless/ath/ath12k/pci.c  | 27 +++++++++++++++++++++-----
- 2 files changed, 23 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
-index 47dde4401210..6671219c3567 100644
---- a/drivers/net/wireless/ath/ath12k/core.h
-+++ b/drivers/net/wireless/ath/ath12k/core.h
-@@ -146,7 +146,7 @@ struct ath12k_ext_irq_grp {
- 	u32 grp_id;
- 	u64 timestamp;
- 	struct napi_struct napi;
--	struct net_device napi_ndev;
-+	struct net_device *napi_ndev;
- };
- 
- struct ath12k_smbios_bdf {
-diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-index 16af046c33d9..ac75e8e3916b 100644
---- a/drivers/net/wireless/ath/ath12k/pci.c
-+++ b/drivers/net/wireless/ath/ath12k/pci.c
-@@ -350,6 +350,7 @@ static void ath12k_pci_free_ext_irq(struct ath12k_base *ab)
- 			free_irq(ab->irq_num[irq_grp->irqs[j]], irq_grp);
- 
- 		netif_napi_del(&irq_grp->napi);
-+		free_netdev(irq_grp->napi_ndev);
- 	}
- }
- 
-@@ -560,8 +561,9 @@ static irqreturn_t ath12k_pci_ext_interrupt_handler(int irq, void *arg)
- static int ath12k_pci_ext_irq_config(struct ath12k_base *ab)
- {
- 	struct ath12k_pci *ab_pci = ath12k_pci_priv(ab);
--	int i, j, ret, num_vectors = 0;
-+	int i, j, n, ret, num_vectors = 0;
- 	u32 user_base_data = 0, base_vector = 0, base_idx;
-+	struct ath12k_ext_irq_grp *irq_grp;
- 
- 	base_idx = ATH12K_PCI_IRQ_CE0_OFFSET + CE_COUNT_MAX;
- 	ret = ath12k_pci_get_user_msi_assignment(ab, "DP",
-@@ -572,13 +574,18 @@ static int ath12k_pci_ext_irq_config(struct ath12k_base *ab)
- 		return ret;
- 
- 	for (i = 0; i < ATH12K_EXT_IRQ_GRP_NUM_MAX; i++) {
--		struct ath12k_ext_irq_grp *irq_grp = &ab->ext_irq_grp[i];
-+		irq_grp = &ab->ext_irq_grp[i];
- 		u32 num_irq = 0;
- 
- 		irq_grp->ab = ab;
- 		irq_grp->grp_id = i;
--		init_dummy_netdev(&irq_grp->napi_ndev);
--		netif_napi_add(&irq_grp->napi_ndev, &irq_grp->napi,
-+		irq_grp->napi_ndev = alloc_netdev_dummy(0);
-+		if (!irq_grp->napi_ndev) {
-+			ret = -ENOMEM;
-+			goto fail_allocate;
-+		}
-+
-+		netif_napi_add(irq_grp->napi_ndev, &irq_grp->napi,
- 			       ath12k_pci_ext_grp_napi_poll);
- 
- 		if (ab->hw_params->ring_mask->tx[i] ||
-@@ -611,13 +618,23 @@ static int ath12k_pci_ext_irq_config(struct ath12k_base *ab)
- 			if (ret) {
- 				ath12k_err(ab, "failed request irq %d: %d\n",
- 					   vector, ret);
--				return ret;
-+				goto fail_request;
- 			}
- 		}
- 		ath12k_pci_ext_grp_disable(irq_grp);
- 	}
- 
- 	return 0;
-+
-+fail_request:
-+	/* i ->napi_ndev was properly allocated. Free it also */
-+	i += 1;
-+fail_allocate:
-+	for (n = 0; n < i; n++) {
-+		irq_grp = &ab->ext_irq_grp[n];
-+		free_netdev(irq_grp->napi_ndev);
-+	}
-+	return ret;
- }
- 
- static int ath12k_pci_set_irq_affinity_hint(struct ath12k_pci *ab_pci,
--- 
-2.43.0
-
+Takashi Sakamoto
 
