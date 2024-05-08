@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-173907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8CF8C076F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:42:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273E08C0770
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3E6DB2325F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4E73284453
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8083B298;
-	Wed,  8 May 2024 22:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2713738DF2;
+	Wed,  8 May 2024 22:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ah2I32fw"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4BoFNAy"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA2324B2F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCCB24B2F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715208134; cv=none; b=lhRVTWusD5QMCt5xLuu9/QMlFlqkkr3jrx8RD2KYzsu/cgAyBoH/VqHgpQmDT7myw7urLNEvJNqq3BENSogI0Tob2pKBWhCMprySE5zXWedJB6t1CQ1IAOskJovonpPVydbrqB6gmebyxMjWtfaVINuV0iCY8w7mHB8fPbmGXkw=
+	t=1715208141; cv=none; b=As3iHRcbSTZZXP8xrKj7neekEV0Zpupwk9bz/h+yThp8AIoIOVWCqlkMxGeAXCqykVX58LlyWK77qeTGCS5KmtPLt0X39EQJxCQkVt5IAetXJX9US8BezYD8UfFYWzZitidRh9fa3W30UVZ6+5/rzOWtNBCtrDm8Lu3Bb2UF7Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715208134; c=relaxed/simple;
-	bh=xdbI3HgqGVbYBMlkoEOKyGSFZrOh4mVYelo6HDS93bI=;
+	s=arc-20240116; t=1715208141; c=relaxed/simple;
+	bh=3JpFwQMSCq/cMZ/d8Z+jM59pDpM4EAcAV96a2sNlir4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mRLbJ7dpdE7MVRrlG/m4xeMoex8UNRm7bMP593M3bpQ1JFpHlEYFsgAsXnBNvDQM1SFKKt0g91TDG3vB9PZG2wZBSHmT+yGQX6HBkcE62L4BoI+c4wk0LyPq+N9W2dXC0o42zQ34pWhPSMmUrkHOXtsh7xFAXbNDox2rvvpp+ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ah2I32fw; arc=none smtp.client-ip=209.85.215.180
+	 MIME-Version; b=Ia3unzJCIV6bVxRsvzi9x9diu7nS7kc6a8ykj/neBjkqz0ezvs/kFzUYlvRvJzT8HlroGJ+OaaKyn/mxpmpgSXt+V93tdGLz6UQ4+DOsSadlqZkPA1wdNLnjivJwAt8aaDO5+p5Ld4kaWKU62iHWIPUJnI8RY2xA2ZmgECBDpr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4BoFNAy; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5e4f79007ffso204254a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:42:13 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b2b42b5126so266954a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715208132; x=1715812932; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715208139; x=1715812939; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7DcpNxuaHKQ2XGPRcrgwYPClc6OYNtCFnxYQ34hBDF0=;
-        b=Ah2I32fwodcmjO7bcCXeobZR2yL7NVrXgDawWk6FR3zEDwRUbEcmCW00Wzx7lhXnjh
-         jQB6nMqZqQHNKmM868iHBN5OWqL36XeeFPKIgzKxuU74fF20pByN8IP0xXdR6tGtvxyS
-         XWX17s8OuucoCL5YDRkjYylO87u8UGRF1mqp34ryvaX6hU1d/7chNhPtSoY3JeXXV80S
-         6G62x1ZBMIGCA/Ly6Wxfg9PnmrfhxNhsFgfMwptqPE+ds6p61R8THb9HlPTWnueJ++t+
-         tVryNnOZYJd7ydNHMQtEVpo5YHvN5qmluQG48fX444JOJINHxg2KcstCpUoP62TX8seh
-         By4g==
+        bh=0eTHILZ80XouT+1m3vAPlwsDJfF9Pcan8u7a91N/lZo=;
+        b=l4BoFNAye3TxOi3+bsrpHuTGDehBVrrZcwM8fvFLdHhV123Ufsup69/yxIK7y5lN5B
+         St8ySyP7oHrbYYplf51BkFHgAOr+TF+Mskw199ZiKuzsMuohF+dfHA+x1Wc4M+RJW1dI
+         xnQLyBctHI8jgQvn3neE0H9zhjnWSH5/MSOPlEbviZytMT1jMrwTmmdFYgls3VZX06Zr
+         DA29mLmDnEvr2vTljXHicF8DpehwnygtkKg3tn1ziQml9WNQ6dT0usGI7Cz4hcIwqD9C
+         aVQRTT0rKw1ubfELnZRSzuX4Z6wh5FOlUOzpDcnK/CW4KnMmiR437YqQzSyDGR4RDRbt
+         z+cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715208132; x=1715812932;
+        d=1e100.net; s=20230601; t=1715208139; x=1715812939;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7DcpNxuaHKQ2XGPRcrgwYPClc6OYNtCFnxYQ34hBDF0=;
-        b=AjJVIaLGvJs5MGDySs7DwU0y9n5yQ5YuE+GNANe9nzBWsUTGsBh1RIlZG9+uwQnS+G
-         f2shLUPDb1viLu7arr2fDyucEsRfTGE0oqD330HiCJKcTEQHja0pbhlVYOjWOLy53Xtb
-         87vokk//Mu+3YL2wcUQXXVozschtTr8KfNxz2NlY2Zz+Qn/mIPWA6MXzw8JPnrxpSA8L
-         e+MTCHyVi0v9ja8YWnZv+udWPQC2mWcgJdXBtwSuypd2HMsdRW19nSWFGYKTncXuBlz+
-         rRQ+7Ut0yC9Ls29vP4J3P05Su5zKZB/5sb+2f9t4JxtW5+LIO4QbEF1WYOQlbMR2zJOa
-         u5yA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWPTk+kqUfjjLc4c7PTeCCRAr5tknGXm8Q8ONMEJH+rn88pOLG3whH+Vzk4vp3F0Tzo6Nb03yfdt/o2sFibd1arrNnLRwQsDijBZWR
-X-Gm-Message-State: AOJu0YyJuMK/LOpu+RuoiptlBAPGjTeUXNRpc81+ZHt50jNyqQQCYQVz
-	0w/BSI5GMpcEU1jfQidZ46YtfsAK+6rkgu5cgX/oebWdwsPxWChO
-X-Google-Smtp-Source: AGHT+IGkFdAUAzrMlbUlBhREM/CEvwatOEIMRBL45vN2bg1LTAUKPSPifp6IeAAwfIL/STXKxZU/xg==
-X-Received: by 2002:a17:90a:8b06:b0:2a2:981b:2c9e with SMTP id 98e67ed59e1d1-2b6169e1a86mr4021869a91.36.1715208132570;
-        Wed, 08 May 2024 15:42:12 -0700 (PDT)
+        bh=0eTHILZ80XouT+1m3vAPlwsDJfF9Pcan8u7a91N/lZo=;
+        b=oPws+0W5pAY/4Yd4amvPsOfk8ABA4tUFjtRGFM39jYWPoYJggXtKR0bG0ciblC8sOs
+         ZnL/BKMQm24d63HS2KjfUXa48cU+MwhVChKPE6nqneaUeEIXobfBAqkIRHcmfbZhknn2
+         VGy4yxnboe7pY6AwaAdHtkof/orfCFTWDNAxcJbGOJ6yX+KK7fXEkCG2KNs7RovONbyF
+         0JhdIUrefuvdXMu8Rt859p3Jyn04muD0x8qygi3uhBjKF/bXLTW00q+uYA5m5fN4I+5o
+         8nmCuvZwpgPbu0r1Lt0fb4/l5E/zZs8Q7QQIvzWA0O2YEJo+LphP5pE73z4vQAOI2QkO
+         8/1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMdiNAY2RMCMiY+4QcvQyzDhfbPLZERWKCsMgCwzfPH1TF2Lfbe9DT6yJVx9COFB/agsvFCGgCNhOMUbnqejBp3Gtt1e1A6qfyT5Wu
+X-Gm-Message-State: AOJu0YyHlk9vabxVSyQ4Zx4224NnUhnSr8LAjiVmLw4SD8ZGnZwTPLtd
+	TVJT/4cDEhfIZ651M4U3ym4Enm/lR3lDenCjFpC7EeZpjYzNGao4
+X-Google-Smtp-Source: AGHT+IHz0/iZAnfRiaUeJgoYtdpHEy5GFxUrXuxrhikbMPcC7Bwle7yCU/X9SrLM3+bghWb9T3SB5w==
+X-Received: by 2002:a17:90a:ce94:b0:2b1:73f8:a013 with SMTP id 98e67ed59e1d1-2b61639d6b2mr3773903a91.2.1715208139383;
+        Wed, 08 May 2024 15:42:19 -0700 (PDT)
 Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126b666sm102082a91.34.2024.05.08.15.42.05
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126b666sm102082a91.34.2024.05.08.15.42.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 15:42:12 -0700 (PDT)
+        Wed, 08 May 2024 15:42:18 -0700 (PDT)
 From: Barry Song <21cnbao@gmail.com>
 To: akpm@linux-foundation.org,
 	linux-mm@kvack.org
@@ -85,13 +85,10 @@ Cc: baolin.wang@linux.alibaba.com,
 	ying.huang@intel.com,
 	yosryahmed@google.com,
 	yuzhao@google.com,
-	ziy@nvidia.com,
-	Khalid Aziz <khalid.aziz@oracle.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>
-Subject: [PATCH v4 4/6] mm: introduce arch_do_swap_page_nr() which allows restore metadata for nr pages
-Date: Thu,  9 May 2024 10:40:38 +1200
-Message-Id: <20240508224040.190469-5-21cnbao@gmail.com>
+	ziy@nvidia.com
+Subject: [PATCH v4 5/6] mm: swap: make should_try_to_free_swap() support large-folio
+Date: Thu,  9 May 2024 10:40:39 +1200
+Message-Id: <20240508224040.190469-6-21cnbao@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240508224040.190469-1-21cnbao@gmail.com>
 References: <20240508224040.190469-1-21cnbao@gmail.com>
@@ -103,87 +100,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Barry Song <v-songbaohua@oppo.com>
+From: Chuanhua Han <hanchuanhua@oppo.com>
 
-Should do_swap_page() have the capability to directly map a large folio,
-metadata restoration becomes necessary for a specified number of pages
-denoted as nr. It's important to highlight that metadata restoration is
-solely required by the SPARC platform, which, however, does not enable
-THP_SWAP. Consequently, in the present kernel configuration, there
-exists no practical scenario where users necessitate the restoration of
-nr metadata. Platforms implementing THP_SWAP might invoke this function
-with nr values exceeding 1, subsequent to do_swap_page() successfully
-mapping an entire large folio. Nonetheless, their arch_do_swap_page_nr()
-functions remain empty.
+The function should_try_to_free_swap() operates under the assumption
+that swap-in always occurs at the normal page granularity,
+i.e., folio_nr_pages() = 1. However, in reality, for large folios,
+add_to_swap_cache() will invoke folio_ref_add(folio, nr).  To accommodate
+large folio swap-in, this patch eliminates this assumption.
 
+Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
+Co-developed-by: Barry Song <v-songbaohua@oppo.com>
 Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+Acked-by: Chris Li <chrisl@kernel.org>
 Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Andreas Larsson <andreas@gaisler.com>
+Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/pgtable.h | 26 ++++++++++++++++++++------
- mm/memory.c             |  3 ++-
- 2 files changed, 22 insertions(+), 7 deletions(-)
+ mm/memory.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 18019f037bae..463e84c3de26 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1084,6 +1084,15 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
- })
- 
- #ifndef __HAVE_ARCH_DO_SWAP_PAGE
-+static inline void arch_do_swap_page_nr(struct mm_struct *mm,
-+				     struct vm_area_struct *vma,
-+				     unsigned long addr,
-+				     pte_t pte, pte_t oldpte,
-+				     int nr)
-+{
-+
-+}
-+#else
- /*
-  * Some architectures support metadata associated with a page. When a
-  * page is being swapped out, this metadata must be saved so it can be
-@@ -1092,12 +1101,17 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
-  * page as metadata for the page. arch_do_swap_page() can restore this
-  * metadata when a page is swapped back in.
-  */
--static inline void arch_do_swap_page(struct mm_struct *mm,
--				     struct vm_area_struct *vma,
--				     unsigned long addr,
--				     pte_t pte, pte_t oldpte)
--{
--
-+static inline void arch_do_swap_page_nr(struct mm_struct *mm,
-+					struct vm_area_struct *vma,
-+					unsigned long addr,
-+					pte_t pte, pte_t oldpte,
-+					int nr)
-+{
-+	for (int i = 0; i < nr; i++) {
-+		arch_do_swap_page(vma->vm_mm, vma, addr + i * PAGE_SIZE,
-+				pte_advance_pfn(pte, i),
-+				pte_advance_pfn(oldpte, i));
-+	}
- }
- #endif
- 
 diff --git a/mm/memory.c b/mm/memory.c
-index eea6e4984eae..b51c059af0b0 100644
+index b51c059af0b0..d9434df24d62 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -4266,7 +4266,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	VM_BUG_ON(!folio_test_anon(folio) ||
- 			(pte_write(pte) && !PageAnonExclusive(page)));
- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
--	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
-+	arch_do_swap_page_nr(vma->vm_mm, vma, vmf->address,
-+			pte, vmf->orig_pte, 1);
+@@ -3877,7 +3877,7 @@ static inline bool should_try_to_free_swap(struct folio *folio,
+ 	 * reference only in case it's likely that we'll be the exlusive user.
+ 	 */
+ 	return (fault_flags & FAULT_FLAG_WRITE) && !folio_test_ksm(folio) &&
+-		folio_ref_count(folio) == 2;
++		folio_ref_count(folio) == (1 + folio_nr_pages(folio));
+ }
  
- 	folio_unlock(folio);
- 	if (folio != swapcache && swapcache) {
+ static vm_fault_t pte_marker_clear(struct vm_fault *vmf)
 -- 
 2.34.1
 
