@@ -1,64 +1,75 @@
-Return-Path: <linux-kernel+bounces-173669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C058C03BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:50:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6D18C03BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664D328557D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:50:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD83A288FD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAEE12DDB0;
-	Wed,  8 May 2024 17:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95D212AAE8;
+	Wed,  8 May 2024 17:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rla7ceu3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CEJT1VIN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9401B12B148;
-	Wed,  8 May 2024 17:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1348BEE
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715190615; cv=none; b=lOCKcBo9Wf3JYKNZvbk2EKv/tk03luV5GdU3PhLQu8oOkFU5qCOw05CY3ReKSe7gTOEWIEFPs+E82q63xBjeIB973B3KS1zJ9VDOmMix8ROyPQ5d1NzZwrlFLWNqsyRPcRxzV0FtWHIRcnZLhDk4xWCPp5pfaS3YjGuRsXzSifE=
+	t=1715190637; cv=none; b=uQuaRGhlj2B2YCNQfdEQ+fTvq3TZ2hehj3pVyz/aK0Hy2JkUEX+pBmLxXzA7xi2fQ7ybiX2haHQPYEuAdeV7b1Mysj98w9NMXpelGnUHUiJ5ttasb5SyZ0Xyk4+eAusWvmTsBo/e8IWabcOisHA/O3vdno0J3lNnyoWTb+TrIdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715190615; c=relaxed/simple;
-	bh=O7Iu+gfiqdTrJ5Xezid8yKZhJ+FRommTaNGfEwrOI4c=;
+	s=arc-20240116; t=1715190637; c=relaxed/simple;
+	bh=/79lVjVOGKjWtEnpx6Su7BVq+J88D4Y6CVYEINBVIBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QV5W+fdL+xkh0ohjfYecZFknJcuIObVK5CJVhd+ltiPfoYUb6ldCv4rOi3bOX/kdX856nzMVifYYNaxLpvzh3kImnlLp8Cs+dwFlyAMIpxPDrewWrQnlbexPrL1HvevWqSFIt+H+pmo3HZkg3CyD5xQGZWu7pcr0XbDvAGakq5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rla7ceu3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2F2C113CC;
-	Wed,  8 May 2024 17:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715190614;
-	bh=O7Iu+gfiqdTrJ5Xezid8yKZhJ+FRommTaNGfEwrOI4c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rla7ceu3BrmVcpFdRGNn0AW4gfXOO8LADVNVvrR3LyWGxP8tus/4nJsxlUDdrt7GV
-	 z+pEWZlWgrStd0c13TYNY7Srhyrf4OaxBvpZr1Rj21qyBbR2TSVAUhgRSBOaLLJnUX
-	 MmxCRGMZqAWDDLykIjLGUyqfUOpatzkat2PuyGDOX4V9+phJ8EmDkvsgNmzTQSRw9l
-	 vy4o+oEQPZMKyhXbzTX5jGkDqxdhnO5jgmlWlo3lOxL5HOz3+z48mvMjW2z9UXC7UZ
-	 44PXuLMukcEAPC/Y1Nr6SrhOaw39O4rHg/E2ZA/NE7rBCwy3grmUF/HvHNiFNyuMqV
-	 HcIrvNEhdhuoQ==
-Date: Wed, 8 May 2024 12:50:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [APPROACH 2 1/2] arm64: dts: amlogic: list all slave clocks for
- audio clock controller
-Message-ID: <20240508175013.GA2244257-robh@kernel.org>
-References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
- <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qk2pXmIxBAd4vkU+6MTOPemtLP5qTWz2bMuU1a77i6K/AoY54pWmnuL0+feDzEVwdznBidA/+0TGQsWjTg6JUTgk7iM4ZXuJcuTb15nfubrFbCwqjm75MgbkhAwnE6eEeN2maNBG7jk6CdeMMLJK0TboC+Xs3TKfiLOyHLbVTpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CEJT1VIN; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715190635; x=1746726635;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/79lVjVOGKjWtEnpx6Su7BVq+J88D4Y6CVYEINBVIBM=;
+  b=CEJT1VINcezzeNR25J2Sl/Xz5TcrHoGqlDO4nzICr2/7XoGIZIgaW5M+
+   dgQ/fdQz2Oqfp+PS9wU+ZR+VblsiLgfkf7Y70LnhK6HeB7whlnWqDIuGl
+   WVvOnlNc4kbANtAVavY5BRpBEmbkQaKcwmwpq4RdfM1KUctcs6H/K+Txb
+   x/ggt9TLV6P93x06fuzdCDb06aF5CDIMSoPhf/jgOt9HZCdRJ/8bH+R+s
+   Aictx6asUn2GiDRGynR+WAlHc9h+KhPkhBGvp5WwuNOYznftzQWw+Q9Yy
+   M6b2bq+6A8zderPtn0b0Nc/nrG/N/TtrAPF5UvYanS2Hivh6Vs8fohKCp
+   g==;
+X-CSE-ConnectionGUID: Z0RT8jbiThiMibVvVRZtCw==
+X-CSE-MsgGUID: zBLzZt/4SG2UwN9jSQQwmQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="21642029"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="21642029"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 10:50:33 -0700
+X-CSE-ConnectionGUID: uI9ipCNjSUqM28DWf1SIsw==
+X-CSE-MsgGUID: Xye86n34QsSgTjh7MdsSUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="29339011"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 10:50:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s4lQy-00000005Wpr-3ZJ8;
+	Wed, 08 May 2024 20:50:28 +0300
+Date: Wed, 8 May 2024 20:50:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Tal Gilboa <talgi@nvidia.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>
+Subject: Re: [PATCH v1 1/1] dimlib: Use *-y instead of *-objs in Makefile
+Message-ID: <Zju7ZNSMCSzbqCGO@smile.fi.intel.com>
+References: <20240508143039.1196671-1-andriy.shevchenko@linux.intel.com>
+ <c0ce1a9b-d63d-43e7-96f0-6eeb35051f63@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,32 +78,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
+In-Reply-To: <c0ce1a9b-d63d-43e7-96f0-6eeb35051f63@broadcom.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, May 08, 2024 at 05:42:58PM +0300, Jan Dakinevich wrote:
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 27 ++++++++++++++++++++--
->  arch/arm64/boot/dts/amlogic/meson-g12.dtsi | 26 +++++++++++++++++++--
->  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 +++++++++++++++++++--
->  3 files changed, 73 insertions(+), 6 deletions(-)
+On Wed, May 08, 2024 at 10:39:55AM -0700, Florian Fainelli wrote:
+> On 5/8/24 07:29, Andy Shevchenko wrote:
+> > *-objs suffix is reserved rather for (user-space) host programs while
+> > usually *-y suffix is used for kernel drivers (although *-objs works
+> > for that purpose for now).
+> > 
+> > Let's correct the old usages of *-objs in Makefiles.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> index 6d12b760b90f..28f4ec5f39b0 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-> @@ -1342,7 +1342,9 @@ clkc_audio: clock-controller@0 {
->  					 <&clkc CLKID_HIFI_PLL>,
->  					 <&clkc CLKID_FCLK_DIV3>,
->  					 <&clkc CLKID_FCLK_DIV4>,
-> -					 <&clkc CLKID_GP0_PLL>;
-> +					 <&clkc CLKID_GP0_PLL>,
-> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
+> Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> > ---
+> > 
+> > Reported by Olek. As I said him this is correct change which is
+> > documented in Documentation/kbuild/makefiles.rst "Composite Host
+> > Programs" (mind the meaning of the word "host"!).
+> 
+> Why not credit him with an official Reported-by?
 
-All 3 cases are just unused clocks on the end. I suppose that's not 
-always the case. You could just set 'minItems' in the binding to 
-avoid needing to pad the end and the dts changes.
+No problem
+Reported-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-Rob
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
