@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-173935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB458C07CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE5D8C07D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E841F22428
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:40:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6920A283EB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441CD133983;
-	Wed,  8 May 2024 23:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EA9133401;
+	Wed,  8 May 2024 23:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fDsVxjMN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qi6LoIzC"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D4D1E89A;
-	Wed,  8 May 2024 23:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B753130E5A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715211642; cv=none; b=VrauKH+dr+5AXv7AOqQyFIb6iKUPru8sFSdx/HlJO4xwhw5eEes2BTJIEscso7VKOZxN7U+nSqgYyX+BMolg71uspCUG8J/dH4ptVWue/EVAd6rkbOYtT2FfdRb/zSVSAX871eXl2Nq8sgqTCWJ4Jh/stsqX63TBnxxujcm0oUA=
+	t=1715211654; cv=none; b=lHBxKIURhFrcjJu7b9CJ+LT4isbQ6JnAwrm+Nwi6pPC/nqdXrAjlROq1JJsQHwWjm/7T7bDAlCnaYOseK6GCUfTCHr36KO+LzkYkyWxBFILsq7zrblCxr+NjjnIDzRXtxkhwpNne5H2YEvVzK7YPDXJDdIMo4yjUgpTB34nr810=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715211642; c=relaxed/simple;
-	bh=XHxrjqFEAkxk0OlBRxqEri56L1j3vEZ5UCKWMemhFoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qvuUvGfF6rxiUI0hBcqoiiQDjjq/i4oS8EIPfo4/tri/kAvORUC5osshK7Cjm3V4dCZScMhCrJaIjUyeSoCRhK6XE7ImA5Sc0i6rFusinLySpttVZTBVsLV8DE59ake2I/SuVWYcqMuZYQ1uU/p6sjfuHKiN6dECBlZEUlgYbdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fDsVxjMN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448NBoxd006086;
-	Wed, 8 May 2024 23:40:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=9HgzBBw6z3F0SqH/OB4mEKC34o1ooj2L1DEYGdkaaEU=; b=fD
-	sVxjMNSuHybRUy6+brZOY1gM/KUZi8j+dfZjeMB62qyunphXs9n9ILxQeBL15v5L
-	r1XLpLcZF6uQFiSF0+vdlPv6cvUuQNcF+oSx+CebdN+Wg3KRC37iYzZR8azTgBf4
-	SjrUO5gBhDA9unGeALeg/cf/fqJucuY3vSXVJ7Qbsx8PrwZkIBobscb8943LKgwH
-	Y6x+lSGwvlNMMoLQWz5d5q8KMNnYwJXjbAjgc1+34eFSDdD65oKsc9CrlLqH5TO4
-	sD9TwBoEXXIwHKuUjullzRUdvzLnvWhaRe9+3dhGhhpfXf5eqPfH3dRgxZfrnsS9
-	/rmUkhgl2GxPcpnKLAnw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07u8sjhw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 23:40:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 448NeKHf008061
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 23:40:20 GMT
-Received: from [10.110.126.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 8 May 2024
- 16:40:19 -0700
-Message-ID: <066fe096-a9d3-2498-275d-185f709e9a02@quicinc.com>
-Date: Wed, 8 May 2024 16:40:19 -0700
+	s=arc-20240116; t=1715211654; c=relaxed/simple;
+	bh=KwT+okHPi+W6VidpPKXRKh3Wp+ViBEdA4IHjwz/sFCA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n+MHoTa7E7tm81mYhKxKADqFXJB6Iu12uqZwgTN60aU+7c3tqqpS2OeBuWvDRaavJ2Agv+36GzTDys+JW8s77OM7fCCiH9NnjkNf4z/Btqrl2UP93MHdDt5WR3bPHqYzgO5dQln62izLvH7I2zf3ZKU0ywlMJsHkeIordhbrn5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qi6LoIzC; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1eed90a926fso62365ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:40:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715211651; x=1715816451; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rtBaK54I/OmT+ZzA/0tf7fwuvPPu1s0eLKsDcEO5LUU=;
+        b=qi6LoIzCLq4SeYGvdiLFo91UPUgRc8VAjgYHRryxc7qIKku1C2lali1ZIXsdD6qFZ3
+         kORy//kvHgYzx3VxXGWEX4oL9R4q8HBjrdO1e24gX8/DFAr57pfv28tjhn3EEJdyCORs
+         3W5Zsjp2phod1fw0TkFLV+nOgcDwySyRng+lA6w2q36HbFnZZIne3EHE/4yTccKCJ0a/
+         DnBuQ6lAfOPMnC4IoTQKdy1v78B/CXQuGBUzvZZlJ9VS3+T2GAtPMeyyH6logM9s6avI
+         FoiKlQp8f4mjFh84v3w1F7DtNZctwT148nf0QYCoPmWOOnVMPn8wShJEngoIyx0eHjHP
+         5TJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715211651; x=1715816451;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rtBaK54I/OmT+ZzA/0tf7fwuvPPu1s0eLKsDcEO5LUU=;
+        b=Z8JkFVfM1msqWm4vcE1Jm3Wj9JuTkW3V3HbDGrvoviwG57ODE4lf95RiGc+SkT/awg
+         iGj9QppwdWlZdtICxDh3xW94Yfhy/sg1vLmdt1sLFYXdcoreNfGcBEoKA9giQeL18RJr
+         vqOESoysx7X2VSACv+6bK+jTP6amcOWD83NHj4wQuOXFHmVyxCkm2JJ+ZCAY1tTDV3Rk
+         Pa1Uq7fiLEK7VnfxKRJ/2Nmn5GPMwa/lGEwGPkC98pU/LKDso73hYbVLWyTFvw+B6uYz
+         hTDL3lQ2CkySXfdV6MLA3nVNHalTZdQBI9ECO1J/81gdC+hCKXlt54q6cwzgoeY3wKA6
+         xs/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXRoFNhKQYJcR+HSOIvNuEhNR06NTyIFDn4Z/20hrBA8uusJr84aLJZleAlzv+XWhP47UqHucGWW4eiYQ5tO14N8hLrAU4FqfXMX8Yn
+X-Gm-Message-State: AOJu0YzsoMnlZq0sTSU5Pei5nc0NiqvJ1JyMpgtOlrOBWl6Wg3WtyioH
+	e6f3+32Jjou5Kmin+fF0aVXU6/84trl38SXHDBEQQvPZBn4REPGC8s3MzJ/xld6E1CGBZ397ZR3
+	4wQzJLEGL3nckc+RxvlWPqKLW3B8yV7PnATXd
+X-Google-Smtp-Source: AGHT+IE9rtUIKw/slmUwrF8lW9b8vFSRydp6eE79h5ko9MZ8atWirNMl5J/gF4jU3omSX5ix5Yu8yH27Id/RF3iiyMM=
+X-Received: by 2002:a17:902:f605:b0:1e8:88b2:17cd with SMTP id
+ d9443c01a7336-1ef005fa6fbmr1062665ad.12.1715211651249; Wed, 08 May 2024
+ 16:40:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v21 22/39] ALSA: usb-audio: Prevent starting of audio
- stream if in use
-Content-Language: en-US
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <lgirdwood@gmail.com>, <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
-        <broonie@kernel.org>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <bagasdotme@gmail.com>, <robh@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-23-quic_wcheng@quicinc.com>
- <1e98935e-e35a-49e0-bbbf-ff326d40b581@linux.intel.com>
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <1e98935e-e35a-49e0-bbbf-ff326d40b581@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mvZrtfZJK2u-V9ExiU9H9B2lUv-rtHBK
-X-Proofpoint-ORIG-GUID: mvZrtfZJK2u-V9ExiU9H9B2lUv-rtHBK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=821 adultscore=0
- phishscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405080177
+References: <Zjmc5EiN6zmWZj4r@x1>
+In-Reply-To: <Zjmc5EiN6zmWZj4r@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 8 May 2024 16:40:40 -0700
+Message-ID: <CAP-5=fV3T6G29Hrg3fGRnenjxUMjVfPK-zFGQgp9UgJn1JBA9g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf kwork: Use zfree() to avoid possibly accessing
+ dangling pointers
+To: arnaldo.melo@gmail.com
+Cc: Yang Jihong <yangjihong1@huawei.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pierre,
+On Mon, May 6, 2024 at 8:15=E2=80=AFPM <arnaldo.melo@gmail.com> wrote:
+>
+> When freeing a->b it is good practice to set a->b to NULL using
+> zfree(&a->b) so that when we have a bug where a reference to a freed 'a'
+> pointer is kept somewhere, we can more quickly cause a segfault if some
+> code tries to use a->b.
+>
+> Convert one such case in the 'perf kwork' codebase.
+>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Yang Jihong <yangjihong1@huawei.com>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-On 5/7/2024 2:20 PM, Pierre-Louis Bossart wrote:
-> 
->> If a PCM device is already in use, the check will return an error to
->> userspace notifying that the stream is currently busy.  This ensures that
->> only one path is using the USB substream.
-> 
-> What was the point of having a "USB Mixer" then?
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-The USB mixer is intended to enable/route the USB offloading path to the 
-audio DSP, and is for controlling the ASoC specific entities.  This 
-change is needed to resolve any contention between the USB SND PCM 
-device (non offload path) and the ASoC USB BE DAI (offload path).
+Thanks,
+Ian
 
-Thanks
-Wesley Cheng
+> ---
+>  tools/perf/builtin-kwork.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
+> index 0092b9b39611d7e9..56e3f3a5e03a2d66 100644
+> --- a/tools/perf/builtin-kwork.c
+> +++ b/tools/perf/builtin-kwork.c
+> @@ -2230,7 +2230,7 @@ static int perf_kwork__top(struct perf_kwork *kwork=
+)
+>         perf_kwork__top_report(kwork);
+>
+>  out:
+> -       free(kwork->top_stat.cpus_runtime);
+> +       zfree(&kwork->top_stat.cpus_runtime);
+>         return ret;
+>  }
+>
+> --
+> 2.44.0
+>
 
