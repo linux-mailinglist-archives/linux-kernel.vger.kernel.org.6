@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-172567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4C58BF3C4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:36:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199EE8BF3CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25031C2341B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:36:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D303328435E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E2C3D9E;
-	Wed,  8 May 2024 00:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OQ+H01xI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04491637;
+	Wed,  8 May 2024 00:45:03 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3375B387;
-	Wed,  8 May 2024 00:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A23838F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715128578; cv=none; b=VWMe/2qy0XfljBL9d2n5YufX495cbhorKFGab3WxSSpymboUuk570BVtZ4FZJYrT/rWubUUKq4nDI6LUXqwVXa6hzWaXVlHXv2z3cCltrsyKabvilBIdgEWs4F3xGn0CL1rRJmvKSpMiCwtD8n2XVqK2MSsH5ynNLXehSV6FOts=
+	t=1715129102; cv=none; b=HfAZ6zR48NlpouosjexPPDlnQxbZu27vOozfwj9GLCzhlNHR+irEUziikCGPthRDIpcCsNt7573+cNzD+ES0CcsqNG7FYAy1CmXYgFCgOSu77LlxBKJVzm8Q2FIFueBR9pjSOrRGexL7Dwh7t/AeMbU5kLDvyjgqe7rs2FTfhg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715128578; c=relaxed/simple;
-	bh=yJK99pCXyuoTwOmUw90tjzeWFArr9+bCKIgZP+l1zPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJI6F6ffXlXzlSBgeWP5K6tY8OXmlgh0DkPRVWylYQumoI+zjOp2PJoPULSY3UFJ4fxyeUcqEhcf+HZHdjhHihqOm31JtR5xZkoeHDw7mhOAsMjCMmh0y9u8UD/cyQ/Vsb0EiSSbkdbceVcDQiKzgitzKise6cnRBxFUEKQ/4oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OQ+H01xI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F708C2BBFC;
-	Wed,  8 May 2024 00:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715128577;
-	bh=yJK99pCXyuoTwOmUw90tjzeWFArr9+bCKIgZP+l1zPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OQ+H01xIYPmmknJAvbU3bmScXIpz3vpyzx6ir2u7dmO/Xgg7CKerL+vni4NEyPiTa
-	 a8wiKTeyvMov2m0/C7+OGHAQaYNVL94XFGbCV3qMO/2+OypsUaEKmWahfa6OoMriHO
-	 JOTZzdn6I0qktdd5tcgoxdInIANGoqnVRC4z0sYX3nzUtnjbUu0Tbc5hQWGZCZfQvs
-	 wdi3Gt775bGtTmHcmn/2O3Jm8XyA3P3xzYbbkI0N0cEpl5vBNCEczBFRgUz1M+WrXE
-	 J3ISBLiQ9ZAWlzE0ACJvCZfU5xMQhMYF1U03doKVRPCFuIiN/n15sIq1WRbLmmd7Bm
-	 xWQOzJ05IHqSw==
-Date: Tue, 7 May 2024 21:36:14 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org, viro@zeniv.linux.org.uk,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-mm@kvack.org,
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 5/5] selftests/bpf: a simple benchmark tool for
- /proc/<pid>/maps APIs
-Message-ID: <ZjrI_h7InWYdOBtD@x1>
-References: <20240504003006.3303334-6-andrii@kernel.org>
- <2024050404-rectify-romp-4fdb@gregkh>
- <CAEf4BzaUgGJVqw_yWOXASHManHQWGQV905Bd-wiaHj-mRob9gw@mail.gmail.com>
- <CAP-5=fWPig8-CLLBJ_rb3D6eNAKVY7KX_n_HcpGqL7gfe-=XXg@mail.gmail.com>
- <CAEf4Bzab+sRQ8pzNYxh1BOgjhDF4yCkqcHxy5YZAyT-jef7Acw@mail.gmail.com>
- <CAP-5=fXv59EmyM7FNnwAp0JjAZjtYhCj3b3FTH7KsHL=k8C6oQ@mail.gmail.com>
- <CAEf4BzbdGJzMuRgGJE72VFquXL37rS9Ti__wx4f_+kt3yetkEg@mail.gmail.com>
- <CAEf4BzYykUsN_Z92cXAh_9+fmN-bzr7xOEBe2v_5xDoXRhijmg@mail.gmail.com>
- <CAM9d7cg4ErddXRXJWg7sAgSY=wzej8e4SO6NhsXJNDj69DyqCw@mail.gmail.com>
- <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
+	s=arc-20240116; t=1715129102; c=relaxed/simple;
+	bh=yfQw/3vqdF4+42mil5aRcLojxuwgAsyxYBx/zV3endY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TC85D2ovgNz7dO7mu+QvlsK+RZsak44YRY6s700/sW4huMv1k5Pn9QacXxqOzNy1FK/83uRWyrm+CQno17/I/TiE/BPyH58VrGtblOqeKMRy9ue2bMD5P8FKZqweHncs3hvbN3gqUjDoY/qkfyewu9zKzz6vFO4HTZj1ebkjogg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 706b27a40cd311ef9305a59a3cc225df-20240508
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.37,REQID:e66522b2-69bb-40e4-8a42-b1c626a2eeff,IP:15,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:0
+X-CID-INFO: VERSION:1.1.37,REQID:e66522b2-69bb-40e4-8a42-b1c626a2eeff,IP:15,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:0
+X-CID-META: VersionHash:6f543d0,CLOUDID:ed6f28bb4c424293f5dd8bc025c82a57,BulkI
+	D:240508083935XHS2JZ5I,BulkQuantity:0,Recheck:0,SF:44|64|66|38|24|17|19|10
+	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: 706b27a40cd311ef9305a59a3cc225df-20240508
+X-User: lijun01@kylinos.cn
+Received: from [172.30.60.202] [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <lijun01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1605079120; Wed, 08 May 2024 08:39:33 +0800
+Message-ID: <9af195f9-c47c-a323-dcc8-9b0bb6926d7e@kylinos.cn>
+Date: Wed, 8 May 2024 08:39:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH v2] LoongArch: Update the flush cache policy
+Content-Language: en-US
+To: chenhuacai@kernel.org, kernel@xen0n.name, lvjianmin@loongson.cn,
+ dongbiao@loongson.cn, zhangbaoqi@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240507074357.2156083-1-lijun01@kylinos.cn>
+From: lijun <lijun01@kylinos.cn>
+In-Reply-To: <20240507074357.2156083-1-lijun01@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzZTRU9CGrcAysLKCCbjUvJZPFaLA122MVo_zKgk8pAUSA@mail.gmail.com>
 
-On Tue, May 07, 2024 at 03:56:40PM -0700, Andrii Nakryiko wrote:
-> On Tue, May 7, 2024 at 3:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > On Tue, May 7, 2024 at 10:29 AM Andrii Nakryiko <andrii.nakryiko@gmail.com> wrote:
-> > > In another reply to Arnaldo on patch #2 I mentioned the idea of
-> > > allowing to iterate only file-backed VMAs (as it seems like what
-> > > symbolizers would only care about, but I might be wrong here). So I
+Superseded.
 
-> > Yep, I think it's enough to get file-backed VMAs only.
- 
-> Ok, I guess I'll keep this functionality for v2 then, it's a pretty
-> trivial extension to existing logic.
-
-Maps for JITed code, for isntance, aren't backed by files:
-
-commit 578c03c86fadcc6fd7319ddf41dd4d1d88aab77a
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Thu Jan 16 10:49:31 2014 +0900
-
-    perf symbols: Fix JIT symbol resolution on heap
-    
-    Gaurav reported that perf cannot profile JIT program if it executes the
-    code on heap.  This was because current map__new() only handle JIT on
-    anon mappings - extends it to handle no_dso (heap, stack) case too.
-    
-    This patch assumes JIT profiling only provides dynamic function symbols
-    so check the mapping type to distinguish the case.  It'd provide no
-    symbols for data mapping - if we need to support symbols on data
-    mappings later it should be changed.
-    
-    Reported-by: Gaurav Jain <gjain@fb.com>
-    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-    Tested-by: Gaurav Jain <gjain@fb.com>
-
-⬢[acme@toolbox perf-tools-next]$ git show 89365e6c9ad4c0e090e4c6a4b67a3ce319381d89
-commit 89365e6c9ad4c0e090e4c6a4b67a3ce319381d89
-Author: Andi Kleen <ak@linux.intel.com>
-Date:   Wed Apr 24 17:03:02 2013 -0700
-
-    perf tools: Handle JITed code in shared memory
-    
-    Need to check for /dev/zero.
-    
-    Most likely more strings are missing too.
-    
-    Signed-off-by: Andi Kleen <ak@linux.intel.com>
-    Link: http://lkml.kernel.org/r/1366848182-30449-1-git-send-email-andi@firstfloor.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 6fcb9de623401b8a..8bcdf9e54089acaf 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -21,6 +21,7 @@ const char *map_type__name[MAP__NR_TYPES] = {
- static inline int is_anon_memory(const char *filename)
- {
-        return !strcmp(filename, "//anon") ||
-+              !strcmp(filename, "/dev/zero (deleted)") ||
-               !strcmp(filename, "/anon_hugepage (deleted)");
- }
-
-etc.
-
-- Arnaldo
+在 2024/5/7 15:43, Li Jun 写道:
+> fix when LoongArch s3 resume, Can't find image information
+>
+> Signed-off-by: Li Jun <lijun01@kylinos.cn>
+> Signed-off-by: Baoqi Zhang <zhangbaoqi@loongson.cn>
+> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
+> Signed-off-by: Biao Dong <dongbiao@loongson.cn>
+> ---
+>   arch/loongarch/mm/cache.c | 23 ++++++++++++++++++++++-
+>   1 file changed, 22 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/mm/cache.c b/arch/loongarch/mm/cache.c
+> index 6be04d36ca07..89eeb9a97dd5 100644
+> --- a/arch/loongarch/mm/cache.c
+> +++ b/arch/loongarch/mm/cache.c
+> @@ -63,6 +63,27 @@ static void flush_cache_leaf(unsigned int leaf)
+>   	} while (--nr_nodes > 0);
+>   }
+>   
+> +static void flush_cache_last_level(unsigned int leaf)
+> +{
+> +	u64 addr;
+> +	int i, j, nr_nodes;
+> +	struct cache_desc *cdesc = current_cpu_data.cache_leaves + leaf;
+> +
+> +	nr_nodes = loongson_sysconf.nr_nodes;
+> +
+> +	addr = CSR_DMW1_BASE;
+> +	iocsr_write32(0x1, 0x280);
+> +	do {
+> +		for (i = 0; i < (cdesc->ways * 3); i++) {
+> +			for (j = 0; j < (cdesc->sets); j++) {
+> +				*(volatile u32 *)addr;
+> +				addr += cdesc->linesz;
+> +			}
+> +		}
+> +		addr += 0x100000000000;
+> +	} while (--nr_nodes > 0);
+> +}
+> +
+>   asmlinkage __visible void __flush_cache_all(void)
+>   {
+>   	int leaf;
+> @@ -71,7 +92,7 @@ asmlinkage __visible void __flush_cache_all(void)
+>   
+>   	leaf = cache_present - 1;
+>   	if (cache_inclusive(cdesc + leaf)) {
+> -		flush_cache_leaf(leaf);
+> +		flush_cache_last_level(leaf);
+>   		return;
+>   	}
+>   
 
