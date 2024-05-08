@@ -1,131 +1,78 @@
-Return-Path: <linux-kernel+bounces-172565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26518BF3BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:34:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6768BF3BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC27B217C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:34:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D75284007
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC35F652;
-	Wed,  8 May 2024 00:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C9F8BE2;
+	Wed,  8 May 2024 00:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I+MJGh92"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZxfO6uu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31853387;
-	Wed,  8 May 2024 00:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF53C7490;
+	Wed,  8 May 2024 00:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715128485; cv=none; b=Glity5KoDc+nFD4LiHt21uV3dyTZqTxw2OB+lffgHeafTfxN/S3EcQJYevIG2cztUX3E3rTvM3I27fnNhPSxot+iCeOBNpGmW55qd4KhHqeEGRZbBuM5FW6Klu+/Yfk8C2To7o7VIyqzCRGhs5EpdIQGLrc/Kf5mpKMuQtXn5ys=
+	t=1715128488; cv=none; b=JuBDqhimWQdQlESGnPs46GJs/23TLfcuTveess0+l8rQGgwe6oGaa26srL/7sMKla4e3gGucXoYzqTsSUsHWKOwF4hGVm2naBGdCzYs7rxuPEv0CsBMiUh3N/sDABmXf2w2u+eIYMiDuCpkJ46eTKwfkxUSEVQ01tMlR4xTlpk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715128485; c=relaxed/simple;
-	bh=DkKeUnboAHqb/Jet1FGm7L4z0eOPNgYxnvewhiK5kkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=bWV7G8kOTdgnkWuirrc08Uchq7R68ZHi4GHftnbQO1tQzDN0wZafkl+gSuCrUdU3wxLiYqsfpKNAnmXFzBdjtMwhycAPklWsEHcIzQqnINYxI0rA9nY7KyEWrZGGAyaZGTJXO/p4GX3q9+zbH8oMghSE+hg+zcREZm/q0SWa6vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=I+MJGh92; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715128479;
-	bh=RyQGYljSWMAe9xi+R6OxFlFM37o0P0Z9Ke1ZuQqhF5M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=I+MJGh92FkhJ4OFZGdXrsBTHDkv+9ZxBHYNdHvt37z4Ihd9tNMwbl+XO2lysbZI9k
-	 8YNb2UqF8C/N/BkIAJBEhhgCSRTS0gvAo7J6p/Tok/fsiQlL2wEflQgc2bSMR1Qieo
-	 R8vyMVb1Z0jdFCqxaX2t+njlhmz2hlutUW+1AynPu7KbBbPKMO3aSjKibzuLXHWhBX
-	 Cbw5zyOZBTRXcYNd45B5x+C6Qa49p4D9TiwRt6QCelpNd3eBJsRQPOt7vVPA9P0+tR
-	 G9iRjqv5w5y9xBzZNvXMYUdh/IzZvrq2+73JTHC+/48xf/jDsXTHXG2FlPhZIT6FYx
-	 sTQK3zytP6BEw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VYx3z1dMVz4wcF;
-	Wed,  8 May 2024 10:34:39 +1000 (AEST)
-Date: Wed, 8 May 2024 10:34:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Cc: Christoph Hellwig <hch@lst.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Ritesh Harjani (IBM)"
- <ritesh.list@gmail.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the ext4 tree
-Message-ID: <20240508103436.589bb440@canb.auug.org.au>
+	s=arc-20240116; t=1715128488; c=relaxed/simple;
+	bh=KMjZdINE6p4LPP83BwN/kf1WG3JBITPmf6n2KYAIkwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NBmIMB8/cOimdoWa4trE5r79vPnDrxV65p2wgcC2ABPlbCGoP/nG121OW2LgC18IoGXRWcMjC/UcwqMw/JdgJdFmmpbMLsNXWw79XTXoXZCVbgu5zCc0OMPU2lg+jes04coP/Sb16l/fYK4pdWTvYMI5aB78B21jZ5LRbLdd8+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZxfO6uu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5563C4AF63;
+	Wed,  8 May 2024 00:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715128488;
+	bh=KMjZdINE6p4LPP83BwN/kf1WG3JBITPmf6n2KYAIkwU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hZxfO6uuR0sJsZ4maM3E83w8LHyCysvPwHU9Kwn/G06Zbv4L2e/hFTq9GUS5Ai1SV
+	 dS2srV0P/M8Wy15kUE5x+9yxIpbJJF9kzZBsOxYvlNG+SPDOb5Te1nRAP26K19I+z1
+	 Egars8UnKppMv4utEWCCS29OKItnDCev17XefLnfZorFryFeFWCrUNtdVCrTR/1OT0
+	 oVq7c/WDtgjsh5sNvDOq/ZIKGWHLgyysT64CGBp1cgL9Ij5Y1z05BX2QU17eSJ3XlA
+	 TweCwTcn3bxY24+CITarXvlNVsUhsNTPQo/nnVFfhXRmOB6I8jJVH4L/31eSJGwo8Q
+	 AwqETHFwAltDQ==
+Date: Tue, 7 May 2024 17:34:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Richard Gobert <richardbgobert@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ willemdebruijn.kernel@gmail.com, dsahern@kernel.org,
+ alexander.duyck@gmail.com, shuah@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v9 0/3] net: gro: remove network_header use,
+ move p->{flush/flush_id} calculations to L4
+Message-ID: <20240507173447.015a03a5@kernel.org>
+In-Reply-To: <20240507162349.130277-1-richardbgobert@gmail.com>
+References: <20240507162349.130277-1-richardbgobert@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z6QW1W_rd/rhI.BiE15ht.j";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/z6QW1W_rd/rhI.BiE15ht.j
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Tue,  7 May 2024 18:23:45 +0200 Richard Gobert wrote:
+> The cb fields network_offset and inner_network_offset are used instead of
+> skb->network_header throughout GRO.
+> 
+> These fields are then leveraged in the next commit to remove flush_id state
+> from napi_gro_cb, and stateful code in {ipv6,inet}_gro_receive which may be
+> unnecessarily complicated due to encapsulation support in GRO. These fields
+> are checked in L4 instead.
+> 
+> 3rd patch adds tests for different flush_id flows in GRO.
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
-
-  fs/ext4/file.c
-
-between commit:
-
-  a0c7cce824a5 ("ext4: set FMODE_CAN_ODIRECT instead of a dummy direct_IO m=
-ethod")
-
-from the ext4 tree and commit:
-
-  210a03c9d51a ("fs: claw back a few FMODE_* bits")
-
-from the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/ext4/file.c
-index 77529c655f95,28c51b0cc4db..000000000000
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@@ -884,8 -885,7 +884,7 @@@ static int ext4_file_open(struct inode=20
-  			return ret;
-  	}
- =20
-- 	filp->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC |
-- 			FMODE_DIO_PARALLEL_WRITE | FMODE_CAN_ODIRECT;
- -	filp->f_mode |=3D FMODE_NOWAIT;
-++	filp->f_mode |=3D FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-  	return dquot_file_open(inode, filp);
-  }
- =20
-
---Sig_/z6QW1W_rd/rhI.BiE15ht.j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY6yJwACgkQAVBC80lX
-0GyDZQf/TS0djE5HDw+uGXN7PsX7EJSoe8QFKVc5p5fAcv43Hiv5JsDwB/IrDuAY
-OVa7N/aIrM4ZYZMsAwkVyYZfQkCTS6BxEs/xnICoE6+xbrttFlcedCNclJ5/7b4x
-BtQm+YRNTTD7jDDweT2tUVq173dhAX7kIAAeWCUwlYVw1l8u4RIISPqGyd7Lw5Hz
-sWsgBRgFNUJr93OcTl5mRsVe5kypTH1ZeDh+GJAMq60+9RYAqicD9VQ8h4R1CIu/
-2l94FBnpsUtCerqkbxztS+6LoxUvYrahFMN5dnOpPC8eoNefafFa0yatA9DbeJKs
-OCB2EQqkwgUYpvbNTFyBlYxxjQGCyA==
-=9tMw
------END PGP SIGNATURE-----
-
---Sig_/z6QW1W_rd/rhI.BiE15ht.j--
+Doesn't apply to either tree, please rebase.
+-- 
+pw-bot: cr
 
