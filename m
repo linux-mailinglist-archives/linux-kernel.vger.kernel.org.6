@@ -1,161 +1,116 @@
-Return-Path: <linux-kernel+bounces-172540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA5C8BF35B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:13:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D96E58BF35F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 905D6B27ECD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:10:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77D26B28051
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1261A2C32;
-	Wed,  8 May 2024 00:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2EB10FF;
+	Wed,  8 May 2024 00:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="GdpblQXo"
-Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="d8evcJLT"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8668BEC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E2E633
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715126563; cv=none; b=TqIXOlrOz+SqJ+Ge1sldyTQbROTmgUSbl9EUC3xcCGMfVdLgYFXndL9j1S5peFCqZjtB9JWckIR1pLOgx85W9j+p8yi5HVeCp+i3YF4QQ/foPscpJ2UEIqENBnmXcOeAy0gWMiQmFuDilltU7UeDSiT+bjVMsGkuKRGBNC4Ibuc=
+	t=1715126697; cv=none; b=LcP/z2l2zyObgVDSld4CZJjK5Q55VIvwGJ+xp0pb6VTmmNZI2YZmsxY4SZOawXb7WL0zNn40ySY1ahSkLZ4fKmrfPDwm5F62wkcs9q1K2vYuI3ZyvUkJHW3rrkpa5zFs4U+ubIheHJzHChhc2eYoNc6QK6Pq+kwIZBFDcMydl9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715126563; c=relaxed/simple;
-	bh=x8yzkCVk6Wolns38BJznG8F1DF6BmLfscTRYXzWxiFY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mg1BBzZpMrS8kj8ty/o8jzBRIf+gdizX8m5QMb3j/Zu5TwSllvBymp//AhAjTVcKMk4No8dG3k9pVl1HvAcUGtgPY6HFP/WIy/zJSQ/EuiZWkHlQ0lTzbrwl4X91tVW7mem0TU9eJK1ylt3pXuUMxLc7WiI2Dz6EzZgWEXX0TWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GdpblQXo; arc=none smtp.client-ip=209.85.166.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7d9d0936d6aso461863339f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 17:02:30 -0700 (PDT)
+	s=arc-20240116; t=1715126697; c=relaxed/simple;
+	bh=EJN6mlEQptyW+8QYnpWcKaJ9kN9jPZky98kePf90PeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C92rE/rrDptd2ebMFWh9PqIbp3wehUrff9MSWDsDbOkDAXpPKPnTDw8LG5HOdtM1yMPDXP2EfWVDMhJ+wtGuO4xiHy7YMWa2ChLPEztAN4oKFDTQoFUoT9qvk1Ol0AfEzWURpQwSJPAQLieBZ7H+z8fiW8GUArFxIVIk7IShiLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=d8evcJLT; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7928dae7befso328136985a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 17:04:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715126549; x=1715731349; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2EzQcPBxS/fsLuAnrDweegMDqFpI++/qb4hh3xWGZ0s=;
-        b=GdpblQXo4Kb0hrYYpH4pnJQ+o5cPP+aKxKYmYYCqqcytbyFeW9R7YgV/OS5GqYGuuK
-         CE/zZS/fzjgq1z7NJTa7UC2dqQdjjrMAoBdJM5j0vg3+y3S95d0wFUcJoV1DhmZQliHK
-         nZMNksktsOpuOFmj11fx2V2hEl0/Wjy8nerpPuoCUu2P8XO+wBR7WXcwwXTe6F+TvOHv
-         /HEJ2RHQUPTTxpExMhWR1p1gthAEXXXCl3d2sbuiRmDFwhinVJZR4nWceSRpjkNbnU3N
-         ZlUzDrOIST1sSlD/a/2su/Q0EJigvA975qQd7KGEzl1PbTtFXyZ+4u8aJUVsAxnmZzqT
-         MntQ==
+        d=ziepe.ca; s=google; t=1715126695; x=1715731495; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vwwfu9gXxuRQ/Lnag+3klP7eYPeDRNPyKKE1ARsN48s=;
+        b=d8evcJLTJy+8PC0y55ogKbJYsIs07RACpF+JUcjU4FQwxec4Pjhc9SIRrlcsf/gIEF
+         JO/rUANvUpt/fuXaGI6CcQ+F/08/HNOsJsKVbh7/k03pQ6LY9VAE2bmpFbSuKidfD2H/
+         UhnXbqGFoi7TVrUD25TjwMCEX1kC7VIWAJOucgCNHOrM1U5UDBhb79BpJb0HODBhf75a
+         cGTphCQkv31pmV5eOxeeFCtr9LeBBZRMMmSuMTM/SOf0RkWm/z7xwrjYIu9gbbEeG9Yk
+         /lJgxIXAQnaaT7BTaoxhNWAU7KKN3r41Z8E2IV8ZULUbT9oPnE72yV0RyoOUu7xCJX+m
+         Ofhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715126549; x=1715731349;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2EzQcPBxS/fsLuAnrDweegMDqFpI++/qb4hh3xWGZ0s=;
-        b=c6ubsPNXreq4E8zV/l7h4od2AzdEtjtibqG39ETnge5dKCxZxIpQbkKVHp4a1Fvcjm
-         HBVocbmc404HOeRowFoTNwbN7ZIPUaeRIs/tGeaz6yxildFfEiY7smkThDSF0AQZ34CD
-         UEAWq4Lvz9DLDJK9vq/nFPNWUjcWLHMPptwRpPA5yGeFXD8MWLS7hOMruw8V7JM0bO5k
-         R8A8t2lrMmGyOtXNrieikCtMtvUYyBD0GXWjaFac1IJqQxcKCpkrYdJYLYMkcVqmocBY
-         fvDFARrkD1O0SR4nvGcGJlC1J46+KrPD66LMntRnY4czuVT97hI3DwmRs+vKZvKz4Wa2
-         TMCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWr9qxlnp1B6DjPmIfqkNhitcRW3jCAuXeaD0o6q9DIBQY8UxI2szzHU/nVVmbC4DjpAorIR6VSJ9D21nKpyiH2sOudcroTcT/Ip+Pw
-X-Gm-Message-State: AOJu0YyL/B3q7NGpO7ByDEK7v6trufkY5+1BJZdsDJoWJbD9NPz7vui3
-	lGGuNpgoKE39+5pkmAhwrOSjTdDd6NZvqiBPW2kvECMrEkR4M9X8czs1A8U+CFxR3ex5+9Ruk10
-	vfU57rQXrUdlLX9OPaOIc3g==
-X-Google-Smtp-Source: AGHT+IGw/gpETax6yTNA3i+9Zl+QI37sM3g2h6H0L5ARm9tG/6yPfzStL17AVO5/mFkhkenOKA0hprTVnxl15+f/xA==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:6638:1648:b0:488:d489:3940 with
- SMTP id 8926c6da1cb9f-488fdb12340mr66133173.3.1715126549481; Tue, 07 May 2024
- 17:02:29 -0700 (PDT)
-Date: Wed, 08 May 2024 00:02:27 +0000
+        d=1e100.net; s=20230601; t=1715126695; x=1715731495;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vwwfu9gXxuRQ/Lnag+3klP7eYPeDRNPyKKE1ARsN48s=;
+        b=VEUonHh2PWSy2KRgXnkurZG6NH7lGXRFQXCH5QiAY/7MqcxlwZ0QYH7n3+6dBKVuI6
+         EYe3L2+2nupQj6tOF7uSZX1dN8qAGQHRb/R7LLou65UQXeNFtrnWmmzmOq/4JwnFYXTQ
+         pztoggebgq7o5WhN54Kg/1+ct4kRejAcC+lv1caVhevM6jFgR/IFt77519SEQOw8GSUE
+         JAQNJBHjD4vckL0IVch5SHnfiU3k+0L6m/rbIewRr3Gf36XKRp9OF3sxIUoftCNLFqnM
+         di344WlClsScaVmWQA0Bg3+m3q+mBkWPgkSFUkw4PfiRlVSbZ2DHmjJwUCjeUMRNVq29
+         UM4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0m5dCP3Hwaq0/ZVZVi2m41oBOXkfartMwL/P5FZv4/mh0QvfdximfXe8Oi6zKrTDIHtfxawmTFy1zf80VPGA+5v+B2ftqJ1qPVGV5
+X-Gm-Message-State: AOJu0YyACUZTFKOpR4U89GF/6GElcToCmoyCX3isZUhAZjkudaeT/8Q2
+	czH8AyRgzEm2JasHhRbo/K65c9QAe50qkg2vROQ7UKr863LfOTMY2hEgTDL9fng=
+X-Google-Smtp-Source: AGHT+IHYYyzxl2qn3bcVXy98/9Q/oTYtmKwzIdmiSS76208dyr73dlmOHTUi+Oep8QKsaSqr7cfBKw==
+X-Received: by 2002:a05:620a:c07:b0:792:9167:5982 with SMTP id af79cd13be357-792b26ae168mr130112085a.15.1715126695290;
+        Tue, 07 May 2024 17:04:55 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id n10-20020a05620a222a00b007929914d7cbsm2454612qkh.81.2024.05.07.17.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 17:04:54 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1s4Unm-00040d-AR;
+	Tue, 07 May 2024 21:04:54 -0300
+Date: Tue, 7 May 2024 21:04:54 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>,
+	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+	virtualization@lists.linux-foundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/9] iommu: Add attachment handle to struct iopf_group
+Message-ID: <20240508000454.GM4718@ziepe.ca>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-4-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIABLBOmYC/x2MWwqEMBAEryLzbSCG+FivIoto0urAopJZRAje3
- SjUT0F1RxIEhlCbRQo4WHhbkxR5Rm4Z1hmKfXIy2lhd6lqN9iFlSkIv+MH9e9kBr1A1TntrquZ TUNrvAROf73f3va4bRAFkr2sAAAA=
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715126548; l=2860;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=x8yzkCVk6Wolns38BJznG8F1DF6BmLfscTRYXzWxiFY=; b=Sj99Fwr6AVwgXA4Y1BeQQmQ9JnnNDd7bY5VrSgi54QBOz4VkOqHiWOJ+sI+4TBriRdbf+MPy6
- pOsiE1rtNb6DspdDULYONRJEuLYkienHIofZLsdYrGz2xSOQp0ISZ1m
-X-Mailer: b4 0.12.3
-Message-ID: <20240508-b4-b4-sio-sr_select_speed-v1-1-968906b908b7@google.com>
-Subject: [PATCH] scsi: sr: fix unintentional arithmetic wraparound
-From: Justin Stitt <justinstitt@google.com>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Bill Wendling <morbo@google.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
-	Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240430145710.68112-4-baolu.lu@linux.intel.com>
 
-Running syzkaller with the newly reintroduced signed integer overflow
-sanitizer produces this report:
+On Tue, Apr 30, 2024 at 10:57:04PM +0800, Lu Baolu wrote:
+> @@ -206,8 +197,11 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+>  	if (group == &abort_group)
+>  		goto err_abort;
+>  
+> -	group->domain = get_domain_for_iopf(dev, fault);
+> -	if (!group->domain)
+> +	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) ||
+> +	    get_attach_handle_for_iopf(dev, fault->prm.pasid, group))
+> +		get_attach_handle_for_iopf(dev, IOMMU_NO_PASID, group);
 
-[   65.194362] ------------[ cut here ]------------
-[   65.197752] UBSAN: signed-integer-overflow in ../drivers/scsi/sr_ioctl.c:436:9
-[   65.203607] -2147483648 * 177 cannot be represented in type 'int'
-[   65.207911] CPU: 2 PID: 10416 Comm: syz-executor.1 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
-[   65.213585] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[   65.219923] Call Trace:
-[   65.221556]  <TASK>
-[   65.223029]  dump_stack_lvl+0x93/0xd0
-[   65.225573]  handle_overflow+0x171/0x1b0
-[   65.228219]  sr_select_speed+0xeb/0xf0
-[   65.230786]  ? __pm_runtime_resume+0xe6/0x130
-[   65.233606]  sr_block_ioctl+0x15d/0x1d0
-..
+That seems a bit weird looking?
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang. It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
+get_attach_handle_for_iopf(dev, 
+   (fault->prm.flags &
+   IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) ? fault->prm.pasid : IOMMU_NO_PASID,
+   group);
 
-Let's add an extra check to make sure we don't exceed 0xffff/177 (350)
-since 0xffff is the max speed. This has two benefits: 1) we deal with
-integer overflow before it happens and 2) we properly respect the max
-speed of 0xffff. There are some "magic" numbers here but I did not want
-to change more than what was necessary.
-
-Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-Closes: https://github.com/KSPP/linux/issues/357
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
-Here's the syzkaller reproducer:
-r0 = openat$cdrom(0xffffffffffffff9c, &(0x7f0000000140), 0x800, 0x0)
-ioctl$CDROM_SELECT_SPEED(r0, 0x5322, 0x7ee9f7c1)
-
-.. which was used against Kees' tree here (v6.8rc2):
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
-
-.. with this config:
-https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
----
- drivers/scsi/sr_ioctl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
-index 5b0b35e60e61..2d78bcf68eb3 100644
---- a/drivers/scsi/sr_ioctl.c
-+++ b/drivers/scsi/sr_ioctl.c
-@@ -430,7 +430,8 @@ int sr_select_speed(struct cdrom_device_info *cdi, int speed)
- 	Scsi_CD *cd = cdi->handle;
- 	struct packet_command cgc;
- 
--	if (speed == 0)
-+	/* avoid exceeding the max speed or overflowing integer bounds */
-+	if (speed == 0 || speed > 0xffff / 177)
- 		speed = 0xffff;	/* set to max */
- 	else
- 		speed *= 177;	/* Nx to kbyte/s */
-
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240507-b4-b4-sio-sr_select_speed-e68c0d426891
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+Jason
 
