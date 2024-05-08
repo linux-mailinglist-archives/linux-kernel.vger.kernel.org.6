@@ -1,127 +1,194 @@
-Return-Path: <linux-kernel+bounces-173389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004358BFFCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C9E8BFFD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:20:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5EF1F22FE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 385921C211A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BC985633;
-	Wed,  8 May 2024 14:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxjHvgoS"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92141F5F3;
-	Wed,  8 May 2024 14:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1F08562E;
+	Wed,  8 May 2024 14:20:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6CE53389;
+	Wed,  8 May 2024 14:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715177940; cv=none; b=J2fc4GXcntR8Ptaw/EwWUrwxEat6rOxwCqjpu3EDvIm4aGDPM41cIi/cFgbzTrjvCRsbW91FurIyDGVHIbsNmsllS4o2CG1/uUtMa4FrDTlPD9QGVbvyu4sYsJl5al0+t2oHXJqQzRpuki4SMQMERsg+TXV4s4//QUKKELw3QyE=
+	t=1715178007; cv=none; b=psiKO90iuF3kYmzTPbud6IfBPdhIv8XNDPF03aJoaUMTxr39tqBYVwSLs8SOqcIyqyNrxj4mCjGSwbD/R2HSlA/6t3aDI11Ka/WKRORL575qM6h52WpB2BZlQh/i8WT0AnrqtLjD0AzVsnnlkYLiEHb1Sy+zD/tPkO1O3lUR4jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715177940; c=relaxed/simple;
-	bh=2kkirt6e1tPPOnZq3X5WtkWdhQIf6ryAuUYhO5Df7RA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hyJUv969IdKe6xEQSApK2gh4CwIUIPIi8Q4DczDJrsBwOMqy3ZLD7dVPzVFnK9/GKYrI2TMyGC6uIgpv2qcJI3uqIzCuL8Wu4+MYbvNkDBg4w4aBXnL2zMyeyoi14LM7hOSjCOujNBUIxSimAxE7foRA3zIBW7MfWaBjtj+QhuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxjHvgoS; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e0a0cc5e83so53567971fa.1;
-        Wed, 08 May 2024 07:18:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715177937; x=1715782737; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/o8FZDVnI5HiA6gRp5LYG7KHS1m880+Mz+IUrCObIk=;
-        b=fxjHvgoS5X8vtsQbkp8sJDwM4Py+F2ed/vR7sDQdiHahybRWPj5K3s4WctnpZGI9Fc
-         vXJfDprtTMdcFk6YmtVtwR2YDnR2bec/wax63wWlMoSJEHVYHVzuHjFzq/dFdeHATmSh
-         hi0MLJvc/gjA0YXOPKyGnK4WdMKJm4ZLIGODX1ODaOp5cw3zkjjYzls4RGDg4+nGkoIX
-         U6yTwd7EFFD8nZdgTRfwKn1kpA/qQ4+3gNHRoDIrWe/cL996BRz0ouLgRPQdtAP2ci0+
-         CWVfNGV6A+rxrQ5AMQ0UV4OL2oowwV3muJVVe1xSL8dlzUG0gAcHYp5BUL/J5aZ+52VO
-         yACA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715177937; x=1715782737;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/o8FZDVnI5HiA6gRp5LYG7KHS1m880+Mz+IUrCObIk=;
-        b=hjKfraCw4avOmK68QtkJJc86fNPrYuj61/vH8LTA6Q5R21mZ2iRld+H5m0meGK/FK0
-         nCExAwIuWHjYA+OEQXQS7AzPb8BiprM/rF6LE77mI0zqHfa7jgmps6OrsGUO6P0xkOBm
-         ghUwenu+n57brroiu7wMXh4QR/VGailo5Bg/Ct/t8c4bVW7CFTx50qRkr4tPxbMz44hI
-         tT0MLkwiC0icroNwZ0j4GCVbnH5RV/eNRPfS1Pc+136IwIHxEFpcDKll7IxefJYSya7r
-         hlVlDyOiEg1CqXAQlzFM576n7YroWq1kzZcGKK1Znoan99Wg3j6shvnxfnB47yX4e89h
-         miFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfLmAZKQZ9U1SYLfIwDL+EELzQWUzIRtnuilk+Ezt61I3EdbUA98m01MhV8+rVwk3LEE/WDRLTgC/avyXySi5hWK79b68FOd410bQvXtFANBDRW0LFdA6Uuds18aTmjewCoMbaucaQrwJssYGw
-X-Gm-Message-State: AOJu0YwXHRGlOVCCf05vtAOwPYD4MUxX1mneBSMaYmoiVb1XBUq0Lb3w
-	pfPeu4meL8n4gMmqQnTVNVVIiFVO+i93BhxqpkfjxzSFnNQaJi0GD67xOXh7/q3ZBGpTCsL7KXh
-	OX/G+8dFAyqyP731SWcRMLrMbMjc=
-X-Google-Smtp-Source: AGHT+IHNN2Jg6pxtqKtrszRPpVa+3MamJp9KOJV7TV2Xe0scCtageC9Am3BgR9TNsbvf9fMR9gNXRhBjiHur8eRokC4=
-X-Received: by 2002:a05:651c:617:b0:2e2:be7a:e497 with SMTP id
- 38308e7fff4ca-2e447cac611mr13719581fa.49.1715177936843; Wed, 08 May 2024
- 07:18:56 -0700 (PDT)
+	s=arc-20240116; t=1715178007; c=relaxed/simple;
+	bh=MywWnECT1IA57bzYsC62zZaCOfyYL9X9TzJpNmQ9Mkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GPqkejLz+H6/17So+kVvp+WDo0nxgWhFlEGpt+jS3OS68sdRUOhSWE8RGG5QkzUi9eZdBg3zirbEIuXSYyXI+ZSnZj8/0SGLVXG5KCM9LnJo7GfiYKS+TjOpPQIANluJSnK14q/MY21EGKMfeiVDdH8bkxuYkciYVyY715l6nYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 054B51007;
+	Wed,  8 May 2024 07:20:31 -0700 (PDT)
+Received: from [10.1.30.37] (PF4Q20KV.arm.com [10.1.30.37])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5013F905;
+	Wed,  8 May 2024 07:20:03 -0700 (PDT)
+Message-ID: <0ab3a37a-f569-471f-b6a8-6e35959f568d@arm.com>
+Date: Wed, 8 May 2024 15:19:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240415141922.25055-1-peter.tsao@mediatek.com>
- <171328023414.16225.12939333659144302573.git-patchwork-notify@kernel.org> <0d59ae68-7552-454a-8d01-72c359496901@leemhuis.info>
-In-Reply-To: <0d59ae68-7552-454a-8d01-72c359496901@leemhuis.info>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 8 May 2024 10:18:44 -0400
-Message-ID: <CABBYNZK1QWNHpmXUyne1Vmqqvy7csmivL7q7N2Mu=2fmrUV4jg@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btusb: Fix the patch for MT7920 the affected
- to MT7921
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: marcel@holtmann.org, johan.hedberg@gmail.com, sean.wang@mediatek.com, 
-	deren.Wu@mediatek.com, chris.lu@mediatek.com, aaron.hou@mediatek.com, 
-	steve.lee@mediatek.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	patchwork-bot+bluetooth@kernel.org, Peter Tsao <peter.tsao@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] perf symbols: Update kcore map before merging in
+ remaining symbols
+To: James Clark <james.clark@arm.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, atrajeev@linux.vnet.ibm.com,
+ irogers@google.com, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org
+References: <20240507141210.195939-1-james.clark@arm.com>
+ <20240507141210.195939-4-james.clark@arm.com>
+ <CAM9d7cjYvMndUmSuwnE1ETwnu_6WrxQ4UzsNHHvo4SVR250L7A@mail.gmail.com>
+ <16116798-52d6-4004-8514-9b81c789474f@arm.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <16116798-52d6-4004-8514-9b81c789474f@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 5/8/2024 10:14 AM, James Clark wrote:
 
-On Wed, May 8, 2024 at 4:34=E2=80=AFAM Linux regression tracking (Thorsten
-Leemhuis) <regressions@leemhuis.info> wrote:
->
-> On 16.04.24 17:10, patchwork-bot+bluetooth@kernel.org wrote:
-> >
-> > This patch was applied to bluetooth/bluetooth-next.git (master)
-> > by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-> >
-> > On Mon, 15 Apr 2024 22:19:22 +0800 you wrote:
-> >> Because both MT7920 and MT7921 use the same chip ID.
-> >> We use the 8th bit of fw_flavor to distingush MT7920.
-> >> The original patch made a mistake to check whole fw_flavor,
-> >> that makes the condition both true (dev_id =3D=3D 0x7961 && fw_flavor)=
-,
-> >> and makes MT7921 flow wrong.
-> >>
-> >> In this patch, we correct the flow to get the 8th bit value for MT7920=
-.
-> >> And the patch is verified pass with both MT7920 and MT7921.
-> >>
-> >> [...]
-> >
-> > Here is the summary with links:
-> >   - Bluetooth: btusb: Fix the patch for MT7920 the affected to MT7921
-> >     https://git.kernel.org/bluetooth/bluetooth-next/c/263296438807
->
-> Hi! 6.9 is only days close and this is fixing a 6.9 regression, so allow
-> me to quickly ask: do you still plan to submit this for mainline merge
-> soon? Or did you already and I just missed it? Ciao, Thorsten
+[...]
 
-It wasn't marked with Fixes or stable though which is what I usually
-use as an indicator to backport.
+>> Looks like you and Leo are working on the same problem.
+>>
+>> https://lore.kernel.org/r/20240505202805.583253-1-leo.yan@arm.com/
+>>
+> 
+> Oops I should have checked the list. It looks like we can still take his
+> fix as well though, with an updated comment.
 
---=20
-Luiz Augusto von Dentz
+Sorry for duplicate work. I will resend my patch separately with refined
+comment, as suggested by Adrian.
+
+[...]
+
+>>> @@ -1289,7 +1289,7 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>>>  {
+>>>         struct maps *kmaps = map__kmaps(map);
+>>>         struct kcore_mapfn_data md;
+>>> -       struct map *replacement_map = NULL;
+>>> +       struct map *map_ref, *replacement_map = NULL;
+>>>         struct machine *machine;
+>>>         bool is_64_bit;
+>>>         int err, fd;
+>>> @@ -1367,6 +1367,24 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>>>         if (!replacement_map)
+>>>                 replacement_map = list_entry(md.maps.next, struct map_list_node, node)->map;
+
+As the 'replacement' map is mainly used to adjust the kernel's sections
+between '_stext' and '_end', some arches might don't share the same issue with
+Arm64.  So it is a bit redundant for assignment 'replacement_map' if it is
+NULL, we can consider to remove the above two lines.
+
+>>>
+>>> +       /*
+>>> +        * Update addresses of vmlinux map. Re-insert it to ensure maps are
+>>> +        * correctly ordered. Do this before using maps__merge_in() for the
+>>> +        * remaining maps so vmlinux gets split if necessary.
+>>> +        */
+>>> +       map_ref = map__get(map);
+>>> +       maps__remove(kmaps, map_ref);
+>>
+>> A nitpick.  It'd be natural to use 'map' instead of 'map_ref'
+>> (even if they are the same) since IIUC we want to remove
+>> the old 'map' and update 'map_ref' then add it back.
+>>
+> 
+> Using map makes sense, I can update that.
+> 
+>>> +
+>>> +       map__set_start(map_ref, map__start(replacement_map));
+>>> +       map__set_end(map_ref, map__end(replacement_map));
+>>> +       map__set_pgoff(map_ref, map__pgoff(replacement_map));
+>>> +       map__set_mapping_type(map_ref, map__mapping_type(replacement_map));
+>>
+>> So here, replacement_map should not be NULL right?
+>>
+> 
+> Yes it shouldn't be. It would only be NULL if md.maps is empty, but
+> there's already an exit condition for that above.
+> 
+> Some of the other code also assumes node->map is always set, so it can't
+> be NULL that way either.
+
+Thus, we can consider to check condition for 'replacement' map is NULL or not.
+
+    if (replacement_map) {
+	list_del_init(&new_node->node);
+
+	map_ref = map__get(map);
+	maps__remove(kmaps, map_ref);
+	...
+	map__put(new_map);
+	if (err)
+		goto out_err;
+	free(new_node);
+    }
+
+[...]
+
+>>> @@ -1374,24 +1392,8 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>>>
+>>>                 list_del_init(&new_node->node);
+>>>
+>>> -               if (RC_CHK_EQUAL(new_map, replacement_map)) {
+>>> -                       struct map *map_ref;
+>>> -
+>>> -                       /* Ensure maps are correctly ordered */
+>>> -                       map_ref = map__get(map);
+>>> -                       maps__remove(kmaps, map_ref);
+>>> -
+>>> -                       map__set_start(map_ref, map__start(new_map));
+>>> -                       map__set_end(map_ref, map__end(new_map));
+>>> -                       map__set_pgoff(map_ref, map__pgoff(new_map));
+>>> -                       map__set_mapping_type(map_ref, map__mapping_type(new_map));
+>>> -
+>>> -                       err = maps__insert(kmaps, map_ref);
+>>> -                       map__put(map_ref);
+>>> -                       map__put(new_map);
+>>> -                       if (err)
+>>> -                               goto out_err;
+>>> -               } else {
+>>> +               /* skip if replacement_map, already inserted above */
+>>> +               if (!RC_CHK_EQUAL(new_map, replacement_map)) {
+
+With above change, we don't need check 'replacement_map' at here.
+
+Just extend a bit for considering a more clean fixing, we need to sort all
+ranges in 'md.maps', this would be benefit for two things:
+
+- We can fix up any map regions, not only limit to the 'replacement_map'. With
+  sorting maps in 'md.maps', we can totally remove the code for
+  'replacement_map'.
+- We can report the potential issue caused by overlapping in the first place
+  rather than the assert log in check_invariants(). This is easier for later
+  debugging.
+
+But current patch is good enough for me, I don't have strong opinion for this.
+
+Thanks,
+Leo
+
+>>>                         /*
+>>>                          * Merge kcore map into existing maps,
+>>>                          * and ensure that current maps (eBPF)
+>>> --
+>>> 2.34.1
+>>>
 
