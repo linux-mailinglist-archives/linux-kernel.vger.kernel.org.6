@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-173655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF998C037D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:43:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44188C0384
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733381F223F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 259E7B24837
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258A012B142;
-	Wed,  8 May 2024 17:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="INisVFej"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C302D79E1;
+	Wed,  8 May 2024 17:44:10 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3BD35F18
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BCC38F9A;
+	Wed,  8 May 2024 17:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715190228; cv=none; b=PSQZUkrtEJeNew5Syd6T4IKmG2zA8XyRlFSRXmRV6L1RIc8ctAr1vV0R+Ts+BXDDpjt5DZf/MdRm4LP487iGFjp/NmV463OK9V5CI7GwT631oYwWf4yRH+dVgAcB4MUug8d2plk8FJhEXmvr0Jia7f/55r07Kj4gOwPLIh7xKfs=
+	t=1715190250; cv=none; b=GpaS2xeXk5S4l7neu4IYflMxlUJZgOCaNc3K5B/qSTVWkrvCg1KmqDyzTErulNLAkVeNEdt0dwFJS7l6oLXKKgtemHH5ScsHrH4dHXbOu3Wst2u+Y8sm1VCDM9eYS0oCNsP6Ygpk6oXex0se6551S3fp53VNt6Mie5sZdEQqO8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715190228; c=relaxed/simple;
-	bh=31XmwO5nXS1nwEapBk2NNksodlmCulY6cmDlawgK3qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bRZUxwqcu1M3QG2aAEuvdMSjp31kuS5PM6tGj52hRfcW8GiapOLd11+v6PYdEpig2FsefHqFZoEDiO+bKd5ZoCkSXbO9FWBvHuBciAOfenVqAbkooz6/lZuUHn7AcciRKd7KEd/7u24ptz396oHqWr6T4Xfx195V0ZxcspTv8sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=INisVFej; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ba1ba55ffso246385e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:43:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715190224; x=1715795024; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=idEaMcbGFaK4BQgFvbB0b5BDKYmvMsNLNj6qCW0EDH0=;
-        b=INisVFejlQ1rTtIijaKpKsCM5C1LOXcWblW7Bfb9xL147+SQECDaaNw61uoWiMfvfS
-         /KmnYfmYLJNqwVQpMlEciNglye3xUFw77UEbWETf5tskPxn1EvidTyJQ9anvTf8A+J+Y
-         mJSHELJ4eTpMmnHWvsj4JMYdlkMEsifxTMM3erwilUZYZ6QHg58KC7VV0hZk2fVcTcEQ
-         9HuZMONxY+SDRFVSvVrOYFddpAO1h8oVsg49ewi03G902Uf+o34e7EOnbutFxORzXgzD
-         MSk7bwpCdzqhRUvEYrXdiCH8TuQxFsthtpqIhJcyLXzoocv8lWS0cFG8XGxMC+MsDT6n
-         TKBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715190224; x=1715795024;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=idEaMcbGFaK4BQgFvbB0b5BDKYmvMsNLNj6qCW0EDH0=;
-        b=hT+QlnBPzSdzVEnOpf6MwBwKDgVc21VjnyQHuuWBvpY6A0AFe7T6ol2gmCWhhcqLcD
-         MF+l0x5kodZV/q87KDP7eo6G0VJILGhtN3s0IpMV1eL3Kv7n86TBdm0Ftntj42LtCe/O
-         VJou84oxwBmGX5ikyW3KM0PEOCMtWhwsRxjL6+AoUqTaFty48vjB2LEsJCq+SIVZUNf3
-         JZJudK8LPRTIZBsWMRylg+Wgu5yd/L3aXgdhG6nOIkXXVeC878A4h991nHx+cjPkTZaF
-         JHHqCTF4UsUZkinby/GkZmeKDzpa3Q8iwGotRLnHINDxp2j7ju7JHaSjSVW8HmqjrTug
-         zd/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0YMwg41Oq6ZlmELWHhAfXDyAykLcib3fl+d4c4qcz7hYWn7GjARKYoVyw913As+3n053Sz1XMiqoB6GGNVxx8uLPi5NKSpF7+CzgU
-X-Gm-Message-State: AOJu0Yw1IFzOJzOLxjW6lSfdmV8SaviejUMj9xHt7vkft0ZXyGy1Tjdl
-	8PlkdOTWs6QJRERH3RkB+gUQRUt/HZVJyzCVbWTTnSI32Uip7tjecQuD9t9Dhxw=
-X-Google-Smtp-Source: AGHT+IEu1aW4a8E99d+7lWp9ZffFtuGe8/3woIj3ozR0DQZMe/xC4frcR0jBIUcfvK8mmbuAyGoGxQ==
-X-Received: by 2002:a05:600c:1d05:b0:418:d3f4:677b with SMTP id 5b1f17b1804b1-41fbce7ddc9mr2866845e9.17.1715190224639;
-        Wed, 08 May 2024 10:43:44 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882086f0sm30355515e9.42.2024.05.08.10.43.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 10:43:44 -0700 (PDT)
-Message-ID: <613657e3-0ddb-47f7-b66b-e1462b6a6282@linaro.org>
-Date: Wed, 8 May 2024 18:43:43 +0100
+	s=arc-20240116; t=1715190250; c=relaxed/simple;
+	bh=Gz4wEJwjFRJax85gYAY8xR9FHpxogME+xjyKzzRa+14=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NVJ5hqUBVpBlRLU/48K1ff8y5YEnRSeEh5O1gJsfTocyCOQi4qR4ZwCmQsbuyHerKWDGIsyK6Hy9zZam6eh86wSF+2jAqPX5N5rHQV7YHD6vZySGQ+iKstCPlrlhdUEpQCLhu5OC7BcjiD5iXetx+1oCAKobg2Ji9c9sfvgpAvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZMvB0lN4z6K7GH;
+	Thu,  9 May 2024 01:43:34 +0800 (CST)
+Received: from lhrpeml500006.china.huawei.com (unknown [7.191.161.198])
+	by mail.maildlp.com (Postfix) with ESMTPS id A4F42140AB8;
+	Thu,  9 May 2024 01:44:03 +0800 (CST)
+Received: from lhrpeml500006.china.huawei.com (7.191.161.198) by
+ lhrpeml500006.china.huawei.com (7.191.161.198) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 8 May 2024 18:44:03 +0100
+Received: from lhrpeml500006.china.huawei.com ([7.191.161.198]) by
+ lhrpeml500006.china.huawei.com ([7.191.161.198]) with mapi id 15.01.2507.039;
+ Wed, 8 May 2024 18:44:03 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"Jonathan Cameron" <jonathan.cameron@huawei.com>, "dave.jiang@intel.com"
+	<dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "Jon.Grimm@amd.com"
+	<Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "mike.malvestuto@intel.com"
+	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
+	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>
+Subject: RE: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Thread-Topic: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Thread-Index: AQHaknlLsB7DmyDvA0iAgKJhxeY8vLF4vVgAgABZuhCAEPP6AIADoMIA///2ZwCAABJKUA==
+Date: Wed, 8 May 2024 17:44:03 +0000
+Message-ID: <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
+References: <20240419164720.1765-1-shiju.jose@huawei.com>
+ <20240419164720.1765-2-shiju.jose@huawei.com>
+ <20240425101542.GAZiotThrq7bOE9Ieb@fat_crate.local>
+ <63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
+ <20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
+ <e0ce36eb80054440ab877ccee4e606de@huawei.com>
+ <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
+In-Reply-To: <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] pinctrl: qcom: spmi-gpio: drop broken pm8008
- support
-To: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
- Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>,
- Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240506150830.23709-1-johan+linaro@kernel.org>
- <20240506150830.23709-10-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240506150830.23709-10-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 06/05/2024 16:08, Johan Hovold wrote:
-> The SPMI GPIO driver assumes that the parent device is an SPMI device
-> and accesses random data when backcasting the parent struct device
-> pointer for non-SPMI devices.
-> 
-> Fortunately this does not seem to cause any issues currently when the
-> parent device is an I2C client like the PM8008, but this could change if
-> the structures are reorganised (e.g. using structure randomisation).
-> 
-> Notably the interrupt implementation is also broken for non-SPMI devices.
-> 
-> Also note that the two GPIO pins on PM8008 are used for interrupts and
-> reset so their practical use should be limited.
-> 
-> Drop the broken GPIO support for PM8008 for now.
-> 
-> Fixes: ea119e5a482a ("pinctrl: qcom-pmic-gpio: Add support for pm8008")
-> Cc: stable@vger.kernel.org	# 5.13
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->   drivers/pinctrl/qcom/pinctrl-spmi-gpio.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> index f4e2c88a7c82..e61be7d05494 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-> @@ -1206,7 +1206,6 @@ static const struct of_device_id pmic_gpio_of_match[] = {
->   	{ .compatible = "qcom,pm7325-gpio", .data = (void *) 10 },
->   	{ .compatible = "qcom,pm7550ba-gpio", .data = (void *) 8},
->   	{ .compatible = "qcom,pm8005-gpio", .data = (void *) 4 },
-> -	{ .compatible = "qcom,pm8008-gpio", .data = (void *) 2 },
->   	{ .compatible = "qcom,pm8019-gpio", .data = (void *) 6 },
->   	/* pm8150 has 10 GPIOs with holes on 2, 5, 7 and 8 */
->   	{ .compatible = "qcom,pm8150-gpio", .data = (void *) 10 },
-
-Since there are no upstream dtsi users there's no harm in dropping and 
-re-adding when i2c can be taken account of.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Pi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+RnJvbTogQm9yaXNsYXYgUGV0a292IDxicEBh
+bGllbjguZGU+DQo+U2VudDogMDggTWF5IDIwMjQgMTg6MjANCj5UbzogU2hpanUgSm9zZSA8c2hp
+anUuam9zZUBodWF3ZWkuY29tPg0KPkNjOiBsaW51eC1jeGxAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1hY3BpQHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+bW1Aa3ZhY2sub3JnOyBkYW4uai53aWxs
+aWFtc0BpbnRlbC5jb207IGRhdmVAc3Rnb2xhYnMubmV0OyBKb25hdGhhbg0KPkNhbWVyb24gPGpv
+bmF0aGFuLmNhbWVyb25AaHVhd2VpLmNvbT47IGRhdmUuamlhbmdAaW50ZWwuY29tOw0KPmFsaXNv
+bi5zY2hvZmllbGRAaW50ZWwuY29tOyB2aXNoYWwubC52ZXJtYUBpbnRlbC5jb207IGlyYS53ZWlu
+eUBpbnRlbC5jb207DQo+bGludXgtZWRhY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmc7IGRhdmlkQHJlZGhhdC5jb207DQo+VmlsYXMuU3JpZGhhcmFuQGFtZC5j
+b207IGxlby5kdXJhbkBhbWQuY29tOyBZYXplbi5HaGFubmFtQGFtZC5jb207DQo+cmllbnRqZXNA
+Z29vZ2xlLmNvbTsgamlhcWl5YW5AZ29vZ2xlLmNvbTsgdG9ueS5sdWNrQGludGVsLmNvbTsNCj5K
+b24uR3JpbW1AYW1kLmNvbTsgZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tOyByYWZhZWxAa2Vy
+bmVsLm9yZzsNCj5sZW5iQGtlcm5lbC5vcmc7IG5hb3lhLmhvcmlndWNoaUBuZWMuY29tOyBqYW1l
+cy5tb3JzZUBhcm0uY29tOw0KPmp0aG91Z2h0b25AZ29vZ2xlLmNvbTsgc29tYXN1bmRhcmFtLmFA
+aHBlLmNvbTsNCj5lcmRlbWFrdGFzQGdvb2dsZS5jb207IHBnb25kYUBnb29nbGUuY29tOyBkdWVu
+d2VuQGdvb2dsZS5jb207DQo+bWlrZS5tYWx2ZXN0dXRvQGludGVsLmNvbTsgZ3RoZWxlbkBnb29n
+bGUuY29tOw0KPndzY2h3YXJ0ekBhbXBlcmVjb21wdXRpbmcuY29tOyBkZmVyZ3Vzb25AYW1wZXJl
+Y29tcHV0aW5nLmNvbTsNCj53YnNAb3MuYW1wZXJlY29tcHV0aW5nLmNvbTsgbmlmYW4uY3hsQGdt
+YWlsLmNvbTsgdGFueGlhb2ZlaQ0KPjx0YW54aWFvZmVpQGh1YXdlaS5jb20+OyBaZW5ndGFvIChC
+KSA8cHJpbWUuemVuZ0BoaXNpbGljb24uY29tPjsNCj5rYW5na2FuZy5zaGVuQGZ1dHVyZXdlaS5j
+b207IHdhbmdodWlxaWFuZyA8d2FuZ2h1aXFpYW5nQGh1YXdlaS5jb20+Ow0KPkxpbnV4YXJtIDxs
+aW51eGFybUBodWF3ZWkuY29tPg0KPlN1YmplY3Q6IFJlOiBbUkZDIFBBVENIIHY4IDAxLzEwXSBy
+YXM6IHNjcnViOiBBZGQgc2NydWIgc3Vic3lzdGVtDQo+DQo+T24gV2VkLCBNYXkgMDgsIDIwMjQg
+YXQgMDQ6NTk6MThQTSArMDAwMCwgU2hpanUgSm9zZSB3cm90ZToNCj4+ID4+IEkgdGhpbmsgaXQg
+aGFwcGVucyBvbmx5IHdoZW4gYSBkZXBlbmRlbnQgbW9kdWxlIGFzIGF1dG9sb2FkZWQgYmFzZWQN
+Cj4+ID4+IG9uIGEgc2NydWIgZGV2aWNlIGV4aXN0aW5nIHdpdGggZXhjZXB0aW9uIG9mIG1lbW9y
+eSBzY3J1YiBjb250cm9sDQo+PiA+PiBidWlsdCBpbiBhbmQgd2hvIHdvdWxkIGJ1aWxkIHRoaXMg
+aW4/DQo+PiA+DQo+PiA+WW91IHRoaW5rIG9yIHlvdSBrbm93Pw0KPj4gV2Uga25vdyBhcyBJIGhh
+ZCB0ZXN0ZWQuDQo+DQo+RG9lcyB0aGlzIHRoaW5nIHJlZ2lzdGVyIHN1Y2Nlc3NmdWxseSBvbiBh
+IG1hY2hpbmUgd2hpY2ggZG9lc24ndCBoYXZlIHRob3NlDQo+ZGV2aWNlcz8NCj4NCkkgbWVhbiBz
+Y3J1YiBzdWJzeXN0ZW0gbW9kdWxlIGlzIG5vdCBsb2FkZWQgYW5kIGluaXRpYWx6ZWQgdW50aWwg
+YSBkZXBlbmRlbnQgIGRldmljZSBtb2R1bGUgaXMgbG9hZGVkIGFuZCBhIGRldmljZSBkb2VzIG5v
+dCBnZXQgcmVnaXN0ZXJlZCB3aXRoIHRoZSBzY3J1YiBzdWJzeXN0ZW0gb24gYSBtYWNoaW5lIHdo
+aWNoIGRvZXNuJ3QgaGF2ZSB0aGUgY29ycmVzcG9uZGluZyBzY3J1YiBmZWF0dXJlcy4NCj4tLQ0K
+PlJlZ2FyZHMvR3J1c3MsDQo+ICAgIEJvcmlzLg0KPg0KPmh0dHBzOi8vcGVvcGxlLmtlcm5lbC5v
+cmcvdGdseC9ub3Rlcy1hYm91dC1uZXRpcXVldHRlDQoNClRoYW5rcywNClNoaWp1DQo=
 
