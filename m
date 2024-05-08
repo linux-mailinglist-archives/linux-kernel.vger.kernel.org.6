@@ -1,150 +1,114 @@
-Return-Path: <linux-kernel+bounces-173253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495838BFDA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBF58BFDAE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEAEFB22044
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C0F62857A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B9458119;
-	Wed,  8 May 2024 12:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485495B1E4;
+	Wed,  8 May 2024 12:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nF8mCKjC"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="BkR85RNs"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0828722071;
-	Wed,  8 May 2024 12:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0A422071;
+	Wed,  8 May 2024 12:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715172641; cv=none; b=sXGDODACVmairh7Yl29q4beZndePa4BmdYGYNAwP5nPAG31p33W3LRnLGMuDBOD0osT3TG2EXKukMCaZm0T5UhLXx/ytR2wosCHXrBbXaI4OTcF2zbXzM8yA7ZGYZmspRzbLr/UnOTHj4j5ev4vEK7BWhX3Zpq3hWHrcmFHFqks=
+	t=1715172678; cv=none; b=PSSsROc2rLG/kmtiFt5FMRaA1L64bNqEGTOgPHrPrALJUhjVKPqnlG5AKZvWKDPbK3SZyfZn9SWyIUzi7SUyT64uMdcsI4IXCvyeMoq3HUTuu5ad7q7ZDhi0d8SGbM1coapZfVeyHN0CcPVSmRYSxLsL9lV3OnvOmxBD5OVeTa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715172641; c=relaxed/simple;
-	bh=xxoigdMuZDH/elCkReVLK7gi7lt+nFEyJsXIqj3Mwp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BjwMn6+7EyG1tfZ6t+Su0vTpT+lAEqmQyHxKdPto5aD0HUfdh4a2LdcmkkM6j+DrTmKQu7jHjagNU3jRjkiP9QjJMucS6by2u+/KWw/sgCPthjIsUsZ6asKdxJym71ovwpWU3C2Hcp4cEDKNe2VlgsIkfJm+KPL1k5fAM6eZEUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nF8mCKjC; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f74fa2a82so4951118e87.0;
-        Wed, 08 May 2024 05:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715172638; x=1715777438; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5W3/T5hNFLBQFwQnjoXHkZWSTE3Wc9MBCfUpRXABUCY=;
-        b=nF8mCKjCSwJBqHEu/jUWV4YdMn6DTOJ4/bCg5+0ihNSaJrbZrRtJna/vTYXHWWblPQ
-         13lwIFvjp4Lx7q5il+heRbgrQy709mPXe/t7QrcxUnWItcwxw9bFBQB4/oxU01q1Q/vt
-         oMYyqVcS0gjyoMf/NihJuxM9Wk/3MUyczhlVtB7332dVMYWvpveWscvmKN77EYPQyYbN
-         vSpe9b0192MESngxPxVzXXvATMBBPu043dHnqELQ9+tQRVh3YSglXtu+eWHoOzRtlxdQ
-         KKKP5OC3S+vBWnSYqbtMxGwWypW9Yh5bNvi2hwfwsezzqxQkVocJQer7ub/UrEXzbIDH
-         i2RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715172638; x=1715777438;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5W3/T5hNFLBQFwQnjoXHkZWSTE3Wc9MBCfUpRXABUCY=;
-        b=An5N85Lkw9CooRKi0XG/XkEoRFw9hRJZzH0bDCvnl0bCn58M9F4WJuH1HK27FBoLeT
-         9liwiE+nnvQPPOxt2Q1jOWMtBPwg6KSTXmDKnVLF7MqnD13pyQ5MVmpLyJC24CdV1Zcx
-         6ybM9xeXPpxb8PFkQIEjRaBhQje5ej8XuQYTrNyVnHAdvjecEZbX88/slJqPwwo0IeNj
-         guG3Wt8g8nssHFJ76Xco+gzxVtQ9MmrIQOoXcBC6e5/SWX9hODrqtxWqlNuyFcciG0o3
-         /H162cj1fwHGLIDCR3F+dN+q+3OSXc5jlZZ3vg1j2sEaw2pYNUdho+qSbvKPAQfLN2uK
-         jnkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzm2TyX8EbI1kYegQWO8c7WSk7EtpD/34+IOCm/3Ncn2uVlO9/lebB4NhOX39Iqq45VN8MmG/9iRT3OTZAvlTxaoBC+1riYH1u1j2DK2EK/6loLSraxTRpIP2Dw0tr2bIlelFa78QeIHnWyQvczpzkog35uETVc0K768zksVHnIeAmhRw=
-X-Gm-Message-State: AOJu0YxqynJDP3WQEaE/T17moAg03QP/3JxXo9Uw/8YKwRk5YwyvJw4T
-	ztg+oHXM4BysIASLAXcM/0WanKUxqqXOBx8WncDBN9fiDm/ZOeGD
-X-Google-Smtp-Source: AGHT+IExQ9Bo3wFOlD3cPw8vNboAsh5CWVK1tusp2l9JO65IhQgGzC0hKoUwKiy+1C44igc64lZdvQ==
-X-Received: by 2002:a19:8c11:0:b0:51d:804a:232 with SMTP id 2adb3069b0e04-5217c372ea6mr1996300e87.11.1715172637827;
-        Wed, 08 May 2024 05:50:37 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id g3-20020a056512118300b00518e17fc331sm2499159lfr.157.2024.05.08.05.50.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 05:50:37 -0700 (PDT)
-Date: Wed, 8 May 2024 15:50:34 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Paul Burton <paulburton@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/5] MIPS: Move mips_cm_probe after prom_init
-Message-ID: <forgoxnzqnwreba7j57lgs6lgzny3zdnaqnpctr2qhtlcad3pg@l44sn4zf7hu3>
-References: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
- <20240507-cm_probe-v1-3-11dbfd598f3c@flygoat.com>
+	s=arc-20240116; t=1715172678; c=relaxed/simple;
+	bh=zjLlvB+WbJijsa7Xq2sGoO7LgZnL7gRVI2UA3wsYzcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=geN/5VNbdH8GTK1diKdVxyoZZgNg5vvSEWXIsjkTzSpn9n9rtlGjkRCazZmEAgm+mJNNtaoEXKTBFH0anbIvmk6LBlIW8T0RxozZZg6pTnreZ2rBk7dXufm17g7HSGpjbAsDrvrVHlhwdMxhUDWfJKZY9YikbOf2nnz9PDXvnSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=BkR85RNs; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=zjLlvB+WbJijsa7Xq2sGoO7LgZnL7gRVI2UA3wsYzcY=;
+	t=1715172676; x=1715604676; b=BkR85RNsJiheEHp4jencaeLhwFiknHBpEcEwEG6g/9FugG1
+	DHRX6V5j0wmaijOjWzC2ylJr2jo3MNzJFKHDX4J77455GieigLGDxVDTQGDv3ayDtAQXbHJH7VjbQ
+	jLz8UmQAx8QK0Sh6UazeUdKOhdl8G7Hm66WrbI2w8K72EJtzFvPbSkkY84mYInFQypdnwo0ACDuM6
+	uiQFt6Shmx+Dtfz7bNW+dVbSNMMCPrZUpFNda8xdf/NYPNQJmgdIXzLU8rs3RReKYrCv6Lf96rMxg
+	zyy/9Ls6Ni7lJ0DmC/mXqFHBtsZV3vUD7nJO4S074nOYe3/zw+cCRCWBTMgU1y8w==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s4glL-0003Db-Ck; Wed, 08 May 2024 14:51:11 +0200
+Message-ID: <7e3fdac4-e0bc-42f4-9bb3-a6b16f323491@leemhuis.info>
+Date: Wed, 8 May 2024 14:51:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507-cm_probe-v1-3-11dbfd598f3c@flygoat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Regression] 6.9.0: WARNING: workqueue: WQ_MEM_RECLAIM
+ ttm:ttm_bo_delayed_delete [ttm] is flushing !WQ_MEM_RECLAIM
+ events:qxl_gc_work [qxl]
+To: stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+Cc: airlied@gmail.com, airlied@redhat.com, daniel@ffwll.ch,
+ dreaming.about.electric.sheep@gmail.com, dri-devel@lists.freedesktop.org,
+ kraxel@redhat.com, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ spice-devel@lists.freedesktop.org, tzimmermann@suse.de,
+ virtualization@lists.linux.dev, Anders Blomdell <anders.blomdell@gmail.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ David Wang <00107082@163.com>
+References: <20240430061337.764633-1-00107082@163.com>
+ <20240506143003.4855-1-00107082@163.com>
+ <ac41c761-27c9-48c3-bd80-d94d4db291e8@leemhuis.info>
+ <b57f8ede-5de6-4d3d-96a0-d2fdc6c31174@gmail.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <b57f8ede-5de6-4d3d-96a0-d2fdc6c31174@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715172676;62cce3d8;
+X-HE-SMSGID: 1s4glL-0003Db-Ck
 
-On Tue, May 07, 2024 at 10:01:51AM +0100, Jiaxun Yang wrote:
-> Move mips_cm_probe after prom_init so we can use fdt functions
-> in mips_cm_probe to obtain essential information.
-> 
-> Impat for all systems that may have CM in system:
+On 08.05.24 14:35, Anders Blomdell wrote:
+> On 2024-05-07 07:04, Linux regression tracking (Thorsten Leemhuis) wrote:
+>> On 06.05.24 16:30, David Wang wrote:
+>>>> On 30.04.24 08:13, David Wang wrote:
+>>
+>>>> And confirmed that the warning is caused by
+>>>> 07ed11afb68d94eadd4ffc082b97c2331307c5ea and reverting it can fix.
+>>>
+>>> The kernel warning still shows up in 6.9.0-rc7.
+>>> (I think 4 high load processes on a 2-Core VM could easily trigger
+>>> the kernel warning.)
+>>
+>> Thx for the report. Linus just reverted the commit 07ed11afb68 you
+>> mentioned in your initial mail (I put that quote in again, see above):
+>>
+>> 3628e0383dd349 ("Reapply "drm/qxl: simplify qxl_fence_wait"")
+>> https://git.kernel.org/torvalds/c/3628e0383dd349f02f882e612ab6184e4bb3dc10
+>>
+>> So this hopefully should be history now.
+>>
+> Since this affects the 6.8 series (6.8.7 and onwards), I made a CC to
+> stable@vger.kernel.org
 
-> - geneirc: Adjusted code to accommodate this change
+Ohh, good idea, I thought Linus had added a stable tag, but that is not
+the case. Adding Greg as well and making things explicit:
 
-s/geneirc/generic
+@Greg: you might want to add 3628e0383dd349 ("Reapply "drm/qxl: simplify
+qxl_fence_wait"") to all branches that received 07ed11afb68d94 ("Revert
+"drm/qxl: simplify qxl_fence_wait"") (which afaics went into v6.8.7,
+v6.6.28, v6.1.87, and v5.15.156).
 
-> - Lantiq: No impact, CM configuration won't be changed at all
-> - ralink: Called mips_cm_probe on it's own, in prom_init->prom_soc_init
-
-> - malta: No impact, CM address comes from CP0_CMGCR
-
-Are you sure about this? This was one of the problematic part I met
-back when was trying to implement the feature.
-arch/mips/mti-malta/malta-init.c:
-prom_init()
-+-> mips_cpc_probe()
-    +-> mips_cpc_phys_base()
-        +-> mips_cm_present(): mips_gcr_base != NULL
-        +-> read_gcr_cpc_status()
-        +-> read_gcr_cpc_base()
-        +-> write_gcr_cpc_base()
-
-So by moving mips_cm_probe() to being executed after prom_init() the
-calls-chain above will be broken since the mips_gcr_base will be left
-uninitialized. Do I miss something?
-
-Please, note originally the mips_cm_probe() invocation was right
-above the Malta's mips_cpc_probe():
-3af5a67c86a3 ("MIPS: Fix early CM probing")
-
--Serge(y)
-
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  arch/mips/kernel/setup.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-> index 12a1a4ffb602..732579c8f4f8 100644
-> --- a/arch/mips/kernel/setup.c
-> +++ b/arch/mips/kernel/setup.c
-> @@ -773,8 +773,8 @@ static void __init setup_rng_seed(void)
->  void __init setup_arch(char **cmdline_p)
->  {
->  	cpu_probe();
-> -	mips_cm_probe();
->  	prom_init();
-> +	mips_cm_probe();
->  
->  	setup_early_fdc_console();
->  #ifdef CONFIG_EARLY_PRINTK
-> 
-> -- 
-> 2.34.1
-> 
-> 
+Ciao, Thorsten
 
