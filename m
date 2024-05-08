@@ -1,123 +1,160 @@
-Return-Path: <linux-kernel+bounces-172592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FE28BF413
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:29:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB888BF41F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C925B1F24806
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF891C20930
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E179947A;
-	Wed,  8 May 2024 01:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617BC101E3;
+	Wed,  8 May 2024 01:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="oO3OfM6q"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TkLlv5Ep"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CCB8F6A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 01:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8270DDB3;
+	Wed,  8 May 2024 01:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715131762; cv=none; b=Uu/J+rR6DaWfKmNftGQ8F0m3a1bPSF1+nsvkrZxaGo24broIL2xST9PDpcoun7cKMzddr2aiEJQ85FeDQevcaJujk24ZIKLKks1yq5k1Cwqex0vkSFebH4M3+bSuh+djUiCfOEnOftrRuPVJoInpcAHOhWkpo2LwlyRgi/F1blk=
+	t=1715131893; cv=none; b=nx9gZUybqmpUsHUsr1j5In6/3MkGFST8t6LJMHf83S66wesRzYsYfIFC9OLQ2XPa9b7KF/mpaJO+YTP8fEYzR7wnZOBKi7m9GrRZBuA8dnFMtePrx1RUf5zy1T3RB8S9+GDv4PXxI1rbOFKChMtiKy8EyD1OLJerccGKmnKY+Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715131762; c=relaxed/simple;
-	bh=S+KmA9dSLhjXnhJF873IqV/Gd9cnIAVOxz54318nTNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lij0P7W5O6fVY2tDzjQKrjnA90Hg/FrAT0KRs6clFV7xa0ar7qoEvfeOjW3N4PDTRKUVmyb+jrx6ugToBBETdCW72H+6J1+GwQjm7BCS0wCQQ75KxlLB6uwMjbu6f1FPgNQCJGpblWMHaY2jW0t8G3Hu4IzoJ3Q5KxZJNWLTEOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=oO3OfM6q; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso3263827b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 18:29:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1715131760; x=1715736560; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tzB4aecjphlPEDzQe5NK3FsOS2K2mixibavsvosnc7o=;
-        b=oO3OfM6qLLjMz9aUHLhklQ0uPj2Y5ZRMWlLy9gma4k33HACixpV2Ake6Hpax5RliMZ
-         2M4Tgj1YvJCseaP4E7iKLcqV6toXKblk9O+jIE+VuhqtbkTg2vt2ljEvPmJW+AqCqaos
-         Vjau5N7VOUKC373kRYF41noOFbH2SmJN88qpAw5Wv4IFccy8k16lkWaHp64/x5yJePsx
-         RcTE794ew9YpKBqG2LJZbvwjCC/IfBkQCT7t1JfRpxzbM1KBm2zDp08Qggoz+LmiPTXQ
-         nlqNlYSa47jpXxlTsKRayZE5TPnHNbOiYEMYP+hDIVEHnCA++qGXxoOMY8zMPyBAAzWq
-         pceA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715131760; x=1715736560;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tzB4aecjphlPEDzQe5NK3FsOS2K2mixibavsvosnc7o=;
-        b=t21RhdKEMpAz3enDFc96g0upQlPIXkmA5pDaUx+3KO7DofAXDejZ8ZX3+5KWo8btRe
-         qUajXZZ8O0cAYeQi16k5ech54paAXYWtdnJY66h05nrc/pTY0mpR8h440r8YoYJavkpU
-         IXTcAxvUE0dqNl0ILpgkU58oyGR1szRlEwSGkOqEzWu/fEss/1xTsbomXoztOD0Xf+5F
-         PVfJ0Fr2pmKY74qk9wkKKze28+dafgFZeI1JAvdBaSgvShKUmZ+1bKsEevpnfb/38cs0
-         95fXIKDT7HDVPALlA+LDe/EAoTQ3kAx2nblEUr4QiwXabplFsdDKIScmjTTEteGBy8vc
-         5g+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPta1IVq22LpmHuPcaSAnJEeR587Kf0Wh83gz/NzHkOFAket1hyvr158ZoYhAGM008aB07ziyOO6cSuDHrDDhidHLyn8o1r84vhqpN
-X-Gm-Message-State: AOJu0YyfXqJK3YbB0Mf7X4jF+bLbclV7HzDFyoFqZlCom1NGev9DhIsq
-	7v+UeCRxpKEJaqo1GnunhGW6vpbnA6phYEe2ZaZA9XboHn13o2ZGBoOzJBTso8etHE+aY+AZBv/
-	t
-X-Google-Smtp-Source: AGHT+IFRCw8e0cW7ldgPKWllS3XVUq4LhbnIO0GsLRIB6i79BIUwHKsbT8AkP/LXEDjMS63xwL/0KA==
-X-Received: by 2002:a05:6a00:1410:b0:6ea:b9a1:63d7 with SMTP id d2e1a72fcca58-6f49c20eba9mr1696829b3a.10.1715131759520;
-        Tue, 07 May 2024 18:29:19 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id fi39-20020a056a0039a700b006f3f9e4dfd4sm10040409pfb.60.2024.05.07.18.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 18:29:19 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1s4W7P-007LB8-18;
-	Wed, 08 May 2024 11:29:15 +1000
-Date: Wed, 8 May 2024 11:29:15 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <ZjrVaynGeygNaDtQ@dread.disaster.area>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+	s=arc-20240116; t=1715131893; c=relaxed/simple;
+	bh=bgJe8CD5Cy5YFMk2bifAmaRqq6gFsp2lDEFW1Q52+gw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=lT4fnUVxX9p1Bf9xlqb+kbufIqAS0e7cl6mnCiiM6Y6xIjAH4pXBwPfdLYl/K2YboE66kIHT2E92euh4tgDJPF2FBj/FEwIhFl89UblZyO5eNZe3GpQZhPB8ci3HJTg+lXEa+OWwqAOhbxVIbeNrXBr25H5TVlbIACn1lYcJLTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TkLlv5Ep; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 447LSBS8010568;
+	Wed, 8 May 2024 01:31:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding:to:cc; s=qcppdkim1; bh=vuoaFeUU6XssIK
+	wTd1WsnfAeKzA349xSXCu9bfOdhjk=; b=TkLlv5EpnI6r73AF6uc74TrSWgTPi6
+	qzGwsgmg8+5a4kl6luSrnv7H8bXD7YegMoIU+qOGPfIoXQzVT5rCeC9Ezy451i8E
+	bljzC8iMIdT72QXiJgbW5hlHcxzXzzE/YpD84ExknYSCVyXwf0FNuJp5ucdGOM+1
+	oKW6i8u6faThBjJ+tJy0oSNHNTGfdoSk92m/iXPe1B1tDYsYYV89W4c8X9wFa9JK
+	RvVuHtSXgxjiw62VaYzXKARIRqcK2oDj2AreHfpDEw+z3CBpKgahd3VMG4iE4Vbl
+	ZcYBBTbxEB/rwP0g5AF1rV0UOu+cedt9SYVaA5yCDpkFhZQJosKT6aJQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyspggnkx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 01:31:21 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4481VKlx024746
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 8 May 2024 01:31:20 GMT
+Received: from hu-scheluve-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 7 May 2024 18:31:11 -0700
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Subject: [PATCH v3 0/2] Mark Ethernet devices on sa8775p as DMA-coherent
+Date: Tue, 7 May 2024 18:30:59 -0700
+Message-ID: <20240507-mark_ethernet_devices_dma_coherent-v3-0-dbe70d0fa971@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANPVOmYC/5WNyw7CIBQFf8WwFgO3gI+V/2EMoXBriSlVqETT9
+ N+lXelOl3OSMzOShNFjIofVSCJmn3wfClTrFbGtCRek3hUmwEAwAZJ2Jl41Di3GgIN25WIxadc
+ ZbfsyYhiosopLUe8EV5IU0S1i459L5HQu3Po09PG1NDOf17/0mVNOjWNbKZkQCOp4f3jrg93Yv
+ iNzIMOHtGI/SaFIQTR17eyecYBv6TRNb/YNf8ErAQAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Andrew Halaney
+	<ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Bhupesh Sharma
+	<bhupesh.sharma@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LCz7ZCAEwpLmpQFW6rFbGceAJYCWQs5L
+X-Proofpoint-ORIG-GUID: LCz7ZCAEwpLmpQFW6rFbGceAJYCWQs5L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-07_16,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 clxscore=1015 bulkscore=0 mlxlogscore=740
+ adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405080009
 
-On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
-> The fxr->file1_offset and fxr->file2_offset variables come from the user
-> in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-> Check the they aren't negative.
-> 
-> Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> From static analysis.  Untested.  Sorry!
-> 
->  fs/xfs/xfs_exchrange.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-> index c8a655c92c92..3465e152d928 100644
-> --- a/fs/xfs/xfs_exchrange.c
-> +++ b/fs/xfs/xfs_exchrange.c
-> @@ -337,6 +337,9 @@ xfs_exchange_range_checks(
->  	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
->  		return -ETXTBSY;
->  
-> +	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
-> +		return -EINVAL;
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+To: Andrew Halaney <ahalaney@redhat.com>
+To: Vinod Koul <vkoul@kernel.org>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+Cc: kernel@quicinc.com
+Cc: linux-arm-msm@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org
 
-Aren't the operational offset/lengths already checked for underflow
-and overflow via xfs_exchange_range_verify_area()?
+Patch 1 :- This patch marks Ethernet devices on Sa8775p as DMA-coherent
+as both the devices are cache coherent.
 
--Dave.
+Patch 2 :- Update the schema of qcom,ethqos to allow specifying Ethernet
+devices as "dma-coherent".
+
+Changes in v3:
+Update the schema to specify Ethernet devices as "dma-coherent".
+- Link: https://lore.kernel.org/r/20240425-mark_ethernet_devices_dma_coherent-v1-1-ad0755044e26@quicinc.com
+
+Changes in v2:
+Remove internal change-id from commit message
+- Link to v1: https://lore.kernel.org/r/20240425-mark_ethernet_devices_dma_coherent-v1-1-ad0755044e26@quicinc.com
+
+---
+---
+Sagar Cheluvegowda (2):
+      arm64: dts: qcom: sa8775p: mark ethernet devices as DMA-coherent
+      dt-bindings: net: qcom: ethernet: Allow dma-coherent
+
+ Documentation/devicetree/bindings/net/qcom,ethqos.yaml | 2 ++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi                  | 2 ++
+ 2 files changed, 4 insertions(+)
+---
+base-commit: a93289b830ce783955b22fbe5d1274a464c05acf
+change-id: 20240425-mark_ethernet_devices_dma_coherent-6c6154b84165
+
+Best regards,
 -- 
-Dave Chinner
-david@fromorbit.com
+Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+
 
