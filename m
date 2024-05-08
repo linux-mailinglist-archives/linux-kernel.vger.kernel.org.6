@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-173257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3647F8BFDB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:52:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3AC8BFDBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F1A2858AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DB42B24112
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A743D5C8F4;
-	Wed,  8 May 2024 12:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1796BB4C;
+	Wed,  8 May 2024 12:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrLk9kfT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kDzn13Qt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3WkgttlU"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF5222071;
-	Wed,  8 May 2024 12:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185036A34C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715172737; cv=none; b=bGQXyb20QIEO2wd1nJE4KXbtEFWj3WpdbCZvFleSdiqbtDSsDC9PPdZRfvU9Vgi4k3uIE7LDE5hZ5Em1cs3+sjO+2JuhKKjwNVPbscKbbkTQwJDXAYXdXATx5pZGV2w6aUgGVrUG6GZim7dnRhUl+G3s+PGga659A9yZowg1Ej0=
+	t=1715172742; cv=none; b=U2ukqCqfO14Rx5+jOvCVTdvX5tTV6ImmOz7iy5/KLOp5AUpwXGFWunLDCn76xI36xKJBRcDxTdwelKuSkSOieVhcVHCmE8ZEPYxVHivTeVeA3kEWF8jGz+HElPuMx5shT1VfsWq81Qq7QR6dM9snXLWFT0Y0RZxsEfra0JDJLLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715172737; c=relaxed/simple;
-	bh=gKVeUXfF3Ho2Ed/J5T0T6Hm5ka9z6vCma7xttwCG1nk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=PBDsW1JafR0jaCv7jR/dQjLNx/0gX91x73WWWrKLxjgUPuR8FfgJWDMuYTBsrKYciImkzqlnKkuivn9df/e3KOuJb57oq+1H53g1va8jZYKpw6B0qQrMXKpA0zfK5vW3zxmNAYl5S+1JdNsKpyg6Sz+U4kin8Jh4aKrWFIxG0wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrLk9kfT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F67CC113CC;
-	Wed,  8 May 2024 12:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715172736;
-	bh=gKVeUXfF3Ho2Ed/J5T0T6Hm5ka9z6vCma7xttwCG1nk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=ZrLk9kfTvdSk83ynbdqCIsg3st29lqtv/1sbYd9zMlbJIpR4kz4maM4bvCc7bhE6o
-	 yeicwe6Lpe564y7ZeTXYSLQ51IQiSSW6S58nizMsqt4fhTcbYbrz9oSh5jnQnsLR98
-	 y931YLg6R1Ue4LfhfurZjJByaIrDXAfJ1nNHI25RxtqX10yYg+hyCmxTQ044mJ95cQ
-	 BJscpF/cQ2kK6GpAtC24TBHrXSBgMEXPptoXeyuP87wtgDwxMyEr5SPdO51/hPMPW3
-	 IbFXQNFkPg2LMoFzyVXpN3PW2HKrAafh5ByHt/Rm86AsDKEYJWCokE7W0PqxVp3L/Q
-	 iq/BrU0R0khYg==
-Date: Wed, 08 May 2024 07:52:10 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1715172742; c=relaxed/simple;
+	bh=J0lUDT8rrcvRsx9774q/JHRDZf7sHnEPkdm0tLi1WdA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CfunKhlvbl4rCwV3gnfM9cLHDhqPnBQMMjvgebx//UnptOwBHVJijJnYrMKXYejsEryrE+BEwZ0enN24DDNclptsgEjfo3VQ7r3SkXx6mCPPKMBPM7t/KlsVODohLn8hXJfMOYHio7Ac4QoQztMTerUctGQsUvHO9cORsnVX/2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kDzn13Qt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3WkgttlU; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715172739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5zg6WebQLZVM/Zr+k3gM1mlCJa9IkRkbXXh8OvAx+UU=;
+	b=kDzn13QtcrAMPtvVA8nuTumLTovbIvWeUaw8eAjBXuaLEtnBWP7Z0OffHnpITbMUWEqlZl
+	s7Ck0C/Hxhs8kEQCfrxSYX0SQTSCslHvhbgmSo8tqSCOepAVwBhTbnZodV7NWvCrY0C2pZ
+	zhWjTnoEzM+A/5LEQnfY94Kds6BqLWs8hcC4uIcdXjBmYBpf+aEkzzhFwc4NsK4XURpXok
+	9EQpUioG3nOg8cTvOk2tdvHYTWhRwxR58C90CjAJk6Lu/eWoXCVZNmVg2halgl57vBbLia
+	UF2tYudkdv+peNO5OH0C+gH+EouJzwqTMRiHjOb9VyJvgvwhGHlgORkmD6/39g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715172739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5zg6WebQLZVM/Zr+k3gM1mlCJa9IkRkbXXh8OvAx+UU=;
+	b=3WkgttlUHBuDb1OeflNpxqBJL22YSbI3qnKCsL1HPQbn4/OVajKRFSWKQGw5RyFeZrf7Uv
+	rrRKR8Xu0gKjrBDw==
+To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
+ <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Keith Lucas
+ <keith.lucas@oracle.com>
+Subject: Re: [PATCH v3 3/4] x86/pkeys: Update PKRU to enable all pkeys
+ before XSAVE
+In-Reply-To: <FF998E58-D109-45B1-9BD8-FEF873E2FA7A@oracle.com>
+References: <20240425180542.1042933-1-aruna.ramakrishna@oracle.com>
+ <20240425180542.1042933-4-aruna.ramakrishna@oracle.com>
+ <87wmo5po0i.ffs@tglx> <FF998E58-D109-45B1-9BD8-FEF873E2FA7A@oracle.com>
+Date: Wed, 08 May 2024 14:52:18 +0200
+Message-ID: <874jb8pit9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, 
- Jaroslav Kysela <perex@perex.cz>, Alim Akhtar <alim.akhtar@samsung.com>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Takashi Iwai <tiwai@suse.com>, ~postmarketos/upstreaming@lists.sr.ht, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>, 
- alsa-devel@alsa-project.org, Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20240508-midas-wm1811-gpio-jack-v2-2-b4d36cd02c6e@gmail.com>
-References: <20240508-midas-wm1811-gpio-jack-v2-0-b4d36cd02c6e@gmail.com>
- <20240508-midas-wm1811-gpio-jack-v2-2-b4d36cd02c6e@gmail.com>
-Message-Id: <171517273028.1398305.2447515495565580200.robh@kernel.org>
-Subject: Re: [PATCH v2 2/7] ASoC: dt-bindings: samsung,midas-audio: Add
- GPIO-based headset jack detection
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, May 07 2024 at 17:34, Aruna Ramakrishna wrote:
+>> On May 7, 2024, at 9:47=E2=80=AFAM, Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>>
+>> Also this lacks any justification why this enables all pkeys and how
+>> that is the right thing to do instead of using init_pkru_value which
+>> is what is set by fpu__clear_user_states() before going back to user
+>> space. For signal handling this can be the only valid PKEY state unless
+>> I'm missing something here.
+>
+> If the alt sig stack is protected by a different pkey (other than pkey 0)=
+, then
+> this flow would need to enable that, along with the pkey for the thread=
+=E2=80=99s=20
+> stack. Since the code has no way of knowing what pkey the altstack needs,
+> it enables all for this brief window.
 
-On Wed, 08 May 2024 12:58:50 +0200, Artur Weber wrote:
-> Some Samsung devices that share the midas-audio driver use a GPIO-based
-> approach to headset jack detection, as opposed to using the built-in
-> jack detection provided by the wm8994 driver. This setup uses two GPIOs
-> (one for jack detection and another for key detection) and an ADC
-> channel for determining the jack type or button pressed.
-> 
-> Add DT configuration values that allow for describing these setups.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Changes in v2:
-> - Added vendor prefix to threshold properties
-> - Dropped pipe (|) character from description: field
-> ---
->  .../bindings/sound/samsung,midas-audio.yaml        | 30 ++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
+Again. The flow here is:
 
-My bot found errors running 'make dt_binding_check' on your patch:
+handle_signal()
+  enable_access_to_altstack()
 
-yamllint warnings/errors:
-/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml:95:26: [error] syntax error: mapping values are not allowed here (syntax)
+  ....
 
-dtschema/dtc warnings/errors:
-make[2]: *** Deleting file 'Documentation/devicetree/bindings/sound/samsung,midas-audio.example.dts'
-Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml:95:26: mapping values are not allowed in this context
-make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/sound/samsung,midas-audio.example.dts] Error 1
-make[2]: *** Waiting for unfinished jobs....
-/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml:95:26: mapping values are not allowed in this context
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml: ignoring, error parsing file
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+  fpu__clear_user_states()
+    restore_fpregs_from_init_fpstate(XFEATURE_MASK_USER_RESTORE)
+    os_xrstor(&init_fpstate, features_mask)
+    pkru_write_default()
+      write_pkru(init_pkru_value);  <- Loads the default PKRU value
+=20=20=20=20=20=20=20=20=20=20=20
+return_to_user_space()
 
-doc reference errors (make refcheckdocs):
+User space resumes with the default PKRU value and the first thing user
+space does when entering the signal handler is to push stuff on the
+signal stack.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240508-midas-wm1811-gpio-jack-v2-2-b4d36cd02c6e@gmail.com
+If the signal stack is protected by a key which is not contained in
+init_pkru_value then the application segfaults in a non recoverable way,
+no?
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+So arguably it is sufficient to ensure that PKRU has the keys in
+init_pkru_value enabled:
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+    sigpkru =3D read_pkru() & init_pkru_value;
 
-pip3 install dtschema --upgrade
+If user space protects the task stack or the sigalt stack with a key
+which is not in init_pkru_value then it does not matter at all whether
+it dies in handle_signal() or later when returning to user space, no?
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+I'm not fundamentaly opposed to enable all keys, but I don't buy this
+without a proper explanation why this has been chosen over enabling only
+the absolute minimum access rights.
 
+Thanks,
+
+        tglx
 
