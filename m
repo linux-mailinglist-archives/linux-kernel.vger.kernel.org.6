@@ -1,237 +1,127 @@
-Return-Path: <linux-kernel+bounces-172947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D137B8BF92F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:01:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E78D8BF933
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:02:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885A3281B2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02AADB2408F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F07B73176;
-	Wed,  8 May 2024 09:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8Hshsn0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2D971B24;
-	Wed,  8 May 2024 09:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963CB71B50;
+	Wed,  8 May 2024 09:02:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA123A1BE
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715158899; cv=none; b=eVrFA4vbdTeDqFuQ7jubJ88FnrLwzcNFN3ZAqvx5zOboQcDIHh4bxmqxCVW9HSQ3ght6et8H1zT4X4AaZwS3dCykiQsSFalOpzqRrOtpc4ZjMa3i1zf7VY+CvCnGafZP3HQ9W5OYZunqpQtTrqYAANCc+Ji0WUBw3/DRKeA7KP8=
+	t=1715158968; cv=none; b=aCRAlADGaxXLRMk1xwHiW6X4mDHzWs6kg42FO6cAD7ON4R2baVzr2cpqFwvUDIYm+p2evw6tu4vGn9wZ6JbIptYNNwzwjjlSLaqz2foWaAaXWRESdZDhZGTPWLoB4iQN1rDxwCPv63sxdxY1RNKeYHI5j2yOHMmjq9/bACjDDSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715158899; c=relaxed/simple;
-	bh=2+NkL7/xFV8fjHBWJGNNByOB3Pm5bJPK0iJ7GOonRZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LT8P7e0NDpzqVhHCgjjudWFKmOdMtyjtqpOWrZs8ViK6+rgmAK+vumkkfP2iL/mwPZ+TFDoOXOtvi0H+4HAB/AlqoCSjSwoKMEa7BerQ7Rb1GSJAWdo2oePxvINWRQFB56XquPw7FNtG0v7dyijvdQHhTUEBZK0Ay3Wlp7vX0bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8Hshsn0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D552BC113CC;
-	Wed,  8 May 2024 09:01:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715158898;
-	bh=2+NkL7/xFV8fjHBWJGNNByOB3Pm5bJPK0iJ7GOonRZg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=d8Hshsn0aOE1yUfO+V6rDvKuLWxBi6AYvqq8FQRYmIr6SI7O5akU2NYjNk4xO7wbV
-	 sOjXuxToraQJlGib4S8zKhQq4YikRw1OU9KFY8GlnogaLxLX2SPNUh7dBlL7ocWqFL
-	 RGwJLB6TkUcIZ1Ol0s2ZCVbTZhQ8dXzvSDdRuqIwxr4HOlZQ5q8dL8fV+vqGh1laO9
-	 2TLBFwuacXIB18x9x6B7kNw6+TmtVwRLaSKyCA00QESBuf86wEumI6fy5ugFdgmSQp
-	 8mWHhdiheblyfykQxZc4M0eXYZylXl918RYbIK3R3XDPb+Rhh8KNlUhHZOpzcGnmbF
-	 FxsgjbG9gZctw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so6866651e87.1;
-        Wed, 08 May 2024 02:01:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/TcVSFtbHaT8f+bJm2ebVt8q3hu0tP8yuKfxFcUcph4eaPcn0z+rP6QaPCjO7C7ZjrkV0G1GTrhw4VSUe5H3kY+OwGu1VbatqLM3a
-X-Gm-Message-State: AOJu0YwebXoMmi32MgZ02vFyMvggknCPOtkBlvbdv2Pqyzo6zGD6zCOh
-	dG/dRzNL6Xdy7ECHhOoXeRUTLDykTp1nnyf51zZQabBrqrBAtQ1gCZ+OKThTKi8jRvpvuuF83zj
-	Rl50c2n6BZCi9pbemPBJvTBmEOyI=
-X-Google-Smtp-Source: AGHT+IF5DbO+GqCsyJ09mGRZTux66fFOe1L/vNw5oAAYvZGX3dQ4vaVNGvk1IT309mpyVP8oqGarFJoMgvjohgcR8rU=
-X-Received: by 2002:a05:6512:202c:b0:51f:3e0c:ace3 with SMTP id
- 2adb3069b0e04-5217c5670cdmr1520132e87.16.1715158897192; Wed, 08 May 2024
- 02:01:37 -0700 (PDT)
+	s=arc-20240116; t=1715158968; c=relaxed/simple;
+	bh=qdVURWUQTSFjr2TDtJ9VB2HmxpiC61kP72lHZ5Sh/9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J63+AM6GYPhPd6iL7PUPdgRMTSyZ3kwhJrbJQq1vDMguW1pJ7c0MMa9hrB4MWvo+bO0zmauufYE5KnbkXXLcvPa0q+ILTjiEhsubabhCjNAhrRtZZbR9HDjTgEcGyHxX3dqeY3TXQCWGtyhYPD05qBAcvYihzMTaELYl9ucAJSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9ECFD1063;
+	Wed,  8 May 2024 02:03:10 -0700 (PDT)
+Received: from [10.57.67.194] (unknown [10.57.67.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 43F0C3F6A8;
+	Wed,  8 May 2024 02:02:43 -0700 (PDT)
+Message-ID: <eb3aa3dc-42ee-475a-8b95-d27951c362a1@arm.com>
+Date: Wed, 8 May 2024 10:02:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508071734.199462-1-ebiggers@kernel.org>
-In-Reply-To: <20240508071734.199462-1-ebiggers@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 8 May 2024 11:01:25 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHnBA5qeyHa-b6w+cw5-iomA=3drk7yGGzp-gc_-4uKig@mail.gmail.com>
-Message-ID: <CAMj1kXHnBA5qeyHa-b6w+cw5-iomA=3drk7yGGzp-gc_-4uKig@mail.gmail.com>
-Subject: Re: [PATCH] crypto: x86/aes-gcm - add VAES and AVX512 / AVX10
- optimized AES-GCM
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] mm: shmem: add multi-size THP sysfs interface for
+ anonymous shmem
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <6b4afed1ef26dbd08ae9ec58449b329564dcef3e.1714978902.git.baolin.wang@linux.alibaba.com>
+ <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
+ <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
+ <cb458b62-e27d-47d6-8efd-bacdb9da7530@redhat.com>
+ <ff1908f8-0887-403b-8d2a-d83a17895523@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <ff1908f8-0887-403b-8d2a-d83a17895523@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 8 May 2024 at 09:22, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Add implementations of AES-GCM for x86_64 CPUs that support VAES (vector
-> AES), VPCLMULQDQ (vector carryless multiplication), and either AVX512 or
-> AVX10.  There are two implementations, sharing most source code: one
-> using 256-bit vectors and one using 512-bit vectors.
->
-> I wrote the new AES-GCM assembly code from scratch, focusing on
-> performance, code size (both source and binary), and documenting the
-> source.  The new assembly file aes-gcm-avx10-x86_64.S is about 1200
-> lines including extensive comments, and it generates less than 8 KB of
-> binary code.  This includes both 256-bit and 512-bit vector code; note
-> that only one is used at runtime.  The main loop does 4 vectors at a
-> time, with the AES and GHASH instructions interleaved.  Any remainder is
-> handled using a simple 1 vector at a time loop, with masking.
->
+On 08/05/2024 08:12, David Hildenbrand wrote:
+> On 08.05.24 09:08, David Hildenbrand wrote:
+>> On 08.05.24 06:45, Baolin Wang wrote:
+>>>
+>>>
+>>> On 2024/5/7 18:52, Ryan Roberts wrote:
+>>>> On 06/05/2024 09:46, Baolin Wang wrote:
+>>>>> To support the use of mTHP with anonymous shmem, add a new sysfs interface
+>>>>> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
+>>>>> directory for each mTHP to control whether shmem is enabled for that mTHP,
+>>>>> with a value similar to the top level 'shmem_enabled', which can be set to:
+>>>>> "always", "inherit (to inherit the top level setting)", "within_size",
+>>>>> "advise",
+>>>>> "never", "deny", "force". These values follow the same semantics as the top
+>>>>> level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
+>>>>> to 'always' to keep compatibility.
+>>>>
+>>>> We decided at [1] to not allow 'force' for non-PMD-sizes.
+>>>>
+>>>> [1]
+>>>> https://lore.kernel.org/linux-mm/533f37e9-81bf-4fa2-9b72-12cdcb1edb3f@redhat.com/
+>>>>
+>>>> However, thinking about this a bit more, I wonder if the decision we made to
+>>>> allow all hugepages-xxkB/enabled controls to take "inherit" was the wrong one.
+>>>> Perhaps we should have only allowed the PMD-sized enable=inherit (this is just
+>>>> for legacy back compat after all, I don't think there is any use case where
+>>>> changing multiple mTHP size controls atomically is actually useful). Applying
+>>>
+>>> Agree. This is also our usage of 'inherit'.
+> 
+> Missed that one: there might be use cases in the future once we would start
+> defaulting to "inherit" for all knobs (a distro might default to that) and
+> default-enable THP in the global knob. Then, it would be easy to disable any THP
+> by disabling the global knob. (I think that's the future we're heading to, where
+> we'd have an "auto" mode that can be set on the global toggle).
+> 
+> But I am just making up use cases ;) I think it will be valuable and just doing
+> it consistently now might be cleaner.
 
-This looks very good! The code is well structured and due to the
-comments, it is reasonably easy to follow for someone familiar with
-the underlying math.
+I agree that consistency between enabled and shmem_enabled is top priority. And
+yes, I had forgotten about the glorious "auto" future. So probably continuing
+all sizes to select "inherit" is best.
 
-I also strongly prefer a parameterized implementation that assembles
-to a minimal object code size over the other proposed implementations,
-where there may be a slight marginal performance gain due to the use
-of different code paths for different input sizes, but this tends to
-be beneficial mostly for benchmarks and not for real-world use cases.
+But for shmem_enabled, that means we need the following error checking:
 
-..
->
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+ - It is an error to set "force" for any size except PMD-size
 
-Tested-by: Ard Biesheuvel <ardb@kernel.org> # Tiger Lake
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+ - It is an error to set "force" for the global control if any size except PMD-
+   size is set to "inherit"
 
-Some nits below.
+ - It is an error to set "inherit" for any size except PMD-size if the global
+   control is set to "force".
 
+Certainly not too difficult to code and prove to be correct, but not the nicest
+UX from the user's point of view when they start seeing errors.
 
-> ---
->  arch/x86/crypto/Kconfig                |    1 +
->  arch/x86/crypto/Makefile               |    3 +
->  arch/x86/crypto/aes-gcm-avx10-x86_64.S | 1201 ++++++++++++++++++++++++
->  arch/x86/crypto/aesni-intel_glue.c     |  515 +++++++++-
->  4 files changed, 1706 insertions(+), 14 deletions(-)
->  create mode 100644 arch/x86/crypto/aes-gcm-avx10-x86_64.S
->
-..
-> diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
-> index 5b25d2a58aeb..e4dec49023af 100644
-> --- a/arch/x86/crypto/aesni-intel_glue.c
-> +++ b/arch/x86/crypto/aesni-intel_glue.c
-> @@ -1212,17 +1212,481 @@ static struct simd_skcipher_alg *aes_xts_simdalg_##suffix
->  DEFINE_XTS_ALG(aesni_avx, "xts-aes-aesni-avx", 500);
->  #if defined(CONFIG_AS_VAES) && defined(CONFIG_AS_VPCLMULQDQ)
->  DEFINE_XTS_ALG(vaes_avx2, "xts-aes-vaes-avx2", 600);
->  DEFINE_XTS_ALG(vaes_avx10_256, "xts-aes-vaes-avx10_256", 700);
->  DEFINE_XTS_ALG(vaes_avx10_512, "xts-aes-vaes-avx10_512", 800);
-> -#endif
-> +
-> +#define NUM_KEY_POWERS         16 /* excludes zero padding */
-> +#define FULL_NUM_KEY_POWERS    (NUM_KEY_POWERS + 3) /* includes zero padding */
-> +
-> +struct aes_gcm_key_avx10 {
-> +       struct crypto_aes_ctx aes_key AESNI_ALIGN_ATTR;
-> +       u32 rfc4106_nonce AESNI_ALIGN_ATTR;
+I think we previously said this would likely be temporary, and if/when tmpfs
+gets mTHP support, we could simplify and allow all sizes to be set to "force".
+But I wonder if tmpfs would ever need explicit mTHP control? Maybe it would be
+more suited to the approach the page cache takes to transparently ramp up the
+folio size as it faults more in. (Just saying there is a chance that this error
+checking becomes permanent).
 
-Is the alignment needed here?
-
-> +       u8 ghash_key_powers[FULL_NUM_KEY_POWERS][16] AESNI_ALIGN_ATTR;
-> +};
-> +
-> +asmlinkage void
-> +aes_gcm_precompute_vaes_avx10_256(struct aes_gcm_key_avx10 *key);
-> +asmlinkage void
-> +aes_gcm_precompute_vaes_avx10_512(struct aes_gcm_key_avx10 *key);
-> +
-> +asmlinkage void
-> +aes_gcm_aad_update_vaes_avx10(const struct aes_gcm_key_avx10 *key,
-> +                             u8 ghash_acc[16], const u8 *aad, int aadlen);
-> +
-> +asmlinkage void
-> +aes_gcm_enc_update_vaes_avx10_256(const struct aes_gcm_key_avx10 *key,
-> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
-> +                                 const u8 *src, u8 *dst, int datalen);
-> +asmlinkage void
-> +aes_gcm_enc_update_vaes_avx10_512(const struct aes_gcm_key_avx10 *key,
-> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
-> +                                 const u8 *src, u8 *dst, int datalen);
-> +
-> +asmlinkage void
-> +aes_gcm_dec_update_vaes_avx10_256(const struct aes_gcm_key_avx10 *key,
-> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
-> +                                 const u8 *src, u8 *dst, int datalen);
-> +asmlinkage void
-> +aes_gcm_dec_update_vaes_avx10_512(const struct aes_gcm_key_avx10 *key,
-> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
-> +                                 const u8 *src, u8 *dst, int datalen);
-> +
-> +asmlinkage void
-> +aes_gcm_enc_final_vaes_avx10(const struct aes_gcm_key_avx10 *key,
-> +                            const u32 le_ctr[4], const u8 ghash_acc[16],
-> +                            u64 total_aadlen, u64 total_datalen,
-> +                            u8 *tag, int taglen);
-> +asmlinkage bool
-> +aes_gcm_dec_final_vaes_avx10(const struct aes_gcm_key_avx10 *key,
-> +                            const u32 le_ctr[4], const u8 ghash_acc[16],
-> +                            u64 total_aadlen, u64 total_datalen,
-> +                            const u8 *tag, int taglen);
-> +
-> +static int gcm_setkey_vaes_avx10(struct crypto_aead *tfm, const u8 *raw_key,
-> +                                unsigned int keylen, bool vl256)
-> +{
-> +       struct aes_gcm_key_avx10 *key = aes_align_addr(crypto_aead_ctx(tfm));
-> +       int err;
-> +
-> +       /* The assembly code assumes the following offsets. */
-> +       BUILD_BUG_ON(offsetof(typeof(*key), aes_key.key_enc) != 0);
-> +       BUILD_BUG_ON(offsetof(typeof(*key), aes_key.key_length) != 480);
-> +       BUILD_BUG_ON(offsetof(typeof(*key), ghash_key_powers) != 512);
-> +
-> +       if (likely(crypto_simd_usable())) {
-
-Is it really necessary to have 3 different code paths here? If so,
-could you add a comment why?
-
-> +               err = aes_check_keylen(keylen);
-> +               if (err)
-> +                       return err;
-> +               kernel_fpu_begin();
-> +               aesni_set_key(&key->aes_key, raw_key, keylen);
-> +               if (vl256)
-> +                       aes_gcm_precompute_vaes_avx10_256(key);
-> +               else
-> +                       aes_gcm_precompute_vaes_avx10_512(key);
-> +               kernel_fpu_end();
-> +       } else {
-> +               static const u8 x_to_the_minus1[16] __aligned(__alignof__(be128)) = {
-> +                       [0] = 0xc2, [15] = 1
-> +               };
-> +               be128 h1 = {};
-> +               be128 h;
-> +               int i;
-> +
-> +               err = aes_expandkey(&key->aes_key, raw_key, keylen);
-> +               if (err)
-> +                       return err;
-> +               /*
-> +                * Emulate the aes_gcm_precompute assembly function in portable
-> +                * C code: Encrypt the all-zeroes block to get the hash key H^1,
-> +                * zeroize the padding at the end of ghash_key_powers, and store
-> +                * H^1 * x^-1 through H^NUM_KEY_POWERS * x^-1, byte-reversed.
-> +                */
-> +               aes_encrypt(&key->aes_key, (u8 *)&h1, (u8 *)&h1);
-> +               memset(key->ghash_key_powers, 0, sizeof(key->ghash_key_powers));
-> +               h = h1;
-> +               gf128mul_lle(&h, (const be128 *)x_to_the_minus1);
-> +               for (i = NUM_KEY_POWERS - 1; i >= 0; i--) {
-> +                       put_unaligned_be64(h.a, &key->ghash_key_powers[i][8]);
-> +                       put_unaligned_be64(h.b, &key->ghash_key_powers[i][0]);
-> +                       gf128mul_lle(&h, &h1);
-> +               }
-> +       }
-> +       return 0;
-> +}
-> +
 
