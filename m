@@ -1,197 +1,248 @@
-Return-Path: <linux-kernel+bounces-173929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B018C07A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E523F8C07A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3294A1C21260
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1CD21C21225
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949E6130E5A;
-	Wed,  8 May 2024 23:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D0F1327ED;
+	Wed,  8 May 2024 23:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="IF/p+zAw"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NtapXneG"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2061.outbound.protection.outlook.com [40.107.93.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6B08626D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715210654; cv=none; b=Ex36zlyJi6emjIbbp6ehNCIRMQluj9Sx4ACUfoy6Q/jUMUXKSRTKKQoO14ad478A8lUaVpvS/ZAdalJHdSA2hzlwcYYoME+fsewXoRwCXw1hQeTM5Ya4yYzdX270CWpfE+78rMUvemAWzAOU3zngQyf/iT5DspVhC8AAKZTR2YY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715210654; c=relaxed/simple;
-	bh=m/nCFqHe0a+bSNrZTvPd++SPHNeMCq8hpEDrrkoK4xM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6TM9mkh8jNC5cC+StRk4f9D/4iW0dVEZFcWdC0fWWOSGArkAax/pQvflHcNeQwqR4U8JV9xw2dNXXkMQ44kJK6HCuH1Uxs5/HDzqkyiGXw+tWVHihRnZcKfx3f4VdgMAyVwTw8AuZ5WTd3JY7rrT1pxip78Yi4Lp+7Fr1GdL2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=IF/p+zAw; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b27c532e50so249953a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715210652; x=1715815452; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u+AO/FgdbXB/WPpRvASJSNtkz6kd+Jn2U53cQAsPW9M=;
-        b=IF/p+zAwHPkMRzw1HTFZX6gOBmC0zTnpqZe3u4v0ryFb19omSxjusTy+aS6ZNqhToM
-         aYNp0oXxJdcOItHtqIO/pky28HtV7NOaNiAK1LTq5F2sjDxQ8Rbq9rZ2V7Hj6CDa/+zA
-         b4ioCBQkS7GZ2CrdvKXX+AF+vHItG+uPj1qEM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715210652; x=1715815452;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+AO/FgdbXB/WPpRvASJSNtkz6kd+Jn2U53cQAsPW9M=;
-        b=Ek7G6yTj1vkwLQWig5vfo3oCCG/2p/C95Ghkey7a+w2ZWLG+8+RJNlRpSKfsb0tRQU
-         hmgeep7JFwCNE2PHruWfDVcmzvh2O2+2upL2lb1GwTlPwT2nXk8VEMPmMPqI86cOFtms
-         N03iCILs2gFQTlwJvPPfe4Jb/lA0t4D1OQGmrSQDxBifPiCcoQOc15Jg6BF1wQslq7hE
-         QtwaQ1o4dDdP3wdRzzN07Gww7p1NJuWM4eGrG6pjadGs27a7VMrSNSoTlL13aBWZJ8kg
-         KPIMxD0QIW+tTresPF06Lyw2bNdu2I5flxZBY1vWDVCoNGGfuFsQrgb9qbI1K3vT7azb
-         KoUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/EsN90GDJREoIcX+MzF4b2nSjs4ZdtVIWRgcIzgg6g7QD5kOrABNpUIPank9SZl9BeXwrfYR9Z+kKFYeWVxUUY9V7nVqkwU/asKXt
-X-Gm-Message-State: AOJu0YwxT8S307Mp+bRnf4KskdVQZwKoEbrrNYBOXqTDWBzQ9NmersMC
-	0ScCilNrPHlPEOvj0n7E3BKYEnJdmCHA2D4/5w2lSvX2alR3nNJLhT4QS8F8844=
-X-Google-Smtp-Source: AGHT+IH/X19jWdrcIa2RfuVEDUbUdZo5O//bofdSllbZHHS/yCmARd5qOQe8x9IzsnVULm5gwIrQxw==
-X-Received: by 2002:a17:90a:1c8f:b0:2b2:a607:ea4a with SMTP id 98e67ed59e1d1-2b616be46bdmr3944849a91.44.1715210651863;
-        Wed, 08 May 2024 16:24:11 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62863a1d4sm2024316a91.8.2024.05.08.16.24.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 16:24:11 -0700 (PDT)
-Date: Wed, 8 May 2024 16:24:08 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	saeedm@nvidia.com, gal@nvidia.com, nalramli@fastly.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next 0/1] mlx5: Add netdev-genl queue stats
-Message-ID: <ZjwJmKa6orPm9NHF@LQ3V64L9R2>
-References: <20240503022549.49852-1-jdamato@fastly.com>
- <c3f4f1a4-303d-4d57-ae83-ed52e5a08f69@linux.dev>
- <ZjUwT_1SA9tF952c@LQ3V64L9R2>
- <20240503145808.4872fbb2@kernel.org>
- <ZjV5BG8JFGRBoKaz@LQ3V64L9R2>
- <20240503173429.10402325@kernel.org>
- <ZjkbpLRyZ9h0U01_@LQ3V64L9R2>
- <8678e62c-f33b-469c-ac6c-68a060273754@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1193252F6D;
+	Wed,  8 May 2024 23:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715210974; cv=fail; b=C75UtgVv2gcIeL55Ge6bYN/l55XcSikf+YTBKxDsQRp+yKBWOhGxMj/Udesk9Qfe/asw+gaTx0tyoabszBp7Tff8eDDKqiP+AolnXQuwVt0u7dg/4CfWH76MxzoOXzpgEwATzgtoaXVB5RERUFMrVIBMETMVr8xT7d4b2VX6U8w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715210974; c=relaxed/simple;
+	bh=LOEbwux9EOa6oCgvVSkb6yUt6H6V0ygK7SEq/1Xv0Og=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=be1dvznEOh3WcUI70GSKsxSBnqmkVIWfx6uQJQZWNnOpTlWg6VOAlrxtFnMkQnv84fl49s1SeP0ex4yd6VTE9GTn0voe/UEtJjUl9BJtLvuKqAIhA8c8l9GroqkfjwUeyExgqJW1YIb9RQt8DxZkyeyce+s6rDhqiNjrA2rob7g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NtapXneG; arc=fail smtp.client-ip=40.107.93.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M7Lii2mcpxGNmRLqSNmZv1YhtbmJWvzvn1+vJ4bw/P1/3FOs8QVnX8mrkt2Cv8KanoqJNJli7+NnNJiQQQCJv+QfrSytH/N+b7BDDyeRvDCqh8bDTX0vUgzJOif24fBva29ojhhnJIzCjlMeXwHuwnwsDkYetNySm9vW8pZgGP9LaRt1quL5z3H6kSuL/rLLmFE4x/OiWjvGM9GseQHBQHuMlZubA1neSMAt3Dxi2KFcOyXtUG2Qm1FhcgrtoJBfwMEBbtjZtu+XXBB+YNq8khyrmyAH9+TmG7Oc26eeIEuJ95Oj+ej0hAFR8RWbmVdG9rW7vWcuUXXzdzpKBX3QAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pcvKIA4qThoqjPbkUzhNyMqNzus8YV2KxZAYn1wtY7I=;
+ b=FZFtas9p1YOpoXNOk5lS1AkQ8IET6xeV8eSCpE/1H0IER6QQw6K0mYAKJLt7fNFiia3EvaQVBf2VPtdaG7ckKq2caqurXwZnlsc/tqw1sSvJYqhOS+gT76dodB/r8yYMMueMMbl3qBaWcp+3mZJ+4l+DbZ/M+0wSq/n/oQNizPEf9ZRVGCfgOvcggXCS6ccXQ9LbTvoNFPwrOHKQbRWylA6fok5zO1dRW+GZW2J9V2D3ibanueQkJOCdbafzbLQLJTs6O1iFmVNtORV9QHoPohti1bTED6qRnjPD1B5JvqZGLi0HjoY8U2xsY0MF60bbobY2oj9hSy96yUdJWdTJFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pcvKIA4qThoqjPbkUzhNyMqNzus8YV2KxZAYn1wtY7I=;
+ b=NtapXneGnJe7o8tMHbECnx+r/viBuSNccOLsmJbMicNaqMeq5DaMlk3C4qicPfm0gjFj/TrRqjAOK6WCoohjmdQKV4bLuY2hLuhGTJkMOXLUMaXKxWjdLPGIQh7ztMeXRKDOsEHqGUonT9eHjhmfVHv6Gk3R2xRZguk2OgBfbR8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ by BY5PR12MB4228.namprd12.prod.outlook.com (2603:10b6:a03:20b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Wed, 8 May
+ 2024 23:29:27 +0000
+Received: from MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
+ ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.7544.045; Wed, 8 May 2024
+ 23:29:27 +0000
+Message-ID: <379ba0ed-5c67-4fb8-9738-952289d2f699@amd.com>
+Date: Wed, 8 May 2024 18:29:23 -0500
+User-Agent: Mozilla Thunderbird
+From: "Moger, Babu" <babu.moger@amd.com>
+Subject: Re: [RFC PATCH v3 00/17] x86/resctrl : Support AMD Assignable
+ Bandwidth Monitoring Counters (ABMC)
+Reply-To: babu.moger@amd.com
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
+ tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
+ kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
+ jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
+ rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
+ jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
+ daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
+ ilpo.jarvinen@linux.intel.com, peternewman@google.com,
+ maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+References: <cover.1711674410.git.babu.moger@amd.com>
+ <48b595cc-5ffe-4507-bffd-335a60fdaab9@intel.com>
+ <2016b830-64c7-43bd-8116-bdfd239221e3@amd.com>
+ <ea75801f-e56a-486d-85a4-85c57bce0c81@intel.com>
+ <7e92200e-d68c-4dc4-85c3-7192a23f8cbc@amd.com>
+ <b8a87fb1-838f-4337-8940-8eb1c5328a2b@intel.com>
+Content-Language: en-US
+In-Reply-To: <b8a87fb1-838f-4337-8940-8eb1c5328a2b@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0040.namprd04.prod.outlook.com
+ (2603:10b6:806:120::15) To MW3PR12MB4553.namprd12.prod.outlook.com
+ (2603:10b6:303:2c::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8678e62c-f33b-469c-ac6c-68a060273754@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|BY5PR12MB4228:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85b54708-505f-41b7-345a-08dc6fb6b412
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R1RWU3d4OGxMNzNSRlkzc2VmTlhXaDliMVBNUTJKWWk5YlVxZmlKVXgwRGQv?=
+ =?utf-8?B?ZUFPdGZITlUvaWlIU2cybnpSQ2RTSnhpUWhpaktWbmhsNDZpNW5LR0xZM3pB?=
+ =?utf-8?B?cUN4dFRudUJJRlNBaDZxdm05emJMOHF3bkJwQ1k3YjlSSEtRMkZ4eHI0QzZ5?=
+ =?utf-8?B?WStXSlNVdE95THd1S25ZUEk2MUUyK0JyV21OUTR5Y01pdC81MW9MSXpkSS9j?=
+ =?utf-8?B?M0ZveWpmUzNUNGtteW9yM0xvR0tHUVlHNHdZZGxzMXM1dlJQMVJMWkJ0d0tw?=
+ =?utf-8?B?V0dxdTNMaUJCanYxeEtad2MzcEo1NzJoV2xlNmJoYTNSbFVCUS9QTVE1bHZP?=
+ =?utf-8?B?TzV3M0cwRDh6V1B2SktNV0N6S3d5L282amhFN1h3dkdRTGFZMjVsakdHRkh2?=
+ =?utf-8?B?SjdPdGFQa2JFT1BvM2VsWHRTWEg1T0NVN0VRNGJ6VERxT3k0U3FSYkZUOTJY?=
+ =?utf-8?B?dGRPTm9GSFllc2E4dmxTSFBtRk9aaHl3ZnlWV1MrUFgvY1FPSFB6Zk91MUVZ?=
+ =?utf-8?B?R0lOQXNVdDVYYkQwQnBqT1JKYmFJZWdiYVhNTUE1NWxMY3RVb2E5RTVQWEkr?=
+ =?utf-8?B?djBXOFVGK3pDaXJ3VWNaVVhoUDJ0bzhPMVVZVVFlc2tKL1l5L1BSOTFQTUFV?=
+ =?utf-8?B?UEErVTNUWFk2WDJMRW9hZCtVb2JOV3ZGQkVHUDNOclF4bmZmUVJGMzhLUmUw?=
+ =?utf-8?B?alBWUVRpU2FLQUwyeHZZcUl2OURwZTAxNWRUNkVDRnE2TmViVHpTNDRBVHNz?=
+ =?utf-8?B?MDNOaTZWZ3FERXk5VkVRS1FIdU01cjRxZFdiMGlhRWxVVVBxMHZHWTJtUDIz?=
+ =?utf-8?B?SmJiZWlEdXlvUDJHWDBKek5uVlpsZWlkWFh6SzhObUhBbzVQUjFzc1Mzcnhl?=
+ =?utf-8?B?ZHBHUVNSR24rVGU0RmtlUGtJN1NpMzI2TjFlWWtYRTQ4Z1JPa2lZS3gzeVBV?=
+ =?utf-8?B?ZDEyeERMUmtkYkFCdkpKalNPYnJvZVFyV05hcFJQS0lHNmJGdVpJeWhFNDh5?=
+ =?utf-8?B?WTBTUWFJNHFXUG9HY0ovQkJTS1FOZHNobG9xS0p0NDdNcWQ1UWZJK3FGdU9Q?=
+ =?utf-8?B?T2tBMWQrazNBNlVrWXhJMzQwb0gwV1oxSzVaL1JUNzJTSi9GSjNWUE0vcVc3?=
+ =?utf-8?B?dHRneUtTbnpnQmY3anhrQkJ6bUIwNytISGZqaXpkR1kzUFd5TU1mTlI5VWJw?=
+ =?utf-8?B?RFhCNlBTU0VjcHRQY0FoVFA2eisvUUtqRFRncW0rcGkvakNjRGRHcG5sN2tn?=
+ =?utf-8?B?RVhZSXBOQ2VKRkNSSlMzK2oxZTBkeEFsbEhScE9UN3JOTW1sQ3lEN1NoZ2h5?=
+ =?utf-8?B?WVZBZm5oWmhJT1E5Uk1yN1hRa3N6QTFNRUlEVkpqODZ6QmhHOW9zVGRtWUdl?=
+ =?utf-8?B?WXZxUk0wV0Y1VnVpM2wrY0lSMlZUcit6eFJSc2o5cnYrTDRKb1AzejlHOC9n?=
+ =?utf-8?B?dVM4eVNJSG5nS1hKN3JjUVNzbVAvSVV1NW0xSGxxOVZqdStOUnNJbmUxei9B?=
+ =?utf-8?B?QmhkWWNMVHE4M3E1dm5wbjZOV2lpRzRyU3V1c0l3UTVHYjJpRlYzVnpSWDZ1?=
+ =?utf-8?B?NHZ1Vmx0N29rVGdNSktGVXIwL0lkNjFwUm1SdHpuSjcwZVFzSHRJTGlid0ZE?=
+ =?utf-8?Q?DEtzx3syckgD+QFxUFEasXq0UATGHuKXlYmjYMtCQpnk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WEZpWTQ5Y0FlNVlicW45NnRBeWtCWFltNEI0V2J4aS9YVlVlZGJaaVlYZnJG?=
+ =?utf-8?B?MnFlWU9PQlRucXZjWXU3UXVoMEtLK2lIWUJLbENlUCtDckJ1U2RYL0l0WTBr?=
+ =?utf-8?B?NXVpY3JDeFMrNnNiZ2JIaUt1SEZhdXFUNVdmSU5XNVJjVWlvTHZ4azVyUkRT?=
+ =?utf-8?B?enAzVTk1akpsT3o1MEt4cStEL0FSRGFsY3gvOEsxMlROYlV5RDQwTkNZL1VR?=
+ =?utf-8?B?azhKcmJMbGJnUmV2SVhNNG85SjhBaTJKdWNQVFdFdXQ4QjgrSWN2cXltZDhE?=
+ =?utf-8?B?R05uTXNnR0g2VzVJVnQzQ21sRmdsb0kveER6WHJ1RmNTTkxpcEk0NWpScVIx?=
+ =?utf-8?B?eVd6bnNzTFZSa3hRZWttelkwMWcxWnBITUFMSWRLc2tjUmRSNjc3bHFtaWx6?=
+ =?utf-8?B?UmhYRkFxRkc2YkZvYWhMNFd0S2k4WDErMlRvSmVWQS82d1hLa21kS3ZlV2s0?=
+ =?utf-8?B?Z3dKbEpwQ1VVZjdGQzlXeFZrZHlWTTlxWGJMS0RuN0YrMFY3OVFoczROQ01O?=
+ =?utf-8?B?UUE0MXE3eWFWNzk3NlRJNW1MVCs2clVDbmpuQTJpNUkrNWx2djJYeWlGQXJK?=
+ =?utf-8?B?emlOY2hVR285Szd6Z2ZwNElQcVFXS3MrNTRvbWVBQ2YyZVprU1Q4Z2F6WWNG?=
+ =?utf-8?B?akJaWXJkY2JGN0tFM3AvbkQzejdpSUwydlVHemlmMStWaWRyQVBLdHptd3NF?=
+ =?utf-8?B?b0FFMzExdmFRcGFiREs0cW5lYnlSUnh6eDNmRGVVOExzMDlOOElmTDArRWNU?=
+ =?utf-8?B?bEZLTzFjMGtDQ0FtenNGWjk5Vk5RVWp5TXE0ZHc0VjFRN1hOUGcxL01jWUNJ?=
+ =?utf-8?B?eFFtUndZQTVUU0xGcGtjQk9kSm9ZcnZTT0dqdUdsOG1EYmpNZ2tnRVY5M1Rs?=
+ =?utf-8?B?R3lkUXBYK3h6elhSZW9TdlZ3eS9uSG45Y01kUXByNWJxeUZBZ1hIYVp4SFZV?=
+ =?utf-8?B?dXZld3FVZUVTdzgvVzZqeHhmaytRdERvNE9qR0VlYXhEbVRmZWhVM0xqeTVH?=
+ =?utf-8?B?RWp4WG80S3NRRThhOWlKUVcwS2FESk9LT1drQk5WYkE0QzRMcFJHUVVjK1B0?=
+ =?utf-8?B?M3QwTFZzbUYzWDdKZFJYWGtaa0xqUHJqaVlVMEhsRU9lUlZtNlVaZHMyYStS?=
+ =?utf-8?B?UmI3TEVlYTVSK1J0MHpRbnVPWUtBL09rbmVLNGU1eC9pdHFyNktiRENUMUxY?=
+ =?utf-8?B?Zk4rd3lxWXNrNW9WU1YvS0x4YVoyeEFHNVRYUUl3bWE4dGJ6ZE0rN1loR3RK?=
+ =?utf-8?B?S2tEVEEyU3dOdXBiQk1wNmVaMHZoQ2dRU0dyQmNmakRtTDVuVXFCbVgyb1F1?=
+ =?utf-8?B?ZXRrUTFGdFY3ankxcVdzZW1kMjI4TkdwckpmYXFQY2ZETzVBMDBhTTdhV0U1?=
+ =?utf-8?B?KzRjc0dMM01oeG5PS2xsd1ZDU2JoUHhTNTY4djlwNGp1Ui9XakJoZ3NVcDJx?=
+ =?utf-8?B?RS85cmNza3VqYS83aGlxSHVHcDY3SHlPMHdDei9CL2g4a0ZESjNpL2NudFpW?=
+ =?utf-8?B?TXZVWm51Zy9EN1cwazYyYk1pU3RFaVhNSHlJYjJjVW9VdExrcHI2aGY4cFcv?=
+ =?utf-8?B?RHNTTUlVZG1HcFc4NHpvVzN1bnVQMkxiTXF6NG9ZRkxMbUVCS2VlV2lKMnph?=
+ =?utf-8?B?c1hKaDhtQzAxZWIrb3k1MVNOOVlyMTdGS3NYUmZWbUgyRWFrNXhNNkVoZXZ1?=
+ =?utf-8?B?U3FwVHlmMXh4MGUydzkxK2drZTU3L0djLzNlWC91N0MzNldrWWp5T3pxZzRl?=
+ =?utf-8?B?WEZwcWRyeThQYnRsT1VlZTlLdkVpUzArbGhGemdFQzVLTk01WWUxL1JqbGs2?=
+ =?utf-8?B?WHhYUWdoWWw2YkVOUWJUaEIzSjNnL3JIdDUvL0hhQ0locHI2bXJFOVBvUjRW?=
+ =?utf-8?B?ZjMxK1l2Q3RQMHc3NUJXWjZXRU5yOHNBQnZpRktRemZNZXpUdkJ4ODNXLzZF?=
+ =?utf-8?B?WURJVzN2amoyeWRWREQ4UURYcDkrZmZYYm9GZ2ZpaUNpOGoyRVFxYUVoTDh2?=
+ =?utf-8?B?UCtvK296dGh1Nmh3VmJHSEt6QUN1RzUraEdLR3Ird00xaFY0NEFJQTRMSGVL?=
+ =?utf-8?B?TGcyWlNWV2Z2MThsRXprVWxLNG4xTUpXMHpZRkI4UmpyWHlkbDkvN0JFMjN0?=
+ =?utf-8?Q?15Rk=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85b54708-505f-41b7-345a-08dc6fb6b412
+X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 23:29:27.7300
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: abA+dgKdV3EoQR/WduxWRIMPyeuLY/OQabuH/CXe94GB7LnEIL1tSCZmjF8I7ckL
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4228
 
-On Thu, May 09, 2024 at 12:40:01AM +0300, Tariq Toukan wrote:
+Hi Reinette,
+
+On 5/8/24 15:41, Reinette Chatre wrote:
+> Hi Babu,
 > 
+> On 5/8/2024 1:07 PM, Moger, Babu wrote:
+>> Hi Reinette,
+>>
+>> On 5/7/24 15:26, Reinette Chatre wrote:
+>>> Hi Babu,
+>>>
+>>> On 5/6/2024 10:18 AM, Moger, Babu wrote:
+>>>> On 5/3/24 18:24, Reinette Chatre wrote:
+>>>>> On 3/28/2024 6:06 PM, Babu Moger wrote:
+>>>>>
+>>>>>> a. Check if ABMC support is available
+>>>>>> 	#mount -t resctrl resctrl /sys/fs/resctrl/
+>>>>>>
+>>>>>> 	#cat /sys/fs/resctrl/info/L3_MON/mbm_assign
+>>>>>> 	[abmc] 
+>>>>>> 	legacy_mbm
+>>>>>>
+>>>>>> 	Linux kernel detected ABMC feature and it is enabled.
+>>>>>
+>>>>> Please note that this adds the "abmc" feature to the resctrl
+>>>>> *filesystem* that supports more architectures than just AMD. Calling the
+>>>>> resctrl filesystem feature "abmc" means that (a) AMD needs to be ok with
+>>>>> other architectures calling their features that are
+>>>>> similar-but-maybe-not-identical-to-AMD-ABMC "abmc", or (b) this needs
+>>>>> a new generic name.
+>>>>
+>>>> It should not a problem if other architecture calling abmc for similar
+>>>> feature. But generic name is always better if there is a suggestion.
+>>>
+>>> "should not a problem" does not instill confidence that AMD is
+>>> actually ok with this.
+>>
+>> The feature "ABMC" has been used in the public document already to refer
+>> this feature.
+>> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
 > 
-> On 06/05/2024 21:04, Joe Damato wrote:
-> > On Fri, May 03, 2024 at 05:34:29PM -0700, Jakub Kicinski wrote:
-> > > On Fri, 3 May 2024 16:53:40 -0700 Joe Damato wrote:
-> > > > > diff --git a/include/net/netdev_queues.h b/include/net/netdev_queues.h
-> > > > > index c7ac4539eafc..f5d9f3ad5b66 100644
-> > > > > --- a/include/net/netdev_queues.h
-> > > > > +++ b/include/net/netdev_queues.h
-> > > > > @@ -59,6 +59,8 @@ struct netdev_queue_stats_tx {
-> > > > >    * statistics will not generally add up to the total number of events for
-> > > > >    * the device. The @get_base_stats callback allows filling in the delta
-> > > > >    * between events for currently live queues and overall device history.
-> > > > > + * @get_base_stats can also be used to report any miscellaneous packets
-> > > > > + * transferred outside of the main set of queues used by the networking stack.
-> > > > >    * When the statistics for the entire device are queried, first @get_base_stats
-> > > > >    * is issued to collect the delta, and then a series of per-queue callbacks.
-> > > > >    * Only statistics which are set in @get_base_stats will be reported
-> > > > > 
-> > > > > 
-> > > > > SG?
-> > > > 
-> > > > I think that sounds good and makes sense, yea. By that definition, then I
-> > > > should leave the PTP stats as shown above. If you agree, I'll add that
-> > > > to the v2.
-> > > 
-> > > Yup, agreed.
-> > > 
-> > > > I feel like I should probably wait before sending a v2 with PTP included in
-> > > > get_base_stats to see if the Mellanox folks have any hints about why rtnl
-> > > > != queue stats on mlx5?
-> > > > 
-> > > > What do you think?
-> > > 
-> > > Very odd, the code doesn't appear to be doing any magic :S Did you try
-> > > to print what the delta in values is? Does bringing the interface up and
-> > > down affect the size of it?
-> > 
-> > I booted the kernel which includes PTP stats in the base stats as you've
-> > suggested (as shown in the diff in this thread) and I've brought the
-> > interface down and back up:
-> > 
-> > $ sudo ip link set dev eth0 down
-> > $ sudo ip link set dev eth0 up
-> > 
-> > Re ran the test script, which includes some mild debugging print out I
-> > added to show the delta for rx-packets (but I think all stats are off):
-> > 
-> >    # Exception| Exception: Qstats are lower, fetched later
-> > 
-> > key: rx-packets rstat: 1192281902 qstat: 1186755777
-> > key: rx-packets rstat: 1192281902 qstat: 1186755781
-> > 
-> > So qstat is lower by (1192281902 - 1186755781) = 5,526,121
-> > 
-> > Not really sure why, but I'll take another look at the code this morning to
-> > see if I can figure out what's going on.
-> > 
-> > I'm clearly doing something wrong or misunderstanding something about the
-> > accounting that will seem extremely obvious in retrospect.
+> It is clear to me that Assignable Bandwidth Monitoring Counters (ABMC) is the
+> name of the AMD feature. The question is whether users can use the 
+> same name to interact with "similar but maybe not identical" features from other
+> architectures, which is what this series enables.
 > 
-> Hi Joe,
+>> If there comes a conflict then we can change it to amd_abmc. Didn't see
+>> any conflict at this pint.
 > 
-> Thanks for your patch.
-> Apologies for the late response. I was on PTO for some time.
+> How do you envision this? The resctrl filesystem interface is intended to be
+> architecture neutral so it is not obvious to me how "amd_abmc" is expected
+> to look? Why would it be necessary to have different architecture specific names
+> for a similar feature from different architectures that users interact with in
+> the same way? Sounds to me as though this just needs a new non-AMD marketing name. 
 
-No worries, I hope you enjoyed your PTO. I appreciate your response, time,
-and energy.
+I think I misunderstood it.
+It is not a concern to have a same name("abmc") for similar feature across
+the architectures.
 
-> From first look the patch looks okay. The overall approach seems correct.
-
-Sounds good to me!
- 
-> The off-channels queues (like PTP) do not exist in default. So they are out
-> of the game unless you explicitly enables them.
-
-I did not enable them, but if you saw the thread, it sounds like Jakub's
-preference is that in the v2 I include the PTP stats in get_base_stats.
-
-Are you OK with that?
-Are there other queue stats I should include as well?
-
-> A possible reason for this difference is the queues included in the sum.
-> Our stats are persistent across configuration changes, so they doesn't reset
-> when number of channels changes for example.
-> 
-> We keep stats entries for al ring indices that ever existed. Our driver
-> loops and sums up the stats for all of them, while the stack loops only up
-> to the current netdev->real_num_rx_queues.
-> 
-> Can this explain the diff here?
-
-Yes, that was it. Sorry I didn't realize this case. My lab machine runs a
-script to adjust the queue count shortly after booting.
-
-I disabled that and re-ran:
-
-  NETIF=eth0 tools/testing/selftests/drivers/net/stats.py
-
-and all tests pass.
+ABMC is also kind of generic. I am open to other generic suggestions. I
+think we should have "assign" and "monitor" words in them.
+-- 
+Thanks
+Babu Moger
 
