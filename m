@@ -1,322 +1,136 @@
-Return-Path: <linux-kernel+bounces-172975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7D28BF99F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A87128BF9A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0CE1F24338
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D40C1F24B94
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD22762DE;
-	Wed,  8 May 2024 09:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78345762DF;
+	Wed,  8 May 2024 09:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="j/xAcfs6"
-Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gVOfzAbj"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4A21DFE8;
-	Wed,  8 May 2024 09:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2798E75811;
+	Wed,  8 May 2024 09:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715161176; cv=none; b=lFn/phLzYFZD3wS0X2nQbrKbTfBt9T2+KzVGdvLiypZN4HTUJN97ItHgGYrOiGI0AurAbs8phLCrhen3G4SU6lquLX4qNTXTtRRx9wD96YdX0LUl6seT2VyLxHmJAE4mboIi1AXGeISWYiFSk5asVpQeQxt22vQMw+k8bknwcN8=
+	t=1715161189; cv=none; b=k4iY8agMePlD0vL1j1CsfvlvN/vhXH5taTP35Y18VlOaQp73b0snOTkWj8e7GqFIDD2Kci93vLxDo4qa7g0Gz0TImEV3ul50dqGtV7laMyrbZo6sWb0dnVW7oZAP7gbNBSgMAPMW4vKAXihhgMDMTURMYaMHT7QIXt8g5ho5cJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715161176; c=relaxed/simple;
-	bh=KH7B+KUi7/uyxY/n5GLOsX5f4dTbd0+EXoloUHOnaWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fhMEv5ENyVVHbxxCEYwlmaJTOMQT/x/dCTCZCozCZylaKCp1jGkQxaV8zqbZi035/j+Lvdp3ME2lkNthqBR6BSs8zvhXAxedNXN2dBD7lRZ/IVut4aQAtdmXv7sgTB4I55VBjLLDwcjwz1EDm1bB9B+ywfybnJcimmbi3kjG4u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=j/xAcfs6; arc=none smtp.client-ip=199.247.17.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
-Received: from spock.localnet (unknown [94.142.239.106])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by prime.voidband.net (Postfix) with ESMTPSA id A4C1762DD102;
-	Wed, 08 May 2024 11:39:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-	s=dkim-20170712; t=1715161170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYimBYoGsy02yIPeW5MHw0nmB/ooXCVrMND+XDBZq/8=;
-	b=j/xAcfs6jkOB87aATp/uUNBdM/ByWYRwcOw/m8gQZccvn5dXCJvefzMjdZ3MQYKO/ZarLu
-	urjZZ8+ru2sQLst2qcu2U9JgrTAOcyogQaimMP8uvGxNBv5M3p6yiRIx3E93mVnBX4i8HX
-	ldlWogz5c2kiTTC2G4m+dyEMeMW98i8=
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com,
- viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
- Borislav.Petkov@amd.com, Perry Yuan <perry.yuan@amd.com>
-Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, Xiaojian.Du@amd.com,
- Li.Meng@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v10 3/7] cpufreq: amd-pstate: implement cpb_boost sysfs entry for
- boost control
-Date: Wed, 08 May 2024 11:39:15 +0200
-Message-ID: <4563575.LvFx2qVVIh@natalenko.name>
-In-Reply-To:
- <90a2bf1607c525a1e5b42d7327dbcfe5dd338549.1715152592.git.perry.yuan@amd.com>
-References:
- <cover.1715152592.git.perry.yuan@amd.com>
- <90a2bf1607c525a1e5b42d7327dbcfe5dd338549.1715152592.git.perry.yuan@amd.com>
+	s=arc-20240116; t=1715161189; c=relaxed/simple;
+	bh=tooO+PnKs4QuJyhK8dQd4N8Ll7R1cRiwaAFITlTvBKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WEBhLYwROuAQQ59/ndJUOQiRevrR8D5oNtswQXbMqIByftKWTJ0BT5tcRcGBOBp6egBCRHNkejPHfIeksxXgXDRTiFguNA7jeiKy/7oI8wtf/YEHi33eRGdz0waQjG0ubADZ5xe96MW7r1MFh8kJFBkWPJ9KvYJM0nn0o1E9Psc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gVOfzAbj; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4489dg0g108024;
+	Wed, 8 May 2024 04:39:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715161182;
+	bh=OUWrbCU48QMw/LpDyFtgC8ZGVV6wJUg+tB4jL7Mcw+o=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=gVOfzAbjdBayCgJe2IbJ1igCDAIr/W5yWouQKPc7aMNAW+gsHz3Gcf4ghCxrMUqzD
+	 skJzhIUw35PoEbN6BaCFsLY2w9kgPSO7QfKOCyLr7fPdNJAsxl7ekJoBQVHnlP9c4W
+	 5WmYqRnUM79VEVCYaZ83AkggB4ctqaRB9HESicL4=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4489dgi2031181
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 8 May 2024 04:39:42 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 8
+ May 2024 04:39:42 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 8 May 2024 04:39:42 -0500
+Received: from [172.24.227.88] (uda0500640.dhcp.ti.com [172.24.227.88])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4489dcRN036983;
+	Wed, 8 May 2024 04:39:39 -0500
+Message-ID: <5167d813-d5ff-eb3e-ea6e-68e5a5acf39e@ti.com>
+Date: Wed, 8 May 2024 15:09:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2322898.ElGaqSPkdT";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-
---nextPart2322898.ElGaqSPkdT
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-Date: Wed, 08 May 2024 11:39:15 +0200
-Message-ID: <4563575.LvFx2qVVIh@natalenko.name>
-MIME-Version: 1.0
-
-Hello.
-
-On st=C5=99eda 8. kv=C4=9Btna 2024 9:21:08, SEL=C4=8C Perry Yuan wrote:
-> From: Perry Yuan <Perry.Yuan@amd.com>
->=20
-> With this new sysfs entry `cpb_boost`created, user can change CPU boost
-> state dynamically under `active`, `guided` and `passive` modes.
-> And the highest perf and frequency will also be updated as the boost
-> state changing.
->=20
-> 0): check current boost state
-> cat /sys/devices/system/cpu/amd_pstate/cpb_boost
->=20
-> 1): disable CPU boost
-> sudo bash -c "echo 0 > /sys/devices/system/cpu/amd_pstate/cpb_boost"
->=20
-> 2): enable CPU boost
-> sudo bash -c "echo 1 > /sys/devices/system/cpu/amd_pstate/cpb_boost"
->=20
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D217931
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D217618
-> Signed-off-by: Perry Yuan <Perry.Yuan@amd.com>
-> ---
->  drivers/cpufreq/amd-pstate-ut.c |   2 +-
->  drivers/cpufreq/amd-pstate.c    | 114 +++++++++++++++++++++++++++++++-
->  include/linux/amd-pstate.h      |   1 +
->  3 files changed, 115 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate=
-=2Dut.c
-> index f04ae67dda37..b3601b0e6dd3 100644
-> --- a/drivers/cpufreq/amd-pstate-ut.c
-> +++ b/drivers/cpufreq/amd-pstate-ut.c
-> @@ -226,7 +226,7 @@ static void amd_pstate_ut_check_freq(u32 index)
->  			goto skip_test;
->  		}
-> =20
-> -		if (cpudata->boost_supported) {
-> +		if (amd_pstate_global_params.cpb_boost) {
->  			if ((policy->max =3D=3D cpudata->max_freq) ||
->  					(policy->max =3D=3D cpudata->nominal_freq))
->  				amd_pstate_ut_cases[index].result =3D AMD_PSTATE_UT_RESULT_PASS;
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index f7dab0f7b452..f81fd61dd2a9 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -686,8 +686,10 @@ static int amd_pstate_boost_init(struct amd_cpudata =
-*cpudata)
->  	}
-> =20
->  	amd_pstate_global_params.cpb_supported =3D !(boost_val & MSR_K7_HWCR_CP=
-B_DIS);
-> -	if (amd_pstate_global_params.cpb_supported)
-> +	if (amd_pstate_global_params.cpb_supported) {
->  		current_pstate_driver->boost_enabled =3D true;
-> +		cpudata->boost_state =3D true;
-> +	}
-> =20
->  	amd_pstate_global_params.cpb_boost =3D amd_pstate_global_params.cpb_sup=
-ported;
-> =20
-> @@ -1293,6 +1295,114 @@ static ssize_t prefcore_show(struct device *dev,
->  	return sysfs_emit(buf, "%s\n", str_enabled_disabled(amd_pstate_prefcore=
-));
->  }
-> =20
-> +static int amd_pstate_cpu_boost_update(struct cpufreq_policy *policy, bo=
-ol on)
-> +{
-> +	struct amd_cpudata *cpudata =3D policy->driver_data;
-> +	struct cppc_perf_ctrls perf_ctrls;
-> +	u32 highest_perf, nominal_perf, nominal_freq, max_freq;
-> +	int ret;
-> +
-> +	if (!policy) {
-> +		pr_err("policy is null\n");
-> +		return -ENODATA;
-> +	}
-> +
-> +	highest_perf =3D READ_ONCE(cpudata->highest_perf);
-> +	nominal_perf =3D READ_ONCE(cpudata->nominal_perf);
-> +	nominal_freq =3D READ_ONCE(cpudata->nominal_freq);
-> +	max_freq =3D READ_ONCE(cpudata->max_freq);
-> +
-> +	if (boot_cpu_has(X86_FEATURE_CPPC)) {
-> +		u64 value =3D READ_ONCE(cpudata->cppc_req_cached);
-> +
-> +		value &=3D ~GENMASK_ULL(7, 0);
-> +		value |=3D on ? highest_perf : nominal_perf;
-> +		WRITE_ONCE(cpudata->cppc_req_cached, value);
-> +
-> +		wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
-> +	} else {
-> +		perf_ctrls.max_perf =3D on ? highest_perf : nominal_perf;
-> +		ret =3D cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
-> +		if (ret) {
-> +			cpufreq_cpu_release(policy);
-> +			pr_debug("failed to set energy perf value (%d)\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if (on)
-> +		policy->cpuinfo.max_freq =3D max_freq;
-> +	else
-> +		policy->cpuinfo.max_freq =3D nominal_freq * 1000;
-> +
-> +	policy->max =3D policy->cpuinfo.max_freq;
-> +
-> +	if (cppc_state =3D=3D AMD_PSTATE_PASSIVE) {
-> +		ret =3D freq_qos_update_request(&cpudata->req[1],
-> +				      policy->cpuinfo.max_freq);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int amd_pstate_cpu_boost(int cpu, bool state)
-> +{
-> +	int ret;
-> +	struct cpufreq_policy *policy =3D cpufreq_cpu_get(cpu);
-> +	struct amd_cpudata *cpudata =3D policy->driver_data;
-> +
-> +	if (!policy) {
-> +		pr_err("policy is NULL\n");
-> +		ret =3D -ENODATA;
-> +		goto err_exit;
-> +	}
-> +
-> +	ret =3D amd_pstate_cpu_boost_update(policy, state);
-> +	refresh_frequency_limits(policy);
-> +	cpudata->boost_state =3D !!state;
-> +
-> +err_exit:
-> +	cpufreq_cpu_put(policy);
-> +	return ret < 0 ? ret : 0;
-> +}
-> +
-> +static ssize_t cpb_boost_show(struct device *dev,
-> +			   struct device_attribute *attr, char *buf)
-> +{
-> +	return sysfs_emit(buf, "%u\n", amd_pstate_global_params.cpb_boost);
-> +}
-> +
-> +static ssize_t cpb_boost_store(struct device *dev, struct device_attribu=
-te *b,
-> +			    const char *buf, size_t count)
-> +{
-> +	bool new_state;
-> +	ssize_t ret;
-> +	int cpu;
-> +
-> +	if (!amd_pstate_global_params.cpb_supported) {
-> +		pr_err("Boost mode is not supported by this processor or SBIOS\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret =3D kstrtobool(buf, &new_state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mutex_lock(&amd_pstate_driver_lock);
-> +	for_each_present_cpu(cpu) {
-> +		ret =3D amd_pstate_cpu_boost(cpu, new_state);
-> +		if (ret < 0) {
-> +			pr_warn("failed to update cpu boost for CPU%d (%d)\n", cpu, ret);
-
-Note ret is ssize_t, so %d should be %ld (or %z/%zd/%zi?) instead.
-
-> +			goto err_exit;
-> +		}
-> +	}
-> +	amd_pstate_global_params.cpb_boost =3D !!new_state;
-> +
-> +err_exit:
-> +	mutex_unlock(&amd_pstate_driver_lock);
-> +	return ret < 0 ? ret : count;
-> +}
-> +
->  cpufreq_freq_attr_ro(amd_pstate_max_freq);
->  cpufreq_freq_attr_ro(amd_pstate_lowest_nonlinear_freq);
-> =20
-> @@ -1303,6 +1413,7 @@ cpufreq_freq_attr_rw(energy_performance_preference);
->  cpufreq_freq_attr_ro(energy_performance_available_preferences);
->  static DEVICE_ATTR_RW(status);
->  static DEVICE_ATTR_RO(prefcore);
-> +static DEVICE_ATTR_RW(cpb_boost);
-> =20
->  static struct freq_attr *amd_pstate_attr[] =3D {
->  	&amd_pstate_max_freq,
-> @@ -1327,6 +1438,7 @@ static struct freq_attr *amd_pstate_epp_attr[] =3D {
->  static struct attribute *pstate_global_attributes[] =3D {
->  	&dev_attr_status.attr,
->  	&dev_attr_prefcore.attr,
-> +	&dev_attr_cpb_boost.attr,
->  	NULL
->  };
-> =20
-> diff --git a/include/linux/amd-pstate.h b/include/linux/amd-pstate.h
-> index 8ba5dd4d3405..56f616a5cd0f 100644
-> --- a/include/linux/amd-pstate.h
-> +++ b/include/linux/amd-pstate.h
-> @@ -106,6 +106,7 @@ struct amd_cpudata {
->  	u32	policy;
->  	u64	cppc_cap1_cached;
->  	bool	suspended;
-> +	bool	boost_state;
->  };
-> =20
->  /*
->=20
-
-
-=2D-=20
-Oleksandr Natalenko (post-factum)
---nextPart2322898.ElGaqSPkdT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmY7SEMACgkQil/iNcg8
-M0tgIBAA2bvCr4o6vPSrdQN6Iunfu5oZDcI7uElQJ93I/hCYBOi7RWVXKDDggd7M
-lJcxY5xRYQuAAlLsgDd6GMqbdfbki3ham9uj25ALq1Ct11OwSplaFPzWIpN7OS6C
-SjdXlfjwc6X0YmI7q1wzOUqAJjRNVmYcQAAD8c84JGON2/UZ73WqBLrDYV993r6K
-Us+XkC79RdUGPY0aX1v9AGaeZlVvLVzsbbFImWDijaH47Z3SmIfVytHtW/euy5CJ
-1UZ5fmrRaGY4fOXmtd9c9/x9SxCo1B9I99crkSIu9xdbCHtBkrWCDqYGQpBvhw/n
-HUZEM0C1IoFGHm/wdhaJQAYeyj6E7IYOAZXWLfKzAhxpj4BZxUXa7HYHS8V6BcYF
-Bk/zoln7lMlaYFAqNNR2jGYH8+iEptbn+Y8spocnNy5bbqrcvQGXvgx/oe+GOl+x
-fm2OtpHfSAGga1tqsBFsZEOa+4K/Gtk/HiALseF5GGYTReDmTdttMqzugU09Tw33
-6DwSDxTGrW8Pbxctw3mmP9J7b7l4NbhMu4t+2reh+Jx5+sRwPMzZHbTZg3bapu61
-zEBpgxNI6+ycsBU/158S+3zq6FRFzgkDWMsfEK9iNVAMXErmQSwGV3PTZV6qHSP7
-OMD6HThh8FveOklfhJDLLdvXJUN+2WhlDf93KYg0Qco1lQYN184=
-=PK+c
------END PGP SIGNATURE-----
-
---nextPart2322898.ElGaqSPkdT--
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-j722s-evm: Update USB0 and USB1
+ configuration for EVM
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <srk@ti.com>, <rogerq@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Ravi Gunasekaran <r-gunasekaran@ti.com>
+References: <20240429120932.11456-1-r-gunasekaran@ti.com>
+ <20240429120932.11456-4-r-gunasekaran@ti.com>
+ <20240507150123.GA471367-robh@kernel.org>
+From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+In-Reply-To: <20240507150123.GA471367-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
 
+On 5/7/24 8:31 PM, Rob Herring wrote:
+> On Mon, Apr 29, 2024 at 05:39:32PM +0530, Ravi Gunasekaran wrote:
+>> The GPIO expander on the EVM allows the USB selection for Type-C
+>> port to either USB0 or USB1 via USB hub. By default, let the Type-C
+>> port select USB0 via the GPIO expander port P05.
+>>
+>> Enable super-speed on USB1 by updating SerDes0 lane configuration.
+>>
+>> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
+>> ---
+>>  arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 58 +++++++++++++++++++++++++
+>>  arch/arm64/boot/dts/ti/k3-serdes.h      |  7 +++
+>>  2 files changed, 65 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> index bf3c246d13d1..ddb4f1f0d92d 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
+>> @@ -9,7 +9,9 @@
+>>  /dts-v1/;
+>>  
+>>  #include <dt-bindings/net/ti-dp83867.h>
+>> +#include <dt-bindings/phy/phy.h>
+>>  #include "k3-j722s.dtsi"
+>> +#include "k3-serdes.h"
+>>  
+>>  / {
+>>  	compatible = "ti,j722s-evm", "ti,j722s";
+>> @@ -20,6 +22,8 @@
+>>  		serial2 = &main_uart0;
+>>  		mmc0 = &sdhci0;
+>>  		mmc1 = &sdhci1;
+>> +		usb0 = &usb0;
+>> +		usb1 = &usb1;
+> 
+> Why is this needed? Doesn't look related?
+
+I rechecked, it is not needed, I will remove it in v2.
+
+> 
+>>  	};
+>>  
+
+[...]
+
+-- 
+Regards,
+Ravi
 
