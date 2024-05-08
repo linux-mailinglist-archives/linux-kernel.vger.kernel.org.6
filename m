@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-173731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D82B8C04A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:50:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC6D8C04A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79F8EB2648E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6889828B440
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73447130E47;
-	Wed,  8 May 2024 18:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C7F130ADF;
+	Wed,  8 May 2024 18:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwT2gHw2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXHcMZ0f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E884912FF73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAAA12F582
 	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715194161; cv=none; b=BNY+AW49zMlUJyw+BHaU6Se28ou+jZYCaseNd9QYKA3HdOQBIKLynNrQO3bQMaOB86Qw8fhsNHcWvAw1EaAcwNN1U8VM/su+UUiRY3BKauAIBMPFFMp2zMogurzSp3S+qoEn93mNof1hq8hikVDJLHq6JPCIafYu0eCvaE4VfJA=
+	t=1715194161; cv=none; b=OFR5HIelhP0TKdv/oxPrZ4nNERtuqfqAslyHr2k7yEThqIf5fYo3ZWvPal2lTPOJXKVoRXyjprxZGOaXReb6WObfHoFVjQttLV8V1OXyqk3Fg1r4hgSG9uzOwrNRSNWdMABTV/y339pAqNu8K4oaxfeSyr4ABBHgYz231EWIYqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715194161; c=relaxed/simple;
-	bh=gd7PMl27AoVAQ2ia5Bgo3BitWkSsgq61mZW0eRFY/TM=;
+	bh=hd+FSPktwPD2NcYKRreZq3cQ1ikz55qeFiAASrNEG50=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e6UtF5FCMnN13Jwf2O5ARjjVOqUdzb+4bgse3lx9soihMOqm+7Rf5K457y5hrdobXeo7FIWevVB1XtwX3JlcZCoNN071L2RQBZgGhg+vMgxTuaNh/ael5l3mZNJYwEMg1GBcOqb97ESkTXRdxhleGOcdlT9xev9u+4tLbhf2u/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwT2gHw2; arc=none smtp.client-ip=192.198.163.8
+	 MIME-Version; b=O0yEBkODtMsJZmuGgbtrziIScbcB4iBzPHoSVSbcnLLDzQGT2ibSLCMKnope3LaXEg+yvpxsh4u39omJcJHpCGgt50gMlFb6IouX5vjhilPFDfnCL9RpADZo2KfMOVJ/+K6wIuWGaSn0QfQYWZudDMkyzAAbS7/y4z4qgLzpI7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lXHcMZ0f; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,39 +35,39 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1715194160; x=1746730160;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gd7PMl27AoVAQ2ia5Bgo3BitWkSsgq61mZW0eRFY/TM=;
-  b=BwT2gHw2IpJP14SwhSnVD+GFCAPVmimoqQe6UlcEXkqiXTOP29hP744y
-   z6ZcrBYk72B7mmP1iPpF2ZTEdnOzF8oTBbhZRb2GckeqKj5sBdqWZ/Tk0
-   gBRUkIzGgrUcmpQ98QSDuf28ovIW2o8kjIPadgC72X/Txw9vYQ6S68Ejp
-   ZKyj4qd8sv+PZ8P2buBHViLkOIjT+G0iVkuQzJEOJ3LdnBlZcWtK3Wd0U
-   b4i2U/iNjncEP+9/SXsiFcgnRW5Q23RAvtzzqJ/Pi9FyD7JEVH0afdmhF
-   zb++CWQl7iz0GFxLbe52SoOwpH5Y+rNDloQGFKjgSO+XB4dH+g/DT88eD
-   g==;
-X-CSE-ConnectionGUID: Bndd3cpNQzWMUkmP792+HA==
-X-CSE-MsgGUID: oQcu8kSyQK2Q2PO8jcFqyw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="28591030"
+  bh=hd+FSPktwPD2NcYKRreZq3cQ1ikz55qeFiAASrNEG50=;
+  b=lXHcMZ0fQM61GHqNmfhwxoRHDuljVJlHeRUMADKckSUP/J3w+A0jHeuL
+   QL69VOPpiursSKuL6gFQ/NdWVHM6VEhhEte6jz+wakV6YV6T+k3kvM8r3
+   CMpVvQQe4QfrVzZ/KCX4RpQlBcMVKFch1GqLTHWtStQL0RCoPk91UuQpP
+   ivXaiWWJ8fYaaVbRNgC5nP31EGXuGkHkMxhG+9CwsJ3JXY7cNxZfn5fE3
+   AQ1qPJoDPx/iMck8dOOBa4fIUlVB3dcKAwBxFtwyfuTFprf0udsgc7cnC
+   rCRJUrnZvVIqh4qNIfAGnk7/vq6ulA6Co05fNqeQS+aK7suK/IkqD8q1i
+   w==;
+X-CSE-ConnectionGUID: xS1D0IvYSSyWZaB+i7GxoA==
+X-CSE-MsgGUID: ELvcE6P7RsGkeDxf7kZ6VA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="36457776"
 X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="28591030"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 11:49:17 -0700
-X-CSE-ConnectionGUID: yUhMmsEfSPeoIoDAIhI8Bg==
-X-CSE-MsgGUID: 4LUFf3YBRBKx5D2fS5IBiQ==
+   d="scan'208";a="36457776"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 11:49:18 -0700
+X-CSE-ConnectionGUID: kq6I8R3mT5CiJjCYFvDp+w==
+X-CSE-MsgGUID: iOck02fWSHSZQUgxLuhOAQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="29024974"
+   d="scan'208";a="28957220"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa006.fm.intel.com with ESMTP; 08 May 2024 11:49:16 -0700
+  by fmviesa009.fm.intel.com with ESMTP; 08 May 2024 11:49:16 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BC1A3D5A; Wed, 08 May 2024 21:49:12 +0300 (EEST)
+	id C58CE11F; Wed, 08 May 2024 21:49:12 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 07/10] misc: eeprom_93xx46: Convert to use kstrtox()
-Date: Wed,  8 May 2024 21:47:00 +0300
-Message-ID: <20240508184905.2102633-8-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 08/10] misc: eeprom_93xx46: Replace explicit castings with proper specifiers
+Date: Wed,  8 May 2024 21:47:01 +0300
+Message-ID: <20240508184905.2102633-9-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240508184905.2102633-1-andriy.shevchenko@linux.intel.com>
 References: <20240508184905.2102633-1-andriy.shevchenko@linux.intel.com>
@@ -79,43 +79,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-sscanf() is a heavy one and moreover requires additional boundary checks.
-Convert driver to use kstrtobool() in eeprom_93xx46_store_erase().
+There is no need to have an explicit casting when we can simply use
+the correct printf() specifier.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/misc/eeprom/eeprom_93xx46.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/misc/eeprom/eeprom_93xx46.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/misc/eeprom/eeprom_93xx46.c b/drivers/misc/eeprom/eeprom_93xx46.c
-index 3f885bac72c2..18a3b534ea73 100644
+index 18a3b534ea73..ac485b2827db 100644
 --- a/drivers/misc/eeprom/eeprom_93xx46.c
 +++ b/drivers/misc/eeprom/eeprom_93xx46.c
-@@ -10,7 +10,7 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/gpio/consumer.h>
--#include <linux/kernel.h>
-+#include <linux/kstrtox.h>
- #include <linux/log2.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-@@ -366,9 +366,13 @@ static ssize_t eeprom_93xx46_store_erase(struct device *dev,
- 					 const char *buf, size_t count)
- {
- 	struct eeprom_93xx46_dev *edev = dev_get_drvdata(dev);
--	int erase = 0, ret;
-+	bool erase;
-+	int ret;
-+
-+	ret = kstrtobool(buf, &erase);
-+	if (ret)
-+		return ret;
+@@ -162,8 +162,8 @@ static int eeprom_93xx46_read(void *priv, unsigned int off,
+ 		ndelay(250);
  
--	sscanf(buf, "%d", &erase);
- 	if (erase) {
- 		ret = eeprom_93xx46_ew(edev, 1);
- 		if (ret)
+ 		if (err) {
+-			dev_err(&edev->spi->dev, "read %zu bytes at %d: err. %d\n",
+-				nbytes, (int)off, err);
++			dev_err(&edev->spi->dev, "read %zu bytes at %u: err. %d\n",
++				nbytes, off, err);
+ 			break;
+ 		}
+ 
+@@ -274,7 +274,8 @@ static int eeprom_93xx46_write(void *priv, unsigned int off,
+ {
+ 	struct eeprom_93xx46_dev *edev = priv;
+ 	char *buf = val;
+-	int i, ret, step = 1;
++	int ret, step = 1;
++	unsigned int i;
+ 
+ 	if (unlikely(off >= edev->size))
+ 		return -EFBIG;
+@@ -301,8 +302,7 @@ static int eeprom_93xx46_write(void *priv, unsigned int off,
+ 	for (i = 0; i < count; i += step) {
+ 		ret = eeprom_93xx46_write_word(edev, &buf[i], off + i);
+ 		if (ret) {
+-			dev_err(&edev->spi->dev, "write failed at %d: %d\n",
+-				(int)off + i, ret);
++			dev_err(&edev->spi->dev, "write failed at %u: %d\n", off + i, ret);
+ 			break;
+ 		}
+ 	}
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
