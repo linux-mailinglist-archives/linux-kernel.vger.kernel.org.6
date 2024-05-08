@@ -1,105 +1,116 @@
-Return-Path: <linux-kernel+bounces-173695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA6E8C0445
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:25:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCB28C0450
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D47B247A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:25:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77875286BB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D921112C814;
-	Wed,  8 May 2024 18:25:49 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E9412DD98;
+	Wed,  8 May 2024 18:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H4dHBcmI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAC11292E5
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3EA12BE9E;
+	Wed,  8 May 2024 18:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715192749; cv=none; b=BxvFxZ+zpkdnKtFqunkJQaSgcJkSmRwUbZe6+Prgh7nUagnYhe+4Dlt8FxRm5U7Syu+ih7hb8WJeZLRTyAw2TOTShX+SSF5sM44T0Tt5V5a97n2diQzOqO0QJC4y6THaV4/gCJXPE8J3Vm3r5t/LW1A12ztAzXwllnhk2xXLAjY=
+	t=1715192865; cv=none; b=MYznzFf4V90bq2xauUrWjYuaZ/pG8IJBSnTrztzFbAN1XAdgCmUOrluzmCkJr4dXdDrBokmBM9gBoH3xJi5rLD6XCCQlXduXKEmvcSgRuPkdsJMTgtNlXFBmJU3rpCYIGWBQIgORefo4B9DzSuLKmvwSrloZ8kD6LrczonUVmd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715192749; c=relaxed/simple;
-	bh=ItrjONTKazFM54mQO0cKmmhKMQAKqNk0ljaWbS5eIHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UIorcUFSBt4ELJ7TvsE+eQpl9T1+h3AdP+GiDMqKslL2dGwVCpyiW8bskOHIwYz9k8e4PJuk1is3CE9+Pd5LQGe7GeCEJE2y+006JYplouXoofw4Czxk+SXQ4wRfu4SruXf8Hoxs6wprGRmajU7gxpvgXvwz7FwmTKouY8ps3uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 10E491C0005;
-	Wed,  8 May 2024 18:25:36 +0000 (UTC)
-Message-ID: <3bb94ee6-622d-4dd8-ac11-b8bd2b2849ef@ghiti.fr>
-Date: Wed, 8 May 2024 20:25:36 +0200
+	s=arc-20240116; t=1715192865; c=relaxed/simple;
+	bh=TQyn2lCiksoMNY+L3Cmit5xvgMlOchLg/3HXre8evts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=edsEDS3j0RPY+BwoUi8S8U7Fr9lsZ7L32QqNlYUlzOXfyI2d8VwO9e55GZBMaCUZRFXEEF4dQ+O5bEAzJuwsZzvemqb2c6voH++gKGVDAatp7rWfRwMbf/BhHH6F4e+wBjjHtwD6dXQBC07/IbyjGh6UYYRnDUg1KHGtRe+sBPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H4dHBcmI; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715192864; x=1746728864;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TQyn2lCiksoMNY+L3Cmit5xvgMlOchLg/3HXre8evts=;
+  b=H4dHBcmI0CQIMpvcgBLfLZ0c69k+BzZv6LIpTb17DmNnAyJYtRhO6xR5
+   wLr/C0n8GZTKdQNAd36muZiLm4SNdlhE+SG+ZIvy/QGGY0jqzH/HuXLwL
+   RYfpGh0a9IABSSlmo9VSUX5wQ3nW9r7RD0r+OT1FiaGF9dw2aibjDz9sD
+   lNmcKFnGRDPx0AK+UvxNUidISEwCav2L/PfSZ2eyqLN1Fvs0BgSiTw0dj
+   gQXsjoum2MW9Y4WpZvtp6+9zJtXdKUI2qdPzRRbU28+6dET6V7Dq4/IwZ
+   VhJNiuhhAWFvEipK8lAzmZkUcv388wVbkexZUXnaOWy9ewUNaqDOpawgd
+   Q==;
+X-CSE-ConnectionGUID: HHU7tMSuRsmdxVylYmK5TQ==
+X-CSE-MsgGUID: UrZviiP8Qdi+uEx9eP8HZQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="21746829"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="21746829"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 11:27:43 -0700
+X-CSE-ConnectionGUID: pPHW8MKiSkaurGKf+8RAmQ==
+X-CSE-MsgGUID: 6/g+hsMwS+mdRwVMUlc4Pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="33526172"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 11:27:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s4m0t-00000005XUW-2oGJ;
+	Wed, 08 May 2024 21:27:35 +0300
+Date: Wed, 8 May 2024 21:27:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Subject: Re: [PATCH net-next v2 1/1] net: intel: Use *-y instead of *-objs in
+ Makefile
+Message-ID: <ZjvEF7haIsMcMh08@smile.fi.intel.com>
+References: <20240508180057.1947637-1-andriy.shevchenko@linux.intel.com>
+ <1f2eb3d5-649d-4723-af89-ca625070877d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] Merge arm64/riscv hugetlbfs contpte support
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-mm@kvack.org
-References: <20240508111829.16891-1-alexghiti@rivosinc.com>
- <20240508092756.58fba60e4b6ce0986e8f5f73@linux-foundation.org>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240508092756.58fba60e4b6ce0986e8f5f73@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: yes
-X-Spam-Level: **************************
-X-GND-Spam-Score: 400
-X-GND-Status: SPAM
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f2eb3d5-649d-4723-af89-ca625070877d@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Andrew,
+On Wed, May 08, 2024 at 11:23:39AM -0700, Jacob Keller wrote:
+> On 5/8/2024 11:00 AM, Andy Shevchenko wrote:
 
-On 08/05/2024 18:27, Andrew Morton wrote:
-> On Wed,  8 May 2024 13:18:20 +0200 Alexandre Ghiti <alexghiti@rivosinc.com> wrote:
->
->> This patchset intends to merge the contiguous ptes hugetlbfs implementation
->> of arm64 and riscv.
->>
->> ...
->>
->>   arch/arm64/Kconfig                  |   1 +
->>   arch/arm64/include/asm/pgtable.h    |  56 +++++-
->>   arch/arm64/mm/hugetlbpage.c         | 291 +---------------------------
->>   arch/riscv/Kconfig                  |   1 +
->>   arch/riscv/include/asm/hugetlb.h    |   2 +-
->>   arch/riscv/include/asm/pgtable-64.h |  11 ++
->>   arch/riscv/include/asm/pgtable.h    | 153 +++++++++++++--
->>   arch/riscv/mm/hugetlbpage.c         | 227 ----------------------
->>   arch/riscv/mm/pgtable.c             |   6 +-
->>   mm/Kconfig                          |   3 +
->>   mm/Makefile                         |   1 +
->>   mm/contpte.c                        | 272 ++++++++++++++++++++++++++
->>   12 files changed, 480 insertions(+), 544 deletions(-)
->>   create mode 100644 mm/contpte.c
-> Hits three subsystems, so I guess mm.git is the place.  I'll await
-> reviewer/tester input and let's look at getting this into mm.git after
-> 6.10-rc1?
+..
+
+> FWIW I applied v1 and v2, and got only the following range-diff:
+
+> This matches the changes described w.r.t ordering, and everything built
+> properly when I tested it on my test kernel tree.
+> 
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+
+Thank you!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Sure, fine by me :)
-
-Thanks,
-
-Alex
-
-
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
