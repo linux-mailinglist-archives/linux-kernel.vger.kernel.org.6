@@ -1,109 +1,98 @@
-Return-Path: <linux-kernel+bounces-173876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861EB8C071B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8998E8C0721
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:05:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415592848CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FFE2834FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:05:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A32F133285;
-	Wed,  8 May 2024 22:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B49A133284;
+	Wed,  8 May 2024 22:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgDkL1UL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lSauip+Q"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48637D530;
-	Wed,  8 May 2024 22:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5743FD530
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715205879; cv=none; b=E/CT7VndAwXPHpkVRIUZzOFpAEdNVfw8voI/FMl6jnoKmYvjr+rYEWdjNo9b1rEF99LUJO/EbIx+sAKabscGsFMtQOG4LkpKT3+lWLhgBNYu3Syr3U/5u/0+p5zqsl0UCRQl5V1uU7+3iWZSsG9+Hh3YCfjHQozGL8nY3PRv1cM=
+	t=1715205942; cv=none; b=eJKu1EvK5s2Kju833eJ0jcZfanbCpTQ9sdcYhjJpJbwS2JXDkY0CwFSwCGn6sJ3TZHdVaEv2buCPaPoAlV3jQjdwsW7z/UWit1nJ+VSxndkYRTGyWT/+AS1n6Mm9ioHnUbfUwokNqltny0n2kd/G7zVD0UzWDnt1dtfuTjY8kZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715205879; c=relaxed/simple;
-	bh=ZN+vFBI35D1ri+L+O7niU/x4x2qvaqXNVEPvYjNr4B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ah4GAdah73BtpPukTF7EZkg9BdE4zzvYoLh0jSCX/YrbZGA7k88G/V7z626UkHCkd8dNtXcaeN4+Y40NetPDUqXNTqgfEPOFvhRJQCZRd9YpTbA4tiNuM/FURTyQKBYHLjip0IzS1crokGEbLfdw+nVNDyeNHtaKlnchCPfTv/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgDkL1UL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8630BC113CC;
-	Wed,  8 May 2024 22:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715205878;
-	bh=ZN+vFBI35D1ri+L+O7niU/x4x2qvaqXNVEPvYjNr4B0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bgDkL1UL4cUDw/bK4TvVB6BnhfDeQox+XBPdaNKVEM1LYL8gZOLSsn5Gh1ch9Lr/o
-	 ohlulgg51oRnHEmgSrqvubg2oZJBV0fv/NP0K6oHA2oceBzfZ+BtlQgP+LNgBJfzSu
-	 dDkEosJ1IH1OSmv+iGO8wTqniE0C8IdDMiykTG8P1VFm9XuE7CwN40JSG/l60gEcre
-	 sqh1DRhzCf73jGvgfUWfRVQn3Z4Invy59zKEey6PnezZ35cwLZvMX/MydyZWa0RLMk
-	 zvf6tqrAuFXJSuI6nAOzLxAWdV0X3iRsrDT8cqgOZgUxHI3LEgf3tXFHwkOxsyvjTs
-	 jMw0tS4koxC3A==
-Date: Wed, 8 May 2024 17:04:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: LeoLiu-oc <LeoLiu-oc@zhaoxin.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
-	tony.luck@intel.com, bp@alien8.de, bhelgaas@google.com,
-	robert.moore@intel.com, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	acpica-devel@lists.linux.dev, CobeChen@zhaoxin.com,
-	TonyWWang@zhaoxin.com, ErosZhang@zhaoxin.com, LeoLiu@zhaoxin.com
-Subject: Re: [PATCH v2 0/3] Parse the HEST PCIe AER and set to relevant
- registers
-Message-ID: <20240508220436.GA1789788@bhelgaas>
+	s=arc-20240116; t=1715205942; c=relaxed/simple;
+	bh=xXJXTX+AXl31YNYKpCfQaCakia+fRsDhNq9CD9DPan0=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lwe83ecEvuvhPi4U5Pn+LcNsbEuJSZKR7WUaVN6LkFgeg0XrJKJ6tbAWF6Zchfljs4cnd7Mx6kEtCqNjYY6XrpMZ47bgAYNXgFzNch1BH8xzKhCqiZqLgp4zOqjdYfMgGrWQ2SqzF5K1RcSzMY3c1pzLHDqMfHKzOrQKUMmphLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lSauip+Q; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-d9b9adaf291so278301276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:05:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715205939; x=1715810739; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xXJXTX+AXl31YNYKpCfQaCakia+fRsDhNq9CD9DPan0=;
+        b=lSauip+QEVMvJYgAjrNL7aHJDKYdz7h7x/0PNu0Wwi4oAMaSgvBj2TjIblgwtBO7+S
+         6K+Z4xnIod/vIjM+nS1NrwEssn2rKJEnBJqI1LL78EfKeMZBQWchxCPC6GnGfVR3uoZ9
+         2rfDVGeVaGtkqhc7zmZwo1cgw3iDTw8pTmBlg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715205939; x=1715810739;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xXJXTX+AXl31YNYKpCfQaCakia+fRsDhNq9CD9DPan0=;
+        b=YQ7xNefL7JoEHn1gF6yEnI/reH7la4qf4eH5H2GIKS1cVyqhtxezfEiqofMcKP+d2d
+         U2hYFw22ZNGBhVgnTmVw1og75jS49fJ6Uyn+DDcj10WcY36ztwlGZLG7JaACC0s+D0tF
+         MVuQ3fIzx1BL9T0y/dW2VVHie6A8Z3jsDtx+JNNrg9B0vZXy+h1K2o1HUAK0n7i6POYD
+         K+6Cv+QcgRPO0Y2JprAWuQBMKjrFUXQUVgwiNOZdwttS+sYBI32yphrirWtNfFGMG1bw
+         RgJF376uuG/jIb//ix0dF8w8qsPVKcZ8adzQ01I+gcL8+y/noZN7m3VPuCXe8McDGUdm
+         EGug==
+X-Forwarded-Encrypted: i=1; AJvYcCVsiljWP5NRLo6C5EPRuROyw/uFLrQq8PJe4dk0TGLbjGlUGJMR01AYjA8FdVr5rTGeIw4tOVcjvtkPjT8nYfnNci0Fv+PndnafZLzq
+X-Gm-Message-State: AOJu0YxZblzs4Mx0QgWQ5Mtrtngz+yXNM4fncZfOozm4+ppBkorES9OW
+	FWYJOGxEfNy2hIZT+5dKD/YFZaVuE4KPQEsajJZMSM7l91nDfG5ZcR6Y/oBaUfmYzmK6lptx2ib
+	c7lFyFTJuxGog23pHnysHwkzhaRsQJQfRO7xr
+X-Google-Smtp-Source: AGHT+IFOzlvTP54gRhOxc+z5MQ8WG/MPd7EKLY+wd4h6GfQB/rKrNwQ8ChHVKkeDh1oaX6WWyOIU2soq0jHzKU8OGwY=
+X-Received: by 2002:a25:ac9a:0:b0:de6:d0a:ee3d with SMTP id
+ 3f1490d57ef6-debb9db5a4amr4379276276.30.1715205939465; Wed, 08 May 2024
+ 15:05:39 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 May 2024 15:05:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231218030430.783495-1-LeoLiu-oc@zhaoxin.com>
+In-Reply-To: <20240506150830.23709-8-johan+linaro@kernel.org>
+References: <20240506150830.23709-1-johan+linaro@kernel.org> <20240506150830.23709-8-johan+linaro@kernel.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Wed, 8 May 2024 15:05:38 -0700
+Message-ID: <CAE-0n51CUjWD30BbyPDqspg3-ZX3QaguBEtR9tBztGxCxSa4eg@mail.gmail.com>
+Subject: Re: [PATCH 07/13] mfd: pm8008: drop unused driver data
+To: Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mark Brown <broonie@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Satya Priya <quic_c_skakit@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Dec 18, 2023 at 11:04:27AM +0800, LeoLiu-oc wrote:
-> From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
-> 
-> According to the Section 18.3.2.4, 18.3.2.5 and 18.3.2.6 in ACPI SPEC
-> r6.5, the register value form HEST PCI Express AER Structure should be
-> written to relevant PCIe Device's AER Capabilities.So the purpose of the
-> patch set is to extract register value from HEST PCI Express AER
-> structures and program them into PCIe Device's AER registers. Refer to the
-> ACPI SPEC r6.5 for the more detailed description. This patch is an
-> effective supplement to _HPP/_HPX method when the Firmware does not
-> support the _HPP/_HPX method and can be specially configured for the AER
-> register of the specific device.
-> 
+Quoting Johan Hovold (2024-05-06 08:08:24)
+> The i2c client driver data pointer has never been used so drop the
+> unnecessary assignment.
+>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
-> 
-> v1->v2:
-> - Move the definition of structure "hest_parse_aer_info" to file apei.h.
 
-Just noticed that this removes the ACPICA header dependency problem
-that Rafael pointed out.  This also applies (with minor offsets) to
-v6.9-rc1, so it's not very stale.  We're almost to the v6.9 final
-release, so when v6.10-rc1 is tagged, can you rebase to that and
-repost this?
-
-I assume you have a platform that uses this.  It would be good to
-mention that in the commit log of patches 1 and 3 so we have some idea
-of where it's useful and where changes need to be tested.
-
-> LeoLiuoc (3):
->   ACPI/APEI: Add hest_parse_pcie_aer()
->   PCI: Add AER bits #defines for PCIe to PCI/PCI-X Bridge
->   PCI/ACPI: Add pci_acpi_program_hest_aer_params()
-> 
->  drivers/acpi/apei/hest.c      | 69 +++++++++++++++++++++++-
->  drivers/pci/pci-acpi.c        | 98 +++++++++++++++++++++++++++++++++++
->  drivers/pci/pci.h             |  9 ++++
->  drivers/pci/probe.c           |  1 +
->  include/acpi/apei.h           | 17 ++++++
->  include/uapi/linux/pci_regs.h |  3 ++
->  6 files changed, 195 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
