@@ -1,141 +1,129 @@
-Return-Path: <linux-kernel+bounces-173638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32BC8C033B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098BB8C034A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74DAD1F22844
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:35:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2F91C21772
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AEB12BEB6;
-	Wed,  8 May 2024 17:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E41B12AAE7;
+	Wed,  8 May 2024 17:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H0ZAeHvg"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u/7axkXU"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D55A127E34
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470F078C60
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715189684; cv=none; b=LGBLcH4j5Y6KmZprsYn5GIkg58b9vbmvTnvCNlQckOf6CGuZWViosgf+1iP7qG8SEW29XqKV0wsgxAW6IpeK/f8Y9ZIsXRmmmfomB9HY4PLnTLPMKk5FYUGetEaC526NNpgE3Qq+jEJiEjejbuPLf6dKHFRDTWVrjuEUKRKtp1k=
+	t=1715189872; cv=none; b=HaObW0Mc5esHpYIpj+T0N8MV0MHJ61eGzM+qlULn3pnvdnSXmxuBfDFpOKQN/4BChG0JCVSMuSNXVxGv0Wbd97uNngbGg54+3OzYwRJ8azxbOnSoYd0z5mi6rMRpb64b0q1bgzhrUCMSvv/jOapenaNGz4dLv2ENbEyoCoaXU9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715189684; c=relaxed/simple;
-	bh=HKvr42kCJ5T2vBl47UrgH9gPQIDs/Cx4DaxhFirh7Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2bFNuUsUY/ADoHzQDpSKswLO2k+IUxE5vtNANKI7lHLlzGX0LQ7a7XCuSwywekX5dlOJygolJUETJZXEtWL25VdYGiBOKCSgoxxpa5pVGVk+BjEaEyZB5zgWMonbDNwoRv+W+LxRERZA7wR5VodzrX38/YDHAL3o4LXJAjUGO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H0ZAeHvg; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso31789b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:34:42 -0700 (PDT)
+	s=arc-20240116; t=1715189872; c=relaxed/simple;
+	bh=TXOzRo2lvLq2dLy4X4KCCbjFUla8ZPfNznBSr32fAwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NG4KZmgDHuEs2NFV3plLhQU3oXsvqA7NXTpUw3OITo0JwnsX4ltz2Pa3eY8FOqvd7KLcvvBWMueXqh6F6c8lENPOFAcaHFrG3lvlV2riVKj/Tsk/Nin73QQ/69NNw5ZM7YEFXr1MrLkFLNjtPsCBWAZQlVp9CbCXQjBGy4v+UHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u/7axkXU; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41a72f3a20dso32663445e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715189682; x=1715794482; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZlSdIb10yMdduLYmXyW631A2JIaNaeSFkZVL/IzXzM=;
-        b=H0ZAeHvgm+nkTb/1J4vKErf34CkRMj+OfnSZ7Mu6aWZ/nALOmZJhB/qQ+iLV1KYUWn
-         SgiZN4Pt5zczcJavaGcFIMgDHZQOGzEZ+aNDhUiEagj73+t7nygY75ruc4N+d1CbkAu+
-         49udd0HxUgYJN39bYTLtHmlXFYzQVKGchRX0w=
+        d=linaro.org; s=google; t=1715189869; x=1715794669; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oqqIYAEt8QY8iBn2hcjwrp22I2V9u33qj84qnnfOYxo=;
+        b=u/7axkXUTizRqcKto1EfE7rXascufU7BIkP9eUxi8DXPKFVBPXd6TTYgHvoORLlk1L
+         ITXHwn/k+W4eyDQhig98EayGlEEV+8UkKFVmGMgqnnpL5IKQPjmNBOCL9J24RYXDSodb
+         DeH22B50aJfGm8ErHbZ5Vk1MPl+aJ+i9yA30eBj6hh8NM9Y9c/Gny7fk2vEza2OF0qI0
+         QKXJbWrzgoUIH/DNijYsldsHh4+5DehbNnnOBQ3rXJnl/EWKzFEMHSNGuoz6m0fmbYXn
+         Yo3/8uO0pBzduymW3Vb7vKpCWa84IxOMGFcfGeUgkjeZStP9LX8uRMGI6dmFHV53kQzf
+         R1mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715189682; x=1715794482;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0ZlSdIb10yMdduLYmXyW631A2JIaNaeSFkZVL/IzXzM=;
-        b=vx3oJnZjvS7fWv5DijEK1dJGZoV6Th638zyM90UkR9XqxPazO4cAvGLvavsybJ3gb2
-         QKRQKnYeFLM7BedGxVzNkzksTKDoLf7s8ui1jZpApjpEgBzW3xUjbh67cssG/xKihX6g
-         3NubJTcUytV7gs1kX9O9aayiB5yl5kj0pZ9CMmywt5qEak7SwDjiSipM3lqbPgrdYqeh
-         uOtuOkZE5fosWPdZHnPTswfrM2PBjbuxU5xtylJPlTPWzXls7NX5s74AeFkYbaCKptcS
-         1FqK1y/gUTmQuJS+7sDKRe2QL+0OEH9yUhhZ7NtD80TVc22a73r9jE4xCjdWOo/RjXJ4
-         F0oA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhLWcHLYHX3M9p4FkUB+M1Yjhe9IMZpXUsolSnYMu6P+KtaaF3vwKvmDg1uQlYtoYDzOuYqzsCLOjaycD8uq80oUndidAtZM7f34zh
-X-Gm-Message-State: AOJu0YxMhj9SJKUcDx9cHEGN59K58TDdOUIMwpMAVwTV+1BUBCxlk9KY
-	jShwiCOHQoIpN8MBiO8f7c7pks65PhP5Ju3HA9rDPTSf/+PMtM0SQaQ+3ma3xQ==
-X-Google-Smtp-Source: AGHT+IGsPbeewYhYfLGgBNn4yC+he+DDIfnSNSANWyR5bFJKhyZXsgwA47/XfqmZijCPC22jnu5JHQ==
-X-Received: by 2002:a05:6a00:610e:b0:6f3:ef3d:60f4 with SMTP id d2e1a72fcca58-6f49c2b10fdmr3369180b3a.33.1715189682342;
-        Wed, 08 May 2024 10:34:42 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id n5-20020a056a000d4500b006f448d3c700sm10388005pfv.142.2024.05.08.10.34.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 10:34:41 -0700 (PDT)
-Date: Wed, 8 May 2024 10:34:41 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bill Wendling <morbo@google.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: sr: fix unintentional arithmetic wraparound
-Message-ID: <202405081034.2BC4BCA4A8@keescook>
-References: <20240508-b4-b4-sio-sr_select_speed-v2-1-00b68f724290@google.com>
+        d=1e100.net; s=20230601; t=1715189869; x=1715794669;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oqqIYAEt8QY8iBn2hcjwrp22I2V9u33qj84qnnfOYxo=;
+        b=nFDtsW55zpFFxUxZq9qa8qPyGQaKchyLXJnRlT8Vz9DjguUmCGlYL0/SS9t4g6R7C/
+         nF/JpXZALfctvTbEpu/r0O9he9nqoV/YzWVf4tFxGGB45LqFJN9/9SuxagwYbREDpDuo
+         JSG7K/VG1KNGqX1CPMMfEmUF5lwZPtRuIsHto0FbE3Ujb7slirreYB98Kbe5DajRSMsm
+         utT+hASMzgs0nZGp0w9OWkpSTkVdXSJrbDg8EQdwxjyOgRg7zQ8lcAG0W+G4Pe+u0y1i
+         HS30pSTpWhVSTS3wrty1/Fn1DvJ1+2612ozU60Lwp4v8/elio+wsU1nHMYohLKQzQlI4
+         u06A==
+X-Forwarded-Encrypted: i=1; AJvYcCUx+s7Qgk1ANQmUuqDR5nIEw1FzqtwxpPQ+e3E8ns5eDG7DbKlwPPNLaDa+EePtU7KyUGvVtoSSzI8sZowCdLWf00BdWtC2EPUrnopu
+X-Gm-Message-State: AOJu0YwtOHYnoCqrUij90UVdLL3Q4fSI87NcDdLAxVyxw52ltwOPhg1L
+	fI2e2UkL0vQPOGN2RwgkQcmGNQD12BSeWphj10/ocSPdAlV3xZSWL1k9Bl3N0RA=
+X-Google-Smtp-Source: AGHT+IG2HyWFwSUGdiJup/vedK3nsgsEgSjeU6gUkpcysNJXAQwDlCboLqHz1Lcaym8y5YeAFgXvTw==
+X-Received: by 2002:a05:600c:154d:b0:419:f9ae:e50 with SMTP id 5b1f17b1804b1-41f71ad0a1bmr28793645e9.37.1715189869528;
+        Wed, 08 May 2024 10:37:49 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id m8-20020a05600c4f4800b0041bcb898984sm3005872wmq.31.2024.05.08.10.37.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 10:37:49 -0700 (PDT)
+Message-ID: <52a165bb-81d8-4fa5-8ead-7aced3ba9a45@linaro.org>
+Date: Wed, 8 May 2024 18:37:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508-b4-b4-sio-sr_select_speed-v2-1-00b68f724290@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/13] mfd: pm8008: mark regmap structures as const
+To: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-5-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240506150830.23709-5-johan+linaro@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 05:22:51PM +0000, Justin Stitt wrote:
-> Running syzkaller with the newly reintroduced signed integer overflow
-> sanitizer produces this report:
+On 06/05/2024 16:08, Johan Hovold wrote:
+> The regmap irq chip structures can be const so mark them as such.
 > 
-> [   65.194362] ------------[ cut here ]------------
-> [   65.197752] UBSAN: signed-integer-overflow in ../drivers/scsi/sr_ioctl.c:436:9
-> [   65.203607] -2147483648 * 177 cannot be represented in type 'int'
-> [   65.207911] CPU: 2 PID: 10416 Comm: syz-executor.1 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
-> [   65.213585] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   65.219923] Call Trace:
-> [   65.221556]  <TASK>
-> [   65.223029]  dump_stack_lvl+0x93/0xd0
-> [   65.225573]  handle_overflow+0x171/0x1b0
-> [   65.228219]  sr_select_speed+0xeb/0xf0
-> [   65.230786]  ? __pm_runtime_resume+0xe6/0x130
-> [   65.233606]  sr_block_ioctl+0x15d/0x1d0
-> ...
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>   drivers/mfd/qcom-pm8008.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang. It was re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
-> 
-> Firstly, let's change the type of "speed" to unsigned long as
-> sr_select_speed()'s only caller passes in an unsigned long anyways.
-> 
-> $ git grep '\.select_speed'
-> |	drivers/scsi/sr.c:      .select_speed           = sr_select_speed,
-> ...
-> |	static int cdrom_ioctl_select_speed(struct cdrom_device_info *cdi,
-> |	                unsigned long arg)
-> |	{
-> |	        ...
-> |	        return cdi->ops->select_speed(cdi, arg);
-> |	}
-> 
-> Next, let's add an extra check to make sure we don't exceed 0xffff/177
-> (350) since 0xffff is the max speed. This has two benefits: 1) we deal
-> with integer overflow before it happens and 2) we properly respect the
-> max speed of 0xffff. There are some "magic" numbers here but I did not
-> want to change more than what was necessary.
-> 
-> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-> Closes: https://github.com/KSPP/linux/issues/357
-> Cc: linux-hardening@vger.kernel.org
-> Signed-off-by: Justin Stitt <justinstitt@google.com>
+> diff --git a/drivers/mfd/qcom-pm8008.c b/drivers/mfd/qcom-pm8008.c
+> index d0f190c2ea2b..42dd4bf039c9 100644
+> --- a/drivers/mfd/qcom-pm8008.c
+> +++ b/drivers/mfd/qcom-pm8008.c
+> @@ -51,7 +51,7 @@ enum {
+>   	POLARITY_LO_INDEX,
+>   };
+>   
+> -static unsigned int pm8008_config_regs[] = {
+> +static const unsigned int pm8008_config_regs[] = {
+>   	INT_SET_TYPE_OFFSET,
+>   	INT_POL_HIGH_OFFSET,
+>   	INT_POL_LOW_OFFSET,
+> @@ -131,7 +131,7 @@ static int pm8008_set_type_config(unsigned int **buf, unsigned int type,
+>   	return 0;
+>   }
+>   
+> -static struct regmap_irq_chip pm8008_irq_chip = {
+> +static const struct regmap_irq_chip pm8008_irq_chip = {
+>   	.name			= "pm8008_irq",
+>   	.main_status		= I2C_INTR_STATUS_BASE,
+>   	.num_main_regs		= 1,
 
-Yeah, this looks good. Thanks!
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
