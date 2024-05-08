@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-172914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439788BF897
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0478BF89D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0E7286784
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:33:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4082824A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF69535C4;
-	Wed,  8 May 2024 08:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E461535B6;
+	Wed,  8 May 2024 08:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="K9uRWPjf"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="fDO6RXd9"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374F21A28B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F74B8C1F;
+	Wed,  8 May 2024 08:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157214; cv=none; b=W2PDo6Nv+ytSodw4Hu5lrfYvJ+xEiAHcJpbJvw/VxTJ3m9vUZKdiGXCfHFfxvqbJuH/iLhpfhK27FS4C7niDuKEYmwgG/JbtKuhM+IXqxZ0grC0BoMivSEDB0jVIm1klYrcUtWu8JdcZo0NcVve0iYfkRh+w9f+r7MfxKrbGW8U=
+	t=1715157247; cv=none; b=uXq7/u/PKYxmsrE6dqZfEobT/W1y4Q/ppIlmrreEr+HYYVMi7HnyJLp/Fa3aSJDO4b00u1ojOVAwr4LoXmSg0AFDDdrXP7FQy4/oQZdrxxwl+z61qokSqzJoy3wgWOGr1mGpKZY4AmlZqteMQb/yNQuaVMaXWhJRmHPvBfLf218=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157214; c=relaxed/simple;
-	bh=yVA0FiOqbqE2S/DFz9MrWAmt57JjHMvIMtAeb/3chdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6dNZuPribCjwzUGEwlUsJM3s6EYRjUbsgEMhAElhHso8uAb/j1qT+ODISPDBd9AedRj+kRueOA/8V+HH9lykr0k+/OVI8sHTgcvqyYjxbJ/X9EzuUEYslhim79fK4FTMh2S3SkIQeekXV+7+RtXrjZQwsxieL0MQSNUGSWAVyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=K9uRWPjf; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51ff8cce77dso618716e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1715157211; x=1715762011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6y4EwFqVETg6O9C1VDyvCbQ1UYKFlViM3dNLmDxh+rE=;
-        b=K9uRWPjf6ZKRGjUAajZTF5RzrGQjVjybeBJbVmsdjx9FVOH+eO07nJN3V6C1PWMMP5
-         EVEcrSWLEOBKYK88VF4rFtOBl5YdyH6j3lmPgbh0x40X5Riptr6FdMDokW+cj6jqMR9O
-         7UrwUzq6gZhYtz6C+/w8JxprCZyDk68QN2TWc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715157211; x=1715762011;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6y4EwFqVETg6O9C1VDyvCbQ1UYKFlViM3dNLmDxh+rE=;
-        b=Fwm1kMfYPvewPXUE9O+KKyenhfUBMRZO2lBFIOLxpTS+1oiKk2VKfV7+2b73GSOd+m
-         E4Sg0+yylr4IWVq32ZTMHVdOGzgVo2k7weueQo9N9WDM7CeZd2c1+CUu9hbo1goX1tOD
-         aRWuGcttyGadY3yXbmaXka/xso5wsa7KRGFsNrTAi7fju1/+/7j2SrwaMbduKtmyQft7
-         ghxxDMpOFlrpX7BhU9469n0QLunog/zYTPzkLcZ9ZvcMJZx9jr97HFTFouxqeYJSVXHk
-         sR1dBnASqIM0WRKO9iEWkcNEuEpUGZJJ8boiwRQGmX6r+0ZvSEV04Ujn1wTE8Ch29+Y0
-         gViA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAA6nHFInHXd82xscZJthIqWtfMgV4Brr/7sLZuU3gr/fyUDvgGhs7hG0Hg4p7/CQXwE9gW80+pVxy8eN2gRN8fs7xv+1dEIYwmCcj
-X-Gm-Message-State: AOJu0YzveoVytmZbLwGGZAPExWe1W6BjCn5fqh1urG2XUPl6T025uSqc
-	j9Y5kP5uKzoj+pXM7LsxtuWUeKDElqadzyurCHcOpC/vDJwAOfETht6x3ENQHZQ=
-X-Google-Smtp-Source: AGHT+IE8WloieXoBNrz84YwZxVbzeE/8sdLkgTaGX4kiUy5piDKudNOJ6ss5nr4szNlRJ4Cd4qE+HQ==
-X-Received: by 2002:ac2:499c:0:b0:51e:ee83:bb8b with SMTP id 2adb3069b0e04-5217d242e7bmr1063993e87.5.1715157211274;
-        Wed, 08 May 2024 01:33:31 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q11-20020a056402248b00b005726b83071esm7424373eda.4.2024.05.08.01.33.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 01:33:30 -0700 (PDT)
-Date: Wed, 8 May 2024 10:33:28 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Maxime Ripard <mripard@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <Zjs42PGvilLlF0Cg@phenom.ffwll.local>
-Mail-Followup-To: Daniel Stone <daniel@fooishbar.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Maxime Ripard <mripard@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat>
- <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
- <cbe5a743-d8be-4b0e-99c4-e804fbadc099@redhat.com>
- <ZjoNTw-TkPnnWLTG@phenom.ffwll.local>
- <CAPj87rN3uSZoHpWLSQqz1SW9YMZNj9fkoA_EDEE_bzv-Tw8tSw@mail.gmail.com>
+	s=arc-20240116; t=1715157247; c=relaxed/simple;
+	bh=eZo0SbgVlDwK+HUbWvKnFU4s6LwJQVx0tiQVgOF+HlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u1ZSbDeSABFTcJrFBsDQiuliEQi3C62NY9Crdb8b6i0XfbQ3UctDfDo+/rNo94ErRLazjHwMzwUxZH6nfpr837N2Oi+VQiSlHi/4xUoRmXa18SCxJb+49+5vBhVGo3sIjod11Eb/l9Tf/k1GMO20cP2FuSY9573ipL0kwCmFqUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=fDO6RXd9; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=VYf2x8KePoKCnsFPyEO9iLMDoM/FQ8kORSg9BUE2DME=;
+	t=1715157245; x=1715589245; b=fDO6RXd9Bl1JRryVHuQUyunuXDtieEPoINtNl85v07NTRB5
+	JHZ7DDU2bP8fy0mdh6B9+WlzTSScxFtuCLfuc93qkreQDLbB79LfhYdkdhgPe8d455Cjl9vfIqHbO
+	Ws+NHqyLj/Qde74V4J0KpE8viC8kloEOlZXHDHQjb/p7esysLJ4HyrnDqWZgMxDzXGKbuXudsFIHL
+	qyaSmqytYcZMUIdAlvHtWbvmKaBVR2ENxkhmlJPXj5C4B6vtf9t2lFSTe2Lc6f1OZ7L2A512ip42a
+	IpipJvwxXK7HFUsIAXoRSlJojU2jpDgkoFXQe8SLBPCw68gl6fuEN9+D6iV1HilQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s4ckO-0007C1-9k; Wed, 08 May 2024 10:33:56 +0200
+Message-ID: <0d59ae68-7552-454a-8d01-72c359496901@leemhuis.info>
+Date: Wed, 8 May 2024 10:33:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPj87rN3uSZoHpWLSQqz1SW9YMZNj9fkoA_EDEE_bzv-Tw8tSw@mail.gmail.com>
-X-Operating-System: Linux phenom 6.6.15-amd64 
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH] Bluetooth: btusb: Fix the patch for MT7920 the affected
+ to MT7921
+To: luiz.dentz@gmail.com
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, sean.wang@mediatek.com,
+ deren.Wu@mediatek.com, chris.lu@mediatek.com, aaron.hou@mediatek.com,
+ steve.lee@mediatek.com, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ patchwork-bot+bluetooth@kernel.org, Peter Tsao <peter.tsao@mediatek.com>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240415141922.25055-1-peter.tsao@mediatek.com>
+ <171328023414.16225.12939333659144302573.git-patchwork-notify@kernel.org>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <171328023414.16225.12939333659144302573.git-patchwork-notify@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715157245;99242499;
+X-HE-SMSGID: 1s4ckO-0007C1-9k
 
-On Wed, May 08, 2024 at 06:46:53AM +0100, Daniel Stone wrote:
-> Hi,
+On 16.04.24 17:10, patchwork-bot+bluetooth@kernel.org wrote:
 > 
-> On Tue, 7 May 2024 at 12:15, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Mon, May 06, 2024 at 04:01:42PM +0200, Hans de Goede wrote:
-> > > On 5/6/24 3:38 PM, Daniel Vetter wrote:
-> > > I agree that bad applications are an issue, but not for the flathub / snaps
-> > > case. Flatpacks / snaps run sandboxed and don't have access to a full /dev
-> > > so those should not be able to open /dev/dma_heap/* independent of
-> > > the ACLs on /dev/dma_heap/*. The plan is for cameras using the
-> > > libcamera software ISP to always be accessed through pipewire and
-> > > the camera portal, so in this case pipewere is taking the place of
-> > > the compositor in your kms vs render node example.
-> >
-> > Yeah essentially if you clarify to "set the permissions such that pipewire
-> > can do allocations", then I think that makes sense. And is at the same
-> > level as e.g. drm kms giving compsitors (but _only_ compositors) special
-> > access rights.
+> This patch was applied to bluetooth/bluetooth-next.git (master)
+> by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 > 
-> That would have the unfortunate side effect of making sandboxed apps
-> less efficient on some platforms, since they wouldn't be able to do
-> direct scanout anymore ...
+> On Mon, 15 Apr 2024 22:19:22 +0800 you wrote:
+>> Because both MT7920 and MT7921 use the same chip ID.
+>> We use the 8th bit of fw_flavor to distingush MT7920.
+>> The original patch made a mistake to check whole fw_flavor,
+>> that makes the condition both true (dev_id == 0x7961 && fw_flavor),
+>> and makes MT7921 flow wrong.
+>>
+>> In this patch, we correct the flow to get the 8th bit value for MT7920.
+>> And the patch is verified pass with both MT7920 and MT7921.
+>>
+>> [...]
+> 
+> Here is the summary with links:
+>   - Bluetooth: btusb: Fix the patch for MT7920 the affected to MT7921
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/263296438807
 
-I was assuming that everyone goes through pipewire, and ideally that is
-the only one that can even get at these special chardev.
-
-If pipewire is only for sandboxed apps then yeah this aint great :-/
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Hi! 6.9 is only days close and this is fixing a 6.9 regression, so allow
+me to quickly ask: do you still plan to submit this for mainline merge
+soon? Or did you already and I just missed it? Ciao, Thorsten
 
