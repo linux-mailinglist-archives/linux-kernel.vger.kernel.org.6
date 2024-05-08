@@ -1,223 +1,112 @@
-Return-Path: <linux-kernel+bounces-173543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1A18C01FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:32:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 622EE8C01FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA3B21843
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:32:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DF51F2112E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB48ECC;
-	Wed,  8 May 2024 16:32:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A22246B5;
+	Wed,  8 May 2024 16:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="d999NY9F"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoofWAtM"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB7C633
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AD0622;
+	Wed,  8 May 2024 16:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715185921; cv=none; b=drvPlspMfb9/BeMk+QNVo7pUJormKNbmhwUQ1RlqwX/78Oc3fmQlXZ05MUdpV7zrirF/IP58RvsO1k2mNgTrH5MxZPcFrvvgM316HETt4SvCsUJDLbpF3gCWwRfKRMNKIWPjE2oCz6VOqohljUPWCXW7Xtt2sJt8r2Z5sdC8SGg=
+	t=1715185965; cv=none; b=OYMz2wbWklcYggNk0c7Jf0UeIyiNGP/nRxdD/3FEDUzW/hXvoqokxoCvoiE4MGE4ZO8398qXxjV7v93XBJKlH3wP3lZPRRGSJf/ylcsvU2E/27mYDvXBSGIazEQ6VUkaOrkI5TlnkkupPYvD35m+ayMx7vWpmP7jeSCyNQwRD80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715185921; c=relaxed/simple;
-	bh=HyI7CfR13ETlHE8vYoaiB6VcQcpejXw10JAvJm1BG8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZESGQ5NYrVmmND8/U7n7a4pkZjOVvWwdSlYHtUxouNFnD5bn+0h6e9ArGZQRZ9Vu3JmqQfNpwl9cc2dLRNmxnXqdSadJJLzKZMwqzOfZKBP/oIlBt8JodCHrPpqcnaZFl6C/sO6fdUQ/N3D6bCq8jn/9opqobUS2g3YSFHTLQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=d999NY9F; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so3028351276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 09:31:59 -0700 (PDT)
+	s=arc-20240116; t=1715185965; c=relaxed/simple;
+	bh=V+UlBtviKRplAFVuSD5WaZIQT/sci91Paoj0zH91ETc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m3pnfJ+WanRb+61blhpmbpkU3opxq2sxk8TBzm7fx9ncQrW65+DuJMKQNUUDL7vjMT66bExKykFWKNcmxhLpZRqjxb1IFyKYcP/wKmIsGX9IPV4dEqyoYRgo7UbKJiMW9iD2a9qydtM0DeTmoPKT9rtjotJUkMz4EH21JjScFh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoofWAtM; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f3761c96aso5971606e87.3;
+        Wed, 08 May 2024 09:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1715185918; x=1715790718; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IpqvT/s3hJi/m2NA6vxsDVwPdDU6A01/xZePHqulLGs=;
-        b=d999NY9FedIIIfmjQe7VOeVqo4FZn5382/nd66m1q1iSE5u/tRSawUSkSDCtoAGQuX
-         S6nDtwPsZLMOsGpGshhCWJsS+ceUt6MTOPlsAKTA0vwtXmHTEQqaZa5j5h6w4UgW3DRY
-         HGGPkwVGLyYCt17z7fVMgeOmTiSKRcdauRAVi/tOuvT+fMk6fCwH0Iurg/HQX9T0IXyv
-         DzBnLjW1oyGJhpPSqiyj7txetNy1otSbNGuNLTgIaMQvaO0Qn5WeYkfi/ecFysB98HYt
-         cvaS6xQhW1XRCaCpcli8T7bmxCiC1i5oxArZALaDjKtyByeGQz/NdCM/UtpXMFuvUQMy
-         xmlw==
+        d=gmail.com; s=20230601; t=1715185962; x=1715790762; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=V+UlBtviKRplAFVuSD5WaZIQT/sci91Paoj0zH91ETc=;
+        b=WoofWAtMGWbhf2JCmj00SvUHO8iwHiyqqwWhYYveelKGrJMwCkj8cYmG+Xt6Ttl6Zc
+         0s+uKmM9g59U6UmRqs12p9VjsBB3Rhy2ZqNcm0+v4i4Ztr8XVjP/Xm3irScdRDuLA2L4
+         gZXFe5pg4m5/hhP37ASjTgnTkTIzJAlxgIsAgV3Mt5HJOtgltw0GhUD4y733eoX1WVBc
+         dD0bGnxDQ4JEkhmK+s++4/dyfQRfLq/xMaZMciEx+Z85XBzFMsdV5Rqk/AQfJe9mBZs+
+         KCrUFS3nGXsZJnLGqqliNP91QIeBvZW19yLGytO/nf/6VfVmMDisNl8Rfp5Vi5CV7FAY
+         vf0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715185918; x=1715790718;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IpqvT/s3hJi/m2NA6vxsDVwPdDU6A01/xZePHqulLGs=;
-        b=Oz3iMLe03PYbv61vNJ5pblIaop6k1Lhd1/wLFSH8Z3KLrTvOnft3Po+Z9W5giQV7zK
-         u7NOmw53UsN1LDMlxjLeWnY0ghbiOqatfRpHqsqzMfMQpCtMRnTnHqoHHrBa1EnjoFaW
-         BWyc0cOyk08jZYvFGN6r4DCs+jZad6VwCi7irVYFOAmMrE2y+HPCy7htY4t7Wo4HZkNJ
-         5ZBcdJvUwb2xtcBW4XscwTf5iIUd1F2K5x8psaWdAp1dqDDuBwIcbt4vDUsbHCSHx7Gj
-         l4ycQXACi5jcPA0uFoKFLkhQ22ekoGlf1s7ir8RYF4rWqyx3hhswdvmdcxNLyuT090I+
-         HJrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhPwR6BGFFFAYbezwxgdmzooMIYQL27RrA/RRZynlksfI+03ni/EDtodCFoKwBJmWgFeBBmLVknajPdEjBL1kL0XRwY5QGqnPdJ1N2
-X-Gm-Message-State: AOJu0YxCPHDKDPA7EzffpG3PYKqJzBvSUmHVQWCVPD7QHcKd2UznC4r5
-	T/BYTTSGr4wQqfBYD9MPsA1zozcdK2GP7yIbgZVzblyZTP2QQHRdqy4LOgpUZfiP+oSZVzG+9Yj
-	2wAQpUJamV5F5OrAVJufyGoH+90pSw5qbAm0CcQ==
-X-Google-Smtp-Source: AGHT+IH/MU4b0lEqMztmXKc3H0f61MliNMwFr4dmluuoJ6iRqo65l2GtQDlm9o8wIkIkn7RbcEzlRSKc//Wn7bWSkeI=
-X-Received: by 2002:a25:b184:0:b0:de5:8816:2d1c with SMTP id
- 3f1490d57ef6-debb9e53cebmr3094653276.65.1715185918279; Wed, 08 May 2024
- 09:31:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715185962; x=1715790762;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V+UlBtviKRplAFVuSD5WaZIQT/sci91Paoj0zH91ETc=;
+        b=R2OEH8BQXsuW5Co41WEw6i0Yhd4pGCC2qT/HzAjVm6vRWFFBjB4m612CCQ+1t5Hz8N
+         QnWD9aJmwGYLJagXA0mj0AkqmLIAykhm2jmfQmNORIOB7o+fxjtU04/VCF52qTR2b54q
+         j6Ry2LnmkTNFmvF6wgjstjtp5J7BtgHwcpLY2ey3IgSWgJJLtiArrQNVlVcCrYsitExU
+         FZDHi0/lGPJtdka5Q5YmM/hpu2JUUMInNH/C5bB/w4uXpe/o9ylHR/bVLotlFb2BxRHs
+         GK5Z84HjIUnNUGQLUWvIquIawdNiwUGVewPulEIi4iXfDTT50DVndQZCFry0obEi8mP2
+         FeWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXDEKN6u2znMLYezKVSCpJDLVH0F8tG8Z5kpOG8jzNQMYgVfWbC79GsgAY39YdNY/XrduaKwT0nokHpcb+F44/97a1EsMuu1xX0UWex0+rLtL+ACZXYK8UcAYLtl/JxPABcwDTnN+ZGw==
+X-Gm-Message-State: AOJu0YxF6QHQfhqnWnSQ6pUgx5+vXNMwVUnjqzAcrc8ex/Mzac/l01WZ
+	lnjvsu6NejtOdcs8TZOwsjOcrHyaBbvBe3cozFr1eUX7w4kBevQe
+X-Google-Smtp-Source: AGHT+IHAs8Tu5r/cNrM8qwZu2fstp9iHU9GwAkEowndpD34nsUQ0NN6g30dKDQKYz9ZqtvE7WFA0Tw==
+X-Received: by 2002:ac2:5929:0:b0:51d:a1ab:98bc with SMTP id 2adb3069b0e04-5217c3733cfmr2768097e87.2.1715185962225;
+        Wed, 08 May 2024 09:32:42 -0700 (PDT)
+Received: from [10.176.235.56] ([137.201.254.41])
+        by smtp.gmail.com with ESMTPSA id kk1-20020a170907766100b00a599c00442fsm6421117ejc.150.2024.05.08.09.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 09:32:41 -0700 (PDT)
+Message-ID: <e00686432d2aa09880f801eecadbb2bdf6d23573.camel@gmail.com>
+Subject: Re: [PATCH v2] scsi: ufs: Allow RTT negotiation
+From: Bean Huo <huobean@gmail.com>
+To: Avri Altman <avri.altman@wdc.com>, "Martin K . Petersen"
+	 <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Bean Huo <beanhuo@micron.com>, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 08 May 2024 18:32:40 +0200
+In-Reply-To: <20240503113429.7220-1-avri.altman@wdc.com>
+References: <20240503113429.7220-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v2-1-2e665f072f8f@linaro.org>
- <dvyed4grpazqk7a3tz6dqwpkd76ghtrt4euinxt3kycdeh63ez@ljgfjsfhypix>
- <20a0300a-ac16-456c-840a-e272f49050a8@linaro.org> <bppn2qglcya3xbfy7uey5cgybyanxthhweqv7foojwi5rvqwmk@temzdedvecfe>
-In-Reply-To: <bppn2qglcya3xbfy7uey5cgybyanxthhweqv7foojwi5rvqwmk@temzdedvecfe>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 8 May 2024 17:31:39 +0100
-Message-ID: <CAPY8ntAJJu8RM66xFr4dGWtZJVhsjjXEecT5=YKBVr+0hVL9+w@mail.gmail.com>
-Subject: Re: [PATCH v2] media: i2c: Fix imx412 exposure control
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, "Paul J. Murphy" <paul.j.murphy@intel.com>, 
-	Martina Krasteva <quic_mkrastev@quicinc.com>, 
-	Daniele Alessandrelli <daniele.alessandrelli@intel.com>, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Jacopo and Bryan
+On Fri, 2024-05-03 at 14:34 +0300, Avri Altman wrote:
+> UFS4.0, and specifically gear 5 changes this, and requires the device
+> to
+> be more attentive.=C2=A0 This doesn't come free - the device has to
+> allocate
+> more resources to that end, but the sequential write performance
+> improvement is significant. Early measurements shows 25% gain when
+> moving from rtt 2 to 9. Therefore, set bMaxNumOfRTT to be
+> min(bDeviceRTTCap, NORTT) as UFSHCI expects.
+>=20
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
 
-On Wed, 8 May 2024 at 13:43, Jacopo Mondi <jacopo.mondi@ideasonboard.com> wrote:
->
-> Hi Bryan
->
-> On Wed, May 08, 2024 at 01:30:31PM GMT, Bryan O'Donoghue wrote:
-> > On 08/05/2024 09:02, Jacopo Mondi wrote:
-> > > Hi Bryan
-> > >
-> > > On Mon, May 06, 2024 at 11:38:26PM GMT, Bryan O'Donoghue wrote:
-> > > > Currently we have the following algorithm to calculate what value should be
-> > > > written to the exposure control of imx412.
-> > > >
-> > > > lpfr = imx412->vblank + imx412->cur_mode->height;
-> > > > shutter = lpfr - exposure;
-> > > >
-> > > > The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
-> > > > algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
-> > > > decreasing as the requested exposure value from user-space goes up.
-> > > >
-> > > > e.g.
-> > > > [ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
-> > > > [ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
-> > > > [ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
-> > > > [ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
-> > > > [ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
-> > > > [ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
-> > > >
-> > > > This behaviour results in the image having less exposure as the requested
-> > > > exposure value from user-space increases.
-> > > >
-> > > > Other sensor drivers such as ov5675, imx218, hid556 and others take the
-> > > > requested exposure value and directly.
-> > >
-> > > has the phrase been truncated or is it me reading it wrong ?
-> >
-> > Sod's law says no matter how many times you send yourself a patch before
-> > sending it to LKML you'll find a typo ~ 2 seconds after reading your patch
-> > on LKML.
-> >
->
-> Sounds familiar enough
->
-> >
-> > > > Looking at the range of imx sensors, it appears this particular error has
-> > > > been replicated a number of times but, I haven't so far really drilled into
-> > > > each sensor.
-> > >
-> > > Ouch, what other driver have the same issue ?
-> >
-> > So without data sheet or sensor its hard to say if these are correct or
-> > incorrect, it's the same basic calculation though.
-> >
-> > drivers/media/i2c/imx334.c::imx334_update_exp_gain()
-> >
-> >         lpfr = imx334->vblank + imx334->cur_mode->height;
-> >         shutter = lpfr - exposure;
-> >
-> >         ret = imx334_write_reg(imx334, IMX334_REG_SHUTTER, 3, shutter);
-> >
-> >
-> > drivers/media/i2c/imx335.c::imx335_update_exp_gain()
-> >
-> >         lpfr = imx335->vblank + imx335->cur_mode->height;
-> >         shutter = lpfr - exposure;
-> >
-> >         ret = imx335_write_reg(imx335, IMX334_REG_SHUTTER, 3, shutter);
-> >
-> >
-> > Looking again I'm inclined to believe the imx334/imx335 stuff is probably
-> > correct for those sensors, got copied to imx412/imx577 and misapplied to the
-> > EXPOSURE control in imx412.
-> >
->
-> Without datasheet/devices it really is hard to tell. Cargo cult at
-> play most probably.
 
-For reference certainly imx327/290/462 which are all siblings in the
-Sony Starvis family do calculate exposure as
-exposure = 1 frame period - (SHS1 + 1) * (1H period)
-So 0 = max exposure and bigger values are shorter exposure time.
+Avri,
 
-I'm not saying that the imx412 driver is right in doing this as well,
-but it seems there is a trend with the Sony Starvis family to program
-exposure in this different manner. Don't discount it as wrong for all
-drivers!
+I was still curious about this 25% gain, so I will take a look. It
+would be great if you could share more information about this.
 
-  Dave
 
-> >
-> > > > - ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
-> > > > + ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
-> > >
-> > > No datasheet here, can you confirm the IMX412_REG_EXPOSURE_CIT
-> > > register is actually in lines ?
-> >
-> >
-> > Looks like.
-> >
-> > From downstream "coarseIntgTimeAddr"
-> >
-> > imx577_sensor.xml
-> >     <coarseIntgTimeAddr>0x0202</coarseIntgTimeAddr>
-> >
-> > imx586/imx586_sensor.cpp
-> > pRegSettingsInfo->regSetting[regCount].registerAddr  =
-> > pExposureData->pRegInfo->coarseIntgTimeAddr + 1;
-> >
-> > pRegSettingsInfo->regSetting[regCount].registerData  = (lineCount & 0xFF);
-> >
-> > > Apart from that, as the CID_EXPOSURE control limit are correctly
-> > > updated when a new VBLANK is set by taking into account the exposure
-> > > margins, I think writing the control value to the register is the
-> > > right thing to do (if the register is in lines of course)
-> > >
-> > > Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> > >
-> > > Thanks
-> > >    j
-> > >
-> >
-> > If that's good enough I'll fix the typo and apply your RB.
->
-> Sure
->
-> Thanks
->   j
->
-> >
-> > ---
-> > bod
-> >
->
+
+Reviewed-by: Bean Huo <beanhuo@micron.com>
+
+
 
