@@ -1,182 +1,144 @@
-Return-Path: <linux-kernel+bounces-173913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1528C0779
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA54B8C077C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 993C8282FBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21CD1C21171
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676DE39AC3;
-	Wed,  8 May 2024 22:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F4E3B298;
+	Wed,  8 May 2024 23:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JivcEIfD"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE9A23778
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Zln5e1uK"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE7417C79;
+	Wed,  8 May 2024 23:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715208879; cv=none; b=b3rUBd/cUJwjoXX4RdQT1fi/mOQATDeI8SU/XPaRiCZxj6XxzJvYRnkoZpnV0evzjsmyaD8USPBWAwAnI0+0Vahdeu8OyRhixihLwqAha+HnJ9015z/JhU1eIvngZT787L+x8auaxFZ27j2rQAdAxaOy5OWqW8+wqxhQR/yUxNk=
+	t=1715209281; cv=none; b=EkmeZTNXNB9YnrO1Y3Di5rZPJTV3wJfHYyCQ6yuOrEEY1hdrMTABIvXnQ8Azc6HvkccVlAB+Cw9p1Z2/H/GJFttXZXxCoDfKUNQBBkg2X9TYOxamTi66WOthJeI31WLQ+jXrSIG6bZB3qutCrbyg0V1HrTZKIGWmrXFqqlD44Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715208879; c=relaxed/simple;
-	bh=gyQ55hQgJIIwlukOBDSk95pxDialupoX6yg1FkBruGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVbjQTOUchu7aU3UahkkGAs0d4FODQaZQUyckf1i/zFFaSw5eg85whUCw+ZeGqx/PTHfVQ9fxAIEWufA70eZNQK7tjTt80VBJ9bDAeDaf8F+BuFj4wVOIeORaFi70zrE5JPqcXOpZaEnfPA4Uj/55i3vSFTVHSUByAZgWgfJ/bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JivcEIfD; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ec4dc64c6cso1519105ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715208877; x=1715813677; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3u1Pl3pGa/v+VPDPwQjOTFukEhJKGI8Aryv6GP6qkbs=;
-        b=JivcEIfDN4SmAShCubZEgvTmd/oQjxHrN/cGzs1+XcoXHyL8ncWuRVwse+AcxZ2gAF
-         FH/n1CT79VmXsCr/3JJ2RbRt2rKwbh0mtVMuo6euPpTl/Sb90CAS6aPMBbkFFbHOz2cJ
-         N73Svg2p5b5aP7ZfV2+bCVJXMFhCoJsEe0e5U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715208877; x=1715813677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3u1Pl3pGa/v+VPDPwQjOTFukEhJKGI8Aryv6GP6qkbs=;
-        b=A9z4LRFWByI0KEUZKqDU3ko/BqaobJzs0l5qKnae7j7G2Au/wy9Y0lp2T4RWgJrFIk
-         HKxgsJSOgI+hnfUeaJ5cd3n/wMSzm+ydf8r8ejd6wsut5AT0oJxglXB+lQm1v7AHrj/M
-         keY2vt8wpCNAW474wumaD0mgkjBEzKXMRGGNDXDodJBDkESvKS7MQ0ZyyPmvLRzWdW+5
-         ZY+5gw8xE07XknvbSR0WBpq7y3cLmgqjMrwf6RJkQ5hqGcCiZgBaEWDGuN17/h+D0l1d
-         VzjDnjHPY22czTHpwjY1wtdhjX65W1U3bErWym5ZqzEfwKKME/5BBNDaBq9YLp47QYAJ
-         OG2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUsqtnawFjgVBPzUQopi91RMAegj7KGugRDIKxjj3cvgXla9IwexghpfrsDWtiVhtC79eYqyPIZUznO2F0WtNR6BNh0Zi21YK+QMrOA
-X-Gm-Message-State: AOJu0YwGrqqHS3RtuFdWUanqkTWvM7hrMmnZotzG6qoC0t4Nm9YM33zz
-	bc8DZzJThPMJnGqMndURkXGtrrikTXPnNYb5XVGPFgWOOgcrHEmTV8017b+NxA==
-X-Google-Smtp-Source: AGHT+IF5qLS8MIZu8bkrdkM2TSnYV54A1dmV9tmHQoSYXNzqgbagdmzZsQoufeCX4B3wWJs7UZAp1w==
-X-Received: by 2002:a17:902:c947:b0:1e8:4ad9:cbdf with SMTP id d9443c01a7336-1eeb0187168mr50075185ad.13.1715208877180;
-        Wed, 08 May 2024 15:54:37 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d1899sm714405ad.21.2024.05.08.15.54.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 15:54:36 -0700 (PDT)
-Date: Wed, 8 May 2024 15:54:36 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Justin Stitt <justinstitt@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <202405081354.B0A8194B3C@keescook>
-References: <202404291502.612E0A10@keescook>
- <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook>
- <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+	s=arc-20240116; t=1715209281; c=relaxed/simple;
+	bh=DtVkRLbSIWWL6W99drJAbKWruAWM/NFuDby/5Rgvx/A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rKmtDffC8g6fdRgpOX5A2pL1S5LEM59kRYfMwksltMS+SHCCspXBPLhlHT/1BmwPcObjqwS6cE+hjd6z3dYcGoDV6gQchQKBYzIiYUmPJaWlkD9kA0KopRDvmPhLI2Y4lZBPg5KLO8omlqCPLovNIiB3aW/7UmXtrHBtDYSYnk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Zln5e1uK; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C307814C2D7;
+	Thu,  9 May 2024 01:01:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1715209270;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=C4kCd4f1fETSvtBT8U5U5jWRV3zFNJk5hsrFH2PIslo=;
+	b=Zln5e1uKwmcX2sFl6Km81P8cCpACYAqJbTQw3bPtg4BOr0/pMuOS7n9WyTUM0EjiS1pQnS
+	yFXfBIYEqTDb5IVB4BrLYnz6AO/MQdhxY5rSLUPh6pXrwvLY+3LDlF8ROKIm02S5dYwPAu
+	Ne1WEF4cf7EEJJHUuq6MuOKV1mgr/El11jXFs2u9GTZIP1Px1B1y8MaVjS/aB+nTSgfsrj
+	q+kwpB820fXVxGhqvcnX7r/QuAvX/7/76A8iV7nojimu+yjLo/B5VEckZqrTiWd3tqADxc
+	kRISho/W3wCx5eYv7aHARG0/Ap3Dt+LdCqX8NbjEbkTMtgdJwxFs6fUaGHiBSA==
+Received: from [127.0.0.1] (localhost.lan [::1])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTP id aa59b7a1;
+	Wed, 8 May 2024 23:01:02 +0000 (UTC)
+From: Dominique Martinet <asmadeus@codewreck.org>
+Subject: [PATCH v3 0/3] perf probe: Allow names to start with digits
+Date: Thu, 09 May 2024 08:00:44 +0900
+Message-Id: <20240509-perf_digit-v3-0-9036bf7898da@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABwEPGYC/23M3QqCMBjG8VuRHbeY+3DUkfcREbq96kvg5J2sQ
+ rz3pidRdPg88PsvLAIhRHYuFkaQMGIY81CHgrmhGXvg6PNmUkgttLB8AupuHnucuZVam9aAbyv
+ JMpgIOnzuscs17wHjHOi1t1O5vX8zqeSCGwtOWVcpddK1Cx4eBO5+DNSzLZXkhxthvrjMvAIHS
+ tjON43/5eu6vgHYOQ+75wAAAA==
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Jiri Olsa <jolsa@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dominique Martinet <asmadeus@codewreck.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2122;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=DtVkRLbSIWWL6W99drJAbKWruAWM/NFuDby/5Rgvx/A=;
+ b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBmPAQpZxEW/ojbsturei7d9f/4vmOnm7OrY/SBw
+ 5VWo8P8kv+JAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZjwEKQAKCRCrTpvsapjm
+ cCGgEACrxicZKszCnF/FwNjXlR2m8t3fxnsm0c028fPhf2yOQu38JrwNTP6whexWJ7rDSUR5vk2
+ HCHwkSFJiwxRkj+bbJ2wNMBaFCudxBSMR0ZmN86w82RbSTmYfymOXLUAS8azeswJVwTkKlSykQ/
+ zIFMZC8wJXV/6o81L6R937yUUrNYq+gmXxJlR4AISkr5/wyghh4iYDTACTKzOUwWoFDzyFX6Ks6
+ aZfD8aTxPSavrH2BFS2GsVh8MsJjO9ZcspfJaRLhsTIe+Q9dzQ4OTxOSVRXnj5uvkO01WZrqGrh
+ 5YeSDVw0WLHWNdy5VYTqS+7LFkwmK7kytG8Y65L2d8ZDFXiCqKI0Nq8oMy6ZROia9N3jvGq8K6x
+ QBi093eyxZzi1Qb5KGSo5obXn3uWVSe75cdFPYNTgRcN9c0o1siDVwV6W2R8rTl8cuhJD9T0JKP
+ UQxwnWXHTAWivzeLc7sTZnFJY+RiTSaCZ1SxTxOrIC++malt57LPb729Q21a002G/Mjoq2JtR12
+ kmZ5SEnk3nk/TxxZ0PIqc0p5Oa0k9ZSAHKBN3eDnjrHqCvxPq+qJbTiiJRNKAAESHwUWQXnH69I
+ sEhQR2KG1OBsM4Ic3IpQnfoNj1GojKyAALUOwPEovKWNrBzoPVv3r7KV2SDz8yjQK5Oaox45quv
+ qXmUJ11GP2+mNGQ==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
 
-On Wed, May 08, 2024 at 01:07:38PM -0700, Linus Torvalds wrote:
-> On Wed, 8 May 2024 at 12:45, Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Wed, May 08, 2024 at 10:52:44AM -0700, Linus Torvalds wrote:
-> > > Example:
-> > >
-> > >    static inline u32 __hash_32_generic(u32 val)
-> > >    {
-> > >         return val * GOLDEN_RATIO_32;
-> > >    }
-> >
-> > But what about:
-> >
-> > static inline u32 __item_offset(u32 val)
-> > {
-> >         return val * ITEM_SIZE_PER_UNIT;
-> > }
-> 
-> What about it? I'm saying that your tool NEEDS TO BE SMART ENOUGH to
-> see the "what about".
+This is a rebase of the patch orginally sent almost two years ago here:
+https://lkml.kernel.org/r/20220612061508.1449636-1-asmadeus@codewreck.org
 
-This is verging on omniscience, though. Yes, some amount of additional
-reasoning can be applied under certain conditions (though even that would
-still require some kind of annotation), but GCC can't even reliably figure
-out if a variable is unused in a single function. We're not going to be
-able to track overflow tainting throughout the code base in a useful
-fashion.
+At the time I was asked to add tests, and Jiri whipped up something to
+make the test pass even for probes that don't exist on most systems but
+that ended up never being formatted or sent... I asked what happened of
+it and got asked to send it myself, but obviously also totally forget
+about it myself until I needed it again now.
 
-> IOW, exactly the same as "a+b < a". Yes, "a+b" might wrap around, but
-> if the use is to then compare it with one of the addends, then clearly
-> such a wrap-around is fine.
+I've taken the diff from that thread, adapted it a little bit to the
+current master branch and checked things still fall in place -- I didn't
+see any obvious problem.
 
-Yes, but it is an absolutely trivial example: it's a single expression
-with only 2 variables. Proving that the value coming in from some
-protocol that is passed through and manipulated by countless layers of the
-kernel before it gets used inappropriately is not a reasonably solvable
-problem. But we can get at the root cause: the language (and our use of
-it) needs to change to avoid the confused calculation in the first place.
+Thanks!
 
-> A tool that doesn't look at how the result is used, and just blindly
-> says "wrap-around error" is a tool that I think is actively
-> detrimental.
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+---
+Changes in v3:
+- fix evsel__newtp_idx typo in commit 1's message
+- rebase onto perf-tools-next
+- add trailers
+- Link to v2: https://lore.kernel.org/r/20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org
 
-I do hear what you're saying here. I think you're over-estimating the
-compiler's abilities. And as I mentioned in the RFC, finding known bad
-cases to protect is the reverse of what we want for coverage: we want
-to _not_ cover the things we know to be _safe_. So we want to find
-(via compiler or annotation) the cases where overflow is _expected_.
+Changes in v2:
+- update Jiri's email in commit tags
+- (not a change, but after being brain-dead and Ian helpful
+reply I'm confirming patch 3/3 works as expected)
+- Link to v1: https://lore.kernel.org/r/20240407-perf_digit-v1-0-57ec37c63394@codewreck.org
 
-> We already expect a lot of kernel developers. We should not add on to
-> that burden because of your pet project.
+---
+Dominique Martinet (3):
+      perf parse-events: pass parse_state to add_tracepoint
+      perf parse-events: Add new 'fake_tp' parameter for tests
+      perf parse: Allow names to start with digits
 
-I think it's a misunderstanding to consider this a pet project. C's lack
-of overflow intent has spawned entire language ecosystems in reaction.
-There are entire classes of flaws that exist specifically because of this
-kind of confusion in C. It is the topic of countless PhD research efforts.
+ tools/perf/tests/parse-events.c | 11 +++++++++--
+ tools/perf/tests/pmu-events.c   |  2 +-
+ tools/perf/util/evlist.c        |  3 ++-
+ tools/perf/util/evsel.c         | 20 +++++++++++++-------
+ tools/perf/util/evsel.h         |  4 ++--
+ tools/perf/util/metricgroup.c   |  3 ++-
+ tools/perf/util/parse-events.c  | 38 +++++++++++++++++++++++---------------
+ tools/perf/util/parse-events.h  |  9 ++++++---
+ tools/perf/util/parse-events.l  |  4 ++--
+ tools/perf/util/parse-events.y  |  2 +-
+ 10 files changed, 61 insertions(+), 35 deletions(-)
+---
+base-commit: 187c219b57eaf3e1b7a3cab2c6a8b7909bdbf4a9
+change-id: 20240407-perf_digit-72445b5edb62
 
-People who care about catching overflows can slowly add the type
-annotations over the next many years, and we'll reach reasonable coverage
-soon enough. It doesn't seem onerous: I'm not asking that people even
-do it themselves (though I'd love the help), I'm just trying to find
-acceptance for annotations about where the sanitizer can ignore overflow.
-
-> Put another way: I'm putting the onus on YOU to make sure your pet
-> project is the "Yogi Bear" of pet projects - smarter than the average
-> bear.
-
-Sure, but if the bar is omniscience, that's not a path forward.
-
-I haven't really heard a viable counterproposal here. Let me try something
-more concrete: how would you propose we systemically solve flaws like
-the one fixed below? And note that the first fix was incomplete and it
-took 8 years before it got fully fixed:
-
-	a723968c0ed3 ("perf: Fix u16 overflows")               (v4.3)
-	382c27f4ed28 ("perf: Fix perf_event_validate_size()")  (v6.7)
-
-Because the kernel didn't catch when the u16 overflowed, it allowed for
-kernel memory content exposure to userspace. And that's just the place
-that it got noticed. With the struct holding the u16 is referenced in
-360 different source files, it's not always a trivial analysis. But,
-for example, the sanitizer not finding a "wraps" annotation on the
-perf_event::read_size variable would have caught it immediately on
-overflow.
-
-And I mean this _kind_ of bug; not this bug in particular. I'm just
-using it as a hopefully reasonable example of the complexity level we
-need to solve under.
-
--Kees
-
+Best regards,
 -- 
-Kees Cook
+Dominique Martinet | Asmadeus
+
 
