@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-173815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046CE8C05EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4418C05F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADEC52845DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:53:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4771C21E4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D24B1327F5;
-	Wed,  8 May 2024 20:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34727132C1A;
+	Wed,  8 May 2024 20:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iiHu3Awk"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AkmAducX"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11507131E59
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 20:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B691327F9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 20:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715201602; cv=none; b=Y4M5IbxDDdisCvNCSrHcOshtFvRhhJodAkPwrucv0OKZSyZ17eI1JEociOzRudIq4ZSIfUnQ4JGQjhuPpMQHls9lpR+y5MV+TKpvOARmrCYvnF49XhIxu/tYCYP6XnVl1s56FLVfNIKbshBpH8QuQnCFlVPmiCM/kUsX/87lszE=
+	t=1715201605; cv=none; b=Uouu1pNUfBLi8B7/28XZdW1j8O1fsk396AF0Wwe/mdL6yXOaZEsDyBEJ5YGAaUnPDcWGfZHnL6lH+/Tnw2YiOcM22AACQv7bg/5/mqGuVuII9RChtum5Dsw7uTdfpoAgXiL5zcBHemuA/YSD2t6tvMkjPT51P07Bh5QqjiC0AoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715201602; c=relaxed/simple;
-	bh=n07cet+ooVwUA0uJv8Y6mZYMPV/YLtLnLn+A9Q0pcWs=;
+	s=arc-20240116; t=1715201605; c=relaxed/simple;
+	bh=ffiVjlfL5JRxypm2LFNXguMcxEv6tEk4w5vhVB2Pcig=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UEX1j/olrUhvuSwhVY7KeYOjnrZaZONETs/OQ20RxcRYKlFvxO0y4uPl3aNtlY5BSGwLhL5Y4INwCQo8MDxVdJm2vCi4/8OiUpufKu79SMxtmpHKWLFe5UZtCXoEN0mXasjV0MY7JNw8+v99ynlkwFTXqIvHopJGd0501kgbOBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iiHu3Awk; arc=none smtp.client-ip=209.85.216.41
+	 MIME-Version; b=ttWGB/OtojL4yNC5D3sSUk8AEpzYW93FqgwU1C1QTFYbPsMEBhS4SZLSoYDLgBfWDCvAgf/bW18yRygWsRGpKi5XHcEIPR8QJKBwUEbLbv9enUK1ID2yrw8+2jK0nAGHysTMsH20452vMbTzsaj+nVIPI1460WfxIYEGKetDmU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AkmAducX; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b36232fa48so184516a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 13:53:20 -0700 (PDT)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5ce6b5e3c4eso136302a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 13:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715201600; x=1715806400; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715201603; x=1715806403; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9F2O1ySgZCzUPwkKOIVF7CvO8xaM7qBPiKzCHpLk+3I=;
-        b=iiHu3AwkwX7oFstR9fwxoUwpGamOnj0/zLDghVnKQvvW9DbSuDEJ9HQJ5artVfoJsR
-         iKDccXNbh6WIK/DidZvhmpUgHmnCg27Mmvlmhoi3lF/5DkxCRd3/mh+daYd6lgyvYXpn
-         /IeOqbNlEkQM/Z5hrw7n+PQtAH18IQA06K25g=
+        bh=H0KBQjikHoEoo31Ag6nuesXir34mVyr/KHi31tqkm70=;
+        b=AkmAducXo+l0fyAy9YMwVl9x5boz9dKEZmAMhBkSaM5edlTuQbVfTeyfks2++7O9je
+         CeEQwdVlNqEMB+H0w/wYcowljk3D8j5kR2xGw/xzPWYpv03xuZx2tepRd00dw/aSl9la
+         5hBHKMTzsWg6htPZkEEuCLxq4Gwn0itALQSzc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715201600; x=1715806400;
+        d=1e100.net; s=20230601; t=1715201603; x=1715806403;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9F2O1ySgZCzUPwkKOIVF7CvO8xaM7qBPiKzCHpLk+3I=;
-        b=EEcxeIIfu4NS744ay7iY5w6+EC1kHZQim+ChTcHSZ3Q2vWpz4MusXEfNkUG43mOwoX
-         gcIy+lT4RU4bOp0mHhBEUXBFFYMuZcIrZKpc25tJFhwE1TLAvGUno+9q1sPfM0mHoMS7
-         WeXKfhoe1WR/+2Ch/oHlXH9mLxfVKWx4N79T3J/qhVVzxCffPf9VZhaAFE6qSYWibtex
-         BNaPnVraQd9qKzLdH1Dl7Z9CM/3PW+zOkYQHQ1P4CpXykD/L/DC/cypFHw5/dc4DFVoi
-         kvPP0eQk4MwcL04yhTUxswc3c87riBDrCVPw5MQFa4sV9NtrXUr5t/mXYnhbt9jcM7aG
-         DJUA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/k1OCoAdEd/wOGOmvOWZ2N8n3KSb/A030acLzJep+aaUjMEkv+nk0mQj6gGTkLJGZgt4PX+8BbjtJKfD5P2dPd4IAYL+0DMSHXiCS
-X-Gm-Message-State: AOJu0YzeAPlzmX5svaUhtW2Ry4y6GhkE/GSNNyLHCquoxhSLKUFuom9G
-	yDGNbXi/lrmzWFmTs1GYXefMV3UMu/EP6+0VhVMHsoMmFFzS6ylJIGFJW5H3/g==
-X-Google-Smtp-Source: AGHT+IHcvmXqDVJ/bC9j+Qc7/hlGGXc3bJX7RxOprm6cXhjNiCfIYQ8UUIU69gAVZPyxLM1azYo0gw==
-X-Received: by 2002:a17:90b:212:b0:2b3:28be:df00 with SMTP id 98e67ed59e1d1-2b61649c518mr3600358a91.4.1715201600424;
-        Wed, 08 May 2024 13:53:20 -0700 (PDT)
+        bh=H0KBQjikHoEoo31Ag6nuesXir34mVyr/KHi31tqkm70=;
+        b=BJFyf6LexQG+lp4V+0TPEUhN52GGThzp62oRvxvDKfWuvhw/9kInrNonOk61HMZhLK
+         ESWSqSSgSa0XQYlp91p20uVLQNWC61lfaebRXRPM9eED5Ap7hKYbbcqsDsFVmraReG2L
+         B9dop2GD6knXqZhOhaPzasAKNnCl6oitIzOan5oZmYXQtKFfYgPNdSO7zE0PLXOsOWI9
+         anJrssJcrAwPHdb0bDDbsw0aodl5ArZcLgYEKU4aAapIvj+JRJgOrFUzVxO1141nuDWz
+         x5SMg9/vBHb3v+WQKSU0h0QKY4FqfkDKx33Zq6+4IRcGwthPWEtX1ELI4+t10/45GjHR
+         mmWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTr91fI8wag2uvs2+6AsNmqNlqmOUadgyInH0yr+LFP2A7y1jOXCY2HzNKYi8GcvKh2YS4GoaelkBqy8Cu8Z1uwUzV9zVzW0/PXn/Q
+X-Gm-Message-State: AOJu0YwY8Bd1jFJic/ohhtV9N8hatNAT6cFVQZgOn4ePzyjCB+Dw2hPp
+	G4UqyB0pm3Qhk/M5xQOebtKBiLyewQjQ8RRdHtZkHHww9+TI5+dy4s5BnjwnSA==
+X-Google-Smtp-Source: AGHT+IE52ygfxvKZfSUFp985/EUTRAks71N4Iu7eNeNZ/S31yCHhDoyeglHw6Q/rCJMwMG6Dg6CVVg==
+X-Received: by 2002:a17:90b:4b11:b0:2b1:8210:56bb with SMTP id 98e67ed59e1d1-2b6163a2665mr3577408a91.3.1715201602810;
+        Wed, 08 May 2024 13:53:22 -0700 (PDT)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:40f4:feca:59e0:d3ca])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126ad51sm6887a91.25.2024.05.08.13.53.18
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126ad51sm6887a91.25.2024.05.08.13.53.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 13:53:19 -0700 (PDT)
+        Wed, 08 May 2024 13:53:22 -0700 (PDT)
 From: Douglas Anderson <dianders@chromium.org>
 To: dri-devel@lists.freedesktop.org
 Cc: lvzhaoxiong@huaqin.corp-partner.google.com,
@@ -83,9 +83,9 @@ Cc: lvzhaoxiong@huaqin.corp-partner.google.com,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/9] drm/mipi-dsi: mipi_dsi_*_write functions don't need to ratelimit prints
-Date: Wed,  8 May 2024 13:51:45 -0700
-Message-ID: <20240508135148.v4.3.I9982cd5d8014de7a4513f5619f66f88da49ce4ec@changeid>
+Subject: [PATCH v4 4/9] drm/mipi-dsi: Reduce driver bloat of mipi_dsi_*_write_seq()
+Date: Wed,  8 May 2024 13:51:46 -0700
+Message-ID: <20240508135148.v4.4.Id15fae80582bc74a0d4f1338987fa375738f45b9@changeid>
 X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
 In-Reply-To: <20240508205222.2251854-1-dianders@chromium.org>
 References: <20240508205222.2251854-1-dianders@chromium.org>
@@ -97,79 +97,224 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We really don't expect these errors to be printed over and over
-again. When a driver hits the error it should bail out. Just use a
-normal error print.
+Through a cooperative effort between Hsin-Yi Wang and Dmitry
+Baryshkov, we have realized the dev_err() in the
+mipi_dsi_*_write_seq() macros was causing quite a bit of bloat to the
+kernel. Let's hoist this call into drm_mipi_dsi.c by adding a "chatty"
+version of the functions that includes the print. While doing this,
+add a bit more comments to these macros making it clear that they
+print errors and also that they return out of _the caller's_ function.
 
-This gives a nice space savings for users of these functions:
+Without any changes to clients this gives a nice savings. Specifically
+the macro was inlined and thus the error report call was inlined into
+every call to mipi_dsi_dcs_write_seq() and
+mipi_dsi_generic_write_seq(). By using a call to a "chatty" function,
+the usage is reduced to one call in the chatty function and a function
+call at the invoking site.
+
+Building with my build system shows one example:
 
 $ scripts/bloat-o-meter \
   .../before/panel-novatek-nt36672e.ko \
   .../after/panel-novatek-nt36672e.ko
-add/remove: 0/1 grow/shrink: 0/1 up/down: 0/-16760 (-16760)
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-4404 (-4404)
 Function                                     old     new   delta
-nt36672e_1080x2408_60hz_init               17080   10640   -6440
-nt36672e_1080x2408_60hz_init._rs           10320       -  -10320
-Total: Before=31815, After=15055, chg -52.68%
+nt36672e_1080x2408_60hz_init               10640    6236   -4404
+Total: Before=15055, After=10651, chg -29.25%
 
+Note that given the change in location of the print it's harder to
+include the "cmd" in the printout for mipi_dsi_dcs_write_seq() since,
+theoretically, someone could call the new chatty function with a
+zero-size array and it would be illegal to dereference data[0].
+There's a printk format to print the whole buffer and this is probably
+more useful for debugging anyway. Given that we're doing this for
+mipi_dsi_dcs_write_seq(), let's also print the buffer for
+mipi_dsi_generic_write_seq() in the error case.
+
+It should be noted that the current consensus of DRM folks is that the
+mipi_dsi_*_write_seq() should be deprecated due to the non-intuitive
+return behavior. A future patch will formally mark them as deprecated
+and provide an alternative.
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
-(no changes since v3)
+Changes in v4:
+- Update wording as per Linus W.
 
 Changes in v3:
-- ("mipi_dsi_*_write functions don't need to ratelimit...") moved earlier.
+- Rebased upon patch to remove ratelimit of prints.
 
 Changes in v2:
-- New
+- Add some comments to the macros about printing and returning.
+- Change the way err value is handled in prep for next patch.
+- Modify commit message now that this is part of a series.
+- Rebased upon patches to avoid theoretical int overflow.
 
- include/drm/drm_mipi_dsi.h | 24 +++++++++++-------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/drm_mipi_dsi.c | 56 ++++++++++++++++++++++++++++++++++
+ include/drm/drm_mipi_dsi.h     | 47 +++++++++++++++-------------
+ 2 files changed, 82 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index 795001bb7ff1..8593d9ed5891 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -764,6 +764,34 @@ ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *dsi, const void *payload,
+ }
+ EXPORT_SYMBOL(mipi_dsi_generic_write);
+ 
++/**
++ * mipi_dsi_generic_write_chatty() - mipi_dsi_generic_write() w/ an error log
++ * @dsi: DSI peripheral device
++ * @payload: buffer containing the payload
++ * @size: size of payload buffer
++ *
++ * Like mipi_dsi_generic_write() but includes a dev_err_ratelimited()
++ * call for you and returns 0 upon success, not the number of bytes sent.
++ *
++ * Return: 0 on success or a negative error code on failure.
++ */
++int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *dsi,
++				  const void *payload, size_t size)
++{
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	ret = mipi_dsi_generic_write(dsi, payload, size);
++	if (ret < 0) {
++		dev_err(dev, "sending generic data %*ph failed: %zd\n",
++			(int)size, payload, ret);
++		return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(mipi_dsi_generic_write_chatty);
++
+ /**
+  * mipi_dsi_generic_read() - receive data using a generic read packet
+  * @dsi: DSI peripheral device
+@@ -852,6 +880,34 @@ ssize_t mipi_dsi_dcs_write_buffer(struct mipi_dsi_device *dsi,
+ }
+ EXPORT_SYMBOL(mipi_dsi_dcs_write_buffer);
+ 
++/**
++ * mipi_dsi_dcs_write_buffer_chatty - mipi_dsi_dcs_write_buffer() w/ an error log
++ * @dsi: DSI peripheral device
++ * @data: buffer containing data to be transmitted
++ * @len: size of transmission buffer
++ *
++ * Like mipi_dsi_dcs_write_buffer() but includes a dev_err_ratelimited()
++ * call for you and returns 0 upon success, not the number of bytes sent.
++ *
++ * Return: 0 on success or a negative error code on failure.
++ */
++int mipi_dsi_dcs_write_buffer_chatty(struct mipi_dsi_device *dsi,
++				     const void *data, size_t len)
++{
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	ret = mipi_dsi_dcs_write_buffer(dsi, data, len);
++	if (ret < 0) {
++		dev_err(dev, "sending dcs data %*ph failed: %zd\n",
++			(int)len, data, ret);
++		return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_write_buffer_chatty);
++
+ /**
+  * mipi_dsi_dcs_write() - send DCS write command
+  * @dsi: DSI peripheral device
 diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index e0f56564bf97..67967be48dbd 100644
+index 67967be48dbd..6d68d9927f46 100644
 --- a/include/drm/drm_mipi_dsi.h
 +++ b/include/drm/drm_mipi_dsi.h
-@@ -314,17 +314,16 @@ int mipi_dsi_dcs_get_display_brightness_large(struct mipi_dsi_device *dsi,
+@@ -256,6 +256,8 @@ int mipi_dsi_picture_parameter_set(struct mipi_dsi_device *dsi,
+ 
+ ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *dsi, const void *payload,
+ 			       size_t size);
++int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *dsi,
++				  const void *payload, size_t size);
+ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+ 			      size_t num_params, void *data, size_t size);
+ 
+@@ -279,6 +281,8 @@ enum mipi_dsi_dcs_tear_mode {
+ 
+ ssize_t mipi_dsi_dcs_write_buffer(struct mipi_dsi_device *dsi,
+ 				  const void *data, size_t len);
++int mipi_dsi_dcs_write_buffer_chatty(struct mipi_dsi_device *dsi,
++				     const void *data, size_t len);
+ ssize_t mipi_dsi_dcs_write(struct mipi_dsi_device *dsi, u8 cmd,
+ 			   const void *data, size_t len);
+ ssize_t mipi_dsi_dcs_read(struct mipi_dsi_device *dsi, u8 cmd, void *data,
+@@ -311,38 +315,39 @@ int mipi_dsi_dcs_get_display_brightness_large(struct mipi_dsi_device *dsi,
+ 
+ /**
+  * mipi_dsi_generic_write_seq - transmit data using a generic write packet
++ *
++ * This macro will print errors for you and will RETURN FROM THE CALLING
++ * FUNCTION (yes this is non-intuitive) upon error.
++ *
   * @dsi: DSI peripheral device
   * @seq: buffer containing the payload
   */
--#define mipi_dsi_generic_write_seq(dsi, seq...)                                 \
--	do {                                                                    \
--		static const u8 d[] = { seq };                                  \
--		struct device *dev = &dsi->dev;                                 \
--		ssize_t ret;                                                    \
--		ret = mipi_dsi_generic_write(dsi, d, ARRAY_SIZE(d));            \
--		if (ret < 0) {                                                  \
--			dev_err_ratelimited(dev, "transmit data failed: %zd\n", \
--					    ret);                               \
--			return ret;                                             \
--		}                                                               \
-+#define mipi_dsi_generic_write_seq(dsi, seq...)                           \
-+	do {                                                              \
-+		static const u8 d[] = { seq };                            \
-+		struct device *dev = &dsi->dev;                           \
-+		ssize_t ret;                                              \
-+		ret = mipi_dsi_generic_write(dsi, d, ARRAY_SIZE(d));      \
-+		if (ret < 0) {                                            \
-+			dev_err(dev, "transmit data failed: %zd\n", ret); \
-+			return ret;                                       \
-+		}                                                         \
+-#define mipi_dsi_generic_write_seq(dsi, seq...)                           \
+-	do {                                                              \
+-		static const u8 d[] = { seq };                            \
+-		struct device *dev = &dsi->dev;                           \
+-		ssize_t ret;                                              \
+-		ret = mipi_dsi_generic_write(dsi, d, ARRAY_SIZE(d));      \
+-		if (ret < 0) {                                            \
+-			dev_err(dev, "transmit data failed: %zd\n", ret); \
+-			return ret;                                       \
+-		}                                                         \
++#define mipi_dsi_generic_write_seq(dsi, seq...)                                \
++	do {                                                                   \
++		static const u8 d[] = { seq };                                 \
++		int ret;                                                       \
++		ret = mipi_dsi_generic_write_chatty(dsi, d, ARRAY_SIZE(d));    \
++		if (ret < 0)                                                   \
++			return ret;                                            \
  	} while (0)
  
  /**
-@@ -340,8 +339,7 @@ int mipi_dsi_dcs_get_display_brightness_large(struct mipi_dsi_device *dsi,
- 		ssize_t ret;                                                \
- 		ret = mipi_dsi_dcs_write_buffer(dsi, d, ARRAY_SIZE(d));     \
- 		if (ret < 0) {                                              \
--			dev_err_ratelimited(                                \
--				dev, "sending command %#02x failed: %zd\n", \
-+			dev_err(dev, "sending command %#02x failed: %zd\n", \
- 				cmd, ret);                                  \
- 			return ret;                                         \
- 		}                                                           \
+  * mipi_dsi_dcs_write_seq - transmit a DCS command with payload
++ *
++ * This macro will print errors for you and will RETURN FROM THE CALLING
++ * FUNCTION (yes this is non-intuitive) upon error.
++ *
+  * @dsi: DSI peripheral device
+  * @cmd: Command
+  * @seq: buffer containing data to be transmitted
+  */
+-#define mipi_dsi_dcs_write_seq(dsi, cmd, seq...)                            \
+-	do {                                                                \
+-		static const u8 d[] = { cmd, seq };                         \
+-		struct device *dev = &dsi->dev;                             \
+-		ssize_t ret;                                                \
+-		ret = mipi_dsi_dcs_write_buffer(dsi, d, ARRAY_SIZE(d));     \
+-		if (ret < 0) {                                              \
+-			dev_err(dev, "sending command %#02x failed: %zd\n", \
+-				cmd, ret);                                  \
+-			return ret;                                         \
+-		}                                                           \
++#define mipi_dsi_dcs_write_seq(dsi, cmd, seq...)                               \
++	do {                                                                   \
++		static const u8 d[] = { cmd, seq };                            \
++		int ret;                                                       \
++		ret = mipi_dsi_dcs_write_buffer_chatty(dsi, d, ARRAY_SIZE(d)); \
++		if (ret < 0)                                                   \
++			return ret;                                            \
+ 	} while (0)
+ 
+ /**
 -- 
 2.45.0.rc1.225.g2a3ae87e7f-goog
 
