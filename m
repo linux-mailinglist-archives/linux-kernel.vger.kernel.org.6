@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-173803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CF08C05BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:34:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CFA8C05C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76A4EB230D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341751F2386B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923CF131744;
-	Wed,  8 May 2024 20:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A9D13173E;
+	Wed,  8 May 2024 20:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heGND9F5"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="a2/4sLX3";
+	dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b="CEGyBVPP"
+Received: from mailrelay5-1.pub.mailoutpod2-cph3.one.com (mailrelay5-1.pub.mailoutpod2-cph3.one.com [46.30.211.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D212A17F;
-	Wed,  8 May 2024 20:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F8D225D9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 20:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.211.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715200473; cv=none; b=mvEPxaNnncBy10JVaWOrzsTmUI4goab/U2A8F4jUAXCoh27ZSJycdaL2lqzczzfioP/iF08qvOz5Xt5DQxMW/ritnwfOli0TFG9PQiCPmBMtJTKPboVw1ORg66KO88d5RrF5VoFxb3d7ekftbJldbZj+9mRNRCoowvHLsEm7N/s=
+	t=1715200647; cv=none; b=M6PbagwjQyHbteaBvWQ3y4g0qL9ibdkPDWE9wXcqbq0MiSsNACFHA6wD+X603RKidf8OIYFM/MWHsT9qBZ4Sn5IRFiRO2AdDySM/UiZjyuUJBCrIrQaFpWjd+hQ5e66WbpnTIS1ePBnX+QAoSQBmAOqF3+RIN+6fbr8NKoWT+Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715200473; c=relaxed/simple;
-	bh=TvcqRI5iA0Z7Bk1l+OWXxKVFjors/ms85nxBW0rJi3o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HW7sUwbPXzf4YjQ5Ib9Bg9EycNjVQ4oKMz8a50YGa0se4F30cnKgLJQ9HvZDWft/LwPl2CnM4xaY1ni62fMTxdO9bINs5B4lFX3Syl5tSpYjzckZj0oF37OAb7B6VYjTW5MCv20a5y2gE/HvCBzD94qGxfMTRAZpNPrrJzLZ4I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heGND9F5; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a5a0013d551so14623166b.2;
-        Wed, 08 May 2024 13:34:30 -0700 (PDT)
+	s=arc-20240116; t=1715200647; c=relaxed/simple;
+	bh=07jHoMe4bOPwypjru0RYH8uUcJ12KG1zUOTQvntaJ6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wokbj9QbvzbQyNikMG2pJZFwDptN6nsa/gMIQpvM9j3v34OM0G4Ot9fV6HwgHjtkJBeCwmgBP0BHNwsazUmiGjN+i7uhhLpqRXq67Lr/uoRdsDkQ4n//kJvT9P2EmmNdhZqkMR5inPBjSOdCgBn7jvoaeaDYbHnXFp/VC4lbYr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org; spf=none smtp.mailfrom=ravnborg.org; dkim=pass (2048-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=a2/4sLX3; dkim=permerror (0-bit key) header.d=ravnborg.org header.i=@ravnborg.org header.b=CEGyBVPP; arc=none smtp.client-ip=46.30.211.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ravnborg.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715200469; x=1715805269; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4D/wsR/nZF2oU4cRe7wiG2sNbWufWK+ynmZknuVoK+I=;
-        b=heGND9F5cCt8hzhsSstCs7P7peuS3mQ0KWSOCXkBO+FSL0mmhTkDEzF7bdqFfSZPrW
-         7DKu7whf8FkPmPOUacZ++xXGQcaGRy2p42aiMqGDTyudkn674EL1K2wNvO96hPNBJIWH
-         wP1MjulOXPS0XpiywaOjdQoqmxFazgYflaaDoeGWzUeFyxk4OMwLXJkDq+JTYYO+RdAx
-         c1ZaH7j1AdNYlKgP/jtroQVM/JnjDw4ZasjgurKgbAmN8Nc8tpeb3zijY+k2slGqG45d
-         MUyPLZy5XvpH81t5b51KDzrVv2wEs/dC9NP9wvgb/jyQXSqzG/zTtQMj1PV9WVU2ML2w
-         w0Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715200469; x=1715805269;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4D/wsR/nZF2oU4cRe7wiG2sNbWufWK+ynmZknuVoK+I=;
-        b=TGUySa2IHzpUiWnBBU56vhNuBQmwGDtIP5stZoavoiYq6OV8gKmxyQRCIN9MjryYhs
-         gdTHSa38Gya4obrWoTbyUE6lNAq5B3SOXL6lLsPzZlojNxHozZew9ugVPLR7V9MKKgcB
-         JNCpEFq8QXNrQrVbYCCVbeZ5O1NHzprOX9C+xkCh3H2JSt6rnIcQVpPy/B+XmgfzU2j1
-         BSBJAHz5ERBWQYKApl5gmJ613oWPibFq13Zrq44U+fwXYxN9ix7c4CFRjiqQJ3xPJnwj
-         rM6qBlPyBzpfJ7FCi0W35JaYWGvhSzTfp8CAUpnc4a2Y6cDaEjM2Lg9xbMCH9CXKa7O8
-         caiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgUht1d7OxQyYd1O6/HU8DiroLjYCRyIviZk1ReLoKR631Tst2zK/ToavpNzFJh2/YA6SqQCINcoCVzVnNUJ4oQpl4S8TaeaRFpP5qHPPicl7vfdRWUf7WAw4M349wPk/rqHQHdaKl
-X-Gm-Message-State: AOJu0Yzk4GcBIL1hIYO04+hdU2t4qLZjPXQY7M5raSItnlDZohiA7CcD
-	rxHaqV+J2/XUfOth1UamenGc4p23GoQvokrMqqtqgpUVa3V4GAwnfaNUWGpc
-X-Google-Smtp-Source: AGHT+IGFdtRQoEDrS8EJZco1r9vOO7Jg+6Qm71hlZoviI+PSpW5TJeyzzley9AaHCQAAbfB7oOEXJw==
-X-Received: by 2002:a50:9353:0:b0:572:9d22:eb8c with SMTP id 4fb4d7f45d1cf-5731d9b62c4mr3334708a12.15.1715200469501;
-        Wed, 08 May 2024 13:34:29 -0700 (PDT)
-Received: from [169.254.60.140] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm7128233eda.23.2024.05.08.13.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 13:34:29 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Wed, 08 May 2024 22:34:14 +0200
-Subject: [PATCH] clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer
- Plus PLLs
+	d=ravnborg.org; s=rsa1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=2Kr4WAPymGfrFyDSJoZ4sUX/qeZZIZop4uu2xT6wC8g=;
+	b=a2/4sLX3UBAM5CDJi69E6xgTJmcUlUGlgiWpr3MBzvygSwoYJbD4px9wDDaWolIfocZnuHGq8Ipki
+	 g2c1Cm9trcnFPLPJWyfrieGUJP49pcwKxr6DwOohwAUqPl8aNIpGCsd369mft5I/sOhOF5pDe2XvoZ
+	 TznTG2taddCRb4oovv2/qD/kGN5HXfArIwiXGAG60eJhNhQCyLMcG4vKw94oh6SZGwI5cWKfCGf9sI
+	 5ZG6DPefQlnNmzHOhVyaAX6YR+XIh19zAIYTPBigUyCmp6z3Vts8TQANRqh3PGKkaijxA59SZBMP4p
+	 ksjcSxxQkccvLutPmbJzHTtgoX7IvvQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed;
+	d=ravnborg.org; s=ed1;
+	h=in-reply-to:content-type:mime-version:references:message-id:subject:cc:to:
+	 from:date:from;
+	bh=2Kr4WAPymGfrFyDSJoZ4sUX/qeZZIZop4uu2xT6wC8g=;
+	b=CEGyBVPPCl2X12NdPcyzd1fao8OO62cec9WJU3Erhxjd1RIzw7J466KO211uqWipb7NQIdd3xvAKq
+	 Z/F8Ep7AA==
+X-HalOne-ID: 9ba8772e-0d7a-11ef-88ab-edf132814434
+Received: from ravnborg.org (2-105-2-98-cable.dk.customer.tdc.net [2.105.2.98])
+	by mailrelay5.pub.mailoutpod2-cph3.one.com (Halon) with ESMTPSA
+	id 9ba8772e-0d7a-11ef-88ab-edf132814434;
+	Wed, 08 May 2024 20:36:15 +0000 (UTC)
+Date: Wed, 8 May 2024 22:36:13 +0200
+From: Sam Ravnborg <sam@ravnborg.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
+	Helge Deller <deller@gmx.de>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+	"open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] fbdev: Have CONFIG_FB_NOTIFY be tristate
+Message-ID: <20240508203613.GA2715801@ravnborg.org>
+References: <20240503192858.103640-1-florian.fainelli@broadcom.com>
+ <8e1867fc-34da-457c-b95a-2d51ea97336a@app.fastmail.com>
+ <05a5e893-12f7-49fd-9a9a-abd387571f9b@broadcom.com>
+ <ZjjXtEwWWZX43c6l@phenom.ffwll.local>
+ <47c63c4c-c657-4210-b476-c91c4f192483@app.fastmail.com>
+ <ZjoMI5bJSlqhtOy1@phenom.ffwll.local>
+ <41191296-0aa0-4010-b70f-efa80b9200d4@app.fastmail.com>
+ <fe156e32-8ce7-4ce5-99cb-6291ad4b83b0@broadcom.com>
+ <41639d6b-a429-43f4-8568-12fcd1671cff@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240508-stromer-plus-alpha-en-v1-1-6639ce01ca5b@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAMXhO2YC/x3MwQqDMAyA4VeRnA3UUofsVWSHUNM14GpJpgzEd
- 1/x+B3+/wRjFTZ4dicoH2KylYah7yBmKm9GWZrBOx/c6Ca0r24fVqzrbkhrzYRc0FGgEB9L8lO
- E1lblJL/7O7+u6w+44sh4ZwAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kathiravan T <quic_kathirav@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41639d6b-a429-43f4-8568-12fcd1671cff@app.fastmail.com>
 
-The clk_alpha_pll_stromer_plus_set_rate() function does not
-sets the ALPHA_EN bit in the USER_CTL register, so setting
-rates which requires using alpha mode works only if the bit
-gets set already prior calling the function.
+Hi Arnd,
 
-Extend the function to set the ALPHA_EN bit in order to allow
-using fractional rates regardless whether the bit gets set
-previously or not.
+> 
+> I think if you want to do a new version, that is likely to run
+> into new problems, given that this part of fbdev is particularly
+> fragile and partly wrong. On the other hand, it would be nice to
+> have a patch to limit the use of the notifiers to the smallest
+> set of kernel configs that actually need it, and leave it turned
+> off for everything else.
+> 
+> These are the ones I could find:
+> 
+> - CONFIG_GUMSTIX_AM200EPD (FB_EVENT_FB_REGISTERED)
 
-Fixes: 84da48921a97 ("clk: qcom: clk-alpha-pll: introduce stromer plus ops")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Based on 'qcom-clk-for-6.10'
----
+I was surprised to see this driver is still around as many other old
+drivers was nuked as part of the pxa cleanup.
+It is the only user of FB_EVENT_FB_REGISTERED - so a potential cleanup
+if the driver is no longer relevant.
 
----
- drivers/clk/qcom/clk-alpha-pll.c | 3 +++
- 1 file changed, 3 insertions(+)
+Just a drive-by comment, this should not stop a v2 of the patchset.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index d4227909d1fe..c51647e37df8 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -2574,6 +2574,9 @@ static int clk_alpha_pll_stromer_plus_set_rate(struct clk_hw *hw,
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
- 					a >> ALPHA_BITWIDTH);
- 
-+	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-+			   PLL_ALPHA_EN, PLL_ALPHA_EN);
-+
- 	regmap_write(pll->clkr.regmap, PLL_MODE(pll), PLL_BYPASSNL);
- 
- 	/* Wait five micro seconds or more */
-
----
-base-commit: 3c5b3e17b8fd1f1add5a9477306c355fab126977
-change-id: 20240508-stromer-plus-alpha-en-0a4a4c6df28c
-
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
-
+	Sam
 
