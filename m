@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-173044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070288BFAB5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A178BFAB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 201AFB2300B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B99CB257BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D66354679;
-	Wed,  8 May 2024 10:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9HdpBoE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mNQtBvwz";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9HdpBoE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mNQtBvwz"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8887C085
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D743D961;
+	Wed,  8 May 2024 10:14:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF957D3E0
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715163210; cv=none; b=mIDjXIubDcC2NHab9TcY53zberlJsp1+yD9ZEMBHW/qBQfPNL1/roMhkHsS52SvQxIBnFACpoZZdy22q4LIZ2tiv6gFZd/HPo8jGBFaUsRfmb2bns26Vc55W5MFmjXRsl4eDMkC+hVHFMvAd+3IcKrTGqvdW6zw+dgCAm9Fbv+s=
+	t=1715163269; cv=none; b=U+4gXKP/FPXE6PjGEGkIu8eqwbvujzCqd9ceFCJWmLHFNqGKBQfb+jI4T1JDIMLpiohSBKUkB+67uBTZ5NjrNkcGuo6evs+V5JJSIAJYFJkgmXPRvroM0bP3MtN3uw25zzYKFfdhKtY1XKr8kSXUNjmYP+jOa7u636N46uH2UTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715163210; c=relaxed/simple;
-	bh=D+SeDU4f4kZ0YOm9XhwOgh4eP157dyE6CUIju7BjqXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUogXwnWRHgjnVRKFbKBdL2T56698MJbtfzVS2+mNUCyVqDL1BtSzbKpRjjXJuRCn7Kb55fcWsXmULDrl36zGx2jhbfZuq0IpjmcGiW0eo8pMroB7vkQQmAuI1y3VCk7TYBIAtN6dOyK1LT8uj0oPpq6uB4JlWJjWtNoCFPOP/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9HdpBoE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mNQtBvwz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9HdpBoE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mNQtBvwz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CA5F75C7CD;
-	Wed,  8 May 2024 10:13:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715163206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
-	b=Y9HdpBoEBZND1blx1ILjE2bVefkOXqJVEqCjUbrYd2G6Equ+iXXFtrg9T/FW8ZB+KR59fu
-	xGE1VWprGupuDCGElMZuY2G+MY/mvJ86bkMDXeVCKrHvrrQgB1Mni7THO/CT8O2Ut6jgEG
-	5ANTQujXffsr2wWOCJ5QSPyl4Jt0ZF8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715163206;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
-	b=mNQtBvwzds9UQ4mngCMyBuYS8l9H7cVUa+uyI4PZCop1Syv45kBzuqKOOGTBmzOyJyFMKB
-	0bR/n2My7IP+WrAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715163206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
-	b=Y9HdpBoEBZND1blx1ILjE2bVefkOXqJVEqCjUbrYd2G6Equ+iXXFtrg9T/FW8ZB+KR59fu
-	xGE1VWprGupuDCGElMZuY2G+MY/mvJ86bkMDXeVCKrHvrrQgB1Mni7THO/CT8O2Ut6jgEG
-	5ANTQujXffsr2wWOCJ5QSPyl4Jt0ZF8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715163206;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
-	b=mNQtBvwzds9UQ4mngCMyBuYS8l9H7cVUa+uyI4PZCop1Syv45kBzuqKOOGTBmzOyJyFMKB
-	0bR/n2My7IP+WrAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B15F1386E;
-	Wed,  8 May 2024 10:13:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X7RYE0ZQO2b1LQAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 08 May 2024 10:13:26 +0000
-Date: Wed, 8 May 2024 12:13:24 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Frank van der Linden <fvdl@google.com>
-Cc: linux-mm@kvack.org, muchun.song@linux.dev, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH] mm/hugetlb: align cma on allocation order, not demotion
- order
-Message-ID: <ZjtQRKtzwXN6VUx_@localhost.localdomain>
-References: <20240430161437.2100295-1-fvdl@google.com>
+	s=arc-20240116; t=1715163269; c=relaxed/simple;
+	bh=qyHck4lXL+nEAOdlP8Jx5BwNuf3sCOg4DZwlaXeEEF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B7jPh20xXYYDIatSs0EChbcu4o7IdPK8iz8PClZjEd3JZsf9q3XmqCD/SF+ZuJ/b0y1R6tU65SbvUSP+cONuFYUlm9ska1d8w8cxiY+/M6xn8Kz5NBlPxOwvpE8aYize+Nj/a6MFUbudYA5wwBXedRwM4ipuQqaGHApKj9T8SIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4D2F1063;
+	Wed,  8 May 2024 03:14:52 -0700 (PDT)
+Received: from [10.57.67.194] (unknown [10.57.67.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95B863F587;
+	Wed,  8 May 2024 03:14:25 -0700 (PDT)
+Message-ID: <91007ef8-ed54-4594-a574-fb20ba91cba9@arm.com>
+Date: Wed, 8 May 2024 11:14:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240430161437.2100295-1-fvdl@google.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] arm64/mm: Enable userfaultfd write-protect
+Content-Language: en-GB
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Joey Gouly
+ <joey.gouly@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, David Hildenbrand <david@redhat.com>,
+ Peter Xu <peterx@redhat.com>, Mike Rapoport <rppt@linux.ibm.com>,
+ Shivansh Vij <shivanshvij@outlook.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240503144604.151095-1-ryan.roberts@arm.com>
+ <20240507110750.GA22289@willie-the-truck>
+ <674dac6b-4fd5-4460-81fd-6b215b21434e@arm.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <674dac6b-4fd5-4460-81fd-6b215b21434e@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Apr 30, 2024 at 04:14:37PM +0000, Frank van der Linden wrote:
-> Align the CMA area for hugetlb gigantic pages to their size, not the
-> size that they can be demoted to. Otherwise there might be misaligned
-> sections at the start and end of the CMA area that will never be used
-> for hugetlb page allocations.
+On 08/05/2024 11:00, Anshuman Khandual wrote:
 > 
-> Signed-off-by: Frank van der Linden <fvdl@google.com>
-> Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> Fixes: a01f43901cfb ("hugetlb: be sure to free demoted CMA pages to CMA")
+> 
+> On 5/7/24 16:37, Will Deacon wrote:
+>> Hi Ryan,
+>>
+>> On Fri, May 03, 2024 at 03:45:58PM +0100, Ryan Roberts wrote:
+>>> This series adds uffd write-protect support for arm64.
+>>>
+>>> Previous attempts to add uffd-wp (and soft-dirty) have failed because of a
+>>> perceived lack of available PTE SW bits. However it actually turns out that
+>>> there are 2 available but they are hidden. PTE_PROT_NONE was previously
+>>> occupying a SW bit, but can be moved, freeing up the SW bit. Bit 63 is marked as
+>>> "IGNORED" in the Arm ARM, but it does not currently indicate "reserved for SW
+>>> use" like it does for the other SW bits. I've confirmed with the spec owner that
+>>> this is an oversight; the bit is intended to be reserved for SW use and the spec
+>>> will clarify this in a future update.
+>>>
+>>> So now we have two spare bits; patch 4 enables uffd-wp on arm64, using the SW
+>>> bit freed up by moving PTE_PROT_NONE. This leaves bit 63 spare for future use
+>>> (e.g. soft-dirty - see RFC at [4] - or some other usage).
+>>>
+>>> ---
+>>>
+>>> This applies on top of v6.9-rc5.
+>>
+>> I chucked this into the CI on Friday and it looks to have survived the
+>> long weekend, so I've gone ahead and merged it into for-next/core. Short
+>> of any last minute failures (touch wood), this should land in 6.10.
+> 
+> It would be great to have some memory migration tests (including THP and HugeTLB)
+> thrown at this series, which should test the mapped, migration entry transitions
+> etc. But not sure if there are any such tests off the shelf and readily available
+> in the CI system.
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+The "private_anon_thp" migration test in mm selftests is doing that for THP. and
+invoking pmd_mkinvalid() as I recall; that's what originally led to me finding
+the pmd_mkinvalid()-on-a-swap-pmd bug. There is nothing in that suite for
+HugeTLB though - happy to run if someone can recommend anything.
 
-
--- 
-Oscar Salvador
-SUSE Labs
 
