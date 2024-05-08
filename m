@@ -1,211 +1,122 @@
-Return-Path: <linux-kernel+bounces-173215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D550F8BFD22
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:31:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBA88BFD26
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51BA4B221E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E891C2259F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695755102F;
-	Wed,  8 May 2024 12:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29925787B;
+	Wed,  8 May 2024 12:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xwx1MVje"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iRWREZOJ"
 Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63AC17D2;
-	Wed,  8 May 2024 12:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD1F3C097
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715171455; cv=none; b=nwhdr/oAg/4hS9kA3coVrCcyzwLRG+RLWx27tvdv3uPzwGLoiv39moS/52R9e7wOtkMuHdmK2HnIJZ8vdqOHHnm3WUsmMHk327wr+UudUrhYF6UGQ+bJZwrVMU4shg1hqybTlwEiCT48hKdHMHjiXPZlQpUROJLDKdhlN8v3Rys=
+	t=1715171468; cv=none; b=XQ7rBFbeSMf+pdOGp5b2pCj8xgAJq/R4y7fi3+rP9l/8LbpcOxJLyW06k+dHDVWk7y1EkG+bQ/MqyCXonbC89bqOzG+HPTG3cltGDCZ/59UhfQxAZRX9uMiQx+Bwxj/BFzPUEioKLUs0D2tWwzKDgi2mTJUeyeZBc6h/U+tQG04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715171455; c=relaxed/simple;
-	bh=ALq+GbVInLjCqyOE3VcX8VbwJqOjvawQQIc4bTCD7cc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DjK7LEV3d3Rp84A6P2tPSKPgnmCYxFEYaUdX15ainKqXsb9F8j7Ec8riU0A8KQlj+oAwzB9SYtoY3Kwd5FE61tpSUagY/tjrkRpV9TUUOtIrCineMmDj8V8+asACbUg34etrG0ezdkeMbGzL5Y4Rwd4FV5C0/3d7+urMwtyOFaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xwx1MVje; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5200afe39eso1135295366b.1;
-        Wed, 08 May 2024 05:30:53 -0700 (PDT)
+	s=arc-20240116; t=1715171468; c=relaxed/simple;
+	bh=ypiD4mRN51Hplwk/35DZxPd83xif6QNctW1BjADlk2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nsp0BN7Jx1awSqVWS04ZW8EC89AGqqwtVVDutz9F1LCWM3sPqE1qP1rmbExHpLeAtLhXe9xyb3gcVvtNAiRSr/8XKl8WATr18PcKLyxrHvlKII377BiqPvC6hF4mxiSkT7W+tMedAtRypNNApq3lNHz0SIMKkKhN6gCJcfOeJKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iRWREZOJ; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59c448b44aso886903866b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 05:31:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715171452; x=1715776252; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pcm2/YfLi6B6QSCpP7qXLx5hvzXORG9bOF9gqBdKX9Q=;
-        b=Xwx1MVje0sLndPaK7kmGs0+d66y11zD+S+PtV21KZikfKE+wzCdoQd4sDujGb7rzaD
-         VqMthpvlFvVUX6Cmx0L5opdbP8GzDqXjJjnGfKfjWAAxitO+vKQ2W/FSkbV82qPwVzLS
-         K597AAd2HMDwlqYlBcULhrR1FQDA+6B7bORjGX2sLPebnMxKOHMQelwdVhp2Z6+rtlfJ
-         VmtahI2eEggYjhUerNBQqG7k3tWbF2NG4bm7FJSjGtJmggT9D+jAoI3+GvDzVqDgPEaH
-         nMTAu9qBkODZXQwbgQWgMZOCDohT2ECwri660XI+Vsg2S4lIHeNHuKrtwba58/1QFFKk
-         V1dQ==
+        d=linaro.org; s=google; t=1715171465; x=1715776265; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PvskylCoCM4TGyFAD0Ni5/k+Obqef8+RlkP1gi+7gz0=;
+        b=iRWREZOJg4M7LYWKwz4EaopSuhScVbc3RhtkAKd5ctzY9jmTSotrbK9J97TO75pCSz
+         unMETwB7iHjzOvd5sN3awPRmhna21PbqfuZKl0Vm2EFug4SfHcJgE+sRh0UZW2PX2e89
+         m6NifRySLCOTCSDbxAlPIY1b5DTtjif8HE+TbcVKKFV2tUn0oOA4gPO09GoK/+pCOPc3
+         FzxHgqH0WIB0jt8ydkN1+qTvgK7BD8khSyKnBndSgidj/T9bC/ldbKoIEGd/XO4oqeNn
+         sd1uSSn47XxKR/ZFMJNkxaYhLLZ/qtwQf667Hv4gOlgcSOtZ/WEQlKOVKoihfy9Yinxr
+         D3Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715171452; x=1715776252;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pcm2/YfLi6B6QSCpP7qXLx5hvzXORG9bOF9gqBdKX9Q=;
-        b=PP7hIGfdQYC0sQDk2Jg5GtjtDmqLe+Hg5IUaYD2crS0i+wvilaVjvg9w+g6zpny41d
-         53tNo7jz68KuR/eMyfLc18Fo8P99ZdwKJ5OMdD4Ydh5f+nJQgIe3Ye9OOzmP0nbQ1jcM
-         4n8//4Bj53r/Or7kuDqkJ8WdKeOatuvFG+kMfsX/CJR1smTS7HIIv5KqtUbiDG7/VDpY
-         U1YX2Gh5Ao40QKJ7B/V7j9bJjYt8uygQ2x833ZHhKJ+V9yR1EA+Qd6iG6h27x3rnTovM
-         6CTBX0Ts10HFCNaiyDg2HXhPtDpj5lWWeQ12RxNk/0yZhijt7wr6xxTbXW2+u/VnOMyL
-         dbNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrDj6GtWSXtjd9ACo0mXr3QOxoUcz+XnCfwk6oiThgTXZ9x8VysTquTW5oLrtmuk9mUOeRs3HS8gxV2PpydYP4rrXmVmvRTNtcbQNPbArCq5X8I+Zz4BoYKPfEmWlK1bgyV2cmRMA74w==
-X-Gm-Message-State: AOJu0YwefzJe53tkH7loMQURvvJb1rFEO9OVrHDu21ZH58Yc3GdrR7qy
-	kEPXDdXxhf0urioJ1G6NXDwjVcP4JG8t1W2KNJBFAEnltXT6DUc5bm/8TwQwqKM71hRcoBmZczk
-	syaz3WnGMz3Eqau5VLI6Im/MShY4Wi8lMuzY=
-X-Google-Smtp-Source: AGHT+IGl8X9MaGsulmww8nCeO5gSLtUDnL5MWBFljZFyxkO8eM+qiXDpQYJ8Z0NXgOWoOT66jo3S89FPe5HQd5NxLRM=
-X-Received: by 2002:a17:906:a41a:b0:a59:ced4:25b0 with SMTP id
- a640c23a62f3a-a59fb95595fmr200267766b.34.1715171451873; Wed, 08 May 2024
- 05:30:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715171465; x=1715776265;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvskylCoCM4TGyFAD0Ni5/k+Obqef8+RlkP1gi+7gz0=;
+        b=RuBXKQmp6z15lbaDkNBaXcy0eSh4JFn5ue6YfwILdlkp3genhcG8gF33MhS0x859iZ
+         UX5dFbw6qknZZWza7gxDff14nyYqS/0l6tJ9iT+VxfbtgnTFMnSd75h8BKjdNtQfAJpu
+         1+UNG75eeqxRq3aou8bAtMN5PbiPmTlRd+qg7BRwN/Uoc7lvkZIkGfTpZ0ZhKwZ0xkFV
+         fLxijmtc9Njb62BvNhZHLatXlo39LNmXyaL6LarrazrnjMslrQmqqhgIffKUdnhh1VRV
+         X7lYz8HiQbXpVidFBy7LOaJrL1gbDnxl+Ik4CDa/dvKiF0D/ssdo3ylNtZiFX2ZNthea
+         nBLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUp2RHUJpQdqDoGwUZ5dBm3lbg9cUVsere3HAUOjyb33vpUNEAuzQAJI/bKyQQbz2qwpREQkIGHbceFh/ZaoLe5jvAKCJ9JP73VNif
+X-Gm-Message-State: AOJu0YylAYK4FwYtifLlNwYPCb8PEtXTwON4DWl3uEpgUFfqIctBtJhk
+	XQUYqajOmbZKGj5na11KcbjfPy5trR3q0hrmTMbCW5aK/I0XaU0omqvWhgNyULM=
+X-Google-Smtp-Source: AGHT+IHfBM6/97ZL/jz+mDbZXN+ZoyZROPPx8q1R59a4i7BYeDoYLd2VcD04ZDBe3HyHqZcPnwxIkQ==
+X-Received: by 2002:a17:906:aec7:b0:a59:affe:b9f with SMTP id a640c23a62f3a-a59fb923376mr157625866b.6.1715171464771;
+        Wed, 08 May 2024 05:31:04 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id gz20-20020a170906f2d400b00a5a0c9e16f1sm160306ejb.51.2024.05.08.05.31.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 05:31:04 -0700 (PDT)
+Date: Wed, 8 May 2024 15:31:00 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: bcm2835-unicam: Fix a NULL vs IS_ERR() check
+Message-ID: <fbbe7862-2820-44eb-81cb-7f33b99cca35@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com> <2543817.5xW6y1K4kI@bagend>
- <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
- <CANAwSgTU7UF_RaNnVSZR7SehQqC7Eo6D=JqT11gN7jK2diN_Ug@mail.gmail.com> <a1fb157c88f420cd85d56edff2a4d85b@manjaro.org>
-In-Reply-To: <a1fb157c88f420cd85d56edff2a4d85b@manjaro.org>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Wed, 8 May 2024 16:30:40 +0400
-Message-ID: <CABjd4YwHGYRrpMFn1uoQMRh3Tp4-py111tZiCGgf7afWxNGXnQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
- all RK3588 boards
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Anand Moon <linux.amoon@gmail.com>, Diederik de Haas <didi.debian@cknow.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Hello Dragan and Anand,
+The media_pad_remote_pad_unique() function returns error pointers, not
+NULL.  Update the check accordingly.
 
-On Wed, May 8, 2024 at 3:46=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> wr=
-ote:
->
-> Hello Anand,
->
-> On 2024-05-08 13:40, Anand Moon wrote:
-> > On Mon, 6 May 2024 at 18:24, Alexey Charkov <alchark@gmail.com> wrote:
-> >> On Mon, May 6, 2024 at 4:29=E2=80=AFPM Diederik de Haas
-> >> <didi.debian@cknow.org> wrote:
-> >> > On Monday, 6 May 2024 11:36:33 CEST Alexey Charkov wrote:
-> >> > > This enables the on-chip thermal monitoring sensor (TSADC) on all
-> >> > > RK3588(s) boards that don't have it enabled yet. It provides tempe=
-rature
-> >> > > monitoring for the SoC and emergency thermal shutdowns, and is thu=
-s
-> >> > > important to have in place before CPU DVFS is enabled, as high CPU
-> >> > > operating performance points can overheat the chip quickly in the
-> >> > > absence of thermal management.
-> >> > >
-> >> > > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> >> > > ---
-> >> > >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4=
- ++++
-> >> > >  8 files changed, 32 insertions(+)
-> >> > >
-> >> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >> > > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
-> >> > > b8e15b76a8a6..21e96c212dd8 100644
-> >> > > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >> > > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> >> > > @@ -742,6 +742,10 @@ regulator-state-mem {
-> >> > >       };
-> >> > >  };
-> >> > >
-> >> > > +&tsadc {
-> >> > > +     status =3D "okay";
-> >> > > +};
-> >> > > +
-> >> > >  &uart2 {
-> >> > >       pinctrl-0 =3D <&uart2m0_xfer>;
-> >> > >       status =3D "okay";
-> >> >
-> >> > I built a kernel with v3 of your patch set and someone tested it on =
-a ROCK 5B
-> >> > 'for me' and it had the following line in dmesg:
-> >> >
-> >> > rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
-> >> >
-> >> > I'm guessing that turned up due to enabling tsadc, but (also) in v4 =
-I didn't
-> >> > see a change wrt "rockchip,grf".
-> >> > Should that be done? (asking; I don't know)
-> >>
-> >> I'm getting the same. Neither the mainline TSADC driver [1], nor the
-> >> downstream one [2] seems to use the grf pointer on RK3588 at all. It
-> >> still works in spite of that warning, although I can't see how (or if)
-> >> it configures the reset mechanism without those GRF registers.
-> >>
-> >> Best regards,
-> >> Alexey
-> >>
-> >> [1]
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/drivers/thermal/rockchip_thermal.c#n818
-> >> [2]
-> >> https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/thermal=
-/rockchip_thermal.c#L961
-> >>
-> >
-> > If the following changes fix the warning.
-> >
-> > Checking the Rockchip RK3588 TRM V1.0-Part1-20220309.pdf
-> > PMU1GRF_SOC_CON3 which has tsadc_shut_reset_trigger_en bit
-> > to control the Enable TSADC shut reset trigger for DDR fail safe.
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > index 85c25d5efdad..5490a44e093e 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > @@ -2662,6 +2662,7 @@ tsadc: tsadc@fec00000 {
-> >                 rockchip,hw-tshut-temp =3D <120000>;
-> >                 rockchip,hw-tshut-mode =3D <0>; /* tshut mode 0:CRU
-> > 1:GPIO */
-> >                 rockchip,hw-tshut-polarity =3D <0>; /* tshut polarity
-> > 0:LOW 1:HIGH */
-> > +               rockchip,pmu =3D <&pmu1grf>;
-> >                 pinctrl-0 =3D <&tsadc_gpio_func>;
-> >                 pinctrl-1 =3D <&tsadc_shut>;
-> >                 pinctrl-names =3D "gpio", "otpout";
->
-> Basically, the rockchip_thermal driver doesn't use GRF at all on
-> the RK3588(s), so virtually any value specified as "rockchip,pmu"
-> can eliminate the warning.
+Fixes: 392cd78d495f ("media: bcm2835-unicam: Add support for CCP2/CSI2 camera interface")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/media/platform/broadcom/bcm2835-unicam.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-To me, specifying an arbitrary GRF in the device tree just to silence
-a warning that the current driver emits sounds bad. If the GRF is not
-needed for TSADC initialization on RK3588, then it should not be in
-the device tree (and it looks like the case here) - otherwise the
-device tree ceases to be a truthful description of the hardware.
+diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
+index 3c7878d8d79b..ad55fc930e5b 100644
+--- a/drivers/media/platform/broadcom/bcm2835-unicam.c
++++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
+@@ -2433,9 +2433,9 @@ static int unicam_async_bound(struct v4l2_async_notifier *notifier,
+ 		return ret;
+ 
+ 	source = media_pad_remote_pad_unique(sink);
+-	if (!source) {
++	if (IS_ERR(source)) {
+ 		dev_err(unicam->dev, "No connected sensor pad\n");
+-		return -ENOTCONN;
++		return PTR_ERR(source);
+ 	}
+ 
+ 	unicam->sensor.subdev = subdev;
+-- 
+2.43.0
 
-I'm not sure if we need that "DDR fail safe" logic mentioned in the
-TRM that Anand quoted, given that neither Rockchip downstream nor
-current mainline driver implement it, and furthermore none of the
-other SoC revisions supported by the driver mention it. If we do in
-fact need it, we should probably first test it along with respective
-driver code before committing to an upstream DT and thus making it
-part of the ABI.
-
-IMO this is more of a driver issue than a device tree issue: maybe a
-small patch to demote this warning to an info message would be better?
-It's harmless anyway.
-
-Best regards,
-Alexey
 
