@@ -1,220 +1,248 @@
-Return-Path: <linux-kernel+bounces-173262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F5C8BFDD6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10C928BFDD9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A01C282B93
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:58:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E271F23295
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D80559165;
-	Wed,  8 May 2024 12:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838216CDAB;
+	Wed,  8 May 2024 12:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="YaAhApHd"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ICCWlJuY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE545787B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715173115; cv=fail; b=CJ4w/TP32Ovm0VFmItY5/Q+qrqXlNmb7MIwTIeyYNPIB7ce1GYZZnuJZ6uKR+rONXQuU+aq/NFTyvwS1+pWKaMpGfmOKUgllN5aJRuXsMiVFRRBmPtOg7mGIvywflzocoKcKG6WHbRmnJmaJvkLeUiFW1Se9MepI9Yodot8tJX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715173115; c=relaxed/simple;
-	bh=C7MUNeOyxVCtXTZX/JSlCefDqX6pmZngbA80wa2P8pM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d4X4Ul85+G5C+s48cl9Femzl3LlTvQfHGdOyXc4gyCT18ZW91KIVFILgxn+9Gd86LECfVFq+CCj0CtVJJiEBCTC29KkbOvG5DRfZ66t2eP5hHoWeitJN3UdVlpZqWRL5yn9x2Db4qoqnj+TAfwgpiJiC3g8OxyQJCVMef7/ikxY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=YaAhApHd; arc=fail smtp.client-ip=40.107.255.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hszAub+7MeC6fedBCKE4PEO/JJMiaknRsr8YlZHzsSkf5ru4AaH6du3g59aK/V3bS/Uwyi+r6ibu8qny1XbP9Uq8EYX0nmoN8dDLbS6C+BWXktyzyzxCOC+wXsPFoY5gVmI+L17Ke2fe6mhGAmWmRs44Tek23IKP3rUULG3glnFO9Da3HZip1FdWN2yVkcg7FUtowzeoEY2X2aTbNoMbHmzSxXn/MvsBfsV0yJHCGmP7UGPDiPS/tzeVxxGGSQSxlMw+b1C/AS49fZAPbQUVXW65+OTUsACZjafGSgxuJ9Ls/dmZpT9BCNUGpSudPBTuU9LhIhNijeX76VQKH16X7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NAKGxuau+zdh5ldhQgYIuJGzScIPltlXMA8cN6yOibg=;
- b=bbpDgpBP5QDBlU+iqPyLhoaRQDk08LwNpSLc9TQd8+IR2M0tVNgA4zga4fhYN3maTCe2GBjbdAwHtdIqhNXGtKbKDTmssNvBKZApkTh67OVhnzpSjgdgl0A/FrfJvh7nIbOuWD7HQIpHQ+0kBUzejg5nt0KlM5x8jrOW54K3Id8RjySl+hX0D7oilHrllRGUH1jLpp2UvjqycaqjV10m3DkbMKj2uGKaSggDh3JHnuYASUeoClcz6Ci34Yk4rIvvuwCErHakz+O4gZ5JIJg3bm8njZKH0OuzjrzDXn4EGdsoEDTOkcNvDmdcbLdtJbZOE2YrXJjkFityDOwqzxddtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NAKGxuau+zdh5ldhQgYIuJGzScIPltlXMA8cN6yOibg=;
- b=YaAhApHdt1ran+48+u3+JTNkQXrwVB2pn+FJLG/An0E13FayS483TlfPn930fvBJQhWVr6qyMXUqx/HjuVfE2kz4jkrmV/k+3dCjlti//ZuvI0hjpBx5+b33mordat9ayHHyEIl1pGD4QN/oetUxOwrvNkTmajwY7sFQ5m0idcY=
-Received: from PU1PR06CA0019.apcprd06.prod.outlook.com (2603:1096:803:2a::31)
- by JH0PR02MB6438.apcprd02.prod.outlook.com (2603:1096:990:1a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Wed, 8 May
- 2024 12:58:29 +0000
-Received: from HK3PEPF0000021A.apcprd03.prod.outlook.com
- (2603:1096:803:2a:cafe::e5) by PU1PR06CA0019.outlook.office365.com
- (2603:1096:803:2a::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45 via Frontend
- Transport; Wed, 8 May 2024 12:58:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- HK3PEPF0000021A.mail.protection.outlook.com (10.167.8.36) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Wed, 8 May 2024 12:58:29 +0000
-Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
- (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 8 May
- 2024 20:58:28 +0800
-From: <hailong.liu@oppo.com>
-To: <akpm@linux-foundation.org>
-CC: <urezki@gmail.com>, <hch@infradead.org>, <lstoakes@gmail.com>,
-	<21cnbao@gmail.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-	<xiang@kernel.org>, <chao@kernel.org>, Hailong.Liu <hailong.liu@oppo.com>,
-	Oven <liyangouwen1@oppo.com>
-Subject: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if called with __GFP_NOFAIL
-Date: Wed, 8 May 2024 20:58:08 +0800
-Message-ID: <20240508125808.28882-1-hailong.liu@oppo.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252AC59165
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715173132; cv=none; b=M18Pmdo5K2Qy1X3ivHzDOkn52ubUcZ67IHyrsdXOb1X6ljK/1s//awh8Rehe1TYOcnXusRHO4tT6UmYdacmIwx9E0l2T43w19PP+7hTAqEHyHqGRYJHTPRbJDVUMlyhu2/xOj6jBUXsG8vFBAE3L0OScCOw3gKhKvE91SuhWX0U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715173132; c=relaxed/simple;
+	bh=GYjfMVF/gOTYFXkiteIcGwz9L/HVIE8jUpBP3nujoZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcBtKMCVJabfb7hBX92obn2utZGxukH7Oux4+7M0VRYgNeopMowT7MDPFAoHX7YZfcyHYZfuEZslxY3FRPLJEGjS7O1PVhp6u5/TJtFvzgCjc/Pn9WjX7g7j+eiEmIbKdSmTDLRth2S8LhuewxUGjHTNqD4fOdVaewheckyX3uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ICCWlJuY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715173129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OMWFB+58LjFbAGe/YILHZwb6Uma7hDTXbrXSYkry9jI=;
+	b=ICCWlJuY78gFz5G5Uc2wa4/D3RpKbluyeNkxFpbBVtPhyfGBzwSpPs4zymTJWbeca2ukYZ
+	Qtow/xEWozS07vLnbGLU4ofV20TfzlDXk5BRsH39DHfT5Ch4VOuz+d78YN3P7ABzc86tGQ
+	J1h99bc5Nrbi1pGNAFLiu5pb4/hotkA=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-662-Sj-D9hbEMpOUTgaC3hg7WQ-1; Wed,
+ 08 May 2024 08:58:45 -0400
+X-MC-Unique: Sj-D9hbEMpOUTgaC3hg7WQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4E6903C01C0D;
+	Wed,  8 May 2024 12:58:45 +0000 (UTC)
+Received: from fedora (unknown [10.22.18.45])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id AF2BC2088AFE;
+	Wed,  8 May 2024 12:58:43 +0000 (UTC)
+Date: Wed, 8 May 2024 08:58:42 -0400
+From: Audra Mitchell <audra@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	raquini@redhat.com, Peter Xu <peterx@redhat.com>
+Subject: Re: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
+Message-ID: <Zjt3Apr8ILFA4oK_@fedora>
+References: <20240507195510.283744-1-audra@redhat.com>
+ <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021A:EE_|JH0PR02MB6438:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68d36560-5d0c-430e-b0e1-08dc6f5e8ec5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|82310400017|1800799015|36860700004;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LDy49rz/NenaJ57q5e4u/v/1xBSds0zJVxvVrbuFR79qM6ZV2sOru+KlNoP1?=
- =?us-ascii?Q?OWsPlpjr+HX9XbpbAh9KjI0TSxPpBgIm3e027Dc1MK96YsyQ+l04TvJ6jGz1?=
- =?us-ascii?Q?cgVROOLig+Yg6+DXl+RKc08cAiBwbcVAo+aDSEqflhE2wIEkXTS6uBJSoGre?=
- =?us-ascii?Q?LvyBhnD4hvazrS6SPU1JoTfZJ9zVV0z97CQX07JU6MoWEBsJoMBra/7Ds1QO?=
- =?us-ascii?Q?uVwZveZBBoShUPMlSOTyHhUb+rNBWH57k8uIeGH2VKZZVGGmooV5Y88HNJo2?=
- =?us-ascii?Q?tCTDIL7cnrKIVXgYa1bhvfLwQ4+Hk9kIffm+17Xnv42N+OsffrCgHzxFkG+L?=
- =?us-ascii?Q?lAWYritC3py3vR5ty2q5hO6+y6JwhJR2pR1sxxHFwXYwvcg07k1RVcZgIt4s?=
- =?us-ascii?Q?Ch5NRZFihxTaFTHtRCAbSCWX7PrjcQFAiKjxhAaUvlifDSfPUk2zrvAQr8iy?=
- =?us-ascii?Q?hWgJGe9kz6A6X4dcClVKwKDnzn1fdHcmT1dVtl5pW0qeebB6V5X1234vj1SO?=
- =?us-ascii?Q?aa/OpFQVh8qE06w70I5mbliMrw8xRfVxLgPMPTtpUAC2nLNP/kVgUYcUsehq?=
- =?us-ascii?Q?dFOXqxsrvAXxaN7EyvGjKadQlE2nrS9H1atHTPfldjiLpNdP2n3sqJX/0a50?=
- =?us-ascii?Q?Nygmb7MmZc8Pvzn1uzQYjmGoVtanLX9LMEBI+Ve2DRH5ORZdIULVn3Udv8JG?=
- =?us-ascii?Q?XwXH0oVirN7svFGEyjDIwxzd6JZWA+nHm6b62tdY9dlvVL8xpumAAYwGf4Pz?=
- =?us-ascii?Q?YKLWeqFkp5yQWnfTOtpCLgP9kp+vBWyIYkmqTvI6Ysed5jnsW3X1xBK5r3Td?=
- =?us-ascii?Q?vS2GIr0ZNCSiAOGm4+2Y4EculaNQede6A3GJndXlgYBXUlFhoj0JYPYUL91O?=
- =?us-ascii?Q?VGplPpqmPaK3NEZ+kHd4Bap+4LVQQhQbFrIR9qcXUTXcO85WhHv5YpVUCFAj?=
- =?us-ascii?Q?N0CwtQjKiW8Gq8v8864p/Cgy5pOONAfYnQrX0jMbE5ywhQ5Has8f9YAZysuv?=
- =?us-ascii?Q?5mSLqtnZMm97zUOWtPY8JT4fRNupqz89nlmdLtxO7jj9ferySoQMIg0K2Uhn?=
- =?us-ascii?Q?B+Dqwfylhjpua47g6ZeeyhC/QGNDNp2AjDWJ5nIa9XoWM0x3cyW15IoRFYPQ?=
- =?us-ascii?Q?4noqKT5YCf58HFdUG3/02OWsY/wInMSIOjCXweDu8vSd2oE05U85eLPb8OAf?=
- =?us-ascii?Q?aL4syvzd50oGlvf5uU0HU/kzCUJPhr+lAE3Vbm03pS2btmVELKJUtaGV3fHc?=
- =?us-ascii?Q?0bpKKoV0fzkkzRD4ZLXJksA+ut8LgiJY3tvC20MtITWDkmkli/onABOd46dY?=
- =?us-ascii?Q?H0fZh5rLOkaAqXPRdq/bNKsxe4sURUnhFyUFEHOcTMOywmt93tlrRBWAIvej?=
- =?us-ascii?Q?GbT6l1IclATfxXA5GfJyJpNZi1jc?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(82310400017)(1800799015)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 12:58:29.1134
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68d36560-5d0c-430e-b0e1-08dc6f5e8ec5
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021A.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR02MB6438
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-From: "Hailong.Liu" <hailong.liu@oppo.com>
+On Wed, May 08, 2024 at 09:39:10AM +0200, David Hildenbrand wrote:
+> On 07.05.24 21:55, Audra Mitchell wrote:
+> > Currently if we request a feature that is not set in the Kernel
+> > config we fail silently and return the available features. However, the
+> > documentation indicates we should return an EINVAL.
+> 
+> I assume you are referencing
+> 
+> "EINVAL The API version requested in the api field is not supported by this
+> kernel, or  the  features  field passed to the kernel includes feature bits
+> that are not supported by the current kernel version."
+> 
+> and
+> 
+> "To  enable  userfaultfd features the application should set a bit
+> corresponding to each feature it wants to enable in the features field. If
+> the kernel supports all the requested features it will enable them.
+> Otherwise it will zero out the returned uffdio_api structure and return
+> EINVAL.
+> "
+> 
+> in which case I agree.
 
-Commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmalloc")
-includes support for __GFP_NOFAIL, but it presents a conflict with
-commit dd544141b9eb ("vmalloc: back off when the current task is
-OOM-killed"). A possible scenario is as belows:
+Yep! I'm referencing the man page.
 
-process-a
-kvcalloc(n, m, GFP_KERNEL | __GFP_NOFAIL)
-    __vmalloc_node_range()
-	__vmalloc_area_node()
-	    vm_area_alloc_pages()
-            --> oom-killer send SIGKILL to process-a
-            if (fatal_signal_pending(current)) break;
---> return NULL;
+> 
+> > 
+> > We need to fix this issue since we can end up with a Kernel warning
+> > should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
+> > a kernel with the config not set with this feature.
+> 
+> Can you mention which exact one? Is it a WARN* or a pr_warn() ?
 
-to fix this, do not check fatal_signal_pending() in vm_area_alloc_pages()
-if __GFP_NOFAIL set.
+Here is the kernel warning I get:
 
-Reported-by: Oven <liyangouwen1@oppo.com>
-Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
----
- mm/vmalloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[  200.803094] unrecognized swap entry 0x7c00000000000001
+[  200.808270] ------------[ cut here ]------------
+[  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
+[  200.820738] Modules linked in: qrtr bridge stp llc rfkill sunrpc amd_atl intel_rapl_msr intel_rapl_common amd64_edac edac_mce_amd kvm_amd kvm ipmi_ssif acpi_ipmi i2c_piix4 ipmi_si wmi_bmof dcdbas dell_smbios dell_wmi_descriptor ptdma ipmi_devintf rapl ipmi_msghandler acpi_power_meter pcspkr k10temp xfs libcrc32c sd_mod t10_pi mgag200 sg drm_kms_helper crct10dif_pclmul i2c_algo_bit ahci crc32_pclmul drm_shmem_helper libahci crc32c_intel drm i40e libata ghash_clmulni_intel tg3 ccp megaraid_sas sp5100_tco wmi dm_mirror dm_region_hash dm_log dm_mod fuse
+[  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
+[  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
+[  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
+[  200.889595] Code: 83 fa 02 0f 86 44 01 00 00 83 f9 17 0f 84 e1 00 00 00 83 f9 1f 0f 84 d0 00 00 00 48 89 c6 48 c7 c7 00 e4 dd bb e8 73 a2 de ff <0f> 0b e9 44 fd ff ff 45 0f b6 44 24 20 41 f6 c0 f4 75 27 4c 89 ee
+[  200.908348] RSP: 0018:ffffa18d2e6c37c8 EFLAGS: 00010246
+[  200.913584] RAX: 000000000000002a RBX: 00007f26d3600000 RCX: 0000000000000000
+[  200.920730] RDX: 0000000000000000 RSI: ffff93503f9a0bc0 RDI: ffff93503f9a0bc0
+[  200.927867] RBP: 00007f26d35cc000 R08: 0000000000000000 R09: ffffa18d2e6c3688
+[  200.935009] R10: ffffa18d2e6c3680 R11: ffffffffbc9de448 R12: ffffa18d2e6c39e8
+[  200.942149] R13: ffff92d1ebc15b50 R14: ffff93114e0cde60 R15: ffffa18d2e6c3928
+[  200.949291] FS:  0000000000000000(0000) GS:ffff93503f980000(0000) knlGS:0000000000000000
+[  200.957384] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  200.963140] CR2: 00007f26b1600658 CR3: 00000040905ba000 CR4: 0000000000350ef0
+[  200.970283] Call Trace:
+[  200.972745]  <TASK>
+[  200.974862]  ? __warn+0x7f/0x130
+[  200.978108]  ? zap_pte_range+0x43d/0x660
+[  200.982044]  ? report_bug+0x18a/0x1a0
+[  200.985720]  ? handle_bug+0x3c/0x70
+[  200.989219]  ? exc_invalid_op+0x14/0x70
+[  200.993068]  ? asm_exc_invalid_op+0x16/0x20
+[  200.997265]  ? zap_pte_range+0x43d/0x660
+[  201.001199]  ? zap_pte_range+0x43d/0x660
+[  201.005134]  zap_pmd_range.isra.0+0xf9/0x230
+[  201.009416]  unmap_page_range+0x2d4/0x4a0
+[  201.013436]  unmap_vmas+0xa8/0x180
+[  201.016854]  exit_mmap+0xea/0x3b0
+[  201.020191]  __mmput+0x43/0x120
+[  201.023342]  exit_mm+0xb1/0x110
+[  201.026496]  do_exit+0x270/0x4f0
+[  201.029739]  do_group_exit+0x2c/0x80
+[  201.033326]  get_signal+0x886/0x8b0
+[  201.036828]  ? srso_return_thunk+0x5/0x5f
+[  201.040848]  arch_do_signal_or_restart+0x25/0x100
+[  201.045563]  ? srso_return_thunk+0x5/0x5f
+[  201.049583]  ? vma_set_page_prot+0x5e/0xc0
+[  201.053692]  ? srso_return_thunk+0x5/0x5f
+[  201.057713]  ? syscall_exit_work+0xff/0x130
+[  201.061908]  syscall_exit_to_user_mode+0x1b3/0x200
+[  201.066712]  do_syscall_64+0x87/0x160
+[  201.070387]  ? srso_return_thunk+0x5/0x5f
+[  201.074405]  ? do_mmap+0x416/0x5f0
+[  201.077821]  ? srso_return_thunk+0x5/0x5f
+[  201.081840]  ? rseq_get_rseq_cs+0x1d/0x240
+[  201.085950]  ? srso_return_thunk+0x5/0x5f
+[  201.089970]  ? rseq_ip_fixup+0x6d/0x1d0
+[  201.093823]  ? vm_mmap_pgoff+0x117/0x1a0
+[  201.097755]  ? srso_return_thunk+0x5/0x5f
+[  201.101776]  ? srso_return_thunk+0x5/0x5f
+[  201.105795]  ? syscall_exit_to_user_mode+0x78/0x200
+[  201.110685]  ? srso_return_thunk+0x5/0x5f
+[  201.114706]  ? do_syscall_64+0x87/0x160
+[  201.118557]  ? srso_return_thunk+0x5/0x5f
+[  201.122575]  ? __count_memcg_events+0x49/0xb0
+[  201.126944]  ? srso_return_thunk+0x5/0x5f
+[  201.130967]  ? srso_return_thunk+0x5/0x5f
+[  201.134986]  ? syscall_exit_work+0xff/0x130
+[  201.139184]  ? srso_return_thunk+0x5/0x5f
+[  201.143205]  ? syscall_exit_to_user_mode+0x78/0x200
+[  201.148093]  ? srso_return_thunk+0x5/0x5f
+[  201.152114]  ? do_syscall_64+0x87/0x160
+[  201.155960]  ? srso_return_thunk+0x5/0x5f
+[  201.159984]  ? sched_clock_cpu+0xb/0x190
+[  201.163916]  ? srso_return_thunk+0x5/0x5f
+[  201.167939]  ? irqtime_account_irq+0x40/0xc0
+[  201.172220]  ? srso_return_thunk+0x5/0x5f
+[  201.176243]  ? srso_return_thunk+0x5/0x5f
+[  201.180263]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  201.185326] RIP: 0033:0x7f26dfd0735b
+[  201.188939] Code: Unable to access opcode bytes at 0x7f26dfd07331.
+[  201.195128] RSP: 002b:00007fffce176868 EFLAGS: 00000206 ORIG_RAX: 000000000000000a
+[  201.202700] RAX: fffffffffffffffc RBX: 00007f26dfe60000 RCX: 00007f26dfd0735b
+[  201.209841] RDX: 0000000000000003 RSI: 0000000001000000 RDI: 00007f26af401000
+[  201.216983] RBP: 00007f26b0400640 R08: 00000000ffffffff R09: 0000000000000000
+[  201.224127] R10: ffffffffffffffc0 R11: 0000000000000206 R12: 0000000000000000
+[  201.231267] R13: 000000000040d320 R14: 0000000000000000 R15: 0000000000000000
+[  201.238413]  </TASK>
+[  201.240610] ---[ end trace 0000000000000000 ]---
+[  201.245250] unrecognized swap entry 0x7c00000000000001
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6641be0ca80b..2f359d08bf8d 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3560,7 +3560,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
 
- 	/* High-order pages or fallback path if "bulk" fails. */
- 	while (nr_allocated < nr_pages) {
--		if (fatal_signal_pending(current))
-+		if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
- 			break;
 
- 		if (nid == NUMA_NO_NODE)
----
-This issue occurred during OPLUS KASAN test. Below is part of the log
+> 
+> Likely we want "Fixes:" here.
 
--> send signal
-[65731.222840] [ T1308] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/apps/uid_10198,task=gs.intelligence,pid=32454,uid=10198
+This could be seen as a continuation of the problem 
+2ff559f31a5d Revert "userfaultfd: don't fail on unrecognized features" 
+was trying to solve. However, this patch only checks to make sure we didnt 
+ask for a feature outside the possible range of features. We are still missing
+a check to confirm the requested features are also configured on. So I guess 
+the "Fixes" tag would be for this patch?
+914eedcb9ba0 userfaultfd: don't fail on unrecognized features
 
-[65731.259685] [T32454] Call trace:
-[65731.259698] [T32454]  dump_backtrace+0xf4/0x118
-[65731.259734] [T32454]  show_stack+0x18/0x24
-[65731.259756] [T32454]  dump_stack_lvl+0x60/0x7c
-[65731.259781] [T32454]  dump_stack+0x18/0x38
-[65731.259800] [T32454]  mrdump_common_die+0x250/0x39c [mrdump]
-[65731.259936] [T32454]  ipanic_die+0x20/0x34 [mrdump]
-[65731.260019] [T32454]  atomic_notifier_call_chain+0xb4/0xfc
-[65731.260047] [T32454]  notify_die+0x114/0x198
-[65731.260073] [T32454]  die+0xf4/0x5b4
-[65731.260098] [T32454]  die_kernel_fault+0x80/0x98
-[65731.260124] [T32454]  __do_kernel_fault+0x160/0x2a8
-[65731.260146] [T32454]  do_bad_area+0x68/0x148
-[65731.260174] [T32454]  do_mem_abort+0x151c/0x1b34
-[65731.260204] [T32454]  el1_abort+0x3c/0x5c
-[65731.260227] [T32454]  el1h_64_sync_handler+0x54/0x90
-[65731.260248] [T32454]  el1h_64_sync+0x68/0x6c
-[65731.260269] [T32454]  z_erofs_decompress_queue+0x7f0/0x2258
---> be->decompressed_pages = kvcalloc(be->nr_pages, sizeof(struct page *), GFP_KERNEL | __GFP_NOFAIL);
-	kernel panic by NULL pointer dereference.
-	erofs assume kvmalloc with __GFP_NOFAIL never return NULL.
+Happy to get your input here!
 
-[65731.260293] [T32454]  z_erofs_runqueue+0xf30/0x104c
-[65731.260314] [T32454]  z_erofs_readahead+0x4f0/0x968
-[65731.260339] [T32454]  read_pages+0x170/0xadc
-[65731.260364] [T32454]  page_cache_ra_unbounded+0x874/0xf30
-[65731.260388] [T32454]  page_cache_ra_order+0x24c/0x714
-[65731.260411] [T32454]  filemap_fault+0xbf0/0x1a74
-[65731.260437] [T32454]  __do_fault+0xd0/0x33c
-[65731.260462] [T32454]  handle_mm_fault+0xf74/0x3fe0
-[65731.260486] [T32454]  do_mem_abort+0x54c/0x1b34
-[65731.260509] [T32454]  el0_da+0x44/0x94
-[65731.260531] [T32454]  el0t_64_sync_handler+0x98/0xb4
-[65731.260553] [T32454]  el0t_64_sync+0x198/0x19c
+Thanks in advance!
 
---
-2.34.1
+
+> 
+> > 
+> > Signed-off-by: Audra Mitchell <audra@redhat.com>
+> > ---
+> >   fs/userfaultfd.c | 5 +++++
+> >   1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 60dcfafdc11a..17210558de79 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -2073,6 +2073,11 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
+> >   	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+> >   	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+> >   #endif
+> > +
+> > +	ret = -EINVAL;
+> > +	if (features & ~uffdio_api.features)
+> > +		goto err_out;
+> > +
+> >   	uffdio_api.ioctls = UFFD_API_IOCTLS;
+> >   	ret = -EFAULT;
+> >   	if (copy_to_user(buf, &uffdio_api, sizeof(uffdio_api)))
+> 
+> CCing Peter.
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
 
