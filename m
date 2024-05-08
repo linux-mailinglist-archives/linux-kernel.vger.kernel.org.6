@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-173198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C728BFCDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:07:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58578BFCE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F4BB1C21E2A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:07:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9DB282716
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24CC839E4;
-	Wed,  8 May 2024 12:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3456382C6C;
+	Wed,  8 May 2024 12:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGTF0dc/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MlCVQ+rl"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F402BB03;
-	Wed,  8 May 2024 12:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5581ACC;
+	Wed,  8 May 2024 12:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170037; cv=none; b=gF+daDyGYnYQDGSDY8XWspLTk6Xtaw8rp14K9ENX3dbU+xr4ziPRq5+rvG9WhWpspPi18m8UixnzuzbYR/5t+ceuk9Sh1s2K4/tmmMCj/DbVFNoOQxote/4BoSKO4MekQPpsMIE+8WpQrJ2dEZyNEr4dZQ1vF7XOxmbRW8r4h2o=
+	t=1715170069; cv=none; b=fBC+SIXIjgcWhigaJKk39i6K7+JJJiofCVAKSVNQM813LdGBjtVZNmtwZijLUT/NVedBMeTKO/ktBSHUapOr0EoX3LFC0w1jh+6hy9NAPOC4GGAU6mxeTbU7uN+7tkrXKAhCRhnAoNAI5kgxQZMOOS3+alpJF8DmoxfJGjB+m8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170037; c=relaxed/simple;
-	bh=oLumnwDbwwH/DgYQvtUxMCqelOVEGJ6zPxZzNljEza4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=po0zlRYwzerarzzoh0eNzR7LYoKdkoexUnxpfeag2ejQExWpC6Bw+S47pesjWCiDYMhr+34zmMXdvCkOrlu8R9NvhjSQLtewQz+u3AM97fKJEZjdxXQe6BE6lDt1K6FJOzObuW3d+WotaMfS3GqXUU9nV5qiLBZV50lq4XsLsTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGTF0dc/; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715170036; x=1746706036;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=oLumnwDbwwH/DgYQvtUxMCqelOVEGJ6zPxZzNljEza4=;
-  b=IGTF0dc/lwALvvkLkUQSmIPzReT77Prz3fqUMAa5r/l0LTgpxzeJtCiL
-   eFnZovcY85gkBfAmp3gv/0uRD446bXMjBCgLYL2UWLlkeBNfisOxUZ2Ri
-   Zu7TliaB3Hf1B2En2gOlo3df6xW8Py3ZLaCHBqItwRyVLxD4H4Lke7/1v
-   wSXi13eIuGrsffwbanpQutKx5MxBDdM0HSdBHRWgjEy/tD/HexfdQIhmo
-   GeSYLKoQjv/55YRbwLeq6Egvv1ZW+AzzLOxdm5eKcl/QLmLbpsMAqqwAe
-   zzarX5o5uxSMbkFd7EKzl28gnLNAg+Fk4sd0yUkLx5hLfCXmCGia2CX/J
-   A==;
-X-CSE-ConnectionGUID: PkxSGgDAQ9COPgekeQOkmA==
-X-CSE-MsgGUID: Ted4Fyc5QFWMPwdnTDElGg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="33530982"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33530982"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 05:07:13 -0700
-X-CSE-ConnectionGUID: Z5OOjc3ySoCSsHlBtrQ5pw==
-X-CSE-MsgGUID: PXHDStR+RCaH82laAJE0gQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33702558"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.80])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 05:07:10 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Florian Fainelli <florian.fainelli@telecomint.eu>,
-	Ralf Baechle <ralf@linux-mips.org>,
-	Phil Sutter <n0-1@freewrt.org>,
-	linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] MIPS: Routerboard 532: Fix vendor retry check code
-Date: Wed,  8 May 2024 15:07:00 +0300
-Message-Id: <20240508120700.51374-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715170069; c=relaxed/simple;
+	bh=ktcidu+FHa+WtZ/ugeKJFFvB5nUAHpFhqK+OYz1rTOI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=uyD5tu2h0DGP2A5J3s3jkwUq5IuJjlrsp1Le3magzZin4pRvJGtLMgeiF+Qq66YDyRhvp6kuypZfflwDkdj9T8dR7jUwKGvZvLFMEnzl6s2ndwpqN6IkWyh0yFHtoohIB8LcRlvyz5UgqW+MnelAR5CTFTE7C6IR/fpDPOQKvMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MlCVQ+rl; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715170047; x=1715774847; i=markus.elfring@web.de;
+	bh=ktcidu+FHa+WtZ/ugeKJFFvB5nUAHpFhqK+OYz1rTOI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MlCVQ+rlY8lr8z1PVLklKJH0zc1LcmooWgSG3eywkoYgEPjGfpCPZOdhMXvZcOor
+	 YNzniVuKXdwO7OlI8wHAjYTBt3fET8srJO+Sfr5KEBRzfZFvgZPMRWfad7vSllnfC
+	 vfz4NJ6JVCjHQtVrrlEw9kCwsYHyWFHY5OsJ05sLv78CiDO8XGp9/TKgflL3BHWPH
+	 t207QCfkMi4fkjjVnJ0JA5CKqrHF4Xdq4axZHHCpSZCL/J5abtFz/JXYq/HdIhorb
+	 8btcy+JUCRkmj2jmLwOFLPRF+ooXKlswHHTyfgVYZ9HPQBOns//uv6H664blPnNM0
+	 n6Bu6u8biYQrwOncXA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1My6pf-1spEHY1yCF-016g89; Wed, 08
+ May 2024 14:07:27 +0200
+Message-ID: <f10e8993-3b99-4fde-b7e6-cc459b7b6021@web.de>
+Date: Wed, 8 May 2024 14:07:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Ziwei Xiao <ziweixiao@google.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jeroen de Borst <jeroendb@google.com>,
+ John Fraker <jfraker@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Shailend Chand <shailend@google.com>, rushilg@google.com
+References: <20240507225945.1408516-2-ziweixiao@google.com>
+Subject: Re: [PATCH net-next 1/5] gve: Add adminq mutex lock
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240507225945.1408516-2-ziweixiao@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FOFIB3IXAeSXdWvJtGDw20e63TAhcSPqs2ZAKkOBk0aJPgwCJJx
+ 62wjyB0bWpmuWgKAdRcSFAcTsBFz+QxTjdheKq6I9PWn4iVCIafKdyUMPgYDtiv5osRNvqL
+ 0x6KT2x73iXSvLv2lj9XOWcuIwZ5JnguGaVrDZxxzqFjAorNkBKJeOLIOEF4e+t2UiJmyEX
+ 3OjAC2pZoXBvX0Gpi3I9A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZezT6UXmAkM=;6PZqZF92EhoPAFXEZwGOb8JPglj
+ yBAvDsZVMfjWy7n7LevkqvPrc7s6pT/uw9BQ1Zm5ghTZBasNkSaJaNSYh62p/Q75zBW2xzFEY
+ VMQZrcKo6ASRdBgdk3roQSDTOAbGtHV0ZCFKoyXv3I1sbB4noClijgGf8nXYmukEj5488v/uR
+ KfkTiODu+qposlhyd1dHjhqJAwJPQ7Ygjn8rU5SMdscYRoflSH4bqLZ1WlOEYcAlwmYbKePxx
+ +rzLXFjbT1pToNyBt0d1UXfyRjdzf0bag+FQuIhQonQx/lFZpdX3nt5eFepJ5sC9H8BYBAYlD
+ 6Xjx2daR7VpnFTlxZ5GN6EYZt3N8FyQ3unBXGHgUa6UCGXN9jLSTOM3gLLOkJ+I+rTFDFAglk
+ qVx/b/+eCj5Yq8Wd3JQdrHW1Q3XRD0+jEZKLLpv92wWU4cYqMLs5agvX88h4i+q9w26YqG1lo
+ cS8jmZe1ATsnhB+/DCij/CxBvX0tpUhH1yP3V8YKRH+EiGdJ6Mgj4U1Knl+XjDmf7MZ+3tnNf
+ TC4H3YrwL36Vce8yMpGYMeX78Mjx+/qvRjBAFqIHE9EXCNdBqphb0Pgnm8RwbKEtpq1KUxTVb
+ Ik2Gco25ZoW8EhSWGQQB+xloDOeiN1HqlRkhBGyii40J1eTW1+Az1jJzkJm9jFjXmCHkbqCa6
+ oP61e8iUACXY5quT/W74GjPCI1T2BTClX2/T9wkaOltdDVoTikNmfb++ke0oFFGkXzlHgI+Ff
+ Vc9P6lkwWpjl6yq5RhdtAAZ3Cb7O3PUV+o/ehDpR6fbFX8Uyqk55ThqwuvdcoLh1bW68aXUNn
+ YFiIXYOsSVICdX2mGFOJvaqL4a7o7VihWzQxdkGWjsh94=
 
-read_config_dword() contains strange condition checking ret for a
-number of values. The ret variable, however, is always zero because
-config_access() never returns anything else. Thus, the retry is always
-taken until number of tries is exceeded.
+=E2=80=A6
+> the rtnl_lock, such as the upcoming flow steering operations. For such
+> situations, it can temporarily drop the rtnl_lock, and replace it for
+> these operations with a new adminq lock, which can ensure the adminq
+> command execution to be thread-safe.
 
-The code looks like it wants to check *val instead of ret to see if the
-read gave an error response.
+Would you like to use imperative wordings for an improved change descripti=
+on?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
-Fixes: 73b4390fb234 ("[MIPS] Routerboard 532: Support for base system")
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
---
-
-IMPORTANT NOTE TO MAINTAINER:
-
-This change has potential of breaking something and I don't have HW to
-test this with. I only came across it while going through all PCIBIOS_*
-call chains. Clearly the current code non-sensical so something is not
-right but whether this is the right way to solve the problem, I'm not
-entirely sure because it will make small change into the behavior.
----
- arch/mips/pci/ops-rc32434.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/mips/pci/ops-rc32434.c b/arch/mips/pci/ops-rc32434.c
-index 874ed6df9768..34b9323bdabb 100644
---- a/arch/mips/pci/ops-rc32434.c
-+++ b/arch/mips/pci/ops-rc32434.c
-@@ -112,8 +112,8 @@ static int read_config_dword(struct pci_bus *bus, unsigned int devfn,
- 	 * gives them time to settle
- 	 */
- 	if (where == PCI_VENDOR_ID) {
--		if (ret == 0xffffffff || ret == 0x00000000 ||
--		    ret == 0x0000ffff || ret == 0xffff0000) {
-+		if (*val == 0xffffffff || *val == 0x00000000 ||
-+		    *val == 0x0000ffff || *val == 0xffff0000) {
- 			if (delay > 4)
- 				return 0;
- 			delay *= 2;
--- 
-2.39.2
-
+Regards,
+Markus
 
