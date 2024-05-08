@@ -1,907 +1,294 @@
-Return-Path: <linux-kernel+bounces-172778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A9A8BF6AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:00:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D858BF6AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5FD11C2157E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:00:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05BF283579
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AE320DDB;
-	Wed,  8 May 2024 07:00:23 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8EB1A2C15;
-	Wed,  8 May 2024 07:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715151621; cv=none; b=fLc+PMO+UYKUEvLslURbIWPpW/pMuWoN0DD3U7wAm1fKeTyHP7LtHPhGanHTydPTTc8LK3fxRVU4Rho9sm6kShHnewQCLLgs99r8UYwLE3zjRNSnbW2w2NB4V0s2b2e+wcxkbDqt0Uqm3ZPYcWEvf9GGxIPfaWPAGmWJiu0xAKE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715151621; c=relaxed/simple;
-	bh=x41MsKxY249A36fkoWdLniDHK02+MF9GrYAxFRztLiE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UVw1gUJCxlUzRu51NiAr/s9nVL3jnv+TLJz5mY7wKgzXzVql4jL9gVrw7jW1ADqnH8X1ia/NLBP8KXUmSnnFNp9DyN63kdU/T+CtH3Lwf5A40RsjMlOGMfbktTAbaktQn+H68Iq1i74BDZL/JA1Dt6fPQa6vubV/GLhYUBrA3Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.173])
-	by gateway (Coremail) with SMTP id _____8BxtOr_IjtmljwJAA--.12537S3;
-	Wed, 08 May 2024 15:00:15 +0800 (CST)
-Received: from [10.20.42.173] (unknown [10.20.42.173])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxC977Ijtml0wVAA--.41437S3;
-	Wed, 08 May 2024 15:00:13 +0800 (CST)
-Subject: Re: [PATCH 2/2] Loongarch:Support loongarch avec
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org,
- kernel@xen0n.name, tglx@linutronix.de, jiaxun.yang@flygoat.com,
- gaoliang@loongson.cn, wangliupu@loongson.cn, lvjianmin@loongson.cn,
- yijun@loongson.cn, mhocko@suse.com, akpm@linux-foundation.org,
- dianders@chromium.org, xry111@xry111.site, zhaotianrui@loongson.cn,
- nathan@kernel.org, yangtiezhu@loongson.cn, zhoubinbin@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240507125953.9117-1-zhangtianyang@loongson.cn>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <bb7d1699-8cde-f27b-3374-39fe572a41ff@loongson.cn>
-Date: Wed, 8 May 2024 15:00:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF4E286AF;
+	Wed,  8 May 2024 07:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n6GCa3I4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E497025632;
+	Wed,  8 May 2024 07:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715151628; cv=fail; b=gN3TysaedkUiIIXYw92RIvMAGVlOHUdIOdj+diarg4I+awVoDwWcbDh9E4uvfOqsudw/zhpxmh7J1e+iMQYqdVnJHtV7B2xx5gCp6vJ6IqMYQ5shCQjMEwdjoMF102aM3DtZuVXmOM773dVK+vlL619Q7cBauCGsX6eYKtJ49Yo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715151628; c=relaxed/simple;
+	bh=FCueRtO6Kp5Cv8CgxBItMXRV51zDRays51t2ubsScRk=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Gn1mCsKzX6zlEj5mgF0hcxHRrnozZ75BBItQi7V3SUxolb8nvj/0Ra8+nOWOKkF5NSid+5cbbrVOW8k076NaGDmsc9BGrZWaXhtdAP4d/sBJraHcvx1/rjnSCbAy+eVLGmyeKCAAEmeD/8y2KS7iJa4ZBaarvjyY+FhR2i+c3Sc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n6GCa3I4; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715151626; x=1746687626;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=FCueRtO6Kp5Cv8CgxBItMXRV51zDRays51t2ubsScRk=;
+  b=n6GCa3I4bv+1ovx7bO1Y3c7hNyHtzG07xTleLuzEG5o9tI8Jza54gGz9
+   NZjd1jQEhpmGG+HpcRgdPeEPgMykdJdMCbJ4MUAXj5o1hxz8Y2idgTJp0
+   sTCOJxh2gUHL61x9Ry3SGkkJ25VyobtL1FsPgixxInO/iyHf2ughWreuO
+   pStSIZ/Zup9HRyOMZatdaRXFIH6Ul+QEpL2hwwWHp3ES6bQBY4JYP61N1
+   XdNGVaF6NQy0YDidyOtBmpWc8tOOnSAjGrCzBiSyYkGZ2lXAoe+l/30tC
+   1oNNsG8yPObpftt0Cu67k172DBKnoh8Auz6LEUvTlz0ZVhJFAwepyt1Xi
+   Q==;
+X-CSE-ConnectionGUID: iQFuOAzDQ6qgd0Q83Cyy1A==
+X-CSE-MsgGUID: eU0Wwd8/Rtqu+GoIII4aGg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10927570"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="10927570"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 00:00:26 -0700
+X-CSE-ConnectionGUID: oGvYpUjQQaylPBoRvhJOZQ==
+X-CSE-MsgGUID: /PugYiMFTAWiaHvNMxrO4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="59642427"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 May 2024 00:00:27 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 8 May 2024 00:00:25 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Wed, 8 May 2024 00:00:25 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.172)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 8 May 2024 00:00:25 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Cha/WsaxGq73cDm27//DonnhK3XK0FJeh8n3w2Vh25B4MTC1SJHSKu1FgCknTbLOueBoUQHIKLZuwpUNRsHApuC1xUEmnO5IUENlba+67R94HZfmCHZLeM1tbLtddi1+8dnQ7XO+ZSRDNIEf2xDCO7F2HRZendswJ7r0UL3VsOsayAOk5PnCZlXUz4hZuwjx//LiBOQlO5fKke7bf7wYU3WrPpVGOBfulhBcUDbcTP0NjjClM3wemz7zVW0ISka/JYu1twAB7/cQjLv0i/eJAMkdHSFvyh9C9xGD7ggyhWpcehTr4LnB4IU7kjgjvTuJ9t4aU+TNpyl98JUZwSkiLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gvg61DchbtxHXun96jskfmn44vIFMDx5vaRM8S9nrdU=;
+ b=LCXEOBnoeCV+Pd5bci6uGxbceVhAkv6jxwHetdEm/UIJogJ6SkHFk4q4PZzQU/zrIgr2vKpECI4kAgXwo8aG9W+1CRcSWHwxNOOYmbG9gTY7kxRrTG6JXKEkDALiiv65NFnRN6SpTMLOM6tW5imV4zzD2bMbrNvJNonpqzxr/IyYF5nVO7LSqrT9kuO6UzZlpJTQ5nuPyhgkaqsJ0p1KhK7rzyZcZyyGnJAY6+JQx2BFhd/9rwqw7Qt7AdCMzDEtdPqwx19C7ATyW2c0mE0hghE32amW7AoHWM8KDiWeIIA11IFQiLCGXxKE+XR/OA9zigvXFKCEh9+3+rE+6XzAVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH0PR11MB4965.namprd11.prod.outlook.com (2603:10b6:510:34::7)
+ by DS7PR11MB6152.namprd11.prod.outlook.com (2603:10b6:8:9b::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.46; Wed, 8 May 2024 07:00:22 +0000
+Received: from PH0PR11MB4965.namprd11.prod.outlook.com
+ ([fe80::36c3:f638:9d28:2cd4]) by PH0PR11MB4965.namprd11.prod.outlook.com
+ ([fe80::36c3:f638:9d28:2cd4%6]) with mapi id 15.20.7544.029; Wed, 8 May 2024
+ 07:00:22 +0000
+Message-ID: <5a8c31bd-0fe3-48f2-8ec3-b143fe289827@intel.com>
+Date: Wed, 8 May 2024 15:00:12 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 17/27] KVM: x86: Report KVM supported CET MSRs as
+ to-be-saved
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <dave.hansen@intel.com>, <x86@kernel.org>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peterz@infradead.org>, <chao.gao@intel.com>, <rick.p.edgecombe@intel.com>,
+	<mlevitsk@redhat.com>, <john.allen@amd.com>
+References: <20240219074733.122080-1-weijiang.yang@intel.com>
+ <20240219074733.122080-18-weijiang.yang@intel.com>
+ <ZjLE7giCsEI4Sftp@google.com>
+ <4e034aaf-7a64-4427-b29d-da040ec7b9f0@intel.com>
+ <Zjpkl0U23qEOO3DY@google.com>
+Content-Language: en-US
+From: "Yang, Weijiang" <weijiang.yang@intel.com>
+In-Reply-To: <Zjpkl0U23qEOO3DY@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0141.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::21) To PH0PR11MB4965.namprd11.prod.outlook.com
+ (2603:10b6:510:34::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240507125953.9117-1-zhangtianyang@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8CxC977Ijtml0wVAA--.41437S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj9fXoWfXw4UCrWfJFWxKr1xurW3urX_yoW5Gw43to
-	WfJFySvw1rGr17Cr98tw1qqFyYqr18ArWDAasrZFsY9F4UtrZ0kFW7Gw43tFWxG3WkKrZr
-	Gay7WrZ7Xa97twnxl-sFpf9Il3svdjkaLaAFLSUrUUUUeb8apTn2vfkv8UJUUUU8wcxFpf
-	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
-	UjIYCTnIWjp_UUUOn7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
-	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	JF0_Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwI
-	xGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_
-	Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8uc_3
-	UUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR11MB4965:EE_|DS7PR11MB6152:EE_
+X-MS-Office365-Filtering-Correlation-Id: 779171b1-e20b-4cf4-d903-08dc6f2c86e2
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?N2RNZis1RW43b0ErRW1SOEc0ckxNWExRakpNWUkvNjVTVktZQmRQQkJDV0Jt?=
+ =?utf-8?B?aks3K293RVFaTkhITFBYams1TGI5Vm81YjllOUdEalBQWWJjZmVTMGhDV1RJ?=
+ =?utf-8?B?NW1DYjlpRmgvUVR6QnFoRnBTU1JVWDE5WTMvZVF4dmVSS3NySGxic041Sktv?=
+ =?utf-8?B?QjJCVEkveitnYUdCOEZQSWVHc3FTS21jU0wzNmhuSFFBU3dkV25WZlVQelNU?=
+ =?utf-8?B?MUNtZkx2ZHU4NUszSGxZcy94aXdSelhpNnFiekZCdkwwMXE1WlZDZHZQdHM0?=
+ =?utf-8?B?T1U3bkU0UXZ0eEtBcDdOekZVbjRPL002WjRueHdwS0pIZlpJajVzdkpibGVt?=
+ =?utf-8?B?UmgwdXpMenY5SUZjWVVVaWwzQzJ0TFhvRHZTdkEzYlZVaHNlQTcwQStLYkwv?=
+ =?utf-8?B?SmJ1VzZ0N1Z3amhBcmJtZGF2MXFEVEw5bUFaRExNaXhCRlN2cnhsVzVDQjZK?=
+ =?utf-8?B?YWtHRDJMK09kczh1MFBkYXBMQkpiMFlUdkZVUzlmQ3RFUkFXcktxRzNvaWh3?=
+ =?utf-8?B?eEVFZ3BtQnF0NnpyMG9JVzdUV2RhV3kxM045Qkp3YUd0T0JoeVFORzJHeHRT?=
+ =?utf-8?B?V0NZRkozT21jK1F5alJHVnJERjdsTzQweDgwY3F0MWVLUnlGbGhpbTRrUSsz?=
+ =?utf-8?B?RGtzbDB3aUFjZEhROVFDTXpRdmxBTTNxOUZmVkpHS1FWd1FVajZaNjV4N3ZM?=
+ =?utf-8?B?S0R0U2Jrd0tKWmdVZlp6Mkc1dy9XdGpLcWN4Ukc2a3Zvd1UxaGFzaTg2V1BK?=
+ =?utf-8?B?cWlMRGQzamM3cjNkdUozbWd3bURiSDd1SDFXR2Radko0dXR2c1l5eVlxY0xw?=
+ =?utf-8?B?YWh5eVNRMmNoNlZ6YUQzZnlUZmJvbHhTblJFV0ZyaXJhSGlaMXhoVCt6Rm11?=
+ =?utf-8?B?bThQREJUbGdPQjAvdnBPOEdTbExnTTY4RWs0dHQvSnpnbXl6YVJXeTVtek9S?=
+ =?utf-8?B?OFNNR0ZjYTFvOE0vUi9JNWQ0amxpd3A5L0l0Y3pBK3kzTWY5NWdzZEFIeHZW?=
+ =?utf-8?B?NEpVejVyOXNxNGhKREMwUVpucEZ0SE91M3duRkVXaytHRzd4dHo4TGk3bnBi?=
+ =?utf-8?B?QXc1a0VkaXdZSldtSVBYbE9wT0dJbmJpMTRTb3lzdHRxcjFlUzh6VHJYMC9S?=
+ =?utf-8?B?YThuTUx2clJFSEVwcmV4aHFQVjZhTXpaWkxHNkRnL0JwMkhWN0VLYlRZTHdx?=
+ =?utf-8?B?OFEyU2N1enpNWldoOU9ZaHpFOHdnV0hWRldZTXlzMTQ4VEhTNG45MnZhMk51?=
+ =?utf-8?B?TFRySDluelZWS2xoMzZHZ1VnY0ZKZEo2UHdoa2RlNzVJQWxZS1RGWEkyNVE4?=
+ =?utf-8?B?YkZLNlJtR2Y0NVZNVTJERnZTSnpXWldpWm11azY1STJ2cFBmS2FTR1FkRFEy?=
+ =?utf-8?B?bTFEc2VwS2VjejFRdTNMMk1UV2NZQzVsZmg3SDNtdkZLSC9adDA4VGVDMkZi?=
+ =?utf-8?B?Rk1RMS93RUhjdDZnQ3JtOGR4TmRjeUd0b28wTmhQRHBQUUlJVVBEVkg3T0pt?=
+ =?utf-8?B?RC9GV25naXZSMkplU3JDV0ovTmhnNDlqTHV6TnYxVHo2QUR3RGN4eDZ4SGdr?=
+ =?utf-8?B?ZENzWTRDQkNoYTVFZWZub0YwK1N5T0VxRXpUTndaM3FpZEU3VXZMY1lhK0hm?=
+ =?utf-8?B?S1YrKy92VU03T1BJWG9QODFiTmMwUGRyNjBNYVJJcGljNm5zS2xiaVNKN2Vj?=
+ =?utf-8?B?ZTlUTlFRRnJRMUtZZEZ3eU1hVm9RcjNYYkFmeWRwUEJGZFprWDhUdURnPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR11MB4965.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a0dwOS9HT1g4UHRUVkpQVVhNM1FhT0Z0T1VYLytlUGx5R2FqcmR0azl4Ti9y?=
+ =?utf-8?B?S25pTmJJQVhiNlVZQUc5OUNGRndCRm5ZWnJxMzJpNlRwdCsyMXMvNk9uU0N4?=
+ =?utf-8?B?SkFsYTZWNzJnYkdBSDU3NlU3dWEwQ0tYT3MxZmpxY2QyMTBWaC9Xc1h6ZktQ?=
+ =?utf-8?B?Y3pqR01MbGJLOTNvKy9laVdEK29GQTRCS1B5Z3FsRlErc1E1V1R6WHN2b3lQ?=
+ =?utf-8?B?LzVwMVJMRGgzWDQxVUVlSFRNZkRFMUdiZHhEdE1BTm1xNnFpS0ttS3REaXNl?=
+ =?utf-8?B?TFJnT0dValZMcHEvQ213eU5xaXI2dWdiNUVaY1lCNjhJRU1nSVozTTRxN21H?=
+ =?utf-8?B?OTk0T2cvTkNwUC85VmNyTm1tSHQzYjJSZUErL016SGNRMXI0UkQxNCsvZjIv?=
+ =?utf-8?B?MmJ5c1ZXQjVERXFIY2lvUmVIc21zaGk0aU1adWVyMHZMWlJmNmdueHlBNjJp?=
+ =?utf-8?B?c0VMNGVwRnNkOFA5WGJyMWR5VWtFM3ZFWU1iV1hPTkdPNU53V3pubWdnb2lI?=
+ =?utf-8?B?cU10NlU0Z3lqdWF0MDJvMFhPNWFqS0hEY0FyYkVQbXUxcVV0YkVXdGxmSFNR?=
+ =?utf-8?B?Tjh3MjFZb1NpT29OSlZnMWUwMUZvVW90ZnVHQ0djSk5TMGhpeERYellYdS8y?=
+ =?utf-8?B?RFRkcG8zelJ6NEpRaWtRRkQ4cWVwc2RYcGxtOGpNTmQvNFJxRXpkMzdxaW5F?=
+ =?utf-8?B?MUV1amVsOG0wekZ6SFMxdWdFYVRMaFlJMDdETVhxeVRoRDdPemhyRmxNYkwy?=
+ =?utf-8?B?YnlERGYwQ2xaclovN1M3T2lnMVZ6M09YdGI3NXQwWkxMK2FCTE1waXY1aDlE?=
+ =?utf-8?B?R3doblZPVjBPTkdCZXIwVWp3Rm5LYmpKVmhOWmNJK1h2d3pCeG84bzZVNWlX?=
+ =?utf-8?B?RTRnTnJOSm82cTNIRFVEMUxRTWdVc2hJTlJOZklQWFRxY2MreTBINkUrSFZX?=
+ =?utf-8?B?aW5PemRmdldaMVNLcGtwOGgrSy9OTFhTdGdNQ1RwUFJkNklhUnN6ck5iSnhp?=
+ =?utf-8?B?V3AyN2cycEtPY1J5V0xmNlBodTZJZERKS2FKOFNaQksyVyswRTM3STlDT0lM?=
+ =?utf-8?B?S2lTKy83cW5YaG1rUmxOS2g5ZGE2dy8xd2RIejkzbUlUbC9ZZlZ4aDZtUDh0?=
+ =?utf-8?B?alBPV2lvUGw3anFiL0RtWnNjL3ZEdDc3VEE3N1p5K3g1dUIzMy8rZ1ZlUnV3?=
+ =?utf-8?B?SU5BWUFWTDNtdmlUS2hCSUlLSWtzUXhDOEdNaHhJK09INzVCYzE1Q1gwNVpM?=
+ =?utf-8?B?bkh1NW9aY3loZ1cyb1JjTGpLcDQ3WGdjUmRnWW5kcXZOdjRpV3ZkZVZtcGNs?=
+ =?utf-8?B?aGpSZzFycmRDOU1lQWJqSlNpazZ0L0VVbVZuOTk0YVlzNGhUT0lmZjU4T1Bm?=
+ =?utf-8?B?dlUrWG9DZ1o0OUxscjZHSHFqdVVzV2dwcGZod1VYTy9oNExnOHkzT09WWGE4?=
+ =?utf-8?B?YWpvVXZSa3h0L3daanJjT3pCTy9vWUxZUDFJa3I0a0d2NXgzUVZ2RjZvVUVP?=
+ =?utf-8?B?a0lMc0ZrZTR5aTdYbjJ5NDd3bVN4bXlQYmdFZzJweXloaWsxdS9zTGIwYXdx?=
+ =?utf-8?B?Rnd5WUNUaUgzL2JsR0d1SFpxTGZ3MDB0dFBRUXc4MGFwaVJpanZwODhrUjlX?=
+ =?utf-8?B?MVh0ZHdYVy9iSHlCdm9JT0tYTTVOeTNGcGpLL2ViMDE4YjVBc2RlcWc0clMw?=
+ =?utf-8?B?TlhLdUYrcDh3RG9PWElLM29nemtQeGJYemFTeVJ4OGlLRS9FZXl3N0lEV1Qz?=
+ =?utf-8?B?ZExvS2pKd00xK2pObnNwcVloYTFYbEZVMExyV1VvMVBjQTlEUExnZXlxdm5D?=
+ =?utf-8?B?bzZUREltcUJnMXF6RDRnTUV1dDYyK1JiK3l2bjVsSGNGbDZnMjBnYU9UMGRH?=
+ =?utf-8?B?dkN1dEh6R2hrY1VKcHBRT29yQWE2MTZ0dUEwMEFzMGcySEJTeS9ONS93cnpy?=
+ =?utf-8?B?elA0dER3MEtWUUw5NEhLbFQ4UGdlall6bUF6TlJkUnhlT0hTTzM1emN6dVVC?=
+ =?utf-8?B?QkI2ODBoMkxHRDVwd05lVUFFWkhERm5lWndFNkVyNFRTNlpUWlF2cHdweEJy?=
+ =?utf-8?B?bDh6ZG9OajdNZmZOUmhiRjZ0dk5CanBYWU9qZGNIOEtBbWE2OUJFazRKNWZP?=
+ =?utf-8?B?S05CWnFSUzgrejZzMi9VZTJFY2ozQUwzNWhuNEdXdm9sYmRqM2tpUi85aEk2?=
+ =?utf-8?B?TWc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 779171b1-e20b-4cf4-d903-08dc6f2c86e2
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB4965.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 07:00:21.9545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5TA9OO5Ij9nSx94v1eSGZwKxwVy/EdCucoU4GGTu45lBVDk0o0thIFO8TzURyfvHunv73AF9kDiQig/eBXUgcw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6152
+X-OriginatorOrg: intel.com
 
+On 5/8/2024 1:27 AM, Sean Christopherson wrote:
+> On Mon, May 06, 2024, Weijiang Yang wrote:
+>> On 5/2/2024 6:40 AM, Sean Christopherson wrote:
+>>> On Sun, Feb 18, 2024, Yang Weijiang wrote:
 
+[...]
 
-On 2024/5/7 下午8:59, Tianyang Zhang wrote:
-> From: zhangtianyang <zhangtianyang@loongson.cn>
-> 
-> Introduce the advanced extended interrupt controllers,
-> This feature will allow each core to have an independent
-> 256 interrupt vectors, and MSI interrupts can be
-> independently routed to any vector on any CPU.
-
-Hi tianyang,
-
-Thanks for provide the patch.
-
-One simple question, can old kernel without this driver such as kernel 
-6.8 run in the new hardware with advanced extended interrupt controllers?
-
-> 
-> Co-developed-by: Jianmin Lv <lvjianmin@loongson.cn>
-> Signed-off-by: Jianmin Lv <lvjianmin@loongson.cn>
-> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
-> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
-> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> ---
->   arch/loongarch/Kconfig                    |   1 +
->   arch/loongarch/include/asm/cpu-features.h |   1 +
->   arch/loongarch/include/asm/cpu.h          |   2 +
->   arch/loongarch/include/asm/hw_irq.h       |  10 +
->   arch/loongarch/include/asm/irq.h          |   7 +-
->   arch/loongarch/include/asm/loongarch.h    |  19 +-
->   arch/loongarch/include/asm/smp.h          |   1 +
->   arch/loongarch/kernel/cpu-probe.c         |   3 +-
->   arch/loongarch/kernel/smp.c               |   3 +
->   drivers/irqchip/Makefile                  |   2 +-
->   drivers/irqchip/irq-loongarch-avec.c      | 434 ++++++++++++++++++++++
->   drivers/irqchip/irq-loongarch-cpu.c       |   4 +-
->   drivers/irqchip/irq-loongson-eiointc.c    |   3 +
->   drivers/irqchip/irq-loongson-pch-msi.c    |  45 ++-
->   14 files changed, 525 insertions(+), 10 deletions(-)
->   create mode 100644 drivers/irqchip/irq-loongarch-avec.c
-> 
-> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-> index 10959e6c3583..71b8f19745e0 100644
-> --- a/arch/loongarch/Kconfig
-> +++ b/arch/loongarch/Kconfig
-> @@ -76,6 +76,7 @@ config LOONGARCH
->   	select GENERIC_ENTRY
->   	select GENERIC_GETTIMEOFDAY
->   	select GENERIC_IOREMAP if !ARCH_IOREMAP
-> +	select GENERIC_IRQ_MATRIX_ALLOCATOR
->   	select GENERIC_IRQ_MULTI_HANDLER
->   	select GENERIC_IRQ_PROBE
->   	select GENERIC_IRQ_SHOW
-> diff --git a/arch/loongarch/include/asm/cpu-features.h b/arch/loongarch/include/asm/cpu-features.h
-> index 2eafe6a6aca8..16a716f88a5c 100644
-> --- a/arch/loongarch/include/asm/cpu-features.h
-> +++ b/arch/loongarch/include/asm/cpu-features.h
-> @@ -65,5 +65,6 @@
->   #define cpu_has_guestid		cpu_opt(LOONGARCH_CPU_GUESTID)
->   #define cpu_has_hypervisor	cpu_opt(LOONGARCH_CPU_HYPERVISOR)
->   #define cpu_has_ptw		cpu_opt(LOONGARCH_CPU_PTW)
-> +#define cpu_has_avecint		cpu_opt(LOONGARCH_CPU_AVECINT)
->   
->   #endif /* __ASM_CPU_FEATURES_H */
-> diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/include/asm/cpu.h
-> index 48b9f7168bcc..843f9c4ec980 100644
-> --- a/arch/loongarch/include/asm/cpu.h
-> +++ b/arch/loongarch/include/asm/cpu.h
-> @@ -99,6 +99,7 @@ enum cpu_type_enum {
->   #define CPU_FEATURE_GUESTID		24	/* CPU has GuestID feature */
->   #define CPU_FEATURE_HYPERVISOR		25	/* CPU has hypervisor (running in VM) */
->   #define CPU_FEATURE_PTW			26	/* CPU has hardware page table walker */
-> +#define CPU_FEATURE_AVECINT		27	/* CPU has avec interrupt */
->   
->   #define LOONGARCH_CPU_CPUCFG		BIT_ULL(CPU_FEATURE_CPUCFG)
->   #define LOONGARCH_CPU_LAM		BIT_ULL(CPU_FEATURE_LAM)
-> @@ -127,5 +128,6 @@ enum cpu_type_enum {
->   #define LOONGARCH_CPU_GUESTID		BIT_ULL(CPU_FEATURE_GUESTID)
->   #define LOONGARCH_CPU_HYPERVISOR	BIT_ULL(CPU_FEATURE_HYPERVISOR)
->   #define LOONGARCH_CPU_PTW		BIT_ULL(CPU_FEATURE_PTW)
-> +#define LOONGARCH_CPU_AVECINT		BIT_ULL(CPU_FEATURE_AVECINT)
->   
->   #endif /* _ASM_CPU_H */
-> diff --git a/arch/loongarch/include/asm/hw_irq.h b/arch/loongarch/include/asm/hw_irq.h
-> index af4f4e8fbd85..521abce32135 100644
-> --- a/arch/loongarch/include/asm/hw_irq.h
-> +++ b/arch/loongarch/include/asm/hw_irq.h
-> @@ -9,6 +9,16 @@
->   
->   extern atomic_t irq_err_count;
->   
-> +/*
-> + * 256 vectors Map:
-> + *
-> + * 0 - 15: mapping legacy IPs, e.g. IP0-12.
-> + * 16 - 255: mapping a vector for external IRQ.
-> + *
-> + */
-> +#define NR_VECTORS	256
-> +#define IRQ_MATRIX_BITS	NR_VECTORS
-> +#define NR_LEGACY_VECTORS	16
->   /*
->    * interrupt-retrigger: NOP for now. This may not be appropriate for all
->    * machines, we'll see ...
-> diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/irq.h
-> index 218b4da0ea90..e28bd96c6611 100644
-> --- a/arch/loongarch/include/asm/irq.h
-> +++ b/arch/loongarch/include/asm/irq.h
-> @@ -65,7 +65,7 @@ extern struct acpi_vector_group msi_group[MAX_IO_PICS];
->   #define LOONGSON_LPC_LAST_IRQ		(LOONGSON_LPC_IRQ_BASE + 15)
->   
->   #define LOONGSON_CPU_IRQ_BASE		16
-> -#define LOONGSON_CPU_LAST_IRQ		(LOONGSON_CPU_IRQ_BASE + 14)
-> +#define LOONGSON_CPU_LAST_IRQ		(LOONGSON_CPU_IRQ_BASE + 15)
->   
->   #define LOONGSON_PCH_IRQ_BASE		64
->   #define LOONGSON_PCH_ACPI_IRQ		(LOONGSON_PCH_IRQ_BASE + 47)
-> @@ -101,6 +101,11 @@ int pch_msi_acpi_init(struct irq_domain *parent,
->   					struct acpi_madt_msi_pic *acpi_pchmsi);
->   int pch_pic_acpi_init(struct irq_domain *parent,
->   					struct acpi_madt_bio_pic *acpi_pchpic);
-> +int __init pch_msi_acpi_init_v2(struct irq_domain *parent,
-> +		struct acpi_madt_msi_pic *pch_msi_entry);
-> +int __init loongarch_avec_acpi_init(struct irq_domain *parent);
-> +void complete_irq_moving(int *restart);
-> +
->   int find_pch_pic(u32 gsi);
->   struct fwnode_handle *get_pch_msi_handle(int pci_segment);
->   
-> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
-> index 46366e783c84..4d9a09861925 100644
-> --- a/arch/loongarch/include/asm/loongarch.h
-> +++ b/arch/loongarch/include/asm/loongarch.h
-> @@ -72,7 +72,6 @@
->   #define  CPUCFG1_RPLV			BIT(23)
->   #define  CPUCFG1_HUGEPG			BIT(24)
->   #define  CPUCFG1_CRC32			BIT(25)
-> -#define  CPUCFG1_MSGINT			BIT(26)
->   
->   #define LOONGARCH_CPUCFG2		0x2
->   #define  CPUCFG2_FP			BIT(0)
-> @@ -240,8 +239,8 @@
->   #define  CSR_ESTAT_EXC_WIDTH		6
->   #define  CSR_ESTAT_EXC			(_ULCAST_(0x3f) << CSR_ESTAT_EXC_SHIFT)
->   #define  CSR_ESTAT_IS_SHIFT		0
-> -#define  CSR_ESTAT_IS_WIDTH		14
-> -#define  CSR_ESTAT_IS			(_ULCAST_(0x3fff) << CSR_ESTAT_IS_SHIFT)
-> +#define  CSR_ESTAT_IS_WIDTH		15
-> +#define  CSR_ESTAT_IS			(_ULCAST_(0x7fff) << CSR_ESTAT_IS_SHIFT)
->   
->   #define LOONGARCH_CSR_ERA		0x6	/* ERA */
->   
-> @@ -987,10 +986,17 @@
->   #define CSR_FWPC_SKIP_SHIFT		16
->   #define CSR_FWPC_SKIP			(_ULCAST_(1) << CSR_FWPC_SKIP_SHIFT)
->   
-> +#define LOONGARCH_CSR_IRR0		0xa0
-> +#define LOONGARCH_CSR_IRR1		0xa1
-> +#define LOONGARCH_CSR_IRR2		0xa2
-> +#define LOONGARCH_CSR_IRR3		0xa3
-> +
-> +#define	LOONGARCH_CSR_ILR		0xa4
-> +
->   /*
->    * CSR_ECFG IM
->    */
-> -#define ECFG0_IM		0x00001fff
-> +#define ECFG0_IM		0x00005fff
->   #define ECFGB_SIP0		0
->   #define ECFGF_SIP0		(_ULCAST_(1) << ECFGB_SIP0)
->   #define ECFGB_SIP1		1
-> @@ -1033,6 +1039,7 @@
->   #define  IOCSRF_EIODECODE		BIT_ULL(9)
->   #define  IOCSRF_FLATMODE		BIT_ULL(10)
->   #define  IOCSRF_VM			BIT_ULL(11)
-> +#define  IOCSRF_AVEC			BIT_ULL(15)
->   
->   #define LOONGARCH_IOCSR_VENDOR		0x10
->   
-> @@ -1043,6 +1050,7 @@
->   #define LOONGARCH_IOCSR_MISC_FUNC	0x420
->   #define  IOCSR_MISC_FUNC_TIMER_RESET	BIT_ULL(21)
->   #define  IOCSR_MISC_FUNC_EXT_IOI_EN	BIT_ULL(48)
-> +#define  IOCSR_MISC_FUNC_AVEC_EN	BIT_ULL(51)
->   
->   #define LOONGARCH_IOCSR_CPUTEMP		0x428
->   
-> @@ -1363,9 +1371,10 @@ __BUILD_CSR_OP(tlbidx)
->   #define INT_TI		11	/* Timer */
->   #define INT_IPI		12
->   #define INT_NMI		13
-> +#define INT_AVEC	14
->   
->   /* ExcCodes corresponding to interrupts */
-> -#define EXCCODE_INT_NUM		(INT_NMI + 1)
-> +#define EXCCODE_INT_NUM		(INT_AVEC + 1)
->   #define EXCCODE_INT_START	64
->   #define EXCCODE_INT_END		(EXCCODE_INT_START + EXCCODE_INT_NUM - 1)
->   
-> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
-> index f81e5f01d619..577f591c1c73 100644
-> --- a/arch/loongarch/include/asm/smp.h
-> +++ b/arch/loongarch/include/asm/smp.h
-> @@ -62,6 +62,7 @@ extern int __cpu_logical_map[NR_CPUS];
->   #define SMP_BOOT_CPU		0x1
->   #define SMP_RESCHEDULE		0x2
->   #define SMP_CALL_FUNCTION	0x4
-> +#define SMP_CLEAR_VECT		0x8
->   
->   struct secondary_data {
->   	unsigned long stack;
-> diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kernel/cpu-probe.c
-> index 55320813ee08..3b2e72e8f9bd 100644
-> --- a/arch/loongarch/kernel/cpu-probe.c
-> +++ b/arch/loongarch/kernel/cpu-probe.c
-> @@ -106,7 +106,6 @@ static void cpu_probe_common(struct cpuinfo_loongarch *c)
->   		elf_hwcap |= HWCAP_LOONGARCH_CRC32;
->   	}
->   
-> -
->   	config = read_cpucfg(LOONGARCH_CPUCFG2);
->   	if (config & CPUCFG2_LAM) {
->   		c->options |= LOONGARCH_CPU_LAM;
-> @@ -176,6 +175,8 @@ static void cpu_probe_common(struct cpuinfo_loongarch *c)
->   		c->options |= LOONGARCH_CPU_EIODECODE;
->   	if (config & IOCSRF_VM)
->   		c->options |= LOONGARCH_CPU_HYPERVISOR;
-> +	if (config & IOCSRF_AVEC)
-> +		c->options |= LOONGARCH_CPU_AVECINT;
->   
->   	config = csr_read32(LOONGARCH_CSR_ASID);
->   	config = (config & CSR_ASID_BIT) >> CSR_ASID_BIT_SHIFT;
-> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
-> index a16e3dbe9f09..4fcf399a8b17 100644
-> --- a/arch/loongarch/kernel/smp.c
-> +++ b/arch/loongarch/kernel/smp.c
-> @@ -176,6 +176,9 @@ irqreturn_t loongson_ipi_interrupt(int irq, void *dev)
->   		per_cpu(irq_stat, cpu).ipi_irqs[IPI_CALL_FUNCTION]++;
->   	}
->   
-> +	if (action & SMP_CLEAR_VECT)
-> +		complete_irq_moving(NULL);
-> +
->   	return IRQ_HANDLED;
->   }
->   
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index ec4a18380998..398db4c3e264 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -105,7 +105,7 @@ obj-$(CONFIG_LS1X_IRQ)			+= irq-ls1x.o
->   obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
->   obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)	+= irq-ti-sci-inta.o
->   obj-$(CONFIG_TI_PRUSS_INTC)		+= irq-pruss-intc.o
-> -obj-$(CONFIG_IRQ_LOONGARCH_CPU)		+= irq-loongarch-cpu.o
-> +obj-$(CONFIG_IRQ_LOONGARCH_CPU)		+= irq-loongarch-cpu.o irq-loongarch-avec.o
->   obj-$(CONFIG_LOONGSON_LIOINTC)		+= irq-loongson-liointc.o
->   obj-$(CONFIG_LOONGSON_EIOINTC)		+= irq-loongson-eiointc.o
->   obj-$(CONFIG_LOONGSON_HTPIC)		+= irq-loongson-htpic.o
-> diff --git a/drivers/irqchip/irq-loongarch-avec.c b/drivers/irqchip/irq-loongarch-avec.c
-> new file mode 100644
-> index 000000000000..71ce33db63db
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-loongarch-avec.c
-> @@ -0,0 +1,434 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2020 Loongson Technologies, Inc.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/kernel.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/msi.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/cpuhotplug.h>
-> +#include <linux/radix-tree.h>
-> +
-> +#include <asm/loongarch.h>
-> +#include <asm/setup.h>
-> +
-> +static phys_addr_t msi_base_v2;
-> +
-> +typedef struct irq_data *irq_map_t[NR_VECTORS];
-> +DECLARE_PER_CPU(irq_map_t, irq_map);
-> +DEFINE_PER_CPU(irq_map_t, irq_map) = {
-> +	[0 ... NR_VECTORS - 1] = NULL,
-> +};
-> +
-> +struct pending_list {
-> +	struct list_head head;
-> +	raw_spinlock_t	lock;
-> +};
-> +
-> +DEFINE_PER_CPU(struct pending_list, pending_list);
-> +
-> +struct loongarch_avec_chip {
-> +	struct fwnode_handle	*fwnode;
-> +	struct irq_domain	*domain;
-> +	struct irq_matrix	*vector_matrix;
-> +	raw_spinlock_t		lock;
-> +} loongarch_avec;
-> +
-> +struct loongarch_avec_data {
-> +	struct list_head entry;
-> +	unsigned int cpu;
-> +	unsigned int vec;
-> +	unsigned int prev_cpu;
-> +	unsigned int prev_vec;
-> +};
-> +
-> +static int assign_irq_vector(struct irq_data *irqd, const struct cpumask *dest,
-> +		unsigned int *cpu, int *vector)
-> +{
-> +	int ret;
-> +
-> +	ret = irq_matrix_alloc(loongarch_avec.vector_matrix, dest, false, cpu);
-> +	if (ret < 0)
-> +		return ret;
-> +	*vector = ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void loongarch_avec_ack_irq(struct irq_data *d)
-> +{
-> +}
-> +
-> +static inline void loongarch_avec_unmask_irq(struct irq_data *d)
-> +{
-> +}
-> +
-> +static inline void loongarch_avec_mask_irq(struct irq_data *d)
-> +{
-> +}
-> +
-> +static void loongarch_avec_sync(struct loongarch_avec_data *adata)
-> +{
-> +	struct loongarch_avec_data *data;
-> +	struct pending_list *plist;
-> +
-> +	if (cpu_online(adata->prev_cpu)) {
-> +		plist = per_cpu_ptr(&pending_list, adata->prev_cpu);
-> +
-> +		data = kmalloc(sizeof(struct loongarch_avec_data), GFP_KERNEL);
-> +		if (!data) {
-> +			pr_warn("NO space for clean data\n");
-> +			return;
-> +		}
-> +		memcpy(data, adata, sizeof(struct loongarch_avec_data));
-> +		INIT_LIST_HEAD(&data->entry);
-> +
-> +		list_add_tail(&data->entry, &plist->head);
-> +		loongson_send_ipi_single(adata->prev_cpu, SMP_CLEAR_VECT);
-> +	}
-> +	adata->prev_cpu = adata->cpu;
-> +	adata->prev_vec = adata->vec;
-> +}
-> +
-> +static int loongarch_avec_set_affinity(struct irq_data *data,
-> +		const struct cpumask *dest, bool force)
-> +{
-> +	struct cpumask intersect_mask;
-> +	struct loongarch_avec_data *adata;
-> +	unsigned int cpu, vector;
-> +	unsigned long flags;
-> +	int ret = 0;
-> +
-> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
-> +	adata = irq_data_get_irq_chip_data(data);
-> +
-> +	if (adata->vec && cpu_online(adata->cpu)
-> +			&& cpumask_test_cpu(adata->cpu, dest)) {
-> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +		return 0;
-> +	}
-> +
-> +	if (!cpumask_intersects(dest, cpu_online_mask)) {
-> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +		return -EINVAL;
-> +	}
-> +
-> +	cpumask_and(&intersect_mask, dest, cpu_online_mask);
-> +
-> +	ret = assign_irq_vector(data, &intersect_mask, &cpu, &vector);
-> +	if (ret) {
-> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +		return ret;
-> +	}
-> +
-> +	adata->cpu = cpu;
-> +	adata->vec = vector;
-> +	per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = data;
-> +	loongarch_avec_sync(adata);
-> +
-> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +	irq_data_update_effective_affinity(data, cpumask_of(cpu));
-> +
-> +	return IRQ_SET_MASK_OK;
-> +}
-> +
-> +static void loongarch_avec_compose_msg(struct irq_data *d,
-> +		struct msi_msg *msg)
-> +{
-> +	struct loongarch_avec_data *avec_data;
-> +
-> +	avec_data = irq_data_get_irq_chip_data(d);
-> +
-> +	msg->address_hi = 0x0;
-> +	msg->address_lo = msi_base_v2 | ((avec_data->vec & 0xff) << 4) |
-> +		((cpu_logical_map(avec_data->cpu & 0xffff)) << 12);
-There is requirement for variable msi_base_v2 aligned with 1<< 28.
-
-Is that right? However there is no such checking in function 
-pch_msi_parse_madt().
-
-Also it will be better if there is some notations.
-
-> +	msg->data = 0x0;
-> +
-> +}
-> +
-> +static struct irq_chip loongarch_avec_controller = {
-> +	.name			= "CORE_AVEC",
-> +	.irq_ack		= loongarch_avec_ack_irq,
-> +	.irq_mask		= loongarch_avec_mask_irq,
-> +	.irq_unmask		= loongarch_avec_unmask_irq,
-> +	.irq_set_affinity	= loongarch_avec_set_affinity,
-> +	.irq_compose_msi_msg	= loongarch_avec_compose_msg,
-> +};
-> +
-> +void complete_irq_moving(int *restart)
-> +{
-> +	struct pending_list *plist = this_cpu_ptr(&pending_list);
-> +	struct loongarch_avec_data *adata, *tmp;
-> +	int cpu, vector;
-> +	u32 bias;
-> +	u64 irr;
-> +
-> +	raw_spin_lock(&loongarch_avec.lock);
-> +
-> +	list_for_each_entry_safe(adata, tmp, &plist->head, entry) {
-> +
-> +		cpu = adata->prev_cpu;
-> +		vector = adata->prev_vec;
-> +		bias = vector/64;
-> +		switch (bias) {
-> +		case 0x0:
-> +			irr = csr_read64(LOONGARCH_CSR_IRR0);
-> +			break;
-> +		case 0x1:
-> +			irr = csr_read64(LOONGARCH_CSR_IRR1);
-> +			break;
-> +		case 0x2:
-> +			irr = csr_read64(LOONGARCH_CSR_IRR2);
-> +			break;
-> +		case 0x3:
-> +			irr = csr_read64(LOONGARCH_CSR_IRR3);
-> +			break;
-> +		default:
-> +			return;
-> +		}
-> +
-> +		if (irr & (1UL << (vector % 64))) {
-> +			loongson_send_ipi_single(cpu, SMP_CLEAR_VECT);
-
-It is strange that sending ipi to itself to clear MSI interrupt.
-It requires that there cannot be loop check in ipi interrupt handler, 
-else ipi hanlder loop checking will find new IPI message again.
-
-Is it possible to do_irq() for MSI interrupt directly in ipi handler?
-	d = raw_cpu_ptr(irq_map)[vector];
-	if (d)
-		generic_handle_irq(d->irq);
-
-> +			continue;
-> +		}
-> +		list_del(&adata->entry);
-> +		irq_matrix_free(loongarch_avec.vector_matrix, cpu, vector, false);
-> +		this_cpu_ptr(irq_map)[vector] = 0;
-> +		kfree(adata);
-> +	}
-> +	raw_spin_unlock(&loongarch_avec.lock);
-> +}
-> +
-> +static void loongarch_avec_dispatch(struct irq_desc *desc)
-> +{
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	struct irq_data *d;
-> +	unsigned long vector;
-> +
-> +	chained_irq_enter(chip, desc);
-> +	vector = csr_read64(LOONGARCH_CSR_ILR);
-> +	if (vector & 0x80000000)
-> +		return;
-what is the meaning of 0x80000000? It had better be defined as macro.
-
-Regards
-Bibo Mao
-> +
-> +	vector &= 0xff;
-> +
-> +	d = raw_cpu_ptr(irq_map)[vector];
-> +	if (d)
-> +		generic_handle_irq(d->irq);
-> +	else
-> +		pr_warn("IRQ ERROR:Unexpected irq  occur on cpu %d[vector %d]\n",
-> +				smp_processor_id(), vector);
-> +
-> +	chained_irq_exit(chip, desc);
-> +}
-> +
-> +static int loongarch_avec_alloc(struct irq_domain *domain, unsigned int virq,
-> +		unsigned int nr_irqs, void *arg)
-> +{
-> +	struct loongarch_avec_data *adata;
-> +	struct irq_data *irqd;
-> +	unsigned int cpu, vector;
-> +	unsigned long flags;
-> +	int i, err;
-> +
-> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
-> +	for (i = 0; i < nr_irqs; i++) {
-> +		irqd = irq_domain_get_irq_data(domain, virq + i);
-> +		adata = kzalloc(sizeof(*adata), GFP_KERNEL);
-> +		if (!adata) {
-> +			raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +			return -ENOMEM;
-> +		}
-> +		err = assign_irq_vector(irqd, cpu_online_mask, &cpu, &vector);
-> +		if (err) {
-> +			raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +			return err;
-> +		}
-> +		adata->prev_cpu = adata->cpu = cpu;
-> +		adata->prev_vec = adata->vec = vector;
-> +
-> +		per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irqd;
-> +		irq_domain_set_info(domain, virq + i, virq, &loongarch_avec_controller,
-> +				adata, handle_edge_irq, NULL, NULL);
-> +		irqd_set_single_target(irqd);
-> +		irqd_set_affinity_on_activate(irqd);
-> +	}
-> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +
-> +	return err;
-> +}
-> +
-> +static void loongarch_avec_free(struct irq_domain *domain, unsigned int virq,
-> +		unsigned int nr_irqs)
-> +{
-> +	struct loongarch_avec_data *adata;
-> +	struct irq_data *d;
-> +	unsigned long flags;
-> +	unsigned int i;
-> +
-> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
-> +	for (i = 0; i < nr_irqs; i++) {
-> +		d = irq_domain_get_irq_data(domain, virq + i);
-> +		adata = irq_data_get_irq_chip_data(d);
-> +		if (d) {
-> +			irq_matrix_free(loongarch_avec.vector_matrix,
-> +					adata->cpu,
-> +					adata->vec, false);
-> +			irq_domain_reset_irq_data(d);
-> +		}
-> +	}
-> +
-> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +}
-> +
-> +static const struct irq_domain_ops loongarch_avec_domain_ops = {
-> +	.alloc		= loongarch_avec_alloc,
-> +	.free		= loongarch_avec_free,
-> +};
-> +
-> +static int __init irq_matrix_init(void)
-> +{
-> +	int i;
-> +
-> +	loongarch_avec.vector_matrix = irq_alloc_matrix(NR_VECTORS, 0, NR_VECTORS - 1);
-> +	if (!loongarch_avec.vector_matrix)
-> +		return -ENOMEM;
-> +	for (i = 0; i < NR_LEGACY_VECTORS; i++)
-> +		irq_matrix_assign_system(loongarch_avec.vector_matrix, i, false);
-> +
-> +	irq_matrix_online(loongarch_avec.vector_matrix);
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init loongarch_avec_init(struct irq_domain *parent)
-> +{
-> +	int ret = 0, parent_irq;
-> +	unsigned long tmp;
-> +
-> +	tmp = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
-> +	tmp |= IOCSR_MISC_FUNC_AVEC_EN;
-> +	iocsr_write64(tmp, LOONGARCH_IOCSR_MISC_FUNC);
-> +
-> +	raw_spin_lock_init(&loongarch_avec.lock);
-> +
-> +	loongarch_avec.fwnode = irq_domain_alloc_named_fwnode("CORE_AVEC");
-> +	if (!loongarch_avec.fwnode) {
-> +		pr_err("Unable to allocate domain handle\n");
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	loongarch_avec.domain = irq_domain_create_tree(loongarch_avec.fwnode,
-> +			&loongarch_avec_domain_ops, NULL);
-> +	if (!loongarch_avec.domain) {
-> +		pr_err("core-vec: cannot create IRQ domain\n");
-> +		ret = -ENOMEM;
-> +		goto out_free_handle;
-> +	}
-> +
-> +	parent_irq = irq_create_mapping(parent, INT_AVEC);
-> +	if (!parent_irq) {
-> +		pr_err("Failed to mapping hwirq\n");
-> +		ret = -EINVAL;
-> +		goto out_remove_domain;
-> +	}
-> +	irq_set_chained_handler_and_data(parent_irq, loongarch_avec_dispatch, NULL);
-> +
-> +	ret = irq_matrix_init();
-> +	if (ret) {
-> +		pr_err("Failed to init irq matrix\n");
-> +		goto out_free_matrix;
-> +	}
-> +
-> +	return ret;
-> +
-> +out_free_matrix:
-> +	kfree(loongarch_avec.vector_matrix);
-> +out_remove_domain:
-> +	irq_domain_remove(loongarch_avec.domain);
-> +out_free_handle:
-> +	irq_domain_free_fwnode(loongarch_avec.fwnode);
-> +out:
-> +	return ret;
-> +}
-> +
-> +static int loongarch_avec_offline_cpu(unsigned int cpu)
-> +{
-> +	unsigned long flags;
-> +	struct pending_list *plist = per_cpu_ptr(&pending_list, cpu);
-> +
-> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
-> +	if (list_empty(&plist->head)) {
-> +		irq_matrix_offline(loongarch_avec.vector_matrix);
-> +	} else {
-> +		pr_warn("cpu %d advanced extioi is busy\n");
-> +		raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +		return -EBUSY;
-> +	}
-> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +	return 0;
-> +}
-> +
-> +static int loongarch_avec_online_cpu(unsigned int cpu)
-> +{
-> +	struct pending_list *plist = per_cpu_ptr(&pending_list, cpu);
-> +	unsigned long flags;
-> +
-> +	raw_spin_lock_irqsave(&loongarch_avec.lock, flags);
-> +
-> +	irq_matrix_online(loongarch_avec.vector_matrix);
-> +
-> +	INIT_LIST_HEAD(&plist->head);
-> +
-> +	raw_spin_unlock_irqrestore(&loongarch_avec.lock, flags);
-> +	return 0;
-> +}
-> +#if defined(CONFIG_ACPI)
-> +static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
-> +		const unsigned long end)
-> +{
-> +	struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
-> +
-> +	msi_base_v2 = pchmsi_entry->msg_address;
-> +	return pch_msi_acpi_init_v2(loongarch_avec.domain, pchmsi_entry);
-> +}
-> +
-> +static inline int __init acpi_cascade_irqdomain_init(void)
-> +{
-> +	return acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
-> +}
-> +
-> +int __init loongarch_avec_acpi_init(struct irq_domain *parent)
-> +{
-> +	int ret = 0;
-> +
-> +	ret = loongarch_avec_init(parent);
-> +	if (ret) {
-> +		pr_err("Failed to init irq domain\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = acpi_cascade_irqdomain_init();
-> +	if (ret) {
-> +		pr_err("Failed to cascade IRQ domain\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
-> +			"loongarch_avec:online",
-> +			loongarch_avec_online_cpu, loongarch_avec_offline_cpu);
-> +	if (ret < 0) {
-> +		pr_err("loongarch_avec: failed to register hotplug callbacks.\n");
-> +		return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +#endif
-> diff --git a/drivers/irqchip/irq-loongarch-cpu.c b/drivers/irqchip/irq-loongarch-cpu.c
-> index 9d8f2c406043..1ecac59925c6 100644
-> --- a/drivers/irqchip/irq-loongarch-cpu.c
-> +++ b/drivers/irqchip/irq-loongarch-cpu.c
-> @@ -138,7 +138,9 @@ static int __init acpi_cascade_irqdomain_init(void)
->   	if (r < 0)
->   		return r;
->   
-> -	return 0;
-> +	if (cpu_has_avecint)
-> +		r = loongarch_avec_acpi_init(irq_domain);
-> +	return r;
->   }
->   
->   static int __init cpuintc_acpi_init(union acpi_subtable_headers *header,
-> diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
-> index 405f622a26ad..39795241304e 100644
-> --- a/drivers/irqchip/irq-loongson-eiointc.c
-> +++ b/drivers/irqchip/irq-loongson-eiointc.c
-> @@ -359,6 +359,9 @@ static int __init acpi_cascade_irqdomain_init(void)
->   	if (r < 0)
->   		return r;
->   
-> +	if (cpu_has_avecint)
-> +		return 0;
-> +
->   	r = acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
->   	if (r < 0)
->   		return r;
-> diff --git a/drivers/irqchip/irq-loongson-pch-msi.c b/drivers/irqchip/irq-loongson-pch-msi.c
-> index 6e1e1f011bb2..d1706080b4f4 100644
-> --- a/drivers/irqchip/irq-loongson-pch-msi.c
-> +++ b/drivers/irqchip/irq-loongson-pch-msi.c
-> @@ -16,7 +16,6 @@
->   #include <linux/slab.h>
->   
->   static int nr_pics;
-> -
->   struct pch_msi_data {
->   	struct mutex	msi_map_lock;
->   	phys_addr_t	doorbell;
-> @@ -100,6 +99,17 @@ static struct irq_chip middle_irq_chip = {
->   	.irq_compose_msi_msg	= pch_msi_compose_msi_msg,
+>> For the latter, IIUC KVM still needs to expose the index within the synthetic
+>> namespace so that userspace can read/write the intended MSRs, of course not
+>> expose the synthetic MSR index via existing uAPI,  But you said the "index"
+>> exposed to userspace can simply  be '0' in this case, then how to distinguish
+>> the synthetic MSRs in userspace and KVM? And how userspace can be aware of
+>> the synthetic MSR index allocation in KVM?
+> The idea is to have a synthetic index that is exposed to userspace, and a separate
+> KVM-internal index for emulating accesses.  The value that is exposed to userspace
+> can start at 0 and be a simple incrementing value as we add synthetic MSRs, as the
+> .type == SYNTHETIC makes it impossible for the value to collide with a "real" MSR.
+>
+> Translating to a KVM-internal index is a hack to avoid having to plumb a 64-bit
+> index into all the MSR code.  We could do that, i.e. pass the full kvm_x86_reg_id
+> into the MSR helpers, but I'm not convinced it'd be worth the churn.  That said,
+> I'm not opposed to the idea either, if others prefer that approach.
+>
+> E.g.
+>
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index 738c449e4f9e..21152796238a 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -420,6 +420,8 @@ struct kvm_x86_reg_id {
+>          __u16 rsvd16;
 >   };
 >   
-> +static struct irq_chip pch_msi_irq_chip_v2 = {
-> +	.name			= "MSI",
-> +	.irq_ack		= irq_chip_ack_parent,
-> +};
+> +#define MSR_KVM_GUEST_SSP      0
 > +
-> +static struct msi_domain_info pch_msi_domain_info_v2 = {
-> +	.flags		= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-> +			MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX,
-> +	.chip	= &pch_msi_irq_chip_v2,
-> +};
-> +
->   static int pch_msi_parent_domain_alloc(struct irq_domain *domain,
->   					unsigned int virq, int hwirq)
->   {
-> @@ -268,6 +278,9 @@ struct fwnode_handle *get_pch_msi_handle(int pci_segment)
->   {
->   	int i;
->   
-> +	if (cpu_has_avecint)
-> +		return pch_msi_handle[0];
-> +
->   	for (i = 0; i < MAX_IO_PICS; i++) {
->   		if (msi_group[i].pci_segment == pci_segment)
->   			return pch_msi_handle[i];
-> @@ -289,4 +302,34 @@ int __init pch_msi_acpi_init(struct irq_domain *parent,
->   
->   	return ret;
+>   #define KVM_SYNC_X86_REGS      (1UL << 0)
+>   #define KVM_SYNC_X86_SREGS     (1UL << 1)
+>   #define KVM_SYNC_X86_EVENTS    (1UL << 2)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index f45cdd9d8c1f..1a9e1e0c9f49 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -5990,6 +5990,19 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
+>          }
 >   }
-> +
-> +int __init pch_msi_acpi_init_v2(struct irq_domain *parent,
-> +		struct acpi_madt_msi_pic *msi_entry)
+>   
+> +static int kvm_translate_synthetic_msr(u32 *index)
 > +{
-> +	struct irq_domain *msi_domain;
+> +       switch (*index) {
+> +       case MSR_KVM_GUEST_SSP:
+> +               *index = MSR_KVM_INTERNAL_GUEST_SSP;
+> +               break;
+> +       default:
+> +               return -EINVAL;
+> +       }
 > +
-> +	if (pch_msi_handle[0])
-> +		return 0;
-> +
-> +	pch_msi_handle[0] = irq_domain_alloc_named_fwnode("msipic-v2");
-> +	if (!pch_msi_handle[0]) {
-> +		pr_err("Unable to allocate domain handle\n");
-> +		kfree(pch_msi_handle[0]);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	msi_domain = pci_msi_create_irq_domain(pch_msi_handle[0],
-> +			&pch_msi_domain_info_v2,
-> +			parent);
-> +	if (!msi_domain) {
-> +		pr_err("Failed to create PCI MSI domain\n");
-> +		kfree(pch_msi_handle[0]);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	pr_info("IRQ domain MSIPIC-V2 init done.\n");
-> +	return 0;
+> +       return 0;
 > +}
 > +
+>   long kvm_arch_vcpu_ioctl(struct file *filp,
+>                           unsigned int ioctl, unsigned long arg)
+>   {
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index cc585051d24b..3b5a038f5260 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -49,6 +49,15 @@ void kvm_spurious_fault(void);
+>   #define KVM_FIRST_EMULATED_VMX_MSR     MSR_IA32_VMX_BASIC
+>   #define KVM_LAST_EMULATED_VMX_MSR      MSR_IA32_VMX_VMFUNC
+>   
+> +/*
+> + * KVM's internal, non-ABI indices for synthetic MSRs.  The values themselves
+> + * are arbitrary and have no meaning, the only requirement is that they don't
+> + * conflict with "real" MSRs that KVM supports.  Use values at the uppper end
+> + * of KVM's reserved paravirtual MSR range to minimize churn, i.e. these values
+> + * will be usable until KVM exhausts its supply of paravirtual MSR indices.
+> + */
+> +#define MSR_KVM_INTERNAL_GUEST_SSP     0x4b564dff
 > +
->   #endif
-> 
+>   #define KVM_DEFAULT_PLE_GAP            128
+>   #define KVM_VMX_DEFAULT_PLE_WINDOW     4096
+>   #define KVM_DEFAULT_PLE_WINDOW_GROW    2
+
+OK, I'll post an RFC patch for this change, thanks a lot!
+
 
 
