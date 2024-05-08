@@ -1,53 +1,73 @@
-Return-Path: <linux-kernel+bounces-173326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6F18BFEFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:40:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA088BFECB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8508228A66C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:40:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B291C2181E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BE612AADC;
-	Wed,  8 May 2024 13:37:16 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BD67A15A;
+	Wed,  8 May 2024 13:35:31 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1FA129E6F;
-	Wed,  8 May 2024 13:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7A257895;
+	Wed,  8 May 2024 13:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715175436; cv=none; b=OslnuR4IdmMNeuQ8nz2V9+4P8hCgtN/FGDRVa6gCWZfTPUJI9jSSmCY6M76RaAn11Xt72lq5SHvMMrkvdUBkXayuEC4cQvhRUJyJ9ntgVUvBLWSDqzT3mOrgpaPS5aeUhWMtOpSoDkzVwxklo3i71CLTdyzaR7VEUXScQe8dW6M=
+	t=1715175331; cv=none; b=NJFz985d+D3yNgQV+fse/AQ3UOKls0xyv92V/P6b1Hjp2YXdi4LGWP/UgkxiHc9fugpGXDu+eHQPmqTRKzDei+MVlJ8angttJqbQ3O78rADY/DONp4iksaH4UEfj1FY/sStxJmns6TflAX/6C/Q0vkDKwrvEwgIIsO/+SUNQYAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715175436; c=relaxed/simple;
-	bh=i8ROPqhmVnC8e0fn6M6stlQ3vLOiFPDZQPqza+03iss=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hjz0DmMtzcWCd++L3sV3RP0erPVN5tRUgX3dx1qMew0w1H81c4nRYFisyt+fRHIdlPeiq6TwJ8iz21LKW2pZFUI0JW76aHWsDxfT1KT6UTtHSkluWGfI6f+NhodvOmAK6Ny5FphU2twDSaRDIBletVIfUhLlTcKTbt06Od4zOI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZGM44V8rzvRNB;
-	Wed,  8 May 2024 21:33:52 +0800 (CST)
-Received: from dggpemm500005.china.huawei.com (unknown [7.185.36.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id BCD8918007B;
-	Wed,  8 May 2024 21:37:12 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- dggpemm500005.china.huawei.com (7.185.36.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 8 May 2024 21:37:12 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v3 13/13] mm: page_frag: add a entry in MAINTAINERS for page_frag
-Date: Wed, 8 May 2024 21:34:08 +0800
-Message-ID: <20240508133408.54708-14-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240508133408.54708-1-linyunsheng@huawei.com>
-References: <20240508133408.54708-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1715175331; c=relaxed/simple;
+	bh=CfXeBIxV4C+jL/jNnDU/oY1PsdSnY5Ju4YlZNOkgAhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K8zJtepCmGrEZyCX5A0xC2eSrPc3J/e+6ianuPRz2v+98G3kIUORtk8z6RjZr4JazPnh3jipuQ4ysbp8Tjgb3dt88vMO2pdh08+vRkL3eYCoE/8xy6bCFZwgoV0GzJMsYCXlmPmuARM/HEb3lAdJkIFsPqTlWICyT2ri2HVzLqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59e4136010so643975766b.3;
+        Wed, 08 May 2024 06:35:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715175328; x=1715780128;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TKCbsCY2oOpekUYkO38CaKdBUC+VYKdnXLVoDUKEhPo=;
+        b=STtYQxhQnIGJXqeJP6jK6b4US05Rt2/d2E1r1gI01aEssMhWXQrvPhvsyDLg3t6Y4l
+         roHyJP2Z05tQhnCBXUJpcjZUgAWBKlfw6Sps5v+1cMPhHwhVjvx+EmlYcw6q8SZnQZ4E
+         8smsRHA1ThtIfQvK20aqHbxduZzzoq7L+gZB4v8kPdxdtnm5vgLPDYvW3i/t1QKJvM6H
+         VQazGN+bn281VbPp4uvN8qxb9Lv/Q013Pangz1pSS9ZJuAcb7jXh+cIxvh0Wz67KULot
+         bpAAFK93cY0Skpfw4z64uXnJOv9iFkZwUMQZlBAy/s/xaClh8NrbRx/xvym19YEXloXR
+         3+Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4FukMbkapZSGIs/s+peNRF4eZVU9m24vrdz+bfAWR7qiYzwyHOKt9GqcIuH+EH+O9UIoork+L9zu//lXN2a/ZaeouMOhigCcll7xALGlDRpeAZeUqpaUAWpUKJ01G1tBB/siVOY7aQrS/JEqS/g==
+X-Gm-Message-State: AOJu0YwbG2hwRPLDWuLvKHtuvy3xw3HXiNTM+OPdTcOG5dWb92uOHYDM
+	xm+yL8Uumb+d1mvtG6gjoGo/teuFz0hpmiPqrlkEU4oHsyE8BCoW
+X-Google-Smtp-Source: AGHT+IFnzjwfGL/1AUmtxFrhIm1P6yn//An62MfUcS0RTzT66gF5iszhTFzHplkEaVPO8EHYWJy4JA==
+X-Received: by 2002:a17:906:eb09:b0:a59:aff8:c713 with SMTP id a640c23a62f3a-a59fb94ba5bmr174164766b.10.1715175327541;
+        Wed, 08 May 2024 06:35:27 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id ze15-20020a170906ef8f00b00a59ae3efb03sm5245485ejb.3.2024.05.08.06.35.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 06:35:27 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>
+Cc: leit@meta.com,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH] perf list: Fix the --no-desc option
+Date: Wed,  8 May 2024 06:35:17 -0700
+Message-ID: <20240508133518.3204221-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,47 +75,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500005.china.huawei.com (7.185.36.74)
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add a entry in MAINTAINERS for to indicate
-the new subsystem/library's maintainer, maillist, status and
-file lists of page_frag.
+Currently, the --no-desc option in perf list isn't functioning as
+intended.
 
-Alexander is the orginal author of page_frag, add him in the
-MAINTAINERS too.
+This issue arises from the overwriting of struct option->desc with the
+opposite value of struct option->long_desc. Consequently, whatever
+parse_options() returns at struct option->desc gets overridden later,
+rendering the --desc or --no-desc arguments ineffective.
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+To resolve this, set ->desc as true by default and allow parse_options()
+to adjust it accordingly. This adjustment will fix the --no-desc
+option while preserving the functionality of the other parameters.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ tools/perf/builtin-list.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 294e472d7de8..2cb9f8cf8da7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16704,6 +16704,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	mm/page_frag_test.c
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
+diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+index 02bf608d585e..58589f67e800 100644
+--- a/tools/perf/builtin-list.c
++++ b/tools/perf/builtin-list.c
+@@ -491,6 +491,7 @@ int cmd_list(int argc, const char **argv)
+ 	int i, ret = 0;
+ 	struct print_state default_ps = {
+ 		.fp = stdout,
++		.desc = true,
+ 	};
+ 	struct print_state json_ps = {
+ 		.fp = stdout,
+@@ -563,7 +564,6 @@ int cmd_list(int argc, const char **argv)
+ 		};
+ 		ps = &json_ps;
+ 	} else {
+-		default_ps.desc = !default_ps.long_desc;
+ 		default_ps.last_topic = strdup("");
+ 		assert(default_ps.last_topic);
+ 		default_ps.visited_metrics = strlist__new(NULL, NULL);
 -- 
-2.33.0
+2.43.0
 
 
