@@ -1,381 +1,137 @@
-Return-Path: <linux-kernel+bounces-172906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A7B8BF874
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:24:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC9B8BF877
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F28EB2524A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:24:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FC731C22CEB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388A545BE3;
-	Wed,  8 May 2024 08:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5271D45C14;
+	Wed,  8 May 2024 08:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HA7Ydd3f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Lx37t//3"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE4252F86;
-	Wed,  8 May 2024 08:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCE02BB11
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715156642; cv=none; b=WGEfKEI3UzTIph+19BGuBWEX5nPbmZOb0I9SIU27TKf2/eY7GmurMWsECB9KqEgcjvUuQ8OH0rnBzEMDmWGsAhJH3+qM1k3sYM2CTaHy5j20ZFyAx8ur9DnrGwMojMIeV2BkpGovGDrTcgJnjlTa9venBQ/yUbHwY3ykJNsJCGU=
+	t=1715156695; cv=none; b=RgQk/iO3LB1WKk41ZALnBrKAYgoCSEVbhW8HaUNug6vWuLC8AwmDYr1nnXnvz+UsQAuD/iU3r/d+0C6Gr/FNrXw/Fc5B93MIbgik/QLtJXPn7jpnDwATsblwdvK4Couo9A7uzpQiju0UNSjLzb8tOo0GRd5JQk9xy2lJwI2/+jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715156642; c=relaxed/simple;
-	bh=mpJMJiFgL29condaFoFct70ooxm4gcroDqJ7evmuU1Q=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=kT383DC/+aTBqKqnGqSVWJdIkOLzsCuF6Fm+wwA1Js28IGkRkXe+BisuaCzBemdt7eIomMfQUlI651yZOJnRTbP7t1BBRkZybBYNa1zC91jj5f3sV98MZ6UxlJhvDnHQ9Lg0vH3St2MeOlc7eu3n7V5P5CKN3Zz973DhetyTsys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HA7Ydd3f; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715156640; x=1746692640;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=mpJMJiFgL29condaFoFct70ooxm4gcroDqJ7evmuU1Q=;
-  b=HA7Ydd3fUHgr/1upXvnvx+2xkOIG9YiTHYOlK2wj/AieGPIhpkIHdG3t
-   I7lD14F6IRiebuAe1tEF7YBcVk3KD4UZO+8zoern5dpHyDaAA3JxMz8wo
-   FzYDpJgc4mzaFoQJikSF1453q6gB7Wx11mi1eDdZPrRqiT4FkpWfCzBWB
-   fXRqvt91EJ9VzMOBx+GwtuxWfn8zDUiBT+1KS5nLnerkgdT19HjmDUgbr
-   5AjaCZp+uWmMP2VsHcx8SNeetCCuGf21d9PHQk8HNRXwDWk3aPO3ppRO9
-   VxdQzLcfERxXErCu7S9LCfJzbMsKOzN5alKeFW/JmIXBKAEQqY9gbiGAJ
-   A==;
-X-CSE-ConnectionGUID: 95mBBDA3RYmWRBBoCcE8uQ==
-X-CSE-MsgGUID: hHHqQiIfQ4yyC1YLbmX6OQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22154732"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="22154732"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:24:00 -0700
-X-CSE-ConnectionGUID: IOeDcwVmRcWGeF7CEoDBiQ==
-X-CSE-MsgGUID: zU58sGYtTUqlwP90I9IEPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="52021470"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.80])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:23:56 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 8 May 2024 11:23:51 +0300 (EEST)
-To: "David E. Box" <david.e.box@linux.intel.com>
-cc: linux-doc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, 
-    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH V2 1/3] platform/x86/intel/sdsi: Add ioctl SPDM
- transport
-In-Reply-To: <20240507180106.5218-1-david.e.box@linux.intel.com>
-Message-ID: <462e6bef-d8fc-16e2-ad8d-7fb18e9a011a@linux.intel.com>
-References: <20240507180106.5218-1-david.e.box@linux.intel.com>
+	s=arc-20240116; t=1715156695; c=relaxed/simple;
+	bh=4RnyJU4AtrXrc/uDoIgp3W1VJfd/uJ9jgFiWFzAshHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGplqSmEBMlhcrbe1EMSDkZL9llZPOtM2z5/gf69ooXZDxlRZhvDDBs/Z+9LEE3oSBxOMOpzYKU5d97XrQUrF+LthZoJwjPoXja3Fa/oy6orfKz/sF4pnOwAp2IsD72UtxjmoY9j8hE0po5/luewNN6/YSURXQmRHAqGj7G/6+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Lx37t//3; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 260C440E024C;
+	Wed,  8 May 2024 08:24:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4eVKPAL546f7; Wed,  8 May 2024 08:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715156689; bh=4XAZ/wIYgWolSZJSRlwndi6e3nnKe+xC3HFhMSHclag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lx37t//3UMdyCh6XQbdnd5oRGOKpFljkUivPePVGVE5b5boN/rD/k3gjqkb2FXP0Q
+	 hi9iJkKai7QPF549Dab2ZGyqGTXcNfW4vM9OVu89b2yzN9zIW4o152FJdSJxkQEsHp
+	 oTYzobQv2zQ4y0M8rCNHlScHXiOiwgvnltn7hnpEDbHdoHN8Z/Py3t2Zh7V5w1IFk8
+	 juHtNF0t+Ui2WX1InYvw/Kic/Ry4bKik+PKPOGNE4gRmu0yB2rkaI92k/czru6d6kN
+	 T1ObQCYDS2YFdlSlKkXLIpnfs5/4lH8aCgDcX+k4SMgDQcm0JTMxvjG0UofG5G9PQd
+	 SAW6c5/u3XX1ziIKsN4TFDE+Ewt4Xd6T2jqzio6Aiy5VX1vmfYgzsogePBG4fyHrpz
+	 3T7iEmPikzXPIXEfC1+wk2wiDY22je4TlsCTDyV+DOK3GJ/W5yzSja8wzqECTcoBNk
+	 OcY52w3KLNWrr0WCA/m+qbomxaYg5QJroE4LrycWSDM1jt8EjUHgP9vgnQ/FcXVC2J
+	 y+6w8twLwU54w/Zy/XTbl7zQebWBjlVQhg3XSnPSEMSN+74nPZeu//38bdwzY6NSY3
+	 V8F3sLv+tG5FxFk7PQWso76yVQPEL/CAwZ44Mun9Ai/7r8wWsSbMskGFdnrSrzCLrE
+	 5v/EwvoDGF4c3aRtKgsHLBHA=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D7FEF40E0177;
+	Wed,  8 May 2024 08:24:38 +0000 (UTC)
+Date: Wed, 8 May 2024 10:24:38 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Oliver Sang <oliver.sang@intel.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+	Srikanth Aithal <sraithal@amd.com>, fengwei.yin@intel.com,
+	yujie.liu@intel.com
+Subject: Re: [tip:x86/alternatives] [x86/alternatives] ee8962082a:
+ WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
+Message-ID: <20240508082438.GBZjs2xsn4diYXU4ud@fat_crate.local>
+References: <20240430193211.GEZjFHO0ayDXtgvbE7@fat_crate.local>
+ <ZjFLpkgI3Zl4dsXs@google.com>
+ <20240430223305.GFZjFxoSha7S5BYbIu@fat_crate.local>
+ <20240504124822.GAZjYulrGPPX_4w4zK@fat_crate.local>
+ <ZjiCJz4myN2DLnZ5@xsang-OptiPlex-9020>
+ <Zjj3Lrv2NNHLEzzk@google.com>
+ <20240506155759.GOZjj-B_Qrz4DCXwmb@fat_crate.local>
+ <ZjnTW4XQwVHEiSaW@xsang-OptiPlex-9020>
+ <20240507114814.GBZjoU_u5kYBhLips3@fat_crate.local>
+ <Zjsy8v0pZHPMkjPY@xsang-OptiPlex-9020>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zjsy8v0pZHPMkjPY@xsang-OptiPlex-9020>
 
-On Tue, 7 May 2024, David E. Box wrote:
-
-> Intel On Demand adds attestation and firmware measurement retrieval
-> services through use of the protocols defined the Security Protocols and
-> Data Measurement (SPDM) specification. SPDM messages exchanges are used to
-> authenticate On Demand hardware and to retrieve signed measurements of the
-> NVRAM state used to track feature provisioning and the NVRAM state used for
-> metering services. These allow software to verify the authenticity of the
-> On Demand hardware as well as the integrity of the reported silicon
-> configuration.
+On Wed, May 08, 2024 at 04:08:18PM +0800, Oliver Sang wrote:
+> we really don't do any manual change recently, however, per your reminding,
+> we rerun tests on both ee8962082a and its parent v6.9-rc3 again.
 > 
-> Add an ioctl interface for sending SPDM messages through the On Demand
-> mailbox. Provides commands to get a list of SPDM enabled devices, get the
-> message size limits for SPDM Requesters and Responders, and perform an SPDM
-> message exchange.
+> while we made original report, we always saw below for both commits.
+> "x86/cpu: VMX (outside TXT) disabled by BIOS"
 > 
-> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> Link: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf [1]
-> ---
-> V2
->    - Move size < 4 check into sdsi_spdm_exchange() and add comment
->      clarifying return values of that function.
->    - Use SZ_4K and add helpers
->    - Use devm_kasprintf()
->    - Remove unnecessary parens
->    - Use --attest for long option
+> by rerun today, we cannot see it again, on both commits.
+
+Yeah, from the last dump you shouldn't be seeing it.
+
+> then for ee8962082a, the reported
+>   WARNING:at_arch/x86/kernel/cpu/cpuid-deps.c:#do_clear_cpu_cap
+> disappeared also while no "x86/cpu: VMX (outside TXT) disabled by BIOS"
+
+Yeah, it does feel like something underneath the OS has changed/is
+changing for this to happen.
+
+> we are using kexec to boot into kernel, and the kernel images keep same,
+> so we are sure this strage phenomenon is not caused by kernel build.
+
+Hmm, kexec won't go through BIOS so I can imagine if the kernel has left
+FEAT_CTL in some weird state... but then if it has been locked, nothing
+should change it anymore.
+
+> now we doubt it's really a bios issue, we found another similar machine,
+> which also show "x86/cpu: VMX (outside TXT) disabled by BIOS", but after
+> several rounds of cold reboot, the message disappeared, too.
+
+If you see that again, please run my branch with the debug patch - that
+should at least tell us what's weird in FEAT_CTL.
+
+> we will investigate this BIOS further and avoid this kind of misleading
+> report in the future.
 > 
->  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
->  MAINTAINERS                                   |   1 +
->  drivers/platform/x86/intel/sdsi.c             | 210 +++++++++++++++++-
->  include/uapi/linux/intel_sdsi.h               |  81 +++++++
->  4 files changed, 292 insertions(+), 1 deletion(-)
->  create mode 100644 include/uapi/linux/intel_sdsi.h
-> 
-> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> index c472423412bf..20dcc2dbcaf6 100644
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@ -382,6 +382,7 @@ Code  Seq#    Include File                                           Comments
->                                                                       <mailto:mathieu.desnoyers@efficios.com>
->  0xF8  all    arch/x86/include/uapi/asm/amd_hsmp.h                    AMD HSMP EPYC system management interface driver
->                                                                       <mailto:nchatrad@amd.com>
-> +0xFC  all    linux/intel_sdsi.h
->  0xFD  all    linux/dm-ioctl.h
->  0xFE  all    linux/isst_if.h
->  ====  =====  ======================================================= ================================================================
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 846187625552..060bd3358cec 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11165,6 +11165,7 @@ INTEL SDSI DRIVER
->  M:	David E. Box <david.e.box@linux.intel.com>
->  S:	Supported
->  F:	drivers/platform/x86/intel/sdsi.c
-> +F:	include/uapi/linux/intel_sdsi.h
->  F:	tools/arch/x86/intel_sdsi/
->  F:	tools/testing/selftests/drivers/sdsi/
->  
-> diff --git a/drivers/platform/x86/intel/sdsi.c b/drivers/platform/x86/intel/sdsi.c
-> index 277e4f4b20ac..686dd9e4e026 100644
-> --- a/drivers/platform/x86/intel/sdsi.c
-> +++ b/drivers/platform/x86/intel/sdsi.c
-> @@ -11,9 +11,12 @@
->  #include <linux/auxiliary_bus.h>
->  #include <linux/bits.h>
->  #include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
->  #include <linux/device.h>
->  #include <linux/iopoll.h>
-> +#include <linux/intel_sdsi.h>
->  #include <linux/kernel.h>
-> +#include <linux/miscdevice.h>
->  #include <linux/module.h>
->  #include <linux/overflow.h>
->  #include <linux/pci.h>
-> @@ -42,6 +45,7 @@
->  
->  #define SDSI_ENABLED_FEATURES_OFFSET	16
->  #define SDSI_FEATURE_SDSI		BIT(3)
-> +#define SDSI_FEATURE_ATTESTATION	BIT(12)
->  #define SDSI_FEATURE_METERING		BIT(26)
->  
->  #define SDSI_SOCKET_ID_OFFSET		64
-> @@ -91,6 +95,7 @@ enum sdsi_command {
->  	SDSI_CMD_PROVISION_CAP		= 0x0008,
->  	SDSI_CMD_READ_STATE		= 0x0010,
->  	SDSI_CMD_READ_METER		= 0x0014,
-> +	SDSI_CMD_ATTESTATION		= 0x1012,
->  };
->  
->  struct sdsi_mbox_info {
-> @@ -109,12 +114,14 @@ struct disc_table {
->  struct sdsi_priv {
->  	struct mutex		mb_lock;	/* Mailbox access lock */
->  	struct device		*dev;
-> +	struct miscdevice	miscdev;
->  	void __iomem		*control_addr;
->  	void __iomem		*mbox_addr;
->  	void __iomem		*regs_addr;
->  	int			control_size;
->  	int			maibox_size;
->  	int			registers_size;
-> +	int			id;
->  	u32			guid;
->  	u32			features;
->  };
-> @@ -582,6 +589,97 @@ static const struct attribute_group sdsi_group = {
->  };
->  __ATTRIBUTE_GROUPS(sdsi);
->  
-> +/*
-> + * SPDM transport
-> + * Returns size of the response message or an error code on failure.
-> + */
-> +static int sdsi_spdm_exchange(void *private, const void *request,
-> +			      size_t request_sz, void *response,
-> +			      size_t response_sz)
-> +{
-> +	struct sdsi_priv *priv = private;
-> +	struct sdsi_mbox_info info = {};
-> +	size_t spdm_msg_size, size;
-> +	int ret;
-> +
-> +	/*
-> +	 * For the attestation command, the mailbox write size is the sum of:
-> +	 *     Size of the SPDM request payload, padded for qword alignment
-> +	 *     8 bytes for the mailbox command
-> +	 *     8 bytes for the actual (non-padded) size of the SPDM request
-> +	 */
-> +	if (request_sz > SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64))
-> +		return -EOVERFLOW;
-> +
-> +	info.size = round_up(request_sz, sizeof(u64)) + 2 * sizeof(u64);
-> +
-> +	u64 *payload __free(kfree) = kzalloc(info.size, GFP_KERNEL);
-> +	if (!payload)
-> +		return -ENOMEM;
-> +
-> +	memcpy(payload, request, request_sz);
-> +
-> +	/* The non-padded SPDM payload size is the 2nd-to-last qword */
-> +	payload[(info.size / sizeof(u64)) - 2] = request_sz;
-> +
-> +	/* Attestation mailbox command is the last qword of payload buffer */
-> +	payload[(info.size / sizeof(u64)) - 1] = SDSI_CMD_ATTESTATION;
-> +
-> +	info.payload = payload;
-> +	info.buffer = response;
-> +
-> +	ret = mutex_lock_interruptible(&priv->mb_lock);
-> +	if (ret)
-> +		return ret;
-> +	ret = sdsi_mbox_write(priv, &info, &size);
-> +	mutex_unlock(&priv->mb_lock);
-> +
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/*
-> +	 * The read size is the sum of:
-> +	 *     Size of the SPDM response payload, padded for qword alignment
-> +	 *     8 bytes for the actual (non-padded) size of the SPDM payload
-> +	 */
-> +
-> +	if (size < sizeof(u64)) {
-> +		dev_err(priv->dev,
-> +			"Attestation error: Mailbox reply size, %ld, too small\n",
-> +			size);
+> sorry again :(
 
-For size_t, %zu is the correct printf format. There are more of these 
-below but I won't mark them explicitly.
-
-> +		return -EPROTO;
-> +	}
-> +
-> +	if (!IS_ALIGNED(size, sizeof(u64))) {
-> +		dev_err(priv->dev,
-> +			"Attestation error: Mailbox reply size, %ld, is not aligned\n",
-> +			size);
-> +		return -EPROTO;
-> +	}
-> +
-> +	/*
-> +	 * Get the SPDM response size from the last QWORD and check it fits
-> +	 * with no more than 7 bytes of padding
-> +	 */
-> +	spdm_msg_size = ((u64 *)info.buffer)[(size - sizeof(u64)) / sizeof(u64)];
-> +	if (!in_range(size - spdm_msg_size - sizeof(u64), 0, 8)) {
-> +		dev_err(priv->dev,
-> +			"Attestation error: Invalid SPDM response size, %ld\n",
-> +			spdm_msg_size);
-> +		return -EPROTO;
-> +	}
-> +
-> +	if (spdm_msg_size > response_sz || spdm_msg_size < SPDM_HEADER_SIZE) {
-> +		dev_err(priv->dev, "Attestation error: Expected response size %ld, got %ld\n",
-> +			response_sz, spdm_msg_size);
-> +		return -EOVERFLOW;
-> +	}
-> +
-> +	memcpy(response, info.buffer, spdm_msg_size);
-> +
-> +	return spdm_msg_size;
-> +}
-> +
->  static int sdsi_get_layout(struct sdsi_priv *priv, struct disc_table *table)
->  {
->  	switch (table->guid) {
-> @@ -649,6 +747,92 @@ static int sdsi_map_mbox_registers(struct sdsi_priv *priv, struct pci_dev *paren
->  	return 0;
->  }
->  
-> +#define SDSI_SPDM_DRIVER_VERSION	1
-> +
-> +static int sdsi_spdm_get_info(struct sdsi_priv *priv,
-> +			      struct sdsi_spdm_info __user *argp)
-> +{
-> +	struct sdsi_spdm_info info;
-> +
-> +	info.driver_version = SDSI_SPDM_DRIVER_VERSION;
-> +	info.api_version = priv->guid;
-> +	info.dev_no = priv->id;
-> +	info.max_request_size = SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64);
-> +	info.max_response_size = SDSI_SIZE_READ_MSG - sizeof(u64);
-> +
-> +	if (copy_to_user(argp, &info, sizeof(info)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +static int sdsi_spdm_do_command(struct sdsi_priv *priv,
-> +				struct sdsi_spdm_command __user *argp)
-> +{
-> +	u32 req_size, rsp_size;
-> +
-> +	if (get_user(req_size, &argp->size))
-> +		return -EFAULT;
-> +
-> +	if (req_size < 4 || req_size > sizeof(struct sdsi_spdm_message))
-> +		return -EINVAL;
-> +
-> +	struct sdsi_spdm_message *request __free(kfree) =
-> +		kmalloc(req_size, GFP_KERNEL);
-> +	if (!request)
-> +		return -ENOMEM;
-> +
-> +	struct sdsi_spdm_command *response __free(kfree) =
-> +		kmalloc(SDSI_SIZE_READ_MSG, GFP_KERNEL);
-> +	if (!response)
-> +		return -ENOMEM;
-> +
-> +	if (copy_from_user(request, &argp->message, req_size))
-> +		return -EFAULT;
-> +
-> +	rsp_size = sdsi_spdm_exchange(priv, request, req_size, response,
-> +				      SDSI_SIZE_READ_MSG);
-> +	if (rsp_size < 0)
-> +		return rsp_size;
-> +
-> +	if (put_user(rsp_size, &argp->size))
-> +		return -EFAULT;
-> +
-> +	if (copy_to_user(&argp->message, response, rsp_size))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
-> +static long sdsi_spdm_ioctl(struct file *file, unsigned int cmd,
-> +			    unsigned long arg)
-> +{
-> +	struct sdsi_priv *priv;
-> +	long ret = -ENOTTY;
-> +
-> +	priv = container_of(file->private_data, struct sdsi_priv, miscdev);
-> +
-> +	switch (cmd) {
-> +	case SDSI_IF_SPDM_INFO:
-> +		ret = sdsi_spdm_get_info(priv,
-> +				(struct sdsi_spdm_info __user *)arg);
-> +		break;
-> +	case SDSI_IF_SPDM_COMMAND:
-> +		ret = sdsi_spdm_do_command(priv,
-> +				(struct sdsi_spdm_command __user *)arg);
-
-You can return directly.
-
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return ret;
-
-return -ENOTTY;
-
-and remove the ret variable entirely.
-
+No worries, thanks for testing kernels and thanks Sean too. :-)
 
 -- 
- i.
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
