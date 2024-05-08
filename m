@@ -1,137 +1,187 @@
-Return-Path: <linux-kernel+bounces-173296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689338BFE9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E53C38BFE92
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F4E28989E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:21:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141921C22669
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E3171B3A;
-	Wed,  8 May 2024 13:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D4573176;
+	Wed,  8 May 2024 13:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hGjCzRZj"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ISRSIXfr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBF06F514;
-	Wed,  8 May 2024 13:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2896F07E;
+	Wed,  8 May 2024 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715174494; cv=none; b=kxvlhuIsIgaEa0brs1ZOwIicA7WoALtFe7lNw2TNEp/p2qRRwWWuNVp2SRpuVScYYIgZFdDHcT/QL/BAMnQAX99j0eHpq0ckZ+7UP1t3GDTiDXu/mbSkarlaZkse1UIlsXd7JQ0Zjm3rjRx93Fucasp9SWGY/mu9DsLUd70jwP0=
+	t=1715174472; cv=none; b=JEml5AMpXZrgjxjUaeVSVheTtSr9VK6il0A+v3jb0EEa5dlpCEAf2sNsV8rlTHmptaATTwRqeD+GcYxAHkWUs019bSt1MCbfTXl3XKP/lo9uSoNVcMGhIwdWNFN+vZPMf9DmlO8gxFeeUqtkPrOMfYq2wsPG+jOBVRVlZWuXsxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715174494; c=relaxed/simple;
-	bh=ssaG7LKbJUkwN9FIh78/iyjTlMmbcPt8tPMh8MlDX/I=;
+	s=arc-20240116; t=1715174472; c=relaxed/simple;
+	bh=3lpzmZ1CcF+40VeU5eyrSjKDwEL08Geu8Md3lZ8zsv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S01kX0kcd9o3VDjbjgxl2X07Vta3EOtAa53v11lWuftL7wc7vdt0EpBnVru3V+QU4R7yd+rsU9CSi3JG7ayjhMlmuDLYwh9aLo4/0kkNguB9/TeA5DYfXKs9QII6jcQWerM3Ngojlc0wvoUQHKH3rqjBGcRjwdPtNQzSZDIp8IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hGjCzRZj; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 448DL9WH017863;
-	Wed, 8 May 2024 13:21:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=CDqHnKT8vhO5HdyY5jQPjAI+5F/MYn/SRXL9aPBLaXk=;
- b=hGjCzRZjowD3g5gIC3PLqY3QMyy3Y1W04lw+XwZzlb9JCQ1zE/2HYS0tegV8Gbakfs07
- FL6r4DvblfS3YHx+cjHHjSFfuUg6CUSLZQbRu2iu3ulBG3WeySHTiTzOpJ9a/AJp7Aaj
- Vs5ycqyEaZMzykaYX2xflDs83bJpDwK+qPX5NUQ4kjHTY8QxRZNT0h5K7JjmiDFSXFFa
- rP1RBDGsGYMq0CIYs7KdyVlyA3AKfZ/AsTt1P3FrN/xORTXjbBpSIplAvvlcFkwRxy3g
- 2mbhEDvMrHWBQwPdxlu7MGl2t6o1eZ28izzirAy/cqJvh4Q7NsYHYVuuDOP5eSBmENvn 3w== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y09tv027a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 13:20:59 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 448BV6lT017387;
-	Wed, 8 May 2024 13:18:35 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xyshsvtjf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 13:18:35 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 448DIR4A45613336
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 May 2024 13:18:29 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9DB0E2004E;
-	Wed,  8 May 2024 13:18:27 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7ADD520040;
-	Wed,  8 May 2024 13:18:27 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  8 May 2024 13:18:27 +0000 (GMT)
-Date: Wed, 8 May 2024 15:18:26 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Jens Remus <jremus@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the s390 tree with the kbuild tree
-Message-ID: <20240508131826.6522-B-hca@linux.ibm.com>
-References: <20240508095726.32237e53@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mn/ws/ZrK2u8lwRwLXvD+pmMzQdPaG0DrPeCstlGO4lrFS/nt5uTY6ogyJoz7k6vamm+jo0zIZHxyAoHgU0GOIfcPOUW8oMz31YKY3KJIWVQIMz3ityDufGqewZWgE5QVSMh/tEhN7OUj/jvZchPjF/HqXeS57SFTo/dJ6R2Zvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ISRSIXfr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0FCFC113CC;
+	Wed,  8 May 2024 13:21:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715174472;
+	bh=3lpzmZ1CcF+40VeU5eyrSjKDwEL08Geu8Md3lZ8zsv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ISRSIXfr2CwhmfRHGt7q/WgKF7xmXanDYpsIDtXOlZ+mwDPGDST3zysNt6VRigy3g
+	 VfXiXVb903n4D3gUe5Bvlg/eIse7LbwlgUCrKG2KhhbmQIUuE7PvBvwXRk10VMtTfh
+	 oIhyI8vc2ke5ixmmXG8VNXUFoGj4mSfvEyXjSYKqe/lCl05R+MpN8IKXQDv6Q0YgiY
+	 xkPz9r9JzJpoInqzxPuIrKSPuO/hCLs8dQ8UcQ5ZtaC6p6LpjkW44GXtj72ofWir34
+	 yxI1y8vj/EhOHbHRwF+E5mXkjtqMwTEZ+eQb0KHYEqXhDLZwGPR1Mk6NOZT6mR5w5O
+	 pId8VRj2IbXxQ==
+Date: Wed, 8 May 2024 15:21:09 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v2 22/27] rcu: Rename dyntick_save_progress_counter()
+ into eqs_save_progress_counter()
+Message-ID: <Zjt8RSn6D4SzZJHC@localhost.localdomain>
+References: <20240430091740.1826862-1-vschneid@redhat.com>
+ <20240430091740.1826862-23-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240508095726.32237e53@canb.auug.org.au>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TMTV4g1THWxioHQfmuweizNX44lq7cqA
-X-Proofpoint-GUID: TMTV4g1THWxioHQfmuweizNX44lq7cqA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=955 phishscore=0
- mlxscore=0 malwarescore=0 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2405010000 definitions=main-2405080094
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240430091740.1826862-23-vschneid@redhat.com>
 
-Hi Stephen,
+Le Tue, Apr 30, 2024 at 11:17:26AM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
+> meaning.
+> 
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> ---
+>  .../RCU/Design/Memory-Ordering/TreeRCU-dyntick.svg        | 2 +-
+>  .../RCU/Design/Memory-Ordering/TreeRCU-gp-fqs.svg         | 2 +-
+>  Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp.svg   | 2 +-
+>  .../RCU/Design/Memory-Ordering/TreeRCU-hotplug.svg        | 2 +-
+>  kernel/rcu/tree.c                                         | 8 ++++----
+>  5 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-dyntick.svg b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-dyntick.svg
+> index 423df00c4df9d..961b2595241fe 100644
+> --- a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-dyntick.svg
+> +++ b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-dyntick.svg
+> @@ -528,7 +528,7 @@
+>         font-style="normal"
+>         y="-8652.5312"
+>         x="2466.7822"
+> -       xml:space="preserve">dyntick_save_progress_counter()</text>
+> +       xml:space="preserve">eqs_save_progress_counter()</text>
+>      <text
+>         style="font-size:192px;font-style:normal;font-weight:bold;text-anchor:start;fill:#000000;stroke-width:0.025in;font-family:Courier"
+>         id="text202-7-2-7-2-0"
+> diff --git a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-fqs.svg b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-fqs.svg
+> index d82a77d03d8cc..9a8e7d1686ce1 100644
+> --- a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-fqs.svg
+> +++ b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp-fqs.svg
+> @@ -844,7 +844,7 @@
+>       font-style="normal"
+>       y="1547.8876"
+>       x="4417.6396"
+> -     xml:space="preserve">dyntick_save_progress_counter()</text>
+> +     xml:space="preserve">eqs_save_progress_counter()</text>
+>    <g
+>       style="fill:none;stroke-width:0.025in"
+>       transform="translate(6501.9719,-10685.904)"
+> diff --git a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp.svg b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp.svg
+> index 53e0dc2a2c793..40e6686962de1 100644
+> --- a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp.svg
+> +++ b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-gp.svg
+> @@ -2974,7 +2974,7 @@
+>         font-style="normal"
+>         y="38114.047"
+>         x="-334.33856"
+> -       xml:space="preserve">dyntick_save_progress_counter()</text>
+> +       xml:space="preserve">eqs_save_progress_counter()</text>
+>      <g
+>         style="fill:none;stroke-width:0.025in"
+>         transform="translate(1749.9916,25880.249)"
+> diff --git a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-hotplug.svg b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-hotplug.svg
+> index 4fa7506082bfe..14313aeb8affd 100644
+> --- a/Documentation/RCU/Design/Memory-Ordering/TreeRCU-hotplug.svg
+> +++ b/Documentation/RCU/Design/Memory-Ordering/TreeRCU-hotplug.svg
+> @@ -516,7 +516,7 @@
+>         font-style="normal"
+>         y="-8652.5312"
+>         x="2466.7822"
+> -       xml:space="preserve">dyntick_save_progress_counter()</text>
+> +       xml:space="preserve">eqs_save_progress_counter()</text>
+>      <text
+>         style="font-size:192px;font-style:normal;font-weight:bold;text-anchor:start;fill:#000000;stroke-width:0.025in;font-family:Courier"
+>         id="text202-7-2-7-2-0"
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 73b95240a1a6c..2037daf0298d0 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -764,11 +764,11 @@ static void rcu_gpnum_ovf(struct rcu_node *rnp, struct rcu_data *rdp)
+>  }
+>  
+>  /*
+> - * Snapshot the specified CPU's dynticks counter so that we can later
+> + * Snapshot the specified CPU's RCU_WATCHING counter so that we can later
+>   * credit them with an implicit quiescent state.  Return 1 if this CPU
+>   * is in dynticks idle mode, which is an extended quiescent state.
+>   */
+> -static int dyntick_save_progress_counter(struct rcu_data *rdp)
+> +static int eqs_save_progress_counter(struct rcu_data *rdp)
 
-On Wed, May 08, 2024 at 09:57:26AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the s390 tree got a conflict in:
-> 
->   scripts/Makefile.vdsoinst
-> 
-> between commit:
-> 
->   d6d223135547 ("kbuild: simplify generic vdso installation code")
-> 
-> from the kbuild tree and commit:
-> 
->   4cfae05eb3aa ("s390/vdso: Create .build-id links for unstripped vdso files")
-> 
-> from the s390 tree.
+rcu_watching_snap_save() ?
 
-..
+>  {
+>  	rdp->watching_snap = rcu_watching_snap(rdp->cpu);
+>  	if (rcu_watching_in_eqs(rdp->watching_snap)) {
+> @@ -782,7 +782,7 @@ static int dyntick_save_progress_counter(struct rcu_data *rdp)
+>  /*
+>   * Returns positive if the specified CPU has passed through a quiescent state
+>   * by virtue of being in or having passed through an dynticks idle state since
+> - * the last call to dyntick_save_progress_counter() for this same CPU, or by
+> + * the last call to eqs_save_progress_counter() for this same CPU, or by
+>   * virtue of having been offline.
+>   *
+>   * Returns negative if the specified CPU needs a force resched.
+> @@ -1981,7 +1981,7 @@ static void rcu_gp_fqs(bool first_time)
+>  
+>  	if (first_time) {
+>  		/* Collect dyntick-idle snapshots. */
+> -		force_qs_rnp(dyntick_save_progress_counter);
+> +		force_qs_rnp(eqs_save_progress_counter);
+>  	} else {
+>  		/* Handle dyntick-idle and offline CPUs. */
+>  		force_qs_rnp(rcu_implicit_dynticks_qs);
 
-> diff --cc scripts/Makefile.vdsoinst
-> index bf72880c50d0,a81ca735003e..000000000000
-> --- a/scripts/Makefile.vdsoinst
-> +++ b/scripts/Makefile.vdsoinst
-> @@@ -20,8 -21,8 +20,8 @@@ $$(dest): $(1) FORC
->   	$$(call cmd,install)
->   
->   # Some architectures create .build-id symlinks
-> - ifneq ($(filter arm sparc x86, $(SRCARCH)),)
-> + ifneq ($(filter arm s390 sparc x86, $(SRCARCH)),)
->  -link := $(install-dir)/.build-id/$$(shell $(READELF) -n $$(src) | sed -n 's@^.*Build ID: \(..\)\(.*\)@\1/\2@p').debug
->  +link := $(install-dir)/.build-id/$$(shell $(READELF) -n $(1) | sed -n 's@^.*Build ID: \(..\)\(.*\)@\1/\2@p').debug
+And then I'm tempted to propose rcu_watching_snap_recheck() instead of
+rcu_implicit_dynticks_qs().
 
-You can drop this fixup, since I removed the above referenced commit from
-the s390 tree again.
+Thanks.
+
+> -- 
+> 2.43.0
+> 
 
