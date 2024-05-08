@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-172890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33A98BF835
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:12:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 941B78BF836
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E2D1F234F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E7C3281748
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2717240BFE;
-	Wed,  8 May 2024 08:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F7E4085E;
+	Wed,  8 May 2024 08:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZjFtKFxa"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="cEA/h3vI"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED13DB97;
-	Wed,  8 May 2024 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B112C68F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155925; cv=none; b=bMy5fFz8K7vAM8HAp/dBeSEXN9XV8GvjhF03uW0pJnthrNZ8CxF7As3q/UfzXcde38jFM/YRZINTRg33A+uNEXQ3YOt1ZcPtwJgu7VTYpo/HHOzVxoOBHDlY3GLJK/+rH+0q4OkNv8azq+xYeRfcqtxFRxWcXP5hqph7RpvzoCc=
+	t=1715155983; cv=none; b=j+G75QWk8BDteZoGzov8LmY6vlyFUGIDwfjco5mMx13c7jBzL3bnLhaD5o3vM48DXgK9u+lRb1wwhLvoqjTIBqa0yDW6/rt29gy4OG5QPonaMoGL7T93eokTCXKs0f02ha5MyNqZt/IBwKouNHKpazR/KEBBiG3T3DAvwhtdGM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155925; c=relaxed/simple;
-	bh=edbSgAp6x5wdS7hhDjQhYQQt1mmbXqGyMLbuEgoFHL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TfVaKkFWw2OQV3jyJz+bzgWmxsBTU3GxNBuTgg9cH2q18Nld6uzezIaf3q0cxswBPmWRxiSOHbIykFl2uvzy8xjisLKu74/MkAru6ijK5oJdzZ84z4RH/L5vxbkxywX82CNIgcRioxe7gngA/MHX27OGgrp1wcBSt1efzux3xO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZjFtKFxa; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uRqGn1bN/Grcd+F1z4WjSaR1kcVdDX8dLEQa2ZSJ9Jc=; b=ZjFtKFxa9wt8DrsHiQAJ0YTvlM
-	CB3WxxTkZNQCVro9WRZ3AEWSOU1tKi8PhFSERTQ73pDPXW/I9XhUaicOOayOCFoSYgK/QCe/tuv9w
-	PRp/MygDqsMqZkkY3fVuuCy/rVGGs+WjzUNF43KT5omOMrRmU3RHjBoXWMDHrWGPxhdoad6LaLjla
-	GQ+4yXoKFwjgTrhmgL4KlZqsoh5p7V63p/58qP3TMKYzBkeQJvRwQI1BlItx67TqMv9dMWYRMVSuT
-	uLvFXof9NpGd/2X1bxvRVRFMhXKDHRaB4bhZnn1/I7lwanff5BGu7QOSiAV6ymZkMDv3N1+PCt3Ui
-	09/I+DDg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55036)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s4cOr-0004so-17;
-	Wed, 08 May 2024 09:11:41 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s4cOn-0001EY-HV; Wed, 08 May 2024 09:11:37 +0100
-Date: Wed, 8 May 2024 09:11:37 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-	bartosz.golaszewski@linaro.org, horms@kernel.org,
-	ahalaney@redhat.com, rohan.g.thomas@intel.com,
-	j.zink@pengutronix.de, leong.ching.swee@intel.com,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] net: stmmac: move the lock to struct
- plat_stmmacenet_data
-Message-ID: <ZjszuWWw8PPxNyKE@shell.armlinux.org.uk>
-References: <20240508045257.2470698-1-xiaolei.wang@windriver.com>
+	s=arc-20240116; t=1715155983; c=relaxed/simple;
+	bh=WCkwErRZyljeBlt1Jr4HGlQt0q1XbGKrsEZ1B7EBZFw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CLQNIa8+4cV+E5MtyXtLFs1Y91YmxPxlxHwvPtybMg3sx82K5TFQeVHWa760Bwb9rcJyeYP19RiJ2FbAu9qOad66E/yIPUlLxJhroBQBVPN6Ez1RGlJpT9Yvi9vt8CX/8Px56EQPy9AgCMU7LjGf/gO7Y8lXJ+6avJ1lhetS+Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=cEA/h3vI; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a599a298990so1091015666b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1715155980; x=1715760780; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zvfcVwr/mFxjXcj1cizgE4k3o6ft2+QQYHhXo8/rWmY=;
+        b=cEA/h3vI/hTTG+MzwkWlnu+8LYsW0nfm1/BYamUIDjWKHn2/pv8umAD7a4TIYre3i1
+         YMqxr+YQ5mNrgovv9YD+cGE8ggr8lSU/l1Dw00Ed2kdshNmfFNlDDUvkgzZQmFs0qiLJ
+         hsLmObwLW9C/pdM7wNkIkQlvqsXG/xzYPFTTn+lqk2XlG24DRXC3BQkM1JVqMp3U1HtJ
+         ya1lnxM1W3KcxbqYNUbjBizCh/2GVKhpiJcz0B5zsBIDrNsMdvJlNM63NWOmCtPb3VvC
+         Lw5Gaz1cKWr7CDJqDM8C4O6QTm0SVHnyagSZwKYFNho0Fnd8kj38nMkCjuzsrRPmrQdC
+         y5gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715155980; x=1715760780;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zvfcVwr/mFxjXcj1cizgE4k3o6ft2+QQYHhXo8/rWmY=;
+        b=KLpwNNVVshhBwMaxU6G3ZBNiO+joa4Ixn+IYW/AQornUS4ZEGTChKHPKFvYtvIbisy
+         QnWQJqIz0znBQZhqX24NF6f3w0CWboPChp/UHVHdV6s23x3YzRXFTMGynxSNDSVTzivv
+         PhIVmOZfWAqtPSmCcw+YR0AjH4CA3LIKGGcNhJmswCNAMjfcc/9uMgYESmMsql5Pi0yt
+         64Fo5lnxkCOFZ1mSLbbsbivv6Y6K2SZliqDYmCTRtb7PqWFPdLPzsove/G+JFGI5NnzT
+         dpieukRWaBdp3UCinhQec91MdFUV0GueVMzVWnUE/0UvhaNxMPXDUf/ELsqWUZ38X04B
+         570g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHvSFxEg2MmZA2uMlZImRpuQR5yFnTm16unNHb8I9Qx1GXGU2Gj1EiZFwQpzCSXDqcOzLQvlvm3gbTKlYfoINtEryom++auYKKYu4y
+X-Gm-Message-State: AOJu0YxMxzVTELL29raUKlqj3+5PwDuQbfaKmi9B1/Tak+bYBIjvrW4i
+	9AlEebh2Rl6VTCopUkZUsy6BazaZBb2wDHJfrZTVuuvlHwUklPByptWbQkxHb8Q=
+X-Google-Smtp-Source: AGHT+IH5ZChJ+ZUtI8nQH6jVQm9JoEHn3A4cazCjqHGPJIzlcyPwhNOYnmGRrzKtCq/qXBFOO8Pi4w==
+X-Received: by 2002:a17:906:e24c:b0:a59:c52b:993d with SMTP id a640c23a62f3a-a59fb94b612mr103226666b.20.1715155979987;
+        Wed, 08 May 2024 01:12:59 -0700 (PDT)
+Received: from otso.luca.vpn.lucaweiss.eu (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id h8-20020a17090634c800b00a59b8e16ac7sm4507713ejb.36.2024.05.08.01.12.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:12:59 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Wed, 08 May 2024 10:12:53 +0200
+Subject: [PATCH] clk: qcom: gcc-sm6350: Fix gpll6* & gpll7 parents
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508045257.2470698-1-xiaolei.wang@windriver.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240508-sm6350-gpll-fix-v1-1-e4ea34284a6d@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAAQ0O2YC/x2MSQqAMAwAvyI5G4imSvUr4sEl1oAbLYhQ/LvF4
+ wzMRAjiVQK0WQQvtwY9jwRFnsG0DocT1DkxlFQaqshi2GuuCN21bbjogwOTHUdu2LCBVF1ekv6
+ PXf++H59gmuphAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@somainline.org>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.13.0
 
-On Wed, May 08, 2024 at 12:52:57PM +0800, Xiaolei Wang wrote:
-> Reinitialize the whole est structure would also reset the mutex lock
-> which is embedded in the est structure, and then trigger the following
-> warning. To address this, move the lock to struct plat_stmmacenet_data.
-> We also need to require the mutex lock when doing this initialization.
+Both gpll6 and gpll7 are parented to CXO at 19.2 MHz and not to GPLL0
+which runs at 600 MHz. Also gpll6_out_even should have the parent gpll6
+and not gpll0.
 
-What is plat->lock protecting exactly? "lock" is opaque and doesn't
-hint at its purpose. Does it serialise accesses to plat->est? If so,
-consider naming it plat->est_lock to make its purpose and what it's
-doing clear.
+Adjust the parents of these clocks to make Linux report the correct rate
+and not absurd numbers like gpll7 at ~25 GHz or gpll6 at 24 GHz.
 
-Please also follow netdev best practice; allow at least 24 hours to
-pass _and_ for discussion to finish before posting a new version of
-a patch or patch series.
+Corrected rates are the following:
 
-Also see the "How do I indicate which tree" question at:
-https://www.kernel.org/doc/html/v5.3/networking/netdev-FAQ.html
+  gpll7              807999902 Hz
+  gpll6              768000000 Hz
+     gpll6_out_even  384000000 Hz
+  gpll0              600000000 Hz
+     gpll0_out_odd   200000000 Hz
+     gpll0_out_even  300000000 Hz
 
-Thanks.
+And because gpll6 is the parent of gcc_sdcc2_apps_clk_src (at 202 MHz)
+that clock also reports the correct rate now and avoids this warning:
 
+  [    5.984062] mmc0: Card appears overclocked; req 202000000 Hz, actual 6312499237 Hz
+
+Fixes: 131abae905df ("clk: qcom: Add SM6350 GCC driver")
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ drivers/clk/qcom/gcc-sm6350.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-sm6350.c b/drivers/clk/qcom/gcc-sm6350.c
+index cf4a7b6e0b23..0559a33faf00 100644
+--- a/drivers/clk/qcom/gcc-sm6350.c
++++ b/drivers/clk/qcom/gcc-sm6350.c
+@@ -100,8 +100,8 @@ static struct clk_alpha_pll gpll6 = {
+ 		.enable_mask = BIT(6),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpll6",
+-			.parent_hws = (const struct clk_hw*[]){
+-				&gpll0.clkr.hw,
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_alpha_pll_fixed_fabia_ops,
+@@ -124,7 +124,7 @@ static struct clk_alpha_pll_postdiv gpll6_out_even = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gpll6_out_even",
+ 		.parent_hws = (const struct clk_hw*[]){
+-			&gpll0.clkr.hw,
++			&gpll6.clkr.hw,
+ 		},
+ 		.num_parents = 1,
+ 		.ops = &clk_alpha_pll_postdiv_fabia_ops,
+@@ -139,8 +139,8 @@ static struct clk_alpha_pll gpll7 = {
+ 		.enable_mask = BIT(7),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpll7",
+-			.parent_hws = (const struct clk_hw*[]){
+-				&gpll0.clkr.hw,
++			.parent_data = &(const struct clk_parent_data){
++				.fw_name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_alpha_pll_fixed_fabia_ops,
+
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240508-sm6350-gpll-fix-a308bb393434
+
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Luca Weiss <luca.weiss@fairphone.com>
+
 
