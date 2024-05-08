@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-172613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6578BF446
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:57:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3398BF449
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75189B22072
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:57:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61C7D1F248B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BF6AD52;
-	Wed,  8 May 2024 01:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322FFBE62;
+	Wed,  8 May 2024 01:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GXKOWuht"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XrqdimSk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414668F5B;
-	Wed,  8 May 2024 01:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B670AAD5B
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 01:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715133458; cv=none; b=Wr5ap4RJNVNNAWQkG7d7kbActjcTLb3Rr8QkcSOJDOhvyVEwUKpwb7d5J/AVDUAQvsPUvNfM+950wSBfCRYmAxcdkawOG6ivXDCGgwUPRTn/WyomgcBeqsIq2FC64Qi/6K52ax+MM948gUwNBBvslp0OYwm9RYnsuKqdWqBqUwI=
+	t=1715133544; cv=none; b=vEmcwJCy3eggWEQzCdrbx8pJSyTJiLKS6/o+3IxKYRAaJHIbGLELCaln+TL6iXJds4zDeiW4AYXs0gYK4m71BYxj8HWBfqqJAoix4GhvKzwlfjJx9H0s4B4lKMATc/VpIreLeUmpbxzqMZvbdN7OZhjnTUuKim9s+/EE7LhoTIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715133458; c=relaxed/simple;
-	bh=HcDPoxwMQd5aL1/Y+9hVU+0sr3rIr4L2JMYSTKUkfu4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwHb4bEiCntWZgaVnG2zeHjGUnH8yd9S+QITCfUIardnNwV8n6LAHl9iOi7GxgwxmqaOTfQQCPvV/K6mP0PCG+hdKUUFXuuyfS3dTb1Ki1WaFo1FNMufVy17+u59DM0XOHFh5GCzCJ3aIWPpoED3XwVbdDLL/wg8g6KcNplPVlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GXKOWuht; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4481VYiR006544;
-	Wed, 8 May 2024 01:57:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=SmUaCm+lO5/m6trar7GNY
-	UV5v+xucRFrgeFiKiolHnc=; b=GXKOWuhtnjKabGKiNVt17Y4Rf9JLMss1cY4Fx
-	YndQkmqedHFpBGhVJdSoMw4yGWy2fD7edFs2w3uw0iFgj1spNOfTET8iFySCwjeI
-	3SfXDzoLHIkwQe250Bxrd+lGHXOgT0euNTZtlJyRv9XQhkoJHgEzdmzZUy4M6CAA
-	Ewxxn2bXNs1dj5YFJg10sk7i97AS5LWH8MFeX2SsuPpOAb6eblCYSqY/hgcaopVI
-	oCugZ1lfMGzf4B14nf9NDZxrAkLJeiayrv7xU1vfguxXcWi76J0ZMnLuno46aKeF
-	wNhen6zWYwugdU0DE+SLX7oICaUAXWVXlmhB0vpFct8veSAEA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyspr0pj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 01:57:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4481vQhd028314
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 01:57:26 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 7 May 2024 18:57:26 -0700
-Date: Tue, 7 May 2024 18:57:24 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Shawn Guo <shawn.guo@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Stephan Gerhold
-	<stephan@gerhold.net>,
-        <quic_okukatla@quicinc.com>
-Subject: Re: [PATCH 3/4] interconnect: qcom: icc-rpm: Make simple functions
- return void
-Message-ID: <20240508015724.GC25316@hu-mdtipton-lv.qualcomm.com>
-References: <20240326-topic-rpm_icc_qos_cleanup-v1-0-357e736792be@linaro.org>
- <20240326-topic-rpm_icc_qos_cleanup-v1-3-357e736792be@linaro.org>
+	s=arc-20240116; t=1715133544; c=relaxed/simple;
+	bh=lwZIs6CzSxO5Tr1++vZd4auE5LaEKUQlwHfL7lc3r4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Wn4HNjtTayeETFBbUQLZ68VCIOWrqTJVZYKfZjUAxUi+336l+/UAEy2Tm7nIzFVzl/nD3HZVIka+dC++A3WwJhvi/gFfrWZTyTxtRPhM1QmUBrYgizBk98SAde/6oNgFZCngqkEpou4pUZtCA9fbqyqra0wGoC5CEb0XXlScjUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XrqdimSk; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715133540; x=1746669540;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=lwZIs6CzSxO5Tr1++vZd4auE5LaEKUQlwHfL7lc3r4k=;
+  b=XrqdimSk1kCgPE7gUsodWiCCVHiG4oXofYhD6kiyFLTfBjT9LhyfRVUi
+   LkozLqcpCjEzGVasEeRRkUpCSsPjqQi/kB+aSesWFfUQRoDuddVhrADss
+   sOYGGirKzAt3ZtR7N872eh+jbTfxiyLeWaTB734vQx/VbUl/nTRRtlclb
+   yBZHGK6M++h7DtijuGuKgoNoaJcYguGRQreTMEmu6gdnfc0XX2P83l02/
+   82h90H1V8OOsEQ6pkouueXUEoMhiAJF2dFi7GQSySNGrUDoeUIuCEzQKi
+   B/M1ycE8JhA1VkR09X5CSR4kYaPPfzcWBU6TnyDgmPk+HRIynSznGGAEX
+   w==;
+X-CSE-ConnectionGUID: 2/I0yDkqSpSRVS8GQ4ujQA==
+X-CSE-MsgGUID: 8zVzJGSeRTiXu86taohE7Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11127389"
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="11127389"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 18:58:59 -0700
+X-CSE-ConnectionGUID: WLhRMqfLTC23F4cTUpLASg==
+X-CSE-MsgGUID: EJXhSxmWSsOQhFZh1uBWfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
+   d="scan'208";a="28818348"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 07 May 2024 18:58:58 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4Wa8-0002q8-1n;
+	Wed, 08 May 2024 01:58:56 +0000
+Date: Wed, 8 May 2024 09:58:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sam Ravnborg <sam@ravnborg.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andreas Larsson <andreas@gaisler.com>
+Subject: (.head.text+0x2040): relocation truncated to fit: R_SPARC_WDISP22
+ against `.init.text'
+Message-ID: <202405080936.tWaJdO3P-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240326-topic-rpm_icc_qos_cleanup-v1-3-357e736792be@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: b2lNbMb76KSIVE28Q5SkNa_-WNSCSK2d
-X-Proofpoint-GUID: b2lNbMb76KSIVE28Q5SkNa_-WNSCSK2d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_16,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 malwarescore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 impostorscore=0 mlxlogscore=928 bulkscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405080012
 
-On Tue, Mar 26, 2024 at 08:42:34PM +0100, Konrad Dybcio wrote:
-> Register accesses can't just randomly fail. Change the return type of
-> functions that only do that to void.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/interconnect/qcom/icc-rpm.c | 110 +++++++++++++++---------------------
->  1 file changed, 47 insertions(+), 63 deletions(-)
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   dccb07f2914cdab2ac3a5b6c98406f765acab803
+commit: 91d3ff922c346d6d8cb8de5ff8d504fe0ca9e17e sparc32: Fix parport build with sparc32
+date:   9 weeks ago
+config: sparc-randconfig-001-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080936.tWaJdO3P-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080936.tWaJdO3P-lkp@intel.com/reproduce)
 
-[...]
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405080936.tWaJdO3P-lkp@intel.com/
 
-> @@ -115,48 +111,42 @@ static int qcom_icc_set_bimc_qos(struct icc_node *src)
->  	 * only if we are NOT in Bypass Mode.
->  	 */
->  	if (mode != NOC_QOS_MODE_BYPASS) {
-> -		for (i = 3; i >= 0; i--) {
-> -			rc = qcom_icc_bimc_set_qos_health(qp,
-> -							  &qn->qos, i);
-> -			if (rc)
-> -				return rc;
-> -		}
-> +		qcom_icc_bimc_set_qos_health(qp, &qn->qos, 3);
-> +		qcom_icc_bimc_set_qos_health(qp, &qn->qos, 2);
-> +		qcom_icc_bimc_set_qos_health(qp, &qn->qos, 1);
-> +		qcom_icc_bimc_set_qos_health(qp, &qn->qos, 0);
+All errors (new ones prefixed by >>):
 
-Not sure I see the point of unrolling this loop. With the error checking
-removed, the loop could be reduced to just two lines, which is shorter
-than the unrolled version and isn't really any more complicated:
+   arch/sparc/kernel/head_32.o: in function `current_pc':
+>> (.head.text+0x2040): relocation truncated to fit: R_SPARC_WDISP22 against `.init.text'
+   arch/sparc/kernel/head_32.o: in function `halt_notsup':
+   (.head.text+0x2100): relocation truncated to fit: R_SPARC_WDISP22 against `.init.text'
+>> arch/sparc/kernel/process_32.o:(.fixup+0x4): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/process_32.o:(.fixup+0xc): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+>> arch/sparc/kernel/signal_32.o:(.fixup+0x0): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/signal_32.o:(.fixup+0x8): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/signal_32.o:(.fixup+0x10): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/signal_32.o:(.fixup+0x18): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/signal_32.o:(.fixup+0x20): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/signal_32.o:(.fixup+0x28): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
+   arch/sparc/kernel/signal_32.o:(.fixup+0x30): additional relocation overflows omitted from the output
 
-	for (i = 3; i >= 0; i--)
-		qcom_icc_bimc_set_qos_health(qp, &qn->qos, i);
-
-Unrolling the loop is also slightly out-of-scope for this patch that
-claims to just change the return types.
-
-Otherwise, patch looks good to me.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
