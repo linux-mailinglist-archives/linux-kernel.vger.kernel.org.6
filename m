@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-173481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959028C00E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D408C00EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353F51F22D4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:25:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1F7281A13
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1B1127E32;
-	Wed,  8 May 2024 15:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3883A7E0F0;
+	Wed,  8 May 2024 15:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaOq8vT8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dOm+oVcp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE08127B68;
-	Wed,  8 May 2024 15:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBAD128394
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181935; cv=none; b=sl5540E9vxXYqmPaSROmg1D62JQV5ydixl/i+O3NermhtdB0sfsgttwCNmdZ5dGLjtNStIUvR1gXebNUvehBcC2iFR37jTuSWzF5KIqqDr8RjWp5w5eL5031uiM0HZ7QhXDlDMv++wQ6cePrtPDer0uv4eYZVyf2kPFYBZ/DOk4=
+	t=1715182032; cv=none; b=KvkHZQn8o8v9NHGiEztuJDV4WQHPerwo/xlHLCB9qbxsuKAihTFrAstlO95A4aNQGmolajusj85EmaSgm4O/qermwjI0eBYOBfVvb4dDTbJ40e0kyMa9YykV8Kd9IwsLVPl79qCVsNr+E2ztQAw84KtDNXzMcYdAFnlBBYQ6p6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181935; c=relaxed/simple;
-	bh=v+LCBawZUinlZ/kH4yoHavtuY3E/hIPj7ZijTmY1JXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t2sJKWW/lK78qF8mD6Qw/smLiqVTfCqG5fVuxHkm0W+l2ciruAL2vQuFyp10E3Iu2KEszLWy7ph5a+OO2Spj2Y2QlDdpXhu5q6Q/o+30D7r7NjIEykCWWG/MFJPnvQiiSg1UbwxGuiLIaltyLNndXWrDh/5jy/J8kwbsvAIJcow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaOq8vT8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7703C113CC;
-	Wed,  8 May 2024 15:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715181935;
-	bh=v+LCBawZUinlZ/kH4yoHavtuY3E/hIPj7ZijTmY1JXQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oaOq8vT8Mf1zifKh4rJMDX7eO4brejCkk3w/sN9cphWeDS7Dcdj5ACO+sBEntms8V
-	 Svm3sFFhm1mxlbV8cn5nqmWCm6AqR6AQ4m2H7GyZ4u5HdzKDtSMyy2dHvB91245RDR
-	 iWvdFHieCkNyT29GOiNZMmrWGYN6+/BPqSXJKzBEx8TZfdEXbUrpQLXo4WhZSZwBLD
-	 G2ZzYnZKZbHCzRx0l27d7HALcrz+43p2FxgJ8jo+bt2UTtXLNLf2K9xXUk0hWc2qci
-	 r9zBPGjNwycVLsHgtcGqBsr5NuW5cE0YqpdfbnYdn8Q9mA7DuGipT6jgufaTsNcyzy
-	 D5nF0L+FBAm1Q==
-Date: Wed, 8 May 2024 08:25:33 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, nalramli@fastly.com, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH net-next v3] selftest: epoll_busy_poll: epoll busy poll
- tests
-Message-ID: <20240508082533.37a49678@kernel.org>
-In-Reply-To: <ZjrhvnpRIhPI3mal@LQ3V64L9R2>
-References: <20240508004328.33970-1-jdamato@fastly.com>
-	<ZjrhvnpRIhPI3mal@LQ3V64L9R2>
+	s=arc-20240116; t=1715182032; c=relaxed/simple;
+	bh=ItL86uGAqwtSHzvV7e4Z98MypI8As0zBjnzHJ4JD/+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E98Yzvt1G7wpLP1EnMT03AO1eFmHp5WbcUPJH6VOtYW0d966Ghn+zG+5t8obuWaDmGoT2y/9ZJYPl48+1m01RtJC7hSw7kaBNO3RpsJFmgfSnUgPGXJXQw1Qqs49Dqu8u8Z3Am55Umv9/MIK5DMxqqtFaUDsVEH66qNiDdJ9tjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dOm+oVcp; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715182026; x=1746718026;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ItL86uGAqwtSHzvV7e4Z98MypI8As0zBjnzHJ4JD/+Y=;
+  b=dOm+oVcptQSHYPRl4c6XlqEvrKHYUWZutkXiuUK1btFrnX4OLb3dk7ZJ
+   P3noLjOYtDCoNkWdBs8LMGC81vEim2ow0K0AnpSStA20tC9wVEH1pMDzX
+   aOND+fyeUAY+ZlgDnIxbRyy3mmlzzX/eDJAZKXWpKg6EuvdpyXCnBCYE1
+   o+cDLgrUEL1VNYnoHaxL28i20OaM0OvZdRikILZrW1obhgvrl8BsA48b9
+   QAMk2TWR7cJ5RbUHMVqhlK2XJq1KxF1eymZtrS+s9h5CFSGQh2lYtotMg
+   hkC+B4x6N8P6g9mJIWzroXarbYsqOZkiLLyxfRcLOaao9HrwmDh4bBqu6
+   w==;
+X-CSE-ConnectionGUID: 8rp5oB4CT9a485hLh/rfIA==
+X-CSE-MsgGUID: NlGaFvOzRR2GvmFs01oIcg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11429086"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="11429086"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:27:05 -0700
+X-CSE-ConnectionGUID: MYnSKQ2/RdCXHfHJiF7k9w==
+X-CSE-MsgGUID: U96b3+4LRi2AqLykBsphWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="28851881"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 08 May 2024 08:27:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id E52E2109; Wed, 08 May 2024 18:27:02 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Subject: [PATCH v1 1/1] xen/xenbus: Use *-y instead of *-objs in Makefile
+Date: Wed,  8 May 2024 18:26:47 +0300
+Message-ID: <20240508152658.1445809-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 7 May 2024 19:21:50 -0700 Joe Damato wrote:
-> On Wed, May 08, 2024 at 12:43:26AM +0000, Joe Damato wrote:
-> > Add a simple test for the epoll busy poll ioctls, using the kernel
-> > selftest harness.
-> > 
-> > This test ensures that the ioctls have the expected return codes and
-> > that the kernel properly gets and sets epoll busy poll parameters.
-> > 
-> > The test can be expanded in the future to do real busy polling (provided
-> > another machine to act as the client is available).  
-> 
-> Ah, built and worked for me, but of course fails remotely:
-> 
-> epoll_busy_poll.c:20:10: fatal error: sys/capability.h: No such file or directory
->    20 | #include <sys/capability.h>
->       |          ^~~~~~~~~~~~~~~~~~
-> 
-> Looks like selftests/bpf/cap_helpers.c avoids a similar-ish issue? Not sure if
-> there's a better way or if I should do something like that?
-> 
-> I assume it is not possible to add deps like libcap-dev to the test harness somehow?
+*-objs suffix is reserved rather for (user-space) host programs while
+usually *-y suffix is used for kernel drivers (although *-objs works
+for that purpose for now).
 
-Ah sorry, CI builder was missing the libcap-devel package.
-I can't retrigger the CI easily, unfortunately, could you repost?
-(without the 24h wait)
+Let's correct the old usages of *-objs in Makefiles.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+Note, the original approach is weirdest from the existing.
+Only a few drivers use this (-objs-y) one most likely by mistake.
+
+ drivers/xen/xenbus/Makefile | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/xen/xenbus/Makefile b/drivers/xen/xenbus/Makefile
+index 0c7532110815..b0d69602214e 100644
+--- a/drivers/xen/xenbus/Makefile
++++ b/drivers/xen/xenbus/Makefile
+@@ -1,15 +1,13 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-y	+= xenbus.o
++
++xenbus-y := xenbus_client.o
++xenbus-y += xenbus_comms.o
++xenbus-y += xenbus_xs.o
++xenbus-y += xenbus_probe.o
++
++xenbus-$(CONFIG_XEN_BACKEND) += xenbus_probe_backend.o
++
+ obj-y	+= xenbus_dev_frontend.o
+-
+-xenbus-objs =
+-xenbus-objs += xenbus_client.o
+-xenbus-objs += xenbus_comms.o
+-xenbus-objs += xenbus_xs.o
+-xenbus-objs += xenbus_probe.o
+-
+-xenbus-be-objs-$(CONFIG_XEN_BACKEND) += xenbus_probe_backend.o
+-xenbus-objs += $(xenbus-be-objs-y)
+-
+ obj-$(CONFIG_XEN_BACKEND) += xenbus_dev_backend.o
+ obj-$(CONFIG_XEN_XENBUS_FRONTEND) += xenbus_probe_frontend.o
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
