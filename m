@@ -1,125 +1,319 @@
-Return-Path: <linux-kernel+bounces-173502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AD38C0135
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:44:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADF08C013A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01AAF28902B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DED01C2242C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C94128378;
-	Wed,  8 May 2024 15:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="NRCdJVQs"
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41230128394;
+	Wed,  8 May 2024 15:44:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459D47D3F5;
-	Wed,  8 May 2024 15:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEDC126F39;
+	Wed,  8 May 2024 15:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715183033; cv=none; b=mC1vQzkL4BrF4/1I1+b/L8NQhuGBqAjg3s2AbS8K9EbzVQUTycnZqlfaIApc9jIsl5Ev1iXrH3Mu/brOw5LDECiMy+B9DIDWNI7MJ0MGHnAUK188+OgEefXtZXWsMdrVGyQmamyY9p4G8BcH8MnfiSdLa1iTp7+0Yjx2EpULLaY=
+	t=1715183066; cv=none; b=FNLSV4zHBOOHRcyUkYoHKmBWfLkZm5G2lj9X7NUh6u0LwmRqBRi6ytLVYmCs/0ulnLKJaw0VU84w3Xd+ykPA4NZyLG6SYRIn7zbDpBmYBkQBRKrR+VyDeJjNiKguj9Yq059SgxlEF0bSmgLmY4jXdbPTCsyn2f5QT5uog2U72rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715183033; c=relaxed/simple;
-	bh=0j3aBfj9ZfpV1MH5nO9NGwaJrnnRhkiWZXMK8FGpErI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pytLkAcL1iRDqy2FOflh2Gtw2mJj341DeFjqo8RbSmUhjTmWBHs4oKVDlZ7nXWXMX1eLwhGMS9+ANOnGFxZX51Vdi8zzfVL+EbRvDVvjkNFNsgC4mxuuqgxJIC1q3ZFfrSSay3n77NGGFlHKW8N2C6v0uE5Tr6vFoTYImVX4wnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=NRCdJVQs; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 420666000852;
-	Wed,  8 May 2024 16:43:48 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id Ra1H46aqlsMF; Wed,  8 May 2024 16:43:46 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id AAC0C6003C01;
-	Wed,  8 May 2024 16:43:45 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1715183026;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=NQrIcFv9v2tmhATWNtUWwd3zf3STqTRGKWUwe6MA4gI=;
-	b=NRCdJVQszJtyFHGVGnD5MzT6yNvhPwPdL6u/fZJ2iqnjkT/d9AQd+C5zGqkEItI3J6IWza
-	xnPlieE3SGz8nEVPhO59cCHBWDvrwymYX83i7A1OBcLN7ZiQl2LJ8P3qe5Y864+p0VYHxC
-	w43V5rknL0M16cJTiG8Qu3LFeFaESWI=
-Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:4589:2164:1bc5:2670])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id E401F360092;
-	Wed,  8 May 2024 16:43:44 +0100 (WEST)
-Date: Wed, 8 May 2024 16:43:40 +0100
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
-	dmitry.baryshkov@linaro.org, bleung@chromium.org, pmalani@chromium.org, jthies@google.com, 
-	abhishekpandit@chromium.org, lk@c--e.de, saranya.gopal@intel.com, dan.carpenter@linaro.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: diogo.ivo@tecnico.ulisboa.pt
-Subject: [PATCH] usb: typec: ucsi: Add new notification bits
-Message-ID: <3filrg6mbh6m3galir7ew5juakd25uvksimr7mqd7uc5td3xza@fdvxcewozqeh>
+	s=arc-20240116; t=1715183066; c=relaxed/simple;
+	bh=fbytiBxk9aCvNLuZTIUm90QUNrs4BiaGpAjgwqM2sV8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ilOvVA8ExqePLF3Yn9vR/F95xZ4e6JrFli8WOYwJ9v51Rk2xMYOkyVSdvubQXX5rJWAD44KcLA3u3Blr5ZNBvaA56AEpiC5YRMZOy9qKEAtTrpWYZLpu0P31Hx7RqbYcBYR6aMClgXC0TDcYFYj2Nx1LLJtwhyu8W/poquau2ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZKB14wvMz6K6Lg;
+	Wed,  8 May 2024 23:41:13 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id B60CC1400D1;
+	Wed,  8 May 2024 23:44:19 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 8 May
+ 2024 16:44:18 +0100
+Date: Wed, 8 May 2024 16:44:17 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Dongsheng Yang <dongsheng.yang@easystack.cn>
+CC: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+	Gregory Price <gregory.price@memverge.com>, <axboe@kernel.dk>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+Message-ID: <20240508164417.00006c69@Huawei.com>
+In-Reply-To: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
+	<66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
+	<ZikhwAAIGFG0UU23@memverge.com>
+	<bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
+	<ZiuwyIVaKJq8aC6g@memverge.com>
+	<98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
+	<ZivS86BrfPHopkru@memverge.com>
+	<8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
+	<wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
+	<20240503105245.00003676@Huawei.com>
+	<5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+	<20240508131125.00003d2b@Huawei.com>
+	<ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Newer UCSI versions defined additional notification bits that can be
-enabled by the PPM. Add their definitions and convert all definitions
-to BIT_ULL() as we now cross the 32-bit boundary.
+On Wed, 8 May 2024 21:03:54 +0800
+Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- drivers/usb/typec/ucsi/ucsi.h | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+> =E5=9C=A8 2024/5/8 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8B=E5=8D=88 8:11, J=
+onathan Cameron =E5=86=99=E9=81=93:
+> > On Wed, 8 May 2024 19:39:23 +0800
+> > Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
+> >  =20
+> >> =E5=9C=A8 2024/5/3 =E6=98=9F=E6=9C=9F=E4=BA=94 =E4=B8=8B=E5=8D=88 5:52=
+, Jonathan Cameron =E5=86=99=E9=81=93: =20
+> >>> On Sun, 28 Apr 2024 11:55:10 -0500
+> >>> John Groves <John@groves.net> wrote:
+> >>>     =20
+> >>>> On 24/04/28 01:47PM, Dongsheng Yang wrote: =20
+> >>>>>
+> >>>>>
+> >>>>> =E5=9C=A8 2024/4/27 =E6=98=9F=E6=9C=9F=E5=85=AD =E4=B8=8A=E5=8D=88 =
+12:14, Gregory Price =E5=86=99=E9=81=93: =20
+> >>>>>> On Fri, Apr 26, 2024 at 10:53:43PM +0800, Dongsheng Yang wrote: =20
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> =E5=9C=A8 2024/4/26 =E6=98=9F=E6=9C=9F=E4=BA=94 =E4=B8=8B=E5=8D=
+=88 9:48, Gregory Price =E5=86=99=E9=81=93: =20
+> >>>>>>>>        =20
+> >>>>>>>    =20
+> >>
+> >> ... =20
+> >>>>
+> >>>> Just to make things slightly gnarlier, the MESI cache coherency prot=
+ocol
+> >>>> allows a CPU to speculatively convert a line from exclusive to modif=
+ied,
+> >>>> meaning it's not clear as of now whether "occasional" clean write-ba=
+cks
+> >>>> can be avoided. Meaning those read-only mappings may be more importa=
+nt
+> >>>> than one might think. (Clean write-backs basically make it
+> >>>> impossible for software to manage cache coherency.) =20
+> >>>
+> >>> My understanding is that clean write backs are an implementation spec=
+ific
+> >>> issue that came as a surprise to some CPU arch folk I spoke to, we wi=
+ll
+> >>> need some path for a host to say if they can ever do that.
+> >>>
+> >>> Given this definitely effects one CPU vendor, maybe solutions that
+> >>> rely on this not happening are not suitable for upstream.
+> >>>
+> >>> Maybe this market will be important enough for that CPU vendor to stop
+> >>> doing it but if they do it will take a while...
+> >>>
+> >>> Flushing in general is as CPU architecture problem where each of the
+> >>> architectures needs to be clear what they do / specify that their
+> >>> licensees do.
+> >>>
+> >>> I'm with Dan on encouraging all memory vendors to do hardware coheren=
+ce! =20
+> >>
+> >> Hi Gregory, John, Jonathan and Dan:
+> >> 	Thanx for your information, they help a lot, and sorry for the late r=
+eply.
+> >>
+> >> After some internal discussions, I think we can design it as follows:
+> >>
+> >> (1) If the hardware implements cache coherence, then the software layer
+> >> doesn't need to consider this issue, and can perform read and write
+> >> operations directly. =20
+> >=20
+> > Agreed - this is one easier case.
+> >  =20
+> >>
+> >> (2) If the hardware doesn't implement cache coherence, we can consider=
+ a
+> >> DMA-like approach, where we check architectural features to determine =
+if
+> >> cache coherence is supported. This could be similar to
+> >> `dev_is_dma_coherent`. =20
+> >=20
+> > Ok. So this would combine host support checks with checking if the shar=
+ed
+> > memory on the device is multi host cache coherent (it will be single ho=
+st
+> > cache coherent which is what makes this messy) =20
+> >>
+> >> Additionally, if the architecture supports flushing and invalidating C=
+PU
+> >> caches (`CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE`,
+> >> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU`,
+> >> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL`), =20
+> >=20
+> > Those particular calls won't tell you much at all. They indicate that a=
+ flush
+> > can happen as far as a common point for DMA engines in the system. No
+> > information on whether there are caches beyond that point.
+> >  =20
+> >>
+> >> then we can handle cache coherence at the software layer.
+> >> (For the clean writeback issue, I think it may also require
+> >> clarification from the architecture, and how DMA handles the clean
+> >> writeback problem, which I haven't further checked.) =20
+> >=20
+> > I believe the relevant architecture only does IO coherent DMA so it is
+> > never a problem (unlike with multihost cache coherence).Hi Jonathan, =20
+>=20
+> let me provide an example,
+> In nvmeof-rdma, the `nvme_rdma_queue_rq` function places a request into=20
+> `req->sqe.dma`.
+>=20
+> (1) First, it calls `ib_dma_sync_single_for_cpu()`, which invalidates=20
+> the CPU cache:
+>=20
+>=20
+> ib_dma_sync_single_for_cpu(dev, sqe->dma,
+>                              sizeof(struct nvme_command), DMA_TO_DEVICE);
+>=20
+>=20
+> For example, on ARM64, this would call `arch_sync_dma_for_cpu`, followed=
+=20
+> by `dcache_inval_poc(start, start + size)`.
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.h b/drivers/usb/typec/ucsi/ucsi.h
-index c4d103db9d0f..e70cf5b15562 100644
---- a/drivers/usb/typec/ucsi/ucsi.h
-+++ b/drivers/usb/typec/ucsi/ucsi.h
-@@ -124,18 +124,23 @@ void ucsi_connector_change(struct ucsi *ucsi, u8 num);
- #define UCSI_ACK_COMMAND_COMPLETE		BIT(17)
- 
- /* SET_NOTIFICATION_ENABLE command bits */
--#define UCSI_ENABLE_NTFY_CMD_COMPLETE		BIT(16)
--#define UCSI_ENABLE_NTFY_EXT_PWR_SRC_CHANGE	BIT(17)
--#define UCSI_ENABLE_NTFY_PWR_OPMODE_CHANGE	BIT(18)
--#define UCSI_ENABLE_NTFY_CAP_CHANGE		BIT(21)
--#define UCSI_ENABLE_NTFY_PWR_LEVEL_CHANGE	BIT(22)
--#define UCSI_ENABLE_NTFY_PD_RESET_COMPLETE	BIT(23)
--#define UCSI_ENABLE_NTFY_CAM_CHANGE		BIT(24)
--#define UCSI_ENABLE_NTFY_BAT_STATUS_CHANGE	BIT(25)
--#define UCSI_ENABLE_NTFY_PARTNER_CHANGE		BIT(27)
--#define UCSI_ENABLE_NTFY_PWR_DIR_CHANGE		BIT(28)
--#define UCSI_ENABLE_NTFY_CONNECTOR_CHANGE	BIT(30)
--#define UCSI_ENABLE_NTFY_ERROR			BIT(31)
-+#define UCSI_ENABLE_NTFY_CMD_COMPLETE		BIT_ULL(16)
-+#define UCSI_ENABLE_NTFY_EXT_PWR_SRC_CHANGE	BIT_ULL(17)
-+#define UCSI_ENABLE_NTFY_PWR_OPMODE_CHANGE	BIT_ULL(18)
-+#define UCSI_ENABLE_NTFY_ATTENTION		BIT_ULL(19)
-+#define UCSI_ENABLE_NTFY_LPM_FW_UPDATE_REQ	BIT_ULL(20)
-+#define UCSI_ENABLE_NTFY_CAP_CHANGE		BIT_ULL(21)
-+#define UCSI_ENABLE_NTFY_PWR_LEVEL_CHANGE	BIT_ULL(22)
-+#define UCSI_ENABLE_NTFY_PD_RESET_COMPLETE	BIT_ULL(23)
-+#define UCSI_ENABLE_NTFY_CAM_CHANGE		BIT_ULL(24)
-+#define UCSI_ENABLE_NTFY_BAT_STATUS_CHANGE	BIT_ULL(25)
-+#define UCSI_ENABLE_NTFY_SECURITY_REQ_PARTNER	BIT_ULL(26)
-+#define UCSI_ENABLE_NTFY_PARTNER_CHANGE		BIT_ULL(27)
-+#define UCSI_ENABLE_NTFY_PWR_DIR_CHANGE		BIT_ULL(28)
-+#define UCSI_ENABLE_NTFY_SET_RETIMER_MODE	BIT_ULL(29)
-+#define UCSI_ENABLE_NTFY_CONNECTOR_CHANGE	BIT_ULL(30)
-+#define UCSI_ENABLE_NTFY_ERROR			BIT_ULL(31)
-+#define UCSI_ENABLE_NTFY_SINK_PATH_STS_CHANGE	BIT_ULL(32)
- #define UCSI_ENABLE_NTFY_ALL			0xdbe70000
- 
- /* SET_UOR command bits */
--- 
-2.45.0
+Key here is the POC. It's a flush to the point of coherence of the local
+system.  It has no idea about interhost coherency and is not necessarily
+the DRAM (in CXL or otherwise).
+
+If you are doing software coherence, those devices will plug into today's
+hosts and they have no idea that such a flush means pushing out into
+the CXL fabric and to the type 3 device.
+
+>=20
+> (2) Setting up data related to the NVMe request.
+>=20
+> (3) then Calls `ib_dma_sync_single_for_device` to flush the CPU cache to=
+=20
+> DMA memory:
+>=20
+> ib_dma_sync_single_for_device(dev, sqe->dma,
+>                                  sizeof(struct nvme_command),=20
+> DMA_TO_DEVICE);
+>=20
+> Of course, if the hardware ensures cache coherency, the above operations=
+=20
+> are skipped. However, if the hardware does not guarantee cache=20
+> coherency, RDMA appears to ensure cache coherency through this method.
+>=20
+> In the RDMA scenario, we also face the issue of multi-host cache=20
+> coherence. so I'm thinking, can we adopt a similar approach in CXL=20
+> shared memory to achieve data sharing?
+
+You don't face the same coherence issues, or at least not in the same way.
+In that case the coherence guarantees are actually to the RDMA NIC.
+It is guaranteed to see the clean data by the host - that may involve
+flushes to PoC.  A one time snapshot is then sent to readers on other
+hosts. If writes occur they are also guarantee to replace cached copies
+on this host - because there is well define guarantee of IO coherence
+or explicit cache maintenance to the PoC.
+
+=20
+>=20
+> >>
+> >> (3) If the hardware doesn't implement cache coherence and the cpu
+> >> doesn't support the required CPU cache operations, then we can run in
+> >> nocache mode. =20
+> >=20
+> > I suspect that gets you no where either.  Never believe an architecture
+> > that provides a flag that says not to cache something.  That just means
+> > you should not be able to tell that it is cached - many many implementa=
+tions
+> > actually cache such accesses. =20
+>=20
+> Sigh, then that really makes thing difficult.
+
+Yes. I think we are going to have to wait on architecture specific clarific=
+ations
+before any software coherent use case can be guaranteed to work beyond the =
+3.1 ones
+for temporal sharing (only one accessing host at a time) and read only shar=
+ing where
+writes are dropped anyway so clean write back is irrelevant beyond some noi=
+se in
+logs possibly (if they do get logged it is considered so rare we don't care=
+!).
+
+> >  =20
+> >>
+> >> CBD can initially support (3), and then transition to (1) when hardware
+> >> supports cache-coherency. If there's sufficient market demand, we can
+> >> also consider supporting (2). =20
+> > I'd assume only (3) works.  The others rely on assumptions I don't thin=
+k =20
+>=20
+> I guess you mean (1), the hardware cache-coherency way, right?
+
+Indeed - oops!
+Hardware coherency is the way to go, or a well defined and clearly document
+description of how to play with the various host architectures.
+
+Jonathan
+
+
+>=20
+> :)
+> Thanx
+>=20
+> > you can rely on.
+> >=20
+> > Fun fun fun,
+> >=20
+> > Jonathan
+> >  =20
+> >>
+> >> How does this approach sound?
+> >>
+> >> Thanx =20
+> >>>
+> >>> J
+> >>>     =20
+> >>>>
+> >>>> Keep in mind that I don't think anybody has cxl 3 devices or CPUs ye=
+t, and
+> >>>> shared memory is not explicitly legal in cxl 2, so there are things =
+a cpu
+> >>>> could do (or not do) in a cxl 2 environment that are not illegal bec=
+ause
+> >>>> they should not be observable in a no-shared-memory environment.
+> >>>>
+> >>>> CBD is interesting work, though for some of the reasons above I'm so=
+mewhat
+> >>>> skeptical of shared memory as an IPC mechanism.
+> >>>>
+> >>>> Regards,
+> >>>> John
+> >>>>
+> >>>>
+> >>>>    =20
+> >>>
+> >>> .
+> >>>     =20
+> >=20
+> > .
+> >  =20
 
 
