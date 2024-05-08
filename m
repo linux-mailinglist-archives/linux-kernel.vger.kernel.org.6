@@ -1,111 +1,255 @@
-Return-Path: <linux-kernel+bounces-172582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3435D8BF3FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:18:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9268BF3F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6921F22D0C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:18:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F361F285524
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80457947A;
-	Wed,  8 May 2024 01:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC9E7FD;
+	Wed,  8 May 2024 01:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jYonm/yn"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hBUS/1GZ"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9469179EA;
-	Wed,  8 May 2024 01:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715131081; cv=none; b=LC5xvg67Yn4vpYKsgtnxdWg5zwGftxDXoZvK3WQk/Lt7VPcLsOjyj05ghoobPnVZK+PLSmG5sNmous/Dva3IS109m7JK0hMZbGrV77D/MXYAM4+Sy1y8ggZQ8LTwkMMbE3LJuGkBC4yy24TWfSVUKT/ss70vQl/D4TAXOEFPj5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715131081; c=relaxed/simple;
-	bh=jj2KQP2ub0sVi3xfQLP9yZsNYDR+0zm8HmKQaeY8O48=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=OIQkB64FgbLdd6sLPjtNReYJLagGXKrLaaWzHYM6qJNfUy1Slim4t+bOvXOU72l5OdLYVILt/yhv2kU6uSt/IuOzHAJmrYC6lXDyg8jv6VR/39YkeQ/IjL5hRZiNGkRZKstAj3rIXt4/hFEvaB9fqMLONAAAAH3wnlPhulVz8QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jYonm/yn; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1715131069; bh=bXCqxOHnXGAR0rzdG4ht0Yt67x9bWfQlWK66zskQZqM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jYonm/ynl8I+nvGyIi68cgjeUrXiNx8rpFbas+Yi7licRAKKCKLCVZdtZ7ZUFKqrz
-	 AYArmsgtPNCEojicaLjE3O+ytnYRwmGnnfWU1QvDaOyAEKsmf1olL32GbTvNkVlEtr
-	 hTPth5lJgvLVKEoLBSFtJfxgq3bhepPceWaKwEOQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 2E4340E6; Wed, 08 May 2024 09:11:36 +0800
-X-QQ-mid: xmsmtpt1715130696tuynpi050
-Message-ID: <tencent_CBBB5E331C9E521B014B6C1B9B2576BA8E08@qq.com>
-X-QQ-XMAILINFO: NhpLzBn2I3Xw/Mobo9iGIOo/qTBimLx0Fery84U2qt+xe6wOTv+10vngPKcjAI
-	 IqW1+gezsbiVQYJCRmH7WU9LN0jI4i5k9XEySZ3h1cs3xlUABCpOsjcUL5q3y0FOQy3W7QEjadTi
-	 h/V3x6xxUTJaXiWgvBlMLdGD+waeX/5UpdyXjEECwt+Yqz7y5zSOVQlabIeA8hY0IYT+cUbh3iAZ
-	 7Xn8LDwvy/YCA+9tGqVS7JRjQMtWILKfGrHCp9+iIMU+4NEDz3/nV2I3r5TXzKw0Y18unRavguK9
-	 AUKmTXN5lLdVeAGp4R+ZQEE0sJy2jFoEBY9zTWh/Denj4swhfYb6XGfn6qph/4+ANaSwmY2dWirA
-	 5JyoVeeautia6lKtcPiw7yqhBUBiQkUDV21Y4ZPASASe/rm9CX1zmb7YJaU2b+SLFSfWYUdDoomS
-	 3tIVxMF6rTy5EQlfqqxBmv4KEXUrUvuOwQXWZ1i2qEQyeqdUCs1D5zHm8UOsd/uHG79EjS7DGeFN
-	 0EMN867ULqrbV3BtYC3XEH8fAc60csu83MYr5I0QroOeoQXwceQYuy5I5PCjqFwbYAQdAJSQH2PU
-	 j2+t4RxoXLQXo4zn3K3KaCmH31XyGUy9knOVFDLyixQMi8YMOniBRWe8oyOuCu9UXj1NclWwoZkz
-	 hp2nkDBgP7KNzhBHxvADRsdwCK0swSz3WhWs6yxd5UqXql47ou9zQwq8efNRT5c2pxcl1gKMdhTr
-	 +C30+rLU9BHOtvYART3AYPBZ3vFrIPsDF3VBv4HTtM2ibw4IMved6k4mXyPectNEaf+UjG6FeFYe
-	 F84HxkAhVISuRZR91FcicIx/ZOxGvDbMRrlwGmPapqZyiAw83wJp0sbQC6ji3G22QYKuGPmKwkul
-	 +OrQOsxwPWGvKrgZeLizNu575iZX+wHLFxiq+ThbXSL/WBiYKrKHNii7pFZXGVpo7CbjsYb7M749
-	 EAevEEfno=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: kent.overstreet@linux.dev
-Cc: bfoster@redhat.com,
-	eadavis@qq.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Date: Wed,  8 May 2024 09:11:37 +0800
-X-OQ-MSGID: <20240508011136.3227286-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <7chwa5h2y2eotafxfnapxn754n7y3zpze2sm5dif3zyx7hkxcc@2zu6pskc7fbo>
-References: <7chwa5h2y2eotafxfnapxn754n7y3zpze2sm5dif3zyx7hkxcc@2zu6pskc7fbo>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE53E633;
+	Wed,  8 May 2024 01:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715131003; cv=fail; b=qyyxjUm880VVdNIbWPwDLHkKKBu9zqOel1n2rW7ZCGUYWa1qgsj1DpgdmON7A7AlQ6LN3E5HNc26geVeP9x8NLJkNuxomETbRAcXqURNBjYLkhyiS+ledIfRMjAZVRUV3/WxqgcSP84HS83/4qE/R7FEfg1wuw1EMqVtKZZs+PQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715131003; c=relaxed/simple;
+	bh=7pAvIBnJFWLsgFsGOIHaIhVe7O/HPmTBbBIx6W7vpOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GBztPzUHo4MmHBP0DnvcXQuJuNlYLn1lOyaKvj68rxkgzwjkGLbenI+lFWurTc8ENMb1LNy2F4GbDHUrS0WerGCPkJ5VsjY9wuTFRd7HRGvaPT/xAgor5z0WJuczjLRhGyzofJHljOC7B2uC3aiKvx6baD+uYtH0/ggClP+RlYw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hBUS/1GZ; arc=fail smtp.client-ip=40.107.92.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LTliWSUM5HJ2HZDv35OFh0knrIivSxMNbNn0VMNwJ1TdqmIjN8VZxZz7mfeD0xaDWU9I4FtvDKiEY4J5aD2MV1CyiTQ7sFqMOYQg6ms3Xkp7v8zgDVyyD2NWadXT3vPnxLJg0HisqvpM4lKjLkHFIR+UFHobBZKpjo0HwukRgDxvqL8uofmhEyp8GT7JsDmCGeQjhd2ZH+rOZkqv3JD9BYnvZnvWw4qvn1DUIhFrzcORjFGGAVCWnGQ78JGO4gGKtkqseQAGtrIlNprx2hvnGV7371w1I0Yxn+X6Y9jPnEZHLzDfjFXqeBCYqv7MbXIQuiqgYTwIuqlPulul54jXjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GQBvLy2SR6/ARN2c/YkUDhr1ZETM/J5DdF/hqRLQnhs=;
+ b=QAi1fgwW3dwHa84bl5chiQhxfQqoZ4OoGkwVQ33o832KmEcIt5n+6GAUvXuKLZ4OMrj+yqFyybpdHYgSrdTpjaobDIg1l/qAhMAqKcVfzBEsMNlWBbLgQgx7c6xHWZchUf7tSC4wsU7mSMEsxRtXgxaH5AwhOcFGD60EwVp71dJfQbFw2xq7YLZYSmloK8Eij5RWMJH9ZRMEKCWOfSYJtXTBDNGEA5+yQNZD5bCBqOaMThDnuN4fCy38b2dYnVzJeDMv6Rj0OkNkaj6TIJ+Ktz4W1lq+A8dAlED9Wh8ID82ceKoekFb0Ay01LHG1OmPpqwyFFs8gGeRIt3aqmJNY0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GQBvLy2SR6/ARN2c/YkUDhr1ZETM/J5DdF/hqRLQnhs=;
+ b=hBUS/1GZtWFbQ6rQFokfKeqYV+bXbaEq1xa2m0SkUJn29EW12F5Kf4jVNYATlOWvAQDHpaQtnoYsBJPOGd06g1cFn9mvwmhpc5XmCOtYsQ4zlPffr9j8lmGjKMEQbrdqEjGua/UOSIFDur1gvR9Ce/HhSo5KxY8fL2wl30zMd6j5iUgFVYsYJ0c2YzcapKUu/iBAFdn0M8y3lHYCivIF2eDMqVnCYAbyoPFVNBN38IKQ2Fcmrgt3ia2W9xdfmj0jcBErprcY/68O3EtLQ6ZWBZO3a0+Lhi9dBfs1xhRgwST1DxJaAhGZ5sK4ph8m6mv7NQ0YlX8gmK7PpebEPp2DnQ==
+Received: from CH0PR04CA0069.namprd04.prod.outlook.com (2603:10b6:610:74::14)
+ by BY5PR12MB4226.namprd12.prod.outlook.com (2603:10b6:a03:203::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Wed, 8 May
+ 2024 01:16:36 +0000
+Received: from CH3PEPF0000000F.namprd04.prod.outlook.com
+ (2603:10b6:610:74:cafe::7) by CH0PR04CA0069.outlook.office365.com
+ (2603:10b6:610:74::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43 via Frontend
+ Transport; Wed, 8 May 2024 01:16:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.18 via Frontend Transport; Wed, 8 May 2024 01:16:36 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 7 May 2024
+ 18:16:26 -0700
+Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 7 May 2024
+ 18:16:26 -0700
+Message-ID: <997d7fe0-46c8-4b38-824d-083ab29f54ce@nvidia.com>
+Date: Tue, 7 May 2024 18:16:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/resctrl: fix clang build warnings related to
+ abs(), labs() calls
+To: Reinette Chatre <reinette.chatre@intel.com>, Shuah Khan <shuah@kernel.org>
+CC: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+	<justinstitt@google.com>, Fenghua Yu <fenghua.yu@intel.com>, Valentin Obst
+	<kernel@valentinobst.de>, <linux-kselftest@vger.kernel.org>, LKML
+	<linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+References: <20240503234051.21217-1-jhubbard@nvidia.com>
+ <9ae11dcb-62e8-4361-9f78-971d4c6e6054@intel.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <9ae11dcb-62e8-4361-9f78-971d4c6e6054@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|BY5PR12MB4226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14c7f25a-abc6-4b71-8495-08dc6efc819b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|7416005|376005|82310400017|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?emdRQ1BOYW05U1NHdWpmWnByYUxtTGRMdkdGeUM1RVpCSmU1RG0ya0ppZHBk?=
+ =?utf-8?B?RGJxdkF6d2g4VE5neHJmbnUwd2Z5Mi9GbFJFUzlSUWVMbGorMVJOZlgwakMx?=
+ =?utf-8?B?YktYQ043cnZhalFGdndLMTZ0eFdQcENNOHMyaSt2ZjUvNHU1NktQK3plcDBO?=
+ =?utf-8?B?bXR4SmpEbmJmOHZpZmlYSzNGVWNXdVNmTUNaalQrQ2J0dEIxRW8zdUNPdGUr?=
+ =?utf-8?B?KzJJNXMrSk1wNUZzamxFRks0YWJxcnZlelZMeldMbXo3RHhrRDNKMS9GKzV4?=
+ =?utf-8?B?TTBBeUozU1BYSjh6djJCaGZYZ3NBQlE4d3ByMnN2TkpmN25ZZ0hkTmZOSGlU?=
+ =?utf-8?B?Lzc3UGgxcFJaTnhmMHdBRVlJRUhVRktFQm10T25YUFRzaEd3SUlJanpoWWtJ?=
+ =?utf-8?B?WFI4U1JLMlFVVWNaQlpMWldxejlER2dBeVhLR055cFFjQzhDVi84T1hhM1BU?=
+ =?utf-8?B?OWljcjloV3l6ZlZSdEdyUjVVa1dMRFNZM2ZnckVDNmZ2R3FHN1B0eVc3akZl?=
+ =?utf-8?B?d2tPZXV5UDVWanNrUWlIKzFkUTU3L2pEWW45dEhiTHBzWTFNVmxDeVcxQU96?=
+ =?utf-8?B?TldJcnBQLzZtM3JwNkhCOTg3WVRGTTVneXlPZ2d4UXZPb01sSnJLYW1VQXNL?=
+ =?utf-8?B?NS9VZzMwMGY3Z0RKVjhtdVl5eXovaVhrRzdERk5SR3g4OGNJYSsxb0FCUUEw?=
+ =?utf-8?B?ZWt2c2J2dDJ4dWtzSzVLZUR3L2s5d2lCUnFVTlJSV1JsRitZampHQy9LVzdV?=
+ =?utf-8?B?NHZxaFlQRkNpT2VQSlkrbUxSN2FtcFMveG9RK2x2SXVZdko2UWEzT1RxTHBM?=
+ =?utf-8?B?WjU0SVRFRlVnRmJDQ3hQTTVIWDI5cmkxdzNYRHIyUHlaYjhTNDVqNnA4VXdr?=
+ =?utf-8?B?TFZITjlldkVuQm9SRERVUzZUTm5SWE53YmZyMkF4UUtOMkpyUU9nc1ArQ0JN?=
+ =?utf-8?B?YURSZFFiaStFeVpBZ0xIOHpyQmttODRxWW5WL0lYbkc4NStOY1A3Y0NNWjkw?=
+ =?utf-8?B?WmVWUGhyNUVFZVlUUnZoYUtnazhwa0VrdjJ0U211bnlSNkd1UmhheGNUakJH?=
+ =?utf-8?B?SHpuTmc4eXVtQWFSeXRzclBWQmtQa1VmTXo0VzFFZG1oYXpybnF6dTRUc05v?=
+ =?utf-8?B?bW9hbEl6RU9JSXhPMlg5NG1YMGJkU1M1N2tqZXE2ZXk5YzBjS1R1NGFYVkJh?=
+ =?utf-8?B?bUxsOE5tVDIyT0JMRUsraUxPNFlMcDcxaldUTGpIYWFQWXVEUXI2TStNQ0JM?=
+ =?utf-8?B?UmhRVTFUVk5HQjNUZjQxYlJiWTlQSXpZR1BDYWFNUm9wVUtPVkpIQnlRaTJM?=
+ =?utf-8?B?ZDYyM2lHZ0I1dlJBRm5sbWNFNk1hMzU5R2dkUDNycnc1QU5jQjliRi9XWFhB?=
+ =?utf-8?B?am8zUW1jQ1d4bTlpem02c0o2cjBid3huMkgvTEJFWU5jTWVCdnVYVWZ3Y1Zw?=
+ =?utf-8?B?alo5V0R5N2tXZUhNTTVUamp6cG9UcjNIOE12bElYRnB3TXJCTCt5aWYxbk1Q?=
+ =?utf-8?B?N2dTd01GSzg3UUVVd3QvNWFsOWY1QjhDWDQvb092YjRUa21janhPSU1nNmVz?=
+ =?utf-8?B?cFlTMEplbW84WnBLVHQvYU5GNlZSYytxTjdlNnZqNHI0RFZ2S2svY1U0bUhB?=
+ =?utf-8?B?S1ZqUnpjYlZ5aGkxd3B1UmU5dmt3eWhvR2oxYi94U1lWcnArQ1cyMHQxYWVP?=
+ =?utf-8?B?T0Q2VCtieHFBOWk3S2FFWlREM2FPeVVGOVpmTnBBdFdxNFJINEZLYmFuMm8v?=
+ =?utf-8?B?WldSbzArQVBZYk5DUXNyT3ZMdS9TVC9lb2NKam8rOVFFMHdpc0lEVnJySElL?=
+ =?utf-8?B?aDRmQVNHSklPRG5ZRU5Kd1cyU0Z5Z3d5VkJ2T0kzRWl5R3BRWXFZd1RzTlRv?=
+ =?utf-8?Q?ayBpCyrZfbjXR?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(82310400017)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 01:16:36.3472
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14c7f25a-abc6-4b71-8495-08dc6efc819b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4226
 
-On Tue, 7 May 2024 20:59:14 -0400, Kent Overstreet wrote:
-> > > diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-> > > index 35ca3f138de6..194e55b11137 100644
-> > > --- a/fs/bcachefs/sb-clean.c
-> > > +++ b/fs/bcachefs/sb-clean.c
-> > > @@ -278,6 +278,17 @@ static int bch2_sb_clean_validate(struct bch_sb *sb,
-> > >  		return -BCH_ERR_invalid_sb_clean;
-> > >  	}
-> > > 
-> > > +	for (struct jset_entry *entry = clean->start;
-> > > +	     entry != vstruct_end(&clean->field);
-> > > +	     entry = vstruct_next(entry)) {
-> > > +		if ((void *) vstruct_next(entry) > vstruct_end(&clean->field)) {
-> > > +			prt_str(err, "entry type ");
-> > > +			bch2_prt_jset_entry_type(err, le16_to_cpu(entry->type));
-> > > +			prt_str(err, " overruns end of section");
-> > > +			return -BCH_ERR_invalid_sb_clean;
-> > > +		}
-> > > +	}
-> > > +
-> > The original judgment here is sufficient, there is no need to add this section of inspection.
+On 5/7/24 3:30 PM, Reinette Chatre wrote:
+..
+>> diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
+>> index a81f91222a89..af33abd1cca7 100644
+>> --- a/tools/testing/selftests/resctrl/cmt_test.c
+>> +++ b/tools/testing/selftests/resctrl/cmt_test.c
+>> @@ -29,22 +29,22 @@ static int cmt_setup(const struct resctrl_test *test,
+>>   	return 0;
+>>   }
+>>   
+>> -static int show_results_info(unsigned long sum_llc_val, int no_of_bits,
+>> -			     unsigned long cache_span, unsigned long max_diff,
+>> -			     unsigned long max_diff_percent, unsigned long num_of_runs,
+>> +static int show_results_info(long sum_llc_val, int no_of_bits,
+>> +			     long cache_span, long max_diff,
+>> +			     long max_diff_percent, long num_of_runs,
+>>   			     bool platform)
+>>   {
+>> -	unsigned long avg_llc_val = 0;
+>> +	long avg_llc_val = 0;
+>>   	float diff_percent;
+>>   	long avg_diff = 0;
+>>   	int ret;
+>>   
+>>   	avg_llc_val = sum_llc_val / num_of_runs;
+>> -	avg_diff = (long)abs(cache_span - avg_llc_val);
+>> +	avg_diff = labs(cache_span - avg_llc_val);
+>>   	diff_percent = ((float)cache_span - avg_llc_val) / cache_span * 100;
+>>   
+>>   	ret = platform && abs((int)diff_percent) > max_diff_percent &&
+>> -	      abs(avg_diff) > max_diff;
+>> +	      labs(avg_diff) > max_diff;
+>>   
+>>   	ksft_print_msg("%s Check cache miss rate within %lu%%\n",
+>>   		       ret ? "Fail:" : "Pass:", max_diff_percent);
 > 
-> No, we need to be able to print things that failed to validate so that
-> we see what went wrong.
-The follow check work fine, why add above check ?
-   1         if (vstruct_bytes(&clean->field) < sizeof(*clean)) {
-  268                 prt_printf(err, "wrong size (got %zu should be %zu)",
-    1                        vstruct_bytes(&clean->field), sizeof(*clean));
+> The changes in this hunk are unexpected. The changes to this area made by previous
+> version was ok, no? It really seems like this just does a brute force of everything
+
+Well, not entirely. That first version was when I still believed clang's
+claim that abs()/labs() was a no-op. I've since been corrected! :)
+
+> to long (while taking labs() twice) unnecessarily.
+
+Which part exactly is unnecessary? Are you looking at the function args?
+Or something else? I've stared at it too much and am not spotting the
+issue yet.
+
+> 
+>> diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
+>> index 7946e32e85c8..707b07687249 100644
+>> --- a/tools/testing/selftests/resctrl/mba_test.c
+>> +++ b/tools/testing/selftests/resctrl/mba_test.c
+>> @@ -60,8 +60,8 @@ static bool show_mba_info(unsigned long *bw_imc, unsigned long *bw_resc)
+>>   	/* Memory bandwidth from 100% down to 10% */
+>>   	for (allocation = 0; allocation < ALLOCATION_MAX / ALLOCATION_STEP;
+>>   	     allocation++) {
+>> -		unsigned long avg_bw_imc, avg_bw_resc;
+>> -		unsigned long sum_bw_imc = 0, sum_bw_resc = 0;
+>> +		long avg_bw_imc, avg_bw_resc;
+>> +		long sum_bw_imc = 0, sum_bw_resc = 0;
+>>   		int avg_diff_per;
+>>   		float avg_diff;
+>>   
+> 
+> On second look it only seems necessary to change avg_bw_imc and avg_bw_resc. What do you think?
+
+Yes, that works! I'll change it.
+
+> 
+> 
+>> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
+>> index d67ffa3ec63a..30af15020731 100644
+>> --- a/tools/testing/selftests/resctrl/mbm_test.c
+>> +++ b/tools/testing/selftests/resctrl/mbm_test.c
+>> @@ -17,8 +17,8 @@
+>>   static int
+>>   show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
+>>   {
+>> -	unsigned long avg_bw_imc = 0, avg_bw_resc = 0;
+>> -	unsigned long sum_bw_imc = 0, sum_bw_resc = 0;
+>> +	long avg_bw_imc = 0, avg_bw_resc = 0;
+>> +	long sum_bw_imc = 0, sum_bw_resc = 0;
+>>   	int runs, ret, avg_diff_per;
+>>   	float avg_diff = 0;
+>>
+> 
+> Same here wrt the avg_ variables.
+
+Also yes here, I'll change that too.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
 
 
