@@ -1,226 +1,179 @@
-Return-Path: <linux-kernel+bounces-173836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851D88C062A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:19:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC51F8C0628
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 153AC1F2328B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8CE283B61
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9120B12C497;
-	Wed,  8 May 2024 21:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DM5i1Ki/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D99131BC9;
+	Wed,  8 May 2024 21:19:09 +0000 (UTC)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939E213119E;
-	Wed,  8 May 2024 21:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5232F12C497;
+	Wed,  8 May 2024 21:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715203159; cv=none; b=peaq8qkMuJ+JlTmdYUXv8903yp2TIyOMnHlHdh3HM7UkvOR7gbhJvdB5k8iUbCDABd/bWgsg4+sh/McAvcrruekH3IZkh5rdXqy1dwXMoxeLdshvcbXlMM0yFPNbbj23h1VpzxSdQ2kw0AS4f/8sFEjrVLo5pXwypV9rHfsnq6g=
+	t=1715203148; cv=none; b=fyVUyKs/J6nTIFuWnbNcPZ99OvrP07kF+fmmVouyWbdcFJ/KQwb2UTAksF//1vs38eR9k6QF7sFtIC+tTRBFmZ7Kgy04njOP9jY6wgcX3EM/d30oUrd64TtbSJlHysDSIIfoY2degE1ZqMmYeR20skEpDIQnyKCrlfb7cNAdHCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715203159; c=relaxed/simple;
-	bh=YLYrpjHh3hn32bvgW3ETTt82p/27a+oZUhGKBb/WX+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrLxTe75P48io6SdkGDK/Kn175xo5w/NilAs9MoRkiD92UWUyyzIcpWA4bG7e73qmWD/kaWNCl74x4YNzHrJNAoiDpqsU+q4/PIayZEUcJbUvImWt4P8GrC8bmQIcm9FpYICsh6elaGnDIqFyHjVQ69xbg5erfS8x/NJDCWYlRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DM5i1Ki/; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715203158; x=1746739158;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YLYrpjHh3hn32bvgW3ETTt82p/27a+oZUhGKBb/WX+Y=;
-  b=DM5i1Ki//dBWvOlYVitMvOVBKiriJPR0V2Xz61lvK4qrG2FVbvLoIivq
-   +RIw7dPIhtrfyHHHpIB0Id5cBZV2j/VppiNxXW93O8QV9M95lXJGaGZIF
-   AdJiihy6kUAfZfP1MmiU7g8KWiGq/oGUGuucy1PKgFAmO0s6rfKXJnMXv
-   CSXhQQ6XpaepWv2vk4tmeejSjU+v0HJyEmrwZvxHd78XOzaqYnpDYWGpC
-   eEcJRc5k4DJ0HBT4jjoWdq+DbMPMqgrrMpl6T8y7+g3uAXa3S5o7ph8WN
-   8L6E0T7Dr7XVWFAO/YHKVQBdEqpQggNSGPoY4ajkvchKIqVJTj5vhXs0v
-   A==;
-X-CSE-ConnectionGUID: DnUQycqxSVW+FZpoUY4v7g==
-X-CSE-MsgGUID: tXPxfFo0SZGyB+mi08mH7g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="21662614"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="21662614"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 14:19:18 -0700
-X-CSE-ConnectionGUID: QT7w+RkPTiy3xD8mcnJifQ==
-X-CSE-MsgGUID: EWHKRMMtRImX7RSmLSeJ1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="29389461"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 08 May 2024 14:19:15 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4ogy-00047W-2c;
-	Wed, 08 May 2024 21:19:12 +0000
-Date: Thu, 9 May 2024 05:18:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>,
-	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/5] misc: fastrpc: Add static PD restart support
-Message-ID: <202405090532.EhFuvhrs-lkp@intel.com>
-References: <20240508054250.2922-6-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1715203148; c=relaxed/simple;
+	bh=LZaTxpcC6rDlaczxIBkXQsVl/n555uhdZA29kcRqL1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mAUuKL6tHMr7aPSxp3+YB5GLp01w05Ohi2ptsWiPPlqD2XdoOLUhG56HB/ngqMd/H1+siXBlEYIm9nrLeuiIF1TakaJo/KQeBsGADhzJmqwAUc0oKnrIYl3srwaugr0JVEgUJAIeCK66SGS/fknymmTPjoCYGv6R8NUQIo22loo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2b4348fa971so195600a91.1;
+        Wed, 08 May 2024 14:19:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715203147; x=1715807947;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iH/sB0aLG2WmibnGzHehJ6oJYqkz2Fm71FR2/jk70jg=;
+        b=V8yVYeuGKmPnll8KVt5B9y3lMF3Aq1aFdoEFI2adltzpi9+s5iccPoAyIDMILrv408
+         vJTdxKvF7o0w080djTFdYdQq9X32j0Xz1yZJ1H2D+tRoULOf0PhYIQYnOVeX9Rs149Yp
+         Feim4IcmAlThBgAkb0vz8E+y0OOHbP8i/enwkeuCioSGnC6Ay2RIn1vfapvvtBKddVMa
+         tD9N2d1piVGQSDl2oKZhhcSaq1yL0w4RqBwFy/uXVP6G3Jl0+WM78swng9HquoleapoG
+         tF1XAqG9jgZp5Mkjax4mxlQpPR3+vdosewVO+E0YNHd1ve0DwyUKU8Hp1f6HmMF3OnCq
+         R24w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/OHNKjg9M1gl6iJ4HYBMUAkOkkyouqcPo0fgzjxGUqL+mAq2RoB38YdMaLBhK7pmkGB3soEJkAE9kQduIi9lGq/4iYGOk2HvncIKFeyt/5A==
+X-Gm-Message-State: AOJu0YxGo7N0iy3JcSa0uO2QcK9n1xOCUcN03kK7vFXsbMBXPOGw0mLi
+	tz2W0V6mXbhENAbBRV5/BzfuK3SIudeQMANO8FXskXyeErzZpEzS1ysduZ1nteCydvU1+gSoKwx
+	WC4YUI93xjqqwsREj+iLtFRklmUw=
+X-Google-Smtp-Source: AGHT+IH+t++T544tPgXHpsm0a1tOuiLQCQxEAsmohdvIVYxfAQt0ye/thNzXQuR0DBvAYffz/QdOdsHhrcWb0fzJRx8=
+X-Received: by 2002:a17:90b:358c:b0:2b4:39cd:250c with SMTP id
+ 98e67ed59e1d1-2b6163a26d2mr3978862a91.8.1715203146579; Wed, 08 May 2024
+ 14:19:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508054250.2922-6-quic_ekangupt@quicinc.com>
+References: <20240508134259.24413-1-nick.forrington@arm.com> <20240508134259.24413-2-nick.forrington@arm.com>
+In-Reply-To: <20240508134259.24413-2-nick.forrington@arm.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 8 May 2024 14:18:54 -0700
+Message-ID: <CAM9d7ciQ5idMLWO51JrpNEbFtdtrgz3o0qashX5dL2y1d1MRyw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf lock info: Display both map and thread by default
+To: Nick Forrington <nick.forrington@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ekansh,
+Hello,
 
-kernel test robot noticed the following build errors:
+On Wed, May 8, 2024 at 6:46=E2=80=AFAM Nick Forrington <nick.forrington@arm=
+com> wrote:
+>
+> Change "perf lock info" argument handling to:
+>
+> Display both map and thread info (rather than an error) when neither are
+> specified.
+>
+> Display both map and thread info (rather than just thread info) when
+> both are requested.
+>
+> Signed-off-by: Nick Forrington <nick.forrington@arm.com>
+> ---
+>  tools/perf/Documentation/perf-lock.txt |  4 ++--
+>  tools/perf/builtin-lock.c              | 22 +++++++++++++++++-----
+>  2 files changed, 19 insertions(+), 7 deletions(-)
+>
+> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Document=
+ation/perf-lock.txt
+> index f5938d616d75..57a940399de0 100644
+> --- a/tools/perf/Documentation/perf-lock.txt
+> +++ b/tools/perf/Documentation/perf-lock.txt
+> @@ -111,11 +111,11 @@ INFO OPTIONS
+>
+>  -t::
+>  --threads::
+> -       dump thread list in perf.data
+> +       dump only the thread list in perf.data
+>
+>  -m::
+>  --map::
+> -       dump map of lock instances (address:name table)
+> +       dump only the map of lock instances (address:name table)
+>
+>
+>  CONTENTION OPTIONS
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 230461280e45..d0b8645487ad 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -1483,11 +1483,16 @@ static int dump_info(void)
+>
+>         if (info_threads)
+>                 dump_threads();
+> -       else if (info_map)
+> +
+> +       if (info_map) {
+> +               if (info_threads)
+> +                       fputc('\n', lock_output);
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.9-rc7 next-20240508]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+it seems you need pr_info("\n").  Where does lock_output come from?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ekansh-Gupta/misc-fastrpc-Redesign-remote-heap-management/20240508-134613
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20240508054250.2922-6-quic_ekangupt%40quicinc.com
-patch subject: [PATCH v1 5/5] misc: fastrpc: Add static PD restart support
-config: arm-randconfig-001-20240509 (https://download.01.org/0day-ci/archive/20240509/202405090532.EhFuvhrs-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405090532.EhFuvhrs-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405090532.EhFuvhrs-lkp@intel.com/
+>                 dump_map();
+> -       else {
+> +       }
+> +
+> +       if (!info_threads && !info_map) {
+>                 rc =3D -1;
+> -               pr_err("Unknown type of information\n");
+> +               pr_err("No lock info specified\n");
+>         }
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+I think we can remove this block now.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/goldfishfb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-mipi0a.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6797-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6797-mm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-eth.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-apmixed.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-topckgen.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-infracfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-apmixedsys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-aud.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-mfgcfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-apmixedsys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-topckgen.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-infra_ao.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-ipe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mdp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-wpe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-aud.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-img.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-ipe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-msdc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-apmixedsys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-apu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-rtc-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a23-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-v3s-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-de-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-usb-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/qcom/spm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/rt4831-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_acm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611uxc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/sil-sii8620.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/drm_panel_orientation_quirks.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-spmi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-sccb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/fastrpc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/pcf50633-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cdrom/cdrom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x-control.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/phy/phy-am335x.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/misc/ezusb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/host/ohci-exynos.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/ch341.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/touchscreen/cyttsp_i2c_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-twl.o
-WARNING: modpost: drivers/media/i2c/et8ek8/et8ek8: section mismatch in reference: et8ek8_i2c_driver+0x8 (section: .data) -> et8ek8_remove (section: .exit.text)
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/i2c/uda1342.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-async.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/v4l2-core/v4l2-fwnode.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/flash/leds-rt4505.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/blink/leds-bcm63138.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-arb.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/ingenic-adc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/xilinx-ams.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
->> ERROR: modpost: "qmi_txn_init" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_send_request" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_txn_cancel" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_txn_wait" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_add_lookup" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_handle_init" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_handle_release" [drivers/soc/qcom/pdr_interface.ko] undefined!
->> ERROR: modpost: "qmi_response_type_v01_ei" [drivers/soc/qcom/pdr_interface.ko] undefined!
+Thanks,
+Namhyung
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for QCOM_PDR_HELPERS
-   Depends on [n]: NET [=n]
-   Selected by [m]:
-   - QCOM_FASTRPC [=m] && (ARCH_QCOM [=n] || COMPILE_TEST [=y]) && RPMSG [=m]
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+>         return rc;
+> @@ -2578,9 +2583,9 @@ int cmd_lock(int argc, const char **argv)
+>
+>         const struct option info_options[] =3D {
+>         OPT_BOOLEAN('t', "threads", &info_threads,
+> -                   "dump thread list in perf.data"),
+> +                   "dump the thread list in perf.data"),
+>         OPT_BOOLEAN('m', "map", &info_map,
+> -                   "map of lock instances (address:name table)"),
+> +                   "dump the map of lock instances (address:name table)"=
+),
+>         OPT_PARENT(lock_options)
+>         };
+>
+> @@ -2694,6 +2699,13 @@ int cmd_lock(int argc, const char **argv)
+>                         if (argc)
+>                                 usage_with_options(info_usage, info_optio=
+ns);
+>                 }
+> +
+> +               /* If neither threads nor map requested, display both */
+> +               if (!info_threads && !info_map) {
+> +                       info_threads =3D true;
+> +                       info_map =3D true;
+> +               }
+> +
+>                 /* recycling report_lock_ops */
+>                 trace_handler =3D &report_lock_ops;
+>                 rc =3D __cmd_report(true);
+> --
+> 2.44.0
+>
+>
 
