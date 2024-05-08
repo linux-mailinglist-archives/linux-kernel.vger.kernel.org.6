@@ -1,137 +1,117 @@
-Return-Path: <linux-kernel+bounces-173927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220DF8C079E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:22:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C0D8C07A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63771F21E39
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32A271C21381
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6489012AAD7;
-	Wed,  8 May 2024 23:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="LXoP1o3/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DamMVyl5"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A084512F382;
+	Wed,  8 May 2024 23:24:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946124500F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD10B672;
+	Wed,  8 May 2024 23:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715210554; cv=none; b=A2002oAr0CD/6eaTjfuDJUDwluxsguUe8ppnNEK9SA1M9Q+lsUm+a5IOCcnX9KuNl/9vR8IonVTWh2RT920zQ0IvKjmwZwD5YKW/T2iuMl5A32U55iPAyXTYRmSZuRFCCdmX7PBrfztsVELu+pElpLGzAxrSqCkf1Jv1iuaLhX0=
+	t=1715210641; cv=none; b=gwtRVvPzB8DnxjyMj2c0Hhrp+vAKnrtKFqSdyA2vIz7k1zwT+SfFMSkPW8jU8IB0RQP/lelX1QPU7LJcrHmToQCbPIE1qCFB0HRxpH0z7dz3LaCgKW+r1450P/CqbYW4icdHBn8H2IkizpbnTgVFM6S4z0SEfqF2rqo8CW2xB3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715210554; c=relaxed/simple;
-	bh=lngbHDQsQRj5Hk1X061YNZ2PwKPmOTLgrOxgGJm3xlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1FqJSXnHv1zxOfGFgvsbttO5xNwfkvdzBgZUkf6Xl6BOMQJc16AIkkMDQ7cD/Izm8bubNc5RFVlAjH96Z33ShFo7cAJbQN0cSqA6IhPHnZmApQOFB4U7ZInvqU36/OClbdihjdgv1lH5YO8VdSqMwCSzgNhasGV++eP/4r/ed4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=LXoP1o3/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DamMVyl5; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id EF2B61140165;
-	Wed,  8 May 2024 19:22:29 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 08 May 2024 19:22:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1715210549; x=
-	1715296949; bh=PqBmtiMR6pS/tekKeSNhOa3yqevNRmTxuIESSK02LFc=; b=L
-	XoP1o3/MaG7ZKFLGJn9zRvBzslXe0kASTMbNYLTvh9oLGHqcbTTL7JF07E5lkQUd
-	kNEJxmCnP4b4xzLcLGQA3sEei0QaXHTghCaItqUPu+7PR7/5ftT5t3x5BxYfhPgn
-	oMiGHO/SSoa0Mg9zhABoBocPbMlUaGOBFwhiszLk8FMb7YNb5z0+RqJiYCE+4p58
-	LYelow9xtIa5QNJBhxuHuyag7C6oqDvTY/sO0l5i6aZMWmaP7Mj3anjNDJxkfO0P
-	ezMdTTn4rgmX9MWS/rq5QXK9yf9ahY2fffvZgJd+h580ykX3Fb58rgI2F9rVNpcR
-	eZ7gqVNM7udaX8CDK406A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715210549; x=1715296949; bh=PqBmtiMR6pS/tekKeSNhOa3yqevN
-	RmTxuIESSK02LFc=; b=DamMVyl5VV4JB02JP6Gg309He8zHcpTAouBNipQ07axb
-	aJJGxNLmEDgud1NCzenP+OUoRfJfiSuzzwqiXmXpRz4S0obKKbCeFyUg/ngfI7w9
-	qPkr3C5TzxlXltuyfSPD8Gq1ufWBpAFAnZI4Mi0XT4+VgNJ36LH/R2QynzYAh5YJ
-	VB7JdUyEzcaiviid1DaMu3mSyQlbLoGDgXn4TyujUyzLnb+we4LpT6kN/S3cjCTA
-	rSTCUjP24g8xy57qJZnFZXtG0WCEfh8Savy+/AbqiWair7ObowyRkIrejnmU973s
-	9Z7bpzmk7QWkhHfo44TV8AUk02/EsEizxPcMV83eUw==
-X-ME-Sender: <xms:NQk8Zqs7t7v_OnhC-VlHZmnMu-hqq3MhAWRS219DexdzGyW70ab9mA>
-    <xme:NQk8ZvclOiA7V-yrUoH0xe-LxOwwW91oI6QtwdDniKSgnCVeb3Pnb8P2doTuyAyfB
-    vx9dNzgRtQLXdyrfLc>
-X-ME-Received: <xmr:NQk8Zlxs8h_MenB-tD5zjk97eoAxJ4MFA5OTt7bKyLrcJLoaEhmHW_YhqVxRuKF0pDEgxN-sI8yN_egklIDBmXsSBk-P94lOKQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefuddgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
-    ertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
-    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhte
-    etgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
-    hsrghkrghmohgttghhihdrjhhp
-X-ME-Proxy: <xmx:NQk8ZlM3RlkRmooEL5722T4VR-7oXnq6lSPQuY8LnmBw_nsvD6RyrA>
-    <xmx:NQk8Zq_kYU9F2HkRKzxaNE1MtCMx5DzXi7RuTBTn4cgerCt85tY9_g>
-    <xmx:NQk8ZtU0XtRYl4phR9EcREhxl4WtLWYWolfWnAj4gN_2zTh2aurnpQ>
-    <xmx:NQk8ZjdujezXgOd5eoCKF464krudlM9tQRTvncRNfMrQmgqhAT8YRw>
-    <xmx:NQk8ZsI4vYP--ZOmKsfJKcvixDYopFHPx8pUs4VOgftb7xcP50hCYW8T>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 May 2024 19:22:28 -0400 (EDT)
-Date: Thu, 9 May 2024 08:22:26 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firewire: obsolete usage of *-objs in Makefile for KUnit
- test
-Message-ID: <20240508232226.GA31582@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-References: <20240508105351.532693-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1715210641; c=relaxed/simple;
+	bh=vUTkfLdc7CqIpwGVwaRF5qhEnigzM/XCF5VTlfRUQJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lk8dP6TDSLfePVtj+YfQzueAI/ROZ1YjrskqI5J/W8WbH/lofbuydTzftrNLgqAi6msZP5QeSmUEtwHJXSniMfCQtSaBiXIFcHB6lbe8GhQHtZKzU6UIGX8GetzN4c4rVEyDhvDMPJT+yELmH2sj0cBneFTlTob0voJtqv/PW0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96026C113CC;
+	Wed,  8 May 2024 23:23:59 +0000 (UTC)
+Date: Wed, 8 May 2024 19:23:57 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Mike Rapoport <rppt@kernel.org>, Kees Cook <keescook@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>,
+ linux-mm@kvack.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Tony Luck
+ <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ linux-hardening@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Ross
+ Zwisler <zwisler@google.com>, wklin@google.com, Vineeth Remanan Pillai
+ <vineeth@bitbyteword.org>, Joel Fernandes <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Linus Torvalds
+ <torvalds@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+Subject: Re: [POC][RFC][PATCH 1/2] mm/x86: Add wildcard * option as
+ memmap=nn*align:name
+Message-ID: <20240508192357.72bfcb81@rorschach.local.home>
+In-Reply-To: <CAMj1kXG3jiLahONhPkKD0VSngDnMQoUCkDmoCsWEzOHDZmhTiA@mail.gmail.com>
+References: <20240409210254.660888920@goodmis.org>
+	<20240409211351.075320273@goodmis.org>
+	<202404091521.B63E85D@keescook>
+	<20240409191156.5f92a15c@gandalf.local.home>
+	<202404091638.2F98764A41@keescook>
+	<Zhmgm86tzpanoweB@kernel.org>
+	<20240412181940.3e1d99f7@gandalf.local.home>
+	<202404151017.FC002AA5@keescook>
+	<ZjJYV7ak5ApgNTBx@kernel.org>
+	<CAMj1kXG3jiLahONhPkKD0VSngDnMQoUCkDmoCsWEzOHDZmhTiA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508105351.532693-1-o-takashi@sakamocchi.jp>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 07:53:51PM +0900, Takashi Sakamoto wrote:
-> Nowadays *-objs list is just for user space programs.
+On Mon, 6 May 2024 12:38:32 +0200
+Ard Biesheuvel <ardb@kernel.org> wrote:
+
+
+> The logic in arch/x86/boot/compressed/kaslr.c is now only used by non-EFI boot.
 > 
-> This commit obsolete the usage, and simplify Makefile for firewire KUnit
-> tests since the tests are not composite objects.
+> In general, I am highly skeptical that hopes and prayers are enough to
+> prevent the firmware from stepping on such a region, unless this is
+> only a best effort thing, and failures are acceptable. For instance,
+
+I would be very happy with just a "best effort" approach. I think
+kexec/kdump has the same issue and it hasn't been a problem in practice.
+
+> booting an EFI system with/without an external display attached, or
+> with a USB device inserted (without even using it during boot) will
+> impact the memory map, to the extent that the E820 table derived from
+> it may look different. (EFI tries to keep the runtime regions in the
+> same place but the boot-time regions are allocated/freed on demand)
+
+Part of my requirement was that the system is exactly the same (no
+changes to hardware or even the kernel).
+
 > 
-> Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> ---
->  drivers/firewire/Makefile | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/firewire/Makefile b/drivers/firewire/Makefile
-> index 013e1f2641bd..75c47d046925 100644
-> --- a/drivers/firewire/Makefile
-> +++ b/drivers/firewire/Makefile
-> @@ -16,8 +16,5 @@ obj-$(CONFIG_FIREWIRE_NET)  += firewire-net.o
->  obj-$(CONFIG_FIREWIRE_NOSY) += nosy.o
->  obj-$(CONFIG_PROVIDE_OHCI1394_DMA_INIT) += init_ohci1394_dma.o
->  
-> -firewire-uapi-test-objs += uapi-test.o
-> -firewire-packet-serdes-test-objs += packet-serdes-test.o
-> -
-> -obj-$(CONFIG_FIREWIRE_KUNIT_UAPI_TEST) += firewire-uapi-test.o
-> -obj-$(CONFIG_FIREWIRE_KUNIT_PACKET_SERDES_TEST) += firewire-packet-serdes-test.o
-> +obj-$(CONFIG_FIREWIRE_KUNIT_UAPI_TEST) += uapi-test.o
-> +obj-$(CONFIG_FIREWIRE_KUNIT_PACKET_SERDES_TEST) += packet-serdes-test.o
-> -- 
-> 2.43.0
+> So I would strongly urge to address this properly, and work with
+> firmware folks to define some kind of protocol for this.
 
-Applied to for-next branch.
+We could possibly add that later, but honesty, that is something that I
+doubt would ever happen. You would have to get buy-in from all firmware
+stakeholders. I'm not sure if this is a big enough use case for them to
+even take a look at it.
 
+The main use case for this work is for pstore to have crash information
+of what happened up to the crash. In 99.99% of the time, the firmware
+or kaslr will not use the memory that was needed, and you can get very
+useful information from the crash info. If the pstore is moved, it
+should be able to see that the memory is garbage and just reset it.
 
-Regards
+Note that we can not use kexec/kdump in the field for various reasons,
+and I need a way to reserve memory for several different devices (both
+x86 and arm).
 
-Takashi Sakamoto
+-- Steve
 
