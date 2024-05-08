@@ -1,226 +1,109 @@
-Return-Path: <linux-kernel+bounces-172876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D882D8BF7F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:04:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA8E8BF7D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15D0EB21FD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05FA1285F2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E493E494;
-	Wed,  8 May 2024 08:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="N/RL/99i"
-Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.ad.secure-endpoints.com [208.125.0.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D6B3B1AA;
+	Wed,  8 May 2024 07:58:10 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E313D54C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C453D2C6B2
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 07:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155459; cv=none; b=h0R9G/c41iJmg02ck/AczZueh9YyM8SS/74rlpIFnlKrPAJmEQz+Apqre9zaU02d8mJSSfTnS8SckNuQo/mEztQ8ntDnEDjuWltMWx/w38b9rVi7a7GoJHHJdxxf0/e6Qf1RWBgrgZhv2IG2lPauhaRD9yQithcoTkvBK2cO8CM=
+	t=1715155090; cv=none; b=jbCEEg9Np13cy6VTHx0RrosIinJ8GyvcuDYTkYsGMoNzWgmgnDOuvtWXARaKNrWmRQ/r8c4sXGTgSzzigldDw7FFDwgzHRlyl4hDhydrs8Kb6kwaiH+ZESa4P4SD1cORID5jM23/w9rt+gR0lJHLVBTycJqoQrnmdU4ue2JSNNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155459; c=relaxed/simple;
-	bh=fnAGjN3WXf6Gf+kzeLVB8Y1WbqKeRRlANUtvCPGb+fs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=STZfF0GLnONZxFrSktziLUSMB6Lg7qZXz2F3ltd8ZpzQgptudz7H2sqYeXdAOmKmsduWadeyCrfFeuZmrXv9noxTD21WSmoZMXqiYRVfcNI8qDtShbanvk/WMI84kW6rnq1aK9xiiMiuQC3dIEq6WIk+eW3XXljizpiWv9cYMZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=N/RL/99i; arc=none smtp.client-ip=208.125.0.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
-	d=auristor.com; s=MDaemon; r=y; t=1715155089; x=1715759889;
-	i=jaltman@auristor.com; q=dns/txt; h=Content-Type:Mime-Version:
-	Subject:From:In-Reply-To:Date:Cc:Content-Transfer-Encoding:
-	Message-Id:References:To; bh=OOGFqnrRmLyMJdtPJTcV8eMaia1HruvhmH/
-	XgAfJZ68=; b=N/RL/99itCm4Gb2jZ5L7LGt3pcw7Io9Nkq763XsoMrgFNpKZ77Q
-	xSSa5swVv0Am1KmFo6VwFpivejc8p6oI5+mgov5NIMUU011A4XIsVeixf7GSKj/E
-	CMwqA+g4vb1DjjI0jH51WaEgICTmmFUm78SDtYidAN6evMOkktW/g/q4=
-X-MDAV-Result: clean
-X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Wed, 08 May 2024 03:58:09 -0400
-Received: from smtpclient.apple [(146.70.168.190)] by auristor.com (208.125.0.235) (MDaemon PRO v24.0.0c) 
-	with ESMTPSA id md5001003915906.msg; Wed, 08 May 2024 03:58:07 -0400
-X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Wed, 08 May 2024 03:58:07 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 146.70.168.190
-X-MDHelo: smtpclient.apple
-X-MDArrival-Date: Wed, 08 May 2024 03:58:07 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=1858b13987=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-kernel@vger.kernel.org
-Content-Type: multipart/signed;
-	boundary="Apple-Mail=_D836D061-CAAF-425C-8204-6F0770CDD582";
-	protocol="application/pkcs7-signature";
-	micalg=sha-256
+	s=arc-20240116; t=1715155090; c=relaxed/simple;
+	bh=uWM00LTb29R7wXe11vLiSA1AF/FT232XqVRFnb/7+uQ=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=kqqQF+5uYFGzppAmeA/w7TXkkmN9yldgOX2GzF3trk6Zhbhp1j8zKzox0dcpoW7e8u9gOUrtrCIVU+EtxgVelaRo5ZCicbIAFEVzDy6UFqJn1W9GpOF+zAKHft18xGTqFcCZO1WpI0oJyCfXQrzEAmYiZdP0y4x/c17RmscHX5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZ6qf53pwztT2C;
+	Wed,  8 May 2024 15:54:38 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id A72751800B8;
+	Wed,  8 May 2024 15:58:04 +0800 (CST)
+Received: from [10.173.135.154] (10.173.135.154) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 8 May 2024 15:58:04 +0800
+Subject: Re: [PATCH 2/3] mm/madvise: Add MF_ACTION_REQUIRED to
+ madvise(MADV_HWPOISON)
+To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240501232458.3919593-1-jane.chu@oracle.com>
+ <20240501232458.3919593-3-jane.chu@oracle.com>
+ <0c7dbf7d-dcb6-f9f2-4a2a-9700ea465a47@huawei.com>
+ <c37e5aac-3bc7-4013-b58a-e29c6bfbfd1f@oracle.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <0268cba2-807c-d7c8-952f-a81f52d45d15@huawei.com>
+Date: Wed, 8 May 2024 15:58:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH net 0/5] rxrpc: Miscellaneous fixes
-From: Jeffrey Altman <jaltman@auristor.com>
-In-Reply-To: <20240507194447.20bcfb60@kernel.org>
-Date: Wed, 8 May 2024 01:57:43 -0600
-Cc: David Howells <dhowells@redhat.com>,
- netdev@vger.kernel.org,
- Marc Dionne <marc.dionne@auristor.com>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- linux-afs@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <955B77FD-C0C2-479E-9D85-D2F62E3DA48C@auristor.com>
-References: <20240503150749.1001323-1-dhowells@redhat.com>
- <20240507194447.20bcfb60@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-MDCFSigsAdded: auristor.com
+MIME-Version: 1.0
+In-Reply-To: <c37e5aac-3bc7-4013-b58a-e29c6bfbfd1f@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
+On 2024/5/7 3:54, Jane Chu wrote:
+> On 5/5/2024 12:02 AM, Miaohe Lin wrote:
+> 
+>> On 2024/5/2 7:24, Jane Chu wrote:
+>>> The soft hwpoison injector via madvise(MADV_HWPOISON) operates in
+>>> a synchrous way in a sense, the injector is also a process under
+>>> test, and should it have the poisoned page mapped in its address
+>>> space, it should legitimately get killed as much as in a real UE
+>>> situation.
+>> Will it be better to add a method to set MF_ACTION_REQUIRED explicitly when inject soft hwpoison?
+>> Thanks.
+> 
+> So the first question is: Is there a need to preserve the existing behavior of  madvise(MADV_HWPOISON)?
+> 
+> The madvise(2) man page says -
+> 
+>        *MADV_HWPOISON *(since Linux 2.6.32)
+>               Poison the pages in the range specified by/addr/  and/length/
+>               and handle subsequent references to those pages like a
+>               hardware memory corruption.  This operation is available
+>               only for privileged (*CAP_SYS_ADMIN*) processes.  This
+>               operation may result in the calling process receiving a
+>               *SIGBUS *and the page being unmapped.
+> 
+>               This feature is intended for testing of memory error-
+>               handling code; it is available only if the kernel was
+>               configured with*CONFIG_MEMORY_FAILURE*.
+> 
+> And the impression from my reading is that: there doesn't seem to be a need.
+> 
+> A couple observations -
+> - The man page states that the calling process may receive a SIGBUS and the page being unmapped.
+> But the existing behavior is no SIGBUS unless MCE early kill is elected, so it doesn't quite match
+> the man page.
+> - There is 'hwpoison-inject' which behaves similar to the existing madvise(MADV_HWPOISON), that is,
+> soft inject without MF_ACTION_REQUIRED flag.
+> 
 
---Apple-Mail=_D836D061-CAAF-425C-8204-6F0770CDD582
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
-
-
-> On May 7, 2024, at 8:44=E2=80=AFPM, Jakub Kicinski <kuba@kernel.org> =
-wrote:
->=20
-> On Fri,  3 May 2024 16:07:38 +0100 David Howells wrote:
->> Here some miscellaneous fixes for AF_RXRPC:
->>=20
->> (1) Fix the congestion control algorithm to start cwnd at 4 and to =
-not cut
->>  ssthresh when the peer cuts its rwind size.
->>=20
->> (2) Only transmit a single ACK for all the DATA packets glued =
-together
->>  into a jumbo packet to reduce the number of ACKs being generated.
->>=20
->> (3) Clean up the generation of flags in the protocol header when =
-creating
->>  a packet for transmission.  This means we don't carry the old
->>  REQUEST-ACK bit around from previous transmissions, will make it
->>  easier to fix the MORE-PACKETS flag and make it easier to do jumbo
->>  packet assembly in future.
->>=20
->> (4) Fix how the MORE-PACKETS flag is driven.  We shouldn't be setting =
-it
->>  in sendmsg() as the packet is then queued and the bit is left in =
-that
->>  state, no matter how long it takes us to transmit the packet - and
->>  will still be in that state if the packet is retransmitted.
->>=20
->> (5) Request an ACK on an impending transmission stall due to the app =
-layer
->>  not feeding us new data fast enough.  If we don't request an ACK, we
->>  may have to hold on to the packet buffers for a significant amount =
-of
->>  time until the receiver gets bored and sends us an ACK anyway.
->=20
-> Looks like these got marked as Rejected in patchwork.
-> I think either because lore is confused and attaches an exchange with
-> DaveM from 2022 to them (?) or because I mentioned to DaveM that I'm
-> not sure these are fixes. So let me ask - on a scale of 1 to 10, how
-> convinced are you that these should go to Linus this week rather than
-> being categorized as general improvements and go during the merge
-> window (without the Fixes tags)?
-
-Jakub,
-
-In my opinion, the first two patches in the series I believe are =
-important to back port to the stable branches.
-
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com =
-<mailto:jaltman@auristor.com>>
-
-Jeffrey
-
-
-
-
---Apple-Mail=_D836D061-CAAF-425C-8204-6F0770CDD582
-Content-Disposition: attachment;
-	filename=smime.p7s
-Content-Type: application/pkcs7-signature;
-	name=smime.p7s
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDHEw
-ggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJBgNVBAYT
-AlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMB4XDTIyMDgw
-NDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0EwMTQxMEQwMDAwMDE4
-MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRtYW4xFTATBgNVBAoTDEF1
-cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCk
-C7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3xHZRtv179LHKAOcsY2jIctzieMxf
-82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyNfO/wJ0rX7G+ges22Dd7goZul8rPaTJBI
-xbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kIEEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq
-4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6
-W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjGIcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAw
-gYQGCCsGAQUFBwEBBHgwdjAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEIGCCsGAQUFBzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2Nl
-cnRzL3RydXN0aWRjYWExMy5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYD
-VR0TBAIwADCCASsGA1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIB
-Fj5odHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5k
-ZXguaHRtbDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJl
-ZW4gaXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmlj
-YXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8vdmFsaWRh
-dGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQYMBaBFGphbHRt
-YW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2sgjAdBgNVHSUEFjAU
-BggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwVeycprp8Ox1npiTyfwc5Q
-aVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4cWLeQfaMrnyNeEuvHx/2CT44c
-dLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYqutYF4Chkxu4KzIpq90eDMw5ajkex
-w+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJoQle4wDxrdXdnIhCP7g87InXKefWgZBF4
-VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXta8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRk
-gIGb319a7FjslV8wggaXMIIEf6ADAgECAhBAAXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUA
-MEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBD
-b21tZXJjaWFsIFJvb3QgQ0EgMTAeFw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIB
-IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6i
-xaNP0JKSjTd+SG5LwqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6i
-qgB63OdHxBN/15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxl
-g+m1Vjgno1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi
-2un03bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkGCCsG
-AQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3Qu
-Y29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL3Jvb3RzL2Nv
-bW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C5yZUyI42djCCASQG
-A1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0dHBzOi8vc2VjdXJlLmlk
-ZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMIG6BggrBgEFBQcC
-AjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMgYmVlbiBpc3N1ZWQgaW4gYWNjb3Jk
-YW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2VydGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0
-IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20v
-Y3JsL2NvbW1lcmNpYWxyb290Y2ExLmNybDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQw
-HQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX
-6Nl4a03cDHt7TLdPxCzFvDF2bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN
-95jUXLdLPRToNxyaoB5s0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24
-GBqqVudvPRLyMJ7u6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azN
-BkfnbRq+0e88QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8Hvgn
-LCBFK2s4Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXF
-C9budb9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4dUsZy
-Tk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJnp/BscizY
-dNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eAMDGCAqYwggKi
-AgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUGA1UEAxMOVHJ1c3RJ
-RCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCgggEpMBgGCSqGSIb3DQEJ
-AzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDUwODA3NTc0M1owLwYJKoZIhvcNAQkE
-MSIEIOvI1o7o3RBhHrydMNY+LyjGKKdZbn4T1gSrSHI4x0J9MF0GCSsGAQQBgjcQBDFQME4wOjEL
-MAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMC
-EEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQAgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYD
-VQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzM
-MA0GCSqGSIb3DQEBCwUABIIBAJSAqsyvXHysXBxBoywxmyaC/FOja91oh/km1wpW4crvs6JGSdO8
-1ljHQAhA/QByvuq1x7fJ5JaQV5yf/A+2vMT6Mi9uYkQztOtzCZ5FX3/9rv/woLflsx9LYuoGjVod
-ccenZ9Nikrl1vxbNV3G100KvD+3efWu6sW3nWK44BQWbPjraCZ/eZD4qID5wtdMitQCpymbmDKCk
-xRLPOIDTsTpS2HuMxNzNky1dwucRLME9985gP72uEw4LOx95evwklTFzeIDV6xPnPNGoE/8DHoCw
-I69v5156EJXF9T7iQPyDSMXtm77DTIueHrXSWRDyX0P2osh7j41koYxvN5rOtMwAAAAAAAA=
---Apple-Mail=_D836D061-CAAF-425C-8204-6F0770CDD582--
-
+I tend to agree with you. It might be a good idea to add MF_ACTION_REQUIRED to madvise(MADV_HWPOISON).
+Thanks.
+.
 
