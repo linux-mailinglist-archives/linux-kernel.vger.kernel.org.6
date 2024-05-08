@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-173244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8418BFD82
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAADC8BFD83
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8083B257AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:45:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09142876CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C8054FBD;
-	Wed,  8 May 2024 12:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0dlrTVYw"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2D36A8A4
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8736F54FBD;
+	Wed,  8 May 2024 12:45:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A89753389
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715172278; cv=none; b=aIq27TtmTRwSFf9q3rcFNVOPd1q+qAcKeXD+gjDgIakDM2JoJ16SRZOkWZuflMLndAqNqyRmsJTJpH1364X4BHrsE0O7WOGrOquJj/k3500rUuIaIqMRfyefSGmGESaXIoxXrtZ8ZucYcxiIalMfKfU3QoeN6slpvYqkQCjjK30=
+	t=1715172303; cv=none; b=NvXaFUUx6oU52hqBZla2805r1cL6eUp327loIyMm9bsm8Uu5no6BQv28T191BZNFlY9UTlleoxt36tjAW95Mb4bIMyfDcDmjfDAyftK5W1qa4rNRjtDBqFAD67uC+iduXcGG+HxEir22lmfZFAB/QICvGlUPcyqMKGJFrXfoMuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715172278; c=relaxed/simple;
-	bh=zmA2+tCDw16RjR/3j2+3tT2/AoPS7qyS7V4GhqwgqXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U5cI9NRNAnww7JbxpO0AiqCE9Sq9WdZW6wshiuP9xIotVGRiYFCRVMtAbPJsU5FEnuPOQCddkj5R5mUBsstPXzKaFZ6M4fAewLTUCuvBfgPk/Fb/4V6B1FBbIl3gY4OQqp2ig3WaD6ZIXObCaaaH1vMz5Y6l7v8eCBYSrDisRGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0dlrTVYw; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715172274;
-	bh=zmA2+tCDw16RjR/3j2+3tT2/AoPS7qyS7V4GhqwgqXw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=0dlrTVYwZFLMOymDDPlJgMbxax0vrGgshPR1ATXjluKj3gCwGqOe5vshSy1Ca1D90
-	 f2l0qTwdyAXKnHmvaT5ORfPUx3ApHfGv4O1Uc9V6fcDd8LU47uHDPX3W4y6qaTgTYA
-	 WBdL/E2V5xvnWpUTjf0ZGE5l/wfenCVvMY7Czjgkdl14CsdLp9eM36npJVbV56HSqF
-	 YPK2E6LM0FudDvRLGaOHGhLh1QGENj7rSoSL2RqZNJvaYR4K/cIQIoXRmwfo5EgVRg
-	 AgwV+NQhFNE2JtQmEKzkAY6jF+apNbGMD09fq1NgcerZdL3UsPDXaKE2EsfCqf16Io
-	 0UCnpCetXVo6A==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C7A863782112;
-	Wed,  8 May 2024 12:44:33 +0000 (UTC)
-Message-ID: <5de7d6af-54ac-49b7-b5c2-fa9381310288@collabora.com>
-Date: Wed, 8 May 2024 14:44:33 +0200
+	s=arc-20240116; t=1715172303; c=relaxed/simple;
+	bh=G6mMO8Hw203WkjN6OLfUWlZeQIa0p1RukkdeLtcAqmg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sTKj3RUV9rJL2nqyrwjmhp95K7QQ6itu8/HT5TzXNmDBUCbzAkCvgdHoI9zlDbjzkEwoSA4DnVlh4SPlxEwxbnjOYbs0uFQvR4xUPrlfrRTwA0osbuz2Gko9CL9rq2UXMXdqTrkp5iCOq9H8AAUthUZwDmK7eb3wgpw5vEgIGtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27F421007;
+	Wed,  8 May 2024 05:45:26 -0700 (PDT)
+Received: from [10.57.67.194] (unknown [10.57.67.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B61523F587;
+	Wed,  8 May 2024 05:44:58 -0700 (PDT)
+Message-ID: <c9d30301-9bca-43bb-b273-bbd0a3fc180d@arm.com>
+Date: Wed, 8 May 2024 13:44:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,209 +41,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailbox: mtk-cmdq: Fix sleeping function called from
- invalid context
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Alexandre Mergnat <amergnat@baylibre.com>,
- Jason-ch Chen <jason-ch.chen@mediatek.com>,
- Johnson Wang <johnson.wang@mediatek.com>,
- Singo Chang <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
- Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- Fei Shao <fshao@chromium.org>
-References: <20240508095143.12023-1-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240508095143.12023-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 5/8] mm: shmem: add multi-size THP sysfs interface for
+ anonymous shmem
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
+ ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
+ ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <6b4afed1ef26dbd08ae9ec58449b329564dcef3e.1714978902.git.baolin.wang@linux.alibaba.com>
+ <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
+ <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
+ <cb458b62-e27d-47d6-8efd-bacdb9da7530@redhat.com>
+ <ff1908f8-0887-403b-8d2a-d83a17895523@redhat.com>
+ <eb3aa3dc-42ee-475a-8b95-d27951c362a1@arm.com>
+ <928c73de-76b0-40d6-a0c3-23d72270ac5c@redhat.com>
+ <28f311ec-9b46-4f28-991c-ac74177acf32@redhat.com>
+ <5c2c70fd-a291-4ca4-b229-dc54e92b3471@arm.com>
+In-Reply-To: <5c2c70fd-a291-4ca4-b229-dc54e92b3471@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Il 08/05/24 11:51, Jason-JH.Lin ha scritto:
-> When we run kernel with lockdebug option, we will get the BUG below:
-> [  106.692124] BUG: sleeping function called from invalid context at drivers/base/power/runtime.c:1164
-> [  106.692190] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 3616, name: kworker/u17:3
-> [  106.692226] preempt_count: 1, expected: 0
-> [  106.692254] RCU nest depth: 0, expected: 0
-> [  106.692282] INFO: lockdep is turned off.
-> [  106.692306] irq event stamp: 0
-> [  106.692331] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> [  106.692376] hardirqs last disabled at (0): [<ffffffee15d37fa0>] copy_process+0xc90/0x2ac0
-> [  106.692429] softirqs last  enabled at (0): [<ffffffee15d37fc4>] copy_process+0xcb4/0x2ac0
-> [  106.692473] softirqs last disabled at (0): [<0000000000000000>] 0x0
-> [  106.692513] CPU: 1 PID: 3616 Comm: kworker/u17:3 Not tainted 6.1.87-lockdep-14133-g26e933aca785 #1 6839942e1cf34914b0a366137843dd2366f52aa9
-> [  106.692556] Hardware name: Google Ciri sku0/unprovisioned board (DT)
-> [  106.692586] Workqueue: imgsys_runner imgsys_runner_func
-> [  106.692638] Call trace:
-> [  106.692662]  dump_backtrace+0x100/0x120
-> [  106.692702]  show_stack+0x20/0x2c
-> [  106.692737]  dump_stack_lvl+0x84/0xb4
-> [  106.692775]  dump_stack+0x18/0x48
-> [  106.692809]  __might_resched+0x354/0x4c0
-> [  106.692847]  __might_sleep+0x98/0xe4
-> [  106.692883]  __pm_runtime_resume+0x70/0x124
-> [  106.692921]  cmdq_mbox_send_data+0xe4/0xb1c
-> [  106.692964]  msg_submit+0x194/0x2dc
-> [  106.693003]  mbox_send_message+0x190/0x330
-> [  106.693043]  imgsys_cmdq_sendtask+0x1618/0x2224
-> [  106.693082]  imgsys_runner_func+0xac/0x11c
-> [  106.693118]  process_one_work+0x638/0xf84
-> [  106.693158]  worker_thread+0x808/0xcd0
-> [  106.693196]  kthread+0x24c/0x324
-> [  106.693231]  ret_from_fork+0x10/0x20
+On 08/05/2024 13:43, Ryan Roberts wrote:
+> On 08/05/2024 13:10, David Hildenbrand wrote:
+>> On 08.05.24 14:02, David Hildenbrand wrote:
+>>> On 08.05.24 11:02, Ryan Roberts wrote:
+>>>> On 08/05/2024 08:12, David Hildenbrand wrote:
+>>>>> On 08.05.24 09:08, David Hildenbrand wrote:
+>>>>>> On 08.05.24 06:45, Baolin Wang wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 2024/5/7 18:52, Ryan Roberts wrote:
+>>>>>>>> On 06/05/2024 09:46, Baolin Wang wrote:
+>>>>>>>>> To support the use of mTHP with anonymous shmem, add a new sysfs interface
+>>>>>>>>> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
+>>>>>>>>> directory for each mTHP to control whether shmem is enabled for that mTHP,
+>>>>>>>>> with a value similar to the top level 'shmem_enabled', which can be set to:
+>>>>>>>>> "always", "inherit (to inherit the top level setting)", "within_size",
+>>>>>>>>> "advise",
+>>>>>>>>> "never", "deny", "force". These values follow the same semantics as the top
+>>>>>>>>> level, except the 'deny' is equivalent to 'never', and 'force' is
+>>>>>>>>> equivalent
+>>>>>>>>> to 'always' to keep compatibility.
+>>>>>>>>
+>>>>>>>> We decided at [1] to not allow 'force' for non-PMD-sizes.
+>>>>>>>>
+>>>>>>>> [1]
+>>>>>>>> https://lore.kernel.org/linux-mm/533f37e9-81bf-4fa2-9b72-12cdcb1edb3f@redhat.com/
+>>>>>>>>
+>>>>>>>> However, thinking about this a bit more, I wonder if the decision we made to
+>>>>>>>> allow all hugepages-xxkB/enabled controls to take "inherit" was the wrong
+>>>>>>>> one.
+>>>>>>>> Perhaps we should have only allowed the PMD-sized enable=inherit (this is
+>>>>>>>> just
+>>>>>>>> for legacy back compat after all, I don't think there is any use case where
+>>>>>>>> changing multiple mTHP size controls atomically is actually useful).
+>>>>>>>> Applying
+>>>>>>>
+>>>>>>> Agree. This is also our usage of 'inherit'.
+>>>>>
+>>>>> Missed that one: there might be use cases in the future once we would start
+>>>>> defaulting to "inherit" for all knobs (a distro might default to that) and
+>>>>> default-enable THP in the global knob. Then, it would be easy to disable any
+>>>>> THP
+>>>>> by disabling the global knob. (I think that's the future we're heading to,
+>>>>> where
+>>>>> we'd have an "auto" mode that can be set on the global toggle).
+>>>>>
+>>>>> But I am just making up use cases ;) I think it will be valuable and just doing
+>>>>> it consistently now might be cleaner.
+>>>>
+>>>> I agree that consistency between enabled and shmem_enabled is top priority. And
+>>>> yes, I had forgotten about the glorious "auto" future. So probably continuing
+>>>> all sizes to select "inherit" is best.
+>>>>
+>>>> But for shmem_enabled, that means we need the following error checking:
+>>>>
+>>>>    - It is an error to set "force" for any size except PMD-size
+>>>>
+>>>>    - It is an error to set "force" for the global control if any size except
+>>>> PMD-
+>>>>      size is set to "inherit"
+>>>>
+>>>>    - It is an error to set "inherit" for any size except PMD-size if the global
+>>>>      control is set to "force".
+>>>>
+>>>> Certainly not too difficult to code and prove to be correct, but not the nicest
+>>>> UX from the user's point of view when they start seeing errors.
+>>>>
+>>>> I think we previously said this would likely be temporary, and if/when tmpfs
+>>>> gets mTHP support, we could simplify and allow all sizes to be set to "force".
+>>>> But I wonder if tmpfs would ever need explicit mTHP control? Maybe it would be
+>>>> more suited to the approach the page cache takes to transparently ramp up the
+>>>> folio size as it faults more in. (Just saying there is a chance that this error
+>>>> checking becomes permanent).
+>>>
+>>> Note that with shmem you're inherently facing the same memory waste
+>>> issues etc as you would with anonymous memory. (sometimes even worse, if
+>>> you're running shmem that's configured to be unswappable!).
+>>
+>> Also noting that memory waste is not really a problem when a write to a shmem
+>> file allocates a large folio that stays within boundaries of that write; issues
+>> only pop up if you end up over-allocating, especially, during page faults where
+>> you have not that much clue about what to do (single address, no real range
+>> provided).
+>>
+>> There is the other issue that wasting large chunks of contiguous memory on stuff
+>> that barely benefits from it. With memory that maybe never gets evicted, there
+>> is no automatic "handing back" of that memory to the system to be used by
+>> something else. With ordinary files, that's a bit different. But I did not look
+>> closer into that issue yet, it's one of the reasons MADV_HUGEPAGE was added IIRC.
 > 
-> We found that there is a spin_lock_irqsave protection in msg_submit()
-> of mailbox.c and it is in the atomic context.
-> So when cmdq driver calls pm_runtime_get_sync() in cmdq_mbox_send_data(),
-> it will get this BUG report.
-> 
-> 1. Change pm_runtime_get_sync() to pm_runtime_get() to avoid using sleep
->     in atomic context.
-> 2. Move clk_bulk_enable() outside cmdq_runtime_resume() to ensure GCE
->     clocks are enabled before configuring GCE register.
-> 3. Add used_count to avoid cmdq_runtime_suspend() being called before
->     calling cmdq_runtime_resume().
-> 
-> Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM with autosuspend")
-> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-> ---
->   drivers/mailbox/mtk-cmdq-mailbox.c | 24 +++++++++++++++---------
->   1 file changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-> index 033aff11f87c..b50f42e69aab 100644
-> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
-> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-> @@ -82,6 +82,7 @@ struct cmdq {
->   	const struct gce_plat	*pdata;
->   	struct cmdq_thread	*thread;
->   	struct clk_bulk_data	clocks[CMDQ_GCE_NUM_MAX];
-> +	atomic_t		used_count;
->   	bool			suspended;
->   };
->   
-> @@ -317,14 +318,21 @@ static int cmdq_runtime_resume(struct device *dev)
->   {
->   	struct cmdq *cmdq = dev_get_drvdata(dev);
->   
-> -	return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
-> +	atomic_inc(&cmdq->used_count);
-> +	return 0;
->   }
->   
->   static int cmdq_runtime_suspend(struct device *dev)
->   {
->   	struct cmdq *cmdq = dev_get_drvdata(dev);
->   
-> +	if (atomic_read(&cmdq->used_count) == 0) {
-> +		dev_warn(dev, "%s when used_count is 0!", __func__);
-> +		return -EINVAL;
-> +	}
-> +
->   	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
-> +	atomic_dec(&cmdq->used_count);
->   	return 0;
->   }
->   
-> @@ -392,9 +400,8 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
->   	/* Client should not flush new tasks if suspended. */
->   	WARN_ON(cmdq->suspended);
->   
-> -	ret = pm_runtime_get_sync(cmdq->mbox.dev);
-> -	if (ret < 0)
-> -		return ret;
-> +	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
+> OK understood. Although, with tmpfs you're not going to mmap it then randomly
+> extend the file through page faults - mmap doesn't permit that, I don't think?
+> So presumably the user must explicitly set the size of the file first? Are you
+> suggesting there are a lot of use cases where a large tmpfs file is created,
+> mmaped then only accessed sparsely?
 
-That's a bit sketchy, and I'm afraid that this will break in some other ways.
-
-We could - again - simply change the msg_submit() function in mailbox.c, so that
-it takes into account that a driver may need PM done.
-
-A low effort example (which may be good enough or not) is:
-
-static void msg_submit(struct mbox_chan *chan)
-{
-	unsigned count, idx;
-	unsigned long flags;
-	void *data;
-	int err;
-
-	if (chan->mbox->ops->pm_off) {
-		err = chan->mbox->ops->pm_on();
-		if (err)
-			return err;
-	}
-
-	spin_lock_irqsave(&chan->lock, flags);
-
-	if (!chan->msg_count || chan->active_req) {
-		err = -EBUSY;
-		goto exit;
-	}
-
-	......
-
-	exit:
-	spin_unlock_irqrestore(&chan->lock, flags);
-
-	if (!err && (chan->txdone_method & TXDONE_BY_POLL)) {
-		/* kick start the timer immediately to avoid delays */
-		spin_lock_irqsave(&chan->mbox->poll_hrt_lock, flags);
-		hrtimer_start(&chan->mbox->poll_hrt, 0, HRTIMER_MODE_REL);
-		spin_unlock_irqrestore(&chan->mbox->poll_hrt_lock, flags);
-	}
-
-/* I guess setting it OFF can't fail anyway, so this would be a void function */
-	if (chan->mbox->ops->pm_off)
-		chan->mbox->ops->pm_off();
-}
-
-
-Then we can wire up the two functions in the MediaTek driver - where our mailbox
-only simply needs pm_runtime_get_sync() and pm_runtime_put().
-
-The reason why I'm suggesting a callback is that this would catch the case of
-mailboxes that need "more complicated" flows for ON/OFF.
-
-Jassi, do you like the idea?
-
-If you do, I can eventually go for a real commit with better names than pm_off/on
-if I can find any - so that then Jason can go on with his mtk-cmdq fix on top of
-that.
-
-Cheers,
-Angelo
-
-> +	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
->   
->   	task = kzalloc(sizeof(*task), GFP_ATOMIC);
->   	if (!task) {
-> @@ -465,7 +472,8 @@ static void cmdq_mbox_shutdown(struct mbox_chan *chan)
->   	struct cmdq_task *task, *tmp;
->   	unsigned long flags;
->   
-> -	WARN_ON(pm_runtime_get_sync(cmdq->mbox.dev) < 0);
-> +	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
-> +	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
->   
->   	spin_lock_irqsave(&thread->chan->lock, flags);
->   	if (list_empty(&thread->task_busy_list))
-> @@ -507,11 +515,9 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
->   	struct cmdq_task *task, *tmp;
->   	unsigned long flags;
->   	u32 enable;
-> -	int ret;
->   
-> -	ret = pm_runtime_get_sync(cmdq->mbox.dev);
-> -	if (ret < 0)
-> -		return ret;
-> +	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
-> +	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
->   
->   	spin_lock_irqsave(&thread->chan->lock, flags);
->   	if (list_empty(&thread->task_busy_list))
+I know that's often the case for anon memory, but not sure if you would expect
+the same pattern with an explicit file?
 
 
