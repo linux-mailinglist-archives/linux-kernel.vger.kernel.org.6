@@ -1,106 +1,107 @@
-Return-Path: <linux-kernel+bounces-173609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E508C02D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:15:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE948C02E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E769CB22AC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18675281781
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31BF2524AF;
-	Wed,  8 May 2024 17:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5C84BA94;
+	Wed,  8 May 2024 17:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="H9DTgRrM"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AzTUe/15"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E886A63E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5740C63E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188537; cv=none; b=TForp98tm/9KUsC8ifA8jMzE6kv2g8HBOmXNVcDCGVSjVhxGRzML3rPZzkmlyO5I9a5NHVPiwLRU9vgt2lyFGxAh6wrrMtbUnAu2NY7coZvzVP8HSda2EWfD6AnttSaO2IwikRLgamMA2LKeSYxKfYUBvT3qSiNXq85d5VpMNrQ=
+	t=1715188663; cv=none; b=kkF6AM5tHKPC1cPNAEyndSsIgeLyAgWWpyfqmKBlHwHcogzP9D16gcU9RHmhQcDhlVhFVTNw2tjHM1O0LDGIKKCmYpZUoHCiqDeMvra1Pv5e7gQrOFTUNNUjTDjLklLkxiZ6A3VwUmRwthbT9ujQPJdgcKjiv/io/R3gfCZCkRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715188537; c=relaxed/simple;
-	bh=CPDYOJthGwxvd6Ww1/rBsQAd3NnJHGJPANIpBp0Zf0k=;
+	s=arc-20240116; t=1715188663; c=relaxed/simple;
+	bh=Kxn1OpXajAC4QAVxlaCCK4ZVHRi/UjZM97fUkWUoxJE=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UEEiJAguwmB7cEvX2T3xpxxAeCViX5+lpdiRFeZLkmNQkfQcy3o8sd6tewMRG6TlHt1CPeZyDhWe45kqNLKW/9EubewGukwRVXRZ+IbNo4CsZTMpupyjfgd3HH6fNsRynBDS4skrilYChluJTflUycOz6QKhSO+Zn3qUrKhTrfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=H9DTgRrM; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1715188528;
-	bh=CPDYOJthGwxvd6Ww1/rBsQAd3NnJHGJPANIpBp0Zf0k=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=H9DTgRrMRH2cfFgHxweDWIGneBqH6vz46oKu6AgtazBfQzt2RHmP0t4nyzHCZGzwu
-	 WYrVvxt+ctAp/iKmq1/DBV3JvdeSQ6J0omjTwrSNvlDduxZyawEOCU32CvXkDYKY+/
-	 O6ONFbiBAuGcg+D+V1iEuLiGSr+4j7JETim4j39s=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id DE8AD40926; Wed,  8 May 2024 10:15:28 -0700 (PDT)
+	 MIME-Version:Content-Type; b=PLTle7Dju4HcHYT7RSkaRKeWvI7qJqL7SGY699d4l1o67eV6AJOE7dh7BTiGx9gqGIgL5VJhQynBQz6zXeV+rz+FsA6/GpjOIEuxPaNsZofU+VbSadM/58kX3y27YZ6gIamps7eXyxhc0GlxyUVQow9YH4DWVWOw3FRZDcBhByo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AzTUe/15; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715188661;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RgumTHjw5lWA0kR5RCBEM/DVrmph4hHsyV7IvxPwa1U=;
+	b=AzTUe/15julYSZIpXWc9dWrh9ihMCAGi5cjUr6IPeIfCQQaA1inLTAR8f5VNqZ8TUeiAdi
+	yeAlrhFJceZ63+oMCVpl0khLfl6mLI/ptx0jz2qT/SBmO2BvxU6P0uiuRFvW+JsQ3V5sSY
+	GPsAM2jutWfjIKGVGnrsksXpnPsA6Lg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-xjcmPchrNO2ZGK2OhCc-NQ-1; Wed, 08 May 2024 13:17:36 -0400
+X-MC-Unique: xjcmPchrNO2ZGK2OhCc-NQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 29F60101A551;
+	Wed,  8 May 2024 17:17:35 +0000 (UTC)
+Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id BCD8A1C066AC;
+	Wed,  8 May 2024 17:17:34 +0000 (UTC)
+Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
+	id 9EA9C30C2BDF; Wed,  8 May 2024 17:17:34 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id DCFF540925;
-	Wed,  8 May 2024 10:15:28 -0700 (PDT)
-Date: Wed, 8 May 2024 10:15:28 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-cc: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com, 
-    will@kernel.org, scott@os.amperecomputing.com, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-In-Reply-To: <c9c3c0d5-bb61-4eed-8b89-b0341a2c6f5c@arm.com>
-Message-ID: <c1ba9ba3-b0d6-4c6c-d628-614751d737c2@gentwo.org>
-References: <20240507223558.3039562-1-yang@os.amperecomputing.com> <c9c3c0d5-bb61-4eed-8b89-b0341a2c6f5c@arm.com>
+	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 986D73E5E0;
+	Wed,  8 May 2024 19:17:34 +0200 (CEST)
+Date: Wed, 8 May 2024 19:17:34 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Fan Wu <wufan@linux.microsoft.com>
+cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, 
+    tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, 
+    snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com, 
+    linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+    linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+    linux-block@vger.kernel.org, dm-devel@lists.linux.dev, 
+    audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v18 12/21] dm: add finalize hook to target_type
+In-Reply-To: <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com>
+Message-ID: <aa767961-5e3-2ceb-1a1e-ff66a8eed649@redhat.com>
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com> <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Wed, 8 May 2024, Anshuman Khandual wrote:
 
->> The atomic RMW instructions, for example, ldadd, actually does load +
->> add + store in one instruction, it may trigger two page faults, the
->> first fault is a read fault, the second fault is a write fault.
->
-> It may or it will definitely create two consecutive page faults. What
-> if the second write fault never came about. In that case an writable
-> page table entry would be created unnecessarily (or even wrongfully),
-> thus breaking the CoW.
 
-An atomic RMV will always perform a write? If there is a read fault 
-then write fault will follow.
+On Fri, 3 May 2024, Fan Wu wrote:
 
->> Some applications use atomic RMW instructions to populate memory, for
->> example, openjdk uses atomic-add-0 to do pretouch (populate heap memory
->
-> But why cannot normal store operation is sufficient for pre-touching
-> the heap memory, why read-modify-write (RMW) is required instead ?
+> This patch adds a target finalize hook.
+> 
+> The hook is triggered just before activating an inactive table of a
+> mapped device. If it returns an error the __bind get cancelled.
+> 
+> The dm-verity target will use this hook to attach the dm-verity's
+> roothash metadata to the block_device struct of the mapped device.
+> 
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-Sure a regular write operation is sufficient but you would have to modify 
-existing applications to get that done. x86 does not do a read fault on 
-atomics so we have an issue htere.
+Hi
 
-> If the memory address has some valid data, it must have already reached there
-> via a previous write access, which would have caused initial CoW transition ?
-> If the memory address has no valid data to begin with, why even use RMW ?
+Why not use the preresume callback?
 
-Because the application can reasonably assume that all uninitialized data 
-is zero and therefore it is not necessary to have a prior write access.
+Is there some reason why do we need a new callback instead of using the 
+existing one?
 
->> Some other architectures also have code inspection in page fault path,
->> for example, SPARC and x86.
->
-> Okay, I was about to ask, but is not calling get_user() for all data
-> read page faults increase the cost for a hot code path in general for
-> some potential savings for a very specific use case. Not sure if that
-> is worth the trade-off.
-
-The instruction is cache hot since it must be present in the cpu cache for 
-the fault. So the overhead is minimal.
+Mikulas
 
 
