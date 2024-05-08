@@ -1,142 +1,261 @@
-Return-Path: <linux-kernel+bounces-172698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88AA8BF593
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:34:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95848BF595
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 767F7B22A2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:34:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09EA51C23C89
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD1D17BA7;
-	Wed,  8 May 2024 05:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="j88ccihM"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF314179AF;
+	Wed,  8 May 2024 05:36:21 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E12E15E88
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807BA171B0
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715146460; cv=none; b=owSHh8tWjDboVNLZlEgoYAgu0uuBidgrgD6leYQO9acX/H1tSglZNPCVqB0NwpDahph8kpBnl6wjtd4TukeAyaRzoXYqAwMClbv6lI6qdvq5/c+xpaOPbHzYdrjAdgiTGjLApDrOtQFCZBxaqr3eA6AUpMd1zHZHrpLXUCCa1aM=
+	t=1715146581; cv=none; b=Y+2hqNaeYlthZ641/yCwq/sLZHPot7NqF3iE7oCsfPTbHP4RN/GVFasodcqMxY0T0LZ7Ei5FEP5mpNuyRRPywPLZNT/xx10Mof/D3SkRmtzMdd5kQkuRELoSHHYnSQ0hdDHACQg0ZAPMPgzLyKa7jDlDF/L3QrxhNJDXsrdF3Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715146460; c=relaxed/simple;
-	bh=Mgc4qvmHI5USLX4TSJDzE/lN4QyO/e2B1pGdj7DbaaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n6LTurs2EqtsYgWEIknbzeFcW85JHeOgVAIrwU05IVwkUpaePL+5SyGtr1giVx1Nay9dp9u/82FiiiMVsIy3ApgGh6LxEHsjkfLVBrjkBcSwkwu1JRrfjJK3PZ4hNFos0YbGBwPtojuKXv1aPfmIHjuWTp5D0PWAlZvb9mbjPEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=j88ccihM; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so3166168b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1715146458; x=1715751258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fXT/Ht6B5HpOzfTzjvvlcw2AzVRmZ1Sdv0MVJNtZ0AM=;
-        b=j88ccihMcOAO/pW9IWO2VnDt8+i5GMktEE2DgjBrQFnnrmjmMfvToiDkXjfg18HqDM
-         Chwj0dVx7JIfRhdvhiwLGn1C+XKiEpGqNYG5g9QyQPijPaO+hoXZC+h9Fix0qQqNOroI
-         cr+/SAg52MxCeLuavjetnd+EFdtB7riq6XcuA+lXOhkk9O4Kdrp3Op6SvzFQndVU1wYB
-         g2uydNYRPyXIAIZ1v5Z5YNVTn4OdCZQ1XrCVZ3La0r+uZrqFDsHYe4TzerfuH0S7UQz4
-         ASWLpDq+tXV25IEKlpMbBGNd5MeDFEer52xwNmdAXp4Mq2F5GHT6uXO6U/ZCydnOuGH5
-         6Vng==
+	s=arc-20240116; t=1715146581; c=relaxed/simple;
+	bh=S4gEHYymC1ch3jS4q9sF0xemJerl9APW68Fzqb0/fXM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j+PmdDfXesSybNhm8cfuMWsn6JXi4vfiCc4Wo3z8NvBiW/YblN7GzxutIvTZkCYC0ZZIUDwDHflGkbYcOQINt5Dt9eLLt0c7+SqHHJqKqBOheVbzWu5oLk14NgQPCYDleJ2Ec4OA3p1Nin2xwXHZn3vg+xsLTWeJ57DivEozuGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36b3b387b4eso48250035ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:36:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715146458; x=1715751258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1715146579; x=1715751379;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXT/Ht6B5HpOzfTzjvvlcw2AzVRmZ1Sdv0MVJNtZ0AM=;
-        b=QyoB05QNiyu5mvO26bOEz6/+2sLUi8Bs5DDZFO/UD9bePz1Y2i1EZ7y+Z29TGKFsr4
-         zwHtQ5l2BAmrMcSWnOMzKYIcUeQDAAxDudfUMZ08qYQr4Ci2/jL2ZB+n0717jgNkEUbb
-         L+960lvCwxvgt1Pn9T0MwwDlT5ovKqXwB85zWvjCaKTRct969/YzkpOLRX6vj6+h/oIA
-         dsQhVPXmbDsWxbSQAgiBxGdR3KvnLxKT8JLVWeerVRpsmjXw0t4sGlYfjcvF3h8c35r7
-         e6Yh8mVKBwkFeK3OHTQBKW1X1/Z/uBsLj57qVky4z1c9+huOYs4ejbo2TgmSQLI4XlDd
-         W/Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWet+DExcfXHgQp0A6CwDD5BqYY1GNd3ThABp86YV6Nj7/l2uIqBJz4bkRfqoZNI73KRD/kihrlariq2fk9BUP+IrcCd/FwUkx4rOts
-X-Gm-Message-State: AOJu0Yw3AdcqprgxIJKZgecp+2eTGi4ZBasAWkrluVgmmUJ4Uo2b7TOy
-	1P50rqSbKz8MtkNOKQkoMuf7JN7v70m0mmvaxtA7pvRrvH52gKWXl+irP5QBsPU=
-X-Google-Smtp-Source: AGHT+IE6nF92f8yMJvw4QXM30dHJBCHwIsLxQLj62XpbEJNdClKoMiShhkTXCvn5sfSkppH7D38bPg==
-X-Received: by 2002:a05:6a21:880a:b0:1af:9e3c:63c0 with SMTP id adf61e73a8af0-1afc8dbe1cbmr1900935637.59.1715146457800;
-        Tue, 07 May 2024 22:34:17 -0700 (PDT)
-Received: from [192.168.1.15] (174-21-160-85.tukw.qwest.net. [174.21.160.85])
-        by smtp.gmail.com with ESMTPSA id z8-20020a170903018800b001e4464902bcsm10911053plg.60.2024.05.07.22.34.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 22:34:17 -0700 (PDT)
-Message-ID: <64a7690e-50a1-4b3b-9b9b-5c2efa552806@davidwei.uk>
-Date: Tue, 7 May 2024 22:34:16 -0700
+        bh=tS/QKLFbZ72HkGmrCTfWCUyKFvyoD3yXMTX+FI1lu9c=;
+        b=lpRLZ/XjpLLKBoMXFyc/jzhAZIGQK2/uzK4KuySeRmtxJbE/Unag9C9lm3qYqmhaj+
+         y6ZGG2GAyxVbRoiWx748v1uF3a470aZ2xELVpogMDUUs/vB84+WSbN/yq7/1A+7gguvl
+         Fd5YmECasESPsJwpvRpSsJytwlW+RO8/GbwAxFiS9XJtXbSqfyu9TDyPi+vxG8fzgz2g
+         EfE5tbATjAlg8UDH89s4ROHOzUMp76xYjohNAXe2XyMI5fEhN5iMO2gpdvTxvTNuRkO/
+         S2rLTk4oBZi88wIg+HSsIGvz8E9qLAXxSAEYbrKa1aZM9oGtMtUglGU4fl7gFpq9ffgQ
+         urOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMJ2K0jescNBKYPwRbgBjGqzuwCh0Zpe6PCkpBiD1YbPG/gFb94idbf+eHWHYyrD094U63gJeLsav6nTV1OB9faKfXzBoDEfAWLnPT
+X-Gm-Message-State: AOJu0YzlUhi9s3gwxS29CFNhNBCCQl4kh3b9EED+uBv2PROEoyYTF0WX
+	UgHyXV/bVmdpDfMBoRjvjhF/vhfWpl4YXAZY5DoFiNMN/6uP42F3I3bLhANxPlE2k1nyyqTcpIb
+	RRUHz1XIY1OovSRSkz6Whr8zaeQ4UbXyPuKQ3ciEAKdsFuDZ2X5/Psgw=
+X-Google-Smtp-Source: AGHT+IFkJB2CLj8DbGgNFMRhktqu3E2FTFXBUn2vHLmP+hjKvcpCoqvCsx0jaHNoIHp3V7jGibfWQBR+vp9iFgmYC9WSGEPj6ryA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/5] gve: Add adminq extended command
-Content-Language: en-GB
-To: Ziwei Xiao <ziweixiao@google.com>, netdev@vger.kernel.org
-Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, willemb@google.com, hramamurthy@google.com,
- rushilg@google.com, jfraker@google.com, linux-kernel@vger.kernel.org
-References: <20240507225945.1408516-1-ziweixiao@google.com>
- <20240507225945.1408516-4-ziweixiao@google.com>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20240507225945.1408516-4-ziweixiao@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1d05:b0:369:f7ca:a361 with SMTP id
+ e9e14a558f8ab-36caeccc653mr674705ab.1.1715146578791; Tue, 07 May 2024
+ 22:36:18 -0700 (PDT)
+Date: Tue, 07 May 2024 22:36:18 -0700
+In-Reply-To: <0000000000006399c80617120daa@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000091228c0617eaae32@google.com>
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
+From: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-05-07 15:59, Ziwei Xiao wrote:
-> From: Jeroen de Borst <jeroendb@google.com>
-> 
-> Add a new device option to signal to the driver that the device supports
-> flow steering. This device option also carries the maximum number of
-> flow steering rules that the device can store.
+syzbot has found a reproducer for the following issue on:
 
-Other than superficial style choices, looks good.
+HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=137daa6c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c493dcd5a68168a94b2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1134f3c0980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1367a504980000
 
-> 
-> Signed-off-by: Jeroen de Borst <jeroendb@google.com>
-> Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
-> Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
-> Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
-> Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
-> ---
->  drivers/net/ethernet/google/gve/gve.h        |  2 +
->  drivers/net/ethernet/google/gve/gve_adminq.c | 42 ++++++++++++++++++--
->  drivers/net/ethernet/google/gve/gve_adminq.h | 11 +++++
->  3 files changed, 51 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
-> index ca7fce17f2c0..58213c15e084 100644
-> --- a/drivers/net/ethernet/google/gve/gve.h
-> +++ b/drivers/net/ethernet/google/gve/gve.h
-> @@ -786,6 +786,8 @@ struct gve_priv {
->  
->  	u16 header_buf_size; /* device configured, header-split supported if non-zero */
->  	bool header_split_enabled; /* True if the header split is enabled by the user */
-> +
-> +	u32 max_flow_rules;
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ea1961ce01fe/disk-dccb07f2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/445a00347402/vmlinux-dccb07f2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/461aed7c4df3/bzImage-dccb07f2.xz
 
-nit: this struct is lovingly documented, could we continue by adding a
-one liner here maybe about how it's device configured?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com
 
->  };
->  
->  enum gve_service_task_flags_bit {
-> diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
-> index 514641b3ccc7..85d0d742ad21 100644
-> --- a/drivers/net/ethernet/google/gve/gve_adminq.c
-> +++ b/drivers/net/ethernet/google/gve/gve_adminq.c
-> @@ -44,6 +44,7 @@ void gve_parse_device_option(struct gve_priv *priv,
->  			     struct gve_device_option_jumbo_frames **dev_op_jumbo_frames,
->  			     struct gve_device_option_dqo_qpl **dev_op_dqo_qpl,
->  			     struct gve_device_option_buffer_sizes **dev_op_buffer_sizes,
-> +			     struct gve_device_option_flow_steering **dev_op_flow_steering,
+======================================================
+WARNING: possible circular locking dependency detected
+6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0 Not tainted
+------------------------------------------------------
+syz-executor149/5078 is trying to acquire lock:
+ffff88802a978888 (&of->mutex){+.+.}-{3:3}, at: kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
 
-nit: getting unwieldy here, is it time to pack into a struct?
+but task is already holding lock:
+ffff88802d80b540 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (&p->lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
+       call_read_iter include/linux/fs.h:2104 [inline]
+       copy_splice_read+0x662/0xb60 fs/splice.c:365
+       do_splice_read fs/splice.c:985 [inline]
+       splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
+       do_sendfile+0x515/0xdc0 fs/read_write.c:1301
+       __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+       __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (&pipe->mutex){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
+       backing_file_splice_write+0x2bc/0x4c0 fs/backing-file.c:289
+       ovl_splice_write+0x3cf/0x500 fs/overlayfs/file.c:379
+       do_splice_from fs/splice.c:941 [inline]
+       do_splice+0xd77/0x1880 fs/splice.c:1354
+       __do_splice fs/splice.c:1436 [inline]
+       __do_sys_splice fs/splice.c:1652 [inline]
+       __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (sb_writers#4){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1664 [inline]
+       sb_start_write+0x4d/0x1c0 include/linux/fs.h:1800
+       mnt_want_write+0x3f/0x90 fs/namespace.c:409
+       ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:629
+       lookup_open fs/namei.c:3497 [inline]
+       open_last_lookups fs/namei.c:3566 [inline]
+       path_openat+0x1425/0x3240 fs/namei.c:3796
+       do_filp_open+0x235/0x490 fs/namei.c:3826
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+       do_sys_open fs/open.c:1421 [inline]
+       __do_sys_open fs/open.c:1429 [inline]
+       __se_sys_open fs/open.c:1425 [inline]
+       __x64_sys_open+0x225/0x270 fs/open.c:1425
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       inode_lock_shared include/linux/fs.h:805 [inline]
+       lookup_slow+0x45/0x70 fs/namei.c:1708
+       walk_component+0x2e1/0x410 fs/namei.c:2004
+       lookup_last fs/namei.c:2461 [inline]
+       path_lookupat+0x16f/0x450 fs/namei.c:2485
+       filename_lookup+0x256/0x610 fs/namei.c:2514
+       kern_path+0x35/0x50 fs/namei.c:2622
+       lookup_bdev+0xc5/0x290 block/bdev.c:1136
+       resume_store+0x1a0/0x710 kernel/power/hibernate.c:1235
+       kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
+       call_write_iter include/linux/fs.h:2110 [inline]
+       new_sync_write fs/read_write.c:497 [inline]
+       vfs_write+0xa84/0xcb0 fs/read_write.c:590
+       ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&of->mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
+       traverse+0x14f/0x550 fs/seq_file.c:106
+       seq_read_iter+0xc5e/0xd60 fs/seq_file.c:195
+       call_read_iter include/linux/fs.h:2104 [inline]
+       copy_splice_read+0x662/0xb60 fs/splice.c:365
+       do_splice_read fs/splice.c:985 [inline]
+       splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
+       do_sendfile+0x515/0xdc0 fs/read_write.c:1301
+       __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+       __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &of->mutex --> &pipe->mutex --> &p->lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&p->lock);
+                               lock(&pipe->mutex);
+                               lock(&p->lock);
+  lock(&of->mutex);
+
+ *** DEADLOCK ***
+
+2 locks held by syz-executor149/5078:
+ #0: ffff88807de89868 (&pipe->mutex){+.+.}-{3:3}, at: splice_file_to_pipe+0x2e/0x500 fs/splice.c:1292
+ #1: ffff88802d80b540 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
+
+stack backtrace:
+CPU: 0 PID: 5078 Comm: syz-executor149 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
+ traverse+0x14f/0x550 fs/seq_file.c:106
+ seq_read_iter+0xc5e/0xd60 fs/seq_file.c:195
+ call_read_iter include/linux/fs.h:2104 [inline]
+ copy_splice_read+0x662/0xb60 fs/splice.c:365
+ do_splice_read fs/splice.c:985 [inline]
+ splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
+ do_sendfile+0x515/0xdc0 fs/read_write.c:1301
+ __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7d8d33f8e9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7d8d2b8218 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f7d8d3c9428 RCX: 00007f7d8d33f8e9
+RDX: 0000000000000000 RSI: 0000000000000007 RDI: 0000000000000006
+RBP: 00007f7d8d3c9420 R08: 00007ffdc82d7c57 R09: 0000000000000000
+R10: 0000000000000004 R11: 0000000000000246 R12: 00007f7d8d39606c
+R13: 0030656c69662f2e R14: 0079616c7265766f R15: 00007f7d8d39603b
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
