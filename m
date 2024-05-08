@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-172575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1281F8BF3E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B94B8BF3E7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2C0B210B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:59:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 826CAB20E50
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEDA1A2C29;
-	Wed,  8 May 2024 00:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA0A65C;
+	Wed,  8 May 2024 01:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hYozxBpU"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="BFGjaM/D"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F21C621
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E979F399;
+	Wed,  8 May 2024 01:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715129965; cv=none; b=lsk8fhbkJaD/Cg+d38yu+xjPyJ3Ru0eoUzctweSzX3yUp+o7AFJT5ZpOQU53JV4iuYeGcBcKWT/WMMFsPsRNneLuLg8sj7uKDLUVRMzxiqYsPLaNqulRjJfwtfch59TGSYlqZZb/gRB0A3ldvjYvk0FfkBRjaRgrMcN0M+JrSCE=
+	t=1715130043; cv=none; b=oFkHcZqu6LUkPHxoPu2PgoDM7Q2dUNov0+GrHlKB1Zh9N4lAAFdKsJ+HSNgdpFSJY2zzxZ1ymm5oSg/o5Hf218bOz89DTbSgDG3obzuYe0c6G81/BR/5S3Z3C5ILbXZwli5Tn8fddZYvmlvZmAbqlEtOEJt8W2yM12WVs6JFSU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715129965; c=relaxed/simple;
-	bh=HPKo0kjA4VMAEdS3jgdkrkVKvRNlcwe01fWxC6/gNfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkeWsIJI5hkrBfExuybShANYRVEVflAHECaspfA+szTvfm0NZqLH5pslanZE7drjuoehbgvjlWGG7tqk3P162fnFTsHHKADp3eTa2NaSqmVWBHVU3dz7ju+QdVBMCGvzCsnQUo5J/c95gG2zLa228arv32riEJxOUSn4PfHq4Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hYozxBpU; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 7 May 2024 20:59:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715129960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CKJj04qCaWozA5OZiCOs2YLUCi6uSucwcFVp9F+GYz0=;
-	b=hYozxBpUi13Ihp6MHSC3zJItNcCVYBGiy5gWX8Cs0A6y+Himp+jshK97g07kCOl3TFq88i
-	Zt4sN7Z/Mdhg79dg+hAEgGzsQHKwbgZ8KNdJh1Vy9rVJwc1MZRjoKopdTONURw2+FmmZKI
-	m2QLFJSDTFZEtSm+HF1ArKHYMD8FvDs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <7chwa5h2y2eotafxfnapxn754n7y3zpze2sm5dif3zyx7hkxcc@2zu6pskc7fbo>
-References: <x73mcz4gjzdmwlynj426sq34zj232wr2z2xjbjc4tkcdbfpegb@hr55sh6pn7ol>
- <tencent_6086EB12C2C654899D6EE16EF28C8727EC06@qq.com>
+	s=arc-20240116; t=1715130043; c=relaxed/simple;
+	bh=/8Bq7FXsUxoAh3ffhhufUURn58m0DQuS71n5CXE7GAU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=duzC6+PxC/TtuRVaPg8p6ebMT2ApaqIaSadn9op8LLdmmRY5CAmxD7XE+GTmYjpZwMKnPLFO2dSibV9ZOZ5DEJlejTIgqO8ZGralAwEgazEaMdEnjETk/hOAg32RiFk/epJ46lCNZZOk3agODNEVtdwfVHGGF67OxBg+gGIDaPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=BFGjaM/D; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp14-2-82-209.adl-apt-pir-bras31.tpg.internode.on.net [14.2.82.209])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id CC19A20016;
+	Wed,  8 May 2024 09:00:30 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1715130033;
+	bh=kMjFTG/O0qrpfW1eF1AuxbXY76Q+hOssQVvDEfpATf4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=BFGjaM/DkrZvajCW6PMQ18HRX7vtyY7LVGbeDxBsQQcUCM0C3AtkktGVqvLIwxoLS
+	 cVE0p/hjrNyGMSgR8TThdds+fLF8whBw4153a6VXRLArCIJj5dNAZIeqa1QgYx0s0s
+	 P0su5qGrayeU6BCvf41pGwDnau0r3tl9qO16melnWDK6WjF0LoTs05ib6+pHcDBAHA
+	 J++C3ZfBln93RL/Yp2QAB8w40vMPaeJ80gaKoYPfV/IPX1NTLrgpSd8dLRKl8ArAjr
+	 2vX0QvWNdR9sRl3uS9064m2PEaSTysxSJ8ixQD8npnROaMI/on6jWvJO8MJh1Pd/Cj
+	 Qdio8kWqNb+ag==
+Message-ID: <db966c501288c73ac50a86aa2e5884e6cfc28715.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v8 0/2] Change email sender
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Kelly Hung <KellyHung@asus.com>, robh+dt@kernel.org
+Cc: krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, joel@jms.id.au, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, kelly_hung@asus.com, Allenyy_Hsu@asus.com
+Date: Wed, 08 May 2024 10:30:28 +0930
+In-Reply-To: <20240507092109.6018-1-KellyHung@asus.com>
+References: <20240507092109.6018-1-KellyHung@asus.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_6086EB12C2C654899D6EE16EF28C8727EC06@qq.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 08, 2024 at 08:49:39AM +0800, Edward Adam Davis wrote:
-> On Tue, 7 May 2024 10:14:22 -0400, Kent Overstreet wrote:
-> > > When got too small clean field, entry will never equal vstruct_end(&clean->field),
-> > > the dead loop resulted in out of bounds access.
-> > >
-> > > Fixes: 12bf93a429c9 ("bcachefs: Add .to_text() methods for all superblock sections")
-> > > Fixes: a37ad1a3aba9 ("bcachefs: sb-clean.c")
-> > > Reported-and-tested-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > 
-> > I've already got a patch up for this - the validation was missing as
-> > well.
-> > 
-> > commit f39055220f6f98a180e3503fe05bbf9921c425c8
-> > Author: Kent Overstreet <kent.overstreet@linux.dev>
-> > Date:   Sun May 5 22:28:00 2024 -0400
-> > 
-> >     bcachefs: Add missing validation for superblock section clean
-> > 
-> >     We were forgetting to check for jset entries that overrun the end of the
-> >     section - both in validate and to_text(); to_text() needs to be safe for
-> >     types that fail to validate.
-> > 
-> >     Reported-by: syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-> >     Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > 
-> > diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-> > index 35ca3f138de6..194e55b11137 100644
-> > --- a/fs/bcachefs/sb-clean.c
-> > +++ b/fs/bcachefs/sb-clean.c
-> > @@ -278,6 +278,17 @@ static int bch2_sb_clean_validate(struct bch_sb *sb,
-> >  		return -BCH_ERR_invalid_sb_clean;
-> >  	}
-> > 
-> > +	for (struct jset_entry *entry = clean->start;
-> > +	     entry != vstruct_end(&clean->field);
-> > +	     entry = vstruct_next(entry)) {
-> > +		if ((void *) vstruct_next(entry) > vstruct_end(&clean->field)) {
-> > +			prt_str(err, "entry type ");
-> > +			bch2_prt_jset_entry_type(err, le16_to_cpu(entry->type));
-> > +			prt_str(err, " overruns end of section");
-> > +			return -BCH_ERR_invalid_sb_clean;
-> > +		}
-> > +	}
-> > +
-> The original judgment here is sufficient, there is no need to add this section of inspection.
+Hi Kelly,
 
-No, we need to be able to print things that failed to validate so that
-we see what went wrong.
+On Tue, 2024-05-07 at 17:21 +0800, Kelly Hung wrote:
+> Requesting assistance from ASUS IT, I obtained a new smtp account.
+> So send the patch again using new smtp account.
+
+Ah, thanks, however Joel's already sent a PR to the ARM SoC maintainers
+with your patches. Sorry that we didn't communicate that too well.
+Here's the PR:
+
+https://lore.kernel.org/lkml/CACPK8Xd2Qc9MQUJ-8GuRjmyU50oMHpmmHPHLqAh9W_1Gy=
+qi2ug@mail.gmail.com/
+
+>=20
+> Kelly Hung (2):
+>   dt-bindings: arm: aspeed: add ASUS X4TF board
+>   ARM: dts: aspeed: x4tf: Add dts for asus x4tf project
+>=20
+>  .../bindings/arm/aspeed/aspeed.yaml           |   1 +
+>  arch/arm/boot/dts/aspeed/Makefile             |   1 +
+>  .../boot/dts/aspeed/aspeed-bmc-asus-x4tf.dts  | 581 ++++++++++++++++++
+>  3 files changed, 583 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-asus-x4tf.dts
+>=20
+> --
+> 2.25.1
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> This email and any attachments to it contain confidential information and=
+ are intended solely for the use of the individual to whom it is addressed.=
+ If you are not the intended recipient or receive it accidentally, please i=
+mmediately notify the sender by e-mail and delete the message and any attac=
+hments from your computer system, and destroy all hard copies. Please be ad=
+vised that any unauthorized disclosure, copying, distribution or any action=
+ taken or omitted in reliance on this, is illegal and prohibited. Any views=
+ or opinions expressed are solely those of the author and do not represent =
+those of ASUSTeK.
+>=20
+> For pricing information, ASUS is only entitled to set a recommendation re=
+sale price. All customers are free to set their own price as they wish.
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+
+Unfortunately these footers aren't helpful. The kernel's mailing list
+etiquette documentation has more info:
+
+https://subspace.kernel.org/etiquette.html#do-not-include-confidentiality-d=
+isclaimers
+
+Andrew
 
