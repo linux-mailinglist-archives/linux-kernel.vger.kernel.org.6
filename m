@@ -1,206 +1,208 @@
-Return-Path: <linux-kernel+bounces-172992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A01E8BF9CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:51:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1D18BF9D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042FC1F23EAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855462819A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E87768FC;
-	Wed,  8 May 2024 09:51:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06E675803
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9F077620;
+	Wed,  8 May 2024 09:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bFSwIteg"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6483FE3F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715161861; cv=none; b=IcajV/wex0isKKP3pipdgZttsTmLBh5rQGcbUcbRn3DDshs19DSlJ/WvgTD+h4jSrTF5NHEPE0xKsWgokLGXcuBmAdk/cc0f6WN0jJQIIWPNldOFrDEIdsM7mIr6LsCI40L2xb7VvXzS4r6xUp/6oPNB8rZHxXYIoF3JNEt9DA0=
+	t=1715161912; cv=none; b=toCZnrIQVeFXS1j8Q5/Clk8CTrpqY1pb8C/hBP71YvV7tkztnnzqZODzBP/llJOek2/fBA0anua/gQg16geyOG2aUSB/1kAmwzPajsZhMG2rMoNzPTLGuBzAGDcykm2gGFuOIPcAlMC5qh7+YUhQSKlUHd/QWwoKlo6e0BQdlxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715161861; c=relaxed/simple;
-	bh=7fkcZU8LfFiIhbredwhVEaDQVg66SbZcA4NULSo3Q7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ct3Haro+LXstugMcLEF7THB8s/QJUszNLa++lMYO8DmXN52iOfngirR/YwXdUw+l1ElvB/Zbn0HitDUkVuskB0flvmDUbrEZ/Luqzc77uB/M/sgTCLuBiFz2WvueB/ZLdx/B21UleDR9Yh1F+Kyecg3eb/mc1c5RDNcinXGCQQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7529B1063;
-	Wed,  8 May 2024 02:51:24 -0700 (PDT)
-Received: from [10.163.34.220] (unknown [10.163.34.220])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 351533F587;
-	Wed,  8 May 2024 02:50:53 -0700 (PDT)
-Message-ID: <ac21f19d-6065-4a70-8172-5eb19d0d6a29@arm.com>
-Date: Wed, 8 May 2024 15:20:56 +0530
+	s=arc-20240116; t=1715161912; c=relaxed/simple;
+	bh=YOsEbjWcfZIpD15f+HkcOc4BQjQkE+PFSvOypW0kM/Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bqm7YsXrpRGIIqH76c15uoYQp4WLkbryAH//SiROc0Sx/xcL5SQP/H1l4vhwPaIQOpzeUXtKvpPF+wqDeFoxQ/Y1LMh2xH3/rupxGFfr9YbuN+EY+CHHfj0vy8ylLZPyitmr61eURZgqaGEuHTjnteDvUZk02qnYU0kQ3VeQ+iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bFSwIteg; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 9416d58e0d2011efb92737409a0e9459-20240508
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=EpbT5fkgin4b8SqQc5adWxDC5bZ2ttTXku30oyuQHbw=;
+	b=bFSwItegwhH7VnuTFtnAqYOAtfLYcKtr2df+Ukm1X2pAdf7MtT8plA9bjhH26C420GOkPWT+aLD/37abeBL3850QrVbXMlN7dnFl9OtzF2IXoO+v9f9fSyvMEMkEG7z8HjcXwQfXQurr32CtaZAFgFgcM7glNxHk6nunfw8iRRc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:dd9d5ad5-4e05-4884-9de1-38c3080c3812,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:a5b68092-e2c0-40b0-a8fe-7c7e47299109,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 9416d58e0d2011efb92737409a0e9459-20240508
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 583157918; Wed, 08 May 2024 17:51:44 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 8 May 2024 17:51:43 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 8 May 2024 17:51:43 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>, Jason-ch Chen
+	<jason-ch.chen@mediatek.com>, Johnson Wang <johnson.wang@mediatek.com>,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Singo Chang
+	<singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Shawn Sung
+	<shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Fei Shao
+	<fshao@chromium.org>
+Subject: [PATCH v2] mailbox: mtk-cmdq: Fix sleeping function called from invalid context
+Date: Wed, 8 May 2024 17:51:43 +0800
+Message-ID: <20240508095143.12023-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] arm64/mm: Remove PTE_PROT_NONE bit
-Content-Language: en-US
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Joey Gouly <joey.gouly@arm.com>, Ard Biesheuvel <ardb@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, David Hildenbrand <david@redhat.com>,
- Peter Xu <peterx@redhat.com>, Mike Rapoport <rppt@linux.ibm.com>,
- Shivansh Vij <shivanshvij@outlook.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240503144604.151095-1-ryan.roberts@arm.com>
- <20240503144604.151095-3-ryan.roberts@arm.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240503144604.151095-3-ryan.roberts@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK: N
 
+When we run kernel with lockdebug option, we will get the BUG below:
+[  106.692124] BUG: sleeping function called from invalid context at drivers/base/power/runtime.c:1164
+[  106.692190] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 3616, name: kworker/u17:3
+[  106.692226] preempt_count: 1, expected: 0
+[  106.692254] RCU nest depth: 0, expected: 0
+[  106.692282] INFO: lockdep is turned off.
+[  106.692306] irq event stamp: 0
+[  106.692331] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+[  106.692376] hardirqs last disabled at (0): [<ffffffee15d37fa0>] copy_process+0xc90/0x2ac0
+[  106.692429] softirqs last  enabled at (0): [<ffffffee15d37fc4>] copy_process+0xcb4/0x2ac0
+[  106.692473] softirqs last disabled at (0): [<0000000000000000>] 0x0
+[  106.692513] CPU: 1 PID: 3616 Comm: kworker/u17:3 Not tainted 6.1.87-lockdep-14133-g26e933aca785 #1 6839942e1cf34914b0a366137843dd2366f52aa9
+[  106.692556] Hardware name: Google Ciri sku0/unprovisioned board (DT)
+[  106.692586] Workqueue: imgsys_runner imgsys_runner_func
+[  106.692638] Call trace:
+[  106.692662]  dump_backtrace+0x100/0x120
+[  106.692702]  show_stack+0x20/0x2c
+[  106.692737]  dump_stack_lvl+0x84/0xb4
+[  106.692775]  dump_stack+0x18/0x48
+[  106.692809]  __might_resched+0x354/0x4c0
+[  106.692847]  __might_sleep+0x98/0xe4
+[  106.692883]  __pm_runtime_resume+0x70/0x124
+[  106.692921]  cmdq_mbox_send_data+0xe4/0xb1c
+[  106.692964]  msg_submit+0x194/0x2dc
+[  106.693003]  mbox_send_message+0x190/0x330
+[  106.693043]  imgsys_cmdq_sendtask+0x1618/0x2224
+[  106.693082]  imgsys_runner_func+0xac/0x11c
+[  106.693118]  process_one_work+0x638/0xf84
+[  106.693158]  worker_thread+0x808/0xcd0
+[  106.693196]  kthread+0x24c/0x324
+[  106.693231]  ret_from_fork+0x10/0x20
 
+We found that there is a spin_lock_irqsave protection in msg_submit()
+of mailbox.c and it is in the atomic context.
+So when cmdq driver calls pm_runtime_get_sync() in cmdq_mbox_send_data(),
+it will get this BUG report.
 
-On 5/3/24 20:16, Ryan Roberts wrote:
-> Currently the PTE_PRESENT_INVALID and PTE_PROT_NONE functionality
-> explicitly occupy 2 bits in the PTE when PTE_VALID/PMD_SECT_VALID is
-> clear. This has 2 significant consequences:
-> 
->   - PTE_PROT_NONE consumes a precious SW PTE bit that could be used for
->     other things.
->   - The swap pte layout must reserve those same 2 bits and ensure they
->     are both always zero for a swap pte. It would be nice to reclaim at
->     least one of those bits.
-> 
-> But PTE_PRESENT_INVALID, which since the previous patch, applies
-> uniformly to page/block descriptors at any level when PTE_VALID is
-> clear, can already give us most of what PTE_PROT_NONE requires: If it is
-> set, then the pte is still considered present; pte_present() returns
-> true and all the fields in the pte follow the HW interpretation (e.g. SW
-> can safely call pte_pfn(), etc). But crucially, the HW treats the pte as
-> invalid and will fault if it hits.
-> 
-> So let's remove PTE_PROT_NONE entirely and instead represent PROT_NONE
-> as a present but invalid pte (PTE_VALID=0, PTE_PRESENT_INVALID=1) with
-> PTE_USER=0 and PTE_UXN=1. This is a unique combination that is not used
-> anywhere else.
-> 
-> The net result is a clearer, simpler, more generic encoding scheme that
-> applies uniformly to all levels. Additionally we free up a PTE SW bit
-> and a swap pte bit (bit 58 in both cases).
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+1. Change pm_runtime_get_sync() to pm_runtime_get() to avoid using sleep
+   in atomic context.
+2. Move clk_bulk_enable() outside cmdq_runtime_resume() to ensure GCE
+   clocks are enabled before configuring GCE register.
+3. Add used_count to avoid cmdq_runtime_suspend() being called before
+   calling cmdq_runtime_resume().
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM with autosuspend")
+Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+---
+ drivers/mailbox/mtk-cmdq-mailbox.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-> ---
->  arch/arm64/include/asm/pgtable-prot.h |  3 +--
->  arch/arm64/include/asm/pgtable.h      | 31 +++++++++++++++------------
->  2 files changed, 18 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-> index cdbf51eef7a6..81f07b44f7b8 100644
-> --- a/arch/arm64/include/asm/pgtable-prot.h
-> +++ b/arch/arm64/include/asm/pgtable-prot.h
-> @@ -18,7 +18,6 @@
->  #define PTE_DIRTY		(_AT(pteval_t, 1) << 55)
->  #define PTE_SPECIAL		(_AT(pteval_t, 1) << 56)
->  #define PTE_DEVMAP		(_AT(pteval_t, 1) << 57)
-> -#define PTE_PROT_NONE		(_AT(pteval_t, 1) << 58) /* only when !PTE_VALID */
->  
->  /*
->   * PTE_PRESENT_INVALID=1 & PTE_VALID=0 indicates that the pte's fields should be
-> @@ -103,7 +102,7 @@ static inline bool __pure lpa2_is_enabled(void)
->  		__val;							\
->  	 })
->  
-> -#define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PROT_NONE | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
-> +#define PAGE_NONE		__pgprot(((_PAGE_DEFAULT) & ~PTE_VALID) | PTE_PRESENT_INVALID | PTE_RDONLY | PTE_NG | PTE_PXN | PTE_UXN)
->  /* shared+writable pages are clean by default, hence PTE_RDONLY|PTE_WRITE */
->  #define PAGE_SHARED		__pgprot(_PAGE_SHARED)
->  #define PAGE_SHARED_EXEC	__pgprot(_PAGE_SHARED_EXEC)
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 7156c940ac4f..c0f4471423db 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -105,7 +105,7 @@ static inline pteval_t __phys_to_pte_val(phys_addr_t phys)
->  /*
->   * The following only work if pte_present(). Undefined behaviour otherwise.
->   */
-> -#define pte_present(pte)	(!!(pte_val(pte) & (PTE_VALID | PTE_PROT_NONE)))
-> +#define pte_present(pte)	(pte_valid(pte) || pte_present_invalid(pte))
->  #define pte_young(pte)		(!!(pte_val(pte) & PTE_AF))
->  #define pte_special(pte)	(!!(pte_val(pte) & PTE_SPECIAL))
->  #define pte_write(pte)		(!!(pte_val(pte) & PTE_WRITE))
-> @@ -478,7 +478,16 @@ static inline pte_t pte_swp_clear_exclusive(pte_t pte)
->   */
->  static inline int pte_protnone(pte_t pte)
->  {
-> -	return (pte_val(pte) & (PTE_VALID | PTE_PROT_NONE)) == PTE_PROT_NONE;
-> +	/*
-> +	 * pte_present_invalid() tells us that the pte is invalid from HW
-> +	 * perspective but present from SW perspective, so the fields are to be
-> +	 * interpretted as per the HW layout. The second 2 checks are the unique
-> +	 * encoding that we use for PROT_NONE. It is insufficient to only use
-> +	 * the first check because we share the same encoding scheme with pmds
-> +	 * which support pmd_mkinvalid(), so can be present-invalid without
-> +	 * being PROT_NONE.
-> +	 */
-> +	return pte_present_invalid(pte) && !pte_user(pte) && !pte_user_exec(pte);
->  }
->  
->  static inline int pmd_protnone(pmd_t pmd)
-> @@ -487,12 +496,7 @@ static inline int pmd_protnone(pmd_t pmd)
->  }
->  #endif
->  
-> -#define pmd_present_invalid(pmd)	pte_present_invalid(pmd_pte(pmd))
-> -
-> -static inline int pmd_present(pmd_t pmd)
-> -{
-> -	return pte_present(pmd_pte(pmd)) || pmd_present_invalid(pmd);
-> -}
-> +#define pmd_present(pmd)	pte_present(pmd_pte(pmd))
->  
->  /*
->   * THP definitions.
-> @@ -1029,8 +1033,8 @@ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->  	 * in MAIR_EL1. The mask below has to include PTE_ATTRINDX_MASK.
->  	 */
->  	const pteval_t mask = PTE_USER | PTE_PXN | PTE_UXN | PTE_RDONLY |
-> -			      PTE_PROT_NONE | PTE_VALID | PTE_WRITE | PTE_GP |
-> -			      PTE_ATTRINDX_MASK;
-> +			      PTE_PRESENT_INVALID | PTE_VALID | PTE_WRITE |
-> +			      PTE_GP | PTE_ATTRINDX_MASK;
->  	/* preserve the hardware dirty information */
->  	if (pte_hw_dirty(pte))
->  		pte = set_pte_bit(pte, __pgprot(PTE_DIRTY));
-> @@ -1078,17 +1082,17 @@ static inline int pgd_devmap(pgd_t pgd)
->  #ifdef CONFIG_PAGE_TABLE_CHECK
->  static inline bool pte_user_accessible_page(pte_t pte)
->  {
-> -	return pte_present(pte) && (pte_user(pte) || pte_user_exec(pte));
-> +	return pte_valid(pte) && (pte_user(pte) || pte_user_exec(pte));
->  }
->  
->  static inline bool pmd_user_accessible_page(pmd_t pmd)
->  {
-> -	return pmd_leaf(pmd) && !pmd_present_invalid(pmd) && (pmd_user(pmd) || pmd_user_exec(pmd));
-> +	return pmd_valid(pmd) && !pmd_table(pmd) && (pmd_user(pmd) || pmd_user_exec(pmd));
->  }
->  
->  static inline bool pud_user_accessible_page(pud_t pud)
->  {
-> -	return pud_leaf(pud) && (pud_user(pud) || pud_user_exec(pud));
-> +	return pud_valid(pud) && !pud_table(pud) && (pud_user(pud) || pud_user_exec(pud));
->  }
->  #endif
->  
-> @@ -1252,7 +1256,6 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
->   *	bits 2:		remember PG_anon_exclusive
->   *	bits 3-7:	swap type
->   *	bits 8-57:	swap offset
-> - *	bit  58:	PTE_PROT_NONE (must be zero)
->   *	bit  59:	PTE_PRESENT_INVALID (must be zero)
->   */
->  #define __SWP_TYPE_SHIFT	3
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 033aff11f87c..b50f42e69aab 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -82,6 +82,7 @@ struct cmdq {
+ 	const struct gce_plat	*pdata;
+ 	struct cmdq_thread	*thread;
+ 	struct clk_bulk_data	clocks[CMDQ_GCE_NUM_MAX];
++	atomic_t		used_count;
+ 	bool			suspended;
+ };
+ 
+@@ -317,14 +318,21 @@ static int cmdq_runtime_resume(struct device *dev)
+ {
+ 	struct cmdq *cmdq = dev_get_drvdata(dev);
+ 
+-	return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
++	atomic_inc(&cmdq->used_count);
++	return 0;
+ }
+ 
+ static int cmdq_runtime_suspend(struct device *dev)
+ {
+ 	struct cmdq *cmdq = dev_get_drvdata(dev);
+ 
++	if (atomic_read(&cmdq->used_count) == 0) {
++		dev_warn(dev, "%s when used_count is 0!", __func__);
++		return -EINVAL;
++	}
++
+ 	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
++	atomic_dec(&cmdq->used_count);
+ 	return 0;
+ }
+ 
+@@ -392,9 +400,8 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
+ 	/* Client should not flush new tasks if suspended. */
+ 	WARN_ON(cmdq->suspended);
+ 
+-	ret = pm_runtime_get_sync(cmdq->mbox.dev);
+-	if (ret < 0)
+-		return ret;
++	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
++	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+ 
+ 	task = kzalloc(sizeof(*task), GFP_ATOMIC);
+ 	if (!task) {
+@@ -465,7 +472,8 @@ static void cmdq_mbox_shutdown(struct mbox_chan *chan)
+ 	struct cmdq_task *task, *tmp;
+ 	unsigned long flags;
+ 
+-	WARN_ON(pm_runtime_get_sync(cmdq->mbox.dev) < 0);
++	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
++	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+ 
+ 	spin_lock_irqsave(&thread->chan->lock, flags);
+ 	if (list_empty(&thread->task_busy_list))
+@@ -507,11 +515,9 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
+ 	struct cmdq_task *task, *tmp;
+ 	unsigned long flags;
+ 	u32 enable;
+-	int ret;
+ 
+-	ret = pm_runtime_get_sync(cmdq->mbox.dev);
+-	if (ret < 0)
+-		return ret;
++	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
++	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+ 
+ 	spin_lock_irqsave(&thread->chan->lock, flags);
+ 	if (list_empty(&thread->task_busy_list))
+-- 
+2.18.0
+
 
