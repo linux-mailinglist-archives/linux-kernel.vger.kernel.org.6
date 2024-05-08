@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-173472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C658C00C7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:19:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C697E8C00CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915D92821D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9B51F22854
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB2F126F1D;
-	Wed,  8 May 2024 15:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14695127B40;
+	Wed,  8 May 2024 15:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnsAL4Hu"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K9rZ1qBM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BAB1A2C05;
-	Wed,  8 May 2024 15:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468B21A2C05;
+	Wed,  8 May 2024 15:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181563; cv=none; b=W5bI8eL0uF7RPcDxfu1FEIkHFXxAgP3LJ7nm4QM2+kvXTrjtbq/WqxK0Wn50wbfO4j/P4newS8H6wLn7JmgqS+PMNt22XAmS8na5IF7swCbbai6YvcH/5K/CrdE9N6I5zwTNBzXv3TVQ7RDm7g9kve/njBsWzAnwUA6scWTJogE=
+	t=1715181609; cv=none; b=dCDHNGyqmQzs1/57LlzHA0GK2DYKqEUtzGN34XL+2ClmAY8ps+pbZcAVQGfPat/FCwYel77n6D5oOCBKi67a7uWHkXmOuhAkcdnN87RPPAOfeddIo37zu+PcXHCJB7fcxfCcx1a2AweMuva1Z0Hrhym0nn7E0c5ifFLeoSu30mE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181563; c=relaxed/simple;
-	bh=RDgZFIRWFAsYzacA2jE3u0koUD8JEkZ3FTaoS1xbQzo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rd75BNrYv1s/s7tu0wM44eiqjxkLaLb7CyJF3EpOvvTqmEYZ4Is4iG2FRKOAQqFHk7dxgQ880K1XyNaRin3cyl5c2tSareSK0iBFwcjnCti39M0YpKkTTwJxXxnuQlVhqWvu3b7nlEABJ2/ZQeSkKVDesHJW1dJFhRnUaz3au20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnsAL4Hu; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e428242a38so27479231fa.2;
-        Wed, 08 May 2024 08:19:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715181560; x=1715786360; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VcQPlzrDQgRkPj7R1y1WUS01giEukkyq4WKKdpmpB7Q=;
-        b=PnsAL4HuiG2+lPmhUSJXcjqATUl3th8v25SaPxjqdz+UoCeO583Vczkor9luOkoQ3B
-         2MUPDDng8RWeU4inCFLW0n5RRUFw5BCrvMtxPneXUMMoPfZEVl4nrakmHKmaTYKKxT+X
-         bWRt9E0tKxtVUJhcpmwqkNR3zz5dKGZoGRhxT5dSQCXP2ttcKLYuDXKiKjN6nh8HFDue
-         qKN1WVxq926cJLu/+itlTs6lxEMtvvGGPM3poKJRh/Hp70ofqKWQjVkpwJeNjQIQuagm
-         DwJaDocscOX9+NwY+HQFBI+OItJiGUGdUTvvK+cqM7Nze70ksbEMOY0gmCLHTuHEUpVA
-         CUuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715181560; x=1715786360;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VcQPlzrDQgRkPj7R1y1WUS01giEukkyq4WKKdpmpB7Q=;
-        b=oxXTXg4U+z38/WM7tqBcxiwtQqCw/Pmb3nwoJawwn+EP4/TkbdtyQ2AZkMFlaA5iui
-         lVrNbS36NOqUqAJnLygbAjG7gIZu3XZYvxskyYNGGZK2Sbo4qTLgFtpA90l64D8iXwFW
-         p7zdT6+DhEWWTzw2BKCIzEGY6Rv9bjKd//ehG6zFSmDzCTjpX1m0ZM7zxBIJGO2TNjmh
-         w/xpYtw8e+CwSCLnap91cIj4bpstSMKAf/kpnrKyzE+T/ry99K35Gi+9JOsybJfTtsW/
-         FsyXt+fkOL7ZQxEHh+O0+DXVcIMVUgGdz4QZxZzkcxbHwDfh6NjgyRlx8lL2/0vBB0MR
-         S6QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoONbdxSCdg59hFLljFTZTk8wzxDWVKU0/2w8HxdE3tssWJE4BRC+TIW/pswlrOdJLRwejWMY9OI7cbFhXpsQBzzDAmX5vUO0D8A==
-X-Gm-Message-State: AOJu0YwBvFDJ+j+GhXQFE0pacWGfYBi6tTOUkUTo6J8/n3k0jjLGVvQb
-	XPaJlkxRZCvU0jdn0KgHtqrI7NA0Zk9rueY2yA8HBLIIPTW5Heov8NgvLmZ6zxg3sB+H5a2NROh
-	AMVcA0/mQ23eEokVkuDyJDu7WGGnl/5VH
-X-Google-Smtp-Source: AGHT+IHSZ0xp3QCT9NGnc4t9ud5lmOaRsX5swKxd7bOZQ2fPeSzch2OQJOXeKr2uQ5fp+3wOuWZsUwcyZnEKpIpLDOM=
-X-Received: by 2002:a05:6512:3101:b0:51f:4d57:6812 with SMTP id
- 2adb3069b0e04-5217c567135mr2201292e87.19.1715181559991; Wed, 08 May 2024
- 08:19:19 -0700 (PDT)
+	s=arc-20240116; t=1715181609; c=relaxed/simple;
+	bh=F7/xJtqZj5pHb27cUKilA7HO8qx0Hd9ce0l1SBmQKRI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eea/wLZT+y6SwkKKkjvchh+krAF++aIBxjD2Z4VTqh6wI6i29sFm0Kz6r0K+lKGWzsG/9BduHthG7Kduw9m5FTms81TmsTpfwzM9vND1JkcxSxYVEwGnZ82BlwhVY2Dc4Ge/VcW7w8yp6txvjHkJ4kYgOeYRiMMQPqiySFeEE9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K9rZ1qBM; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715181607; x=1746717607;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=F7/xJtqZj5pHb27cUKilA7HO8qx0Hd9ce0l1SBmQKRI=;
+  b=K9rZ1qBMIbDSnoZfkx/JsFnmqxaXIQm5gH3TdQhaqhNWm494Co+KPEZr
+   wSnaDFaamtbmY9oBJZya6fK00RgROspDBpIgCW2ehSaTJD0gLLhYDc1Fu
+   FoiLL2XapInY8Ggz82ZiaA5IV2IrL7w0Q5hDJ9ec11YA7mpK4HU0I3azZ
+   W4jWjAzbCBVezVBcR+XMmuebg06MJAAFZgZSnGuTJhFwz8gMKse1PVii/
+   Www/m5/OAMqA+mJd+vMfetlkVzJ2S/8+an0tdpkDqv+JZqjrOK2sSgF08
+   xTBFrnfDHcNxdAWco17KBYFt2RA7a47AJseeNzmANa5X/wigcaJil1I49
+   w==;
+X-CSE-ConnectionGUID: Tv+QKSp1Tt6i0T1NcAvU6w==
+X-CSE-MsgGUID: 7u3Vk7otSP6kQgbYqg5nEg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11428977"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="11428977"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:19:59 -0700
+X-CSE-ConnectionGUID: hVZnJc5nTd+QSa92kM2png==
+X-CSE-MsgGUID: 8GM+nOUMSu6VdSY8WhUTvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="28850980"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 08 May 2024 08:19:53 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7C6DD109; Wed, 08 May 2024 18:19:52 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Subject: [PATCH v1 1/1] lockd: Use *-y instead of *-objs in Makefile
+Date: Wed,  8 May 2024 18:19:38 +0300
+Message-ID: <20240508151951.1445074-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 8 May 2024 10:19:07 -0500
-Message-ID: <CAH2r5mtdSGPTs-FEWJFzn_uED8Ni0LLSCXbrRs2s8nrxZt+3Ow@mail.gmail.com>
-Subject: [GIT PULL] ksmbd fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Please pull the following changes since commit
-e67572cd2204894179d89bd7b984072f19313b03:
+*-objs suffix is reserved rather for (user-space) host programs while
+usually *-y suffix is used for kernel drivers (although *-objs works
+for that purpose for now).
 
-  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
+Let's correct the old usages of *-objs in Makefiles.
 
-are available in the Git repository at:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-  git://git.samba.org/ksmbd.git tags/6.9-rc7-ksmbd-fixes
+Note, the original approach is weirdest from the existing.
+Only a few drivers use this (-objs-y) one most likely by mistake.
 
-for you to fetch changes up to 691aae4f36f9825df6781da4399a1e718951085a:
+ fs/lockd/Makefile | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-  ksmbd: do not grant v2 lease if parent lease key and epoch are not
-set (2024-05-04 23:53:36 -0500)
-
-----------------------------------------------------------------
-Five ksmbd server fixes, all also for stable
-- Three fixes related to SMB3 leases (fixes two xfstests, and a locking issue)
-- Unitialized variable fix
-- Socket creation fix when bindv6only is set
-----------------------------------------------------------------
-Namjae Jeon (5):
-      ksmbd: fix uninitialized symbol 'share' in smb2_tree_connect()
-      ksmbd: off ipv6only for both ipv4/ipv6 binding
-      ksmbd: avoid to send duplicate lease break notifications
-      ksmbd: use rwsem instead of rwlock for lease break
-      ksmbd: do not grant v2 lease if parent lease key and epoch are not set
-
- fs/smb/server/oplock.c        | 65 +++++++++++++++++++++++--------------------
- fs/smb/server/smb2pdu.c       |  8 +++---
- fs/smb/server/smb_common.c    |  4 +--
- fs/smb/server/transport_tcp.c |  4 +++
- fs/smb/server/vfs_cache.c     | 28 +++++++++----------
- fs/smb/server/vfs_cache.h     |  2 +-
- 6 files changed, 60 insertions(+), 51 deletions(-)
-
+diff --git a/fs/lockd/Makefile b/fs/lockd/Makefile
+index ac9f9d84510e..fe3e23dd29c3 100644
+--- a/fs/lockd/Makefile
++++ b/fs/lockd/Makefile
+@@ -7,8 +7,7 @@ ccflags-y += -I$(src)			# needed for trace events
+ 
+ obj-$(CONFIG_LOCKD) += lockd.o
+ 
+-lockd-objs-y += clntlock.o clntproc.o clntxdr.o host.o svc.o svclock.o \
+-	        svcshare.o svcproc.o svcsubs.o mon.o trace.o xdr.o
+-lockd-objs-$(CONFIG_LOCKD_V4) += clnt4xdr.o xdr4.o svc4proc.o
+-lockd-objs-$(CONFIG_PROC_FS) += procfs.o
+-lockd-objs		      := $(lockd-objs-y)
++lockd-y := clntlock.o clntproc.o clntxdr.o host.o svc.o svclock.o \
++	   svcshare.o svcproc.o svcsubs.o mon.o trace.o xdr.o
++lockd-$(CONFIG_LOCKD_V4) += clnt4xdr.o xdr4.o svc4proc.o
++lockd-$(CONFIG_PROC_FS) += procfs.o
 -- 
-Thanks,
+2.43.0.rc1.1336.g36b5255a03ac
 
-Steve
 
