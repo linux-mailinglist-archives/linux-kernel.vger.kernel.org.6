@@ -1,171 +1,112 @@
-Return-Path: <linux-kernel+bounces-173880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4FE38C0726
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:06:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596408C072B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ACCD28339C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B5E51C21518
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31847132C1A;
-	Wed,  8 May 2024 22:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B3D13398E;
+	Wed,  8 May 2024 22:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eIwHpyNh"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mrJCh/vA"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5985D530
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5616A132C39
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715206003; cv=none; b=QMW42sAo1qQDO3rziKfvUVRH0e4h13bHEqTuc3uMUlVBx24uSy1TeLS6I2QgYsq4+R2eq5AvLX/X5p/NH1P48smz2XW/zYbPkV8BTgvE58T30TFe+dBkOjqd7ZgdduP0Ql6Teoxx4YlAHyoRUz2b8daSL8tzHxUNTm8tv3ETaL0=
+	t=1715206007; cv=none; b=PxtbJL+fN/6PCgkvTER08g5wYyDZZSDghWSm+y7LMVcEMUdem/nLGu7gMtXI2KH+UyzPjYrhRPWTqWzWfEnHibEnt01fDHFOfdaAP1SnCwLlPsbrqsAqN6jriQbQdH0WemcJjCaruEwCE6J01maNaCZBfqlwUj3yBVYH6iDLBEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715206003; c=relaxed/simple;
-	bh=qOFm3ZKV69A7H4pqw5T6HTz2Dm7/9XTvjCo9AdNg4zo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tJlW1vR2zyQ6RiBh75Prx2hnVsfiHdSbbYJq089Bhy6GN4zmw1toAa3yUDSqHcqCFPMBRvHaSSZZEbt2kGpC3eHuIZkyaBONY7E9fHaiLme4WaWxPQZmT6drG2AXyuvUs15EgOp3ATibuz1j24QQ1pXrHsYwfDm+vowmoj5F28I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eIwHpyNh; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43ae23431fbso65041cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:06:41 -0700 (PDT)
+	s=arc-20240116; t=1715206007; c=relaxed/simple;
+	bh=MYf2C+IVa2MHv22SQrK22GbmF6wjXC51pjaBmwgA4/c=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r9c1voazgLmCiTfmP2Vk2d78ynVOv7SFR3EF/dbp5JKNFH81x472Tkj6vonzTiJ1vLzhp4c/r002E3FJOZ29yd7lhlVH7cxvyV8ryEQBhBDawU0vL0UycrBTx3olxOh7IoLLwCbWPexWOrAnDZ80vuj+gUHj2KI6taD08MA6aJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mrJCh/vA; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-de607ab52f4so281500276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:06:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715206001; x=1715810801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aldqJPzGArxjZEpKLgm9s+1EdgolTnnhV+Hb3JyH5UE=;
-        b=eIwHpyNhRTL5NTj3bT7NnoSy0UN08HsremfMJdvPQCKnbmWzcF9wZEkbV+64RpgzdH
-         V7WTEuhEJdcJYj11KAV7zkcDBl7dTKESywKH30Dho98Y5wnyagQXgh1ZBfZU7ZFUVRmB
-         voNyunxhwZHG7Ph5huuSgJqciQPCms8Qs6cb96L/3rfiHlAXkydy5midxUhg79NFOlDD
-         WMLxiA+SKQXXH5Jwvyd6vGtT4R1cNsCDJhkF+n0W1hGqxYw9UTNuKtTKJL4/QnAMhhqL
-         qJjajVE1uhdP3anXX/2CDX+CjRTUGKqh9n1sbIB/QbJYxu2SFB0AIvAq3pNEj4QuRSdH
-         emTw==
+        d=chromium.org; s=google; t=1715206003; x=1715810803; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dMHzkcCEM6WKf+0ckd7ajH+dnlQXB7OMmlnsiVH7l2Y=;
+        b=mrJCh/vAvZn/GDiaThVj4tVHRhEHhCjGfbWk22fIqaVJh6N7yaIFZT81rdInfoSeb/
+         GIyrVM8eaSyktetNAojuKdFjPAn6G00CyNKOqXJYPp74pWL1cK6PXdV8O+oNLPNuJlqP
+         nEEBmwzpKnn13jkNHD3kxEUKs50ZcFhrp29Lg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715206001; x=1715810801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aldqJPzGArxjZEpKLgm9s+1EdgolTnnhV+Hb3JyH5UE=;
-        b=GFoQ/vrzh6uN4Zb+HZMBexk8sd9JKnZwY3RSDFCb+X+DWsi+ic2B6ftDkX/nwSOAwG
-         xUaHWGj9v1BoslrtUx08Yo5A+P6B10fLZybVqItayMYi3xZMXJWiMvAcVzVfGAh8zSHc
-         Sa30RXAm6bsrsTX+hn7bsqxSlmkcbU3Ja6pvPjCdL6qAy1tU+aGpNw7fu5oXMBZ2f0IF
-         RRDBKczlZTX7gqgHU2Qs3/8Ju2K9AuJQHe62H5WbCWlMpluXZA3fmSgVL6QNOhC9SdgI
-         8n2Z1ETPzWz/9wcRw7HRNp8ItglYPXCK5GVaQddRGbuP3R9JaZDLIjWwleGxcCSIUxGy
-         cmzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhzbL2LShILrT2/1i+dfKJGaCR7XNZzaz92SpQ2IG5ID1A1GyjAkanTJxXpdauFdABWYpd8d5EQI+wGypHKu/lkLu2i1+gWNMTAX7m
-X-Gm-Message-State: AOJu0Yw8MjTJNdl+g48bFH71aDkZBVot8tvZ9rb2xpExVRJ7UT4Xn3UX
-	bIw3AD6mThuAi/2p4ZTz8L4VNO9Twau/XGRlaksUIm6ESOKtrg6rQDfwPshFopnAbpKKYt1aVbM
-	aLh3yGICIGbRKmJyY4dJ2mGXYgJgnqzjV0gpSLm/b5YxssO/YClX7
-X-Google-Smtp-Source: AGHT+IHslyE9ivhzwymqY1CNoCjqRPOBfG0hg1XUJ4EiUAR0wxVsaJBHAqH8bw3HTX1qf55o9V7mZbMPecatCwzAJQM=
-X-Received: by 2002:a05:622a:98d:b0:43a:e258:8fed with SMTP id
- d75a77b69052e-43def9611ccmr1330191cf.18.1715206000605; Wed, 08 May 2024
- 15:06:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715206003; x=1715810803;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dMHzkcCEM6WKf+0ckd7ajH+dnlQXB7OMmlnsiVH7l2Y=;
+        b=Tzwi0GRNKNpxnS8Us3wOTGWMmezVLjGTOu8czAxdbywSErIUbSwwc0XfSJReHq9tzb
+         PJWD3Y0bBCKSOIOX7zRPNaS83WBVdfPVHC6XhN2BamTOPtbQ9zSsDZ0QMIJaCxFrIohs
+         y8paTXVigQyplNTiygHCJI8GPRTGYrKPCBlZbjggaE9B2ia1vHz1QsXh4Zow5J6uHmxR
+         LWCE6iObog6dWfHEKczjNgjTllWfsUN5hOPUqJYeCloEJWSLqpJoVGqrH1CY7FyJCA15
+         4/pqtFBTy2NSgOd9DgL3pYMT2ZYtsYvpePthccwtEDIVNn87zGvvDOON5GgtcAmL5mhc
+         kFng==
+X-Forwarded-Encrypted: i=1; AJvYcCWIIpe8U9ADBIB1HjBuj158F0C290dy1/ogaRkLGWt5Eag6aAlTZ4/y+k3cO8LPxwPaGTdTQXOAH5RfoUJw7KxOaXwqpFsQYrFFtPS3
+X-Gm-Message-State: AOJu0YytDZIaHXuPglsLi7+iIVIbfUONuC8vBDC1uIdpo16tQ30ACi6J
+	JCpyHmlhpF5raiYFcAfHAljRxMXWU4nnSSGN0VpIR/YgNAQEXfBkJGJNAQU2kEQ155MSUajkXIK
+	oK3V3YbONKdEORLLP3qbTUQqo04fyE2WRzNqh
+X-Google-Smtp-Source: AGHT+IEdwkrhfX0w2UniR3n9+sRy8cxE66X/Cjr3CnSlguofehS2mZBYzAz3B0TdrHNIzoagJzZ/piqfBJIMxUVv2nA=
+X-Received: by 2002:a25:bf8e:0:b0:de6:80a:f7f2 with SMTP id
+ 3f1490d57ef6-debb9d711f0mr4319909276.28.1715206002100; Wed, 08 May 2024
+ 15:06:42 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 May 2024 15:06:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507141210.195939-1-james.clark@arm.com> <20240507141210.195939-3-james.clark@arm.com>
-In-Reply-To: <20240507141210.195939-3-james.clark@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 8 May 2024 15:06:29 -0700
-Message-ID: <CAP-5=fUqaXWm0xFCoaFYzVkWVMD3Khtxu7au5natVvDVw+fvTQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] perf maps: Re-use __maps__free_maps_by_name()
-To: James Clark <james.clark@arm.com>
-Cc: linux-perf-users@vger.kernel.org, atrajeev@linux.vnet.ibm.com, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org
+In-Reply-To: <20240506150830.23709-10-johan+linaro@kernel.org>
+References: <20240506150830.23709-1-johan+linaro@kernel.org> <20240506150830.23709-10-johan+linaro@kernel.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Wed, 8 May 2024 15:06:41 -0700
+Message-ID: <CAE-0n52+d4s1gJGWpiuCc1vc-rM-d-6FE3VC_qm78kNcKyrb=w@mail.gmail.com>
+Subject: Re: [PATCH 09/13] pinctrl: qcom: spmi-gpio: drop broken pm8008 support
+To: Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mark Brown <broonie@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
+	Satya Priya <quic_c_skakit@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 7:13=E2=80=AFAM James Clark <james.clark@arm.com> wr=
-ote:
+Quoting Johan Hovold (2024-05-06 08:08:26)
+> The SPMI GPIO driver assumes that the parent device is an SPMI device
+> and accesses random data when backcasting the parent struct device
+> pointer for non-SPMI devices.
 >
-> maps__merge_in() hard codes the steps to free the maps_by_name list. It
-> seems to not map__put() each element before freeing, and it sets
-> maps_by_name_sorted to true after freeing, which may be harmless but
-> is inconsistent with maps__init() and other functions.
+> Fortunately this does not seem to cause any issues currently when the
+> parent device is an I2C client like the PM8008, but this could change if
+> the structures are reorganised (e.g. using structure randomisation).
 >
-> maps__maps_by_name_addr() is also quite hard to read because we already
-> have maps__maps_by_name() and maps__maps_by_address(), but the function
-> is only used in that place so delete it.
+> Notably the interrupt implementation is also broken for non-SPMI devices.
 >
-> Signed-off-by: James Clark <james.clark@arm.com>
+> Also note that the two GPIO pins on PM8008 are used for interrupts and
+> reset so their practical use should be limited.
+>
+> Drop the broken GPIO support for PM8008 for now.
+>
+> Fixes: ea119e5a482a ("pinctrl: qcom-pmic-gpio: Add support for pm8008")
+> Cc: stable@vger.kernel.org      # 5.13
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
->  tools/perf/util/maps.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
-> index 61eb742d91e3..16b39db594f4 100644
-> --- a/tools/perf/util/maps.c
-> +++ b/tools/perf/util/maps.c
-> @@ -124,11 +124,6 @@ static void maps__set_maps_by_address(struct maps *m=
-aps, struct map **new)
->
->  }
->
-> -static struct map ***maps__maps_by_name_addr(struct maps *maps)
-> -{
-> -       return &RC_CHK_ACCESS(maps)->maps_by_name;
-> -}
-> -
->  static void maps__set_nr_maps_allocated(struct maps *maps, unsigned int =
-nr_maps_allocated)
->  {
->         RC_CHK_ACCESS(maps)->nr_maps_allocated =3D nr_maps_allocated;
-> @@ -284,6 +279,9 @@ void maps__put(struct maps *maps)
->
->  static void __maps__free_maps_by_name(struct maps *maps)
->  {
-> +       if (!maps__maps_by_name(maps))
-> +               return;
-> +
->         /*
->          * Free everything to try to do it from the rbtree in the next se=
-arch
 
-nit: this comment is stale, it should be maps_by_address rather than the rb=
-tree.
-
-Reviewed-by: Ian Rogers <irogers@google.com>
-
-Thanks,
-Ian
-
->          */
-> @@ -291,6 +289,9 @@ static void __maps__free_maps_by_name(struct maps *ma=
-ps)
->                 map__put(maps__maps_by_name(maps)[i]);
->
->         zfree(&RC_CHK_ACCESS(maps)->maps_by_name);
-> +
-> +       /* Consistent with maps__init(). When maps_by_name =3D=3D NULL, m=
-aps_by_name_sorted =3D=3D false */
-> +       maps__set_maps_by_name_sorted(maps, false);
->  }
->
->  static int map__start_cmp(const void *a, const void *b)
-> @@ -1167,8 +1168,7 @@ int maps__merge_in(struct maps *kmaps, struct map *=
-new_map)
->         }
->         maps__set_maps_by_address(kmaps, merged_maps_by_address);
->         maps__set_maps_by_address_sorted(kmaps, true);
-> -       zfree(maps__maps_by_name_addr(kmaps));
-> -       maps__set_maps_by_name_sorted(kmaps, true);
-> +       __maps__free_maps_by_name(kmaps);
->         maps__set_nr_maps_allocated(kmaps, merged_nr_maps_allocated);
->
->         /* Copy entries before the new_map that can't overlap. */
-> --
-> 2.34.1
->
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
