@@ -1,133 +1,305 @@
-Return-Path: <linux-kernel+bounces-172936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA108BF8F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:44:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F1C8BF8FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9931C214F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4EA21F21BD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A79535CF;
-	Wed,  8 May 2024 08:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eLlvpm0q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4043353813;
+	Wed,  8 May 2024 08:44:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE8A28FF;
-	Wed,  8 May 2024 08:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695FC9476;
+	Wed,  8 May 2024 08:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157846; cv=none; b=LA8xNuBcwk08E9Ho+6n+jAmcoKZ1kH/CEfYjbRIeR0cMc0BhaRLWPGWwN17o4/VQstByk0HzeLUM9N5LcMdoevl0MdbG2auehV2YcdtvI7bRL+I8POrTG4GQsyzQ2IoTRkIngAuqumrEP6wEfiRHGOrgdwOrHEJO1zbKEbZjdA4=
+	t=1715157864; cv=none; b=eWsJrTOETcxfyvZBZRLzfDJ+S8/Qp2nD2zcWPvwXIY029nR7SnfbM2oYpFuQ8io5XqB+OfDXNNLFjGk4Sczi7O4sMVhnWfPVO3Lrc2+jmkx27svcn0rA11g1mwFi6oRrRh8idJr6xUmdRqcWEfxD8g0QU1HydoBygf0DDxoMbck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157846; c=relaxed/simple;
-	bh=EIWAO/oS2DvpnpR2Kb+vwzKu0pOKwN71qpcxPw4cnbQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aOdtBQGRPTlFVXaR+j8RTqTFFwh8a1Mvp0nl9smTZU4JFpYdjSRT38jFVq/R8nR7haQ1/XYdVz6KwvJZG/vMy4WQL2MF60L61rJoruMBvg3IJzNx5JacSKFnEw/EI1imWOL4GbIgpVfYEyI8f5VIVNhcPBodPLdmb9zw5NTegR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eLlvpm0q; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715157845; x=1746693845;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=EIWAO/oS2DvpnpR2Kb+vwzKu0pOKwN71qpcxPw4cnbQ=;
-  b=eLlvpm0qUF4WC5f7Kcuh0MOBi3ZfwIAB5688XFcHKmbD4OsCU+0LMid4
-   VOVY3UYSP+p1bLXL1/smgeRifbUHyWv01YvyU5djml7IaRUefiBYAU+ey
-   HYvLnc0FvuKTPL+0kku/klf+DL3IO6EP/NB28MIrvvBe6FmSQIc2CHKny
-   7BaDPHPZoB10bdLpWrZfS/fK82bAtqNu290dJvMCRbaYCsG17wkQmbRLi
-   xtXt1Wl9XlbnAzmglrHHAu4jT1KdRHGcaFRdTsww5W67rv531VGOO/Jta
-   SxDX/nJuUsdyJRzlLa7lfgXIIEIpPbest0Chmpd59whQbOWYYk8K4kuPZ
-   g==;
-X-CSE-ConnectionGUID: HsuiSElYT6uGUXN2FcJCLg==
-X-CSE-MsgGUID: uPq76WX8TPKGSzvomrxT0Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22157077"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="22157077"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:44:04 -0700
-X-CSE-ConnectionGUID: BUHs8ofaQuaFaDI+23XuYg==
-X-CSE-MsgGUID: lnq/6KdBSl2/VjOScGEihQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="52025594"
-Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO localhost) ([10.245.246.76])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:43:59 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
- freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, Abhinav
- Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, seanpaul@chromium.org,
- swboyd@chromium.org, quic_jesszhan@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro
- Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
-In-Reply-To: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
-Date: Wed, 08 May 2024 11:43:56 +0300
-Message-ID: <87a5l0lmlv.fsf@intel.com>
+	s=arc-20240116; t=1715157864; c=relaxed/simple;
+	bh=T5zecpj4li0OuIWBMVUt5WCfBkgXJbSbJgxIbR51vqs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SRswTxxyLC8rm9PIKjNZp+4cp1VyJ6qoFVNYchE1oZIF5QCfKiXwcpwl1PyLAexLWSFVud7jiqq8OsKCeg4HZji0EmJ5Ughbcj9x1K2hpiZpNUuICauGyl129Q6kxIxuZBMBGeKALhVGBK+C7qKT/y6MOKMQ5w5/wu/oR5Knrb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZ7sK1b83z6K6Kl;
+	Wed,  8 May 2024 16:41:09 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 44CD0140B54;
+	Wed,  8 May 2024 16:44:14 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 8 May
+ 2024 09:44:13 +0100
+Date: Wed, 8 May 2024 09:44:11 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra
+	<peterz@infradead.org>, <linux-pm@vger.kernel.org>,
+	<loongarch@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
+	<linux-arch@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+	<x86@kernel.org>, Russell King <linux@armlinux.org.uk>, Miguel Luis
+	<miguel.luis@oracle.com>, James Morse <james.morse@arm.com>, Salil Mehta
+	<salil.mehta@huawei.com>, Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, "Gavin
+ Shan" <gshan@redhat.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<linuxarm@huawei.com>, <justin.he@arm.com>, <jianyong.wu@arm.com>
+Subject: Re: [PATCH v9 06/19] ACPI: processor: Move checks and availability
+ of acpi_processor earlier
+Message-ID: <20240508094411.00001b92@Huawei.com>
+In-Reply-To: <CAJZ5v0g-Aenoj5H+pNPtoqTgV5U7K5RGNjdOnqobqxkyL5NMVQ@mail.gmail.com>
+References: <20240430142434.10471-1-Jonathan.Cameron@huawei.com>
+	<20240430142434.10471-7-Jonathan.Cameron@huawei.com>
+	<CAJZ5v0g-Aenoj5H+pNPtoqTgV5U7K5RGNjdOnqobqxkyL5NMVQ@mail.gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 07 May 2024, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
-> Since commit 5acf49119630 ("drm/msm: import gen_header.py script from Mesa"),
-> compilation is broken on machines having python versions older than 3.9
-> due to dependency on argparse.BooleanOptionalAction.
+On Tue, 7 May 2024 21:04:26 +0200
+"Rafael J. Wysocki" <rafael@kernel.org> wrote:
 
-Is it now okay to require Python for the build? Not listed in
-Documentation/process/changes.rst.
+> On Tue, Apr 30, 2024 at 4:27=E2=80=AFPM Jonathan Cameron
+> <Jonathan.Cameron@huawei.com> wrote:
+> >
+> > Make the per_cpu(processors, cpu) entries available earlier so that
+> > they are available in arch_register_cpu() as ARM64 will need access
+> > to the acpi_handle to distinguish between acpi_processor_add()
+> > and earlier registration attempts (which will fail as _STA cannot
+> > be checked).
+> >
+> > Reorder the remove flow to clear this per_cpu() after
+> > arch_unregister_cpu() has completed, allowing it to be used in
+> > there as well.
+> >
+> > Note that on x86 for the CPU hotplug case, the pr->id prior to
+> > acpi_map_cpu() may be invalid. Thus the per_cpu() structures
+> > must be initialized after that call or after checking the ID
+> > is valid (not hotplug path).
+> >
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> =20
+>=20
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>=20
+> One nit below.
 
-BR,
-Jani.
+Thanks.  Given timing, this is looking like 6.11 material.
+I'll tidy this up and post a v10 in a couple of weeks (so around
+rc1 time). Maybe we'll pick up some more tags for the ARM
+specific bits in the meantime.
 
+Thanks for all your help!
 
+Jonathan
 
->
-> Switch to use simple bool for the validate flag to remove the dependency.
->
-> Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/msm/registers/gen_header.py b/drivers/gpu/drm/msm/registers/gen_header.py
-> index fc3bfdc991d2..3926485bb197 100644
-> --- a/drivers/gpu/drm/msm/registers/gen_header.py
-> +++ b/drivers/gpu/drm/msm/registers/gen_header.py
-> @@ -538,7 +538,7 @@ class Parser(object):
->  		self.variants.add(reg.domain)
->  
->  	def do_validate(self, schemafile):
-> -		if self.validate == False:
-> +		if not self.validate:
->  			return
->  
->  		try:
-> @@ -948,7 +948,8 @@ def main():
->  	parser = argparse.ArgumentParser()
->  	parser.add_argument('--rnn', type=str, required=True)
->  	parser.add_argument('--xml', type=str, required=True)
-> -	parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
-> +	parser.add_argument('--validate', default=False, action='store_true')
-> +	parser.add_argument('--no-validate', dest='validate', action='store_false')
->  
->  	subparsers = parser.add_subparsers()
->  	subparsers.required = True
+>=20
+> > ---
+> > v9: Add back a blank line accidentally removed in code move.
+> >     Fix up error returns so that the new cleanup in processor_add()
+> >     is triggered on detection of the bios bug.
+> >     Combined with the previous 2 patches, should solve the leak
+> >     that Gavin identified.
+> > ---
+> >  drivers/acpi/acpi_processor.c | 80 +++++++++++++++++++++--------------
+> >  1 file changed, 49 insertions(+), 31 deletions(-)
+> >
+> > diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processo=
+r.c
+> > index 16e36e55a560..4a79b42d649e 100644
+> > --- a/drivers/acpi/acpi_processor.c
+> > +++ b/drivers/acpi/acpi_processor.c
+> > @@ -183,8 +183,38 @@ static void __init acpi_pcc_cpufreq_init(void) {}
+> >  #endif /* CONFIG_X86 */
+> >
+> >  /* Initialization */
+> > +static DEFINE_PER_CPU(void *, processor_device_array);
+> > +
+> > +static bool acpi_processor_set_per_cpu(struct acpi_processor *pr,
+> > +                                      struct acpi_device *device)
+> > +{
+> > +       BUG_ON(pr->id >=3D nr_cpu_ids);
+> > +
+> > +       /*
+> > +        * Buggy BIOS check.
+> > +        * ACPI id of processors can be reported wrongly by the BIOS.
+> > +        * Don't trust it blindly
+> > +        */
+> > +       if (per_cpu(processor_device_array, pr->id) !=3D NULL &&
+> > +           per_cpu(processor_device_array, pr->id) !=3D device) {
+> > +               dev_warn(&device->dev,
+> > +                        "BIOS reported wrong ACPI id %d for the proces=
+sor\n",
+> > +                        pr->id);
+> > +               return false;
+> > +       }
+> > +       /*
+> > +        * processor_device_array is not cleared on errors to allow bug=
+gy BIOS
+> > +        * checks.
+> > +        */
+> > +       per_cpu(processor_device_array, pr->id) =3D device;
+> > +       per_cpu(processors, pr->id) =3D pr;
+> > +
+> > +       return true;
+> > +}
+> > +
+> >  #ifdef CONFIG_ACPI_HOTPLUG_CPU
+> > -static int acpi_processor_hotadd_init(struct acpi_processor *pr)
+> > +static int acpi_processor_hotadd_init(struct acpi_processor *pr,
+> > +                                     struct acpi_device *device)
+> >  {
+> >         int ret;
+> >
+> > @@ -198,8 +228,16 @@ static int acpi_processor_hotadd_init(struct acpi_=
+processor *pr)
+> >         if (ret)
+> >                 goto out;
+> >
+> > +       if (!acpi_processor_set_per_cpu(pr, device)) {
+> > +               ret =3D -EINVAL;
+> > +               acpi_unmap_cpu(pr->id);
+> > +               goto out;
+> > +       }
+> > +
+> >         ret =3D arch_register_cpu(pr->id);
+> >         if (ret) {
+> > +               /* Leave the processor device array in place to detect =
+buggy bios */
+> > +               per_cpu(processors, pr->id) =3D NULL;
+> >                 acpi_unmap_cpu(pr->id);
+> >                 goto out;
+> >         }
+> > @@ -217,7 +255,8 @@ static int acpi_processor_hotadd_init(struct acpi_p=
+rocessor *pr)
+> >         return ret;
+> >  }
+> >  #else
+> > -static inline int acpi_processor_hotadd_init(struct acpi_processor *pr)
+> > +static inline int acpi_processor_hotadd_init(struct acpi_processor *pr,
+> > +                                            struct acpi_device *device)
+> >  {
+> >         return -ENODEV;
+> >  }
+> > @@ -316,10 +355,13 @@ static int acpi_processor_get_info(struct acpi_de=
+vice *device)
+> >          *  because cpuid <-> apicid mapping is persistent now.
+> >          */
+> >         if (invalid_logical_cpuid(pr->id) || !cpu_present(pr->id)) {
+> > -               int ret =3D acpi_processor_hotadd_init(pr);
+> > +               int ret =3D acpi_processor_hotadd_init(pr, device);
+> >
+> >                 if (ret)
+> >                         return ret;
+> > +       } else {
+> > +               if (!acpi_processor_set_per_cpu(pr, device))
+> > +                       return -EINVAL;
+> >         } =20
+>=20
+> This looks a bit odd.
+>=20
+> I would make acpi_processor_set_per_cpu() return 0 on success and
+> -EINVAL on failure and the above would become
+>=20
+> if (invalid_logical_cpuid(pr->id) || !cpu_present(pr->id))
+>          ret =3D acpi_processor_hotadd_init(pr, device);
+> else
+>         ret =3D acpi_processor_set_per_cpu(pr, device);
+>=20
+> if (ret)
+>         return ret;
+>=20
+> (and of course ret needs to be defined at the beginning of the function).
+>=20
+> >
+> >         /*
+> > @@ -365,8 +407,6 @@ static int acpi_processor_get_info(struct acpi_devi=
+ce *device)
+> >   * (cpu_data(cpu)) values, like CPU feature flags, family, model, etc.
+> >   * Such things have to be put in and set up by the processor driver's =
+probe().
+> >   */
+> > -static DEFINE_PER_CPU(void *, processor_device_array);
+> > -
+> >  static int acpi_processor_add(struct acpi_device *device,
+> >                                         const struct acpi_device_id *id)
+> >  {
+> > @@ -395,28 +435,6 @@ static int acpi_processor_add(struct acpi_device *=
+device,
+> >         if (result) /* Processor is not physically present or unavailab=
+le */
+> >                 goto err_clear_driver_data;
+> >
+> > -       BUG_ON(pr->id >=3D nr_cpu_ids);
+> > -
+> > -       /*
+> > -        * Buggy BIOS check.
+> > -        * ACPI id of processors can be reported wrongly by the BIOS.
+> > -        * Don't trust it blindly
+> > -        */
+> > -       if (per_cpu(processor_device_array, pr->id) !=3D NULL &&
+> > -           per_cpu(processor_device_array, pr->id) !=3D device) {
+> > -               dev_warn(&device->dev,
+> > -                       "BIOS reported wrong ACPI id %d for the process=
+or\n",
+> > -                       pr->id);
+> > -               /* Give up, but do not abort the namespace scan. */
+> > -               goto err_clear_driver_data;
+> > -       }
+> > -       /*
+> > -        * processor_device_array is not cleared on errors to allow bug=
+gy BIOS
+> > -        * checks.
+> > -        */
+> > -       per_cpu(processor_device_array, pr->id) =3D device;
+> > -       per_cpu(processors, pr->id) =3D pr;
+> > -
+> >         dev =3D get_cpu_device(pr->id);
+> >         if (!dev) {
+> >                 result =3D -ENODEV;
+> > @@ -470,10 +488,6 @@ static void acpi_processor_remove(struct acpi_devi=
+ce *device)
+> >         device_release_driver(pr->dev);
+> >         acpi_unbind_one(pr->dev);
+> >
+> > -       /* Clean up. */
+> > -       per_cpu(processor_device_array, pr->id) =3D NULL;
+> > -       per_cpu(processors, pr->id) =3D NULL;
+> > -
+> >         cpu_maps_update_begin();
+> >         cpus_write_lock();
+> >
+> > @@ -481,6 +495,10 @@ static void acpi_processor_remove(struct acpi_devi=
+ce *device)
+> >         arch_unregister_cpu(pr->id);
+> >         acpi_unmap_cpu(pr->id);
+> >
+> > +       /* Clean up. */
+> > +       per_cpu(processor_device_array, pr->id) =3D NULL;
+> > +       per_cpu(processors, pr->id) =3D NULL;
+> > +
+> >         cpus_write_unlock();
+> >         cpu_maps_update_done();
+> >
+> > --
+> > 2.39.2
+> > =20
 
--- 
-Jani Nikula, Intel
 
