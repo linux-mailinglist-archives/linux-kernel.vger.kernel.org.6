@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-172756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE18E8BF632
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:26:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BF48BF635
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64A0C28A953
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:26:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E05BB23D84
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACA322338;
-	Wed,  8 May 2024 06:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528502561D;
+	Wed,  8 May 2024 06:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="KlXjzmhV"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NloDDEZo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DD81BC40
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 06:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6975E28373;
+	Wed,  8 May 2024 06:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149469; cv=none; b=Mc5Fotbm5bFfbpcRfbN8PLRCAkG1g+/Hx1L+OG8Qda61u1hlFRQ05IGgKCIFxrJPSu0JrXtOWtX4SeFp+ngfcCYPVgv+Lz2rmrLb+0S12/xfPDCnhe61mZzo9IjmoJO6mQo6vqaAhqxvX1I7NXCSrjDewPB52+k5Nm4hNEI/KuY=
+	t=1715149489; cv=none; b=WAIZkswpkn/8tygVAraVbZ65LQ7snJJUOIZso2ZooiAGRgFV+BA73y5OXs+PliVYQxkWB+pJfNH/t90iWshE6tGS0+5bFfeZpNZ2XCnJu8efbVqHL3If0zuSzAJ4QR9DJr8BtSdhPnPGL0y4/gaS3q8Qk0t1PhEZ8yBSVQjlYy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149469; c=relaxed/simple;
-	bh=Wbp/AwpYX7upSdItvbQvzSbsVzx+kiC3OXh+8FAuSNw=;
+	s=arc-20240116; t=1715149489; c=relaxed/simple;
+	bh=p6nrGwLvjeGOi1nMq/8XNnBJdlDdDoiGOZ2hZYq1OB4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Aro1JDDn7/dTVloef8nrgLC8AorB0krIxmtFlzhJ0a9ueLN5QYnYVkpkt8p6IB4GxEi93pLirwbJ9qyspLeLlWQP0EpAF/dyjhXHLeEzLOrjrBd7bXIpIXUN6xqecnSzAkBDOL1boeKRoQQGnexkukweHwnhZiWUvAsug6ovRyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=KlXjzmhV; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso3409189b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 23:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1715149466; x=1715754266; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7AMnUX2YT8tVUEAbF8ZHvccX5Ts1C30c2UFvuj96f0g=;
-        b=KlXjzmhVH/f4EvQU1AmSYj6bqYj5yH5RyxYbtmpPej0Cyt38+71380D8fxrr28d17g
-         vaTN9hRmkFiF1SEPWy41KJmfagnYUII5n4beThlzBpJEahopJGfgisKNoiEefPGR4g+i
-         wUJUg2K2GelFRJKGVlwx+eSdjd5HfVa6aadGQsaHdTduZxkNAzurKp9VwNodDo1tH70r
-         9LYK0m0xZakBYXkIBb4hFK6Vmgea+5f6JnSAwe8ji1OhywgObLJs/gTWwYvqa5i/xcP4
-         zK0Zzv6uPOvv0MNW8U8eGjBG2zjwvJS1V642r3zHm7rVsrKs/fM+s36+lW899J1sB2IZ
-         4B2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715149466; x=1715754266;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7AMnUX2YT8tVUEAbF8ZHvccX5Ts1C30c2UFvuj96f0g=;
-        b=kn7GCp5afI13R0/v3c/sd7GDrhKotmiE1bqTfyXqJyR1lWAdP7jtds7bxYhHiPwFzC
-         0BvXroaqIVtunY3czhzfzXfJcjcVIsBTzOppAOQcjN9Oo5fH0t1uSx8r0L88clEPEqKC
-         +xutNC6bibCKBgJh/fKatmSipgqBif6N4ZFmxkgIqbzzkVqSdx80/T4yZcjgFziz+vFP
-         7dtgcMwiVaN4HTmtvilYzqUc+0NMSx8QKjcPf2StJ05DUK9YN9AiGlLuGHWLUtBjRcIc
-         bhevvOC65KShyTJHQU2RZ83EyoqUBFnj2l8/Fa7RI1mjjrqSIyK39dNYwmA16vi13xwv
-         iT1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlWk27sYMaAU9p/2dOy/usp/DK1cYT+D/0v88FNlvjdPfDBHqoa0AXM9kR1fjHCTdL/wG/Ps199XOqLzxNuN48EBpcv8qF0TxhrOqd
-X-Gm-Message-State: AOJu0Yzjp60TE0FG/6DeYHCeOgDPnT0HBpva8c8GxVe/664hPSVtxYBA
-	LAQveWZbrLFLeYnNxnjLK2CKuW9MlK9U2+v3q7SNH6xLUNL/8Wp+oZQko+NaL0I=
-X-Google-Smtp-Source: AGHT+IFKtuIy0MMo+ZTLC8DLfMyEyh3LVwYqAPgsF/g9T/sWdoau4q7NDRx6r5JXztoeP2WJOR7w4g==
-X-Received: by 2002:a62:81c3:0:b0:6ed:973d:936 with SMTP id d2e1a72fcca58-6f49c20e816mr1717394b3a.9.1715149465878;
-        Tue, 07 May 2024 23:24:25 -0700 (PDT)
-Received: from [192.168.1.15] (174-21-160-85.tukw.qwest.net. [174.21.160.85])
-        by smtp.gmail.com with ESMTPSA id u4-20020a056a00124400b006edceb4ea9dsm10448566pfi.166.2024.05.07.23.24.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 23:24:25 -0700 (PDT)
-Message-ID: <a75ca51c-89b1-4f90-be52-e5fb71ca519a@davidwei.uk>
-Date: Tue, 7 May 2024 23:24:24 -0700
+	 In-Reply-To:Content-Type; b=ZmeAaF6os5zVmR20MWvqCZ1gSGDY83YMsfLAugxMRsnToRMblghyYJv3NBdx/Q3VPTxU1HjmHnWEyVFnEqxcTQpYILIkNzB9X8Y2o0ARoaAjuv3EWZUPIdl/wOrBSyK7O5IXXgZux6F2hLnY2rvfwontQhwUkDp06BowlRauV3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NloDDEZo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F35BEC113CC;
+	Wed,  8 May 2024 06:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715149489;
+	bh=p6nrGwLvjeGOi1nMq/8XNnBJdlDdDoiGOZ2hZYq1OB4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NloDDEZoQt+4vj2xEyVtrzlc+6LLFXQsPdQkB5GnnRGjieGHOnBJRFkwnz3iicEwd
+	 UYxLpbvF6/MHGK7Mg1IKlcu/mBkQAMaC8dNKg60SEX/lK8fRBSdn8gavHpP03kTNKp
+	 wd9xi/KNknlK1K1cUnTwvFg7ZMso7JbT5N+JGVDXl4gGxLKHlNufpsg3cn51zFtg5+
+	 cVlzixBzRvSxSPz64zJmdgMWQT5tlc+Kj5Y/zKeuRkXePdmaDdxlsJTk07YCdagaFe
+	 J68u++00l+KRQP/OOciwQtMC7pj7EqNiKP6ELLSoIcCKfQKYv2wlOQmBBn1F8MihIC
+	 vuufvBNW1/Meg==
+Message-ID: <49ff4f07-aaf9-4f29-ba97-b4b03b05f36d@kernel.org>
+Date: Wed, 8 May 2024 08:24:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,537 +49,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 4/5] gve: Add flow steering adminq commands
-Content-Language: en-GB
-To: Ziwei Xiao <ziweixiao@google.com>, netdev@vger.kernel.org
-Cc: jeroendb@google.com, pkaligineedi@google.com, shailend@google.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, willemb@google.com, hramamurthy@google.com,
- rushilg@google.com, jfraker@google.com, linux-kernel@vger.kernel.org
-References: <20240507225945.1408516-1-ziweixiao@google.com>
- <20240507225945.1408516-5-ziweixiao@google.com>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <20240507225945.1408516-5-ziweixiao@google.com>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10
+To: Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+ Sylwester Nawrocki <snawrocki@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240504120624.6574-1-krzysztof.kozlowski@linaro.org>
+ <8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org>
+ <b1fd9806-3e33-488a-a5a9-a156a2c735d2@kernel.org>
+ <b3e320ecb16320f88d7db566be51b1e9.sboyd@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b3e320ecb16320f88d7db566be51b1e9.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-05-07 15:59, Ziwei Xiao wrote:
-> From: Jeroen de Borst <jeroendb@google.com>
+On 07/05/2024 22:43, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2024-05-06 22:54:10)
+>> On 07/05/2024 01:44, Stephen Boyd wrote:
+>>> Quoting Krzysztof Kozlowski (2024-05-04 05:06:22)
+>>>> The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+>>>>
+>>>>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+>>>>
+>>>> are available in the Git repository at:
+>>>>
+>>>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.10
+>>>
+>>> I'm getting compile warnings. Is there a pending fix? Also, why is GS101
+>>
+>> I don't see any of these warnings. Neither local (W=1), nor on my CI,
+>> nor reported by LKP (which reported build successes for this branch).
+>> How can I reproduce it?
 > 
-> Adding new adminq commands for the driver to configure and query flow
-> rules that are stored in the device. Flow steering rules are assigned
-> with a location that determines the relative order of the rules.
+> I ran this command
 > 
-> Flow rules can run up to an order of millions. In such cases, storing
-> a full copy of the rules in the driver to prepare for the ethtool query
-> is infeasible while querying them from the device is better. That needs
-> to be optimized too so that we don't send a lot of adminq commands. The
-> solution here is to store a limited number of rules/rule ids in the
-> driver in a cache. This patch uses dma_pool to allocate 4k bytes which
-> lets device write at most 46 flow rules(4k/88) or 1k rule ids(4096/4)
-> at a time.
+>  make W=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- drivers/clk/samsung/clk-gs101.o
 > 
-> For configuring flow rules, there are 3 sub-commands:
-> - ADD which adds a rule at the location supplied
-> - DEL which deletes the rule at the location supplied
-> - RESET which clears all currently active rules in the device
+> and I see the warnings. They're actually upgraded to errors.
+
+So regular W=1 build... weird.
+
 > 
-> For querying flow rules, there are also 3 sub-commands:
-> - QUERY_RULES corresponds to ETHTOOL_GRXCLSRULE. It fills the rules in
->   the allocated cache after querying the device
-> - QUERY_RULES_IDS corresponds to ETHTOOL_GRXCLSRLALL. It fills the
->   rule_ids in the allocated cache after querying the device
-> - QUERY_RULES_STATS corresponds to ETHTOOL_GRXCLSRLCNT. It queries the
->   device's current flow rule number and the supported max flow rule
->   limit
+>>
+>>
+>>> describing clk parents with strings instead of using clk_parent_data?
+>>
+>> GS101 uses existing Samsuung clock framework, so that's how it is done
+>> there. There is nothing odd here, comparing to other Samsung clocks.
 > 
-> Signed-off-by: Jeroen de Borst <jeroendb@google.com>
-> Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
-> Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
-> Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
-> Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
-> ---
->  drivers/net/ethernet/google/gve/gve.h         |  42 ++++++
->  drivers/net/ethernet/google/gve/gve_adminq.c  | 133 ++++++++++++++++++
->  drivers/net/ethernet/google/gve/gve_adminq.h  |  75 ++++++++++
->  drivers/net/ethernet/google/gve/gve_ethtool.c |   5 +-
->  drivers/net/ethernet/google/gve/gve_main.c    |  54 ++++++-
->  5 files changed, 307 insertions(+), 2 deletions(-)
+> Ok. Is anyone working on migrating Samsung clk drivers to the non-string
+> way?
+
+I am not aware of it. There was no serious development for Samsung SoC
+in total for years.
+
 > 
-> diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethernet/google/gve/gve.h
-> index 58213c15e084..355ae797eacf 100644
-> --- a/drivers/net/ethernet/google/gve/gve.h
-> +++ b/drivers/net/ethernet/google/gve/gve.h
-> @@ -60,6 +60,10 @@
->  
->  #define GVE_DEFAULT_RX_BUFFER_OFFSET 2048
->  
-> +#define GVE_FLOW_RULES_CACHE_SIZE (GVE_ADMINQ_BUFFER_SIZE / sizeof(struct gve_flow_rule))
-> +#define GVE_FLOW_RULE_IDS_CACHE_SIZE \
-> +	(GVE_ADMINQ_BUFFER_SIZE / sizeof(((struct gve_flow_rule *)0)->location))
-> +
->  #define GVE_XDP_ACTIONS 5
->  
->  #define GVE_GQ_TX_MIN_PKT_DESC_BYTES 182
-> @@ -678,6 +682,39 @@ enum gve_queue_format {
->  	GVE_DQO_QPL_FORMAT		= 0x4,
->  };
->  
-> +struct gve_flow_spec {
-> +	__be32 src_ip[4];
-> +	__be32 dst_ip[4];
-> +	union {
-> +		struct {
-> +			__be16 src_port;
-> +			__be16 dst_port;
-> +		};
-> +		__be32 spi;
-> +	};
-> +	union {
-> +		u8 tos;
-> +		u8 tclass;
-> +	};
-> +};
-> +
-> +struct gve_flow_rule {
-> +	u32 location;
-> +	u16 flow_type;
-> +	u16 action;
-> +	struct gve_flow_spec key;
-> +	struct gve_flow_spec mask;
-> +};
-> +
-> +struct gve_flow_rules_cache {
-> +	bool rules_cache_synced; /* False if the driver's rules_cache is outdated */
-> +	struct gve_flow_rule *rules_cache;
-> +	u32 *rule_ids_cache;
-> +	/* The total number of queried rules that stored in the caches */
-> +	u32 rules_cache_num;
-> +	u32 rule_ids_cache_num;
-> +};
-> +
->  struct gve_priv {
->  	struct net_device *dev;
->  	struct gve_tx_ring *tx; /* array of tx_cfg.num_queues */
-> @@ -744,6 +781,8 @@ struct gve_priv {
->  	u32 adminq_report_link_speed_cnt;
->  	u32 adminq_get_ptype_map_cnt;
->  	u32 adminq_verify_driver_compatibility_cnt;
-> +	u32 adminq_query_flow_rules_cnt;
-> +	u32 adminq_cfg_flow_rule_cnt;
->  
->  	/* Global stats */
->  	u32 interface_up_cnt; /* count of times interface turned up since last reset */
-> @@ -788,6 +827,9 @@ struct gve_priv {
->  	bool header_split_enabled; /* True if the header split is enabled by the user */
->  
->  	u32 max_flow_rules;
-> +	u32 num_flow_rules; /* Current number of flow rules registered in the device */
-> +
-> +	struct gve_flow_rules_cache flow_rules_cache;
->  };
->  
->  enum gve_service_task_flags_bit {
-> diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
-> index 85d0d742ad21..7a929e20cf96 100644
-> --- a/drivers/net/ethernet/google/gve/gve_adminq.c
-> +++ b/drivers/net/ethernet/google/gve/gve_adminq.c
-> @@ -287,6 +287,8 @@ int gve_adminq_alloc(struct device *dev, struct gve_priv *priv)
->  	priv->adminq_report_stats_cnt = 0;
->  	priv->adminq_report_link_speed_cnt = 0;
->  	priv->adminq_get_ptype_map_cnt = 0;
-> +	priv->adminq_query_flow_rules_cnt = 0;
-> +	priv->adminq_cfg_flow_rule_cnt = 0;
->  
->  	/* Setup Admin queue with the device */
->  	if (priv->pdev->revision < 0x1) {
-> @@ -526,6 +528,12 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
->  	case GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY:
->  		priv->adminq_verify_driver_compatibility_cnt++;
->  		break;
-> +	case GVE_ADMINQ_QUERY_FLOW_RULES:
-> +		priv->adminq_query_flow_rules_cnt++;
-> +		break;
-> +	case GVE_ADMINQ_CONFIGURE_FLOW_RULE:
-> +		priv->adminq_cfg_flow_rule_cnt++;
-> +		break;
->  	default:
->  		dev_err(&priv->pdev->dev, "unknown AQ command opcode %d\n", opcode);
->  	}
-> @@ -1188,3 +1196,128 @@ int gve_adminq_get_ptype_map_dqo(struct gve_priv *priv,
->  			  ptype_map_bus);
->  	return err;
->  }
-> +
-> +static int
-> +gve_adminq_configure_flow_rule(struct gve_priv *priv,
-> +			       struct gve_adminq_configure_flow_rule *flow_rule_cmd)
-> +{
-> +	int err = gve_adminq_execute_extended_cmd(priv,
-> +			GVE_ADMINQ_CONFIGURE_FLOW_RULE,
-> +			sizeof(struct gve_adminq_configure_flow_rule),
-> +			flow_rule_cmd);
-> +
-> +	if (err) {
-> +		dev_err(&priv->pdev->dev, "Timeout to configure the flow rule, trigger reset");
-> +		gve_reset(priv, true);
-> +	} else {
-> +		priv->flow_rules_cache.rules_cache_synced = false;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +int gve_adminq_add_flow_rule(struct gve_priv *priv, struct gve_adminq_flow_rule *rule, u32 loc)
-> +{
-> +	struct gve_adminq_configure_flow_rule flow_rule_cmd = {
-> +		.opcode = cpu_to_be16(GVE_RULE_ADD),
-> +		.location = cpu_to_be32(loc),
-> +		.rule = *rule,
-> +	};
-> +
-> +	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
-> +}
-> +
-> +int gve_adminq_del_flow_rule(struct gve_priv *priv, u32 loc)
-> +{
-> +	struct gve_adminq_configure_flow_rule flow_rule_cmd = {
-> +		.opcode = cpu_to_be16(GVE_RULE_DEL),
-> +		.location = cpu_to_be32(loc),
-> +	};
-> +
-> +	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
-> +}
-> +
-> +int gve_adminq_reset_flow_rules(struct gve_priv *priv)
-> +{
-> +	struct gve_adminq_configure_flow_rule flow_rule_cmd = {
-> +		.opcode = cpu_to_be16(GVE_RULE_RESET),
-> +	};
-> +
-> +	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
-> +}
-> +
-> +/* In the dma memory that the driver allocated for the device to query the flow rules, the device
-> + * will first write it with a struct of gve_query_flow_rules_descriptor. Next to it, the device
-> + * will write an array of rules or rule ids with the count that specified in the descriptor.
-> + * For GVE_FLOW_RULE_QUERY_STATS, the device will only write the descriptor.
-> + */
-> +static int gve_adminq_process_flow_rules_query(struct gve_priv *priv, u16 query_opcode,
-> +					       struct gve_query_flow_rules_descriptor *descriptor)
-> +{
-> +	struct gve_flow_rules_cache *flow_rules_cache = &priv->flow_rules_cache;
-> +	u32 num_queried_rules, total_memory_len, rule_info_len;
-> +	void *descriptor_end, *rule_info;
-> +
-> +	total_memory_len = be32_to_cpu(descriptor->total_length);
-> +	if (total_memory_len > GVE_ADMINQ_BUFFER_SIZE) {
-> +		dev_err(&priv->dev->dev, "flow rules query is out of memory.\n");
+>>
+>>>
+>>> In file included from drivers/clk/samsung/clk-gs101.c:16:
+>>> drivers/clk/samsung/clk-gs101.c:2616:7: error: ‘mout_hsi2_mmc_card_p’
+>>> defined but not used [-Werror=unused-const-variable=]
+>>>  2616 | PNAME(mout_hsi2_mmc_card_p)     = { "fout_shared2_pll", "fout_shared3_pll",
+>>
+>> I see indeed some unused variables and I will drop them but your
+>> warnings are not reproducible.
+> 
+> Weird! I use gcc-12.2 if that helps. I've been meaning to upgrade but I
+> also don't see much urgency.
+> 
+> I'll wait for the next PR.
 
-The error doesn't seem to match the inequality used. Also, how can the
-HW write more than GVE_ADMINQ_BUFFER_SIZE?
+Yes, patch is already in linux-next, so I'll wait a bit and send today.
 
-> +		return -ENOMEM;
-> +	}
-> +
-> +	num_queried_rules = be32_to_cpu(descriptor->num_queried_rules);
-> +	descriptor_end = (void *)descriptor + total_memory_len;
+Best regards,
+Krzysztof
 
-This isn't being used.
-
-> +	rule_info = (void *)(descriptor + 1);
-> +
-> +	switch (query_opcode) {
-> +	case GVE_FLOW_RULE_QUERY_RULES:
-> +		rule_info_len = num_queried_rules * sizeof(*flow_rules_cache->rules_cache);
-
-Do you need to verify what the HW has written matches your expectations
-i.e. is sizeof(*descriptor) + rule_info_len == total_memory_len?
-
-> +
-> +		memcpy(flow_rules_cache->rules_cache, rule_info, rule_info_len);
-> +		flow_rules_cache->rules_cache_num = num_queried_rules;
-> +		break;
-> +	case GVE_FLOW_RULE_QUERY_IDS:
-> +		rule_info_len = num_queried_rules * sizeof(*flow_rules_cache->rule_ids_cache);
-> +
-> +		memcpy(flow_rules_cache->rule_ids_cache, rule_info, rule_info_len);
-> +		flow_rules_cache->rule_ids_cache_num = num_queried_rules;
-> +		break;
-> +	case GVE_FLOW_RULE_QUERY_STATS:
-> +		priv->num_flow_rules = be32_to_cpu(descriptor->num_flow_rules);
-> +		priv->max_flow_rules = be32_to_cpu(descriptor->max_flow_rules);
-> +		return 0;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return  0;
-> +}
-> +
-> +int gve_adminq_query_flow_rules(struct gve_priv *priv, u16 query_opcode, u32 starting_loc)
-> +{
-> +	struct gve_query_flow_rules_descriptor *descriptor;
-> +	union gve_adminq_command cmd;
-> +	dma_addr_t descriptor_bus;
-> +	int err = 0;
-> +
-> +	memset(&cmd, 0, sizeof(cmd));
-> +	descriptor = dma_pool_alloc(priv->adminq_pool, GFP_KERNEL, &descriptor_bus);
-
-Why is adminq_pool only used for 2 commands?
-
-> +	if (!descriptor)
-> +		return -ENOMEM;
-> +
-> +	cmd.opcode = cpu_to_be32(GVE_ADMINQ_QUERY_FLOW_RULES);
-> +	cmd.query_flow_rules = (struct gve_adminq_query_flow_rules) {
-> +		.opcode = cpu_to_be16(query_opcode),
-> +		.starting_rule_id = cpu_to_be32(starting_loc),
-> +		.available_length = cpu_to_be64(GVE_ADMINQ_BUFFER_SIZE),
-> +		.rule_descriptor_addr = cpu_to_be64(descriptor_bus),
-> +	};
-> +	err = gve_adminq_execute_cmd(priv, &cmd);
-> +	if (err)
-> +		goto out;
-> +
-> +	err = gve_adminq_process_flow_rules_query(priv, query_opcode, descriptor);
-> +
-> +out:
-> +	dma_pool_free(priv->adminq_pool, descriptor, descriptor_bus);
-> +	return err;
-> +}
-> diff --git a/drivers/net/ethernet/google/gve/gve_adminq.h b/drivers/net/ethernet/google/gve/gve_adminq.h
-> index e64a0e72e781..9ddb72f92197 100644
-> --- a/drivers/net/ethernet/google/gve/gve_adminq.h
-> +++ b/drivers/net/ethernet/google/gve/gve_adminq.h
-> @@ -25,11 +25,21 @@ enum gve_adminq_opcodes {
->  	GVE_ADMINQ_REPORT_LINK_SPEED		= 0xD,
->  	GVE_ADMINQ_GET_PTYPE_MAP		= 0xE,
->  	GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY	= 0xF,
-> +	GVE_ADMINQ_QUERY_FLOW_RULES		= 0x10,
->  
->  	/* For commands that are larger than 56 bytes */
->  	GVE_ADMINQ_EXTENDED_COMMAND		= 0xFF,
->  };
->  
-> +/* The normal adminq command is restricted to be 56 bytes at maximum. For the
-> + * longer adminq command, it is wrapped by GVE_ADMINQ_EXTENDED_COMMAND with
-> + * inner opcode of gve_adminq_extended_cmd_opcodes specified. The inner command
-> + * is written in the dma memory allocated by GVE_ADMINQ_EXTENDED_COMMAND.
-> + */
-> +enum gve_adminq_extended_cmd_opcodes {
-> +	GVE_ADMINQ_CONFIGURE_FLOW_RULE	= 0x101,
-> +};
-> +
->  /* Admin queue status codes */
->  enum gve_adminq_statuses {
->  	GVE_ADMINQ_COMMAND_UNSET			= 0x0,
-> @@ -434,6 +444,66 @@ struct gve_adminq_get_ptype_map {
->  	__be64 ptype_map_addr;
->  };
->  
-> +/* Flow-steering related definitions */
-> +enum gve_adminq_flow_rule_cfg_opcode {
-> +	GVE_RULE_ADD	= 0,
-> +	GVE_RULE_DEL	= 1,
-> +	GVE_RULE_RESET	= 2,
-> +};
-
-Could these be more descriptive?
-
-> +
-> +enum gve_adminq_flow_rule_query_opcode {
-> +	GVE_FLOW_RULE_QUERY_RULES	= 0,
-> +	GVE_FLOW_RULE_QUERY_IDS		= 1,
-> +	GVE_FLOW_RULE_QUERY_STATS	= 2,
-> +};
-> +
-> +enum gve_adminq_flow_type {
-> +	GVE_FLOW_TYPE_TCPV4,
-> +	GVE_FLOW_TYPE_UDPV4,
-> +	GVE_FLOW_TYPE_SCTPV4,
-> +	GVE_FLOW_TYPE_AHV4,
-> +	GVE_FLOW_TYPE_ESPV4,
-> +	GVE_FLOW_TYPE_TCPV6,
-> +	GVE_FLOW_TYPE_UDPV6,
-> +	GVE_FLOW_TYPE_SCTPV6,
-> +	GVE_FLOW_TYPE_AHV6,
-> +	GVE_FLOW_TYPE_ESPV6,
-> +};
-> +
-> +/* Flow-steering command */
-> +struct gve_adminq_flow_rule {
-> +	__be16 flow_type;
-> +	__be16 action; /* RX queue id */
-> +	struct gve_flow_spec key;
-> +	struct gve_flow_spec mask;
-> +};
-> +
-> +struct gve_adminq_configure_flow_rule {
-> +	__be16 opcode;
-> +	u8 padding[2];
-> +	struct gve_adminq_flow_rule rule;
-> +	__be32 location;
-> +};
-> +
-> +static_assert(sizeof(struct gve_adminq_configure_flow_rule) == 92);
-> +
-> +struct gve_query_flow_rules_descriptor {
-> +	__be32 num_flow_rules; /* Current rule counts stored in the device */
-> +	__be32 max_flow_rules;
-> +	__be32 num_queried_rules;
-
-nit: more comments here are appreciated.
-
-> +	__be32 total_length; /* The memory length that the device writes */
-> +};
-> +
-> +struct gve_adminq_query_flow_rules {
-> +	__be16 opcode;
-> +	u8 padding[2];
-> +	__be32 starting_rule_id;
-> +	__be64 available_length; /* The dma memory length that the driver allocated */
-> +	__be64 rule_descriptor_addr; /* The dma memory address */
-> +};
-> +
-> +static_assert(sizeof(struct gve_adminq_query_flow_rules) == 24);
-> +
->  union gve_adminq_command {
->  	struct {
->  		__be32 opcode;
-> @@ -454,6 +524,7 @@ union gve_adminq_command {
->  			struct gve_adminq_get_ptype_map get_ptype_map;
->  			struct gve_adminq_verify_driver_compatibility
->  						verify_driver_compatibility;
-> +			struct gve_adminq_query_flow_rules query_flow_rules;
->  			struct gve_adminq_extended_command extended_command;
->  		};
->  	};
-> @@ -488,6 +559,10 @@ int gve_adminq_verify_driver_compatibility(struct gve_priv *priv,
->  					   u64 driver_info_len,
->  					   dma_addr_t driver_info_addr);
->  int gve_adminq_report_link_speed(struct gve_priv *priv);
-> +int gve_adminq_add_flow_rule(struct gve_priv *priv, struct gve_adminq_flow_rule *rule, u32 loc);
-> +int gve_adminq_del_flow_rule(struct gve_priv *priv, u32 loc);
-> +int gve_adminq_reset_flow_rules(struct gve_priv *priv);
-> +int gve_adminq_query_flow_rules(struct gve_priv *priv, u16 query_opcode, u32 starting_loc);
->  
->  struct gve_ptype_lut;
->  int gve_adminq_get_ptype_map_dqo(struct gve_priv *priv,
-> diff --git a/drivers/net/ethernet/google/gve/gve_ethtool.c b/drivers/net/ethernet/google/gve/gve_ethtool.c
-> index 156b7e128b53..02cee7e0e229 100644
-> --- a/drivers/net/ethernet/google/gve/gve_ethtool.c
-> +++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-> @@ -74,7 +74,8 @@ static const char gve_gstrings_adminq_stats[][ETH_GSTRING_LEN] = {
->  	"adminq_create_tx_queue_cnt", "adminq_create_rx_queue_cnt",
->  	"adminq_destroy_tx_queue_cnt", "adminq_destroy_rx_queue_cnt",
->  	"adminq_dcfg_device_resources_cnt", "adminq_set_driver_parameter_cnt",
-> -	"adminq_report_stats_cnt", "adminq_report_link_speed_cnt", "adminq_get_ptype_map_cnt"
-> +	"adminq_report_stats_cnt", "adminq_report_link_speed_cnt", "adminq_get_ptype_map_cnt",
-> +	"adminq_query_flow_rules", "adminq_cfg_flow_rule",
->  };
->  
->  static const char gve_gstrings_priv_flags[][ETH_GSTRING_LEN] = {
-> @@ -458,6 +459,8 @@ gve_get_ethtool_stats(struct net_device *netdev,
->  	data[i++] = priv->adminq_report_stats_cnt;
->  	data[i++] = priv->adminq_report_link_speed_cnt;
->  	data[i++] = priv->adminq_get_ptype_map_cnt;
-> +	data[i++] = priv->adminq_query_flow_rules_cnt;
-> +	data[i++] = priv->adminq_cfg_flow_rule_cnt;
->  }
->  
->  static void gve_get_channels(struct net_device *netdev,
-> diff --git a/drivers/net/ethernet/google/gve/gve_main.c b/drivers/net/ethernet/google/gve/gve_main.c
-> index cabf7d4bcecb..eb435ccbe98e 100644
-> --- a/drivers/net/ethernet/google/gve/gve_main.c
-> +++ b/drivers/net/ethernet/google/gve/gve_main.c
-> @@ -141,6 +141,52 @@ static void gve_get_stats(struct net_device *dev, struct rtnl_link_stats64 *s)
->  	}
->  }
->  
-> +static int gve_alloc_flow_rule_caches(struct gve_priv *priv)
-> +{
-> +	struct gve_flow_rules_cache *flow_rules_cache = &priv->flow_rules_cache;
-> +	int err = 0;
-> +
-> +	if (!priv->max_flow_rules)
-> +		return 0;
-> +
-> +	flow_rules_cache->rules_cache =
-> +		kvcalloc(GVE_FLOW_RULES_CACHE_SIZE, sizeof(*flow_rules_cache->rules_cache),
-> +			 GFP_KERNEL);
-> +	if (!flow_rules_cache->rules_cache) {
-> +		dev_err(&priv->pdev->dev, "Cannot alloc flow rules cache\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	flow_rules_cache->rule_ids_cache =
-> +		kvcalloc(GVE_FLOW_RULE_IDS_CACHE_SIZE, sizeof(*flow_rules_cache->rule_ids_cache),
-> +			 GFP_KERNEL);
-> +	if (!flow_rules_cache->rule_ids_cache) {
-> +		dev_err(&priv->pdev->dev, "Cannot alloc flow rule ids cache\n");
-> +		err = -ENOMEM;
-> +		goto free_rules_cache;
-> +	}
-> +
-> +	return 0;
-> +
-> +free_rules_cache:
-> +	kvfree(flow_rules_cache->rules_cache);
-> +	flow_rules_cache->rules_cache = NULL;
-> +	return err;
-> +}
-> +
-> +static void gve_free_flow_rule_caches(struct gve_priv *priv)
-> +{
-> +	struct gve_flow_rules_cache *flow_rules_cache = &priv->flow_rules_cache;
-> +
-> +	if (!priv->max_flow_rules)
-> +		return;
-
-Is this needed? Is kernel style just kvfree() w/o checks?
-
-> +
-> +	kvfree(flow_rules_cache->rule_ids_cache);
-> +	flow_rules_cache->rule_ids_cache = NULL;
-> +	kvfree(flow_rules_cache->rules_cache);
-> +	flow_rules_cache->rules_cache = NULL;
-> +}
-> +
->  static int gve_alloc_counter_array(struct gve_priv *priv)
->  {
->  	priv->counter_array =
-> @@ -521,9 +567,12 @@ static int gve_setup_device_resources(struct gve_priv *priv)
->  {
->  	int err;
->  
-> -	err = gve_alloc_counter_array(priv);
-> +	err = gve_alloc_flow_rule_caches(priv);
->  	if (err)
->  		return err;
-> +	err = gve_alloc_counter_array(priv);
-> +	if (err)
-> +		goto abort_with_flow_rule_caches;
->  	err = gve_alloc_notify_blocks(priv);
->  	if (err)
->  		goto abort_with_counter;
-> @@ -575,6 +624,8 @@ static int gve_setup_device_resources(struct gve_priv *priv)
->  	gve_free_notify_blocks(priv);
->  abort_with_counter:
->  	gve_free_counter_array(priv);
-> +abort_with_flow_rule_caches:
-> +	gve_free_flow_rule_caches(priv);
->  
->  	return err;
->  }
-> @@ -606,6 +657,7 @@ static void gve_teardown_device_resources(struct gve_priv *priv)
->  	kvfree(priv->ptype_lut_dqo);
->  	priv->ptype_lut_dqo = NULL;
->  
-> +	gve_free_flow_rule_caches(priv);
->  	gve_free_counter_array(priv);
->  	gve_free_notify_blocks(priv);
->  	gve_free_stats_report(priv);
 
