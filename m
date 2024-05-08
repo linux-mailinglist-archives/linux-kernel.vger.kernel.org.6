@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-173702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BC68C045C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:30:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2640E8C045D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BDB1F246EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16BE281D7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A321312FF92;
-	Wed,  8 May 2024 18:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F41304B0;
+	Wed,  8 May 2024 18:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LSObHsKV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MkTYOg3v"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9BD12F5B1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADD2481BD
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715193012; cv=none; b=QBNuxBRsw/EEWxlO8dx2zHAi3mBIWPHU7tuCLKEWEX45Fp8DAvaSn/Bt9mC9pjv08ESi8ybs8NDs1DJqrB/9mnZJlvzKgIPfMeXVlVNxleVKsfTAeXsWk3rn9htFUvkHvkOpJZB8wmrpvQs040Oa50RC8NfF9Hx66dNAewQ2bs8=
+	t=1715193012; cv=none; b=jlXvsVKmBa6BCo9e5RNBe//9ei8KQlO5WfV6drSp/y4KYTm6Ab9wbJMk97ZihqMirsHzeIjy+7HXQo9QIWjdCWqDGlke7dv/QA4EBUu20rP81C86tiiHndgnRx6MeV9QcrtCS3TFs1k2IsgbXikCcLcxDzbHFEix1kkYWebOEoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715193012; c=relaxed/simple;
-	bh=Ga3Ngyurh/GWTsaSz8bm6gGWfNz+qIwkdAIA/iJbJ4I=;
+	bh=tGeTT+tQWNJbKsFVdDmQOB1mb9yMQs3jSrIboV+0orM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ea35KrOGxGHuO2Y3j4FkmEN9mxON5M//+GWX5sRAkpI38gzZgLX2FGOsFDxtU1WBXTWHOukqu61JI7PEVqY2ZcBq7OtpW0e3UXLl+p8PYIvGa7yIQTca87QN5t7cij75QHWL+UgUrMN9FAUKmq7pTdgtQO9XCWSQXi3dz/zuX0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LSObHsKV; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=MLMP9vnv0o5gtSBDUKjVl7UVWsts8P/z3LX6WGMgnobUTQ4GS5/XRGoYLT9JTuBxo3QBYcV03H5Ibyux8WWN03Uz7MxONkIeSRNqP58ssQPN93HDY2WMfbMg9CAfdNr7TKdWJc+kh38WTwfPeTaoYL/OgyGVeB2ZCtJw60K4It0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MkTYOg3v; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
@@ -36,24 +36,24 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MM014qTWc/BTbJIJ9XXkyJ6CD8+RdtKp2vlBJYzap2I=;
-	b=LSObHsKVzywRoHHKDfmLjL2I7ijSZe1s0qI6Vmz9j3Qa8kkNhglLUhdaII4FgB+XG1BHDR
-	5/GCrPQVkx36WUgw65wA+fk30y1b3JweHyVocUCn2pQt2Jri7JJHUM1rA3VuyQovfWvsIG
-	iq45UXr54IkCKDakwqgmf9fuMkObMLQ=
+	bh=y29b0cT6yB5VZTvsbZqA3LcuNrLGP3cN/SVFA7pEfpw=;
+	b=MkTYOg3vjNs2ZnK0nrYGDQTbYPfqy2cnYA1YIp9Y3/65x/ymhtBs01i6rbrexBBfD6mkdw
+	Kuc5Z4isBbntVas2fGNl2xC0RRg71jyyreOBZSehWsjCGdLZEO35KJ+RdG77X037YhUyMC
+	YGcltCTYdtrwSBaU4uPZjSag2Lqls6A=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-yI5SFXODOUWO93qE5vbptQ-1; Wed,
- 08 May 2024 14:30:03 -0400
-X-MC-Unique: yI5SFXODOUWO93qE5vbptQ-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-36QGDf8mNPue-GhiuNEv6w-1; Wed,
+ 08 May 2024 14:30:06 -0400
+X-MC-Unique: 36QGDf8mNPue-GhiuNEv6w-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 91B7C380009B;
-	Wed,  8 May 2024 18:30:02 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A9031380009B;
+	Wed,  8 May 2024 18:30:05 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.39.192.63])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 4D3E010009E6;
-	Wed,  8 May 2024 18:29:59 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id DBAED10000AD;
+	Wed,  8 May 2024 18:30:02 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: kvm@vger.kernel.org,
@@ -69,9 +69,9 @@ Cc: kvm@vger.kernel.org,
 	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
 	Matthew Wilcox <willy@infradead.org>,
 	Thomas Huth <thuth@redhat.com>
-Subject: [PATCH v3 01/10] s390/uv: don't call folio_wait_writeback() without a folio reference
-Date: Wed,  8 May 2024 20:29:46 +0200
-Message-ID: <20240508182955.358628-2-david@redhat.com>
+Subject: [PATCH v3 02/10] s390/uv: gmap_make_secure() cleanups for further changes
+Date: Wed,  8 May 2024 20:29:47 +0200
+Message-ID: <20240508182955.358628-3-david@redhat.com>
 In-Reply-To: <20240508182955.358628-1-david@redhat.com>
 References: <20240508182955.358628-1-david@redhat.com>
 Precedence: bulk
@@ -83,43 +83,112 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-folio_wait_writeback() requires that no spinlocks are held and that
-a folio reference is held, as documented. After we dropped the PTL, the
-folio could get freed concurrently. So grab a temporary reference.
+Let's factor out handling of LRU cache draining and convert the if-else
+chain to a switch-case.
 
-Fixes: 214d9bbcd3a6 ("s390/mm: provide memory management functions for protected KVM guests")
 Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/s390/kernel/uv.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/s390/kernel/uv.c | 66 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 40 insertions(+), 26 deletions(-)
 
 diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 265fea37e030..016993e9eb72 100644
+index 016993e9eb72..25fe28d189df 100644
 --- a/arch/s390/kernel/uv.c
 +++ b/arch/s390/kernel/uv.c
-@@ -318,6 +318,13 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
- 			rc = make_folio_secure(folio, uvcb);
- 			folio_unlock(folio);
- 		}
+@@ -266,6 +266,36 @@ static bool should_export_before_import(struct uv_cb_header *uvcb, struct mm_str
+ 	return atomic_read(&mm->context.protected_count) > 1;
+ }
+ 
++/*
++ * Drain LRU caches: the local one on first invocation and the ones of all
++ * CPUs on successive invocations. Returns "true" on the first invocation.
++ */
++static bool drain_lru(bool *drain_lru_called)
++{
++	/*
++	 * If we have tried a local drain and the folio refcount
++	 * still does not match our expected safe value, try with a
++	 * system wide drain. This is needed if the pagevecs holding
++	 * the page are on a different CPU.
++	 */
++	if (*drain_lru_called) {
++		lru_add_drain_all();
++		/* We give up here, don't retry immediately. */
++		return false;
++	}
++	/*
++	 * We are here if the folio refcount does not match the
++	 * expected safe value. The main culprits are usually
++	 * pagevecs. With lru_add_drain() we drain the pagevecs
++	 * on the local CPU so that hopefully the refcount will
++	 * reach the expected safe value.
++	 */
++	lru_add_drain();
++	*drain_lru_called = true;
++	/* The caller should try again immediately */
++	return true;
++}
 +
-+		/*
-+		 * Once we drop the PTL, the folio may get unmapped and
-+		 * freed immediately. We need a temporary reference.
-+		 */
-+		if (rc == -EAGAIN)
-+			folio_get(folio);
- 	}
- unlock:
- 	pte_unmap_unlock(ptep, ptelock);
-@@ -330,6 +337,7 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+ /*
+  * Requests the Ultravisor to make a page accessible to a guest.
+  * If it's brought in the first time, it will be cleared. If
+@@ -275,7 +305,7 @@ static bool should_export_before_import(struct uv_cb_header *uvcb, struct mm_str
+ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+ {
+ 	struct vm_area_struct *vma;
+-	bool local_drain = false;
++	bool drain_lru_called = false;
+ 	spinlock_t *ptelock;
+ 	unsigned long uaddr;
+ 	struct folio *folio;
+@@ -331,37 +361,21 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+ out:
+ 	mmap_read_unlock(gmap->mm);
+ 
+-	if (rc == -EAGAIN) {
++	switch (rc) {
++	case -EAGAIN:
+ 		/*
+ 		 * If we are here because the UVC returned busy or partial
  		 * completion, this is just a useless check, but it is safe.
  		 */
  		folio_wait_writeback(folio);
-+		folio_put(folio);
- 	} else if (rc == -EBUSY) {
- 		/*
- 		 * If we have tried a local drain and the folio refcount
+ 		folio_put(folio);
+-	} else if (rc == -EBUSY) {
+-		/*
+-		 * If we have tried a local drain and the folio refcount
+-		 * still does not match our expected safe value, try with a
+-		 * system wide drain. This is needed if the pagevecs holding
+-		 * the page are on a different CPU.
+-		 */
+-		if (local_drain) {
+-			lru_add_drain_all();
+-			/* We give up here, and let the caller try again */
+-			return -EAGAIN;
+-		}
+-		/*
+-		 * We are here if the folio refcount does not match the
+-		 * expected safe value. The main culprits are usually
+-		 * pagevecs. With lru_add_drain() we drain the pagevecs
+-		 * on the local CPU so that hopefully the refcount will
+-		 * reach the expected safe value.
+-		 */
+-		lru_add_drain();
+-		local_drain = true;
+-		/* And now we try again immediately after draining */
+-		goto again;
+-	} else if (rc == -ENXIO) {
++		return -EAGAIN;
++	case -EBUSY:
++		/* Additional folio references. */
++		if (drain_lru(&drain_lru_called))
++			goto again;
++		return -EAGAIN;
++	case -ENXIO:
+ 		if (gmap_fault(gmap, gaddr, FAULT_FLAG_WRITE))
+ 			return -EFAULT;
+ 		return -EAGAIN;
 -- 
 2.45.0
 
