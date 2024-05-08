@@ -1,114 +1,124 @@
-Return-Path: <linux-kernel+bounces-173844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2A58C064F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:33:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3207D8C0650
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2D128162E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C241F2289C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BA3131E4B;
-	Wed,  8 May 2024 21:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBD1130E27;
+	Wed,  8 May 2024 21:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utts5TQ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="USm7C+JN"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB77823B8;
-	Wed,  8 May 2024 21:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003353A1AB
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715204018; cv=none; b=Cb/qQaGItGZ7TEUJgIm+EFBgiVt3oqR38e74aiuZCDcrNMdVf1fz4VIeFIQS6NSe4qU5Z08mPjKEkA6yDELmhtHKYY1EVQ4nuXQ9vuemaYb5CtF0B7R94VTsQKDN4UUXfRzsna06881XUSDNdKnu+t4pnmfjDr9dE4zZMvhNZ3k=
+	t=1715204156; cv=none; b=eCsuw9EO8h122HBGg6xRSlYitWGGPtFot8tt2K3sV7T6D6Es6wJUHe93ZMdEkaaPkgwuzb8MMagYhvWQoLLr1sNeFsVG/vOAf7D2YPIyvfZp2TZmbI5IIeZJGo0+INJXza+3MinIZbKldS2QYEmc1L0Pw7W+2KywPqRbxF3wqRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715204018; c=relaxed/simple;
-	bh=dBWydrhX02YbGnsnhGjSVobHD8eSb5gTySir8O5N8vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BNh9eqnRANPH5n4eNEgBztWN+EzXkn1SUl1+nxP/XgSWHllINvALkFXFua8YXAifGhcU+bsX8fo77+F2PP4XNu+PMtSjw0z4aBObJmJ+aQ7OJhiq7Hvhw6cVvZgod5puZ1cayAxhjkbYAAKpFEMkHRKA8FqPYaP9xaYCskxHYYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utts5TQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE55DC113CC;
-	Wed,  8 May 2024 21:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715204018;
-	bh=dBWydrhX02YbGnsnhGjSVobHD8eSb5gTySir8O5N8vo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=utts5TQ5RS+8E+11XLTySWAdvK4SSvw6Fcf8WimRYrwV3dUWS0bywUbIU0gPtDq/9
-	 BGmVjG/9bn/vvQ4sxl4RaTOfMpmwm+EnJpV8fHFoE2RB7u3tUmIAre9rq/ukZqUNOC
-	 jT0X42kMPt2hn/Wb8QkWWXaBXA/4vsB5woKs/AUMiL/cRlJh1wtacHd5YCPm4El8r3
-	 +Yk23RFbCpUvPnyP+1MAJBex8in3MI/yP1kqttFY6Z5wqB8lr/IQFRKSaCCean+x0C
-	 g9GHHlwTgse3fE0/c7QZjMrfUhQQ37TxpFGFROLCaSyyIqqs9BDiRSSnciHq7eENBK
-	 AkqNIXixhi2SA==
-From: Conor Dooley <conor@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	kernel test robot <lkp@intel.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk, reset: microchip: mpfs: fix incorrect preprocessor conditions
-Date: Wed,  8 May 2024 22:33:24 +0100
-Message-ID: <20240508-unabashed-cheese-8f645b4f69ba@spud>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715204156; c=relaxed/simple;
+	bh=TItpyl1t0DXLCCEbXrOYaW4CWjE/M37i078bhWzEMyA=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=k8kwbbz8XABoYKAzzmIpWQZo3/oIQYjBTBFO9yEGhIOMVoF4bWeG5f5BpVk92iz1gsjRQFMk6v34Pg6FIafDPYyLRigNNfXNvxw0uR8TCTAcWc/hvF+K5paQPfKgEr3uspG8AxQf5eu6A/6kDk5VrzNCKmIp/QI9du+ikTvSbnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=USm7C+JN; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6a0b68733f5so1953306d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:35:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715204154; x=1715808954; darn=vger.kernel.org;
+        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3gYCZ7oFAMec1ZrgXeVWypvnMbMyJT9MYWUz9Y1dIg8=;
+        b=USm7C+JNWffsKHNigWyJbeDSzgGm3DZCzC+sZy9D8jpibta/G6OrF4QwVVvNDf/1fH
+         1n14rpOztosk0q73Eq4ONepjz6GG/nYlcQHmJfkASVTUbbmEZ+Ah5YnW8RwUey2yq7A0
+         0tUodQ5HPLd3+vLzkBpZACbfiMKWvGSNKECu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715204154; x=1715808954;
+        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3gYCZ7oFAMec1ZrgXeVWypvnMbMyJT9MYWUz9Y1dIg8=;
+        b=dUR6EXfr1H2XrALwsMtQWXj8SFvsh6vVb3k6k/xwxNnD5IoBfR8bSRHkit5DkiUW8x
+         BZhqL9U2kuPI7zMYfZZWysBmrw1TTrBkKs6/YWSNAG/3XdormOZHTuRuLMrwklg0NfFu
+         f6T/kYGnydwZJeJFscXINN2Vu7c6Ift3ooNG+6QAocJf4b/YbDred5D7e3MNvC1DQxZC
+         nT14pvz1+4lWsdHgEWmWa8UAUeBHN9t+VJkUwoJjJMp8s8O4RMw6h8h3lvF8hF4fwDzh
+         xPvEKtOsFEezlVYzUwHNxM1JQpl9PMkrfFIdQG2LC8D3aeyFILv05soUEqyd2h0M+nHJ
+         FlYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQYvRHiHoly10/s7l52fEJ+42j162aiPwFavoebwfNwRx0Sz5oRJZgJtK+OD4ArBAm0D1ETOy0PrH6QAZvoMfx8j2lZiNuyLQUEf+r
+X-Gm-Message-State: AOJu0Yw2TSqI7tzMT2nY1ooBaCFlfAg5WNWdms85VsuJc9zBwSoQ1h7o
+	y422JqPIhmFhVEuqYd9rVwDX/Hh9ipGRKQ4meDFk6bckaytCQdVrmUzqX+OwPAPvrqWi0LZ/Z85
+	lYNTSLdkqYXcziuliW1t+88tzZEqXK0hOYvVK
+X-Google-Smtp-Source: AGHT+IFZNxebi22TlsEERMHQx17gy2mKTrpsZi/0tZWOTRFXXyKTkZ+BTLUu9XLHL3gPzTq7v8I+/UedXLdrgPAaY2M=
+X-Received: by 2002:a05:6214:d88:b0:6a0:ce1b:e75f with SMTP id
+ 6a1803df08f44-6a1514bd656mr44299346d6.45.1715204153925; Wed, 08 May 2024
+ 14:35:53 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 May 2024 17:35:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2271; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=9+wMvAaSUGcoI1wTiaH0YmLJKrjarvzY4RrG23q3Gts=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnW75ewzlizuXVy2rGlP873xPRLm2z2t1DkfejikMyk2 Nfns/pIRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACaiG8HwP1nthUDM8gdPq2tC ni892fC1XfnH5i07Fa6+k7O7rClx+QYjw+yLR7oM3YuvXy7NcbO4V3awQ6hP9Mya1ffNZZao3ud n5AEA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240311-decode_stacktrace-find_module-improvements-v1-1-8bea42b421aa@bootlin.com>
+References: <20240311-decode_stacktrace-find_module-improvements-v1-0-8bea42b421aa@bootlin.com>
+ <20240311-decode_stacktrace-find_module-improvements-v1-1-8bea42b421aa@bootlin.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Wed, 8 May 2024 17:35:53 -0400
+Message-ID: <CAE-0n52cX0qhTWdNtJEvy_GUEbXonf9LgmU253Rn8xTehj5OKg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] scripts/decode_stacktrace.sh: remove find_module
+ recursion and improve error reporting
+To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, 
+	Konstantin Khlebnikov <koct9i@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Sasha Levin <sashal@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Quoting Luca Ceresoli (2024-03-11 08:24:54)
+> The find_module() function can fail for two reasons:
+>
+>  * the module was not found
+>  * the module was found but without debugging info
+>
+> In both cases the user is reported the same error:
+>
+>    WARNING! Modules path isn't set, but is needed to parse this symbol
+>
+> This is misleading in case the modules path is set correctly.
+>
+> find_module() is currently implemented as a recursive function based on
+> global variables in order to check up to 4 different paths. This is not
+> straightforward to read and even less to modify.
+>
+> Besides, the debuginfod code at the beginning of find_module() is executed
+> identlcally every time the function is entered, i.e. up to 4 times per each
 
-While moving all the reset code in the PolarFire SoC clock driver to the
-reset subsystem, I removed an `#if IS_ENABLED(RESET_CONTROLLER)` from
-the driver and moved it to the header, however this was not the correct
-thing to do. In the driver such a condition over-eagerly provided a
-complete implementation for mpfs_reset_{read,write}() when the reset
-subsystem was enabled without the PolarFire SoC reset driver, but in the
-header it meant that when the subsystem was enabled and the driver was
-not, no implementation for mpfs_reset_controller_register() was
-provided. Fix the condition so that the stub implementation of
-mpfs_reset_controller_register() is used when the reset driver is
-disabled.
+s/identlcally/identically/
 
-Fixes: 098c290a490d ("clock, reset: microchip: move all mpfs reset code to the reset subsystem")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405082259.44DzHvaN-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202405082200.tBrEs5CZ-lkp@intel.com/
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: linux-clk@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- include/soc/microchip/mpfs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> module search due to recursion.
+>
+> To be able to improve error reporting, first rewrite the find_module()
+> function to remove recursion. The new version of the function iterates over
+> all the same (up to 4) paths as before and for each of them does the same
+> checks as before. At the end of the iteration it is now able to print an
+> appropriate error message, so that has been moved from the caller into
+> find_module().
+>
+> Finally, when the module is found but without debugging info, mention the
+> two Kconfig variables one needs to set in order to have the needed
+> debugging symbols.
+>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
 
-diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
-index d7e612b5e22e..0bd67e10b704 100644
---- a/include/soc/microchip/mpfs.h
-+++ b/include/soc/microchip/mpfs.h
-@@ -43,11 +43,11 @@ struct mtd_info *mpfs_sys_controller_get_flash(struct mpfs_sys_controller *mpfs_
- #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
- 
- #if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
--#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-+#if IS_ENABLED(CONFIG_RESET_POLARFIRE_SOC)
- int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base);
- #else
- static inline int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base) { return 0; }
--#endif /* if IS_ENABLED(CONFIG_RESET_CONTROLLER) */
-+#endif /* if IS_ENABLED(CONFIG_RESET_POLARFIRE_SOC) */
- #endif /* if IS_ENABLED(CONFIG_MCHP_CLK_MPFS) */
- 
- #endif /* __SOC_MPFS_H__ */
--- 
-2.43.0
-
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
