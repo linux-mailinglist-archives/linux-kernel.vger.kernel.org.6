@@ -1,278 +1,330 @@
-Return-Path: <linux-kernel+bounces-173208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94C78BFD09
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 016158BFD0A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353D11F24D21
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690E61F24A2D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D95E84A23;
-	Wed,  8 May 2024 12:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154B84A38;
+	Wed,  8 May 2024 12:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uYzKqwAt"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2069.outbound.protection.outlook.com [40.107.236.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpBilK6E"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF38839E6;
-	Wed,  8 May 2024 12:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170866; cv=fail; b=LH+nMvcSuLbDdrZ6/XHgDwPTxIxLgMqgIWVxi2eBImDeGVUJz8J1K3NG8g7HYzt7fWY+UpzLWH8IHaXhg4K0nezz+O8HiPAobA0eW11t0Ejxze+VlEOCMT7NZXROo65OPj1m4/UQodX5Og+tkgIno5SRngFzQ1ulQc6V8Xz/joE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170866; c=relaxed/simple;
-	bh=hMZerb6J+V0G+lI1rtQ6Uk6xOaL39doUNlx+OzcCh4M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Gt2HULPp1+ed8SL7ExFN4He84ESTBB4k7Ehfo7avsM1sfa5uYEaAA68yaZD/yyRgKxt2ghBKVNCT69iJH2upMfpmUOMWaIrzvWsomIO9M/xfeB7dWEIoy9hmZm8l74QKODzgeBpYEuDTprpSLBF6pMZ5tS+i3pW5/Cn5nnHSVWA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uYzKqwAt; arc=fail smtp.client-ip=40.107.236.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OziI8Hwaa8pem7gBkhlfJCJNdIQFc5DuW+3EVyxxT1qwiZgneroEGXuO5bMJ0DhjV5LgxFW16lMi0bXaoMBbfnxDQ5LV7qkbawDEIrBrpgSA/WuaUSBnt7B7zalHtMKgXOrCN6xdueN6YOwE4avfMzdvdzrjjFW2OWzl0T3MRbPpn77Ff3QosWE2Vs9q/pISe+ryWpjafX9NL2Ee0wEo7Fa6CqArw3GCDYiJc0wnJ0bn7wJsmKBTlMY+joF3Rd5/ejP3p4nSkpkmjF6mkhQz3UDbAzDw8hQbejGk0Dpqz7FuCVoX9Gr74s9q4w/DJWgv5ilCxTwxB34WbVktXcfqTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hMZerb6J+V0G+lI1rtQ6Uk6xOaL39doUNlx+OzcCh4M=;
- b=niqBaJMpLeK5N0YdTMlmVsfeyZWkQs85E2QF36HbDcGd8g3GozmOtJrx9Ka+SaDDWbAJB85k9nc8Ac9+dEiALZaLa/Ezo1NctaAKWJGx0uBe9PQQKrvUnYChA6QCtOziziq/JOMpJWwTcpgsfo0wmHvsAS/geFifqCMRALWoQ+swvO2veKJd8FcM9WFluazqIRbbwbGU1IvB5/DNRlFwzbFjITIiXdl0AymPGfWPp034YdfYMic4BokpFM2LYY6nDzZtoWXk36NAyVtDyCikCLHbYQJFYV3a8HHCDOF6eKHPFScmnLX6W41/LIxvoA98AlGLHlleL8f9WD6MxdQQ/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hMZerb6J+V0G+lI1rtQ6Uk6xOaL39doUNlx+OzcCh4M=;
- b=uYzKqwAtBesmNb7RPLxC5qjUv9un3Gm8gbVIQzE2jCNXgXGhcGTOygqUbaSnUw6rMpoqqdQviaGTkc8MkPizDEHVLlUUmlVyrBmqfemNPBDuEMhBej0otEYxxstS3y+h/wd64sgjylPZw/NZVddFdO7nDCwm58O53mltMNmecXI=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by CH3PR12MB7691.namprd12.prod.outlook.com (2603:10b6:610:151::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Wed, 8 May
- 2024 12:20:58 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%6]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 12:20:58 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: Oleksandr Natalenko <oleksandr@natalenko.name>,
-	"rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "Limonciello,
- Mario" <Mario.Limonciello@amd.com>, "viresh.kumar@linaro.org"
-	<viresh.kumar@linaro.org>, "Huang, Ray" <Ray.Huang@amd.com>, "Shenoy, Gautham
- Ranjal" <gautham.shenoy@amd.com>, "Petkov, Borislav"
-	<Borislav.Petkov@amd.com>
-CC: "Deucher, Alexander" <Alexander.Deucher@amd.com>, "Huang, Shimmer"
-	<Shimmer.Huang@amd.com>, "Du, Xiaojian" <Xiaojian.Du@amd.com>, "Meng, Li
- (Jassmine)" <Li.Meng@amd.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v10 6/7] cpufreq: amd-pstate: introduce per CPU frequency
- boost control
-Thread-Topic: [PATCH v10 6/7] cpufreq: amd-pstate: introduce per CPU frequency
- boost control
-Thread-Index: AQHaoRiYMaTKA50UnUuOnfmHHsxhKrGNE56AgAACigCAACu1QA==
-Date: Wed, 8 May 2024 12:20:58 +0000
-Message-ID:
- <CYYPR12MB8655F5A8DC7F001E818048DD9CE52@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <cover.1715152592.git.perry.yuan@amd.com>
- <49204c6d4a334c0bfbc589dda79b5cd7c4c28b7c.1715152592.git.perry.yuan@amd.com>
- <12430678.O9o76ZdvQC@natalenko.name> <1884700.tdWV9SEqCh@natalenko.name>
-In-Reply-To: <1884700.tdWV9SEqCh@natalenko.name>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ActionId=76665d55-ad9e-4d40-b853-f6536b89aa87;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_ContentBits=0;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Enabled=true;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Method=Standard;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_Name=General;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SetDate=2024-05-08T12:19:52Z;MSIP_Label_4342314e-0df4-4b58-84bf-38bed6170a0f_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|CH3PR12MB7691:EE_
-x-ms-office365-filtering-correlation-id: 88d0297a-e46e-44dd-cd67-08dc6f595113
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|1800799015|376005|366007|38070700009|921011;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VEZhMGs1K044WEZrWUhKVElyQXdDcDZlTFZCeThCZEx4WlpPT1JSczJJNFJh?=
- =?utf-8?B?eWx2N0dSaU00dXFUVG1haUorRjV6QzduempwbnBsWE5WeHAwaUw5ODh6dng5?=
- =?utf-8?B?NENWYVpZZXlIN1hOMVFhWVJzY2V3cVM5cTIxTUtqVnJxQVM2VU5aYnJkaGlE?=
- =?utf-8?B?ZFdaSXkwQlUrUDVCT295Mm9QQkR2VHQrTC9IenlmUkJqSnpGblE1ZEFwUTN1?=
- =?utf-8?B?Rzd6ZlRjQmk0REgvN002MVNiaXNjZ3BiYXNRYmNCclQvSDZzS01ZRytScDdu?=
- =?utf-8?B?MmF1NFdpamVpNmtuSWp3SjZFekhEZEJSREJaR1J6T0NVTGhQWFFpc2loZ3Vh?=
- =?utf-8?B?VHRvaWF3VlpscWNnRklGT1JEU2Y3bVozRkhMeHdPbHR1bXhaUDByRVBTVlYr?=
- =?utf-8?B?OGZzRUcwcEhiYjhkZFlMaFFtcXA0TStJV3poSE96VmpuYVl2WURCUE5lSFZh?=
- =?utf-8?B?R3NtbjQxMkZLVjZYQkJjQzg2QTUyTUxPcHdGN0JjdHgvV0FYL0VYS1RsTnYr?=
- =?utf-8?B?WTVGSXdDYUVSOVlCLzlpRmhxNDRqZkp1ZmljWlQ3ak9DNlpJTld1UzViNnla?=
- =?utf-8?B?WUdXZ2YydHNBRGMraG9JZkxsOHQvTG8wcllOYlhLd2o3a1VVK1VCcjl0V0JT?=
- =?utf-8?B?VnJ2endEQUhLWmRXSnVEbWVrTTdGQ2NJdi96QW4ramo2VFYrTmR1aGFCaDJQ?=
- =?utf-8?B?S3MwVTJPdW1UOEM1QVEwZzl2RlpzZmFWNnl4dmpwVkhkTkNhL1FDMEpHMmRq?=
- =?utf-8?B?NmdwaW5RTEF3dlQzNDhNN2xId3VrVUVkbzlLKzdzS1owSlI4bDlPMFZESnZF?=
- =?utf-8?B?WWRTMTVBQ1VPdWh4bGoybW03aGFKZUltdCtHUkNoeGFSOXBqTlRocEp6R3Bs?=
- =?utf-8?B?TFlNbjBvU2N4K1pDaWIvR3hiQWVWQ1NpUTNhclI4VFh4bUEzUDNhN25mUVMy?=
- =?utf-8?B?MUZBcFRadkRlOVNhVDB6OS9tZEs2cWxubmNETFJZNk5wMThPeUdDNXNIYWFP?=
- =?utf-8?B?cGx5MW9VTUZHNStzYVVVM2JBb0QvMTMxVy9ldkJlQnpGd2VpTFRhdzBwZ1JQ?=
- =?utf-8?B?TnM0MlNvMGZjNlJiaFpWdEtNeVZEWXY4cVdoTnJuQ0l5d240SlJUMUltUG1J?=
- =?utf-8?B?MFBoN1oxUTFJVXhBUmh1b0psUTFkVWZNcktmNXg1M05KYnlzTHBxNHRVTHBz?=
- =?utf-8?B?djgvZmVqYkY0QU1iZkh1TjJFWUlVSit3L05CNzNVWi95VG0wQlYyRGJMSk1B?=
- =?utf-8?B?dUxKdWVrLzNFV1R2OFVwMkl0bi9OcE5FTnB4ZTBiMmFlUFVmS09Qb1lhZERL?=
- =?utf-8?B?Ykc2Qi9wdGYvMC9wQ0NHMEpiaUJweTQrK1JyTi85Wk5UbU8vMWN4cThhVW9R?=
- =?utf-8?B?d2VOaks2MDVpcFBEb0tzeVE3TExoMm5yMTZsQmpJMmRtY25zcmpnRThxVXk1?=
- =?utf-8?B?UW9MYWVQNDZwWjdLdkU2QW5qSDlxMGRaVktBRy9JdU9mY2tLcGl0UUtPUVlk?=
- =?utf-8?B?RllEZldjWCthMXUvVzR3SWoxUFJmZ1dNNFFGazN5ejB4ZFBIalVLUG1LZ21N?=
- =?utf-8?B?eGtFRlNSbjRwT2s3ZXVSOU9qZFM4a04wdkUzOEZHUkxpci8xb0dVaWV2ZHJX?=
- =?utf-8?B?ejdMY1ZTNjhlVno0SlNsL2VYWFhwODhzSk9CUUJlbGdaenFkTTlLZ2VFV2tZ?=
- =?utf-8?B?QlFRS3pmUWtMR1Q4VVhuNWpWbzFCanRLMDhEank0OEpabEs3LzFyQmVhcWhn?=
- =?utf-8?B?K3h2cTk0b2dkcEtiTXBTNWZhdFYyajI4Y2w3R3JIUXMzVWFLYnVKZ0JLOUEw?=
- =?utf-8?Q?TlBFCCgFjGcHWrROvpyMf8o4+DVqzQ3s3U60w=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(38070700009)(921011);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Yy9YdXQzLzZSejFxNG8xdmMzZzJRYXhWNG1OMWVseXYxaTBabklvUkZ0WWVS?=
- =?utf-8?B?REtKWFZiYklmZVYwbEs0akwwUUJMQUlNWnpVQnE5bnl3K2dERStPSmliRnJp?=
- =?utf-8?B?N0dLUGZJQmNZbzd5YU9wRmpLVjlHMXZybFovSmlFQzkyZ0RuSXp6UzR6bGI1?=
- =?utf-8?B?WFlCYyt3WXlWMFJXeVlFVFpqMkIxY0R1NTVicFRnay9vN2ROTm9yNkM4UzVC?=
- =?utf-8?B?UGJibWI5cmR0T2lpWFlIMXA5d3ljN2o2NEFldVg1V3FxSC8wdzNPaTFrSE9T?=
- =?utf-8?B?QjhzQkpuQzJ6Ym4vKzB1dlYreTlEYlRVbEI2anBjMVhXeU5jejZscy85dlda?=
- =?utf-8?B?Y3ZveFZlY2FIcjNneXp0NGg4UzBIOWxYWTRKamVSeVY1c3QwU2daTi9CRUxH?=
- =?utf-8?B?aWsralJkeVFBL1pjY2swZ2hqOTYwcUxvTjNSaURrNnJGS0xHdmo1V3VPL2ll?=
- =?utf-8?B?Si9qSGU4YWJjUEhtQ1lVUERBYTFIbU9GSGFkUzJZWGpyMDl0QkRBWVVWbXdz?=
- =?utf-8?B?TE9DOUx0SWZqbUdnaHk1akNSWWtnM1libHJuOWN2VlhZT0djQTZOL1pqU1Ry?=
- =?utf-8?B?dzlRVE1FODJGalNkVzRUYk1nYnRFMXBrdEplMUpRdTdkMkRPQUhEcitaTG04?=
- =?utf-8?B?bW9vN2tUOXgzNDBtSkFlVGdlVURFRVU4bCsraDMya2JBa2VPT3UvVGVWNjg4?=
- =?utf-8?B?bGI5anJnc0xDdGxpSlhBMTZHRWNadDhlbmVaSmNNczhDZU85cm1rSVVzTlFV?=
- =?utf-8?B?WlprbVBJdlYyaVFlVC9jU2lyTkFMR2ZQc1pFVmZLV3dMdDhqTlhUT0RoY3pn?=
- =?utf-8?B?V3cvTXNMTEkwaEZjUHh3L1Y2bGxvRzdhL09FYUR2R3phb0Y0QWQ0aG5EQ0p5?=
- =?utf-8?B?T3RtYy9HaEg2aUpSOXZBRHFxeWtDRmcwU2QzVEMzbm15T1pkNllUVENheW90?=
- =?utf-8?B?ekxPb09BWXZSd1ZPZlVhbllqaHpNZ0JjRGtEejhRYzdUTTRzZGl5QklmQUxQ?=
- =?utf-8?B?WUtOc2tMR0p5YjNDOFM5NXU3eXJZakdnUmxWQmY2OFowcmxmR1FleWNjZTZ2?=
- =?utf-8?B?VDFSSjVkdTQyRWJHWm1DZ2ZYSUxCcVBicW9Fa3o3djl6VWtNRFZ2Y1dGWlZj?=
- =?utf-8?B?Nm8zWmZ2KzVGYldLcDhZbWUyZVA1cmNQQk5xeDJJMzdQc3loY1dLeDJLd0tF?=
- =?utf-8?B?ZzRlVDVROXpiSTV3N3ZFUStrMFAvWElOR1NQTnJwN0VHK2xYNzRlZDROYUs5?=
- =?utf-8?B?YkxXMTZzdXN0S3FnMElwOWhGOGs4YkNBbzYrL0kxZDV3bDRLM0VJaldXWkcz?=
- =?utf-8?B?K0o1enlDemtmTWZhQXBoNThnakUrRGEwMmFWYXA3cGZxcWFGL2puU0RmVXpJ?=
- =?utf-8?B?N3lOb1lENUhTNTBXY2RDaXU3VW1NWkxBR2NyWmc1QWFnRmpxVTFxc3Z5Qk9m?=
- =?utf-8?B?T3RmOUVmWUxuejhzLzJ4SEpjWENaT1BiWTBmMERlUDJiazIwTUhwVXMwTEpj?=
- =?utf-8?B?b2lhNzYxY1pDUVorMnUyTGdlMUNvM2lhTkJUZlZRN0VoOTZya2NZSFJEaXhi?=
- =?utf-8?B?NFg1VkU0cFVIeU9oZkNxbUJ6UXk2Z3JFSlRrNEtJM0FUWWN3VDNZZVI0VzVL?=
- =?utf-8?B?NU1McG0vRTkraGRpV2FPeS9FeDR1OTFlWFhvaEYyRDJSbW85SW5WdGNodmlR?=
- =?utf-8?B?clg4R01iVEpSNzM4akxPS0JESUhzUWtGNXRtS0laTVRPUjJ6TjlnV0tVQjdk?=
- =?utf-8?B?OVk2anE1bURCdFF0V2FlSWRBNVdMSzZwNVBDd0s5bFBRNXpRaG1VdXBuSncx?=
- =?utf-8?B?eisxeUN1OWhoR1Y1YlNsME9oL25sSW0wVnlqd25UQ0NSRUtkcDF0V25QMlZq?=
- =?utf-8?B?NW96OHY1N1dCVU9XVFhNN1YrdnlTaTBtQW05NGd2c3VZVkw4QUR1eXM1QUdO?=
- =?utf-8?B?MExEbDFjeVBxeUt6NnQxN2xUbklYTWgyTzFQdmxKUklQcHNqVHNzdmhsVDNJ?=
- =?utf-8?B?ZXV1L3pUK0o0aXUvOHcxV2tlS3RZdkJ2aGlFUHp1SjZKUEZTTkd0RFpWZFZJ?=
- =?utf-8?B?cHFiZHVrTlIzVDNweHdPQzBHNy83TXRxUngzMkhBbzJ5M2hCTzQ5dTNTVmFQ?=
- =?utf-8?Q?YnDw=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3405D83CBA;
+	Wed,  8 May 2024 12:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715170880; cv=none; b=CvPgAiUvygvkQzfLVOz6KpovSkCVcu/QNEnxyDI7FqmEqN0fnfEF132aSlN5CNUDGwKwJ140ZKIERufYFKfEga9XGWknQsJTZhUc+z8i+OniSQTFIJ9DZrQvXbaGlkU5NN1004gn3r/gA/qGkMzcDvLi265uLUQiwEIj1qN7xtc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715170880; c=relaxed/simple;
+	bh=s5sglRjEGV8T9UisIn28YPRQYj1xNgstKEOV3dsMzCs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=VFJ8fYE7dLvUxx4JN0BnRKUFYW2HZXCpsQsuwYyXstcFfuqLjTMNoVzmNh98j+FucUrmT6rzsXP4gj0u9b50IB9GifqB8um5893ftO3agJtnyTpmDHkQxHFZWtXWV93Rg03MbZ4QPWwD5EwTrF257BY3h+MuiRy4cSPRwESms5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpBilK6E; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ed0abbf706so29773205ad.2;
+        Wed, 08 May 2024 05:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715170878; x=1715775678; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Wq2cbWqEeEEeVBqHczsjobIDxQ5lhzHyo4DV/Jjbdk=;
+        b=RpBilK6E4xgM7jONjOA4hyHMUrfyN+aKYVjQ1PyMFAhrmaWseYdcTR/SjZ6NIqJ2wA
+         YnqjZD5HPAs8/V9Gy9wpH9PTKN24jG1cFaefqrRFCd7ICjzg1e1OLtBPnlQufDUR1H5c
+         JcDX17CTQBTMAl1McRlOnnNRuTJweecO5mzwBsVWFHu5QSBvdvQSd02BeXLzbT3n8PGT
+         0f3MbgZseoVCF5d2z8+/StQl5P9RdgVVLmZ0FgGwrhyfTQs6y+RDMeZtARiGe1nJI0P/
+         Lj5vM6ZnsGPhKacvtr0DObcj7CR8RouPUy+gkCEsP8AU+biAeJkzSAnX+wHWfVBXYod+
+         Wprg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715170878; x=1715775678;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8Wq2cbWqEeEEeVBqHczsjobIDxQ5lhzHyo4DV/Jjbdk=;
+        b=CJL6y5PE/Fkm4EnqqkDb59Ovtt9w4qsqiar32Vk2P2UdB8pSUpeXGqaDDWC7i1Y/G6
+         Cx+Mq/vHZWfagCBXAPEJKJ/nWDufs0KEDTeSCbTlO5EQtiKqUYtiimTsIytXK5ZAaofB
+         M+CQfA5OXS+jSXqDPBe9rUZJYnDrGGbWSdt313iRFM6XD885gkWD36k9HVhsM4bJ5a5P
+         sL315IzY1vqwfNBPXZRk5iCHolG+er/53MfQ3Xl6UdhJDeT4gifh+KbupwDpIwhEbmdo
+         Eyxpm5xFpJo10fuMDBCF/ywFyxwE54U6wyS9aHxSXSOIeE5dUB2SJJvW6rn35c7eZ0rd
+         maAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXn/arSCxef9uTcfF/svbIoshvBijUZIJf9ONC9knXB5OIRxvnCwYCz4JFH25inlar6RKmj/VQeAeggau34HbrjRSbo6HNzhp6k85DOsChd8fvv4KAtAwW5vjoYjV9Kigys
+X-Gm-Message-State: AOJu0YyXfijnOK0dWb2qVukBsNWcsz8dTlwYuOfMNupkjYmvgqxKq+tj
+	PIOR+12WvkyI7Y+XCc/YiJYwTyAHFpQPru3sFhtNnnKOY6YKejth
+X-Google-Smtp-Source: AGHT+IGeTD7aFAYoEaI35ZIuWXFJrDZoSQ6AWKyZfB4Eviw4O375tGDyvXRsVtARY4tpMm2+BXL1cg==
+X-Received: by 2002:a17:902:d588:b0:1e4:24cc:e020 with SMTP id d9443c01a7336-1eeb089c231mr34982305ad.67.1715170878308;
+        Wed, 08 May 2024 05:21:18 -0700 (PDT)
+Received: from localhost ([1.146.8.34])
+        by smtp.gmail.com with ESMTPSA id n2-20020a170902d2c200b001eb2e6b14e0sm11694253plc.126.2024.05.08.05.21.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 05:21:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88d0297a-e46e-44dd-cd67-08dc6f595113
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2024 12:20:58.2751
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zn1M29r4GLp6adLHFE2i2xRslJ+I1/qN0Yldvbzq3jlqxuFZ0DfztXRRsOT411amXMvje4AgPLFONxY7DYmbYg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7691
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 08 May 2024 22:21:10 +1000
+Message-Id: <D149BWFCJHTP.J7WBZZZHJEGT@gmail.com>
+Subject: Re: [PATCH v6] arch/powerpc/kvm: Add support for reading VPA
+ counters for pseries guests
+From: "Nicholas Piggin" <npiggin@gmail.com>
+To: "Gautam Menghani" <gautam@linux.ibm.com>, <mpe@ellerman.id.au>,
+ <christophe.leroy@csgroup.eu>, <naveen.n.rao@linux.ibm.com>
+Cc: <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vaibhav Jain" <vaibhav@linux.ibm.com>
+X-Mailer: aerc 0.17.0
+References: <20240506145605.73794-1-gautam@linux.ibm.com>
+In-Reply-To: <20240506145605.73794-1-gautam@linux.ibm.com>
 
-W0FNRCBPZmZpY2lhbCBVc2UgT25seSAtIEdlbmVyYWxdDQoNClJlZ2FyZHMuDQpQZXJyeQ0KDQo+
-IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE9sZWtzYW5kciBOYXRhbGVua28g
-PG9sZWtzYW5kckBuYXRhbGVua28ubmFtZT4NCj4gU2VudDogV2VkbmVzZGF5LCBNYXkgOCwgMjAy
-NCA1OjQzIFBNDQo+IFRvOiByYWZhZWwuai53eXNvY2tpQGludGVsLmNvbTsgTGltb25jaWVsbG8s
-IE1hcmlvDQo+IDxNYXJpby5MaW1vbmNpZWxsb0BhbWQuY29tPjsgdmlyZXNoLmt1bWFyQGxpbmFy
-by5vcmc7IEh1YW5nLCBSYXkNCj4gPFJheS5IdWFuZ0BhbWQuY29tPjsgU2hlbm95LCBHYXV0aGFt
-IFJhbmphbA0KPiA8Z2F1dGhhbS5zaGVub3lAYW1kLmNvbT47IFBldGtvdiwgQm9yaXNsYXYNCj4g
-PEJvcmlzbGF2LlBldGtvdkBhbWQuY29tPjsgWXVhbiwgUGVycnkgPFBlcnJ5Lll1YW5AYW1kLmNv
-bT4NCj4gQ2M6IERldWNoZXIsIEFsZXhhbmRlciA8QWxleGFuZGVyLkRldWNoZXJAYW1kLmNvbT47
-IEh1YW5nLCBTaGltbWVyDQo+IDxTaGltbWVyLkh1YW5nQGFtZC5jb20+OyBEdSwgWGlhb2ppYW4g
-PFhpYW9qaWFuLkR1QGFtZC5jb20+OyBNZW5nLA0KPiBMaSAoSmFzc21pbmUpIDxMaS5NZW5nQGFt
-ZC5jb20+OyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5r
-ZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjEwIDYvN10gY3B1ZnJlcTogYW1kLXBz
-dGF0ZTogaW50cm9kdWNlIHBlciBDUFUNCj4gZnJlcXVlbmN5IGJvb3N0IGNvbnRyb2wNCj4NCj4g
-T24gc3TFmWVkYSA4LiBrdsSbdG5hIDIwMjQgMTE6MzQ6MjEsIFNFTMSMIE9sZWtzYW5kciBOYXRh
-bGVua28gd3JvdGU6DQo+ID4gSGVsbG8uDQo+ID4NCj4gPiBPbiBzdMWZZWRhIDguIGt2xJt0bmEg
-MjAyNCA5OjIxOjExLCBTRUzEjCBQZXJyeSBZdWFuIHdyb3RlOg0KPiA+ID4gQWRkIGEgbmV3IHN5
-c2ZzIGF0dHJpYnV0ZSBmaWxlIHRvIHN1cHBvcnQgcGVyIENQVSBmcmVxdWVuY3kgYm9vc3QNCj4g
-PiA+IGNvbnRyb2wsIGFsbG93aW5nIGluZGl2aWR1YWwgQ1BVcyB0byBlbmFibGUgb3IgZGlzYWJs
-ZSBDUEIgc2VwYXJhdGVseS4NCj4gPiA+DQo+ID4gPiBUaGUgbmV3IHN5c2ZzIGF0dHJpYnV0ZSBm
-aWxlIGlzIGxvY2F0ZWQgYXQgYmVsb3cgcGF0aCwNCj4gPiA+IGAvc3lzL2RldmljZXMvc3lzdGVt
-L2NwdS9jcHVYL2NwdWZyZXEvYm9vc3RgLA0KPiA+ID4gd2hlcmUgYFhgIHJlcHJlc2VudHMgdGhl
-IENQVSBudW1iZXIuDQo+ID4gPg0KPiA+ID4gVG8gZGlzYWJsZSBDUEIgZm9yIGEgc3BlY2lmaWMg
-Q1BVLCB5b3UgY2FuIHVzZSB0aGUgZm9sbG93aW5nIGNvbW1hbmQ6DQo+ID4gPiAkIHN1ZG8gYmFz
-aCAtYyAiZWNobyAwID4gL3N5cy9kZXZpY2VzL3N5c3RlbS9jcHUvY3B1WC9jcHVmcmVxL2Jvb3N0
-Ig0KPiA+ID4NCj4gPiA+IEFmdGVyIGRpc2FibGluZyBDUEIsIHRoZSBDUFUgZnJlcXVlbmN5IHdp
-bGwgbm8gbG9uZ2VyIGJvb3N0IGJleW9uZA0KPiA+ID4gdGhlIGJhc2UgZnJlcXVlbmN5IGZvciB0
-aGF0IHBhcnRpY3VsYXIgQ1BVLg0KPiA+ID4NCj4gPiA+IGZvciBleGFtcGxlOg0KPiA+ID4gLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQ0KPiA+ID4gQ1BVIE5PREUgU09DS0VUIENPUkUgTDFkOkwxaTpMMjpMMyBPTkxJ
-TkUgICAgTUFYTUhaICAgTUlOTUhaDQo+IE1IWg0KPiA+ID4gICAwICAgIDAgICAgICAwICAgIDAg
-MDowOjA6MCAgICAgICAgICB5ZXMgNDIwOC4wMDAwIDQwMC4wMDAwIDE2NjYuNzc0MA0KPiA+ID4g
-ICAxICAgIDAgICAgICAwICAgIDAgMDowOjA6MCAgICAgICAgICB5ZXMgNDIwOC4wMDAwIDQwMC4w
-MDAwICA0MDAuMDAwMA0KPiA+ID4NCj4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gPiAtLSAkIHN1ZG8g
-YmFzaCAtYyAiZWNobyAwID4NCj4gPiA+IC9zeXMvZGV2aWNlcy9zeXN0ZW0vY3B1L2NwdTAvY3B1
-ZnJlcS9ib29zdCINCj4gPiA+DQo+ID4gPiBDUFUgTk9ERSBTT0NLRVQgQ09SRSBMMWQ6TDFpOkwy
-OkwzIE9OTElORSAgICBNQVhNSFogICBNSU5NSFoNCj4gTUhaDQo+ID4gPiAgIDAgICAgMCAgICAg
-IDAgICAgMCAwOjA6MDowICAgICAgICAgIHllcyAzNTAxLjAwMDAgNDAwLjAwMDAgNDE1NC4zMTQw
-DQo+ID4gPiAgIDEgICAgMCAgICAgIDAgICAgMCAwOjA6MDowICAgICAgICAgIHllcyA0MjA4LjAw
-MDAgNDAwLjAwMDAgIDQwMC4wMDAwDQo+ID4gPg0KPiA+ID4gUGxlYXNlIGJlIGF3YXJlIHRoYXQg
-bW9kaWZ5aW5nIHRoZSBnbG9iYWwgdmFyaWFibGUNCj4gPiA+IGBhbWRfcHN0YXRlX2dsb2JhbF9w
-YXJhbXMuY3BiX2Jvb3N0YCB3aWxsIG92ZXJ3cml0ZSB0aGUgaW5kaXZpZHVhbCBDUFUNCj4gc2V0
-dGluZ3MuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogUGVycnkgWXVhbiA8cGVycnkueXVh
-bkBhbWQuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUu
-YyB8IDI3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ID4gIDEgZmlsZSBjaGFuZ2Vk
-LCAyNyBpbnNlcnRpb25zKCspDQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3B1
-ZnJlcS9hbWQtcHN0YXRlLmMNCj4gPiA+IGIvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYyBp
-bmRleCAxMWJjZTJjMWRiMzIuLmNiMDA1NWU3Yzg0Mg0KPiA+ID4gMTAwNjQ0DQo+ID4gPiAtLS0g
-YS9kcml2ZXJzL2NwdWZyZXEvYW1kLXBzdGF0ZS5jDQo+ID4gPiArKysgYi9kcml2ZXJzL2NwdWZy
-ZXEvYW1kLXBzdGF0ZS5jDQo+ID4gPiBAQCAtMTM3MSw2ICsxMzcxLDMwIEBAIHN0YXRpYyBpbnQg
-YW1kX3BzdGF0ZV9jcHVfYm9vc3QoaW50IGNwdSwgYm9vbA0KPiBzdGF0ZSkNCj4gPiA+ICAgcmV0
-dXJuIHJldCA8IDAgPyByZXQgOiAwOw0KPiA+ID4gIH0NCj4gPiA+DQo+ID4gPiArc3RhdGljIHNz
-aXplX3Qgc2hvd19ib29zdChzdHJ1Y3QgY3B1ZnJlcV9wb2xpY3kgKnBvbGljeSwgY2hhciAqYnVm
-KQ0KPiA+ID4gK3sNCj4gPiA+ICsgc3RydWN0IGFtZF9jcHVkYXRhICpjcHVkYXRhID0gcG9saWN5
-LT5kcml2ZXJfZGF0YTsNCj4gPiA+ICsgYm9vbCBib29zdF92YWw7DQo+ID4gPiArDQo+ID4gPiAr
-IGJvb3N0X3ZhbCA9IFJFQURfT05DRShjcHVkYXRhLT5ib29zdF9zdGF0ZSk7DQo+ID4gPiArDQo+
-ID4gPiArIHJldHVybiBzeXNmc19lbWl0KGJ1ZiwgIiV1XG4iLCBib29zdF92YWwpOyB9DQo+ID4g
-PiArDQo+ID4gPiArc3RhdGljIHNzaXplX3Qgc3RvcmVfYm9vc3QoDQo+ID4gPiArICAgICAgICAg
-c3RydWN0IGNwdWZyZXFfcG9saWN5ICpwb2xpY3ksIGNvbnN0IGNoYXIgKmJ1Ziwgc2l6ZV90IGNv
-dW50KSB7DQo+ID4gPiArIGJvb2wgYm9vc3RfdmFsOw0KPiA+ID4gKyBpbnQgcmV0Ow0KPiA+ID4g
-Kw0KPiA+ID4gKyBpZiAoc3NjYW5mKGJ1ZiwgIiVkIiwgJmJvb3N0X3ZhbCkgIT0gMSkNCj4gPg0K
-PiA+IFRoaXMgd2lsbCBnZW5lcmF0ZSB3YXJuaW5nLiBJSVVDLCBzc2NhbmYoKSBkb2Vzbid0IHdv
-cmsgd2l0aCBib29sZWFucw0KPiBkaXJlY3RseSwgc28geW91J2QgcHJvYmFibHkgd2FudCB0byBy
-ZWFkIHRoZSB2YWx1ZSBpbnRvIGFuICh1bnNpZ25lZCkgaW50ZWdlciwNCj4gYW5kIHRoZW4gY2Fz
-dCBpdCB0byBib29sLg0KPg0KPiDigKZvciBtYXliZSBqdXN0IHVzZSBrc3RydG9ib29sKCk/DQoN
-ClllcywgIHRoZSBrc3RydG9ib29sIGlzIHRoZSBmdW5jdGlvbiBJIG5lZWQgdG8gdXNlLCAgd2ls
-bCBjaGFuZ2UgaXQgaW4gbmV4dC4NClRoYW5rcw0KUGVycnkuDQoNCj4NCj4gPg0KPiA+ID4gKyAg
-ICAgICAgIHJldHVybiAtRUlOVkFMOw0KPiA+ID4gKw0KPiA+ID4gKyByZXQgPSBhbWRfcHN0YXRl
-X2NwdV9ib29zdChwb2xpY3ktPmNwdSwgYm9vc3RfdmFsKTsNCj4gPiA+ICsNCj4gPiA+ICsgcmV0
-dXJuIHJldCA8IDAgPyByZXQgOiBjb3VudDsNCj4gPiA+ICt9DQo+ID4gPiArDQo+ID4gPiAgc3Rh
-dGljIHNzaXplX3QgY3BiX2Jvb3N0X3Nob3coc3RydWN0IGRldmljZSAqZGV2LA0KPiA+ID4gICAg
-ICAgICAgICAgICAgICAgICAgc3RydWN0IGRldmljZV9hdHRyaWJ1dGUgKmF0dHIsIGNoYXIgKmJ1
-ZikgIHsgQEAgLQ0KPiAxNDE2LDYNCj4gPiA+ICsxNDQwLDcgQEAgY3B1ZnJlcV9mcmVxX2F0dHJf
-cm8oYW1kX3BzdGF0ZV9wcmVmY29yZV9yYW5raW5nKTsNCj4gPiA+ICBjcHVmcmVxX2ZyZXFfYXR0
-cl9ybyhhbWRfcHN0YXRlX2h3X3ByZWZjb3JlKTsNCj4gPiA+ICBjcHVmcmVxX2ZyZXFfYXR0cl9y
-dyhlbmVyZ3lfcGVyZm9ybWFuY2VfcHJlZmVyZW5jZSk7DQo+ID4gPiAgY3B1ZnJlcV9mcmVxX2F0
-dHJfcm8oZW5lcmd5X3BlcmZvcm1hbmNlX2F2YWlsYWJsZV9wcmVmZXJlbmNlcyk7DQo+ID4gPiAr
-Y3B1ZnJlcV9mcmVxX2F0dHJfcncoYm9vc3QpOw0KPiA+ID4gIHN0YXRpYyBERVZJQ0VfQVRUUl9S
-VyhzdGF0dXMpOw0KPiA+ID4gIHN0YXRpYyBERVZJQ0VfQVRUUl9STyhwcmVmY29yZSk7DQo+ID4g
-PiAgc3RhdGljIERFVklDRV9BVFRSX1JXKGNwYl9ib29zdCk7DQo+ID4gPiBAQCAtMTQyNiw2ICsx
-NDUxLDcgQEAgc3RhdGljIHN0cnVjdCBmcmVxX2F0dHIgKmFtZF9wc3RhdGVfYXR0cltdID0gew0K
-PiA+ID4gICAmYW1kX3BzdGF0ZV9oaWdoZXN0X3BlcmYsDQo+ID4gPiAgICZhbWRfcHN0YXRlX3By
-ZWZjb3JlX3JhbmtpbmcsDQo+ID4gPiAgICZhbWRfcHN0YXRlX2h3X3ByZWZjb3JlLA0KPiA+ID4g
-KyAmYm9vc3QsDQo+ID4gPiAgIE5VTEwsDQo+ID4gPiAgfTsNCj4gPiA+DQo+ID4gPiBAQCAtMTQz
-Nyw2ICsxNDYzLDcgQEAgc3RhdGljIHN0cnVjdCBmcmVxX2F0dHIgKmFtZF9wc3RhdGVfZXBwX2F0
-dHJbXQ0KPiA9IHsNCj4gPiA+ICAgJmFtZF9wc3RhdGVfaHdfcHJlZmNvcmUsDQo+ID4gPiAgICZl
-bmVyZ3lfcGVyZm9ybWFuY2VfcHJlZmVyZW5jZSwNCj4gPiA+ICAgJmVuZXJneV9wZXJmb3JtYW5j
-ZV9hdmFpbGFibGVfcHJlZmVyZW5jZXMsDQo+ID4gPiArICZib29zdCwNCj4gPiA+ICAgTlVMTCwN
-Cj4gPiA+ICB9Ow0KPiA+ID4NCj4gPiA+DQo+ID4NCj4gPg0KPiA+DQo+DQo+DQo+IC0tDQo+IE9s
-ZWtzYW5kciBOYXRhbGVua28gKHBvc3QtZmFjdHVtKQ0K
+On Tue May 7, 2024 at 12:56 AM AEST, Gautam Menghani wrote:
+> PAPR hypervisor has introduced three new counters in the VPA area of
+> LPAR CPUs for KVM L2 guest (see [1] for terminology) observability - 2
+> for context switches from host to guest and vice versa, and 1 counter
+> for getting the total time spent inside the KVM guest. Add a tracepoint
+> that enables reading the counters for use by ftrace/perf. Note that this
+> tracepoint is only available for nestedv2 API (i.e, KVM on PowerVM).
+>
+> [1] Terminology:
+> a. L1 refers to the VM (LPAR) booted on top of PAPR hypervisor
+> b. L2 refers to the KVM guest booted on top of L1.
+>
+> Signed-off-by: Vaibhav Jain <vaibhav@linux.ibm.com>
+> Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+> ---
+> v5 -> v6:
+> 1. Use TRACE_EVENT_FN to enable/disable counters only once.
+> 2. Remove the agg. counters from vcpu->arch.
+> 3. Use PACA to maintain old counter values instead of zeroing on every
+> entry.
+> 4. Simplify variable names
+>
+> v4 -> v5:
+> 1. Define helper functions for getting/setting the accumulation counter
+> in L2's VPA
+>
+> v3 -> v4:
+> 1. After vcpu_run, check the VPA flag instead of checking for tracepoint
+> being enabled for disabling the cs time accumulation.
+>
+> v2 -> v3:
+> 1. Move the counter disabling and zeroing code to a different function.
+> 2. Move the get_lppaca() inside the tracepoint_enabled() branch.
+> 3. Add the aggregation logic to maintain total context switch time.
+>
+> v1 -> v2:
+> 1. Fix the build error due to invalid struct member reference.
+>
+>  arch/powerpc/include/asm/lppaca.h | 11 +++++--
+>  arch/powerpc/include/asm/paca.h   |  5 +++
+>  arch/powerpc/kvm/book3s_hv.c      | 52 +++++++++++++++++++++++++++++++
+>  arch/powerpc/kvm/trace_hv.h       | 27 ++++++++++++++++
+>  4 files changed, 92 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/lppaca.h b/arch/powerpc/include/asm=
+/lppaca.h
+> index 61ec2447dabf..f40a646bee3c 100644
+> --- a/arch/powerpc/include/asm/lppaca.h
+> +++ b/arch/powerpc/include/asm/lppaca.h
+> @@ -62,7 +62,8 @@ struct lppaca {
+>  	u8	donate_dedicated_cpu;	/* Donate dedicated CPU cycles */
+>  	u8	fpregs_in_use;
+>  	u8	pmcregs_in_use;
+> -	u8	reserved8[28];
+> +	u8	l2_counters_enable;  /* Enable usage of counters for KVM guest */
+> +	u8	reserved8[27];
+>  	__be64	wait_state_cycles;	/* Wait cycles for this proc */
+>  	u8	reserved9[28];
+>  	__be16	slb_count;		/* # of SLBs to maintain */
+> @@ -92,9 +93,13 @@ struct lppaca {
+>  	/* cacheline 4-5 */
+> =20
+>  	__be32	page_ins;		/* CMO Hint - # page ins by OS */
+> -	u8	reserved12[148];
+> +	u8	reserved12[28];
+> +	volatile __be64 l1_to_l2_cs_tb;
+> +	volatile __be64 l2_to_l1_cs_tb;
+> +	volatile __be64 l2_runtime_tb;
+
+I wonder if we shouldn't be moving over to use READ_ONCE for these
+instead of volatile.
+
+Probably doesn't really matter here. Maybe general audit of volatiles
+in arch/powerpc could be something to put in linuxppc issues.
+
+> +	u8 reserved13[96];
+>  	volatile __be64 dtl_idx;	/* Dispatch Trace Log head index */
+> -	u8	reserved13[96];
+> +	u8	reserved14[96];
+>  } ____cacheline_aligned;
+> =20
+>  #define lppaca_of(cpu)	(*paca_ptrs[cpu]->lppaca_ptr)
+> diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/p=
+aca.h
+> index 1d58da946739..f20ac7a6efa4 100644
+> --- a/arch/powerpc/include/asm/paca.h
+> +++ b/arch/powerpc/include/asm/paca.h
+> @@ -278,6 +278,11 @@ struct paca_struct {
+>  	struct mce_info *mce_info;
+>  	u8 mce_pending_irq_work;
+>  #endif /* CONFIG_PPC_BOOK3S_64 */
+> +#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
+> +	u64 l1_to_l2_cs;
+> +	u64 l2_to_l1_cs;
+> +	u64 l2_runtime_agg;
+> +#endif
+>  } ____cacheline_aligned;
+
+I don't think these really need to be in the paca.
+
+paca is for per-cpu stuff that is accessed in real mode, early interrupt
+entry, etc.
+
+> =20
+>  extern void copy_mm_to_paca(struct mm_struct *mm);
+> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+> index 8e86eb577eb8..ed69ad58bd02 100644
+> --- a/arch/powerpc/kvm/book3s_hv.c
+> +++ b/arch/powerpc/kvm/book3s_hv.c
+> @@ -4108,6 +4108,54 @@ static void vcpu_vpa_increment_dispatch(struct kvm=
+_vcpu *vcpu)
+>  	}
+>  }
+> =20
+> +static inline int kvmhv_get_l2_counters_status(void)
+> +{
+> +	return get_lppaca()->l2_counters_enable;
+> +}
+> +
+> +static inline void kvmhv_set_l2_counters_status(int cpu, bool status)
+> +{
+> +	if (status)
+> +		lppaca_of(cpu).l2_counters_enable =3D 1;
+> +	else
+> +		lppaca_of(cpu).l2_counters_enable =3D 0;
+> +}
+> +
+> +int kmvhv_counters_tracepoint_regfunc(void)
+> +{
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		kvmhv_set_l2_counters_status(cpu, true);
+> +	}
+> +	return 0;
+> +}
+> +
+> +void kmvhv_counters_tracepoint_unregfunc(void)
+> +{
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		kvmhv_set_l2_counters_status(cpu, false);
+> +	}
+> +}
+> +
+> +static void do_trace_nested_cs_time(struct kvm_vcpu *vcpu)
+> +{
+> +	struct lppaca *lp =3D get_lppaca();
+> +	u64 l1_to_l2_ns, l2_to_l1_ns, l2_runtime_ns;
+> +
+> +	l1_to_l2_ns =3D tb_to_ns(be64_to_cpu(lp->l1_to_l2_cs_tb));
+> +	l2_to_l1_ns =3D tb_to_ns(be64_to_cpu(lp->l2_to_l1_cs_tb));
+> +	l2_runtime_ns =3D tb_to_ns(be64_to_cpu(lp->l2_runtime_tb));
+> +	trace_kvmppc_vcpu_stats(vcpu, l1_to_l2_ns - local_paca->l1_to_l2_cs,
+> +					l2_to_l1_ns - local_paca->l2_to_l1_cs,
+> +					l2_runtime_ns - local_paca->l2_runtime_agg);
+> +	local_paca->l1_to_l2_cs =3D l1_to_l2_ns;
+> +	local_paca->l2_to_l1_cs =3D l2_to_l1_ns;
+> +	local_paca->l2_runtime_agg =3D l2_runtime_ns;
+> +}
+
+So you're just using the per-cpu values to cache the last value
+read so next time you can take a delta.
+
+Could you zero the counters before entry? Or just use local
+variables to read the before values.
+
+If you want to keep the same scheme, I think per-cpu variables
+should work.
+
+Otherwise,
+
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+
+> +
+>  static int kvmhv_vcpu_entry_nestedv2(struct kvm_vcpu *vcpu, u64 time_lim=
+it,
+>  				     unsigned long lpcr, u64 *tb)
+>  {
+> @@ -4156,6 +4204,10 @@ static int kvmhv_vcpu_entry_nestedv2(struct kvm_vc=
+pu *vcpu, u64 time_limit,
+> =20
+>  	timer_rearm_host_dec(*tb);
+> =20
+> +	/* Record context switch and guest_run_time data */
+> +	if (kvmhv_get_l2_counters_status())
+> +		do_trace_nested_cs_time(vcpu);
+> +
+>  	return trap;
+>  }
+> =20
+> diff --git a/arch/powerpc/kvm/trace_hv.h b/arch/powerpc/kvm/trace_hv.h
+> index 8d57c8428531..dc118ab88f23 100644
+> --- a/arch/powerpc/kvm/trace_hv.h
+> +++ b/arch/powerpc/kvm/trace_hv.h
+> @@ -238,6 +238,9 @@
+>  	{H_MULTI_THREADS_ACTIVE,	"H_MULTI_THREADS_ACTIVE"}, \
+>  	{H_OUTSTANDING_COP_OPS,		"H_OUTSTANDING_COP_OPS"}
+> =20
+> +int kmvhv_counters_tracepoint_regfunc(void);
+> +void kmvhv_counters_tracepoint_unregfunc(void);
+> +
+>  TRACE_EVENT(kvm_guest_enter,
+>  	TP_PROTO(struct kvm_vcpu *vcpu),
+>  	TP_ARGS(vcpu),
+> @@ -512,6 +515,30 @@ TRACE_EVENT(kvmppc_run_vcpu_exit,
+>  			__entry->vcpu_id, __entry->exit, __entry->ret)
+>  );
+> =20
+> +TRACE_EVENT_FN(kvmppc_vcpu_stats,
+> +	TP_PROTO(struct kvm_vcpu *vcpu, u64 l1_to_l2_cs, u64 l2_to_l1_cs, u64 l=
+2_runtime),
+> +
+> +	TP_ARGS(vcpu, l1_to_l2_cs, l2_to_l1_cs, l2_runtime),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(int,		vcpu_id)
+> +		__field(u64,		l1_to_l2_cs)
+> +		__field(u64,		l2_to_l1_cs)
+> +		__field(u64,		l2_runtime)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->vcpu_id  =3D vcpu->vcpu_id;
+> +		__entry->l1_to_l2_cs =3D l1_to_l2_cs;
+> +		__entry->l2_to_l1_cs =3D l2_to_l1_cs;
+> +		__entry->l2_runtime =3D l2_runtime;
+> +	),
+> +
+> +	TP_printk("VCPU %d: l1_to_l2_cs_time=3D%llu ns l2_to_l1_cs_time=3D%llu =
+ns l2_runtime=3D%llu ns",
+> +		__entry->vcpu_id,  __entry->l1_to_l2_cs,
+> +		__entry->l2_to_l1_cs, __entry->l2_runtime),
+> +	kmvhv_counters_tracepoint_regfunc, kmvhv_counters_tracepoint_unregfunc
+> +);
+>  #endif /* _TRACE_KVM_HV_H */
+> =20
+>  /* This part must be outside protection */
+
 
