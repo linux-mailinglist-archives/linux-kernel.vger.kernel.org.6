@@ -1,73 +1,51 @@
-Return-Path: <linux-kernel+bounces-173147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71868BFC34
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B64FB8BFC39
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D35F11C212C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E733E1C21BC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB2082D62;
-	Wed,  8 May 2024 11:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9879382492;
+	Wed,  8 May 2024 11:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cVtwl2Ey"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="vp+oNFN9"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AB447F6C;
-	Wed,  8 May 2024 11:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167AC823DD;
+	Wed,  8 May 2024 11:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168148; cv=none; b=eJjU0TsyE78ZD963yoessgBvF11SwWh0/x/rK0cRpUufsMGUsuTzHye401rZNWuGDQZ9zeEyjewMj1/RGe2rU0rd2NRkBij8yGR9576KvMPalBIrE8ulL8G7xO6hxNqNI8GB0FyuMiKne1rqb+azIjofCbJTSgdDULIU20Ztmsw=
+	t=1715168222; cv=none; b=qrjvs207sTlcaWaitD3mtPja7HLzQLvv61Cdnz5RHFbOMs/Vxt11+++eAvQxSXGy3+LXwMzXl7XGIwYS1v3cutWsoHKDooyJnH3VJ74I4ArygTLAIIHObGqtxszIMedfdr0P3UUIwElKwU5y0qnzuECtZ4kmVVjVhcqbhGNI/XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168148; c=relaxed/simple;
-	bh=NUGzzI2KqNP1cPbp/GxrzL3VQvSocCNEihYdoADSwBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P7Nkvm7GcpAYmXb1yv4TUGjc4bdQV9BxYOZZvaVvdmxkiaJJTNsu7hyhghtAcp4SS6rtwjo3tNaIkRwnsU8K05ADAMOfgoF1Sld/FTWcx2KHPw0RySsaXFTb2forzcWP44kAkw19wiLoZy0L29zUWXqX/erg7uBhc0YgvhlGiOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cVtwl2Ey; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso889617966b.2;
-        Wed, 08 May 2024 04:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715168145; x=1715772945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Vb7A8NDewpqVb/wyIJ0582aE2qv/3FWwkQEcmRDFW+Y=;
-        b=cVtwl2EyWMN1bGdSkykbJhrDFoQpdkWU7U8Iqy5jzsqGgIvn/e6ZCNK6t48QGPTZ/x
-         P70xXIi51A1Jkx7i30fX0a5dMpmqyyeTmNPyo0KzQBvmURkZDWUUCvKPBrPmzjJxqmq+
-         Au3+NimpyoMB0Z74M/IOrwR6cou46Qxg8Rt946ebkk7lRvziMVXMRkxMVJusv/6DaNWu
-         IEDZhsoO/i1y43oBsLpNQ6T96eMJU0Kx2k96MPJbB5sPytYv67jOqcmBixqa7TnMvlsK
-         kiQ5Pr43AQKfYlO9JU6XsdJy44dMQCfMEayJ4Qj5R7tGtqFJnzDQz2cpLNpF9vqlPzHQ
-         UTgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715168145; x=1715772945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vb7A8NDewpqVb/wyIJ0582aE2qv/3FWwkQEcmRDFW+Y=;
-        b=AgjGsJScNDHJqQnI6NO2doDMKlGhORuTvTqwGd7a5nhAK5hlZOowBbS6EK3x1GsZAW
-         oxpBCGu/hEnuqVBaKDdzmirrQ0KDQJpVl5QASebqXLVqe776RWbI2oeHZwkwqCmnuHF3
-         IB6Tvwxt4gjNYO/WHqrDbpY19rILXEkkvcVUyCENOOcNNRAyzbTv3CWz4NK8sn0jYhHE
-         cAS1zCfsOFQECJyLeeypg8VKpoQABZlB+w6wUCEnTD/VWvDRoePdeW1tF7wIq2wPG4f8
-         F+G4Za6ERSCi2N7c4gNkQHnc7Zt/zeY0C9JWkZBFolOsp6UUN/XnyMZw4HmbbRjaZXTk
-         WpkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU88OpDWbAOKdGKRMW2jpmD1p+H4YCFocqp3cT5i4CVf8rHabWNVVjXlErDKGMXBVu7ygruQDbYaQBCzHGvKGWhmDWRQ4yVA6e3EueaCUBuMsscIgViXVmvYZziF7rumzHQgTbhQB9DZhymBNt8fZyF70VxXaYEPTwv6fr/G6qLlLvQ6XizMsnVgGCGnetj5aPeEISags693A3rBN9ze3otY7SB5qAlnwby1thQL0ZDnfU/XDPQb1dIiXBzYjmdKg/pOLJ0NT7R39oD741CYEesFvQwmDJh8wJSP+IAVxdrZboU+QI80YhsL17T+DPQwpdQE8JjS/U7gA3STCtvWxSdJAgmCTXPO5CCbTtBm8lx+Y9AxYZ55B0L7PFd4bA5ZGNoIwgwdXwkiAb6zOIQimtEU9CUJcmAM5uk+QlhPZWXUKnGJPMufklnDErHVFvBdOVUnFi1LDEyvIor+jgsCk01DdZlVsDvVLZqOaGkt4PNaBbwKMc+LPXJznPCeyFAOEeerFwZw==
-X-Gm-Message-State: AOJu0YzI1687RXF6xyRCrTIQN9uPWV+DevSYCa5VsGXCpQOX+qFFXMnX
-	LXvIxD90PoGcaC1YBBzmXYmeCRggFEUco55LvUySgy3oWOkuDtSh
-X-Google-Smtp-Source: AGHT+IFD1CFod5VQ+iswMgBuojxIC5HF11jrNe705xchAqUdklV+Hcoyl3d8HPrZmlieFNMEy7rhLQ==
-X-Received: by 2002:a17:906:54c7:b0:a59:9edf:14b6 with SMTP id a640c23a62f3a-a59fb9699ccmr154863866b.45.1715168145194;
-        Wed, 08 May 2024 04:35:45 -0700 (PDT)
-Received: from [192.168.42.217] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id p25-20020a170906141900b00a55a5384986sm7568868ejc.24.2024.05.08.04.35.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 04:35:44 -0700 (PDT)
-Message-ID: <1e2823db-504b-4829-856f-3f45a45ccada@gmail.com>
-Date: Wed, 8 May 2024 12:35:52 +0100
+	s=arc-20240116; t=1715168222; c=relaxed/simple;
+	bh=z/2a/nrs23WhS9VrtF5qiDn+DU+cNJvGsX0TMquMRxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q8yO+xm1PrKXS+S6ahVwnvJKMh7R9TyyXfdvRp+4f/8D6VnaeYF8v1MHdcArHKj7mFPA2Bqeb57C2f+kTTRSv9i4sbfpCHUJxF1RAEPZdgfJ1MLQEClGUGjf+C7Nah33aGRvmf9TZdQsNywvm25SVLbWu4w1Fe6BPmYl6xwtulo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=vp+oNFN9; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=lwuG52TUbyfVkNwqey1JXh7+1gTpfjwoDt9EJB504Lw=;
+	t=1715168221; x=1715600221; b=vp+oNFN9YcexA9sn1rkTwGe+LIyAGFqDIo88U2/k8wGCO2N
+	iFpjjIKKZYng4anMFaoT1phnQpJ0h6Oh0LEyNCazes+Fy/ZHLMKofC5SwiBxeyScIVD9qbWdH6hYS
+	4+YOfGeETq2iXYFxA0HtPxYWo+in/7MugkhC6GquCR5Gfdg6vBgn/oXuJC/yrUiHsLxn6xFeEOKDC
+	CgyQo2Xj2+ZF2KRI2ezAAZXFoOQftCdlLrrqcLSvopKaLEtmkVXtZTCL9vXdWB5Di7GeXK1fBFZ10
+	Fs9oeCkT8wqXMFlBnPVr45J5SnG/3KA/TWVo5EjQrAssR84JJlga5Lk4NAy4sRvw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s4fbX-00055h-2w; Wed, 08 May 2024 13:36:59 +0200
+Message-ID: <252f883a-6bf1-4ef7-a5f9-d261a6cf725e@leemhuis.info>
+Date: Wed, 8 May 2024 13:36:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,139 +53,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH net-next v8 02/14] net: page_pool: create hooks for
- custom page providers
-To: Jason Gunthorpe <jgg@ziepe.ca>, Mina Almasry <almasrymina@google.com>,
- Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Amritha Nambiar <amritha.nambiar@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>,
- Kaiyuan Zhang <kaiyuanz@google.com>, Christian Brauner <brauner@kernel.org>,
- Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>,
- Florian Westphal <fw@strlen.de>, Yunsheng Lin <linyunsheng@huawei.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
- Arseniy Krasnov <avkrasnov@salutedevices.com>,
- Aleksander Lobakin <aleksander.lobakin@intel.com>,
- Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Richard Gobert <richardbgobert@gmail.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Johannes Berg <johannes.berg@intel.com>, Abel Wu <wuyun.abel@bytedance.com>,
- Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-References: <ZjjHUh1eINPg1wkn@infradead.org>
- <20b1c2d9-0b37-414c-b348-89684c0c0998@gmail.com>
- <20240507161857.GA4718@ziepe.ca> <ZjpVfPqGNfE5N4bl@infradead.org>
- <CAHS8izPH+sRLSiZ7vbrNtRdHrFEf8XQ61XAyHuxRSL9Jjy8YbQ@mail.gmail.com>
- <20240507164838.GG4718@ziepe.ca>
- <0d5da361-cc7b-46e9-a635-9a7a4c208444@gmail.com>
- <20240507175644.GJ4718@ziepe.ca>
- <6a50d01a-b5b9-4699-9d58-94e5f8f81c13@gmail.com>
- <20240507233247.GK4718@ziepe.ca> <Zjsm3vO6rIY_sw5A@phenom.ffwll.local>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <Zjsm3vO6rIY_sw5A@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [REGRESSION] next boot regression caused by
+ RIP:0010:acpi_find_gpio+0x4b/0x103 kernel panic
+To: Laura Nao <laura.nao@collabora.com>, regressions@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, kernel@collabora.com
+References: <20240426154208.81894-1-laura.nao@collabora.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <20240426154208.81894-1-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715168221;b694817c;
+X-HE-SMSGID: 1s4fbX-00055h-2w
 
-On 5/8/24 08:16, Daniel Vetter wrote:
-> On Tue, May 07, 2024 at 08:32:47PM -0300, Jason Gunthorpe wrote:
->> On Tue, May 07, 2024 at 08:35:37PM +0100, Pavel Begunkov wrote:
->>> On 5/7/24 18:56, Jason Gunthorpe wrote:
->>>> On Tue, May 07, 2024 at 06:25:52PM +0100, Pavel Begunkov wrote:
->>>>> On 5/7/24 17:48, Jason Gunthorpe wrote:
->>>>>> On Tue, May 07, 2024 at 09:42:05AM -0700, Mina Almasry wrote:
->>>>>>
->>>>>>> 1. Align with devmem TCP to use udmabuf for your io_uring memory. I
->>>>>>> think in the past you said it's a uapi you don't link but in the face
->>>>>>> of this pushback you may want to reconsider.
->>>>>>
->>>>>> dmabuf does not force a uapi, you can acquire your pages however you
->>>>>> want and wrap them up in a dmabuf. No uapi at all.
->>>>>>
->>>>>> The point is that dmabuf already provides ops that do basically what
->>>>>> is needed here. We don't need ops calling ops just because dmabuf's
->>>>>> ops are not understsood or not perfect. Fixup dmabuf.
->>>>>
->>>>> Those ops, for example, are used to efficiently return used buffers
->>>>> back to the kernel, which is uapi, I don't see how dmabuf can be
->>>>> fixed up to cover it.
->>>>
->>>> Sure, but that doesn't mean you can't use dma buf for the other parts
->>>> of the flow. The per-page lifetime is a different topic than the
->>>> refcounting and access of the entire bulk of memory.
->>>
->>> Ok, so if we're leaving uapi (and ops) and keep per page/sub-buffer as
->>> is, the rest is resolving uptr -> pages, and passing it to page pool in
->>> a convenient to page pool format (net_iov).
->>
->> I'm not going to pretend to know about page pool details, but dmabuf
->> is the way to get the bulk of pages into a pool within the net stack's
->> allocator and keep that bulk properly refcounted while.
->>
->> An object like dmabuf is needed for the general case because there are
->> not going to be per-page references or otherwise available.
->>
->> What you seem to want is to alter how the actual allocation flow works
->> from that bulk of memory and delay the free. It seems like a different
->> topic to me, and honestly hacking into the allocator free function
->> seems a bit weird..
+On 26.04.24 17:42, Laura Nao wrote:
+> Hello,
 > 
-> Also I don't see how it's an argument against dma-buf as the interface for
+> KernelCI has identified a next boot regression on the following
+> Chromebooks, between next-20240416 and next-20240418:
+> - Lenovo ThinkPad C13 Yoga Chromebook (codename morphius) - kernel
+>   configuration used [1]
+> - ASUS Chromebook Flip C436FA (codename helios) - kernel configuration
+>   used [2]
+>
+> [...]
+> 
+> The issue is still present on next-20240426.
+>> #regzbot introduced: next-20240416..next-20240418
 
-It's not, neither I said it is, but it is an argument against removing
-the network's page pool ops.
+Hmmm, I noticed nothing has happened here.
 
-> all these, because e.g. ttm internally does have a page pool because
-> depending upon allocator, that's indeed beneficial. Other drm drivers have
-> more buffer-based concepts for opportunistically memory around, usually
-> by marking buffers that are just kept as cache as purgeable (which is a
-> concept that goes all the way to opengl/vulkan).
+Is this issue still happening? With a link to the particular test in the
+CI I might have been able to answer that myself. ;)
 
-Because in this case it solves nothing and helps with nothing, quite
-the opposite. Just as well we can ask why NVMe doesn't wrap user pages
-into a dmabuf while doing IO.
+If it's still broken I assume we need a bisection.
 
-> But these are all internals of the dma-buf exporter, the dma-buf api users
-> don't ever need to care.
-> -Sima
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
--- 
-Pavel Begunkov
+#regzbot poke
+
 
