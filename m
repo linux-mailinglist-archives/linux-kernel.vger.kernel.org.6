@@ -1,175 +1,176 @@
-Return-Path: <linux-kernel+bounces-172643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5569D8BF4CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:00:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6E98BF4D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B645285944
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D231F22DB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5C9134A6;
-	Wed,  8 May 2024 03:00:28 +0000 (UTC)
-Received: from mx9.didiglobal.com (mx9.didiglobal.com [111.202.70.124])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id C9A9B11C85
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 03:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.202.70.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B7913AC5;
+	Wed,  8 May 2024 03:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="je+VPU1P"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FC814A83;
+	Wed,  8 May 2024 03:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715137227; cv=none; b=CG2EZ3XF5+TdXXXQqEpqCk0dSCH2XGZdZ4nUFS1r464wvTZe5JZAxzciraiQKVreiD+nvpOluXvPmFtc6wmPXOk910tr/9VB40mCw/MpAz7GeWtHXc6NCY67+b/g5ELkhIyLSnzdguyIOoJ7o9lC1Yzfod82R7z4159J1sa01l8=
+	t=1715137335; cv=none; b=bzuebSlu5f0MEuRu3/ujUR81UCf9kD0Lu2Go4KMeUfce8TcnkGcnJ0bytcv9OchFPpqy4YRMKLW2TFHIP8O9pOz6NIC1YKW+4a33KznDAw238eM1JAd2iNoMk43CN1lu200IMawLZ1CzHVPAXpffMh5Naeq8N/q9iNU/71DEUfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715137227; c=relaxed/simple;
-	bh=bPdmSzOv8UZsSmFt1Agi1x4lnc6uBqagJYNQWZcn4Kk=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version; b=amUFm3JJKlTYcEiPiHQ6fwS8EeeqWqY/RSC3rumS+rOI0zJcNRzHl1i0QkBXwP1Fb+ol7vkTHu0vBpwHTvhsplhpHIIuAP2zXW2kZdZWUGu6zSZxBtu6GweYAS5TPYrrZPn8GVOGXbZRaC4/smR/owSIK9Ui8hkUDocWi1M/ub4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com; spf=pass smtp.mailfrom=didiglobal.com; arc=none smtp.client-ip=111.202.70.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=didiglobal.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=didiglobal.com
-Received: from mail.didiglobal.com (unknown [10.79.64.11])
-	by mx9.didiglobal.com (MailData Gateway V2.8.8) with ESMTPS id 088931852131F3;
-	Wed,  8 May 2024 10:56:54 +0800 (CST)
-Received: from ZJY02-ACTMBX-02.didichuxing.com (10.79.65.12) by
- ZJY01-ACTMBX-01.didichuxing.com (10.79.64.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 8 May 2024 10:56:54 +0800
-Received: from ZJY02-ACTMBX-02.didichuxing.com ([fe80::98e9:1ba4:7aed:409f])
- by ZJY02-ACTMBX-02.didichuxing.com ([fe80::98e9:1ba4:7aed:409f%4]) with mapi
- id 15.01.2507.035; Wed, 8 May 2024 10:56:54 +0800
-X-MD-Sfrom: fuyuanli@didiglobal.com
-X-MD-SrcIP: 10.79.64.11
-From: =?utf-8?B?5LuY5YWD5YqbIEplcnJ5IEZ1?= <fuyuanli@didiglobal.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
-	"juri.lelli@redhat.com" <juri.lelli@redhat.com>, "vincent.guittot@linaro.org"
-	<vincent.guittot@linaro.org>, "dietmar.eggemann@arm.com"
-	<dietmar.eggemann@arm.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"bsegall@google.com" <bsegall@google.com>, "mgorman@suse.de"
-	<mgorman@suse.de>, "bristot@redhat.com" <bristot@redhat.com>,
-	"vschneid@redhat.com" <vschneid@redhat.com>, "kolyshkin@gmail.com"
-	<kolyshkin@gmail.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "kent.overstreet@linux.dev"
-	<kent.overstreet@linux.dev>, "frederic@kernel.org" <frederic@kernel.org>,
-	"oleg@redhat.com" <oleg@redhat.com>, "hca@linux.ibm.com" <hca@linux.ibm.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>, "tj@kernel.org" <tj@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>, "CruzZhao@linux.alibaba.com"
-	<CruzZhao@linux.alibaba.com>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched: Introduce task_struct::latency_sensi_flag.
-Thread-Topic: [PATCH] sched: Introduce task_struct::latency_sensi_flag.
-Thread-Index: AQHanpk0GOnQJDnKi0yunFEc6isNrrGJcj0AgAM3VAA=
-Date: Wed, 8 May 2024 02:56:54 +0000
-Message-ID: <8323816F-8481-4DBA-B074-19A0CAFE3C30@didiglobal.com>
-In-Reply-To: <20240506095006.W6mrPsML@linutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <34EB458A0BDE4B4EA50121FCC308C8D2@didichuxing.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1715137335; c=relaxed/simple;
+	bh=RSXkWh+YRP86q6rexA0Xz6MWHMmjPq2kVnY4SmLPLew=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=C/VShYn8M4fUyGqp7XwmO8ZSyWRBvS11F55FeE5fNgA7/bmZ/xVuXycwfAv5iPX7EHz2sNwzwFLkKKwPfoS2ImTxSYqiY/gg6JJZwJHbvH8yBsZiiBVbo3FiCB4ssTfhrvgS/C5aDvh6QZigNHfyog1vEFHyyQXHB8R9rn4OsUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=je+VPU1P; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715137330;
+	bh=FEbw+d5VeRFIZSqUXNpFbCLSNmCEdL3Hop+4ng9mEOc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=je+VPU1PJCpn9bE2wPrAXVtRbKp19yXraTVwUS/PYZ83yFvHhVqknI4ZhOXwPPzOX
+	 mTXC9DtaE43sXjcGYwctEHv9F4ZyEG9Q9DTxoix6Tq5dcKVw0L/sTcM3K9MWxz5Y4S
+	 NnDszPFNmsPX7AMROIX0vWkSYOgCIWGNhE2wOxA39aPBc8p4lQG/B3JdDsc69haQxi
+	 AHjUmEegimQNWhByMUqEXwv+ODwTVsI8bX43BfKO/Pudx1UQ0Kn6RjG/4Y17u0mxtE
+	 yYpB9lRoEV0EVz4CkiZFTGzJiKH7QGBG9aOZP7cv+4PaF6RiRGPSi7BVOjnFVjqiKH
+	 mDfd/gNkCiX2g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VZ0L86Fp8z4wc7;
+	Wed,  8 May 2024 13:02:08 +1000 (AEST)
+Date: Wed, 8 May 2024 13:02:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Christoph Hellwig <hch@lst.de>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the block tree with the vfs-brauner
+ tree
+Message-ID: <20240508130207.3d83702f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/X84bEj4TZydhZxfVv0cdEua";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Pg0KPg0KPg0KPiDlnKggMjAyNC81Lzcg5LiK5Y2IOToyOO+8jOKAnFNlYmFzdGlhbiBBbmRyemVq
-IFNpZXdpb3LigJ08YmlnZWFzeUBsaW51dHJvbml4LmRlIDxtYWlsdG86YmlnZWFzeUBsaW51dHJv
-bml4LmRlPj4g5YaZ5YWlOg0KPg0KPg0KPiBPbiAyMDI0LTA1LTA1IDExOjA2OjE1IFsrMDgwMF0s
-IGZ1eXVhbmxpIHdyb3RlOg0KPiA+IEluIHRoZSBwYXRoIGxvY2FsX2JoX2VuYWJsZSgpLT5fX2xv
-Y2FsX2JoX2VuYWJsZV9pcCgpLCB0aGUgc29mdGlycQ0KPiA+IGhhbmRsZXJzIHdpbGwgYmUgZXhl
-Y3V0ZWQgaW4gdGhlIGNvbnRleHQgb2YgY3VycmVudCB0YXNrLiBCdXQgZm9yIHNvbWUNCj4gPiB0
-YXNrcyBzZW5zaXRpdmUgdG8gcnVubmluZyBsYXRlbmN5LCB3ZSBleHBlY3QgdGhhdCB0aGV5IHdp
-bGwgbm90IHNwZW5kDQo+ID4gZXh0cmEgdGltZSBleGVjdXRpbmcgc29mdGlycS4gU28gbGF0ZW5j
-eV9zZW5zaV9mbGFnIGlzIGludHJvZHVjZWQgaW4NCj4gPiB0YXNrX3N0cnVjdCwgd2hlbiBpdCBp
-cyBzZXQgdG8gMSwgdGFzayBvbmx5IHdha2VzIHVwIHNvZnRpcnEgZGFlbW9uIGluDQo+ID4gX19s
-b2NhbF9iaF9lbmFibGVfaXAoKS4NCj4gPg0KPiA+IEEgdGVzdCBoYXMgYmVlbiBtYWRlIGluIHR3
-byBob3N0cyBuYW1lZCBBIGFuZCBCLiBJbiBBLCBzZXZlcmFsIGNsaWVudHMNCj4gPiBzZW50IHVk
-cCBwYWNrZXRzIHRvIGEgc2luZ2xlIHNlcnZlciBpbiBCIGNvbmN1cnJlbnRseSBhcyBmYXN0IGFz
-DQo+ID4gcG9zc2libGUuIEluIEIsIHRoZSBJUlFzIG9mIHRoZXNlIGZsb3dzIHdlcmUgYm91bmQg
-dG8gQ1BVIDAgYnkgZmxvdw0KPiA+IGRpcmVjdG9yLCBzbyB0aGVyZSB3YXMgYWx3YXlzIGEgdHJp
-Z2dlcmVkIG5ldF9yeCBzb2Z0aXJxIG9uIENQVSAwLiBUaGVuDQo+ID4gYSB0ZXN0IHByb2dyYW0g
-d2FzIHN0YXJ0ZWQgaW4gQiwgd2hpY2ggd2FzIGFsc28gYm91bmQgdG8gQ1BVIDAsIGFuZA0KPiA+
-IGtlZXBlZCBjYWxsaW5nIHNlbmR0bygpIGluIGEgbG9vcC4gU2FtcGxpbmcgd2l0aCBwZXJmLCBy
-ZXN1bHRzIHNob3dlZA0KPiA+IHRoYXQgYWJvdXQgMjUlIG9mIHJ1bm5pbmcgdGltZSBvZiB0ZXN0
-IHByb2dyYW0gd2FzIHNwZW50IGV4ZWN1dGluZw0KPiA+IGxvY2FsX2JoX2VuYWJsZSgpIGNvbnRh
-aW5lZCBpbiBzeXNjYWxsIHNlbmR0bygpLCBidXQgYWZ0ZXIgc2V0dGluZw0KPiA+IGxhdGVuY3lf
-c2Vuc2lfZmxhZyB0byAxLCB0aGlzIHByb3BvcnRpb24gaGFkIGJlZW4gcmVkdWNlZCB0byAwLjUl
-Lg0KPg0KPg0KPiBJcyB0aGlzIFBSRUVNUFRfUlQgcmVsYXRlZCBvciBub3Q/DQpUaGUgcHJvYmxl
-bSB0aGF0IEkgbWV0IG9jY3VyZWQgb24gUlQga2VybmVsLCBhIHRhc2sgaGFkIGhpZ2ggbGF0ZW5j
-eQ0KZHVlIHRvIHNwZW5kDQptdWNoIHRpbWUgZG9pbmcgc29mdGlycS4gQW5kIEkgdGhpbmsgc29t
-ZSB0YXNrcyBvbiBOb24tUlQga2VybmVsIG1heQ0KYWxzbyB3YW50IGxvdw0KbGF0ZW5jeSwgc28g
-aW50cm9kdWNlIHRoaXMgZmxhZyB0byBib3RoIFJUIGFuZCBOb24tUlQga2VybmVsLg0KPiBSVCB3
-aXNlIEkgd29ya2VkIGhhcmQgdG8gZ2V0IHJpZCBvZiBrc29mdGlycWQgdXNhZ2UgYmVjYXVzZSB5
-b3UgdXNlIGxvc2UNCk15IGltcGxlbWVudGF0aW9uIHJlZmVycyB0byBjdXJyZW50IGNvZGUgaW4g
-UlQga2VybmVsLiBJbiBjdXJyZW50DQp2ZXJzaW9uLCBfX2xvY2FsX2JoX2VuYWJsZV9pcCgpDQp3
-aWxsIG91dHNvdXJjZSB3b3JrIHRvIGtzb2Z0aXJxZCB3aGVuIHByZWVtcHQgaXMgZGlzYWJsZWQu
-DQo+IGNvbnRleHQsIHByaW9yaXR5IGFuZCBldmVyeXRoaW5nIG9uY2UgdGhpcyBoYXBwZW5zLiBQ
-bHVzIGFuIGlubm9jZW50DQo+IHRocmVhZCBjYW4gYmUgZm9yY2VkIHRvIGRvIHRoZSB3b3JrIGlu
-c3RlYWQuDQpTb3JyeSwgSSBkb24ndCB1bmRlcnN0YW5kLCB3aGljaCB0aHJlYWQgeW91IG1lYW4/
-DQo+IE5vbi1SVCB3aXNlIHlvdXIgcGVyZm9ybWFuY2UgY2FuIGdvIHJhcGlkbHkgZG93biB0aGUg
-aGlsbCBpZiB0aGUgd3JvbmcNCj4gdGFzay8gdXNlciBpcyBvdXRzb3VyY2luZyB0aGUgd29yayB0
-byBrc29mdGlycWQuDQpJIGFncmVlLCBzbyB0aGUgZGVmYXVsdCB2YWx1ZSBvZiBuZXcgZmxhZyBp
-cyAwLCB3aGljaCBkb2VzIG5vdCBhZmZlY3QNCm5vcm1hbCB3b3JraW5nIG9mIHNvZnRpcnEuDQpV
-c2VycyBuZWVkIHRvIGV2YWx1YXRlIGJvdGggcGVyZm9ybWFuY2UgYW5kIGxhdGVuY3kgaW1wYWN0
-cywgYW5kDQpkZWNpZGUgaWYgc2V0IGl0IHRvIDENCj4NCj4NCj4gQW5kIHRoaXMgaXMgd2hhdCB5
-b3UgYXJlIGRvaW5nOiBZb3UgYXJlIG91dHNvdXJjaW5nIHdvcmsgdG8gYSBkaWZmZXJlbnQNCj4g
-Y29udGV4dCBhbmQgaGF2ZSAyNSUgaW1wcm92ZW1lbnQgaGVyZSBhbmQgMjUlIHdvcmsgc29tZXdo
-ZXJlIGVsc2Ugd2hpY2gNClllYWgsIHRoZXJlIG11c3QgYmUgMjUlIHdvcmsgc29tZXdoZXJlIGVs
-c2UuIEkgdGhpbmsgdGhlIHB1cnBvc2Ugb2YNCm91dHNvdXJjaW5nIHdvcmsgaXMgdG8NCmVuc3Vy
-ZSBzb21lIHNwZWNpYWwgdGFza3MgaGF2ZSBsb3cgbGF0ZW5jeSwgbm90IHdob2xlIHN5c3RlbS4g
-QW5kIHRoZQ0KZGVjaXNpb24gbGllcyB3aXRoIHVzZXJzLg0KPiB5b3UgZG9uJ3QgbWVhc3VyZS4g
-Tm90IHRvIG1lbnRpb24gdGhhdCBfYW5vdGhlcl8gY29udGV4dCBjb3VsZCBkbyB0aGlzDQo+IHNv
-ZnRpcnEgd29yayBpZiBpdCBoYXBwZW5zIHRvIGVuZCB1cCBpbiB0aGUgc2VjdGlvbiBiZWZvcmUg
-a3NvZnRpcnFkIGhhZA0KPiBhIGNoYW5jZSB0byBydW4uDQo+DQo+DQo+IFNvLCB0aGlzIGRvZXMg
-bm90IHNvdW5kIGdvb2QuIElmIHlvdSB3YW50IHRvIGhhdmUgYSBsb3ctbGF0ZW5jeSB0YXNrDQo+
-IHdoaWNoIGNhbiBzZW5kIHBhY2tldHMgYW5kIG5vdCBkbyB0aGUgbmVlZGVkIHNvZnRpcnEgcGFy
-dCBJIHdvdWxkDQo+IHN1Z2dlc3QgdG8gaGF2ZSBhbm90aGVyIHRocmVhZCB3aGVyZSB0aGlzIGlz
-IG91dHNvdXJjZWQgYW5kIHRoZSB0aHJlYWQNCj4gZG9lcyB0aGUgd29yay4NCldoYXQgeW91IG1l
-YW4gaXMgbmFwaSB0aHJlYWQ/IE15IHRob3VnaHQgaXMgcHJvdmlkaW5nIGEgd2F5IHRvIGhhdmUg
-YQ0KbG93LWxhdGVuY3kgdGFzayBpZiB1c2VyIGRvZXMNCm5vdCB3YW50IHRvIGVuYWJsZSBuYXBp
-IHRocmVhZGVkLA0KPg0KPg0KPiA+IFNpZ25lZC1vZmYtYnk6IGZ1eXVhbmxpIDxmdXl1YW5saUBk
-aWRpZ2xvYmFsLmNvbSA8bWFpbHRvOmZ1eXVhbmxpQGRpZGlnbG9iYWwuY29tPj4NCj4NCj4NCj4g
-U2ViYXN0aWFuDQo+DQo+DQo+DQpUaGFua3MNCmZ1eXVhbmxpDQoNCu+7v+WcqCAyMDI0LzUvNyDk
-uIrljYg5OjI477yM4oCcU2ViYXN0aWFuIEFuZHJ6ZWogU2lld2lvcuKAnTxiaWdlYXN5QGxpbnV0
-cm9uaXguZGUgPG1haWx0bzpiaWdlYXN5QGxpbnV0cm9uaXguZGU+PiDlhpnlhaU6DQoNCg0KT24g
-MjAyNC0wNS0wNSAxMTowNjoxNSBbKzA4MDBdLCBmdXl1YW5saSB3cm90ZToNCj4gSW4gdGhlIHBh
-dGggbG9jYWxfYmhfZW5hYmxlKCktPl9fbG9jYWxfYmhfZW5hYmxlX2lwKCksIHRoZSBzb2Z0aXJx
-DQo+IGhhbmRsZXJzIHdpbGwgYmUgZXhlY3V0ZWQgaW4gdGhlIGNvbnRleHQgb2YgY3VycmVudCB0
-YXNrLiBCdXQgZm9yIHNvbWUNCj4gdGFza3Mgc2Vuc2l0aXZlIHRvIHJ1bm5pbmcgbGF0ZW5jeSwg
-d2UgZXhwZWN0IHRoYXQgdGhleSB3aWxsIG5vdCBzcGVuZA0KPiBleHRyYSB0aW1lIGV4ZWN1dGlu
-ZyBzb2Z0aXJxLiBTbyBsYXRlbmN5X3NlbnNpX2ZsYWcgaXMgaW50cm9kdWNlZCBpbg0KPiB0YXNr
-X3N0cnVjdCwgd2hlbiBpdCBpcyBzZXQgdG8gMSwgdGFzayBvbmx5IHdha2VzIHVwIHNvZnRpcnEg
-ZGFlbW9uIGluDQo+IF9fbG9jYWxfYmhfZW5hYmxlX2lwKCkuDQo+IA0KPiBBIHRlc3QgaGFzIGJl
-ZW4gbWFkZSBpbiB0d28gaG9zdHMgbmFtZWQgQSBhbmQgQi4gSW4gQSwgc2V2ZXJhbCBjbGllbnRz
-DQo+IHNlbnQgdWRwIHBhY2tldHMgdG8gYSBzaW5nbGUgc2VydmVyIGluIEIgY29uY3VycmVudGx5
-IGFzIGZhc3QgYXMNCj4gcG9zc2libGUuIEluIEIsIHRoZSBJUlFzIG9mIHRoZXNlIGZsb3dzIHdl
-cmUgYm91bmQgdG8gQ1BVIDAgYnkgZmxvdw0KPiBkaXJlY3Rvciwgc28gdGhlcmUgd2FzIGFsd2F5
-cyBhIHRyaWdnZXJlZCBuZXRfcnggc29mdGlycSBvbiBDUFUgMC4gVGhlbg0KPiBhIHRlc3QgcHJv
-Z3JhbSB3YXMgc3RhcnRlZCBpbiBCLCB3aGljaCB3YXMgYWxzbyBib3VuZCB0byBDUFUgMCwgYW5k
-DQo+IGtlZXBlZCBjYWxsaW5nIHNlbmR0bygpIGluIGEgbG9vcC4gU2FtcGxpbmcgd2l0aCBwZXJm
-LCByZXN1bHRzIHNob3dlZA0KPiB0aGF0IGFib3V0IDI1JSBvZiBydW5uaW5nIHRpbWUgb2YgdGVz
-dCBwcm9ncmFtIHdhcyBzcGVudCBleGVjdXRpbmcNCj4gbG9jYWxfYmhfZW5hYmxlKCkgY29udGFp
-bmVkIGluIHN5c2NhbGwgc2VuZHRvKCksIGJ1dCBhZnRlciBzZXR0aW5nDQo+IGxhdGVuY3lfc2Vu
-c2lfZmxhZyB0byAxLCB0aGlzIHByb3BvcnRpb24gaGFkIGJlZW4gcmVkdWNlZCB0byAwLjUlLg0K
-DQoNCklzIHRoaXMgUFJFRU1QVF9SVCByZWxhdGVkIG9yIG5vdD8NClJUIHdpc2UgSSB3b3JrZWQg
-aGFyZCB0byBnZXQgcmlkIG9mIGtzb2Z0aXJxZCB1c2FnZSBiZWNhdXNlIHlvdSB1c2UgbG9zZQ0K
-Y29udGV4dCwgcHJpb3JpdHkgYW5kIGV2ZXJ5dGhpbmcgb25jZSB0aGlzIGhhcHBlbnMuIFBsdXMg
-YW4gaW5ub2NlbnQNCnRocmVhZCBjYW4gYmUgZm9yY2VkIHRvIGRvIHRoZSB3b3JrIGluc3RlYWQu
-DQpOb24tUlQgd2lzZSB5b3VyIHBlcmZvcm1hbmNlIGNhbiBnbyByYXBpZGx5IGRvd24gdGhlIGhp
-bGwgaWYgdGhlIHdyb25nDQp0YXNrLyB1c2VyIGlzIG91dHNvdXJjaW5nIHRoZSB3b3JrIHRvIGtz
-b2Z0aXJxZC4NCg0KDQpBbmQgdGhpcyBpcyB3aGF0IHlvdSBhcmUgZG9pbmc6IFlvdSBhcmUgb3V0
-c291cmNpbmcgd29yayB0byBhIGRpZmZlcmVudA0KY29udGV4dCBhbmQgaGF2ZSAyNSUgaW1wcm92
-ZW1lbnQgaGVyZSBhbmQgMjUlIHdvcmsgc29tZXdoZXJlIGVsc2Ugd2hpY2gNCnlvdSBkb24ndCBt
-ZWFzdXJlLiBOb3QgdG8gbWVudGlvbiB0aGF0IF9hbm90aGVyXyBjb250ZXh0IGNvdWxkIGRvIHRo
-aXMNCnNvZnRpcnEgd29yayBpZiBpdCBoYXBwZW5zIHRvIGVuZCB1cCBpbiB0aGUgc2VjdGlvbiBi
-ZWZvcmUga3NvZnRpcnFkIGhhZA0KYSBjaGFuY2UgdG8gcnVuLg0KDQoNClNvLCB0aGlzIGRvZXMg
-bm90IHNvdW5kIGdvb2QuIElmIHlvdSB3YW50IHRvIGhhdmUgYSBsb3ctbGF0ZW5jeSB0YXNrDQp3
-aGljaCBjYW4gc2VuZCBwYWNrZXRzIGFuZCBub3QgZG8gdGhlIG5lZWRlZCBzb2Z0aXJxIHBhcnQg
-SSB3b3VsZA0Kc3VnZ2VzdCB0byBoYXZlIGFub3RoZXIgdGhyZWFkIHdoZXJlIHRoaXMgaXMgb3V0
-c291cmNlZCBhbmQgdGhlIHRocmVhZA0KZG9lcyB0aGUgd29yay4NCg0KDQo+IFNpZ25lZC1vZmYt
-Ynk6IGZ1eXVhbmxpIDxmdXl1YW5saUBkaWRpZ2xvYmFsLmNvbSA8bWFpbHRvOmZ1eXVhbmxpQGRp
-ZGlnbG9iYWwuY29tPj4NCg0KDQpTZWJhc3RpYW4NCg0KDQoNCg==
+--Sig_/X84bEj4TZydhZxfVv0cdEua
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+FIXME: Add owner of second tree to To:
+       Add author(s)/SOB of conflicting commits.
+
+Today's linux-next merge of the block tree got a conflict in:
+
+  block/ioctl.c
+
+between commit:
+
+  695eaf683e8e ("blk_ioctl_{discard,zeroout}(): we only want ->bd_inode->i_=
+mapping here...")
+
+from the vfs-brauner tree and commits:
+
+  719c15a75ebf ("blk-lib: check for kill signal in ioctl BLKDISCARD")
+  fb4271f2bfac ("Merge branch 'for-6.10/block' into for-next")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc block/ioctl.c
+index 3b31c09941dc,c0f1b6583a9a..000000000000
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@@ -95,8 -95,13 +95,12 @@@ static int compat_blkpg_ioctl(struct bl
+  static int blk_ioctl_discard(struct block_device *bdev, blk_mode_t mode,
+  		unsigned long arg)
+  {
++ 	unsigned int bs_mask =3D bdev_logical_block_size(bdev) - 1;
+  	uint64_t range[2];
+  	uint64_t start, len, end;
+ -	struct inode *inode =3D bdev->bd_inode;
++ 	struct bio *prev =3D NULL, *bio;
++ 	sector_t sector, nr_sects;
++ 	struct blk_plug plug;
+  	int err;
+ =20
+  	if (!(mode & BLK_OPEN_WRITE))
+@@@ -124,9 -131,34 +130,34 @@@
+  	err =3D truncate_bdev_range(bdev, mode, start, start + len - 1);
+  	if (err)
+  		goto fail;
+- 	err =3D blkdev_issue_discard(bdev, start >> 9, len >> 9, GFP_KERNEL);
++=20
++ 	sector =3D start >> SECTOR_SHIFT;
++ 	nr_sects =3D len >> SECTOR_SHIFT;
++=20
++ 	blk_start_plug(&plug);
++ 	while (1) {
++ 		if (fatal_signal_pending(current)) {
++ 			if (prev)
++ 				bio_await_chain(prev);
++ 			err =3D -EINTR;
++ 			goto out_unplug;
++ 		}
++ 		bio =3D blk_alloc_discard_bio(bdev, &sector, &nr_sects,
++ 				GFP_KERNEL);
++ 		if (!bio)
++ 			break;
++ 		prev =3D bio_chain_and_submit(prev, bio);
++ 	}
++ 	if (prev) {
++ 		err =3D submit_bio_wait(prev);
++ 		if (err =3D=3D -EOPNOTSUPP)
++ 			err =3D 0;
++ 		bio_put(prev);
++ 	}
++ out_unplug:
++ 	blk_finish_plug(&plug);
+  fail:
+ -	filemap_invalidate_unlock(inode->i_mapping);
+ +	filemap_invalidate_unlock(bdev->bd_mapping);
+  	return err;
+  }
+ =20
+
+--Sig_/X84bEj4TZydhZxfVv0cdEua
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY66y8ACgkQAVBC80lX
+0GzcEwf9FfHtra+chFIi3ZeHfu7NdGK2tb5O6kAMDLTwLwQdQmJ9u/Dj18rEoiM4
+o10As2KLpPWYnukJsqy1uQidCKAvalSZDRp3tO0EPuHld78HOG3MuJye1Tk7MjJF
+LK9hsbNrfbFmPxsuDBey3/Ref1RGVRrkpY7hd1v1A63cgY1ajMD2012XSFBhDCGt
+07zy9D8sZAirLgUAEjQDFyVBYDbze2kVMFylmLtSsXpRkEJP1vwIJVJKQxFizc/o
+x66UyJMNvghATxlzSiiEGaLc6z/KvseoJqt+1m9xdeWlrdNIZjctgB1FRdo4b02P
+nOlO1xAwwuibi3w5QZsCOFCHGJtDXg==
+=Ohqx
+-----END PGP SIGNATURE-----
+
+--Sig_/X84bEj4TZydhZxfVv0cdEua--
 
