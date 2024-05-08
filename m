@@ -1,250 +1,219 @@
-Return-Path: <linux-kernel+bounces-173134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1508BFBFB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 177EA8BFC07
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB011F223C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A942821F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE64981AA2;
-	Wed,  8 May 2024 11:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B268287A;
+	Wed,  8 May 2024 11:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ckIRElua"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1xNeRSz"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B832581ABE
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE064C61F;
+	Wed,  8 May 2024 11:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715167766; cv=none; b=l5vCSq1KQqZp9APA/4yWinV+kBChWuu9RsyUkqd6wwGzTm4T34src4azL0q27/xrtInWIbvoipSoZB8LjG4/PcumnhohJlR3f/NEdbhyPUhK/s/Y27CTW2Vuf8KuvJbyDmECul3QUUw4lJ1bGrLzXAJCP05LKtdwIeIPVPaFyto=
+	t=1715167804; cv=none; b=kUurOUyrvVMhkPgx0Vx2sU5AMAe1yC3MFevHxe2hzgjKF4SonV+hPQEFCSoI9Cp6oAUEA1geUyphKdyVjGiK8ZIqLuGwQMetPlK7kogmNL77eNq5rFGvYddxxI3r0GJrw5ZvnnlkNg5SM06i263JpSc7vxGrYVOnHmEnBMlsdsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715167766; c=relaxed/simple;
-	bh=o1P08wRN5zgIFHUzBZZbjDk7vYIB/bRy0pNZCySSAJM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mPvxWklt3BRIXGnWOnZuDlG21eVmUCbbFyi9RLbyNRaZ6tF9REKz3PAX53sZz3YY9lZP9bS85zMZvccbEF2Ur7a68JIjuUOEkVQwsG5SN1PiXnU2YshuSVMfNadACkIt092tDN5R5rQ2dJi7QuCSvgul+hkPScz6iecrc/exvBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ckIRElua; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4df2630c49dso1239504e0c.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:29:24 -0700 (PDT)
+	s=arc-20240116; t=1715167804; c=relaxed/simple;
+	bh=i1YXbT1f9p3n8QhwhLPoFD2HZIiqNikXNuPP+Cyyt3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pv/lRpMxcvXS+X071yeAjW0UbLvKL1GPOYPSVSz6zxxUFq2UVgTyx1olEvbEk93zUj5aaG0bN8Nvn8sQ/Ae8g7Iu8rM7cXaydHxkvJF9Msu5YGlkUU5G6uCBRwc923dX+CZlKavu/GxpaeSrXsYtMJX4IKAtFP9jSf5WsiG6F+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h1xNeRSz; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59b178b75bso779737866b.0;
+        Wed, 08 May 2024 04:30:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715167763; x=1715772563; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hQ/p1VPhOxx8AauRV82BX+Y5UWsefLJrJMnijX2piSg=;
-        b=ckIREluaOu/kHw1qgw5Pf9nrD2b9+HWaWTVCFoTMlyoO5cS3SX/AiHlcNhmhF8U9nz
-         6r/brF8YjSi2WrErGamudbBFOf2pQnATA47TNYw3CZ3yJUM2+jRBA90dsBxCI7gDrMXq
-         aClbyxw3S5CGDMjMviipEj1ZM7QLrLW5vzt4ZXN7VjrYY7XReDpOv65dHN33WZsVmd1b
-         8SMuyWrguqV0PVaWdtJ3+M8pEg4zaCoZv5hlaLwXIE53NBivyNrEUwkuYUOWz9mHqVJB
-         C2Vi8LQq8lCYILP2XwK8vL540Wbhh4/LSZpvXfLzmg4bDpzPr4WZfLXG8ffttWHw0lCv
-         NFAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715167763; x=1715772563;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=gmail.com; s=20230601; t=1715167801; x=1715772601; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=hQ/p1VPhOxx8AauRV82BX+Y5UWsefLJrJMnijX2piSg=;
-        b=a4W8sj0mxc+7049LFPqQzu5Z5MV0uLlwKxvmJZQN4L3NJMCQ8D44gqJZkfyYRlF35j
-         MRv6hHkwtAQtaMnb6VH5dfmXVC7Pz23CrxmzZEzXxbB1LE2tKoI/lyvSk5I9of0aFuja
-         tHhu8o7GTqfAMSPSwqCd1edNqMuVHFk3d70m96nASijg7xapMVZRXJgUOw5QEqpMUfGL
-         23weOTVXURZWcoCMnZZvblALl4bLsIwSk1cS5BdJY4PoXuqO9FaB1fvLjAxuJiMyM3dv
-         8BgYmgWkTRJnVRYL9Vx2LqjLlkOabY+mdc0LX9jX95OKgMlsewCDsNXmJy9Oq9AQd1S8
-         B+sg==
-X-Gm-Message-State: AOJu0Yw1JVcjCFYJZH98snWSNZVinyHQGbtInjqaCVag7UG120Avhvrf
-	CzwH7k/RM5g3UqG97f26+xGj/Y/42wAhrpna0QTFPnSlvk7RP+/aIMpLvsNUz4bLL5rsLCdWICX
-	JrWZnTbOuuyAmBUUiAFKUnBhQFyiLQ8x/GdcXFNswWs2lrhDOBHk=
-X-Google-Smtp-Source: AGHT+IGJ+T6/99q0ZQKInq6ADBUWPxJxgpXgRQ2dnLje77bkTFuLwMf08tMOi+Ajkvwo9Obpe7o/02KWJU5vShsVCaQ=
-X-Received: by 2002:a05:6122:4595:b0:4c8:8d45:5325 with SMTP id
- 71dfb90a1353d-4df6918905emr2499319e0c.7.1715167762554; Wed, 08 May 2024
- 04:29:22 -0700 (PDT)
+        bh=3OIqwzAifyFyoLgyrgDnMDOezHmps93bJkTuXZ4CdWs=;
+        b=h1xNeRSzafyepxYmDP1++9rqUH17lOg6BY5IYYZKIy6/IE1vkKZ8Xz7yiNh6rfSm1c
+         XIGgKxzsKV+baBdnLFU7P0dnnybBXBEeophzt68HmlzA/m8P54CIVfgNBz2YTznj58VD
+         Q6oA6BVEVkZ/5RYKlFDZJrAt3aZtbUcKPBxz3zLgX7PgUAMeLFewiNouR+ANUam+C8C/
+         8lg4qW5ITEVgUmrEogE2fgkpY+Rd+LaRFTV8CmMADYhvQyvR/IaL0qlxzA1NQrKyMU+v
+         wGPc6XNTYYd8u96moAaUVk8P4wNMSFxj6CgECON6X2mzq2STOxFTrxAF69XZCNuNFftQ
+         Jj1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715167801; x=1715772601;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OIqwzAifyFyoLgyrgDnMDOezHmps93bJkTuXZ4CdWs=;
+        b=aNRaoLQHW1BxW3FMWZAyG3s1ptWM+mSjr4TAZ9Yr/rp5Piff1eJjdfkKoJPKsMSRTk
+         q0XBzvhaYWm7Q0yO4mo6TwbPkpv9JhTKtothM2JePqInUxDu/P8VxPQ6vf0w4sOr83XB
+         /3X8OmtZW0WFbC1eSjFkA/83Oscj8lVxEO3yjLG+cxvuwFMrPl0mhaZJ63NpWgjgP+kT
+         Scgm0oqN807bIweux6kMzrAl1usRlxM2QN2EAeqqru0Kw0fhh/MQtcXwv8c6TNZArohZ
+         dIVtEQy6Pmx+/yPs+JDIWTsZjVNv2zvHvQIRcau9bk90KQhJUTb4rKbpjY//0EPtam1K
+         E7vA==
+X-Forwarded-Encrypted: i=1; AJvYcCXm6w1eumq2q9EMEFyo4kNc8BR9pHrCS7tCygX2LAAYKcKouzgdFQMTPS5lAf6HJFibgduel/icX9JLTfZlq06TgC6rI4xyuOEcXDL4pIENalvxqAp0uCq1j5phhJICqgDkqsePt1bEIvIdvUtNI32jtOt8On8FNwThndFpciAiOgmgaF9/qomoYHHG/WquLicwAIWHVN4B7/Nqp2MalaWONW9Ek5G/KWTjX7B3Y4s7s4f4PA0kjabU0g8+wb6DwEfegEVxQlPeGSBmt9GoTJ/MvjN6ZeUCtvwzyozO2IUgQuzvl28XVn/Fky4SF7VV+Cn28NrJSmETpnz1E0nOCaWDyMsDLQlT6olsbEPRsxTtW9aFDzYcjBPHsPBSoeC6hGPhz++xbtf//NRFe97vRuoIRbGP1r1alatawYbxTOAflPn5lJSi7qC8dulkn6pESJOiz+BJhfLqgy7fISAXu/vGH/ghY2EiC19Qp4vWL1dp6LXRHhgctY75V7oUF9ROZsoG2p0hKQ==
+X-Gm-Message-State: AOJu0YzhUcl4AehwA3nCUUxAAjhD/+r3doMZIQfZcynU/xi7awPEAfHT
+	tlKafeagOWsmRTkwhFBzSWh9c5r2dW8fRzMiKGUfp+A6Q2mrY/B2
+X-Google-Smtp-Source: AGHT+IEBCSS9yz2TLoxpJSv9wB1C02lZToMUPdrmRCsf8QV6Km9boW/BeDcdlJbFciMxAmm6cw9vRg==
+X-Received: by 2002:a17:906:2b1b:b0:a58:a0b8:2a64 with SMTP id a640c23a62f3a-a59fb94b152mr153051866b.5.1715167800381;
+        Wed, 08 May 2024 04:30:00 -0700 (PDT)
+Received: from [192.168.42.217] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id kh24-20020a170906f81800b00a59bf40ba6dsm4449273ejb.7.2024.05.08.04.29.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 04:29:59 -0700 (PDT)
+Message-ID: <54830914-1ec9-4312-96ad-423ac0aeb233@gmail.com>
+Date: Wed, 8 May 2024 12:30:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 8 May 2024 16:59:10 +0530
-Message-ID: <CA+G9fYvOjtEBtB21FwFmvbautebx_2Py-tjqduPcWyS5B9nB5w@mail.gmail.com>
-Subject: next: kasan: Unable to handle kernel paging request at virtual address
-To: open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com, 
-	lkft-triage@lists.linaro.org
-Cc: David Gow <davidgow@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Guenter Roeck <linux@roeck-us.net>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next v8 02/14] net: page_pool: create hooks for
+ custom page providers
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mina Almasry <almasrymina@google.com>,
+ Christoph Hellwig <hch@infradead.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Amritha Nambiar <amritha.nambiar@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>, Christian Brauner <brauner@kernel.org>,
+ Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>,
+ Florian Westphal <fw@strlen.de>, Yunsheng Lin <linyunsheng@huawei.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Jens Axboe <axboe@kernel.dk>,
+ Arseniy Krasnov <avkrasnov@salutedevices.com>,
+ Aleksander Lobakin <aleksander.lobakin@intel.com>,
+ Michael Lass <bevan@bi-co.net>, Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Richard Gobert <richardbgobert@gmail.com>,
+ Sridhar Samudrala <sridhar.samudrala@intel.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Johannes Berg <johannes.berg@intel.com>, Abel Wu <wuyun.abel@bytedance.com>,
+ Breno Leitao <leitao@debian.org>, David Wei <dw@davidwei.uk>,
+ Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
+References: <CAHS8izM0=xc2UhUxhnF_BixuFs5VaDV9W1jbso1K+Rg=35NzeA@mail.gmail.com>
+ <ZjjHUh1eINPg1wkn@infradead.org>
+ <20b1c2d9-0b37-414c-b348-89684c0c0998@gmail.com>
+ <20240507161857.GA4718@ziepe.ca> <ZjpVfPqGNfE5N4bl@infradead.org>
+ <CAHS8izPH+sRLSiZ7vbrNtRdHrFEf8XQ61XAyHuxRSL9Jjy8YbQ@mail.gmail.com>
+ <20240507164838.GG4718@ziepe.ca>
+ <0d5da361-cc7b-46e9-a635-9a7a4c208444@gmail.com>
+ <20240507175644.GJ4718@ziepe.ca>
+ <6a50d01a-b5b9-4699-9d58-94e5f8f81c13@gmail.com>
+ <20240507233247.GK4718@ziepe.ca>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240507233247.GK4718@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-While running kunit tests on arm64 and x86_64 the following kernel BUG
-noticed on running Linux next-20240508 kernel and stride tests failed.
+On 5/8/24 00:32, Jason Gunthorpe wrote:
+> On Tue, May 07, 2024 at 08:35:37PM +0100, Pavel Begunkov wrote:
+>> On 5/7/24 18:56, Jason Gunthorpe wrote:
+>>> On Tue, May 07, 2024 at 06:25:52PM +0100, Pavel Begunkov wrote:
+>>>> On 5/7/24 17:48, Jason Gunthorpe wrote:
+>>>>> On Tue, May 07, 2024 at 09:42:05AM -0700, Mina Almasry wrote:
+>>>>>
+>>>>>> 1. Align with devmem TCP to use udmabuf for your io_uring memory. I
+>>>>>> think in the past you said it's a uapi you don't link but in the face
+>>>>>> of this pushback you may want to reconsider.
+>>>>>
+>>>>> dmabuf does not force a uapi, you can acquire your pages however you
+>>>>> want and wrap them up in a dmabuf. No uapi at all.
+>>>>>
+>>>>> The point is that dmabuf already provides ops that do basically what
+>>>>> is needed here. We don't need ops calling ops just because dmabuf's
+>>>>> ops are not understsood or not perfect. Fixup dmabuf.
+>>>>
+>>>> Those ops, for example, are used to efficiently return used buffers
+>>>> back to the kernel, which is uapi, I don't see how dmabuf can be
+>>>> fixed up to cover it.
+>>>
+>>> Sure, but that doesn't mean you can't use dma buf for the other parts
+>>> of the flow. The per-page lifetime is a different topic than the
+>>> refcounting and access of the entire bulk of memory.
+>>
+>> Ok, so if we're leaving uapi (and ops) and keep per page/sub-buffer as
+>> is, the rest is resolving uptr -> pages, and passing it to page pool in
+>> a convenient to page pool format (net_iov).
+> 
+> I'm not going to pretend to know about page pool details, but dmabuf
+> is the way to get the bulk of pages into a pool within the net stack's
+> allocator and keep that bulk properly refcounted while.> 
+> An object like dmabuf is needed for the general case because there are
+> not going to be per-page references or otherwise available.
 
-observations:
-1) The null pointer dereference notice while running kunit_test
-2) The stride test case failed on today's linux next-20240508 tag.
+They are already pinned, memory is owned by the provider, io_uring
+in this case, and it should not be freed circumventing io_uring,
+and at this stage calling release_pages() is not such a hassle,
+especially comparing to introducing an additional object.
 
-The detailed log provided in the links below.
+My question is how having an intermediary dmabuf benefits the net
+stack or io_uring ? For now IMO it doesn't solve anything but adds
+extra complexity. Adding dmabuf for the sake of adding dmabuf is
+not a great choice.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> What you seem to want is to alter how the actual allocation flow works
+> from that bulk of memory and delay the free. It seems like a different
+For people who jumped here without looking what this patchset is
+about, that's the entire point of the io_uring zero copy approach
+as well as this set. Instead of using kernel private pages that you
+have no other option but to copy/mmap (and then free), it hands
+buffers to the user while using memory accessible/visible in some
+way by the user.
 
-Crash log:
---------
+That "delay free" is taking a reference while user is reading data
+(slightly different for devmem tcp). And note, it's not a page/dmabuf
+reference, kernel can forcibly take it back and release pages.
 
-<6>[   43.086497]     KTAP version 1
-<6>[   43.087004]     # Subtest: kunit_fault
-<6>[   43.087577]     # module: kunit_test
-<6>[   43.087748]     1..1
-<1>[   43.092588] Unable to handle kernel paging request at virtual
-address dfff800000000000
-<1>[   43.093687] KASAN: null-ptr-deref in range
-[0x0000000000000000-0x0000000000000007]
-<1>[   43.094770] Mem abort info:
-<1>[   43.095425]   ESR = 0x0000000096000005
-<1>[   43.097071]   EC = 0x25: DABT (current EL), IL = 32 bits
-<1>[   43.098034]   SET = 0, FnV = 0
-<1>[   43.098542]   EA = 0, S1PTW = 0
-<1>[   43.099104]   FSC = 0x05: level 1 translation fault
-<1>[   43.099837] Data abort info:
-<1>[   43.100679]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-<1>[   43.101535]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-<1>[   43.102321]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-<1>[   43.103287] [dfff800000000000] address between user and kernel
-address ranges
-<0>[   43.105111] Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
-<4>[   43.106046] Modules linked in:
-<4>[   43.108961] CPU: 1 PID: 375 Comm: kunit_try_catch Tainted: G
-            N 6.9.0-rc7-next-20240508 #1
-<4>[   43.110433] Hardware name: linux,dummy-virt (DT)
-<4>[   43.111555] pstate: 82400009 (Nzcv daif +PAN -UAO +TCO -DIT
--SSBS BTYPE=--)
-<4>[   43.113232] pc : kunit_test_null_dereference+0x2c/0x114
-<4>[   43.114785] lr : kunit_generic_run_threadfn_adapter+0x84/0x104
-<4>[   43.115692] sp : ffff800080ff7dd0
-<4>[   43.116646] x29: ffff800080ff7de0 x28: 0000000000000000 x27:
-1ffe000018f1db69
-<4>[   43.117953] x26: dfff800000000000 x25: ffff943388e90ab8 x24:
-0000000000000001
-<4>[   43.119037] x23: 1ffe000018a7a771 x22: dfff800000000000 x21:
-dfff800000000000
-<4>[   43.120659] x20: ffff943388e9d5a0 x19: fff00000c53d3b88 x18:
-ffff800080097930
-<4>[   43.121669] x17: ffff943388e905e4 x16: ffff94338837d7e4 x15:
-0000000000000001
-<4>[   43.122762] x14: 1ffe000018f1dc59 x13: 0000000000000000 x12:
-0000000000000000
-<4>[   43.123881] x11: fffd800018f1dc5a x10: dfff800000000000 x9 :
-1ffe000018a7a772
-<4>[   43.125204] x8 : 7c0c8af2c07cc400 x7 : 0000000000000000 x6 :
-72745f74696e756b
-<4>[   43.126291] x5 : fff00000c53d45d6 x4 : 0000000000000000 x3 :
-ffff94338acf91b4
-<4>[   43.127380] x2 : 0000000000000001 x1 : 0000000000000001 x0 :
-ffff800080087af8
-<4>[   43.129375] Call trace:
-<4>[   43.129852]  kunit_test_null_dereference+0x2c/0x114
-<4>[   43.130621]  kunit_generic_run_threadfn_adapter+0x84/0x104
-<4>[   43.131480]  kthread+0x268/0x3a4
-<4>[   43.132390]  ret_from_fork+0x10/0x20
-<0>[   43.133497] Code: d2d00015 f9426508 f2fbfff5 f90007e8 (39c002a8)
-<4>[   43.134637] ---[ end trace 0000000000000000 ]---
-<3>[   43.136227]     # kunit_test_fault_null_dereference: try
-faulted: last line seen lib/kunit/kunit-test.c:95
+> topic to me, and honestly hacking into the allocator free function
+> seems a bit weird..
 
-<trim>
+Do you also think that DMA_BUF_IOCTL_SYNC is a weird hack, because
+it "delays free" by pinning the dmabuf object and letting the user
+read memory instead of copying it? I can find many examples
 
-<6>[   98.315793]         KTAP version 1
-<6>[   98.317173]         # Subtest: stride
-<4>[   98.320844] regmap_test stride.regmap_test: No cache used with
-register defaults set!
-<3>[   98.323706]
-==================================================================
-<3>[   98.325683] BUG: KASAN: slab-out-of-bounds in stride+0x698/0x8a8
-<3>[   98.326518] Write of size 1 at addr fff00000c7b3320b by task
-kunit_try_catch/1143
-<3>[   98.328402]
-<3>[   98.329468] CPU: 0 PID: 1143 Comm: kunit_try_catch Tainted: G
-  D          N 6.9.0-rc7-next-20240508 #1
-<3>[   98.330560] Hardware name: linux,dummy-virt (DT)
-<3>[   98.331400] Call trace:
-<3>[   98.332216]  dump_backtrace+0xf0/0x128
-<3>[   98.332815]  show_stack+0x18/0x24
-<3>[   98.333475]  dump_stack_lvl+0x40/0x84
-<3>[   98.334187]  print_report+0x16c/0x728
-<3>[   98.334887]  kasan_report+0xd8/0x134
-<3>[   98.335589]  __asan_report_store1_noabort+0x20/0x2c
-<3>[   98.337089]  stride+0x698/0x8a8
-<3>[   98.337739]  kunit_try_run_case+0x118/0x31c
-<3>[   98.338574]  kunit_generic_run_threadfn_adapter+0x84/0x104
-<3>[   98.339529]  kthread+0x268/0x3a4
-<3>[   98.340427]  ret_from_fork+0x10/0x20
-<3>[   98.341331]
-<3>[   98.341826] Allocated by task 1143:
-<4>[   98.342644]  kasan_save_track+0x40/0x78
-<4>[   98.343269]  kasan_save_alloc_info+0x44/0x54
-<4>[   98.344067]  __kasan_kmalloc+0x84/0x9c
-<4>[   98.345005]  __kmalloc_noprof+0x208/0x3a4
-<4>[   98.346322]  __regmap_init_ram+0x70/0x158
-<4>[   98.347113]  gen_regmap+0x3a4/0x554
-<4>[   98.347878]  stride+0x78/0x8a8
-<4>[   98.348639]  kunit_try_run_case+0x118/0x31c
-<4>[   98.349326]  kunit_generic_run_threadfn_adapter+0x84/0x104
-<4>[   98.350315]  kthread+0x268/0x3a4
-<4>[   98.350983]  ret_from_fork+0x10/0x20
-<3>[   98.351734]
-<3>[   98.352257] The buggy address belongs to the object at fff00000c7b33200
-<3>[   98.352257]  which belongs to the cache kmalloc-16 of size 16
-<3>[   98.354108] The buggy address is located 0 bytes to the right of
-<3>[   98.354108]  allocated 11-byte region [fff00000c7b33200, fff00000c7b3320b)
-<3>[   98.355956]
-<3>[   98.356752] The buggy address belongs to the physical page:
-<4>[   98.357945] page: refcount:1 mapcount:0 mapping:0000000000000000
-index:0x0 pfn:0x107b33
-<4>[   98.359143] flags: 0xbfffe0000000000(node=0|zone=2|lastcpupid=0x1ffff)
-<4>[   98.360819] page_type: 0xffffefff(slab)
-<4>[   98.362282] raw: 0bfffe0000000000 fff00000c0001640
-dead000000000122 0000000000000000
-<4>[   98.363246] raw: 0000000000000000 0000000080800080
-00000001ffffefff 0000000000000000
-<4>[   98.364762] page dumped because: kasan: bad access detected
-<3>[   98.365543]
-<3>[   98.365944] Memory state around the buggy address:
-<3>[   98.367010]  fff00000c7b33100: fa fb fc fc fa fb fc fc fa fb fc
-fc fa fb fc fc
-<3>[   98.368304]  fff00000c7b33180: fa fb fc fc fa fb fc fc fa fb fc
-fc fa fb fc fc
-<3>[   98.369228] >fff00000c7b33200: 00 03 fc fc 00 03 fc fc fc fc fc
-fc fc fc fc fc
-<3>[   98.370208]                       ^
-<3>[   98.370915]  fff00000c7b33280: fc fc fc fc fc fc fc fc fc fc fc
-fc fc fc fc fc
-<3>[   98.372179]  fff00000c7b33300: fc fc fc fc fc fc fc fc fc fc fc
-fc fc fc fc fc
-<3>[   98.373119]
-==================================================================
-<6>[   98.379784]         not ok 1 none-default @0x0
-<6>[   98.387715]         ok 2 flat-default @0x0
-<6>[   98.396608]         ok 3 rbtree-default @0x0
-<6>[   98.403430]         ok 4 maple-default @0x0
-<6>[   98.405635]     # stride: pass:3 fail:1 skip:0 total:4
-<6>[   98.406235]     not ok 11 stride
-
-Links:
-----
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2gB3M3nlA8sWzr9GBuN7rCQHsPH/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240508/testrun/23827533/suite/log-parser-boot/tests/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240508/testrun/23827533/suite/log-parser-boot/test/check-kernel-bug/log
- - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2gB3N9JXfJ181Hm9cmchZm9q53F
-
-metadata:
---
-  arch: arm64
-  environment: qemu-arm64
-  git_describe: next-20240508
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+Pavel Begunkov
 
