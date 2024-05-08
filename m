@@ -1,191 +1,441 @@
-Return-Path: <linux-kernel+bounces-172875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D274B8BF7F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:04:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF7C88BF7F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8891A2859CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:03:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D2E28609A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC293F8D0;
-	Wed,  8 May 2024 08:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1503EA9C;
+	Wed,  8 May 2024 08:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tBG0gy7V"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gptV/mWD"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ABC3CF73
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8C03D96D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155432; cv=none; b=SBVLRUpEXiuDiPN420Wvarn8F8DkjrDOD9BmtDlflYbI0mdEhUINxIAnyXcL16U3SibqSjq6eunGwzKLhg4i+0EyoNVm0FfWK/RpqSSHZcsScOjyVPo/7bQh1Pjedd1lxG0GcWiEfpkhe98gsgsV0iHpnFBBIVxJ0Ip3R5Pzr30=
+	t=1715155477; cv=none; b=Ayhs6cJk1NUARLD6tmzZSQK+dybtxGEQtO+4fYjodXjDjMm1GQTMhGk1e4upb4xQQXjV5yNhmrnKB+8/x2ZLkC9TG74TEDGww7A0EL+7Fa/nwm/WHj7dTZ17vu2q7ZRs8KFd+UDrbMG6xv8UcSYGuMufnQFhamnBSw1hyXbdJUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155432; c=relaxed/simple;
-	bh=jwC9M5BWq2vxWcPd0WqZZUFo5bYUj4aAuO4f1WiU67U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DuWk1CAV6LZRLtj9Z/KIsUERPXb3h7qw+scKuOwNJMZEZ6THv8Koaf5SGoL3DeAsn+nZEyi8BB7V2bRwdqEVbH3LCS6sGRBKkjXnNc7rIQdRmYPC32zd2M4Q4EYcwqsEhTrDPHgIC22AO25lwfsYYdAhXDGWxPSV5Xwn4LiStpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tBG0gy7V; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso826971966b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:03:51 -0700 (PDT)
+	s=arc-20240116; t=1715155477; c=relaxed/simple;
+	bh=HlL1SQzg7ruG3GbnT2244vswJjDne2MZ8l7gpQueiCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0XFsK9wvpIt1MS8fSR7pf55c9wTggGPcefQswk2VqozZ1VLj0TtWkzhdvDFFvHlY4dLMEYLLLl5/O85JPoHN/eNnD444utneE9EMXPQFqtez4r2JtM3zimiuT2uwIOKhtQruVRklJwv3U/j3ZxEZ3xThE0ruHKla0W5uMapJPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gptV/mWD; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c9691460b9so1657942b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:04:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715155429; x=1715760229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=eu4SeCR/kEFNVAoI9TGLUZ5URLmJpaE5X6aXPMjBCyk=;
-        b=tBG0gy7VjCcIKDsMwTYURPUoybJ+40Rgv5325/38INnLm7SkbT3wQabeiGtOs4hBQW
-         OvXk+/9eTip6g2za3tUlAsilTNREJBM0ka3v0ln3jEYHxKWV2+TETO4+DE3ccCOr6PzW
-         Mh/fJDZKxZhj0453JlJtTQ01KBzdZbNwm6t0Ne2pggr+j+QpqfTbnStjTWgzZD7K6qAQ
-         7f6x9pDtjYBBzVnMwno7TF/xZxG6mYTreBq1w41mGMYfUHAYkj0iMwK1WE0CU/bctjN+
-         sIJ9X67uuCT2do/jDliVi5CFbKa8XlV7dR76ENYNCtE2B92Ez9vyCFUJDV2TIo6fLevf
-         Ebqg==
+        d=chromium.org; s=google; t=1715155475; x=1715760275; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=v6EJLX/g+mtUojj2Iv/MkNkp9Pc492RGZqRm8bYlqdU=;
+        b=gptV/mWDDjUC3SYB1hh8ljmbAQk32G3noU7e5tRkG2H6EcJy1F8L7wa057i812KrSk
+         cMA5FjT6WExAiBI3dw+vSETVoYzr1UBN05zky5jqbdeSDEfHhC8lanUBXabD7zqxL7Mm
+         MfpGzaG8KsGvzSSk4h9z8GrP/5qcWOkLjsHfs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715155429; x=1715760229;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eu4SeCR/kEFNVAoI9TGLUZ5URLmJpaE5X6aXPMjBCyk=;
-        b=KYOYMt8efx3cLR4AdUXdRiDdG75cq6xhwDImQXnWbg3i6uULGAgXt5HZ5pUIBTSGjV
-         9uL7RtDHBwpzLISmeYy7a11spRhwjnJrQ1FlILEYRwvEvxkhI0hSkdY/dVB+HzXjRm2S
-         5Vhz4gHtveJU+PbCR/KnbZrp6ta5W28jVXzc8XTjCAIi+tXCVjooh0w82qL4jOX0ygtx
-         gGNdUZzw7pn3FoTZhJuYfCCvU7dIMRkjZwDEO9GVMbRO6xaG9gGzP36lNAH9whQ1vi8z
-         jK+Xwpq7N1sxLJ6txywm0Jy0jiwBP1j9SnCObf3HSni3RnJ/M70PSyeWmJwM3bsBIA81
-         spKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEHUjo17FRMEyXZwKqt2/bAUAsI99Uqelod3syOIhl6c9pc8Ayc8QTiuGyVW58xaEjJ/NVl1QQjHypsMYigsdlaUnqQJIaAvApV5Ul
-X-Gm-Message-State: AOJu0YwR6txxk1r8g3ALUK+3jQtfW8b+Yp9N+rZ01pVa5Zh15Q/tSyn1
-	gr9BiZj2AZ4+YG80KT0BvGGP+JdUlo9DKjfHHPv8AasliAh7QKzPX7/A/NuVcNU=
-X-Google-Smtp-Source: AGHT+IHwFPyHnACE6OWnp5/5Gpo7kWNOw0G/J9KE5f4I8SUilDWBJu0uFLQdxEQ7R+clkHHUXEibKQ==
-X-Received: by 2002:a17:906:1957:b0:a59:a977:a157 with SMTP id a640c23a62f3a-a59fb9f209dmr116411466b.73.1715155428636;
-        Wed, 08 May 2024 01:03:48 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id fw14-20020a170906c94e00b00a59bf41edbesm4378311ejb.146.2024.05.08.01.03.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 01:03:47 -0700 (PDT)
-Message-ID: <0e7496c4-7dfc-404d-944c-a1869389722b@linaro.org>
-Date: Wed, 8 May 2024 10:03:46 +0200
+        d=1e100.net; s=20230601; t=1715155475; x=1715760275;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v6EJLX/g+mtUojj2Iv/MkNkp9Pc492RGZqRm8bYlqdU=;
+        b=bz01tTfab/Spnw+B4mZq5sgXQ+1dTLxCwhQLxF28pGj3VWFhz2xBICOROG43c8j0/J
+         FV402oD5Ipj2nqfZDSb/3uZNLsLJ5qOIkeIFk8cqCTEic4tHpQ2xFL6EuaOScrOeEDEz
+         2Q12xiUnmkVwDcxiahIVIbBEnrEr6gdVEmRYjpJxw5O75lee6LAe1b8s/6lmjIs5s54/
+         BjzlOc2Zoo6MpXmbQwa1TxcDas4GjucGdc49xRDcv1k03pLWDLpUtg0J56RvrSp0vbg8
+         y0XVJ92su2AnFekow5b8l2UdpYYoGNCfTyNeFNBRvmqI0qYkJDVlivwQT3vkSlrCQ1wv
+         IMzg==
+X-Gm-Message-State: AOJu0Yw+aPzJTAfUllaMeOk5NcEyMmQ6ZpS1Ktl199oFGrwWDfqOxm9h
+	eKPxHgVEWIYPZ7lpOS+aklMLEsazP1fQT/r0oG0Uv7vhna5tvx9jI+6QjKfmYg==
+X-Google-Smtp-Source: AGHT+IFUmdDASdFHNuEcG9nOH4SDdUFpg4trPBVbjPrOf0+LaQdNF0jK/JNzlvznjX7HLZafo1ThYg==
+X-Received: by 2002:a05:6808:7c9:b0:3c9:6d23:fdd7 with SMTP id 5614622812f47-3c9852b7240mr2014216b6e.24.1715155474512;
+        Wed, 08 May 2024 01:04:34 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id c6-20020a056a00008600b006e6fc52ecd0sm9580410pfj.123.2024.05.08.01.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:04:33 -0700 (PDT)
+Date: Wed, 8 May 2024 01:04:33 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Vignesh Balasubramanian <vigbalas@amd.com>
+Cc: linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org,
+	mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com,
+	ebiederm@xmission.com, x86@kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, bpetkov@amd.com,
+	jinisusan.george@amd.com, matz@suse.de, binutils@sourceware.org,
+	jhb@freebsd.org, felix.willgerodt@intel.com
+Subject: Re: [PATCH v2 1/1] x86/elf: Add a new .note section containing
+ Xfeatures information to x86 core files
+Message-ID: <202405080052.21E569F@keescook>
+References: <20240507095330.2674-1-vigbalas@amd.com>
+ <20240507095330.2674-2-vigbalas@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] ASoC: dt-bindings: Add bindings for Cadence I2S-MC
- controller
-To: Xingyu Wu <xingyu.wu@starfivetech.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Claudiu Beznea <Claudiu.Beznea@microchip.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor.dooley@microchip.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-References: <20240508070406.286159-1-xingyu.wu@starfivetech.com>
- <20240508070406.286159-2-xingyu.wu@starfivetech.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240508070406.286159-2-xingyu.wu@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507095330.2674-2-vigbalas@amd.com>
 
-On 08/05/2024 09:04, Xingyu Wu wrote:
-> Add bindings for the Multi-Channel I2S controller of Cadence.
+On Tue, May 07, 2024 at 03:23:31PM +0530, Vignesh Balasubramanian wrote:
+> Add a new .note section containing type, size, offset and flags of
+> every xfeature that is present.
 > 
-> The Multi-Channel I2S (I2S-MC) implements a function of the
-> 8-channel I2S bus interfasce. Each channel can become receiver
-> or transmitter. Four I2S instances are used on the StarFive
-> JH8100 SoC. One instance of them is limited to 2 channels, two
-> instance are limited to 4 channels, and the other one can use
-> most 8 channels. Add a unique property about
-> 'starfive,i2s-max-channels' to distinguish each instance.
+> This information will be used by the debuggers to understand the XSAVE
+> layout of the machine where the core file is dumped, and to read XSAVE
+> registers, especially during cross-platform debugging.
 > 
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> Some background:
+> 
+> The XSAVE layouts of modern AMD and Intel CPUs differ, especially since
+> Memory Protection Keys and the AVX-512 features have been inculcated into
+> the AMD CPUs.
+> This is since AMD never adopted (and hence never left room in the XSAVE
+> layout for) the Intel MPX feature. Tools like GDB had assumed a fixed XSAVE
+> layout matching that of Intel (based on the XCR0 mask).
+> Hence, the core dumps from AMD CPUs didn't match the known size for the
+> XCR0 mask. This resulted in GDB and other tools not being able to access
+> the values of the AVX-512 and PKRU registers on AMD CPUs.
+> To solve this, an interim solution has been accepted into GDB, and is
+> already a part of GDB 14, thanks to these series of patches
+> [ https://sourceware.org/pipermail/gdb-patches/2023-March/198081.html ].
+> But this patch series depends on heuristics based on the total XSAVE
+> register set size and the XCR0 mask to infer the layouts of the various
+> register blocks for core dumps, and hence, is not a foolproof mechanism to
+> determine the layout of the XSAVE area.
+> 
+> Hence this new core dump note has been proposed as a more sturdy mechanism
+> to allow GDB/LLDB and other relevant tools to determine the layout of the
+> XSAVE area of the machine where the corefile was dumped.
+> The new core dump note (which is being proposed as a per-process .note
+> section), NT_X86_XSAVE_LAYOUT (0x205) contains an array of structures.
+> Each structure describes an individual extended feature containing offset,
+> size and flags (that is obtained through CPUID instruction) in a format
+> roughly matching the follow C structure:
+> 
+> struct xfeat_component {
+>        u32 xfeat_type;
+>        u32 xfeat_sz;
+>        u32 xfeat_off;
+>        u32 xfeat_flags;
+> };
+> 
+> Co-developed-by: Jini Susan George <jinisusan.george@amd.com>
+> Signed-off-by: Jini Susan George <jinisusan.george@amd.com>
+> Signed-off-by: Vignesh Balasubramanian <vigbalas@amd.com>
+> ---
+> v1->v2: Removed kernel internal defn dependency, code improvements
+> 
+>  arch/x86/Kconfig             |   1 +
+>  arch/x86/include/asm/elf.h   |  34 +++++++++
+>  arch/x86/kernel/fpu/xstate.c | 141 +++++++++++++++++++++++++++++++++++
+>  fs/binfmt_elf.c              |   4 +-
+>  include/uapi/linux/elf.h     |   1 +
+>  5 files changed, 179 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 928820e61cb5..cc67daab3396 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -105,6 +105,7 @@ config X86
+>  	select ARCH_HAS_DEBUG_WX
+>  	select ARCH_HAS_ZONE_DMA_SET if EXPERT
+>  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+> +	select ARCH_HAVE_EXTRA_ELF_NOTES
+>  	select ARCH_MHP_MEMMAP_ON_MEMORY_ENABLE
+>  	select ARCH_MIGHT_HAVE_ACPI_PDC		if ACPI
+>  	select ARCH_MIGHT_HAVE_PC_PARPORT
+> diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+> index 1fb83d47711f..5952574db64b 100644
+> --- a/arch/x86/include/asm/elf.h
+> +++ b/arch/x86/include/asm/elf.h
+> @@ -13,6 +13,40 @@
+>  #include <asm/auxvec.h>
+>  #include <asm/fsgsbase.h>
+>  
+> +struct xfeat_component {
+> +	u32 xfeat_type;
+> +	u32 xfeat_sz;
+> +	u32 xfeat_off;
+> +	u32 xfeat_flags;
+> +} __packed;
+> +
+> +_Static_assert(sizeof(struct xfeat_component)%4 == 0, "xfeat_component is not aligned");
+> +
+> +enum custom_feature {
+> +	FEATURE_XSAVE_FP = 0,
+> +	FEATURE_XSAVE_SSE = 1,
+> +	FEATURE_XSAVE_YMM = 2,
+> +	FEATURE_XSAVE_BNDREGS = 3,
+> +	FEATURE_XSAVE_BNDCSR = 4,
+> +	FEATURE_XSAVE_OPMASK = 5,
+> +	FEATURE_XSAVE_ZMM_Hi256 = 6,
+> +	FEATURE_XSAVE_Hi16_ZMM = 7,
+> +	FEATURE_XSAVE_PT = 8,
+> +	FEATURE_XSAVE_PKRU = 9,
+> +	FEATURE_XSAVE_PASID = 10,
+> +	FEATURE_XSAVE_CET_USER = 11,
+> +	FEATURE_XSAVE_CET_SHADOW_STACK = 12,
+> +	FEATURE_XSAVE_HDC = 13,
+> +	FEATURE_XSAVE_UINTR = 14,
+> +	FEATURE_XSAVE_LBR = 15,
+> +	FEATURE_XSAVE_HWP = 16,
+> +	FEATURE_XSAVE_XTILE_CFG = 17,
+> +	FEATURE_XSAVE_XTILE_DATA = 18,
+> +	FEATURE_MAX,
+> +	FEATURE_XSAVE_EXTENDED_START = FEATURE_XSAVE_YMM,
+> +	FEATURE_XSAVE_EXTENDED_END = FEATURE_XSAVE_XTILE_DATA,
+> +};
+> +
+>  typedef unsigned long elf_greg_t;
+>  
+>  #define ELF_NGREG (sizeof(struct user_regs_struct) / sizeof(elf_greg_t))
+> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+> index 33a214b1a4ce..3d1c3c96e34d 100644
+> --- a/arch/x86/kernel/fpu/xstate.c
+> +++ b/arch/x86/kernel/fpu/xstate.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/seq_file.h>
+>  #include <linux/proc_fs.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/coredump.h>
+>  
+>  #include <asm/fpu/api.h>
+>  #include <asm/fpu/regset.h>
+> @@ -87,6 +88,8 @@ static unsigned int xstate_flags[XFEATURE_MAX] __ro_after_init;
+>  #define XSTATE_FLAG_SUPERVISOR	BIT(0)
+>  #define XSTATE_FLAG_ALIGNED64	BIT(1)
+>  
+> +static const char owner_name[] = "LINUX";
 
+This needs to move under the CONFIG_COREDUMP below (so says the build
+bots).
 
 > +
-> +  starfive,i2s-max-channels:
-> +    description:
-> +      Number of I2S max stereo channels supported on the StarFive
-> +      JH8100 SoC.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [2, 4, 8]
+>  /*
+>   * Return whether the system supports a given xfeature.
+>   *
+> @@ -1837,3 +1840,141 @@ int proc_pid_arch_status(struct seq_file *m, struct pid_namespace *ns,
+>  	return 0;
+>  }
+>  #endif /* CONFIG_PROC_PID_ARCH_STATUS */
 > +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: starfive,jh8100-i2s
-> +    then:
-> +      required:
-> +        - starfive,i2s-max-channels
-> +    else:
-> +      properties:
-> +        starfive,i2s-max-channels: false
+> +#ifdef CONFIG_COREDUMP
+> +static int get_sub_leaf(int custom_xfeat)
+
+Why is this "int"? I don't imagine there are negative features?
+
+> +{
+> +	switch (custom_xfeat) {
+> +	case FEATURE_XSAVE_YMM:			return XFEATURE_YMM;
+> +	case FEATURE_XSAVE_BNDREGS:		return XFEATURE_BNDREGS;
+> +	case FEATURE_XSAVE_BNDCSR:		return XFEATURE_BNDCSR;
+> +	case FEATURE_XSAVE_OPMASK:		return XFEATURE_OPMASK;
+> +	case FEATURE_XSAVE_ZMM_Hi256:		return XFEATURE_ZMM_Hi256;
+> +	case FEATURE_XSAVE_Hi16_ZMM:		return XFEATURE_Hi16_ZMM;
+> +	case FEATURE_XSAVE_PT:			return XFEATURE_PT_UNIMPLEMENTED_SO_FAR;
+> +	case FEATURE_XSAVE_PKRU:		return XFEATURE_PKRU;
+> +	case FEATURE_XSAVE_PASID:		return XFEATURE_PASID;
+> +	case FEATURE_XSAVE_CET_USER:		return XFEATURE_CET_USER;
+> +	case FEATURE_XSAVE_CET_SHADOW_STACK:	return XFEATURE_CET_KERNEL_UNUSED;
+> +	case FEATURE_XSAVE_HDC:			return XFEATURE_RSRVD_COMP_13;
+> +	case FEATURE_XSAVE_UINTR:		return XFEATURE_RSRVD_COMP_14;
+> +	case FEATURE_XSAVE_LBR:			return XFEATURE_LBR;
+> +	case FEATURE_XSAVE_HWP:			return XFEATURE_RSRVD_COMP_16;
+> +	case FEATURE_XSAVE_XTILE_CFG:		return XFEATURE_XTILE_CFG;
+> +	case FEATURE_XSAVE_XTILE_DATA:		return XFEATURE_XTILE_DATA;
+> +	default:
+> +		pr_warn_ratelimited("Not a valid XSAVE Feature.");
+
+This isn't very friendly; it's keeping secrets about the unknown value. :)
+Also it's missing a newline. How about:
+
+		pr_warn_ratelimited("Not a known XSAVE Feature: %u\n",
+				    custom_xfeat);
+
+> +		return 0;
+> +	}
+> +}
 > +
-> +required:
+> +/*
+> + * Dump type, size, offset and flag values for every xfeature that is present.
+> + */
+> +static int dump_xsave_layout_desc(struct coredump_params *cprm)
+> +{
+> +	u32 supported_features = 0;
+> +	struct xfeat_component xc;
+> +	u32 eax, ebx, ecx, edx;
+> +	int num_records = 0;
+> +	int sub_leaf = 0;
+> +	int i;
+> +
+> +	/* Find supported extended features */
+> +	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> +	supported_features = eax;
+> +
+> +	for (i = FEATURE_XSAVE_EXTENDED_START;
+> +			i <= FEATURE_XSAVE_EXTENDED_END; i++) {
+> +		sub_leaf = get_sub_leaf(i);
+> +		if (!sub_leaf)
+> +			continue;
+> +		if (supported_features & (1U << sub_leaf)) {
+> +			cpuid_count(XSTATE_CPUID, sub_leaf, &eax, &ebx, &ecx, &edx);
+> +			xc.xfeat_type = i;
+> +			xc.xfeat_sz = eax;
+> +			xc.xfeat_off = ebx;
+> +			/* Reserved for future use */
+> +			xc.xfeat_flags = 0;
+> +
+> +			if (!dump_emit(cprm, &xc,
+> +				       sizeof(struct xfeat_component)))
+> +				return 0;
+> +			num_records++;
+> +		}
+> +	}
+> +
+> +	return num_records;
+> +}
+> +
+> +static int get_xsave_desc_size(void)
 
-I asked to put it after properties: block, not after allOf:. See
-example-schema for preferred order. Why? Because we are used to it and
-it makes reading the schema easier for us.
+This can return u32: never negative.
 
-Rest looks good, so with the re-order:
+> +{
+> +	int supported_features = 0;
+> +	int xfeatures_count = 0;
+> +	u32 eax, ebx, ecx, edx;
+> +	int sub_leaf = 0;
+> +	int i;
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+"i" can be u32 and then we can fix the get_sub_leaf() arg type.
 
-Best regards,
-Krzysztof
+> +
+> +	/* Find supported extended features */
+> +	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> +	supported_features = eax;
+> +
+> +	for (i = FEATURE_XSAVE_EXTENDED_START;
+> +			i <= FEATURE_XSAVE_EXTENDED_END; i++) {
+> +		sub_leaf = get_sub_leaf(i);
+> +		if (!sub_leaf)
+> +			continue;
+> +		if (supported_features & (1U << sub_leaf))
+> +			xfeatures_count++;
+> +	}
+> +
+> +	return xfeatures_count * (sizeof(struct xfeat_component));
+> +}
+> +
+> +int elf_coredump_extra_notes_write(struct coredump_params *cprm)
+> +{
+> +	int num_records = 0;
+> +	struct elf_note en;
+> +
+> +	en.n_namesz = sizeof(owner_name);
+> +	en.n_descsz = get_xsave_desc_size();
+> +	en.n_type = NT_X86_XSAVE_LAYOUT;
+> +
+> +	if (!dump_emit(cprm, &en, sizeof(en)))
+> +		return 1;
+> +	if (!dump_emit(cprm, owner_name, en.n_namesz))
+> +		return 1;
+> +	if (!dump_align(cprm, 4))
+> +		return 1;
+> +
+> +	num_records = dump_xsave_layout_desc(cprm);
+> +	if (!num_records) {
+> +		pr_warn_ratelimited("Error adding XSTATE layout ELF note. XSTATE buffer in the core file will be unparseable.");
 
+Missing trailing newline.
+
+> +		return 1;
+> +	}
+> +
+> +	/* Total size should be equal to the number of records */
+> +	if ((sizeof(struct xfeat_component) * num_records) != en.n_descsz) {
+> +		pr_warn_ratelimited("Error adding XSTATE layout ELF note. The size of the .note section does not match with the total size of the records.");
+
+Same.
+
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Return the size of new note.
+> + */
+> +int elf_coredump_extra_notes_size(void)
+> +{
+> +	int size = 0;
+> +
+> +	/* NOTE Header */
+> +	size += sizeof(struct elf_note);
+> +	/* name + align */
+> +	size += roundup(sizeof(owner_name), 4);
+> +	size += get_xsave_desc_size();
+> +
+> +	return size;
+> +}
+> +#endif
+
+Since it's a long if/endif, add: /* CONFIG_COREDUMP */ after the endif
+here.
+
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 5397b552fbeb..833bcb7e957b 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -2000,7 +2000,7 @@ static int elf_core_dump(struct coredump_params *cprm)
+>  	{
+>  		size_t sz = info.size;
+>  
+> -		/* For cell spufs */
+> +		/* For cell spufs and x86 xstate */
+>  		sz += elf_coredump_extra_notes_size();
+>  
+>  		phdr4note = kmalloc(sizeof(*phdr4note), GFP_KERNEL);
+> @@ -2064,7 +2064,7 @@ static int elf_core_dump(struct coredump_params *cprm)
+>  	if (!write_note_info(&info, cprm))
+>  		goto end_coredump;
+>  
+> -	/* For cell spufs */
+> +	/* For cell spufs and x86 xstate */
+>  	if (elf_coredump_extra_notes_write(cprm))
+>  		goto end_coredump;
+>  
+> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+> index b54b313bcf07..e30a9b47dc87 100644
+> --- a/include/uapi/linux/elf.h
+> +++ b/include/uapi/linux/elf.h
+> @@ -411,6 +411,7 @@ typedef struct elf64_shdr {
+>  #define NT_X86_XSTATE	0x202		/* x86 extended state using xsave */
+>  /* Old binutils treats 0x203 as a CET state */
+>  #define NT_X86_SHSTK	0x204		/* x86 SHSTK state */
+> +#define NT_X86_XSAVE_LAYOUT	0x205	/* XSAVE layout description */
+>  #define NT_S390_HIGH_GPRS	0x300	/* s390 upper register halves */
+>  #define NT_S390_TIMER	0x301		/* s390 timer register */
+>  #define NT_S390_TODCMP	0x302		/* s390 TOD clock comparator register */
+> -- 
+> 2.34.1
+> 
+
+Otherwise looks good. I'd like to see feedback from Intel folks too.
+
+Thanks for working on this!
+
+-Kees
+
+-- 
+Kees Cook
 
