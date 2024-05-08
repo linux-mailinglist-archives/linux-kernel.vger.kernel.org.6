@@ -1,121 +1,96 @@
-Return-Path: <linux-kernel+bounces-173612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553BB8C02F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:18:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7078C02F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11596281247
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:18:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CF711C21AFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01EB3101CF;
-	Wed,  8 May 2024 17:18:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CFD53387;
+	Wed,  8 May 2024 17:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eE4Beywt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NwDJPz8e"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB5A2E3E8;
-	Wed,  8 May 2024 17:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAC914A8C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188688; cv=none; b=pbifQ+mY+s+NGOMJ+b8V27mJwCNcPkUIHA6XWiWyh//Wy4anwo6XMurXXlmnpk1XzTBkTxp2kGgtNJm05s7Roh/7ZYLI2nUu0yP2plD0hWswCaZC+QNyBcWnextXY+PFq+v7dUq6Fa9EXT1LgVylT6lAkXgww21CCnbZYoxJF64=
+	t=1715188731; cv=none; b=DdYS+8JCHNGK8GZ0IDNCHZvDF9HkxOQkehYWWmS7i/rkYYOPicApxTxCFaU9vDewUuxq1bL+MKR9OpTB4c2uBgVXVbGXz+IHhLFuOUeer0U7JEcbJJHU7I6hWR5/bm3QORtjB2UVqZR2tIjzan35WJzXx0aSoM3a6bmajrYM8Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715188688; c=relaxed/simple;
-	bh=uLLaune42TupOBgkRUofecfgAsBuOBglfsyyRmLDEHM=;
+	s=arc-20240116; t=1715188731; c=relaxed/simple;
+	bh=OWpnNJ8rKooM+3S2sS4vhuD1egQMYUMnJc2NoPV4lBI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXqxnIlypDKk90C7A5dDTWY2zlpY9brKhbb6GILULLzrh/LAk5Ej3WpUUxWyWSD6tRzXqQ+6zOASpvWell3GUTJJLRAlhevMIqA7bvbIxVD5ehndXlozqnRL4LC/B4qrCov8GhRTlikIcYEJUg9SCuYz05n+T5So3qoLt3Fb2aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eE4Beywt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D4CC113CC;
-	Wed,  8 May 2024 17:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715188687;
-	bh=uLLaune42TupOBgkRUofecfgAsBuOBglfsyyRmLDEHM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eE4BeywtHEsHwRws/u3ElnzkL/r8QoUb9Hsa7YIM4AHjc+1an2O0of6bQ79OpBMDX
-	 rgCa/StEDE/baqvccO2zFfBQsI8gTwzgM/L0fsvQLsj9LsMaI52CIAMVEsmal0CReU
-	 HruYfuXnWUMRVjTLmjNv6X+BusDfcXyYjSMMmrmAD9dSSTE3pe1pkk/P1D2ofPDrUq
-	 rojV/jJBHWTY2cOwlVAROgVVSLAAZj4f4xt/xD3GavNHykDp97T3zEt/L0B+btL3HC
-	 btV6ei7tFgkzEJuAVH3lvuouUwYvMzHfAA26nA06csBUBwY02mRKk45hknXYID79CO
-	 E7yWSWqsGarXg==
-Date: Wed, 8 May 2024 18:18:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-Cc: linux-kernel@vger.kernel.org, jic23@kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	robh@kernel.org, nuno.sa@analog.com
-Subject: Re: [PATCH v2 7/8] dt-bindings: iio: imu: Add ADIS1657X family
- devices compatibles
-Message-ID: <20240508-monsoon-theology-d141f4e32bad@spud>
-References: <20240508131310.880479-1-ramona.bolboaca13@gmail.com>
- <20240508131310.880479-8-ramona.bolboaca13@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHH/Gu8BFZmjKdqg/wAhaTj8u9yht4RSe0mon3OgnsSynazGvt8l3+/dQkqeY0sxAD+7mMtuhHBe1DEZDJOM+Qi7xbLY842ksYNpO5/apkoKCj15cHd9YVlr8vYE04gMO5aYvj6TH6LajejEkLmvtkkdQ4HsheZLmiDIdMB10Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NwDJPz8e; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 8 May 2024 12:18:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715188727;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BZ3larZmFR+bN7ztPWWRwB/fEtXJTQLP/bM1SI4qrog=;
+	b=NwDJPz8ekvICd3m5pf6iNYs5hxpRkt3eaSBLs1IpNNmQS42Udd+l+0C49g/GiWe7SSb7dI
+	htEdA2rASUwPs+3HHkF+ag4xw1h+CKZVsRW/RmOhkx0WYFfBtua/ecjURjrexVXMD6yyXX
+	L5V3LDOObgWF3yWn+TYc+kC8nGgVa2w=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sebastian Ott <sebott@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2 4/6] KVM: arm64: add emulation for CTR_EL0 register
+Message-ID: <Zjuz87jRcrHXebpx@linux.dev>
+References: <20240426104950.7382-1-sebott@redhat.com>
+ <20240426104950.7382-5-sebott@redhat.com>
+ <ZjH6DcedmJsAb6vw@linux.dev>
+ <29e7b97b-7a61-9b64-2c57-5a5d0e5f190e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WpJ+I2U/bkBC8Ytu"
-Content-Disposition: inline
-In-Reply-To: <20240508131310.880479-8-ramona.bolboaca13@gmail.com>
-
-
---WpJ+I2U/bkBC8Ytu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <29e7b97b-7a61-9b64-2c57-5a5d0e5f190e@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 08, 2024 at 04:13:09PM +0300, Ramona Gradinariu wrote:
-> Add ADIS1657X family devices compatibles and specify the according
-> maximum SPI baudrate.
-> Similarly to other ADIS1650X devices, ADIS1657X supports sync-mode
-> values [0,2].
-> Each newly added device has a different angular velocity/linear
-> acceleration/ delta velocity scale combination, as follows:
-> Accel dynamic range sensitivity:
-> - 262144000 LSB/g: ADIS16575
-> - 52428800 LSB/g: ADIS16576, ADIS16577
-> Gyro dynamic range sensitivity:
-> - 2621440 LSB/deg/sec: ADIS1575-2, ADIS1576-2, ADIS1577-2
-> - 655360 LSB/deg/sec: ADIS1575-3, ADIS1576-3, ADIS1577-3
-> Delta velocity sensitivity:
-> - 2^15/100 LSB/m/sec: ADIS16575
-> - 2^15/125 LSB/m/sec: ADIS16576
-> - 2^15/400 LSB/m/sec: ADIS16577
-> Each ADIS1657X device supports FIFO usage and a sample-rate of 4.1KHz,
-> meanwhile the already existing devices do not support FIFO usage and
-> have a maximum sample-rate of 2.1KHz.
->=20
-> Signed-off-by: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-> ---
-> changes in v2:
->  - updated commit message stating the differences between the new added d=
-evices
->  and existing ones supported by this driver
+On Wed, May 08, 2024 at 05:17:25PM +0200, Sebastian Ott wrote:
+> Hej Oliver,
+> 
+> On Wed, 1 May 2024, Oliver Upton wrote:
+> > > +static u64 reset_ctr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *rd)
+> > > +{
+> > > +	vcpu->kvm->arch.ctr_el0 = read_sanitised_ftr_reg(SYS_CTR_EL0);
+> > > +	return vcpu->kvm->arch.ctr_el0;
+> > > +}
+> > > +
+> > 
+> > We definitely do not want this value to change across a vCPU reset, it
+> > should be handled like the other ID registers where they only get reset
+> > once for the VM lifetime.
+> 
+> Hm, maybe I'm misreading the code here but I don't think this is true
+> for existing regs e.g. CLIDR_EL1 or the stuff defined via ID_WRITABLE().
 
-Thanks for that. Was much easier to understand this way than cross
-checking a bunch of structs and the justification for how the bindings
-look should be in the binding commit message anyway :)
+This works for the feature ID registers we maintain per-VM, but not for
+the feature ID registers local to a vCPU. Sent some fixes out for this
+but forgot to Cc you on it, apologies.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+https://lore.kernel.org/kvmarm/20240502233529.1958459-1-oliver.upton@linux.dev/
 
-Cheers,
-Conor.
-
---WpJ+I2U/bkBC8Ytu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjuzywAKCRB4tDGHoIJi
-0mehAQC8UPguZodr1irMCzp/fysIvK+krWOQqFCuTAdnBGW4xgD/ZrNfugE7vATt
-GBNvkJhgirM/PqrQECwkgCA8q+RkMAs=
-=vlxh
------END PGP SIGNATURE-----
-
---WpJ+I2U/bkBC8Ytu--
+-- 
+Thanks,
+Oliver
 
