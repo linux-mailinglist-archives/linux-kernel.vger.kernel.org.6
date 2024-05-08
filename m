@@ -1,885 +1,569 @@
-Return-Path: <linux-kernel+bounces-172988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D494D8BF9C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 761B58BF9C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E061C2211C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A887285090
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305D67B3F3;
-	Wed,  8 May 2024 09:47:55 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989163613C;
-	Wed,  8 May 2024 09:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F43F78C7F;
+	Wed,  8 May 2024 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LXrHLViK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BD076413
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715161673; cv=none; b=i2rvEAZtf0xihFM91of3Fi0iKDsHLpOrdoFDrfmMmoeQ3bRVaFl7A0Svf2GDr5xHkDexCIpY+fUaljOI+skW07cH4Cfjz6/Rbn2/WTbqIvN8DeiDh5CHNgNJ7UVF6OPDC6zXKe6YNCNPNP1PumCDsTZ7yt35hoX4kmqqlpodK7c=
+	t=1715161713; cv=none; b=XOJq6eihmpPkTBllRfqWVxuuykywOpLfj7GwS4hW5OIVPD7ScbLqgzHnL9KXRnFN8rPHcKY+wbwGV8muko0V8ADPmtawmw+aCb3qFfAi9dUH02/uTB5VM2+agcAXmLNs057trEOm6mHdcKfVV896K+fi/E+WVjTCQyVJOoLxJ9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715161673; c=relaxed/simple;
-	bh=Smsc/UzDl3/jK/dEYNi0KPrzkpNTVo3i0D8H9H66qB8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=SbNRd7YlgBgLYa+o69gNre0oAbUN618esnjc1Ub9gSN0uTviLXLFOBxtBBZ19qr3kX5jAlYFkNUnCmGpPxXDg9ehpLv6wgli8/aSHu4YC/2eCyfKfcDnQpM5BLChydY717KPz0y5wTpuHEOH5lt11qColU8OcBV4SDfWuE/yHPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-cc-663b4a3b893a
-From: Byungchul Park <byungchul@sk.com>
-To: linux-kernel@vger.kernel.org
-Cc: kernel_team@skhynix.com,
-	torvalds@linux-foundation.org,
-	damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	will@kernel.org,
-	tglx@linutronix.de,
-	rostedt@goodmis.org,
-	joel@joelfernandes.org,
-	sashal@kernel.org,
-	daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com,
-	johannes.berg@intel.com,
-	tj@kernel.org,
-	tytso@mit.edu,
-	willy@infradead.org,
-	david@fromorbit.com,
-	amir73il@gmail.com,
-	gregkh@linuxfoundation.org,
-	kernel-team@lge.com,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	mhocko@kernel.org,
-	minchan@kernel.org,
-	hannes@cmpxchg.org,
-	vdavydov.dev@gmail.com,
-	sj@kernel.org,
-	jglisse@redhat.com,
-	dennis@kernel.org,
-	cl@linux.com,
-	penberg@kernel.org,
-	rientjes@google.com,
-	vbabka@suse.cz,
-	ngupta@vflare.org,
-	linux-block@vger.kernel.org,
-	josef@toxicpanda.com,
-	linux-fsdevel@vger.kernel.org,
-	jack@suse.cz,
-	jlayton@kernel.org,
-	dan.j.williams@intel.com,
-	hch@infradead.org,
-	djwong@kernel.org,
-	dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com,
-	melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com,
-	42.hyeyoo@gmail.com,
-	chris.p.wilson@intel.com,
-	gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com,
-	boqun.feng@gmail.com,
-	longman@redhat.com,
-	hdanton@sina.com,
-	her0gyugyu@gmail.com
-Subject: [PATCH v14 27/28] dept: Add documentation for Dept
-Date: Wed,  8 May 2024 18:47:24 +0900
-Message-Id: <20240508094726.35754-28-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240508094726.35754-1-byungchul@sk.com>
-References: <20240508094726.35754-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0yMcRzHfb/Pc8/zdHU8O8yjTHYklAjx8dtseLQZ4y9seNRTHV3soh82
-	W+mH/Dgrdv04jX7tahVXd02F45yVTlOpUFRLNbR+ka5JkSv889lrn89r78/njw9DyMslrowy
-	7JyoDhNCFZSUlA64ZK/c4r85aHW+YRakXF8N9pEkEjINxRQ03C9CUFwWi6G3ag+8G+1HMP6q
-	noA0bQOC7I/tBJRVdyAwF1yioKlnJjTbhyiwaa9REJdroOB13wSGttSbGIqM+6A2OQeDZewz
-	CWm9FNxOi8OO8gXDmL6QBn2MB3QV6GiY+OgLto63EjC/94KMO20UPDbbSKiu6MLQ9DCTgo7i
-	SQnUVteQ0JCikcC9wRwK+kb1BOjtQzQ0WrIwlMQ7ghK//5bAC40FQ2JeKYbm1kcIniR1YjAW
-	v6Xgub0fg8moJeBnfhWCrhsDNCRcH6PhduwNBNcSUkmIb/OD8R+Z1I6N/PP+IYKPN0Xy5tEs
-	kn+Zw/GVunaaj3/ynuazjOd5U8EKPvdxL+azh+0S3lh4heKNwzdp/upAM+YH6+poviZ9nOR7
-	mtPwAdcj0i2BYqgyQlSv2nZCGvIyxY7OfjOhKEvqLRyDLHHoKnJiOHYdV2/vlvznou671BRT
-	rCfX0jJGTPEcdhFn0nyadgi2X8rl1e2e4tnsZu7Du+/TPsl6cI1NyeQUy9j13FB6N/03050r
-	KrFM5zg5+q2fB6f3ylk/7lGczuFIHc4kw1kN+f8Oms89K2ghk5EsC80oRHJlWIRKUIau8wmJ
-	DlNG+QScURmR4530FyeOVqDhhkNWxDJI4SKzzNsUJJcIEeHRKiviGEIxR1Z1eUOQXBYoRF8Q
-	1WeOq8+HiuFW5MaQinmyNaORgXI2WDgnnhbFs6L6/xQzTq4xyH//129rnWxzy0fSvQ8+PeWt
-	a889jp3F9JMrO+WXUkvvPNi7U1je5bb7TWZbY6e8JrDSM1hbxh2MYDI2qjZ5LbBVsrG+USfN
-	i/Nm+6z5vUszvj326IMyrXbJz8u/ApDOO+DNha3uSxeaa5dpBPPkfmvrMa/Xns6qakPlroTD
-	eLF7r4IMDxF8VxDqcOEP/Yf+h0oDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTYRTHe573NmeLl2X5pkGxkGphF9I6NIsoyIeg6EMRVGSrXnWkJluu
-	7ELW1K6Ky6ZlatNkiTOtLWilk6Fo2sWWjrxkUna1zFE60ZTKGX05/Pifw+//5Ugo+XUmRKJJ
-	OiJqk9QJClZKS7eqDOGqzarY5R+9EWC8vBx8w+dpKKyuZMFdZUVQef8Mhv7GaOgYGUAw/vwF
-	BfkmN4KSd28ouN/Ui8BZfpaF9g8zwOPzstBiusSC4VY1Cy+/TWDoybuCwWrbAk9zSjG4xj7T
-	kN/Pwo18A54cXzCMWSo4sKSFQV95AQcT71ZAS+8rBhqKWhhwdi+B68U9LNQ6W2hocvRhaH9U
-	yEJv5R8GnjY10+A2ZjFwZ7CUhW8jFgosPi8HbS4zhrvpk7bMod8MPM5yYcgsu4fB01WDoO78
-	Wwy2ylcsNPgGMNhtJgp+3W5E0Jf9nYOMy2Mc3DiTjeBSRh4N6T2RMD5ayK5fQxoGvBRJtx8l
-	zhEzTZ6UCuRhwRuOpNd1c8RsSyH2ciW5VduPSclPH0NsFRdYYvt5hSMXv3swGWxt5UjztXGa
-	fPDk422hu6RRB8UEjV7ULlu3Txr/xOhDyT/s6JgrLxenIZcBXUQBEoGPEKzvb7J+ZvmFQmfn
-	GOXnIH6+YM/6xPiZ4gekQlnrJj/P5FXC646hqXuaDxPa2nNoP8v4VYL32nvun3OeYL3rmvIE
-	TOZdnwenuuR8pFBjKOBykNSMplWgIE2SPlGtSYhcqjsUn5qkObb0wOFEG5p8GMupCaMDDbdH
-	1yNeghTTZW5WFStn1HpdamI9EiSUIkjWeG51rFx2UJ16XNQejtGmJIi6ehQqoRXBss07xX1y
-	Pk59RDwkismi9v8WSwJC0tDtq6mkNSNQ/gyq5yzu9LpPmxpTZKfXXp2rLNtj5O9F6T8y8aPm
-	cGUyc+518979P3bME9doNm4w5Xm2x9i/nsjujt5bFPjYrS+hdbtXOnK1Qw/0Ef21+uC1q61t
-	YbnKUKGquG2WIyrSaV0ZNlvpkBToZ5ctyIwLPrnoxPpZ0xY0KGhdvHqFktLq1H8BjgJwCiwD
-	AAA=
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1715161713; c=relaxed/simple;
+	bh=G0TOcXb+lsZ30brQlzr5/pvU94PDwK8LQilY7lk4bcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cPvuWbDJAqx7JjiCc/MDk1gutZAkcmqZNKwzK9N8QKyk67c0K+Bc/QyyAauqt0o0KTP8+VAqingYQDTTp+QtgRlQ/yJoar5gOU9D/LjtBfRGP17tVdnsyIIyCkwTOWfo00S++8xZNyx5UxJvwWIk2YjEzL9kusgKftmoKtBc5GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LXrHLViK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715161710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IVtnVYv+jE+76xonW/9xbRYfHrTj99gWRU84rHceY+E=;
+	b=LXrHLViKIbe06sxPgeyX8H9GcoEG4qqBlwZDNmhzmbA2yRTA6LNTd9lWQ7ESRVJIIogLxP
+	cf73j8BsIS52mkcLxy2CPO97Qbc66WLqHbxULZyCpqHA84atiFfYTLACUn4w18Y1O43Qly
+	Fb4GfxSHVeWoQ75BszpZxkF0Rt8iA2U=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-372-2Hn0EXcpOQGq0VDKmIvcDQ-1; Wed, 08 May 2024 05:48:28 -0400
+X-MC-Unique: 2Hn0EXcpOQGq0VDKmIvcDQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a59ad486084so216879566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 02:48:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715161707; x=1715766507;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IVtnVYv+jE+76xonW/9xbRYfHrTj99gWRU84rHceY+E=;
+        b=qbt4eHip9FcweGOM1dyPnxYpsqZYZnIIzzhTBVq7NzKJahb4dQ7Irv9pUX1NKY1Rbr
+         e2n4BgKtPJGRSJWFBVO1HULqIyWd7LijkVxXrrT6Xd51+uGMjWp7DmMFV/BLl+xlHtCM
+         EQj0CznT+BGOEDE0sA9VJ55n5a+LAy5pBJGhE+z95xPhu8NKAjNIHPXpTMoAB8SQR5ef
+         wl3SnHsUFUgOgm7aHcUSkDjfGk0CBX/vaKrw1Y2bO6XWtyYM24dVy0hdEpS22Q2Wfgxi
+         XI/EW531tLyqSwMMy5Wuo1wffSZC7MmzEkL0Vc/H3TohIcy49Db9fJt+fp7nNgFbeDpF
+         og8g==
+X-Forwarded-Encrypted: i=1; AJvYcCURhdCRaqQmdWp/9RI/NCx1FWbIFFdREtHAqU51+/E4K3crzx2FbXozog5LeNBs9HwFaljHb+ED3qO3236f/H6BWrd5Ba2NvUzmUAIc
+X-Gm-Message-State: AOJu0YzvsQ9XX0WXWxAcTWp+ioiYBviqqabffZ238axJfIoCbCRpkn6L
+	kVM1jHYOu/XPjeREAfjV5a85idcbCsK4qGCvNdrSJaFiHDhWOc7Z/Hc48BN5s5oiTRPzdrlHEGe
+	/qWQncEy501DJtdz8d9C8pvMM6ugMRXcedJ6WEdNor9+kMZl9izcUSdAynk8Iwg==
+X-Received: by 2002:a17:906:c7d3:b0:a59:aa0d:60 with SMTP id a640c23a62f3a-a59fb923027mr114007066b.6.1715161707499;
+        Wed, 08 May 2024 02:48:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjysf8uTUp8BsQ6eE0t2vj5e28HiwDaQHVy/fko5FYS//MaUc66/u9rzoRWaUTNBlWqswxBg==
+X-Received: by 2002:a17:906:c7d3:b0:a59:aa0d:60 with SMTP id a640c23a62f3a-a59fb923027mr114003766b.6.1715161706882;
+        Wed, 08 May 2024 02:48:26 -0700 (PDT)
+Received: from [172.16.1.27] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
+        by smtp.gmail.com with ESMTPSA id kf6-20020a17090776c600b00a599a97a66fsm6139229ejc.55.2024.05.08.02.48.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2024 02:48:25 -0700 (PDT)
+From: Eelco Chaudron <echaudro@redhat.com>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, horms@kernel.org,
+ i.maximets@ovn.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>,
+ Donald Hunter <donald.hunter@gmail.com>, linux-kernel@vger.kernel.org,
+ dev@openvswitch.org
+Subject: Re: [PATCH net-next 6/8] net:openvswitch: add psample support
+Date: Wed, 08 May 2024 11:48:25 +0200
+X-Mailer: MailMate (1.14r6029)
+Message-ID: <E1CBBF37-E292-4CA7-B714-53485E85B75F@redhat.com>
+In-Reply-To: <5f516a72-d406-49bf-98a0-0f1ade8a0d50@redhat.com>
+References: <20240424135109.3524355-1-amorenoz@redhat.com>
+ <20240424135109.3524355-7-amorenoz@redhat.com>
+ <72F692D6-621D-4E02-AAE2-AC63CC99FEBE@redhat.com>
+ <5f516a72-d406-49bf-98a0-0f1ade8a0d50@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This document describes the concept of Dept.
 
-Signed-off-by: Byungchul Park <byungchul@sk.com>
+
+On 7 May 2024, at 16:18, Adrian Moreno wrote:
+
+> On 5/3/24 11:43 AM, Eelco Chaudron wrote:
+>>
+>>
+>> On 24 Apr 2024, at 15:50, Adrian Moreno wrote:
+>>
+>>> Add support for psample sampling via two new attributes to the
+>>> OVS_ACTION_ATTR_SAMPLE action.
+>>>
+>>> OVS_SAMPLE_ATTR_PSAMPLE_GROUP used to pass an integer psample group_i=
+d.
+>>> OVS_SAMPLE_ATTR_PSAMPLE_COOKIE used to pass a variable-length binary
+>>> cookie that will be forwared to psample.
+>>>
+>>> The maximum length of the user-defined cookie is set to 16, same as
+>>> tc_cookie, to discourage using cookies that will not be offloadable.
+>>>
+>>> In order to simplify the internal processing of the action and given =
+the
+>>> maximum size of the cookie is relatively small, add both fields to th=
+e
+>>> internal-only struct sample_arg.
+>>>
+>>> The presence of a group_id mandates that the action shall called the
+>>> psample module to multicast the packet with such group_id and the
+>>> user-provided cookie if present. This behavior is orthonogal to
+>>> also executing the nested actions if present.
+>>>
+>>> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+>>
+>> This is not a full review yet. Just some comments, as I=E2=80=99m look=
+ing at the user-space patch first and added similar comments.
+>>
+>> I=E2=80=99ll do a proper review of this series once I=E2=80=99m done w=
+ith user-space part.
+>>
+>> //Eelco
+>>
+>>> ---
+>>>   Documentation/netlink/specs/ovs_flow.yaml |  6 ++
+>>>   include/uapi/linux/openvswitch.h          | 49 ++++++++++----
+>>>   net/openvswitch/actions.c                 | 51 +++++++++++++--
+>>>   net/openvswitch/flow_netlink.c            | 80 ++++++++++++++++++--=
 ---
- Documentation/dependency/dept.txt | 735 ++++++++++++++++++++++++++++++
- 1 file changed, 735 insertions(+)
- create mode 100644 Documentation/dependency/dept.txt
+>>>   4 files changed, 153 insertions(+), 33 deletions(-)
+>>>
+>>> diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentatio=
+n/netlink/specs/ovs_flow.yaml
+>>> index 4fdfc6b5cae9..5543c2937225 100644
+>>> --- a/Documentation/netlink/specs/ovs_flow.yaml
+>>> +++ b/Documentation/netlink/specs/ovs_flow.yaml
+>>> @@ -825,6 +825,12 @@ attribute-sets:
+>>>           name: actions
+>>>           type: nest
+>>>           nested-attributes: action-attrs
+>>> +      -
+>>> +        name: psample_group
+>>> +        type: u32
+>>> +      -
+>>> +        name: psample_cookie
+>>> +        type: binary
+>>>     -
+>>>       name: userspace-attrs
+>>>       enum-name: ovs-userspace-attr
+>>> diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/op=
+envswitch.h
+>>> index efc82c318fa2..e9cd6f3a952d 100644
+>>> --- a/include/uapi/linux/openvswitch.h
+>>> +++ b/include/uapi/linux/openvswitch.h
+>>> @@ -639,6 +639,7 @@ enum ovs_flow_attr {
+>>>   #define OVS_UFID_F_OMIT_MASK     (1 << 1)
+>>>   #define OVS_UFID_F_OMIT_ACTIONS  (1 << 2)
+>>>
+>>> +#define OVS_PSAMPLE_COOKIE_MAX_SIZE 16
+>>>   /**
+>>>    * enum ovs_sample_attr - Attributes for %OVS_ACTION_ATTR_SAMPLE ac=
+tion.
+>>>    * @OVS_SAMPLE_ATTR_PROBABILITY: 32-bit fraction of packets to samp=
+le with
+>>> @@ -646,15 +647,27 @@ enum ovs_flow_attr {
+>>>    * %UINT32_MAX samples all packets and intermediate values sample i=
+ntermediate
+>>>    * fractions of packets.
+>>>    * @OVS_SAMPLE_ATTR_ACTIONS: Set of actions to execute in sampling =
+event.
+>>> - * Actions are passed as nested attributes.
+>>> + * Actions are passed as nested attributes. Optional if
+>>> + * OVS_SAMPLE_ATTR_PSAMPLE_GROUP is set.
+>>> + * @OVS_SAMPLE_ATTR_PSAMPLE_GROUP: A 32-bit number to be used as psa=
+mple group.
+>>> + * Optional if OVS_SAMPLE_ATTR_ACTIONS is set.
+>>> + * @OVS_SAMPLE_ATTR_PSAMPLE_COOKIE: A variable-length binary cookie =
+that, if
+>>> + * provided, will be copied to the psample cookie.
+>>
+>> As there is a limit of to the cookie should we mention it here?
+>>
+>
+> I thought OVS_PSAMPLE_COOKIE_MAX_SIZE was expressive enough but sure, w=
+e can also mention it here.
+>
+>>>    *
+>>> - * Executes the specified actions with the given probability on a pe=
+r-packet
+>>> - * basis.
+>>> + * Either OVS_SAMPLE_ATTR_PSAMPLE_GROUP or OVS_SAMPLE_ATTR_ACTIONS m=
+ust be
+>>> + * specified.
+>>> + *
+>>> + * Executes the specified actions and/or sends the packet to psample=
 
-diff --git a/Documentation/dependency/dept.txt b/Documentation/dependency/dept.txt
-new file mode 100644
-index 000000000000..5dd358b96734
---- /dev/null
-+++ b/Documentation/dependency/dept.txt
-@@ -0,0 +1,735 @@
-+DEPT(DEPendency Tracker)
-+========================
-+
-+Started by Byungchul Park <max.byungchul.park@sk.com>
-+
-+How lockdep works
-+-----------------
-+
-+Lockdep detects a deadlock by checking lock acquisition order. For
-+example, a graph to track acquisition order built by lockdep might look
-+like:
-+
-+   A -> B -
-+           \
-+            -> E
-+           /
-+   C -> D -
-+
-+   where 'A -> B' means that acquisition A is prior to acquisition B
-+   with A still held.
-+
-+Lockdep keeps adding each new acquisition order into the graph in
-+runtime. For example, 'E -> C' will be added when the two locks have
-+been acquired in the order, E and then C. The graph will look like:
-+
-+       A -> B -
-+               \
-+                -> E -
-+               /      \
-+    -> C -> D -        \
-+   /                   /
-+   \                  /
-+    ------------------
-+
-+   where 'A -> B' means that acquisition A is prior to acquisition B
-+   with A still held.
-+
-+This graph contains a subgraph that demonstrates a loop like:
-+
-+                -> E -
-+               /      \
-+    -> C -> D -        \
-+   /                   /
-+   \                  /
-+    ------------------
-+
-+   where 'A -> B' means that acquisition A is prior to acquisition B
-+   with A still held.
-+
-+Lockdep reports it as a deadlock on detection of a loop and stops its
-+working.
-+
-+CONCLUSION
-+
-+Lockdep detects a deadlock by checking if a loop has been created after
-+adding a new acquisition order into the graph.
-+
-+
-+Limitation of lockdep
-+---------------------
-+
-+Lockdep deals with a deadlock by typical lock e.g. spinlock and mutex,
-+that are supposed to be released within the acquisition context. However,
-+when it comes to a deadlock by folio lock that is not supposed to be
-+released within the acquisition context or other general synchronization
-+mechanisms, lockdep doesn't work.
-+
-+Can lockdep detect the following deadlock?
-+
-+   context X	   context Y	   context Z
-+
-+		   mutex_lock A
-+   folio_lock B
-+		   folio_lock B <- DEADLOCK
-+				   mutex_lock A <- DEADLOCK
-+				   folio_unlock B
-+		   folio_unlock B
-+		   mutex_unlock A
-+				   mutex_unlock A
-+
-+No. What about the following?
-+
-+   context X		   context Y
-+
-+			   mutex_lock A
-+   mutex_lock A <- DEADLOCK
-+			   wait_for_complete B <- DEADLOCK
-+   complete B
-+			   mutex_unlock A
-+   mutex_unlock A
-+
-+No.
-+
-+CONCLUSION
-+
-+Lockdep cannot detect a deadlock by folio lock or other general
-+synchronization mechanisms.
-+
-+
-+What leads a deadlock
-+---------------------
-+
-+A deadlock occurs when one or multi contexts are waiting for events that
-+will never happen. For example:
-+
-+   context X	   context Y	   context Z
-+
-+   |		   |		   |
-+   v		   |		   |
-+   1 wait for A    v		   |
-+   .		   2 wait for C    v
-+   event C	   .		   3 wait for B
-+		   event B	   .
-+				   event A
-+
-+Event C cannot be triggered because context X is stuck at 1, event B
-+cannot be triggered because context Y is stuck at 2, and event A cannot
-+be triggered because context Z is stuck at 3. All the contexts are stuck.
-+We call this *deadlock*.
-+
-+If an event occurrence is a prerequisite to reaching another event, we
-+call it *dependency*. In this example:
-+
-+   Event A occurrence is a prerequisite to reaching event C.
-+   Event C occurrence is a prerequisite to reaching event B.
-+   Event B occurrence is a prerequisite to reaching event A.
-+
-+In terms of dependency:
-+
-+   Event C depends on event A.
-+   Event B depends on event C.
-+   Event A depends on event B.
-+
-+Dependency graph reflecting this example will look like:
-+
-+    -> C -> A -> B -
-+   /                \
-+   \                /
-+    ----------------
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+A circular dependency exists. Such a circular dependency leads a
-+deadlock since no waiters can have desired events triggered.
-+
-+CONCLUSION
-+
-+A circular dependency of events leads a deadlock.
-+
-+
-+Introduce DEPT
-+--------------
-+
-+DEPT(DEPendency Tracker) tracks wait and event instead of lock
-+acquisition order so as to recognize the following situation:
-+
-+   context X	   context Y	   context Z
-+
-+   |		   |		   |
-+   v		   |		   |
-+   wait for A	   v		   |
-+   .		   wait for C	   v
-+   event C	   .		   wait for B
-+		   event B	   .
-+				   event A
-+
-+and builds up a dependency graph in runtime that is similar to lockdep.
-+The graph might look like:
-+
-+    -> C -> A -> B -
-+   /                \
-+   \                /
-+    ----------------
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+DEPT keeps adding each new dependency into the graph in runtime. For
-+example, 'B -> D' will be added when event D occurrence is a
-+prerequisite to reaching event B like:
-+
-+   |
-+   v
-+   wait for D
-+   .
-+   event B
-+
-+After the addition, the graph will look like:
-+
-+                     -> D
-+                    /
-+    -> C -> A -> B -
-+   /                \
-+   \                /
-+    ----------------
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+DEPT is going to report a deadlock on detection of a new loop.
-+
-+CONCLUSION
-+
-+DEPT works on wait and event so as to theoretically detect all the
-+potential deadlocks.
-+
-+
-+How DEPT works
-+--------------
-+
-+Let's take a look how DEPT works with the 1st example in the section
-+'Limitation of lockdep'.
-+
-+   context X	   context Y	   context Z
-+
-+		   mutex_lock A
-+   folio_lock B
-+		   folio_lock B <- DEADLOCK
-+				   mutex_lock A <- DEADLOCK
-+				   folio_unlock B
-+		   folio_unlock B
-+		   mutex_unlock A
-+				   mutex_unlock A
-+
-+Adding comments to describe DEPT's view in terms of wait and event:
-+
-+   context X	   context Y	   context Z
-+
-+		   mutex_lock A
-+		   /* wait for A */
-+   folio_lock B
-+   /* wait for A */
-+   /* start event A context */
-+
-+		   folio_lock B
-+		   /* wait for B */ <- DEADLOCK
-+		   /* start event B context */
-+
-+				   mutex_lock A
-+				   /* wait for A */ <- DEADLOCK
-+				   /* start event A context */
-+
-+				   folio_unlock B
-+				   /* event B */
-+		   folio_unlock B
-+		   /* event B */
-+
-+		   mutex_unlock A
-+		   /* event A */
-+				   mutex_unlock A
-+				   /* event A */
-+
-+Adding more supplementary comments to describe DEPT's view in detail:
-+
-+   context X	   context Y	   context Z
-+
-+		   mutex_lock A
-+		   /* might wait for A */
-+		   /* start to take into account event A's context */
-+		   /* 1 */
-+   folio_lock B
-+   /* might wait for B */
-+   /* start to take into account event B's context */
-+   /* 2 */
-+
-+		   folio_lock B
-+		   /* might wait for B */ <- DEADLOCK
-+		   /* start to take into account event B's context */
-+		   /* 3 */
-+
-+				   mutex_lock A
-+				   /* might wait for A */ <- DEADLOCK
-+				   /* start to take into account
-+				      event A's context */
-+				   /* 4 */
-+
-+				   folio_unlock B
-+				   /* event B that's been valid since 2 */
-+		   folio_unlock B
-+		   /* event B that's been valid since 3 */
-+
-+		   mutex_unlock A
-+		   /* event A that's been valid since 1 */
-+
-+				   mutex_unlock A
-+				   /* event A that's been valid since 4 */
-+
-+Let's build up dependency graph with this example. Firstly, context X:
-+
-+   context X
-+
-+   folio_lock B
-+   /* might wait for B */
-+   /* start to take into account event B's context */
-+   /* 2 */
-+
-+There are no events to create dependency. Next, context Y:
-+
-+   context Y
-+
-+   mutex_lock A
-+   /* might wait for A */
-+   /* start to take into account event A's context */
-+   /* 1 */
-+
-+   folio_lock B
-+   /* might wait for B */
-+   /* start to take into account event B's context */
-+   /* 3 */
-+
-+   folio_unlock B
-+   /* event B that's been valid since 3 */
-+
-+   mutex_unlock A
-+   /* event A that's been valid since 1 */
-+
-+There are two events. For event B, folio_unlock B, since there are no
-+waits between 3 and the event, event B does not create dependency. For
-+event A, there is a wait, folio_lock B, between 1 and the event. Which
-+means event A cannot be triggered if event B does not wake up the wait.
-+Therefore, we can say event A depends on event B, say, 'A -> B'. The
-+graph will look like after adding the dependency:
-+
-+   A -> B
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+Lastly, context Z:
-+
-+   context Z
-+
-+   mutex_lock A
-+   /* might wait for A */
-+   /* start to take into account event A's context */
-+   /* 4 */
-+
-+   folio_unlock B
-+   /* event B that's been valid since 2 */
-+
-+   mutex_unlock A
-+   /* event A that's been valid since 4 */
-+
-+There are also two events. For event B, folio_unlock B, there is a
-+wait, mutex_lock A, between 2 and the event - remind 2 is at a very
-+start and before the wait in timeline. Which means event B cannot be
-+triggered if event A does not wake up the wait. Therefore, we can say
-+event B depends on event A, say, 'B -> A'. The graph will look like
-+after adding the dependency:
-+
-+    -> A -> B -
-+   /           \
-+   \           /
-+    -----------
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+A new loop has been created. So DEPT can report it as a deadlock. For
-+event A, mutex_unlock A, since there are no waits between 4 and the
-+event, event A does not create dependency. That's it.
-+
-+CONCLUSION
-+
-+DEPT works well with any general synchronization mechanisms by focusing
-+on wait, event and its context.
-+
-+
-+Interpret DEPT report
-+---------------------
-+
-+The following is the example in the section 'How DEPT works'.
-+
-+   context X	   context Y	   context Z
-+
-+		   mutex_lock A
-+		   /* might wait for A */
-+		   /* start to take into account event A's context */
-+		   /* 1 */
-+   folio_lock B
-+   /* might wait for B */
-+   /* start to take into account event B's context */
-+   /* 2 */
-+
-+		   folio_lock B
-+		   /* might wait for B */ <- DEADLOCK
-+		   /* start to take into account event B's context */
-+		   /* 3 */
-+
-+				   mutex_lock A
-+				   /* might wait for A */ <- DEADLOCK
-+				   /* start to take into account
-+				      event A's context */
-+				   /* 4 */
-+
-+				   folio_unlock B
-+				   /* event B that's been valid since 2 */
-+		   folio_unlock B
-+		   /* event B that's been valid since 3 */
-+
-+		   mutex_unlock A
-+		   /* event A that's been valid since 1 */
-+
-+				   mutex_unlock A
-+				   /* event A that's been valid since 4 */
-+
-+We can Simplify this by replacing each waiting point with [W], each
-+point where its event's context starts with [S] and each event with [E].
-+This example will look like after the replacement:
-+
-+   context X	   context Y	   context Z
-+
-+		   [W][S] mutex_lock A
-+   [W][S] folio_lock B
-+		   [W][S] folio_lock B <- DEADLOCK
-+
-+				   [W][S] mutex_lock A <- DEADLOCK
-+				   [E] folio_unlock B
-+		   [E] folio_unlock B
-+		   [E] mutex_unlock A
-+				   [E] mutex_unlock A
-+
-+DEPT uses the symbols [W], [S] and [E] in its report as described above.
-+The following is an example reported by DEPT for a real problem.
-+
-+   Link: https://lore.kernel.org/lkml/6383cde5-cf4b-facf-6e07-1378a485657d@I-love.SAKURA.ne.jp/#t
-+   Link: https://lore.kernel.org/lkml/1674268856-31807-1-git-send-email-byungchul.park@lge.com/
-+
-+   ===================================================
-+   DEPT: Circular dependency has been detected.
-+   6.2.0-rc1-00025-gb0c20ebf51ac-dirty #28 Not tainted
-+   ---------------------------------------------------
-+   summary
-+   ---------------------------------------------------
-+   *** DEADLOCK ***
-+
-+   context A
-+       [S] lock(&ni->ni_lock:0)
-+       [W] folio_wait_bit_common(PG_locked_map:0)
-+       [E] unlock(&ni->ni_lock:0)
-+
-+   context B
-+       [S] (unknown)(PG_locked_map:0)
-+       [W] lock(&ni->ni_lock:0)
-+       [E] folio_unlock(PG_locked_map:0)
-+
-+   [S]: start of the event context
-+   [W]: the wait blocked
-+   [E]: the event not reachable
-+   ---------------------------------------------------
-+   context A's detail
-+   ---------------------------------------------------
-+   context A
-+       [S] lock(&ni->ni_lock:0)
-+       [W] folio_wait_bit_common(PG_locked_map:0)
-+       [E] unlock(&ni->ni_lock:0)
-+
-+   [S] lock(&ni->ni_lock:0):
-+   [<ffffffff82b396fb>] ntfs3_setattr+0x54b/0xd40
-+   stacktrace:
-+         ntfs3_setattr+0x54b/0xd40
-+         notify_change+0xcb3/0x1430
-+         do_truncate+0x149/0x210
-+         path_openat+0x21a3/0x2a90
-+         do_filp_open+0x1ba/0x410
-+         do_sys_openat2+0x16d/0x4e0
-+         __x64_sys_creat+0xcd/0x120
-+         do_syscall_64+0x41/0xc0
-+         entry_SYSCALL_64_after_hwframe+0x63/0xcd
-+
-+   [W] folio_wait_bit_common(PG_locked_map:0):
-+   [<ffffffff81b228b0>] truncate_inode_pages_range+0x9b0/0xf20
-+   stacktrace:
-+         folio_wait_bit_common+0x5e0/0xaf0
-+         truncate_inode_pages_range+0x9b0/0xf20
-+         truncate_pagecache+0x67/0x90
-+         ntfs3_setattr+0x55a/0xd40
-+         notify_change+0xcb3/0x1430
-+         do_truncate+0x149/0x210
-+         path_openat+0x21a3/0x2a90
-+         do_filp_open+0x1ba/0x410
-+         do_sys_openat2+0x16d/0x4e0
-+         __x64_sys_creat+0xcd/0x120
-+         do_syscall_64+0x41/0xc0
-+         entry_SYSCALL_64_after_hwframe+0x63/0xcd
-+
-+   [E] unlock(&ni->ni_lock:0):
-+   (N/A)
-+   ---------------------------------------------------
-+   context B's detail
-+   ---------------------------------------------------
-+   context B
-+       [S] (unknown)(PG_locked_map:0)
-+       [W] lock(&ni->ni_lock:0)
-+       [E] folio_unlock(PG_locked_map:0)
-+
-+   [S] (unknown)(PG_locked_map:0):
-+   (N/A)
-+
-+   [W] lock(&ni->ni_lock:0):
-+   [<ffffffff82b009ec>] attr_data_get_block+0x32c/0x19f0
-+   stacktrace:
-+         attr_data_get_block+0x32c/0x19f0
-+         ntfs_get_block_vbo+0x264/0x1330
-+         __block_write_begin_int+0x3bd/0x14b0
-+         block_write_begin+0xb9/0x4d0
-+         ntfs_write_begin+0x27e/0x480
-+         generic_perform_write+0x256/0x570
-+         __generic_file_write_iter+0x2ae/0x500
-+         ntfs_file_write_iter+0x66d/0x1d70
-+         do_iter_readv_writev+0x20b/0x3c0
-+         do_iter_write+0x188/0x710
-+         vfs_iter_write+0x74/0xa0
-+         iter_file_splice_write+0x745/0xc90
-+         direct_splice_actor+0x114/0x180
-+         splice_direct_to_actor+0x33b/0x8b0
-+         do_splice_direct+0x1b7/0x280
-+         do_sendfile+0xb49/0x1310
-+
-+   [E] folio_unlock(PG_locked_map:0):
-+   [<ffffffff81f10222>] generic_write_end+0xf2/0x440
-+   stacktrace:
-+         generic_write_end+0xf2/0x440
-+         ntfs_write_end+0x42e/0x980
-+         generic_perform_write+0x316/0x570
-+         __generic_file_write_iter+0x2ae/0x500
-+         ntfs_file_write_iter+0x66d/0x1d70
-+         do_iter_readv_writev+0x20b/0x3c0
-+         do_iter_write+0x188/0x710
-+         vfs_iter_write+0x74/0xa0
-+         iter_file_splice_write+0x745/0xc90
-+         direct_splice_actor+0x114/0x180
-+         splice_direct_to_actor+0x33b/0x8b0
-+         do_splice_direct+0x1b7/0x280
-+         do_sendfile+0xb49/0x1310
-+         __x64_sys_sendfile64+0x1d0/0x210
-+         do_syscall_64+0x41/0xc0
-+         entry_SYSCALL_64_after_hwframe+0x63/0xcd
-+   ---------------------------------------------------
-+   information that might be helpful
-+   ---------------------------------------------------
-+   CPU: 1 PID: 8060 Comm: a.out Not tainted
-+	6.2.0-rc1-00025-gb0c20ebf51ac-dirty #28
-+   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-+	BIOS Bochs 01/01/2011
-+   Call Trace:
-+    <TASK>
-+    dump_stack_lvl+0xf2/0x169
-+    print_circle.cold+0xca4/0xd28
-+    ? lookup_dep+0x240/0x240
-+    ? extend_queue+0x223/0x300
-+    cb_check_dl+0x1e7/0x260
-+    bfs+0x27b/0x610
-+    ? print_circle+0x240/0x240
-+    ? llist_add_batch+0x180/0x180
-+    ? extend_queue_rev+0x300/0x300
-+    ? __add_dep+0x60f/0x810
-+    add_dep+0x221/0x5b0
-+    ? __add_idep+0x310/0x310
-+    ? add_iecxt+0x1bc/0xa60
-+    ? add_iecxt+0x1bc/0xa60
-+    ? add_iecxt+0x1bc/0xa60
-+    ? add_iecxt+0x1bc/0xa60
-+    __dept_wait+0x600/0x1490
-+    ? add_iecxt+0x1bc/0xa60
-+    ? truncate_inode_pages_range+0x9b0/0xf20
-+    ? check_new_class+0x790/0x790
-+    ? dept_enirq_transition+0x519/0x9c0
-+    dept_wait+0x159/0x3b0
-+    ? truncate_inode_pages_range+0x9b0/0xf20
-+    folio_wait_bit_common+0x5e0/0xaf0
-+    ? filemap_get_folios_contig+0xa30/0xa30
-+    ? dept_enirq_transition+0x519/0x9c0
-+    ? lock_is_held_type+0x10e/0x160
-+    ? lock_is_held_type+0x11e/0x160
-+    truncate_inode_pages_range+0x9b0/0xf20
-+    ? truncate_inode_partial_folio+0xba0/0xba0
-+    ? setattr_prepare+0x142/0xc40
-+    truncate_pagecache+0x67/0x90
-+    ntfs3_setattr+0x55a/0xd40
-+    ? ktime_get_coarse_real_ts64+0x1e5/0x2f0
-+    ? ntfs_extend+0x5c0/0x5c0
-+    ? mode_strip_sgid+0x210/0x210
-+    ? ntfs_extend+0x5c0/0x5c0
-+    notify_change+0xcb3/0x1430
-+    ? do_truncate+0x149/0x210
-+    do_truncate+0x149/0x210
-+    ? file_open_root+0x430/0x430
-+    ? process_measurement+0x18c0/0x18c0
-+    ? ntfs_file_release+0x230/0x230
-+    path_openat+0x21a3/0x2a90
-+    ? path_lookupat+0x840/0x840
-+    ? dept_enirq_transition+0x519/0x9c0
-+    ? lock_is_held_type+0x10e/0x160
-+    do_filp_open+0x1ba/0x410
-+    ? may_open_dev+0xf0/0xf0
-+    ? find_held_lock+0x2d/0x110
-+    ? lock_release+0x43c/0x830
-+    ? dept_ecxt_exit+0x31a/0x590
-+    ? _raw_spin_unlock+0x3b/0x50
-+    ? alloc_fd+0x2de/0x6e0
-+    do_sys_openat2+0x16d/0x4e0
-+    ? __ia32_sys_get_robust_list+0x3b0/0x3b0
-+    ? build_open_flags+0x6f0/0x6f0
-+    ? dept_enirq_transition+0x519/0x9c0
-+    ? dept_enirq_transition+0x519/0x9c0
-+    ? lock_is_held_type+0x4e/0x160
-+    ? lock_is_held_type+0x4e/0x160
-+    __x64_sys_creat+0xcd/0x120
-+    ? __x64_compat_sys_openat+0x1f0/0x1f0
-+    do_syscall_64+0x41/0xc0
-+    entry_SYSCALL_64_after_hwframe+0x63/0xcd
-+   RIP: 0033:0x7f8b9e4e4469
-+   Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
-+   89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48>
-+   3d 01 f0 ff ff 73 01 c3 48 8b 0d ff 49 2b 00 f7 d8 64 89 01 48
-+   RSP: 002b:00007f8b9eea4ef8 EFLAGS: 00000202 ORIG_RAX: 0000000000000055
-+   RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8b9e4e4469
-+   RDX: 0000000000737562 RSI: 0000000000000000 RDI: 0000000020000000
-+   RBP: 00007f8b9eea4f20 R08: 0000000000000000 R09: 0000000000000000
-+   R10: 0000000000000000 R11: 0000000000000202 R12: 00007fffa75511ee
-+   R13: 00007fffa75511ef R14: 00007f8b9ee85000 R15: 0000000000000003
-+    </TASK>
-+
-+Let's take a look at the summary that is the most important part.
-+
-+   ---------------------------------------------------
-+   summary
-+   ---------------------------------------------------
-+   *** DEADLOCK ***
-+
-+   context A
-+       [S] lock(&ni->ni_lock:0)
-+       [W] folio_wait_bit_common(PG_locked_map:0)
-+       [E] unlock(&ni->ni_lock:0)
-+
-+   context B
-+       [S] (unknown)(PG_locked_map:0)
-+       [W] lock(&ni->ni_lock:0)
-+       [E] folio_unlock(PG_locked_map:0)
-+
-+   [S]: start of the event context
-+   [W]: the wait blocked
-+   [E]: the event not reachable
-+
-+The summary shows the following scenario:
-+
-+   context A	   context B	   context ?(unknown)
-+
-+				   [S] folio_lock(&f1)
-+   [S] lock(&ni->ni_lock:0)
-+   [W] folio_wait_bit_common(PG_locked_map:0)
-+
-+		   [W] lock(&ni->ni_lock:0)
-+		   [E] folio_unlock(&f1)
-+
-+   [E] unlock(&ni->ni_lock:0)
-+
-+Adding supplementary comments to describe DEPT's view in detail:
-+
-+   context A	   context B	   context ?(unknown)
-+
-+				   [S] folio_lock(&f1)
-+				   /* start to take into account context
-+				      B heading for folio_unlock(&f1) */
-+				   /* 1 */
-+   [S] lock(&ni->ni_lock:0)
-+   /* start to take into account this context heading for
-+      unlock(&ni->ni_lock:0) */
-+   /* 2 */
-+
-+   [W] folio_wait_bit_common(PG_locked_map:0) (= folio_lock(&f1))
-+   /* might wait for folio_unlock(&f1) */
-+
-+		   [W] lock(&ni->ni_lock:0)
-+		   /* might wait for unlock(&ni->ni_lock:0) */
-+
-+		   [E] folio_unlock(&f1)
-+		   /* event that's been valid since 1 */
-+
-+   [E] unlock(&ni->ni_lock:0)
-+   /* event that's been valid since 2 */
-+
-+Let's build up dependency graph with this report. Firstly, context A:
-+
-+   context A
-+
-+   [S] lock(&ni->ni_lock:0)
-+   /* start to take into account this context heading for
-+      unlock(&ni->ni_lock:0) */
-+   /* 2 */
-+
-+   [W] folio_wait_bit_common(PG_locked_map:0) (= folio_lock(&f1))
-+   /* might wait for folio_unlock(&f1) */
-+
-+   [E] unlock(&ni->ni_lock:0)
-+   /* event that's been valid since 2 */
-+
-+There is one interesting event, unlock(&ni->ni_lock:0). There is a
-+wait, folio_lock(&f1), between 2 and the event. Which means
-+unlock(&ni->ni_lock:0) is not reachable if folio_unlock(&f1) does not
-+wake up the wait. Therefore, we can say unlock(&ni->ni_lock:0) depends
-+on folio_unlock(&f1), say, 'unlock(&ni->ni_lock:0) -> folio_unlock(&f1)'.
-+The graph will look like after adding the dependency:
-+
-+   unlock(&ni->ni_lock:0) -> folio_unlock(&f1)
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+Secondly, context B:
-+
-+   context B
-+
-+   [W] lock(&ni->ni_lock:0)
-+   /* might wait for unlock(&ni->ni_lock:0) */
-+
-+   [E] folio_unlock(&f1)
-+   /* event that's been valid since 1 */
-+
-+There is also one interesting event, folio_unlock(&f1). There is a
-+wait, lock(&ni->ni_lock:0), between 1 and the event - remind 1 is at a
-+very start and before the wait in timeline. Which means folio_unlock(&f1)
-+is not reachable if unlock(&ni->ni_lock:0) does not wake up the wait.
-+Therefore, we can say folio_unlock(&f1) depends on unlock(&ni->ni_lock:0),
-+say, 'folio_unlock(&f1) -> unlock(&ni->ni_lock:0)'. The graph will look
-+like after adding the dependency:
-+
-+    -> unlock(&ni->ni_lock:0) -> folio_unlock(&f1) -
-+   /                                                \
-+   \                                                /
-+    ------------------------------------------------
-+
-+   where 'A -> B' means that event A depends on event B.
-+
-+A new loop has been created. So DEPT can report it as a deadlock! Cool!
-+
-+CONCLUSION
-+
-+DEPT works awesome!
--- 
-2.17.1
+>>> + * with the given probability on a per-packet basis.
+>>>    */
+>>>   enum ovs_sample_attr {
+>>>   	OVS_SAMPLE_ATTR_UNSPEC,
+>>> -	OVS_SAMPLE_ATTR_PROBABILITY, /* u32 number */
+>>> -	OVS_SAMPLE_ATTR_ACTIONS,     /* Nested OVS_ACTION_ATTR_* attributes=
+=2E */
+>>> +	OVS_SAMPLE_ATTR_PROBABILITY,	/* u32 number */
+>>> +	OVS_SAMPLE_ATTR_ACTIONS,	/* Nested OVS_ACTION_ATTR_
+>>
+>> Missing * after OVS_ACTION_ATTR_
+>
+> As a matter of fact, adding an * makes checkpatch generate a warning II=
+RC. That's why I initially removed it. I can look at fixing checkpatch in=
+stead.
+>
+>>
+>>> +					 * attributes.
+>>> +					 */
+>>> +	OVS_SAMPLE_ATTR_PSAMPLE_GROUP,	/* u32 number */
+>>> +	OVS_SAMPLE_ATTR_PSAMPLE_COOKIE,	/* binary */
+>>
+>> As these are general sample options, I would not add the PSAMPLE refer=
+ence. Other data paths could use a different implementation. So I guess O=
+VS_SAMPLE_ATTR_GROUP_ID and OVS_SAMPLE_ATTR_COOKIE would be enough.
+>>
+>
+> OK. But isn't the API already psample-ish? I mean that the group_id is =
+something specific to psample that might not be present in other datapath=
+ implementation.
+
+Well, I see it as a general GROUP and COOKIE attribute that should be ava=
+ilable as part of the SAMPLE being taken/provided by the Datapath impleme=
+ntation.
+
+Not sure what we should call PSAMPLE, but some suggestions are;
+
+  OVS_SAMPLE_ATTR_OFFLOAD/DESTINATION/ENDPOINT/COLLECTOR/TARGET_COOKIE
+
+>>>   	__OVS_SAMPLE_ATTR_MAX,
+>>>
+>>>   #ifdef __KERNEL__
+>>> @@ -665,13 +678,27 @@ enum ovs_sample_attr {
+>>>   #define OVS_SAMPLE_ATTR_MAX (__OVS_SAMPLE_ATTR_MAX - 1)
+>>>
+>>>   #ifdef __KERNEL__
+>>> +
+>>> +/* Definition for flags in struct sample_arg. */
+>>> +enum {
+>>> +	/* When set, actions in sample will not change the flows. */
+>>> +	OVS_SAMPLE_ARG_FLAG_EXEC =3D 1 << 0,
+>>> +	/* When set, the packet will be sent to psample. */
+>>> +	OVS_SAMPLE_ARG_FLAG_PSAMPLE =3D 1 << 1,
+>>> +};
+>>> +
+>>>   struct sample_arg {
+>>> -	bool exec;                   /* When true, actions in sample will n=
+ot
+>>> -				      * change flow keys. False otherwise.
+>>> -				      */
+>>> -	u32  probability;            /* Same value as
+>>> -				      * 'OVS_SAMPLE_ATTR_PROBABILITY'.
+>>> -				      */
+>>
+>>
+>> Not sure if you can actually do this, you are changing a structure tha=
+t is part of the UAPI. This change breaks backwards compatibility.
+>>
+>
+> Hmmm... this the internal argument structure protected by #ifdef __KERN=
+EL__. It is used in several actions to optimize the internal action handl=
+ing (i.e: using a compact struct instead of a list of netlink attributes)=
+=2E I guess the reason for having it in this file is because the attribut=
+e enum is being reused, but I wouldn't think of this struct as part of th=
+e uAPI.
+>
+> If the (#ifdef __KERNEL__) does not exclude this struct from the uAPI I=
+ think we should move it (all of them actually) to some internal file.
+
+You are right, I missed the =E2=80=98#ifdef __KERNEL__=E2=80=99 kernel.
+
+>>
+>>> +	u16 flags;		/* Flags that modify the behavior of the
+>>> +				 * action. See SAMPLE_ARG_FLAG_*.
+>>> +				 */
+>>> +	u32  probability;       /* Same value as
+>>> +				 * 'OVS_SAMPLE_ATTR_PROBABILITY'.
+>>> +				 */
+>>> +	u32  group_id;		/* Same value as
+>>> +				 * 'OVS_SAMPLE_ATTR_PSAMPLE_GROUP'.
+>>> +				 */
+>>> +	u8  cookie_len;		/* Length of psample cookie. */
+>>> +	char cookie[OVS_PSAMPLE_COOKIE_MAX_SIZE]; /* psample cookie data. *=
+/
+>>
+>> Would it make sense for the cookie also to be u8?
+>>
+>
+> Yes, probably.
+>
+>>>   };
+>>>   #endif
+>>>
+>>> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+>>> index 6fcd7e2ca81f..eb3166986fd2 100644
+>>> --- a/net/openvswitch/actions.c
+>>> +++ b/net/openvswitch/actions.c
+>>> @@ -24,6 +24,7 @@
+>>>   #include <net/checksum.h>
+>>>   #include <net/dsfield.h>
+>>>   #include <net/mpls.h>
+>>> +#include <net/psample.h>
+>>>   #include <net/sctp/checksum.h>
+>>>
+>>>   #include "datapath.h"
+>>> @@ -1025,6 +1026,34 @@ static int dec_ttl_exception_handler(struct da=
+tapath *dp, struct sk_buff *skb,
+>>>   	return 0;
+>>>   }
+>>>
+>>> +static int ovs_psample_packet(struct datapath *dp, struct sw_flow_ke=
+y *key,
+>>> +			      const struct sample_arg *arg,
+>>> +			      struct sk_buff *skb)
+>>> +{
+>>> +	struct psample_group psample_group =3D {};
+>>> +	struct psample_metadata md =3D {};
+>>> +	struct vport *input_vport;
+>>> +	u32 rate;
+>>> +
+>>> +	psample_group.group_num =3D arg->group_id;
+>>> +	psample_group.net =3D ovs_dp_get_net(dp);
+>>> +
+>>> +	input_vport =3D ovs_vport_rcu(dp, key->phy.in_port);
+>>> +	if (!input_vport)
+>>> +		input_vport =3D ovs_vport_rcu(dp, OVSP_LOCAL);
+>>> +
+>>> +	md.in_ifindex =3D input_vport->dev->ifindex;
+>>> +	md.user_cookie =3D arg->cookie_len ? &arg->cookie[0] : NULL;
+>>> +	md.user_cookie_len =3D arg->cookie_len;
+>>> +	md.trunc_size =3D skb->len;
+>>> +
+>>> +	rate =3D arg->probability ? U32_MAX / arg->probability : 0;
+>>> +
+>>> +	psample_sample_packet(&psample_group, skb, rate, &md);
+>>
+>> Does this mean now the ovs module, now is dependent on the presence of=
+ psample? I think we should only support sampling to psample if the modul=
+e exists, else we should return an error. There might be distributions no=
+t including psample by default.
+>
+> Agree. I'll add some compile-time checks the same way we do with nf_nat=
+=2E
+>
+>>
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>>   /* When 'last' is true, sample() should always consume the 'skb'.
+>>>    * Otherwise, sample() should keep 'skb' intact regardless what
+>>>    * actions are executed within sample().
+>>> @@ -1033,11 +1062,12 @@ static int sample(struct datapath *dp, struct=
+ sk_buff *skb,
+>>>   		  struct sw_flow_key *key, const struct nlattr *attr,
+>>>   		  bool last)
+>>>   {
+>>> -	struct nlattr *actions;
+>>> +	const struct sample_arg *arg;
+>>>   	struct nlattr *sample_arg;
+>>>   	int rem =3D nla_len(attr);
+>>> -	const struct sample_arg *arg;
+>>> +	struct nlattr *actions;
+>>>   	bool clone_flow_key;
+>>> +	int ret;
+>>>
+>>>   	/* The first action is always 'OVS_SAMPLE_ATTR_ARG'. */
+>>>   	sample_arg =3D nla_data(attr);
+>>> @@ -1051,9 +1081,20 @@ static int sample(struct datapath *dp, struct =
+sk_buff *skb,
+>>>   		return 0;
+>>>   	}
+>>>
+>>> -	clone_flow_key =3D !arg->exec;
+>>> -	return clone_execute(dp, skb, key, 0, actions, rem, last,
+>>> -			     clone_flow_key);
+>>> +	if (arg->flags & OVS_SAMPLE_ARG_FLAG_PSAMPLE) {
+>>> +		ret =3D ovs_psample_packet(dp, key, arg, skb);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>> +
+>>> +	if (nla_ok(actions, rem)) {
+>>> +		clone_flow_key =3D !(arg->flags & OVS_SAMPLE_ARG_FLAG_EXEC);
+>>> +		ret =3D clone_execute(dp, skb, key, 0, actions, rem, last,
+>>> +				    clone_flow_key);
+>>> +	} else if (last) {
+>>> +		ovs_kfree_skb_reason(skb, OVS_DROP_LAST_ACTION);
+>>> +	}
+>>> +	return ret;
+>>>   }
+>>>
+>>>   /* When 'last' is true, clone() should always consume the 'skb'.
+>>> diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_ne=
+tlink.c
+>>> index f224d9bcea5e..1a348d3905fc 100644
+>>> --- a/net/openvswitch/flow_netlink.c
+>>> +++ b/net/openvswitch/flow_netlink.c
+>>> @@ -2561,6 +2561,9 @@ static int __ovs_nla_copy_actions(struct net *n=
+et, const struct nlattr *attr,
+>>>   				  u32 mpls_label_count, bool log,
+>>>   				  u32 depth);
+>>>
+>>> +static int copy_action(const struct nlattr *from,
+>>> +		       struct sw_flow_actions **sfa, bool log);
+>>> +
+>>>   static int validate_and_copy_sample(struct net *net, const struct n=
+lattr *attr,
+>>>   				    const struct sw_flow_key *key,
+>>>   				    struct sw_flow_actions **sfa,
+>>> @@ -2569,10 +2572,10 @@ static int validate_and_copy_sample(struct ne=
+t *net, const struct nlattr *attr,
+>>>   				    u32 depth)
+>>>   {
+>>>   	const struct nlattr *attrs[OVS_SAMPLE_ATTR_MAX + 1];
+>>> -	const struct nlattr *probability, *actions;
+>>> +	const struct nlattr *probability, *actions, *group, *cookie;
+>>> +	struct sample_arg arg =3D {};
+>>>   	const struct nlattr *a;
+>>>   	int rem, start, err;
+>>> -	struct sample_arg arg;
+>>>
+>>>   	memset(attrs, 0, sizeof(attrs));
+>>>   	nla_for_each_nested(a, attr, rem) {
+>>> @@ -2589,7 +2592,19 @@ static int validate_and_copy_sample(struct net=
+ *net, const struct nlattr *attr,
+>>>   		return -EINVAL;
+>>>
+>>>   	actions =3D attrs[OVS_SAMPLE_ATTR_ACTIONS];
+>>> -	if (!actions || (nla_len(actions) && nla_len(actions) < NLA_HDRLEN)=
+)
+>>> +	if (actions && (!nla_len(actions) || nla_len(actions) < NLA_HDRLEN)=
+)
+>>> +		return -EINVAL;
+>>> +
+>>> +	group =3D attrs[OVS_SAMPLE_ATTR_PSAMPLE_GROUP];
+>>> +	if (group && nla_len(group) !=3D sizeof(u32))
+>>> +		return -EINVAL;
+>>> +
+>>> +	cookie =3D attrs[OVS_SAMPLE_ATTR_PSAMPLE_COOKIE];
+>>> +	if (cookie &&
+>>> +	    (!group || nla_len(cookie) > OVS_PSAMPLE_COOKIE_MAX_SIZE))
+>>> +		return -EINVAL;
+>>> +
+>>> +	if (!group && !actions)
+>>>   		return -EINVAL;
+>>>
+>>>   	/* validation done, copy sample action. */
+>>> @@ -2608,7 +2623,19 @@ static int validate_and_copy_sample(struct net=
+ *net, const struct nlattr *attr,
+>>>   	 * If the sample is the last action, it can always be excuted
+>>>   	 * rather than deferred.
+>>>   	 */
+>>> -	arg.exec =3D last || !actions_may_change_flow(actions);
+>>> +	if (actions && (last || !actions_may_change_flow(actions)))
+>>> +		arg.flags |=3D OVS_SAMPLE_ARG_FLAG_EXEC;
+>>> +
+>>> +	if (group) {
+>>> +		arg.flags |=3D OVS_SAMPLE_ARG_FLAG_PSAMPLE;
+>>> +		arg.group_id =3D nla_get_u32(group);
+>>> +	}
+>>> +
+>>> +	if (cookie) {
+>>> +		memcpy(&arg.cookie[0], nla_data(cookie), nla_len(cookie));
+>>> +		arg.cookie_len =3D nla_len(cookie);
+>>> +	}
+>>> +
+>>>   	arg.probability =3D nla_get_u32(probability);
+>>>
+>>>   	err =3D ovs_nla_add_action(sfa, OVS_SAMPLE_ATTR_ARG, &arg, sizeof(=
+arg),
+>>> @@ -2616,12 +2643,13 @@ static int validate_and_copy_sample(struct ne=
+t *net, const struct nlattr *attr,
+>>>   	if (err)
+>>>   		return err;
+>>>
+>>> -	err =3D __ovs_nla_copy_actions(net, actions, key, sfa,
+>>> -				     eth_type, vlan_tci, mpls_label_count, log,
+>>> -				     depth + 1);
+>>> -
+>>> -	if (err)
+>>> -		return err;
+>>> +	if (actions) {
+>>> +		err =3D __ovs_nla_copy_actions(net, actions, key, sfa,
+>>> +					     eth_type, vlan_tci,
+>>> +					     mpls_label_count, log, depth + 1);
+>>> +		if (err)
+>>> +			return err;
+>>> +	}
+>>>
+>>>   	add_nested_action_end(*sfa, start);
+>>>
+>>> @@ -3553,20 +3581,38 @@ static int sample_action_to_attr(const struct=
+ nlattr *attr,
+>>>   		goto out;
+>>>   	}
+>>>
+>>> -	ac_start =3D nla_nest_start_noflag(skb, OVS_SAMPLE_ATTR_ACTIONS);
+>>> -	if (!ac_start) {
+>>> -		err =3D -EMSGSIZE;
+>>> -		goto out;
+>>> +	if (arg->flags & OVS_SAMPLE_ARG_FLAG_PSAMPLE) {
+>>> +		if (nla_put_u32(skb, OVS_SAMPLE_ATTR_PSAMPLE_GROUP,
+>>> +				arg->group_id)) {
+>>> +			err =3D -EMSGSIZE;
+>>> +			goto out;
+>>> +		}
+>>> +
+>>> +		if (arg->cookie_len &&
+>>> +		    nla_put(skb, OVS_SAMPLE_ATTR_PSAMPLE_COOKIE,
+>>> +			    arg->cookie_len, &arg->cookie[0])) {
+>>> +			err =3D -EMSGSIZE;
+>>> +			goto out;
+>>> +		}
+>>>   	}
+>>>
+>>> -	err =3D ovs_nla_put_actions(actions, rem, skb);
+>>> +	if (nla_ok(actions, rem)) {
+>>> +		ac_start =3D nla_nest_start_noflag(skb, OVS_SAMPLE_ATTR_ACTIONS);
+>>> +		if (!ac_start) {
+>>> +			err =3D -EMSGSIZE;
+>>> +			goto out;
+>>> +		}
+>>> +		err =3D ovs_nla_put_actions(actions, rem, skb);
+>>> +	}
+>>>
+>>>   out:
+>>>   	if (err) {
+>>> -		nla_nest_cancel(skb, ac_start);
+>>> +		if (ac_start)
+>>> +			nla_nest_cancel(skb, ac_start);
+>>>   		nla_nest_cancel(skb, start);
+>>>   	} else {
+>>> -		nla_nest_end(skb, ac_start);
+>>> +		if (ac_start)
+>>> +			nla_nest_end(skb, ac_start);
+>>>   		nla_nest_end(skb, start);
+>>>   	}
+>>>
+>>> -- =
+
+>>> 2.44.0
+>>
 
 
