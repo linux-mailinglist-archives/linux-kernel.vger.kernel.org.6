@@ -1,200 +1,237 @@
-Return-Path: <linux-kernel+bounces-172946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612808BF92D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D137B8BF92F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A7D281B11
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885A3281B2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1D55381E;
-	Wed,  8 May 2024 09:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F07B73176;
+	Wed,  8 May 2024 09:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="YEGDdr6n"
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8Hshsn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F65535D5
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2D971B24;
+	Wed,  8 May 2024 09:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715158879; cv=none; b=fARRBEFfJ+hlFvqWV5XUde7UcuN2yppXSiL0yAY6owJrClBX4mPjrOxsGx3FyqVSt6ChxYCJyPmV+7/HS3ZJVjDn42sCUijOPF6kwcKm6FzFPIk+iNGalJzcV40AxNkUpuWeeixgnBe52/Ftlo7yrvhwQ8gbpwcVpN9DvELPFh0=
+	t=1715158899; cv=none; b=eVrFA4vbdTeDqFuQ7jubJ88FnrLwzcNFN3ZAqvx5zOboQcDIHh4bxmqxCVW9HSQ3ght6et8H1zT4X4AaZwS3dCykiQsSFalOpzqRrOtpc4ZjMa3i1zf7VY+CvCnGafZP3HQ9W5OYZunqpQtTrqYAANCc+Ji0WUBw3/DRKeA7KP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715158879; c=relaxed/simple;
-	bh=JkP6+eiZhw46lunKytgdnT9Oh1wOlD5bnLpNuf/BUHs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FPE9xR5YKj99sTbGwpM16eT64vQbmw6RoAU0vu9qf2B9F8bwqVRU/KN6DuqVCh9mf9Io6wTHqsvH6j7bddOi+KcMhbr+0LoknWGk8/lyg0wWbRLaWIwElR1+pwUOrb0lEnNBKIwCNap+s706vsmVKTTV3r23aCx0xu+EHlQ3Cgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=YEGDdr6n; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tjH7M6aUma+Zios2O7UafiQx4LAtq5MpcVX+A3JHUj8=; b=YEGDdr6nkoPywUVGaCZZatD78P
-	hBYnQckFCrYii4KQz/nzJZDrcuBH0vlv6FolPa2yz1roRWV3/mQ4tW6Ba/lwD9E36oitEb0QKzBQR
-	oKt4ZgJWDiXD7LLzxxHYkT6R1S9sS8aAob1Vq4NnuGl4jvLMuaUhsMAhv7kn5yPh2vMQsXL+vBE7b
-	iBvZjvFNUrhh+5tvymSVVwB+hnW6l3mQ2+TT0tUanBsLAXUXRYvk8i+b+eR1wpVKEQCjZaJqUzfB6
-	Fj3zlqyQZ1Uc331KCv6pHZGl0oIZB/qrdLUz2j90t7/4LeznnfrDPQMuHXfneL0Rdfl91bTjUv1to
-	BPLul6Iw==;
-Received: from [63.135.74.212] (helo=[192.168.1.184])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1s4dAQ-008QRp-Qs; Wed, 08 May 2024 10:00:50 +0100
-Message-ID: <b3ff587a-61f5-4abf-b71f-7ad48ff66969@codethink.co.uk>
-Date: Wed, 8 May 2024 10:00:48 +0100
+	s=arc-20240116; t=1715158899; c=relaxed/simple;
+	bh=2+NkL7/xFV8fjHBWJGNNByOB3Pm5bJPK0iJ7GOonRZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LT8P7e0NDpzqVhHCgjjudWFKmOdMtyjtqpOWrZs8ViK6+rgmAK+vumkkfP2iL/mwPZ+TFDoOXOtvi0H+4HAB/AlqoCSjSwoKMEa7BerQ7Rb1GSJAWdo2oePxvINWRQFB56XquPw7FNtG0v7dyijvdQHhTUEBZK0Ay3Wlp7vX0bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8Hshsn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D552BC113CC;
+	Wed,  8 May 2024 09:01:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715158898;
+	bh=2+NkL7/xFV8fjHBWJGNNByOB3Pm5bJPK0iJ7GOonRZg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=d8Hshsn0aOE1yUfO+V6rDvKuLWxBi6AYvqq8FQRYmIr6SI7O5akU2NYjNk4xO7wbV
+	 sOjXuxToraQJlGib4S8zKhQq4YikRw1OU9KFY8GlnogaLxLX2SPNUh7dBlL7ocWqFL
+	 RGwJLB6TkUcIZ1Ol0s2ZCVbTZhQ8dXzvSDdRuqIwxr4HOlZQ5q8dL8fV+vqGh1laO9
+	 2TLBFwuacXIB18x9x6B7kNw6+TmtVwRLaSKyCA00QESBuf86wEumI6fy5ugFdgmSQp
+	 8mWHhdiheblyfykQxZc4M0eXYZylXl918RYbIK3R3XDPb+Rhh8KNlUhHZOpzcGnmbF
+	 FxsgjbG9gZctw==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so6866651e87.1;
+        Wed, 08 May 2024 02:01:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV/TcVSFtbHaT8f+bJm2ebVt8q3hu0tP8yuKfxFcUcph4eaPcn0z+rP6QaPCjO7C7ZjrkV0G1GTrhw4VSUe5H3kY+OwGu1VbatqLM3a
+X-Gm-Message-State: AOJu0YwebXoMmi32MgZ02vFyMvggknCPOtkBlvbdv2Pqyzo6zGD6zCOh
+	dG/dRzNL6Xdy7ECHhOoXeRUTLDykTp1nnyf51zZQabBrqrBAtQ1gCZ+OKThTKi8jRvpvuuF83zj
+	Rl50c2n6BZCi9pbemPBJvTBmEOyI=
+X-Google-Smtp-Source: AGHT+IF5DbO+GqCsyJ09mGRZTux66fFOe1L/vNw5oAAYvZGX3dQ4vaVNGvk1IT309mpyVP8oqGarFJoMgvjohgcR8rU=
+X-Received: by 2002:a05:6512:202c:b0:51f:3e0c:ace3 with SMTP id
+ 2adb3069b0e04-5217c5670cdmr1520132e87.16.1715158897192; Wed, 08 May 2024
+ 02:01:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] riscv: Add PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT
- Kconfig option
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor.dooley@microchip.com>, Song Liu <song@kernel.org>,
- Xi Wang <xi.wang@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
- <cleger@rivosinc.com>, Jessica Clarke <jrtc27@jrtc27.com>,
- Andy Chiu <andy.chiu@sifive.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
- <20240507-compile_kernel_with_extensions-v2-3-722c21c328c6@rivosinc.com>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <20240507-compile_kernel_with_extensions-v2-3-722c21c328c6@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: ben.dooks@codethink.co.uk
+References: <20240508071734.199462-1-ebiggers@kernel.org>
+In-Reply-To: <20240508071734.199462-1-ebiggers@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 8 May 2024 11:01:25 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHnBA5qeyHa-b6w+cw5-iomA=3drk7yGGzp-gc_-4uKig@mail.gmail.com>
+Message-ID: <CAMj1kXHnBA5qeyHa-b6w+cw5-iomA=3drk7yGGzp-gc_-4uKig@mail.gmail.com>
+Subject: Re: [PATCH] crypto: x86/aes-gcm - add VAES and AVX512 / AVX10
+ optimized AES-GCM
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/05/2024 02:36, Charlie Jenkins wrote:
-> The existing "RISCV_ISA_SVNAPOT" option is repurposed to be used to by
-> kernel code to determine if either
-> PLATFORM_MAY_SUPPORT_RISCV_ISA_SVNAPOT or
-> PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT has been set.
-> 
-> PLATFORM_MAY_SUPPORT_RISCV_ISA_SVNAPOT will check if the hardware
-> supports Svnapot before using it, while
-> PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT will assume that the hardware
-> supports Svnapot.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+On Wed, 8 May 2024 at 09:22, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add implementations of AES-GCM for x86_64 CPUs that support VAES (vector
+> AES), VPCLMULQDQ (vector carryless multiplication), and either AVX512 or
+> AVX10.  There are two implementations, sharing most source code: one
+> using 256-bit vectors and one using 512-bit vectors.
+>
+> I wrote the new AES-GCM assembly code from scratch, focusing on
+> performance, code size (both source and binary), and documenting the
+> source.  The new assembly file aes-gcm-avx10-x86_64.S is about 1200
+> lines including extensive comments, and it generates less than 8 KB of
+> binary code.  This includes both 256-bit and 512-bit vector code; note
+> that only one is used at runtime.  The main loop does 4 vectors at a
+> time, with the AES and GHASH instructions interleaved.  Any remainder is
+> handled using a simple 1 vector at a time loop, with masking.
+>
+
+This looks very good! The code is well structured and due to the
+comments, it is reasonably easy to follow for someone familiar with
+the underlying math.
+
+I also strongly prefer a parameterized implementation that assembles
+to a minimal object code size over the other proposed implementations,
+where there may be a slight marginal performance gain due to the use
+of different code paths for different input sizes, but this tends to
+be beneficial mostly for benchmarks and not for real-world use cases.
+
+..
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+
+Tested-by: Ard Biesheuvel <ardb@kernel.org> # Tiger Lake
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+
+Some nits below.
+
+
 > ---
->   arch/riscv/Kconfig               | 19 -----------------
->   arch/riscv/Kconfig.isa           | 44 ++++++++++++++++++++++++++++++++++++++++
->   arch/riscv/include/asm/pgtable.h |  3 ++-
->   3 files changed, 46 insertions(+), 20 deletions(-)
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index c2e9eded0a7d..3c1960e8cd7c 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -484,25 +484,6 @@ config RISCV_ALTERNATIVE_EARLY
->   	help
->   	  Allows early patching of the kernel for special errata
->   
-> -config RISCV_ISA_SVNAPOT
-> -	bool "Svnapot extension support for supervisor mode NAPOT pages"
-> -	depends on 64BIT && MMU
-> -	depends on RISCV_ALTERNATIVE
-> -	default y
-> -	help
-> -	  Add support for the Svnapot ISA-extension in the kernel when it
-> -	  is detected at boot.
-> -
-> -	  The Svnapot extension is used to mark contiguous PTEs as a range
-> -	  of contiguous virtual-to-physical translations for a naturally
-> -	  aligned power-of-2 (NAPOT) granularity larger than the base 4KB page
-> -	  size. When HUGETLBFS is also selected this option unconditionally
-> -	  allocates some memory for each NAPOT page size supported by the kernel.
-> -	  When optimizing for low memory consumption and for platforms without
-> -	  the Svnapot extension, it may be better to say N here.
-> -
-> -	  If you don't know what to do here, say Y.
-> -
->   config RISCV_ISA_SVPBMT
->   	bool "Svpbmt extension support for supervisor mode page-based memory types"
->   	depends on 64BIT && MMU
-> diff --git a/arch/riscv/Kconfig.isa b/arch/riscv/Kconfig.isa
-> index 0663c98b5b17..37585bcd763e 100644
-> --- a/arch/riscv/Kconfig.isa
-> +++ b/arch/riscv/Kconfig.isa
-> @@ -124,3 +124,47 @@ config RISCV_ISA_V_PREEMPTIVE
->   	  This config allows kernel to run SIMD without explicitly disable
->   	  preemption. Enabling this config will result in higher memory
->   	  consumption due to the allocation of per-task's kernel Vector context.
+>  arch/x86/crypto/Kconfig                |    1 +
+>  arch/x86/crypto/Makefile               |    3 +
+>  arch/x86/crypto/aes-gcm-avx10-x86_64.S | 1201 ++++++++++++++++++++++++
+>  arch/x86/crypto/aesni-intel_glue.c     |  515 +++++++++-
+>  4 files changed, 1706 insertions(+), 14 deletions(-)
+>  create mode 100644 arch/x86/crypto/aes-gcm-avx10-x86_64.S
+>
+..
+> diff --git a/arch/x86/crypto/aesni-intel_glue.c b/arch/x86/crypto/aesni-intel_glue.c
+> index 5b25d2a58aeb..e4dec49023af 100644
+> --- a/arch/x86/crypto/aesni-intel_glue.c
+> +++ b/arch/x86/crypto/aesni-intel_glue.c
+> @@ -1212,17 +1212,481 @@ static struct simd_skcipher_alg *aes_xts_simdalg_##suffix
+>  DEFINE_XTS_ALG(aesni_avx, "xts-aes-aesni-avx", 500);
+>  #if defined(CONFIG_AS_VAES) && defined(CONFIG_AS_VPCLMULQDQ)
+>  DEFINE_XTS_ALG(vaes_avx2, "xts-aes-vaes-avx2", 600);
+>  DEFINE_XTS_ALG(vaes_avx10_256, "xts-aes-vaes-avx10_256", 700);
+>  DEFINE_XTS_ALG(vaes_avx10_512, "xts-aes-vaes-avx10_512", 800);
+> -#endif
 > +
-> +config RISCV_ISA_SVNAPOT
-> +	bool
+> +#define NUM_KEY_POWERS         16 /* excludes zero padding */
+> +#define FULL_NUM_KEY_POWERS    (NUM_KEY_POWERS + 3) /* includes zero padding */
 > +
-> +choice
-> +	prompt "Svnapot extension support for supervisor mode NAPOT pages"
-> +	default PLATFORM_MAY_SUPPORT_RISCV_ISA_SVNAPOT
-> +	help
-> +	  This selects the level of support for Svnapot in the Linux Kernel.
-> +
-> +	  The Svnapot extension is used to mark contiguous PTEs as a range
-> +	  of contiguous virtual-to-physical translations for a naturally
-> +	  aligned power-of-2 (NAPOT) granularity larger than the base 4KB page
-> +	  size. When HUGETLBFS is also selected this option unconditionally
-> +	  allocates some memory for each NAPOT page size supported by the kernel.
-> +	  When optimizing for low memory consumption and for platforms without
-> +	  the Svnapot extension, it may be better to prohibit Svnapot.
-> +
-> +config PROHIBIT_RISCV_ISA_SVNAPOT
-> +	bool "Prohibit Svnapot extension"
-> +	help
-> +	  Regardless of if the platform supports Svnapot, prohibit the kernel
-> +	  from using Svnapot.
-> +
-> +config PLATFORM_MAY_SUPPORT_RISCV_ISA_SVNAPOT
-> +	bool "Allow Svnapot extension if supported"
-> +	depends on 64BIT && MMU
-> +	depends on RISCV_ALTERNATIVE
-> +	select RISCV_ISA_SVNAPOT
-> +	help
-> +	  Add support for the Svnapot ISA-extension in the kernel when it
-> +	  is detected at boot.
-> +
-> +config PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT
-> +	bool "Emit Svnapot mappings when building Linux"
-> +	depends on 64BIT && MMU
-> +	depends on NONPORTABLE
-> +	select RISCV_ISA_SVNAPOT
-> +	help
-> +	  Compile a kernel that assumes that the platform supports Svnapot.
-> +	  This option produces a kernel that will not run on systems that do
-> +	  not support Svnapot.
-> +
-> +endchoice
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index 6afd6bb4882e..432be9691b78 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -289,7 +289,8 @@ static inline pte_t pud_pte(pud_t pud)
->   
->   static __always_inline bool has_svnapot(void)
->   {
-> -	return riscv_has_extension_likely(RISCV_ISA_EXT_SVNAPOT);
-> +	return IS_ENABLED(CONFIG_PLATFORM_SUPPORTS_RISCV_ISA_SVNAPOT) ||
-> +	       riscv_has_extension_likely(RISCV_ISA_EXT_SVNAPOT);
+> +struct aes_gcm_key_avx10 {
+> +       struct crypto_aes_ctx aes_key AESNI_ALIGN_ATTR;
+> +       u32 rfc4106_nonce AESNI_ALIGN_ATTR;
 
-could you add the IS_ENABLED(*) check into riscv_has_extension_likely
-and other such functions?
+Is the alignment needed here?
 
+> +       u8 ghash_key_powers[FULL_NUM_KEY_POWERS][16] AESNI_ALIGN_ATTR;
+> +};
+> +
+> +asmlinkage void
+> +aes_gcm_precompute_vaes_avx10_256(struct aes_gcm_key_avx10 *key);
+> +asmlinkage void
+> +aes_gcm_precompute_vaes_avx10_512(struct aes_gcm_key_avx10 *key);
+> +
+> +asmlinkage void
+> +aes_gcm_aad_update_vaes_avx10(const struct aes_gcm_key_avx10 *key,
+> +                             u8 ghash_acc[16], const u8 *aad, int aadlen);
+> +
+> +asmlinkage void
+> +aes_gcm_enc_update_vaes_avx10_256(const struct aes_gcm_key_avx10 *key,
+> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
+> +                                 const u8 *src, u8 *dst, int datalen);
+> +asmlinkage void
+> +aes_gcm_enc_update_vaes_avx10_512(const struct aes_gcm_key_avx10 *key,
+> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
+> +                                 const u8 *src, u8 *dst, int datalen);
+> +
+> +asmlinkage void
+> +aes_gcm_dec_update_vaes_avx10_256(const struct aes_gcm_key_avx10 *key,
+> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
+> +                                 const u8 *src, u8 *dst, int datalen);
+> +asmlinkage void
+> +aes_gcm_dec_update_vaes_avx10_512(const struct aes_gcm_key_avx10 *key,
+> +                                 const u32 le_ctr[4], u8 ghash_acc[16],
+> +                                 const u8 *src, u8 *dst, int datalen);
+> +
+> +asmlinkage void
+> +aes_gcm_enc_final_vaes_avx10(const struct aes_gcm_key_avx10 *key,
+> +                            const u32 le_ctr[4], const u8 ghash_acc[16],
+> +                            u64 total_aadlen, u64 total_datalen,
+> +                            u8 *tag, int taglen);
+> +asmlinkage bool
+> +aes_gcm_dec_final_vaes_avx10(const struct aes_gcm_key_avx10 *key,
+> +                            const u32 le_ctr[4], const u8 ghash_acc[16],
+> +                            u64 total_aadlen, u64 total_datalen,
+> +                            const u8 *tag, int taglen);
+> +
+> +static int gcm_setkey_vaes_avx10(struct crypto_aead *tfm, const u8 *raw_key,
+> +                                unsigned int keylen, bool vl256)
+> +{
+> +       struct aes_gcm_key_avx10 *key = aes_align_addr(crypto_aead_ctx(tfm));
+> +       int err;
+> +
+> +       /* The assembly code assumes the following offsets. */
+> +       BUILD_BUG_ON(offsetof(typeof(*key), aes_key.key_enc) != 0);
+> +       BUILD_BUG_ON(offsetof(typeof(*key), aes_key.key_length) != 480);
+> +       BUILD_BUG_ON(offsetof(typeof(*key), ghash_key_powers) != 512);
+> +
+> +       if (likely(crypto_simd_usable())) {
 
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
+Is it really necessary to have 3 different code paths here? If so,
+could you add a comment why?
 
-https://www.codethink.co.uk/privacy.html
-
+> +               err = aes_check_keylen(keylen);
+> +               if (err)
+> +                       return err;
+> +               kernel_fpu_begin();
+> +               aesni_set_key(&key->aes_key, raw_key, keylen);
+> +               if (vl256)
+> +                       aes_gcm_precompute_vaes_avx10_256(key);
+> +               else
+> +                       aes_gcm_precompute_vaes_avx10_512(key);
+> +               kernel_fpu_end();
+> +       } else {
+> +               static const u8 x_to_the_minus1[16] __aligned(__alignof__(be128)) = {
+> +                       [0] = 0xc2, [15] = 1
+> +               };
+> +               be128 h1 = {};
+> +               be128 h;
+> +               int i;
+> +
+> +               err = aes_expandkey(&key->aes_key, raw_key, keylen);
+> +               if (err)
+> +                       return err;
+> +               /*
+> +                * Emulate the aes_gcm_precompute assembly function in portable
+> +                * C code: Encrypt the all-zeroes block to get the hash key H^1,
+> +                * zeroize the padding at the end of ghash_key_powers, and store
+> +                * H^1 * x^-1 through H^NUM_KEY_POWERS * x^-1, byte-reversed.
+> +                */
+> +               aes_encrypt(&key->aes_key, (u8 *)&h1, (u8 *)&h1);
+> +               memset(key->ghash_key_powers, 0, sizeof(key->ghash_key_powers));
+> +               h = h1;
+> +               gf128mul_lle(&h, (const be128 *)x_to_the_minus1);
+> +               for (i = NUM_KEY_POWERS - 1; i >= 0; i--) {
+> +                       put_unaligned_be64(h.a, &key->ghash_key_powers[i][8]);
+> +                       put_unaligned_be64(h.b, &key->ghash_key_powers[i][0]);
+> +                       gf128mul_lle(&h, &h1);
+> +               }
+> +       }
+> +       return 0;
+> +}
+> +
 
