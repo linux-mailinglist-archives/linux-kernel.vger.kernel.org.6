@@ -1,239 +1,219 @@
-Return-Path: <linux-kernel+bounces-173202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7685F8BFCED
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:10:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CD88BFCF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDAB2852BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64BE1F23B81
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4615683A0D;
-	Wed,  8 May 2024 12:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G4aQ5Lwx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F1B83CB7;
+	Wed,  8 May 2024 12:11:32 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76A62BB03
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7861A82D90;
+	Wed,  8 May 2024 12:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170229; cv=none; b=q0oqHL4I/bsbjy6+j2NbhMeCX4/twT2Mpsg1CQhbBKL/4Uoz9C5/ptydvZENXH7uJxmpmhu3o6rJYB+OGktYFb78Z+IlaEFPxR03exmunMsAy27pd+/AYZLy8jV5eytaluM424CiX5Qp2hzI8yHJZngszJNpjvAMPmY6aIYl//w=
+	t=1715170291; cv=none; b=rpIZS379epGMRYDnxOrcs+5IXDOd+QjZi7Dg+OTDfIn5f5ot/QywmBVBheTfIuQ3FTNdxK7BTDDBbrG4uH6+vC/fGuc/8d+StaPk94IgnOfPFh7/x3vxT9kh/p48lis2+akTfUj9shBXaos7aOVvQEZ95WQ5eWyGeTGg5JXkx4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170229; c=relaxed/simple;
-	bh=QRoyAGtEqndP9Ig5sQWxMXolZQuXePz89Yb7WY36Cl8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eDUmucSD6KV6mRSf0MLoxCw6M09zrDGV1o8vi9/ypSeQAWudTgSlHsiB7pVSNt+TCgxTxHOC6kYi6m7Ys6xJzLfArj84eQ6pz6H32t4ccAICaCvPpz6uQ0Tr3jpjqm2kAyaAiIW5CwbsGpZo0ML7hpav0xdFoS1KKKrWq+XNkpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G4aQ5Lwx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715170226;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iMoEOX7eESTPC2f1Z6UDozwRk8yNCJqOG9OTu2wsUss=;
-	b=G4aQ5Lwxt8eY2OWXAKDfrpuMlw1sB0+ktFcGSXWSVa0G75kUr3gFWOLkxdXsefr6S/6g6l
-	QO7Ki7wbMNQ2c1+VqrE3HFC4PMW5mF7limWE+gRUxSMlz325Jo4EU0jI4xgSYjuouq1NZu
-	TvYfiWx0gQdA6RowdAGjYe24bJGl4EI=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-490-gmIBxFVQPr6UG7Yn-1FD8A-1; Wed, 08 May 2024 08:10:25 -0400
-X-MC-Unique: gmIBxFVQPr6UG7Yn-1FD8A-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-41bfb8c1ecaso16945825e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 05:10:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715170224; x=1715775024;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iMoEOX7eESTPC2f1Z6UDozwRk8yNCJqOG9OTu2wsUss=;
-        b=KkGZwFk6LfjYlgXG3vpDwYjforBqLrL28jLyqsN8igiLCZ8Jn1amLLj/ChQ6j7htCN
-         rDk+479cB1/rvfoJNAeWTx/2DkQojhZMbfgawctBX0wXE3M35VZbzgt27oUXxvw442d+
-         tWcKm+8D2+LQMZ12lFalhtQz6zdFUAcHSgdufYPfULOj/xl0/lBdo7tIYrcrg4rI5rZP
-         QNSke6kFejH+kD84ELui5XnZvoYMYpFzKN3Pn7DLTCS+El15GQdyEvZS3DxIsN0KbVb9
-         eQXK9Gb7qsWfARmOQKPOM+IoJOW/0efKOVZLmfihw8ZxdhhbYY1RrC9KFxdgXjGON19A
-         /OIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiVhCKyAUoh108Cl+3tM7QVN7j36CR2tqoCJgTH/iOyu3F3EU/ZGSnY0r+LONaDA83ILcfyt5ZKNltf3q3dTYQOnf76QVu4adMi9dJ
-X-Gm-Message-State: AOJu0Yy2lzrCQXyoEQeUihj8qgGb40Y0xwSghPoXxuX76msUnYXZafQS
-	xg7WQEWRnj6aY3WyL5E+tA/L0nQCNAARaIjXR+pYojJHyu5NYgqYGmQ9ckCXnXVsQvdd9AHexRZ
-	felA9ZPedokrqAq6KWmnRivrItlgr3pH8mK+larsnHisW4dAGc7mn7yQv5uBLwQ==
-X-Received: by 2002:a05:600c:3555:b0:41a:7ab1:fd98 with SMTP id 5b1f17b1804b1-41f71ebf886mr17461145e9.21.1715170224120;
-        Wed, 08 May 2024 05:10:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqKDmFFgNTP8wyQOgTOcgHtFItibcidHyi+Dd0HUA5oOlrTpbgFBzaOLMdoAvKbbhfHALnUQ==
-X-Received: by 2002:a05:600c:3555:b0:41a:7ab1:fd98 with SMTP id 5b1f17b1804b1-41f71ebf886mr17460975e9.21.1715170223675;
-        Wed, 08 May 2024 05:10:23 -0700 (PDT)
-Received: from [192.168.3.108] (p5b0c6bc3.dip0.t-ipconnect.de. [91.12.107.195])
-        by smtp.gmail.com with ESMTPSA id h12-20020a05600c314c00b0041be9cb540esm2099812wmo.18.2024.05.08.05.10.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 05:10:23 -0700 (PDT)
-Message-ID: <28f311ec-9b46-4f28-991c-ac74177acf32@redhat.com>
-Date: Wed, 8 May 2024 14:10:21 +0200
+	s=arc-20240116; t=1715170291; c=relaxed/simple;
+	bh=CvC4SaTrCKbShgiA1w33VZZILcCw+uE0dnFnAgjYmGM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=osLpBY/U/ja+syuOPxUKFJ4+z5tWTDwUaVI93+A6OsnaV2MTWMMDBaeDKY/Y0x1q3yYbCTfGvQ1tc+OS2vEDC3NdHD7DuNUGzMq25ALPv0WNAtZhMDs4E6+4uTgI14bUkxs4TSScXnOT38fVoIgGqGcOPuQ0dipVQztYWtCIEaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZDWQ05bHz6D9DJ;
+	Wed,  8 May 2024 20:10:58 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3E1D31402CB;
+	Wed,  8 May 2024 20:11:27 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 8 May
+ 2024 13:11:26 +0100
+Date: Wed, 8 May 2024 13:11:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Dongsheng Yang <dongsheng.yang@easystack.cn>
+CC: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+	Gregory Price <gregory.price@memverge.com>, <axboe@kernel.dk>,
+	<linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+Message-ID: <20240508131125.00003d2b@Huawei.com>
+In-Reply-To: <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
+	<66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+	<ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
+	<ZikhwAAIGFG0UU23@memverge.com>
+	<bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
+	<ZiuwyIVaKJq8aC6g@memverge.com>
+	<98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
+	<ZivS86BrfPHopkru@memverge.com>
+	<8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
+	<wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
+	<20240503105245.00003676@Huawei.com>
+	<5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] mm: shmem: add multi-size THP sysfs interface for
- anonymous shmem
-From: David Hildenbrand <david@redhat.com>
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <6b4afed1ef26dbd08ae9ec58449b329564dcef3e.1714978902.git.baolin.wang@linux.alibaba.com>
- <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
- <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
- <cb458b62-e27d-47d6-8efd-bacdb9da7530@redhat.com>
- <ff1908f8-0887-403b-8d2a-d83a17895523@redhat.com>
- <eb3aa3dc-42ee-475a-8b95-d27951c362a1@arm.com>
- <928c73de-76b0-40d6-a0c3-23d72270ac5c@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <928c73de-76b0-40d6-a0c3-23d72270ac5c@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 08.05.24 14:02, David Hildenbrand wrote:
-> On 08.05.24 11:02, Ryan Roberts wrote:
->> On 08/05/2024 08:12, David Hildenbrand wrote:
->>> On 08.05.24 09:08, David Hildenbrand wrote:
->>>> On 08.05.24 06:45, Baolin Wang wrote:
->>>>>
->>>>>
->>>>> On 2024/5/7 18:52, Ryan Roberts wrote:
->>>>>> On 06/05/2024 09:46, Baolin Wang wrote:
->>>>>>> To support the use of mTHP with anonymous shmem, add a new sysfs interface
->>>>>>> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
->>>>>>> directory for each mTHP to control whether shmem is enabled for that mTHP,
->>>>>>> with a value similar to the top level 'shmem_enabled', which can be set to:
->>>>>>> "always", "inherit (to inherit the top level setting)", "within_size",
->>>>>>> "advise",
->>>>>>> "never", "deny", "force". These values follow the same semantics as the top
->>>>>>> level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
->>>>>>> to 'always' to keep compatibility.
->>>>>>
->>>>>> We decided at [1] to not allow 'force' for non-PMD-sizes.
->>>>>>
->>>>>> [1]
->>>>>> https://lore.kernel.org/linux-mm/533f37e9-81bf-4fa2-9b72-12cdcb1edb3f@redhat.com/
->>>>>>
->>>>>> However, thinking about this a bit more, I wonder if the decision we made to
->>>>>> allow all hugepages-xxkB/enabled controls to take "inherit" was the wrong one.
->>>>>> Perhaps we should have only allowed the PMD-sized enable=inherit (this is just
->>>>>> for legacy back compat after all, I don't think there is any use case where
->>>>>> changing multiple mTHP size controls atomically is actually useful). Applying
->>>>>
->>>>> Agree. This is also our usage of 'inherit'.
->>>
->>> Missed that one: there might be use cases in the future once we would start
->>> defaulting to "inherit" for all knobs (a distro might default to that) and
->>> default-enable THP in the global knob. Then, it would be easy to disable any THP
->>> by disabling the global knob. (I think that's the future we're heading to, where
->>> we'd have an "auto" mode that can be set on the global toggle).
->>>
->>> But I am just making up use cases ;) I think it will be valuable and just doing
->>> it consistently now might be cleaner.
->>
->> I agree that consistency between enabled and shmem_enabled is top priority. And
->> yes, I had forgotten about the glorious "auto" future. So probably continuing
->> all sizes to select "inherit" is best.
->>
->> But for shmem_enabled, that means we need the following error checking:
->>
->>    - It is an error to set "force" for any size except PMD-size
->>
->>    - It is an error to set "force" for the global control if any size except PMD-
->>      size is set to "inherit"
->>
->>    - It is an error to set "inherit" for any size except PMD-size if the global
->>      control is set to "force".
->>
->> Certainly not too difficult to code and prove to be correct, but not the nicest
->> UX from the user's point of view when they start seeing errors.
->>
->> I think we previously said this would likely be temporary, and if/when tmpfs
->> gets mTHP support, we could simplify and allow all sizes to be set to "force".
->> But I wonder if tmpfs would ever need explicit mTHP control? Maybe it would be
->> more suited to the approach the page cache takes to transparently ramp up the
->> folio size as it faults more in. (Just saying there is a chance that this error
->> checking becomes permanent).
-> 
-> Note that with shmem you're inherently facing the same memory waste
-> issues etc as you would with anonymous memory. (sometimes even worse, if
-> you're running shmem that's configured to be unswappable!).
+On Wed, 8 May 2024 19:39:23 +0800
+Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
 
-Also noting that memory waste is not really a problem when a write to a 
-shmem file allocates a large folio that stays within boundaries of that 
-write; issues only pop up if you end up over-allocating, especially, 
-during page faults where you have not that much clue about what to do 
-(single address, no real range provided).
+> =E5=9C=A8 2024/5/3 =E6=98=9F=E6=9C=9F=E4=BA=94 =E4=B8=8B=E5=8D=88 5:52, J=
+onathan Cameron =E5=86=99=E9=81=93:
+> > On Sun, 28 Apr 2024 11:55:10 -0500
+> > John Groves <John@groves.net> wrote:
+> >  =20
+> >> On 24/04/28 01:47PM, Dongsheng Yang wrote: =20
+> >>>
+> >>>
+> >>> =E5=9C=A8 2024/4/27 =E6=98=9F=E6=9C=9F=E5=85=AD =E4=B8=8A=E5=8D=88 12=
+:14, Gregory Price =E5=86=99=E9=81=93: =20
+> >>>> On Fri, Apr 26, 2024 at 10:53:43PM +0800, Dongsheng Yang wrote: =20
+> >>>>>
+> >>>>>
+> >>>>> =E5=9C=A8 2024/4/26 =E6=98=9F=E6=9C=9F=E4=BA=94 =E4=B8=8B=E5=8D=88 =
+9:48, Gregory Price =E5=86=99=E9=81=93: =20
+> >>>>>>     =20
+> >>>>> =20
+>=20
+> ...
+> >>
+> >> Just to make things slightly gnarlier, the MESI cache coherency protoc=
+ol
+> >> allows a CPU to speculatively convert a line from exclusive to modifie=
+d,
+> >> meaning it's not clear as of now whether "occasional" clean write-backs
+> >> can be avoided. Meaning those read-only mappings may be more important
+> >> than one might think. (Clean write-backs basically make it
+> >> impossible for software to manage cache coherency.) =20
+> >=20
+> > My understanding is that clean write backs are an implementation specif=
+ic
+> > issue that came as a surprise to some CPU arch folk I spoke to, we will
+> > need some path for a host to say if they can ever do that.
+> >=20
+> > Given this definitely effects one CPU vendor, maybe solutions that
+> > rely on this not happening are not suitable for upstream.
+> >=20
+> > Maybe this market will be important enough for that CPU vendor to stop
+> > doing it but if they do it will take a while...
+> >=20
+> > Flushing in general is as CPU architecture problem where each of the
+> > architectures needs to be clear what they do / specify that their
+> > licensees do.
+> >=20
+> > I'm with Dan on encouraging all memory vendors to do hardware coherence=
+! =20
+>=20
+> Hi Gregory, John, Jonathan and Dan:
+> 	Thanx for your information, they help a lot, and sorry for the late repl=
+y.
+>=20
+> After some internal discussions, I think we can design it as follows:
+>=20
+> (1) If the hardware implements cache coherence, then the software layer=20
+> doesn't need to consider this issue, and can perform read and write=20
+> operations directly.
 
-There is the other issue that wasting large chunks of contiguous memory 
-on stuff that barely benefits from it. With memory that maybe never gets 
-evicted, there is no automatic "handing back" of that memory to the 
-system to be used by something else. With ordinary files, that's a bit 
-different. But I did not look closer into that issue yet, it's one of 
-the reasons MADV_HUGEPAGE was added IIRC.
+Agreed - this is one easier case.
 
--- 
-Cheers,
+>=20
+> (2) If the hardware doesn't implement cache coherence, we can consider a=
+=20
+> DMA-like approach, where we check architectural features to determine if=
+=20
+> cache coherence is supported. This could be similar to=20
+> `dev_is_dma_coherent`.
 
-David / dhildenb
+Ok. So this would combine host support checks with checking if the shared
+memory on the device is multi host cache coherent (it will be single host
+cache coherent which is what makes this messy)
+>=20
+> Additionally, if the architecture supports flushing and invalidating CPU=
+=20
+> caches (`CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE`,=20
+> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU`,=20
+> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL`),
+
+Those particular calls won't tell you much at all. They indicate that a flu=
+sh
+can happen as far as a common point for DMA engines in the system. No
+information on whether there are caches beyond that point.
+
+>=20
+> then we can handle cache coherence at the software layer.
+> (For the clean writeback issue, I think it may also require=20
+> clarification from the architecture, and how DMA handles the clean=20
+> writeback problem, which I haven't further checked.)
+
+I believe the relevant architecture only does IO coherent DMA so it is
+never a problem (unlike with multihost cache coherence).
+>=20
+> (3) If the hardware doesn't implement cache coherence and the cpu=20
+> doesn't support the required CPU cache operations, then we can run in=20
+> nocache mode.
+
+I suspect that gets you no where either.  Never believe an architecture
+that provides a flag that says not to cache something.  That just means
+you should not be able to tell that it is cached - many many implementations
+actually cache such accesses.
+
+>=20
+> CBD can initially support (3), and then transition to (1) when hardware=20
+> supports cache-coherency. If there's sufficient market demand, we can=20
+> also consider supporting (2).
+I'd assume only (3) works.  The others rely on assumptions I don't think
+you can rely on.
+
+Fun fun fun,
+
+Jonathan
+
+>=20
+> How does this approach sound?
+>=20
+> Thanx
+> >=20
+> > J
+> >  =20
+> >>
+> >> Keep in mind that I don't think anybody has cxl 3 devices or CPUs yet,=
+ and
+> >> shared memory is not explicitly legal in cxl 2, so there are things a =
+cpu
+> >> could do (or not do) in a cxl 2 environment that are not illegal becau=
+se
+> >> they should not be observable in a no-shared-memory environment.
+> >>
+> >> CBD is interesting work, though for some of the reasons above I'm some=
+what
+> >> skeptical of shared memory as an IPC mechanism.
+> >>
+> >> Regards,
+> >> John
+> >>
+> >>
+> >> =20
+> >=20
+> > .
+> >  =20
 
 
