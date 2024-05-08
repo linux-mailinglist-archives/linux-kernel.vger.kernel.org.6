@@ -1,57 +1,59 @@
-Return-Path: <linux-kernel+bounces-173701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767FF8C0458
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BC68C045C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175551F24AC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75BDB1F246EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43ACB12D754;
-	Wed,  8 May 2024 18:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A321312FF92;
+	Wed,  8 May 2024 18:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g1qgpnqR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LSObHsKV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D485812D76E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9BD12F5B1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715193005; cv=none; b=nAao54gJNCBA+bJOyH24Yf9YuPHa8z4WaDY9OQKXtQ4TuPzWAuKfb9q2PsUR/DuB5GdY0BjlIMlDFXComJSVP6xfR1Uc7z8wKoig958PBHKRqFX6FeBFphqJ9bQcOZwLTS5PtqDxBB9hX9A258+pgJwOFlThR0lFbG2+H4Dm0SE=
+	t=1715193012; cv=none; b=QBNuxBRsw/EEWxlO8dx2zHAi3mBIWPHU7tuCLKEWEX45Fp8DAvaSn/Bt9mC9pjv08ESi8ybs8NDs1DJqrB/9mnZJlvzKgIPfMeXVlVNxleVKsfTAeXsWk3rn9htFUvkHvkOpJZB8wmrpvQs040Oa50RC8NfF9Hx66dNAewQ2bs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715193005; c=relaxed/simple;
-	bh=Af8N4wZvAUQNJQSK6fWTOSDCmGwfI/n8jS+x3krwiAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OdN7DjNp/BLTImlr5eCGfpHBWeSBD/GZ/udyX8qDkloIRWC9yMvBc4nGa0g2P7K1j70tFc6zm5FQkieqDjB66k6lmWe/ie7Fi0imn3ZeGrIlDEa4mV7QCKV2oxx9oSQ22KskTSg5O8YWUMq/bgJh39UUtBs7IRYNsAG4/54AHKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g1qgpnqR; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1715193012; c=relaxed/simple;
+	bh=Ga3Ngyurh/GWTsaSz8bm6gGWfNz+qIwkdAIA/iJbJ4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ea35KrOGxGHuO2Y3j4FkmEN9mxON5M//+GWX5sRAkpI38gzZgLX2FGOsFDxtU1WBXTWHOukqu61JI7PEVqY2ZcBq7OtpW0e3UXLl+p8PYIvGa7yIQTca87QN5t7cij75QHWL+UgUrMN9FAUKmq7pTdgtQO9XCWSQXi3dz/zuX0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LSObHsKV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715193002;
+	s=mimecast20190719; t=1715193009;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZRQClyq6NCq+r6tZYqc96Ix/EYxfWTPYPd8njOlX/60=;
-	b=g1qgpnqRqg1FEXop8OmnzKciXLR1HJYn6jqih4Arge+pa0+H44eUFYy6HkhVO0bT0DA9cw
-	1PcAY3uXem4rJjw+VVRMwuUIG/DHaJE7OTi2lCEY1xeDGHb+CzCeJaJJLiBQvd26NuNLTJ
-	CJmQan3oHG3Pwc5PqvIqMbIKzmKOPg0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-249-m407-a4UOv6tTjIN-Jxvqw-1; Wed, 08 May 2024 14:29:59 -0400
-X-MC-Unique: m407-a4UOv6tTjIN-Jxvqw-1
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MM014qTWc/BTbJIJ9XXkyJ6CD8+RdtKp2vlBJYzap2I=;
+	b=LSObHsKVzywRoHHKDfmLjL2I7ijSZe1s0qI6Vmz9j3Qa8kkNhglLUhdaII4FgB+XG1BHDR
+	5/GCrPQVkx36WUgw65wA+fk30y1b3JweHyVocUCn2pQt2Jri7JJHUM1rA3VuyQovfWvsIG
+	iq45UXr54IkCKDakwqgmf9fuMkObMLQ=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-550-yI5SFXODOUWO93qE5vbptQ-1; Wed,
+ 08 May 2024 14:30:03 -0400
+X-MC-Unique: yI5SFXODOUWO93qE5vbptQ-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1198C8007BC;
-	Wed,  8 May 2024 18:29:59 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 91B7C380009B;
+	Wed,  8 May 2024 18:30:02 +0000 (UTC)
 Received: from t14s.fritz.box (unknown [10.39.192.63])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 4D36510000AD;
-	Wed,  8 May 2024 18:29:56 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4D3E010009E6;
+	Wed,  8 May 2024 18:29:59 +0000 (UTC)
 From: David Hildenbrand <david@redhat.com>
 To: linux-kernel@vger.kernel.org
 Cc: kvm@vger.kernel.org,
@@ -67,9 +69,11 @@ Cc: kvm@vger.kernel.org,
 	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
 	Matthew Wilcox <willy@infradead.org>,
 	Thomas Huth <thuth@redhat.com>
-Subject: [PATCH v3 00/10] s390: PG_arch_1+folio cleanups for uv+hugetlb
-Date: Wed,  8 May 2024 20:29:45 +0200
-Message-ID: <20240508182955.358628-1-david@redhat.com>
+Subject: [PATCH v3 01/10] s390/uv: don't call folio_wait_writeback() without a folio reference
+Date: Wed,  8 May 2024 20:29:46 +0200
+Message-ID: <20240508182955.358628-2-david@redhat.com>
+In-Reply-To: <20240508182955.358628-1-david@redhat.com>
+References: <20240508182955.358628-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,77 +83,43 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Rebased on 390x/features. Cleanups around PG_arch_1 and folio handling
-in UV and hugetlb code.
+folio_wait_writeback() requires that no spinlocks are held and that
+a folio reference is held, as documented. After we dropped the PTL, the
+folio could get freed concurrently. So grab a temporary reference.
 
-One "easy" fix upfront. Another issue I spotted is documented in [1].
+Fixes: 214d9bbcd3a6 ("s390/mm: provide memory management functions for protected KVM guests")
+Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ arch/s390/kernel/uv.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Once this hits upstream, we can remove HAVE_ARCH_MAKE_PAGE_ACCESSIBLE
-from core-mm and s390x, so only the folio variant will remain.
-
-Compile tested, but not runtime tested with UV, I'll appreciate some
-testing help from people with UV access and experience.
-
-[1] https://lkml.kernel.org/r/20240404163642.1125529-1-david@redhat.com
-
-v2 -> v3:
-* "s390/uv: split large folios in gmap_make_secure()"
- -> Spelling fix
-* "s390/hugetlb: convert PG_arch_1 code to work on folio->flags"
- -> Extended patch description
-
-v1 -> v2:
-* Rebased on s390x/features:
-* "s390/hugetlb: convert PG_arch_1 code to work on folio->flags"
- -> pmd_folio() not available on s390x/features
-* "s390/uv: don't call folio_wait_writeback() without a folio reference"
- -> Willy's folio conversion is in s390x/features
-* "s390/uv: convert PG_arch_1 users to only work on small folios"
- -> Add comments
-* Rearrange code and handle split_folio() return values properly. New
-  patches to handle splitting:
- -> "s390/uv: gmap_make_secure() cleanups for further changes"
- -> "s390/uv: split large folios in gmap_make_secure()"
-* Added more cleanups:
- -> "s390/uv: make uv_convert_from_secure() a static function"
- -> "s390/uv: convert uv_destroy_owned_page() to uv_destroy_(folio|pte)()"
- -> "s390/uv: convert uv_convert_owned_from_secure() to
-     uv_convert_from_secure_(folio|pte)()"
- -> "s390/mm: implement HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE"
-
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: Janosch Frank <frankja@linux.ibm.com>
-Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: Thomas Huth <thuth@redhat.com>
-
-David Hildenbrand (10):
-  s390/uv: don't call folio_wait_writeback() without a folio reference
-  s390/uv: gmap_make_secure() cleanups for further changes
-  s390/uv: split large folios in gmap_make_secure()
-  s390/uv: convert PG_arch_1 users to only work on small folios
-  s390/uv: update PG_arch_1 comment
-  s390/uv: make uv_convert_from_secure() a static function
-  s390/uv: convert uv_destroy_owned_page() to uv_destroy_(folio|pte)()
-  s390/uv: convert uv_convert_owned_from_secure() to
-    uv_convert_from_secure_(folio|pte)()
-  s390/uv: implement HAVE_ARCH_MAKE_FOLIO_ACCESSIBLE
-  s390/hugetlb: convert PG_arch_1 code to work on folio->flags
-
- arch/s390/include/asm/page.h    |   5 +
- arch/s390/include/asm/pgtable.h |   8 +-
- arch/s390/include/asm/uv.h      |  12 +-
- arch/s390/kernel/uv.c           | 207 +++++++++++++++++++++-----------
- arch/s390/mm/fault.c            |  14 ++-
- arch/s390/mm/gmap.c             |  10 +-
- arch/s390/mm/hugetlbpage.c      |   8 +-
- 7 files changed, 172 insertions(+), 92 deletions(-)
-
+diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
+index 265fea37e030..016993e9eb72 100644
+--- a/arch/s390/kernel/uv.c
++++ b/arch/s390/kernel/uv.c
+@@ -318,6 +318,13 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+ 			rc = make_folio_secure(folio, uvcb);
+ 			folio_unlock(folio);
+ 		}
++
++		/*
++		 * Once we drop the PTL, the folio may get unmapped and
++		 * freed immediately. We need a temporary reference.
++		 */
++		if (rc == -EAGAIN)
++			folio_get(folio);
+ 	}
+ unlock:
+ 	pte_unmap_unlock(ptep, ptelock);
+@@ -330,6 +337,7 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
+ 		 * completion, this is just a useless check, but it is safe.
+ 		 */
+ 		folio_wait_writeback(folio);
++		folio_put(folio);
+ 	} else if (rc == -EBUSY) {
+ 		/*
+ 		 * If we have tried a local drain and the folio refcount
 -- 
 2.45.0
 
