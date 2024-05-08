@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-172762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C5D8BF652
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:35:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AEF8BF663
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0722F1F23FCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B664B20C8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB79F1EB3F;
-	Wed,  8 May 2024 06:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4062030B;
+	Wed,  8 May 2024 06:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g/4ebGJl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Cndb51xc"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FB4171B6;
-	Wed,  8 May 2024 06:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A49171B6;
+	Wed,  8 May 2024 06:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715150097; cv=none; b=TtMV+08LaZ4JjM5R6kyZXmi3s1ND9Mq2icnTOgRi2tTT1ALEqgAxpg3s0xPCPUKnwe0q6aSXku7nWcT7nRZcGvLVTaJQjYDxrKzI5T54zr40w8EClcJKLuJ+nAhulw6B+3BdV9NC8gWEBbz+gcpRAtryL5jMePi6BiyEJnv7Z6A=
+	t=1715150333; cv=none; b=eNGOhQC9ZKjZqJ9flAfXumzfc/nmgtHt9fbsgRzQ+JfC3ONIQyeZJOaXQU5b3zQAwEHohsSVQAoPWzkNWLzasaPEDWp18azl8e7A5jwbmgM3fdSm9bMqUgJndeObqF3mE6Cto+QG6hOjSFyevYU2wWJX9KvRXx7rIbKrHDowVYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715150097; c=relaxed/simple;
-	bh=APOtoHE0voeGHGRQZmu8ViVknqEdQFOsrAsV/taQU8o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AgHKO0T6SmBzWyARJKjeYQeLIridGgsD2XGzpeyOAIgHpK1Nia2nv4Tr0k1NC6wFXSZhUwNCS2P7yPyUUEbVvlLrq/QJSvG/yplgAaa0gqS3iA/KjL054KxqAgCznxrrGenzv7JIrd9B0FgX8HtJMHkAe855o2S+Dt7Y3d4Sm+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g/4ebGJl; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715150095; x=1746686095;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=APOtoHE0voeGHGRQZmu8ViVknqEdQFOsrAsV/taQU8o=;
-  b=g/4ebGJlFPrfKb8Ekggc4t+rJFkvcz309/EgzXqAOBKCXuJjm2MHvZUc
-   0n1vKNhbeeO9dl7e9fjyIK7tdfzZzjtWlhrE0cWKM6tiq0qfjUhVOBzfl
-   sYmQpRRmdeSgmvOqM4lCsYYWhkVtAzEe06U9juxQgRz5uLQ9tkBqLcvg0
-   PQpcGj38HtfCGB7yTk4eb+R+32C0cTtZDJh4j2IU9Qo9nUi/rw3+jpxEC
-   OcMXk5B4ZB28XRY99YxsI5g02o6yOgUDei9NzMExtQFgEE1mqDfx3wqz+
-   82ZCxesQAGKizpp+XnKyQv4Yod6jvNlMjBvuscoPDk1zcCG2oxOixGw6M
-   g==;
-X-CSE-ConnectionGUID: JI9di07gTBOUUkFftxH4oQ==
-X-CSE-MsgGUID: YDMy3d7HTHS8nNMaCVJrrA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11112075"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="11112075"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:34:55 -0700
-X-CSE-ConnectionGUID: lwvudA58TuKaK1DXKi7eyA==
-X-CSE-MsgGUID: herrs9BzRNaY5euN0yK5Bw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="28875086"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:34:51 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Matthew Wilcox <willy@infradead.org>,  Chris
- Li <chrisl@kernel.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
- <minchan@kernel.org>,  Hugh Dickins <hughd@google.com>,  David Hildenbrand
- <david@redhat.com>,  Yosry Ahmed <yosryahmed@google.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/12] mm: remove page_file_offset and folio_file_pos
-In-Reply-To: <20240502084939.30250-3-ryncsn@gmail.com> (Kairui Song's message
-	of "Thu, 2 May 2024 16:49:37 +0800")
-References: <20240502084609.28376-1-ryncsn@gmail.com>
-	<20240502084939.30250-3-ryncsn@gmail.com>
-Date: Wed, 08 May 2024 14:32:59 +0800
-Message-ID: <87a5l0lso4.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1715150333; c=relaxed/simple;
+	bh=A+PJVgDVE8sTEvBSrfqKil2ejz4LkNUS/yxQcNdS1gQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DnKeWaequ/IlXh68qqnTL3NF4ic6o8pI3VtwF7vsu6SVVIVx6nYnE2TxaBvXCzVKvqYc1jBO+nBEcUN+4DE/7DQgDrx83l9grX1IY2V2prEgBjtgJdigRGyKz7SgfsyKlXqHPndsX1rs9TpsKbvCCZmnXkXDqT1MqBrtzhkhrko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Cndb51xc; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715150301; x=1715755101; i=markus.elfring@web.de;
+	bh=9nmIhydlWpp+VskLYPtmBE63mu4+9KImaXkDmeMoLtY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Cndb51xcVx2MFXruzuS2M3HvLbHNpQOx/diZ7ZjNUXumKHRvhYIoVvHrX4WsDnuw
+	 7YXkZuhN3wDmQYrGv/48OptjHfW1+fadhlSFkMwil0hOVMH5ilmwYZ6CL6DLJql+o
+	 f3oXU4esgCUxy4jYCKew+QcTrfLoCaBWligiOhTWAqhtaODXKm1f4PcZmsLl3Dvg8
+	 ggZoBK4NQfulrKSdu0OctgW3iE2lO2t3UpjQp6GfP8d7KoG/rmgHJCMnJfNXgXloD
+	 Gwo+UnKq+aGOe2rieFhWHzTJFVpj9usYocdy5sUT5e0ewXFnvuoC3RV+LU8IMn8Qn
+	 Q8XwTnMh8ZFaM6BVsw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MtPre-1stw6l2zKI-016aBE; Wed, 08
+ May 2024 08:38:21 +0200
+Message-ID: <1617bc1b-5966-45d8-ae3d-25c6e11a032c@web.de>
+Date: Wed, 8 May 2024 08:38:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3] time/timgr: Fix wrong reference when level 0 group
+ allocation failed
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Levi Yun <ppbuk5246@gmail.com>,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+References: <20240505085709.82688-1-ppbuk5246@gmail.com>
+ <20240506041059.86877-1-ppbuk5246@gmail.com>
+ <ZjisiuqiR9p76YcJ@localhost.localdomain> <87seys4yn1.fsf@somnus>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <87seys4yn1.fsf@somnus>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gdEVndsCrAEtnuIVmhtjmSp0KuU+wodZDrdmAlvkjLCoLE1SfmI
+ VjLwjvx4FMJT2dmBZ0Mg6DUBVnEoGn8IwMxnPfPEnriyNxdPIZJhEIj/BXUKlgaKxxMOE70
+ 5lAYb9Kgax00hI2foDSZEsfmR1ZeVYpG4NdK305g+FBAjexLxqPnU/YD3y3cbwfhELt8AL5
+ x5DKAyOl/kX+hzLNPGlxQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PIJEPIvcphw=;T4OJJsqv1WrvnN7UKjTLeIJBMmh
+ lWzJTWyx4nF3aByranlTxHu5JOAsFRJNVwYJWyroGgWBFhNarxMEJ60Z3dERKyOLIYqZkOqvB
+ 5wZ6C1bFIACna39/aN1VRLar6uC+G/JESIPA9MujqM6B1laDZnoDrhDJZmGKoWbx+sXfbuA3w
+ HFZ/syjtcv71K12Uj6xdTSEvQIyXbhl7iI52OfdVQPLFdyhPcXZZRFNi9kj+RAGTQ6sS1zvBj
+ RP56MlTepQhKrFDDwvkvFddikRde5xOO9gdqJBjOnyT5UxKLhk06yCFZ/h/qk48UKaHUZQ30O
+ TWnctfKc1xKtytpK9Oc/jPXQVQNw1/xXE4cM2CMxKSOlTFRghtpyKZEcdj/GzHi29dR+A61xp
+ 0zRxyKfAQ26AqwFhxOSnH586qu1VA36BwOPz2B49RULj++PNAGJBR0M9NA9vlcKMPuP+tSdyz
+ kClf4ogmddXdgqeQdoKVx2+yvsSM1w78w7GLr+kvXMLDQugslr9FAv6boCv9QmtmeRBePXAj5
+ 7bcy0nRkaO0h5ODJKR0MACYMcxWn9Y8dEnGvnm7UtrMisRgncnQ66WhdtaVuP6zypExRKtnf1
+ AD2SpdEgwgmZTrw744xkwVPL6P1zcZZ9LQIZrMpE52UcruTP6BMHxVJOrZ3HPk2S8qpuw6OSH
+ KDCPya08tugmjB5U10r4ABpr/TvEH+3lDWY9A4DXRL7RmQfXgwjXCtYE5h6pPQfam7FtlWZUR
+ EIYUwe0pAp+dqqoesx9XMfhzzpl4kJH7IYXgRrifXXy6DLEWlKJcXz4DF3S15R8elzin6RkpG
+ /9H9XZwx9s2p1dTlcSkyVl4lP/pqlukvD2WdVL2wx2ipE=
 
-Kairui Song <ryncsn@gmail.com> writes:
+=E2=80=A6
+>>> To prevent this, Check loop condition first before initializing timer =
+hierarchy.
+=E2=80=A6
+>>> ---
+>>> v3:
+>>>     - Fix typo.
+>>>
+>>> v2:
+>>> 	- Modify commit message.
+>>>
+>>>  kernel/time/timer_migration.c | 4 ++--
+=E2=80=A6
+> Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 
-> From: Kairui Song <kasong@tencent.com>
->
-> These two helpers were useful for mixed usage of swap cache and page
-> cache, which help retrieve the corresponding file or swap device offset
-> of a page or folio.
->
-> They were introduced in commit f981c5950fa8 ("mm: methods for teaching
-> filesystems about PG_swapcache pages") and used in commit d56b4ddf7781
-> ("nfs: teach the NFS client how to treat PG_swapcache pages"), suppose
-> to be used with direct_IO for swap over fs.
->
-> But after commit e1209d3a7a67 ("mm: introduce ->swap_rw and use it
-> for reads from SWP_FS_OPS swap-space"), swap with direct_IO is no more,
-> and swap cache mapping is never exposed to fs.
->
-> Now we have dropped all users of page_file_offset and folio_file_pos,
-> so they can be deleted.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+Do you find any remaining wording concerns less relevant fur such a change=
+log?
 
-LGTM, Thanks!
-
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-
-> ---
->  include/linux/pagemap.h | 17 -----------------
->  1 file changed, 17 deletions(-)
->
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 850d32057939..a324582ea702 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -918,11 +918,6 @@ static inline loff_t page_offset(struct page *page)
->  	return ((loff_t)page->index) << PAGE_SHIFT;
->  }
->  
-> -static inline loff_t page_file_offset(struct page *page)
-> -{
-> -	return ((loff_t)page_index(page)) << PAGE_SHIFT;
-> -}
-> -
->  /**
->   * folio_pos - Returns the byte position of this folio in its file.
->   * @folio: The folio.
-> @@ -932,18 +927,6 @@ static inline loff_t folio_pos(struct folio *folio)
->  	return page_offset(&folio->page);
->  }
->  
-> -/**
-> - * folio_file_pos - Returns the byte position of this folio in its file.
-> - * @folio: The folio.
-> - *
-> - * This differs from folio_pos() for folios which belong to a swap file.
-> - * NFS is the only filesystem today which needs to use folio_file_pos().
-> - */
-> -static inline loff_t folio_file_pos(struct folio *folio)
-> -{
-> -	return page_file_offset(&folio->page);
-> -}
-> -
->  /*
->   * Get the offset in PAGE_SIZE (even for hugetlb folios).
->   */
+Regards,
+Markus
 
