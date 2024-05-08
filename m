@@ -1,194 +1,361 @@
-Return-Path: <linux-kernel+bounces-172743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32FF8BF607
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:21:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4302D8BF5E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89911287D0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:21:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30DC1F22FAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BE21863E;
-	Wed,  8 May 2024 06:21:16 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2135.outbound.protection.partner.outlook.cn [139.219.146.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D992030B;
+	Wed,  8 May 2024 06:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yI42BjBc"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2051.outbound.protection.outlook.com [40.107.102.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E52E1758E;
-	Wed,  8 May 2024 06:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5511863C;
+	Wed,  8 May 2024 06:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149276; cv=fail; b=C4O7OwhkE9ueszZ/te6g29iW7gjq/UyJNV89Z2GAQvG+9k43V8YKFHOtpUMkQrgRpiC7ZcGeSTNlbX3MX0JGA9jbH5HzXh2STohVI6ncb/iL0S/UsybYQWKblyln+P89Xcj8QboNRMfGuBrrS3QVBPSg0Bai9Eq3gFG4IBgHCfU=
+	t=1715148322; cv=fail; b=NUOuXKnEv5DjufkoZFAvzBZpGlOK2xyFRSfpvFuzPckOZ3ALpCmQtB6ag11zJOo4XKjrtuLzYk6fIYWZgA7E07tmV77t7MmBeDUil8E8gghB1PxokVP8LNJre1nUsIEvaU172apFU3ouf4ePti4LLMiA3Lui6bGgaqq3ReZBC4M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149276; c=relaxed/simple;
-	bh=vhyXDstkQ9XgXmpG/Wqgw0Oa4OHHIdRXHfTJo/HjLNw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lyAcso21+7bHqspvGC62oEDNv0SIcOW0zAwszMgq6T055Qrnyz4svOMq6TL13tnRz89UkuwsOeEUTM6h1E1e97kIAY6sVM/jCny4SAOCLLbw8792QEg4Dhf5rgyJYasa31ZHcG/a6f/PBRNyOgYGJsE6XAxOa2vrohexgVJHLGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+	s=arc-20240116; t=1715148322; c=relaxed/simple;
+	bh=z5VWE23tCeumW2tbUwJCHz6uR1PbUOPADnkOKAdPIvQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AufVfoKe4cXrh4BfmWl+s2VhOeDVxX/Zp0jZr0xMNk7GRxxJEQrz59sdKVwMLdM5JV7Lud+oLZkFD3Q/TOuEal3igp3TZL0YDECFxSB85LGuKokZjP28p8nghZLKGnFZlh/Qjj3cFmhUkh/JWwtuc6wz1kFRQOObKeUcPbPvoqc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yI42BjBc; arc=fail smtp.client-ip=40.107.102.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c+D02S3Jb6qLpQtBYM8R9QOaaWfsrK76jMKvm5OLJR0GzGhyV0Ny4SSt62ZbCcDHfFSapyM/zFiw+W+3DDoV7mhPbMQFHBgTTCXzdSvO7ji+vPXKrVDNh91mmuADDm5myl0ZGqh+9zzNBiJ91crLZg+KH1jeGXk9ITnPnJ758T+rswY3l5ffxDfueaFMSLGBwjyqu/rpTLckujqCLUM0QE4bgsXPA7xU/Z7KIVXm39pMOE8utvfhXZaPZUhTHnNRlbJeU4tttN77JDEZntkgVIDanRmoFXUFqeB431FV8Url7TZXHjroDHFoZaJPRr64PU/t/yxt5k/ZuxP7bx5pmA==
+ b=YojH39HXs2mf0jEECa/ASd8y/b7d3MHiGpSDgRU7ZHlVAUCUPFkOXrnjtKWD4i9EP5+UPA8xMejt6rwUPkQjIAsTmvzYcm1eu9xMo1nQ1nX2/eUBdhqKZGsvsmYYlTLQm64cojfnZ7MoWjI/41e2sJvrYYyZL2sVR0ifvEwOy4dy1Pq6jrXyGsSMIDcy8OibV+tsBbWSwSS1D4K97mfdPgMkHUafZpP/H6XODXqcNu9Y0OyGCqjlQRAJyJktrEK2HYRiYz4PxxgS+U+/an7BC7bYYbPGntqMEyN1I4EFL1IpdR5W6DINYq0OGqR4MuLaGQ0nE2PlUsZmD/ucLh8f4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/l/yhPdxSaHesfLxpxwia9e0XvULHbFNP3fr+SAq+x8=;
- b=UDBzAgAWUwBxAKQv8cW9dNNsgyPwaRmuAVvwUaQ2SolJ6bk8UUR6uPE/7ansGk4KsvYN2MpI+ocisU/GTedB2hJQbPDA9Ui9E6cy2OlmvRjwQq9sx7I69iVamGepKGzvi0Z+fAsMQTRFZWmhoOqQHO5f24VaHVgv78t3MCSrzlWbWx1yxMqtR5/GzNLnGhXCnzCgQ7u8TYPNH/c6Pu1F1WRkQR5ultfzZUVec8z/mbGKdanwCUA7CN3fU9Chea/4e7hUvkfIoqJv7zuJCk/+Se/JGSbKPJE5dtkDKrXHgSFKpWQqANfupdcEJuVsBeiFVKivlvVrUxNLg6gsSdh0HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::9) by ZQ4PR01MB1283.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:15::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Wed, 8 May
- 2024 05:48:05 +0000
-Received: from ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn
- ([fe80::301e:ec80:4356:8b14]) by
- ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn ([fe80::301e:ec80:4356:8b14%6])
- with mapi id 15.20.7472.044; Wed, 8 May 2024 05:48:05 +0000
-From: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
-To: Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Cc: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>,
-	Ley Foon Tan <leyfoon.tan@starfivetech.com>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eng Lee Teh <englee.teh@starfivetech.com>
-Subject: [PATCH v3 1/2] spi: spi-cadence: Add optional reset control support
-Date: Wed,  8 May 2024 13:47:27 +0800
-Message-ID: <20240508054728.1751162-2-jisheng.teoh@starfivetech.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240508054728.1751162-1-jisheng.teoh@starfivetech.com>
-References: <20240508054728.1751162-1-jisheng.teoh@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHXPR01CA0026.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:1b::35) To ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::9)
+ bh=HS1ORoWQExkx6rktbhPzqAKYoaQi8LXjO9GrTzVQv+U=;
+ b=HG5C2xiEXSmaz/WCklSIhv36dDadU7mhiY5G00bjeylod0YvS+umoiOQA1pAqrwpspxbmdz2oKJ5SuQzqFoluaDESe6B3RA/maclajQOQ8HqdD9RkUdhTdWyEabBrvA2S9FuWJjNNPuaGwsVCERTh05nxHLRFIj0oUuPCTRqUepDEyVGUqtC3dGuangRVzE7MZOFnWBV4XASBacFb5OveqqvUXdKfyvkEY+tlkFVSB4Ve29TFiOrAA8/FaUp5/8906vg0qaR3s7C/cN+Q64wbOw3MYhwFj4vkW1grS9bQ4Vnc5kmfA5KsXwVmLBKSDCwnXEQdLQfgX5pEhQ9mfm0Cg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HS1ORoWQExkx6rktbhPzqAKYoaQi8LXjO9GrTzVQv+U=;
+ b=yI42BjBcqwOE/bdlHRS/qH8qVSfTYdnovwbXNlA6gOfe94vzDOWIEsvDospOcqbp2czlZd9sWW0ODP0GnDgWU07PZRu/GsyyRjYj1s8nucfTACQUB3OS25cZIjd917YYqBcCCPsTEaHCXxdQShdqJmAlGbQ4pox1NndhQTwTI/w=
+Received: from PH7PR17CA0060.namprd17.prod.outlook.com (2603:10b6:510:325::24)
+ by MW4PR12MB7000.namprd12.prod.outlook.com (2603:10b6:303:208::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Wed, 8 May
+ 2024 06:05:17 +0000
+Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
+ (2603:10b6:510:325:cafe::bd) by PH7PR17CA0060.outlook.office365.com
+ (2603:10b6:510:325::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45 via Frontend
+ Transport; Wed, 8 May 2024 06:05:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Wed, 8 May 2024 06:05:16 +0000
+Received: from BLR-5CG113396H.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 8 May
+ 2024 01:05:07 -0500
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <irogers@google.com>
+CC: <ravi.bangoria@amd.com>, <swapnil.sapkal@amd.com>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<rostedt@goodmis.org>, <vincent.guittot@linaro.org>, <bristot@redhat.com>,
+	<adrian.hunter@intel.com>, <james.clark@arm.com>,
+	<kan.liang@linux.intel.com>, <gautham.shenoy@amd.com>,
+	<kprateek.nayak@amd.com>, <juri.lelli@redhat.com>,
+	<yangjihong@bytedance.com>, <linux-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <santosh.shukla@amd.com>,
+	<ananth.narayan@amd.com>, <sandipan.das@amd.com>
+Subject: [RFC 1/4] perf sched: Make `struct perf_sched sched` a global variable
+Date: Wed, 8 May 2024 11:34:24 +0530
+Message-ID: <20240508060427.417-2-ravi.bangoria@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240508060427.417-1-ravi.bangoria@amd.com>
+References: <20240508060427.417-1-ravi.bangoria@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1154:EE_|ZQ4PR01MB1283:EE_
-X-MS-Office365-Filtering-Correlation-Id: 998f0a26-8430-4ed1-beb3-08dc6f226eba
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|MW4PR12MB7000:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1b72310-a59f-43ff-4c81-08dc6f24d55f
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|36860700004|82310400017|1800799015|7416005;
 X-Microsoft-Antispam-Message-Info:
-	9HetvZxU7EBT869EaKJ07ubqr/HsEKBBYzECkyzXebkcYlZEN35kDNJgdpouqibyHSfbgDPzYtaUOGLU5kucuzZKwsrzzsfbWIJG2WBu4a3rFxArWXn1A3aFqQiYQ/vYB8qsVOVw5Vpd2LsZO+pMpsrjFzct9tRHCRTsZWHSljB0HKs5+GdJlhRSt+21W/lcutzY/42ThuOfbnAQFa/Ue6wD8k3do4cn/9YUGE0hwqgkDTuKbgurC21dNyxErx1PF8cxtZ1ILXfXWFlWH87uKcZdIO5rn10nyzzeqsAcYBsCXkQhvZ5DqLAKKn7sY3X7iQxBMUvKIdU4UMwfH2CBPoBiceJ9MRGtwOsOGTyG4+t+mULEgGRRfN6owvI9KYkgAFjD9WGc6IzmDuJdEe1oP3kxoL1VOZStCBTeytCRc9pn3NDTGlgFIhKFO82Glk6DjfZj/oEbwXw7NrwCxUIvoQMSxv39gXGiRZc+r1Wy6Iy2078qF/DbpwwSYBEvqaD9+RNn8QyZGvqMiOn5RKIhe/pnOhC6XKWsWob+noofVUcY1aRnH/nQBYKsq+97EiwC72pK1Taos1Aqwjrql4yLYHc156CW0cQkGsU46AocxD0xoYmn5f1fkr3dyCt5wYNz
+	=?us-ascii?Q?1QHCSFQ9BDSJUlYuCqVUQZDaxfNgLkVJfNv2Az6Ep4pZ6tpMcqBy4gP43TNP?=
+ =?us-ascii?Q?62aslwNIm7nxwyfqWCo/1EgkdO3njpXG+Dtmaq7AmzWI/4IPHrzn72rv+2ed?=
+ =?us-ascii?Q?b7xRnqkke70RpuNNPP7ZH41xU26ikR1kRCRlwAvAWRE711W1hhPaAKBe+C2m?=
+ =?us-ascii?Q?y79tCtC9UhwTxlyhfnwtgjQHcOarA1YIh8OUEA5Vw1njF14whq/i9+a5k8qf?=
+ =?us-ascii?Q?1J2SBCX4OUWUpb4FIYaltlRzKMveZx7usemYy0G0nrNERq/MDFr5E4SkXQPx?=
+ =?us-ascii?Q?vc/k5rIFihWY9D5yootmWQbPLcjd7StfAqyLz+q/Qb1SDr/O1Xt+dKUuamOz?=
+ =?us-ascii?Q?e/1kJmgWjUeynboWq7M111pGB/v/LWWbZliFAG0Stuv9Qf5FhDjXWTa7lXBE?=
+ =?us-ascii?Q?dZUQXEHHJCLfiWQPlGiDce+2qx8biwiVlBSbWg4WwrefVMV4qJ+3NQe9dTdi?=
+ =?us-ascii?Q?jhyAe16nCoZsDwjinJoUxGFB9ji6p8amaTyp59QWjFGGt/R3EkNFaeJim8JU?=
+ =?us-ascii?Q?n5dngt9+DoQCwaUm2SjwQ0EZGTrZbigqMdDSZeYlB0O8TJDPwF/pltk27Erg?=
+ =?us-ascii?Q?2EFur7YYamVgMvHutrbQD1M5cL7E8/Aw6n5OtGnRyvApxsHWTXCicQKvjjJ0?=
+ =?us-ascii?Q?FB5PBwKyx/qbLIc6tB3m91o5C76VcMq0yiFLMSd1cjEZ9DkcZyCfmK8kmwBb?=
+ =?us-ascii?Q?bNCXpk4bUCO/rKraEVKYWPnJKYYMUb0McYvLgVuMspuJgnEEFlMFnnJwcl+l?=
+ =?us-ascii?Q?EGco67sTE8j9vWeyPIy8d86gE1ZJk0QD0UpKRSN0AebtDHDSSwWXhTxqtLzj?=
+ =?us-ascii?Q?lqMsgI/BEhvPF+llVvXlu99xvRB/UW2+tkDeRipzydpmYfQ9acYufJZVJWsV?=
+ =?us-ascii?Q?fJbTqbmFJf/P6JZWEbMkUtJmTIzfghFMTygq1oCjIuD9NHzUB41+OkdYubJp?=
+ =?us-ascii?Q?CHq+LOIauyoDwgViXhw/QdVEoWc3BBDU4ued0m/XFnVjKONcCW3+6adRS34C?=
+ =?us-ascii?Q?RaGBmssfA29bqQbEiu8pf/0ysWLpmTqUSxXm3SfGriyJnckHBkOmXalmm9kc?=
+ =?us-ascii?Q?tvKz5M/A/m5j62LEHMU/AurZuMQg/LfEKGTCfd8AWw5+8lSFnRSddEXKFf+G?=
+ =?us-ascii?Q?Kjt4EDs76ha7pZwFoQKkD1K1Jr5UMr8TsAbgPQpbG6oiOC5VgDmbSbLXOOW7?=
+ =?us-ascii?Q?lUQllViFwjWy4ECZPdL+5/B4VlPwMr6KNE0eJFZB7rIXeZnbUUQbosdhh+0O?=
+ =?us-ascii?Q?bjncsnZuMQ73OuI7/DhqmY4U5VWJzbT0bpAh85OyjVEvLAL5LJLZdwiq4ZsT?=
+ =?us-ascii?Q?zCaZahiec33xOVQ1UPHMLQEGSWNy/3UUQqIdGeBWs9auMsqFScCxIy6ibB2p?=
+ =?us-ascii?Q?8nlGLVo+4R5OsCAW76PPEbUFTgdJ?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(41320700004)(7416005)(52116005)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9O6cryDGe8QDoZ2F4aMUN5sjrFH8XlN+HQtSmWZf4FZgndGb5c/YpHpwris8?=
- =?us-ascii?Q?QIhHI28zKMvc+oehHriojcdxSG+94fWwMwqJoujWRlKraRqHhyei2JEkwtub?=
- =?us-ascii?Q?ELdLpJDLX+nNpkEC+Ydt87I9nRPfbFlrCom7JC4izGWGKcYAmss+mjzYUpgg?=
- =?us-ascii?Q?h0Qzb+WChInIZZ3h+YfI/o9PN3S4C2v7nIQXvbmOznyyN1IMoeORk0kPcbNs?=
- =?us-ascii?Q?+EPz0I8v01MbLrgwuVKJQ1ciLruC1eOZ6vVnr30/rc0fq14Q+xj1IeQ+YIKX?=
- =?us-ascii?Q?OP8s7PA1gCpJ2eXiCTx1VDrKqskhWjQf+B2k8VKVQ7G7+pIQ77BLIqAETKBY?=
- =?us-ascii?Q?e9Ju/zBt/6vX2Bbu7IcX+rNFGeIJQZFLRii+y8hRGDROc1TEFsLtQGmuQk3C?=
- =?us-ascii?Q?bzp5X1YJJ8dAdftQOLerSJjxHnjMz6GWvMasVi9IVwQyGAhkSNKZ9iQZKft8?=
- =?us-ascii?Q?WhmIhXsR0alB9mrADv/BUZvoT3t/KE8oYl1BWmpVAkG9g4q/Rte7ecxE8XUn?=
- =?us-ascii?Q?RhOimozZeqJU4WPnJbZDjZWqRQ8+mdb3a1RWu7cCtDcPwtgqe9mabgsTmRnV?=
- =?us-ascii?Q?+GxbQpZ91Q2dt/cEJAoK9AxnO/XTThHaUQFEFODRcI4yx5ZnOB0bjqVB+evT?=
- =?us-ascii?Q?16WA6NhkOJvulp+DvExY3PkX2uhOEQf3Dp0epQjr5BW7BTQg3QSvINaTPWoU?=
- =?us-ascii?Q?jSqv6Da+K4DfK1Asm6EPaTPACDCMCO+nMf0HRNy2KQoP2JDQE755xzdDlKT4?=
- =?us-ascii?Q?P3bt3EMfenW0I8aUFf4c0KaI/JQtqv/gduQh+PQP/5PzErUepyY82E+yHxM/?=
- =?us-ascii?Q?XwPN9z1NABsvIE2SYDCG2X6aqQnIf5pWuSpvl+a0N1jfx0lPIxFi7RVNAiXY?=
- =?us-ascii?Q?x8iNltbBhCq98saxCGwl24vPvrxsbZ4mRKW239Rh8kd0NfgGtZGZbfkH2+js?=
- =?us-ascii?Q?JxRSQjaqUV/eOQo+1n/KtT3PF461Qly2h8UYElSXkM8bzKkBIklGDCaR8pL+?=
- =?us-ascii?Q?PvLgswe4J0FrfecLpCUa6sh0OpWFe5qDt6CjTPedNOYSIgAfNn2qsXEeA82a?=
- =?us-ascii?Q?bnmQJR66H7Lt/43olgtdocCLBZXW4mtFIYSrg7pEl/IZl6rLD0nfOiFZ/N19?=
- =?us-ascii?Q?V64Sb2LUwn3CT/Wmne1vG5zipI2ojnM4fAKIe7Bi0ZqRT8DJVPq1nPlpzers?=
- =?us-ascii?Q?wkiWg/iXb3ie9HO8jpOJfeX7GIit5SyCSvVjQd+a+MWKXJMPgWHEPWBGFpGJ?=
- =?us-ascii?Q?zeFHDXteCcRrRzbkiH3pdX/JLzepX18nOIsVyeDp1WKjLtNLK4q6CJ7yAGDL?=
- =?us-ascii?Q?SFiJ/Yd1bJfro+qOnp4fiBKb/IvfPwGeOs/LhmpVv3/e/QnGxTEMVcGsoIpZ?=
- =?us-ascii?Q?iC1daL4Kmi5y5/A/kWl+yy1PUqHYEFxXEFOL2aeMH+U5pc6CwOupJHM1bqg4?=
- =?us-ascii?Q?/qqecONl+dd0F0yc3uvq8n/sHyr3YEiDHfijcALDdIu6Q0DKs5AZ1+flxzs+?=
- =?us-ascii?Q?/332tgI17uDT7qTxnEyQVT6gEaQ/4mBzpBpkpH12gnVegASVGpvO0ZpkuWl9?=
- =?us-ascii?Q?3m3cs5GUhiC/XHKjIGvxJYtzHy+XGsvX8pW9aaI05mU16bknIi17ssjPpAN7?=
- =?us-ascii?Q?eQ=3D=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 998f0a26-8430-4ed1-beb3-08dc6f226eba
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 05:48:05.8464
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400017)(1800799015)(7416005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 06:05:16.7972
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5Zp0qdLl+450JGSpGL3qELEcNcq1tQUOQk+Qhmbd03DGYUEWaX9tG1HTXsWl3esHutA3h2QJu4YXlYvNHRcGHFf9K0EJVicKfear4/mfFs0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1283
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1b72310-a59f-43ff-4c81-08dc6f24d55f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7000
 
-Add optional reset control support for spi-cadence to properly bring
-the SPI device into an operating condition.
+Currently it is function local. Followup changes will add new fields to
+this structure, and those new fields will be used by callback functions
+to which there is no way to pass a pointer of `sched` variable. So make
+it a global variable. Also, rename it to `perf_sched` to be consistent
+with other builtin-*.c subtools nomenclature.
 
-Co-developed-by: Eng Lee Teh <englee.teh@starfivetech.com>
-Signed-off-by: Eng Lee Teh <englee.teh@starfivetech.com>
-Co-developed-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-Signed-off-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-Signed-off-by: Ji Sheng Teoh <jisheng.teoh@starfivetech.com>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
 ---
- drivers/spi/spi-cadence.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ tools/perf/builtin-sched.c | 109 +++++++++++++++++++------------------
+ 1 file changed, 55 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-index e5140532071d..4eacf3f6e031 100644
---- a/drivers/spi/spi-cadence.c
-+++ b/drivers/spi/spi-cadence.c
-@@ -18,6 +18,7 @@
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-+#include <linux/reset.h>
- #include <linux/spi/spi.h>
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 0fce7d8986c0..bc1317d7e106 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -3504,29 +3504,30 @@ static int __cmd_record(int argc, const char **argv)
+ 	return ret;
+ }
  
- /* Name of this driver */
-@@ -111,6 +112,7 @@
-  * @dev_busy:		Device busy flag
-  * @is_decoded_cs:	Flag for decoder property set or not
-  * @tx_fifo_depth:	Depth of the TX FIFO
-+ * @rstc:		Optional reset control for SPI controller
-  */
- struct cdns_spi {
- 	void __iomem *regs;
-@@ -125,6 +127,7 @@ struct cdns_spi {
- 	u8 dev_busy;
- 	u32 is_decoded_cs;
- 	unsigned int tx_fifo_depth;
-+	struct reset_control *rstc;
- };
++static const char default_sort_order[] = "avg, max, switch, runtime";
++static struct perf_sched perf_sched = {
++	.tool = {
++		.sample		 = perf_sched__process_tracepoint_sample,
++		.comm		 = perf_sched__process_comm,
++		.namespaces	 = perf_event__process_namespaces,
++		.lost		 = perf_event__process_lost,
++		.fork		 = perf_sched__process_fork_event,
++		.ordered_events = true,
++	},
++	.cmp_pid	      = LIST_HEAD_INIT(perf_sched.cmp_pid),
++	.sort_list	      = LIST_HEAD_INIT(perf_sched.sort_list),
++	.sort_order	      = default_sort_order,
++	.replay_repeat	      = 10,
++	.profile_cpu	      = -1,
++	.next_shortname1      = 'A',
++	.next_shortname2      = '0',
++	.skip_merge           = 0,
++	.show_callchain	      = 1,
++	.max_stack            = 5,
++};
++
+ int cmd_sched(int argc, const char **argv)
+ {
+-	static const char default_sort_order[] = "avg, max, switch, runtime";
+-	struct perf_sched sched = {
+-		.tool = {
+-			.sample		 = perf_sched__process_tracepoint_sample,
+-			.comm		 = perf_sched__process_comm,
+-			.namespaces	 = perf_event__process_namespaces,
+-			.lost		 = perf_event__process_lost,
+-			.fork		 = perf_sched__process_fork_event,
+-			.ordered_events = true,
+-		},
+-		.cmp_pid	      = LIST_HEAD_INIT(sched.cmp_pid),
+-		.sort_list	      = LIST_HEAD_INIT(sched.sort_list),
+-		.sort_order	      = default_sort_order,
+-		.replay_repeat	      = 10,
+-		.profile_cpu	      = -1,
+-		.next_shortname1      = 'A',
+-		.next_shortname2      = '0',
+-		.skip_merge           = 0,
+-		.show_callchain	      = 1,
+-		.max_stack            = 5,
+-	};
+ 	const struct option sched_options[] = {
+ 	OPT_STRING('i', "input", &input_name, "file",
+ 		    "input file name"),
+@@ -3534,31 +3535,31 @@ int cmd_sched(int argc, const char **argv)
+ 		    "be more verbose (show symbol address, etc)"),
+ 	OPT_BOOLEAN('D', "dump-raw-trace", &dump_trace,
+ 		    "dump raw trace in ASCII"),
+-	OPT_BOOLEAN('f', "force", &sched.force, "don't complain, do it"),
++	OPT_BOOLEAN('f', "force", &perf_sched.force, "don't complain, do it"),
+ 	OPT_END()
+ 	};
+ 	const struct option latency_options[] = {
+-	OPT_STRING('s', "sort", &sched.sort_order, "key[,key2...]",
++	OPT_STRING('s', "sort", &perf_sched.sort_order, "key[,key2...]",
+ 		   "sort by key(s): runtime, switch, avg, max"),
+-	OPT_INTEGER('C', "CPU", &sched.profile_cpu,
++	OPT_INTEGER('C', "CPU", &perf_sched.profile_cpu,
+ 		    "CPU to profile on"),
+-	OPT_BOOLEAN('p', "pids", &sched.skip_merge,
++	OPT_BOOLEAN('p', "pids", &perf_sched.skip_merge,
+ 		    "latency stats per pid instead of per comm"),
+ 	OPT_PARENT(sched_options)
+ 	};
+ 	const struct option replay_options[] = {
+-	OPT_UINTEGER('r', "repeat", &sched.replay_repeat,
++	OPT_UINTEGER('r', "repeat", &perf_sched.replay_repeat,
+ 		     "repeat the workload replay N times (-1: infinite)"),
+ 	OPT_PARENT(sched_options)
+ 	};
+ 	const struct option map_options[] = {
+-	OPT_BOOLEAN(0, "compact", &sched.map.comp,
++	OPT_BOOLEAN(0, "compact", &perf_sched.map.comp,
+ 		    "map output in compact mode"),
+-	OPT_STRING(0, "color-pids", &sched.map.color_pids_str, "pids",
++	OPT_STRING(0, "color-pids", &perf_sched.map.color_pids_str, "pids",
+ 		   "highlight given pids in map"),
+-	OPT_STRING(0, "color-cpus", &sched.map.color_cpus_str, "cpus",
++	OPT_STRING(0, "color-cpus", &perf_sched.map.color_cpus_str, "cpus",
+                     "highlight given CPUs in map"),
+-	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
++	OPT_STRING(0, "cpus", &perf_sched.map.cpus_str, "cpus",
+                     "display given CPUs in map"),
+ 	OPT_PARENT(sched_options)
+ 	};
+@@ -3567,24 +3568,24 @@ int cmd_sched(int argc, const char **argv)
+ 		   "file", "vmlinux pathname"),
+ 	OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
+ 		   "file", "kallsyms pathname"),
+-	OPT_BOOLEAN('g', "call-graph", &sched.show_callchain,
++	OPT_BOOLEAN('g', "call-graph", &perf_sched.show_callchain,
+ 		    "Display call chains if present (default on)"),
+-	OPT_UINTEGER(0, "max-stack", &sched.max_stack,
++	OPT_UINTEGER(0, "max-stack", &perf_sched.max_stack,
+ 		   "Maximum number of functions to display backtrace."),
+ 	OPT_STRING(0, "symfs", &symbol_conf.symfs, "directory",
+ 		    "Look for files with symbols relative to this directory"),
+-	OPT_BOOLEAN('s', "summary", &sched.summary_only,
++	OPT_BOOLEAN('s', "summary", &perf_sched.summary_only,
+ 		    "Show only syscall summary with statistics"),
+-	OPT_BOOLEAN('S', "with-summary", &sched.summary,
++	OPT_BOOLEAN('S', "with-summary", &perf_sched.summary,
+ 		    "Show all syscalls and summary with statistics"),
+-	OPT_BOOLEAN('w', "wakeups", &sched.show_wakeups, "Show wakeup events"),
+-	OPT_BOOLEAN('n', "next", &sched.show_next, "Show next task"),
+-	OPT_BOOLEAN('M', "migrations", &sched.show_migrations, "Show migration events"),
+-	OPT_BOOLEAN('V', "cpu-visual", &sched.show_cpu_visual, "Add CPU visual"),
+-	OPT_BOOLEAN('I', "idle-hist", &sched.idle_hist, "Show idle events only"),
+-	OPT_STRING(0, "time", &sched.time_str, "str",
++	OPT_BOOLEAN('w', "wakeups", &perf_sched.show_wakeups, "Show wakeup events"),
++	OPT_BOOLEAN('n', "next", &perf_sched.show_next, "Show next task"),
++	OPT_BOOLEAN('M', "migrations", &perf_sched.show_migrations, "Show migration events"),
++	OPT_BOOLEAN('V', "cpu-visual", &perf_sched.show_cpu_visual, "Add CPU visual"),
++	OPT_BOOLEAN('I', "idle-hist", &perf_sched.idle_hist, "Show idle events only"),
++	OPT_STRING(0, "time", &perf_sched.time_str, "str",
+ 		   "Time span for analysis (start,stop)"),
+-	OPT_BOOLEAN(0, "state", &sched.show_state, "Show task state when sched-out"),
++	OPT_BOOLEAN(0, "state", &perf_sched.show_state, "Show task state when sched-out"),
+ 	OPT_STRING('p', "pid", &symbol_conf.pid_list_str, "pid[,pid...]",
+ 		   "analyze events only for given process id(s)"),
+ 	OPT_STRING('t', "tid", &symbol_conf.tid_list_str, "tid[,tid...]",
+@@ -3645,31 +3646,31 @@ int cmd_sched(int argc, const char **argv)
+ 	} else if (strlen(argv[0]) > 2 && strstarts("record", argv[0])) {
+ 		return __cmd_record(argc, argv);
+ 	} else if (strlen(argv[0]) > 2 && strstarts("latency", argv[0])) {
+-		sched.tp_handler = &lat_ops;
++		perf_sched.tp_handler = &lat_ops;
+ 		if (argc > 1) {
+ 			argc = parse_options(argc, argv, latency_options, latency_usage, 0);
+ 			if (argc)
+ 				usage_with_options(latency_usage, latency_options);
+ 		}
+-		setup_sorting(&sched, latency_options, latency_usage);
+-		return perf_sched__lat(&sched);
++		setup_sorting(&perf_sched, latency_options, latency_usage);
++		return perf_sched__lat(&perf_sched);
+ 	} else if (!strcmp(argv[0], "map")) {
+ 		if (argc) {
+ 			argc = parse_options(argc, argv, map_options, map_usage, 0);
+ 			if (argc)
+ 				usage_with_options(map_usage, map_options);
+ 		}
+-		sched.tp_handler = &map_ops;
+-		setup_sorting(&sched, latency_options, latency_usage);
+-		return perf_sched__map(&sched);
++		perf_sched.tp_handler = &map_ops;
++		setup_sorting(&perf_sched, latency_options, latency_usage);
++		return perf_sched__map(&perf_sched);
+ 	} else if (strlen(argv[0]) > 2 && strstarts("replay", argv[0])) {
+-		sched.tp_handler = &replay_ops;
++		perf_sched.tp_handler = &replay_ops;
+ 		if (argc) {
+ 			argc = parse_options(argc, argv, replay_options, replay_usage, 0);
+ 			if (argc)
+ 				usage_with_options(replay_usage, replay_options);
+ 		}
+-		return perf_sched__replay(&sched);
++		return perf_sched__replay(&perf_sched);
+ 	} else if (!strcmp(argv[0], "timehist")) {
+ 		if (argc) {
+ 			argc = parse_options(argc, argv, timehist_options,
+@@ -3677,13 +3678,13 @@ int cmd_sched(int argc, const char **argv)
+ 			if (argc)
+ 				usage_with_options(timehist_usage, timehist_options);
+ 		}
+-		if ((sched.show_wakeups || sched.show_next) &&
+-		    sched.summary_only) {
++		if ((perf_sched.show_wakeups || perf_sched.show_next) &&
++		    perf_sched.summary_only) {
+ 			pr_err(" Error: -s and -[n|w] are mutually exclusive.\n");
+ 			parse_options_usage(timehist_usage, timehist_options, "s", true);
+-			if (sched.show_wakeups)
++			if (perf_sched.show_wakeups)
+ 				parse_options_usage(NULL, timehist_options, "w", true);
+-			if (sched.show_next)
++			if (perf_sched.show_next)
+ 				parse_options_usage(NULL, timehist_options, "n", true);
+ 			return -EINVAL;
+ 		}
+@@ -3691,7 +3692,7 @@ int cmd_sched(int argc, const char **argv)
+ 		if (ret)
+ 			return ret;
  
- /* Macros for the SPI controller read/write */
-@@ -588,6 +591,16 @@ static int cdns_spi_probe(struct platform_device *pdev)
- 		goto remove_ctlr;
+-		return perf_sched__timehist(&sched);
++		return perf_sched__timehist(&perf_sched);
+ 	} else {
+ 		usage_with_options(sched_usage, sched_options);
  	}
- 
-+	xspi->rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, "spi");
-+	if (IS_ERR(xspi->rstc)) {
-+		ret = dev_err_probe(&pdev->dev, PTR_ERR(xspi->rstc),
-+				    "Cannot get SPI reset.\n");
-+		goto remove_ctlr;
-+	}
-+
-+	reset_control_assert(xspi->rstc);
-+	reset_control_deassert(xspi->rstc);
-+
- 	if (!spi_controller_is_target(ctlr)) {
- 		xspi->ref_clk = devm_clk_get_enabled(&pdev->dev, "ref_clk");
- 		if (IS_ERR(xspi->ref_clk)) {
 -- 
-2.43.2
+2.44.0
 
 
