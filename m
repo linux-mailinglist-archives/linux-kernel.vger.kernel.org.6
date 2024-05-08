@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-172738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A25F8BF5FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:17:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EC28BF5FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01177286DB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99E9DB20E31
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C9C18AE0;
-	Wed,  8 May 2024 06:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4311F18028;
+	Wed,  8 May 2024 06:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cquS4GkG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W3GOTw/w"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D1717C60;
-	Wed,  8 May 2024 06:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD03617BCD;
+	Wed,  8 May 2024 06:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149037; cv=none; b=POgn6OT9RByr/84NGvzL/QdhsxzBhEBaayu0kM6eSHFiKK9C9pMvnqr3tvdtdP8f2hn9vQh+lUUHthfPDB8P+11T48IW0MXV/SUi3OOixRELxRUd2fDZvyXymuxCQHi/FIphyyz8ibZ+vUDOfL4oXMBlLRrBaradbbnkGPCLBPA=
+	t=1715149109; cv=none; b=D0mjK1LQUMAuqqsLQCEM7Ou0df1QiS+5JYZz3/KjVO/QuyY3NKKG9xpMqZx2jeR2V/hm3NRgkjg2YbCbYDKcqMZvJsyeirneH2ATy7O6YtXPnAWfDux2aItQaqydgX//HWxtcNQTl9aWZabLnHlT4Qw3dkNBud4cItpAltD0F9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149037; c=relaxed/simple;
-	bh=T26SDKirdEo8SHZ8HjwDIG4EdXpl2FYVdBGtGn6knrM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UlMJ1PR3QnovVyPtcpkmadW0u3V0QtFY3wynWg65mCHVUs0xVRBY/vzqLdpAat4E8LNENoblNt8XGamSJFNUR7xL0U3CJj402muI2CohRAH1Urpjj9OWIKmq55EtCe/pxhLKVr0xfQKgtyE8BN3HKw/nPhFKgBnpDLP6meafaTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cquS4GkG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4482UVXT017982;
-	Wed, 8 May 2024 06:16:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=4ZVMtsvIKFQutqFB7Piu+yfh0WtTdxIprL8802CV5CQ=; b=cq
-	uS4GkGH/1VtQf8/4bvbKHdcC3OrR8Uq2Ic5QeMHf9EjDjknZBsc+Stk/xE6dZYK6
-	DRIoL6h1IFNT2tqV1gAJUWmyNX/aNeG9871NVqWMjTVAupbAwEm7dX6bNDkVPSVD
-	0AtBctHrTGY0yy+kiMuv4OQQbuN/AvFrkdySkn0blquWj3H2Y/cbyqn2bhA+lxXo
-	UByYJx/3PJqJoIj3lJ0X7U7L/F37v77X3ma4EtE/cntHvIcuiJzIMCmXLR7uNUH/
-	mwxYDppaI8ceSa6cbCh6tCqZMKatfjGApUYDSy6iO6hHjtxzt+AyXkEqeHSTFEs0
-	MN/K1lrsadW84A/ZtqYw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xysgc93up-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 06:16:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4486Guic001987
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 06:16:56 GMT
-Received: from [10.50.20.203] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
- 23:16:49 -0700
-Message-ID: <569087fe-e675-41a4-b975-2d01d95b6d3c@quicinc.com>
-Date: Wed, 8 May 2024 11:46:40 +0530
+	s=arc-20240116; t=1715149109; c=relaxed/simple;
+	bh=0O6Jrn0zRwiPdIfa506NPSja/s9+WipuhrUjnzn9X7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rqb/rQ/SIhAhijBhUZL0rGnAdKvDXXOYvRvSI0XdHyPemCpSDz9pqGt4jKbEVN8g8Q7nnhsIkG/fK2SG/1muUjDBELQpG//ShSX+ROd9JG9dH1GiYxBir37actz8FCrEA1gPnC+MzInRgScWUZiY3Anvu+MaFGRzikrgamTNQDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W3GOTw/w; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715149108; x=1746685108;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0O6Jrn0zRwiPdIfa506NPSja/s9+WipuhrUjnzn9X7U=;
+  b=W3GOTw/wPtHTZnYqU5k/VfW0LlQBmxW1L94ioX0ScRXpZruXPEJSys+Q
+   0/Rn1sTsm3sU0omTnM65Kdux5VOhKuX+086oHGGXk56oSKqTJRByduIxy
+   zm8tRtt4ZaVVLMuSiGQ6aLcZh+X3oWrlBGr4CJqLWIAaPaoo+9gVQ7avN
+   UZdHc7gMjzTHODBnG1WGEp1TPYu54iGirv8/6EDKWyKKZ/4r/GMfFB27H
+   0yjHoyrnmq5qtajrMi30s6ydN+2QyXN5ALOy2yd2sI/DISm7IimHnJVEp
+   YmJ3gaNpsG50qL/3LVt4hVlbfyA0phN9dOIwsXdmXF3a74KzLc1So9HSe
+   g==;
+X-CSE-ConnectionGUID: X/cjYjISSbmuu0TUd4sfkg==
+X-CSE-MsgGUID: p429NptsRp6QTW5eI6Wj9Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="28461835"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="28461835"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:18:28 -0700
+X-CSE-ConnectionGUID: E9t8kbvsQwmGPQUlSiKaTQ==
+X-CSE-MsgGUID: 3PQphuNHRkah0PM0Tnj4UQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="33295539"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.34.189])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 23:18:22 -0700
+Message-ID: <479cfef5-daa8-4650-85c7-4a5764885562@intel.com>
+Date: Wed, 8 May 2024 09:18:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,122 +66,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 RESEND 0/8] ipq9574: Enable PCI-Express support
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Lorenzo
- Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I
-	<kishon@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>
-References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] perf maps: Process kcore maps in order
+To: Leo Yan <leo.yan@linux.dev>
+Cc: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240505202805.583253-1-leo.yan@arm.com>
+ <d47346fc-51b4-4af5-a014-0bd6f3b7bae0@intel.com>
+ <20240507210151.GB1384@debian-dev>
 Content-Language: en-US
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240507210151.GB1384@debian-dev>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: H7iKy63Y87Fd912I5jpplZxuUVmXEYRT
-X-Proofpoint-ORIG-GUID: H7iKy63Y87Fd912I5jpplZxuUVmXEYRT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_02,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0 suspectscore=0
- spamscore=0 mlxlogscore=999 mlxscore=0 lowpriorityscore=0 malwarescore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405080045
 
+On 8/05/24 00:01, Leo Yan wrote:
+> Hi Adrian,
+> 
+> On Mon, May 06, 2024 at 08:43:01AM +0300, Adrian Hunter wrote:
+> 
+> [...]
+> 
+>>> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+>>> index 9ebdb8e13c0b..e15d70845488 100644
+>>> --- a/tools/perf/util/symbol.c
+>>> +++ b/tools/perf/util/symbol.c
+>>> @@ -1266,7 +1266,24 @@ static int kcore_mapfn(u64 start, u64 len, u64 pgoff, void *data)
+>>>  	map__set_end(list_node->map, map__start(list_node->map) + len);
+>>>  	map__set_pgoff(list_node->map, pgoff);
+>>>  
+>>> -	list_add(&list_node->node, &md->maps);
+>>> +	/*
+>>> +	 * Kcore maps are ordered with:
+>>> +	 *   [_text.._end): Kernel text section
+>>> +	 *   [VMALLOC_START..VMALLOC_END): vmalloc
+>>> +	 *   ...
+>>> +	 *
+>>> +	 * On Arm64, the '_text' and 'VMALLOC_START' are the same values
+>>> +	 * but VMALLOC_END (~124TiB) is much bigger then the text end
+>>> +	 * address. So '_text' region is the subset of the vmalloc region.
+>>> +	 *
+>>> +	 * Afterwards, when dso__load_kcore() adjusts kernel maps, we must
+>>> +	 * process the kernel text size prior to handling vmalloc region.
+>>> +	 * This can avoid to using any inaccurate kernel text size when
+>>> +	 * extending maps with vmalloc region. For this reason, here it
+>>> +	 * always adds kcore maps to the tail of list to make sure the
+>>> +	 * sequential handling is in order.
+>>> +	 */
+>>> +	list_add_tail(&list_node->node, &md->maps);
+>>
+>> This seems reasonable, but I wonder if it might be robust
+>> and future proof to also process the main map first
+>> e.g. totally untested:
+> 
+> Makes sense for me, I verified your proposal with a minor improvment,
+> please see the comment below.
+> 
+>> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+>> index 9ebdb8e13c0b..63bce45a5abb 100644
+>> --- a/tools/perf/util/symbol.c
+>> +++ b/tools/perf/util/symbol.c
+>> @@ -1365,16 +1365,15 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
+>>  	if (!replacement_map)
+>>  		replacement_map = list_entry(md.maps.next, struct map_list_node, node)->map;
+>>  
+>> -	/* Add new maps */
+>> +	/* Add replacement_map */
+>>  	while (!list_empty(&md.maps)) {
+> 
+> For the replacement map, as we have located it in the list, here we
+> don't need to iterate the whole kcore map list anymore. We can
+> directly use the replacement map to update the passed map:
+> 
+>         /* Update replacement_map */
+>         if (replacement_map) {
+>                 struct map *map_ref;
+> 
+>                 list_del_init(&replacement_node->node);
+>                 map__set_start(map, map__start(replacement_map));
+>                 map__set_end(map, map__end(replacement_map));
+>                 map__set_pgoff(map, map__pgoff(replacement_map));
+>                 map__set_mapping_type(map, map__mapping_type(replacement_map));
+>                 /* Ensure maps are correctly ordered */
+>                 map_ref = map__get(map);
+>                 maps__remove(kmaps, map_ref);
+>                 err = maps__insert(kmaps, map_ref);
+>                 map__put(map_ref);
+>                 map__put(replacement_map);
+>                 if (err)
+>                         goto out_err;
+>                 free(replacement_node);
+>         }
+> 
+> I also uploaded the verified change to https://termbin.com/rrfo.
+> 
+> Please let me know if you would like to send a patch for this, or you
+> want me to spin a new version. Either is fine for me.
 
+James has a patch that does this also and looks good:
 
-On 5/1/2024 9:58 AM, Alexandru Gagniuc wrote:
-> There are four PCIe ports on IPQ9574, pcie0 thru pcie3. This series
-> addresses pcie2, which is a gen3x2 port. The board I have only uses
-> pcie2, and that's the only one enabled in this series. pcie3 is added
-> as a special request, but is untested.
-> 
-> I believe this makes sense as a monolithic series, as the individual
-> pieces are not that useful by themselves.
+https://lore.kernel.org/linux-perf-users/CAM9d7cjYvMndUmSuwnE1ETwnu_6WrxQ4UzsNHHvo4SVR250L7A@mail.gmail.com/T/#md3d61e4182fc5bc3aee917db9af23a39b617b8ea
 
-Hi Alexandru,
+However, the "list_add_tail" change still seems worth doing
+because it is more logical to process in order rather than
+reverse order.  Probably just need to adjust the comment and
+commit message.
 
-As Dmitry suggested, we are working on enabling the PCIe NOC clocks
-via Interconnect. We will be posting the PCIe series with
-Interconnect support [1] shortly.
-
-[1] - 
-https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
-
-Thanks,
-S.Devi Priya
-> 
-> In v2, I've had some issues regarding the dt schema checks. For
-> transparency, I used the following test invocations to test:
-> 
->        make dt_binding_check     DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
->        make dtbs_check           DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
-> 
-> Changes since v3:
->   - "const"ify .hw.init fields for the PCIE pipe clocks
->   - Used pciephy_v5_regs_layout instead of v4 in phy-qcom-qmp-pcie.c
->   - Included Manivannan's patch for qcom-pcie.c clocks
->   - Dropped redundant comments in "ranges" and "interrupt-map" of pcie2.
->   - Added pcie3 and pcie3_phy dts nodes
->   - Moved snoc and anoc clocks to PCIe controller from PHY
-> 
-> Changes since v2:
->   - reworked resets in qcom,pcie.yaml to resolve dt schema errors
->   - constrained "reg" in qcom,pcie.yaml
->   - reworked min/max intems in qcom,ipq8074-qmp-pcie-phy.yaml
->   - dropped msi-parent for pcie node, as it is handled by "msi" IRQ
-> 
-> Changes since v1:
->   - updated new tables in phy-qcom-qmp-pcie.c to use lowercase hex numbers
->   - reorganized qcom,ipq8074-qmp-pcie-phy.yaml to use a single list of clocks
->   - reorganized qcom,pcie.yaml to include clocks+resets per compatible
->   - Renamed "pcie2_qmp_phy" label to "pcie2_phy"
->   - moved "ranges" property of pcie@20000000 higher up
-> 
-> Alexandru Gagniuc (7):
->    dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
->    clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
->    dt-bindings: PCI: qcom: Add IPQ9574 PCIe controller
->    PCI: qcom: Add support for IPQ9574
->    dt-bindings: phy: qcom,ipq8074-qmp-pcie: add ipq9574 gen3x2 PHY
->    phy: qcom-qmp-pcie: add support for ipq9574 gen3x2 PHY
->    arm64: dts: qcom: ipq9574: add PCIe2 and PCIe3 nodes
-> 
-> Manivannan Sadhasivam (1):
->    PCI: qcom: Switch to devm_clk_bulk_get_all() API to get the clocks
->      from Devicetree
-> 
->   .../devicetree/bindings/pci/qcom,pcie.yaml    |  37 ++++
->   .../phy/qcom,ipq8074-qmp-pcie-phy.yaml        |   1 +
->   arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 178 +++++++++++++++++-
->   drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++++++
->   drivers/pci/controller/dwc/pcie-qcom.c        | 164 +++-------------
->   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 136 ++++++++++++-
->   .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 ++
->   include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
->   8 files changed, 469 insertions(+), 141 deletions(-)
-> 
 
