@@ -1,488 +1,249 @@
-Return-Path: <linux-kernel+bounces-173268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FD58BFDEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:03:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386D08BFDEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7BC1C2129C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:03:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A721F23226
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2166FB9D;
-	Wed,  8 May 2024 13:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D4VLAPfu"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22696A33B;
+	Wed,  8 May 2024 13:04:42 +0000 (UTC)
+Received: from mail-m24123.xmail.ntesmail.com (mail-m24123.xmail.ntesmail.com [45.195.24.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04E96F514;
-	Wed,  8 May 2024 13:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA15F1E49F;
+	Wed,  8 May 2024 13:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715173427; cv=none; b=EPD5C5/Grv77IkLPOTfKeczTX94qy1AKSjpMk/2v2+Y6OQvCkPhLtiKW0Mx9tGY9ewIuxhbZHTWHnV1XC87h5bl6/xB5Xg9AkHMeDtTHjN0OD2xxiN5hPj69/VikaP0XBjV+VzlXWaGrLGAgRK3kxYTHLcmJIMXG9tgaruoNQyw=
+	t=1715173482; cv=none; b=syLXPX3C2BXOZmM8vv12jCRj/eUbyeo/O5DXg4kt3KfT9QtlrRl2VcM5HWQBWAb8hWEpKvVzhLYHwpjv4QYPrBtDLnB4V82DE2azlJrV7AqjqAFPeaqWAAImL9iCoxffLGU6qGbb0f6hAbYWczQE4/fU/NpwH1GkW/k/BxXzDDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715173427; c=relaxed/simple;
-	bh=5FEuNuqB/xNgZpz5eMrt4wnOu5jHXdgJutLLPE66LU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IqU1bNU1VAvv3eAxaJ7Jcp7OIdLJnVDAD4c5+ssjbhMU5OhxEGxlP4CJWZh/rPW0Odwgl/sX6AQSN/OdEKNjjdoYccDBoKcaFPqrVRuEmOsh0uR75f5VA0ykyEymNkh2LVsrFaUw+BF+SQfiYITQAMX3hqQ7xklJEKRSY1nn4Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D4VLAPfu; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715173413;
-	bh=5FEuNuqB/xNgZpz5eMrt4wnOu5jHXdgJutLLPE66LU8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D4VLAPfuxR04RrUjyNzTm7l5RZgiJoBmJV1sabUa/Kk325ubbamcDSvyqRzIrOfpw
-	 VWUkvUkvJgc0PYKVdPkRzqcdmAanVMw9vNxQIgtEWw7h7QXxyA5uS1m+qqs/+bcfDK
-	 1rCndo0hswsnhlVKE7ZU0SEXuBQFTQLGJ3Xjzhd3kejwMqKfM8xkCO7uBWvmarC1Dj
-	 lR29yk7jjk5UbWW8QLktLZaTXPLFlNfhZ4p9WWigL2Fb5YHx4mEJNBDZUtB9XIphk4
-	 Y8lywEA0ZnlXn63dHFHXriFjoruE9Kps2B/gaoMj3iIdWb5LB6kI1OoyF18Xb8eQkP
-	 G2fS605ZHlgqg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87E133782113;
-	Wed,  8 May 2024 13:03:32 +0000 (UTC)
-Message-ID: <cbf73111-a6cf-47da-9563-89d49fbdb17d@collabora.com>
-Date: Wed, 8 May 2024 15:03:31 +0200
+	s=arc-20240116; t=1715173482; c=relaxed/simple;
+	bh=NQVipMt6posJdAbFswoB/ZgbupdFMau/BakoExgSncE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WQ4+Zuq78/XjuMcl0Z/DmOUn4b+JoOSul9DI+sVV8rTxDnCb0sGFOGwLF6Z7iwdQARwqxezGORUY49xcw5LrC7V14FCnfqaGiTYcVUgQ3XhsOuDf6TjfJR6i+1AMg58dLJo/ZcvdPKezc3tAa8JxQLmBx336AvMvOro72lbwMBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.24.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from [192.168.122.189] (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id C459B860215;
+	Wed,  8 May 2024 21:03:55 +0800 (CST)
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+ Gregory Price <gregory.price@memverge.com>, axboe@kernel.dk,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
+ <66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
+ <ZikhwAAIGFG0UU23@memverge.com>
+ <bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
+ <ZiuwyIVaKJq8aC6g@memverge.com>
+ <98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
+ <ZivS86BrfPHopkru@memverge.com>
+ <8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
+ <wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
+ <20240503105245.00003676@Huawei.com>
+ <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+ <20240508131125.00003d2b@Huawei.com>
+From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Message-ID: <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+Date: Wed, 8 May 2024 21:03:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
- support for board path
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "wenst@chromium.org" <wenst@chromium.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
- <20240409120211.321153-3-angelogioacchino.delregno@collabora.com>
- <aa7e3bcf70383e563a65919f924ec2e5e4cd778c.camel@mediatek.com>
- <becdc2e5-4a1d-4280-b6f8-78d4903be283@collabora.com>
- <4dfb09b9c437ab2baa0898eca13a43fd7475047a.camel@mediatek.com>
- <46347f5d-e09b-4e83-a5a2-e12407f442a4@collabora.com>
- <847e1a84b532956f697d24014d684c86f0b76f03.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <847e1a84b532956f697d24014d684c86f0b76f03.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20240508131125.00003d2b@Huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkaQh1JVh9IShhIGkMdH04ZH1UZERMWGhIXJBQOD1
+	lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a8f584daaf4023ckunmc459b860215
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OQg6Pio6LDc*QlYvVkMrTRgj
+	OSIKCgJVSlVKTEpOSkxIT0hNTU1LVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
+	V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBQ0NCSDcG
 
-Il 08/05/24 09:19, CK Hu (胡俊光) ha scritto:
-> On Tue, 2024-05-07 at 16:07 +0200, AngeloGioacchino Del Regno wrote:
->> Il 07/05/24 08:59, CK Hu (胡俊光) ha scritto:
->>> On Thu, 2024-05-02 at 10:50 +0200, AngeloGioacchino Del Regno
->>> wrote:
->>>> Il 25/04/24 04:23, CK Hu (胡俊光) ha scritto:
->>>>> Hi, Angelo:
->>>>>
->>>>> On Tue, 2024-04-09 at 14:02 +0200, AngeloGioacchino Del Regno
->>>>> wrote:
->>>>>> Document OF graph on MMSYS/VDOSYS: this supports up to three
->>>>>> DDP
->>>>>> paths
->>>>>> per HW instance (so potentially up to six displays for multi-
->>>>>> vdo
->>>>>> SoCs).
->>>>>>
->>>>>> The MMSYS or VDOSYS is always the first component in the DDP
->>>>>> pipeline,
->>>>>> so it only supports an output port with multiple endpoints -
->>>>>> where
->>>>>> each
->>>>>> endpoint defines the starting point for one of the (currently
->>>>>> three)
->>>>>> possible hardware paths.
->>>>>>
->>>>>> Signed-off-by: AngeloGioacchino Del Regno <
->>>>>> angelogioacchino.delregno@collabora.com>
->>>>>> ---
->>>>>>     .../bindings/arm/mediatek/mediatek,mmsys.yaml | 23
->>>>>> +++++++++++++++++++
->>>>>>     1 file changed, 23 insertions(+)
->>>>>>
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
->>>>>> ys.y
->>>>>> aml
->>>>>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
->>>>>> ys.y
->>>>>> aml
->>>>>> index b3c6888c1457..4e9acd966aa5 100644
->>>>>> ---
->>>>>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
->>>>>> ys.y
->>>>>> aml
->>>>>> +++
->>>>>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
->>>>>> ys.y
->>>>>> aml
->>>>>> @@ -93,6 +93,29 @@ properties:
->>>>>>       '#reset-cells':
->>>>>>         const: 1
->>>>>>     
->>>>>> +  port:
->>>>>> +    $ref: /schemas/graph.yaml#/properties/port
->>>>>> +    description:
->>>>>> +      Output port node. This port connects the MMSYS/VDOSYS
->>>>>> output
->>>>>> to
->>>>>> +      the first component of one display pipeline, for
->>>>>> example
->>>>>> one
->>>>>> of
->>>>>> +      the available OVL or RDMA blocks.
->>>>>> +      Some MediaTek SoCs support up to three display outputs
->>>>>> per
->>>>>> MMSYS.
->>>>>> +    properties:
->>>>>> +      endpoint@0:
->>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>> +        description: Output to the primary display pipeline
->>>>>> +
->>>>>> +      endpoint@1:
->>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>> +        description: Output to the secondary display
->>>>>> pipeline
->>>>>> +
->>>>>> +      endpoint@2:
->>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
->>>>>> +        description: Output to the tertiary display pipeline
->>>>>> +
->>>>>> +    required:
->>>>>> +      - endpoint@0
->>>>>> +
->>>>>
->>>>> mmsys/vdosys does not output data to the first component of
->>>>> display
->>>>> pipeline, so this connection looks 'virtual'. Shall we add
->>>>> something
->>>>> virtual in device tree? You add this in order to decide which
->>>>> pipeline
->>>>> is 1st, 2nd, 3rd, but for device it don't care which one is
->>>>> first.
->>>>> In
->>>>> computer, software could change which display is the primary
->>>>> display.
->>>>> I'm not sure it's good to decide display order in device tree?
->>>>>
->>>>
->>>> Devicetree describes hardware, so nothing virtual can be present
->>>> -
->>>> and in any case,
->>>> the primary/secondary/tertiary pipeline is in relation to MM/VDO
->>>> SYS,
->>>> not referred
->>>> to software.
->>>>
->>>> Better explaining, the primary pipeline is not necessarily the
->>>> primary display in
->>>> DRM terms: that's a concept that is completely detached from the
->>>> scope of this
->>>> series and this graph - and it's something that shall be managed
->>>> solely by the
->>>> driver (mediatek-drm in this case).
->>>>
->>>> Coming back to the connection looking, but *not* being virtual:
->>>> the
->>>> sense here is
->>>> that the MM/VDOSYS blocks are used in the display pipeline to
->>>> "stitch" together
->>>> the various display pipeline hardware blocks, or, said
->>>> differently,
->>>> setting up the
->>>> routing between all of those (P.S.: mmsys_mtxxxx_routing_table!)
->>>> through the VDO
->>>> Input Selection (VDOx_SEL_IN) or Output Selection (VDOx_SEL_OUT)
->>>> and
->>>> with the
->>>> assistance of the VDO Multiple Output Mask (VDOx_MOUT) for the
->>>> multiple outputs
->>>> usecase, both of which, are described by this graph.
->>>
->>> I agree this part, but this is related to display device OF graph.
->>> These display device would output video data from one device and
->>> input
->>> to another video device. These video device would not input or
->>> output
->>> video data to mmsys/vdosys.
->>>
->>>>
->>>> This means that the VDOSYS is really the "master" of the display
->>>> pipeline since
->>>> everything gets enabled, mixed and matched from there - and
->>>> that's in
->>>> the sense
->>>> of hardware operation, so we are *really* (and not virtually!)
->>>> flipping switches.
->>>
->>> I agree mmsys/vdosys is master of video pipeline, so let's define
->>> what
->>> the port in mmsys/vdosys is. If the port means the master
->>> relationship,
->>> mmsys/vdosys should output port to every display device. Or use a
->>> simply way to show the master relation ship
->>>
->>> mmsys-subdev = <&ovl0, &rdma0, &color0, ...>, <&ovl1, &rdma1,
->>> &color1,
->>> ...>;
->>>
->>
->> There's no need to list all of the VDO0/VDO1/mmsys devices in one big
->> array
->> property, because the actual possible devices can be defined:
->>     1. In the bindings; and
->>     2. In the actual OF graph that we write for each SoC+board
->> combination.
->>
->> A graph cannot contain a connection to a device that cannot be
->> connected to
->> the previous, so, your "mmsys-subdev" list can be retrieved by
->> looking at the
->> graph:
->>    - Start from VDO0/1 or MMSYS
->>    - Walk through (visually, even) OUTPUT ports
->>      - VDO0 (read output ep) -> ovl0 (read output ep) -> rdma0 (read
->> output ep) ->
->>        color0 (...) -> etc
->>    - Nothing more - it's all defined there.
->>
->>>
->>> Another problem is how to group display device? If two pipeline
->>> could
->>> be route to the same display interface, such as
->>>
->>> rdma0 -> dsi
->>> rdma1 -> dsi
->>>
->>> Would this be single group?
->>
->> There are multiple ways of doing this, but one that comes to my mind
->> right now and
->> that looks clean as well is the following:
->>
->> ovl0@ef01 {
->>      .....
->>     ports {
->>       port@0 {
->>         reg = <0>;
->>         ovl0_in: endpoint {
->>           remote-endpoint = <&vdosys0_out>;
->>         };
->>       };
+
+
+在 2024/5/8 星期三 下午 8:11, Jonathan Cameron 写道:
+> On Wed, 8 May 2024 19:39:23 +0800
+> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
 > 
-> I'm not sure how do you define this port from OVL to vdosys. If this
-> port means 'master relationship', others could add port in COLOR to
-> point to vdosys because COLOR and vdosys has the 'master relationship'
-> and I could not reject this. So we need more specific definition of
-> this port.
-
-
-> Only the 'first' device in pipeline could have this port?
-
-Correct. Only the first device in a pipeline - and this is actually a restriction
-that the generic binding definition of port already gives, in a way.
-
-
-> In mt8173, one pipeline is
-> 
-> ovl -> color -> aal -> od -> rdma -> ufo -> dsi
-> 
-> But rdma has an option to read data from od or directly from DRAM. If
-> from DRAM, the pipeline would be changed to
-> 
-> rdma -> ufo -> dsi
-> 
-> 
-> So it's confused which one is 'first'.
-
-That's why the pipeline is *board-specific* and not soc-generic!
-
-And what you described is *exactly* the reason why I'm adding support for the
-OF graphs in mediatek-drm: specifying the correct pipeline for each board as per
-what each board wants to use (said differently: for each board's *capabilities*).
-
-So, if on a certain board you want to skip OD, you can hook RDMA up directly to
-MMSYS/VDOSYS.
-
-In MT8173, one pipeline for one board uses endpoints IN/OUT like this:
-
-MMSYS -> OVL -> COLOR -> AAL -> OD -> RDMA -> UFO -> DSI
-
-and for another board, endpoints will be like
-
-MMSYS -> RDMA -> UFO -> DSI
-
-..which is the exact same as you described, and I think that your confusion comes
-from the fact that you didn't put MMSYS at the beginning of the pipeline :-)
-
-
-
-
-In case you need any *temporary override* on any board that defines a pipeline like
-
-MMSYS -> OVL -> COLOR -> AAL -> OD -> RDMA -> UFO -> DSI
-
-so that the pipeline *temporarily* becomes (for power management, or for any other
-reason) RDMA -> UFO -> DSI .... that's not a concern: the graph is present, and it
-is used to tell to the driver what is the regular pipeline to use.
-Eventual temporary overrides can be managed transparently inside of the driver with
-C code and no changes to the devicetree are required.
-
-
-> I don't know how to decide which device could point to mmsys/vdosys. So
-> please give a specific definition.
-> 
-
-Nothing points TO mmsys/vdosys. It is mmsys/vdosys pointing to a device.
-
-So, mmsys/vdosys must point to the *first device in the pipeline*.
-
-Any other doubt?
-
-Cheers,
-Angelo
-
-> Regards,
-> CK
-> 
->>
->>       port@1 {
->>         reg = <1>;
->>         ovl0_out0: endpoint@0 {
->>           remote-endpoint = <&rdma0_in>;
->>         };
->>         ovl0_out1: endpoint@1 {
->>           remote-endpoint = <&rdma1_in>;
->>         };
->>       };
->>     };
->> };
->>
->> rdma0@1234 {
->>      .....
->>     ports {
->>       port@0 {
->>         reg = <0>;
->>         rdma0_in: endpoint {
->>           remote-endpoint = <&ovl0_out0>; /* assuming ovl0 outputs to
->> rdma0...*/
->>         };
->>       };
->>       port@1 {
->>         reg = <1>;
->>         rdma0_out: endpoint@1 {
->>           remote-endpoint = <&dsi_dual_intf0_in>;
->>         };
->>       };
->>     };
->> };
->>
->>
->> rdma1@5678 {
->>      .....
->>     ports {
->>       port@0 {
->>         reg = <0>;
->>         rdma1_in: endpoint {
->>           /* assuming ovl0 outputs to rdma1 as well... can be
->> something else. */
->>           remote-endpoint = <&ovl0_out1>;
->>         };
->>       };
->>       port@1 {
->>         reg = <1>;
->>         rdma1_out: endpoint {
->>           remote-endpoint = <&dsi_dual_intf1_in>;
->>         };
->>       };
->>     };
->> };
->>
->>
->> dsi@9abcd {
->>      .....
->>     ports {
->>       port@0 {
->>         reg = <0>;
->>         /* Where endpoint@0 could be always DSI LEFT CTRL */
->>         dsi_dual_intf0_in: endpoint@0 {
->>           remote-endpoint = <&rdma0_out>;
->>         };
->>         /* ...and @1 could be always DSI RIGHT CTRL */
->>         dsi_dual_intf1_in: endpoint@1 {
->>           remote-endpoint = <&rdma1_out>;
->>         };
->>       };
->>
->>       port@1 {
->>         reg = <1>;
->>         dsi0_out: endpoint {
->>           remote-endpoint = <&dsi_panel_in>;
->>         };
->>       };
->>     };
->> };
->>
->> ...for a dual-dsi panel, it'd be a similar graph.
->>
->> Cheers,
->> Angelo
->>
->>>
->>> mmsys-subdev = <&rdma0, &rdma1, &dsi>;
->>>
->>> Or two group?
->>>
->>> mmsys-subdev = <&rdma0, &dsi>, <&rdma1, &dsi>;
->>>
->>> I think we should clearly define this.
->>>
->>> Regards,
->>> CK
->>>
->>>>
->>>>
->>>> Cheers,
->>>> Angelo
->>>>
->>>>> Regards,
->>>>> CK
+>> 在 2024/5/3 星期五 下午 5:52, Jonathan Cameron 写道:
+>>> On Sun, 28 Apr 2024 11:55:10 -0500
+>>> John Groves <John@groves.net> wrote:
+>>>    
+>>>> On 24/04/28 01:47PM, Dongsheng Yang wrote:
 >>>>>
 >>>>>
->>>>>>     required:
->>>>>>       - compatible
->>>>>>       - reg
+>>>>> 在 2024/4/27 星期六 上午 12:14, Gregory Price 写道:
+>>>>>> On Fri, Apr 26, 2024 at 10:53:43PM +0800, Dongsheng Yang wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> 在 2024/4/26 星期五 下午 9:48, Gregory Price 写道:
+>>>>>>>>       
+>>>>>>>   
+>>
+>> ...
 >>>>
->>>>
+>>>> Just to make things slightly gnarlier, the MESI cache coherency protocol
+>>>> allows a CPU to speculatively convert a line from exclusive to modified,
+>>>> meaning it's not clear as of now whether "occasional" clean write-backs
+>>>> can be avoided. Meaning those read-only mappings may be more important
+>>>> than one might think. (Clean write-backs basically make it
+>>>> impossible for software to manage cache coherency.)
+>>>
+>>> My understanding is that clean write backs are an implementation specific
+>>> issue that came as a surprise to some CPU arch folk I spoke to, we will
+>>> need some path for a host to say if they can ever do that.
+>>>
+>>> Given this definitely effects one CPU vendor, maybe solutions that
+>>> rely on this not happening are not suitable for upstream.
+>>>
+>>> Maybe this market will be important enough for that CPU vendor to stop
+>>> doing it but if they do it will take a while...
+>>>
+>>> Flushing in general is as CPU architecture problem where each of the
+>>> architectures needs to be clear what they do / specify that their
+>>> licensees do.
+>>>
+>>> I'm with Dan on encouraging all memory vendors to do hardware coherence!
 >>
+>> Hi Gregory, John, Jonathan and Dan:
+>> 	Thanx for your information, they help a lot, and sorry for the late reply.
 >>
+>> After some internal discussions, I think we can design it as follows:
 >>
+>> (1) If the hardware implements cache coherence, then the software layer
+>> doesn't need to consider this issue, and can perform read and write
+>> operations directly.
+> 
+> Agreed - this is one easier case.
+> 
+>>
+>> (2) If the hardware doesn't implement cache coherence, we can consider a
+>> DMA-like approach, where we check architectural features to determine if
+>> cache coherence is supported. This could be similar to
+>> `dev_is_dma_coherent`.
+> 
+> Ok. So this would combine host support checks with checking if the shared
+> memory on the device is multi host cache coherent (it will be single host
+> cache coherent which is what makes this messy)
+>>
+>> Additionally, if the architecture supports flushing and invalidating CPU
+>> caches (`CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE`,
+>> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU`,
+>> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL`),
+> 
+> Those particular calls won't tell you much at all. They indicate that a flush
+> can happen as far as a common point for DMA engines in the system. No
+> information on whether there are caches beyond that point.
+> 
+>>
+>> then we can handle cache coherence at the software layer.
+>> (For the clean writeback issue, I think it may also require
+>> clarification from the architecture, and how DMA handles the clean
+>> writeback problem, which I haven't further checked.)
+> 
+> I believe the relevant architecture only does IO coherent DMA so it is
+> never a problem (unlike with multihost cache coherence).Hi Jonathan,
+
+let me provide an example,
+In nvmeof-rdma, the `nvme_rdma_queue_rq` function places a request into 
+`req->sqe.dma`.
+
+(1) First, it calls `ib_dma_sync_single_for_cpu()`, which invalidates 
+the CPU cache:
 
 
+ib_dma_sync_single_for_cpu(dev, sqe->dma,
+                             sizeof(struct nvme_command), DMA_TO_DEVICE);
+
+
+For example, on ARM64, this would call `arch_sync_dma_for_cpu`, followed 
+by `dcache_inval_poc(start, start + size)`.
+
+(2) Setting up data related to the NVMe request.
+
+(3) then Calls `ib_dma_sync_single_for_device` to flush the CPU cache to 
+DMA memory:
+
+ib_dma_sync_single_for_device(dev, sqe->dma,
+                                 sizeof(struct nvme_command), 
+DMA_TO_DEVICE);
+
+Of course, if the hardware ensures cache coherency, the above operations 
+are skipped. However, if the hardware does not guarantee cache 
+coherency, RDMA appears to ensure cache coherency through this method.
+
+In the RDMA scenario, we also face the issue of multi-host cache 
+coherence. so I'm thinking, can we adopt a similar approach in CXL 
+shared memory to achieve data sharing?
+
+>>
+>> (3) If the hardware doesn't implement cache coherence and the cpu
+>> doesn't support the required CPU cache operations, then we can run in
+>> nocache mode.
+> 
+> I suspect that gets you no where either.  Never believe an architecture
+> that provides a flag that says not to cache something.  That just means
+> you should not be able to tell that it is cached - many many implementations
+> actually cache such accesses.
+
+Sigh, then that really makes thing difficult.
+> 
+>>
+>> CBD can initially support (3), and then transition to (1) when hardware
+>> supports cache-coherency. If there's sufficient market demand, we can
+>> also consider supporting (2).
+> I'd assume only (3) works.  The others rely on assumptions I don't think
+
+I guess you mean (1), the hardware cache-coherency way, right?
+
+:)
+Thanx
+
+> you can rely on.
+> 
+> Fun fun fun,
+> 
+> Jonathan
+> 
+>>
+>> How does this approach sound?
+>>
+>> Thanx
+>>>
+>>> J
+>>>    
+>>>>
+>>>> Keep in mind that I don't think anybody has cxl 3 devices or CPUs yet, and
+>>>> shared memory is not explicitly legal in cxl 2, so there are things a cpu
+>>>> could do (or not do) in a cxl 2 environment that are not illegal because
+>>>> they should not be observable in a no-shared-memory environment.
+>>>>
+>>>> CBD is interesting work, though for some of the reasons above I'm somewhat
+>>>> skeptical of shared memory as an IPC mechanism.
+>>>>
+>>>> Regards,
+>>>> John
+>>>>
+>>>>
+>>>>   
+>>>
+>>> .
+>>>    
+> 
+> .
+> 
 
