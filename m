@@ -1,111 +1,137 @@
-Return-Path: <linux-kernel+bounces-173155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467298BFC45
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:39:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1324C8BFC49
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D41285590
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:38:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4545A1C2292E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB2D82D66;
-	Wed,  8 May 2024 11:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1598287F;
+	Wed,  8 May 2024 11:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kci4b9x0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1i3rHWG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064178120A;
-	Wed,  8 May 2024 11:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA588120C;
+	Wed,  8 May 2024 11:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168297; cv=none; b=SXXZ+aemNTkzNugrLC+8PtqAD7CJMZO9zvyMsd0/J43nePWid/PYZHb8oLeTgeDfEscNnYof26yixprVtP1CRKrP0m7RHSGv9/tDOVeX/TM0edXyBL3C/RKZ2XTr0oWKGOw+ITsSCiBrfoOStQ4j5j1xm3ruY7YWaJ19w65/Oi8=
+	t=1715168349; cv=none; b=s77PIBYuY7+UIDLHFWjVvg7Aua7c+JzINaMS381D1tkRlsLsLLdWUbyM06GYbELB4KF01djXNMGMK+k08oPsE1NWTbZZ8nOC4hbDMbZA8yXuVrdG8wRinJNum0Ior6HAdoEi8vbHEROkSN8flxSx3oaVSncWD0/kyDvRFuX+iK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168297; c=relaxed/simple;
-	bh=iweWDyYezogrtHMPwakIJOi3mF2YKlhm4kZbXzx5dEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L0y2Sdez1th6PjCW59a24zJyWBTXNW/03j8GM5fuTESwiajibD9gnqEdUbLNcfYvT3Vr/Y8sRbpUOMriAY/Aik0iFUkGDxLRzhuAnkqS8nlvus/b1UnL3TxLPtLpIpB0vju19mt5Ocx2Exeq5CC3m0EXFgcHvwYpcGxUv4WMnJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kci4b9x0; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715168296; x=1746704296;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iweWDyYezogrtHMPwakIJOi3mF2YKlhm4kZbXzx5dEM=;
-  b=Kci4b9x0IEIUk5fGHt4RZWBF26Kqg+mi6dSj7YOKBhsEYy+dFC3pi8Wx
-   BjmqR9K6ib+KQueNvI2Vml3iuPnZQi46WAUs3JyvNtHLesrY4tRin2tYM
-   OHTM1S4HpxBLzTS6tddgKkxvTALuP0LNddRCl+6SrjocjOLM8pjVZMHAU
-   hn5fxG/+ofgWIPV0nLOmXyaEGgqLHMWFz3ho9qGIW6ed6P1asBlCn2dvq
-   8YvdHEFVTprsr7HC+HayfNDoMOuLht2ajtf6TMauPbfxiXtQwcO8SQUXo
-   NMLWKId6xWKfMJVhNbdGOQNYTSXtZn9znBQAyT6mZNNTk+psjCGZt+8Li
-   w==;
-X-CSE-ConnectionGUID: OVRgsgomQaSJFGf6BDGb3A==
-X-CSE-MsgGUID: CNNuUfs9RjaprAyMJZHBQw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11233689"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="11233689"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 04:38:15 -0700
-X-CSE-ConnectionGUID: zisdnwuuRFOLYoml0UjQIw==
-X-CSE-MsgGUID: nwWIU/lPSi2pMCs/8TgTyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33695727"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 08 May 2024 04:38:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2286911F; Wed, 08 May 2024 14:38:12 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v1 1/1] usb: phy: tegra: Replace of_gpio.h by proper one
-Date: Wed,  8 May 2024 14:38:09 +0300
-Message-ID: <20240508113809.926155-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1715168349; c=relaxed/simple;
+	bh=W261NQPf1ONiv0m5gYuul40Ggl5L4ivB5hD1JASB2SM=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SQMWe5nsGcY6DHXwHyYiHcmXNWsNbM6W7rTLKvW21puVjiNtZnnG9zXsMRlFn1pbop3GfSOU93zRMz0NMqoHdJVJwqnXv5jqJ7aTmDyGJ/XLQIUDUjytktOgmxUnnguTMhsC9WJFbjTWdHDmA3/g825aCiq9FphuBRA10rLRCsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1i3rHWG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34D6C113CC;
+	Wed,  8 May 2024 11:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715168349;
+	bh=W261NQPf1ONiv0m5gYuul40Ggl5L4ivB5hD1JASB2SM=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=f1i3rHWGTaEoRBWU7oBgZREic7p5tsHQQtj6bLj2d+gR9LYnCP6YuhepkcHaQEYhc
+	 CPMvoGd9qp/qjcQzIUCMpDqnTUAsxCo8wVAmrEaqMa7O3PVd7aj9hi8OAuFNVLz0rp
+	 ttWWmiq4NGGM5XI9kDl9ycdi0S6EBt/dEScqUQPwWD5TILDivv0YCOzxYcxUzP8CTE
+	 3BTL4sERXx4wljJjt9LZGP4FMdaPQyoQpmzLKTXbBG9BuuVvMvq7SL80kUhjJ1Txgx
+	 zk0gnAkHnBzuFt0l0SY1xeCR+e57LYiEJAHMUxR/9jvgXuaOJ6o1BBy34fFhHPVHM7
+	 2GntC4DWm+GdA==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, Alexei Starovoitov
+ <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
+ <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, "Eduard
+ Zingerman" <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, "KP
+ Singh" <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V"
+ <aneesh.kumar@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>,
+ bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf] powerpc/bpf: enforce full ordering for ATOMIC
+ operations with BPF_FETCH
+In-Reply-To: <87o79gopuj.fsf@mail.lhotse>
+References: <20240507175439.119467-1-puranjay@kernel.org>
+ <87o79gopuj.fsf@mail.lhotse>
+Date: Wed, 08 May 2024 11:39:05 +0000
+Message-ID: <mb61pwmo4zg6e.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-of_gpio.h is deprecated and subject to remove.
-The driver doesn't use it directly, replace it
-with what is really being used.
+Michael Ellerman <mpe@ellerman.id.au> writes:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/usb/tegra_usb_phy.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> Puranjay Mohan <puranjay@kernel.org> writes:
+>> The Linux Kernel Memory Model [1][2] requires RMW operations that have a
+>> return value to be fully ordered.
+>>
+>> BPF atomic operations with BPF_FETCH (including BPF_XCHG and
+>> BPF_CMPXCHG) return a value back so they need to be JITed to fully
+>> ordered operations. POWERPC currently emits relaxed operations for
+>> these.
+>
+> Thanks for catching this.
+>
+>> diff --git a/arch/powerpc/net/bpf_jit_comp32.c b/arch/powerpc/net/bpf_jit_comp32.c
+>> index 2f39c50ca729..b635e5344e8a 100644
+>> --- a/arch/powerpc/net/bpf_jit_comp32.c
+>> +++ b/arch/powerpc/net/bpf_jit_comp32.c
+>> @@ -853,6 +853,15 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+>>  			/* Get offset into TMP_REG */
+>>  			EMIT(PPC_RAW_LI(tmp_reg, off));
+>>  			tmp_idx = ctx->idx * 4;
+>> +			/*
+>> +			 * Enforce full ordering for operations with BPF_FETCH by emitting a 'sync'
+>> +			 * before and after the operation.
+>> +			 *
+>> +			 * This is a requirement in the Linux Kernel Memory Model.
+>> +			 * See __cmpxchg_u64() in asm/cmpxchg.h as an example.
+>> +			 */
+>> +			if (imm & BPF_FETCH)
+>> +				EMIT(PPC_RAW_SYNC());
+>>  			/* load value from memory into r0 */
+>>  			EMIT(PPC_RAW_LWARX(_R0, tmp_reg, dst_reg, 0));
+>>  
+>> @@ -905,6 +914,8 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+>>  
+>>  			/* For the BPF_FETCH variant, get old data into src_reg */
+>>  			if (imm & BPF_FETCH) {
+>> +				/* Emit 'sync' to enforce full ordering */
+>> +				EMIT(PPC_RAW_SYNC());
+>>  				EMIT(PPC_RAW_MR(ret_reg, ax_reg));
+>>  				if (!fp->aux->verifier_zext)
+>>  					EMIT(PPC_RAW_LI(ret_reg - 1, 0)); /* higher 32-bit */
+>
+> On 32-bit there are non-SMP systems where those syncs will probably be expensive.
+>
+> I think just adding an IS_ENABLED(CONFIG_SMP) around the syncs is
+> probably sufficient. Christophe?
 
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 46e73584b6e6..e6c14f2b1f9b 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -7,11 +7,12 @@
- #define __TEGRA_USB_PHY_H
- 
- #include <linux/clk.h>
--#include <linux/gpio.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
- #include <linux/usb/otg.h>
- 
-+struct gpio_desc;
-+
- /*
-  * utmi_pll_config_in_car_module: true if the UTMI PLL configuration registers
-  *     should be set up by clk-tegra, false if by the PHY code
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Yes, I should do it for both 32-bit and 64-bit because the kernel does
+that as well:
 
+In POWERPC __atomic_pre/post_full_fence resolves to 'sync' in case of
+CONFIG_SMP and barrier() in case of !CONFIG_SMP.
+
+barrier() is not relevant for JITs as it is used at compile time.
+
+So, I will use
+
+if (IS_ENABLED(CONFIG_SMP))
+        EMIT(PPC_RAW_SYNC());
+
+in the next version.
+
+
+Thanks,
+Puranjay
 
