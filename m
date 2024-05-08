@@ -1,155 +1,127 @@
-Return-Path: <linux-kernel+bounces-173388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3AB8BFFCA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004358BFFCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3CA9B20C59
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:16:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5EF1F22FE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF57885626;
-	Wed,  8 May 2024 14:15:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542D77BB0F;
-	Wed,  8 May 2024 14:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BC985633;
+	Wed,  8 May 2024 14:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxjHvgoS"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92141F5F3;
+	Wed,  8 May 2024 14:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715177753; cv=none; b=glOP3tW5mgZb6BkZNC9vuNtN/6UBeNMrxyX2KQWEq/Bpvm0FsYLb8d2yCee2fBWqafRN7AIcmAy5EOdhLYb/RWFw9hSxs3OJocVu3lnqGmzwKINU03gIBBa9SMtnF4XKaucDyvzAvfxgmfPWcR558kdvPSQbL/0xYpVrn/0DyCM=
+	t=1715177940; cv=none; b=J2fc4GXcntR8Ptaw/EwWUrwxEat6rOxwCqjpu3EDvIm4aGDPM41cIi/cFgbzTrjvCRsbW91FurIyDGVHIbsNmsllS4o2CG1/uUtMa4FrDTlPD9QGVbvyu4sYsJl5al0+t2oHXJqQzRpuki4SMQMERsg+TXV4s4//QUKKELw3QyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715177753; c=relaxed/simple;
-	bh=6A7Z1g12GoKK+DOAy2tHYcRQ25V+VaPQo8VdbUz1buI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nmOxJQO2agTFyVw1CmVsE/NNDprYEUaFo08ycCMKwF1Dbw4kFq65y8JlfyZRsc2xz63vNkj39ejwN2hy0SjBXFCbdchojbgkpXVGwvhnuun4M+h1AQMoebb/DXYzgqi09uBo0GVogI1eTqdOtRDSnlqGn6vhzU+yT+JxYDhwLC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44D201007;
-	Wed,  8 May 2024 07:16:16 -0700 (PDT)
-Received: from e127643.broadband (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 943633F6A8;
-	Wed,  8 May 2024 07:15:48 -0700 (PDT)
-From: James Clark <james.clark@arm.com>
-To: linux-perf-users@vger.kernel.org
-Cc: leo.yan@linux.dev,
-	James Clark <james.clark@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf dwarf-aux: Fix build with HAVE_DWARF_CFI_SUPPORT
-Date: Wed,  8 May 2024 15:14:57 +0100
-Message-Id: <20240508141458.439017-1-james.clark@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715177940; c=relaxed/simple;
+	bh=2kkirt6e1tPPOnZq3X5WtkWdhQIf6ryAuUYhO5Df7RA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hyJUv969IdKe6xEQSApK2gh4CwIUIPIi8Q4DczDJrsBwOMqy3ZLD7dVPzVFnK9/GKYrI2TMyGC6uIgpv2qcJI3uqIzCuL8Wu4+MYbvNkDBg4w4aBXnL2zMyeyoi14LM7hOSjCOujNBUIxSimAxE7foRA3zIBW7MfWaBjtj+QhuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxjHvgoS; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e0a0cc5e83so53567971fa.1;
+        Wed, 08 May 2024 07:18:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715177937; x=1715782737; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W/o8FZDVnI5HiA6gRp5LYG7KHS1m880+Mz+IUrCObIk=;
+        b=fxjHvgoS5X8vtsQbkp8sJDwM4Py+F2ed/vR7sDQdiHahybRWPj5K3s4WctnpZGI9Fc
+         vXJfDprtTMdcFk6YmtVtwR2YDnR2bec/wax63wWlMoSJEHVYHVzuHjFzq/dFdeHATmSh
+         hi0MLJvc/gjA0YXOPKyGnK4WdMKJm4ZLIGODX1ODaOp5cw3zkjjYzls4RGDg4+nGkoIX
+         U6yTwd7EFFD8nZdgTRfwKn1kpA/qQ4+3gNHRoDIrWe/cL996BRz0ouLgRPQdtAP2ci0+
+         CWVfNGV6A+rxrQ5AMQ0UV4OL2oowwV3muJVVe1xSL8dlzUG0gAcHYp5BUL/J5aZ+52VO
+         yACA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715177937; x=1715782737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W/o8FZDVnI5HiA6gRp5LYG7KHS1m880+Mz+IUrCObIk=;
+        b=hjKfraCw4avOmK68QtkJJc86fNPrYuj61/vH8LTA6Q5R21mZ2iRld+H5m0meGK/FK0
+         nCExAwIuWHjYA+OEQXQS7AzPb8BiprM/rF6LE77mI0zqHfa7jgmps6OrsGUO6P0xkOBm
+         ghUwenu+n57brroiu7wMXh4QR/VGailo5Bg/Ct/t8c4bVW7CFTx50qRkr4tPxbMz44hI
+         tT0MLkwiC0icroNwZ0j4GCVbnH5RV/eNRPfS1Pc+136IwIHxEFpcDKll7IxefJYSya7r
+         hlVlDyOiEg1CqXAQlzFM576n7YroWq1kzZcGKK1Znoan99Wg3j6shvnxfnB47yX4e89h
+         miFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfLmAZKQZ9U1SYLfIwDL+EELzQWUzIRtnuilk+Ezt61I3EdbUA98m01MhV8+rVwk3LEE/WDRLTgC/avyXySi5hWK79b68FOd410bQvXtFANBDRW0LFdA6Uuds18aTmjewCoMbaucaQrwJssYGw
+X-Gm-Message-State: AOJu0YwXHRGlOVCCf05vtAOwPYD4MUxX1mneBSMaYmoiVb1XBUq0Lb3w
+	pfPeu4meL8n4gMmqQnTVNVVIiFVO+i93BhxqpkfjxzSFnNQaJi0GD67xOXh7/q3ZBGpTCsL7KXh
+	OX/G+8dFAyqyP731SWcRMLrMbMjc=
+X-Google-Smtp-Source: AGHT+IHNN2Jg6pxtqKtrszRPpVa+3MamJp9KOJV7TV2Xe0scCtageC9Am3BgR9TNsbvf9fMR9gNXRhBjiHur8eRokC4=
+X-Received: by 2002:a05:651c:617:b0:2e2:be7a:e497 with SMTP id
+ 38308e7fff4ca-2e447cac611mr13719581fa.49.1715177936843; Wed, 08 May 2024
+ 07:18:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240415141922.25055-1-peter.tsao@mediatek.com>
+ <171328023414.16225.12939333659144302573.git-patchwork-notify@kernel.org> <0d59ae68-7552-454a-8d01-72c359496901@leemhuis.info>
+In-Reply-To: <0d59ae68-7552-454a-8d01-72c359496901@leemhuis.info>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 8 May 2024 10:18:44 -0400
+Message-ID: <CABBYNZK1QWNHpmXUyne1Vmqqvy7csmivL7q7N2Mu=2fmrUV4jg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Fix the patch for MT7920 the affected
+ to MT7921
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, sean.wang@mediatek.com, 
+	deren.Wu@mediatek.com, chris.lu@mediatek.com, aaron.hou@mediatek.com, 
+	steve.lee@mediatek.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	patchwork-bot+bluetooth@kernel.org, Peter Tsao <peter.tsao@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-check_allowed_ops() is used from both HAVE_DWARF_GETLOCATIONS_SUPPORT
-and HAVE_DWARF_CFI_SUPPORT sections, so move it into the right place so
-that it's available when either are defined. This shows up when doing
-a static cross compile for arm64:
+Hi,
 
-  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LDFLAGS="-static" \
-    EXTRA_PERFLIBS="-lexpat"
+On Wed, May 8, 2024 at 4:34=E2=80=AFAM Linux regression tracking (Thorsten
+Leemhuis) <regressions@leemhuis.info> wrote:
+>
+> On 16.04.24 17:10, patchwork-bot+bluetooth@kernel.org wrote:
+> >
+> > This patch was applied to bluetooth/bluetooth-next.git (master)
+> > by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+> >
+> > On Mon, 15 Apr 2024 22:19:22 +0800 you wrote:
+> >> Because both MT7920 and MT7921 use the same chip ID.
+> >> We use the 8th bit of fw_flavor to distingush MT7920.
+> >> The original patch made a mistake to check whole fw_flavor,
+> >> that makes the condition both true (dev_id =3D=3D 0x7961 && fw_flavor)=
+,
+> >> and makes MT7921 flow wrong.
+> >>
+> >> In this patch, we correct the flow to get the 8th bit value for MT7920=
+.
+> >> And the patch is verified pass with both MT7920 and MT7921.
+> >>
+> >> [...]
+> >
+> > Here is the summary with links:
+> >   - Bluetooth: btusb: Fix the patch for MT7920 the affected to MT7921
+> >     https://git.kernel.org/bluetooth/bluetooth-next/c/263296438807
+>
+> Hi! 6.9 is only days close and this is fixing a 6.9 regression, so allow
+> me to quickly ask: do you still plan to submit this for mainline merge
+> soon? Or did you already and I just missed it? Ciao, Thorsten
 
-  util/dwarf-aux.c:1723:6: error: implicit declaration of function 'check_allowed_ops'
+It wasn't marked with Fixes or stable though which is what I usually
+use as an indicator to backport.
 
-Fixes: 55442cc2f22d ("perf dwarf-aux: Check allowed DWARF Ops")
-Signed-off-by: James Clark <james.clark@arm.com>
----
- tools/perf/util/dwarf-aux.c | 56 ++++++++++++++++++-------------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
-
-diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-index c0a492e65388..c9584563cd56 100644
---- a/tools/perf/util/dwarf-aux.c
-+++ b/tools/perf/util/dwarf-aux.c
-@@ -1215,6 +1215,34 @@ static int offset_from_dwarf_op(Dwarf_Op *op)
- 	}
- 	return -1;
- }
-+
-+static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
-+{
-+	/* The first op is checked separately */
-+	ops++;
-+	nops--;
-+
-+	/*
-+	 * It needs to make sure if the location expression matches to the given
-+	 * register and offset exactly.  Thus it rejects any complex expressions
-+	 * and only allows a few of selected operators that doesn't change the
-+	 * location.
-+	 */
-+	while (nops) {
-+		switch (ops->atom) {
-+		case DW_OP_stack_value:
-+		case DW_OP_deref_size:
-+		case DW_OP_deref:
-+		case DW_OP_piece:
-+			break;
-+		default:
-+			return false;
-+		}
-+		ops++;
-+		nops--;
-+	}
-+	return true;
-+}
- #endif /* HAVE_DWARF_GETLOCATIONS_SUPPORT || HAVE_DWARF_CFI_SUPPORT */
- 
- #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
-@@ -1395,34 +1423,6 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
- 	return true;
- }
- 
--static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
--{
--	/* The first op is checked separately */
--	ops++;
--	nops--;
--
--	/*
--	 * It needs to make sure if the location expression matches to the given
--	 * register and offset exactly.  Thus it rejects any complex expressions
--	 * and only allows a few of selected operators that doesn't change the
--	 * location.
--	 */
--	while (nops) {
--		switch (ops->atom) {
--		case DW_OP_stack_value:
--		case DW_OP_deref_size:
--		case DW_OP_deref:
--		case DW_OP_piece:
--			break;
--		default:
--			return false;
--		}
--		ops++;
--		nops--;
--	}
--	return true;
--}
--
- /* Only checks direct child DIEs in the given scope. */
- static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
- {
--- 
-2.34.1
-
+--=20
+Luiz Augusto von Dentz
 
