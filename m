@@ -1,141 +1,120 @@
-Return-Path: <linux-kernel+bounces-173072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2084C8BFB1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:39:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5FA8BFB2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4243284D85
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:39:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58E9EB21749
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D83D82482;
-	Wed,  8 May 2024 10:39:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CA781729;
+	Wed,  8 May 2024 10:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="gzcay2bz"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9067F81724
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDD48061B;
+	Wed,  8 May 2024 10:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715164754; cv=none; b=Bf8FCjMENJfGTIs8+BrJOkZOjwPOsazPskoCEFSzVQwxhLet5Y78W2SZnn0VSNDIOqKktRlkjSabq2PeebSzanSg5hgaYYud0BqniOeCAdnDt1P0xGpAo2LqQQtO45jqORTT4YDDwWbYTvE//iCYvIszzNShRJwsCA8vCVF5vXg=
+	t=1715164904; cv=none; b=NpLpJUVhXjvSKfOK7bc+3QHic0027xghbrRYjINGAWm0k5z1IoA6b0SUQ63uKop+YSJXi+x3EcpVjjhhcsbNlNQqFMii9z0iqrW2+18lTyby+fO4/tfYZBTZG14rTkU+erXElqvwOMgaCEBuK1/ASl3xBoXPoZMg3gDodlycdR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715164754; c=relaxed/simple;
-	bh=73nDyYn53Rnic7QOSyXmbY0u4vSoCSvZ/Gu75sTU39k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tqBewFg4iyyT1siGiJSOHoWkPz/7VM6+cLzVT9ytSVB6xG6zCo5MReKBOH991XlZT/xgr8o/WrKn8Nkjh3b3LTNP6eWAXEzuHBVWsRLJQGA03I/wop+JZk72+KE81htYh8SJVH8nv8iICea/0GjOxf1XMFuMyVL6OQjQozhQy6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s4ehV-0004BJ-8o; Wed, 08 May 2024 12:39:05 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s4ehT-000G0I-I7; Wed, 08 May 2024 12:39:03 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s4ehT-00HLTt-1b;
-	Wed, 08 May 2024 12:39:03 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	David Ahern <dsahern@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
-Subject: [PATCH net-next v1 3/3] net: dsa: microchip: dcb: set default apptrust to PCP only
-Date: Wed,  8 May 2024 12:39:02 +0200
-Message-Id: <20240508103902.4134098-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240508103902.4134098-1-o.rempel@pengutronix.de>
-References: <20240508103902.4134098-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1715164904; c=relaxed/simple;
+	bh=ftk3LXm1KKRXyvUxh2iDxkdzjCVpvWqkwpfBuiUcmSo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RDm03PXYpB9TaItGBv0QQqNtY3OL3P3qjJ1iLEXqEVN0jpurdPxDDUimaqYFl/UjPT/CL8Ktx7EljdTrsd0tEcqilR+JA0GN2sRvq2uhxgEBsPXS6cck1KYcp8er0FsifCNUmWUjlatDc6xctaEgevkgXfCSpDY/6XM6A08CV1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=gzcay2bz; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 05876600A2;
+	Wed,  8 May 2024 10:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1715164897;
+	bh=ftk3LXm1KKRXyvUxh2iDxkdzjCVpvWqkwpfBuiUcmSo=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=gzcay2bzt3xz45WH2jyYMewfkSg1ICtKOW2N9S0+WfOikt+lrsXUROaKfCSuaRi6z
+	 N0oGA8qEXfWeB8Ay7BS+CCtZU4WJeijpR87ZrTCEsRZT3RZ52e4k6aInJrRTiX5Egz
+	 CyrNwC14kz6sN5oJfcYzN6eJzh3qc15xYJ4X+KNI0gT0vSZfaCzkUj7DFUdIUGBaCr
+	 imigTrRd+/bKI4/ad+EVToUhBmi/bY7eHrXeEvj4ffiYlL3LdrLBEbyPKbkqczAV3Z
+	 Hxnf7K5wGLtVd/78jSqhCxFKHha6KYNYBeeq35QqY24nRP+d6zXYs6K4fpiIbpllew
+	 vohFQ7bp8Ve1Q==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id A2456201852;
+	Wed, 08 May 2024 10:41:27 +0000 (UTC)
+Message-ID: <f54e0ffb-4087-4e83-9953-122fc19f488b@fiberby.net>
+Date: Wed, 8 May 2024 10:41:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+Subject: Re: [PATCH net-next 01/14] net: qede: use extack in
+ qede_flow_parse_ports()
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Manish Chopra <manishc@marvell.com>,
+ netdev@vger.kernel.org
+References: <20240507104421.1628139-1-ast@fiberby.net>
+ <20240507104421.1628139-2-ast@fiberby.net>
+ <e3993bb2-3aac-4b07-8f8a-e537fa902af4@intel.com>
+Content-Language: en-US
+In-Reply-To: <e3993bb2-3aac-4b07-8f8a-e537fa902af4@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Before DCB support, the KSZ driver had only PCP as source of packet
-priority values. To avoid regressions, make PCP only as default value.
-User will need enable DSCP support manually.
+Hi Przemek,
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/dsa/microchip/ksz_dcb.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+Thank you for the review!
 
-diff --git a/drivers/net/dsa/microchip/ksz_dcb.c b/drivers/net/dsa/microchip/ksz_dcb.c
-index 07f6742df41bd..dfe2c48e1066a 100644
---- a/drivers/net/dsa/microchip/ksz_dcb.c
-+++ b/drivers/net/dsa/microchip/ksz_dcb.c
-@@ -82,10 +82,6 @@ static const u8 ksz_supported_apptrust[] = {
- 	IEEE_8021QAZ_APP_SEL_DSCP,
- };
- 
--static const u8 ksz8_port2_supported_apptrust[] = {
--	DCB_APP_SEL_PCP,
--};
--
- static const char * const ksz_supported_apptrust_variants[] = {
- 	"empty", "dscp", "pcp", "dscp pcp"
- };
-@@ -771,9 +767,8 @@ int ksz_port_get_apptrust(struct dsa_switch *ds, int port, u8 *sel, int *nsel)
-  */
- int ksz_dcb_init_port(struct ksz_device *dev, int port)
- {
--	const u8 *sel;
-+	const u8 ksz_default_apptrust[] = { DCB_APP_SEL_PCP };
- 	int ret, ipm;
--	int sel_len;
- 
- 	if (is_ksz8(dev)) {
- 		ipm = ieee8021q_tt_to_tc(IEEE8021Q_TT_BE,
-@@ -789,18 +784,8 @@ int ksz_dcb_init_port(struct ksz_device *dev, int port)
- 	if (ret)
- 		return ret;
- 
--	if (ksz_is_ksz88x3(dev) && port == KSZ_PORT_2) {
--		/* KSZ88x3 devices do not support DSCP classification on
--		 * "Port 2.
--		 */
--		sel = ksz8_port2_supported_apptrust;
--		sel_len = ARRAY_SIZE(ksz8_port2_supported_apptrust);
--	} else {
--		sel = ksz_supported_apptrust;
--		sel_len = ARRAY_SIZE(ksz_supported_apptrust);
--	}
--
--	return ksz_port_set_apptrust(dev->ds, port, sel, sel_len);
-+	return ksz_port_set_apptrust(dev->ds, port, ksz_default_apptrust,
-+				     ARRAY_SIZE(ksz_default_apptrust));
- }
- 
- /**
+On 5/8/24 10:07 AM, Przemek Kitszel wrote:
+> On 5/7/24 12:44, Asbjørn Sloth Tønnesen wrote:
+>> Convert qede_flow_parse_ports to use extack,
+>> and drop the edev argument.
+>>
+>> Convert DP_NOTICE call to use NL_SET_ERR_MSG_MOD instead.
+>>
+>> In calls to qede_flow_parse_ports(), use NULL as extack
+>> for now, until a subsequent patch makes extack available.
+>>
+>> Only compile tested.
+>>
+>> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+>> ---
+>>   drivers/net/ethernet/qlogic/qede/qede_filter.c | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/qlogic/qede/qede_filter.c b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+>> index ded48523c383..3995baa2daa6 100644
+>> --- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
+>> +++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+>> @@ -1700,7 +1700,7 @@ static int qede_parse_actions(struct qede_dev *edev,
+>>   }
+>>   static int
+>> -qede_flow_parse_ports(struct qede_dev *edev, struct flow_rule *rule,
+>> +qede_flow_parse_ports(struct netlink_ext_ack *extack, struct flow_rule *rule,
+>>                 struct qede_arfs_tuple *t)
+> 
+> there are ~40 cases in drivers/net/ethernet that have an extack param as
+> not the last one, and over 1250 that have an extack as the last param.
+> My grepping was very naive, and counted both forward declarations and
+> implementations, but it's clear what is the preference.
+> 
+> Could you please convert the series to be that way?
+
+Sure, will do that in v2.
+
 -- 
-2.39.2
-
+Best regards
+Asbjørn Sloth Tønnesen
+Network Engineer
+Fiberby - AS42541
 
