@@ -1,105 +1,208 @@
-Return-Path: <linux-kernel+bounces-173183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6768BFCB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:53:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B0CE8BFCB6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D8D285F2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:53:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D285FB25AF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAED082D90;
-	Wed,  8 May 2024 11:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C72C82D89;
+	Wed,  8 May 2024 11:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6VCsAAm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxYC+23D"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0A9823D1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40F081AD0;
+	Wed,  8 May 2024 11:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715169217; cv=none; b=tKQWg6lWTSub6xmxGEB7QTtljPoiL1ZASiIx+xxK2MDgv0698gtyfK1QDj0An1laIouI6SJFX3hN1hV4o8036Dpum1b6NOIdsRvMnTpnuZM5ru+Q6ib9hcTktXYmLBc4KxA4/Hj1wAuWFTy9IsXZu8VC8+lGoAzbMShpVE+YwVQ=
+	t=1715169271; cv=none; b=q9dIBxKo0GdZcZB+B3XGfrs0OMlMyJ/0p3eTOtisvWmAn4ldvUaGuHumTLcLaCyF0qu8T7XJBML8Qronbt2qFmsPkU+lJMslV/eQzLIvTHaAWmW+ZALQMQK1xsHbl1+w6AaR9rNXVhVpNai5KaFIwqdXWbkEV7QjfezP+zEcwU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715169217; c=relaxed/simple;
-	bh=hYwn+JI3hSrV50VTfmR6XV0Ay3DMP/xwKfK4TzcbBFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irnrXfo4soo24TPvIFE/xqtlTcE82Bds/ZwgO6hcrkkHF6I7lzrC+GmyA/E7yPVFNa2eZiKE7b++thQ3r5WucZjGIOe6o3f4n9V7np3Q/Kq4jZ8hc11vs78dKhO9GX+5S4JEvOoU//JMXxkutilTmmHjO6OWI6aklm0csl+iNDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6VCsAAm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F62CC3277B;
-	Wed,  8 May 2024 11:53:36 +0000 (UTC)
+	s=arc-20240116; t=1715169271; c=relaxed/simple;
+	bh=6SikNqtY91pwhlwXY/mT/hxrDvEXZ56J2/ACEwNQ8kc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KL/8VW6HslOoEbq9lfAPphffcW5x4rVkXg3+L7UVdGKmPJ8IcOVtQ5/gd5Rl6TDxxluI/wXwJKPId8bs2fa8xXk2VDBTZreDCSEdULOhl2Xrzopkul5Yl+ouMYW6EbDCaetzNFJHb+DU5jg1kzoAqxkv5NUxOqklNm+4Af8k0uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxYC+23D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C50C113CC;
+	Wed,  8 May 2024 11:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715169216;
-	bh=hYwn+JI3hSrV50VTfmR6XV0Ay3DMP/xwKfK4TzcbBFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G6VCsAAmBEfWQLdNhiQFeJ6vEKrVRN5tmq+kb5I3MWPg3GFOLaYVWAGEgFkX5Ye64
-	 vOnpV7tyk1mdhwHk3kiH7i5ys+Q9km6CyFSOkhH8lxmFshLQfzCSYzCCNQbnoKBBFw
-	 68RDN0eUWsRIkWoXVb69ukGEG9DdfDX/ukPPawbXnPcKabHgnCc3XT9yeuAKnLWZRk
-	 ONIVHK589AIF8B/wFRsX9O/9Ni9OGLLD08b90OZ3uHHQQXPn5O5kVJvxlL008Tv7he
-	 CUvTD/OOrQ6zCumarW22kFgvu2M3rzLApki0b2LaR5W7GwALtzW3RErBIEOUO2nL3H
-	 GzmJ44I4e3cZQ==
-Date: Wed, 8 May 2024 20:53:34 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Alina Yu <alina_yu@richtek.com>
-Cc: lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-	johnny_lai@richtek.com, cy_huang@richtek.com
-Subject: Re: [PATCH v2 2/4] regulator: rtq2208: Fix LDO to be compatible with
- both fixed and adjustable vout
-Message-ID: <ZjtnvjlJpfNn7qVT@finisterre.sirena.org.uk>
-References: <cover.1714467553.git.alina_yu@richtek.com>
- <ffeecd61c194df1f7f049bd50cb2bbbad3cf1025.1714467553.git.alina_yu@richtek.com>
- <ZjGmmYWHu-ZQQdIh@finisterre.sirena.org.uk>
- <20240502073029.GA4055@linuxcarl2.richtek.com>
- <20240502092614.GA31518@linuxcarl2.richtek.com>
- <ZjRAsJHn57pZy5UH@finisterre.sirena.org.uk>
- <20240503073536.GA12846@linuxcarl2.richtek.com>
- <ZjjwFTtiopqsYdeJ@finisterre.sirena.org.uk>
- <20240508065402.GA7462@linuxcarl2.richtek.com>
+	s=k20201202; t=1715169270;
+	bh=6SikNqtY91pwhlwXY/mT/hxrDvEXZ56J2/ACEwNQ8kc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OxYC+23D+pxvJkWt5e534tyf3OwgABM2L1Z81vkR2K22YD5z8VvCDC6XTjCRAlPb8
+	 vY2fOlQP6Btto9oO/8EU5urb6bbWAeOREvbicuyZAOMW+vLanIZleSgZpG7vdQFbgR
+	 6+OX3Kyi62rxfpBaqVp3CMBbXoq4YFYH9Y37UN7MVTf6w/JcUgEz1CEmUmv97G1O3k
+	 U85neZ1fjcDQhBq2oeCZlkfDW43XthanWMOo+aZ4lY4ygGU9BzqQxUqMtOSu2ssE9+
+	 bAtv2SD4AuD/X/bLurjSyu2Zk8v3layv3iGz0Ok0jLIDcPMR/WI0zhqb3QB3xmB5cR
+	 yf3xR4fCouZAg==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	bpf@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	paulmck@kernel.org
+Cc: puranjay12@gmail.com
+Subject: [PATCH bpf v2] powerpc/bpf: enforce full ordering for ATOMIC operations with BPF_FETCH
+Date: Wed,  8 May 2024 11:54:04 +0000
+Message-Id: <20240508115404.74823-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mtC14iJaOWxhpsjn"
-Content-Disposition: inline
-In-Reply-To: <20240508065402.GA7462@linuxcarl2.richtek.com>
-X-Cookie: Accuracy, n.:
+Content-Transfer-Encoding: 8bit
 
+The Linux Kernel Memory Model [1][2] requires RMW operations that have a
+return value to be fully ordered.
 
---mtC14iJaOWxhpsjn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+BPF atomic operations with BPF_FETCH (including BPF_XCHG and
+BPF_CMPXCHG) return a value back so they need to be JITed to fully
+ordered operations. POWERPC currently emits relaxed operations for
+these.
 
-On Wed, May 08, 2024 at 02:54:02PM +0800, Alina Yu wrote:
+We can show this by running the following litmus-test:
 
-> May I modify the code into this ?
-> I'll add 'richtek,fixed-microvolt' property in dtsi; remove 'regulator-min-microvolt' and 'regulator-max-microvolt'
-> to prevent fail caused by constraints->apply_uV.
+PPC SB+atomic_add+fetch
 
-Adding the new property seems fine.  You still need to permit the
-min/max microvolt properties for the case where the regulator is in
-normal mode and can vary, you could write rules that ensure that the
-constraints line up in the case where a fixed voltage is specified but
-I'm not sure it's worth the effort.
+{
+0:r0=x;  (* dst reg assuming offset is 0 *)
+0:r1=2;  (* src reg *)
+0:r2=1;
+0:r4=y;  (* P0 writes to this, P1 reads this *)
+0:r5=z;  (* P1 writes to this, P0 reads this *)
+0:r6=0;
 
---mtC14iJaOWxhpsjn
-Content-Type: application/pgp-signature; name="signature.asc"
+1:r2=1;
+1:r4=y;
+1:r5=z;
+}
 
------BEGIN PGP SIGNATURE-----
+P0                      | P1            ;
+stw         r2, 0(r4)   | stw  r2,0(r5) ;
+                        |               ;
+loop:lwarx  r3, r6, r0  |               ;
+mr          r8, r3      |               ;
+add         r3, r3, r1  | sync          ;
+stwcx.      r3, r6, r0  |               ;
+bne         loop        |               ;
+mr          r1, r8      |               ;
+                        |               ;
+lwa         r7, 0(r5)   | lwa  r7,0(r4) ;
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY7Z7sACgkQJNaLcl1U
-h9Aquwf9H+G8Hr6XIT+TdTjeWbKbmYnY5RaWfJdxK43T7eNU/oHJdAsLluk2/pVx
-K/fkI82xYzAFuHBcOolpKy3Vxp7tMt2W3+edHzxSQWr+wWcJLlHWEpSWHrfjxMA/
-1rCfVnpKZPZUJM+3CShDOHwWdwEtGQMEtH/+GTjxl/DJV3UCybGBQq+1O/0QPg0b
-bXSFJtrpu56D5ePvApQKSBvrE6K9KPw5cgRh8/1SWLOIvQZNOnc5WybUuTRt6Q4O
-IAJiS86ZvbvHOq4jK0dSYOzmRXjSknDrb2qzaQKCN4k7WJ3bWuwDm5i4MRUgITUI
-qnqEDr00RhOleKjbf4AD4YG+GO7z2Q==
-=iHZI
------END PGP SIGNATURE-----
+~exists(0:r7=0 /\ 1:r7=0)
 
---mtC14iJaOWxhpsjn--
+Witnesses
+Positive: 9 Negative: 3
+Condition ~exists (0:r7=0 /\ 1:r7=0)
+Observation SB+atomic_add+fetch Sometimes 3 9
+
+This test shows that the older store in P0 is reordered with a newer
+load to a different address. Although there is a RMW operation with
+fetch between them. Adding a sync before and after RMW fixes the issue:
+
+Witnesses
+Positive: 9 Negative: 0
+Condition ~exists (0:r7=0 /\ 1:r7=0)
+Observation SB+atomic_add+fetch Never 0 9
+
+[1] https://www.kernel.org/doc/Documentation/memory-barriers.txt
+[2] https://www.kernel.org/doc/Documentation/atomic_t.txt
+
+Fixes: 65112709115f ("powerpc/bpf/64: add support for BPF_ATOMIC bitwise operations")
+Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+---
+Changes in v1 -> v2:
+v1: https://lore.kernel.org/all/20240507175439.119467-1-puranjay@kernel.org/
+- Don't emit `sync` for non-SMP kernels as that adds unessential overhead.
+---
+ arch/powerpc/net/bpf_jit_comp32.c | 12 ++++++++++++
+ arch/powerpc/net/bpf_jit_comp64.c | 12 ++++++++++++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/arch/powerpc/net/bpf_jit_comp32.c b/arch/powerpc/net/bpf_jit_comp32.c
+index 2f39c50ca729..0318b83f2e6a 100644
+--- a/arch/powerpc/net/bpf_jit_comp32.c
++++ b/arch/powerpc/net/bpf_jit_comp32.c
+@@ -853,6 +853,15 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 			/* Get offset into TMP_REG */
+ 			EMIT(PPC_RAW_LI(tmp_reg, off));
+ 			tmp_idx = ctx->idx * 4;
++			/*
++			 * Enforce full ordering for operations with BPF_FETCH by emitting a 'sync'
++			 * before and after the operation.
++			 *
++			 * This is a requirement in the Linux Kernel Memory Model.
++			 * See __cmpxchg_u64() in asm/cmpxchg.h as an example.
++			 */
++			if (imm & BPF_FETCH && IS_ENABLED(CONFIG_SMP))
++				EMIT(PPC_RAW_SYNC());
+ 			/* load value from memory into r0 */
+ 			EMIT(PPC_RAW_LWARX(_R0, tmp_reg, dst_reg, 0));
+ 
+@@ -905,6 +914,9 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 
+ 			/* For the BPF_FETCH variant, get old data into src_reg */
+ 			if (imm & BPF_FETCH) {
++				/* Emit 'sync' to enforce full ordering */
++				if (IS_ENABLED(CONFIG_SMP))
++					EMIT(PPC_RAW_SYNC());
+ 				EMIT(PPC_RAW_MR(ret_reg, ax_reg));
+ 				if (!fp->aux->verifier_zext)
+ 					EMIT(PPC_RAW_LI(ret_reg - 1, 0)); /* higher 32-bit */
+diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+index 79f23974a320..9a077f8acf7b 100644
+--- a/arch/powerpc/net/bpf_jit_comp64.c
++++ b/arch/powerpc/net/bpf_jit_comp64.c
+@@ -804,6 +804,15 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 			/* Get offset into TMP_REG_1 */
+ 			EMIT(PPC_RAW_LI(tmp1_reg, off));
+ 			tmp_idx = ctx->idx * 4;
++			/*
++			 * Enforce full ordering for operations with BPF_FETCH by emitting a 'sync'
++			 * before and after the operation.
++			 *
++			 * This is a requirement in the Linux Kernel Memory Model.
++			 * See __cmpxchg_u64() in asm/cmpxchg.h as an example.
++			 */
++			if (imm & BPF_FETCH && IS_ENABLED(CONFIG_SMP))
++				EMIT(PPC_RAW_SYNC());
+ 			/* load value from memory into TMP_REG_2 */
+ 			if (size == BPF_DW)
+ 				EMIT(PPC_RAW_LDARX(tmp2_reg, tmp1_reg, dst_reg, 0));
+@@ -865,6 +874,9 @@ int bpf_jit_build_body(struct bpf_prog *fp, u32 *image, u32 *fimage, struct code
+ 			PPC_BCC_SHORT(COND_NE, tmp_idx);
+ 
+ 			if (imm & BPF_FETCH) {
++				/* Emit 'sync' to enforce full ordering */
++				if (IS_ENABLED(CONFIG_SMP))
++					EMIT(PPC_RAW_SYNC());
+ 				EMIT(PPC_RAW_MR(ret_reg, _R0));
+ 				/*
+ 				 * Skip unnecessary zero-extension for 32-bit cmpxchg.
+-- 
+2.42.0
+
 
