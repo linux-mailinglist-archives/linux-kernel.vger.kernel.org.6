@@ -1,103 +1,206 @@
-Return-Path: <linux-kernel+bounces-172932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C774C8BF8E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:41:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712538BF8EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E7B1F25B9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:41:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2826D286B47
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2951B745FA;
-	Wed,  8 May 2024 08:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2741253818;
+	Wed,  8 May 2024 08:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ndCYK31U"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Q9LMcMBr"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EDF535DD;
-	Wed,  8 May 2024 08:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CEB53801
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157595; cv=none; b=A3A022oMRm2KrJ2RAN3DyC/jFMgpjZb+xPU6BPOUeuqp8uteAe4+wokV6+Xmvp8tpebQNkVirUwxNuVR/v74lA+M9rYBvmZgQ2V6YTqT0qZSqttLrdYIIdeVl241l0CaIrEzzEnMBvWorWcVeWoa6gV6gA1+BQC71DBVfPnQaCs=
+	t=1715157604; cv=none; b=VMeCGQx2XT3l4wqYTlUtvc7pS49CKlolMfyuXKFin7IvPODRVA31/7vZInJnsKbtuXXHP8ILqRgoUZsMlr1JUlck3AcnNDFWGQ9Ltd7qpwNgkpGqJ1Wcp0xn8pLpPE+vU3EC8AR/PH5wzxBfCaZVN8QZi0GybWbWpWgyPkiqoxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157595; c=relaxed/simple;
-	bh=J+PQfd29qCEkIFqLYMfOqB2KUwrBfTwfwKZYBhSKYzc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S5yCoQedA8YtjtHqLkj2q5dlFV5wTUl/no3j+bAlrh8f0oZgZ3G1vVcuVjhUSufTnkCYUuHDOnhcw0mU7sVoWPEpT82hks/Gpw6NkZhm/08MxpGI9hOXpzv3YXB4QACrqW/dlncY7Ta/GfutrGvE6i28ZU7HGb8dZlaP0jo+tYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ndCYK31U; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43dda802bb3so246991cf.0;
-        Wed, 08 May 2024 01:39:53 -0700 (PDT)
+	s=arc-20240116; t=1715157604; c=relaxed/simple;
+	bh=1xSdGCgIU8aP178mgDcqVTSMC4s/XSolT45EILTJaS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r55jg/E/2ANyXGq4CCdZ3fWx7mYufuYfvraslCO1qQOrZ6E9DOs9X+jNfjeIkm6FKMkvXGSuwcIoPfPlp/brtND6wJScOdB0j5MF08pvHPoKBrDtt5x9nKEnG0B0VeK3xrbIigkcvZMHUBp1Jb09BwA2gLqCooSNxfdQ/03a2IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=Q9LMcMBr; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59a86fb052so133845366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715157593; x=1715762393; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+PQfd29qCEkIFqLYMfOqB2KUwrBfTwfwKZYBhSKYzc=;
-        b=ndCYK31UOffe5aitstDpIoOp5urizJCGFMLMvQv0nxuHWZOaMHOViAM+wvatEjIsNc
-         TUzgVHU9eXf3UG1IGcvi7RN//ee4iEoQB7g2ECWRQUrULWqv1MLabF39MsAVwh9tKB+F
-         3lnyteN7OZbzfh0qadMfDeDOl7JRpiPcp2tqusRaOzEoMgfYjzv++XRmgtsH+GrSvM4E
-         W/Y2eKozKKvgZ24TfJpn+jo4rW9Q/HZjF/OK/AJXvdprKKw0bAZHO4nS0vCNkRKlJgJt
-         SFJD4prW8SSEc94Mz27q6Zmb3XHqOsye+GmT+YWY1bdyGSB8o9cUkbe4+d6YiyMR4sk4
-         /PQQ==
+        d=ffwll.ch; s=google; t=1715157601; x=1715762401; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TjDECsAq9W3dnXC6ANhg0GrZ6XSPEO0XVnHc2JQoQ80=;
+        b=Q9LMcMBrrO1pijrJ6yt38tdbUmu9EEbhwWk6FIARqLVgs88gF0ErEWanzHtX3Xrcnf
+         MZ1u0gIm5miDIPo26b5FA6l+ofLuLzdG4w6utu8/V531ps3GQm9zLirklaIUUtmT3ung
+         n8rnHrjIr0vbRoUVFrY2SQV/9M9cRE6VTEGdM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715157593; x=1715762393;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J+PQfd29qCEkIFqLYMfOqB2KUwrBfTwfwKZYBhSKYzc=;
-        b=rQbI1UAGI1cC6BUQE+vPOYE3V85frxxwE5T9177lH5275jVHZncOuwwshlbFe95XNo
-         zlDLUHbWDpRIyn3MRu9h7DyomvloOijwaOBC/H4Ifn+jg1feCaDW476RUcA6gKtm34Lw
-         ede4JAsrcLgUF56U8TLzwWkj0yZAgE7RIFxD6WKZ2JBBNGm+aycyf30XWokV+HFAumZl
-         fvgc9ZvMGRWOlf5FoaaVjwZFKpnZonrIOVzWX2YjKIcTyrAPyFB0l4urev3SeUK2zQ0J
-         syMFLI2GNYZvYx9Aq8+zkUaiG+B8IsYqveR5fMVPpaIcGglClTtKIUS81RTYL+wAWxPF
-         MR8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXDMX0H8O/z+pGKzwiDLM1u/w0p3VcvoChAGnwGgpwu0txtVt5eZMHPXggljwqiwbzH+CBOqGb9v/4Dts/rfNVouj/D05KLXfK8YZa0Loxay8r74jtOtL4J9tbqNzobiLyE3Y95eZMIDbM=
-X-Gm-Message-State: AOJu0YzZMx2Xq1CumzdAC2x3I0XMth9qsP6+oW2kIRAfHV/pCnxdeyV4
-	JDDl8TF0LdB8a8W/6cfubprRggz9bcisQ9OkIhjq2gYobrcnIDlpsqulz2G/pOBAfawTRoIIj3m
-	0bCD8KlEZVlwssHZyjkeciAtzjJc=
-X-Google-Smtp-Source: AGHT+IFbHvBVS6LvE9VyyUxGe4Dx+/5XNZJwJY9GdUXiicZzhTZ+bu9VFrTJNH4aWCT0/TwiOvIkRq5mW32Bb71ptGA=
-X-Received: by 2002:a05:6214:2aac:b0:699:4d3:98dc with SMTP id
- 6a1803df08f44-6a151418127mr23321276d6.0.1715157593085; Wed, 08 May 2024
- 01:39:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715157601; x=1715762401;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TjDECsAq9W3dnXC6ANhg0GrZ6XSPEO0XVnHc2JQoQ80=;
+        b=PVs8+88EE/MeuzLvUHnWwvqmsT/x3bNhHzvJ7PS0MHT5+q+d8+NsLJPPXpqKDkcObe
+         AR6F3vZSYiwVZlgzOFBAR99Rh07mbdxBellhjFDhqca0bKDhw2+Wy25fgm9r/mNvRh4c
+         Lr0Oh2noAZ6Y+x9g5LRqd2Z8AymEIhqiVIO4OtbLMqg7xtE/hjJuKa6oGFaRsgZ+DPdp
+         QNrCB/MEY7sldql/wTPR5dRbWJkPl6B6aCK9eurDBkSbA3RXD7wQyjADFG6gsgMOdpzG
+         5eAWv+8NXOZOHpChI5nbc6YXVpBfgrIsm1qn17EHea2LEo7l8VS3fxsyeNpgOPElewrU
+         7D6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVgFb08hntRggySdIDTdvf88H0FBU7wDN8xjBupwDPUkC5BCkW3ZJ7fvLYFN0qfchR2wTMcWVgKMngPb8EgSaq7Y2JA80bbxHd/q89Z
+X-Gm-Message-State: AOJu0YzaA47KBIm8PIT/HaE9M6FEZlHKRdGHR1jY721BbA+qE6fbjFx0
+	kJ8XWLuLwHEFqLyn7v96V3Wu1EsA5h6DWqwfYn6l5xGyPcOE2q8IJx1qCkQQ6dA=
+X-Google-Smtp-Source: AGHT+IGPIAQ6Tm4FnC70hw3PFhT5mBH/5wt01YJzyWABi0B27GbCxWEn36XIAqIwrxHxasKk9JiZiw==
+X-Received: by 2002:a17:906:ccce:b0:a59:cf59:f7ff with SMTP id a640c23a62f3a-a59fb94f3c4mr140742766b.2.1715157601017;
+        Wed, 08 May 2024 01:40:01 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id bi11-20020a170907368b00b00a59f73fb086sm1155563ejc.196.2024.05.08.01.40.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:40:00 -0700 (PDT)
+Date: Wed, 8 May 2024 10:39:58 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Maxime Ripard <mripard@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+Message-ID: <Zjs6Xt_W0VsY8wJc@phenom.ffwll.local>
+Mail-Followup-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Maxime Ripard <mripard@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+ <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+ <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+ <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+ <CAA8EJpr4bJUQt2T63_FZ=KHGEm4vixfpk3pMV9naABEONJfMmQ@mail.gmail.com>
+ <20240507184049.GC20390@pendragon.ideasonboard.com>
+ <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506114752.47204-1-charles.goodix@gmail.com>
- <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com> <ZjmOUp725QTHrfcT@google.com>
- <Zjo8eTQQS1LvzFgZ@finisterre.sirena.org.uk> <ZjpFVGw6PgjRcZY3@nixie71>
- <ZjqYp1oxPPWcF3jW@google.com> <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
-In-Reply-To: <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
-From: Richard Hughes <hughsient@gmail.com>
-Date: Wed, 8 May 2024 09:39:41 +0100
-Message-ID: <CAD2FfiE+VFa+7sHQg=LGkBy556msNyyFUhmWW_cAfZd0V4DPYQ@mail.gmail.com>
-Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
- and writing touch IC registers
-To: Mark Brown <broonie@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jeff LaBundy <jeff@labundy.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	neil.armstrong@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On Wed, 8 May 2024 at 03:37, Mark Brown <broonie@kernel.org> wrote:
-> The other model I've seen used BTW is to expose a MTD device, if the
-> device actually looks like a MTD device (perhaps even is just a flash
-> that's fairly directly exposed) that minimises the kernel code quite
-> well.
+On Tue, May 07, 2024 at 10:59:42PM +0300, Dmitry Baryshkov wrote:
+> On Tue, 7 May 2024 at 21:40, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > On Tue, May 07, 2024 at 06:19:18PM +0300, Dmitry Baryshkov wrote:
+> > > On Tue, 7 May 2024 at 18:15, Bryan O'Donoghue wrote:
+> > > > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
+> > > > > Ah, I see. Then why do you require the DMA-ble buffer at all? If you are
+> > > > > providing data to VPU or DRM, then you should be able to get the buffer
+> > > > > from the data-consuming device.
+> > > >
+> > > > Because we don't necessarily know what the consuming device is, if any.
+> > > >
+> > > > Could be VPU, could be Zoom/Hangouts via pipewire, could for argument
+> > > > sake be GPU or DSP.
+> > > >
+> > > > Also if we introduce a dependency on another device to allocate the
+> > > > output buffers - say always taking the output buffer from the GPU, then
+> > > > we've added another dependency which is more difficult to guarantee
+> > > > across different arches.
+> > >
+> > > Yes. And it should be expected. It's a consumer who knows the
+> > > restrictions on the buffer. As I wrote, Zoom/Hangouts should not
+> > > require a DMA buffer at all.
+> >
+> > Why not ? If you want to capture to a buffer that you then compose on
+> > the screen without copying data, dma-buf is the way to go. That's the
+> > Linux solution for buffer sharing.
+> 
+> Yes. But it should be allocated by the DRM driver. As Sima wrote,
+> there is no guarantee that the buffer allocated from dma-heaps is
+> accessible to the GPU.
+> 
+> >
+> > > Applications should be able to allocate
+> > > the buffer out of the generic memory.
+> >
+> > If applications really want to copy data and degrade performance, they
+> > are free to shoot themselves in the foot of course. Applications (or
+> > compositors) need to support copying as a fallback in the worst case,
+> > but all components should at least aim for the zero-copy case.
+> 
+> I'd say that they should aim for the optimal case. It might include
+> both zero-copying access from another DMA master or simple software
+> processing of some kind.
+> 
+> > > GPUs might also have different
+> > > requirements. Consider GPUs with VRAM. It might be beneficial to
+> > > allocate a buffer out of VRAM rather than generic DMA mem.
+> >
+> > Absolutely. For that we need a centralized device memory allocator in
+> > userspace. An effort was started by James Jones in 2016, see [1]. It has
+> > unfortunately stalled. If I didn't have a camera framework to develop, I
+> > would try to tackle that issue :-)
+> 
+> I'll review the talk. However the fact that the effort has stalled
+> most likely means that 'one fits them all' approach didn't really fly
+> well. We have too many usecases.
 
-If it helps, fwupd already uses mtd for other devices too, although at
-the moment we're using it only for system firmware -- e.g. intel-spi
-style. The MTD subsystem doesn't give fwupd much info about the
-{removable} device itself, and that can pose a problem unless you
-start using heuristics about the parent device to match firmware to
-the mtd device.
+I think there's two reasons:
 
-Richard.
+- It's a really hard problem with many aspects. Where you need to allocate
+  the buffer is just one of the myriad of issues a common allocator needs
+  to solve.
+
+- Every linux-based os has their own solution for these, and the one that
+  suffers most has an entirely different one from everyone else: Android
+  uses binder services to allow apps to make these allocations, keep track
+  of them and make sure there's no abuse. And if there is, it can just
+  nuke the app.
+
+Cheers, Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
