@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-172700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1AF88BF59E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:43:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC778BF5A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2E80285786
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEA72857DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C56417C60;
-	Wed,  8 May 2024 05:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8396417C61;
+	Wed,  8 May 2024 05:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KcIa/Bhi"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hurqW07R"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC66D1758E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B9222324;
+	Wed,  8 May 2024 05:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715146970; cv=none; b=Pn1HxZebziWuaQ+oKABJY1HWrSiflsnoKDounXiOReFPk+Xz83qMgpPzrFyb8UJjJK5FfB6cAlv2+Vha+gV4jxB29Lfa2kHnU0jbZvw5a6FnRnvEdM+JQw1rOPbV1FKbHQ1RW98Edz8aDQOJnO/hQHzVkbneBkFQUVD+PY3TbUE=
+	t=1715146986; cv=none; b=QFpX0goh1jM7kCXtSCGg3Or/fzWssUutefubldq4WrNi6RG4aZb+Q+skMQDxkOVHtziYjR6pQozVSc0zGBgd+CheZ0si3w95E4mjM8+Tyf+/p0zhGzmxS7f5NldRK5ZlS2jI8FtUIXht3PJ+/Nd4zRdMbR02jSj67YQI/oM0W+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715146970; c=relaxed/simple;
-	bh=Dm8oAyDId/BGzFguq4WTwi8cfuw6NO7IL3CwBWqI+YI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tFo5CDmDFlK7Ivhd5spME3sVFsN0tAsMn78KGO+CtzAZzRrtvjylXMkaLDK0f3HkJPDwNGScfBKfkLjWuHhsF2HshRUfEXXuV40SdyIcv8Bw0uEm83n928ED5HZW/8/cjrgP+ddy9vL8QETIfeUKvvWcf9Cse0E90CsdnevWuk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KcIa/Bhi; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-61bed5ce32fso43600747b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715146968; x=1715751768; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8is/8kMXXquytRmRTTojazPRXnlwoDhApNzUo9b3+OQ=;
-        b=KcIa/BhiRW5xS3AQueE75g59SNsIUK7uFzmASvX+e254/TVlCrWRvk69o5U56MBJVJ
-         +6xNpGUi81LEsfeMlpf6hPyxUdTvREE/rIno9US2AeUv9/8rmuCvX8qkUtO/S4P8x9A7
-         gNql39MBxjLtQik8dAb4RLs/g8TlxD2m+dPOYdISqkTDJKRFqa+foXMAvQz00Bh58S6/
-         LHt55T6ueY+mS8FEKFflcKay5dgT8SAdfyf0xb9P5MfFn4/7Zh96p49GdgRLyEj69xui
-         BSmXw9E1iueHRuA82pmMB9+39RgIgqlXs/LhwyNLzhxGWgRGtzBOCF67qE5Z49dGQA17
-         TOmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715146968; x=1715751768;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8is/8kMXXquytRmRTTojazPRXnlwoDhApNzUo9b3+OQ=;
-        b=RarGravilvmXjrQHNNpIRyQZAnzh0h9RQJP+uZEegEKok3WV6Cexfvq2LqTd9VkR/A
-         2xCNxc2fS8pViUZ51xWJ/jxj05ijdHs3Odv2pufS+hylE2SwcldRGSXnskdnXKPXCwuS
-         778eIfKlpJobea2zF0G12kAlPggwn2JHpHpoI/2Vaqq1o9950WIXHrmovVFsT2vPq3at
-         kjBR4qpQdZ+zsHTKbDgmLCozKzgD3IwJladJiMAP+y4MFM9l2zcrh9HkeGDNMUJYUL7Q
-         p51sYsqHiWYlKBBb9nB10HyuhfSp3S0T1XZfLJOyFiDRBRg0Rc43IIKBGSo1haceARcf
-         bIyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXK4cTqQm/w3DkUoqJgv9rwEHjhqQF9wm6Dmozry99yr42DyffXbNODZyjgh63SnSHX/waXR6eaqijm7l2dcF04qz9FoALbat4Ay6gk
-X-Gm-Message-State: AOJu0YwTlFLGtIVxBBq353JGI0jxq1ScixkJTiA0bKNrZPbgR885h7he
-	Gqg6+0CI/OMVa1TcjXgBVcOamve4wShi5HZ4OW5vIEDV0dai7BEkyfTE4O5HFEU+VJgMA7ugpOJ
-	pRmVD+Szqngv7dYajP7sKHV9RSbKOK6RqdUql2Q==
-X-Google-Smtp-Source: AGHT+IG24D1NQIZ27R3N3aZ27xeVwEEsTRm5xCfdyZ/r6uMBhrpmntSpIHxXqQrXwipOem08bGFWGZKtDUaSlW68z1M=
-X-Received: by 2002:a81:7182:0:b0:61b:3356:a679 with SMTP id
- 00721157ae682-62085a6fd15mr20951377b3.17.1715146967118; Tue, 07 May 2024
- 22:42:47 -0700 (PDT)
+	s=arc-20240116; t=1715146986; c=relaxed/simple;
+	bh=9i+NqIGo7kzjRxvqTqjq200CuyPCEflocMqbaDuREtg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aTodPcZv0UhfWPkqC+rHIQbHwnGYUFe5r6wArv6wHvJMio2qCWaBOWqOFuTusAbrB1kQu/Sp1G8mzA01BaK4TESLBIY1+ph49kEbkXsdLpGfODMrvPRG2a/KOwTB4v7mAr74EbI0Ulwgs/iskpgZ3gTBNq4uvYF/Sip5Y1WnMb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hurqW07R; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4484ftXO016309;
+	Wed, 8 May 2024 05:43:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=Y0o0ERh
+	4r6DVUsthnNfeeX5HJMGS2kcD4LBvFXz5Oi8=; b=hurqW07RbiMJX/OjRD6y3wg
+	KYw/HiJ7cqLSzLBOmyNsBZcj1DuR7Wo0V8XaxfK3IsVy7jMbeY6n9TjkbRbXMbPE
+	2YMZhw092k/xpxWZGD6gS/Bwj2KZXw1EtkRqaNbbSJ7cXdOasa/99DH1SszdbmfA
+	Y+I1kHqJPNam2C75k7sLC2QSXQGYDYhPtgh1DEtI5i2QL14Q/QMPxUezsDhWzmWX
+	rC1I/HdXqijfil5mtQvSYIWuFQol1qs3H/MnSfffJLQIWuVWyA2GeEnD8Eyxv5ts
+	Ap/84J30bZnYY24Fz4n9I+fWv2cMmjA31BEPFOAMQYR3/8zHB2p5jft7MGkJ4Ng=
+	=
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyspr10yx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 05:43:02 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4485h0J9012567
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 8 May 2024 05:43:00 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 7 May 2024 22:42:58 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/5] Add missing features to FastRPC driver
+Date: Wed, 8 May 2024 11:12:43 +0530
+Message-ID: <20240508054250.2922-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240430082717.65f26140@kernel.org> <20240430160057.557295-1-jtornosm@redhat.com>
-In-Reply-To: <20240430160057.557295-1-jtornosm@redhat.com>
-From: Yongqin Liu <yongqin.liu@linaro.org>
-Date: Wed, 8 May 2024 13:42:36 +0800
-Message-ID: <CAMSo37UN11V8UeDM4cyD+iXyRR1Us53a00e34wTy+zP6vx935A@mail.gmail.com>
-Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address
- before first reading
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com, 
-	inventor500@vivaldi.net, jarkko.palviainen@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
-	vadim.fedorenko@linux.dev, Sumit Semwal <sumit.semwal@linaro.org>, 
-	John Stultz <jstultz@google.com>, Viktor Martensson <vmartensson@google.com>, 
-	Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _Ehy7-ixZ4dNqwjw_iXm5JH488-CcRGx
+X-Proofpoint-GUID: _Ehy7-ixZ4dNqwjw_iXm5JH488-CcRGx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_02,2024-05-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1011 malwarescore=0 suspectscore=0 priorityscore=1501
+ mlxscore=0 impostorscore=0 mlxlogscore=547 bulkscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405080040
 
-Hi, Jose
+This patch series adds the listed features that have been missing
+in upstream fastRPC driver.
 
-On Wed, 1 May 2024 at 00:01, Jose Ignacio Tornos Martinez
-<jtornosm@redhat.com> wrote:
->
-> > v6.8.8 has 56f78615b already. We need another patch, Jose?
->
-> Hello Jakub,
->
-> I will try to analyze it during the next week (I will be out until then).
->
+- Redesign and improve remote heap management.
+- Add static PD restart support for audio and sensors PD using
+  PDR framework.
+- Add change to support unsigned PD. Unsigned PD can be enabled
+  using userspace API:
+  https://git.codelinaro.org/linaro/qcomlt/fastrpc/-/blob/master/src/fastrpc_apps_user.c?ref_type=heads#L1173
+- Add check for untrusted applications and allow trusted processed to
+  offload to system unsigned PD.
 
-Not sure if you have checked it already, this commit causes an issue for the
-db845c + ACK android15-6.6[1] + AOSP main Android configuration, the
-ethernet does not work,
-there is no ip address assigned, like:
-    db845c:/ # ifconfig eth0
-    eth0      Link encap:Ethernet  HWaddr 02:00:89:7a:fb:61  Driver ax88179_178a
-              UP BROADCAST MULTICAST  MTU:1500  Metric:1
-              RX packets:0 errors:0 dropped:0 overruns:0 frame:0
-              TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000
-              RX bytes:0 TX bytes:0
+Ekansh Gupta (5):
+  misc: fastrpc: Redesign remote heap management
+  misc: fastrpc: Add support for unsigned PD
+  misc: fastrpc: Restrict untrusted apk to spawn
+  misc: fastrpc: Add system unsigned PD support
+  misc: fastrpc: Add static PD restart support
 
-    db845c:/ #
-if I have this change reverted, then it will work again:
-    db845c:/ # ifconfig eth0
-    eth0      Link encap:Ethernet  HWaddr 02:00:89:7a:fb:61  Driver ax88179_178a
-              inet addr:192.168.1.10  Bcast:192.168.1.255  Mask:255.255.255.0
-              inet6 addr: 240e:305:2c88:4700:4b6d:926d:1592:fc5e/64
-Scope: Global
-              inet6 addr: 240e:305:2c88:4700:edc9:86ec:7c5e:b028/64
-Scope: Global
-              inet6 addr: fe80::32ce:8a2e:269d:e53f/64 Scope: Link
-              UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-              RX packets:966 errors:0 dropped:33 overruns:0 frame:0
-              TX packets:475 errors:0 dropped:0 overruns:0 carrier:0
-              collisions:0 txqueuelen:1000
-              RX bytes:51193 TX bytes:39472
+ drivers/misc/Kconfig        |   1 +
+ drivers/misc/fastrpc.c      | 631 +++++++++++++++++++++++++++++-------
+ include/uapi/misc/fastrpc.h |   2 +
+ 3 files changed, 514 insertions(+), 120 deletions(-)
 
-    db845c:/ #
-
-One thing to be noted here is that, during the boot, the MAC address
-will be reassigned
-to make sure each board has its own unique MAC address with the
-following commands:
-    /vendor/bin/ifconfig eth0 down
-    /vendor/bin/ifconfig eth0 hw ether "${ETHADDR}"
-    /vendor/bin/ifconfig eth0 up
-
-
-Could you please help have a check and fix or give some suggestions on
-this issue?
-
-[1]: https://android.googlesource.com/kernel/common/+/refs/heads/android15-6.6
 -- 
-Best Regards,
-Yongqin Liu
----------------------------------------------------------------
-#mailing list
-linaro-android@lists.linaro.org
-http://lists.linaro.org/mailman/listinfo/linaro-android
+2.43.0
+
 
