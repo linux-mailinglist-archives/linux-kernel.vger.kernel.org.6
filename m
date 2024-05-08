@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-173409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA128C0015
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:35:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988B08C0014
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11301C23444
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39FB41F26CF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EB61272BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140F11272A0;
 	Wed,  8 May 2024 14:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sb49OlRC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="QTCGbw4b"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050186630;
-	Wed,  8 May 2024 14:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61DC8625B;
+	Wed,  8 May 2024 14:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715178878; cv=none; b=j9LWj7Z3H5AlQHVwE2gaEeFyJDPxwL0nc4P8anPxHcNb7BZLkaQK7s3VY9euKZUfOmxcDwxjpjqprVZ/v6TY8Ns6ybLQsloa9iWu+AWQwAxYoBok4Ikl3jpxFzyPu0COJMtAf2Bc03h/Tphg2963DDQTbym/8inUCTL0H+HN6F4=
+	t=1715178878; cv=none; b=YdfvjXYaIm9aEvJBCh+xs6VjzLfKSBu+nIr+vrdCQp6ErbMimtLmKv0mIMjWL/b9FkzauAscKtkWfKIkZJjqNPNVpqckJ5Wh775YZbH/JyZJUeAkGv5F9+Kbhaw1HaiYrapiKJqIw5yxYwJ9KotwIIoOTG14yB7G0srcJUUStws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715178878; c=relaxed/simple;
-	bh=LkpImf7Xtegq1U9a+QMyUfSZIIkF8bJjQH28HZhVga0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pdRCfcv5oTyl47h97jD2+zBB//BWUfyGxzN/JHMRA63zqMzmsd8XXJgp2YOos9gxQPswB5P68PIAr4l16JldOGvZH1fG7pfMjB/Mh/pDzWR7Gxnu+Mg4EKwyAO7detugQjJuMnELoA52vA0vqg+EekQqZepF/prwpffV4LZQ8r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sb49OlRC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84C1CC32783;
-	Wed,  8 May 2024 14:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715178877;
-	bh=LkpImf7Xtegq1U9a+QMyUfSZIIkF8bJjQH28HZhVga0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Sb49OlRC1SeN2Z3yjggk5qbbS+bA9/SmtwkeG/4KATklP+CJdtZ2EXsJCcgoPI19L
-	 u00EsvbrMumHLyBDeGfjvZMtz5Xlg44JC9XWF4fVhkhcfrAawWN9/dNRayNeU7A8OT
-	 IboYGxypuslUkGCdY7BipEsqI0msBln/hKwRHdcFa4Tx65YBxL69IfAmf/9aAdL4SR
-	 stdL30hqMNFSAWipoYsCjisjsHFhc0VipbCbJfw3mKqTPdYnu0R38pxOTljGKceX3t
-	 glP/6q93MgUdFh3SxLtg6Hfa2J2yVvx3E2/bW0omYLgFQk3agx1Qf4+XKmMyv4xZLp
-	 qBNgO1v+I/6oA==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
+	bh=Mf879ORHeiN78yZ0qbPSxvvQFKSWRXMy6QgOVWZGZ/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SieUqlU6vcTg4s/9JYcBZkn8qLvAxcgZ3WCgLKuEiBkEkSpzRAbtkHIYIAbVzzeiZPRxOU3XsYGSikoLxacoSnjfv+NKcM1HJ7bx0jH+xUQ8zduz/nq2MPEluniSioofslR5/SvP4fSGFr5/n+5ibdrxYvtUBYJwsKOKsWSwvNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=QTCGbw4b; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id A436660136;
+	Wed,  8 May 2024 14:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1715178869;
+	bh=Mf879ORHeiN78yZ0qbPSxvvQFKSWRXMy6QgOVWZGZ/4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=QTCGbw4bvuLg9MKqflYo3aHGsy2DeGhJ3t0g4pRplys3Mth9ORPabssqgjv1iAKyF
+	 nqW9j/1XAVR+YaSy3eN6Hgs6dIpARAuPzaTDGXoT9qEQ6nKC4x2xWw/ch+r0uP0XcX
+	 GARYYaTVP3OZa5MRy6f/OvOj//W2QrUjOyfws0xpHUc9v7DMUOe2FYe/KwUsEPHbWE
+	 PyaMoblQWYSeLCIfOBWTdR1jvp9krSJCqButNpC04hNA4zlRvYAiLCIfOWjrbfXCrd
+	 CwpKFKKVWjuK788o53s9sawCKYkNb0rqkqFGYX0H4llZYw/u4hmZ1ZQCHLo8mPGXeQ
+	 skf8LEK9DPV7w==
+Received: by x201s (Postfix, from userid 1000)
+	id 6AA1C20912B; Wed, 08 May 2024 14:34:07 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
 	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: puranjay12@gmail.com
-Subject: [PATCH] tools/memory-model: Add atomic_and()/or()/xor() and add_negative
-Date: Wed,  8 May 2024 14:34:00 +0000
-Message-Id: <20240508143400.36256-1-puranjay@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Subject: [PATCH net-next v2 13/14] net: qede: propagate extack through qede_flow_spec_validate()
+Date: Wed,  8 May 2024 14:34:01 +0000
+Message-ID: <20240508143404.95901-14-ast@fiberby.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240508143404.95901-1-ast@fiberby.net>
+References: <20240508143404.95901-1-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Pull-849[1] added the support of '&', '|', and '^' to the herd7 tool's
-atomics operations.
+Pass extack to qede_flow_spec_validate() when called in
+qede_flow_spec_to_rule().
 
-Use these in linux-kernel.def to implement atomic_and()/or()/xor() with
-all their ordering variants.
+Pass extack to qede_parse_actions().
 
-atomic_add_negative() is already available so add its acquire, release,
-and relaxed ordering variants.
+Not converting qede_flow_spec_validate() to use extack for
+errors, as it's only called from qede_flow_spec_to_rule(),
+where extack is faked into a DP_NOTICE anyway, so opting to
+keep DP_VERBOSE/DP_NOTICE usage.
 
-[1] https://github.com/herd/herdtools7/pull/849
+Only compile tested.
 
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
 ---
- tools/memory-model/linux-kernel.def | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/net/ethernet/qlogic/qede/qede_filter.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-index 88a39601f525..d1f11930ec51 100644
---- a/tools/memory-model/linux-kernel.def
-+++ b/tools/memory-model/linux-kernel.def
-@@ -65,6 +65,9 @@ atomic_set_release(X,V) { smp_store_release(X,V); }
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_filter.c b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+index b83432744a03..e616855d8891 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+@@ -1953,7 +1953,8 @@ int qede_add_tc_flower_fltr(struct qede_dev *edev, __be16 proto,
+ static int qede_flow_spec_validate(struct qede_dev *edev,
+ 				   struct flow_action *flow_action,
+ 				   struct qede_arfs_tuple *t,
+-				   __u32 location)
++				   __u32 location,
++				   struct netlink_ext_ack *extack)
+ {
+ 	int err;
  
- atomic_add(V,X) { __atomic_op(X,+,V); }
- atomic_sub(V,X) { __atomic_op(X,-,V); }
-+atomic_and(V,X) { __atomic_op(X,&,V); }
-+atomic_or(V,X)  { __atomic_op(X,|,V); }
-+atomic_xor(V,X) { __atomic_op(X,^,V); }
- atomic_inc(X)   { __atomic_op(X,+,1); }
- atomic_dec(X)   { __atomic_op(X,-,1); }
+@@ -1977,7 +1978,7 @@ static int qede_flow_spec_validate(struct qede_dev *edev,
+ 		return -EINVAL;
+ 	}
  
-@@ -77,6 +80,21 @@ atomic_fetch_add_relaxed(V,X) __atomic_fetch_op{once}(X,+,V)
- atomic_fetch_add_acquire(V,X) __atomic_fetch_op{acquire}(X,+,V)
- atomic_fetch_add_release(V,X) __atomic_fetch_op{release}(X,+,V)
+-	err = qede_parse_actions(edev, flow_action, NULL);
++	err = qede_parse_actions(edev, flow_action, extack);
+ 	if (err)
+ 		return err;
  
-+atomic_fetch_and(V,X) __atomic_fetch_op{mb}(X,&,V)
-+atomic_fetch_and_relaxed(V,X) __atomic_fetch_op{once}(X,&,V)
-+atomic_fetch_and_acquire(V,X) __atomic_fetch_op{acquire}(X,&,V)
-+atomic_fetch_and_release(V,X) __atomic_fetch_op{release}(X,&,V)
-+
-+atomic_fetch_or(V,X) __atomic_fetch_op{mb}(X,|,V)
-+atomic_fetch_or_relaxed(V,X) __atomic_fetch_op{once}(X,|,V)
-+atomic_fetch_or_acquire(V,X) __atomic_fetch_op{acquire}(X,|,V)
-+atomic_fetch_or_release(V,X) __atomic_fetch_op{release}(X,|,V)
-+
-+atomic_fetch_xor(V,X) __atomic_fetch_op{mb}(X,^,V)
-+atomic_fetch_xor_relaxed(V,X) __atomic_fetch_op{once}(X,^,V)
-+atomic_fetch_xor_acquire(V,X) __atomic_fetch_op{acquire}(X,^,V)
-+atomic_fetch_xor_release(V,X) __atomic_fetch_op{release}(X,^,V)
-+
- atomic_inc_return(X) __atomic_op_return{mb}(X,+,1)
- atomic_inc_return_relaxed(X) __atomic_op_return{once}(X,+,1)
- atomic_inc_return_acquire(X) __atomic_op_return{acquire}(X,+,1)
-@@ -117,3 +135,6 @@ atomic_sub_and_test(V,X) __atomic_op_return{mb}(X,-,V) == 0
- atomic_dec_and_test(X)  __atomic_op_return{mb}(X,-,1) == 0
- atomic_inc_and_test(X)  __atomic_op_return{mb}(X,+,1) == 0
- atomic_add_negative(V,X) __atomic_op_return{mb}(X,+,V) < 0
-+atomic_add_negative_relaxed(V,X) __atomic_op_return{once}(X,+,V) < 0
-+atomic_add_negative_acquire(V,X) __atomic_op_return{acquire}(X,+,V) < 0
-+atomic_add_negative_release(V,X) __atomic_op_return{release}(X,+,V) < 0
+@@ -2024,7 +2025,7 @@ static int qede_flow_spec_to_rule(struct qede_dev *edev,
+ 
+ 	/* Make sure location is valid and filter isn't already set */
+ 	err = qede_flow_spec_validate(edev, &flow->rule->action, t,
+-				      fs->location);
++				      fs->location, &extack);
+ err_out:
+ 	if (extack._msg)
+ 		DP_NOTICE(edev, "%s\n", extack._msg);
 -- 
-2.40.1
+2.43.0
 
 
