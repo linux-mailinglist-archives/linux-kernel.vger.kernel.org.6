@@ -1,161 +1,103 @@
-Return-Path: <linux-kernel+bounces-172889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901968BF832
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:11:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B33A98BF835
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:12:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174941F2196D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E2D1F234F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7AA40BE6;
-	Wed,  8 May 2024 08:11:30 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2717240BFE;
+	Wed,  8 May 2024 08:12:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZjFtKFxa"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551453FBB1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ED13DB97;
+	Wed,  8 May 2024 08:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155889; cv=none; b=gs4henUAhv5gwCSnhMveUXEQTBzCiB9T1J8V9xSzjPeYPYw1ahZB+y5SfJ8Kqt6ALQpzfV48a2HDOWjN/XOhl6SjNzNuLdsZI7ruz/cRz6N4PN2LdWYchineWhBstqhKhQfl2lb+Qbp88ZLg2cInMCDFFFf8bdS15CZSNZdPSJI=
+	t=1715155925; cv=none; b=bMy5fFz8K7vAM8HAp/dBeSEXN9XV8GvjhF03uW0pJnthrNZ8CxF7As3q/UfzXcde38jFM/YRZINTRg33A+uNEXQ3YOt1ZcPtwJgu7VTYpo/HHOzVxoOBHDlY3GLJK/+rH+0q4OkNv8azq+xYeRfcqtxFRxWcXP5hqph7RpvzoCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155889; c=relaxed/simple;
-	bh=saxFz38dozy1mF1iTqtAanoNI9EUBodlVOT3bIkWB5A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Bg2bx4BWYHDqxJVdALLHSQgm24qXGGGKkjJvuLm1BBzTVZsUja9pgP2KqXKJJIlKVYoURkeZS94aQ0lPylHT+HbDTgBI4zx9eJuDguMfn7k6seBRCqRVyHqsP5+idt15Jl9CpwiS1NpIh6zQn5TVud/NPjkHlpu2ndjfz2sWIq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e195fac186so41803639f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:11:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715155887; x=1715760687;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1TC4P/faER2lAvVgIfDbtDWGEj4zknODtVb17Ze9sQc=;
-        b=RUM5MdEf4MteV3QGr57IqCR18+AKl7KX/RzkpFApvBR+ej8ZxtyfmGY+bx6lCqUfPx
-         CSbVQBHXnYlRgw+YIgBpgrTOYv5E+M4NmpD+fWa7p0Y1MI4KHIgzCRtlhgytdMU1QJPI
-         6ofAnWMhJZkT+wquiFTBl63zlOq97N9/UpklhT2XnAcxG40Kq3VJj30nLehfk0fLBi1Y
-         yePv+YbMY/K1hnUm6mPZJX42NUO7g3ujHY/tL3XK690j31pOxcBCM0zwK+s++lhKMPOD
-         6uQuW/LoBLl0vXTFoVM/ntUg8aGDViUAab9m8uxbQmiggSFPxWR0sN3QABl0Z6QwiD6X
-         ckCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXm/D3rqecos9s/lPY+xIQVTB48Od0jwwKWnANibsVb+GLltoMKesKuJwSUfL1NS7cYf8Tmx+YGmnVnQEEM8p7hABXNrJhtDiBrDxu
-X-Gm-Message-State: AOJu0YxUZlx0xdMQkH0hoWCnksAYZGqtwV3AI0C5FYheTSg74sDWuy51
-	gUy1QRAzdmhZ9WdgZCSNPvOdjIsnDlkJ9A5QknKoXO2Qs7ocPpQehas7fNrIVNlu04ZBJQnRcIj
-	rM9iI2TWxHt4ppixNXF1EpSdd/4DynyAw39BAvQ+MyCaVE4FGDTMAnzc=
-X-Google-Smtp-Source: AGHT+IFgdbj6+sIkAGoToRnJPBmkbWHMq5sVU4eRFthIoz0S0PkhOpDpwMsH0rgxzOLiMI3IvKdgBCzhZ+dNiex9WuLAD5SUsQqj
+	s=arc-20240116; t=1715155925; c=relaxed/simple;
+	bh=edbSgAp6x5wdS7hhDjQhYQQt1mmbXqGyMLbuEgoFHL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfVaKkFWw2OQV3jyJz+bzgWmxsBTU3GxNBuTgg9cH2q18Nld6uzezIaf3q0cxswBPmWRxiSOHbIykFl2uvzy8xjisLKu74/MkAru6ijK5oJdzZ84z4RH/L5vxbkxywX82CNIgcRioxe7gngA/MHX27OGgrp1wcBSt1efzux3xO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZjFtKFxa; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uRqGn1bN/Grcd+F1z4WjSaR1kcVdDX8dLEQa2ZSJ9Jc=; b=ZjFtKFxa9wt8DrsHiQAJ0YTvlM
+	CB3WxxTkZNQCVro9WRZ3AEWSOU1tKi8PhFSERTQ73pDPXW/I9XhUaicOOayOCFoSYgK/QCe/tuv9w
+	PRp/MygDqsMqZkkY3fVuuCy/rVGGs+WjzUNF43KT5omOMrRmU3RHjBoXWMDHrWGPxhdoad6LaLjla
+	GQ+4yXoKFwjgTrhmgL4KlZqsoh5p7V63p/58qP3TMKYzBkeQJvRwQI1BlItx67TqMv9dMWYRMVSuT
+	uLvFXof9NpGd/2X1bxvRVRFMhXKDHRaB4bhZnn1/I7lwanff5BGu7QOSiAV6ymZkMDv3N1+PCt3Ui
+	09/I+DDg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55036)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s4cOr-0004so-17;
+	Wed, 08 May 2024 09:11:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s4cOn-0001EY-HV; Wed, 08 May 2024 09:11:37 +0100
+Date: Wed, 8 May 2024 09:11:37 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+	bartosz.golaszewski@linaro.org, horms@kernel.org,
+	ahalaney@redhat.com, rohan.g.thomas@intel.com,
+	j.zink@pengutronix.de, leong.ching.swee@intel.com,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] net: stmmac: move the lock to struct
+ plat_stmmacenet_data
+Message-ID: <ZjszuWWw8PPxNyKE@shell.armlinux.org.uk>
+References: <20240508045257.2470698-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2389:b0:488:59cc:eb4c with SMTP id
- 8926c6da1cb9f-488fdd5553amr128283173.3.1715155887604; Wed, 08 May 2024
- 01:11:27 -0700 (PDT)
-Date: Wed, 08 May 2024 01:11:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006a59f00617ecd989@google.com>
-Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_bkey_format_invalid
-From: syzbot <syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508045257.2470698-1-xiaolei.wang@windriver.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hello,
+On Wed, May 08, 2024 at 12:52:57PM +0800, Xiaolei Wang wrote:
+> Reinitialize the whole est structure would also reset the mutex lock
+> which is embedded in the est structure, and then trigger the following
+> warning. To address this, move the lock to struct plat_stmmacenet_data.
+> We also need to require the mutex lock when doing this initialization.
 
-syzbot found the following issue on:
+What is plat->lock protecting exactly? "lock" is opaque and doesn't
+hint at its purpose. Does it serialise accesses to plat->est? If so,
+consider naming it plat->est_lock to make its purpose and what it's
+doing clear.
 
-HEAD commit:    9221b2819b8a Add linux-next specific files for 20240503
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=153b20e4980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8ab537f51a6a0d98
-dashboard link: https://syzkaller.appspot.com/bug?extid=9833a1d29d4a44361e2c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114b7a50980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b7ae87180000
+Please also follow netdev best practice; allow at least 24 hours to
+pass _and_ for discussion to finish before posting a new version of
+a patch or patch series.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3e67dbdc3c37/disk-9221b281.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ade618fa19f8/vmlinux-9221b281.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/df12e5073c97/bzImage-9221b281.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d64ba6155455/mount_0.gz
+Also see the "How do I indicate which tree" question at:
+https://www.kernel.org/doc/html/v5.3/networking/netdev-FAQ.html
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com
+Thanks.
 
-loop0: detected capacity change from 0 to 32768
-bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=compression=lz4,nojournal_transaction_names
-bcachefs (loop0): recovering from clean shutdown, journal seq 7
-------------[ cut here ]------------
-UBSAN: shift-out-of-bounds in fs/bcachefs/bkey.c:663:22
-shift exponent 254 is too large for 64-bit type 'unsigned long long'
-CPU: 1 PID: 5092 Comm: syz-executor406 Not tainted 6.9.0-rc6-next-20240503-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- ubsan_epilogue lib/ubsan.c:231 [inline]
- __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
- bch2_bkey_format_invalid+0x46c/0x5c0 fs/bcachefs/bkey.c:663
- validate_bset+0x168d/0x25a0 fs/bcachefs/btree_io.c:824
- bch2_btree_node_read_done+0x20d2/0x5ed0 fs/bcachefs/btree_io.c:1142
- btree_node_read_work+0x665/0x1300 fs/bcachefs/btree_io.c:1345
- bch2_btree_node_read+0x2637/0x2c80 fs/bcachefs/btree_io.c:1730
- __bch2_btree_root_read fs/bcachefs/btree_io.c:1769 [inline]
- bch2_btree_root_read+0x61e/0x970 fs/bcachefs/btree_io.c:1793
- read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:472
- bch2_fs_recovery+0x2334/0x36e0 fs/bcachefs/recovery.c:800
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1030
- bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2105
- bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1917
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2a0 fs/super.c:1780
- do_new_mount+0x2be/0xb40 fs/namespace.c:3352
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa35434c8fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff2b30e848 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fff2b30e860 RCX: 00007fa35434c8fa
-RDX: 0000000020005d80 RSI: 0000000020005dc0 RDI: 00007fff2b30e860
-RBP: 0000000000000010 R08: 00007fff2b30e8a0 R09: 0000000000005d8f
-R10: 0000000000000010 R11: 0000000000000282 R12: 0000000000000004
-R13: 00007fff2b30e8a0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
----[ end trace ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
