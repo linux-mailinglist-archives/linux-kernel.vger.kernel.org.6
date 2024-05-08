@@ -1,148 +1,94 @@
-Return-Path: <linux-kernel+bounces-172577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBC08BF3EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:07:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B639E8BF3EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAFEC1F24894
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652C01F249FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F7E1A2C18;
-	Wed,  8 May 2024 01:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m4iNpoPA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E504C6E;
+	Wed,  8 May 2024 01:11:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6BE633;
-	Wed,  8 May 2024 01:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A22622
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 01:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715130425; cv=none; b=UGzW6P5wqFnw0slufOd3AoOmeMZpqz0hls6Hv8pWXLiPImnsLweslXFneHpGVU7yFv+/+4VoWV3ZadhYfBikzv5vcRg4ZguXGCM953W6P4kFRymVGJsSd6vE/vkFULHxvedZwFOB9Dotbv4iwySyOej3Cf9o7csC6uP6NWnaNDE=
+	t=1715130665; cv=none; b=pACXOxWi1RPY7yqlylb/imEDOGNe+G3YuJZExjgSK1HRz22S81mB4Pvv1Jfkdm6uMGy30NLs/6kz6V0ciSZ+cDBCfbAUVOj9xO77N4cWTFXBHUqXNN2gpUH2tK4yhiuJAVpjHnACRGbTOFyCfEzKSaMu38MXsF5BsNqhZuMnlig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715130425; c=relaxed/simple;
-	bh=p5WCLuKt+jPVh7GPjljN8xrAfP7mBESc4n8DNvE7TsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AjMc92ZCAFKhB6Q2+TSnouVaF3JHwJGmaIXpK/ifmN+5aadpYafl3eRLSff7or2YmEAXBmCrxbfZebiWaW27eNI8ZAlLA3r+UMMVN0YFMpr+8It9Yw/F04q3ESGv5FSP50hnDpLZUDmcu815c4oh0t+5i4HyVbr9aMm2hQrucaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m4iNpoPA; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715130424; x=1746666424;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=p5WCLuKt+jPVh7GPjljN8xrAfP7mBESc4n8DNvE7TsE=;
-  b=m4iNpoPAaalKd7tYmAcFwwshLwlgo7luEGV0xvBFHvTbDHe14WWHg1lN
-   giNKH8J10J9d8Wl63Y/lZydvmlQFHYG1Xj28ty+MKXL/YY7SBAdt5Hhz4
-   lqVIIMBIyqpU9hju49QyY6u5OzBzOrTIahT3lqmlUkxFQrxj5/eidKpkZ
-   REPWnSVCoGgA2fr2rp3xekM1CY4IDJ7XMuhR6kZ45EaqTzLeiZgMcHaQZ
-   55GAS4WEKDOjDNkrbyNQmDy1ANsoQjQGHX1oM5H+FT2a+PwrmmbDaOrgs
-   xuq34Qps+iD3EFsdF+HyulMy/ZSDVQjscCbr1UGbS7tHSqkM9CtDnQs5h
-   A==;
-X-CSE-ConnectionGUID: 5KWel6vPQOCJF8VZKeA5Jg==
-X-CSE-MsgGUID: 9FQXmNVmR3iU1bH8GmM25Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="21523941"
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="21523941"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 18:07:04 -0700
-X-CSE-ConnectionGUID: 4YELYJD7TpSSD3sntn6oOw==
-X-CSE-MsgGUID: Ynp4SyJyRGmdjsXeKRFF/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,143,1712646000"; 
-   d="scan'208";a="28579669"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 07 May 2024 18:06:58 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4Vlm-0002nk-3C;
-	Wed, 08 May 2024 01:06:55 +0000
-Date: Wed, 8 May 2024 09:06:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Edward Adam Davis <eadavis@qq.com>,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com
-Cc: oe-kbuild-all@lists.linux.dev, bfoster@redhat.com,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Message-ID: <202405080823.um76blCH-lkp@intel.com>
-References: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+	s=arc-20240116; t=1715130665; c=relaxed/simple;
+	bh=ComJ7Mq6e1Rkio2gqje2gB81UYrfcIxLx2vomWU3nHw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Znu2QvjJP2vf/ZblcdITumpGEdgV71W+oPx9yXPOhjj4ZiDMZrsr16gmWeIGytIt5iEzyy2Ywk743sXM9GRrOhhTzN+4MRE1cVuM17srqHKnHAlMW0aWR9ooX/XlDpP/FvI83vPQLRFw29TzGUvVYTl/U+oNsvpySgo52RwN/bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7da7d4ccb67so442858739f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 18:11:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715130663; x=1715735463;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hCDXw2gQqk3jTpIqfVkM1qGItUI3O219WvpvPgx8/w8=;
+        b=iSiQXt5n2c6IjJpem5FdFa+oWXaAD9Ll/7jjTbHilGzQbnLmeiVlj7IDKcllt+7vMz
+         NgysYSTibuU2YflbFybf5zsmHOpRu8NHly5C6BUEZeTHjIB4JanbU12yhuZUBJrxgYI3
+         dm9ILWQG4xUqTLmmPiEEPEgeWzxR6ziqe33YPN5xeBFliSobBbBA7wQr/wdO82MRcyuy
+         uh/0QIOvuEDEuEo7XynFwg80bUOjIWwG5br2VvkDrbzRFoNGWuLPKWSZgpCraWXwf5XK
+         jq9v04sc/sAdDrlEFf0euA5Nqrgt/u6ilCSgIc+7Axg3D7Vf9ZQuKkHPip3h0ZjHQuPb
+         TwDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh4deYM1CwXYqd4m9BjerVQjwQ+cz9HzfKJNI2x4qOU6wcQm6S3YHVCaWzw0CiuLSHrlGB+m7jjvrObptre+90dnZysyVpbJrnIZTq
+X-Gm-Message-State: AOJu0YwEG49+C9LMGzyUGojUA/ao6AT9uHKYzW6uGZiB6T8wKY4CHwRo
+	6g+dVnuVPvMXJindCpkX/inCbNUvxDpjJeo1q6be+xSarAxY59BbI0ErkM5Fv2p6YrNCDJ28NEQ
+	5GyTRrbjKZlspxmSoAqTwJdWBp4q9kZ41ZV3zfFqqsl0Pnt69HQ8d+c0=
+X-Google-Smtp-Source: AGHT+IFi/rL2dWS/0pnDUEdd2wPnRN+7V5vGNWHm9uVNPfzIngyJWfb44KXU1GTbEffnrKm23GEwVf2CLP3TXushn//Y6+TOg1o7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_816D842DE96C309554E8E2ED9ACC6078120A@qq.com>
+X-Received: by 2002:a05:6638:270e:b0:488:75e3:f3c5 with SMTP id
+ 8926c6da1cb9f-488fd34f405mr72866173.0.1715130663577; Tue, 07 May 2024
+ 18:11:03 -0700 (PDT)
+Date: Tue, 07 May 2024 18:11:03 -0700
+In-Reply-To: <0000000000007558ae061553f41b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f2475f0617e6f9ea@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-out-of-bounds Read in hci_sock_setsockopt
+From: syzbot <syzbot+837ba09d9db969068367@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, eadavis@qq.com, hdanton@sina.com, 
+	johan.hedberg@gmail.com, jolsa@kernel.org, laoar.shao@gmail.com, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, marcel@holtmann.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Edward,
+syzbot has bisected this issue to:
 
-kernel test robot noticed the following build warnings:
+commit 3505cb9fa26cfec9512744466e754a8cbc2365b0
+Author: Jiri Olsa <jolsa@kernel.org>
+Date:   Wed Aug 9 08:34:14 2023 +0000
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.9-rc7 next-20240507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+    bpf: Add attach_type checks under bpf_prog_attach_check_attach_type
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Edward-Adam-Davis/bcachefs-fix-oob-in-bch2_sb_clean_to_text/20240507-172635
-base:   linus/master
-patch link:    https://lore.kernel.org/r/tencent_816D842DE96C309554E8E2ED9ACC6078120A%40qq.com
-patch subject: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-config: x86_64-randconfig-121-20240508 (https://download.01.org/0day-ci/archive/20240508/202405080823.um76blCH-lkp@intel.com/config)
-compiler: clang version 18.1.4 (https://github.com/llvm/llvm-project e6c3289804a67ea0bb6a86fadbe454dd93b8d855)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240508/202405080823.um76blCH-lkp@intel.com/reproduce)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=158aedbc980000
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=178aedbc980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=138aedbc980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=837ba09d9db969068367
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15807005180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1777929d180000
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405080823.um76blCH-lkp@intel.com/
+Reported-by: syzbot+837ba09d9db969068367@syzkaller.appspotmail.com
+Fixes: 3505cb9fa26c ("bpf: Add attach_type checks under bpf_prog_attach_check_attach_type")
 
-sparse warnings: (new ones prefixed by >>)
-   fs/bcachefs/sb-clean.c: note: in included file:
-   fs/bcachefs/bcachefs.h:1027:9: sparse: sparse: array of flexible structures
-   fs/bcachefs/sb-clean.c: note: in included file (through fs/bcachefs/bcachefs.h):
-   fs/bcachefs/bcachefs_format.h:794:38: sparse: sparse: array of flexible structures
-   fs/bcachefs/bcachefs_format.h:1453:38: sparse: sparse: array of flexible structures
->> fs/bcachefs/sb-clean.c:296:20: sparse: sparse: incompatible types in comparison expression (different base types):
-   fs/bcachefs/sb-clean.c:296:20: sparse:    struct jset_entry *
-   fs/bcachefs/sb-clean.c:296:20: sparse:    void *
-
-vim +296 fs/bcachefs/sb-clean.c
-
-   283	
-   284	static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
-   285					  struct bch_sb_field *f)
-   286	{
-   287		struct bch_sb_field_clean *clean = field_to_type(f, clean);
-   288		struct jset_entry *entry;
-   289	
-   290		prt_printf(out, "flags:          %x",	le32_to_cpu(clean->flags));
-   291		prt_newline(out);
-   292		prt_printf(out, "journal_seq:    %llu",	le64_to_cpu(clean->journal_seq));
-   293		prt_newline(out);
-   294	
-   295		for (entry = clean->start;
- > 296		     entry < vstruct_end(&clean->field);
-   297		     entry = vstruct_next(entry)) {
-   298			if (entry->type == BCH_JSET_ENTRY_btree_keys &&
-   299			    !entry->u64s)
-   300				continue;
-   301	
-   302			bch2_journal_entry_to_text(out, NULL, entry);
-   303			prt_newline(out);
-   304		}
-   305	}
-   306	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
