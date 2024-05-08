@@ -1,124 +1,112 @@
-Return-Path: <linux-kernel+bounces-173396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F698BFFEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E658BFFF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D768E282EA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4BF9286C56
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BEC86240;
-	Wed,  8 May 2024 14:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIwywg5r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139268563D;
+	Wed,  8 May 2024 14:26:23 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923828562E;
-	Wed,  8 May 2024 14:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2487BB0F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 14:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715178341; cv=none; b=OL3L6/xvesPSqLlLgWQpb4TPsSqKPxgBDl+aQGQNPUSjMO9aqf2/tknGFDIkiBEz7DbJJxxASqJBxA2WnZPFYDxDb8BxN3L0u1zOD3dmtQL7LKIULdpyNMxQma4teGyS7YnkpnfpZyy01MRFX1BkBfawgr+9H7U+1NI7FATpFos=
+	t=1715178382; cv=none; b=svdiDCUkGkwaCFsOEzNfbuT69tFShhRRxmGdxTW1JVZfm4SStTTcYH0JxWb6M72It924xuuAWWDxhw6Uc1PhUOLR7gZEiHTel07/nIU5g8ixGfLkZW1PLizWsRcoP/SkhRX6fcpGIao8luHaGIB85R9Umy5yohWW3POYWewrDVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715178341; c=relaxed/simple;
-	bh=GJmvi/Sx1Tmjcq6Bnii+IMV6C5ZymcNZfpdtfXPoNkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMMQGFGxNh5Qo3KnnWqbpXmydNnHsgmSTuiHaP8N4lg22BdyVLlGrTKRrFnP10GRhu3raaVOzqGts9bLRrxib6ShnpS98Lyc4ryVJiVFzI4KlIvp1TzJHxvHS/Cog/SHgj0rSbvdJeD6dAOzjM2XTr35zm5JDeM4ZCqZZ2IVpes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIwywg5r; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715178340; x=1746714340;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GJmvi/Sx1Tmjcq6Bnii+IMV6C5ZymcNZfpdtfXPoNkk=;
-  b=KIwywg5rsNOAf3x0WRDbE7scJCaGAFVtqQUocQwvgNJ47/MvMWvmg3pi
-   GBiucELq/C/kbe18sK6MNPy1OhvIP3ladVP1tsTuW1cv6iz4kFaCeM3ZZ
-   yi11NqyZHyexqQf1s2zFZ3mwFemzczva4KuBmjAUsjseoeOjC1YJnoJwt
-   d40hBUMmJnY3iS0umgcg8wYsJAGweRigbYJT3RT7+ay5U1WX0jHz1SPo+
-   R14VNbXOf4yjs4vFXLzudfbqU3t45q0XF4td9QGVZRx57U84jXkEVDx0T
-   +mDzlFlV+0SaWYUq3Zgl9wQBEoxidgYsd5CapbwnzNKtccke01qoGSNBu
-   g==;
-X-CSE-ConnectionGUID: Xs8RSaYPQJ6KfLl/ItCm7A==
-X-CSE-MsgGUID: xCZeykM7TUqsPmpaEWEeQw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="14836225"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="14836225"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 07:25:39 -0700
-X-CSE-ConnectionGUID: CYCHGa+5QuOPLZYR89aEqg==
-X-CSE-MsgGUID: /qEKDGxwR6iaVVUBhdkp7Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33703450"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 07:25:35 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s4iEd-00000005T34-3Cbf;
-	Wed, 08 May 2024 17:25:31 +0300
-Date: Wed, 8 May 2024 17:25:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Jacob Keller <jacob.e.keller@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>
-Subject: Re: [PATCH net-next v1 1/1] net: intel: Use *-y instead of *-objs in
- Makefile
-Message-ID: <ZjuLW8jA3MuT0oih@smile.fi.intel.com>
-References: <20240508132315.1121086-1-andriy.shevchenko@linux.intel.com>
- <6ac025de-9264-4510-ba7f-f9a56c564a80@intel.com>
+	s=arc-20240116; t=1715178382; c=relaxed/simple;
+	bh=UdR2fErl7TnEbwnYOGyhHFBr3B8ZGufJf022XuyvVHM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r2jAp6anZV1HfP+tpki+FePixFfb7wZPcRajz50vE3MzNsKtUsHQa2uy6csiF2lVRl67vr9G/GffzYBcBi4OWR1TGUuOqxAEhbE2+cePD8p9DGsrX8s1Z+UYIqhRDS0mRsOHSKAFypVGDlMtu0FlIP49RSR6y3IFj0/deBTG7hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36b3c9c65d7so46479515ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 07:26:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715178380; x=1715783180;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ggX7JfzxabWB+vmWXTbMblhOWD2FBIwHUcIiLQVCmEY=;
+        b=SSURfMMds60LI70l4zx/zK+WOrX0ywk3QXaCkR7Kh9iGdyFSjJ11sJTuStb3jdXOc3
+         aXl3127GshGK33syWBlFqNhNO9d3EvKy/M5GcCMYsKt5VGALVsLOyO91qsyZEmujtjpB
+         VR0Jufz7HveQ3Wed32hvoBm+Kx978f0s5yaV4mhbnl/hS+AbUkdms/wwBdMPETZFQAeX
+         BlZ7PFO4ZC2kW9u6AOfKFAeNYT1+t0UZJXXaxPFjuJIqbX+14Ezii0H3+hbtjw/ISYeM
+         lIQd1UkQViXE47QE/vAOX6IP86Zd/cBgD0WukmLDJuMaGuKEB4tNagSiUXSPq9hbUOkC
+         v+8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVY+5DennOWHKC9XkHESc40Ysbs0wKUpOvRxNrFD8w7c91Vb259jWdeUD6HNk9sdJJmoWaBpv+1XhyPofl3XeoIVLXAjJs7tG2rsBCO
+X-Gm-Message-State: AOJu0Yywy1PPoN4jQXGI3YDbMsIjn5W0LOX5vxjvFvZIVgDDLPPME/NV
+	pCXah1vhAV0agHhlCFhqENDXKkWQ66/vAIVoN7MuPOKYN8fSgW9oWSKmQZeKYmWk4cBBy2oq9AD
+	yXdgZ4xN3sWXZrfVzqflVry0U2we/dW67uUWxn3e9r1P9AHT5Dn3dTt0=
+X-Google-Smtp-Source: AGHT+IE3irFr0EarejwE4ZUfo63P6rsADopPw0Tyws7UdKSafF9C+DV9+qZmahh9Xs5+4US62vYMjrQQgAEiQLPuZjpLQBNTdTUf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ac025de-9264-4510-ba7f-f9a56c564a80@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a92:c549:0:b0:36c:5bd2:6b92 with SMTP id
+ e9e14a558f8ab-36caeb3f298mr1304065ab.0.1715178380480; Wed, 08 May 2024
+ 07:26:20 -0700 (PDT)
+Date: Wed, 08 May 2024 07:26:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001863ff0617f21661@google.com>
+Subject: [syzbot] Monthly jfs report (May 2024)
+From: syzbot <syzbot+list96c21f4b86afe479c7ee@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 08, 2024 at 03:35:26PM +0200, Alexander Lobakin wrote:
-> > *-objs suffix is reserved rather for (user-space) host programs while
-> > usually *-y suffix is used for kernel drivers (although *-objs works
-> > for that purpose for now).
-> > 
-> > Let's correct the old usages of *-objs in Makefiles.
-> 
-> Wait, I was sure I've seen somewhere that -objs is more new and
-> preferred over -y. 
+Hello jfs maintainers/developers,
 
-Then you are mistaken.
+This is a 31-day syzbot report for the jfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/jfs
 
-> See recent dimlib comment where Florian changed -y to
-> -objs for example.
+During the period, 12 new issues were detected and 0 were fixed.
+In total, 39 issues are still open and 39 have been fixed so far.
 
-So does he :-)
+Some of the still happening issues:
 
-> Any documentation reference that -objs is for userspace and we should
-> clearly use -y?
+Ref  Crashes Repro Title
+<1>  3656    Yes   kernel BUG in jfs_evict_inode
+                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
+<2>  2347    Yes   general protection fault in lmLogSync (2)
+                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
+<3>  1710    Yes   kernel BUG in txUnlock
+                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
+<4>  1654    Yes   WARNING in dbAdjTree
+                   https://syzkaller.appspot.com/bug?extid=ab18fa9c959320611727
+<5>  1439    Yes   general protection fault in write_special_inodes
+                   https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
+<6>  882     Yes   INFO: task hung in lock_metapage
+                   https://syzkaller.appspot.com/bug?extid=1d84a1682e4673d5c4fb
+<7>  750     Yes   WARNING in inc_nlink (3)
+                   https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
+<8>  606     Yes   kernel BUG in dbFindLeaf
+                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
+<9>  500     Yes   general protection fault in jfs_flush_journal
+                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
+<10> 410     Yes   KASAN: user-memory-access Write in __destroy_inode
+                   https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
 
-Sure. Luckily it's documented in Documentation/kbuild/makefiles.rst
-"Composite Host Programs" (mind the meaning of the word "host"!).
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-With Best Regards,
-Andy Shevchenko
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
+You may send multiple commands in a single email message.
 
