@@ -1,166 +1,381 @@
-Return-Path: <linux-kernel+bounces-172905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27F028BF871
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:24:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A7B8BF874
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 910B1B23FDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:23:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F28EB2524A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B143B481BD;
-	Wed,  8 May 2024 08:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388A545BE3;
+	Wed,  8 May 2024 08:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gozhegQh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HA7Ydd3f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABB03FBBD;
-	Wed,  8 May 2024 08:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE4252F86;
+	Wed,  8 May 2024 08:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715156620; cv=none; b=C2Q+EXcYULVEqj5/n9ipsdtGT+2B5Ms0U50uJKId4gFzjXp95ils/+w1gd8a5somAuYbuo/jTA3GEe6gXGiuVwU2pgx6bTuCApIT4lA+wIxH17mYeBgB58IbXWXNna1yEXtqQ2p/M27T7BR7mC5nf8s+LDz5cqKU2QH1uGTPZdY=
+	t=1715156642; cv=none; b=WGEfKEI3UzTIph+19BGuBWEX5nPbmZOb0I9SIU27TKf2/eY7GmurMWsECB9KqEgcjvUuQ8OH0rnBzEMDmWGsAhJH3+qM1k3sYM2CTaHy5j20ZFyAx8ur9DnrGwMojMIeV2BkpGovGDrTcgJnjlTa9venBQ/yUbHwY3ykJNsJCGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715156620; c=relaxed/simple;
-	bh=K8F6N9JpOlsWc+Jn9CZxhBMEiSzjK/YkQAeLoeEmCRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrbDqnp8I4mpHSuCvXVFHZDl/1nWNinCvZA0sGEpraz0k6n/KQE9m/aA4q2q2EbQFZCYJ6HG6kfvCeypqti/xT+s96RwakGA1ovcqfXV1baVvSpEfpRu8sj8vXgw/thjjLiJFmF8O7xx6PgLzvPa9YAWyVmJ3+Xp7EXsyGzvRDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gozhegQh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4618EC113CC;
-	Wed,  8 May 2024 08:23:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715156619;
-	bh=K8F6N9JpOlsWc+Jn9CZxhBMEiSzjK/YkQAeLoeEmCRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gozhegQh/sghCs3jhqNxNQD4Skq7ybLhYA9g5pbCyJMQHdidxIIMKkT+SAQjpOs1x
-	 r/+Pr+7vnfepnVBiy1k08ZJEVDf6YMabkKhnr5O8SeAezRaBUmxQy9Jq3JtOYtfO/2
-	 kUDALdXV0wDWjnHX5PVahvGNt9avtfV2GqzJFqlHX1nvQgyRiEcoJToY9tGhfTLqOu
-	 9LarS55PEg8RvFinUJkd96tqfJD3IBiwjJAH6jRv3I/gNUnOA5ivnIOHWjVPO7kWXc
-	 BpY1cmz3ga0wxomzIhkawH9Aoea71AjfKqY9a7UbKpIGStEvh7fs8DLobBPpwmCjP+
-	 hXaulBCK61CGg==
-Date: Wed, 8 May 2024 10:23:32 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
-	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240508-unwiederholbar-abmarsch-1813370ad633@brauner>
-References: <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
+	s=arc-20240116; t=1715156642; c=relaxed/simple;
+	bh=mpJMJiFgL29condaFoFct70ooxm4gcroDqJ7evmuU1Q=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=kT383DC/+aTBqKqnGqSVWJdIkOLzsCuF6Fm+wwA1Js28IGkRkXe+BisuaCzBemdt7eIomMfQUlI651yZOJnRTbP7t1BBRkZybBYNa1zC91jj5f3sV98MZ6UxlJhvDnHQ9Lg0vH3St2MeOlc7eu3n7V5P5CKN3Zz973DhetyTsys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HA7Ydd3f; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715156640; x=1746692640;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=mpJMJiFgL29condaFoFct70ooxm4gcroDqJ7evmuU1Q=;
+  b=HA7Ydd3fUHgr/1upXvnvx+2xkOIG9YiTHYOlK2wj/AieGPIhpkIHdG3t
+   I7lD14F6IRiebuAe1tEF7YBcVk3KD4UZO+8zoern5dpHyDaAA3JxMz8wo
+   FzYDpJgc4mzaFoQJikSF1453q6gB7Wx11mi1eDdZPrRqiT4FkpWfCzBWB
+   fXRqvt91EJ9VzMOBx+GwtuxWfn8zDUiBT+1KS5nLnerkgdT19HjmDUgbr
+   5AjaCZp+uWmMP2VsHcx8SNeetCCuGf21d9PHQk8HNRXwDWk3aPO3ppRO9
+   VxdQzLcfERxXErCu7S9LCfJzbMsKOzN5alKeFW/JmIXBKAEQqY9gbiGAJ
+   A==;
+X-CSE-ConnectionGUID: 95mBBDA3RYmWRBBoCcE8uQ==
+X-CSE-MsgGUID: hHHqQiIfQ4yyC1YLbmX6OQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22154732"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="22154732"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:24:00 -0700
+X-CSE-ConnectionGUID: IOeDcwVmRcWGeF7CEoDBiQ==
+X-CSE-MsgGUID: zU58sGYtTUqlwP90I9IEPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="52021470"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.80])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:23:56 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 8 May 2024 11:23:51 +0300 (EEST)
+To: "David E. Box" <david.e.box@linux.intel.com>
+cc: linux-doc@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH V2 1/3] platform/x86/intel/sdsi: Add ioctl SPDM
+ transport
+In-Reply-To: <20240507180106.5218-1-david.e.box@linux.intel.com>
+Message-ID: <462e6bef-d8fc-16e2-ad8d-7fb18e9a011a@linux.intel.com>
+References: <20240507180106.5218-1-david.e.box@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d68417df-1493-421a-8558-879abe36d6fa@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, May 07, 2024 at 07:45:02PM +0200, Christian König wrote:
-> Am 07.05.24 um 18:46 schrieb Linus Torvalds:
-> > On Tue, 7 May 2024 at 04:03, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > > It's really annoying that on some distros/builds we don't have that, and
-> > > for gpu driver stack reasons we _really_ need to know whether a fd is the
-> > > same as another, due to some messy uniqueness requirements on buffer
-> > > objects various drivers have.
-> > It's sad that such a simple thing would require two other horrid
-> > models (EPOLL or KCMP).
-> > 
-> > There'[s a reason that KCMP is a config option - *some* of that is
-> > horrible code - but the "compare file descriptors for equality" is not
-> > that reason.
-> > 
-> > Note that KCMP really is a broken mess. It's also a potential security
-> > hole, even for the simple things, because of how it ends up comparing
-> > kernel pointers (ie it doesn't just say "same file descriptor", it
-> > gives an ordering of them, so you can use KCMP to sort things in
-> > kernel space).
-> > 
-> > And yes, it orders them after obfuscating the pointer, but it's still
-> > not something I would consider sane as a baseline interface. It was
-> > designed for checkpoint-restore, it's the wrong thing to use for some
-> > "are these file descriptors the same".
-> > 
-> > The same argument goes for using EPOLL for that. Disgusting hack.
-> > 
-> > Just what are the requirements for the GPU stack? Is one of the file
-> > descriptors "trusted", IOW, you know what kind it is?
-> > 
-> > Because dammit, it's *so* easy to do. You could just add a core DRM
-> > ioctl for it. Literally just
-> > 
-> >          struct fd f1 = fdget(fd1);
-> >          struct fd f2 = fdget(fd2);
-> >          int same;
-> > 
-> >          same = f1.file && f1.file == f2.file;
-> >          fdput(fd1);
-> >          fdput(fd2);
-> >          return same;
-> > 
-> > where the only question is if you also woudl want to deal with O_PATH
-> > fd's, in which case the "fdget()" would be "fdget_raw()".
-> > 
-> > Honestly, adding some DRM ioctl for this sounds hacky, but it sounds
-> > less hacky than relying on EPOLL or KCMP.
-> > 
-> > I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
-> > too, if this is possibly a more common thing. and not just DRM wants
-> > it.
-> > 
-> > Would something like that work for you?
-> 
-> Well the generic approach yes, the DRM specific one maybe. IIRC we need to
-> be able to compare both DRM as well as DMA-buf file descriptors.
-> 
-> The basic problem userspace tries to solve is that drivers might get the
-> same fd through two different code paths.
-> 
-> For example application using OpenGL/Vulkan for rendering and VA-API for
-> video decoding/encoding at the same time.
-> 
-> Both APIs get a fd which identifies the device to use. It can be the same,
-> but it doesn't have to.
-> 
-> If it's the same device driver connection (or in kernel speak underlying
-> struct file) then you can optimize away importing and exporting of buffers
-> for example.
-> 
-> Additional to that it makes cgroup accounting much easier because you don't
-> count things twice because they are shared etc...
+On Tue, 7 May 2024, David E. Box wrote:
 
-One thing to keep in mind is that a generic VFS level comparing function
-will only catch the obvious case where you have dup() equivalency as
-outlined above by Linus. That's what most people are interested in and
-that could easily replace most kcmp() use-cases for comparing fds.
+> Intel On Demand adds attestation and firmware measurement retrieval
+> services through use of the protocols defined the Security Protocols and
+> Data Measurement (SPDM) specification. SPDM messages exchanges are used to
+> authenticate On Demand hardware and to retrieve signed measurements of the
+> NVRAM state used to track feature provisioning and the NVRAM state used for
+> metering services. These allow software to verify the authenticity of the
+> On Demand hardware as well as the integrity of the reported silicon
+> configuration.
+> 
+> Add an ioctl interface for sending SPDM messages through the On Demand
+> mailbox. Provides commands to get a list of SPDM enabled devices, get the
+> message size limits for SPDM Requesters and Responders, and perform an SPDM
+> message exchange.
+> 
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> Link: https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.0.1.pdf [1]
+> ---
+> V2
+>    - Move size < 4 check into sdsi_spdm_exchange() and add comment
+>      clarifying return values of that function.
+>    - Use SZ_4K and add helpers
+>    - Use devm_kasprintf()
+>    - Remove unnecessary parens
+>    - Use --attest for long option
+> 
+>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+>  MAINTAINERS                                   |   1 +
+>  drivers/platform/x86/intel/sdsi.c             | 210 +++++++++++++++++-
+>  include/uapi/linux/intel_sdsi.h               |  81 +++++++
+>  4 files changed, 292 insertions(+), 1 deletion(-)
+>  create mode 100644 include/uapi/linux/intel_sdsi.h
+> 
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> index c472423412bf..20dcc2dbcaf6 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -382,6 +382,7 @@ Code  Seq#    Include File                                           Comments
+>                                                                       <mailto:mathieu.desnoyers@efficios.com>
+>  0xF8  all    arch/x86/include/uapi/asm/amd_hsmp.h                    AMD HSMP EPYC system management interface driver
+>                                                                       <mailto:nchatrad@amd.com>
+> +0xFC  all    linux/intel_sdsi.h
+>  0xFD  all    linux/dm-ioctl.h
+>  0xFE  all    linux/isst_if.h
+>  ====  =====  ======================================================= ================================================================
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 846187625552..060bd3358cec 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11165,6 +11165,7 @@ INTEL SDSI DRIVER
+>  M:	David E. Box <david.e.box@linux.intel.com>
+>  S:	Supported
+>  F:	drivers/platform/x86/intel/sdsi.c
+> +F:	include/uapi/linux/intel_sdsi.h
+>  F:	tools/arch/x86/intel_sdsi/
+>  F:	tools/testing/selftests/drivers/sdsi/
+>  
+> diff --git a/drivers/platform/x86/intel/sdsi.c b/drivers/platform/x86/intel/sdsi.c
+> index 277e4f4b20ac..686dd9e4e026 100644
+> --- a/drivers/platform/x86/intel/sdsi.c
+> +++ b/drivers/platform/x86/intel/sdsi.c
+> @@ -11,9 +11,12 @@
+>  #include <linux/auxiliary_bus.h>
+>  #include <linux/bits.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/device.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/intel_sdsi.h>
+>  #include <linux/kernel.h>
+> +#include <linux/miscdevice.h>
+>  #include <linux/module.h>
+>  #include <linux/overflow.h>
+>  #include <linux/pci.h>
+> @@ -42,6 +45,7 @@
+>  
+>  #define SDSI_ENABLED_FEATURES_OFFSET	16
+>  #define SDSI_FEATURE_SDSI		BIT(3)
+> +#define SDSI_FEATURE_ATTESTATION	BIT(12)
+>  #define SDSI_FEATURE_METERING		BIT(26)
+>  
+>  #define SDSI_SOCKET_ID_OFFSET		64
+> @@ -91,6 +95,7 @@ enum sdsi_command {
+>  	SDSI_CMD_PROVISION_CAP		= 0x0008,
+>  	SDSI_CMD_READ_STATE		= 0x0010,
+>  	SDSI_CMD_READ_METER		= 0x0014,
+> +	SDSI_CMD_ATTESTATION		= 0x1012,
+>  };
+>  
+>  struct sdsi_mbox_info {
+> @@ -109,12 +114,14 @@ struct disc_table {
+>  struct sdsi_priv {
+>  	struct mutex		mb_lock;	/* Mailbox access lock */
+>  	struct device		*dev;
+> +	struct miscdevice	miscdev;
+>  	void __iomem		*control_addr;
+>  	void __iomem		*mbox_addr;
+>  	void __iomem		*regs_addr;
+>  	int			control_size;
+>  	int			maibox_size;
+>  	int			registers_size;
+> +	int			id;
+>  	u32			guid;
+>  	u32			features;
+>  };
+> @@ -582,6 +589,97 @@ static const struct attribute_group sdsi_group = {
+>  };
+>  __ATTRIBUTE_GROUPS(sdsi);
+>  
+> +/*
+> + * SPDM transport
+> + * Returns size of the response message or an error code on failure.
+> + */
+> +static int sdsi_spdm_exchange(void *private, const void *request,
+> +			      size_t request_sz, void *response,
+> +			      size_t response_sz)
+> +{
+> +	struct sdsi_priv *priv = private;
+> +	struct sdsi_mbox_info info = {};
+> +	size_t spdm_msg_size, size;
+> +	int ret;
+> +
+> +	/*
+> +	 * For the attestation command, the mailbox write size is the sum of:
+> +	 *     Size of the SPDM request payload, padded for qword alignment
+> +	 *     8 bytes for the mailbox command
+> +	 *     8 bytes for the actual (non-padded) size of the SPDM request
+> +	 */
+> +	if (request_sz > SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64))
+> +		return -EOVERFLOW;
+> +
+> +	info.size = round_up(request_sz, sizeof(u64)) + 2 * sizeof(u64);
+> +
+> +	u64 *payload __free(kfree) = kzalloc(info.size, GFP_KERNEL);
+> +	if (!payload)
+> +		return -ENOMEM;
+> +
+> +	memcpy(payload, request, request_sz);
+> +
+> +	/* The non-padded SPDM payload size is the 2nd-to-last qword */
+> +	payload[(info.size / sizeof(u64)) - 2] = request_sz;
+> +
+> +	/* Attestation mailbox command is the last qword of payload buffer */
+> +	payload[(info.size / sizeof(u64)) - 1] = SDSI_CMD_ATTESTATION;
+> +
+> +	info.payload = payload;
+> +	info.buffer = response;
+> +
+> +	ret = mutex_lock_interruptible(&priv->mb_lock);
+> +	if (ret)
+> +		return ret;
+> +	ret = sdsi_mbox_write(priv, &info, &size);
+> +	mutex_unlock(&priv->mb_lock);
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/*
+> +	 * The read size is the sum of:
+> +	 *     Size of the SPDM response payload, padded for qword alignment
+> +	 *     8 bytes for the actual (non-padded) size of the SPDM payload
+> +	 */
+> +
+> +	if (size < sizeof(u64)) {
+> +		dev_err(priv->dev,
+> +			"Attestation error: Mailbox reply size, %ld, too small\n",
+> +			size);
 
-But, of course there's the case where you have two file descriptors
-referring to two different files that reference the same underlying
-object (usually stashed in file->private_data).
+For size_t, %zu is the correct printf format. There are more of these 
+below but I won't mark them explicitly.
 
-For most cases that problem can ofc be solved by comparing the
-underlying inode. But that doesn't work for drivers using the generic
-anonymous inode infrastructure because it uses the same inode for
-everything or for cases where the same underlying object can even be
-represented by different inodes.
+> +		return -EPROTO;
+> +	}
+> +
+> +	if (!IS_ALIGNED(size, sizeof(u64))) {
+> +		dev_err(priv->dev,
+> +			"Attestation error: Mailbox reply size, %ld, is not aligned\n",
+> +			size);
+> +		return -EPROTO;
+> +	}
+> +
+> +	/*
+> +	 * Get the SPDM response size from the last QWORD and check it fits
+> +	 * with no more than 7 bytes of padding
+> +	 */
+> +	spdm_msg_size = ((u64 *)info.buffer)[(size - sizeof(u64)) / sizeof(u64)];
+> +	if (!in_range(size - spdm_msg_size - sizeof(u64), 0, 8)) {
+> +		dev_err(priv->dev,
+> +			"Attestation error: Invalid SPDM response size, %ld\n",
+> +			spdm_msg_size);
+> +		return -EPROTO;
+> +	}
+> +
+> +	if (spdm_msg_size > response_sz || spdm_msg_size < SPDM_HEADER_SIZE) {
+> +		dev_err(priv->dev, "Attestation error: Expected response size %ld, got %ld\n",
+> +			response_sz, spdm_msg_size);
+> +		return -EOVERFLOW;
+> +	}
+> +
+> +	memcpy(response, info.buffer, spdm_msg_size);
+> +
+> +	return spdm_msg_size;
+> +}
+> +
+>  static int sdsi_get_layout(struct sdsi_priv *priv, struct disc_table *table)
+>  {
+>  	switch (table->guid) {
+> @@ -649,6 +747,92 @@ static int sdsi_map_mbox_registers(struct sdsi_priv *priv, struct pci_dev *paren
+>  	return 0;
+>  }
+>  
+> +#define SDSI_SPDM_DRIVER_VERSION	1
+> +
+> +static int sdsi_spdm_get_info(struct sdsi_priv *priv,
+> +			      struct sdsi_spdm_info __user *argp)
+> +{
+> +	struct sdsi_spdm_info info;
+> +
+> +	info.driver_version = SDSI_SPDM_DRIVER_VERSION;
+> +	info.api_version = priv->guid;
+> +	info.dev_no = priv->id;
+> +	info.max_request_size = SDSI_SIZE_WRITE_MSG - 2 * sizeof(u64);
+> +	info.max_response_size = SDSI_SIZE_READ_MSG - sizeof(u64);
+> +
+> +	if (copy_to_user(argp, &info, sizeof(info)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+> +static int sdsi_spdm_do_command(struct sdsi_priv *priv,
+> +				struct sdsi_spdm_command __user *argp)
+> +{
+> +	u32 req_size, rsp_size;
+> +
+> +	if (get_user(req_size, &argp->size))
+> +		return -EFAULT;
+> +
+> +	if (req_size < 4 || req_size > sizeof(struct sdsi_spdm_message))
+> +		return -EINVAL;
+> +
+> +	struct sdsi_spdm_message *request __free(kfree) =
+> +		kmalloc(req_size, GFP_KERNEL);
+> +	if (!request)
+> +		return -ENOMEM;
+> +
+> +	struct sdsi_spdm_command *response __free(kfree) =
+> +		kmalloc(SDSI_SIZE_READ_MSG, GFP_KERNEL);
+> +	if (!response)
+> +		return -ENOMEM;
+> +
+> +	if (copy_from_user(request, &argp->message, req_size))
+> +		return -EFAULT;
+> +
+> +	rsp_size = sdsi_spdm_exchange(priv, request, req_size, response,
+> +				      SDSI_SIZE_READ_MSG);
+> +	if (rsp_size < 0)
+> +		return rsp_size;
+> +
+> +	if (put_user(rsp_size, &argp->size))
+> +		return -EFAULT;
+> +
+> +	if (copy_to_user(&argp->message, response, rsp_size))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+> +static long sdsi_spdm_ioctl(struct file *file, unsigned int cmd,
+> +			    unsigned long arg)
+> +{
+> +	struct sdsi_priv *priv;
+> +	long ret = -ENOTTY;
+> +
+> +	priv = container_of(file->private_data, struct sdsi_priv, miscdev);
+> +
+> +	switch (cmd) {
+> +	case SDSI_IF_SPDM_INFO:
+> +		ret = sdsi_spdm_get_info(priv,
+> +				(struct sdsi_spdm_info __user *)arg);
+> +		break;
+> +	case SDSI_IF_SPDM_COMMAND:
+> +		ret = sdsi_spdm_do_command(priv,
+> +				(struct sdsi_spdm_command __user *)arg);
 
-So for such cases a driver specific ioctl() to compare two fds will
-be needed in addition to the generic helper.
+You can return directly.
+
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return ret;
+
+return -ENOTTY;
+
+and remove the ret variable entirely.
+
+
+-- 
+ i.
+
 
