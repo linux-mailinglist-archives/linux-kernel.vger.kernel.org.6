@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-173067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783A88BFB12
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5FD8BFB17
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CB21C211C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4881C211BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DBA8120A;
-	Wed,  8 May 2024 10:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA0E80C13;
+	Wed,  8 May 2024 10:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mKlT/PE1"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Edwc/9s3"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DD0818
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDE42836D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715164538; cv=none; b=RO90fX5Dtp6bZVC3SpLiP9CP35MilfHOK1m+gZ+OSEiLxmK8KH6YEuvqeJnRTr2/rVlVx5epvzsy5T/x92hNhnnV7+ncPROsgeKVIUTmLp/FN4M3lLHRCINFxOQvH8NTXrjm5i1ZUBB/Gxor5HfB8WFIp8LsZJaerURyKi7rO/M=
+	t=1715164698; cv=none; b=j4dGOMXY/QpyoSCBLvySn06Y774J+uhkJ8V/kpZdWZRMT8Iypn8X9erCQMzoOV42g86t5WchTt9TUdLlWdV+afd1JuPXwin5PtqOjUFvM3+kbn7ZbJ1ekiVjsP5ofMSEacmDyEekECfkMMyV4uv49AdyL5h6BbP/TOutDMSkNW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715164538; c=relaxed/simple;
-	bh=APidSQ+3WQOS9Q06FfKzB35Pu5Hy9eNcQ8g5v/Lka7k=;
+	s=arc-20240116; t=1715164698; c=relaxed/simple;
+	bh=aaYeaMdasKaspZebsx+IVEbvrwdp4b2JzRsLI+LVbtg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U3BpCZja0IviMqfMCLla7VjhlQIsyHaUaolBhEGbIDmK6FFKvxR9DkuSslyzkeQIvu2/zVgsvncWPm3aXFszmoyIjs3ntJahKp6+uGHXsdSTjCsYFuxP9sf8zokQ/TPYqIAeLuxVTzSw5ZgUW5ZJXy92eDjVLgwh/rGy4nKCQGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mKlT/PE1; arc=none smtp.client-ip=91.218.175.179
+	 In-Reply-To:Content-Type; b=qpltzl+Iy5GttO4mz6BkO5uM4EnA0NrGHWhJ08pFQdXfKCH1GNOjUvP8ilm5Zw65tjQ2/eZ9ahB6WPdrTY/BhJh7KeqcVz/6J/iCADYhCvmdg0LZbG3ePse0oqRDO+zdGPAe/o5rqVe79UGIXZHp+3oRlrOy2Yn/Kz0dSgpSVLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Edwc/9s3; arc=none smtp.client-ip=91.218.175.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <36168dfd-bdfa-42cd-965a-f7a0e108108e@linux.dev>
+Message-ID: <45bdacaf-29e9-488f-a4e8-2b5ec891cfc4@linux.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715164534;
+	t=1715164692;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RK5/NX8sHGGXG6wjj5Bs0mAPLkvXvHvETx9taLYIC70=;
-	b=mKlT/PE19fkGF6lF6eMgEHYE2HIx9ALSLH0p+Ofh6u5w4NhlCKa7XMgT7lhjiGpGTOXUPm
-	9toyXZZBCIz2c5psawYuWP3+8f9kWQZGpQAjsPaaXpqH0HMI09JSKTwEMHv+StDkLQjBe/
-	LQsv6a2XOAtLk20SHawA0zEkmFbWEbc=
-Date: Wed, 8 May 2024 18:35:06 +0800
+	bh=5eHqA7UOBweZX4Vrf/qg7QA6MfSTlCuOrDrWzen+vio=;
+	b=Edwc/9s3GpdgxKvV/VSPbUnQYAZI0n2z411AMthQyYUD2RRB9vj71UInEVmevYLsEMN7Q9
+	NBvNXthWvS8THUBzFxoCSAUe+4KC59uC++8xQSDeh6K9DW2bgGbEK7UmW9ZsIlq8JL98KS
+	zffZlxZFFbEyHGvDqzSgSkyg7f711+8=
+Date: Wed, 8 May 2024 18:37:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/4] mm/ksm: fix ksm_pages_scanned accounting
+Subject: Re: [PATCH 2/4] mm/ksm: fix ksm_zero_pages accounting
 Content-Language: en-US
 To: Andrew Morton <akpm@linux-foundation.org>,
  David Hildenbrand <david@redhat.com>, Stefan Roesch <shr@devkernel.io>,
@@ -56,58 +56,152 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
  zhouchengming@bytedance.com
 References: <20240508-b4-ksm-counters-v1-0-e2a9b13f70c5@linux.dev>
- <20240508-b4-ksm-counters-v1-1-e2a9b13f70c5@linux.dev>
+ <20240508-b4-ksm-counters-v1-2-e2a9b13f70c5@linux.dev>
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240508-b4-ksm-counters-v1-1-e2a9b13f70c5@linux.dev>
+In-Reply-To: <20240508-b4-ksm-counters-v1-2-e2a9b13f70c5@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Migadu-Flow: FLOW_OUT
 
 On 2024/5/8 17:55, Chengming Zhou wrote:
-> During testing, I found ksm_pages_scanned is unchanged although the
-> scan_get_next_rmap_item() did return valid rmap_item that is not NULL.
+> We normally ksm_zero_pages++ in ksmd when page is merged with zero page,
+> but ksm_zero_pages-- is done from page tables side, which can't protected
+> by the ksmd mutex.
 > 
-> The reason is the scan_get_next_rmap_item() will return NULL after
-> a full scan, so ksm_do_scan() just return without accounting of the
-> ksm_pages_scanned.
+> So we can read very exceptional value of ksm_zero_pages in rare cases,
+> such as -1, which is very confusing to users.
 > 
-> Fix it by just putting ksm_pages_scanned accounting in that loop,
-> and it will be accounted more timely if that loop would last for
-> a long time.
+> Fix it by changing to use atomic_long_t, and the same case with the
+> mm->ksm_zero_pages.
 > 
 
-Fixes: b348b5fe2b5f ("mm/ksm: add pages scanned metric")
+Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
+Fixes: 6080d19f0704 ("ksm: add ksm zero pages for each process")
 
 > Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 > ---
->  mm/ksm.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  fs/proc/base.c           |  2 +-
+>  include/linux/ksm.h      | 22 +++++++++++++++++++---
+>  include/linux/mm_types.h |  2 +-
+>  mm/ksm.c                 | 11 +++++------
+>  4 files changed, 26 insertions(+), 11 deletions(-)
 > 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index e1034bf1c937..0f9c491552ff 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -2753,18 +2753,16 @@ static void ksm_do_scan(unsigned int scan_npages)
->  {
->  	struct ksm_rmap_item *rmap_item;
->  	struct page *page;
-> -	unsigned int npages = scan_npages;
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 18550c071d71..72a1acd03675 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -3214,7 +3214,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+>  	mm = get_task_mm(task);
+>  	if (mm) {
+>  		seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
+> -		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
+> +		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
+>  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+>  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
+>  		mmput(mm);
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index 52c63a9c5a9c..bfc2cf756b0d 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -33,16 +33,32 @@ void __ksm_exit(struct mm_struct *mm);
+>   */
+>  #define is_ksm_zero_pte(pte)	(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte))
 >  
-> -	while (npages-- && likely(!freezing(current))) {
-> +	while (scan_npages-- && likely(!freezing(current))) {
->  		cond_resched();
->  		rmap_item = scan_get_next_rmap_item(&page);
->  		if (!rmap_item)
->  			return;
->  		cmp_and_merge_page(page, rmap_item);
->  		put_page(page);
-> +		ksm_pages_scanned++;
+> -extern unsigned long ksm_zero_pages;
+> +extern atomic_long_t ksm_zero_pages;
+> +
+> +static inline void ksm_map_zero_page(struct mm_struct *mm)
+> +{
+> +	atomic_long_inc(&ksm_zero_pages);
+> +	atomic_long_inc(&mm->ksm_zero_pages);
+> +}
+>  
+>  static inline void ksm_might_unmap_zero_page(struct mm_struct *mm, pte_t pte)
+>  {
+>  	if (is_ksm_zero_pte(pte)) {
+> -		ksm_zero_pages--;
+> -		mm->ksm_zero_pages--;
+> +		atomic_long_dec(&ksm_zero_pages);
+> +		atomic_long_dec(&mm->ksm_zero_pages);
 >  	}
-> -
-> -	ksm_pages_scanned += scan_npages - npages;
 >  }
 >  
->  static int ksmd_should_run(void)
+> +static inline long get_ksm_zero_pages(void)
+> +{
+> +	return atomic_long_read(&ksm_zero_pages);
+> +}
+> +
+> +static inline long mm_ksm_zero_pages(struct mm_struct *mm)
+> +{
+> +	return atomic_long_read(&mm->ksm_zero_pages);
+> +}
+> +
+>  static inline int ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
+>  {
+>  	if (test_bit(MMF_VM_MERGEABLE, &oldmm->flags))
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 24323c7d0bd4..af3a0256fa93 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -985,7 +985,7 @@ struct mm_struct {
+>  		 * Represent how many empty pages are merged with kernel zero
+>  		 * pages when enabling KSM use_zero_pages.
+>  		 */
+> -		unsigned long ksm_zero_pages;
+> +		atomic_long_t ksm_zero_pages;
+>  #endif /* CONFIG_KSM */
+>  #ifdef CONFIG_LRU_GEN_WALKS_MMU
+>  		struct {
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 0f9c491552ff..6e0dca3cecf3 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -296,7 +296,7 @@ static bool ksm_use_zero_pages __read_mostly;
+>  static bool ksm_smart_scan = true;
+>  
+>  /* The number of zero pages which is placed by KSM */
+> -unsigned long ksm_zero_pages;
+> +atomic_long_t ksm_zero_pages = ATOMIC_LONG_INIT(0);
+>  
+>  /* The number of pages that have been skipped due to "smart scanning" */
+>  static unsigned long ksm_pages_skipped;
+> @@ -1429,8 +1429,7 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
+>  		 * the dirty bit in zero page's PTE is set.
+>  		 */
+>  		newpte = pte_mkdirty(pte_mkspecial(pfn_pte(page_to_pfn(kpage), vma->vm_page_prot)));
+> -		ksm_zero_pages++;
+> -		mm->ksm_zero_pages++;
+> +		ksm_map_zero_page(mm);
+>  		/*
+>  		 * We're replacing an anonymous page with a zero page, which is
+>  		 * not anonymous. We need to do proper accounting otherwise we
+> @@ -3373,7 +3372,7 @@ static void wait_while_offlining(void)
+>  #ifdef CONFIG_PROC_FS
+>  long ksm_process_profit(struct mm_struct *mm)
+>  {
+> -	return (long)(mm->ksm_merging_pages + mm->ksm_zero_pages) * PAGE_SIZE -
+> +	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
+>  		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item);
+>  }
+>  #endif /* CONFIG_PROC_FS */
+> @@ -3662,7 +3661,7 @@ KSM_ATTR_RO(pages_skipped);
+>  static ssize_t ksm_zero_pages_show(struct kobject *kobj,
+>  				struct kobj_attribute *attr, char *buf)
+>  {
+> -	return sysfs_emit(buf, "%ld\n", ksm_zero_pages);
+> +	return sysfs_emit(buf, "%ld\n", get_ksm_zero_pages());
+>  }
+>  KSM_ATTR_RO(ksm_zero_pages);
+>  
+> @@ -3671,7 +3670,7 @@ static ssize_t general_profit_show(struct kobject *kobj,
+>  {
+>  	long general_profit;
+>  
+> -	general_profit = (ksm_pages_sharing + ksm_zero_pages) * PAGE_SIZE -
+> +	general_profit = (ksm_pages_sharing + get_ksm_zero_pages()) * PAGE_SIZE -
+>  				ksm_rmap_items * sizeof(struct ksm_rmap_item);
+>  
+>  	return sysfs_emit(buf, "%ld\n", general_profit);
 > 
 
