@@ -1,88 +1,121 @@
-Return-Path: <linux-kernel+bounces-173463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C228C00B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:12:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81908C00B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96721F274BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:12:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F313B2586F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23345128808;
-	Wed,  8 May 2024 15:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B840A126F0A;
+	Wed,  8 May 2024 15:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyK/6sxK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ELneRCgx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4DC126F07;
-	Wed,  8 May 2024 15:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3EB86AF4
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181110; cv=none; b=KawXHMuz+VSDjzOaW1IXj5mZi6j2xDsYx+S7Jjjfq270lur4v2vUa4x+XMU4GMGF0E+QjYfLM90xHqEmBzCBuN9Xwi3R7tJM2Eu+B8bmZc4J8S7fEc9qGmPIw+yHm9629vinwrtk8HY3d617Ee1D1L1htiVwDMudxJqFduykfmE=
+	t=1715181151; cv=none; b=ljMKIpgfktTEAjnEMs8ZmMK4ilf2vlyfsTERoCUyTCmg77MuSN/9mZUtX9CmE+NN+mjsZgdI0MqHIKpcxW1QI6pEbH4rtNSNMNpFEiwenElD4GcPe6Iu2JSBKP2PQUK1/4wnTifT+A7xNS/jUmzalUsjoDqVJSPNi335R+7Whnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181110; c=relaxed/simple;
-	bh=vikwuTwMkABdES9wzg7+bp3LS1APlhsRz9rgvZ9XVt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5CBshEVq3CumAhlIf0uMstKNq21Rck2JeP241tQbfEm/M32AwG0lOD5UZrq1YI/Z/65bhtqu2IMMBH+6iu1dVMU3DDdOnoR3yuW9H1ihDF9ewwhQ4x2HMCv1vdQriEtEXUblr2wirEJmohsdmcA1QLL2j9xZgY15mG0PZPp80w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyK/6sxK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DA4C2BD10;
-	Wed,  8 May 2024 15:11:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715181109;
-	bh=vikwuTwMkABdES9wzg7+bp3LS1APlhsRz9rgvZ9XVt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TyK/6sxK5ZGUQqv0U91OuTojVQ4jqgAwXQLfi20bKBNBNBnsfqp7sU2GT1PTQFU0o
-	 0OgCBSGbvRfZkT6KcIJdWyDdxWM9eJxmTuN6Tz9JeK4YHnc/e7Z6mQ9i5ll5uMxtCr
-	 W1XM0f6tchzFPrnxAJQzx4qG5fovQD2PhGsqzKWB/c5ZnuMJ6MbordKrRQglmJSnAb
-	 3VvqZ+Pq7fJ3uuVsY+mN+kdKyytNNtbZnpj/H/NI6Xji6mMaxdtUJb/Dl5bsLEUS0u
-	 3j0kbZRrTUBpVIxhMzmyvS7hj5j1EnB11y8gJRjTKvyClwHr2xm9QkfcFd3DENaeWt
-	 kuGHSQt6WLuWQ==
-Date: Wed, 8 May 2024 16:11:45 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH wireless-next v2] wifi: ath12k: allocate dummy net_device
- dynamically
-Message-ID: <20240508151145.GG1736038@kernel.org>
-References: <20240508095410.1923198-1-leitao@debian.org>
+	s=arc-20240116; t=1715181151; c=relaxed/simple;
+	bh=NeKIszsGqh9jwuCffltG5mcAS23lZDfRVcT3V/NAucg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+0+AvMrnz2dgeiCt3CffL/Ku/Vm8azzjegoulZbiobcB/Eil2YYHmSa7hWWNpapmKrYP9pgnG4nxjW63ABCr04wullbqMsDt/fgqcPEl1lUuSjeRipHmAWp6De0Koiu/DQ7tLuq6ItyGLQUojCBWegH0rHOeKNgpNgAEzVS7+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ELneRCgx; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715181149; x=1746717149;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NeKIszsGqh9jwuCffltG5mcAS23lZDfRVcT3V/NAucg=;
+  b=ELneRCgxyVpq/P+x1U7ZPRZW0dYgF+/F3KQMjE2/9pqKQezRZcGoeAzm
+   V69e9IUc3SSQn5vd+cyzYEFKjtC6Vfz+o2RyIwvNzleTjKZFc1nNoIOLo
+   HpIqB4AedsYT6Ds+CnDT/87EsFgGZlwLSvqPiKDvT7j88kikCTY9QxWIl
+   vyGPp5zI4mLBwJUUx26YjBXl9hJeu2W9LNEtMWYXEtlVfC/HS0QoUbQCV
+   jbh32Cc7LlU9zZmv5qOXVOiJPIvybOLDfXOogKuvjzP5S50p5D0g7TTik
+   0HyOIaIp6QLVGQfGzzegg1uW2OvTgVHbPoZmf9WICzSwiNryt1MrjGu+r
+   Q==;
+X-CSE-ConnectionGUID: 1aI6JsJrSYu9sNh+fis4qA==
+X-CSE-MsgGUID: UASOLpqERBqMrwOtPMJD2Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="13995756"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="13995756"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 08:12:29 -0700
+X-CSE-ConnectionGUID: slK9hIdPTcSp/pfKo+282w==
+X-CSE-MsgGUID: lEg6CzfaRZydWglcXvrh8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="33442219"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 08 May 2024 08:12:27 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 4F32F11F; Wed, 08 May 2024 18:12:26 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH v1 1/1] mtd: physmap: Use *-y instead of *-objs in Makefile
+Date: Wed,  8 May 2024 18:11:53 +0300
+Message-ID: <20240508151222.1443491-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508095410.1923198-1-leitao@debian.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 08, 2024 at 02:54:09AM -0700, Breno Leitao wrote:
-> Embedding net_device into structures prohibits the usage of flexible
-> arrays in the net_device structure. For more details, see the discussion
-> at [1].
-> 
-> Un-embed the net_device from struct ath12k_ext_irq_grp by converting it
-> into a pointer. Then use the leverage alloc_netdev_dummy() to allocate
-> the net_device object at ath12k_pci_ext_irq_config().
-> 
-> The free of the device occurs at ath12k_pci_free_ext_irq().
-> 
-> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Changelog:
->  v2:
-> 	* Free all the allocated dummy devices if one of them fails to
-> 	  be allocated (in ath12k_pci_ext_irq_config()), as
-> 	  pointed by by Simon Horman.
+*-objs suffix is reserved rather for (user-space) host programs while
+usually *-y suffix is used for kernel drivers (although *-objs works
+for that purpose for now).
 
-Thanks for the update.
+Let's correct the old usages of *-objs in Makefiles.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+Note, the original approach is weirdest from the existing.
+Only a few drivers use this (-objs-y) one most likely by mistake.
+
+ drivers/mtd/maps/Makefile | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/mtd/maps/Makefile b/drivers/mtd/maps/Makefile
+index a9083c888e3b..019f1e92cc41 100644
+--- a/drivers/mtd/maps/Makefile
++++ b/drivers/mtd/maps/Makefile
+@@ -17,13 +17,12 @@ obj-$(CONFIG_MTD_ICHXROM)	+= ichxrom.o
+ obj-$(CONFIG_MTD_CK804XROM)	+= ck804xrom.o
+ obj-$(CONFIG_MTD_TSUNAMI)	+= tsunami_flash.o
+ obj-$(CONFIG_MTD_PXA2XX)	+= pxa2xx-flash.o
+-physmap-objs-y			+= physmap-core.o
+-physmap-objs-$(CONFIG_MTD_PHYSMAP_BT1_ROM) += physmap-bt1-rom.o
+-physmap-objs-$(CONFIG_MTD_PHYSMAP_VERSATILE) += physmap-versatile.o
+-physmap-objs-$(CONFIG_MTD_PHYSMAP_GEMINI) += physmap-gemini.o
+-physmap-objs-$(CONFIG_MTD_PHYSMAP_IXP4XX) += physmap-ixp4xx.o
+-physmap-objs			:= $(physmap-objs-y)
+ obj-$(CONFIG_MTD_PHYSMAP)	+= physmap.o
++physmap-y			:= physmap-core.o
++physmap-$(CONFIG_MTD_PHYSMAP_BT1_ROM) += physmap-bt1-rom.o
++physmap-$(CONFIG_MTD_PHYSMAP_VERSATILE) += physmap-versatile.o
++physmap-$(CONFIG_MTD_PHYSMAP_GEMINI) += physmap-gemini.o
++physmap-$(CONFIG_MTD_PHYSMAP_IXP4XX) += physmap-ixp4xx.o
+ obj-$(CONFIG_MTD_PISMO)		+= pismo.o
+ obj-$(CONFIG_MTD_PCMCIA)	+= pcmciamtd.o
+ obj-$(CONFIG_MTD_SA1100)	+= sa1100-flash.o
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
