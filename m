@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-173180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0964F8BFCA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:48:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60718BFCAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA6F1C20B8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9194B285FF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA8D81AD0;
-	Wed,  8 May 2024 11:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PzMa+iHl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90432839E5;
+	Wed,  8 May 2024 11:52:16 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4DC82492;
-	Wed,  8 May 2024 11:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A4282876
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168874; cv=none; b=OeQxuHfqMNroZFyBFTLWZra98e72ImojDfuN3bGHV6TE70/Zo2ZmHThD1uce0uVT8DbqRdJR3DwDNqKnD1mvu/bnDdsSTShBFMmHckzdPgcGK2cnjTthWbK9bbPHwxujYz00LIaP8+HrmAbufrY32BS9lZJvlaJlLl+ZKqrLd2Q=
+	t=1715169136; cv=none; b=frF3Z6i9iZ8XdbKk64VaDvPiR4PAP3sdMc/hyzGHROUIyX/uDJ0OUB5RExyZnu94rSSeKo4895USr+QbpPCsxt4qCFDLFHnPW/c+XeEULrRTOnHIjCTErNDgvbh5aBy6WlM11Pcam9YtvWPfFdgzrfr4HCqFaUcvKspLxfHUpJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168874; c=relaxed/simple;
-	bh=uDG480PUhwe0ESIDmugza7mKOq0B7fW09PsYqfZWf+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQD9hDbdereDTM4di/juqy383T6o6AEYOO0uPzbYwWZV4P1iYhXH4XWMkHKiLcIMRUsFW0dg1ipHig8LBdX7lCAYmGT8TiJZEn2Tlx3YRjfuM0lduX7llgSU6KK2lqO7qa0a3t248pbypCVtlShdK0q8wihPCYQGm6/TiC9eYII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PzMa+iHl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFB8DC113CC;
-	Wed,  8 May 2024 11:47:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715168874;
-	bh=uDG480PUhwe0ESIDmugza7mKOq0B7fW09PsYqfZWf+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PzMa+iHlmGnMVBsjCPWjPeHvQZtIFYHrHr70MzejGo9K494+r1vUTzSegQVW8tQe5
-	 4sUy59+h9vZq4b9MeGcfSzeIbX1WFy2YC0l0twTGv1vU2MrnxQRTW5TftBIgr+Ikyx
-	 bldlW9k2RqgO/E7/oVymFWM+DbeXyUNgCQBfgjmfsvG3zXvMvV6fV1itm5qze0o1fv
-	 +NIH/NEeG5uUqyX/2ThBI7VfoU9JRN+Y6mEQvXUYb3ypEsGepAqWZaka9YXE7/C1Nd
-	 8xgXxwAY0Ay/0FQQvw6wthkJUVAUxbxCbUlEm3xRjDvRl2YOIZFymdHNUzdw2wF8U2
-	 Z6jj9cQfnDiMg==
-Date: Wed, 8 May 2024 20:47:51 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Richard Hughes <hughsient@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Jeff LaBundy <jeff@labundy.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	neil.armstrong@linaro.org
-Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
- and writing touch IC registers
-Message-ID: <ZjtmZ6Jrj6vn6sv3@finisterre.sirena.org.uk>
-References: <20240506114752.47204-1-charles.goodix@gmail.com>
- <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
- <ZjmOUp725QTHrfcT@google.com>
- <Zjo8eTQQS1LvzFgZ@finisterre.sirena.org.uk>
- <ZjpFVGw6PgjRcZY3@nixie71>
- <ZjqYp1oxPPWcF3jW@google.com>
- <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
- <CAD2FfiE+VFa+7sHQg=LGkBy556msNyyFUhmWW_cAfZd0V4DPYQ@mail.gmail.com>
+	s=arc-20240116; t=1715169136; c=relaxed/simple;
+	bh=3TcpGLamPR+er3cedcxqpNcBb7/RyBJ4tTHiLInhVpI=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=EUxRBh8V+uiOuyewowKk6TkNyOnjUKVWOzgK6p6d0xgRWoIxht04hDJ29VU8vAbkC1Kwt3EMI3/MIgV7YcTT7rFguVid5vmnAQ+LU7oKBQdO2jtC053HafSp+pnJWgX68/W4GddxkIhEItAUjgUXkuKtcZknWWFczgM5IGZs5VE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-28-ejStQR8JMFGrAgvUcnec0Q-1; Wed, 08 May 2024 12:52:11 +0100
+X-MC-Unique: ejStQR8JMFGrAgvUcnec0Q-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 8 May
+ 2024 12:51:40 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 8 May 2024 12:51:40 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: =?utf-8?B?J0NocmlzdGlhbiBLw7ZuaWcn?= <christian.koenig@amd.com>, "T.J.
+ Mercier" <tjmercier@google.com>, Charan Teja Kalla
+	<quic_charante@quicinc.com>, zhiguojiang <justinjiang@vivo.com>, Sumit Semwal
+	<sumit.semwal@linaro.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "opensource.kernel@vivo.com"
+	<opensource.kernel@vivo.com>
+Subject: RE: [PATCH] dmabuf: fix dmabuf file poll uaf issue
+Thread-Topic: [PATCH] dmabuf: fix dmabuf file poll uaf issue
+Thread-Index: AQHaoId+JYKtMQTt+U6dUCQNubR7xbGNNzKw
+Date: Wed, 8 May 2024 11:51:40 +0000
+Message-ID: <c0fe95949d4f41449f17add8300270b9@AcuMS.aculab.com>
+References: <4fedd80c-d5b6-4478-bfd3-02d1ee1a26e5@vivo.com>
+ <aab5ec51-fcff-44f2-a4f5-2979bd776a03@amd.com>
+ <2ebca2fd-9465-4e64-b3cc-ffb88ef87800@vivo.com>
+ <d4209754-5f26-422d-aca0-45cccbc44ad0@amd.com>
+ <289b9ad6-58a3-aa39-48ae-a244fe108354@quicinc.com>
+ <CABdmKX3Zu8LihAFjMuUHx4xzZoqgmY7OKdyVz-D26gM-LECn6A@mail.gmail.com>
+ <8ca45837-cbed-28da-4a6f-0dcec8294f51@quicinc.com>
+ <83605228-92ee-b666-d894-1c145af2e5ab@quicinc.com>
+ <CABdmKX2MWU9-9YN46PXx-Jy-O9CHMv8hCkvArd7BbWUBs=GPnw@mail.gmail.com>
+ <8915fcc1-d8f1-48c2-9e51-65159aaa5a3b@amd.com>
+ <ZjovD5WaWjknd-qv@phenom.ffwll.local>
+ <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
+In-Reply-To: <44b08793-cf44-4cbd-a3bb-583af351ab9e@amd.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nDq691KZs7iF1YOg"
-Content-Disposition: inline
-In-Reply-To: <CAD2FfiE+VFa+7sHQg=LGkBy556msNyyFUhmWW_cAfZd0V4DPYQ@mail.gmail.com>
-X-Cookie: Accuracy, n.:
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
+RnJvbTogQ2hyaXN0aWFuIEvDtm5pZw0KPiBTZW50OiAwNyBNYXkgMjAyNCAxNTowNQ0KLi4uDQo+
+IEkgYWN0dWFsbHkgaGF2ZSBiZWVuIHRlbGxpbmcgcGVvcGxlIHRvIChhYil1c2UgdGhlIGVwb2xs
+IGJlaGF2aW9yIHRvDQo+IGNoZWNrIGlmIHR3byBmaWxlIGRlc2NyaXB0b3JzIHBvaW50IHRvIHRo
+ZSBzYW1lIHVuZGVybHlpbmcgZmlsZSB3aGVuDQo+IEtDTVAgaXNuJ3QgYXZhaWxhYmxlLg0KDQpJ
+biB3aGF0IHdheT8NCllvdSBjYW4gYWRkIGJvdGggZmQgdG8gdGhlIHNhbWUgZXBvbGwgZmQuDQpS
+ZWx5aW5nIG9uIHRoZSBpbXBsaWNpdCBFUE9MTF9DVExfREVMIG5vdCBoYXBwZW5pbmcgdW50aWwg
+Ym90aCBmZCBhcmUNCmNsb3NlZCBpcyBhIHJlY2lwZSBmb3IgZGlzYXN0ZXIuDQooQW5kIEkgY2Fu
+J3Qgc2VlIGFuIG9idmlvdXMgd2F5IG9mIHRlc3RpbmcgaXQuKQ0KDQpRNi9BNiBvbiBlcG9sbCg3
+KSBzaG91bGQgYWx3YXlzIGhhdmUgaGFkIGEgY2F2ZWF0IHRoYXQgaXQgaXMgYW4NCidpbXBsZW1l
+bnRhdGlvbiBkZXRhaWwnIGFuZCBzaG91bGRuJ3QgYmUgcmVsaWVkIG9uLg0KKGl0IGlzIHdyaXR0
+ZW4gYXMgYSAnYmV3YXJlIG9mJyAuLi4pDQoNClRoZSBvdGhlciBwb2ludCBpcyB0aGF0IHRoZXJl
+IGFyZSB0d28gd2F5cyB0byBnZXQgbXVsdGlwbGUgZmQgdGhhdA0KcmVmZXJlbmNlIHRoZSBzYW1l
+IHVuZGVybHlpbmcgZmlsZS4NCmR1cCgpIGZvcmsoKSBldGMgc2hhcmUgdGhlIGZpbGUgb2Zmc2V0
+LCBidXQgb3BlbigiL2Rldi9mZC9uIikgYWRkcw0KYSByZWZlcmVuY2UgY291bnQgbGF0ZXIgYW5k
+IGhhcyBhIHNlcGFyYXRlIGZpbGUgb2Zmc2V0Lg0KDQpJIGRvbid0IGtub3cgd2hpY2ggc3RydWN0
+dXJlIGVwb2xsIGlzIHVzaW5nLCBidXQgSSBzdXNwZWN0IGl0IGlzDQp0aGUgZm9ybWVyLg0KU28g
+aXQgbWF5IG5vdCB0ZWxsIHlvdSB3aGF0IHlvdSB3YW50IHRvIGtub3cuDQoNCglEYXZpZA0KDQot
+DQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwg
+TWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2Fs
+ZXMpDQo=
 
---nDq691KZs7iF1YOg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, May 08, 2024 at 09:39:41AM +0100, Richard Hughes wrote:
-
-> If it helps, fwupd already uses mtd for other devices too, although at
-> the moment we're using it only for system firmware -- e.g. intel-spi
-> style. The MTD subsystem doesn't give fwupd much info about the
-> {removable} device itself, and that can pose a problem unless you
-> start using heuristics about the parent device to match firmware to
-> the mtd device.
-
-FWIW I know SolareFlare network cards used to do this too, though I
-don't know about current products.
-
---nDq691KZs7iF1YOg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY7ZmcACgkQJNaLcl1U
-h9Bivgf8C+o2DfqpMLI8yUtww0Hmq/ALfX3f27DBHJBMrIuD/k475jxEPHnIbIJH
-lzizEAs4ZZW+LU5Yl+kmdYikVAv3pelrRnjHlEI5TL47wypIft3/Nh3iRHMflPkt
-oskqPewUw52nQVijTLjXeT+lDPt5WhtVPohVTZPOqAeF/Gq+hen059KvvizBF6id
-f6iGzbZuNTGuCOJ6xrysqjZtK+7nZxqHyhRhG2+GjV2Dxri6YQEETSCc//Nl+o2D
-PE5gJ4YPIIuscbi0BINKgiYa/mIB4/HkOK2cG/lvLM1UCMWeX7uZ1GllSp5KC49q
-DDYFT4Gih3hzgVzilxTxF+XKGS1D4g==
-=XTWh
------END PGP SIGNATURE-----
-
---nDq691KZs7iF1YOg--
 
