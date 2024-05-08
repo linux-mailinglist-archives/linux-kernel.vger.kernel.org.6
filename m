@@ -1,294 +1,194 @@
-Return-Path: <linux-kernel+bounces-173537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638698C01E8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:23:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BBB8C01EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8A0281B83
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:23:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C680F1C221C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0411112A16C;
-	Wed,  8 May 2024 16:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4AC12A176;
+	Wed,  8 May 2024 16:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rm6ALsVE"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="M5r0f/1E";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bzOvvdS9"
+Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7D712881C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDF76D1B0;
+	Wed,  8 May 2024 16:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715185432; cv=none; b=umGOAk5byzPUSd/2SHzSgQoXkFNW0Dt959nK4SItMch83C8O+mL4F8qiOCaFeq2F0XtHml0u0yI4wpHbi6WUxYWRxfEJnIRvH8n/ncsJ7t4RgwXXspjxJf3SbaL9/iwhN27xVbuk5I/12tHe5rhWEdmkIc9pYlcBe0zpIwNIo+s=
+	t=1715185450; cv=none; b=DHx9vzmZaekKwPdAIL7Gsz2QnSn+gHZEpxdYsedkqD7+ayWh5kEcrDmyJUFnzWK0mmWG/oTjNDyIBiFk9mP51fcJMLmCNDJZOa2315mrSxbKTY/Y2U95n+6FE/bmWb0ZPbo9AAvWk7FJqh+kbftAJa4xp0bkgjIOqkLjtZFw6jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715185432; c=relaxed/simple;
-	bh=LALlFwOWTUd2XSFgFgwKb1A89IlaNVHQcrhML21oaak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LSKZ8iXEqrSuK/9JDYe17pvlukWyFeE6R8XJfXLvu0lg0BPuWMhn3+wme+74oH4nImmtMGySK/oAQDFjWmrEKCPmA7UcYjXC8HF5dxYKIzcXhKjiZM2c4bd12EzdgCvtls73ZECEu3N5NESZgNV1MSYHwU4i3mkHz98ZGxaoSl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rm6ALsVE; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b33d011e5dso782018a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 09:23:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715185430; x=1715790230; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q9PR0H5Ma0VdvfQv9vA6DsIGHDUPuZqqFaaGm/DimjM=;
-        b=rm6ALsVEUBA5vlThf+LLOrFRqDPL0plouypTYD4j64Z/QVUGal3dpFMQKGTm5iiBXJ
-         Cjj9KHkvnA2zi0gV2/7tsQbmMoaNQ/kMtOEpT9/O5smSSigdP9JgM/t7bBAvIGfCeljN
-         hT6NHi0YiegEs5t3LYDiz3N835D0w4uBD9fdmu6WZrnVjrhX2i1pc4eKsEF+B9NrNUKt
-         00MpDlfIO89Xs0Fqja43FdjcHbEw+Z6vz7AUYnYmEYnbJTIxm4+zDF4NOG5Mhy2JSUlN
-         70kIzrt6hVBHMum4Xwp/JgjSph7iyxRZjwjRVrGKKhcInxPXgq/KmANBhS1oBg3QmukT
-         khTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715185430; x=1715790230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q9PR0H5Ma0VdvfQv9vA6DsIGHDUPuZqqFaaGm/DimjM=;
-        b=DMx8fXjVjS34hSNBZUXRLPabSGjskaCRqX4UL/7a+LQKeg2n4zsPsaJxzcwzQD+yzs
-         oWhZMtT10VQ2KMgHxmDpgjeY6ttLauvNT201d2mjipzxsH2W4PrBv52gh1wSk/mH3LCL
-         DIAN1bttCyhChLOGwTr51zn4eAAXxqiHCuNL+uaxqhMmf9ffWFkH1rJDmlpYOxdp3Von
-         8lrjPGHoE+IsrSJ2GQSdwQgeckIe1s6le6RmiWgg0gDzBtYKAEeauedDYWLHrCmW4pSs
-         HWuOifZH2ZTyAi/ySAV+so4ty1U0Tas6BPELtGsK1WHfDF16jPVJ19fKoLm6AVODGgCR
-         uz6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+RrnU0/GBx8wVn1T2AmaU+MpTEpCaivZwYjD99bMSaR1HmtSMGsqFiVbJiPVZZFbUGklGVufKTc05NXO7fYZjQKPH8K6q9RO/xphA
-X-Gm-Message-State: AOJu0YxHHxGsdnrXyDpH0vsGgmipsIyj21504MDjV9AReYdW9Y4bmy5K
-	7rMY8Z2q/Yrw43/M4gfMf4y6oRlZjNGsH39UQ7OqzAL9Ph22S2v/maLmX5RHMO5VZeC4b6lV15o
-	LcxOLEYH406MsOqRAEwLES+V3SukOvpoy/4WVMA==
-X-Google-Smtp-Source: AGHT+IGG2VOIinHtS5GnaEwxWHkBdndt57JbFMCF8GT0Evb8OyYBWNqOAOJa/aA98QEZ3bfiqYVpMobFkZtcNX1hB0w=
-X-Received: by 2002:a17:90a:e396:b0:2b6:208c:2aee with SMTP id
- 98e67ed59e1d1-2b65fe18df9mr188527a91.20.1715185429807; Wed, 08 May 2024
- 09:23:49 -0700 (PDT)
+	s=arc-20240116; t=1715185450; c=relaxed/simple;
+	bh=ibNJ8Xe8MiZ/i4OLkjlyLfRh2B8XMD+/gb/5ylg6D/U=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=CyaYnjyfROxoTB198bKaKBHQlqyV9FaLxk8op6dnbglLDRRahZbg+NEbI+uSv0MP87k9kn0BNmo+0XhfG7PZwGP4kR9ei74Yng0hhVmpxY96T2lE2SkIPSAUug4Y/7KCnOgnwl5WhefA1UZ0cvkCLRtslx+0b1w36L6DIf6U5VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=M5r0f/1E; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bzOvvdS9; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id DDF5D1380259;
+	Wed,  8 May 2024 12:24:07 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Wed, 08 May 2024 12:24:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1715185447;
+	 x=1715271847; bh=4nGit7XxeGIk2SVfnODtOYvvu5kqArp+iKedBGicZYU=; b=
+	M5r0f/1EYGGBMZdHb2yx3K2srlH9EtawFjd1OIHaqMNPGJgqZGax9dOsaauwRxgi
+	gSinIxlrgKyYVldrm1EG9CKjma973HUuKh3TWGSaqpKve3np8dFKWWmUcv8AZApU
+	z/IKRMxtlcEmWmp6F9vyvY8ELHu76qZ/wEuHvne8GWpMHCVglpC/cSCYsACKXlmc
+	gElXZYJTXNlu4wTb7iiQvWPwRq9CaY8suDi26qd5nvENKrdrOcDmWBSFEemGMhpi
+	S5hqgo5wqYWh2h+9Q7cgs3wh2OvCFxJVIcWhNqrrewym6jyL1IZVNWYFTO2gs2ke
+	Nt5C2NmzxhB+8PcOzOu9jA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715185447; x=
+	1715271847; bh=4nGit7XxeGIk2SVfnODtOYvvu5kqArp+iKedBGicZYU=; b=b
+	zOvvdS9bVHsE0CusftMhnE2toFhTfNuk39zVNqUSBWlIHeyETt4HK12QuBRTDOde
+	eb974p/2CNtXMYdqR+iuyTwEhfljN5u9A+GMJwHwRfwRTq2OsIZcw4OA2T9r3zZM
+	paPt1ecjgWhoPVYaHgeyULeh7J3ijMF1pfALbPvmEhbciSf8Nt7zqdY6OAloLD6D
+	hQeVDTr2Y5XDkLPJ43NE+0HSjvQPJauehOBqORzqMo48NTezKD/v/LcAXI3csUi5
+	v94cm0iRGvT0Zq+Spri84UUhWLFTzccfqjsmppHyAr8Ur/hzD3CG1sODcA0iFP1w
+	qMdEAeB/6wt1tQbxiP48Q==
+X-ME-Sender: <xms:J6c7ZnKgPQIPzd-dMOjCFvhu7Iaq_7gwtCnOITu-_pqudo7vQlY3Ug>
+    <xme:J6c7ZrLYcV82q6-CuDb5q2XgYseEioX9D6Beib_mbLsHCfXm3rEcw4IrIOez-xb8w
+    LO5oLz797m27Wuc_-E>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeftddgleelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:J6c7ZvuHoQMWAVCFq_9NOwcNCqjmhsrI5GRCuOAmDHqxwviLFt06Lw>
+    <xmx:J6c7ZgbUOfY7ajcYqJCxsuPb07bZLIbwrPOqzIa9b5ppL38lAhfEdA>
+    <xmx:J6c7ZuZu6LAb-gGkp6T5AfkzH40niWILIuhOdypY_VzWshPM8MOS3A>
+    <xmx:J6c7ZkB4iFfJvfFdPAlN4lwblXZshDW3nPtlJDwo_WqgH5K4Tk8IcQ>
+    <xmx:J6c7ZkNlfiQSEAo4BcU2NRQoO5PTsHQ5SQFDAWKlo0akBXXjQgWDRehr>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 34C0D36A0074; Wed,  8 May 2024 12:24:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1714494653.git.tjeznach@rivosinc.com> <b83f81c04d1f3885d860b1eec03761fe63a33183.1714494653.git.tjeznach@rivosinc.com>
- <20240501145621.GD1723318@ziepe.ca> <CAH2o1u63GjMnYrfa8W-c1hdp+TAA0R-FyxXM4dEiFF+KEGWwbA@mail.gmail.com>
- <20240503181059.GC901876@ziepe.ca> <CAH2o1u7av8zMucB2sKxBOZtd1eqEC4Qmgin=8VQ03pWbQdZUUg@mail.gmail.com>
- <20240505154639.GD901876@ziepe.ca> <CAH2o1u6g87nt=S7id-O43PubR=GaOLj-vmk7+OdTiY=Kw1BU5A@mail.gmail.com>
- <20240507165156.GH4718@ziepe.ca>
-In-Reply-To: <20240507165156.GH4718@ziepe.ca>
-From: Tomasz Jeznach <tjeznach@rivosinc.com>
-Date: Wed, 8 May 2024 09:23:37 -0700
-Message-ID: <CAH2o1u7tu2NrbFs0g8y4iUdAUYUEN=O_H4C+O_LmwbuZS-zeqw@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] iommu/riscv: Paging domain support
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Anup Patel <apatel@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Nick Kossifidis <mick@ics.forth.gr>, Sebastien Boeuf <seb@rivosinc.com>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux@rivosinc.com
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <8d02a270-c9b7-4389-899e-cd755e55f0a4@app.fastmail.com>
+In-Reply-To: 
+ <forgoxnzqnwreba7j57lgs6lgzny3zdnaqnpctr2qhtlcad3pg@l44sn4zf7hu3>
+References: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
+ <20240507-cm_probe-v1-3-11dbfd598f3c@flygoat.com>
+ <forgoxnzqnwreba7j57lgs6lgzny3zdnaqnpctr2qhtlcad3pg@l44sn4zf7hu3>
+Date: Wed, 08 May 2024 17:23:48 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Serge Semin" <fancer.lancer@gmail.com>
+Cc: "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/5] MIPS: Move mips_cm_probe after prom_init
+Content-Type: text/plain;charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 9:51=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
-:
->
-> On Mon, May 06, 2024 at 07:22:07PM -0700, Tomasz Jeznach wrote:
-> > On Sun, May 5, 2024 at 8:46=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> w=
-rote:
-> > >
-> > > On Fri, May 03, 2024 at 12:44:09PM -0700, Tomasz Jeznach wrote:
-> > > > > For detach I think yes:
-> > > > >
-> > > > >    Inv CPU                                   Detach CPU
-> > > > >
-> > > > >   write io_pte                               Update device descri=
-ptor
-> > > > >   rcu_read_lock
-> > > > >     list_for_each
-> > > > >       <make invalidation command>            <make description in=
-v cmd>
-> > > > >       dma_wmb()                              dma_wmb()
-> > > > >       <doorbell>                             <cmd doorbell>
-> > > > >   rcu_read_unlock
-> > > > >                                              list_del_rcu()
-> > > > >                                              <wipe ASID>
-> > > > >
-> > > > > In this case I think we never miss an invalidation, the list_del =
-is
-> > > > > always after the HW has been fully fenced, so I don't think we ca=
-n
-> > > > > have any issue. Maybe a suprious invalidation if the ASID gets
-> > > > > re-used, but who cares.
-> > > > >
-> > > > > Attach is different..
-> > > > >
-> > > > >    Inv CPU                                   Attach CPU
-> > > > >
-> > > > >   write io_pte
-> > > > >   rcu_read_lock
-> > > > >     list_for_each // empty
-> > > > >                                              list_add_rcu()
-> > > > >                                              Update device descri=
-ptor
-> > > > >                                              <make description in=
-v cmd>
-> > > > >                                              dma_wmb()
-> > > > >                                              <cmd doorbell>
-> > > > >   rcu_read_unlock
-> > > > >
-> > > > > As above shows we can "miss" an invalidation. The issue is narrow=
-, the
-> > > > > io_pte could still be sitting in write buffers in "Inv CPU" and n=
-ot
-> > > > > yet globally visiable. "Attach CPU" could get the device descript=
-or
-> > > > > installed in the IOMMU and the IOMMU could walk an io_pte that is=
- in
-> > > > > the old state. Effectively this is because there is no release/ac=
-quire
-> > > > > barrier passing the io_pte store from the Inv CPU to the Attach C=
-PU to the
-> > > > > IOMMU.
-> > > > >
-> > > > > It seems like it should be solvable somehow:
-> > > > >  1) Inv CPU releases all the io ptes
-> > > > >  2) Attach CPU acquires the io ptes before updating the DDT
-> > > > >  3) Inv CPU acquires the RCU list in such a way that either attac=
-h
-> > > > >     CPU will acquire the io_pte or inv CPU will acquire the RCU l=
-ist.
-> > > > >  4) Either invalidation works or we release the new iopte to the =
-SMMU
-> > > > >     and don't need it.
-> > > > >
-> > > > > But #3 is a really weird statement. smb_mb() on both sides may do=
- the
-> > > > > job??
-> > > > >
-> > > >
-> > > > Actual attach sequence is slightly different.
-> > > >
-> > > >  Inv CPU                            Attach CPU
-> > > >
-> > > >  write io_pte
-> > > >   rcu_read_lock
-> > > >     list_for_each // empty
-> > > >                                     list_add_rcu()
-> > > >                                     IOTLB.INVAL(PSCID)
-> > > >                                     <make description inv cmd>
-> > > >                                     dma_wmb()
-> > > >                                     <cmd doorbell>
-> > > >  rcu_read_unlock
-> > > >
-> > > > I've tried to cover this case with riscv_iommu_iotlb_inval() called
-> > > > before the attached domain is visible to the device.
-> > >
-> > > That invalidation shouldn't do anything. If this is the first attach
-> > > of a PSCID then the PSCID had better already be empty, it won't becom=
-e
-> > > non-empty until the DDT entry is installed.
-> > >
-> > > And if it is the second attach then the Inv CPU is already taking car=
-e
-> > > of things, no need to invalidate at all.
-> > >
-> > > Regardless, there is still a theortical race that the IOPTEs haven't
-> > > been made visible yet because there is still no synchronization with
-> > > the CPU writing them.
-> > >
-> > > So, I don't think this solves any problem. I belive you need the
-> > > appropriate kind of CPU barrier here instead of an invalidation.
-> > >
-> >
-> > Yes. There was a small, but still plausible race w/ IOPTEs visibility
-> > to the IOMMU.
-> > For v5 I'm adding two barriers to the inval/detach flow, I believe
-> > should cover it.
-> >
-> > 1) In riscv_iommu_iotlb_inval() unconditional dma_wmb() to make any
-> > pending writes to PTEs visible to the IOMMU device. This should cover
-> > the case when list_add_rcu() update is not yet visible in the
-> > _iotlb_inval() sequence, for the first time the domain is attached to
-> > the IOMMU.
-> >
-> >   Inv CPU                                    Attach CPU
-> >   write io_pte
-> >   dma_wmb (1)
-> >   rcu_read_lock
-> >     list_for_each // empty                   list_add_rcu()
-> >                                              smp_wmb (2)
-> >                                              Update device descriptor
-> >                                              <make description inv cmd>
-> >                                              // PTEs are visible to the=
- HW (*1)
-> >                                              dma_wmb()
-> >                                              <cmd doorbell>
-> >   rcu_read_unlock
-> >
-> > 2) In riscv_iommu_bond_link() write memory barrier to ensure list
-> > update is visible before IOMMU descriptor update. If stale data has
-> > been fetched by the HW, inval CPU will run iotlb-invalidation
-> > sequence. There is a possibility that IOMMU will fetch correct PTEs
-> > and will receive unnecessary IOTLB inval, but I don't think anyone
-> > would care.
-> >
-> >   Inv CPU                                    Attach CPU
-> >   write io_pte                               list_add_rcu()
-> >                                              smp_wmb (2)
-> >                                              Update device descriptor
-> >                                              <make description inv cmd>
-> >                                              // HW might fetch stale PT=
-Es
-> >                                              dma_wmb()
-> >                                              <cmd doorbell>
-> >   dma_wmb (1)
-> >   rcu_read_lock
-> >     list_for_each // non-empty (*2)
-> >       <make iotlb inval cmd>
-> >       dma_wmb()
-> >       <cmd doorbell>
-> >   rcu_read_unlock
-> >
-> > 3) I've also updated riscv_iommu_bond_unlink() to wipe the PSCID cache
-> > on the last domain unlink from the IOMMU.
-> >
-> > Thank you for pointing this out. Let me know if that makes sense.
->
-> I'm not an expert in barriers, but I think you need the more expensive
-> "mb" in both cases.
->
-> The inv side is both releasing the write and acquiring the list
-> read. IIRC READ_ONCE is not a full acquire?
->
-> The Attach side is both releasing the list_add_rcu() and acquiring the
-> iopte.
->
-> rcu is still a benefit, there is no cache line sharing and there is
-> only one full barrier, not two, like a spinlock.
->
-> And a big fat comment in both sides explaining this :)
->
-
-I'm not an expert in barriers as well, but I've checked offline with one ;)
-
-And the conclusion is that we need FENCE W,W (or stronger) on the
-attach side, and FENCE RW,RW in the invalidation sequence.  Hardware
-access to PTE/DC is sequential, with implied FENCE R,R barriers.
-
-As 'attach' sequence is a rare event anyway, I'll go on "mb" on both
-sides, as suggested.
-Unless there are other opinions on that I'll update barriers to match
-this conclusion and try to capture in long comment for bond / inval /
-attach synchronization assumptions.
-
-Jason, thanks again for pointing this out.
 
 
-> Jason
+=E5=9C=A82024=E5=B9=B45=E6=9C=888=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
+=8D=881:50=EF=BC=8CSerge Semin=E5=86=99=E9=81=93=EF=BC=9A
+> On Tue, May 07, 2024 at 10:01:51AM +0100, Jiaxun Yang wrote:
+>> Move mips_cm_probe after prom_init so we can use fdt functions
+>> in mips_cm_probe to obtain essential information.
+>>=20
+>> Impat for all systems that may have CM in system:
+>
+>> - geneirc: Adjusted code to accommodate this change
+>
+> s/geneirc/generic
+>
+>> - Lantiq: No impact, CM configuration won't be changed at all
+>> - ralink: Called mips_cm_probe on it's own, in prom_init->prom_soc_in=
+it
+>
+>> - malta: No impact, CM address comes from CP0_CMGCR
+>
+> Are you sure about this? This was one of the problematic part I met
+> back when was trying to implement the feature.
+> arch/mips/mti-malta/malta-init.c:
+> prom_init()
+> +-> mips_cpc_probe()
+>     +-> mips_cpc_phys_base()
+>         +-> mips_cm_present(): mips_gcr_base !=3D NULL
+>         +-> read_gcr_cpc_status()
+>         +-> read_gcr_cpc_base()
+>         +-> write_gcr_cpc_base()
+>
+> So by moving mips_cm_probe() to being executed after prom_init() the
+> calls-chain above will be broken since the mips_gcr_base will be left
+> uninitialized. Do I miss something?
 
-Best,
-- Tomasz
+Hi Serge,
+
+Good catch! This is indeed a problem.
+I tried to dig a little bit and found that a possible solution is to
+move SMP initialization to device_tree_init(), as what generic platform
+did.
+
+I was able to test malta boot with this solution on my heavily patched
+QEMU, I can confirm that both CM-SMP and scache are working as expected.
+
+Will share my QEMU patches and configurations in next rev.=20
+
+Thanks
+- Jiaxun
+
+>
+> Please, note originally the mips_cm_probe() invocation was right
+> above the Malta's mips_cpc_probe():
+> 3af5a67c86a3 ("MIPS: Fix early CM probing")
+>
+> -Serge(y)
+>
+>>=20
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  arch/mips/kernel/setup.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+>> index 12a1a4ffb602..732579c8f4f8 100644
+>> --- a/arch/mips/kernel/setup.c
+>> +++ b/arch/mips/kernel/setup.c
+>> @@ -773,8 +773,8 @@ static void __init setup_rng_seed(void)
+>>  void __init setup_arch(char **cmdline_p)
+>>  {
+>>  	cpu_probe();
+>> -	mips_cm_probe();
+>>  	prom_init();
+>> +	mips_cm_probe();
+>> =20
+>>  	setup_early_fdc_console();
+>>  #ifdef CONFIG_EARLY_PRINTK
+>>=20
+>> --=20
+>> 2.34.1
+>>=20
+>>
+
+--=20
+- Jiaxun
 
