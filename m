@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-173466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EB38C00BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:13:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4080D8C00D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFC71F23692
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:13:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D563FB25362
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAC81272B4;
-	Wed,  8 May 2024 15:13:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A26126F05;
+	Wed,  8 May 2024 15:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="P4xkoawb"
+Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A571272A0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885E986AF4
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181185; cv=none; b=WyCpOprQanjkmKvcQ2uKgyUfE6N+8cqZGt+FjLEL2i/7aflakcKP5alwMrIc5kSPuwWAxQDH+LJWVhr2aVdbdVLyJkiX9sxQcINjUzgKH62i4++uwESyBdHYjyafBxhJk0RgtV6DlxCMK/VTH9gDUvvqlHpzvrEQ5TtVEkGM1so=
+	t=1715181623; cv=none; b=UMMl+1yhDtiHYkyTegoqMqSQj780HIAnsar0GCgtGnfO+UA5gmdrLpfgVN1V7uOYTygHKSgn5SxyNecT5jxXcXdeUKVTsZMEB0rdWmT2ElKFeMwMGcQL6qZKYyXKH9p0f6ejjMIPUDV9K0Ql0ODBIW3FrUxEOUkGnps3jU8olNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181185; c=relaxed/simple;
-	bh=VTooLKM1UWVTk8gSGQDqgDwStVWBUyMdaRzHq8tOcbs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=L5oqXMtLDCz/mROLTfwZkJGUJ4KC4uULoPRkw7b5sSOo0pGH/nQqLd1OtSsMhFhy6tTTqzLNb61es/pkGXuU5cTU/ascxwoS43arIpif1vTKtBbpL5IrMOhVT8bcGwETcj8bIDcioTH798s5aK8ljAWqiMDu5zFgKA4lV08KIaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dec4e29827so463929539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:13:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715181183; x=1715785983;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEBdO5/t3gWQndQoUbCFMwd1dlzvgeFuNRoAmahB4YQ=;
-        b=DHlgbOsFCZOApy+/V9Eyg5XxVkxUxSSuhIjRq+r4BfgxWw4yjp6LQFTT/+NEGWNMUC
-         ujFeghQ53t9o6SH47wZDN0iGaNaeV3mqHy2a0m7WmaozXdFGCiNBOu75gdHQUVE5wdZp
-         fXP+bhBncNqSGjPA1oyVRFCQIZSp7qx39FNAiAQNSwx7enhCMNq6vchnd3Msfwb3W8Np
-         62Zr2xC8CngsH6P6x7CTiCaVuFgnAYXf/qdGA+DoxJB7kIjXibxad4wVpIGkflOMw4vm
-         YvKZWXrnAtvttm/oXsHCLGy9El6ZxN18t6TYkrObilTzQh2ZRigPqUDs8ZmGfoNIsKXw
-         Cgkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXds+lgV+kESP4quwIhHCXRqZZ3ur6uVzqYSuPGyI92jhQjPJB8fpgiPSnVnIv2sIyOnAtupIkf067OezWMLqkNw8Y7wNEYGOPU9lCf
-X-Gm-Message-State: AOJu0YyPTcC/8tAaiLcT/+K6z4ob1JB30VCbhWk+UCMR1H0o6qwX/R9a
-	fwoIucuiJ2QT+5qMK070KzmwMAS90rv4PfAC6Vhwgbi/heCHW8x96iN0AsamrIpS/2mxmshuFm/
-	Erudaz+DQEOrctMt6JBsTDVkxoNXGUupy8/9cx4mgt6SpjELG7SsYrOk=
-X-Google-Smtp-Source: AGHT+IEgJOu5ZVCCFED8YRbF5GZ6UCcgUorZLjp//7D8s5IUYcamXViyuOmXvu9So1WH93R5xeRN4nyaq37WLksFXyCFnIm9g7Cb
+	s=arc-20240116; t=1715181623; c=relaxed/simple;
+	bh=pVWuYbzUs7Jev4RY7RmHJPW4092hATCc5SdzY5qRSLw=;
+	h=Message-ID:From:To:Subject:Date:MIME-Version; b=ZrM20EIWOKilFC9Eqn2KghFTK0O8nBKtQufnpnhQtb4uq7Md4WCmJjHHh4xuQLE4261aMDFwBeUnKs6MIWZ+opKAhGYRAl5CxA7XSr0pVPVyAamrpz8Fb0BVaD8vTgSYhRfoncNyBLr6J27IQ/tlxCXazQHxe+OBVLyLyuVV2uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=P4xkoawb; arc=none smtp.client-ip=162.62.57.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1715181609; bh=elRxz6OWhugfzFAIlmwlLj9gRAiGJCPhF4W6JN9Xyhg=;
+	h=From:To:Subject:Date;
+	b=P4xkoawbUSX2SA01TpRaQrvpxoNZ2ctBO2HwRubIMdTeVA9VhWhCs7dNTVSjgm7lQ
+	 v9T+ueQvpK1J60/BkgvlYVZHKNJ+LTBsejdan+veu1ciHMK7QiBeWrhrQE0+iDtO0Z
+	 0sIEWHd7aqw9cXOJ9/UpmwIsUHJT1Kct/VCz0fY0=
+Received: from pipishuo-OMEN-by-HP-Laptop-16-b0xxx.. ([123.115.148.131])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 375AB210; Wed, 08 May 2024 23:13:53 +0800
+X-QQ-mid: xmsmtpt1715181233tkjqblovg
+Message-ID: <tencent_1992979C468AF087A1909000C6D0D5E61207@qq.com>
+X-QQ-XMAILINFO: MUl6Z5IrFzo7Rxpr5BMoTbyvm829X+fUJdpiyFAfklHaNPjsUL+MRRa88iq6np
+	 3dCgOCRp+f1wzZtEYcNcXa6FM6+LOwGTASB1HPAU0OnaQ/YTIAkrP9/I7LPEKwb7KeVwKg44OmYf
+	 r61J/cAI+dDoBOx7ilN+jxbQZ1tDWQ8e+Y0g/gZK3s+QcBrxjFjGamqOnddAcKpwgc6fBOwh38mz
+	 5uzMJAJmfMHoWD5ROP8p8jgZpCF1oQxjTXNXPY1rXOft+/uPxGLk6HwvEAijQhMHjHlhLxQOmyjf
+	 095s3a31xa+OqJPx0a9xJX6OfbBHXgVG66ZPHKx3JlWGCDXfrrRdQljO5TZDDjhFUJywSrg7RK4u
+	 6F6MGGcFcirD4eXvzvT2XSRJcSxdXWdRlAK80zgUa4Z/GXi6fjyZQJkiexd2vfYrr9Oj0XO91uF7
+	 WBxJEWDszBDeF5GGPWkwAdzhJCBPzhgbx5roJywTUY47CyfCHlKH3C5s0yEx1PAAI8GPCqofqTrr
+	 qXecxlbWm0kB7WocpxS4S3Ah1a5IPsr6fiR5FehXWe3vz/PC4oftteA03AikEqsznXwWJgg6CktF
+	 DdK4mBrGzobzKhNjkGgzZfLyHY3aTNA7L3+3UFprG9nPkgqfWyoZxQDj5MWjNfEnmea7g9UjZAdM
+	 68VJZWjuw4cujoSMppGqKGEBu1NXklINrk88Aqp7KdHKDfkXB3fDh59eq/J7Azha4/o2iYb3+Jx4
+	 qZ8iV+GucNO0rMx7sWtxB817jWB+52QD+R6OTiWyCa29yOqMULjUzFvZX1/vQ7jG/Es+ePpDu5En
+	 Q5VGh4KNNtDag+IVgDs74I5YKKGsnc1x1bu8g7KQxQ6Q8xuVi2DBLHdJyOjSlRTwbXg3CxSr5+9O
+	 FJyT5qtY68xbOargjIpdou8k9H37z/fX5Sp6uDhvXztEGiiDLytJQn+B6Ul7D4AJvAf3qznt01DI
+	 pNqKBzaSf3MaybwXggIUHj93jGvziYl/TuCyx7efXP4X/fuY10ZQjHSLfzw3u0PtJlKJeuDZ+fvz
+	 P06Gp/Aje/IQruYAn0U6qBRfjhgfzCsb1JibiV0gfMVoGVnp6+8B/KtwQvqcURTnk0zn+7+Bdr8F
+	 DF5lNdpfhZXpM4VJvJw7jbvAuKk9rP8bWc5hpGUTkgZnCT7c0WMvu/uyIcg92NEYmo5mYyIrRS9U
+	 ciOkc/2yAsioev2Q==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Chen shuo <1289151713@qq.com>
+To: 1289151713@qq.com,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: rtl8192e: remove the r8192E_dev.c's unnecessary brace
+Date: Wed,  8 May 2024 23:13:52 +0800
+X-OQ-MSGID: <20240508151352.6831-1-1289151713@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8325:b0:488:ac5a:7fe9 with SMTP id
- 8926c6da1cb9f-488fdd777e4mr155178173.4.1715181183643; Wed, 08 May 2024
- 08:13:03 -0700 (PDT)
-Date: Wed, 08 May 2024 08:13:03 -0700
-In-Reply-To: <0000000000006399c80617120daa@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002d41840617f2bd39@google.com>
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
-From: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, gregkh@linuxfoundation.org, hch@lst.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, rafael@kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+There is a unnecessary brace in r8192E_dev.c.Remove it to shorten
+code and improve readability.
 
-commit 1e8c813b083c4122dfeaa5c3b11028331026e85d
-Author: Christoph Hellwig <hch@lst.de>
-Date:   Wed May 31 12:55:32 2023 +0000
+Signed-off-by: Chen shuo <1289151713@qq.com>
+---
+v2:Make "Subject" line more unique.
+   Add space after : and driver name in the subject.
 
-    PM: hibernate: don't use early_lookup_bdev in resume_store
+ drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1380072f180000
-start commit:   dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1040072f180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1780072f180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c493dcd5a68168a94b2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1134f3c0980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1367a504980000
+diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+index e3ed709a7674..1862a9899966 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
++++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+@@ -1640,9 +1640,8 @@ bool rtl92e_get_rx_stats(struct net_device *dev, struct rtllib_rx_stats *stats,
+ 	if (stats->Length < 24)
+ 		stats->bHwError |= 1;
+ 
+-	if (stats->bHwError) {
++	if (stats->bHwError)
+ 		return false;
+-	}
+ 
+ 	stats->RxDrvInfoSize = pdesc->RxDrvInfoSize;
+ 	stats->RxBufShift = (pdesc->Shift) & 0x03;
+-- 
+2.34.1
 
-Reported-by: syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com
-Fixes: 1e8c813b083c ("PM: hibernate: don't use early_lookup_bdev in resume_store")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
