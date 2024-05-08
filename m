@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-173102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3268BFB88
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:02:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0A58BFB6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ECC61C2198C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:02:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB849283239
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD3981752;
-	Wed,  8 May 2024 11:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E182681ABF;
+	Wed,  8 May 2024 10:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRe9OunH"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4QZLng8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39AB83A19;
-	Wed,  8 May 2024 11:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1E38172A;
+	Wed,  8 May 2024 10:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715166090; cv=none; b=c4nHqfVg5QCPD664t+vyatCsK9pXydZFcMHanggdUfQzQPAmOWIe97ulQ6UMgDJZDuNoEPtlGhrXMtFUG9cjQ4oFy0mU+d2T6Ri0v4xVhqrBo8wnuEM9xMugjVMgXZWPT/iWMpBNfVYsWGNCwlHLLl5xMTFOZdPgKsMn/EE6k9w=
+	t=1715165947; cv=none; b=hRF+n/uicCFKTZWOYlOHAG8s4vKMIhtWwLpgkB9DjC9feQeiPidemI3pkWOH00H7qP3raW6asUjohFvC4yB3sMGNdcpgk/ts8fDglyubI3eTZkcfJQJg55JP9+zAUdcc64NN3ZUgZs9EZNQ16/IXrSaidzsnBW7G5sc3QuuUZ5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715166090; c=relaxed/simple;
-	bh=UL/4N8rXRM70GUqix5tPsZFEQGhkMZHDmI2ayaFJGlM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HnQ9lQPTNHPfwVozZEmSA6tnHc+8j/d2s6NVRcsi4RjL3sgRuYLFydz6ysG3xwZI0ceCKQXq8NfjlFvYA9hDhQHO7DfsGjMxVEiYP+8aOeRrhS2i2HCssAjfywc++uwulEvUwq4ygZb2xHTd1dEEgPU4Lr6NqZnuQaXNG3gKhvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRe9OunH; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59ece5e18bso488475766b.2;
-        Wed, 08 May 2024 04:01:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715166087; x=1715770887; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1xXdtLXh9Wq/U+DCcvi3Zl9MvXXMxZj9qmUG/1NN6b8=;
-        b=BRe9OunHfu6osrKvLgMw+vaWMBo13H44Xd2cp3AaeD7b8wrekagRlsW1jmcgFMD91y
-         ELmSkZdwB+zXfuYKledn9ILyTZn6qDfuob6SXZEAb82icDdXmv/PLBiloMpZ2Y4iB6Zy
-         QhcKJpoXqi9I0Y33Yd/DmcasltOAop9Ef3Arv7nqf73awcOYb3vhAuk1BS/ursrGgQWA
-         7tpk0EXKrfF8keKGSx7uZlf6SUonuox4+dnGklM8avfbCkZkzR52rSneDxLL8vvbmsnn
-         W30f7vZjoYZKms7R3IrjNdtuj1+t2dYp31axemOnvLif3TCnbA2dwZiYfSacEK00Zlhh
-         sJlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715166087; x=1715770887;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1xXdtLXh9Wq/U+DCcvi3Zl9MvXXMxZj9qmUG/1NN6b8=;
-        b=g1RNmFc7czmdN4v4bWEGRhv7ZDOsMRR3AKm/ihcam6/RunmgI6Xsxgdu+AfR34TuCy
-         b2wHZU9g4BZv7jJgwMBMGK3B1vJN24Pic2Z/MyN6ZYyFuLMtb+9CBBEp8DVUfmLd+iiM
-         VJcO8PZ9O+78Ej0Nxhz7ZCktVpi9134abFitusU7+fDC7baGHQlzOFwN+PGzmI93thyM
-         97GQ+TIYVcZiIDj4g2Zj6Q7BvhegoX0wRpNQUA3dZWglWduZ5v3vDqzQRSthMCU6jKxW
-         RkcQnzwLZFLQlzNDYtuUms0dfW0aVSf8Hw4+9quI71nLegohshzmqxK/6c07psrmwnoo
-         1psQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/K9lXeYP9Cvwxocz40wgrZ9Og1C5wkIvHH8OB6MOnHJakbuJl5TbigQAgjdz2B6UB01i88rF1UrDeZV9eIUqj0kfRecpUumq4pJWJiPZFW4nBPoG7wLZQEZVdbtzhI9bw/C/f9zfOi40WW7mjN/X8ng6tLMgifMYcoOiZHxVBTTQaBmZG6ZDtZR7m7hZxVTAEl8wj5/+kRzprk4j3qWqjLrNbxSQ5k4Q=
-X-Gm-Message-State: AOJu0Yyu6p64VG9CEZ+JK01OsYWaZWVZj0ncnYvKPVeExWlXnLHBVKft
-	cM5ayqQEVyXQYiKwnCwZZ/Y1YJ5kNTmQmAqPfq2800s8accXa8FC
-X-Google-Smtp-Source: AGHT+IHSvqngLWudU2mq3sRdhAXsMHPmyVHOgZ0v5JQdfowG5AeyhCGC/cKuo86niykSWYIXOiqDig==
-X-Received: by 2002:a50:a699:0:b0:572:664c:83f2 with SMTP id 4fb4d7f45d1cf-5731da68d64mr1873313a12.27.1715166087014;
-        Wed, 08 May 2024 04:01:27 -0700 (PDT)
-Received: from hex.my.domain (83.8.126.253.ipv4.supernova.orange.pl. [83.8.126.253])
-        by smtp.gmail.com with ESMTPSA id m6-20020a056402510600b005726b58a436sm7455793edd.30.2024.05.08.04.01.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 04:01:26 -0700 (PDT)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Wed, 08 May 2024 12:58:55 +0200
-Subject: [PATCH v2 7/7] ARM: dts: samsung: exynos4212-tab3: Fix up wm1811
- codec config
+	s=arc-20240116; t=1715165947; c=relaxed/simple;
+	bh=6VZ7r11vgmtx2F69LIOMPd3L9p0ehngsk+gDZpyp9lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F/hXcgXtrBvWlja10N3U/FV4AXAymmI4EIvihIXKEIYnB0hrStdQAWr2U3eBJPtdaDITxWJNwnfhTBRVkoH8NAl2mdKJjiLX5gXMM0AOB8Ka9vlYU8N4wl8F4zG4bHXJmD4piHNtymfgv7aZsVPlJRVrqTDGN2m7rmo55BbBbsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4QZLng8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4580EC113CC;
+	Wed,  8 May 2024 10:59:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715165946;
+	bh=6VZ7r11vgmtx2F69LIOMPd3L9p0ehngsk+gDZpyp9lo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D4QZLng8qe62yhyqFmtJpj0LltREfFRz6Vfp0qvmRJBPjp6uh0iDWUslUZT5Y3LMh
+	 CbVilUqsouBVEmNYSJEqDdAgrn4lYW2qsI93uUhRiEKcDO4yq5ky93xkk38vDNgKrv
+	 j++AKQE2epqE0M+F+Dx5RNS4begnpFtE3K9D7H+b6nxVvqeUw1VDjslYXUmk/9/3Z7
+	 zdvqjQWOcdbzskcT1OLxQuNV2SmKbXzErEWrLs9GxututtNbU/SmCjulZPEeFZyxHS
+	 +s3rdrAIoN8aL5LrDkak/hly8ADJFOi0yYm3yGoN5koJnmdMHMNsekMe47k0OtWwco
+	 0GU86vKRbMfQg==
+Date: Wed, 8 May 2024 12:59:03 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v2 18/27] rcu: Rename rcu_dynticks_in_eqs_since() into
+ rcu_watching_changed_since()
+Message-ID: <Zjta9-jCNHmAAh6b@localhost.localdomain>
+References: <20240430091740.1826862-1-vschneid@redhat.com>
+ <20240430091740.1826862-19-vschneid@redhat.com>
+ <ZjoxIhtCw4Pov0VH@localhost.localdomain>
+ <d3177337-51cd-4841-ba4b-8e0f8f5bbc84@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240508-midas-wm1811-gpio-jack-v2-7-b4d36cd02c6e@gmail.com>
-References: <20240508-midas-wm1811-gpio-jack-v2-0-b4d36cd02c6e@gmail.com>
-In-Reply-To: <20240508-midas-wm1811-gpio-jack-v2-0-b4d36cd02c6e@gmail.com>
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715166076; l=1054;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=UL/4N8rXRM70GUqix5tPsZFEQGhkMZHDmI2ayaFJGlM=;
- b=7BPWy7GfZUBZ3TTXDAlEmhxr7SnPBBZ9ehQ1CJLgWoE87M699gDN5kcEDVe31eaoWB0oP2YD5
- Aj6UHKKMILGCsBtWyvT/a6q3VshUe0QJDlyqa8bnGA8MeXyc3wPf4XJ
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3177337-51cd-4841-ba4b-8e0f8f5bbc84@paulmck-laptop>
 
-Drop incorrect interrupt parent and add MCLK2 clock.
+Le Tue, May 07, 2024 at 10:14:08AM -0700, Paul E. McKenney a écrit :
+> On Tue, May 07, 2024 at 03:48:18PM +0200, Frederic Weisbecker wrote:
+> > Le Tue, Apr 30, 2024 at 11:17:22AM +0200, Valentin Schneider a écrit :
+> > > The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> > > RCU_WATCHING, the dynticks prefix can go.
+> > > 
+> > > Furthermore, the "in_eqs_since" part confuses me, as IIUC this only checks
+> > > for a change in watching/eqs state, not that RCU transitionned *into* a
+> > > EQS after the snapshot was taken.
+> > > 
+> > > e.g. if
+> > >   snap = 0b1000 (EQS)
+> > > and the following rcu_watching_snap(CPU) is:
+> > > 	 0b1100 (watching)
+> > > then
+> > >   rcu_watching_in_eqs_since(rdp, snap) -> true
+> > > 
+> > > but because RCU was already in EQS at the time of the
+> > > snap - it hasn't entered EQS "since" the snap was taken.
+> > > 
+> > > Update the name to reflect that we're only looking at watching/EQS
+> > > transitions, not specifically transitions into EQS.
+> > 
+> > Indeed in practice the function only checks a change. But semantically it really
+> > checks a trip to eqs because this function is only ever called after a failing
+> > call to rcu_dynticks_in_eqs().
+> > 
+> > So not sure about that one rename. Paul?
+> 
+> As you say, Valentin is technically correct.  Me, I am having a hard
+> time getting too excited one way or the other.  ;-)
+> 
+> I suggest thinking in terms of rate-bounding the change.  If you do
+> change it, don't change it again for a few years.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v2:
-- Split out wm1811 changes from midas-audio config change patch
----
- arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Makes sense!
 
-diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-index 8dc81112172c..20e5e7ba6b92 100644
---- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-+++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-@@ -529,12 +529,11 @@ &i2c_4 {
- 	wm1811: audio-codec@1a {
- 		compatible = "wlf,wm1811";
- 		reg = <0x1a>;
--		clocks = <&pmu_system_controller 0>;
--		clock-names = "MCLK1";
-+		clocks = <&pmu_system_controller 0>,
-+			 <&s5m8767_osc S2MPS11_CLK_BT>;
-+		clock-names = "MCLK1", "MCLK2";
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
--		interrupt-parent = <&gpx3>;
--		interrupts = <6 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		gpio-controller;
- 		#gpio-cells = <2>;
+> 
+> Either way, should comments be changed or added?
+> 
+> Of course, the scientific way to evaluate this is to whose a couple
+> dozen people the old code and a couple dozen other people the new code,
+> and see if one group or the other has statistically significantly lower
+> levels of confusion.  I don't see how this is feasible, but it is the
+> (painfully) correct way.  On the other hand, it would have the beneficial
+> side effect of getting more people exposed to Linux-kernel-RCU internals.
+> Unfortunately, it might also have the additional side effect of making
+> them (more) annoyed at RCU.  ;-)
 
--- 
-2.45.0
+Sounds good!
 
+I divided myself in two blank RCU subjects for a double blind study
+and locked those people up overnight with a paper containing both proposals.
+
+I opened the door five minutes ago and they both elected by mutual agreement
+rcu_watching_changed_since()! Also they are thirsty.
+
+Congratulations Valentin! :-)
+
+> 							Thanx, Paul
 
