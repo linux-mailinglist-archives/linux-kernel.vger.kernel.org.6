@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-173932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9E58C07AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E10F18C07AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBF8283288
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97967282F30
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6F4133983;
-	Wed,  8 May 2024 23:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD9B1327ED;
+	Wed,  8 May 2024 23:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UdVmYjMt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxhTdRwk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC7912DD8A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFF728387;
 	Wed,  8 May 2024 23:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715211186; cv=none; b=p8MUKfNOn6Jq+oZaxDBO9FuCqRSTetx/uMFlG8FPrH9nyKWfzWgjGPTJ6uSBSiUFSUlv8yP29ZyIXqBEXSvd9xTRP/Dvg2wsu8ifZhUFXBo17FX4dM+ksNlUNjwHnDchd/P0UnIOe96Ohop4JuP9L4K68monUm+yj05aVE+IyqU=
+	t=1715211184; cv=none; b=R/flGOXWLd1H+bcl36bSe2hySg2GGFSkZnF8K7NlDm5a9PCi2HLIB5DdA08idHm12e610V5JLm5ALfdAAZbTQaHOs+YRYZSSOA/GX0WcARjqVGnW5gRhuhZZp64OqDH8xQFaUb+ISZZUxSXAnaUp0H90IVIYA4OwdVT9mdsWlqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715211186; c=relaxed/simple;
-	bh=GEAIMwFtyg+vAQGXluqnLDgeV0lbUGMAcGTBXuU4E98=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DvjqB6ntT0z9oZgAF/oa5FGs4hd+4gI8hA3fwXQPpEmwM6FhiUW1yuahVeUdF/Z842U+1xN3GZHj+ZeHs2B9H64KHMVuxvt44eo2+FE2BOxhTLnsOxmRRQdwStaAZoclEAcT6xNkxe8EGQEnUs0B14Hy3tekHRqh6Ld58ss5iWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UdVmYjMt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448C4Y75027303;
-	Wed, 8 May 2024 23:32:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=1iu0bePOw83173L41461NVMwojOBNpiVdvT7Bl2/o+o=; b=Ud
-	VmYjMtdvKcish+QgW9GTSAL4/oRSgvsTNSOi1FMnbLRQZYO9g+I7aqwkcsmvwBok
-	wP8QqoTdXqDqYXDNqUEud88wkGgwZnbC3wPIRlGjEFaXOg5GO/CRCJrdqcYmhRKV
-	XvcfYu2ddXjuo2/8ekSnk4M9pfYtROjbV0IjPEWAkocIrVof/refApVuQs1LdwiZ
-	hQuTZRysiXuGdjjNJCsg9cdxDRQM7Tnq+15vAxNkgy5BBcxILF/B20AgkOvMLfHE
-	BlVUl56Q5Xi/Kj114Juzz8zJNHCq/ZK0OhS5r6HkJ2p+Bbm9r+U7Jy4MecSjZn7I
-	bZtCC2koss502AfVwDkQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y0930scy5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 23:32:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 448NWd75032048
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 23:32:39 GMT
-Received: from [10.71.109.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 8 May 2024
- 16:32:39 -0700
-Message-ID: <a0868c79-f93e-36f1-e1c1-7a069222ebc7@quicinc.com>
-Date: Wed, 8 May 2024 16:32:38 -0700
+	s=arc-20240116; t=1715211184; c=relaxed/simple;
+	bh=rymFRL9RenzD7dHMXH9iTV136lK+n6YZqLAw1D9IOc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Q8tp2p/EKI90FMk+xWyk7sbWfEd7EINrCzbcGXmnEBsXCMvorb4inypj8U1WoTkqdW7BNeVkx684Hbz/NSGj0Md7rIbRs1OqDaQSe3AzWTEuN1sfVaABjipFlx24GSoH+ESiKqWiab3KmghCJTkmDvhrWoWI0T9/RdG5GGRWv5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxhTdRwk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF799C113CC;
+	Wed,  8 May 2024 23:33:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715211184;
+	bh=rymFRL9RenzD7dHMXH9iTV136lK+n6YZqLAw1D9IOc8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=CxhTdRwkIoIHjNCan0EzKcUVMCxw2dMCjbzheFWQvigKFzGghLCSSOemAlAC6Dxud
+	 nAUdQmMOva5iragqXcCT1EAjDe/Pav1c+wCI7LgXhsMbNw4PCZZViYm11GvPQgxHQK
+	 D7qkFBVzHRof0oRjK/vPCsAJ7bKUqr6pCvTnVlKtwi86s7qOfzUcD83Er0C2omZGFT
+	 y2JQKTGOnFJr+eyZp4BFMVUmUVoCgca9SdCGzU77Dkopr+6PvgysAvQZr+++Zg2umX
+	 neNtqGlXZ/E5+JeX73T2EactCiUOM4/f7eBwAGUFtvK8LdEbPPbPI+ZYtVrIinc5v3
+	 oZ3FthdxurO3A==
+Date: Wed, 8 May 2024 18:33:02 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Phil Elwell <phil@raspberrypi.com>,
+	bcm-kernel-feedback-list@broadcom.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 4/4] PCI: brcmstb: Configure HW CLKREQ# mode
+ appropriate for downstream device
+Message-ID: <20240508233302.GA1792067@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 1/2] drm/msm/gen_header: allow skipping the validation
-Content-Language: en-US
-To: Doug Anderson <dianders@chromium.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn
- Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Helen Koike <helen.koike@collabora.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Stephen
- Rothwell <sfr@canb.auug.org.au>
-References: <20240503-fd-fix-lxml-v2-0-f80a60ce21a1@linaro.org>
- <20240503-fd-fix-lxml-v2-1-f80a60ce21a1@linaro.org>
- <CAD=FV=XnpS-=CookKxzFM8og9WCSEMxfESmfTYH811438qg4ng@mail.gmail.com>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <CAD=FV=XnpS-=CookKxzFM8og9WCSEMxfESmfTYH811438qg4ng@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MtBzCmbgcpFFUcFdwHfSfdimmt5lYR-Q
-X-Proofpoint-ORIG-GUID: MtBzCmbgcpFFUcFdwHfSfdimmt5lYR-Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 phishscore=0 mlxlogscore=981 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405080176
+In-Reply-To: <CA+-6iNxEZm=axRAeeAKwxemjEdjjmJYTUs8nThp_NDohXcV5Jg@mail.gmail.com>
 
+On Wed, May 08, 2024 at 01:55:24PM -0400, Jim Quinlan wrote:
+> On Mon, May 6, 2024 at 7:20 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> ...
 
+> > As a user, how do I determine which setting to use?
+>
+> Using the "safe" mode will always work.  In fact I considered making
+> this the default mode.
 
-On 5/8/2024 3:41 PM, Doug Anderson wrote:
-> Hi,
+> As I said, I cannot enumerate all of the reasons why one mode works
+> and one does not for a particular device+board+connector combo.  The
+> HW folks have not really been forthcoming on the reasons as well.
 > 
-> On Fri, May 3, 2024 at 11:15 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->>
->> @@ -941,6 +948,7 @@ def main():
->>          parser = argparse.ArgumentParser()
->>          parser.add_argument('--rnn', type=str, required=True)
->>          parser.add_argument('--xml', type=str, required=True)
->> +       parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
-> 
-> FWIW, the above (argparse.BooleanOptionalAction) appears to be a
-> python 3.9 thing. My own build environment happens to have python3
-> default to python 3.8 and thus I get a build error related to this. I
-> have no idea what the kernel usually assumes for a baseline, but
-> others might get build errors too. I don't even see python listed in:
-> 
-> https://docs.kernel.org/process/changes.html
-> 
-> ...in any case, if it's easy to change this to not require python3.9
-> that would at least help for my build environment. :-P
-> 
+> > Trial and error?  If so, how do I identify the errors?
+>
+> Either PCIe link-up is not happening, or it is happening but the
+> device driver is non-functional and boot typically  hangs.
 
-Yes, I had posted this y'day as I also ran into this
+What I'm hearing is that it's trial and error. 
 
-https://patchwork.freedesktop.org/patch/593057/
+If we can't tell users how to figure out which mode to use, I think we
+have to explicitly say "try the modes in this order until you find one
+that works."
 
+That sucks, but if it's all we can do, I guess we don't have much
+choice, and we should just own up to it.
 
-> -Doug
+There's no point in telling users "if your card drives CLKREQ# use X,
+but if not and it can tolerate out-of-spec T_CLRon timing, use Y"
+because nobody knows how to figure that out.
+
+And we can say which features are enabled in each mode so they aren't
+surprised, e.g., something like this:
+
+  "default" -- The Root Port supports ASPM L0s, L1, L1 Substates, and
+    Clock Power Management.  This provides the best power savings but
+    some devices may not work correctly because the Root Port doesn't
+    comply with T_CLRon timing required for PCIe Mini Cards [1].
+
+  "no-l1ss" -- The Root Port supports ASPM L0s, L1 (but not L1
+    Substates), and Clock Power Management.  [I assume there's some
+    other Root Port defect that causes issues with some devices in
+    this mode; I dunno.  If we don't know exactly what it is, I guess
+    we can't really say anything.]
+
+  "safe" -- The Root Port supports ASPM L0, L1, L1 Substates, but not
+    Clock Power Management.  All devices should work in this mode.
+
+[1] PCIe Mini CEM r2.1, sec 3.2.5.2.2
+
+(I'm not sure which features are *actually* enabled in each mode, I
+just guessed.)
+
+Bjorn
 
