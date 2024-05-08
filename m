@@ -1,218 +1,194 @@
-Return-Path: <linux-kernel+bounces-172942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5444B8BF913
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:53:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAF88BF918
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76611F226E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:53:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D3328624F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868D25467A;
-	Wed,  8 May 2024 08:53:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADD053E01
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3DA53E1F;
+	Wed,  8 May 2024 08:54:10 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCAD3EA9C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715158397; cv=none; b=XSQb9JGm9HBLNVoKbAY3bJW3R8FlX+bkq3CNu5dbK9clU3n/QrYeKP96vbuMLe5BWcqCoPvemIYJV2/XGZfJw8qLUi9y8QB++tddyNZp1GLkC2lY6tkXPZyM1o7jgmpASZZInFNqHcMbN7NLNmW3E7twwPOmXwtRlOuDn7e5QTM=
+	t=1715158449; cv=none; b=WQpZVsSoQzoA2qBHSPA6d3Do7DSd+NduCZN7YxCzqwg52moJ0yGOMqFnc0BDDdud/u86Et8NK6BT/+1IZ1M2o90idItPhax1AQvUlQZnlUQBEqeQqoKZOdfbI7nrpQYnl70af/Krmiyl9wxAxIefRuuVsVCs1rAK2mXlV4hXP0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715158397; c=relaxed/simple;
-	bh=ZyP24KrMlTJgeXhOBUddPMgFlmQ1GKjmqbXccEfps4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cr20r2kiusqvmxso9Rqg+NCNA0eJXgGwI96XM4PZSKvvR+DiCs3xhyjP84ZgnlZ856ClZXMKTAyWhZQd3+uR7ql8r8r4CojxyQGV/iHgmMX+q/S1UhO6V/obGbhWr3+Fk5oPoonYg8kLytdwNkim2nStqqyAlaXa1jQGDB6HazE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BB641063;
-	Wed,  8 May 2024 01:53:38 -0700 (PDT)
-Received: from [10.57.67.194] (unknown [10.57.67.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E45203F6A8;
-	Wed,  8 May 2024 01:53:10 -0700 (PDT)
-Message-ID: <e5c5b9ff-e874-4d97-a036-48178bd147cc@arm.com>
-Date: Wed, 8 May 2024 09:53:09 +0100
+	s=arc-20240116; t=1715158449; c=relaxed/simple;
+	bh=pflO7IhFdkN0vZOy11haWgFFUMQUG7T+bleZpLFH1m4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=saVhGBNE850bdpaiIzTWdXx5M8rqKAOJdAfNzCHUtVbwsEsWITJn/gFtFWrq4ZXtS4M5G1gy6hW2fKBXuN2IeLykGUkxPHpL9FxTzly9mTletuQokH82ygHqv7FChO9UiqqkkPvaGuOU+iZNicWxUSyx7MRlcOrSTfpBJMs9oj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1s4d3M-0001lz-IY; Wed, 08 May 2024 10:53:32 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1s4d3I-000F6P-1y; Wed, 08 May 2024 10:53:28 +0200
+Received: from mtr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mtr@pengutronix.de>)
+	id 1s4d3H-000Z3P-36;
+	Wed, 08 May 2024 10:53:27 +0200
+Date: Wed, 8 May 2024 10:53:27 +0200
+From: Michael Tretter <m.tretter@pengutronix.de>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Subject: Re: [PATCH v2 01/18] media: allegro: nal-hevc: Refactor
+ nal_hevc_sub_layer_hrd_parameters
+Message-ID: <Zjs9h40l9gfaiOei@pengutronix.de>
+Mail-Followup-To: Michael Tretter <m.tretter@pengutronix.de>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+References: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
+ <20240507-cocci-flexarray-v2-1-7aea262cf065@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] mm: memory: extend finish_fault() to support large
- folio
-Content-Language: en-GB
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, ioworker0@gmail.com,
- wangkefeng.wang@huawei.com, ying.huang@intel.com, 21cnbao@gmail.com,
- shy828301@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <e3f4ae78ef2d565a65fadaa843e53a24bf5b57e4.1714978902.git.baolin.wang@linux.alibaba.com>
- <13939ade-a99a-4075-8a26-9be7576b7e03@arm.com>
- <d2bd3277-7ef5-4909-a149-6895ad95459e@linux.alibaba.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <d2bd3277-7ef5-4909-a149-6895ad95459e@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240507-cocci-flexarray-v2-1-7aea262cf065@chromium.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 08/05/2024 04:44, Baolin Wang wrote:
+On Tue, 07 May 2024 16:27:06 +0000, Ricardo Ribalda wrote:
+> Replace all the single elements arrays with the element itself.
 > 
+> Pahole shows the same padding and alignment for x86 and arm in both
+> situations.
 > 
-> On 2024/5/7 18:37, Ryan Roberts wrote:
->> On 06/05/2024 09:46, Baolin Wang wrote:
->>> Add large folio mapping establishment support for finish_fault() as a
->>> preparation,
->>> to support multi-size THP allocation of anonymous shmem pages in the following
->>> patches.
->>>
->>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> ---
->>>   mm/memory.c | 43 +++++++++++++++++++++++++++++++++----------
->>>   1 file changed, 33 insertions(+), 10 deletions(-)
->>>
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index eea6e4984eae..936377220b77 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -4747,9 +4747,12 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>>   {
->>>       struct vm_area_struct *vma = vmf->vma;
->>>       struct page *page;
->>> +    struct folio *folio;
->>>       vm_fault_t ret;
->>>       bool is_cow = (vmf->flags & FAULT_FLAG_WRITE) &&
->>>                 !(vma->vm_flags & VM_SHARED);
->>> +    int type, nr_pages, i;
->>> +    unsigned long addr = vmf->address;
->>>         /* Did we COW the page? */
->>>       if (is_cow)
->>> @@ -4780,24 +4783,44 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>>               return VM_FAULT_OOM;
->>>       }
->>>   +    folio = page_folio(page);
->>> +    nr_pages = folio_nr_pages(folio);
->>> +
->>> +    if (unlikely(userfaultfd_armed(vma))) {
->>> +        nr_pages = 1;
->>> +    } else if (nr_pages > 1) {
->>> +        unsigned long start = ALIGN_DOWN(vmf->address, nr_pages * PAGE_SIZE);
->>> +        unsigned long end = start + nr_pages * PAGE_SIZE;
->>> +
->>> +        /* In case the folio size in page cache beyond the VMA limits. */
->>> +        addr = max(start, vma->vm_start);
->>> +        nr_pages = (min(end, vma->vm_end) - addr) >> PAGE_SHIFT;
->>> +
->>> +        page = folio_page(folio, (addr - start) >> PAGE_SHIFT);
->>
->> I still don't really follow the logic in this else if block. Isn't it possible
->> that finish_fault() gets called with a page from a folio that isn't aligned with
->> vmf->address?
->>
->> For example, let's say we have a file who's size is 64K and which is cached in a
->> single large folio in the page cache. But the file is mapped into a process at
->> VA 16K to 80K. Let's say we fault on the first page (VA=16K). You will calculate
-> 
-> For shmem, this doesn't happen because the VA is aligned with the hugepage size
-> in the shmem_get_unmapped_area() function. See patch 7.
+> This fixes this cocci warning:
+> drivers/media/platform/allegro-dvt/nal-hevc.h:102:14-22: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
 
-Certainly agree that shmem can always make sure that it packs a vma in a way
-such that its folios are naturally aligned in VA when faulting in memory. If you
-mremap it, that alignment will be lost; I don't think that would be a problem
-for a single process; mremap will take care of moving the ptes correctly and
-this path is not involved.
-
-But what about the case when a process mmaps a shmem region, then forks, then
-the child mremaps the shmem region. Then the parent faults in a THP into the
-region (nicely aligned). Then the child faults in the same offset in the region
-and gets the THP that the parent allocated; that THP will be aligned in the
-parent's VM space but not in the child's.
+Thanks for the patch.
 
 > 
->> start=0 and end=64K I think?
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/platform/allegro-dvt/allegro-core.c |  6 +++---
+>  drivers/media/platform/allegro-dvt/nal-hevc.c     | 11 +++--------
+>  drivers/media/platform/allegro-dvt/nal-hevc.h     |  6 +++---
+>  3 files changed, 9 insertions(+), 14 deletions(-)
 > 
-> Yes. Unfortunately, some file systems that support large mappings do not perform
-> alignment for multi-size THP (non-PMD sized, for example: 64K). I think this
-> requires modification to __get_unmapped_area--->thp_get_unmapped_area_vmflags()
-> or file->f_op->get_unmapped_area() to align VA for multi-size THP in future.
+> diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
+> index da61f9beb6b4..369bd88cc0ae 100644
+> --- a/drivers/media/platform/allegro-dvt/allegro-core.c
+> +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
+> @@ -1852,14 +1852,14 @@ static ssize_t allegro_hevc_write_sps(struct allegro_channel *channel,
+>  	hrd->dpb_output_delay_length_minus1 = 30;
+>  
+>  	hrd->bit_rate_scale = ffs(channel->bitrate_peak) - 6;
+> -	hrd->vcl_hrd[0].bit_rate_value_minus1[0] =
+> +	hrd->vcl_hrd[0].bit_rate_value_minus1 =
+>  		(channel->bitrate_peak >> (6 + hrd->bit_rate_scale)) - 1;
+>  
+>  	cpb_size = v4l2_ctrl_g_ctrl(channel->mpeg_video_cpb_size) * 1000;
+>  	hrd->cpb_size_scale = ffs(cpb_size) - 4;
+> -	hrd->vcl_hrd[0].cpb_size_value_minus1[0] = (cpb_size >> (4 + hrd->cpb_size_scale)) - 1;
+> +	hrd->vcl_hrd[0].cpb_size_value_minus1 = (cpb_size >> (4 + hrd->cpb_size_scale)) - 1;
+>  
+> -	hrd->vcl_hrd[0].cbr_flag[0] = !v4l2_ctrl_g_ctrl(channel->mpeg_video_frame_rc_enable);
+> +	hrd->vcl_hrd[0].cbr_flag = !v4l2_ctrl_g_ctrl(channel->mpeg_video_frame_rc_enable);
+>  
+>  	size = nal_hevc_write_sps(&dev->plat_dev->dev, dest, n, sps);
+>  
+> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.c b/drivers/media/platform/allegro-dvt/nal-hevc.c
+> index 9cdf2756e0a3..575089522df5 100644
+> --- a/drivers/media/platform/allegro-dvt/nal-hevc.c
+> +++ b/drivers/media/platform/allegro-dvt/nal-hevc.c
+> @@ -210,14 +210,9 @@ static void nal_hevc_rbsp_vps(struct rbsp *rbsp, struct nal_hevc_vps *vps)
+>  static void nal_hevc_rbsp_sub_layer_hrd_parameters(struct rbsp *rbsp,
+>  						   struct nal_hevc_sub_layer_hrd_parameters *hrd)
+>  {
+> -	unsigned int i;
+> -	unsigned int cpb_cnt = 1;
+> -
+> -	for (i = 0; i < cpb_cnt; i++) {
+> -		rbsp_uev(rbsp, &hrd->bit_rate_value_minus1[i]);
+> -		rbsp_uev(rbsp, &hrd->cpb_size_value_minus1[i]);
+> -		rbsp_bit(rbsp, &hrd->cbr_flag[i]);
+> -	}
+> +	rbsp_uev(rbsp, &hrd->bit_rate_value_minus1);
+> +	rbsp_uev(rbsp, &hrd->cpb_size_value_minus1);
+> +	rbsp_bit(rbsp, &hrd->cbr_flag);
+>  }
+>  
+>  static void nal_hevc_rbsp_hrd_parameters(struct rbsp *rbsp,
+> diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/drivers/media/platform/allegro-dvt/nal-hevc.h
+> index eb46f12aae80..afa7a9d7d654 100644
+> --- a/drivers/media/platform/allegro-dvt/nal-hevc.h
+> +++ b/drivers/media/platform/allegro-dvt/nal-hevc.h
+> @@ -97,9 +97,9 @@ struct nal_hevc_vps {
+>  };
+>  
+>  struct nal_hevc_sub_layer_hrd_parameters {
+> -	unsigned int bit_rate_value_minus1[1];
+> -	unsigned int cpb_size_value_minus1[1];
+> -	unsigned int cbr_flag[1];
+> +	unsigned int bit_rate_value_minus1;
+> +	unsigned int cpb_size_value_minus1;
+> +	unsigned int cbr_flag;
 
-By nature of the fact that a file mapping is shared between multiple processes
-and each process can map it where ever it wants down to 1 page granularity, its
-impossible for any THP containing a part of that file to be VA-aligned in every
-process it is mapped in.
+The struct is modeled after the specification in ITU-T H.265, which
+defines the fields as arrays. It's a limitation of the current
+implementation that only a single element is supported.
 
-> 
-> So before adding that VA alignment changes, only allow building the large folio
-> mapping for anonymous shmem:
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 936377220b77..9e4d51826d23 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4786,7 +4786,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->         folio = page_folio(page);
->         nr_pages = folio_nr_pages(folio);
-> 
-> -       if (unlikely(userfaultfd_armed(vma))) {
-> +       if (unlikely(userfaultfd_armed(vma)) || !vma_is_anon_shmem(vma)) {
+Maybe replacing the hard coded values with a constant would be more
+appropriate to document this limitation.
 
-If the above theoretical flow for fork & mremap is valid, then I don't think
-this is sufficient.
+Michael
 
->                 nr_pages = 1;
->         } else if (nr_pages > 1) {
->                 unsigned long start = ALIGN_DOWN(vmf->address, nr_pages *
-> PAGE_SIZE);
+>  };
+>  
+>  struct nal_hevc_hrd_parameters {
 > 
->> Additionally, I think this path will end up mapping the entire folio (as long as
->> it fits in the VMA). But this bypasses the fault-around configuration. As I
->> think I mentioned against the RFC, this will inflate the RSS of the process and
->> can cause behavioural changes as a result. I believe the current advice is to
->> disable fault-around to prevent this kind of bloat when needed.
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 > 
-> With above change, I do not think this is a problem? since users already want to
-> use mTHP for anonymous shmem.
 > 
->> It might be that you need a special variant of finish_fault() for shmem?
->>
->>
->>> +    }
->>>       vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
->>> -                      vmf->address, &vmf->ptl);
->>> +                       addr, &vmf->ptl);
->>>       if (!vmf->pte)
->>>           return VM_FAULT_NOPAGE;
->>>         /* Re-check under ptl */
->>> -    if (likely(!vmf_pte_changed(vmf))) {
->>> -        struct folio *folio = page_folio(page);
->>> -        int type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
->>> -
->>> -        set_pte_range(vmf, folio, page, 1, vmf->address);
->>> -        add_mm_counter(vma->vm_mm, type, 1);
->>> -        ret = 0;
->>> -    } else {
->>> -        update_mmu_tlb(vma, vmf->address, vmf->pte);
->>> +    if (nr_pages == 1 && unlikely(vmf_pte_changed(vmf))) {
->>> +        update_mmu_tlb(vma, addr, vmf->pte);
->>> +        ret = VM_FAULT_NOPAGE;
->>> +        goto unlock;
->>> +    } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
->>> +        for (i = 0; i < nr_pages; i++)
->>> +            update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pte + i);
->>>           ret = VM_FAULT_NOPAGE;
->>> +        goto unlock;
->>>       }
->>>   +    set_pte_range(vmf, folio, page, nr_pages, addr);
->>> +    type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
->>> +    add_mm_counter(vma->vm_mm, type, nr_pages);
->>> +    ret = 0;
->>> +
->>> +unlock:
->>>       pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>       return ret;
->>>   }
-
 
