@@ -1,131 +1,97 @@
-Return-Path: <linux-kernel+bounces-173936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE5D8C07D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:41:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1EAF8C07D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6920A283EB7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA46283B98
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EA9133401;
-	Wed,  8 May 2024 23:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qi6LoIzC"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C59913329E;
+	Wed,  8 May 2024 23:41:18 +0000 (UTC)
+Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B753130E5A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC05986ADB
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715211654; cv=none; b=lHBxKIURhFrcjJu7b9CJ+LT4isbQ6JnAwrm+Nwi6pPC/nqdXrAjlROq1JJsQHwWjm/7T7bDAlCnaYOseK6GCUfTCHr36KO+LzkYkyWxBFILsq7zrblCxr+NjjnIDzRXtxkhwpNne5H2YEvVzK7YPDXJDdIMo4yjUgpTB34nr810=
+	t=1715211677; cv=none; b=TG+uzCtpHOJYPA4KJzZZioxatooon4LlYq0Pmb4u9U5g7xwGYieI5W+zM9xA5NQycD8unCaJ9vwBczdykpULhl/R/GcpjRlnCI5uJs8UyL+h8BvY+lz2G2XfZzPOGVLgEw/XIMqWel6hcqrDbC4kJMf4iW3lXTmU81VrzTgyNQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715211654; c=relaxed/simple;
-	bh=KwT+okHPi+W6VidpPKXRKh3Wp+ViBEdA4IHjwz/sFCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+MHoTa7E7tm81mYhKxKADqFXJB6Iu12uqZwgTN60aU+7c3tqqpS2OeBuWvDRaavJ2Agv+36GzTDys+JW8s77OM7fCCiH9NnjkNf4z/Btqrl2UP93MHdDt5WR3bPHqYzgO5dQln62izLvH7I2zf3ZKU0ywlMJsHkeIordhbrn5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qi6LoIzC; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1eed90a926fso62365ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715211651; x=1715816451; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rtBaK54I/OmT+ZzA/0tf7fwuvPPu1s0eLKsDcEO5LUU=;
-        b=qi6LoIzCLq4SeYGvdiLFo91UPUgRc8VAjgYHRryxc7qIKku1C2lali1ZIXsdD6qFZ3
-         kORy//kvHgYzx3VxXGWEX4oL9R4q8HBjrdO1e24gX8/DFAr57pfv28tjhn3EEJdyCORs
-         3W5Zsjp2phod1fw0TkFLV+nOgcDwySyRng+lA6w2q36HbFnZZIne3EHE/4yTccKCJ0a/
-         DnBuQ6lAfOPMnC4IoTQKdy1v78B/CXQuGBUzvZZlJ9VS3+T2GAtPMeyyH6logM9s6avI
-         FoiKlQp8f4mjFh84v3w1F7DtNZctwT148nf0QYCoPmWOOnVMPn8wShJEngoIyx0eHjHP
-         5TJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715211651; x=1715816451;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rtBaK54I/OmT+ZzA/0tf7fwuvPPu1s0eLKsDcEO5LUU=;
-        b=Z8JkFVfM1msqWm4vcE1Jm3Wj9JuTkW3V3HbDGrvoviwG57ODE4lf95RiGc+SkT/awg
-         iGj9QppwdWlZdtICxDh3xW94Yfhy/sg1vLmdt1sLFYXdcoreNfGcBEoKA9giQeL18RJr
-         vqOESoysx7X2VSACv+6bK+jTP6amcOWD83NHj4wQuOXFHmVyxCkm2JJ+ZCAY1tTDV3Rk
-         Pa1Uq7fiLEK7VnfxKRJ/2Nmn5GPMwa/lGEwGPkC98pU/LKDso73hYbVLWyTFvw+B6uYz
-         hTDL3lQ2CkySXfdV6MLA3nVNHalTZdQBI9ECO1J/81gdC+hCKXlt54q6cwzgoeY3wKA6
-         xs/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXRoFNhKQYJcR+HSOIvNuEhNR06NTyIFDn4Z/20hrBA8uusJr84aLJZleAlzv+XWhP47UqHucGWW4eiYQ5tO14N8hLrAU4FqfXMX8Yn
-X-Gm-Message-State: AOJu0YzsoMnlZq0sTSU5Pei5nc0NiqvJ1JyMpgtOlrOBWl6Wg3WtyioH
-	e6f3+32Jjou5Kmin+fF0aVXU6/84trl38SXHDBEQQvPZBn4REPGC8s3MzJ/xld6E1CGBZ397ZR3
-	4wQzJLEGL3nckc+RxvlWPqKLW3B8yV7PnATXd
-X-Google-Smtp-Source: AGHT+IE9rtUIKw/slmUwrF8lW9b8vFSRydp6eE79h5ko9MZ8atWirNMl5J/gF4jU3omSX5ix5Yu8yH27Id/RF3iiyMM=
-X-Received: by 2002:a17:902:f605:b0:1e8:88b2:17cd with SMTP id
- d9443c01a7336-1ef005fa6fbmr1062665ad.12.1715211651249; Wed, 08 May 2024
- 16:40:51 -0700 (PDT)
+	s=arc-20240116; t=1715211677; c=relaxed/simple;
+	bh=nrqdNLDIzx+dkszgfU8G0gVZ5s8Mf/hcOqDeIGlqtNk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jMb9etqzrp3xMywKe8HhryQQcKf0ryZBGd06UYqt5ksQ5wZ+upJmlNQTIGROF1XYg2sRuqQHENDIVh8yCBZbFLI6Q7HZhV7JGDaQkVAurwTHxX/eJFZE3GPkAFML9Wt66XrXtndTBm3kOZPr634zc7IZG2aPzmMuXJpXwjH3MoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.141])
+	by sina.com (10.75.12.45) with ESMTP
+	id 663C0D8E00003EDE; Wed, 9 May 2024 07:41:04 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 92419731457684
+X-SMAIL-UIID: E88DBBE4D00B4F63966FFFAF9A9CF77C-20240509-074104-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+1e6e0b916b211bee1bd6@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [block?] [usb?] INFO: rcu detected stall in aoecmd_cfg (2)
+Date: Thu,  9 May 2024 07:40:53 +0800
+Message-Id: <20240508234053.2319-1-hdanton@sina.com>
+In-Reply-To: <0000000000008de5720617f64aae@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zjmc5EiN6zmWZj4r@x1>
-In-Reply-To: <Zjmc5EiN6zmWZj4r@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 8 May 2024 16:40:40 -0700
-Message-ID: <CAP-5=fV3T6G29Hrg3fGRnenjxUMjVfPK-zFGQgp9UgJn1JBA9g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] perf kwork: Use zfree() to avoid possibly accessing
- dangling pointers
-To: arnaldo.melo@gmail.com
-Cc: Yang Jihong <yangjihong1@huawei.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 6, 2024 at 8:15=E2=80=AFPM <arnaldo.melo@gmail.com> wrote:
->
-> When freeing a->b it is good practice to set a->b to NULL using
-> zfree(&a->b) so that when we have a bug where a reference to a freed 'a'
-> pointer is kept somewhere, we can more quickly cause a segfault if some
-> code tries to use a->b.
->
-> Convert one such case in the 'perf kwork' codebase.
->
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Yang Jihong <yangjihong1@huawei.com>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Wed, 08 May 2024 12:27:20 -0700
+> syzbot found the following issue on:
+> 
+> HEAD commit:    9221b2819b8a Add linux-next specific files for 20240503
+> git tree:       linux-next
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=161a5d1f180000
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git  9221b2819b8a
 
-Thanks,
-Ian
-
-> ---
->  tools/perf/builtin-kwork.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/tools/perf/builtin-kwork.c b/tools/perf/builtin-kwork.c
-> index 0092b9b39611d7e9..56e3f3a5e03a2d66 100644
-> --- a/tools/perf/builtin-kwork.c
-> +++ b/tools/perf/builtin-kwork.c
-> @@ -2230,7 +2230,7 @@ static int perf_kwork__top(struct perf_kwork *kwork=
-)
->         perf_kwork__top_report(kwork);
->
->  out:
-> -       free(kwork->top_stat.cpus_runtime);
-> +       zfree(&kwork->top_stat.cpus_runtime);
->         return ret;
->  }
->
-> --
-> 2.44.0
->
+--- l/drivers/input/misc/yealink.c
++++ y/drivers/input/misc/yealink.c
+@@ -436,7 +436,7 @@ static void urb_irq_callback(struct urb
+ 
+ 	yealink_do_idle_tasks(yld);
+ 
+-	if (!yld->shutdown) {
++	if (!yld->shutdown && status != -EPROTO) {
+ 		ret = usb_submit_urb(yld->urb_ctl, GFP_ATOMIC);
+ 		if (ret && ret != -EPERM)
+ 			dev_err(&yld->intf->dev,
+@@ -458,13 +458,13 @@ static void urb_ctl_callback(struct urb
+ 	case CMD_KEYPRESS:
+ 	case CMD_SCANCODE:
+ 		/* ask for a response */
+-		if (!yld->shutdown)
++		if (!yld->shutdown && status != -EPROTO)
+ 			ret = usb_submit_urb(yld->urb_irq, GFP_ATOMIC);
+ 		break;
+ 	default:
+ 		/* send new command */
+ 		yealink_do_idle_tasks(yld);
+-		if (!yld->shutdown)
++		if (!yld->shutdown && status != -EPROTO)
+ 			ret = usb_submit_urb(yld->urb_ctl, GFP_ATOMIC);
+ 		break;
+ 	}
+--
 
