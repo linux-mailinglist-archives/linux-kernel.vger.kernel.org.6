@@ -1,80 +1,70 @@
-Return-Path: <linux-kernel+bounces-173562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8AF8C022D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:44:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC7828C0230
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0332FB210F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8885B1C21807
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3481F46B5;
-	Wed,  8 May 2024 16:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F8546B5;
+	Wed,  8 May 2024 16:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jWdHTgVF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JvY717bi"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF6265C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5978A65C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 16:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715186636; cv=none; b=HqE7bdZeKxXUQfGEKdWdU6ZZ0pQ3NQT5hOWAg0uu3XvpYwNA+2g9QOMnWSTGDJYI3PeYL+/cO8mh00SUuqu5E6J4AR6Go0r934c1qTCVjC6lhwSeLzwV0lSppcB576TE6TEP2WB1T+WpbH2XkZUAQU9WdwtDR+K2zWD5H9vyOoA=
+	t=1715186665; cv=none; b=NorOyTVf8QxngofcN4Cy0ec+MaCrO/e87CvSiz5D2Mp9f00pr/Grhm1wS4Jsmhm8LeDDnoZHmwbDso6JGVDgLRfnN5Hk6eT7OthtVj6iYnBZcPzlsjhhPd19tKNe2dzy5vt4xv5wQyn68YnJei3CIkmIm/GNwgMuBzzPjaNyZRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715186636; c=relaxed/simple;
-	bh=v2O/JOXhGm7/O6sH0tL56gDuw0iqg3tR8svJJWlpQlA=;
+	s=arc-20240116; t=1715186665; c=relaxed/simple;
+	bh=4wGJLuChsp/1gmRGB7NQcvgOkYoPQYFGYebbsMssmAU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PtIoSryPGDPZqRKLDS+o1ltaiSsIkQDzON4mvN6Pqj+q9WdrtGHMYG/mpjd8/CNhZeugWxzoL+7p1WVdk6ccqUwmccDTXXpXIZMFJqJrR9olTVWR/mGOiJoHX1vB7gSnGSOx5g03mbNVMySXE7RIt//xuaYkOH/J8UyhTH5oRd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jWdHTgVF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715186632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kfu+kNg5psV0QrTCz/mBUS9Pxutp2X9pNWB5lOfJe8k=;
-	b=jWdHTgVFvD9KTogAn4tXmg5dUneed6LJa8knepN13TcyG969mThvEJikcOLZdv6+NGTXtw
-	6yPwOiws1D4+IhyT8iun0/6SLfddQ9WIg5MXfTqeQadVIo1NYb5PC4XKXFYFqoPt4BmUPa
-	pNCRDGctoB5NjPojvSli5D41Ln87nls=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651-RcJfeKrUNOi4xiFX333G0Q-1; Wed, 08 May 2024 12:43:51 -0400
-X-MC-Unique: RcJfeKrUNOi4xiFX333G0Q-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-41a370b6acdso22914415e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 09:43:51 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=nLvNznCzw7Tic/BseqxSMs2GPIMy0AsLvQoJEL2WoyuCo6FqReeOLN2bkhWPEOlN5mzlUqrzWTgbwYAsZhGZpSoQGAGSPfHcEIpwLI2jSv0Dz+C9m1j9CQJN5wbmS+V5IntpqhYIAOLDkdad6sawV59ALW+Ae7B3hLFaaQbmj9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JvY717bi; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-437610adf96so26679791cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 09:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1715186662; x=1715791462; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FYLyoRSUPniPvnVO2R453QQvOI5X4K1kXoE2yfblRxY=;
+        b=JvY717biIuAWsH2TeOZAU6uzeDGMn94CH5coAXDsDkwsox3WqI9Bho70ZyuCiazrpi
+         SEUEBN0B7ih1AsXOp+NtkYAoRXCavuZb88RmJK+2W9Ko/f6/ejdYLS4Tz7sh8wS+/1XF
+         THRO65CIw58EY2G9Ln7VApXWGK6/aWDQT5SiI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715186630; x=1715791430;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
+        d=1e100.net; s=20230601; t=1715186662; x=1715791462;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=kfu+kNg5psV0QrTCz/mBUS9Pxutp2X9pNWB5lOfJe8k=;
-        b=WU7dHSz1BAd5N287Cl3UdO0lZAAFOaeIEWaTKx03iqzdeI/3TfHPyF9Yu1KKehESyQ
-         B0vpIduOOPlTDBPopCGpTMyp4Z0Z0fT0CIV9q0rG2xzjnx/YZ8aRav+IEqBjKJEPrFnE
-         JQN/NiMGkVDGHDNYBYWyWOB4Oase71zQny5KNIGTdgOiadcKdn0LE1ugRFVhCxtmKyZv
-         ZBQpIX2vNRaB2Ms/aV8ao9PTKehPXraKKYFDmnAVWz6a7H+6zIYLwuAjztU2SKV05jIy
-         lNOZxi+Q864lxPhsiNU0kPnmhF1Ytc0H0f7UaJduCKGEl52Xfwtuzy6WJWUUisEiuTeN
-         V9IA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbHzMe5W84Zs7sp9G4pm0gmRBg9N5YdgOLx+Sc9r7TYP2/qTxO73tauY1BjzcZRHBcEGjwWEfb+D9R9GPkw7seMNjeqb4qs3j42Jue
-X-Gm-Message-State: AOJu0YyHtPoxI3CjlTF0PCcFAPjOXZI6ognlvf18yR0dTldXmRhi7Ipa
-	VZIFGJwPRJZXcPYyeZ/2RVA1boz7ZadVBjgVNF51cpIdtxe/0L/1bHkQ9WHjVpj2QAJLHFzwUF4
-	MFY86f69wOxzYvzSNGAILLTgSiLZMQzug8TOKcWk5S4MzFLv3G1J5AP+J1t/BEQ==
-X-Received: by 2002:a05:600c:3507:b0:41a:f9db:88ac with SMTP id 5b1f17b1804b1-41f71cc4e9cmr25139245e9.14.1715186630451;
-        Wed, 08 May 2024 09:43:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiXFhtgFYexLvlE9tUnQOpwikaBE/AJRGx0k+bYeHdn7M9LalM+i8Bs18/sw5TMREw1EkZEA==
-X-Received: by 2002:a05:600c:3507:b0:41a:f9db:88ac with SMTP id 5b1f17b1804b1-41f71cc4e9cmr25139055e9.14.1715186629991;
-        Wed, 08 May 2024 09:43:49 -0700 (PDT)
-Received: from [192.168.3.108] (p5b0c6bc3.dip0.t-ipconnect.de. [91.12.107.195])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882085dbsm29015445e9.41.2024.05.08.09.43.48
+        bh=FYLyoRSUPniPvnVO2R453QQvOI5X4K1kXoE2yfblRxY=;
+        b=A5Jj5NOc+fgH6OqCu9fc9UJyBx03k2fM6k/4SizCEE+c8ppeQnoZ4oAYyy6+o17UGw
+         UiUVrBU88j+804hFRpdKYH2pWZES/7j/LXxqBcrcSTqXVq4AdNqSKnph10JeTufM8bTs
+         BvLLK/fL3fg+slhD+JEs2gCSeP2neabpQgrV9cPWNUsk/4PT1ZYhDEorFnZoCPSuBApj
+         iF9a6OAGKqxxsa821JlhoV+wHaYePJ1k3MM94n52ViU1Ny8rJluXTMi++1XLcZSF3PxN
+         AYFdri2+u/GbgYBKIr6wabKs5ts14GYFDb+3atxaiRomfcUUF2Vkm875qulv0Gz6wsMO
+         1R9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVYn9xYa1RkeX2YewkRLIw0UZpY3e3efLbw0u4ULWJ/h1d9z0n1Asjnk2XBt8AM2AQ2ZHPFOqnpws2V46CAm3odA0ioXcTpjOq9k5po
+X-Gm-Message-State: AOJu0YxLyracQXBDF3vw/i8UaUiDottUpsOxGVzF4FSqO3Niwrn5qH6d
+	7+/2HAA9l958WHM2w+FKd+DubNxBhPHC07LbKX5qXK2EBs9N8eDXEkCFk6lSuQ==
+X-Google-Smtp-Source: AGHT+IFZFoNRasNXkJ7SgvkTDbSJp5c9GMg9Q34fg6FccxNhrU7LpBQ34NMaB5CDRA470ncuqT0xEw==
+X-Received: by 2002:a05:622a:1a0d:b0:43c:5d37:5a97 with SMTP id d75a77b69052e-43dbed30d10mr40637981cf.31.1715186662199;
+        Wed, 08 May 2024 09:44:22 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id hx1-20020a05622a668100b004364d940d3dsm7696341qtb.96.2024.05.08.09.44.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 09:43:49 -0700 (PDT)
-Message-ID: <417e4dc4-ea48-4d68-a441-f782f98a08fe@redhat.com>
-Date: Wed, 8 May 2024 18:43:48 +0200
+        Wed, 08 May 2024 09:44:20 -0700 (PDT)
+Message-ID: <9ed8a274-4db7-4ecb-a3db-f33818328a3d@broadcom.com>
+Date: Wed, 8 May 2024 09:44:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,210 +72,218 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Fix userfaultfd_api to return EINVAL as expected
-To: Audra Mitchell <audra@redhat.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- akpm@linux-foundation.org, shuah@kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org, raquini@redhat.com,
- Peter Xu <peterx@redhat.com>
-References: <20240507195510.283744-1-audra@redhat.com>
- <939a16f2-7b66-45a6-a043-4821bd3c71dc@redhat.com> <Zjt3Apr8ILFA4oK_@fedora>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 3/5] dt-bindings: mips: brcm: Document
+ brcm,bmips-cbr-reg property
+To: Rob Herring <robh@kernel.org>, Christian Marangi <ansuelsmth@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+ linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, =?UTF-8?Q?Daniel_Gonz=C3=A1lez_Cabanelas?=
+ <dgcbueu@gmail.com>
+References: <20240503212139.5811-1-ansuelsmth@gmail.com>
+ <20240503212139.5811-4-ansuelsmth@gmail.com>
+ <20240507130728.GA43076-robh@kernel.org>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240507130728.GA43076-robh@kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000bee71d0617f40310"
+
+--000000000000bee71d0617f40310
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zjt3Apr8ILFA4oK_@fedora>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 08.05.24 14:58, Audra Mitchell wrote:
-> On Wed, May 08, 2024 at 09:39:10AM +0200, David Hildenbrand wrote:
->> On 07.05.24 21:55, Audra Mitchell wrote:
->>> Currently if we request a feature that is not set in the Kernel
->>> config we fail silently and return the available features. However, the
->>> documentation indicates we should return an EINVAL.
+On 5/7/24 06:07, Rob Herring wrote:
+> On Fri, May 03, 2024 at 11:20:59PM +0200, Christian Marangi wrote:
+>> Document brcm,bmips-cbr-reg and brcm,bmips-broken-cbr-reg property.
 >>
->> I assume you are referencing
+>> Some SoC suffer from a BUG where read_c0_brcm_cbr() might return 0
+>> if called from TP1. The CBR address is always the same on the SoC
+>> hence it can be provided in DT to handle broken case where bootloader
+>> doesn't init it or SMP where read_c0_brcm_cbr() returns 0 from TP1.
 >>
->> "EINVAL The API version requested in the api field is not supported by this
->> kernel, or  the  features  field passed to the kernel includes feature bits
->> that are not supported by the current kernel version."
+>> Usage of this property is to give an address also in these broken
+>> configuration/bootloader.
 >>
->> and
->>
->> "To  enable  userfaultfd features the application should set a bit
->> corresponding to each feature it wants to enable in the features field. If
->> the kernel supports all the requested features it will enable them.
->> Otherwise it will zero out the returned uffdio_api structure and return
->> EINVAL.
->> "
->>
->> in which case I agree.
+>> If the SoC/Bootloader ALWAYS provide a broken CBR address the property
+>> "brcm,bmips-broken-cbr-reg" can be used to ignore any value already set
+>> in the registers for CBR address.
 > 
-> Yep! I'm referencing the man page.
+> Why can't these be implied from an SoC specific compatible?
 
-Might be worth just quoting the man page :)
+Because some SoCs with the same compatible have it right, and some 
+wrong, courtesy of how the various OEMs implemented it.
 
->>> We need to fix this issue since we can end up with a Kernel warning
->>> should a program request the feature UFFD_FEATURE_WP_UNPOPULATED on
->>> a kernel with the config not set with this feature.
->>
->> Can you mention which exact one? Is it a WARN* or a pr_warn() ?
 > 
-> Here is the kernel warning I get:
-> 
+> It's not a great design where you have to update the DT which should be
+> provided from the bootloader in order to work-around bootloader
+> issues...
 
-Thanks, it makes sense to add the first couple of lines of below to the 
-patch description.
+The bootloader was designed without DT in mind, and while CFE had a 
+callback mechanism to query environment variables and whatnot, those 
+devices were stripped out of it.
 
-> [  200.803094] unrecognized swap entry 0x7c00000000000001
-> [  200.808270] ------------[ cut here ]------------
-> [  200.812896] WARNING: CPU: 91 PID: 13634 at mm/memory.c:1660 zap_pte_range+0x43d/0x660
-> [  200.820738] Modules linked in: qrtr bridge stp llc rfkill sunrpc amd_atl intel_rapl_msr intel_rapl_common amd64_edac edac_mce_amd kvm_amd kvm ipmi_ssif acpi_ipmi i2c_piix4 ipmi_si wmi_bmof dcdbas dell_smbios dell_wmi_descriptor ptdma ipmi_devintf rapl ipmi_msghandler acpi_power_meter pcspkr k10temp xfs libcrc32c sd_mod t10_pi mgag200 sg drm_kms_helper crct10dif_pclmul i2c_algo_bit ahci crc32_pclmul drm_shmem_helper libahci crc32c_intel drm i40e libata ghash_clmulni_intel tg3 ccp megaraid_sas sp5100_tco wmi dm_mirror dm_region_hash dm_log dm_mod fuse
-> [  200.869387] CPU: 91 PID: 13634 Comm: userfaultfd Kdump: loaded Not tainted 6.9.0-rc5+ #8
-> [  200.877477] Hardware name: Dell Inc. PowerEdge R6525/0N7YGH, BIOS 2.7.3 03/30/2022
-> [  200.885052] RIP: 0010:zap_pte_range+0x43d/0x660
-> [  200.889595] Code: 83 fa 02 0f 86 44 01 00 00 83 f9 17 0f 84 e1 00 00 00 83 f9 1f 0f 84 d0 00 00 00 48 89 c6 48 c7 c7 00 e4 dd bb e8 73 a2 de ff <0f> 0b e9 44 fd ff ff 45 0f b6 44 24 20 41 f6 c0 f4 75 27 4c 89 ee
-> [  200.908348] RSP: 0018:ffffa18d2e6c37c8 EFLAGS: 00010246
-> [  200.913584] RAX: 000000000000002a RBX: 00007f26d3600000 RCX: 0000000000000000
-> [  200.920730] RDX: 0000000000000000 RSI: ffff93503f9a0bc0 RDI: ffff93503f9a0bc0
-> [  200.927867] RBP: 00007f26d35cc000 R08: 0000000000000000 R09: ffffa18d2e6c3688
-> [  200.935009] R10: ffffa18d2e6c3680 R11: ffffffffbc9de448 R12: ffffa18d2e6c39e8
-> [  200.942149] R13: ffff92d1ebc15b50 R14: ffff93114e0cde60 R15: ffffa18d2e6c3928
-> [  200.949291] FS:  0000000000000000(0000) GS:ffff93503f980000(0000) knlGS:0000000000000000
-> [  200.957384] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  200.963140] CR2: 00007f26b1600658 CR3: 00000040905ba000 CR4: 0000000000350ef0
-> [  200.970283] Call Trace:
-> [  200.972745]  <TASK>
-> [  200.974862]  ? __warn+0x7f/0x130
-> [  200.978108]  ? zap_pte_range+0x43d/0x660
-> [  200.982044]  ? report_bug+0x18a/0x1a0
-> [  200.985720]  ? handle_bug+0x3c/0x70
-> [  200.989219]  ? exc_invalid_op+0x14/0x70
-> [  200.993068]  ? asm_exc_invalid_op+0x16/0x20
-> [  200.997265]  ? zap_pte_range+0x43d/0x660
-> [  201.001199]  ? zap_pte_range+0x43d/0x660
-> [  201.005134]  zap_pmd_range.isra.0+0xf9/0x230
-> [  201.009416]  unmap_page_range+0x2d4/0x4a0
-> [  201.013436]  unmap_vmas+0xa8/0x180
-> [  201.016854]  exit_mmap+0xea/0x3b0
-> [  201.020191]  __mmput+0x43/0x120
-> [  201.023342]  exit_mm+0xb1/0x110
-> [  201.026496]  do_exit+0x270/0x4f0
-> [  201.029739]  do_group_exit+0x2c/0x80
-> [  201.033326]  get_signal+0x886/0x8b0
-> [  201.036828]  ? srso_return_thunk+0x5/0x5f
-> [  201.040848]  arch_do_signal_or_restart+0x25/0x100
-> [  201.045563]  ? srso_return_thunk+0x5/0x5f
-> [  201.049583]  ? vma_set_page_prot+0x5e/0xc0
-> [  201.053692]  ? srso_return_thunk+0x5/0x5f
-> [  201.057713]  ? syscall_exit_work+0xff/0x130
-> [  201.061908]  syscall_exit_to_user_mode+0x1b3/0x200
-> [  201.066712]  do_syscall_64+0x87/0x160
-> [  201.070387]  ? srso_return_thunk+0x5/0x5f
-> [  201.074405]  ? do_mmap+0x416/0x5f0
-> [  201.077821]  ? srso_return_thunk+0x5/0x5f
-> [  201.081840]  ? rseq_get_rseq_cs+0x1d/0x240
-> [  201.085950]  ? srso_return_thunk+0x5/0x5f
-> [  201.089970]  ? rseq_ip_fixup+0x6d/0x1d0
-> [  201.093823]  ? vm_mmap_pgoff+0x117/0x1a0
-> [  201.097755]  ? srso_return_thunk+0x5/0x5f
-> [  201.101776]  ? srso_return_thunk+0x5/0x5f
-> [  201.105795]  ? syscall_exit_to_user_mode+0x78/0x200
-> [  201.110685]  ? srso_return_thunk+0x5/0x5f
-> [  201.114706]  ? do_syscall_64+0x87/0x160
-> [  201.118557]  ? srso_return_thunk+0x5/0x5f
-> [  201.122575]  ? __count_memcg_events+0x49/0xb0
-> [  201.126944]  ? srso_return_thunk+0x5/0x5f
-> [  201.130967]  ? srso_return_thunk+0x5/0x5f
-> [  201.134986]  ? syscall_exit_work+0xff/0x130
-> [  201.139184]  ? srso_return_thunk+0x5/0x5f
-> [  201.143205]  ? syscall_exit_to_user_mode+0x78/0x200
-> [  201.148093]  ? srso_return_thunk+0x5/0x5f
-> [  201.152114]  ? do_syscall_64+0x87/0x160
-> [  201.155960]  ? srso_return_thunk+0x5/0x5f
-> [  201.159984]  ? sched_clock_cpu+0xb/0x190
-> [  201.163916]  ? srso_return_thunk+0x5/0x5f
-> [  201.167939]  ? irqtime_account_irq+0x40/0xc0
-> [  201.172220]  ? srso_return_thunk+0x5/0x5f
-> [  201.176243]  ? srso_return_thunk+0x5/0x5f
-> [  201.180263]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  201.185326] RIP: 0033:0x7f26dfd0735b
-> [  201.188939] Code: Unable to access opcode bytes at 0x7f26dfd07331.
-> [  201.195128] RSP: 002b:00007fffce176868 EFLAGS: 00000206 ORIG_RAX: 000000000000000a
-> [  201.202700] RAX: fffffffffffffffc RBX: 00007f26dfe60000 RCX: 00007f26dfd0735b
-> [  201.209841] RDX: 0000000000000003 RSI: 0000000001000000 RDI: 00007f26af401000
-> [  201.216983] RBP: 00007f26b0400640 R08: 00000000ffffffff R09: 0000000000000000
-> [  201.224127] R10: ffffffffffffffc0 R11: 0000000000000206 R12: 0000000000000000
-> [  201.231267] R13: 000000000040d320 R14: 0000000000000000 R15: 0000000000000000
-> [  201.238413]  </TASK>
-> [  201.240610] ---[ end trace 0000000000000000 ]---
-> [  201.245250] unrecognized swap entry 0x7c00000000000001
-> 
-> 
 > 
 >>
->> Likely we want "Fixes:" here.
+>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+>> ---
+>>   .../devicetree/bindings/mips/brcm/soc.yaml    | 32 +++++++++++++++++++
+>>   1 file changed, 32 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mips/brcm/soc.yaml b/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+>> index 975945ca2888..29af8f0db785 100644
+>> --- a/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+>> +++ b/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+>> @@ -55,6 +55,21 @@ properties:
+>>            under the "cpus" node.
+>>           $ref: /schemas/types.yaml#/definitions/uint32
+>>   
+>> +      brcm,bmips-broken-cbr-reg:
+>> +        description: Declare that the Bootloader init a broken
+>> +          CBR address in the registers and the one provided from
+>> +          DT should always be used.
 > 
-> This could be seen as a continuation of the problem
-> 2ff559f31a5d Revert "userfaultfd: don't fail on unrecognized features"
-> was trying to solve. However, this patch only checks to make sure we didnt
-> ask for a feature outside the possible range of features. We are still missing
-> a check to confirm the requested features are also configured on. So I guess
-> the "Fixes" tag would be for this patch?
-> 914eedcb9ba0 userfaultfd: don't fail on unrecognized features
+> Why wouldn't brcm,bmips-cbr-reg being present indicate to use it?
 > 
-> Happy to get your input here!
+>> +        type: boolean
+>> +
+>> +      brcm,bmips-cbr-reg:
+>> +        description: Reference address of the CBR.
+>> +          Some SoC suffer from a BUG where read_c0_brcm_cbr() might
+>> +          return 0 if called from TP1. The CBR address is always the
+>> +          same on the SoC hence it can be provided in DT to handle
+>> +          broken case where bootloader doesn't initialise it or SMP
+>> +          where read_c0_brcm_cbr() returns 0 from TP1.
+>> +        $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> CBR is never defined anywhere in this patch.
 
-I agree with Peters summary :)
-
+The very presence of "brcm,bmips-cbr-reg" property should be enough to 
+indicate to the kernel that it should the value provided, rather than 
+the value returned from read_c0_brcm_cbr(). That is, I don't think there 
+is a need to indicate to the kernel that the CBR value is broken, if you 
+provide a new value that is enough of a clue to tel you that.
 -- 
-Cheers,
+Florian
 
-David / dhildenb
 
+--000000000000bee71d0617f40310
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIKxHXQibJJ9zXpp/
+Tbftu/4fNJPO1n7bQuR7qsJckAjgMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDUwODE2NDQyMlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC+KLkMrv+wd7AL7k1b0SP27J/cj5Sl5i/8
+/BNqfVoYL1PP5+eRdEKfTHTeTxs8R7TBh/eIyRgBLW6SBrzRTJKPG7i7TCzb6PQBjZJFGBLpLsox
++zayVLmLrbDIcj0PNX+iM5Qc/xr7U460YErZKVGkZKRY1H2vN5OG/64+iA97z0HPlg72HhM+PBFV
+jbK1sJcmjKHKb9rxNWpoxWuDNtqv0HHq8he8GcQgNW+3Fd1Z2P3aOmtClqF4TdZZgHlM1pHzcYrg
+CAFjs4qig8nbwFivFPJQ+i8iSd1KJBNI0IsaEOYaLkbPDyBS4d3FGum5uqxKfBVDaPR8qI0HXnP2
+IA5A
+--000000000000bee71d0617f40310--
 
