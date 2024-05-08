@@ -1,165 +1,168 @@
-Return-Path: <linux-kernel+bounces-173799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20ECC8C05A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:28:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07C18C05A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C050428332F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BE301F21561
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F6F130E2C;
-	Wed,  8 May 2024 20:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE85130E34;
+	Wed,  8 May 2024 20:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyX9IHCr"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="kg6HtCVG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hn4JzeGW"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E249130E20
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 20:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13852130AFA;
+	Wed,  8 May 2024 20:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715200092; cv=none; b=uHhqiRFf6mzZFRMTd2cy2geUnoSlbQkUmLkwRxy3PYdR/xr8awBAhyDcgdLV713jxargIfNnFSDcRHtm1MPyAPB4NBnHXPKAShZhF0YqLV95VJhwIazWcKvLRZdiFIccM0hD9/nUPz1kJ20oxJmJoJ72DquH8MiwPZS02APfh08=
+	t=1715200111; cv=none; b=kNC6WKeYLu87Csb/UbVP0cJ6EGRdfBcgPyaJ+w4ATaHelWiiqvSfSMTpYVO2POJmhPpzuxs4MbjyN+gBEgpJwykn866li+sOQ07yDJmfSxhBnzRH2N1hYQ4OeBbCiQMoQFhIHbT0SXVv/tg29RCKKzj7eDBkuseolszvCoMc3KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715200092; c=relaxed/simple;
-	bh=o2NLQhPztuDZ4rTiTDFMEINRFzrqOs93EXYAp0RXtiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BloAhkzIGIGhSC2JAhxbO7ifaxq8lQ+3l/MDIesiyy3eG4cbMkxzaZOvTLfgrxsuiJKiI3LpuKSGB451m3gl5pdoCcWmLLG8YygAcq9jN07UmnMLSnQ23L4UrnzajB6VoiHBxAJ6g9dRfbmy4KVbCoaVrqEP7A7csGtFsIl5Wn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NyX9IHCr; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso3839a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 13:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715200088; x=1715804888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VxBCT1ZV/EGWLKjxVs7FXcKu7sqjJfkKsVJ1w+mU1+0=;
-        b=NyX9IHCrSC9Je83Z/MnO8GwYzmpBLZE12Oh7P0WFKvTalU2Ciei+SR4yfrdbmQXps+
-         uWt/vjgQ+p0u6FKAcDDdqRciXtxpn1eAn1RRbxJrfD7/D6dUWWiyHNmgyOHtkeETq02t
-         YGSf7tHygxWbjyaDE4tFQH/tNyN+kiFydGC4Sf/vS3eO7m6sUlailV45R5eKKxcUYq0J
-         aW/UI7mnxqPAUJ+IEgeMuC8o5GtFG8x1++zBxQVDeD5vc9pjheIIRF7IN7vbtVWA/fD2
-         KDdFmbJEMXi4XdMUBM8YFeX7KpKa9V5dExWXQepqMrbkr5Fy3psYGVyoCv4bI3hNGEoQ
-         uD6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715200088; x=1715804888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VxBCT1ZV/EGWLKjxVs7FXcKu7sqjJfkKsVJ1w+mU1+0=;
-        b=a2LdCbrZNgsejkQ12j3ljkFrvJwmzfY6fwn94FZP5SQRZBxCGNBQljsjSGRpBipRtM
-         tUkBM+mUzE2igpvvRVtegNr3Mv0dnXwM0XIpXMozW8YSzacqnJ37sdvpH9w9d6pzmp69
-         LcN0PYgugwizVY2wky61lgGdFYQ7hrl+jYjbDsPjgE9ubwbfmVHhtIZ9FKCq7etTHxuF
-         YOCROHdt7Rd+UbeyS88QiSkAVlyGptuJtBJ/sm4MVtnxPeGyEx0HWNyJB69AY0OyuEbu
-         55JfYdw7744npZBmXV3z2xYk8f4PTTnW9Iz634CH6GV11arptBXcavRbFGxxaTK9gZLt
-         V12w==
-X-Forwarded-Encrypted: i=1; AJvYcCWIzzt7ZRICmlWqt4r7ezjevw4xWZAH4EsQVro7qmJMhnTxlRVatfvDkidRlSpY3lq0L616ImjtmwU3FkCMWI0ECcaQVwlW7LvW8G48
-X-Gm-Message-State: AOJu0YxrgyGDOqx+D8986Pin/fNChIKS4cEQ3HAAqq7wvySV04rBZQ5j
-	KA7NsA40Bl9gd0vhdvAm10Xn1NA1hLCKZ3Fe0kaBfwCum0pVGAxr0GZZ8cXsnn2m14eZ5YxVYRt
-	njbkj2/NpIG+p0eTJXDLJ+S4URXHGAp6O1RnL
-X-Google-Smtp-Source: AGHT+IG0Nkg3RjjAAyj+n+Ew0xyy8RnKsH20og6+OrFEWYycNhxXEo9VK176FECewK/2EQxZ5XFepnMJQqWDZY6gYdE=
-X-Received: by 2002:a05:6402:228b:b0:572:a33d:437f with SMTP id
- 4fb4d7f45d1cf-573341614e1mr44879a12.2.1715200087751; Wed, 08 May 2024
- 13:28:07 -0700 (PDT)
+	s=arc-20240116; t=1715200111; c=relaxed/simple;
+	bh=KKTnYE/+6c0wZB8oPaRYsZ5PxxNQR2AnCTX6BwXaEcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hmEl17QFy+vZmAvIBKJe/4frJtnTSC/jXZZ0EC0FBNiZJiNFPmk80MVcR90ZhdzsEkiM/VwIShFpVIZIpEufi3vt15E2bInhihC3Zt0kDJwIlc6PyZX0BIsh2nRGw3isHJIWgKIayOe9IgN1zDmA0Vvu8F0Nv8OPW1qlEXC1UN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=kg6HtCVG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hn4JzeGW; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 0B42E1380381;
+	Wed,  8 May 2024 16:28:28 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 08 May 2024 16:28:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1715200108;
+	 x=1715286508; bh=KKTnYE/+6c0wZB8oPaRYsZ5PxxNQR2AnCTX6BwXaEcY=; b=
+	kg6HtCVGRmit3APTNuegMPqvOSBF14gME8ovGNwa3GcOXEmEfGigxWvHpMkcEvW5
+	FpJic/56fF0R0814Ppl52ey6XFV/8HyDfNVvjg5FQ9WP8enpl5kC+Gwkljj10cOH
+	tb3k0XwSM/7yCeWQdbd2EGBzY7OWYkayuswjYb+hxD08jy5rmtmh+2k4vkpZNTVP
+	0CoyM5IFv0QXbpBphHCQbethz/B7DfJRHdzQ7X0cQt0uWNAVh0Rhs47E4AeBJTdW
+	i4KVyme8MtS18/VK80LmyOW9/HqoF7Fketk1PyOtxImAZuAn7eZHzdKVr5tCqM+Y
+	+PkpxjGv5HNnfOhxgMJxgA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715200108; x=
+	1715286508; bh=KKTnYE/+6c0wZB8oPaRYsZ5PxxNQR2AnCTX6BwXaEcY=; b=H
+	n4JzeGWByG0/CCmHY9T5xWb7ek4zNAKTuqsm3Li/1AQm2bjgpOg6tEbSbWgeAej0
+	4NrFFhIbc3xeg5FiIfpn6XVxLIs+C6eufPFB4SICGaPilgXNNyzposjwv8b7APUX
+	ldHhmQAw3+DnsCYcnHz/oQHad2U6TdfStPZRGC9kRJKVaGpGzAFOYExfyfMmqX+p
+	LxYPikG0dk8tcPGxvuQxjf9ab3xoEmAJYhC3tp/FQT8TvgSNFv6HnADEVglZN6Iv
+	rJdpJSSgQuOopZd/1YrJMIcVCXS6ECoaLOcEIvPpJdnjTKM9MNiCzIXdSvQj5X5Q
+	zINTqY7fIPXI8LyuWDTjg==
+X-ME-Sender: <xms:a-A7ZiKf69YirQTEQnVf00_9nrVOxE4a5DrCFbOtFJ-r4mIUe-SqLw>
+    <xme:a-A7ZqJpmarVp7CjWuuRzStvwDinVDqdhmoU57FnWzOVYXmiBFNmhTyQvRnjpUem2
+    5Yw5qhzbIsQpTmWxq4>
+X-ME-Received: <xmr:a-A7Zive8Uxx76yXZZ_R9RIMM-ijsuMx4VtCz4CdxWnLKTrtlF-dnwqAz96-JGyPRg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeftddgudegjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheplfhi
+    rgiguhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
+    enucggtffrrghtthgvrhhnpeelueffheehgeeluedvlefghfeukeejteeuveeuhffftdfg
+    uefhgefgueekffeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:a-A7ZnamHW_g9jHQOT55DhrhXNGsDUi37iWXeoaiVjY9QTo3sBsZ8g>
+    <xmx:a-A7ZpaoOfgIAtH0oq3HeuL83tJic4fcDNKqIsXLa_vBIEdyzIPKdg>
+    <xmx:a-A7ZjAoMn1QdzVWNwVQ_dN8EhvvbczB8fDhrjCqdGT93Vf_5fZn1w>
+    <xmx:a-A7ZvbNU31c6AzaaGKIGVpd6_z8SumarXMnJM80_0ZcjEj1vIT4Cw>
+    <xmx:bOA7ZrlQYTx9ZxZ1xv-Tvd0JqiYKF_0xrgItAUESNP9dLtA5-u7r-2BO>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 May 2024 16:28:26 -0400 (EDT)
+Message-ID: <42f91b62-2bf9-414d-ad05-6770282637f7@flygoat.com>
+Date: Wed, 8 May 2024 21:28:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507214254.2787305-1-edliaw@google.com> <20240507214254.2787305-5-edliaw@google.com>
- <ZjuEILj0SZRuTL9I@google.com>
-In-Reply-To: <ZjuEILj0SZRuTL9I@google.com>
-From: Edward Liaw <edliaw@google.com>
-Date: Wed, 8 May 2024 13:27:39 -0700
-Message-ID: <CAG4es9VWuY4Z5HoU_SQCDaSrDC0s1knDfGvLNEa1YxhC0RZ2ZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] selftests: Drop define _GNU_SOURCE
-To: Sean Christopherson <seanjc@google.com>
-Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
-	David Hildenbrand <david@redhat.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Seth Forshee <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>, 
-	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 8, 2024 at 6:54=E2=80=AFAM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Tue, May 07, 2024, Edward Liaw wrote:
-> > _GNU_SOURCE is provided by KHDR_INCLUDES, so it should be dropped to
-> > prevent _GNU_SOURCE redefined warnings.
->
-> ...
->
-> > diff --git a/tools/testing/selftests/x86/test_syscall_vdso.c b/tools/te=
-sting/selftests/x86/test_syscall_vdso.c
-> > index 8965c311bd65..5cd13279bba5 100644
-> > --- a/tools/testing/selftests/x86/test_syscall_vdso.c
-> > +++ b/tools/testing/selftests/x86/test_syscall_vdso.c
-> > @@ -8,10 +8,6 @@
-> >   * Can be built statically:
-> >   * gcc -Os -Wall -static -m32 test_syscall_vdso.c thunks_32.S
-> >   */
-> > -#undef _GNU_SOURCE
-> > -#define _GNU_SOURCE 1
-> > -#undef __USE_GNU
-> > -#define __USE_GNU 1
->
-> AFAICT, manually defining __USE_GNU is frowned upon, so I'm guessing the =
-__USE_GNU
-> stuff is just the result of misguided copy+paste.  But it would be nice t=
-o get
-> confirmation that this test isn't doing something clever.  Or at the very=
- least,
-> explain the removal of __USE_GNU in the changelog.
-
-It looks like test_syscall_vdso, test_FCMOV, test_FCOMI, and
-test_FISTTP don't actually use any GNU extensions.  I'll add that to
-the commit message.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] dt-bindings: mips: Document mti,mips-cm
+Content-Language: en-GB
+To: Conor Dooley <conor@kernel.org>
+Cc: "paulburton@kernel.org" <paulburton@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
+ <20240507-cm_probe-v1-4-11dbfd598f3c@flygoat.com>
+ <20240507-jokester-antelope-808b21b957e6@spud>
+ <fbb4b8e2-edf4-4b4e-8b71-154a09f24ccd@app.fastmail.com>
+ <20240508-puzzle-directive-b6f771f92fe9@spud>
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Autocrypt: addr=jiaxun.yang@flygoat.com;
+ keydata= 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
+ HVO98ZmbMeg=
+In-Reply-To: <20240508-puzzle-directive-b6f771f92fe9@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
+
+在 2024/5/8 18:01, Conor Dooley 写道:
+[...]
+>> So it's actually a register block that can be remapped to anywhere in
+>> MMIO address space. DeviceTree usually passes firmware's mapping location
+>> to kernel.
+>>
+>> There are some other similar bindings like mti,mips-cdmm and mti,mips-cpc,
+>> I just copied phraseology from them, should I try to explain it more here?
+> The description that you've given here is of something that sounded
+> awfully like mapping into a location in DDR etc, is it actually being
+> mapped into a non-memory address?
+It is an overlay being realized at CPU core level so it can be mapped at any
+where, but the firmware convention is to map it to a "non-memory address".
+
+Thanks
+- Jiaxun
 >
-> >  #include <unistd.h>
-> >  #include <stdlib.h>
-> >  #include <string.h>
+> Thanks,
+> Conor.
+
 
