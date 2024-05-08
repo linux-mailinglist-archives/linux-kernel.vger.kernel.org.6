@@ -1,146 +1,78 @@
-Return-Path: <linux-kernel+bounces-173663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448AB8C0398
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:47:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52428C038D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6CECB25A83
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C4441C22F64
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829B412D218;
-	Wed,  8 May 2024 17:46:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C20812B148;
+	Wed,  8 May 2024 17:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmFyhkl7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D69812F5B3
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5541D12B151;
+	Wed,  8 May 2024 17:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715190373; cv=none; b=PDZcby6tRrjVwpROBjvqtFJJzJuGC+8WQASE1BZKITBW9kXg9d9Xl3EyiJ4r332ayLcrk9TzfDh1wDN5bWYAc0oTOdY2ks0eJls6XAGKjZqlqTcDo/J7EMy/wj8xpY+8jzcNaGUj17L2i6a+n7vZuYC+dXiujjAYLkn6fx74eOw=
+	t=1715190369; cv=none; b=idlGUlpFeL+uDLB0RDsjk1J6zrnGF/QrWKhxl7ob6yAi1jVW9ns8BSi/4yoeED4GbJSKmDWBxvYFYk+V5v+L3rApNLoi0e1Qj2rYuWcOXSFuWaif/6TKy0kK2hFGKgVREvGGTURtTpTQzGpLdTLxuTpRyVY5omItofAXfbu1jLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715190373; c=relaxed/simple;
-	bh=f8PbXGqF82lXHQlKyIX8tEfHkeLPJzChVRHjKD0oLGg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A7/HbwM3Xib3L4WuWmJ9whNwvroPuzQ8sqnjW0vdww8+Vg28oEiolu6snKpseYqE30WnDeUPKza9jLbyrn/yJmH5kGltctz5JxhS6gASQCj2zouyyF3Kc8wNurLrSkOimUrUdlBw0r9/LWH69q6PQ6VQFy5jt8SslTmNc8xB/Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1s4lMg-0007oy-75; Wed, 08 May 2024 19:46:02 +0200
-Message-ID: <a08ac1e225d29797cf8d375c5cf4c331f66c92a8.camel@pengutronix.de>
-Subject: Re: [PATCH v1] pmdomain: imx8m-blk-ctrl: fix suspend/resume order
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Vitor Soares <ivitro@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>
-Cc: Vitor Soares <vitor.soares@toradex.com>, linux-pm@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Wed, 08 May 2024 19:46:01 +0200
-In-Reply-To: <20240418155151.355133-1-ivitro@gmail.com>
-References: <20240418155151.355133-1-ivitro@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1715190369; c=relaxed/simple;
+	bh=E1rX+uEyiyyBTm4O0UCMclDSNFz4ciEQN7629gUYxQ4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LZysYA89RFI4i4KChLNWcGsFyuig2PUEoJ0OmGCDVPeeEGK5dCV+7NseLBe0aH0PSlvlSBgiPot6KVluil8FKPud+u43VbZHpnE7kKOajMDSykf5EgAeES71H99ejXFUiTnZtxeYFCX1Ph5asJD2meJu/sT93cvCrl4ZQrpMB0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmFyhkl7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EBD63C4AF0B;
+	Wed,  8 May 2024 17:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715190369;
+	bh=E1rX+uEyiyyBTm4O0UCMclDSNFz4ciEQN7629gUYxQ4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=EmFyhkl7UaW2hF+icTtPWUCj0adOdp9DML3nO7gben1FXPo9thNQjuz7xz+sQ6gIK
+	 mC/7b9VZLPb6hw7KG5raeS6OCm4ooKTE62TFP6+PmmYxJ1pWUS85VqJvC50We7XV7N
+	 t7rHGBA0CC7hOJeMYjyIl+mfZdzH3SmEJz7e3OxLnVDkpEGGjB39wcQ2/B9KrIfTbD
+	 G80vf28yt3btG3yZH3zHZbieneQnMBHqBfMLYtzn4gVDYJUhCh+Q3f/faP3nRjhPIz
+	 CO8WbxGvi2f6iLhaNKx3vkeinDAISCca0MJMb1GMFXdtJu5PjYgTY1ElVYI3+91Fd9
+	 1KI8cedS2S6aA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DAF7AC43332;
+	Wed,  8 May 2024 17:46:08 +0000 (UTC)
+Subject: Re: [GIT PULL] fuse fixes for 6.9 final
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJfpegvtjodd03R4KjaMg=V9gcCHK3Js3GP-s-8QRcpTJ_TMQA@mail.gmail.com>
+References: <CAJfpegvtjodd03R4KjaMg=V9gcCHK3Js3GP-s-8QRcpTJ_TMQA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJfpegvtjodd03R4KjaMg=V9gcCHK3Js3GP-s-8QRcpTJ_TMQA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-6.9-final
+X-PR-Tracked-Commit-Id: 96d88f65adfbcaca153afd7d3e20d74ba379c599
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 065a057a31353c896af2f410ae431975687b29ed
+Message-Id: <171519036889.20720.8940562846116581049.pr-tracker-bot@kernel.org>
+Date: Wed, 08 May 2024 17:46:08 +0000
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Am Donnerstag, dem 18.04.2024 um 16:51 +0100 schrieb Vitor Soares:
-> From: Vitor Soares <vitor.soares@toradex.com>
->=20
-> During the probe, the genpd power_dev is added to the dpm_list after
-> blk_ctrl due to its parent/child relationship. Making the blk_ctrl
-> suspend after and resume before the genpd power_dev.
->=20
-> As a consequence, the system hangs when resuming the VPU due to the
-> power domain dependency.
->=20
-> To ensure the proper suspend/resume order, add a device link betweem
-> blk_ctrl and genpd power_dev. It guarantees genpd power_dev is suspended
-> after and resumed before blk-ctrl.
->=20
-> Cc: <stable@vger.kernel.org>
-> Closes: https://lore.kernel.org/all/fccbb040330a706a4f7b34875db1d896a0bf8=
-1c8.camel@gmail.com/
-> Link: https://lore.kernel.org/all/20240409085802.290439-1-ivitro@gmail.co=
-m/
-> Fixes: 2684ac05a8c4 ("soc: imx: add i.MX8M blk-ctrl driver")
-> Suggested-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+The pull request you sent on Wed, 8 May 2024 15:30:04 +0200:
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-6.9-final
 
-> ---
->=20
-> This is a new patch, but is a follow-up of:
-> https://lore.kernel.org/all/20240409085802.290439-1-ivitro@gmail.com/
->=20
-> As suggested by Lucas, we are addressing this PM issue in the imx8m-blk-c=
-trl
-> driver instead of in the imx8mm.dtsi.
->=20
->  drivers/pmdomain/imx/imx8m-blk-ctrl.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->=20
-> diff --git a/drivers/pmdomain/imx/imx8m-blk-ctrl.c b/drivers/pmdomain/imx=
-/imx8m-blk-ctrl.c
-> index ca942d7929c2..cd0d2296080d 100644
-> --- a/drivers/pmdomain/imx/imx8m-blk-ctrl.c
-> +++ b/drivers/pmdomain/imx/imx8m-blk-ctrl.c
-> @@ -283,6 +283,20 @@ static int imx8m_blk_ctrl_probe(struct platform_devi=
-ce *pdev)
->  			goto cleanup_pds;
->  		}
-> =20
-> +		/*
-> +		 * Enforce suspend/resume ordering by making genpd power_dev a
-> +		 * provider of blk-ctrl. Genpd power_dev is suspended after and
-> +		 * resumed before blk-ctrl.
-> +		 */
-> +		if (!device_link_add(dev, domain->power_dev, DL_FLAG_STATELESS)) {
-> +			ret =3D -EINVAL;
-> +			dev_err_probe(dev, ret,
-> +				      "failed to link to %s\n", data->name);
-> +			pm_genpd_remove(&domain->genpd);
-> +			dev_pm_domain_detach(domain->power_dev, true);
-> +			goto cleanup_pds;
-> +		}
-> +
->  		/*
->  		 * We use runtime PM to trigger power on/off of the upstream GPC
->  		 * domain, as a strict hierarchical parent/child power domain
-> @@ -324,6 +338,7 @@ static int imx8m_blk_ctrl_probe(struct platform_devic=
-e *pdev)
->  	of_genpd_del_provider(dev->of_node);
->  cleanup_pds:
->  	for (i--; i >=3D 0; i--) {
-> +		device_link_remove(dev, bc->domains[i].power_dev);
->  		pm_genpd_remove(&bc->domains[i].genpd);
->  		dev_pm_domain_detach(bc->domains[i].power_dev, true);
->  	}
-> @@ -343,6 +358,7 @@ static void imx8m_blk_ctrl_remove(struct platform_dev=
-ice *pdev)
->  	for (i =3D 0; bc->onecell_data.num_domains; i++) {
->  		struct imx8m_blk_ctrl_domain *domain =3D &bc->domains[i];
-> =20
-> +		device_link_remove(&pdev->dev, domain->power_dev);
->  		pm_genpd_remove(&domain->genpd);
->  		dev_pm_domain_detach(domain->power_dev, true);
->  	}
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/065a057a31353c896af2f410ae431975687b29ed
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
