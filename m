@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-172824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE6F8BF734
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:39:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D7F8BF735
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB921C209F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:39:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3DB1F240D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3E12E852;
-	Wed,  8 May 2024 07:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3EC3A1C5;
+	Wed,  8 May 2024 07:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1nuvvsDk";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VhcHvm6K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+IoIWuH"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5A73A1DA;
-	Wed,  8 May 2024 07:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87F83612D;
+	Wed,  8 May 2024 07:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715153942; cv=none; b=qSJ9hzS/inqPb9UlrM7genso6Th88gUw0TB5n5OWcdsOCEgJ3zZgKy44CqgyKhBfrtcXz6NDsBJgnC8BZjCgXPWOHTTma/rUFAKfS8dt7zPscr2+T0ur4yHXosPTU2HZrshXB8ljIZXiSYwRWxZ8Q5vYQDI79Vd3ofUaymDkq30=
+	t=1715153953; cv=none; b=DNt15qnUt50TX85M0TAFoNOL8r+tbRu9H9hCIjqOSzqm1QmTYHG+AspOpELx5Z2clMuqYwIgVZLKH9bzFRv5dnUgOlgRkB9se5BfY9PyUhx0OqMktaZfeChBpNSijsfY2eT3++lkSRobw5bncN/DM2JQyrcW/YUPMyh0bXh1koo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715153942; c=relaxed/simple;
-	bh=GRBM6Q9ulEa6b1C1AIlEe8Wdt4+S7xROw+0i92+JaGM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Vl2oIYOqyOkitW77ksIncoyWS3WdSqPuvnWaTgkGHmYgFKNyjqGKE8rB0z05nOpE2SOvzKqYi5uwUohh3wM5duRx8irqZOsI3mfzRYGi5zy0uFtGW//D7zEsFFUgK+WXC7dGsncrbZiKGy7fxj0JXMqu63aMEkDZhUEl+9Crtrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1nuvvsDk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VhcHvm6K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715153938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H6hqXb9MCRTxs635sBkjBFmdNV/lsU4W+VAlI6NfWPc=;
-	b=1nuvvsDkJk308I59qyuDDAY7raMXe58IJXHnvzks1l63fWs+dsBnkjDhXWyX+RkV5iwtA8
-	T3RA3EpWWIdkiKp1cax73+1KK2ox+7wLrbrvMIvRG2TELc+w2JbgQjKEZq+5ZfvRrJD/8F
-	F8jpJogjcxUpCQMQFrJMErIyKbaTyAenawxMeeWOe14p9gCqzdgaEKrp44L/1IWM1lalyL
-	yw6OMkBZatjNT8rJ8aNZ4It2sMoGGoLVipfSUaTMOZCrVC869f7TDfA9R9MnAokrpPpt/B
-	OJYBR/wOvl0N9uAd1+YZM4U0seXYiQfQ+tYgjvnzs9psZGw2RDjWoVeZPgz0Xw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715153938;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H6hqXb9MCRTxs635sBkjBFmdNV/lsU4W+VAlI6NfWPc=;
-	b=VhcHvm6KLaVB6rBreMYUoEE64Vi598JqUzdOvrN74UVu4Cjh8nJs+xoFXBzFMTwf1LmnpH
-	S/C3f/eYNLCT5VAA==
-To: Richard Cochran <richardcochran@gmail.com>, Mahesh Bandewar
- <maheshb@google.com>
-Cc: Netdev <netdev@vger.kernel.org>, Linux <linux-kernel@vger.kernel.org>,
- David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Arnd
- Bergmann <arnd@arndb.de>, Sagi Maimon <maimon.sagi@gmail.com>, Jonathan
- Corbet <corbet@lwn.net>, John Stultz <jstultz@google.com>, Mahesh Bandewar
- <mahesh@bandewar.net>
-Subject: Re: [PATCHv4 net-next] ptp/ioctl: support MONOTONIC_RAW timestamps
- for PTP_SYS_OFFSET_EXTENDED
-In-Reply-To: <ZjsDJ-adNCBQIbG1@hoboy.vegasvil.org>
-References: <20240502211047.2240237-1-maheshb@google.com>
- <ZjsDJ-adNCBQIbG1@hoboy.vegasvil.org>
-Date: Wed, 08 May 2024 09:38:58 +0200
-Message-ID: <87cypwpxbh.ffs@tglx>
+	s=arc-20240116; t=1715153953; c=relaxed/simple;
+	bh=f3LK0ObLAJurfNRZdpJ4wptu0daiM/YkDVKRX3RKV1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KP2NDvth4YP0c8BupXcDeNNNzYEaEZQr+4LCqlDQvY0autsrFKhngP6IsJci/ImuDGXVfwdxhthpuHeb2qQWAR1b5GJZarPx1MSGz2b2uzFusCAPS1FhicHBlHrH6RntO3T716fWInF6E+EdFw2CI9qXnUBO25s34KWDcU0CsK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+IoIWuH; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f3761c96aso5193446e87.3;
+        Wed, 08 May 2024 00:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715153950; x=1715758750; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=HQn9AgRFMdHrqQQjouGtyxcYjF50ckhpwWQdA7LsrIo=;
+        b=Q+IoIWuHnRMmiDmQTcp8jyTlj6gIj2HIKxvYilxhTwWrpkTEZMaSnFUsWwouyp2XHw
+         N2+ml2E+xSN5Hx73KmkRhVWU/US07nnSw6JXxv20kEBV/VZW0weJmdSQ9lSSRecsF8Io
+         o06IPjMCyEp/ZHp02FqzfnGezqMNuvUdOHgwe6qRmjC/zEVDAt0+rv2QrSk4JhSM5Ih2
+         dzlBiRKj0WUHVe5+CZBO2kfCXQl2bMkfzn/dSaKL6/RSMs11jJWQZoIF8//IfC+PiyJQ
+         lhD0JBZ4F9gA+0LU+Q1TpSlZDAcBbJudKf1/70nzpJb4sdi7WMDKWp4+vFnLTy5luir1
+         we+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715153950; x=1715758750;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HQn9AgRFMdHrqQQjouGtyxcYjF50ckhpwWQdA7LsrIo=;
+        b=r8orGBLHyWifQ7WCMir0J/E7TtxaJxWqs+iySAnXr5w1aWTuukvGgTe84ekeI3ow9k
+         U/e4/VGklG9wtJrVWY3ixCC4CEJH6yG8EwteO09CMQFhyQQhLvH4vHnKsyX0C7uZHPgd
+         eVFp/eO6s1dwYi2Tt/5wDWqriZym4TylVzw0juiDeukACH5iWHB//jy79pVl35TBESYu
+         Wma9BdP3yc7xkgqjcQzZAOvk9jwLlqwWUt1yoajXuT1p+GLHty3YYpYIuxXq//ZpM/ct
+         2Q5tO0zN7gu8o0Q85vTB92Tvb2D4iyFhkLBKenmAeJadvwohmh9jHe1mkW/LHPudT9V0
+         ApPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/48CW23wr1d6O1ejm3Tq7+LfQTMZOwBR4bBaQ6kOc309Q4md4qQpf16KRQWo2V4nHXJhN8NSzyPzBrwUZ1Y0A7NLHONQ3gEBQoex3YF5UKi0qPgmTCnx8aUOTpOsLMK2yIn97VX0W96l1oUVmcw==
+X-Gm-Message-State: AOJu0YyXEL51cBqS/rDM1XmOk9tqc1nOgvyBzAlnHOxKaQPg4JTV2yi8
+	9aCUdAm3W0XnrYmORc8uGvG8+ObfmTK9qXsmmgMnBbHwJNcs5Pp9bN2Ns7yj
+X-Google-Smtp-Source: AGHT+IFpFo8eT1Te9z3lKdN3VNhEIZaSFYvju61jJNNZjUVEuLpM4ZukvEkmhQvpPaRHFMkzaPibIQ==
+X-Received: by 2002:a05:6512:3b28:b0:51d:1d42:3eef with SMTP id 2adb3069b0e04-5217c6673f2mr2056665e87.29.1715153949372;
+        Wed, 08 May 2024 00:39:09 -0700 (PDT)
+Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87c254bfsm12859855e9.17.2024.05.08.00.39.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 00:39:08 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Wed, 8 May 2024 09:39:06 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Makefile.perf:1149: *** Missing bpftool input for generating
+ vmlinux.h.  Stop.
+Message-ID: <ZjssGrj+abyC6mYP@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, May 07 2024 at 21:44, Richard Cochran wrote:
-> On Thu, May 02, 2024 at 02:10:47PM -0700, Mahesh Bandewar wrote:
->> +/*
->> + * ptp_sys_offset_extended - data structure for IOCTL operation
->> + *			     PTP_SYS_OFFSET_EXTENDED
->> + *
->> + * @n_samples:	Desired number of measurements.
->> + * @clockid:	clockid of a clock-base used for pre/post timestamps.
->> + * @rsv:	Reserved for future use.
->> + * @ts:		Array of samples in the form [pre-TS, PHC, post-TS]. The
->> + *		kernel provides @n_samples.
->> + *
->> + * History:
->> + * v1: Initial implementation.
->> + *
->> + * v2: Use the first word of the reserved-field for @clockid. That's
->> + *     backward compatible since v1 expects all three reserved words
->> + *     (@rsv[3]) to be 0 while the clockid (first word in v2) for
->> + *     CLOCK_REALTIME is '0'.
->
-> This is not really appropriate for a source code comment.  The
-> un-merged patch series iterations are preserved at lore.kernel in case
-> someone needs that.
->
-> The "backward compatible" information really wants to be in the commit
-> message.
 
-I agree that it wants to be in the commit message, but having the
-version information in the kernel-doc which describes the UAPI is
-sensible and useful. That's where I'd look first and asking a user to
-dig up this information on lore is not really helpful.
+So I've been getting this perf build failure for some time:
+
+  kepler:~/tip/tools/perf> make clean
+  Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
+  make: *** [Makefile:90: clean] Error 2
+
+.. but if I clone a new repository, it works fine, until a point.
+
+'make clean' doesn't work - and 'make mrproper' in the main kernel 
+directory doesn't clean up properly.
+
+Only if I do a brute-force:
+
+	rm -rf tools/
+	git checkout HEAD -f
+
+does it get resolved.
+
+The failure condition triggers if I Ctrl-C the following build a couple of 
+times, without it being finished:
+
+
+   cd tools/perf; make clean install
+   ...
+
+   LD      util/perf-in.o
+   LD      perf-in.o
+   CC      pmu-events/pmu-events.o
+ ^Cmake[3]: *** [pmu-events/Build:43: pmu-events/pmu-events.o] Interrupt
+ make[2]: *** [Makefile.perf:709: pmu-events/pmu-events-in.o] Interrupt
+ make[1]: *** [Makefile.perf:264: sub-make] Interrupt
+ make: *** [Makefile:113: install] Interrupt
+ kepler:~/tip> perfi
+ Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
+ make: *** [Makefile:90: clean] Error 2
 
 Thanks,
 
-        tglx
+	Ingo
 
