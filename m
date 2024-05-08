@@ -1,118 +1,226 @@
-Return-Path: <linux-kernel+bounces-173831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546648C0619
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B69CB8C061E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FB35284C49
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E179283AF5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A5721373;
-	Wed,  8 May 2024 21:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06AF8131BBD;
+	Wed,  8 May 2024 21:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TXF2fxN4"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kxuxpqp8"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D2413175B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF60130E24
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715202809; cv=none; b=XTizNxIsNXk7xyHGtXyDVYv4e+Yw5Vf+TnSTwGZgBIU5LE7KzhsxXa4Gr9t/ZAqop+1saQZRhwoFXcWMj7KbgmF3W8kb7jV3vX6AbQRwKjZbr2WsRgPG8hqnggGaErdB3oXDMaMgOpxSf9NoqtXHJe+UTACb8ri/PMSdtshGrHA=
+	t=1715202905; cv=none; b=KoC9/g/eGilsGgOX6Zi/R3/w3QbrU/JrQh65jCSqr8miny1HAlVAB1SikZLe27pNzZyzKLoMhE9uUfzv7VPTDyt7EkX4feaQHP+DaHK1pKqw9XW/5OMeBqADmWa23fwj4Abiy+XFEt0G8leTvcGkHpjiNvoTRc+DLpILgjoPrTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715202809; c=relaxed/simple;
-	bh=XYj2SfU/qI2Oqly9uh18pSWAcgoIOhgV2D/F8k1QRS0=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P6vNZAY+jucSpkwu3mxW7My9GrX4smV7aWmfKVCngst9mk1jpTvFN49TbZZnMZKU/k1/ztHt52y/gSI1bE4stZxFmxZRkfKqmaCOBNgWIhGQ29ZVnC0JMUlWWly6Tw6jwsaZORwbmB/eGfwGXYXjs3XU+DAorSEBmGoS3YgTXnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TXF2fxN4; arc=none smtp.client-ip=209.85.167.182
+	s=arc-20240116; t=1715202905; c=relaxed/simple;
+	bh=ZAY9OmGIvyuKXyebqDh1IRclz4/RXSUx0T+wrGSqSIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rol6ii73esrVw3GAgukzXVkagsi2x+Ib+tBm85F6DXXF3LedwWxkZPslEJBKiLT2EdH01HLZXNF9oOHoOLvS++C3TOrwDKkSAR1QfivtOQIxrOY1QaAqYbTOIwLi/MuTpLc0a51wNSIORpQpNmI/NCeWJFhP2tjQpxSlTNCZGek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Kxuxpqp8; arc=none smtp.client-ip=209.85.167.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9741777f0so113417b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:13:27 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c969fa8fd2so152196b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:15:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715202807; x=1715807607; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M98zkpUg3yxVayso31qmdD5gmDCW7hzlsYnZ3G3ptME=;
-        b=TXF2fxN4p8RNZqgfbpbrpLjq5xW7oJNoqkfd3VuNY8EQiBgaXVsgjS6o4+Pd5kvzC9
-         wPkrlQvRrGO0Lmn1mgbCE0mY5UoVOugIdH7k6qDbPuf2d53XsGXfsZ3hIzw/eOCTXyZF
-         mQhGTJwm+5oe/V6+X0crl7Fc5IX+wlS2hDw60=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715202807; x=1715807607;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1715202901; x=1715807701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M98zkpUg3yxVayso31qmdD5gmDCW7hzlsYnZ3G3ptME=;
-        b=hYMKDvz7U9lx8sCIBMWd8w77WcWDXNQYuRnJv++6BlrR1iNTywwKwi84s7pMaxOt/P
-         LOd/0k/n4FKPOk1xMLKsc4rQ/N8gcR2TPV0bHYfO2ZT3kaaG708x7O7mJCyVQhfh64K6
-         W65DJJTv7dP0PGK7ArwKyuVk+bjzOkay6bxL8uYUzoIYHa5+++gevEWnnd0+S4Bc8xUN
-         WGknnHTyOO7VAyeMhNWc4Tc39lvDGcDc6GuBlwuaQdhLqtREPejaLfKcc4G1b/874ebx
-         Qy6KnqS9i/0MRyR8ApJc9fnxUZ/gAG3NlSYH2LC/ezLFrNphCr+JGxcFKjyYDHMIZmFU
-         Wy3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVCLwz6VEWuo8sklo4D09TLldgJTQFCHh9vVj9mu8WFbadDKOujSuBkPu6aCG19IxECptwO9iXgLRsYcP+kAdFLSK2K5YRANIXK5gNk
-X-Gm-Message-State: AOJu0Yw4FykQ+hUi4o8UvdL6cKK3xL/M1dc2JC9rsmYdODc/lH5S+l5M
-	lI/A78yTUzflPZz6aiAMJkAEZwDodnO2q+Qvrq20fA3G/I1qt6ainunPJ3oLFPpg+3unoOcz0sO
-	18/lwA08Ky1mB6EbRGjnMD6/YEDpjTJ6s1UT1
-X-Google-Smtp-Source: AGHT+IFTemfTMKR0QxJ6EVhmJjQlbP9xLe7ilDDVa9JCZeC8nukoUyyV89qhOs3YHhAZd4nqAQXTtvTb6s8kR3KAeoo=
-X-Received: by 2002:a05:6808:1705:b0:3c9:7027:8e8c with SMTP id
- 5614622812f47-3c985306fcemr4906245b6e.39.1715202807033; Wed, 08 May 2024
- 14:13:27 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 8 May 2024 14:13:26 -0700
+        bh=buSNW1rXJ5tp0mHF2b1c12zxGyNSJnH+cWUgnRIBSqA=;
+        b=Kxuxpqp8c24qcvc4ShwzWdwy1bdADPCCWE/3rBmWfhiQl6hmu0NdmIbHyO8NB8+22V
+         T1AKHck2Z/tvmPyshjvk2+2JGaFhz/d59CmLU5kYFec3BAR0eclD2vwZGFpBSnY8R0DQ
+         pOxGVSom0MfMQBZNbGBcdViJYzUQdo2vhLahY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715202901; x=1715807701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=buSNW1rXJ5tp0mHF2b1c12zxGyNSJnH+cWUgnRIBSqA=;
+        b=LaZEWfssmsrJM0RfrqyXNV9SrSFGHqHobGA3yvNgiMpwTOphPT0nHvwfFwQKPyBrc6
+         icQHiNreAgSm3KnYz60kLBLxBXqNvAndcOIbnP5sN/t5peX+oMXDyanYroP+3Cl6Qkxq
+         G2oVJIOLhcql0zRwYHVyQ4+0qSSwdstlvKy6uEN2R2FZ6zfJk2tuEnWXomU78/dOjDv0
+         C6xLAwZHb6G5RlaGz1GrwPR/kjA0C9L9d9xNQXd9p9eaAhJzzkaht8L3wQ79c6B3a2b8
+         LbdjYs9nQ8ZZa37OJM2tzY0gbNAhxNYl/NlaigGUS7x38RuTdvHw+m7GdlV/rYqNfZBj
+         TnWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUR7qQ8wV6AU5P8IyVHiKEoNnaxu+3ZM9MAqz0wCttSefKFDDtuGvO/stXpdMPvAhooi2o580R6pSREMiLT4XdN8TxqAFRaY1g4IKET
+X-Gm-Message-State: AOJu0Yxo+iOM2KFyG++L1n7BYJZN7M9SA2PEJkLaYQQk0Yi7A1w9UQ8V
+	tiSzS7oY6mO0nVFD4n+nbDcZXm2OPERqcGKQaAekKE1TpnGXPlfD9ovujwKClvGPS2H1dJvuNvQ
+	=
+X-Google-Smtp-Source: AGHT+IFv6xGirBnyCIMeN/JrTkUQJvNBCiOS6MZNF12+ENLhoNMZNmPdghedZfb9aUXy6B2Rc/asCQ==
+X-Received: by 2002:a05:6808:418c:b0:3c9:6f6d:2e72 with SMTP id 5614622812f47-3c98532acbbmr4281556b6e.56.1715202900539;
+        Wed, 08 May 2024 14:15:00 -0700 (PDT)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
+        by smtp.gmail.com with ESMTPSA id bi27-20020a05620a319b00b0078d631f35c2sm6249125qkb.24.2024.05.08.14.15.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 14:15:00 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-439b1c72676so47171cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:15:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWmoxIhwE9AXpq2I4K7XbdEqWbQU1NeJrSsL9PWFgvR/ZW8I0nvMDY8WWKcJFF2OvevAY5wJCSn9sx845PGs9EflY5UMY0ushwWllAE
+X-Received: by 2002:a05:622a:1c0d:b0:43a:c1cd:2f4c with SMTP id
+ d75a77b69052e-43df44dc04cmr169931cf.5.1715202879034; Wed, 08 May 2024
+ 14:14:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240503171847.68267-2-puranjay@kernel.org>
-References: <20240503171847.68267-1-puranjay@kernel.org> <20240503171847.68267-2-puranjay@kernel.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Wed, 8 May 2024 14:13:26 -0700
-Message-ID: <CAE-0n5248NiYQ9KvLqwaLuSSGXMM4RMtnB2uayZQbdJXQWTAvw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: implement raw_smp_processor_id() using thread_info
-To: Catalin Marinas <catalin.marinas@arm.com>, Douglas Anderson <dianders@chromium.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Puranjay Mohan <puranjay@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, bpf@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: puranjay12@gmail.com
+References: <20240503213441.177109-1-dianders@chromium.org> <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com>
+In-Reply-To: <CACRpkdYbtfE9RLsDewV2UwnJknCp_sFEgc+cq=OF+Qd3tkTcwA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 8 May 2024 14:14:22 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WoYm43SzrdrSZ1Np58iQ4nMwF0u6uamOAnZc4pqmBpsg@mail.gmail.com>
+Message-ID: <CAD=FV=WoYm43SzrdrSZ1Np58iQ4nMwF0u6uamOAnZc4pqmBpsg@mail.gmail.com>
+Subject: Re: [RFT PATCH v2 00/48] drm/panel: Remove most store/double-check of
+ prepared/enabled state
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+	Chris Morgan <macromorgan@hotmail.com>, Yuran Pereira <yuran.pereira@hotmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Jerry Han <hanxu5@huaqin.corp-partner.google.com>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Ondrej Jirman <megi@xff.cz>, 
+	Purism Kernel Team <kernel@puri.sm>, Robert Chiras <robert.chiras@nxp.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Stefan Mavrodiev <stefan@olimex.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Puranjay Mohan (2024-05-03 10:18:47)
-> Remove the percpu variable cpu_number as it is used only in
-> set_smp_ipi_range() as a dummy variable to be passed to ipi_handler().
-> Use irq_stat in place of cpu_number here like arm32.
+Hi,
+
+On Sun, May 5, 2024 at 11:52=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
+org> wrote:
 >
-> [1] https://github.com/puranjaymohan/linux/commit/77d3fdd
-
-Maybe you should have put this under the cut for the patch so its on
-the mailing list, and lore.
-
+> On Fri, May 3, 2024 at 11:36=E2=80=AFPM Douglas Anderson <dianders@chromi=
+um.org> wrote:
 >
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> ---
-
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index 4ced34f62dab..98d4e352c3d0 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -1021,12 +1016,12 @@ void __init set_smp_ipi_range(int ipi_base, int n)
+> > As talked about in commit d2aacaf07395 ("drm/panel: Check for already
+> > prepared/enabled in drm_panel"), we want to remove needless code from
+> > panel drivers that was storing and double-checking the
+> > prepared/enabled state. Even if someone was relying on the
+> > double-check before, that double-check is now in the core and not
+> > needed in individual drivers.
+> >
+> > This series attempts to do just that. While the original grep, AKA:
+> >   git grep 'if.*>prepared' -- drivers/gpu/drm/panel
+> >   git grep 'if.*>enabled' -- drivers/gpu/drm/panel
+> > ...still produces a few hits after my series, they are _mostly_ all
+> > gone. The ones that are left are less trivial to fix.
+> >
+> > One of the main reasons that many panels probably needed to store and
+> > double-check their prepared/enabled appears to have been to handle
+> > shutdown and/or remove. Panels drivers often wanted to force the power
+> > off for panels in these cases and this was a good reason for the
+> > double-check.
+> >
+> > In response to my V1 series [1] we had much discussion of what to
+> > do. The conclusion was that as long as DRM modeset drivers properly
+> > called drm_atomic_helper_shutdown() that we should be able to remove
+> > the explicit shutdown/remove handling in the panel drivers. Most of
+> > the patches to improve DRM modeset drivers [2] [3] [4] have now
+> > landed.
+> >
+> > In contrast to my V1 series, I broke the V2 series up a lot
+> > more. Since a few of the panel drivers in V1 already landed, we had
+> > fewer total drivers and so we could devote a patch to each panel.
+> > Also, since we were now relying on DRM modeset drivers I felt like we
+> > should split the patches for each panel into two: one that's
+> > definitely safe and one that could be reverted if we found a
+> > problematic DRM modeset driver that we couldn't fix.
+> >
+> > Sorry for the large number of patches. I've set things to mostly just
+> > CC people on the cover letter and the patches that are relevant to
+> > them. I've tried to CC people on the whole series that have shown
+> > interest in this TODO item.
+> >
+> > As patches in this series are reviewed and/or tested they could be
+> > landed. There's really no ordering requirement for the series unless
+> > patches touch the same driver.
+> >
+> > NOTE: this touches _a lot_ of drivers, is repetitive, and is not
+> > really possible to generate automatically. That means it's entirely
+> > possible that my eyes glazed over and I did something wrong. Please
+> > double-check me and don't assume that I got everything perfect, though
+> > I did my best. I have at least confirmed that "allmodconfig" for arm64
+> > doesn't fall on its face with this series. I haven't done a ton of
+> > other testing.
+> >
+> > [1] https://lore.kernel.org/r/20230804140605.RFC.4.I930069a32baab6faf46=
+d6b234f89613b5cec0f14@changeid
+> > [2] https://lore.kernel.org/r/20230901234015.566018-1-dianders@chromium=
+org
+> > [3] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium=
+org
+> > [4] https://lore.kernel.org/r/20230921192749.1542462-1-dianders@chromiu=
+m.org
 >
->                 if (ipi_should_be_nmi(i)) {
->                         err = request_percpu_nmi(ipi_base + i, ipi_handler,
-> -                                                "IPI", &cpu_number);
-> +                                                "IPI", &irq_stat);
+> This is the right thing to do, thanks for looking into this!
+>
+> As for the behaviour of .remove() I doubt whether in many cases
+> the original driver authors have even tested this themselves.
 
-I know this is mirroring arm, but it would be nice to have a comment
-saying that we need some percpu variable here even if the handler
-doesn't use it.
+Yeah, I'd tend to agree.
+
+
+> I would say we should just apply the series as soon as it's non-RFC
+
+It's not actually RFC now, but "RFT" (request for testing). I don't
+_think_ there's any need to send a version without the RFT tag before
+landing unless someone really feels strongly about it.
+
+
+> after the next merge window
+
+With drm-misc there's not really any specific reason to wait for the
+merge window to open/close as we can land in drm-misc-next at any time
+regardless of the merge window. drm-misc-next will simply stop feeding
+linuxnext for a while.
+
+That all being said, I'm happy to delay landing this until after the
+next -rc1 comes out if people would prefer that. If I don't hear
+anything, I guess I'll just wait until -rc1 before landing any of
+these.
+
+
+> and see what happens. I doubt it
+> will cause much trouble.
+
+I can land the whole series if that's what everyone agrees on. As I
+mentioned above, I'm at least slightly worried that I did something
+stupid _somewhere_ in this series since no automation was possible and
+with repetitive tasks like this it's super easy to flub something up.
+It's _probably_ fine, but I guess I still have the worry in the back
+of my mind.
+
+If folks think I should just apply the whole series then I'm happy to
+do that. If folks think I should just land parts of the series as they
+are reviewed/tested I can do that as well. Let me know. If I don't
+hear anything I'd tend to just land patches that are reviewed/tested.
+Then after a month or so (hopefully) I'd send out a v2 with anything
+left.
+
+
+> The series:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thanks!
+
+-Doug
 
