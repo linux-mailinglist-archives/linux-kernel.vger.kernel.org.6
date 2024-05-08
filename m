@@ -1,362 +1,196 @@
-Return-Path: <linux-kernel+bounces-173901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4867E8C0762
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:38:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E788C076B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48151F237B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A88D284522
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C03F38DF2;
-	Wed,  8 May 2024 22:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15332837E;
+	Wed,  8 May 2024 22:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gvOyBGsQ"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3bMk6RW"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C583222318
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FE322338
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 22:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715207875; cv=none; b=QGvrYdoEl1zxRAbxIUYO13Rcc3O0WKUQZkaaAw67uNmP4KN+wf9YzefoMoJmGiBfam06ztC+DNeGrEAohAfee361WulVAdlGOwYAyzDwknSnSyauLUEnzgb8l9TcRfjvKUBK2RGlVeWl/5idRvePPuqt993tMgjFJfnp8uGIL0o=
+	t=1715208105; cv=none; b=jXUvjLPqsDQeYEnVZ0VN7Z7LQEwaDQZ7wUxgYzxeb9o3mlNVlNoDCZ3lVVW+Un5VW8MGTrGU/3JuNRijSLvsGjoEPpyHQ+4cl8wxoBLYa8EETc5VcCNI/A0LcwkvYGjIyAJGeWMS+/cVFqlcAoBlJE69myH2vzrCCE0zODEb5Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715207875; c=relaxed/simple;
-	bh=gkiQnNwVQrsa+28STlZ5/i+j4rn304bwjnjT6RZAH8c=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sPA7XMnvmwEgGt6emKicJViD+O6NRBCrChN+d0P4aBdgEvxS4TXg9gP/Y83bGWGV9ixhhXZszKTjJNV3s9mJycx/mGOmL+nIRJZok8YgcjqVQIWZw9CFBFCxpLLs0LlPwQyZtFj6/up/GkxY70EwQFer6T7P7EH4Zb8FyfVwlQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gvOyBGsQ; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-de4665b4969so323687276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:37:52 -0700 (PDT)
+	s=arc-20240116; t=1715208105; c=relaxed/simple;
+	bh=81mGqMlPCjnNrz6VDhrLw6nwmThTj1pSx3UbUQy3VQs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Btn3jTUdvtrXLi6yl3K4tOYIiPXqybyz5OxKglcq9EaIr3wwldTg3KbLHKZI2KuiUDNoOanBdIGoU4yH0WcYss198W8F2s6jN7DasCL9s0ZVYZYy3bC+maP4UwfRYS0IUCIaXcZr5gWQaYfLiXIYUaAzJ8tQInv41LzHSgoIzOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3bMk6RW; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-5d4d15ec7c5so212504a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 15:41:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715207872; x=1715812672; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CQnhPPJLZqhiPyY2VjG7VAxW3Am1dwZRgVu5xvgsRfk=;
-        b=gvOyBGsQA82/b71DKXWg3uNs5mjtvtzNHNn5Ta0OeOGNbmiikN/Z3qcIfA+1ip20TT
-         J25zVD0K9+4d4bfOi7I3TXUTGfvRR4DDbzpI6a9vBw2g5GIMQenYIkhJfOyw0CTDqhiD
-         z7PVwhy2hg/kG1aVfuNkeG+euOmvK/Y7GWlX0=
+        d=gmail.com; s=20230601; t=1715208103; x=1715812903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fag+0lN5RRIVRREjp5/07+vscB8dKez30/dkSV+vmtA=;
+        b=A3bMk6RWGUbGoNouyxr7YszT/2OnCgu60N72zuYr/rFISeVc7ctX0bc7ttYiiSDMlh
+         WkIQpWhJsbZBiOmOcrjZ6bHO9fM4UW3LdvX5IlAIu6bevXKNFeKpFMl8ZqsTEsMKDlhu
+         mVvmJ5QdwwvfrsdFcUOImbRKRzLHtDl14LezfgQl3iTxrBDbWwWa8sYjFKbpyd2Gfm2F
+         4u9OrRDS5L0lycm42qzjTwqt0QvDBGLN646BwBJQt8cxmk7lZOtxE6f75yUBYGHq+QyA
+         6osaQUvlSu3bFlukrmfJd3oOwMPiojm++D9LU3njC+CTGCor6P5ct/Mkiqh12bbIleWw
+         CCkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715207872; x=1715812672;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQnhPPJLZqhiPyY2VjG7VAxW3Am1dwZRgVu5xvgsRfk=;
-        b=UJw5aNsvy6Sa4Kt5rBGVJJ8ChQ/ew876NVP4NaHidtvKkb42OcBsNUzUFC40rrVnaB
-         PPSdVlAYnHh32SCVqOUT75woi3pjYgRrj6/VLpVQnHXkuyBSYXL5zuFL/AthRdBIfx0E
-         aHP2FDk2DRpPr3PEe2WSGQN1oSpd8B1sy9NMY73vC8Uwh/PNmAz2cS+reQtillxbSQSz
-         VDUXLmjgE5caREccKZ8Hm2PQLnT9OSEdq2kZzqldt8sPtPyu+42FSn1JnGv5NP/s6WId
-         I4BGSNWjsAcu5oS3mm7pJ3ygXFpDcYvvmrTWSH02MHEetQ1rypDWtBn8XiPZV06reXy7
-         a6rw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC0yquTWPtMfViMiQ1QZo/cGKQA3fG0eGKUCpPtjCNHK4HAQ1elYGl1nlvXDcFsjsYwH/DyabShc9m+vwDV3GFoa+drOhnwq5y/k0n
-X-Gm-Message-State: AOJu0Yy5maEsxkPEmuhPoOUiqAviUVVc4yPZ9SvwButDndQRuqzjwVEu
-	rvKh4Noi8jW8YpbMjUHV2zii8+LA8qfG5P/I+lEjhGgqJdbHB5dq+eeYhCIlSNBf3QXPsXG2TYS
-	gJOX95GstPvoxIi0TGzf/moNah7dkduRiKHZ4
-X-Google-Smtp-Source: AGHT+IEDCFI8xn8l9izDfECjs69+U4QoPp9r27+Xw69iFeSo27F7rPihO9uzigfOROJXNOoUrDXWiJl7KN8VUyIrL2c=
-X-Received: by 2002:a5b:811:0:b0:de5:4bb4:25b9 with SMTP id
- 3f1490d57ef6-debb9ce095dmr4747797276.12.1715207871771; Wed, 08 May 2024
- 15:37:51 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 8 May 2024 22:37:51 +0000
+        d=1e100.net; s=20230601; t=1715208103; x=1715812903;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fag+0lN5RRIVRREjp5/07+vscB8dKez30/dkSV+vmtA=;
+        b=oo49AsOnnisTVRkKnpMELbrcJWlKAjC9iwS26YjCnt87FIe119D/l0MvV/Cq2JzU2k
+         /5Wt158rwN3qNAYwdS/fYFU/AKoN29RhAEmvtlc1IySVpft4in6Z86Ltg0/lNe2RaTP3
+         CwOu9FbnIuyWYqVjIdkG68aEWjwKZXqqlHtG0tQ/FrSZvDY0Z+dLa5IrdsA+QEG4JvGs
+         /+02MVk54CFIrPLyIXv2JVYZ+C59q7gG+b98J5bKbfwphbIOMnj+4sv061UF38IrJsJw
+         qSPTrNgLDdAVI9iKezMeISqfajw77ZsqYvk2rV1lmhTOOkfvHYrhWs+LySp5jpzOT4hQ
+         qq0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXGjZujNR3GmKCBkQrU+YaqrWWH3b2GP5fqpBX3KXOx7AATAxlAthYDloTlrbH72Xftt2STAMSoDzaItPN88Pcqn+Ajat7pBUUVwdUX
+X-Gm-Message-State: AOJu0YwZkiZLDNCOIMGJI1Tm+MhauhFmnA3ybdgd9C3BGm1U90jcbNbT
+	ZGPulnvUwZ923IQrHeL2+1FcwZlbPz6zEM9HIsaeltQ7IZpjLr0r
+X-Google-Smtp-Source: AGHT+IGKR1ePsggrjPqWWWgvw/miwp2Qdt3DWt+R0Wu6Gnj1JkEDzdWmYzUCxtmjFUy1IlZAZMUlBA==
+X-Received: by 2002:a05:6a21:3985:b0:1af:ce5e:ca5f with SMTP id adf61e73a8af0-1afce5ecd95mr2461311637.16.1715208103459;
+        Wed, 08 May 2024 15:41:43 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126b666sm102082a91.34.2024.05.08.15.41.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 15:41:43 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: baolin.wang@linux.alibaba.com,
+	chrisl@kernel.org,
+	david@redhat.com,
+	hanchuanhua@oppo.com,
+	hannes@cmpxchg.org,
+	hughd@google.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	ryan.roberts@arm.com,
+	surenb@google.com,
+	v-songbaohua@oppo.com,
+	willy@infradead.org,
+	xiang@kernel.org,
+	ying.huang@intel.com,
+	yosryahmed@google.com,
+	yuzhao@google.com,
+	ziy@nvidia.com
+Subject: [PATCH v4 0/6] large folios swap-in: handle refault cases first
+Date: Thu,  9 May 2024 10:40:34 +1200
+Message-Id: <20240508224040.190469-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240506150830.23709-13-johan+linaro@kernel.org>
-References: <20240506150830.23709-1-johan+linaro@kernel.org> <20240506150830.23709-13-johan+linaro@kernel.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Wed, 8 May 2024 22:37:50 +0000
-Message-ID: <CAE-0n52KTZ8G2VuvrDgJ9kAE61YULXY4u6nPP3CYWpg1CBjbXA@mail.gmail.com>
-Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
-To: Bjorn Andersson <andersson@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Mark Brown <broonie@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Das Srinagesh <quic_gurus@quicinc.com>, 
-	Satya Priya <quic_c_skakit@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Johan Hovold (2024-05-06 08:08:29)
-> From: Satya Priya <quic_c_skakit@quicinc.com>
->
-> Qualcomm Technologies, Inc. PM8008 is an I2C-controlled PMIC containing
-> seven LDO regulators. Add a PM8008 regulator driver to support PMIC
-> regulator management via the regulator framework.
->
-> Note that this driver, originally submitted by Satya Priya [1], has been
-> reworked to match the new devicetree binding which no longer describes
-> each regulator as a separate device.
->
-> This avoids describing internal details like register offsets in the
-> devicetree and allows for extending the implementation with features
-> like over-current protection without having to update the binding.
+From: Barry Song <v-songbaohua@oppo.com>
 
-Thanks. I had to remember this topic.
+This patch is extracted from the large folio swapin series[1], primarily addressing
+the handling of scenarios involving large folios in the swap cache. Currently, it is
+particularly focused on addressing the refaulting of mTHP, which is still undergoing
+reclamation. This approach aims to streamline code review and expedite the integration
+of this segment into the MM tree.
 
->
-> Specifically note that the regulator interrupts are shared between all
-> regulators.
->
-> Note that the secondary regmap is looked up by name and that if the
-> driver ever needs to be generalised to support regulators provided by
-> the primary regmap (I2C address) such information could be added to a
-> driver lookup table matching on the parent compatible.
->
-> This also fixes the original implementation, which looked up regulators
-> by 'regulator-name' property rather than devicetree node name and which
-> prevented the regulators from being named to match board schematics.
->
-> [1] https://lore.kernel.org/r/1655200111-18357-8-git-send-email-quic_c_skakit@quicinc.com
->
-> Signed-off-by: Satya Priya <quic_c_skakit@quicinc.com>
-> Cc: Stephen Boyd <swboyd@chromium.org>
-> [ johan: rework probe to match new binding, amend commit message and
->          Kconfig entry]
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
-> diff --git a/drivers/regulator/qcom-pm8008-regulator.c b/drivers/regulator/qcom-pm8008-regulator.c
-> new file mode 100644
-> index 000000000000..51f1ce5e043c
-> --- /dev/null
-> +++ b/drivers/regulator/qcom-pm8008-regulator.c
-> @@ -0,0 +1,215 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/driver.h>
-> +
-> +#define VSET_STEP_MV                   8
-> +#define VSET_STEP_UV                   (VSET_STEP_MV * 1000)
-> +
-> +#define LDO_ENABLE_REG(base)           ((base) + 0x46)
-> +#define ENABLE_BIT                     BIT(7)
-> +
-> +#define LDO_VSET_LB_REG(base)          ((base) + 0x40)
-> +
-> +#define LDO_STEPPER_CTL_REG(base)      ((base) + 0x3b)
-> +#define DEFAULT_VOLTAGE_STEPPER_RATE   38400
-> +#define STEP_RATE_MASK                 GENMASK(1, 0)
+It relies on Ryan's swap-out series[2], leveraging the helper function
+swap_pte_batch() introduced by that series.
 
-Include bits.h?
+Presently, do_swap_page only encounters a large folio in the swap
+cache before the large folio is released by vmscan. However, the code
+should remain equally useful once we support large folio swap-in via
+swapin_readahead(). This approach can effectively reduce page faults
+and eliminate most redundant checks and early exits for MTE restoration
+in recent MTE patchset[3].
 
-> +
-> +#define NLDO_MIN_UV                    528000
-> +#define NLDO_MAX_UV                    1504000
-> +
-> +#define PLDO_MIN_UV                    1504000
-> +#define PLDO_MAX_UV                    3400000
-> +
-> +struct pm8008_regulator_data {
-> +       const char                      *name;
-> +       const char                      *supply_name;
-> +       u16                             base;
-> +       int                             min_dropout_uv;
-> +       const struct linear_range       *voltage_range;
-> +};
-> +
-> +struct pm8008_regulator {
-> +       struct regmap           *regmap;
-> +       struct regulator_desc   rdesc;
-> +       u16                     base;
-> +       int                     step_rate;
+The large folio swap-in for SWP_SYNCHRONOUS_IO and swapin_readahead()
+will be split into separate patch sets and sent at a later time.
 
-Is struct regulator_desc::vsel_step usable for this? If not, can it be
-unsigned?
+-v4:
+ - collect acked-by/reviewed-by of Ryan, "Huang, Ying", Chris, David and
+   Khalid, many thanks!
+ - Simplify reuse code in do_swap_page() by checking refcount==1, per
+   David;
+ - Initialize large folio-related variables later in do_swap_page(), per
+   Ryan;
+ - define swap_free() as swap_free_nr(1) per Ying and Ryan.
 
-> +};
-> +
-> +static const struct linear_range nldo_ranges[] = {
-> +       REGULATOR_LINEAR_RANGE(528000, 0, 122, 8000),
-> +};
-> +
-> +static const struct linear_range pldo_ranges[] = {
-> +       REGULATOR_LINEAR_RANGE(1504000, 0, 237, 8000),
-> +};
-> +
-> +static const struct pm8008_regulator_data reg_data[] = {
-> +       /* name   parent       base    headroom_uv voltage_range */
-> +       { "ldo1", "vdd_l1_l2", 0x4000, 225000, nldo_ranges, },
-> +       { "ldo2", "vdd_l1_l2", 0x4100, 225000, nldo_ranges, },
-> +       { "ldo3", "vdd_l3_l4", 0x4200, 300000, pldo_ranges, },
-> +       { "ldo4", "vdd_l3_l4", 0x4300, 300000, pldo_ranges, },
-> +       { "ldo5", "vdd_l5",    0x4400, 200000, pldo_ranges, },
-> +       { "ldo6", "vdd_l6",    0x4500, 200000, pldo_ranges, },
-> +       { "ldo7", "vdd_l7",    0x4600, 200000, pldo_ranges, },
-> +};
-> +
-> +static int pm8008_regulator_get_voltage(struct regulator_dev *rdev)
-> +{
-> +       struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> +       __le16 mV;
-> +       int uV;
+-v3:
+ - optimize swap_free_nr using bitmap with single one "long"; "Huang, Ying"
+ - drop swap_free() as suggested by "Huang, Ying", now hibernation can get
+   batched;
+ - lots of cleanup in do_swap_page() as commented by Ryan Roberts and "Huang,
+   Ying";
+ - handle arch_do_swap_page() with nr pages though the only platform which
+   needs it, sparc, doesn't support THP_SWAPOUT as suggested by "Huang,
+   Ying";
+ - introduce pte_move_swp_offset() as suggested by "Huang, Ying";
+ - drop the "any_shared" of checking swap entries with respect to David's
+   comment;
+ - drop the counter of swapin_refault and keep it for debug purpose per
+   Ying
+ - collect reviewed-by tags
+ Link:
+  https://lore.kernel.org/linux-mm/20240503005023.174597-1-21cnbao@gmail.com/
 
-Can this be unsigned? Doubt we have negative voltage and this would
-match rdesc.min_uV type.
+-v2:
+ - rebase on top of mm-unstable in which Ryan's swap_pte_batch() has changed
+   a lot.
+ - remove folio_add_new_anon_rmap() for !folio_test_anon()
+   as currently large folios are always anon(refault).
+ - add mTHP swpin refault counters
+  Link:
+  https://lore.kernel.org/linux-mm/20240409082631.187483-1-21cnbao@gmail.com/
 
-> +
-> +       regmap_bulk_read(pm8008_reg->regmap,
-> +                       LDO_VSET_LB_REG(pm8008_reg->base), (void *)&mV, 2);
+-v1:
+  Link: https://lore.kernel.org/linux-mm/20240402073237.240995-1-21cnbao@gmail.com/
 
-Is struct regulator_desc::vsel_reg usable for this?
+Differences with the original large folios swap-in series
+ - collect r-o-b, acked;
+ - rename swap_nr_free to swap_free_nr, according to Ryan;
+ - limit the maximum kernel stack usage for swap_free_nr, Ryan;
+ - add output argument in swap_pte_batch to expose if all entries are
+   exclusive
+ - many clean refinements, handle the corner case folio's virtual addr
+   might not be naturally aligned
 
-> +
-> +       uV = le16_to_cpu(mV) * 1000;
-> +       return (uV - pm8008_reg->rdesc.min_uV) / pm8008_reg->rdesc.uV_step;
-> +}
-> +
-> +static inline int pm8008_write_voltage(struct pm8008_regulator *pm8008_reg,
-> +                                                       int mV)
-> +{
-> +       __le16 vset_raw;
-> +
-> +       vset_raw = cpu_to_le16(mV);
-> +
-> +       return regmap_bulk_write(pm8008_reg->regmap,
-> +                       LDO_VSET_LB_REG(pm8008_reg->base),
-> +                       (const void *)&vset_raw, sizeof(vset_raw));
+[1] https://lore.kernel.org/linux-mm/20240304081348.197341-1-21cnbao@gmail.com/
+[2] https://lore.kernel.org/linux-mm/20240408183946.2991168-1-ryan.roberts@arm.com/
+[3] https://lore.kernel.org/linux-mm/20240322114136.61386-1-21cnbao@gmail.com/
 
-Is the cast to please sparse?
+Barry Song (3):
+  mm: remove the implementation of swap_free() and always use
+    swap_free_nr()
+  mm: introduce pte_move_swp_offset() helper which can move offset
+    bidirectionally
+  mm: introduce arch_do_swap_page_nr() which allows restore metadata for
+    nr pages
 
-> +}
-> +
-> +static int pm8008_regulator_set_voltage_time(struct regulator_dev *rdev,
-> +                               int old_uV, int new_uv)
-> +{
-> +       struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> +
-> +       return DIV_ROUND_UP(abs(new_uv - old_uV), pm8008_reg->step_rate);
-> +}
-> +
-> +static int pm8008_regulator_set_voltage(struct regulator_dev *rdev,
-> +                                       unsigned int selector)
-> +{
-> +       struct pm8008_regulator *pm8008_reg = rdev_get_drvdata(rdev);
-> +       int rc, mV;
-> +
-> +       rc = regulator_list_voltage_linear_range(rdev, selector);
-> +       if (rc < 0)
-> +               return rc;
-> +
-> +       /* voltage control register is set with voltage in millivolts */
-> +       mV = DIV_ROUND_UP(rc, 1000);
-> +
-> +       rc = pm8008_write_voltage(pm8008_reg, mV);
-> +       if (rc < 0)
-> +               return rc;
-> +
-> +       return 0;
+Chuanhua Han (3):
+  mm: swap: introduce swap_free_nr() for batched swap_free()
+  mm: swap: make should_try_to_free_swap() support large-folio
+  mm: swap: entirely map large folios found in swapcache
 
-Can be shorter to save lines
+ include/linux/pgtable.h | 26 +++++++++++++-----
+ include/linux/swap.h    |  9 +++++--
+ kernel/power/swap.c     |  5 ++--
+ mm/internal.h           | 25 ++++++++++++++---
+ mm/memory.c             | 60 +++++++++++++++++++++++++++++++++--------
+ mm/swapfile.c           | 48 +++++++++++++++++++++++++++++----
+ 6 files changed, 142 insertions(+), 31 deletions(-)
 
-	return pm8008_write_voltage(pm8008_reg, mV);
+-- 
+2.34.1
 
-> +}
-> +
-> +static const struct regulator_ops pm8008_regulator_ops = {
-> +       .enable                 = regulator_enable_regmap,
-> +       .disable                = regulator_disable_regmap,
-> +       .is_enabled             = regulator_is_enabled_regmap,
-> +       .set_voltage_sel        = pm8008_regulator_set_voltage,
-> +       .get_voltage_sel        = pm8008_regulator_get_voltage,
-> +       .list_voltage           = regulator_list_voltage_linear,
-> +       .set_voltage_time       = pm8008_regulator_set_voltage_time,
-> +};
-> +
-> +static int pm8008_regulator_probe(struct platform_device *pdev)
-> +{
-> +       struct regulator_config reg_config = {};
-> +       struct pm8008_regulator *pm8008_reg;
-> +       struct device *dev = &pdev->dev;
-> +       struct regulator_desc *rdesc;
-> +       struct regulator_dev *rdev;
-> +       struct regmap *regmap;
-> +       unsigned int val;
-> +       int rc, i;
-> +
-> +       regmap = dev_get_regmap(dev->parent, "secondary");
-> +       if (!regmap)
-> +               return -EINVAL;
-> +
-> +       for (i = 0; i < ARRAY_SIZE(reg_data); i++) {
-> +               pm8008_reg = devm_kzalloc(dev, sizeof(*pm8008_reg), GFP_KERNEL);
-> +               if (!pm8008_reg)
-> +                       return -ENOMEM;
-> +
-> +               pm8008_reg->regmap = regmap;
-> +               pm8008_reg->base = reg_data[i].base;
-> +
-> +               /* get slew rate */
-> +               rc = regmap_bulk_read(pm8008_reg->regmap,
-> +                               LDO_STEPPER_CTL_REG(pm8008_reg->base), &val, 1);
-> +               if (rc < 0) {
-> +                       dev_err(dev, "failed to read step rate: %d\n", rc);
-
-Is it step rate or slew rate? The comment doesn't agree with the error
-message.
-
-> +                       return rc;
-> +               }
-> +               val &= STEP_RATE_MASK;
-> +               pm8008_reg->step_rate = DEFAULT_VOLTAGE_STEPPER_RATE >> val;
-> +
-> +               rdesc = &pm8008_reg->rdesc;
-> +               rdesc->type = REGULATOR_VOLTAGE;
-> +               rdesc->ops = &pm8008_regulator_ops;
-> +               rdesc->name = reg_data[i].name;
-> +               rdesc->supply_name = reg_data[i].supply_name;
-> +               rdesc->of_match = reg_data[i].name;
-> +               rdesc->uV_step = VSET_STEP_UV;
-> +               rdesc->linear_ranges = reg_data[i].voltage_range;
-> +               rdesc->n_linear_ranges = 1;
-> +               BUILD_BUG_ON((ARRAY_SIZE(pldo_ranges) != 1) ||
-
-This should be an && not || right?
-
-> +                               (ARRAY_SIZE(nldo_ranges) != 1));
-> +
-> +               if (reg_data[i].voltage_range == nldo_ranges) {
-> +                       rdesc->min_uV = NLDO_MIN_UV;
-> +                       rdesc->n_voltages = ((NLDO_MAX_UV - NLDO_MIN_UV) / rdesc->uV_step) + 1;
-> +               } else {
-> +                       rdesc->min_uV = PLDO_MIN_UV;
-> +                       rdesc->n_voltages = ((PLDO_MAX_UV - PLDO_MIN_UV) / rdesc->uV_step) + 1;
-> +               }
-> +
-> +               rdesc->enable_reg = LDO_ENABLE_REG(pm8008_reg->base);
-> +               rdesc->enable_mask = ENABLE_BIT;
-> +               rdesc->min_dropout_uV = reg_data[i].min_dropout_uv;
-> +               rdesc->regulators_node = of_match_ptr("regulators");
-> +
-> +               reg_config.dev = dev->parent;
-> +               reg_config.driver_data = pm8008_reg;
-> +               reg_config.regmap = pm8008_reg->regmap;
-> +
-> +               rdev = devm_regulator_register(dev, rdesc, &reg_config);
-> +               if (IS_ERR(rdev)) {
-> +                       rc = PTR_ERR(rdev);
-> +                       dev_err(dev, "failed to register regulator %s: %d\n",
-> +                                       reg_data[i].name, rc);
-> +                       return rc;
-
-Could be return dev_err_probe() to simplify.
 
