@@ -1,254 +1,225 @@
-Return-Path: <linux-kernel+bounces-173949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB398C081E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:48:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3A98C0824
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 617F71F21EE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:48:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F463B21CEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4224B134735;
-	Wed,  8 May 2024 23:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HuYhnb3k"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54B31339AB;
+	Wed,  8 May 2024 23:54:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206021353F2
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D13D1327F2
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 23:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715212081; cv=none; b=TxLecL8xdIgFpQIlU7UK9MAFMcC0QduqjAJR0heDvBYUUifdXcS22Nd3OYi0QYq1cTLQmyy7XZF9lp7GK8NTJyeQjpnOxtttjm2JIno+8TZCuIlEY9+pX8GFjespDkQJlNzjYn/dbbaudAGOpHqF6WL9DawMm/JgVXvZMLN0cqE=
+	t=1715212440; cv=none; b=VP/J+oA/VV88/vXR7fkTIGtSAdMUvC/BpMpAoZSD9udq8o1+1S9VX4bCN2YTlwh0+573l674n4uX26IhE/zdGfavrYFnvP7BoodSrfVslr2ctCkjJjiuVHqP3HY6NuFdY6lYhxpw1IFYQ+bkBoK7kXNq7B5K4zhPEDCfQb3pq3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715212081; c=relaxed/simple;
-	bh=OW/b8uAOH+Sb+MiKHJVZZkROsd6CBAfhvOiVb6V3tqU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W26SsRP4flTUPxx8DYTfuiQeXy2lFmpJ59uzf90Av955ulB1+/6mUGyyrQhCizGRHy3m84TYq3JG4SamQnFuXjpu4AETTGvOY6Mk4s8uPrzUluET1etJ+v0C/LCV0j4nUhRnihx6DrwwlttKwyJvzRMrAc+ny5YJuAh47J7l1Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HuYhnb3k; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51f74fa2a82so315889e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715212064; x=1715816864; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLC5ByXhKS1C0+XIxfmxA5pdOYFsJLXlzKRuFCObZZY=;
-        b=HuYhnb3kRHrf7zsLLtolw7yUo01pKUUURP6a89u+yzTP34baSfLhJ/pcgCPX8ReEr/
-         mSSXJYsQbsci7N9IgTJbbZUHVwgWCLZHKR3/WZW1n9zt/cJ28PWfaF1gKS7jxU5vxEz0
-         d8Gzu/GQRqlLRE5dRySTNZXuN/Rj/nvployMw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715212064; x=1715816864;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HLC5ByXhKS1C0+XIxfmxA5pdOYFsJLXlzKRuFCObZZY=;
-        b=Ac61YWIRDK/2S4iUya97UjFQMzE80upeXqpzUFmxaXihbAsfTFUdM0wakc189actw3
-         4p9UZ/o2Q2Id9JfIwDeGtzWCDDrae4RkgA9JpJwqCMExh8f2PXH2nD84dllx4eBMEJkS
-         76MHOvouW+uO3z0QBBRBo8YIuVQ071ytfqVMQWnU7NTF3H6YMunvYY5BFOhavCBNPkQ/
-         6dIR8SP+GrhdF04h0Tr5TY4siY0P3jeG7Rf0DoMnNvck6dwckRUg9AlB9p+qIQT1fd4x
-         BUx6w5J4VWQbeud+dl8WOcPv4ErdlHeX7vWzzKLTEeFXSoV4JTybiFYTN8juz9FTakdI
-         AMBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRrz/qBX8hvEp/CeAFnpR+ABHx7d/cMCxTSGcDfWpuwyFFPapppSLu+rQUZ+QdnHDFuBVf6lYtw4FnckiCFzI8j3z+8g2e9xS7U8Mx
-X-Gm-Message-State: AOJu0YyPH2go9WznA7rBcirAEE2a0YMCzPoNKUIhLtxkTOs7kvM8n7T0
-	sN1bYUZcIJmbAQS8zjaJRykhN+5SqA4Nkgf7/poDpux7NpPCb2++adFO3h+cDML9/tcx+CYpyTJ
-	/mwyB4w==
-X-Google-Smtp-Source: AGHT+IEWsW9Li7XJhmJbe0Ql1OT7zvmtuLbpzqA2BypovDEj4D+Kwptibrx/t46FrfSDzuayj6PRag==
-X-Received: by 2002:a19:c20a:0:b0:521:742a:baf4 with SMTP id 2adb3069b0e04-5217c373e52mr2906595e87.9.1715212063641;
-        Wed, 08 May 2024 16:47:43 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17892444sm12830466b.76.2024.05.08.16.47.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 16:47:43 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a5a1054cf61so64249266b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 16:47:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUHt2yNnsdK+61H8qIKCMaDYhL40Rx800sRvV7KGqQiYfHsR+GgxmYSf4UU2zu4yPNtQta0He/AdsgkmQ1NfCGvYwLxDmPpODj9QItZ
-X-Received: by 2002:a17:907:118b:b0:a59:bb63:5e93 with SMTP id
- a640c23a62f3a-a59fb920592mr343424566b.16.1715212062214; Wed, 08 May 2024
- 16:47:42 -0700 (PDT)
+	s=arc-20240116; t=1715212440; c=relaxed/simple;
+	bh=sw7/cyRA0+8F6bdwISmbc5OkCJdAWouQOnOBHriBSbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1bigjxPxlaEub296MMBRVlzrFizJ2PNtGbVB1oQ51WTAqmNHfFQIKqjmjiFFP10SUDDu64Dmb5K2ktkhNapdZLGqAJR1w0tfNidn2utnM4/Xj0uOMKO3Zaak8jZu77P01WYzfQ/4Y2ZKT2nMT2KpJuXl4WCCEq04Ush3pkJ4u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s4r6f-00032N-MT; Thu, 09 May 2024 01:53:53 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s4r6f-000MDQ-2h; Thu, 09 May 2024 01:53:53 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1s4r6f-002HCQ-00;
+	Thu, 09 May 2024 01:53:53 +0200
+Date: Thu, 9 May 2024 01:53:52 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: dwc3: gadget: check drained isoc ep
+Message-ID: <ZjwQkIBUlhl-4ScO@pengutronix.de>
+References: <20240307-dwc3-gadget-complete-irq-v2-1-8c5e9b35f7b9@pengutronix.de>
+ <20240402230555.xgt5uilc42diyr4m@synopsys.com>
+ <20240402231848.4hzzrxegjrcmdab2@synopsys.com>
+ <20240404002906.wk6xbz2wp2tf2xwn@synopsys.com>
+ <Zie5sN473m2rgNTK@pengutronix.de>
+ <20240424015059.w7hsee4tt2ixkp5y@synopsys.com>
+ <ZjbIeib2UMta7FbY@pengutronix.de>
+ <20240508230252.wauttsgkp63fpife@synopsys.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202404291502.612E0A10@keescook> <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook>
-In-Reply-To: <202405081354.B0A8194B3C@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 May 2024 16:47:25 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
-Message-ID: <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-To: Kees Cook <keescook@chromium.org>
-Cc: Justin Stitt <justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Z7LlYPAU/B3cdMx8"
+Content-Disposition: inline
+In-Reply-To: <20240508230252.wauttsgkp63fpife@synopsys.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, 8 May 2024 at 15:54, Kees Cook <keescook@chromium.org> wrote:
+
+--Z7LlYPAU/B3cdMx8
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 08, 2024 at 11:03:00PM +0000, Thinh Nguyen wrote:
+>On Sun, May 05, 2024, Michael Grzeschik wrote:
+>> On Wed, Apr 24, 2024 at 01:51:01AM +0000, Thinh Nguyen wrote:
+>> > >
+>> >
+>> > Right. Unfortunately, dwc3 can only "guess" when UVC function stops
+>> > pumping more request or whether it's due to some large latency. The
+>> > logic to workaround this underrun issue will not be foolproof. Perhaps
+>> > we can improve upon it, but the solution is better implement at the UVC
+>> > function driver.
+>>
+>> Yes, the best way to solve this is in the uvc driver.
+>>
+>> > I thought we have the mechanism in UVC function now to ensure queuing
+>> > enough zero-length requests to account for underrun/latency issue?
+>> > What's the issue now?
+>>
+>> This is actually only partially true. Even with the zero-length packages
+>> it is possible that we run into underruns. This is why we implemented
+>> this patch. This has happened because another interrupt thread with the
+>> same prio on the same CPU as this interrupt thread was keeping the CPU
 >
-> Sure, but if the bar is omniscience, that's not a path forward.
+>Do you have the data on the worst latency?
 
-I really don't think there's a lot of omniscience involved at all.
+It was something a bit more then around 2ms AFAIR. Since with one frame
+enqueued we only trigger the interrupt every 16 requests (16*125us =3D 2ms)
 
-> I haven't really heard a viable counterproposal here.
+So with at least 2ms latency we did hit the sweet spot in several cases.
 
-So let me make the counter-proposal that you actually concentrate on
-very limited cases.
+>Can this other interrupt thread lower its priority relative to UVC? For
+>isoc endpoint, data is time critical.
 
-Baby steps, in other words.
+The details are not that important. Sure the is a bug, that needed to be
+solved. But all I wanted is to improve the overal dwc3 driver.
 
-For example, the most common case of overflow we've ever had has very
-much been array indexing. Now, sometimes that has actually been actual
-undefined behavior, because it's been overflow in signed variables,
-and those are "easy" to find in the sense that you just say "no, can't
-do that". UBSAN finds them, and that's good.
+>Currently dwc3 can have up to 255 TRBs per endpoint, potentially 255
+>zero-length requests. That's 255 uframe, or roughly ~30ms. Is your worst
+>latency more than 30ms? ie. no handling of transfer completion and
+>ep_queue for the whole 255 intervals or 30ms. If that's the case, we
+>have problems that cannot just be solved in dwc3.
 
-So I'd suggest seeing if we can catch the cases that *technically*
-aren't UB, but match dangerous overflow situations. IOW, start with
-very limited and very targeted things to look out for.
+Yes. But as mentioned above, this was not the case. Speaking of, there
+is currently a bug in the uvc_video driver, that is not taking into
+acount that actually every zero-length request should without exception
+need to trigger an interrupt. Currently we also only scatter them over
+the 16ms period, like with the actual payload. But since we feed the
+video stream with the interrupts, we loose 2ms of potential ep_queue
+calls with actual payload in the worst case.
 
-For example: some of the "this is not UB" may actually be trivial
-mistakes that come about because of the silent C type casting rules:
-overflow in unsigned arithmetic isn't UB, but it's actually very easy
-to make arithmetic unsigned "by mistake".
+My patch is already in the stack and will be send today.
 
-IOW, a pattern to look out for might be
+>> busy. As the dwc3 interrupt thread get to its call, the time was already
+>> over and the hw was already drained, although the started list was not
+>> yet empty, which was causing the next queued requests to be queued to
+>> late. (zero length or not)
+>>
+>> Yes, this needed to be solved on the upper level first, by moving the
+>> long running work of the other interrupt thread to another thread or
+>> even into the userspace.
+>
+>Right.
+>
+>>
+>> However I thought it would be great if we could somehow find out in
+>> the dwc3 core and make the pump mechanism more robust against such
+>> late enqueues.
+>
+>The dwc3 core handling of events and ep_queue is relatively quick. I'm
+>all for any optimization in the dwc3 core for performance. However, I
+>don't want to just continue looking for workaround in the dwc3 core
+>without looking to solve the issue where it should be. I don't want to
+>sacrifice complexity and/or performance to other applications for just
+>UVC.
 
-        int a;
-        ...
-        a * sizeof(xyz);
+I totally understand this. And as we already found out more and more
+about the underlying complexity of the dwc3 driver I see more and more
+clearer how we have to handle the corner cases. I just started this
+conversation with Avichal and you in the other thread.
 
-where "sizeof" obviously is unsigned, and then the C integer
-promotions end up making this a well-defined operation that probably
-really *is* dangerous, because the integer promotion basically adds an
-implicit cast from "int" to "size_t" in there.
+https://lore.kernel.org/all/17192e0f-7f18-49ae-96fc-71054d46f74a@google.com/
 
-End result: it's not UB, but maybe it is not-*accidentally*-UB, and
-thus maybe worth a warning? See what I'm saying?
+I think there is some work to come. As to be sure that everybody is on
+the same page I will prepare a roadmap on how to proceed and what to
+discuss. There are many cases interfering with each other which make the
+solution pretty complex.
 
-So *that* I feel could be something where you can warn without a ton
-of compiler smarts at all. If you see an *implicit* cast to unsigned
-and then the subsequent operations wraps around, it's probably worth
-being a lot more worried about.
+>> This all started with that series.
+>>
+>> https://lore.kernel.org/all/20240307-dwc3-gadget-complete-irq-v1-0-4fe9a=
+c0ba2b7@pengutronix.de/
+>>
+>> And patch 2 of this series did work well so far. The next move was this
+>> patch.
+>>
+>> Since the last week debugging we found out that it got other issues.
+>> It is not allways save to read the HWO bit, from the driver.
+>>
+>> Turns out that after an new TRB was prepared with the HWO bit set
+>> it is not save to read immideatly back from that value as the hw
+>> will be doing some operations on that exactly new prepared TRB.
+>>
+>> We ran into this problem when applying this patch. The trb buffer list
+>> was actually filled but we hit a false positive where the latest HWO bit
+>> was 0 (probably due to the hw action in the background) and therefor
+>> went into end transfer.
+>>
+>
+>Thanks for the update.
 
-Now, another thing to do might be to treat assignments (and again,
-implicit casts) to 'size_t' specially. In most compilers (certainly in
-gcc), "size_t" is a special type.
+Thanks,
+Michael
 
-Now, in the kernel, we don't actually use __builtin_size_t (the kernel
-started out with a very standalone type system, and I think it
-actually predated gcc's __builtin_size_t or maybe I just wasn't aware
-of it). But we certainly _could_ - or we could at least use some
-special marked type for our own 'size_t'.
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-And basically try to catch cases where arithmetic is explicitly used
-for a size calculation: things like 'kmalloc()' etc are the obvious
-things. And yes, the result will then have an (implicit) cast to
-'size_t' as part of the calling convention.
+--Z7LlYPAU/B3cdMx8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That's another "pattern that sounds relevant and easy to notice for a compiler".
+-----BEGIN PGP SIGNATURE-----
 
-And, finally, simply pointer arithmetic. Again, this is *not* some
-"omniscience required". This is something very obvious where the
-compiler is *very* aware of it being pointer arithmetic, because
-pointer arithmetic has that implicit (and important) "take size of
-object into account".
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmY8EI4ACgkQC+njFXoe
+LGS01hAAhUG5/Of+XNj3OmLS7wXs3oYCQEAwjttD8+FrH2GTe8qIZ6R9WziBRQ68
+nmT4o9NbmADJ7a8wjLxUNZGhUANm5OVnRfc/bo4OP90/nR1FnREDpBPZC2gL7b1G
+hvhPhRVOcHdGoJ50c/kgW5KczOUwDunhZx+r6n8SZ74MH3KvbExJMMCk+782YpqD
+Ky7hxxx338OsnC4cNNX5w3CNSmG5JmUGja96ygvuM31s89kqzEPQVqrMlE0ycq09
+54xvHkzo4P3h9FYAJ+LW16U520IIMqezc+b7LLjgQQAlOm7G1gWCxaWt2Pm0un8f
+8opE8V2/lxr/bLbUjnN7q8bCjB0HTbtwcIUszxDU1gcyi2QHk59M2KwIAHA29RBK
+Y9bo6qmlix9GRs74kMFHFiszV+lm/+FQ+td7U6HYeiXWlPmlCTc2yI5cKrMVP9WU
+3zCBZv0x1QOkXmOiDTa+2gHxyOmB0AONo60wnrFMLIjgTOfHcDROmTLL1M8Wsbrc
+0W63gguIHEcYn3g7vA2+hqnGT+B0CB8TCr4DgqiteLacUQFeTcC/qvC1Cd0Gw3K7
+3rkJVI8m5/bEmwon8DvE0nAF7I21X23i6YDEoGrTWxXbz3+xssjAi4I93rzmSGOk
+oCyBGJRyUDYiFVDOUAaUrNxklFUm/QIB3SRQaxPlumgbXLtkCB4=
+=YPfe
+-----END PGP SIGNATURE-----
 
-So again, if you see an integer expression that leads to pointer
-arithmetic, at that point the overflow very much is relevant.
-
-See? Three very *targeted* things where
-
- (a) the compiler is very much aware of the use
-
- (b) you can fairly confidently say "integer arithmetic wraparound is
-a dangerous thing even when not UB".
-
-So what I object to - loudly - is some completely bogus argument of
-"integer wraparound is always wrong".
-
-And dammit, I have seen you state something that sounds very much like
-that several times, most recently in just this thread where you were
-arguing for a special "u32_wrap" type just to allow wrapping without
-complaints.
-
-And I think it's that overly-generic "wrap-around is wrong" argument
-that is completely bogus and needs to be nipped in the bud.
-
-Wrap-around is not only well-defined, it's *useful*, and it's *used*,
-and I find tools that warn about good code (like our existing hash
-functions) to be *HORRIBLE*.
-
-False positive warnings make real warnings worthless.
-
-And so I think warning about wrap-around in general is mindless and
-wrong and actively counter-productive. If people then just "fix" the
-warning by casting it to "u32_wrap", you have only caused problems.
-
-But catching wrap-around in *specific* cases, if you can argue for why
-it's wrong in *those* cases: that sounds fine.
-
-And I tried to give three examples of such specific cases above - I'm
-sure there are many others.
-
-To conclude: I think the path forward is not at all omniscience. It's
-"limit yourself to cases that matter". Don't think of wrap-around as
-some "global evil" like you seem to do. Think of it as wrong in
-_specific_ cases, and see if you can target those cases.
-
-Start small, in other words.
-
-Now, to take the specific example you brought up: commits a723968c0ed3
-and 382c27f4ed28. Honestly, I think you'll find that that one wouldn't
-have been caught by some arithmetic wrap-around issue, because the
-*arithmetic* was actually done in a type that didn't even wrap around.
-
-IOW, in that case, you had "int size", and none of the arithmetic on
-the size actually wrapped.
-
-No, the only point where that actually failed was then when a
-(non-overflowing, non-wrapping) final value was assigned to a 16-bit
-field, ie the problem only ever happened at the final assignment:
-
-        event->read_size = size;
-
-where no overflow had ever happened before that.
-
-So in *that* case, you actually have a much more interesting
-situation. Not wrap-around, not overflow, but "implicit cast drops
-significant bits".
-
-And yes, I do think implicit integer casts are dangerous. Often *more*
-dangerous than arithmetic overflow and wrapping. We've had absolutely
-tons of them. Some of our most traditional bugs have very much been
-about implicit casting losing bits and causing problems as a result.
-
-In fact, that's the reason we have MAX_RW_COUNT - because we used to
-have too many places where various drivers or filesystems ended up
-casting a "size_t" count argument down to "int count". So we are
-literally violating POSIX semantics for some of the most important
-system calls (read() and write()) as a safety measure against hidden
-implicit truncating casts.
-
-I think that would be a completely different area that might be worth
-looking at: instrumenting implicit casts for "drops bits". I'm afraid
-that it's just *so* common than we might not be able to do that
-sanely.
-
-But again, maybe it would be worth looking into, at least for some
-limited cases. To go back to your particular example, it might be
-worth trying to limit it for unusual type sizes like implicit casts to
-'u16' or bitfields: not because those type sizes are magical, but
-because it might be a way to limit the pain.
-
-Summary: targeted baby steps, not some draconian "wrap-around is wrong".
-
-                  Linus
+--Z7LlYPAU/B3cdMx8--
 
