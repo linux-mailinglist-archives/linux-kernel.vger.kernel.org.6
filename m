@@ -1,190 +1,103 @@
-Return-Path: <linux-kernel+bounces-173160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7FB8BFC51
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:40:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052808BFC59
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DDBB1C22180
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2231F23930
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6F5824AC;
-	Wed,  8 May 2024 11:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE4D83A0D;
+	Wed,  8 May 2024 11:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnLsjxTl"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLY3Z30U"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57605823C3;
-	Wed,  8 May 2024 11:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EC3839FE;
+	Wed,  8 May 2024 11:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168424; cv=none; b=aB+W0C1wJbGidrrIuMrhZl6l+bzgK8t1PXfv/fqLg8arlzB3MK+Vavnu7ijBcR2ZGFnZLDfE6lnTapShGf2sjTnSeSk2z90/EpBc+cxBiRNdajZvi9M3eVwtTj1+jWcbIivqgU+au3blL7pljvClpSBg6E8rC+pe30UorAT0r2w=
+	t=1715168440; cv=none; b=C7exQuJQUENAqW/2CvBHxL/LH3vVfdvACBWnnm9eT1mmp+lsYqjLxu4ItW+tHgOiAgNPM9Ol07sapV3bj3FruPjilclbnBxXvJhZ7naghkCN+S3oJb2Pnq7mS95cHcM4OYRQvRlVRtw4icnTCYhGOKSgmwB0WjgWPqZR8Dn4IxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168424; c=relaxed/simple;
-	bh=LzkcsxBboOgTqBhvmxB1AA5X0VPmOIkAnWcagywa/TM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rMIqoa6z+ZFb0qX3hmKwz7/bRPn8+0T1bb25n0n+pe5+lshySxjkoODy2DTo3cXIsLdTMP2xu0TrsIVl0d3l9+rd28wePqw28AFZAV9b8otp7hAu8jqZETYZs5J9v69Sk0xYTv6x3+cTZu19CVXd/nPsAF+5j08xJlMggjFcROA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GnLsjxTl; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b203c9933dso2267152eaf.3;
-        Wed, 08 May 2024 04:40:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715168422; x=1715773222; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IOIzh5hay1VG+baSkhj40F76B94Bx+2N06xZr/PBSXw=;
-        b=GnLsjxTlU/2dVrZE8+WMjbY0VMLNLbBbnA5YrhMHhR7q2cbI0XQyq5dgFmEfLylK65
-         G8e7syVaiLXR1q/NtIZ+5Y8w5isHEQviYloB2o1j/8f8m21X/+LS9hfiTOVTkcFSSA9r
-         9D/oP6rsLFrUcMYJuOWlQ3vFF9os4REMNWgK6PXw+hpi9xiHUOg972DGWuG9mvPI2Rl/
-         eX9k4tGsCDmUiOSWhbaGnI6PMHCwY2kHvtJMOh3Wj6ImrzYkzXp3Nl3WAyvpfis3IYqd
-         jnp6BYG8RYVQUMHPDnz0U19jOoYqO2lcZbUsOawLTD33IeBR6bKyUBsWpyHPCxZEh0UE
-         Za8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715168422; x=1715773222;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IOIzh5hay1VG+baSkhj40F76B94Bx+2N06xZr/PBSXw=;
-        b=WXhFxa8mfmpTobscMItxtiwCQx7lxK/TpoBw1pJgakmm8M6ZvweD8soUbGanJXkYDr
-         AaLbeZPr5t89+FeQzuWVoaWxWnL916RvWWqMfzFUFT/VelDgsxQSrDushS4XBDFJ95+H
-         TNvelYbw1ZfLJ4aB8VvRwGJ6q9tqhrzPByPaM/NX4e9SS8bbIq/ARWXP6Df5y2V3Z7rL
-         qiXQ+vmdzA5EpqHoOsIUBbG5oLFYV2Nk+7uJ/LncbJ0KbLVoxNK2p3j/y3v2vetrD4HU
-         +ITQnMkPic9Kw7E9r9uFPIFzdW/R83XoevcYQVBBbH1fA98de3wB3/6bFN8/xyJcz9x0
-         77DA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYuRWlmXOWqsB0YGiQ4C9nFWAoDbyzdrKFrfEacWtD/gZdJnN9/ewc6VIZBkjR5Yp4B0Qd4GHYLjibqeZXCPvO9qEFoc3D8aVhRK5Q/ofciV7NIVxcLnLR6VBhqNUMQS5UDRxo/AJleA==
-X-Gm-Message-State: AOJu0YyGfguW+bhLtTe0f1UTPijWDYIOJyhm5dqC1wi+CfpIkcV5nIdp
-	tdTOaX7NFwuz8C9dPrtU9DXr2CAZ9o+deThI0EVsN2PZQI8PgvinWWkaPZ913XIvJZXJgwf8K7w
-	QRDzi32ZcnrVowH3krliTU/oZTwljLorWx7Q=
-X-Google-Smtp-Source: AGHT+IHmLv/TAPoHKLua1wTR21SZpjGzAQp6CSeJ56q1NNnw1JuHDSs+rZx7mIDbkUq4KHNnaSNxsszq9ha12ZE1pgk=
-X-Received: by 2002:a4a:58c8:0:b0:5b1:ff93:de40 with SMTP id
- 006d021491bc7-5b24d60d1c7mr2278127eaf.5.1715168422279; Wed, 08 May 2024
- 04:40:22 -0700 (PDT)
+	s=arc-20240116; t=1715168440; c=relaxed/simple;
+	bh=L553O5yxjkFAwL/t2j+02UPkkJnndDONYb+IspTlLIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cWAwhZPIQdm+2IJ8pvk+cGeM+boJyngwNA887KqTBvhEu9/mphuSf7z4TJPIX72j4P1JAk0YBAmI/oby83INdJG+QfpOpdbg5bB2iJf9f4GqDCFbG/gz3t2nWCc9c9WmuAKny1iMlm26beuffAx2jay78Ng7cb0rceb4wKcKJto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLY3Z30U; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715168439; x=1746704439;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L553O5yxjkFAwL/t2j+02UPkkJnndDONYb+IspTlLIc=;
+  b=CLY3Z30UzWKXjqMohvILI6xg4LORgf4BryW+xSShD0Qg1FK4v+DQR6E2
+   oTu+4+NNsFgQAqoDCorccP6K3ozcMXX+IUK4n3AjNDQYx068vd0t62Rvr
+   bFmjofV/hecMx31ZpczLSLokCYGSIYn0Ek1redwhq6oo01MY4Q7mdrU+/
+   QuEjxIOtBnuJVa0wpgz5AjIZpXl+AZVPRAA8OTScyer6T11MG7RKGbPVo
+   iqlzZQh0tPnIYAArysxaZWVXtrFMZ4rFYGoPqW4NadOhU6Ze68Pht2KPL
+   c9ij95lXlEw8WOSug6q58jTtSNSESwNffh7U4Z9qv3CJFX1jRX07OPdVr
+   g==;
+X-CSE-ConnectionGUID: vIErpBS3QDinXvY2x+xe2w==
+X-CSE-MsgGUID: 4eSTUCdIQWmtVm2O1r1ZfQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10888806"
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="10888806"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 04:40:38 -0700
+X-CSE-ConnectionGUID: 34J1j/zTST+kzKSWfK90Xw==
+X-CSE-MsgGUID: p/T5EAlcQnemw3/ghHjRXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
+   d="scan'208";a="33379940"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 08 May 2024 04:40:36 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 53CD911F; Wed, 08 May 2024 14:40:35 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tony Lindgren <tony@atomide.com>,
+	Lee Jones <lee@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] mfd: menelaus: Remove unused linux/gpio.h
+Date: Wed,  8 May 2024 14:40:33 +0300
+Message-ID: <20240508114033.952578-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
- <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com> <2543817.5xW6y1K4kI@bagend>
- <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
-In-Reply-To: <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 8 May 2024 17:10:05 +0530
-Message-ID: <CANAwSgTU7UF_RaNnVSZR7SehQqC7Eo6D=JqT11gN7jK2diN_Ug@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
- all RK3588 boards
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Diederik de Haas <didi.debian@cknow.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Dragan Simic <dsimic@manjaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Alexey,
+linux/gpio.h is deprecated and subject to remove.
+The driver doesn't use it, simply remove the unused header.
 
-On Mon, 6 May 2024 at 18:24, Alexey Charkov <alchark@gmail.com> wrote:
->
-> Hello Diederik,
->
-> On Mon, May 6, 2024 at 4:29=E2=80=AFPM Diederik de Haas <didi.debian@ckno=
-w.org> wrote:
-> >
-> > Hi,
-> >
-> > On Monday, 6 May 2024 11:36:33 CEST Alexey Charkov wrote:
-> > > This enables the on-chip thermal monitoring sensor (TSADC) on all
-> > > RK3588(s) boards that don't have it enabled yet. It provides temperat=
-ure
-> > > monitoring for the SoC and emergency thermal shutdowns, and is thus
-> > > important to have in place before CPU DVFS is enabled, as high CPU
-> > > operating performance points can overheat the chip quickly in the
-> > > absence of thermal management.
-> > >
-> > > Signed-off-by: Alexey Charkov <alchark@gmail.com>
-> > > ---
-> > >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4 ++=
-++
-> > >  8 files changed, 32 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
-> > > b8e15b76a8a6..21e96c212dd8 100644
-> > > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > > @@ -742,6 +742,10 @@ regulator-state-mem {
-> > >       };
-> > >  };
-> > >
-> > > +&tsadc {
-> > > +     status =3D "okay";
-> > > +};
-> > > +
-> > >  &uart2 {
-> > >       pinctrl-0 =3D <&uart2m0_xfer>;
-> > >       status =3D "okay";
-> >
-> > I built a kernel with v3 of your patch set and someone tested it on a R=
-OCK 5B
-> > 'for me' and it had the following line in dmesg:
-> >
-> > rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
-> >
-> > I'm guessing that turned up due to enabling tsadc, but (also) in v4 I d=
-idn't
-> > see a change wrt "rockchip,grf".
-> > Should that be done? (asking; I don't know)
->
-> I'm getting the same. Neither the mainline TSADC driver [1], nor the
-> downstream one [2] seems to use the grf pointer on RK3588 at all. It
-> still works in spite of that warning, although I can't see how (or if)
-> it configures the reset mechanism without those GRF registers.
->
-> Best regards,
-> Alexey
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/drivers/thermal/rockchip_thermal.c#n818
-> [2] https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/therma=
-l/rockchip_thermal.c#L961
->
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mfd/menelaus.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-If the following changes fix the warning.
+diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+index 662604ea97f2..787b9c2f3804 100644
+--- a/drivers/mfd/menelaus.c
++++ b/drivers/mfd/menelaus.c
+@@ -29,7 +29,6 @@
+ #include <linux/bcd.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/menelaus.h>
+-#include <linux/gpio.h>
+ 
+ #include <asm/mach/irq.h>
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Checking the Rockchip RK3588 TRM V1.0-Part1-20220309.pdf
-PMU1GRF_SOC_CON3 which has tsadc_shut_reset_trigger_en bit
-to control the Enable TSADC shut reset trigger for DDR fail safe.
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-index 85c25d5efdad..5490a44e093e 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-@@ -2662,6 +2662,7 @@ tsadc: tsadc@fec00000 {
-                rockchip,hw-tshut-temp =3D <120000>;
-                rockchip,hw-tshut-mode =3D <0>; /* tshut mode 0:CRU 1:GPIO =
-*/
-                rockchip,hw-tshut-polarity =3D <0>; /* tshut polarity
-0:LOW 1:HIGH */
-+               rockchip,pmu =3D <&pmu1grf>;
-                pinctrl-0 =3D <&tsadc_gpio_func>;
-                pinctrl-1 =3D <&tsadc_shut>;
-                pinctrl-names =3D "gpio", "otpout";
-
-Thanks
--Anand
-
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
