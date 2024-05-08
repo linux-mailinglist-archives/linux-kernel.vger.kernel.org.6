@@ -1,299 +1,148 @@
-Return-Path: <linux-kernel+bounces-172692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D9F8BF585
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:14:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 851B68BF587
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5438B1C22D5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:14:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126641F25E80
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF89179BC;
-	Wed,  8 May 2024 05:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIT6xoEX"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07A61755A;
+	Wed,  8 May 2024 05:14:51 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E1117597
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21943182C5;
+	Wed,  8 May 2024 05:14:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715145283; cv=none; b=LCn2pFRYROPUE/uVfN+azsLl/PjNnP50wAahye7sPEugUjcBNlVSNUcDMo31BwzVkml7CoIvUqfJiTARR/9O0jv7s5arAweJz0R0VlYP2RWQputu6Rk8V5zzCy+ZZKpC6gLrF1ofwe70CYsK0EAMXaS27khZhXlYPSG4ps9P5HA=
+	t=1715145291; cv=none; b=iv6XLQSoRVqEz4ezY8xBBaoXKcUcDGXerH2xHIZy8utZiub80gWdtR2AQTXbmSQOty5HXGG8wFZzy/PQv1EmicS/5JF9a7kspjB5AeAfKgEJ1dfqDC87h2mksySSqXCGl4GTSl84LP1zG++kzM/M0YOrJpyHZb9fVJFh4q/b9Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715145283; c=relaxed/simple;
-	bh=dPS0rGrYQUxBpoJN3CR8XFSPSI7eBe4wL3aiWA/H1GE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s59CfNR44eOa4LFD5t06Hoe+3INwbE4V10k3AmF8CH5GQ0SP6rFx2bXYxk5vlME8pYQqoC4GBCACbur2BHQMdMf5XB3k15rQkKQpTazyUtwlEVX293ZBpcZWYZQk92p5qYzo5VjGBjvfaaybEaygT7wXhSj0RpKNdTvEbrb6Nu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIT6xoEX; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-572adaa172cso796082a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715145279; x=1715750079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LyzSFLYlexgFjtX1X6+Hr5dHIkUV+Eu+niVH388nLk=;
-        b=AIT6xoEXQZP4ca3ezB1x5uh1piz9SiYT7Zhn4SWocfTdDbRnEuD0/1/EZXvfIbSUqP
-         ej7U1k76XFrxmqb7i2kgChD0UmkdTAP02bXhs3Ytbsi5ZWD6+1Ff02IlFKzZvGMV90eQ
-         7DJr/CpE3cMbkwxfnTHkcYk2nE3ioH/kyhfVFebqBQ9lcWH0JZ/xUK3qRa0ZJ9k2QQGz
-         xTJcjDBQyEljrO6I062PfrfYsFvwPO6Hdz7NoxSEdG74sFS0Rr9Mdxaf049DEREO8fRp
-         Nu8y6dNlAebuBCOkDo0mmEBnE0g32q23sM/k0ut+UktVVJvS1rx5jn0u0Jz2ieb2Ghiv
-         DPbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715145279; x=1715750079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+LyzSFLYlexgFjtX1X6+Hr5dHIkUV+Eu+niVH388nLk=;
-        b=m0R8UGMLuLe8svQGnGu9riec4xHerOOF/5PkRfQxddOnkCgTDRiDruV0hqAVEipK6E
-         bvyjzEjFVqZlv2JmIa/S21NXJQkdQ54idlHgGWHfHiX2lJg6nMMl2Q/hJWrgxabbR3s9
-         PTuTyCDIPbXo4pK+8i6J8NOtqOIRzSgqegUK08usQhRWdNNogtWpM7UUTqSD5fLtbiIz
-         eGNYwImDbmFQ6HrWnuuXd3R4+mfweW5SdEjDa3QPUbkabT7cVDnzfOkaxZ4LngBTTmVW
-         vWDHTdHIBXlgH2FIbvURfhhwnn9nYBYuswanHTak8VfK4MPz6rPc0VmUkD3AVzQYNNfI
-         fveQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLPXzGehKjrByDQbFcBxvG6mfuOzArRC12DykXwnnJSgwhmJNo2hCkZEzT7B8GKD2Xe0ghwon3txqJkuxNrCzTsGiLiGPoeWaQDceu
-X-Gm-Message-State: AOJu0Yz21zhvlvzc/8SuFD0Ju5SRUK7D4b2CqwqGx6gQlyuOYo39LMiI
-	Db49MQsEhyQT+pjMH2DG5PUoGwN5Mhg51Pf3HXi9lwmh7kblwkGSpq5Nyf8efeD+LN6ZEaXhdL4
-	tr5tcC1RpLTFpUAwrj4pv6EUnnJc=
-X-Google-Smtp-Source: AGHT+IFSkxSQRrOJtQm4GC5stVxBepUVcQ95xgMMBKbXpuewUwp4OtsPe+AWdwvjRkdFYbk6eeSqSWQT0y344LzC03o=
-X-Received: by 2002:aa7:c2d3:0:b0:572:5122:4845 with SMTP id
- 4fb4d7f45d1cf-5731101d43fmr3949764a12.4.1715145279143; Tue, 07 May 2024
- 22:14:39 -0700 (PDT)
+	s=arc-20240116; t=1715145291; c=relaxed/simple;
+	bh=/YST7JttZYUhFEhxiwIV1PLpBD/c9+ByZTl2gJ9FNTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZW9qPvK0sxR3Pd4In7sl8swDHUKfnpJSGkEJRbjOvNYz6hQ96B+AZ8exwg/VOdhaSw3tKSOkQ+YUMSyxAgv9S+omH52DBTj56FC1cvTMOMYMird6HdOLEBPCwSOCfHi3wrrNT5+pB0GF+taZfZVMQ9PtDnUZda6dPJcidcWk88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 28390101EB72D;
+	Wed,  8 May 2024 07:14:38 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id A9A594FB157; Wed,  8 May 2024 07:14:37 +0200 (CEST)
+Date: Wed, 8 May 2024 07:14:37 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Esther Shimanovich <eshimanovich@chromium.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <ZjsKPSgV39SF0gdX@wunner.de>
+References: <CA+Y6NJF6+s5zUZeaWtagpMt8Qu0a1oE+3re3c6EsppH+ZsuMRQ@mail.gmail.com>
+ <20240419044945.GR112498@black.fi.intel.com>
+ <CA+Y6NJEpWpfPqHO6=Z1XFCXZDUq1+g6EFryB+Urq1=h0PhT+fg@mail.gmail.com>
+ <7d68a112-0f48-46bf-9f6d-d99b88828761@amd.com>
+ <20240423053312.GY112498@black.fi.intel.com>
+ <7197b2ce-f815-48a1-a78e-9e139de796b7@amd.com>
+ <20240424085608.GE112498@black.fi.intel.com>
+ <CA+Y6NJFyi6e7ype6dTAjxsy5aC80NdVOt+Vg-a0O0y_JsfwSGg@mail.gmail.com>
+ <Zi0VLrvUWH6P1_or@wunner.de>
+ <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-4-ioworker0@gmail.com>
- <9BC53B16-A63F-48DF-BE0B-D51E0E82E1B4@nvidia.com>
-In-Reply-To: <9BC53B16-A63F-48DF-BE0B-D51E0E82E1B4@nvidia.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Wed, 8 May 2024 13:14:27 +0800
-Message-ID: <CAK1f24m_kfj8bc3VpwX3Y=+=twU17qRtWZQhKRXWJZvQiYv8og@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	maskray@google.com, ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, 
-	mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
-	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
-	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
-	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
 
-Hey Zi,
+On Wed, May 01, 2024 at 06:23:28PM -0400, Esther Shimanovich wrote:
+> On Sat, Apr 27, 2024 at 3:17AM Lukas Wunner <lukas@wunner.de> wrote:
+> That is correct, when the user-visible issue occurs, no driver is
+> bound to the NHI and XHCI. The discrete JHL chip is not permitted to
+> attach to the external-facing root port because of the security
+> policy, so the NHI and XHCI are not seen by the computer.
 
-Thanks for taking time to review!
+Could you rework your patch to only rectify the NHI's and XHCI's
+device properties and leave the bridges untouched?
 
-On Wed, May 8, 2024 at 12:20=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 1 May 2024, at 0:27, Lance Yang wrote:
->
-> > When the user no longer requires the pages, they would use
-> > madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
-> > typically would not re-write to that memory again.
-> >
-> > During memory reclaim, if we detect that the large folio and its PMD ar=
-e
-> > both still marked as clean and there are no unexpected references
-> > (such as GUP), so we can just discard the memory lazily, improving the
-> > efficiency of memory reclamation in this case.  On an Intel i5 CPU, rec=
-laiming 1GiB of lazyfree THPs using
-> > mem_cgroup_force_empty() results in the following runtimes in seconds
-> > (shorter is better):
-> >
-> > --------------------------------------------
-> > |     Old       |      New       |  Change  |
-> > --------------------------------------------
-> > |   0.683426    |    0.049197    |  -92.80% |
-> > --------------------------------------------
-> >
-> > Suggested-by: Zi Yan <ziy@nvidia.com>
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > ---
-> >  include/linux/huge_mm.h |  9 +++++
-> >  mm/huge_memory.c        | 73 +++++++++++++++++++++++++++++++++++++++++
-> >  mm/rmap.c               |  3 ++
-> >  3 files changed, 85 insertions(+)
-> >
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 38c4b5537715..017cee864080 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
-> >
-> >  void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
-ddress,
-> >                          pmd_t *pmd, bool freeze, struct folio *folio);
-> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
-ddr,
-> > +                        pmd_t *pmdp, struct folio *folio);
-> >
-> >  static inline void align_huge_pmd_range(struct vm_area_struct *vma,
-> >                                       unsigned long *start,
-> > @@ -492,6 +494,13 @@ static inline void align_huge_pmd_range(struct vm_=
-area_struct *vma,
-> >                                       unsigned long *start,
-> >                                       unsigned long *end) {}
-> >
-> > +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
-> > +                                      unsigned long addr, pmd_t *pmdp,
-> > +                                      struct folio *folio)
-> > +{
-> > +     return false;
-> > +}
-> > +
-> >  #define split_huge_pud(__vma, __pmd, __address)      \
-> >       do { } while (0)
-> >
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 145505a1dd05..90fdef847a88 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2690,6 +2690,79 @@ static void unmap_folio(struct folio *folio)
-> >       try_to_unmap_flush();
-> >  }
-> >
-> > +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
-> > +                                    unsigned long addr, pmd_t *pmdp,
-> > +                                    struct folio *folio)
-> > +{
-> > +     struct mm_struct *mm =3D vma->vm_mm;
-> > +     int ref_count, map_count;
-> > +     pmd_t orig_pmd =3D *pmdp;
-> > +     struct mmu_gather tlb;
-> > +     struct page *page;
-> > +
-> > +     if (pmd_dirty(orig_pmd) || folio_test_dirty(folio))
-> > +             return false;
-> > +     if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd))=
-)
-> > +             return false;
-> > +
-> > +     page =3D pmd_page(orig_pmd);
-> > +     if (unlikely(page_folio(page) !=3D folio))
-> > +             return false;
-> > +
-> > +     tlb_gather_mmu(&tlb, mm);
-> > +     orig_pmd =3D pmdp_huge_get_and_clear(mm, addr, pmdp);
-> > +     tlb_remove_pmd_tlb_entry(&tlb, pmdp, addr);
-> > +
-> > +     /*
-> > +      * Syncing against concurrent GUP-fast:
-> > +      * - clear PMD; barrier; read refcount
-> > +      * - inc refcount; barrier; read PMD
-> > +      */
-> > +     smp_mb();
-> > +
-> > +     ref_count =3D folio_ref_count(folio);
-> > +     map_count =3D folio_mapcount(folio);
-> > +
-> > +     /*
-> > +      * Order reads for folio refcount and dirty flag
-> > +      * (see comments in __remove_mapping()).
-> > +      */
-> > +     smp_rmb();
-> > +
-> > +     /*
-> > +      * If the PMD or folio is redirtied at this point, or if there ar=
-e
-> > +      * unexpected references, we will give up to discard this folio
-> > +      * and remap it.
-> > +      *
-> > +      * The only folio refs must be one from isolation plus the rmap(s=
-).
-> > +      */
-> > +     if (ref_count !=3D map_count + 1 || folio_test_dirty(folio) ||
-> > +         pmd_dirty(orig_pmd)) {
-> > +             set_pmd_at(mm, addr, pmdp, orig_pmd);
-> > +             return false;
-> > +     }
-> > +
-> > +     folio_remove_rmap_pmd(folio, page, vma);
-> > +     zap_deposited_table(mm, pmdp);
-> > +     add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
-> > +     folio_put(folio);
-> > +
-> > +     return true;
-> > +}
-> > +
-> > +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
-ddr,
-> > +                        pmd_t *pmdp, struct folio *folio)
-> > +{
-> > +     VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
-> > +     VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
-> > +     VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
-> > +
-> > +     if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
-> > +             return __discard_trans_pmd_locked(vma, addr, pmdp, folio)=
-;
-> > +
-> > +     return false;
-> > +}
-> > +
-> >  static void remap_page(struct folio *folio, unsigned long nr)
-> >  {
-> >       int i =3D 0;
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 432601154583..1d3d30cb752c 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -1675,6 +1675,9 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >               }
-> >
-> >               if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
-> > +                     if (unmap_huge_pmd_locked(vma, range.start, pvmw.=
-pmd,
-> > +                                               folio))
-> > +                             goto walk_done;
->
-> You might not need to check (flags & TTU_SPLIT_HUGE_PMD) for
-> unmap_huge_pmd_locked(), since you are unmapping a PMD here.
-> TTU_SPLIT_HUGE_PMD is here because try_to_unmap_one() was not able to unm=
-ap
-> a PMD. You probably can remove it for callers that are unmapping
-> the folio but not the ones are swapping.
+The thunderbolt driver will then rectify the bridge's properties
+using the patches on this branch (particularly the one named
+"thunderbolt: Mark PCIe Adapters on Root Switch as non-removable"):
 
-Thanks for the suggestion!
+https://github.com/l1k/linux/commits/thunderbolt_associate_v1
 
-Ageed. For unmap_huge_pmd_locked(), there is no need to check the
-TTU_SPLIT_HUGE_PMD flag. We only need to check the flag for
-split_huge_pmd_locked().
+This approach keeps most of the code in the thunderbolt driver
+(which has a very clear picture which PCI bridges belong to the
+Host Router and which to Device Routers).  The footprint in the
+PCI core is thus kept minimal, which increases upstream
+acceptability of your patch.
 
-Given this, if we fail to remove the PMD mapping and the flag is not set,
-I think we should stop the walk. So we can also remove the
-VM_BUG_ON_FOLIO() below.
+You can match the NHI using DECLARE_PCI_FIXUP_CLASS_FINAL():
 
-/* Unexpected PMD-mapped THP? */
-VM_BUG_ON_FOLIO(!pvmw.pte, folio);
+* Search for PCI_CLASS_SERIAL_USB_USB4 with class shift 0
+  to match a USB4 Host Interface from any vendor.
+* Seach for PCI_CLASS_SYSTEM_OTHER with class shift 8
+  to match a Thunderbolt 1 to 3 Host Interface.
+  I recommend checking the is_thunderbolt bit on those devices
+  to avoid matching a non-NHI.
 
-Zi, what do you think?
+Then fixup the device properties of the NHI so that it can bind.
+
+To also rectify the properties of the XHCI, you'd have to use
+pci_upstream_bridge() to find the Downstream Port above, check
+whether that's non-NULL.  The bus on which the Downstream Port
+resides is pdev->bus.  On all Host Routers I know, the XHCI is
+below slot 02.0 on that bus, so you could use pci_get_slot()
+to find that Downstream Port, then use pci_get_slot() again
+to find slot 00.0 on that bridge's subordinate bus.  If that
+device has class PCI_CLASS_SERIAL_USB_XHCI, you've found the
+XHCI and can rectify its properties.  Device references acquired
+with pci_get_*() need to be returned with pci_dev_put().
+
+The quirk should be #ifdef'ed to CONFIG_ACPI.  Alternatively,
+it could be declared in pci-acpi.c near pci_acpi_set_external_facing().
+
+
+> > However that doesn't appear to be sufficient:  I notice that in your
+> > patch, you're also clearing the external_facing bit on the Root Port
+> > above the discrete host controller.
+> 
+> Rajat (rajatja@google.com) in an internal review had suggested I add
+> that, and leave it up to kernel maintainers to decide if it's strictly
+> necessary.
+
+I'd recommend to leave the Root Port's properties untouched
+unless that's necessary.
+
+
+> I don???t have this device available at my office. I just saw that
+> StarTech sells a universal laptop docking station with chipset-id
+> Intel - Alpine Ridge DSL6540. Then I looked up the device, and found
+> it here: https://linux-hardware.org/?id=pci:8086-1577-8086-0000
+> 
+> Therefore, I concluded that the DSL6540 has an NHI component.
+> 
+> If these logs are important, I could probably make a case to purchase
+> that docking station and get the info that you need. Please let me
+> know!
+
+Never mind, this scenario is being tested internally at Intel
+and the above-linked branch contains a commit to avoid binding
+to a Host Interface exposed by a Device Router.
 
 Thanks,
-Lance
 
->
->
->
-> >                       /*
-> >                        * We temporarily have to drop the PTL and start =
-once
-> >                        * again from that now-PTE-mapped page table.
-> > --
-> > 2.33.1
->
->
-> --
-> Best Regards,
-> Yan, Zi
+Lukas
 
