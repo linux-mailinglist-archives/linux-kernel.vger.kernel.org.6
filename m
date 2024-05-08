@@ -1,203 +1,196 @@
-Return-Path: <linux-kernel+bounces-173181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F858BFCAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D49088BFCB3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CD3A285FAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D51C1F22715
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582F482C6B;
-	Wed,  8 May 2024 11:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E9282D93;
+	Wed,  8 May 2024 11:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DfxI5AKH"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKU1PLg6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38EC7823BF
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0E182876;
+	Wed,  8 May 2024 11:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715169123; cv=none; b=qGtcG7EvG3E0W9WQoQXTHLBHAxp9eUYnodvd2O62g/bPjOSwoWQZipbFSHvznBD4NsKL0ly6pmydX/DXsNGuB4D2RrNCGZA9frPxMnve/Qio7/moq8IpwFaZumreS/JKYVjl5VAMc2qboo8sMcdTlSTJPEqCtz4IBr/LZzUP74Q=
+	t=1715169217; cv=none; b=jJBduLK+Ev0H8/eZ6pLrIWa5048r3r4HSXVt9ifKXvYokihlHq5ev1WC1jQhDs7Q8JBi07vfCNqHgRKuqpPM/6FbB/DkDPIi1Q5y5/AZ8MuRFIBdp7ziLrU87DZicMn/+7auXfbOdMbGaBIGPUjJBn25hyDO+THWx3hyXpde924=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715169123; c=relaxed/simple;
-	bh=21WZUZABtoQNfRX1jBAzfALHLDUGBlVG06XSqRlV0fg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=elXBhz7U/5okWX/4qsjlNNWR1zru+Si999OdTUZfwaw43hDp1WmSe2iH7LA8D3Q5AKjev8iF7LfNCHOIPhTX+qi3LUAGUpj5yZGTTQZskqM+Mmr6nTGhoEdYOC1nwq5HU3SgwnkctCT6MwMJNNGMPO+3XdF+g/iSRMthV0daPyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DfxI5AKH; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2b387e2e355so2884610a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715169121; x=1715773921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wYxgECP19KQcIH0PhiMfWn89B9REarDnlrwf/7Dgpy8=;
-        b=DfxI5AKHdSr9rHLldL1S5XNs1utg+7iRBgQbin0Xx3Wg2CpzQ94dg0dadOLKkrctJ/
-         B/KdAluEflC4hPw3/rTlOHA0IobIWG2rn4A7ibG9mu5A+HPOQox2IMuOC1Cf2fuHITOP
-         zwuoHVTbAoUAlZG5UeUYIhTZR6GOzE0pkv3KNpGVZEf0/Jm+3SWV8E7YTVIFg0hTEgcU
-         q7F4OuAMtOziMNanddSOlunKGxGk62KcbhmhIfyBKPuNnejqlYf2kZYp+G9QPHbPhV39
-         yvrhNc/sJQzD5T9BvCwPAUuhJFOepbMi9iwx+NKlEJDxSIme6X9P/HFTk8HV2FrTy/is
-         sQ7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715169121; x=1715773921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wYxgECP19KQcIH0PhiMfWn89B9REarDnlrwf/7Dgpy8=;
-        b=I6Fgb6HEqWm2giE4lrr66Z/7vWc8BRbdtPFVJdsKbyx3xb0cJUkEPy+X6xJP0XxTYO
-         UU+mmhyHxKGmm7F+xo6ShH0H13IVy1Tj7TOm9cT4+qY7sLb7GkRTI0gnsO1hxhaGssGO
-         SWg1ao+Pg3mByJ6eFOP/a9Oglm+I5sKEed4Zq6qQ0PfCPgKEz6d/Sw56aE3fR1M3SPqm
-         sF4BzQ53Va+spDy7PdWmYMm5cGfX/s07XWHf9mvz8hhM25Wlfxv847HWiutT2uljHYEu
-         3K0GskZ8NNjv/qnEriwczgyP7I7kBQx05Io5iBe38X2Bm8YPHGRGZqj4ovqmy1Hke2mO
-         wlVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrjJhWa7q/PSWSt0mObNGn69mAP/8VQUM3ZuH89JULp8Wt3R8K3Gihs8va1ZxLf4VafLvoBqEAmwvJM/0d4XIgDqCDkPu7rFau7+CL
-X-Gm-Message-State: AOJu0YwIh7rbbo3sKdgiuhOoLUDzeadIfJlks2LmSrdjKgpfZ23w+xCA
-	jYYNzkaeDzMIM1RmVHhgFD9mNMyuxqjtf0+fb/efxtMzQYLF+rrvSkH/GeTYwJ+zC+PrQXm72Mk
-	bhTlfHffIiG6RT1zdiTRgoIhbA2lvgQUZdgv3OQ==
-X-Google-Smtp-Source: AGHT+IEhdE+GG8XxwKNRlclHRbBSycIrPohs+PTxSK9Z3F9iJMuBG2HZF6XAdrrAJXkCh/xJgPaDBMp9H0/wPUP9epQ=
-X-Received: by 2002:a17:90a:d386:b0:2b6:22f0:3b8a with SMTP id
- 98e67ed59e1d1-2b622f03bc3mr1840592a91.36.1715169121651; Wed, 08 May 2024
- 04:52:01 -0700 (PDT)
+	s=arc-20240116; t=1715169217; c=relaxed/simple;
+	bh=wwYlQSFkpQ4bVOEdJuGODcDN5o3g/o0+11Y+wlXLVDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgWL8ti2csEPDFKOFnRVpmpBFOyO5LbUlmFG0URNwHLPu5W+sDUGGpiG3ZLOcZxaIfOmIn+rqeUdLJxAVANOieTP7IxYhcNHNwsdbIOyeYWfDzyN/M4N2Y2jyxcpb/g0lQFoJS6i95mtJaTs7NJbKyankKuxrnz5XEjj9lOb08w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKU1PLg6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A876EC113CC;
+	Wed,  8 May 2024 11:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715169216;
+	bh=wwYlQSFkpQ4bVOEdJuGODcDN5o3g/o0+11Y+wlXLVDc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MKU1PLg6W385eGrptF++XnqSbcL/CJBFOxjIGvr/hk1NQ11zDZ+MkGBUQuUE2e3Xm
+	 BtLwCLhm8Se10UonejKGHT3ojkHPUJPUg8mgkZASH/x674GPsjJQK0aPV7Q5Mcdro4
+	 bYSxkxGICDa6gmQ1kD2bWmtH/SE24KEG0wwgclH2KlI2B38zAxBJSSAiLhpVDLei6v
+	 WUvvrmVLPJNHb/JP9cIEnsKGLGX3tDcciX4aaT6GcICmowU1oz3GQ3nBRpxYW05COu
+	 Y1CQLfrMAeZF1OrsSe71hFowqGa9D2KRnaXDbCT5Gni5cJSBpwRwTiSTqMo/xvGbBT
+	 IEtirfE4X67bw==
+Date: Wed, 8 May 2024 13:53:30 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, 
+	Alexei Starovoitov <ast@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: verifier: allow arrays of progs to be used in
+ sleepable context
+Message-ID: <b5r55f2uan7qm5h34nfu2qmoap2gm3ox3dtp2kjpaxebjrzxvp@zqx23ecrnj4q>
+References: <20240422-sleepable_array_progs-v1-1-7c46ccbaa6e2@kernel.org>
+ <7344022a-6f59-7cbf-ee45-6b7d59114be6@iogearbox.net>
+ <un4jw2ef45vu3vwojpjca3wezso7fdp5gih7np73f4pmsmhmaj@csm3ix2ygd5i>
+ <35nbgxc7hqyef3iobfvhbftxtbxb3dfz574gbba4kwvbo6os4v@sya7ul5i6mmd>
+ <CAADnVQJaG8kDaJr5LV29ces+gVpgARLAWiUvE9Ee5huuiW5X=Q@mail.gmail.com>
+ <mhkzkf4e23uvljtmwizwcxyuyat2tmfxn33xb4t7waafgmsa66@mcrzpj3b6ssx>
+ <CAADnVQLJ=nxp3bZYYMJd0yrUtMNx2DcvYXXmbGKBQAiG85kSLQ@mail.gmail.com>
+ <xt2zckipzs24eur4ozdo64uoxfed6jm3qixxgnp3o2gogjmosc@723s2u7jbsaz>
+ <CAADnVQK9qeMmzxE-aivmue-CF_hn1EFUTUAZyaMRqy2cW6j73A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507135234.1356855-1-yangcong5@huaqin.corp-partner.google.com>
- <20240507135234.1356855-3-yangcong5@huaqin.corp-partner.google.com> <CAD=FV=Wj5WKcVbNGHQ_BbZa_fsVJkpYb2C8TE8bjhvJvx+N_hw@mail.gmail.com>
-In-Reply-To: <CAD=FV=Wj5WKcVbNGHQ_BbZa_fsVJkpYb2C8TE8bjhvJvx+N_hw@mail.gmail.com>
-From: cong yang <yangcong5@huaqin.corp-partner.google.com>
-Date: Wed, 8 May 2024 19:51:50 +0800
-Message-ID: <CAHwB_NKPswAvE5TjRxWMR8LLV5sNuMmymXr4nhDc3r_AdRKr8A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] drm/panel: himax-hx83102: Break out as separate driver
-To: Doug Anderson <dianders@chromium.org>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
-	linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
-	robh+dt@kernel.org, conor+dt@kernel.org, airlied@gmail.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQK9qeMmzxE-aivmue-CF_hn1EFUTUAZyaMRqy2cW6j73A@mail.gmail.com>
 
-Hi,
-
-Doug Anderson <dianders@chromium.org> =E4=BA=8E2024=E5=B9=B45=E6=9C=888=E6=
-=97=A5=E5=91=A8=E4=B8=89 07:35=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi,
->
-> On Tue, May 7, 2024 at 6:53=E2=80=AFAM Cong Yang
-> <yangcong5@huaqin.corp-partner.google.com> wrote:
+On May 07 2024, Alexei Starovoitov wrote:
+> On Tue, May 7, 2024 at 6:32 AM Benjamin Tissoires <bentiss@kernel.org> wrote:
 > >
-> > +static int hx83102_enable_extended_cmds(struct hx83102 *ctx, bool enab=
-le)
-> > +{
-> > +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi }=
-;
-> > +
-> > +       if (enable)
-> > +               mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETEXTC,=
- 0x83, 0x10, 0x21, 0x55, 0x00);
-> > +       else
-> > +               mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETEXTC,=
- 0x00, 0x00, 0x00);
-> > +
-> > +       return 0;
->
-> You're throwing away the error codes returned by the
-> mipi_dsi_dcs_write_seq_multi(), which you shouldn't do. You have two
-> options:
->
-> Option #1: return dsi_ctx.accum_err here and then check the return
-> value in callers.
->
-> Option #2: instead of having this function take "struct hx83102 *ctx",
-> just have it take "struct mipi_dsi_multi_context *dsi_ctx". Then it
-> can return void and everything will be fine.
->
-> I'd prefer option #2 but either is OK w/ me.
+> > Yes, exactly that. See [0] for my current WIP. I've just sent it, not
+> > for reviews, but so you see what I meant here.
+> 
+> The patches helped to understand, for sure, and on surface
+> they kind of make sense, but without seeing what is that
+> hid specific kfunc that will use it
+> it's hard to make a call.
 
-Ok,I will fix in V4, thanks.
+I've posted my HID WIP on [1]. It probably won't compile as my local
+original branch was having a merge of HID and bpf trees.
 
->
->
-> > +static int starry_himax83102_j02_init(struct hx83102 *ctx)
-> > +{
-> > +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi }=
-;
-> > +
-> > +       hx83102_enable_extended_cmds(ctx, true);
-> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x2c, =
-0xb5, 0xb5, 0x31, 0xf1,
-> > +                                        0x31, 0xd7, 0x2f, 0x36, 0x36, =
-0x36, 0x36, 0x1a, 0x8b, 0x11,
-> > +                                        0x65, 0x00, 0x88, 0xfa, 0xff, =
-0xff, 0x8f, 0xff, 0x08, 0x74,
-> > +                                        0x33);
->
-> The indentation is still off here. You have 5 tabs followed by a
-> space. To make things line up with the opening brace I think it should
-> be 4 tabs followed by 5 spaces.
+> The (u64)(long) casting concerns and prog lifetime are
+> difficult to get right. The verifier won't help and it all
+> will fall on code reviews.
 
-Sorry, my  editor 'Visual Studio Code' It seems that the correct indentatio=
-n
-is not recognized. I have checked it through the 'vim' editor in the V4 ver=
-sion.
-Thanks.
+yeah, this is a concern.
 
->
->
-> > +static int hx83102_enable(struct drm_panel *panel)
-> > +{
-> > +       struct hx83102 *ctx =3D panel_to_hx83102(panel);
-> > +       struct mipi_dsi_device *dsi =3D ctx->dsi;
-> > +       struct device *dev =3D &dsi->dev;
-> > +       int ret;
-> > +
-> > +       ret =3D ctx->desc->init(ctx);
-> > +       if (ret)
-> > +               return ret;
->
-> You're still changing behavior here. In the old boe-tv101wum-nl6
-> driver the init() function was invoked at the end of prepare(). Now
-> you've got it at the beginning of enable(). If this change is
-> important it should be in a separate commit and explained.
->
->
-> > +       ret =3D mipi_dsi_dcs_exit_sleep_mode(dsi);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
-> > +               return ret;
-> > +       }
-> > +
-> > +       msleep(120);
-> > +
-> > +       ret =3D mipi_dsi_dcs_set_display_on(dsi);
-> > +       if (ret) {
-> > +               dev_err(dev, "Failed to turn on the display: %d\n", ret=
-);
-> > +       }
->
-> The old boe-tv101wum-nl6 driver didn't call
-> mipi_dsi_dcs_exit_sleep_mode() nor mipi_dsi_dcs_set_display_on() in
-> its enable routine, did it? If this change is important please put it
-> in a separate change and justify it.
+> So I'd rather not go this route.
+> Let's explore first what exactly the goal here.
+> We've talked about sleepable tail_calls, this async callbacks
+> from hid kfuncs, and struct-ops.
+> Maybe none of them fit well and we need something else.
+> Could you please explain (maybe once again) what is the end goal?
 
-In the old boe-tv101wum-nl6 driver inital cmds was invoked at the end of
-prepare() function , and call 0x11 and 0x29 at end of inital. For
-himax-hx83102 driver, we move inital cmds invoked at enable() function.
-For panel timing, I think there is no much difference. They are
-all initial cmds executed after meeting the power-on sequence.
-I will update these in the v4 commit message.
+right now I need 4 hooks in HID, the first 2 are already upstream:
+- whenever I need to retrieve the report descriptor (this happens in a
+  sleepable context, but non sleepable is fine)
+- whenever I receive an event from a device (non sleepable context, this
+  is coming from a hard IRQ context)
+- whenever someone tries to write to the device through
+  hid_hw_raw_request (original context is sleepable, and for being able
+  to communicate with the device we need sleepable context in bpf)
+- same but from hid_hw_output_report
 
->
->
-> -Doug
+Again, the first 2 are working just fine.
+
+Implementing the latter twos requires sleepable context because we
+might:
+
+1. a request is made from user-space
+2. we jump into hid-bpf
+3. the bpf program "converts" the request from report ID 1 to 2 (because
+we export a slightly different API)
+4. the bpf program directly emits hid_bpf_raw_request (sleepable
+operation)
+5. the bpf program returns the correct value
+6. hid-core doesn't attempt to communicate with the device as bpf
+already did.
+
+In the series, I also realized that I need sleepable and non sleepable
+contexts for this kind of situation, because I want tracing and
+firewalling available (non sleepable context), while still allowing to
+communicate with the device. But when you communicate with the device
+from bpf, the sleepable bpf program is not invoked or this allows
+infinite loops.
+
+> 
+> > Last time I checked, I thought struct_ops were only for defining one set
+> > of operations. And you could overwrite them exactly once.
+> > But after reading more carefully how it was used in tcp_cong.c, it seems
+> > we can have multiple programs which define the same struct_ops, and then
+> > it's the kernel which will choose which one needs to be run.
+> 
+> struct-ops is pretty much a mechanism for kernel to define
+> a set of callbacks and bpf prog to provide implementation for
+> these callbacks. The kernel choses when to call them.
+> tcp-bpf is one such user. sched_ext is another and more advanced.
+> Currently struct-ops bpf prog loading/attaching mechanism
+> only specifies the struct-ops. There is no device-id argument,
+> but that can be extended and kernel can keep per-device a set
+> of bpf progs.
+> struct-ops is a bit of overkill if you have only one callback.
+> It's typically for a set of callbacks.
+
+In the end I have 4. However, I might have programs that overwrite twice
+the same callback (see the 2 SEC("fmod_ret/hid_bpf_device_event") in
+[2]).
+
+> 
+> > Last, I'm not entirely sure how I can specify which struct_ops needs to be
+> > attached to which device, but it's worth a shot. I've already realized
+> > that I would probably have to drop the current way of HID-BPF is running,
+> > so now it's just technical bits to assemble :)
+> 
+> You need to call different bpf progs per device, right?
+
+yes
+
+> If indirect call is fine from performance pov,
+> then tailcall or struct_ops+device_argument might fit.
+
+performance is not a requirement. It's better if we have low latency but
+we are not talking the same requirements than network.
+
+> 
+> If you want max perf with direct calls then
+> we'd need to generalize xdp dispatcher.
+
+I'll need to have a deeper look at it, yeah.
+
+> 
+> So far it sounds that tailcalls might be the best actually,
+> since prog lifetime is handled by prog array map.
+> Maybe instead of bpf_tail_call helper we should add a kfunc that
+> will operate on prog array differently?
+> (if current bpf_tail_call semantics don't fit).
+
+Actually I'd like to remove bpf_tail_call entirely, because it requires
+to pre-load a BPF program at boot, and in some situations (RHEL) this
+creates issues. I haven't been able to debug what was happening, I
+couldn't reproduce it myself, but removing that bit would be nice :)
+
+Cheers,
+Benjamin
+
+[1] https://lore.kernel.org/bpf/20240508-hid_bpf_async_fun-v1-0-558375a25657@kernel.org/
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/tree/drivers/hid/bpf/progs/XPPen__ArtistPro16Gen2.bpf.c?h=for-next
 
