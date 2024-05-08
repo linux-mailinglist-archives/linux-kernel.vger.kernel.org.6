@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-173112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2758BFBAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:16:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E3B8BFBAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B52CB226D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:16:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849D41C21731
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A65682486;
-	Wed,  8 May 2024 11:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFCF82890;
+	Wed,  8 May 2024 11:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Lyioe+l1"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PyklEU2B"
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D550B7D07F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B84D81ABF
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715166972; cv=none; b=SRVRQk/dQq56ZSzT7lcFOEB0YHVDt65HTZvo8MzbvF1DRGlVZro3/1g7+2E0FxcxkA9Fob8J9/IVNLKkZsnsDLqimWOi+MvZq7w4z71cWpOPRv6Jq+DY1UufUJXLTdwqR4tqTuxdLTdxlTSegL2RwmD0evhu749ZkIpNSMGFlz0=
+	t=1715166974; cv=none; b=eO0nAPPPonUoenbHlsLnK4KgmlE/BztksRft02rDo9ye2DKYXzqdyiB42LCmOJx3NOPm3n0nJiqQDYXBkx++RNbdT9VCDsfcNknHxq2GnS04CPKNgwbXkdy3yNdGdl+O1H0tr5ZzqZQuZA/uwK7NGpjTe+NTBNdL2RXhuAODF9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715166972; c=relaxed/simple;
-	bh=F3m98SryOb/x5XWClShpUXV2JbrsUxTW10RXS5LFe7A=;
+	s=arc-20240116; t=1715166974; c=relaxed/simple;
+	bh=RPie27IklaRFn+/JiKJQkM0UDLWbdd1RvmETEowVFe4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X2hO+n2gNKwkdR+N/8/nkzgs6wjtscvABFjBW94RYYyE8mBzhWPWqluKJ+/23zk12OgWnCmhud0t9/O2xaRLjAraw4H4Um86FjEoKqWpFvjDrdtCaV5StqK3ybhXPI7oH7pc9JPU4qndwRU3sTWZlp20IwcPJeAsMuTQJIapcl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Lyioe+l1; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=SuWGcFdqWEph4yv8tYoZN6FWApOZ1uJyHZvu22VOu2N0lFTMIMhnjAuhzd3PW2L/A6MEQNIyTmA6+bO3+sMd2JUeevcdzNff3Tr10dTzUNbRLyL+Yvci9N8pyXU0ouU4aaxcXHnkEkQYEbvte+9J1KO+A8zdVCrYNlp9ZRpfcSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PyklEU2B; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 194054061D
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C00B54155E
 	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:16:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
 	s=20210705; t=1715166968;
-	bh=D0ew36e5vVU/6+Iw9oM1mZEw1Uv4LlOrlkufMVDQOq8=;
+	bh=/V1XrjVIykV/6kKtO7hT6IY0af9h2AXu+LfSqihAnro=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
 	 MIME-Version;
-	b=Lyioe+l1itDvD5ZOJBka37D29x0BRFxqXLS6HjamKjlE3CgumoqV3LTYD5GnWGCqv
-	 Oh9Q17G9U7LIQx4YPcjeyy2WeBZYfTy2uP62zis1KBrDMfAlMv16dohiL6VUEsMWvR
-	 fPekKoAcZ0GuOM9lYSisbSaVMJNCYdPlmVRoquM/X9eQ+TqJkGXL8iMrhGQgUR2Tqv
-	 oxT9DXlfhAMz/+AB4nUdZtKQmW5HHMrfXCd0GZQxQUFf3Q3iMCxbQJnEhp1HKCkIOQ
-	 oP8ZeeagnyCEAr5mKiIwQ26S6d9JzWNtntz99Pv6GqK0/NL1bXzetVF8MElPdYfvG1
-	 KxqXAbfjTwF2g==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a59ad486084so223456966b.1
+	b=PyklEU2Bvqn/MWrQjPyGVPOXkqC0k4bdPS3TQtKQ5tFwEjOBoE7ACM3bijbJ/5iYu
+	 mQKKigRx5vHb9OfcSJQ+58KJ0pRLH/clknRIZCegsahyS/Wy6s5RB2Og7lJi8xzI0O
+	 FtyV2+WwdCUzHGUViC2knyXn1Tfs1WS3pynp/nu3nTcUhMD4458kKc15LdFCe/9Azi
+	 Hl0Kck9dRzeHUUjbmvgpwsiZp7x+UN+4GCLDBPljH5GuY7mJszMth9/di35JcU8A4O
+	 vA/ioTYEr6PDHUp3DZj7mZ68IPkH3bFliIfyG/8Im5jKJ33JgeY98xMTHytw4UjaV/
+	 6lRs+NZZhu+bQ==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a59c7586f7cso218874266b.3
         for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:16:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715166967; x=1715771767;
+        d=1e100.net; s=20230601; t=1715166968; x=1715771768;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D0ew36e5vVU/6+Iw9oM1mZEw1Uv4LlOrlkufMVDQOq8=;
-        b=t9iTp5S+5rXj4Qx55mIANieEU4pRMVI6tNcsp/kGagwNlO9dBDTGNji4CEYAnegFrW
-         BtzOFwgJgXmy7TtCCj4vMU7TXkEneD/PPlsDLMU6mVdZ4tsaMdCFj6fvzIx/mOF6Ysaz
-         3667Xb9oRbYLHAjQunC+W24nMCvhd531XS3eim8BVivRl0do+INEnpAuh3AFBU2YauEm
-         RuE48nQ2mFDBWqbKT+Jm0EU25TnrKfMfWDV89BF4Qka2svito/GxTYwXYutOtwdAZX1c
-         md7XDngbC8R0ACLhWsszC184/hL5Un6EMx+J8pVSeQRivzSA4SWLBlBRUkYROdNvXnEM
-         9hqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUd+25V9ziExP3NzjYnNG4GhV4nF5jasPGbxwaEQcqfiLVkip+DIECamHrKc/YAUQO96Ggk+p3TFYLv3iuKvTnCn4fiCRKZGNUr8831
-X-Gm-Message-State: AOJu0YwJn/+Ui45vg2+Nkf8Loy6wsWE5PhJ/gimFOf4/fy4Vg9hbVv81
-	0WS9VtUuvYo86kgCaftbRszH4H3d/7BpgBry2rt0cATEMR4mnPvIxov/LP5YATmsJPjPblUYI+1
-	tRawttaUgxY1p36M6ZqD1GWdmknUpPpHZug2wmrZ4kyz5sCGfwsj/hFLfCAblR+QWJLXIx4Rh41
-	+NSw==
-X-Received: by 2002:a50:8707:0:b0:572:a76e:645a with SMTP id 4fb4d7f45d1cf-5731d9d2df6mr1558875a12.12.1715166967753;
-        Wed, 08 May 2024 04:16:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqGr0GivLfWF6z1E1QkljJkrnAc2l74CIT39UNlpuCzyDWw8jOzF9sDgwy5FEt/BbrEhk8ig==
-X-Received: by 2002:a50:8707:0:b0:572:a76e:645a with SMTP id 4fb4d7f45d1cf-5731d9d2df6mr1558861a12.12.1715166967248;
-        Wed, 08 May 2024 04:16:07 -0700 (PDT)
+        bh=/V1XrjVIykV/6kKtO7hT6IY0af9h2AXu+LfSqihAnro=;
+        b=A64/sscH6zq/BO3faWM4QGtS8uKtAVII/wygEQmlH/I3FstoPIkLbymuCVJDBu1sR/
+         1TJX3R8/YSiw5+zZUAOVweKOG8u/lHskGjyX2yZiYQES1mOSOcl5Xrz1Zczv4faCpfIQ
+         O6ResWiWrH13X1LnwCs5xuCDTsma0far6PSAPiL2uCa0CTGMynorc+xVHEEdoVHCYX25
+         8BPSkLr/q270X7IB0L8hB4Rx29uyrzh/JOnEXorft3Qx+zDLeITlwqhAjvyzCWmfPyd3
+         K/nAH2Z4rScjckLNhGLLxx3gwChSG0h7coTLExHOO5dWLzGTHVxlpD0KmmEA4JduoCSb
+         Lq8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWblj9CV2W9P7JwKBjzc7xkEMPnjsfj9KHza+mDIZErfuQ6PoUzkdOl9Zj9RBJsZPdrz9SpafTcQx+6Qjv10qUYZOAFckcjLShAnmZn
+X-Gm-Message-State: AOJu0YwD1IslQq1ecT3HnaGt8BztQRUQB4TFKnvHwG6emYU8vBiLmeU9
+	7AAVdN6SFCuQbprOGeYixfuKF5iH14pEWrM6IwI3rJnVsglU7sTIe1iesUXeOhXdNNtDK/46bm/
+	j7tVVk4bqYfgPv+y5yMIuBhRG4bHWCe9CzcdMTDP+wM8zKYmZMXAMP/yIqS9cWxUJwDrFkT3Csq
+	Yw8A==
+X-Received: by 2002:a50:8750:0:b0:571:cb02:418a with SMTP id 4fb4d7f45d1cf-5731daa2c96mr1402047a12.40.1715166968340;
+        Wed, 08 May 2024 04:16:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6TPvf3Ivj5W/nYnn3IO32jmZvtFJ0qUyRLDwfBkqqGUcetVJihJg5ZpM/8Zui9NrEJ+6fzg==
+X-Received: by 2002:a50:8750:0:b0:571:cb02:418a with SMTP id 4fb4d7f45d1cf-5731daa2c96mr1402037a12.40.1715166968077;
+        Wed, 08 May 2024 04:16:08 -0700 (PDT)
 Received: from stitch.. ([2a01:4262:1ab:c:8ce6:9eb:cd7b:fcdd])
-        by smtp.gmail.com with ESMTPSA id co22-20020a0564020c1600b00572a865af10sm7513556edb.44.2024.05.08.04.16.06
+        by smtp.gmail.com with ESMTPSA id co22-20020a0564020c1600b00572a865af10sm7513556edb.44.2024.05.08.04.16.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 04:16:06 -0700 (PDT)
+        Wed, 08 May 2024 04:16:07 -0700 (PDT)
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To: devicetree@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
@@ -86,9 +86,9 @@ Cc: Emil Renner Berthing <kernel@esmil.dk>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Albert Ou <aou@eecs.berkeley.edu>
-Subject: [PATCH v1 1/2] riscv: dts: starfive: Add JH7100 high speed UARTs
-Date: Wed,  8 May 2024 13:15:54 +0200
-Message-ID: <20240508111604.887466-2-emil.renner.berthing@canonical.com>
+Subject: [PATCH v1 2/2] riscv: dts: starfive: Enable Bluetooth on JH7100 boards
+Date: Wed,  8 May 2024 13:15:55 +0200
+Message-ID: <20240508111604.887466-3-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240508111604.887466-1-emil.renner.berthing@canonical.com>
 References: <20240508111604.887466-1-emil.renner.berthing@canonical.com>
@@ -102,52 +102,81 @@ Content-Transfer-Encoding: 8bit
 
 From: Emil Renner Berthing <kernel@esmil.dk>
 
-Add missing device tree nodes for UART0 and UART1 on the StarFive JH7100
-SoC. UART0 is used for Bluetooth on the BeagleV Starlight and StarFive
-VisionFive V1 boards.
+Add pinctrl and UART nodes for the Broadcom Wifi/Bluetooth module on the
+BeagleV Starlight and StarFive VisionFive V1 boards.
 
 Signed-off-by: Emil Renner Berthing <kernel@esmil.dk>
 ---
- arch/riscv/boot/dts/starfive/jh7100.dtsi | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ .../boot/dts/starfive/jh7100-common.dtsi      | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7100.dtsi b/arch/riscv/boot/dts/starfive/jh7100.dtsi
-index 9a2e9583af88..34c1622d5496 100644
---- a/arch/riscv/boot/dts/starfive/jh7100.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7100.dtsi
-@@ -258,6 +258,32 @@ sysmain: syscon@11850000 {
- 			reg = <0x0 0x11850000 0x0 0x10000>;
+diff --git a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+index ae1a6aeb0aea..1f79481bfd96 100644
+--- a/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7100-common.dtsi
+@@ -289,6 +289,41 @@ GPO_SDIO1_PAD_CDATA_OEN_BIT3,
  		};
+ 	};
  
-+		uart0: serial@11870000 {
-+			compatible = "starfive,jh7100-hsuart", "snps,dw-apb-uart";
-+			reg = <0x0 0x11870000 0x0 0x10000>;
-+			clocks = <&clkgen JH7100_CLK_UART0_CORE>,
-+				 <&clkgen JH7100_CLK_UART0_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&rstgen JH7100_RSTN_UART0_APB>;
-+			interrupts = <92>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
++	uart0_pins: uart0-0 {
++		rx-pins {
++			pinmux = <GPIOMUX(40, GPO_LOW, GPO_DISABLE,
++				  GPI_UART0_PAD_SIN)>;
++			bias-pull-up;
++			drive-strength = <14>;
++			input-enable;
++			input-schmitt-enable;
 +		};
-+
-+		uart1: serial@11880000 {
-+			compatible = "starfive,jh7100-hsuart", "snps,dw-apb-uart";
-+			reg = <0x0 0x11880000 0x0 0x10000>;
-+			clocks = <&clkgen JH7100_CLK_UART1_CORE>,
-+				 <&clkgen JH7100_CLK_UART1_APB>;
-+			clock-names = "baudclk", "apb_pclk";
-+			resets = <&rstgen JH7100_RSTN_UART1_APB>;
-+			interrupts = <93>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			status = "disabled";
++		tx-pins {
++			pinmux = <GPIOMUX(41, GPO_UART0_PAD_SOUT,
++				  GPO_ENABLE, GPI_NONE)>;
++			bias-disable;
++			drive-strength = <35>;
++			input-disable;
++			input-schmitt-disable;
 +		};
++		cts-pins {
++			pinmux = <GPIOMUX(39, GPO_LOW, GPO_DISABLE,
++				  GPI_UART0_PAD_CTSN)>;
++			bias-pull-down;
++			drive-strength = <14>;
++			input-enable;
++			input-schmitt-enable;
++		};
++		rts-pins {
++			pinmux = <GPIOMUX(42, GPO_UART0_PAD_RTSN,
++				  GPO_ENABLE, GPI_NONE)>;
++			bias-disable;
++			drive-strength = <35>;
++			input-disable;
++			input-schmitt-disable;
++		};
++	};
 +
- 		i2c0: i2c@118b0000 {
- 			compatible = "snps,designware-i2c";
- 			reg = <0x0 0x118b0000 0x0 0x10000>;
+ 	uart3_pins: uart3-0 {
+ 		rx-pins {
+ 			pinmux = <GPIOMUX(13, GPO_LOW, GPO_DISABLE,
+@@ -393,6 +428,20 @@ wifi@1 {
+ 	};
+ };
+ 
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm4330-bt";
++		max-speed = <4000000>;
++		device-wakeup-gpios = <&gpio 38 GPIO_ACTIVE_HIGH>;
++		reset-gpios = <&gpio 35 GPIO_ACTIVE_LOW>;
++	};
++};
++
+ &uart3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart3_pins>;
 -- 
 2.43.0
 
