@@ -1,240 +1,341 @@
-Return-Path: <linux-kernel+bounces-173462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634708C00AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:12:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8516E8C00B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:12:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 820A91C23E2B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390F32811C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938EA127E1E;
-	Wed,  8 May 2024 15:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0E585281;
+	Wed,  8 May 2024 15:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="m4d+ZvIx";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lICX6LqO"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="I7NodmaO"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861AE1272BF;
-	Wed,  8 May 2024 15:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181100; cv=fail; b=iyJY6So8hNBK19AyaBJpG6TLfXaxmehFfx1q4CcnwYkVudOeiiNDuBpXhgG8O2Qofmrw5mvSShtDz7cOs6Tv3SKQW3yCODfIbeKlwokGuazsjAwmF4dXe4ri8y8nbf7WYlfXGUfAO0V1RDUfYhOFj/HQzHaqzk3dafipR6W/FAI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181100; c=relaxed/simple;
-	bh=vOFatVDc0fJe5mbG4rQPtTjuJ0jzO1aKiKc966AfdfI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZrLu25jbB9TsGBrulzyjivSuGpdUeoAjPvxoLerqO2P/x8/CM/MA1QjiBWjZAezN4dhKqwjtPOlMkdFk39P5i/2UTVCA0jwz5jDx/vaHgj7JrMBK4y1rcGOpml1wmeNW2+VZXJuwzumA/73RHdQvZMsTTIOsxFTQIoDbDgwYpPQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=m4d+ZvIx; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lICX6LqO; arc=fail smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715181099; x=1746717099;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=vOFatVDc0fJe5mbG4rQPtTjuJ0jzO1aKiKc966AfdfI=;
-  b=m4d+ZvIx72jTx9+XlanOkl6BKbukOl2H9iHs++Ckc4CI5DlS/2aEyx0p
-   dOTfhbhl9kqP/Omhyu3l23A/URT03hhshgKHyTpHyen7HdyNjfm5K7yGA
-   wqtrDeTkTz4jSkLqE3WgFxbJL1v8oW2D0k4xyp0BntPkQBrpxm40VHZbN
-   IMnvSDlen19t5+1IADBx7Ydy/IvJ3SvEHBaKbltitz6Ph7XrwwKukiQNd
-   BstqnzV6H/bDqAcnHam/c7qtJGO8+PJfRH2ibmHAs9BHc/YlJ7BXa76Qk
-   KtVnhvxInTLctnQgqeS/Whr4wugtVLN+hcI1si3jdaq7kYjv9S8R/goa7
-   g==;
-X-CSE-ConnectionGUID: y6LI+8pmQzCNYKQc1TRedA==
-X-CSE-MsgGUID: soxZi/mhRCCfYmTpyvjrBw==
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="254993005"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 May 2024 08:11:32 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 8 May 2024 08:11:26 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 8 May 2024 08:11:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CnqdZJDs7qWki8OjnauSyWsPx9ddnFq+BwUMSDsmWGT6fWaWx/GXyLtEKD8stzwvYN1Hv0rCq+VuU5jv0FFJQ2lCHahlF+KK1Hw7Q8Ag6/JeXJh5LhnvMxlLN84ZVGJEOH/r3FjfDFfpxwtlk5IQU0aJcppIeJXGL33Eke7foaT4qd94x2b7w/B1EvK5BrRrsuBNGKT0JjcCS5hC2LYDjMKEkr0OOWHMEOtaUqN9baEDOTY8+rFPMew3GHBbKl1NKhklkm1vg2OJS4QkbvVXgsoZKduIswK0GMLak5hokIsdtVucJWNVDy4/WWgusk8wwK90tNRlEtQTsRs6z8TDng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vOFatVDc0fJe5mbG4rQPtTjuJ0jzO1aKiKc966AfdfI=;
- b=jJvEY3GVBVcsxEo5TRjP32V4/PUnFrwHitzoQSGrRBXfL1i9aVsAsPl2Ty9Pm2/7wW/o1zEPujGYCExuzLEgEbdMM5dRwrYNygFdyui4282x9sINN2ayzyDLDUofkoYqT9FalI6M7lliIqfbobA2/lDpFS8Iju8YxImNC/8rOefYGzxAJIgcaFDJA4V0FvSu+oK77YskbeaIeMkqRIY9NfbOJOC9e1nIJ9r0JSPPbuFRx1XXnGfp1oXLs4OSIUiO9GGg6M2CrNUfFVLzj9pQe+iTuJUZdVhYNkUaKt6HvfCgI7DHTAwUSWncf50vHGCeGXXnvJaLp9yhPNzFtOXBwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vOFatVDc0fJe5mbG4rQPtTjuJ0jzO1aKiKc966AfdfI=;
- b=lICX6LqOQn7IyJtA8lKkpJXRbUVzdQBfXC63yvyarR7TfN3LUJvHc05SH8F7Ezu18W3nHz+jVrEc68Ju8mYWzheziKY8f+QXsZRZbh0g0lq6rFzhGxLMcsRFqi9UGBhneDT8mtQ79+i5st6j7/FgTY044eDIdnJTSXLA8ub3BnX1eucyFGjQ0nU8qF3rXKPYnnmbo51GUZltRcLHIevAY2FVIM92Gp1w0KuQJ3g8ki//WC/Umi3DgGRoSLNktDLQnImJmiH3AVQf7u2IbYKni8iJ6EQdkSHnq6N7Gd+XV2mkQBw8GyqOWNZfRAUk6iygAelRx5HESmA6CP0Aun22zw==
-Received: from PH7PR11MB8033.namprd11.prod.outlook.com (2603:10b6:510:246::12)
- by PH7PR11MB7515.namprd11.prod.outlook.com (2603:10b6:510:278::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Wed, 8 May
- 2024 15:11:24 +0000
-Received: from PH7PR11MB8033.namprd11.prod.outlook.com
- ([fe80::22a1:16dd:eea9:330c]) by PH7PR11MB8033.namprd11.prod.outlook.com
- ([fe80::22a1:16dd:eea9:330c%2]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 15:11:24 +0000
-From: <Arun.Ramadoss@microchip.com>
-To: <andrew@lunn.ch>, <olteanv@gmail.com>, <davem@davemloft.net>,
-	<Woojung.Huh@microchip.com>, <pabeni@redhat.com>, <o.rempel@pengutronix.de>,
-	<edumazet@google.com>, <f.fainelli@gmail.com>, <kuba@kernel.org>
-CC: <kernel@pengutronix.de>, <dsahern@kernel.org>, <san@skov.dk>,
-	<willemb@google.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <horms@kernel.org>, <UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net-next v1 3/3] net: dsa: microchip: dcb: set default
- apptrust to PCP only
-Thread-Topic: [PATCH net-next v1 3/3] net: dsa: microchip: dcb: set default
- apptrust to PCP only
-Thread-Index: AQHaoTQmmxkmJC7tK0SYoMdLNTn/s7GNchMA
-Date: Wed, 8 May 2024 15:11:24 +0000
-Message-ID: <d4f7d3be15d46b07d7139ee4d453d7366d7aedc3.camel@microchip.com>
-References: <20240508103902.4134098-1-o.rempel@pengutronix.de>
-	 <20240508103902.4134098-4-o.rempel@pengutronix.de>
-In-Reply-To: <20240508103902.4134098-4-o.rempel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.36.5-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB8033:EE_|PH7PR11MB7515:EE_
-x-ms-office365-filtering-correlation-id: c817ce08-c3aa-47e4-a571-08dc6f71205e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?eHZ4S3pDV3lxNkx3ZFF4U0RyM3VGV280b2NTZlVuVEdvYStYMVdzbUxoMndG?=
- =?utf-8?B?VlR2NWMxRC8vOU5aTmJBTEc1YTR5KzBqYzhvSVlHZVFESGtkeE9BUy90elVa?=
- =?utf-8?B?WG5XTnZnT2c4RTZ1ZXk1VXpUbTVObTJhblFjZDc3WXUwSVFORWlSb3IvclhE?=
- =?utf-8?B?WVh5MTh0MFRIVDYwZzR2cmpWTGFmM3lZeFovWjI3NExBUzRMd3ZaWW1NZ1c2?=
- =?utf-8?B?MTZidzlrL3FudFRnTXpIWDRadVdVckhOVG9JZi9aWnQ2ODgyZ2hVZC9TZWlI?=
- =?utf-8?B?N21sR1JEd2tUYUJYUVpOZ3I4RG5Fbkt4VmVPQ2psSFJlS3JyN29QQ3VQUStQ?=
- =?utf-8?B?R25RdFlUZDlvd29vVlZ6SUcreklPUTlMTmhnWksyeENhOERNOG1PUzZ2Z3JT?=
- =?utf-8?B?UU9ZR3VXVTdHVlVNUG56aFJ6T24xK0FNaFVHWUVuZDVEUHo2TWhyUmZwa0tv?=
- =?utf-8?B?dDVJTkRXV2h3RjBoS2hBaTZ4bXVJV3V5MUZPY0tnMG9OV2lLR29Jd0xucXZI?=
- =?utf-8?B?cmZuNGpEZ0FhSDhMTU1jTTJsTVFTdFdpMzNITDlwOFJUSVVISGZwUFQxbWVw?=
- =?utf-8?B?ZFNHSlJMT2wxMGpna2J6dzBibDBqb2VEOXg4WkhscFJhUkZObzVmc2VPOTlB?=
- =?utf-8?B?N3I3czZWSE5BdldDa3NDNXNYM0xtVldGZGZ2Z2EydG9KN0g5bW5uWFg1Qm92?=
- =?utf-8?B?VUlYdUJtbUxHaHBXZkFRZ0RhWEJ0bFpRemQvSVZFVCtNUUVMZG91R3JvbmN0?=
- =?utf-8?B?WmxPZTFZUTcwMmRoQkJYSDdiU0ZNY3N1RjJRNlRER1hIejk2M3l4Ync1NnNq?=
- =?utf-8?B?dituUWVPV1JhTFFkREp4T2pVUlhWTU8wQWV6aG4ySEhvRmV4N3NKNkl1RFpa?=
- =?utf-8?B?V2hmMGNOUEdRR3pSMVErSENGTnhFSXY3SzV6dUVzakQ2RUlQc0FNR2NXOFo0?=
- =?utf-8?B?aHRWdFJ0RVZNR3BGN3JBVXVmazdQZzV3ZnpJUUZtV1F1WDEzK0VyQzNOMUxQ?=
- =?utf-8?B?elJ3anFWOURjUHgvMmsvOTlFUTF5NElkRzdGK05SZExEVUZ3OGNDM3ZYdWxM?=
- =?utf-8?B?aGk0K2M1aGZFRDNIY1l0aHpuMG5iNkxaNXh5OW51ZWh4SGVqYUNudkZ2MlM1?=
- =?utf-8?B?RUV1eml2RFVrL29QWjk0YjZjQ1owSnZCRDdMUnlEZEpnSEZHM2VPMTZsdG9i?=
- =?utf-8?B?MXJCZ1VmamdiNHE3WituME1ETUJqTlVTU2h4KzhTNXFOTkN1V1k0YVlJeFRZ?=
- =?utf-8?B?UVhEaHVneEsvaFd1R3NiZGthdzN2Vjl5UE5oTUozaldoWEdnVWV6Sk1PODRs?=
- =?utf-8?B?NmtwV0NYVkZrOGV1UXNTYjVMMEZqV3lxdkdON0hiRVFRNEtSNGx1c2QxY1NE?=
- =?utf-8?B?YllFUkJ6bkJMNVU3ZnNrMUtXTTV1V1Q4ME4yN1NST3k2OENSQXFGOEIwN2FQ?=
- =?utf-8?B?WFF2VWtaQ1U4TUZabjBHbGNGKzhNUjlXMGJJZzh5NDZwTDVzcUgrY1JKNEFN?=
- =?utf-8?B?Z05MWXd1SHlWOTA4ZVZ0cWdWdVJ5Z2hHTy95TGE2M2lLTHR2YzVaTG5GaEtY?=
- =?utf-8?B?RXBwVHJ0ZVRKdTc3QS96OWcwa0QzR2FWSndRV1F1dUxHME0xNWdwQWNMblhw?=
- =?utf-8?B?VGxKSkxHOTJxcnFsSmsrdy9Wc1VSR09vbStSUkxBeE9NQW5QN1lDS1ZWYXlz?=
- =?utf-8?B?OCtBVXNzZGxYWGtIOXMxLzM0NzhJTExqQXhOLzUwKzhmc2RVYWpGanFqa29m?=
- =?utf-8?B?M2hhNHloQjJFVzQrSGtLaFVCd3p0OHdwZlRlYmhQSnA3a0JGSE5KZWNBUVN0?=
- =?utf-8?B?Qmh6L01wb3RYdlpYc0thQT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB8033.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NFpqcU1MbnBURFI1RkQ0Rnk0TmtXOFpOQkNlZVowSi9UbnB5SUIxZThpMml3?=
- =?utf-8?B?cjFGTTlseE9UbXdwL0NoVjZTTTRxcEppb2wwWmRCbUZ2NXZNZXhxaXRKeVdF?=
- =?utf-8?B?cFMyRmZrSURzOUgxMzhVbldlQkZ2UTRacXhveEV3NU5tQ2xzamJyZlMxTE43?=
- =?utf-8?B?QmtoYmFkMXBDK2lCWmFSdjhzejQ4bGoyR2FhNk51cTRja2xQdEV5UEE3TUpU?=
- =?utf-8?B?QU0zUzE0R1lFUThGb3VrMnZIdm5Remg1SWFlVUdYUWI5UjVIVCtRSWhQRU10?=
- =?utf-8?B?ZDV5TVZYc0VKb0ZhWDJES3FQU1p6WFhHVXpIWmwvUzlZdU1JcVh4d3RxajF6?=
- =?utf-8?B?WUFvQjNuL2ZGZHh5eXpPSTBlMmVwZnkrTEVOVTZDbTV0Rkh3N3JaVTNtS01K?=
- =?utf-8?B?SXBLenA5akxaVVU1TXdyRzFkMmovNVNLMnpHS1pTS0RpL1VYcHJwY2NVNXR1?=
- =?utf-8?B?TFAxek1oaGFJWkV1Z1c3QlV1SUZwb1FwYjJOQTc5YXM0SmthQW9zTCt1MWtG?=
- =?utf-8?B?TlFVQzBIUWQ5d3dLY0Z3bG40M0RsRHE0eUpnRkRXanR0dWFUZHZGQXFWNm0x?=
- =?utf-8?B?dlNNR1FIWnpwVFdOdzZFUkgwdHNYdjNYTlNENm5XOXp0Ty9ZSXN2SEJ4Yjhr?=
- =?utf-8?B?NXZ0R1VQbXJEY1lUUFZXQTFINGRvVFozTGJjQXhhTW9JMzZGRHNtbmQ1OUZp?=
- =?utf-8?B?allVczA1cnRPMUViZ3JvM2JsdFNVS1NPUHg4WkhBSkhVVmhWZnQxczJXaVJ0?=
- =?utf-8?B?M0doamhyNUlTSzVVVmRkUkM1b280em1PVjdPL3NjWit0VjlxMzR2QnFIVURz?=
- =?utf-8?B?d1luNTVYZGlacjBRRjcwMkxKMmlZdDU4aEVFWkFwbytNTjdocjlyVVJKN1lx?=
- =?utf-8?B?LzUvZ2ZJR1ZaRjRVdUtUNWdMU0NtZkp2NGpzMDE0bi9jeUZNeUVDS2hvbDVJ?=
- =?utf-8?B?R1M2QWROSm9Iam5zSTBpb1BIVXp5SGl1UjBuK2RyOWhaQzVHWTQ1SXBFdFlO?=
- =?utf-8?B?dndnZ2RuVld6RlBPSElvb2gwenVGMmMwQkg2dzhoSzRERWlsUi9BbUVrREx1?=
- =?utf-8?B?VVNzR1hXTmh5ZnErQjF1SHU3M2lKeXZFYkZZTGZINmZwWXJCTDcvZWVwRElF?=
- =?utf-8?B?eFZnZWNTV1FXOE1ETm5vSThYMWtiampVMzN0M0FxWVZ0eWE0T1VtS2FrSTN0?=
- =?utf-8?B?NjhOeWpUc3YxV3Q4dVFodjNhbE5GU3ZnVk5Kd2FUOFNodEgzQ3FiV2VFdGtT?=
- =?utf-8?B?dCsxYUdaZ0FEM3VFODRQcU5GM3dXRXNFaW05dTRjSjFZNFhzZm5aZ0QzekFX?=
- =?utf-8?B?TEJhekZUVmd3Qm53aVRUMXZSTjgwT1RSRVFmbjI3U2Y4V0lsdGQ1UUZ5K1M2?=
- =?utf-8?B?UEJmcGRHdXhyV1grKy9YSnJGaTkrai9Jbmp0bTVMNW9SVUQwL3pJaGJHRkgy?=
- =?utf-8?B?c0V2RlBKQ29HTEk2R3NSVHJBbWRlTytmRFp3UXNPYVp0a3NxdkdyOEJmTzZF?=
- =?utf-8?B?ZkdNUDBIS1Y2UTE5YWpvNENQT2g2TlFRVWpPM3d6RzNiS1JrK2EzV2JxN3ox?=
- =?utf-8?B?RXpVMlZRaTVEaUVvTkpQcm1CNnJnZnRMaUZXQ05kRkJGMTc3TjhKQ0drRGU1?=
- =?utf-8?B?RE5CNk5vUGZDVUc0REVWSmpVdUxXeTNJWGlnVTBBMGZ0SFZaNG5LNTVNdU1Q?=
- =?utf-8?B?bWwvU3dMQ3JUcXlEWkRxQXdJck83UE9YVFRDV2tFbnhna292akJSK3V6WGlK?=
- =?utf-8?B?NmlUNzB4WDdxM01OUUpCa0l2enBMdVdiQU95WUZmMU9mdzNhQWdsVzlKblZR?=
- =?utf-8?B?MXVib1oxMzFUcDNvRDNZVUZ6U0ZCaUlMT2NLYUdoS1Z0dUdmczQxMDVHMUh2?=
- =?utf-8?B?TjhjcG5ybUUyWnlacDFrRGVBajNJU2lCZ2pZNENXRHZyNVIwZXEweXZ1OGNC?=
- =?utf-8?B?MUQ3MkdOQUl5RUM0SHR2MlJRNThUNXdkM0Y2TzVEYi9xV2xsc0xZTmxnUEh4?=
- =?utf-8?B?N2FIYUYwWUhpVjJ5aTVLYzVoakhzRFd1TDFsMDRmUVE5NUU1OXBYNTVobEJi?=
- =?utf-8?B?bXdKWG01MU43STZXeFNsTmYzdjNROTJiMis5ckRCd3JmV1Q0VEV3cklEZnMr?=
- =?utf-8?B?VlZkaW52K1RCa1cydDV6SlVIWmtLeDVqSlRZYk4yR0djMnhMeGsyckFnVG5P?=
- =?utf-8?B?L1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <09C7D29A4178BE41A26463A7D83A6E2C@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9781272BB;
+	Wed,  8 May 2024 15:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715181121; cv=none; b=Ip+HxRge5OA5VhlUjXeoO8BmAF5ftob9gSbghzqAgurOa8sZUCYGzY7RNicIBFEhyH2gk3kLmJiTZ5LmmLi4aT85hmXpyPlXUtOHXiAzQOO1imdo6s+SG1eD0xv7mNkx3NHIEencdD1gzrcdTw04XFdnO/0twifUWj4222ERsEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715181121; c=relaxed/simple;
+	bh=vImjKnxy3rGl7yL+SZpgGb5cYxG4rbforMVAbq2Tycw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WNcr/Vh+li4AUFElYptDNff20cqfgZu5BVdFjBAAO6RrFNfaQYaSQdlal51sF2Bhvk+ah03a1EJwlR9NI79MGTPD4iggWbnmezkMyZVqXOTLivpwykLYPVxp4dmwlIHTH/YiWcH/MtZ7tY5jrKyOeci4LvBWadXK6d8lpxRxCp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=I7NodmaO; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [94.142.239.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 1194E62DD101;
+	Wed, 08 May 2024 17:11:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1715181114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ofZfmqMlM4xbn52ILVyak4iroqJ+0SAVWwfqZlcKwnk=;
+	b=I7NodmaOAQkn6AVVFRJ4kdKJTluqWE6jv5ayazlRD+UoCBQynPecfezN1420tkwlQ76U9n
+	LxRyJVyTJxl+cNt21Iq/n2C5TLLg6ixqvwjKmgXOQrUcQQ1pyJWJKZ6AFcH44p1KtxrSiZ
+	fJBeowGJXqv03XflmvnGfUXdM1o8i2Q=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com,
+ viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
+ Borislav.Petkov@amd.com, Perry Yuan <perry.yuan@amd.com>
+Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, Xiaojian.Du@amd.com,
+ Li.Meng@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 0/7] AMD Pstate Driver Core Performance Boost
+Date: Wed, 08 May 2024 17:11:42 +0200
+Message-ID: <4916526.31r3eYUQgx@natalenko.name>
+In-Reply-To: <cover.1715152592.git.perry.yuan@amd.com>
+References: <cover.1715152592.git.perry.yuan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB8033.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c817ce08-c3aa-47e4-a571-08dc6f71205e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2024 15:11:24.4430
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9strp1dQMdtx+dqacAEo0RzjTCSrvDxeJceM2aAi0lCpAhzyUOghnIUhSYu1TmuqkagGuqgnFzATI/4KmTBVFJHA3G8bc6LT8fmk27bcJWs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7515
+Content-Type: multipart/signed; boundary="nextPart4563618.LvFx2qVVIh";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-SGkgT2xla3NpaiwNCg0KT24gV2VkLCAyMDI0LTA1LTA4IGF0IDEyOjM5ICswMjAwLCBPbGVrc2lq
-IFJlbXBlbCB3cm90ZToNCj4gRVhURVJOQUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBv
-cGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UNCj4ga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+
-IA0KPiANCj4gLXN0YXRpYyBjb25zdCB1OCBrc3o4X3BvcnQyX3N1cHBvcnRlZF9hcHB0cnVzdFtd
-ID0gew0KPiAtICAgICAgIERDQl9BUFBfU0VMX1BDUCwNCj4gLX07DQo+IC0NCj4gIHN0YXRpYyBj
-b25zdCBjaGFyICogY29uc3Qga3N6X3N1cHBvcnRlZF9hcHB0cnVzdF92YXJpYW50c1tdID0gew0K
-PiAgICAgICAgICJlbXB0eSIsICJkc2NwIiwgInBjcCIsICJkc2NwIHBjcCINCj4gIH07DQo+IEBA
-IC03NzEsOSArNzY3LDggQEAgaW50IGtzel9wb3J0X2dldF9hcHB0cnVzdChzdHJ1Y3QgZHNhX3N3
-aXRjaCAqZHMsDQo+IGludCBwb3J0LCB1OCAqc2VsLCBpbnQgKm5zZWwpDQo+ICAgKi8NCj4gIGlu
-dCBrc3pfZGNiX2luaXRfcG9ydChzdHJ1Y3Qga3N6X2RldmljZSAqZGV2LCBpbnQgcG9ydCkNCj4g
-IHsNCj4gLSAgICAgICBjb25zdCB1OCAqc2VsOw0KPiArICAgICAgIGNvbnN0IHU4IGtzel9kZWZh
-dWx0X2FwcHRydXN0W10gPSB7IERDQl9BUFBfU0VMX1BDUCB9Ow0KPiAgICAgICAgIGludCByZXQs
-IGlwbTsNCj4gLSAgICAgICBpbnQgc2VsX2xlbjsNCj4gDQo+ICAgICAgICAgaWYgKGlzX2tzejgo
-ZGV2KSkgew0KPiAgICAgICAgICAgICAgICAgaXBtID0gaWVlZTgwMjFxX3R0X3RvX3RjKElFRUU4
-MDIxUV9UVF9CRSwNCj4gQEAgLTc4OSwxOCArNzg0LDggQEAgaW50IGtzel9kY2JfaW5pdF9wb3J0
-KHN0cnVjdCBrc3pfZGV2aWNlICpkZXYsDQo+IGludCBwb3J0KQ0KPiAgICAgICAgIGlmIChyZXQp
-DQo+ICAgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiANCj4gLSAgICAgICBpZiAoa3N6X2lz
-X2tzejg4eDMoZGV2KSAmJiBwb3J0ID09IEtTWl9QT1JUXzIpIHsNCj4gLSAgICAgICAgICAgICAg
-IC8qIEtTWjg4eDMgZGV2aWNlcyBkbyBub3Qgc3VwcG9ydCBEU0NQIGNsYXNzaWZpY2F0aW9uDQo+
-IG9uDQo+IC0gICAgICAgICAgICAgICAgKiAiUG9ydCAyLg0KPiAtICAgICAgICAgICAgICAgICov
-DQo+IC0gICAgICAgICAgICAgICBzZWwgPSBrc3o4X3BvcnQyX3N1cHBvcnRlZF9hcHB0cnVzdDsN
-Cj4gLSAgICAgICAgICAgICAgIHNlbF9sZW4gPSBBUlJBWV9TSVpFKGtzejhfcG9ydDJfc3VwcG9y
-dGVkX2FwcHRydXN0KTsNCg0KSWYgd2UgcmVtb3ZlIHRoaXMsIEhvdyB0aGUgdXNlciBhcHBsaWNh
-dGlvbiBrbm93cyBhYm91dCB0aGUgRFNDUA0KcmVzaXN0cmljdGlvbiBvZiBLU1o4IHBvcnQgMi4g
-SXMgaXQgaW1wbGVtZW50ZWQgaW4gb3RoZXIgZnVuY3Rpb25zPw0KDQo+IC0gICAgICAgfSBlbHNl
-IHsNCj4gLSAgICAgICAgICAgICAgIHNlbCA9IGtzel9zdXBwb3J0ZWRfYXBwdHJ1c3Q7DQo+IC0g
-ICAgICAgICAgICAgICBzZWxfbGVuID0gQVJSQVlfU0laRShrc3pfc3VwcG9ydGVkX2FwcHRydXN0
-KTsNCj4gLSAgICAgICB9DQo+IC0NCj4gLSAgICAgICByZXR1cm4ga3N6X3BvcnRfc2V0X2FwcHRy
-dXN0KGRldi0+ZHMsIHBvcnQsIHNlbCwgc2VsX2xlbik7DQo+ICsgICAgICAgcmV0dXJuIGtzel9w
-b3J0X3NldF9hcHB0cnVzdChkZXYtPmRzLCBwb3J0LA0KPiBrc3pfZGVmYXVsdF9hcHB0cnVzdCwN
-Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEFSUkFZX1NJWkUoa3N6X2Rl
-ZmF1bHRfYXBwdHJ1c3QpDQo+ICk7DQo+ICB9DQo+IA0KPiAgLyoqDQo+IC0tDQo+IDIuMzkuMg0K
-PiANCg==
+--nextPart4563618.LvFx2qVVIh
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Subject: Re: [PATCH v10 0/7] AMD Pstate Driver Core Performance Boost
+Date: Wed, 08 May 2024 17:11:42 +0200
+Message-ID: <4916526.31r3eYUQgx@natalenko.name>
+In-Reply-To: <cover.1715152592.git.perry.yuan@amd.com>
+References: <cover.1715152592.git.perry.yuan@amd.com>
+MIME-Version: 1.0
+
+Hello.
+
+On st=C5=99eda 8. kv=C4=9Btna 2024 9:21:05, SEL=C4=8C Perry Yuan wrote:
+> Hi all,
+> The patchset series add core performance boost feature for AMD pstate
+> driver including passisve ,guide and active mode support.
+>=20
+> User can change core frequency boost control with a new sysfs entry:
+>=20
+> "/sys/devices/system/cpu/amd_pstate/cpb_boost"
+>=20
+>=20
+> 1) globally disable core boost:
+> $ sudo bash -c "echo 0 > /sys/devices/system/cpu/amd_pstate/cpb_boost"
+> $ lscpu -ae
+> CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ      MHZ
+>   0    0      0    0 0:0:0:0          yes 4201.0000 400.0000 2983.578
+>   1    0      0    1 1:1:1:0          yes 4201.0000 400.0000 2983.578
+>   2    0      0    2 2:2:2:0          yes 4201.0000 400.0000 2583.855
+>   3    0      0    3 3:3:3:0          yes 4201.0000 400.0000 2983.578
+>   4    0      0    4 4:4:4:0          yes 4201.0000 400.0000 2983.578
+>=20
+> 2) globally enable core boost:
+> $ sudo bash -c "echo 1 > /sys/devices/system/cpu/amd_pstate/cpb_boost"
+> $ lscpu -ae
+>    0    0      0    0 0:0:0:0          yes 5759.0000 400.0000 2983.578
+>   1    0      0    1 1:1:1:0          yes 5759.0000 400.0000 2983.578
+>   2    0      0    2 2:2:2:0          yes 5759.0000 400.0000 2983.578
+>   3    0      0    3 3:3:3:0          yes 5759.0000 400.0000 2983.578
+>   4    0      0    4 4:4:4:0          yes 5759.0000 400.0000 2983.578
+>=20
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> The V9 patches add per CPU boost control, user can enable/disable CPUs bo=
+ost
+> as the below command tested on a laptop system.
+> # before
+>   CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
+>   0    0      0    0 0:0:0:0          yes 4208.0000 400.0000 1666.7740
+>   1    0      0    0 0:0:0:0          yes 4208.0000 400.0000  400.0000
+>   2    0      0    1 1:1:1:0          yes 4208.0000 400.0000 3386.1260
+>   3    0      0    1 1:1:1:0          yes 4208.0000 400.0000  400.0000
+> $ sudo rdmsr 0xc00102b3 -p 0
+> 10a6
+>=20
+> $ sudo bash -c "echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/boost"
+> # after
+>   CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
+>     0    0      0    0 0:0:0:0          yes 3501.0000 400.0000  400.0000
+>     1    0      0    0 0:0:0:0          yes 4208.0000 400.0000 1391.0690
+>     2    0      0    1 1:1:1:0          yes 4208.0000 400.0000 3654.4541
+>     3    0      0    1 1:1:1:0          yes 4208.0000 400.0000  400.0000
+> $ sudo rdmsr 0xc00102b3 -p 0
+> 108a
+>=20
+>=20
+> The patches have been tested with the AMD 7950X processor and many users
+> would like to get core boost control enabled for power saving.
+>=20
+> Perry.
+>=20
+>=20
+> Changes from v9:
+>  * change per CPU boost sysfs file name to `boost` (Mario)
+>  * rebased to latest linux-pm/bleeding-edge
+>=20
+> Changes from v8:
+>  * pick RB flag for patch 4 (Mario)
+>  * change boot_cpu_has to cpu_feature_enabled for patch 2 (Boris)
+>  * merge patch 6 into patch 3 (Mario)
+>  * add two patch for per CPU boost control patch 6 & 7(Mario)
+>  * rebased to latest linux-pm/bleeding-edge
+>=20
+> Changes from v7:
+>  * fix the mutext locking issue in the sysfs file update(Ray, Mario)
+>  * pick ack flag from Ray
+>  * use X86_FEATURE_CPB to verify the CPB function in Patch #2(Ray)
+>  * rerun the testing to check function works well
+>  * rebased to linux-pm/bleeding-edge latest
+>=20
+> Changes from v6:
+>  * reword patch 2 commit log (Gautham)
+>  * update cover letter description(Gautham)
+>  * rebase to kernel v6.9-rc5
+>=20
+> Changes from v4:
+>  * drop the legacy boost remove patch, let us keep the legacy interface
+>    in case some applications break.
+>  * rebase to linux-pm/bleeding-edge branch
+>  * rework the patchset base on [PATCH v8 0/8] AMD Pstate Fixes And
+>    Enhancements which has some intial work done there.
+>=20
+> Changes from v4:
+>  * move MSR_K7_HWCR_CPB_DIS_BIT into msr-index.h
+>  * pick RB flag from Gautham R. Shenoy
+>  * add Cc Oleksandr Natalenko <oleksandr@natalenko.name>
+>  * rebase to latest linux-pm/bleeding-edge branch
+>  * rebase the patch set on top of [PATCH v7 0/6] AMD Pstate Fixes And Enh=
+ancements
+>  * update  [PATCH v7 2/6] to use MSR_K7_HWCR_CPB_DIS_BIT
+>=20
+> Changes from v3:
+>  * rebased to linux-pm/bleeding-edge v6.8
+>  * rename global to amd_pstate_global_params(Oleksandr Natalenko)
+>  * remove comments for boot_supported in amd_pstate.h
+>  * fix the compiler warning for amd-pstate-ut.ko
+>  * use for_each_online_cpu in cpb_boost_store which fix the null pointer
+>    error during testing
+>  * fix the max frequency value to be KHz when cpb boost disabled(Gautham =
+R. Shenoy)
+>=20
+> Changes from v2:
+>  * move global struct to amd-pstate.h
+>  * fix the amd-pstate-ut with new cpb control interface
+>=20
+> Changes from v1:
+>  * drop suspend/resume fix patch 6/7 because of the fix should be in
+>    another fix series instead of CPB feature
+>  * move the set_boost remove patch to the last(Mario)
+>  * Fix commit info with "Closes:" (Mario)
+>  * simplified global.cpb_supported initialization(Mario)
+>  * Add guide mode support for CPB control
+>  * Fixed some Doc typos and add guide mode info to Doc as well.
+>=20
+> v1: https://lore.kernel.org/all/cover.1706255676.git.perry.yuan@amd.com/
+> v2: https://lore.kernel.org/lkml/cover.1707047943.git.perry.yuan@amd.com/
+> v3: https://lore.kernel.org/lkml/cover.1707297581.git.perry.yuan@amd.com/
+> v4: https://lore.kernel.org/lkml/cover.1710322310.git.perry.yuan@amd.com/
+> v5: https://lore.kernel.org/lkml/cover.1710473712.git.perry.yuan@amd.com/
+> v6: https://lore.kernel.org/lkml/cover.1710754236.git.perry.yuan@amd.com/
+> v7: https://lore.kernel.org/lkml/cover.1713861200.git.perry.yuan@amd.com/
+> v8: https://lore.kernel.org/lkml/cover.1714112854.git.perry.yuan@amd.com/
+> v9: https://lore.kernel.org/lkml/cover.1714989803.git.perry.yuan@amd.com/
+>=20
+> Perry Yuan (7):
+>   cpufreq: acpi: move MSR_K7_HWCR_CPB_DIS_BIT into msr-index.h
+>   cpufreq: amd-pstate: initialize new core precision boost state
+>   cpufreq: amd-pstate: implement cpb_boost sysfs entry for boost control
+>   cpufreq: amd-pstate: fix the MSR highest perf will be reset issue
+>     while cpb boost off
+>   Documentation: cpufreq: amd-pstate: introduce the new cpu boost
+>     control method
+>   cpufreq: amd-pstate: introduce per CPU frequency boost control
+>   Documentation: cpufreq: amd-pstate: update doc for Per CPU boost
+>     control method
+>=20
+>  Documentation/admin-guide/pm/amd-pstate.rst |  30 ++++
+>  arch/x86/include/asm/msr-index.h            |   2 +
+>  drivers/cpufreq/acpi-cpufreq.c              |   2 -
+>  drivers/cpufreq/amd-pstate-ut.c             |   2 +-
+>  drivers/cpufreq/amd-pstate.c                | 189 ++++++++++++++++++--
+>  include/linux/amd-pstate.h                  |  14 ++
+>  6 files changed, 225 insertions(+), 14 deletions(-)
+
+I've applied this series along with fixes and improvements [1], and I canno=
+t get guided mode to work with my CPU any more.
+
+The CPU is:
+
+```
+Vendor ID:                AuthenticAMD
+  Model name:             AMD Ryzen 9 5950X 16-Core Processor
+    CPU family:           25
+    Model:                33
+    Thread(s) per core:   2
+    Core(s) per socket:   16
+    Socket(s):            1
+    Stepping:             2
+```
+
+I've got `amd_pstate=3Dguided` set in the kernel cmdline, but `amd-pstate-e=
+pp` gets loaded anyway. When I try to set `guided` manually via `echo guide=
+d | sudo tee /sys/devices/system/cpu/amd_pstate/status`, the status gets dr=
+opped to `disable`, `tee` errors out with `-ENODEV`, and there's this in th=
+e kernel log:
+
+```
+$ jctl -kb | grep sysfs: | cut -d ' ' -f 5-
+kernel: sysfs: cannot create duplicate filename '/devices/system/cpu/cpufre=
+q/policy0/boost'
+=E2=80=A6
+kernel: sysfs: cannot create duplicate filename '/devices/system/cpu/cpufre=
+q/policy31/boost'
+```
+
+The following is applied on top of v6.9-rc7:
+
+```
+cpufreq: amd-pstate: automatically load pstate driver by default
+cpufreq: amd-pstate: fix the highest frequency issue which limit performance
+cpufreq: amd-pstate: implement heterogeneous core topology for highest perf=
+ormance initialization
+x86/cpufeatures: Add feature bits for AMD heterogeneous processor
+cpufreq: amd-pstate: switch boot_cpu_has() to cpu_feature_enabled()
+Documentation: PM: amd-pstate: add guide mode to the Operation mode
+Documentation: PM: amd-pstate: add debugging section for driver loading fai=
+lure
+Documentation: PM: amd-pstate: introducing recommended reboot requirement d=
+uring driver switch
+cpufreq: amd-pstate: add debug message while CPPC is supported and disabled=
+ by SBIOS
+cpufreq: amd-pstate: show CPPC debug message if CPPC is not supported
+cpufreq: amd-pstate: optimiza the initial frequency values verification
+Documentation: cpufreq: amd-pstate: update doc for Per CPU boost control me=
+thod
+cpufreq: amd-pstate: introduce per CPU frequency boost control
+Documentation: cpufreq: amd-pstate: introduce the new cpu boost control met=
+hod
+cpufreq: amd-pstate: fix the MSR highest perf will be reset issue while cpb=
+ boost off
+cpufreq: amd-pstate: implement cpb_boost sysfs entry for boost control
+cpufreq: amd-pstate: initialize new core precision boost state
+cpufreq: acpi: move MSR_K7_HWCR_CPB_DIS_BIT into msr-index.h
+cpufreq: amd-pstate: remove unused variable lowest_nonlinear_freq
+cpufreq: amd-pstate: fix code format problems
+cpufreq: amd-pstate: Add quirk for the pstate CPPC capabilities missing
+cpufreq: amd-pstate: get transition delay and latency value from ACPI tables
+cpufreq: amd-pstate: Bail out if min/max/nominal_freq is 0
+cpufreq: amd-pstate: Remove amd_get_{min,max,nominal,lowest_nonlinear}_freq=
+()
+cpufreq: amd-pstate: Unify computation of {max,min,nominal,lowest_nonlinear=
+}_freq
+cpufreq: amd-pstate: Document the units for freq variables in amd_cpudata
+cpufreq: amd-pstate: Document *_limit_* fields in struct amd_cpudata
+```
+
+Previously, with your submissions, it was possible to use `guided` mode wit=
+h my Zen 3.
+
+[1] https://lore.kernel.org/lkml/cover.1715065568.git.perry.yuan@amd.com/
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart4563618.LvFx2qVVIh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmY7li4ACgkQil/iNcg8
+M0sK4A/8CBR0rRDUlLAqHe4vx/jwLb4E41lEzJ4J/lg1pINR/JNN5p2ZcBlCBeM9
+mJkovc6jhQU8A/IYigK0blZ7OKoJkNl4AQMg8vDF+7lHQBOiRa4iZy4igntpli4G
+puRMzn9wYNUri75zQPe1iubf0GRbX/2eAsnBkOMndr0iHGWBy+2H8LSh+/qJ2eLV
+p6WFvNsUEbDc0VlNdTyY7HEHqltYgXIkVDGNxFdIeMPB0Zer0kTq0qeZFZoDs6Ao
+k1mmzAAroPcDD2h+WmSTrUJoAPYSSFWi0hk5q3IKsfrP21t0UGz1nMQ78yAxOnaf
+Lab1gKHIggoQGBH7OyR6/xFaM8SS5dbw25n4EU50w8vBpjL6I5il8cdWzx2TGMQk
+5X1sGTFZ86OoJpvEbViaQ3eZxA9xhTZaOE52t5+bTtqAyV78SOYHSJwx5dOOZFJx
+MJjV5NDUGnIFBMVfx5H/HpkWYQ/F2BNJRrvhpZ0aY7zVQ3WbJAlXAEO1722RFLqJ
+Wr3bEiqKKkSHb+46QRzURciz8JgJpxjVXz8Ln0RdLJxKCiNTkLWAEDpAMlZyR9jn
+l0ggZtI449rr4xSnaZ74M+kCQGWdw8m9cxJ8q/juE8528yDDbGEUjtrWQxJqCRhX
+VDU0ZlxvIYCxC/+IKpSUC+fOMamd5kZl64OGAKQxroDkAEnYCWY=
+=3nXF
+-----END PGP SIGNATURE-----
+
+--nextPart4563618.LvFx2qVVIh--
+
+
+
 
