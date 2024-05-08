@@ -1,143 +1,187 @@
-Return-Path: <linux-kernel+bounces-173041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADA28BFAA9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62A88BFAB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77A2E285D95
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 154351C229E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A22080BF2;
-	Wed,  8 May 2024 10:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6972781ADB;
+	Wed,  8 May 2024 10:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="KPtJyn8K"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1ElVR4F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187CE8063C;
-	Wed,  8 May 2024 10:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759F081AA2;
+	Wed,  8 May 2024 10:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162901; cv=none; b=XLpfuuMN9NXugaEb1yMifITtXzStIG/YOKuSLIlmcK8rB6onHe4yaEYjF+aW9z0ehcSzO354saj24d1TmM8VQVwMP7zzXdOvVuGvnMX0ZP1SRNrBnjAE4G0bA/gsSbLybDp82fkxbmL9W8WK2LEWSQi7DtNBd1/lotdHBmCMqtA=
+	t=1715162945; cv=none; b=DMufwDfTuz5VSi2fWEAEK8sQ+VGcogoDGtusoCEc6j8gr1CFq54sdexvz17giT53M1K7tYEeuRBNYwp2tiXDUlCIciJgEZElvXxNMx9WdJ3EIBlJkg/ahoHyukAq6c624wrEXzZ181Kpvh9aV4A4YPWoFmfiA5sRKP8c1Opy9jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162901; c=relaxed/simple;
-	bh=TPptcfmWefb6Dwpc7wioI/LAUBpw0qGUXV0LNVjXWEM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hDf0fM5Q+fBdOW3AMk3JHTr31WJyJzd1NmX7lM2A15krSEerU1mu9PjuC62T5Xz/1CNfFONdUB/05tOEKwrzsRc4V1VPJNAK75Rbk2SY7BwPwyitqqxy2SXu/EADN29beUzOAUxOlMd9mpXzw7WK1nNjZaZW3opx330NOQiYz4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=KPtJyn8K; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44870QlG029375;
-	Wed, 8 May 2024 05:08:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding:content-type; s=PODMain02222019; bh=N
-	J7EXhSoGpVKvEWs1UdcCOfYFkLfSO0USCWaoNX8CHA=; b=KPtJyn8KFqYdCPlvZ
-	1SYaEXdrErwCc3x1yxlFtMHcrTAsf8ZD/24p+Mx+uVkmtqmfhXjwcOAsBCMbvcFN
-	QtSxF+ovD2auZtD89uYft7HO57N25L4NpogRDpMhV0VmJ1y97Iq25fcifiug2IB6
-	IvYiZ0LUX/ljzDK71M10Oc8hGCHtgWK245b/YHT8FjWwuWN9RIDfnFGYp1FWkH8m
-	L9hbyqhHslqKhdplza8g2Hww8pGj4b3Gwru0Sazm5+vAUfEeoR4S8H5O+CMxb2kw
-	BUkrV5zmj34qM/B1xBYDUZI58/ALEfhf9vKaBxPH1U7dk+Xmfr7ujU1U8WGI0Fys
-	+VPTg==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 3xysherp5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 05:08:14 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 8 May 2024
- 11:08:12 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9
- via Frontend Transport; Wed, 8 May 2024 11:08:12 +0100
-Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id E47BF820244;
-	Wed,  8 May 2024 10:08:11 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <tiwai@suse.com>
-CC: <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>
-Subject: [PATCH] ALSA: hda: cs35l56: Fix lifetime of cs_dsp instance
-Date: Wed, 8 May 2024 11:08:11 +0100
-Message-ID: <20240508100811.49514-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715162945; c=relaxed/simple;
+	bh=yrabQPbPYvR+JPoitoyg+9RDRV3056ERK0Y8S6+be2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MP4Kfr7Cq8o8REf3FFAXYolEGs74xDmdSopmZ5QbiyG+fStMHonKdIhOG0xexibBfARno75xqZjqQt3Toz1EXzKm3Y2EGhNZrqfYrjLgF5pC6H/Caq0/QMuxStRA+JAkOzQhP0uhXMcIy6OLMQ/MU/vXpTJg32vdb5Do4lWzb84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g1ElVR4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A84C113CC;
+	Wed,  8 May 2024 10:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715162945;
+	bh=yrabQPbPYvR+JPoitoyg+9RDRV3056ERK0Y8S6+be2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g1ElVR4FITT9TalGvuJbfFMESgGVWUWwPh+Jiuy91aSKwAstAfiXyTFlhWpH9rlSj
+	 kfIlOoOJuqfDvOjLN8emFmJHFevm1IH96irYRz+bm+AeV/W55Qd9olPzuGmF9V5muE
+	 pK/1XrE8w15gD5I30PJqCcNALy57CVi2E1HdM889nC0xP/jJoaExLQShGX7lbyi/eh
+	 d+g9d5hbZklc3NXzwARwXdQTzR4cOV7VSYrk3XdlkoSZ9zHOCSHa/wS2X3cAfEkvXt
+	 9fgjkNU9JXabQi2jcGskzOm9saN/97+mE1laXFfa/OtQxkb4aV/+BHhS2K0ZDaDOTM
+	 mD01Fvs9jdnhQ==
+Date: Wed, 8 May 2024 12:08:57 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, christian.koenig@amd.com, 
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <20240508-risse-fehlpass-895202f594fd@brauner>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: ClisYTMZ6HFqvrv3HKI_oxKb6ovp3v7g
-X-Proofpoint-ORIG-GUID: ClisYTMZ6HFqvrv3HKI_oxKb6ovp3v7g
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
 
-The cs_dsp instance is initialized in the driver probe() so it
-should be freed in the driver remove(). Also fix a missing call
-to cs_dsp_remove() in the error path of cs35l56_hda_common_probe().
+On Mon, May 06, 2024 at 04:29:44PM +0200, Christian König wrote:
+> Am 04.05.24 um 20:20 schrieb Linus Torvalds:
+> > On Sat, 4 May 2024 at 08:32, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > Lookie here, the fundamental issue is that epoll can call '->poll()'
+> > > on a file descriptor that is being closed concurrently.
+> > Thinking some more about this, and replying to myself...
+> > 
+> > Actually, I wonder if we could *really* fix this by simply moving the
+> > eventpoll_release() to where it really belongs.
+> > 
+> > If we did it in file_close_fd_locked(),  it would actually make a
+> > *lot* more sense. Particularly since eventpoll actually uses this:
+> > 
+> >      struct epoll_filefd {
+> >          struct file *file;
+> >          int fd;
+> >      } __packed;
+> > 
+> > ie it doesn't just use the 'struct file *', it uses the 'fd' itself
+> > (for ep_find()).
+> > 
+> > (Strictly speaking, it should also have a pointer to the 'struct
+> > files_struct' to make the 'int fd' be meaningful).
+> 
+> While I completely agree on this I unfortunately have to ruin the idea.
+> 
+> Before we had KCMP some people relied on the strange behavior of eventpoll
+> to compare struct files when the fd is the same.
+> 
+> I just recently suggested that solution to somebody at AMD as a workaround
+> when KCMP is disabled because of security hardening and I'm pretty sure I've
+> seen it somewhere else as well.
+> 
+> So when we change that it would break (undocumented?) UAPI behavior.
 
-The call to cs_dsp_remove() was being done in the component unbind
-callback cs35l56_hda_unbind(). This meant that if the driver was
-unbound and then re-bound it would be using an uninitialized cs_dsp
-instance.
+I've worked on that a bit yesterday and I learned new things about epoll
+and ran into some limitations.
 
-It is best to initialize the cs_dsp instance in probe() so that it
-can return an error if it fails. The component binding API doesn't
-have any error handling so there's no way to handle a failure if
-cs_dsp was initialized in the bind.
+Like, what happens if process P1 has a file descriptor registered in an
+epoll instance and now P1 forks and creates P2. So every file that P1
+maintains gets copied into a new file descriptor table for P2. And the
+same file descriptors refer to the same files for both P1 and P2.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Fixes: 73cfbfa9caea ("ALSA: hda/cs35l56: Add driver for Cirrus Logic CS35L56 amplifier")
----
- sound/pci/hda/cs35l56_hda.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+So there's two interesting cases here:
 
-diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
-index 558c1f38fe97..11b0570ff56d 100644
---- a/sound/pci/hda/cs35l56_hda.c
-+++ b/sound/pci/hda/cs35l56_hda.c
-@@ -732,8 +732,6 @@ static void cs35l56_hda_unbind(struct device *dev, struct device *master, void *
- 	if (cs35l56->base.fw_patched)
- 		cs_dsp_power_down(&cs35l56->cs_dsp);
- 
--	cs_dsp_remove(&cs35l56->cs_dsp);
--
- 	if (comps[cs35l56->index].dev == dev)
- 		memset(&comps[cs35l56->index], 0, sizeof(*comps));
- 
-@@ -1035,7 +1033,7 @@ int cs35l56_hda_common_probe(struct cs35l56_hda *cs35l56, int hid, int id)
- 			       ARRAY_SIZE(cs35l56_hda_dai_config));
- 	ret = cs35l56_force_sync_asp1_registers_from_cache(&cs35l56->base);
- 	if (ret)
--		goto err;
-+		goto dsp_err;
- 
- 	/*
- 	 * By default only enable one ASP1TXn, where n=amplifier index,
-@@ -1061,6 +1059,8 @@ int cs35l56_hda_common_probe(struct cs35l56_hda *cs35l56, int hid, int id)
- 
- pm_err:
- 	pm_runtime_disable(cs35l56->base.dev);
-+dsp_err:
-+	cs_dsp_remove(&cs35l56->cs_dsp);
- err:
- 	gpiod_set_value_cansleep(cs35l56->base.reset_gpio, 0);
- 
-@@ -1078,6 +1078,8 @@ void cs35l56_hda_remove(struct device *dev)
- 
- 	component_del(cs35l56->base.dev, &cs35l56_hda_comp_ops);
- 
-+	cs_dsp_remove(&cs35l56->cs_dsp);
-+
- 	kfree(cs35l56->system_name);
- 	pm_runtime_put_noidle(cs35l56->base.dev);
- 
--- 
-2.39.2
+(1) P2 explicitly removes the file descriptor from the epoll instance
+    via epoll_ctl(EPOLL_CTL_DEL). That removal affects both P1 and P2
+    since the <fd, file> pair is only registered once and it isn't
+    marked whether it belongs to P1 and P2 fdtable.
 
+    So effectively fork()ing with epoll creates a weird shared state
+    where removal of file descriptors that were registered before the
+    fork() affects both child and parent.
+
+    I found that surprising even though I've worked with epoll quite
+    extensively in low-level userspace.
+
+(2) P2 doesn't close it's file descriptors. It just exits. Since removal
+    of the file descriptor from the epoll instance isn't done during
+    close() but during last fput() P1's epoll state remains unaffected
+    by P2's sloppy exit because P1 still holds references to all files
+    in its fdtable.
+
+    (Sidenote, if one ends up adding every more duped-fds into epoll
+    instance that one doesn't explicitly close and all of them refer to
+    the same file wouldn't one just be allocating new epitems that
+    are kept around for a really long time?)
+
+So if the removal of the fd would now be done during close() or during
+exit_files() when we call close_files() and since there's currently no
+way of differentiating whether P1 or P2 own that fd it would mean that
+(2) collapses into (1) and we'd always alter (1)'s epoll state. That
+would be a UAPI break.
+
+So say we record the fdtable to get ownership of that file descriptor so
+P2 doesn't close anything in (2) that really belongs to P1 to fix that
+problem.
+
+But afaict, that would break another possible use-case. Namely, where P1
+creates an epoll instance and registeres fds and then fork()s to create
+P2. Now P1 can exit and P2 takes over the epoll loop of P1. This
+wouldn't work anymore because P1 would deregister all fds it owns in
+that epoll instance during exit. I didn't see an immediate nice way of
+fixing that issue.
+
+But note that taking over an epoll loop from the parent doesn't work
+reliably for some file descriptors. Consider man signalfd(2):
+
+   epoll(7) semantics
+       If a process adds (via epoll_ctl(2)) a signalfd file descriptor to an epoll(7) instance,
+       then epoll_wait(2) returns events only for signals sent to that process.  In particular,
+       if  the process then uses fork(2) to create a child process, then the child will be able
+       to read(2) signals that  are  sent  to  it  using  the  signalfd  file  descriptor,  but
+       epoll_wait(2)  will  not  indicate  that the signalfd file descriptor is ready.  In this
+       scenario, a possible workaround is that after the fork(2), the child process  can  close
+       the  signalfd  file descriptor that it inherited from the parent process and then create
+       another signalfd file descriptor and add it to the epoll instance.   Alternatively,  the
+       parent and the child could delay creating their (separate) signalfd file descriptors and
+       adding them to the epoll instance until after the call to fork(2).
+
+So effectively P1 opens a signalfd and registers it in an epoll
+instance. Then it fork()s and creates P2. Now both P1 and P2 call
+epoll_wait(). Since signalfds are always relative to the caller and P1
+did call signalfd_poll() to register the callback only P1 can get
+events. So P2 can't take over signalfds in that epoll loop.
+
+Honestly, the inheritance semantics of epoll across fork() seem pretty
+wonky and it would've been better if an epoll fd inherited across
+would've returned ESTALE or EINVAL or something. And if that inheritance
+of epoll instances would really be a big use-case there'd be some
+explicit way to enable this.
 
