@@ -1,81 +1,117 @@
-Return-Path: <linux-kernel+bounces-172758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998928BF639
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 849818BF63D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB521F242A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:27:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69661C224DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 06:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B9F2BB03;
-	Wed,  8 May 2024 06:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB9420DDB;
+	Wed,  8 May 2024 06:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Vh1PdP00"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EGO3/6Ki"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A469D182C5
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 06:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938291E895;
+	Wed,  8 May 2024 06:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149548; cv=none; b=e9wl4H60jhPhTiee+oLRX4GElO8UdvVFWMtPFsfcLfihBDMUrRKF3lc0MlUXOK3fa5tpJ8kiGyAgvVKqB6tYkl65gLIIKMbMZXvjvzB81D14nJTJSTaIf0nUzbwFA1Ed4Wtd7/Mjiw3ARBLT7xT3o2bFzFQjAFTI86+sGtj3YzE=
+	t=1715149683; cv=none; b=m3HOPkT6d7yoLC2z4+NxDgVQEfaWSgMPn91tM7GWyx/ntQZ0oNyFYYfijA72i8Mj/QcHZCa1VfIUvB8ePAcn58KDlG2YnrCGdXKEsWWf5IaV+l9HPHzyOk6EAdl5JW8SXxqicY64U/i6mtl+gCeWuQOUPq5BhOvD3McfmFHDKtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149548; c=relaxed/simple;
-	bh=0yTnDzRzl6YMEDAYdK4MzUFIs1RryobdwGldopgZgrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrMF3lQeyu0VL9/iFxtcNq6/MdJNq7r211bLrKJ7mvHEKhFJmNVZUX69Q9/56Vq4MtsscTtbSpLN0pg5WfRlqXD/oEd5hQs2+MJ3TF6Zv0Oe9i5P/OT8Ya7G+nJVuqj/OnI45Pe5KDYegqdvHIlVmF/ZVHPDUF/HXaKWdZx8vlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Vh1PdP00; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 8 May 2024 06:25:39 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715149544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cX9UDFEcMUiOwQWR3+txM6O/c7psSYzDc8seRaVOFUA=;
-	b=Vh1PdP00Hz0dsjoJ8XSe+qAtpu16Gl/4TaRhsPZ3AnqRi04QNU82oEK7OXqFZH7NOcVwXg
-	7Ua/e5i8KWFXYzf9bVHTz+fHUkVvEm217ZgRHX9ISZtqa/oPPeSwyVV/0Sc2h1xdGJSLkt
-	wLnhCNlaP/Y6fwqO9DMHaKu4KWAfCwQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>, pbonzini@redhat.com,
-	shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.8 18/52] KVM: selftests: Add test for uaccesses
- to non-existent vgic-v2 CPUIF
-Message-ID: <Zjsa4yeD_EmV7TgP@linux.dev>
-References: <20240507230800.392128-1-sashal@kernel.org>
- <20240507230800.392128-18-sashal@kernel.org>
+	s=arc-20240116; t=1715149683; c=relaxed/simple;
+	bh=J+KWJReAN1bvmIc1+CXM6hmmcHsVMfMWZdaStKHUBvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jJ8HBmsOMATGYWugBQ3Ki/JG2JNlcuF4ojWwHJgYy+V+WkqTHuv01Ppof62lVijAIhORYl8zDj15VthL8cjWM+HRAm5cnuCzbnpDRR7QKNLXFXmkvenKnE0lEJ5PoRPVIcK1e+34EnbjHOF/XlBnRyzzhDVdkEL/b0adkidIM7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EGO3/6Ki; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715149678;
+	bh=ZOz3Pw+/RdehelHDH4oMi407Gjkpc5RGsdvGv7lRWY8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EGO3/6Ki2hUFUvQJYX+4FD8/VbI/0EHGM+EytzymiYn/r8yq76HOgCl9jMmmtT6zi
+	 GNYSqDduBy3W5QmRIRBA/F2YTgqVjp+Pyygi4lR6r/RuyGA/+A8eAspJ4/x4lIxIj7
+	 YEgqYStcphwt44DcT3VtjD8stFzgs73bCDPhVLGy0bkJsfKZwH57ioeJ2OHawnFfg4
+	 JB5iybJfxaKxBLEWgShDME2vsWnGGo+uBMi3kyremYG0enZd8GK7NSILKIBSM/nJiz
+	 37zHPp1xB+PGzc+1rQFuSqCvuqjbW9MhuhuSANxulajxL2QvE4GAjj0uLnFZkJSLPD
+	 J915AIHJZvUpw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VZ4vf4461z4wd3;
+	Wed,  8 May 2024 16:27:58 +1000 (AEST)
+Date: Wed, 8 May 2024 16:27:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bitmap tree
+Message-ID: <20240508162755.7d339509@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507230800.392128-18-sashal@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/M+b7W10N57o7hlPYGocOAf6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi,
+--Sig_/M+b7W10N57o7hlPYGocOAf6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 07:06:44PM -0400, Sasha Levin wrote:
-> From: Oliver Upton <oliver.upton@linux.dev>
-> 
-> [ Upstream commit 160933e330f4c5a13931d725a4d952a4b9aefa71 ]
+Hi all,
 
-Can you please drop this and pick up the bugfix instead?
+After merging the bitmap tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-6ddb4f372fc6 ("KVM: arm64: vgic-v2: Check for non-NULL vCPU in vgic_v2_parse_attr()")
+lib/test_bitops.c: In function 'test_fns':
+lib/test_bitops.c:56:9: error: cleanup argument not a function
+   56 |         unsigned long *buf __free(kfree) =3D NULL;
+      |         ^~~~~~~~
+lib/test_bitops.c:60:15: error: implicit declaration of function 'kmalloc_a=
+rray' [-Werror=3Dimplicit-function-declaration]
+   60 |         buf =3D kmalloc_array(10000, sizeof(unsigned long), GFP_KER=
+NEL);
+      |               ^~~~~~~~~~~~~
+lib/test_bitops.c:60:13: error: assignment to 'long unsigned int *' from 'i=
+nt' makes pointer from integer without a cast [-Werror=3Dint-conversion]
+   60 |         buf =3D kmalloc_array(10000, sizeof(unsigned long), GFP_KER=
+NEL);
+      |             ^
+cc1: all warnings being treated as errors
 
--- 
-Thanks,
-Oliver
+Caused by commit
+
+  777c893e12fa ("lib/test_bitops: Add benchmark test for fns()")
+
+I have used the bitmap tree from next-20240507 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/M+b7W10N57o7hlPYGocOAf6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY7G2sACgkQAVBC80lX
+0Gx/jgf+OUuwfQGiGCZdigyuvJ0o7JN/Jss0aYukv7X3kxIBKrDOaemLQ+C9BmKI
+hzNURVn3i1q/z71pWftqurKDi68l0mbjb0hfPcCrJCdoOpiQO0jcqNGPQM4kU0Qp
+xotZbJ1mQFjyePoMU9bzoxswfap0Tkew3seFfzQ2LJ50gPYhm8TmFeg1Teqb4+4B
+By2/pzGkHZIQhrlfRte6PNnxo1n5uwb/DVzTbTi+gu+o+jiVBycg1v1+mlQH335Z
+ogJfHd/ECaJgqNwl6foeX7s+Xq1EVUvEdklwHMBBiDlRZPsmTBbasAl87phZczfg
+CTlBC1O6TWhBu301lnwcTe/McNieOA==
+=o6W2
+-----END PGP SIGNATURE-----
+
+--Sig_/M+b7W10N57o7hlPYGocOAf6--
 
