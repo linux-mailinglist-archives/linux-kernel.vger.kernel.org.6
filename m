@@ -1,129 +1,143 @@
-Return-Path: <linux-kernel+bounces-173038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2588BFAA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:14:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B438BFAA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F0581C22070
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:14:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A16B26005
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511DC7F47B;
-	Wed,  8 May 2024 10:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FF17F7FA;
+	Wed,  8 May 2024 10:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FGfwL3Ek"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BPjYn4lV"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2752179DC5
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A397F7D3;
+	Wed,  8 May 2024 10:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715162714; cv=none; b=udQvYR/FJBf29roPs4t94r5Uv0xRQYY0pSzhJTp7uMETW7r3+gXeE2sfK42LT8qMA0HYn8NsVlEXCT0/8Xd6G0H7WN8nvgNomskGfftWP0ZosBRDHclNSwT8ogX1ulGyxjLKHRn0c5b1DnK0oHlxggzg46yQ+aH+FKveTVvqGdY=
+	t=1715162737; cv=none; b=EbOdsLuiv54xeS6lZCWZqcCUyZ/Hi+uc16Xgcdve8411qLbwHqHajJeYUYHipw9pmFSrihW+cRX+r5NGaMN2YqKCzuV7UN4J4uwQSVyrVnpNj5fIC1979/3jeZ0bq9KKfjF2CHg4t2gDO4YI3vIyK2UWZWHjMj2i1QxE2f0JYyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715162714; c=relaxed/simple;
-	bh=G4McmKXGrbsG7hhqIl363OQbT8PymU5AYalg5sCJHdc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kfNKtS6dvpSbXeRUV/T2Zr5KisVHdyfSy8wvW4VlAhQRnJwCjySTAYaOVrMhoJIf8bQvF3fVxCRIV3ba3M2TO21E/Pb7LWWa2/GJ7Hxc8R5EhM/r017SjS8YngVkAxQfx/1hCBCMVEvZkNM6govaNacrcJiSrJL+egghbnILNl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FGfwL3Ek; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715162712; x=1746698712;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G4McmKXGrbsG7hhqIl363OQbT8PymU5AYalg5sCJHdc=;
-  b=FGfwL3Eky2Zk2uHmD7AEG5zOTC6z0hXYr6hGu11l8bcqXINv3eSNDOxZ
-   ZVSldpjfsMXzew+OH+jzzRI8XUCfRqZjnUMoQh+yTuUlQCbU2ofHBwqVr
-   9SsSNv4v1EN29uLKKo4UfbHTG2pBwt+NWKzI9uL1SU9mmcWy7IHmZeCMl
-   s/vL3ndf1YARV8FcMElx+8xbG2dnF4HlsdXosNCkYjPyNKWo3qe6cSJTb
-   lpAj0OnzyqwKd0SAqer+24cV1MKzB0hByy7OTF9nYv9HuSf8Az4xOoBYn
-   kB+UM2WjSwEaP73cDvUGPWOgzFdBihiqXGYgFSiNurtBZKhexK/IyolYq
-   A==;
-X-CSE-ConnectionGUID: Qcr/ruMjSguXuTxIXyo2lQ==
-X-CSE-MsgGUID: IxrDbhUYSGGaVZpgXVtIXQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22404979"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="22404979"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 03:05:11 -0700
-X-CSE-ConnectionGUID: kMX3erAoQoGyrL1Vb2FspA==
-X-CSE-MsgGUID: qnk/TkvhR0edV/MFwBNYEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="28778593"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.237.100]) ([10.124.237.100])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 03:05:08 -0700
-Message-ID: <a03d3bf6-0610-427c-bf2a-5f6c410e220e@linux.intel.com>
-Date: Wed, 8 May 2024 18:05:06 +0800
+	s=arc-20240116; t=1715162737; c=relaxed/simple;
+	bh=69rPTkrrk+KDC8oVqGxQZvFlCJ9xKMO3lKevbhjOd14=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ru/IpzmO3CcMhYb/fAkME60gFO+LKoVhFbePhxtgT5gD6QvLaeCEU2NsGFkVWoFQWM30T1N23S9sKuV+jcWkBmcKHOFOHIj07ZdBld9Euo8yizGdUe7Q716DmCpwsla971o6eiC1/CXpXJZQirsoS9NFNP22mmmkOEVIOVnHuo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BPjYn4lV; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41ba1ba55ffso3687775e9.1;
+        Wed, 08 May 2024 03:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715162734; x=1715767534; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1pfrqMs/oV1OywiwI/fbear8P048VZ1F1GZommjWhxc=;
+        b=BPjYn4lVlmeT4GXv7BfwlwFa30+q8sl7UdTMtHUOzRpp00/GZdvdLfWq/4Jg3QbtU+
+         +eW7rPw1z8EnCXVveQT4NPg2vRBBx+IkTaJMl1X99Lpc3Dd26I1SYAivkVTIW6PPC3ym
+         fOra4IZOR0kvYeCF9uy3Q50CszcAXUBI5LPkBX5A0YMdcW9Nk1VGYBmcz8RTuZjBe8EA
+         SCBd9Vmphd2VB7VWikICuol3ZmyFCyXrjH3o7uVWXbLuo2Fnc8OnB0Hk90E/OqasQvSh
+         8NQTfEb2UnhQy0vgdN9SkcaK6Cki/eFs0aKjAT4G5OmVuUMfv4Y64Ca8fFoTJAkC9cBx
+         nRIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715162734; x=1715767534;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1pfrqMs/oV1OywiwI/fbear8P048VZ1F1GZommjWhxc=;
+        b=R/VRojhpp984VBUWk8dVzVNBxot3hJCm8Ua6pePHq+DXfBhCU81fCHbJsvbcjNsrzZ
+         LwhQsWVw77NJPmbagXBhQk/6O2QRayoVGtBUQVSS06aI8+6qCyH5JKj1X9qcsQf30+kv
+         EAozzHqJx3+1Mj6M9pUsohVvTkz7ldAs5L/QhpKjkrjWmZuV1oQ6HSxa+b+9NKoNTTCx
+         O1dY6qi3YPNp4cxBwtASB+uq8x3NG4RmDK/nwmWTcpoxMSafF+eCAw+lqKnmR0CvHVuJ
+         l0/dZOpO0ShgvZZZ/yOwh00mXonM5hrnA4p2BO7vlREI33EAgcD5itei6BrqwA3oT4DV
+         VUhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvPaPhumbNpZ+mlRHBhhKXNLMtcKCuiw9y9xiULd278fnzxhSl6277R9ULAKsUsTyZbq7E7D33j0Jx2vpXB7y5FazZPf8s0SECcoCUh+amtBvgq2G9V87cIiEdT7dfoQGh
+X-Gm-Message-State: AOJu0Yw6ZUQmBjGaw6D4/hjKVi4L5Gqi1bFNX2KEzxPlXwVpItqRzt34
+	16mK3oIuSx7aGnVGIF+nBVyizJyMa416lNLaSgmb+t06f+xE+58S
+X-Google-Smtp-Source: AGHT+IHbPK8B0S9D/N+c2TUnl34+0ibw3s7SFJOpj8TxqMbt0pndiEbMnr8WkwO+xCns/doklbqPyA==
+X-Received: by 2002:a05:600c:35c3:b0:41b:4506:9fd with SMTP id 5b1f17b1804b1-41f71ad0be5mr20497925e9.6.1715162734173;
+        Wed, 08 May 2024 03:05:34 -0700 (PDT)
+Received: from localhost (54-240-197-231.amazon.com. [54.240.197.231])
+        by smtp.gmail.com with ESMTPSA id z18-20020adff752000000b0034e19861891sm14923686wrp.33.2024.05.08.03.05.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 May 2024 03:05:32 -0700 (PDT)
+From: Puranjay Mohan <puranjay12@gmail.com>
+To: Maxwell Bland <mbland@motorola.com>, "open list:BPF [GENERAL] (Safe
+ Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Mark
+ Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, open
+ list <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>
+Subject: Re: [PATCH bpf-next v3 0/3]  Support kCFI + BPF on arm64
+In-Reply-To: <fhdcjdzqdqnoehenxbipfaorseeamt3q7fbm7ghe6z5s2chif5@lrhtasolawud>
+References: <fhdcjdzqdqnoehenxbipfaorseeamt3q7fbm7ghe6z5s2chif5@lrhtasolawud>
+Date: Wed, 08 May 2024 10:05:30 +0000
+Message-ID: <mb61p34qs1uvp.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
- virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/9] iommufd: Add iommufd fault object
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-6-baolu.lu@linux.intel.com>
- <20240508001121.GN4718@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240508001121.GN4718@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 2024/5/8 8:11, Jason Gunthorpe wrote:
-> On Tue, Apr 30, 2024 at 10:57:06PM +0800, Lu Baolu wrote:
->> diff --git a/drivers/iommu/iommu-priv.h b/drivers/iommu/iommu-priv.h
->> index ae65e0b85d69..1a0450a83bd0 100644
->> --- a/drivers/iommu/iommu-priv.h
->> +++ b/drivers/iommu/iommu-priv.h
->> @@ -36,6 +36,10 @@ struct iommu_attach_handle {
->>   			struct device	*dev;
->>   			refcount_t	users;
->>   		};
->> +		/* attach data for IOMMUFD */
->> +		struct {
->> +			void		*idev;
->> +		};
-> We can use a proper type here, just forward declare it.
-> 
-> But this sequence in the other patch:
-> 
-> +       ret = iommu_attach_group(hwpt->domain, idev->igroup->group);
-> +       if (ret) {
-> +               iommufd_fault_iopf_disable(idev);
-> +               return ret;
-> +       }
-> +
-> +       handle = iommu_attach_handle_get(idev->igroup->group, IOMMU_NO_PASID, 0);
-> +       handle->idev = idev;
-> 
-> Is why I was imagining the caller would allocate, because now we have
-> the issue that a fault capable domain was installed into the IOMMU
-> before it's handle could be fully setup, so we have a race where a
-> fault could come in right between those things. Then what happens?
-> I suppose we can retry the fault and by the time it comes back the
-> race should resolve. A bit ugly I suppose.
+Maxwell Bland <mbland@motorola.com> writes:
 
-You are right. It makes more sense if the attached data is allocated and
-managed by the caller. I will go in this direction and update my series.
-I will also consider other review comments you have given in other
-places.
+Hi Maxwell,
 
-Best regards,
-baolu
+> In preparation for the BPF summit, I took a look back on BPF-CFI patches
+> to check the status and found that there had been no updates for around
+> a month, so I went ahead and made the fixes suggested in v2.
+>
+> This patchset handles emitting proper CFI hashes during JIT, which
+> can cause some of the selftests to fail, and handles removing the
+> __nocfi tag from bpf_dispatch_*_func on ARM, meaning Clang CFI 
+> checks will be generated:
+>
+> 0000000000fea1e8 <bpf_dispatcher_xdp_func>:
+> paciasp
+> stp     x29, x30, [sp, #-0x10]!
+> mov     x29, sp
+> + ldur    w16, [x2, #-0x4]                           
+> + movk    w17, #0x1881                               
+> + movk    w17, #0xd942, lsl #16                      
+> + cmp     w16, w17                                
+> + b.eq    0xffff8000810016a0 <bpf_dispatcher_xdp_func+0x24>
+> + brk     #0x8222   
+> blr     x2
+> ldp     x29, x30, [sp], #0x10
+> autiasp
+> ret
+>
+> Where ^+ indicates the additional assembly.
+>
+> Credit goes to Puranjay Mohan entirely for this, I just did some fixes,
+> hopefully that is OK.
+
+Thanks for taking this effort forward.
+
+checkpatch.pl complains about the patches like the following:
+
+ERROR: Missing Signed-off-by: line by nominal patch author 'Maxwell Bland <mbland@motorola.com>'
+
+So, you can change the authorship of the patch like:
+
+git commit --amend --author "Puranjay Mohan <puranjay12@gmail.com>"
+
+similar for the patch by Mark:
+
+git commit --amend --author "Mark Rutland <mark.rutland@arm.com>"
+
+Thanks,
+Puranjay
 
