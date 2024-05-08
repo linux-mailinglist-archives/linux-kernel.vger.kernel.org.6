@@ -1,124 +1,286 @@
-Return-Path: <linux-kernel+bounces-173845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3207D8C0650
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF148C0651
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C241F2289C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 761E6282358
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBD1130E27;
-	Wed,  8 May 2024 21:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8092D131BA5;
+	Wed,  8 May 2024 21:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="USm7C+JN"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="tnOJKQ6J"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003353A1AB
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63458120C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715204156; cv=none; b=eCsuw9EO8h122HBGg6xRSlYitWGGPtFot8tt2K3sV7T6D6Es6wJUHe93ZMdEkaaPkgwuzb8MMagYhvWQoLLr1sNeFsVG/vOAf7D2YPIyvfZp2TZmbI5IIeZJGo0+INJXza+3MinIZbKldS2QYEmc1L0Pw7W+2KywPqRbxF3wqRY=
+	t=1715204250; cv=none; b=s6AyRy6He4RHrWHfVe02B2PDKj0WIMxKfsfSj4OY/EzUcH8JheceVa1HuHIY+aqCLETAKup/+GDztt2qlO/CTT3G35Fk7oDeRYA+trAvOec/S5eVqXC10dV6zz9VY6exeDssk8UiN1T6TVjuHNYqAnwvc/NjWCXj68wK5yWR/oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715204156; c=relaxed/simple;
-	bh=TItpyl1t0DXLCCEbXrOYaW4CWjE/M37i078bhWzEMyA=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=k8kwbbz8XABoYKAzzmIpWQZo3/oIQYjBTBFO9yEGhIOMVoF4bWeG5f5BpVk92iz1gsjRQFMk6v34Pg6FIafDPYyLRigNNfXNvxw0uR8TCTAcWc/hvF+K5paQPfKgEr3uspG8AxQf5eu6A/6kDk5VrzNCKmIp/QI9du+ikTvSbnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=USm7C+JN; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6a0b68733f5so1953306d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:35:54 -0700 (PDT)
+	s=arc-20240116; t=1715204250; c=relaxed/simple;
+	bh=k+4tc+KwmnqhQyyFw7zD965SuJhq3cr3lh52uQiXmIY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ngqpQe6e7PDTy2cKK1TX5Pm9QkUX1UFH3l/4S5qBMPWteMSKhuKbRlLxGIS3TtPgcIxthIrpe2JG7Xig/AlY/nZVT2mQwu7dNqx6QQjLPBMvCD72E6RqOYZk1W7vfxoI7Kum4a2wHcD0nwoRHa31wC9f1iKDsqcd4REiH8+7FLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tnOJKQ6J; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43d361a2124so117821cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715204154; x=1715808954; darn=vger.kernel.org;
-        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3gYCZ7oFAMec1ZrgXeVWypvnMbMyJT9MYWUz9Y1dIg8=;
-        b=USm7C+JNWffsKHNigWyJbeDSzgGm3DZCzC+sZy9D8jpibta/G6OrF4QwVVvNDf/1fH
-         1n14rpOztosk0q73Eq4ONepjz6GG/nYlcQHmJfkASVTUbbmEZ+Ah5YnW8RwUey2yq7A0
-         0tUodQ5HPLd3+vLzkBpZACbfiMKWvGSNKECu8=
+        d=google.com; s=20230601; t=1715204248; x=1715809048; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ydDQmhBL597XUhZAhAsSoGMq2Aqb+GmiKIr8rkv69AA=;
+        b=tnOJKQ6JX7AT/akWjDEQfgyfgN02JG39bMUsogOvrg1FCnIDgLBW8iFsCsUZbsjJ76
+         nALNA8tIw6EleU+B3uKAOriz4h4mi7m5rg3m2izVEmbqz5oL2OCQ575mZgTTrKpO0ojY
+         LoyPHvxvptVUOfA6/md+Gd5plkwM5idmPko9vAuGlwucqUy6lnwIvrMyw3hpbtCboBDl
+         i2hvAvQBpejJ6st4l/nMycnxLtunV7t0aqvofJ+4tkD0XZnUexzohTiRSx9shL/oCP9Q
+         +5/d+qSs0/d84HWrttXxDrklhUdWcR3s8sUrcv8l3SGP43Qe2pLW8D8S9g1vavuFYMom
+         2Rsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715204154; x=1715808954;
-        h=to:subject:message-id:date:user-agent:from:references:in-reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3gYCZ7oFAMec1ZrgXeVWypvnMbMyJT9MYWUz9Y1dIg8=;
-        b=dUR6EXfr1H2XrALwsMtQWXj8SFvsh6vVb3k6k/xwxNnD5IoBfR8bSRHkit5DkiUW8x
-         BZhqL9U2kuPI7zMYfZZWysBmrw1TTrBkKs6/YWSNAG/3XdormOZHTuRuLMrwklg0NfFu
-         f6T/kYGnydwZJeJFscXINN2Vu7c6Ift3ooNG+6QAocJf4b/YbDred5D7e3MNvC1DQxZC
-         nT14pvz1+4lWsdHgEWmWa8UAUeBHN9t+VJkUwoJjJMp8s8O4RMw6h8h3lvF8hF4fwDzh
-         xPvEKtOsFEezlVYzUwHNxM1JQpl9PMkrfFIdQG2LC8D3aeyFILv05soUEqyd2h0M+nHJ
-         FlYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQYvRHiHoly10/s7l52fEJ+42j162aiPwFavoebwfNwRx0Sz5oRJZgJtK+OD4ArBAm0D1ETOy0PrH6QAZvoMfx8j2lZiNuyLQUEf+r
-X-Gm-Message-State: AOJu0Yw2TSqI7tzMT2nY1ooBaCFlfAg5WNWdms85VsuJc9zBwSoQ1h7o
-	y422JqPIhmFhVEuqYd9rVwDX/Hh9ipGRKQ4meDFk6bckaytCQdVrmUzqX+OwPAPvrqWi0LZ/Z85
-	lYNTSLdkqYXcziuliW1t+88tzZEqXK0hOYvVK
-X-Google-Smtp-Source: AGHT+IFZNxebi22TlsEERMHQx17gy2mKTrpsZi/0tZWOTRFXXyKTkZ+BTLUu9XLHL3gPzTq7v8I+/UedXLdrgPAaY2M=
-X-Received: by 2002:a05:6214:d88:b0:6a0:ce1b:e75f with SMTP id
- 6a1803df08f44-6a1514bd656mr44299346d6.45.1715204153925; Wed, 08 May 2024
- 14:35:53 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 8 May 2024 17:35:53 -0400
+        d=1e100.net; s=20230601; t=1715204248; x=1715809048;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ydDQmhBL597XUhZAhAsSoGMq2Aqb+GmiKIr8rkv69AA=;
+        b=LqH1Sv7N9luwOWlUC0vOrGQcb4yQ8lwGUyrWctTdH8I0RHYVMzQO2z3IWwZeearKJT
+         bQAIsgHz6fFEwHGFOHKH02Hjzs7DiqT4tSphfE6apG7Io5m7dm5xzdR7BaRIK9gvp+H1
+         qXUTIvPWgdOxy621UwUIgGThl9vgSeEwsOVa1Nyb23vFpxWXUNpG9BeC2gfKSV2bMN8Z
+         rXKcGZ+aUDZoMwKLx9H2mIbUha/adiK+GOn6Jc3T8LulZJeILPxchUd3XnRhOD/S55Sh
+         2RhGkgrF1xHYcFyN4T8pckk9YDnE4OVbgqB4FfqxatXj7zCRLVfAcCtN3WO+o6USP3Ub
+         Yydg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMTZ7vZCDBuU03U1dCBJDCdVo694Uiz3qfF8mo6JLmcEz0Kk86oxf7+a74T9JR10YNCLgFGX4AuoRKhrXIu4F89y6Kp+Mb1jUjvODM
+X-Gm-Message-State: AOJu0Yz07+ZEhMoOFUiK/ELHj0a9RHib1+i88GPRpUjTvVAXzJ4KarfX
+	EK2AZTfg9EHk2WQXCKFJZJO8ci1ldCLO0LTtn8ht4djxlF9Ae5nRNCABxgVExtQMG+qjtybsOZD
+	e8G5w/ZFEH0HQDH9OropAjtsBmCeO1q7g/xDh
+X-Google-Smtp-Source: AGHT+IHyODFej2ggc3VFTiA+YFPclKrjBW8J8DzqpcSBbh3yZyBgiZXR3hh/wfA5Mm3leRfz8n0esXBnN2N8Iczt5OI=
+X-Received: by 2002:a05:622a:53c3:b0:439:ef72:75fb with SMTP id
+ d75a77b69052e-43df44da949mr267921cf.1.1715204247554; Wed, 08 May 2024
+ 14:37:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240311-decode_stacktrace-find_module-improvements-v1-1-8bea42b421aa@bootlin.com>
-References: <20240311-decode_stacktrace-find_module-improvements-v1-0-8bea42b421aa@bootlin.com>
- <20240311-decode_stacktrace-find_module-improvements-v1-1-8bea42b421aa@bootlin.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Wed, 8 May 2024 17:35:53 -0400
-Message-ID: <CAE-0n52cX0qhTWdNtJEvy_GUEbXonf9LgmU253Rn8xTehj5OKg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] scripts/decode_stacktrace.sh: remove find_module
- recursion and improve error reporting
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>, 
-	Konstantin Khlebnikov <koct9i@gmail.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Sasha Levin <sashal@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+References: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org> <20240505-perf_digit-v2-1-6ece307fdaad@codewreck.org>
+In-Reply-To: <20240505-perf_digit-v2-1-6ece307fdaad@codewreck.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 8 May 2024 14:37:16 -0700
+Message-ID: <CAP-5=fUmeyd3BR7njJEDQ-=qkpvLPMoQO-7De+3mqLaSOoZZxw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] perf parse-events: pass parse_state to add_tracepoint
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Luca Ceresoli (2024-03-11 08:24:54)
-> The find_module() function can fail for two reasons:
+On Sun, May 5, 2024 at 4:14=E2=80=AFAM Dominique Martinet
+<asmadeus@codewreck.org> wrote:
 >
->  * the module was not found
->  * the module was found but without debugging info
->
-> In both cases the user is reported the same error:
->
->    WARNING! Modules path isn't set, but is needed to parse this symbol
->
-> This is misleading in case the modules path is set correctly.
->
-> find_module() is currently implemented as a recursive function based on
-> global variables in order to check up to 4 different paths. This is not
-> straightforward to read and even less to modify.
->
-> Besides, the debuginfod code at the beginning of find_module() is executed
-> identlcally every time the function is entered, i.e. up to 4 times per each
+> The next patch will add another flag to parse_state that we will want to
+> pass to evsel__nwetp_idx(), so pass the whole parse_state all the way
+> down instead of giving only the index
 
-s/identlcally/identically/
+Nit: evsel__newtp_idx typo
+Fwiw, I think the idx value is possibly something to be done away
+with. We renumber the evsels here:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/parse-events.c?h=3Dperf-tools-next#n2077
 
-> module search due to recursion.
->
-> To be able to improve error reporting, first rewrite the find_module()
-> function to remove recursion. The new version of the function iterates over
-> all the same (up to 4) paths as before and for each of them does the same
-> checks as before. At the end of the iteration it is now able to print an
-> appropriate error message, so that has been moved from the caller into
-> find_module().
->
-> Finally, when the module is found but without debugging info, mention the
-> two Kconfig variables one needs to set in order to have the needed
-> debugging symbols.
->
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
+> Originally-by: Jiri Olsa <jolsa@kernel.org>
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 > ---
-
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+>  tools/perf/util/parse-events.c | 31 ++++++++++++++++++-------------
+>  tools/perf/util/parse-events.h |  3 ++-
+>  tools/perf/util/parse-events.y |  2 +-
+>  3 files changed, 21 insertions(+), 15 deletions(-)
+>
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
+s.c
+> index 6f8b0fa17689..6e8cba03f0ac 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -519,13 +519,14 @@ static void tracepoint_error(struct parse_events_er=
+ror *e, int err,
+>         parse_events_error__handle(e, column, strdup(str), strdup(help));
+>  }
+>
+> -static int add_tracepoint(struct list_head *list, int *idx,
+> +static int add_tracepoint(struct parse_events_state *parse_state,
+> +                         struct list_head *list,
+>                           const char *sys_name, const char *evt_name,
+>                           struct parse_events_error *err,
+>                           struct parse_events_terms *head_config, void *l=
+oc_)
+>  {
+>         YYLTYPE *loc =3D loc_;
+> -       struct evsel *evsel =3D evsel__newtp_idx(sys_name, evt_name, (*id=
+x)++);
+> +       struct evsel *evsel =3D evsel__newtp_idx(sys_name, evt_name, pars=
+e_state->idx++);
+>
+>         if (IS_ERR(evsel)) {
+>                 tracepoint_error(err, PTR_ERR(evsel), sys_name, evt_name,=
+ loc->first_column);
+> @@ -544,7 +545,8 @@ static int add_tracepoint(struct list_head *list, int=
+ *idx,
+>         return 0;
+>  }
+>
+> -static int add_tracepoint_multi_event(struct list_head *list, int *idx,
+> +static int add_tracepoint_multi_event(struct parse_events_state *parse_s=
+tate,
+> +                                     struct list_head *list,
+>                                       const char *sys_name, const char *e=
+vt_name,
+>                                       struct parse_events_error *err,
+>                                       struct parse_events_terms *head_con=
+fig, YYLTYPE *loc)
+> @@ -578,7 +580,7 @@ static int add_tracepoint_multi_event(struct list_hea=
+d *list, int *idx,
+>
+>                 found++;
+>
+> -               ret =3D add_tracepoint(list, idx, sys_name, evt_ent->d_na=
+me,
+> +               ret =3D add_tracepoint(parse_state, list, sys_name, evt_e=
+nt->d_name,
+>                                      err, head_config, loc);
+>         }
+>
+> @@ -592,19 +594,21 @@ static int add_tracepoint_multi_event(struct list_h=
+ead *list, int *idx,
+>         return ret;
+>  }
+>
+> -static int add_tracepoint_event(struct list_head *list, int *idx,
+> +static int add_tracepoint_event(struct parse_events_state *parse_state,
+> +                               struct list_head *list,
+>                                 const char *sys_name, const char *evt_nam=
+e,
+>                                 struct parse_events_error *err,
+>                                 struct parse_events_terms *head_config, Y=
+YLTYPE *loc)
+>  {
+>         return strpbrk(evt_name, "*?") ?
+> -               add_tracepoint_multi_event(list, idx, sys_name, evt_name,
+> +               add_tracepoint_multi_event(parse_state, list, sys_name, e=
+vt_name,
+>                                            err, head_config, loc) :
+> -               add_tracepoint(list, idx, sys_name, evt_name,
+> +               add_tracepoint(parse_state, list, sys_name, evt_name,
+>                                err, head_config, loc);
+>  }
+>
+> -static int add_tracepoint_multi_sys(struct list_head *list, int *idx,
+> +static int add_tracepoint_multi_sys(struct parse_events_state *parse_sta=
+te,
+> +                                   struct list_head *list,
+>                                     const char *sys_name, const char *evt=
+_name,
+>                                     struct parse_events_error *err,
+>                                     struct parse_events_terms *head_confi=
+g, YYLTYPE *loc)
+> @@ -630,7 +634,7 @@ static int add_tracepoint_multi_sys(struct list_head =
+*list, int *idx,
+>                 if (!strglobmatch(events_ent->d_name, sys_name))
+>                         continue;
+>
+> -               ret =3D add_tracepoint_event(list, idx, events_ent->d_nam=
+e,
+> +               ret =3D add_tracepoint_event(parse_state, list, events_en=
+t->d_name,
+>                                            evt_name, err, head_config, lo=
+c);
+>         }
+>
+> @@ -1266,7 +1270,8 @@ static int get_config_chgs(struct perf_pmu *pmu, st=
+ruct parse_events_terms *head
+>         return 0;
+>  }
+>
+> -int parse_events_add_tracepoint(struct list_head *list, int *idx,
+> +int parse_events_add_tracepoint(struct parse_events_state *parse_state,
+> +                               struct list_head *list,
+>                                 const char *sys, const char *event,
+>                                 struct parse_events_error *err,
+>                                 struct parse_events_terms *head_config, v=
+oid *loc_)
+> @@ -1282,14 +1287,14 @@ int parse_events_add_tracepoint(struct list_head =
+*list, int *idx,
+>         }
+>
+>         if (strpbrk(sys, "*?"))
+> -               return add_tracepoint_multi_sys(list, idx, sys, event,
+> +               return add_tracepoint_multi_sys(parse_state, list, sys, e=
+vent,
+>                                                 err, head_config, loc);
+>         else
+> -               return add_tracepoint_event(list, idx, sys, event,
+> +               return add_tracepoint_event(parse_state, list, sys, event=
+,
+>                                             err, head_config, loc);
+>  #else
+> +       (void)parse_state;
+>         (void)list;
+> -       (void)idx;
+>         (void)sys;
+>         (void)event;
+>         (void)head_config;
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-event=
+s.h
+> index 809359e8544e..fd55a154ceff 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -189,7 +189,8 @@ int parse_events_terms__to_strbuf(const struct parse_=
+events_terms *terms, struct
+>  int parse_events__modifier_event(struct list_head *list, char *str, bool=
+ add);
+>  int parse_events__modifier_group(struct list_head *list, char *event_mod=
+);
+>  int parse_events_name(struct list_head *list, const char *name);
+> -int parse_events_add_tracepoint(struct list_head *list, int *idx,
+> +int parse_events_add_tracepoint(struct parse_events_state *parse_state,
+> +                               struct list_head *list,
+>                                 const char *sys, const char *event,
+>                                 struct parse_events_error *error,
+>                                 struct parse_events_terms *head_config, v=
+oid *loc);
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-event=
+s.y
+> index d70f5d84af92..0bab4263f8e3 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -537,7 +537,7 @@ tracepoint_name opt_event_config
+>         if (!list)
+>                 YYNOMEM;
+>
+> -       err =3D parse_events_add_tracepoint(list, &parse_state->idx, $1.s=
+ys, $1.event,
+> +       err =3D parse_events_add_tracepoint(parse_state, list, $1.sys, $1=
+event,
+>                                         error, $2, &@1);
+>
+>         parse_events_terms__delete($2);
+>
+> --
+> 2.44.0
+>
 
