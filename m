@@ -1,205 +1,98 @@
-Return-Path: <linux-kernel+bounces-173636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8088C032F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592AA8C0339
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2461C21750
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:34:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE08D1F21E63
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE4B12AAD1;
-	Wed,  8 May 2024 17:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87912AAE7;
+	Wed,  8 May 2024 17:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="DHYz8t0F"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uB5RMCHf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13DF128806;
-	Wed,  8 May 2024 17:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0E1128829;
+	Wed,  8 May 2024 17:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715189632; cv=none; b=uWRWcd9w7RtevP2YKl6xM82YlblRYlcqIIP+MKsdGmoWsQlBNJWFgjuAiF4unREqXGF8gnwRcBurE1FNOERUv4rTuUtOD4qLsWVPw+A5YMUu/2Vw3JkzF2HM0tgLJZ7wNKjnVdIvg8SfTQvaICVhl5Xurfi9SaH2RGmnyc300fQ=
+	t=1715189654; cv=none; b=JC/mfW75gzpAhh3AkRnYT8AmLZrxKaz/KXHs1I5RqYmIdBgumf8Leijmar6zBJwk3TW7L/k+xESO8w72juHth8BPo3W9uEYcDqT7VT14Lj0V3fNIoiSaqvXjF8fnvYYdZt3KhgL0+oH1k8RjdmQspmJv0pXvH0WxI1+Gh+XP/o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715189632; c=relaxed/simple;
-	bh=2GilhqZtlLPttb85A1d2PddeB4aUhLzNUbRfDd0NgAE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bIwigWBcjFLPFBUgdGjbUbTUXOoEQNmQ1WuvfgmQ2Vl4azVNY5LBixWBBj4whuSOQMsDH/WXW+JVvaDZPTWhdiDAKKoWVC2lFyvEA20nndiAvF6zTWphY3GjL2G/hD/h1+q2dKXgznVqUKs2BfrLydh7eOcVLIFizYUdOZVR1dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=DHYz8t0F; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715189630; x=1746725630;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=UUo3ItEPwAK/Mo/YaF/CWRNiPFBINW7V9XBUrDV/B38=;
-  b=DHYz8t0Fbcs9EcK3zvQyJFvxPYUEKMdU2ymyNSl31gLvPzuRwy+rc2MG
-   QP9sVp37HVHQ2JaqtmpDfzc/MnJELeWGYPxa0yDIbpACzUO56DY0fFnw8
-   RYxzuY9ejBazQ6r8iuvMWlPQvUBoaOs8V3gtvyvniFow75E9GFvcq9m5k
-   A=;
-X-IronPort-AV: E=Sophos;i="6.08,145,1712620800"; 
-   d="scan'208";a="417790249"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 17:33:44 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:43343]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.157:2525] with esmtp (Farcaster)
- id 674f1dbd-fb22-4915-83d4-0b59d1ce8133; Wed, 8 May 2024 17:33:44 +0000 (UTC)
-X-Farcaster-Flow-ID: 674f1dbd-fb22-4915-83d4-0b59d1ce8133
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 8 May 2024 17:33:36 +0000
-Received: from 88665a182662.ant.amazon.com.com (10.88.140.17) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 8 May 2024 17:33:33 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <leitao@debian.org>
-CC: <alexander@mihalicyn.com>, <daan.j.demeyer@gmail.com>,
-	<davem@davemloft.net>, <dhowells@redhat.com>, <edumazet@google.com>,
-	<horms@kernel.org>, <john.fastabend@gmail.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <paulmck@kernel.org>
-Subject: Re: [PATCH net-next] af_unix: Fix data races in unix_release_sock/unix_stream_sendmsg
-Date: Wed, 8 May 2024 10:33:24 -0700
-Message-ID: <20240508173324.53565-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240508111749.2386649-1-leitao@debian.org>
-References: <20240508111749.2386649-1-leitao@debian.org>
+	s=arc-20240116; t=1715189654; c=relaxed/simple;
+	bh=RO+OX4OnuX/UqQFFPw0QJr4nwO4KwxnWWktJWf7Ariw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ry16IXrFB+ljcdtSVi/0OZBMAUi7FLvHSZtkSCKLsHGIIjzXWSNd4NZpTsNxartz77gGL7V/lYE53cHvga0oy9o/vF2VOulGhUm4TsBOW+oTTPKrUXs3T4QgP1ih5IDP/rEsmHoOaakLHImQg68X+nOnMauYzUAW0BLLEqGEFWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uB5RMCHf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B6A4C2BD11;
+	Wed,  8 May 2024 17:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715189654;
+	bh=RO+OX4OnuX/UqQFFPw0QJr4nwO4KwxnWWktJWf7Ariw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=uB5RMCHf6dt8ZTnS4XNzG8fPZ6xjEtoj4wXKNZWDBJOUoLM12mvC2MPyW96PaJ/o2
+	 u63561FB81vJC749FLbD2cpZv4Ttt8HIAheGsw2StAgOL4vcVIvpMJgAX7ivmA0zOj
+	 Ni4wEwwA3c/Y5iuQMKqmkoyJguzjPHmcejJvxVQT/HVvymZwzM1hUYaggD8U05PzDX
+	 +CYDeT1eEW3pmOlAi1nKyWB1SSQMjqIZmZUcF7eTf7oywsHAVFA6h9SYs3kHDHFlXI
+	 EOxLhJ4UpfrxmIUE9t4Zue94j0HxA2B+tjKt5X6n9hjNDyrHlK0BcPn/hviFBEhOUq
+	 09ajS+d+CCwSQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0FFF0CE0448; Wed,  8 May 2024 10:34:14 -0700 (PDT)
+Date: Wed, 8 May 2024 10:34:14 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: Puranjay Mohan <puranjay@kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	puranjay12@gmail.com
+Subject: Re: [PATCH] tools/memory-model: Add atomic_and()/or()/xor() and
+ add_negative
+Message-ID: <ca00b80e-3770-48e1-ba27-29da55949c82@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240508143400.36256-1-puranjay@kernel.org>
+ <ZjuaFmFMloYqq1PS@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D039UWA002.ant.amazon.com (10.13.139.32) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjuaFmFMloYqq1PS@andrea>
 
-From: Breno Leitao <leitao@debian.org>
-Date: Wed,  8 May 2024 04:17:45 -0700
-> A data-race condition has been identified in af_unix. In one data path,
-> the write function unix_release_sock() atomically writes to
-> sk->sk_shutdown using WRITE_ONCE. However, on the reader side,
-> unix_stream_sendmsg() does not read it atomically. Consequently, this
-> issue is causing the following KCSAN splat to occur:
+On Wed, May 08, 2024 at 05:28:22PM +0200, Andrea Parri wrote:
+> On Wed, May 08, 2024 at 02:34:00PM +0000, Puranjay Mohan wrote:
+> > Pull-849[1] added the support of '&', '|', and '^' to the herd7 tool's
+> > atomics operations.
+> > 
+> > Use these in linux-kernel.def to implement atomic_and()/or()/xor() with
+> > all their ordering variants.
+> > 
+> > atomic_add_negative() is already available so add its acquire, release,
+> > and relaxed ordering variants.
+> > 
+> > [1] https://github.com/herd/herdtools7/pull/849
+> > 
+> > Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
 > 
-> 	BUG: KCSAN: data-race in unix_release_sock / unix_stream_sendmsg
-> 
-> 	write (marked) to 0xffff88867256ddbb of 1 bytes by task 7270 on cpu 28:
-> 	unix_release_sock (net/unix/af_unix.c:640)
-> 	unix_release (net/unix/af_unix.c:1050)
-> 	sock_close (net/socket.c:659 net/socket.c:1421)
-> 	__fput (fs/file_table.c:422)
-> 	__fput_sync (fs/file_table.c:508)
-> 	__se_sys_close (fs/open.c:1559 fs/open.c:1541)
-> 	__x64_sys_close (fs/open.c:1541)
-> 	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-> 	do_syscall_64 (arch/x86/entry/common.c:?)
-> 	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> 	read to 0xffff88867256ddbb of 1 bytes by task 989 on cpu 14:
-> 	unix_stream_sendmsg (net/unix/af_unix.c:2273)
-> 	__sock_sendmsg (net/socket.c:730 net/socket.c:745)
-> 	____sys_sendmsg (net/socket.c:2584)
-> 	__sys_sendmmsg (net/socket.c:2638 net/socket.c:2724)
-> 	__x64_sys_sendmmsg (net/socket.c:2753 net/socket.c:2750 net/socket.c:2750)
-> 	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-> 	do_syscall_64 (arch/x86/entry/common.c:?)
-> 	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> 	value changed: 0x01 -> 0x03
-> 
-> The line numbers are related to commit dd5a440a31fa ("Linux 6.9-rc7").
-> 
-> Commit e1d09c2c2f57 ("af_unix: Fix data races around sk->sk_shutdown.")
-> addressed a comparable issue in the past regarding sk->sk_shutdown.
-> However, it overlooked resolving this particular data path.
-> 
-> To prevent potential race conditions in the future, all read accesses to
-> sk->sk_shutdown in af_unix need be marked with READ_ONCE().
+> Acked-by: Andrea Parri <parri.andrea@gmail.com>
 
-Let's not add READ_ONCE() if not needed.  Othwewise, someone reading
-the code would assess wrongly that the value could be updated locklessly
-elsewhere.
+Queued for review and testing, and thank you both!
 
-You can find all writers of sk->sk_shutdown do that update under
-unix_state_lock().
-
-
-> Although
-> there are additional reads in other->sk_shutdown without atomic reads,
-> I'm excluding them as I'm uncertain about their potential parallel
-> execution.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  net/unix/af_unix.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 9a6ad5974dff..74795e6d13c6 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -2270,7 +2270,7 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
->  			goto out_err;
->  	}
->  
-> -	if (sk->sk_shutdown & SEND_SHUTDOWN)
-> +	if (READ_ONCE(sk->sk_shutdown) & SEND_SHUTDOWN)
->  		goto pipe_err;
->  
->  	while (sent < len) {
-> @@ -2446,7 +2446,7 @@ int __unix_dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t size,
->  		unix_state_lock(sk);
->  		/* Signal EOF on disconnected non-blocking SEQPACKET socket. */
->  		if (sk->sk_type == SOCK_SEQPACKET && err == -EAGAIN &&
-> -		    (sk->sk_shutdown & RCV_SHUTDOWN))
-> +		    (READ_ONCE(sk->sk_shutdown) & RCV_SHUTDOWN))
-
-Here we locked unix_state_lock() just before accessing sk_shutdown,
-so no need for READ_ONCE().
-
-
->  			err = 0;
->  		unix_state_unlock(sk);
->  		goto out;
-> @@ -2566,7 +2566,7 @@ static long unix_stream_data_wait(struct sock *sk, long timeo,
->  		if (tail != last ||
->  		    (tail && tail->len != last_len) ||
->  		    sk->sk_err ||
-> -		    (sk->sk_shutdown & RCV_SHUTDOWN) ||
-> +		    (READ_ONCE(sk->sk_shutdown) & RCV_SHUTDOWN) ||
->  		    signal_pending(current) ||
->  		    !timeo)
->  			break;
-
-Same here,
-
-
-> @@ -2764,7 +2764,7 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
->  			err = sock_error(sk);
->  			if (err)
->  				goto unlock;
-> -			if (sk->sk_shutdown & RCV_SHUTDOWN)
-> +			if (READ_ONCE(sk->sk_shutdown) & RCV_SHUTDOWN)
->  				goto unlock;
->  
->  			unix_state_unlock(sk);
-
-and here.
-
-Could you update the changelog and repost v2 for unix_stream_sendmsg()
-targetting net tree with this Fixes tag ?
-
-  Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-
-Thanks!
-
-> -- 
-> 2.43.0
+							Thanx, Paul
 
