@@ -1,114 +1,121 @@
-Return-Path: <linux-kernel+bounces-173256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EE68BFDB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:51:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3647F8BFDB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65EC3285C69
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:51:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F1A2858AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34756A33F;
-	Wed,  8 May 2024 12:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A743D5C8F4;
+	Wed,  8 May 2024 12:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+wYYErv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrLk9kfT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305075C8F4;
-	Wed,  8 May 2024 12:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF5222071;
+	Wed,  8 May 2024 12:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715172698; cv=none; b=KGlxgCF+n6uYrOOkp0wKnU/Rbk2AaW9PK7J+HpNmD6ItAC7NtHSMN1F4AZbg79qDjwhAQ1Zi4ZMwYllxkHtUjVEzLvNRY24pYUKtQHT8MHZ1szjTOc5ocKpR4dF/Ny+Y2y2z2x7dAsfxkxHz/iyllVH1OUqNlhShSbsGFNBnoFE=
+	t=1715172737; cv=none; b=bGQXyb20QIEO2wd1nJE4KXbtEFWj3WpdbCZvFleSdiqbtDSsDC9PPdZRfvU9Vgi4k3uIE7LDE5hZ5Em1cs3+sjO+2JuhKKjwNVPbscKbbkTQwJDXAYXdXATx5pZGV2w6aUgGVrUG6GZim7dnRhUl+G3s+PGga659A9yZowg1Ej0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715172698; c=relaxed/simple;
-	bh=IuMR0WzGssFWCdB3kp6DpjezXdcQqzHxncfUeFUz8rU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eih4uk7905wVFNGKcaQgsjKyiu+5mJJtn27OE6Ma7CxoufLqy3NZoiCDtnLD/mEDvuwGz2Bgxj6dV5P28fSMk8Oos+BIRgIXmLBI/VIkTSX6JT5AzLVJ8FgxXNMTUpoaD9HWdYvo37Kzwg6KBvXVv2sS3l/Ym9pcD4NbI25kpVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+wYYErv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B8A4C4AF63;
-	Wed,  8 May 2024 12:51:37 +0000 (UTC)
+	s=arc-20240116; t=1715172737; c=relaxed/simple;
+	bh=gKVeUXfF3Ho2Ed/J5T0T6Hm5ka9z6vCma7xttwCG1nk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=PBDsW1JafR0jaCv7jR/dQjLNx/0gX91x73WWWrKLxjgUPuR8FfgJWDMuYTBsrKYciImkzqlnKkuivn9df/e3KOuJb57oq+1H53g1va8jZYKpw6B0qQrMXKpA0zfK5vW3zxmNAYl5S+1JdNsKpyg6Sz+U4kin8Jh4aKrWFIxG0wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrLk9kfT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F67CC113CC;
+	Wed,  8 May 2024 12:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715172697;
-	bh=IuMR0WzGssFWCdB3kp6DpjezXdcQqzHxncfUeFUz8rU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+wYYErvSCkfV+3Fv1Z+xaki7HRzIeK9BQec+115VBUjo+vXp7MUXTja1QBu8dCg1
-	 P/SFgIWSwDM0o07QM3v4dorxNvIdkAUeTv2388YoHJE/v7po0qRsW76+bMb6K1lsUd
-	 MHk1GjQj7/nHXNIXLE9TSsFYz59UIxP9rALBIV+ZeC8S/A7ebIKZQSYt2/AeNeczuQ
-	 7fhnrwvzEoJmgRDep4M31YOtyA3rN/1VrdH0wPa7XVgAhbsWxqGtvoghPmqTxwHTmD
-	 D/8UGQh043B3nAWEm9P389YLFJ0sDXvdtxotmZIKc24vFGkEFtrusC4PJMZEXbXenf
-	 R0BtLjhrI6ZGw==
-Date: Wed, 8 May 2024 14:51:34 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: marc.ferland@gmail.com
-Cc: michal.simek@amd.com, linux-arm-kernel@lists.infradead.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Marc Ferland <marc.ferland@sonatest.com>
-Subject: Re: [PATCH] i2c: xiic: print error code when xiic_start_xfer fails
-Message-ID: <h6mggdcri53rq65jzi5ov6n7oqdvaldtpofh6eina6gos2wyyw@crjmnmfpynw4>
-References: <20240506154520.3886867-1-marc.ferland@sonatest.com>
+	s=k20201202; t=1715172736;
+	bh=gKVeUXfF3Ho2Ed/J5T0T6Hm5ka9z6vCma7xttwCG1nk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ZrLk9kfTvdSk83ynbdqCIsg3st29lqtv/1sbYd9zMlbJIpR4kz4maM4bvCc7bhE6o
+	 yeicwe6Lpe564y7ZeTXYSLQ51IQiSSW6S58nizMsqt4fhTcbYbrz9oSh5jnQnsLR98
+	 y931YLg6R1Ue4LfhfurZjJByaIrDXAfJ1nNHI25RxtqX10yYg+hyCmxTQ044mJ95cQ
+	 BJscpF/cQ2kK6GpAtC24TBHrXSBgMEXPptoXeyuP87wtgDwxMyEr5SPdO51/hPMPW3
+	 IbFXQNFkPg2LMoFzyVXpN3PW2HKrAafh5ByHt/Rm86AsDKEYJWCokE7W0PqxVp3L/Q
+	 iq/BrU0R0khYg==
+Date: Wed, 08 May 2024 07:52:10 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506154520.3886867-1-marc.ferland@sonatest.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ Jaroslav Kysela <perex@perex.cz>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Takashi Iwai <tiwai@suse.com>, ~postmarketos/upstreaming@lists.sr.ht, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>, 
+ alsa-devel@alsa-project.org, Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240508-midas-wm1811-gpio-jack-v2-2-b4d36cd02c6e@gmail.com>
+References: <20240508-midas-wm1811-gpio-jack-v2-0-b4d36cd02c6e@gmail.com>
+ <20240508-midas-wm1811-gpio-jack-v2-2-b4d36cd02c6e@gmail.com>
+Message-Id: <171517273028.1398305.2447515495565580200.robh@kernel.org>
+Subject: Re: [PATCH v2 2/7] ASoC: dt-bindings: samsung,midas-audio: Add
+ GPIO-based headset jack detection
 
-Hi Marc,
 
-On Mon, May 06, 2024 at 11:45:20AM -0400, marc.ferland@gmail.com wrote:
-> From: Marc Ferland <marc.ferland@sonatest.com>
+On Wed, 08 May 2024 12:58:50 +0200, Artur Weber wrote:
+> Some Samsung devices that share the midas-audio driver use a GPIO-based
+> approach to headset jack detection, as opposed to using the built-in
+> jack detection provided by the wm8994 driver. This setup uses two GPIOs
+> (one for jack detection and another for key detection) and an ADC
+> channel for determining the jack type or button pressed.
 > 
-> xiic_start_xfer can fail for different reasons:
+> Add DT configuration values that allow for describing these setups.
 > 
-> - EBUSY: bus is busy or i2c messages still in tx_msg or rx_msg
-> - ETIMEDOUT: timed-out trying to clear the RX fifo
-
-Wolfram has recently removed all the error printouts caused by
-etimedout.
-
-> - EINVAL: wrong clock settings
-> 
-> Printing the error code helps identifying the root cause.
-> 
-> Signed-off-by: Marc Ferland <marc.ferland@sonatest.com>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->  drivers/i2c/busses/i2c-xiic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v2:
+> - Added vendor prefix to threshold properties
+> - Dropped pipe (|) character from description: field
+> ---
+>  .../bindings/sound/samsung,midas-audio.yaml        | 30 ++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 > 
-> diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
-> index 71391b590ada..73729f0180a1 100644
-> --- a/drivers/i2c/busses/i2c-xiic.c
-> +++ b/drivers/i2c/busses/i2c-xiic.c
-> @@ -1165,7 +1165,7 @@ static int xiic_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
->  
->  	err = xiic_start_xfer(i2c, msgs, num);
->  	if (err < 0) {
-> -		dev_err(adap->dev.parent, "Error xiic_start_xfer\n");
-> +		dev_err(adap->dev.parent, "Error xiic_start_xfer: %d\n", err);
 
-I don't see the end user being interested in having the error
-number printed in the dmesg. In fact, I doubt the end user is
-interested in this message at all.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-We could print the debug messages (or warnings) where the actual
-failure occurs. For example, in the setclk case, a warning is
-already being printed, and I don't see why we should also print
-an error here.
+yamllint warnings/errors:
+/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml:95:26: [error] syntax error: mapping values are not allowed here (syntax)
 
-Does that make sense?
+dtschema/dtc warnings/errors:
+make[2]: *** Deleting file 'Documentation/devicetree/bindings/sound/samsung,midas-audio.example.dts'
+Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml:95:26: mapping values are not allowed in this context
+make[2]: *** [Documentation/devicetree/bindings/Makefile:26: Documentation/devicetree/bindings/sound/samsung,midas-audio.example.dts] Error 1
+make[2]: *** Waiting for unfinished jobs....
+/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml:95:26: mapping values are not allowed in this context
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml: ignoring, error parsing file
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
 
-Andi
+doc reference errors (make refcheckdocs):
 
->  		goto out;
->  	}
->  
-> -- 
-> 2.34.1
-> 
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240508-midas-wm1811-gpio-jack-v2-2-b4d36cd02c6e@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
