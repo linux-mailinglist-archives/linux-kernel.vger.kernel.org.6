@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-172596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C638BF422
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:34:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FE28BF413
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D46DB2169A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C925B1F24806
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 01:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16677947A;
-	Wed,  8 May 2024 01:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E179947A;
+	Wed,  8 May 2024 01:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Yen5rOD9"
-Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="oO3OfM6q"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07A679EA;
-	Wed,  8 May 2024 01:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CCB8F6A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 01:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715132034; cv=none; b=Or8SyhV6IJIRj6jtf/3p5XNR3L87KH7W8n0jdJlMMRZRgvH5+5q5t2yYGXpPTR5raQgc+Ha8L9dQBFtgkieWR8/xl7JuoadMHw1K9k1cuhMESvMcSH2NEr74NYHzAfkU25XoG9HninLZTaZOf/4hStHu1FkxSLxPS+m5jnR9dJk=
+	t=1715131762; cv=none; b=Uu/J+rR6DaWfKmNftGQ8F0m3a1bPSF1+nsvkrZxaGo24broIL2xST9PDpcoun7cKMzddr2aiEJQ85FeDQevcaJujk24ZIKLKks1yq5k1Cwqex0vkSFebH4M3+bSuh+djUiCfOEnOftrRuPVJoInpcAHOhWkpo2LwlyRgi/F1blk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715132034; c=relaxed/simple;
-	bh=YlFykGoxAiiJuRSGMaXz+r9CTvvsH71wleL5j7OOBK8=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=pLXONj0OSxsKSEknJvUZYtEiJ2/1dnLyRTvN4jMErXws4MIkOeQVIDGC3BHJ24MeMDSKi8SDdgX4h9ugrJrtrUSLr7aM9MW5uMgJ97zTrXzP7Qapqq/IFXK2QdAp+dJKK200IYAGmy/stB4ZAD5YxPXg2TZdzeLLszAYhe9YqZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Yen5rOD9; arc=none smtp.client-ip=203.205.221.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1715131729; bh=RpAApWwz9vkgICo+/HQ8lHrSIvkMVGTy8S0GeZrlgnA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Yen5rOD9cbZyWc/jSaTf3Z/6fAAfN+bHweFJbjzH08pU4J+E1dgMvXfEMS5qv1X3H
-	 a/UmHUTFHSqaw7GGnzhpncrnes0VaIMhx5BjVlP1PV7o8o2SsI3juArSm4GKeyZpax
-	 2Gztw2XvZu2H0e3lmp2oSBIenhHtYNgNZyroIAuk=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 72E20E1A; Wed, 08 May 2024 09:28:46 +0800
-X-QQ-mid: xmsmtpt1715131726tzjvae2pq
-Message-ID: <tencent_B063096003B044521770576F66D1336E2305@qq.com>
-X-QQ-XMAILINFO: NKDEJ657lpu+DDn7E0qu1B5l9FJz1NUFydfhaK0WOb/m6BIuFtUYxkqaX89AzB
-	 R90rmgs9QYyMVM31FNZjg3zY9Np0qiQ2zEny9CJidE5+8CJXK5GrV9EhpgP4Bx++KWMSDjtGmml1
-	 dXPi0A1jFMLs2IqBZWHo1/tKtz6cm3G2yLh7W6JDIp1QeNrI91vgyLUIY4z3Md8kmTlPjboKcuG+
-	 d5/HXtd3oQxi6+qwYclwIpjGfGeLaDLkXgjL+KW5K2UgAMvQM7b7I5IFcdkPgLdpyIg34y7pgGjE
-	 yjsJ+tgx/HUAMPF+Nb89E2PjxdtzvpNXhJ4R35DwNKSt0Qg0Xr+0lg1+785j2AZQO6wZcZOyIsHt
-	 CUT4V3fZD9mKwZ5tCOSowJlTRXYZFYyQKBf515wrrm8kndgR33aa7UTNH0JB0vBdOEVRmOEX6huh
-	 zfWMQg8/slPUwzrW6IZ3Ogvd8pGYrQ2a4VW4CLk1TaI6Te2XJYIFgt3Zv1OIzF8g2TnlkXOZK+K9
-	 m6CAlOjSFsWTfihoXn+Inmq5wcBFQZyyTodV9+3EXGbzDEZcqrUpVk4CoyITRGm9yxEKLwxpEP/X
-	 3+FyoIQ/90nRIub/MNkHB9F1qwu6BbPe51OuGOEGfSAhWecWtSMtwVXCMqVJM/uZNTQ4fIUszS7n
-	 j8NzV3SDcVmzPyb6JJGX530Pfs/g5yiPQoB/R6lGw32PKnUoyyKK9fc3ggWcXbKzWJ5uDYJ/x76T
-	 3UGxGWn1GqKzCZLmh0Lxf+IRH03LlEAg9Q+4xoHUIdriSPX0bsa6Z8epS5yksR0b1OunTX6VnJ4W
-	 MXyTg+wvF9TzHBpXr+Hez+9SqnoDqL7GnDYAlIMlJpNzqdAc/R7AakFkVqLfO/Im3FNTDJZfxIaP
-	 PT7lSEUcs9wByl5MKu10l/6rZ8nJl6cakz/bT4+af2lGP0kMcFgSzHPg1vdLGKSS5hNCDwbPvp0p
-	 XGGp9JMYi1xZyrA++LVqVAfdYtHWPgxdlP61OcTbSLyw2pEBQKZNrBxZIhnvJJ2e9K5pHcMPo=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Edward Adam Davis <eadavis@qq.com>
-To: kent.overstreet@linux.dev
-Cc: bfoster@redhat.com,
-	eadavis@qq.com,
-	linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+c48865e11e7e893ec4ab@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: fix oob in bch2_sb_clean_to_text
-Date: Wed,  8 May 2024 09:28:47 +0800
-X-OQ-MSGID: <20240508012846.3244444-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <nq3ka3ovvksptfkl5c53c4yn54efhu6dtt356lrda2wg7xzwak@tutbtfe7eskb>
-References: <nq3ka3ovvksptfkl5c53c4yn54efhu6dtt356lrda2wg7xzwak@tutbtfe7eskb>
+	s=arc-20240116; t=1715131762; c=relaxed/simple;
+	bh=S+KmA9dSLhjXnhJF873IqV/Gd9cnIAVOxz54318nTNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lij0P7W5O6fVY2tDzjQKrjnA90Hg/FrAT0KRs6clFV7xa0ar7qoEvfeOjW3N4PDTRKUVmyb+jrx6ugToBBETdCW72H+6J1+GwQjm7BCS0wCQQ75KxlLB6uwMjbu6f1FPgNQCJGpblWMHaY2jW0t8G3Hu4IzoJ3Q5KxZJNWLTEOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=oO3OfM6q; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f44a2d1e3dso3263827b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 18:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1715131760; x=1715736560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzB4aecjphlPEDzQe5NK3FsOS2K2mixibavsvosnc7o=;
+        b=oO3OfM6qLLjMz9aUHLhklQ0uPj2Y5ZRMWlLy9gma4k33HACixpV2Ake6Hpax5RliMZ
+         2M4Tgj1YvJCseaP4E7iKLcqV6toXKblk9O+jIE+VuhqtbkTg2vt2ljEvPmJW+AqCqaos
+         Vjau5N7VOUKC373kRYF41noOFbH2SmJN88qpAw5Wv4IFccy8k16lkWaHp64/x5yJePsx
+         RcTE794ew9YpKBqG2LJZbvwjCC/IfBkQCT7t1JfRpxzbM1KBm2zDp08Qggoz+LmiPTXQ
+         nlqNlYSa47jpXxlTsKRayZE5TPnHNbOiYEMYP+hDIVEHnCA++qGXxoOMY8zMPyBAAzWq
+         pceA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715131760; x=1715736560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzB4aecjphlPEDzQe5NK3FsOS2K2mixibavsvosnc7o=;
+        b=t21RhdKEMpAz3enDFc96g0upQlPIXkmA5pDaUx+3KO7DofAXDejZ8ZX3+5KWo8btRe
+         qUajXZZ8O0cAYeQi16k5ech54paAXYWtdnJY66h05nrc/pTY0mpR8h440r8YoYJavkpU
+         IXTcAxvUE0dqNl0ILpgkU58oyGR1szRlEwSGkOqEzWu/fEss/1xTsbomXoztOD0Xf+5F
+         PVfJ0Fr2pmKY74qk9wkKKze28+dafgFZeI1JAvdBaSgvShKUmZ+1bKsEevpnfb/38cs0
+         95fXIKDT7HDVPALlA+LDe/EAoTQ3kAx2nblEUr4QiwXabplFsdDKIScmjTTEteGBy8vc
+         5g+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPta1IVq22LpmHuPcaSAnJEeR587Kf0Wh83gz/NzHkOFAket1hyvr158ZoYhAGM008aB07ziyOO6cSuDHrDDhidHLyn8o1r84vhqpN
+X-Gm-Message-State: AOJu0YyfXqJK3YbB0Mf7X4jF+bLbclV7HzDFyoFqZlCom1NGev9DhIsq
+	7v+UeCRxpKEJaqo1GnunhGW6vpbnA6phYEe2ZaZA9XboHn13o2ZGBoOzJBTso8etHE+aY+AZBv/
+	t
+X-Google-Smtp-Source: AGHT+IFRCw8e0cW7ldgPKWllS3XVUq4LhbnIO0GsLRIB6i79BIUwHKsbT8AkP/LXEDjMS63xwL/0KA==
+X-Received: by 2002:a05:6a00:1410:b0:6ea:b9a1:63d7 with SMTP id d2e1a72fcca58-6f49c20eba9mr1696829b3a.10.1715131759520;
+        Tue, 07 May 2024 18:29:19 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
+        by smtp.gmail.com with ESMTPSA id fi39-20020a056a0039a700b006f3f9e4dfd4sm10040409pfb.60.2024.05.07.18.29.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 18:29:19 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1s4W7P-007LB8-18;
+	Wed, 08 May 2024 11:29:15 +1000
+Date: Wed, 8 May 2024 11:29:15 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
+Message-ID: <ZjrVaynGeygNaDtQ@dread.disaster.area>
+References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
 
-On Tue, 7 May 2024 21:21:16 -0400, Kent Overstreet wrote:
-> > > > > diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-> > > > > index 35ca3f138de6..194e55b11137 100644
-> > > > > --- a/fs/bcachefs/sb-clean.c
-> > > > > +++ b/fs/bcachefs/sb-clean.c
-> > > > > @@ -278,6 +278,17 @@ static int bch2_sb_clean_validate(struct bch_sb *sb,
-> > > > >  		return -BCH_ERR_invalid_sb_clean;
-> > > > >  	}
-> > > > > 
-> > > > > +	for (struct jset_entry *entry = clean->start;
-> > > > > +	     entry != vstruct_end(&clean->field);
-> > > > > +	     entry = vstruct_next(entry)) {
-> > > > > +		if ((void *) vstruct_next(entry) > vstruct_end(&clean->field)) {
-> > > > > +			prt_str(err, "entry type ");
-> > > > > +			bch2_prt_jset_entry_type(err, le16_to_cpu(entry->type));
-> > > > > +			prt_str(err, " overruns end of section");
-> > > > > +			return -BCH_ERR_invalid_sb_clean;
-> > > > > +		}
-> > > > > +	}
-> > > > > +
-> > > > The original judgment here is sufficient, there is no need to add this section of inspection.
-> > > 
-> > > No, we need to be able to print things that failed to validate so that
-> > > we see what went wrong.
-> > The follow check work fine, why add above check ?
-> >    1         if (vstruct_bytes(&clean->field) < sizeof(*clean)) {
-> >   268                 prt_printf(err, "wrong size (got %zu should be %zu)",
-> >     1                        vstruct_bytes(&clean->field), sizeof(*clean));
-> > 
+On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
+> The fxr->file1_offset and fxr->file2_offset variables come from the user
+> in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
+> Check the they aren't negative.
 > 
-> You sure you're not inebriated?
-Here, is my test log, according to it, I can confirm what went wrong.
-[  129.350671][ T7772] bcachefs (/dev/loop0): error validating superblock: Invalid superblock section clean: wrong size (got 8 should be 24)
-[  129.350671][ T7772] clean (size 8):
-[  129.350671][ T7772] flags:          0
-[  129.350671][ T7772] journal_seq:    0
+> Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> From static analysis.  Untested.  Sorry!
+> 
+>  fs/xfs/xfs_exchrange.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+> index c8a655c92c92..3465e152d928 100644
+> --- a/fs/xfs/xfs_exchrange.c
+> +++ b/fs/xfs/xfs_exchrange.c
+> @@ -337,6 +337,9 @@ xfs_exchange_range_checks(
+>  	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
+>  		return -ETXTBSY;
+>  
+> +	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
+> +		return -EINVAL;
 
+Aren't the operational offset/lengths already checked for underflow
+and overflow via xfs_exchange_range_verify_area()?
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
