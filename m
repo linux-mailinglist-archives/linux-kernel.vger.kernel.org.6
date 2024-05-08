@@ -1,108 +1,144 @@
-Return-Path: <linux-kernel+bounces-173043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794BF8BFAB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070288BFAB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34692285685
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 201AFB2300B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEC682492;
-	Wed,  8 May 2024 10:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D66354679;
+	Wed,  8 May 2024 10:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zh/RcZaG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9HdpBoE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mNQtBvwz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y9HdpBoE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mNQtBvwz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9990D82487;
-	Wed,  8 May 2024 10:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8887C085
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715163087; cv=none; b=n1Y9Ws63rvGkQkMNwdE38sh8/MSVhqA6TVDfWSDQidDbOjN2WNP/CcJTjh8JD4mzqeD2Wckk+XZjZtPAEeW1SMW7eNJhQuesB2fXoIwliPO47hPVZtrD459RRFH58ovLVNDIGZXhQskUXKbJEXdSlcn5fl7y1ureER7PXH+LBY0=
+	t=1715163210; cv=none; b=mIDjXIubDcC2NHab9TcY53zberlJsp1+yD9ZEMBHW/qBQfPNL1/roMhkHsS52SvQxIBnFACpoZZdy22q4LIZ2tiv6gFZd/HPo8jGBFaUsRfmb2bns26Vc55W5MFmjXRsl4eDMkC+hVHFMvAd+3IcKrTGqvdW6zw+dgCAm9Fbv+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715163087; c=relaxed/simple;
-	bh=O01+4OxDhqfAMNBJajyRNazF4RaEhwcQwMkJgUw3EWY=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZLHs8nI304CGxa4RC1mYUOMwS1NwAUSJnszVHeC/Wl3oaaY3qlQImlFc1GPNaTTOM4yJLQJqLa7uqpF2unbLoXsxXDLvG/To9gj2dUsPgw6Kggup4TIDsE0HCtTUlRYnoQKLvOsxlLZ3TKkqZ0zNdCPADLceogOAImIEL/IL3BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zh/RcZaG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1EEFC4AF17;
-	Wed,  8 May 2024 10:11:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715163087;
-	bh=O01+4OxDhqfAMNBJajyRNazF4RaEhwcQwMkJgUw3EWY=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=Zh/RcZaGT6E7lVROM1Ix/WzyM9U1WHn89iH+ECtYZyPi325pd5UBnddq6OsgQKhGj
-	 dtgp1emBDcRguH+li8+LQOsvCJHPDTzLgdhPEnO6o2x9HZhEu0bjP2FV3Co8XIFCye
-	 zN4xGHE8nKwPbF0b+AXMC9mFzQqGUrhGjtblR5TjB5mb2wy78uePKX7yUX6LcmK+Bj
-	 EchcG9cYgys2zvHpPQstcBiSX9NWznB/RttR2UazhmwjIa9ODcL4uU00iHqmG+2hdb
-	 wzt2m24Re/wGc58B9JxIG00Be3CU853Cea4h9d6mKsUD2Cdk99oG0QBZqNID/djXMX
-	 O53MvfdTHggLA==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Zi Shen Lim <zlim.lnx@gmail.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Mykola Lysenko
- <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, bpf@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf, arm64: Add support for lse atomics in
- bpf_arena
-In-Reply-To: <20240426161116.441-1-puranjay@kernel.org>
-References: <20240426161116.441-1-puranjay@kernel.org>
-Date: Wed, 08 May 2024 10:11:23 +0000
-Message-ID: <mb61pzft0zk8k.fsf@kernel.org>
+	s=arc-20240116; t=1715163210; c=relaxed/simple;
+	bh=D+SeDU4f4kZ0YOm9XhwOgh4eP157dyE6CUIju7BjqXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KUogXwnWRHgjnVRKFbKBdL2T56698MJbtfzVS2+mNUCyVqDL1BtSzbKpRjjXJuRCn7Kb55fcWsXmULDrl36zGx2jhbfZuq0IpjmcGiW0eo8pMroB7vkQQmAuI1y3VCk7TYBIAtN6dOyK1LT8uj0oPpq6uB4JlWJjWtNoCFPOP/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9HdpBoE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mNQtBvwz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y9HdpBoE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mNQtBvwz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CA5F75C7CD;
+	Wed,  8 May 2024 10:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715163206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
+	b=Y9HdpBoEBZND1blx1ILjE2bVefkOXqJVEqCjUbrYd2G6Equ+iXXFtrg9T/FW8ZB+KR59fu
+	xGE1VWprGupuDCGElMZuY2G+MY/mvJ86bkMDXeVCKrHvrrQgB1Mni7THO/CT8O2Ut6jgEG
+	5ANTQujXffsr2wWOCJ5QSPyl4Jt0ZF8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715163206;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
+	b=mNQtBvwzds9UQ4mngCMyBuYS8l9H7cVUa+uyI4PZCop1Syv45kBzuqKOOGTBmzOyJyFMKB
+	0bR/n2My7IP+WrAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715163206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
+	b=Y9HdpBoEBZND1blx1ILjE2bVefkOXqJVEqCjUbrYd2G6Equ+iXXFtrg9T/FW8ZB+KR59fu
+	xGE1VWprGupuDCGElMZuY2G+MY/mvJ86bkMDXeVCKrHvrrQgB1Mni7THO/CT8O2Ut6jgEG
+	5ANTQujXffsr2wWOCJ5QSPyl4Jt0ZF8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715163206;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KOPhKh5bbV4erWB3bpEEwxQJqvrW36xZvgOrjVCnVEM=;
+	b=mNQtBvwzds9UQ4mngCMyBuYS8l9H7cVUa+uyI4PZCop1Syv45kBzuqKOOGTBmzOyJyFMKB
+	0bR/n2My7IP+WrAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B15F1386E;
+	Wed,  8 May 2024 10:13:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id X7RYE0ZQO2b1LQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 08 May 2024 10:13:26 +0000
+Date: Wed, 8 May 2024 12:13:24 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Frank van der Linden <fvdl@google.com>
+Cc: linux-mm@kvack.org, muchun.song@linux.dev, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Subject: Re: [PATCH] mm/hugetlb: align cma on allocation order, not demotion
+ order
+Message-ID: <ZjtQRKtzwXN6VUx_@localhost.localdomain>
+References: <20240430161437.2100295-1-fvdl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240430161437.2100295-1-fvdl@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Puranjay Mohan <puranjay@kernel.org> writes:
+On Tue, Apr 30, 2024 at 04:14:37PM +0000, Frank van der Linden wrote:
+> Align the CMA area for hugetlb gigantic pages to their size, not the
+> size that they can be demoted to. Otherwise there might be misaligned
+> sections at the start and end of the CMA area that will never be used
+> for hugetlb page allocations.
+> 
+> Signed-off-by: Frank van der Linden <fvdl@google.com>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Fixes: a01f43901cfb ("hugetlb: be sure to free demoted CMA pages to CMA")
 
-> When LSE atomics are available, BPF atomic instructions are implemented
-> as single ARM64 atomic instructions, therefore it is easy to enable
-> these in bpf_arena using the currently available exception handling
-> setup.
->
-> LL_SC atomics use loops and therefore would need more work to enable in
-> bpf_arena.
->
-> Enable LSE atomics based instructions in bpf_arena and use the
-> bpf_jit_supports_insn() callback to reject atomics in bpf_arena if LSE
-> atomics are not available.
->
-> All atomics and arena_atomics selftests are passing:
->
->   [root@ip-172-31-2-216 bpf]# ./test_progs -a atomics,arena_atomics
->   #3/1     arena_atomics/add:OK
->   #3/2     arena_atomics/sub:OK
->   #3/3     arena_atomics/and:OK
->   #3/4     arena_atomics/or:OK
->   #3/5     arena_atomics/xor:OK
->   #3/6     arena_atomics/cmpxchg:OK
->   #3/7     arena_atomics/xchg:OK
->   #3       arena_atomics:OK
->   #10/1    atomics/add:OK
->   #10/2    atomics/sub:OK
->   #10/3    atomics/and:OK
->   #10/4    atomics/or:OK
->   #10/5    atomics/xor:OK
->   #10/6    atomics/cmpxchg:OK
->   #10/7    atomics/xchg:OK
->   #10      atomics:OK
->   Summary: 2/14 PASSED, 0 SKIPPED, 0 FAILED
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-Gentle ping about this,
 
-Thanks,
-Puranjay
+-- 
+Oscar Salvador
+SUSE Labs
 
