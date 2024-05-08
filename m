@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-173544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622EE8C01FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:32:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B1F8C0203
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DF51F2112E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:32:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F7528468A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A22246B5;
-	Wed,  8 May 2024 16:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0421A2C32;
+	Wed,  8 May 2024 16:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoofWAtM"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FylmqufR"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AD0622;
-	Wed,  8 May 2024 16:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0290B622;
+	Wed,  8 May 2024 16:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715185965; cv=none; b=OYMz2wbWklcYggNk0c7Jf0UeIyiNGP/nRxdD/3FEDUzW/hXvoqokxoCvoiE4MGE4ZO8398qXxjV7v93XBJKlH3wP3lZPRRGSJf/ylcsvU2E/27mYDvXBSGIazEQ6VUkaOrkI5TlnkkupPYvD35m+ayMx7vWpmP7jeSCyNQwRD80=
+	t=1715186075; cv=none; b=Udmo4KFSmYYpE0ATgcl8eHCUrUyKJ0nl7QOfnwbkRwjdSjcA73XuwxEtOfGsF0LhE/2BTtNRpamJ8ZQz7vNixF2BBxXzfeyMlhhKZBq1DEdlwq2XSlSC3WqZhvp8sFAGg84BS+gORfvhKyz6XJBIhYCQEpLFhqm8/1nlxrK5RnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715185965; c=relaxed/simple;
-	bh=V+UlBtviKRplAFVuSD5WaZIQT/sci91Paoj0zH91ETc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m3pnfJ+WanRb+61blhpmbpkU3opxq2sxk8TBzm7fx9ncQrW65+DuJMKQNUUDL7vjMT66bExKykFWKNcmxhLpZRqjxb1IFyKYcP/wKmIsGX9IPV4dEqyoYRgo7UbKJiMW9iD2a9qydtM0DeTmoPKT9rtjotJUkMz4EH21JjScFh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoofWAtM; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1715186075; c=relaxed/simple;
+	bh=D5lI9tZL1V+2jG505+yREVMB16rC/g6xFy9eD+Dl0UI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UPk9H5/U4zqhI04eIbUQm/TUH3bxzadVxDjWZiPXLB/+V6hfAGp2LbVspu1cpTj8x6KSpml5hA6uxdYzK9uPfoa1Hs2MSSIFRsE1Rl3YiBLZBs7JrMZsKX0SAeTOklYtgamVAEP5V2EnuwaIikge2nZL2A14649/iXlkvjaTeuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FylmqufR; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f3761c96aso5971606e87.3;
-        Wed, 08 May 2024 09:32:44 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59ad344f7dso943959466b.0;
+        Wed, 08 May 2024 09:34:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715185962; x=1715790762; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=V+UlBtviKRplAFVuSD5WaZIQT/sci91Paoj0zH91ETc=;
-        b=WoofWAtMGWbhf2JCmj00SvUHO8iwHiyqqwWhYYveelKGrJMwCkj8cYmG+Xt6Ttl6Zc
-         0s+uKmM9g59U6UmRqs12p9VjsBB3Rhy2ZqNcm0+v4i4Ztr8XVjP/Xm3irScdRDuLA2L4
-         gZXFe5pg4m5/hhP37ASjTgnTkTIzJAlxgIsAgV3Mt5HJOtgltw0GhUD4y733eoX1WVBc
-         dD0bGnxDQ4JEkhmK+s++4/dyfQRfLq/xMaZMciEx+Z85XBzFMsdV5Rqk/AQfJe9mBZs+
-         KCrUFS3nGXsZJnLGqqliNP91QIeBvZW19yLGytO/nf/6VfVmMDisNl8Rfp5Vi5CV7FAY
-         vf0A==
+        d=gmail.com; s=20230601; t=1715186072; x=1715790872; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EFyb4OwW6O36XIPrRKUTzT1X2HopZig+7SPq2MNRbdE=;
+        b=FylmqufRDahCgZrGeRAQ9APYCcZPX7y3fzGQ0nWw02Nx5vkAN8V04FEkhOFNNLzzzJ
+         0zRYfTQsbZlf3cqbB5z6vzi1jRxaTeSfPiNk3EFiBCm3TL2TPODHFV3IXn3C9eveg/FQ
+         AVIpxPgPP8h+Q57aUBxMpu+qow97eVkS8YPhZOjKB89MKh2oyGj0Px0HrfehduiQhleA
+         7gDWPj4LdLzK0P+otRSjbr1pXMx3pVVgVCV0qz5PIF8++AQhhhzfgVZHIjFqLGraPeZr
+         YZOnbnqQaT6GnI4IwdhuxpJ1jR35sfpCiJlSlKEXxAeOTS8Bfd1uRk7/rgddWNXeXehb
+         IOVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715185962; x=1715790762;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V+UlBtviKRplAFVuSD5WaZIQT/sci91Paoj0zH91ETc=;
-        b=R2OEH8BQXsuW5Co41WEw6i0Yhd4pGCC2qT/HzAjVm6vRWFFBjB4m612CCQ+1t5Hz8N
-         QnWD9aJmwGYLJagXA0mj0AkqmLIAykhm2jmfQmNORIOB7o+fxjtU04/VCF52qTR2b54q
-         j6Ry2LnmkTNFmvF6wgjstjtp5J7BtgHwcpLY2ey3IgSWgJJLtiArrQNVlVcCrYsitExU
-         FZDHi0/lGPJtdka5Q5YmM/hpu2JUUMInNH/C5bB/w4uXpe/o9ylHR/bVLotlFb2BxRHs
-         GK5Z84HjIUnNUGQLUWvIquIawdNiwUGVewPulEIi4iXfDTT50DVndQZCFry0obEi8mP2
-         FeWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXDEKN6u2znMLYezKVSCpJDLVH0F8tG8Z5kpOG8jzNQMYgVfWbC79GsgAY39YdNY/XrduaKwT0nokHpcb+F44/97a1EsMuu1xX0UWex0+rLtL+ACZXYK8UcAYLtl/JxPABcwDTnN+ZGw==
-X-Gm-Message-State: AOJu0YxF6QHQfhqnWnSQ6pUgx5+vXNMwVUnjqzAcrc8ex/Mzac/l01WZ
-	lnjvsu6NejtOdcs8TZOwsjOcrHyaBbvBe3cozFr1eUX7w4kBevQe
-X-Google-Smtp-Source: AGHT+IHAs8Tu5r/cNrM8qwZu2fstp9iHU9GwAkEowndpD34nsUQ0NN6g30dKDQKYz9ZqtvE7WFA0Tw==
-X-Received: by 2002:ac2:5929:0:b0:51d:a1ab:98bc with SMTP id 2adb3069b0e04-5217c3733cfmr2768097e87.2.1715185962225;
-        Wed, 08 May 2024 09:32:42 -0700 (PDT)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id kk1-20020a170907766100b00a599c00442fsm6421117ejc.150.2024.05.08.09.32.41
+        d=1e100.net; s=20230601; t=1715186072; x=1715790872;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EFyb4OwW6O36XIPrRKUTzT1X2HopZig+7SPq2MNRbdE=;
+        b=UOWwMHmc8gURRNjiW3ism9V0O9qoSprtWT6eYzsx03p91Z0Hx7fOD1rtqCO4lWmCOx
+         IhQKuzbh69kWl6QJnfeYMK+4wDE7BklgMNmrLGnPrF1i7QDQY9irO9kBQmvtIP1UIU8V
+         EW3vSWqe31btNVCR5AiztH/5ENjgAB84Hzcg3ksB/WN65tOrRZ5vff/cprYLU+k76ML/
+         9ycpHlbJMHf9y3HuFcRSANB7RFfPT6tWeLo2gQC8yyCML00depgi1DRsEsCGhQgE6piv
+         0t/dTYHNbF9omAfyXWfqFpWoowBnWjuNT1wndOE67Lpi+MguoAiUGt5D/s/b0iZq6Pln
+         8Deg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOc1oap1j2y89ChwH5b1XjpqQ/q7ICa2ml5rcApnC8LU6OLp5C7irHM6g5CZ6DI7glNtDZ1PndJr9k+yyMusRFPTbvCTvN2xz7YOOO8TSLX+3JoS8GLHzMH09lcL+wFSn08MZQgE5c
+X-Gm-Message-State: AOJu0Yx74XMVetiX2FNCLHHNH7gs9dJeJZ5mR0RsCO39/gMT7nlRXsl/
+	YgoNY+vtkMNQmLP/xHEDAKPy5jOW7WYjurVvguq0YEAf0ectPLFf
+X-Google-Smtp-Source: AGHT+IFYqeqsepYfgiw6k03M+NbCt1gTnq3ajyaZT03GdKNGce/5iAQhZrlsI5IGa62US7Xrv8gPAw==
+X-Received: by 2002:a17:906:260a:b0:a59:f3f9:d24c with SMTP id a640c23a62f3a-a59fb9e6872mr209208766b.76.1715186072215;
+        Wed, 08 May 2024 09:34:32 -0700 (PDT)
+Received: from localhost.localdomain ([2a04:ee41:82:7577:a3c8:644e:cd04:560a])
+        by smtp.gmail.com with ESMTPSA id hb4-20020a170906b88400b00a5599f3a057sm7872843ejb.107.2024.05.08.09.34.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 09:32:41 -0700 (PDT)
-Message-ID: <e00686432d2aa09880f801eecadbb2bdf6d23573.camel@gmail.com>
-Subject: Re: [PATCH v2] scsi: ufs: Allow RTT negotiation
-From: Bean Huo <huobean@gmail.com>
-To: Avri Altman <avri.altman@wdc.com>, "Martin K . Petersen"
-	 <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>, Bean Huo <beanhuo@micron.com>, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 08 May 2024 18:32:40 +0200
-In-Reply-To: <20240503113429.7220-1-avri.altman@wdc.com>
-References: <20240503113429.7220-1-avri.altman@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 08 May 2024 09:34:31 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org
+Cc: lars@metafoo.de,
+	andriy.shevchenko@linux.intel.com,
+	ang.iglesiasg@gmail.com,
+	mazziesaccount@gmail.com,
+	ak@it-klinger.de,
+	petre.rodan@subdimension.ro,
+	phil@raspberrypi.com,
+	579lpy@gmail.com,
+	linus.walleij@linaro.org,
+	semen.protsenko@linaro.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vasileios Amoiridis <vassilisamir@gmail.com>
+Subject: [PATCH 0/9] iio: pressure: bmp280: Add triggered buffer support and
+Date: Wed,  8 May 2024 18:34:16 +0200
+Message-Id: <20240508163425.143831-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-05-03 at 14:34 +0300, Avri Altman wrote:
-> UFS4.0, and specifically gear 5 changes this, and requires the device
-> to
-> be more attentive.=C2=A0 This doesn't come free - the device has to
-> allocate
-> more resources to that end, but the sequential write performance
-> improvement is significant. Early measurements shows 25% gain when
-> moving from rtt 2 to 9. Therefore, set bMaxNumOfRTT to be
-> min(bDeviceRTTCap, NORTT) as UFSHCI expects.
->=20
-> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+Based on upstream master with the previous patches of this series applied
+as well.
+
+IMPORTANT NOTE: There is a fix queued up for this driver here [1]. It is going
+to conflict with PATCH [7-9/9]. The previous patches should be fine. The
+solution should be quite trivial with minor changes in all 3 PATCH [7-9/9].
+When it is deemed necessary I can resubmit the patches or help with resolving
+the issue.
+
+Changes in v6:
+
+PATCH [1-3/9]: new:
+	- split of PATCH [5/10] of v5 according to proposal here [2].
+
+PATCH [4/9]: new:
+	- split of PATCH [6/10] of v5 according to proposal here [3].
+
+PATCH [6/9]:
+	- Removed mutex_lock() and added guard(mutex) to
+	  bmp580_nvmem_{read/write}() functions as well.
+
+PATCH [9/9]:
+	- In the buffer handlers, add 'goto out;' instead of just returning the
+	  error because iio_trigger_notify_done() wouldn't be called in case of
+	  error.
+
+[1]: https://lore.kernel.org/linux-iio/043f2be49df3c11152aaf32fc5467ed43fd59faa.camel@gmail.com/
+[2]: https://lore.kernel.org/linux-iio/20240505200818.1e70c664@jic23-huawei/
+[3]: https://lore.kernel.org/linux-iio/20240505202106.1c780044@jic23-huawei/
+
+Vasileios Amoiridis (9):
+  iio: pressure: bmp280: Remove dead error checks
+  iio: pressure: bmp280: Remove, add and update error messages
+  iio: pressure: bmp280: Make error checks consistent
+  iio: pressure: bmp280: Use unsigned data types for raw sensor data
+  iio: pressure: bmp280: Refactorize reading functions
+  iio: pressure: bmp280: Introduce new cleanup routines
+  iio: pressure: bmp280: Generalize read_{temp,press,humid}() functions
+  iio: pressure: bmp280: Add SCALE, RAW values in channels and
+    refactorize them
+  iio: pressure: bmp280: Add triggered buffer support
+
+ drivers/iio/pressure/Kconfig       |    2 +
+ drivers/iio/pressure/bmp280-core.c | 1130 ++++++++++++++++++++--------
+ drivers/iio/pressure/bmp280-spi.c  |    8 +-
+ drivers/iio/pressure/bmp280.h      |   34 +-
+ 4 files changed, 844 insertions(+), 330 deletions(-)
 
 
-Avri,
-
-I was still curious about this 25% gain, so I will take a look. It
-would be great if you could share more information about this.
-
-
-
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-
+base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
+-- 
+2.25.1
 
 
