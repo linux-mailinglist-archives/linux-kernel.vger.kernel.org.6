@@ -1,109 +1,97 @@
-Return-Path: <linux-kernel+bounces-173174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1AA8BFC8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:45:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E71D8BFC8F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA8528786C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A121F25441
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5288288C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C514A82D8E;
 	Wed,  8 May 2024 11:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2DkkJds"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DViiBMBf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E48881AD0;
-	Wed,  8 May 2024 11:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACFE8288A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168726; cv=none; b=MXzaw++NvXtDKz//J5U6qdxu/ldh9OsjQ0hI4PPIuQo1Lb7iFQVc84Lmw8aOXvA0o0riFWmJHBarHzrMuS+DErgYPDIAiqIY5eDjjuQXcowKPCs+eOO5YwNWWCxZ60X/mpGD44DjxYoNixXcFrAKKNDg1DOh4Iylmn0DNVlC4vM=
+	t=1715168727; cv=none; b=opEIlM2v3Tp70AO7FKqGym+jbqkGqPES59ZpY/xisD08T/4rHgIoZ/+/v+Jwuf/cpQs3QOVLbaXzWmdB/JGCK5J3ZHC++RosttEKJB2/hW7tXNiuMY4el5okUQOx5TaDchIvKu+OJmoUZSE12ELmQiTAf3ovCPY64aq2bCH+pxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168726; c=relaxed/simple;
-	bh=ysQMPzsDmdSKglgataWxi6Vk6YGZw5N5O//e4R4eqdg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h31LE0W5myDk31eLoZ5Ntx2iCc/T8kwULMPHSD1fDDs7yIdr5Ya4ixgTmFm5HyP7ZoYACCRbQ+j9IL5wGLyfq2N6LJU6gxVKWwYlNHh1pYBZguFmzZz5CrN4ulVCXZdADMR8LO5qrlUMOTKgTRd3sUcfAPPjS16lDfqjMdDk53U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2DkkJds; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715168725; x=1746704725;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ysQMPzsDmdSKglgataWxi6Vk6YGZw5N5O//e4R4eqdg=;
-  b=d2DkkJdsdllueGRiR1xNHD2oWYmAgKowBaSWfZ8lF9R/cMyV15d2nOPj
-   mcX/r7PQ+nwOh5vAsJ1Q4JD0+cqfgjqmPdyhtVAj4ayh3LxN9aEF7s7qw
-   f3osq33a1gz1QcHewI4Yz6A5J2rEMlan88JP6C5PlWsuMbyHHHMRj5qUy
-   9laamy2wPGJQW/Zm6jNJAr7NipWNkmmY3Eaz86NvXLXsBkAqs8QosxMTS
-   IflEhgXVXjn2vlEbDrxRn/WO5yKzffiJsf5TDJ+6zlhOaLjFxOElnmMR7
-   Jo0Ml6Nwio9bkyzx/H4/PvcVxug8VbmZHXnSQfBCAnz8N8fGUlCUheLw9
-   A==;
-X-CSE-ConnectionGUID: LGvDU9NdRByURblp/td/sA==
-X-CSE-MsgGUID: 7JXF34PQSgGSVAr66k8Rvw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11234275"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="11234275"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 04:45:25 -0700
-X-CSE-ConnectionGUID: IHQsn8PmQdWC0SWNtEbnJg==
-X-CSE-MsgGUID: NDgYrUWXQdykbmw35d1DeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33697538"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 08 May 2024 04:45:22 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 892E611F; Wed, 08 May 2024 14:45:21 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH net-next v1 1/1] net: ethernet: adi: adin1110: Replace linux/gpio.h by proper one
-Date: Wed,  8 May 2024 14:45:19 +0300
-Message-ID: <20240508114519.972082-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1715168727; c=relaxed/simple;
+	bh=MHEpXaea2vwkautiJ1URrZr3IAGketdW3dy5SWhS2M0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TdLwDldRv8LRaZ+eXOpd5ZMV3UFwPG58ieQ4cdqSHC9NdeW0CZg3KGLaibmj37nitHUlOXjvyZTCQs5yGABHUouExCIuc2XjzOhYIouaFChOvsjEyTxGaAM5Qvb9PnEr3fpagokw4+IjC7JxKavepIQJRw2F4DIuGqZE7IbqbFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DViiBMBf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F367FC3277B;
+	Wed,  8 May 2024 11:45:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715168727;
+	bh=MHEpXaea2vwkautiJ1URrZr3IAGketdW3dy5SWhS2M0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=DViiBMBf1VZ5FTvixCKuJqmLCMSaC2yxUmCO/DzZITJyM/+wwilX/815f7oClVn9f
+	 O4dU6VaaUFVKdeamdkzD8q4XbOA43FgpJI0MKek0Pfz3faY3rYRY0o+fGnrFoCskQX
+	 UGq1ayfSF3E7I5yEWH/cpaQ1S0cQmq5HN2OYJnL4MGnsa5E0ohiSZKevMzsG0ExaSf
+	 /ll5klqVaa3n9MTa1yFmnH2AvY8Q2ENzt6mHcQn5rDUFmGl58U6E2eySXqkho9i6kx
+	 /ZsDAshwpR7Vm9t9PHcAEp88l2nVZX/+wd4NYmCm2VDBhNRlwxnbkITjWrs4W/NjGr
+	 Z0mGat7TGyueQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
+In-Reply-To: <20240507104703.2070117-2-u.kleine-koenig@pengutronix.de>
+References: <20240507104703.2070117-2-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] regulator: Mention regulator id in error message about
+ dummy supplies
+Message-Id: <171516872575.2006327.16231349651539331829.b4-ty@kernel.org>
+Date: Wed, 08 May 2024 20:45:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14-dev
 
-linux/gpio.h is deprecated and subject to remove.
-The driver doesn't use it directly, replace it
-with what is really being used.
+On Tue, 07 May 2024 12:47:02 +0200, Uwe Kleine-König wrote:
+> With the name that is currently looked up it is considerably easier to
+> understand the issue and fix the warning.
+> 
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/net/ethernet/adi/adin1110.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to
 
-diff --git a/drivers/net/ethernet/adi/adin1110.c b/drivers/net/ethernet/adi/adin1110.c
-index 8b4ef5121308..0713f1e2c7f3 100644
---- a/drivers/net/ethernet/adi/adin1110.c
-+++ b/drivers/net/ethernet/adi/adin1110.c
-@@ -11,10 +11,10 @@
- #include <linux/crc8.h>
- #include <linux/etherdevice.h>
- #include <linux/ethtool.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/if_bridge.h>
- #include <linux/interrupt.h>
- #include <linux/iopoll.h>
--#include <linux/gpio.h>
- #include <linux/kernel.h>
- #include <linux/mii.h>
- #include <linux/module.h>
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: Mention regulator id in error message about dummy supplies
+      commit: 75c48adfe9b16fc5a468ef4cec4e87a1418c3ed8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
