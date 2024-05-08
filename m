@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-173225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959978BFD44
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:37:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA168BFD48
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC7E3B231ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520421C2095E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21F5347B6;
-	Wed,  8 May 2024 12:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7009B47F5B;
+	Wed,  8 May 2024 12:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="GlSblQkR"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fVuDMYxI"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F662BAED;
-	Wed,  8 May 2024 12:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B774347B6;
+	Wed,  8 May 2024 12:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715171804; cv=none; b=LxZKJ3sRC8tBpONU0DhecDUIY2GPnUCdYjNnc/oddtqQSqP4pz3eNV4Csj5snDOZBCSeQ/tmrYysbn2ZFg0xh/vv+ByrO4lTjk3dr4317dWY1lvi2lLeY5D6YWe7QkBUgEOVClUwv4A/K9TOhWOh11OFAyrlBuWDT/TE0QAD708=
+	t=1715171858; cv=none; b=C2e8VJqZITpGdcS9oZJ8w1VsQrqIiMdH9LIQWrbpfRhv6RjWyaa611PxDjsvBxvqDBGmYgieCfWi28MCYaqR6s3zEZIsCyyezCK2k3eDVDwCnfSmpvkyNcMmtxJdMDMYh/8bdba/t2nDhrKhfClGw7u41Pge9VJrKstNnvd5GR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715171804; c=relaxed/simple;
-	bh=sHlKHFUpBYnej+jAdfFB5RVQZxPG0xMiNILaB/TqGiU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rGXYDlDZ76uZOkvTJGcZrWW5WqbzJJedM6vVMSqnTgm0nOgST+52/RW6CdhcMYj78700/7QVvZGzWl0A4WKSdjYyE0TmTW0llobQUGc1tK3RnryceF72OEdSRPTmVuz4WyKj6UpK8d69Blkyz+d4iYYCR2N3D+sc4vSNqHSi3UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=GlSblQkR; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1715171797;
-	bh=yZfVG4NHrpkSnPReaPO53GzUAb96Z27VcrDQVyegR40=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GlSblQkRZ18yVtg+e7k/X7oifUEcihFeqt5cIFB0UOf4KmZ+/IbdcUfKggKM2kl6U
-	 Goge19E2LwBUGRqI4FqGF3iLTCICHDU11dmFLL/0r2V1nR0BkzK7MPXdHyCCCLccBq
-	 u0jhCjC8DrQl1nmwc2jHZyZLhXwXFfqMVksSE+rKFJ4PpmdGJCkvVdnW1046BoEPsu
-	 KCulCV/1MC6gbme0QmfMnnomb/xrJJsl8AsuERjIpCfyZAD4to9DvN2tN4PynPLDN+
-	 E8RYxgacEEBLJ7q+lq24Ni4D1MRlO3Rpt2VN1akrairH6UdxUv8o6HU0ink95LKqMo
-	 mzTXwOOyYLdCg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VZF510x9Dz4x2v;
-	Wed,  8 May 2024 22:36:37 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Gautam Menghani <gautam@linux.ibm.com>, npiggin@gmail.com,
- christophe.leroy@csgroup.eu, naveen.n.rao@linux.ibm.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Vaibhav Jain
- <vaibhav@linux.ibm.com>
-Subject: Re: [PATCH v6] arch/powerpc/kvm: Add support for reading VPA
- counters for pseries guests
-In-Reply-To: <20240506145605.73794-1-gautam@linux.ibm.com>
-References: <20240506145605.73794-1-gautam@linux.ibm.com>
-Date: Wed, 08 May 2024 22:36:35 +1000
-Message-ID: <87o79gmqek.fsf@mail.lhotse>
+	s=arc-20240116; t=1715171858; c=relaxed/simple;
+	bh=cAz7HeJbFspsZFZ1DAYm8MdRx4JYFVuGaZU2/nEtWSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A3uatjmnBs5N/o44CSyLBQEUsXepmq3lAOjLTQePvISbfnGudIPUzihe+339luIXgQR2RLQYlAHHJgkJgiSpgGjDfvXhCunlCi3sost8LDsvBvN3tGHWaRYDZ1ljQz57uTiECfTm3glm1AmGJyJDOabLE2Er9+jubj3eavlx/1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fVuDMYxI; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51f300b318cso5068490e87.3;
+        Wed, 08 May 2024 05:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715171855; x=1715776655; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=i58eGKPvYNQTQcyeap/7W0ADrn9Va3j9vHO5Ufznw58=;
+        b=fVuDMYxIfgSgSsxnBwdSAog3UeLFFOUY36lksdFcyybPUCbXi6q7A2TfG78WyElM29
+         iVwaTnJKGSdtt51DCZFAEqWFUd9VPHA+41OqaHdMoZr3VRCFlmZHTS38bC/4W2e/lKnS
+         /daTZc6XY4We4nTZElyehmPL47waAww/oQ47fw4u3YqvefPHDs+WOvhbwxJwU0oirZrr
+         mWA7eRCdo0Dyt7yLYErgXufCMQsuS55erUEW0bWKwZJM3RqR34F4VhXeAKrpAe04FL8p
+         XA1RwhcLXMHjKXzWSwEOUJZ1initQTpB1EbTKNj6AyIk/3d0wf/zS6I5anGdJ6ew2KNU
+         Qswg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715171855; x=1715776655;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i58eGKPvYNQTQcyeap/7W0ADrn9Va3j9vHO5Ufznw58=;
+        b=V1v0PamH0EZlIQ8lpZYSO4q4n6s9mDFgYOxmtI3w1Z4lwwCeWcB56oFIsfIgA6UN4i
+         AW1p5+eIrG13BveDUdLIXIDZRcf+KhRkuTsBlfBkII8E0SWKGoPe7VJHgZAoE4Omv01h
+         L/JJHKm/NQJVOlj35o0cYHT5rJX7AEYFhuCLWR83J4eQVOKcDBQJOgcwnRUJJIqIo2Yn
+         osRVzlzuRwmkOR0idnPVXDofpEqHfjNSZ4E3t5QNGC0P5v1JOnIXsH/+x8J9PdWMMIV+
+         nUZle008w4Pz4+9K2oSLhu5S2CUrhlOkkLP2fzbUdyYEmvPiorWhy/gAZnPKfM+MzVEz
+         VfNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjQih1N0gDkgLwoVkMFJSaXwvJMtu2MGJE7sQuSfmI03ALToSH01uP55UO92PYN8HH0aCmfAVxTkLE6Fg2kFWdP6uUXoC+TP0s7mvUYoOhlIUjJdhSEVOuzFC7L1Ozn9Nnj+gygbxz+V287oKvUOA/Z7AAyCdOX4/XmPP5+THtX1Y3fP0=
+X-Gm-Message-State: AOJu0YwTPevSSDI8VHgbDlxqAYyfAC7qOEn5KV3F0zxFlxLqGi+h3ztR
+	RJxUhfqMwafqp+M8bkKTGvNXe2T1fnHx4i+mDhZ4npHSJwNZUQLHQo66pw==
+X-Google-Smtp-Source: AGHT+IESdzI9ECXTCgEWOcIfTwT0hKXRiT5PTOUn7yNGACujM0l6NidLseL3uzfgExjDFynctwp+jA==
+X-Received: by 2002:ac2:4a7a:0:b0:51d:605e:c1e0 with SMTP id 2adb3069b0e04-5217c5664d4mr1346867e87.19.1715171855101;
+        Wed, 08 May 2024 05:37:35 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id b26-20020a056512025a00b0051f026412b5sm2514455lfo.141.2024.05.08.05.37.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 05:37:34 -0700 (PDT)
+Date: Wed, 8 May 2024 15:37:31 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Paul Burton <paulburton@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-mips@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/5] MIPS: cm: Probe GCR address from devicetree
+Message-ID: <zy2p2ebyjmuaj6fv2qhglljnjz2x4jmb5d7rkwipu6rn5rrxnc@2tavfilxs7ie>
+References: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507-cm_probe-v1-0-11dbfd598f3c@flygoat.com>
 
-Gautam Menghani <gautam@linux.ibm.com> writes:
-> PAPR hypervisor has introduced three new counters in the VPA area of
-> LPAR CPUs for KVM L2 guest (see [1] for terminology) observability - 2
-> for context switches from host to guest and vice versa, and 1 counter
-> for getting the total time spent inside the KVM guest. Add a tracepoint
-> that enables reading the counters for use by ftrace/perf. Note that this
-> tracepoint is only available for nestedv2 API (i.e, KVM on PowerVM).
-..
-> diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-> index 8e86eb577eb8..ed69ad58bd02 100644
-> --- a/arch/powerpc/kvm/book3s_hv.c
-> +++ b/arch/powerpc/kvm/book3s_hv.c
-> @@ -4108,6 +4108,54 @@ static void vcpu_vpa_increment_dispatch(struct kvm=
-_vcpu *vcpu)
->  	}
->  }
->=20=20
-> +static inline int kvmhv_get_l2_counters_status(void)
-> +{
-> +	return get_lppaca()->l2_counters_enable;
-> +}
+Hi Jiaxun
 
-This is breaking the powernv build:
+On Tue, May 07, 2024 at 10:01:48AM +0100, Jiaxun Yang wrote:
+> Hi all,
+> 
+> This series enabled mips-cm code to probe GCR address from devicetree.
+> 
+> This feature has been implemented in MIPS's out-of-tree kernel for
+> a while, and MIPS's u-boot fork on boston will generate required
+> "mti,mips-cm" node as well.
 
-$ make powernv_defconfig ; make -s -j (nproc)
-make[1]: Entering directory '/home/michael/linux/.build'
-  GEN     Makefile
-#
-# configuration written to .config
-#
-make[1]: Leaving directory '/home/michael/linux/.build'
-./arch/powerpc/kvm/book3s_hv.c: In function =E2=80=98kvmhv_get_l2_counters=
-_status=E2=80=99:
-./arch/powerpc/kvm/book3s_hv.c:4113:16: error: implicit declaration of fun=
-ction =E2=80=98get_lppaca=E2=80=99; did you mean =E2=80=98get_paca=E2=80=99=
-? [-Werror=3Dimplicit-function-declaration]
- 4113 |         return get_lppaca()->l2_counters_enable;
-      |                ^~~~~~~~~~
-      |                get_paca
-./arch/powerpc/kvm/book3s_hv.c:4113:28: error: invalid type argument of =
-=E2=80=98->=E2=80=99 (have =E2=80=98int=E2=80=99)
- 4113 |         return get_lppaca()->l2_counters_enable;
-      |                            ^~
-In file included from ../arch/powerpc/include/asm/paravirt.h:9,
-                 from ../arch/powerpc/include/asm/qspinlock.h:7,
-                 from ../arch/powerpc/include/asm/spinlock.h:7,
-                 from ../include/linux/spinlock.h:95,
-                 from ../include/linux/sched.h:2138,
-                 from ../include/linux/hardirq.h:9,
-                 from ../include/linux/kvm_host.h:7,
-                 from ../arch/powerpc/kvm/book3s_hv.c:18:
-./arch/powerpc/kvm/book3s_hv.c: In function =E2=80=98kvmhv_set_l2_counters=
-_status=E2=80=99:
-./arch/powerpc/include/asm/lppaca.h:105:41: error: =E2=80=98struct paca_st=
-ruct=E2=80=99 has no member named =E2=80=98lppaca_ptr=E2=80=99
-  105 | #define lppaca_of(cpu)  (*paca_ptrs[cpu]->lppaca_ptr)
-      |                                         ^~
-./arch/powerpc/kvm/book3s_hv.c:4119:17: note: in expansion of macro =E2=80=
-=98lppaca_of=E2=80=99
- 4119 |                 lppaca_of(cpu).l2_counters_enable =3D 1;
-      |                 ^~~~~~~~~
-./arch/powerpc/include/asm/lppaca.h:105:41: error: =E2=80=98struct paca_st=
-ruct=E2=80=99 has no member named =E2=80=98lppaca_ptr=E2=80=99
-  105 | #define lppaca_of(cpu)  (*paca_ptrs[cpu]->lppaca_ptr)
-      |                                         ^~
-./arch/powerpc/kvm/book3s_hv.c:4121:17: note: in expansion of macro =E2=80=
-=98lppaca_of=E2=80=99
- 4121 |                 lppaca_of(cpu).l2_counters_enable =3D 0;
-      |                 ^~~~~~~~~
-./arch/powerpc/kvm/book3s_hv.c: In function =E2=80=98do_trace_nested_cs_ti=
-me=E2=80=99:
-./arch/powerpc/kvm/book3s_hv.c:4145:29: error: initialization of =E2=80=98=
-struct lppaca *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from inte=
-ger without a cast [-Werror=3Dint-conversion]
- 4145 |         struct lppaca *lp =3D get_lppaca();
-      |                             ^~~~~~~~~~
-./arch/powerpc/kvm/book3s_hv.c: In function =E2=80=98kvmhv_get_l2_counters=
-_status=E2=80=99:
-./arch/powerpc/kvm/book3s_hv.c:4114:1: error: control reaches end of non-v=
-oid function [-Werror=3Dreturn-type]
- 4114 | }
-      | ^
-cc1: all warnings being treated as errors
-make[5]: *** [../scripts/Makefile.build:244: arch/powerpc/kvm/book3s_hv.o] =
-Error 1
-make[5]: *** Waiting for unfinished jobs....
-make[4]: *** [../scripts/Makefile.build:485: arch/powerpc/kvm] Error 2
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [../scripts/Makefile.build:485: arch/powerpc] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [/home/michael/linux/Makefile:1919: .] Error 2
-make[1]: *** [/home/michael/linux/Makefile:240: __sub-make] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+Thank you very much for the series. This work has been scheduled in my
+TODO list for years. I could have done it earlier but a simple at the
+first glance change turned to be tricky. The main concern was the
+stage at what CM was probed. I was afraid to break things by changing
+the order of the CM-base address getting. Let's discuss this matter in
+the respective patch. It might get to be I was wrong to worry.
 
+-Serge(y)
 
-cheers
+> 
+> Please review.
+> Thanks
+> 
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> ---
+> Jiaxun Yang (5):
+>       MIPS: generic: Do __dt_setup_arch in prom_init
+>       MIPS: cm: Prefix probe functions with __init
+>       MIPS: Move mips_cm_probe after prom_init
+>       dt-bindings: mips: Document mti,mips-cm
+>       MIPS: cm: Probe GCR address from DeviceTree
+> 
+>  .../devicetree/bindings/mips/mips-cm.yaml          | 37 ++++++++++++
+>  arch/mips/generic/init.c                           |  9 ++-
+>  arch/mips/include/asm/mips-cm.h                    |  4 +-
+>  arch/mips/kernel/mips-cm.c                         | 66 ++++++++++++++++++----
+>  arch/mips/kernel/setup.c                           |  2 +-
+>  5 files changed, 100 insertions(+), 18 deletions(-)
+> ---
+> base-commit: 2b84edefcad14934796fad37b16512b6a2ca467e
+> change-id: 20240506-cm_probe-0c667c8b63bf
+> 
+> Best regards,
+> -- 
+> Jiaxun Yang <jiaxun.yang@flygoat.com>
+> 
+> 
 
