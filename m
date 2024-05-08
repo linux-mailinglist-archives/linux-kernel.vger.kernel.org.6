@@ -1,51 +1,46 @@
-Return-Path: <linux-kernel+bounces-173898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38ECA8C0758
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:30:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01E28C075E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E82E2283183
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB7E284505
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 22:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABD1133426;
-	Wed,  8 May 2024 22:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A795168DC;
+	Wed,  8 May 2024 22:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d8tD27Us"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E953213340E;
-	Wed,  8 May 2024 22:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OQn9AT8g"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779A615E88;
+	Wed,  8 May 2024 22:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715207391; cv=none; b=aeo0D32PKS+wy9P8kr6ovH1cJOQlbN4espE71o26+qxWnFIwYLtlUeMuhpykiGRhnnUsJnugBR9VDUqGpeQO0qpEn6FOvCUOMFMuSXMDyB757T489UzsT5AU1huuuTx2+6i7RTipYFZvFe+/LR/Dvyohh4Hx7qwGZr+DJ5FTeUk=
+	t=1715207416; cv=none; b=m0bppicqogg4h+dKioyasG/QR//kVUKXpKnMwzE9wmSRjUpXzN/v44Z5BstztCsVxr4/azASJj6q/AWo3uyQpBGZ1kVVCqw5VrTHuG+hEAZQJ54diDVJN+mUSDDCUys2Cx3RhFPPG6t+MMNfOdoGjeo5RgV4YKNSCvYwZDFh528=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715207391; c=relaxed/simple;
-	bh=FzJBgrQxIdNzOxQOHuhjRfbO74jsiRprQUNagdrkAaY=;
+	s=arc-20240116; t=1715207416; c=relaxed/simple;
+	bh=jfeLTHQ7V+tCqtymgqJlwOAfeOURmxDxjCflu8nkTEY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MInjMlLVG9FdGLdkgxQtLQdyKoKzcDSfHV+X16+X0rtoNRf1tdAkHYvnnVmV8QOhfXvbAMt0OyZ9e87mEem7Y2MF5Qmg97927zVLzxgAuQa5KqgBc0k70QULD8ROVhSKJJ8FOayebbEkjCPJXX9EDEC7fScxLc6/X5WGBQuYOtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d8tD27Us; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=d6XhmtyByC67AvaiaMru39DJYEvRdT178Mi2caB30As=; b=d8tD27Usvg00XgSFQM+NPLWPb2
-	H580GLyvv8UpISBdrNnFqZw8uq7BmCDzdRVb3hTTjAa1zvLLVY3r+theec7SMIORmGqGiPDKoDrrW
-	rQ1ggvRwkXJa+jfgVl2OVVIL2I/xWRUsGfrvRFQBn1ZcfdzpdcvaABUKHNtXkikzrgvYk17hjxo72
-	cmmaWM0izaQlC6wpy01HAxzXSsMR7jBomGSDC4Mo5bbmRbEWXPBHx2rrQpbUuAPN2Fyk1JGkoNQju
-	EETZzYJReBw22RRvI4iuFFkaMBPQ0y8yWU9lbuxxmR0CASGv8oNeGqfC44XFpgejANGjt6nnGisNL
-	W1w4EwNg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s4pnG-0000000H9uo-43cd;
-	Wed, 08 May 2024 22:29:47 +0000
-Message-ID: <c1f1b699-71ad-409a-a843-afe42640626a@infradead.org>
-Date: Wed, 8 May 2024 15:29:43 -0700
+	 In-Reply-To:Content-Type; b=ew+zAFcD1+A/SybQg/pNhhOuC6HZD5+itj0YmEVK9m7Ql8waBqOIGXLa7QbWN/DdXJ+AfM3iqAwamxKMl0+o/CV/TbjRL5ZnmpvGmikwf2vRfn3kJy8sA0ogQd50VjLsxMYtt9GOUju6vfDW7eb1gs6dluzwBwtvI4RR5LuZHrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OQn9AT8g; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [167.220.2.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C10B42083CB3;
+	Wed,  8 May 2024 15:30:14 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C10B42083CB3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715207414;
+	bh=O39rDdpiO7kqlQ1I2DZU4uxK3DPuYhyDQeOss37ivQE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OQn9AT8gEUZm1+BKeo83wexh4Z3f5It6vRhh7Pzqr+2y0WTUnuH/E7sqiAHVHeEL+
+	 9XhkVv8JsB+7owD+m+wLhaQu1OV5XajkEcsn4jOkJzoZWmVZ0k69t5uJonoPcXpT9o
+	 lDsC/EkVaH0XrDBb0zgwyEVgoCmSC44jslo29LI4=
+Message-ID: <212b02a8-f5f0-4433-a726-1639dda61790@linux.microsoft.com>
+Date: Wed, 8 May 2024 15:30:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,86 +48,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] docs: Add advanced extended IRQ model description
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org,
- kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org, siyanteng@loongson.cn
-Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240507122228.5288-1-zhangtianyang@loongson.cn>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240507122228.5288-1-zhangtianyang@loongson.cn>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v18 12/21] dm: add finalize hook to target_type
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+ tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com,
+ snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com,
+ linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
+ <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com>
+ <aa767961-5e3-2ceb-1a1e-ff66a8eed649@redhat.com>
+Content-Language: en-CA
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <aa767961-5e3-2ceb-1a1e-ff66a8eed649@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi--
 
-On 5/7/24 5:22 AM, Tianyang Zhang wrote:
-> From 3C6000, Loongarch began to support advanced extended
-> interrupt mode, in which each CPU has an independent interrupt
-> vector number.This will enhance the architecture's ability
-> to support modern devices
+
+On 5/8/2024 10:17 AM, Mikulas Patocka wrote:
 > 
-> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
-> ---
->  .../arch/loongarch/irq-chip-model.rst         | 33 +++++++++++++++++
->  .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 +++++++++++++++++--
->  2 files changed, 67 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/arch/loongarch/irq-chip-model.rst
-> index 7988f4192363..79228741d1b9 100644
-> --- a/Documentation/arch/loongarch/irq-chip-model.rst
-> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
-> @@ -85,6 +85,39 @@ to CPUINTC directly::
->      | Devices |
->      +---------+
->  
-> +Advanced Extended IRQ model
-> +=======================
+> On Fri, 3 May 2024, Fan Wu wrote:
+> 
+>> This patch adds a target finalize hook.
+>>
+>> The hook is triggered just before activating an inactive table of a
+>> mapped device. If it returns an error the __bind get cancelled.
+>>
+>> The dm-verity target will use this hook to attach the dm-verity's
+>> roothash metadata to the block_device struct of the mapped device.
+>>
+>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> 
+> Hi
+> 
+> Why not use the preresume callback?
+> 
+> Is there some reason why do we need a new callback instead of using the
+> existing one?
+> 
+> Mikulas
+Thanks for the suggestion.
 
-The === underline line needs to be at least as long as the line above it.
+Mike suggested the new finalize() callback. I think the reason for not 
+using the preresume() callback is that there are multiple points that 
+can fail before activating an inactive table of a mapped device which 
+can potentially lead to inconsistent state.
 
-> +
-> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt go
-> +to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, MSI interrupts go to AVEC,
-> +and then go to CPUINTC, Other devices interrupts go to PCH-PIC/PCH-LPC and gathered
+In our specific case, we are trying to associate dm-verity's roothash 
+metadata with the block_device struct of the mapped device inside the 
+callback.
 
-                  CPUINTC.
+If we use the preresume() callback for the work and an error occurs 
+between the callback and the table activation, this leave the 
+block_device struct in an inconsistent state.
 
-> +by EIOINTC, and then go to CPUINTC directly::
-> +
-> + +-----+     +--------------------------+     +-------+
-> + | IPI | --> |           CPUINTC        | <-- | Timer |
-> + +-----+     +--------------------------+     +-------+
-> +              ^        ^             ^
-> +              |        |             |
-> +      +--------+  +---------+ +---------+     +-------+
-> +      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
-> +      +--------+  +---------+ +---------+     +-------+
-> +           ^            ^
-> +           |            |
-> +         +---------+  +---------+
-> +         |   MSI   |  | PCH-PIC |
-> +         +---------+  +---------+
-> +            ^          ^       ^
-> +            |          |       |
-> +    +---------+ +---------+ +---------+
-> +    | Devices | | PCH-LPC | | Devices |
-> +    +---------+ +---------+ +---------+
-> +                     ^
-> +                     |
-> +                +---------+
-> +                | Devices |
-> +                +---------+
-> +
-> +
->  ACPI-related definitions
->  ========================
->  
+This is because now the block device contains the roothash metadata of 
+it's inactive table due to the preresume() callback, but the activation 
+failed so the mapped device is still using the old table.
 
-thanks.
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+The new finalize() callback guarantees that the callback happens just 
+before the table activation, thus avoiding the inconsistency.
+
+-Fan
 
