@@ -1,86 +1,126 @@
-Return-Path: <linux-kernel+bounces-173859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0498C068D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5EC8C0692
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FE8C1C2119A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D2701C20B8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7A7132816;
-	Wed,  8 May 2024 21:51:08 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799AD13280C;
+	Wed,  8 May 2024 21:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="K8gt/jer"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6237D3FB
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508A312DDA7;
+	Wed,  8 May 2024 21:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715205067; cv=none; b=U80XQk2cqOQj1MCZwP1AHn4mfIe6BJJ17e+ZuY3BJVd2upqCgJNGuPag4znjGraAZ4hZB+10MhPlFfl4LaepM1oKw5WVDZRQdR/TuK+lHB+Yw/vr685ys+6taGvZO5fYxvROCmuPt8yUks2lu7uBSfMo10oRpiUcpqWk2LZrgvM=
+	t=1715205078; cv=none; b=iiYeGYeZ+DGD/XuYAaEUL8XcRgdS7kUdQp/cs0B1OiurvrAz2jkxHUM0ynNocTsJ+4r6UhUhSQ1NMZ1g5hYDW6K11w6HwPwYspluqB9qJb2aUrXB+pj/tJE5+0lf4a/RPqVMrWKqpz38VMs57KoxIxk4RSKnzuzO8RexB6y8kS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715205067; c=relaxed/simple;
-	bh=eJjEcSgebcwFM059pnNtpFNbNgETDRBOLS9rFVm9fNs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=M8xEo9JCVmWrPx7BugiP7biLwX4dMjlSJS+m/JIUvngaJBjrhxDE3tvWuDw/VZ3Fo1fhR5moNRQxAD3fJMRwvWeEK5/g2th1ijVRBWEjkPL9coK5TRwOIUDdFWTp9z432G/8q+R2WZNP6ADQRG8PeyyzKOGkSibgIy9WKkisG/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7dd8cd201d6so17303239f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:51:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715205065; x=1715809865;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6r/rgrh99pD91WI0nDuRj5BeEdIm70lvzLY4UwUiEPs=;
-        b=RnN+oVyLAXUmt/9EdCNIOlgLKWzeg720YG6RAia41RvKCHXcDbypOQD2EIxINCB85f
-         FtahD0G6jyqdeBw18fIsl3DsAUS7nHGB86mQrSbo/Qv+rnGMkoDEtxcYq5tKEu9h5zch
-         ZIRFcyaVTr/gkqd26DRbVfcgblZ5LR3F9KUeP4g3HZwXyhm3x8I6rCbkY0Gxlq/hfVNs
-         yhbpk38D6YjE+NOO+EMYUZwlU1JjpOECnsrMVnzccwP9nr4TX8WBVoTiRL3xmW43UOO0
-         qRjyUrOyV6k48TgJwsM0FruyAcJLlHakyGo6KwdWCbG8jNVRGlj48mLs9H6N/OVY566W
-         5P4Q==
-X-Gm-Message-State: AOJu0Yz2U7DLKrRodoPK7az1jqyevFu4lLDwSCBtcCOV/Zv56wfim1/R
-	PDwwWCAH8tSpbku8t9uwtJdSDBlTUo3t/TwQ+uHyDa+acu9occP824alBRtxsEKj43Fg3omGSOQ
-	XIAL74RiQ5KhRuO4KIckHjdRxnGprdeYpxP3RU6SZj9XuRoFIKTEHMNg=
-X-Google-Smtp-Source: AGHT+IG7jDohLjMVtPwTyHt/8qpbFkWXXDCFJCYffFRYgFYWFnu9kqjXYQstkRNmT+pT0qXG7qDcOX7U0kAx/LghlRGYTMko8WJU
+	s=arc-20240116; t=1715205078; c=relaxed/simple;
+	bh=IdgHgaZdPcCXFSJGhhONFbwqejjGF4oKLW1+TyIjdGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QH7h8I8Ah4fLF7n+jjx41wXCMAVK2sJ4u1Rsj6MHh/fuqYvzp/gjIfYBS1S6NesWbdg49LE8UrNk9PXKbEUmuM9AvqwsByAUMbNBwWsDvrM+hdM57B+rPxjljbsE0wSPnY7BTRkFS+lnHpyo2kGf11inj7Oubfe8+9mrPc2e/HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=K8gt/jer; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EAD5916D4;
+	Wed,  8 May 2024 23:51:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715205072;
+	bh=IdgHgaZdPcCXFSJGhhONFbwqejjGF4oKLW1+TyIjdGk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K8gt/jeri0bkXEDe3kXbJ7A0PhkdE0GTmUVOr1cZWm/xQqOUM8l2aRy5P5oCOB8zp
+	 pu0k/PidVMCYjfxZy70PN0pzgULxqT3UqKF7dJJcEFSBgKCLTdMQKXkNdsykFUBggZ
+	 PN4pnMgaieoRRUxFKddxdt+nJpP7kLaKYlSynubo=
+Date: Thu, 9 May 2024 00:51:06 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Robert Mader <robert.mader@collabora.com>,
+	Sebastien Bacher <sebastien.bacher@canonical.com>,
+	Linux Media Mailing List <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linaro-mm-sig@lists.linaro.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Milan Zamazal <mzamazal@redhat.com>,
+	Maxime Ripard <mripard@redhat.com>,
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+Message-ID: <20240508215106.GA24860@pendragon.ideasonboard.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+ <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+ <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+ <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+ <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
+ <20240507183613.GB20390@pendragon.ideasonboard.com>
+ <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
+ <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:890b:b0:488:b7c1:401b with SMTP id
- 8926c6da1cb9f-488fdd8402amr295571173.4.1715205065578; Wed, 08 May 2024
- 14:51:05 -0700 (PDT)
-Date: Wed, 08 May 2024 14:51:05 -0700
-In-Reply-To: <ZjuXMtWceCuembsw@zeus>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a6a5940617f84cab@google.com>
-Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, ryasuoka@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
 
-Hello,
+On Wed, May 08, 2024 at 10:36:08AM +0200, Daniel Vetter wrote:
+> On Tue, May 07, 2024 at 04:07:39PM -0400, Nicolas Dufresne wrote:
+> > Le mardi 07 mai 2024 à 21:36 +0300, Laurent Pinchart a écrit :
+> > > Shorter term, we have a problem to solve, and the best option we have
+> > > found so far is to rely on dma-buf heaps as a backend for the frame
+> > > buffer allocatro helper in libcamera for the use case described above.
+> > > This won't work in 100% of the cases, clearly. It's a stop-gap measure
+> > > until we can do better.
+> > 
+> > Considering the security concerned raised on this thread with dmabuf heap
+> > allocation not be restricted by quotas, you'd get what you want quickly with
+> > memfd + udmabuf instead (which is accounted already).
+> > 
+> > It was raised that distro don't enable udmabuf, but as stated there by Hans, in
+> > any cases distro needs to take action to make the softISP works. This
+> > alternative is easy and does not interfere in anyway with your future plan or
+> > the libcamera API. You could even have both dmabuf heap (for Raspbian) and the
+> > safer memfd+udmabuf for the distro with security concerns.
+> > 
+> > And for the long term plan, we can certainly get closer by fixing that issue
+> > with accounting. This issue also applied to v4l2 io-ops, so it would be nice to
+> > find common set of helpers to fix these exporters.
+> 
+> Yeah if this is just for softisp, then memfd + udmabuf is also what I was
+> about to suggest. Not just as a stopgap, but as the real official thing.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Long term I still want a centralized memory allocator, at which point
+libcamera should stop allocating buffers at all.
 
-failed to checkout kernel repo git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/master: failed to run ["git" "fetch" "--force" "675adff2843877c2da27b36b2517f827bc9915ea" "master"]: exit status 128
-fatal: couldn't find remote ref master
+> udmabuf does kinda allow you to pin memory, but we can easily fix that by
+> adding the right accounting and then either let mlock rlimits or cgroups
+> kernel memory limits enforce good behavior.
 
+-- 
+Regards,
 
-
-Tested on:
-
-commit:         [unknown 
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git master
-kernel config:  https://syzkaller.appspot.com/x/.config?x=80c7a82a572c0de3
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10a463bc980000
-
+Laurent Pinchart
 
