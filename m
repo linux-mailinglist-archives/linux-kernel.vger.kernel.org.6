@@ -1,207 +1,162 @@
-Return-Path: <linux-kernel+bounces-172647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6118BF4D8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00808BF4E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9781F24F5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:12:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C372A1C23006
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 03:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7097C14A8C;
-	Wed,  8 May 2024 03:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307E21400B;
+	Wed,  8 May 2024 03:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bRTCEoFq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="qs3G3HLZ"
+Received: from out0-193.mail.aliyun.com (out0-193.mail.aliyun.com [140.205.0.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A55E12E6C;
-	Wed,  8 May 2024 03:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A1110A31;
+	Wed,  8 May 2024 03:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715137930; cv=none; b=i++BgRk6pqd6exR86MGMfn1ZSGfsvOqlgNmXlmNSt+peJBEse5zNrxVf558ck00BNh5ofUxMwwOPH2+P/daWZkHe5BTZqitO0VZMIC9X1Hz4MA6MF88coHDou9YRvBOfwKAWYIm5P8m07OvaixHtYeCawfsTzOXKKICKSeoEBFk=
+	t=1715138336; cv=none; b=d4KeCbgaAC0WBq7Oyzh666VXDtLx7NAW4S1AdgWokwHyKldwwsMIn4vbR+llZ9K4dXYFT5dKJAn0xUWaekMMU2rijvhWlS1LGUSQHMwEgC2hFTpE5FDW1Ttl87lQsvADKoAFHvT+0o2S/bW/zUVhAppKMFJ+rG0ceXvZIGciAAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715137930; c=relaxed/simple;
-	bh=dojBfFEdRQ4nxloccm/HMrkGY2HBMwlLPi66aL/0V4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BRyIEO5zHzv4+0ZhyC1Uv7guC7YcreM4kfuHErN4QNwk1DWoFw3QufC4iniXGqrOq4xEZt6VxOUIOS0AWEEzMx0DanvflX1b9D5wxnEpO06F76SEelC0U9+Ioci83Tb1vdesCn2G/tAEJSsh0SAOsK9cEnAqkQetM3UE/yPWFr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bRTCEoFq; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715137928; x=1746673928;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dojBfFEdRQ4nxloccm/HMrkGY2HBMwlLPi66aL/0V4Q=;
-  b=bRTCEoFqWxPl2jhTsssT4xNjtJ/K6Xj/QB5VJOn+TtT6/J6CLOlA0dOO
-   5xxN6Q2CGiQSHkSL09zk07AP6QTO42T03MURCswwDMsoV4Vzr18h7A4SW
-   Q0lHQwWv/iLE6tLU4Rnvs7gxHyZVYVg6RiugH1/ge2cp62UuRiarl9yz+
-   lWyX9NdIGt8/LA7PhULKp19mjkP+tLJLxXC6SBgCiVnCqz5pb7Cexiy6W
-   Dzg2uaPgjW2ZcjVNAEeDBj4ymAcioldPe4lJkmdPe7Gev5mlJP0rfZOj0
-   HocMTZTpMHBS06Z/2Z8JRKQyh41U5bVIx1Efw8FWeAfjb5BBNP9d6k6Rz
-   w==;
-X-CSE-ConnectionGUID: ++3MTyjQSFKPFBLXWd10hQ==
-X-CSE-MsgGUID: B3N1s9aMTVewoRZcMzAbaA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10814129"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="10814129"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 20:12:07 -0700
-X-CSE-ConnectionGUID: xwQBTDE0Tay2I1d6rDrH8Q==
-X-CSE-MsgGUID: 4zxaEh4FQVuxc8Z2qTzPCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="28720178"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 07 May 2024 20:12:03 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4Xiq-0002uY-13;
-	Wed, 08 May 2024 03:12:00 +0000
-Date: Wed, 8 May 2024 11:11:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Michal Simek <monstr@monstr.eu>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Subject: Re: [PATCH 06/18] media: siano: Refactor struct sms_msg_data
-Message-ID: <202405081007.7eCrDhSN-lkp@intel.com>
-References: <20240507-cocci-flexarray-v1-6-4a421c21fd06@chromium.org>
+	s=arc-20240116; t=1715138336; c=relaxed/simple;
+	bh=XLuR9VxXVV1Ku8DVWVb7b2tLdtBtCxg3+Z+626HBzJ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BcJu4cKohEzCTI1ENLDjGSgD25LsrTZlHuY4X4qx1JvIbo1uxNTGMJYP34CSQ/WlKhhM+U7Bx1xQsWfzk8u3TXXwZXSCt6vGXOGDKH3nN4uQenUTUerMc7w8I/PGEHp/3EBSGspxps0sKizdLXCuLDu0BUXvJK1XWD9D6d07n+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=qs3G3HLZ; arc=none smtp.client-ip=140.205.0.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1715138325; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=DnAX2XxWMmT4hYoRUEoVeoZJUWhjhnceF4d+AxQfu6I=;
+	b=qs3G3HLZuWzK77mam8IvxbBqK3JADd/OxmQyBoXfPlTnNBUA99zKZMChDTRBWS8SY6Mlds2WTeeCaPAFZOktL6bTj67/Jeo1gBEyBz08YMau1LbfMmmaLp+9uDRIVQJ6Wfqwsnz/tO3wZYOE3kzvEx4keBWVEBfvFzBtjvWexAc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047205;MF=houwenlong.hwl@antgroup.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---.XV8fOaO_1715138323;
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.XV8fOaO_1715138323)
+          by smtp.aliyun-inc.com;
+          Wed, 08 May 2024 11:18:44 +0800
+From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
+To: kvm@vger.kernel.org
+Cc: "Lai Jiangshan" <jiangshan.ljs@antgroup.com>,
+  "Sean Christopherson" <seanjc@google.com>,
+  "Paolo Bonzini" <pbonzini@redhat.com>,
+  "Thomas Gleixner" <tglx@linutronix.de>,
+  "Ingo Molnar" <mingo@redhat.com>,
+  "Borislav Petkov" <bp@alien8.de>,
+  "Dave Hansen" <dave.hansen@linux.intel.com>,
+   <x86@kernel.org>,
+  "H. Peter Anvin" <hpa@zytor.com>,
+   <linux-kernel@vger.kernel.org>
+Subject: [PATCH] KVM: x86/mmu: Only allocate shadowed translation cache for sp->role.level <= KVM_MAX_HUGEPAGE_LEVEL
+Date: Wed, 08 May 2024 11:18:42 +0800
+Message-Id: <bf08a06675ed97d2456f7dcd9b0b2ef92f4602be.1715137643.git.houwenlong.hwl@antgroup.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507-cocci-flexarray-v1-6-4a421c21fd06@chromium.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Ricardo,
+Only the indirect SP with sp->role.level <= KVM_MAX_HUGEPAGE_LEVEL might
+have leaf gptes, so allocation of shadowed translation cache is needed
+only for it. Additionally, use sp->shadowed_translation to determine
+whether to use the information in shadowed translation cache or not.
 
-kernel test robot noticed the following build errors:
+Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+---
+ arch/x86/kvm/mmu/mmu.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-[auto build test ERROR on e695668af8523b059127dfa8b261c76e7c9cde10]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Ribalda/media-allegro-nal-hevc-Refactor-nal_hevc_sub_layer_hrd_parameters/20240507-213119
-base:   e695668af8523b059127dfa8b261c76e7c9cde10
-patch link:    https://lore.kernel.org/r/20240507-cocci-flexarray-v1-6-4a421c21fd06%40chromium.org
-patch subject: [PATCH 06/18] media: siano: Refactor struct sms_msg_data
-config: mips-randconfig-r113-20240508 (https://download.01.org/0day-ci/archive/20240508/202405081007.7eCrDhSN-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 0ab4458df0688955620b72cc2c72a32dffad3615)
-reproduce: (https://download.01.org/0day-ci/archive/20240508/202405081007.7eCrDhSN-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405081007.7eCrDhSN-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/media/common/siano/smsendian.c:15:
-   In file included from drivers/media/common/siano/smscoreapi.h:18:
-   In file included from include/linux/mm.h:2208:
-   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/media/common/siano/smsendian.c:27:16: error: subscripted value is not an array, pointer, or vector
-      27 |                 msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
-         |                 ~~~~~~~~~~~~~^~
-   drivers/media/common/siano/smsendian.c:27:64: error: subscripted value is not an array, pointer, or vector
-      27 |                 msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
-         |                                                                 ~~~~~~~~~~~~~^~
-   include/linux/byteorder/generic.h:89:21: note: expanded from macro 'le32_to_cpu'
-      89 | #define le32_to_cpu __le32_to_cpu
-         |                     ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   drivers/media/common/siano/smsendian.c:36:17: error: subscripted value is not an array, pointer, or vector
-      36 |                         msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
-         |                         ~~~~~~~~~~~~~^~
-   drivers/media/common/siano/smsendian.c:36:64: error: subscripted value is not an array, pointer, or vector
-      36 |                         msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
-         |                                                                        ~~~~~~~~~~~~~^~
-   include/linux/byteorder/generic.h:89:21: note: expanded from macro 'le32_to_cpu'
-      89 | #define le32_to_cpu __le32_to_cpu
-         |                     ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   drivers/media/common/siano/smsendian.c:73:17: error: subscripted value is not an array, pointer, or vector
-      73 |                         msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
-         |                         ~~~~~~~~~~~~~^~
-   drivers/media/common/siano/smsendian.c:73:64: error: subscripted value is not an array, pointer, or vector
-      73 |                         msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
-         |                                                                        ~~~~~~~~~~~~~^~
-   include/linux/byteorder/generic.h:89:21: note: expanded from macro 'le32_to_cpu'
-      89 | #define le32_to_cpu __le32_to_cpu
-         |                     ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   1 warning and 6 errors generated.
-
-
-vim +27 drivers/media/common/siano/smsendian.c
-
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  13  
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  14  #include "smsendian.h"
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20 @15  #include "smscoreapi.h"
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  16  
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  17  void smsendian_handle_tx_message(void *buffer)
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  18  {
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  19  #ifdef __BIG_ENDIAN
-ff7ff3656465f7 drivers/media/common/siano/smsendian.c Dong Chuanjian        2022-12-26  20  	struct sms_msg_data *msg = buffer;
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  21  	int i;
-28a59df4d7cb8f drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2013-03-21  22  	int msg_words;
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  23  
-dfef84fc135832 drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2013-03-21  24  	switch (msg->x_msg_header.msg_type) {
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  25  	case MSG_SMS_DATA_DOWNLOAD_REQ:
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  26  	{
-e1b7f11b37def5 drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2018-04-20 @27  		msg->msg_data[0] = le32_to_cpu((__force __le32)(msg->msg_data[0]));
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  28  		break;
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  29  	}
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  30  
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  31  	default:
-28a59df4d7cb8f drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2013-03-21  32  		msg_words = (msg->x_msg_header.msg_length -
-dfef84fc135832 drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2013-03-21  33  				sizeof(struct sms_msg_hdr))/4;
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  34  
-28a59df4d7cb8f drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2013-03-21  35  		for (i = 0; i < msg_words; i++)
-e1b7f11b37def5 drivers/media/common/siano/smsendian.c Mauro Carvalho Chehab 2018-04-20  36  			msg->msg_data[i] = le32_to_cpu((__force __le32)msg->msg_data[i]);
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  37  
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  38  		break;
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  39  	}
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  40  #endif /* __BIG_ENDIAN */
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  41  }
-2c5582e58ce298 drivers/media/dvb/siano/smsendian.c    Mauro Carvalho Chehab 2009-05-14  42  EXPORT_SYMBOL_GPL(smsendian_handle_tx_message);
-cb17f9047d2c6f drivers/media/dvb/siano/smsendian.c    Uri Shkolnik          2009-04-20  43  
-
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index fc3b59b59ee1..8be987d0f05e 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -716,12 +716,12 @@ static bool sp_has_gptes(struct kvm_mmu_page *sp);
+ 
+ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
+ {
++	if (sp->shadowed_translation)
++		return sp->shadowed_translation[index] >> PAGE_SHIFT;
++
+ 	if (sp->role.passthrough)
+ 		return sp->gfn;
+ 
+-	if (!sp->role.direct)
+-		return sp->shadowed_translation[index] >> PAGE_SHIFT;
+-
+ 	return sp->gfn + (index << ((sp->role.level - 1) * SPTE_LEVEL_BITS));
+ }
+ 
+@@ -733,7 +733,7 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
+  */
+ static u32 kvm_mmu_page_get_access(struct kvm_mmu_page *sp, int index)
+ {
+-	if (sp_has_gptes(sp))
++	if (sp->shadowed_translation)
+ 		return sp->shadowed_translation[index] & ACC_ALL;
+ 
+ 	/*
+@@ -754,7 +754,7 @@ static u32 kvm_mmu_page_get_access(struct kvm_mmu_page *sp, int index)
+ static void kvm_mmu_page_set_translation(struct kvm_mmu_page *sp, int index,
+ 					 gfn_t gfn, unsigned int access)
+ {
+-	if (sp_has_gptes(sp)) {
++	if (sp->shadowed_translation) {
+ 		sp->shadowed_translation[index] = (gfn << PAGE_SHIFT) | access;
+ 		return;
+ 	}
+@@ -1697,7 +1697,7 @@ static void kvm_mmu_free_shadow_page(struct kvm_mmu_page *sp)
+ 	hlist_del(&sp->hash_link);
+ 	list_del(&sp->link);
+ 	free_page((unsigned long)sp->spt);
+-	if (!sp->role.direct)
++	if (sp->shadowed_translation)
+ 		free_page((unsigned long)sp->shadowed_translation);
+ 	kmem_cache_free(mmu_page_header_cache, sp);
+ }
+@@ -1850,6 +1850,17 @@ static bool kvm_mmu_prepare_zap_page(struct kvm *kvm, struct kvm_mmu_page *sp,
+ static void kvm_mmu_commit_zap_page(struct kvm *kvm,
+ 				    struct list_head *invalid_list);
+ 
++static bool sp_might_have_leaf_gptes(struct kvm_mmu_page *sp)
++{
++	if (sp->role.direct)
++		return false;
++
++	if (sp->role.level > KVM_MAX_HUGEPAGE_LEVEL)
++		return false;
++
++	return true;
++}
++
+ static bool sp_has_gptes(struct kvm_mmu_page *sp)
+ {
+ 	if (sp->role.direct)
+@@ -2199,7 +2210,8 @@ static struct kvm_mmu_page *kvm_mmu_alloc_shadow_page(struct kvm *kvm,
+ 
+ 	sp = kvm_mmu_memory_cache_alloc(caches->page_header_cache);
+ 	sp->spt = kvm_mmu_memory_cache_alloc(caches->shadow_page_cache);
+-	if (!role.direct)
++	sp->role = role;
++	if (sp_might_have_leaf_gptes(sp))
+ 		sp->shadowed_translation = kvm_mmu_memory_cache_alloc(caches->shadowed_info_cache);
+ 
+ 	set_page_private(virt_to_page(sp->spt), (unsigned long)sp);
+@@ -2216,7 +2228,6 @@ static struct kvm_mmu_page *kvm_mmu_alloc_shadow_page(struct kvm *kvm,
+ 	kvm_account_mmu_page(kvm, sp);
+ 
+ 	sp->gfn = gfn;
+-	sp->role = role;
+ 	hlist_add_head(&sp->hash_link, sp_list);
+ 	if (sp_has_gptes(sp))
+ 		account_shadowed(kvm, sp);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.31.1
+
 
