@@ -1,237 +1,215 @@
-Return-Path: <linux-kernel+bounces-172972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826078BF991
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:32:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 202108BF9AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075BC1F23672
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:32:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F032B21814
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28E07440B;
-	Wed,  8 May 2024 09:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA8C768EA;
+	Wed,  8 May 2024 09:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WCVhhFG6"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="C1WtybD9"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358DA3613C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2551DFE8;
+	Wed,  8 May 2024 09:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715160728; cv=none; b=JDYMvNDxJmslZr4rxHJ+/x/dOiEasbeCqxuFjD+Lrk3CC31D6CFxWwb5eFL0seJ1x0gS4rmoApcVn7holTSYqwvuEFpVdm4APy0VnxgIfqaI90VuNQWAnJP5SK/pv9ZBweaD2C5BVN6FavrkIpY8LVth/6Bq+kUvk3UQr2jHBvA=
+	t=1715161344; cv=none; b=onh4ycT5O1FzqKlEST2ACBpnllUtzV3czkBJCKfN35r3iUwxukXkaFx0SV3uua0UWD5HdDLlWYWU3fu/ynwXNBkTo1Y2MX3ykzOxwr/LRP55fCwS4I3PtCYizc/eQX3OJbr7yuSaC6c8bMgy5wKxp4E+TeM+kMcqD8vUP3NSJhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715160728; c=relaxed/simple;
-	bh=N2qCMFWNGt/971GXcPVaxJJfzsYq+ZVjHxs7EqIppY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WadLL6loJCw4449uXLMAHpMHvL/ldRHrCeEArkpxh65ohPTuS5NH1MR/qGBHmqWJCpxpwSGJco875Yr6yDNSom5BuP9FBse/9FWc/Vo7zyrgB0lBWHm0KTqaPIHIFbm9bSZ3Hox02RpAMJHrhEYcvGzvLLWyj31va/MVfvTsq3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WCVhhFG6; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715160720; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=X6ll+DleuF5VzRVyJHMdLVkT8eka2pdj3LoVi8Wvj6M=;
-	b=WCVhhFG62S78M+b/R3RdUXRirlY90IjviSDTqPC2ZHEY1C+4ByEdXGLwMEEoDeZSJ/+RLptL/Th/EcAVQvWw9fX0rn0KYqFet15AlM+5qjMOaJVoGXsXW9eTXGzqEx4NP55PBcBMQhKaOploGvmwY7mNZ5AJXqySWwgkOy6wrW4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033068173054;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W63DC6R_1715160717;
-Received: from 30.97.56.69(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W63DC6R_1715160717)
-          by smtp.aliyun-inc.com;
-          Wed, 08 May 2024 17:31:58 +0800
-Message-ID: <3d87da24-7887-4912-abcf-14062e8514de@linux.alibaba.com>
-Date: Wed, 8 May 2024 17:31:57 +0800
+	s=arc-20240116; t=1715161344; c=relaxed/simple;
+	bh=tpHBLYwWAXWzFJOiiqPNurkj4onSKHEuQPtc+N0ukQ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VfsK94TT9j5ZRhedqF6cA9oH7BBYdpCz2sa6Kk0C2kLLE807oDrwRa3dQqRPnapBSS9DmhLxJXhLl1xz9mwflCxe5uRtNPvGt2sM5LLqFK2FHlwHmfZv6UCH1xY2SB/k5ZoNnHJoewpYNijrWP04YpUpGeB+OJuB2FACaFjBWeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=C1WtybD9; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [94.142.239.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id BE1EC62DD101;
+	Wed, 08 May 2024 11:34:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1715160896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ITaU40SFRGKxHYojpCSGh4eL/ryxiwlKRxY2NrN5Zus=;
+	b=C1WtybD9FCqWeBqrKKxR6GaNxYDNixDpsr8122tNc9qjBkBxdK5+OZSBm8d/iIzRSScW8I
+	aZ2o+kiJy0d3sa3ZgBToBB5vwIe5Hk6WobBHabirTBFjky7OBc17eYz9MGPXAM4RJWnTP+
+	avQsxBdHVgLbQwRtbyM8GLhENTKHRek=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com,
+ viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com,
+ Borislav.Petkov@amd.com, Perry Yuan <perry.yuan@amd.com>
+Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, Xiaojian.Du@amd.com,
+ Li.Meng@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v10 6/7] cpufreq: amd-pstate: introduce per CPU frequency boost
+ control
+Date: Wed, 08 May 2024 11:34:21 +0200
+Message-ID: <12430678.O9o76ZdvQC@natalenko.name>
+In-Reply-To:
+ <49204c6d4a334c0bfbc589dda79b5cd7c4c28b7c.1715152592.git.perry.yuan@amd.com>
+References:
+ <cover.1715152592.git.perry.yuan@amd.com>
+ <49204c6d4a334c0bfbc589dda79b5cd7c4c28b7c.1715152592.git.perry.yuan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] mm: memory: extend finish_fault() to support large
- folio
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, ioworker0@gmail.com,
- wangkefeng.wang@huawei.com, ying.huang@intel.com, 21cnbao@gmail.com,
- shy828301@gmail.com, ziy@nvidia.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <e3f4ae78ef2d565a65fadaa843e53a24bf5b57e4.1714978902.git.baolin.wang@linux.alibaba.com>
- <13939ade-a99a-4075-8a26-9be7576b7e03@arm.com>
- <d2bd3277-7ef5-4909-a149-6895ad95459e@linux.alibaba.com>
- <e5c5b9ff-e874-4d97-a036-48178bd147cc@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <e5c5b9ff-e874-4d97-a036-48178bd147cc@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart5776929.DvuYhMxLoT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+
+--nextPart5776929.DvuYhMxLoT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Wed, 08 May 2024 11:34:21 +0200
+Message-ID: <12430678.O9o76ZdvQC@natalenko.name>
+MIME-Version: 1.0
+
+Hello.
+
+On st=C5=99eda 8. kv=C4=9Btna 2024 9:21:11, SEL=C4=8C Perry Yuan wrote:
+> Add a new sysfs attribute file to support per CPU frequency boost
+> control, allowing individual CPUs to enable or disable CPB separately.
+>=20
+> The new sysfs attribute file is located at below path,
+> `/sys/devices/system/cpu/cpuX/cpufreq/boost`,
+> where `X` represents the CPU number.
+>=20
+> To disable CPB for a specific CPU, you can use the following command:
+> $ sudo bash -c "echo 0 > /sys/devices/system/cpu/cpuX/cpufreq/boost"
+>=20
+> After disabling CPB, the CPU frequency will no longer boost beyond
+> the base frequency for that particular CPU.
+>=20
+> for example:
+> ----------------------------------------------------------------------
+> CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
+>   0    0      0    0 0:0:0:0          yes 4208.0000 400.0000 1666.7740
+>   1    0      0    0 0:0:0:0          yes 4208.0000 400.0000  400.0000
+>=20
+> ----------------------------------------------------------------------
+> $ sudo bash -c "echo 0 > /sys/devices/system/cpu/cpu0/cpufreq/boost"
+>=20
+> CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
+>   0    0      0    0 0:0:0:0          yes 3501.0000 400.0000 4154.3140
+>   1    0      0    0 0:0:0:0          yes 4208.0000 400.0000  400.0000
+>=20
+> Please be aware that modifying the global variable
+> `amd_pstate_global_params.cpb_boost` will overwrite the individual CPU se=
+ttings.
+>=20
+> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
+> ---
+>  drivers/cpufreq/amd-pstate.c | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>=20
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index 11bce2c1db32..cb0055e7c842 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1371,6 +1371,30 @@ static int amd_pstate_cpu_boost(int cpu, bool stat=
+e)
+>  	return ret < 0 ? ret : 0;
+>  }
+> =20
+> +static ssize_t show_boost(struct cpufreq_policy *policy, char *buf)
+> +{
+> +	struct amd_cpudata *cpudata =3D policy->driver_data;
+> +	bool boost_val;
+> +
+> +	boost_val =3D READ_ONCE(cpudata->boost_state);
+> +
+> +	return sysfs_emit(buf, "%u\n", boost_val);
+> +}
+> +
+> +static ssize_t store_boost(
+> +		struct cpufreq_policy *policy, const char *buf, size_t count)
+> +{
+> +	bool boost_val;
+> +	int ret;
+> +
+> +	if (sscanf(buf, "%d", &boost_val) !=3D 1)
+
+This will generate warning. IIUC, sscanf() doesn't work with booleans direc=
+tly, so you'd probably want to read the value into an (unsigned) integer, a=
+nd then cast it to bool.
+
+> +		return -EINVAL;
+> +
+> +	ret =3D amd_pstate_cpu_boost(policy->cpu, boost_val);
+> +
+> +	return ret < 0 ? ret : count;
+> +}
+> +
+>  static ssize_t cpb_boost_show(struct device *dev,
+>  			   struct device_attribute *attr, char *buf)
+>  {
+> @@ -1416,6 +1440,7 @@ cpufreq_freq_attr_ro(amd_pstate_prefcore_ranking);
+>  cpufreq_freq_attr_ro(amd_pstate_hw_prefcore);
+>  cpufreq_freq_attr_rw(energy_performance_preference);
+>  cpufreq_freq_attr_ro(energy_performance_available_preferences);
+> +cpufreq_freq_attr_rw(boost);
+>  static DEVICE_ATTR_RW(status);
+>  static DEVICE_ATTR_RO(prefcore);
+>  static DEVICE_ATTR_RW(cpb_boost);
+> @@ -1426,6 +1451,7 @@ static struct freq_attr *amd_pstate_attr[] =3D {
+>  	&amd_pstate_highest_perf,
+>  	&amd_pstate_prefcore_ranking,
+>  	&amd_pstate_hw_prefcore,
+> +	&boost,
+>  	NULL,
+>  };
+> =20
+> @@ -1437,6 +1463,7 @@ static struct freq_attr *amd_pstate_epp_attr[] =3D {
+>  	&amd_pstate_hw_prefcore,
+>  	&energy_performance_preference,
+>  	&energy_performance_available_preferences,
+> +	&boost,
+>  	NULL,
+>  };
+> =20
+>=20
+
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart5776929.DvuYhMxLoT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmY7Rx0ACgkQil/iNcg8
+M0sozhAAwBKs7R6wasSZh5RwWS9z9V5g2aOMfwlMXNbXWMxVHZsq8E/rncUtUJ5b
+jjjvAYGBFcW4Z+5WWU8OTQr82MpTiXfPs7A5lSz6vbrkuF2dGfWPdrXFmA1xv1Nw
+SrDjQSNkzB7U3/wUFjADu5yyaORBMRrCGCl6CktG4Cnoe6pRi1tLndNqPjp7xiHm
+blZJTNvs7V7KV2tTpMPYgPKAadkuMfEURI7grBqe0kfy8r1z6HHQmkJVHCfoa3RF
+oHiwFcBBZJ3bAUG2ps/V8dsNcStYWvgDQHuKMO1ZGwvx0L3JMhY8hKFIzb92i2El
+51u9zAa81QZEnEr4BjvqRIdRuH+4QkQ07gXjsmfxQwGmhJgpGTlqUoHBLUXNyD6U
+QZpfWsltaKpLf3ilhc/OTXclHe4eg3/hMhNUNTCg1ThKKgSRG/QCLE3vS80F2tdL
+Vc1RehzmUdFfxLPN+6In+w+i9eQqzrKelXME1NGOoETKyLtxu4UvUOxw+Ux8/jTD
+Dh9mRRFAaeiPuKnH+Eu7X1dCoCZ9flByhOJKABZO9Q3LQ3bvNUzJHEHVDsSmiKZ0
+2a0FkEuC/kRwUnr1rARFjHzxoFZh94gMewyqCCehgAH1iB4dYNzHZHkDXJi1z/dD
+IrwctWnfVHmwTLQmx7u/4qXoTwvoxAyf4QDvhcZIlq4D5CYz1g0=
+=SI1r
+-----END PGP SIGNATURE-----
+
+--nextPart5776929.DvuYhMxLoT--
 
 
 
-On 2024/5/8 16:53, Ryan Roberts wrote:
-> On 08/05/2024 04:44, Baolin Wang wrote:
->>
->>
->> On 2024/5/7 18:37, Ryan Roberts wrote:
->>> On 06/05/2024 09:46, Baolin Wang wrote:
->>>> Add large folio mapping establishment support for finish_fault() as a
->>>> preparation,
->>>> to support multi-size THP allocation of anonymous shmem pages in the following
->>>> patches.
->>>>
->>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> ---
->>>>    mm/memory.c | 43 +++++++++++++++++++++++++++++++++----------
->>>>    1 file changed, 33 insertions(+), 10 deletions(-)
->>>>
->>>> diff --git a/mm/memory.c b/mm/memory.c
->>>> index eea6e4984eae..936377220b77 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -4747,9 +4747,12 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>>>    {
->>>>        struct vm_area_struct *vma = vmf->vma;
->>>>        struct page *page;
->>>> +    struct folio *folio;
->>>>        vm_fault_t ret;
->>>>        bool is_cow = (vmf->flags & FAULT_FLAG_WRITE) &&
->>>>                  !(vma->vm_flags & VM_SHARED);
->>>> +    int type, nr_pages, i;
->>>> +    unsigned long addr = vmf->address;
->>>>          /* Did we COW the page? */
->>>>        if (is_cow)
->>>> @@ -4780,24 +4783,44 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>>>                return VM_FAULT_OOM;
->>>>        }
->>>>    +    folio = page_folio(page);
->>>> +    nr_pages = folio_nr_pages(folio);
->>>> +
->>>> +    if (unlikely(userfaultfd_armed(vma))) {
->>>> +        nr_pages = 1;
->>>> +    } else if (nr_pages > 1) {
->>>> +        unsigned long start = ALIGN_DOWN(vmf->address, nr_pages * PAGE_SIZE);
->>>> +        unsigned long end = start + nr_pages * PAGE_SIZE;
->>>> +
->>>> +        /* In case the folio size in page cache beyond the VMA limits. */
->>>> +        addr = max(start, vma->vm_start);
->>>> +        nr_pages = (min(end, vma->vm_end) - addr) >> PAGE_SHIFT;
->>>> +
->>>> +        page = folio_page(folio, (addr - start) >> PAGE_SHIFT);
->>>
->>> I still don't really follow the logic in this else if block. Isn't it possible
->>> that finish_fault() gets called with a page from a folio that isn't aligned with
->>> vmf->address?
->>>
->>> For example, let's say we have a file who's size is 64K and which is cached in a
->>> single large folio in the page cache. But the file is mapped into a process at
->>> VA 16K to 80K. Let's say we fault on the first page (VA=16K). You will calculate
->>
->> For shmem, this doesn't happen because the VA is aligned with the hugepage size
->> in the shmem_get_unmapped_area() function. See patch 7.
-> 
-> Certainly agree that shmem can always make sure that it packs a vma in a way
-> such that its folios are naturally aligned in VA when faulting in memory. If you
-> mremap it, that alignment will be lost; I don't think that would be a problem
-
-When mremap it, it will also call shmem_get_unmapped_area() to align the 
-VA, but for mremap() with MAP_FIXED flag as David pointed out, yes, this 
-patch may be not work perfectly.
-
-> for a single process; mremap will take care of moving the ptes correctly and
-> this path is not involved.
-> 
-> But what about the case when a process mmaps a shmem region, then forks, then
-> the child mremaps the shmem region. Then the parent faults in a THP into the
-> region (nicely aligned). Then the child faults in the same offset in the region
-> and gets the THP that the parent allocated; that THP will be aligned in the
-> parent's VM space but not in the child's.
-
-Sorry, I did not get your point here. IIUC, the child's VA will also be 
-aligned if the child mremap is not set MAP_FIXED, since the child's 
-mremap will still call shmem_get_unmapped_area() to find an aligned new 
-VA. Please correct me if I missed your point.
-
->>> start=0 and end=64K I think?
->>
->> Yes. Unfortunately, some file systems that support large mappings do not perform
->> alignment for multi-size THP (non-PMD sized, for example: 64K). I think this
->> requires modification to __get_unmapped_area--->thp_get_unmapped_area_vmflags()
->> or file->f_op->get_unmapped_area() to align VA for multi-size THP in future.
-> 
-> By nature of the fact that a file mapping is shared between multiple processes
-> and each process can map it where ever it wants down to 1 page granularity, its
-> impossible for any THP containing a part of that file to be VA-aligned in every
-> process it is mapped in.
-
-Yes, so let me re-polish this patch. Thanks.
-
->> So before adding that VA alignment changes, only allow building the large folio
->> mapping for anonymous shmem:
->>
->> diff --git a/mm/memory.c b/mm/memory.c
->> index 936377220b77..9e4d51826d23 100644
->> --- a/mm/memory.c
->> +++ b/mm/memory.c
->> @@ -4786,7 +4786,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>          folio = page_folio(page);
->>          nr_pages = folio_nr_pages(folio);
->>
->> -       if (unlikely(userfaultfd_armed(vma))) {
->> +       if (unlikely(userfaultfd_armed(vma)) || !vma_is_anon_shmem(vma)) {
-> 
-> If the above theoretical flow for fork & mremap is valid, then I don't think
-> this is sufficient.
-> 
->>                  nr_pages = 1;
->>          } else if (nr_pages > 1) {
->>                  unsigned long start = ALIGN_DOWN(vmf->address, nr_pages *
->> PAGE_SIZE);
->>
->>> Additionally, I think this path will end up mapping the entire folio (as long as
->>> it fits in the VMA). But this bypasses the fault-around configuration. As I
->>> think I mentioned against the RFC, this will inflate the RSS of the process and
->>> can cause behavioural changes as a result. I believe the current advice is to
->>> disable fault-around to prevent this kind of bloat when needed.
->>
->> With above change, I do not think this is a problem? since users already want to
->> use mTHP for anonymous shmem.
->>
->>> It might be that you need a special variant of finish_fault() for shmem?
->>>
->>>
->>>> +    }
->>>>        vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
->>>> -                      vmf->address, &vmf->ptl);
->>>> +                       addr, &vmf->ptl);
->>>>        if (!vmf->pte)
->>>>            return VM_FAULT_NOPAGE;
->>>>          /* Re-check under ptl */
->>>> -    if (likely(!vmf_pte_changed(vmf))) {
->>>> -        struct folio *folio = page_folio(page);
->>>> -        int type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
->>>> -
->>>> -        set_pte_range(vmf, folio, page, 1, vmf->address);
->>>> -        add_mm_counter(vma->vm_mm, type, 1);
->>>> -        ret = 0;
->>>> -    } else {
->>>> -        update_mmu_tlb(vma, vmf->address, vmf->pte);
->>>> +    if (nr_pages == 1 && unlikely(vmf_pte_changed(vmf))) {
->>>> +        update_mmu_tlb(vma, addr, vmf->pte);
->>>> +        ret = VM_FAULT_NOPAGE;
->>>> +        goto unlock;
->>>> +    } else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
->>>> +        for (i = 0; i < nr_pages; i++)
->>>> +            update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pte + i);
->>>>            ret = VM_FAULT_NOPAGE;
->>>> +        goto unlock;
->>>>        }
->>>>    +    set_pte_range(vmf, folio, page, nr_pages, addr);
->>>> +    type = is_cow ? MM_ANONPAGES : mm_counter_file(folio);
->>>> +    add_mm_counter(vma->vm_mm, type, nr_pages);
->>>> +    ret = 0;
->>>> +
->>>> +unlock:
->>>>        pte_unmap_unlock(vmf->pte, vmf->ptl);
->>>>        return ret;
->>>>    }
 
