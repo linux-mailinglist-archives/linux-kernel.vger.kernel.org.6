@@ -1,110 +1,116 @@
-Return-Path: <linux-kernel+bounces-173430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFEA8C0052
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6BD8C002A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 16:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5E61C213B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A99E428C0EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981721272B4;
-	Wed,  8 May 2024 14:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5866D86257;
+	Wed,  8 May 2024 14:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="XNGGDpS0"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tk+36egP"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB2E8625F;
-	Wed,  8 May 2024 14:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0696D12FF99
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 14:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715179393; cv=none; b=Vx/gJGvgCXSxUllV9geCWfb7It1wcRO9iTal28IoDgzOmkY5KPyU9g3J3CZaXYdQqnvGTbDpuB0oKMcz/vc43WwBCx6uHaJMcwufcJ//YsXD/hyf3pVDLZbPMjEYJslGHnFTNcS/KS/jFrp7A/c0xNwdVk8tChgq8yROYD1qcUU=
+	t=1715178886; cv=none; b=uK+IqUDcSBPlQDxtFtGKHGXHndU9BtcylMk+kGficuNqQ56cerhwLUPAW3PH6TTyvUXdgsKCwrd/eNlgU/TwtGnYvlWHdwV8TuMs2+m7XW6feHsmV9wE+9prpqKTlINEEpgESf/nIhtu/0Hh1TQ0C5w6F47y+uZAYRxV6QapjVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715179393; c=relaxed/simple;
-	bh=hRQM6pa4uOlYJlXbLpb90EuOE7VS+21UzKU3uMNSqcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f/9OqIQowo0jghQYu5ji14qhWr7Xe4Ybvci3TKBufsOiArATIlLfUQwhBWUxXHiFbCpJdRP0yNgPnyQWZZbjvYz8VnebT64oIsY0mMzdkVnlgQGOhjSew5xtBNeCgGHHlUZ6u5l62R6L1bNdqKTfpBBHd19c3zD8lcYH3KuZVTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=XNGGDpS0; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id EBFE6600A2;
-	Wed,  8 May 2024 14:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1715178866;
-	bh=hRQM6pa4uOlYJlXbLpb90EuOE7VS+21UzKU3uMNSqcc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XNGGDpS0ikIorNWcFCAqFXZFSoEZobaoZZSuxKak2Ye1Lj3zeTwprjOGPhG6NumDJ
-	 ieUduAKpyFrteW8F7aWi/Clx84pVPFoN75sP1xSEiIUFjmmuTxCmD7PWyXe6bry8aQ
-	 kh5eobe2q0x4a/RIY6pCVsjNWGW4nPoYWg49547603FleV+AldkaZ+uRdEChz7xRfw
-	 Dm7pMGKYV/tnrfzTPRxnbQifaTifRYZ9EHW1Bf3RJ3NeOlHxPsyzHMbKUM06xO+yjB
-	 wzVQ7buMdNKkkbPGG7p4wJ2a9OMaynN0xlcgVHEhMkyXSdQ1g/f6ju7xQFLZzzNhMX
-	 thvhYwE9hJuoA==
-Received: by x201s (Postfix, from userid 1000)
-	id 8F1AC20916D; Wed, 08 May 2024 14:34:07 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: netdev@vger.kernel.org
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: [PATCH net-next v2 14/14] net: qede: use extack in qede_parse_actions()
-Date: Wed,  8 May 2024 14:34:02 +0000
-Message-ID: <20240508143404.95901-15-ast@fiberby.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240508143404.95901-1-ast@fiberby.net>
-References: <20240508143404.95901-1-ast@fiberby.net>
+	s=arc-20240116; t=1715178886; c=relaxed/simple;
+	bh=yDTHGWifoYnCGHAM/Y88fZXygAlEP5oTp5WSlDuAQIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IppcFwpcAw+Ap+CrNoQno9vgmBBsR0sePKYcy4mZS5mBoohNtoJoMPfxf8STYVIFRUifyrjlgohgZOPHhT3gZGAbrTIKLEyXbuAFRTWPeuvKGJJ0LZU2pBF7H1TlNSqNvYIZaKg6Atpx6bsR5CcJXP2LotqeTkO+U5FbZIV64Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tk+36egP; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3c989d4e838so318992b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 07:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715178884; x=1715783684; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=siRVx/snUNjFKCrOeXvo0bmHNPIKe0N1mufovHth3gA=;
+        b=Tk+36egPwrdCTfCWyCWZ2q38hd4CFboyCElCt8hTcaiwWCnrbhuVJAKcutD99x4bcS
+         dSzPAYVoJO4z7W1YPIMmcoPw4+xxXXgj8GVM8RIu/bkyVKdLIX3btfwDrfreo4s44Ieq
+         eeWYL+UTH9hS7kGDSiu4k+DyLk4dq08wKANf1lLxQa5MVwp4wXfc2eHWDOyTnM4KnMFa
+         GO1H3NOpK13Ovaa82aEThPOZP8MTpLLF5IM7/XdMc1VhZYHiAzuwMOWCA/R4cWMmMu0p
+         Qx18wJJn0i6F6/Y5fJuzwi46O0L0Zw5UdcLZKxI0ReZaexk94qSxmouigld4P7lUiuE7
+         Z2dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715178884; x=1715783684;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=siRVx/snUNjFKCrOeXvo0bmHNPIKe0N1mufovHth3gA=;
+        b=P6WubIHucvPV99shvAJ13TgGgwepkQBo0HBEfQYk7rNFlOZZXrdi0mh+qcMJUxWsq9
+         tUeSfNsC89EBkzhfJYqi5U/9Gl7t6x1QIlYjySbnBRygmn/vu/zP63caf1GACvpJyKqQ
+         iv0fQhnQByJJG9SfUEwZYMNngCHsOOSYhnnUVGOKEjvNhOe4UebAOj6tRcq3fOfCtTYt
+         vDhwdTnqEjJkGcMhNDMwew5DyPjRWH7i09mjPxia/CrTZqmFygzp+Y6QWtRqeVFn/Y98
+         bdlk64f5mtExUjqDeLHCSeeWYzrras588FerdJ5tORVeET00vXDi/lWC1IgxFkSXKuSe
+         vwBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqRFUU0NFF3UD77CWVxG3I/rTPA2rRYO1fd7wmU0Ldh4xhS3fsfX6rGvqaAjtJdEDeant/jk553xWl3A4UOsvv8ZGsBzxDtxqVBVS
+X-Gm-Message-State: AOJu0YzG/yiWqxKijMV2LiLWP9BMHpclKrtUQv6/P5aSWpGzU6wgEH3u
+	aiPXWr0cqW5AnlnDNpVKKtO92JiJgxnIk6wHk9g0LGZuHPRht7emClQOXjrnczbe8OwAFEeI7iL
+	uVMttaQ2MrRAAHuFcScfWtHzpuSl/wvWXrA7AOA==
+X-Google-Smtp-Source: AGHT+IGumxShjVByOQe/R35U/8zQPy0g7+iBzxrPPaEkNW4QM0ked4asufN+qzk9wWvStxQh+HGs93iE8sH2Y6Jxa2U=
+X-Received: by 2002:a05:6808:124e:b0:3c9:73a2:6862 with SMTP id
+ 5614622812f47-3c9852c5e01mr3076178b6e.31.1715178884096; Wed, 08 May 2024
+ 07:34:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240503075619.394467-1-mpe@ellerman.id.au>
+In-Reply-To: <20240503075619.394467-1-mpe@ellerman.id.au>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 8 May 2024 20:04:31 +0530
+Message-ID: <CA+G9fYvo4--rSTHC1Vxdbbe62O6FhL_P2XdcF2Q7ZRku8HjpGg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] powerpc/io: Avoid clang null pointer arithmetic warnings
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, arnd@arndb.de, linux-kernel@vger.kernel.org, 
+	nathan@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Convert DP_NOTICE/DP_INFO to NL_SET_ERR_MSG_MOD.
+On Fri, 3 May 2024 at 13:26, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> With -Wextra clang warns about pointer arithmetic using a null pointer.
+> When building with CONFIG_PCI=n, that triggers a warning in the IO
+> accessors, eg:
+>
+>   In file included from linux/arch/powerpc/include/asm/io.h:672:
+>   linux/arch/powerpc/include/asm/io-defs.h:23:1: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>      23 | DEF_PCI_AC_RET(inb, u8, (unsigned long port), (port), pio, port)
+>         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   ...
+>   linux/arch/powerpc/include/asm/io.h:591:53: note: expanded from macro '__do_inb'
+>     591 | #define __do_inb(port)          readb((PCI_IO_ADDR)_IO_BASE + port);
+>         |                                       ~~~~~~~~~~~~~~~~~~~~~ ^
+>
+> That is because when CONFIG_PCI=n, _IO_BASE is defined as 0.
+>
+> Although _IO_BASE is defined as plain 0, the cast (PCI_IO_ADDR) converts
+> it to void * before the addition with port happens.
+>
+> Instead the addition can be done first, and then the cast. The resulting
+> value will be the same, but avoids the warning, and also avoids void
+> pointer arithmetic which is apparently non-standard.
+>
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Closes: https://lore.kernel.org/all/CA+G9fYtEh8zmq8k8wE-8RZwW-Qr927RLTn+KqGnq1F=ptaaNsA@mail.gmail.com
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 
-Keep edev around for use with QEDE_RSS_COUNT().
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Only compile tested.
-
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- drivers/net/ethernet/qlogic/qede/qede_filter.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/qlogic/qede/qede_filter.c b/drivers/net/ethernet/qlogic/qede/qede_filter.c
-index e616855d8891..9c72febc6a42 100644
---- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
-+++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
-@@ -1671,7 +1671,7 @@ static int qede_parse_actions(struct qede_dev *edev,
- 	int i;
- 
- 	if (!flow_action_has_entries(flow_action)) {
--		DP_NOTICE(edev, "No actions received\n");
-+		NL_SET_ERR_MSG_MOD(extack, "No actions received");
- 		return -EINVAL;
- 	}
- 
-@@ -1687,7 +1687,8 @@ static int qede_parse_actions(struct qede_dev *edev,
- 				break;
- 
- 			if (act->queue.index >= QEDE_RSS_COUNT(edev)) {
--				DP_INFO(edev, "Queue out-of-bounds\n");
-+				NL_SET_ERR_MSG_MOD(extack,
-+						   "Queue out-of-bounds");
- 				return -EINVAL;
- 			}
- 			break;
--- 
-2.43.0
-
+--
+Linaro LKFT
+https://lkft.linaro.org
 
