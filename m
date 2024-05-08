@@ -1,208 +1,184 @@
-Return-Path: <linux-kernel+bounces-172993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1D18BF9D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:51:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 105AA8BF9DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 855462819A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 415391C21C3D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9F077620;
-	Wed,  8 May 2024 09:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bFSwIteg"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB4F7C097;
+	Wed,  8 May 2024 09:54:37 +0000 (UTC)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6483FE3F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 09:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080ED54679;
+	Wed,  8 May 2024 09:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715161912; cv=none; b=toCZnrIQVeFXS1j8Q5/Clk8CTrpqY1pb8C/hBP71YvV7tkztnnzqZODzBP/llJOek2/fBA0anua/gQg16geyOG2aUSB/1kAmwzPajsZhMG2rMoNzPTLGuBzAGDcykm2gGFuOIPcAlMC5qh7+YUhQSKlUHd/QWwoKlo6e0BQdlxE=
+	t=1715162076; cv=none; b=hbkiy7mhRIlKA9t5amG8Tt00jVGjdVAdxnIzuXUuP2ISx85j9atNDRB153iwQdIUA9dxZQQu2HsixLYxkCDUvNaxGWYJMHqQnalpjuNXHarq91y89GpmsPiXmgKEX7wLhvJGF6VzibalrYQ4aOcxQxLidFp+amjAUUQhfb8WpvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715161912; c=relaxed/simple;
-	bh=YOsEbjWcfZIpD15f+HkcOc4BQjQkE+PFSvOypW0kM/Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bqm7YsXrpRGIIqH76c15uoYQp4WLkbryAH//SiROc0Sx/xcL5SQP/H1l4vhwPaIQOpzeUXtKvpPF+wqDeFoxQ/Y1LMh2xH3/rupxGFfr9YbuN+EY+CHHfj0vy8ylLZPyitmr61eURZgqaGEuHTjnteDvUZk02qnYU0kQ3VeQ+iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bFSwIteg; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 9416d58e0d2011efb92737409a0e9459-20240508
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=EpbT5fkgin4b8SqQc5adWxDC5bZ2ttTXku30oyuQHbw=;
-	b=bFSwItegwhH7VnuTFtnAqYOAtfLYcKtr2df+Ukm1X2pAdf7MtT8plA9bjhH26C420GOkPWT+aLD/37abeBL3850QrVbXMlN7dnFl9OtzF2IXoO+v9f9fSyvMEMkEG7z8HjcXwQfXQurr32CtaZAFgFgcM7glNxHk6nunfw8iRRc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:dd9d5ad5-4e05-4884-9de1-38c3080c3812,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:a5b68092-e2c0-40b0-a8fe-7c7e47299109,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 9416d58e0d2011efb92737409a0e9459-20240508
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 583157918; Wed, 08 May 2024 17:51:44 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 8 May 2024 17:51:43 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 8 May 2024 17:51:43 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alexandre Mergnat <amergnat@baylibre.com>, Jason-ch Chen
-	<jason-ch.chen@mediatek.com>, Johnson Wang <johnson.wang@mediatek.com>,
-	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Singo Chang
-	<singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>, Shawn Sung
-	<shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Fei Shao
-	<fshao@chromium.org>
-Subject: [PATCH v2] mailbox: mtk-cmdq: Fix sleeping function called from invalid context
-Date: Wed, 8 May 2024 17:51:43 +0800
-Message-ID: <20240508095143.12023-1-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1715162076; c=relaxed/simple;
+	bh=FfA5dF31garZW/tk3DQl+spTHY7RrowSCt5gDZ9Om5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EL3URdUFxNswfWu89eqgUIrgtfQ/sJ6hROy9rHX5NYs3BShUlm6JeUzTEPWLbbemddnMzGsyJcgM4DwAotsg0V07awZEfniFke+DkzHomIm2EzzcbDHelPnrVD2KMJ93ARL4yIvL8RZU9cgCb8ByllPQgl5Zf9UwsYIbzIURu0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f3761c96aso5359673e87.3;
+        Wed, 08 May 2024 02:54:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715162073; x=1715766873;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sD2/6sPlr7JEw5uhBN364YYJFLTnmVMqOaL4BzfWeD8=;
+        b=JK9dtjL3KcLGjrM7+kmQQsDY0Y5AqzmConde9oSepmQmv7OIfQymaJjU+w/+DUJa+v
+         Z5hghzEAynwFe1JwOL/AHM9ObQDy7TFA1W/nOUPf4UK6+BfIfRb8DsjZu3NqUNTDOb49
+         JC7R0Gf/Tg2ggCWgFBTO4Pl0//WFlxiiuhyYxs71tDYhZZsWFFZ36MD3hHXnrIJSn9pq
+         7oxrWUt86U63tv+YLjwfOc640O4umls3wXNIHGxOk2i0dnjHfoq94zk5VrYjBAhnawsh
+         kzMQUNVn5a/9ofUMsObz2uh7zRAelLAYlDwrwyFgtY4zCI1OGQXqpovH5mID27mlpTXm
+         yRgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaVnDQcksz/jsxekU//CEQIjcPRMYzjSX4DPSmHhWS9NjEtnX92F+JvAGCk+bTPFPdOm000lC6pm9wCh984+xGwsQxIFsSigPKIFdD/LUqlxMKwtIlYOgYi0lZAPysEHNEtYlVELVL7yUah44=
+X-Gm-Message-State: AOJu0YywGncSVmDtpr54G2+potKreOQsD2wQQa8aMZ8KRG2H4T2sLXBh
+	yv0j3HRGEbJnYZfyD2XB/DAFuhl6Z02Mf8jAnnbBynvcpRM+NsvTmMgtPg==
+X-Google-Smtp-Source: AGHT+IHmCf5LAkl84GP171Zeb9C+hU+YlcxP1NLnZdtmzr65qLJvoOCAVJfs5QJwFe5Cm/IGPVi37w==
+X-Received: by 2002:ac2:5929:0:b0:51d:a1ab:98bc with SMTP id 2adb3069b0e04-5217c3733cfmr1876163e87.2.1715162072909;
+        Wed, 08 May 2024 02:54:32 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-119.fbsv.net. [2a03:2880:30ff:77::face:b00c])
+        by smtp.gmail.com with ESMTPSA id d19-20020a17090648d300b00a5a06effd3fsm379569ejt.221.2024.05.08.02.54.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 02:54:32 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: horms@kernel.org,
+	Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS)),
+	ath12k@lists.infradead.org (open list:QUALCOMM ATH12K WIRELESS DRIVER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH wireless-next v2] wifi: ath12k: allocate dummy net_device dynamically
+Date: Wed,  8 May 2024 02:54:09 -0700
+Message-ID: <20240508095410.1923198-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 8bit
 
-When we run kernel with lockdebug option, we will get the BUG below:
-[  106.692124] BUG: sleeping function called from invalid context at drivers/base/power/runtime.c:1164
-[  106.692190] in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 3616, name: kworker/u17:3
-[  106.692226] preempt_count: 1, expected: 0
-[  106.692254] RCU nest depth: 0, expected: 0
-[  106.692282] INFO: lockdep is turned off.
-[  106.692306] irq event stamp: 0
-[  106.692331] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-[  106.692376] hardirqs last disabled at (0): [<ffffffee15d37fa0>] copy_process+0xc90/0x2ac0
-[  106.692429] softirqs last  enabled at (0): [<ffffffee15d37fc4>] copy_process+0xcb4/0x2ac0
-[  106.692473] softirqs last disabled at (0): [<0000000000000000>] 0x0
-[  106.692513] CPU: 1 PID: 3616 Comm: kworker/u17:3 Not tainted 6.1.87-lockdep-14133-g26e933aca785 #1 6839942e1cf34914b0a366137843dd2366f52aa9
-[  106.692556] Hardware name: Google Ciri sku0/unprovisioned board (DT)
-[  106.692586] Workqueue: imgsys_runner imgsys_runner_func
-[  106.692638] Call trace:
-[  106.692662]  dump_backtrace+0x100/0x120
-[  106.692702]  show_stack+0x20/0x2c
-[  106.692737]  dump_stack_lvl+0x84/0xb4
-[  106.692775]  dump_stack+0x18/0x48
-[  106.692809]  __might_resched+0x354/0x4c0
-[  106.692847]  __might_sleep+0x98/0xe4
-[  106.692883]  __pm_runtime_resume+0x70/0x124
-[  106.692921]  cmdq_mbox_send_data+0xe4/0xb1c
-[  106.692964]  msg_submit+0x194/0x2dc
-[  106.693003]  mbox_send_message+0x190/0x330
-[  106.693043]  imgsys_cmdq_sendtask+0x1618/0x2224
-[  106.693082]  imgsys_runner_func+0xac/0x11c
-[  106.693118]  process_one_work+0x638/0xf84
-[  106.693158]  worker_thread+0x808/0xcd0
-[  106.693196]  kthread+0x24c/0x324
-[  106.693231]  ret_from_fork+0x10/0x20
+Embedding net_device into structures prohibits the usage of flexible
+arrays in the net_device structure. For more details, see the discussion
+at [1].
 
-We found that there is a spin_lock_irqsave protection in msg_submit()
-of mailbox.c and it is in the atomic context.
-So when cmdq driver calls pm_runtime_get_sync() in cmdq_mbox_send_data(),
-it will get this BUG report.
+Un-embed the net_device from struct ath12k_ext_irq_grp by converting it
+into a pointer. Then use the leverage alloc_netdev_dummy() to allocate
+the net_device object at ath12k_pci_ext_irq_config().
 
-1. Change pm_runtime_get_sync() to pm_runtime_get() to avoid using sleep
-   in atomic context.
-2. Move clk_bulk_enable() outside cmdq_runtime_resume() to ensure GCE
-   clocks are enabled before configuring GCE register.
-3. Add used_count to avoid cmdq_runtime_suspend() being called before
-   calling cmdq_runtime_resume().
+The free of the device occurs at ath12k_pci_free_ext_irq().
 
-Fixes: 8afe816b0c99 ("mailbox: mtk-cmdq-mailbox: Implement Runtime PM with autosuspend")
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+[1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+Changelog:
+ v2:
+	* Free all the allocated dummy devices if one of them fails to
+	  be allocated (in ath12k_pci_ext_irq_config()), as
+	  pointed by by Simon Horman.
+---
+ drivers/net/wireless/ath/ath12k/core.h |  2 +-
+ drivers/net/wireless/ath/ath12k/pci.c  | 27 +++++++++++++++++++++-----
+ 2 files changed, 23 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 033aff11f87c..b50f42e69aab 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -82,6 +82,7 @@ struct cmdq {
- 	const struct gce_plat	*pdata;
- 	struct cmdq_thread	*thread;
- 	struct clk_bulk_data	clocks[CMDQ_GCE_NUM_MAX];
-+	atomic_t		used_count;
- 	bool			suspended;
+diff --git a/drivers/net/wireless/ath/ath12k/core.h b/drivers/net/wireless/ath/ath12k/core.h
+index 47dde4401210..6671219c3567 100644
+--- a/drivers/net/wireless/ath/ath12k/core.h
++++ b/drivers/net/wireless/ath/ath12k/core.h
+@@ -146,7 +146,7 @@ struct ath12k_ext_irq_grp {
+ 	u32 grp_id;
+ 	u64 timestamp;
+ 	struct napi_struct napi;
+-	struct net_device napi_ndev;
++	struct net_device *napi_ndev;
  };
  
-@@ -317,14 +318,21 @@ static int cmdq_runtime_resume(struct device *dev)
- {
- 	struct cmdq *cmdq = dev_get_drvdata(dev);
+ struct ath12k_smbios_bdf {
+diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
+index 16af046c33d9..ac75e8e3916b 100644
+--- a/drivers/net/wireless/ath/ath12k/pci.c
++++ b/drivers/net/wireless/ath/ath12k/pci.c
+@@ -350,6 +350,7 @@ static void ath12k_pci_free_ext_irq(struct ath12k_base *ab)
+ 			free_irq(ab->irq_num[irq_grp->irqs[j]], irq_grp);
  
--	return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
-+	atomic_inc(&cmdq->used_count);
-+	return 0;
+ 		netif_napi_del(&irq_grp->napi);
++		free_netdev(irq_grp->napi_ndev);
+ 	}
  }
  
- static int cmdq_runtime_suspend(struct device *dev)
+@@ -560,8 +561,9 @@ static irqreturn_t ath12k_pci_ext_interrupt_handler(int irq, void *arg)
+ static int ath12k_pci_ext_irq_config(struct ath12k_base *ab)
  {
- 	struct cmdq *cmdq = dev_get_drvdata(dev);
+ 	struct ath12k_pci *ab_pci = ath12k_pci_priv(ab);
+-	int i, j, ret, num_vectors = 0;
++	int i, j, n, ret, num_vectors = 0;
+ 	u32 user_base_data = 0, base_vector = 0, base_idx;
++	struct ath12k_ext_irq_grp *irq_grp;
  
-+	if (atomic_read(&cmdq->used_count) == 0) {
-+		dev_warn(dev, "%s when used_count is 0!", __func__);
-+		return -EINVAL;
-+	}
+ 	base_idx = ATH12K_PCI_IRQ_CE0_OFFSET + CE_COUNT_MAX;
+ 	ret = ath12k_pci_get_user_msi_assignment(ab, "DP",
+@@ -572,13 +574,18 @@ static int ath12k_pci_ext_irq_config(struct ath12k_base *ab)
+ 		return ret;
+ 
+ 	for (i = 0; i < ATH12K_EXT_IRQ_GRP_NUM_MAX; i++) {
+-		struct ath12k_ext_irq_grp *irq_grp = &ab->ext_irq_grp[i];
++		irq_grp = &ab->ext_irq_grp[i];
+ 		u32 num_irq = 0;
+ 
+ 		irq_grp->ab = ab;
+ 		irq_grp->grp_id = i;
+-		init_dummy_netdev(&irq_grp->napi_ndev);
+-		netif_napi_add(&irq_grp->napi_ndev, &irq_grp->napi,
++		irq_grp->napi_ndev = alloc_netdev_dummy(0);
++		if (!irq_grp->napi_ndev) {
++			ret = -ENOMEM;
++			goto fail_allocate;
++		}
 +
- 	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
-+	atomic_dec(&cmdq->used_count);
++		netif_napi_add(irq_grp->napi_ndev, &irq_grp->napi,
+ 			       ath12k_pci_ext_grp_napi_poll);
+ 
+ 		if (ab->hw_params->ring_mask->tx[i] ||
+@@ -611,13 +618,23 @@ static int ath12k_pci_ext_irq_config(struct ath12k_base *ab)
+ 			if (ret) {
+ 				ath12k_err(ab, "failed request irq %d: %d\n",
+ 					   vector, ret);
+-				return ret;
++				goto fail_request;
+ 			}
+ 		}
+ 		ath12k_pci_ext_grp_disable(irq_grp);
+ 	}
+ 
  	return 0;
++
++fail_request:
++	/* i ->napi_ndev was properly allocated. Free it also */
++	i += 1;
++fail_allocate:
++	for (n = 0; n < i; n++) {
++		irq_grp = &ab->ext_irq_grp[n];
++		free_netdev(irq_grp->napi_ndev);
++	}
++	return ret;
  }
  
-@@ -392,9 +400,8 @@ static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
- 	/* Client should not flush new tasks if suspended. */
- 	WARN_ON(cmdq->suspended);
- 
--	ret = pm_runtime_get_sync(cmdq->mbox.dev);
--	if (ret < 0)
--		return ret;
-+	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
-+	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
- 
- 	task = kzalloc(sizeof(*task), GFP_ATOMIC);
- 	if (!task) {
-@@ -465,7 +472,8 @@ static void cmdq_mbox_shutdown(struct mbox_chan *chan)
- 	struct cmdq_task *task, *tmp;
- 	unsigned long flags;
- 
--	WARN_ON(pm_runtime_get_sync(cmdq->mbox.dev) < 0);
-+	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
-+	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
- 
- 	spin_lock_irqsave(&thread->chan->lock, flags);
- 	if (list_empty(&thread->task_busy_list))
-@@ -507,11 +515,9 @@ static int cmdq_mbox_flush(struct mbox_chan *chan, unsigned long timeout)
- 	struct cmdq_task *task, *tmp;
- 	unsigned long flags;
- 	u32 enable;
--	int ret;
- 
--	ret = pm_runtime_get_sync(cmdq->mbox.dev);
--	if (ret < 0)
--		return ret;
-+	WARN_ON(pm_runtime_get(cmdq->mbox.dev) < 0);
-+	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
- 
- 	spin_lock_irqsave(&thread->chan->lock, flags);
- 	if (list_empty(&thread->task_busy_list))
+ static int ath12k_pci_set_irq_affinity_hint(struct ath12k_pci *ab_pci,
 -- 
-2.18.0
+2.43.0
 
 
