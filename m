@@ -1,161 +1,178 @@
-Return-Path: <linux-kernel+bounces-173854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF76F8C067D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:44:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE6A8C067F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 23:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DC8282E4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:44:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 415EFB20B6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2F1327F0;
-	Wed,  8 May 2024 21:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45652131BAF;
+	Wed,  8 May 2024 21:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p7LissJW"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VxzklLl9"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2069.outbound.protection.outlook.com [40.107.100.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020F513281A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715204669; cv=none; b=h9uUGFx57QqHtbm+15FWXZcVhbZOOYTcPmluy2g1LqDbZMAx4OQRu7IRjKFYs3Grfl4dl+11n8otWD9Vh1ikCyBMMFJN6PaKTVXXqYHeUGg7Qaqw/5kgiMPp5Uo18ddku2Q8VNSFNh+N2D608qSZLX4MRz4GLvBmFHwnRzocx/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715204669; c=relaxed/simple;
-	bh=+GqhfbCWo1/rL5WMUZWC0dKWAFYfQARQY4h2Wx1maBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XUBWnscdOMG6ek2aU8CClRNTdL/N9H9g0dIcSq62LzYds9yMV6HV8qM06e6VE1mUucm1F3GeqYazoLC9gL/FZbR3PEbDTN0IgY6wftamEIUDLjAfwtfJxR7XrYIyYYme8kSGRBz3R1CRf5MEZLDucZ1ff3eaxWuiOKKhrCbKfu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p7LissJW; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43d55133609so39751cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 14:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715204660; x=1715809460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WNz33LRukOuC2TAVQ91flMmJhD+luZs+qYkSeJGKPFs=;
-        b=p7LissJW2l94uE6++IZCGBm5cIuf+2Bq4sm0wKUNlGmpgkbqmhxNs1ljG+MUK2nAH8
-         /AtMnTiZ8GdU5CI4QFdNG1mCvk4zgPWtf7qqr4h+hEJUOjR0Arx/ZSATLskniHad657Y
-         cbSZyTwuSt0lZu5cBMu/Kda8R/a5NjZsVbJ8R+gl8SkYv1+xGg0opaOJI2QL4TU6lmjk
-         GCcewSBdfESwyJAOP1gUiUBpe7AS29Eicf49WWeFDIdlmN62DaZ+RHpk2ywWiP6YsHMn
-         h1aWkI+GFhAeivGgkg/ZvZsIElSd8UyzzunHiZ6i5AkUHWgs4MpfkjS4O4Lg8YoLFAXi
-         pwyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715204660; x=1715809460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WNz33LRukOuC2TAVQ91flMmJhD+luZs+qYkSeJGKPFs=;
-        b=qR+5JY3+aMDQLDEg+XVAZkWDmBAUtu3Hybh1SM26x0mX5dKa+q7+baf+DOBkn/iPyU
-         HxNV62m4MFWyF7wrA2ihS3DgLPnatE8wnhp5xQ7sZ3utyX4FaWwC5SUZ+1FVXLRD5UoZ
-         +BHeJ4dU6aSaDFf/QtQIcFwADqXEhX7OBXmPkXq+mJWoyDqHrvwZ7WYBw5Cwt8OTbXWY
-         +cwcznc5pRvKGUAWF5+L1eF763X7ht6yNivbV31efjkjetkPI3ZsySTwnv8/eVmqVgTh
-         4G2Dx7gxR3itd325S+VKBxz1vbAOHPvLUgoqccr3CZVxm/brM59BiVw2lK7QgVdIQZrs
-         R6ug==
-X-Forwarded-Encrypted: i=1; AJvYcCW21BgZ/KHwr3PLC2lS6oDYV2Qh6faKnIdMK+Ao6qeIYTf4yk1OHpepUj3MjbFY+3p75Z7kn3oJgEOacBo9s4HznzwRMzAbJV6hsVWO
-X-Gm-Message-State: AOJu0Yy5V4JT7A5RvEcbVnbksgtGmoJ6PFuNP/Q+1029iwwCEUa32rJa
-	qjMVwNnRNOjolOmX4NU4q6NxVXl2KEcJnb1hxQiYjxwsvBKwoVWUnDCZMpCRBBz7dzYAkFONNgs
-	pzJ2wlv763S2cBCcMtJ1RDjXfiFxgEMg7BBl0
-X-Google-Smtp-Source: AGHT+IG4V8Ro6H7VLFiSiWMxVSXvKP2tZ5kz1hDy9s6imtx4QHxTmnCi3+YTDPOrrDiAYIGEDIZLIhogA0rDgA99sXo=
-X-Received: by 2002:ac8:6f1b:0:b0:43c:de95:6258 with SMTP id
- d75a77b69052e-43defba092bmr1278391cf.18.1715204659725; Wed, 08 May 2024
- 14:44:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C227A1DFCF
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 21:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715204760; cv=fail; b=QWU7XhBA/Rxf8UcD4mPNuzmbI+MwvkJtJJtLX0CjocHXzbI2ZY1yWu934hwaNblu0GF06oaWTbqtJGSPmsE3JyqK33BE3+nMeqfQ9hMN1ZuVta4DKME9+V4ycBawgcZ+GLHxZZa4XRiMu1F0aWQag8ht1XuW4Bdy0axAcOlc+QI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715204760; c=relaxed/simple;
+	bh=onVKEPXNBWoyYsWfWU0goaYcA1LB/XMuIT8QlgonskU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kTx4U1tpgIi7kMOtl3fXpTPwSMoX2etYEN6sO+9WwBPKzy+pcb2bgxMXhkxfG15SClMv0PdqQUKjYjASUfDwaVqW0SdfGRmDq2RYzKMzF7GZ+BDpfKZcrppj7CbpS+SYsF/rryWTJqpRcz19tHIerWJOyGuZVdNfMYoFutOUnoM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VxzklLl9; arc=fail smtp.client-ip=40.107.100.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OcfJq6ECr3cnM5tBIxsiJ5h6+s90GdipxNSjniGvjPUVc2ENc5mOTOMUd/Snd5bVwNFO0QLlzqF42GJabCoBFoejKpR5BP5xp++NQr3tunSONt0vO2ma9jrQCEKpbCt8748biqB1TpoLvpQAR0yKICHn8EZPZdV4ym2nzoK8YdKExOKMaue0iQ4In01g/ByG3E9V1s11dxz0P1s25tdjgw1EYABkr3wAtzzB91L/DesAvAD77Sa96Y5mIitKE/b0/Uy7o6L9XX8GzrXn1VXyxJpJAxra5JaHAvP4hdIZNLxhuEXEB+mrQJL633YV36jRM1bRW6aUylKSNMFoqjbfJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7igv+HwvqcHayPwa2WpYbYYtnoemNpLM3K5dnjJ1Vv8=;
+ b=E4RMbG9Fn8u57RBl3eYoA0UG7+5mkG0Yx7bjyBZycsofXCv2qLw+LzUhSe1w5A81FIfJwGzM3Ryya1QL+Cc9oGwbFyBGbjfCGyT06m0xHx5C2RAZMBsufHuAG+MehfXYeVaFSTqIO/ScC8hUqgthKUKqKo14dDxicG0YSObI1aP5XmD2NucMF3QKucglwnIA5WQvAsxE8hF5bpNeL7yvlh0z+2StXJpkyQBd3asyLmPTQgjRQL9ci603sCwnxKaB14XUaigeseHV2jlmfV3+d5u5kt+V1n3Ds+nURFhMwC9ge2RIwbtFn+5OgEgcCPImXILZf3uru5IBnctSst+OZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7igv+HwvqcHayPwa2WpYbYYtnoemNpLM3K5dnjJ1Vv8=;
+ b=VxzklLl9NNWKf444m7LArscRty8SKjr2RLgICCHkkoSsGgLtbRDqtOyx6nKggXQ2xHvNWwD89irM9C8SZvNFYX4Pu+kLt6ysRk7IKDxT3xc4ukfoHSfxg6+t3MyAQp+fWh+/wExxfF9eLlTxIcxYtAJudjFRJtHE48qkjYVFIwA=
+Received: from BL0PR02CA0056.namprd02.prod.outlook.com (2603:10b6:207:3d::33)
+ by PH8PR12MB7158.namprd12.prod.outlook.com (2603:10b6:510:22a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Wed, 8 May
+ 2024 21:45:55 +0000
+Received: from MN1PEPF0000ECD6.namprd02.prod.outlook.com
+ (2603:10b6:207:3d:cafe::94) by BL0PR02CA0056.outlook.office365.com
+ (2603:10b6:207:3d::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.46 via Frontend
+ Transport; Wed, 8 May 2024 21:45:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000ECD6.mail.protection.outlook.com (10.167.242.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Wed, 8 May 2024 21:45:55 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 8 May
+ 2024 16:45:52 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: <dri-devel@lists.freedesktop.org>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+	"Aurabindo Pillai" <aurabindo.pillai@amd.com>, Daniel Wheeler
+	<daniel.wheeler@amd.com>, Fangzhi Zuo <jerry.zuo@amd.com>, Mario Limonciello
+	<mario.limonciello@amd.com>, =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=
+	<ville.syrjala@linux.intel.com>, Tyler Schneider <tyler.schneider@amd.com>
+Subject: [PATCH v2] drm/amd/display: Enable colorspace property for MST connectors
+Date: Wed, 8 May 2024 16:45:35 -0500
+Message-ID: <20240508214535.356-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org> <20240505-perf_digit-v2-3-6ece307fdaad@codewreck.org>
-In-Reply-To: <20240505-perf_digit-v2-3-6ece307fdaad@codewreck.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 8 May 2024 14:44:08 -0700
-Message-ID: <CAP-5=fWUm9X1_Yj_sqHQqCqfSpcrXsDggJRO+GN2jo=km-0bBQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] perf parse: Allow names to start with digits
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD6:EE_|PH8PR12MB7158:EE_
+X-MS-Office365-Filtering-Correlation-Id: 735b1263-f0f7-4b7c-95df-08dc6fa83d40
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|376005|1800799015|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R0FkN3NSZ2RkZ2VESGFLSndnL0lvQXBHSGpOaHR6NzhnNTE5MEtIZHZHQk1p?=
+ =?utf-8?B?WHU0RmFlazM2NmszdEhQRnA0b3ZWL1BYZUxWSXhYR3hZNkRhZGdFM3FzOFY4?=
+ =?utf-8?B?SGp4QzhhTGYyQk1oOGhvWUdMWlVqTDlMTzN5bXFDVGI2Qm1ianQxT1BETkpM?=
+ =?utf-8?B?WnBFVTZzcFRGcHBmdG93ZVBRNTIzcW1tNUdYTXlGd09PNFVjTldEZTBhaHg3?=
+ =?utf-8?B?T0RGZ01RTWt6UHdNNlFrTWZDNG9VbkdJWTNwY2svdXBCSFpEL2Jld0VTN0dG?=
+ =?utf-8?B?bWYyR1B4VlhOc2FRZ3d2Q2JBejY0WHFaNXlCUWlJMGp1U1VoNEVXZFV1WUI4?=
+ =?utf-8?B?cGdDZ0t6VXZwb01oSVhhS2NtTldTNnJTb29JR1IzUVB4elliQ21qVjdtdEV6?=
+ =?utf-8?B?cHZrVVJhOTV4NFdINDFaaDVHOHZvWUZVa3dNREpINzk3eWxieU1iRHRsRVh4?=
+ =?utf-8?B?QjB1c29kY3BCWWdxdnBBVFhEdld2YlVWS3pBSEtyTjk1TXN4Z1RHcUcwSUpF?=
+ =?utf-8?B?VnFqZ0lPZTI1aWxsUUw4czJqNXpjRUhnS1pLN253eHhHY2RiQ2NzWjZGaHlr?=
+ =?utf-8?B?elZPK0dZc1FEcHNYVUxaWFNIL3ZWVldLdEJZNnJRalk3NTFjUVk5dHA3N3Ex?=
+ =?utf-8?B?ZXVkZnlFeHUrb29pdnk4MmY2dFFJZ2lzc1k0cW54OWx6WFNIeEpIUTB4SnJW?=
+ =?utf-8?B?UDRMWldQM0E3Z2R3Nlk3cVFzd29ZUS9mZEY4R3JTZUNkcUFmbERWb3g2VUlJ?=
+ =?utf-8?B?TkJhb0E0aWZpN05QOXdBc2g1ZFVySmNsMXAxYXVxK21idkJTNG9LMnI3bmhP?=
+ =?utf-8?B?aThQbXh5elJnakJpNHNkdGhJelZuSkcwRllxZE1aMFcxZHRGak9UenlvaGhE?=
+ =?utf-8?B?M2RkRkNxVDBacmtXWHJsY0IvRnFsZ082dC9ySEo3SkVYdWxkcDhxcUVCQXlP?=
+ =?utf-8?B?RFZxRGExRHFSa0xiRjd5MXFXdm1mVzdVUy9vUjlMb2tRRWhHVFN0d281SVZ5?=
+ =?utf-8?B?YWJGdndjRkNaUlRKbVpzZzdXUk8vMS95T1YvcWZPcGlvOU5oU0RWR3VJdDdk?=
+ =?utf-8?B?eFdSNUlVeVlQRkk3V25ibUJlanJXVE0zZWo1M0NwQ2Ntc3lKK1RyNHZMdi80?=
+ =?utf-8?B?WllZcHY5WE5NVHp6NDJTWXdOd3phZlp2eHNTWTZQU21BWVhBYnpiZG5JUXF1?=
+ =?utf-8?B?VEdYeGRPdjMrL2lyclJvSEo1amR2VUVrU3ZPV2dEekthN0lhbm5LMHJrb0sr?=
+ =?utf-8?B?NERkeHd4LzkrbkxuYmcyMzYzclFWU2YwNkpScFB2N3liL2FnaE9sa3JYa2wv?=
+ =?utf-8?B?OU1hdFZySk4vZGthVXowWkVNSWFjYU1CTnBXWmRnbnZZazRoRDJDb25IcGho?=
+ =?utf-8?B?a2NSK2krMFpnSDUwWHN3U2tSNUJhYWw5Q0RXVGJLdDlrbUpHMnl3aFJkdVR3?=
+ =?utf-8?B?N051WTVWcUZmbmV6N1pmRDQ0ZXlwWHFFcFkrSWt5cTJVcXZ1Tmt1TzNSUU9l?=
+ =?utf-8?B?UWpZN3JXajdWRlFRR1JiZ1JPN3dNN3I3ZDkwVGkxdzIyclJITGh3YmxqZnhh?=
+ =?utf-8?B?c2ZYTWRIenQrbXBVVXBOU2IrRzRORkZtZXl3Z3djNWluRjdvdW92N3c5OE91?=
+ =?utf-8?B?U0IzN01XTWtzcDI3aTN0TldqWDVPNVZJTkJmVFcyZkFxNG4rMjdVUFJOQ2Va?=
+ =?utf-8?B?SDhPMHd0c0YwV3ZXK1AxMHZZR2syZkVXVzNaazBSdWo2YnhHV1g2eTFoSTRY?=
+ =?utf-8?Q?QzrKYnYlT/zDwJgQzNlv+up+vJPbejWSIxTGVta?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(376005)(1800799015)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 21:45:55.2130
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 735b1263-f0f7-4b7c-95df-08dc6fa83d40
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD6.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7158
 
-On Sun, May 5, 2024 at 4:14=E2=80=AFAM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
->
-> Tracepoints can start with digits, although we don't have many of these:
->
-> $ rg -g '*.h' '\bTRACE_EVENT\([0-9]'
-> net/mac802154/trace.h
-> 53:TRACE_EVENT(802154_drv_return_int,
-> ...
->
-> net/ieee802154/trace.h
-> 66:TRACE_EVENT(802154_rdev_add_virtual_intf,
-> ...
->
-> include/trace/events/9p.h
-> 124:TRACE_EVENT(9p_client_req,
-> ...
->
-> Just allow names to start with digits too so e.g. perf trace -e '9p:*'
-> works
->
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+MST colorspace property support was disabled due to a series of warnings
+that came up when the device was plugged in since the properties weren't
+made at device creation. Create the properties in advance instead.
 
-Reviewed-by: Ian Rogers <irogers@google.com>
-Tested-by: Ian Rogers <irogers@google.com>
+Suggested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Fixes: 69a959610229 ("drm/amd/display: Temporary Disable MST DP Colorspace Property").
+Reported-and-tested-by: Tyler Schneider <tyler.schneider@amd.com>
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3353
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks,
-Ian
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 941e96f100f4..12b036d511d0 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -613,6 +613,9 @@ dm_dp_add_mst_connector(struct drm_dp_mst_topology_mgr *mgr,
+ 		&connector->base,
+ 		dev->mode_config.tile_property,
+ 		0);
++	connector->colorspace_property = master->base.colorspace_property;
++	if (connector->colorspace_property)
++		drm_connector_attach_colorspace_property(connector);
+ 
+ 	drm_connector_set_path_property(connector, pathprop);
+ 
+-- 
+2.43.0
 
-> ---
->  tools/perf/tests/parse-events.c | 5 +++++
->  tools/perf/util/parse-events.l  | 4 ++--
->  2 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-eve=
-nts.c
-> index ef056e8740fe..6cf055dd5c09 100644
-> --- a/tools/perf/tests/parse-events.c
-> +++ b/tools/perf/tests/parse-events.c
-> @@ -2280,6 +2280,11 @@ static const struct evlist_test test__events[] =3D=
- {
->                 .check =3D test__checkevent_breakpoint_2_events,
->                 /* 3 */
->         },
-> +       {
-> +               .name =3D "9p:9p_client_req",
-> +               .check =3D test__checkevent_tracepoint,
-> +               /* 4 */
-> +       },
->  };
->
->  static const struct evlist_test test__events_pmu[] =3D {
-> diff --git a/tools/perf/util/parse-events.l b/tools/perf/util/parse-event=
-s.l
-> index e86c45675e1d..c36f8dbf593a 100644
-> --- a/tools/perf/util/parse-events.l
-> +++ b/tools/perf/util/parse-events.l
-> @@ -158,8 +158,8 @@ event               [^,{}/]+
->  num_dec                [0-9]+
->  num_hex                0x[a-fA-F0-9]{1,16}
->  num_raw_hex    [a-fA-F0-9]{1,16}
-> -name           [a-zA-Z_*?\[\]][a-zA-Z0-9_*?.\[\]!\-]*
-> -name_tag       [\'][a-zA-Z_*?\[\]][a-zA-Z0-9_*?\-,\.\[\]:=3D]*[\']
-> +name           [a-zA-Z0-9_*?\[\]][a-zA-Z0-9_*?.\[\]!\-]*
-> +name_tag       [\'][a-zA-Z0-9_*?\[\]][a-zA-Z0-9_*?\-,\.\[\]:=3D]*[\']
->  name_minus     [a-zA-Z_*?][a-zA-Z0-9\-_*?.:]*
->  drv_cfg_term   [a-zA-Z0-9_\.]+(=3D[a-zA-Z0-9_*?\.:]+)?
->  /*
->
-> --
-> 2.44.0
->
 
