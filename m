@@ -1,153 +1,102 @@
-Return-Path: <linux-kernel+bounces-173735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00258C04AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFDEC8C04B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1071C22934
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:59:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01301C2290B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E6312EBE7;
-	Wed,  8 May 2024 18:59:17 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC50812EBED;
+	Wed,  8 May 2024 19:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XckR9UnS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDDDF12C464;
-	Wed,  8 May 2024 18:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBFDE12DDA1;
+	Wed,  8 May 2024 19:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715194756; cv=none; b=W+qP7fjU5bs8uWvg/aDv0q7fnXbn+fHt2sdHXAn7jj7f4v9afzqG+05lI1krDCWhCucBfCVNPUfl9P+T0oQXs4LC2GZybT30cYqrAr86fM5Qw9YVLps7GsH7WnTCwGIjGBzJ57UKQQQn7A30el2ZLnsuSGwQaDIJKkWyJFxm79A=
+	t=1715194848; cv=none; b=UvzDv8YCmkVGtGWbWRy7RfWNZlfRHfUVqobW7Yt9XKE2WFzs/gnNftTd7Hsz9RKs3LLuMnbRhI+/zJM+viQU04s+su9aGU1FJoibvvKSbdjH6JEdxd2yW/NV+6pq9BGI8YFEGDncJ46SqK430j4KjlDJFIJt6j/kiwjZK7uiIdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715194756; c=relaxed/simple;
-	bh=bSLgq4FvpeTB8kkbHpmgDPjDvcsz7KxXYPf2zdLXhbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NCce4Ldz5dgmyybSyhFm1iuZExaIjAGQZq87DAX2l+qbbbM1/YGHGm88swsA3FE5b7ncmk8da4tYbkfMFKEPUAyg237jdcravRudX33YAs8twKoRtNBHxQAtp69qj2ZYihqZVRo/3x2lP8WWmkesaMzc09Q2/W97xfz3i6+zgbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so2246542a12.0;
-        Wed, 08 May 2024 11:59:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715194753; x=1715799553;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eFrOIrDzTcMn622VateT75IhKFBfpAyCB1nXrmsjnHc=;
-        b=A+Aj4wEFOeuc/nFRSoBL5uvJPwdxNMvzAXrXL8DVPKKmyVK5st23UEOE0wmV0Evl6A
-         AeihrgEPjAfKzWwYEq4hwIyw7HYPl9u43Dl21PhrWo/bHE/tFBTt+QbMiOrxwY/XgmZ6
-         FWCYtEzS/dZDLYdKqPS0CUjbGBTa1h2Ny4GA4toLyMUHBVUAlOmjx7z0hMvHwxff60Wl
-         ICPz+GunUI7YJBpxmLyWTN8hTnda4BJ8VRNhYzzWzH0oDobbstQndZlxt1f8TRfPm6sq
-         QfhT5beqTB8Blqov2r3QUH8gzU8D3eaECCtl+SiyP3RDv3thjfyY7HbjLgv0xGW2FDPn
-         jA8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIeXjhzS2ua7kAs7E7cOFQKd9gprvmSzs8qBaTcfZeGA5X4D9QJye1F9g1gknkUdz4PvimVG4kDBXr4V+CtmVMc0+nIMGrR7kZUmqxTRcFd4fXA68y+LFkkQQGpyxtY13IgNMoDW5h07RwfvA=
-X-Gm-Message-State: AOJu0YxboxBGMXDuA2iX21nBrV0TW5eixOCdtSGPQcCiQXMMJ85d1Byv
-	ElW1O0/OtBxcvH8gn2gFsWCZ1UpjOe+QmfriMScrQjo9giOB2PfmtO3fEg==
-X-Google-Smtp-Source: AGHT+IEK4RWsOUL+8o+nVUUM0654BVgn5v3VnQl5a8AzTg5iRjxacDUtx9DKydCnJGRbKSZJvyiVQA==
-X-Received: by 2002:a50:d50c:0:b0:572:3eaa:a637 with SMTP id 4fb4d7f45d1cf-573326dbfe0mr342070a12.2.1715194753099;
-        Wed, 08 May 2024 11:59:13 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id ee53-20020a056402293500b0056fede24155sm7890077edb.89.2024.05.08.11.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 11:59:12 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: horms@kernel.org,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS)),
-	ath11k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH11K WIRELESS DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH wireless-next] ath11k: Fix error path in ath11k_pcic_ext_irq_config
-Date: Wed,  8 May 2024 11:59:01 -0700
-Message-ID: <20240508185902.70975-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715194848; c=relaxed/simple;
+	bh=THUpirS2DYDNx1Syq3v5LR9C0SjXYALQn8Wm0luUztM=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=GjOZQ+lX1fg7m/W9uIgqWWnpgmvKeZEpDeCcU5eLTbflUDevgvxGzUkcWjGQQPamoM5TPT3mJHAt/12QeSfJv7jsbMOIH4sDFdI5Aa/oF/bzhCxA6Ei05LhyhwV48PqE+i+6/CglatMgQj/H6Tr1+YjEcRPwsuqPmoaZpcDjsSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XckR9UnS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61AD6C113CC;
+	Wed,  8 May 2024 19:00:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715194847;
+	bh=THUpirS2DYDNx1Syq3v5LR9C0SjXYALQn8Wm0luUztM=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=XckR9UnS7pBnMYhcByCFR2JM3VbJnj2bDkXIjOCUhl7bsSwtVI5L7cq9NzfdURzDh
+	 MQMFlHAclGGqwGNdDlQIUOAPM1xsGokcM41tJuie4pih91Ep8RoYShURywDjyxnX5x
+	 FVNULg+cbSgVr0iJ86/RDqR4P87BgXVhE4bJADj+cxc0yp2V+L4XgLy8b1r0zE5o6H
+	 2TWUvTxQlwO6XrVCcj8tKXfbOzPveolmkbVqUY912jAnrSARznmr0WtCqYfZGHYcbX
+	 qqlC9+oZFn8L8uWVKWi4DdijmWMEd2fMXfSxlXTuduHwYrq9c16cIG/40RK7UHkwZK
+	 N1xG+P0fKz4ww==
+Date: Wed, 08 May 2024 14:00:45 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org, linux@roeck-us.net, 
+ linux-kernel@vger.kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20240508170544.263059-2-chris.packham@alliedtelesis.co.nz>
+References: <20240508170544.263059-1-chris.packham@alliedtelesis.co.nz>
+ <20240508170544.263059-2-chris.packham@alliedtelesis.co.nz>
+Message-Id: <171519484579.2414809.16063275628400924542.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Document adt7475 PWM initial
+ duty cycle
 
-If one of the dummy allocation fails in ath11k_pcic_ext_irq_config(),
-the previous allocated devices might leak due to returning without
-deallocating the devices.
 
-Instead of returning on the error path, deallocate all the previously
-allocated net_devices and then return.
+On Thu, 09 May 2024 05:05:42 +1200, Chris Packham wrote:
+> Add documentation for the pwm-initial-duty-cycle and
+> pwm-initial-frequency properties. These allow the starting state of the
+> PWM outputs to be set to cater for hardware designs where undesirable
+> amounts of noise is created by the default hardware state.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+>  .../devicetree/bindings/hwmon/adt7475.yaml    | 26 ++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
+> 
 
-Fixes: bca592ead825 ("wifi: ath11k: allocate dummy net_device dynamically")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/wireless/ath/ath11k/pcic.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/drivers/net/wireless/ath/ath11k/pcic.c b/drivers/net/wireless/ath/ath11k/pcic.c
-index 79eb3f9c902f..debe7c5919ef 100644
---- a/drivers/net/wireless/ath/ath11k/pcic.c
-+++ b/drivers/net/wireless/ath/ath11k/pcic.c
-@@ -561,6 +561,7 @@ static int ath11k_pcic_ext_irq_config(struct ath11k_base *ab)
- {
- 	int i, j, n, ret, num_vectors = 0;
- 	u32 user_base_data = 0, base_vector = 0;
-+	struct ath11k_ext_irq_grp *irq_grp;
- 	unsigned long irq_flags;
- 
- 	ret = ath11k_pcic_get_user_msi_assignment(ab, "DP", &num_vectors,
-@@ -574,14 +575,16 @@ static int ath11k_pcic_ext_irq_config(struct ath11k_base *ab)
- 		irq_flags |= IRQF_NOBALANCING;
- 
- 	for (i = 0; i < ATH11K_EXT_IRQ_GRP_NUM_MAX; i++) {
--		struct ath11k_ext_irq_grp *irq_grp = &ab->ext_irq_grp[i];
-+		irq_grp = &ab->ext_irq_grp[i];
- 		u32 num_irq = 0;
- 
- 		irq_grp->ab = ab;
- 		irq_grp->grp_id = i;
- 		irq_grp->napi_ndev = alloc_netdev_dummy(0);
--		if (!irq_grp->napi_ndev)
--			return -ENOMEM;
-+		if (!irq_grp->napi_ndev) {
-+			ret = -ENOMEM;
-+			goto fail_allocate;
-+		}
- 
- 		netif_napi_add(irq_grp->napi_ndev, &irq_grp->napi,
- 			       ath11k_pcic_ext_grp_napi_poll);
-@@ -606,11 +609,8 @@ static int ath11k_pcic_ext_irq_config(struct ath11k_base *ab)
- 			int irq = ath11k_pcic_get_msi_irq(ab, vector);
- 
- 			if (irq < 0) {
--				for (n = 0; n <= i; n++) {
--					irq_grp = &ab->ext_irq_grp[n];
--					free_netdev(irq_grp->napi_ndev);
--				}
--				return irq;
-+				ret = irq;
-+				goto fail_irq;
- 			}
- 
- 			ab->irq_num[irq_idx] = irq;
-@@ -635,6 +635,15 @@ static int ath11k_pcic_ext_irq_config(struct ath11k_base *ab)
- 	}
- 
- 	return 0;
-+fail_irq:
-+	/* i ->napi_ndev was properly allocated. Free it also */
-+	i += 1;
-+fail_allocate:
-+	for (n = 0; n < i; n++) {
-+		irq_grp = &ab->ext_irq_grp[n];
-+		free_netdev(irq_grp->napi_ndev);
-+	}
-+	return ret;
- }
- 
- int ath11k_pcic_config_irq(struct ath11k_base *ab)
--- 
-2.43.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/adt7475.example.dtb: hwmon@2e: adi,pwm-initial-frequency:0:1: 0 is not one of [11, 14, 22, 29, 35, 44, 58, 88, 22500]
+	from schema $id: http://devicetree.org/schemas/hwmon/adt7475.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240508170544.263059-2-chris.packham@alliedtelesis.co.nz
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
