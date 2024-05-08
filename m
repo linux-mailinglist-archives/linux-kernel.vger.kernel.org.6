@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-172630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28ADE8BF49F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:37:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534FD8BF4A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C70D1C2310C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:37:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7DA285264
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA22134B0;
-	Wed,  8 May 2024 02:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0300211CB4;
+	Wed,  8 May 2024 02:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oTOPnCtw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EuiAqF3B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256362563;
-	Wed,  8 May 2024 02:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4137BEAD0;
+	Wed,  8 May 2024 02:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715135846; cv=none; b=umxksKHZJjmPXyPBMj8XDcuJR3AQ+I/BHltJ2NsbrjLrz7HBhmHRNMExhmZ8R4h6XyILU9hzCd+4DXY8NKC6//z3jmRt8dOfd7l0W9Go2VQBhL7wRkycYhKMVL10S5UmJJNr7/HA7ptvKopXutPSDOxZ+2eWkSXEVTKKF+DAoTE=
+	t=1715135868; cv=none; b=Yr6/dSBg4s50qkJtcudJQjgUsTYAZV/aAyAZpK0yh/6qsJTiJv+XL1Qi5BC4BanqacLR4zN7j9gfzbpeBj+Ks+fcXNSQUu1k/mQST13gYgW5H/xtvfKisVJ775WPkT11R8Ckdcn11/C4nVvHpA6brbKogeX4MajnGxUNBamGqLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715135846; c=relaxed/simple;
-	bh=L+7O8cBMHbYGbdx2i1sHwLmX/iYsNK3kndk4UoqXo0U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3/W7YEZFZ55EuoBb5iPk+3kwKrQqFCILerL/+owr/4bqo2DJppJ+9S6Hs7u2tjTpPmdap+CX94O2cnoBFQOKGyQy0xZwCVTlnhVKV89ZNy/hMUjzhWIaaR0c1D3sgxeHELUewIR2HfKr0cmeuQk2YtuyX4nbRN9xdHsfM+pM+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oTOPnCtw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4480tSlQ010362;
-	Wed, 8 May 2024 02:37:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=/ZCjObFVzI65lpVfxycSD
-	PFIUahEfff+75M1F2+9dBI=; b=oTOPnCtwrNqqvCiRTQi/md0vkbK+itUoS5I8n
-	/p7CyQqjbyBgP4m3oT/t9CLeFKFXtJjdFtr24CWpRjNUzY+iR1oZDxiTb+rtVro9
-	5W7ciqKSTfT/x6RqMY9hNouabsWuxKrtLgrzBioWuwnt22ExOiQZpz6+XbimQ/Az
-	iCWjBf+IcniJb9NE242lqTUZ41mdpOXwpCo1EbJfHnQLN4MIaEmukNEo384xNSs5
-	6QksrxwA3wveP5I5YaTUH4fNY/lbB6vOBmsY2AtQyDa2f/Bzm6L4YVnfbiMnFFq4
-	MKfSGvAeqJw50n79e3Ot5/MrOPZDp/P8+Z8aIu7CGlTsV11vw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xysph0rx9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 02:37:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4482bIlH001487
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 02:37:18 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 7 May 2024 19:37:17 -0700
-Date: Tue, 7 May 2024 19:37:16 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Kees Cook <keescook@chromium.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Gustavo A . R . Silva"
-	<gustavoars@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>, <quic_rlaggysh@quicinc.com>
-Subject: Re: [PATCH v4 1/4] interconnect: qcom: icc-rpmh: Add QoS
- configuration support
-Message-ID: <20240508023716.GD25316@hu-mdtipton-lv.qualcomm.com>
-References: <20240325181628.9407-1-quic_okukatla@quicinc.com>
- <20240325181628.9407-2-quic_okukatla@quicinc.com>
- <d59896bb-a559-4013-a615-37bb43278b2e@linaro.org>
- <91f59477-1799-4db6-bcc2-3f0c5225d1c8@quicinc.com>
- <0a58e05a-7bf5-459a-b202-66d88c095b45@linaro.org>
+	s=arc-20240116; t=1715135868; c=relaxed/simple;
+	bh=ABIHuAol1RkqvO67SLAalaYd+ekF8teyJLNahtOn3xQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cg/Wt3HQ/khCaNDmteNMArG4bi3fMmHokzcO8aS76Vvl1bcjy3D3nZARv1n9O6eU3bs1XdigiGdrj5n31936tSYbLVErlnO0hnTDwS6KORZpf6HU+TYhMH7pyKinhOxR49/L7gvMiVNk4CvUPUNUcvNvmjRnVww1QGZ+px+3f6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EuiAqF3B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8BAC2BBFC;
+	Wed,  8 May 2024 02:37:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715135867;
+	bh=ABIHuAol1RkqvO67SLAalaYd+ekF8teyJLNahtOn3xQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EuiAqF3BdoPrwlz++LYhqIM49/GJvGRGrQQIVXUnAmQxZie7fmk8uEUjCDyMTTazl
+	 5CDNXr0lrGrh8jqEKIfSSN7B7JXDdq+IOq0Or2lxPjIrkH5ZauuRWzXKjoQIrl67UW
+	 1hZ7Qp36DSrxugHVWBWFkUwhM1rCHOg5FSeKaLNRufQI/AnsRJMTHAt+UP72eIn/A7
+	 6OlACuIRdCRjN22ovlMKdx+BC4u6IJq6aMf+2X21mcGBXYnhr570zIKyL5OMnMPbNn
+	 BbfxEHqdbCeknorwM3D2XEp/Yoz3lcDkSjjpYaSyPQyp7x/VMAblhlsxJYf5lMgtcW
+	 V2LEXsiAeDebw==
+Date: Wed, 8 May 2024 11:37:45 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jeff LaBundy <jeff@labundy.com>, Hans de Goede <hdegoede@redhat.com>,
+	Charles Wang <charles.goodix@gmail.com>, hadess@hadess.net,
+	Richard Hughes <hughsient@gmail.com>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, neil.armstrong@linaro.org
+Subject: Re: [PATCH] Input: goodix-berlin - Add sysfs interface for reading
+ and writing touch IC registers
+Message-ID: <ZjrledLjn8RsGiwC@finisterre.sirena.org.uk>
+References: <20240506114752.47204-1-charles.goodix@gmail.com>
+ <6362e889-7df2-4c61-8ad5-bfe199e451ec@redhat.com>
+ <ZjmOUp725QTHrfcT@google.com>
+ <Zjo8eTQQS1LvzFgZ@finisterre.sirena.org.uk>
+ <ZjpFVGw6PgjRcZY3@nixie71>
+ <ZjqYp1oxPPWcF3jW@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7rZlMyEu+j77dzs2"
 Content-Disposition: inline
-In-Reply-To: <0a58e05a-7bf5-459a-b202-66d88c095b45@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cUIFXgQRc5CvC0-zkk9z50wybFjoVYuB
-X-Proofpoint-GUID: cUIFXgQRc5CvC0-zkk9z50wybFjoVYuB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-07_16,2024-05-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=835
- impostorscore=0 priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 malwarescore=0 adultscore=0
- suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405080017
+In-Reply-To: <ZjqYp1oxPPWcF3jW@google.com>
+X-Cookie: Accuracy, n.:
 
-On Sat, Apr 13, 2024 at 09:31:47PM +0200, Konrad Dybcio wrote:
-> On 3.04.2024 10:45 AM, Odelu Kukatla wrote:
-> > 
-> > 
-> > On 3/27/2024 2:26 AM, Konrad Dybcio wrote:
-> >> On 25.03.2024 7:16 PM, Odelu Kukatla wrote:
-> >>> It adds QoS support for QNOC device and includes support for
-> >>> configuring priority, priority forward disable, urgency forwarding.
-> >>> This helps in priortizing the traffic originating from different
-> >>> interconnect masters at NoC(Network On Chip).
-> >>>
-> >>> Signed-off-by: Odelu Kukatla <quic_okukatla@quicinc.com>
-> >>> ---
-> 
-> [...]
-> 
-> >>> @@ -70,6 +102,7 @@ struct qcom_icc_node {
-> >>>  	u64 max_peak[QCOM_ICC_NUM_BUCKETS];
-> >>>  	struct qcom_icc_bcm *bcms[MAX_BCM_PER_NODE];
-> >>>  	size_t num_bcms;
-> >>> +	const struct qcom_icc_qosbox *qosbox;
-> >>
-> >> I believe I came up with a better approach for storing this.. see [1]
-> >>
-> >> Konrad
-> >>
-> >> [1] https://lore.kernel.org/linux-arm-msm/20240326-topic-rpm_icc_qos_cleanup-v1-4-357e736792be@linaro.org/
 
-Note that I replied to this patch series as well. Similar comments here
-for how that approach would apply to icc-rpmh.
+--7rZlMyEu+j77dzs2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> >>
-> > 
-> > I see in this series, QoS parameters are moved into struct qcom_icc_desc. 
-> > Even though we program QoS at Provider/Bus level, it is property of the node/master connected to a Bus/NoC.
-> 
-> I don't see how it could be the case, we're obviously telling the controller which
-> endpoints have priority over others, not telling nodes whether the data they
-> transfer can omit the queue.
+On Tue, May 07, 2024 at 02:09:59PM -0700, Dmitry Torokhov wrote:
+> On Tue, May 07, 2024 at 10:14:28AM -0500, Jeff LaBundy wrote:
 
-The QoS settings tune the priority of data coming out of a specific port
-on the NOC. The nodes are 1:1 with the ports. Yes, this does tell the
-NOC which ports have priority over others. But that's done by
-configuring each port's priority in their own port-specific QoS
-registers.
+> > For example, many devices must be placed in a bootloader mode during
+> > the FW update, and may clamp or toggle an interrupt pin during this
+> > mode switch. If user space initiates this sequence while the driver is
+> > unaware of this process, it may attempt to read status registers from
+> > an I2C address that is temporarily offline.
 
-> 
-> > It will be easier later to know which master's QoS we are programming if we add in node data.
-> > Readability point of view,  it might be good to keep QoS parameters in node data.  
-> 
-> I don't agree here either, with the current approach we've made countless mistakes
-> when converting the downstream data (I have already submitted some fixes with more
-> in flight), as there's tons of jumping around the code to find what goes where.
+> And yet we have i2c-dev and hidraw that are often successfully used to
+> flash the firmware, do diagnostics, etc. without encumbering the kernel.
 
-I don't follow why keeping the port's own QoS settings in that port's
-struct results in more jumping around. It should do the opposite, in
-fact. If someone wants to know the QoS settings applied to the qhm_qup0
-port, then they should be able to look directly in the qhm_qup0 struct.
-Otherwise, if it's placed elsewhere then they'd have to jump elsewhere
-to find what that logical qhm_qup0-related data is set to.
+Yeah, those seem like a reasonable enough model for safer devices - they
+do the exclusion thing so you don't have a real driver running at the
+same time.  For things like PMICs there's some concerns of course.
 
-If it *was* placed elsewhere, then we'd still need some logical way to
-map between that separate location and the node it's associated with.
-Which is a problem with your patch for cleaning up the icc-rpm QoS. In
-its current form, it's impossible to identify which QoS settings apply
-to which logical node (without detailed knowledge of the NOC register
-layout).
+The other model I've seen used BTW is to expose a MTD device, if the
+device actually looks like a MTD device (perhaps even is just a flash
+that's fairly directly exposed) that minimises the kernel code quite
+well.
 
-Keeping this data with the node struct reduces the need for extra layers
-of mapping between the QoS settings and the node struct. It keeps all
-the port-related information all together in one place.
+--7rZlMyEu+j77dzs2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I did like your earlier suggestion of using a compound literal to
-initialize the .qosbox pointers, such that we don't need a separate
-top-level variable defined for them. They're only ever referenced by a
-single node, so there's no need for them to be separate variables.
+-----BEGIN PGP SIGNATURE-----
 
-But I don't see the logic in totally separating the QoS data from the
-port it's associated with.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY65XgACgkQJNaLcl1U
+h9BwWAf/UP+aNwRClILavfD13cThg00n7zwWD9uhBnaRChYB9X1iTj6+IoVXwHRW
+gO4qxaTP/uzc+Q4vahodQjkHIe3l3t4pegJ/+BKursC9ACilGMPLuf1KBnJIQRfZ
+i/4n2DqCOVXj7AYTl52TJWwzv85l9b1sbvkhFHRPFTQCNcUWZhL6H7q2XuQJWsTo
+zDHOqqE9vcAEkzPJJEbr1wWfCcJRZ9bE+cHJgNJfXU2izOily6RfiJ9uFcWtaehD
+oHYYdBe6YbnwyPkorEqIRhRTO5D2snGctfbUnfxCmGbIuR8Ob+rIbIxd3siJDu5y
+vb5eJWjLE+iXONTQ3zx6HWctftpcuA==
+=+Mn4
+-----END PGP SIGNATURE-----
 
-> 
-> Konrad
+--7rZlMyEu+j77dzs2--
 
