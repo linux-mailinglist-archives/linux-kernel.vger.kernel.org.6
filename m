@@ -1,196 +1,211 @@
-Return-Path: <linux-kernel+bounces-173214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26418BFD20
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D550F8BFD22
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122651C2205A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51BA4B221E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F9C2EB08;
-	Wed,  8 May 2024 12:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695755102F;
+	Wed,  8 May 2024 12:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PQi4T/AR"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xwx1MVje"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72E58F40
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63AC17D2;
+	Wed,  8 May 2024 12:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715171437; cv=none; b=tBkGk2GJkHXHSYmeinz71bDnsHqA4zZWrUZ99tObxQNAQzdB0eS1oUz7oplNHV3atsCTheK7UG7tx52rG3ZXfL/y6SGZGk5galuBeFT0bgpmEmJ52AMnc/gUADX6Blhr4X6ChwZQWyr1xB9w92+FaW66B0jrl2koJb46ua0XWy4=
+	t=1715171455; cv=none; b=nwhdr/oAg/4hS9kA3coVrCcyzwLRG+RLWx27tvdv3uPzwGLoiv39moS/52R9e7wOtkMuHdmK2HnIJZ8vdqOHHnm3WUsmMHk327wr+UudUrhYF6UGQ+bJZwrVMU4shg1hqybTlwEiCT48hKdHMHjiXPZlQpUROJLDKdhlN8v3Rys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715171437; c=relaxed/simple;
-	bh=TqVEqH1q0bDGKE0x+2yoDuOpG9nNPgui+nNL00aF/uI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QQUPeM7CRORebhgeyc4m9PI4bBrPPWrjIcgRMlqKn6x9rfLMDjCuzsDKW9ayxxEIiOSDxWrjB/fMUkaeWjjqWG+8ulYZcMZt4N05gIPkzqZaQ+lmCLzyFE9Mso66qwaz2m9Et+mD9wni7/gLoZoRRpwLa31t91KrpnhaEVy4VeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PQi4T/AR; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34e667905d2so3244847f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 05:30:34 -0700 (PDT)
+	s=arc-20240116; t=1715171455; c=relaxed/simple;
+	bh=ALq+GbVInLjCqyOE3VcX8VbwJqOjvawQQIc4bTCD7cc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DjK7LEV3d3Rp84A6P2tPSKPgnmCYxFEYaUdX15ainKqXsb9F8j7Ec8riU0A8KQlj+oAwzB9SYtoY3Kwd5FE61tpSUagY/tjrkRpV9TUUOtIrCineMmDj8V8+asACbUg34etrG0ezdkeMbGzL5Y4Rwd4FV5C0/3d7+urMwtyOFaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xwx1MVje; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5200afe39eso1135295366b.1;
+        Wed, 08 May 2024 05:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715171433; x=1715776233; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YYrKVOxVHFjhu1hOKK81DsZdjrvks2E1EPLM+0mit2E=;
-        b=PQi4T/AROhdnBwPvab+UgUX+n+e6okCPFBjUNFujIUafxj+NATgrOe9zZVra2wAeWy
-         EEqid6O6qxf1Upil4PatFngkjXrp1QEO/lZGYjxknyxxHoKYhbmdvQA2I2cNwOPdDLsN
-         EUbzC4JeUV7O/Zp3bPZp3TgA09MrJW2pXFrK7F1aCeZ4IqH97hUaWrWmldUQehEWW+sF
-         GEwYHjPOLoNy1VcqbOsq+6F4r565+qUX/65VFM41yXL6ynZp3o0qZGL997AKHC+pjjTK
-         8XqAIymTaEoRYpoxDnL7TPdjnaQcVMjwOAbxPQKN8gtr+W+bMHL62dW1UVr29OJYEkvQ
-         bLRA==
+        d=gmail.com; s=20230601; t=1715171452; x=1715776252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pcm2/YfLi6B6QSCpP7qXLx5hvzXORG9bOF9gqBdKX9Q=;
+        b=Xwx1MVje0sLndPaK7kmGs0+d66y11zD+S+PtV21KZikfKE+wzCdoQd4sDujGb7rzaD
+         VqMthpvlFvVUX6Cmx0L5opdbP8GzDqXjJjnGfKfjWAAxitO+vKQ2W/FSkbV82qPwVzLS
+         K597AAd2HMDwlqYlBcULhrR1FQDA+6B7bORjGX2sLPebnMxKOHMQelwdVhp2Z6+rtlfJ
+         VmtahI2eEggYjhUerNBQqG7k3tWbF2NG4bm7FJSjGtJmggT9D+jAoI3+GvDzVqDgPEaH
+         nMTAu9qBkODZXQwbgQWgMZOCDohT2ECwri660XI+Vsg2S4lIHeNHuKrtwba58/1QFFKk
+         V1dQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715171433; x=1715776233;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YYrKVOxVHFjhu1hOKK81DsZdjrvks2E1EPLM+0mit2E=;
-        b=JD+OCy54vqSS/Hx/Xbdzzh86hTp0br3vDDC23cQp4X/tIRkWLTnPV65D+P4MdTXN5w
-         ojOGyA90zOQFTbXIpfU0HppNKr+E9IQ551Rhwk+oLPr6LJxatwjpRHMpTeuCrPj5FWjN
-         4ZpdOZTBDchNrdj1YOfRz14NeGV5H4e+cG1jaVaH3UTdwmTP1ndCPVRnPe8omT4Ia1hT
-         J0DerAUoDN9CWQOp74c9KbipzqjfKf5x1a7/bF04yzK1lNSvQ8vp95H6c4inFx3PYkkZ
-         Ksu6bw+LuJiXIBmLIIohmNjtzA5PDjVOOQngx0qWQkSuJ8ihxJzr2kX4zmkZouzgACzu
-         j2oA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxLJTw+zDHr0DTN6aYT+0d9K6v1Ab3JvTqT/lMF01FK4jHqp8nLey1tgxMNC+KFfr0lPc39cL/tUtD6/ii3kuQlFsQf5GVQhujrHRc
-X-Gm-Message-State: AOJu0YwEsRxH8Mb1fQil7sS/pA9kdqfEDrEJ1OPOgzT9sJQ/DOziA7pY
-	++hk7fPl1lHM98hEoGJacheXM+j3E/jNaBKPbApkPW63ZpdVna1rUI4VgdC8hX0=
-X-Google-Smtp-Source: AGHT+IG8EbUGwi8/BfWn1wOtM+/v8DkGeYcRCIK9ljfep3i3RMp/IXmIHIzEQndnWf0PIELdTF3xFw==
-X-Received: by 2002:a5d:69ca:0:b0:34e:182f:62ed with SMTP id ffacd0b85a97d-34fcb3abb03mr2290407f8f.61.1715171432974;
-        Wed, 08 May 2024 05:30:32 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id t3-20020a05600001c300b0034df7313bf1sm15406607wrx.0.2024.05.08.05.30.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 05:30:32 -0700 (PDT)
-Message-ID: <20a0300a-ac16-456c-840a-e272f49050a8@linaro.org>
-Date: Wed, 8 May 2024 13:30:31 +0100
+        d=1e100.net; s=20230601; t=1715171452; x=1715776252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pcm2/YfLi6B6QSCpP7qXLx5hvzXORG9bOF9gqBdKX9Q=;
+        b=PP7hIGfdQYC0sQDk2Jg5GtjtDmqLe+Hg5IUaYD2crS0i+wvilaVjvg9w+g6zpny41d
+         53tNo7jz68KuR/eMyfLc18Fo8P99ZdwKJ5OMdD4Ydh5f+nJQgIe3Ye9OOzmP0nbQ1jcM
+         4n8//4Bj53r/Or7kuDqkJ8WdKeOatuvFG+kMfsX/CJR1smTS7HIIv5KqtUbiDG7/VDpY
+         U1YX2Gh5Ao40QKJ7B/V7j9bJjYt8uygQ2x833ZHhKJ+V9yR1EA+Qd6iG6h27x3rnTovM
+         6CTBX0Ts10HFCNaiyDg2HXhPtDpj5lWWeQ12RxNk/0yZhijt7wr6xxTbXW2+u/VnOMyL
+         dbNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrDj6GtWSXtjd9ACo0mXr3QOxoUcz+XnCfwk6oiThgTXZ9x8VysTquTW5oLrtmuk9mUOeRs3HS8gxV2PpydYP4rrXmVmvRTNtcbQNPbArCq5X8I+Zz4BoYKPfEmWlK1bgyV2cmRMA74w==
+X-Gm-Message-State: AOJu0YwefzJe53tkH7loMQURvvJb1rFEO9OVrHDu21ZH58Yc3GdrR7qy
+	kEPXDdXxhf0urioJ1G6NXDwjVcP4JG8t1W2KNJBFAEnltXT6DUc5bm/8TwQwqKM71hRcoBmZczk
+	syaz3WnGMz3Eqau5VLI6Im/MShY4Wi8lMuzY=
+X-Google-Smtp-Source: AGHT+IGl8X9MaGsulmww8nCeO5gSLtUDnL5MWBFljZFyxkO8eM+qiXDpQYJ8Z0NXgOWoOT66jo3S89FPe5HQd5NxLRM=
+X-Received: by 2002:a17:906:a41a:b0:a59:ced4:25b0 with SMTP id
+ a640c23a62f3a-a59fb95595fmr200267766b.34.1715171451873; Wed, 08 May 2024
+ 05:30:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: i2c: Fix imx412 exposure control
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- "Paul J. Murphy" <paul.j.murphy@intel.com>,
- Martina Krasteva <quic_mkrastev@quicinc.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v2-1-2e665f072f8f@linaro.org>
- <dvyed4grpazqk7a3tz6dqwpkd76ghtrt4euinxt3kycdeh63ez@ljgfjsfhypix>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <dvyed4grpazqk7a3tz6dqwpkd76ghtrt4euinxt3kycdeh63ez@ljgfjsfhypix>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
+ <20240506-rk-dts-additions-v4-2-271023ddfd40@gmail.com> <2543817.5xW6y1K4kI@bagend>
+ <CABjd4Yw-JA5=SfcgtVNYZN37hFbqf14Ut1yHTSz1YZiZ3NQ-pw@mail.gmail.com>
+ <CANAwSgTU7UF_RaNnVSZR7SehQqC7Eo6D=JqT11gN7jK2diN_Ug@mail.gmail.com> <a1fb157c88f420cd85d56edff2a4d85b@manjaro.org>
+In-Reply-To: <a1fb157c88f420cd85d56edff2a4d85b@manjaro.org>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Wed, 8 May 2024 16:30:40 +0400
+Message-ID: <CABjd4YwHGYRrpMFn1uoQMRh3Tp4-py111tZiCGgf7afWxNGXnQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] arm64: dts: rockchip: enable thermal management on
+ all RK3588 boards
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Anand Moon <linux.amoon@gmail.com>, Diederik de Haas <didi.debian@cknow.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai <wens@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/05/2024 09:02, Jacopo Mondi wrote:
-> Hi Bryan
-> 
-> On Mon, May 06, 2024 at 11:38:26PM GMT, Bryan O'Donoghue wrote:
->> Currently we have the following algorithm to calculate what value should be
->> written to the exposure control of imx412.
->>
->> lpfr = imx412->vblank + imx412->cur_mode->height;
->> shutter = lpfr - exposure;
->>
->> The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
->> algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
->> decreasing as the requested exposure value from user-space goes up.
->>
->> e.g.
->> [ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
->> [ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
->> [ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
->> [ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
->> [ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
->> [ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
->>
->> This behaviour results in the image having less exposure as the requested
->> exposure value from user-space increases.
->>
->> Other sensor drivers such as ov5675, imx218, hid556 and others take the
->> requested exposure value and directly.
-> 
-> has the phrase been truncated or is it me reading it wrong ?
+Hello Dragan and Anand,
 
-Sod's law says no matter how many times you send yourself a patch before 
-sending it to LKML you'll find a typo ~ 2 seconds after reading your 
-patch on LKML.
+On Wed, May 8, 2024 at 3:46=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> wr=
+ote:
+>
+> Hello Anand,
+>
+> On 2024-05-08 13:40, Anand Moon wrote:
+> > On Mon, 6 May 2024 at 18:24, Alexey Charkov <alchark@gmail.com> wrote:
+> >> On Mon, May 6, 2024 at 4:29=E2=80=AFPM Diederik de Haas
+> >> <didi.debian@cknow.org> wrote:
+> >> > On Monday, 6 May 2024 11:36:33 CEST Alexey Charkov wrote:
+> >> > > This enables the on-chip thermal monitoring sensor (TSADC) on all
+> >> > > RK3588(s) boards that don't have it enabled yet. It provides tempe=
+rature
+> >> > > monitoring for the SoC and emergency thermal shutdowns, and is thu=
+s
+> >> > > important to have in place before CPU DVFS is enabled, as high CPU
+> >> > > operating performance points can overheat the chip quickly in the
+> >> > > absence of thermal management.
+> >> > >
+> >> > > Signed-off-by: Alexey Charkov <alchark@gmail.com>
+> >> > > ---
+> >> > >  arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts               | 4=
+ ++++
+> >> > >  8 files changed, 32 insertions(+)
+> >> > >
+> >> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> >> > > b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts index
+> >> > > b8e15b76a8a6..21e96c212dd8 100644
+> >> > > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> >> > > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> >> > > @@ -742,6 +742,10 @@ regulator-state-mem {
+> >> > >       };
+> >> > >  };
+> >> > >
+> >> > > +&tsadc {
+> >> > > +     status =3D "okay";
+> >> > > +};
+> >> > > +
+> >> > >  &uart2 {
+> >> > >       pinctrl-0 =3D <&uart2m0_xfer>;
+> >> > >       status =3D "okay";
+> >> >
+> >> > I built a kernel with v3 of your patch set and someone tested it on =
+a ROCK 5B
+> >> > 'for me' and it had the following line in dmesg:
+> >> >
+> >> > rockchip-thermal fec00000.tsadc: Missing rockchip,grf property
+> >> >
+> >> > I'm guessing that turned up due to enabling tsadc, but (also) in v4 =
+I didn't
+> >> > see a change wrt "rockchip,grf".
+> >> > Should that be done? (asking; I don't know)
+> >>
+> >> I'm getting the same. Neither the mainline TSADC driver [1], nor the
+> >> downstream one [2] seems to use the grf pointer on RK3588 at all. It
+> >> still works in spite of that warning, although I can't see how (or if)
+> >> it configures the reset mechanism without those GRF registers.
+> >>
+> >> Best regards,
+> >> Alexey
+> >>
+> >> [1]
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/drivers/thermal/rockchip_thermal.c#n818
+> >> [2]
+> >> https://github.com/radxa/kernel/blob/stable-5.10-rock5/drivers/thermal=
+/rockchip_thermal.c#L961
+> >>
+> >
+> > If the following changes fix the warning.
+> >
+> > Checking the Rockchip RK3588 TRM V1.0-Part1-20220309.pdf
+> > PMU1GRF_SOC_CON3 which has tsadc_shut_reset_trigger_en bit
+> > to control the Enable TSADC shut reset trigger for DDR fail safe.
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> > b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> > index 85c25d5efdad..5490a44e093e 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> > @@ -2662,6 +2662,7 @@ tsadc: tsadc@fec00000 {
+> >                 rockchip,hw-tshut-temp =3D <120000>;
+> >                 rockchip,hw-tshut-mode =3D <0>; /* tshut mode 0:CRU
+> > 1:GPIO */
+> >                 rockchip,hw-tshut-polarity =3D <0>; /* tshut polarity
+> > 0:LOW 1:HIGH */
+> > +               rockchip,pmu =3D <&pmu1grf>;
+> >                 pinctrl-0 =3D <&tsadc_gpio_func>;
+> >                 pinctrl-1 =3D <&tsadc_shut>;
+> >                 pinctrl-names =3D "gpio", "otpout";
+>
+> Basically, the rockchip_thermal driver doesn't use GRF at all on
+> the RK3588(s), so virtually any value specified as "rockchip,pmu"
+> can eliminate the warning.
 
+To me, specifying an arbitrary GRF in the device tree just to silence
+a warning that the current driver emits sounds bad. If the GRF is not
+needed for TSADC initialization on RK3588, then it should not be in
+the device tree (and it looks like the case here) - otherwise the
+device tree ceases to be a truthful description of the hardware.
 
->> Looking at the range of imx sensors, it appears this particular error has
->> been replicated a number of times but, I haven't so far really drilled into
->> each sensor.
-> 
-> Ouch, what other driver have the same issue ?
+I'm not sure if we need that "DDR fail safe" logic mentioned in the
+TRM that Anand quoted, given that neither Rockchip downstream nor
+current mainline driver implement it, and furthermore none of the
+other SoC revisions supported by the driver mention it. If we do in
+fact need it, we should probably first test it along with respective
+driver code before committing to an upstream DT and thus making it
+part of the ABI.
 
-So without data sheet or sensor its hard to say if these are correct or 
-incorrect, it's the same basic calculation though.
+IMO this is more of a driver issue than a device tree issue: maybe a
+small patch to demote this warning to an info message would be better?
+It's harmless anyway.
 
-drivers/media/i2c/imx334.c::imx334_update_exp_gain()
-
-         lpfr = imx334->vblank + imx334->cur_mode->height;
-         shutter = lpfr - exposure;
-
-         ret = imx334_write_reg(imx334, IMX334_REG_SHUTTER, 3, shutter);
-
-
-drivers/media/i2c/imx335.c::imx335_update_exp_gain()
-
-         lpfr = imx335->vblank + imx335->cur_mode->height;
-         shutter = lpfr - exposure;
-
-         ret = imx335_write_reg(imx335, IMX334_REG_SHUTTER, 3, shutter);
-
-
-Looking again I'm inclined to believe the imx334/imx335 stuff is 
-probably correct for those sensors, got copied to imx412/imx577 and 
-misapplied to the EXPOSURE control in imx412.
-
-
->> -	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
->> +	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
-> 
-> No datasheet here, can you confirm the IMX412_REG_EXPOSURE_CIT
-> register is actually in lines ?
-
-
-Looks like.
-
- From downstream "coarseIntgTimeAddr"
-
-imx577_sensor.xml
-     <coarseIntgTimeAddr>0x0202</coarseIntgTimeAddr>
-
-imx586/imx586_sensor.cpp
-pRegSettingsInfo->regSetting[regCount].registerAddr  = 
-pExposureData->pRegInfo->coarseIntgTimeAddr + 1;
-
-pRegSettingsInfo->regSetting[regCount].registerData  = (lineCount & 0xFF);
-
-> Apart from that, as the CID_EXPOSURE control limit are correctly
-> updated when a new VBLANK is set by taking into account the exposure
-> margins, I think writing the control value to the register is the
-> right thing to do (if the register is in lines of course)
-> 
-> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> 
-> Thanks
->    j
-> 
-
-If that's good enough I'll fix the typo and apply your RB.
-
----
-bod
-
+Best regards,
+Alexey
 
