@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-173691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76D48C0430
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:15:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC1E68C0434
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 20:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5000B23571
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:15:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6945CB2152C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 18:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A890F12BF28;
-	Wed,  8 May 2024 18:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A889412BF34;
+	Wed,  8 May 2024 18:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1AqxpRx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBzIL6Ez"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB32320309
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 18:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7983320309;
+	Wed,  8 May 2024 18:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715192107; cv=none; b=AlR7cMfNgrJZvJtvK1bDTk0A5+WNtWzvjjwWIZB17Y5bvgfn+yGNpVA0bs4f/xO8sIXpEUSCswcyLkBsl6L9VRRhpe4lT1mSv7X3Pkhq1UmY6rYUdVpeyOTtisDLWhA8pC/FuKAwG3ftHOxt4z9wVNcHFXdU+TwOWyHq80sptvE=
+	t=1715192270; cv=none; b=StqoEzGnkT+H3gEmVUYKeBMBxJJnHg2JNfSwto92GvTYerXll6L53je/Jam8VtsXIz4xpdyDNjJKYng833arns6cF5euEUEvg7ZP9vrRAN9o2qguhBCoZKiBUXm3Yq8BiItjZ0QHTOE1OMzj72qaheMn/Ozn1zpHZ6pt2fssPf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715192107; c=relaxed/simple;
-	bh=TFkpB6wqKib5yUSM2ThxFvN6vK5tKlCFz/zYQwF7gCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O0wiJ2oBn/x9jzMeYvxmDbuUIZ2rtm6Qsni7wEt2jQ9T+hV3cLEntmcNj+IPVW9v9JDo/PHaJ/sGq/TMkN3JE5HnPsb6GwYPBS19yI75b+FAPWslllfgCOs+S/lmCOG6vYysLvXN//Cr2W/OHRMHs+qMyovwlBffpDdkmI9YdvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1AqxpRx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F628C113CC;
-	Wed,  8 May 2024 18:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715192106;
-	bh=TFkpB6wqKib5yUSM2ThxFvN6vK5tKlCFz/zYQwF7gCA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D1AqxpRxVwISEygzVftkCfgH12sPYUTcFBx5sRUjTlrl89eUScUviDA3HEHZdNctc
-	 yUCqiJDvfB1Uen/RirMxBDihLigc/5NaiA89/xBRU8i0Dc7yXnagWbHiqjWGdw8IQf
-	 n35iJkuuz3xDf4sm/hOrgllczdExTVBDDBGeVizEdbSAm8M74kW7oxWLtH3+kY0x0l
-	 m8ABKVgO9dWpx/gQKjTQiyoRGv6rU8lJYGlDGHvgTF09h+Uo8TAk4WIs6tk+hBjSUO
-	 aHapQObIdvG8mf98wTcZ83GH+xI7KQ10DkQyrbVyzD08URsWGMXp8RTTCzbWXZeiDO
-	 965F11jrNhozg==
-Message-ID: <6599e2a3-3b04-4ea2-aa5c-a916b66c8009@kernel.org>
-Date: Wed, 8 May 2024 20:15:00 +0200
+	s=arc-20240116; t=1715192270; c=relaxed/simple;
+	bh=7lb9Wfw2vAX/aQ/+Pc2GwcF3qJyp7LE//3XRv/R1lLA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lpY1yRj+Zfoaa8pBAmNhkKKYqhcs1TSyhWjQdGtNYfxd/YG5ROmsCGMKVhUR6S736AWTeM3ZxNT7qzAWiIFvocxMTQF1zaDPB890oK+3eYJ1DQwCmVFEGguhJCIyYtCdQQYN9fbZ0i627ZTGM2w87x513Y7ybPKAdyYkd3PenZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBzIL6Ez; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34e0d47bd98so656492f8f.0;
+        Wed, 08 May 2024 11:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715192267; x=1715797067; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7lb9Wfw2vAX/aQ/+Pc2GwcF3qJyp7LE//3XRv/R1lLA=;
+        b=mBzIL6EzY8NYAUJnisfTCwwK53VD8jrbIhZ20oDFWyFcJKc1fCvHBXzsjBENSD1Ck8
+         38ga6a5rWN9GBeqMAO/IyLIhxkNXzgmraGAlcG8yrPsPYspqaIJ3Su8NYIuyD+oi+ezL
+         ZgG5pkqERHoutq+hW0q5R2+Trj9lpHQLPb0Un32Vc2ToCwGpkwUXwii1kCeuqwN7+m/h
+         pYvMBTz/9wyau4h3C5jzt+VFdlCQm909JGkoHa4FIjZUZ26i1EsyNpRDkfwQ2jcpz2Qr
+         T32Sa2m5scpqmoXLQrAKcdBkBQFTws3T0bfDU95gINIj8A1UHcgPFfpx9vvM9WKwPaKh
+         d1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715192267; x=1715797067;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7lb9Wfw2vAX/aQ/+Pc2GwcF3qJyp7LE//3XRv/R1lLA=;
+        b=vM+2mVoETsv5xKS/6elNa/0GKAXZMXsD7yrqBi13jTAsfDxJS5W0ZIyzX/dcLNt6d+
+         FJd3esUsEQVPCX2lCIS6Z2y19M2Pu3IlAf7PDApJVVMNMB4Ftz+5rYmlwbgDRSA0GRQm
+         NkJDkemP5A/0yUJJuLkJ+SNY+b+igvHoOFqaDTVn5cFjkQ9ffOt0SXI/A3hfG6iEv3eN
+         878ypfouPiFHywUX8bT8s+k/7H72lSfGNrJ1Kov80RD8kswNwVC5PIkYHNlYC6o9vTnx
+         fMhGaA2G0Ge56XTcGOWz+D5PqV5xccDrsN/K5hdgjt4vTVB3eRqCsxqx8H8DUVa9wg9h
+         6IAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXy1xIxK8F3SjSg0IJfEcoH0NoVQ7ioUS1FCNkOAufS62nC9FT/RPQ8/W+rSPuFjUs0yl5nKEkSuzZVDC9eib3fv4mWij6nYbUfiASQ3L80i30Onsvoewm/4miFXJJB0nK9xdIDhxIB
+X-Gm-Message-State: AOJu0YwhRjgyeQdKm+K1qXFkq4O3RvZcq55Fqd/zY9m8NW74/gT/y9ls
+	0Z6in0TKGozBDgPbIXKOS7qB+qF6qQo++cw4XELSiBI5Dr2ckN7Y
+X-Google-Smtp-Source: AGHT+IEz8lsFWhJL9tDMc4oARWvttIjiqZxtiPPRSzb2dyAOzx8IqliboOL6QugfdRMlWo3Rimlrpw==
+X-Received: by 2002:adf:e2ce:0:b0:34d:7d04:7903 with SMTP id ffacd0b85a97d-35018135ad9mr344434f8f.6.1715192266523;
+        Wed, 08 May 2024 11:17:46 -0700 (PDT)
+Received: from fedora.. ([94.73.34.44])
+        by smtp.gmail.com with ESMTPSA id n8-20020adffe08000000b0034df2d0bd71sm15849287wrr.12.2024.05.08.11.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 11:17:45 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: daniel@ffwll.ch
+Cc: brpol@chromium.org,
+	corbet@lwn.net,
+	dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com,
+	hirono@chromium.org,
+	jshargo@chromium.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mairacanal@riseup.net,
+	marius.vlad@collabora.com,
+	mduggan@chromium.org,
+	melissa.srw@gmail.com,
+	mripard@kernel.org,
+	rodrigosiqueiramelo@gmail.com,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v6 0/7] Adds support for ConfigFS to VKMS!
+Date: Wed,  8 May 2024 20:17:43 +0200
+Message-ID: <20240508181744.7030-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <ZjCtgSaL50YrS-F-@phenom.ffwll.local>
+References: <ZjCtgSaL50YrS-F-@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] eeprom: 93xx46: drop unneeded MODULE_ALIAS
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <20240414154957.127113-1-krzk@kernel.org>
- <20240414154957.127113-3-krzk@kernel.org>
- <Zju8HpBCiOjjIZ1j@smile.fi.intel.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zju8HpBCiOjjIZ1j@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/05/2024 19:53, Andy Shevchenko wrote:
-> On Sun, Apr 14, 2024 at 05:49:57PM +0200, Krzysztof Kozlowski wrote:
->> The ID table already has respective entry and MODULE_DEVICE_TABLE and
->> creates proper alias for SPI driver.  Having another MODULE_ALIAS causes
->> the alias to be duplicated.
-> 
-> ...
-> 
->>  MODULE_ALIAS("spi:93xx46");
-> 
-> I was stumbled over this (leftover?).
-> Commit message doesn't elaborate this bit.
-> Any comments?
+Hi everyone,
 
-It is not present in ID table and commit msg removes only duplicated
-aliases. That alias has meaning - someone might be actually relying on it.
+I wasn't aware of these patches, but I'm really glad they are getting
+some attention, thanks a lot for your review Sima.
 
-Best regards,
-Krzysztof
+Given that it's been a while since the patches were emailed, I'm not
+sure if the original authors of the patches could implement your
+comments. If not, I can work on it. Please let me know.
 
+I'm working on a Mutter feature that'd greatly benefit from this uapi
+and I'm sure other compositors would find it useful.
+
+I'll start working on a new version in a few days if nobody else is
+already working on it.
+
+Best wishes,
+José Expósito
 
