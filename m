@@ -1,166 +1,233 @@
-Return-Path: <linux-kernel+bounces-172888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A70258BF831
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:11:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981588BF82F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3391B2187D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:11:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BEAEB209BA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06D53FE3F;
-	Wed,  8 May 2024 08:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B977F3DB97;
+	Wed,  8 May 2024 08:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gA1++mlU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bTkOMCKY"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05703B7A0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA2336137
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715155858; cv=none; b=rG731aQhWAvYdQkqj2og+6OU9hHJRnV2TJx/hvYrKTYAyuraha+SkPwPPHNhgQXNlAeoVZte59lYEhcok+1bfKjnfPWWh4EyGtjfzBQVDaPL1NM+pqRdKSmZEd6eln+Ht8doeVNujBa3ud84luOIb51Fj4Ep/0MmMhr1jPLfIuM=
+	t=1715155832; cv=none; b=SEXtzHM9Jh8OdjOG8nUc8QE/xoF4Bx27j9WnQjixiTTooAbwmKv1lPfApepYsMvP1TU7ZN5YMR8GwutaWArg3wQhf3rSIxoHtJVkWQtW6ZQPBW5mjyu5e1osMykzP9vDGTwuD1grfNa2S5BaZSfcJcnnWwzbfDHdZif9i3Dy58E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715155858; c=relaxed/simple;
-	bh=/on5X/cY4M8emv68YO5Q8B0COsehn7OYyz7t0+eXzto=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uck8m7p/XxYNmT+GOH9pzkegsTTaeO6HMSJVSQYnw4ov8hDVchw3fkQsKzJbRdfMbWO+2Uz2bakMDA6SJKWleA6PP5M+BdHV6mSWij1Kr2Mtpn2CwZc+4/zb2IVWsvfgLfu3B1RMesQ0mHmCs+DQwEY/Hyw7JGCsjWfytebcGxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gA1++mlU; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715155856; x=1746691856;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=/on5X/cY4M8emv68YO5Q8B0COsehn7OYyz7t0+eXzto=;
-  b=gA1++mlUTTskrDvSlSOwlbQj7O811GMEAZTNr8lIyb1KtKEz5fCsLAGT
-   8dntkWHXPRzB6pPOSZo0Yj1Tea7p0eqI3CXX1K9kLjuyhk1HwQeLlGFAT
-   zfkIJVw9TmVoHC4pxqVmlPCujNZ9K6tOgq4ChZynSymFg7rtiLB/JaHU8
-   XzXk4LOHsa4HfhIZ4lqRgebul+pnNERm9TNyjQ5f6ZA/qCS9qg7fnbhjT
-   cn2X8mwfBk3VYom9wdsnlgcBm0K9K9/Z3Jm31iWjnSMUWzujSwv/NHw+X
-   N5KaGSh6nBeKf3MtObk8iwwBwNKFHj2rLCL6u8cY3Bc9xvWwHTHFv7vhq
-   A==;
-X-CSE-ConnectionGUID: 8RJBdDFVRLiPGwQGDXoYAw==
-X-CSE-MsgGUID: 01pBGfnSTeOX1vC0W9sMjg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="10845312"
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="10845312"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:10:56 -0700
-X-CSE-ConnectionGUID: kAvrKWCvRniONnhB8OO5sg==
-X-CSE-MsgGUID: CRmLOhA8ROSKgO52UJ0qTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
-   d="scan'208";a="29384745"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:10:51 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
-  baolin.wang@linux.alibaba.com,  chrisl@kernel.org,  david@redhat.com,
-  hanchuanhua@oppo.com,  hannes@cmpxchg.org,  hughd@google.com,
-  kasong@tencent.com,  linux-kernel@vger.kernel.org,  ryan.roberts@arm.com,
-  surenb@google.com,  v-songbaohua@oppo.com,  willy@infradead.org,
-  xiang@kernel.org,  yosryahmed@google.com,  yuzhao@google.com,
-  ziy@nvidia.com
-Subject: Re: [PATCH v3 3/6] mm: introduce pte_move_swp_offset() helper which
- can move offset bidirectionally
-In-Reply-To: <20240503005023.174597-4-21cnbao@gmail.com> (Barry Song's message
-	of "Fri, 3 May 2024 12:50:20 +1200")
-References: <20240503005023.174597-1-21cnbao@gmail.com>
-	<20240503005023.174597-4-21cnbao@gmail.com>
-Date: Wed, 08 May 2024 16:08:59 +0800
-Message-ID: <87ttj8iv38.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1715155832; c=relaxed/simple;
+	bh=yDdWDsmhU8mOYZ99K64v5ZtUCmcCbDJ3z/nVF/28VME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=leV+AXUsoJ7k3tkO64+1RU3u9/uIAvYVnLnaG+3v6VcfCzsUFyWhkpasU4uPe8r2OR5GHDfXM3msVa7OShwlsPBnD2sV6stAVzrsa17YTxFUEXN0x7oPYaihYDUHX84qIu9koTek2814Eu2wj/SA58gVNPCLyfs3G6Gp3nW4AwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bTkOMCKY; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-deb65b541faso4021583276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715155830; x=1715760630; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDil2ZnVWcb5vp45cry1hHQo0ylQ9Dttur8ChmQtHdc=;
+        b=bTkOMCKYsk+gYYnKHVYMEdKUHaTSk9qPwcT5Bkxtwq5LQ2rSO0QOmoRfHdqVwXfgAx
+         KPUz49rNSHNXz4Og1SCb/eDaH6n47DrdHIGoPYsTP860Gb4ArLfT5C2TM/ZvQbm2s1Y9
+         bTO/nhXOJYTwT3FmB4DV1o6wX+PzuirJ33jdrb1x0dFZXSURYPapbahQSD/Oy6saZfD+
+         I6DxLOYvXeOoRyudYWMIH5iF9uytiCYyb/gCvZeF0pfA27UGh6TwAYoljgEvLHcsZxJm
+         IP5Wo6Zh+YodvFpamtqJR2zI6mO2QBOmPOvLxHE7mNeV0A0GKbgX0sHA2Sg4kN8G9iRM
+         8ENQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715155830; x=1715760630;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hDil2ZnVWcb5vp45cry1hHQo0ylQ9Dttur8ChmQtHdc=;
+        b=HHZffxF+UZvN7y07wUyKaqq26ztW9VCJbNugn8oJ8JmGINV05kxVYvzz2OF/OqKifU
+         lCzYFiIradstdCIr21Pz0Rvu1APO3E62Zq+WV60If2bC68M6uuMC0WG6yRsyIcT8164i
+         cpA+g+Rq73CxTtGrU4G0oI4XR15PHbDHdSRJUs8TZKl4ZMp7Gt4Ld7OQKTp+Nob+Pvk3
+         /S2JmOEDT/+xAIy+F2r3xFriGQ+jjD9sOKf04X0dsV3/XWX8mNCwDiSussLLmKM0Pixa
+         Vb9nOzu9UoloO/fgn27dYXxK6bs5Pzq0WClWt7WRZUpBSTpGT+XNVLwb/22sCA9zAuSp
+         XTZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZJn2PqsJLapgvSHkM9ud3GkfFo7gGLj46+IPYST4Ysg63hzZxF2IpDhCu4+7M9bHyZh4XqCsOh4TMLhejLJWTJ+nRrFoU0xdz1FqM
+X-Gm-Message-State: AOJu0YwswWj5189P6NxuynCNQzidO3CRQaXhhRV88vVhcxiC5npuog/t
+	tE56HIAXJ6TuWe3zSYBCDW4EQCVirnjkGeJpe8OrqJ8tq2c68bkZ+W+dJMuAcJ3fhFrP3UOSpgX
+	0vO5/g/MTKPZTyHyuF57sETHjD/LAP6pb+SVj4g==
+X-Google-Smtp-Source: AGHT+IHCYOkOb4GRkecIOgxE4jNRIrOhLbYw42i8TBkgZ/yh1zPVDtP2VZreSBEEiDOF5QRtA2ZAv967VqXp6nKpg5A=
+X-Received: by 2002:a05:6902:46:b0:de5:a2de:9453 with SMTP id
+ 3f1490d57ef6-debb9d4ac68mr2095872276.17.1715155830352; Wed, 08 May 2024
+ 01:10:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com> <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+ <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com> <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+ <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com> <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+ <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+In-Reply-To: <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 8 May 2024 11:10:18 +0300
+Message-ID: <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, andersson@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Barry Song <21cnbao@gmail.com> writes:
-
-> From: Barry Song <v-songbaohua@oppo.com>
+On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
 >
-> There could arise a necessity to obtain the first pte_t from a swap
-> pte_t located in the middle. For instance, this may occur within the
-> context of do_swap_page(), where a page fault can potentially occur in
-> any PTE of a large folio. To address this, the following patch introduces
-> pte_move_swp_offset(), a function capable of bidirectional movement by
-> a specified delta argument. Consequently, pte_increment_swp_offset()
-> will directly invoke it with delta = 1.
+> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
+> > Hi Varada,
+> >
+> > Thank you for your work on this!
+> >
+> > On 2.05.24 12:30, Varadarajan Narayanan wrote:
+> > > On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+> > > > On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+> > > > > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+> > > > > >
+> > > > > >
+> > > > > > On 4/18/24 11:23, Varadarajan Narayanan wrote:
+> > > > > > > IPQ SoCs dont involve RPM in managing NoC related clocks and
+> > > > > > > there is no NoC scaling. Linux itself handles these clocks.
+> > > > > > > However, these should not be exposed as just clocks and align
+> > > > > > > with other Qualcomm SoCs that handle these clocks from a
+> > > > > > > interconnect provider.
+> > > > > > >
+> > > > > > > Hence include icc provider capability to the gcc node so that
+> > > > > > > peripherals can use the interconnect facility to enable these
+> > > > > > > clocks.
+> > > > > > >
+> > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > > > ---
+> > > > > >
+> > > > > > If this is all you do to enable interconnect (which is not the case,
+> > > > > > as this patch only satisfies the bindings checker, the meaningful
+> > > > > > change happens in the previous patch) and nothing explodes, this is
+> > > > > > an apparent sign of your driver doing nothing.
+> > > > >
+> > > > > It appears to do nothing because, we are just enabling the clock
+> > > > > provider to also act as interconnect provider. Only when the
+> > > > > consumers are enabled with interconnect usage, this will create
+> > > > > paths and turn on the relevant NOC clocks.
+> > > >
+> > > > No, with sync_state it actually does "something" (sets the interconnect
+> > > > path bandwidths to zero). And *this* patch does nothing functionally,
+> > > > it only makes the dt checker happy.
+> > >
+> > > I understand.
+> > >
+> > > > > This interconnect will be used by the PCIe and NSS blocks. When
+> > > > > those patches were posted earlier, they were put on hold until
+> > > > > interconnect driver is available.
+> > > > >
+> > > > > Once this patch gets in, PCIe for example will make use of icc.
+> > > > > Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
+> > > > >
+> > > > > The 'pcieX' nodes will include the following entries.
+> > > > >
+> > > > >         interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+> > > > >                         <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
+> > > > >         interconnect-names = "pcie-mem", "cpu-pcie";
+> > > >
+> > > > Okay. What about USB that's already enabled? And BIMC/MEMNOC?
+> > >
+> > > For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
+> > > clock. Hence, interconnect is not specified there.
+> > >
+> > > MEMNOC to System NOC interfaces seem to be enabled automatically.
+> > > Software doesn't have to turn on or program specific clocks.
+> > >
+> > > > > > The expected reaction to "enabling interconnect" without defining the
+> > > > > > required paths for your hardware would be a crash-on-sync_state, as all
+> > > > > > unused (from Linux's POV) resources ought to be shut down.
+> > > > > >
+> > > > > > Because you lack sync_state, the interconnects silently retain the state
+> > > > > > that they were left in (which is not deterministic), and that's precisely
+> > > > > > what we want to avoid.
+> > > > >
+> > > > > I tried to set 'sync_state' to icc_sync_state to be invoked and
+> > > > > didn't see any crash.
+> > > >
+> > > > Have you confirmed that the registers are actually written to, and with
+> > > > correct values?
+> > >
+> > > I tried the following combinations:-
+> > >
+> > > 1. Top of tree linux-next + This patch set
+> > >
+> > >     * icc_sync_state called
+> > >     * No crash or hang observed
+> > >     * From /sys/kernel/debug/clk/clk_summary can see the
+> > >       relevant clocks are set to the expected rates (compared
+> > >       with downstream kernel)
+> > >
+> > > 2. Top of tree linux-next + This patch set + PCIe enablement
+> > >
+> > >     * icc_sync_state NOT called
+> >
+> > If sync_state() is not being called, that usually means that there
+> > are interconnect consumers that haven't probed successfully (PCIe?)
+> > or their dependencies. That can be checked in /sys/class/devlink/.../status
+> > But i am not sure how this works for PCI devices however.
+> >
+> > You can also manually force a call to sync_state by writing "1" to
+> > the interconnect provider's /sys/devices/.../state_synced
+> >
+> > Anyway, the question is if PCIe and NSS work without this driver?
 >
-> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-
-LGTM, Thanks!  Feel free to add
-
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-
-in the future version.
-
-> ---
->  mm/internal.h | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
+> No.
 >
-> diff --git a/mm/internal.h b/mm/internal.h
-> index c5552d35d995..cfe4aed66a5c 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -211,18 +211,21 @@ static inline int folio_pte_batch(struct folio *folio, unsigned long addr,
->  }
->  
->  /**
-> - * pte_next_swp_offset - Increment the swap entry offset field of a swap pte.
-> + * pte_move_swp_offset - Move the swap entry offset field of a swap pte
-> + *	 forward or backward by delta
->   * @pte: The initial pte state; is_swap_pte(pte) must be true and
->   *	 non_swap_entry() must be false.
-> + * @delta: The direction and the offset we are moving; forward if delta
-> + *	 is positive; backward if delta is negative
->   *
-> - * Increments the swap offset, while maintaining all other fields, including
-> + * Moves the swap offset, while maintaining all other fields, including
->   * swap type, and any swp pte bits. The resulting pte is returned.
->   */
-> -static inline pte_t pte_next_swp_offset(pte_t pte)
-> +static inline pte_t pte_move_swp_offset(pte_t pte, long delta)
->  {
->  	swp_entry_t entry = pte_to_swp_entry(pte);
->  	pte_t new = __swp_entry_to_pte(__swp_entry(swp_type(entry),
-> -						   (swp_offset(entry) + 1)));
-> +						   (swp_offset(entry) + delta)));
->  
->  	if (pte_swp_soft_dirty(pte))
->  		new = pte_swp_mksoft_dirty(new);
-> @@ -234,6 +237,20 @@ static inline pte_t pte_next_swp_offset(pte_t pte)
->  	return new;
->  }
->  
-> +
-> +/**
-> + * pte_next_swp_offset - Increment the swap entry offset field of a swap pte.
-> + * @pte: The initial pte state; is_swap_pte(pte) must be true and
-> + *	 non_swap_entry() must be false.
-> + *
-> + * Increments the swap offset, while maintaining all other fields, including
-> + * swap type, and any swp pte bits. The resulting pte is returned.
-> + */
-> +static inline pte_t pte_next_swp_offset(pte_t pte)
-> +{
-> +	return pte_move_swp_offset(pte, 1);
-> +}
-> +
->  /**
->   * swap_pte_batch - detect a PTE batch for a set of contiguous swap entries
->   * @start_ptep: Page table pointer for the first entry.
+> > If they work, is this because the clocks are turned on by default
+> > or by the boot loader?
+>
+> Initially, the PCIe/NSS driver enabled these clocks directly
+> by having them in their DT nodes itself. Based on community
+> feedback this was removed and after that PCIe/NSS did not work.
+>
+> > Then if an interconnect path (clock) gets disabled either when we
+> > reach a sync_state (with no bandwidth requests) or we explicitly
+> > call icc_set_bw() with 0 bandwidth values, i would expect that
+> > these PCIe and NSS devices would not function anymore (it might
+> > save some power etc) and if this is unexpected we should see a
+> > a crash or hang...
+> >
+> > Can you confirm this?
+>
+> With ICC enabled, icc_set_bw (with non-zero values) is called by
+> PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
+> values.
+>
+> PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
+> NSS:    ppe_icc_init -> icc_set_bw
+>
+> I believe sync_state is not getting called since there is a
+> non-zero set bandwidth request. Which seems to be aligned with
+> your explanation.
 
---
-Best Regards,
-Huang, Ying
+This doesn't look correct. sync_state is being called once all
+consumers are probed. It doesn't matter whether those consumers have
+non-zero bandwidth requests or no.
+
+
+-- 
+With best wishes
+Dmitry
 
