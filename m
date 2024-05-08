@@ -1,166 +1,151 @@
-Return-Path: <linux-kernel+bounces-173628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDA18C031A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363E58C031B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218611F22E4D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8891C213FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205EC129A69;
-	Wed,  8 May 2024 17:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288D212AAC7;
+	Wed,  8 May 2024 17:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3yoAq0T"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="EKOYCDkY"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E47979CF;
-	Wed,  8 May 2024 17:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44FA79CF
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715189455; cv=none; b=PZtxyrwgyGM/HRXzcLG9Io7DxLjU5bu0a34Iulc0y6Q8pQUNRh1ixC/nqoLu5xDF5eGdCPqwPjPpsEaaiMn+MAA1dL93wkR/Nz60SwdQ2Z0MzXJwCgs/zX9dVQX0xivUd+NXkO2xZJtV5xx+qP5VKP3EfFDxkBNk2gb96LcOiuQ=
+	t=1715189465; cv=none; b=CtFeUwAh927v9N8LczI0V+84khoq1hu15SM+bYfOO4B5iFWsZe91GPhGHvlSG4O9fF47ksOtbn6NzoStYKFhbA0vjKyZCl1OmTpOrAAt6fgcftfszz6heFG2ZEUogPibL0J4OR4FErtyWvzH0AUj1J8JWl1OKnsvhUikxb4nac0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715189455; c=relaxed/simple;
-	bh=vYfE+uXBisYwplwMBgJYce9Fnn3PhzHMT3aXaLfTTEw=;
+	s=arc-20240116; t=1715189465; c=relaxed/simple;
+	bh=OfwDpxyqiScR6zhprUMGR6XwrzsPF5VBLMLxJ9wu2Qg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pr3fI0lqxiOp6vtH+Xk0dzcYQ4GF7xO5fJnxlQ7DJZZ2l55YT609dwdm3I9atPQOJfeNwkJx99HtjQSgtlmrSjEBq8eWxCgxkr+V0a0KjrJRylM1Z12RW4WasBC8pn+iJ2bsWxQJRfqddv+FYFABlnVHNFxPTOtNcUEQtezIgv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3yoAq0T; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2b3f5fcecc1so33689a91.1;
-        Wed, 08 May 2024 10:30:53 -0700 (PDT)
+	 To:Cc:Content-Type; b=XDI1gVgp9U6yindyXAB2EuX2vrmH5Llal/VVYhwI/VOm58AhYWgHZPIUAGQRU+xdhm5KOYRv10KBa+mjd7Y8oUcyC/g6OtDfvrLPpcczAlCSixCFJHFVLtjc8HGy8/WB+q7ozvCzbT/iMhzwvDCklG3O+vQJU+nu7Y4X6LM2piY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=EKOYCDkY; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4df2a816455so1633e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715189453; x=1715794253; darn=vger.kernel.org;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1715189462; x=1715794262; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+fR68JCn/hWTtGUKbSoApl+GEYdIRkhWhhAj/uy4nvw=;
-        b=R3yoAq0TJDcZ0CDDm9ftbBh/F1gITEQ4cFZkbfEPjJ9wV5AxaaMcwifOeRbH39SHxu
-         eKBHmZyBE4szzRgVxnzTxC3N4jo6KlvkBPYIWgsh5iXyLOGEiDQGt0wYkmJ66yZidc+m
-         RpQVRs1fkHRhAcqgWDC5FlcfyOGdCpWk3IqBhYObG7pPDBS3NUh8LaE2bfEfwb64eWUj
-         8ZkImoSUlPn1I/qTZUkVnotyFwMluolgaW1DPsSsDsMyrUIa+wu5wSXLAaXj9TUl6+EQ
-         EGczX7Nij0QoJylX7fBHFNgMWmxSswigQ6TW30fnEeSYA9i1MuSRiIqJc0KuDUFO4RBM
-         4qfg==
+        bh=XYHNs3XK4WCLJlrYLVcrMhCbS8TVZdO8Yn1TsyzQ25I=;
+        b=EKOYCDkYR+0VZlZnP34FuwtcEeQ2YqX8kRDMpHemSBkoBEgX9WrxFa7kNjICDqLSNU
+         hOk7mrxTE8k6Ye7b2S7LoQ8Ouxbm6By30LW2qsv6/lHUN6fyOXBJopCUXFAsRDaR4EZC
+         aQe9CQeJSJyHUTh2Po+BqxotfkItlGiGWvX2QPZcyRVVx81mlUzmgcehf7lfcq96bUAc
+         H90aEc0566xWH/h0Bjare+mYhRtzVXOHc6Kjl17PyRr4kmlYgayiY2+hNEzskQQuppKW
+         wLms70D7PlgzmptN4dj4yL1kFT65vjRtutupPl6bG0GBnqJn1PTC/slhd9YB9f+M3cyr
+         EUUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715189453; x=1715794253;
+        d=1e100.net; s=20230601; t=1715189462; x=1715794262;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+fR68JCn/hWTtGUKbSoApl+GEYdIRkhWhhAj/uy4nvw=;
-        b=pOX0X7djzW0L5LiiN3zBYsLVC2CimDm9luY1fddvLN54sLukhVUFBmJ2005Jh8Odr3
-         o4TsyrUWRGUEpQujf86qCBvDyvYxiqE7YTeWQsDW0ZL/zp/DdSe/mmTlHPiKXKF1Z7BJ
-         kEwK6T5a1y/bMckE1nm87Y5wG2RBuAIzQuZmLPC8yg3CEo1vHqY5QsDvPvqim5jCKbry
-         R3BEd4/CawHm7Lhv3G/SGf+2bL9htJjbWTbzddh+foQHWNbcXCNcGMN809xJ0cYvTs6f
-         0jpTMyIS3XuAD+s94+7Y1x2EJ/AieJisIRCyT7nQ1QVAZH8vRy4B7ko3dsB0abn6nyUp
-         k8cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbZxU8u0JKVcBqrsg3nWEZnKuMHKNLm2SL5zEIL6fCw00fk8pdEvR38Lf3g9WyKZdBU/WLS29bVG8oaiHqcg3zTTVU2jf3uJMWNYSa
-X-Gm-Message-State: AOJu0YzIroiW/OtzNXatu2gUlPilBCrTnn/AFJrH/xyE/+XKH54mgrwo
-	fJ6T3e4QIv2UtC+4krq0R8DvTtcL/zdAT3pBQWOhR0iOMz7zkBGd9Nl0b1xAYxR9yJzRgs6LibW
-	QLDZXUi6FVgg6hippCZ05FHGSql0=
-X-Google-Smtp-Source: AGHT+IEApl3TxNSeIkqfktM/yAubKMXjdwKSRv8nVwvMfEAIehyTaQLljuSSDvebWx4PryXczfykg+2AXkwOlbCDIC8=
-X-Received: by 2002:a17:90a:1bc9:b0:2b6:2089:e4ec with SMTP id
- 98e67ed59e1d1-2b6208a10f3mr2568776a91.22.1715189453289; Wed, 08 May 2024
- 10:30:53 -0700 (PDT)
+        bh=XYHNs3XK4WCLJlrYLVcrMhCbS8TVZdO8Yn1TsyzQ25I=;
+        b=Z1ansxuxIbUg4QdEIdLSe3vwnncT00M+/8cp25od4Dly8vVrKcM2H/yoFi58uDgPcZ
+         C8hrpqvjGLVVwJtlZWfn/8V/LYb9/agplqMHKukdUMAbFgaK7Grr/qfCxLrhm1JmKB6x
+         PkgOTvh29WM2KpoyjptBMH52QHFsGTTnyAXGIAPSxlYHhB77nha3j9pdinO9/5zzOdJs
+         MhT1MSBLM6rPU5yLKoPAvFuyOocuo1h8jM8RA0gd8NN/JUGM0LJ/JejZn4VNC1G7MP89
+         mzYdi2NufK80WznRTX76vXuwrtCBC91mWRrCbm3fjvQRpGcfNWY/yNalUgS1DBEpdIGi
+         Z/zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwqgZWrUBtt4eCX1QkcpDzfxE+dsDdiXNzdjT39M93ACOXar9wSvfRCGyUhXr3MfISFMU8Zho7R34M4Pp7NjCSKwr1lSWZe8Li0fzU
+X-Gm-Message-State: AOJu0Yw6vU1Gt85HSmQUTESLH2uNGFzcsidGDgyU0mNw0J8DktKZQTF6
+	g+b11vQhPBSvYTXocC9EMQulZiMe6/vor4ciHVyv9IhEuh2CuZU3NHWwM/Fn9OWv28kKofTvTcd
+	yE4tOpjoZH4GNUBubZ3f/tv8OFdAvz3I9wrzE
+X-Google-Smtp-Source: AGHT+IHbsrHY0xfhpaS6MiO5kI6jtwoEYY+goIDARLemeQWPf0CECxDmXAYt4b8xzd2tMYkNUCL0wQWtWqEeqJGtRe0=
+X-Received: by 2002:a05:6122:2a50:b0:4dc:d7b4:5f7d with SMTP id
+ 71dfb90a1353d-4df6919da63mr3417762e0c.8.1715189462609; Wed, 08 May 2024
+ 10:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fccbb040330a706a4f7b34875db1d896a0bf81c8.camel@gmail.com> <4e781d80fbec0db13555456ab8af6bdae6dee168.camel@gmail.com>
-In-Reply-To: <4e781d80fbec0db13555456ab8af6bdae6dee168.camel@gmail.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 8 May 2024 12:30:41 -0500
-Message-ID: <CAHCN7xJF1=BNgh=wpsyd6WP=haOq2UdCYEt2AaL7rGfhDUh6CQ@mail.gmail.com>
-Subject: Re: iMX8M Mini suspend/resume hanging on imx8m_blk_ctrl_power_on()
-To: vitor <ivitro@gmail.com>
-Cc: linux-pm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	vitor.soares@toradex.com, ulf.hansson@linaro.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	rafael@kernel.org, geert+renesas@glider.be, peng.fan@nxp.com, 
-	linus.walleij@linaro.org, u.kleine-koenig@pengutronix.de, marex@denx.de, 
-	Lucas Stach <l.stach@pengutronix.de>
+References: <20240426133310.1159976-1-stsp2@yandex.ru> <CALCETrUL3zXAX94CpcQYwj1omwO+=-1Li+J7Bw2kpAw4d7nsyw@mail.gmail.com>
+ <20240428.171236-tangy.giblet.idle.helpline-y9LqufL7EAAV@cyphar.com>
+ <CALCETrU2VwCF-o7E5sc8FN_LBs3Q-vNMBf7N4rm0PAWFRo5QWw@mail.gmail.com>
+ <20240507-verpennen-defekt-b6f2c9a46916@brauner> <CALCETrWuVQ-ggnak40AX16PUnM43zhogceFN-3c_YAKZGvs5Og@mail.gmail.com>
+ <20240508-flugverbindung-sonnig-dcfa4971152e@brauner>
+In-Reply-To: <20240508-flugverbindung-sonnig-dcfa4971152e@brauner>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Wed, 8 May 2024 10:30:50 -0700
+Message-ID: <CALCETrWEBY6HLyRqgN65YVp0gP0akU_HyVbGctC6sph5NX6RkQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] implement OA2_CRED_INHERIT flag for openat2()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, Stas Sergeev <stsp2@yandex.ru>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
+	Stefan Metzmacher <metze@samba.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Andy Lutomirski <luto@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Alexander Aring <alex.aring@gmail.com>, David Laight <David.Laight@aculab.com>, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 5, 2024 at 10:09=E2=80=AFAM vitor <ivitro@gmail.com> wrote:
+On Wed, May 8, 2024 at 12:32=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
 >
-> Hi,
->
-> On Thu, 2024-04-04 at 16:53 +0100, vitor wrote:
-> > Greetings,
+> On Tue, May 07, 2024 at 01:38:42PM -0700, Andy Lutomirski wrote:
+> > On Tue, May 7, 2024 at 12:42=E2=80=AFAM Christian Brauner <brauner@kern=
+el.org> wrote:
+> > >
+> > > > With my kernel hat on, maybe I agree.  But with my *user* hat on, I
+> > > > think I pretty strongly disagree.  Look, idmapis lousy for
+> > > > unprivileged use:
+> > > >
+> > > > $ install -m 0700 -d test_directory
+> > > > $ echo 'hi there' >test_directory/file
+> > > > $ podman run -it --rm
+> > > > --mount=3Dtype=3Dbind,src=3Dtest_directory,dst=3D/tmp,idmap [debian=
+-slim]
+> > >
+> > > $ podman run -it --rm --mount=3Dtype=3Dbind,src=3Dtest_directory,dst=
+=3D/tmp,idmap [debian-slim]
+> > >
+> > > as an unprivileged user doesn't use idmapped mounts at all. So I'm no=
+t
+> > > sure what this is showing. I suppose you're talking about idmaps in
+> > > general.
 > >
-> > I'm trying to suspend/resume our Verdin iMX8M Mini with VPU IP using
-> > the latest 6.9.0-rc2 Kernel. While the system can suspend without
-> > issues, it hangs on the resume routine. After some investigation, I
-> > can
-> > see the Kernel hanging on imx8m_blk_ctrl_power_on()[1] while resuming
-> > the hantro-vpu power domain.
+> > Meh, fair enough.  But I don't think this would have worked any better
+> > with privilege.
 > >
-> > Any hint about that?
-> >
-> > [1]
-> > https://elixir.bootlin.com/linux/v6.9-rc2/source/drivers/pmdomain/imx
-> > /imx8m-blk-ctrl.c#L101
-> >
+> > Can idmaps be programmed by an otherwise unprivileged owner of a
+> > userns and a mountns inside?
 >
-+ Lucas
+> Yes, but only for userns mountable filesystems that support idmapped
+> mounts. IOW, you need privilege over the superblock and the idmapping
+> you're trying to use.
 
-> Looking at other child nodes of the pgc node, pgc_vpu_[g1|g2|h1] seems
-> to be nested into pgc_vpumix.
->
+Hmm.  Is there a good reason to require privilege over the superblock?
+ Obviously creating an idmap that allows one to impersonate someone
+else seems like a problem, but if an unprivileged task already "owns"
+(see below) a UID or GID, then effectively delegating that UID or GID
+is would need caution but is not fundamentally terrible.
 
-On the surface, that's how it appears and it would be consistent with
-how the GPU's work with the GPC's for each GPU calling the gpumix.
-However, the VPU's all reference the vpu_blk_ctrl which itself
-references the vpumix.
+So, if I'm 1000:1000, then creating an idmap that makes some other
+task (that isn't 1000:1000) get to act as 1000:1000 doesn't grant new
+powers.  But maybe something even more general could be done (although
+I'm not sure this is worthwhile): if I own a userns and that userns
+has an outside UID 1001 mapped (via newuidmap, for example), then
+perhaps letting me configure an idmap that grants UID 1001 seems not
+especially dangerous.  But maybe that particular job should also be
+delegated to newuidmap.
 
-Lucas,
+Out of an abundance of caution, maybe this whole thing should be
+opt-in.  For example, there could be a new CAP_DELEGATE that allows
+delegation of one's own uid and gid.  The idea is that it should be
+safe to grant regular users CAP_DELEGATE as an ambient capability.
 
-You seem to know this driver pretty well.  Do you expect the G1, G2,
-and H1 PGC's to all reference the vpumix, or do you expect the
-vpu_blk_ctrl to enable/disable the vpumix?
-
-
-
-> After applying the following changes to imx8mm.dtsi, the suspend/resume
-> is working.
->
->
-> @@ -739,16 +739,19 @@ pgc_vpumix: power-domain@6 {
->         pgc_vpu_g1: power-domain@7 {
->                 #power-domain-cells =3D <0>;
->                 reg =3D <IMX8MM_POWER_DOMAIN_VPUG1>;
-> +               power-domains =3D <&pgc_vpumix>;
->         };
->
->         pgc_vpu_g2: power-domain@8 {
->                 #power-domain-cells =3D <0>;
->                 reg =3D <IMX8MM_POWER_DOMAIN_VPUG2>;
-> +               power-domains =3D <&pgc_vpumix>;
->         };
->
->         pgc_vpu_h1: power-domain@9 {
->                 #power-domain-cells =3D <0>;
->                 reg =3D <IMX8MM_POWER_DOMAIN_VPUH1>;
-> +               power-domains =3D <&pgc_vpumix>;
->         };
->
->
-> I will prepare the patch to send in the next couple of days.
-
-Please CC me when post the patch, and I can run some tests on my hardware.
-
-thanks
-
-adam
-
->
-> Regards,
-> Vitor Soares
->
+--Andy
 
