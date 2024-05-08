@@ -1,181 +1,168 @@
-Return-Path: <linux-kernel+bounces-173190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE388BFCC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:59:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA14D8BFCC4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D44D283709
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:59:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186D51C21E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F7682D9F;
-	Wed,  8 May 2024 11:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF77C82D9F;
+	Wed,  8 May 2024 11:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RY9FAj5O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WavizOkh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7BF7D405;
-	Wed,  8 May 2024 11:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD87763EE;
+	Wed,  8 May 2024 11:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715169548; cv=none; b=gyMyunG32vXpGy29xSUID3xMc9JORnxR46EHBbwqs3uOtmt3foxKrQGKW/Kd72x5jHNz+Erq2fbRD/jbqLSSk+lfsKe9iJCyqgeOvv/OLb69fWZsGK6Dq7wRJIk1RrfIvC04kCN6Lq0TR/dKFFh5SkjTFbUPSpOFFb1k0Ozh7ao=
+	t=1715169567; cv=none; b=jQj6NmruUkRpZwD2ARd430IRp1U6Uh6HfXiUGQpCwdSKBEs3e0jmrfLGX04rZtXpFHYZFj74Au9jE076+mO+g6wyPZE9qgn81V8G2q///V8yCCxvGJg6ruBg6u9R/PWs+8u11369U4qMnbQlTcYDv6WX/ObYmUkdfhO3eHpoHb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715169548; c=relaxed/simple;
-	bh=T2T1c8P9LRlCkGtHutSW1xZfS0Ui+J7aHG0ayh6G03M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=plDHC3psxgQtjgu6nU3xqNdVGoXdZbQo05XgIevHrXSZDvt1hpfIPUOVsIus54gD7oc4VpQG0Je7B9/o1fTrl9IQP/xqZboPAaNNVlOd5/T7wKeEjbqfWiFP2BL1hv8ictiSepBnCtKYGGLuT7rRqETeJbSTgBAELjeWTcmQGmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RY9FAj5O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB465C3277B;
-	Wed,  8 May 2024 11:59:07 +0000 (UTC)
+	s=arc-20240116; t=1715169567; c=relaxed/simple;
+	bh=f5KLwZFAJed67Isnwjb2g/lcj37+mpliFwNUVN/9dnw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jMpoTEJawKZfPgPuczZBp/9B55URWaV7skezw2BiGhy2so044FaFFmkkoLtrkYFW4tyPWai6VsqgOMi0NQn79isnQGi2Pi1sY3ucwX0PHd3Dt4PoGl02YM7eaZYXpVMKzeyRRcrLitELryrTUJXOjThdizBdEGy0BeDvr6abtGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WavizOkh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269D9C113CC;
+	Wed,  8 May 2024 11:59:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715169547;
-	bh=T2T1c8P9LRlCkGtHutSW1xZfS0Ui+J7aHG0ayh6G03M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RY9FAj5OA1K4QOc1q0QtUajpwyO5O5RK/eCTyskaCKB3O8cAUqoIB7coFkpbZytda
-	 skOZ2cvjAGEmOTnknibL2reyTQ871KbI7dKy43c6X+b+FcrEC0VdBTA0hyNboHGpIg
-	 tvBZA0ufLS0ICDlGgEqHFQNqX6Mm3tPTukSo0m0DyEHLh/W2/Ds3+hoQdc9AEg1FIN
-	 GJQRpvDbY7Ntwe/GsAXGDMQkhki902P4hAJy3D/+7+qzPrDNuxSpynJYHzQlVjC+7j
-	 Vlb3ehCzf4c/5CHw4sTuEGHCsUwcKniqJf+tC+KN1ymAD6pIqiHZcuR47iYHDuUylW
-	 8mnIOEskWvzqg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5ad288442bdso483390eaf.3;
-        Wed, 08 May 2024 04:59:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW9zH4vIcTe+gWqo9n+Oq57btcLBq9ieXDHxIyeP3KBDBTkpQPOpzNC1usQwRG1ZIbu/mgWQiC/9Z1HvIyoMVn140isd9MZvHcHYfaPxw35JNDYW7zVHOX5Pc4ialxiu3T0a9nlmJs=
-X-Gm-Message-State: AOJu0Yyi63v4oJ9Mpv1OLQI8kgEwGnUdmg7oQfgyu+nipqmibwsd7A7t
-	kDRqb0KfvsBKV3OB06Xpy7InqdNIiHG2stmD1k2qQaaKnDLG0CmmvEUQbZYU/3cfrr5Gb/89oSF
-	T78DWowkeuJPwi0x31ICFR2/1d4A=
-X-Google-Smtp-Source: AGHT+IFS3EDJbe8ENnYkyF9SduMaIcC7krDDlJSk69HKvAxmJ6Hl/d5/kgfQO7zi5w4pc+3hWp607ekKxkcjY+4bLD4=
-X-Received: by 2002:a05:6820:b05:b0:5aa:3e4f:f01e with SMTP id
- 006d021491bc7-5b24d47d89fmr2171435eaf.1.1715169547045; Wed, 08 May 2024
- 04:59:07 -0700 (PDT)
+	s=k20201202; t=1715169566;
+	bh=f5KLwZFAJed67Isnwjb2g/lcj37+mpliFwNUVN/9dnw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WavizOkhUlsZCIp/Fl5fySFp851j2TxMT6qDySzlkzMSZfLh8+NbdjJNT05b4PnQs
+	 VR5yOzH8xbA+pcRRZRiFMsr57XNVYFH8bdvPsl58ODeNIfiPe3Y6rknh2uTwpi5Au9
+	 28rWrXXxqfV/gjQf9yKc34jrSsykfV5iB4rtjN3RjKrFSywRSKkwABRX/9umRu9ykl
+	 4tsO67eO7ekehpoflTjCFmJKLcCvern4ouMDq44rHIXlONK8dajsLOD0sYgfqooouq
+	 i+YBLgmJft2l33TLbFeNx4ube7hk8/3dAiGFktmD2Q5I3XIqHZnS+zBbTH2cEE1CIy
+	 njjRzJhC0rCcA==
+Message-ID: <41047a89-2787-422f-a643-3e2d850da6dd@kernel.org>
+Date: Wed, 8 May 2024 14:59:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508054703.3728337-1-perry.yuan@amd.com>
-In-Reply-To: <20240508054703.3728337-1-perry.yuan@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 8 May 2024 13:58:55 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iqEj0bx72Rqn--srv8Y+ievjZx6W8_kJksPzPVTLLqxQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iqEj0bx72Rqn--srv8Y+ievjZx6W8_kJksPzPVTLLqxQ@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: amd-pstate: fix the highest frequency issue
- which limit performance
-To: Perry Yuan <perry.yuan@amd.com>
-Cc: rafael.j.wysocki@intel.com, Mario.Limonciello@amd.com, 
-	viresh.kumar@linaro.org, Ray.Huang@amd.com, gautham.shenoy@amd.com, 
-	Borislav.Petkov@amd.com, Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, 
-	Xiaojian.Du@amd.com, Li.Meng@amd.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-j722s: Add support for SERDES0
+To: Ravi Gunasekaran <r-gunasekaran@ti.com>, nm@ti.com, vigneshr@ti.com
+Cc: kristo@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, srk@ti.com, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240429120932.11456-1-r-gunasekaran@ti.com>
+ <20240429120932.11456-2-r-gunasekaran@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240429120932.11456-2-r-gunasekaran@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 8, 2024 at 7:47=E2=80=AFAM Perry Yuan <perry.yuan@amd.com> wrot=
-e:
->
-> To address the performance drop issue, an optimization has been
-> implemented. The incorrect highest performance value previously set by th=
-e
-> low-level power firmware for AMD CPUs with Family ID 0x19 and Model ID
-> ranging from 0x70 to 0x7F series has been identified as the cause.
->
-> To resolve this, a check has been implemented to accurately determine the
-> CPU family and model ID. The correct highest performance value is now set
-> and the performance drop caused by the incorrect highest performance valu=
-e
-> are eliminated.
->
-> Before the fix, the highest frequency was set to 4200MHz, now it is set
-> to 4971MHz which is correct.
->
-> CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
->   0    0      0    0 0:0:0:0          yes 4971.0000 400.0000  400.0000
->   1    0      0    0 0:0:0:0          yes 4971.0000 400.0000  400.0000
->   2    0      0    1 1:1:1:0          yes 4971.0000 400.0000 4865.8140
->   3    0      0    1 1:1:1:0          yes 4971.0000 400.0000  400.0000
->
-> v1->v2:
->  * add test by flag from Gaha Bana
 
-This should go into the section below the tags.
 
-And if you send a v2 of a patch, please indicate that this is a v2 in
-the subject.
-
-> Fixes: f3a052391822 ("cpufreq: amd-pstate: Enable amd-pstate preferred co=
-re support")
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218759
-> Signed-off-by: Perry Yuan <perry.yuan@amd.com>
-> Co-developed-by: Mario Limonciello <mario.limonciello@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> Tested-by: Gaha Bana <gahabana@gmail.com>
+On 29/04/2024 15:09, Ravi Gunasekaran wrote:
+> Add SERDES0 and its wrapper description to support USB3
+> and SGMII interfaces.
+> 
+> Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
 > ---
->  drivers/cpufreq/amd-pstate.c | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 2db095867d03..6a342b0c0140 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -50,7 +50,8 @@
->
->  #define AMD_PSTATE_TRANSITION_LATENCY  20000
->  #define AMD_PSTATE_TRANSITION_DELAY    1000
-> -#define AMD_PSTATE_PREFCORE_THRESHOLD  166
-> +#define CPPC_HIGHEST_PERF_PERFORMANCE  196
-> +#define CPPC_HIGHEST_PERF_DEFAULT      166
->
->  /*
->   * TODO: We need more time to fine tune processors with shared memory so=
-lution
-> @@ -326,6 +327,21 @@ static inline int amd_pstate_enable(bool enable)
->         return static_call(amd_pstate_enable)(enable);
->  }
->
-> +static u32 amd_pstate_highest_perf_set(struct amd_cpudata *cpudata)
-> +{
-> +       struct cpuinfo_x86 *c =3D &cpu_data(0);
+>  arch/arm64/boot/dts/ti/k3-j722s.dtsi | 54 ++++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> index c75744edb143..beba5a3ea6cc 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
+> @@ -9,6 +9,7 @@
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> +#include <dt-bindings/phy/phy-ti.h>
+>  
+>  #include "k3-am62p5.dtsi"
+>  
+> @@ -75,6 +76,50 @@
+>  			 <0x00 0x78000000 0x00 0x78000000 0x00 0x00008000>,
+>  			 <0x00 0x78100000 0x00 0x78100000 0x00 0x00008000>;
+>  	};
 > +
-> +       /*
-> +        * For AMD CPUs with Family ID 19H and Model ID range 0x70 to 0x7=
-f,
-> +        * the highest performance level is set to 196.
-> +        * https://bugzilla.kernel.org/show_bug.cgi?id=3D218759
-> +        */
-> +       if (c->x86 =3D=3D 0x19 && (c->x86_model >=3D 0x70 && c->x86_model=
- <=3D 0x7f))
-> +               return CPPC_HIGHEST_PERF_PERFORMANCE;
-> +
-> +       return CPPC_HIGHEST_PERF_DEFAULT;
-> +}
-> +
->  static int pstate_init_perf(struct amd_cpudata *cpudata)
->  {
->         u64 cap1;
-> @@ -342,7 +358,7 @@ static int pstate_init_perf(struct amd_cpudata *cpuda=
-ta)
->          * the default max perf.
->          */
->         if (cpudata->hw_prefcore)
-> -               highest_perf =3D AMD_PSTATE_PREFCORE_THRESHOLD;
-> +               highest_perf =3D amd_pstate_highest_perf_set(cpudata);
->         else
->                 highest_perf =3D AMD_CPPC_HIGHEST_PERF(cap1);
->
-> @@ -366,7 +382,7 @@ static int cppc_init_perf(struct amd_cpudata *cpudata=
-)
->                 return ret;
->
->         if (cpudata->hw_prefcore)
-> -               highest_perf =3D AMD_PSTATE_PREFCORE_THRESHOLD;
-> +               highest_perf =3D amd_pstate_highest_perf_set(cpudata);
->         else
->                 highest_perf =3D cppc_perf.highest_perf;
->
-> --
+> +	serdes_refclk: clock-cmnrefclk {
 
-Applied as 6.10 material, thanks!
+What could be the generic name here?
+
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <0>;
+> +	};
+> +
+> +	serdes_wiz0: wiz@f000000 {
+
+Should generic name be phy?
+
+> +		compatible = "ti,am64-wiz-10g";
+> +		ranges = <0x0f000000 0x0 0x0f000000 0x00010000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		power-domains = <&k3_pds 279 TI_SCI_PD_EXCLUSIVE>;
+> +		clocks = <&k3_clks 279 0>, <&k3_clks 279 1>, <&serdes_refclk>;
+> +		clock-names = "fck", "core_ref_clk", "ext_ref_clk";
+> +		num-lanes = <1>;
+> +		#reset-cells = <1>;
+> +		#clock-cells = <1>;
+> +
+> +		assigned-clocks = <&k3_clks 279 1>;
+> +		assigned-clock-parents = <&k3_clks 279 5>;
+> +
+> +		serdes0: serdes@f000000 {
+
+here too?
+
+> +			compatible = "ti,j721e-serdes-10g";
+> +			reg = <0x0f000000 0x00010000>;
+> +			reg-names = "torrent_phy";
+> +			resets = <&serdes_wiz0 0>;
+> +			reset-names = "torrent_reset";
+> +			clocks = <&serdes_wiz0 TI_WIZ_PLL0_REFCLK>,
+> +				 <&serdes_wiz0 TI_WIZ_PHY_EN_REFCLK>;
+> +			clock-names = "refclk", "phy_en_refclk";
+> +			assigned-clocks = <&serdes_wiz0 TI_WIZ_PLL0_REFCLK>,
+> +					  <&serdes_wiz0 TI_WIZ_PLL1_REFCLK>,
+> +					  <&serdes_wiz0 TI_WIZ_REFCLK_DIG>;
+> +			assigned-clock-parents = <&k3_clks 279 1>,
+> +						 <&k3_clks 279 1>,
+> +						 <&k3_clks 279 1>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			#clock-cells = <1>;
+> +
+> +			status = "disabled"; /* Needs lane config */
+> +		};
+> +	};
+>  };
+>  
+>  /* Main domain overrides */
+> @@ -83,6 +128,15 @@
+>  	ti,interrupt-ranges = <7 71 21>;
+>  };
+>  
+> +&main_conf {
+> +	serdes0_ln_ctrl: mux-controller@4080 {
+> +		compatible = "reg-mux";
+> +		reg = <0x4080 0x4>;
+> +		#mux-control-cells = <1>;
+> +		mux-reg-masks = <0x0 0x3>; /* SERDES0 lane0 select */
+> +	};
+> +};
+> +
+>  &oc_sram {
+>  	reg = <0x00 0x70000000 0x00 0x40000>;
+>  	ranges = <0x00 0x00 0x70000000 0x40000>;
+
+-- 
+cheers,
+-roger
 
