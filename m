@@ -1,418 +1,488 @@
-Return-Path: <linux-kernel+bounces-173266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE988BFDE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:03:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FD58BFDEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007571F2377D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA7BC1C2129C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679346BFB3;
-	Wed,  8 May 2024 13:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2166FB9D;
+	Wed,  8 May 2024 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um8A1+Gb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D4VLAPfu"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072FF7E57F;
-	Wed,  8 May 2024 13:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04E96F514;
+	Wed,  8 May 2024 13:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715173384; cv=none; b=vEUlIuox9GiLfacL6Mm22X7Vr5ueW/h/5V/dqbsfbJZhOiERdj3M/z9w9S1Xf1lHOqTA5bCv5rHVxHhc6oU1ePvT2jTY2d/mMOnX7Du1ogO1oxWyHFxNBO5ENSUnYPAa2k+gp3libp5Cy/h7GKNPTxPjoQV1rr+AMGGw7s6mp/8=
+	t=1715173427; cv=none; b=EPD5C5/Grv77IkLPOTfKeczTX94qy1AKSjpMk/2v2+Y6OQvCkPhLtiKW0Mx9tGY9ewIuxhbZHTWHnV1XC87h5bl6/xB5Xg9AkHMeDtTHjN0OD2xxiN5hPj69/VikaP0XBjV+VzlXWaGrLGAgRK3kxYTHLcmJIMXG9tgaruoNQyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715173384; c=relaxed/simple;
-	bh=01LJvPegPkRkhZihRNl/WMO4vMJyZSWpYYOjBKJ/LDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y5lXfTvdOaq/PBayPRAltMCgu3EiggO7QhP2ai1j4Qw6l7hU73/VBmeAb0/RyLyoaf5kIj254e4FpCJ7vlzNCbxNfojppwXcNakDN1yTuSMGD9efxS9WIzapdfSuaAZe0ok6eFoT1FL8j/eH83meWTnm0IXorr/2f62gCa2buv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um8A1+Gb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6CFC4AF66;
-	Wed,  8 May 2024 13:03:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715173383;
-	bh=01LJvPegPkRkhZihRNl/WMO4vMJyZSWpYYOjBKJ/LDE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=um8A1+GbLmhUZSQa/iVdTWhjZAyH/DLQiN13SIfEp0+dr+oDxeCY7uQPvwuAghMET
-	 8qGPJkH5kf19Lc/ciZohALp6Y+3Ng4i3iYHXXgDgDwF9/XZfwRjlK+0kP4dKf5BT08
-	 1LsIYL3u47plEZhSJg/CsDqmoU4TlhwLKraezgeZUs+lhL+JIDgTg0eXVG5NTXj/3n
-	 bNCJhAaDHay8CchQXlbtuBcwv3m9aASsIUT26ig7euHW3+i13lq5dCBp0whdKHb9Rd
-	 k/u9pudGHgBEsXUiBmZ72N9rTk6b/MIXCedKeOuwV3aOq1IGw1Ygh1Ia27bcuZ/H+c
-	 7PxsqKiO5FOFw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so7288129e87.1;
-        Wed, 08 May 2024 06:03:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVH7LM8KPg0I/g33/UW2ozI6Xn3K3eEK9SWTZKeUyQLLqlcGSD+TJnqfr0bzkE4uuomHbY3LpMi8ZeX7XlyXsyl/5OhuEyIlpQuamU/R5m3PnoCKJGeRQCy+Ayz4+4wUJQciVhIKVN+TnvyC8HKZw==
-X-Gm-Message-State: AOJu0Yz2IDYhjQDtauisMRrusoU5uLIPvJ5/Y23DpXM/HkgLC0TtZHZU
-	0hwlgMqCepRzGZFooMF7GyrzIqQ7N49Nnq48863zRUPbID8+T1xl5EW0voJB/AipNzQELHkfepp
-	jjv3wdHJl3vDt2cIVb3A3jwkUUcE=
-X-Google-Smtp-Source: AGHT+IG+00kY9mpFe8s5aIyse0mMpyW1ULwLO8p3m8f7XlHKxR6q519vRQk49KDn8ns8Dfm0olRbRGNIY8yAzjGtAVQ=
-X-Received: by 2002:a19:ad06:0:b0:51d:a208:2282 with SMTP id
- 2adb3069b0e04-5217cd49611mr2247119e87.51.1715173381671; Wed, 08 May 2024
- 06:03:01 -0700 (PDT)
+	s=arc-20240116; t=1715173427; c=relaxed/simple;
+	bh=5FEuNuqB/xNgZpz5eMrt4wnOu5jHXdgJutLLPE66LU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IqU1bNU1VAvv3eAxaJ7Jcp7OIdLJnVDAD4c5+ssjbhMU5OhxEGxlP4CJWZh/rPW0Odwgl/sX6AQSN/OdEKNjjdoYccDBoKcaFPqrVRuEmOsh0uR75f5VA0ykyEymNkh2LVsrFaUw+BF+SQfiYITQAMX3hqQ7xklJEKRSY1nn4Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D4VLAPfu; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715173413;
+	bh=5FEuNuqB/xNgZpz5eMrt4wnOu5jHXdgJutLLPE66LU8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=D4VLAPfuxR04RrUjyNzTm7l5RZgiJoBmJV1sabUa/Kk325ubbamcDSvyqRzIrOfpw
+	 VWUkvUkvJgc0PYKVdPkRzqcdmAanVMw9vNxQIgtEWw7h7QXxyA5uS1m+qqs/+bcfDK
+	 1rCndo0hswsnhlVKE7ZU0SEXuBQFTQLGJ3Xjzhd3kejwMqKfM8xkCO7uBWvmarC1Dj
+	 lR29yk7jjk5UbWW8QLktLZaTXPLFlNfhZ4p9WWigL2Fb5YHx4mEJNBDZUtB9XIphk4
+	 Y8lywEA0ZnlXn63dHFHXriFjoruE9Kps2B/gaoMj3iIdWb5LB6kI1OoyF18Xb8eQkP
+	 G2fS605ZHlgqg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87E133782113;
+	Wed,  8 May 2024 13:03:32 +0000 (UTC)
+Message-ID: <cbf73111-a6cf-47da-9563-89d49fbdb17d@collabora.com>
+Date: Wed, 8 May 2024 15:03:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240411121047.2005033-1-maobibo@loongson.cn> <db839f86-6749-e15b-a084-d8a4a6735f1c@loongson.cn>
-In-Reply-To: <db839f86-6749-e15b-a084-d8a4a6735f1c@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 8 May 2024 21:02:55 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4MucyKrQdxBtoh7PJZDiWo1kB-9TP2L-x0tw8vh=ypNQ@mail.gmail.com>
-Message-ID: <CAAhV-H4MucyKrQdxBtoh7PJZDiWo1kB-9TP2L-x0tw8vh=ypNQ@mail.gmail.com>
-Subject: Re: [PATCH v3] perf kvm: Add kvm-stat for loongarch64
-To: maobibo <maobibo@loongson.cn>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ian Rogers <irogers@google.com>, 
-	Ming Wang <wangming01@loongson.cn>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: arm: mediatek: mmsys: Add OF graph
+ support for board path
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "wenst@chromium.org" <wenst@chromium.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ =?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
+ "daniel@ffwll.ch" <daniel@ffwll.ch>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "kernel@collabora.com" <kernel@collabora.com>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ =?UTF-8?B?WXUtY2hhbmcgTGVlICjmnY7nprnnkosp?= <Yu-chang.Lee@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
+ <20240409120211.321153-3-angelogioacchino.delregno@collabora.com>
+ <aa7e3bcf70383e563a65919f924ec2e5e4cd778c.camel@mediatek.com>
+ <becdc2e5-4a1d-4280-b6f8-78d4903be283@collabora.com>
+ <4dfb09b9c437ab2baa0898eca13a43fd7475047a.camel@mediatek.com>
+ <46347f5d-e09b-4e83-a5a2-e12407f442a4@collabora.com>
+ <847e1a84b532956f697d24014d684c86f0b76f03.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <847e1a84b532956f697d24014d684c86f0b76f03.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 7, 2024 at 2:11=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote:
->
-> Hi Peter/Ian/Huacai,
->
-> This patch stays one month without response, I know you are busy and
-> look through thousands of patch every day.
->
-> Just one question, who has permission to merge perf kvm patch for
-> LoongArch. Is it LoongArch maintainer or perf kvm maintainer?
-It should probably go to perf tree, but if it is allowed, maybe I can
-try to merge into LoongArch tree.
+Il 08/05/24 09:19, CK Hu (胡俊光) ha scritto:
+> On Tue, 2024-05-07 at 16:07 +0200, AngeloGioacchino Del Regno wrote:
+>> Il 07/05/24 08:59, CK Hu (胡俊光) ha scritto:
+>>> On Thu, 2024-05-02 at 10:50 +0200, AngeloGioacchino Del Regno
+>>> wrote:
+>>>> Il 25/04/24 04:23, CK Hu (胡俊光) ha scritto:
+>>>>> Hi, Angelo:
+>>>>>
+>>>>> On Tue, 2024-04-09 at 14:02 +0200, AngeloGioacchino Del Regno
+>>>>> wrote:
+>>>>>> Document OF graph on MMSYS/VDOSYS: this supports up to three
+>>>>>> DDP
+>>>>>> paths
+>>>>>> per HW instance (so potentially up to six displays for multi-
+>>>>>> vdo
+>>>>>> SoCs).
+>>>>>>
+>>>>>> The MMSYS or VDOSYS is always the first component in the DDP
+>>>>>> pipeline,
+>>>>>> so it only supports an output port with multiple endpoints -
+>>>>>> where
+>>>>>> each
+>>>>>> endpoint defines the starting point for one of the (currently
+>>>>>> three)
+>>>>>> possible hardware paths.
+>>>>>>
+>>>>>> Signed-off-by: AngeloGioacchino Del Regno <
+>>>>>> angelogioacchino.delregno@collabora.com>
+>>>>>> ---
+>>>>>>     .../bindings/arm/mediatek/mediatek,mmsys.yaml | 23
+>>>>>> +++++++++++++++++++
+>>>>>>     1 file changed, 23 insertions(+)
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
+>>>>>> ys.y
+>>>>>> aml
+>>>>>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
+>>>>>> ys.y
+>>>>>> aml
+>>>>>> index b3c6888c1457..4e9acd966aa5 100644
+>>>>>> ---
+>>>>>> a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
+>>>>>> ys.y
+>>>>>> aml
+>>>>>> +++
+>>>>>> b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mms
+>>>>>> ys.y
+>>>>>> aml
+>>>>>> @@ -93,6 +93,29 @@ properties:
+>>>>>>       '#reset-cells':
+>>>>>>         const: 1
+>>>>>>     
+>>>>>> +  port:
+>>>>>> +    $ref: /schemas/graph.yaml#/properties/port
+>>>>>> +    description:
+>>>>>> +      Output port node. This port connects the MMSYS/VDOSYS
+>>>>>> output
+>>>>>> to
+>>>>>> +      the first component of one display pipeline, for
+>>>>>> example
+>>>>>> one
+>>>>>> of
+>>>>>> +      the available OVL or RDMA blocks.
+>>>>>> +      Some MediaTek SoCs support up to three display outputs
+>>>>>> per
+>>>>>> MMSYS.
+>>>>>> +    properties:
+>>>>>> +      endpoint@0:
+>>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
+>>>>>> +        description: Output to the primary display pipeline
+>>>>>> +
+>>>>>> +      endpoint@1:
+>>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
+>>>>>> +        description: Output to the secondary display
+>>>>>> pipeline
+>>>>>> +
+>>>>>> +      endpoint@2:
+>>>>>> +        $ref: /schemas/graph.yaml#/properties/endpoint
+>>>>>> +        description: Output to the tertiary display pipeline
+>>>>>> +
+>>>>>> +    required:
+>>>>>> +      - endpoint@0
+>>>>>> +
+>>>>>
+>>>>> mmsys/vdosys does not output data to the first component of
+>>>>> display
+>>>>> pipeline, so this connection looks 'virtual'. Shall we add
+>>>>> something
+>>>>> virtual in device tree? You add this in order to decide which
+>>>>> pipeline
+>>>>> is 1st, 2nd, 3rd, but for device it don't care which one is
+>>>>> first.
+>>>>> In
+>>>>> computer, software could change which display is the primary
+>>>>> display.
+>>>>> I'm not sure it's good to decide display order in device tree?
+>>>>>
+>>>>
+>>>> Devicetree describes hardware, so nothing virtual can be present
+>>>> -
+>>>> and in any case,
+>>>> the primary/secondary/tertiary pipeline is in relation to MM/VDO
+>>>> SYS,
+>>>> not referred
+>>>> to software.
+>>>>
+>>>> Better explaining, the primary pipeline is not necessarily the
+>>>> primary display in
+>>>> DRM terms: that's a concept that is completely detached from the
+>>>> scope of this
+>>>> series and this graph - and it's something that shall be managed
+>>>> solely by the
+>>>> driver (mediatek-drm in this case).
+>>>>
+>>>> Coming back to the connection looking, but *not* being virtual:
+>>>> the
+>>>> sense here is
+>>>> that the MM/VDOSYS blocks are used in the display pipeline to
+>>>> "stitch" together
+>>>> the various display pipeline hardware blocks, or, said
+>>>> differently,
+>>>> setting up the
+>>>> routing between all of those (P.S.: mmsys_mtxxxx_routing_table!)
+>>>> through the VDO
+>>>> Input Selection (VDOx_SEL_IN) or Output Selection (VDOx_SEL_OUT)
+>>>> and
+>>>> with the
+>>>> assistance of the VDO Multiple Output Mask (VDOx_MOUT) for the
+>>>> multiple outputs
+>>>> usecase, both of which, are described by this graph.
+>>>
+>>> I agree this part, but this is related to display device OF graph.
+>>> These display device would output video data from one device and
+>>> input
+>>> to another video device. These video device would not input or
+>>> output
+>>> video data to mmsys/vdosys.
+>>>
+>>>>
+>>>> This means that the VDOSYS is really the "master" of the display
+>>>> pipeline since
+>>>> everything gets enabled, mixed and matched from there - and
+>>>> that's in
+>>>> the sense
+>>>> of hardware operation, so we are *really* (and not virtually!)
+>>>> flipping switches.
+>>>
+>>> I agree mmsys/vdosys is master of video pipeline, so let's define
+>>> what
+>>> the port in mmsys/vdosys is. If the port means the master
+>>> relationship,
+>>> mmsys/vdosys should output port to every display device. Or use a
+>>> simply way to show the master relation ship
+>>>
+>>> mmsys-subdev = <&ovl0, &rdma0, &color0, ...>, <&ovl1, &rdma1,
+>>> &color1,
+>>> ...>;
+>>>
+>>
+>> There's no need to list all of the VDO0/VDO1/mmsys devices in one big
+>> array
+>> property, because the actual possible devices can be defined:
+>>     1. In the bindings; and
+>>     2. In the actual OF graph that we write for each SoC+board
+>> combination.
+>>
+>> A graph cannot contain a connection to a device that cannot be
+>> connected to
+>> the previous, so, your "mmsys-subdev" list can be retrieved by
+>> looking at the
+>> graph:
+>>    - Start from VDO0/1 or MMSYS
+>>    - Walk through (visually, even) OUTPUT ports
+>>      - VDO0 (read output ep) -> ovl0 (read output ep) -> rdma0 (read
+>> output ep) ->
+>>        color0 (...) -> etc
+>>    - Nothing more - it's all defined there.
+>>
+>>>
+>>> Another problem is how to group display device? If two pipeline
+>>> could
+>>> be route to the same display interface, such as
+>>>
+>>> rdma0 -> dsi
+>>> rdma1 -> dsi
+>>>
+>>> Would this be single group?
+>>
+>> There are multiple ways of doing this, but one that comes to my mind
+>> right now and
+>> that looks clean as well is the following:
+>>
+>> ovl0@ef01 {
+>>      .....
+>>     ports {
+>>       port@0 {
+>>         reg = <0>;
+>>         ovl0_in: endpoint {
+>>           remote-endpoint = <&vdosys0_out>;
+>>         };
+>>       };
+> 
+> I'm not sure how do you define this port from OVL to vdosys. If this
+> port means 'master relationship', others could add port in COLOR to
+> point to vdosys because COLOR and vdosys has the 'master relationship'
+> and I could not reject this. So we need more specific definition of
+> this port.
 
 
-Huacai
->
-> Regards
-> Bibo Mao
->
->
-> On 2024/4/11 =E4=B8=8B=E5=8D=888:10, Bibo Mao wrote:
-> > Add support for 'perf kvm stat' on loongarch64 platform, now only
-> > kvm exit event is supported.
-> >
-> > Here is example output about "perf kvm --host stat report" command
-> >
-> >     Event name   Samples   Sample%     Time (ns)   Time%   Mean Time (n=
-s)
-> >      Mem store     83969    51.00%     625697070   8.00%             74=
-51
-> >       Mem read     37641    22.00%     112485730   1.00%             29=
-88
-> >      Interrupt     15542     9.00%      20620190   0.00%             13=
-26
-> >          Iocsr     15207     9.00%      94296190   1.00%             62=
-00
-> >      Hypercall      4873     2.00%      12265280   0.00%             25=
-16
-> >           Idle      3713     2.00%    6322055860  87.00%          17026=
-81
-> >            FPU      1819     1.00%       2750300   0.00%             15=
-11
-> >         Ifecth       502     0.00%       1341740   0.00%             26=
-72
-> >     Mem modify       324     0.00%        602240   0.00%             18=
-58
-> >         Cpucfg        55     0.00%         77610   0.00%             14=
-11
-> >            Csr        12     0.00%         19690   0.00%             16=
-40
-> >           LASX         3     0.00%          4870   0.00%             16=
-23
-> >            LSX         2     0.00%          2100   0.00%             10=
-50
-> >
-> > Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> > ---
-> > v2 --- v3:
-> >    1. Add NULL check with cpuid in function get_cpuid()
-> >    2. Add example output from /proc/cpuinfo before function get_cpuid()
-> > v1 --- v2:
-> >    1. Add child_ops for kvm exit event, split kvm:kvm_exit_gspr events
-> > into cpucfg/csr/iocsr/idle child events by decoding detailed gspr
-> > instruction.
-> >    2. Remove some exception code type which does not happen in current
-> > kvm implementation, such as meomry NR/NX/priviledge exception.
-> > ---
-> >   tools/perf/arch/loongarch/Makefile        |   1 +
-> >   tools/perf/arch/loongarch/util/Build      |   2 +
-> >   tools/perf/arch/loongarch/util/header.c   |  88 ++++++++++++++
-> >   tools/perf/arch/loongarch/util/kvm-stat.c | 135 +++++++++++++++++++++=
-+
-> >   4 files changed, 226 insertions(+)
-> >   create mode 100644 tools/perf/arch/loongarch/util/header.c
-> >   create mode 100644 tools/perf/arch/loongarch/util/kvm-stat.c
-> >
-> > diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loong=
-arch/Makefile
-> > index 3992a67a87d9..c89d6bb6b184 100644
-> > --- a/tools/perf/arch/loongarch/Makefile
-> > +++ b/tools/perf/arch/loongarch/Makefile
-> > @@ -4,6 +4,7 @@ PERF_HAVE_DWARF_REGS :=3D 1
-> >   endif
-> >   PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET :=3D 1
-> >   PERF_HAVE_JITDUMP :=3D 1
-> > +HAVE_KVM_STAT_SUPPORT :=3D 1
-> >
-> >   #
-> >   # Syscall table generation for perf
-> > diff --git a/tools/perf/arch/loongarch/util/Build b/tools/perf/arch/loo=
-ngarch/util/Build
-> > index d776125a2d06..b12d374d7096 100644
-> > --- a/tools/perf/arch/loongarch/util/Build
-> > +++ b/tools/perf/arch/loongarch/util/Build
-> > @@ -1,5 +1,7 @@
-> > +perf-y +=3D header.o
-> >   perf-y +=3D perf_regs.o
-> >
-> >   perf-$(CONFIG_DWARF)     +=3D dwarf-regs.o
-> >   perf-$(CONFIG_LOCAL_LIBUNWIND) +=3D unwind-libunwind.o
-> >   perf-$(CONFIG_LIBDW_DWARF_UNWIND) +=3D unwind-libdw.o
-> > +perf-$(CONFIG_LIBTRACEEVENT) +=3D kvm-stat.o
-> > diff --git a/tools/perf/arch/loongarch/util/header.c b/tools/perf/arch/=
-loongarch/util/header.c
-> > new file mode 100644
-> > index 000000000000..a4ed732b49c6
-> > --- /dev/null
-> > +++ b/tools/perf/arch/loongarch/util/header.c
-> > @@ -0,0 +1,88 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Implementation of get_cpuid().
-> > + *
-> > + * Author: Nikita Shubin <n.shubin@yadro.com>
-> > + */
-> > +
-> > +#include <stdio.h>
-> > +#include <stdlib.h>
-> > +#include <api/fs/fs.h>
-> > +#include <errno.h>
-> > +#include "util/debug.h"
-> > +#include "util/header.h"
-> > +
-> > +/*
-> > + * Output example from /proc/cpuinfo
-> > + *   CPU Family              : Loongson-64bit
-> > + *   Model Name              : Loongson-3C5000
-> > + *   CPU Revision            : 0x11
-> > + */
-> > +#define CPUINFO_MODEL        "Model Name"
-> > +#define CPUINFO              "/proc/cpuinfo"
-> > +static char *_get_field(const char *line)
-> > +{
-> > +     char *line2, *nl;
-> > +
-> > +     line2 =3D strrchr(line, ' ');
-> > +     if (!line2)
-> > +             return NULL;
-> > +
-> > +     line2++;
-> > +     nl =3D strrchr(line, '\n');
-> > +     if (!nl)
-> > +             return NULL;
-> > +
-> > +     return strndup(line2, nl - line2);
-> > +}
-> > +
-> > +static char *__get_cpuid(void)
-> > +{
-> > +     char *line, *model, *cpuid;
-> > +     unsigned long line_sz;
-> > +     FILE *file;
-> > +
-> > +     file =3D fopen(CPUINFO, "r");
-> > +     if (file =3D=3D NULL)
-> > +             return cpuid;
-> > +
-> > +     line =3D model =3D cpuid =3D NULL;
-> > +     while (getline(&line, &line_sz, file) !=3D -1) {
-> > +             if (strncmp(line, CPUINFO_MODEL, strlen(CPUINFO_MODEL)))
-> > +                     continue;
-> > +
-> > +             model =3D _get_field(line);
-> > +             if (!model)
-> > +                     goto free;
-> > +             break;
-> > +     }
-> > +
-> > +     if (model && (asprintf(&cpuid, "%s", model) < 0))
-> > +             cpuid =3D NULL;
-> > +
-> > +free:
-> > +     fclose(file);
-> > +     free(model);
-> > +     return cpuid;
-> > +}
-> > +
-> > +int get_cpuid(char *buffer, size_t sz)
-> > +{
-> > +     char *cpuid =3D __get_cpuid();
-> > +     int ret =3D 0;
-> > +
-> > +     if (!cpuid)
-> > +             return EINVAL;
-> > +
-> > +     if (sz >=3D strlen(cpuid))
-> > +             scnprintf(buffer, sz, "%s", cpuid);
-> > +     else
-> > +             ret =3D ENOBUFS;
-> > +     free(cpuid);
-> > +     return ret;
-> > +}
-> > +
-> > +char *get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
-> > +{
-> > +     return __get_cpuid();
-> > +}
-> > diff --git a/tools/perf/arch/loongarch/util/kvm-stat.c b/tools/perf/arc=
-h/loongarch/util/kvm-stat.c
-> > new file mode 100644
-> > index 000000000000..cc50adb0835a
-> > --- /dev/null
-> > +++ b/tools/perf/arch/loongarch/util/kvm-stat.c
-> > @@ -0,0 +1,135 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#include <errno.h>
-> > +#include <memory.h>
-> > +#include <errno.h>
-> > +#include "util/kvm-stat.h"
-> > +#include "util/parse-events.h"
-> > +#include "util/debug.h"
-> > +#include "util/evsel.h"
-> > +#include "util/evlist.h"
-> > +#include "util/pmus.h"
-> > +
-> > +#define LOONGARCH_EXCEPTION_INT              0
-> > +#define LOONGARCH_EXCEPTION_PIL              1
-> > +#define LOONGARCH_EXCEPTION_PIS              2
-> > +#define LOONGARCH_EXCEPTION_PIF              3
-> > +#define LOONGARCH_EXCEPTION_PME              4
-> > +#define LOONGARCH_EXCEPTION_FPD              15
-> > +#define LOONGARCH_EXCEPTION_SXD              16
-> > +#define LOONGARCH_EXCEPTION_ASXD     17
-> > +#define LOONGARCH_EXCEPTION_GSPR     22
-> > +#define  LOONGARCH_EXCEPTION_CPUCFG  100
-> > +#define  LOONGARCH_EXCEPTION_CSR     101
-> > +#define  LOONGARCH_EXCEPTION_IOCSR   102
-> > +#define  LOONGARCH_EXCEPTION_IDLE    103
-> > +#define  LOONGARCH_EXCEPTION_OTHERS  104
-> > +#define LOONGARCH_EXCEPTION_HVC              23
-> > +
-> > +#define loongarch_exception_type                             \
-> > +     {LOONGARCH_EXCEPTION_INT,  "Interrupt" },               \
-> > +     {LOONGARCH_EXCEPTION_PIL,  "Mem read" },                \
-> > +     {LOONGARCH_EXCEPTION_PIS,  "Mem store" },               \
-> > +     {LOONGARCH_EXCEPTION_PIF,  "Ifecth" },                  \
-> > +     {LOONGARCH_EXCEPTION_PME,  "Mem modify" },              \
-> > +     {LOONGARCH_EXCEPTION_FPD,  "FPU" },                     \
-> > +     {LOONGARCH_EXCEPTION_SXD,  "LSX" },                     \
-> > +     {LOONGARCH_EXCEPTION_ASXD, "LASX" },                    \
-> > +     {LOONGARCH_EXCEPTION_GSPR, "Privilege Error" },         \
-> > +     {LOONGARCH_EXCEPTION_HVC,  "Hypercall" },               \
-> > +     {LOONGARCH_EXCEPTION_CPUCFG, "Cpucfg" },                \
-> > +     {LOONGARCH_EXCEPTION_CSR,    "Csr" },                   \
-> > +     {LOONGARCH_EXCEPTION_IOCSR,  "Iocsr" },                 \
-> > +     {LOONGARCH_EXCEPTION_IDLE,   "Idle" },                  \
-> > +     {LOONGARCH_EXCEPTION_OTHERS, "Others" }
-> > +
-> > +define_exit_reasons_table(loongarch_exit_reasons, loongarch_exception_=
-type);
-> > +
-> > +const char *vcpu_id_str =3D "vcpu_id";
-> > +const char *kvm_exit_reason =3D "reason";
-> > +const char *kvm_entry_trace =3D "kvm:kvm_enter";
-> > +const char *kvm_reenter_trace =3D "kvm:kvm_reenter";
-> > +const char *kvm_exit_trace =3D "kvm:kvm_exit";
-> > +const char *kvm_events_tp[] =3D {
-> > +     "kvm:kvm_enter",
-> > +     "kvm:kvm_reenter",
-> > +     "kvm:kvm_exit",
-> > +     "kvm:kvm_exit_gspr",
-> > +     NULL,
-> > +};
-> > +
-> > +static bool event_end(struct evsel *evsel,
-> > +             struct perf_sample *sample __maybe_unused,
-> > +             struct event_key *key __maybe_unused)
-> > +{
-> > +     /*
-> > +      * LoongArch kvm is different with other architectures
-> > +      *
-> > +      * There is kvm:kvm_reenter or kvm:kvm_enter event adjacent with
-> > +      * kvm:kvm_exit event.
-> > +      *   kvm:kvm_reenter means returning to guest immediately
-> > +      *   kvm:kvm_enter   means returning to vmm and then to guest
-> > +      */
-> > +     return evsel__name_is(evsel, kvm_entry_trace) ||
-> > +             evsel__name_is(evsel, kvm_reenter_trace);
-> > +}
-> > +
-> > +static void event_gspr_get_key(struct evsel *evsel,
-> > +                     struct perf_sample *sample,
-> > +                     struct event_key *key)
-> > +{
-> > +     unsigned int insn;
-> > +
-> > +     key->key =3D LOONGARCH_EXCEPTION_OTHERS;
-> > +     insn =3D evsel__intval(evsel, sample, "inst_word");
-> > +     switch (insn >> 24) {
-> > +     case 0:
-> > +             /* cpucfg inst trap */
-> > +             if ((insn >> 10) =3D=3D 0x1b)
-> > +                     key->key =3D LOONGARCH_EXCEPTION_CPUCFG;
-> > +             break;
-> > +     case 4:
-> > +             /* csr inst trap */
-> > +             key->key =3D LOONGARCH_EXCEPTION_CSR;
-> > +             break;
-> > +     case 6:
-> > +             /* iocsr inst trap */
-> > +             if ((insn >> 15) =3D=3D 0xc90)
-> > +                     key->key =3D LOONGARCH_EXCEPTION_IOCSR;
-> > +             else if ((insn >> 15) =3D=3D 0xc91)
-> > +                     /* idle inst trap */
-> > +                     key->key =3D LOONGARCH_EXCEPTION_IDLE;
-> > +             break;
-> > +     default:
-> > +             key->key =3D LOONGARCH_EXCEPTION_OTHERS;
-> > +             break;
-> > +     }
-> > +}
-> > +
-> > +static struct child_event_ops child_events[] =3D {
-> > +     { .name =3D "kvm:kvm_exit_gspr", .get_key =3D event_gspr_get_key =
-},
-> > +     { NULL, NULL },
-> > +};
-> > +
-> > +static struct kvm_events_ops exit_events =3D {
-> > +     .is_begin_event =3D exit_event_begin,
-> > +     .is_end_event =3D event_end,
-> > +     .child_ops =3D child_events,
-> > +     .decode_key =3D exit_event_decode_key,
-> > +     .name =3D "VM-EXIT"
-> > +};
-> > +
-> > +struct kvm_reg_events_ops kvm_reg_events_ops[] =3D {
-> > +     { .name =3D "vmexit", .ops =3D &exit_events, },
-> > +     { NULL, NULL },
-> > +};
-> > +
-> > +const char * const kvm_skip_events[] =3D {
-> > +     NULL,
-> > +};
-> > +
-> > +int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid __maybe_=
-unused)
-> > +{
-> > +     kvm->exit_reasons_isa =3D "loongarch64";
-> > +     kvm->exit_reasons =3D loongarch_exit_reasons;
-> > +     return 0;
-> > +}
-> >
-> > base-commit: 2c71fdf02a95b3dd425b42f28fd47fb2b1d22702
-> >
->
+> Only the 'first' device in pipeline could have this port?
+
+Correct. Only the first device in a pipeline - and this is actually a restriction
+that the generic binding definition of port already gives, in a way.
+
+
+> In mt8173, one pipeline is
+> 
+> ovl -> color -> aal -> od -> rdma -> ufo -> dsi
+> 
+> But rdma has an option to read data from od or directly from DRAM. If
+> from DRAM, the pipeline would be changed to
+> 
+> rdma -> ufo -> dsi
+> 
+> 
+> So it's confused which one is 'first'.
+
+That's why the pipeline is *board-specific* and not soc-generic!
+
+And what you described is *exactly* the reason why I'm adding support for the
+OF graphs in mediatek-drm: specifying the correct pipeline for each board as per
+what each board wants to use (said differently: for each board's *capabilities*).
+
+So, if on a certain board you want to skip OD, you can hook RDMA up directly to
+MMSYS/VDOSYS.
+
+In MT8173, one pipeline for one board uses endpoints IN/OUT like this:
+
+MMSYS -> OVL -> COLOR -> AAL -> OD -> RDMA -> UFO -> DSI
+
+and for another board, endpoints will be like
+
+MMSYS -> RDMA -> UFO -> DSI
+
+..which is the exact same as you described, and I think that your confusion comes
+from the fact that you didn't put MMSYS at the beginning of the pipeline :-)
+
+
+
+
+In case you need any *temporary override* on any board that defines a pipeline like
+
+MMSYS -> OVL -> COLOR -> AAL -> OD -> RDMA -> UFO -> DSI
+
+so that the pipeline *temporarily* becomes (for power management, or for any other
+reason) RDMA -> UFO -> DSI .... that's not a concern: the graph is present, and it
+is used to tell to the driver what is the regular pipeline to use.
+Eventual temporary overrides can be managed transparently inside of the driver with
+C code and no changes to the devicetree are required.
+
+
+> I don't know how to decide which device could point to mmsys/vdosys. So
+> please give a specific definition.
+> 
+
+Nothing points TO mmsys/vdosys. It is mmsys/vdosys pointing to a device.
+
+So, mmsys/vdosys must point to the *first device in the pipeline*.
+
+Any other doubt?
+
+Cheers,
+Angelo
+
+> Regards,
+> CK
+> 
+>>
+>>       port@1 {
+>>         reg = <1>;
+>>         ovl0_out0: endpoint@0 {
+>>           remote-endpoint = <&rdma0_in>;
+>>         };
+>>         ovl0_out1: endpoint@1 {
+>>           remote-endpoint = <&rdma1_in>;
+>>         };
+>>       };
+>>     };
+>> };
+>>
+>> rdma0@1234 {
+>>      .....
+>>     ports {
+>>       port@0 {
+>>         reg = <0>;
+>>         rdma0_in: endpoint {
+>>           remote-endpoint = <&ovl0_out0>; /* assuming ovl0 outputs to
+>> rdma0...*/
+>>         };
+>>       };
+>>       port@1 {
+>>         reg = <1>;
+>>         rdma0_out: endpoint@1 {
+>>           remote-endpoint = <&dsi_dual_intf0_in>;
+>>         };
+>>       };
+>>     };
+>> };
+>>
+>>
+>> rdma1@5678 {
+>>      .....
+>>     ports {
+>>       port@0 {
+>>         reg = <0>;
+>>         rdma1_in: endpoint {
+>>           /* assuming ovl0 outputs to rdma1 as well... can be
+>> something else. */
+>>           remote-endpoint = <&ovl0_out1>;
+>>         };
+>>       };
+>>       port@1 {
+>>         reg = <1>;
+>>         rdma1_out: endpoint {
+>>           remote-endpoint = <&dsi_dual_intf1_in>;
+>>         };
+>>       };
+>>     };
+>> };
+>>
+>>
+>> dsi@9abcd {
+>>      .....
+>>     ports {
+>>       port@0 {
+>>         reg = <0>;
+>>         /* Where endpoint@0 could be always DSI LEFT CTRL */
+>>         dsi_dual_intf0_in: endpoint@0 {
+>>           remote-endpoint = <&rdma0_out>;
+>>         };
+>>         /* ...and @1 could be always DSI RIGHT CTRL */
+>>         dsi_dual_intf1_in: endpoint@1 {
+>>           remote-endpoint = <&rdma1_out>;
+>>         };
+>>       };
+>>
+>>       port@1 {
+>>         reg = <1>;
+>>         dsi0_out: endpoint {
+>>           remote-endpoint = <&dsi_panel_in>;
+>>         };
+>>       };
+>>     };
+>> };
+>>
+>> ...for a dual-dsi panel, it'd be a similar graph.
+>>
+>> Cheers,
+>> Angelo
+>>
+>>>
+>>> mmsys-subdev = <&rdma0, &rdma1, &dsi>;
+>>>
+>>> Or two group?
+>>>
+>>> mmsys-subdev = <&rdma0, &dsi>, <&rdma1, &dsi>;
+>>>
+>>> I think we should clearly define this.
+>>>
+>>> Regards,
+>>> CK
+>>>
+>>>>
+>>>>
+>>>> Cheers,
+>>>> Angelo
+>>>>
+>>>>> Regards,
+>>>>> CK
+>>>>>
+>>>>>
+>>>>>>     required:
+>>>>>>       - compatible
+>>>>>>       - reg
+>>>>
+>>>>
+>>
+>>
+>>
+
+
 
