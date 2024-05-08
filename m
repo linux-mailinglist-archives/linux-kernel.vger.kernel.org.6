@@ -1,122 +1,217 @@
-Return-Path: <linux-kernel+bounces-172929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885CF8BF8E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:40:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B56A8BF8E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D411C22697
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F5E1C23824
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7802B6E5EF;
-	Wed,  8 May 2024 08:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522056FE20;
+	Wed,  8 May 2024 08:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="X9Dksld9"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1lkVOCS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D0C6BB51
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAA51DA21;
+	Wed,  8 May 2024 08:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157527; cv=none; b=Nu1Upd24xkTU3nDXp2ax88IK6A6Ri9/5nEqEKGTgucPhnwZTcSXrbtLpBJY3tBdsMWKqQKXyOGlxFc4CopknhUXkViTJC9hu+GquIo/Ua3RIBijvCxZjoG/qROXp2M/VKgWqZChlx2j4hIB8JsbtXFLFGHsJgMbDmj+89wnW+S4=
+	t=1715157568; cv=none; b=qOeoV8aHRdVPIr84fewkr8Dzr0iN1X6WWhXoem5Dgz8kwLuIIoxhyaNhRcQRzaf2ZxDQuR+3p5Rtiyg/M045ndEiWDTYskoINKerH++FTszyj7XziEUbMDqmiX9gLG+Pwae8YN3EyljnkbJglRDpOFjQgSGHFTpDPRnvlCypbpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157527; c=relaxed/simple;
-	bh=V5spKHAJYycDPIb8qjonfW7CCAIoHcDr+o3JbjTG3F8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=h1EGQgX0tT1CYzcxwFLrh4Rm7dzmx6uBuLk0dc+/bU0tjgv2koN5+nlo7RkMwpBbZrvbHBCB2HYz3WvdRmLF8mKEZFonJVOm3UuqKnWrOP+GWq5jRzqokSHA72uy8jW8YOr1N7BQqGBZR1F9WkcEX3XWiKFz0PhSY7U0uLPkxyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=X9Dksld9; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-792b8d989e8so9762485a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1715157525; x=1715762325; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V5spKHAJYycDPIb8qjonfW7CCAIoHcDr+o3JbjTG3F8=;
-        b=X9Dksld9Hez5TXYfe0vX/RwJZUXUSojsLUbLwU4I1s2L9JAR8+Tcev8RFoUoRJjEA8
-         KV6Kvcb4Vxh9qgcnT+BmHh78QJCPk12NI9GOapqf73lHse6mqJ/zd/5vb2EzoE9uLx1l
-         NytKZoC5ybMLpv/O75by4/gSjyCB3GJQ2Zi+g3NEDXT3WC4sbLEuG9+qPjmJ5m8RKetj
-         L5f3k4PTY+4THtT0DciShUX5uw7vdOLJnagUZhQu7Zh+WIkh5K2sZf9GWHiVTK8QCxGj
-         bPC2gUyNxYCG4MYbCdmQD3DyvyxZILEqhziLxv4OPujtgGOSCQG7JpMBkjhyRZPhfzN3
-         9D1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715157525; x=1715762325;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V5spKHAJYycDPIb8qjonfW7CCAIoHcDr+o3JbjTG3F8=;
-        b=lG6XAbMNwDDi6BmU+MkvvErIqk1S6piArf9Ucemo/YdrjuK9EIUOxMYq3HqCqXi90K
-         zQSveewX+7ptRu0AXaM/o4rquQryH31YdUYDe8VXjQEH4fPFLjhKPJlfXbsQ0gLcEf+C
-         9KbwVk7H0CVajqbQE6d1XlVhuSk3WQicooZQzqG6TtI0AehjgGv9ho117UVuBNQTK5rx
-         SIiZfMJKkLGBssnksuABtrq69KoHUNPkGw8AKxm1YNKUlC/ch+erBZyLp/tFa9Mh0H2y
-         HNXL/tvFb6LM/nJce/azqVNGBQQw74tmlSjgkIVuJXStLxiVeuowKvCfkOkO6hMbyXIr
-         r/Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUA5RBANXPrDluVqEG68E5KlYM08Xjr4Do9gpw55P0JAzPhg4LcRsjUrRlVk+9Wq1d78rXV9irDbvMLHhp8OzvP6CUVcBvTkW5myPVK
-X-Gm-Message-State: AOJu0YwijhPwpeu378uk4AcFMM7D7Th1kNYxgEfS9WDIhjjjUoQv9wjs
-	IZId9ImSagoivHgrlrBvYbOmk0MAyygGWweTrp61RaVd3CIdlqnDNsoAjFfJ591NZoSg7dGHdHT
-	i5OdCC/r84P3z9v5nwFVKVLYwPvnkeOI+gllMnA==
-X-Google-Smtp-Source: AGHT+IGBmSz6eFLsDLHd1HFg7kcp7kmSokUNcM7b494MpO41SWF9RR8A0fpKHutyvvQMYFPwHGwiGt9z4eDnQ5YljZw=
-X-Received: by 2002:a05:620a:4593:b0:790:b14b:21b9 with SMTP id
- af79cd13be357-792a6481401mr809884385a.18.1715157525012; Wed, 08 May 2024
- 01:38:45 -0700 (PDT)
+	s=arc-20240116; t=1715157568; c=relaxed/simple;
+	bh=Az+mUCgN8cLAqPcKX4l3XwNzu3OaAIxFfUYbqtcwBuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4dKT6L1GyGNp3hP+PjxFere+8VOekH9fn0AZhBukeikysZyBglbbbaudEuZvAtUiS7fn5f5OZbC6oJVTk46+5MRLvKJIjlWeEhPeMv0UETxFHBHR+rsO5dGUGmsgFqKT7LX1xxVSdGsh0T3+jqAifY/mfGu7imYJ7jg6mXBck0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1lkVOCS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3FC1C113CC;
+	Wed,  8 May 2024 08:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715157568;
+	bh=Az+mUCgN8cLAqPcKX4l3XwNzu3OaAIxFfUYbqtcwBuw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E1lkVOCSWSDjLVLMNkECiGVwa6umncB49gFnCQxqigWFKIpPxEKkYqr0QZ3w8N0e3
+	 LS6ql/n22qnxqojctbzGjBExsEeOkfqsuEOlnIc68UZuSFp1fFHVhnBWwe8lXzgmZG
+	 PMmzM/hPwJBWRBbOHa3mq05shSwDOQQYqPWt1GxVMlQ8c2wiY2vV7pErPGNpSt+CLU
+	 fqUfhgmyKKReB1QrrjpgePn9MEJvxnMUTrmNKv6RQdU3VtDdw+ioNIpB2pR9jvk8iA
+	 9Vx2Apak6rHvL1NPb5/wlrcdFPN5vc3Am3vcJq8GiLvG9CWxc738vu7Ln5MsHm+h6z
+	 ycW8hxMGx09yA==
+Date: Wed, 8 May 2024 09:39:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: "kuba@kernel.org" <kuba@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"andrew@lunn.ch" <andrew@lunn.ch>,
+	"jiri@resnulli.us" <jiri@resnulli.us>,
+	Ping-Ke Shih <pkshih@realtek.com>,
+	Larry Chiu <larry.chiu@realtek.com>
+Subject: Re: [PATCH net-next v17 01/13] rtase: Add pci table supported in
+ this module
+Message-ID: <20240508083923.GO15955@kernel.org>
+References: <20240502091847.65181-1-justinlai0215@realtek.com>
+ <20240502091847.65181-2-justinlai0215@realtek.com>
+ <20240503093331.GN2821784@kernel.org>
+ <14c200b4573b4a60af14b37861ca1727@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <20240506-dazzling-nippy-rhino-eabccd@houat> <ZjjdUBYYKXJ1EPr5@phenom.ffwll.local>
- <cbe5a743-d8be-4b0e-99c4-e804fbadc099@redhat.com> <ZjoNTw-TkPnnWLTG@phenom.ffwll.local>
- <CAPj87rN3uSZoHpWLSQqz1SW9YMZNj9fkoA_EDEE_bzv-Tw8tSw@mail.gmail.com> <Zjs42PGvilLlF0Cg@phenom.ffwll.local>
-In-Reply-To: <Zjs42PGvilLlF0Cg@phenom.ffwll.local>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 8 May 2024 09:38:33 +0100
-Message-ID: <CAPj87rN-wSbGSAoB8y3MXCS20_MAQvfpWSeUKYR6XzQ+Oh0FZA@mail.gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-To: Daniel Stone <daniel@fooishbar.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Maxime Ripard <mripard@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
-	John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
-	Sebastien Bacher <sebastien.bacher@canonical.com>, 
-	Linux Media Mailing List <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Milan Zamazal <mzamazal@redhat.com>, 
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <14c200b4573b4a60af14b37861ca1727@realtek.com>
 
-On Wed, 8 May 2024 at 09:33, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Wed, May 08, 2024 at 06:46:53AM +0100, Daniel Stone wrote:
-> > That would have the unfortunate side effect of making sandboxed apps
-> > less efficient on some platforms, since they wouldn't be able to do
-> > direct scanout anymore ...
->
-> I was assuming that everyone goes through pipewire, and ideally that is
-> the only one that can even get at these special chardev.
->
-> If pipewire is only for sandboxed apps then yeah this aint great :-/
+On Mon, May 06, 2024 at 11:32:38AM +0000, Justin Lai wrote:
+> > 
+> > 
+> > On Thu, May 02, 2024 at 05:18:35PM +0800, Justin Lai wrote:
+> > > Add pci table supported in this module, and implement pci_driver
+> > > function to initialize this driver, remove this driver, or shutdown this driver.
+> > >
+> > > Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> > 
+> > ...
+> > 
+> > > diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > new file mode 100644
+> > > index 000000000000..5ddb5f7abfe9
+> > > --- /dev/null
+> > > +++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+> > > @@ -0,0 +1,618 @@
+> > > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> > > +/*
+> > > + *  rtase is the Linux device driver released for Realtek Automotive
+> > > +Switch
+> > > + *  controllers with PCI-Express interface.
+> > > + *
+> > > + *  Copyright(c) 2023 Realtek Semiconductor Corp.
+> > > + *
+> > > + *  Below is a simplified block diagram of the chip and its relevant
+> > interfaces.
+> > > + *
+> > > + *               *************************
+> > > + *               *                       *
+> > > + *               *  CPU network device   *
+> > > + *               *                       *
+> > > + *               *   +-------------+     *
+> > > + *               *   |  PCIE Host  |     *
+> > > + *               ***********++************
+> > > + *                          ||
+> > > + *                         PCIE
+> > > + *                          ||
+> > > + *      ********************++**********************
+> > > + *      *            | PCIE Endpoint |             *
+> > > + *      *            +---------------+             *
+> > > + *      *                | GMAC |                  *
+> > > + *      *                +--++--+  Realtek         *
+> > > + *      *                   ||     RTL90xx Series  *
+> > > + *      *                   ||                     *
+> > > + *      *     +-------------++----------------+    *
+> > > + *      *     |           | MAC |             |    *
+> > > + *      *     |           +-----+             |    *
+> > > + *      *     |                               |    *
+> > > + *      *     |     Ethernet Switch Core      |    *
+> > > + *      *     |                               |    *
+> > > + *      *     |   +-----+           +-----+   |    *
+> > > + *      *     |   | MAC |...........| MAC |   |    *
+> > > + *      *     +---+-----+-----------+-----+---+    *
+> > > + *      *         | PHY |...........| PHY |        *
+> > > + *      *         +--++-+           +--++-+        *
+> > > + *      *************||****************||***********
+> > 
+> > Thanks for the diagram, I like it a lot :)
+> > 
+> 
+> Thank you for your like :)
+> > > + *
+> > > + *  The block of the Realtek RTL90xx series is our entire chip
+> > > + architecture,
+> > > + *  the GMAC is connected to the switch core, and there is no PHY in
+> > between.
+> > > + *  In addition, this driver is mainly used to control GMAC, but does
+> > > + not
+> > > + *  control the switch core, so it is not the same as DSA.
+> > > + */
+> > 
+> > ...
+> > 
+> > > +static int rtase_alloc_msix(struct pci_dev *pdev, struct
+> > > +rtase_private *tp) {
+> > > +     int ret;
+> > > +     u16 i;
+> > > +
+> > > +     memset(tp->msix_entry, 0x0, RTASE_NUM_MSIX * sizeof(struct
+> > > + msix_entry));
+> > > +
+> > > +     for (i = 0; i < RTASE_NUM_MSIX; i++)
+> > > +             tp->msix_entry[i].entry = i;
+> > > +
+> > > +     ret = pci_enable_msix_exact(pdev, tp->msix_entry, tp->int_nums);
+> > > +     if (!ret) {
+> > 
+> > In Linux Networking code it is an idiomatic practice to keep handle errors in
+> > branches and use the main path of execution for the non error path.
+> > 
+> > In this case I think that would look a bit like this:
+> > 
+> >         ret = pci_enable_msix_exact(pdev, tp->msix_entry, tp->int_nums);
+> >         if (ret)
+> >                 return ret;
+> > 
+> >         ...
+> > 
+> >         return 0;
+> > 
+> > > +
+> > > +             for (i = 0; i < tp->int_nums; i++)
+> > > +                     tp->int_vector[i].irq = pci_irq_vector(pdev, i);
+> > 
+> > pci_irq_vector() can fail, should that be handled here?
+> 
+> Thank you for your feedback, I will confirm this part again.
+> > 
+> > > +     }
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static int rtase_alloc_interrupt(struct pci_dev *pdev,
+> > > +                              struct rtase_private *tp) {
+> > > +     int ret;
+> > > +
+> > > +     ret = rtase_alloc_msix(pdev, tp);
+> > > +     if (ret) {
+> > > +             ret = pci_enable_msi(pdev);
+> > > +             if (ret)
+> > > +                     dev_err(&pdev->dev,
+> > > +                             "unable to alloc interrupt.(MSI)\n");
+> > 
+> > If an error occurs then it is a good practice to unwind resource allocations
+> > made within the context of this function call, as this leads to more symmetric
+> > unwind paths in callers.
+> > 
+> > In this case I think any resources consumed by rtase_alloc_msix() should be
+> > released if pci_enable_msi fails. Probably using a goto label is appropriate
+> > here.
+> > 
+> > Likewise, I suggest that similar logic applies to errors within
+> > rtase_alloc_msix().
+> > 
+> 
+> Since msi will be enabled only when msix enable fails, when pci_enable_msi fails,
+> there will be no problem of msix-related resources needing to be released,
+> because the msix interrupt has not been successfully allocated.
 
-No, PipeWire is fine, I mean graphical apps.
-
-Right now, if your platform requires CMA for display, then the app
-needs access to the GPU render node and the display node too, in order
-to allocate buffers which the compositor can scan out directly. If it
-only has access to the render nodes and not the display node, it won't
-be able to allocate correctly, so its content will need a composition
-pass, i.e. performance penalty for sandboxing. But if it can allocate
-correctly, then hey, it can exhaust CMA just like heaps can.
-
-Personally I think we'd be better off just allowing access and
-figuring out cgroups later. It's not like the OOM story is great
-generally, and hey, you can get there with just render nodes ...
-
-Cheers,
-Daniel
+Thanks, as long as no allocated resources have not been freed in the case of
+returning an error value, then I am happy.
 
