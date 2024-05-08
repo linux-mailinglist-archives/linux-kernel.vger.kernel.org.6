@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-172625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D8E8BF483
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F838BF48A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 04:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AAFB1F2551B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:26:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299671F24963
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5BDBE68;
-	Wed,  8 May 2024 02:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972E8DDD9;
+	Wed,  8 May 2024 02:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCYEKP4Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZT0V59GR"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57B22563;
-	Wed,  8 May 2024 02:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D887AD53C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 02:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715135192; cv=none; b=e/nhHVeh1Dh72tJTiOgUoULopxDZFNaKm5DaIo8M987j2yWSc8xsWMNBvTXBfvIEZ8RJ9X7sdtGhDhxyJJcWbUPhlDksG52ug4Bfjd5sEkK84W9kOLWrwuHOBk4SccerG3IbfC/u3vF3iDrmCcqDaIdfOo0em3uxHQfPYEfNyBU=
+	t=1715135271; cv=none; b=u8vkaQlPD7fhXAJqR9RO45Z/9Gozt6TOk120ugWmV6gg/c8DbLDTWyqz53F1+yAwRHEsgGRSt9q90kYWDzjfyIsNYYwgmmGkK/DXUjxKjvnneV8lECDRDqTdyVbtdxKoQDuf+gywrkWvPIDzM1GvgEVjAnCQLTpp5oVDSlVC+Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715135192; c=relaxed/simple;
-	bh=gQBDHlJVjn9IyeGe/AMBB67ceGlqQXb/p8wQRVumnQg=;
+	s=arc-20240116; t=1715135271; c=relaxed/simple;
+	bh=FqHHjfDx9ENi3Pts6alsW6C4sQF4MogYbWkxo0Ih7J8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbZltV+kvkVmvubBuf1da+fNDIz+VebITDhOumzFCCNbCuJT+p+zBsVTysV1Lnp5C45mZMhP1F7/fvmzL3zLTKzTrLABKTngj6zAbH3IVg1VjjwaOnrfg0+JDp5RQYLfmrSp84AyDeqyMOZneOUd/fr7IeAymJa2xtl55oTNZfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCYEKP4Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C627C2BBFC;
-	Wed,  8 May 2024 02:26:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715135192;
-	bh=gQBDHlJVjn9IyeGe/AMBB67ceGlqQXb/p8wQRVumnQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iCYEKP4Y46BnvDzYK0hkbvNOSYpuVwJuXnNVAgtsNfMwNr0Nbu1zZ2lgViUzZwE3k
-	 qTdUcf+Il5IPruDUmVvuvxzO8PHki8fWPsMFIk8pOlKYvqCE0ZLmw6UIGIK6fQUC49
-	 GKdaTyuuCswsKHhqORs5EMQi0++o9wqjNUdMHURuncKNhwDbSb2clxfONybevdcpEl
-	 gXGz27boGIWIturmt+7w4CuHY2zaPQiDFp9mSf7vAgvi+MhXEHQ3PBRy9OGYE6kldU
-	 8XU4AH8REH8RT1lapYgwLgUbW8EoJd7jwAodysljoALXEZ/eIxCa5rlLgf0IkP7lt9
-	 3Hxa2q4woEqAg==
-Date: Tue, 7 May 2024 19:26:31 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	Chandan Babu R <chandan.babu@oracle.com>, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] xfs: check for negatives in xfs_exchange_range_checks()
-Message-ID: <20240508022631.GF2049409@frogsfrogsfrogs>
-References: <0e7def98-1479-4f3a-a69a-5f4d09e12fa8@moroto.mountain>
- <ZjrVaynGeygNaDtQ@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPz7Q3twS6LKGIlIVaWv8CUSTF2aRZVmiP10vgtADpnyOPrfhfJiBtNyoxrZTBFiT4LNo1uqtmafBtSqJ1oXmzj4gf+lI8C2270eXiIqLKQRQewZXKPFhhBdNb/Y1hZwTYYhJzVqUStJR5ToTCBJAwTCdsUnj9zAsy7A9jaEf/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZT0V59GR; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 7 May 2024 22:27:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715135267;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FGZyhctyl0sVp+jffQYu4jnwoerfNp5K7r6RyHG7Dck=;
+	b=ZT0V59GR7QaJbFwj0A+CDc/+5dJ1S1WoXka0vIF7pJ48MHId7ZMCGB5dVmdD/fpAQ9gDGb
+	aL4Fs58nzcOshLilnH0f98xkmHDR09r/GgJgTVBIYTnDIwU+2mvdS8HvjeTPPiQbl0uFg4
+	soalv7w0Ncr9z8JNXQU0/Bg4ZwFNLl8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Petr Vorel <pvorel@suse.cz>
+Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+	Su Yue <l@damenly.org>, Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC value to
+ UAPI magic.h
+Message-ID: <c2wlqrxm4y42chiiwhvqvfop7fiux3kyphjejgrdbpx2vhmvfh@o7sdo4tb6lzg>
+References: <20240507153757.150891-1-pvorel@suse.cz>
+ <ZjpQV0ddhG9sUo8P@bfoster>
+ <20240507164430.GD138935@pevik>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,43 +59,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjrVaynGeygNaDtQ@dread.disaster.area>
+In-Reply-To: <20240507164430.GD138935@pevik>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 08, 2024 at 11:29:15AM +1000, Dave Chinner wrote:
-> On Sat, May 04, 2024 at 02:27:36PM +0300, Dan Carpenter wrote:
-> > The fxr->file1_offset and fxr->file2_offset variables come from the user
-> > in xfs_ioc_exchange_range().  They are size loff_t which is an s64.
-> > Check the they aren't negative.
-> > 
-> > Fixes: 9a64d9b3109d ("xfs: introduce new file range exchange ioctl")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > From static analysis.  Untested.  Sorry!
-> > 
-> >  fs/xfs/xfs_exchrange.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
-> > index c8a655c92c92..3465e152d928 100644
-> > --- a/fs/xfs/xfs_exchrange.c
-> > +++ b/fs/xfs/xfs_exchrange.c
-> > @@ -337,6 +337,9 @@ xfs_exchange_range_checks(
-> >  	if (IS_SWAPFILE(inode1) || IS_SWAPFILE(inode2))
-> >  		return -ETXTBSY;
-> >  
-> > +	if (fxr->file1_offset < 0 || fxr->file2_offset < 0)
-> > +		return -EINVAL;
+On Tue, May 07, 2024 at 06:44:30PM +0200, Petr Vorel wrote:
+> > On Tue, May 07, 2024 at 05:37:57PM +0200, Petr Vorel wrote:
+> > > Move BCACHEFS_STATFS_MAGIC value to UAPI <linux/magic.h> under
+> > > BCACHEFS_SUPER_MAGIC definition (use common approach for name) and reuse the
+> > > definition in bcachefs_format.h BCACHEFS_STATFS_MAGIC.
 > 
-> Aren't the operational offset/lengths already checked for underflow
-> and overflow via xfs_exchange_range_verify_area()?
+> > > There are other bcachefs magic definitions: BCACHE_MAGIC, BCHFS_MAGIC,
+> > > which use UUID_INIT() and are used only in libbcachefs. Therefore move
+> > > only BCACHEFS_STATFS_MAGIC value, which can be used outside of
+> > > libbcachefs for f_type field in struct statfs in statfs() or fstatfs().
+> 
+> > > Suggested-by: Su Yue <l@damenly.org>
+> > > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > > ---
+> 
+> > I was thinking you'd just rename the STATFS_MAGIC def locally as well,
+> > but whatever.. LGTM, thanks for the tweaks!
+> 
+> Ah, I thought it'd be more readable this way from bcachefs point.
+> Kent, just let me know if you prefer Brian's way and I'll send v4.
 
-Oh, yeah, they are.  I was just thinking surely I wrote some tests to
-pass in garbage offsets and bounce back out...
-
---D
-
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+It's in my tree now :)
 
