@@ -1,146 +1,161 @@
-Return-Path: <linux-kernel+bounces-172539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87908BF34A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:10:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA5C8BF35B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 02:13:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C5228A41E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:10:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 905D6B27ECD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 00:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6431A2C2E;
-	Tue,  7 May 2024 23:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1261A2C32;
+	Wed,  8 May 2024 00:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TaLFIb8a"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="GdpblQXo"
+Received: from mail-io1-f74.google.com (mail-io1-f74.google.com [209.85.166.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7F81A2C1C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 May 2024 23:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8668BEC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 00:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715126331; cv=none; b=XQ4AXrvR79bPVCOlVohgCUz2FndVZp3beC9zQXZw9uIWJtVHDlbOapZBzh07QG3+C8uUlDegYeCBE/jEG9P0SAYo8X9GdiDSMj0o1jQVKD5Du9v62XKNK+k9SnjoHsw8PvicUJRar0i/PM/VJaV8VNBIzu+atuAzB4bumyANIFk=
+	t=1715126563; cv=none; b=TqIXOlrOz+SqJ+Ge1sldyTQbROTmgUSbl9EUC3xcCGMfVdLgYFXndL9j1S5peFCqZjtB9JWckIR1pLOgx85W9j+p8yi5HVeCp+i3YF4QQ/foPscpJ2UEIqENBnmXcOeAy0gWMiQmFuDilltU7UeDSiT+bjVMsGkuKRGBNC4Ibuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715126331; c=relaxed/simple;
-	bh=ylSqnLZbO+zia8UKjkEK25WV8CJGTqFaiaWW/u+DMEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNZEa33ysC0/M0mNRQhJ3M6QQJEV6j450ulMoXcVB157GHW275fNsbP/67DgkFXZtXl05YyPr2C3F0NRzS72aXGTeBlKAqbxLGi+dHTvZzbuFbT9sAtWZpD37TO3XKXHPXgbijA1wBR/1vaSFoyYU0nRJCgNR0Ft7blJbhIMTz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=TaLFIb8a; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c96c096a32so1617014b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 16:58:49 -0700 (PDT)
+	s=arc-20240116; t=1715126563; c=relaxed/simple;
+	bh=x8yzkCVk6Wolns38BJznG8F1DF6BmLfscTRYXzWxiFY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mg1BBzZpMrS8kj8ty/o8jzBRIf+gdizX8m5QMb3j/Zu5TwSllvBymp//AhAjTVcKMk4No8dG3k9pVl1HvAcUGtgPY6HFP/WIy/zJSQ/EuiZWkHlQ0lTzbrwl4X91tVW7mem0TU9eJK1ylt3pXuUMxLc7WiI2Dz6EzZgWEXX0TWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GdpblQXo; arc=none smtp.client-ip=209.85.166.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-io1-f74.google.com with SMTP id ca18e2360f4ac-7d9d0936d6aso461863339f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 17:02:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1715126328; x=1715731128; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DvtASyflOHvhyFKgb33ra88jVW8QAEN6i7T1g7ME2mI=;
-        b=TaLFIb8a5R+329CgRXowOwe0bSLHTUs27HSirM9XKv/Ayi939rcj58FutBQ0sRfkY/
-         /RlW0j3jUbsNcOG78g/ltLgCG7YVIf/FnFJG7nWRxOKokR+ixZluMgCscWxOd1ycCGN/
-         2CdrtYS3ZhbxCTxb3nnXnngAe9BVt0Z0KG/YzbrFKPzfFLciZowf+8DtzBzJmnUGpkuU
-         9M/y/VS8wQ5ldN9gU1DXYN6CaSln9OS5HZLAw7S3K8I0528EfXy3nElY09MafZiXBmZm
-         FX1+buqaX9gaekcA53SuswnSH8iRQO27KWbhHDvynOHWTq+dM32EFfjnLIEs7+f15a+G
-         dPbw==
+        d=google.com; s=20230601; t=1715126549; x=1715731349; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2EzQcPBxS/fsLuAnrDweegMDqFpI++/qb4hh3xWGZ0s=;
+        b=GdpblQXo4Kb0hrYYpH4pnJQ+o5cPP+aKxKYmYYCqqcytbyFeW9R7YgV/OS5GqYGuuK
+         CE/zZS/fzjgq1z7NJTa7UC2dqQdjjrMAoBdJM5j0vg3+y3S95d0wFUcJoV1DhmZQliHK
+         nZMNksktsOpuOFmj11fx2V2hEl0/Wjy8nerpPuoCUu2P8XO+wBR7WXcwwXTe6F+TvOHv
+         /HEJ2RHQUPTTxpExMhWR1p1gthAEXXXCl3d2sbuiRmDFwhinVJZR4nWceSRpjkNbnU3N
+         ZlUzDrOIST1sSlD/a/2su/Q0EJigvA975qQd7KGEzl1PbTtFXyZ+4u8aJUVsAxnmZzqT
+         MntQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715126328; x=1715731128;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DvtASyflOHvhyFKgb33ra88jVW8QAEN6i7T1g7ME2mI=;
-        b=NA5LdEj6cv7K5etjQ+kp5k+2ApTcHMP/vn+/zoOUcsI7/Y5s0fr5EVgt9ALwGgK4UK
-         y+jDGRu9wZ63hzIuEBqb3QFSxkGMs/+cenu3qG59EHvH5XgH+lxgLOswi6ezalUfryWo
-         MkAIEKTy/RBqhdEQHFN5iwQP5pV55ZB2RITjFloND7HwGJP58GzL6A+p9uXP6pNlPhw2
-         xDAujsCaYRTYQGvUVUQAM4ACQEBpEteiu+1zHmmbD+uFadPQWTQBgMNKXidrtCttAEAl
-         2pfgq1MWyJyrydU/ioIfJwN2/SGIT1V3fkWegu8KQ8XDUmOJiGhqwStr9SHecJjRxtHS
-         Pktg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAyL0tdM+9lGJERMpZMNBpLAqcyQy5ISnvLBSzNzC7SBQzL5nIupuEIOzMPGl6//2HOazVIjagEGFy8wF7V7Lygcu0xBThll8No7T8
-X-Gm-Message-State: AOJu0YwaVj0yZy3UiwR/Pc/dIzFWdtbvFDJV4BIjqS6rMO4TeC2xHz96
-	JVSZ1Hm+TTVt3YLoxeDs1NS8+3U672BV3bPvgPt+LbtshAUCs1/mSpArslfJcH8=
-X-Google-Smtp-Source: AGHT+IHu9M7KtAnyALdrftZ/mWuRI60K3nPgZ0sthjqi//C4bjE+htSbFz1y13Y/VO1rSC947qc2mg==
-X-Received: by 2002:a05:6808:1393:b0:3c9:66f2:f31a with SMTP id 5614622812f47-3c9852d5e11mr1317313b6e.34.1715126328537;
-        Tue, 07 May 2024 16:58:48 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id bi6-20020a05620a318600b00790f74b3814sm5340332qkb.82.2024.05.07.16.58.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 16:58:47 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s4Uhr-0003Vm-7q;
-	Tue, 07 May 2024 20:58:47 -0300
-Date: Tue, 7 May 2024 20:58:47 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/9] iommu: Replace sva_iommu with iommu_attach_handle
-Message-ID: <20240507235847.GL4718@ziepe.ca>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-3-baolu.lu@linux.intel.com>
+        d=1e100.net; s=20230601; t=1715126549; x=1715731349;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2EzQcPBxS/fsLuAnrDweegMDqFpI++/qb4hh3xWGZ0s=;
+        b=c6ubsPNXreq4E8zV/l7h4od2AzdEtjtibqG39ETnge5dKCxZxIpQbkKVHp4a1Fvcjm
+         HBVocbmc404HOeRowFoTNwbN7ZIPUaeRIs/tGeaz6yxildFfEiY7smkThDSF0AQZ34CD
+         UEAWq4Lvz9DLDJK9vq/nFPNWUjcWLHMPptwRpPA5yGeFXD8MWLS7hOMruw8V7JM0bO5k
+         R8A8t2lrMmGyOtXNrieikCtMtvUYyBD0GXWjaFac1IJqQxcKCpkrYdJYLYMkcVqmocBY
+         fvDFARrkD1O0SR4nvGcGJlC1J46+KrPD66LMntRnY4czuVT97hI3DwmRs+vKZvKz4Wa2
+         TMCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWr9qxlnp1B6DjPmIfqkNhitcRW3jCAuXeaD0o6q9DIBQY8UxI2szzHU/nVVmbC4DjpAorIR6VSJ9D21nKpyiH2sOudcroTcT/Ip+Pw
+X-Gm-Message-State: AOJu0YyL/B3q7NGpO7ByDEK7v6trufkY5+1BJZdsDJoWJbD9NPz7vui3
+	lGGuNpgoKE39+5pkmAhwrOSjTdDd6NZvqiBPW2kvECMrEkR4M9X8czs1A8U+CFxR3ex5+9Ruk10
+	vfU57rQXrUdlLX9OPaOIc3g==
+X-Google-Smtp-Source: AGHT+IGw/gpETax6yTNA3i+9Zl+QI37sM3g2h6H0L5ARm9tG/6yPfzStL17AVO5/mFkhkenOKA0hprTVnxl15+f/xA==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6638:1648:b0:488:d489:3940 with
+ SMTP id 8926c6da1cb9f-488fdb12340mr66133173.3.1715126549481; Tue, 07 May 2024
+ 17:02:29 -0700 (PDT)
+Date: Wed, 08 May 2024 00:02:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240430145710.68112-3-baolu.lu@linux.intel.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIABLBOmYC/x2MWwqEMBAEryLzbSCG+FivIoto0urAopJZRAje3
+ SjUT0F1RxIEhlCbRQo4WHhbkxR5Rm4Z1hmKfXIy2lhd6lqN9iFlSkIv+MH9e9kBr1A1TntrquZ TUNrvAROf73f3va4bRAFkr2sAAAA=
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715126548; l=2860;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=x8yzkCVk6Wolns38BJznG8F1DF6BmLfscTRYXzWxiFY=; b=Sj99Fwr6AVwgXA4Y1BeQQmQ9JnnNDd7bY5VrSgi54QBOz4VkOqHiWOJ+sI+4TBriRdbf+MPy6
+ pOsiE1rtNb6DspdDULYONRJEuLYkienHIofZLsdYrGz2xSOQp0ISZ1m
+X-Mailer: b4 0.12.3
+Message-ID: <20240508-b4-b4-sio-sr_select_speed-v1-1-968906b908b7@google.com>
+Subject: [PATCH] scsi: sr: fix unintentional arithmetic wraparound
+From: Justin Stitt <justinstitt@google.com>
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Bill Wendling <morbo@google.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Apr 30, 2024 at 10:57:03PM +0800, Lu Baolu wrote:
-> diff --git a/drivers/iommu/iommu-priv.h b/drivers/iommu/iommu-priv.h
-> index da1addaa1a31..ae65e0b85d69 100644
-> --- a/drivers/iommu/iommu-priv.h
-> +++ b/drivers/iommu/iommu-priv.h
-> @@ -30,6 +30,13 @@ void iommu_device_unregister_bus(struct iommu_device *iommu,
->  
->  struct iommu_attach_handle {
->  	struct iommu_domain		*domain;
-> +	union {
-> +		/* attach data for SVA domain */
-> +		struct {
-> +			struct device	*dev;
-> +			refcount_t	users;
-> +		};
-> +	};
->  };
+Running syzkaller with the newly reintroduced signed integer overflow
+sanitizer produces this report:
 
-FWIW I was thinking of having the caller allocate the handle and pass it
-down, but this seems workable too and is a bit simpler.
+[   65.194362] ------------[ cut here ]------------
+[   65.197752] UBSAN: signed-integer-overflow in ../drivers/scsi/sr_ioctl.c:436:9
+[   65.203607] -2147483648 * 177 cannot be represented in type 'int'
+[   65.207911] CPU: 2 PID: 10416 Comm: syz-executor.1 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+[   65.213585] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   65.219923] Call Trace:
+[   65.221556]  <TASK>
+[   65.223029]  dump_stack_lvl+0x93/0xd0
+[   65.225573]  handle_overflow+0x171/0x1b0
+[   65.228219]  sr_select_speed+0xeb/0xf0
+[   65.230786]  ? __pm_runtime_resume+0xe6/0x130
+[   65.233606]  sr_block_ioctl+0x15d/0x1d0
+..
 
-> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
-> index bdc2e6fda782..b325097421c1 100644
-> --- a/drivers/misc/uacce/uacce.c
-> +++ b/drivers/misc/uacce/uacce.c
-> @@ -106,7 +106,7 @@ static long uacce_fops_compat_ioctl(struct file *filep,
->  static int uacce_bind_queue(struct uacce_device *uacce, struct uacce_queue *q)
->  {
->  	u32 pasid;
-> -	struct iommu_sva *handle;
-> +	struct iommu_attach_handle *handle;
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-Though I'm much less keen on this..
+Let's add an extra check to make sure we don't exceed 0xffff/177 (350)
+since 0xffff is the max speed. This has two benefits: 1) we deal with
+integer overflow before it happens and 2) we properly respect the max
+speed of 0xffff. There are some "magic" numbers here but I did not want
+to change more than what was necessary.
 
-Maybe
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/357
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Here's the syzkaller reproducer:
+r0 = openat$cdrom(0xffffffffffffff9c, &(0x7f0000000140), 0x800, 0x0)
+ioctl$CDROM_SELECT_SPEED(r0, 0x5322, 0x7ee9f7c1)
 
-  struct iommu_attach_handle {
-  	struct iommu_domain		*domain;
- 	union {
-	      struct iommu_sva sva;
- 	};
-  };
+.. which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
 
-?
+.. with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ drivers/scsi/sr_ioctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Then container_of(sva) to get back to handle and keep the meaningful
-type?
+diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
+index 5b0b35e60e61..2d78bcf68eb3 100644
+--- a/drivers/scsi/sr_ioctl.c
++++ b/drivers/scsi/sr_ioctl.c
+@@ -430,7 +430,8 @@ int sr_select_speed(struct cdrom_device_info *cdi, int speed)
+ 	Scsi_CD *cd = cdi->handle;
+ 	struct packet_command cgc;
+ 
+-	if (speed == 0)
++	/* avoid exceeding the max speed or overflowing integer bounds */
++	if (speed == 0 || speed > 0xffff / 177)
+ 		speed = 0xffff;	/* set to max */
+ 	else
+ 		speed *= 177;	/* Nx to kbyte/s */
 
-Jason
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240507-b4-b4-sio-sr_select_speed-e68c0d426891
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
