@@ -1,314 +1,348 @@
-Return-Path: <linux-kernel+bounces-172709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B358BF5B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9378B8BF5AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03258B24569
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A7032836C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 05:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3736D2030A;
-	Wed,  8 May 2024 05:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2553E17C69;
+	Wed,  8 May 2024 05:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXl/E5F4"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYjlY4pO"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CAC17BC9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 05:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC3B3A1C5;
+	Wed,  8 May 2024 05:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715147029; cv=none; b=kxSC7cqh4Lois87iyA4MMf4vxcZu4yl2cnQMkrKZXFNv4HaCRM8oux9nl3wfJUq92ELUT3MIdwCf9esYmQu2D2DWYsuoHCXhttAE711nQsdLO1pk2XH8hsyebhF/mBrc6nTtoR9B+Jhbi+s1qVSHkPEn1b4aOKanR7pW8wxGV4o=
+	t=1715147027; cv=none; b=f9vVAaAi+DxgXJjkL/nHlylnUeZh4dOsydUbotU08IuKtv8nGuYQ4TZRrkhFU3s71vN6Eg8Gw8IB3TrNojixhczXVt3MNffiqi0M/Eami6r++eIams9HVhO48Rui2J95i1yAhNQN0kYzZZk99BopfLZjxjz7JYozd2Pc+vh58Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715147029; c=relaxed/simple;
-	bh=EKr0nALOHoXOFoZ4Y4D71cUkrpALZRYSZJIDaMqetaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WWttMJ5YQdGuO83CTFJzZw6MCJKq6iv2N9zSy52CVZa51aDsTKwJe5VvP+LqE58kF460jP+14c8PNYA47xk0tM4+lSYGzATErTU61luXN15bYGKIN78W3o0K+oR63ffhI2CRxHtKPt4TMgAp72L1mWIPOOSb/shXJlZ0RCFh3r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXl/E5F4; arc=none smtp.client-ip=209.85.208.178
+	s=arc-20240116; t=1715147027; c=relaxed/simple;
+	bh=QmJ8E0GR6HVfUQpKE6Djv4TCZt/N05vFu7w3L88Kops=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HpDeJRcmNQWh2zxP/0YpMZRL23exI4YhaWmQ8KcS5GzKkQtnzQYB8QLSgMngdgz+5TNOTCtKhmyiEcwUlzwo07gKPT5SF453upg5NywAflp6RuPOKrYqZbx7BHIYr//DGQaZCUMRg0mFs7RK53aQxURdoNgBc9HMkwdvfVYHjmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYjlY4pO; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2db17e8767cso49587121fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 May 2024 22:43:46 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so770512666b.0;
+        Tue, 07 May 2024 22:43:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715147025; x=1715751825; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A5PEmbYNWTmC8gM9cZHTBZBiwl2NVDZC9uwbao4CaT0=;
-        b=UXl/E5F4W5MldHrAADibiQEOCZt7ysnckk/UvAw3mDi92LKg+YmZdTZigdH1Jvdy18
-         ZK4vg0Mvx5EP1FoGD9hqLMhBfk/vHnVc/TXOinc6/NFTyNZwHLqeE8GC3CXeq+AddYEZ
-         M1GO7soUujyX7nLJzdDpRD7FF1ifslCgADx9Axq57Tqv5ieXRS87z/Yx660KKBFVP/UU
-         OT56kuPXiXM6o8URJyXEKNdGdxOJjq7aTX8i+mimJxoFX3kgRGSW9f6od5tdLuhhDj6C
-         UVXhxn45qJ9M/kOutVIgbeq3FTgtay13Z4dc+wtuWcq1u/ufUlpHefYuOpnZ/1yZJxnN
-         rE0w==
+        d=gmail.com; s=20230601; t=1715147023; x=1715751823; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fiWPwYiB92tF4WQY1BN+lNYYVhCz5it+Y7g3x7gUTT0=;
+        b=TYjlY4pONJqa80oqoPdS63GBp66B120OM9srMfPV/WtZVBwrq8JsFTFZJhbNrXUbdr
+         mQpELRqMDk6W93+B5ba8WtkUuP2P1SJiMvDhQQzMN6hXgV4FnGxttmUhmwbOmGaxLExE
+         Y5keUNEN6urYG/uNpY5QX2pndwQTHSaz5lZaQ6s+XARnOxJYLLOtAJjXADs0c0NZkqJ2
+         TYEXzfhAqZSRGln6yuaI5KxhAuhjuQrkuyRu5bRfkMVqUtKTKWzBAS9APURsSrJ03q0+
+         3Q8CHDyDk2ksElSDXlCCraygi5nPDokqvuq+E6NLVlilwJsDU5XRw9zmv8ZXVLzQMcTQ
+         OrGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715147025; x=1715751825;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A5PEmbYNWTmC8gM9cZHTBZBiwl2NVDZC9uwbao4CaT0=;
-        b=JNp3u5I1L4DS65/LprvVxQK0WbfDF7vhv80eYetNwHymDaSV6gW1iKRNKjhAA2PD0i
-         v+gDoOwjnWzZq9HTXJrsuS2WLD5Xi1jX6jtunARZxDrzHy95X1oX8HgUV3Ol9TSeX4vQ
-         i0oLJsJFxSh1b1AyELRI0ffLB6GwNRJk8AYmnchxPjv//k7dOgNc2rfYP02WAd3b1A84
-         YEaCiBH57W3/6J7bOAR57E6Kh0Y3Bmncfg8RPNYoDM8hDNJ7uWrGNdns29rG/wQc5zV2
-         T+c8vr7heW35/6vxsX1/w6k5bCRabjzrf9C8QEsObaBoYI2qZ5sgzYtEm54BDGVfsqKS
-         E+Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIr7UBseO1WnlFlad05qpLVvAwp3zhyyjaZTiM6UNAbT4ozYB4jzjRXu18OQzMV1LpPMXiF5q8R6OLdTrN2PShAc6vyOCsHwufW4wY
-X-Gm-Message-State: AOJu0YxawctoNa9dF4wIZYIKMnBJ51jDxWkj0EY/SLw12H82qlG1Iuo/
-	0iVNv3fDgMNCIqGMI+CEVfR5IBNzoQ617o4sblOE/5yvSSIrlAb50r6dDkKi77cfwMuVopOspfB
-	JI2P/1U7Cnai2mazZS1GmTrc9HIg=
-X-Google-Smtp-Source: AGHT+IEC3boq4vs89DL5IcnOxWiwLxU7007NeBGdGJmImLJ7/t3jkU8frkSKNMJew0yAAHME+Y++dYfiBJc9U+Ztybg=
-X-Received: by 2002:a2e:a4ad:0:b0:2e2:350:556f with SMTP id
- 38308e7fff4ca-2e4470878d6mr8707611fa.31.1715147025257; Tue, 07 May 2024
- 22:43:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715147023; x=1715751823;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fiWPwYiB92tF4WQY1BN+lNYYVhCz5it+Y7g3x7gUTT0=;
+        b=nGpae4fhzV0/hEHXif/mKsq2arFhAol2kxy+P/ifRYoOENGr0gQxHiaTS+QTMnwgWN
+         gEajZfeqWzUW1Kl3SVJzqJWZe20m0KpTR8cGZ9F86HuEgGnJds9s99o28MhsvN0SQy8v
+         QH+arfnubX1Cmew77LgWk6U1WZPDO1LiF0bu5D6EF5of/M/xNUwTbxirl9qDxP2I7mh2
+         XLcf0PlRGnTfkVqbjmer5jsTRmx3EOFc09rGk0nZZeAZjQjUv0iqAylC1zBCeXXM67K7
+         o7pymgqklfSI3ZD1LJ4bYLbvv4WXsMD6JfXJrIL4MG3MvlQbmz1D0MAii2nQhygWSEvL
+         72cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6BTS+JmTcxTS9vBX/V+J08qQj71ZX/l44dstmQGUDGiXcBUlKSXx6PSeQ9kIN7rced/nnUE+AcEvc+XWjzsBGFFMzm8ldJfYr7F1E
+X-Gm-Message-State: AOJu0YwJHvDZYV5sqFUlDWMzd45IZiPPcwIZrOWpYaCOEAPqt89rwIjv
+	Z1UFX7Unj4d++lVdjP6wJ5/bG2r90sKaBVowhI2H2NuOgmGPZwA0
+X-Google-Smtp-Source: AGHT+IF7cIGyFtpEAXYC1YmQO4hzObfVUwPA74DS0TjxiqRtmI/DEc970iSlvGionU5zELgJQe6lFA==
+X-Received: by 2002:a50:bb41:0:b0:572:719f:b44f with SMTP id 4fb4d7f45d1cf-5731d9ce2a9mr1060568a12.9.1715147023013;
+        Tue, 07 May 2024 22:43:43 -0700 (PDT)
+Received: from ?IPV6:2a01:c23:c5ec:1600:f15f:edb4:9cd5:3c38? (dynamic-2a01-0c23-c5ec-1600-f15f-edb4-9cd5-3c38.c23.pool.telefonica.de. [2a01:c23:c5ec:1600:f15f:edb4:9cd5:3c38])
+        by smtp.googlemail.com with ESMTPSA id p9-20020a056402500900b005727b2ae25csm7176205eda.14.2024.05.07.22.43.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 22:43:42 -0700 (PDT)
+Message-ID: <b1ef50ce-40e5-453a-a78a-55e373ad36db@gmail.com>
+Date: Wed, 8 May 2024 07:43:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-3-ioworker0@gmail.com>
- <0077A412-0AF1-4022-8F49-EE77AE601ECB@nvidia.com>
-In-Reply-To: <0077A412-0AF1-4022-8F49-EE77AE601ECB@nvidia.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Wed, 8 May 2024 13:43:33 +0800
-Message-ID: <CAK1f24mRVam3w9CZkq4O0smGUTVUQfdvA48mqsU+NKxMUxdz1A@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	maskray@google.com, ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, 
-	mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
-	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
-	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
-	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH net-next 1/2] net: phy: phy_link_topology: Pass netdevice
+ to phy_link_topo helpers
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
+ Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+ Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>
+References: <20240507102822.2023826-1-maxime.chevallier@bootlin.com>
+ <20240507102822.2023826-2-maxime.chevallier@bootlin.com>
+Content-Language: en-US
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20240507102822.2023826-2-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 7, 2024 at 11:26=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
->
-> On 1 May 2024, at 0:26, Lance Yang wrote:
->
-> > In preparation for supporting try_to_unmap_one() to unmap PMD-mapped
-> > folios, start the pagewalk first, then call split_huge_pmd_address()
-> > to split the folio.
-> >
-> > Suggested-by: David Hildenbrand <david@redhat.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> > ---
-> >  include/linux/huge_mm.h | 20 ++++++++++++++++++++
-> >  mm/huge_memory.c        | 42 +++++++++++++++++++++--------------------
-> >  mm/rmap.c               | 24 +++++++++++++++++------
-> >  3 files changed, 60 insertions(+), 26 deletions(-)
-> >
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index c8d3ec116e29..38c4b5537715 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -409,6 +409,20 @@ static inline bool thp_migration_supported(void)
-> >       return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
-> >  }
-> >
-> > +void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
-ddress,
-> > +                        pmd_t *pmd, bool freeze, struct folio *folio);
-> > +
-> > +static inline void align_huge_pmd_range(struct vm_area_struct *vma,
-> > +                                     unsigned long *start,
-> > +                                     unsigned long *end)
-> > +{
-> > +     *start =3D ALIGN(*start, HPAGE_PMD_SIZE);
-> > +     *end =3D ALIGN_DOWN(*end, HPAGE_PMD_SIZE);
-> > +
-> > +     VM_WARN_ON_ONCE(vma->vm_start > *start);
-> > +     VM_WARN_ON_ONCE(vma->vm_end < *end);
-> > +}
-> > +
-> >  #else /* CONFIG_TRANSPARENT_HUGEPAGE */
-> >
-> >  static inline bool folio_test_pmd_mappable(struct folio *folio)
-> > @@ -471,6 +485,12 @@ static inline void __split_huge_pmd(struct vm_area=
-_struct *vma, pmd_t *pmd,
-> >               unsigned long address, bool freeze, struct folio *folio) =
-{}
-> >  static inline void split_huge_pmd_address(struct vm_area_struct *vma,
-> >               unsigned long address, bool freeze, struct folio *folio) =
-{}
-> > +static inline void split_huge_pmd_locked(struct vm_area_struct *vma,
-> > +                                      unsigned long address, pmd_t *pm=
-d,
-> > +                                      bool freeze, struct folio *folio=
-) {}
-> > +static inline void align_huge_pmd_range(struct vm_area_struct *vma,
-> > +                                     unsigned long *start,
-> > +                                     unsigned long *end) {}
-> >
-> >  #define split_huge_pud(__vma, __pmd, __address)      \
-> >       do { } while (0)
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 8261b5669397..145505a1dd05 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2584,6 +2584,27 @@ static void __split_huge_pmd_locked(struct vm_ar=
-ea_struct *vma, pmd_t *pmd,
-> >       pmd_populate(mm, pmd, pgtable);
-> >  }
-> >
-> > +void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long a=
-ddress,
-> > +                        pmd_t *pmd, bool freeze, struct folio *folio)
-> > +{
-> > +     VM_WARN_ON_ONCE(folio && !folio_test_pmd_mappable(folio));
-> > +     VM_WARN_ON_ONCE(!IS_ALIGNED(address, HPAGE_PMD_SIZE));
-> > +     VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
-> > +     VM_BUG_ON(freeze && !folio);
-> > +
-> > +     /*
-> > +      * When the caller requests to set up a migration entry, we
-> > +      * require a folio to check the PMD against. Otherwise, there
-> > +      * is a risk of replacing the wrong folio.
-> > +      */
-> > +     if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
-> > +         is_pmd_migration_entry(*pmd)) {
-> > +             if (folio && folio !=3D pmd_folio(*pmd))
-> > +                     return;
-> > +             __split_huge_pmd_locked(vma, pmd, address, freeze);
-> > +     }
-> > +}
-> > +
-> >  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
-> >               unsigned long address, bool freeze, struct folio *folio)
-> >  {
-> > @@ -2595,26 +2616,7 @@ void __split_huge_pmd(struct vm_area_struct *vma=
-, pmd_t *pmd,
-> >                               (address & HPAGE_PMD_MASK) + HPAGE_PMD_SI=
-ZE);
-> >       mmu_notifier_invalidate_range_start(&range);
-> >       ptl =3D pmd_lock(vma->vm_mm, pmd);
-> > -
-> > -     /*
-> > -      * If caller asks to setup a migration entry, we need a folio to =
-check
-> > -      * pmd against. Otherwise we can end up replacing wrong folio.
-> > -      */
-> > -     VM_BUG_ON(freeze && !folio);
-> > -     VM_WARN_ON_ONCE(folio && !folio_test_locked(folio));
-> > -
-> > -     if (pmd_trans_huge(*pmd) || pmd_devmap(*pmd) ||
-> > -         is_pmd_migration_entry(*pmd)) {
-> > -             /*
-> > -              * It's safe to call pmd_page when folio is set because i=
-t's
-> > -              * guaranteed that pmd is present.
-> > -              */
-> > -             if (folio && folio !=3D pmd_folio(*pmd))
-> > -                     goto out;
-> > -             __split_huge_pmd_locked(vma, pmd, range.start, freeze);
-> > -     }
-> > -
-> > -out:
-> > +     split_huge_pmd_locked(vma, range.start, pmd, freeze, folio);
-> >       spin_unlock(ptl);
-> >       mmu_notifier_invalidate_range_end(&range);
-> >  }
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index 7e2575d669a9..432601154583 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -1636,9 +1636,6 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >       if (flags & TTU_SYNC)
-> >               pvmw.flags =3D PVMW_SYNC;
-> >
-> > -     if (flags & TTU_SPLIT_HUGE_PMD)
-> > -             split_huge_pmd_address(vma, address, false, folio);
-> > -
-> >       /*
-> >        * For THP, we have to assume the worse case ie pmd for invalidat=
-ion.
-> >        * For hugetlb, it could be much worse if we need to do pud
-> > @@ -1650,6 +1647,8 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >       range.end =3D vma_address_end(&pvmw);
-> >       mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm,
-> >                               address, range.end);
-> > +     if (flags & TTU_SPLIT_HUGE_PMD)
-> > +             align_huge_pmd_range(vma, &range.start, &range.end);
-> >       if (folio_test_hugetlb(folio)) {
-> >               /*
-> >                * If sharing is possible, start and end will be adjusted
-> > @@ -1664,9 +1663,6 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >       mmu_notifier_invalidate_range_start(&range);
-> >
-> >       while (page_vma_mapped_walk(&pvmw)) {
-> > -             /* Unexpected PMD-mapped THP? */
-> > -             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
-> > -
-> >               /*
-> >                * If the folio is in an mlock()d vma, we must not swap i=
-t out.
-> >                */
-> > @@ -1678,6 +1674,22 @@ static bool try_to_unmap_one(struct folio *folio=
-, struct vm_area_struct *vma,
-> >                       goto walk_done_err;
-> >               }
-> >
-> > +             if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
-> > +                     /*
-> > +                      * We temporarily have to drop the PTL and start =
-once
-> > +                      * again from that now-PTE-mapped page table.
-> > +                      */
-> > +                     split_huge_pmd_locked(vma, range.start, pvmw.pmd,=
- false,
-> > +                                           folio);
->
-> Just in case you might miss here, since you will no longer align
-> range.start as Baolin mentioned in another email and you have a VM_WARN_O=
-NCE
-> in split_huge_pmd_locked(), you will need to align the input address now.
+On 07.05.2024 12:28, Maxime Chevallier wrote:
+> The phy link topology's main goal is to better track which PHYs are
+> connected to a given netdevice. Make so that the helpers take the
+> netdevice as a parameter directly.
+> 
+The commit message should explain what the issue is that you're fixing,
+and how this patch fixes it.
 
-Thanks for bringing that up!
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Fixes: 6916e461e793 ("net: phy: Introduce ethernet link topology representation")
+> Closes: https://lore.kernel.org/netdev/2e11b89d-100f-49e7-9c9a-834cc0b82f97@gmail.com/
+> Closes: https://lore.kernel.org/netdev/20240409201553.GA4124869@dev-arch.thelio-3990X/
+> ---
+>  drivers/net/phy/phy_device.c        | 25 ++++++++-----------------
+>  drivers/net/phy/phy_link_topology.c | 13 ++++++++++---
+>  include/linux/phy_link_topology.h   | 21 +++++++++++++--------
+>  net/ethtool/netlink.c               |  2 +-
+>  4 files changed, 32 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+> index 616bd7ba46cb..111434201545 100644
+> --- a/drivers/net/phy/phy_device.c
+> +++ b/drivers/net/phy/phy_device.c
+> @@ -277,14 +277,6 @@ static void phy_mdio_device_remove(struct mdio_device *mdiodev)
+>  
+>  static struct phy_driver genphy_driver;
+>  
+> -static struct phy_link_topology *phy_get_link_topology(struct phy_device *phydev)
+> -{
+> -	if (phydev->attached_dev)
+> -		return phydev->attached_dev->link_topo;
+> -
+> -	return NULL;
+> -}
+> -
+>  static LIST_HEAD(phy_fixup_list);
+>  static DEFINE_MUTEX(phy_fixup_lock);
+>  
+> @@ -1389,10 +1381,10 @@ static DEVICE_ATTR_RO(phy_standalone);
+>  int phy_sfp_connect_phy(void *upstream, struct phy_device *phy)
+>  {
+>  	struct phy_device *phydev = upstream;
+> -	struct phy_link_topology *topo = phy_get_link_topology(phydev);
+> +	struct net_device *dev = phydev->attached_dev;
+>  
+> -	if (topo)
+> -		return phy_link_topo_add_phy(topo, phy, PHY_UPSTREAM_PHY, phydev);
+> +	if (dev)
+> +		return phy_link_topo_add_phy(dev, phy, PHY_UPSTREAM_PHY, phydev);
+>  
+>  	return 0;
+>  }
+> @@ -1411,10 +1403,10 @@ EXPORT_SYMBOL(phy_sfp_connect_phy);
+>  void phy_sfp_disconnect_phy(void *upstream, struct phy_device *phy)
+>  {
+>  	struct phy_device *phydev = upstream;
+> -	struct phy_link_topology *topo = phy_get_link_topology(phydev);
+> +	struct net_device *dev = phydev->attached_dev;
+>  
+> -	if (topo)
+> -		phy_link_topo_del_phy(topo, phy);
+> +	if (dev)
+> +		phy_link_topo_del_phy(dev, phy);
+>  }
+>  EXPORT_SYMBOL(phy_sfp_disconnect_phy);
+>  
+> @@ -1561,8 +1553,7 @@ int phy_attach_direct(struct net_device *dev, struct phy_device *phydev,
+>  		if (phydev->sfp_bus_attached)
+>  			dev->sfp_bus = phydev->sfp_bus;
+>  
+> -		err = phy_link_topo_add_phy(dev->link_topo, phydev,
+> -					    PHY_UPSTREAM_MAC, dev);
+> +		err = phy_link_topo_add_phy(dev, phydev, PHY_UPSTREAM_MAC, dev);
+>  		if (err)
+>  			goto error;
+>  	}
+> @@ -1992,7 +1983,7 @@ void phy_detach(struct phy_device *phydev)
+>  	if (dev) {
+>  		phydev->attached_dev->phydev = NULL;
+>  		phydev->attached_dev = NULL;
+> -		phy_link_topo_del_phy(dev->link_topo, phydev);
+> +		phy_link_topo_del_phy(dev, phydev);
+>  	}
+>  	phydev->phylink = NULL;
+>  
+> diff --git a/drivers/net/phy/phy_link_topology.c b/drivers/net/phy/phy_link_topology.c
+> index 985941c5c558..0e36bd7c15dc 100644
+> --- a/drivers/net/phy/phy_link_topology.c
+> +++ b/drivers/net/phy/phy_link_topology.c
+> @@ -35,10 +35,11 @@ void phy_link_topo_destroy(struct phy_link_topology *topo)
+>  	kfree(topo);
+>  }
+>  
+> -int phy_link_topo_add_phy(struct phy_link_topology *topo,
+> +int phy_link_topo_add_phy(struct net_device *dev,
+>  			  struct phy_device *phy,
+>  			  enum phy_upstream upt, void *upstream)
+>  {
+> +	struct phy_link_topology *topo = dev->link_topo;
+>  	struct phy_device_node *pdn;
+>  	int ret;
+>  
+> @@ -90,10 +91,16 @@ int phy_link_topo_add_phy(struct phy_link_topology *topo,
+>  }
+>  EXPORT_SYMBOL_GPL(phy_link_topo_add_phy);
+>  
+> -void phy_link_topo_del_phy(struct phy_link_topology *topo,
+> +void phy_link_topo_del_phy(struct net_device *dev,
+>  			   struct phy_device *phy)
+>  {
+> -	struct phy_device_node *pdn = xa_erase(&topo->phys, phy->phyindex);
+> +	struct phy_link_topology *topo = dev->link_topo;
+> +	struct phy_device_node *pdn;
+> +
+> +	if (!topo)
+> +		return;
+> +
+> +	pdn = xa_erase(&topo->phys, phy->phyindex);
+>  
+>  	/* We delete the PHY from the topology, however we don't re-set the
+>  	 * phy->phyindex field. If the PHY isn't gone, we can re-assign it the
+> diff --git a/include/linux/phy_link_topology.h b/include/linux/phy_link_topology.h
+> index 6b79feb607e7..166a01710aa2 100644
+> --- a/include/linux/phy_link_topology.h
+> +++ b/include/linux/phy_link_topology.h
+> @@ -12,11 +12,11 @@
+>  #define __PHY_LINK_TOPOLOGY_H
+>  
+>  #include <linux/ethtool.h>
+> +#include <linux/netdevice.h>
+>  #include <linux/phy_link_topology_core.h>
+>  
+>  struct xarray;
+>  struct phy_device;
+> -struct net_device;
+>  struct sfp_bus;
+>  
+>  struct phy_device_node {
+> @@ -37,11 +37,16 @@ struct phy_link_topology {
+>  	u32 next_phy_index;
+>  };
+>  
+> -static inline struct phy_device *
+> -phy_link_topo_get_phy(struct phy_link_topology *topo, u32 phyindex)
+> +static inline struct phy_device
+> +*phy_link_topo_get_phy(struct net_device *dev, u32 phyindex)
+>  {
+> -	struct phy_device_node *pdn = xa_load(&topo->phys, phyindex);
+> +	struct phy_link_topology *topo = dev->link_topo;
+> +	struct phy_device_node *pdn;
+>  
+> +	if (!topo)
+> +		return NULL;
+> +
+> +	pdn = xa_load(&topo->phys, phyindex);
+>  	if (pdn)
+>  		return pdn->phy;
+>  
+> @@ -49,21 +54,21 @@ phy_link_topo_get_phy(struct phy_link_topology *topo, u32 phyindex)
+>  }
+>  
+>  #if IS_REACHABLE(CONFIG_PHYLIB)
+> -int phy_link_topo_add_phy(struct phy_link_topology *topo,
+> +int phy_link_topo_add_phy(struct net_device *dev,
+>  			  struct phy_device *phy,
+>  			  enum phy_upstream upt, void *upstream);
+>  
+> -void phy_link_topo_del_phy(struct phy_link_topology *lt, struct phy_device *phy);
+> +void phy_link_topo_del_phy(struct net_device *dev, struct phy_device *phy);
+>  
+>  #else
+> -static inline int phy_link_topo_add_phy(struct phy_link_topology *topo,
+> +static inline int phy_link_topo_add_phy(struct net_device *dev,
+>  					struct phy_device *phy,
+>  					enum phy_upstream upt, void *upstream)
+>  {
+>  	return 0;
+>  }
+>  
+> -static inline void phy_link_topo_del_phy(struct phy_link_topology *topo,
+> +static inline void phy_link_topo_del_phy(struct net_device *dev,
+>  					 struct phy_device *phy)
+>  {
+>  }
+> diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+> index 563e94e0cbd8..f5b4adf324bc 100644
+> --- a/net/ethtool/netlink.c
+> +++ b/net/ethtool/netlink.c
+> @@ -170,7 +170,7 @@ int ethnl_parse_header_dev_get(struct ethnl_req_info *req_info,
+>  			struct nlattr *phy_id;
+>  
+>  			phy_id = tb[ETHTOOL_A_HEADER_PHY_INDEX];
+> -			phydev = phy_link_topo_get_phy(dev->link_topo,
+> +			phydev = phy_link_topo_get_phy(dev,
+>  						       nla_get_u32(phy_id));
+>  			if (!phydev) {
+>  				NL_SET_BAD_ATTR(extack, phy_id);
 
-I do miss the alignment here when I decide to no longer align range.start
-in another email - thanks!
 
-Zi, could I move the alignment here?
-IIUC, we will not encounter a partially mapped THP here, and range.start
-and range.end should also not beyond the VMA limits.
-
-                     align_huge_pmd_range(vma, &range.start, &range.end);
-                     split_huge_pmd_locked(vma, range.start, pvmw.pmd, fals=
-e,
-                                           folio);
-
-
-Thanks,
-Lance
-
->
-> > +                     pvmw.pmd =3D NULL;
-> > +                     spin_unlock(pvmw.ptl);
-> > +                     flags &=3D ~TTU_SPLIT_HUGE_PMD;
-> > +                     continue;
-> > +             }
-> > +
-> > +             /* Unexpected PMD-mapped THP? */
-> > +             VM_BUG_ON_FOLIO(!pvmw.pte, folio);
-> > +
-> >               pfn =3D pte_pfn(ptep_get(pvmw.pte));
-> >               subpage =3D folio_page(folio, pfn - folio_pfn(folio));
-> >               address =3D pvmw.address;
-> > --
-> > 2.33.1
->
->
-> --
-> Best Regards,
-> Yan, Zi
 
