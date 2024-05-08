@@ -1,159 +1,244 @@
-Return-Path: <linux-kernel+bounces-173195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559588BFCD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:05:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7554D8BFCDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8BD1F25EFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975D41C22136
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2E7839E3;
-	Wed,  8 May 2024 12:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E707584A3C;
+	Wed,  8 May 2024 12:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hdzkpQuz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6b9ritU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C34F45024
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2CD45024;
+	Wed,  8 May 2024 12:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715169903; cv=none; b=AZ1YSTjswAm18ZECmEEqEtHRaRLfnLMMzU3NRSJZILl0i54lOfhO7uuRNx4PfrPJu2uo/CMeMCN5OYeA6NjwjYEODPwCCpu+cS8LWAfC7nbyWDy/ujnf2BO4fmXfG8bh2H7O51dh8GUkqHoU3NnntT9kTUZx5iTUsC3963or5PQ=
+	t=1715169959; cv=none; b=UtoNHioxFfQko1t0MIcVidCXcjiEhUHdML+01Kpthl0xgVEZam7NhFZowgFh1d5PsLkHS1UF8DWwuLzx/odHiypwhKXF2dp68GnakVp2NJZPIrDNQxcWSz6WNoQ4V9hr1Ybr92+Rxo8Tx+Q1i7AXQZfsdlg3X+th3omSH9o7lic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715169903; c=relaxed/simple;
-	bh=GATzjlivhq8fKMFczIL/3RPrPffvid/SU8NTqPLJYPs=;
+	s=arc-20240116; t=1715169959; c=relaxed/simple;
+	bh=Nyz1qBX4AhSejr40aGAqB++CiOKmtDB7Y/C9c18/WZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZArFwz0mWJTHKf/6ScB5lo8jQmzzdgQij1kfzYlpttFkYZgCSavlMISLwv475or4JQFueorxc+kEOdjzwoBaUmj9vvJc/mzMkZmhDvLsgMrnIUwH7ilJX55vQ700nDs5L8ko2i5mc3LruOyGkC2LiDEw5RCQNEpTo8ultGOfhuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hdzkpQuz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9B7D940E0177;
-	Wed,  8 May 2024 12:04:53 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id idHYIoNC5YuF; Wed,  8 May 2024 12:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715169890; bh=f3BmmZ/ZrWMxvMKQEh/hpc9YGyn7kI0w2PJrN/PFOAo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2og/Fi8kG6iXrU125n9a9LtvM09cyg4znz2MZLBfigUG+Ecwd0uny+kCXcw/97MtdD44/07etLiPq3zQStfHq9rpD7gEjYzTiPrViSs/XRIOYpldnQe7WyWwvkSQDSU6AMZpaKghclu7FoZ5ZcUP4DcpSlpnHpohY48H2OvyAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6b9ritU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81CBC113CC;
+	Wed,  8 May 2024 12:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715169958;
+	bh=Nyz1qBX4AhSejr40aGAqB++CiOKmtDB7Y/C9c18/WZ8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hdzkpQuzF7KWDDuh6lP0sSlhQpJKKXN3IRFkvo17PIvT/MaZa5CIYLCcbCmQNH2B/
-	 w6uMqdIKGEonCdlxDqRXPPPHrxr4/7kTyZ2rJKALlhosuxv0/h7o6S39sYblJTHkbt
-	 pE8cA4tIPM9ED6TNmrMnaeZzDlkd3edEHLOwcviv/BzO+vp9TW5cNA8B2KQoWdH23X
-	 xuEp0e4MWeap7ltCIrBK4Tf8ztkbfwnv5FJKZqEBwUwCY82cg4cc9a/Iw1zFToV8Ft
-	 zd9ghbBhd5rPasz2Bv+mL+qfcf92gy2IDGr3KvsZwOXK7K3Yf7ShaCP7M1ojDwlulf
-	 9p7JpwI2RKdPv5Hi3pxxKAXOJikaPT1xP5pfkgfkaTS2ms8/+ofTyTzKC4wUDY3C4r
-	 Es7IXT2SRD5U6wJ7A5Gfi5dsZykIsNIHmoaIbd6xkK7gMzXaFqcfi/E1cD1zW8HH2h
-	 dAqE1Y38sBwMabDEJmQN8wZwVq4y1iWxRDRkx2vpYrtZW9nZ4QPy7Fhw8ZNCQiUrzp
-	 LhezVj24J5rO9MqhBdGp8eYVrtLGsRtcr3aub4FeBoD7f/sHPXWyMY7Oi/xfMe1wsw
-	 ++b3IRKbcipZ4cfD4r0dVOHzep8SSqnRLNpAJZUU0aGVNnq/87f12Y8GK3N4yZHiOo
-	 SxlSJ1Y8dzrhiyQ7DXWLbvWg=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C0CEA40E024C;
-	Wed,  8 May 2024 12:04:28 +0000 (UTC)
-Date: Wed, 8 May 2024 14:04:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
+	b=h6b9ritU4vQNxnTR7eE3vrl7XyG3xhiGCQ3mm6aJQRCCFjPFC/Q1hWuJjhy4l+Qax
+	 oR324+ZD/1B55q8u12dgWy3sRKPw84A6m5/lJMNbU/ZfkzUlIfv9F6M4Qsr74SZluv
+	 Ri6pDOnK4BWwAhDMhF58vTUbpuAZdeUXISMowuweeAt6zvNRRwALQPzA5fLGJ57Wbp
+	 2OEXRdD82ue1m5gsxJCTrctUxqpi5AwOZDXrAU1DFHkyJAlciUx03FDgas2YXkWL4U
+	 Ezxdp3UnYRZZhJByl5oD0Rz2BdBs3ecBvSz1FhVaxAQRSNofS2jvXx6H85WK8jvqHo
+	 58Yjy/AMTsjFA==
+Date: Wed, 8 May 2024 21:05:55 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	Jun Nakajima <jun.nakajima@intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	"Kalra, Ashish" <ashish.kalra@amd.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
 	Sean Christopherson <seanjc@google.com>,
-	"Huang, Kai" <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>,
-	kexec@lists.infradead.org, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Tao Liu <ltao@redhat.com>
-Subject: Re: [PATCHv10 10/18] x86/tdx: Convert shared memory back to private
- on kexec
-Message-ID: <20240508120422.GCZjtqRrSuJeUyByEM@fat_crate.local>
-References: <20240409113010.465412-1-kirill.shutemov@linux.intel.com>
- <20240409113010.465412-11-kirill.shutemov@linux.intel.com>
- <20240505121319.GAZjd337gHC0uhk6aM@fat_crate.local>
- <bpmagk7v6swftzjjpchplzjwgx3pbdqzklcxybrmrhprqizk45@lxmvva42z36g>
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Seth Forshee <sforshee@kernel.org>,
+	Bongsu Jeon <bongsu.jeon@samsung.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-input@vger.kernel.org, iommu@lists.linux.dev,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
+	bpf@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v2 1/5] selftests: Compile kselftest headers with
+ -D_GNU_SOURCE
+Message-ID: <Zjtqo6EFyGmSeREQ@finisterre.sirena.org.uk>
+Mail-Followup-To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@atishpatra.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Seth Forshee <sforshee@kernel.org>,
+	Bongsu Jeon <bongsu.jeon@samsung.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-sound@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+	linux-input@vger.kernel.org, iommu@lists.linux.dev,
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org,
+	bpf@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+References: <20240507214254.2787305-1-edliaw@google.com>
+ <20240507214254.2787305-2-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fwllAq8yEacRp/F5"
 Content-Disposition: inline
-In-Reply-To: <bpmagk7v6swftzjjpchplzjwgx3pbdqzklcxybrmrhprqizk45@lxmvva42z36g>
+In-Reply-To: <20240507214254.2787305-2-edliaw@google.com>
+X-Cookie: Accuracy, n.:
 
-On Mon, May 06, 2024 at 06:37:19PM +0300, Kirill A. Shutemov wrote:
-> "second kernel" is nomenclature kexec folks are using, but okay.
 
-And the "third kernel" is the one which got kexec-ed the second time?
+--fwllAq8yEacRp/F5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-You can make it: "The second, kexec-ed kernel" and then it is perfectly
-clear.
+On Tue, May 07, 2024 at 09:38:26PM +0000, Edward Liaw wrote:
+> Add the -D_GNU_SOURCE flag to KHDR_INCLUDES so that it is defined in a
+> central location.
+>=20
+> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> asprintf into kselftest_harness.h, which is a GNU extension and needs
+> _GNU_SOURCE to either be defined prior to including headers or with the
+> -D_GNU_SOURCE flag passed to the compiler.
 
-> > > +	/*
-> > > +	 * Crash kernel reaches here with interrupts disabled: can't wait for
-> > > +	 * conversions to finish.
-> > > +	 *
-> > > +	 * If race happened, just report and proceed.
-> > > +	 */
-> > > +	bool wait_for_lock = !crash;
-> > 
-> > You don't need that bool - use crash.
-> 
-> Dave suggested the variable for documentation purposes.
-> 
-> https://lore.kernel.org/all/0b70ee1e-4bb5-4867-9378-f5723ca091d5@intel.com
-> 
-> I'm fine either way.
+Reviewed-by: Mark Brown <broonie@kernel.org>
 
-But you have the comment above it which already explains what's going
-on...
+This does mean we define _GNU_SOURCE for nolibc (and I guess any other
+libc people use like bionic) but hopefully nobody's using the same
+define with a different meaning so should be fine.
 
-> > Why are we printing something here if we're not really acting up on it?
-> > 
-> > Who should care here?
-> 
-> The only thing we can do at this point on failure is panic. It think
-> it is reasonable to proceed, especially for crash case.
-> 
-> The print leaves a trace in the log to give a clue for debug.
+--fwllAq8yEacRp/F5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Sure but you'll leave a trace if you panic right then and there, on the
-first failure. Why noodle through the pages if the first failure is
-already fatal?
+-----BEGIN PGP SIGNATURE-----
 
-> One possible reason for the failure is if kdump raced with memory
-> conversion. In this case shared bit in page table got set (or not cleared
-> form shared->private conversion), but the page is actually private. So
-> this failure is not going to affect the kexec'ed kernel.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY7aqIACgkQJNaLcl1U
+h9DCxAf+M+eUS9Sr8Cy7bCTOxGv4sZGiJ7AeEEoR5TzBm5SOC6mKe/M0t4SexFRB
+5nAjL3TO9i8cfMtUMh6LMvciaa5sGVNRFhpTIgljvO7ND7Dv+WKpJyiicl/1DYIK
+DEdpua8OQJ4bz9PQwOZO1kgQzC003JRxY0Gbz9kk8ie58HVAodSSWi7kgNsMc/0t
+mKOumN6X7MhAoslboc7h3A6xymN8AHvHeNga3yP+1E84M8mjiR91sc3btIn4Wa/w
+6LIqTSCun/wuxeQnkz0Rlk1LdA1F0KQPzQAriWxju8K9dqc3prqYkWuDtRVYN+Li
+LJAemrTmdlcOF/7uoi1Z7s4wZajT2A==
+=IlWr
+-----END PGP SIGNATURE-----
 
-Lemme make sure I understand what you're saying here:
-
-1. This is a fatal failure and we should panic
-
-However,
-
-2. the kexec-ed kernel is using a different page table so there won't be
-   a mismatch between shared/private marking of the page so it doesn't
-   matter
-
-Close?
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--fwllAq8yEacRp/F5--
 
