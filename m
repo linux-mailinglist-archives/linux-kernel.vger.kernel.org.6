@@ -1,134 +1,86 @@
-Return-Path: <linux-kernel+bounces-173370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E500C8BFF8A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD8D8BFF8C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:54:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A070328231A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA2C228160E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F6579B9D;
-	Wed,  8 May 2024 13:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD227EF08;
+	Wed,  8 May 2024 13:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="i6WjQrfV"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VosKMvN9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357841A2C11
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842867C09F;
+	Wed,  8 May 2024 13:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715176406; cv=none; b=lUydPIKVlXg3enP3ezO8CUXdVFU0VDSqfETIgxqXIEO7aIFWRPbOSoSCcALA0YhYketyjW4WwmMHihio//JUV51YqxKkQlSiSuyFOAyHJzlrzvFHT1hZ4NyJKbH8w/q/bnjxVXSy9uGMjzOxfYq+7NRV9+v9FL22LtQBYwT3YFc=
+	t=1715176478; cv=none; b=dSJCfyC6zrmgej5PqRAenjJwyqDnvp5JCxMbPFBYaFrk5o9oFkEjFP9pCpKGoxuL+tQXwmCF9hgENEc0R0b4jvKQVVBVWHxVhKriNO9sFyMp0sw0c405SLDehltHXp118RkL03DIWQFdoUKFv78uigCfXdXRQILeS9KuJ0Ts6Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715176406; c=relaxed/simple;
-	bh=rnyl7Xp77+0HYhwPE1QmPfKmC2U78gvaTg519sdiZps=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G3LLQFzbxmmGSNK0Af3AcKCoKSfo60w59RkH3Kp7A+9Cu1Fbd6Plzn6y18Ox2IWoPmk8hJhbb+qtgCIzD2dfeEevMDMbP2K3SyZLB+SMBGoBJNxs5WAmVaXjardkCa8GMChMRjWBemnHC33Hbzte3zZHIL6W9vffPHxXMiYzlUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=i6WjQrfV; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1715176354; x=1715781154; i=efault@gmx.de;
-	bh=xvqbbAqfc9EOFpvqcHsYsOBw5lY+DntkMAAWorfeO9k=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=i6WjQrfV8G+HPtES47TSJrYXpXqh39+3re9yMZEbLp5+jbDrYsQfI9IMRCdtvseL
-	 /2wehND6/dQRZuJlc96UjAjzZOvvoo7ZNFa3LrzzQdbMb3KgRHAGZttn+1CtfUReD
-	 GG06Vu89g847q5CGRi4rbLVdJTzvqNiYXCz4XWokw5KFdkXumymKaBRXNz6fGLHn/
-	 4jrGZPYAPJk08+ebm8LeRCHX7F1bGUmb/zautqM59j6CG8AmLw5ibfaHKe+njzinD
-	 ZlubZm6O6p4pfLG6dL6KliUjt5pBdWV9y9aIXhHGqqedrqugc8SahpFdXh/c9QuM3
-	 0dLwpoU/S4pbPQcqnA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([185.221.151.210]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MbRjt-1sbIS30yVN-00aTHr; Wed, 08
- May 2024 15:52:34 +0200
-Message-ID: <9c360c0d337b124c71095f06889d1c69279a7c06.camel@gmx.de>
-Subject: Re: [RFC][PATCH 10/10] sched/eevdf: Use sched_attr::sched_runtime
- to set request/slice suggestion
-From: Mike Galbraith <efault@gmx.de>
-To: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de,  bristot@redhat.com, vschneid@redhat.com,
- linux-kernel@vger.kernel.org,  kprateek.nayak@amd.com,
- wuyun.abel@bytedance.com, tglx@linutronix.de,  tim.c.chen@intel.com,
- yu.c.chen.y@gmail.com
-Date: Wed, 08 May 2024 15:52:32 +0200
-In-Reply-To: <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
-References: <20240405102754.435410987@infradead.org>
-	 <20240405110010.934104715@infradead.org> <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1715176478; c=relaxed/simple;
+	bh=BVindEG8kkeqoVqnzxdnmSHNneCwyXWBRBgbxPuLyZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pJw5zzgm6mB915dElQysjWF2b/tFtvOtREHYOaNpw6E8UcdC2LzvpbooaPYjRZLetD7TGaRpKnahSB4fD9OBDMvEKx48ILOAi5Qut59xeOuuUW2GNvLhcWu0d6BjDzwLxRaO0K1Nr/VCSLaTfCA0BqHVEjBTOlS8aFMkuqN4G2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VosKMvN9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCD9C113CC;
+	Wed,  8 May 2024 13:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715176478;
+	bh=BVindEG8kkeqoVqnzxdnmSHNneCwyXWBRBgbxPuLyZE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VosKMvN9G5m8W0xR/dY2Gmlj5VGjqY2IJpa1UAltsiCKSIfnNhSnQlxS4heE1btT9
+	 ECCB9NJ5OGV8kY9EOjGeyQmbAPFrHnGMaf+3en7krFHyItjn1QucO9T3LYAv2npdHa
+	 gx8ecsojvu4ZTqgx4JU2MInj469Xy0kQMEcz6Vdy6XGimiLMrtcY+CXzqUDVlkkoi6
+	 gjAGLUW7tcSeMUCd1sI1ijvM3g7p14HQtG1oL/liW9paqkTrkKysH2ReCV6H/HzOAP
+	 wPS4Pppx0tf9B6pPz6x6n/NGo991sHLWAzV2Ns+bC5if/EwzAcbmAhC2f/xje7vGg+
+	 BqILBev026bOA==
+Date: Wed, 8 May 2024 06:54:36 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jeffrey Altman <jaltman@auristor.com>, David Howells
+ <dhowells@redhat.com>
+Cc: netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, linux-afs@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 0/5] rxrpc: Miscellaneous fixes
+Message-ID: <20240508065436.2f0c07e9@kernel.org>
+In-Reply-To: <955B77FD-C0C2-479E-9D85-D2F62E3DA48C@auristor.com>
+References: <20240503150749.1001323-1-dhowells@redhat.com>
+	<20240507194447.20bcfb60@kernel.org>
+	<955B77FD-C0C2-479E-9D85-D2F62E3DA48C@auristor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QOMj/JfgW6fn2tFkYIe4JeP8d426H3XoSY9KW474SzmxWwbOFw3
- RiUmwVfp+uMryE8sSrJErI71zbU9UCiFJ10U+hd3HTTzSr0OSPRonuHNaL2KleuiBN+3b0X
- 5AqW41ZXh9tSa2HdiATI05QR+EC1s8Rtdi50UbyWryQtiHQsMUvp1G2mmW+58rGbu0P3/5i
- gJ3jloKo37Ufk116+uw6Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Gw5PYY1ZB6A=;glpYNK6WATXwgcaY+mtwtEf9zcF
- dbiCPUTF4MqtFS5zKu+feso2oXsKh4BAdc74sv8kN4qsRgK0OLWOusV1KCqONK5LnLRfJY2gX
- LdAsYXHfW2V3RkCBAPZ1wcW+m+XkODqWR1VVhYYWelIy9+PA+W9sxfmg7XdntzP/4T35NRUln
- IGg2t0bQIewyMEbB2QgbjcLAgz30+1alN+UNw3yr/JPgBLb6h3XVJhjO+7+9kPYY+LUB5CJZH
- NnwNF0eLY1kglS27cAxaR/y8CuWzh0BHZGnGta3PaSykI8AmOCBapswR9Rea86i4sMwNCqUtO
- lK03uX2P8jmXl/c6vNfAJCDcGGI2IJMINn95JSvSDk8p0LmZq75dwjNFOVU6ut266BQ2YYTdF
- gkcD+qv+iubZyt8FZCK8Gn2O2X7CKpuG2L/fAjAulAdnnTf0YiBL6puQMbWi5gMZYWhVNoY3Z
- XJSrTp4R80edO/od2tIkhKi8CxxXnopUu4eu1GPtv39Yzz8FLaeGNaPdNjJlPLKn/yZ8Wnvyf
- kU/Wwys87H9pzNxVoCKBrRk8nACoWdrE8VtNmANPhUPqpyilVZVQnc+LwaC8XQDwJptIua3uL
- YdtNt9r64WtujyxXOzFnmhQOm7awXnGyqBAw4wv+eEpaX1g4hI+S6ztd8HEs42ayCbNZqqfTQ
- kViMcEYnkq2BnOwEBbgUQThiR8fWAS5xptpfw4iFzTqDXpUq+JFGY0kfjgaDMSUv+kxusz8Ii
- AMCGVOy/E6aUnFvavYMzfwxOnZmLWe/iCxAHIbK2uyRyMYyCiFRrnH4hHyZBQGYHkDN7UMeH5
- NM/ToSEBjm4//SYx8V2EBJuXk21JMLKNW8/G/8zI5MdLI=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 2024-05-07 at 23:15 +0800, Chen Yu wrote:
-> On 2024-04-05 at 12:28:04 +0200, Peter Zijlstra wrote:
-> > Allow applications to directly set a suggested request/slice length us=
-ing
-> > sched_attr::sched_runtime.
-> >
-> > The implementation clamps the value to: 0.1[ms] <=3D slice <=3D 100[ms=
-]
-> > which is 1/10 the size of HZ=3D1000 and 10 times the size of HZ=3D100.
-> >
-> > Applications should strive to use their periodic runtime at a high
-> > confidence interval (95%+) as the target slice. Using a smaller slice
-> > will introduce undue preemptions, while using a larger value will
-> > increase latency.
-> >
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> >
->
-> Is it possible to leverage this task slice to do better task wakeup plac=
-ement?
+On Wed, 8 May 2024 01:57:43 -0600 Jeffrey Altman wrote:
+> > Looks like these got marked as Rejected in patchwork.
+> > I think either because lore is confused and attaches an exchange with
+> > DaveM from 2022 to them (?) or because I mentioned to DaveM that I'm
+> > not sure these are fixes. So let me ask - on a scale of 1 to 10, how
+> > convinced are you that these should go to Linus this week rather than
+> > being categorized as general improvements and go during the merge
+> > window (without the Fixes tags)?  
+> 
+> Jakub,
+> 
+> In my opinion, the first two patches in the series I believe are important to back port to the stable branches.
+> 
+> Reviewed-by: Jeffrey Altman <jaltman@auristor.com <mailto:jaltman@auristor.com>>
 
-Slice being unrelated to placement makes its use in a placement related
-knob look wrong.  Even the smallest possible slice is orders of
-magnitude larger than the cycle time of TCP_RR, making slice nearly
-irrelevant to the issue being demonstrating via TCP_RR.  Even for that
-huge socket box, it won't take long as cycle time increases toward that
-smallest possible slice for the cost of needless wait to bury placement
-decision costs.
+Are they regressions? Seems possible from the Fixes tag but unclear
+from the text of the commit messages.
 
-> The idea is that, the smaller the slice the wakee has, the less idle CPU=
- it
-> should scan. This can reduce wake latency and inhibit costly task migrat=
-ion,
-> especially on large systems.
-
-Sure, this is an age old issue that's scaled up to size extra ugly in
-that huge socket box.  Any solution needs to scale as well methinks, a
-simple fixed yardstick won't work, as the costs being mitigated vary
-wildly with platform size/shape.
-
-	-Mike
+In any case, taking the first two may be a reasonable compromise.
+Does it sounds good to you, David?
 
