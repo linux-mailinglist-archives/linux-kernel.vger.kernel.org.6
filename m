@@ -1,386 +1,250 @@
-Return-Path: <linux-kernel+bounces-173133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBE38BFBF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:27:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1508BFBFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89FE1F22671
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB011F223C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DB1823CE;
-	Wed,  8 May 2024 11:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE64981AA2;
+	Wed,  8 May 2024 11:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jYuuvzo1"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2051.outbound.protection.outlook.com [40.107.92.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ckIRElua"
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDD881ACA;
-	Wed,  8 May 2024 11:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715167653; cv=fail; b=Ltug+o6KZmrOuZzY5BsC7kQOitN7edbfQ/lGt8qEPwpX4LmFXKAZRkLkeSraDlv796zPj2XagtRwoTe/PZkJRjxIibOvjGJgYBuMMVmeWWYGMOFivhukMPDXZwInFGIF+Gebqxh0CaAJBdJ1AtHn4xwRnWVkfi7uo9egbYZMOZo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715167653; c=relaxed/simple;
-	bh=alU1ZDgrzr45WpqQixiTgtbQfoEJDUgfn7w85CTMORg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UK1aQaRV1rLlBbPS01HAcmxHy0CstVeobQ1Cj50DnQYX093+i53pZ5q97uypGNYi7F4ZUh/01yUZg8t2wD07+liqB4/gGrQUndBWVKx0UXd2alfzvGNjrQdtGvTK0O/EjGSjXrzn/SFKGF8pjXguEONwGt1fSkaOOkVhPwQ0ySs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jYuuvzo1; arc=fail smtp.client-ip=40.107.92.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QDI+jS/JQzNtQKiF+0ZhyWMwe9pccMeKjvV1jldCnhnhtlEQi1zFmMkV9CAN5OO0T1awJYkPADw42UK7JoqS8wQ/GlU5UPwm0TvAUHO93yQRol4YdrNh5LWqOIBnqSeg+QH4lcaI1vHJnnhFyNYDieICvE14c8MZjoX3TYxhBBR707I2N2YsYMqp3iVW/lf+hAqhvrl7Sr/w1vE5SuUTGX3urjBxnouOSNWIYX3a640tSk+XX9zyxsfmaUEmWggJMieQ5gTVLAEY/08nLASwK+3eJhnAoS3OqxShcbkBvC0MmNSjX85Va8FIiM9oaMhtNoKpgwlzcUl9Fzigr2aQ7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g6XpHvbRm83eDZCXE0++oixUcydx3uKJHMJZUoSIlPU=;
- b=BCqGingzJMrijDVjyVF01MUENSidSOv1Ne8E2BGGts8Xn6v4fgdFWR8E1+XjJm8RKRhMJN1uKqayOmBmzmyn3KGLGzCbvuQLXi57RzOMQht7tfx834fEX8sHUeNJuN23sPXmVsUgz8xjG+k21rZz5j+vaObtLPrCmEeKByR3UO/23ooNZhDplDFpCrt3sdVbkV/tq/rDnk3D2csZ63LHpXcL90E8bYi0Oq/AimUyqV9fl33c+ZjoDYX/a9mf1kihDraTuCbKVl90DKNBosA38sX/fGEgeG/rEDHVtxQlIzTd90Ky6BycnUMyOY6ne06ZCzHCkZ+ehg97mWWAf/Bcww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=lwn.net smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g6XpHvbRm83eDZCXE0++oixUcydx3uKJHMJZUoSIlPU=;
- b=jYuuvzo1zhe4adMX34M9g9BJuQS8RRG8RwtrRGSiU/kLFKH7zZ/qcIamHFTgIi6WAuGS4aFyq+Lv1r3WmPxdlqiyDMK/rCceujua17jCmleyA1Wisiuti82dv9I/1KigQA+tGDOlo+PSZLOylNSIgXDWKzWwUkSjfMMGMnhjPm6jy/pW5aVGYJXn2mXL7xZ9EZwEvvybj2tSstXuPW878yucD3A/ElybouZn9bhqY8pQ2Q2zVSCujTJaBIlyLp/5i4o97BEXgQOaMaqNoQ1AfpCgvRkaDTDMi4+uG88dDN3ErWtoXKy/EJqwfMld8UiaI3admslKrx1SG8/nf3z5iQ==
-Received: from CH0P220CA0004.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:ef::10)
- by PH7PR12MB6658.namprd12.prod.outlook.com (2603:10b6:510:211::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Wed, 8 May
- 2024 11:27:25 +0000
-Received: from CH3PEPF00000011.namprd21.prod.outlook.com
- (2603:10b6:610:ef:cafe::ae) by CH0P220CA0004.outlook.office365.com
- (2603:10b6:610:ef::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42 via Frontend
- Transport; Wed, 8 May 2024 11:27:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH3PEPF00000011.mail.protection.outlook.com (10.167.244.116) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.0 via Frontend Transport; Wed, 8 May 2024 11:27:24 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 8 May 2024
- 04:27:07 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 8 May 2024
- 04:27:06 -0700
-Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 8 May 2024 04:27:01 -0700
-From: Vidya Sagar <vidyas@nvidia.com>
-To: <corbet@lwn.net>, <bhelgaas@google.com>, <galshalom@nvidia.com>,
-	<leonro@nvidia.com>, <jgg@nvidia.com>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>
-CC: <mmoshrefjava@nvidia.com>, <shahafs@nvidia.com>, <vsethi@nvidia.com>,
-	<sdonthineni@nvidia.com>, <jan@nvidia.com>, <tdave@nvidia.com>,
-	<linux-doc@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
-	<mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V1] PCI: Extend ACS configurability
-Date: Wed, 8 May 2024 16:56:58 +0530
-Message-ID: <20240508112658.3555882-1-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B832581ABE
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 11:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715167766; cv=none; b=l5vCSq1KQqZp9APA/4yWinV+kBChWuu9RsyUkqd6wwGzTm4T34src4azL0q27/xrtInWIbvoipSoZB8LjG4/PcumnhohJlR3f/NEdbhyPUhK/s/Y27CTW2Vuf8KuvJbyDmECul3QUUw4lJ1bGrLzXAJCP05LKtdwIeIPVPaFyto=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715167766; c=relaxed/simple;
+	bh=o1P08wRN5zgIFHUzBZZbjDk7vYIB/bRy0pNZCySSAJM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=mPvxWklt3BRIXGnWOnZuDlG21eVmUCbbFyi9RLbyNRaZ6tF9REKz3PAX53sZz3YY9lZP9bS85zMZvccbEF2Ur7a68JIjuUOEkVQwsG5SN1PiXnU2YshuSVMfNadACkIt092tDN5R5rQ2dJi7QuCSvgul+hkPScz6iecrc/exvBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ckIRElua; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4df2630c49dso1239504e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 04:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715167763; x=1715772563; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hQ/p1VPhOxx8AauRV82BX+Y5UWsefLJrJMnijX2piSg=;
+        b=ckIREluaOu/kHw1qgw5Pf9nrD2b9+HWaWTVCFoTMlyoO5cS3SX/AiHlcNhmhF8U9nz
+         6r/brF8YjSi2WrErGamudbBFOf2pQnATA47TNYw3CZ3yJUM2+jRBA90dsBxCI7gDrMXq
+         aClbyxw3S5CGDMjMviipEj1ZM7QLrLW5vzt4ZXN7VjrYY7XReDpOv65dHN33WZsVmd1b
+         8SMuyWrguqV0PVaWdtJ3+M8pEg4zaCoZv5hlaLwXIE53NBivyNrEUwkuYUOWz9mHqVJB
+         C2Vi8LQq8lCYILP2XwK8vL540Wbhh4/LSZpvXfLzmg4bDpzPr4WZfLXG8ffttWHw0lCv
+         NFAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715167763; x=1715772563;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hQ/p1VPhOxx8AauRV82BX+Y5UWsefLJrJMnijX2piSg=;
+        b=a4W8sj0mxc+7049LFPqQzu5Z5MV0uLlwKxvmJZQN4L3NJMCQ8D44gqJZkfyYRlF35j
+         MRv6hHkwtAQtaMnb6VH5dfmXVC7Pz23CrxmzZEzXxbB1LE2tKoI/lyvSk5I9of0aFuja
+         tHhu8o7GTqfAMSPSwqCd1edNqMuVHFk3d70m96nASijg7xapMVZRXJgUOw5QEqpMUfGL
+         23weOTVXURZWcoCMnZZvblALl4bLsIwSk1cS5BdJY4PoXuqO9FaB1fvLjAxuJiMyM3dv
+         8BgYmgWkTRJnVRYL9Vx2LqjLlkOabY+mdc0LX9jX95OKgMlsewCDsNXmJy9Oq9AQd1S8
+         B+sg==
+X-Gm-Message-State: AOJu0Yw1JVcjCFYJZH98snWSNZVinyHQGbtInjqaCVag7UG120Avhvrf
+	CzwH7k/RM5g3UqG97f26+xGj/Y/42wAhrpna0QTFPnSlvk7RP+/aIMpLvsNUz4bLL5rsLCdWICX
+	JrWZnTbOuuyAmBUUiAFKUnBhQFyiLQ8x/GdcXFNswWs2lrhDOBHk=
+X-Google-Smtp-Source: AGHT+IGJ+T6/99q0ZQKInq6ADBUWPxJxgpXgRQ2dnLje77bkTFuLwMf08tMOi+Ajkvwo9Obpe7o/02KWJU5vShsVCaQ=
+X-Received: by 2002:a05:6122:4595:b0:4c8:8d45:5325 with SMTP id
+ 71dfb90a1353d-4df6918905emr2499319e0c.7.1715167762554; Wed, 08 May 2024
+ 04:29:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 8 May 2024 16:59:10 +0530
+Message-ID: <CA+G9fYvOjtEBtB21FwFmvbautebx_2Py-tjqduPcWyS5B9nB5w@mail.gmail.com>
+Subject: next: kasan: Unable to handle kernel paging request at virtual address
+To: open list <linux-kernel@vger.kernel.org>, kunit-dev@googlegroups.com, 
+	lkft-triage@lists.linaro.org
+Cc: David Gow <davidgow@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Guenter Roeck <linux@roeck-us.net>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000011:EE_|PH7PR12MB6658:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2cdb56f-d45b-4d56-903f-08dc6f51d595
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|36860700004|376005|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?anp5K3dGS0JNM3NGTTZTeVQxcWJsVWJqeEhpU2I1OGhLY2pNY0UrNGozNW10?=
- =?utf-8?B?RVErNWkwb3ZpbmlldjJxQTF5K0orUmhTbVQ2Wk5jcE1HTElQVDMyV1dDLzd6?=
- =?utf-8?B?Rm5MdlNFV2xOZmpwb0g2YkRLeENUYW5rcUU1NHQzejVjUDFDWExGNlRmdXFR?=
- =?utf-8?B?Q3lmV0FNNVUrQy9CZFFMbW1XMWhMcXN3Y0N4WVU3bjhrSDMyUDA0STdaYzZK?=
- =?utf-8?B?UEdTclc2M3R0cC8yUFRKajB3MmF1ZjIvNWk4UXJlMmIrcUtoVGI4NHdkbytR?=
- =?utf-8?B?U2xjQUFHWHlKcWRHbHlKR0RvemdrRytFaXRRRk53Z3RXWUNoaFB1Yzc5WHJS?=
- =?utf-8?B?TWVYQlgyczRpKzFoeFh0OGlrNTZrdkFjQ0gxTWJCTjRadkJBZk16NHBrTzhr?=
- =?utf-8?B?Yy9HemF5RndET1U0K1Y0Yjl3UURHMzlWZWpDeXFoZWZmVkhucVg2V3dsZ1hL?=
- =?utf-8?B?bGdLdUY3WG9Zc1pSTjhRU1RORlBoM29FSnZHQitmSEVVZGFoVDRUaDVpbVRG?=
- =?utf-8?B?bFRTdHN4R29vT1RNaEZSc3ZzcWNXam9KVlN0blRWVVBjdkY1R3BScFY5RGRJ?=
- =?utf-8?B?dlY5NzJrVzV1THpUTzI5Q0hVQVh0SEF0OVhiK2xkc3lxU01IQTQ0WjJyckU5?=
- =?utf-8?B?WlNLOUlHNmRCdTVOdXNqNDgxMTJ1Nk9YaXVwVkZsMzFHVHljS1JtZ2kzK0p0?=
- =?utf-8?B?ZjZ5a2QwNVNPNllDcmpCa0dpeDNDdm95aVdxSlM1YVV1Nk03ZGd1bSt2THVu?=
- =?utf-8?B?VGlqTVNveDhNZGdZVzFsZlNDVlA5T2labklJaWJnTkFIR0xNejZiYVVRK3Mx?=
- =?utf-8?B?NTExQkdGUUdyRjlBYm83bURwQjNKMmZ5NG9mRVdMZmozcVNoSzdKbGlMbE5r?=
- =?utf-8?B?TWpWcnBmSnY1ZXQvK0hLdXNjcHNlSzFHU2dUajV3dG9adHErV0RHeForWGJm?=
- =?utf-8?B?SldUclhQUi8ybytxSDZlK3crdk5vRjd2UjUrcWhZdFFMY21xcE9aZTBRb2Q1?=
- =?utf-8?B?RS9zUndHN1RLa28rRTZpRmFVRW8wYzlLNGFONDNKMUp6MjNwaFVkZExQazND?=
- =?utf-8?B?NVp3cDByYjhHTCtsNDU3Z1BsdDdONEVkRzIxMXdmcys5dlNjcTVrckVQLzBV?=
- =?utf-8?B?blBJdC9FUTlYNnNVY1BQSUZYZEsvV0NwVGdFRkIxMWdFSCtXS3RkbXhrMloz?=
- =?utf-8?B?UmVFWEtNV05WM2lndjNDNjlEOGgvcjN6aHhCeWhRaDNId1BvMXNwTFM1b0VE?=
- =?utf-8?B?S29DQWJZS2FOcGY4WEg0cWZZVVh0YW5rTjV1VkdnS2h6T2JBdlNqWHpKdXpo?=
- =?utf-8?B?RmVFVzBvQjkzZk0wWEdCWWFFSFlLNWthdnNmem5UVGtvSmJVQ3o2VTR0MDR5?=
- =?utf-8?B?MWdDdnkxU3dLSzI2WHpQVjNLODBycFZoV1NYVDJlMEtvZjdXeDM1VWZ6aEFZ?=
- =?utf-8?B?dUwzSW9EOURrYlhCRkNPeFNsb2dRelFHMmgvRGw0d0gybGlROWcyaWZQM2VY?=
- =?utf-8?B?Vy85ZUJ6ekdrZGtvbUE5Ymd1NGtCb0ZMQ3VHUU9NN3FtSUUxVkxJOXlFUTBJ?=
- =?utf-8?B?U1E2Y3VCam5ERGp2VVBkaEl6eHZNMlExV2xXYU51SzMwMkowZ3pIK1gzbmxR?=
- =?utf-8?B?YkVLdElla3NIRmk0enU0WDllSlBsVHJMK3kxQWFLdDJvYVFPSlc0VkZzRFRQ?=
- =?utf-8?B?VDJyYlFIQys4ZjhPNlBlejRFZ0ZVNmoyOEh1K2pzWlVhemVaU245djRuRXAr?=
- =?utf-8?B?VW4xM3F2N3UyM3BOOFBJM1dhbDBWbVhMR2Jkczc2V3VsN0k3NDVrYkhKSjR0?=
- =?utf-8?Q?65fmb5QvphHG77Efcy+l1JuD+6Fo+POtYpkR8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(36860700004)(376005)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2024 11:27:24.3650
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2cdb56f-d45b-4d56-903f-08dc6f51d595
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000011.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6658
 
-For iommu_groups to form correctly, the ACS settings in the PCIe fabric
-need to be setup early in the boot process, either via the BIOS or via
-the kernel disable_acs_redir parameter.
+While running kunit tests on arm64 and x86_64 the following kernel BUG
+noticed on running Linux next-20240508 kernel and stride tests failed.
 
-disable_acs_redir allows clearing the RR|CR|EC ACS flags, but the PCIe
-spec Rev3.0 already defines 7 different ACS related flags with many more
-useful combinations depending on the fabric design.
+observations:
+1) The null pointer dereference notice while running kunit_test
+2) The stride test case failed on today's linux next-20240508 tag.
 
-For backward compatibility, leave the 'disable_acs_redir' as is and add
-a new parameter 'config_acs'so that the user can directly specify the ACS
-flags to set on a per-device basis. Use a similar syntax to the existing
-'resource_alignment'  parameter by using the @ character and have the user
-specify the ACS flags using a bit encoding. If both 'disable_acs_redir' and
-'config_acs' are specified for a particular device, configuration specified
-through 'config_acs' takes precedence over the other.
+The detailed log provided in the links below.
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
- .../admin-guide/kernel-parameters.txt         |  22 ++++
- drivers/pci/pci.c                             | 119 ++++++++++++++----
- 2 files changed, 119 insertions(+), 22 deletions(-)
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 41644336e..b4a8207eb 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4456,6 +4456,28 @@
- 				bridges without forcing it upstream. Note:
- 				this removes isolation between devices and
- 				may put more devices in an IOMMU group.
-+		config_acs=
-+				Format:
-+				=<ACS flags>@<pci_dev>[; ...]
-+				Specify one or more PCI devices (in the format
-+				specified above) optionally prepended with flags
-+				and separated by semicolons. The respective
-+				capabilities will be enabled, disabled or unchanged
-+				based on what is specified in flags.
-+				ACS Flags is defined as follows
-+				bit-0 : ACS Source Validation
-+				bit-1 : ACS Translation Blocking
-+				bit-2 : ACS P2P Request Redirect
-+				bit-3 : ACS P2P Completion Redirect
-+				bit-4 : ACS Upstream Forwarding
-+				bit-5 : ACS P2P Egress Control
-+				bit-6 : ACS Direct Translated P2P
-+				Each bit can be marked as
-+				‘0‘ – force disabled
-+				‘1’ – force enabled
-+				‘x’ – unchanged.
-+				Note: this may remove isolation between devices
-+				and may put more devices in an IOMMU group.
- 		force_floating	[S390] Force usage of floating interrupts.
- 		nomio		[S390] Do not use MIO instructions.
- 		norid		[S390] ignore the RID field and force use of
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index a607f277c..0ad48ade9 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -887,30 +887,59 @@ void pci_request_acs(void)
- }
- 
- static const char *disable_acs_redir_param;
-+static const char *config_acs_param;
- 
--/**
-- * pci_disable_acs_redir - disable ACS redirect capabilities
-- * @dev: the PCI device
-- *
-- * For only devices specified in the disable_acs_redir parameter.
-- */
--static void pci_disable_acs_redir(struct pci_dev *dev)
-+static void __pci_config_acs(struct pci_dev *dev, const char *p,
-+			     u16 mask, u16 flags)
- {
-+	char *delimit;
- 	int ret = 0;
--	const char *p;
--	int pos;
--	u16 ctrl;
-+	u16 ctrl, pos;
- 
--	if (!disable_acs_redir_param)
--		return;
--
--	p = disable_acs_redir_param;
- 	while (*p) {
-+		if (!mask) {
-+			/* Check for ACS flags */
-+			delimit = strstr(p, "@");
-+			if (delimit) {
-+				int end;
-+				u32 shift = 0;
-+
-+				end = delimit - p - 1;
-+
-+				while (end > -1) {
-+					if (*(p + end) == '0') {
-+						mask |= 1 << shift;
-+						shift++;
-+						end--;
-+					} else if (*(p + end) == '1') {
-+						mask |= 1 << shift;
-+						flags |= 1 << shift;
-+						shift++;
-+						end--;
-+					} else if ((*(p + end) == 'x') || (*(p + end) == 'X')) {
-+						shift++;
-+						end--;
-+					} else {
-+						pci_err(dev, "Invalid ACS flags... Ignoring\n");
-+						return;
-+					}
-+				}
-+				p = delimit + 1;
-+			} else {
-+				pci_err(dev, "ACS Flags missing\n");
-+				return;
-+			}
-+		}
-+
-+		if (mask & ~(PCI_ACS_SV | PCI_ACS_TB | PCI_ACS_RR | PCI_ACS_CR |
-+			    PCI_ACS_UF | PCI_ACS_EC | PCI_ACS_DT)) {
-+			pci_err(dev, "Invalid ACS flags specified\n");
-+			return;
-+		}
-+
- 		ret = pci_dev_str_match(dev, p, &p);
- 		if (ret < 0) {
--			pr_info_once("PCI: Can't parse disable_acs_redir parameter: %s\n",
--				     disable_acs_redir_param);
--
-+			pr_info_once("PCI: Can't parse acs command line parameter\n");
- 			break;
- 		} else if (ret == 1) {
- 			/* Found a match */
-@@ -932,18 +961,60 @@ static void pci_disable_acs_redir(struct pci_dev *dev)
- 
- 	pos = dev->acs_cap;
- 	if (!pos) {
--		pci_warn(dev, "cannot disable ACS redirect for this hardware as it does not have ACS capabilities\n");
-+		pci_warn(dev, "cannot configure ACS for this hardware as it does not have ACS capabilities\n");
- 		return;
- 	}
- 
-+	pci_dbg(dev, "ACS mask  = 0x%X\n", mask);
-+	pci_dbg(dev, "ACS flags = 0x%X\n", flags);
-+
- 	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
-+	ctrl &= ~mask;
-+	ctrl |= flags;
-+	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
- 
--	/* P2P Request & Completion Redirect */
--	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
-+	pci_info(dev, "Configured ACS\n");
-+}
- 
--	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
-+/**
-+ * pci_disable_acs_redir - disable ACS redirect capabilities
-+ * @dev: the PCI device
-+ *
-+ * For only devices specified in the disable_acs_redir parameter.
-+ */
-+static void pci_disable_acs_redir(struct pci_dev *dev)
-+{
-+	const char *p;
-+	u16 mask = 0, flags = 0;
-+
-+	if (!disable_acs_redir_param)
-+		return;
-+
-+	p = disable_acs_redir_param;
-+
-+	mask = PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC;
-+	flags = ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
-+
-+	__pci_config_acs(dev, p, mask, flags);
-+}
-+
-+/**
-+ * pci_config_acs - configure ACS capabilities
-+ * @dev: the PCI device
-+ *
-+ * For only devices specified in the config_acs parameter.
-+ */
-+static void pci_config_acs(struct pci_dev *dev)
-+{
-+	const char *p;
-+	u16 mask = 0, flags = 0;
-+
-+	if (!config_acs_param)
-+		return;
-+
-+	p = config_acs_param;
- 
--	pci_info(dev, "disabled ACS redirect\n");
-+	__pci_config_acs(dev, p, mask, flags);
- }
- 
- /**
-@@ -1005,6 +1076,7 @@ static void pci_enable_acs(struct pci_dev *dev)
- 	 * preferences.
- 	 */
- 	pci_disable_acs_redir(dev);
-+	pci_config_acs(dev);
- }
- 
- /**
-@@ -7023,6 +7095,8 @@ static int __init pci_setup(char *str)
- 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
- 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
- 				disable_acs_redir_param = str + 18;
-+			} else if (!strncmp(str, "config_acs=", 11)) {
-+				config_acs_param = str + 11;
- 			} else {
- 				pr_err("PCI: Unknown option `%s'\n", str);
- 			}
-@@ -7047,6 +7121,7 @@ static int __init pci_realloc_setup_params(void)
- 	resource_alignment_param = kstrdup(resource_alignment_param,
- 					   GFP_KERNEL);
- 	disable_acs_redir_param = kstrdup(disable_acs_redir_param, GFP_KERNEL);
-+	config_acs_param = kstrdup(config_acs_param, GFP_KERNEL);
- 
- 	return 0;
- }
--- 
-2.25.1
+Crash log:
+--------
 
+<6>[   43.086497]     KTAP version 1
+<6>[   43.087004]     # Subtest: kunit_fault
+<6>[   43.087577]     # module: kunit_test
+<6>[   43.087748]     1..1
+<1>[   43.092588] Unable to handle kernel paging request at virtual
+address dfff800000000000
+<1>[   43.093687] KASAN: null-ptr-deref in range
+[0x0000000000000000-0x0000000000000007]
+<1>[   43.094770] Mem abort info:
+<1>[   43.095425]   ESR = 0x0000000096000005
+<1>[   43.097071]   EC = 0x25: DABT (current EL), IL = 32 bits
+<1>[   43.098034]   SET = 0, FnV = 0
+<1>[   43.098542]   EA = 0, S1PTW = 0
+<1>[   43.099104]   FSC = 0x05: level 1 translation fault
+<1>[   43.099837] Data abort info:
+<1>[   43.100679]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+<1>[   43.101535]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+<1>[   43.102321]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+<1>[   43.103287] [dfff800000000000] address between user and kernel
+address ranges
+<0>[   43.105111] Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+<4>[   43.106046] Modules linked in:
+<4>[   43.108961] CPU: 1 PID: 375 Comm: kunit_try_catch Tainted: G
+            N 6.9.0-rc7-next-20240508 #1
+<4>[   43.110433] Hardware name: linux,dummy-virt (DT)
+<4>[   43.111555] pstate: 82400009 (Nzcv daif +PAN -UAO +TCO -DIT
+-SSBS BTYPE=--)
+<4>[   43.113232] pc : kunit_test_null_dereference+0x2c/0x114
+<4>[   43.114785] lr : kunit_generic_run_threadfn_adapter+0x84/0x104
+<4>[   43.115692] sp : ffff800080ff7dd0
+<4>[   43.116646] x29: ffff800080ff7de0 x28: 0000000000000000 x27:
+1ffe000018f1db69
+<4>[   43.117953] x26: dfff800000000000 x25: ffff943388e90ab8 x24:
+0000000000000001
+<4>[   43.119037] x23: 1ffe000018a7a771 x22: dfff800000000000 x21:
+dfff800000000000
+<4>[   43.120659] x20: ffff943388e9d5a0 x19: fff00000c53d3b88 x18:
+ffff800080097930
+<4>[   43.121669] x17: ffff943388e905e4 x16: ffff94338837d7e4 x15:
+0000000000000001
+<4>[   43.122762] x14: 1ffe000018f1dc59 x13: 0000000000000000 x12:
+0000000000000000
+<4>[   43.123881] x11: fffd800018f1dc5a x10: dfff800000000000 x9 :
+1ffe000018a7a772
+<4>[   43.125204] x8 : 7c0c8af2c07cc400 x7 : 0000000000000000 x6 :
+72745f74696e756b
+<4>[   43.126291] x5 : fff00000c53d45d6 x4 : 0000000000000000 x3 :
+ffff94338acf91b4
+<4>[   43.127380] x2 : 0000000000000001 x1 : 0000000000000001 x0 :
+ffff800080087af8
+<4>[   43.129375] Call trace:
+<4>[   43.129852]  kunit_test_null_dereference+0x2c/0x114
+<4>[   43.130621]  kunit_generic_run_threadfn_adapter+0x84/0x104
+<4>[   43.131480]  kthread+0x268/0x3a4
+<4>[   43.132390]  ret_from_fork+0x10/0x20
+<0>[   43.133497] Code: d2d00015 f9426508 f2fbfff5 f90007e8 (39c002a8)
+<4>[   43.134637] ---[ end trace 0000000000000000 ]---
+<3>[   43.136227]     # kunit_test_fault_null_dereference: try
+faulted: last line seen lib/kunit/kunit-test.c:95
+
+<trim>
+
+<6>[   98.315793]         KTAP version 1
+<6>[   98.317173]         # Subtest: stride
+<4>[   98.320844] regmap_test stride.regmap_test: No cache used with
+register defaults set!
+<3>[   98.323706]
+==================================================================
+<3>[   98.325683] BUG: KASAN: slab-out-of-bounds in stride+0x698/0x8a8
+<3>[   98.326518] Write of size 1 at addr fff00000c7b3320b by task
+kunit_try_catch/1143
+<3>[   98.328402]
+<3>[   98.329468] CPU: 0 PID: 1143 Comm: kunit_try_catch Tainted: G
+  D          N 6.9.0-rc7-next-20240508 #1
+<3>[   98.330560] Hardware name: linux,dummy-virt (DT)
+<3>[   98.331400] Call trace:
+<3>[   98.332216]  dump_backtrace+0xf0/0x128
+<3>[   98.332815]  show_stack+0x18/0x24
+<3>[   98.333475]  dump_stack_lvl+0x40/0x84
+<3>[   98.334187]  print_report+0x16c/0x728
+<3>[   98.334887]  kasan_report+0xd8/0x134
+<3>[   98.335589]  __asan_report_store1_noabort+0x20/0x2c
+<3>[   98.337089]  stride+0x698/0x8a8
+<3>[   98.337739]  kunit_try_run_case+0x118/0x31c
+<3>[   98.338574]  kunit_generic_run_threadfn_adapter+0x84/0x104
+<3>[   98.339529]  kthread+0x268/0x3a4
+<3>[   98.340427]  ret_from_fork+0x10/0x20
+<3>[   98.341331]
+<3>[   98.341826] Allocated by task 1143:
+<4>[   98.342644]  kasan_save_track+0x40/0x78
+<4>[   98.343269]  kasan_save_alloc_info+0x44/0x54
+<4>[   98.344067]  __kasan_kmalloc+0x84/0x9c
+<4>[   98.345005]  __kmalloc_noprof+0x208/0x3a4
+<4>[   98.346322]  __regmap_init_ram+0x70/0x158
+<4>[   98.347113]  gen_regmap+0x3a4/0x554
+<4>[   98.347878]  stride+0x78/0x8a8
+<4>[   98.348639]  kunit_try_run_case+0x118/0x31c
+<4>[   98.349326]  kunit_generic_run_threadfn_adapter+0x84/0x104
+<4>[   98.350315]  kthread+0x268/0x3a4
+<4>[   98.350983]  ret_from_fork+0x10/0x20
+<3>[   98.351734]
+<3>[   98.352257] The buggy address belongs to the object at fff00000c7b33200
+<3>[   98.352257]  which belongs to the cache kmalloc-16 of size 16
+<3>[   98.354108] The buggy address is located 0 bytes to the right of
+<3>[   98.354108]  allocated 11-byte region [fff00000c7b33200, fff00000c7b3320b)
+<3>[   98.355956]
+<3>[   98.356752] The buggy address belongs to the physical page:
+<4>[   98.357945] page: refcount:1 mapcount:0 mapping:0000000000000000
+index:0x0 pfn:0x107b33
+<4>[   98.359143] flags: 0xbfffe0000000000(node=0|zone=2|lastcpupid=0x1ffff)
+<4>[   98.360819] page_type: 0xffffefff(slab)
+<4>[   98.362282] raw: 0bfffe0000000000 fff00000c0001640
+dead000000000122 0000000000000000
+<4>[   98.363246] raw: 0000000000000000 0000000080800080
+00000001ffffefff 0000000000000000
+<4>[   98.364762] page dumped because: kasan: bad access detected
+<3>[   98.365543]
+<3>[   98.365944] Memory state around the buggy address:
+<3>[   98.367010]  fff00000c7b33100: fa fb fc fc fa fb fc fc fa fb fc
+fc fa fb fc fc
+<3>[   98.368304]  fff00000c7b33180: fa fb fc fc fa fb fc fc fa fb fc
+fc fa fb fc fc
+<3>[   98.369228] >fff00000c7b33200: 00 03 fc fc 00 03 fc fc fc fc fc
+fc fc fc fc fc
+<3>[   98.370208]                       ^
+<3>[   98.370915]  fff00000c7b33280: fc fc fc fc fc fc fc fc fc fc fc
+fc fc fc fc fc
+<3>[   98.372179]  fff00000c7b33300: fc fc fc fc fc fc fc fc fc fc fc
+fc fc fc fc fc
+<3>[   98.373119]
+==================================================================
+<6>[   98.379784]         not ok 1 none-default @0x0
+<6>[   98.387715]         ok 2 flat-default @0x0
+<6>[   98.396608]         ok 3 rbtree-default @0x0
+<6>[   98.403430]         ok 4 maple-default @0x0
+<6>[   98.405635]     # stride: pass:3 fail:1 skip:0 total:4
+<6>[   98.406235]     not ok 11 stride
+
+Links:
+----
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2gB3M3nlA8sWzr9GBuN7rCQHsPH/
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240508/testrun/23827533/suite/log-parser-boot/tests/
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240508/testrun/23827533/suite/log-parser-boot/test/check-kernel-bug/log
+ - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2gB3N9JXfJ181Hm9cmchZm9q53F
+
+metadata:
+--
+  arch: arm64
+  environment: qemu-arm64
+  git_describe: next-20240508
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
