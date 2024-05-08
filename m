@@ -1,354 +1,178 @@
-Return-Path: <linux-kernel+bounces-172911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9C48BF885
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E0A8BF88B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC6D3B226AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60871F24A0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983CA5026D;
-	Wed,  8 May 2024 08:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC180535D1;
+	Wed,  8 May 2024 08:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xp12ydVm"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eaeu5qAg"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B2F1EB56
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91366436A6
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157028; cv=none; b=uVzBcCYnx6lqD+3vdD0bV4A3Zkwvx2ue/Nh2KCQxqjWkjJyuoQ0LpD1Gy/j5YPTyCBDoI3zBC1t0Z3+v897jhe8+EfmrlucqT4RglqZNILBc9vKOfoD9BBV9LALYxZc57F6JQeMWtgOA1ciK50q8k3/3d3YbnFRcUqxcD+35XO8=
+	t=1715157134; cv=none; b=ihTiZCjyvX8eH27lQ3x8ZJsMYV2g21TD3K5JCylY4V8F7boKElEEuq8F0qKthPzjncXcsBE2BO4Un9rP49W6CcO/CgiUo2USykdDQp6EPLSZdFqXGY92EbaPJExfR1wFjGzgkOhUxYK23tqeQ4OQha4vLYnfuivt8YmtAkg6b5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157028; c=relaxed/simple;
-	bh=+3ReGjuhVd6zQ3RcnRj3ZV+iMuDv13+l7oOLnOiEWY8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YLZ+rahsdjAScs+VD0ig3fr4CDHSYMs7mmU0v7WcKGAfoNybnOQnF0oJz21xidy7Bn4ANcXOBxeX25SFwaZoxyK04OxbxWJL5PD+QDVAVKy2qWwAsPEav1zKp1M6LuxL5ecDgQX3EdvdXLam/zCPQKKwxq2bYfjFFYT2CcKdo5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xp12ydVm; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4df1cb3c87eso1296458e0c.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:30:26 -0700 (PDT)
+	s=arc-20240116; t=1715157134; c=relaxed/simple;
+	bh=b3DUk88N1D27ioVFvmL2iMHqSDZeX4sADmOjfnV9m+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXCZGwGRQR7H98/ov+iMu8RzbvalvWpONN/GSN/WXnbPkTWB1QMc4poBm3ELT7dv0IwcZ4x62Jp/rJjZnBClY3foxtxDWFtf60ZNzbcPdpWafAI8WLm9EMizN0QsyJtXxW1Qr3YbYIsz8JNmqBjmfb8xNQcRaL/N620W7vQJeg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=eaeu5qAg; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a554cf23c3eso32654066b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:32:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715157026; x=1715761826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EUJDG03Mjw+2XpovVR7RPuA7B88kWpbfRCW3yD4FtR4=;
-        b=Xp12ydVmApexN4DzWodd+uWOmPBoOv+ckDmfLAkAzxVip2TwiUZfGlbyXJIJtgtlPh
-         PaCUkkINjdxoY5ud8mEXUCnqHI+41XbkKc9T3yuVdWsdHyqYhGN/hp1eKIRO+h0I3sqV
-         V0esBoEKXZC3Ls5xpLUxgJEpVyIGcI3WHPiZ5E1JXKEtvFIkTlolkEbzJWUE7abpNRw0
-         NfQfXNm4aS/1oU8166Dfx7sdVRwspr4655AruodaOTxmZFQi9o1IH7AIQVG2zWi77HEx
-         WpBRMCO8RHnq57VjrW5mHBqgnqdIyJ4BZiw9j1KjFRk0UNJ++CZnqCgmZ1pMg9rrl24F
-         a4qg==
+        d=ffwll.ch; s=google; t=1715157131; x=1715761931; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+L7cVJ0RXkqS3cuApbLADzGi4qIsO/ernkhsuK+4mg=;
+        b=eaeu5qAglxOVyiOJOS4fHDF72gGQMJxJ+QWaAKQOEVXFSFTZwDvBysQONbDIZ/Agv9
+         fqJaRJkP1H0iQtf5du7qnUEqAIKnrh+t+DSPOkAV3BTXUfRfQpcMOuB7CUvtlxYDCjJK
+         CIT5X7aN5++07AxZRP/kI/84g2pUozbqsbbFc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715157026; x=1715761826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EUJDG03Mjw+2XpovVR7RPuA7B88kWpbfRCW3yD4FtR4=;
-        b=T+b4fh6dcFXD9qOpqjMTS/RUU0CYg5Qz4qQJC7s3Aj5tGRDece3O1z/yBmceCoXkVG
-         QyqQpSC/d3xKVvLR6sohad3rwKHLGw9K3439Lf/rzJiMMt3jCJRf01w0ZuGHpEa+kBJF
-         biSpmQbfN1xuDTkz0NZvOon2tVjNnOnSVe8SmoNqkotV/K7bFi/N5W/wiiBauKtbmd0q
-         n9mhZ7hRqU3fDS7rmwvUMON2va1osrvJHhxvo5eVHueUfOv0JBopseUkcZX+h7V1efWz
-         UTWBTMleQ2Sd29fdCSZXQbz7D5/0tDqE0Z6diKNwNrctmfyH5btShb0HAVZInUzdd98N
-         LjYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/sSyW+Y10F3asZUGkQ4kNny81yp3q4qmJ8PUWoxcwX8ibdDznvS8Y4NC62h9gj6F5LhK1YFtBEECDEGWYU/McXufXC3BhPBw1m/CV
-X-Gm-Message-State: AOJu0YywPgdohbp/Zk6OwTnqMzG76nA/BduTv+Jt8keF9sCXyKbJSKR3
-	cvqgDLcF6fTjPnCO2P4fl10qfx8Q89vOEw0HG+/J5aeaJbvE9fv6fA+iM+6cXKHTJ5oT47vpanN
-	s1204bjErmqaFZm+/JDxwpZXnRu4=
-X-Google-Smtp-Source: AGHT+IFpK2nFxJdMD/Vo1UFasc9ih/H09ABF9W1Bnr4S7XIG/z2E2Wiqwk8mVWA2bStZXhLjSXL1ulkmP1H5ESDLaCs=
-X-Received: by 2002:a05:6122:2089:b0:4d4:2069:eafb with SMTP id
- 71dfb90a1353d-4df692bfa01mr1784456e0c.9.1715157024145; Wed, 08 May 2024
- 01:30:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715157131; x=1715761931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k+L7cVJ0RXkqS3cuApbLADzGi4qIsO/ernkhsuK+4mg=;
+        b=LYYDBFpgAQU9nxaF5kmq1t4C3IjbxTi8JSX7sXObtzKrAEOALRwGijO6QqrT/qI6RD
+         Qw4IGQ6kMvUEppAb+d02jsz0BTw8rI6tdD+paEo1Wj1tc5Vnke+VOwJvW434pXawa/7T
+         h5sxVZR8lNBW9p2cE8+iJ8TSkHTtDo4Cgo3iRVML2jG1cQJII519rr0l4yJwtN6pxyVz
+         +CKsL1gBC8x4k9vjOHgmNCmd8Ht7NEs6cqYplkKnAOHITQpx4e3yzwj3/wXeINEY40rr
+         Y7a/ny78znWK+Jm3/CJLff0ksFArinLEit8imeeGtfm3R2ozbE9nwtRwceVU1GYJo2HQ
+         gkkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVt6ryp6IglKLGihWuSOnNHl66giEelUbQ/4dzgnzRACAIMoKKrV6Gj27fTOA6kTTRBE6Y5kvsB6cqX1HEaBUgcDImgm5W5THUEH8kw
+X-Gm-Message-State: AOJu0Yw1JiKkBKCYSYhxkrjoxHt/93iXrPIKv2efCXIJmCoQA6SreJAb
+	qj1mwYQqRMxiudZj9y6csI+0QVWKnYGKwnd02dbEgwvpVlGRRLt2FOpKOEpTp+Q=
+X-Google-Smtp-Source: AGHT+IHr0DJSEJ8IbuC5woWDxr1DEtRthw0/l9kV1uMkZSNSlIS/DcIHRg9/N+jRs+eVsPBC4/zXZw==
+X-Received: by 2002:a17:906:fd17:b0:a59:7f38:8dfc with SMTP id a640c23a62f3a-a59fb9ebd21mr102078066b.5.1715157130873;
+        Wed, 08 May 2024 01:32:10 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id uz14-20020a170907118e00b00a599adfd49dsm6073415ejb.64.2024.05.08.01.32.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 01:32:10 -0700 (PDT)
+Date: Wed, 8 May 2024 10:32:08 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>,
+	Pekka Paalanen <pekka.paalanen@collabora.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <Zjs4iEw1Lx1YcR8M@phenom.ffwll.local>
+Mail-Followup-To: Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Simon Ser <contact@emersion.fr>,
+	Pekka Paalanen <pekka.paalanen@collabora.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org,
+	axboe@kernel.dk, christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org, io-uring@vger.kernel.org,
+	jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, minhquangbui99@gmail.com,
+	sumit.semwal@linaro.org,
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+References: <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+ <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+ <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
+ <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+ <040b32b8-c4df-4121-bb0d-f0c6ee9e123d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503005023.174597-1-21cnbao@gmail.com> <20240503005023.174597-3-21cnbao@gmail.com>
- <e0c1cbb2-da06-4658-a23a-962496e83557@arm.com> <87y18kivny.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <87y18kivny.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 8 May 2024 20:30:12 +1200
-Message-ID: <CAGsJ_4wnS8-vjVx4uuKwQ_=Y4g8EN58QJZ=cXR=cmuX1ZE84RA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] mm: remove swap_free() and always use swap_free_nr()
-To: "Huang, Ying" <ying.huang@intel.com>, Christoph Hellwig <hch@infradead.org>, chrisl@kernel.org
-Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, david@redhat.com, hanchuanhua@oppo.com, 
-	hannes@cmpxchg.org, hughd@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, surenb@google.com, v-songbaohua@oppo.com, 
-	willy@infradead.org, xiang@kernel.org, yosryahmed@google.com, 
-	yuzhao@google.com, ziy@nvidia.com, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <040b32b8-c4df-4121-bb0d-f0c6ee9e123d@gmail.com>
+X-Operating-System: Linux phenom 6.6.15-amd64 
 
-On Wed, May 8, 2024 at 7:58=E2=80=AFPM Huang, Ying <ying.huang@intel.com> w=
-rote:
->
-> Ryan Roberts <ryan.roberts@arm.com> writes:
->
-> > On 03/05/2024 01:50, Barry Song wrote:
-> >> From: Barry Song <v-songbaohua@oppo.com>
-> >>
-> >> To streamline maintenance efforts, we propose discontinuing the use of
-> >> swap_free(). Instead, we can simply invoke swap_free_nr() with nr set
-> >> to 1. This adjustment offers the advantage of enabling batch processin=
-g
-> >> within kernel/power/swap.c. Furthermore, swap_free_nr() is designed wi=
-th
-> >> a bitmap consisting of only one long, resulting in overhead that can b=
-e
-> >> ignored for cases where nr equals 1.
-> >>
-> >> Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-> >> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> >> Cc: Pavel Machek <pavel@ucw.cz>
-> >> Cc: Len Brown <len.brown@intel.com>
-> >> Cc: Hugh Dickins <hughd@google.com>
-> >> ---
-> >>  include/linux/swap.h |  5 -----
-> >>  kernel/power/swap.c  |  7 +++----
-> >>  mm/memory.c          |  2 +-
-> >>  mm/rmap.c            |  4 ++--
-> >>  mm/shmem.c           |  4 ++--
-> >>  mm/swapfile.c        | 19 +++++--------------
-> >>  6 files changed, 13 insertions(+), 28 deletions(-)
-> >>
-> >> diff --git a/include/linux/swap.h b/include/linux/swap.h
-> >> index d1d35e92d7e9..f03cb446124e 100644
-> >> --- a/include/linux/swap.h
-> >> +++ b/include/linux/swap.h
-> >> @@ -482,7 +482,6 @@ extern int add_swap_count_continuation(swp_entry_t=
-, gfp_t);
-> >>  extern void swap_shmem_alloc(swp_entry_t);
-> >>  extern int swap_duplicate(swp_entry_t);
-> >>  extern int swapcache_prepare(swp_entry_t);
-> >> -extern void swap_free(swp_entry_t);
-> >
-> > I wonder if it would be cleaner to:
-> >
-> > #define swap_free(entry) swap_free_nr((entry), 1)
-> >
-> > To save all the churn for the callsites that just want to pass a single=
- entry?
->
-> I prefer this way.  Although I prefer inline functions.
+On Wed, May 08, 2024 at 07:55:08AM +0200, Christian König wrote:
+> Am 07.05.24 um 21:07 schrieb Linus Torvalds:
+> > On Tue, 7 May 2024 at 11:04, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > On Tue, May 07, 2024 at 09:46:31AM -0700, Linus Torvalds wrote:
+> > > 
+> > > > I'd be perfectly ok with adding a generic "FISAME" VFS level ioctl
+> > > > too, if this is possibly a more common thing. and not just DRM wants
+> > > > it.
+> > > > 
+> > > > Would something like that work for you?
+> > > Yes.
+> > > 
+> > > Adding Simon and Pekka as two of the usual suspects for this kind of
+> > > stuff. Also example code (the int return value is just so that callers know
+> > > when kcmp isn't available, they all only care about equality):
+> > > 
+> > > https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/util/os_file.c#L239
+> > That example thing shows that we shouldn't make it a FISAME ioctl - we
+> > should make it a fcntl() instead, and it would just be a companion to
+> > F_DUPFD.
+> > 
+> > Doesn't that strike everybody as a *much* cleaner interface? I think
+> > F_ISDUP would work very naturally indeed with F_DUPFD.
+> > 
+> > Yes? No?
+> 
+> Sounds absolutely sane to me.
 
-Yes, using static inline is preferable. I've recently submitted
-a checkpatch/codestyle for this, which can be found at:
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=3Dmm-=
-everything&id=3D39c58d5ed036
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=3Dmm-=
-everything&id=3D8379bf0b0e1f5
+Yeah fcntl(fd1, F_ISDUP, fd2); sounds extremely reasonable to me too.
 
-Using static inline aligns with the established rule.
+Aside, after some irc discussions I paged a few more of the relevant info
+back in, and at least for dma-buf we kinda sorted this out by going away
+from the singleton inode in this patch: ed63bb1d1f84 ("dma-buf: give each
+buffer a full-fledged inode")
 
->
-> Otherwise, LGTM.  Feel free to add
->
-> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+It's uapi now so we can't ever undo that, but with hindsight just the
+F_ISDUP is really what we wanted. Because we have no need for that inode
+aside from the unique inode number that's only used to compare dma-buf fd
+for sameness, e.g.
 
-Thanks!
+https://gitlab.freedesktop.org/wlroots/wlroots/-/blob/master/render/vulkan/texture.c#L490
 
->
-> in the future version.
+The one question I have is whether this could lead to some exploit tools,
+because at least the android conformance test suite verifies that kcmp
+isn't available to apps (which is where we need it, because even with all
+the binder-based isolation gpu userspace still all run in the application
+process due to performance reasons, any ipc at all is just too much).
 
-I believe Christoph's vote leans towards simply removing swap_free_nr
-and renaming it to swap_free, while adding a new parameter as follows.
-
-void swap_free(swp_entry_t entry, int nr);
-{
-}
-
-now I see Ryan and you prefer
-
-static inline swap_free()
-{
-        swap_free_nr(...., 1)
-}
-
-Chris slightly favors discouraging the use of swap_free() without the
-new parameter. Removing swap_free() can address this concern.
-
-It seems that maintaining swap_free() and having it call swap_free_nr() wit=
-h
-a default value of 1 received the most support.
-
-To align with free_swap_and_cache() and free_swap_and_cache_nr(),
-I'll proceed with the "static inline" approach in the new version. Please
-voice any objections you may have, Christoph, Chris.
-
->
-> >>  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
-> >>  extern void swapcache_free_entries(swp_entry_t *entries, int n);
-> >>  extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
-> >> @@ -561,10 +560,6 @@ static inline int swapcache_prepare(swp_entry_t s=
-wp)
-> >>      return 0;
-> >>  }
-> >>
-> >> -static inline void swap_free(swp_entry_t swp)
-> >> -{
-> >> -}
-> >> -
-> >>  static inline void swap_free_nr(swp_entry_t entry, int nr_pages)
-> >>  {
-> >>  }
-> >> diff --git a/kernel/power/swap.c b/kernel/power/swap.c
-> >> index 5bc04bfe2db1..6befaa88a342 100644
-> >> --- a/kernel/power/swap.c
-> >> +++ b/kernel/power/swap.c
-> >> @@ -181,7 +181,7 @@ sector_t alloc_swapdev_block(int swap)
-> >>      offset =3D swp_offset(get_swap_page_of_type(swap));
-> >>      if (offset) {
-> >>              if (swsusp_extents_insert(offset))
-> >> -                    swap_free(swp_entry(swap, offset));
-> >> +                    swap_free_nr(swp_entry(swap, offset), 1);
-> >>              else
-> >>                      return swapdev_block(swap, offset);
-> >>      }
-> >> @@ -200,12 +200,11 @@ void free_all_swap_pages(int swap)
-> >>
-> >>      while ((node =3D swsusp_extents.rb_node)) {
-> >>              struct swsusp_extent *ext;
-> >> -            unsigned long offset;
-> >>
-> >>              ext =3D rb_entry(node, struct swsusp_extent, node);
-> >>              rb_erase(node, &swsusp_extents);
-> >> -            for (offset =3D ext->start; offset <=3D ext->end; offset+=
-+)
-> >> -                    swap_free(swp_entry(swap, offset));
-> >> +            swap_free_nr(swp_entry(swap, ext->start),
-> >> +                         ext->end - ext->start + 1);
-> >>
-> >>              kfree(ext);
-> >>      }
-> >> diff --git a/mm/memory.c b/mm/memory.c
-> >> index eea6e4984eae..f033eb3528ba 100644
-> >> --- a/mm/memory.c
-> >> +++ b/mm/memory.c
-> >> @@ -4225,7 +4225,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
-> >>       * We're already holding a reference on the page but haven't mapp=
-ed it
-> >>       * yet.
-> >>       */
-> >> -    swap_free(entry);
-> >> +    swap_free_nr(entry, 1);
-> >>      if (should_try_to_free_swap(folio, vma, vmf->flags))
-> >>              folio_free_swap(folio);
-> >>
-> >> diff --git a/mm/rmap.c b/mm/rmap.c
-> >> index 087a79f1f611..39ec7742acec 100644
-> >> --- a/mm/rmap.c
-> >> +++ b/mm/rmap.c
-> >> @@ -1865,7 +1865,7 @@ static bool try_to_unmap_one(struct folio *folio=
-, struct vm_area_struct *vma,
-> >>                              goto walk_done_err;
-> >>                      }
-> >>                      if (arch_unmap_one(mm, vma, address, pteval) < 0)=
- {
-> >> -                            swap_free(entry);
-> >> +                            swap_free_nr(entry, 1);
-> >>                              set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> >>                              goto walk_done_err;
-> >>                      }
-> >> @@ -1873,7 +1873,7 @@ static bool try_to_unmap_one(struct folio *folio=
-, struct vm_area_struct *vma,
-> >>                      /* See folio_try_share_anon_rmap(): clear PTE fir=
-st. */
-> >>                      if (anon_exclusive &&
-> >>                          folio_try_share_anon_rmap_pte(folio, subpage)=
-) {
-> >> -                            swap_free(entry);
-> >> +                            swap_free_nr(entry, 1);
-> >>                              set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> >>                              goto walk_done_err;
-> >>                      }
-> >> diff --git a/mm/shmem.c b/mm/shmem.c
-> >> index fa2a0ed97507..bfc8a2beb24f 100644
-> >> --- a/mm/shmem.c
-> >> +++ b/mm/shmem.c
-> >> @@ -1836,7 +1836,7 @@ static void shmem_set_folio_swapin_error(struct =
-inode *inode, pgoff_t index,
-> >>       * in shmem_evict_inode().
-> >>       */
-> >>      shmem_recalc_inode(inode, -1, -1);
-> >> -    swap_free(swap);
-> >> +    swap_free_nr(swap, 1);
-> >>  }
-> >>
-> >>  /*
-> >> @@ -1927,7 +1927,7 @@ static int shmem_swapin_folio(struct inode *inod=
-e, pgoff_t index,
-> >>
-> >>      delete_from_swap_cache(folio);
-> >>      folio_mark_dirty(folio);
-> >> -    swap_free(swap);
-> >> +    swap_free_nr(swap, 1);
-> >>      put_swap_device(si);
-> >>
-> >>      *foliop =3D folio;
-> >> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> >> index ec12f2b9d229..ddcd0f24b9a1 100644
-> >> --- a/mm/swapfile.c
-> >> +++ b/mm/swapfile.c
-> >> @@ -1343,19 +1343,6 @@ static void swap_entry_free(struct swap_info_st=
-ruct *p, swp_entry_t entry)
-> >>      swap_range_free(p, offset, 1);
-> >>  }
-> >>
-> >> -/*
-> >> - * Caller has made sure that the swap device corresponding to entry
-> >> - * is still around or has not been recycled.
-> >> - */
-> >> -void swap_free(swp_entry_t entry)
-> >> -{
-> >> -    struct swap_info_struct *p;
-> >> -
-> >> -    p =3D _swap_info_get(entry);
-> >> -    if (p)
-> >> -            __swap_entry_free(p, entry);
-> >> -}
-> >> -
-> >>  static void cluster_swap_free_nr(struct swap_info_struct *sis,
-> >>              unsigned long offset, int nr_pages)
-> >>  {
-> >> @@ -1385,6 +1372,10 @@ static void cluster_swap_free_nr(struct swap_in=
-fo_struct *sis,
-> >>      unlock_cluster_or_swap_info(sis, ci);
-> >>  }
-> >>
-> >> +/*
-> >> + * Caller has made sure that the swap device corresponding to entry
-> >> + * is still around or has not been recycled.
-> >> + */
-> >>  void swap_free_nr(swp_entry_t entry, int nr_pages)
-> >>  {
-> >>      int nr;
-> >> @@ -1930,7 +1921,7 @@ static int unuse_pte(struct vm_area_struct *vma,=
- pmd_t *pmd,
-> >>              new_pte =3D pte_mkuffd_wp(new_pte);
-> >>  setpte:
-> >>      set_pte_at(vma->vm_mm, addr, pte, new_pte);
-> >> -    swap_free(entry);
-> >> +    swap_free_nr(entry, 1);
-> >>  out:
-> >>      if (pte)
-> >>              pte_unmap_unlock(pte, ptl);
->
-> --
-> Best Regards,
-> Huang, Ying
-
-Thanks
-Barry
+Otoh if we just add this to drm fd as an ioctl somewhere, then it will
+also be available to every android app because they all do need the gpu
+for rendering. So going with the full generic fcntl is probably best.
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
