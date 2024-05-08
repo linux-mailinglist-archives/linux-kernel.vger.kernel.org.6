@@ -1,169 +1,184 @@
-Return-Path: <linux-kernel+bounces-173666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681908C03A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6838C03A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BED41C2464C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:47:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808FD1C24817
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C231612BF34;
-	Wed,  8 May 2024 17:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC4D12AAEF;
+	Wed,  8 May 2024 17:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CjSTttrr"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuTHulvN"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E24D12B148
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB8112A17D;
+	Wed,  8 May 2024 17:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715190402; cv=none; b=W96L4PvjJIlbBEJpqw0Wj2mMuy0WqKybOT91CHs3aoM3Xy/lNsKea7EnFhJcUAapWYOO5nAV+U08qLq3MT7OM0kUxaS7st3ViykWNdQ9RBUzLvL7A1IkvOA7c7NbVV9iVIcsS+zGmJJk7s8r4d19zzCz+5aLWA/0iFOg6d/gQOg=
+	t=1715190477; cv=none; b=aMdF9xSKqPRPyBHF3PuJgcKicpF0nmgtFhEqJRLW7YZ5JBTO546aeLQW9bd9psfnfmuURpT4KgmUCEJ7/kSGf8Lo3lbDIBPx0WgH6cAAaCHZ4X0UrY2rr0zS5w7cp1WM2PY4u7vEC0ldegOJnBHKefqSQ8luxPDZDSuh8di4srQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715190402; c=relaxed/simple;
-	bh=GVJHmEwymCVBDV/Kc2heeoYUG9kyI20JxTRuwx64UEY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KOScJffHwqhIeqzjGo81uJHruREY/y9WNFFcHjfuCYEQMDtrrOgtsaxTtLYhyTx+DnI0GPrbtPXFLXzvnnEhR/oLSuARulS30SUKufZwe7/PWDegYugyEjh07v/e1Kc4U3C1KbejzSX26SYJHgsGvOmSszu1Pfogy8gIJFeqjzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CjSTttrr; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e45c0a8360so166741fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:46:39 -0700 (PDT)
+	s=arc-20240116; t=1715190477; c=relaxed/simple;
+	bh=NIDVWllLarpxWInOUxzM8dpHdna/DzDLUzvnxbWU01g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I7uI9aw8e2m+yWghhC9SRsqhVxUzumlM+dWBAJATGaU0kS1ztv5M0lOs+PkqUYE6cPYuwVVG2aL60YlH2DvrkYp80aRoObgisBPXaa2fN86WL7NuMM5oul2gf+c5Acb8vguJrn14ih5CZQ8OnFOlfxJuKf8aANmYEoPpdiTx4pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuTHulvN; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-de5a7b18acdso20022276.3;
+        Wed, 08 May 2024 10:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715190398; x=1715795198; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tBqc0otO/1vZytz7RpFsktZzqG8V8CralOjrOLBef2c=;
-        b=CjSTttrrYZuf9kwnWneMHGUXnblAj9o1MvT68LX8RHJom63mK3aIy6i6GQLcXeB85F
-         Fl2xjo6GtNeMTfQ7w0kQs0n5p/y/+gdAAUOdvZBKO7EZqDo/9DQHIFuTE/8AZKIJa8Y6
-         UGYINVThIc7c6QabTRkJM29LAtRhFIpZT9HlDBjFevYSNrxfMM9jNoqCS6eyq87oivFz
-         /y7+vHrj+R4rFR72C1jHme6hxcUD0CBcnSQJQfOkG5OaZpHAParsMXJbfsXFSow+Xvm4
-         R++vC9QafxTRZscR1DCZ01oQmu8Fy+zh6jJsGQaI4+qiPov8N4TXlJZq0TvIb048ukwW
-         pD3g==
+        d=gmail.com; s=20230601; t=1715190474; x=1715795274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=04e9lsEENEtBo6Y1Ejz9Hf/22A/cgbyXH7aOe7PkMlI=;
+        b=RuTHulvNKeCiHfJi7meJRQA5KizwX3s3ijSZBpVHu41tLa8Bj+u+bZXdIDsSllJVEq
+         scU8i9/1DcdsiCWj1Sdp8eYe0vw+klD8K8w9PZoyawJ8PJzuQ8rlAsJotW16+sIcjRF9
+         SftU7d3q9Y00jkrwc/Ooro/zgN5Kb5vnAprlVpU25IBSrf1K1PUZx1HBgP9hBZBIvByq
+         d30wj2xnc0K6bkjHAi0iIrHpV6B6R47tbklnr/ot3r3aG7Qg7i91ilk5T87ka7adjt3E
+         N6GLjncYNjZ77rR+Buv9aEn7qxmpbdXOWwcU778QyaMKA+0+K10ZmS99xkWZpz0T7H+B
+         IQug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715190398; x=1715795198;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tBqc0otO/1vZytz7RpFsktZzqG8V8CralOjrOLBef2c=;
-        b=Q/vt8aAX0BIBZkdH1cdJeND7cLd6ErjhWkL85smpGlUDKDIQL5vcuk6UM4ueNLHWji
-         ZiEid3De+O9o5dtgHcz/s1qsSO59VdwJoDf8ka3M/RuCMXSemPBEh+ETO4Hgk3tIhC63
-         y0YGMUM4tlxOHuXHTXNrzHQPPIBrEEOU04rFTimp/+7ZGNyQS/8su8929SJXQlrhFyQW
-         gCHOzH3Ph6s2P5cSv3QxwzOjluu3ikupHJVFowshl07OgOI17w+CBEkUU1SMjp0f2Q5w
-         pRvzpQqXAsLIESzzQKScnlt9vVb6PjOpCTVeHd2TvNlnLkoaIW5bX8paYq1b5wLXLgjz
-         pgYg==
-X-Forwarded-Encrypted: i=1; AJvYcCX/o8/SK4do5gkvJLbCIaRJWj/0SPAnqmDP4NnuvtaorD23gUVcf/cyGbeZejHhN+lpOvZsv2HjZ5CMk5t4XQHtx0lgND0vJ8i6mFZ4
-X-Gm-Message-State: AOJu0YxTTGLmL02SZXRwCnWa37ZTo0iUD+mgxu4ufvRg1FofsMfMLcJA
-	PgudkRWHcvEwXfDmPU0IR0N6JV1P3SZ1OvoTPw5nCPONqDlcSZ/bMaBSIykCM/I=
-X-Google-Smtp-Source: AGHT+IG+Rmny74VZr2L+E6k80Nq9iEIJnnTkrW4sDMxKn1aUHIiF+KJWt9jPP/boB01r67V0blTUSw==
-X-Received: by 2002:a05:6512:3a89:b0:521:b333:6f02 with SMTP id 2adb3069b0e04-521b3336f3cmr1623400e87.14.1715190398393;
-        Wed, 08 May 2024 10:46:38 -0700 (PDT)
-Received: from [127.0.1.1] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id z19-20020a195e53000000b0051b6f060248sm2635543lfi.134.2024.05.08.10.46.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 10:46:38 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 08 May 2024 19:46:31 +0200
-Subject: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
+        d=1e100.net; s=20230601; t=1715190474; x=1715795274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=04e9lsEENEtBo6Y1Ejz9Hf/22A/cgbyXH7aOe7PkMlI=;
+        b=m/SRiTVvim7JJSFbaKUfgaC3T788o9R1O6QMwPdApXr1c/6qvSl9nRT1lzXz6ctFzQ
+         BWHGBwyfOyAZE+1HDhhcybZ2SNGgPCUuQl8duMXSxKp37JAjQfWgIT/VlCd7ui7d1hcf
+         9+TUtjA+kWRDRQrACeHVS9uogoPjnlB5Nluucr+wBdtzrtngO2UpXG0n9Iz5bYD0FFKM
+         AZuxljHpYJfKlvsb847Y722CqI9NblQTTNHAePnFcPZL6A6r2DZkS618HXKeAddLCaMb
+         PN/baWpUb0zN62hHlGqvCbFKMEe9iLNjFgKSoFAjRmBJSmtvqNIp7DJQV1Vo/8H8Vh1j
+         YaBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXP4s+p4nHWRwGth4vJnF0Y3Vt0CkYLhq6y91FnvDZmPo8lviOksbX1qFgHsoyU1DRtn+/1MlBwWiOfDzPXd6dHbLeRoM45K/o5t+gydGnRHyGArszG5XB5fhGSAdmUHtARjUCIDr0=
+X-Gm-Message-State: AOJu0Yz904UbM7Z0nxPjunJsGOXSWFzQBUlCW9DZdPiRg8OzbSbTG6b9
+	V/F9W7LbzCju+tIAqULCPckRC77sCzVuS1opfOaZ0dkE4NP07fnDGWsQTj7+oIToKR1g81EAaJd
+	7HxNBahrkNUAmh6XScDayDGaTkl1xoA==
+X-Google-Smtp-Source: AGHT+IEqDuf6npYt7VEKOfS3+IldIr1XFvhfpyFy1EIIxsihAUcRdMjYbWrSBteTu6lo4K6q6rBf6MjFuFXKEqlq8JI=
+X-Received: by 2002:a5b:609:0:b0:de5:4b1f:7e00 with SMTP id
+ 3f1490d57ef6-debb9d27bc8mr3109777276.15.1715190474410; Wed, 08 May 2024
+ 10:47:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAHa6O2YC/x3MQQqAIBBA0avIrBN0UMiuEi1Ep5qNikYE4d2Tl
- m/x/wuNKlODRbxQ6ebGOQ3oSUA4fTpIchwGVGiUVbO8cuEgfayUsvQYtXMhGm0RRlIq7fz8u3X
- r/QNAVpdUXgAAAA==
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+References: <fccbb040330a706a4f7b34875db1d896a0bf81c8.camel@gmail.com>
+ <4e781d80fbec0db13555456ab8af6bdae6dee168.camel@gmail.com>
+ <CAHCN7xJF1=BNgh=wpsyd6WP=haOq2UdCYEt2AaL7rGfhDUh6CQ@mail.gmail.com> <8636fb8d9809aaafbd8274ec0dbfc250e1113c73.camel@pengutronix.de>
+In-Reply-To: <8636fb8d9809aaafbd8274ec0dbfc250e1113c73.camel@pengutronix.de>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 8 May 2024 12:47:41 -0500
+Message-ID: <CAHCN7x+L1RzT5EmOLaFcHmkSMS2pG0NVyWnRo-ZqhLpLEftBSg@mail.gmail.com>
+Subject: Re: iMX8M Mini suspend/resume hanging on imx8m_blk_ctrl_power_on()
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: vitor <ivitro@gmail.com>, linux-pm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	vitor.soares@toradex.com, ulf.hansson@linaro.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	rafael@kernel.org, geert+renesas@glider.be, peng.fan@nxp.com, 
+	linus.walleij@linaro.org, u.kleine-koenig@pengutronix.de, marex@denx.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Memory barriers help ensure instruction ordering, NOT time and order
-of actual write arrival at other observers (e.g. memory-mapped IP).
-On architectures employing weak memory ordering, the latter can be a
-giant pain point, and it has been as part of this driver.
+On Wed, May 8, 2024 at 12:45=E2=80=AFPM Lucas Stach <l.stach@pengutronix.de=
+> wrote:
+>
+> Hi Adam,
+>
+> Am Mittwoch, dem 08.05.2024 um 12:30 -0500 schrieb Adam Ford:
+> > On Fri, Apr 5, 2024 at 10:09=E2=80=AFAM vitor <ivitro@gmail.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Thu, 2024-04-04 at 16:53 +0100, vitor wrote:
+> > > > Greetings,
+> > > >
+> > > > I'm trying to suspend/resume our Verdin iMX8M Mini with VPU IP usin=
+g
+> > > > the latest 6.9.0-rc2 Kernel. While the system can suspend without
+> > > > issues, it hangs on the resume routine. After some investigation, I
+> > > > can
+> > > > see the Kernel hanging on imx8m_blk_ctrl_power_on()[1] while resumi=
+ng
+> > > > the hantro-vpu power domain.
+> > > >
+> > > > Any hint about that?
+> > > >
+> > > > [1]
+> > > > https://elixir.bootlin.com/linux/v6.9-rc2/source/drivers/pmdomain/i=
+mx
+> > > > /imx8m-blk-ctrl.c#L101
+> > > >
+> > >
+> > + Lucas
+> >
+> > > Looking at other child nodes of the pgc node, pgc_vpu_[g1|g2|h1] seem=
+s
+> > > to be nested into pgc_vpumix.
+> > >
+> >
+> > On the surface, that's how it appears and it would be consistent with
+> > how the GPU's work with the GPC's for each GPU calling the gpumix.
+> > However, the VPU's all reference the vpu_blk_ctrl which itself
+> > references the vpumix.
+> >
+> > Lucas,
+> >
+> > You seem to know this driver pretty well.  Do you expect the G1, G2,
+> > and H1 PGC's to all reference the vpumix, or do you expect the
+> > vpu_blk_ctrl to enable/disable the vpumix?
+> >
+> Nope, that's incorrect, as discussed here:
+> https://lore.kernel.org/all/9ce35b9bb5a15891f6bd01bd54b7dc84b3ba4021.came=
+l@pengutronix.de/
 
-Moreover, the gpu_/gmu_ accessors already use non-relaxed versions of
-readl/writel, which include r/w (respectively) barriers.
+That's what I thought.
+>
+> >
+> >
+> > > After applying the following changes to imx8mm.dtsi, the suspend/resu=
+me
+> > > is working.
+> > >
+> > >
+> > > @@ -739,16 +739,19 @@ pgc_vpumix: power-domain@6 {
+> > >         pgc_vpu_g1: power-domain@7 {
+> > >                 #power-domain-cells =3D <0>;
+> > >                 reg =3D <IMX8MM_POWER_DOMAIN_VPUG1>;
+> > > +               power-domains =3D <&pgc_vpumix>;
+> > >         };
+> > >
+> > >         pgc_vpu_g2: power-domain@8 {
+> > >                 #power-domain-cells =3D <0>;
+> > >                 reg =3D <IMX8MM_POWER_DOMAIN_VPUG2>;
+> > > +               power-domains =3D <&pgc_vpumix>;
+> > >         };
+> > >
+> > >         pgc_vpu_h1: power-domain@9 {
+> > >                 #power-domain-cells =3D <0>;
+> > >                 reg =3D <IMX8MM_POWER_DOMAIN_VPUH1>;
+> > > +               power-domains =3D <&pgc_vpumix>;
+> > >         };
+> > >
+> > >
+> > > I will prepare the patch to send in the next couple of days.
+> >
+> > Please CC me when post the patch, and I can run some tests on my hardwa=
+re.
+>
+> The correct patch is already out:
+> https://lore.kernel.org/all/20240418155151.355133-1-ivitro@gmail.com/
 
-Replace the barriers with a readback that ensures the previous writes
-have exited the write buffer (as the CPU must flush the write to the
-register it's trying to read back) and subsequently remove the hack
-introduced in commit b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt
-status in hw_init").
-
-Fixes: b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt status in hw_init")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c |  5 ++---
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 14 ++++----------
- 2 files changed, 6 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 0e3dfd4c2bc8..4135a53b55a7 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -466,9 +466,8 @@ static int a6xx_rpmh_start(struct a6xx_gmu *gmu)
- 	int ret;
- 	u32 val;
- 
--	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, 1 << 1);
--	/* Wait for the register to finish posting */
--	wmb();
-+	gmu_write(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ, BIT(1));
-+	gmu_read(gmu, REG_A6XX_GMU_RSCC_CONTROL_REQ);
- 
- 	ret = gmu_poll_timeout(gmu, REG_A6XX_GMU_RSCC_CONTROL_ACK, val,
- 		val & (1 << 1), 100, 10000);
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index 973872ad0474..0acbc38b8e70 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -1713,22 +1713,16 @@ static int hw_init(struct msm_gpu *gpu)
- 	}
- 
- 	/* Clear GBIF halt in case GX domain was not collapsed */
-+	gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-+	gpu_read(gpu, REG_A6XX_GBIF_HALT);
- 	if (adreno_is_a619_holi(adreno_gpu)) {
--		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
- 		gpu_write(gpu, REG_A6XX_RBBM_GPR0_CNTL, 0);
--		/* Let's make extra sure that the GPU can access the memory.. */
--		mb();
-+		gpu_read(gpu, REG_A6XX_RBBM_GPR0_CNTL);
- 	} else if (a6xx_has_gbif(adreno_gpu)) {
--		gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
- 		gpu_write(gpu, REG_A6XX_RBBM_GBIF_HALT, 0);
--		/* Let's make extra sure that the GPU can access the memory.. */
--		mb();
-+		gpu_read(gpu, REG_A6XX_RBBM_GBIF_HALT);
- 	}
- 
--	/* Some GPUs are stubborn and take their sweet time to unhalt GBIF! */
--	if (adreno_is_a7xx(adreno_gpu) && a6xx_has_gbif(adreno_gpu))
--		spin_until(!gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK));
--
- 	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_CNTL, 0);
- 
- 	if (adreno_is_a619_holi(adreno_gpu))
-
----
-base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
-change-id: 20240508-topic-adreno-a2d199cd4152
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
-
+Thanks.
+>
+> Regards,
+> Lucas
 
