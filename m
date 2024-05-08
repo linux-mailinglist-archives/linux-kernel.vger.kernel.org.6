@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-172935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F988BF8F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:42:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA108BF8F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0752874A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9931C214F9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238CF54907;
-	Wed,  8 May 2024 08:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A79535CF;
+	Wed,  8 May 2024 08:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZzmm8Ud"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eLlvpm0q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EA247A7D;
-	Wed,  8 May 2024 08:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE8A28FF;
+	Wed,  8 May 2024 08:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715157682; cv=none; b=S4CgTA0AowGyQNgQBfAn4UNCtQiyr6CudfdjdJR1+i95vDLdtA4ypUHfVmGLmQfXGPCPxUmVi6Z2/QwIvTpoVLc7HJzPjh7OjnZnzj877g7XwMjkumvuNBMRQUk9YGxt+eE+5wxuYZwElaiX9d7Ls9ioif00Qli5DBHEFrISamE=
+	t=1715157846; cv=none; b=LA8xNuBcwk08E9Ho+6n+jAmcoKZ1kH/CEfYjbRIeR0cMc0BhaRLWPGWwN17o4/VQstByk0HzeLUM9N5LcMdoevl0MdbG2auehV2YcdtvI7bRL+I8POrTG4GQsyzQ2IoTRkIngAuqumrEP6wEfiRHGOrgdwOrHEJO1zbKEbZjdA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715157682; c=relaxed/simple;
-	bh=tFrBko3fZ39c5ExxzecBIB9057Bs/91qzrR6wSOjiec=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tJ5pr5Fp4T9aBvytn0h5bfLmc60PFq4YFGhU9FDp6m7AnPjcOS3ni2jGINPJEU/Dd9HkKQCRWYc/E8LHr7dAcQBjhEtn8ziDpOB9D2APYlqGq6yYXQqH+uwTtUZnK2bEdrPDovQszFlFG2gJ+3NyAVOEuSdi8eWVL0IMOQt9YL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZzmm8Ud; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41bab13ca81so42477145e9.1;
-        Wed, 08 May 2024 01:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715157679; x=1715762479; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oahqZfDyyAg3+t3i7wWbHAtk2w+BE0/9KN4JkqkuepE=;
-        b=eZzmm8Udekh/RgfmJqoT6pcGhKkn+JDt/1XeAZ6ZzdBh7SfGoeMaJbU54jxgofVDZa
-         0mNZ6auWxISh+9xz4kAtwvUvff/SjNotmVDZHB0mWC956+9oADxKWOL9RL07oYw/4pVl
-         4nQ8UDH4FWF1b4swQn7LSNDfnaW8aKn4u9b1i9rnWp1y0x+DyCLpeqIu9ql9XjqzNsbM
-         OGbaehjPve/LCsQTQdj/aRmPRMCiATbGj6wdnaouAT0NnE9sQ3KABRoES9RXVF4ODW3d
-         APqkke6PiVj9+SIsXVIFXNfXE4HD92I3mr5HhvSngn48suW6LncN7nOeN39melSwGzY3
-         AITw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715157679; x=1715762479;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oahqZfDyyAg3+t3i7wWbHAtk2w+BE0/9KN4JkqkuepE=;
-        b=byc6OLI30TtgZUmnK8zeDBgECKsIqXzkh4C58Up6TB0c1ZTuoORhyH3W61d/y+Fsfn
-         y3gxcFQJ9QoktkxdmuM6AmlLqf0vSpGEQBeTBfw6lhdT+a1FEJg+UL9v6ZGjPTB9aZCZ
-         2L4PDg3znSUtpqshXJYGpcjeK0XsNqg75TIO0YDxT8A6MBvj2ADROeKEubkPZq9x34Bf
-         TYVEDXLQoZxdG01nuZplvzJ3pv5L+M9LHN6S+3eCp5n+RCYpN3B8AhWlPLNir2TvG82q
-         lyQZZ/D6vGJQ/7Gg691IwoUCpxxaig+GFXGjlPkEfD4qizDe2q8odnPJ1GnuVTdbcWmG
-         cWeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyRQMgJSL2frtioO4ngNn8Y/nZaLdcCOqDXSddyWcuYOcN6chr24g1qAOA0Kej5g3r1JEiTKjADVqe+kAYH9BH5bl5qSz9mPx3CA7U33HdB9WM9xwoJ1ll+5lksAV3ma5LQWFiP8lQ8Uos8TSn
-X-Gm-Message-State: AOJu0YwUwszuvHPzYhVDxc7dnVic2KPwJN0DHile/fRaG15zU39dRiRD
-	vZOICG+61YsLo9HybCpbuWmwsXLRHnNSJ7cFGwXlQ/2AuHKs82h+
-X-Google-Smtp-Source: AGHT+IFlZthE/gNpHlsP4PzBCS7/ATHrR1sotaFVQmvVdO9ZDKPaoW32q0ewDHy1qLhhfNuhcB32Bg==
-X-Received: by 2002:a05:600c:3587:b0:41b:fa34:9e48 with SMTP id 5b1f17b1804b1-41f719d6190mr19055165e9.30.1715157679003;
-        Wed, 08 May 2024 01:41:19 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87b26675sm14959835e9.2.2024.05.08.01.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 01:41:18 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kselftest@vger.kernel.org,
-	Benjamin Gray <bgray@linux.ibm.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] selftests/powerpc/dexcr: Fix spelling mistake "predicition" -> "prediction"
-Date: Wed,  8 May 2024 09:41:17 +0100
-Message-Id: <20240508084117.2869261-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715157846; c=relaxed/simple;
+	bh=EIWAO/oS2DvpnpR2Kb+vwzKu0pOKwN71qpcxPw4cnbQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aOdtBQGRPTlFVXaR+j8RTqTFFwh8a1Mvp0nl9smTZU4JFpYdjSRT38jFVq/R8nR7haQ1/XYdVz6KwvJZG/vMy4WQL2MF60L61rJoruMBvg3IJzNx5JacSKFnEw/EI1imWOL4GbIgpVfYEyI8f5VIVNhcPBodPLdmb9zw5NTegR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eLlvpm0q; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715157845; x=1746693845;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=EIWAO/oS2DvpnpR2Kb+vwzKu0pOKwN71qpcxPw4cnbQ=;
+  b=eLlvpm0qUF4WC5f7Kcuh0MOBi3ZfwIAB5688XFcHKmbD4OsCU+0LMid4
+   VOVY3UYSP+p1bLXL1/smgeRifbUHyWv01YvyU5djml7IaRUefiBYAU+ey
+   HYvLnc0FvuKTPL+0kku/klf+DL3IO6EP/NB28MIrvvBe6FmSQIc2CHKny
+   7BaDPHPZoB10bdLpWrZfS/fK82bAtqNu290dJvMCRbaYCsG17wkQmbRLi
+   xtXt1Wl9XlbnAzmglrHHAu4jT1KdRHGcaFRdTsww5W67rv531VGOO/Jta
+   SxDX/nJuUsdyJRzlLa7lfgXIIEIpPbest0Chmpd59whQbOWYYk8K4kuPZ
+   g==;
+X-CSE-ConnectionGUID: HsuiSElYT6uGUXN2FcJCLg==
+X-CSE-MsgGUID: uPq76WX8TPKGSzvomrxT0Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="22157077"
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="22157077"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:44:04 -0700
+X-CSE-ConnectionGUID: BUHs8ofaQuaFaDI+23XuYg==
+X-CSE-MsgGUID: lnq/6KdBSl2/VjOScGEihQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,144,1712646000"; 
+   d="scan'208";a="52025594"
+Received: from dhhellew-desk2.ger.corp.intel.com.ger.corp.intel.com (HELO localhost) ([10.245.246.76])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 01:43:59 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, Abhinav
+ Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, seanpaul@chromium.org,
+ swboyd@chromium.org, quic_jesszhan@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro
+ Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
+In-Reply-To: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
+Date: Wed, 08 May 2024 11:43:56 +0300
+Message-ID: <87a5l0lmlv.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-There is a spelling mistake in the help message. Fix it.
+On Tue, 07 May 2024, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> Since commit 5acf49119630 ("drm/msm: import gen_header.py script from Mesa"),
+> compilation is broken on machines having python versions older than 3.9
+> due to dependency on argparse.BooleanOptionalAction.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/powerpc/dexcr/chdexcr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is it now okay to require Python for the build? Not listed in
+Documentation/process/changes.rst.
 
-diff --git a/tools/testing/selftests/powerpc/dexcr/chdexcr.c b/tools/testing/selftests/powerpc/dexcr/chdexcr.c
-index bda44630cada..c548d7a5bb9b 100644
---- a/tools/testing/selftests/powerpc/dexcr/chdexcr.c
-+++ b/tools/testing/selftests/powerpc/dexcr/chdexcr.c
-@@ -26,7 +26,7 @@ static void help(void)
- 	       "\n"
- 	       "The normal option sets the aspect in the DEXCR. The --no- variant\n"
- 	       "clears that aspect. For example, --ibrtpd sets the IBRTPD aspect bit,\n"
--	       "so indirect branch predicition will be disabled in the provided program.\n"
-+	       "so indirect branch prediction will be disabled in the provided program.\n"
- 	       "Conversely, --no-ibrtpd clears the aspect bit, so indirect branch\n"
- 	       "prediction may occur.\n"
- 	       "\n"
+BR,
+Jani.
+
+
+
+>
+> Switch to use simple bool for the validate flag to remove the dependency.
+>
+> Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/registers/gen_header.py b/drivers/gpu/drm/msm/registers/gen_header.py
+> index fc3bfdc991d2..3926485bb197 100644
+> --- a/drivers/gpu/drm/msm/registers/gen_header.py
+> +++ b/drivers/gpu/drm/msm/registers/gen_header.py
+> @@ -538,7 +538,7 @@ class Parser(object):
+>  		self.variants.add(reg.domain)
+>  
+>  	def do_validate(self, schemafile):
+> -		if self.validate == False:
+> +		if not self.validate:
+>  			return
+>  
+>  		try:
+> @@ -948,7 +948,8 @@ def main():
+>  	parser = argparse.ArgumentParser()
+>  	parser.add_argument('--rnn', type=str, required=True)
+>  	parser.add_argument('--xml', type=str, required=True)
+> -	parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
+> +	parser.add_argument('--validate', default=False, action='store_true')
+> +	parser.add_argument('--no-validate', dest='validate', action='store_false')
+>  
+>  	subparsers = parser.add_subparsers()
+>  	subparsers.required = True
+
 -- 
-2.39.2
-
+Jani Nikula, Intel
 
