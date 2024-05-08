@@ -1,74 +1,81 @@
-Return-Path: <linux-kernel+bounces-172899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF3A8BF84A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:17:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A16B8BF850
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCEAAB24818
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:17:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402001F25E57
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 08:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04713D96D;
-	Wed,  8 May 2024 08:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0330147A64;
+	Wed,  8 May 2024 08:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyctnA4x"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gt3HJsS2"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5619D52F6D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 08:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20EA3FBB1;
+	Wed,  8 May 2024 08:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715156208; cv=none; b=G3eC5pDwlU2rNFuDLiN42SwV26PZTKqo/yoIzrx/T1C5I6P4KvBX+24L551Bd+StERgWTwD+XCQSHtJyNTyAZ0JtWdKAEse4xWIIEic/qWoB2UG9sbnBZewLDiHiOe7IGwOGuVArHLORqk0RRj+wdnnG+JFjP/w/ol9Or1w7TK0=
+	t=1715156238; cv=none; b=anq8ZTjZXJOgPndMr+f0qdv308blUanrEMy2iy8CVKepM1G7HrNsFKikR+Ocp4FiiWHYicg4nTjns/mKdGTz/aZVVYex8TPJU0gGBe5HpmVmjoex9Psvjwujjh3oUnLhuLNZutL4YvbT70eer42GTzOa5ZF9NfzSFPcAlfZEjoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715156208; c=relaxed/simple;
-	bh=RVNDo+PUPNeV1sa0OC/s/rwZqNAdhw3yPx+40/ruZ0I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=siGzYdTsC9muuvrfAMMSoUpZ7Vd0FPF63WDrkTJeFpGepC0mRuOyJPHBVHoALGzRtWDpN01sjGdKxKh5kZentFLC5GPH8Q0ttihcCTmKvNSNtgHdgyLY37pnhdeKInH3amY5mX5kMT+Nhrra4gJMPyUuSI6co5S9u+W2GahbkVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SyctnA4x; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59ece5e18bso439657066b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 01:16:46 -0700 (PDT)
+	s=arc-20240116; t=1715156238; c=relaxed/simple;
+	bh=90DPNvTKk/61EKaroqF5/ctsM6XMfjDkwTO+ek1k5Bo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=O7HqbgnUxndbPA0i3eIyRtufDuLJ+4hP7WgfSqN0Im80atEo+F4FvGsJyOBgBWXqmDL22Am8Ps5ElLZcZfjqj+Nze5EwacOT5q4Z1IFtHUT9fvYMeEACrGmhwxD5eAp8eJWtoMplOKypPdib058GzfUKqbOMzCFKWsELbGAudJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gt3HJsS2; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41bab13ca81so42295795e9.1;
+        Wed, 08 May 2024 01:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715156204; x=1715761004; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sm/iyvA/oRf8IDDwCG6199y51shfGYvzaBKbXuvmT5Q=;
-        b=SyctnA4xYaVsB2PPGVfs+voYP5cw3cQhuWXRyCUAs6+naaiTT1v4+V0CCIJeatEQh6
-         mJqOzkukGLxu0IcYF9JxVjNSooAsuvfHC/PWaZPpAyuPjHcE0sdBvSVcRMA24wAa1x6G
-         Ih7++DwW++DPUqlHr0rU/w9Uyo7st10AywkFAJWYTtW5tzFeOFbpio6enpG8FpAeKck9
-         nNbiN00ErA08hpn3oDnK/pAqgwVOtmIKTxFzqgkVD8j+3YuXyp9bpY1EywrTn22aOpBq
-         dk0zoUEG+7rNLIUy622kKBTBLpAqPp1WuRPCRfpE37Vad3Gtsn1c/t8fJMDOoHkkl5ON
-         Oq1A==
+        d=gmail.com; s=20230601; t=1715156235; x=1715761035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6kKiaeh6idYVV5u3iGDfXnjpgKpmSWJxA9vCD2GpJnM=;
+        b=gt3HJsS2F3TSLEhm2XkEiDCBS5YDepdEqg06QAz6hmjHVYZ3ZLkUqBFrDcsOaH/kjo
+         aVTb60qRQrU25V2YSDN+0rAN6AqOEjV+mwKoY7DQ3EXWfENuBwdZB9Oxde+nDVL1P7yJ
+         fDkdqJ6HjUyFsvat3lDkKpsHsOmRFJgWEj0NtUYnN6NG2GaNQoOmtK4dsDadrT+P/RLj
+         RbQ9A/aCqWSVD+jDRBJ1RyML/7ncKmodRpM/lGv9Fd6u3lpAg6uWphHdRZMjWmwG3h/n
+         g9oJTeOwS33cU8a45HyZ8wjytSwvLTIxGm2Z/saF5lY3LrSKU3dDp+ibAh+nxla/O5oa
+         IMcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715156204; x=1715761004;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sm/iyvA/oRf8IDDwCG6199y51shfGYvzaBKbXuvmT5Q=;
-        b=gY34t2p7rAzGF0Bj7+dBPXsBHWOOdPRnkFToN9CWG2nkJ1aZvotWWyjtRyy+auUBOz
-         kJ1KoL2Qj5HW8wB7j2/fE2ERMnfPSn+Np0NTuZcnB1PDtgnEfjUF9ceD94mZmzOcyJ4q
-         pawgTUOJB+Qoxdmok1lc0ix/Xurhu3ZQr3XoGKPRAJmOB6WM+hDPbPvs8/NTs5q/Dr6a
-         UPuJsELuUE9EN1rB3AH7e6y5JzCbWscw5qmDcMWuQgCEpC1iMzrOzNLi7MwRhcqFrU7F
-         X0YVcLD/4gSrWssK43mfHjHfoWrzgQn1eg8A513fSe7egGhD+R90GNGF4pQqi1rNCqTN
-         NkOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmGUvdZ/e4goTuWbXwdgDkfmNEUnWTCaqoLZNiv7v/1k7hdAmNoT3N4FBMQLBrpc/mW6kR4rx+lEL2hZxhHxlNnmxONgJII2ebe7QJ
-X-Gm-Message-State: AOJu0YxWTI+kX0jBXXo895vA9ju5N0aMOwQx0TvdeRcHF4G4axKs3DkT
-	/lZNxbiuq86u2xiKv2gxWSL60X2lsmxr68W7+DKkc/UrDqLLEGNYYzosE8B5oVs=
-X-Google-Smtp-Source: AGHT+IEcO03sXS25ca8HNMd80x92ztrXnHCfFufNC3oFOema6hx6ZWP/GUScP9uFCp2eEtc5nFXxgw==
-X-Received: by 2002:a17:906:c2d9:b0:a59:c23d:85ce with SMTP id a640c23a62f3a-a59fb9c6b24mr143408066b.51.1715156204516;
-        Wed, 08 May 2024 01:16:44 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id va28-20020a17090711dc00b00a59b87dd0d7sm4564734ejb.147.2024.05.08.01.16.43
+        d=1e100.net; s=20230601; t=1715156235; x=1715761035;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6kKiaeh6idYVV5u3iGDfXnjpgKpmSWJxA9vCD2GpJnM=;
+        b=FI3T6WJjjdhgiLLH9fa3WSFJBwgHIPetjuF4D7cyiNqpg+mfmv036Mea9xZkYLWMze
+         f1F3KeVgTDnPzhjB9EYv2qx3JfZwFR6Jb4FH/hvR6BC+Xjq1SL88+DwgXkT7puHg6FRi
+         IGCqEc+BWy/ak4Dcctln4plyoFYvSR252Lyy1efN41slP3xzleq5IeRVRg71maaMg3tw
+         UeLeEQ7azf1EMhPRkomzxoWP1mIOyR7yshT3zSDahxhzTrG6+jMMZ9VpqRPy8FBhZu0g
+         5SjfJ6FtKqEWcsBoxFgzbVG4HWjKdKBT4XHWZ+wNGLYePTDf18cKB/qnOoN27eJmNHKW
+         IxoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAb//MzhulEdK75wOqn3DJMSeQoaDHERpgZr1Uzx0DWZtqty9z//HO35x5XmekRFv7zjnYJ8gis4h+5BXBD7Qvcrbamns/owbAlHfAuQxKJUDTFAJfUvmanlpxuib/q5b80jsusLs3o2w=
+X-Gm-Message-State: AOJu0Yz/90JYbWgXHYPn0X/BVizCW3YkYqWFjav2qgQ+kANi6zIQy3ng
+	y1RO44QGN2cce2i9sqdsDAcwyI+IhZxNkLX/21UGn1JvDGVkPyc+tI+kHQ==
+X-Google-Smtp-Source: AGHT+IGahfijjEz447rKpNw9CltyPhLlHKfTOAF556oy99EfklwoqHsljht2OrI3ywXqY9k9v5FgyQ==
+X-Received: by 2002:a05:600c:190f:b0:41e:a90d:1216 with SMTP id 5b1f17b1804b1-41f71302e7emr21788915e9.3.1715156234933;
+        Wed, 08 May 2024 01:17:14 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f882089cbsm13845675e9.48.2024.05.08.01.17.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 01:16:44 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 08 May 2024 10:16:30 +0200
-Subject: [PATCH v2 4/4] ASoC: qcom: x1e80100: Correct channel mapping
+        Wed, 08 May 2024 01:17:14 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] media: intel/ipu6: Fix spelling mistake "remappinp" -> "remapping"
+Date: Wed,  8 May 2024 09:17:12 +0100
+Message-Id: <20240508081712.2868257-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,93 +83,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240508-asoc-x1e80100-4-channel-mapping-v2-4-ccef9a66a572@linaro.org>
-References: <20240508-asoc-x1e80100-4-channel-mapping-v2-0-ccef9a66a572@linaro.org>
-In-Reply-To: <20240508-asoc-x1e80100-4-channel-mapping-v2-0-ccef9a66a572@linaro.org>
-To: James Schulman <james.schulman@cirrus.com>, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1580;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=RVNDo+PUPNeV1sa0OC/s/rwZqNAdhw3yPx+40/ruZ0I=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmOzTkOvfRHwYugcz1kWoAcP3RrYYVLFgYomUkd
- wIXaQGCsqWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZjs05AAKCRDBN2bmhouD
- 17MfD/9ppYgawBoat2rd8pJ2G9oUl2iFD/zoJ64d4jFm5+wgcwXzMQiTRfSf7oFG8U+a9tEP9Lz
- KIEJluX00tJicgT3dxM0fC1NxHgTQKdyRhCTgsyoYlIdMsM5ffGkaPXZpKUnbZLpvoKC5TS9l45
- XuZnc1CaiutElSV2WeOBZN055cBzSup7HUYMjrpjYw1ZjJodQmROFvIp6DC8ck09Eaivs1Faz4A
- pRgweZoMHmEmVlESPoHB574JtwtKaYnL3naL9Q9PxmReTPmIyHYXlQvao76rKgdsVaHcjuveRWM
- Se7RGCOp0csNhKv9bvu/U9+OUUUizlnwE1OktST9U9nZxrmM0kTURDj6kz7+84uVwf/dN3AUiq/
- akm0Zt99Wo5Jc3m2WwBRizlSMx7SIx6tM8tjNL6NDW296+M4Z4wlKD5o/Vm509RE5V/LSula/Qa
- G1OvZI53EqPpwlgGtESAYdfmmQl4pnz+mAIbhyevVgEjrpgLmVfUaPb6g9jc45jR8XBkkH+hs8A
- Pjg++CEL6W05MMiNzBediwzt5EYd8dvKeQB1Bj2P/Y3kfuPKUnW2tJ8b2bevnmE4DJwlHzyCVDT
- 8sxPzgstpttuV5NNVaJjbbnJr1HFnS3lhLY61Y6JW/kmIRUoEj59SdrGb/tqhXXsz7lQPgYiRhl
- /HjRVehRnvlOnwg==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-X1E80100 CRD board comes with four speakers arranged as left front+back
-and then right front+back.  Using default channel mapping causes front
-right speaker to play left back stream.
+There is a spelling mistake in a dev_err_probe message. Fix it.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
+ drivers/media/pci/intel/ipu6/ipu6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-1. Rework significantly, because only backend DAIs is now affected.
----
- sound/soc/qcom/x1e80100.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/sound/soc/qcom/x1e80100.c b/sound/soc/qcom/x1e80100.c
-index c3c8bf7ffb5b..27f34c0873ab 100644
---- a/sound/soc/qcom/x1e80100.c
-+++ b/sound/soc/qcom/x1e80100.c
-@@ -12,6 +12,7 @@
+diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
+index 2cf04251c9e7..d2bebd208461 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6.c
++++ b/drivers/media/pci/intel/ipu6/ipu6.c
+@@ -530,7 +530,7 @@ static int ipu6_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
  
- #include "common.h"
- #include "qdsp6/q6afe.h"
-+#include "qdsp6/q6dsp-common.h"
- #include "sdw.h"
+ 	ret = pcim_iomap_regions(pdev, 1 << IPU6_PCI_BAR, pci_name(pdev));
+ 	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to I/O mem remappinp\n");
++		return dev_err_probe(dev, ret, "Failed to I/O mem remapping\n");
  
- struct x1e80100_snd_data {
-@@ -80,6 +81,23 @@ static int x1e80100_snd_prepare(struct snd_pcm_substream *substream)
- 	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
- 	struct x1e80100_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
- 	struct sdw_stream_runtime *sruntime = data->sruntime[cpu_dai->id];
-+	const unsigned int rx_slot[4] = { PCM_CHANNEL_FL,
-+					  PCM_CHANNEL_LB,
-+					  PCM_CHANNEL_FR,
-+					  PCM_CHANNEL_RB };
-+	int ret;
-+
-+	switch (cpu_dai->id) {
-+	case WSA_CODEC_DMA_RX_0:
-+	case WSA_CODEC_DMA_RX_1:
-+		ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
-+						  ARRAY_SIZE(rx_slot), rx_slot);
-+		if (ret)
-+			return ret;
-+		break;
-+	default:
-+		break;
-+	}
- 
- 	return qcom_snd_sdw_prepare(substream, sruntime,
- 				    &data->stream_prepared[cpu_dai->id]);
-
+ 	isp->base = pcim_iomap_table(pdev)[IPU6_PCI_BAR];
+ 	pci_set_drvdata(pdev, isp);
 -- 
-2.43.0
+2.39.2
 
 
