@@ -1,115 +1,130 @@
-Return-Path: <linux-kernel+bounces-172971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAEAD8BF990
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1D08BF98B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 11:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96D07281BE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF7E283A78
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1550F75803;
-	Wed,  8 May 2024 09:31:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECF75803;
+	Wed,  8 May 2024 09:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="yI4LvrKF"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6263D961;
-	Wed,  8 May 2024 09:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2A971753;
+	Wed,  8 May 2024 09:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715160662; cv=none; b=NTPJi9+CRJQjwVfDJ89K3nAwlM3/igTmykivmoAM5hhiH/tRa1NGYpo3j5Fz+GdFfb1zhrF/oSIwifYCpCt2jwcy/e/6P3WxFD9RF0wKUZpNM7TUDUd9KpdDjCBMZKFoPYYV5O4w5mQL5hQdW1J8smFV0zihnajDCV26rOtiTBw=
+	t=1715160588; cv=none; b=s7Dw6EcCfG1wHXMt7BthOmO78ISE7yZDz6zvWli6DqJ54fVY5h2Exozx+553MHX7X9jVyrz99aKTSzwGbbXGeTgST9wKEHHEf2BPy1qFABVK3ciKptOuOR0B9YFuYbPPwQ1KD6NFHH9sRuUJ4dxdqcPho3mfkrDgVZoHgIWI5fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715160662; c=relaxed/simple;
-	bh=+eHgcr2e3JuTlx7yzSK7Ri/f46kJbzU74BjCTSxabTA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ib0+kPU4ImOtg6PUbPHj0K/EtX/TJqKWp45DbCeg5U4xQmIeUBhapEsjp+vjoFdZHeSKdaXWiT1jzViCWww4ZqMoWuIcmkVLj0jL5WHxXqR/LgUf7WhD/LVRShouu1Qnsfv2f4ujqj7keF/zH/erikyZmoHW5YiELmqVVW9EiaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VZ8yd5Ngsz4f3kJr;
-	Wed,  8 May 2024 17:30:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 154401A017D;
-	Wed,  8 May 2024 17:30:55 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxBNRjtm_BpaMA--.32846S4;
-	Wed, 08 May 2024 17:30:54 +0800 (CST)
-From: linan666@huaweicloud.com
-To: song@kernel.org
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linan666@huaweicloud.com,
-	yukuai3@huawei.com,
-	yi.zhang@huawei.com,
-	houtao1@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH] md: do not delete safemode_timer in mddev_suspend
-Date: Wed,  8 May 2024 17:20:53 +0800
-Message-Id: <20240508092053.1447930-1-linan666@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715160588; c=relaxed/simple;
+	bh=CyUA6ks1HsLglg9cdqivgokq0SYSLKF5yuxVYskxaFY=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=unJMbanPABl4VVNXLwyBwZSFRf2yiGynpdVfl37E6fKHi1l853yiGtDFsrg4OTHJNm6BY+AuG8JUiuJ+nfTvFHt6aL4OtYUndbVumoDhjB4vmnxyrk2S7r+sag6+BStJJFt700q2F6RwVd14v2ZF27Kx8LzWgF/2n4bOAiF1dJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=yI4LvrKF; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxBNRjtm_BpaMA--.32846S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr1UJry8Kw1ruw47uw4DJwb_yoW8GF4fp3
-	ySqw4agw1rXFWIyF4UAa1kWFy5Jwn3GrZFyFy7W395Za1Sqr18WF42gws0qFyUuF93Janr
-	Jrs5C34rZa48GF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lw4CEc2x0rVAKj4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUBSoJUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1715160582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JL7Cqc7rpixgBgbCXhIQMAAO82vWRkxls15BxMKvRjg=;
+	b=yI4LvrKFeze38qylAOEwDE+u0aDLwijFZ11pRQXLtPq+5cRr4L29GioAoB+XHJJDyJS4SF
+	dYIhMJAXL01yhOISHYCff80gnsnbRlJjsKG6TCf4LS1ODA4AJ9t67oUGzH4ISIZDALxboo
+	gdoTbP5qvSjdWBwukr/zNQnLi6bvSeISFQ6/PHSSCnZ08BywqcGtOG8PJtO84fGlMs1fSD
+	snRkHQU1XjAAncDkgSsXaoQVWdgM9rBRrTVmCn+3xTLCgHk1394fEio19jL9iJEsXEUw01
+	ts0CTGePsVsnx/F2vIjQY0+BetXaqSm0qvR9tqLxnXB4gwwNq+qMV6QRH7xSvg==
+Date: Wed, 08 May 2024 11:29:41 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Alexey Charkov <alchark@gmail.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu
+ Tsai <wens@kernel.org>, Diederik de Haas <didi.debian@cknow.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Kever Yang
+ <kever.yang@rock-chips.com>
+Subject: Re: [PATCH v4 6/6] arm64: dts: rockchip: Add OPP data for CPU cores
+ on RK3588
+In-Reply-To: <e220061e-0bb5-4fa4-9a91-aefd81e6636c@cherry.de>
+References: <20240506-rk-dts-additions-v4-0-271023ddfd40@gmail.com>
+ <20240506-rk-dts-additions-v4-6-271023ddfd40@gmail.com>
+ <e220061e-0bb5-4fa4-9a91-aefd81e6636c@cherry.de>
+Message-ID: <dd9c76519ee0eee177528488a4946056@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-From: Li Nan <linan122@huawei.com>
+Hello Quentin,
 
-The deletion of safemode_timer in mddev_suspend() is redundant and
-potentially harmful now. If timer is about to be woken up but gets
-deleted, 'in_sync' will remain 0 until the next write, causing array
-to stay in the 'active' state instead of transitioning to 'clean'.
+On 2024-05-08 11:12, Quentin Schulz wrote:
+> On 5/6/24 11:36 AM, Alexey Charkov wrote:
+>> By default the CPUs on RK3588 start up in a conservative performance
+>> mode. Add frequency and voltage mappings to the device tree to enable
+>> dynamic scaling via cpufreq.
+>> 
+>> OPP values are adapted from Radxa's downstream kernel for Rock 5B [1],
+>> stripping them down to the minimum frequency and voltage combinations
+>> as expected by the generic upstream cpufreq-dt driver, and also 
+>> dropping
+>> those OPPs that don't differ in voltage but only in frequency (keeping
+>> the top frequency OPP in each case).
+>> 
+>> Note that this patch ignores voltage scaling for the CPU memory
+>> interface which the downstream kernel does through a custom cpufreq
+>> driver, and which is why the downstream version has two sets of 
+>> voltage
+>> values for each OPP (the second one being meant for the memory
+>> interface supply regulator). This is done instead via regulator
+>> coupling between CPU and memory interface supplies on affected boards.
+> 
+> I'm not sure this is everything we need though.
+> 
+> For the LITTLE cores cluster, all OPPs up to 1.416GHz are using the
+> same opp-supported-hw, however the ones above, aren't.
+> 
+> 1.608GHz, 1.704GHz and 1.8GHz are all using different opp-supported-hw.
+> 
+> Similarly, for the big cores clusters, all OPPs up to 1.608GHz are
+> using the same opp-supported-hw, but not the ones above.
+> 
+> 1.8GHz and 2.016GHz, 2.208GHz, 2.256GHz, 2.304GHz, 2.352GHz and 2.4GHz
+> all have a different opp-supported-hw.
+> 
+> The values in that array are coming from cpu leakage (different for
+> LITTLE, big0 and big1 clusters) and "specification serial number"
+> (whatever that means), those are coming from the SoC OTP. In the
+> downstream kernel from Rockchip, the former value is called "SoC
+> Version" and the latter "Speed Grade".
+> 
+> I think this may have something to do with "binning" and I would see
+> the ones above the "common" OPPs as "overclocking". Not all CPUs would
+> support them and some may not run stable at some lower frequency than
+> their stable max. Adding Kever from Rockchip in Cc to have some input
+> on the need to support those.
 
-Commit 0d9f4f135eb6 ("MD: Add del_timer_sync to mddev_suspend (fix
-nasty panic))" introduced this deletion for dm, because if timer fired
-after dm is destroyed, the resource which the timer depends on might
-have been freed.
+Good point.  We should remove the OPPs for both clusters that aren't
+supported by all RK3588(s) binnings, to be on the safe side.
 
-However, commit 0dd84b319352 ("md: call __md_stop_writes in md_stop")
-added __md_stop_writes() to md_stop(), which is called before freeing
-resource. Timer is deleted in __md_stop_writes(), and the origin issue
-is resolved. Therefore, delete safemode_timer can be removed safely now.
-
-Signed-off-by: Li Nan <linan122@huawei.com>
----
- drivers/md/md.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index aff9118ff697..09c55d9a2c54 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -479,7 +479,6 @@ int mddev_suspend(struct mddev *mddev, bool interruptible)
- 	 */
- 	WRITE_ONCE(mddev->suspended, mddev->suspended + 1);
- 
--	del_timer_sync(&mddev->safemode_timer);
- 	/* restrict memory reclaim I/O during raid array is suspend */
- 	mddev->noio_flag = memalloc_noio_save();
- 
--- 
-2.39.2
-
+I'll hopefully dive into supporting different Rockchip binnings rather
+soon.  There's even more about that, and not just with the RK3588(s),
+which I think I'll get all covered.
 
