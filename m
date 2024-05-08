@@ -1,207 +1,97 @@
-Return-Path: <linux-kernel+bounces-173068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5FD8BFB17
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:38:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F388BFB1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4881C211BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96AE1F23386
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 10:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA0E80C13;
-	Wed,  8 May 2024 10:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Edwc/9s3"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA69823BC;
+	Wed,  8 May 2024 10:39:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDE42836D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BEF81721
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 10:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715164698; cv=none; b=j4dGOMXY/QpyoSCBLvySn06Y774J+uhkJ8V/kpZdWZRMT8Iypn8X9erCQMzoOV42g86t5WchTt9TUdLlWdV+afd1JuPXwin5PtqOjUFvM3+kbn7ZbJ1ekiVjsP5ofMSEacmDyEekECfkMMyV4uv49AdyL5h6BbP/TOutDMSkNW0=
+	t=1715164754; cv=none; b=H52BCK7BbFsooHIqCGLoGtL5ZJPsb6qG/J9S7KwjLbjNn4cqSao2pP6C/5mj1phVNc91rCmodOG0d5ATblWsUGVtqhkk4b4Pejv3fjOTR+R3FOkRPPqBMkcmAHE3QbZzWloSGt4abImPj6VMhzLYD73s+qRcKjIg3ej9nE3sjao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715164698; c=relaxed/simple;
-	bh=aaYeaMdasKaspZebsx+IVEbvrwdp4b2JzRsLI+LVbtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qpltzl+Iy5GttO4mz6BkO5uM4EnA0NrGHWhJ08pFQdXfKCH1GNOjUvP8ilm5Zw65tjQ2/eZ9ahB6WPdrTY/BhJh7KeqcVz/6J/iCADYhCvmdg0LZbG3ePse0oqRDO+zdGPAe/o5rqVe79UGIXZHp+3oRlrOy2Yn/Kz0dSgpSVLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Edwc/9s3; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <45bdacaf-29e9-488f-a4e8-2b5ec891cfc4@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715164692;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5eHqA7UOBweZX4Vrf/qg7QA6MfSTlCuOrDrWzen+vio=;
-	b=Edwc/9s3GpdgxKvV/VSPbUnQYAZI0n2z411AMthQyYUD2RRB9vj71UInEVmevYLsEMN7Q9
-	NBvNXthWvS8THUBzFxoCSAUe+4KC59uC++8xQSDeh6K9DW2bgGbEK7UmW9ZsIlq8JL98KS
-	zffZlxZFFbEyHGvDqzSgSkyg7f711+8=
-Date: Wed, 8 May 2024 18:37:44 +0800
+	s=arc-20240116; t=1715164754; c=relaxed/simple;
+	bh=shiwGSUaYs6M/v6Nfu5vlAB62BF0UdPHl54Nvv1gzsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z1W4jaMsP/2idB6+jXSZundqJiO28V5YkZeDc+EKqsNKL4GDqZ+uCNfnzoIdxvC7HZqnp8925U15+50XAdNgKU5UYkZsY4IxiGrXXL+yM9x/aTyiPOJre5CUuiNY+HbEvUZOjsXQ7DceALJhgx5X7sLYzVXFjhWVbP4pOa7fbLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s4ehV-0004BH-8n; Wed, 08 May 2024 12:39:05 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s4ehT-000G0F-GF; Wed, 08 May 2024 12:39:03 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s4ehT-00HLTP-1M;
+	Wed, 08 May 2024 12:39:03 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
+Subject: [PATCH net-next v1 0/3] net: dsa: microchip: DCB fixes 
+Date: Wed,  8 May 2024 12:38:59 +0200
+Message-Id: <20240508103902.4134098-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/4] mm/ksm: fix ksm_zero_pages accounting
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Stefan Roesch <shr@devkernel.io>,
- xu xin <xu.xin16@zte.com.cn>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240508-b4-ksm-counters-v1-0-e2a9b13f70c5@linux.dev>
- <20240508-b4-ksm-counters-v1-2-e2a9b13f70c5@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240508-b4-ksm-counters-v1-2-e2a9b13f70c5@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024/5/8 17:55, Chengming Zhou wrote:
-> We normally ksm_zero_pages++ in ksmd when page is merged with zero page,
-> but ksm_zero_pages-- is done from page tables side, which can't protected
-> by the ksmd mutex.
-> 
-> So we can read very exceptional value of ksm_zero_pages in rare cases,
-> such as -1, which is very confusing to users.
-> 
-> Fix it by changing to use atomic_long_t, and the same case with the
-> mm->ksm_zero_pages.
-> 
+This patch series address recommendation to rename IPV to IPM to avoid
+confusion with IPV name used in 802.1Qci PSFP. And restores default "PCP
+only" configuration as source of priorities to avoid possible
+regressions. 
 
-Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
-Fixes: 6080d19f0704 ("ksm: add ksm zero pages for each process")
+Oleksij Rempel (3):
+  net: dsa: microchip: dcb: add comments for DSCP related functions
+  net: dsa: microchip: dcb: rename IPV to IPM
+  net: dsa: microchip: dcb: set default apptrust to PCP only
 
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
-> ---
->  fs/proc/base.c           |  2 +-
->  include/linux/ksm.h      | 22 +++++++++++++++++++---
->  include/linux/mm_types.h |  2 +-
->  mm/ksm.c                 | 11 +++++------
->  4 files changed, 26 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 18550c071d71..72a1acd03675 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3214,7 +3214,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->  	mm = get_task_mm(task);
->  	if (mm) {
->  		seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
-> -		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
-> +		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
->  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
->  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
->  		mmput(mm);
-> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-> index 52c63a9c5a9c..bfc2cf756b0d 100644
-> --- a/include/linux/ksm.h
-> +++ b/include/linux/ksm.h
-> @@ -33,16 +33,32 @@ void __ksm_exit(struct mm_struct *mm);
->   */
->  #define is_ksm_zero_pte(pte)	(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte))
->  
-> -extern unsigned long ksm_zero_pages;
-> +extern atomic_long_t ksm_zero_pages;
-> +
-> +static inline void ksm_map_zero_page(struct mm_struct *mm)
-> +{
-> +	atomic_long_inc(&ksm_zero_pages);
-> +	atomic_long_inc(&mm->ksm_zero_pages);
-> +}
->  
->  static inline void ksm_might_unmap_zero_page(struct mm_struct *mm, pte_t pte)
->  {
->  	if (is_ksm_zero_pte(pte)) {
-> -		ksm_zero_pages--;
-> -		mm->ksm_zero_pages--;
-> +		atomic_long_dec(&ksm_zero_pages);
-> +		atomic_long_dec(&mm->ksm_zero_pages);
->  	}
->  }
->  
-> +static inline long get_ksm_zero_pages(void)
-> +{
-> +	return atomic_long_read(&ksm_zero_pages);
-> +}
-> +
-> +static inline long mm_ksm_zero_pages(struct mm_struct *mm)
-> +{
-> +	return atomic_long_read(&mm->ksm_zero_pages);
-> +}
-> +
->  static inline int ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
->  {
->  	if (test_bit(MMF_VM_MERGEABLE, &oldmm->flags))
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 24323c7d0bd4..af3a0256fa93 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -985,7 +985,7 @@ struct mm_struct {
->  		 * Represent how many empty pages are merged with kernel zero
->  		 * pages when enabling KSM use_zero_pages.
->  		 */
-> -		unsigned long ksm_zero_pages;
-> +		atomic_long_t ksm_zero_pages;
->  #endif /* CONFIG_KSM */
->  #ifdef CONFIG_LRU_GEN_WALKS_MMU
->  		struct {
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index 0f9c491552ff..6e0dca3cecf3 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -296,7 +296,7 @@ static bool ksm_use_zero_pages __read_mostly;
->  static bool ksm_smart_scan = true;
->  
->  /* The number of zero pages which is placed by KSM */
-> -unsigned long ksm_zero_pages;
-> +atomic_long_t ksm_zero_pages = ATOMIC_LONG_INIT(0);
->  
->  /* The number of pages that have been skipped due to "smart scanning" */
->  static unsigned long ksm_pages_skipped;
-> @@ -1429,8 +1429,7 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
->  		 * the dirty bit in zero page's PTE is set.
->  		 */
->  		newpte = pte_mkdirty(pte_mkspecial(pfn_pte(page_to_pfn(kpage), vma->vm_page_prot)));
-> -		ksm_zero_pages++;
-> -		mm->ksm_zero_pages++;
-> +		ksm_map_zero_page(mm);
->  		/*
->  		 * We're replacing an anonymous page with a zero page, which is
->  		 * not anonymous. We need to do proper accounting otherwise we
-> @@ -3373,7 +3372,7 @@ static void wait_while_offlining(void)
->  #ifdef CONFIG_PROC_FS
->  long ksm_process_profit(struct mm_struct *mm)
->  {
-> -	return (long)(mm->ksm_merging_pages + mm->ksm_zero_pages) * PAGE_SIZE -
-> +	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
->  		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item);
->  }
->  #endif /* CONFIG_PROC_FS */
-> @@ -3662,7 +3661,7 @@ KSM_ATTR_RO(pages_skipped);
->  static ssize_t ksm_zero_pages_show(struct kobject *kobj,
->  				struct kobj_attribute *attr, char *buf)
->  {
-> -	return sysfs_emit(buf, "%ld\n", ksm_zero_pages);
-> +	return sysfs_emit(buf, "%ld\n", get_ksm_zero_pages());
->  }
->  KSM_ATTR_RO(ksm_zero_pages);
->  
-> @@ -3671,7 +3670,7 @@ static ssize_t general_profit_show(struct kobject *kobj,
->  {
->  	long general_profit;
->  
-> -	general_profit = (ksm_pages_sharing + ksm_zero_pages) * PAGE_SIZE -
-> +	general_profit = (ksm_pages_sharing + get_ksm_zero_pages()) * PAGE_SIZE -
->  				ksm_rmap_items * sizeof(struct ksm_rmap_item);
->  
->  	return sysfs_emit(buf, "%ld\n", general_profit);
-> 
+ drivers/net/dsa/microchip/ksz_common.c |  46 +++++------
+ drivers/net/dsa/microchip/ksz_common.h |   2 +-
+ drivers/net/dsa/microchip/ksz_dcb.c    | 106 ++++++++++++++-----------
+ 3 files changed, 85 insertions(+), 69 deletions(-)
+
+-- 
+2.39.2
+
 
