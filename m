@@ -1,215 +1,319 @@
-Return-Path: <linux-kernel+bounces-173338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84018BFF17
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DE58BFF23
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC331C2110E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:43:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6961C20991
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02428627E;
-	Wed,  8 May 2024 13:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="oBfbulLh";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Gn1bqbQc"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD28284E0F;
-	Wed,  8 May 2024 13:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715175719; cv=fail; b=NmrocTQmQZbJY/8ugeudXfbeYzndevTjvD5q7h9K5UzTm6FyuuEPsMDd3AyfgjZb+x0yOirBaC4r/QoQsgl8OYBV+mlgcCe8gkH9ex/FCoHI8QCbh9CKxm1fotdFjlmV9YQAjR7yiNnsiB0v5kAxjoquwQhW89H/a9Pi1UVHfUc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715175719; c=relaxed/simple;
-	bh=V1pl2R5HIU9noxzl55tg/ezjkJ7c7Eg9C2GXe8SYB1I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kDoy7jCt1XYmWfItMQ8+Yr31ODB1ssPw8aBCpT19NFUQLnguKyNg46otLIxPHsSN3WB22+qJJqyEiXiXp/vDd3sRSk+mLaNJf/zOgaS2xLh77RvvXpEOiLjR9S6czxSCsKsh0GgZLotbvQttsD16hDm8WtguTVoPfY5ntO/FT/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=oBfbulLh; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Gn1bqbQc; arc=fail smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715175717; x=1746711717;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=V1pl2R5HIU9noxzl55tg/ezjkJ7c7Eg9C2GXe8SYB1I=;
-  b=oBfbulLhSluNeO5VHM7sGru458z/VA4cEJpSSaX0yduTu23+FuWmlkwi
-   ZlW075zgBpPKero+QyX+0s+2enIoMrZ0qb36DtdQ02lKSWymLA+H7F7ec
-   Z/wb2ylLxlT7vWzjbqnKUOaQZ5QGrogZqEkQLQ434PRvWQ88q3hPy5z8o
-   pCf8K8o3gGN7vFFQQNetcyR6Yy2wBCFj+X/FQ+xF01qjfr/hbVqyp+qQt
-   n8TMqdW1lakpGBwBe+3FJXnoNLUrV8Hl4Dk9Tk2MTHxNLqntIYAoxuyxz
-   HbnYFHPP2rNUdi9ba8rZmFt0p2p1OvLQOK+wlbWuAP8a2Pxf+OLohbIg0
-   g==;
-X-CSE-ConnectionGUID: WIAKeA70T9e5O6NYhgdbjw==
-X-CSE-MsgGUID: akh6ZRLpSHeUC6H31PeWBw==
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="24716593"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 May 2024 06:41:56 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 8 May 2024 06:41:50 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 8 May 2024 06:41:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a71ecJI5/mhjhO/TFANtMi0cFx4gjChxvERZpx6tgsVrG06qdIX9/y2EwID1kwtI7CY92Jpgq+Ju+CFgJawkfqx/WlFcdwlripw64cYv9mxk8Pdp5PZRntqJrP8WtwNbBRD0EcPrKfxv2T9+L7TcW167ykNim76pFfEwjZINEs+QROQaQeChj9xgeSPiISs4UwT1W7y2mFQc3W94/jn9jaxMcTLH3jr59XfrEfk1Nm8/FbgiALihJXMkzmumno1Mlr8asNF7BeGhyUphVxHvUR7ee1TbCpvZ3+j4+4+rCl+agOcZKnoBB27erNXWDl1M8u5837BE7/EQGHBB9zKNYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tLTmB5v+V9pq0Hys/wEC7qFaIdmIcxmKlh16FC3Kj3g=;
- b=W/2aQBTXksme1pBnxwSNAHu0xcCuY29pDRZGupDtmeEowA9xWYDebCXYypUp99Sm1euV62NHHwVJVvaM370ZBw8FrqSssa6nIDrx1qJm/J0/MWnuXfxN1W+GnSrDU/22zj9q5lD3oNxAbWHAuCsVcs5Nb0cEPsbrccY5x+Zyux/TTWH4ogSvbaCG1HNntRE9vGXshxUwMiKZGidmrm28kdP1N3oJlAr7tqGG8PDFT94i3AbAIhp1NXJhals73x/tXEa1GZskte2zjgy1FTjXuW0scFFT8fllIcWZjBbtCLVEfTlLjLU0cP7SxN7XkmPxarfDapLl+P2DibDTdx1giA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tLTmB5v+V9pq0Hys/wEC7qFaIdmIcxmKlh16FC3Kj3g=;
- b=Gn1bqbQcSAMZeAAtLGVjnPOUpnEqLxIVQb2ssOHsOCwyBoReJbH4mu2uWgRHltM/YFVWnq0ikPaGHE7MMLrP+YC4qTdIyRnBX9FMSkAJxzKJ61lWSBv0tdLZbmSNzKVJ38ZdoMz9qfi70/98jFbzIkxi0qgvgAWdAbb7L8mXl6aq7gg948D9sGq1GoRqsZn9pAgJv+CaA4wnL7CTLZoicvypGRT83aov5+4pX7pev1y1P6mdCpLg/BZgyn5BeLSye+xOgIyTzPaxpP05TH+f0pnlqPnzzEz1wbwQaQlputxyaKcDf0PQ2xcrZnuOWN0Cj4oIqxz9teiK9JyQ6CBcWQ==
-Received: from BL0PR11MB2913.namprd11.prod.outlook.com (2603:10b6:208:79::29)
- by PH8PR11MB8105.namprd11.prod.outlook.com (2603:10b6:510:254::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Wed, 8 May
- 2024 13:41:48 +0000
-Received: from BL0PR11MB2913.namprd11.prod.outlook.com
- ([fe80::3bc1:80d8:bfa5:e742]) by BL0PR11MB2913.namprd11.prod.outlook.com
- ([fe80::3bc1:80d8:bfa5:e742%6]) with mapi id 15.20.7544.041; Wed, 8 May 2024
- 13:41:48 +0000
-From: <Woojung.Huh@microchip.com>
-To: <o.rempel@pengutronix.de>, <davem@davemloft.net>, <andrew@lunn.ch>,
-	<edumazet@google.com>, <f.fainelli@gmail.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <olteanv@gmail.com>, <Arun.Ramadoss@microchip.com>
-CC: <kernel@pengutronix.de>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <UNGLinuxDriver@microchip.com>,
-	<dsahern@kernel.org>, <horms@kernel.org>, <willemb@google.com>, <san@skov.dk>
-Subject: RE: [PATCH net-next v1 2/3] net: dsa: microchip: dcb: rename IPV to
- IPM
-Thread-Topic: [PATCH net-next v1 2/3] net: dsa: microchip: dcb: rename IPV to
- IPM
-Thread-Index: AQHaoTQfG0BpAGYhr0agOcuX46Zh2bGNV6gQ
-Date: Wed, 8 May 2024 13:41:47 +0000
-Message-ID: <BL0PR11MB291304A2A9E43E7B7A533EE4E7E52@BL0PR11MB2913.namprd11.prod.outlook.com>
-References: <20240508103902.4134098-1-o.rempel@pengutronix.de>
- <20240508103902.4134098-3-o.rempel@pengutronix.de>
-In-Reply-To: <20240508103902.4134098-3-o.rempel@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL0PR11MB2913:EE_|PH8PR11MB8105:EE_
-x-ms-office365-filtering-correlation-id: 53e3dbe1-c9d8-4c3e-a47b-08dc6f649bbb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007|38070700009;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?211lP3VwAx+/DAn59iAZiY/RfvvsF3nceCo1fOCdinTuyjTaCC7JApasJM?=
- =?iso-8859-1?Q?VJAZeIWtX8FI2kR/6DN29ww/k0SeCo0MvobMlVqyh+xpIK1FpqPHeD+9yJ?=
- =?iso-8859-1?Q?CHM+uhR32Y0zV/X5b6snjY6NNPrbma7j6OPOwYJO3bCvdAHQZr+9kXcpcL?=
- =?iso-8859-1?Q?h/0e7MVXJo8rYvJZujGsWPwdliUHGvAMy1BNBr8W6gbXGRuWa8hMwVKF0C?=
- =?iso-8859-1?Q?24Cmdm0GVhkflD8hDrAF+bVC+CS6Yrz6PJ0Z0R4vIwJrx3bx/NAP2UFahH?=
- =?iso-8859-1?Q?JjXsJII54Tz88njsoSGKG0nyhLyUmM64ekTwdDFVy3MTTppv6b2hdloo3L?=
- =?iso-8859-1?Q?hAJTKcEqCcRI5MDD0zq5L4yOEYCJU9C4xXtMi0MtkDr1aHkM5T1dce/EcH?=
- =?iso-8859-1?Q?t7NSfbFzx31hijCOuPYVUE7i2Q+1rkYI2IfVFHc6osEpHJ7F/BW9OEGj2t?=
- =?iso-8859-1?Q?L96FfqktbRCn634Bnje2zBNgeU1LleZssni1tvHDe5CB/avHBeHrgy4Npc?=
- =?iso-8859-1?Q?QAHuhoJDhuc3b/9tBL8BigbYL9HN4Pwj936Sb/p2xpXP24KqcJGoHQCnpb?=
- =?iso-8859-1?Q?MPQDqPbzAVX55u5A/5wea9zQ5sn3V1c6KElTvjHWsJmReKI6MX5TqE3CtU?=
- =?iso-8859-1?Q?ZTj/NlYI/KZ/AhA24xueOaeiju8/Bfi99JYkfIvPhpFVSSUTNxD6VGvel4?=
- =?iso-8859-1?Q?nxQZD4uIntKrhxP9/AF4+3zDcRpZRRp8bPh6KolJL3m15I63JvQTnPPLvw?=
- =?iso-8859-1?Q?UTKgtSvXjrDMHZrkQTwelFCyRl6OzijzwwQn3mSUgL12N1Qslm/wv/Ah0r?=
- =?iso-8859-1?Q?vzbrsDdlFi6C0rOKk8Xkbclj6JJDtzaqwc/XA8QdAY9Dwk+N88Acaf+uq1?=
- =?iso-8859-1?Q?5bJn1koSPYPU0PdESc56YOlk1edQlxwSxc/Y20AXE/wN3/n6beYhVQSuil?=
- =?iso-8859-1?Q?jm+8tCy4H5ZupIzehC7Iw+F7lRkDG8jbVOchns0o3crEhbPh9d+rMQdJRx?=
- =?iso-8859-1?Q?pkosHdVRyY/RfSNWuoF4F0l4g4RoM2Sp555qNNestWWa1c4OiRqHlOITLq?=
- =?iso-8859-1?Q?FORTn4s+JfqAocNHcMcaDxsLY47JhfwYMoG/63x99KmrRoRWmoB0LQnP8T?=
- =?iso-8859-1?Q?HITkagNoswdf9ueGVOmm6N9y651vixjvvTH5qGzLapWXPZiMFziAAhCXC5?=
- =?iso-8859-1?Q?GBfQsGWQrQgYUnpw60RIMxKRvtCsYNBEEa3PFvVKTP0L/vR/MgLd054oKp?=
- =?iso-8859-1?Q?/HyFj/7rIS3YZCydeGSL6OhPVJuLH0dyM4KhZgE+0I8TyOxHneaf8PeSkP?=
- =?iso-8859-1?Q?dniMKO5MAG246AylajGXvrmLCcQlGVs5XZovurvBjtkGD0kMUmKm6aqht3?=
- =?iso-8859-1?Q?VsOTRSrxZYmBjq+/YrpbxK+nRnH1ymiQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR11MB2913.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?PDovO3he3WSPC2E3DP5wyJ5+y+EjFBaW/i35fCUXYR0zCGWm6ZqpB390wo?=
- =?iso-8859-1?Q?67psPWOAizvQu3XT3ses3oQAIsKD3NYVmPYwsiqP2tJEuYHYFvVH2lNPtt?=
- =?iso-8859-1?Q?ZcybhebPZfkL+W52AJwgy2o6cVzQBOY1yv1luZ/2Rr2X1XRPXhbtpDaeBH?=
- =?iso-8859-1?Q?7C5zl9cibByzCsvjmoW1Kcoa5r2CrGX6GC6YUiyBBHzJpnvBWwLaNPcLF/?=
- =?iso-8859-1?Q?r3VTF2VN+U3+Wn/QUwgWQrt9E98t25qdjqYqnND6fkZbnfMy8I+3NWEWzY?=
- =?iso-8859-1?Q?uioFKR6z2DBV5zsD9tr1d8nL1Nc/LcYJBeu1QHbXKlxZgFeGJ+ayHqOh/U?=
- =?iso-8859-1?Q?nijqIzQo5MyZ65fPdcVieNhbkYBQ40Vd26i8J6lMY6qlMmaIosfbCZyCHb?=
- =?iso-8859-1?Q?5W0hkSUfrYRhM/9yibpncmzaCvISAGe2CMKgbqHr8ojtFZF/ZL6Q+sZnq+?=
- =?iso-8859-1?Q?HN6VZ3vN48AUrF+lykwdORjlYb4eKl61LQkNPyLe4ivmvTdE4pJk+p40am?=
- =?iso-8859-1?Q?PXtBkrPhZyM1Vdk6sDzaY58zI5W0UUQnUnN0RQh1V3Bf9VyoBwg0UYLIMH?=
- =?iso-8859-1?Q?VPswuea88NJL2kR/LwwPAB9+iIdOE3KxUYb9MNuh+b1Xs9jYtb3ewKMiQh?=
- =?iso-8859-1?Q?qoU/wttCpjL46DHm5mSyDaLffh9NhBsRD0ZLtoSQ4Bd+LsLStFtZLCVOM9?=
- =?iso-8859-1?Q?lvUP5FfkjdlOZpMTVGB1FbYX+VDC06vJSyfGGzaMov6sRITk8mGbcbke+x?=
- =?iso-8859-1?Q?vt+/NeR04vKHWcDhakIIi64HKmHSFXnbyHD7q1sFpuER8keKszSzecA+n8?=
- =?iso-8859-1?Q?idfJmBkiamlGnzXs9NKXL5KfOsrTNtYjyoIpYhxWrEGYABDp5A4/n55EXM?=
- =?iso-8859-1?Q?lmGmEofqkEmnBeKBJd95nqkWXetznEDzYP56FsvDulwqVOns0olQ5IaCyz?=
- =?iso-8859-1?Q?M3I0bJrTgxIHKrFNm5wmMt8Zl0/YuOwIJZ+bX9Hrrld7kTs1LOE/3mJ/l1?=
- =?iso-8859-1?Q?7zC8bwVE2q1KkHlFtuScS6DAOHOyT3SX2CJeNwucavhbxrynaQrJmZm2JV?=
- =?iso-8859-1?Q?LO9u7bwYgkJXdo4/wi69Mz9KFGwWGBkdZp9Mdt5fwqpIhSGGoy7ngeILRi?=
- =?iso-8859-1?Q?auO8EkUxuQ4RcjcsGnVkrCTDaA3p7QjU5OmXNxa1uf2zlgJZb7D4YIfdB0?=
- =?iso-8859-1?Q?yM5kYVg6frtZrOv11Q7nP915BY8F72UTJ/LU7DnmUo29nmooyJ9/dUC9B8?=
- =?iso-8859-1?Q?ejr47no9obIQUsYF4L4Ld4ClEQCd4L0cEwKWlxBudUkBvFSZi06imBgDPH?=
- =?iso-8859-1?Q?UoCZGS8iqN8qhgcno4Tfj04DjcFtzieEvUtfOfbAGzD0dnq/MFMSgH+o4V?=
- =?iso-8859-1?Q?1wS6ANnX57wklJtzEfWgRgigEaLPIW2hJ4cc9jGv0aGPXsTZEYlEeshpEA?=
- =?iso-8859-1?Q?vc+BXGv1G/I8pzbmqmguQ4h1eiMGeGSnCnGFODRvsiH/MoAbBLhOZKxp2f?=
- =?iso-8859-1?Q?7NQNu6KiYwoOG8ffUYMeGzp5SYDHJ3S3uZBsf2RtSU1CuEfrpHKRQzM6OS?=
- =?iso-8859-1?Q?9k5cvYDnMOEsWJUooCSwkPtIho+3zPsLsxftv08MOniMIyj87Lx0OHfOyH?=
- =?iso-8859-1?Q?HiC3gJO5zTUuIN8Lq2EeRlXvsj1LUfOSRl?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36039127E2D;
+	Wed,  8 May 2024 13:42:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A208593D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 13:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715175722; cv=none; b=I0s6dEQRpbWPd0TS65dC+ldNtzlVbn7dfWxncWlBVpmkAbDn1nmev0YPSWqoLjEfd0AnPcsXalHheAOb+/Dal3b/2itx1TiMnk+trWW9U/zxhn4xCiwA9Vjs918Tkatq6roud+ZXTfCYBScmtjCUM73Fe1njOztkfFfXkrrMxnw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715175722; c=relaxed/simple;
+	bh=0zLqaZotKMv5PLSJmqI1oGTAtVYf4Qx2C5RPP5X329M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AHxZtRC71WLZuLTBA7xdzQggIDoaEZ1cgkSO/8huWLTmFYU7shvyrHGnhMiV5nxKzOhElTYlI0BcniRXNp4UkbK4F9H+FiQTfgCDCPtJxQnu+U05pp20LFntQJ1P+k/V0e5x4i5YRHFGODeIfrgMokzxEWnebWckIzy4RiQORaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26B771007;
+	Wed,  8 May 2024 06:42:23 -0700 (PDT)
+Received: from [10.57.67.194] (unknown [10.57.67.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9D523F6A8;
+	Wed,  8 May 2024 06:41:55 -0700 (PDT)
+Message-ID: <42733616-5f8f-47ce-a861-b00701069221@arm.com>
+Date: Wed, 8 May 2024 14:41:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2913.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53e3dbe1-c9d8-4c3e-a47b-08dc6f649bbb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2024 13:41:47.9921
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BU24nZ9PhhS1xY5U4ALBVCpvlg5Gqkh+FaA9gS0F516swkewjdrxVkc2uZ+HjE3uq8X83JlnvDUgD76hj/MxTOBqboyV1sdaPWMCnffLz6M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8105
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] mm: align larger anonymous mappings on THP
+ boundaries
+Content-Language: en-GB
+To: Kefeng Wang <wangkefeng.wang@huawei.com>, Yang Shi <shy828301@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Yang Shi <yang@os.amperecomputing.com>,
+ riel@surriel.com, cl@linux.com, akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, Ze Zuo <zuoze1@huawei.com>
+References: <20231214223423.1133074-1-yang@os.amperecomputing.com>
+ <1e8f5ac7-54ce-433a-ae53-81522b2320e1@arm.com>
+ <Zav3UK7ESNxCMjyP@casper.infradead.org>
+ <b75cb59a-734f-43d5-b565-fc9bb8c5ed05@arm.com>
+ <CAHbLzkpT6padaDo8GimCcQReSGybQn_ntzj+wsZbTXe3urtK-g@mail.gmail.com>
+ <bad7ec4a-1507-4ec4-996a-ea29d07d47a0@arm.com>
+ <CAHbLzkrtcsU=pW13AyAMvF72A03fUV5iFcM0HwQoEemeajtqxg@mail.gmail.com>
+ <b84e2799-2b6c-4670-b017-3a04ec18c0f2@arm.com>
+ <dea802da-2e5e-4c91-b817-43afdde68958@huawei.com>
+ <1dc9a561-55f7-4d65-8b86-8a40fa0e84f9@arm.com>
+ <6016c0e9-b567-4205-8368-1f1c76184a28@huawei.com>
+ <2c14d9ad-c5a3-4f29-a6eb-633cdf3a5e9e@redhat.com>
+ <da24d8bb-3723-48fa-86f4-8b24457d3556@huawei.com>
+ <2b403705-a03c-4cfe-8d95-b38dd83fca52@arm.com>
+ <CAHbLzkq9BQFfpjxG_ozrgzWOO3XJmtre-mgY03McY6guVn7U9g@mail.gmail.com>
+ <281aebf1-0bff-4858-b479-866eb05b9e94@huawei.com>
+ <219cb8e3-a77b-468b-9d69-0b3e386f93f6@arm.com>
+ <7d8c43b6-b1ef-428e-9d6a-1c26284feb26@huawei.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <7d8c43b6-b1ef-428e-9d6a-1c26284feb26@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Oleksij,
+On 08/05/2024 14:37, Kefeng Wang wrote:
+> 
+> 
+> On 2024/5/8 16:36, Ryan Roberts wrote:
+>> On 08/05/2024 08:48, Kefeng Wang wrote:
+>>>
+>>>
+>>> On 2024/5/8 1:17, Yang Shi wrote:
+>>>> On Tue, May 7, 2024 at 8:53 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>
+>>>>> On 07/05/2024 14:53, Kefeng Wang wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 2024/5/7 19:13, David Hildenbrand wrote:
+>>>>>>>
+>>>>>>>> https://github.com/intel/lmbench/blob/master/src/lat_mem_rd.c#L95
+>>>>>>>>
+>>>>>>>>> suggest. If you want to try something semi-randomly; it might be useful
+>>>>>>>>> to rule
+>>>>>>>>> out the arm64 contpte feature. I don't see how that would be interacting
+>>>>>>>>> here if
+>>>>>>>>> mTHP is disabled (is it?). But its new for 6.9 and arm64 only. Disable
+>>>>>>>>> with
+>>>>>>>>> ARM64_CONTPTE (needs EXPERT) at compile time.
+>>>>>>>> I don't enabled mTHP, so it should be not related about ARM64_CONTPTE,
+>>>>>>>> but will have a try.
+>>>>>>
+>>>>>> After ARM64_CONTPTE disabled, memory read latency is similar with
+>>>>>> ARM64_CONTPTE
+>>>>>> enabled(default 6.9-rc7), still larger than align anon reverted.
+>>>>>
+>>>>> OK thanks for trying.
+>>>>>
+>>>>> Looking at the source for lmbench, its malloc'ing (512M + 8K) up front and
+>>>>> using
+>>>>> that for all sizes. That will presumably be considered "large" by malloc and
+>>>>> will be allocated using mmap. So with the patch, it will be 2M aligned.
+>>>>> Without
+>>>>> it, it probably won't. I'm still struggling to understand why not aligning
+>>>>> it in
+>>>>> virtual space would make it more performant though...
+>>>>
+>>>> Yeah, I'm confused too.
+>>> Me too, I get a smaps[_rollup] for 0.09375M size, the biggest difference
+>>> for anon shows below, and all attached.
+>>
+>> OK, a bit more insight; during initialization, the test makes 2 big malloc
+>> calls; the first is 1M and the second is 512M+8K. I think those 2 are the 2 vmas
+>> below (malloc is adding an extra page to the allocation, presumably for
+>> management structures).
+>>
+>> With efa7df3e3bb5 applied, the 1M allocation is allocated at a non-THP-aligned
+>> address. All of its pages are populated (see permutation() which allocates and
+>> writes it) but none of them are THP (obviously - its only 1M and THP is only
+>> enabled for 2M). But the 512M region is allocated at a THP-aligned address. And
+>> the first page is populated with a THP (presumably faulted when malloc writes to
+>> its control structure page before the application even sees the allocated buffer.
+>>
+>> In contrast, when efa7df3e3bb5 is reverted, neither of the vmas are THP-aligned,
+>> and therefore the 512M region abutts the 1M region and the vmas are merged in
+>> the kernel. So we end up with the single 525328 kB region. There are no THPs
+>> allocated here (due to alignment constraiints) so we end up with the 1M region
+>> fully populated with 4K pages as before, and only the malloc control page plus
+>> the parts of the buffer that the application actually touches being populated in
+>> the 512M region.
+>>
+>> As far as I can tell, the application never touches the 1M region during the
+>> test so it should be cache-cold. It only touches the first part of the 512M
+>> buffer it needs for the size of the test (96K here?). The latency of allocating
+>> the THP will have been consumed during test setup so I doubt we are seeing that
+>> in the test results and I don't see why having a single TLB entry vs 96K/4K=24
+>> entries would make it slower.
+> 
+> It is strange, and even more stranger, I got another machine(old machine
+> 128 core and the new machine 96 core, but with same L1/L2 cache size
+> per-core), the new machine without this issue, will contact with our
+> hardware team, maybe some different configurations(prefetch or some
+> other similar hardware configurations) , thank for all the suggestion
+> and analysis!
 
-Thanks for change.
+No problem, you're welcome!
 
-> @@ -2726,20 +2726,20 @@ static int
-> ksz9477_set_default_prio_queue_mapping(struct ksz_device *dev,
->                                                   int port)
->  {
->         u32 queue_map =3D 0;
-> -       int ipv;
-> +       int ipm;
->=20
-> -       for (ipv =3D 0; ipv < dev->info->num_ipvs; ipv++) {
-> +       for (ipm =3D 0; ipm < dev->info->num_ipms; ipm++) {
->                 int queue;
->=20
->                 /* Traffic Type (TT) is corresponding to the Internal
-> Priority
-> -                * Value (IPV) in the switch. Traffic Class (TC) is
-> +                * Value (IPM) in the switch. Traffic Class (TC) is
-
-Change "Value (IPM)..." to "Map (IPM)..."
-
-After this change,
-
-Reviewed-by: Woojung Huh <woojung.huh@microchip.com>
+> 
+> 
+>>
+>> It would be interesting to know the address that gets returned from malloc for
+>> the 512M region if that's possible to get (in both cases)? I guess it is offset
+>> into the first page. Perhaps it is offset such that with the THP alignment case
+>> the 96K of interest ends up straddling 3 cache lines (cache line is 64K I
+>> assume?), but for the unaligned case, it ends up nicely packed in 2?
+> 
+> CC zuoze, please help to check this.
+> 
+> Thank again.
+>>
+>> Thanks,
+>> Ryan
+>>
+>>>
+>>> 1) with efa7df3e3bb5 smaps
+>>>
+>>> ffff68e00000-ffff88e03000 rw-p 00000000 00:00 0
+>>> Size:             524300 kB
+>>> KernelPageSize:        4 kB
+>>> MMUPageSize:           4 kB
+>>> Rss:                2048 kB
+>>> Pss:                2048 kB
+>>> Pss_Dirty:          2048 kB
+>>> Shared_Clean:          0 kB
+>>> Shared_Dirty:          0 kB
+>>> Private_Clean:         0 kB
+>>> Private_Dirty:      2048 kB
+>>> Referenced:         2048 kB
+>>> Anonymous:          2048 kB // we have 1 anon thp
+>>> KSM:                   0 kB
+>>> LazyFree:              0 kB
+>>> AnonHugePages:      2048 kB
+>>
+>> Yes one 2M THP shown here.
+>>
+>>> ShmemPmdMapped:        0 kB
+>>> FilePmdMapped:         0 kB
+>>> Shared_Hugetlb:        0 kB
+>>> Private_Hugetlb:       0 kB
+>>> Swap:                  0 kB
+>>> SwapPss:               0 kB
+>>> Locked:                0 kB
+>>> THPeligible:           1
+>>> VmFlags: rd wr mr mw me ac
+>>> ffff88eff000-ffff89000000 rw-p 00000000 00:00 0
+>>> Size:               1028 kB
+>>> KernelPageSize:        4 kB
+>>> MMUPageSize:           4 kB
+>>> Rss:                1028 kB
+>>> Pss:                1028 kB
+>>> Pss_Dirty:          1028 kB
+>>> Shared_Clean:          0 kB
+>>> Shared_Dirty:          0 kB
+>>> Private_Clean:         0 kB
+>>> Private_Dirty:      1028 kB
+>>> Referenced:         1028 kB
+>>> Anonymous:          1028 kB // another large anon
+>>
+>> This is not THP, since you only have 2M THP enabled. This will be 1M of 4K page
+>> allocations + 1 4K page malloc control structure, allocated and accessed by
+>> permutation() during test setup.
+>>
+>>> KSM:                   0 kB
+>>> LazyFree:              0 kB
+>>> AnonHugePages:         0 kB
+>>> ShmemPmdMapped:        0 kB
+>>> FilePmdMapped:         0 kB
+>>> Shared_Hugetlb:        0 kB
+>>> Private_Hugetlb:       0 kB
+>>> Swap:                  0 kB
+>>> SwapPss:               0 kB
+>>> Locked:                0 kB
+>>> THPeligible:           0
+>>> VmFlags: rd wr mr mw me ac
+>>>
+>>> and the smap_rollup
+>>>
+>>> 00400000-fffff56bd000 ---p 00000000 00:00 0 [rollup]
+>>> Rss:                4724 kB
+>>> Pss:                3408 kB
+>>> Pss_Dirty:          3338 kB
+>>> Pss_Anon:           3338 kB
+>>> Pss_File:             70 kB
+>>> Pss_Shmem:             0 kB
+>>> Shared_Clean:       1176 kB
+>>> Shared_Dirty:        420 kB
+>>> Private_Clean:         0 kB
+>>> Private_Dirty:      3128 kB
+>>> Referenced:         4344 kB
+>>> Anonymous:          3548 kB
+>>> KSM:                   0 kB
+>>> LazyFree:              0 kB
+>>> AnonHugePages:      2048 kB
+>>> ShmemPmdMapped:        0 kB
+>>> FilePmdMapped:         0 kB
+>>> Shared_Hugetlb:        0 kB
+>>> Private_Hugetlb:       0 kB
+>>> Swap:                  0 kB
+>>> SwapPss:               0 kB
+>>> Locked:                0 kB
+>>>
+>>> 2) without efa7df3e3bb5 smaps
+>>>
+>>> ffff9845b000-ffffb855f000 rw-p 00000000 00:00 0
+>>> Size:             525328 kB
+>>
+>> This is a merged-vma version of the above 2 regions.
+>>
+>>> KernelPageSize:        4 kB
+>>> MMUPageSize:           4 kB
+>>> Rss:                1128 kB
+>>> Pss:                1128 kB
+>>> Pss_Dirty:          1128 kB
+>>> Shared_Clean:          0 kB
+>>> Shared_Dirty:          0 kB
+>>> Private_Clean:         0 kB
+>>> Private_Dirty:      1128 kB
+>>> Referenced:         1128 kB
+>>> Anonymous:          1128 kB // only large anon
+>>> KSM:                   0 kB
+>>> LazyFree:              0 kB
+>>> AnonHugePages:         0 kB
+>>> ShmemPmdMapped:        0 kB
+>>> FilePmdMapped:         0 kB
+>>> Shared_Hugetlb:        0 kB
+>>> Private_Hugetlb:       0 kB
+>>> Swap:                  0 kB
+>>> SwapPss:               0 kB
+>>> Locked:                0 kB
+>>> THPeligible:           1
+>>> VmFlags: rd wr mr mw me ac
+>>>
+>>> and the smap_rollup,
+>>>
+>>> 00400000-ffffca5dc000 ---p 00000000 00:00 0 [rollup]
+>>> Rss:                2600 kB
+>>> Pss:                1472 kB
+>>> Pss_Dirty:          1388 kB
+>>> Pss_Anon:           1388 kB
+>>> Pss_File:             84 kB
+>>> Pss_Shmem:             0 kB
+>>> Shared_Clean:       1000 kB
+>>> Shared_Dirty:        424 kB
+>>> Private_Clean:         0 kB
+>>> Private_Dirty:      1176 kB
+>>> Referenced:         2220 kB
+>>> Anonymous:          1600 kB
+>>> KSM:                   0 kB
+>>> LazyFree:              0 kB
+>>> AnonHugePages:         0 kB
+>>> ShmemPmdMapped:        0 kB
+>>> FilePmdMapped:         0 kB
+>>> Shared_Hugetlb:        0 kB
+>>> Private_Hugetlb:       0 kB
+>>> Swap:                  0 kB
+>>> SwapPss:               0 kB
+>>> Locked:                0 kB
+>>>
 
 
