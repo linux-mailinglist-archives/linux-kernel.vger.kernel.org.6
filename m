@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-173750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7758C04DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152058C04E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8907F2822A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46AB41C20962
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1E6130A51;
-	Wed,  8 May 2024 19:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43716130A67;
+	Wed,  8 May 2024 19:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wlgk9djv"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T5J88gsR"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0054912AAE7
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 19:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263E11272B2;
+	Wed,  8 May 2024 19:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715196139; cv=none; b=WpSkNlbzJAZea0ENs0RMfwvR67+lObK+COSI6r4ZPSQ1n4FsvaGmnMEq8VVGM/6JEUtDIQss0HXDb2T0p2mHtXvMwZYzqidWrLrTuqJYHrtJQRmETIa38yk94Dccj64s63f3aX4N9AcwgU1DpoTuFgBcQDZWmL3pp6b8PdDkYK4=
+	t=1715196236; cv=none; b=XxRnX1ncQtfC0/7O2FLnte8KtYeAKVkAjDbHXZmM3oFFbZlCWCARgupLmeNjzsYYydZ5wF2X4Yb1yU1TbFbef8/lbspneboGYeqx2wWctB2QFKVZ1AabWOJUsyjgJ7ac9fJSjDU2RWJOUXDzKlh8MdsFTLGHulyNp2ZsGZ6EWBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715196139; c=relaxed/simple;
-	bh=lqqYhTHRkOHchj7ahusEqPtaPXdvyvpJQqB28P8Khpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kIH4BZf5ErJoLojqoRYL0JEuc6hisgfFB06FxQgSWXpRKJelq5W+aUf8heRYS8iyd0aJpHRE+Me+ZGBmKkwSyY9NhHafe/ZP/iBACMCUM2kIuLdNZgg5eAGqthpV/2FJLPm3yX+QDGI8+VowDtxKcApKADAmbCsrGmkFjmQ6N6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wlgk9djv; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-34f52fc2191so28598f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 12:22:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715196136; x=1715800936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JHdWFU3GAmv3dyZh/NErYLFPQ80pO8FEjOYvZYPGwK4=;
-        b=Wlgk9djvmDnNOsXjQ7WMymA2UB61GzqcHjFYJaYrWjEb8+wfQJ5PxSIZkTbecGkkBu
-         WIycnv5zCqI2YfKHlMXJCQKcabCNWiFq0BXijlTDjZ2r8Shpqu82l3eqMnyxHmcKczFR
-         c4bDilEH8MAZGOa8QGLO+bsFDtHjWveOg/mcGhJnHLxgd/ieWtzQiWenqiwof0KtGL5k
-         +OEu1bHcDztfSarnAmdNcfnqTBITE3se5u6BGUKjy5/8Gw5VDMz/1YlfyXvyreaRQJy7
-         gZRw471ZFQVyXWk8pnmi4WEBznRTk7kIr6jy6WHWskinGmehqXrO3HJKFFtsZVcxEBJ0
-         FzAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715196136; x=1715800936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JHdWFU3GAmv3dyZh/NErYLFPQ80pO8FEjOYvZYPGwK4=;
-        b=TxRPbvE1vegyOhpJhNlpmlHADUVEuL/nl70BzBxd7oJ1QzTA5O+lQr0r5pe/RmbJ8f
-         QdU7hR4RPV8zMFpVlIXKrr5sYhPawx+MNSPcG0KMzvkB4cVlioVBWDfZZjTEsTnxi1dy
-         FxXhtlNKGdOmGpbYT5Q093/Ogf+4arkWytYHqQieocvyhSHS3vBt6BiuKJ6ZFgU6X9Bh
-         F2WwlYYMdvmnMwuhCdC+P0CBpaY2vqCbjoC0aTDsqM5R18/J/U7IUDEOA15+l/uN4PFe
-         YU6qPEFJwXq7cwfpoDOFd5uxVjaXaY3Q9LqcsWS77HfS2J8hHkNJpNvLSl7YjZhzvbak
-         ayng==
-X-Gm-Message-State: AOJu0YzR0vxZiwbMcmCmJwqtnrNEjb4EYtgTY/2WJunXLpk715QJ0n5K
-	ZTMpvx9JEGFJvEANhDSc2oaL8vsh6072ptLYCFj6AvfMXeIN7hRh
-X-Google-Smtp-Source: AGHT+IH1LFIthPmm8rjO7cHBk7oP96R9pj5grKZFAIHcYCC1oLMrOqsbmEA9fd63ZrHawTu9t8W/yw==
-X-Received: by 2002:a5d:690b:0:b0:34e:16b2:9abf with SMTP id ffacd0b85a97d-34fca339aacmr2603256f8f.33.1715196136172;
-        Wed, 08 May 2024 12:22:16 -0700 (PDT)
-Received: from localhost.localdomain (host86-177-210-156.range86-177.btcentralplus.com. [86.177.210.156])
-        by smtp.gmail.com with ESMTPSA id gb30-20020a056000459e00b0034e0346317dsm15984822wrb.13.2024.05.08.12.22.15
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 08 May 2024 12:22:15 -0700 (PDT)
-From: Levi Yun <ppbuk5246@gmail.com>
-To: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	Markus.Elfring@web.de
-Cc: linux-kernel@vger.kernel.org,
-	Levi Yun <ppbuk5246@gmail.com>
-Subject: [PATCH v3] time/tick-sched: idle load balancing when nohz_full cpu becomes idle.
-Date: Wed,  8 May 2024 20:22:13 +0100
-Message-ID: <20240508192213.31050-1-ppbuk5246@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240508172621.30069-1-ppbuk5246@gmail.com>
-References: <20240508172621.30069-1-ppbuk5246@gmail.com>
+	s=arc-20240116; t=1715196236; c=relaxed/simple;
+	bh=GHuER5dbfZxlowizuRnXdNSV4RfCN5Z1qKuPNP9FXLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PycnjuUrmv9THdX89et1kd1txcYXs5Tr0gt0i8P2OC8JIFaG/WD1BVeVoZBvdC80RS0qPnqXrD7ZE/bp43Dwi3hMatUwJnyy81FICgGDKUruth7ZmTndH5Mco/p1cu7xU8I1q32piX9f/QkTu/KIajXq2Y4mvkw19ZRYZtwSbI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T5J88gsR; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=owcYIBhREu30dQ7gp++xwkQ2QSY2wtlTxlrzCTL5bZI=; b=T5J88gsRvVqm7VXMGnlAXqj71K
+	wogB+O1qSZcA3PbIWP8DCHh9ewoZQ3J5vwkhHhuyEPlhUJnobg2cuYu5Y5dca8RpEJjOPfM6Pt03B
+	Pe+t/WCDCTXomOu/5YkL3h2wfP8s0sO1pER6ZmMtYxZ9VjfWUWTXEM7btge5E/kDl4YVNJeU7YRmj
+	AyRdEJGilqUgwVkH1M2s5Ju9R8geUvTTb1iM/GLRS5dfmkEsVI4ze+tK7OIAbMH5McIRcPJ34Pa+E
+	WawfRDbj+ExplViquzo2kLxJ3GvTB7Q+oGJfKxOpAnOZC6sElHOJfRqMhzErfPuFCXwWz3XgM074C
+	ZWFoHYjw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s4mtA-0000000GiK0-1rbQ;
+	Wed, 08 May 2024 19:23:40 +0000
+Date: Wed, 8 May 2024 12:23:40 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Christoph Lameter <christoph@lameter.com>,
+	Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"hughd@google.com" <hughd@google.com>,
+	"ioworker0@gmail.com" <ioworker0@gmail.com>,
+	"wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+	"ying.huang@intel.com" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"shy828301@gmail.com" <shy828301@gmail.com>,
+	"ziy@nvidia.com" <ziy@nvidia.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
+Message-ID: <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <CGME20240508113934eucas1p13a3972f3f9955365f40155e084a7c7d5@eucas1p1.samsung.com>
+ <fqtaxc5pgu3zmvbdad4w6xty5iozye7v5z2b5ckqcjv273nz7b@hhdrjwf6rai3>
+ <f44dc19a-e117-4418-9114-b723c5dc1178@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f44dc19a-e117-4418-9114-b723c5dc1178@redhat.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-It wouldn't be chosen to perform idle load balancing because it doesn't
-call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
-becomes idle.
+On Wed, May 08, 2024 at 01:58:19PM +0200, David Hildenbrand wrote:
+> On 08.05.24 13:39, Daniel Gomez wrote:
+> > On Mon, May 06, 2024 at 04:46:24PM +0800, Baolin Wang wrote:
+> > > The primary strategy is similar to supporting anonymous mTHP. Introduce
+> > > a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
+> > > which can have all the same values as the top-level
+> > > '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
+> > > additional "inherit" option. By default all sizes will be set to "never"
+> > > except PMD size, which is set to "inherit". This ensures backward compatibility
+> > > with the shmem enabled of the top level, meanwhile also allows independent
+> > > control of shmem enabled for each mTHP.
+> > 
+> > I'm trying to understand the adoption of mTHP and how it fits into the adoption
+> > of (large) folios that the kernel is moving towards. Can you, or anyone involved
+> > here, explain this? How much do they overlap, and can we benefit from having
+> > both? Is there any argument against the adoption of large folios here that I
+> > might have missed?
+> 
+> mTHP are implemented using large folios, just like traditional PMD-sized THP
+> are.
+> 
+> The biggest challenge with memory that cannot be evicted on memory pressure
+> to be reclaimed (in contrast to your ordinary files in the pagecache) is
+> memory waste, well, and placement of large chunks of memory in general,
+> during page faults.
+> 
+> In the worst case (no swap), you allocate a large chunk of memory once and
+> it will stick around until freed: no reclaim of that memory.
+> 
+> That's the reason why THP for anonymous memory and SHMEM have toggles to
+> manually enable and configure them, in contrast to the pagecache. The same
+> was done for mTHP for anonymous memory, and now (anon) shmem follows.
+> 
+> There are plans to have, at some point, have it all working automatically,
+> but a lot for that for anonymous memory (and shmem similarly) is still
+> missing and unclear.
 
-tick_nohz_idle_stop_tick() is only called in idle state and
-nohz_balance_enter_idle() tracks the CPU which is part of nohz.idle_cpus_mask
-with rq->nohz_tick_stopped.
+Whereas the use for large folios for filesystems is already automatic,
+so long as the filesystem supports it. We do this in readahead and write
+path already for iomap, we opportunistically use large folios if we can,
+otherwise we use smaller folios.
 
-Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_idle()
-without checking !was_stopped so that nohz_full cpu can be chosen to
-perform idle load balancing when it enters idle state.
+So a recommended approach by Matthew was to use the readahead and write
+path, just as in iomap to determine the size of the folio to use [0].
+The use of large folios would also be automatic and not require any
+knobs at all.
 
-Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
----
-v3:
-	- Rewording commit message.
+The mTHP approach would be growing the "THP" use in filesystems by the
+only single filesystem to use THP. Meanwhile use of large folios is already
+automatic with the approach taken by iomap.
 
-v2:
-	- Fix typos in commit message.
+We're at a crux where it does beg the question if we should continue to
+chug on with tmpfs being special and doing things differently extending
+the old THP interface with mTHP, or if it should just use large folios
+using the same approach as iomap did.
 
- kernel/time/tick-sched.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+From my perspective the more shared code the better, and the more shared
+paths the better. There is a chance to help test swap with large folios
+instead of splitting the folios for swap, and that would could be done
+first with tmpfs. I have not evaluated the difference in testing or how
+we could get the most of shared code if we take a mTHP approach or the
+iomap approach for tmpfs, that should be considered.
 
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 71a792cd8936..31a4cd89782f 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
- 		ts->idle_sleeps++;
- 		ts->idle_expires = expires;
+Are there other things to consider? Does this require some dialog at
+LSFMM?
 
--		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
--			ts->idle_jiffies = ts->last_jiffies;
-+		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-+			if (!was_stopped)
-+				ts->idle_jiffies = ts->last_jiffies;
-+
- 			nohz_balance_enter_idle(cpu);
- 		}
- 	} else {
---
-2.41.0
+[0] https://lore.kernel.org/all/ZHD9zmIeNXICDaRJ@casper.infradead.org/
+
+  Luis
 
