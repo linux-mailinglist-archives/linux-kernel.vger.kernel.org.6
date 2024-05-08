@@ -1,148 +1,134 @@
-Return-Path: <linux-kernel+bounces-173369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADF98BFF89
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:52:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E500C8BFF8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 486931F245F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:52:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A070328231A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 13:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D9179B9D;
-	Wed,  8 May 2024 13:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F6579B9D;
+	Wed,  8 May 2024 13:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OiQpH/u4"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="i6WjQrfV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A316B3B7A0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 13:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357841A2C11
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 13:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715176374; cv=none; b=PN79xKnm2jNq3APF+dE0SrwYRqGssiFEdwy48jFRPrTnq8kXJTdb71/UxBPTo0BC7Z9ryQqWZ0f+FVIhKDH520SCQuNGcvCr0KZbjFcVhKjkug2ImIjup7J2xQcQNDZk6/WlagSquRFbUfDsAHUuporV0Pb86HukFwJ/H3/YZ9w=
+	t=1715176406; cv=none; b=lUydPIKVlXg3enP3ezO8CUXdVFU0VDSqfETIgxqXIEO7aIFWRPbOSoSCcALA0YhYketyjW4WwmMHihio//JUV51YqxKkQlSiSuyFOAyHJzlrzvFHT1hZ4NyJKbH8w/q/bnjxVXSy9uGMjzOxfYq+7NRV9+v9FL22LtQBYwT3YFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715176374; c=relaxed/simple;
-	bh=jcglahS4fzZ1+iHXBUKcnnMVqkR05fQI1TKLF3Q4ky4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cKFm9gcvaDis+he0AvPWzYBKYMJAL0Erg6kJYksPy0E2v6lvqcyxseLaedbVXYUpC/Bbwq7OT2fkGA46MHHodFdOFWKWA6LJvi3r5EdQjoFDaJB+Shrby5/yoINq9h+KBewBL++wH63hfPc5b1Y9KT4RJykAdwskjFy3ZQ+rnew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OiQpH/u4; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7d8ad19a-dae8-4783-8f49-227ef8ca4857@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715176369;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X6nBa8Swb0pQAYgPUFjA9k+jIGdbE8D0Y0wHnw+ROds=;
-	b=OiQpH/u4G74Br/DFrLL00699DNL62Tz4R1572g80K14ELUPcecmBqayJGmomJPpcCvYbTU
-	9Cviqgs0cW3KN5kACszgo5zWUFaecBLIlLe9ehbI/uLN1df8aitjKdkUXpgiGKWrCKt1RQ
-	OLYkMP/4SCWFuMl5N7gf2DcaOAeJyAk=
-Date: Wed, 8 May 2024 21:52:20 +0800
+	s=arc-20240116; t=1715176406; c=relaxed/simple;
+	bh=rnyl7Xp77+0HYhwPE1QmPfKmC2U78gvaTg519sdiZps=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G3LLQFzbxmmGSNK0Af3AcKCoKSfo60w59RkH3Kp7A+9Cu1Fbd6Plzn6y18Ox2IWoPmk8hJhbb+qtgCIzD2dfeEevMDMbP2K3SyZLB+SMBGoBJNxs5WAmVaXjardkCa8GMChMRjWBemnHC33Hbzte3zZHIL6W9vffPHxXMiYzlUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=i6WjQrfV; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1715176354; x=1715781154; i=efault@gmx.de;
+	bh=xvqbbAqfc9EOFpvqcHsYsOBw5lY+DntkMAAWorfeO9k=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=i6WjQrfV8G+HPtES47TSJrYXpXqh39+3re9yMZEbLp5+jbDrYsQfI9IMRCdtvseL
+	 /2wehND6/dQRZuJlc96UjAjzZOvvoo7ZNFa3LrzzQdbMb3KgRHAGZttn+1CtfUReD
+	 GG06Vu89g847q5CGRi4rbLVdJTzvqNiYXCz4XWokw5KFdkXumymKaBRXNz6fGLHn/
+	 4jrGZPYAPJk08+ebm8LeRCHX7F1bGUmb/zautqM59j6CG8AmLw5ibfaHKe+njzinD
+	 ZlubZm6O6p4pfLG6dL6KliUjt5pBdWV9y9aIXhHGqqedrqugc8SahpFdXh/c9QuM3
+	 0dLwpoU/S4pbPQcqnA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([185.221.151.210]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MbRjt-1sbIS30yVN-00aTHr; Wed, 08
+ May 2024 15:52:34 +0200
+Message-ID: <9c360c0d337b124c71095f06889d1c69279a7c06.camel@gmx.de>
+Subject: Re: [RFC][PATCH 10/10] sched/eevdf: Use sched_attr::sched_runtime
+ to set request/slice suggestion
+From: Mike Galbraith <efault@gmx.de>
+To: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de,  bristot@redhat.com, vschneid@redhat.com,
+ linux-kernel@vger.kernel.org,  kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com, tglx@linutronix.de,  tim.c.chen@intel.com,
+ yu.c.chen.y@gmail.com
+Date: Wed, 08 May 2024 15:52:32 +0200
+In-Reply-To: <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
+References: <20240405102754.435410987@infradead.org>
+	 <20240405110010.934104715@infradead.org> <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/4] mm/ksm: fix ksm_zero_pages accounting
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Stefan Roesch <shr@devkernel.io>,
- xu xin <xu.xin16@zte.com.cn>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240508-b4-ksm-counters-v1-0-e2a9b13f70c5@linux.dev>
- <20240508-b4-ksm-counters-v1-2-e2a9b13f70c5@linux.dev>
- <7cac6762-4486-4c42-885d-dd5715eb6ba4@redhat.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <7cac6762-4486-4c42-885d-dd5715eb6ba4@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QOMj/JfgW6fn2tFkYIe4JeP8d426H3XoSY9KW474SzmxWwbOFw3
+ RiUmwVfp+uMryE8sSrJErI71zbU9UCiFJ10U+hd3HTTzSr0OSPRonuHNaL2KleuiBN+3b0X
+ 5AqW41ZXh9tSa2HdiATI05QR+EC1s8Rtdi50UbyWryQtiHQsMUvp1G2mmW+58rGbu0P3/5i
+ gJ3jloKo37Ufk116+uw6Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Gw5PYY1ZB6A=;glpYNK6WATXwgcaY+mtwtEf9zcF
+ dbiCPUTF4MqtFS5zKu+feso2oXsKh4BAdc74sv8kN4qsRgK0OLWOusV1KCqONK5LnLRfJY2gX
+ LdAsYXHfW2V3RkCBAPZ1wcW+m+XkODqWR1VVhYYWelIy9+PA+W9sxfmg7XdntzP/4T35NRUln
+ IGg2t0bQIewyMEbB2QgbjcLAgz30+1alN+UNw3yr/JPgBLb6h3XVJhjO+7+9kPYY+LUB5CJZH
+ NnwNF0eLY1kglS27cAxaR/y8CuWzh0BHZGnGta3PaSykI8AmOCBapswR9Rea86i4sMwNCqUtO
+ lK03uX2P8jmXl/c6vNfAJCDcGGI2IJMINn95JSvSDk8p0LmZq75dwjNFOVU6ut266BQ2YYTdF
+ gkcD+qv+iubZyt8FZCK8Gn2O2X7CKpuG2L/fAjAulAdnnTf0YiBL6puQMbWi5gMZYWhVNoY3Z
+ XJSrTp4R80edO/od2tIkhKi8CxxXnopUu4eu1GPtv39Yzz8FLaeGNaPdNjJlPLKn/yZ8Wnvyf
+ kU/Wwys87H9pzNxVoCKBrRk8nACoWdrE8VtNmANPhUPqpyilVZVQnc+LwaC8XQDwJptIua3uL
+ YdtNt9r64WtujyxXOzFnmhQOm7awXnGyqBAw4wv+eEpaX1g4hI+S6ztd8HEs42ayCbNZqqfTQ
+ kViMcEYnkq2BnOwEBbgUQThiR8fWAS5xptpfw4iFzTqDXpUq+JFGY0kfjgaDMSUv+kxusz8Ii
+ AMCGVOy/E6aUnFvavYMzfwxOnZmLWe/iCxAHIbK2uyRyMYyCiFRrnH4hHyZBQGYHkDN7UMeH5
+ NM/ToSEBjm4//SYx8V2EBJuXk21JMLKNW8/G/8zI5MdLI=
 
-On 2024/5/8 20:36, David Hildenbrand wrote:
-> On 08.05.24 11:55, Chengming Zhou wrote:
->> We normally ksm_zero_pages++ in ksmd when page is merged with zero page,
->> but ksm_zero_pages-- is done from page tables side, which can't protected
->> by the ksmd mutex.
->>
->> So we can read very exceptional value of ksm_zero_pages in rare cases,
->> such as -1, which is very confusing to users.
->>
->> Fix it by changing to use atomic_long_t, and the same case with the
->> mm->ksm_zero_pages.
->>
->> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
->> ---
->>   fs/proc/base.c           |  2 +-
->>   include/linux/ksm.h      | 22 +++++++++++++++++++---
->>   include/linux/mm_types.h |  2 +-
->>   mm/ksm.c                 | 11 +++++------
->>   4 files changed, 26 insertions(+), 11 deletions(-)
->>
->> diff --git a/fs/proc/base.c b/fs/proc/base.c
->> index 18550c071d71..72a1acd03675 100644
->> --- a/fs/proc/base.c
->> +++ b/fs/proc/base.c
->> @@ -3214,7 +3214,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->>       mm = get_task_mm(task);
->>       if (mm) {
->>           seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
->> -        seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
->> +        seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
->>           seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
->>           seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
->>           mmput(mm);
->> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
->> index 52c63a9c5a9c..bfc2cf756b0d 100644
->> --- a/include/linux/ksm.h
->> +++ b/include/linux/ksm.h
->> @@ -33,16 +33,32 @@ void __ksm_exit(struct mm_struct *mm);
->>    */
->>   #define is_ksm_zero_pte(pte)    (is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte))
->>   -extern unsigned long ksm_zero_pages;
->> +extern atomic_long_t ksm_zero_pages;
->> +
->> +static inline void ksm_map_zero_page(struct mm_struct *mm)
->> +{
->> +    atomic_long_inc(&ksm_zero_pages);
->> +    atomic_long_inc(&mm->ksm_zero_pages);
->> +}
->>     static inline void ksm_might_unmap_zero_page(struct mm_struct *mm, pte_t pte)
->>   {
->>       if (is_ksm_zero_pte(pte)) {
->> -        ksm_zero_pages--;
->> -        mm->ksm_zero_pages--;
->> +        atomic_long_dec(&ksm_zero_pages);
->> +        atomic_long_dec(&mm->ksm_zero_pages);
->>       }
->>   }
->>   +static inline long get_ksm_zero_pages(void)
->> +{
->> +    return atomic_long_read(&ksm_zero_pages);
->> +}
-> 
-> I suggest inlining that one. The naming of the function also is a bit inconsistent staring at the others.
+On Tue, 2024-05-07 at 23:15 +0800, Chen Yu wrote:
+> On 2024-04-05 at 12:28:04 +0200, Peter Zijlstra wrote:
+> > Allow applications to directly set a suggested request/slice length us=
+ing
+> > sched_attr::sched_runtime.
+> >
+> > The implementation clamps the value to: 0.1[ms] <=3D slice <=3D 100[ms=
+]
+> > which is 1/10 the size of HZ=3D1000 and 10 times the size of HZ=3D100.
+> >
+> > Applications should strive to use their periodic runtime at a high
+> > confidence interval (95%+) as the target slice. Using a smaller slice
+> > will introduce undue preemptions, while using a larger value will
+> > increase latency.
+> >
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> >
+>
+> Is it possible to leverage this task slice to do better task wakeup plac=
+ement?
 
-Good point, I will inline it.
+Slice being unrelated to placement makes its use in a placement related
+knob look wrong.  Even the smallest possible slice is orders of
+magnitude larger than the cycle time of TCP_RR, making slice nearly
+irrelevant to the issue being demonstrating via TCP_RR.  Even for that
+huge socket box, it won't take long as cycle time increases toward that
+smallest possible slice for the cost of needless wait to bury placement
+decision costs.
 
-> 
->> +
->> +static inline long mm_ksm_zero_pages(struct mm_struct *mm)
->> +{
->> +    return atomic_long_read(&mm->ksm_zero_pages);
->> +}
->> +
-> 
-> Apart from that LGTM
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> 
+> The idea is that, the smaller the slice the wakee has, the less idle CPU=
+ it
+> should scan. This can reduce wake latency and inhibit costly task migrat=
+ion,
+> especially on large systems.
 
-Thanks!
+Sure, this is an age old issue that's scaled up to size extra ugly in
+that huge socket box.  Any solution needs to scale as well methinks, a
+simple fixed yardstick won't work, as the costs being mitigated vary
+wildly with platform size/shape.
+
+	-Mike
 
