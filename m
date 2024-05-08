@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-173756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DF68C04F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D50E78C04F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 21:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80BD1B27BF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:25:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C283285EBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7911130A72;
-	Wed,  8 May 2024 19:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E974A131184;
+	Wed,  8 May 2024 19:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="BDz8rVKH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Vf1rcuPT"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4386639AD6
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 19:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DDCC130E2B
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 19:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715196345; cv=none; b=oyhJfQZsUTqb99EQzF9oBa8EaCOj5GY5/dRgfkihWsKGyMz5DL/Jvlcnu188D8oy/IsAdqMzrHDEH2VD7vuOQI39sp9YXDTuOLmcqtMPr2K6YH8ayD5TL9D3cW1MPMowlGI8xTl6giy/vaobZp9M1HO2pZU17cQYSh3IrsawimM=
+	t=1715196407; cv=none; b=LuxMH5iUOUimwiWDa7J15oOOXpsS+W7v+UI8iXUbq/MTJovZ1ru+KUVoJGkm/Y/u7/TmH1FHLAaQ3cHu5KxPFxmZrsqWcK2OgDEOtDmzp9g7hk9NcWKGgH2P7RPcLSOc/cya7LdB+cfBVRqp1ObEo0qVPwNAUf6VM+QkBdAav4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715196345; c=relaxed/simple;
-	bh=PQE6gIAzIEyjZtZOWR0stsukrYzPYSrIuauq4EQ2VFQ=;
+	s=arc-20240116; t=1715196407; c=relaxed/simple;
+	bh=QAMm7iDD+RVBgL6xWmp2oKGGqUu8F8yMrpYtOKhCup4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GdsFo1bK4luPulxwes/TRaQtqdfHolZSNZSaz/+3LQdRQbjKa0VMYmctRI3NV84mIKE6C+Y65SyLdI7JZYqhDvOBtdubHAOJNmXfu4sqanvpMNzlmK8DY89cOhi9QSkWPaNOWpcjltcewVcgbEDhQgbd/Sfw9WxMDhN6VfVN7sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=BDz8rVKH; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=ngIDdABb2JEO/n0RyJDYiQTiqcoC+3yS08r3pOVrBzepQcM0+LQ+JSOpQLZbEYzLqDTaJsaKRSxahuj1ni1YgAef9wYsxGgGSrdUqD84kncPIrnYUNgkt7c+5U9p/Jw1EL7Mxp+XIXTNtox1hl37uwCkvQFdQh5mQAlJ2e/Mun4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Vf1rcuPT; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41b7a26326eso432735e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 12:25:44 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-34d99ec52e1so25837f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 12:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715196343; x=1715801143; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715196404; x=1715801204; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Nb289X82Pwy2psbtYSkuOYlUdcLMn+kmFJiTkQU5Z+c=;
-        b=BDz8rVKHvv2T6cuL9LzQj1msbZjcTb3MNkw5SwsN7Hcw0+JvthaSzouNtn8Ns9St3v
-         Fy6GS+r4aVoilkxByBvAKvgesKEf1NSNaiO8XgBCX/cKNHRMEMRVKAp29YZGIJ2vi3m6
-         VRg5IC6FTse8M0QkDhXZBrCYZU4RqT5L5H7knhB2qWpde7GAgHLGHdNysPMJUTMMBCNY
-         1PWmqzM4q2S7R1+VU/InT/klu88wt7eDIsIx7ekMErUjMiaj2SsKklo0w7e66CydSKAp
-         Mm09pBcog64MsXDkIn98odxXhnHGjFW0GFE7s2hf1Z1hKKi/ge/rZncRBGoVc0ypTy+k
-         Cm2g==
+        bh=7NXxlYw1RM9+WdFNtDaqsh0kbg9AU8PQDaN/vzezo7A=;
+        b=Vf1rcuPT6YthWxYLpMow8FQkLZ4hfLIwlRMMpix+rec3eLkd53bePAfi8LRrG9B54k
+         /bBRyveG9AweqpHzqf3gQQ6psbw7JelZpsV0lfgYQ0sh5dPwyKOYhyb542mp0wkON2ya
+         NL3Lv2uIv6rjX3YUWGgxVgUz1VoYk57cxQzmzVnQbpZrYWfZHLAz4BfTw7fhAZILZaa4
+         n/aIVDlJ9oWhXwmVUTSDzxY5ZDbug/y+B8vaJPHVOPkA1lUQC+mdfd+sYsgIU+EzEgnh
+         1o48/3cC91GTdsNKtcTGlhWjhy0D1sVAkfbbPBsBQLVIF6QHjjOp9FgnH34K8KpngZ7L
+         iYmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715196343; x=1715801143;
+        d=1e100.net; s=20230601; t=1715196404; x=1715801204;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Nb289X82Pwy2psbtYSkuOYlUdcLMn+kmFJiTkQU5Z+c=;
-        b=Zb5+wCihBy+nuifey9aYEmQdjlUSkApdVkWS/e//EFJA/vo4x/RKjXTRwBzq/QhFwW
-         RqFDLUtqmyHxGTNsD1Khv1whqOSOA2pPs/UuT6L6Us8SZpZTAIoEbeIV3FOGIlLHvnSX
-         Xtz5mVxs08AkKcE1DT4r6jtQu/az3BofnmmAfYuRFW+jC0muuFjTVRoePiRsUZP522eq
-         sH3I5IhsJvAIneZJQd0d6lMF6/+DJ5rd98eJleKtqrdX/ObFiBkh3PbOzdlXDapLiSU/
-         Rywa+lQ4Vxv315jdrEIw5u4FKJ/k2gLluGWi9nYpMkmei+yGiT84isq+u136vIgkT3kc
-         kcrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0cdfASV3WeMx7xX4UTG90neq/ugeNIdAnpzY5DuSFYRTYXmnV0/pC3SSxpO+57bwWFqKzNlPoOV7WnB6S9A02j1DcESempMjGeLnM
-X-Gm-Message-State: AOJu0YwS7ewhRpNiYl39BN15WJtx5eT2qJRVSvRw4yG+g4PniA85D4/8
-	7u5MClM8daDTrmJZhPtgADnDTJZTuxYx0rjp/xIHHkHxUW2wylLcuYL93WIPuZg=
-X-Google-Smtp-Source: AGHT+IFUGL9dDH2gwgI9tPWACeaOFPW71lxlPF9m81I7+sLroC1dBTrL+wbzR1KIUMB3+0Tz7vFgZA==
-X-Received: by 2002:adf:a492:0:b0:343:a368:f792 with SMTP id ffacd0b85a97d-34fca621315mr2849241f8f.52.1715196342717;
-        Wed, 08 May 2024 12:25:42 -0700 (PDT)
+        bh=7NXxlYw1RM9+WdFNtDaqsh0kbg9AU8PQDaN/vzezo7A=;
+        b=F9jY/GjenuIXY6AUDFBsTY2Bdtw1+uXl6A+mBA+m5Cn86qDOb/FmFBUtxGNfObI0dx
+         /YxB9yWtv9GmD0Vq+04MxmPfTbDWRsw6kD3ufU6owuvgOC57jSN+kGaUqIbHPJhsui7W
+         jOZSijF24cjy8ElP3Hl+nizefKhAwUy66YyhUKfP5zgAP/JI0RT5u6yE8Z0esWHuLqxX
+         97MkwfURALJUBC5I/a3sSbIE3ZobmGfJV8cFNvmNiYZjnCSmUGC31rugqOZd/XhY6gfd
+         +gLJ3jGDAelZREMdk/ZC4dv8Q7JKmCZjZsOBAa7T2nFVy+QKe85zX/Q5rv4ZbzHDda7N
+         LA4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnrTgTItdqMe0zdL0RZcdkrzacLpBHyMo6dQTJQT+rWmWZYWe6ko/SkLqXO3ghares3NFYu9jtK6o6apG2mceCsLyLgIT+QaS5GpVI
+X-Gm-Message-State: AOJu0Yxx2mzF4cCZNnJa+K6oSEcX3a3qOqMg4y2QE1MQFkGeZ0m0NiUK
+	kdA2rlOFhnHNbrTyvbBWRe3w0DkvRpZFWo6f8VWp0zv+b3vJfAB+zstNaxbU22U=
+X-Google-Smtp-Source: AGHT+IGACzzezThLxVMxwcYVQ6pqU/BhrbSjplAZdXD5UPpMsvfoJ1LwcNLet4jFhPFrbMRRJqyyWw==
+X-Received: by 2002:a5d:4522:0:b0:34c:bb79:452b with SMTP id ffacd0b85a97d-34fca62159dmr2733749f8f.52.1715196403826;
+        Wed, 08 May 2024 12:26:43 -0700 (PDT)
 Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id b12-20020a5d4d8c000000b0034e65b8b43fsm14038517wru.8.2024.05.08.12.25.41
+        by smtp.gmail.com with ESMTPSA id o16-20020adfcf10000000b0034b1bd76d30sm15921429wrj.28.2024.05.08.12.26.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 12:25:42 -0700 (PDT)
+        Wed, 08 May 2024 12:26:43 -0700 (PDT)
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
 To: Ryan Roberts <ryan.roberts@arm.com>,
 	Catalin Marinas <catalin.marinas@arm.com>,
@@ -92,9 +92,9 @@ To: Ryan Roberts <ryan.roberts@arm.com>,
 	kvm-riscv@lists.infradead.org,
 	linux-mm@kvack.org
 Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: [PATCH 06/12] mm, riscv, arm64: Use common pte_clear() function
-Date: Wed,  8 May 2024 21:19:25 +0200
-Message-Id: <20240508191931.46060-7-alexghiti@rivosinc.com>
+Subject: [PATCH 07/12] mm, riscv, arm64: Use common ptep_get_and_clear() function
+Date: Wed,  8 May 2024 21:19:26 +0200
+Message-Id: <20240508191931.46060-8-alexghiti@rivosinc.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240508191931.46060-1-alexghiti@rivosinc.com>
 References: <20240508191931.46060-1-alexghiti@rivosinc.com>
@@ -106,95 +106,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make riscv use the contpte aware pte_clear() function from arm64.
+Make riscv use the contpte aware ptep_get_and_clear() function from arm64.
 
 Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 ---
- arch/arm64/include/asm/pgtable.h | 9 +++------
- arch/riscv/include/asm/pgtable.h | 4 +++-
- arch/riscv/mm/init.c             | 2 +-
- mm/contpte.c                     | 6 ++++++
- 4 files changed, 13 insertions(+), 8 deletions(-)
+ arch/arm64/include/asm/pgtable.h | 8 ++------
+ arch/riscv/include/asm/pgtable.h | 7 +++++--
+ mm/contpte.c                     | 8 ++++++++
+ 3 files changed, 15 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index bb6210fb72c8..74e582f2884f 100644
+index 74e582f2884f..ff7fe1d9cabe 100644
 --- a/arch/arm64/include/asm/pgtable.h
 +++ b/arch/arm64/include/asm/pgtable.h
-@@ -1439,12 +1439,9 @@ extern void set_ptes(struct mm_struct *mm, unsigned long addr,
- 		     pte_t *ptep, pte_t pte, unsigned int nr);
- #define set_ptes set_ptes
+@@ -1473,12 +1473,8 @@ static inline pte_t get_and_clear_full_ptes(struct mm_struct *mm,
+ }
  
--static inline void pte_clear(struct mm_struct *mm,
+ #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+-static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
 -				unsigned long addr, pte_t *ptep)
 -{
 -	contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
--	__pte_clear(mm, addr, ptep);
+-	return __ptep_get_and_clear(mm, addr, ptep);
 -}
-+extern void pte_clear(struct mm_struct *mm,
-+		      unsigned long addr, pte_t *ptep);
-+#define pte_clear pte_clear
++extern pte_t ptep_get_and_clear(struct mm_struct *mm,
++				unsigned long addr, pte_t *ptep);
  
- #define clear_full_ptes clear_full_ptes
- static inline void clear_full_ptes(struct mm_struct *mm, unsigned long addr,
+ #define __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
+ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
 diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 4f8f673787e7..41534f4b8a6d 100644
+index 41534f4b8a6d..03cd640137ed 100644
 --- a/arch/riscv/include/asm/pgtable.h
 +++ b/arch/riscv/include/asm/pgtable.h
-@@ -792,18 +792,20 @@ extern void set_ptes(struct mm_struct *mm, unsigned long addr,
- #define set_ptes set_ptes
- extern void set_pte(pte_t *ptep, pte_t pte);
+@@ -794,6 +794,9 @@ extern void set_pte(pte_t *ptep, pte_t pte);
  #define set_pte set_pte
-+extern void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
-+#define pte_clear pte_clear
+ extern void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
+ #define pte_clear pte_clear
++#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
++extern pte_t ptep_get_and_clear(struct mm_struct *mm,
++				unsigned long addr, pte_t *ptep);
  
  #else /* CONFIG_THP_CONTPTE */
  
- #define ptep_get		__ptep_get
+@@ -801,11 +804,11 @@ extern void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep);
  #define set_ptes		__set_ptes
  #define set_pte			__set_pte
-+#define pte_clear		__pte_clear
+ #define pte_clear		__pte_clear
++#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
++#define ptep_get_and_clear	__ptep_get_and_clear
  
  #endif /* CONFIG_THP_CONTPTE */
  
- #define __HAVE_ARCH_PTEP_GET_AND_CLEAR
- #define ptep_get_and_clear	__ptep_get_and_clear
--#define pte_clear		__pte_clear
+-#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+-#define ptep_get_and_clear	__ptep_get_and_clear
  #define __HAVE_ARCH_PTEP_SET_ACCESS_FLAGS
  #define ptep_set_access_flags	__ptep_set_access_flags
  #define __HAVE_ARCH_PTEP_SET_WRPROTECT
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index bb5c6578204c..c82f17b3060b 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -327,7 +327,7 @@ void __set_fixmap(enum fixed_addresses idx, phys_addr_t phys, pgprot_t prot)
- 	if (pgprot_val(prot))
- 		__set_pte(ptep, pfn_pte(phys >> PAGE_SHIFT, prot));
- 	else
--		pte_clear(&init_mm, addr, ptep);
-+		__pte_clear(&init_mm, addr, ptep);
- 	local_flush_tlb_page(addr);
- }
- 
 diff --git a/mm/contpte.c b/mm/contpte.c
-index 543ae5b5a863..c9eff6426ca0 100644
+index c9eff6426ca0..5bf939639233 100644
 --- a/mm/contpte.c
 +++ b/mm/contpte.c
-@@ -45,6 +45,7 @@
-  *   - set_ptes()
+@@ -46,6 +46,7 @@
   *   - ptep_get_lockless()
   *   - set_pte()
-+ *   - pte_clear()
+  *   - pte_clear()
++ *   - ptep_get_and_clear()
   */
  
  pte_t huge_ptep_get(pte_t *ptep)
-@@ -676,4 +677,9 @@ void set_pte(pte_t *ptep, pte_t pte)
- 	__set_pte(ptep, pte_mknoncont(pte));
+@@ -682,4 +683,11 @@ void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
+ 	contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
+ 	__pte_clear(mm, addr, ptep);
  }
- 
-+void pte_clear(struct mm_struct *mm, unsigned long addr, pte_t *ptep)
++
++pte_t ptep_get_and_clear(struct mm_struct *mm,
++			 unsigned long addr, pte_t *ptep)
 +{
 +	contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
-+	__pte_clear(mm, addr, ptep);
++	return __ptep_get_and_clear(mm, addr, ptep);
 +}
  #endif /* CONFIG_THP_CONTPTE */
 -- 
