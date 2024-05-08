@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-173467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AD38C00BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F3D8C00C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8A1A1C2222B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CBA01F26F42
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 15:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE60126F0F;
-	Wed,  8 May 2024 15:16:14 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463CD126F39;
+	Wed,  8 May 2024 15:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VCPDeGCe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5121A2C05
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093111A2C05
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 15:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715181374; cv=none; b=scPzwZovXeCiNZonKEh11ao1JfnwxBPhocntXuk/EA8Ylw6qJ9Ci77korqXpPKe6EdY3gZK4ygs9gW51/Gdlb1zqDVNoGxl4aPVYmfM3FT09aHJE4iZFznPz7WlbkZgBjYlIrKV6jv6tYKN450sfDExwrPzUm274CaCxWxveAl4=
+	t=1715181399; cv=none; b=cUIr3fI9oUvY39HjQNlP2yROIzAHtDrtEO8N0Klby1kvx7hrzTVgElx8fU+9df+YstI9vxFuBIn4aFT6BsUt44bHib46Jbo01iOPQL0X6KwTgM774mEr5hKu3wayB60Gu/VmLp977Kq210eqtoEY4MZaUEfHho74LrtFIF3yXIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715181374; c=relaxed/simple;
-	bh=SDEkX/7FIehgXht/piuMpV8rE/Un2CrlriQeS6ym12M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N2ab9CnFHNuFBlExc7zAzo3VitnA6dAizRVdujf4bZ9241VpbcnUqlM2C2rsBJ50nn9AoagrRSS+ZXFoGrDb5uSvFdJyx1YeTVAbdgWBzPqqn1+oT9Y3cUzG8naUGX9Do7QP2zZl7ATBdiUsBJ4FmWhizV/I96qDkIZEj1Ceat0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7da41da873bso651020839f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 08:16:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715181372; x=1715786172;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mVj+gVbgXZM6nZIWEcn7mM4B49NEdWTqZh3wTgaJrF8=;
-        b=ZrPkb2H5Z7y+aATViuigeYgK0a9hxT6ArPiF58EZjMhfvQNoLrQL+/smp8J1dLIeIi
-         cHel3NKVg6wTnbiewvrKkpYpwyYMNAImvl1aH3RuJcXmUMkkvuz+a4M6Mt7f2ZiFi80j
-         EEkRhlioiF96qccz9fqOYxLgEpXL6TuQh3ouWOv+tOiAyheEGge7TXHVOIrMe0iLis/B
-         kikyBn3xVTUf8m9ygVC0lYpB15vF5V+PN1yYVpnVQWMmLGdyue5lMptzEyIts4H1m+VD
-         VNQElW/GX7j9kg5BaDV82t+mwnkq9ffruoL1usMAScvx+eaMFuE5rwerdt4X2LkdFgn4
-         0XCA==
-X-Gm-Message-State: AOJu0YwB92CxEtjTVBwZHAtbP82umy4G8J5ShjvHa53taWoDeL8/K5P7
-	Sv9IJIsDDkAZAjFDTdn+6wSxlkIAGZA72uIAhMeuETqFzKQ6XtfFIZmpFqVUwqWWE/tySc/AGvx
-	xJCnQuZRyXzht7K/VbGNbYewYPI84UNKBNFidTaVlFwd/PYNd3cfvKno=
-X-Google-Smtp-Source: AGHT+IEf0UrDkOdjl1prdkMMdW8yNlz9ic6T0GyVf4rguyg1pKqOEiG12mK8wcw4t7eviIR85mbxB75vHRv+WRcDVcD+8e1CGZMr
+	s=arc-20240116; t=1715181399; c=relaxed/simple;
+	bh=1n1JFhMEHpxXbsCLEsA6h7UwWX9ChBNYgtKIrOPkqIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TmzyFUyVOMA9S0jfG6djxSAz9yeXytLWlSphbVws+wU0fyKRwBw7dBnCBKkvVvWDRiP1XhyqUC8U8VvkmqotcIijwRgmNdiorjCKrc2m0o5OuAWda9AuFOZaF2/B01vLiwBbIAxkXMME4UoppDTjRRfMdyUhAvEHb0unV66kDdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VCPDeGCe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 448FCr0B005990;
+	Wed, 8 May 2024 15:16:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=MwULw37PH8betM2DCzv8Tn8ZQugnBHlhkZhXViiVS54=;
+ b=VCPDeGCeq4HkyMyB2rFIVhB1y6nhQ4/+KzC3z42WYvWGz4S1GBXZDkJkXtnL3Ke7TZev
+ EcDaCiMBf+yi44U5MF6MuLedWFqIOVc5VSwfTN70PGl/UvGXeoAjJ25ZiNf+BuQyMJKZ
+ dhea9WymH+QRKwYlNay+uC2Wqfghc5shw0j9QX1lLo33EFOrM4y5kucwtaDtPMsXArbj
+ xZzQ4wzjwtimipFaIzUuuJyS1jpgUVJMh3glETe/iQLfvYDaqDEfTnhkuW60ODQCwWpu
+ cZPi6ljOfq/bLdKh0ABFfny2Zhs4macqP6maEyXKdrp2brXj3Z+6MBWzYON0mW/zPWBD Ig== 
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0btug0ee-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 15:16:24 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 448F2oms003964;
+	Wed, 8 May 2024 15:16:23 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xysgsdcgw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 15:16:23 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 448FGFfi23200272
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 May 2024 15:16:17 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E8BE758060;
+	Wed,  8 May 2024 15:16:14 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C37975805C;
+	Wed,  8 May 2024 15:16:14 +0000 (GMT)
+Received: from [9.61.25.238] (unknown [9.61.25.238])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  8 May 2024 15:16:14 +0000 (GMT)
+Message-ID: <a924a55d-f591-498d-b80e-4889ed6691e9@linux.ibm.com>
+Date: Wed, 8 May 2024 10:16:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:641c:b0:7da:6916:b435 with SMTP id
- ca18e2360f4ac-7e18fbcd3eamr4375739f.0.1715181371844; Wed, 08 May 2024
- 08:16:11 -0700 (PDT)
-Date: Wed, 08 May 2024 08:16:11 -0700
-In-Reply-To: <00000000000003b4af060de27f6b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000064fced0617f2c805@google.com>
-Subject: Re: [syzbot] [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] hwmon: (ucd90320) Increase delay from 250 to 500us
+To: Lakshmi Yadlapati <lakshmiy@us.ibm.com>, jdelvare@suse.com,
+        linux@roeck-us.net
+Cc: ninad@linux.ibm.com, linux-kernel@vger.kernel.org
+References: <20240507194603.1305750-1-lakshmiy@us.ibm.com>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <20240507194603.1305750-1-lakshmiy@us.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: YQJ3gLj7ikHBfaduKTxWf34CZn-pFDnv
+X-Proofpoint-GUID: YQJ3gLj7ikHBfaduKTxWf34CZn-pFDnv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=979 suspectscore=0 clxscore=1011 malwarescore=0 mlxscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405080109
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
 
-***
+On 5/7/24 14:46, Lakshmi Yadlapati wrote:
+> Following the failure observed with a delay of 250us, experiments were
+> conducted with various delays. It was found that a delay of 350us
+> effectively mitigated the issue.
+>
+> To provide a more optimal solution while still allowing a margin for
+> stability, the delay is being adjusted to 500us.
 
-Subject: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-Author: ryasuoka@redhat.com
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git master
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
 
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index b133dc55304c..0aaff30cb68f 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
- 				 ndev->ops->n_core_ops);
- }
- 
-+static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
-+{
-+	if (skb->len < header_size ||
-+	    !nci_plen(skb->data) ||
-+	    skb->len < header_size + nci_plen(skb->data)) {
-+		return false;
-+	}
-+	return true;
-+}
-+
- /* ---- NCI TX Data worker thread ---- */
- 
- static void nci_tx_work(struct work_struct *work)
-@@ -1516,24 +1526,32 @@ static void nci_rx_work(struct work_struct *work)
- 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
- 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
- 
--		if (!nci_plen(skb->data)) {
-+		if (!skb->len) {
- 			kfree_skb(skb);
--			kcov_remote_stop();
--			break;
-+			continue;
- 		}
- 
- 		/* Process frame */
- 		switch (nci_mt(skb->data)) {
- 		case NCI_MT_RSP_PKT:
--			nci_rsp_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
-+				nci_rsp_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		case NCI_MT_NTF_PKT:
--			nci_ntf_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
-+				nci_ntf_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		case NCI_MT_DATA_PKT:
--			nci_rx_data_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_DATA_HDR_SIZE))
-+				nci_rx_data_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		default:
 
+>
+> Signed-off-by: Lakshmi Yadlapati <lakshmiy@us.ibm.com>
+> ---
+>   drivers/hwmon/pmbus/ucd9000.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/hwmon/pmbus/ucd9000.c b/drivers/hwmon/pmbus/ucd9000.c
+> index 8d9d422450e5..d817c719b90b 100644
+> --- a/drivers/hwmon/pmbus/ucd9000.c
+> +++ b/drivers/hwmon/pmbus/ucd9000.c
+> @@ -80,11 +80,11 @@ struct ucd9000_debugfs_entry {
+>    * It has been observed that the UCD90320 randomly fails register access when
+>    * doing another access right on the back of a register write. To mitigate this
+>    * make sure that there is a minimum delay between a write access and the
+> - * following access. The 250us is based on experimental data. At a delay of
+> - * 200us the issue seems to go away. Add a bit of extra margin to allow for
+> + * following access. The 500 is based on experimental data. At a delay of
+> + * 350us the issue seems to go away. Add a bit of extra margin to allow for
+>    * system to system differences.
+>    */
+> -#define UCD90320_WAIT_DELAY_US 250
+> +#define UCD90320_WAIT_DELAY_US 500
+>   
+>   static inline void ucd90320_wait(const struct ucd9000_data *data)
+>   {
 
