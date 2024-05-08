@@ -1,115 +1,237 @@
-Return-Path: <linux-kernel+bounces-173619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ADD98C0302
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:22:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8048C0304
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 19:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1946F1F227AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:22:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670A41F23B15
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 17:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83DF53387;
-	Wed,  8 May 2024 17:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8A879F6;
+	Wed,  8 May 2024 17:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GMfcJzvQ"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="t3saEfn0"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E194E79F6
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34095336D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 17:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715188960; cv=none; b=TjKdx6eMcKl8XnAIJULwiKJ5u3LU7+QsKnJqG8Xl6dGgh3dLckxz+zg63y1vnlgi2Kg+ThhVCOwEejXGMEStjd+5vzLc7wR3g/56iaEvF5ZaygHGgJ6JZVuBCcGZH8RccA9JMihMBXVWn19Up1o2KfeaFhfg/mvWVbSCFa0CVro=
+	t=1715188975; cv=none; b=AmjFi6ZscIKrtXokxQus6odXvejudNyBRkQ23ORd3nBAqzvFis4RdaAi41RrpXiEdTa597C17krnXvMvor5QUmuEhp1Bz8+R6keSwWAz+hdLURP2sFxKb12iegCwXWGiGp28rAnHuLc2z8ixBGUYhAvi1bsehzz2m0pHD3TiYvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715188960; c=relaxed/simple;
-	bh=klZ6+XShnNjYHqzk7WhV4DOji81QsTegGKMuhCL9oew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qeXnD4KfYRWycb6HM/i9eE7gSJp61H+3ytjpq7XTWsijYWFHLRc0CsxoeW8kVHlytTO4xGJOvNI6DZLHjUpZeT0rltBY9lfQgyD57Qs5fe+syVce5AJC2+4rv++Q1gstVOdUQSUGanxog+ZSPhVKmAw7ttj+sxLCzu0LZEd7u+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GMfcJzvQ; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e22a1bed91so176611fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:22:38 -0700 (PDT)
+	s=arc-20240116; t=1715188975; c=relaxed/simple;
+	bh=u4IncrtpCxubuwQgD8YUieXvfjotsSuja6N1Oi10lPE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qkwyg9y3DVB0ON3R1KzqLmAYHDdMmeQi6Usi48zkePQAR6fgh5QYetsx8LH5sZY7sRmWH3rpoQ4tcRxMf3axYvJpVv/SEMHCx20HK3zfRtb00xZksOsAzg84bNooWBsf5V/CQ3B5pvI1F6u5VTesIRSbHEMQdU77gRg5QNqnDDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t3saEfn0; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-7e1964b70e2so100217139f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715188957; x=1715793757; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SRl/m4RVKZLzWdBeNIFBLk9WHXC7qByJMfaYJzzbNPA=;
-        b=GMfcJzvQFqhCKh9rx8b5qbVLoWn1Q3AK/UM4KWmP4IMSE7I4aFeN8FlzfXMxqrQ0B1
-         0wgyIXFUtCFWqUkJhU2Rv5YOptdT9jsESSHz3cn4gJ9bxITMQwdBa9oomXBQaMRR1ZWg
-         rgo4T633OAUJuZ3wR7CQai+MWMiDxKk0TyuME=
+        d=google.com; s=20230601; t=1715188972; x=1715793772; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XE1QNsIrpSdoBDzkTgvC4e4sDaJEW78xu5f3eAO+u4k=;
+        b=t3saEfn06fZdip5p3C/JgG8UevClu2UIKjFy4zUu2vcpO1t2ltDZRx6WZKNb52HkN/
+         E37X3xnRng4hEcwKJceI5+Lky5tvguMvNTUQ+iSx4bo+XSbtaZ0UKcWkYePpPPg0cppl
+         emMn3PDwxTXHzYWQnRCkucGUmYMH7thjypIR1ZY2iMSC3Oftes6zZdrpTgQJFgk19RSZ
+         itLF8WVPNwynUBGAGAgYL1vXH7YeUUglJDFtzhNrLgEZpDxzvo9TGtVbPpIxUPJ2Jk8Z
+         E2TiK1ZlH3+o5HIeyXJLTpGPDI2Ld6iB9/u0rITXD6QBX+wFwmQkcVJg7MwtNsMzx0vl
+         KrQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715188957; x=1715793757;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SRl/m4RVKZLzWdBeNIFBLk9WHXC7qByJMfaYJzzbNPA=;
-        b=d1uq9upPBnDg9rnU7qj7imHc9Mgp0WjiE7o3oSCL18gmPvNolMAjrM6Nb0cLlbdVTy
-         26d7HCmjjoGSyn7eZ4VqqkHcqjdJrSlGK43h3BbV8QI8KhDueZATjRk7ney/nlWj4S+U
-         MtmoaXILgQqw0jQDCA/g4bJuiUJwhJTYZDjyJhmjcEtCZ5PSfVd6yKfB+SrcC7z76IFg
-         ZjCBNrWi4HEwQmdbhiJOlO8KQ96QAkIsZRb3F9wozkbN+U9UNPvCukRXUbLm+QKk8QL6
-         dr6yI4oOLDZUgc8U3JzUSamJba0B1T82NT0Yitk1jdS58JM/VoMOXhvfPm3oUmxgqPG0
-         8lzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYdwxXL5wmvSE7BEfoovDfPCbEXkk/XvSyqjcnbstXHDJHdOeB3ELZTVBXJM2y5sRKoZ+zs6utnFVSmm5NFjeMIhXFeFyI+XnPlbsK
-X-Gm-Message-State: AOJu0YwNxO5d6gu+YjUR5nOosKhaxNTNdhWkSdU9Ko1SZfF2jzGVpDGL
-	lKRy+ztUCHbXU8dbGgTOhQsynDOpIUmzTIW+3MjwUJhLxhnrwQCOtqMYDp4Ch7T5s/SdERN35LW
-	ENqse4g==
-X-Google-Smtp-Source: AGHT+IGz4Tg3ATKAXctlfrTOdC8t0KB2PvHop1PfGuraGTjbfjrkFKbuR/OhdCe/I6skpWfbO9ThEA==
-X-Received: by 2002:a05:651c:105b:b0:2e1:cb22:a4d with SMTP id 38308e7fff4ca-2e4476af859mr20197321fa.36.1715188956846;
-        Wed, 08 May 2024 10:22:36 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id t6-20020a2e7806000000b002d81c25febfsm2379356ljc.108.2024.05.08.10.22.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 10:22:36 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5206a5854adso4331721e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 10:22:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXGiezfI8WwgbfWSAcYABzaUbCvWjzL7fESmXwQOoUZQZxrMcdAGeCsQaLhTMaausKVvCx+nsKIOMGOL93OjkgcfjZFBFWhgZrMLdHz
-X-Received: by 2002:a05:6512:3709:b0:521:7885:150f with SMTP id
- 2adb3069b0e04-5217c566c9bmr1897367e87.28.1715188955736; Wed, 08 May 2024
- 10:22:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715188972; x=1715793772;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XE1QNsIrpSdoBDzkTgvC4e4sDaJEW78xu5f3eAO+u4k=;
+        b=SRDIoLJBe4T0/zXNbVilhLKypeMcppr+L4Ah0dYPgwEBWSyemtod6/ly58a4Q/TQ+D
+         HUrI6caWP+MzPRdwH3YdV8Yxq81tBa0LAoHsRk+GwPe0UG6npU+v+w1mpTIrMMjiiEbs
+         /a2n+2J9/H4UfxWsw4WvMXfE6vpNf5gZI2vHh3OiuB5YRImrm98ulJ27bDNtgmiANkaJ
+         BQ5qt1qgaEKHRj1fZDFdSFwnLgRfF4WG5jCeSHGf9DuD2QbQp8U83DtDyrgehMbnlQzn
+         hzGdApSXcqR/FDlMwwLixce2vHh6aC+NLy9Nh2vdktj76O3PUIuztJAReGfs1xKDYygs
+         yznQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDeYAs+SGHUwCeqyrcXbXWwag0PBUHy9PCEGIjha0uZOKYFEu4NO62btktttfBPDxttIoDz7m0lW0wlIe6GTOYxOilG0UThlCjHCAw
+X-Gm-Message-State: AOJu0YyGii9gobOAuNKN30emiiK7IyVZZpSQagz3Ji4CUYbbZV1mt/eM
+	O2e213ybDVg8VabDfAUQQqcr42L1jqfjQIOXfKYou69XNBCtbbtvwCEEjou1w1RF0fNSxLSlzDl
+	s1noINY1GkMgq2Nh/MkxhNg==
+X-Google-Smtp-Source: AGHT+IEuBGqzlpwNaU7svDGL3Zek3/TGDsOW4gHZZ+YDM2nc1D8NlRTOXdtcbQb/W0hoJF3F1F9uhAcjjx+hP4x81Q==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6602:3f86:b0:7da:b30e:df80 with
+ SMTP id ca18e2360f4ac-7e18fbcc8c5mr3658939f.0.1715188971917; Wed, 08 May 2024
+ 10:22:51 -0700 (PDT)
+Date: Wed, 08 May 2024 17:22:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <7abb76bb-eb4a-4136-af2f-6b22fbf3d79f@app.fastmail.com>
-In-Reply-To: <7abb76bb-eb4a-4136-af2f-6b22fbf3d79f@app.fastmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 May 2024 10:22:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whbpyM=Vgb8cM_aoRtZf7GDWq7Wa-cJ=J0DpVkfnd1PBg@mail.gmail.com>
-Message-ID: <CAHk-=whbpyM=Vgb8cM_aoRtZf7GDWq7Wa-cJ=J0DpVkfnd1PBg@mail.gmail.com>
-Subject: Re: [GIT PULL] ARM SoC fixes for 6.9, part 3
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: soc@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAOq0O2YC/32NQQqDMBBFryKzbkoSrCZd9R5FpMZpHLBGMhJax
+ Ls3Ct0WZvM+/79ZgTESMlyLFSImYgpTBn0qwA2PyaOgPjNoqUt5kbXoyv1yTXBsGUd0S8szYi+
+ wMk72pa6MVZD3c8QnvQ/3vck8EC8hfo5XSe3pz2r+WJMSStjslFVnpenqmw/Bj3h24QXNtm1fG XNPXsMAAAA=
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715188971; l=6182;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=u4IncrtpCxubuwQgD8YUieXvfjotsSuja6N1Oi10lPE=; b=fv+LN7qHNuPE4tQk73JaJ9gUQL3bUZ0BBo3Bg7pp+tVHXb8anS5WSRRQsIjQ1UUCkLRHE0c9o
+ EFv6FCWnOtVCnmHgUVoGP14S9u5iIiOodjb2VK+zubr0V2ELop9Khn1
+X-Mailer: b4 0.12.3
+Message-ID: <20240508-b4-b4-sio-sr_select_speed-v2-1-00b68f724290@google.com>
+Subject: [PATCH v2] scsi: sr: fix unintentional arithmetic wraparound
+From: Justin Stitt <justinstitt@google.com>
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Bill Wendling <morbo@google.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, 7 May 2024 at 23:00, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> ARM SoC fixes for 6.9, part 3
+Running syzkaller with the newly reintroduced signed integer overflow
+sanitizer produces this report:
 
-Hmm. Some of this already came in in "part 2", and your diffstat is
-wrong as a result.
+[   65.194362] ------------[ cut here ]------------
+[   65.197752] UBSAN: signed-integer-overflow in ../drivers/scsi/sr_ioctl.c:436:9
+[   65.203607] -2147483648 * 177 cannot be represented in type 'int'
+[   65.207911] CPU: 2 PID: 10416 Comm: syz-executor.1 Not tainted 6.8.0-rc2-00035-gb3ef86b5a957 #1
+[   65.213585] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   65.219923] Call Trace:
+[   65.221556]  <TASK>
+[   65.223029]  dump_stack_lvl+0x93/0xd0
+[   65.225573]  handle_overflow+0x171/0x1b0
+[   65.228219]  sr_select_speed+0xeb/0xf0
+[   65.230786]  ? __pm_runtime_resume+0xe6/0x130
+[   65.233606]  sr_block_ioctl+0x15d/0x1d0
+..
 
-You seem to have done the mtk-soc merge again:
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-> Arnd Bergmann (3):
->       Merge tag 'mtk-soc-fixes-for-v6.9' of https://git.kernel.org/pub/scm/linux/kernel/git/mediatek/linux into for-next
+Firstly, let's change the type of "speed" to unsigned long as
+sr_select_speed()'s only caller passes in an unsigned long anyways.
 
-and this part of the diffstat:
+$ git grep '\.select_speed'
+|	drivers/scsi/sr.c:      .select_speed           = sr_select_speed,
+..
+|	static int cdrom_ioctl_select_speed(struct cdrom_device_info *cdi,
+|	                unsigned long arg)
+|	{
+|	        ...
+|	        return cdi->ops->select_speed(cdi, arg);
+|	}
 
->  drivers/soc/mediatek/Kconfig                  |  1 +
->  drivers/soc/mediatek/mtk-svs.c                |  7 +++++--
+Next, let's add an extra check to make sure we don't exceed 0xffff/177
+(350) since 0xffff is the max speed. This has two benefits: 1) we deal
+with integer overflow before it happens and 2) we properly respect the
+max speed of 0xffff. There are some "magic" numbers here but I did not
+want to change more than what was necessary.
 
-doesn't show up for me because I already had it from your
-soc-fixes-6.9-2 pull request.
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/357
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- change @speed type from int to unsigned long and use a clamp (thanks Kees)
+- also update documentation to avoid confusion
+- Link to v1: https://lore.kernel.org/r/20240508-b4-b4-sio-sr_select_speed-v1-1-968906b908b7@google.com
+---
+Here's the syzkaller reproducer:
+r0 = openat$cdrom(0xffffffffffffff9c, &(0x7f0000000140), 0x800, 0x0)
+ioctl$CDROM_SELECT_SPEED(r0, 0x5322, 0x7ee9f7c1)
 
-I've pulled this, but am a bit confused about how you missed your own
-previous pull..
+.. which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
 
-               Linus
+.. with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ Documentation/cdrom/cdrom-standard.rst | 4 ++--
+ drivers/scsi/sr.h                      | 2 +-
+ drivers/scsi/sr_ioctl.c                | 5 ++++-
+ include/linux/cdrom.h                  | 2 +-
+ 4 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/cdrom/cdrom-standard.rst b/Documentation/cdrom/cdrom-standard.rst
+index 7964fe134277..6c1303cff159 100644
+--- a/Documentation/cdrom/cdrom-standard.rst
++++ b/Documentation/cdrom/cdrom-standard.rst
+@@ -217,7 +217,7 @@ current *struct* is::
+ 		int (*media_changed)(struct cdrom_device_info *, int);
+ 		int (*tray_move)(struct cdrom_device_info *, int);
+ 		int (*lock_door)(struct cdrom_device_info *, int);
+-		int (*select_speed)(struct cdrom_device_info *, int);
++		int (*select_speed)(struct cdrom_device_info *, unsigned long);
+ 		int (*get_last_session) (struct cdrom_device_info *,
+ 					 struct cdrom_multisession *);
+ 		int (*get_mcn)(struct cdrom_device_info *, struct cdrom_mcn *);
+@@ -396,7 +396,7 @@ action need be taken, and the return value should be 0.
+ 
+ ::
+ 
+-	int select_speed(struct cdrom_device_info *cdi, int speed)
++	int select_speed(struct cdrom_device_info *cdi, unsigned long speed)
+ 
+ Some CD-ROM drives are capable of changing their head-speed. There
+ are several reasons for changing the speed of a CD-ROM drive. Badly
+diff --git a/drivers/scsi/sr.h b/drivers/scsi/sr.h
+index 1175f2e213b5..dc899277b3a4 100644
+--- a/drivers/scsi/sr.h
++++ b/drivers/scsi/sr.h
+@@ -65,7 +65,7 @@ int sr_disk_status(struct cdrom_device_info *);
+ int sr_get_last_session(struct cdrom_device_info *, struct cdrom_multisession *);
+ int sr_get_mcn(struct cdrom_device_info *, struct cdrom_mcn *);
+ int sr_reset(struct cdrom_device_info *);
+-int sr_select_speed(struct cdrom_device_info *cdi, int speed);
++int sr_select_speed(struct cdrom_device_info *cdi, unsigned long speed);
+ int sr_audio_ioctl(struct cdrom_device_info *, unsigned int, void *);
+ 
+ int sr_is_xa(Scsi_CD *);
+diff --git a/drivers/scsi/sr_ioctl.c b/drivers/scsi/sr_ioctl.c
+index 5b0b35e60e61..a0d2556a27bb 100644
+--- a/drivers/scsi/sr_ioctl.c
++++ b/drivers/scsi/sr_ioctl.c
+@@ -425,11 +425,14 @@ int sr_reset(struct cdrom_device_info *cdi)
+ 	return 0;
+ }
+ 
+-int sr_select_speed(struct cdrom_device_info *cdi, int speed)
++int sr_select_speed(struct cdrom_device_info *cdi, unsigned long speed)
+ {
+ 	Scsi_CD *cd = cdi->handle;
+ 	struct packet_command cgc;
+ 
++	/* avoid exceeding the max speed or overflowing integer bounds */
++	speed = clamp(0, speed, 0xffff / 177);
++
+ 	if (speed == 0)
+ 		speed = 0xffff;	/* set to max */
+ 	else
+diff --git a/include/linux/cdrom.h b/include/linux/cdrom.h
+index 98c6fd0b39b6..fdfb61ccf55a 100644
+--- a/include/linux/cdrom.h
++++ b/include/linux/cdrom.h
+@@ -77,7 +77,7 @@ struct cdrom_device_ops {
+ 				      unsigned int clearing, int slot);
+ 	int (*tray_move) (struct cdrom_device_info *, int);
+ 	int (*lock_door) (struct cdrom_device_info *, int);
+-	int (*select_speed) (struct cdrom_device_info *, int);
++	int (*select_speed) (struct cdrom_device_info *, unsigned long);
+ 	int (*get_last_session) (struct cdrom_device_info *,
+ 				 struct cdrom_multisession *);
+ 	int (*get_mcn) (struct cdrom_device_info *,
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240507-b4-b4-sio-sr_select_speed-e68c0d426891
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
