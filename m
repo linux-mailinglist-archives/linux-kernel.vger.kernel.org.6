@@ -1,165 +1,148 @@
-Return-Path: <linux-kernel+bounces-173218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE158BFD33
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:33:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642D18BFD38
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159A42837CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F94C283641
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5038A4C618;
-	Wed,  8 May 2024 12:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488E65646E;
+	Wed,  8 May 2024 12:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A5DXGb1u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wOTWj4is";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JrNPEmWn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Qy9DZuab"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Ft47RNiP"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FBA8F40;
-	Wed,  8 May 2024 12:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0D155E58
+	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715171623; cv=none; b=sAszNAgIoBHx5NawnGwcNXR66vUsWTkS6O+9IkxZPC8gDqrSWJ8F+tqDEsIjX/u0rb8lz8Rmgv6LfqkeYQuJSlVfiuAm/TspTWxr5mrVl5wvtDyEoGgxzfCiz3/F6N+T69++ZRlwtdGg2m+UEqgks4RSaYitKhS2ARJAQLKajcY=
+	t=1715171651; cv=none; b=bMFA5dgs56/0akX5CWvlEvRhuhGkHMRqOAtN9xppGAYBj1uPzwcHmzT0UfRZcEaoHSJbd3VE4trVNVM2NtXwiaEkbIe2ukrZC1RTNJfHI/ngMfoi2j//g/48o7IiaF6qooNpQcqkuR3gYvqoySv7R11HQDKe0pGcACE2b1jAYtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715171623; c=relaxed/simple;
-	bh=kce2VuM911zea0WWKrZ2+wtK3+AoRFxMWuJEmXU7RDw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S/Ipbe08CeoAsORtbk+Nwsk6ndXQ1miUaNNwHQxUHjWrOxlXoo0gZ8qrGWbVIRpN3GM2KDngdj27rHf7iNbRBUN/8A8wCQxLH1DRGE9KI0Yl/MwoR66kjwM+ujiN1i2t9gThYcpx4KRxPKbiL1XUhIh3TR3HyIjSpcL2i5nPr+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A5DXGb1u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wOTWj4is; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JrNPEmWn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Qy9DZuab; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EE870338EB;
-	Wed,  8 May 2024 12:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715171619; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IZED0/uUxjpa9QqexclyJrsYKjLLxeptrfiihIyhvys=;
-	b=A5DXGb1uD6y75Ek6pRwaUHxYNQgh3kO2eVKsN697rMw+4gynG3fiwz8kwfnZqihljM51Ox
-	48k6qJ4Ivhi3wli+rVRFYTSi/v7p4soJ1pv+JuWoEMfuH1RZj8zGeFtc0ONgsUXF6pGQT5
-	Pj32B6g6vLfItxe3+JJMoWx4QCUULKg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715171619;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IZED0/uUxjpa9QqexclyJrsYKjLLxeptrfiihIyhvys=;
-	b=wOTWj4isJ7EYMVY3XyMwnPp4t58frQbf1K4INoMGv8PCUZju+vkpwDZ2laaimbsCuIsU8g
-	jlbo+ul+UK8vbVAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=JrNPEmWn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Qy9DZuab
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715171618; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IZED0/uUxjpa9QqexclyJrsYKjLLxeptrfiihIyhvys=;
-	b=JrNPEmWnuJI2vmbtwXSUhSku2QevDGVlS0MboQzL7MEJsRWVeW3UIvagEt9ku9AwWktFdH
-	/KkDq96YZkmsqJg5o09Nbd0zzE6PVhVR32RAC8rZZysaJPBVJiLGTC6ZD02JylvE683hsl
-	u4vRUQ084g1lPlUNobyWV/zSuMaZ60M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715171618;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IZED0/uUxjpa9QqexclyJrsYKjLLxeptrfiihIyhvys=;
-	b=Qy9DZuab3G83VHtAJq5RBuKTBHDnAYUz9y0H8zt1v6kZ841S+EWLXaPWORh6zV77HSUIrx
-	fpw705+B88wlMCBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B46B61386E;
-	Wed,  8 May 2024 12:33:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lNWRKiJxO2YUXQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 08 May 2024 12:33:38 +0000
-Date: Wed, 08 May 2024 14:33:53 +0200
-Message-ID: <875xvocwjy.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>,
-	<alsa-devel@alsa-project.org>,
-	<linux-sound@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: hda/cs_dsp_ctl: Use private_free for control cleanup
-In-Reply-To: <20240508095627.44476-1-rf@opensource.cirrus.com>
-References: <20240508095627.44476-1-rf@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1715171651; c=relaxed/simple;
+	bh=DiF+oR2Mfi2GH39WI0QdXSCh3Dt7vn1cAK3BuRqWzvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SgPOd3LSyUgUH0ZIxMwph+1hlQMCeOxjtRizs/nc1Hfy+eleZarmOXkHZSGVxK97ZXmIZC86u8uiStJV1muudMHHr+TkkdBroiDQZSYi+XBs+uuJBXNe3fLOI8e7F2y/wAdWlLC1hyO1uSpQX1WCJ4Vgup4OroYuO05Eyjoie6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Ft47RNiP; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715171644; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=yw11G1gLE8iNd8Cfpyqtd9XhzkVzZPbalt0cTW63xQw=;
+	b=Ft47RNiPD34fR71qxFw7ts0MS5rRhSftdwBPPuCtGHJ6+JNaXgaZY2RkmCwfMh0lJdXRelC0QC1Tt5xfz+uHErfUhyrpgqCtE2OGT1sK8wk+24EBi+I247Kq/YtVhNj2Zu5cuOizcmRYfSSxVa1RqA4M7hT+ammpeVghtep8eZY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W63ZZzu_1715171638;
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W63ZZzu_1715171638)
+          by smtp.aliyun-inc.com;
+          Wed, 08 May 2024 20:34:03 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: clean up z_erofs_load_full_lcluster()
+Date: Wed,  8 May 2024 20:33:57 +0800
+Message-Id: <20240508123357.3266173-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -3.49
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: EE870338EB
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.49 / 50.00];
-	BAYES_HAM(-2.98)[99.89%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 08 May 2024 11:56:27 +0200,
-Richard Fitzgerald wrote:
-> 
-> Use the control private_free callback to free the associated data
-> block. This ensures that the memory won't leak, whatever way the
-> control gets destroyed.
-> 
-> The original implementation didn't actually remove the ALSA
-> controls in hda_cs_dsp_control_remove(). It only freed the internal
-> tracking structure. This meant it was possible to remove/unload the
-> amp driver while leaving its ALSA controls still present in the
-> soundcard. Obviously attempting to access them could cause segfaults
-> or at least dereferencing stale pointers.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Fixes: 3233b978af23 ("ALSA: hda: hda_cs_dsp_ctl: Add Library to support CS_DSP ALSA controls")
-> ---
-> This replaces my earlier "keep it simple" attempt at cleanup.
-> I decided that implementing private_free is the only sensible
-> way to fix the cleanup.
+Only four lcluster types here, remove redundant code.
+No real logic changes.
 
-Applied now.  Thanks.
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+Some random cleanup out of the upcoming big lclusters..
 
+ fs/erofs/erofs_fs.h |  5 +----
+ fs/erofs/zmap.c     | 21 +++++----------------
+ 2 files changed, 6 insertions(+), 20 deletions(-)
 
-Takashi
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+index 4bc11602aac8..6c0c270c42e1 100644
+--- a/fs/erofs/erofs_fs.h
++++ b/fs/erofs/erofs_fs.h
+@@ -406,8 +406,7 @@ enum {
+ 	Z_EROFS_LCLUSTER_TYPE_MAX
+ };
+ 
+-#define Z_EROFS_LI_LCLUSTER_TYPE_BITS        2
+-#define Z_EROFS_LI_LCLUSTER_TYPE_BIT         0
++#define Z_EROFS_LI_LCLUSTER_TYPE_MASK	(Z_EROFS_LCLUSTER_TYPE_MAX - 1)
+ 
+ /* (noncompact only, HEAD) This pcluster refers to partial decompressed data */
+ #define Z_EROFS_LI_PARTIAL_REF		(1 << 15)
+@@ -461,8 +460,6 @@ static inline void erofs_check_ondisk_layout_definitions(void)
+ 		     sizeof(struct z_erofs_lcluster_index));
+ 	BUILD_BUG_ON(sizeof(struct erofs_deviceslot) != 128);
+ 
+-	BUILD_BUG_ON(BIT(Z_EROFS_LI_LCLUSTER_TYPE_BITS) <
+-		     Z_EROFS_LCLUSTER_TYPE_MAX - 1);
+ 	/* exclude old compiler versions like gcc 7.5.0 */
+ 	BUILD_BUG_ON(__builtin_constant_p(fmh) ?
+ 		     fmh != cpu_to_le64(1ULL << 63) : 0);
+diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+index e313c936351d..26637a60eba5 100644
+--- a/fs/erofs/zmap.c
++++ b/fs/erofs/zmap.c
+@@ -31,7 +31,7 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+ 			vi->inode_isize + vi->xattr_isize) +
+ 			lcn * sizeof(struct z_erofs_lcluster_index);
+ 	struct z_erofs_lcluster_index *di;
+-	unsigned int advise, type;
++	unsigned int advise;
+ 
+ 	m->kaddr = erofs_read_metabuf(&m->map->buf, inode->i_sb,
+ 				      erofs_blknr(inode->i_sb, pos), EROFS_KMAP);
+@@ -43,10 +43,8 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+ 	di = m->kaddr + erofs_blkoff(inode->i_sb, pos);
+ 
+ 	advise = le16_to_cpu(di->di_advise);
+-	type = (advise >> Z_EROFS_LI_LCLUSTER_TYPE_BIT) &
+-		((1 << Z_EROFS_LI_LCLUSTER_TYPE_BITS) - 1);
+-	switch (type) {
+-	case Z_EROFS_LCLUSTER_TYPE_NONHEAD:
++	m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
++	if (m->type == Z_EROFS_LCLUSTER_TYPE_NONHEAD) {
+ 		m->clusterofs = 1 << vi->z_logical_clusterbits;
+ 		m->delta[0] = le16_to_cpu(di->di_u.delta[0]);
+ 		if (m->delta[0] & Z_EROFS_LI_D0_CBLKCNT) {
+@@ -60,24 +58,15 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
+ 			m->delta[0] = 1;
+ 		}
+ 		m->delta[1] = le16_to_cpu(di->di_u.delta[1]);
+-		break;
+-	case Z_EROFS_LCLUSTER_TYPE_PLAIN:
+-	case Z_EROFS_LCLUSTER_TYPE_HEAD1:
+-	case Z_EROFS_LCLUSTER_TYPE_HEAD2:
+-		if (advise & Z_EROFS_LI_PARTIAL_REF)
+-			m->partialref = true;
++	} else {
++		m->partialref = !!(advise & Z_EROFS_LI_PARTIAL_REF);
+ 		m->clusterofs = le16_to_cpu(di->di_clusterofs);
+ 		if (m->clusterofs >= 1 << vi->z_logical_clusterbits) {
+ 			DBG_BUGON(1);
+ 			return -EFSCORRUPTED;
+ 		}
+ 		m->pblk = le32_to_cpu(di->di_u.blkaddr);
+-		break;
+-	default:
+-		DBG_BUGON(1);
+-		return -EOPNOTSUPP;
+ 	}
+-	m->type = type;
+ 	return 0;
+ }
+ 
+-- 
+2.39.3
+
 
