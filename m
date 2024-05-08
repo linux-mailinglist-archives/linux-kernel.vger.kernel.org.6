@@ -1,120 +1,102 @@
-Return-Path: <linux-kernel+bounces-173211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D24E8BFD14
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4206C8BFD17
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 14:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B739D1F234EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:23:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73E401C22F33
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 12:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2336184A23;
-	Wed,  8 May 2024 12:23:14 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B91684A32;
+	Wed,  8 May 2024 12:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="V+mV4j4i"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F0545024
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 12:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E5281ABF;
+	Wed,  8 May 2024 12:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715170993; cv=none; b=r7MlpKHdI4NGpQsahEhtZC8ACNQnTDbHmMiBgOo9yhFIlHqYzSwe/0TvH3i+KJWH8ydH2Emf9yj+jJfPIakGLG9155JyFXPo9ztCPG28OmuSp2Fdk3W0tPGreLkfvB5adA+H/qTQcwJ0+t1ozY3fMKW3uDIZw1QBj3dIIs29SjM=
+	t=1715171176; cv=none; b=iqpjx56+7VSGheAhBcJrOHzwhGmeNF+Q9zbhbWzeQhkWV4VA8k7L6/e3nW4vykgGbJwRmfjcwxs7SwQsXb5WfmLccQeGsa6WlougQRW99UyE8yXDXtwPjosQSYKr3OVOSwXvzIq/b3wIfy0/5WutLcOt8cEiWrViHBhJODSgGVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715170993; c=relaxed/simple;
-	bh=SCE5JWU4nqxphECUgDgRgi0LtZaDC5XX2+xe9FqzcBs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=cSwSg5LfrfcN9yEqvJVfPg5cQ78z+bxLLwf0bAgebzJv73utPbodRoI4BECFjUjVfGIjwbtXjACp2Y4VUIUGZReHshjT28eFuvsa+KdQrzvMqTdu96fLg8rFVnWVf5TO+4meYfwpAInV8Cwt48CtnubpcYHEKK2Oo4uYkB4CWlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-172-HAljp3vRPtmBU0n87pTUDQ-1; Wed, 08 May 2024 13:23:09 +0100
-X-MC-Unique: HAljp3vRPtmBU0n87pTUDQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 8 May
- 2024 13:22:38 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 8 May 2024 13:22:38 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Kees Cook' <keescook@chromium.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: Justin Stitt <justinstitt@google.com>, Peter Zijlstra
-	<peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Subject: RE: [RFC] Mitigating unexpected arithmetic overflow
-Thread-Topic: [RFC] Mitigating unexpected arithmetic overflow
-Thread-Index: AQHaoNrkK91jQ1nmYEmzGISNIfAGlrGNP8bg
-Date: Wed, 8 May 2024 12:22:38 +0000
-Message-ID: <e777a057e8d246efbc90381c2988b9b2@AcuMS.aculab.com>
-References: <202404291502.612E0A10@keescook>
-In-Reply-To: <202404291502.612E0A10@keescook>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1715171176; c=relaxed/simple;
+	bh=j3Ot/IyazXb8aifsPqkGgRMobmYq0OZQJ/U3tJeKFsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lbqHGjwwt+CSEFUVcRdNLpiSLww3kO3H+SR4EVhypqkUdjK4JA/u/PGPPykCxHetEg1fe6N23cyz9grxYOSm1Bg3hjPzWwVkO3vWlFWGWp7ehD7q4Z38z7uGQRJChZ2ygYmq8mAdcqJHBpo40HJhhN4q6cD/dFlUqh/MHQs3ruE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=V+mV4j4i; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=c6FK8kE2E3qY4r3/M503lbKRVuqOuZQLe5oE7UqdJHg=; b=V+mV4j4inbuhAz6AIWRBNs3IQi
+	NOZlDUdJ4zXWr1Ml995bvReYQczAhXUaZixVikHFfF9GMKnM/xQuazWx3+DtIV2MjnBM0/P03+NWY
+	6aRqHq4BPcMEkSXNYwCAZtw1KVS35tu/FVWMSKmbsPG3tu4HKOZ7hjgDUoZ2/TAL54cc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s4gMu-00Ewpn-6b; Wed, 08 May 2024 14:25:56 +0200
+Date: Wed, 8 May 2024 14:25:56 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Sky Huang <SkyLake.Huang@mediatek.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Qingfang Deng <dqfext@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Steven Liu <Steven.Liu@mediatek.com>
+Subject: Re: [PATCH 2/3] net: phy: mediatek: Add mtk phy lib for token ring
+ access & LED/other manipulations
+Message-ID: <a005409e-255e-4633-a58c-6c29e6708b34@lunn.ch>
+References: <20240425023325.15586-1-SkyLake.Huang@mediatek.com>
+ <20240425023325.15586-3-SkyLake.Huang@mediatek.com>
+ <Zjo9SZiGKDUf2Kwx@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zjo9SZiGKDUf2Kwx@makrotopia.org>
 
-From: Kees Cook
-> Sent: 08 May 2024 00:28
->=20
-> Over the last decade or so, our work hardening against weaknesses
-> in various kernel APIs and eliminating the ambiguities in C language
-> semantics have traditionally been somewhat off in one corner or another
-> of the Linux codebase. This topic is going to be much different as
-> it is ultimately about the C type system, which is rather front and
-> center. So, hold on to your hats while I try to explain what's desired
-> here. Please try to reserve judgement until the end; as we've explored
-> the topic we've found a lot of nuances, which I've tried to touch on
-> below. I'm hoping folks can have an open mind about all this and not
-> jump to any conclusions without first hearing me out. :)
->=20
->=20
-> Problem to Solve
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> The Linux kernel has consistently suffered from unexpected arithmetic
-> overflow bugs. These lead to any number of exploitable conditions[0].
-> Our continuing efforts to improve things (refcount_t, alloc_size(),
-> etc) have helped in some specific areas, but on the whole, we've had a
-> relatively unchanged count of serious arithmetic overflow flaws over the
-> life of the project[1]. This is not tolerable, and we should, all of us,
-> make the effort needed to put an end to it in a systematic way.
+On Tue, May 07, 2024 at 03:40:09PM +0100, Daniel Golle wrote:
+> > +/* Registers on MDIO_MMD_VEND2 */
+> > +#define MTK_PHY_LED0_ON_CTRL			0x24
+> > +#define MTK_PHY_LED1_ON_CTRL			0x26
+> > +#define   MTK_PHY_LED_ON_MASK			GENMASK(6, 0)
+> 
+> Shouldn't this be
+> GENMASK(6, 0) | BIT(7)
+> 
+> to include the MTK_PHY_LED_ON_LINK2500 bit as well?
+> 
+> I also noticed that this bit is the only difference between the LED
+> controller of the internal 2.5G PHY in MT7988 and the Airoha EN8811H
+> (driver air_en8811h.c, present in net-next). The EN8811H seems to use
+> BIT(8) for LED_ON_LINK2500.
+> 
+> Could you create this helper library in a way that it would be useful
+> also for the otherwise identical LED controller of the Airoha EN8811H,
+> ie. supporting both variants with LED_ON_LINK2500 at BIT(7) as well as
+> BIT(8) would be worth it imho as all the rest could be shared.
 
-Is it April 1?
+Please trim the email when replying to just what is relevant. If i
+need to page down lots of time to find a comment it is possible i will
+skip write passed a comment...
 
-Have you estimated the performance cost of checking the result of
-all integer arithmetic.
-
-If you have a cpu with 'signed/unsigned add(etc) with trap on overflow'
-instructions then maybe you could use them to panic the kernel.
-But otherwise you'll need a conditional branch after pretty much
-every arithmetic instruction.
-As well as the code bloat there is likely to be a 50% chance they
-are mis-predicted slowing things down a lot more.
-IIRC at least some x86 cpu do not default to static prediction (eg
-backwards taken forwards not) but always use data from the branch
-prediction logic - so the first time a branch is seen it is predicted
-randomly.
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+     Andrew
 
