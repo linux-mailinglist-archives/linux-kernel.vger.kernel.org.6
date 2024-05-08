@@ -1,197 +1,235 @@
-Return-Path: <linux-kernel+bounces-172784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-172785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BAA78BF6C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:09:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CDC8BF6C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 09:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EBDFB21AC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0689B2844B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 May 2024 07:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F1823746;
-	Wed,  8 May 2024 07:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA562561D;
+	Wed,  8 May 2024 07:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jOOXn98x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="ZAyKmc+N"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A4D168DC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 May 2024 07:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2C115E86;
+	Wed,  8 May 2024 07:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715152139; cv=none; b=VfXMDqwFhHYvIImp1F86fGb99nFgLMo0TdzwMZrsYZpH2DHIZ5KuNLTT5hRsJRrgwXwp0+EnfLsILjrRYl7GbqjDQMxFC3yXuIC1EYpL55Oy4t8Hct8sBaUdq0i/sjTrP4oaH2tAPHuuEqlJLhchAgiz1QBTsjL/hSj2TbHxO1U=
+	t=1715152190; cv=none; b=WiPtpVHcLKxpjLUm5N2hFGuF1TqUk+FUKWTNqRxt1raiPpX0MOj6Rm2FB/QToqPvvebS8KuAlGRKtnEYdOEkbA0xkNwQWH6LmxaXu/YUhqoZVUpns3H/Sq37v8yKoA4jVE+zQ8y1AuNrpf7QHKM/2dX3nI5SUdMTMKX4Qbt7ltA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715152139; c=relaxed/simple;
-	bh=hfWMV0ViYD8OjtyW0AUOBKwG0gP3LBiObofuANNAyHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t31dDHRv1Yi6YkJhxmEEOekOyyvnQi4+P0IJ9DMZ6SXeWmfrrDW9h3HR5u+ZpWUxlXrk3l3uid+tGPRSP6R7S+5l07+mDW84ndY7tEBVGjeWSDnJzwWZNxPoUGqDFcp2uuN6bI4KrUdVVLZcrIxoCPbQmmeCQSTp/gUmtm4OqQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jOOXn98x; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715152136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=OXKliv38RKyk33UIE1OloI2gQJb7d5lm3TUylexLlhU=;
-	b=jOOXn98xrfideuqNMaiMnMK/GGHMDgv5Cp4TpKyr2DzHxdVd8bL8Z68x94cUgKIeM/0Vda
-	5JE9obgW0o8vNWaqXajNuePxiFbL9ZpHFL63Dp2ncm1Bwbov+H2ceJwotIxvknYjBrCMmq
-	MgN3L/yIFppIXi3i2qSSrdPkZkkrMGY=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-338-RM--cWcqP1C7nEyAr3CEyA-1; Wed, 08 May 2024 03:08:55 -0400
-X-MC-Unique: RM--cWcqP1C7nEyAr3CEyA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34d7a7585d7so2968599f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 00:08:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715152134; x=1715756934;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OXKliv38RKyk33UIE1OloI2gQJb7d5lm3TUylexLlhU=;
-        b=ROvubZxSpLO2EC/zgROxQvVCBbkTj+JXeSNGZgDujWxziHSPk7QlTiZtnwgee0Sc78
-         Gn/LKwBbQh87BB+Q54kIOuWb1Tm/QkXfhZ87l0gDB4tHoaojw58OuSrvAGfSge0ZCdbg
-         enHYw+iH9ASJ1SEhM2nBWKJjSDUwfTuMHsD+W1Ao7/YFstZRV6m6/DQMrzG6FmgJtGi3
-         4uQRUK1gxgvyPRmiEMR1e7+omVX8tdC9wR4CiM5McD/KhXEh8mXjEs9TZacyBnf84s0z
-         NH982fTICpLc/hYU1eORHYrqQv5voIE9MEgI9Jzk3dbDWXngJoPhK1xZ1j/Yn5R0rTkY
-         ZW5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJipYnQW/zTaHcADLOzoDdt22/xdv3VWEAvAu7U6V4IQcCGVoaIW0mC6BR7qquQaHy5dADoh1uLx629Ao99V10WHi++0pzjbLSQyeb
-X-Gm-Message-State: AOJu0YwOLvoCEcKq7ajny7guUDLj8soYcv02bULayOTEx8V1N+mgf+ky
-	kRiF+Vu2Fk8P6VoNdwOYuqqTkrrNF3p39FGD1D1mvKalH6p35Liq9/4D0OVGqmrE+bwgGf9uKcl
-	KEeuTmBVCYpIOHRkxfT/p/lgM/dd8mdZEhjs+nV1kdsx/gMhM51bjw0kJCESm1w==
-X-Received: by 2002:a5d:4904:0:b0:346:92d2:a496 with SMTP id ffacd0b85a97d-34fca42eb91mr1339552f8f.29.1715152133613;
-        Wed, 08 May 2024 00:08:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEkQfbqBKr1MxjDAN0f7SWjWAq181oVgHKdyz6l1NGCIZ4y6Y7yr8wG9pNDYxjQNgldNRWNHg==
-X-Received: by 2002:a5d:4904:0:b0:346:92d2:a496 with SMTP id ffacd0b85a97d-34fca42eb91mr1339526f8f.29.1715152133097;
-        Wed, 08 May 2024 00:08:53 -0700 (PDT)
-Received: from [192.168.3.108] (p5b0c6bc3.dip0.t-ipconnect.de. [91.12.107.195])
-        by smtp.gmail.com with ESMTPSA id v23-20020a5d5917000000b00346ceb9e060sm14586294wrd.103.2024.05.08.00.08.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 00:08:52 -0700 (PDT)
-Message-ID: <cb458b62-e27d-47d6-8efd-bacdb9da7530@redhat.com>
-Date: Wed, 8 May 2024 09:08:51 +0200
+	s=arc-20240116; t=1715152190; c=relaxed/simple;
+	bh=4I3/b/RWdKDsqAWaFoI38koUjVEP35TxOAyx2gUrEbA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IZbYw2IYFJiYiGxlFBe8q75d+kG0k+dO65FaW2raoR24bEk4kks70FBMOXHjtGGVztHw+sArfLT3RhIrF/8vQ84XBxzjhLtm1Yln6yeoz/nOubi1uuOteOaOpVZJ3TU3suQ/X2r+OJWOp0iWP0Q1dwyniTQVlWbmKf/lmYMLrD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=ZAyKmc+N; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4485RT5r001818;
+	Wed, 8 May 2024 00:09:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type; s=
+	pfpt0220; bh=Z43sw7wJKj+AEUjOjRBr3+5NfAhSnoJw42gJbDaeRzs=; b=ZAy
+	Kmc+NQhqIRY3EuATqwa85y7ArWFLigIe6uTlxolCC4/JHrL6ZyTsLHOfSd0oLNsw
+	HoPvR5ybQo5rmuh0emLABqCsaNoqWixVh7zZ+G+63bvCc5ZQnv/Q9c9yWM2hVpzy
+	Zo84rnm/3dffBCVfxTlyQEjerQiAP3gHFNjYW4I0dBIOczH6u9RbdmdjlFZwEvU9
+	Z7xB1wRpetLvOaqmK9LngumPZ7Ocdo3dJkelvnbLZmi3tmh3crmOmae30o8d5L0c
+	sQJ9CNQTDfiiqTBESkDdnMvzzUx0jScNGsEpcvnKfImCwwXtfzqDJy0MA0KULwDy
+	ohBNCWgsn5jes1f6w5Q==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3xysfmjabg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 00:09:40 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 8 May 2024 00:09:39 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 8 May 2024 00:09:39 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id 8378D5B6942;
+	Wed,  8 May 2024 00:09:36 -0700 (PDT)
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <sbhatta@marvell.com>, <gakula@marvell.com>,
+        <sgoutham@marvell.com>, <naveenm@marvell.com>
+Subject: [net-next Patch] octeontx2-pf: Reuse Transmit queue/Send queue index of HTB class
+Date: Wed, 8 May 2024 12:39:35 +0530
+Message-ID: <20240508070935.11501-1-hkelam@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] mm: shmem: add multi-size THP sysfs interface for
- anonymous shmem
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, ioworker0@gmail.com, wangkefeng.wang@huawei.com,
- ying.huang@intel.com, 21cnbao@gmail.com, shy828301@gmail.com,
- ziy@nvidia.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <6b4afed1ef26dbd08ae9ec58449b329564dcef3e.1714978902.git.baolin.wang@linux.alibaba.com>
- <30329a82-45b9-4e78-8c48-bd56af113786@arm.com>
- <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <0b3735bc-2ad7-44f8-808b-37fc90d57199@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Ao6lBRG0M2fGNjaTUJZ7AYl2fbuGofun
+X-Proofpoint-ORIG-GUID: Ao6lBRG0M2fGNjaTUJZ7AYl2fbuGofun
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_02,2024-05-08_01,2023-05-22_02
 
-On 08.05.24 06:45, Baolin Wang wrote:
-> 
-> 
-> On 2024/5/7 18:52, Ryan Roberts wrote:
->> On 06/05/2024 09:46, Baolin Wang wrote:
->>> To support the use of mTHP with anonymous shmem, add a new sysfs interface
->>> 'shmem_enabled' in the '/sys/kernel/mm/transparent_hugepage/hugepages-kB/'
->>> directory for each mTHP to control whether shmem is enabled for that mTHP,
->>> with a value similar to the top level 'shmem_enabled', which can be set to:
->>> "always", "inherit (to inherit the top level setting)", "within_size", "advise",
->>> "never", "deny", "force". These values follow the same semantics as the top
->>> level, except the 'deny' is equivalent to 'never', and 'force' is equivalent
->>> to 'always' to keep compatibility.
->>
->> We decided at [1] to not allow 'force' for non-PMD-sizes.
->>
->> [1]
->> https://lore.kernel.org/linux-mm/533f37e9-81bf-4fa2-9b72-12cdcb1edb3f@redhat.com/
->>
->> However, thinking about this a bit more, I wonder if the decision we made to
->> allow all hugepages-xxkB/enabled controls to take "inherit" was the wrong one.
->> Perhaps we should have only allowed the PMD-sized enable=inherit (this is just
->> for legacy back compat after all, I don't think there is any use case where
->> changing multiple mTHP size controls atomically is actually useful). Applying
-> 
-> Agree. This is also our usage of 'inherit'.
-> 
->> that pattern here, it means the top level can always take "force" without any
->> weird error checking. And we would allow "force" on the PMD-sized control but
->> not on the others - again this is easy to error check.
->>
->> Does this pattern make more sense? If so, is it too late to change
->> hugepages-xxkB/enabled interface?
-> 
-> IMO, this sounds reasonable to me. Let's see what others think, David?
+Real number of Transmit queues are incremented when user enables HTB
+class and vice versa. Depending on SKB priority driver returns transmit
+queue (Txq). Transmit queues and Send queues are one-to-one mapped.
 
-Likely too late and we should try not to diverge too much from "enabled" 
-for "shmem_enabled".
+In few scenarios, Driver is returning transmit queue value which is
+greater than real number of transmit queue and Stack detects this as
+error and overwrites transmit queue value.
 
-Having that said, to me it's much cleaner to just have "inherit" for all 
-sizes and disallow invalid configurations as discussed.
+For example
+user has added two classes and real number of queues are incremented
+accordingly
+- tc class add dev eth1 parent 1: classid 1:1 htb
+      rate 100Mbit ceil 100Mbit prio 1 quantum 1024
+- tc class add dev eth1 parent 1: classid 1:2 htb
+      rate 100Mbit ceil 200Mbit prio 7 quantum 1024
 
-Error checking cannot be too hard unless I am missing something important :)
+now if user deletes the class with id 1:1, driver decrements the real
+number of queues
+- tc class del dev eth1 classid 1:1
 
+But for the class with id 1:2, driver is returning transmit queue
+value which is higher than real number of transmit queue leading
+to below error
+
+eth1 selects TX queue x, but real number of TX queues is x
+
+This patch solves the problem by assigning deleted class transmit
+queue/send queue to active class.
+
+Signed-off-by: Hariprasad Kelam <hkelam@marvell.com>
+---
+ .../net/ethernet/marvell/octeontx2/nic/qos.c  | 80 ++++++++++++++++++-
+ 1 file changed, 79 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+index 1723e9912ae0..070711df612e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/qos.c
+@@ -545,6 +545,20 @@ otx2_qos_sw_create_leaf_node(struct otx2_nic *pfvf,
+ 	return node;
+ }
+ 
++static struct otx2_qos_node
++*otx2_sw_node_find_by_qid(struct otx2_nic *pfvf, u16 qid)
++{
++	struct otx2_qos_node *node = NULL;
++	int bkt;
++
++	hash_for_each(pfvf->qos.qos_hlist, bkt, node, hlist) {
++		if (node->qid == qid)
++			break;
++	}
++
++	return node;
++}
++
+ static struct otx2_qos_node *
+ otx2_sw_node_find(struct otx2_nic *pfvf, u32 classid)
+ {
+@@ -917,6 +931,7 @@ static void otx2_qos_enadis_sq(struct otx2_nic *pfvf,
+ 		otx2_qos_disable_sq(pfvf, qid);
+ 
+ 	pfvf->qos.qid_to_sqmap[qid] = node->schq;
++	otx2_qos_txschq_config(pfvf, node);
+ 	otx2_qos_enable_sq(pfvf, qid);
+ }
+ 
+@@ -1475,13 +1490,45 @@ static int otx2_qos_leaf_to_inner(struct otx2_nic *pfvf, u16 classid,
+ 	return ret;
+ }
+ 
++static int otx2_qos_cur_leaf_nodes(struct otx2_nic *pfvf)
++{
++	int last = find_last_bit(pfvf->qos.qos_sq_bmap, pfvf->hw.tc_tx_queues);
++
++	return last ==  pfvf->hw.tc_tx_queues ? 0 : last + 1;
++}
++
++static void otx2_reset_qdisc(struct net_device *dev, u16 qid)
++{
++	struct netdev_queue *dev_queue = netdev_get_tx_queue(dev, qid);
++	struct Qdisc *qdisc = rtnl_dereference(dev_queue->qdisc_sleeping);
++
++	if (!qdisc)
++		return;
++
++	spin_lock_bh(qdisc_lock(qdisc));
++	qdisc_reset(qdisc);
++	spin_unlock_bh(qdisc_lock(qdisc));
++}
++
++static void otx2_cfg_smq(struct otx2_nic *pfvf, struct otx2_qos_node *node,
++			 int qid)
++{
++	struct otx2_qos_node *tmp;
++
++	list_for_each_entry(tmp, &node->child_schq_list, list)
++		if (tmp->level == NIX_TXSCH_LVL_MDQ) {
++			otx2_qos_txschq_config(pfvf, tmp);
++			pfvf->qos.qid_to_sqmap[qid] = tmp->schq;
++		}
++}
++
+ static int otx2_qos_leaf_del(struct otx2_nic *pfvf, u16 *classid,
+ 			     struct netlink_ext_ack *extack)
+ {
+ 	struct otx2_qos_node *node, *parent;
+ 	int dwrr_del_node = false;
++	u16 qid, moved_qid;
+ 	u64 prio;
+-	u16 qid;
+ 
+ 	netdev_dbg(pfvf->netdev, "TC_HTB_LEAF_DEL classid %04x\n", *classid);
+ 
+@@ -1517,6 +1564,37 @@ static int otx2_qos_leaf_del(struct otx2_nic *pfvf, u16 *classid,
+ 	if (!parent->child_static_cnt)
+ 		parent->max_static_prio = 0;
+ 
++	moved_qid = otx2_qos_cur_leaf_nodes(pfvf);
++
++	/* last node just deleted */
++	if (moved_qid == 0 || moved_qid == qid)
++		return 0;
++
++	moved_qid--;
++
++	node = otx2_sw_node_find_by_qid(pfvf, moved_qid);
++	if (!node)
++		return 0;
++
++	/* stop traffic to the old queue and disable
++	 * SQ associated with it
++	 */
++	node->qid =  OTX2_QOS_QID_INNER;
++	__clear_bit(moved_qid, pfvf->qos.qos_sq_bmap);
++	otx2_qos_disable_sq(pfvf, moved_qid);
++
++	otx2_reset_qdisc(pfvf->netdev, pfvf->hw.tx_queues + moved_qid);
++
++	/* enable SQ associated with qid and
++	 * update the node
++	 */
++	otx2_cfg_smq(pfvf, node, qid);
++
++	otx2_qos_enable_sq(pfvf, qid);
++	__set_bit(qid, pfvf->qos.qos_sq_bmap);
++	node->qid = qid;
++
++	*classid = node->classid;
+ 	return 0;
+ }
+ 
 -- 
-Cheers,
-
-David / dhildenb
+2.17.1
 
 
