@@ -1,114 +1,146 @@
-Return-Path: <linux-kernel+bounces-174757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA9F8C148F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:14:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD03F8C148E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6241C219A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:14:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39844B2139E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD87770F0;
-	Thu,  9 May 2024 18:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98314770FC;
+	Thu,  9 May 2024 18:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kr3JPGOi"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aal0Vrql"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61A7770F3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF6A2556F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715278472; cv=none; b=Ln0cuhctPbMOtEjKZE7KoEPJUb4bhPXxZgF23yYW2MZUsZg6PyaDdpjQxfr6lN9Tuna0JniKoOr4hOJScAthqlzspt4wQ0xyii+4AgFqsPZskBPe0U7CeiM6MoQnajeoKmfdUm8HDjx8Rs3ZGe6V9ShskFJlf03MzZ0Zwg1cifE=
+	t=1715278460; cv=none; b=bqihNAPyF/tPFPhuospxVuKJeaCPz/WdllacPiZtR/PRePrQFkkFe4XqVA9U5eeGKjMWHXPMN3UFki+V0gPlMTOdY0MLjLdara+QUeZBUznV7zmobKz0cHuAMHsFTslOqgAtbAf5Zzs6+WeOiiTA4Ucpyw3RrioslN+kyvG4jH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715278472; c=relaxed/simple;
-	bh=YkVHyBMrNVy/mhlt5buLaXZgmPiU5YnVS2XKhBxY72k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AVxur4umSzh8duvHRQ0Vw6leepuTUBlw6k8DlIfVhhsPzcpOVOdJ3+qDkDicq/svCyhVmry+qIgp19Pd4IAyD7UyqRFo8x1CzDWzQldfiWV+Kt0xVFRNx+nj8jLcJNFZSykQnIv/7YQFyavU32Fz+NyShVjEoEjXAyZCMqls7lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kr3JPGOi; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41b2119da94so8209095e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:14:30 -0700 (PDT)
+	s=arc-20240116; t=1715278460; c=relaxed/simple;
+	bh=u4dvkwzWHVULogOsMWvSG9SUp30Sev0URzMg9QiiN+s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CKTApKdoY8EtdnOVLoDNgGuDTjuYpbn8J/hBJUra39leqejnWxgdQnD0B55T4dDxRvWONzhUKmn3PfRjRrfLhwnbUueXJWd7duxW8NY664okPBKY6Rrcp+TCjqtfsd/6aXpee/Q+to8qzdRAaBczaUOW2LoNGJzOd0AGG6kWEYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aal0Vrql; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-34d7d04808bso819685f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:14:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715278469; x=1715883269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YkVHyBMrNVy/mhlt5buLaXZgmPiU5YnVS2XKhBxY72k=;
-        b=kr3JPGOiZtreb+q5PZSImrMaWUe9socviXLAWzEA1JL0qf8mZMfluXMSLdUz6NsHs8
-         DeZ818hm86s64cXjh1aW12CEa6pOwV27coRnI9YPMMn5Qf9fKAGq0QmNvTPs9VtLGxbE
-         TNsI21bXF0jo3sTJHgxk3jAIxiJ5rKcMTHc79p1ThwkmKg+DLNcCfrG9/yxapFOjLNH0
-         aKOMRAAGCMsY11CgU9sNEiOme3ZQhusElXd6+HRFCK2CvZofn5JSJ8s7cEKbtRyUKD4i
-         V6Gg4SfuJFjZa3AUIbEWgIMk6cftkodznRGPLAK/NvGlu9VjM9kE6F5tG/v1NTiZ2rua
-         82gQ==
+        d=gmail.com; s=20230601; t=1715278457; x=1715883257; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGgT1hFMgp8SCEUMu0ofv/nKd4SmFdvFXao6FIoI+VY=;
+        b=Aal0VrqlQkrwJmQwSO0wScYb0g6azd5/Bnd0tockjN4UmkziOxGOB6m+agau7cz+9K
+         HG1UGa1P0l7KOhgTRwcSRDli5HvzfWVDlaH0DhFiPBwBHVmcy5r/kpWoedn+8Nfmv4NJ
+         Pe4gT5QxrAxfVVE6EMYoXJfbZIjYwyu8plD4GFjDoUJH5yQ8NcFO3N56RH3vy7/LZzXe
+         Xt6V9B/VB55MNiraz/U2WicOCEUBrlk94BZRXrtx97NPAr6F+WkYMNlwWF6w4fCa+gdx
+         dGydYS+vL+bxFN9FVcZyA/xBtjr0oxsyb68l3/S+oP7oWn/thSdpxleMnIXzg48HCinO
+         EeRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715278469; x=1715883269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YkVHyBMrNVy/mhlt5buLaXZgmPiU5YnVS2XKhBxY72k=;
-        b=SkozeV+yEiO0VMQY4pxG3Y2LyyMnvO/rNyxaLceRzj6RABgF/X8Qu9UqEO86a78aRd
-         mIunTBuQBHH0oDVLoyhzrqmo/exPQfFTE/b0aHASX9ewqdcY8soU4vwOhxhXsy8PwRWm
-         f43GQgSB9gHa1WuLpoWS0pWSFMp0Aopf1bmD3WDcz8EtmDQyRyT2HspXCvFDz3UQXCBT
-         LCTZsEx3TdtiHgITChsMiD18LE833h3LZDtQwmdma5xLz4o5L7oUy01Iy1BJw5HomO/Z
-         4TWmrlrL/Rcc876sinlgM/ydp2J0pL7uAtReSnX+tbXq2xesEey8+dS/mRPrYn6eqs0n
-         Y8pA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKiMbOXjkuWx37KHcpz+65xX9NBFvJ59BR4mRmJawoIr/tfcIKZKe8JxPl1OdCUgC+pJr9yD5VJez/qP/OycbmlshADz1q2YMrXqKB
-X-Gm-Message-State: AOJu0YyE0GIo/1mwrc1uW93+9nLJSgdxgOlVWtTJsPUNUpd6OVyVx3hs
-	0F+Z0vUp5u0cjaheTkI8Xrdj+qO5YYCHWJi7/s46Ng0tvejHgP7FTUMsCuZXWjlHDjVIkHnHFyV
-	4nhKTdPG0BqklTW9HHCKf6dXjnha2jZzeLDOHkI/idDjOrIk6OA==
-X-Google-Smtp-Source: AGHT+IFEBzEdjhOEiKmfPO2uLKnUu7B6VTjtb2JD+mFLsKtCP1/91pTQm4Kr4v+etrsn+JFIt5PnkJ+q3Hjl87Bdr9Y=
-X-Received: by 2002:adf:e80b:0:b0:34c:77bc:6c51 with SMTP id
- ffacd0b85a97d-3504a61c6a0mr249933f8f.1.1715278469112; Thu, 09 May 2024
- 11:14:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715278457; x=1715883257;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZGgT1hFMgp8SCEUMu0ofv/nKd4SmFdvFXao6FIoI+VY=;
+        b=pUdo6DiyNzDQT38i3rAO6V/VIzwrYi0PFYS1iU2ngt1i7/3PuC1I0jThlaeN+72rEj
+         RGWxSSgxCMaSH8nbnVFlgzBpoL2mqbsHZqMjaTVhooKxUAJOIm7um62kl9puy5cAsfAZ
+         IfhMZM8maOiR7V09yOSolQLU2khECEUL7TxVqj+9zwtyHERPYcXMjbwUETfLuwCbfWOE
+         9oz9ajaGmcC+FueN+PlLZWK/aRaVwAZM7p3lbXaf4rqxJ0LXHVpAm383gj95a5mbHxVX
+         K3FBuHyWfPJeyz00Iad+nn8h+SiFK7FDiMI8ebBGvb9MxUmVuTVRQh6RiglEzyH34F6r
+         OmmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsVVdtwi17cm9iL1UqqaEH/GRo9GXu3zXRT9kiSEc5InjLwQAL1KhNPmPwodrWb2iZsU5AvQ0d7Jz0rJD3Kji5OexoB2TdTubbp5Em
+X-Gm-Message-State: AOJu0Yw5gHTwZDUn1pb4vEhX3bJyNBzNnPheNGRty+xxc/T+PsLHLiF0
+	fngGnB2g7pcZyn/W9mbfMl0lSCZQIAhl4y6QUnP0JGwg9gMVq4G4
+X-Google-Smtp-Source: AGHT+IFhoA/vMIw+2oaqHOhFzdJJvOAysP+jydkChqoSdF7SyzB4dG4uXSezRwQdw7c6vf12sQ6TOg==
+X-Received: by 2002:adf:e785:0:b0:34a:7a97:caa1 with SMTP id ffacd0b85a97d-3504a61c7bfmr373895f8f.2.1715278457363;
+        Thu, 09 May 2024 11:14:17 -0700 (PDT)
+Received: from [192.168.1.130] (51B6DCE0.unconfigured.pool.telekom.hu. [81.182.220.224])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bd40sm2350566f8f.4.2024.05.09.11.14.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 11:14:16 -0700 (PDT)
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+Date: Thu, 09 May 2024 20:14:07 +0200
+Subject: [PATCH] drm/panel: jdi-fhd-r63452: move DCS off commands to
+ disable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509100148.22384-1-osalvador@suse.de> <ZjzO4xH97Lu2UgEu@x1n>
-In-Reply-To: <ZjzO4xH97Lu2UgEu@x1n>
-From: Axel Rasmussen <axelrasmussen@google.com>
-Date: Thu, 9 May 2024 11:13:50 -0700
-Message-ID: <CAJHvVcjP6PS-m4dTTTF2MhDiaZ_U9WPfWO=JZZwGpHaA8o=qtA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Minor fixups for hugetlb fault path
-To: Peter Xu <peterx@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Muchun Song <muchun.song@linux.dev>, Liu Shixin <liushixin2@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240509-jdi-use-disable-v1-1-5c175b2ea1ee@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAG4SPWYC/x3MwQpAQBRG4VfRXbs1Jsp4FVkw8+NKaG6k5N1Nl
+ t/inIcUUaDUZA9FXKKybwlFnpGf+20CS0gma2xpKuN4CcKngoNoP6xgwDrj6uB8XVCqjohR7v/
+ Ydu/7AaqscXRhAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <trabarni@gmail.com>
+X-Mailer: b4 0.13.0
 
-On Thu, May 9, 2024 at 6:26=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
->
-> On Thu, May 09, 2024 at 12:01:46PM +0200, Oscar Salvador wrote:
-> > Hi,
-> >
-> > this series contains a couple of fixups for hugetlb_fault and hugetlb_w=
-p
-> > respectively, where a VM_FAULT_SET_HINDEX call was missing.
-> >
-> > I did not bother with a Fixes tag because the missing piece here is tha=
-t
-> > we will not report to userspace the right extension of the faulty area
-> > by adjusting struct kernel_siginfo.si_addr_lsb, but I do not consider t=
-hat
-> > to be a big issue because I assume that userspace already knows the siz=
-e
-> > of the mapping anyway.
->
-> Acked-by: Peter Xu <peterx@redhat.com>
+Move DCS off commands from .unprepare to .disable so that they
+actually reach the DSI host.
 
-Looks correct to me as well. Thanks!
+Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
+---
+ drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Acked-by: Axel Rasmussen <axelrasmussen@google.com>
+diff --git a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
+index 483dc88d16d8..f7222974d6ed 100644
+--- a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
++++ b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
+@@ -169,6 +169,15 @@ static int jdi_fhd_r63452_prepare(struct drm_panel *panel)
+ }
+ 
+ static int jdi_fhd_r63452_unprepare(struct drm_panel *panel)
++{
++	struct jdi_fhd_r63452 *ctx = to_jdi_fhd_r63452(panel);
++
++	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++
++	return 0;
++}
++
++static int jdi_fhd_r63452_disable(struct drm_panel *panel)
+ {
+ 	struct jdi_fhd_r63452 *ctx = to_jdi_fhd_r63452(panel);
+ 	struct device *dev = &ctx->dsi->dev;
+@@ -178,8 +187,6 @@ static int jdi_fhd_r63452_unprepare(struct drm_panel *panel)
+ 	if (ret < 0)
+ 		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
+ 
+-	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+-
+ 	return 0;
+ }
+ 
+@@ -219,6 +226,7 @@ static int jdi_fhd_r63452_get_modes(struct drm_panel *panel,
+ static const struct drm_panel_funcs jdi_fhd_r63452_panel_funcs = {
+ 	.prepare = jdi_fhd_r63452_prepare,
+ 	.unprepare = jdi_fhd_r63452_unprepare,
++	.disable = jdi_fhd_r63452_disable,
+ 	.get_modes = jdi_fhd_r63452_get_modes,
+ };
+ 
 
->
-> --
-> Peter Xu
->
+---
+base-commit: 704ba27ac55579704ba1289392448b0c66b56258
+change-id: 20240509-jdi-use-disable-ee29098d9c81
+
+Best regards,
+-- 
+Barnabás Czémán <trabarni@gmail.com>
+
 
