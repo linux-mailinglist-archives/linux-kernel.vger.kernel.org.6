@@ -1,78 +1,171 @@
-Return-Path: <linux-kernel+bounces-174665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307768C126E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:08:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFE0C8C1271
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8877282DBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:08:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0401C21774
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8282D16F84A;
-	Thu,  9 May 2024 16:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC2F16F84B;
+	Thu,  9 May 2024 16:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bXIOy4dB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cab7YjQw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VdRal7e0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cab7YjQw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VdRal7e0"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C411C383BD;
-	Thu,  9 May 2024 16:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E0316F295;
+	Thu,  9 May 2024 16:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715270911; cv=none; b=T+05vbZ+to9jhnOJAcnamSyuu3fsx80kVi56XmrSEXyAK6q7dYU4tpQ7QE8srE4sLrCJ1ZBvTpULGRJBJsQrTpKRAmwZfouQHhgMCIFmDSYBFg10Ea/wvB6buQ8IAuW9zl38cmrVjiIYw75NZ6GT/SbBDeBEHDcnwnmUzIOoiI8=
+	t=1715271051; cv=none; b=B+qkzKxglXoA1hL839FoD91aGfuALm9gPVi9/cWSneJyQLoq+8ghILvo+y6qU5gW2EUQEexyWkfDPco1JfEadQll7RB8OAmPwQo7ZBva8tAu+2ndm88zldPW0rJ8XqGmm4I+TdO3rNx4+j2Uh0R5PvZigahVD5gJfQXlY0xXIXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715270911; c=relaxed/simple;
-	bh=MYR+CFIkGzihpDWth62ZkNAsHCMsoZA6XvVass6Oiqg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MezW4iFpdZnujGcs9Qu8UBOrlUqmvZE/06MpGoQNESHsXXPQTFu743lKfdT0/xVkn2J22wEUqP18BLbFww7c2j7mcKUAnWsjDDcP5Lc9Yu/ZMexyrUT0dbDH6SakOkQ3ecJwhLTdMN/a/8+aBImvxjCFY4S8k3CbSfOKormn2U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bXIOy4dB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 452E6C116B1;
-	Thu,  9 May 2024 16:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715270911;
-	bh=MYR+CFIkGzihpDWth62ZkNAsHCMsoZA6XvVass6Oiqg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=bXIOy4dB/Bq8t+bicf5ZobqC1cejuvCpiNj9MFOIvRIUKBkcC6tgih4b3pLjGp4lJ
-	 YzBmCb7spm6TD68uFIHgtagsxf98oAKSQ36WLLf34T4wZp9u+KFtniyWQFAxxuLELM
-	 hzK3kQ3WfzqWlFCAwf27gpgQhJXzWznq4xsbatPozOr6EeWakpzRev1CHHhYWN/gyG
-	 ekdF5DuKYN3NHMqLWGk4sAM8uPaJ2cg/49RyRTgALmWLTp0yW56MA1NH0qH/+ERf/G
-	 dthAtUXdlGZUlKsBJ9ZpW0FAIG9rEMNBQUsfB1dosbXygqhnw8PKDJpMQCFwyn8o2y
-	 +XQD1g27mWxpQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3CA3CC433F2;
-	Thu,  9 May 2024 16:08:31 +0000 (UTC)
-Subject: Re: [GIT PULL] Networking for v6.9-rc8
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240509115411.30032-1-pabeni@redhat.com>
-References: <20240509115411.30032-1-pabeni@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240509115411.30032-1-pabeni@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.9-rc8
-X-PR-Tracked-Commit-Id: 6e7ffa180a532b6fe2e22aa6182e02ce988a43aa
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8c3b7565f81e030ef448378acd1b35dabb493e3b
-Message-Id: <171527091124.25065.14713515277010029379.pr-tracker-bot@kernel.org>
-Date: Thu, 09 May 2024 16:08:31 +0000
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1715271051; c=relaxed/simple;
+	bh=qmj559/SpP6HjuomjajSCDse6k9r51/VK4xz7OWMtnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WP2zsV1dX8JNhNbI27qOMNrD63Li5bBjc0cCopOjFv+WpIT+SW4fxtPjYhBJv8kVC5Ew6sMdmDHHwuspiaf2e6ZAQP47O8L8GwoES+h/xnqoYVCrs1V2vXgXZo89vRUIaBbLtfGERmFdNXlk6AHYiRSar18So9TU7YvhAIMaN9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cab7YjQw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VdRal7e0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cab7YjQw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VdRal7e0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 02936388EF;
+	Thu,  9 May 2024 16:10:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715271048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vjg2UcAN5fIPVGTTxX1TLrGuAZO8bmRZuqsaPWE+qB0=;
+	b=cab7YjQw6jp18ynWm/l1AXIjYbsnHA5TQy6HKhq2+hibZMGWqm/wdEpePKXqf6EvpHTnpD
+	6Gxbjs954CyTTIj26NHMYHjI2XaX6ZQyeadcfz+Xfcfkyo74ClN/A+ynAdSuNknO6D9Kxd
+	qPQe1LR4fIFibmUFRDPZWUhCzNbu/Uk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715271048;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vjg2UcAN5fIPVGTTxX1TLrGuAZO8bmRZuqsaPWE+qB0=;
+	b=VdRal7e0Na0Q6iZM7ZxBlM76DmXsvwjZtYBgfuV5dYHM1pxXSISps2S8AjFPyoRi8YG5x6
+	+aZJ9V5kz9SWSUCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715271048; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vjg2UcAN5fIPVGTTxX1TLrGuAZO8bmRZuqsaPWE+qB0=;
+	b=cab7YjQw6jp18ynWm/l1AXIjYbsnHA5TQy6HKhq2+hibZMGWqm/wdEpePKXqf6EvpHTnpD
+	6Gxbjs954CyTTIj26NHMYHjI2XaX6ZQyeadcfz+Xfcfkyo74ClN/A+ynAdSuNknO6D9Kxd
+	qPQe1LR4fIFibmUFRDPZWUhCzNbu/Uk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715271048;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Vjg2UcAN5fIPVGTTxX1TLrGuAZO8bmRZuqsaPWE+qB0=;
+	b=VdRal7e0Na0Q6iZM7ZxBlM76DmXsvwjZtYBgfuV5dYHM1pxXSISps2S8AjFPyoRi8YG5x6
+	+aZJ9V5kz9SWSUCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB64913941;
+	Thu,  9 May 2024 16:10:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 11V0OYf1PGbwHwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 09 May 2024 16:10:47 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9E136A0861; Thu,  9 May 2024 18:10:47 +0200 (CEST)
+Date: Thu, 9 May 2024 18:10:47 +0200
+From: Jan Kara <jack@suse.cz>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v1 1/1] isofs: Use *-y instead of *-objs in Makefile
+Message-ID: <20240509161047.osfiapw5bkezqy6b@quack3>
+References: <20240508152129.1445372-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508152129.1445372-1-andriy.shevchenko@linux.intel.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.com:email]
 
-The pull request you sent on Thu,  9 May 2024 13:54:11 +0200:
+On Wed 08-05-24 18:21:11, Andy Shevchenko wrote:
+> *-objs suffix is reserved rather for (user-space) host programs while
+> usually *-y suffix is used for kernel drivers (although *-objs works
+> for that purpose for now).
+> 
+> Let's correct the old usages of *-objs in Makefiles.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.9-rc8
+Thanks! Added to my tree.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8c3b7565f81e030ef448378acd1b35dabb493e3b
+								Honza
 
-Thank you!
-
+> ---
+> 
+> Note, the original approach is weirdest from the existing.
+> Only a few drivers use this (-objs-y) one most likely by mistake.
+> 
+>  fs/isofs/Makefile | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/isofs/Makefile b/fs/isofs/Makefile
+> index 6498fd2b0f60..b25bc542a22b 100644
+> --- a/fs/isofs/Makefile
+> +++ b/fs/isofs/Makefile
+> @@ -5,7 +5,6 @@
+>  
+>  obj-$(CONFIG_ISO9660_FS) += isofs.o
+>  
+> -isofs-objs-y 			:= namei.o inode.o dir.o util.o rock.o export.o
+> -isofs-objs-$(CONFIG_JOLIET)	+= joliet.o
+> -isofs-objs-$(CONFIG_ZISOFS)	+= compress.o
+> -isofs-objs			:= $(isofs-objs-y)
+> +isofs-y 		:= namei.o inode.o dir.o util.o rock.o export.o
+> +isofs-$(CONFIG_JOLIET)	+= joliet.o
+> +isofs-$(CONFIG_ZISOFS)	+= compress.o
+> -- 
+> 2.43.0.rc1.1336.g36b5255a03ac
+> 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
