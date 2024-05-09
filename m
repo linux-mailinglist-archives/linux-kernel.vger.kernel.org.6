@@ -1,167 +1,138 @@
-Return-Path: <linux-kernel+bounces-174441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492E88C0EBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:14:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342878C0EC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD2928403A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE2C81F22151
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B891311A3;
-	Thu,  9 May 2024 11:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BF2131192;
+	Thu,  9 May 2024 11:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="v9Ofmdlm"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyA2yVOw"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157A2130A72;
-	Thu,  9 May 2024 11:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE2A130E46;
+	Thu,  9 May 2024 11:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715253250; cv=none; b=Ypse72nfYO/QKklNXX+FuwYbvjiKacQPMeOFVvG+0aH9ZFiYewUQEwR4cbC1T5ytkp5fo0Lpi3M1Q15X6FBRyQDOE641dJnKPwjZXab4cIYmeIVxexdQOCDl1SGTCYbMCsGFnq1venQhPV6vccsiUKdBaFIlEB4oUIxZuM5tSJA=
+	t=1715253307; cv=none; b=noawz/jd0zcWpXLtHQXws0uaA8pCu5nQ6dRHrEYcDG/k2t0B2zlqz/Yk6/Tjbd0usF0aQI+4oZvbQteQ/Q/NXBm7qAT1K0XsS+AD4c2oyn+i0OVoT0p5n5DikP2ti8inL0jaaMsGAy6g00r3OMmjEltSuDLdcwSwihW9LTYtqag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715253250; c=relaxed/simple;
-	bh=W7hm6BvkcNcn8eBhdXYzNcbvW4tXXHGzX3RW3gM/XdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BwZRjyis5LYRNy1ny2T3SsbIL1qh8CMohClYPLv13MHUG9qcCTY36pkm7bPFq6h60uNEOGoz+E89zU7THHjK38ycqZyVR2WJVBUKz05V/xLChvQ/yOvepQPzuXhZHypphaOJNBwswlTcoJHU2OwprK2khvzeg2oRzjir0ROPfW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=v9Ofmdlm; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 5F2AC3CE9;
-	Thu,  9 May 2024 13:13:57 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 5F2AC3CE9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1715253237; bh=bRUFy+r/cxbqPhuoLOrnEcwvvLhG2K9hdF85gn+Fljk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=v9OfmdlmOTwxPHKNhAF+5d1mWXXdp9+i2GEPMEvaCVO/inhXtSFt4MZGkEsQROmsK
-	 PhAbaJHPu8YhoMAQeSLc+jfurxrP1hIv1x80L94TBXGYDKXzYn84ObiqDCuhFIjNNE
-	 nPw6FHuQmLWWq/DZadWZ5ndEJ3IEhLO8uDjVv5sU=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Thu,  9 May 2024 13:13:36 +0200 (CEST)
-Message-ID: <28d423b1-49d8-4180-8394-622b1afd9cd9@perex.cz>
-Date: Thu, 9 May 2024 13:13:34 +0200
+	s=arc-20240116; t=1715253307; c=relaxed/simple;
+	bh=vXsFMRaxSZwNwrtFNURLPwY0cD8dWAmv9PX27I1oIPQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dNzF3x0uc3SrO71hm3geg2DDWlbNibll49+Cg4BP0xi34BzhENvI9FeKyCYa5uk3IebB3CqgpeUaKgmdMZH/gWq8RPxvwlnmS93VyO4w8QYlnHvbQvvDTDx0tdA0KbVofzuSdqcYBWT1ioN+i7LCsn6n9MUBcJ7ho6rASMFHYN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyA2yVOw; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-34e0d8b737eso1078793f8f.1;
+        Thu, 09 May 2024 04:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715253304; x=1715858104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJB+OgvYLYogQhbVxq5DLy1Lyjt+NholKOBiVxc0zRI=;
+        b=lyA2yVOwOWzGWUNIoK7J65jieH6XYi3xE7atmFVJj6GTtof3/nJ2gBWfVuQz6AT+aZ
+         Sy/fPJYfExeNRvpAMWxTFby7tqbcw36dCjv2+ZKgvtBO6vexlRv/wzjdeSBJozEmlAWF
+         9LMuOtLGxPQe2OECy0eHmx4pItXdjpXBE4PVF3tq7v2Rl+QKar+RHv++TKXDAB5oHaZ1
+         lY8+8GDG1yhAd5vO6VmxBZySYjD5fzSeLidFW9+c57QU5uR53T7ubnPWWLRDM+oqmVYQ
+         cgKa/U/INlQTznMIoiUJrV5NlYjyXSRIpuovpALUmH+v8V7qaCvWichxNXIPFHM7kDUO
+         nNCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715253304; x=1715858104;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IJB+OgvYLYogQhbVxq5DLy1Lyjt+NholKOBiVxc0zRI=;
+        b=E/3zgIkBcd3slxgwAgHFPSWscZq2rW9+0+w9BQ/PgCTWDMBCLjy7qWM0OZp63YwJkS
+         Ib4w+kMsK5JRQib8hAtfZLTxRlOUi2bB7kv+yt3702/Cr3pN8YamuZtL9isNqrhQ968U
+         2yoQuI7b5kE3eoQ9lujuuFMeNYdTdRHSO/gb7FDJfb1hf3sPSwGBDa+WNS2/uddetqc9
+         CWvmSB+Rnhnfrpf/Sq79LDPQWs8Jk5F4oQo8bhzOGn7gh48wkvKkd+4wQegfZVVA7sUu
+         NtksikkRnZdkotKTcpMxRuMQYWP1XDtfEVVHiK5B3mgpruYTq/Rj/64OpHjLhS8Pg0zs
+         58qA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJyu0BkXlKV83+qLPcSUvVcqze4fqOnl7cYrZebUvuC8fmSZjQw9V2Z2vdC+NKcC3Y3Dqr3Jl6d6AHM69wqxXEtSXvhGbFpgn9x7pYx381UOJ7ASMgbfHN7rutOVbEeaVnCaB02Lun2GOkz2Tn6/4HDFmTNvcxAHAhU2vElQQ0hQQyEHM=
+X-Gm-Message-State: AOJu0YwNE72W2nWgAWedxxd5zSr2uDd/p8ep//re2Dtsdgg3wLF9tMq9
+	31cs3clHBgzIqvis3VHgsmGJN9qqtywnLLO8oYNZWFyFWUKDvaKd
+X-Google-Smtp-Source: AGHT+IHHCRkykSFXuu6ipQb2TuDdXJTI3AAL4s9XQ0bI3eoTF9YXQdmpGXJ2MLVDIqVGbi11gFDoDg==
+X-Received: by 2002:adf:fe8a:0:b0:34c:fd92:3359 with SMTP id ffacd0b85a97d-350185d57e7mr2016967f8f.21.1715253303584;
+        Thu, 09 May 2024 04:15:03 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacfd3sm1426846f8f.84.2024.05.09.04.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 04:15:03 -0700 (PDT)
+Message-ID: <663cb037.5d0a0220.41af4.3328@mx.google.com>
+X-Google-Original-Message-ID: <ZjywNBzF0EwuS4MM@Ansuel-XPS.>
+Date: Thu, 9 May 2024 13:15:00 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: kernel test robot <lkp@intel.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	=?iso-8859-1?Q?=C1lvaro_Fern=E1ndez?= Rojas <noltari@gmail.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Daniel =?iso-8859-1?Q?Gonz=E1lez?= Cabanelas <dgcbueu@gmail.com>,
+	oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 2/5] mips: bmips: rework and cache CBR addr handling
+References: <20240503212139.5811-3-ansuelsmth@gmail.com>
+ <202405090546.iqx9FAqu-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-Content-Language: en-US
-To: Shengjiu Wang <shengjiu.wang@gmail.com>,
- =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>,
- Takashi Iwai <tiwai@suse.de>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
- tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, tiwai@suse.com,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
- <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
- <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
- <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
- <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
- <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
- <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
- <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
- <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
- <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
- <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
- <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
- <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
- <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
-From: Jaroslav Kysela <perex@perex.cz>
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-In-Reply-To: <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202405090546.iqx9FAqu-lkp@intel.com>
 
-On 09. 05. 24 12:44, Shengjiu Wang wrote:
->>> mem2mem is just like the decoder in the compress pipeline. which is
->>> one of the components in the pipeline.
->>
->> I was thinking of loopback with endpoints using compress streams,
->> without physical endpoint, something like:
->>
->> compress playback (to feed data from userspace) -> DSP (processing) ->
->> compress capture (send data back to userspace)
->>
->> Unless I'm missing something, you should be able to process data as fast
->> as you can feed it and consume it in such case.
->>
+On Thu, May 09, 2024 at 07:13:16AM +0800, kernel test robot wrote:
+> Hi Christian,
 > 
-> Actually in the beginning I tried this,  but it did not work well.
-> ALSA needs time control for playback and capture, playback and capture
-> needs to synchronize.  Usually the playback and capture pipeline is
-> independent in ALSA design,  but in this case, the playback and capture
-> should synchronize, they are not independent.
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on robh/for-next]
+> [also build test ERROR on linus/master v6.9-rc7 next-20240508]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/mips-bmips-BCM6358-make-sure-CBR-is-correctly-set/20240504-052513
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+> patch link:    https://lore.kernel.org/r/20240503212139.5811-3-ansuelsmth%40gmail.com
+> patch subject: [PATCH v2 2/5] mips: bmips: rework and cache CBR addr handling
+> config: mips-bcm63xx_defconfig (https://download.01.org/0day-ci/archive/20240509/202405090546.iqx9FAqu-lkp@intel.com/config)
+> compiler: mips-linux-gcc (GCC) 13.2.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405090546.iqx9FAqu-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202405090546.iqx9FAqu-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    mips-linux-ld: arch/mips/kernel/smp-bmips.o: in function `bmips_ebase_setup':
+> >> smp-bmips.c:(.text+0x114): undefined reference to `bmips_cbr_addr'
+> >> mips-linux-ld: smp-bmips.c:(.text+0x118): undefined reference to `bmips_cbr_addr'
+>    mips-linux-ld: arch/mips/kernel/smp-bmips.o: in function `bmips_cpu_setup':
+>    smp-bmips.c:(.text+0x1a4): undefined reference to `bmips_cbr_addr'
+>    mips-linux-ld: smp-bmips.c:(.text+0x1b4): undefined reference to `bmips_cbr_addr'
+>
 
-The core compress API core no strict timing constraints. You can eventually0 
-have two half-duplex compress devices, if you like to have really independent 
-mechanism. If something is missing in API, you can extend this API (like to 
-inform the user space that it's a producer/consumer processing without any 
-relation to the real time). I like this idea.
-
-					Jaroslav
+This is caused by legacy brcm47xx and brcm63xx target. v4 will have this
+fixed (and I will drop the ACK since I moved code around)
 
 -- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
-
+	Ansuel
 
