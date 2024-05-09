@@ -1,86 +1,73 @@
-Return-Path: <linux-kernel+bounces-174210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992BC8C0BB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:50:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 931EA8C0BBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8D01C2250C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DCC1C22177
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B5413C9D2;
-	Thu,  9 May 2024 06:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059E6130A65;
+	Thu,  9 May 2024 06:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zez3NFdM"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcDDk0fh"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9379BDDD9;
-	Thu,  9 May 2024 06:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E157C0AB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715237428; cv=none; b=FrDZyYu7YvPUIPfozpePZQV0yrJ0qzHic1WF9irAG9NzLtdTjyAUo/n7Q8QhEWB1h1uDHmu0XPvwlcXpO+suDvDsTwM/rWHQtOeVcE9zmQdCHH0gjYi4/WnmLP1zGZUYToIyKliYHc1K/+U2CF0F3lrETr4frTY1c1ggF7Bf1Mo=
+	t=1715237527; cv=none; b=gm2JzhObTR228A1W//R1vWR2gT1NQgaNw/938j5OQXogssocXf+74aiat7YoMZlG+W5/6E3R8KS7TNqTQk6PzLIjD4GFLYEwD8+BEjpJbEJFNCa4fuG4sbMbl10KrlREfQ+Sk0Bmh0u4IwHxRwXulpMnKDAdu9DYVvZDGuEErg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715237428; c=relaxed/simple;
-	bh=RSeqe6ed4ewdO4stMEjsqV83ww4odGvJX+LQ9kccDDw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Nq5/uhK6jJ8zpow/53Lyj/0bQmBbXJCSXcG7vcSRQ7xZNfMsifxedsXSqQSEkt+CVUitWij3iI/FsUR1WI3u04TOz6nDkDfETzDHko3E+q2rMbjlJzGULLJit1yEVDWLRmi8YehmVPJ+gh/tEQUDJ+VNR2UvQcWi1OaosRghgiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zez3NFdM; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e4b90b03a9so6674971fa.1;
-        Wed, 08 May 2024 23:50:26 -0700 (PDT)
+	s=arc-20240116; t=1715237527; c=relaxed/simple;
+	bh=rOxCVpuvUmbACYXpkXKZKRD3h2JXgl6Ma28qOmXdJFk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L3RaHO3TuqBNzCOss0WOiE4OYhY/pSU7Z5MynDaVLOtS6IaAjfXjoCZGPVl8na0a53eCXe3IKZFjRxZBle5A7UEH5cclF/FWRsRK2YgfnjlqKU0HJU9vXBcXigMen1nAqkQhszqLrKXtsQfzwqiwmMsb+NNv+vgED2qwf9I929w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bcDDk0fh; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so126420966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:52:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715237425; x=1715842225; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2UOhhsJgb99pm27SXHK1pVf/ykOOg5LTm9pRGDO0Fjs=;
-        b=Zez3NFdMeQnGYCiu7MmJe5nvUMEpBYbwDLmI/ZdVXg2qrU+MbE9/7u2BPsam9iPzB0
-         kD/GdYtPlX1Jyy5rMA7ez0Bm3BFclvBm3/LEGSkpcIbtTilFfgXD3wz9pqMba273qCcS
-         fHqtOC8RpJpOMhTiOM02vIMseqf4smHY6CWT8/Be4OoMWqRkgarc0yOvtcwrgud6pkzr
-         /WXQU91iYi9IKcd2L4ATJTPLkhAc7AcTuEYCsR1c16vqqX17T7CGSVlyuvD5AfQnmnC2
-         YpBOJHAfMN/w3Ms5tfvAKKNENqhZ+dU29dl1hLdwM3AtI8P8sggwQD0f39pH9FZlZaBa
-         03dg==
+        d=linaro.org; s=google; t=1715237523; x=1715842323; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7rnP8lifwF80Zq93ecat3fo7l4f28X4MCb0bTfRERyQ=;
+        b=bcDDk0fhV6fH9poBnJOcTWuLPAyx1KxlO484Cdfxdb22oPFkdDivXS6q2VydScC629
+         Zj4hxL5I+Om9eKbpDP//BmeUytn8MJgUW4GF0Qz7bdCP6iwAwjrhmzsF7hVc83EX9iOF
+         eQ+EjWJzYqGeLl0h5w35C5QceYoEi0cVrn+YodrIyhzkxZP0EsiuivEk88+HJHD+n/WR
+         0MmnHIIXws3OEihsEwO4UyUm0I+xmHBBJnTdKyIDUM+LGNX+rs+3ye+srXzvwMb4Mk5n
+         jg7038BeY+r42HrlrLGyPUZr4Xt8nDia4uxF2qrSWscxKz/Tr7Spgp2y6ARYqw6BlPQc
+         PooQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715237425; x=1715842225;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715237523; x=1715842323;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2UOhhsJgb99pm27SXHK1pVf/ykOOg5LTm9pRGDO0Fjs=;
-        b=SPbGLQQ4l6fT5is9jtKcVwXdkWVu6cpz3iqO9+izVYRFsx+s1agge0ldT6dC4SoJ+U
-         y6sahXsQxOn+ClmfPJo3i3YDSSlXJm8gBvcu1urkPh/fZEROmNX22Kcucj+9qpnc1/yg
-         qxTJHn+hnbggCyNx8YYY6PteA97HTtEiyVDZSF3voztakY2zBiOlZXr/xoOBvKs6J6Uv
-         Phmrem8iY3lxQwEQniCVmImIOm+E2/Ilo5uGkrp/4P59aFm6051nyOgkFXIj/QqODQj3
-         1f7USZBnh94bGTuAk7CbECz6ZsqA/JmMm0BRI/pOYSXWUZbos01BmwcynC3Yx2m5LrMl
-         am5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMq3YRte85F4Smc8eWU+uQIRZGBjdnfNFe/S1NVJ+5n0PtcRsbHlYmNegbTJmgmBmGxwiBC7/2dl8s8drYCdiH0nYMl0FmeXMMOQJJLoB5JyrZYwd8H7K6LzEGAU0tFgk3keUT
-X-Gm-Message-State: AOJu0YxiWMyJUAcWRFR9rrscM4/XrMqpDvFGxC37np7I0a5YSCwfl+iv
-	MroaIu+Md0NvI4oKfAIzsD4xhX7W1HANSeQDr4oxb0QOAOjgQP//
-X-Google-Smtp-Source: AGHT+IFdtu14ZmyI84Ks3pnhLvcdac1FmVj0U13JvxDP7AMPhUTOAmsM9uMthlsZwwvco4EdRUWDNQ==
-X-Received: by 2002:a05:651c:b29:b0:2e2:db99:c35e with SMTP id 38308e7fff4ca-2e44738a829mr35982021fa.12.1715237424463;
-        Wed, 08 May 2024 23:50:24 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fa9dbab53sm31431165e9.13.2024.05.08.23.50.23
+        bh=7rnP8lifwF80Zq93ecat3fo7l4f28X4MCb0bTfRERyQ=;
+        b=qrGyU4yCtWUma0xHUwzCRf3fbyGpfkdU+fjAKHGRlFXnurgvTXcUI9PP3RUi1PiV1n
+         uA0DHr6xtwLnAwwTIjPG2fm2XDstinG3Q4XRTtE9gIgn7CPRGf+DtG+BV1y65hjSoRa7
+         04tIWzEg3bG78Padd8xmhy/TkFwlSICNxsikTfpPaR06QNad3TRIVyWlA4l5F1YUm9dF
+         c7hJ9pVifaQJI4bDzAbj1uLoK9Lb/3d0SzgvscM+JGvSZEeV2Uf2W25KP+Zes3lcJ/Km
+         Dlbv0Gh8xPGu0OC1UiDrzEVGGb4fy/4Cfn5AOMdEX1zUzd9giJZQWVwYBOyz4xTk1+Ky
+         m2Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpN9uqr2i4V5+HyEgz48oEx/478JMNe6I8kzIKdMC0tQx7Z54EuQ+imscWwADREkor5kGpYd8uEEJRYVAU79YVPaKGHbDSCvduiPIt
+X-Gm-Message-State: AOJu0YxpOVbUAciCxeselWVRbb/JJgl5lAkxbGdrwy6t8S9gmi3BkvyG
+	kqTjH9O7wsuNvMTOLcpQQEgjC+d25hqNOqHDu+aOSJyLqy12uWaXFQE/t3U0Urk=
+X-Google-Smtp-Source: AGHT+IFdc13lszpf7lxX/nmLUxwCIGMYlPf62pSkNTQt4xpiimPjtHkcnxTGJfCijKqU+LZx+421gg==
+X-Received: by 2002:a17:906:3c08:b0:a5a:15ac:13fa with SMTP id a640c23a62f3a-a5a15ac1545mr60104166b.38.1715237522834;
+        Wed, 08 May 2024 23:52:02 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81b4sm40730966b.113.2024.05.08.23.52.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 23:50:23 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: dsa: microchip: Fix spellig mistake "configur" -> "configure"
-Date: Thu,  9 May 2024 07:50:23 +0100
-Message-Id: <20240509065023.3033397-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Wed, 08 May 2024 23:52:02 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 0/4] ASoC: qcom: x1e80100: Correct channel mapping
+Date: Thu, 09 May 2024 08:51:51 +0200
+Message-Id: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,29 +75,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIdyPGYC/43NTQ6CMBCG4auQrh0zLZQfV97DuChlgCbYktY0G
+ MLdLax0pct3Mnm+lQXyhgK7ZCvzFE0wzqbITxnTo7IDgelSM4GiQIkVqOA0LJxq5IhQwP5laYK
+ HmmdjByAlexRtQ2VVs6TMnnqzHAu3e+rRhKfzr2Mw8v36vx05ILRcaJ4TKim762Ss8u7s/MB2P
+ IpPsP4NigRqTX2jylLJSnyB27a9AS0hH3sgAQAA
+To: James Schulman <james.schulman@cirrus.com>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Charles Keepax <ckeepax@opensource.cirrus.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2549;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=rOxCVpuvUmbACYXpkXKZKRD3h2JXgl6Ma28qOmXdJFk=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmPHKK+jVIzjueNuFIpjzLc9l0An3OYN7GlvfDY
+ r/bfc0O8A+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZjxyigAKCRDBN2bmhouD
+ 1xX3EACFu/Wuja+nxzB5jFUGdRcGxTyLQNgkhNQkHXBONE9jJdNSUm0BlyHE78b6wPVxwiYbuyM
+ kkSxNw0UlZOHUrLn8eSWXDJYVXXOqDFUM5P4TXS3UVPbGguTL5hw6CZJWbDkVTGCgQ7PR1+ghWj
+ J64mXAZdnY+BjQ7PPvP5MpxdfuHIrJu0jcNI6/Jgfam0GDcCADhXHzmITQsjZyjAUhKDolhSpVy
+ Ln1DNg2myYcHCYSb+eZieOC68XEDzDCb5gkdLL95xe+36rXWVgN3obOsVXys4WSiIEXMKse6Lm9
+ NYbCRq/OXov1nG0EFDae55WzY3upKHAGWNib3cGW7UDZ2MUkR7X501nII5BDB0s3SilXNmXmAuM
+ sZT1/pufvqXxCCndfx8fwiarp1LVpwMaeHL262ODAcgSY/TPxQsGWjekujtAIVxJ2FRoounknfk
+ rLN+umADyowLivtNDX/2rNywtuhhPHKVzMZz/wB/MAU6Ik82b9x0EIPawIkZMhnu8ENg9OddgeF
+ LGnFCfSYP3OdxNPG6+Wun3P1mcB5MZmJ3Ujn5nPq0BtnT5r0sO0XkRBDzJSGiIj0v0Q9vte3CiA
+ fywMS6aYF2xRvq94fU4wJgfda3xHAmEI7ktV7xD9UWFCOpRfVdk/c0rM9NmSUzf8x7HGzMx4fza
+ SL4xj09R6U4NphQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-There is a spelling mistake in a dev_err message. Fix it.
+Hi,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+First patch is a build dependency.
+
+Changes in v3:
+- Add missing Charles' Ack
+- Link to v2: https://lore.kernel.org/r/20240508-asoc-x1e80100-4-channel-mapping-v2-0-ccef9a66a572@linaro.org
+
+Changes in v2:
+- Re-work most of the idea according to Srini comments: set channel
+  mapping for backend DAIs, not frontend.
+- Patch #1: no changes
+- Patch #2 is entirely replaced - now channel mapping is implemented in
+  q6apm-lpass-dais.
+- Patch #3: rework to new approach, but most of the code stays.
+- Patch #4: rework significantly, because only backend DAIs is now
+  affected.
+- Link to v1: https://lore.kernel.org/r/20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org
+
+Description
+===========
+X1E80100 CRD is the first board, which comes with four speakers, so we
+still keep fixing and adding missing pieces.
+
+The board has speaker arranged as left front+back and then right
+front+back.  Using default channel mapping causes front right speaker to
+play left back stream.
+
+Adjust the channel maps for frontend DAIs to fix stereo and four-channel
+playback.
+
+Best regards,
+Krzysztof
+
 ---
- drivers/net/dsa/microchip/ksz_dcb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Krzysztof Kozlowski (4):
+      ASoC: Constify channel mapping array arguments in set_channel_map()
+      ASoC: qcom: q6apm-lpass-dais: Implement proper channel mapping
+      ASoC: qcom: qdsp6: Set channel mapping instead of fixed defaults
+      ASoC: qcom: x1e80100: Correct channel mapping
 
-diff --git a/drivers/net/dsa/microchip/ksz_dcb.c b/drivers/net/dsa/microchip/ksz_dcb.c
-index 5e520c02afd7..484945a9c5fb 100644
---- a/drivers/net/dsa/microchip/ksz_dcb.c
-+++ b/drivers/net/dsa/microchip/ksz_dcb.c
-@@ -220,7 +220,7 @@ static int ksz88x3_port_set_default_prio_quirks(struct ksz_device *dev, int port
- 			return ret;
- 
- 		if (!(port2_data & KSZ8_PORT_802_1P_ENABLE)) {
--			dev_err(dev->dev, "Not possible to configur port priority on Port 1 if PCP apptrust on Port 2 is disabled\n");
-+			dev_err(dev->dev, "Not possible to configure port priority on Port 1 if PCP apptrust on Port 2 is disabled\n");
- 			return -EINVAL;
- 		}
- 	}
+ include/sound/cs35l41.h                 |  4 ++--
+ include/sound/soc-dai.h                 |  8 ++++----
+ sound/soc/codecs/adau7118.c             |  6 ++++--
+ sound/soc/codecs/cs35l41-lib.c          |  4 ++--
+ sound/soc/codecs/cs35l41.c              |  3 ++-
+ sound/soc/codecs/max98504.c             |  6 ++++--
+ sound/soc/codecs/wcd9335.c              |  6 ++++--
+ sound/soc/codecs/wcd934x.c              |  6 ++++--
+ sound/soc/qcom/qdsp6/audioreach.c       | 30 +++++++-----------------------
+ sound/soc/qcom/qdsp6/audioreach.h       |  2 +-
+ sound/soc/qcom/qdsp6/q6afe-dai.c        | 16 ++++++++++------
+ sound/soc/qcom/qdsp6/q6apm-dai.c        |  2 ++
+ sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 21 +++++++++++++--------
+ sound/soc/qcom/x1e80100.c               | 18 ++++++++++++++++++
+ sound/soc/soc-dai.c                     |  4 ++--
+ 15 files changed, 79 insertions(+), 57 deletions(-)
+---
+base-commit: 2b84edefcad14934796fad37b16512b6a2ca467e
+change-id: 20240507-asoc-x1e80100-4-channel-mapping-ea5f02b9e678
+
+Best regards,
 -- 
-2.39.2
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
