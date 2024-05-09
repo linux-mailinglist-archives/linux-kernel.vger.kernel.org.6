@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-174869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28688C1651
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CB58C1657
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C22B285A79
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E64282BCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F73C138482;
-	Thu,  9 May 2024 20:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4307F139566;
+	Thu,  9 May 2024 20:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="chFricDo"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bMGqhXRp"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B17F13792E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FCB137757
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284914; cv=none; b=tW2hQTmd0brgUIGW2qxExaHgK7w8DG1pYbIE9FVa8E8j+H5ekc/6bVW++xe6xw9aRrlKG54RTrJQvuYWDe4j0MZjAC/bKc4zkO4xZGVw85pnAAIlWJzG2AHS4WFd8UhBMQIC4xO7uupTbjpUtRK4naTnZ9LaJodMoORQIyUtT4s=
+	t=1715284918; cv=none; b=axNLLFEerpzbwQCBgnuwDtxjobnYBW8SVp026HC7ZmCVmxdcx1KlUhMtl9NazWkvn83j6qjamwuOe2KKDSdtb8KdEUvwX28dmqrkccrdrq7nCSBgxpgCOGVlTm5SpKZ9Znlb6TGKJUJidd4W14WSKzAlGII1IX7fVrk6Ajydz88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284914; c=relaxed/simple;
-	bh=VGsCQqHe1ICNXcu6Xm0RUTfwKrG6XqF3VyhcVP10zHU=;
+	s=arc-20240116; t=1715284918; c=relaxed/simple;
+	bh=lWLGmZvaxA9RBlByfmCfZky8EH90Zb+6S+z65rzDbew=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lBCic6aTV6qoJlk8Wwf57KcNmsyW17pOMPx2NLjOCYbZevWnM4Tt+3dq3ZF3woI5iQ+6N5BRo/S+FrcoX/LeVM7qePfP8yKCrTqDq4cWYmb/Cqx7lcHnqydkSYCXI+97NYTnLFH5rGPCaS5Pe9VD/benRxZzGWGH9Oeie2yfs5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=chFricDo; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=uI1lqwP+epJbCu+MfzfVn7m1Zh2IlPZaE5WiZS7r/IzPQ31U+CvZjKoMSyiLq20tZPOw4SQ0MoAaHd3a4efNdd49cV/lGsE3+82A7ALkwfqo31HU9fivHBe41hvB5ADGXpJnB/UMG25LrZQxpKAr8cimLJDE9q3uVR5BaA4HRes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bMGqhXRp; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-635731168f7so512621a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 13:01:52 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61be26af113so21326757b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 13:01:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715284912; x=1715889712; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715284915; x=1715889715; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=29EvGICOAZ0F1vgmDohmB/AvF71KDeoXeGxlYusrQjw=;
-        b=chFricDoC+Fdh4vS5MoUveobxKE5C+Okrw59WyWVFibQECFehw79gA7jzxnRvFv8GX
-         oWnCO3ou5pNS8JoW0gz4xiKI+cbqLUjMOxikRsIKlxuALRN6pH9ANP8e+LMA8NjFAfUa
-         BFlRl0MEy/PIEyy8vXxenQYVd19RdKiQqtcGp8OWWDkxzLjzitEBItII4z0CPgDdQpVN
-         NVh5Yi5IhsWw9nXP6mF3YUVzd6hmH3RsktVtj/bnLof/j88fvKztJnrhD4mE7RAjtQsY
-         9MvmO2Vjnzui29ky/mnAm/JgTWkjzcT5cTJgkpvHFGqbfVU5/qMpJj6zq8MSYt5Uxvmv
-         Vgbw==
+        bh=7hWPJomGop1o1vSO/WNR00I+KyAYhO7ZfPBKMyVYJ3k=;
+        b=bMGqhXRpecO3D6FFX7NPimCA4hS/TN+qWy7xAikSq6ZRHE19E5VcBjnz+yzGuSl/le
+         7MaEqbZ+5oZ35HepiEKUenSkM/r5QwdhkiJhUIpEjeSwN73VS6y/fav1H5Fh8szqveBn
+         TwvX1RDXjXFpop/kFj1xttSlxffHOdXQj6sEwomFN9o6wsP+LU+ayufYHIdYGW/gW/4F
+         +chjslXanSEOIOkmcZ6EGXNuvMsay5GuLaIc1nrF2fJhtHLuWvyvg/yLTL4cwKpPb/ea
+         2VIo/NvmlG4ZJ1J3VAwR9DAin1cZM59CxD1i3ZDc1N2HgFQebiqFp+j4PESz3+kN6VMe
+         hIqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284912; x=1715889712;
+        d=1e100.net; s=20230601; t=1715284915; x=1715889715;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=29EvGICOAZ0F1vgmDohmB/AvF71KDeoXeGxlYusrQjw=;
-        b=qjbBrob7Oqa8R0KZUkQypDOJubALCum9GHYE0DkV+WPc3qA2bMNC/xd9q6QjBdr3r3
-         rNLEDP/jNPSPkDRQuGGi3SZzaWpG9uTRjV0IyHi1TeRt4L1mSWbPXp7MjRhH2HrDET9u
-         0SYTnQy4sAb9juf0lh+SP0sv5MbP9h3pEHmH8+8T+dzTHnFNG1E3+COm90V1DHl0IcVk
-         TEDPUC/o3zaOSvxU9bk+d32jX2hnQMbXL/79Cctm2lfMK0wQ2tzjNyAg4+pItsrCANho
-         8tJPOFOsUko+0vxLvofqtKMH14CadGrOSD+1CoOw6b0qXplH6qC1CZvegf3HjgnwgFCf
-         7fUw==
-X-Gm-Message-State: AOJu0Yy3YLyBWAdarTP9CryniMu6V4epzNUBbbTmoUMdv/UnVwnArcJM
-	iy/d9qyCOCiiy4pKO1jW7hryya8iUWXF+tgpNs7LwLrfWDpRWdKo/NKvxaCjwszs1YkSMO1BAn/
-	DqA==
-X-Google-Smtp-Source: AGHT+IExsnAklZVtVghvLsMabbdi8FZgDS5AyDRMtR6GiyjsnqQrJZG4Wi2JzFqUxOoc8PAeH7g5t5xlaP8=
+        bh=7hWPJomGop1o1vSO/WNR00I+KyAYhO7ZfPBKMyVYJ3k=;
+        b=oUtKRaUep2X6WekIUHWu84hZErLKneUklR1LzubgL5BlAKdvjO/yzA+ykNqyHEtbwn
+         2y+Ud0MQhzxter51nHB2NTkG2gi/TCjL9l5H+lqVy7Xf9TdDrHhp2YTtDOfECyROe8qF
+         2Hl2pOr5hLigFESM255ii7B/Ke+tL+HjOg6Dqb7ySlHWgnwIvFKQsvljdCyEE03VO9Rf
+         fQ/jH6H9R8gbpE9XOQx9jGmJ2dtVI4h8GGIeBkp6MG2QSXN2Q8i+V651h8cp9kpf9N7/
+         hZOL+pELbTUIO02a0pJ6pN7oX1q191argRre3/EkGFZyck5gej51NB2nAM+DkgOTFwRy
+         jvUQ==
+X-Gm-Message-State: AOJu0YyEvdOamCMnlFrHqbFaSH0fZwTuqK3vIVAqrB6RgdyT2xKL9ylq
+	K8uqcY20s3dRIYYQrkYbcocKz8OiPUCTw3nnelkPjSfaQXrVVsi6b4aYWsnKGyukpaSxzVPrn9C
+	hIQ==
+X-Google-Smtp-Source: AGHT+IHpbKZq4QkjTflQ8ArARtMBvh0PZ9C9VKKW9QcnoVDxM8W2W8fLFQ/oTQAQRdxFasvDcO10UKeRsB8=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a63:2742:0:b0:5dc:8f95:3d with SMTP id
- 41be03b00d2f7-6373e5492b5mr921a12.2.1715284912360; Thu, 09 May 2024 13:01:52
- -0700 (PDT)
-Date: Thu,  9 May 2024 19:58:15 +0000
+ (user=edliaw job=sendgmr) by 2002:a05:690c:490d:b0:611:2c40:e8d0 with SMTP id
+ 00721157ae682-622affa3fadmr1378917b3.3.1715284914803; Thu, 09 May 2024
+ 13:01:54 -0700 (PDT)
+Date: Thu,  9 May 2024 19:58:16 +0000
 In-Reply-To: <20240509200022.253089-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240509200022.253089-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240509200022.253089-24-edliaw@google.com>
-Subject: [PATCH v3 23/68] selftests/intel_pstate: Drop duplicate -D_GNU_SOURCE
+Message-ID: <20240509200022.253089-25-edliaw@google.com>
+Subject: [PATCH v3 24/68] selftests/iommu: Drop duplicate -D_GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -81,31 +81,37 @@ To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
 	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
 	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
 	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
 Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	kernel-team@android.com, Edward Liaw <edliaw@google.com>, 
 	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
+	John Hubbard <jhubbard@nvidia.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, iommu@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
 -D_GNU_SOURCE can be de-duplicated here, as it is added by lib.mk.
 
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/intel_pstate/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/iommu/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/tools/testing/selftests/intel_pstate/Makefile b/tools/testing/selftests/intel_pstate/Makefile
-index 05d66ef50c97..f45372cb00fe 100644
---- a/tools/testing/selftests/intel_pstate/Makefile
-+++ b/tools/testing/selftests/intel_pstate/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
--CFLAGS := $(CFLAGS) -Wall -D_GNU_SOURCE
-+CFLAGS := $(CFLAGS) -Wall
- LDLIBS += -lm
+diff --git a/tools/testing/selftests/iommu/Makefile b/tools/testing/selftests/iommu/Makefile
+index 32c5fdfd0eef..fd6477911f24 100644
+--- a/tools/testing/selftests/iommu/Makefile
++++ b/tools/testing/selftests/iommu/Makefile
+@@ -2,8 +2,6 @@
+ CFLAGS += -Wall -O2 -Wno-unused-function
+ CFLAGS += $(KHDR_INCLUDES)
  
- ARCH ?= $(shell uname -m 2>/dev/null || echo not)
+-CFLAGS += -D_GNU_SOURCE
+-
+ TEST_GEN_PROGS :=
+ TEST_GEN_PROGS += iommufd
+ TEST_GEN_PROGS += iommufd_fail_nth
 -- 
 2.45.0.118.g7fe29c98d7-goog
 
