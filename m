@@ -1,54 +1,50 @@
-Return-Path: <linux-kernel+bounces-174918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360398C1748
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:27:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02A58C1768
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BB46B24DE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A121F21072
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3220912C470;
-	Thu,  9 May 2024 20:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778AE126F1B;
+	Thu,  9 May 2024 20:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gy43XoG5"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="HPZWOmhn"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADDA8405C;
-	Thu,  9 May 2024 20:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4F580BE5;
+	Thu,  9 May 2024 20:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715285111; cv=none; b=jKY4Mfg0eaLrJr/WrdVgdlgAk6pRArPNGl8cBMO4unQxT+l3Jq+LBgfYbwpfZETRF0KWqt+Lr3KyxP3CXBaV3o4HvUB9YRsS7ADJKiG7XMJigiR67yLjZx73L++GIY6z0HZ022yBBRpZMAzLZuKHJTdREvpDWNriRE8zVdOyiP8=
+	t=1715285773; cv=none; b=nwncLGbTUR9isNlfkxTEv/YqXC46G+RejkoV+juMAHKJzOhJcWDQpnMJhW7SDxFsb2dneYUJIDfk/WqB0y5vuVsx+Q/x5/qlbDA9FJVOWILCW9wBAxf52T5IvO0tzs1UMWPgz0u4Y0oB1BTW8G7xhUFdu0ha/U0W/pR3t/bYtJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715285111; c=relaxed/simple;
-	bh=+OQRrox4NiFSzWCAahZ6m6z1qcTCIJu3cMe6d9XV/4c=;
+	s=arc-20240116; t=1715285773; c=relaxed/simple;
+	bh=cMWw8x/P40/KMWgVweNbntQjYA+K9n2XKgcRYU9QC9I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a1qNLMnzRrY03Dd6c/bMRAYrn8KQuBU9jLkY58PBaL4VFeM4iQJo+8Wme15Yh68uZp9oZYKH5UizblIIi89ucUkz3Hn9yMY7fE2PJ4TVUkwz/Rc6kTV47M9wgnwGp7qNn/YKR92/Di/YClmPnXP0CTxTJSXOv/1eD+Bpjm5rZTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gy43XoG5; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 5A0hsrFbhk6QC5A0hsoqMR; Thu, 09 May 2024 22:05:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715285101;
-	bh=qX1DtiA+PUQHRn3nGRgzieMrVDQkAdDkg4WRPoC1ywM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=gy43XoG56J30hlSWRVxCtOVjO+dv2aixkqyHA8acv4TEvVWK2o7y8K7yQn869TRC+
-	 uC4GAeHtsDzUCkvNxURGSSEg3oaBojbjYEsg46lQm7Iho87LQ7iNRsKt/8/Ylpu2pn
-	 3p1auesTJw3otin1+94vVd59NLW5gaEaM5uRjCIqxQKxn9dPDpNI25F6+tFmfv7bP9
-	 9/KzmUe7fXLSa535HO+aKf+57bPecDA6C1SSkXsvmAyAlfSHUWukgcj9EdcPdq1fuu
-	 MYjaBoi/hE3i5RVyNPoyz+U2JtPWPk0SZZDMyaON/10cV4RqQns3REKpmsiMYpne1I
-	 UiNcdFX3zuWqg==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 09 May 2024 22:05:01 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <d2943958-ac80-4158-8e7c-b5493ab713f8@wanadoo.fr>
-Date: Thu, 9 May 2024 22:04:57 +0200
+	 In-Reply-To:Content-Type; b=RWj7pCbiJUYOoNITLg2fMvzibWkoG5woXPyoKyZ3FDQs3ED0W7yHe8FzClP3TJTL8Ft4SjxLzJMcbaZfN8CbmxM47sRBdjF+slL2QBRCWFtTpPmpnmvL5GIU6enZ98pvfds0yFpulvt6Zb/MV5kIJgrWbkayjnvSwEqejzhcek4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=HPZWOmhn; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1715285763;
+	bh=cMWw8x/P40/KMWgVweNbntQjYA+K9n2XKgcRYU9QC9I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HPZWOmhnoRkqipHqnwg6g545VwMlsV8zx/BSHSoFPE4eWw/mPW4cf0jmeu422Z636
+	 jLntHYOgVNutEjpLrWE9rP1+MPli0NS8sJtlLTVtYguaOTUm+CI3HmXiFtMYktT8Ql
+	 FX7RzuXYLAAEEvihpE/pWrH7pdCmnGMkPWZh//qC1SMDLhRv9YnaftIhQfQitZZkKa
+	 RamXBJLbx3DsqqXTvrWF2nqFsEHQH+JMe/Okl/wi7F4CIjX7ap+LzVAwX78Jj8CHfN
+	 IFkpFCckFqnrzKm/TaiKH4FX05dPGhNGc4WCKG05ghyQKfvelcPFGNsUruPcwx/gTc
+	 /zFV5k2dA0e8g==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Vb3Df5nW8zyZy;
+	Thu,  9 May 2024 16:16:02 -0400 (EDT)
+Message-ID: <638a7831-493c-4917-9b22-5aa663e9ee84@efficios.com>
+Date: Thu, 9 May 2024 16:16:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,112 +52,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] PM / devfreq: exynos: Use Use devm_clk_get_enabled()
- helpers
-To: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240509064754.10082-1-linux.amoon@gmail.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240509064754.10082-1-linux.amoon@gmail.com>
+Subject: Re: [PATCH v3 54/68] selftests/rseq: Drop define _GNU_SOURCE
+To: Edward Liaw <edliaw@google.com>, shuah@kernel.org,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@android.com, linux-security-module@vger.kernel.org,
+ netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+ bpf@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+References: <20240509200022.253089-1-edliaw@google.com>
+ <20240509200022.253089-55-edliaw@google.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20240509200022.253089-55-edliaw@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Le 09/05/2024 à 08:47, Anand Moon a écrit :
-> The devm_clk_get_enabled() helpers:
->      - call devm_clk_get()
->      - call clk_prepare_enable() and register what is needed in order to
->       call clk_disable_unprepare() when needed, as a managed resource.
+On 2024-05-09 15:58, Edward Liaw wrote:
+> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+> redefinition warnings.
 > 
-> This simplifies the code and avoids the calls to clk_disable_unprepare().
-> 
-> While at it, use dev_err_probe consistently, and use its return value
-> to return the error code.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
+
+The patch per se looks fine, except for the "Fixes" tag.
+
+Commit 809216233555 introduces use of asprintf in kselftest_harness.h
+which is used by (all ?) selftests, including the rseq ones. However,
+the rseq selftests each have the #define _GNU_SOURCE, which would have
+been OK without those further changes.
+
+So this patch is more about consolidating where the _GNU_SOURCE is
+defined, which is OK with me, but not so much about "fixing" an
+issue with commit 809216233555.
+
+A "Fix" is something to be backported to stable kernels, and I
+don't think this patch reaches that threshold.
+
+If anything, this patch removes a warning that gets added by
+https://lore.kernel.org/lkml/20240509200022.253089-1-edliaw@google.com/T/#mf8438d03de6e2b613da4f86d4f60c5fe1c5f8483
+within the same series.
+
+Arguably, each #define _GNU_SOURCE could have been first protected
+by a #ifndef guard to eliminate this transient warning, and there
+would be nothing to "fix" in this consolidation series.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Signed-off-by: Edward Liaw <edliaw@google.com>
 > ---
-> V4 - wrap up the error messagee within 80 char
-> v3 - No change
-> v2 - No change
-> ---
->   drivers/devfreq/exynos-bus.c | 22 +++++-----------------
->   1 file changed, 5 insertions(+), 17 deletions(-)
+>   tools/testing/selftests/rseq/basic_percpu_ops_test.c | 1 -
+>   tools/testing/selftests/rseq/basic_test.c            | 2 --
+>   tools/testing/selftests/rseq/param_test.c            | 1 -
+>   tools/testing/selftests/rseq/rseq.c                  | 2 --
+>   4 files changed, 6 deletions(-)
 > 
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index 00118580905a..7d06c476d8e9 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -160,7 +160,6 @@ static void exynos_bus_exit(struct device *dev)
->   	platform_device_unregister(bus->icc_pdev);
->   
->   	dev_pm_opp_of_remove_table(dev);
-> -	clk_disable_unprepare(bus->clk);
->   	dev_pm_opp_put_regulators(bus->opp_token);
->   }
->   
-> @@ -171,7 +170,6 @@ static void exynos_bus_passive_exit(struct device *dev)
->   	platform_device_unregister(bus->icc_pdev);
->   
->   	dev_pm_opp_of_remove_table(dev);
-> -	clk_disable_unprepare(bus->clk);
->   }
->   
->   static int exynos_bus_parent_parse_of(struct device_node *np,
-> @@ -247,23 +245,16 @@ static int exynos_bus_parse_of(struct device_node *np,
->   	int ret;
->   
->   	/* Get the clock to provide each bus with source clock */
-> -	bus->clk = devm_clk_get(dev, "bus");
-> -	if (IS_ERR(bus->clk)) {
-> -		dev_err(dev, "failed to get bus clock\n");
-> -		return PTR_ERR(bus->clk);
-> -	}
+> diff --git a/tools/testing/selftests/rseq/basic_percpu_ops_test.c b/tools/testing/selftests/rseq/basic_percpu_ops_test.c
+> index 2348d2c20d0a..5961c24ee1ae 100644
+> --- a/tools/testing/selftests/rseq/basic_percpu_ops_test.c
+> +++ b/tools/testing/selftests/rseq/basic_percpu_ops_test.c
+> @@ -1,5 +1,4 @@
+>   // SPDX-License-Identifier: LGPL-2.1
+> -#define _GNU_SOURCE
+>   #include <assert.h>
+>   #include <pthread.h>
+>   #include <sched.h>
+> diff --git a/tools/testing/selftests/rseq/basic_test.c b/tools/testing/selftests/rseq/basic_test.c
+> index 295eea16466f..1fed749b4bd7 100644
+> --- a/tools/testing/selftests/rseq/basic_test.c
+> +++ b/tools/testing/selftests/rseq/basic_test.c
+> @@ -2,8 +2,6 @@
+>   /*
+>    * Basic test coverage for critical regions and rseq_current_cpu().
+>    */
 > -
-> -	ret = clk_prepare_enable(bus->clk);
-> -	if (ret < 0) {
-> -		dev_err(dev, "failed to get enable clock\n");
-> -		return ret;
-> -	}
-> +	bus->clk = devm_clk_get_enabled(dev, "bus");
-> +	if (IS_ERR(bus->clk))
-> +		return dev_err_probe(dev, PTR_ERR(bus->clk),
-> +				"failed to get bus clock\n");
->   
->   	/* Get the freq and voltage from OPP table to scale the bus freq */
->   	ret = dev_pm_opp_of_add_table(dev);
->   	if (ret < 0) {
->   		dev_err(dev, "failed to get OPP table\n");
-> -		goto err_clk;
-> +		return ret;
->   	}
->   
->   	rate = clk_get_rate(bus->clk);
-> @@ -281,8 +272,6 @@ static int exynos_bus_parse_of(struct device_node *np,
->   
->   err_opp:
->   	dev_pm_opp_of_remove_table(dev);
-> -err_clk:
-> -	clk_disable_unprepare(bus->clk);
->   
->   	return ret;
->   }
-> @@ -453,7 +442,6 @@ static int exynos_bus_probe(struct platform_device *pdev)
->   
->   err:
->   	dev_pm_opp_of_remove_table(dev);
-> -	clk_disable_unprepare(bus->clk);
->   err_reg:
->   	dev_pm_opp_put_regulators(bus->opp_token);
->   
+> -#define _GNU_SOURCE
+>   #include <assert.h>
+>   #include <sched.h>
+>   #include <signal.h>
+> diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
+> index 2f37961240ca..48a55d94eb72 100644
+> --- a/tools/testing/selftests/rseq/param_test.c
+> +++ b/tools/testing/selftests/rseq/param_test.c
+> @@ -1,5 +1,4 @@
+>   // SPDX-License-Identifier: LGPL-2.1
+> -#define _GNU_SOURCE
+>   #include <assert.h>
+>   #include <linux/membarrier.h>
+>   #include <pthread.h>
+> diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rseq/rseq.c
+> index 96e812bdf8a4..88602889414c 100644
+> --- a/tools/testing/selftests/rseq/rseq.c
+> +++ b/tools/testing/selftests/rseq/rseq.c
+> @@ -14,8 +14,6 @@
+>    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+>    * Lesser General Public License for more details.
+>    */
+> -
+> -#define _GNU_SOURCE
+>   #include <errno.h>
+>   #include <sched.h>
+>   #include <stdio.h>
 
-Hi,
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-if the patch is correct, I think that clk in struct exynos_bus can be 
-easily be removed as well.
-
-CJ
 
