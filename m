@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-174102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3818C0A3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:43:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E248C0A42
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8692AB22438
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDF82284722
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41741148827;
-	Thu,  9 May 2024 03:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEA31494A4;
+	Thu,  9 May 2024 03:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dTdCm5c8"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ag1GO9sX"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FD91487D6
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 03:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7D1487EA
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 03:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715226143; cv=none; b=FqoNJhlutvxHF9Rc+YHtotJ+Pw2fWyXTcA4ErC1CMLCYNlRqHna+bEZhSg8e7RS0AkTVsIK3Ys7G26DQyxiVdynNZzr38fO+Loo82hsSv/GyzzreBtJ+6Stne+zeM7mrX2ToYRvpPu4YDO5LUg1rsH0psh3GgdKHGG9at2jhkXc=
+	t=1715226148; cv=none; b=N/pZX+V/SO5FOZ5t4cdXKePhQAdjg280Op5sQT27WqZuhAgSMx604vuy0M3ViivVFMp4b78Xf7CAqTMS6zy9mIUXuHzNh6ei4+sokQYQgtcE/C3CoQ3lmIb42N4VD9ai1VzgfwPxAzWLK0hcgdrgDPeDTTnAr7dI7MP3dL3zXVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715226143; c=relaxed/simple;
-	bh=F4Piwi7lb767lxLYuYq4jUBHdYi51w8zikR6/jUtKIs=;
+	s=arc-20240116; t=1715226148; c=relaxed/simple;
+	bh=wrioyely99CT0sVkYiVlWNIcnGygsiJlvzrE7NoB+hM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CnNA/c83gg/y9ESPj4dRIytu2qBGVdPsS09Rf6erh0aX6ptuXv/W87e3b8GIpPlx9LiL/VX7IxJog3lImXynx4cMfsTqQurA6Lq7egvwvkX0E6gZv6ILiWF7I4tUBBTRqSuBjTUX4ioRt8u2m4U/ziElknnc4afXNp7TK2Eqb5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dTdCm5c8; arc=none smtp.client-ip=95.215.58.188
+	 MIME-Version; b=BJcG2foM7LjTd+Y5ZeEn4VzAhtNzcuCuDuK2tVesa52Y2Rb24hwju3XvAnywpi5Tq9Myrj6kP6poAo/j7JndlXiJ0De+6qJjl3Hn952agrQOFlFg3CeS5dG38yHCZ4Tp+U8KdgS+iG3sGdbL5QkMPZcRBzHbKuB1t8fdeme2dBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ag1GO9sX; arc=none smtp.client-ip=95.215.58.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715226138;
+	t=1715226140;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NZsrafWTiD8Xvn8i28tCm+uAkpq9cufajhJfcyVAFfM=;
-	b=dTdCm5c8pIUXMqoCNRw2X4/0A0b36u3KsilDaQtMmpFYV9PGmhZKWFZnCnWahL4g1D/HpX
-	21Ko4khA5d9DpTAuD3csm6pPC2zKLOuDwJ28Y4iPkAu1YZvLijcS1fnwYlexHp/cknaKMz
-	FjvOzJHcGfOWab6hYaEgXD3b5uREmIE=
+	bh=/KDgBF7gJ0kzytqIpj+kWsoYbmWfd4DIwDrt5O3JgB0=;
+	b=ag1GO9sXxyNkjIeZKGVNykZdohGSCnyUAxl8L6RRtRfK4sIEZUA1tF1yJz3isXAl3r3P5D
+	uSD1DkLHQErnDx3SHCcGgkj6X3ui3OP7rssmwPLv4vJe0+bsfh9LlTcFTuzJRgM2OEt6EH
+	dFlh7/qv+Zxp2dnf1KCm5v0IGNryTA0=
 From: Roman Gushchin <roman.gushchin@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Muchun Song <muchun.song@linux.dev>,
@@ -51,9 +51,9 @@ Cc: Muchun Song <muchun.song@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH rfc 4/9] mm: memcg: move legacy memcg event code into memcontrol-v1.c
-Date: Wed,  8 May 2024 20:41:33 -0700
-Message-ID: <20240509034138.2207186-5-roman.gushchin@linux.dev>
+Subject: [PATCH rfc 5/9] mm: memcg: move cgroup v1 interface files to memcontrol-v1.c
+Date: Wed,  8 May 2024 20:41:34 -0700
+Message-ID: <20240509034138.2207186-6-roman.gushchin@linux.dev>
 In-Reply-To: <20240509034138.2207186-1-roman.gushchin@linux.dev>
 References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
 Precedence: bulk
@@ -65,1576 +65,1669 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Cgroup v1's memory controller contains a pretty complicated
-event notifications mechanism which is not used on cgroup v2.
-Let's move the corresponding code into memcontrol-v1.c.
-
-Please, note, that mem_cgroup_event_ratelimit() remains in
-memcontrol.c, otherwise it would require exporting too many
-details on memcg stats outside of memcontrol.c.
+Move legacy cgroup v1 memory controller interfaces and corresponding
+code into memcontrol-v1.c.
 
 Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- include/linux/memcontrol.h |  12 -
- mm/internal.h              |  55 ++-
- mm/memcontrol-v1.c         | 653 +++++++++++++++++++++++++++++++++++
- mm/memcontrol.c            | 687 +------------------------------------
- 4 files changed, 712 insertions(+), 695 deletions(-)
+ mm/internal.h      |  15 +-
+ mm/memcontrol-v1.c | 733 +++++++++++++++++++++++++++++++++++++++++++-
+ mm/memcontrol.c    | 748 +--------------------------------------------
+ 3 files changed, 751 insertions(+), 745 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 60355f3cb67c..fc4aaa73aa5e 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -69,18 +69,6 @@ struct mem_cgroup_id {
- 	refcount_t ref;
- };
- 
--/*
-- * Per memcg event counter is incremented at every pagein/pageout. With THP,
-- * it will be incremented by the number of pages. This counter is used
-- * to trigger some periodic events. This is straightforward and better
-- * than using jiffies etc. to handle periodic memcg event.
-- */
--enum mem_cgroup_events_target {
--	MEM_CGROUP_TARGET_THRESH,
--	MEM_CGROUP_TARGET_SOFTLIMIT,
--	MEM_CGROUP_NTARGETS,
--};
--
- struct memcg_vmstats_percpu;
- struct memcg_vmstats;
- struct lruvec_stats_percpu;
 diff --git a/mm/internal.h b/mm/internal.h
-index 9ffd48375ae5..79104cfc08a9 100644
+index 79104cfc08a9..533aa999a450 100644
 --- a/mm/internal.h
 +++ b/mm/internal.h
-@@ -1521,6 +1521,29 @@ static inline void shrinker_debugfs_remove(struct dentry *debugfs_entry,
- void workingset_update_node(struct xa_node *node);
- extern struct list_lru shadow_nodes;
+@@ -13,6 +13,7 @@
+ #include <linux/rmap.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/cgroup-defs.h>
+ #include <linux/tracepoint-defs.h>
  
-+#ifdef CONFIG_CGROUPS
-+/* Whether legacy memory+swap accounting is active */
-+static inline bool do_memsw_account(void)
-+{
-+	return !cgroup_subsys_on_dfl(memory_cgrp_subsys);
-+}
-+#endif
-+
-+/*
-+ * Iteration constructs for visiting all cgroups (under a tree).  If
-+ * loops are exited prematurely (break), mem_cgroup_iter_break() must
-+ * be used for reference counting.
-+ */
-+#define for_each_mem_cgroup_tree(iter, root)		\
-+	for (iter = mem_cgroup_iter(root, NULL, NULL);	\
-+	     iter != NULL;				\
-+	     iter = mem_cgroup_iter(root, iter, NULL))
-+
-+#define for_each_mem_cgroup(iter)			\
-+	for (iter = mem_cgroup_iter(NULL, NULL, NULL);	\
-+	     iter != NULL;				\
-+	     iter = mem_cgroup_iter(NULL, iter, NULL))
-+
- /* Memcontrol definitions used by memory cgroups v1-specific code */
- int try_charge_memcg(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 		     unsigned int nr_pages);
-@@ -1535,11 +1558,27 @@ static inline int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- }
+ struct folio_batch;
+@@ -1579,6 +1580,14 @@ enum mem_cgroup_events_target {
+ bool mem_cgroup_event_ratelimit(struct mem_cgroup *memcg,
+ 				enum mem_cgroup_events_target target);
  
- void mem_cgroup_charge_statistics(struct mem_cgroup *memcg, int nr_pages);
--void memcg_check_events(struct mem_cgroup *memcg, int nid);
- void memcg_oom_recover(struct mem_cgroup *memcg);
- void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
- void mem_cgroup_id_put_many(struct mem_cgroup *memcg, unsigned int n);
- 
-+unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap);
-+
-+/*
-+ * Per memcg event counter is incremented at every pagein/pageout. With THP,
-+ * it will be incremented by the number of pages. This counter is used
-+ * to trigger some periodic events. This is straightforward and better
-+ * than using jiffies etc. to handle periodic memcg event.
-+ */
-+enum mem_cgroup_events_target {
-+	MEM_CGROUP_TARGET_THRESH,
-+	MEM_CGROUP_TARGET_SOFTLIMIT,
-+	MEM_CGROUP_NTARGETS,
-+};
-+
-+bool mem_cgroup_event_ratelimit(struct mem_cgroup *memcg,
-+				enum mem_cgroup_events_target target);
++int memory_stat_show(struct seq_file *m, void *v);
++unsigned long memcg_page_state_local(struct mem_cgroup *memcg, int idx);
++unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item);
++unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item);
++unsigned long memcg_events(struct mem_cgroup *memcg, int event);
++unsigned long memcg_events_local(struct mem_cgroup *memcg, int event);
++void drain_all_stock(struct mem_cgroup *root_memcg);
 +
  /* Memory cgroups v1-specific definitions */
  void mem_cgroup_update_tree(struct mem_cgroup *memcg, int nid);
  void mem_cgroup_remove_from_trees(struct mem_cgroup *memcg);
-@@ -1557,4 +1596,18 @@ void mem_cgroup_cancel_attach(struct cgroup_taskset *tset);
- bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg);
- void mem_cgroup_move_task(void);
+@@ -1606,8 +1615,10 @@ enum res_type {
  
-+/* for encoding cft->private value on file */
-+enum res_type {
-+	_MEM,
-+	_MEMSWAP,
-+	_KMEM,
-+	_TCP,
-+};
-+
-+void memcg_check_events(struct mem_cgroup *memcg, int nid);
-+void mem_cgroup_oom_notify(struct mem_cgroup *memcg);
-+ssize_t memcg_write_event_control(struct kernfs_open_file *of, char *buf,
-+				  size_t nbytes, loff_t off);
-+void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg);
+ void memcg_check_events(struct mem_cgroup *memcg, int nid);
+ void mem_cgroup_oom_notify(struct mem_cgroup *memcg);
+-ssize_t memcg_write_event_control(struct kernfs_open_file *of, char *buf,
+-				  size_t nbytes, loff_t off);
++void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+ void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg);
+ 
++extern struct cftype memsw_files[];
++extern struct cftype mem_cgroup_legacy_files[];
 +
  #endif	/* __MM_INTERNAL_H */
 diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index b39bfa4a8de6..5bf0b62cd7b5 100644
+index 5bf0b62cd7b5..cd711f6b8386 100644
 --- a/mm/memcontrol-v1.c
 +++ b/mm/memcontrol-v1.c
-@@ -4,8 +4,12 @@
- #include <linux/pagewalk.h>
- #include <linux/backing-dev.h>
- #include <linux/swap.h>
-+#include <linux/eventfd.h>
-+#include <linux/poll.h>
-+#include <linux/sort.h>
+@@ -10,6 +10,7 @@
  #include <linux/mm_inline.h>
  #include <linux/swap_cgroup.h>
-+#include <linux/file.h>
+ #include <linux/file.h>
++#include <linux/seq_buf.h>
  
  #include "internal.h"
  #include "swap.h"
-@@ -59,6 +63,54 @@ static struct move_charge_struct {
- 	.waitq = __WAIT_QUEUE_HEAD_INITIALIZER(mc.waitq),
- };
+@@ -111,6 +112,18 @@ struct mem_cgroup_eventfd_list {
  
-+/*
-+ * cgroup_event represents events which userspace want to receive.
-+ */
-+struct mem_cgroup_event {
-+	/*
-+	 * memcg which the event belongs to.
-+	 */
-+	struct mem_cgroup *memcg;
-+	/*
-+	 * eventfd to signal userspace about the event.
-+	 */
-+	struct eventfd_ctx *eventfd;
-+	/*
-+	 * Each of these stored in a list by the cgroup.
-+	 */
-+	struct list_head list;
-+	/*
-+	 * register_event() callback will be used to add new userspace
-+	 * waiter for changes related to this event.  Use eventfd_signal()
-+	 * on eventfd to send notification to userspace.
-+	 */
-+	int (*register_event)(struct mem_cgroup *memcg,
-+			      struct eventfd_ctx *eventfd, const char *args);
-+	/*
-+	 * unregister_event() callback will be called when userspace closes
-+	 * the eventfd or on cgroup removing.  This callback must be set,
-+	 * if you want provide notification functionality.
-+	 */
-+	void (*unregister_event)(struct mem_cgroup *memcg,
-+				 struct eventfd_ctx *eventfd);
-+	/*
-+	 * All fields below needed to unregister event when
-+	 * userspace closes eventfd.
-+	 */
-+	poll_table pt;
-+	wait_queue_head_t *wqh;
-+	wait_queue_entry_t wait;
-+	struct work_struct remove;
+ extern spinlock_t memcg_oom_lock;
+ 
++enum {
++	RES_USAGE,
++	RES_LIMIT,
++	RES_MAX_USAGE,
++	RES_FAILCNT,
++	RES_SOFT_LIMIT,
 +};
 +
-+/* for OOM */
-+struct mem_cgroup_eventfd_list {
-+	struct list_head list;
-+	struct eventfd_ctx *eventfd;
-+};
-+
-+extern spinlock_t memcg_oom_lock;
++#define MEMFILE_PRIVATE(x, val)	((x) << 16 | (val))
++#define MEMFILE_TYPE(val)	((val) >> 16 & 0xffff)
++#define MEMFILE_ATTR(val)	((val) & 0xffff)
 +
  static void __mem_cgroup_insert_exceeded(struct mem_cgroup_per_node *mz,
  					 struct mem_cgroup_tree_per_node *mctz,
  					 unsigned long new_usage_in_excess)
-@@ -1310,6 +1362,607 @@ void mem_cgroup_move_task(void)
+@@ -1801,8 +1814,8 @@ static void memcg_event_ptable_queue_proc(struct file *file,
+  * Input must be in format '<event_fd> <control_fd> <args>'.
+  * Interpretation of args is defined by control file implementation.
+  */
+-ssize_t memcg_write_event_control(struct kernfs_open_file *of, char *buf,
+-				  size_t nbytes, loff_t off)
++static ssize_t memcg_write_event_control(struct kernfs_open_file *of, char *buf,
++					 size_t nbytes, loff_t off)
+ {
+ 	struct cgroup_subsys_state *css = of_css(of);
+ 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+@@ -1946,6 +1959,722 @@ ssize_t memcg_write_event_control(struct kernfs_open_file *of, char *buf,
+ 	return ret;
  }
- #endif
  
-+static void __mem_cgroup_threshold(struct mem_cgroup *memcg, bool swap)
++static DEFINE_MUTEX(memcg_max_mutex);
++
++static int mem_cgroup_resize_max(struct mem_cgroup *memcg,
++				 unsigned long max, bool memsw)
 +{
-+	struct mem_cgroup_threshold_ary *t;
-+	unsigned long usage;
-+	int i;
++	bool enlarge = false;
++	bool drained = false;
++	int ret;
++	bool limits_invariant;
++	struct page_counter *counter = memsw ? &memcg->memsw : &memcg->memory;
 +
-+	rcu_read_lock();
-+	if (!swap)
-+		t = rcu_dereference(memcg->thresholds.primary);
-+	else
-+		t = rcu_dereference(memcg->memsw_thresholds.primary);
++	do {
++		if (signal_pending(current)) {
++			ret = -EINTR;
++			break;
++		}
 +
-+	if (!t)
-+		goto unlock;
++		mutex_lock(&memcg_max_mutex);
++		/*
++		 * Make sure that the new limit (memsw or memory limit) doesn't
++		 * break our basic invariant rule memory.max <= memsw.max.
++		 */
++		limits_invariant = memsw ? max >= READ_ONCE(memcg->memory.max) :
++					   max <= memcg->memsw.max;
++		if (!limits_invariant) {
++			mutex_unlock(&memcg_max_mutex);
++			ret = -EINVAL;
++			break;
++		}
++		if (max > counter->max)
++			enlarge = true;
++		ret = page_counter_set_max(counter, max);
++		mutex_unlock(&memcg_max_mutex);
 +
-+	usage = mem_cgroup_usage(memcg, swap);
++		if (!ret)
++			break;
 +
-+	/*
-+	 * current_threshold points to threshold just below or equal to usage.
-+	 * If it's not true, a threshold was crossed after last
-+	 * call of __mem_cgroup_threshold().
-+	 */
-+	i = t->current_threshold;
++		if (!drained) {
++			drain_all_stock(memcg);
++			drained = true;
++			continue;
++		}
 +
-+	/*
-+	 * Iterate backward over array of thresholds starting from
-+	 * current_threshold and check if a threshold is crossed.
-+	 * If none of thresholds below usage is crossed, we read
-+	 * only one element of the array here.
-+	 */
-+	for (; i >= 0 && unlikely(t->entries[i].threshold > usage); i--)
-+		eventfd_signal(t->entries[i].eventfd);
++		if (!try_to_free_mem_cgroup_pages(memcg, 1, GFP_KERNEL,
++					memsw ? 0 : MEMCG_RECLAIM_MAY_SWAP, NULL)) {
++			ret = -EBUSY;
++			break;
++		}
++	} while (true);
 +
-+	/* i = current_threshold + 1 */
-+	i++;
++	if (!ret && enlarge)
++		memcg_oom_recover(memcg);
 +
-+	/*
-+	 * Iterate forward over array of thresholds starting from
-+	 * current_threshold+1 and check if a threshold is crossed.
-+	 * If none of thresholds above usage is crossed, we read
-+	 * only one element of the array here.
-+	 */
-+	for (; i < t->size && unlikely(t->entries[i].threshold <= usage); i++)
-+		eventfd_signal(t->entries[i].eventfd);
-+
-+	/* Update current_threshold */
-+	t->current_threshold = i - 1;
-+unlock:
-+	rcu_read_unlock();
++	return ret;
 +}
 +
-+static void mem_cgroup_threshold(struct mem_cgroup *memcg)
++/*
++ * Reclaims as many pages from the given memcg as possible.
++ *
++ * Caller is responsible for holding css reference for memcg.
++ */
++static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
 +{
-+	while (memcg) {
-+		__mem_cgroup_threshold(memcg, false);
-+		if (do_memsw_account())
-+			__mem_cgroup_threshold(memcg, true);
++	int nr_retries = MAX_RECLAIM_RETRIES;
 +
-+		memcg = parent_mem_cgroup(memcg);
++	/* we call try-to-free pages for make this cgroup empty */
++	lru_add_drain_all();
++
++	drain_all_stock(memcg);
++
++	/* try to free all pages in this cgroup */
++	while (nr_retries && page_counter_read(&memcg->memory)) {
++		if (signal_pending(current))
++			return -EINTR;
++
++		if (!try_to_free_mem_cgroup_pages(memcg, 1, GFP_KERNEL,
++						  MEMCG_RECLAIM_MAY_SWAP, NULL))
++			nr_retries--;
++	}
++
++	return 0;
++}
++
++static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
++					    char *buf, size_t nbytes,
++					    loff_t off)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++
++	if (mem_cgroup_is_root(memcg))
++		return -EINVAL;
++	return mem_cgroup_force_empty(memcg) ?: nbytes;
++}
++
++static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
++				     struct cftype *cft)
++{
++	return 1;
++}
++
++static int mem_cgroup_hierarchy_write(struct cgroup_subsys_state *css,
++				      struct cftype *cft, u64 val)
++{
++	if (val == 1)
++		return 0;
++
++	pr_warn_once("Non-hierarchical mode is deprecated. "
++		     "Please report your usecase to linux-mm@kvack.org if you "
++		     "depend on this functionality.\n");
++
++	return -EINVAL;
++}
++
++static u64 mem_cgroup_read_u64(struct cgroup_subsys_state *css,
++			       struct cftype *cft)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++	struct page_counter *counter;
++
++	switch (MEMFILE_TYPE(cft->private)) {
++	case _MEM:
++		counter = &memcg->memory;
++		break;
++	case _MEMSWAP:
++		counter = &memcg->memsw;
++		break;
++	case _KMEM:
++		counter = &memcg->kmem;
++		break;
++	case _TCP:
++		counter = &memcg->tcpmem;
++		break;
++	default:
++		BUG();
++	}
++
++	switch (MEMFILE_ATTR(cft->private)) {
++	case RES_USAGE:
++		if (counter == &memcg->memory)
++			return (u64)mem_cgroup_usage(memcg, false) * PAGE_SIZE;
++		if (counter == &memcg->memsw)
++			return (u64)mem_cgroup_usage(memcg, true) * PAGE_SIZE;
++		return (u64)page_counter_read(counter) * PAGE_SIZE;
++	case RES_LIMIT:
++		return (u64)counter->max * PAGE_SIZE;
++	case RES_MAX_USAGE:
++		return (u64)counter->watermark * PAGE_SIZE;
++	case RES_FAILCNT:
++		return counter->failcnt;
++	case RES_SOFT_LIMIT:
++		return (u64)READ_ONCE(memcg->soft_limit) * PAGE_SIZE;
++	default:
++		BUG();
 +	}
 +}
 +
 +/*
-+ * Check events in order.
-+ *
++ * This function doesn't do anything useful. Its only job is to provide a read
++ * handler for a file so that cgroup_file_mode() will add read permissions.
 + */
-+void memcg_check_events(struct mem_cgroup *memcg, int nid)
++static int mem_cgroup_dummy_seq_show(__always_unused struct seq_file *m,
++				     __always_unused void *v)
 +{
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-+		return;
++	return -EINVAL;
++}
 +
-+	/* threshold event is triggered in finer grain than soft limit */
-+	if (unlikely(mem_cgroup_event_ratelimit(memcg,
-+						MEM_CGROUP_TARGET_THRESH))) {
-+		bool do_softlimit;
++static int memcg_update_tcp_max(struct mem_cgroup *memcg, unsigned long max)
++{
++	int ret;
 +
-+		do_softlimit = mem_cgroup_event_ratelimit(memcg,
-+						MEM_CGROUP_TARGET_SOFTLIMIT);
-+		mem_cgroup_threshold(memcg);
-+		if (unlikely(do_softlimit))
-+			mem_cgroup_update_tree(memcg, nid);
++	mutex_lock(&memcg_max_mutex);
++
++	ret = page_counter_set_max(&memcg->tcpmem, max);
++	if (ret)
++		goto out;
++
++	if (!memcg->tcpmem_active) {
++		/*
++		 * The active flag needs to be written after the static_key
++		 * update. This is what guarantees that the socket activation
++		 * function is the last one to run. See mem_cgroup_sk_alloc()
++		 * for details, and note that we don't mark any socket as
++		 * belonging to this memcg until that flag is up.
++		 *
++		 * We need to do this, because static_keys will span multiple
++		 * sites, but we can't control their order. If we mark a socket
++		 * as accounted, but the accounting functions are not patched in
++		 * yet, we'll lose accounting.
++		 *
++		 * We never race with the readers in mem_cgroup_sk_alloc(),
++		 * because when this value change, the code to process it is not
++		 * patched in yet.
++		 */
++		static_branch_inc(&memcg_sockets_enabled_key);
++		memcg->tcpmem_active = true;
 +	}
++out:
++	mutex_unlock(&memcg_max_mutex);
++	return ret;
 +}
 +
-+static int mem_cgroup_oom_notify_cb(struct mem_cgroup *memcg)
++/*
++ * The user of this function is...
++ * RES_LIMIT.
++ */
++static ssize_t mem_cgroup_write(struct kernfs_open_file *of,
++				char *buf, size_t nbytes, loff_t off)
 +{
-+	struct mem_cgroup_eventfd_list *ev;
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	unsigned long nr_pages;
++	int ret;
 +
-+	spin_lock(&memcg_oom_lock);
-+
-+	list_for_each_entry(ev, &memcg->oom_notify, list)
-+		eventfd_signal(ev->eventfd);
-+
-+	spin_unlock(&memcg_oom_lock);
-+	return 0;
-+}
-+
-+void mem_cgroup_oom_notify(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+
-+	for_each_mem_cgroup_tree(iter, memcg)
-+		mem_cgroup_oom_notify_cb(iter);
-+}
-+
-+static int compare_thresholds(const void *a, const void *b)
-+{
-+	const struct mem_cgroup_threshold *_a = a;
-+	const struct mem_cgroup_threshold *_b = b;
-+
-+	if (_a->threshold > _b->threshold)
-+		return 1;
-+
-+	if (_a->threshold < _b->threshold)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int __mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd, const char *args, enum res_type type)
-+{
-+	struct mem_cgroup_thresholds *thresholds;
-+	struct mem_cgroup_threshold_ary *new;
-+	unsigned long threshold;
-+	unsigned long usage;
-+	int i, size, ret;
-+
-+	ret = page_counter_memparse(args, "-1", &threshold);
++	buf = strstrip(buf);
++	ret = page_counter_memparse(buf, "-1", &nr_pages);
 +	if (ret)
 +		return ret;
 +
-+	mutex_lock(&memcg->thresholds_lock);
-+
-+	if (type == _MEM) {
-+		thresholds = &memcg->thresholds;
-+		usage = mem_cgroup_usage(memcg, false);
-+	} else if (type == _MEMSWAP) {
-+		thresholds = &memcg->memsw_thresholds;
-+		usage = mem_cgroup_usage(memcg, true);
-+	} else
-+		BUG();
-+
-+	/* Check if a threshold crossed before adding a new one */
-+	if (thresholds->primary)
-+		__mem_cgroup_threshold(memcg, type == _MEMSWAP);
-+
-+	size = thresholds->primary ? thresholds->primary->size + 1 : 1;
-+
-+	/* Allocate memory for new array of thresholds */
-+	new = kmalloc(struct_size(new, entries, size), GFP_KERNEL);
-+	if (!new) {
-+		ret = -ENOMEM;
-+		goto unlock;
-+	}
-+	new->size = size;
-+
-+	/* Copy thresholds (if any) to new array */
-+	if (thresholds->primary)
-+		memcpy(new->entries, thresholds->primary->entries,
-+		       flex_array_size(new, entries, size - 1));
-+
-+	/* Add new threshold */
-+	new->entries[size - 1].eventfd = eventfd;
-+	new->entries[size - 1].threshold = threshold;
-+
-+	/* Sort thresholds. Registering of new threshold isn't time-critical */
-+	sort(new->entries, size, sizeof(*new->entries),
-+			compare_thresholds, NULL);
-+
-+	/* Find current threshold */
-+	new->current_threshold = -1;
-+	for (i = 0; i < size; i++) {
-+		if (new->entries[i].threshold <= usage) {
-+			/*
-+			 * new->current_threshold will not be used until
-+			 * rcu_assign_pointer(), so it's safe to increment
-+			 * it here.
-+			 */
-+			++new->current_threshold;
-+		} else
++	switch (MEMFILE_ATTR(of_cft(of)->private)) {
++	case RES_LIMIT:
++		if (mem_cgroup_is_root(memcg)) { /* Can't set limit on root */
++			ret = -EINVAL;
 +			break;
++		}
++		switch (MEMFILE_TYPE(of_cft(of)->private)) {
++		case _MEM:
++			ret = mem_cgroup_resize_max(memcg, nr_pages, false);
++			break;
++		case _MEMSWAP:
++			ret = mem_cgroup_resize_max(memcg, nr_pages, true);
++			break;
++		case _KMEM:
++			pr_warn_once("kmem.limit_in_bytes is deprecated and will be removed. "
++				     "Writing any value to this file has no effect. "
++				     "Please report your usecase to linux-mm@kvack.org if you "
++				     "depend on this functionality.\n");
++			ret = 0;
++			break;
++		case _TCP:
++			ret = memcg_update_tcp_max(memcg, nr_pages);
++			break;
++		}
++		break;
++	case RES_SOFT_LIMIT:
++		if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
++			ret = -EOPNOTSUPP;
++		} else {
++			WRITE_ONCE(memcg->soft_limit, nr_pages);
++			ret = 0;
++		}
++		break;
 +	}
-+
-+	/* Free old spare buffer and save old primary buffer as spare */
-+	kfree(thresholds->spare);
-+	thresholds->spare = thresholds->primary;
-+
-+	rcu_assign_pointer(thresholds->primary, new);
-+
-+	/* To be sure that nobody uses thresholds */
-+	synchronize_rcu();
-+
-+unlock:
-+	mutex_unlock(&memcg->thresholds_lock);
-+
-+	return ret;
++	return ret ?: nbytes;
 +}
 +
-+static int mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd, const char *args)
++static ssize_t mem_cgroup_reset(struct kernfs_open_file *of, char *buf,
++				size_t nbytes, loff_t off)
 +{
-+	return __mem_cgroup_usage_register_event(memcg, eventfd, args, _MEM);
-+}
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	struct page_counter *counter;
 +
-+static int memsw_cgroup_usage_register_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd, const char *args)
-+{
-+	return __mem_cgroup_usage_register_event(memcg, eventfd, args, _MEMSWAP);
-+}
-+
-+static void __mem_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd, enum res_type type)
-+{
-+	struct mem_cgroup_thresholds *thresholds;
-+	struct mem_cgroup_threshold_ary *new;
-+	unsigned long usage;
-+	int i, j, size, entries;
-+
-+	mutex_lock(&memcg->thresholds_lock);
-+
-+	if (type == _MEM) {
-+		thresholds = &memcg->thresholds;
-+		usage = mem_cgroup_usage(memcg, false);
-+	} else if (type == _MEMSWAP) {
-+		thresholds = &memcg->memsw_thresholds;
-+		usage = mem_cgroup_usage(memcg, true);
-+	} else
++	switch (MEMFILE_TYPE(of_cft(of)->private)) {
++	case _MEM:
++		counter = &memcg->memory;
++		break;
++	case _MEMSWAP:
++		counter = &memcg->memsw;
++		break;
++	case _KMEM:
++		counter = &memcg->kmem;
++		break;
++	case _TCP:
++		counter = &memcg->tcpmem;
++		break;
++	default:
 +		BUG();
-+
-+	if (!thresholds->primary)
-+		goto unlock;
-+
-+	/* Check if a threshold crossed before removing */
-+	__mem_cgroup_threshold(memcg, type == _MEMSWAP);
-+
-+	/* Calculate new number of threshold */
-+	size = entries = 0;
-+	for (i = 0; i < thresholds->primary->size; i++) {
-+		if (thresholds->primary->entries[i].eventfd != eventfd)
-+			size++;
-+		else
-+			entries++;
 +	}
 +
-+	new = thresholds->spare;
-+
-+	/* If no items related to eventfd have been cleared, nothing to do */
-+	if (!entries)
-+		goto unlock;
-+
-+	/* Set thresholds array to NULL if we don't have thresholds */
-+	if (!size) {
-+		kfree(new);
-+		new = NULL;
-+		goto swap_buffers;
++	switch (MEMFILE_ATTR(of_cft(of)->private)) {
++	case RES_MAX_USAGE:
++		page_counter_reset_watermark(counter);
++		break;
++	case RES_FAILCNT:
++		counter->failcnt = 0;
++		break;
++	default:
++		BUG();
 +	}
-+
-+	new->size = size;
-+
-+	/* Copy thresholds and find current threshold */
-+	new->current_threshold = -1;
-+	for (i = 0, j = 0; i < thresholds->primary->size; i++) {
-+		if (thresholds->primary->entries[i].eventfd == eventfd)
-+			continue;
-+
-+		new->entries[j] = thresholds->primary->entries[i];
-+		if (new->entries[j].threshold <= usage) {
-+			/*
-+			 * new->current_threshold will not be used
-+			 * until rcu_assign_pointer(), so it's safe to increment
-+			 * it here.
-+			 */
-+			++new->current_threshold;
-+		}
-+		j++;
-+	}
-+
-+swap_buffers:
-+	/* Swap primary and spare array */
-+	thresholds->spare = thresholds->primary;
-+
-+	rcu_assign_pointer(thresholds->primary, new);
-+
-+	/* To be sure that nobody uses thresholds */
-+	synchronize_rcu();
-+
-+	/* If all events are unregistered, free the spare array */
-+	if (!new) {
-+		kfree(thresholds->spare);
-+		thresholds->spare = NULL;
-+	}
-+unlock:
-+	mutex_unlock(&memcg->thresholds_lock);
-+}
-+
-+static void mem_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd)
-+{
-+	return __mem_cgroup_usage_unregister_event(memcg, eventfd, _MEM);
-+}
-+
-+static void memsw_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd)
-+{
-+	return __mem_cgroup_usage_unregister_event(memcg, eventfd, _MEMSWAP);
-+}
-+
-+static int mem_cgroup_oom_register_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd, const char *args)
-+{
-+	struct mem_cgroup_eventfd_list *event;
-+
-+	event = kmalloc(sizeof(*event),	GFP_KERNEL);
-+	if (!event)
-+		return -ENOMEM;
-+
-+	spin_lock(&memcg_oom_lock);
-+
-+	event->eventfd = eventfd;
-+	list_add(&event->list, &memcg->oom_notify);
-+
-+	/* already in OOM ? */
-+	if (memcg->under_oom)
-+		eventfd_signal(eventfd);
-+	spin_unlock(&memcg_oom_lock);
-+
-+	return 0;
-+}
-+
-+static void mem_cgroup_oom_unregister_event(struct mem_cgroup *memcg,
-+	struct eventfd_ctx *eventfd)
-+{
-+	struct mem_cgroup_eventfd_list *ev, *tmp;
-+
-+	spin_lock(&memcg_oom_lock);
-+
-+	list_for_each_entry_safe(ev, tmp, &memcg->oom_notify, list) {
-+		if (ev->eventfd == eventfd) {
-+			list_del(&ev->list);
-+			kfree(ev);
-+		}
-+	}
-+
-+	spin_unlock(&memcg_oom_lock);
-+}
-+
-+/*
-+ * DO NOT USE IN NEW FILES.
-+ *
-+ * "cgroup.event_control" implementation.
-+ *
-+ * This is way over-engineered.  It tries to support fully configurable
-+ * events for each user.  Such level of flexibility is completely
-+ * unnecessary especially in the light of the planned unified hierarchy.
-+ *
-+ * Please deprecate this and replace with something simpler if at all
-+ * possible.
-+ */
-+
-+/*
-+ * Unregister event and free resources.
-+ *
-+ * Gets called from workqueue.
-+ */
-+static void memcg_event_remove(struct work_struct *work)
-+{
-+	struct mem_cgroup_event *event =
-+		container_of(work, struct mem_cgroup_event, remove);
-+	struct mem_cgroup *memcg = event->memcg;
-+
-+	remove_wait_queue(event->wqh, &event->wait);
-+
-+	event->unregister_event(memcg, event->eventfd);
-+
-+	/* Notify userspace the event is going away. */
-+	eventfd_signal(event->eventfd);
-+
-+	eventfd_ctx_put(event->eventfd);
-+	kfree(event);
-+	css_put(&memcg->css);
-+}
-+
-+/*
-+ * Gets called on EPOLLHUP on eventfd when user closes it.
-+ *
-+ * Called with wqh->lock held and interrupts disabled.
-+ */
-+static int memcg_event_wake(wait_queue_entry_t *wait, unsigned mode,
-+			    int sync, void *key)
-+{
-+	struct mem_cgroup_event *event =
-+		container_of(wait, struct mem_cgroup_event, wait);
-+	struct mem_cgroup *memcg = event->memcg;
-+	__poll_t flags = key_to_poll(key);
-+
-+	if (flags & EPOLLHUP) {
-+		/*
-+		 * If the event has been detached at cgroup removal, we
-+		 * can simply return knowing the other side will cleanup
-+		 * for us.
-+		 *
-+		 * We can't race against event freeing since the other
-+		 * side will require wqh->lock via remove_wait_queue(),
-+		 * which we hold.
-+		 */
-+		spin_lock(&memcg->event_list_lock);
-+		if (!list_empty(&event->list)) {
-+			list_del_init(&event->list);
-+			/*
-+			 * We are in atomic context, but cgroup_event_remove()
-+			 * may sleep, so we have to call it in workqueue.
-+			 */
-+			schedule_work(&event->remove);
-+		}
-+		spin_unlock(&memcg->event_list_lock);
-+	}
-+
-+	return 0;
-+}
-+
-+static void memcg_event_ptable_queue_proc(struct file *file,
-+		wait_queue_head_t *wqh, poll_table *pt)
-+{
-+	struct mem_cgroup_event *event =
-+		container_of(pt, struct mem_cgroup_event, pt);
-+
-+	event->wqh = wqh;
-+	add_wait_queue(wqh, &event->wait);
-+}
-+
-+/*
-+ * DO NOT USE IN NEW FILES.
-+ *
-+ * Parse input and register new cgroup event handler.
-+ *
-+ * Input must be in format '<event_fd> <control_fd> <args>'.
-+ * Interpretation of args is defined by control file implementation.
-+ */
-+ssize_t memcg_write_event_control(struct kernfs_open_file *of, char *buf,
-+				  size_t nbytes, loff_t off)
-+{
-+	struct cgroup_subsys_state *css = of_css(of);
-+	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
-+	struct mem_cgroup_event *event;
-+	struct cgroup_subsys_state *cfile_css;
-+	unsigned int efd, cfd;
-+	struct fd efile;
-+	struct fd cfile;
-+	struct dentry *cdentry;
-+	const char *name;
-+	char *endp;
-+	int ret;
-+
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-+		return -EOPNOTSUPP;
-+
-+	buf = strstrip(buf);
-+
-+	efd = simple_strtoul(buf, &endp, 10);
-+	if (*endp != ' ')
-+		return -EINVAL;
-+	buf = endp + 1;
-+
-+	cfd = simple_strtoul(buf, &endp, 10);
-+	if ((*endp != ' ') && (*endp != '\0'))
-+		return -EINVAL;
-+	buf = endp + 1;
-+
-+	event = kzalloc(sizeof(*event), GFP_KERNEL);
-+	if (!event)
-+		return -ENOMEM;
-+
-+	event->memcg = memcg;
-+	INIT_LIST_HEAD(&event->list);
-+	init_poll_funcptr(&event->pt, memcg_event_ptable_queue_proc);
-+	init_waitqueue_func_entry(&event->wait, memcg_event_wake);
-+	INIT_WORK(&event->remove, memcg_event_remove);
-+
-+	efile = fdget(efd);
-+	if (!efile.file) {
-+		ret = -EBADF;
-+		goto out_kfree;
-+	}
-+
-+	event->eventfd = eventfd_ctx_fileget(efile.file);
-+	if (IS_ERR(event->eventfd)) {
-+		ret = PTR_ERR(event->eventfd);
-+		goto out_put_efile;
-+	}
-+
-+	cfile = fdget(cfd);
-+	if (!cfile.file) {
-+		ret = -EBADF;
-+		goto out_put_eventfd;
-+	}
-+
-+	/* the process need read permission on control file */
-+	/* AV: shouldn't we check that it's been opened for read instead? */
-+	ret = file_permission(cfile.file, MAY_READ);
-+	if (ret < 0)
-+		goto out_put_cfile;
-+
-+	/*
-+	 * The control file must be a regular cgroup1 file. As a regular cgroup
-+	 * file can't be renamed, it's safe to access its name afterwards.
-+	 */
-+	cdentry = cfile.file->f_path.dentry;
-+	if (cdentry->d_sb->s_type != &cgroup_fs_type || !d_is_reg(cdentry)) {
-+		ret = -EINVAL;
-+		goto out_put_cfile;
-+	}
-+
-+	/*
-+	 * Determine the event callbacks and set them in @event.  This used
-+	 * to be done via struct cftype but cgroup core no longer knows
-+	 * about these events.  The following is crude but the whole thing
-+	 * is for compatibility anyway.
-+	 *
-+	 * DO NOT ADD NEW FILES.
-+	 */
-+	name = cdentry->d_name.name;
-+
-+	if (!strcmp(name, "memory.usage_in_bytes")) {
-+		event->register_event = mem_cgroup_usage_register_event;
-+		event->unregister_event = mem_cgroup_usage_unregister_event;
-+	} else if (!strcmp(name, "memory.oom_control")) {
-+		event->register_event = mem_cgroup_oom_register_event;
-+		event->unregister_event = mem_cgroup_oom_unregister_event;
-+	} else if (!strcmp(name, "memory.pressure_level")) {
-+		event->register_event = vmpressure_register_event;
-+		event->unregister_event = vmpressure_unregister_event;
-+	} else if (!strcmp(name, "memory.memsw.usage_in_bytes")) {
-+		event->register_event = memsw_cgroup_usage_register_event;
-+		event->unregister_event = memsw_cgroup_usage_unregister_event;
-+	} else {
-+		ret = -EINVAL;
-+		goto out_put_cfile;
-+	}
-+
-+	/*
-+	 * Verify @cfile should belong to @css.  Also, remaining events are
-+	 * automatically removed on cgroup destruction but the removal is
-+	 * asynchronous, so take an extra ref on @css.
-+	 */
-+	cfile_css = css_tryget_online_from_dir(cdentry->d_parent,
-+					       &memory_cgrp_subsys);
-+	ret = -EINVAL;
-+	if (IS_ERR(cfile_css))
-+		goto out_put_cfile;
-+	if (cfile_css != css) {
-+		css_put(cfile_css);
-+		goto out_put_cfile;
-+	}
-+
-+	ret = event->register_event(memcg, event->eventfd, buf);
-+	if (ret)
-+		goto out_put_css;
-+
-+	vfs_poll(efile.file, &event->pt);
-+
-+	spin_lock_irq(&memcg->event_list_lock);
-+	list_add(&event->list, &memcg->event_list);
-+	spin_unlock_irq(&memcg->event_list_lock);
-+
-+	fdput(cfile);
-+	fdput(efile);
 +
 +	return nbytes;
-+
-+out_put_css:
-+	css_put(css);
-+out_put_cfile:
-+	fdput(cfile);
-+out_put_eventfd:
-+	eventfd_ctx_put(event->eventfd);
-+out_put_efile:
-+	fdput(efile);
-+out_kfree:
-+	kfree(event);
-+
-+	return ret;
 +}
 +
-+void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg)
++#ifdef CONFIG_NUMA
++
++#define LRU_ALL_FILE (BIT(LRU_INACTIVE_FILE) | BIT(LRU_ACTIVE_FILE))
++#define LRU_ALL_ANON (BIT(LRU_INACTIVE_ANON) | BIT(LRU_ACTIVE_ANON))
++#define LRU_ALL	     ((1 << NR_LRU_LISTS) - 1)
++
++static unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
++				int nid, unsigned int lru_mask, bool tree)
 +{
-+	struct mem_cgroup_event *event, *tmp;
++	struct lruvec *lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
++	unsigned long nr = 0;
++	enum lru_list lru;
 +
-+	/*
-+	 * Unregister events and notify userspace.
-+	 * Notify userspace about cgroup removing only after rmdir of cgroup
-+	 * directory to avoid race between userspace and kernelspace.
-+	 */
-+	spin_lock_irq(&memcg->event_list_lock);
-+	list_for_each_entry_safe(event, tmp, &memcg->event_list, list) {
-+		list_del_init(&event->list);
-+		schedule_work(&event->remove);
++	VM_BUG_ON((unsigned)nid >= nr_node_ids);
++
++	for_each_lru(lru) {
++		if (!(BIT(lru) & lru_mask))
++			continue;
++		if (tree)
++			nr += lruvec_page_state(lruvec, NR_LRU_BASE + lru);
++		else
++			nr += lruvec_page_state_local(lruvec, NR_LRU_BASE + lru);
 +	}
-+	spin_unlock_irq(&memcg->event_list_lock);
++	return nr;
 +}
 +
- static int __init mem_cgroup_v1_init(void)
++static unsigned long mem_cgroup_nr_lru_pages(struct mem_cgroup *memcg,
++					     unsigned int lru_mask,
++					     bool tree)
++{
++	unsigned long nr = 0;
++	enum lru_list lru;
++
++	for_each_lru(lru) {
++		if (!(BIT(lru) & lru_mask))
++			continue;
++		if (tree)
++			nr += memcg_page_state(memcg, NR_LRU_BASE + lru);
++		else
++			nr += memcg_page_state_local(memcg, NR_LRU_BASE + lru);
++	}
++	return nr;
++}
++
++static int memcg_numa_stat_show(struct seq_file *m, void *v)
++{
++	struct numa_stat {
++		const char *name;
++		unsigned int lru_mask;
++	};
++
++	static const struct numa_stat stats[] = {
++		{ "total", LRU_ALL },
++		{ "file", LRU_ALL_FILE },
++		{ "anon", LRU_ALL_ANON },
++		{ "unevictable", BIT(LRU_UNEVICTABLE) },
++	};
++	const struct numa_stat *stat;
++	int nid;
++	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
++
++	mem_cgroup_flush_stats(memcg);
++
++	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
++		seq_printf(m, "%s=%lu", stat->name,
++			   mem_cgroup_nr_lru_pages(memcg, stat->lru_mask,
++						   false));
++		for_each_node_state(nid, N_MEMORY)
++			seq_printf(m, " N%d=%lu", nid,
++				   mem_cgroup_node_nr_lru_pages(memcg, nid,
++							stat->lru_mask, false));
++		seq_putc(m, '\n');
++	}
++
++	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
++
++		seq_printf(m, "hierarchical_%s=%lu", stat->name,
++			   mem_cgroup_nr_lru_pages(memcg, stat->lru_mask,
++						   true));
++		for_each_node_state(nid, N_MEMORY)
++			seq_printf(m, " N%d=%lu", nid,
++				   mem_cgroup_node_nr_lru_pages(memcg, nid,
++							stat->lru_mask, true));
++		seq_putc(m, '\n');
++	}
++
++	return 0;
++}
++#endif /* CONFIG_NUMA */
++
++static const unsigned int memcg1_stats[] = {
++	NR_FILE_PAGES,
++	NR_ANON_MAPPED,
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	NR_ANON_THPS,
++#endif
++	NR_SHMEM,
++	NR_FILE_MAPPED,
++	NR_FILE_DIRTY,
++	NR_WRITEBACK,
++	WORKINGSET_REFAULT_ANON,
++	WORKINGSET_REFAULT_FILE,
++#ifdef CONFIG_SWAP
++	MEMCG_SWAP,
++	NR_SWAPCACHE,
++#endif
++};
++
++static const char *const memcg1_stat_names[] = {
++	"cache",
++	"rss",
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	"rss_huge",
++#endif
++	"shmem",
++	"mapped_file",
++	"dirty",
++	"writeback",
++	"workingset_refault_anon",
++	"workingset_refault_file",
++#ifdef CONFIG_SWAP
++	"swap",
++	"swapcached",
++#endif
++};
++
++/* Universal VM events cgroup1 shows, original sort order */
++static const unsigned int memcg1_events[] = {
++	PGPGIN,
++	PGPGOUT,
++	PGFAULT,
++	PGMAJFAULT,
++};
++
++void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
++{
++	unsigned long memory, memsw;
++	struct mem_cgroup *mi;
++	unsigned int i;
++
++	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
++
++	mem_cgroup_flush_stats(memcg);
++
++	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
++		unsigned long nr;
++
++		nr = memcg_page_state_local_output(memcg, memcg1_stats[i]);
++		seq_buf_printf(s, "%s %lu\n", memcg1_stat_names[i], nr);
++	}
++
++	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
++		seq_buf_printf(s, "%s %lu\n", vm_event_name(memcg1_events[i]),
++			       memcg_events_local(memcg, memcg1_events[i]));
++
++	for (i = 0; i < NR_LRU_LISTS; i++)
++		seq_buf_printf(s, "%s %lu\n", lru_list_name(i),
++			       memcg_page_state_local(memcg, NR_LRU_BASE + i) *
++			       PAGE_SIZE);
++
++	/* Hierarchical information */
++	memory = memsw = PAGE_COUNTER_MAX;
++	for (mi = memcg; mi; mi = parent_mem_cgroup(mi)) {
++		memory = min(memory, READ_ONCE(mi->memory.max));
++		memsw = min(memsw, READ_ONCE(mi->memsw.max));
++	}
++	seq_buf_printf(s, "hierarchical_memory_limit %llu\n",
++		       (u64)memory * PAGE_SIZE);
++	seq_buf_printf(s, "hierarchical_memsw_limit %llu\n",
++		       (u64)memsw * PAGE_SIZE);
++
++	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
++		unsigned long nr;
++
++		nr = memcg_page_state_output(memcg, memcg1_stats[i]);
++		seq_buf_printf(s, "total_%s %llu\n", memcg1_stat_names[i],
++			       (u64)nr);
++	}
++
++	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
++		seq_buf_printf(s, "total_%s %llu\n",
++			       vm_event_name(memcg1_events[i]),
++			       (u64)memcg_events(memcg, memcg1_events[i]));
++
++	for (i = 0; i < NR_LRU_LISTS; i++)
++		seq_buf_printf(s, "total_%s %llu\n", lru_list_name(i),
++			       (u64)memcg_page_state(memcg, NR_LRU_BASE + i) *
++			       PAGE_SIZE);
++
++#ifdef CONFIG_DEBUG_VM
++	{
++		pg_data_t *pgdat;
++		struct mem_cgroup_per_node *mz;
++		unsigned long anon_cost = 0;
++		unsigned long file_cost = 0;
++
++		for_each_online_pgdat(pgdat) {
++			mz = memcg->nodeinfo[pgdat->node_id];
++
++			anon_cost += mz->lruvec.anon_cost;
++			file_cost += mz->lruvec.file_cost;
++		}
++		seq_buf_printf(s, "anon_cost %lu\n", anon_cost);
++		seq_buf_printf(s, "file_cost %lu\n", file_cost);
++	}
++#endif
++}
++
++static u64 mem_cgroup_swappiness_read(struct cgroup_subsys_state *css,
++				      struct cftype *cft)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++
++	return mem_cgroup_swappiness(memcg);
++}
++
++static int mem_cgroup_swappiness_write(struct cgroup_subsys_state *css,
++				       struct cftype *cft, u64 val)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++
++	if (val > MAX_SWAPPINESS)
++		return -EINVAL;
++
++	if (!mem_cgroup_is_root(memcg))
++		WRITE_ONCE(memcg->swappiness, val);
++	else
++		WRITE_ONCE(vm_swappiness, val);
++
++	return 0;
++}
++
++static int mem_cgroup_oom_control_read(struct seq_file *sf, void *v)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_seq(sf);
++
++	seq_printf(sf, "oom_kill_disable %d\n", READ_ONCE(memcg->oom_kill_disable));
++	seq_printf(sf, "under_oom %d\n", (bool)memcg->under_oom);
++	seq_printf(sf, "oom_kill %lu\n",
++		   atomic_long_read(&memcg->memory_events[MEMCG_OOM_KILL]));
++	return 0;
++}
++
++static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
++	struct cftype *cft, u64 val)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++
++	/* cannot set to root cgroup and only 0 and 1 are allowed */
++	if (mem_cgroup_is_root(memcg) || !((val == 0) || (val == 1)))
++		return -EINVAL;
++
++	WRITE_ONCE(memcg->oom_kill_disable, val);
++	if (!val)
++		memcg_oom_recover(memcg);
++
++	return 0;
++}
++
++#if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_SLUB_DEBUG)
++static int mem_cgroup_slab_show(struct seq_file *m, void *p)
++{
++	/*
++	 * Deprecated.
++	 * Please, take a look at tools/cgroup/memcg_slabinfo.py .
++	 */
++	return 0;
++}
++#endif
++
++struct cftype mem_cgroup_legacy_files[] = {
++	{
++		.name = "usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEM, RES_USAGE),
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "max_usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEM, RES_MAX_USAGE),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "limit_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEM, RES_LIMIT),
++		.write = mem_cgroup_write,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "soft_limit_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEM, RES_SOFT_LIMIT),
++		.write = mem_cgroup_write,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "failcnt",
++		.private = MEMFILE_PRIVATE(_MEM, RES_FAILCNT),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "stat",
++		.seq_show = memory_stat_show,
++	},
++	{
++		.name = "force_empty",
++		.write = mem_cgroup_force_empty_write,
++	},
++	{
++		.name = "use_hierarchy",
++		.write_u64 = mem_cgroup_hierarchy_write,
++		.read_u64 = mem_cgroup_hierarchy_read,
++	},
++	{
++		.name = "cgroup.event_control",		/* XXX: for compat */
++		.write = memcg_write_event_control,
++		.flags = CFTYPE_NO_PREFIX | CFTYPE_WORLD_WRITABLE,
++	},
++	{
++		.name = "swappiness",
++		.read_u64 = mem_cgroup_swappiness_read,
++		.write_u64 = mem_cgroup_swappiness_write,
++	},
++	{
++		.name = "move_charge_at_immigrate",
++		.read_u64 = mem_cgroup_move_charge_read,
++		.write_u64 = mem_cgroup_move_charge_write,
++	},
++	{
++		.name = "oom_control",
++		.seq_show = mem_cgroup_oom_control_read,
++		.write_u64 = mem_cgroup_oom_control_write,
++	},
++	{
++		.name = "pressure_level",
++		.seq_show = mem_cgroup_dummy_seq_show,
++	},
++#ifdef CONFIG_NUMA
++	{
++		.name = "numa_stat",
++		.seq_show = memcg_numa_stat_show,
++	},
++#endif
++	{
++		.name = "kmem.limit_in_bytes",
++		.private = MEMFILE_PRIVATE(_KMEM, RES_LIMIT),
++		.write = mem_cgroup_write,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "kmem.usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_KMEM, RES_USAGE),
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "kmem.failcnt",
++		.private = MEMFILE_PRIVATE(_KMEM, RES_FAILCNT),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "kmem.max_usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_KMEM, RES_MAX_USAGE),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++#if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_SLUB_DEBUG)
++	{
++		.name = "kmem.slabinfo",
++		.seq_show = mem_cgroup_slab_show,
++	},
++#endif
++	{
++		.name = "kmem.tcp.limit_in_bytes",
++		.private = MEMFILE_PRIVATE(_TCP, RES_LIMIT),
++		.write = mem_cgroup_write,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "kmem.tcp.usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_TCP, RES_USAGE),
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "kmem.tcp.failcnt",
++		.private = MEMFILE_PRIVATE(_TCP, RES_FAILCNT),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "kmem.tcp.max_usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_TCP, RES_MAX_USAGE),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{ },	/* terminate */
++};
++
++struct cftype memsw_files[] = {
++	{
++		.name = "memsw.usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_USAGE),
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "memsw.max_usage_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_MAX_USAGE),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "memsw.limit_in_bytes",
++		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_LIMIT),
++		.write = mem_cgroup_write,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{
++		.name = "memsw.failcnt",
++		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_FAILCNT),
++		.write = mem_cgroup_reset,
++		.read_u64 = mem_cgroup_read_u64,
++	},
++	{ },	/* terminate */
++};
++
+ void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg)
  {
- 	int node;
+ 	struct mem_cgroup_event *event, *tmp;
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index dc0a38d1107c..7c1a4ea0e9b5 100644
+index 7c1a4ea0e9b5..cd7e5f67d9b5 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -46,9 +46,6 @@
- #include <linux/slab.h>
- #include <linux/swapops.h>
- #include <linux/spinlock.h>
--#include <linux/eventfd.h>
--#include <linux/poll.h>
--#include <linux/sort.h>
- #include <linux/fs.h>
- #include <linux/seq_file.h>
- #include <linux/parser.h>
-@@ -59,7 +56,6 @@
- #include <linux/cpu.h>
- #include <linux/oom.h>
- #include <linux/lockdep.h>
--#include <linux/file.h>
- #include <linux/resume_user_mode.h>
- #include <linux/psi.h>
- #include <linux/seq_buf.h>
-@@ -96,91 +92,13 @@ static bool cgroup_memory_nobpf __ro_after_init;
- static DECLARE_WAIT_QUEUE_HEAD(memcg_cgwb_frn_waitq);
- #endif
- 
--/* Whether legacy memory+swap accounting is active */
--static bool do_memsw_account(void)
--{
--	return !cgroup_subsys_on_dfl(memory_cgrp_subsys);
--}
--
+@@ -95,10 +95,6 @@ static DECLARE_WAIT_QUEUE_HEAD(memcg_cgwb_frn_waitq);
  #define THRESHOLDS_EVENTS_TARGET 128
  #define SOFTLIMIT_EVENTS_TARGET 1024
  
--/* for OOM */
--struct mem_cgroup_eventfd_list {
--	struct list_head list;
--	struct eventfd_ctx *eventfd;
--};
--
--/*
-- * cgroup_event represents events which userspace want to receive.
-- */
--struct mem_cgroup_event {
--	/*
--	 * memcg which the event belongs to.
--	 */
--	struct mem_cgroup *memcg;
--	/*
--	 * eventfd to signal userspace about the event.
--	 */
--	struct eventfd_ctx *eventfd;
--	/*
--	 * Each of these stored in a list by the cgroup.
--	 */
--	struct list_head list;
--	/*
--	 * register_event() callback will be used to add new userspace
--	 * waiter for changes related to this event.  Use eventfd_signal()
--	 * on eventfd to send notification to userspace.
--	 */
--	int (*register_event)(struct mem_cgroup *memcg,
--			      struct eventfd_ctx *eventfd, const char *args);
--	/*
--	 * unregister_event() callback will be called when userspace closes
--	 * the eventfd or on cgroup removing.  This callback must be set,
--	 * if you want provide notification functionality.
--	 */
--	void (*unregister_event)(struct mem_cgroup *memcg,
--				 struct eventfd_ctx *eventfd);
--	/*
--	 * All fields below needed to unregister event when
--	 * userspace closes eventfd.
--	 */
--	poll_table pt;
--	wait_queue_head_t *wqh;
--	wait_queue_entry_t wait;
--	struct work_struct remove;
--};
--
--static void mem_cgroup_threshold(struct mem_cgroup *memcg);
--static void mem_cgroup_oom_notify(struct mem_cgroup *memcg);
--
--/* for encoding cft->private value on file */
--enum res_type {
--	_MEM,
--	_MEMSWAP,
--	_KMEM,
--	_TCP,
--};
--
- #define MEMFILE_PRIVATE(x, val)	((x) << 16 | (val))
- #define MEMFILE_TYPE(val)	((val) >> 16 & 0xffff)
- #define MEMFILE_ATTR(val)	((val) & 0xffff)
- 
--/*
-- * Iteration constructs for visiting all cgroups (under a tree).  If
-- * loops are exited prematurely (break), mem_cgroup_iter_break() must
-- * be used for reference counting.
-- */
--#define for_each_mem_cgroup_tree(iter, root)		\
--	for (iter = mem_cgroup_iter(root, NULL, NULL);	\
--	     iter != NULL;				\
--	     iter = mem_cgroup_iter(root, iter, NULL))
--
--#define for_each_mem_cgroup(iter)			\
--	for (iter = mem_cgroup_iter(NULL, NULL, NULL);	\
--	     iter != NULL;				\
--	     iter = mem_cgroup_iter(NULL, iter, NULL))
+-#define MEMFILE_PRIVATE(x, val)	((x) << 16 | (val))
+-#define MEMFILE_TYPE(val)	((val) >> 16 & 0xffff)
+-#define MEMFILE_ATTR(val)	((val) & 0xffff)
 -
  static inline bool task_is_dying(void)
  {
  	return tsk_is_oom_victim(current) || fatal_signal_pending(current) ||
-@@ -942,8 +860,8 @@ void mem_cgroup_charge_statistics(struct mem_cgroup *memcg, int nr_pages)
- 	__this_cpu_add(memcg->vmstats_percpu->nr_page_events, nr_pages);
+@@ -675,7 +671,7 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
  }
  
--static bool mem_cgroup_event_ratelimit(struct mem_cgroup *memcg,
--				       enum mem_cgroup_events_target target)
-+bool mem_cgroup_event_ratelimit(struct mem_cgroup *memcg,
-+				enum mem_cgroup_events_target target)
+ /* idx can be of type enum memcg_stat_item or node_stat_item. */
+-static unsigned long memcg_page_state_local(struct mem_cgroup *memcg, int idx)
++unsigned long memcg_page_state_local(struct mem_cgroup *memcg, int idx)
  {
- 	unsigned long val, next;
- 
-@@ -967,28 +885,6 @@ static bool mem_cgroup_event_ratelimit(struct mem_cgroup *memcg,
- 	return false;
+ 	long x;
+ 	int i = memcg_stats_index(idx);
+@@ -827,7 +823,7 @@ void __count_memcg_events(struct mem_cgroup *memcg, enum vm_event_item idx,
+ 	memcg_stats_unlock();
  }
  
--/*
-- * Check events in order.
-- *
-- */
--void memcg_check_events(struct mem_cgroup *memcg, int nid)
+-static unsigned long memcg_events(struct mem_cgroup *memcg, int event)
++unsigned long memcg_events(struct mem_cgroup *memcg, int event)
+ {
+ 	int i = memcg_events_index(event);
+ 
+@@ -837,7 +833,7 @@ static unsigned long memcg_events(struct mem_cgroup *memcg, int event)
+ 	return READ_ONCE(memcg->vmstats->events[i]);
+ }
+ 
+-static unsigned long memcg_events_local(struct mem_cgroup *memcg, int event)
++unsigned long memcg_events_local(struct mem_cgroup *memcg, int event)
+ {
+ 	int i = memcg_events_index(event);
+ 
+@@ -1422,15 +1418,13 @@ static int memcg_page_state_output_unit(int item)
+ 	}
+ }
+ 
+-static inline unsigned long memcg_page_state_output(struct mem_cgroup *memcg,
+-						    int item)
++unsigned long memcg_page_state_output(struct mem_cgroup *memcg, int item)
+ {
+ 	return memcg_page_state(memcg, item) *
+ 		memcg_page_state_output_unit(item);
+ }
+ 
+-static inline unsigned long memcg_page_state_local_output(
+-		struct mem_cgroup *memcg, int item)
++unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item)
+ {
+ 	return memcg_page_state_local(memcg, item) *
+ 		memcg_page_state_output_unit(item);
+@@ -1489,8 +1483,6 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+ 	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+ }
+ 
+-static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+-
+ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+ {
+ 	if (cgroup_subsys_on_dfl(memory_cgrp_subsys))
+@@ -2077,7 +2069,7 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+  * Drains all per-CPU charge caches for given root_memcg resp. subtree
+  * of the hierarchy under it.
+  */
+-static void drain_all_stock(struct mem_cgroup *root_memcg)
++void drain_all_stock(struct mem_cgroup *root_memcg)
+ {
+ 	int cpu, curcpu;
+ 
+@@ -3333,119 +3325,6 @@ void split_page_memcg(struct page *head, int old_order, int new_order)
+ 		css_get_many(&memcg->css, old_nr / new_nr - 1);
+ }
+ 
+-static DEFINE_MUTEX(memcg_max_mutex);
+-
+-static int mem_cgroup_resize_max(struct mem_cgroup *memcg,
+-				 unsigned long max, bool memsw)
 -{
--	if (IS_ENABLED(CONFIG_PREEMPT_RT))
--		return;
+-	bool enlarge = false;
+-	bool drained = false;
+-	int ret;
+-	bool limits_invariant;
+-	struct page_counter *counter = memsw ? &memcg->memsw : &memcg->memory;
 -
--	/* threshold event is triggered in finer grain than soft limit */
--	if (unlikely(mem_cgroup_event_ratelimit(memcg,
--						MEM_CGROUP_TARGET_THRESH))) {
--		bool do_softlimit;
+-	do {
+-		if (signal_pending(current)) {
+-			ret = -EINTR;
+-			break;
+-		}
 -
--		do_softlimit = mem_cgroup_event_ratelimit(memcg,
--						MEM_CGROUP_TARGET_SOFTLIMIT);
--		mem_cgroup_threshold(memcg);
--		if (unlikely(do_softlimit))
--			mem_cgroup_update_tree(memcg, nid);
--	}
+-		mutex_lock(&memcg_max_mutex);
+-		/*
+-		 * Make sure that the new limit (memsw or memory limit) doesn't
+-		 * break our basic invariant rule memory.max <= memsw.max.
+-		 */
+-		limits_invariant = memsw ? max >= READ_ONCE(memcg->memory.max) :
+-					   max <= memcg->memsw.max;
+-		if (!limits_invariant) {
+-			mutex_unlock(&memcg_max_mutex);
+-			ret = -EINVAL;
+-			break;
+-		}
+-		if (max > counter->max)
+-			enlarge = true;
+-		ret = page_counter_set_max(counter, max);
+-		mutex_unlock(&memcg_max_mutex);
+-
+-		if (!ret)
+-			break;
+-
+-		if (!drained) {
+-			drain_all_stock(memcg);
+-			drained = true;
+-			continue;
+-		}
+-
+-		if (!try_to_free_mem_cgroup_pages(memcg, 1, GFP_KERNEL,
+-					memsw ? 0 : MEMCG_RECLAIM_MAY_SWAP, NULL)) {
+-			ret = -EBUSY;
+-			break;
+-		}
+-	} while (true);
+-
+-	if (!ret && enlarge)
+-		memcg_oom_recover(memcg);
+-
+-	return ret;
 -}
 -
- struct mem_cgroup *mem_cgroup_from_task(struct task_struct *p)
- {
- 	/*
-@@ -1728,7 +1624,7 @@ static struct lockdep_map memcg_oom_lock_dep_map = {
- };
- #endif
- 
--static DEFINE_SPINLOCK(memcg_oom_lock);
-+DEFINE_SPINLOCK(memcg_oom_lock);
- 
- /*
-  * Check OOM-Killer is already running under our hierarchy.
-@@ -3550,7 +3446,7 @@ static int mem_cgroup_hierarchy_write(struct cgroup_subsys_state *css,
- 	return -EINVAL;
- }
- 
--static unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap)
-+unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap)
+-/*
+- * Reclaims as many pages from the given memcg as possible.
+- *
+- * Caller is responsible for holding css reference for memcg.
+- */
+-static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+-{
+-	int nr_retries = MAX_RECLAIM_RETRIES;
+-
+-	/* we call try-to-free pages for make this cgroup empty */
+-	lru_add_drain_all();
+-
+-	drain_all_stock(memcg);
+-
+-	/* try to free all pages in this cgroup */
+-	while (nr_retries && page_counter_read(&memcg->memory)) {
+-		if (signal_pending(current))
+-			return -EINTR;
+-
+-		if (!try_to_free_mem_cgroup_pages(memcg, 1, GFP_KERNEL,
+-						  MEMCG_RECLAIM_MAY_SWAP, NULL))
+-			nr_retries--;
+-	}
+-
+-	return 0;
+-}
+-
+-static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
+-					    char *buf, size_t nbytes,
+-					    loff_t off)
+-{
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
+-
+-	if (mem_cgroup_is_root(memcg))
+-		return -EINVAL;
+-	return mem_cgroup_force_empty(memcg) ?: nbytes;
+-}
+-
+-static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
+-				     struct cftype *cft)
+-{
+-	return 1;
+-}
+-
+-static int mem_cgroup_hierarchy_write(struct cgroup_subsys_state *css,
+-				      struct cftype *cft, u64 val)
+-{
+-	if (val == 1)
+-		return 0;
+-
+-	pr_warn_once("Non-hierarchical mode is deprecated. "
+-		     "Please report your usecase to linux-mm@kvack.org if you "
+-		     "depend on this functionality.\n");
+-
+-	return -EINVAL;
+-}
+-
+ unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap)
  {
  	unsigned long val;
- 
-@@ -4051,331 +3947,6 @@ static int mem_cgroup_swappiness_write(struct cgroup_subsys_state *css,
- 	return 0;
+@@ -3468,67 +3347,6 @@ unsigned long mem_cgroup_usage(struct mem_cgroup *memcg, bool swap)
+ 	return val;
  }
  
--static void __mem_cgroup_threshold(struct mem_cgroup *memcg, bool swap)
+-enum {
+-	RES_USAGE,
+-	RES_LIMIT,
+-	RES_MAX_USAGE,
+-	RES_FAILCNT,
+-	RES_SOFT_LIMIT,
+-};
+-
+-static u64 mem_cgroup_read_u64(struct cgroup_subsys_state *css,
+-			       struct cftype *cft)
 -{
--	struct mem_cgroup_threshold_ary *t;
--	unsigned long usage;
--	int i;
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+-	struct page_counter *counter;
 -
--	rcu_read_lock();
--	if (!swap)
--		t = rcu_dereference(memcg->thresholds.primary);
--	else
--		t = rcu_dereference(memcg->memsw_thresholds.primary);
+-	switch (MEMFILE_TYPE(cft->private)) {
+-	case _MEM:
+-		counter = &memcg->memory;
+-		break;
+-	case _MEMSWAP:
+-		counter = &memcg->memsw;
+-		break;
+-	case _KMEM:
+-		counter = &memcg->kmem;
+-		break;
+-	case _TCP:
+-		counter = &memcg->tcpmem;
+-		break;
+-	default:
+-		BUG();
+-	}
 -
--	if (!t)
--		goto unlock;
--
--	usage = mem_cgroup_usage(memcg, swap);
--
--	/*
--	 * current_threshold points to threshold just below or equal to usage.
--	 * If it's not true, a threshold was crossed after last
--	 * call of __mem_cgroup_threshold().
--	 */
--	i = t->current_threshold;
--
--	/*
--	 * Iterate backward over array of thresholds starting from
--	 * current_threshold and check if a threshold is crossed.
--	 * If none of thresholds below usage is crossed, we read
--	 * only one element of the array here.
--	 */
--	for (; i >= 0 && unlikely(t->entries[i].threshold > usage); i--)
--		eventfd_signal(t->entries[i].eventfd);
--
--	/* i = current_threshold + 1 */
--	i++;
--
--	/*
--	 * Iterate forward over array of thresholds starting from
--	 * current_threshold+1 and check if a threshold is crossed.
--	 * If none of thresholds above usage is crossed, we read
--	 * only one element of the array here.
--	 */
--	for (; i < t->size && unlikely(t->entries[i].threshold <= usage); i++)
--		eventfd_signal(t->entries[i].eventfd);
--
--	/* Update current_threshold */
--	t->current_threshold = i - 1;
--unlock:
--	rcu_read_unlock();
--}
--
--static void mem_cgroup_threshold(struct mem_cgroup *memcg)
--{
--	while (memcg) {
--		__mem_cgroup_threshold(memcg, false);
--		if (do_memsw_account())
--			__mem_cgroup_threshold(memcg, true);
--
--		memcg = parent_mem_cgroup(memcg);
+-	switch (MEMFILE_ATTR(cft->private)) {
+-	case RES_USAGE:
+-		if (counter == &memcg->memory)
+-			return (u64)mem_cgroup_usage(memcg, false) * PAGE_SIZE;
+-		if (counter == &memcg->memsw)
+-			return (u64)mem_cgroup_usage(memcg, true) * PAGE_SIZE;
+-		return (u64)page_counter_read(counter) * PAGE_SIZE;
+-	case RES_LIMIT:
+-		return (u64)counter->max * PAGE_SIZE;
+-	case RES_MAX_USAGE:
+-		return (u64)counter->watermark * PAGE_SIZE;
+-	case RES_FAILCNT:
+-		return counter->failcnt;
+-	case RES_SOFT_LIMIT:
+-		return (u64)READ_ONCE(memcg->soft_limit) * PAGE_SIZE;
+-	default:
+-		BUG();
 -	}
 -}
 -
--static int compare_thresholds(const void *a, const void *b)
+-/*
+- * This function doesn't do anything useful. Its only job is to provide a read
+- * handler for a file so that cgroup_file_mode() will add read permissions.
+- */
+-static int mem_cgroup_dummy_seq_show(__always_unused struct seq_file *m,
+-				     __always_unused void *v)
 -{
--	const struct mem_cgroup_threshold *_a = a;
--	const struct mem_cgroup_threshold *_b = b;
--
--	if (_a->threshold > _b->threshold)
--		return 1;
--
--	if (_a->threshold < _b->threshold)
--		return -1;
--
--	return 0;
+-	return -EINVAL;
 -}
 -
--static int mem_cgroup_oom_notify_cb(struct mem_cgroup *memcg)
+ #ifdef CONFIG_MEMCG_KMEM
+ static int memcg_online_kmem(struct mem_cgroup *memcg)
+ {
+@@ -3590,390 +3408,6 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
+ }
+ #endif /* CONFIG_MEMCG_KMEM */
+ 
+-static int memcg_update_tcp_max(struct mem_cgroup *memcg, unsigned long max)
 -{
--	struct mem_cgroup_eventfd_list *ev;
+-	int ret;
 -
--	spin_lock(&memcg_oom_lock);
+-	mutex_lock(&memcg_max_mutex);
 -
--	list_for_each_entry(ev, &memcg->oom_notify, list)
--		eventfd_signal(ev->eventfd);
+-	ret = page_counter_set_max(&memcg->tcpmem, max);
+-	if (ret)
+-		goto out;
 -
--	spin_unlock(&memcg_oom_lock);
--	return 0;
+-	if (!memcg->tcpmem_active) {
+-		/*
+-		 * The active flag needs to be written after the static_key
+-		 * update. This is what guarantees that the socket activation
+-		 * function is the last one to run. See mem_cgroup_sk_alloc()
+-		 * for details, and note that we don't mark any socket as
+-		 * belonging to this memcg until that flag is up.
+-		 *
+-		 * We need to do this, because static_keys will span multiple
+-		 * sites, but we can't control their order. If we mark a socket
+-		 * as accounted, but the accounting functions are not patched in
+-		 * yet, we'll lose accounting.
+-		 *
+-		 * We never race with the readers in mem_cgroup_sk_alloc(),
+-		 * because when this value change, the code to process it is not
+-		 * patched in yet.
+-		 */
+-		static_branch_inc(&memcg_sockets_enabled_key);
+-		memcg->tcpmem_active = true;
+-	}
+-out:
+-	mutex_unlock(&memcg_max_mutex);
+-	return ret;
 -}
 -
--static void mem_cgroup_oom_notify(struct mem_cgroup *memcg)
+-/*
+- * The user of this function is...
+- * RES_LIMIT.
+- */
+-static ssize_t mem_cgroup_write(struct kernfs_open_file *of,
+-				char *buf, size_t nbytes, loff_t off)
 -{
--	struct mem_cgroup *iter;
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
+-	unsigned long nr_pages;
+-	int ret;
 -
--	for_each_mem_cgroup_tree(iter, memcg)
--		mem_cgroup_oom_notify_cb(iter);
--}
--
--static int __mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd, const char *args, enum res_type type)
--{
--	struct mem_cgroup_thresholds *thresholds;
--	struct mem_cgroup_threshold_ary *new;
--	unsigned long threshold;
--	unsigned long usage;
--	int i, size, ret;
--
--	ret = page_counter_memparse(args, "-1", &threshold);
+-	buf = strstrip(buf);
+-	ret = page_counter_memparse(buf, "-1", &nr_pages);
 -	if (ret)
 -		return ret;
 -
--	mutex_lock(&memcg->thresholds_lock);
--
--	if (type == _MEM) {
--		thresholds = &memcg->thresholds;
--		usage = mem_cgroup_usage(memcg, false);
--	} else if (type == _MEMSWAP) {
--		thresholds = &memcg->memsw_thresholds;
--		usage = mem_cgroup_usage(memcg, true);
--	} else
--		BUG();
--
--	/* Check if a threshold crossed before adding a new one */
--	if (thresholds->primary)
--		__mem_cgroup_threshold(memcg, type == _MEMSWAP);
--
--	size = thresholds->primary ? thresholds->primary->size + 1 : 1;
--
--	/* Allocate memory for new array of thresholds */
--	new = kmalloc(struct_size(new, entries, size), GFP_KERNEL);
--	if (!new) {
--		ret = -ENOMEM;
--		goto unlock;
--	}
--	new->size = size;
--
--	/* Copy thresholds (if any) to new array */
--	if (thresholds->primary)
--		memcpy(new->entries, thresholds->primary->entries,
--		       flex_array_size(new, entries, size - 1));
--
--	/* Add new threshold */
--	new->entries[size - 1].eventfd = eventfd;
--	new->entries[size - 1].threshold = threshold;
--
--	/* Sort thresholds. Registering of new threshold isn't time-critical */
--	sort(new->entries, size, sizeof(*new->entries),
--			compare_thresholds, NULL);
--
--	/* Find current threshold */
--	new->current_threshold = -1;
--	for (i = 0; i < size; i++) {
--		if (new->entries[i].threshold <= usage) {
--			/*
--			 * new->current_threshold will not be used until
--			 * rcu_assign_pointer(), so it's safe to increment
--			 * it here.
--			 */
--			++new->current_threshold;
--		} else
+-	switch (MEMFILE_ATTR(of_cft(of)->private)) {
+-	case RES_LIMIT:
+-		if (mem_cgroup_is_root(memcg)) { /* Can't set limit on root */
+-			ret = -EINVAL;
 -			break;
--	}
--
--	/* Free old spare buffer and save old primary buffer as spare */
--	kfree(thresholds->spare);
--	thresholds->spare = thresholds->primary;
--
--	rcu_assign_pointer(thresholds->primary, new);
--
--	/* To be sure that nobody uses thresholds */
--	synchronize_rcu();
--
--unlock:
--	mutex_unlock(&memcg->thresholds_lock);
--
--	return ret;
--}
--
--static int mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd, const char *args)
--{
--	return __mem_cgroup_usage_register_event(memcg, eventfd, args, _MEM);
--}
--
--static int memsw_cgroup_usage_register_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd, const char *args)
--{
--	return __mem_cgroup_usage_register_event(memcg, eventfd, args, _MEMSWAP);
--}
--
--static void __mem_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd, enum res_type type)
--{
--	struct mem_cgroup_thresholds *thresholds;
--	struct mem_cgroup_threshold_ary *new;
--	unsigned long usage;
--	int i, j, size, entries;
--
--	mutex_lock(&memcg->thresholds_lock);
--
--	if (type == _MEM) {
--		thresholds = &memcg->thresholds;
--		usage = mem_cgroup_usage(memcg, false);
--	} else if (type == _MEMSWAP) {
--		thresholds = &memcg->memsw_thresholds;
--		usage = mem_cgroup_usage(memcg, true);
--	} else
--		BUG();
--
--	if (!thresholds->primary)
--		goto unlock;
--
--	/* Check if a threshold crossed before removing */
--	__mem_cgroup_threshold(memcg, type == _MEMSWAP);
--
--	/* Calculate new number of threshold */
--	size = entries = 0;
--	for (i = 0; i < thresholds->primary->size; i++) {
--		if (thresholds->primary->entries[i].eventfd != eventfd)
--			size++;
--		else
--			entries++;
--	}
--
--	new = thresholds->spare;
--
--	/* If no items related to eventfd have been cleared, nothing to do */
--	if (!entries)
--		goto unlock;
--
--	/* Set thresholds array to NULL if we don't have thresholds */
--	if (!size) {
--		kfree(new);
--		new = NULL;
--		goto swap_buffers;
--	}
--
--	new->size = size;
--
--	/* Copy thresholds and find current threshold */
--	new->current_threshold = -1;
--	for (i = 0, j = 0; i < thresholds->primary->size; i++) {
--		if (thresholds->primary->entries[i].eventfd == eventfd)
--			continue;
--
--		new->entries[j] = thresholds->primary->entries[i];
--		if (new->entries[j].threshold <= usage) {
--			/*
--			 * new->current_threshold will not be used
--			 * until rcu_assign_pointer(), so it's safe to increment
--			 * it here.
--			 */
--			++new->current_threshold;
 -		}
--		j++;
+-		switch (MEMFILE_TYPE(of_cft(of)->private)) {
+-		case _MEM:
+-			ret = mem_cgroup_resize_max(memcg, nr_pages, false);
+-			break;
+-		case _MEMSWAP:
+-			ret = mem_cgroup_resize_max(memcg, nr_pages, true);
+-			break;
+-		case _KMEM:
+-			pr_warn_once("kmem.limit_in_bytes is deprecated and will be removed. "
+-				     "Writing any value to this file has no effect. "
+-				     "Please report your usecase to linux-mm@kvack.org if you "
+-				     "depend on this functionality.\n");
+-			ret = 0;
+-			break;
+-		case _TCP:
+-			ret = memcg_update_tcp_max(memcg, nr_pages);
+-			break;
+-		}
+-		break;
+-	case RES_SOFT_LIMIT:
+-		if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+-			ret = -EOPNOTSUPP;
+-		} else {
+-			WRITE_ONCE(memcg->soft_limit, nr_pages);
+-			ret = 0;
+-		}
+-		break;
+-	}
+-	return ret ?: nbytes;
+-}
+-
+-static ssize_t mem_cgroup_reset(struct kernfs_open_file *of, char *buf,
+-				size_t nbytes, loff_t off)
+-{
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
+-	struct page_counter *counter;
+-
+-	switch (MEMFILE_TYPE(of_cft(of)->private)) {
+-	case _MEM:
+-		counter = &memcg->memory;
+-		break;
+-	case _MEMSWAP:
+-		counter = &memcg->memsw;
+-		break;
+-	case _KMEM:
+-		counter = &memcg->kmem;
+-		break;
+-	case _TCP:
+-		counter = &memcg->tcpmem;
+-		break;
+-	default:
+-		BUG();
 -	}
 -
--swap_buffers:
--	/* Swap primary and spare array */
--	thresholds->spare = thresholds->primary;
--
--	rcu_assign_pointer(thresholds->primary, new);
--
--	/* To be sure that nobody uses thresholds */
--	synchronize_rcu();
--
--	/* If all events are unregistered, free the spare array */
--	if (!new) {
--		kfree(thresholds->spare);
--		thresholds->spare = NULL;
+-	switch (MEMFILE_ATTR(of_cft(of)->private)) {
+-	case RES_MAX_USAGE:
+-		page_counter_reset_watermark(counter);
+-		break;
+-	case RES_FAILCNT:
+-		counter->failcnt = 0;
+-		break;
+-	default:
+-		BUG();
 -	}
--unlock:
--	mutex_unlock(&memcg->thresholds_lock);
+-
+-	return nbytes;
 -}
 -
--static void mem_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd)
+-#ifdef CONFIG_NUMA
+-
+-#define LRU_ALL_FILE (BIT(LRU_INACTIVE_FILE) | BIT(LRU_ACTIVE_FILE))
+-#define LRU_ALL_ANON (BIT(LRU_INACTIVE_ANON) | BIT(LRU_ACTIVE_ANON))
+-#define LRU_ALL	     ((1 << NR_LRU_LISTS) - 1)
+-
+-static unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
+-				int nid, unsigned int lru_mask, bool tree)
 -{
--	return __mem_cgroup_usage_unregister_event(memcg, eventfd, _MEM);
+-	struct lruvec *lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(nid));
+-	unsigned long nr = 0;
+-	enum lru_list lru;
+-
+-	VM_BUG_ON((unsigned)nid >= nr_node_ids);
+-
+-	for_each_lru(lru) {
+-		if (!(BIT(lru) & lru_mask))
+-			continue;
+-		if (tree)
+-			nr += lruvec_page_state(lruvec, NR_LRU_BASE + lru);
+-		else
+-			nr += lruvec_page_state_local(lruvec, NR_LRU_BASE + lru);
+-	}
+-	return nr;
 -}
 -
--static void memsw_cgroup_usage_unregister_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd)
+-static unsigned long mem_cgroup_nr_lru_pages(struct mem_cgroup *memcg,
+-					     unsigned int lru_mask,
+-					     bool tree)
 -{
--	return __mem_cgroup_usage_unregister_event(memcg, eventfd, _MEMSWAP);
+-	unsigned long nr = 0;
+-	enum lru_list lru;
+-
+-	for_each_lru(lru) {
+-		if (!(BIT(lru) & lru_mask))
+-			continue;
+-		if (tree)
+-			nr += memcg_page_state(memcg, NR_LRU_BASE + lru);
+-		else
+-			nr += memcg_page_state_local(memcg, NR_LRU_BASE + lru);
+-	}
+-	return nr;
 -}
 -
--static int mem_cgroup_oom_register_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd, const char *args)
+-static int memcg_numa_stat_show(struct seq_file *m, void *v)
 -{
--	struct mem_cgroup_eventfd_list *event;
+-	struct numa_stat {
+-		const char *name;
+-		unsigned int lru_mask;
+-	};
 -
--	event = kmalloc(sizeof(*event),	GFP_KERNEL);
--	if (!event)
--		return -ENOMEM;
+-	static const struct numa_stat stats[] = {
+-		{ "total", LRU_ALL },
+-		{ "file", LRU_ALL_FILE },
+-		{ "anon", LRU_ALL_ANON },
+-		{ "unevictable", BIT(LRU_UNEVICTABLE) },
+-	};
+-	const struct numa_stat *stat;
+-	int nid;
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
 -
--	spin_lock(&memcg_oom_lock);
+-	mem_cgroup_flush_stats(memcg);
 -
--	event->eventfd = eventfd;
--	list_add(&event->list, &memcg->oom_notify);
+-	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
+-		seq_printf(m, "%s=%lu", stat->name,
+-			   mem_cgroup_nr_lru_pages(memcg, stat->lru_mask,
+-						   false));
+-		for_each_node_state(nid, N_MEMORY)
+-			seq_printf(m, " N%d=%lu", nid,
+-				   mem_cgroup_node_nr_lru_pages(memcg, nid,
+-							stat->lru_mask, false));
+-		seq_putc(m, '\n');
+-	}
 -
--	/* already in OOM ? */
--	if (memcg->under_oom)
--		eventfd_signal(eventfd);
--	spin_unlock(&memcg_oom_lock);
+-	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
+-
+-		seq_printf(m, "hierarchical_%s=%lu", stat->name,
+-			   mem_cgroup_nr_lru_pages(memcg, stat->lru_mask,
+-						   true));
+-		for_each_node_state(nid, N_MEMORY)
+-			seq_printf(m, " N%d=%lu", nid,
+-				   mem_cgroup_node_nr_lru_pages(memcg, nid,
+-							stat->lru_mask, true));
+-		seq_putc(m, '\n');
+-	}
+-
+-	return 0;
+-}
+-#endif /* CONFIG_NUMA */
+-
+-static const unsigned int memcg1_stats[] = {
+-	NR_FILE_PAGES,
+-	NR_ANON_MAPPED,
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	NR_ANON_THPS,
+-#endif
+-	NR_SHMEM,
+-	NR_FILE_MAPPED,
+-	NR_FILE_DIRTY,
+-	NR_WRITEBACK,
+-	WORKINGSET_REFAULT_ANON,
+-	WORKINGSET_REFAULT_FILE,
+-#ifdef CONFIG_SWAP
+-	MEMCG_SWAP,
+-	NR_SWAPCACHE,
+-#endif
+-};
+-
+-static const char *const memcg1_stat_names[] = {
+-	"cache",
+-	"rss",
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	"rss_huge",
+-#endif
+-	"shmem",
+-	"mapped_file",
+-	"dirty",
+-	"writeback",
+-	"workingset_refault_anon",
+-	"workingset_refault_file",
+-#ifdef CONFIG_SWAP
+-	"swap",
+-	"swapcached",
+-#endif
+-};
+-
+-/* Universal VM events cgroup1 shows, original sort order */
+-static const unsigned int memcg1_events[] = {
+-	PGPGIN,
+-	PGPGOUT,
+-	PGFAULT,
+-	PGMAJFAULT,
+-};
+-
+-static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+-{
+-	unsigned long memory, memsw;
+-	struct mem_cgroup *mi;
+-	unsigned int i;
+-
+-	BUILD_BUG_ON(ARRAY_SIZE(memcg1_stat_names) != ARRAY_SIZE(memcg1_stats));
+-
+-	mem_cgroup_flush_stats(memcg);
+-
+-	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
+-		unsigned long nr;
+-
+-		nr = memcg_page_state_local_output(memcg, memcg1_stats[i]);
+-		seq_buf_printf(s, "%s %lu\n", memcg1_stat_names[i], nr);
+-	}
+-
+-	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
+-		seq_buf_printf(s, "%s %lu\n", vm_event_name(memcg1_events[i]),
+-			       memcg_events_local(memcg, memcg1_events[i]));
+-
+-	for (i = 0; i < NR_LRU_LISTS; i++)
+-		seq_buf_printf(s, "%s %lu\n", lru_list_name(i),
+-			       memcg_page_state_local(memcg, NR_LRU_BASE + i) *
+-			       PAGE_SIZE);
+-
+-	/* Hierarchical information */
+-	memory = memsw = PAGE_COUNTER_MAX;
+-	for (mi = memcg; mi; mi = parent_mem_cgroup(mi)) {
+-		memory = min(memory, READ_ONCE(mi->memory.max));
+-		memsw = min(memsw, READ_ONCE(mi->memsw.max));
+-	}
+-	seq_buf_printf(s, "hierarchical_memory_limit %llu\n",
+-		       (u64)memory * PAGE_SIZE);
+-	seq_buf_printf(s, "hierarchical_memsw_limit %llu\n",
+-		       (u64)memsw * PAGE_SIZE);
+-
+-	for (i = 0; i < ARRAY_SIZE(memcg1_stats); i++) {
+-		unsigned long nr;
+-
+-		nr = memcg_page_state_output(memcg, memcg1_stats[i]);
+-		seq_buf_printf(s, "total_%s %llu\n", memcg1_stat_names[i],
+-			       (u64)nr);
+-	}
+-
+-	for (i = 0; i < ARRAY_SIZE(memcg1_events); i++)
+-		seq_buf_printf(s, "total_%s %llu\n",
+-			       vm_event_name(memcg1_events[i]),
+-			       (u64)memcg_events(memcg, memcg1_events[i]));
+-
+-	for (i = 0; i < NR_LRU_LISTS; i++)
+-		seq_buf_printf(s, "total_%s %llu\n", lru_list_name(i),
+-			       (u64)memcg_page_state(memcg, NR_LRU_BASE + i) *
+-			       PAGE_SIZE);
+-
+-#ifdef CONFIG_DEBUG_VM
+-	{
+-		pg_data_t *pgdat;
+-		struct mem_cgroup_per_node *mz;
+-		unsigned long anon_cost = 0;
+-		unsigned long file_cost = 0;
+-
+-		for_each_online_pgdat(pgdat) {
+-			mz = memcg->nodeinfo[pgdat->node_id];
+-
+-			anon_cost += mz->lruvec.anon_cost;
+-			file_cost += mz->lruvec.file_cost;
+-		}
+-		seq_buf_printf(s, "anon_cost %lu\n", anon_cost);
+-		seq_buf_printf(s, "file_cost %lu\n", file_cost);
+-	}
+-#endif
+-}
+-
+-static u64 mem_cgroup_swappiness_read(struct cgroup_subsys_state *css,
+-				      struct cftype *cft)
+-{
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+-
+-	return mem_cgroup_swappiness(memcg);
+-}
+-
+-static int mem_cgroup_swappiness_write(struct cgroup_subsys_state *css,
+-				       struct cftype *cft, u64 val)
+-{
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+-
+-	if (val > MAX_SWAPPINESS)
+-		return -EINVAL;
+-
+-	if (!mem_cgroup_is_root(memcg))
+-		WRITE_ONCE(memcg->swappiness, val);
+-	else
+-		WRITE_ONCE(vm_swappiness, val);
 -
 -	return 0;
 -}
 -
--static void mem_cgroup_oom_unregister_event(struct mem_cgroup *memcg,
--	struct eventfd_ctx *eventfd)
+-static int mem_cgroup_oom_control_read(struct seq_file *sf, void *v)
 -{
--	struct mem_cgroup_eventfd_list *ev, *tmp;
+-	struct mem_cgroup *memcg = mem_cgroup_from_seq(sf);
 -
--	spin_lock(&memcg_oom_lock);
--
--	list_for_each_entry_safe(ev, tmp, &memcg->oom_notify, list) {
--		if (ev->eventfd == eventfd) {
--			list_del(&ev->list);
--			kfree(ev);
--		}
--	}
--
--	spin_unlock(&memcg_oom_lock);
+-	seq_printf(sf, "oom_kill_disable %d\n", READ_ONCE(memcg->oom_kill_disable));
+-	seq_printf(sf, "under_oom %d\n", (bool)memcg->under_oom);
+-	seq_printf(sf, "oom_kill %lu\n",
+-		   atomic_long_read(&memcg->memory_events[MEMCG_OOM_KILL]));
+-	return 0;
 -}
 -
- static int mem_cgroup_oom_control_read(struct seq_file *sf, void *v)
- {
- 	struct mem_cgroup *memcg = mem_cgroup_from_seq(sf);
-@@ -4616,243 +4187,6 @@ static void memcg_wb_domain_size_changed(struct mem_cgroup *memcg)
+-static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
+-	struct cftype *cft, u64 val)
+-{
+-	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+-
+-	/* cannot set to root cgroup and only 0 and 1 are allowed */
+-	if (mem_cgroup_is_root(memcg) || !((val == 0) || (val == 1)))
+-		return -EINVAL;
+-
+-	WRITE_ONCE(memcg->oom_kill_disable, val);
+-	if (!val)
+-		memcg_oom_recover(memcg);
+-
+-	return 0;
+-}
+-
+ #ifdef CONFIG_CGROUP_WRITEBACK
+ 
+ #include <trace/events/writeback.h>
+@@ -4187,147 +3621,6 @@ static void memcg_wb_domain_size_changed(struct mem_cgroup *memcg)
  
  #endif	/* CONFIG_CGROUP_WRITEBACK */
  
--/*
-- * DO NOT USE IN NEW FILES.
-- *
-- * "cgroup.event_control" implementation.
-- *
-- * This is way over-engineered.  It tries to support fully configurable
-- * events for each user.  Such level of flexibility is completely
-- * unnecessary especially in the light of the planned unified hierarchy.
-- *
-- * Please deprecate this and replace with something simpler if at all
-- * possible.
-- */
--
--/*
-- * Unregister event and free resources.
-- *
-- * Gets called from workqueue.
-- */
--static void memcg_event_remove(struct work_struct *work)
+-#if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_SLUB_DEBUG)
+-static int mem_cgroup_slab_show(struct seq_file *m, void *p)
 -{
--	struct mem_cgroup_event *event =
--		container_of(work, struct mem_cgroup_event, remove);
--	struct mem_cgroup *memcg = event->memcg;
--
--	remove_wait_queue(event->wqh, &event->wait);
--
--	event->unregister_event(memcg, event->eventfd);
--
--	/* Notify userspace the event is going away. */
--	eventfd_signal(event->eventfd);
--
--	eventfd_ctx_put(event->eventfd);
--	kfree(event);
--	css_put(&memcg->css);
--}
--
--/*
-- * Gets called on EPOLLHUP on eventfd when user closes it.
-- *
-- * Called with wqh->lock held and interrupts disabled.
-- */
--static int memcg_event_wake(wait_queue_entry_t *wait, unsigned mode,
--			    int sync, void *key)
--{
--	struct mem_cgroup_event *event =
--		container_of(wait, struct mem_cgroup_event, wait);
--	struct mem_cgroup *memcg = event->memcg;
--	__poll_t flags = key_to_poll(key);
--
--	if (flags & EPOLLHUP) {
--		/*
--		 * If the event has been detached at cgroup removal, we
--		 * can simply return knowing the other side will cleanup
--		 * for us.
--		 *
--		 * We can't race against event freeing since the other
--		 * side will require wqh->lock via remove_wait_queue(),
--		 * which we hold.
--		 */
--		spin_lock(&memcg->event_list_lock);
--		if (!list_empty(&event->list)) {
--			list_del_init(&event->list);
--			/*
--			 * We are in atomic context, but cgroup_event_remove()
--			 * may sleep, so we have to call it in workqueue.
--			 */
--			schedule_work(&event->remove);
--		}
--		spin_unlock(&memcg->event_list_lock);
--	}
--
+-	/*
+-	 * Deprecated.
+-	 * Please, take a look at tools/cgroup/memcg_slabinfo.py .
+-	 */
 -	return 0;
 -}
+-#endif
 -
--static void memcg_event_ptable_queue_proc(struct file *file,
--		wait_queue_head_t *wqh, poll_table *pt)
--{
--	struct mem_cgroup_event *event =
--		container_of(pt, struct mem_cgroup_event, pt);
+-static int memory_stat_show(struct seq_file *m, void *v);
 -
--	event->wqh = wqh;
--	add_wait_queue(wqh, &event->wait);
--}
+-static struct cftype mem_cgroup_legacy_files[] = {
+-	{
+-		.name = "usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEM, RES_USAGE),
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "max_usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEM, RES_MAX_USAGE),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "limit_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEM, RES_LIMIT),
+-		.write = mem_cgroup_write,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "soft_limit_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEM, RES_SOFT_LIMIT),
+-		.write = mem_cgroup_write,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "failcnt",
+-		.private = MEMFILE_PRIVATE(_MEM, RES_FAILCNT),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "stat",
+-		.seq_show = memory_stat_show,
+-	},
+-	{
+-		.name = "force_empty",
+-		.write = mem_cgroup_force_empty_write,
+-	},
+-	{
+-		.name = "use_hierarchy",
+-		.write_u64 = mem_cgroup_hierarchy_write,
+-		.read_u64 = mem_cgroup_hierarchy_read,
+-	},
+-	{
+-		.name = "cgroup.event_control",		/* XXX: for compat */
+-		.write = memcg_write_event_control,
+-		.flags = CFTYPE_NO_PREFIX | CFTYPE_WORLD_WRITABLE,
+-	},
+-	{
+-		.name = "swappiness",
+-		.read_u64 = mem_cgroup_swappiness_read,
+-		.write_u64 = mem_cgroup_swappiness_write,
+-	},
+-	{
+-		.name = "move_charge_at_immigrate",
+-		.read_u64 = mem_cgroup_move_charge_read,
+-		.write_u64 = mem_cgroup_move_charge_write,
+-	},
+-	{
+-		.name = "oom_control",
+-		.seq_show = mem_cgroup_oom_control_read,
+-		.write_u64 = mem_cgroup_oom_control_write,
+-	},
+-	{
+-		.name = "pressure_level",
+-		.seq_show = mem_cgroup_dummy_seq_show,
+-	},
+-#ifdef CONFIG_NUMA
+-	{
+-		.name = "numa_stat",
+-		.seq_show = memcg_numa_stat_show,
+-	},
+-#endif
+-	{
+-		.name = "kmem.limit_in_bytes",
+-		.private = MEMFILE_PRIVATE(_KMEM, RES_LIMIT),
+-		.write = mem_cgroup_write,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "kmem.usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_KMEM, RES_USAGE),
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "kmem.failcnt",
+-		.private = MEMFILE_PRIVATE(_KMEM, RES_FAILCNT),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "kmem.max_usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_KMEM, RES_MAX_USAGE),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-#if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_SLUB_DEBUG)
+-	{
+-		.name = "kmem.slabinfo",
+-		.seq_show = mem_cgroup_slab_show,
+-	},
+-#endif
+-	{
+-		.name = "kmem.tcp.limit_in_bytes",
+-		.private = MEMFILE_PRIVATE(_TCP, RES_LIMIT),
+-		.write = mem_cgroup_write,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "kmem.tcp.usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_TCP, RES_USAGE),
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "kmem.tcp.failcnt",
+-		.private = MEMFILE_PRIVATE(_TCP, RES_FAILCNT),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "kmem.tcp.max_usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_TCP, RES_MAX_USAGE),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{ },	/* terminate */
+-};
 -
--/*
-- * DO NOT USE IN NEW FILES.
-- *
-- * Parse input and register new cgroup event handler.
-- *
-- * Input must be in format '<event_fd> <control_fd> <args>'.
-- * Interpretation of args is defined by control file implementation.
-- */
--static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
--					 char *buf, size_t nbytes, loff_t off)
--{
--	struct cgroup_subsys_state *css = of_css(of);
--	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
--	struct mem_cgroup_event *event;
--	struct cgroup_subsys_state *cfile_css;
--	unsigned int efd, cfd;
--	struct fd efile;
--	struct fd cfile;
--	struct dentry *cdentry;
--	const char *name;
--	char *endp;
--	int ret;
--
--	if (IS_ENABLED(CONFIG_PREEMPT_RT))
--		return -EOPNOTSUPP;
--
--	buf = strstrip(buf);
--
--	efd = simple_strtoul(buf, &endp, 10);
--	if (*endp != ' ')
--		return -EINVAL;
--	buf = endp + 1;
--
--	cfd = simple_strtoul(buf, &endp, 10);
--	if ((*endp != ' ') && (*endp != '\0'))
--		return -EINVAL;
--	buf = endp + 1;
--
--	event = kzalloc(sizeof(*event), GFP_KERNEL);
--	if (!event)
--		return -ENOMEM;
--
--	event->memcg = memcg;
--	INIT_LIST_HEAD(&event->list);
--	init_poll_funcptr(&event->pt, memcg_event_ptable_queue_proc);
--	init_waitqueue_func_entry(&event->wait, memcg_event_wake);
--	INIT_WORK(&event->remove, memcg_event_remove);
--
--	efile = fdget(efd);
--	if (!efile.file) {
--		ret = -EBADF;
--		goto out_kfree;
--	}
--
--	event->eventfd = eventfd_ctx_fileget(efile.file);
--	if (IS_ERR(event->eventfd)) {
--		ret = PTR_ERR(event->eventfd);
--		goto out_put_efile;
--	}
--
--	cfile = fdget(cfd);
--	if (!cfile.file) {
--		ret = -EBADF;
--		goto out_put_eventfd;
--	}
--
--	/* the process need read permission on control file */
--	/* AV: shouldn't we check that it's been opened for read instead? */
--	ret = file_permission(cfile.file, MAY_READ);
--	if (ret < 0)
--		goto out_put_cfile;
--
--	/*
--	 * The control file must be a regular cgroup1 file. As a regular cgroup
--	 * file can't be renamed, it's safe to access its name afterwards.
--	 */
--	cdentry = cfile.file->f_path.dentry;
--	if (cdentry->d_sb->s_type != &cgroup_fs_type || !d_is_reg(cdentry)) {
--		ret = -EINVAL;
--		goto out_put_cfile;
--	}
--
--	/*
--	 * Determine the event callbacks and set them in @event.  This used
--	 * to be done via struct cftype but cgroup core no longer knows
--	 * about these events.  The following is crude but the whole thing
--	 * is for compatibility anyway.
--	 *
--	 * DO NOT ADD NEW FILES.
--	 */
--	name = cdentry->d_name.name;
--
--	if (!strcmp(name, "memory.usage_in_bytes")) {
--		event->register_event = mem_cgroup_usage_register_event;
--		event->unregister_event = mem_cgroup_usage_unregister_event;
--	} else if (!strcmp(name, "memory.oom_control")) {
--		event->register_event = mem_cgroup_oom_register_event;
--		event->unregister_event = mem_cgroup_oom_unregister_event;
--	} else if (!strcmp(name, "memory.pressure_level")) {
--		event->register_event = vmpressure_register_event;
--		event->unregister_event = vmpressure_unregister_event;
--	} else if (!strcmp(name, "memory.memsw.usage_in_bytes")) {
--		event->register_event = memsw_cgroup_usage_register_event;
--		event->unregister_event = memsw_cgroup_usage_unregister_event;
--	} else {
--		ret = -EINVAL;
--		goto out_put_cfile;
--	}
--
--	/*
--	 * Verify @cfile should belong to @css.  Also, remaining events are
--	 * automatically removed on cgroup destruction but the removal is
--	 * asynchronous, so take an extra ref on @css.
--	 */
--	cfile_css = css_tryget_online_from_dir(cdentry->d_parent,
--					       &memory_cgrp_subsys);
--	ret = -EINVAL;
--	if (IS_ERR(cfile_css))
--		goto out_put_cfile;
--	if (cfile_css != css) {
--		css_put(cfile_css);
--		goto out_put_cfile;
--	}
--
--	ret = event->register_event(memcg, event->eventfd, buf);
--	if (ret)
--		goto out_put_css;
--
--	vfs_poll(efile.file, &event->pt);
--
--	spin_lock_irq(&memcg->event_list_lock);
--	list_add(&event->list, &memcg->event_list);
--	spin_unlock_irq(&memcg->event_list_lock);
--
--	fdput(cfile);
--	fdput(efile);
--
--	return nbytes;
--
--out_put_css:
--	css_put(css);
--out_put_cfile:
--	fdput(cfile);
--out_put_eventfd:
--	eventfd_ctx_put(event->eventfd);
--out_put_efile:
--	fdput(efile);
--out_kfree:
--	kfree(event);
--
--	return ret;
--}
--
- #if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_SLUB_DEBUG)
- static int mem_cgroup_slab_show(struct seq_file *m, void *p)
- {
-@@ -5319,19 +4653,8 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
- static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
- {
- 	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
--	struct mem_cgroup_event *event, *tmp;
+ /*
+  * Private memory cgroup IDR
+  *
+@@ -5119,7 +4412,7 @@ static int memory_events_local_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
  
--	/*
--	 * Unregister events and notify userspace.
--	 * Notify userspace about cgroup removing only after rmdir of cgroup
--	 * directory to avoid race between userspace and kernelspace.
--	 */
--	spin_lock_irq(&memcg->event_list_lock);
--	list_for_each_entry_safe(event, tmp, &memcg->event_list, list) {
--		list_del_init(&event->list);
--		schedule_work(&event->remove);
--	}
--	spin_unlock_irq(&memcg->event_list_lock);
-+	mem_cgroup_v1_offline_memcg(memcg);
+-static int memory_stat_show(struct seq_file *m, void *v)
++int memory_stat_show(struct seq_file *m, void *v)
+ {
+ 	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+ 	char *buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+@@ -6351,33 +5644,6 @@ static struct cftype swap_files[] = {
+ 	{ }	/* terminate */
+ };
  
- 	page_counter_set_min(&memcg->memory, 0);
- 	page_counter_set_low(&memcg->memory, 0);
+-static struct cftype memsw_files[] = {
+-	{
+-		.name = "memsw.usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_USAGE),
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "memsw.max_usage_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_MAX_USAGE),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "memsw.limit_in_bytes",
+-		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_LIMIT),
+-		.write = mem_cgroup_write,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{
+-		.name = "memsw.failcnt",
+-		.private = MEMFILE_PRIVATE(_MEMSWAP, RES_FAILCNT),
+-		.write = mem_cgroup_reset,
+-		.read_u64 = mem_cgroup_read_u64,
+-	},
+-	{ },	/* terminate */
+-};
+-
+ #if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_ZSWAP)
+ /**
+  * obj_cgroup_may_zswap - check if this cgroup can zswap
 -- 
 2.43.2
 
