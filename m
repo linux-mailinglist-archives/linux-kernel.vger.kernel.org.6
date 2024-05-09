@@ -1,144 +1,198 @@
-Return-Path: <linux-kernel+bounces-175011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036838C18A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:50:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534468C18AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9651F24EED
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:50:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BC8B22105
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE2E1292FB;
-	Thu,  9 May 2024 21:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28211292E6;
+	Thu,  9 May 2024 21:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Wec7jvMq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DKjs52i4"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0D91A2C03;
-	Thu,  9 May 2024 21:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC4282871
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715291388; cv=none; b=eirX81JWszhck1GFVkCLuvvv0b5QTTU7FGmc6ZZWFzEas6YxLiQ2jaXpYWejl3mp66n+rNmTAZo3ThNAvEpZ2VzoVxtpC/1YpXElN7YqGgefndJsQLVxbvjlLgm2QKru3trT+7XAA+HxwpIDNWIWxgYUaVDntCD7rTwDbMRzpY0=
+	t=1715291458; cv=none; b=I/xDxnpbjJwQRaLj/2JPB9mFPnQQXTILTSalNtjY1fu8vKs+JPZDfSA068HIJasQVQqgfLBxKW4IlJ+7BbTUo2zU43TSVFM8gE7EfZMP7APlWdIPEKwAIqc0fsTqJ3WHzoTe94GYYQRjxTHc+PsBDpDLe/gWoo0oXPsM4EhdTBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715291388; c=relaxed/simple;
-	bh=YCmpm9M7rg8bBTlTTi1uizIbI7KtF4vkiyWgevlyEds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l2xIKeEhl8IWNYJqFS3xs1G1JSBdFDZ8NHs5RuDeU3CjGsU0Hrwr6khmC0xmUkxJpsDOiTQx1WV4YkS38cwkvvivUCUA4Vzmbc6zDxxABTeM3mFe//+ffLMDG5qg0Uym1M3ubxUYfu36UivGE2ldBFaIBRd43XIocJXxq4TRksM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Wec7jvMq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 449LeJ75002135;
-	Thu, 9 May 2024 21:49:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=vsHhs1cefp7jBsXfNMjMddfKHMvYPmG767OdbGYguio=; b=We
-	c7jvMqaesiri1Q+2hFG3qFpCtMJXuUwvOlGGiIV55AquBd4b4NMIjxvRgSRDAA2H
-	Qc83nV+Lnut39c/jpF8qLaz1zfrcYly+9a3fHDqAtSNBKJ3s/2bmupPzjF+noPx7
-	028F/a/AWN9r/RpZAu48vljrXKG0Qv5BxWIeV1Io1mHOoHMCCkb/UWAIZYM2WuVm
-	yWgv9lUAWpavCqA/vrB+bFVeRS8bf1zLQeTsurosT8m5JuKlRx3a4+WHLtsCUDS2
-	ygVDiNObE4hRSVDdUds2jJr2Q3P7K3RgLAX3TG0lP2O4EbZuJSkeSfgHj2tImZoM
-	cbc7eNZOhCDXbEgHKuUw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16kp80bh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 21:49:28 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449LnLKn030148
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 21:49:21 GMT
-Received: from [10.71.112.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
- 14:49:20 -0700
-Message-ID: <072960e7-c8db-b25c-46f8-019534d325d4@quicinc.com>
-Date: Thu, 9 May 2024 14:49:20 -0700
+	s=arc-20240116; t=1715291458; c=relaxed/simple;
+	bh=bb0dF2CqfEI2bRgZH2VWNgit4IJI5S1YcgCig5aMvZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n7S9Yte83VeCLcGtDDQG+uk3N7l+4/cYTbLslFf+6v3FkgeGRkgGSeLC+4RuXj4Czgm3o0c4UvAjGfVK5BJMPu5gjnXdQ14RQywrwfheDwcF4I57Yy6QefgPEZ4wAcxsR4sQrkQKM+94CekmcWtl71eTrMmKXR3JTYoVB90CRjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DKjs52i4; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <868a4758-2873-4ede-83e5-65f42cb12b81@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715291453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x7hxte+yN2kBW0kbRz2/Qi+5X2Kn+BAGAuWpBF10X3k=;
+	b=DKjs52i4jmyGtfwbwo/aDOO4scg7otP0xU9TesqQGHy3gR0RiG3HaMz+xQsYejHm8aO2/B
+	jFwXbjrXnl34x8jZp8VRWC+NcXZVXpB4MYP7+cT1ef15sDfmcRZyz5XFX6PTxNDb/3sYz1
+	pJrwqVEcTl3s5FjsazqJS9FAcaRN7Ow=
+Date: Thu, 9 May 2024 22:50:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v21 26/39] ASoC: qcom: qdsp6: Add support to track
- available USB PCM devices
+Subject: Re: [PATCH V1 8/9] bnxt_en: Add TPH support in BNXT driver
+To: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: bhelgaas@google.com, corbet@lwn.net, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com,
+ ajit.khaparde@broadcom.com, manoj.panicker2@amd.com, Eric.VanTassell@amd.com
+References: <20240509162741.1937586-1-wei.huang2@amd.com>
+ <20240509162741.1937586-9-wei.huang2@amd.com>
 Content-Language: en-US
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <lgirdwood@gmail.com>, <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
-        <broonie@kernel.org>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <bagasdotme@gmail.com>, <robh@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-27-quic_wcheng@quicinc.com>
- <875b643f-af2c-4a1b-87e8-80cd6f236dea@linux.intel.com>
- <b1f8b531-6041-ec11-5932-13bf17b69d0b@quicinc.com>
- <76a943f7-d839-4378-aa12-7fb32e3077e6@linux.intel.com>
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <76a943f7-d839-4378-aa12-7fb32e3077e6@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZQ3i_RvxmNE7-LOMZcLE_vjCphChvZ9_
-X-Proofpoint-ORIG-GUID: ZQ3i_RvxmNE7-LOMZcLE_vjCphChvZ9_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=827 impostorscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 malwarescore=0 clxscore=1015 mlxscore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405010000 definitions=main-2405090155
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20240509162741.1937586-9-wei.huang2@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Pierre,
-
-On 5/9/2024 6:02 AM, Pierre-Louis Bossart wrote:
+On 09/05/2024 17:27, Wei Huang wrote:
+> From: Manoj Panicker <manoj.panicker2@amd.com>
 > 
+> As a usage example, this patch implements TPH support in Broadcom BNXT
+> device driver by invoking pcie_tph_set_st() function when interrupt
+> affinity is changed.
 > 
-> On 5/8/24 18:57, Wesley Cheng wrote:
->> Hi Pierre,
->>
->> On 5/7/2024 2:23 PM, Pierre-Louis Bossart wrote:
->>>
->>>> @@ -113,6 +120,12 @@ static int q6usb_alsa_connection_cb(struct
->>>> snd_soc_usb *usb,
->>>>        if (connected) {
->>>>            /* We only track the latest USB headset plugged in */
->>>>            data->active_usb_chip_idx = sdev->card_idx;
->>>> +
->>>> +        set_bit(sdev->card_idx, &data->available_card_slot);
->>>> +        data->status[sdev->card_idx].sdev = sdev;
->>>
->>> Not following the 'only track the latest USB headset plugged in', I
->>> don't see anything that discard the previously latest headset...
->>>
->>> If you plug headset1, then headset2, how is headset1 marked as not
->>> available for USB offload?
->>>
->>
->> It won't mark headset1 as not available for offload, because offload
->> could happen on either depending on what is selected (from the kcontrol
->> as well).
+> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+> Reviewed-by: Wei Huang <wei.huang2@amd.com>
+> Signed-off-by: Manoj Panicker <manoj.panicker2@amd.com>
+> ---
+>   drivers/net/ethernet/broadcom/bnxt/bnxt.c | 51 +++++++++++++++++++++++
+>   drivers/net/ethernet/broadcom/bnxt/bnxt.h |  4 ++
+>   2 files changed, 55 insertions(+)
 > 
-> Right, so the wording 'only track the latest USB headset plugged in' is
-> incorrect or obsolete, isn't it?
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> index 2c2ee79c4d77..be9c17566fb4 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+> @@ -55,6 +55,7 @@
+>   #include <net/page_pool/helpers.h>
+>   #include <linux/align.h>
+>   #include <net/netdev_queues.h>
+> +#include <linux/pci-tph.h>
+>   
+>   #include "bnxt_hsi.h"
+>   #include "bnxt.h"
+> @@ -10491,6 +10492,7 @@ static void bnxt_free_irq(struct bnxt *bp)
+>   				free_cpumask_var(irq->cpu_mask);
+>   				irq->have_cpumask = 0;
+>   			}
+> +			irq_set_affinity_notifier(irq->vector, NULL);
+>   			free_irq(irq->vector, bp->bnapi[i]);
+>   		}
+>   
+> @@ -10498,6 +10500,45 @@ static void bnxt_free_irq(struct bnxt *bp)
+>   	}
+>   }
+>   
+> +static void bnxt_rtnl_lock_sp(struct bnxt *bp);
+> +static void bnxt_rtnl_unlock_sp(struct bnxt *bp);
+> +static void bnxt_irq_affinity_notify(struct irq_affinity_notify *notify,
+> +				     const cpumask_t *mask)
+> +{
+> +	struct bnxt_irq *irq;
+> +
+> +	irq = container_of(notify, struct bnxt_irq, affinity_notify);
+> +	cpumask_copy(irq->cpu_mask, mask);
+> +
+> +	if (!pcie_tph_set_st(irq->bp->pdev, irq->msix_nr,
+> +			     cpumask_first(irq->cpu_mask),
+> +			     TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY))
+> +		pr_err("error in configuring steering tag\n");
+> +
+> +	if (netif_running(irq->bp->dev)) {
+> +		rtnl_lock();
+> +		bnxt_close_nic(irq->bp, false, false);
+> +		bnxt_open_nic(irq->bp, false, false);
+> +		rtnl_unlock();
+> +	}
 
-Sure, I can reword it.  Will specify that it
-"selects the latest USB headset plugged in for offloading"
+Is it really needed? It will cause link flap and pause in the traffic
+service for the device. Why the device needs full restart in this case?
 
-Thanks
-Wesley Cheng
+> +}
+> +
+> +static void bnxt_irq_affinity_release(struct kref __always_unused *ref)
+> +{
+> +}
+> +
+> +static inline void __bnxt_register_notify_irqchanges(struct bnxt_irq *irq)
+
+No inlines in .c files, please. Let compiler decide what to inline.
+
+> +{
+> +	struct irq_affinity_notify *notify;
+> +
+> +	notify = &irq->affinity_notify;
+> +	notify->irq = irq->vector;
+> +	notify->notify = bnxt_irq_affinity_notify;
+> +	notify->release = bnxt_irq_affinity_release;
+> +
+> +	irq_set_affinity_notifier(irq->vector, notify);
+> +}
+> +
+>   static int bnxt_request_irq(struct bnxt *bp)
+>   {
+>   	int i, j, rc = 0;
+> @@ -10543,6 +10584,7 @@ static int bnxt_request_irq(struct bnxt *bp)
+>   			int numa_node = dev_to_node(&bp->pdev->dev);
+>   
+>   			irq->have_cpumask = 1;
+> +			irq->msix_nr = map_idx;
+>   			cpumask_set_cpu(cpumask_local_spread(i, numa_node),
+>   					irq->cpu_mask);
+>   			rc = irq_set_affinity_hint(irq->vector, irq->cpu_mask);
+> @@ -10552,6 +10594,15 @@ static int bnxt_request_irq(struct bnxt *bp)
+>   					    irq->vector);
+>   				break;
+>   			}
+> +
+> +			if (!pcie_tph_set_st(bp->pdev, i,
+> +					     cpumask_first(irq->cpu_mask),
+> +					     TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY)) {
+> +				netdev_err(bp->dev, "error in setting steering tag\n");
+> +			} else {
+> +				irq->bp = bp;
+> +				__bnxt_register_notify_irqchanges(irq);
+> +			}
+>   		}
+>   	}
+>   	return rc;
+> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+> index dd849e715c9b..0d3442590bb4 100644
+> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+> @@ -1195,6 +1195,10 @@ struct bnxt_irq {
+>   	u8		have_cpumask:1;
+>   	char		name[IFNAMSIZ + 2];
+>   	cpumask_var_t	cpu_mask;
+> +
+> +	int		msix_nr;
+> +	struct bnxt	*bp;
+> +	struct irq_affinity_notify affinity_notify;
+>   };
+>   
+>   #define HWRM_RING_ALLOC_TX	0x1
+
 
