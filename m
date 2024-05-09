@@ -1,156 +1,175 @@
-Return-Path: <linux-kernel+bounces-174220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAAE8C0BCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:57:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E97BB8C0B9F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842F01F21A13
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FF962842B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F90813B5B3;
-	Thu,  9 May 2024 06:56:55 +0000 (UTC)
-Received: from out198-7.us.a.mail.aliyun.com (out198-7.us.a.mail.aliyun.com [47.90.198.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B0186642;
+	Thu,  9 May 2024 06:41:24 +0000 (UTC)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC99C624;
-	Thu,  9 May 2024 06:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF17624;
+	Thu,  9 May 2024 06:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715237814; cv=none; b=qFKUBu83w5dk24zp4y5DIHCbbjRH/Igfw9zjmjHIsHeuWXkz16/7a2CtrEV/ZA7f7ILEFfM299Tl1li5jSYKnv/2Z+Jm7LoJ+qEFMdjWsuaaSuaOyoeb3rSw67w+dQqbfN+v07WFPio4kH6LqmYWnHQPGcfawB94ZLj6dS8T+O4=
+	t=1715236883; cv=none; b=La7A0/Bv3hlbpQIWR5/cJgRAjA2gls3cTflowjMLLiGWyTUwssYGCxUKE5eT4AFX94m+m7MA7hz8MhII9Gl0+5ICmzaWDU1ya/zVHRkiWZaQ80Rpu55BP1kcAfbEX3ks8bA9mcSzetejfTie4gHra2+dtgfEFx8Aqfv2gdHpQ4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715237814; c=relaxed/simple;
-	bh=Wi6Yn3ylUtLS0MS/YnsihDpLq/1i9V4m5nklGqU9x68=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=YBKPOIYIuUU334D06QBx9vBAfX3MMwbXHH8ID1K2jHiwUfShXKgSGoSxYPO7HkeSrfH4smlAizuzhCTne2oDbzCiEuCam4LkCzgJn+c/k+KLA08iZwV1dutBRg3LD/+b6CQhu/XKkRqxFNO7rwP+KIuv087xrFmmkyF3ILVW9Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ubisectech.com; spf=pass smtp.mailfrom=ubisectech.com; arc=none smtp.client-ip=47.90.198.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ubisectech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ubisectech.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07507384|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.38847-0.00208838-0.609442;FP=0|0|0|0|0|-1|-1|-1;HT=ay29a033018047187;MF=bugreport@ubisectech.com;NM=1;PH=DW;RN=3;RT=3;SR=0;TI=W4_0.2.3_v5ForWebDing_21128455_1715236856460_o7001c236;
-Received: from WS-web (bugreport@ubisectech.com[W4_0.2.3_v5ForWebDing_21128455_1715236856460_o7001c236]) at Thu, 09 May 2024 14:40:57 +0800
-Date: Thu, 09 May 2024 14:40:57 +0800
-From: "Ubisectech Sirius" <bugreport@ubisectech.com>
-To: "linux-trace-kernel" <linux-trace-kernel@vger.kernel.org>,
-  "linux-kernel" <linux-kernel@vger.kernel.org>
-Cc: "kent.overstreet" <kent.overstreet@linux.dev>
-Reply-To: "Ubisectech Sirius" <bugreport@ubisectech.com>
-Message-ID: <38599e68-c9e8-4cb9-8ee4-bd08d75a894f.bugreport@ubisectech.com>
-Subject: =?UTF-8?B?Z2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0IGluIGNyeXB0b19za2NpcGhlcl9lbmNyeXB0?=
-X-Mailer: [Alimail-Mailagent revision 4293][W4_0.2.3][v5ForWebDing][Chrome]
+	s=arc-20240116; t=1715236883; c=relaxed/simple;
+	bh=oRK+r+QFI/xe8d51/zCXf0KG6fsVEb0onJS00AWFRMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fgix6I2wyaEdVHYpsCaoWn2dNqfrIY+t6FwrLYymLui+F5SmBc3oN81KtQm7xFZKiTGcATJ1SyBGMNbX+hD/QkyZ6/k4kqiurLAlvJplYVnzGZxrAdpnILqutibOYHHkECmujTNN7ic3lgSqF3kdTS1wFZdxd/uGtyCouMc0KU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41adf155cffso4231015e9.2;
+        Wed, 08 May 2024 23:41:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715236880; x=1715841680;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OtZke5GvRA5Q1ygOLdEqDZhz3gKzUkn+WkX6FZdmhDA=;
+        b=KkH2SE1VP/3U5raiAwmLeDaE+6FqcfFE+v7FoHedoCCHiILLdk7XsjfOcxTCJK4jb1
+         hkYOJ5KY8tbMA21iXehBiTm+s01JAqJO423WCgtpNWihZ2fm9EBEumFzU0BjQCbPLrSA
+         1NY0foNlgGRMY3gmxPFybZXh0Lq23sN2/6XDx5AmM08ED+WOzF4X39rTMpv+3/QM6iTf
+         JxRIrsR7PGPSiVXq0Qr433czIjak1JIgvpxMU6Ktsk9H9lTx3/pYg57T9nDQC8u1Blgr
+         G0xKkk5sZtblaICUM/aY+n5aj1GzjqJDzwpDWKLDAmzZClwkaueCejNSkNOksTs+3nTU
+         rYkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVIott+ugw3MhU8GnPT/mAYDSnzuKyLj9lv5NfohFy78T9t2N9i28xnpEgLnR9xwzmpkjzZ0DkYSSTI6mUy7T3S6M59on4/+anO6esYjpbCAvZfJwScL7fpaB7wHh7ZkgnkQ/+WLyudMUyoB4pBCGpCZ6sD7fy+gzjF6Z44g/QJFmL
+X-Gm-Message-State: AOJu0Yzpp/OGiUJFKpmzV9xTxvBweTZTQIO4ZJJtqfyNvonZGL5K36Mv
+	rEbO+u7Dkj8uR4jw6YJLkpNTZX0SgoI0n/duULPzYFOWMHyBqOUInhvnzA==
+X-Google-Smtp-Source: AGHT+IHM0oiKR2ualZSIpF7ByJMGe0bpbn4VxgTpK1NX2n4lzsiPH/7eTUFazXmgoVk9hUf8oVtwaw==
+X-Received: by 2002:a05:600c:4706:b0:41e:7a1a:d626 with SMTP id 5b1f17b1804b1-41f721b046emr40784725e9.31.1715236880236;
+        Wed, 08 May 2024 23:41:20 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87d2045asm47797715e9.27.2024.05.08.23.41.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 23:41:19 -0700 (PDT)
+Message-ID: <e167d14c-76d3-46b4-aca5-b6003f9cbfc1@kernel.org>
+Date: Thu, 9 May 2024 08:41:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-x-aliyun-im-through: {"mailThroughImNew":true}
-x-aliyun-mail-creator: W4_0.2.3_v5ForWebDing_M3LTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEyNC4wLjAuMCBTYWZhcmkvNTM3LjM2vN
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: Fix possible deadlock in tty_buffer_flush
+To: kovalev@altlinux.org, gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: lvc-project@linuxtesting.org, dutyrok@altlinux.org,
+ oficerovas@altlinux.org, stable@vger.kernel.org
+References: <20240508093005.1044815-1-kovalev@altlinux.org>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ xsFNBE6S54YBEACzzjLwDUbU5elY4GTg/NdotjA0jyyJtYI86wdKraekbNE0bC4zV+ryvH4j
+ rrcDwGs6tFVrAHvdHeIdI07s1iIx5R/ndcHwt4fvI8CL5PzPmn5J+h0WERR5rFprRh6axhOk
+ rSD5CwQl19fm4AJCS6A9GJtOoiLpWn2/IbogPc71jQVrupZYYx51rAaHZ0D2KYK/uhfc6neJ
+ i0WqPlbtIlIrpvWxckucNu6ZwXjFY0f3qIRg3Vqh5QxPkojGsq9tXVFVLEkSVz6FoqCHrUTx
+ wr+aw6qqQVgvT/McQtsI0S66uIkQjzPUrgAEtWUv76rM4ekqL9stHyvTGw0Fjsualwb0Gwdx
+ ReTZzMgheAyoy/umIOKrSEpWouVoBt5FFSZUyjuDdlPPYyPav+hpI6ggmCTld3u2hyiHji2H
+ cDpcLM2LMhlHBipu80s9anNeZhCANDhbC5E+NZmuwgzHBcan8WC7xsPXPaiZSIm7TKaVoOcL
+ 9tE5aN3jQmIlrT7ZUX52Ff/hSdx/JKDP3YMNtt4B0cH6ejIjtqTd+Ge8sSttsnNM0CQUkXps
+ w98jwz+Lxw/bKMr3NSnnFpUZaxwji3BC9vYyxKMAwNelBCHEgS/OAa3EJoTfuYOK6wT6nadm
+ YqYjwYbZE5V/SwzMbpWu7Jwlvuwyfo5mh7w5iMfnZE+vHFwp/wARAQABzSFKaXJpIFNsYWJ5
+ IDxqaXJpc2xhYnlAa2VybmVsLm9yZz7CwXcEEwEIACEFAlW3RUwCGwMFCwkIBwIGFQgJCgsC
+ BBYCAwECHgECF4AACgkQvSWxBAa0cEnVTg//TQpdIAr8Tn0VAeUjdVIH9XCFw+cPSU+zMSCH
+ eCZoA/N6gitEcnvHoFVVM7b3hK2HgoFUNbmYC0RdcSc80pOF5gCnACSP9XWHGWzeKCARRcQR
+ 4s5YD8I4VV5hqXcKo2DFAtIOVbHDW+0okOzcecdasCakUTr7s2fXz97uuoc2gIBB7bmHUGAH
+ XQXHvdnCLjDjR+eJN+zrtbqZKYSfj89s/ZHn5Slug6w8qOPT1sVNGG+eWPlc5s7XYhT9z66E
+ l5C0rG35JE4PhC+tl7BaE5IwjJlBMHf/cMJxNHAYoQ1hWQCKOfMDQ6bsEr++kGUCbHkrEFwD
+ UVA72iLnnnlZCMevwE4hc0zVhseWhPc/KMYObU1sDGqaCesRLkE3tiE7X2cikmj/qH0CoMWe
+ gjnwnQ2qVJcaPSzJ4QITvchEQ+tbuVAyvn9H+9MkdT7b7b2OaqYsUP8rn/2k1Td5zknUz7iF
+ oJ0Z9wPTl6tDfF8phaMIPISYrhceVOIoL+rWfaikhBulZTIT5ihieY9nQOw6vhOfWkYvv0Dl
+ o4GRnb2ybPQpfEs7WtetOsUgiUbfljTgILFw3CsPW8JESOGQc0Pv8ieznIighqPPFz9g+zSu
+ Ss/rpcsqag5n9rQp/H3WW5zKUpeYcKGaPDp/vSUovMcjp8USIhzBBrmI7UWAtuedG9prjqfO
+ wU0ETpLnhgEQAM+cDWLL+Wvc9cLhA2OXZ/gMmu7NbYKjfth1UyOuBd5emIO+d4RfFM02XFTI
+ t4MxwhAryhsKQQcA4iQNldkbyeviYrPKWjLTjRXT5cD2lpWzr+Jx7mX7InV5JOz1Qq+P+nJW
+ YIBjUKhI03ux89p58CYil24Zpyn2F5cX7U+inY8lJIBwLPBnc9Z0An/DVnUOD+0wIcYVnZAK
+ DiIXODkGqTg3fhZwbbi+KAhtHPFM2fGw2VTUf62IHzV+eBSnamzPOBc1XsJYKRo3FHNeLuS8
+ f4wUe7bWb9O66PPFK/RkeqNX6akkFBf9VfrZ1rTEKAyJ2uqf1EI1olYnENk4+00IBa+BavGQ
+ 8UW9dGW3nbPrfuOV5UUvbnsSQwj67pSdrBQqilr5N/5H9z7VCDQ0dhuJNtvDSlTf2iUFBqgk
+ 3smln31PUYiVPrMP0V4ja0i9qtO/TB01rTfTyXTRtqz53qO5dGsYiliJO5aUmh8swVpotgK4
+ /57h3zGsaXO9PGgnnAdqeKVITaFTLY1ISg+Ptb4KoliiOjrBMmQUSJVtkUXMrCMCeuPDGHo7
+ 39Xc75lcHlGuM3yEB//htKjyprbLeLf1y4xPyTeeF5zg/0ztRZNKZicgEmxyUNBHHnBKHQxz
+ 1j+mzH0HjZZtXjGu2KLJ18G07q0fpz2ZPk2D53Ww39VNI/J9ABEBAAHCwV8EGAECAAkFAk6S
+ 54YCGwwACgkQvSWxBAa0cEk3tRAAgO+DFpbyIa4RlnfpcW17AfnpZi9VR5+zr496n2jH/1ld
+ wRO/S+QNSA8qdABqMb9WI4BNaoANgcg0AS429Mq0taaWKkAjkkGAT7mD1Q5PiLr06Y/+Kzdr
+ 90eUVneqM2TUQQbK+Kh7JwmGVrRGNqQrDk+gRNvKnGwFNeTkTKtJ0P8jYd7P1gZb9Fwj9YLx
+ jhn/sVIhNmEBLBoI7PL+9fbILqJPHgAwW35rpnq4f/EYTykbk1sa13Tav6btJ+4QOgbcezWI
+ wZ5w/JVfEJW9JXp3BFAVzRQ5nVrrLDAJZ8Y5ioWcm99JtSIIxXxt9FJaGc1Bgsi5K/+dyTKL
+ wLMJgiBzbVx8G+fCJJ9YtlNOPWhbKPlrQ8+AY52Aagi9WNhe6XfJdh5g6ptiOILm330mkR4g
+ W6nEgZVyIyTq3ekOuruftWL99qpP5zi+eNrMmLRQx9iecDNgFr342R9bTDlb1TLuRb+/tJ98
+ f/bIWIr0cqQmqQ33FgRhrG1+Xml6UXyJ2jExmlO8JljuOGeXYh6ZkIEyzqzffzBLXZCujlYQ
+ DFXpyMNVJ2ZwPmX2mWEoYuaBU0JN7wM+/zWgOf2zRwhEuD3A2cO2PxoiIfyUEfB9SSmffaK/
+ S4xXoB6wvGENZ85Hg37C7WDNdaAt6Xh2uQIly5grkgvWppkNy4ZHxE+jeNsU7tg=
+In-Reply-To: <20240508093005.1044815-1-kovalev@altlinux.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-SGVsbG8uCldlIGFyZSBVYmlzZWN0ZWNoIFNpcml1cyBUZWFtLCB0aGUgdnVsbmVyYWJpbGl0eSBs
-YWIgb2YgQ2hpbmEgVmFsaWFudFNlYy4gUmVjZW50bHksIG91ciB0ZWFtIGhhcyBkaXNjb3ZlcmVk
-IGEgaXNzdWUgaW4gTGludXgga2VybmVsIDYuNy4gQXR0YWNoZWQgdG8gdGhlIGVtYWlsIHdlcmUg
-YSBQb0MgZmlsZSBvZiB0aGUgaXNzdWUuCgpTdGFjayBkdW1wOgoKYmNhY2hlZnMgKGxvb3AwKTog
-ZXJyb3IgdmFsaWRhdGluZyBidHJlZSBub2RlIG9uIGxvb3AwIGF0IGJ0cmVlIGV4dGVudHMgbGV2
-ZWwgMC8wCiAgdTY0cyAxMSB0eXBlIGJ0cmVlX3B0cl92MiBTUE9TX01BWCBsZW4gMCB2ZXIgMDog
-c2VxIDgzNDI2ZmNiNjc4ODZjYmUgd3JpdHRlbiAxNiBtaW5fa2V5IFBPU19NSU4gZHVyYWJpbGl0
-eTogMSBwdHI6IDA6Mjc6MCBnZW4gMAogIG5vZGUgb2Zmc2V0IDAgYnNldCB1NjRzIDA6IHVua25v
-d24gY2hlY2tzdW0gdHlwZSA0LCBmaXhpbmcKZ2VuZXJhbCBwcm90ZWN0aW9uIGZhdWx0LCBwcm9i
-YWJseSBmb3Igbm9uLWNhbm9uaWNhbCBhZGRyZXNzIDB4ZGZmZmZjMDAwMDAwMDAwNDogMDAwMCBb
-IzFdIFBSRUVNUFQgU01QIEtBU0FOIE5PUFRJCktBU0FOOiBudWxsLXB0ci1kZXJlZiBpbiByYW5n
-ZSBbMHgwMDAwMDAwMDAwMDAwMDIwLTB4MDAwMDAwMDAwMDAwMDAyN10KQ1BVOiAwIFBJRDogMjU4
-OTIgQ29tbTogc3l6LWV4ZWN1dG9yLjAgTm90IHRhaW50ZWQgNi43LjAgIzIKSGFyZHdhcmUgbmFt
-ZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMS4xNS4wLTEg
-MDQvMDEvMjAxNApSSVA6IDAwMTA6Y3J5cHRvX3NrY2lwaGVyX2FsZyBpbmNsdWRlL2NyeXB0by9z
-a2NpcGhlci5oOjM4NyBbaW5saW5lXQpSSVA6IDAwMTA6Y3J5cHRvX3NrY2lwaGVyX2VuY3J5cHQr
-MHg0OC8weDE3MCBjcnlwdG8vc2tjaXBoZXIuYzo2NTYKQ29kZTogNDggODkgZmEgNDggYzEgZWEg
-MDMgODAgM2MgMDIgMDAgMGYgODUgMTcgMDEgMDAgMDAgNDggYjggMDAgMDAgMDAgMDAgMDAgZmMg
-ZmYgZGYgNDggOGIgNWQgNDAgNDggOGQgN2IgMTggNDggODkgZmEgNDggYzEgZWEgMDMgPDgwPiAz
-YyAwMiAwMCAwZiA4NSAwOCAwMSAwMCAwMCA0OCA4ZCA3YiAwNCA0YyA4YiA2MyAxOCA0OCBiOCAw
-MCAwMApSU1A6IDAwMTg6ZmZmZmM5MDAwMmQ0NjM4OCBFRkxBR1M6IDAwMDEwMjAyClJBWDogZGZm
-ZmZjMDAwMDAwMDAwMCBSQlg6IDAwMDAwMDAwMDAwMDAwMDggUkNYOiBmZmZmYzkwMDBlMDRhMDAw
-ClJEWDogMDAwMDAwMDAwMDAwMDAwNCBSU0k6IGZmZmZmZmZmODQxNjJiNTAgUkRJOiAwMDAwMDAw
-MDAwMDAwMDIwClJCUDogZmZmZmM5MDAwMmQ0NjNmOCBSMDg6IDAwMDAwMDAwMDAwMDAwMjAgUjA5
-OiAwMDAwMDAwMDAwMDAwMDAxClIxMDogMDAwMDAwMDAwMDAwMDAwMSBSMTE6IDAwMDAwMDAwMDAw
-MDAwMDAgUjEyOiAwMDAwMDAwMDAwMDAwMDA4ClIxMzogMDAwMDAwMDAwMDAwMDAyMCBSMTQ6IGZm
-ZmY4ODgwMTEzM2Q2MDAgUjE1OiBmZmZmYzkwMDAyZDQ2N2Q4CkZTOiAgMDAwMDdmZGQwMTc0YjY0
-MCgwMDAwKSBHUzpmZmZmODg4MDJjNjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDAK
-Q1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpDUjI6IDAw
-MDAwMDFiMmRmMjEwMDAgQ1IzOiAwMDAwMDAwMDU3MzE0MDAwIENSNDogMDAwMDAwMDAwMDc1MGVm
-MApEUjA6IDAwMDAwMDAwMDAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAw
-MDAwMDAwMDAwMApEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERS
-NzogMDAwMDAwMDAwMDAwMDQwMApQS1JVOiA1NTU1NTU1NApDYWxsIFRyYWNlOgogPFRBU0s+CiBk
-b19lbmNyeXB0X3NnKzB4YmMvMHgxNTAgZnMvYmNhY2hlZnMvY2hlY2tzdW0uYzoxMDcKIGRvX2Vu
-Y3J5cHQrMHgyN2QvMHg0MzAgZnMvYmNhY2hlZnMvY2hlY2tzdW0uYzoxNDkKIGdlbl9wb2x5X2tl
-eS5pc3JhLjArMHgxNDQvMHgzMTAgZnMvYmNhY2hlZnMvY2hlY2tzdW0uYzoxOTAKIGJjaDJfY2hl
-Y2tzdW0rMHgxYmMvMHgyYjAgZnMvYmNhY2hlZnMvY2hlY2tzdW0uYzoyMjYKIGJjaDJfYnRyZWVf
-bm9kZV9yZWFkX2RvbmUrMHg3NWIvMHg0NWEwIGZzL2JjYWNoZWZzL2J0cmVlX2lvLmM6MTAwMwog
-YnRyZWVfbm9kZV9yZWFkX3dvcmsrMHg3N2YvMHgxMGUwIGZzL2JjYWNoZWZzL2J0cmVlX2lvLmM6
-MTI2MgogYmNoMl9idHJlZV9ub2RlX3JlYWQrMHhlZjMvMHgxNDYwIGZzL2JjYWNoZWZzL2J0cmVl
-X2lvLmM6MTY0MQogX19iY2gyX2J0cmVlX3Jvb3RfcmVhZCBmcy9iY2FjaGVmcy9idHJlZV9pby5j
-OjE2ODAgW2lubGluZV0KIGJjaDJfYnRyZWVfcm9vdF9yZWFkKzB4MmJjLzB4NjcwIGZzL2JjYWNo
-ZWZzL2J0cmVlX2lvLmM6MTcwNAogcmVhZF9idHJlZV9yb290cyBmcy9iY2FjaGVmcy9yZWNvdmVy
-eS5jOjM4NCBbaW5saW5lXQogYmNoMl9mc19yZWNvdmVyeSsweDI4YjAvMHg1MmQwIGZzL2JjYWNo
-ZWZzL3JlY292ZXJ5LmM6OTE0CiBiY2gyX2ZzX3N0YXJ0KzB4MzY1LzB4NWUwIGZzL2JjYWNoZWZz
-L3N1cGVyLmM6OTc4CiBiY2gyX2ZzX29wZW4rMHgxYWM5LzB4Mzg5MCBmcy9iY2FjaGVmcy9zdXBl
-ci5jOjE5NjgKIGJjaDJfbW91bnQrMHg1MzgvMHgxM2MwIGZzL2JjYWNoZWZzL2ZzLmM6MTg2Mwog
-bGVnYWN5X2dldF90cmVlKzB4MTA5LzB4MjIwIGZzL2ZzX2NvbnRleHQuYzo2NjIKIHZmc19nZXRf
-dHJlZSsweDkzLzB4MzgwIGZzL3N1cGVyLmM6MTc3MQogZG9fbmV3X21vdW50IGZzL25hbWVzcGFj
-ZS5jOjMzMzcgW2lubGluZV0KIHBhdGhfbW91bnQrMHg2NzkvMHgxZTQwIGZzL25hbWVzcGFjZS5j
-OjM2NjQKIGRvX21vdW50IGZzL25hbWVzcGFjZS5jOjM2NzcgW2lubGluZV0KIF9fZG9fc3lzX21v
-dW50IGZzL25hbWVzcGFjZS5jOjM4ODYgW2lubGluZV0KIF9fc2Vfc3lzX21vdW50IGZzL25hbWVz
-cGFjZS5jOjM4NjMgW2lubGluZV0KIF9feDY0X3N5c19tb3VudCsweDI4Ny8weDMxMCBmcy9uYW1l
-c3BhY2UuYzozODYzCiBkb19zeXNjYWxsX3g2NCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzo1MiBb
-aW5saW5lXQogZG9fc3lzY2FsbF82NCsweDQzLzB4MTIwIGFyY2gveDg2L2VudHJ5L2NvbW1vbi5j
-OjgzCiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg2Zi8weDc3ClJJUDogMDAzMzow
-eDdmZGQwMGE5MWIzZQpDb2RlOiA0OCBjNyBjMCBmZiBmZiBmZiBmZiBlYiBhYSBlOCBiZSAwZCAw
-MCAwMCA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMCAwMCAwZiAxZiA0MCAwMCBmMyAwZiAxZSBm
-YSA0OSA4OSBjYSBiOCBhNSAwMCAwMCAwMCAwZiAwNSA8NDg+IDNkIDAxIGYwIGZmIGZmIDczIDAx
-IGMzIDQ4IGM3IGMxIGIwIGZmIGZmIGZmIGY3IGQ4IDY0IDg5IDAxIDQ4ClJTUDogMDAyYjowMDAw
-N2ZkZDAxNzRhZTM4IEVGTEFHUzogMDAwMDAyMDIgT1JJR19SQVg6IDAwMDAwMDAwMDAwMDAwYTUK
-UkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAwMDAwMDAwMDAxMTlmYyBSQ1g6IDAwMDA3ZmRk
-MDBhOTFiM2UKUkRYOiAwMDAwMDAwMDIwMDExYTAwIFJTSTogMDAwMDAwMDAyMDAwMDA0MCBSREk6
-IDAwMDA3ZmRkMDE3NGFlOTAKUkJQOiAwMDAwN2ZkZDAxNzRhZWQwIFIwODogMDAwMDdmZGQwMTc0
-YWVkMCBSMDk6IDAwMDAwMDAwMDAwMDAwMDEKUjEwOiAwMDAwMDAwMDAwMDAwMDAxIFIxMTogMDAw
-MDAwMDAwMDAwMDIwMiBSMTI6IDAwMDAwMDAwMjAwMTFhMDAKUjEzOiAwMDAwMDAwMDIwMDAwMDQw
-IFIxNDogMDAwMDdmZGQwMTc0YWU5MCBSMTU6IDAwMDAwMDAwMjAwMDAxMDAKIDwvVEFTSz4KTW9k
-dWxlcyBsaW5rZWQgaW46Ci0tLVsgZW5kIHRyYWNlIDAwMDAwMDAwMDAwMDAwMDAgXS0tLQpSSVA6
-IDAwMTA6Y3J5cHRvX3NrY2lwaGVyX2FsZyBpbmNsdWRlL2NyeXB0by9za2NpcGhlci5oOjM4NyBb
-aW5saW5lXQpSSVA6IDAwMTA6Y3J5cHRvX3NrY2lwaGVyX2VuY3J5cHQrMHg0OC8weDE3MCBjcnlw
-dG8vc2tjaXBoZXIuYzo2NTYKQ29kZTogNDggODkgZmEgNDggYzEgZWEgMDMgODAgM2MgMDIgMDAg
-MGYgODUgMTcgMDEgMDAgMDAgNDggYjggMDAgMDAgMDAgMDAgMDAgZmMgZmYgZGYgNDggOGIgNWQg
-NDAgNDggOGQgN2IgMTggNDggODkgZmEgNDggYzEgZWEgMDMgPDgwPiAzYyAwMiAwMCAwZiA4NSAw
-OCAwMSAwMCAwMCA0OCA4ZCA3YiAwNCA0YyA4YiA2MyAxOCA0OCBiOCAwMCAwMApSU1A6IDAwMTg6
-ZmZmZmM5MDAwMmQ0NjM4OCBFRkxBR1M6IDAwMDEwMjAyClJBWDogZGZmZmZjMDAwMDAwMDAwMCBS
-Qlg6IDAwMDAwMDAwMDAwMDAwMDggUkNYOiBmZmZmYzkwMDBlMDRhMDAwClJEWDogMDAwMDAwMDAw
-MDAwMDAwNCBSU0k6IGZmZmZmZmZmODQxNjJiNTAgUkRJOiAwMDAwMDAwMDAwMDAwMDIwClJCUDog
-ZmZmZmM5MDAwMmQ0NjNmOCBSMDg6IDAwMDAwMDAwMDAwMDAwMjAgUjA5OiAwMDAwMDAwMDAwMDAw
-MDAxClIxMDogMDAwMDAwMDAwMDAwMDAwMSBSMTE6IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiAwMDAw
-MDAwMDAwMDAwMDA4ClIxMzogMDAwMDAwMDAwMDAwMDAyMCBSMTQ6IGZmZmY4ODgwMTEzM2Q2MDAg
-UjE1OiBmZmZmYzkwMDAyZDQ2N2Q4CkZTOiAgMDAwMDdmZGQwMTc0YjY0MCgwMDAwKSBHUzpmZmZm
-ODg4MDJjNjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAwMDAwMDAwMDAKQ1M6ICAwMDEwIERTOiAw
-MDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMwpDUjI6IDAwMDA1NWU0Y2QyNzgxMjAg
-Q1IzOiAwMDAwMDAwMDU3MzE0MDAwIENSNDogMDAwMDAwMDAwMDc1MGVmMApEUjA6IDAwMDAwMDAw
-MDAwMDAwMDAgRFIxOiAwMDAwMDAwMDAwMDAwMDAwIERSMjogMDAwMDAwMDAwMDAwMDAwMApEUjM6
-IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAw
-MDQwMApQS1JVOiA1NTU1NTU1NAotLS0tLS0tLS0tLS0tLS0tCkNvZGUgZGlzYXNzZW1ibHkgKGJl
-c3QgZ3Vlc3MpOgogICAwOiAgIDQ4IDg5IGZhICAgICAgICAgICAgICAgIG1vdiAgICAlcmRpLCVy
-ZHgKICAgMzogICA0OCBjMSBlYSAwMyAgICAgICAgICAgICBzaHIgICAgJDB4MywlcmR4CiAgIDc6
-ICAgODAgM2MgMDIgMDAgICAgICAgICAgICAgY21wYiAgICQweDAsKCVyZHgsJXJheCwxKQogICBi
-OiAgIDBmIDg1IDE3IDAxIDAwIDAwICAgICAgIGpuZSAgICAweDEyOAogIDExOiAgIDQ4IGI4IDAw
-IDAwIDAwIDAwIDAwICAgIG1vdmFicyAkMHhkZmZmZmMwMDAwMDAwMDAwLCVyYXgKICAxODogICBm
-YyBmZiBkZgogIDFiOiAgIDQ4IDhiIDVkIDQwICAgICAgICAgICAgIG1vdiAgICAweDQwKCVyYnAp
-LCVyYngKICAxZjogICA0OCA4ZCA3YiAxOCAgICAgICAgICAgICBsZWEgICAgMHgxOCglcmJ4KSwl
-cmRpCiAgMjM6ICAgNDggODkgZmEgICAgICAgICAgICAgICAgbW92ICAgICVyZGksJXJkeAogIDI2
-OiAgIDQ4IGMxIGVhIDAzICAgICAgICAgICAgIHNociAgICAkMHgzLCVyZHgKKiAyYTogICA4MCAz
-YyAwMiAwMCAgICAgICAgICAgICBjbXBiICAgJDB4MCwoJXJkeCwlcmF4LDEpIDwtLSB0cmFwcGlu
-ZyBpbnN0cnVjdGlvbgogIDJlOiAgIDBmIDg1IDA4IDAxIDAwIDAwICAgICAgIGpuZSAgICAweDEz
-YwogIDM0OiAgIDQ4IDhkIDdiIDA0ICAgICAgICAgICAgIGxlYSAgICAweDQoJXJieCksJXJkaQog
-IDM4OiAgIDRjIDhiIDYzIDE4ICAgICAgICAgICAgIG1vdiAgICAweDE4KCVyYngpLCVyMTIKICAz
-YzogICA0OCAgICAgICAgICAgICAgICAgICAgICByZXguVwogIDNkOiAgIGI4ICAgICAgICAgICAg
-ICAgICAgICAgIC5ieXRlIDB4YjgKClRoYW5rIHlvdSBmb3IgdGFraW5nIHRoZSB0aW1lIHRvIHJl
-YWQgdGhpcyBlbWFpbCBhbmQgd2UgbG9vayBmb3J3YXJkIHRvIHdvcmtpbmcgd2l0aCB5b3UgZnVy
-dGhlci4KCgoKCgoKCgoKCg==
+On 08. 05. 24, 11:30, kovalev@altlinux.org wrote:
+> From: Vasiliy Kovalev <kovalev@altlinux.org>
+> 
+> A possible scenario in which a deadlock may occur is as follows:
+> 
+> flush_to_ldisc() {
+> 
+>    mutex_lock(&buf->lock);
+> 
+>    tty_port_default_receive_buf() {
+>      tty_ldisc_receive_buf() {
+>        n_tty_receive_buf2() {
+> 	n_tty_receive_buf_common() {
+> 	  n_tty_receive_char_special() {
+> 	    isig() {
+> 	      tty_driver_flush_buffer() {
+> 		pty_flush_buffer() {
+> 		  tty_buffer_flush() {
+> 
+> 		    mutex_lock(&buf->lock); (DEADLOCK)
+> 
+> flush_to_ldisc() and tty_buffer_flush() functions they use the same mutex
+> (&buf->lock), but not necessarily the same struct tty_bufhead object.
+
+"not necessarily" -- so does it mean that it actually can happen (and we 
+should fix it) or not at all (and we should annotate the mutex)?
+
+> However, you should probably use a separate mutex for the
+> tty_buffer_flush() function to exclude such a situation.
+..
+
+> Cc: stable@vger.kernel.org
+
+What commit does this fix?
+
+> --- a/drivers/tty/tty_buffer.c
+> +++ b/drivers/tty/tty_buffer.c
+> @@ -226,7 +226,7 @@ void tty_buffer_flush(struct tty_struct *tty, struct tty_ldisc *ld)
+>   
+>   	atomic_inc(&buf->priority);
+>   
+> -	mutex_lock(&buf->lock);
+> +	mutex_lock(&buf->flush_mtx);
+
+Hmm, how does this protect against concurrent buf pickup. We free it 
+here and the racing thread can start using it, or?
+
+>   	/* paired w/ release in __tty_buffer_request_room; ensures there are
+>   	 * no pending memory accesses to the freed buffer
+>   	 */
+
+thanks,
+-- 
+js
+suse labs
+
 
