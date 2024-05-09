@@ -1,174 +1,146 @@
-Return-Path: <linux-kernel+bounces-174758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA648C1494
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52368C149B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9661D1F21B01
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED8F31C21E17
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3FE770FF;
-	Thu,  9 May 2024 18:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95CC077108;
+	Thu,  9 May 2024 18:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcnwgtVC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="KB2e49G2"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FD1770FE;
-	Thu,  9 May 2024 18:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCA3770FC
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715278482; cv=none; b=IVftg/zfhAyqaM12GenL1/z9GbFxOtlmctWk0cdvubWmjxeA8AyiHG0aqHGpc0IRD3SJEKY5iOwYHhzQCC5cJ4Be+wiRF8XXr4hgaG0s7GYtrsGrQQZbInJojn1kgaS8x3/kayYcfHKCp4e6t447pgwKbu8B57UoEB7vD86AEGc=
+	t=1715278763; cv=none; b=Ey0liRjpLwJd/it+untd8ESGezB0xtL1W0f6JgobqmhMD4TqH/fEkTQD10aaB6Tv2A+vsuS/inxg644u4LDTrikKTC9zBEknVCMK0U3F3BjLMS85mhXIcSeSaPHpRmAN/B1my1XFNLpPCRwlWf9+3K8WkkSTSMAGHoRJ/gkDi4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715278482; c=relaxed/simple;
-	bh=hRafjKR2nz/ik0Ybw1Y2FxPsUTThAfB6fkIwc8yWrHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvLoyYEyQKrNJ9P0s3tZwVDnEgP1aOL8wlaU9jMIuhDgk8N8SpXqSZBVypfQjEO+R6grIIYoK+CVjYeqacpPizU8+hUmTTtHXFCLu1DEO167MiUZ1jCPvwHDjcmVhWJGh3EGZ2fmuCxYTl1+ASf2xVp8HkRZcIYmVVlVggbagcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcnwgtVC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7996C116B1;
-	Thu,  9 May 2024 18:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715278482;
-	bh=hRafjKR2nz/ik0Ybw1Y2FxPsUTThAfB6fkIwc8yWrHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CcnwgtVCG7xfa9ZqQX9x5aPbB8jIN4eai6HbmPjX9FQGjkRwgfJVizpa671LV5kCx
-	 9QcKPdInn/8JQKidSZN9Eu35JSLnJY15KbOhzGq2w8HE2bY9uZkyk0U+HBxZ7kiM+V
-	 aysA3CouUg5fksg2k89YsqHNjChC1e+QIExkTm0ZKsenA/hFkA7dd0bD95DC+Uf844
-	 S+V1pAlVgGoxrbl2rRuhbFPPz1m/SuYxirzNkqJDLeYRmYySS3s37N8IkpGSb7eQDm
-	 BjuX/N9hoEsXnMZUjzWd0dYjjFNG4QGZO2CS7ceb+lKr8CXBBTstrnjgSa7sJEb+st
-	 WQf+eKiLwhByQ==
-Date: Thu, 9 May 2024 19:14:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, paul.walmsley@sifive.com,
-	rick.p.edgecombe@intel.com, broonie@kernel.org,
-	Szabolcs.Nagy@arm.com, kito.cheng@sifive.com, keescook@chromium.org,
-	ajones@ventanamicro.com, conor.dooley@microchip.com,
-	cleger@rivosinc.com, atishp@atishpatra.org, alex@ghiti.fr,
-	bjorn@rivosinc.com, alexghiti@rivosinc.com,
-	samuel.holland@sifive.com, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	corbet@lwn.net, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	charlie@rivosinc.com, apatel@ventanamicro.com,
-	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
-	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 04/29] riscv: zicfilp / zicfiss in dt-bindings
- (extensions.yaml)
-Message-ID: <20240509-cornflake-foyer-e6589c2bc364@spud>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-5-debug@rivosinc.com>
- <20240410115806.GA4044117-robh@kernel.org>
- <CAKC1njSsZ6wfvJtXkp4J4J6wXFtU92W9JGca-atKxBy8UvUwRg@mail.gmail.com>
- <20240415194105.GA94432-robh@kernel.org>
- <Zh6c0FH2OvrfDLje@debug.ba.rivosinc.com>
+	s=arc-20240116; t=1715278763; c=relaxed/simple;
+	bh=RJE7wtOGuiVA6SM4445qxe+uUKV5GXrAqRRpV1HQKLI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=cXJe1yAHKgSfeAXW93coUXBjhI1OzMCHQV7p3CCqgn9D1SQKhKa4mXj1xQWEV5g1HUFyRbBcETv6MUnxaeNJVdi3lnauUZDTY58suHQUL7Qj6OFYmQIsamvOG/3pl8ngrkbU98i9OeBJtDdu59SbEl3cEJpQ87nc5BoqTCLuhU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=KB2e49G2; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 1FED92C0BA5;
+	Fri, 10 May 2024 06:19:13 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1715278753;
+	bh=RJE7wtOGuiVA6SM4445qxe+uUKV5GXrAqRRpV1HQKLI=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=KB2e49G20LPOmo8v7NzrcDu+9gdvwkK88l08p5RK4IIuy52GACt6+qVS+gGSbmDvK
+	 ZCVgndZLRADlr9kpSYOCJxJqSMc1d75LfXbmuTkgqNKr9nkYaMpMc7NXZxRCAaVp1y
+	 YSxKdJHpcBDJh0rL7c9jzKXYb87TpBXcEQS8jCnikkWQNIS6Fr7FO//VZIEQ3FpHuq
+	 fmWQqCOqy7KH1ua8iI6xE0ofoazOjQ76yCvP6TG8k8FEw5OCNZDkXZ8oYNSEhlsH9s
+	 VB5qliUkPqkPXdBOtgL+H+qGzFvRd0ZlJC2Mxyepkg9eKdFLO5jfY/eU/aOZdnjBJg
+	 yYI719MhesGwQ==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B663d13a10000>; Fri, 10 May 2024 06:19:13 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Fri, 10 May 2024 06:19:12 +1200
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with Microsoft
+ SMTP Server (TLS) id 15.0.1497.48; Fri, 10 May 2024 06:19:12 +1200
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Fri, 10 May 2024 06:19:12 +1200
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: Krzysztof Kozlowski <krzk@kernel.org>, "jdelvare@suse.com"
+	<jdelvare@suse.com>, "linux@roeck-us.net" <linux@roeck-us.net>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>
+CC: "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Document adt7475 PWM initial
+ duty cycle
+Thread-Topic: [PATCH v2 1/2] dt-bindings: hwmon: Document adt7475 PWM initial
+ duty cycle
+Thread-Index: AQHaoZJj5QPx6ZJTO0uIJD/DY55QH7GNspyAgAC7vYA=
+Date: Thu, 9 May 2024 18:19:12 +0000
+Message-ID: <d11093bb-230b-4918-a8cd-4f4eb760ccf3@alliedtelesis.co.nz>
+References: <20240508215504.300580-1-chris.packham@alliedtelesis.co.nz>
+ <20240508215504.300580-2-chris.packham@alliedtelesis.co.nz>
+ <fe5b3af9-b307-45e1-b190-ba2b3327a8df@kernel.org>
+In-Reply-To: <fe5b3af9-b307-45e1-b190-ba2b3327a8df@kernel.org>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DDEE378BC921B04C85E523A937244128@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JhRnWmWpnp4za6Qf"
-Content-Disposition: inline
-In-Reply-To: <Zh6c0FH2OvrfDLje@debug.ba.rivosinc.com>
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=MfrPuI/f c=1 sm=1 tr=0 ts=663d13a1 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=oKJsc7D3gJEA:10 a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=elF3_sayRK1upBjPgWEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-
---JhRnWmWpnp4za6Qf
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Apr 16, 2024 at 08:44:16AM -0700, Deepak Gupta wrote:
-> On Mon, Apr 15, 2024 at 02:41:05PM -0500, Rob Herring wrote:
-> > On Wed, Apr 10, 2024 at 02:37:21PM -0700, Deepak Gupta wrote:
-> > > On Wed, Apr 10, 2024 at 4:58=E2=80=AFAM Rob Herring <robh@kernel.org>=
- wrote:
-> > > >
-> > > > On Wed, Apr 03, 2024 at 04:34:52PM -0700, Deepak Gupta wrote:
-> > > > > Make an entry for cfi extensions in extensions.yaml.
-> > > > >
-> > > > > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/riscv/extensions.yaml          | 10 ++++=
-++++++
-> > > > >  1 file changed, 10 insertions(+)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.y=
-aml b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > > index 63d81dc895e5..45b87ad6cc1c 100644
-> > > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> > > > > @@ -317,6 +317,16 @@ properties:
-> > > > >              The standard Zicboz extension for cache-block zeroin=
-g as ratified
-> > > > >              in commit 3dd606f ("Create cmobase-v1.0.pdf") of ris=
-cv-CMOs.
-> > > > >
-> > > > > +        - const: zicfilp
-> > > > > +          description:
-> > > > > +            The standard Zicfilp extension for enforcing forward=
- edge control-flow
-> > > > > +            integrity in commit 3a20dc9 of riscv-cfi and is in p=
-ublic review.
-> > > >
-> > > > Does in public review mean the commit sha is going to change?
-> > > >
-> > >=20
-> > > Less likely. Next step after public review is to gather comments from
-> > > public review.
-> > > If something is really pressing and needs to be addressed, then yes
-> > > this will change.
-> > > Else this gets ratified as it is.
-> >=20
-> > If the commit sha can change, then it is useless. What's the guarantee
-> > someone is going to remember to update it if it changes?
->=20
-> Sorry for late reply.
->=20
-> I was following existing wordings and patterns for messaging in this file.
-> You would rather have me remove sha and only mention that spec is in publ=
-ic
-> review?
-
-Nope, having a commit sha is desired. None of this is mergeable until at
-least the spec becomes frozen, so the sha can be updated at that point
-to the freeze state - or better yet to the ratified state. Being in
-public review is not sufficient.
-
-Cheers,
-Conor
-
---JhRnWmWpnp4za6Qf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj0SggAKCRB4tDGHoIJi
-0mvjAP9d3Qz1PVGc/kOj+XdEfO1FrKoEF9VSW9XYGpnlZvSRVAEAhzTts4ymraHs
-rig86vUonyRRKcngwn/ZR5KdPHqJ3ws=
-=NfI8
------END PGP SIGNATURE-----
-
---JhRnWmWpnp4za6Qf--
+SGkgS3J6eXN6dG9mLA0KDQpPbiA5LzA1LzI0IDE5OjA2LCBLcnp5c3p0b2YgS296bG93c2tpIHdy
+b3RlOg0KPiBPbiAwOC8wNS8yMDI0IDIzOjU1LCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPj4gQWRk
+IGRvY3VtZW50YXRpb24gZm9yIHRoZSBwd20taW5pdGlhbC1kdXR5LWN5Y2xlIGFuZA0KPj4gcHdt
+LWluaXRpYWwtZnJlcXVlbmN5IHByb3BlcnRpZXMuIFRoZXNlIGFsbG93IHRoZSBzdGFydGluZyBz
+dGF0ZSBvZiB0aGUNCj4+IFBXTSBvdXRwdXRzIHRvIGJlIHNldCB0byBjYXRlciBmb3IgaGFyZHdh
+cmUgZGVzaWducyB3aGVyZSB1bmRlc2lyYWJsZQ0KPj4gYW1vdW50cyBvZiBub2lzZSBpcyBjcmVh
+dGVkIGJ5IHRoZSBkZWZhdWx0IGhhcmR3YXJlIHN0YXRlLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6
+IENocmlzIFBhY2toYW0gPGNocmlzLnBhY2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4NCj4+IC0t
+LQ0KPj4NCj4+IE5vdGVzOg0KPj4gICAgICBDaGFuZ2VzIGluIHYyOg0KPj4gICAgICAtIERvY3Vt
+ZW50IDAgYXMgYSB2YWxpZCB2YWx1ZSAobGVhdmVzIGhhcmR3YXJlIGFzLWlzKQ0KPj4NCj4+ICAg
+Li4uL2RldmljZXRyZWUvYmluZGluZ3MvaHdtb24vYWR0NzQ3NS55YW1sICAgIHwgMjcgKysrKysr
+KysrKysrKysrKysrLQ0KPj4gICAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbigtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvaHdtb24vYWR0NzQ3NS55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
+bmRpbmdzL2h3bW9uL2FkdDc0NzUueWFtbA0KPj4gaW5kZXggMDUxYzk3NmFiNzExLi45N2RlZGEw
+ODJiNGEgMTAwNjQ0DQo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
+aHdtb24vYWR0NzQ3NS55YW1sDQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvaHdtb24vYWR0NzQ3NS55YW1sDQo+PiBAQCAtNTEsNiArNTEsMzAgQEAgcHJvcGVydGll
+czoNCj4+ICAgICAgICAgZW51bTogWzAsIDFdDQo+PiAgICAgICAgIGRlZmF1bHQ6IDENCj4+ICAg
+DQo+PiArICBhZGkscHdtLWluaXRpYWwtZHV0eS1jeWNsZToNCj4+ICsgICAgZGVzY3JpcHRpb246
+IHwNCj4+ICsgICAgICBDb25maWd1cmVzIHRoZSBpbml0aWFsIGR1dHkgY3ljbGUgZm9yIHRoZSBQ
+V00gb3V0cHV0cy4gVGhlIGhhcmR3YXJlDQo+PiArICAgICAgZGVmYXVsdCBpcyAxMDAlIGJ1dCB0
+aGlzIG1heSBjYXVzZSB1bndhbnRlZCBmYW4gbm9pc2UgYXQgc3RhcnR1cC4gU2V0DQo+PiArICAg
+ICAgdGhpcyB0byBhIHZhbHVlIGZyb20gMCAoMCUgZHV0eSBjeWNsZSkgdG8gMjU1ICgxMDAlIGR1
+dHkgY3ljbGUpLg0KPj4gKyAgICAkcmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0aW9u
+cy91aW50MzItYXJyYXkNCj4+ICsgICAgbWluSXRlbXM6IDMNCj4+ICsgICAgbWF4SXRlbXM6IDMN
+Cj4+ICsgICAgaXRlbXM6DQo+PiArICAgICAgbWluaW11bTogMA0KPj4gKyAgICAgIG1heGltdW06
+IDI1NQ0KPj4gKyAgICAgIGRlZmF1bHQ6IDI1NQ0KPj4gKw0KPj4gKyAgYWRpLHB3bS1pbml0aWFs
+LWZyZXF1ZW5jeToNCj4gRnJlcXVlbmN5IHVzdWFsbHkgaGFzIHNvbWUgdW5pdHMsIHNvIHVzZSBh
+cHByb3ByaWF0ZSB1bml0IHN1ZmZpeCBhbmQNCj4gZHJvcCAkcmVmLiAgTWF5YmUgdGhhdCdzIGp1
+c3QgdGFyZ2V0LXJwbSBwcm9wZXJ0eT8NCj4NCj4gQnV0IGlzbid0IHRoaXMgZHVwbGljYXRpbmcg
+cHJldmlvdXMgcHJvcGVydHk/IFRoaXMgaXMgZmFuIGNvbnRyb2xsZXIsDQo+IG5vdCBQV00gcHJv
+dmlkZXIgKGluIGFueSBjYXNlIHlvdSBtaXNzIHByb3BlciAkcmVmcyB0byBwd20ueWFtbCBvcg0K
+PiBmYW4tY29tbW9uLnlhbWwpLCBzbyB0aGUgb25seSB0aGluZyB5b3UgaW5pdGlhbGx5IHdhbnQg
+dG8gY29uZmlndXJlIGlzDQo+IHRoZSBmYW4gcm90YXRpb24sIG5vdCBzcGVjaWZpYyBQV00gd2F2
+ZWZvcm0uIElmIHlvdSB5b3Ugd2FudCB0bw0KPiBjb25maWd1cmUgc3BlY2lmaWMgUFdNIHdhdmVm
+b3JtLCB0aGVuIGl0J3MgYSBQV00gcHJvdmlkZXIuLi4gYnV0IGl0IGlzDQo+IG5vdC4uLiBDb25m
+dXNlZC4NCg0KVGhlcmUncyB0d28gdGhpbmdzIGdvaW5nIG9uIGhlcmUuIFRoZXJlJ3MgYSBQV00g
+ZHV0eSBjeWNsZSB3aGljaCBpcyANCmNvbmZpZ3VyYWJsZSBmcm9tIDAlIHRvIDEwMCUuIEl0IG1p
+Z2h0IGJlIG5pY2UgaWYgdGhpcyB3YXMgZXhwcmVzc2VkIGFzIA0KYSBwZXJjZW50YWdlIGluc3Rl
+YWQgb2YgMC0yNTUgYnV0IEkgd2VudCB3aXRoIHRoZSBsYXR0ZXIgYmVjYXVzZSB0aGF0J3MgDQpo
+b3cgdGhlIHN5c2ZzIEFCSSBmb3IgdGhlIGR1dHkgY3ljbGUgd29ya3MuDQoNClRoZSBmcmVxdWVu
+Y3kgKHdoaWNoIEknbGwgY2FsbCBhZGkscHdtLWluaXRpYWwtZnJlcXVlbmN5LWh6IGluIHYzKSAN
+CmFmZmVjdHMgaG93IHRoYXQgZHV0eSBjeWNsZSBpcyBwcmVzZW50ZWQgdG8gdGhlIGZhbnMuIFNv
+IHlvdSBjb3VsZCBzdGlsbCANCmhhdmUgYSBkdXR5IGN5Y2xlIG9mIDUwJSBhdCBhbnkgZnJlcXVl
+bmN5LiBXaGF0IGZyZXF1ZW5jeSBpcyBiZXN0IA0KZGVwZW5kcyBvbiB0aGUga2luZCBvZiBmYW5z
+IGJlaW5nIHVzZWQuIEluIG15IHBhcnRpY3VsYXIgY2FzZSB0aGUgbG93ZXIgDQpmcmVxdWVuY2ll
+cyBlbmQgdXAgd2l0aCB0aGUgZmFucyBvc2NpbGxhdGluZyBhbm5veWluZ2x5IHNvIEkgdXNlIHRo
+ZSANCmhpZ2hlc3Qgc2V0dGluZy4NCg0KPg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0K
+Pg==
 
