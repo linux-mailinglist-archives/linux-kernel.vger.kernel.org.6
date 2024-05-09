@@ -1,193 +1,216 @@
-Return-Path: <linux-kernel+bounces-174808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4A1D8C154B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:18:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D816D8C155A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 963821C21153
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:18:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C14F2831C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0762D7FBB4;
-	Thu,  9 May 2024 19:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A8884FC8;
+	Thu,  9 May 2024 19:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="kUmRIt4R"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="k83wz7aa"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3ED653;
-	Thu,  9 May 2024 19:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BFE7F495
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715282271; cv=none; b=HTk9RJiV/MUFu4ilKV03PBBmTRqE5x3D0oq7jeNsAe2PKg9HaUDXiwVzuHPGR+ESkV6zqbVVJDtoEEcsNB89C8Z0BSGgdZd6YmmA6bc96ra9gLA+EEHLJ+r68mLe+LpPdz2lFcZXBsHfms+WM820aSNPsvV7J0Knf44WgoNXnfg=
+	t=1715282273; cv=none; b=Yk7iekwH+cgswBkwajhlweX0Ji92r1FMVIi5wXlknhgpJc0DzULdw92HqpNOPzYJSXWJemjXwCs0UGldlxUnkIW5l2jvmViDjKnRh+SZixoMQr540CynapW0iuHhE3d8TU/fBZcaGVD2n3XQX/hx1uaxi16vbNGSrkZLE8TyKA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715282271; c=relaxed/simple;
-	bh=TsOA66Gxd9P6ysQ1zUnV2UVgf3AWyGQEfUnpoMtH47U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pTKPQjT/q+iuoegMYV1Feu/QN5LMxOQkqEvfwCaZxMnSfDXIZrndRmf/1SATTAeknptY0n8EUhYVb6DHeZ4Ub9CT0KJr1mAtFUeFrMeq6y+f1wLtIqxwph0SbPn++ktT1En8qEREpFV9T7Wy/oK79FqOqf8h7WjOUlpcSCp7TXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=kUmRIt4R; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
- id 99a7b61e84f11913; Thu, 9 May 2024 21:17:41 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CD22BA524E7;
-	Thu,  9 May 2024 21:17:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1715282261;
-	bh=TsOA66Gxd9P6ysQ1zUnV2UVgf3AWyGQEfUnpoMtH47U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kUmRIt4RYlSxxlAIvKiABrMyj8MMmrFeSsDoBtXDcuTM4hnKpPy7I1+bGhny3Ih+x
-	 BuOz+rwk29f6OEwKnel+pERJA1YLxNgpfvxlGzftmyOR+DuXpzb2X8NWx2saQ0qWcc
-	 m54skSN48mTpP8Em6n6ewYryZlZ0UaTPFkEVkRzs7JrZrIsFPaCfhuB7un7ZXMA/lp
-	 gQUhiJwz3F00hMzXrdqF8D+Zd+jmFAnINTD+U+CKwIL1ewsIjCbfLaqe0IsoPPSkht
-	 HOPK05I4I2DDizL7UTUXnmvIGA/+0AMtI10hWkFgBzeEuB1zvrH18cXSG6jJrkRA2a
-	 x7WBsWGq5nvPQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH v1 7/7] thermal: trip: Use common set of trip type names
-Date: Thu, 09 May 2024 21:17:25 +0200
-Message-ID: <2272195.iZASKD2KPV@kreacher>
-In-Reply-To: <12438864.O9o76ZdvQC@kreacher>
-References: <12438864.O9o76ZdvQC@kreacher>
+	s=arc-20240116; t=1715282273; c=relaxed/simple;
+	bh=T036fifrIA1AksrNL7AFJX0e/GPtXPfszP11ZVgPMCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kazKWjeQnKbvTr/q+u1JPGZMMfcb+adNzv8a/EVbFx/5EJSN2mA/7WWlOyVzjCk35a/4K3dLU+ienDHT0H+YVgv5+mKIjr3mHMnu+YOnV8PrKHlPmR1Rqo2mKFefqv9FyvVikszB7oxVvtQcCbMn5pV26gS56PB8vjsPmtzGYI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=k83wz7aa; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c929dced-e70e-4f49-b812-026b2677bfd9@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715282268;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KOgzY1WJHW9FwJa+ECKBwfARITf81KjLffAQbrFvkAo=;
+	b=k83wz7aalbejSVXWLHFcLxiKRzT5kSW7NA+WKJgvBtn/C0vIRknQrGxh0peZ867AQccx0/
+	nR/vlBtTtlKgscE9YlpFjWU+jX5QgqrVZ+jSo6aKjstFTWCX8uQX1vZSMUDlUMAwIIEtTW
+	QfHyoynhNjpEEnM2hdGGKz5VjPMlOXE=
+Date: Thu, 9 May 2024 12:17:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefvddgudefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
- tggrnhhosehlihhnrghrohdrohhrgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+Subject: Re: [RFC PATCH bpf-next v7 3/3] selftests/bpf: Handle forwarding of
+ UDP CLOCK_TAI packets
+To: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Martin KaFai Lau <martin.lau@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, bpf <bpf@vger.kernel.org>,
+ kernel@quicinc.com
+References: <20240508215842.2449798-1-quic_abchauha@quicinc.com>
+ <20240508215842.2449798-4-quic_abchauha@quicinc.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20240508215842.2449798-4-quic_abchauha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 5/8/24 2:58 PM, Abhishek Chauhan wrote:
+> With changes in the design to forward CLOCK_TAI in the skbuff
+> framework,  existing selftest framework needs modification
+> to handle forwarding of UDP packets with CLOCK_TAI as clockid.
 
-Use the same set of trip type names in sysfs and in the thermal debug
-code output.
+The set lgtm. I have a few final nits on the test.
 
-No intentional functional impact.
+> 
+> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+> ---
+> Changes since v7
+> - Fixed  issues in the ctx_rewrite.c
+>    with respect to dissembly in both
+>    .read and .write
+> 
+> Changes since v6
+> - Moved all the selftest to another patch
+> 
+> Changes since v1 - v5
+> - Patch was not present
+> 
+>   tools/include/uapi/linux/bpf.h                | 15 ++++---
+>   .../selftests/bpf/prog_tests/ctx_rewrite.c    | 10 +++--
+>   .../selftests/bpf/prog_tests/tc_redirect.c    |  3 --
+>   .../selftests/bpf/progs/test_tc_dtime.c       | 39 +++++++++----------
+>   4 files changed, 34 insertions(+), 33 deletions(-)
+> 
+> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+> index 90706a47f6ff..25ea393cf084 100644
+> --- a/tools/include/uapi/linux/bpf.h
+> +++ b/tools/include/uapi/linux/bpf.h
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.h    |    2 ++
- drivers/thermal/thermal_debugfs.c |   10 +---------
- drivers/thermal/thermal_sysfs.c   |   13 +------------
- drivers/thermal/thermal_trip.c    |   15 +++++++++++++++
- 4 files changed, 19 insertions(+), 21 deletions(-)
+nit. Please move this bpf.h sync changes to patch 2 where the uapi changes happen.
 
-Index: linux-pm/drivers/thermal/thermal_trip.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_trip.c
-+++ linux-pm/drivers/thermal/thermal_trip.c
-@@ -9,6 +9,21 @@
-  */
- #include "thermal_core.h"
- 
-+static const char *trip_type_names[] = {
-+	[THERMAL_TRIP_ACTIVE] = "active",
-+	[THERMAL_TRIP_PASSIVE] = "passive",
-+	[THERMAL_TRIP_HOT] = "hot",
-+	[THERMAL_TRIP_CRITICAL] = "critical",
-+};
-+
-+const char *thermal_trip_type_name(enum thermal_trip_type trip_type)
-+{
-+	if (trip_type < THERMAL_TRIP_ACTIVE || trip_type > THERMAL_TRIP_CRITICAL)
-+		return "unknown";
-+
-+	return trip_type_names[trip_type];
-+}
-+
- int for_each_thermal_trip(struct thermal_zone_device *tz,
- 			  int (*cb)(struct thermal_trip *, void *),
- 			  void *data)
-Index: linux-pm/drivers/thermal/thermal_core.h
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.h
-+++ linux-pm/drivers/thermal/thermal_core.h
-@@ -240,6 +240,8 @@ void thermal_governor_update_tz(struct t
- #define trip_to_trip_desc(__trip)	\
- 	container_of(__trip, struct thermal_trip_desc, trip)
- 
-+const char *thermal_trip_type_name(enum thermal_trip_type trip_type);
-+
- void __thermal_zone_set_trips(struct thermal_zone_device *tz);
- int thermal_zone_trip_id(const struct thermal_zone_device *tz,
- 			 const struct thermal_trip *trip);
-Index: linux-pm/drivers/thermal/thermal_sysfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_sysfs.c
-+++ linux-pm/drivers/thermal/thermal_sysfs.c
-@@ -88,18 +88,7 @@ trip_point_type_show(struct device *dev,
- 	if (sscanf(attr->attr.name, "trip_point_%d_type", &trip_id) != 1)
- 		return -EINVAL;
- 
--	switch (tz->trips[trip_id].trip.type) {
--	case THERMAL_TRIP_CRITICAL:
--		return sprintf(buf, "critical\n");
--	case THERMAL_TRIP_HOT:
--		return sprintf(buf, "hot\n");
--	case THERMAL_TRIP_PASSIVE:
--		return sprintf(buf, "passive\n");
--	case THERMAL_TRIP_ACTIVE:
--		return sprintf(buf, "active\n");
--	default:
--		return sprintf(buf, "unknown\n");
--	}
-+	return sprintf(buf, "%s\n", thermal_trip_type_name(tz->trips[trip_id].trip.type));
- }
- 
- static ssize_t
-Index: linux-pm/drivers/thermal/thermal_debugfs.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_debugfs.c
-+++ linux-pm/drivers/thermal/thermal_debugfs.c
-@@ -774,7 +774,6 @@ static int tze_seq_show(struct seq_file
- 	struct thermal_zone_device *tz = thermal_dbg->tz_dbg.tz;
- 	struct thermal_trip_desc *td;
- 	struct tz_episode *tze;
--	const char *type;
- 	u64 duration_ms;
- 	int trip_id;
- 	char c;
-@@ -818,13 +817,6 @@ static int tze_seq_show(struct seq_file
- 		if (trip_stats->min == INT_MAX)
- 			continue;
- 
--		if (trip->type == THERMAL_TRIP_PASSIVE)
--			type = "passive";
--		else if (trip->type == THERMAL_TRIP_ACTIVE)
--			type = "active";
--		else
--			type = "hot";
--
- 		if (trip_stats->timestamp != KTIME_MAX) {
- 			/* Mitigation in progress. */
- 			ktime_t delta = ktime_sub(ktime_get(),
-@@ -840,7 +832,7 @@ static int tze_seq_show(struct seq_file
- 
- 		seq_printf(s, "| %*d | %*s | %*d | %*d | %c%*lld | %*d | %*d |\n",
- 			   4 , trip_id,
--			   8, type,
-+			   8, thermal_trip_type_name(trip->type),
- 			   9, trip->temperature,
- 			   9, trip->hysteresis,
- 			   c, 11, duration_ms,
+> @@ -6207,12 +6207,17 @@ union {					\
+>   	__u64 :64;			\
+>   } __attribute__((aligned(8)))
+>   
+> +/* The enum used in skb->tstamp_type. It specifies the clock type
+> + * of the time stored in the skb->tstamp.
+> + */
+>   enum {
+> -	BPF_SKB_TSTAMP_UNSPEC,
+> -	BPF_SKB_TSTAMP_DELIVERY_MONO,	/* tstamp has mono delivery time */
+> -	/* For any BPF_SKB_TSTAMP_* that the bpf prog cannot handle,
+> -	 * the bpf prog should handle it like BPF_SKB_TSTAMP_UNSPEC
+> -	 * and try to deduce it by ingress, egress or skb->sk->sk_clockid.
+> +	BPF_SKB_TSTAMP_UNSPEC = 0,		/* DEPRECATED */
+> +	BPF_SKB_TSTAMP_DELIVERY_MONO = 1,	/* DEPRECATED */
+> +	BPF_SKB_CLOCK_REALTIME = 0,
+> +	BPF_SKB_CLOCK_MONOTONIC = 1,
+> +	BPF_SKB_CLOCK_TAI = 2,
+> +	/* For any future BPF_SKB_CLOCK_* that the bpf prog cannot handle,
+> +	 * the bpf prog can try to deduce it by ingress/egress/skb->sk->sk_clockid.
+>   	 */
+>   };
+>   
+> diff --git a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+> index 3b7c57fe55a5..08b6391f2f56 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+> @@ -69,15 +69,17 @@ static struct test_case test_cases[] = {
+>   	{
+>   		N(SCHED_CLS, struct __sk_buff, tstamp),
+>   		.read  = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+> -			 "w11 &= 3;"
+> -			 "if w11 != 0x3 goto pc+2;"
+> +			 "if w11 & 0x4 goto pc+1;"
+> +			 "goto pc+4;"
+> +			 "if w11 & 0x3 goto pc+1;"
+> +			 "goto pc+2;"
+>   			 "$dst = 0;"
+>   			 "goto pc+1;"
+>   			 "$dst = *(u64 *)($ctx + sk_buff::tstamp);",
+>   		.write = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+> -			 "if w11 & 0x2 goto pc+1;"
+> +			 "if w11 & 0x4 goto pc+1;"
+>   			 "goto pc+2;"
+> -			 "w11 &= -2;"
+> +			 "w11 &= -4;"
+>   			 "*(u8 *)($ctx + sk_buff::__mono_tc_offset) = r11;"
+>   			 "*(u64 *)($ctx + sk_buff::tstamp) = $src;",
+>   	},
+> diff --git a/tools/testing/selftests/bpf/prog_tests/tc_redirect.c b/tools/testing/selftests/bpf/prog_tests/tc_redirect.c
+> index b1073d36d77a..327d51f59142 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/tc_redirect.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/tc_redirect.c
+> @@ -890,9 +890,6 @@ static void test_udp_dtime(struct test_tc_dtime *skel, int family, bool bpf_fwd)
+>   
+>   	ASSERT_EQ(dtimes[INGRESS_FWDNS_P100], 0,
+>   		  dtime_cnt_str(t, INGRESS_FWDNS_P100));
+> -	/* non mono delivery time is not forwarded */
+> -	ASSERT_EQ(dtimes[INGRESS_FWDNS_P101], 0,
+> -		  dtime_cnt_str(t, INGRESS_FWDNS_P101));
+>   	for (i = EGRESS_FWDNS_P100; i < SET_DTIME; i++)
+>   		ASSERT_GT(dtimes[i], 0, dtime_cnt_str(t, i));
+>   
+> diff --git a/tools/testing/selftests/bpf/progs/test_tc_dtime.c b/tools/testing/selftests/bpf/progs/test_tc_dtime.c
+> index 74ec09f040b7..21f5be202e4b 100644
+> --- a/tools/testing/selftests/bpf/progs/test_tc_dtime.c
+> +++ b/tools/testing/selftests/bpf/progs/test_tc_dtime.c
+> @@ -222,13 +222,19 @@ int egress_host(struct __sk_buff *skb)
+>   		return TC_ACT_OK;
+>   
+>   	if (skb_proto(skb_type) == IPPROTO_TCP) {
+> -		if (skb->tstamp_type == BPF_SKB_TSTAMP_DELIVERY_MONO &&
+> +		if (skb->tstamp_type == BPF_SKB_CLOCK_MONOTONIC &&
+> +		    skb->tstamp)
+> +			inc_dtimes(EGRESS_ENDHOST);
+> +		else
+> +			inc_errs(EGRESS_ENDHOST);
+> +	} else if (skb_proto(skb_type) == IPPROTO_UDP) {
+> +		if (skb->tstamp_type == BPF_SKB_CLOCK_TAI &&
+>   		    skb->tstamp)
+>   			inc_dtimes(EGRESS_ENDHOST);
+>   		else
+>   			inc_errs(EGRESS_ENDHOST);
+>   	} else {
+> -		if (skb->tstamp_type == BPF_SKB_TSTAMP_UNSPEC &&
+> +		if (skb->tstamp_type == BPF_SKB_CLOCK_REALTIME &&
+>   		    skb->tstamp)
 
+Since the UDP+TAI can be handled properly in the above "else if" case now, I 
+would like to further tighten the bolt on detecting the non-zero REALTIME 
+skb->tstamp here since it should not happen at egress. Something like:
 
+	} else {
+		if (skb->tstamp_type == BPF_SKB_CLOCK_REALTIME &&
+		    skb->tstamp)
+			inc_errs(EGRESS_ENDHOST);
+	}
+
+I ran the test (w or w/o the above inc_errs changes) in a loop and it 
+consistently passes now.
+
+Other than the above small nits, in the next re-spin, please remove the RFC tag 
+and you can carry my reviewed-by to all 3 patches. Thanks.
+
+Reviewed-by: Martin KaFai Lau <martin.lau@kernel.org>
+
+>   			inc_dtimes(EGRESS_ENDHOST);
+>   		else
 
 
