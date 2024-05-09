@@ -1,240 +1,194 @@
-Return-Path: <linux-kernel+bounces-174449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B747B8C0EF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:39:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1238C0EF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA65D1C20EBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:39:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0269B2141E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCE1148303;
-	Thu,  9 May 2024 11:39:43 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B06313173B;
+	Thu,  9 May 2024 11:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LUsluixc"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CF71311B6;
-	Thu,  9 May 2024 11:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1982D12FF8E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715254783; cv=none; b=TDE5Z95wLkNDU0U8ks1gXXXTi8Bq1UqZFXneCGV0UTZRRjgTehiLfbEHlYF8o19nMmQ7jWbKpNoY1w1MHMmaQJO11jXCKj27wL0g7zUwbdg+5xz/mQ9CYoR82RFJbQjJwDJDEzmof/ZV7BwnieIYWFk77xY6nrpQUmPwkgszn+k=
+	t=1715254890; cv=none; b=YlN3AtZII0B8J1aA1GzQpBbGyEeew2ubKlunqczWmPAriBwwxJoIM8mhj9V8KufPym8L7R3yR6QubF0EHv0Qi44NXXbwq+0It42Lfc1BeXWYsMWK0pAmCTKnaJYdcM4JUvG0zUFV9PwLQbQIOL2JX87a6razscdeTnIEeLPDgks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715254783; c=relaxed/simple;
-	bh=6Qz4bjICzh8uyecfY7r4wrMMeVHl212hxAyi45Z/xbU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ujV1NUjwEpmXqJ5p9ougAE/bj/BAxWIUIduejl9epJgyqidR7CnSZB/y1hzStvLQvROw257f993nhb23JarAh2Zjp+QsSep/UgI9qPQCL+SIz6LPTpObpIu5vtRbk9i6TqAga63u4fNKwWHzQsM5BID1/JFFE8uFRLEGsSkvpbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZqmB0G1rz6DBQ1;
-	Thu,  9 May 2024 19:39:06 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id ACF4F1400D9;
-	Thu,  9 May 2024 19:39:36 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 9 May
- 2024 12:39:36 +0100
-Date: Thu, 9 May 2024 12:39:34 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
- Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Lukas Wunner
-	<lukas@wunner.de>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, "Krishna
- chaitanya chundru" <quic_krichai@quicinc.com>, Srinivas Pandruvada
-	<srinivas.pandruvada@linux.intel.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Christophe
- JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v5 5/8] PCI/bwctrl: Re-add BW notification portdrv as
- PCIe BW controller
-Message-ID: <20240509123934.0000496b@Huawei.com>
-In-Reply-To: <20240508134744.52134-6-ilpo.jarvinen@linux.intel.com>
-References: <20240508134744.52134-1-ilpo.jarvinen@linux.intel.com>
-	<20240508134744.52134-6-ilpo.jarvinen@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715254890; c=relaxed/simple;
+	bh=1jdDjfryC/Txk3Ehog5XJe8lFu+V6W6ew2Ru5wmFwlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=qPN0FcU+FKQbMGq/JC9tWPZdfEOQIuBrXiyHrGXxsxs6mt8smlEWZoGiscA7wwZkbFajOcNm7dN3Jpe/8AtlBK1fvZWQb1wkNTLj/PHV75BlI3LXQyjEmomjiaU4sbvCGeLrSU4eSPDl63HRqtJTkMRvd78BsHkaAoi5JE456sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LUsluixc; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240509114120euoutp02b3084ce42d499f0d9ef504ba0d14a1ea~NzznHdaGz0039600396euoutp02B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:41:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240509114120euoutp02b3084ce42d499f0d9ef504ba0d14a1ea~NzznHdaGz0039600396euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715254880;
+	bh=sFuV/tFX3qlWPW5/hEAfuW4Mb0Qblw1Ko/UBLqs3gjE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=LUsluixcUNWf9hRnJ/2qvWhFlr35sBCrH2g1GJ1Rxaa276Rw1LDURgZ5IJwkb+ywL
+	 XMhJgaAVYKz/dCGoc7nqEVfoIsqm/hfiN62oL+WHJ86PVCt1qwmy45ZrW+NBLZEO82
+	 GfWpTPga8Li3tYceMBah/WO8CftrSSJC6P25dQQY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240509114119eucas1p2587f7335c4115d3633d2237e25638521~Nzzm3f-NM2502625026eucas1p2r;
+	Thu,  9 May 2024 11:41:19 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 10.7C.09624.F56BC366; Thu,  9
+	May 2024 12:41:19 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240509114119eucas1p232697f21d70fde9a42d6d6488aa5d31a~NzzmfrTEZ2502625026eucas1p2q;
+	Thu,  9 May 2024 11:41:19 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240509114119eusmtrp238e878d6f387c6d0e266316b035d27a9~Nzzme36xc0201902019eusmtrp2P;
+	Thu,  9 May 2024 11:41:19 +0000 (GMT)
+X-AuditID: cbfec7f2-bfbff70000002598-02-663cb65f2399
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 45.9A.08810.F56BC366; Thu,  9
+	May 2024 12:41:19 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240509114118eusmtip1f4321fd1d43f2b0bab0d3c1116a1d9e6~NzzlViG3C1979819798eusmtip1r;
+	Thu,  9 May 2024 11:41:18 +0000 (GMT)
+Message-ID: <46160534-5003-4809-a408-6b3a3f4921e9@samsung.com>
+Date: Thu, 9 May 2024 13:41:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/7] dma: avoid redundant calls for sync operations
+To: Alexander Lobakin <aleksander.lobakin@intel.com>, Christoph Hellwig
+	<hch@lst.de>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will
+	Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Magnus
+	Karlsson <magnus.karlsson@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20240507112026.1803778-3-aleksander.lobakin@intel.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLKsWRmVeSWpSXmKPExsWy7djP87rx22zSDC7sMrS4+Hkhq8XnI8fZ
+	LJ4ee8RusXL1USaLX18sLDpnb2C3uLCtj9Xi8q45bBYrDp1gtzi2QMxixu2lzBZzv0xltjj4
+	4QmrRcsdUwc+jycH5zF5rJm3htFjwaZSj8V7XjJ5bFrVyebxYvNMRo/dNxvYPD5vkgvgiOKy
+	SUnNySxLLdK3S+DKuH5/DXvBK5GK1wcnsjQwtgt2MXJySAiYSPw79pipi5GLQ0hgBaPEkgvT
+	2CGcL4wSj7q3MYNUCQl8ZpS4ssgapuPR/H5WiKLljBJ3L29lhHA+MkqsmHeNEaSKV8BOYuLj
+	1UwgNouAikTrorfMEHFBiZMzn7CA2KIC8hL3b81gB7GFBbwkDr/rBbNFBMIkHh3tARvKLDCL
+	WeLUzedgzcwC4hK3nswHG8omYCjR9baLDcTmFHCRONuznhWiRl5i+9s5zCDNEgKzOSU+tF5n
+	gbjbReLS3X+sELawxKvjW9ghbBmJ/zvnM0E0tDNKLPh9H8qZwCjR8PwWI0SVtcSdc7+A1nEA
+	rdCUWL9LHyLsKLFgxz6wsIQAn8SNt4IQR/BJTNo2nRkizCvR0SYEUa0mMev4Ori1By9cYp7A
+	qDQLKVxmIXlzFpJ3ZiHsXcDIsopRPLW0ODc9tdgwL7Vcrzgxt7g0L10vOT93EyMwxZ3+d/zT
+	Dsa5rz7qHWJk4mA8xCjBwawkwltVY50mxJuSWFmVWpQfX1Sak1p8iFGag0VJnFc1RT5VSCA9
+	sSQ1OzW1ILUIJsvEwSnVwKQ3xcvs58aNlSkeooJHPncGvmGeVBG3x6t42Qa3olftkpNybFeE
+	3vudPMfxZlh4rkO3qm7CF4srmzQq7VwK86JfvPc+nbNfuFLrziH5Pv732zg6PnKdD8pgsWna
+	eZN57kRR7XJz3SzjdnFL2YlL3fryBK8kd+Sv26K55v2XxSVimf1ZeWGil3J2mK5mfq1jY3f5
+	OVvVM8PbKdvm8j/h4XLRu/32rd89f46F+bZz0h4I/tq8c0Gh3rTNPa/uG2X6Smcql5bnSDqZ
+	OTw9eo/tpOaUdatD3NpNXx96ZLFWb7eZ6ZV4/lDlo56HLBsdNrZc2L10TfrGPN20/y9TJp/z
+	+e52pueqdeLRSzGXrj4LUWIpzkg01GIuKk4EAJlRwO/gAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsVy+t/xu7rx22zSDGZeEre4+Hkhq8XnI8fZ
+	LJ4ee8RusXL1USaLX18sLDpnb2C3uLCtj9Xi8q45bBYrDp1gtzi2QMxixu2lzBZzv0xltjj4
+	4QmrRcsdUwc+jycH5zF5rJm3htFjwaZSj8V7XjJ5bFrVyebxYvNMRo/dNxvYPD5vkgvgiNKz
+	KcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuH5/DXvB
+	K5GK1wcnsjQwtgt2MXJySAiYSDya38/axcjFISSwlFHi99YbzBAJGYmT0xpYIWxhiT/Xutgg
+	it4zShzpXA5WxCtgJzHx8WomEJtFQEWiddFbqLigxMmZT1hAbFEBeYn7t2awg9jCAl4Sh9/1
+	gtkiAmESDT0rwBYwC8xiluibGwex4CKjxKmHS5ggEuISt57MB7PZBAwlut6CXMHJwSngInG2
+	Zz1Us5lE19YuRghbXmL72znMExiFZiG5YxaSUbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5x
+	aV66XnJ+7iZGYExvO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMJbVWOdJsSbklhZlVqUH19UmpNa
+	fIjRFBgYE5mlRJPzgUklryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mD
+	U6qBKTOUdfV9FoboSxrV2wW9LP9ts1fqOFH4JVDgm99uwQeVc3ScU9I+81sJy50Le72iMPqM
+	9KT7ZRGsv/imvZy4+M6Ne/7eK17JFD/dx3ku1trz1O3MB3fDP73ZeD6wbrdI0lKni0WSBiFH
+	jhk+Xrtg3bl7K3ZMq9JN0uY+vLd3cp5q3RUu97Ue6f2lm06nfeuZyj+JfY7fkRBnmW990zdH
+	tHE7vzft2C1021t1xUvVnZO45msVv/i3VuKJboybm/ka/uluF9a5+douv/9N4rTGll5L5cWf
+	fl3ZeK3Pqt77vpvSMQ63xfP1NY9NaC6eZNkdJ5clz1TEt+S+eO8942Kt3gfPM+yEH176VfbZ
+	h3/RSiWW4oxEQy3mouJEAJGPshlyAwAA
+X-CMS-MailID: 20240509114119eucas1p232697f21d70fde9a42d6d6488aa5d31a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240507112115eucas1p117bc01652d4cdbe810de841830227f47
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240507112115eucas1p117bc01652d4cdbe810de841830227f47
+References: <20240507112026.1803778-1-aleksander.lobakin@intel.com>
+	<CGME20240507112115eucas1p117bc01652d4cdbe810de841830227f47@eucas1p1.samsung.com>
+	<20240507112026.1803778-3-aleksander.lobakin@intel.com>
 
-On Wed,  8 May 2024 16:47:41 +0300
-Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+Dear All,
 
-> This mostly reverts the commit b4c7d2076b4e ("PCI/LINK: Remove
-> bandwidth notification"). An upcoming commit extends this driver
-> building PCIe bandwidth controller on top of it.
->=20
-> The PCIe bandwidth notification were first added in the commit
-> e8303bb7a75c ("PCI/LINK: Report degraded links via link bandwidth
-> notification") but later had to be removed. The significant changes
-> compared with the old bandwidth notification driver include:
->=20
-> 1) Don't print the notifications into kernel log, just keep the Link
->    Speed cached into the struct pci_bus updated. While somewhat
->    unfortunate, the log spam was the source of complaints that
->    eventually lead to the removal of the bandwidth notifications driver
->    (see the links below for further information).
->=20
-> 2) Besides the Link Bandwidth Management Interrupt, enable also Link
->    Autonomous Bandwidth Interrupt to cover the other source of
->    bandwidth changes.
->=20
-> 3) Use threaded IRQ with IRQF_ONESHOT to handle Bandwidth Notification
->    Interrupts to address the problem fixed in the commit 3e82a7f9031f
->    ("PCI/LINK: Supply IRQ handler so level-triggered IRQs are acked")).
->=20
-> 4) Handle Link Speed updates robustly. Refresh the cached Link Speed
->    when enabling Bandwidth Notification Interrupts, and solve the race
->    between Link Speed read and LBMS/LABS update in
->    pcie_bwnotif_irq_thread().
->=20
-> 5) Use concurrency safe LNKCTL RMW operations.
->=20
-> 6) The driver is now called PCIe bwctrl (bandwidth controller) instead
->    of just bandwidth notifications because of increased scope and
->    functionality within the driver.
->=20
-> 7) Coexist with the Target Link Speed quirk in
->    pcie_failed_link_retrain(). Provide LBMS counting API for it.
->=20
-> 8) Tweaks to variable/functions names for consistency and length
->    reasons.
->=20
-> Bandwidth Notifications enable the cur_bus_speed in the struct pci_bus
-> to keep track PCIe Link Speed changes.
->=20
-> Link: https://lore.kernel.org/all/20190429185611.121751-1-helgaas@kernel.=
-org/
-> Link: https://lore.kernel.org/linux-pci/20190501142942.26972-1-keith.busc=
-h@intel.com/
-> Link: https://lore.kernel.org/linux-pci/20200115221008.GA191037@google.co=
-m/
-> Suggested-by: Lukas Wunner <lukas@wunner.de> # Building bwctrl on top of =
-bwnotif
-> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+On 07.05.2024 13:20, Alexander Lobakin wrote:
+> Quite often, devices do not need dma_sync operations on x86_64 at least.
+> Indeed, when dev_is_dma_coherent(dev) is true and
+> dev_use_swiotlb(dev) is false, iommu_dma_sync_single_for_cpu()
+> and friends do nothing.
+>
+> However, indirectly calling them when CONFIG_RETPOLINE=y consumes about
+> 10% of cycles on a cpu receiving packets from softirq at ~100Gbit rate.
+> Even if/when CONFIG_RETPOLINE is not set, there is a cost of about 3%.
+>
+> Add dev->need_dma_sync boolean and turn it off during the device
+> initialization (dma_set_mask()) depending on the setup:
+> dev_is_dma_coherent() for the direct DMA, !(sync_single_for_device ||
+> sync_single_for_cpu) or the new dma_map_ops flag, %DMA_F_CAN_SKIP_SYNC,
+> advertised for non-NULL DMA ops.
+> Then later, if/when swiotlb is used for the first time, the flag
+> is reset back to on, from swiotlb_tbl_map_single().
+>
+> On iavf, the UDP trafficgen with XDP_DROP in skb mode test shows
+> +3-5% increase for direct DMA.
+>
+> Suggested-by: Christoph Hellwig <hch@lst.de> # direct DMA shortcut
+> Co-developed-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> ---
+>   include/linux/device.h      |  4 +++
+>   include/linux/dma-map-ops.h | 12 ++++++++
+>   include/linux/dma-mapping.h | 53 +++++++++++++++++++++++++++++++----
+>   kernel/dma/mapping.c        | 55 +++++++++++++++++++++++++++++--------
+>   kernel/dma/swiotlb.c        |  6 ++++
+>   5 files changed, 113 insertions(+), 17 deletions(-)
 
-A few trivial things inline. Either way LGTM
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+This patch landed in today's linux-next as commit f406c8e4b770 ("dma: 
+avoid redundant calls for sync operations"). Unfortunately I found that 
+it breaks some of the ARM 32bit boards by forcing skipping DMA sync 
+operations on non-coherent systems. This happens because this patch 
+hooks dma_need_sync=true initialization into set_dma_mask(), but 
+set_dma_mask() is not called from all device drivers, especially from 
+those which operates properly with the default 32bit dma mask (like most 
+of the platform devices created by the OF layer).
 
-> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-> index 6461aa93fe76..6357bc219632 100644
-> --- a/drivers/pci/pcie/Makefile
-> +++ b/drivers/pci/pcie/Makefile
-> @@ -12,4 +12,5 @@ obj-$(CONFIG_PCIEAER_INJECT)	+=3D aer_inject.o
->  obj-$(CONFIG_PCIE_PME)		+=3D pme.o
->  obj-$(CONFIG_PCIE_DPC)		+=3D dpc.o
->  obj-$(CONFIG_PCIE_PTM)		+=3D ptm.o
-> +obj-$(CONFIG_PCIE_BWCTRL)	+=3D bwctrl.o
->  obj-$(CONFIG_PCIE_EDR)		+=3D edr.o
-> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
-> new file mode 100644
-> index 000000000000..5afc533dd0a9
-> --- /dev/null
-> +++ b/drivers/pci/pcie/bwctrl.c
-> @@ -0,0 +1,185 @@
+Frankly speaking I have no idea how this should be fixed. I expect that 
+there are lots of broken devices after this change, because I don't 
+remember that calling set_dma_mask() is mandatory for device drivers.
 
-> +
-> +static irqreturn_t pcie_bwnotif_irq_thread(int irq, void *context)
-> +{
-> +	struct pcie_device *srv =3D context;
-> +	struct pcie_bwctrl_data *data =3D get_service_data(srv);
-> +	struct pci_dev *port =3D srv->port;
-> +	u16 link_status, events;
-> +	int ret;
-> +
-> +	ret =3D pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
-> +	events =3D link_status & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_LABS);
-> +
-> +	if (ret !=3D PCIBIOS_SUCCESSFUL || !events)
-> +		return IRQ_NONE;
+After adding dma_set_mask(dev, DMA_BIT_MASK(32)) to the drivers relevant 
+for my boards the issues are gone, but I'm not sure this is the right 
+approach...
 
-Trivial, but nicer to not use link_status if it is garbage (even briefly)
-Only a couple of lines more to keep it clean.
 
-	ret =3D pcie...
-	if (ret !=3D PCI_BIOS_SUCCESSFUL)
-		return IRQ_NONE;
+> ...
 
-	events =3D ...
-	if (!events)
-		return IRQ_NONE;
-
-> +
-> +	if (events & PCI_EXP_LNKSTA_LBMS)
-> +		atomic_inc(&data->lbms_count);
-> +
-> +	pcie_capability_write_word(port, PCI_EXP_LNKSTA, events);
-> +
-> +	/*
-> +	 * Interrupts will not be triggered from any further Link Speed
-> +	 * change until LBMS is cleared by the write. Therefore, re-read the
-> +	 * speed (inside pcie_update_link_speed()) after LBMS has been
-> +	 * cleared to avoid missing link speed changes.
-> +	 */
-> +	pcie_update_link_speed(port->subordinate);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-> +
-> +static int pcie_bwnotif_probe(struct pcie_device *srv)
-> +{
-> +	struct pci_dev *port =3D srv->port;
-> +	int ret;
-> +
-> +	struct pcie_bwctrl_data *data __free(kfree) =3D
-> +				kzalloc(sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	set_service_data(srv, data);
-> +
-> +	ret =3D request_threaded_irq(srv->irq, NULL, pcie_bwnotif_irq_thread,
-> +				   IRQF_SHARED | IRQF_ONESHOT, "PCIe bwctrl", srv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	port->link_bwctrl =3D no_free_ptr(data);
-> +	pcie_bwnotif_enable(srv);
-> +	pci_info(port, "enabled with IRQ %d\n", srv->irq);
-
-Rather noisy given this is easy enough to establish via other paths.
-pci_dbg() maybe?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static void pcie_bwnotif_remove(struct pcie_device *srv)
-> +{
-> +	struct pcie_bwctrl_data *data =3D get_service_data(srv);
-> +
-> +	scoped_guard(rwsem_write, &pcie_bwctrl_remove_rwsem)
-> +		srv->port->link_bwctrl =3D NULL;
-> +
-> +	pcie_bwnotif_disable(srv->port);
-
-Trivial but I'd like a comment to say why this needs to be done after
-the link_bwctrl =3D NULL above (or if not, move it before that.
-That puts the tear down slightly out of order vs set up.
-
-> +	free_irq(srv->irq, srv);
-> +	kfree(data);
-> +}
-> +
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
