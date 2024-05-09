@@ -1,101 +1,97 @@
-Return-Path: <linux-kernel+bounces-174435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6458C0EA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:03:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E58B8C0EAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF372828BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4DC283136
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF74130A4D;
-	Thu,  9 May 2024 11:03:39 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB07130AC2;
+	Thu,  9 May 2024 11:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lm7IaPNE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB1A12DDA4;
-	Thu,  9 May 2024 11:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA2B12FB0A;
+	Thu,  9 May 2024 11:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715252619; cv=none; b=k55fGrzGT5l1b2nx1L23lCN+zBVbWUEK8zT0co7rjzV3fBQEjztluFOkviExdTTTB75NUUoHaHrQRd70icMEAnkpzBmD13MG1dUe9aW/h9M64c6KA58IRdbKs17tb6fpDoNmIJmjZx0T3mEBRrZ3BAKbqY7xRtM4ut6974RHG2w=
+	t=1715252736; cv=none; b=VbUvh4v916DMS1NHIMgj2ymovHLwU7RT6hSnopoliNwktPcFXzMrpyjSvlgf7T3VurWVVZ0iQNsUtkLqdqZLhXdsLQkrfhQEOwsqLn4QQJoD5H+rmlMXkCjgV7sqakmTiOB8xMqGZuhWaqu5RgiedlcGY9eGbjZMpLIJ0pAEzSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715252619; c=relaxed/simple;
-	bh=rua+diEN5sL6SO/p/mtTZe+IwtIJYVTKAfL0Mp1QCFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUxRQF7H8rez5IIEpYoVNNx4uHVRrbPFwzB0AcBQqXNJO6gffwSz8xWiSHDUunz6Bs5mQFsnQZBo3iU+pBKsIg/QU48zuFje3h+aA0U6ZzuqMk9Ag2aNp36VwnaG/opGDj2Ioq0g8E/CKw41c5xRrYtz0xyIjZcpd5lofQPSO40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59b58fe083so168399166b.0;
-        Thu, 09 May 2024 04:03:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715252616; x=1715857416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pKebFJ18t60poXhmMMuBdvkuAAodcc+MwDuQlCxXoFA=;
-        b=NzimClQmVWBQCXALIsWbg8odM6DxDIaZtQ+9HQDNCWnT0Vs199ez2l7W1y/A2T8N6C
-         AXd94jfmbFo47JSVXFCviic7Z03vpMhqfZS7EZYIJLFdEbw59XRKZDIX5D9zBLots0bj
-         yTNoOAGJuLfw1WE2smpopkLYkQMF1Hlm7+c11QKHfOKSKl6e9b3aYjnC403ORB8MActW
-         NNm6qQOs+6nHWzAm4bDdRTPwFCKVaUIhvbzPy1dG7YDrjGSOcGwWSzNPRHrfBapm0yZI
-         mmkoD5CFbCPZwthvK0RAGtQ4CaVoBkqN8bPEcR5RjvxDde0Jyhq4MIJlDwi69sxvlfFL
-         bREQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXz1a0ccNABkwhqXueSoT83JOlrJ4dJYQI/ofvfmIMwfJCbSo3rLSaObVyxbLcRkOpw/vW+VD32HtsY4tw7EJvj2hADSH2rtzKfCS8hPnPehcGECxgelb/xjPe1WfXDuEFBgz6YG+hU32rtAgo=
-X-Gm-Message-State: AOJu0YxJyryjIOefKkMGbBiNwDtbNKX6hSLJTixvvl7s6qoSSa4UESYQ
-	sJr8HNvjGmc6cIBVQ0bfTW6FdFQkb26h2VR3dNpZLtD+ClIKzlYKmvWysQ==
-X-Google-Smtp-Source: AGHT+IEzpa/y0uip0hSe2TewkU0bZTORS2xGnxtSZxpSK1OK0EWtSTWi2Ax0Eea8OFO5MZSHBf4upQ==
-X-Received: by 2002:a50:9ec1:0:b0:572:a7a6:8ecd with SMTP id 4fb4d7f45d1cf-5731d9b76f6mr3351104a12.8.1715252615756;
-        Thu, 09 May 2024 04:03:35 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed0af0sm578276a12.49.2024.05.09.04.03.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 04:03:35 -0700 (PDT)
-Date: Thu, 9 May 2024 04:03:33 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Ping-Ke Shih <pkshih@realtek.com>, "leit@meta.com" <leit@meta.com>,
-	"open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH wireless] wifi: rtw89: Un-embed dummy device
-Message-ID: <ZjythfKzpK82LN5n@gmail.com>
-References: <20240424182351.3936556-1-leitao@debian.org>
- <f46ae94488d1468e9a9a669320e4cfb9@realtek.com>
- <87ttjqgf2r.fsf@kernel.org>
- <87mspigex0.fsf@kernel.org>
- <acda4194c8d44690b05b83adccb3aa22@realtek.com>
- <Zjx/sKB++v8FJMXx@gmail.com>
- <acf2f82e7f424776835ffbc1f52ba996@realtek.com>
- <87o79fl3iy.fsf@kernel.org>
+	s=arc-20240116; t=1715252736; c=relaxed/simple;
+	bh=8yZ5G/9SKrfBR+Zy97Nerwaq32t4U8fT298esodEx/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gUlgVualpD141UbFKE/CFhfYsRGd1tM5oT3bYq7rkG9NRsYgQMvO4OmZT4dbD75pJNGCCIHF7pCzbvXSUbOhyc8A2wv8BaiYgvy85mCJ9BHqfFRCXNQorL4NdVVmmET84lbJpQeMwo34MruybgG+qJIGHAPHwAe2ei5ZRj9s1ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lm7IaPNE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715252735; x=1746788735;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=8yZ5G/9SKrfBR+Zy97Nerwaq32t4U8fT298esodEx/w=;
+  b=Lm7IaPNEmj5rusRZ3dQ47sbz3qRnArFALMvUDLXhjLSWg3jsZK9aDuWB
+   o/IbAH9DFffqB9F5hmxYgyhuGJCy1Cn3n/ehMgX3kE3P6kPWTaVObl0ER
+   iy8bEXCpU9AalzH9AJo+5DiZ5JJh5KwKc6HrlXMpg202CtbdjdkvYlKML
+   e/EL5uCGypIYvsT6aZyCQaQ20ef27wTFuu+tbAqz37RL9muiU/SyLuKAi
+   gTSjxCQCIh/zsnT4rk5xll4yivGszCcOyQKLYvXTk8I9av9x2zd2hT6j6
+   s9BpdauWQzDJieujJ/gdAz73s5L5YjaYEiYKtVBK6MzgdFen9K/KHpF8k
+   A==;
+X-CSE-ConnectionGUID: 5xyFTrGWTz+GJ6+s5zXjvg==
+X-CSE-MsgGUID: S1tGx6wzQzaLC6izQfp7Lw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="21734846"
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="21734846"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 04:05:35 -0700
+X-CSE-ConnectionGUID: p23PnoRtTJimDnIwNKL7DQ==
+X-CSE-MsgGUID: 3BwFLlMLTkywxR016Ypzmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="34004994"
+Received: from naamamex-mobl.ger.corp.intel.com (HELO [10.245.136.172]) ([10.245.136.172])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 04:05:31 -0700
+Message-ID: <8ae42170-060d-4f35-a79b-18110e9477ff@linux.intel.com>
+Date: Thu, 9 May 2024 14:05:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o79fl3iy.fsf@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH 1/1] net: e1000e & ixgbe: Remove
+ PCI_HEADER_TYPE_MFD duplicates
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240423144100.76522-1-ilpo.jarvinen@linux.intel.com>
+Content-Language: en-US
+From: "naamax.meir" <naamax.meir@linux.intel.com>
+In-Reply-To: <20240423144100.76522-1-ilpo.jarvinen@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 12:48:21PM +0300, Kalle Valo wrote:
-> Ping-Ke Shih <pkshih@realtek.com> writes:
+On 4/23/2024 17:40, Ilpo Järvinen wrote:
+> PCI_HEADER_TYPE_MULTIFUNC is define by e1000e and ixgbe and both are
+> unused. There is already PCI_HEADER_TYPE_MFD in pci_regs.h anyway which
+> should be used instead so remove the duplicated defines of it.
 > 
-> >> Out of curiosity, why don't you rebase your tree to net-next/linux-next
-> >> frequently?
-> >
-> > My tree goes to wireless-next, so I think it should be always based on
-> > wireless-next. Once wirelss-next rebase (ff-merge) net-next, my tree will
-> > have them also. 
-> 
-> The simple answer about updating to net-next frequently: it's
-> complicated :)
-> 
-> The long answer is that the guidance from Linus is to avoid making
-> unnecessary merges so we fast forward wireless-next only after it's
-> pulled to net-next. And we can't rebase wireless-next due to downstream
-> trees Ping's rtw tree, besides rebasing public git trees is evil anyway.
+> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>   drivers/net/ethernet/intel/e1000e/defines.h   | 2 --
+>   drivers/net/ethernet/intel/ixgbe/ixgbe_type.h | 1 -
+>   2 files changed, 3 deletions(-)
 
-Thanks for the explanation!
-
+Tested-by: Naama Meir <naamax.meir@linux.intel.com>
 
