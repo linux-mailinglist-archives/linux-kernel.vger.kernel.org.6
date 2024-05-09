@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-174650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF568C1233
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D868C123A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD77E283455
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896EF282C2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920F415EFA2;
-	Thu,  9 May 2024 15:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D539516F838;
+	Thu,  9 May 2024 15:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RQpbrtA0"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVRNThQw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE0013C68C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 15:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C753BBE3;
+	Thu,  9 May 2024 15:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269720; cv=none; b=n3GcE5Ml7/P17B4BUcBbHRiiPdJVC/X1M1SEVPt2S9LluYboeGZNO1pSj8snunqeh66+k9sO4IVASJ9kLALjWH6Fwew+nAyQ4mJ0GzERAdd6q9yoiBZgZZrBCoFQ/b810bk8aX7DdyZiqOrn5PZmUormpkcUvMcTn+YHO8bQ1Lo=
+	t=1715269780; cv=none; b=d8ORbPseknwBj8mrp3CwHhbnhag8NxIfvcqS+2y4CP+v7aWr1ZH7TEaB/qHFBDUKD5QqMGhfgxGIumz0YXEVhIbdw3UxzrdmtjP+n5e8nT1cPrFnXuHL7EdAur7X/GFulD8BjgMvaJp9dET2wy330GhJqfXrUJ1i4S9oFwJfmbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269720; c=relaxed/simple;
-	bh=mA/fCF0Hyf2s0C0NAXcut1RdJ0/A1Vl70kRKZc0yNVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I+TPZFVaogpFWyZ/uY6nSJE7o+xqDA2ZjOHSUOzPGDu1aSjrvGoDJXD5bpGKpNTCn+UAguHB6OZovX1E2JJ2mFwXOqWW79ZYEAbdmHu1fphE+EIjoPWbR1Zx+LhteOZvNnYNfg7vrQtk4bIp/rbedLJ4ZL/iWxwl5yiM8j7Feio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RQpbrtA0; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so3958468a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 08:48:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715269717; x=1715874517; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=38BuvpIpkB3oaxq+zw4VsWBKcS3P81IEjFcYuWVYCpU=;
-        b=RQpbrtA0ArSgez7nh7jtI6MECUxUKjBpGDth1PWgzyQnl1IT4dZZIQWfxnrhCvQMMh
-         kVKoF+TtkLtJ05WcAbK8Wh2ZU+SpGGzITb7RM84gj/T33NQI8ffaIyadAlWiR3T3ohCC
-         qHA88+DOAoOiwGLeGCrpWn5NsYS12GI3J8nxo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715269717; x=1715874517;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=38BuvpIpkB3oaxq+zw4VsWBKcS3P81IEjFcYuWVYCpU=;
-        b=oHE5lfPHt2zBqg8IMle20EiXE2vbrGM1PAZLlD3QDU1dry4VrYDQso86NT0UKqtOmL
-         z0LU+ZiaMImcwqIkwLY9KCdy48iI6OL8Eqng8qEFlN0YH4OFs2JXwpcL0nshEocLl/u5
-         ArcpTcFczlip+leGVn+zU2OjGDhDOlLzcigndYS7kpH2z8jyRXTbuX1T2W5FdvwtM42c
-         Z9OlU+DZkeFfvJ91vVu01ilNjH/6mO5+Du+nuY4txZPo754qDDOzR3stVm6UdV7jFRVF
-         QFYekj2oxEf4nR4KSZV5rmIdCPVJ8bapFGQK6Q8AYRMsNpwITADsMUFX1AtuJGiwb/ge
-         n7ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTUo97aEhlC69VgNxNmTrbvkG1+fhNM0BVMViBDmhuTo5whOv1gIxMP/IVWKCf4ScxecLjnvYRaB07OTvyyDfPKCkFcEibuG+TAlPM
-X-Gm-Message-State: AOJu0YyVVgJZFMy29c7gakZUyXjte3oe87CuIw1dmMEtktXJ9YLTob8C
-	SwbrwiP8SMhzJIXdPO7tkS7m43cVI8mbjYh+LfD3pASJtkIJ3cUoyp8GgY/H4CZifCWJD0fmFET
-	7CWy9pw==
-X-Google-Smtp-Source: AGHT+IHjlNPmBtz6rerizzRxTi8e3437FfPjfigDdQaaaGJJb3LRLKHYtXn4uBYgOOlKvHvyxsNmIQ==
-X-Received: by 2002:a50:870d:0:b0:572:9503:4f8a with SMTP id 4fb4d7f45d1cf-5734d5c1889mr84422a12.1.1715269717219;
-        Thu, 09 May 2024 08:48:37 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65e2sm815546a12.19.2024.05.09.08.48.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 08:48:37 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so3958439a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 08:48:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlTTU8h1GUtq3H8AXg4iWknVqY9++Z5fMuRSnkUR8Pq2ODv5Ej8MdiQmdLktVDNxS1obXGfh9wcNonxbk++palWsKsst0Em5DMMwWa
-X-Received: by 2002:a17:906:19d0:b0:a59:fb06:5d35 with SMTP id
- a640c23a62f3a-a5a1156665fmr240732966b.8.1715269716628; Thu, 09 May 2024
- 08:48:36 -0700 (PDT)
+	s=arc-20240116; t=1715269780; c=relaxed/simple;
+	bh=KsEs8BwruVwGOe9SOlYG6LUOuNIu+M+XW4g+o/m2/qw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ulmnzUBwWaLiikwlifFIttDP6KW6CarJ1Qy506UAnanW6cyAHdbzsgGgA2UYP/LkXb5UCBqCQZEwt7UpUpzJuXiuL2s1+o8XGYTRO93oRs5MTTMFeDjD8zFCouF/KDGIwB5T9hNKssuk4iyRU/XGxYM7mqm8PY/+1dYqCD9uxQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVRNThQw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB77FC2BD11;
+	Thu,  9 May 2024 15:49:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715269779;
+	bh=KsEs8BwruVwGOe9SOlYG6LUOuNIu+M+XW4g+o/m2/qw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=rVRNThQwEfZwo9OU+9LtVnbOEdy+8KSTo3CQA5DPzF5rB6IJv4NpKhKguSKwCN3NI
+	 5nfHu7oHzjdV4oB+o7sRLrRUVcdo7RwbE58HIo0/Isr4cBWc1ZeQIkiewhuct98b9l
+	 PnQEWxqArMlBOaJrvQbmxd0Kit50UkIzu2SEjf3gn3TyKc8DvdAZLykBbGHHAik+XL
+	 vLe2nWDT8dd1+u6XFNWRsU60N3gNa0b6aFQcJfc4mKi2bZFnCTSB1Z7DXFISpqIb0i
+	 bgGk9qAuqNCKrloZFZjaS/Rx/DrOqfTg8BQQdpvy0beI5XB8wloxK5wt0dAiAnEp1h
+	 bDr/4TUwW3L+Q==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH bpf-next v2 0/2] selftests/bpf: new MPTCP subflow subtest
+Date: Thu, 09 May 2024 17:49:10 +0200
+Message-Id: <20240509-upstream-bpf-next-20240506-mptcp-subflow-test-v2-0-4048c2948665@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
- <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
- <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com> <20240509-kutschieren-tacker-c3968b8d3853@brauner>
-In-Reply-To: <20240509-kutschieren-tacker-c3968b8d3853@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 May 2024 08:48:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
-Message-ID: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
- file lifetimes
-To: Christian Brauner <brauner@kernel.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
-	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
-	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHbwPGYC/5WOyw6CMBBFf4XM2jFQeagr/8OwaGEKjdA2bUEM4
+ d9tiLp3eXOSc+4KnpwiD9dkBUez8sroONghgabnuiNUbdzAUpanRVriZH1wxEcUVqKmJeAPjTY
+ 0Fv0k5GCeGMgHlJxkWRa5kPwE0WkdSbXsvTt8DVBH0isfjHvtR+Zs5x9x9WdzzjBFYqIRrcwv5
+ 6K6PchpGo7GdVBv2/YGTySoZPUAAAA=
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, 
+ Nicolas Rybowski <nicolas.rybowski@tessares.net>, 
+ Geliang Tang <tanggeliang@kylinos.cn>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1723; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=KsEs8BwruVwGOe9SOlYG6LUOuNIu+M+XW4g+o/m2/qw=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmPPCOMqIYRhtxns1IvW83WFSmbWyekstgP4Wr4
+ RuzOGVay0uJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZjzwjgAKCRD2t4JPQmmg
+ cxeXEADD0XL++TZT5pfXXQ4+qr1Ceh0PWRhwaUCOiUx/3vt5ADEEhslAqE1QiZRu0dEkUENfoqx
+ DHZSPOo6rnN9gaoL9iwXhM5I8OsVrZ5vMwru/eTIRvV3OWF+12zgwFr1GKLT+R3+af+hd4uqunW
+ dvzWnj5ai4K7NSRB5Rsa6EOYjKzV4xX+pShrqIPK9exkipjwzn4RKTPoBiGoG/vcsl2tCD94/2h
+ ZOxJHy9C/HMo+e0+7YwzIA25NWUJDHyRVuVNlGZCi9/o9oXqr98lWgzApEv2hf56ned5qnTud8N
+ sTpt9+vGy5AbM1VHAxNz5U3B46BCRxFu+N3jIJZFde7gY5OgmPtE0v2A4Sztdu+h7ClKfc/aiVq
+ E4oV54aj37jtayAwdCeusPfCLuz/7omTeTwoOTRc7gLA2J85ORE2rLlLQ4iiGld4eD2+QLyfHF1
+ Q+bu9s1rFNlMzqetDRCvBax78ZJEyooxg1s8ubLR6XmCxT5kT58qupKcuzmKTwvOwwcJfF4r6fy
+ YxnW72m7aBfkg47NVWBU4B0Zh0SDZE5a9DAYPv9vD93PCw9XEuZokSykHS18a6H5Q59fjfy5LAS
+ /vQKGK9ARcuEcP8MShjycyIaRnrFediUKYx1ytCnjUsCkvob/+kWLMc05HlBkqbTAeSk/2NZU8o
+ upvf/29ZkuI4OHg==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Thu, 9 May 2024 at 04:39, Christian Brauner <brauner@kernel.org> wrote:
->
-> Not worth it without someone explaining in detail why imho. First pass
-> should be to try and replace kcmp() in scenarios where it's obviously
-> not needed or overkill.
+In this series from Geliang, modifying MPTCP BPF selftests, we have:
 
-Ack.
+- A new MPTCP subflow BPF program setting socket options per subflow: it
+  looks better to have this old test program in the BPF selftests to
+  track regressions and to serve as example.
 
-> I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
-> anyway which means that your comparison patch becomes even simpler imho.
-> I've also added a selftest patch:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
+  Note: Nicolas is no longer working for Tessares, but he did this work
+  while working for them, and his email address is no longer available.
 
-LGTM.
+- A new MPTCP BPF subtest validating this new BPF program.
 
-Maybe worth adding an explicit test for "open same file, but two
-separate opens, F_DUPFD_QUERY returns 0? Just to clarify the "it's not
-testing the file on the filesystem for equality, but the file pointer
-itself".
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Changes in v2:
+- Previous patches 1/4 and 2/4 have been dropped from this series:
+  - 1/4: "selftests/bpf: Handle SIGINT when creating netns":
+    - A new version, more generic and no longer specific to MPTCP BPF
+      selftest will be sent later, as part of a new series. (Alexei)
+  - 2/4: "selftests/bpf: Add RUN_MPTCP_TEST macro":
+    - Removed, not to hide helper functions in macros. (Alexei)
+- The commit message of patch 1/2 has been clarified to avoid some
+  possible confusions spot by Alexei.
+- Link to v1: https://lore.kernel.org/r/20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org
 
-             Linus
+---
+Geliang Tang (1):
+      selftests/bpf: Add mptcp subflow subtest
+
+Nicolas Rybowski (1):
+      selftests/bpf: Add mptcp subflow example
+
+ tools/testing/selftests/bpf/prog_tests/mptcp.c    | 109 ++++++++++++++++++++++
+ tools/testing/selftests/bpf/progs/mptcp_subflow.c |  70 ++++++++++++++
+ 2 files changed, 179 insertions(+)
+---
+base-commit: 009367099eb61a4fc2af44d4eb06b6b4de7de6db
+change-id: 20240506-upstream-bpf-next-20240506-mptcp-subflow-test-faef6654bfa3
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
