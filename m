@@ -1,82 +1,210 @@
-Return-Path: <linux-kernel+bounces-174511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA8A8C0FD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:44:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20F38C0FD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B972844DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:44:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207F91C227BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504C91474A5;
-	Thu,  9 May 2024 12:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1H9Ln6N4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9F6147C96;
+	Thu,  9 May 2024 12:44:26 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED9B13119B;
-	Thu,  9 May 2024 12:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3FDF13B7BD;
+	Thu,  9 May 2024 12:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715258633; cv=none; b=E9YZJqbOiG9nr6CMYe7uGQqE0EJADDgTHVrjko+cx0oviXsaUC5yQdmzL9rn3Gfq/pjM3p6X6IvJQjJv9170XaKtuMfzLufnf3m9UNGDJ9c9aXwhMZ/utgnFS5+cc3kCwFXIKwxOL+GH/iR6hyo3agAkw9HvUS8U2kVItL/DHJc=
+	t=1715258665; cv=none; b=bYswjcLLqmi3ZcAp8srVjde/sB49/pRAGsbGKoVJ1OTDX0xKmie3kYpRwHgWgaDy4AKMQQ/aZZX/W2VTpJ0idM5+MVlyfDI3hvyvbTzcYxAvW49srIuUsYAuTaR+S7PUOfAoKkbEsEa+Km0ETwrlrANTKlIL047O1w+HG2Bal6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715258633; c=relaxed/simple;
-	bh=HBcVcBSYqlBUAm8jvtm5+A58mC2yPRD1whRmcdP6P1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tcqVFo5J/yaf66EU/mvcpwPAtOJbJh6DeF4YQmCy3196Wc2DHGxNDM9F01j6wGI1Gkw31DRsae3Ah7Eh8zPYuuW5KquKRaLhQefYRsfNBRhC1TDSrSmJnLCvGxvykVMrQmIDVLmmijnp9PqDsmvnXWrQoonoAM5S7jvaL0DYl1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1H9Ln6N4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CLJUPZZT4rSELmqegiikr7a3zGPJvoLk74CHf7f3U60=; b=1H9Ln6N4Ls0YJx5s+D/LXGYj8Y
-	iw8xSy6uiaWGZCbVIlkzFqGlEPbGDmP2qHiytPFsNx3/5G38xKw8aZxMFdUOC8GA0H0TAObEL+idJ
-	z8LJIoEmmzIlglY6bNnznAdlF5bP/eegGaIph8asX/FNy7fFgkvNiMycAcMLBwetgO0+cYEqqUc1M
-	/svUCZ73XxeeJyqWDC26W9i6itQD+tS8HJ9H+n3o9nKsuz8Bd4FfYprC9cJll812v84I7XNY+HpJo
-	lIa5r/5wV2L3uba08Ow8B4/svgHxy3xbGcR3Yh272y5sIDEeUmCZvcuY3irAOytulG0uVzgo1p60s
-	qoin6rYA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s537n-00000001T9s-1bCv;
-	Thu, 09 May 2024 12:43:51 +0000
-Date: Thu, 9 May 2024 05:43:51 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCHv3 00/19] zram: convert to custom compression API and
- allow algorithms tuning
-Message-ID: <ZjzFB2CzCh1NKlfw@infradead.org>
-References: <20240508074223.652784-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1715258665; c=relaxed/simple;
+	bh=R73MtKD/rDP3asltM0O7fwSxQBJPsPSHFdmUHkI6Pbo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R7z9ZZDGcuSwLh3yPveMKuKowzjiPq7KbDVCx+8KLVZviXzIFCJk60TRVs5mA+x9eXhgQsHF9zTOgoXvIfEa6oMcUoms/5jeQ94jWu9f4WD5dD7SdOl9pBc0mcdDqaoRN38lMizFWrXx/wAUhxGvcumxwGbg2mdOqrAGaUEvrKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZs7X3gqnzvXf1;
+	Thu,  9 May 2024 20:40:56 +0800 (CST)
+Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id E0D4E18007B;
+	Thu,  9 May 2024 20:44:17 +0800 (CST)
+Received: from localhost.localdomain (10.67.175.61) by
+ dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 20:44:17 +0800
+From: Zheng Yejian <zhengyejian1@huawei.com>
+To: <sean@mess.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+	<mchehab@kernel.org>, <zhengyejian1@huawei.com>
+Subject: [PATCH v3] media: dvb-usb: Fix unexpected infinite loop in dvb_usb_read_remote_control()
+Date: Thu, 9 May 2024 20:44:14 +0800
+Message-ID: <20240509124414.1392304-1-zhengyejian1@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <ZjTPqR3_EhbNU-fm@gofer.mess.org>
+References: <ZjTPqR3_EhbNU-fm@gofer.mess.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508074223.652784-1-senozhatsky@chromium.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500012.china.huawei.com (7.185.36.15)
 
-On Wed, May 08, 2024 at 04:41:53PM +0900, Sergey Senozhatsky wrote:
-> 	This patch set moves zram from crypto API to a custom compression
-> API which allows us to tune and configure compression algorithms,
-> something that crypto API, unfortunately, doesn't support.
+Infinite log printing occurs during fuzz test:
 
-[...]
+  rc rc1: DViCO FusionHDTV DVB-T USB (LGZ201) as ...
+  ...
+  dvb-usb: schedule remote query interval to 100 msecs.
+  dvb-usb: DViCO FusionHDTV DVB-T USB (LGZ201) successfully initialized ...
+  dvb-usb: bulk message failed: -22 (1/0)
+  dvb-usb: bulk message failed: -22 (1/0)
+  dvb-usb: bulk message failed: -22 (1/0)
+  ...
+  dvb-usb: bulk message failed: -22 (1/0)
 
->  21 files changed, 1203 insertions(+), 111 deletions(-)
+Looking into the codes, there is a loop in dvb_usb_read_remote_control(),
+that is in rc_core_dvb_usb_remote_init() create a work that will call
+dvb_usb_read_remote_control(), and this work will reschedule itself at
+'rc_interval' intervals to recursively call dvb_usb_read_remote_control(),
+see following code snippet:
 
-Why can't it?  This is an awful lot of crazy code duplication just
-to pass a few parameters.
+  rc_core_dvb_usb_remote_init() {
+    ...
+    INIT_DELAYED_WORK(&d->rc_query_work, dvb_usb_read_remote_control);
+    schedule_delayed_work(&d->rc_query_work,
+                          msecs_to_jiffies(rc_interval));
+    ...
+  }
+
+  dvb_usb_read_remote_control() {
+    ...
+    err = d->props.rc.core.rc_query(d);
+    if (err)
+      err(...)  // Did not return even if query failed
+    schedule_delayed_work(&d->rc_query_work,
+                          msecs_to_jiffies(rc_interval));
+  }
+
+When the infinite log printing occurs, the query callback
+'d->props.rc.core.rc_query' is cxusb_rc_query(). And the log is due to
+the failure of finding a valid 'generic_bulk_ctrl_endpoint'
+in usb_bulk_msg(), see following code snippet:
+
+  cxusb_rc_query() {
+    cxusb_ctrl_msg() {
+      dvb_usb_generic_rw() {
+        ret = usb_bulk_msg(d->udev, usb_sndbulkpipe(d->udev,
+                           d->props.generic_bulk_ctrl_endpoint),...);
+        if (ret)
+          err("bulk message failed: %d (%d/%d)",ret,wlen,actlen);
+          ...
+      }
+  ...
+  }
+
+By analyzing the corresponding USB descriptor, it shows that the
+bNumEndpoints is 0 in its interface descriptor, but
+the 'generic_bulk_ctrl_endpoint' is 1, that means user don't configure
+a valid endpoint for 'generic_bulk_ctrl_endpoint', therefore this
+'invalid' USB device should be rejected before it calls into
+dvb_usb_read_remote_control().
+
+To fix it, we need to add endpoint check for 'generic_bulk_ctrl_endpoint'.
+And as Sean suggested, the same check and clear halts should be done for
+'generic_bulk_ctrl_endpoint_response'. So introduce
+dvb_usb_check_bulk_endpoint() to do it for both of them.
+
+Fixes: 4d43e13f723e ("V4L/DVB (4643): Multi-input patch for DVB-USB device")
+Signed-off-by: Zheng Yejian <zhengyejian1@huawei.com>
+---
+ drivers/media/usb/dvb-usb/dvb-usb-init.c | 35 +++++++++++++++++++++---
+ 1 file changed, 31 insertions(+), 4 deletions(-)
+
+v3:
+ - Fix following warning:
+   drivers/media/usb/dvb-usb/dvb-usb-init.c:133:9: warning: 'adap' may be used uninitialized [-Wmaybe-uninitialized]
+   Link: https://lore.kernel.org/all/ZjTPqR3_EhbNU-fm@gofer.mess.org/
+
+v2:
+ - As Sean suggested, check endpoint and clear halt for both
+   'generic_bulk_ctrl_endpoint' and 'generic_bulk_ctrl_endpoint_response'
+   with the new introduced dvb_usb_check_bulk_endpoint();
+   Link: https://lore.kernel.org/all/ZjCl97Ww6NrzJQCB@gofer.mess.org/
+   Link: https://lore.kernel.org/all/ZjC7rXU7ViaH60_S@gofer.mess.org/
+ - Add Fixes tag.
+ - Link: https://lore.kernel.org/all/20240430104137.1014471-1-zhengyejian1@huawei.com/
+
+v1:
+ - Link: https://lore.kernel.org/all/20240412135256.1546051-1-zhengyejian1@huawei.com/
+
+diff --git a/drivers/media/usb/dvb-usb/dvb-usb-init.c b/drivers/media/usb/dvb-usb/dvb-usb-init.c
+index fbf58012becd..22d83ac18eb7 100644
+--- a/drivers/media/usb/dvb-usb/dvb-usb-init.c
++++ b/drivers/media/usb/dvb-usb/dvb-usb-init.c
+@@ -23,11 +23,40 @@ static int dvb_usb_force_pid_filter_usage;
+ module_param_named(force_pid_filter_usage, dvb_usb_force_pid_filter_usage, int, 0444);
+ MODULE_PARM_DESC(force_pid_filter_usage, "force all dvb-usb-devices to use a PID filter, if any (default: 0).");
+ 
++static int dvb_usb_check_bulk_endpoint(struct dvb_usb_device *d, u8 endpoint)
++{
++	if (endpoint) {
++		int ret;
++
++		ret = usb_pipe_type_check(d->udev, usb_sndbulkpipe(d->udev, endpoint));
++		if (ret)
++			return ret;
++		ret = usb_pipe_type_check(d->udev, usb_rcvbulkpipe(d->udev, endpoint));
++		if (ret)
++			return ret;
++	}
++	return 0;
++}
++
++static void dvb_usb_clear_halt(struct dvb_usb_device *d, u8 endpoint)
++{
++	if (endpoint) {
++		usb_clear_halt(d->udev, usb_sndbulkpipe(d->udev, endpoint));
++		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, endpoint));
++	}
++}
++
+ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ {
+ 	struct dvb_usb_adapter *adap;
+ 	int ret, n, o;
+ 
++	ret = dvb_usb_check_bulk_endpoint(d, d->props.generic_bulk_ctrl_endpoint);
++	if (ret)
++		return ret;
++	ret = dvb_usb_check_bulk_endpoint(d, d->props.generic_bulk_ctrl_endpoint_response);
++	if (ret)
++		return ret;
+ 	for (n = 0; n < d->props.num_adapters; n++) {
+ 		adap = &d->adapter[n];
+ 		adap->dev = d;
+@@ -103,10 +132,8 @@ static int dvb_usb_adapter_init(struct dvb_usb_device *d, short *adapter_nrs)
+ 	 * when reloading the driver w/o replugging the device
+ 	 * sometimes a timeout occurs, this helps
+ 	 */
+-	if (d->props.generic_bulk_ctrl_endpoint != 0) {
+-		usb_clear_halt(d->udev, usb_sndbulkpipe(d->udev, d->props.generic_bulk_ctrl_endpoint));
+-		usb_clear_halt(d->udev, usb_rcvbulkpipe(d->udev, d->props.generic_bulk_ctrl_endpoint));
+-	}
++	dvb_usb_clear_halt(d, d->props.generic_bulk_ctrl_endpoint);
++	dvb_usb_clear_halt(d, d->props.generic_bulk_ctrl_endpoint_response);
+ 
+ 	return 0;
+ 
+-- 
+2.25.1
 
 
