@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-174229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9708C0BE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:07:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7FB78C0BE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014D3B22384
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B941F21F41
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4591F13CA80;
-	Thu,  9 May 2024 07:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B9013CFA8;
+	Thu,  9 May 2024 07:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5U9eGsf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bl9ThYEI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75830624;
-	Thu,  9 May 2024 07:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8023C1A2C37;
+	Thu,  9 May 2024 07:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715238415; cv=none; b=KutUIsIINs2wHyN7bbCD37BfEzPwzC7jH0NSI68KInTpHlDrebMq5OaCz46g6YpkJJ3jp15TulTrlQsfa7Nfs3ZOJMuX+JdiGzNjUXKlsYzGl3rrJN34dMTn9VkOQzzassYJk1JBHz4EVdROZEG2Jw0oeLxal9zmpYVfoFcBoOY=
+	t=1715238803; cv=none; b=d95epzVowpUi+DXOwxmwbmT/8jadbg4Rv8B1m8R6EcqPEsk0oNspBa0e78q29hm462/2MD0aMl66ENYzPuN/t1zXL7Sfqy01Sp5iXDJexgS1mUjXAEJEv8OtxyTHG+RLzqZiHjEqTLKpDfwqSHACx3l6ThGIPIdQHwNJFpBnx3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715238415; c=relaxed/simple;
-	bh=D0YNdCj72T33QDAW/BxiXgYB+ixQvL7O7umDUwM2hUw=;
+	s=arc-20240116; t=1715238803; c=relaxed/simple;
+	bh=pidKHhusQQ0AYUCl/FAVAM9C38pY7QS0bIULk6B0a/8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PFnc5KjL34e3tL03Ru2Lalml7UdZdN6RWzbyUcE+N2OHyj2SVgIsxm/JOc+Fvw9CoXPbMSfYo8r0DsBNmjjcdivVaHnRMGrtyMtbp8TcbwSWy3HlPJ39qEA7xHKiGF3b3i3Gq8ht2Ydth+0hEN5fcOym7qDn3RUNtPdxkKBv6go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5U9eGsf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF35AC116B1;
-	Thu,  9 May 2024 07:06:51 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Cvc44SBjxFB+Cy1VbaWm+RtiDmA8Pw182ETETOJxI89EAuHvuaZNTNo95NZMxcxG4yyMpNlTSUk2+swW6Z6dTjWQ3Bo0XjQlN4LGF8EZPYJJHXE1fJFHPg64ew6FTNGznbfDHUYnN4AqC8O4jlvWle0MTbW7rzbZe4MuIgG0qCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bl9ThYEI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B32AFC116B1;
+	Thu,  9 May 2024 07:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715238415;
-	bh=D0YNdCj72T33QDAW/BxiXgYB+ixQvL7O7umDUwM2hUw=;
+	s=k20201202; t=1715238803;
+	bh=pidKHhusQQ0AYUCl/FAVAM9C38pY7QS0bIULk6B0a/8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K5U9eGsf5CBo92Qm6hl7dhtzryo7duhyQtWuE+zitvv3s1+m+FYHsHVp3uPlFCLDQ
-	 KmbMGdh2/kPFMeyroYW7iAHbySc2hT3PWDQwwdLe3JUexMPiJk1sQu/m9QcB/wdlMh
-	 5AIfLz0qZyffZcL6sCbre8kpYph580qtqs6f+5QsGxsptYyspHRS9gN+8Oeh/CrH37
-	 ccvCD8+8fu/eTZd0VQJ80GXdlV8xdKnVXREnvUyai7xp291d10n7F3QhBuR0TEbzw4
-	 os7C01+2zf2Ds0berdKsrZbsnuCB4vyjimDYsB3JUm8utttL0VKZeEliNK2H1YBY7X
-	 NC9PLItFxXQjw==
-Message-ID: <fe5b3af9-b307-45e1-b190-ba2b3327a8df@kernel.org>
-Date: Thu, 9 May 2024 09:06:49 +0200
+	b=bl9ThYEIpRLI/LBnDIwpNDXpHD12nBOehOJrUF3IxM8ox3Egy7CIdtVJbyZigeUB7
+	 FFHwDwIydedlwcIUDgyGimY6kp2hMP7SxU64Lo0z8FaJHiwnXcjLU6i14lVSadorbh
+	 azshMqYPjW3522/DHv1M7tc1WuMt5hx4Wk/AncpA/0iZyHCYg9kLSWiFAmOiLbZBjs
+	 iRbqVvnGpDXaViLEprUun2VTXL00amOcMOE1QcqGfCKdQrCJn/Bj4qzWRnpyNvLQqK
+	 pUUFqFEx0LcIm/oorZBnfadHbMQtfIU1He+/gSo8Np8IiVFr9YFYai4y/CUcepHo2I
+	 zzM3ffdA4ZMNA==
+Message-ID: <b8c82b1a-db57-4e89-9beb-63992744afe6@kernel.org>
+Date: Thu, 9 May 2024 09:13:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Document adt7475 PWM initial
- duty cycle
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
- linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240508215504.300580-1-chris.packham@alliedtelesis.co.nz>
- <20240508215504.300580-2-chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH v2 7/7] ARM: dts: samsung: exynos4212-tab3: Fix up wm1811
+ codec config
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240508-midas-wm1811-gpio-jack-v2-0-b4d36cd02c6e@gmail.com>
+ <20240508-midas-wm1811-gpio-jack-v2-7-b4d36cd02c6e@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,58 +108,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240508215504.300580-2-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240508-midas-wm1811-gpio-jack-v2-7-b4d36cd02c6e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/05/2024 23:55, Chris Packham wrote:
-> Add documentation for the pwm-initial-duty-cycle and
-> pwm-initial-frequency properties. These allow the starting state of the
-> PWM outputs to be set to cater for hardware designs where undesirable
-> amounts of noise is created by the default hardware state.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> 
-> Notes:
->     Changes in v2:
->     - Document 0 as a valid value (leaves hardware as-is)
-> 
->  .../devicetree/bindings/hwmon/adt7475.yaml    | 27 ++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> index 051c976ab711..97deda082b4a 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> @@ -51,6 +51,30 @@ properties:
->        enum: [0, 1]
->        default: 1
->  
-> +  adi,pwm-initial-duty-cycle:
-> +    description: |
-> +      Configures the initial duty cycle for the PWM outputs. The hardware
-> +      default is 100% but this may cause unwanted fan noise at startup. Set
-> +      this to a value from 0 (0% duty cycle) to 255 (100% duty cycle).
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 3
-> +    maxItems: 3
-> +    items:
-> +      minimum: 0
-> +      maximum: 255
-> +      default: 255
-> +
-> +  adi,pwm-initial-frequency:
+On 08/05/2024 12:58, Artur Weber wrote:
+> Drop incorrect interrupt parent and add MCLK2 clock.
 
-Frequency usually has some units, so use appropriate unit suffix and
-drop $ref.  Maybe that's just target-rpm property?
+1. Separate patches.
+2. Missing explanation why. "Incorrect" says a bit, but not too much.
+Also, imprecise - you remove all interrupts, not just incorrect parent.
 
-But isn't this duplicating previous property? This is fan controller,
-not PWM provider (in any case you miss proper $refs to pwm.yaml or
-fan-common.yaml), so the only thing you initially want to configure is
-the fan rotation, not specific PWM waveform. If you you want to
-configure specific PWM waveform, then it's a PWM provider... but it is
-not... Confused.
+Please provide proper rationale, why this is not correct and information
+that bluetooth 32 kHz clock feeds both bluetooth module and audio codec.
+
+> 
 
 Best regards,
 Krzysztof
