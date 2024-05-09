@@ -1,218 +1,92 @@
-Return-Path: <linux-kernel+bounces-174796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6307A8C151F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:01:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE578C154A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 188B82830DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:01:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A3D2831EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB7B7F48A;
-	Thu,  9 May 2024 19:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3DB7FBA6;
+	Thu,  9 May 2024 19:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="JJqxJHRe"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Edh4Dhng"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B17F483
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE43B7E576;
+	Thu,  9 May 2024 19:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715281252; cv=none; b=WYk5wloP2EueBO1PmbUhBtMAsR2nTxABVkgNFO612Hs/1zsoU3TolVnmOQeaYXNX5+vP3X+AAkzi3iA4RVDsZA+F4OxzlT/WW/eT5gW3FCd9UgSu8YR+hcgLNy6Xv1yhgnTPjoVLyUGJZcyBzpi2bnD26xeTYK+sYwQKpDzhRpw=
+	t=1715282271; cv=none; b=pakLL+xNZrTYBFMQsxOrH2J+7C7N+fe6a7yp3/f163sG84amUFzg8C+/qgV0eXWSuDbIKp0wwOCdukzumGVW13GXDTu1dSWthz/7Ef+E708z+lAQeiLk1PkCBUTqsVxnM3MDNO7vtGKaeNhdBWyL2SIy1UJ3g44URiTJ4O677N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715281252; c=relaxed/simple;
-	bh=xF39L+hs0TY+8aNmea7VYtJ+NEfSYKkZrUTY8FQHMiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d7/n8ErayhdLfDa7TaSpQ6RUEchWYLL1iqrfLzsVfSfhiv7VYmnNAGZZfiUc3veVjQ994C1pI1fMSN3KRqXVS4l8XZfAlu2E8bNOLLDUY2jVR62H45dS85BvNfu68AqxyUgli5AKIK9V1IE0xpnptEZBZYla6CkNnBQ3kAwMJJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=JJqxJHRe; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f44bcbaae7so1116387b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715281242; x=1715886042; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=suVrTFWe4Q9EJfAXikAfGsbIG5FwHp88I8wjDmo5qhw=;
-        b=JJqxJHRelJ7QcM2PM36uXftB9ooQUS6iPJ+3M48VB7n1Rt0Qvw8nwkvwQdK7vDOnbS
-         aGOCUnx0yvWjP5VLhv8aqijkQH2PhO71MfbI8y33/IpWtnZiY6xNDPK0U8dCpwyd0xpG
-         3dlf94UK2jlFf37YfJTq20Hjh3qjs16ULJthd1fBhrPnwa34PZTYrTwDx0jC2sU1i/0n
-         vsGn9/NidfMsoQPz+QPJfwiNmFIVVlgzvW7oSE4yaFwoFEz1PjPZqXy+FpRLbeyIDEsN
-         mr50KSsUPaB3x61aY+qwHMBle46w/Gy+HE1Vj0UoExGhiAFSeN5W4WLz23Ex5zBWYhf/
-         CT5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715281242; x=1715886042;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=suVrTFWe4Q9EJfAXikAfGsbIG5FwHp88I8wjDmo5qhw=;
-        b=lh8Nu5vheDaEH4IjDaVym8NjpGUaTgasfD/dRdOnN3VBBeIAmbw84Lxz7SqsBW+TQD
-         XKQOVgl4M1YFbD3e3P+nIuQ7BO3iT7u9EKngECSIz1Z8A3P9IHc4WSN5Ijo+DFFUI3Lo
-         BwdXgdcCAxGDIVB+d9orBpGM+7OTwFOd6Sj/LSnwcqF061RST4Vrq4ls8gupaFbyFSZv
-         rheWRRjbZHWgnXY13gdZBnBAcNsXgteV8p0WnL8qYILN9jY5vX55PJn+fezv6/VETF+7
-         p/26FVYF9fm2XWx4XAdikqJOTXUy2TUSRCCpXoVINcG/FdG3QRyrzaNXXm5BOU+5AhpB
-         S6+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWk2XjiSI4LY42dOWd0oQSOkoCUlVYQoMVFWIMRWIlPlNOarYEXMydRPuyyvAZP97ZHR4z0eCda0DCbX25NUfCx8ZmMT6EcFeIOYi0
-X-Gm-Message-State: AOJu0YyGkJ2wKfa13kc7xBy0mJg/TKytnEUN6vouoDmzB0b8kZ2xGFZR
-	WJgBc6GH/Ihs0jkcAA0mdcmM0tvCwI6XNMJpp3fn2NoNSzC6vT5kbc7VY6kf6+4=
-X-Google-Smtp-Source: AGHT+IHE3J/hwAQsHqywRim+p5Loya/dtj3SbYe2Ez8JQSaJRUzBly/edfRtpEMzoFQPu7m0vRKdfQ==
-X-Received: by 2002:a05:6300:8002:b0:1af:62a6:e2 with SMTP id adf61e73a8af0-1afde1fb753mr598976637.56.1715281241943;
-        Thu, 09 May 2024 12:00:41 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a6654asm1626451b3a.43.2024.05.09.12.00.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 12:00:41 -0700 (PDT)
-Date: Thu, 9 May 2024 12:00:36 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
-	keescook@chromium.org, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, cleger@rivosinc.com,
-	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
-	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	apatel@ventanamicro.com, mchitale@ventanamicro.com,
-	dbarboza@ventanamicro.com, sameo@rivosinc.com,
-	shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 01/29] riscv: envcfg save and restore on task switching
-Message-ID: <Zj0dVJ20D05ELAoH@debug.ba.rivosinc.com>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-2-debug@rivosinc.com>
- <ZjwUhvLBv13qi77a@ghost>
+	s=arc-20240116; t=1715282271; c=relaxed/simple;
+	bh=hfQu/7n4py57ijqfCDeYo/FIb/Jz4TjzngGAo2b5WRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iAn5PDhB+2qWbZsOtcd2ufkh6ulS/rsWgzmqoLVmuviEp0JEd3I6vNPd2/pI7f8bazofMCjleUp/FRKihmKK7+GCWqNqm7K7FA1MYIp3bTXvXVcnAzmIjSJ5muNfel/yEQfGT0USdiaEDiAELJa2GmzBChUKMchkQBck9S0ZNzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Edh4Dhng reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
+ id c5fe2c6d1c71ddeb; Thu, 9 May 2024 21:17:46 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 43A37A524E7;
+	Thu,  9 May 2024 21:17:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1715282266;
+	bh=hfQu/7n4py57ijqfCDeYo/FIb/Jz4TjzngGAo2b5WRo=;
+	h=From:To:Cc:Subject:Date;
+	b=Edh4Dhngr1ijKD6Hw/EBI8vPusd/J2iwvj+0k2kQ9VUKTx9SFGqslhsxVaK6yWURs
+	 4DNxBb01m10vi3782LeNZHQnxYQQHohEazNfIYqxigWm2cxnOTxgDd94YUbwR302k7
+	 EgdFRVqXSzsiY7BQAjdwKFs3I75TN1opQzgHBMYuLpv2Lgz9T95+3Q9yVlFbjtjZhV
+	 DRk3D3zh8o5uvr0ayiBFH+02KhPGxbifFKITFqDXYd24Um2C49zmZ3KxQsFYH6rjP5
+	 u8v/zaxkB5M3aIXRf/u68/LNn3pnp9k/JNQSvmzCr6OFqY94+I8yi8BdsD4RvXiMxL
+	 1VYxz0J++UMWQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject:
+ [PATCH v1 0/7] thermal/debugfs: Assorted improvements for the 6.11 cycle
+Date: Thu, 09 May 2024 21:02:07 +0200
+Message-ID: <12438864.O9o76ZdvQC@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <ZjwUhvLBv13qi77a@ghost>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefvddgudefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggr
+ nhhosehlihhnrghrohdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On Wed, May 08, 2024 at 05:10:46PM -0700, Charlie Jenkins wrote:
->On Wed, Apr 03, 2024 at 04:34:49PM -0700, Deepak Gupta wrote:
->> envcfg CSR defines enabling bits for cache management instructions and
->> soon will control enabling for control flow integrity and pointer
->> masking features.
->>
->> Control flow integrity enabling for forward cfi and backward cfi are
->> controlled via envcfg and thus need to be enabled on per thread basis.
->>
->> This patch creates a place holder for envcfg CSR in `thread_info` and
->> adds logic to save and restore on task switching.
->>
->> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/switch_to.h   | 10 ++++++++++
->>  arch/riscv/include/asm/thread_info.h |  1 +
->>  2 files changed, 11 insertions(+)
->>
->> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
->> index 7efdb0584d47..2d9a00a30394 100644
->> --- a/arch/riscv/include/asm/switch_to.h
->> +++ b/arch/riscv/include/asm/switch_to.h
->> @@ -69,6 +69,15 @@ static __always_inline bool has_fpu(void) { return false; }
->>  #define __switch_to_fpu(__prev, __next) do { } while (0)
->>  #endif
->>
->> +static inline void __switch_to_envcfg(struct task_struct *next)
->> +{
->> +	register unsigned long envcfg = next->thread_info.envcfg;
->
->This doesn't need the register storage class.
->
+Hi Everyone,
 
-yeah. will fix it. thanks.
+This series is for the 6.11 cycle, but since it is ready from my POV,
+here it goes in case people have the time to look at it in the meantime.
 
->> +
->> +	asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0", 0,
->> +							  RISCV_ISA_EXT_XLINUXENVCFG, 1)
->> +							  :: "r" (envcfg) : "memory");
->> +}
->> +
->
->Something like:
->
->static inline void __switch_to_envcfg(struct task_struct *next)
->{
->	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
->		csr_write(CSR_ENVCFG, next->thread_info.envcfg);
->}
->
->would be easier to read, but the alternative you have written doesn't
->have the jump that riscv_has_extension_unlikely has so what you have
->will be more performant.
+The patches in the series address some minor issues in the thermal
+debugfs code and clean it up somewhat.
 
-Yeah looked at codegen of `riscv_has_extension_unlikely` and I didn't like un-necessary jumps,
-specially in switch_to path. All I want is a CSR write. So used alternative to patch nop with
-CSR write.
+Please refer to the individual patch changelogs for details.
 
->
->Does envcfg need to be save/restored always or just with
->CONFIG_RISCV_USER_CFI?
+At one point I'm going to put this series on a separate git branch
+for easier access/testing.
 
-There is no save (no read of CSR). Only restore (writes to CSR).
+Thanks!
 
-There are pointer masking patches from Samuel Holland where senvcfg needs to be context
-switched on per task basis.
-https://lore.kernel.org/lkml/20240319215915.832127-1-samuel.holland@sifive.com/T/
 
-Given that this CSR controls user execution environment and is per task basis, I thought its
-better to not wrap it under CONFIG_RISCV_USER_CFI and rather make it dependend on
-RISCV_ISA_EXT_XLINUXENVCFG. If any of the extensions which require senvcfg, then simply
-restore this CSR on per task basis.
 
->
->- Charlie
->
->>  extern struct task_struct *__switch_to(struct task_struct *,
->>  				       struct task_struct *);
->>
->> @@ -80,6 +89,7 @@ do {							\
->>  		__switch_to_fpu(__prev, __next);	\
->>  	if (has_vector())					\
->>  		__switch_to_vector(__prev, __next);	\
->> +	__switch_to_envcfg(__next);				\
->>  	((last) = __switch_to(__prev, __next));		\
->>  } while (0)
->>
->> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
->> index 5d473343634b..a503bdc2f6dd 100644
->> --- a/arch/riscv/include/asm/thread_info.h
->> +++ b/arch/riscv/include/asm/thread_info.h
->> @@ -56,6 +56,7 @@ struct thread_info {
->>  	long			user_sp;	/* User stack pointer */
->>  	int			cpu;
->>  	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
->> +	unsigned long envcfg;
->>  #ifdef CONFIG_SHADOW_CALL_STACK
->>  	void			*scs_base;
->>  	void			*scs_sp;
->> --
->> 2.43.2
->>
 
