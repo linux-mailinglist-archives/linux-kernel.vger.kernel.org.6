@@ -1,118 +1,140 @@
-Return-Path: <linux-kernel+bounces-174454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506508C0F03
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581418C0F07
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4D5282F35
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:52:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0DE1F22236
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B40514A4EE;
-	Thu,  9 May 2024 11:51:56 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E718614AD1A;
+	Thu,  9 May 2024 11:54:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05E114A90;
-	Thu,  9 May 2024 11:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D84312FF8E;
+	Thu,  9 May 2024 11:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715255515; cv=none; b=G1rp3JVZNK4enIPuZISIYILtNYjkxqqJvaGCNdwB5MePkiqixneCgr8j4DZdVoAOYW1NTWa3utUi8cTEHdpuS1yyzybjDRLBUAx5iZrBmnIsk9x5nPtS78Cyu+d1f/o8Xw0EqPCK19Wifmporg0ZIO6R8UA4HFa9vcRyaIB/gB0=
+	t=1715255646; cv=none; b=AmPMl+uTwUAF8RXqG4U10TGmM4/7v9VNPW+TypjZehstWQ9qUTyYWqWqnaUyp1MiMRPshqUWvVfscYK9lr/Q/BhJA7rEcjMR7pEWSYOYkda+VUH/wbtGbnTHUl+9iIFpgrEUfsm46Vt0iAu5Ml39lpxl1CiNN+H7PRj5r/7DmlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715255515; c=relaxed/simple;
-	bh=yenylc1AgrZ1yz38O8wb+OBMYcDFl1j/589u+vWWWp4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DESFi/2IUO+3J8zri2hUvvJN5GGmYp2NCAQ47apCJVtkFxwWUdZFCAMSQ7uvBB+KHG+mcfEYJW5JKtNs/RnpOqNtvKcUUgoAMqLcpkkDOHXFfO5F8sLbWVchWHsM4wWq+opiZhAZX9Y6YTP9OiDQg38/BXR2zDREJ23O1O9t7Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VZr2g5s78z4f3jHV;
-	Thu,  9 May 2024 19:51:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2C6E41A016E;
-	Thu,  9 May 2024 19:51:48 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgCnyw7SuDxmDJXqMQ--.3S3;
-	Thu, 09 May 2024 19:51:48 +0800 (CST)
-Subject: Re: [PATCH 7/9] jbd2: remove dead equality check of
- j_commit_[sequence/request] in kjournald2
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
- <20240506141801.1165315-8-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <90912168-9295-ac60-6a4c-687fe12ebd7a@huaweicloud.com>
-Date: Thu, 9 May 2024 19:51:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715255646; c=relaxed/simple;
+	bh=xO5f8wq/0P5imNfCwCvl1FvQaw5qFdKKDOFvrT8KFfw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A/CxQAM244jZmr02h42lrLq+3loMFyjt2lfNZzpObyZLmnMo/Va6gwfN4qIGGxy00d3vY5gEVQuAoeOQ6dVGmJe8FvJOjA5P9ACKBj0DBOAXwqZ9y7u+gZiuYVP5sgvHdooTOTO2uZGUByaEiishZVx6br8HTL9CySfO3RIfnqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZr1l70Dvz6K6vN;
+	Thu,  9 May 2024 19:50:51 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id A0E39140B33;
+	Thu,  9 May 2024 19:54:00 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 9 May
+ 2024 12:53:59 +0100
+Date: Thu, 9 May 2024 12:53:58 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
+ Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Lukas Wunner
+	<lukas@wunner.de>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, "Krishna
+ chaitanya chundru" <quic_krichai@quicinc.com>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Christophe
+ JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v5 6/8] PCI/bwctrl: Add API to set PCIe Link Speed
+Message-ID: <20240509125358.00004c55@Huawei.com>
+In-Reply-To: <20240508134744.52134-7-ilpo.jarvinen@linux.intel.com>
+References: <20240508134744.52134-1-ilpo.jarvinen@linux.intel.com>
+	<20240508134744.52134-7-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240506141801.1165315-8-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCnyw7SuDxmDJXqMQ--.3S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF1ruw48GF4DZF48JFy8uFg_yoW8Gr48pr
-	Wku3WjyFWru3y0grn7KF4DXFWUZ3yjkFyjgrnIkwn3Jw4UJ34Ikwn3trn3JrWqyrZ3G348
-	XFsY9an7Gw1Y9a7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5WlkUU
-	UUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 2024/5/6 22:17, Kemeng Shi wrote:
-> In kjournald2, two equality checks of j_commit_[sequence/request] are
-> under the same j_state_lock. As j_commit_[sequence/request] are updated
-> concurrently with j_state_lock held during runtime, the second check is
-> unnecessary.
-> The j_commit_sequence is only updated concurrently in
-> jbd2_journal_commit_transaction with j_state_lock held.
-> The j_commit_request is only updated concurrently in
-> __jbd2_log_start_commit with j_state_lock held.
-> Also see comment in struct journal_s about lock rule of j_commit_sequence
-> and j_commit_request.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+On Wed,  8 May 2024 16:47:42 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-Looks reasonable to me.
-
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
+> Currently, PCIe Link Speeds are adjusted by custom code rather than in
+> a common function provided in PCI core. PCIe bandwidth controller
+> (bwctrl) introduces an in-kernel API to set PCIe Link Speed. Convert
+> Target Speed quirk to use the new API.
+>=20
+> The new API is also intended to be used in an upcoming commit that adds
+> a thermal cooling device to throttle PCIe bandwidth when thermal
+> thresholds are reached.
+>=20
+> The PCIe bandwidth control procedure is as follows. The highest speed
+> supported by the Port and the PCIe device which is not higher than the
+> requested speed is selected and written into the Target Link Speed in
+> the Link Control 2 Register. Then bandwidth controller retrains the
+> PCIe Link.
+>=20
+> Bandwidth Notifications enable the cur_bus_speed in the struct pci_bus
+> to keep track PCIe Link Speed changes. While Bandwidth Notifications
+> should also be generated when bandwidth controller alters the PCIe Link
+> Speed, a few platforms do not deliver LMBS interrupt after Link
+> Training as expected. Thus, after changing the Link Speed, bandwidth
+> controller makes additional read for the Link Status Register to ensure
+> cur_bus_speed is consistent with the new PCIe Link Speed.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 > ---
->  fs/jbd2/journal.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 01e33b643e4d..e8f592fbd6e1 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -224,8 +224,6 @@ static int kjournald2(void *arg)
->  
->  		prepare_to_wait(&journal->j_wait_commit, &wait,
->  				TASK_INTERRUPTIBLE);
-> -		if (journal->j_commit_sequence != journal->j_commit_request)
-> -			should_sleep = 0;
->  		transaction = journal->j_running_transaction;
->  		if (transaction && time_after_eq(jiffies,
->  						transaction->t_expires))
-> 
+>  drivers/pci/pci.h         |  13 ++++
+>  drivers/pci/pcie/Makefile |   2 +-
+>  drivers/pci/pcie/bwctrl.c | 147 ++++++++++++++++++++++++++++++++++++++
+>  drivers/pci/quirks.c      |  12 +---
+>  include/linux/pci.h       |   3 +
+>  5 files changed, 166 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 416540baf27b..324899fbad0a 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -270,6 +270,19 @@ void pci_disable_bridge_window(struct pci_dev *dev);
+>  struct pci_bus *pci_bus_get(struct pci_bus *bus);
+>  void pci_bus_put(struct pci_bus *bus);
+> =20
+> +#define PCIE_LNKCAP_SLS2SPEED(lnkcap)					\
+> +({									\
+> +	u32 _lnkcap =3D (lnkcap) & PCI_EXP_LNKCAP_SLS;			\
+
+Why the inconsistency wrt to PCIE_LNKCAP2_SLS2SPEED which doesn't bother wi=
+th
+this initial mask. It's not needed afterall as the bits checked are all in =
+the
+mask anyway?
+
+I don't really mind which form but they should look the same.
+
+> +									\
+> +	(_lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_64_0GB ? PCIE_SPEED_64_0GT :	\
+> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_32_0GB ? PCIE_SPEED_32_0GT :	\
+> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_16_0GB ? PCIE_SPEED_16_0GT :	\
+> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_8_0GB ? PCIE_SPEED_8_0GT :	\
+> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_5_0GB ? PCIE_SPEED_5_0GT :	\
+> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_2_5GB ? PCIE_SPEED_2_5GT :	\
+> +	 PCI_SPEED_UNKNOWN);						\
+> +})
+> +
+
+
 
 
