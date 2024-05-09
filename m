@@ -1,95 +1,201 @@
-Return-Path: <linux-kernel+bounces-174280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C338C0C75
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:20:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 772838C0C7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92D91C2183B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99CB91C20828
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFD3149DF1;
-	Thu,  9 May 2024 08:20:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9E6149C7B;
+	Thu,  9 May 2024 08:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NK1doKm7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sx1qPmbk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E846312D76E;
-	Thu,  9 May 2024 08:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF7E13B5A9;
+	Thu,  9 May 2024 08:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715242829; cv=none; b=JQ6BQ2pKc3f++VjEX/xdpPU6H1bNiz926Fa8x4PDulasazXpd+OAYjUN8a2nnjAOeo6fBC7raxOnB23KF/ZoSgX6JG6TcR8WxSUKlCqVsAKqnthFCz0H2nEl0nSl3JtccSCjhUPSMFjYdooARFnrNlGau1QxqbBoI2TF+q7nYGQ=
+	t=1715242903; cv=none; b=qK3t+8rr9A3vpB1G+QQcwXC1TegAfnadSko3nh3euQ7knZe8cHBUNYHgACCpIfMqiWHE8w9HfHnNS2mRuckmmGSuZHpaomi128m6rvpvXpk1E1nAyCgm+KphRB6iPKsjlQJZ1E68FsUdpGS/qjcjP0pqpr5jSwjdhlF7+hdoj8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715242829; c=relaxed/simple;
-	bh=FlMUqvYrfJFhE+zcBZdCUl/oxTB00wwnITCr+xwtjYQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=GI6H06gtoeIc9Bqhje7Z0p75QX6nDvGcR/BtUkw4LeGzDMO7ktNjJPiwTWqnG0IwVwdCVPGqkcYhhNjT2fN88e3RsO/fC7kCOCXSBsssT6pjtQI3KiNm2owhg7aw08ha54eqBVesf5QP7zFEdb7xqNtLW0m8TzrxBE65fDYz2G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NK1doKm7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6AE03C2BBFC;
-	Thu,  9 May 2024 08:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715242828;
-	bh=FlMUqvYrfJFhE+zcBZdCUl/oxTB00wwnITCr+xwtjYQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NK1doKm7EzNAW/oUTLLVBDPHbJVoIGVZJbxZ6zFhQnChzbhvK1UhXigkXbE4CBZYH
-	 FFMZKF6qCfjcIGtpGH5tJD6t5ZBfSuy3BGb6vsoJvhkjcd9HGuL3HJ0c3zzjWXqXcE
-	 U5bLxyzvj3ENyPKZ2e3F1yM3eifHPeO1PH/TQttmiY8Mnx1FP7oJ+x8WVAEnpd/cPd
-	 SvNoFsCvg8IqopUd6xlV9E6kUfolx6eFsF2X0bOAYt4p6883i5XEIFkecD1HzaZ+k3
-	 hvaX/EqSe2rzla38HKJ8DIo4DGtLxATLt7PcTNDe13fWN9Ia6n80JEFoKJEiS7qIQe
-	 j65d53KjBKkzQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5AB8CC32759;
-	Thu,  9 May 2024 08:20:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715242903; c=relaxed/simple;
+	bh=bgDLzxpYitnFqSBkidhPvmb7A8VF+kvubgyIU2MFg0g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=T82L4Zd25nnVoERcRe46VSVjM0FQUV6AJL/4S3lryhx7ZaueUuXIz4e/hFyPlHQoEr0O+Uqe8lIZzgxfl6A9gaC3KN0c5Ae4FR0fiKvXGlWDhRi87/6MIv3iuq8i8X+zhs6cJFa2wGWar44dnJBIBGnDk9XofRWfi4OEBr9SmP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sx1qPmbk; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715242902; x=1746778902;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=bgDLzxpYitnFqSBkidhPvmb7A8VF+kvubgyIU2MFg0g=;
+  b=Sx1qPmbk7c+xdTC2smjOeJdfyELeISbORiRnbNiQP3UHqIeDOCcc9zuZ
+   UVPYeUp7XND6zlwhznxYcWD9rKhuRkrtTvZHO2Ufnleuwpx6+o/y/zLLf
+   fmSKPcs7hzDc8tnh+AkYBZYsRDbocXkTcyGbz4HgWd8gRqtKPJKHSMhfH
+   hS3vyfEhomN21aK9bqJ+vWw0V2boz5/pxrvnCIxG5dY9wI8i4RghfX9Cs
+   AFcspf/B7Q+h2+Vn2jX5h+J//TYd2MlcClYXfFjHAxaPSXyHhVSapx3CB
+   cOA142EK5hmWsHR9CfFMqAivOXJU7NsTsWEPYLSBiOIk5Cnr+iy5ABSeN
+   w==;
+X-CSE-ConnectionGUID: EsycnyROQS6/TWLL2lvC6Q==
+X-CSE-MsgGUID: CE8fm41dSJGUoGbdpRXJ/A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="22550983"
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="22550983"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 01:21:41 -0700
+X-CSE-ConnectionGUID: bBIbfyPmRDytOOx14qdCmA==
+X-CSE-MsgGUID: faG8c/p9TD2G7pIk/O9Vdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="29095902"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.252.34.226])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 01:21:38 -0700
+Message-ID: <c460081e-b74f-4e09-a666-def047b8e587@intel.com>
+Date: Thu, 9 May 2024 11:21:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] mmc: sdhci-of-dwcmshc: add callback functions for
+ dwcmshc_priv
+To: Chen Wang <unicorn_wang@outlook.com>, Chen Wang <unicornxw@gmail.com>,
+ ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jszhang@kernel.org, dfustini@baylibre.com,
+ yifeng.zhao@rock-chips.com, shawn.lin@rock-chips.com, chao.wei@sophgo.com,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com,
+ guoren@kernel.org, inochiama@outlook.com
+References: <cover.1714270290.git.unicorn_wang@outlook.com>
+ <5bb708cc830684676dede5f44ee22c7fd03300b7.1714270290.git.unicorn_wang@outlook.com>
+ <ed900af1-f090-49a9-bc7e-363a28a4ac2b@intel.com>
+ <MA0P287MB282273829FCBA4BE58BD9CC2FEE62@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <MA0P287MB282273829FCBA4BE58BD9CC2FEE62@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net/smc: fix neighbour and rtable leak in
- smc_ib_find_route()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171524282836.9047.9322288635530734098.git-patchwork-notify@kernel.org>
-Date: Thu, 09 May 2024 08:20:28 +0000
-References: <20240507125331.2808-1-guwen@linux.alibaba.com>
-In-Reply-To: <20240507125331.2808-1-guwen@linux.alibaba.com>
-To: Wen Gu <guwen@linux.alibaba.com>
-Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- kgraul@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Tue,  7 May 2024 20:53:31 +0800 you wrote:
-> In smc_ib_find_route(), the neighbour found by neigh_lookup() and rtable
-> resolved by ip_route_output_flow() are not released or put before return.
-> It may cause the refcount leak, so fix it.
+On 9/05/24 05:17, Chen Wang wrote:
 > 
-> Link: https://lore.kernel.org/r/20240506015439.108739-1-guwen@linux.alibaba.com
-> Fixes: e5c4744cfb59 ("net/smc: add SMC-Rv2 connection establishment")
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+> On 2024/4/29 15:08, Adrian Hunter wrote:
+>> On 28/04/24 05:32, Chen Wang wrote:
+>>> From: Chen Wang <unicorn_wang@outlook.com>
+>>>
+>>> The current framework is not easily extended to support new SOCs.
+>>> For example, in the current code we see that the SOC-level
+>>> structure `rk35xx_priv` and related logic are distributed in
+>>> functions such as dwcmshc_probe/dwcmshc_remove/dwcmshc_suspend/......,
+>>> which is inappropriate.
+>>>
+>>> The solution is to abstract some possible common operations of soc
+>>> into virtual members of `dwcmshc_priv`. Each soc implements its own
+>>> corresponding callback function and registers it in init function.
+>>> dwcmshc framework is responsible for calling these callback functions
+>>> in those dwcmshc_xxx functions.
+>>>
+>>> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>>> ---
+>>>   drivers/mmc/host/sdhci-of-dwcmshc.c | 152 +++++++++++++++++-----------
+>>>   1 file changed, 91 insertions(+), 61 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+>>> index 39edf04fedcf..525f954bcb65 100644
+>>> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+>>> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+>>> @@ -214,6 +214,10 @@ struct dwcmshc_priv {
+>>>       void *priv; /* pointer to SoC private stuff */
+>>>       u16 delay_line;
+>>>       u16 flags;
+>>> +
+>>> +    void (*soc_postinit)(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv);
+>>> +    int (*soc_clks_enable)(struct dwcmshc_priv *dwc_priv);
+>>> +    void (*soc_clks_disable)(struct dwcmshc_priv *dwc_priv);
+>> Normally the ops would be part of platform data.  For example,
+>> sdhci-of-arasan.c has:
+>>
+>>     struct sdhci_arasan_of_data {
+>>         const struct sdhci_arasan_soc_ctl_map *soc_ctl_map;
+>>         const struct sdhci_pltfm_data *pdata;
+>>         const struct sdhci_arasan_clk_ops *clk_ops;
+>>     };
+>>
+>> And then:
+>>
+>>     static struct sdhci_arasan_of_data sdhci_arasan_rk3399_data = {
+>>         .soc_ctl_map = &rk3399_soc_ctl_map,
+>>         .pdata = &sdhci_arasan_cqe_pdata,
+>>         .clk_ops = &arasan_clk_ops,
+>>     };
+>>     etc
+>>
+>>     static const struct of_device_id sdhci_arasan_of_match[] = {
+>>         /* SoC-specific compatible strings w/ soc_ctl_map */
+>>         {
+>>             .compatible = "rockchip,rk3399-sdhci-5.1",
+>>             .data = &sdhci_arasan_rk3399_data,
+>>         },
+>>         etc
+>>
+>> So, say:
+>>
+>> struct dwcmshc_pltfm_data {
+>>     const struct sdhci_pltfm_data *pltfm_data;
+>>     void (*postinit)(struct sdhci_host *host, struct dwcmshc_priv *dwc_priv);
+>>     int  (*clks_enable)(struct dwcmshc_priv *dwc_priv);
+>>     void (*clks_disable)(struct dwcmshc_priv *dwc_priv);
+>> }
+>>
+>> Or if the ops are mostly the same, it might be more convenient to
+>> have them in their own structure:
+>>
+>> struct dwcmshc_pltfm_data {
+>>     const struct sdhci_pltfm_data *pltfm_data;
+>>     const struct dwcmshc_ops *ops;
+>> }
 > 
-> [...]
+> hi, Adrian,
+> 
+> I thought about it for a while, and I would like to continue discussing this issue as follows.
+> 
+> I feel like it would be simpler to put it at the dwcmshc_priv level based on the ops involved in the code so far. Judging from the SOCs currently supported by dwcmshc, the ops I abstracted only operate data below the dwcmshc_priv level, and these ops are not used by most SOCs.
+> - postinit: only required by rk35xx
+> - init: involves rk35xx and th1520, and the new soc(sg2042) I want to add.
+> - clks_enable/clks_disable: only rk35xx and the sg2042 I want to add
+> 
+> In particular, for dwcmshc_suspend/dwcmshc_resume, we have already obtained dwcmshc_priv. If ops is to be placed at the platformdata level, we have to use device_get_match_data to obtain data again, which feels a bit unnecessary.
+> 
+> What do you think?
 
-Here is the summary with links:
-  - [net,v2] net/smc: fix neighbour and rtable leak in smc_ib_find_route()
-    https://git.kernel.org/netdev/net/c/2ddc0dd7fec8
+In sdhci-of-arasan.c, ops are copied from platform data to
+driver private data e.g.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+static int sdhci_arasan_probe(struct platform_device *pdev)
+{
+	...
+	struct sdhci_arasan_data *sdhci_arasan;
+	const struct sdhci_arasan_of_data *data;
 
+	data = of_device_get_match_data(dev);
+	if (!data)
+		return -EINVAL;
+	...
+	sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
+	...
+	sdhci_arasan->clk_ops = data->clk_ops;
+
+
+Alternatively, a pointer could be put in driver private data
+to point to platform data.
 
 
