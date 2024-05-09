@@ -1,146 +1,115 @@
-Return-Path: <linux-kernel+bounces-174349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABCF8C0D7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:30:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 815898C0D80
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC6AB21F4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C2C6284235
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7370614A619;
-	Thu,  9 May 2024 09:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EF514A630;
+	Thu,  9 May 2024 09:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSEdW5a1"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYGQqfJk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B814A096
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D3914A096;
+	Thu,  9 May 2024 09:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715246993; cv=none; b=CtyH/ZiGA4GHAhBbd3vmcOzTG1SgrTR74VN3G1UaRKVoFgXre2vxllb0kbsDG53qsGMz/9O7LK3YvKDcX7lfAg6N9Z4skR3wWvUJVCMDwLha3vP1YhN5+KCbhGAHx+lS7aYfvRcEr8nH6YHoBLLYh3+cnmNY1znwNbLcftDviVs=
+	t=1715247078; cv=none; b=gMKEhQ1cxS15lsNERRe0EuFgx7Tw2s5Jj6WyucgBdGWb2G+CzyZlipeICG92bj7uoJCCJmILAoNke52ZR/Dz8a5i85gNjQm0vEEkKAjBYkd70k+TT1OfvM33JlBtUQ5ee8tXbGTCvnc4VYeI9gtpyRVWwlNULxfux69jonpBnOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715246993; c=relaxed/simple;
-	bh=guUV12xHeWZjLEN/heIpUBLc1w752dkq46c8cDI16K0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CGbyLyp9m2x9TNwvHef8F9riKIfHgMq69rE3HP8A6Wv2PCzzL4qJx2XHTfWoFVDUGzeMortz3WrUZTzysPy5fKVRlxsdp8uYk7hIoBb2PQsDqF/MopOowzNjRl4oXqEkcEeFtKASy1yIQZtzPUalFKphOIFsvO5xMmmlIG4Uv7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSEdW5a1; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41e82b78387so5073945e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 02:29:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715246990; x=1715851790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FeSjiIWiFPchsOxTg1Zyaw5gzDqd8TrDZhofZl4LluQ=;
-        b=XSEdW5a1Rq2b4ZOj4PrSlOj78a41xaJglpqPG6S/RLNYOzmAHNmhfPPyi/5epov7Wj
-         8jGcJZLadCDfqZN7l91wwPDgPHhjRNN5qHwsdbrxga3zRpd8QvFK8CqsImjUIfIQ3qXb
-         hPJg1fKAnb74XaIPFKYx1CWpYVv15X7L+lijO75tkjalb5bqLQ+DqsR8Ey+i1sPR54bI
-         43c4i5GRPCwQwsYeAZaNQKjepTFy/oNeFtfQpyaOi4mLUoOSRu+jcLWBhBcbhlwvOLXP
-         Pdpqusq5/laRmv7marrHRbmum6hc/kyj2oeMTq1Rz6/USbIHrxLHty0dGmrOqSKzx4Go
-         wOVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715246990; x=1715851790;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FeSjiIWiFPchsOxTg1Zyaw5gzDqd8TrDZhofZl4LluQ=;
-        b=Fk7gbZm+H7IMjEInlPO+aLpUp0jkOntCX06GzEIcQapda64w0uA8HY3xgPugPhr5Ek
-         FK719Xff5oxLDR7B7SGXdrzl9P/zdhuCXdXTdLBV4UsJOmHfOXGnOtg47MDyis5waXOt
-         ijksVHf9cS5C6jd7uzKE3ANvchQdBDVfpmbLQVeG2+lrHcwOvOrhUwxqKXCN2hlheQ/w
-         +QErnF0ioxgtZNyueY3bMdo5IUlNelhhXJh4nThDa7JeSkZ7AKJ7+gmuwDW9J70PW+N2
-         5u2s6gG6/MLyJxIReMVEOtXcPZ0Zkmq0RllfhkeGXRfWDTUUwFMn1E0FK/tx0wCTRlCb
-         Jwcg==
-X-Gm-Message-State: AOJu0YyePnTxTFumFf685eAJoCBiMrQcJNk11ucWyyr1DphnW0/6rzrT
-	NNFD9CHG3dfnPKpNXOkkuLyPOtTJ4BhOppmUmLqNWrxbWvrtEGeC
-X-Google-Smtp-Source: AGHT+IHvj9qr06dOMV/u73WUyhnxCUsHdsNa1EU1XXGOfei6YvCq89ajcHsuZQJaIBIx4xmJmGBSGA==
-X-Received: by 2002:a05:600c:4703:b0:41a:b56c:2929 with SMTP id 5b1f17b1804b1-41f721acb23mr43842505e9.34.1715246990351;
-        Thu, 09 May 2024 02:29:50 -0700 (PDT)
-Received: from localhost.localdomain ([85.255.237.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce24c0sm19004065e9.17.2024.05.09.02.29.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 09 May 2024 02:29:48 -0700 (PDT)
-From: Levi Yun <ppbuk5246@gmail.com>
-To: anna-maria@linutronix.de,
-	frederic@kernel.org,
-	mingo@kernel.org,
-	tglx@linutronix.de,
-	Markus.Elfring@web.de
-Cc: linux-kernel@vger.kernel.org,
-	Levi Yun <ppbuk5246@gmail.com>
-Subject: [PATCH v4] time/tick-sched: idle load balancing when nohz_full cpu becomes idle.
-Date: Thu,  9 May 2024 10:29:32 +0100
-Message-ID: <20240509092931.35209-2-ppbuk5246@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20240508172621.30069-1-ppbuk5246@gmail.com>
-References: <20240508172621.30069-1-ppbuk5246@gmail.com>
+	s=arc-20240116; t=1715247078; c=relaxed/simple;
+	bh=yMguGKEurxhBhT2kNnn/ZtameJsGQKoLePBLTU/eYv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKwnqZCfF7e/lmv+ObS+4IUQf4zpb7I99Ru9MQTqFvwz0mdQiw0dBn7tzXr6IsqbmrMjlVolnEEydyGGSdN0hZYegjBjGn496GdFugkDXX1WpGjwoEH8IF1ZPO+4wnn0r1mNMnYab7Kofzml0SpYdghTjUHPKNq4s/Vil0ItfdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYGQqfJk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1660DC116B1;
+	Thu,  9 May 2024 09:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715247078;
+	bh=yMguGKEurxhBhT2kNnn/ZtameJsGQKoLePBLTU/eYv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eYGQqfJkN1d/277imD/xsq+021aWyQqzAHzvKYlJp/XBwcAmVhermLRITV4idbxlm
+	 CKZXc+52L3i+8CV+MkhcdM4HXP5msn0L9Y+QJA8uU2EFDRjw3OyF69+vNePo2x/L+a
+	 +ekUKns829/c1CY4gcDhRYGYxkNMZW48RY03sYpNtbj/uo0/hPIv4gckyyYXJhcYtR
+	 0pN4mdioeV4Fy+Y9XO/8fdm/UvhO0GutUU+IfSIgaddAZssxdb83x/LTWKQAaYvXz2
+	 tS2qnyvWguA/e1mwiS0jdH96ZXfVZNn+pO5xLVwOhzkzaUtsUTlOemVobBVVem/UMK
+	 aAky732Vxw4mw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s507W-000000001L5-2a2j;
+	Thu, 09 May 2024 11:31:22 +0200
+Date: Thu, 9 May 2024 11:31:22 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 03/13] mfd: pm8008: deassert reset on probe
+Message-ID: <ZjyX6iBqc50ic_oI@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-4-johan+linaro@kernel.org>
+ <4468becb-dc03-4832-aa03-5f597023fcb2@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4468becb-dc03-4832-aa03-5f597023fcb2@linaro.org>
 
-When nohz_full CPU stops tick in tick_nohz_irq_exit(),
-It wouldn't be chosen to perform idle load balancing because it doesn't
-call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
-becomes idle.
+On Wed, May 08, 2024 at 05:12:51PM +0100, Bryan O'Donoghue wrote:
+> On 06/05/2024 16:08, Johan Hovold wrote:
+> > Request and deassert any (optional) reset gpio during probe in case it
+> > has been left asserted by the boot firmware.
+> > 
+> > Note the reset line is not asserted to avoid reverting to the default
+> > I2C address in case the firmware has configured an alternate address.
 
-Formerly, __tick_nohz_idle_enter() is called in both
-tick_nohz_irq_exit() and in do_idle().
-That's why commit a0db971e4eb6 ("nohz: Move idle balancer registration
-to the idle path") prevents nohz_full cpu which isn't yet
-idle state but tick is stopped from entering idle balance.
+> > @@ -169,6 +171,10 @@ static int pm8008_probe(struct i2c_client *client)
+> >   
+> >   	i2c_set_clientdata(client, regmap);
+> >   
+> > +	reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+> > +	if (IS_ERR(reset))
+> > +		return PTR_ERR(reset);
+> > +
+> >   	if (of_property_read_bool(dev->of_node, "interrupt-controller")) {
+> >   		rc = devm_regmap_add_irq_chip(dev, regmap, client->irq,
+> >   				IRQF_SHARED, 0, &pm8008_irq_chip, &irq_data);
+> 
+> So not resetting is fine and I understand you want to retain the address 
+> given by the firmware, I think that's the right thing to do.
 
-However, this prevents nohz_full cpu which already stops tick from
-entering idle balacne when this cpu really becomes idle state.
+> In addition to adding a small delay suggested by Andy - a few 
+> microseconds pick a number, I think you should verify the chip is out of 
+> reset as we would do with many other i2c devices.
 
-Currently, tick_nohz_idle_stop_tick() is only called in idle state and
-it calls nohz_balance_enter_idle(). this function tracks the CPU
-which is part of nohz.idle_cpus_mask with rq->nohz_tick_stopped properly.
+> In this case, suggest reading REVID_PERPH_TYPE @ 0x104 and 
+> REVID_PERPH_SUBTYPE @ 0x105
+> 
+> REVID_PERPH_TYPE @ 0x104 == 0x51 (PMIC)
+> REVID_PERPH_SUBYTE @ 0x105 == 0x2C (PM8008)
 
-Therefore, Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_idle()
-without checking !was_stopped so that nohz_full cpu can be chosen to
-perform idle load balancing when it enters idle state.
+I'll consider it for v2.
 
-Fixes: a0db971e4eb6 ("nohz: Move idle balancer registration to the idle path")
-Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
----
-v4:
-	- Add fixes tags.
-
-v3:
-	- Rewording commit message.
-
-v2:
-	- Fix typos in commit message.
-
- kernel/time/tick-sched.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 71a792cd8936..31a4cd89782f 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
- 		ts->idle_sleeps++;
- 		ts->idle_expires = expires;
-
--		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
--			ts->idle_jiffies = ts->last_jiffies;
-+		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-+			if (!was_stopped)
-+				ts->idle_jiffies = ts->last_jiffies;
-+
- 			nohz_balance_enter_idle(cpu);
- 		}
- 	} else {
---
-2.41.0
+Johan
 
