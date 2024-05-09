@@ -1,320 +1,85 @@
-Return-Path: <linux-kernel+bounces-174477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8230B8C0F56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:09:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6ED8C0F2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 381A42814F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:09:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA2F7B21B13
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E242D14B088;
-	Thu,  9 May 2024 12:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E/XFM+pG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4139D14AD1A;
+	Thu,  9 May 2024 12:07:07 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAB014AD1A;
-	Thu,  9 May 2024 12:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A93312F582
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 12:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256461; cv=none; b=nl2vHzPYHAo6tqwNgEIinLx2XpYOz7EApbYQroUq6QfldMnsPvhL8k0D3eq6ulAoBEA2S6tYO+q+mxEwQdk66T+zq2WRTv1zP75R6tNSsnF3S2Lw1VL0P5PhJxAG2tOp6g/26Lvg/YhiX+MPqaUwhITw+zWqAUpocwoBJZZ+cJc=
+	t=1715256426; cv=none; b=T26C7TEPh+DcCrSTb9Ve2fH/aGWLlk4tGjp8V3oQCF8g9x+7XPSCR1Jvu/PmGpMLTDclQ/6E9ZS45NkhYDGEx5PVtfLvBaEKv5o0YC+MirOia9oo1keDV2nkOh1PcTz/a3gRUBSGM0A6gFAApJ+vMrbp4CJXVjHre/lf2JMWzlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256461; c=relaxed/simple;
-	bh=Hxoh5JTKAk10iizHDe6S9ModO3gGCUjwct2VimpMtJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=loxuWY1j3a0bH5TiA6XpmzyWVbgjlN6PJcV/3ESl1Xcj6uD+7EXCbUxxkcteVDjqZma9OODjqbx1qD66zdcKTGb/j/RVZxOX7E7ugJyonH2/gAe4uWW/ouyHDe4XUJMIqNMRYwqEIEhSC/naW+QIjXxK/LHr5BO8CGDxILwFW0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E/XFM+pG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 449C7LT4022459;
-	Thu, 9 May 2024 12:07:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=H4tShS+NnsebvFbzHCu9hb+yI5WH8D5a3muAw7bPVtM=;
- b=E/XFM+pGHD8ygO7O9NjpsaEv8+sjDPD5LrDv3Ia/wtgJ+YRYQ449vvSfF2Fs8vGafyBx
- FV5x6mLButeUC5dMSEAIJ2SWGfdg1ZtDd58ONjnyVEZQrrP88Cr+XdH177hdirTvDoiH
- Ch/z7TfeVrp4we7saqR5KnaztZfi3tTvQzaunQCDflpeqE6TG+QWGDyV3sQkt2fTCiuB
- J55bD1QhoOl6YkNcMSMy0a35eDq+U9wYv6rMtfnmOhNSUlnkrNWZXG7+DQVstMOXhgqG
- JstENkYe7+RCFT2dpRQXT20GosB8jv9yV2HQZP2fh27F8oEEOkDgp2uoKQ26ldA3UG1X oA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0x77000u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 12:07:20 +0000
-Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 449C7J1S022431;
-	Thu, 9 May 2024 12:07:20 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0x77000p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 12:07:19 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 449BKtlS003990;
-	Thu, 9 May 2024 12:07:18 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xysgsjphs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 12:07:18 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 449C7C8a31916658
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 9 May 2024 12:07:15 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CDC0220063;
-	Thu,  9 May 2024 12:07:12 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8B72620040;
-	Thu,  9 May 2024 12:07:09 +0000 (GMT)
-Received: from li-a50b8fcc-3415-11b2-a85c-f1daa4f09788.in.ibm.com (unknown [9.109.241.85])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  9 May 2024 12:07:09 +0000 (GMT)
-From: Krishna Kumar <krishnak@linux.ibm.com>
-To: mpe@ellerman.id.au, npiggin@gmail.com
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, brking@linux.vnet.ibm.com,
-        gbatra@linux.ibm.com, aneesh.kumar@kernel.org,
-        christophe.leroy@csgroup.eu, nathanl@linux.ibm.com,
-        bhelgaas@google.com, oohall@gmail.com, tpearson@raptorengineering.com,
-        mahesh.salgaonkar@in.ibm.com, Krishna Kumar <krishnak@linux.ibm.com>
-Subject: [PATCH 2/2] arch/powerpc: hotplug driver bridge support
-Date: Thu,  9 May 2024 17:35:54 +0530
-Message-ID: <20240509120644.653577-3-krishnak@linux.ibm.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240509120644.653577-1-krishnak@linux.ibm.com>
-References: <20240509120644.653577-1-krishnak@linux.ibm.com>
+	s=arc-20240116; t=1715256426; c=relaxed/simple;
+	bh=kpbzqpy6Rhe5iTf0LFJ+eXVAVyIAjSiwFfmOtEu0JAM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XC3gAHD2AGtCJB8HlNxDXJDjacMTMO+9wAo0Y3rSFVj3pLSlUgn9YsUZPHQOnPoTnt+LIydoeLgOyiSCax1cEVAOVv5fADu4zlWo70IS1Ip1C6PqloPhQWwdcltIWPS3rwyhfdsC0XCGp1RYVZP/QDSIqzztwHsLhEGrxkqSKws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
+	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
+	id a526c7aa-0dfc-11ef-b972-005056bdfda7;
+	Thu, 09 May 2024 15:07:02 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 9 May 2024 15:07:02 +0300
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+Message-ID: <Zjy8Zj_naFQ2Ri0M@surfacebook.localdomain>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+ <CAE-0n52KTZ8G2VuvrDgJ9kAE61YULXY4u6nPP3CYWpg1CBjbXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 69z0-lO4Yvt12ZPiaLIX6zcMzRHQZKT6
-X-Proofpoint-ORIG-GUID: kn6K2sGR7l2H9UBQrRWScwibF36WhnTf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_06,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405090080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE-0n52KTZ8G2VuvrDgJ9kAE61YULXY4u6nPP3CYWpg1CBjbXA@mail.gmail.com>
 
-There is an issue with the hotplug operation when it's done on the
-bridge/switch slot. The bridge-port and devices behind the bridge, which
-become offline by hot-unplug operation, don't get hot-plugged/enabled by
-doing hot-plug operation on that slot. Only the first port of the bridge
-gets enabled and the remaining port/devices remain unplugged. The hot
-plug/unplug operation is done by the hotplug driver
-(drivers/pci/hotplug/pnv_php.c).
+Wed, May 08, 2024 at 10:37:50PM +0000, Stephen Boyd kirjoitti:
+> Quoting Johan Hovold (2024-05-06 08:08:29)
 
-Root Cause Analysis: This behavior is due to missing code for the DPC
-switch/bridge. The existing driver depends on pci_hp_add_devices()
-function for device enablement. This function calls pci_scan_slot() on
-only one device-node/port of the bridge, not on all the siblings'
-device-node/port.
+..
 
-The missing code needs to be added which will find all the sibling
-device-nodes/bridge-ports and will run explicit pci_scan_slot() on
-those.  A new function has been added for this purpose which gets
-invoked from pci_hp_add_devices(). This new function
-pci_traverse_sibling_nodes_and_scan_slot() gets all the sibling
-bridge-ports by traversal and explicitly invokes pci_scan_slot on them.
+> > +               BUILD_BUG_ON((ARRAY_SIZE(pldo_ranges) != 1) ||
+> 
+> This should be an && not || right?
 
+> > +                               (ARRAY_SIZE(nldo_ranges) != 1));
 
-Signed-off-by: Krishna Kumar <krishnak@linux.ibm.com>
----
+In any case BUILD_BUG_ON() is not encouraged for such cases, it would be much
+better to have a static_assert() near to one of those arrays.
 
-Command for reproducing the issue :
-
-For hot unplug/disable - echo 0 > /sys/bus/pci/slots/C5/power
-For hot plug/enable -    echo 1 > /sys/bus/pci/slots/C5/power
-
-where C5 is slot associated with bridge.
-
-Scenario/Tests:
-Output of lspci -nn before test is given below. This snippet contains
-devices used for testing on Powernv machine.
-
-0004:02:00.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-0004:02:01.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-0004:02:02.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-0004:02:03.0 PCI bridge [0604]: PMC-Sierra Inc. Device [11f8:4052]
-0004:08:00.0 Serial Attached SCSI controller [0107]:
-Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3 [1000:00c9] (rev 01)
-0004:09:00.0 Serial Attached SCSI controller [0107]:
-Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3 [1000:00c9] (rev 01)
-
-Output of lspci -tv before test is as follows:
-
-# lspci -tv
- +-[0004:00]---00.0-[01-0e]--+-00.0-[02-0e]--+-00.0-[03-07]--
- |                           |               +-01.0-[08]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               +-02.0-[09]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               \-03.0-[0a-0e]--
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-C5(bridge) and C6(End Point) slot address are as below:
-# cat /sys/bus/pci/slots/C5/address
-0004:02:00
-# cat /sys/bus/pci/slots/C6/address
-0004:09:00
-
-Hot-unplug operation on slot associated with bridge:
-# echo 0 > /sys/bus/pci/slots/C5/power
-# lspci -tv
- +-[0004:00]---00.0-[01-0e]--+-00.0-[02-0e]--
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-From the above lspci -tv output, it can be observed that hot unplug
-operation has removed all the PMC-Sierra bridge ports like:
-00.0-[03-07], 01.0-[08], 02.0-[09], 03.0-[0a-0e] and the SAS devices
-behind the bridge-port. Without the fix, when the hot plug operation is
-done on the same slot, it adds only the first bridge port and doesn't
-restore all the bridge-ports and devices that it unplugged earlier.
-Below snippet shows this.
-
-Hot-plug operation on the bridge slot without the fix:
-# echo 1 > /sys/bus/pci/slots/C5/power
-# lspci -tv
- +-[0004:00]---00.0-[01-0e]--+-00.0-[02-0e]--+-00.0-[03-07]--
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-After the fix, it restores all the devices in the same manner how it
-unplugged them earlier during the hot unplug operation. The below snippet
-shows the same.
-Hot-plug operation on bridge slot with the fix:
-# echo 1 > /sys/bus/pci/slots/C5/power
-# lspci -tv
- +-[0004:00]---00.0-[01-0e]--+-00.0-[02-0e]--+-00.0-[03-07]--
- |                           |               +-01.0-[08]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               +-02.0-[09]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               \-03.0-[0a-0e]--
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-Removal of End point device behind bridge are also intact and behaving
-correctly.
-Hot-unplug operation on Endpoint device C6:
-# echo 0 > /sys/bus/pci/slots/C6/power
-# lspci -tv
- +-[0004:00]---00.0-[01-0e]--+-00.0-[02-0e]--+-00.0-[03-07]--
- |                           |               +-01.0-[08]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               +-02.0-[09]--
- |                           |               \-03.0-[0a-0e]--
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-Hot-plug operation on Endpoint device C6:
-# echo 1 > /sys/bus/pci/slots/C6/power
-# lspci -tv
- +-[0004:00]---00.0-[01-0e]--+-00.0-[02-0e]--+-00.0-[03-07]--
- |                           |               +-01.0-[08]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               +-02.0-[09]----00.0  Broadcom / LSI SAS3216 PCI-Express Fusion-MPT SAS-3
- |                           |               \-03.0-[0a-0e]--
- |                           \-00.1  PMC-Sierra Inc. Device 4052
-
-
-
- arch/powerpc/include/asm/ppc-pci.h |  4 +++
- arch/powerpc/kernel/pci-hotplug.c  |  5 ++--
- arch/powerpc/kernel/pci_dn.c       | 42 ++++++++++++++++++++++++++++++
- 3 files changed, 48 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/ppc-pci.h b/arch/powerpc/include/asm/ppc-pci.h
-index a8b7e8682f5b..a5d5ee4ff7c0 100644
---- a/arch/powerpc/include/asm/ppc-pci.h
-+++ b/arch/powerpc/include/asm/ppc-pci.h
-@@ -28,6 +28,10 @@ struct pci_dn;
- void *pci_traverse_device_nodes(struct device_node *start,
- 				void *(*fn)(struct device_node *, void *),
- 				void *data);
-+
-+void *pci_traverse_sibling_nodes_and_scan_slot(struct device_node *start,
-+					       struct pci_bus *bus);
-+
- extern void pci_devs_phb_init_dynamic(struct pci_controller *phb);
- 
- #if defined(CONFIG_IOMMU_API) && (defined(CONFIG_PPC_PSERIES) || \
-diff --git a/arch/powerpc/kernel/pci-hotplug.c b/arch/powerpc/kernel/pci-hotplug.c
-index 0fe251c6ac2c..639a3d592fe2 100644
---- a/arch/powerpc/kernel/pci-hotplug.c
-+++ b/arch/powerpc/kernel/pci-hotplug.c
-@@ -106,7 +106,7 @@ EXPORT_SYMBOL_GPL(pci_hp_remove_devices);
-  */
- void pci_hp_add_devices(struct pci_bus *bus)
- {
--	int slotno, mode, max;
-+	int mode, max;
- 	struct pci_dev *dev;
- 	struct pci_controller *phb;
- 	struct device_node *dn = pci_bus_to_OF_node(bus);
-@@ -129,8 +129,7 @@ void pci_hp_add_devices(struct pci_bus *bus)
- 		 * order for fully rescan all the way down to pick them up.
- 		 * They can have been removed during partial hotplug.
- 		 */
--		slotno = PCI_SLOT(PCI_DN(dn->child)->devfn);
--		pci_scan_slot(bus, PCI_DEVFN(slotno, 0));
-+		pci_traverse_sibling_nodes_and_scan_slot(dn, bus);
- 		max = bus->busn_res.start;
- 		/*
- 		 * Scan bridges that are already configured. We don't touch
-diff --git a/arch/powerpc/kernel/pci_dn.c b/arch/powerpc/kernel/pci_dn.c
-index 38561d6a2079..2e202f9cec21 100644
---- a/arch/powerpc/kernel/pci_dn.c
-+++ b/arch/powerpc/kernel/pci_dn.c
-@@ -493,4 +493,46 @@ static void pci_dev_pdn_setup(struct pci_dev *pdev)
- 	pdn = pci_get_pdn(pdev);
- 	pdev->dev.archdata.pci_data = pdn;
- }
-+
-+void *pci_traverse_sibling_nodes_and_scan_slot(struct device_node *start, struct pci_bus *bus)
-+{
-+	struct device_node *dn;
-+	struct device_node *parent;
-+	int slotno;
-+
-+	const __be32 *classp1;
-+	u32 class1 = 0;
-+
-+	classp1 = of_get_property(start->child, "class-code", NULL);
-+	if (classp1)
-+		class1 = of_read_number(classp1, 1);
-+
-+	/* Call of pci_scan_slot for non-bridge/EP case */
-+	if (!((class1 >> 8) == PCI_CLASS_BRIDGE_PCI)) {
-+		slotno = PCI_SLOT(PCI_DN(start->child)->devfn);
-+		pci_scan_slot(bus, PCI_DEVFN(slotno, 0));
-+		return NULL;
-+	}
-+
-+	/* Iterate all siblings */
-+	parent = start;
-+	for_each_child_of_node(parent, dn) {
-+		const __be32 *classp;
-+		u32 class = 0;
-+
-+		classp = of_get_property(dn, "class-code", NULL);
-+		if (classp)
-+			class = of_read_number(classp, 1);
-+
-+		/* Call of pci_scan_slot on each sibling-nodes/bridge-ports */
-+		if ((class >> 8) == PCI_CLASS_BRIDGE_PCI) {
-+			slotno = PCI_SLOT(PCI_DN(dn)->devfn);
-+			pci_scan_slot(bus, PCI_DEVFN(slotno, 0));
-+		}
-+	}
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(pci_traverse_sibling_nodes_and_scan_slot);
-+
- DECLARE_PCI_FIXUP_EARLY(PCI_ANY_ID, PCI_ANY_ID, pci_dev_pdn_setup);
 -- 
-2.44.0
+With Best Regards,
+Andy Shevchenko
+
 
 
