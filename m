@@ -1,207 +1,108 @@
-Return-Path: <linux-kernel+bounces-174446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320B58C0ED8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:31:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D798C0EE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9B4B20E84
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA861C214AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551681311A1;
-	Thu,  9 May 2024 11:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4557813173B;
+	Thu,  9 May 2024 11:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgcvKIg8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sLJqdM2U"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DDB12FF93
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29907131723
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715254279; cv=none; b=aa6hELWuI9q3WumG8w5HcpOLwkXsaA0/G7guEih8ZX/DLTYC72s1HykxIYZUfCLWKzv3IkE+8yIvendxotk839mizXsZGsUFRQxmbdAbzfybTA7/3Ct3fFlapNEbif6tp9I3sWsc02QJcumEYogJx02jAiUTw5csbnNzTC91Q7k=
+	t=1715254403; cv=none; b=s8sRdA94ukbqP17K/Mtxmi4VssmDKpD65xNbp2RpH6g46eUNG9siFGBPrBFRqQPNTJVHET+pVpISX0+tyhcrKRXV/c1ymGabBv26Q7tD7LQlPlaukYb+F2dkEWOgndgFvXWKALxpOehJF/uoUXrHrw+JnCJkPor22npYgzYjZx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715254279; c=relaxed/simple;
-	bh=KbSJqTXIym8X1LZZSbDqHy2oc5PTnuYaFn9rlqkiybc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XhE7u3TlM/Pf7L5S3XKeGUgwB9hS7IdQoLZ6aoQbLh1UkSHr5qMAKtKA+TNnSzzXnb3SyfEZTxHMtEJk0QG++AGv1mZ1EcYQkv+lEKrfmqDOvGGE4Ln6wwsJuReeNgCkmXK5r/5dVkcbwx/V51Vvc05uLmcLvrIk0cKxz6Usp3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgcvKIg8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715254276;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kZ1oYNvf/jlHzYagQ7dAZFEVJALyTuqemntwu0w6jKw=;
-	b=CgcvKIg8TkwcLe8NWm7mS+8ORrGWGXJa1T+i7a2s9zpruDBKKynVz2w7RpOLXJdC64G1Jw
-	pA5DKiIlYJgmvA9kbmfdUy4DtEYIO83Lh3tn8s8t6v4dI1hwW0yrzJ/qpWTm1yhED7f7zz
-	b9VRAwaqrGBFcxLO9QokgEFr0z4bEzY=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-367-5WV20ux4MQmwWP1g_MQsmA-1; Thu, 09 May 2024 07:31:15 -0400
-X-MC-Unique: 5WV20ux4MQmwWP1g_MQsmA-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-5cf35636346so628930a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:31:15 -0700 (PDT)
+	s=arc-20240116; t=1715254403; c=relaxed/simple;
+	bh=D7puHKjXDTv5CLRZ3bEx0o+8HxlulMS9vgRBINXXqrM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pjiDTisWCeImNng7R9Nykk+8w8z2Tjszww1ngdQG0WbIxNK4V1ghZ3kkDSPyOwpP8wyBxLx1q9WvTaW4JzcqufNbGB85HmsS8jBx3Evc1BcPumWhNyeK8yadFG2dnrZpb/Kz706WCI1HdBi623DAS1SJFlNcPQ6nTi2waMYvFK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sLJqdM2U; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-62050e00cfdso6332137b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715254401; x=1715859201; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J580ICpcOc18LR2tYPLoMdkVY56F2qD4SEKK1qAL5yg=;
+        b=sLJqdM2UWqAeZGdkFtmSl3wLNDNq7zngJ8r8Xt0q5b7CvcXbqd5MyD7Vmms96aIiuu
+         VcpSM7SqVeLZvYtFggs+bvVPt1SWQIJ2e0YsVTctIGG9NN3Ad1IYqqiayC4Jq8P4oRuA
+         MOBEbA3KXVVcAV4egUq9jKfHONImo31LrKGHiMsYNbVmsbrBrU3uuOAKNPaghwCkc6zQ
+         C771mTzZREStEbdWrT36/M6oXNIu+XGSecc4DH04C4HbwHydfr92h5DL3UINzfOZjKor
+         ydizMMhF3NgQrI5BomC9eB2eXsCcecRPDPH7Ha7vap1iSo9A6XpIUCzTBOJ4/h4h8hlI
+         ZFSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715254274; x=1715859074;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715254401; x=1715859201;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kZ1oYNvf/jlHzYagQ7dAZFEVJALyTuqemntwu0w6jKw=;
-        b=YUIvLmZXnZIIrg31mHuOF4+BNcH3pAKNdKiuRl5lptNOvU7GHy5LORPdM5p0ML/gma
-         w9/Uh6Rf8go1nDm4nmasDZOLQuSfXsfnUZzODOvGtDveHEvHlBkq7IhgYQTVTp6C9s19
-         mAqFVRMkKG9Gilqy1oI+8V4aYms8tJR49aEMmG8Q6jnDLXCeYaNTNoGTg2opU8EFYUGJ
-         0E0hbm6OVNBMxq/Prg2wjj3vTQQS64rn+yUsFnZ9Q9ZAYWtzLAP1MdsfI9IbWq/SfW+J
-         cMKYXAIX1/cJIc5F7IzSqWYDmxIFRmaamV9BzPY3yERlZFozVhTattYBz91/1HK/Mn1+
-         n0PA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgqERFnSXMZaQbDpDq3n98ql3gvWlU+Tf9R/deKzsTMW5xGgzxvoZ+MWjQkzrX576dQ3UYOCCqxFWFzFfHbaOIMewN2f2rIUHtq4wh
-X-Gm-Message-State: AOJu0YxZSh0P+rVZQG32VIig0dPhRrNAayQzSeJ8o5xjA8kN6Ak/gQH7
-	nOyj4eTAPBRnvJzetxgdyWhp/F6KeSLuiJdqOjtlbxS90k5kzrGfvXwekKTB3qksECnBAZERYTB
-	ZOtKjjeWg1FznT0UD6gdV2EVqStMEBugT4OZmin8VrmzfuI7XddAC153rhzieFg==
-X-Received: by 2002:a05:6a20:9494:b0:1af:c0f9:b155 with SMTP id adf61e73a8af0-1afc8d8eb58mr5402213637.38.1715254274439;
-        Thu, 09 May 2024 04:31:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEznRBomI8zqavjnHRv+qhrEvXhhgPA38IG4MHjby0WMFKowdUH6+SUrWT3PbTYHv67iCKEGw==
-X-Received: by 2002:a05:6a20:9494:b0:1af:c0f9:b155 with SMTP id adf61e73a8af0-1afc8d8eb58mr5402187637.38.1715254274006;
-        Thu, 09 May 2024 04:31:14 -0700 (PDT)
-Received: from zeus.elecom ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c2567ccsm12023495ad.301.2024.05.09.04.31.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 04:31:13 -0700 (PDT)
-From: Ryosuke Yasuoka <ryasuoka@redhat.com>
-To: krzk@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syoshida@redhat.com,
-	syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
-Subject: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-Date: Thu,  9 May 2024 20:30:33 +0900
-Message-ID: <20240509113036.362290-1-ryasuoka@redhat.com>
-X-Mailer: git-send-email 2.44.0
+        bh=J580ICpcOc18LR2tYPLoMdkVY56F2qD4SEKK1qAL5yg=;
+        b=vkfD/mjVaaLfV51dZ31lEO94RyMvrLrpyvxZzMjneNt05XlouBDA1ZW0J3cDN5jWEg
+         UkJI23te1TdZfABsNe2E+YsYUX3ogxU+Dz+tCb3KMeyRJ7GCfm4WLuvWQzdwyB9gMrvs
+         cHSldxi8/nbKigyGxTCfXxNVEmQ3jj4CDr163UjjuLuUWjenx3gt9Rdu6ivaaFlQNRKU
+         JN426kExgpWP2uYFlP6EjHucccLVtK9fs/i2xCGacmEGZJUdN+QtQNj1yyA1xVow4jl/
+         aFvvTptn2Z3nSmdwZLwowssNYSGy7NHRzjDN7oA3oDSpNZElTP02zG++kkFItrlUcDYU
+         shtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ks6YXoXR2AOGUW7Z02fUCO9BIZCgtSMFZvFRy8n0YWjKNwuaxjL++aIhfR+vXe8/DfKZ9mfT3CdwEMf1bMidGipXKTinoseam4/i
+X-Gm-Message-State: AOJu0Yy3wlesxlqSCrGpiQ7RE3kcC5dube3FnoA972+z4hTjtbopUlzp
+	7Q3AlnFQbBo06Yc0MHlrSKsJEQN8XcUq3eJDgnbByuIydJE1DxJAEyJTjk6phF3l6+wajqW24pg
+	K98fvb6meGwMoKLE2gxrQkbh5X/a3QjjSHQ6pKw==
+X-Google-Smtp-Source: AGHT+IEfaCfQubu0abV2NMgYTivyKDCF+wOYcdPXycOmHmsIEbvjKhurZcgORLCZE2y7Zlgc68XyimSEPRYH4Jo0rAQ=
+X-Received: by 2002:a0d:df4c:0:b0:614:719a:501c with SMTP id
+ 00721157ae682-62085c79e1bmr53862627b3.14.1715254399818; Thu, 09 May 2024
+ 04:33:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com> <20240509-videocc-sm8150-dt-node-v4-2-e9617f65e946@quicinc.com>
+In-Reply-To: <20240509-videocc-sm8150-dt-node-v4-2-e9617f65e946@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 9 May 2024 14:33:07 +0300
+Message-ID: <CAA8EJpq91Ouuwg59CJfM62cC6LsmzOB64ee330c7h0+Pmx_JJA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: sm8150: Add video clock
+ controller node
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-syzbot reported the following uninit-value access issue [1]
-
-nci_rx_work() parses received packet from ndev->rx_q. It should be
-validated header size, payload size and total packet size before
-processing the packet. If an invalid packet is detected, it should be
-silently discarded.
-
-Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
-Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534 [1]
-Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
----
-v4
-- v3 patch uses goto statement and it makes codes complicated. So this
-  patch simply calls kfree_skb inside loop and remove goto statement.
-- [2] inserted kcov_remote_stop() to fix kcov check. However, as we
-  discuss about my v3 patch [3], it should not exit the for statement
-  and should continue processing subsequent packets. This patch removes
-  them and simply insert continue statement.
-
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=19e35f24750d
-
-v3
-https://lore.kernel.org/netdev/20240502082323.250739-1-ryasuoka@redhat.com/T/
-- As Simon pointed out, the valid packets will reach invalid_pkt_free
-and kfree_skb(skb) after being handled correctly in switch statement.
-It can lead to double free issues, which is not intended. So this patch
-uses "continue" instead of "break" in switch statement.
-
-- In the current implementation, once zero payload size is detected, the
-for statement exits. It should continue processing subsequent packets. 
-So this patch just frees skb in invalid_pkt_free when the invalid 
-packets are detected. [3]
-
-v2
-https://lore.kernel.org/lkml/20240428134525.GW516117@kernel.org/T/
-
-- The v1 patch only checked whether skb->len is zero. This patch also
-  checks header size, payload size and total packet size.
+On Thu, 9 May 2024 at 13:24, Satya Priya Kakitapalli
+<quic_skakitap@quicinc.com> wrote:
+>
+> Add device node for video clock controller on Qualcomm
+> SM8150 platform.
+>
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8155p.dtsi |  4 ++++
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi  | 14 ++++++++++++++
+>  2 files changed, 18 insertions(+)
 
 
-v1
-https://lore.kernel.org/linux-kernel/CANn89iJrQevxPFLCj2P=U+XSisYD0jqrUQpa=zWMXTjj5+RriA@mail.gmail.com/T/
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
- net/nfc/nci/core.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
-
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index b133dc55304c..0aaff30cb68f 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
- 				 ndev->ops->n_core_ops);
- }
- 
-+static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
-+{
-+	if (skb->len < header_size ||
-+	    !nci_plen(skb->data) ||
-+	    skb->len < header_size + nci_plen(skb->data)) {
-+		return false;
-+	}
-+	return true;
-+}
-+
- /* ---- NCI TX Data worker thread ---- */
- 
- static void nci_tx_work(struct work_struct *work)
-@@ -1516,24 +1526,32 @@ static void nci_rx_work(struct work_struct *work)
- 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
- 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
- 
--		if (!nci_plen(skb->data)) {
-+		if (!skb->len) {
- 			kfree_skb(skb);
--			kcov_remote_stop();
--			break;
-+			continue;
- 		}
- 
- 		/* Process frame */
- 		switch (nci_mt(skb->data)) {
- 		case NCI_MT_RSP_PKT:
--			nci_rsp_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
-+				nci_rsp_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		case NCI_MT_NTF_PKT:
--			nci_ntf_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
-+				nci_ntf_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		case NCI_MT_DATA_PKT:
--			nci_rx_data_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_DATA_HDR_SIZE))
-+				nci_rx_data_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		default:
 -- 
-2.44.0
-
+With best wishes
+Dmitry
 
