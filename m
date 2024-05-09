@@ -1,163 +1,118 @@
-Return-Path: <linux-kernel+bounces-174481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4079C8C0F5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:11:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FCD8C0F61
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0C00B23173
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:10:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F130EB214F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22DF152196;
-	Thu,  9 May 2024 12:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="V/0hlFlh"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C69B15279E;
+	Thu,  9 May 2024 12:09:18 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C3914D297
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 12:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D9B14B09C;
+	Thu,  9 May 2024 12:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256541; cv=none; b=Tc4EBjFzyg/bWMMVmk7E0M2Slcn8PqA+0IvXqPU0uoxx0Z6qU0LUHqcYDJoAU9ZR/nqjVLlA3CYQD3Zy3WUyO4c08xIEXi2R7l7EzY0jqYqfK5Mu0M5URobp0iGZ3s6ws/EArsDl9Co8J38Qr+/OcLWOqSAq0FQqXm4y3PsL56s=
+	t=1715256557; cv=none; b=PrBJq6czycpumcOICfcxqf1PIdQX2vFJRlwiQDcdAGXqWEdTVk4OeKrEtwQi5zBhW4Ys+mrshdbcR9CoGcIIjXoF8UHJUyyb3FIlEAPFZyLwSj5lI481SYjiJ0+a82e8vGdttjVP8JlqgRz3jknxeLkz8MXH3XMmIMq/KLZP/fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256541; c=relaxed/simple;
-	bh=MheGQE/mJWoO4vRhqhUVOcqkrd5yQj8kOf03Ylf9vEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uBCmEjfrFecFkey1lK7fvKFGyZwNzZlu86BPkoyNeI7S/ar0mDAS5WVdF83dAtTT1rSlFi1LbWsQVxK0HvesgawzSTmn8eio6ub1ULkBo+eWn5etRdo1t4dKULf92pdI9AM/uFoZNDXWpIilPrOJI762WVNqjDBZ0zgVV0GLCbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=V/0hlFlh; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=jmn3ELwSO3SoaQE9A/DU9RdheTNewmzS+o05cKdEnIc=; b=V/0hlFlhP867wZxl
-	Oc7CTsJrHy7I0PYqfbnmc78cXOuYHE32ZyZ/RBjx5b9T9aINeUmAujQFgH7mN2s+9vcNUs3UiHJQ8
-	PRy7+rD11n/q+sDUvB64+1Q+VxbNsdzBU4W7JZwFGPfxxJemws+M0ll9iZQly/aqwcu822huF9kUF
-	7v2g3CU61fOCeUQ+mhOYbYakWs++zeWdMg5ZF5TGh40sXaogC9qJGqan0MFaExhsE3/fBd/gqUyuy
-	frb0D34Usx0M8xB+6sgvrAvLqi1r5CUNeBplDWqeYA+gXX4MAuVAxGPs+ehz8t2I1Qtju4nbu+RaF
-	Rgh/gX+kPYo29Ytblw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s52a0-000BVP-1g;
-	Thu, 09 May 2024 12:08:56 +0000
-Date: Thu, 9 May 2024 12:08:56 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: linux-kernel@vger.kernel.org
-Cc: keescook@chromium.org, nathan@kernel.org, luc.vanoostenryck@gmail.com
-Subject: thoughts wanted on dead code hunting?
-Message-ID: <Zjy82Ja6G2iIHl75@gallifrey>
+	s=arc-20240116; t=1715256557; c=relaxed/simple;
+	bh=oZq6oVWidnT9H3M8+Ig2n8qCcxDsFEqjelAHqdOZVeI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=XqZ6RlE6xrN7nZj8NO6vwJVYxbpBLF5m28PWkWxnJtmE62UWmAgzELwEpMmXB156fnWb7wf+4UCYK/0oKS6NJiM8OMCjGbg+KBAMkzE4oI5Fr2CPPoE/kM/im1hBxq6fA1qZyONLrd3dPUpTwFQuJYrRI2LqwpWgdjk/UgtV2Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VZrQp1D3sz4f3kpx;
+	Thu,  9 May 2024 20:09:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 83C7A1A0F10;
+	Thu,  9 May 2024 20:09:11 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgDnCw_mvDxmQLbrMQ--.46209S3;
+	Thu, 09 May 2024 20:09:11 +0800 (CST)
+Subject: Re: [PATCH 9/9] jbd2: remove unnecessary "should_sleep" in kjournald2
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ jack@suse.com
+References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
+ <20240506141801.1165315-10-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <1f72fcda-a945-415e-0cb3-9de8de8efe60@huaweicloud.com>
+Date: Thu, 9 May 2024 20:09:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 11:29:50 up 22:43,  1 user,  load average: 0.00, 0.00, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20240506141801.1165315-10-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDnCw_mvDxmQLbrMQ--.46209S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrurW7Jr15Jr17WFW3uw1rWFg_yoWkGwc_XF
+	WSyrnrZrZIgrsrAFWIkw1DCr1Ykrs7Xr18Zan2yw4UKr1Dta1vyayDJF9rtwnxWFsaqrWY
+	9a1I9a18Kr9FqjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbWCJP
+	UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi,
-  I've stumbled into finding various types of dead code in the kernel
-and am after peoples thoughts and suggestions.
-  Apologies if this is a bit long.
+On 2024/5/6 22:18, Kemeng Shi wrote:
+> We only need to sleep if no running transaction is expired. Simply remove
+> unnecessary "should_sleep".
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-  It started off after I noticed an unused LIST_HEAD in the parallel
-code, so I sent some patches to clean that and related code up
-(waiting review!), but then wrote a hacky script to find more
-(and then mutex's); and there's a handful of patches removing those
-on list (please review!).
+It looks much clearer now.
 
-  But then I noticed associated with those were some unused structs;
-so I went struct hunting, and that's where I've got a problem.
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-  That's found me ~200 candidates; where I guess 150ish are probably
-real; but my hacky script is, well trivial and hacky, so they each
-need eyeballing, then a git lookup to see why they're unused, and a
-compile just to make there's not some subtle macro somewhere.
+> ---
+>  fs/jbd2/journal.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index ce9004f40ffb..65c6cfce9d92 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -220,15 +220,12 @@ static int kjournald2(void *arg)
+>  		 * so we don't sleep
+>  		 */
+>  		DEFINE_WAIT(wait);
+> -		int should_sleep = 1;
+>  
+>  		prepare_to_wait(&journal->j_wait_commit, &wait,
+>  				TASK_INTERRUPTIBLE);
+>  		transaction = journal->j_running_transaction;
+> -		if (transaction && time_after_eq(jiffies,
+> -						transaction->t_expires))
+> -			should_sleep = 0;
+> -		if (should_sleep) {
+> +		if (transaction == NULL ||
+> +		    time_before(jiffies, transaction->t_expires)) {
+>  			write_unlock(&journal->j_state_lock);
+>  			schedule();
+>  			write_lock(&journal->j_state_lock);
+> 
 
- ** Questions:
-  a) Can anyone think of a better tool than my script (see bottom)?
-   The simplicity is a blessing & a curse - it doesn't know about
-   #ifdef's so I don't need to try lots of configs, but at the same
-   time, it can't tell if the struct actually gets used in a macro
-   and I have to eyeball for a struct which is assigned to as
-   a variable at declaration time.
-
-  b) The dead structs are all over; so they've mostly been individual
-  patches rather than a big patch series - how do people feel about
-  another 150ish similar patches ?
-
- ** other Thoughts
-  * The dead code is all over; from incredibly obscure drivers, to
-   common stuff like ftrace and iscsi.
-
-  * Most of them seem to be the remains of previous cleanups or
-   refactors where someone has removed the function that used
-   it but forgot to remove the list or struct.  Sometimes that happened
-   prior to the first commit, so it's always been dead in the tree.
-
-  * There's a few cases where people have added 'static' to a variable
-   to cleanup compiler warnings, but actually they just needed to
-   delete the variable.
-
-  * A harder problem is unused structure members; some I've spotted
-   by accident, some follow from what else I delete; e.g. if you
-   delete a LIST_HEAD, there's a good chance there's a struct somewhere
-   with the list entry in it that's no longer used.
-
-  * It's not just the kernel; I've just mopped up a few struct's in Mesa
-    as well; but different coding standards make the script harder in
-    places; e.g. X uses typedef struct... everywhere so then you have
-    the problem of hunting the use of the typedef name.
-
-Anyway, that's way too long, all thoughts welcome.
-(Reviews, even more welcome, as they get merged I'll work through my list
-for a few more).
-
-Scripts below,
-
-Dave
-(I've cc'd a few people at a guess for people who might suggest tools;
-but please copy in anyone else who might)
-
-* hacky script for finding unused LIST_HEAD
-
-  (ie print a count of times the name of the list is used in the same file;
-   if it's 1 it's worth looking at)
-
-ag 'static LIST_HEAD'| sed -e 's/[():]/ /'g |
-while read FNAME LINE STATIC DEF VARNAME TRAIL
-do
-echo ">>>" $FNAME ' : ' $VARNAME
-echo -n "Count: "
-grep $VARNAME $FNAME | wc -l 
-grep $VARNAME $FNAME
-done
-
-* hacky script for finding unused struct's
-
-  (ie print a count of time the name of the struct is used in the same file;
-  only bother with .c files; doesn't spot assignments to initialise the struct
-  on later lines, gets confused by struct's with short names etc).
-
-grep -r '^struct [^(=]* {'| tr ':' ' ' |
-while read FNAME STRUCT NAME TAIL
-do
-  echo "$FNAME" | grep -q '[.]c$' || continue
-echo ">>>" $FNAME ' : ' $NAME
-echo -n "Count: "
-grep $NAME $FNAME | wc -l 
-#grep $VARNAME $FNAME
-done
-
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
 
