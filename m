@@ -1,79 +1,148 @@
-Return-Path: <linux-kernel+bounces-174113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758068C0A52
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:02:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE3D8C09D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BDADB21EB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106111C217CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7B81482F6;
-	Thu,  9 May 2024 04:02:12 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2829B146A78;
+	Thu,  9 May 2024 02:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="m0rQ3P5a"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC817147C8B;
-	Thu,  9 May 2024 04:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475C7380
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 02:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715227331; cv=none; b=hff6X4wqdOb6kKmodgtU1poqOfY6FfWVtEKKLWwvkz3sjlbRR63FbLuRXFvad/ImBOP1gzS71PMq23KswfpLY8AGNaKxXteAQjWTRxpuqc3PIBS8fR2X6pij1gt26Lt3hmFvmrYtjiT2ZyhZ4YhItqLJJi4+UHdcgrKWltKn8S0=
+	t=1715222380; cv=none; b=Yk9i0vnVT44pquw7J+tkcmnckBAMY+vwCyuQyzYVwq75+xFDi6nsbe5EX0xaHoEymP687VfeDPcyzJ0nVNzW7IQAwC9Dnl3vvOuFQsskff7bzzkj4vDak1v7mcYUTV/egu4rNchCpxhCX2WtuULCj150iaK/nXOTkp5BVRJgJSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715227331; c=relaxed/simple;
-	bh=48L2aqqLFVW7XU+gBbBWyvRk7z2MDQ5uEfpVBPdJmho=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=Xu/RmDIbTLmBMC/idmOPNlagHqOvo2YXu9Bj/yS5eWZtV/qNKC9svN1AnW2tAuTJirWPvQUM39l3KGx1D/DyAPmDrMWaljIxx8oOHaMdAOQCVV3+AN9WJ0gW14pEWWJqtXBJADsX2XA2vynColN+ALAHX6rCKJVgIZ0OF8pzoIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VZdcs4h0mz8XrSB;
-	Thu,  9 May 2024 12:02:05 +0800 (CST)
-Received: from szxlzmapp05.zte.com.cn ([10.5.230.85])
-	by mse-fl1.zte.com.cn with SMTP id 4492OwvM072423;
-	Thu, 9 May 2024 10:31:16 +0800 (+08)
-	(envelope-from cheng.lin130@zte.com.cn)
-Received: from mapi (szxlzmapp03[null])
-	by mapi (Zmail) with MAPI id mid14;
-	Thu, 9 May 2024 10:30:59 +0800 (CST)
-Date: Thu, 9 May 2024 10:30:59 +0800 (CST)
-X-Zmail-TransId: 2b05663c356305b-30337
-X-Mailer: Zmail v1.0
-Message-ID: <202405091030597804KUqLDPPj2FpTIBrZZ5Eo@zte.com.cn>
-In-Reply-To: <ZjuhDH_i9QWL4vyz@google.com>
-References: 20240508184743778PSWkv_r8dMoye7WmZ7enP@zte.com.cn,ZjuhDH_i9QWL4vyz@google.com
+	s=arc-20240116; t=1715222380; c=relaxed/simple;
+	bh=sS0PWwSVmuY6ke3uD6YjWPykPsFgxqa8lQhRYGi2Vq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=og+s8NZjZ0AnQt/O5u3k9wpEfzWOTTzEO++9kzK28+5aomrc/5Jr4eCMkDWICxc4AECIfdIOKtXQlGUkzNfp+JJNcNsxSo2m0WxAZl5emTphGnOPoC3ZRKMXjUM9kiCHo7KBHkj3YSr/S57O1n34FyvntLzNB/pRtNvOVoOfQDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=m0rQ3P5a; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715222374; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=GmlupQEObKD3hcpHsT80fX0O66yCosUf38s2RUlYQ0I=;
+	b=m0rQ3P5aZfnpT/UyC+KgxEHsMm2T3l2169NDY8EUboiOq1n2ookzSVngOzCuuHwKPGfB7CT6gSvJ1zKaZ/b6VvB/CcX3nQ1cGrsycwmF6hbL9c25M4LWOPwQDQVKTNLCnegp5pI8DXb7nPUdLXhgM4ZrJ9r4IW0RhIQe/5JtWo4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W65JQwU_1715222372;
+Received: from 30.97.48.191(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W65JQwU_1715222372)
+          by smtp.aliyun-inc.com;
+          Thu, 09 May 2024 10:39:33 +0800
+Message-ID: <20d782ad-c059-4029-9c75-0ef278c98d81@linux.alibaba.com>
+Date: Thu, 9 May 2024 10:39:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <cheng.lin130@zte.com.cn>
-To: <seanjc@google.com>
-Cc: <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <jiang.yong5@zte.com.cn>,
-        <wang.liang82@zte.com.cn>, <jiang.xuexin@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gS1ZNOiBpbnRyb2R1Y2Ugdm0ncyBtYXhfaGFsdF9wb2xsX25zIHRvIGRlYnVnZnM=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 4492OwvM072423
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 663C4ABD.007/4VZdcs4h0mz8XrSB
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
+ called with __GFP_NOFAIL
+To: Barry Song <21cnbao@gmail.com>, hailong.liu@oppo.com
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+ lstoakes@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ xiang@kernel.org, chao@kernel.org, Oven <liyangouwen1@oppo.com>
+References: <20240508125808.28882-1-hailong.liu@oppo.com>
+ <CAGsJ_4xN0MBz_73wUvMp74upd9SaQ+TCRJufEj26Y619Rtr7Zw@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4xN0MBz_73wUvMp74upd9SaQ+TCRJufEj26Y619Rtr7Zw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> From: seanjc <seanjc@google.com>
-> > From: Cheng Lin <cheng.lin130@zte.com.cn>
-> >
-> > Introduce vm's max_halt_poll_ns and override_halt_poll_ns to
-> > debugfs. Provide a way to check and modify them.
-> Why?
-If a vm's max_halt_poll_ns has been set using KVM_CAP_HALT_POLL,
-the module parameter kvm.halt_poll.ns will no longer indicate the maximum
-halt pooling interval for that vm. After introducing these two attributes into
-debugfs, it can be used to check whether the individual configuration of the
-vm is enabled and the working value.
-This patch provides a way to check and modify them through the debugfs.
+Hi,
+
+On 2024/5/9 10:20, Barry Song wrote:
+> On Thu, May 9, 2024 at 12:58 AM <hailong.liu@oppo.com> wrote:
+>>
+>> From: "Hailong.Liu" <hailong.liu@oppo.com>
+>>
+>> Commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmalloc")
+>> includes support for __GFP_NOFAIL, but it presents a conflict with
+>> commit dd544141b9eb ("vmalloc: back off when the current task is
+>> OOM-killed"). A possible scenario is as belows:
+>>
+>> process-a
+>> kvcalloc(n, m, GFP_KERNEL | __GFP_NOFAIL)
+>>      __vmalloc_node_range()
+>>          __vmalloc_area_node()
+>>              vm_area_alloc_pages()
+>>              --> oom-killer send SIGKILL to process-a
+>>              if (fatal_signal_pending(current)) break;
+>> --> return NULL;
+>>
+>> to fix this, do not check fatal_signal_pending() in vm_area_alloc_pages()
+>> if __GFP_NOFAIL set.
+>>
+>> Reported-by: Oven <liyangouwen1@oppo.com>
+>> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
+>> ---
+>>   mm/vmalloc.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+>> index 6641be0ca80b..2f359d08bf8d 100644
+>> --- a/mm/vmalloc.c
+>> +++ b/mm/vmalloc.c
+>> @@ -3560,7 +3560,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>>
+>>          /* High-order pages or fallback path if "bulk" fails. */
+>>          while (nr_allocated < nr_pages) {
+>> -               if (fatal_signal_pending(current))
+>> +               if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
+>>                          break;
+> 
+> why not !nofail ?
+> 
+> This seems a correct fix, but it undermines the assumption made in
+> commit dd544141b9eb
+>   ("vmalloc: back off when the current task is OOM-killed")
+> 
+> "
+>      This may trigger some hidden problems, when caller does not handle
+>      vmalloc failures, or when rollaback after failed vmalloc calls own
+>      vmallocs inside.  However all of these scenarios are incorrect: vmalloc
+>      does not guarantee successful allocation, it has never been called with
+>      __GFP_NOFAIL and threfore either should not be used for any rollbacks or
+>      should handle such errors correctly and not lead to critical failures.
+> "
+> 
+> If a significant kvmalloc operation is performed with the NOFAIL flag, it risks
+> reverting the fix intended to address the OOM-killer issue in commit
+> dd544141b9eb.
+> Should we indeed permit the NOFAIL flag for large kvmalloc allocations?
+
+Just from my perspective, I don't really care about kmalloc, vmalloc
+or kvmalloc (__GFP_NOFAIL).  I even don't care if it returns three
+order-0 pages or a high-order page.   I just would like to need a
+virtual consecutive buffer (even it works slowly.) with __GFP_NOFAIL.
+
+Because in some cases, writing fallback code may be tough and hard to
+test if such fallback path is correct since it only triggers in extreme
+workloads, and even such buffers are just used in a very short lifetime.
+Also see other FS discussion of __GFP_NOFAIL, e.g.
+https://lore.kernel.org/all/ZcUQfzfQ9R8X0s47@tiehlicka/
+
+In the worst cases, it usually just needs < 5 order-0 pages (for many
+cases it only needs one page), but with kmalloc it will trigger WARN
+if it occurs to > order-1 allocation. as I mentioned before.
+
+With my limited understanding I don't see why it could any problem with
+kvmalloc(__GFP_NOFAIL) since it has no difference of kmalloc(GFP_NOFAIL)
+with order-0 allocation.
+
+
+Thanks,
+Gao XIang
 
