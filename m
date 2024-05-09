@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-174920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C64E58C176A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:28:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB99B8C1770
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80475286805
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BE681F23DC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9940F126F02;
-	Thu,  9 May 2024 20:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBF8128376;
+	Thu,  9 May 2024 20:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zX+KV5aA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gEMD0idH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D380043;
-	Thu,  9 May 2024 20:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6DA8003F;
+	Thu,  9 May 2024 20:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715285843; cv=none; b=Tk4mGnTjrbeh8qvmyffjzQ7jwwRTDywDmXOi1p+8FckUBZTMiG6kE2W6We/Gk1mDdxiFjEFZTEYek92s0CJ7X1GLQjg1WGr2t9vhm8ugW+ksoRKdteLBjxchMus4tO3RinumiKiDFbc92pHxEPAJLzYuRMQ0VeeNbbEnJno+834=
+	t=1715285886; cv=none; b=HGr5+fGW5T15DpXb2i+IuMIAajXJm4MAtx4UtyApi/IJB1S1I7XYOZEakbHhohhn6t6/GDLj60/iboDA2bKiApKz/Or9EtH+pHyPTpEwKnvKSEOj9colLJhbAcJeQ1FhXL9BQ+G0sMQt0/oiI2xHnFH6Zt1ORR26iW8n/UCJsn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715285843; c=relaxed/simple;
-	bh=lICYDaRSn8HsmeXAurxSzsp+d+rM5QiHyZnsXPzU7TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=esmp/TfaDpoE2reeQ8svcNTcSDQhSm/uv7SSc8N+JDxzqNKgPAIjBtyFamcHhGA3k/KyWNSVKIlsEhblIMcv+9zksBhJhd2xN+lNqsRIuRU5biM7TxwxXPLSS7LOeaV37vY8j0H4y1k/D+rYy+fsCoBNWI18C65f3Q7EcpQex7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zX+KV5aA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2Ct/oG04cz4M7nY829u2Qio1z6a5TPRCIdyjKCqCtGg=; b=zX+KV5aAAuuYlSsD4j+xGKxI28
-	oF0zirnqHjWj16/AD3Vti5CjmatTU9V4UD60sQq2VOrTUQzEuXR2j2XM+e9zwjJlrV9AHTM5errXT
-	nHEbTs5DN4clan/cfjriWrxGljuiFMl7gcoMIFZm9iyz8+sPYfkBPLu7NaSv9qHxGpzo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s5ACH-00F4pk-L3; Thu, 09 May 2024 22:16:57 +0200
-Date: Thu, 9 May 2024 22:16:57 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ratheesh Kannoth <rkannoth@marvell.com>
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Breno Leitao <leitao@debian.org>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Shradha Gupta <shradhagupta@microsoft.com>
-Subject: Re: [PATCH net-next v3] net: Add sysfs atttribute for max_mtu
-Message-ID: <6203153e-780c-4570-9c4e-a053cfbc3290@lunn.ch>
-References: <1715245883-3467-1-git-send-email-shradhagupta@linux.microsoft.com>
- <20240509094225.GA1078660@maili.marvell.com>
+	s=arc-20240116; t=1715285886; c=relaxed/simple;
+	bh=tGu6SKDmfGGrNOQGfcINYAk+oOJrTcaMeM+RqlOw6DM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iqlF/4uaZUho4MpyKldIESymfD63wQ0wTLj9s7b5+YcnrTmNXioCIk2+iBmGUal9Slq+8BozFdZwrS7LaNqIUq/MfISa9u8fCfrytSRcFJPVVWpX9b5DoZSi/B9uEr3eL6EJM+9qxL0UsxQsJskn1iJLz9INGKjqnH6DEf3g06s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gEMD0idH; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715285884; x=1746821884;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tGu6SKDmfGGrNOQGfcINYAk+oOJrTcaMeM+RqlOw6DM=;
+  b=gEMD0idH/0Z7mc1jg4mCuTK3xjAs8RCvAWrqB0aK8aeTEx/Q+5PgimQ3
+   pvquvLzUay2y25GFeOn08KIWxvmmGPTmN+HqnDXMYrjn37cVmXIuBE/4E
+   gWuumzYqWQYFofwUaUiyNn2jdfWD6gUnuoQPGsB3CSyQHzBkJ70/O4kEp
+   cD6ddDpDLqTegqlmaLjrpqsjs3R+9otKR81FXzmNVdw4fyonbz0T8Mg/X
+   r0yTQubBIJlft2ztItRp2RnTX3npvXfNAWGhhssxgU6oBnFTqEy3Cy5D1
+   nfj1q7C3y/GP2fL0Z3Riw8p6ulmY5Ns0KyWBWtHBox8L5gWsi5cpXnSzo
+   g==;
+X-CSE-ConnectionGUID: zwusPubYRaCGHIpOy64c1w==
+X-CSE-MsgGUID: 63+g3T1bT1yuTxldctbRXg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="22634826"
+X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
+   d="scan'208";a="22634826"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 13:18:03 -0700
+X-CSE-ConnectionGUID: 6GK+JPSTS/Gu/bTcpqXLPw==
+X-CSE-MsgGUID: kOyD4yLnQ72oWZ+56hCR8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
+   d="scan'208";a="66808246"
+Received: from epinckar-mobl.amr.corp.intel.com (HELO [10.209.98.74]) ([10.209.98.74])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 13:18:03 -0700
+Message-ID: <2125dda3-829c-4113-988c-3c5861127f97@intel.com>
+Date: Thu, 9 May 2024 13:18:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509094225.GA1078660@maili.marvell.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] doc: swiotlb: iommu/dma: Clarify swiotlb=force
+ option applies only to dma-direct
+To: "T.J. Mercier" <tjmercier@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: petr@tesarici.cz, mhklinux@outlook.com, robin.murphy@arm.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240507013502.3095744-1-tjmercier@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240507013502.3095744-1-tjmercier@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 09, 2024 at 03:12:25PM +0530, Ratheesh Kannoth wrote:
-> On 2024-05-09 at 14:41:23, Shradha Gupta (shradhagupta@linux.microsoft.com) wrote:
-> > For drivers like MANA, max_mtu value is populated with the value of
-> > maximum MTU that the underlying hardware can support.
-> IIUC, this reads dev->mtu.
+So, I know get_maintainer.pl doesn't work great for files that are used
+by a lot of subsystems, but it doesn't seem _super_ hard to find
+relevant maintainers for this stuff.
 
-I think you are misunderstanding the code.
+There are many IOMMU and swiotlb folks in MAINTAINERS who aren't cc'd
+here.  I'd be great to get an ack from those folks.
+iommu@lists.linux.dev seems to pop up pretty frequently.
 
-> > +NETDEVICE_SHOW_RO(max_mtu, fmt_dec);
+I'd also have zero objections to a patch to:
 
-/* generate a show function for simple field */
-#define NETDEVICE_SHOW(field, format_string)				\
-static ssize_t format_##field(const struct net_device *dev, char *buf)	\
-{									\
-	return sysfs_emit(buf, format_string, dev->field);		\
-}									\
-static ssize_t field##_show(struct device *dev,				\
-			    struct device_attribute *attr, char *buf)	\
-{									\
-	return netdev_show(dev, attr, buf, format_##field);		\
-}									\
+	Documentation/arch/x86/x86_64/boot-options.rst
 
-#define NETDEVICE_SHOW_RO(field, format_string)				\
-NETDEVICE_SHOW(field, format_string);					\
-static DEVICE_ATTR_RO(field)
-
-So field is max_mtu, so that dev->field gets expanded to dev->max_mtu.
-
-> you can read the same using ifconfig
-
-We stopped using ifconfig years ago. You actually mean "ip link show"
-
-> or any thing that uses SIOCGIFMTU. why do you need to add a new sysfs ?
-
-SIOCGIFMTU is still implemented, but obsolete, replaced by netlink, as
-Eric pointed out.
-
-	Andrew
+that goes through another tree.
 
