@@ -1,129 +1,85 @@
-Return-Path: <linux-kernel+bounces-174520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E1C8C0FFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:56:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57898C1001
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5FA4B2274F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72ADB28342C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86BCF147C96;
-	Thu,  9 May 2024 12:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81C0152786;
+	Thu,  9 May 2024 12:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tCs3siLX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VEIpiZLu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tCs3siLX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VEIpiZLu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cwAMr01z"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338FE13B7BD;
-	Thu,  9 May 2024 12:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3027A150984;
+	Thu,  9 May 2024 12:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715259359; cv=none; b=Y/XMGkza+5oS1nGp+GfZEW7HSNZ+0X9tz8ciQowqc5uZgqWm3Qtb2494FgEmGcSmELyFuKXVipIXBVqoyYiD4OdAAUBWWpySzbZRSkzSA80zIM86p1Q0kmnqdIC8wc0XJU7nP544ZLE92ygQZ/8b1kicxQ3DrfVkJP5yAahmy8k=
+	t=1715259367; cv=none; b=m7V4+hupLodeH7N7oAWyAjD5UQQ5a/ONldvG/mZFqY/0cVEX9QYnxoFTACd4mc0FCbzCohAHtpj1M/TQbWJHjuluYm6In1ZNu0+ErNCXNYi2RtC3k9Q/1oCSinBmIPVOMFfUxAcguHNuHOrXdagRcQpNhrcJnIJDF12Dy2BGzt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715259359; c=relaxed/simple;
-	bh=+yrNz+x8AmBGhCusNGLRehWFRdVBgPm8KzI/G+gebfo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JMulqWkvGB0oSSZke1wU84JH+wy66Wimlt6Na62xch3qJS2p93sPbL7+/WKmMMfLd3qYADCLHFMzMvzat85N7BOsAs6A6H9CNtl5R9ggW+xRWQz7s9clbWxJ/H4GaCFr2MPyx1dC+5fkptaBoQ1oFr/uxbyNnGNZWtjVCgxG5Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tCs3siLX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VEIpiZLu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tCs3siLX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VEIpiZLu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	s=arc-20240116; t=1715259367; c=relaxed/simple;
+	bh=JDF0xeyMENO/odeWyrMiImKcaqtEJAiCaQpN6vwM+FU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bZ83g0m4kyiLunAL621dbi6AGCrEHvgMjkxi4J7ZKWVgjjS0yY8Mf0a8ZNY62yYSkprY42DaCJD5Z3Zckx8351UvM/gCuIFVZo5xOXuxM1cFzbz0621f82/uNyhu7dqgYRTyFCXjFcfuYqgULoHubBH3b3FPNaJ61FNve+pdAjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cwAMr01z; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715259360;
+	bh=JDF0xeyMENO/odeWyrMiImKcaqtEJAiCaQpN6vwM+FU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cwAMr01zu7qFF8kZOVDcp+mmxiKgLmUqZQsZmlPlrJr8BjhtpkyVbLixqZ7XpOyrG
+	 bRSMZcqHSxTt9AaQ1zF+746lGsmLaH8usSIbMoSKR6hy4N7W3nachwtREkLsvwWvrx
+	 TLzrKqRV55wChbisWCk19t4dO2hjtWTzg2z0JOZk2T1WkBg26i6QOnr1y2frodnDTy
+	 uCQ508rQhWrMQFaBr3NmrFe202moFeH8cholN+Anb7uh8SWT5SF+L5Gd4qbCy2aQpr
+	 J2rTOpnL4aTAnVTD9ZTkgLm+na6qFgtAah4NiJcS3Gb9F9RjdowK0h/DGClWOqI1mk
+	 jJRtNGA+dPhpQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2644434519;
-	Thu,  9 May 2024 12:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715259356; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eak4z/Q1raElMV4x2sDVDtJp74NrXqn3pqrKdF7GEtY=;
-	b=tCs3siLXSYLqW7NcB0O00qP9+2HdPEWUE9VSIcQkn3mrQMSNaV5UqZaPPserJK5KKF37B3
-	Rs6JF7jw0lSgm2zD9hDHNwtjCWvie+pFj98YKvDfB6gniNmLwh3Hc5Q13rt2MT7NGNeCzC
-	2nAFpSrWOd/20B/xIXp3nHsyjyh+9Y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715259356;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eak4z/Q1raElMV4x2sDVDtJp74NrXqn3pqrKdF7GEtY=;
-	b=VEIpiZLusgas8LHujVcUnYfr1irXH7li7GGTZyx+ejDArJrR4WClnYY9OZzt171nFa44oA
-	kjStmJvyKpCeLfBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715259356; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eak4z/Q1raElMV4x2sDVDtJp74NrXqn3pqrKdF7GEtY=;
-	b=tCs3siLXSYLqW7NcB0O00qP9+2HdPEWUE9VSIcQkn3mrQMSNaV5UqZaPPserJK5KKF37B3
-	Rs6JF7jw0lSgm2zD9hDHNwtjCWvie+pFj98YKvDfB6gniNmLwh3Hc5Q13rt2MT7NGNeCzC
-	2nAFpSrWOd/20B/xIXp3nHsyjyh+9Y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715259356;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eak4z/Q1raElMV4x2sDVDtJp74NrXqn3pqrKdF7GEtY=;
-	b=VEIpiZLusgas8LHujVcUnYfr1irXH7li7GGTZyx+ejDArJrR4WClnYY9OZzt171nFa44oA
-	kjStmJvyKpCeLfBA==
-Date: Thu, 9 May 2024 14:55:55 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Wardenjohn <zhangwarden@gmail.com>
-cc: jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
-    joe.lawrence@redhat.com, live-patching@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] livepatch: Rename KLP_* to KLP_TRANSITION_*
-In-Reply-To: <20240507050111.38195-2-zhangwarden@gmail.com>
-Message-ID: <alpine.LSU.2.21.2405091455290.3588@pobox.suse.cz>
-References: <20240507050111.38195-1-zhangwarden@gmail.com> <20240507050111.38195-2-zhangwarden@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BBF903782172;
+	Thu,  9 May 2024 12:55:59 +0000 (UTC)
+Message-ID: <217a8630-de33-4886-b812-53541dcdf178@collabora.com>
+Date: Thu, 9 May 2024 14:55:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpiolib: acpi: Add ACPI device NULL check to
+ acpi_can_fallback_to_crs()
+To: Laura Nao <laura.nao@collabora.com>, mika.westerberg@linux.intel.com,
+ andriy.shevchenko@linux.intel.com
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-acpi@vger.kernel.org, "kernelci.org bot" <bot@kernelci.org>
+References: <20240509104605.538274-1-laura.nao@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240509104605.538274-1-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 7 May 2024, zhangwarden@gmail.com wrote:
-
-> From: Wardenjohn <zhangwarden@gmail.com>
+Il 09/05/24 12:46, Laura Nao ha scritto:
+> Check ACPI device for NULL inside acpi_can_fallback_to_crs(), so callers
+> won't need to.
 > 
-> The original macros of KLP_* is about the state of the transition.
-> Rename macros of KLP_* to KLP_TRANSITION_* to fix the confusing
-> description of klp transition state.
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> Closes: https://lore.kernel.org/all/20240426154208.81894-1-laura.nao@collabora.com/
+> Fixes: 49c02f6e901c ("gpiolib: acpi: Move acpi_can_fallback_to_crs() out of __acpi_find_gpio()")
 > 
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-M
 
