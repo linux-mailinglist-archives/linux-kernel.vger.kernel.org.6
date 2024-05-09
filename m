@@ -1,230 +1,305 @@
-Return-Path: <linux-kernel+bounces-174248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A36BE8C0C16
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:46:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D1C8C0C19
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599BD282B63
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7CB22D0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37A2149C4E;
-	Thu,  9 May 2024 07:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C54149C71;
+	Thu,  9 May 2024 07:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TmJFEynq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E7bvP6ke"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783AC148307
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B513C9A9;
+	Thu,  9 May 2024 07:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240785; cv=none; b=MtV5IGv0A4BmBwTYrZSdFvKOMGg5zwhBmetGaLPSWOYFuCQ/fUvCt1H1Kt/WClmjTrivTiz84pc8YXvmrlWXDjkn3QwMZEjCY+JEKQCwV1QksLH9T+ZrURZ6xPH1OveBzmUcrktMwcidymXvJ1zL6p1SMFKtoRsCLQ6cuoe5qoI=
+	t=1715240869; cv=none; b=eZTbW3FvkVIVSbWlVZSKfzcC1BV78MwkMmYtmyX7LFNg0YER2e2FdrPH+Ot+XY1LKsd3dqsDBLkAzTN/rp+h4UrB4zhOs+fXAAzjwIgs7RQTq0m7qrabQJ7UIVHJCM577BA4vitOov3YuyVFMLqGTVZl4VI03t+ONtrrH3gPrus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240785; c=relaxed/simple;
-	bh=/VBJ95M2e7DnAFoUQlLHIXvBcw30/0yt8Gc1O0n40a0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z2cgkOR6YM4+FrlPzAX/eDlB+aa36crA/ox7sENsvkoGVMhGiPL80aPkyIAD2e7KUznMa9M7a5KXSs9pwzl+2cS+04zhuEXmv2vPM6iTrllyF/BzFFufsIP0rWiGr1czx191AKD55ML6aEDehU0j/d1/Gw7fMCNV1ce3QjWTF3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TmJFEynq; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715240784; x=1746776784;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=/VBJ95M2e7DnAFoUQlLHIXvBcw30/0yt8Gc1O0n40a0=;
-  b=TmJFEynqLbh20RGYakH+GDEWWuQb3ew5/nT1avkGmrfZuDTalOucRVkT
-   UqGhGj/6XaQuL9uefWGLG5wl+heHe3An1o3yyBi/hvk0uRae51o1QLrVA
-   KpeZCqbG4ZW2/uHkNaHB2noPgR7nRgl96WlnvDzNXGJeiDIXps6Go8Do7
-   GYFDfq3g+K5IFGojVhxnuwAFezyDq+ns/8mfebTLEayYfChrx4pIXbOCK
-   jDppYTNVoE+2tW4gvOdEhbTzGt4OS1/WOXwQul7n2tVZZ6GpQ3Z9kA/SD
-   N2NqB28kYstf82TcOS+o8hDUnrq29R70q4FQWT1i6IEstplnB91SyVnvM
-   Q==;
-X-CSE-ConnectionGUID: Y2b6x/rYS2yYFySI/xHoLA==
-X-CSE-MsgGUID: OmT04jjWSmidOYL5hh1PUw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="14954302"
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="14954302"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:46:23 -0700
-X-CSE-ConnectionGUID: UkjHkjEBRiueIdo9SYg/Dw==
-X-CSE-MsgGUID: ZwqJDB7NROywee5DOBY9xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="29720793"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:46:18 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
-  baolin.wang@linux.alibaba.com,  chrisl@kernel.org,  david@redhat.com,
-  hanchuanhua@oppo.com,  hannes@cmpxchg.org,  hughd@google.com,
-  kasong@tencent.com,  linux-kernel@vger.kernel.org,  ryan.roberts@arm.com,
-  surenb@google.com,  v-songbaohua@oppo.com,  willy@infradead.org,
-  xiang@kernel.org,  yosryahmed@google.com,  yuzhao@google.com,
-  ziy@nvidia.com
-Subject: Re: [PATCH v4 6/6] mm: swap: entirely map large folios found in
- swapcache
-In-Reply-To: <20240508224040.190469-7-21cnbao@gmail.com> (Barry Song's message
-	of "Thu, 9 May 2024 10:40:40 +1200")
-References: <20240508224040.190469-1-21cnbao@gmail.com>
-	<20240508224040.190469-7-21cnbao@gmail.com>
-Date: Thu, 09 May 2024 15:44:25 +0800
-Message-ID: <875xvnig4m.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1715240869; c=relaxed/simple;
+	bh=WSpinETt9ddM11kZM/g7bBn58Ik9E4gtbJ2CZCu87TQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Mp+bD8GUDXNS/t3sfU+SjBOE+ist2bMRTYku7chmXs2ViamEeETTPJPpTWGQ/LGosoX6VwxC3X63j6TBwkGcifKaQ6BDcse3okwflPy5f2mXgg5aAbq/z9Pwrh+h6o5kCLKJFwbdiVcn4GwOqUQooFKM1c9pVOtFUMSbphwTB2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E7bvP6ke; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4497AOWq002489;
+	Thu, 9 May 2024 07:47:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=OOkO59AaVpUJrC9ZzlQ801CtxogZJTDH0rDydpTKqFE=; b=E7
+	bvP6keAtfoFcnS49e7bEoSoWWCg+OPdwfPjGlfeTTAyeGpsVd7fWf1v8qtDIX+Hk
+	3pORv9C2eTpOvbvYr2dJ8rXT5goxaPUDuA4YlKs9vIpsxKFK6oNAp5/xr9YMY3Yh
+	z2grXBM/OXRgqAFjV3Vw4bJ2J62fslmDtQTfxM+LEg34ECe3vebsYkO3HoWIGl8G
+	JN0wIhrMnM3rFPttENK04r3j42fje3cRVT7h2nAljHbmPovkZUEu7snSxHO+gm0q
+	Y7Qovds73luxhWmrdsVAgh9fVcNXtE1WdQLcdmLGjv9dnGFLVGPqKpoW0MgDkMD9
+	wSfaECaxkZDK+VT0xWBg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07u8tbdu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 07:47:38 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4497lbV3031137
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 9 May 2024 07:47:37 GMT
+Received: from [10.251.44.50] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
+ 00:47:34 -0700
+Message-ID: <2a244afe-db2a-4b4a-a770-5664c887c8ef@quicinc.com>
+Date: Thu, 9 May 2024 10:47:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: i2c: Fix imx412 exposure control
+Content-Language: en-US
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+CC: Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        "Paul J. Murphy" <paul.j.murphy@intel.com>,
+        "Martina
+ Krasteva" <quic_mkrastev@quicinc.com>,
+        Daniele Alessandrelli
+	<daniele.alessandrelli@intel.com>,
+        Mauro Carvalho Chehab
+	<mchehab+huawei@kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v2-1-2e665f072f8f@linaro.org>
+ <dvyed4grpazqk7a3tz6dqwpkd76ghtrt4euinxt3kycdeh63ez@ljgfjsfhypix>
+ <20a0300a-ac16-456c-840a-e272f49050a8@linaro.org>
+ <bppn2qglcya3xbfy7uey5cgybyanxthhweqv7foojwi5rvqwmk@temzdedvecfe>
+ <171518540550.191612.743149233311332771@ping.linuxembedded.co.uk>
+From: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
+In-Reply-To: <171518540550.191612.743149233311332771@ping.linuxembedded.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: enAwVmUTNyEDS3ZRPNOhhkDun1VwGkvD
+X-Proofpoint-ORIG-GUID: enAwVmUTNyEDS3ZRPNOhhkDun1VwGkvD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_03,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405090052
 
-Barry Song <21cnbao@gmail.com> writes:
+Hi Kieran,
 
-> From: Chuanhua Han <hanchuanhua@oppo.com>
->
-> When a large folio is found in the swapcache, the current implementation
-> requires calling do_swap_page() nr_pages times, resulting in nr_pages
-> page faults. This patch opts to map the entire large folio at once to
-> minimize page faults. Additionally, redundant checks and early exits
-> for ARM64 MTE restoring are removed.
->
-> Signed-off-by: Chuanhua Han <hanchuanhua@oppo.com>
-> Co-developed-by: Barry Song <v-songbaohua@oppo.com>
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+On 5/8/2024 7:23 PM, Kieran Bingham wrote:
+> Quoting Jacopo Mondi (2024-05-08 13:43:34)
+>> Hi Bryan
+>>
+>> On Wed, May 08, 2024 at 01:30:31PM GMT, Bryan O'Donoghue wrote:
+>>> On 08/05/2024 09:02, Jacopo Mondi wrote:
+>>>> Hi Bryan
+>>>>
+>>>> On Mon, May 06, 2024 at 11:38:26PM GMT, Bryan O'Donoghue wrote:
+>>>>> Currently we have the following algorithm to calculate what value should be
+>>>>> written to the exposure control of imx412.
+>>>>>
+>>>>> lpfr = imx412->vblank + imx412->cur_mode->height;
+>>>>> shutter = lpfr - exposure;
+>>>>>
+>>>>> The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
+>>>>> algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
+>>>>> decreasing as the requested exposure value from user-space goes up.
+>>>>>
+>>>>> e.g.
+>>>>> [ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
+>>>>> [ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
+>>>>> [ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
+>>>>> [ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
+>>>>> [ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
+>>>>> [ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
+>>>>>
+>>>>> This behaviour results in the image having less exposure as the requested
+>>>>> exposure value from user-space increases.
+>>>>>
+>>>>> Other sensor drivers such as ov5675, imx218, hid556 and others take the
+>>>>> requested exposure value and directly.
+>>>>
+>>>> has the phrase been truncated or is it me reading it wrong ?
+>>>
+>>> Sod's law says no matter how many times you send yourself a patch before
+>>> sending it to LKML you'll find a typo ~ 2 seconds after reading your patch
+>>> on LKML.
+>>>
+>>
+>> Sounds familiar enough
+>>
+>>>
+>>>>> Looking at the range of imx sensors, it appears this particular error has
+>>>>> been replicated a number of times but, I haven't so far really drilled into
+>>>>> each sensor.
+>>>>
+>>>> Ouch, what other driver have the same issue ?
+>>>
+>>> So without data sheet or sensor its hard to say if these are correct or
+>>> incorrect, it's the same basic calculation though.
+>>>
+>>> drivers/media/i2c/imx334.c::imx334_update_exp_gain()
+>>>
+>>>         lpfr = imx334->vblank + imx334->cur_mode->height;
+>>>         shutter = lpfr - exposure;
+>>>
+>>>         ret = imx334_write_reg(imx334, IMX334_REG_SHUTTER, 3, shutter);
+>>>
+>>>
+>>> drivers/media/i2c/imx335.c::imx335_update_exp_gain()
+>>>
+>>>         lpfr = imx335->vblank + imx335->cur_mode->height;
+>>>         shutter = lpfr - exposure;
+>>>
+>>>         ret = imx335_write_reg(imx335, IMX334_REG_SHUTTER, 3, shutter);
+> 
+> Is this a copy / paste error (IMX334), or are you using a downstream/alternative
+> driver?
 
-LGTM, Thanks!  Feel free to add
+Those drivers was posted as part of intel keembay project upstream effort.
 
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+The drivers where verified but they had some rework during the internal
+review process. And it seems there was copy/paste error on imx412 (which
+i also missed during the review).
 
-in the future version.
+To remove the confusion. there are no issues with imx334 and imx335,
+those sensors are using shutter for setting exposure time.
 
-> ---
->  mm/memory.c | 59 +++++++++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 48 insertions(+), 11 deletions(-)
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index d9434df24d62..8b9e4cab93ed 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3968,6 +3968,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  	pte_t pte;
->  	vm_fault_t ret = 0;
->  	void *shadow = NULL;
-> +	int nr_pages;
-> +	unsigned long page_idx;
-> +	unsigned long address;
-> +	pte_t *ptep;
->  
->  	if (!pte_unmap_same(vmf))
->  		goto out;
-> @@ -4166,6 +4170,38 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  		goto out_nomap;
->  	}
->  
-> +	nr_pages = 1;
-> +	page_idx = 0;
-> +	address = vmf->address;
-> +	ptep = vmf->pte;
-> +	if (folio_test_large(folio) && folio_test_swapcache(folio)) {
-> +		int nr = folio_nr_pages(folio);
-> +		unsigned long idx = folio_page_idx(folio, page);
-> +		unsigned long folio_start = address - idx * PAGE_SIZE;
-> +		unsigned long folio_end = folio_start + nr * PAGE_SIZE;
-> +		pte_t *folio_ptep;
-> +		pte_t folio_pte;
-> +
-> +		if (unlikely(folio_start < max(address & PMD_MASK, vma->vm_start)))
-> +			goto check_folio;
-> +		if (unlikely(folio_end > pmd_addr_end(address, vma->vm_end)))
-> +			goto check_folio;
-> +
-> +		folio_ptep = vmf->pte - idx;
-> +		folio_pte = ptep_get(folio_ptep);
-> +		if (!pte_same(folio_pte, pte_move_swp_offset(vmf->orig_pte, -idx)) ||
-> +		    swap_pte_batch(folio_ptep, nr, folio_pte) != nr)
-> +			goto check_folio;
-> +
-> +		page_idx = idx;
-> +		address = folio_start;
-> +		ptep = folio_ptep;
-> +		nr_pages = nr;
-> +		entry = folio->swap;
-> +		page = &folio->page;
-> +	}
-> +
-> +check_folio:
->  	/*
->  	 * PG_anon_exclusive reuses PG_mappedtodisk for anon pages. A swap pte
->  	 * must never point at an anonymous page in the swapcache that is
-> @@ -4225,12 +4261,12 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  	 * We're already holding a reference on the page but haven't mapped it
->  	 * yet.
->  	 */
-> -	swap_free(entry);
-> +	swap_free_nr(entry, nr_pages);
->  	if (should_try_to_free_swap(folio, vma, vmf->flags))
->  		folio_free_swap(folio);
->  
-> -	inc_mm_counter(vma->vm_mm, MM_ANONPAGES);
-> -	dec_mm_counter(vma->vm_mm, MM_SWAPENTS);
-> +	add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
-> +	add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
->  	pte = mk_pte(page, vma->vm_page_prot);
->  
->  	/*
-> @@ -4247,27 +4283,28 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  		}
->  		rmap_flags |= RMAP_EXCLUSIVE;
->  	}
-> -	flush_icache_page(vma, page);
-> +	folio_ref_add(folio, nr_pages - 1);
-> +	flush_icache_pages(vma, page, nr_pages);
->  	if (pte_swp_soft_dirty(vmf->orig_pte))
->  		pte = pte_mksoft_dirty(pte);
->  	if (pte_swp_uffd_wp(vmf->orig_pte))
->  		pte = pte_mkuffd_wp(pte);
-> -	vmf->orig_pte = pte;
-> +	vmf->orig_pte = pte_advance_pfn(pte, page_idx);
->  
->  	/* ksm created a completely new copy */
->  	if (unlikely(folio != swapcache && swapcache)) {
-> -		folio_add_new_anon_rmap(folio, vma, vmf->address);
-> +		folio_add_new_anon_rmap(folio, vma, address);
->  		folio_add_lru_vma(folio, vma);
->  	} else {
-> -		folio_add_anon_rmap_pte(folio, page, vma, vmf->address,
-> +		folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, address,
->  					rmap_flags);
->  	}
->  
->  	VM_BUG_ON(!folio_test_anon(folio) ||
->  			(pte_write(pte) && !PageAnonExclusive(page)));
-> -	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
-> -	arch_do_swap_page_nr(vma->vm_mm, vma, vmf->address,
-> -			pte, vmf->orig_pte, 1);
-> +	set_ptes(vma->vm_mm, address, ptep, pte, nr_pages);
-> +	arch_do_swap_page_nr(vma->vm_mm, vma, address,
-> +			pte, pte, nr_pages);
->  
->  	folio_unlock(folio);
->  	if (folio != swapcache && swapcache) {
-> @@ -4291,7 +4328,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->  	}
->  
->  	/* No need to invalidate - it was non-present before */
-> -	update_mmu_cache_range(vmf, vma, vmf->address, vmf->pte, 1);
-> +	update_mmu_cache_range(vmf, vma, address, ptep, nr_pages);
->  unlock:
->  	if (vmf->pte)
->  		pte_unmap_unlock(vmf->pte, vmf->ptl);
+With this change imx412 is also working fine it was verified on our side.
 
---
-Best Regards,
-Huang, Ying
+> 
+> Upstream implements this:
+> 
+> /**
+>  * imx335_update_exp_gain() - Set updated exposure and gain
+>  * @imx335: pointer to imx335 device
+>  * @exposure: updated exposure value
+>  * @gain: updated analog gain value
+>  *
+>  * Return: 0 if successful, error code otherwise.
+>  */
+> static int imx335_update_exp_gain(struct imx335 *imx335, u32 exposure, u32 gain)
+> {
+> 	u32 lpfr, shutter;
+> 	int ret;
+> 
+> 	lpfr = imx335->vblank + imx335->cur_mode->height;
+> 	shutter = lpfr - exposure;
+> 
+> 	dev_dbg(imx335->dev, "Set exp %u, analog gain %u, shutter %u, lpfr %u\n",
+> 		exposure, gain, shutter, lpfr);
+> 
+> 	ret = imx335_write_reg(imx335, IMX335_REG_HOLD, 1, 1);
+> 	if (ret)
+> 		return ret;
+> 
+> 	ret = imx335_write_reg(imx335, IMX335_REG_LPFR, 3, lpfr);
+> 	if (ret)
+> 		goto error_release_group_hold;
+> 
+> 	ret = imx335_write_reg(imx335, IMX335_REG_SHUTTER, 3, shutter);
+> 	if (ret)
+> 		goto error_release_group_hold;
+> 
+> 	ret = imx335_write_reg(imx335, IMX335_REG_AGAIN, 2, gain);
+> 
+> error_release_group_hold:
+> 	imx335_write_reg(imx335, IMX335_REG_HOLD, 1, 0);
+> 
+> 	return ret;
+> }
+> 
+>>>
+>>>
+>>> Looking again I'm inclined to believe the imx334/imx335 stuff is probably
+>>> correct for those sensors, got copied to imx412/imx577 and misapplied to the
+>>> EXPOSURE control in imx412.
+> 
+> We're directly using the IMX335 driver in mainline on the i.MX8MP (and
+> also validated on Raspberry Pi 5). AGC is operational on both those
+> platforms with the sensor, so I have no reason to believe there is any
+> error in the upstream driver:
+> 
+>  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/i2c/imx335.c
+
+That is correct, there are no issues with imx334 and imx335.
+
+~Gjorgji
+
+> 
+> 
+> --
+> Kieran
+> 
+> 
+>>>
+>>
+>> Without datasheet/devices it really is hard to tell. Cargo cult at
+>> play most probably.
+>>
+>>>
+>>>>> - ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
+>>>>> + ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
+>>>>
+>>>> No datasheet here, can you confirm the IMX412_REG_EXPOSURE_CIT
+>>>> register is actually in lines ?
+>>>
+>>>
+>>> Looks like.
+>>>
+>>> From downstream "coarseIntgTimeAddr"
+>>>
+>>> imx577_sensor.xml
+>>>     <coarseIntgTimeAddr>0x0202</coarseIntgTimeAddr>
+>>>
+>>> imx586/imx586_sensor.cpp
+>>> pRegSettingsInfo->regSetting[regCount].registerAddr  =
+>>> pExposureData->pRegInfo->coarseIntgTimeAddr + 1;
+>>>
+>>> pRegSettingsInfo->regSetting[regCount].registerData  = (lineCount & 0xFF);
+>>>
+>>>> Apart from that, as the CID_EXPOSURE control limit are correctly
+>>>> updated when a new VBLANK is set by taking into account the exposure
+>>>> margins, I think writing the control value to the register is the
+>>>> right thing to do (if the register is in lines of course)
+>>>>
+>>>> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>>>>
+>>>> Thanks
+>>>>    j
+>>>>
+>>>
+>>> If that's good enough I'll fix the typo and apply your RB.
+>>
+>> Sure
+>>
+>> Thanks
+>>   j
+>>
+>>>
+>>> ---
+>>> bod
+>>>
+> 
 
