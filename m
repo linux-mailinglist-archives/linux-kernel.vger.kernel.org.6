@@ -1,133 +1,196 @@
-Return-Path: <linux-kernel+bounces-173959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21538C0846
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D54DF8C084C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96DFE1F21CD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6448E1F21FFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A50D23DE;
-	Thu,  9 May 2024 00:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E145C82;
+	Thu,  9 May 2024 00:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P+wH3b3X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="quGCd96A"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103BD161;
-	Thu,  9 May 2024 00:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6D34C70
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 00:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715213448; cv=none; b=D5NdQ6lZW+ut7pzI//csfAh5BDUWNaVTMouQ/+Hji1CQ0C9vytqD3lKv/tSmNutONkwawIhxz4ICjBuOecWYIz4DnESBY0VVki8YiYhebkom2iC6DhIybPvpNlOFy26BGMZHQH0/NJXTgC0IxlK8oq86X4DWI+KcyZbCr9iZ2TE=
+	t=1715213454; cv=none; b=hX8DROjklChKa09k+0mrf27ODmaZH3xQTSxe4vdyZ6Zvft84zV36uc49GjwxhxwgdqUjW6rA2Z0/Yl2s8VG+PJXXAPHB5IJvyelFyZCQMoHrU1ozb8n5ui9DiPa4Y/zMU4170R2ZqqYui4RU9iIRYihQwg6/N581qpJVe2iWt4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715213448; c=relaxed/simple;
-	bh=BdWZkVRFBwd5j7dvagqwUn9G8yFkaTmkpBF77B9I/5M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rtmSDScImheJBmVQ4KAo/rh3FVd13hvxkaNnKt9CINVRV5I433dimYF8lmu6GWHuKX7j9T1oQZzJ05CiMO8uVeE+djMqWNPkZqGbIUJjIi4k1mCTGcUrpUt1omwOGESZM7VW49bBWxfjU5yOYJ0GZiQPXQWf/FCZe6MObJbyKmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P+wH3b3X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448AiMH6006648;
-	Thu, 9 May 2024 00:10:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=htshQXf3BliWLR5L8SE0WGh0HqbVq2MlJwUSH8LeGNI=; b=P+
-	wH3b3Xz915z04eBscjYYQwEI+L0syogWqlf/y7+1Ehl5DTUaP82g2X/IbVqqNCs3
-	ILqlAEr3j34LHWVcC7t0X0yUSLVLp4msxkzZYp4XKWNw3CQDXyV4dlCeyVmAhO5Q
-	R7hq7OjDZ4fN7IObJJQIWWFdUzd7LqAJTwz2aCYIyOmObr7+6D76KFMdFsmPS/Ew
-	Sl4glbIKnu4WzlbzAFIxVJZRUKJiXB5FEcuwyt1kvaxWxT2sVabErr21tDm9Ddyw
-	76RxKjYY5lmvHI9RgFnrnHZeXDAWkwxklM6T/8bkRC0jNolz8HyJvdu7+KBts1c9
-	MhpqDr3GBvicJVscNngA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07wfskmt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 00:10:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4490ATSL013890
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 00:10:29 GMT
-Received: from [10.110.126.205] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 8 May 2024
- 17:10:28 -0700
-Message-ID: <3390ef12-67dd-9474-21fb-b8df35fff546@quicinc.com>
-Date: Wed, 8 May 2024 17:10:27 -0700
+	s=arc-20240116; t=1715213454; c=relaxed/simple;
+	bh=qBebSFGe23qXNHpRvKnwFwAJnPuYEpMUnskY0mHPUrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUuxYzBjPSUqEnuJCHo1yAn2jmQZilgzzc01Ec/1nKJ4NmImJhdyFOanHELeu4OJEsL2umMzTKQr93LyoVSCWQJoFdAKPft9MOlOM6NLVikY1caEUUWqnD7qKzYbS2rQrX//0M8QscqeLwHu/weiZ7NUMJIameJczOZBSmx+2tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=quGCd96A; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b21e393debso185889eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 17:10:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715213450; x=1715818250; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZqIlWMGzBPFcGrSBngkQrJzMqDGPG9IZxXHGwlwCwA=;
+        b=quGCd96ArelnOE/6jR2PICNWYL+yjgcpBQTWGRz8858h7zcLdHpD4yPsXyGkceVeFx
+         6ZEZu31weRy09C/x775rqVrhKNRbS5J7WEgKuSAk+xS+90tVAj1uwO01MMPhQWiHAD7+
+         0w3ruqsIAVLJwZluydzAyxLMgTsqnGILCEDQQhYMcU3S50PlbiAGgJ3fUWMz2OdkE4L6
+         ZRBH/b+5SYIOVlbtRzQIhv7mPSgpfBFJ6fxvLzEw6yZWDON4Y9ukBqs2GjL3HbCzDP52
+         bFo8GOOsYRTVUTetLDgiUyv1Wt5Y5biG3p3u+GimpT6WhrwwZ7MsWXuLBdvmrWTwiELM
+         7XDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715213450; x=1715818250;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LZqIlWMGzBPFcGrSBngkQrJzMqDGPG9IZxXHGwlwCwA=;
+        b=Y4rOWWQ5rN7nHa5l4kPEQs/u79aiGJoVq90UY6c+nnfzixdJvzJMw/MQnQNlagUlfI
+         BlnIq/8JPywfeKw4N1mnDyydJBxtGAoIMz7ArTwicU2m2YQAFxd5cSlJyOwl409kBMDd
+         rYfNmekwlLJrmxYLkAE06tfZv+VQGE09TRmXnOlDyrk1xvUbGCyym1twZLCcbJRSBXGL
+         IJmCFVcqix5FXxTvojNtjA1MQifRmYxeUbyxxyWA2dW/JoKKgIs41geaSu58k5nAWYsZ
+         BFs6/2U0Y5S8HomjdPC7+ZV/itC7Oqy640pfnTQ4iGRqluzK/91mLfYRA3gTtzQwqstk
+         mTOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCjImVjhkLIu5TBXMZxWuQm8jevHBNEjcEFFuSgj69ajPNeLPe5RKSbuNvMBNrTUN9F01Nk4us7Pf2G7R2audCUyyFCAhCL6rEKnxA
+X-Gm-Message-State: AOJu0YyLpR4ZnFhjfRMay3+bXj1xcrEJ1UKpKyj38PIuqvAoTzWs4wzN
+	EAR8KvvhrD8kZnIdJMCtrkGSPFikW1gThVKn35BSygd81KyM288HK1CK85rdEV8=
+X-Google-Smtp-Source: AGHT+IGf3JRzZDV8fYaLM87bNAbWYV5rWVExMXqYWMFb1yCMw/X1461/R98MMrR2NY4Y0ojK0sDDKw==
+X-Received: by 2002:a05:6358:785:b0:18d:9114:eb1e with SMTP id e5c5f4694b2df-192d3778875mr506366755d.22.1715213450408;
+        Wed, 08 May 2024 17:10:50 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:4144:6911:574f:fec1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634103f727dsm81409a12.72.2024.05.08.17.10.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 17:10:49 -0700 (PDT)
+Date: Wed, 8 May 2024 17:10:46 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 01/29] riscv: envcfg save and restore on task switching
+Message-ID: <ZjwUhvLBv13qi77a@ghost>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-2-debug@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v21 27/39] ASoC: Introduce SND kcontrols to select sound
- card and PCM device
-Content-Language: en-US
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <lgirdwood@gmail.com>, <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
-        <broonie@kernel.org>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <bagasdotme@gmail.com>, <robh@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-28-quic_wcheng@quicinc.com>
- <54b79b7b-49e6-418e-9a6b-11bcbada8398@linux.intel.com>
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <54b79b7b-49e6-418e-9a6b-11bcbada8398@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xdE5J8-zgxy1rkT7StC50OZu7jDuPNDP
-X-Proofpoint-ORIG-GUID: xdE5J8-zgxy1rkT7StC50OZu7jDuPNDP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405090000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240403234054.2020347-2-debug@rivosinc.com>
 
-Hi Pierre,
-
-On 5/7/2024 2:26 PM, Pierre-Louis Bossart wrote:
+On Wed, Apr 03, 2024 at 04:34:49PM -0700, Deepak Gupta wrote:
+> envcfg CSR defines enabling bits for cache management instructions and
+> soon will control enabling for control flow integrity and pointer
+> masking features.
 > 
+> Control flow integrity enabling for forward cfi and backward cfi are
+> controlled via envcfg and thus need to be enabled on per thread basis.
 > 
-> On 5/7/24 14:51, Wesley Cheng wrote:
->> Add SND kcontrol to SOC USB, which will allow for userpsace to determine
->> which USB card number and PCM device to offload.  This allows for userspace
->> to potentially tag an alternate path for a specific USB SND card and PCM
->> device.  Previously, control was absent, and the offload path would be
->> enabled on the last USB SND device which was connected.  This logic will
->> continue to be applicable if no mixer input is received for specific device
->> selection.
->>
->> An example to configure the offload device using tinymix:
->> tinymix -D 0 set 'USB Offload Playback Route Select' 1 0
->>
->> The above command will configure the offload path to utilize card#1 and PCM
->> stream#0.
+> This patch creates a place holder for envcfg CSR in `thread_info` and
+> adds logic to save and restore on task switching.
 > 
-> I don't know how this is usable in practice. Using card indices is
-> really hard to do, it depends on the order in which devices are
-> plugged-in...
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/switch_to.h   | 10 ++++++++++
+>  arch/riscv/include/asm/thread_info.h |  1 +
+>  2 files changed, 11 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+> index 7efdb0584d47..2d9a00a30394 100644
+> --- a/arch/riscv/include/asm/switch_to.h
+> +++ b/arch/riscv/include/asm/switch_to.h
+> @@ -69,6 +69,15 @@ static __always_inline bool has_fpu(void) { return false; }
+>  #define __switch_to_fpu(__prev, __next) do { } while (0)
+>  #endif
+>  
+> +static inline void __switch_to_envcfg(struct task_struct *next)
+> +{
+> +	register unsigned long envcfg = next->thread_info.envcfg;
 
-How are the existing mechanisms handling USB audio devices, or what is 
-the identifier being used?
+This doesn't need the register storage class.
 
-Thanks
-Wesley Cheng
+> +
+> +	asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0", 0,
+> +							  RISCV_ISA_EXT_XLINUXENVCFG, 1)
+> +							  :: "r" (envcfg) : "memory");
+> +}
+> +
+
+Something like:
+
+static inline void __switch_to_envcfg(struct task_struct *next)
+{
+	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
+		csr_write(CSR_ENVCFG, next->thread_info.envcfg);
+}
+
+would be easier to read, but the alternative you have written doesn't
+have the jump that riscv_has_extension_unlikely has so what you have
+will be more performant.
+
+Does envcfg need to be save/restored always or just with
+CONFIG_RISCV_USER_CFI?
+
+- Charlie
+
+>  extern struct task_struct *__switch_to(struct task_struct *,
+>  				       struct task_struct *);
+>  
+> @@ -80,6 +89,7 @@ do {							\
+>  		__switch_to_fpu(__prev, __next);	\
+>  	if (has_vector())					\
+>  		__switch_to_vector(__prev, __next);	\
+> +	__switch_to_envcfg(__next);				\
+>  	((last) = __switch_to(__prev, __next));		\
+>  } while (0)
+>  
+> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+> index 5d473343634b..a503bdc2f6dd 100644
+> --- a/arch/riscv/include/asm/thread_info.h
+> +++ b/arch/riscv/include/asm/thread_info.h
+> @@ -56,6 +56,7 @@ struct thread_info {
+>  	long			user_sp;	/* User stack pointer */
+>  	int			cpu;
+>  	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
+> +	unsigned long envcfg;
+>  #ifdef CONFIG_SHADOW_CALL_STACK
+>  	void			*scs_base;
+>  	void			*scs_sp;
+> -- 
+> 2.43.2
+> 
 
