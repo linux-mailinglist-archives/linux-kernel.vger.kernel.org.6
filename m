@@ -1,241 +1,520 @@
-Return-Path: <linux-kernel+bounces-174394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCADF8C0E06
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B34CC8C0E0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FD29B22C84
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:12:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D464E1C2181C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BB014B091;
-	Thu,  9 May 2024 10:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF25914B946;
+	Thu,  9 May 2024 10:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nq9pvgLf"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dCWOQPbD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7C5149C65;
-	Thu,  9 May 2024 10:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA4F14B088
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715249553; cv=none; b=qxZPgbsnDm4KThPRQqTfoRwAiTru4d06Y4lnJF2Dfacrd6Yk63gCc6qdEcmG385nBQkoL9eF3wfWF8mlgw7ZpsAlyBcO2StX+tYdMavcYmiLFPOeAllEl3p+6xmz9scIbFZVBQmrRyD7URhyXpK6mZD7APSBG1x08+e3GeTNhC4=
+	t=1715249683; cv=none; b=Fq0HrGWKHEYtN5EmHYTZfRnAAHAIRnUif0DpyOsHJSSJUl0YULnvFbtJ03HvBadw2W8XPW07C3HLSir31XEViAU4oQ2ul7Cpgcno5i4hfMH8ibCM3BqzicblodQ21K38Q2GOGLxWjX3Zy7EZffM3vKREuheI0yZgscqnPUb3Yhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715249553; c=relaxed/simple;
-	bh=UAeR5ZjiFr/EvIX6LWiLIWkIVSAHBYDxqVhnGR8afWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CY/gQ/+c3GwBt/Go9vnCdbYaIjpTGzsPHmUd91n5lqQmSax1X8L3MNFBqEuxsdKjovfi692HWI/aZinUCB6lRw2F3O1xlf8weAx0pzVDibTmeAOEqFwCIS0ck72ytWZtrZR+AOC/I3lXXwkaDv7V/+UoEvyY9qsuatpcFxT3AOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nq9pvgLf; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-36ca529db61so1910375ab.2;
-        Thu, 09 May 2024 03:12:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715249551; x=1715854351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qeeOhJExMaeOPonFZLuLoibUPLJlD+uSiqsEeJXK218=;
-        b=Nq9pvgLfkw+NsUtVv2D9H2ceTg/Oo3E8PdzY/NyorfQ59T43mkug5dCiKuEPSxwc5E
-         WFL3YITbeW55FNj6XUj8AfoPQYrmA60rNYjpH5QwbZiGMVECB/mW+RerbOfJpL/PyLOt
-         Z9Wbd7onMTSGs1oWQmy3LxTqANIJ4BtseY/k1Np/qjjDIVSNIJQUMdty3NBz4BmU2y3r
-         YV6vL87T1NWP92bxP/NNbzxyHIjXNym0TFqx9Rr1PjwNgL75L39++EqwEJsEHNlZAZdX
-         O62Mg1JnBuk5duMcvhciYIokGRPFIRbDcRYhNcwqBD5di3czM+7uU5iOHt87tv9m1Pqm
-         LeFQ==
+	s=arc-20240116; t=1715249683; c=relaxed/simple;
+	bh=KgdfPRGU/BUygq/vRrZlzXD4Zb3wjlPGMOETvS32BqA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Disposition; b=dl1JLGMKpupLxdsOnTNZsepds8FOzoAfPyqmzEydYjliK6ltqaFMcmcQdmWXEnqAm/Nromvp1y33HMoB5gOkiFU25ycT+JQuyMTCHc503YUmIZ3NQirhPZhy68wYSZ5/Dj/LZ5mF9c+hJauj/NhuUWsKwhFy1YRxi8JBnyxVXbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dCWOQPbD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715249680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y94ZLI6kJ1Hvts2f4+dyM/gxRfim2F0PWqoiLQCgXSQ=;
+	b=dCWOQPbDrB3kg0KcWy/pRTvnQc5Gn2SC1mluIw6swvpIZsNgePcbX+nryd6uzvguHhw8aq
+	BRfcSFY31c29Zy/45Tfg8YTVmDIUOAzcjgf02OARIBnnBBQaYBbrqj+d3uwelfvRVsYq4F
+	8VW8DaU+zB42U+cqMUMAGyV50kUUha0=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-523-n_47Rit0Miq8jAnrN0y2uQ-1; Thu, 09 May 2024 06:14:38 -0400
+X-MC-Unique: n_47Rit0Miq8jAnrN0y2uQ-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6f46bf70fd3so403451b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:14:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715249551; x=1715854351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qeeOhJExMaeOPonFZLuLoibUPLJlD+uSiqsEeJXK218=;
-        b=HFsTG0fhoAECWQox0O1UXAMpFKebo38OjMwyCqBmBRztTA/lo8qPorvEnkCIFGNGGc
-         DdZZ2B6UspB9QG8B5bsOVGjwKbVRzqBIiNchA9XlGptCfiwb+bqKY5WoDAWPXnMzisq6
-         sakyRcrmP8kOcUY78p6BQq2sTSrjjJ878AzlIszUZbLpwfW9QxvokjSC+NHRxwUKjo3a
-         Ivt5K7IcBy96DF4RoFySqaneBjxnGiETtSfbbbjRB+YMqcNdAj5OKIPioKeefW563rkf
-         l/edg+SFjR5tqsd37sGz3Ic+6KOwxikk1eILReVHRUtW8uN2PSay2ka7zl1IrnD3wW1W
-         NLpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUY1iAjTtsWhRNnIQtLiFIh/pvLXzN9mh1puOL/2y9tQC50ahEacuZhyoQhlKNTsUvbnIJ7eGNFUPf8ji7Mu3a6StYkcAS1f7NhI4JNzm7ra+XgOHfMzpzKCifylr6XIhvshl+q6UPPF1M=
-X-Gm-Message-State: AOJu0YzrkyFfSWDTCUUG2H8vzXqW1h+PSyPxMFKChvwy8R6mQh75ctAQ
-	tIOzw73sgbiUVn9ccWenHHw1S8y6fkwQdzjv+Bs+//rO6dZ5f6XmKKrqdsgD8sJsMSM8c1T19Zr
-	NUXw4n9WRwr3ZkV9SWWotma1GAY4=
-X-Google-Smtp-Source: AGHT+IGACDILZuY3fjYmxVHjuj9EsLsw9yHssyl7QKQF1yUC0YZknYZxgh3CbiS3+eqeZ0s8vnluIDetD2EkdkJwwd8=
-X-Received: by 2002:a92:cd8b:0:b0:36c:4b01:3063 with SMTP id
- e9e14a558f8ab-36caed04a13mr56384385ab.15.1715249550653; Thu, 09 May 2024
- 03:12:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715249678; x=1715854478;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y94ZLI6kJ1Hvts2f4+dyM/gxRfim2F0PWqoiLQCgXSQ=;
+        b=Rb3i92K7CJzS/dlGN0ZNmu28tNQc2zrpax0Gs5QFUHxu9wegexuKRQ/++vIj+H2zou
+         nCDHyOU061Aj4Naz5GYiZtWyUDBpMex9VdCIEkaPmev3MG7rxu0RHJ/yKbKpkkaOgF+o
+         jMu91oZWqwwvQl+SWillLbwRwPI/WnjZ6zxcwW4gR9tGVxpCi3R/blp4cdXyu9LVdzK5
+         9dYYxP4CRHNjurmfaqPrFfuAf4h2ZUJu3ntofwOr3XH7RafBfNvfk4vaBPPI22WZTuOQ
+         e9E3Oq2fTMjnOHM4G+S0+GtxKk6bcpbqQPm66Tz72yPecKs/kf0jWtEMrBL3o4pBoCje
+         bt1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVIYvfIz5iB26/1CsbymiR5Vn2uyuvxmRzcvSH8WpoDer/Xq7glRuz9ncNKh2ABXB5OFcgFGlpasb3w42KtFu8DD/le7jfO4sVcL9Z4
+X-Gm-Message-State: AOJu0YxxJSNFwKAf1uIaUjQ3wOdmMCGAFANgBMv9wux9K9BLQgbd7CTI
+	Q6+z+JVlJW5I16Xgh9A/Dyq0xPZ4dCwMwsPGG2RDjZ6HqUwqXNMSUEE3y9LWQHENf8MnykKxjFN
+	EiMENvCosgwJo9yI9B8QOZugCn/TMsTeGUZMMu+ra2ErHezPiBhfdSnWA4Px8ng==
+X-Received: by 2002:a05:6a00:740c:b0:6f4:5531:7ce4 with SMTP id d2e1a72fcca58-6f49c2a67camr5575810b3a.33.1715249677639;
+        Thu, 09 May 2024 03:14:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjwd47saWkIqVMFUB6Yhmt+ToeU0rEJ6fpqUKdFc55ujNJNNla3mfw5zQE96EBqlbIhLs9CA==
+X-Received: by 2002:a05:6a00:740c:b0:6f4:5531:7ce4 with SMTP id d2e1a72fcca58-6f49c2a67camr5575785b3a.33.1715249677123;
+        Thu, 09 May 2024 03:14:37 -0700 (PDT)
+Received: from localhost.localdomain ([2804:1b3:a800:8d87:eac1:dae4:8dd4:fe50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a66616sm968113b3a.22.2024.05.09.03.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 03:14:36 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+Date: Thu,  9 May 2024 07:14:18 -0300
+Message-ID: <Zjyh-qRt3YewHsdP@LeoBras>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <ZjyGefTZ8ThZukNG@LeoBras>
+References: <ZjqWXPFuoYWWcxP3@google.com> <0e239143-65ed-445a-9782-e905527ea572@paulmck-laptop> <Zjq9okodmvkywz82@google.com> <ZjrClk4Lqw_cLO5A@google.com> <Zjroo8OsYcVJLsYO@LeoBras> <b44962dd-7b8a-4201-90b7-4c39ba20e28d@paulmck-laptop> <ZjsZVUdmDXZOn10l@LeoBras> <ZjuFuZHKUy7n6-sG@google.com> <5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop> <ZjyGefTZ8ThZukNG@LeoBras>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
- <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310> <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk>
- <20240430172752.20ffcd56@sal.lan> <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk>
- <87sez0k661.wl-tiwai@suse.de> <20240502095956.0a8c5b26@sal.lan>
- <20240502102643.4ee7f6c2@sal.lan> <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk>
- <20240503094225.47fe4836@sal.lan> <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
- <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl> <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
- <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com> <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
-In-Reply-To: <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Thu, 9 May 2024 18:12:19 +0800
-Message-ID: <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-To: =?UTF-8?B?QW1hZGV1c3ogU8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
-	sakari.ailus@iki.fi, tfiga@chromium.org, m.szyprowski@samsung.com, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com, 
-	lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 9, 2024 at 5:50=E2=80=AFPM Amadeusz S=C5=82awi=C5=84ski
-<amadeuszx.slawinski@linux.intel.com> wrote:
->
-> On 5/9/2024 11:36 AM, Shengjiu Wang wrote:
-> > On Wed, May 8, 2024 at 4:14=E2=80=AFPM Amadeusz S=C5=82awi=C5=84ski
-> > <amadeuszx.slawinski@linux.intel.com> wrote:
-> >>
-> >> On 5/8/2024 10:00 AM, Hans Verkuil wrote:
-> >>> On 06/05/2024 10:49, Shengjiu Wang wrote:
-> >>>> On Fri, May 3, 2024 at 4:42=E2=80=AFPM Mauro Carvalho Chehab <mcheha=
-b@kernel.org> wrote:
-> >>>>>
-> >>>>> Em Fri, 3 May 2024 10:47:19 +0900
-> >>>>> Mark Brown <broonie@kernel.org> escreveu:
-> >>>>>
-> >>>>>> On Thu, May 02, 2024 at 10:26:43AM +0100, Mauro Carvalho Chehab wr=
-ote:
-> >>>>>>> Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
-> >>>>>>
-> >>>>>>>> There are still time control associated with it, as audio and vi=
-deo
-> >>>>>>>> needs to be in sync. This is done by controlling the buffers siz=
-e
-> >>>>>>>> and could be fine-tuned by checking when the buffer transfer is =
-done.
-> >>>>>>
-> >>>>>> ...
-> >>>>>>
-> >>>>>>> Just complementing: on media, we do this per video buffer (or
-> >>>>>>> per half video buffer). A typical use case on cameras is to have
-> >>>>>>> buffers transferred 30 times per second, if the video was streame=
-d
-> >>>>>>> at 30 frames per second.
-> >>>>>>
-> >>>>>> IIRC some big use case for this hardware was transcoding so there =
-was a
-> >>>>>> desire to just go at whatever rate the hardware could support as t=
-here
-> >>>>>> is no interactive user consuming the output as it is generated.
-> >>>>>
-> >>>>> Indeed, codecs could be used to just do transcoding, but I would
-> >>>>> expect it to be a border use case. See, as the chipsets implementin=
-g
-> >>>>> codecs are typically the ones used on mobiles, I would expect that
-> >>>>> the major use cases to be to watch audio and video and to participa=
-te
-> >>>>> on audio/video conferences.
-> >>>>>
-> >>>>> Going further, the codec API may end supporting not only transcodin=
-g
-> >>>>> (which is something that CPU can usually handle without too much
-> >>>>> processing) but also audio processing that may require more
-> >>>>> complex algorithms - even deep learning ones - like background nois=
-e
-> >>>>> removal, echo detection/removal, volume auto-gain, audio enhancemen=
-t
-> >>>>> and such.
-> >>>>>
-> >>>>> On other words, the typical use cases will either have input
-> >>>>> or output being a physical hardware (microphone or speaker).
-> >>>>>
-> >>>>
-> >>>> All, thanks for spending time to discuss, it seems we go back to
-> >>>> the start point of this topic again.
-> >>>>
-> >>>> Our main request is that there is a hardware sample rate converter
-> >>>> on the chip, so users can use it in user space as a component like
-> >>>> software sample rate converter. It mostly may run as a gstreamer plu=
-gin.
-> >>>> so it is a memory to memory component.
-> >>>>
-> >>>> I didn't find such API in ALSA for such purpose, the best option for=
- this
-> >>>> in the kernel is the V4L2 memory to memory framework I found.
-> >>>> As Hans said it is well designed for memory to memory.
-> >>>>
-> >>>> And I think audio is one of 'media'.  As I can see that part of Radi=
-o
-> >>>> function is in ALSA, part of Radio function is in V4L2. part of HDMI
-> >>>> function is in DRM, part of HDMI function is in ALSA...
-> >>>> So using V4L2 for audio is not new from this point of view.
-> >>>>
-> >>>> Even now I still think V4L2 is the best option, but it looks like th=
-ere
-> >>>> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
-> >>>> a duplication of code (bigger duplication that just add audio suppor=
-t
-> >>>> in V4L2 I think).
-> >>>
-> >>> After reading this thread I still believe that the mem2mem framework =
-is
-> >>> a reasonable option, unless someone can come up with a method that is
-> >>> easy to implement in the alsa subsystem. From what I can tell from th=
-is
-> >>> discussion no such method exists.
-> >>>
-> >>
-> >> Hi,
-> >>
-> >> my main question would be how is mem2mem use case different from
-> >> loopback exposing playback and capture frontends in user space with DS=
-P
-> >> (or other piece of HW) in the middle?
-> >>
-> > I think loopback has a timing control,  user need to feed data to playb=
-ack at a
-> > fixed time and get data from capture at a fixed time.  Otherwise there
-> > is xrun in
-> > playback and capture.
-> >
-> > mem2mem case: there is no such timing control,  user feeds data to it
-> > then it generates output,  if user doesn't feed data, there is no xrun.
-> > but mem2mem is just one of the components in the playback or capture
-> > pipeline, overall there is time control for whole pipeline,
-> >
->
-> Have you looked at compress streams? If I remember correctly they are
-> not tied to time due to the fact that they can pass data in arbitrary
-> formats?
->
-> From:
-> https://docs.kernel.org/sound/designs/compress-offload.html
->
-> "No notion of underrun/overrun. Since the bytes written are compressed
-> in nature and data written/read doesn=E2=80=99t translate directly to ren=
-dered
-> output in time, this does not deal with underrun/overrun and maybe dealt
-> in user-library"
+On Thu, May 09, 2024 at 05:16:57AM -0300, Leonardo Bras wrote:
+> On Wed, May 08, 2024 at 08:32:40PM -0700, Paul E. McKenney wrote:
+> > On Wed, May 08, 2024 at 07:01:29AM -0700, Sean Christopherson wrote:
+> > > On Wed, May 08, 2024, Leonardo Bras wrote:
+> > > > Something just hit me, and maybe I need to propose something more generic.
+> > > 
+> > > Yes.  This is what I was trying to get across with my complaints about keying off
+> > > of the last VM-Exit time.  It's effectively a broad stroke "this task will likely
+> > > be quiescent soon" and so the core concept/functionality belongs in common code,
+> > > not KVM.
+> > 
+> > OK, we could do something like the following wholly within RCU, namely
+> > to make rcu_pending() refrain from invoking rcu_core() until the grace
+> > period is at least the specified age, defaulting to zero (and to the
+> > current behavior).
+> > 
+> > Perhaps something like the patch shown below.
+> 
+> That's exactly what I was thinking :)
+> 
+> > 
+> > Thoughts?
+> 
+> Some suggestions below:
+> 
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > commit abc7cd2facdebf85aa075c567321589862f88542
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Wed May 8 20:11:58 2024 -0700
+> > 
+> >     rcu: Add rcutree.nocb_patience_delay to reduce nohz_full OS jitter
+> >     
+> >     If a CPU is running either a userspace application or a guest OS in
+> >     nohz_full mode, it is possible for a system call to occur just as an
+> >     RCU grace period is starting.  If that CPU also has the scheduling-clock
+> >     tick enabled for any reason (such as a second runnable task), and if the
+> >     system was booted with rcutree.use_softirq=0, then RCU can add insult to
+> >     injury by awakening that CPU's rcuc kthread, resulting in yet another
+> >     task and yet more OS jitter due to switching to that task, running it,
+> >     and switching back.
+> >     
+> >     In addition, in the common case where that system call is not of
+> >     excessively long duration, awakening the rcuc task is pointless.
+> >     This pointlessness is due to the fact that the CPU will enter an extended
+> >     quiescent state upon returning to the userspace application or guest OS.
+> >     In this case, the rcuc kthread cannot do anything that the main RCU
+> >     grace-period kthread cannot do on its behalf, at least if it is given
+> >     a few additional milliseconds (for example, given the time duration
+> >     specified by rcutree.jiffies_till_first_fqs, give or take scheduling
+> >     delays).
+> >     
+> >     This commit therefore adds a rcutree.nocb_patience_delay kernel boot
+> >     parameter that specifies the grace period age (in milliseconds)
+> >     before which RCU will refrain from awakening the rcuc kthread.
+> >     Preliminary experiementation suggests a value of 1000, that is,
+> >     one second.  Increasing rcutree.nocb_patience_delay will increase
+> >     grace-period latency and in turn increase memory footprint, so systems
+> >     with constrained memory might choose a smaller value.  Systems with
+> >     less-aggressive OS-jitter requirements might choose the default value
+> >     of zero, which keeps the traditional immediate-wakeup behavior, thus
+> >     avoiding increases in grace-period latency.
+> >     
+> >     Link: https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> >     
+> >     Reported-by: Leonardo Bras <leobras@redhat.com>
+> >     Suggested-by: Leonardo Bras <leobras@redhat.com>
+> >     Suggested-by: Sean Christopherson <seanjc@google.com>
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 0a3b0fd1910e6..42383986e692b 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -4981,6 +4981,13 @@
+> >  			the ->nocb_bypass queue.  The definition of "too
+> >  			many" is supplied by this kernel boot parameter.
+> >  
+> > +	rcutree.nocb_patience_delay= [KNL]
+> > +			On callback-offloaded (rcu_nocbs) CPUs, avoid
+> > +			disturbing RCU unless the grace period has
+> > +			reached the specified age in milliseconds.
+> > +			Defaults to zero.  Large values will be capped
+> > +			at five seconds.
+> > +
+> >  	rcutree.qhimark= [KNL]
+> >  			Set threshold of queued RCU callbacks beyond which
+> >  			batch limiting is disabled.
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 7560e204198bb..6e4b8b43855a0 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -176,6 +176,8 @@ static int gp_init_delay;
+> >  module_param(gp_init_delay, int, 0444);
+> >  static int gp_cleanup_delay;
+> >  module_param(gp_cleanup_delay, int, 0444);
+> > +static int nocb_patience_delay;
+> > +module_param(nocb_patience_delay, int, 0444);
+> >  
+> >  // Add delay to rcu_read_unlock() for strict grace periods.
+> >  static int rcu_unlock_delay;
+> > @@ -4334,6 +4336,8 @@ EXPORT_SYMBOL_GPL(cond_synchronize_rcu_full);
+> >  static int rcu_pending(int user)
+> >  {
+> >  	bool gp_in_progress;
+> > +	unsigned long j = jiffies;
+> 
+> I think this is probably taken care by the compiler, but just in case I would move the 
+> j = jiffies;
+> closer to it's use, in order to avoid reading 'jiffies' if rcu_pending 
+> exits before the nohz_full testing.
+> 
+> 
+> > +	unsigned int patience = msecs_to_jiffies(nocb_patience_delay);
+> 
+> What do you think on processsing the new parameter in boot, and saving it 
+> in terms of jiffies already? 
+> 
+> It would make it unnecessary to convert ms -> jiffies every time we run 
+> rcu_pending.
+> 
+> (OOO will probably remove the extra division, but may cause less impact in 
+> some arch)
+> 
+> >  	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+> >  	struct rcu_node *rnp = rdp->mynode;
+> >  
+> > @@ -4347,11 +4351,13 @@ static int rcu_pending(int user)
+> >  		return 1;
+> >  
+> >  	/* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+> > -	if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+> > +	gp_in_progress = rcu_gp_in_progress();
+> > +	if ((user || rcu_is_cpu_rrupt_from_idle() ||
+> > +	     (gp_in_progress && time_before(j + patience, rcu_state.gp_start))) &&
+> 
+> I think you meant:
+> 	time_before(j, rcu_state.gp_start + patience)
+> 
+> or else this always fails, as we can never have now to happen before a 
+> previously started gp, right?
+> 
+> Also, as per rcu_nohz_full_cpu() we probably need it to be read with 
+> READ_ONCE():
+> 
+> 	time_before(j, READ_ONCE(rcu_state.gp_start) + patience)
+> 
+> > +	    rcu_nohz_full_cpu())
+> >  		return 0;
+> >  
+> >  	/* Is the RCU core waiting for a quiescent state from this CPU? */
+> > -	gp_in_progress = rcu_gp_in_progress();
+> >  	if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm && gp_in_progress)
+> >  		return 1;
+> >  
+> > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > index 340bbefe5f652..174333d0e9507 100644
+> > --- a/kernel/rcu/tree_plugin.h
+> > +++ b/kernel/rcu/tree_plugin.h
+> > @@ -93,6 +93,15 @@ static void __init rcu_bootup_announce_oddness(void)
+> >  		pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
+> >  	if (gp_cleanup_delay)
+> >  		pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
+> > +	if (nocb_patience_delay < 0) {
+> > +		pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n", nocb_patience_delay);
+> > +		nocb_patience_delay = 0;
+> > +	} else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
+> > +		pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n", nocb_patience_delay, 5 * MSEC_PER_SEC);
+> > +		nocb_patience_delay = 5 * MSEC_PER_SEC;
+> > +	} else if (nocb_patience_delay) {
+> 
+> Here you suggest that we don't print if 'nocb_patience_delay == 0', 
+> as it's the default behavior, right?
+> 
+> I think printing on 0 could be useful to check if the feature exists, even 
+> though we are zeroing it, but this will probably add unnecessary verbosity.
+> 
+> > +		pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n", nocb_patience_delay);
+> > +	}
+> 
+> Here I suppose something like this can take care of not needing to convert 
+> ms -> jiffies every rcu_pending():
+> 
+> +	nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
+> 
 
-I checked the compress stream. mem2mem case is different with
-compress-offload case
+Uh, there is more to it, actually. We need to make sure the user 
+understands that we are rounding-down the value to multiple of a jiffy 
+period, so it's not a surprise if the delay value is not exactly the same 
+as the passed on kernel cmdline.
 
-compress-offload case is a full pipeline,  the user sends a compress
-stream to it, then DSP decodes it and renders it to the speaker in real
-time.
+So something like bellow diff should be ok, as this behavior is explained 
+in the docs, and pr_info() will print the effective value.
 
-mem2mem is just like the decoder in the compress pipeline. which is
-one of the components in the pipeline.
+What do you think?
 
-best regards
-shengjiu wang
->
-> Amadeusz
+Thanks!
+Leo
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 0a3b0fd1910e..9a50be9fd9eb 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4974,20 +4974,28 @@
+                        otherwise be caused by callback floods through
+                        use of the ->nocb_bypass list.  However, in the
+                        common non-flooded case, RCU queues directly to
+                        the main ->cblist in order to avoid the extra
+                        overhead of the ->nocb_bypass list and its lock.
+                        But if there are too many callbacks queued during
+                        a single jiffy, RCU pre-queues the callbacks into
+                        the ->nocb_bypass queue.  The definition of "too
+                        many" is supplied by this kernel boot parameter.
+ 
++       rcutree.nocb_patience_delay= [KNL]
++                       On callback-offloaded (rcu_nocbs) CPUs, avoid
++                       disturbing RCU unless the grace period has
++                       reached the specified age in milliseconds.
++                       Defaults to zero.  Large values will be capped
++                       at five seconds. Values rounded-down to a multiple
++                       of a jiffy period.
++
+        rcutree.qhimark= [KNL]
+                        Set threshold of queued RCU callbacks beyond which
+                        batch limiting is disabled.
+ 
+        rcutree.qlowmark= [KNL]
+                        Set threshold of queued RCU callbacks below which
+                        batch limiting is re-enabled.
+ 
+        rcutree.qovld= [KNL]
+                        Set threshold of queued RCU callbacks beyond which
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index fcf2b4aa3441..62ede401420f 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -512,20 +512,21 @@ do {                                                              \
+        local_irq_save(flags);                                  \
+        if (rcu_segcblist_is_offloaded(&(rdp)->cblist)) \
+                raw_spin_lock(&(rdp)->nocb_lock);               \
+ } while (0)
+ #else /* #ifdef CONFIG_RCU_NOCB_CPU */
+ #define rcu_nocb_lock_irqsave(rdp, flags) local_irq_save(flags)
+ #endif /* #else #ifdef CONFIG_RCU_NOCB_CPU */
+ 
+ static void rcu_bind_gp_kthread(void);
+ static bool rcu_nohz_full_cpu(void);
++static bool rcu_on_patience_delay(void);
+ 
+ /* Forward declarations for tree_stall.h */
+ static void record_gp_stall_check_time(void);
+ static void rcu_iw_handler(struct irq_work *iwp);
+ static void check_cpu_stall(struct rcu_data *rdp);
+ static void rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp,
+                                     const unsigned long gpssdelay);
+ 
+ /* Forward declarations for tree_exp.h. */
+ static void sync_rcu_do_polled_gp(struct work_struct *wp);
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 340bbefe5f65..639243b0410f 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -5,20 +5,21 @@
+  * or preemptible semantics.
+  *
+  * Copyright Red Hat, 2009
+  * Copyright IBM Corporation, 2009
+  *
+  * Author: Ingo Molnar <mingo@elte.hu>
+  *        Paul E. McKenney <paulmck@linux.ibm.com>
+  */
+ 
+ #include "../locking/rtmutex_common.h"
++#include <linux/jiffies.h>
+ 
+ static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
+ {
+        /*
+         * In order to read the offloaded state of an rdp in a safe
+         * and stable way and prevent from its value to be changed
+         * under us, we must either hold the barrier mutex, the cpu
+         * hotplug lock (read or write) or the nocb lock. Local
+         * non-preemptible reads are also safe. NOCB kthreads and
+         * timers have their own means of synchronization against the
+@@ -86,20 +87,33 @@ static void __init rcu_bootup_announce_oddness(void)
+        if (rcu_kick_kthreads)
+                pr_info("\tKick kthreads if too-long grace period.\n");
+        if (IS_ENABLED(CONFIG_DEBUG_OBJECTS_RCU_HEAD))
+                pr_info("\tRCU callback double-/use-after-free debug is enabled.\n");
+        if (gp_preinit_delay)
+                pr_info("\tRCU debug GP pre-init slowdown %d jiffies.\n", gp_preinit_delay);
+        if (gp_init_delay)
+                pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
+        if (gp_cleanup_delay)
+                pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
++       if (nocb_patience_delay < 0) {
++               pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n",
++                       nocb_patience_delay);
++               nocb_patience_delay = 0;
++       } else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
++               pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n",
++                       nocb_patience_delay, 5 * MSEC_PER_SEC);
++               nocb_patience_delay = msecs_to_jiffies(5 * MSEC_PER_SEC);
++       } else if (nocb_patience_delay) {
++               nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
++               pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n",
++                       jiffies_to_msecs(nocb_patience_delay);
++       }
+        if (!use_softirq)
+                pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.\n");
+        if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
+                pr_info("\tRCU debug extended QS entry/exit.\n");
+        rcupdate_announce_bootup_oddness();
+ }
+ 
+ #ifdef CONFIG_PREEMPT_RCU
+ 
+ static void rcu_report_exp_rnp(struct rcu_node *rnp, bool wake);
+@@ -1260,10 +1274,29 @@ static bool rcu_nohz_full_cpu(void)
+ 
+ /*
+  * Bind the RCU grace-period kthreads to the housekeeping CPU.
+  */
+ static void rcu_bind_gp_kthread(void)
+ {
+        if (!tick_nohz_full_enabled())
+                return;
+        housekeeping_affine(current, HK_TYPE_RCU);
+ }
++
++/*
++ * Is this CPU a NO_HZ_FULL CPU that should ignore RCU if the time since the
++ * start of current grace period is smaller than nocb_patience_delay ?
++ *
++ * This code relies on the fact that all NO_HZ_FULL CPUs are also
++ * RCU_NOCB_CPU CPUs.
++ */
++static bool rcu_on_patience_delay(void)
++{
++#ifdef CONFIG_NO_HZ_FULL
++       if (!nocb_patience_delay)
++               return false;
++
++       if (time_before(jiffies, READ_ONCE(rcu_state.gp_start) + nocb_patience_delay))
++               return true;
++#endif /* #ifdef CONFIG_NO_HZ_FULL */
++       return false;
++}
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 7560e204198b..7a2d94370ab4 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -169,20 +169,22 @@ static int kthread_prio = IS_ENABLED(CONFIG_RCU_BOOST) ? 1 : 0;
+ module_param(kthread_prio, int, 0444);
+ 
+ /* Delay in jiffies for grace-period initialization delays, debug only. */
+ 
+ static int gp_preinit_delay;
+ module_param(gp_preinit_delay, int, 0444);
+ static int gp_init_delay;
+ module_param(gp_init_delay, int, 0444);
+ static int gp_cleanup_delay;
+ module_param(gp_cleanup_delay, int, 0444);
++static int nocb_patience_delay;
++module_param(nocb_patience_delay, int, 0444);
+ 
+ // Add delay to rcu_read_unlock() for strict grace periods.
+ static int rcu_unlock_delay;
+ #ifdef CONFIG_RCU_STRICT_GRACE_PERIOD
+ module_param(rcu_unlock_delay, int, 0444);
+ #endif
+ 
+ /*
+  * This rcu parameter is runtime-read-only. It reflects
+  * a minimum allowed number of objects which can be cached
+@@ -4340,25 +4342,27 @@ static int rcu_pending(int user)
+        lockdep_assert_irqs_disabled();
+ 
+        /* Check for CPU stalls, if enabled. */
+        check_cpu_stall(rdp);
+ 
+        /* Does this CPU need a deferred NOCB wakeup? */
+        if (rcu_nocb_need_deferred_wakeup(rdp, RCU_NOCB_WAKE))
+                return 1;
+ 
+        /* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+-       if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
++       gp_in_progress = rcu_gp_in_progress();
++       if ((user || rcu_is_cpu_rrupt_from_idle() ||
++            (gp_in_progress && rcu_on_patience_delay())) &&
++           rcu_nohz_full_cpu())
+                return 0;
+ 
+        /* Is the RCU core waiting for a quiescent state from this CPU? */
+-       gp_in_progress = rcu_gp_in_progress();
+        if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm && gp_in_progress)
+                return 1;
+ 
+        /* Does this CPU have callbacks ready to invoke? */
+        if (!rcu_rdp_is_offloaded(rdp) &&
+            rcu_segcblist_ready_cbs(&rdp->cblist))
+                return 1;
+ 
+        /* Has RCU gone idle with this CPU needing another grace period? */
+        if (!gp_in_progress && rcu_segcblist_is_enabled(&rdp->cblist) &&
+
+
+
 
