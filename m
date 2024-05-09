@@ -1,152 +1,132 @@
-Return-Path: <linux-kernel+bounces-174165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7390B8C0B0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3388A8C0AE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6E91F2100B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:37:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DBF51C229BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2332C149C5A;
-	Thu,  9 May 2024 05:34:23 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405A91494B8;
+	Thu,  9 May 2024 05:15:37 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29315149C4F;
-	Thu,  9 May 2024 05:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACAC14900A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 05:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715232862; cv=none; b=rdkEhHOCwsbQLKQXJA657T9ZJ/Z8hNdV0sD1+cU48m6n7Qc1+MjIua/pep9OmEsQq7V6zCmFbPaBr+pNjBvvGI6QfMb3tN5NYj8/t/6qvoWaqqiXK4F0ZYeOT3R/X6KFIrLixo2KMa8iH/JEHIfSzeshpSXE3UPZrwETV3pBTAs=
+	t=1715231736; cv=none; b=EDgmXoBH91r3mvyOA1RDFVouwyQQJ9HczSujM+N+yd3qHaiE6HqRHoO0Dmh598JOQnu6pR+ylgqK/Gj9YDMj7pcCcHT6gCOGbmd6uhSgGUSjba0XWpGrpzWZllHhUVJpITjp+XFGwCRKVEcUkfO+l7uagrX+JyaEheaeU/E9S10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715232862; c=relaxed/simple;
-	bh=m2MfUlMl9KxyWVYEaAkVFeSM4ZuXjRKHohyzQ3AsLrE=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=i4MEZXONSpIciERRspkTJc7qtYfeGgFfOrkXbWlbddqBDeUjiZ8Pncb/VZ/GHNyJUKKF3jsGhnu5yhGAp8zBd3FHszFE59Y5dhqwT+eGaGHBFMIWxKOewjwl+hvlOTXddxUG9AqIwysa3JXfuX4NGiB4MRpG59JEblfMWkySF4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 68E76201EF4;
-	Thu,  9 May 2024 07:34:19 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EBD6200B37;
-	Thu,  9 May 2024 07:34:19 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 4D140180222F;
-	Thu,  9 May 2024 13:34:17 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: [PATCH 2/2] arm64: dts: imx8mp-evk: add bt-sco sound card support
-Date: Thu,  9 May 2024 13:14:58 +0800
-Message-Id: <1715231698-451-3-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1715231698-451-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1715231698-451-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1715231736; c=relaxed/simple;
+	bh=cIDQZAOFPzs20dF1EbvJv64A34Ri3yMsRyyX/TylLmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqgwvmTZ7UpL8PJEmMnXxh62pWVGrqjGEaKAprkxFUCF2VtrUkmyiS9DH0qCpTMOgOUo5c45MbrjCMbgzjW1LpHZ9PqlKH0y+BqOKjqT5TLIwgRHNTBlvhAagx8RoGCnUS/VSn25f+q+nxgCdrkRph/jqVul5awldjqM6m7Nr68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s4w7o-0004Iw-3N; Thu, 09 May 2024 07:15:24 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s4w7l-000P7C-Tw; Thu, 09 May 2024 07:15:21 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1s4w7l-002KX4-2a;
+	Thu, 09 May 2024 07:15:21 +0200
+Date: Thu, 9 May 2024 07:15:21 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Arun.Ramadoss@microchip.com
+Cc: andrew@lunn.ch, olteanv@gmail.com, davem@davemloft.net,
+	Woojung.Huh@microchip.com, pabeni@redhat.com, edumazet@google.com,
+	f.fainelli@gmail.com, kuba@kernel.org, kernel@pengutronix.de,
+	dsahern@kernel.org, san@skov.dk, willemb@google.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	horms@kernel.org, UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v1 3/3] net: dsa: microchip: dcb: set default
+ apptrust to PCP only
+Message-ID: <Zjxb6a_MaSxjTQxU@pengutronix.de>
+References: <20240508103902.4134098-1-o.rempel@pengutronix.de>
+ <20240508103902.4134098-4-o.rempel@pengutronix.de>
+ <d4f7d3be15d46b07d7139ee4d453d7366d7aedc3.camel@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d4f7d3be15d46b07d7139ee4d453d7366d7aedc3.camel@microchip.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add bt-sco sound card, which is used by BT HFP case.
-It supports wb profile as default
+Hi Arun,
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 44 ++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+On Wed, May 08, 2024 at 03:11:24PM +0000, Arun.Ramadoss@microchip.com wrote:
+> Hi Oleksij,
+> 
+> On Wed, 2024-05-08 at 12:39 +0200, Oleksij Rempel wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > know the content is safe
+> > 
+> > 
+> > -static const u8 ksz8_port2_supported_apptrust[] = {
+> > -       DCB_APP_SEL_PCP,
+> > -};
+> > -
+> >  static const char * const ksz_supported_apptrust_variants[] = {
+> >         "empty", "dscp", "pcp", "dscp pcp"
+> >  };
+> > @@ -771,9 +767,8 @@ int ksz_port_get_apptrust(struct dsa_switch *ds,
+> > int port, u8 *sel, int *nsel)
+> >   */
+> >  int ksz_dcb_init_port(struct ksz_device *dev, int port)
+> >  {
+> > -       const u8 *sel;
+> > +       const u8 ksz_default_apptrust[] = { DCB_APP_SEL_PCP };
+> >         int ret, ipm;
+> > -       int sel_len;
+> > 
+> >         if (is_ksz8(dev)) {
+> >                 ipm = ieee8021q_tt_to_tc(IEEE8021Q_TT_BE,
+> > @@ -789,18 +784,8 @@ int ksz_dcb_init_port(struct ksz_device *dev,
+> > int port)
+> >         if (ret)
+> >                 return ret;
+> > 
+> > -       if (ksz_is_ksz88x3(dev) && port == KSZ_PORT_2) {
+> > -               /* KSZ88x3 devices do not support DSCP classification
+> > on
+> > -                * "Port 2.
+> > -                */
+> > -               sel = ksz8_port2_supported_apptrust;
+> > -               sel_len = ARRAY_SIZE(ksz8_port2_supported_apptrust);
+> 
+> If we remove this, How the user application knows about the DSCP
+> resistriction of KSZ8 port 2. Is it implemented in other functions?
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index 8be5b2a57f27..b2225cb710b6 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-@@ -114,6 +114,11 @@ reg_vext_3v3: regulator-vext-3v3 {
- 		regulator-max-microvolt = <3300000>;
- 	};
- 
-+	audio_codec_bt_sco: audio-codec-bt-sco {
-+		compatible = "linux,bt-sco";
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,name = "wm8960-audio";
-@@ -145,6 +150,25 @@ simple-audio-card,codec {
- 
- 	};
- 
-+	sound-bt-sco {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "bt-sco-audio";
-+		simple-audio-card,format = "dsp_a";
-+		simple-audio-card,bitclock-inversion;
-+		simple-audio-card,frame-master = <&btcpu>;
-+		simple-audio-card,bitclock-master = <&btcpu>;
-+
-+		btcpu: simple-audio-card,cpu {
-+			sound-dai = <&sai2>;
-+			dai-tdm-slot-num = <2>;
-+			dai-tdm-slot-width = <16>;
-+		};
-+
-+		simple-audio-card,codec {
-+			sound-dai = <&audio_codec_bt_sco 1>;
-+		};
-+	};
-+
- 	sound-hdmi {
- 		compatible = "fsl,imx-audio-hdmi";
- 		model = "audio-hdmi";
-@@ -608,6 +632,17 @@ &pwm4 {
- 	status = "okay";
- };
- 
-+&sai2 {
-+	#sound-dai-cells = <0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sai2>;
-+	assigned-clocks = <&clk IMX8MP_CLK_SAI2>;
-+	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
-+	assigned-clock-rates = <12288000>;
-+	fsl,sai-mclk-direction-output;
-+	status = "okay";
-+};
-+
- &sai3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_sai3>;
-@@ -880,6 +915,15 @@ MX8MP_IOMUXC_UART3_TXD__UART1_DCE_RTS	0x140
- 		>;
- 	};
- 
-+	pinctrl_sai2: sai2grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_SAI2_TXC__AUDIOMIX_SAI2_TX_BCLK	0xd6
-+			MX8MP_IOMUXC_SAI2_TXFS__AUDIOMIX_SAI2_TX_SYNC	0xd6
-+			MX8MP_IOMUXC_SAI2_TXD0__AUDIOMIX_SAI2_TX_DATA00	0xd6
-+			MX8MP_IOMUXC_SAI2_RXD0__AUDIOMIX_SAI2_RX_DATA00	0xd6
-+		>;
-+	};
-+
- 	pinctrl_sai3: sai3grp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_SAI3_TXFS__AUDIOMIX_SAI3_TX_SYNC	0xd6
+Yes, it is implemented in
+ksz_port_set_apptrust()->ksz88x3_port_apptrust_quirk(). This patch
+affects only default configuration.
+
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
