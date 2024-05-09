@@ -1,268 +1,269 @@
-Return-Path: <linux-kernel+bounces-174532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D428C103B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:18:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346128C1044
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2DD1F23E9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:18:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D621C22AFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDBD1527A2;
-	Thu,  9 May 2024 13:18:32 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423A41527B1;
+	Thu,  9 May 2024 13:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X6qk5sLN";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="aiEBkQg2"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2D381C8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715260711; cv=none; b=OsPVelHKykSvlVcNLqQxXr9duKzsUvW+BNTTUDg6Em+xkY7N+g9y/HXm+iFaHlv+j21HKvbxaObydm9r6+fs6JNIfCAYV/PpamTCkBKT17w5D9P4+S9y0PTSdAp0P7YJWZA3QWqSxedMeIdJRA5OoUR1M2dHV8dmdmMqZsNjQd4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715260711; c=relaxed/simple;
-	bh=AsgEJN1pwQZnCjXg93kzLWGJckj0gdfuHDe86lY47xk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rxz8k6lsQ12VtUe+VggfMoVqgc8IXIAFdI1eA5HSrDYLzq5o0S/vahoPUKM3Xu3LjD0FcdkOl0KTyjqRXq4y507WAMnd10lsTZTxwxCccMdcHkqpoOZDNJGyoKjHswgQ38R7QgG2UeZAZUL7hT3HWRH8Q3IZ3f8jp606MLGbT+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e19cf1f440so82057239f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 06:18:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715260709; x=1715865509;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xbcOYf2jPBKcHttp1A9Wc8Pludko+s6isPUH8RhpjQQ=;
-        b=T4Dbcnx3TWuzrAPUEiByEwgHNlQoYXFF0I+zi/ja7A8CmxPTpFy2pYL57CCheOs1dN
-         0vez/z/aD7iBTiGrMNvHSo/yWWa73G/oLELqE6x0MCR1rgsxElRMmn3yHdd86ihXQRcY
-         +Lb3VwCrvrRJ4RVoIdKJVEd6Qrb5H4hSQ44Vdxpf8X9O47Tg8LHrB0kOlmTGjR4dSQOV
-         wwA3D+EIxUc4cWCPj1wETuPY9n6uS61oehOzeuYOgEZmGeIBQ2BSIo2eW7HKkIIcuUgP
-         nCDBiKf07wuhlzYwk3uItb+7Fjy2plDYFa+1NHdyG+d/PI0hRPBKpmAByI+iXH1ubY/K
-         5ggg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbzj7HoYP90TKAiwyKdF/6BceovfU/c/1dLKlOJGdtQ9EaPvgUin8ck/Va6+xRo92WuvEzepryid2X0503tpBlqzCLDfpneMrmjaXI
-X-Gm-Message-State: AOJu0Yy/KkRblZlB7um4Vg7c/kx2XnP6Xjq+1bMyJEv3kloLV5nURwze
-	kJtdcfY7YR+69w9Y+W1Tes5LPCCY4lcayKvN4hio3733dpLuudCUHGB7PIM8ZIinYmraUW5lnQz
-	koO8LdrD1epGmMD06C7vnl6KVyRPebPy92bYVatd6lAAmReJCWDYBA0c=
-X-Google-Smtp-Source: AGHT+IFlgl6Wz+199EZOSfOfidRR28Jj+TYFeqDuCcMnmGd1F25DC+LDRRg7wLmdhR2w/4IOfkQTtdJjf/WwVQZpnbDq89wFTLvl
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D91152785;
+	Thu,  9 May 2024 13:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715261061; cv=fail; b=s9BJ2CxuZXzhd1Da135Md7GQHnEglC+rxp/FLk5/SiFGjlbIH2MVAGt72OG5Ntpo35qkevdXb0bOrCGQYpasEZzz9xvpyfDM0bQ/lw2Je6uMa1KNJlLYo+x8jm/sFB+wDPiwFS/LHtxlPayUJpgGHvifMue+0kbo4kpjX02BmN4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715261061; c=relaxed/simple;
+	bh=yOQxdVvn6RU6dLVNl/QrcWogDcz2j/AIHeD0+Yi1FsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VTqYybinPiIZccxh2oqYLU9FOaRmtXYWpnB6ZooZvcuNCF67O11Y3UReMYvc8az+wCE0h9LSlo5rKx6yXPvFi0EXQC2vXbwBvUQnWUI68TTN+VLDOzR9sCkAZSHFlAxEsuHmwIGp696F9mngJARmqSGfGCbsKYOyv90H1PqPZzc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=X6qk5sLN; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=aiEBkQg2; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 449DNtRT019481;
+	Thu, 9 May 2024 13:23:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=HdyszSnCGDHN2P/FX6X8EcWYi0a+jmcXgnWC7lQC2KY=;
+ b=X6qk5sLNZ4kvW5PvOLvPQnLWHAGZRh3aP9b1X62bnCUkYxpvaXE0EcRCp4JCWYIkf+Pe
+ ZPvH0xPR70HgUbIN+6G6x5u3kOeNLZJyJeL9orhYA9TrpUo1Gb4j1rw4J2wrkvzyq+2C
+ FIApzWnVjoYLUV+fFtj3hC+5w5pp+t/tQPzSyepep9ASQ5lpQf6uqINpddeRJ+snekMF
+ 1rNRqYxwyILHzeLf6HssDxldxMSQiTddzcxcke7P2MHmEwAQNKQJNvOjoKCsmGLywA1O
+ zNZCKdPtlllsbxGwcezmiQmVBs9xJhhvPexmSc1Xz0qA2GLVveQOzPdhQbjRftmaiacR 5A== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y0t628kv6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 09 May 2024 13:23:57 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 449Cb0sv019119;
+	Thu, 9 May 2024 13:19:54 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfn4upd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 09 May 2024 13:19:53 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QnI5xI8Yesy8UlFcCRRW24JNyFQfSvodqnHsYHFC7lg9mg51YfGZUhIVUoMelh1pTG52YXSyxHiIjM5RHU4nk+2ZBmiL+SQciWxiAG9A4JfveJL8y9DjE69F41qrFMTjgOw3jpjZM8aC6wJxHHNLA1OfZYea0m3NVPry2eQHdeKDgtZV59pc1A4C1fMyDxJfFhE37Y7JAM162WVaZfwsftJ9xmZpze/d3KXGj+8j2SVWdawVOkr8rhEiE0IPvMcdhlarJw/S1kZanUr8QwrkjNnAGnNHyBcQPriH5pYekhLNpHcntCfOs8eJCt94cCx82YiwjkoLFxERAvlPIttLiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HdyszSnCGDHN2P/FX6X8EcWYi0a+jmcXgnWC7lQC2KY=;
+ b=Use4BU22czZmq1Ptyrux5XgL1DmrE6yij3xVf4o3Zv76mRJtJsb6RdbH7zBYyALGpJikf9L+oifVWG9X1h7gFiYB5PwQqm37wXP2j91W/cgnuO/lqNGhzbls0Pz2aXRi7yPKv4Af+EORrlguNskFKrNr33oLdXBdMMiRYwFFGrfSd8R2dLY/7bb8DYcGOOyLTGthRHJVnYwJ9o3LThc8SiAijPeVqEoso/wtcOzrJC3Y3NVxSjMCjepcCPoCmypQtqRGxFJU46K7PHlScEi+G9BOZSU1rn8ktSCQVfOef1mqC8jJfolWfKaJOWQSY5YikATviYOlp4eTIDG5kFalUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HdyszSnCGDHN2P/FX6X8EcWYi0a+jmcXgnWC7lQC2KY=;
+ b=aiEBkQg2h3uMSSKHzN7Ijf8woeSCvZHesiZONwIqd4Jw9idefPOGvl4Bl5oXITg8KBcTSXcEja6BsyoIKyOg85AQVXdTujhcv8lXahdnZuTycrZthINKwuigVibfbXeTeEd+Cx0nDSMKleWOI0qz22gtVqO3Q13/nkKQSSSo6dI=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by CH3PR10MB7678.namprd10.prod.outlook.com (2603:10b6:610:17a::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Thu, 9 May
+ 2024 13:19:51 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%6]) with mapi id 15.20.7544.047; Thu, 9 May 2024
+ 13:19:51 +0000
+Date: Thu, 9 May 2024 09:19:48 -0400
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey <tom@talpey.com>, linux-nfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] NFSD: harden svcxdr_dupstr() and svcxdr_tmpalloc()
+ against integer overflows
+Message-ID: <ZjzNdLynC7WxwLno@tissot.1015granger.net>
+References: <332d1149-988e-4ece-8aef-1e3fb8bf8af4@moroto.mountain>
+ <babdb32b-3f3a-4e46-8cbb-26f0ca49cc61@moroto.mountain>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <babdb32b-3f3a-4e46-8cbb-26f0ca49cc61@moroto.mountain>
+X-ClientProxiedBy: CH2PR18CA0003.namprd18.prod.outlook.com
+ (2603:10b6:610:4f::13) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1356:b0:488:c743:c05 with SMTP id
- 8926c6da1cb9f-488fdd5feefmr251558173.5.1715260709069; Thu, 09 May 2024
- 06:18:29 -0700 (PDT)
-Date: Thu, 09 May 2024 06:18:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000042f5d90618054116@google.com>
-Subject: [syzbot] [jfs?] KASAN: slab-out-of-bounds Read in dbAllocBits
-From: syzbot <syzbot+0be47376a6acbcba7f0d@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|CH3PR10MB7678:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51cf4864-7ed5-4bfd-8c1d-08dc702ab566
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?MvtWubtFYHpwNCiTVyuuhmK9uSvtnFEj3DqA1yZq889OvT279EF/mYwPeEDk?=
+ =?us-ascii?Q?fta4tocjTf6P4kkDHAIKAJPfpPSt+uYXV0ToTCOsgnMdX6SS2pCZ99qZv6Yq?=
+ =?us-ascii?Q?xe/2Zikig5UXWhEPzEAME2Wscfrt1z1lFZnn7VJILQVPkGkFAo+Ud0bRlSdX?=
+ =?us-ascii?Q?4shgdK53qzN1owrZ377CUga/InFYvzkdg8806V85pP7lrxvh918Bdv1ChQt5?=
+ =?us-ascii?Q?BnebBzMaRjNfc/cTv+mZfCrn+SwEHKWEFLUXlH2BQt0/2XhMNKMYTyafKSp4?=
+ =?us-ascii?Q?b+kXyZePeID1xbRQT+K6HrivYpTF3SysAQ67Pg1bcZ9vBeobNXCeGGw+3HyB?=
+ =?us-ascii?Q?3Q+eii/c1uDeZ/bliZh+YIP2gZlHLkim+4uGVLBUgppnookyPZ22BDWpEF/X?=
+ =?us-ascii?Q?CflYEMXscG5yD/Yeqmw3aUSJUEx0Jg75IFzIfcTXTNKCNZc+ldHggRx/6g53?=
+ =?us-ascii?Q?sTGgTSiq3yc06Ol6cT5SZbWYmTotZmAZkB5UtGsedqOytRwo+FqkiG/8tqX8?=
+ =?us-ascii?Q?h8nsvwfkGcVon+wlF2gzl/VPdJ/BM2FJoVNQOXZyzogPDPYQuQfuIGRx9uDe?=
+ =?us-ascii?Q?aHvgE0jAN+u31zpc5TQWlC9u5YvfzOO3yw+AVWdpSd2QMtLEVTxCADoE6qtr?=
+ =?us-ascii?Q?UVzbV3YDCCNzNNRtn+xAVyokCqLaMSIDtK/V3KFrqVBZw5q89utApmCe0Bev?=
+ =?us-ascii?Q?bkLMIma0eXJZfTQFOiJHkTVskeMysnc/5ImzUSO02HiiT0qCQRBpLqmB6R2F?=
+ =?us-ascii?Q?DgCEtFBuL6pl6XpVtzsl1k40BBkbHM/893XWWFa4VopxMaOKVhiOYQX2VMmh?=
+ =?us-ascii?Q?uldxof7pXUrBIwXNH8xM+lAgkRN+OYclIHc6k9UA88a3ew60f+CQqx8eQWXt?=
+ =?us-ascii?Q?B8uc7sOprOQ9rqeOw1yOJyZWgHcpJxP6ht2IbCgMIpIqfa3QUEhwnOozHSWb?=
+ =?us-ascii?Q?2y+uh04O1+uM++nR0AasMj3TM8FVU4gjr3+Euvm6/aiqJP7jGwcx3I9y5/O9?=
+ =?us-ascii?Q?CdFuqefiD0cKcKYU0RoO8WLZU9HyZbkOsqk8MHp3f1gSXr8x6Y2PFGQJkw0y?=
+ =?us-ascii?Q?Wmv8FeJw0/2m/b/SOYIuM08kqS6unBs8z34GWF/xDfSqlAtYhCp/Fy0phu7d?=
+ =?us-ascii?Q?slc9YjvSeTA4HNGWs32puTBFBBDmmIfGUJVanSaXmY9uVb75Rm+fYc6FXmFW?=
+ =?us-ascii?Q?nFEX7JsJZzpYqs6eT+DlT+FhCEj8/qDloo8NEkAH5qFHGbgRkVG89vvuSZuz?=
+ =?us-ascii?Q?2+YgR+wpZL/ZXRkLYRRuxMJZQIeJZ28b7H/nbWEa0Q=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?YaolOWEIgw3DJPxJ7eMRutEgQhTWEf+ykmpQ3hqe7TBM1DpfsWa8S3bcKeDB?=
+ =?us-ascii?Q?ou74tvHfcVzSpXKC+Xh/39TvkiSxIs3sZIcqc3D1DozgzNP5glCRwrgpbGNT?=
+ =?us-ascii?Q?lcRkxf/xjz3RTSGN2HAmPadi6lRanaYm3+mCWQ8t586SAUQXyV/r7AT3h+zE?=
+ =?us-ascii?Q?xJ8sUjpTSUL0soIJ30thYD0J1JFAwDd2ZuCz7VxvL+kffh2y/f6+X1x+mZmm?=
+ =?us-ascii?Q?qvKpd7E6OvQhyD3wRCWd0rhGDOsfBctvD4hBhRCk+pcyactB0j8AGbhQn3GP?=
+ =?us-ascii?Q?aNzFrczm7ROynin9xxUVqPzryEdDBU+7sqeCQdqN0zy2BSOEYYVUWzq86Ifl?=
+ =?us-ascii?Q?GM2MQ9eVVHIoAXeV5zo3m1rW5PXgJpgTd2gDIZkUDovP1777X2MkWmuaAvBk?=
+ =?us-ascii?Q?N+Bk7guafI218qqXP2eiue6h453nAgqYAGxDEPbtz2zFzRG4gUSsdQi+Z2aX?=
+ =?us-ascii?Q?U31J09WijmAB26d/0lggmhS3Wb/U+l2K7hcpOsHTv2vnLTEQ/IgcP6ecVr2c?=
+ =?us-ascii?Q?HUOgfb4ctDF1uXOIx/ljONVmemihaMVSuuhC1IT7n/dme3CUqJyOu/kyXG2I?=
+ =?us-ascii?Q?naC+hzvmxgjHbW72EgRc2vg/CXavpbvvc58bnkQTfZLNF2umxwY+ApIg7fih?=
+ =?us-ascii?Q?U+hXfkO4ns+Gkaexp5hM1oLayoI2aoxduAHhhikQowBlwwqwRxINJShfhYyU?=
+ =?us-ascii?Q?ihrs+XMsSuzvBpelhj9QEx9pgbGDNE4yOMnRG82gpPTk0S+d5nz86RhWKu6d?=
+ =?us-ascii?Q?aAU7AxBCYvy0dYgfNYrTKdAB8ZJuOnTTWfg8rbKPn0z6Zu27NklzGgCj1nDy?=
+ =?us-ascii?Q?h5kAlc/2HTVEbh6vUleTCeWRiwfcQVYxRwTNiqhRRg8Zw2Q04fWkSRDO1kPI?=
+ =?us-ascii?Q?+0FUtaLRa2L6aYLR/j+hYP+6QeWtUyOnI+1gJz6xHnbjRTaZTXv4F4uO2jgE?=
+ =?us-ascii?Q?SIHMblN9IjNJFuZXqCPK+YRpUlTLDyUwIKPhPdK5exD9oo7qZloHDrHAV7JO?=
+ =?us-ascii?Q?ornWCUxCNPI9/BI7A7+DJ9wrn48mAow/S4ZC4kg5YR+SF8jYcKyoV3dmug5D?=
+ =?us-ascii?Q?MPsq6HcZ8fxEtw5J6e01XFGJuBKVQ3uGENVJuAiDtiyY9m+lH776O5TCxRK7?=
+ =?us-ascii?Q?3UhepH6txcNmnRpjY77IcY5bUHMyKXBA3BRXvUuh9BeulMtQNLDMH5CtcPqu?=
+ =?us-ascii?Q?fPRjzD0ZkMZbJl3QnXqhMNDgeGba8YV4Ek+kACbWK0/dzUZeuMpPpI5SDXjO?=
+ =?us-ascii?Q?uL2k/eAOk55a/LwJuyffVGXGeAZYcxD6HnrbGxjulBfB0fMv2lYi08zPOocr?=
+ =?us-ascii?Q?/dWEBdn529Xj4mxOc8IIBApBizZ0hFsscV1/djBTtV0GXsng9DBFXWtC3AoV?=
+ =?us-ascii?Q?MVSTtatIK5xPRrfQjSD8MVe7bZT7N0H5eOukjfMlBwPuo2OdWNRy5ozL/M1y?=
+ =?us-ascii?Q?77K/X88KZ/QcC205cpdcCltlhtPf/jtu+ocaPQYcuZPzR1YyhxvBVRzaOOnN?=
+ =?us-ascii?Q?toxA306P/N+gKbk73uviSXpva6fdULwd3sQFWGSb6i9oYrX8Z9Pl6us5Jnuz?=
+ =?us-ascii?Q?lTmf0pyuYO1sl8tz+AutIOMazHaoGI60T+VPdlfVbe5KxqLdx/zYehPsxaxl?=
+ =?us-ascii?Q?Gw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	KRz1B5iScJp9Q1EV0EDZBnhzzKkgwK+TEnPH+ECIt2V7if0UGDWTVz16khu7HKNgtYOjhxUZHJSavXCTf/q/zyWeIkih1EAMxfprQsbOo475qGkHsmgHEDwvrXeSnYzeczf930X+x4KTYl3xGQy0QULj7kyvPobe2C8gQ7gSucn3O7MVdZrEwajAJrusqGAfVNxiI6yETnrFN03qfR9QOMeTAfDujKyLfPuoY5P/Qeia6/x6de4njQCE3nK1byFzzJ/S9sQet9Ea8HLTz3njdNaCfFMRGh5u472ZJBFbZPuea5M6OT4afYly0KxlIoxWq7gB+9TR6DwDgFPKN36c5PzQtbVVrsueU9HYsCfgN+nri8MIY/87gNq/VLTRNODPlZbUga48BPfozclL5YLvhh9qY7uDn00HCrzPgwCF/U+s7e02YSHCjnqtc3QTYciknBIdkBBjc5wHI4vGa9st8LRM35CC1r20q6m3fzgHwVj3tvC+VxTO5EV0WKia+m6oWOtkMR42K5ra0txjjVhDGWEyGHQVPxRyK8eWCgqyBhCN/iD2o1FVK0iFim4jdIG5vt6xZriSoBSzwQcRncxNegx4Iw6WPOKPb6IbAcj/hug=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51cf4864-7ed5-4bfd-8c1d-08dc702ab566
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 13:19:51.6083
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eIJfpM072V1BzTfnn+ikpINlFKFupNDsQwOcLTXgm4RBQBDu7iw8aTeWkQ65lwc0cVMYAR1RWH36+HgrbADjTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7678
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_06,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 mlxscore=0
+ suspectscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405090089
+X-Proofpoint-GUID: 2qwr-H2iapIqsqmVZXe9U5cvhQoVP4jK
+X-Proofpoint-ORIG-GUID: 2qwr-H2iapIqsqmVZXe9U5cvhQoVP4jK
 
-Hello,
+On Thu, May 09, 2024 at 01:48:28PM +0300, Dan Carpenter wrote:
+> These lengths come from xdr_stream_decode_u32() and so we should be a
+> bit careful with them.  Use size_add() and struct_size() to avoid
+> integer overflows.  Saving size_add()/struct_size() results to a u32 is
+> unsafe because it truncates away the high bits.
+> 
+> Also generally storing sizes in longs is safer.  Most systems these days
+> use 64 bit CPUs.  It's harder for an addition to overflow 64 bits than
+> it is to overflow 32 bits.  Also functions like vmalloc() can
+> successfully allocate UINT_MAX bytes, but nothing can allocate ULONG_MAX
+> bytes.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> I think my patch 1 fixes any real issues.  It's hard to assign a Fixes
+> tag to this.
 
-syzbot found the following issue on:
-
-HEAD commit:    7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16306574980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
-dashboard link: https://syzkaller.appspot.com/bug?extid=0be47376a6acbcba7f0d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=159d897f180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c3d354980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-7367539a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1f814bef5f63/vmlinux-7367539a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cd1f53098470/bzImage-7367539a.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6f1d86e6c9f3/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0be47376a6acbcba7f0d@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in dbAllocBits+0x61e/0x630 fs/jfs/jfs_dmap.c:2255
-Read of size 8 at addr ffff88802639eeb8 by task syz-executor242/5196
-
-CPU: 2 PID: 5196 Comm: syz-executor242 Not tainted 6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- dbAllocBits+0x61e/0x630 fs/jfs/jfs_dmap.c:2255
- dbAllocDmap+0x5c/0x110 fs/jfs/jfs_dmap.c:2032
- dbAllocNear fs/jfs/jfs_dmap.c:1258 [inline]
- dbAlloc+0x784/0xab0 fs/jfs/jfs_dmap.c:843
- ea_get+0xc11/0x12c0 fs/jfs/xattr.c:514
- __jfs_setxattr+0x1ed/0x1070 fs/jfs/xattr.c:718
- __jfs_set_acl+0x110/0x1a0 fs/jfs/acl.c:87
- jfs_set_acl+0x256/0x330 fs/jfs/acl.c:115
- set_posix_acl+0x25c/0x320 fs/posix_acl.c:955
- vfs_set_acl+0x53d/0x900 fs/posix_acl.c:1134
- do_set_acl+0xd9/0x1b0 fs/posix_acl.c:1279
- do_setxattr+0xeb/0x170 fs/xattr.c:626
- setxattr+0x15d/0x180 fs/xattr.c:652
- path_setxattr+0x179/0x1e0 fs/xattr.c:671
- __do_sys_lsetxattr fs/xattr.c:694 [inline]
- __se_sys_lsetxattr fs/xattr.c:690 [inline]
- __x64_sys_lsetxattr+0xc1/0x160 fs/xattr.c:690
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f03a87c66b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffca6e6e748 EFLAGS: 00000246 ORIG_RAX: 00000000000000bd
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f03a87c66b9
-RDX: 0000000020000180 RSI: 0000000020000040 RDI: 0000000020000000
-RBP: 00007f03a883f610 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000024 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffca6e6e918 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-Allocated by task 4906:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __do_kmalloc_node mm/slub.c:3966 [inline]
- __kmalloc_node_track_caller+0x220/0x470 mm/slub.c:3986
- kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:599
- __alloc_skb+0x164/0x380 net/core/skbuff.c:668
- __netdev_alloc_skb+0x72/0x3f0 net/core/skbuff.c:732
- __netdev_alloc_skb_ip_align include/linux/skbuff.h:3321 [inline]
- e1000_alloc_rx_buffers+0x3b5/0x7b0 drivers/net/ethernet/intel/e1000e/netdev.c:668
- e1000_configure+0x199a/0x4ad0 drivers/net/ethernet/intel/e1000e/netdev.c:3761
- e1000e_open+0x403/0x1790 drivers/net/ethernet/intel/e1000e/netdev.c:4658
- __dev_open+0x2d4/0x4e0 net/core/dev.c:1430
- __dev_change_flags+0x561/0x720 net/core/dev.c:8692
- dev_change_flags+0x8f/0x160 net/core/dev.c:8764
- devinet_ioctl+0x127a/0x1f10 net/ipv4/devinet.c:1172
- inet_ioctl+0x3aa/0x3f0 net/ipv4/af_inet.c:1001
- sock_do_ioctl+0x116/0x280 net/socket.c:1222
- sock_ioctl+0x22e/0x6c0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:904 [inline]
- __se_sys_ioctl fs/ioctl.c:890 [inline]
- __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:890
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88802639e000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 1720 bytes to the right of
- allocated 2048-byte region [ffff88802639e000, ffff88802639e800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x26398
-head: order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000840(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000000840 ffff888015042f00 ffffea000069fc00 dead000000000002
-raw: 0000000000000000 0000000000080008 00000001ffffffff 0000000000000000
-head: 00fff00000000840 ffff888015042f00 ffffea000069fc00 dead000000000002
-head: 0000000000000000 0000000000080008 00000001ffffffff 0000000000000000
-head: 00fff00000000003 ffffea000098e601 dead000000000122 00000000ffffffff
-head: 0000000800000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4675, tgid -996255200 (klogd), ts 4675, free_ts 20473074610
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d4/0x350 mm/page_alloc.c:1534
- prep_new_page mm/page_alloc.c:1541 [inline]
- get_page_from_freelist+0xa28/0x3780 mm/page_alloc.c:3317
- __alloc_pages+0x22b/0x2460 mm/page_alloc.c:4575
- __alloc_pages_node include/linux/gfp.h:238 [inline]
- alloc_pages_node include/linux/gfp.h:261 [inline]
- alloc_slab_page mm/slub.c:2175 [inline]
- allocate_slab mm/slub.c:2338 [inline]
- new_slab+0xcc/0x3a0 mm/slub.c:2391
- ___slab_alloc+0x66d/0x1790 mm/slub.c:3525
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3610
- __slab_alloc_node mm/slub.c:3663 [inline]
- slab_alloc_node mm/slub.c:3835 [inline]
- kmalloc_trace+0x2fb/0x330 mm/slub.c:3992
- kmalloc include/linux/slab.h:628 [inline]
- syslog_print+0xf9/0x5d0 kernel/printk/printk.c:1556
- do_syslog+0x3be/0x6a0 kernel/printk/printk.c:1734
- __do_sys_syslog kernel/printk/printk.c:1826 [inline]
- __se_sys_syslog kernel/printk/printk.c:1824 [inline]
- __x64_sys_syslog+0x74/0xb0 kernel/printk/printk.c:1824
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 4675 tgid 4675 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1141 [inline]
- free_unref_page_prepare+0x527/0xb10 mm/page_alloc.c:2347
- free_unref_page+0x33/0x3c0 mm/page_alloc.c:2487
- __put_partials+0x14c/0x170 mm/slub.c:2906
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x4e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3798 [inline]
- slab_alloc_node mm/slub.c:3845 [inline]
- kmem_cache_alloc_node+0x177/0x340 mm/slub.c:3888
- __alloc_skb+0x2b1/0x380 net/core/skbuff.c:658
- alloc_skb include/linux/skbuff.h:1313 [inline]
- alloc_skb_with_frags+0xe4/0x710 net/core/skbuff.c:6515
- sock_alloc_send_pskb+0x7f1/0x980 net/core/sock.c:2795
- unix_dgram_sendmsg+0x4b9/0x1b10 net/unix/af_unix.c:2019
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg net/socket.c:745 [inline]
- __sys_sendto+0x47f/0x4e0 net/socket.c:2191
- __do_sys_sendto net/socket.c:2203 [inline]
- __se_sys_sendto net/socket.c:2199 [inline]
- __x64_sys_sendto+0xe0/0x1c0 net/socket.c:2199
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88802639ed80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88802639ee00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88802639ee80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                                        ^
- ffff88802639ef00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88802639ef80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+I agree that this is a defensive change only. As it is late in the
+cycle and this doesn't seem urgent, I would prefer to queue this
+change for v6.11.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  fs/nfsd/nfs4xdr.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> index c7bfd2180e3f..42b41d55d4ed 100644
+> --- a/fs/nfsd/nfs4xdr.c
+> +++ b/fs/nfsd/nfs4xdr.c
+> @@ -118,11 +118,11 @@ static int zero_clientid(clientid_t *clid)
+>   * operation described in @argp finishes.
+>   */
+>  static void *
+> -svcxdr_tmpalloc(struct nfsd4_compoundargs *argp, u32 len)
+> +svcxdr_tmpalloc(struct nfsd4_compoundargs *argp, size_t len)
+>  {
+>  	struct svcxdr_tmpbuf *tb;
+>  
+> -	tb = kmalloc(sizeof(*tb) + len, GFP_KERNEL);
+> +	tb = kmalloc(struct_size(tb, buf, len), GFP_KERNEL);
+>  	if (!tb)
+>  		return NULL;
+>  	tb->next = argp->to_free;
+> @@ -138,9 +138,9 @@ svcxdr_tmpalloc(struct nfsd4_compoundargs *argp, u32 len)
+>   * buffer might end on a page boundary.
+>   */
+>  static char *
+> -svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, u32 len)
+> +svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, size_t len)
+>  {
+> -	char *p = svcxdr_tmpalloc(argp, len + 1);
+> +	char *p = svcxdr_tmpalloc(argp, size_add(len, 1));
+>  
+>  	if (!p)
+>  		return NULL;
+> @@ -150,7 +150,7 @@ svcxdr_dupstr(struct nfsd4_compoundargs *argp, void *buf, u32 len)
+>  }
+>  
+>  static void *
+> -svcxdr_savemem(struct nfsd4_compoundargs *argp, __be32 *p, u32 len)
+> +svcxdr_savemem(struct nfsd4_compoundargs *argp, __be32 *p, size_t len)
+>  {
+>  	__be32 *tmp;
+>  
+> @@ -2146,7 +2146,7 @@ nfsd4_decode_clone(struct nfsd4_compoundargs *argp, union nfsd4_op_u *u)
+>   */
+>  static __be32
+>  nfsd4_vbuf_from_vector(struct nfsd4_compoundargs *argp, struct xdr_buf *xdr,
+> -		       char **bufp, u32 buflen)
+> +		       char **bufp, size_t buflen)
+>  {
+>  	struct page **pages = xdr->pages;
+>  	struct kvec *head = xdr->head;
+> -- 
+> 2.43.0
+> 
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Chuck Lever
 
