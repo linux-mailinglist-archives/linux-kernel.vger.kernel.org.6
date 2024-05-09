@@ -1,284 +1,223 @@
-Return-Path: <linux-kernel+bounces-174354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905EF8C0D89
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C298C8C0D94
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4755928362C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F08428378E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E0414A623;
-	Thu,  9 May 2024 09:36:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LlUd4/FE"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCADA1494D9
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7314E14B946;
+	Thu,  9 May 2024 09:36:54 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C8E14AD37;
+	Thu,  9 May 2024 09:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715247370; cv=none; b=UQi06OSr3mMw9VheIRmMcd2/EPE8O42cjV0f2tpNOumLop3hAFYlkDJ+9qPKAEKQyj3a/JQT+Is6T+hK1wyEFVxaUT2jHw6inJ6fM9bD9UT7VWtF8HgQeMcP+TCzWVeHE6ZkCSs+XcPn5AwYC2AfFmJQd0PA/ImqNqO4TyOB6Xs=
+	t=1715247413; cv=none; b=WJhJPDFjLyWWOHh16eW94JGsLkWqCpj/qKaxyoD2kpJ5A8WcQr1j8GksgmvvhXpLm0z5baisBirYVaMUk5aWRf2FqbGXc52HNZ6ngbMs8Y/2gVRvxxGPuW701Ftafhrb2n9Pay4goz6o13BeiaZIr/JmELn8hjK+tJsSuxsCvJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715247370; c=relaxed/simple;
-	bh=5V0THLtjlGm7lz2Rb8dkX2TumoFDGOdEzv+qTisTZBg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z3rdJou46S0ci9NSEXMBAFXEpKPyPLOEwz+ClialtcDSJe0g0F0TdCtUSs/pSEUM5Xqp6qKwxUpWAdQ6jYd5QqxGfu8BpdhdyNk0A3akafwrxheCmPqeOu6TrXmQhmuhRvCkbSha+wI6a6l6O+ElBHQUfiaNWjKhgpZwO6Q61Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LlUd4/FE; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715247365; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=pvNda+d/dgY+J2GX1dZdTaOZdRlBWeQizib67djYoac=;
-	b=LlUd4/FE304IT+LKS+icoj0rJeipkA26ZIcACtISj95vIOZUjjjh5oyX4Vtx7Yt7nXnN6X9UAFMVRGft5l1Wm0ZFQrnd8dCCV//DVXlxrdKGnKyOekDH0+3vMtsciSNvUJKmAPVTU48Yr4wNdxc4CMD9FB1Ol1THinTHuQCh7hI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0W66VJRi_1715247361;
-Received: from 30.97.56.60(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W66VJRi_1715247361)
-          by smtp.aliyun-inc.com;
-          Thu, 09 May 2024 17:36:03 +0800
-Message-ID: <c49e2663-a7a6-410d-b694-59cd3fb28c78@linux.alibaba.com>
-Date: Thu, 9 May 2024 17:36:01 +0800
+	s=arc-20240116; t=1715247413; c=relaxed/simple;
+	bh=3zCGowu0qqLGgytGgGhf26xsCg/8t3/q/Is3l5ly7iQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=pqSYQS8nMx47bzDzcYF8H3CLIADGHMchZAy+BpDhtwngOF9mthlXGBTosxgxY6ulj3ouy2woeR+0b5nfwmPj/yztruoGqDbHqasxBp6LmVrCaIqHnnx9Rbe2ZK9o9SwcFwkoOnVAoj9sMg8sHL4/+RgSxiKKAwZX7aNKaouA1tY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from ubuntu.localdomain (unknown [221.192.180.131])
+	by mail-app4 (Coremail) with SMTP id cS_KCgD3hLIimTxmfcJPAA--.62319S2;
+	Thu, 09 May 2024 17:36:37 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hams@vger.kernel.org,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	edumazet@google.com,
+	jreuter@yaina.de,
+	dan.carpenter@linaro.org,
+	rkannoth@marvell.com,
+	davem@davemloft.net,
+	lars@oddbit.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH net v7 1/3] ax25: Use kernel universal linked list to implement ax25_dev_list
+Date: Thu,  9 May 2024 17:36:33 +0800
+Message-Id: <85bba3af651ca0e1a519da8d0d715b949891171c.1715247018.git.duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1715247018.git.duoming@zju.edu.cn>
+References: <cover.1715247018.git.duoming@zju.edu.cn>
+X-CM-TRANSID:cS_KCgD3hLIimTxmfcJPAA--.62319S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCryUJFyUZrW5Kr1DAFy7ZFb_yoWrur15pF
+	ZIkF1fArZ7Jr1UAr4DWF1xWr1YvryUt39rAry5uF1Skw1qq3s8Jr1ktryUJryUGrW3Ar18
+	J34UXr4DAr48ur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9K14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
+	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr4
+	1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK
+	67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI
+	8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAv
+	wI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14
+	v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU0gAwDUUUU
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwIQAWY7nwoPXwAesW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] mm/vmscan: avoid split lazyfree THP during
- shrink_folio_list()
-To: Lance Yang <ioworker0@gmail.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org,
- maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com, david@redhat.com,
- 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com,
- zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com,
- libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240501042700.83974-1-ioworker0@gmail.com>
- <20240501042700.83974-4-ioworker0@gmail.com>
- <e0b8a282-973f-41f7-a878-4a287bab81ea@linux.alibaba.com>
- <CAK1f24=gc7VojzSDyNck-03L03UWR4AFxji8Rw+xMKBg1_M7fw@mail.gmail.com>
- <CAK1f24=HYM8zAw88apModHZdaLu849PH=JKPrZ3nxGqQWWzoyQ@mail.gmail.com>
- <8c1d6e06-d84b-4be7-81c8-76e2d8fb9883@linux.alibaba.com>
- <CAK1f24=+-jtjUpyNEXQyhgtGeqKEXr1tRN89Nzg3WQONAZEMMw@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAK1f24=+-jtjUpyNEXQyhgtGeqKEXr1tRN89Nzg3WQONAZEMMw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+The origin ax25_dev_list implements its own single linked list,
+which is complicated and error-prone. For example, when deleting
+the node of ax25_dev_list in ax25_dev_device_down(), we have to
+operate on the head node and other nodes separately.
 
+This patch uses kernel universal linked list to replace original
+ax25_dev_list, which make the operation of ax25_dev_list easier.
 
-On 2024/5/7 19:37, Lance Yang wrote:
-> On Tue, May 7, 2024 at 5:33 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->>
->>
->>
->> On 2024/5/7 16:26, Lance Yang wrote:
->>> On Tue, May 7, 2024 at 2:32 PM Lance Yang <ioworker0@gmail.com> wrote:
->>>>
->>>> Hey Baolin,
->>>>
->>>> Thanks a lot for taking time to review!
->>>>
->>>> On Tue, May 7, 2024 at 12:01 PM Baolin Wang
->>>> <baolin.wang@linux.alibaba.com> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 2024/5/1 12:27, Lance Yang wrote:
->>>>>> When the user no longer requires the pages, they would use
->>>>>> madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
->>>>>> typically would not re-write to that memory again.
->>>>>>
->>>>>> During memory reclaim, if we detect that the large folio and its PMD are
->>>>>> both still marked as clean and there are no unexpected references
->>>>>> (such as GUP), so we can just discard the memory lazily, improving the
->>>>>> efficiency of memory reclamation in this case.  On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
->>>>>> mem_cgroup_force_empty() results in the following runtimes in seconds
->>>>>> (shorter is better):
->>>>>>
->>>>>> --------------------------------------------
->>>>>> |     Old       |      New       |  Change  |
->>>>>> --------------------------------------------
->>>>>> |   0.683426    |    0.049197    |  -92.80% |
->>>>>> --------------------------------------------
->>>>>>
->>>>>> Suggested-by: Zi Yan <ziy@nvidia.com>
->>>>>> Suggested-by: David Hildenbrand <david@redhat.com>
->>>>>> Signed-off-by: Lance Yang <ioworker0@gmail.com>
->>>>>> ---
->>>>>>     include/linux/huge_mm.h |  9 +++++
->>>>>>     mm/huge_memory.c        | 73 +++++++++++++++++++++++++++++++++++++++++
->>>>>>     mm/rmap.c               |  3 ++
->>>>>>     3 files changed, 85 insertions(+)
->>>>>>
->>>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>>>> index 38c4b5537715..017cee864080 100644
->>>>>> --- a/include/linux/huge_mm.h
->>>>>> +++ b/include/linux/huge_mm.h
->>>>>> @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
->>>>>>
->>>>>>     void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
->>>>>>                            pmd_t *pmd, bool freeze, struct folio *folio);
->>>>>> +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
->>>>>> +                        pmd_t *pmdp, struct folio *folio);
->>>>>>
->>>>>>     static inline void align_huge_pmd_range(struct vm_area_struct *vma,
->>>>>>                                         unsigned long *start,
->>>>>> @@ -492,6 +494,13 @@ static inline void align_huge_pmd_range(struct vm_area_struct *vma,
->>>>>>                                         unsigned long *start,
->>>>>>                                         unsigned long *end) {}
->>>>>>
->>>>>> +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
->>>>>> +                                      unsigned long addr, pmd_t *pmdp,
->>>>>> +                                      struct folio *folio)
->>>>>> +{
->>>>>> +     return false;
->>>>>> +}
->>>>>> +
->>>>>>     #define split_huge_pud(__vma, __pmd, __address)     \
->>>>>>         do { } while (0)
->>>>>>
->>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>>> index 145505a1dd05..90fdef847a88 100644
->>>>>> --- a/mm/huge_memory.c
->>>>>> +++ b/mm/huge_memory.c
->>>>>> @@ -2690,6 +2690,79 @@ static void unmap_folio(struct folio *folio)
->>>>>>         try_to_unmap_flush();
->>>>>>     }
->>>>>>
->>>>>> +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
->>>>>> +                                    unsigned long addr, pmd_t *pmdp,
->>>>>> +                                    struct folio *folio)
->>>>>> +{
->>>>>> +     struct mm_struct *mm = vma->vm_mm;
->>>>>> +     int ref_count, map_count;
->>>>>> +     pmd_t orig_pmd = *pmdp;
->>>>>> +     struct mmu_gather tlb;
->>>>>> +     struct page *page;
->>>>>> +
->>>>>> +     if (pmd_dirty(orig_pmd) || folio_test_dirty(folio))
->>>>>> +             return false;
->>>>>> +     if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd)))
->>>>>> +             return false;
->>>>>> +
->>>>>> +     page = pmd_page(orig_pmd);
->>>>>> +     if (unlikely(page_folio(page) != folio))
->>>>>> +             return false;
->>>>>> +
->>>>>> +     tlb_gather_mmu(&tlb, mm);
->>>>>> +     orig_pmd = pmdp_huge_get_and_clear(mm, addr, pmdp);
->>>>>> +     tlb_remove_pmd_tlb_entry(&tlb, pmdp, addr);
->>>>>> +
->>>>>> +     /*
->>>>>> +      * Syncing against concurrent GUP-fast:
->>>>>> +      * - clear PMD; barrier; read refcount
->>>>>> +      * - inc refcount; barrier; read PMD
->>>>>> +      */
->>>>>> +     smp_mb();
->>>>>> +
->>>>>> +     ref_count = folio_ref_count(folio);
->>>>>> +     map_count = folio_mapcount(folio);
->>>>>> +
->>>>>> +     /*
->>>>>> +      * Order reads for folio refcount and dirty flag
->>>>>> +      * (see comments in __remove_mapping()).
->>>>>> +      */
->>>>>> +     smp_rmb();
->>>>>> +
->>>>>> +     /*
->>>>>> +      * If the PMD or folio is redirtied at this point, or if there are
->>>>>> +      * unexpected references, we will give up to discard this folio
->>>>>> +      * and remap it.
->>>>>> +      *
->>>>>> +      * The only folio refs must be one from isolation plus the rmap(s).
->>>>>> +      */
->>>>>> +     if (ref_count != map_count + 1 || folio_test_dirty(folio) ||
->>>>>> +         pmd_dirty(orig_pmd)) {
->>>>>> +             set_pmd_at(mm, addr, pmdp, orig_pmd);
->>>>>> +             return false;
->>>>>> +     }
->>>>>> +
->>>>>> +     folio_remove_rmap_pmd(folio, page, vma);
->>>>>> +     zap_deposited_table(mm, pmdp);
->>>>>> +     add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
->>>>>> +     folio_put(folio);
->>>>>
->>>>> IIUC, you missed handling mlock vma, see mlock_drain_local() in
->>>>> try_to_unmap_one().
->>>>
->>>> Good spot!
->>>>
->>>> I suddenly realized that I overlooked another thing: If we detect that a
->>>> PMD-mapped THP is within the range of the VM_LOCKED VMA, we
->>>> should check whether the TTU_IGNORE_MLOCK flag is set in
->>>> try_to_unmap_one(). If the flag is set, we will remove the PMD mapping
->>>> from the folio. Otherwise, the folio should be mlocked, which avoids
->>>> splitting the folio and then mlocking each page again.
->>>
->>> My previous response above is flawed - sorry :(
->>>
->>> If we detect that a PMD-mapped THP is within the range of the
->>> VM_LOCKED VMA.
->>>
->>> 1) If the TTU_IGNORE_MLOCK flag is set, we will try to remove the
->>> PMD mapping from the folio, as this series has done.
->>
->> Right.
->>
->>> 2) If the flag is not set, the large folio should be mlocked to prevent it
->>> from being picked during memory reclaim? Currently, we just leave it
->>
->> Yes. From commit 1acbc3f93614 ("mm: handle large folio when large folio
->> in VM_LOCKED VMA range"), large folios of the mlocked VMA will be
->> handled during page reclaim phase.
->>
->>> as is and do not to mlock it, IIUC.
->>
->> Original code already handle the mlock case after the PMD-mapped THP is
->> split in try_to_unmap_one():
-> 
-> Yep. But this series doesn't do the TTU_SPLIT_HUGE_PMD immediately.
-> 
->>                   /*
->>                    * If the folio is in an mlock()d vma, we must not swap
->> it out.
->>                    */
->>                   if (!(flags & TTU_IGNORE_MLOCK) &&
->>                       (vma->vm_flags & VM_LOCKED)) {
->>                           /* Restore the mlock which got missed */
-> 
-> IIUC, we could detect a PMD-mapped THP here. So, I'm not sure if we
-> need to mlock it to prevent it from being picked again during memory
-> reclaim. The change is as follows:
+We should do "dev->ax25_ptr = ax25_dev;" and "dev->ax25_ptr = NULL;"
+while holding the spinlock, otherwise the ax25_dev_device_up() and
+ax25_dev_device_down() could race.
 
-For the page reclaim path, folio_check_references() should be able to 
-help restore the mlock of the PMD-mapped THP. However, for other paths 
-that call try_to_unmap(), I believe it is still necessary to check 
-whether the mlock of the PMD-mapped THP was missed.
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
+---
+ include/net/ax25.h  |  3 +--
+ net/ax25/ax25_dev.c | 40 +++++++++++++++-------------------------
+ 2 files changed, 16 insertions(+), 27 deletions(-)
 
-Below code looks reasonable to me from a quick glance.
-
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index ed7f82036986..2a9d037ab23c 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1673,7 +1673,8 @@ static bool try_to_unmap_one(struct folio
-> *folio, struct vm_area_struct *vma,
->                  if (!(flags & TTU_IGNORE_MLOCK) &&
->                      (vma->vm_flags & VM_LOCKED)) {
->                          /* Restore the mlock which got missed */
-> -                       if (!folio_test_large(folio))
-> +                       if (!folio_test_large(folio) ||
-> +                           (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->                                  mlock_vma_folio(folio, vma);
->                          goto walk_done_err;
->                  }
-> 
+diff --git a/include/net/ax25.h b/include/net/ax25.h
+index 0d939e5aee4..c2a85fd3f5e 100644
+--- a/include/net/ax25.h
++++ b/include/net/ax25.h
+@@ -216,7 +216,7 @@ typedef struct {
+ struct ctl_table;
+ 
+ typedef struct ax25_dev {
+-	struct ax25_dev		*next;
++	struct list_head	list;
+ 
+ 	struct net_device	*dev;
+ 	netdevice_tracker	dev_tracker;
+@@ -330,7 +330,6 @@ int ax25_addr_size(const ax25_digi *);
+ void ax25_digi_invert(const ax25_digi *, ax25_digi *);
+ 
+ /* ax25_dev.c */
+-extern ax25_dev *ax25_dev_list;
+ extern spinlock_t ax25_dev_lock;
+ 
+ #if IS_ENABLED(CONFIG_AX25)
+diff --git a/net/ax25/ax25_dev.c b/net/ax25/ax25_dev.c
+index 282ec581c07..f16ee5c09d0 100644
+--- a/net/ax25/ax25_dev.c
++++ b/net/ax25/ax25_dev.c
+@@ -22,11 +22,12 @@
+ #include <net/sock.h>
+ #include <linux/uaccess.h>
+ #include <linux/fcntl.h>
++#include <linux/list.h>
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
+ #include <linux/init.h>
+ 
+-ax25_dev *ax25_dev_list;
++static LIST_HEAD(ax25_dev_list);
+ DEFINE_SPINLOCK(ax25_dev_lock);
+ 
+ ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
+@@ -34,7 +35,7 @@ ax25_dev *ax25_addr_ax25dev(ax25_address *addr)
+ 	ax25_dev *ax25_dev, *res = NULL;
+ 
+ 	spin_lock_bh(&ax25_dev_lock);
+-	for (ax25_dev = ax25_dev_list; ax25_dev != NULL; ax25_dev = ax25_dev->next)
++	list_for_each_entry(ax25_dev, &ax25_dev_list, list)
+ 		if (ax25cmp(addr, (const ax25_address *)ax25_dev->dev->dev_addr) == 0) {
+ 			res = ax25_dev;
+ 			ax25_dev_hold(ax25_dev);
+@@ -59,7 +60,6 @@ void ax25_dev_device_up(struct net_device *dev)
+ 	}
+ 
+ 	refcount_set(&ax25_dev->refcount, 1);
+-	dev->ax25_ptr     = ax25_dev;
+ 	ax25_dev->dev     = dev;
+ 	netdev_hold(dev, &ax25_dev->dev_tracker, GFP_KERNEL);
+ 	ax25_dev->forward = NULL;
+@@ -85,8 +85,8 @@ void ax25_dev_device_up(struct net_device *dev)
+ #endif
+ 
+ 	spin_lock_bh(&ax25_dev_lock);
+-	ax25_dev->next = ax25_dev_list;
+-	ax25_dev_list  = ax25_dev;
++	list_add(&ax25_dev->list, &ax25_dev_list);
++	dev->ax25_ptr     = ax25_dev;
+ 	spin_unlock_bh(&ax25_dev_lock);
+ 	ax25_dev_hold(ax25_dev);
+ 
+@@ -111,32 +111,25 @@ void ax25_dev_device_down(struct net_device *dev)
+ 	/*
+ 	 *	Remove any packet forwarding that points to this device.
+ 	 */
+-	for (s = ax25_dev_list; s != NULL; s = s->next)
++	list_for_each_entry(s, &ax25_dev_list, list)
+ 		if (s->forward == dev)
+ 			s->forward = NULL;
+ 
+-	if ((s = ax25_dev_list) == ax25_dev) {
+-		ax25_dev_list = s->next;
+-		goto unlock_put;
+-	}
+-
+-	while (s != NULL && s->next != NULL) {
+-		if (s->next == ax25_dev) {
+-			s->next = ax25_dev->next;
++	list_for_each_entry(s, &ax25_dev_list, list) {
++		if (s == ax25_dev) {
++			list_del(&s->list);
+ 			goto unlock_put;
+ 		}
+-
+-		s = s->next;
+ 	}
+-	spin_unlock_bh(&ax25_dev_lock);
+ 	dev->ax25_ptr = NULL;
++	spin_unlock_bh(&ax25_dev_lock);
+ 	ax25_dev_put(ax25_dev);
+ 	return;
+ 
+ unlock_put:
++	dev->ax25_ptr = NULL;
+ 	spin_unlock_bh(&ax25_dev_lock);
+ 	ax25_dev_put(ax25_dev);
+-	dev->ax25_ptr = NULL;
+ 	netdev_put(dev, &ax25_dev->dev_tracker);
+ 	ax25_dev_put(ax25_dev);
+ }
+@@ -200,16 +193,13 @@ struct net_device *ax25_fwd_dev(struct net_device *dev)
+  */
+ void __exit ax25_dev_free(void)
+ {
+-	ax25_dev *s, *ax25_dev;
++	ax25_dev *s, *n;
+ 
+ 	spin_lock_bh(&ax25_dev_lock);
+-	ax25_dev = ax25_dev_list;
+-	while (ax25_dev != NULL) {
+-		s        = ax25_dev;
+-		netdev_put(ax25_dev->dev, &ax25_dev->dev_tracker);
+-		ax25_dev = ax25_dev->next;
++	list_for_each_entry_safe(s, n, &ax25_dev_list, list) {
++		netdev_put(s->dev, &s->dev_tracker);
++		list_del(&s->list);
+ 		kfree(s);
+ 	}
+-	ax25_dev_list = NULL;
+ 	spin_unlock_bh(&ax25_dev_lock);
+ }
+-- 
+2.17.1
 
 
