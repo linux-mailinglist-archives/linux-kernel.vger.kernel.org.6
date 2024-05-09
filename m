@@ -1,162 +1,156 @@
-Return-Path: <linux-kernel+bounces-174418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A8E8C0E71
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:48:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543CE8C0E75
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25224281442
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65971F219D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63640131195;
-	Thu,  9 May 2024 10:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888A51304AD;
+	Thu,  9 May 2024 10:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nT0TXTna"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qwKAcxlH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D0D130493
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C2012FF71;
+	Thu,  9 May 2024 10:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251700; cv=none; b=edoD9hHNFC1LpusINuOE77j8iDuTZJCl4etTxUN3oBEaWqOIQHjriHqqZoZPwqimintgLw+zXE6kvuxpZ9Pm0P/LPVSZF5TU4VdX6WwtdJwd2jD0B9wRqOdJtO0GEC+CepXa8sKsC30Y+1l7tcyuLILnw6cH4Zx8CHF3gpZ02lw=
+	t=1715251707; cv=none; b=QKc+qawIe1uN1IQJ0a6OdCUDoQWCEns4ih9bQQJF1PXuuT2yuMqyVDegOO/qq9r/G1Pvusxy7oSuLL7M7DMpXw+8+lpnz1+txrY6iH7Qgc//fbzDtY9owFLqxdm6Y6WHwdsmp6ekBHZ1FCtSViKuFxNQmGr/YgrNkqaPDNfl0Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251700; c=relaxed/simple;
-	bh=AhGKHotUOundbhN4X2YTDc462SsKg+3ZxBuT3oDaWHw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cd+9jEpDB+XenX47lbhzRObZia5YwMRG/JZ5eWjYFDnWscRDwxUj7yDVusSOrOhlgo2ptnri2oIUk9I4z4iET3o39w7C1ZXxwOl+PXmkUmDqHb2at2B0UvKt6PONmfe9ZM03fYXsTudLJ8ibJSiFjXoXQCiL/PKSYBBbaxCkBhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nT0TXTna; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59a64db066so173234766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251697; x=1715856497; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nhk3/XajbYjebewXinPE0P/6g6ueIG9AsQRxMr6tmNE=;
-        b=nT0TXTnaL7FfAtbP7LrDzrvRKwzajzdgiNqJQqFfwCS86vqGJczlvppfzFE3o8cUdC
-         vWpSWvYDMGnoKd5oUFJMbYs64XWNBUqhhGS8lBqolhHPTUTL13wbiz/r4L6RS7hz3sSK
-         A6h5OGPcV2i/KTkWuy3IDnhrXzrUfSsD96CfS/TOFQtrYLqtT8jFnwIkksCIJUoahRt6
-         tjgLL+lNWJcc/blGeK2ksvzVzVHKaGqjEbTVM+X4o9xsioiimqEF2PwVEtDlBQFBplFv
-         2pqCAStUW1VV91/Yt5Mttyz+h61/OSA5TdRl3875TvYGSJuKibpJXgt9jrvKCysCDYY5
-         yX0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251697; x=1715856497;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nhk3/XajbYjebewXinPE0P/6g6ueIG9AsQRxMr6tmNE=;
-        b=eox2d+MGWTGhlmB5hgAc6oHnONGsotmrr3I/SkH/7MMP4ixkIaACimUkGfQoxtqVfJ
-         LeVrCUlztdXmb9yCae3BiKcpdcUVD1OF90Hp5hwEfzA/QZ0mqGd0Si9Kbu6ID4yq6wbL
-         T0ppxvRDIPr/irEXHrwWCywd2m9vmWB+aGrpNdw9vjglH9puDDhO4abPowtigxg4DJjM
-         zvsxdCifhwpnLKHcrKW5i0gdhVZR9U2/5JCfaZhnuLRCOLIhaJgHbQWoQ/YHGFkBCIBE
-         fBCKpbbmUER1qahpKsAWH/i62+V6hJc/f3nA8IolIgtlk5GDafNBjI7zVAOnPclp4+LS
-         yzlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwDMv+ywHw0RmTad4+AbGjv2/YKVqDhJ8AaQAZsUEeHCg9DpaaBYnmc++0bxAVs5FX1PEUpYrahup3E0sHvlE5FuAOxcAfYbsCaYI0
-X-Gm-Message-State: AOJu0YwsVwFelTlHH5DG2/B73v0UXXhD/+g93TTMCel21aG0KbTWWMgJ
-	rk1Pbkz2/KLVfeUmOBbQ9foUFtfyczcd8okuLeZaEZuWX6WmEQVdaS4ibMFEoQg=
-X-Google-Smtp-Source: AGHT+IHQyuhaOFCWDh8Y20z92N/LrJzqyIZFbrRKifXgh0S2UhxNL1L6D0CsxhO9kqq9QHRTuJH7rw==
-X-Received: by 2002:a17:906:db03:b0:a59:b590:5d71 with SMTP id a640c23a62f3a-a59fb6ed704mr459961166b.0.1715251697256;
-        Thu, 09 May 2024 03:48:17 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b014f6sm60466866b.145.2024.05.09.03.48.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:48:16 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ARM: dts: ti: align panel timings node name with dtschema
-Date: Thu,  9 May 2024 12:48:13 +0200
-Message-ID: <20240509104813.216655-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715251707; c=relaxed/simple;
+	bh=y9BHFyK/ML2lMI5w8QLLphhlab8lE52Ydqr/Auxre7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S5FkEJaXZfpWmO/y4UjKoeTmaYjOa0iUidyZ5xHFofoLN/FENa250QWKJFwfyHQXCLj8bw7HHzlxFTeqFRdbg5t10Mgt2K1/PynMqwejkj+LHoS5BX/4JYd7I5ifsNydkYBXkoMBSjeKefw5/wGaoI0owsr/paDdV6Mt+bDYJNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qwKAcxlH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45973C3277B;
+	Thu,  9 May 2024 10:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715251706;
+	bh=y9BHFyK/ML2lMI5w8QLLphhlab8lE52Ydqr/Auxre7c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qwKAcxlH8hFPFn5lUDJ0kQB/eObXbAecSFm1UhSI6V9gddtHWf8Pi2gdOzUr3z7S5
+	 A81ectfX2RpfL4MssSlu/3K4dR1PdaQSr+ggBQQlpihjNDeqbp9rCyHubPFVhdvD99
+	 A6PkauSQ364L5+3ZtnrkIkT2ebNm6mxT/djjQ8b8g3bIDaYELJ9T4HiyBEIl3uhhdH
+	 gGmNrutRWQe19SCad/Y7csxDgHSty5NyWm0sVXwwBdWxAh41hLQ/UrlqzJmvlXWfAV
+	 quUAb1HauMUOxsfeW10YRg9NJmynv5WHp4dKK7TebyBxpWX95GARpy5LGel9Z2OPiJ
+	 LHJoRoKajggsw==
+Message-ID: <1df61b7c-29c4-4537-a0b6-75785606eeae@kernel.org>
+Date: Thu, 9 May 2024 12:48:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+To: Johan Hovold <johan@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Das Srinagesh <quic_gurus@quicinc.com>,
+ Satya Priya <quic_c_skakit@quicinc.com>, Stephen Boyd <swboyd@chromium.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+ <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
+ <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
+ <CAHp75VdUFMvkj-r76H7GFZdpcoh_nb8v6CBj4wBHztNhiaWULQ@mail.gmail.com>
+ <8d2ea17c-f91e-4e14-a239-e5e999f6ac50@linaro.org>
+ <ZjyQFrqHT2HBOWY6@hovoldconsulting.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZjyQFrqHT2HBOWY6@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-DT schema expects panel timings node to follow certain pattern,
-dtbs_check warnings:
+On 09/05/2024 10:57, Johan Hovold wrote:
+> On Tue, May 07, 2024 at 08:14:43PM +0200, Krzysztof Kozlowski wrote:
+>> On 07/05/2024 19:22, Andy Shevchenko wrote:
+>>> On Tue, May 7, 2024 at 6:44 PM Johan Hovold <johan@kernel.org> wrote:
+>>>> On Mon, May 06, 2024 at 10:09:50PM +0300, Andy Shevchenko wrote:
+>>>>> Mon, May 06, 2024 at 05:08:29PM +0200, Johan Hovold kirjoitti:
+> 
+>>>>>> +MODULE_ALIAS("platform:qcom-pm8008-regulator");
+>>>>>
+>>>>> Use ID table instead.
+>>>>
+>>>> No, the driver is not using an id-table for matching so the alias is
+>>>> needed for module auto-loading.
+>>>
+>>> Then create one. Added Krzysztof for that. (He is working on dropping
+>>> MODULE_ALIAS() in cases like this one)
+>>
+>> Yeah, please use ID table, since this is a driver (unless I missed
+>> something). Module alias does not scale, leads to stale and duplicated
+>> entries, so should not be used as substitute of ID table. Alias is
+>> suitable for different cases.
+> 
+> There's no scalability issue here. If the driver uses driver name
+> matching then there will always be exactly one alias needed.
 
-  am335x-pdu001.dtb: display-timings: '240x320p16' does not match any of the regexes: '^timing', 'pinctrl-[0-9]+'
+And then we add one more ID with driver data and how does it scale?
+There is a way to make drivers uniform, standard and easy to read. Why
+doing some other way? What is the benefit of the alias comparing to
+regular module ID table?
 
-Linux drivers do not care about node name, so this should not have
-effect on Linux.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/ti/davinci/da850-evm.dts    | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-guardian.dts | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-pdu001.dts   | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-pepper.dts   | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/ti/davinci/da850-evm.dts b/arch/arm/boot/dts/ti/davinci/da850-evm.dts
-index 6c5936278e75..1f5cd35f8b74 100644
---- a/arch/arm/boot/dts/ti/davinci/da850-evm.dts
-+++ b/arch/arm/boot/dts/ti/davinci/da850-evm.dts
-@@ -65,7 +65,7 @@ panel-info {
- 
- 		display-timings {
- 			native-mode = <&timing0>;
--			timing0: 480x272 {
-+			timing0: timing-480x272 {
- 				clock-frequency = <9000000>;
- 				hactive = <480>;
- 				vactive = <272>;
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
-index 56e5d954a490..4b070e634b28 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
-@@ -74,7 +74,7 @@ panel {
- 		pinctrl-1 = <&lcd_pins_sleep>;
- 
- 		display-timings {
--			320x240 {
-+			timing-320x240 {
- 				hactive         = <320>;
- 				vactive         = <240>;
- 				hback-porch     = <68>;
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-index f38f5bff2b96..17574d0d0525 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-@@ -67,7 +67,7 @@ panel-info {
- 		};
- 
- 		display-timings {
--			240x320p16 {
-+			timing-240x320p16 {
- 				clock-frequency = <6500000>;
- 				hactive = <240>;
- 				vactive = <320>;
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-pepper.dts b/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
-index d5a4a21889d1..e7d561a527fd 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
-@@ -202,7 +202,7 @@ panel-info {
- 	};
- 	display-timings {
- 		native-mode = <&timing0>;
--		timing0: 480x272 {
-+		timing0: timing-480x272 {
- 			clock-frequency = <18400000>;
- 			hactive = <480>;
- 			vactive = <272>;
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
