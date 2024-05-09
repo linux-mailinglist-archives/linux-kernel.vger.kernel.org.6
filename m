@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-174298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D5B8C0CB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:40:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B978C0CD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21ADCB223E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:40:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5368E1C210CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE6D149DE4;
-	Thu,  9 May 2024 08:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/1SRg54"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD03D14A0A6;
+	Thu,  9 May 2024 08:50:44 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7220913D24D;
-	Thu,  9 May 2024 08:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7B7128396
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715243999; cv=none; b=H5So82lRpliWN6n7oOUpAahuHwl5u0KDfe43QPFgEIWQ5qJbi+VNYLNScJc9YLH4b/EGYCCJcygDLyTe7wFj+FY3L79eAr7VOQHTRnu2ND2IDj1d0jt3kooWWGVCwwRKr0vg0jfEUSoKDN7iCMYFbz5IR8qFwGiCAct/QuOqaXo=
+	t=1715244644; cv=none; b=CqTFo8Aq34yZdT2+cozwCoCTbBTwuSSqZlMCp6j+LBNrUvm9lGz2WpTEq+H2adyuS5zz9zPpOs8fsBmNTuhTQHGiCs7bWFqPJCMUZighVRDDBtCU5PpMqPoc9YEmludE4sxMzAkJJbsjKSbJcWaIdqYiAGnA2PsLjY5WlXtPWvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715243999; c=relaxed/simple;
-	bh=N3lC747+fKJugAEc1wHWjEynnNZm00O2tIitmKEOf7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M3/fg6fdWveJTVlJGts5KEISsIn5CUjOkNBhYogyKFYhCqNIfQ6VBKyKe+Ft6yMKlYyD2mUHUC1YWV+h+1vRz29PSjKOOpVKtaB3H7Sh/R/oYjK/lL3ijYdhXXh2PsEBv1pSLCti9O3NH1kV3LUVqidGal3E7tNOY0ogofyrHdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/1SRg54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE6E7C2BBFC;
-	Thu,  9 May 2024 08:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715243998;
-	bh=N3lC747+fKJugAEc1wHWjEynnNZm00O2tIitmKEOf7w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=a/1SRg54ACQpGXLe28vNjQcbiCnoXapyCGFnpwLjWG+RG/X0HmktUb2dn6NxZWsL1
-	 NDvwNS73G3ApSTzsvUFHzTmhOReqBV9miaU4ODUvzxjcOeN2uwk10I/AHFtoLe4y9u
-	 oxT4e+qvo1Cl2gOlQ8zmCJUbBIYkfxWuPw1YUGs2LjZbQ7UDC9nN1zYY4t3UpgK7Wk
-	 OOyMaeNtcTTR/hVjeh9XmN022qyKOz/TYt21TSqLvGuspEX5TltNf5invNuRoaGqjB
-	 zlE096UsIJFVB6MQlQqjnRQuGDBpC6pc+0PpgtlmSaEJ2+BSMHImsEfE1hTzj5as6r
-	 yBu8zGlUVP+wA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1s4zJq-0000000008m-1zlW;
-	Thu, 09 May 2024 10:40:03 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>
-Subject: [PATCH] dt-bindings: usb: qcom,dwc3: fix interrupt max items
-Date: Thu,  9 May 2024 10:38:22 +0200
-Message-ID: <20240509083822.397-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1715244644; c=relaxed/simple;
+	bh=kz1qxPyo9dmTKO4NicjXjKlExY5D67C43u5RpO/2nhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nC1IOf1BvXmbuhASyKNKylgo+QynrY9KGHPiGUYxYYyxMLXgKVILg50g5ISwt+mMPSPl20/8hyGi0olccAuGwNpvCnnwDPu7zCiVhNYtUepchD7MEETg4WOa/jRxISCfKJnglFW2zBfc2C1GvqOGQArwy8G/AQq6SZ9gycgICus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1715243991-086e2325cc0db20001-xx1T2L
+Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id jcY8zdEvtdy2KSos (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Thu, 09 May 2024 16:39:51 +0800 (CST)
+X-Barracuda-Envelope-From: LeoLiu-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Received: from ZXBJMBX03.zhaoxin.com (10.29.252.7) by ZXSHMBX1.zhaoxin.com
+ (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 9 May
+ 2024 16:39:50 +0800
+Received: from [192.168.1.204] (125.76.214.122) by ZXBJMBX03.zhaoxin.com
+ (10.29.252.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 9 May
+ 2024 16:39:49 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
+Message-ID: <a70d141f-cec1-49b5-99d0-0f9e5f722afd@zhaoxin.com>
+X-Barracuda-RBL-Trusted-Forwarder: 192.168.1.204
+Date: Thu, 9 May 2024 16:39:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Parse the HEST PCIe AER and set to relevant
+ registers
+To: Bjorn Helgaas <helgaas@kernel.org>
+X-ASG-Orig-Subj: Re: [PATCH v2 0/3] Parse the HEST PCIe AER and set to relevant
+ registers
+CC: <rafael@kernel.org>, <lenb@kernel.org>, <james.morse@arm.com>,
+	<tony.luck@intel.com>, <bp@alien8.de>, <bhelgaas@google.com>,
+	<robert.moore@intel.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <CobeChen@zhaoxin.com>,
+	<TonyWWang@zhaoxin.com>, <ErosZhang@zhaoxin.com>, <LeoLiu@zhaoxin.com>
+References: <20240508220436.GA1789788@bhelgaas>
+From: LeoLiu-oc <leoliu-oc@zhaoxin.com>
+In-Reply-To: <20240508220436.GA1789788@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
+ ZXBJMBX03.zhaoxin.com (10.29.252.7)
+X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
+X-Barracuda-Start-Time: 1715243991
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 2313
+X-Barracuda-BRTS-Status: 0
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -2.02
+X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.124625
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
 
-A recent commit adding the SC8280XP multiport controller to the binding
-failed to update the interrupt maxItems, which results it DT checker
-warnings like:
 
-	arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dtb: usb@a4f8800: interrupts-extended: [[1, 0, 130, 4], [1, 0, 135, 4], [1, 0, 857, 4], [1, 0, 856, 4], [1, 0, 131, 4], [1, 0, 136, 4], [1, 0, 860, 4], [1, 0, 859, 4], [136, 127, 3], [136, 126, 3], [136, 129, 3], [136, 128, 3], [136, 131, 3], [136, 130, 3], [136, 133, 3], [136, 132, 3], [136, 16, 4], [136, 17, 4]] is too long
 
-Fixes: 80adfb54044e ("dt-bindings: usb: qcom,dwc3: Add bindings for SC8280 Multiport")
-Reported-by: "Rob Herring (Arm)" <robh@kernel.org>
-Link: https://lore.kernel.org/r/171502764588.89686.5159158035724685961.robh@kernel.org
-Link: https://lore.kernel.org/lkml/171449016553.3484108.5214033788092698309.robh@kernel.org/
-Cc: Krishna Kurapati <quic_kriskura@quicinc.com>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+在 2024/5/9 6:04, Bjorn Helgaas 写道:
+> 
+> 
+> [这封邮件来自外部发件人 谨防风险]
+> 
+> On Mon, Dec 18, 2023 at 11:04:27AM +0800, LeoLiu-oc wrote:
+>> From: LeoLiuoc <LeoLiu-oc@zhaoxin.com>
+>>
+>> According to the Section 18.3.2.4, 18.3.2.5 and 18.3.2.6 in ACPI SPEC
+>> r6.5, the register value form HEST PCI Express AER Structure should be
+>> written to relevant PCIe Device's AER Capabilities.So the purpose of the
+>> patch set is to extract register value from HEST PCI Express AER
+>> structures and program them into PCIe Device's AER registers. Refer to the
+>> ACPI SPEC r6.5 for the more detailed description. This patch is an
+>> effective supplement to _HPP/_HPX method when the Firmware does not
+>> support the _HPP/_HPX method and can be specially configured for the AER
+>> register of the specific device.
+>>
+>> ---
+>>
+>> v1->v2:
+>> - Move the definition of structure "hest_parse_aer_info" to file apei.h.
+> 
+> Just noticed that this removes the ACPICA header dependency problem
+> that Rafael pointed out.  This also applies (with minor offsets) to
+> v6.9-rc1, so it's not very stale.  We're almost to the v6.9 final
+> release, so when v6.10-rc1 is tagged, can you rebase to that and
+> repost this?
+> 
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-index f55f601c0329..7dfd2d88b90a 100644
---- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-@@ -118,11 +118,11 @@ properties:
-                                exception of SDM670/SDM845/SM6350.
-         - ss_phy_irq: Used for remote wakeup in Super Speed mode of operation.
-     minItems: 2
--    maxItems: 5
-+    maxItems: 18
- 
-   interrupt-names:
-     minItems: 2
--    maxItems: 5
-+    maxItems: 18
- 
-   qcom,select-utmi-as-pipe-clk:
-     description:
--- 
-2.43.2
+Thank you very much for your review. I will make a new patch version 
+based on the kernel v6.10-rc1 according to your suggestion.
 
+> I assume you have a platform that uses this.  It would be good to
+> mention that in the commit log of patches 1 and 3 so we have some idea
+> of where it's useful and where changes need to be tested.
+> 
+Okay, I will add hardware suitability information for this patch to the 
+commit log.
+
+Yours sincerely
+Leoliu-oc
+
+>> LeoLiuoc (3):
+>>    ACPI/APEI: Add hest_parse_pcie_aer()
+>>    PCI: Add AER bits #defines for PCIe to PCI/PCI-X Bridge
+>>    PCI/ACPI: Add pci_acpi_program_hest_aer_params()
+>>
+>>   drivers/acpi/apei/hest.c      | 69 +++++++++++++++++++++++-
+>>   drivers/pci/pci-acpi.c        | 98 +++++++++++++++++++++++++++++++++++
+>>   drivers/pci/pci.h             |  9 ++++
+>>   drivers/pci/probe.c           |  1 +
+>>   include/acpi/apei.h           | 17 ++++++
+>>   include/uapi/linux/pci_regs.h |  3 ++
+>>   6 files changed, 195 insertions(+), 2 deletions(-)
+>>
+>> --
+>> 2.34.1
+>>
 
