@@ -1,298 +1,127 @@
-Return-Path: <linux-kernel+bounces-174703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CAF8C1333
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:43:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2A68C1336
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81B2282AE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:43:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEF731C21A08
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE10CDDBE;
-	Thu,  9 May 2024 16:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3868BF1;
+	Thu,  9 May 2024 16:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U8xs/M5U"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyEej2Xe"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FECEC8FF
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 16:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90572F24;
+	Thu,  9 May 2024 16:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715272972; cv=none; b=sSoR0G+31wvdSZTUMkvs2ySNv+zLw4roR6JBfA4JNPDOg9EBG7I9gOIGFyOVnh0Aow4vgU6ti9PyePh25WfMx6+U1JvNRUMfjbIh7OLWAD/C0NCVk13NnMtEMgNhtjXODfe8fRiq7567S9uMRx+Fa5eFGYyLJRSXMuEHDCYQfDk=
+	t=1715273001; cv=none; b=KqK50jPu9qgha1/3KofRq5PlerzMoBj9Cp/n6temB3sJbQt6xpsqPGmEMav3pIkM1+SDXXlHom98zRaJDiFkJ+S6w4PUhkpc6jcPt+iXRX5NjcCUc2BqRyyyWpR/x5XS8zRmuJ3zh8ndbNx/6uA57tfjtpe9Mc3yjiS8YRj2owU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715272972; c=relaxed/simple;
-	bh=XpVz8Ta9vWl+Q2TCA6cP9Pv0KSquiHUbOO++9BBK5eY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cuWvVbA9EUIsEcQ3o4RAO/+5NdIUmRf/zGAon1U9OQhqW+8wxxAqsTr5LCIMsr+KFof6d1es1y9vq9dKCcCRZcyp+UYgaCBePtcr9G3huEYlq1CN5nxYUCB2TKCZcYsCbdnilefe+7FzVwpMtgChytEoTn1wGX4IeLcagvq1etI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U8xs/M5U; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de468af2b73so1824301276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 09:42:50 -0700 (PDT)
+	s=arc-20240116; t=1715273001; c=relaxed/simple;
+	bh=0AwIvUlnW4lCfUG4D7qRiLz+lWSN/1R0NdcLcsB9njo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U7YK5phCxOi4p9Rml4vbnoDCYWeZhkfNOaYQ7ocrKOog6YA3o0xAYsMJxCsz956e5mIQZuafqy+wpVtjbPmx9MHkhnIAj/Rh9mVPh+lKE051vrDNnWE1A1IChojbDWEhfiQ+yCiHrkEdAhryCO2EccOtYL7n3+ysil0U80CdB78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CyEej2Xe; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so7171085ad.1;
+        Thu, 09 May 2024 09:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715272970; x=1715877770; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5rHnFr6vKDzMq4yMlIUQc7iGULXQ2sByeq4kGS0fY80=;
-        b=U8xs/M5UOhF0IAz4dECu4CHxTzCQQEXvEtcBch6nqpLYqzRNmV7/VEeij3puKeZyi6
-         kiX8/QxQYU2GE2u8Fn4MlR6XlR5kp+jLnLtsyWLP31ULD4CF59Y+bYkBRJzKDneKM07d
-         i0YzrgYAQAhvVYGYOfvZASZa0tLiJWOlb9D8ibVMryfG1by4Q2IOPHSWfLmEbdpRsNGa
-         cjcS/5yrVodliZDxe+dfZed19Ye/XF1UaQNm4OGoDhSUwTUVeGAN5NoK7iDkRlnYS8tX
-         YdPssja61T7rje8bDDajOKmcnqMQ3svdMeltrJDR7bbRK174D8aOAT7YNxfj/+Ux1J0d
-         LSWA==
+        d=gmail.com; s=20230601; t=1715272999; x=1715877799; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=dq5l0e1y2tiW5zzqrOBBkXmIVHVwwkyt7NGBvVrmm+Y=;
+        b=CyEej2XeHClhg/+sp+wdsamg2rXcyXJdCzfF9pECOi4Gc/ifNfGaxl3Xxdt0fje2ym
+         2xgyHF6QYzCw72SBQMnb2Ark+wVSJsb4Jhw6nwsGLrs9ctGDLdRFz2DSuq7bLfuCazKL
+         N69ZH/anBAooKzmu4Hp+Wze0dZbZPaux5VRU35EMWHBVeWniu2Mj3AS5KqkEO9zOsins
+         wcch6OIff4iucfhklj0lQmzLh58GB+kUY3laYn/+hTORxabNt4WoUV4myLuQF2EzRRXe
+         D5OZ2MvPOc3uHrkq0XC2TF1Ano2NbPCHvtia5qzqnhD2NCAuYUa++DuGPWOKt+O9UE0w
+         7HVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715272970; x=1715877770;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5rHnFr6vKDzMq4yMlIUQc7iGULXQ2sByeq4kGS0fY80=;
-        b=aSdFXHYQBl3sFLoXJoisKKUudn7VImoRMnIPoPazxBqZHGBqNLMy8Nu3i3nDyh3rNm
-         dvfQr73Y1qCFssMs95Lxu53e4dUrC+Vp+8NkBf6qkXp621DG/ZCNnjXy3XjvzIqkDNTk
-         o6B/ivHOb47jXFQYUAXISVxqMUrE2lzkX6qGtJy6Z1wwK5QGqarytnR70SHhxY5SdKy7
-         1frK+KuNXj7+qcNv8iv+HJTOkwdNHwj2zOgQiXgcXQdBlIpuoGt4RCojWcFxDM+8RpsZ
-         kByUVT9OwYUJCXFBb9cZ26q97P2sESXCd7L1k9lEOa4I3ypuSvFM4t8i5xTdTHWod2Y3
-         lGow==
-X-Forwarded-Encrypted: i=1; AJvYcCWx/Mw7fnuEPT1HuTWYI/+KjQJXcPd7PI7Hw5YtYDSAjsc5ssRhMRIJchSdSgyKkdFm8dMT6/KaJcacGOAT1EM1kecuLrgE/+DCX6Ta
-X-Gm-Message-State: AOJu0YzLauNe26J/Ku8RFxeV/KVCJZ3Adh7JW6hMjhidrsTT8tvihoZ9
-	RSAEXGuybmtMaIPKN+KHL3tubqsYFXHGt1a2Evi6X81Jy428n35GBYSvLe1+n1fgg7WqtIQlna9
-	JyA==
-X-Google-Smtp-Source: AGHT+IEdpCuX8CupAV8q5WtcM5afueuGqMsE0YRtrcJLU0gvOO6gn2vj45vQL4z2rB9c8Zm44vWaDKurH3A=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:6988:0:b0:de5:1b63:9ee5 with SMTP id
- 3f1490d57ef6-dee4f30f5a0mr13111276.7.1715272970152; Thu, 09 May 2024 09:42:50
- -0700 (PDT)
-Date: Thu, 9 May 2024 09:42:48 -0700
-In-Reply-To: <20240509090146.146153-1-leitao@debian.org>
+        d=1e100.net; s=20230601; t=1715272999; x=1715877799;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dq5l0e1y2tiW5zzqrOBBkXmIVHVwwkyt7NGBvVrmm+Y=;
+        b=h5dvGf2cul0Fm1mk61+W55D1Z4lZSVMlcIf+/FCR6jxvCUEhr6nOd3mzE2vV2tuf5k
+         cWv3g/8TQ7+BAtCyTZVM/2eaAj1217PiXPMR3AoN27kdiacz5T4QF5kzP2ApXtl4N36u
+         xhvU14ivkkTbHUPXoagRC3AP7b9jSzfub4g4uiMBPvCEpQeXZfdVAk99TDnDg0pPaxbJ
+         n5P9pF+gvaUwY6VtLqcCdXGUuwkRzABWpWQRCTmJWZS5dDcjgs+7DDYOOxcY0+ue/x09
+         KuuDyutwnlV2smnUq09Y26xQpTEkjhRzJPh1KrNOyxugeOj56zQq154z8WPCV4SGREVV
+         S41w==
+X-Forwarded-Encrypted: i=1; AJvYcCUiRJaqOMyxSmFhj2C2VqPlU6FuI8MZ/4OBuhGgqrKvwVm5ZL5QxmTkdFZCWyE/dQM6EmbMvCh6bQjs4ulXBOytAL3+Gdc9Ea63Ptgm
+X-Gm-Message-State: AOJu0YweqL+al58rMC9KfG5bKc+rciJXpVzqQivrWpnXzUdk8FEXc8az
+	KeAXCaCd2bPbZzpVes/ZPBxvFU9l1Yx3KEPLicxAvZx1XCiYMTwu5CSLFg==
+X-Google-Smtp-Source: AGHT+IEewnTAzj8MUnI6YI4M9wFxLUJyfGMaKptYriUZ3npN1Qe2yacoQc+IcJtBsm6jX4ApHyWkpg==
+X-Received: by 2002:a17:902:82c8:b0:1ec:5f1f:364f with SMTP id d9443c01a7336-1ef43d18196mr1905495ad.26.1715272999192;
+        Thu, 09 May 2024 09:43:19 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c136d53sm16433195ad.254.2024.05.09.09.43.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 09:43:17 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v6.9-rc8
+Date: Thu,  9 May 2024 09:43:16 -0700
+Message-Id: <20240509164316.3876202-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240509090146.146153-1-leitao@debian.org>
-Message-ID: <Zjz9CLAIxRXlWe0F@google.com>
-Subject: Re: [PATCH] KVM: Addressing a possible race in kvm_vcpu_on_spin:
-From: Sean Christopherson <seanjc@google.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, rbc@meta.com, paulmck@kernel.org, 
-	"open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024, Breno Leitao wrote:
-> There are two workflow paths that access the same address
-> simultaneously, creating a potential data race in kvm_vcpu_on_spin. This
-> occurs when one workflow reads kvm->last_boosted_vcpu while another
-> parallel path writes to it.
-> 
-> KCSAN produces the following output when enabled.
-> 
-> 	BUG: KCSAN: data-race in kvm_vcpu_on_spin [kvm] / kvm_vcpu_on_spin [kvm]
-> 
-> 	write to 0xffffc90025a92344 of 4 bytes by task 4340 on cpu 16:
-> 	kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112) kvm
-> 	handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
-> 	vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
-> 	vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
-> 	kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
-> 	kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
-> 	__se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
-> 	__x64_sys_ioctl (fs/ioctl.c:890)
-> 	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-> 	do_syscall_64 (arch/x86/entry/common.c:?)
-> 	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> 	read to 0xffffc90025a92344 of 4 bytes by task 4342 on cpu 4:
-> 	kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4069) kvm
-> 	handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
-> 	vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
-> 	vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
-> 	kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
-> 	kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
-> 	__se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
-> 	__x64_sys_ioctl (fs/ioctl.c:890)
-> 	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-> 	do_syscall_64 (arch/x86/entry/common.c:?)
-> 	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> 	value changed: 0x00000012 -> 0x00000000
-> 
-> Given that both operations occur simultaneously without any locking
-> mechanisms in place, let's ensure atomicity to prevent possible data
-> corruption. We'll achieve this by employing READ_ONCE() for the reading
-> operation and WRITE_ONCE() for the writing operation.
+Hi Linus,
 
-Please state changelogs as a commands, e.g.
+Please pull hwmon fixes for Linux v6.9-rc8 from signed tag:
 
-  Use {READ,WRITE}_ONCE() to access kvm->last_boosted_vcpu to ensure ...
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.9-rc8
 
-And I think it's worth calling out that corruption is _extremely_ unlikely to
-happen in practice.  It would require the compiler to generate truly awful code,
-and it would require a VM with >256 vCPUs.
+Thanks,
+Guenter
+------
 
-That said, I do think this should be sent to stable kernels, as it's (very, very)
-theoretically possible to generate an out-of-bounds access, and this seems like a
-super safe fix.  How about this?
+The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
 
----
-KVM: Fix a data race on last_boosted_vcpu in kvm_vcpu_on_spin() 
+  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
 
-Use {READ,WRITE}_ONCE() to access kvm->last_boosted_vcpu to ensure the
-loads and stores are atomic.  In the extremely unlikely scenario the
-compiler tears the stores, it's theoretically possible for KVM to attempt
-to get a vCPU using an out-of-bounds index, e.g. if the write is split
-into multiple 8-bit stores, and is paired with a 32-bit load on a VM with
-257 vCPUs:
+are available in the Git repository at:
 
-  CPU0                              CPU1
-  last_boosted_vcpu = 0xff;                                       
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.9-rc8
 
-                                    (last_boosted_vcpu = 0x100)
-                                    last_boosted_vcpu[15:8] = 0x01;
-  i = (last_boosted_vcpu = 0x1ff)                                               
-                                    last_boosted_vcpu[7:0] = 0x00;
+for you to fetch changes up to 26e8383b116d0dbe74e28f86646563ab46d66d83:
 
-  vcpu = kvm->vcpu_array[0x1ff];
+  hwmon: (pmbus/ucd9000) Increase delay from 250 to 500us (2024-05-09 09:37:06 -0700)
 
-As detected by KCSAN:
+----------------------------------------------------------------
+hwmon fixes for v6.9-rc8
 
-  BUG: KCSAN: data-race in kvm_vcpu_on_spin [kvm] / kvm_vcpu_on_spin [kvm]
-  
-  write to 0xffffc90025a92344 of 4 bytes by task 4340 on cpu 16:
-  kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112) kvm
-  handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
-  vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
-  vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
-  kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
-  kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
-  __se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
-  __x64_sys_ioctl (fs/ioctl.c:890)
-  x64_sys_call (arch/x86/entry/syscall_64.c:33)
-  do_syscall_64 (arch/x86/entry/common.c:?)
-  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-  
-  read to 0xffffc90025a92344 of 4 bytes by task 4342 on cpu 4:
-  kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4069) kvm
-  handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
-  vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
-  vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
-  kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
-  kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
-  __se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
-  __x64_sys_ioctl (fs/ioctl.c:890)
-  x64_sys_call (arch/x86/entry/syscall_64.c:33)
-  do_syscall_64 (arch/x86/entry/common.c:?)
-  entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-  
-  value changed: 0x00000012 -> 0x00000000
+- pmbus/ucd9000: Increase chip access delay to avoid random access
+  errors
 
-Fixes: 217ece6129f2 ("KVM: use yield_to instead of sleep in kvm_vcpu_on_spin")
-Cc: stable@vger.kernel.org
----
+- corsair-cpro: Protect kernel code against parallel hidraw access
+  from userspace
 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  virt/kvm/kvm_main.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index ff0a20565f90..9768307d5e6c 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -4066,12 +4066,13 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
->  {
->  	struct kvm *kvm = me->kvm;
->  	struct kvm_vcpu *vcpu;
-> -	int last_boosted_vcpu = me->kvm->last_boosted_vcpu;
-> +	int last_boosted_vcpu;
->  	unsigned long i;
->  	int yielded = 0;
->  	int try = 3;
->  	int pass;
->  
-> +	last_boosted_vcpu = READ_ONCE(me->kvm->last_boosted_vcpu);
+----------------------------------------------------------------
+Aleksa Savic (3):
+      hwmon: (corsair-cpro) Use a separate buffer for sending commands
+      hwmon: (corsair-cpro) Use complete_all() instead of complete() in ccp_raw_event()
+      hwmon: (corsair-cpro) Protect ccp->wait_input_report with a spinlock
 
-Nit, this could opportunistically use "kvm" without the silly me->kvm.
+Lakshmi Yadlapati (1):
+      hwmon: (pmbus/ucd9000) Increase delay from 250 to 500us
 
->  	kvm_vcpu_set_in_spin_loop(me, true);
->  	/*
->  	 * We boost the priority of a VCPU that is runnable but not
-> @@ -4109,7 +4110,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
->  
->  			yielded = kvm_vcpu_yield_to(vcpu);
->  			if (yielded > 0) {
-> -				kvm->last_boosted_vcpu = i;
-> +				WRITE_ONCE(kvm->last_boosted_vcpu, i);
->  				break;
->  			} else if (yielded < 0) {
->  				try--;
-
-Side topic #1: am I the only one that finds these loops unnecessarily hard to
-read?  Unless I'm misreading the code, it's really just an indirect way of looping
-over all vCPUs, starting at last_boosted_vcpu+1 and the wrapping.
-
-IMO, reworking it to be like this is more straightforward:
-
-	int nr_vcpus, start, i, idx, yielded;
-	struct kvm *kvm = me->kvm;
-	struct kvm_vcpu *vcpu;
-	int try = 3;
-
-	nr_vcpus = atomic_read(&kvm->online_vcpus);
-	if (nr_vcpus < 2)
-		return;
-
-	/* Pairs with the smp_wmb() in kvm_vm_ioctl_create_vcpu(). */
-	smp_rmb();
-
-	kvm_vcpu_set_in_spin_loop(me, true);
-
-	start = READ_ONCE(kvm->last_boosted_vcpu) + 1;
-	for (i = 0; i < nr_vcpus; i++) {
-		idx = (start + i) % nr_vcpus;
-		if (idx == me->vcpu_idx)
-			continue;
-
-		vcpu = xa_load(&kvm->vcpu_array, idx);
-		if (!READ_ONCE(vcpu->ready))
-			continue;
-		if (kvm_vcpu_is_blocking(vcpu) && !vcpu_dy_runnable(vcpu))
-			continue;
-
-		/*
-		 * Treat the target vCPU as being in-kernel if it has a pending
-		 * interrupt, as the vCPU trying to yield may be spinning
-		 * waiting on IPI delivery, i.e. the target vCPU is in-kernel
-		 * for the purposes of directed yield.
-		 */
-		if (READ_ONCE(vcpu->preempted) && yield_to_kernel_mode &&
-		    !kvm_arch_dy_has_pending_interrupt(vcpu) &&
-		    !kvm_arch_vcpu_preempted_in_kernel(vcpu))
-			continue;
-
-		if (!kvm_vcpu_eligible_for_directed_yield(vcpu))
-			continue;
-
-		yielded = kvm_vcpu_yield_to(vcpu);
-		if (yielded > 0) {
-			WRITE_ONCE(kvm->last_boosted_vcpu, i);
-			break;
-		} else if (yielded < 0 && !--try) {
-			break;
-		}
-	}
-
-	kvm_vcpu_set_in_spin_loop(me, false);
-
-	/* Ensure vcpu is not eligible during next spinloop */
-	kvm_vcpu_set_dy_eligible(me, false);
-
-Side topic #2, intercepting PAUSE on x86 when there's only a single vCPU in the
-VM is silly.  I don't know if it's worth the complexity, but we could defer
-enabling PLE exiting until a second vCPU is created, e.g. via a new request.
-
-Hmm, but x86 at least already has KVM_X86_DISABLE_EXITS_PAUSE, so this could be
-more easily handled in userspace, e.g. by disabing PAUSE exiting if userspace
-knows it's creating a single-vCPU VM.
+ drivers/hwmon/corsair-cpro.c  | 43 +++++++++++++++++++++++++++++++------------
+ drivers/hwmon/pmbus/ucd9000.c |  6 +++---
+ 2 files changed, 34 insertions(+), 15 deletions(-)
 
