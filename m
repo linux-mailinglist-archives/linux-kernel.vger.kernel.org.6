@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-174985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9FFE8C184D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6228C184E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BCD2862EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:21:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625A01C2162F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A298C12C46A;
-	Thu,  9 May 2024 21:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ABC1292D7;
+	Thu,  9 May 2024 21:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H89PWR2k"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OAIbD/4j"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AED129E76
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E220612C470
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715289643; cv=none; b=HQ72Dsq0H7q2cy92q+wOPUDnbKJkp57eFr3EkEpGw2cqydVrzc8M3ChKsDao1Q5TI3JOZewyakgVU1cTGSQDLWdByVgdSq4vTJonmXjKyR4w1VRqsFm/5tBAHa47mIhgrSixXzDgB/A12BnxubA+4QeqAzxhAc5z1zUMH9nNKoU=
+	t=1715289646; cv=none; b=Ks+kPWPi4duQoBhftU1Hk9syLkkIbHflPViHDi3ywTqB5qwv6Ej0redCuqLCdAQhtUEhri+YSfmrrPMs+6QXtDE8KHrxbiucC88Tnfx1ks6b7cbkigeyt5Tp+whUcVaHDUpUAyfHHdZhH/oXs4IL+3304yS4JSvZ4awSGVWTXyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715289643; c=relaxed/simple;
-	bh=fJ1rFBZvq/u/ibZlYytLuo1NfFspyuxEibTUJ2GQ7b0=;
+	s=arc-20240116; t=1715289646; c=relaxed/simple;
+	bh=9SBs1y5K2hzjnYPD9Ky3KqU2SZnDlGyGsApyJDQKsvY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hARI/7J1ZMxDOoFVIDy04KnsFmnPniyZJPzTt4PVGCixtJPzLaWWJsLwdW2xPfhGV/hVYocB+eePuuD16l37ilMDRit3Vrp7Pkso27C0aZxr18W7EBNDazwCS5KStX2hot6THb5vnSVRmGfB5b+8EPLMM4PefnixLzLUvQBtxD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H89PWR2k; arc=none smtp.client-ip=209.85.208.182
+	 In-Reply-To:To:Cc; b=EXDgJp2ZQTbCtWs7ThZuYiehdqv1M9sDrPGJS75paVVi9ddDOqlePaPP7kMhjyGgA1znul528Zh8vcw59Bj7muo1XprChOEn/87TmgDFJYEj+c9/P7mX0LlEzN8oaU/yiS9hZs0swOTGpIMq/8eYZs6ZRqwDZFJ56hK1kS+x0UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OAIbD/4j; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so17286001fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:20:27 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f0602bc58so2281982e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:20:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715289626; x=1715894426; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715289627; x=1715894427; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=K0AjYQgc/Kg6ymj2SYvFJcHrf+33vNVWmj+ECCE5Uk4=;
-        b=H89PWR2kuZ4iNCBQ2/uCxKaluAXGjZTaD7JxfhggbBLOS49pHEZAAtGryw3Cl2OmAK
-         WQ3v+ZuEJq//LpoEbZn9sVmJks7k73/+nXh0Yxn+ZKoH9+/7HNb5iyXqPdDKacQC6PaB
-         6tO00eSL66bDtQWoopTGMOKT3xVMrsuj5/8EjyKBzyr1caRH/ol1IvxM/TB5kj1b36z0
-         vRnP+mBdqHmtR9Keu0KgDbieC0G4OQXn09p2JCHyHXMFXFIJNvZvwFqnlm+egsaGQo3D
-         fIX1zjXBnZuD+K7Ad/Z+EFSMna+pgRIx1seOjyqdD0gqOrgmxCuEZWCvpoXe2blwfVjP
-         RJ7Q==
+        bh=qSmAuCxNU1y3XahseuBRK4nFztnrZzASjwN1faGf/vg=;
+        b=OAIbD/4jbqPYK7SKir9nHkskHASBA17iFqPssaPwo1EZI+D0RbxSSfs5Z+yCpHdZls
+         2cj+2piPdccfOyWO/PmUwNK38j6bBSjyvEf1ckzla9VbHa4+TNB4kH4E7MOwNsaAxhRN
+         hagXvpz354c4rzOAV3cW9N7KSGenz3OIMWOJqyQ306tEWslWhJYg17yqJvvePSQF0efb
+         xQ7H7DMJaG/ZEjWGWWkzu3dLsRzaWqnp94vhL+gSmVqms6l5UmsuiJY4BnE6RlyaEAR3
+         mQMcBuunwBjQ9Nz0gSvwfrUIzr4Js8rN+7b/HmRCui0kAngmLRSvFH/nZ5D5OUMbyg0H
+         qeUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715289626; x=1715894426;
+        d=1e100.net; s=20230601; t=1715289627; x=1715894427;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=K0AjYQgc/Kg6ymj2SYvFJcHrf+33vNVWmj+ECCE5Uk4=;
-        b=oWpC2Tw6KGSquhtKRftF1RPQHhXs5iniBHAqZ6iF2j3fByV1kz13DneKCa6c5CL9Dh
-         R+JL1Y8B/4wf+HLDHn36yRntQMhkRGly+4oK66WvQTUCa71fAy+RQPUW8qEGPvvBQKcp
-         BmY/jPme+Quy10WxIja5s4MlM4rPrl9cKvuT6C/CTzdQ8rs+nn70RlGE8c3lq8yq71iE
-         RZSqYCeWY4KSCpX5Zhdb5gtmZYNkqP5K1FcgSAtcYMuyLGqP1nG/Sz9MeUbOqpuyMOwy
-         K79Y723PZEYcUWI364jajyN3YE6jrXnYohp0pqIibu2QSuItQjMAff16nVWqfo/G0PgY
-         8A9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVELmUwgWYqmguJH/xjoWuReub6ecnsZCIObOosNcO+3ww1HbHBPhBP3C7KLq8Uu5RXOWHEGuxDc6f+dqhM4JXy03rdAHmPsoiodvvn
-X-Gm-Message-State: AOJu0Yy3R16V4+eGlzmjm2nQjM8fGl7zBNYe5EH2z0Hz75bINzQALpbP
-	l0vFiW4qceKZ1iyO9jIJErcuQS6Uo4oF/Ju5yXKNhqvW7wcserz5iwcyJD6MQ5Q=
-X-Google-Smtp-Source: AGHT+IGfXvgqsYlqWJKvA6gGWvMK2v5HC+TuvvP8p2JkYzfRGHQykildj77IYhfD/mCd8xaKabV6kA==
-X-Received: by 2002:a05:6512:3701:b0:51d:3f07:c93c with SMTP id 2adb3069b0e04-5220ff71d70mr332140e87.3.1715289625967;
-        Thu, 09 May 2024 14:20:25 -0700 (PDT)
+        bh=qSmAuCxNU1y3XahseuBRK4nFztnrZzASjwN1faGf/vg=;
+        b=NYT4s7/WxilC1/1sPvh+UPIOWR9SJjnOLwFZSnllUr1YCDHIzbDMDLiuWgnqxBw7Y0
+         PRbM5942iiNhseqaKDJVTvTzSDw4SvDnrwsGRPeo2O7fgN4qLlcToPtqo3+eS18B3hJ8
+         X102c0QMhoSXpbtDoPMXDpvi1JtiEJjcTE1uHyG+qUBo7Y4mp7/Fgb5WAbIEvgf26BUe
+         KWo4y3wb50lbndOW7NIwBagD17il6oLO5XADXsF1LokdbHvKOg+0TkNfMwbUYBG38Tv7
+         s5edjsuuH/H+LfXV0bXOFtpCjSCunHV0HSaxhuCjQCsmsCLwyTgohC8/gygQVU5BjXkt
+         Ylkw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8uBxprC51mioG+BQVCSx8+wjbQPNJ901vEStsqlPLEFr3+3xCEYP1TnUjPB9vE/xAJUN0F02VvRHFgOQfvHGycGmmDIKKiVnIsGAa
+X-Gm-Message-State: AOJu0YyvW0v05Pvn9m47W/dtZoDbrdKrCgrD6yKO0ky8ADgbGfy4PUqY
+	0FLK4z1WXmKhQq3ylhje+KEdih4g5YxnkRxRfTFy9Mn72i3IIu3NM+Lh/5paXjK7KtIHmACAnTr
+	z
+X-Google-Smtp-Source: AGHT+IF3MbOHWe+Dd5cqT5itXTVz7GOfcbFYKIuZDqCR1HFSbb9PonNq/bo4qHWf+nls5HUXo433Dg==
+X-Received: by 2002:a19:5e5d:0:b0:51f:b3b:6373 with SMTP id 2adb3069b0e04-521e0c63c91mr1124319e87.15.1715289626701;
+        Thu, 09 May 2024 14:20:26 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d898fsm438832e87.208.2024.05.09.14.20.24
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d898fsm438832e87.208.2024.05.09.14.20.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 14:20:25 -0700 (PDT)
+        Thu, 09 May 2024 14:20:26 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 10 May 2024 00:20:21 +0300
-Subject: [PATCH v2 1/2] drm/panel/lg-sw43408: select
- CONFIG_DRM_DISPLAY_DP_HELPER
+Date: Fri, 10 May 2024 00:20:22 +0300
+Subject: [PATCH v2 2/2] drm/panel/lg-sw43408: mark sw43408_backlight_ops as
+ static
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240510-panel-sw43408-fix-v2-1-d1ef91ee1b7d@linaro.org>
+Message-Id: <20240510-panel-sw43408-fix-v2-2-d1ef91ee1b7d@linaro.org>
 References: <20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org>
 In-Reply-To: <20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -92,43 +93,42 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
  kernel test robot <lkp@intel.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=986;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=982;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=fJ1rFBZvq/u/ibZlYytLuo1NfFspyuxEibTUJ2GQ7b0=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmPT4Xu19gIrEOfaCn3Nv8snYLMWWpmEo6Uppfa
- ZIvO2lCIK2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj0+FwAKCRCLPIo+Aiko
- 1RSUB/9l96pY63NZpv3fzBCzZg3JjmqmQPyhZEoLIB0v1Epgo3eUl0eV+aUDC2NlkhHqksrZqGo
- jQmiwSwh8ZKgIOjXQFDekgIhL8x1fhjXj0c9g03H1UqXd7nsovDm2r00E9EhonIEQFGb6Ro1Fhz
- 8H/3gIa8JYIgDWosbN07hW8phuVPDf7YGXjrSvEDh07x1BVv1yrqTT1yhXwRE3VZ6czzD/bKDLo
- ljztotW1xDNh474V4GU8RJvJe3buA4M9edYtybFBw3GHpCfxxG00eMHM6t96HhtSV51indajJ0Y
- 9AtfJrktTVzNoGfO4y909b5KqWYWI0P6huGVDiEqAcLifedq
+ bh=9SBs1y5K2hzjnYPD9Ky3KqU2SZnDlGyGsApyJDQKsvY=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmPT4XEcEqWGu8gIgOpNkqDt6I0aZl6LpNHXOET
+ V6MyCND2Q+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj0+FwAKCRCLPIo+Aiko
+ 1fCJCACVl1Tw8GbFfpEssdYtGcEkG30m5raWG9Fh2513tdXK57a5ckqCyrL0UTfa9/a8hhidWFn
+ cr/f22s7eR6cHMOArnoYrfA8LPtP+j5QNmGZpYd+RsBFja7fvTaS0OcfU72PPiGucFCdri3em1Q
+ JuefnV2vAE55nQSfNzMwxyJb9b3QvZpAl7gkxQRRi4/PLrNQib0q4XQ7E7YTqKzEGar72mR58nr
+ 9OwO46TWEVauAGhgvg2ry8FSWGSr+Lx8JmahgGJ2+znKRNmnJL2PS+Rvuv545LDxxv2dK1otRQm
+ CAn8U8TiOFVBlinh5cl2ZBGjX5/NxLq80+OLy/eR44GeyqoP
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-This panel driver uses DSC PPS functions and as such depends on the
-DRM_DISPLAY_DP_HELPER. Select this symbol to make required functions
-available to the driver.
+Fix sparse warning regarding symbol 'sw43408_backlight_ops' not being
+declared.
 
 Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202404200800.kYsRYyli-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202404200739.hbWZvOhR-lkp@intel.com/
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/panel/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/panel/panel-lg-sw43408.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 982324ef5a41..2ae0eb0638f3 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -340,6 +340,8 @@ config DRM_PANEL_LG_SW43408
- 	depends on OF
- 	depends on DRM_MIPI_DSI
- 	depends on BACKLIGHT_CLASS_DEVICE
-+	select DRM_DISPLAY_DP_HELPER
-+	select DRM_DISPLAY_HELPER
- 	help
- 	  Say Y here if you want to enable support for LG sw43408 panel.
- 	  The panel has a 1080x2160@60Hz resolution and uses 24 bit RGB per
+diff --git a/drivers/gpu/drm/panel/panel-lg-sw43408.c b/drivers/gpu/drm/panel/panel-lg-sw43408.c
+index 115f4702d59f..2b3a73696dce 100644
+--- a/drivers/gpu/drm/panel/panel-lg-sw43408.c
++++ b/drivers/gpu/drm/panel/panel-lg-sw43408.c
+@@ -182,7 +182,7 @@ static int sw43408_backlight_update_status(struct backlight_device *bl)
+ 	return mipi_dsi_dcs_set_display_brightness_large(dsi, brightness);
+ }
+ 
+-const struct backlight_ops sw43408_backlight_ops = {
++static const struct backlight_ops sw43408_backlight_ops = {
+ 	.update_status = sw43408_backlight_update_status,
+ };
+ 
 
 -- 
 2.39.2
