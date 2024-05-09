@@ -1,216 +1,99 @@
-Return-Path: <linux-kernel+bounces-174502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8D08C0FAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:35:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FA68C0FE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C51E1B21C92
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:35:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D33D1C2271F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC312149E18;
-	Thu,  9 May 2024 12:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="2WeLbyJ2"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A807E147C83;
+	Thu,  9 May 2024 12:47:29 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D8914A90;
-	Thu,  9 May 2024 12:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07216146D7B;
+	Thu,  9 May 2024 12:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715258112; cv=none; b=QCBKxZFOPiBuf5X231M6/2t0OZfv+jtq6kiFpzUQSYUDQX3iNYTfkEm/4QcYBmSZQPPydXI5g1JBtOsE9vAZtAMLASC6LF3PuHqtLtpymFL44azq7zlDthp7Me+6kKe+3jhDzvhY8hC5Eij2YtP9+MA2Hf2pNjXAhYDXenjOvyA=
+	t=1715258849; cv=none; b=tchuUoTZ2ebTpLTBR3BxGQMe+OI1e5aMGVwITM0GUBvXcA+Z8bz7oypZjzz5LBVhC8IghD4ixgPaOPpv53UyIp/WdyaTDNvLlJAvTus+j1hmm11ml37uTKWqB21EcuNT73sOM8KPZg+ZKxLJOYgO1jGp1yo4d7zzYBgUHo0jWSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715258112; c=relaxed/simple;
-	bh=I66ut8+KtUA6Bv3Xqx+VAizz2te0CAi50j3/JmvvNpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VqiA64STSGCBzbaHOnofLHMtv9AvumsJieV3Mp8bvuy7j1e8xnWHHA7WvEGgEJVYHcEpFbWdvxvPaZlworU/NIKtJPWp9YZqSzXT48jPxPLlm4Cdq8CCX2fa8d4BderAVeWFo+5/0aax3QYVAo4wkozWAMJjc/1CdJNdytsnxHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=2WeLbyJ2; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=SmlbI/FlmmuHIPcswkddkrEGDrmDZVS/Ndo9dCDCyeA=; t=1715258110;
-	x=1715690110; b=2WeLbyJ2V1sI3RvSCn0Ay912av3FzAmVCb6XXIeSU0BAy8mSkmlxgMx7IHRix
-	8NYit9qKEDou6zmmCHqJSh2u6VY9zo2x/h2p9gaouBF+79mjluPgVsKT0KH8/G05YBSoVJWdTKgu9
-	ZFGmqbcmo2sYmcix4IDl06T24JO23zpL0aoDPxt1SWmEp8zTozljcLukuft1iMYxf3uO5FKUGioCl
-	YjHpkaQ9Dq4nFrn4duQqgihIpq9qypsClKY0PKFzwAnVBVK3J3vUZoXBSVfXTqHz2oAdI79yokVW3
-	tepbs/8bsQOIv3mJ1X3t7ftsTrpfYc3QHJ+NTzWa/+P2SF2TUA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1s52zK-0006Xy-8j; Thu, 09 May 2024 14:35:06 +0200
-Message-ID: <e6fc06eb-fe52-4cb3-b412-a602369ee875@leemhuis.info>
-Date: Thu, 9 May 2024 14:35:05 +0200
+	s=arc-20240116; t=1715258849; c=relaxed/simple;
+	bh=94OTiQNVw96KBqdSWjcw8KSMyl7GYa6XYujHM5DDG3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iaRG9cSCCYxJSNzfO19DuZwNPYjui8Hts7cVTNWWUkiHbMT+lV3Yem5qXx7NN0d2+V6ptTcYipRviJeT1p1eJp95o9YlqQUWxUbFiaaTy/Z45hLE+6sp1D6hp6Ymw7V+wZZ7RRGEvkXf9N9pToQPe4xvLLTIPMUvSaqtvZDUa8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VZsGq26byz4f3knp;
+	Thu,  9 May 2024 20:47:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id A20071A0568;
+	Thu,  9 May 2024 20:47:23 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g7ZxTxm7wHDMA--.34199S4;
+	Thu, 09 May 2024 20:47:23 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	ming.lei@redhat.com,
+	hch@infradead.org,
+	mpatocka@redhat.com,
+	snitzer@redhat.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 for-6.10/block 0/2] block: fix user-aware inaccurate util
+Date: Thu,  9 May 2024 20:37:15 +0800
+Message-Id: <20240509123717.3223892-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] OPP: Fix required_opp_tables for multiple genpds using
- same table
-To: Viresh Kumar <viresh.kumar@linaro.org>, Viresh Kumar
- <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
- Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
- Vladimir Lypak <vladimir.lypak@gmail.com>, linux-kernel@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <2eb72832e852c80e5c11cd69e7d2f14cefd8b1cb.1712903998.git.viresh.kumar@linaro.org>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <2eb72832e852c80e5c11cd69e7d2f14cefd8b1cb.1712903998.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715258110;d806580a;
-X-HE-SMSGID: 1s52zK-0006Xy-8j
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX5g7ZxTxm7wHDMA--.34199S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYx7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87
+	Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
+	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72
+	CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7
+	M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1l
+	IxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+From: Yu Kuai <yukuai3@huawei.com>
 
+Changes in v2:
+ - just replace blk_mq_in_flight() with part_in_flight() for
+ diskstats_show() and part_stat_show() in patch 2;
 
-On 12.04.24 08:41, Viresh Kumar wrote:
-> The required_opp_tables parsing is not perfect, as the OPP core does the
-> parsing solely based on the DT node pointers.
-> 
-> The core sets the required_opp_tables entry to the first OPP table in
-> the "opp_tables" list, that matches with the node pointer.
-> 
-> If the target DT OPP table is used by multiple devices and they all
-> create separate instances of 'struct opp_table' from it, then it is
-> possible that the required_opp_tables entry may be set to the incorrect
-> sibling device.
-> 
-> Unfortunately, there is no clear way to initialize the right values
-> during the initial parsing and we need to do this at a later point of
-> time.
-> 
-> Cross check the OPP table again while the genpds are attached and fix
-> them if required.
-> 
-> Also add a new API for the genpd core to fetch the device pointer for
-> the genpd.
-> 
-> Cc: Thorsten Leemhuis <regressions@leemhuis.info>
-> Reported-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218682
+Yu Kuai (2):
+  block: support to account io_ticks precisely
+  block: fix that util can be greater than 100%
 
-Did this fall through the cracks? Just wondering, as from here it looks
-like for about four weeks now nothing happened to fix the regression
-linked above. But I might have missed something. Or is everybody waiting
-for a test from the reporter?
+ block/blk-core.c  |  9 +++++----
+ block/blk-merge.c |  2 ++
+ block/blk-mq.c    |  4 ++++
+ block/blk.h       |  1 +
+ block/genhd.c     | 14 +++-----------
+ 5 files changed, 15 insertions(+), 15 deletions(-)
 
-Ciao, Thorsten
+-- 
+2.39.2
 
-
-> Co-developed-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> V2:
-> - Fix an `if` condition.
-> - s/Bugzilla/Closes/ and change ordering.
-> 
->  drivers/opp/core.c        | 31 ++++++++++++++++++++++++++++++-
->  drivers/pmdomain/core.c   | 10 ++++++++++
->  include/linux/pm_domain.h |  6 ++++++
->  3 files changed, 46 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index e233734b7220..cb4611fe1b5b 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -2394,7 +2394,8 @@ static void _opp_detach_genpd(struct opp_table *opp_table)
->  static int _opp_attach_genpd(struct opp_table *opp_table, struct device *dev,
->  			const char * const *names, struct device ***virt_devs)
->  {
-> -	struct device *virt_dev;
-> +	struct device *virt_dev, *gdev;
-> +	struct opp_table *genpd_table;
->  	int index = 0, ret = -EINVAL;
->  	const char * const *name = names;
->  
-> @@ -2427,6 +2428,34 @@ static int _opp_attach_genpd(struct opp_table *opp_table, struct device *dev,
->  			goto err;
->  		}
->  
-> +		/*
-> +		 * The required_opp_tables parsing is not perfect, as the OPP
-> +		 * core does the parsing solely based on the DT node pointers.
-> +		 * The core sets the required_opp_tables entry to the first OPP
-> +		 * table in the "opp_tables" list, that matches with the node
-> +		 * pointer.
-> +		 *
-> +		 * If the target DT OPP table is used by multiple devices and
-> +		 * they all create separate instances of 'struct opp_table' from
-> +		 * it, then it is possible that the required_opp_tables entry
-> +		 * may be set to the incorrect sibling device.
-> +		 *
-> +		 * Cross check it again and fix if required.
-> +		 */
-> +		gdev = dev_to_genpd_dev(virt_dev);
-> +		if (IS_ERR(gdev))
-> +			return PTR_ERR(gdev);
-> +
-> +		genpd_table = _find_opp_table(gdev);
-> +		if (!IS_ERR(genpd_table)) {
-> +			if (genpd_table != opp_table->required_opp_tables[index]) {
-> +				dev_pm_opp_put_opp_table(opp_table->required_opp_tables[index]);
-> +				opp_table->required_opp_tables[index] = genpd_table;
-> +			} else {
-> +				dev_pm_opp_put_opp_table(genpd_table);
-> +			}
-> +		}
-> +
->  		/*
->  		 * Add the virtual genpd device as a user of the OPP table, so
->  		 * we can call dev_pm_opp_set_opp() on it directly.
-> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> index 4215ffd9b11c..c40eda92a85a 100644
-> --- a/drivers/pmdomain/core.c
-> +++ b/drivers/pmdomain/core.c
-> @@ -184,6 +184,16 @@ static struct generic_pm_domain *dev_to_genpd(struct device *dev)
->  	return pd_to_genpd(dev->pm_domain);
->  }
->  
-> +struct device *dev_to_genpd_dev(struct device *dev)
-> +{
-> +	struct generic_pm_domain *genpd = dev_to_genpd(dev);
-> +
-> +	if (IS_ERR(genpd))
-> +		return ERR_CAST(genpd);
-> +
-> +	return &genpd->dev;
-> +}
-> +
->  static int genpd_stop_dev(const struct generic_pm_domain *genpd,
->  			  struct device *dev)
->  {
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 772d3280d35f..f24546a3d3db 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -260,6 +260,7 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
->  int pm_genpd_init(struct generic_pm_domain *genpd,
->  		  struct dev_power_governor *gov, bool is_off);
->  int pm_genpd_remove(struct generic_pm_domain *genpd);
-> +struct device *dev_to_genpd_dev(struct device *dev);
->  int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state);
->  int dev_pm_genpd_add_notifier(struct device *dev, struct notifier_block *nb);
->  int dev_pm_genpd_remove_notifier(struct device *dev);
-> @@ -307,6 +308,11 @@ static inline int pm_genpd_remove(struct generic_pm_domain *genpd)
->  	return -EOPNOTSUPP;
->  }
->  
-> +static inline struct device *dev_to_genpd_dev(struct device *dev)
-> +{
-> +	return ERR_PTR(-EOPNOTSUPP);
-> +}
-> +
->  static inline int dev_pm_genpd_set_performance_state(struct device *dev,
->  						     unsigned int state)
->  {
 
