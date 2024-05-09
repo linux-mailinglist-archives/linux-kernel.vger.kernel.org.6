@@ -1,140 +1,130 @@
-Return-Path: <linux-kernel+bounces-174712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD7F8C1361
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF978C1367
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9553B219F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08ED2828AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAB0BE66;
-	Thu,  9 May 2024 17:04:46 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F72C2ED;
+	Thu,  9 May 2024 17:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tx4+7vB6"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C325C4C8B;
-	Thu,  9 May 2024 17:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281AC8F49
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715274286; cv=none; b=IIcL7fEQduAR4njPxrqLRr7litDpKuecu7NO/me+64VghHivEUoFm/8TdxbWmWdTauox6q/jWoRBs8y07NQxUnfJ6pMjfl8oj6N0VpVsRL4l4KgM+z4O9D4rsulm4WD+JOdqTY/TAqFFKTobxV4HkZfKCJu+umkCNXJqLvtuHHA=
+	t=1715274359; cv=none; b=qUzY05qSTuWOWMFxPrBidwJFA1Qr18CYQa7n6BQUSX/44FAoNFP/+hZVDc7yi51OurmjL3IK+K9N9pgy6K9gQALrZNc6h/g4QDtS3/uI478PQDq6mYoQeoTanPVWoFyas+QWjTIwL7r9j21XUuWi4g5bhdQO1F3ZAvtvq8h1pl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715274286; c=relaxed/simple;
-	bh=jRJENUshDFsZV0tAZUXv5gYyUnozVPD/3nComIwGvsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmNM+nVhPsEppvZP8TQ21GeEk5qtIR4/49wolTwymANOSS5lHj3TOVEKzhoWeaLNR8AdihHjxTbBZ0Zz7aVX1PLMhV/LWs1wwBNaQn2NRya6zlj9MeWPku9C7FQlj10Z6HSPEuzL3IvleWhf3armHOdDyawoJGEMInaOghTPivo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id EF02830013CCC;
-	Thu,  9 May 2024 19:04:32 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id D919F3FCAA; Thu,  9 May 2024 19:04:32 +0200 (CEST)
-Date: Thu, 9 May 2024 19:04:32 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: bcfradella@proton.me, Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Klara Modin <klarasmodin@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Danil Rybakov <danilrybakov249@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ben Fradella <bfradell@netapp.com>,
-	Ranjan Dutta <ranjan.dutta@intel.com>,
-	Yifan2 Li <yifan2.li@intel.com>,
-	Jonathan Yong <jonathan.yong@intel.com>
-Subject: Re: [PATCH] p2sb: Don't init until unassigned resources have been
- assigned.
-Message-ID: <Zj0CIPR5djf0-hHb@wunner.de>
-References: <20240509164905.41016-1-bcfradella@proton.me>
+	s=arc-20240116; t=1715274359; c=relaxed/simple;
+	bh=Q3sNmdeS94+C7MoS3NvxvgzpS/Bh9LDxSVr4O7edpcQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c99tw9C/7p+87VEsWH2qnuL/D5+n8nzUuHKVOEH2ehV/0PlhHrT7i+4H06TGF0/l87jdUwmg4GO1QYYbYRPW2R1xOyr1MEEDukPZ03U2jiP+y+PQYdjm/Zp5MxedCPCeVnPWtn0oLpgfRr2A9lDt/pLhZn19x8ITqMRXCO8Tpbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tx4+7vB6; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-69b6d36b71cso7653596d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715274357; x=1715879157; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LEqKDH2sBB2nta/Np1zrw7eWT1wxg9AR95my7CM8l+g=;
+        b=Tx4+7vB6wQEtC8mkor3dgYA7bIgMzBUFsyzNW6JjheuC7WkXikEXwBteoG3+Y1FEth
+         cutjC+1a1nMwIJZDXrT7OB7+SlLkPKx005h7Hdog9Y0HROBYrn3EqTuGVbiLgQhRdXRI
+         Xn2P7DAwkW27T9eC3ZfKRoVZs93RtbtxEZwnU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715274357; x=1715879157;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LEqKDH2sBB2nta/Np1zrw7eWT1wxg9AR95my7CM8l+g=;
+        b=AWq2L+czaLNkA7Y6IjKBA8G8ikahJtx6s7dloF/8OfEdQbJCtA8QUCosAztK9YHHB9
+         CvsskzLdsK2p6u+8SM4J/0O0cvHBlXmbc7aOYNQU0ktQm/RmoLYN8eM2ZnyzqsdlLxgg
+         02Vh27Tayb+fofICYPJtTd0BpTzlcuwF6tW3GAbEgFjbgoRdsWOzMY6VVUxlRSjnkW0p
+         VsrzDTHPR5a0sPL1xvHDzTusuRaHO7mmPd+l6oIYcwMI41ea2ip71fjyT8bb2LGEl9Gk
+         7OECitIkxVfmeToE/vXY38TT/maiCCtksZyqhkAfuEUv7FxM/7d1ZvUlYNxKDlWAzz58
+         i/2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWo8ecLRtW1CEMhHI+UuCWK53U2LMTNPwppDf1xI5NSZ8Y7vC7QhkRgMEEfgbvmik0MTgVEQl8gTAjTRyPWAsoa7GsDMHtp/oPFYLrN
+X-Gm-Message-State: AOJu0YyCrHtEveAv/9jMf6ClcF+60f4nf3XKg/rWZ52fJy2QnT1TXtNh
+	M+McGBqrmA2VVJj1Tf4GF54HvfmY/lT8CYqoD1hEY+vuAmrjJ4C6FISb+H8UnQ==
+X-Google-Smtp-Source: AGHT+IFraMLLw7LB+hj1IfI8BLqLEbAJqDLGf1QYnKNG4T8HpAQjYLPH6QHmahQLENS6zk+QqulHOQ==
+X-Received: by 2002:ad4:5aea:0:b0:6a0:d4dd:cb44 with SMTP id 6a1803df08f44-6a1515c7de8mr76797036d6.62.1715274356893;
+        Thu, 09 May 2024 10:05:56 -0700 (PDT)
+Received: from denia.c.googlers.com (125.135.86.34.bc.googleusercontent.com. [34.86.135.125])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f194945sm8623726d6.61.2024.05.09.10.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 10:05:56 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 09 May 2024 17:05:55 +0000
+Subject: [PATCH] media: i2c: hi846: Fix V4L2_SUBDEV_FORMAT_TRY
+ get_selection()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509164905.41016-1-bcfradella@proton.me>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240509-fix-hi846-v1-1-1e19dc517be1@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAHICPWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUwNL3bTMCt2MTAsTM91k4xRzc3MzCzMjo1QloPqColSgJNis6NjaWgB
+ MN32WWwAAAA==
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Martin Kepplinger <martink@posteo.de>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Pavel Machek <pavel@ucw.cz>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.12.4
 
-[cc += Shin'ichiro, Klara, Andy, Danil]
+The current code does not return anything to the user.
 
-On Thu, May 09, 2024 at 04:49:34PM +0000, bcfradella@proton.me wrote:
-> From: Ben Fradella <bfradell@netapp.com>
-> 
-> The P2SB could get an invalid BAR from the BIOS, and that won't be fixed
-> up until pcibios_assign_resources(), which is an fs_initcall().
-> 
-> - Move p2sb_fs_init() to an fs_initcall_sync(). This is still early
->   enough to avoid a race with any dependent drivers.
-> 
-> - Add a check for IORESOURCE_UNSET in p2sb_valid_resource() to catch
->   unset BARs going forward.
-> 
-> - Return error values from p2sb_fs_init() so that the 'initcall_debug'
->   cmdline arg provides useful data.
-> 
-> Signed-off-by: Ben Fradella <bfradell@netapp.com>
-> ---
->  drivers/platform/x86/p2sb.c | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/p2sb.c b/drivers/platform/x86/p2sb.c
-> index 3d66e1d4eb1f..1938a3ef9480 100644
-> --- a/drivers/platform/x86/p2sb.c
-> +++ b/drivers/platform/x86/p2sb.c
-> @@ -56,12 +56,9 @@ static int p2sb_get_devfn(unsigned int *devfn)
->  	return 0;
->  }
->  
-> -static bool p2sb_valid_resource(struct resource *res)
-> +static bool p2sb_valid_resource(const struct resource *res)
->  {
-> -	if (res->flags)
-> -		return true;
-> -
-> -	return false;
-> +	return res->flags & ~IORESOURCE_UNSET;
->  }
->  
->  /* Copy resource from the first BAR of the device in question */
-> @@ -220,16 +217,20 @@ EXPORT_SYMBOL_GPL(p2sb_bar);
->  
->  static int __init p2sb_fs_init(void)
->  {
-> -	p2sb_cache_resources();
-> -	return 0;
-> +	return p2sb_cache_resources();
->  }
->  
->  /*
-> - * pci_rescan_remove_lock to avoid access to unhidden P2SB devices can
-> - * not be locked in sysfs pci bus rescan path because of deadlock. To
-> - * avoid the deadlock, access to P2SB devices with the lock at an early
-> - * step in kernel initialization and cache required resources. This
-> - * should happen after subsys_initcall which initializes PCI subsystem
-> - * and before device_initcall which requires P2SB resources.
-> + * pci_rescan_remove_lock() can not be locked in sysfs pci bus rescan path
-> + * because of deadlock. To avoid the deadlock, access P2SB devices with the lock
-> + * at an early step in kernel initialization and cache required resources.
-> + *
-> + * We want to run as early as possible. If the P2SB was assigned a bad BAR,
-> + * we'll need to wait on pcibios_assign_resources() to fix it. So, our list of
-> + * initcall dependencies looks something like this:
-> + *
-> + * ...
-> + * subsys_initcall (pci_subsys_init)
-> + * fs_initcall     (pcibios_assign_resources)
->   */
-> -fs_initcall(p2sb_fs_init);
-> +fs_initcall_sync(p2sb_fs_init);
-> -- 
-> 2.43.0
+Although the code looks a bit dangerous (using a pointer without
+checking if it is valid), it should be fine. The code validates that
+sel->pad has a valid value.
+
+Fix the following smatch error:
+drivers/media/i2c/hi846.c:1854 hi846_get_selection() warn: statement has no effect 31
+
+Fixes: e8c0882685f9 ("media: i2c: add driver for the SK Hynix Hi-846 8M pixel camera")
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+While running media-ci on the last patches there was a new sparse
+warning:
+https://gitlab.freedesktop.org/linux-media/users/patchwork/-/jobs/58524338/artifacts/external_file/junit/test-smatch.log.txt
+---
+ drivers/media/i2c/hi846.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/i2c/hi846.c b/drivers/media/i2c/hi846.c
+index 9c565ec033d4..52d9ca68a86c 100644
+--- a/drivers/media/i2c/hi846.c
++++ b/drivers/media/i2c/hi846.c
+@@ -1851,7 +1851,7 @@ static int hi846_get_selection(struct v4l2_subdev *sd,
+ 		mutex_lock(&hi846->mutex);
+ 		switch (sel->which) {
+ 		case V4L2_SUBDEV_FORMAT_TRY:
+-			v4l2_subdev_state_get_crop(sd_state, sel->pad);
++			sel->r = *v4l2_subdev_state_get_crop(sd_state, sel->pad);
+ 			break;
+ 		case V4L2_SUBDEV_FORMAT_ACTIVE:
+ 			sel->r = hi846->cur_mode->crop;
+
+---
+base-commit: 48259b90973718d2277db27b5e510f0fe957eaa0
+change-id: 20240509-fix-hi846-c3d77768622e
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
