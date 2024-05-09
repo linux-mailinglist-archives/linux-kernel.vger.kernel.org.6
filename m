@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-174253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778FA8C0C25
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:49:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81B608C0C26
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1020D1F22C67
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:49:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331A52819F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14D5149C69;
-	Thu,  9 May 2024 07:49:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB165149C6D;
+	Thu,  9 May 2024 07:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6KniFDG"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3847314830B;
-	Thu,  9 May 2024 07:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8439E13C9C0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240985; cv=none; b=FOVyS56dFLSGGcizZF98eSETto72Mj/6nXR79nq+DDvLFOrjqi9psqr0xMGXOy9kPD9AMGXIdnNu2CFT04QfoKqtc5o4edRKOLSw4vnTNP0NfRK1Oln1SY2yLKcqcIh9INgNVo2evxZ8o8kVoBz/3MApEHFGX6FxYJlPxSI6M2o=
+	t=1715241097; cv=none; b=hicJjckE4/byfSH5b8e6PoF3dt4r4jAXqy+jx2RpOcJNxyqLVWDrLJFyCfqncGf1xzZguzL3FNwyL7Od7mlKzffy85jx4Hu6hmOcmNH2sMFuOcVnqz820q8LR5qnZum1JfjFx/wdrhwjCGb11BRk3ESAwXq0OZgLV5aG2BB3C3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240985; c=relaxed/simple;
-	bh=XwjQRiMTAg/84BTvf/RpSGn4fZ4AJjKPZy2KIBZ5+gM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3cxIR+Fe30odET9G07muf3pDnIkL0b0AITmaXeRK8biYrmYxKCDzc58TrFNrozEabtX7Jy1QIBeMVGYRMsAa9z1LajH+oLFOgJZi44PhaHffMKE/xi2BgkUM25oNwISkyRzuiQPqhqh/ML/BoJw4lVHoP0t4TUtGPgKFTU7d2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 293CAC116B1;
-	Thu,  9 May 2024 07:49:43 +0000 (UTC)
-Date: Thu, 9 May 2024 08:49:40 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, isaacmanjarres@google.com,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-direct: Set SG_DMA_SWIOTLB flag for dma-direct
-Message-ID: <ZjyAFE4Fk_r7KnDA@arm.com>
-References: <20240506052955.GA4923@lst.de>
- <CABdmKX1XNTtoPTvfsJRobim8pHdDjPsKx=qVovVZDh5GEbKCfQ@mail.gmail.com>
- <20240506160244.GA16248@lst.de>
- <CABdmKX1n98+bw+1kewz=wdqq2Nbpaxao_Lx-Gq8oKGNUEP4ytQ@mail.gmail.com>
- <20240506161906.GA17237@lst.de>
- <CABdmKX3s_HnxciDA3XGM8Qj0kLY8OWENg+ifexrON4VYVbuLsA@mail.gmail.com>
- <20240507054314.GA31814@lst.de>
- <CABdmKX3PgcXaRUH3L7OV+POMiMd5L6pEF4fLXYPgfmQUNu_trg@mail.gmail.com>
- <Zju0JOx_ij1qH-34@arm.com>
- <CABdmKX3LANk-0ThrQ86ay5EnToM38gVH3oddBUnXq=9cmS0gCQ@mail.gmail.com>
+	s=arc-20240116; t=1715241097; c=relaxed/simple;
+	bh=Qpetu/YpQMTZ8pAa1jeqlxfiWUijO299LmcayGsUaX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j2wQiMbWGl3eLZYFA4L9xwm5MYyOK9fxVFkysU0mKc0EJglq55Z6g4s/uwxjwVQK4XiOIKfmUsTP2gLHFaoIcE6mMkR0hoIVRHpU9/2RRXakeIH/f8QqCQb58nFpAYmptRrvY6WkqgmvuL4Ij+R/8pUb8hIkfwjfMz+4gDw3E7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6KniFDG; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a597394af62so10390466b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715241094; x=1715845894; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=M6xNzfhaoWFm6sJlVLBh3GSwTzYAxKnIt/VRGk/R2Mk=;
+        b=b6KniFDGWuhfyMkL9MV5UD0YQ+Q1nKkm7nrWyK/4zHKPjTCeGKQ0oIMgB20Z5/gMmr
+         m4/Wz1SQnn0jSdWJ76CRUEHi6Zbc/ZZiBPjmpOfUKtukCb6yO6ijqUkipQzx+3b1JjpG
+         5p93q6XRI/L9wRwbKNY2pchKKYMmPmpZ5pQf0xiK6RTWQWNII90iX3583PifbK0HF2KW
+         KA1u1vRjbwbqjewQT4FMXSQHd1b4GDMT8tGhA7bIfphoC8odg0VFvCJ5YVK088gWIBGd
+         5zqS3EThNt2Sj7ItX7/hCTnOwj4NLtaUmfKXmmdLKvFBJsDNVYZC3M7C7yDnBoEzoL83
+         NLXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715241094; x=1715845894;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M6xNzfhaoWFm6sJlVLBh3GSwTzYAxKnIt/VRGk/R2Mk=;
+        b=KZjFYlK1VFJu3W8UTA2WkdgIx0gMSRVXXSebsu1Q2MIBOlQCnp+Mk2XpsUZT1W691o
+         6nDcJiPm22D4L+SL2ntiIqZMBWw1mPn6qxRofQxA/pBVrZzv7rQiJvtIRI0yNbe2qvby
+         4yl8gY+ljxuY6kkP3sGT1xQYUaJppH6ziJeI4r5xXKegYysIodDrVHy9UiefJ2otiElA
+         E1EL/cu/24MUq7LkNTnNXKHuNtXHwdrJnBbumgeXiVsGPAwoHotiD3T98sUUNe2NEQva
+         dX2l+y0p3thP/IXSPJXCqetFi030a+Zl/KAM8uiZ9XCigDE3TJXR90uPDjtaKxgiOtCr
+         9ldA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAJcyMvvgSkyythDWoyRwUoOjwZ60fnJi42O9nk9iqke/Rig+7NHSdghgKMZAD1Q6AKhb8uIjYmBUoLQlhj1wsjScApmKzKtjGTLlx
+X-Gm-Message-State: AOJu0YyrkZq/4R6g4Qkqg6jmOY+tgATOOT860wAp6bHk6t8/JMmpQ772
+	EjrWue2DwC5aD3PIRUvtcQRxhvEgRrFOb2z/UpHnNXYIgJ0ayB+c
+X-Google-Smtp-Source: AGHT+IHFBKDCvOz55Wyv8QIEsf4C9hOee+D6I/ijudRZT079I4yTV8oRLt6pk1px/3473/B+DRXWwg==
+X-Received: by 2002:a05:6402:3894:b0:572:543c:70eb with SMTP id 4fb4d7f45d1cf-5731da28059mr3237730a12.2.1715241093597;
+        Thu, 09 May 2024 00:51:33 -0700 (PDT)
+Received: from [192.168.0.103] (p57935690.dip0.t-ipconnect.de. [87.147.86.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfc24sm448399a12.42.2024.05.09.00.51.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 00:51:33 -0700 (PDT)
+Message-ID: <190dcc76-7753-4191-8578-482c2942583d@gmail.com>
+Date: Thu, 9 May 2024 09:51:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABdmKX3LANk-0ThrQ86ay5EnToM38gVH3oddBUnXq=9cmS0gCQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] staging: rtl8192e: remove the r8192E_dev.c's
+ unnecessary brace
+To: Chen shuo <1289151713@qq.com>, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <tencent_1992979C468AF087A1909000C6D0D5E61207@qq.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <tencent_1992979C468AF087A1909000C6D0D5E61207@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 01:14:41PM -0700, T.J. Mercier wrote:
-> On Wed, May 8, 2024 at 10:19 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > On Tue, May 07, 2024 at 01:07:25PM -0700, T.J. Mercier wrote:
-> > > On Mon, May 6, 2024 at 10:43 PM Christoph Hellwig <hch@lst.de> wrote:
-> > > > On Mon, May 06, 2024 at 09:39:53AM -0700, T.J. Mercier wrote:
-> > > > > > You should not check, you simply must handle it by doing the proper
-> > > > > > DMA API based ownership management.
-> > > > >
-> > > > > That doesn't really work for uncached buffers.
-> > > >
-> > > > What uncached buffers?
-> > >
-> > > For example these ones:
-> > > https://android.googlesource.com/kernel/common/+/refs/heads/android-mainline/drivers/dma-buf/heaps/system_heap.c#141
-> > >
-> > > Vendors have their own drivers that also export uncached buffers in a
-> > > similar way.
-[...]
-> > I think in general buffer sharing with multiple dma_map_*() calls on the
-> > same buffer and DMA_ATTR_SKIP_CPU_SYNC is incompatible with bouncing,
-> > irrespective of the kmalloc() minalign series. If you do this for a
-> > 32-bit device and one of the pages is outside the ZONE_DMA32 range,
-> > you'd get a similar behaviour.
-> >
-> > From the kmalloc() minumum alignment perspective, it makes sense to skip
-> > the bouncing if DMA_ATTR_SKIP_CPU_SYNC is passed. We also skip the
-> > bouncing if the direction is DMA_TO_DEVICE or the device is fully
-> > coherent.
-> >
-> > A completely untested patch below. It doesn't solve other problems with
-> > bouncing you may have with your out of tree patches and, as Christoph
-> > said, checking in your driver whether the DMA address is a swiotlb
-> > buffer is completely wrong.
+On 5/8/24 17:13, Chen shuo wrote:
+> There is a unnecessary brace in r8192E_dev.c.Remove it to shorten
+> code and improve readability.
 > 
-> This is where I must be missing something. Is the main opposition that
-> the *driver* is checking for swiotlb use (instead of inside the DMA
-> API)?
+> Signed-off-by: Chen shuo <1289151713@qq.com>
+> ---
+> v2:Make "Subject" line more unique.
+>     Add space after : and driver name in the subject.
+> 
+>   drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> index e3ed709a7674..1862a9899966 100644
+> --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
+> @@ -1640,9 +1640,8 @@ bool rtl92e_get_rx_stats(struct net_device *dev, struct rtllib_rx_stats *stats,
+>   	if (stats->Length < 24)
+>   		stats->bHwError |= 1;
+>   
+> -	if (stats->bHwError) {
+> +	if (stats->bHwError)
+>   		return false;
+> -	}
+>   
+>   	stats->RxDrvInfoSize = pdesc->RxDrvInfoSize;
+>   	stats->RxBufShift = (pdesc->Shift) & 0x03;
 
-I see the swiotlb use as some internal detail of the DMA API
-implementation that should not leak outside this framework.
-
-> Because it sounds like we agree it's a bad idea to attempt
-> bouncing + DMA_ATTR_SKIP_CPU_SYNC.
-
-It's not necessarily the DMA_ATTR_SKIP_CPU_SYNC but rather the usage
-model of sharing a buffer between multiple devices. The DMA API is
-mostly tailored around CPU <-> single device ownership and the bouncing
-works fine. When sharing the same buffer with multiple devices, calling
-dma_map_*() on a buffer can potentially create multiple copies of the
-original CPU buffer. It may be fine _if_ the devices don't communicate
-between themselves using such buffer, otherwise the model is broken
-(sync or no sync). The additional issue with DMA_ATTR_SKIP_CPU_SYNC is
-when you use it on subsequent dma_map_*() calls assuming that the sync
-was already done on the first dma_map_*() call but with bouncing it's
-another dma location (ignoring the Android specific patches).
-
-I think we should prevent bouncing if DMA_ATTR_SKIP_CPU_SYNC is passed.
-However, this is not sufficient with a proper use of the DMA API since
-the first dma_map_*() without this attribute can still do the bouncing.
-IMHO what we need is a DMA_ATTR_NO_BOUNCE or DMA_ATTR_SHARED that will
-be used on the first map and potentially on subsequent calls in
-combination with DMA_ATTR_SKIP_CPU_SYNC (though we could use the latter
-to imply "shared"). The downside is that mapping may fail if the
-coherent mask is too narrow.
-
-Anyway, the definitive answer should come from the DMA API maintainers.
-
-> This code looks like it almost gets there, but it'd still reach
-> swiotlb_map (instead of DMA_MAPPING_ERROR) with DMA_ATTR_SKIP_CPU_SYNC
-> set for force_bounce or if the dma_capable check fails.
-
-My quick patch was mainly to ensure the kmalloc() alignment patches do
-not make the situation worse.
-
--- 
-Catalin
+Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
 
