@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-174433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858E28C0E9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6FD8C0EA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42AB52829D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24566282C44
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F2612FF9C;
-	Thu,  9 May 2024 11:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB8B130A4D;
+	Thu,  9 May 2024 11:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bel+ZxZF"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0ipQ+M0"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E711541C79
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064A812E1EB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715252425; cv=none; b=dQNj84zHDAZR3GYlUCBxOH5FwK5hPkCyIa3ikDTmj2JB3NyFzQBrbmOawWT+jEVfgDOrReQXTLNsZveVOw/drp2RtduKxaGhKuyiM2uX7czJDQfN5b63Vnshm3pFals8DaSwHDFD9xUZk5+PtJmoFfaWyVevGQ4+iR0fEyMgaCs=
+	t=1715252538; cv=none; b=gHtCLIWU8edNo5O77UdPWH0AORRaqmLoRPOO792jcTnuYJPbcZU2+4I0vwFt1OpqiHL903wUyqds074KAgBiYHnyFONmgHo95ExbvW7w34bzKDLYtnEIlUykNK8BpNuzE9eAUd7VyrmsxkG7PXDTk6WUQOBBSl/Ni1/xl90+Mqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715252425; c=relaxed/simple;
-	bh=oiYrFcVXcIdeJNQt0Vt+Wqd2amviAN+UyppH8WlBQG8=;
+	s=arc-20240116; t=1715252538; c=relaxed/simple;
+	bh=A3vBu1+lM8pshELKRiGuf0seEpLOmb3b3ZaRgmMoH+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=b0LmRfRhm3GIRZyhjxlynaUTtMQYmtJSrLLEmyLgdNktacYEalSa1Dq1GO2RnvCJH/TLAmaLN8S667HiPG/+kT2H9ovsMsfR05VyykrqF/G0xHzCTcj2vnz6VMOwvWx1JXqlT4qg95XJ5QxRK1JO1rQeL3IZ41AnYU8d7gslLpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bel+ZxZF; arc=none smtp.client-ip=209.85.218.54
+	 Content-Disposition; b=Yz6RuVi5db0mgwvhTyl1uOF/BPryZPO7zZL2I6BiN7P8jabKRyvTQpUO1Cvxo808eg4eN+meV7JwXObQ+TNp2n46lyDG+T9avWXh8aOfJFMj/u7o6Z33EqYHL+aYKmVObh1cw8W4zevb4xEY3Bm3QgFvR4aRssks5Y8mxKHTtAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u0ipQ+M0; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59cdd185b9so330322566b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:00:23 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a5a1054cf61so170954266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715252422; x=1715857222; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715252535; x=1715857335; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dAA13ePi94GJNPEs4FpOTYd6Pg0GRkX3LYO1veVyWjs=;
-        b=bel+ZxZFQdUntv97u2uqZuFKZJjU4k6joe/dAJppuESxanrW75CwqvTYi2OwOPgvsv
-         tLmkleVSZSxrT5O2ksdOAV2R9ow26mCqIrfwrwDvv3W4TwngvGsdbOWCUJm9a6ONe0Vl
-         /JUpyDD/ea3dUfqO782iTtczG95W2iN3Qa8H8sYrqC7CAWzgJnWy7kVhdjGqwu09GBL6
-         B/tb8svZdb3AtfnadNQqDCcpB1aURNea/2xCdOpbZQI1KwxnMmWaqU9K3D7bJJTJAWi+
-         4A9traFl3O9luKheCzIIdNNYAb6BfrH01+AUbWH3VtZKoHXkucHOKx9PpDtog8e1aaKc
-         VMnQ==
+        bh=3wuXHAIfnkMBAUhyPZI5mP5lslC3VrOjOuRB2Uj+Zic=;
+        b=u0ipQ+M028bRXeIQrD9VTjIUcpKypoWcwvZytkvEe20m3PhlnahU0VFFKoafBu0YSH
+         eKxU8yUittAikxDKryt8jR6pfj6Jj2Mcr2jvnsTOjS2w1ek+qPM/7nmq4fIuqMBF3z3L
+         Fi3FGF8KSFJmN2Yn1tzOyftxV1KQKfML3lkppohSyq+PxZjhwfK7F+Wt/9vR2dGI/Ve+
+         0nj3gUcZsZJcAZE9Cg/s6fEEY43SX9Ab3mx4pAAS+yKDqf6RPQPVwcuQGNH5dx5K9iaU
+         Je5PmZJGq1IIjjk0V8jvoFagZ7kdIbPm4YkKnA1KKRR29UC9favt7eOFhISL0EMHCJOF
+         KztA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715252422; x=1715857222;
+        d=1e100.net; s=20230601; t=1715252535; x=1715857335;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dAA13ePi94GJNPEs4FpOTYd6Pg0GRkX3LYO1veVyWjs=;
-        b=Lex5eMTTLdLWn9Zz+OWlfWWaJqaXzcMee/Os15G/tYK2aKkqfNzc0Wihu1MVn9D15b
-         +BNLO3J9gEgdU4S7emhWh/4FO0jvVjsfXxJjgdUnw8NfyMKIHM8GN+wIgN6d+67LzYec
-         EAtMrP6GLotnaHXastEKaZZA9UAm/P+iV7y5Ri7oURaHj90p8sjEa5cOGK3+Ac8O6NTC
-         0DFD978EH9gIofDvsgJF111Nk6OWb74ekvytnawyDUl4lXyQLXIdyn6iqXyE/oT1dOho
-         6aUOlU8BXvfxP1bH1d3IQf2ilza+Sj/9wYAbP6wUffN2Ys0OJlFfadEOc1U4NQvDyKFY
-         m34g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdSxWGIKXFqMDJ+Iv+q7yIN1w/ibrybKt2q3TZJ6H4ASFKZBIiBmgu9l1FcHb8cCVpx3j7A1ocHOJ0C1SEj87L6Q94J3dcv4EC9+Cc
-X-Gm-Message-State: AOJu0Yy04+G1p01JQRUZA/Q3RuanusCqMCbriIA/NuTFA90aiN17WZ1y
-	nD/0BP0LRVF9j+A5+OyOhGCLmFh7SeN8D+Degj77ru0chPRahwGFdikGATcZgmQ=
-X-Google-Smtp-Source: AGHT+IGbK+NqgxFz2Fj31M2oeH3+j6qnkR+cgqHhABgu7n8femfrqEdq3aeg1PWdIgkZis5QTbZqvw==
-X-Received: by 2002:a17:906:2bd3:b0:a59:a1b1:2978 with SMTP id a640c23a62f3a-a5a116ece99mr175295866b.20.1715252422057;
-        Thu, 09 May 2024 04:00:22 -0700 (PDT)
+        bh=3wuXHAIfnkMBAUhyPZI5mP5lslC3VrOjOuRB2Uj+Zic=;
+        b=pxlU005ecN/xSmrNBoTOtr9QTFC2iI5+LHf/8xzgmQUrUT8t/bnDvAehz6BpdmItuQ
+         qd4zl+cDayiW0T9pyDgLpobc4KQRFU4eHq1PV5kKxcGjwF3CIe5mzl8RyCYWjVMTE5fE
+         +c1ITvlW/LZVghqknl5+zwm/Lqld/wMHjw6fJwzcRqZ87obqijZYaHv0Y7yfm8PYLRZq
+         fNSIfTqV1n7Tmb1+vqqrtr/fTYKw8KGPP08QOrycsMgxTOK0Og5OFiLCOnyi+WL40lQV
+         U8ZAQUuFvmq9X33ztaLt4yvmRFj9ZHdv90K0a+RocHC0b7nlphVwzu5iFNLSnvAtl+WV
+         UrUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWp8Nf8GUceoBhxEGEHfT1TpFH2qBs3U808/Sjxxr8TwNyuC9yBI7CnHkPS4Nfr/VuZWKAuMOmqKDT32zwo7qEBqqGwHV3AQoXttDl8
+X-Gm-Message-State: AOJu0YyMvds+vch7XgBUiSl3lMIcZDcf4+rjpumjtI77dQZsDOO+QW03
+	eM1o3sYAx2XxyrLrvJRUq7PoXJrbfz/9zZyCLpRORrJLp60VWJ1rPr5fo9nOEhMSoeCplQOBBqm
+	u
+X-Google-Smtp-Source: AGHT+IGHxe72lWDhQ0aCoZ86yCgXcL/PPUZxUSmPMufSVnI5xrZmniOhMXjiFBMVNiepfD12ToMK2A==
+X-Received: by 2002:a17:906:68c6:b0:a59:a2f0:ee51 with SMTP id a640c23a62f3a-a59fb9c6ccbmr432024466b.54.1715252535132;
+        Thu, 09 May 2024 04:02:15 -0700 (PDT)
 Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d70sm60549766b.125.2024.05.09.04.00.21
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17987sm60970066b.201.2024.05.09.04.02.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 04:00:21 -0700 (PDT)
-Date: Thu, 9 May 2024 14:00:18 +0300
+        Thu, 09 May 2024 04:02:14 -0700 (PDT)
+Date: Thu, 9 May 2024 14:02:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shay Drory <shayd@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Moshe Shemesh <moshe@nvidia.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Yangtao Li <frank.li@vivo.com>, linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net/mlx5: Fix error handling in mlx5_init_one_light()
-Message-ID: <a2bb6a55-5415-4c15-bee9-9e63f4b6a339@moroto.mountain>
+Subject: [PATCH] dmaengine: qcom: gpi: clean up the IRQ disable/enable in
+ gpi_reset_chan()
+Message-ID: <8be473eb-65e0-42b4-b574-e61c3a7f62d8@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,57 +84,39 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If mlx5_query_hca_caps_light() fails then calling devl_unregister() or
-devl_unlock() is a bug.  It's not registered and it's not locked.  That
-will trigger a stack trace in this case because devl_unregister() checks
-both those things at the start of the function.
+The calls write_lock/unlock_irq() disables and re-enables the IRQs.
+Calling spin_lock_irqsave() and spin_lock_restore() when the IRQs are
+already disabled doesn't do anything and just makes the code confusing.
 
-If mlx5_devlink_params_register() fails then this code will call
-devl_unregister() and devl_unlock() twice which will again lead to a
-stack trace or possibly something worse as well.
-
-Fixes: bf729988303a ("net/mlx5: Restore mistakenly dropped parts in register devlink flow")
-Fixes: c6e77aa9dd82 ("net/mlx5: Register devlink first under devlink lock")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/main.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/dma/qcom/gpi.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-index 331ce47f51a1..105c98160327 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
-@@ -1690,7 +1690,7 @@ int mlx5_init_one_light(struct mlx5_core_dev *dev)
- 	err = mlx5_query_hca_caps_light(dev);
- 	if (err) {
- 		mlx5_core_warn(dev, "mlx5_query_hca_caps_light err=%d\n", err);
--		goto query_hca_caps_err;
-+		goto err_function_disable;
- 	}
+diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+index 1c93864e0e4d..ed7918c8bda1 100644
+--- a/drivers/dma/qcom/gpi.c
++++ b/drivers/dma/qcom/gpi.c
+@@ -1197,7 +1197,6 @@ static int gpi_reset_chan(struct gchan *gchan, enum gpi_cmd gpi_cmd)
+ {
+ 	struct gpii *gpii = gchan->gpii;
+ 	struct gpi_ring *ch_ring = &gchan->ch_ring;
+-	unsigned long flags;
+ 	LIST_HEAD(list);
+ 	int ret;
  
- 	devl_lock(devlink);
-@@ -1699,18 +1699,16 @@ int mlx5_init_one_light(struct mlx5_core_dev *dev)
- 	err = mlx5_devlink_params_register(priv_to_devlink(dev));
- 	if (err) {
- 		mlx5_core_warn(dev, "mlx5_devlink_param_reg err = %d\n", err);
--		goto params_reg_err;
-+		goto err_unregister;
- 	}
+@@ -1220,9 +1219,9 @@ static int gpi_reset_chan(struct gchan *gchan, enum gpi_cmd gpi_cmd)
+ 	gpi_mark_stale_events(gchan);
  
- 	devl_unlock(devlink);
- 	return 0;
+ 	/* remove all async descriptors */
+-	spin_lock_irqsave(&gchan->vc.lock, flags);
++	spin_lock(&gchan->vc.lock);
+ 	vchan_get_all_descriptors(&gchan->vc, &list);
+-	spin_unlock_irqrestore(&gchan->vc.lock, flags);
++	spin_unlock(&gchan->vc.lock);
+ 	write_unlock_irq(&gpii->pm_lock);
+ 	vchan_dma_desc_free_list(&gchan->vc, &list);
  
--params_reg_err:
--	devl_unregister(devlink);
--	devl_unlock(devlink);
--query_hca_caps_err:
-+err_unregister:
- 	devl_unregister(devlink);
- 	devl_unlock(devlink);
-+err_function_disable:
- 	mlx5_function_disable(dev, true);
- out:
- 	dev->state = MLX5_DEVICE_STATE_INTERNAL_ERROR;
 -- 
 2.43.0
 
