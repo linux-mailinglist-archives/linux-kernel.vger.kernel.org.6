@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-174984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE978C184B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:21:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FFE8C184D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA384286184
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:21:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94BCD2862EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145B85C5E;
-	Thu,  9 May 2024 21:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A298C12C46A;
+	Thu,  9 May 2024 21:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wob9JhIr"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H89PWR2k"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC00C1292F8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AED129E76
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715289640; cv=none; b=AW6Eh0C4xLPjH+LzunLooBuxKh87i6jElMcHOgzFw0tY9Nh1d65Zbd5JC3lXNQ4t4QwK8ppuvlancB+9e27/ODgXRRxzk2e4yrEl3wRL6+EzhQv72+H4/afhAhHLq1fFMNo+2R4AjAcOLJnXDf9S7p1//3AzHYk+TawrToPlGoc=
+	t=1715289643; cv=none; b=HQ72Dsq0H7q2cy92q+wOPUDnbKJkp57eFr3EkEpGw2cqydVrzc8M3ChKsDao1Q5TI3JOZewyakgVU1cTGSQDLWdByVgdSq4vTJonmXjKyR4w1VRqsFm/5tBAHa47mIhgrSixXzDgB/A12BnxubA+4QeqAzxhAc5z1zUMH9nNKoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715289640; c=relaxed/simple;
-	bh=BYK2WN06GtAji32+gfIGh/W9H3jyH7UilTyBvi9es9o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nfDnd4uju8i5t+C7Xn0b8ygiE++ywduq4ua5dG6vibqi9pbdyZViSf/ebNpxuLvf/ws8+8W39fa9U3jETe7fSIn5iQXI0sOkkWTCpwS3oxDypkeWRN29PkY/ReK7Qtyo2FMMbqSz67kaoOWup1dThl8xfQTRZzozABXkyOz8Q1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wob9JhIr; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1715289643; c=relaxed/simple;
+	bh=fJ1rFBZvq/u/ibZlYytLuo1NfFspyuxEibTUJ2GQ7b0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hARI/7J1ZMxDOoFVIDy04KnsFmnPniyZJPzTt4PVGCixtJPzLaWWJsLwdW2xPfhGV/hVYocB+eePuuD16l37ilMDRit3Vrp7Pkso27C0aZxr18W7EBNDazwCS5KStX2hot6THb5vnSVRmGfB5b+8EPLMM4PefnixLzLUvQBtxD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H89PWR2k; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51fb14816f6so1788641e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:20:26 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so17286001fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715289625; x=1715894425; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1w2Dg2zMqYrpdo5K6ppk2Wk2CEUaZVGV/kusmzWa10=;
-        b=wob9JhIrkdBMj9xMvUs3bRyGPFeNdAe57KYwqyAgSOy9RIOugBkFu2aObiX1kdr6iX
-         9k5ZBz0dGlYGLIii5QIUth0HOdEFRfd1xYZdQC3sADobz440L8NuBaXsPgVt0sCOwIR1
-         4LrxCphxmV2E26znVVXWqsgh+IExzNrWcYAxhR7su0IFIjQ+or4IMuQLBDmWaTwv5mot
-         KX6UexASjTVaoevJtA3g//mGTYRp0e6GShz+KQX0SqKzPQd+pIUGvv+PM/Se5caZgitr
-         d529yl84jgFkMZuu8aaldb1nevwYPEV4dSUp4p1NSwLyH0ZsHEou3OQEJ7IYvEbZaf2N
-         t0zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715289625; x=1715894425;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1715289626; x=1715894426; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g1w2Dg2zMqYrpdo5K6ppk2Wk2CEUaZVGV/kusmzWa10=;
-        b=O6CWcsDq5CJEG/GxCt6wLmru9vMyeoMHXdRz6u52C08/Ev/RUt6d9xUqf1xsbvQIbV
-         /j6NDRiEjD0K8kX4Vyd6R1OHwIrc1JFeVBzVp0j4m7tF9cNeqQX/mmDqJC0uaG5kw9wk
-         Ts+NhlEhI+48z7t3zC3NEvcJME04GU+Sw6TkEUtH7Q9ol2B4yUWdfYdIU9Ps1gGOENi+
-         /ctIObJ/BOUlG/xIwaF9kHzsPZLvotsb9Jq8fpTDK4MztBtAuijsKPbqyqtZ79yAMAGK
-         DYv+NNYI0M/owUehWfENrnaNElwiwX+4A1TsCStHv3TargHg1oyxXxFxvflsXpTzR7aA
-         b61w==
-X-Forwarded-Encrypted: i=1; AJvYcCV3NltMjWLTQF4asPGrQ5xdV1SpbO1RhkVa3OSgC1sFQ+o4wgv9jWrPY1l1e0q09tW+YLlaalycH5Ib/Ay8FB59xLi7/eJ2ElZTa6WH
-X-Gm-Message-State: AOJu0Yyjha/mNJjQzZARI38DgQUIeQAnnKIm6KATQq8oq2XvjJ30PxbN
-	YU7F7Utf27XWPAtJjUMHR+aHXDdUd7/V4aBDHXLUO23XabNM1KJ+kJGivX4SG2w=
-X-Google-Smtp-Source: AGHT+IHnU/aJy1ZO1/xfH52rJie0WRqDYb/sNSj7f6lqtWBZo2L5OLSGrePaO9FoY1/O5wDNN3L4dA==
-X-Received: by 2002:ac2:5049:0:b0:51c:348:3ba9 with SMTP id 2adb3069b0e04-5220fc78614mr475324e87.22.1715289624766;
-        Thu, 09 May 2024 14:20:24 -0700 (PDT)
+        bh=K0AjYQgc/Kg6ymj2SYvFJcHrf+33vNVWmj+ECCE5Uk4=;
+        b=H89PWR2kuZ4iNCBQ2/uCxKaluAXGjZTaD7JxfhggbBLOS49pHEZAAtGryw3Cl2OmAK
+         WQ3v+ZuEJq//LpoEbZn9sVmJks7k73/+nXh0Yxn+ZKoH9+/7HNb5iyXqPdDKacQC6PaB
+         6tO00eSL66bDtQWoopTGMOKT3xVMrsuj5/8EjyKBzyr1caRH/ol1IvxM/TB5kj1b36z0
+         vRnP+mBdqHmtR9Keu0KgDbieC0G4OQXn09p2JCHyHXMFXFIJNvZvwFqnlm+egsaGQo3D
+         fIX1zjXBnZuD+K7Ad/Z+EFSMna+pgRIx1seOjyqdD0gqOrgmxCuEZWCvpoXe2blwfVjP
+         RJ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715289626; x=1715894426;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K0AjYQgc/Kg6ymj2SYvFJcHrf+33vNVWmj+ECCE5Uk4=;
+        b=oWpC2Tw6KGSquhtKRftF1RPQHhXs5iniBHAqZ6iF2j3fByV1kz13DneKCa6c5CL9Dh
+         R+JL1Y8B/4wf+HLDHn36yRntQMhkRGly+4oK66WvQTUCa71fAy+RQPUW8qEGPvvBQKcp
+         BmY/jPme+Quy10WxIja5s4MlM4rPrl9cKvuT6C/CTzdQ8rs+nn70RlGE8c3lq8yq71iE
+         RZSqYCeWY4KSCpX5Zhdb5gtmZYNkqP5K1FcgSAtcYMuyLGqP1nG/Sz9MeUbOqpuyMOwy
+         K79Y723PZEYcUWI364jajyN3YE6jrXnYohp0pqIibu2QSuItQjMAff16nVWqfo/G0PgY
+         8A9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVELmUwgWYqmguJH/xjoWuReub6ecnsZCIObOosNcO+3ww1HbHBPhBP3C7KLq8Uu5RXOWHEGuxDc6f+dqhM4JXy03rdAHmPsoiodvvn
+X-Gm-Message-State: AOJu0Yy3R16V4+eGlzmjm2nQjM8fGl7zBNYe5EH2z0Hz75bINzQALpbP
+	l0vFiW4qceKZ1iyO9jIJErcuQS6Uo4oF/Ju5yXKNhqvW7wcserz5iwcyJD6MQ5Q=
+X-Google-Smtp-Source: AGHT+IGfXvgqsYlqWJKvA6gGWvMK2v5HC+TuvvP8p2JkYzfRGHQykildj77IYhfD/mCd8xaKabV6kA==
+X-Received: by 2002:a05:6512:3701:b0:51d:3f07:c93c with SMTP id 2adb3069b0e04-5220ff71d70mr332140e87.3.1715289625967;
+        Thu, 09 May 2024 14:20:25 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d898fsm438832e87.208.2024.05.09.14.20.23
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d898fsm438832e87.208.2024.05.09.14.20.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 14:20:24 -0700 (PDT)
+        Thu, 09 May 2024 14:20:25 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v2 0/2] drm/panel: two fixes for lg-sw43408
-Date: Fri, 10 May 2024 00:20:20 +0300
-Message-Id: <20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org>
+Date: Fri, 10 May 2024 00:20:21 +0300
+Subject: [PATCH v2 1/2] drm/panel/lg-sw43408: select
+ CONFIG_DRM_DISPLAY_DP_HELPER
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,9 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABQ+PWYC/32NQQ6CMBBFr0Jm7Zh2LIqsvIdhATiFSUhLWlM1p
- He3cgCX7yX//Q0iB+EIbbVB4CRRvCtAhwrGuXcTozwKAykyypDCtXe8YHyZk1ENWnmjtefaXEd
- NemAouzVw0Xvz3hWeJT59+OwXSf/sv1rSqHCghqy9UE2Gbou4PvijDxN0Oecv7sdNXLMAAAA=
+Message-Id: <20240510-panel-sw43408-fix-v2-1-d1ef91ee1b7d@linaro.org>
+References: <20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org>
+In-Reply-To: <20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -90,42 +92,45 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
  kernel test robot <lkp@intel.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=834;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=986;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=BYK2WN06GtAji32+gfIGh/W9H3jyH7UilTyBvi9es9o=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmPT4XQW4EmHL745xMaQ3Khgc3J6NZ1SYxnm0Z9
- VtzIoOZkXyJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj0+FwAKCRCLPIo+Aiko
- 1fufB/0dIT6yHh/Df7jknSeMZ1ifhCbIcAxPhjYPSt/lQZ9IvamjjzpbcmcA1vT+POsDmG+Kbdu
- 34442SiqfdFwqC60oKphHv+KBxtn8koF9d+EHOb7/V+fbSKy4ue+ht9GYX2AbtIFTb10qJKTPyM
- ID+WGhnKX+WC3gPMJ/DQM5yphcxuoHRjulWxpuGMVanKbW2XSzhdbQohHeQwbJl0ZZIt9KvApF5
- rbTIna2d3gl6oCSbdgbkddMVivY8oGtlg48o23V/Q2m6xJqJHsYoSE9WFziveCpxOiqBfOKmfmU
- BgYnhat7KwcA7FbAOW3JDGH7IHp7Fzkq4ThNGtpla92IRDN8
+ bh=fJ1rFBZvq/u/ibZlYytLuo1NfFspyuxEibTUJ2GQ7b0=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmPT4Xu19gIrEOfaCn3Nv8snYLMWWpmEo6Uppfa
+ ZIvO2lCIK2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj0+FwAKCRCLPIo+Aiko
+ 1RSUB/9l96pY63NZpv3fzBCzZg3JjmqmQPyhZEoLIB0v1Epgo3eUl0eV+aUDC2NlkhHqksrZqGo
+ jQmiwSwh8ZKgIOjXQFDekgIhL8x1fhjXj0c9g03H1UqXd7nsovDm2r00E9EhonIEQFGb6Ro1Fhz
+ 8H/3gIa8JYIgDWosbN07hW8phuVPDf7YGXjrSvEDh07x1BVv1yrqTT1yhXwRE3VZ6czzD/bKDLo
+ ljztotW1xDNh474V4GU8RJvJe3buA4M9edYtybFBw3GHpCfxxG00eMHM6t96HhtSV51indajJ0Y
+ 9AtfJrktTVzNoGfO4y909b5KqWYWI0P6huGVDiEqAcLifedq
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Fix two issues with the panel-lg-sw43408 driver reported by the kernel
-test robot.
+This panel driver uses DSC PPS functions and as such depends on the
+DRM_DISPLAY_DP_HELPER. Select this symbol to make required functions
+available to the driver.
 
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202404200800.kYsRYyli-lkp@intel.com/
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Changes in v2:
-- use SELECT instead of DEPEND to follow the reverted Kconfig changes
-- Link to v1: https://lore.kernel.org/r/20240420-panel-sw43408-fix-v1-0-b282ff725242@linaro.org
+ drivers/gpu/drm/panel/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
----
-Dmitry Baryshkov (2):
-      drm/panel/lg-sw43408: select CONFIG_DRM_DISPLAY_DP_HELPER
-      drm/panel/lg-sw43408: mark sw43408_backlight_ops as static
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 982324ef5a41..2ae0eb0638f3 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -340,6 +340,8 @@ config DRM_PANEL_LG_SW43408
+ 	depends on OF
+ 	depends on DRM_MIPI_DSI
+ 	depends on BACKLIGHT_CLASS_DEVICE
++	select DRM_DISPLAY_DP_HELPER
++	select DRM_DISPLAY_HELPER
+ 	help
+ 	  Say Y here if you want to enable support for LG sw43408 panel.
+ 	  The panel has a 1080x2160@60Hz resolution and uses 24 bit RGB per
 
- drivers/gpu/drm/panel/Kconfig            | 2 ++
- drivers/gpu/drm/panel/panel-lg-sw43408.c | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
----
-base-commit: 704ba27ac55579704ba1289392448b0c66b56258
-change-id: 20240420-panel-sw43408-fix-ff6549c121be
-
-Best regards,
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.39.2
 
 
