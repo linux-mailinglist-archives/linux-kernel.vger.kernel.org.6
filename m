@@ -1,49 +1,66 @@
-Return-Path: <linux-kernel+bounces-174320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D532B8C0D04
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:00:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A9F8C0D06
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752F31F226E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6C82819AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD3714A4DB;
-	Thu,  9 May 2024 09:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9nFlMXz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FDD14A4DD;
+	Thu,  9 May 2024 09:02:03 +0000 (UTC)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1EF149C7C;
-	Thu,  9 May 2024 09:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C6212E1C4;
+	Thu,  9 May 2024 09:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715245230; cv=none; b=Q+R+P/UThgzRi4LuDZE1BNkmHGL41fxyYAjqvgz5vmZGh2ZwtaAifd3p5FzrBzUyaqwC3mvlQ3ssdP94q4ADa8f67uXxjY/S5PzxjzrSfEVIUNye9EJrHvhtAcNWN6ZNrl53ySF4sBbTP2KOjxjiJuOUg4cvXrorgnu7gN2Ktl4=
+	t=1715245323; cv=none; b=cF5YRBFx1W8HHEcM1JnXkdFrmvhmRhR9OqcyeYO1zyoCWuWR0ONbM/y5HQUdvSBua6ihxCdIscBIqfnrU6GXu0POr8fmGCgzgvXN2ILF3ViSsdM1Ke8wZj5cz4q3odb584T9GEv3RuMkqZPPcpRngQsEgYd9xiM3vLQtwGhfSFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715245230; c=relaxed/simple;
-	bh=1bw+AV7yOayLR8BA8955PiotGL1IEXnI0/nmhHgiWxg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=o5aO6Y+YayHofFUTEfRy/YpRHFnXCPxViETP1W9CMw7XOKsZTjaBneMyrJX87rD5woupwmScxhrdawPl2j1Nolr9U2YreGBMu22X9g7e9UZrKh3p9sbnBRPu0BHBxATGya8cne5FQCiiaA18DR5be3QYL0m1maMeWsi5lOCbO6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9nFlMXz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A9C21C2BBFC;
-	Thu,  9 May 2024 09:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715245229;
-	bh=1bw+AV7yOayLR8BA8955PiotGL1IEXnI0/nmhHgiWxg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=q9nFlMXz+BCOUhlzbXkHFKsuFBpp19NrDQckaRCnhKEDj9LUBYl14j5Tun6Snlxbc
-	 f4IY8z8LVYNOP1xYvuRONIvOP2VKTP7ib0FeVlBMzN2iFNFfHbooZpFwO0xilk24ax
-	 5TPuqlHBb1/JLmNVk48KzeQc0nvOMGQXOhHPdExtVMCnPMfYB4RDRCnj6cEH0NaHmN
-	 Ubnl5GejZOTNRXfPMB+a7cZPtMXP9PX6IgJlskPAfn/SbZooRLtNz1vtB4Wh+Apvm9
-	 S34/JAID593BtrRpixV2kkQWDSdOyYjSZQ+VentD5EHKvzuJW79efe05ibXlIlTFUE
-	 oBBK1MOIl2kDw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 992FFE7C112;
-	Thu,  9 May 2024 09:00:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715245323; c=relaxed/simple;
+	bh=GZat9LINhFY7HET0Bfu5/n99u2tVBTaKeJXrhTXoj84=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RIwg1IgBH1BUTFU4LYBMzVmHS8xwmyJJomgM5XLJLbS0bHS4SNro7m2uSb+6UDAI4sgTYQXTw2/SbnYNOX3MtoqRfgl3Dgg66uD+Gr2aeFFHi7ZdTdA8tD7HK8xe0+POsfEs/jct5jfyD/p5dUfDZNnXuqmjg1x8g6C0LK5o6vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59cf0bda27so76319666b.0;
+        Thu, 09 May 2024 02:02:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715245320; x=1715850120;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Oi3yojxJ4xAGQp2FG233vt0UC3eonUyTb4YkLIyjxjs=;
+        b=ft2ydMk5JUysektUjav+vUek8+vIZ5U4V6kZfRS+Xkm+yWsaFWLWib7Gsn7usPK84h
+         +xkRCGhOxhTUyyR+XTyUk/NYoiOeaptmsZOQHKXMCJYIecWTr7yZ67g4iaG7bDX2MEQR
+         UT3NhX3m9LeZ69zW4Js7BotFJ+I2pkcqWrLgoWseozFUP3CBpE4AXciKClk9yIyVy9cg
+         MuKOrMnjzhTP2K2KxnVphv/s3bLAftEdM9a+Ufwe3B+Att4L5PI2Ia18bEPSpit2jRrI
+         5GCAvRev40o5jQrTOfW1kJM7YieXxwhe873TgpkaWmA9jf6wpSy60TVvzk8Al7wvS2jU
+         oAUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEXeCLUv/kpBxYFXlXBewsWDCaJ52htzcGyBwGtqVTNXP5iiYKSH4uUVInfJYWaOyHJjM/2/qSsr1+c6PRJSKUXRWozgHak7JBcZuBK8aVqIxxSizT9CAz8an2/2Dyj++1
+X-Gm-Message-State: AOJu0YzBVFA7vdkTeAl6mr+O+sMAZpNTBAk3B9a4DiyHCe4NgQ8Lu3Vf
+	80g5vhy9izC1jYJzp7Y27uaL2GtpLcmcq4UAk2wrF5bv2cjN9e86
+X-Google-Smtp-Source: AGHT+IG4oJw3MuRp847dXHlmTNFINDozRfgyJ8e2lLWZZJYAwbdZJ1OY0RijrHZsXTKvJ/WWawo7Ag==
+X-Received: by 2002:a50:d58b:0:b0:572:3f41:25aa with SMTP id 4fb4d7f45d1cf-5731d9b5f29mr4693125a12.11.1715245319838;
+        Thu, 09 May 2024 02:01:59 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6704sm486670a12.3.2024.05.09.02.01.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 02:01:59 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: rbc@meta.com,
+	paulmck@kernel.org,
+	kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE (KVM)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] KVM: Addressing a possible race in kvm_vcpu_on_spin:
+Date: Thu,  9 May 2024 02:01:46 -0700
+Message-ID: <20240509090146.146153-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,59 +68,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V3 net 0/7] There are some bugfix for the HNS3 ethernet driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171524522962.30298.276584443025659640.git-patchwork-notify@kernel.org>
-Date: Thu, 09 May 2024 09:00:29 +0000
-References: <20240507134224.2646246-1-shaojijie@huawei.com>
-In-Reply-To: <20240507134224.2646246-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us,
- horms@kernel.org, shenjian15@huawei.com, wangjie125@huawei.com,
- liuyonglong@huawei.com, chenhao418@huawei.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
 
-Hello:
+There are two workflow paths that access the same address
+simultaneously, creating a potential data race in kvm_vcpu_on_spin. This
+occurs when one workflow reads kvm->last_boosted_vcpu while another
+parallel path writes to it.
 
-This series was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+KCSAN produces the following output when enabled.
 
-On Tue, 7 May 2024 21:42:17 +0800 you wrote:
-> There are some bugfix for the HNS3 ethernet driver
-> 
-> ---
-> changeLog:
-> v2 -> v3:
->   - Fix coding errors in "net: hns3: using user configure after hardware reset", suggested by Simon Horman
->   https://lore.kernel.org/all/20240426100045.1631295-1-shaojijie@huawei.com/
-> v1 -> v2:
->   - Adjust the code sequence to completely eliminate the race window, suggested by Jiri Pirko
->   v1: https://lore.kernel.org/all/20240422134327.3160587-1-shaojijie@huawei.com/
-> 
-> [...]
+	BUG: KCSAN: data-race in kvm_vcpu_on_spin [kvm] / kvm_vcpu_on_spin [kvm]
 
-Here is the summary with links:
-  - [V3,net,1/7] net: hns3: using user configure after hardware reset
-    https://git.kernel.org/netdev/net/c/05eb60e9648c
-  - [V3,net,2/7] net: hns3: direct return when receive a unknown mailbox message
-    https://git.kernel.org/netdev/net/c/669554c512d2
-  - [V3,net,3/7] net: hns3: change type of numa_node_mask as nodemask_t
-    https://git.kernel.org/netdev/net/c/6639a7b95321
-  - [V3,net,4/7] net: hns3: release PTP resources if pf initialization failed
-    https://git.kernel.org/netdev/net/c/950aa4239989
-  - [V3,net,5/7] net: hns3: use appropriate barrier function after setting a bit value
-    https://git.kernel.org/netdev/net/c/094c28122852
-  - [V3,net,6/7] net: hns3: fix port vlan filter not disabled issue
-    https://git.kernel.org/netdev/net/c/f5db7a3b65c8
-  - [V3,net,7/7] net: hns3: fix kernel crash when devlink reload during initialization
-    https://git.kernel.org/netdev/net/c/35d92abfbad8
+	write to 0xffffc90025a92344 of 4 bytes by task 4340 on cpu 16:
+	kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112) kvm
+	handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
+	vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
+	vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
+	kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
+	kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
+	__se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
+	__x64_sys_ioctl (fs/ioctl.c:890)
+	x64_sys_call (arch/x86/entry/syscall_64.c:33)
+	do_syscall_64 (arch/x86/entry/common.c:?)
+	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
 
-You are awesome, thank you!
+	read to 0xffffc90025a92344 of 4 bytes by task 4342 on cpu 4:
+	kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4069) kvm
+	handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
+	vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
+	vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
+	kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
+	kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
+	__se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
+	__x64_sys_ioctl (fs/ioctl.c:890)
+	x64_sys_call (arch/x86/entry/syscall_64.c:33)
+	do_syscall_64 (arch/x86/entry/common.c:?)
+	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+	value changed: 0x00000012 -> 0x00000000
+
+Given that both operations occur simultaneously without any locking
+mechanisms in place, let's ensure atomicity to prevent possible data
+corruption. We'll achieve this by employing READ_ONCE() for the reading
+operation and WRITE_ONCE() for the writing operation.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ virt/kvm/kvm_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index ff0a20565f90..9768307d5e6c 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4066,12 +4066,13 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+ {
+ 	struct kvm *kvm = me->kvm;
+ 	struct kvm_vcpu *vcpu;
+-	int last_boosted_vcpu = me->kvm->last_boosted_vcpu;
++	int last_boosted_vcpu;
+ 	unsigned long i;
+ 	int yielded = 0;
+ 	int try = 3;
+ 	int pass;
+ 
++	last_boosted_vcpu = READ_ONCE(me->kvm->last_boosted_vcpu);
+ 	kvm_vcpu_set_in_spin_loop(me, true);
+ 	/*
+ 	 * We boost the priority of a VCPU that is runnable but not
+@@ -4109,7 +4110,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+ 
+ 			yielded = kvm_vcpu_yield_to(vcpu);
+ 			if (yielded > 0) {
+-				kvm->last_boosted_vcpu = i;
++				WRITE_ONCE(kvm->last_boosted_vcpu, i);
+ 				break;
+ 			} else if (yielded < 0) {
+ 				try--;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.43.0
 
 
