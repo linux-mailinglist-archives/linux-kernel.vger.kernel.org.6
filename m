@@ -1,126 +1,240 @@
-Return-Path: <linux-kernel+bounces-174448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DDF8C0EEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B747B8C0EF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AF3028361B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA65D1C20EBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBEA149E0E;
-	Thu,  9 May 2024 11:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6oJLrKg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCE1148303;
+	Thu,  9 May 2024 11:39:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2FE13172A;
-	Thu,  9 May 2024 11:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CF71311B6;
+	Thu,  9 May 2024 11:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715254740; cv=none; b=uYETSHc9rDQvRAGBPG/o40TiMZYqmgct1PPk0rHL8Rt8YRWH04ega2ewlHAv38r0ytSpKFTrRnOORkBt5uEQNwFQoqeLCseZR35x91mmUTmDpNziPXkD8LKtyu9UKVzStRvm/QtEtYd0EiReaHQfn4MaOkpbz7VELXJfKYx32sM=
+	t=1715254783; cv=none; b=TDE5Z95wLkNDU0U8ks1gXXXTi8Bq1UqZFXneCGV0UTZRRjgTehiLfbEHlYF8o19nMmQ7jWbKpNoY1w1MHMmaQJO11jXCKj27wL0g7zUwbdg+5xz/mQ9CYoR82RFJbQjJwDJDEzmof/ZV7BwnieIYWFk77xY6nrpQUmPwkgszn+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715254740; c=relaxed/simple;
-	bh=ziw08gHcd8mjdUarjJlC5MxDSSrwq+SNZaIBS6tHOrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ffRKvGTVlcCsQiihZM2sSUHmCNytRGVi39D9cO/+PgivZBPyhFawMCEvcPSLiEX4bsi0ARjGRa+SaNhDH/ztQLOpXOJxzdSz4mKuYft2TidT8VQnZjWLOHZXXQX1vRXYIrZTK17Qp4Z2QRjlh7rzcfoR9RpIfeqT+lerMLK1D4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6oJLrKg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E980C116B1;
-	Thu,  9 May 2024 11:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715254740;
-	bh=ziw08gHcd8mjdUarjJlC5MxDSSrwq+SNZaIBS6tHOrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b6oJLrKgWptVKfS1b1DJld2kF473qcRQlYA9NcglxVQ3muP9XFveN76SPmN4h0W/q
-	 NtuRMy302BNatpVrMjzy+J4i2PGajKdd8X7yLnVS5aPgyB9cB3k2SQlym7AmJBtxVJ
-	 KwZKFNH1145vKFZGaBVPfwBsQtQqbJPwX0vrIbL1M6b9L/9vg3XpgjB5Ecpu6Wn0qs
-	 n5S+yKpK5ZdFiq8Ms5VkVDikYeWo+2/jla9RqHZA9C3ODKbkhq6tc8y2/ZU9HpzQBU
-	 MAP4RUarW1r2oACdn0WMre9CPv0H5pS1yjNETR0xZt45kIBnasjBrwt5ML1ySGfTnS
-	 S7pDSxU6Dq/eA==
-Date: Thu, 9 May 2024 13:38:52 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240509-kutschieren-tacker-c3968b8d3853@brauner>
-References: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
- <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
- <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
+	s=arc-20240116; t=1715254783; c=relaxed/simple;
+	bh=6Qz4bjICzh8uyecfY7r4wrMMeVHl212hxAyi45Z/xbU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ujV1NUjwEpmXqJ5p9ougAE/bj/BAxWIUIduejl9epJgyqidR7CnSZB/y1hzStvLQvROw257f993nhb23JarAh2Zjp+QsSep/UgI9qPQCL+SIz6LPTpObpIu5vtRbk9i6TqAga63u4fNKwWHzQsM5BID1/JFFE8uFRLEGsSkvpbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZqmB0G1rz6DBQ1;
+	Thu,  9 May 2024 19:39:06 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id ACF4F1400D9;
+	Thu,  9 May 2024 19:39:36 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 9 May
+ 2024 12:39:36 +0100
+Date: Thu, 9 May 2024 12:39:34 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
+ Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Lukas Wunner
+	<lukas@wunner.de>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, "Krishna
+ chaitanya chundru" <quic_krichai@quicinc.com>, Srinivas Pandruvada
+	<srinivas.pandruvada@linux.intel.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Christophe
+ JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v5 5/8] PCI/bwctrl: Re-add BW notification portdrv as
+ PCIe BW controller
+Message-ID: <20240509123934.0000496b@Huawei.com>
+In-Reply-To: <20240508134744.52134-6-ilpo.jarvinen@linux.intel.com>
+References: <20240508134744.52134-1-ilpo.jarvinen@linux.intel.com>
+	<20240508134744.52134-6-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Wed, May 08, 2024 at 10:14:44AM -0700, Linus Torvalds wrote:
-> On Wed, 8 May 2024 at 09:19, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > So since we already have two versions of F_DUPFD (the other being
-> > F_DUPFD_CLOEXEC) I decided that the best thing to do is to just extend
-> > on that existing naming pattern, and called it F_DUPFD_QUERY instead.
-> >
-> > I'm not married to the name, so if somebody hates it, feel free to
-> > argue otherwise.
-> 
-> Side note: with this patch, doing
-> 
->    ret = fcntl(fd1, F_DUPFD_QUERY, fd2);
-> 
-> will result in:
-> 
->  -1 (EBADF): 'fd1' is not a valid file descriptor
->  -1 (EINVAL): old kernel that doesn't support F_DUPFD_QUERY
->  0: fd2 does not refer to the same file as fd1
->  1: fd2 is the same 'struct file' as fd1
-> 
-> and it might be worth noting a couple of things here:
-> 
->  (a) fd2 being an invalid file descriptor does not cause EBADF, it
-> just causes "does not match".
-> 
->  (b) we *could* use more bits for more equality
-> 
-> IOW, it would possibly make sense to extend the 0/1 result to be
-> 
-> - bit #0: same file pointer
-> - bit #1: same path
-> - bit #2: same dentry
-> - bit #3: same inode
-> 
-> which are all different levels of "sameness".
+On Wed,  8 May 2024 16:47:41 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-Not worth it without someone explaining in detail why imho. First pass
-should be to try and replace kcmp() in scenarios where it's obviously
-not needed or overkill.
+> This mostly reverts the commit b4c7d2076b4e ("PCI/LINK: Remove
+> bandwidth notification"). An upcoming commit extends this driver
+> building PCIe bandwidth controller on top of it.
+>=20
+> The PCIe bandwidth notification were first added in the commit
+> e8303bb7a75c ("PCI/LINK: Report degraded links via link bandwidth
+> notification") but later had to be removed. The significant changes
+> compared with the old bandwidth notification driver include:
+>=20
+> 1) Don't print the notifications into kernel log, just keep the Link
+>    Speed cached into the struct pci_bus updated. While somewhat
+>    unfortunate, the log spam was the source of complaints that
+>    eventually lead to the removal of the bandwidth notifications driver
+>    (see the links below for further information).
+>=20
+> 2) Besides the Link Bandwidth Management Interrupt, enable also Link
+>    Autonomous Bandwidth Interrupt to cover the other source of
+>    bandwidth changes.
+>=20
+> 3) Use threaded IRQ with IRQF_ONESHOT to handle Bandwidth Notification
+>    Interrupts to address the problem fixed in the commit 3e82a7f9031f
+>    ("PCI/LINK: Supply IRQ handler so level-triggered IRQs are acked")).
+>=20
+> 4) Handle Link Speed updates robustly. Refresh the cached Link Speed
+>    when enabling Bandwidth Notification Interrupts, and solve the race
+>    between Link Speed read and LBMS/LABS update in
+>    pcie_bwnotif_irq_thread().
+>=20
+> 5) Use concurrency safe LNKCTL RMW operations.
+>=20
+> 6) The driver is now called PCIe bwctrl (bandwidth controller) instead
+>    of just bandwidth notifications because of increased scope and
+>    functionality within the driver.
+>=20
+> 7) Coexist with the Target Link Speed quirk in
+>    pcie_failed_link_retrain(). Provide LBMS counting API for it.
+>=20
+> 8) Tweaks to variable/functions names for consistency and length
+>    reasons.
+>=20
+> Bandwidth Notifications enable the cur_bus_speed in the struct pci_bus
+> to keep track PCIe Link Speed changes.
+>=20
+> Link: https://lore.kernel.org/all/20190429185611.121751-1-helgaas@kernel.=
+org/
+> Link: https://lore.kernel.org/linux-pci/20190501142942.26972-1-keith.busc=
+h@intel.com/
+> Link: https://lore.kernel.org/linux-pci/20200115221008.GA191037@google.co=
+m/
+> Suggested-by: Lukas Wunner <lukas@wunner.de> # Building bwctrl on top of =
+bwnotif
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
-anyway which means that your comparison patch becomes even simpler imho.
-I've also added a selftest patch:
+A few trivial things inline. Either way LGTM
 
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-?
+> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> index 6461aa93fe76..6357bc219632 100644
+> --- a/drivers/pci/pcie/Makefile
+> +++ b/drivers/pci/pcie/Makefile
+> @@ -12,4 +12,5 @@ obj-$(CONFIG_PCIEAER_INJECT)	+=3D aer_inject.o
+>  obj-$(CONFIG_PCIE_PME)		+=3D pme.o
+>  obj-$(CONFIG_PCIE_DPC)		+=3D dpc.o
+>  obj-$(CONFIG_PCIE_PTM)		+=3D ptm.o
+> +obj-$(CONFIG_PCIE_BWCTRL)	+=3D bwctrl.o
+>  obj-$(CONFIG_PCIE_EDR)		+=3D edr.o
+> diff --git a/drivers/pci/pcie/bwctrl.c b/drivers/pci/pcie/bwctrl.c
+> new file mode 100644
+> index 000000000000..5afc533dd0a9
+> --- /dev/null
+> +++ b/drivers/pci/pcie/bwctrl.c
+> @@ -0,0 +1,185 @@
+
+> +
+> +static irqreturn_t pcie_bwnotif_irq_thread(int irq, void *context)
+> +{
+> +	struct pcie_device *srv =3D context;
+> +	struct pcie_bwctrl_data *data =3D get_service_data(srv);
+> +	struct pci_dev *port =3D srv->port;
+> +	u16 link_status, events;
+> +	int ret;
+> +
+> +	ret =3D pcie_capability_read_word(port, PCI_EXP_LNKSTA, &link_status);
+> +	events =3D link_status & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_LABS);
+> +
+> +	if (ret !=3D PCIBIOS_SUCCESSFUL || !events)
+> +		return IRQ_NONE;
+
+Trivial, but nicer to not use link_status if it is garbage (even briefly)
+Only a couple of lines more to keep it clean.
+
+	ret =3D pcie...
+	if (ret !=3D PCI_BIOS_SUCCESSFUL)
+		return IRQ_NONE;
+
+	events =3D ...
+	if (!events)
+		return IRQ_NONE;
+
+> +
+> +	if (events & PCI_EXP_LNKSTA_LBMS)
+> +		atomic_inc(&data->lbms_count);
+> +
+> +	pcie_capability_write_word(port, PCI_EXP_LNKSTA, events);
+> +
+> +	/*
+> +	 * Interrupts will not be triggered from any further Link Speed
+> +	 * change until LBMS is cleared by the write. Therefore, re-read the
+> +	 * speed (inside pcie_update_link_speed()) after LBMS has been
+> +	 * cleared to avoid missing link speed changes.
+> +	 */
+> +	pcie_update_link_speed(port->subordinate);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+> +
+> +static int pcie_bwnotif_probe(struct pcie_device *srv)
+> +{
+> +	struct pci_dev *port =3D srv->port;
+> +	int ret;
+> +
+> +	struct pcie_bwctrl_data *data __free(kfree) =3D
+> +				kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	set_service_data(srv, data);
+> +
+> +	ret =3D request_threaded_irq(srv->irq, NULL, pcie_bwnotif_irq_thread,
+> +				   IRQF_SHARED | IRQF_ONESHOT, "PCIe bwctrl", srv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	port->link_bwctrl =3D no_free_ptr(data);
+> +	pcie_bwnotif_enable(srv);
+> +	pci_info(port, "enabled with IRQ %d\n", srv->irq);
+
+Rather noisy given this is easy enough to establish via other paths.
+pci_dbg() maybe?
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void pcie_bwnotif_remove(struct pcie_device *srv)
+> +{
+> +	struct pcie_bwctrl_data *data =3D get_service_data(srv);
+> +
+> +	scoped_guard(rwsem_write, &pcie_bwctrl_remove_rwsem)
+> +		srv->port->link_bwctrl =3D NULL;
+> +
+> +	pcie_bwnotif_disable(srv->port);
+
+Trivial but I'd like a comment to say why this needs to be done after
+the link_bwctrl =3D NULL above (or if not, move it before that.
+That puts the tear down slightly out of order vs set up.
+
+> +	free_irq(srv->irq, srv);
+> +	kfree(data);
+> +}
+> +
+
 
