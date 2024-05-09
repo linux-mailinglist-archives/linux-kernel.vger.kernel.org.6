@@ -1,210 +1,185 @@
-Return-Path: <linux-kernel+bounces-174788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE958C14FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:45:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A748C1500
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BC81C217F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:45:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211D91C20C64
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C90A7E776;
-	Thu,  9 May 2024 18:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D917EEF2;
+	Thu,  9 May 2024 18:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Qei5f/NB"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2044.outbound.protection.outlook.com [40.107.243.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="G1C0l0pS"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806821A2C35;
-	Thu,  9 May 2024 18:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715280326; cv=fail; b=cHyrNXCMhu2lBAUIwTmWBd0TxwEQtDiE+df+LaGVJwiNDR2EWNSWZ7Wtu0uKd02AYJ8pf1yBPaRC+td5nNlk3iJYFrtEcMYFIP3VO2Dk5LSbEjmioBMyPFNmeXIHn7q2M7a2SbOptm016nQzmbz6fikcR4cmsOZJyHmbywTMYPU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715280326; c=relaxed/simple;
-	bh=+Hr1EpkuY/e95c1dA0gPWgh0GStUk7+S3RodskdbKQc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fTBvyGkuW8iymDg0spHfJISA8SlugH4T+6VLliN7ool721i67H00aNcP5x+vvVA39f9iyHKy8Af7zAEZ9opIgTvr0OhP6dkegznUmKujkqgVzLb9gebV6jQXfT6Jjl0UE0D8BKdXSUaW0SvUKSLQfS4G3GqTgflnWtmoJ7j4cXA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Qei5f/NB; arc=fail smtp.client-ip=40.107.243.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a1An+D1fCE89q4d0Qbi0PsRMgA7J51H5b/E6J3f2WbBLhEZr23MQTt/GzsrgIKKJQtaAzn97HOxX03ujtUoHxu8zjGFPNRlFvQPvKQ8eoqCrVAYXA4A6bk2hJ3dHgWVc66FzzgJkxwad1v9MhNC2b9A6psL64xrbDF/NhPDMNX67dFpqIhacaSv4pTXF/HI+sWGwfdNnSMSMDd80/uVKl54qXJFu3JZWv2mo1Bdq+xWHhQ+Fw412brpDSohp4fiQ0zJ0SrOPGtprDzXkxfBSW9Ry/Kvyg0Q9xD8ep35XaNCL35ctCRybruOB19NdRGMe+mkD53wjubdhE94/q6ZzVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wS9c61cD+iqzMewqa2kBZ7Ae824L/NlWEGGttar6pTE=;
- b=X/sU6/nx5+VE1cFkdyFNZPn5fSQH8WbZrV5gwh+u5XvJMbuIiLxUEdQpCKyhCifW2ssFG/XPNnSQFY0ycVS+HUvaMxVfp5u0HwOLjvFafEuikEHgO5DzU/gOvnNSWR4ZxPtvzATljug4BJRkIPhzQUrVGDKZz+KNpkIXdTW2HtpAHOhlk3qfUnyg/kdXNFc7Jp4+0+uqEcnDu6MpfpVLh8WOYqP9V4bW0MhWZ9aL3DV/yiDPbM+poYjgx95hKLRBmsTSa/6BDJruRjdp2bVBzL2UByDXJB3IuSpIxeeohRhwRDo+Pk3M342vBsTyBTNjYkA3wrawF7S+MyuNm0oo5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wS9c61cD+iqzMewqa2kBZ7Ae824L/NlWEGGttar6pTE=;
- b=Qei5f/NBHWj5RL7cMBxRGAY1RWjsebvK0chHh7+0zNJvYHUwGfsvakwrbJVNbSuTWkTic8j+XAqFNzzB5EGrOt/EYqde/3XiJ2qdfMOlX8rsahN++C9N0mq7o0v5lt4z1CLl+SEoi0Dt6cyo8tCJfaFYkI1tqTZ1Dgye2500aI4=
-Received: from BY3PR05CA0051.namprd05.prod.outlook.com (2603:10b6:a03:39b::26)
- by CY8PR12MB7100.namprd12.prod.outlook.com (2603:10b6:930:60::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
- 2024 18:45:22 +0000
-Received: from CO1PEPF000066EC.namprd05.prod.outlook.com
- (2603:10b6:a03:39b:cafe::b4) by BY3PR05CA0051.outlook.office365.com
- (2603:10b6:a03:39b::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.46 via Frontend
- Transport; Thu, 9 May 2024 18:45:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000066EC.mail.protection.outlook.com (10.167.249.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Thu, 9 May 2024 18:45:21 +0000
-Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 9 May
- 2024 13:45:15 -0500
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: <rafael@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<hdegoede@redhat.com>, <Yilin.Chen@amd.com>, <Randy.Perez@amd.com>,
-	<Michael.Chiu@amd.com>, Mario Limonciello <mario.limonciello@amd.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] ACPI: x86: Force StorageD3Enable on more products
-Date: Thu, 9 May 2024 13:45:02 -0500
-Message-ID: <20240509184502.52480-1-mario.limonciello@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84F37711E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715280394; cv=none; b=PXyAVq5beXj2zmkcxt6962Txr1HqjhXtS5ru/tJcpwe4n6gFJdVMiHvnkoLknn7LaNyZ33xaf5+WeVXkcqiEjrWofUBzzUxLy7x5Pks1srp25HgvVUqUP0rTORiyaLnfq5AgRvSRA3r0KI05Q/+iZDO4vx+oKB+nk8DSXtCQ6PQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715280394; c=relaxed/simple;
+	bh=bVYyI3uNK8Ue9unjuecRzNC8ZDWp+FAsR3nmvBep48k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JpvwHR9rOlWL8GccLe4fplDYBkd+IBU4tEgJoJjg+xc0OF5BmflbWrximpPD4/G7tLMH3xjUtthJkArgv406N/cIyzVFayKjU9jDLaci+qFAFeiuykzps+Psv6TIisvVmDpc/t17L3cndN4Z9HTS+hxf7iP9hbG0cjssjiq9XqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=G1C0l0pS; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f44ed6e82fso1108608b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715280392; x=1715885192; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8qs+zeJ73xYDCsb+04oKc8vKm2skXM6Yjmk5Cex/hmQ=;
+        b=G1C0l0pSZ9WKAz3yBAJ34cjzN7oLHUiu/xl/t1kyW/hxNH3yObcTPTGas/rr/p2Z18
+         /TXyiuu6/TX3ekHxPDwIu3N+lBaSAi9iKKdEFvy5eUnPV0f73jC564DS9vL+HnHwoIRm
+         Ngy7IoO02hvOIrhdOLsNkc58Y8l05eJFsccJym3MqvSJb9SZOms5a843QXrC03zhxTIY
+         0pi422VZEonhd7O2QA3fHRz5Tz7vQmjEX1CLFDGIf5eVOP8IBjTvmOhcY1I/WZ96zGqM
+         a7BegrvAs4EmhgMXGWTAfqsbPYBtYIvgDf/muwMD0qsv1G2HjT+L28xrXuG7B5oakLsv
+         oxjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715280392; x=1715885192;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8qs+zeJ73xYDCsb+04oKc8vKm2skXM6Yjmk5Cex/hmQ=;
+        b=so/1W37tJnmmj1iq5bwjbA6ktQQ2A4AfbWCaM+QwH8fX2iqI7NDBJ+BBLSzfdrCvjE
+         xqkZImRDT1lZ4oQDAxOIsIXpWw3Cvqcv3llV0Pn2UWUE7/EUgmBHm4mf+vId/d6q3hwL
+         I2JdujQaulQXcbM4XIrEICG5hdG2VIDsimyU44+U9hJVRpI+MVS1adJzWswk1fUDWgMb
+         rhLM7wnXcO54FczvcCMN7rUiFJsPE0dPiYvmU/uuLu1iOn1ltd8nnRaAqOFcNQDRAhk3
+         YGaXfeGcGBvY+FVuBSquesuIXgRdhkc2niM1Sed/n6jsOSRiO47wDKpuL5c1AhCqASFB
+         a3eg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9OuOhgTzSCufmOUts0JMBZTxLbI6yuvCqjPDN/KjYHHRYBeMekbDAQU4dF2Cl7RiWanoX/X5CNCN2LgnNZoabv2dhf5E0/t6fvmvm
+X-Gm-Message-State: AOJu0Yx6BodOeCeuS4vX+iTD5ZZLHydJ17OvMSpi+r9n5/q9agmRGM4i
+	SPHaexrC4puZkmJBcda4g1kC8Nm8bX3Fdc01drv0vpXf5OTfyT3ZR5+yvjzRTJg=
+X-Google-Smtp-Source: AGHT+IHSkbFTtM14eAz4leAGtq7pP+xnyJh4LBmDtig93VWvmXkOMQqIKOUJFRYjpBP4l5vncaDl3Q==
+X-Received: by 2002:a05:6a20:7486:b0:1af:889e:8b06 with SMTP id adf61e73a8af0-1afde10ad77mr864261637.35.1715280392190;
+        Thu, 09 May 2024 11:46:32 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2afa7b5sm1607660b3a.163.2024.05.09.11.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 11:46:31 -0700 (PDT)
+Date: Thu, 9 May 2024 11:46:26 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, paul.walmsley@sifive.com,
+	rick.p.edgecombe@intel.com, broonie@kernel.org,
+	Szabolcs.Nagy@arm.com, kito.cheng@sifive.com, keescook@chromium.org,
+	ajones@ventanamicro.com, conor.dooley@microchip.com,
+	cleger@rivosinc.com, atishp@atishpatra.org, alex@ghiti.fr,
+	bjorn@rivosinc.com, alexghiti@rivosinc.com,
+	samuel.holland@sifive.com, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	corbet@lwn.net, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	charlie@rivosinc.com, apatel@ventanamicro.com,
+	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
+	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 04/29] riscv: zicfilp / zicfiss in dt-bindings
+ (extensions.yaml)
+Message-ID: <Zj0aAiZiTrt9ACjj@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-5-debug@rivosinc.com>
+ <20240410115806.GA4044117-robh@kernel.org>
+ <CAKC1njSsZ6wfvJtXkp4J4J6wXFtU92W9JGca-atKxBy8UvUwRg@mail.gmail.com>
+ <20240415194105.GA94432-robh@kernel.org>
+ <Zh6c0FH2OvrfDLje@debug.ba.rivosinc.com>
+ <20240509-cornflake-foyer-e6589c2bc364@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066EC:EE_|CY8PR12MB7100:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d1436e4-6248-4942-b267-08dc70582e4a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|376005|82310400017|36860700004;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fbVO20rG4JDhKEWCGmaFbRM3CKCXGk1JxIK5lRtpNwHYdlwFpYen16esTA1T?=
- =?us-ascii?Q?1yy2EkWNYZ8ddmkEIjsZz7lXJDq8TmX+I/26zk35fOvFBNBm+XrRhLovoI9q?=
- =?us-ascii?Q?1EcizxmKcUdnI44GRL3DXvcyZrC/YYCsOy1yYp7bCTGYRfFZE6jAR60ibCtQ?=
- =?us-ascii?Q?6wDv+Kt/vbdyGgy+40JkWb7bKx9+i9uPb/cvUPtQRSPi8zQ4FEsAoEQGELUp?=
- =?us-ascii?Q?lD86Ow48tr1svIuubbDoQ0fVMEce46Y5vDG7oVqtltul2lYBvnjIsrCQpls1?=
- =?us-ascii?Q?ZIuqs3lYBhYIuo2G6nGPuSuljSpzVmfM4oGhuZwkt9TSPkm8vqfmzrOpZohM?=
- =?us-ascii?Q?nKFz8hjROqNeDE//L6dRR3qKf9uHkFRuz4SEITvMMvbSH9bGdFKIA7lRRQ2G?=
- =?us-ascii?Q?BhzgyO9V4Llv3Cd1lAJ9KBTcH72oIObzYxiUQCjqxFOQF4tCGUEmxK0pQm1o?=
- =?us-ascii?Q?6FiPQjzjUnQnx2EbjrTCbDZc9g5YTreQCn2Xsbi93CChvtdNQADEGk1R/sya?=
- =?us-ascii?Q?3DNyGvQwJ9uQtcF6r8JURpEhPXTQJdslw97yHZ0zXJttKeaCfIIVDPc7rKgd?=
- =?us-ascii?Q?HsqFZBtX64B6jsvwGqkB2iNeH464AYvFr+xIaz8Wt5twtUwSsnG3/d25nmTH?=
- =?us-ascii?Q?ozk+ruoO0cmj7RQRsAqjwwH2W183/6JFZJcDXSrOw0LitK9R68KtGYJkD1Ot?=
- =?us-ascii?Q?MRi6sYhcJsVY7hxuYWwMg6xmLd028fGzBPipN3kInjQq+kKYA2Dz++5snPkH?=
- =?us-ascii?Q?fPoeMMmyY0oSdaMQl91c+QKvpfpSWYuEVIgj7SkHegIFnXAeAdSbiqDvj3ZS?=
- =?us-ascii?Q?gvYTkNZvYgrdUQVe9Ct6B86oidXfB35P58nyfPue0uZIZIxmjOMTdm9KajkO?=
- =?us-ascii?Q?3TIHxb3228n6F+yKdLyYoiZFE9Z1Ev7OOrtabx3PfKMzZnustDgUp4Wc6MZx?=
- =?us-ascii?Q?J0+kx8VfViKlAOMcfMZsA6/aOS16u3t6C5MZ9d4t2D/bIhTWNG8qpYKPKFet?=
- =?us-ascii?Q?dRvoKsJAnuKpdsnjRc4iWgr7UYVAbDShrqpKDoff7+UgWnTirXzOldfEt7MK?=
- =?us-ascii?Q?rqxkUIIB9ZTOGfyoAXNyoV6cFuqgkTpw/JifF1rgT3jY/SJCbzGqu2p329kE?=
- =?us-ascii?Q?ZFktx2LkmYlQ5KKqqF8mf8fZ9UIS0LTN5wqlsW8TxayuZCsG9+389vjIMR3r?=
- =?us-ascii?Q?TN58CMQ/Fv+YWxo9Mm5JNUlT8vHu4Gu2fLzMCfaNUUHmU1FDQ/9kYZYyHCeU?=
- =?us-ascii?Q?rMrDCknVDSmxB3UwMuINFaru0r6c6kg4dIgoMC+FaS52NATCeFVp2GLfyKsJ?=
- =?us-ascii?Q?3HZXsezeiMx4Loz3XrkXOLxvZFuEy715RiqEHyQMkdghHw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(376005)(82310400017)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 18:45:21.4285
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d1436e4-6248-4942-b267-08dc70582e4a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066EC.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7100
+In-Reply-To: <20240509-cornflake-foyer-e6589c2bc364@spud>
 
-A Rembrandt-based HP thin client is reported to have problems where
-the NVME disk isn't present after resume from s2idle.
+On Thu, May 09, 2024 at 07:14:26PM +0100, Conor Dooley wrote:
+>On Tue, Apr 16, 2024 at 08:44:16AM -0700, Deepak Gupta wrote:
+>> On Mon, Apr 15, 2024 at 02:41:05PM -0500, Rob Herring wrote:
+>> > On Wed, Apr 10, 2024 at 02:37:21PM -0700, Deepak Gupta wrote:
+>> > > On Wed, Apr 10, 2024 at 4:58 AM Rob Herring <robh@kernel.org> wrote:
+>> > > >
+>> > > > On Wed, Apr 03, 2024 at 04:34:52PM -0700, Deepak Gupta wrote:
+>> > > > > Make an entry for cfi extensions in extensions.yaml.
+>> > > > >
+>> > > > > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> > > > > ---
+>> > > > >  .../devicetree/bindings/riscv/extensions.yaml          | 10 ++++++++++
+>> > > > >  1 file changed, 10 insertions(+)
+>> > > > >
+>> > > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> > > > > index 63d81dc895e5..45b87ad6cc1c 100644
+>> > > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> > > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> > > > > @@ -317,6 +317,16 @@ properties:
+>> > > > >              The standard Zicboz extension for cache-block zeroing as ratified
+>> > > > >              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+>> > > > >
+>> > > > > +        - const: zicfilp
+>> > > > > +          description:
+>> > > > > +            The standard Zicfilp extension for enforcing forward edge control-flow
+>> > > > > +            integrity in commit 3a20dc9 of riscv-cfi and is in public review.
+>> > > >
+>> > > > Does in public review mean the commit sha is going to change?
+>> > > >
+>> > >
+>> > > Less likely. Next step after public review is to gather comments from
+>> > > public review.
+>> > > If something is really pressing and needs to be addressed, then yes
+>> > > this will change.
+>> > > Else this gets ratified as it is.
+>> >
+>> > If the commit sha can change, then it is useless. What's the guarantee
+>> > someone is going to remember to update it if it changes?
+>>
+>> Sorry for late reply.
+>>
+>> I was following existing wordings and patterns for messaging in this file.
+>> You would rather have me remove sha and only mention that spec is in public
+>> review?
+>
+>Nope, having a commit sha is desired. None of this is mergeable until at
+>least the spec becomes frozen, so the sha can be updated at that point
+>to the freeze state - or better yet to the ratified state. Being in
+>public review is not sufficient.
 
-This is because the NVME disk wasn't put into D3 at suspend, and
-that happened because the StorageD3Enable _DSD was missing in the BIOS.
+Spec is frozen.
+As per RVI spec lifecycle, spec freeze is a prior step to public review.
+Public review concluded on 25th April
+https://lists.riscv.org/g/tech-ss-lp-cfi/message/91
 
-As AMD's architecture requires that the NVME is in D3 for s2idle, adjust
-the criteria for force_storage_d3 to match *all* Zen SoCs when the FADT
-advertises low power idle support.
+Next step is ratification whenever board meets.
 
-This will ensure that any future products with this BIOS deficiency don't
-need to be added to the allow list of overrides.
+>
+>Cheers,
+>Conor
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/acpi/x86/utils.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/acpi/x86/utils.c b/drivers/acpi/x86/utils.c
-index 90c3d2eab9e9..7507a7706898 100644
---- a/drivers/acpi/x86/utils.c
-+++ b/drivers/acpi/x86/utils.c
-@@ -197,16 +197,16 @@ bool acpi_device_override_status(struct acpi_device *adev, unsigned long long *s
- }
- 
- /*
-- * AMD systems from Renoir and Lucienne *require* that the NVME controller
-+ * AMD systems from Renoir onwards *require* that the NVME controller
-  * is put into D3 over a Modern Standby / suspend-to-idle cycle.
-  *
-  * This is "typically" accomplished using the `StorageD3Enable`
-  * property in the _DSD that is checked via the `acpi_storage_d3` function
-- * but this property was introduced after many of these systems launched
-- * and most OEM systems don't have it in their BIOS.
-+ * but some OEM systems still don't have it in their BIOS.
-  *
-  * The Microsoft documentation for StorageD3Enable mentioned that Windows has
-- * a hardcoded allowlist for D3 support, which was used for these platforms.
-+ * a hardcoded allowlist for D3 support as well as a registry key to override
-+ * the BIOS, which has been used for these cases.
-  *
-  * This allows quirking on Linux in a similar fashion.
-  *
-@@ -219,19 +219,15 @@ bool acpi_device_override_status(struct acpi_device *adev, unsigned long long *s
-  *    https://bugzilla.kernel.org/show_bug.cgi?id=216773
-  *    https://bugzilla.kernel.org/show_bug.cgi?id=217003
-  * 2) On at least one HP system StorageD3Enable is missing on the second NVME
--      disk in the system.
-+ *    disk in the system.
-+ * 3) On at least one HP Rembrandt system StorageD3Enable is missing on the only
-+ *    NVME device.
-  */
--static const struct x86_cpu_id storage_d3_cpu_ids[] = {
--	X86_MATCH_VENDOR_FAM_MODEL(AMD, 23, 24, NULL),  /* Picasso */
--	X86_MATCH_VENDOR_FAM_MODEL(AMD, 23, 96, NULL),	/* Renoir */
--	X86_MATCH_VENDOR_FAM_MODEL(AMD, 23, 104, NULL),	/* Lucienne */
--	X86_MATCH_VENDOR_FAM_MODEL(AMD, 25, 80, NULL),	/* Cezanne */
--	{}
--};
--
- bool force_storage_d3(void)
- {
--	return x86_match_cpu(storage_d3_cpu_ids);
-+	if (!cpu_feature_enabled(X86_FEATURE_ZEN))
-+		return false;
-+	return acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0;
- }
- 
- /*
--- 
-2.43.0
 
 
