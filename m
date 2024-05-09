@@ -1,211 +1,210 @@
-Return-Path: <linux-kernel+bounces-174288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301058C0C90
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:29:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C1CB8C0C92
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FFD5B21481
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6FF8281FC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C92149E0B;
-	Thu,  9 May 2024 08:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h44dSdFj"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B361149DF1;
+	Thu,  9 May 2024 08:30:24 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7FC13D27C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FE73EA72
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715243377; cv=none; b=s9Xm+sS+LOWBxE269vL3REVkjR1wgRpEN5niM/v6eBs/zeCp2pl3eYOIW5hh0UFLDXG+EwB857hiJXsJXFp7CMJiNR5w8vehOmfUNbyct/eFl1TJP2OJLuYFDZ2M/dFyiFKsoSDUIDD3MtM39OR2NheaNmpQkn95+2tQTayZhng=
+	t=1715243424; cv=none; b=rOEwMPAaQU2UjR8F3DIdTY6yl9ftfrgAbudwRcIvoXM3yIl/UMGF0yNuaY55tnPubiVseqxK+9PSfvJ6IavOvRYMdURZqqj7XjxJHGDQugXolLuINX8zfe1nIp190uKuwc6QyzVwIZgxl+/v1u7DDmNsGAdpOivFYbtwFx1pOf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715243377; c=relaxed/simple;
-	bh=IRGjeXM1KNxqqYh4Ik3MFrABRQcli/7ofMMTYRmjaCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kUth07tjGBkuvwgSmkL7UBEgHJitxJ8SeP00eSU0yMJRo4OXNFjjeafhr6CUrNNfJGWPcW3g70/YZi8wbPCGWY+InXAGelD9YtEPNhDnao8w0NucW0KNhR5J1a/9GUvdADpuoWpZsKxWDcruQUER8lpecvfhWlRYMDziclOig2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h44dSdFj; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59e4136010so133859466b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:29:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715243374; x=1715848174; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=hMLp8AiHMhJ0KZlIbzXsouNCXcq5N+tUnfpKJC3oGdU=;
-        b=h44dSdFjZEskNhPLk2IPSDa2UPOssm+rQU4yPG7EKBXkfcFEl3X5AHD+rl4+bIaJzk
-         ULb77x0hI0e+7VbiJ+a/R2WoPInappvUhh1yakiCpCia9NRSu3aMqOiwyxPEpK6Sas2w
-         y3xVi0Sy3RxIN9b7QshjVshncScmFTJcy42YsAcxwuRqNlRh8c/br1P3MOosJYu3SMU7
-         A6JiITP75uTQqCZrM+Fn5LZaJeCw/dr3/ZNIhUwt68G1WfSpJDKPGfWec/LfVheX2A7e
-         S54phTQN4dSSeL4jwo2t4+ceH9gyEGrF0Aht1/9S6I3PJpjfUCPPesuDdyh1QsI92znh
-         LEng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715243374; x=1715848174;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hMLp8AiHMhJ0KZlIbzXsouNCXcq5N+tUnfpKJC3oGdU=;
-        b=SawwsNx1UJUe4NpLR0dFbmhiDTold3oH07FrqmJh/HhN1LXi1PVa6h4qgvK76O2Y1n
-         DjsY7i72YH5V7NYDI2lzXL2MbcSFfuttb07ezJY25QNS6LfRTpUN58UIO5DN9FVVPyq1
-         kHuX43ggFzhBZsFowzZCoZL41eYUMQI8c8T0EXEx00CAQQJSEH3I3OqGSo8mWquarU0Z
-         vP16/SHTj6SZFAk5aYRUwShzDofc+K+f4hzIlCosoSPh07nDiJAN8gEG+Pg8RuRYAPzb
-         U9jdI0Q9h0nOKasKU9UJqDkOXSUnpQ8QcpAnPMwCxHWvfNGq+GGOIyBG9JSedKpKlnGZ
-         zMfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3iUVAqygEEfSxY/+DWAWXG3vGLbKvi3NhwqqvIvgQ6+IMjme8tCq/KF3oKkP9Gmxgzsnm4yePV6fX9rz4hWxBDpjwAhuPFuMOpj1D
-X-Gm-Message-State: AOJu0YzTbUMz1PxxgPvH8aNuR8cS4mVdTj5TKozns79aLMwbv72shJKu
-	V1ijwI7Nms2lNMxRdNIiPDm3yvkXtlxGU9+MsthAO49+WCIy4nwXVt0tQJsoQQ0=
-X-Google-Smtp-Source: AGHT+IG8dT/haVwP+PHSIa+dbvrLvv5s5nmQBqwoDNlyNPTU7oMINb5xzYLfMOCIvdD8UqkNZqeHWg==
-X-Received: by 2002:a17:906:714f:b0:a59:ba2b:590e with SMTP id a640c23a62f3a-a59fb9dbcb9mr285672966b.48.1715243374175;
-        Thu, 09 May 2024 01:29:34 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7df7sm48748366b.111.2024.05.09.01.29.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 01:29:33 -0700 (PDT)
-Message-ID: <a20479be-a4cf-4fb5-8d37-277d14a93224@linaro.org>
-Date: Thu, 9 May 2024 10:29:31 +0200
+	s=arc-20240116; t=1715243424; c=relaxed/simple;
+	bh=C328mu3ZLLaMoY86QHm4QsC2s9qDJqQwWW5EVTHPZEQ=;
+	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WkA7I8S5qVuhdCgzGYbq/joXnSQsbpR+m7n6Ky4vtgxJfD9ko9j38E9NtYmHkUkMrHsy+S34rc9bEK61V7z0H/XZJBrACUD0DmI/rwnAGSbTHFIFfpEucQHoD2eisl1lL1l2e4OpedYjoI2JhNKoETJjVBX79m4zKMr+ZZOcgtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VZlVR4S05z1RDD8;
+	Thu,  9 May 2024 16:26:55 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9962A180032;
+	Thu,  9 May 2024 16:30:16 +0800 (CST)
+Received: from [10.173.135.154] (10.173.135.154) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 16:30:16 +0800
+Subject: Re: [PATCH 3/3] mm/memory-failure: send SIGBUS in the event of thp
+ split fail
+To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240501232458.3919593-1-jane.chu@oracle.com>
+ <20240501232458.3919593-4-jane.chu@oracle.com>
+ <038cffc0-e027-b518-460f-40099819c588@huawei.com>
+ <c172fa3d-d4a4-4605-8f39-df0536718bd5@oracle.com>
+ <b6c1b513-4470-4721-120c-1b1c813b2680@huawei.com>
+ <1b4c50b6-2371-4e1b-aef3-d70c32888054@oracle.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <30d4d249-e3b1-79d5-3501-0ccb9c529110@huawei.com>
+Date: Thu, 9 May 2024 16:30:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] dt-bindings: hwmon: max31790: Add
- maxim,pwmout-pin-as-tach-input property
-To: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>,
- Guenter Roeck <linux@roeck-us.net>, Conor Dooley <conor@kernel.org>
-Cc: Chanh Nguyen <chanh@os.amperecomputing.com>,
- Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>,
- Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240414042246.8681-1-chanh@os.amperecomputing.com>
- <20240414042246.8681-4-chanh@os.amperecomputing.com>
- <13b195e6-cbbd-4f74-a6fa-d874cb4aaa45@linaro.org>
- <065243cc-09cf-4087-8842-bd4394fb324f@amperemail.onmicrosoft.com>
- <d549cf2b-a7fa-4644-8fcb-3c420503ee01@amperemail.onmicrosoft.com>
- <20240423-gallantly-slurp-24adbfbd6f09@spud>
- <ab5cfd8c-0e88-4194-a77e-5ffbb6890319@amperemail.onmicrosoft.com>
- <396b47f5-9604-44ab-881f-94d0664bcab8@roeck-us.net>
- <0dcc8788-604a-49c1-8c6b-fdbfa9192039@amperemail.onmicrosoft.com>
- <da94fde6-3286-44eb-a543-c2ac4d11cd32@roeck-us.net>
- <8fb38eb3-bb94-49cc-b5bc-80989d7876b9@amperemail.onmicrosoft.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1b4c50b6-2371-4e1b-aef3-d70c32888054@oracle.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <8fb38eb3-bb94-49cc-b5bc-80989d7876b9@amperemail.onmicrosoft.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-On 08/05/2024 05:44, Chanh Nguyen wrote:
+On 2024/5/9 1:45, Jane Chu wrote:
+> On 5/8/2024 1:08 AM, Miaohe Lin wrote:
+> 
+>> On 2024/5/7 4:26, Jane Chu wrote:
+>>> On 5/5/2024 12:00 AM, Miaohe Lin wrote:
+>>>
+>>>> On 2024/5/2 7:24, Jane Chu wrote:
+>>>>> When handle hwpoison in a GUP longterm pin'ed thp page,
+>>>>> try_to_split_thp_page() will fail. And at this point, there is little else
+>>>>> the kernel could do except sending a SIGBUS to the user process, thus
+>>>>> give it a chance to recover.
 >>>>>
+>>>>> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+>>>> Thanks for your patch. Some comments below.
 >>>>
->>>> I am not even sure how to define tach-ch to mean "use the pwm output pin
->>>> associated with this tachometer input channel not as pwm output
->>>> but as tachometer input". That would be a boolean, not a number.
->>>>
+>>>>> ---
+>>>>>    mm/memory-failure.c | 36 ++++++++++++++++++++++++++++++++++++
+>>>>>    1 file changed, 36 insertions(+)
+>>>>>
+>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>>>>> index 7fcf182abb96..67f4d24a98e7 100644
+>>>>> --- a/mm/memory-failure.c
+>>>>> +++ b/mm/memory-failure.c
+>>>>> @@ -2168,6 +2168,37 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+>>>>>        return rc;
+>>>>>    }
+>>>>>    +/*
+>>>>> + * The calling condition is as such: thp split failed, page might have
+>>>>> + * been GUP longterm pinned, not much can be done for recovery.
+>>>>> + * But a SIGBUS should be delivered with vaddr provided so that the user
+>>>>> + * application has a chance to recover. Also, application processes'
+>>>>> + * election for MCE early killed will be honored.
+>>>>> + */
+>>>>> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
+>>>>> +            struct page *hpage)
+>>>>> +{
+>>>>> +    struct folio *folio = page_folio(hpage);
+>>>>> +    LIST_HEAD(tokill);
+>>>>> +    int res = -EHWPOISON;
+>>>>> +
+>>>>> +    /* deal with user pages only */
+>>>>> +    if (PageReserved(p) || PageSlab(p) || PageTable(p) || PageOffline(p))
+>>>>> +        res = -EBUSY;
+>>>>> +    if (!(PageLRU(hpage) || PageHuge(p)))
+>>>>> +        res = -EBUSY;
+>>>> Above checks seems unneeded. We already know it's thp?
+>>> Agreed.
 >>>
->>> Thank Guenter,
+>>> I  lifted these checks from hwpoison_user_mapping() with a hope to make kill_procs_now() more generic,
 >>>
->>> I reviewed again the "tach-ch" property, which is used in the 
->>> https://elixir.bootlin.com/linux/v6.9-rc6/source/Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.yaml#L68 and https://elixir.bootlin.com/linux/v6.9-rc6/source/drivers/hwmon/aspeed-g6-pwm-tach.c#L434
+>>> such as, potentially replacing kill_accessing_processes() for re-accessing hwpoisoned page.
 >>>
->>> That is something completely different from my purpose.
+>>> But I backed out at last, due to concerns that my tests might not have covered sufficient number of scenarios.
 >>>
+>>>>> +
+>>>>> +    if (res == -EHWPOISON) {
+>>>>> +        collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
+>>>>> +        kill_procs(&tokill, true, pfn, flags);
+>>>>> +    }
+>>>>> +
+>>>>> +    if (flags & MF_COUNT_INCREASED)
+>>>>> +        put_page(p);
+>>>> This if block is broken. put_page() has been done when try_to_split_thp_page() fails?
+>>> put_page() has not been done if try_to_split_thp_page() fails, and I think it should.
+>> In try_to_split_thp_page(), if split_huge_page fails, i.e. ret != 0, put_page() is called. See below:
 >>
->> Based on its definition, tach-ch is associated with fans, and it looks
->> like the .yaml file groups multiple sets of fans into a single
->> fan node.
+>> static int try_to_split_thp_page(struct page *page)
+>> {
+>>     int ret;
 >>
->> In the simple case that would be
->>      tach-ch = <1>
->> ...
->>      tach-ch = <12>
+>>     lock_page(page);
+>>     ret = split_huge_page(page);
+>>     unlock_page(page);
 >>
->> or, if all fans are controlled by a single pwm
->>      tach-ch = <1 2 3 4 5 6 8 9 10 11 12>
+>>     if (unlikely(ret))
+>>         put_page(page);
+>>     ^^^^^^^^^^^^^^^^^^^^^^^
+>>     return ret;
+>> }
 >>
->> The existence of tachometer channel 7..12 implies that pwm channel 
->> (tachometer
->> channel - 6) is used as tachometer channel. That should be sufficient to 
->> program
->> the chip for that channel. All you'd have to do is to ensure that pwm 
->> channel
->> "X" is not listed as tachometer channel "X + 6", and program pwm channel 
->> "X - 6"
->> for tachometer channels 7..12 as tachometer channels.
->>
+>> Or am I miss something?
 > 
-> Hi Guenter,
+> I think you caught a bug in my code, thanks!
 > 
-> I applied the patch [2/3] in my patch series 
-> (https://lore.kernel.org/lkml/20240414042246.8681-3-chanh@os.amperecomputing.com/)
-> 
-> My device tree is configured as below, I would like to configure PWMOUT 
-> pins 5 and 6 to become the tachometer input pins.
-> 
+> How about moving put_page() outside try_to_split_thp_page() ?
 
-And what is wrong in described common tach-ch property? I think we
-explained it three times and you did not provide any arguments, what's
-missing. Instead you say "I want something like this in DTS" which is
-not an argument and does not help discussion.
+If you want to send SIGBUS in the event of thp split fail, it might be required to do so.
+I think kill_procs_now() needs extra thp refcnt to do its work.
 
-Best regards,
-Krzysztof
+> 
+>>
+>>> I will revise the code so that put_page() is called regardless MF_ACTION_REQUIRED is set or not.
+>>>
+>>>>> +
+>>>> action_result is missing?
+>>> Indeed,  action_result() isn't always called, referring to the re-accessing hwpoison scenarios.
+>>>
+>>> In this case, I think the reason  is that, we just killed the process and there is nothing
+>>>
+>>> else to do or to report.
+>>>
+>>>>> +    return res;
+>>>>> +}
+>>>>> +
+>>>>>    /**
+>>>>>     * memory_failure - Handle memory failure of a page.
+>>>>>     * @pfn: Page Number of the corrupted page
+>>>>> @@ -2297,6 +2328,11 @@ int memory_failure(unsigned long pfn, int flags)
+>>>>>             */
+>>>>>            SetPageHasHWPoisoned(hpage);
+>>>>>            if (try_to_split_thp_page(p) < 0) {
+>>>> Should hwpoison_filter() be called in this case?
+>>> Yes, it should. I will add the hwpoison_filter check.
+>>>>> +            if (flags & MF_ACTION_REQUIRED) {
+>> Only in MF_ACTION_REQUIRED case, SIGBUS is sent to processes when thp split failed. Any reson under it?
+> 
+> I took a clue from kill_accessing_process() which is invoked only if MF_ACTION_REQUIRED is set.
+> 
+> The usual code path for delivery signal is
+> 
+> if page-is-dirty or MF_MUST_KILL-is-set or umap-failed, then
+> 
+> - send SIGKILL if vaddr is -EFAULT
+> 
+> - send SIGBUS with BUS_MCEERR_AR if MF_ACTION_REQUIRED is set
+> 
+> - send SIGBUS with BUS_MCEERR_AO if MF_ACTION_REQUIRED is not set and process elected for MCE-early-kill
+> 
+> So, if kill_procs_now() is invoked only if MF_ACTION_REQUIRED (as it is in the patch), one can argue that
+> 
+> the MCE-early-kill request is not honored which deviates from the existing behavior.
+> 
+> Perhaps I should remove the
+> 
+> + if (flags & MF_ACTION_REQUIRED) {
+
+I tend to agree MCE-early-kill request should be honored when try to kill process.
+Thanks.
+.
 
 
