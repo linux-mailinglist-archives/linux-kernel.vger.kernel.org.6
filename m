@@ -1,283 +1,130 @@
-Return-Path: <linux-kernel+bounces-174709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0B58C1346
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:54:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52A28C1349
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5841B2182D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:54:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EF091C21076
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC50CA73;
-	Thu,  9 May 2024 16:54:25 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6F59460;
+	Thu,  9 May 2024 16:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="CLInEngq"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26F36FD0
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 16:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EBB6FD0;
+	Thu,  9 May 2024 16:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715273664; cv=none; b=CBVXy/9Foq/gXD2PQ9ZJJpvP03WduXWA9zk7N9gGqUR96JMjvWSwk/EA4ctKNHcy80fnvLWMYotkVJhkrZlY2Y6pB6QNp2sG9ID97DuVmIBSgagB7VZIOp00gCBAK2Xmtap+H+fn7llCegDa1AvWhrvyIIsumKZhn9UY22GP9QU=
+	t=1715273715; cv=none; b=rc/HMP89BDWYb/bpqPJebtDG9UMnkLVQbxwHw7GyWor9Hkhfxg0wB0+BL+5u//RAuPevM8XS9Ns7JZXgsSrH1SWfGkKaaEvnT9n0OTASZNKUybNvxcPCiAuAvNw7dVy6cF1stDXCfDYk0uslA04nsp+NHiUhebtr0LS9AaVmxgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715273664; c=relaxed/simple;
-	bh=jRFBtIxI7p41PalXC/FldCWeMtTS5vkp+wgCQ8PDF3w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=et4seUH0whkkuUK4g77I0Atq82LGIU6X1iSCZjNTF5QNRP/FWgrx9Q8RKat04+TVPgR+Rc/b2gW17XmN7VAg4Uw2OgP5IG3ep7NsuGhOIjmR3nWElif7blBYK1nLroEGHqmRRvSfRFpYA18r+nqUuQ/V18o3u3zoWPfWGfdxb1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7ddf08e17e4so86690339f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 09:54:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715273662; x=1715878462;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AOw5MqGpBrLpd0h3l7Dpkao88gTm4e5Gux9aso7oDEg=;
-        b=XtHwR9pODWP6LK+ZWTUN51vopvwJbg7mav9fGGvfsA2RRBmjhSgYcYQCq47k7qdfEY
-         uBVyWxXWVdzIJvmP1nC49+7HXeTBNJMK1TqRS+nP85CBJSo85JrKO/IeM6Dh8pmJKiaD
-         ZDbcn+45O2+gBceMbpLHsnMDANkDWjymZPdLJS5G9Y9P+fAWs3+FLZIpXkbslbiEpHGQ
-         1Hr+yO2YLufZnRm2RPT0dYoKQnCr1zvESxdZdcHWsKlciCAW0c61Z2bDuzCx6cKgnFQ8
-         LcLGFoUfeGpwVy5SmuXBWbOVE0FGqxcOxoiluRXBi8rkuCe6UqR0yVLyqsomDhb4mmiK
-         cQVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKj6Ok5vhz5Hb+aAQTqXmADnhGgabUCYTkAgL9mbYyRDAr9rRiAL7J58oM98jFDJMnKuOSzra5rhrkmWkd4ddtPpOtp7pYNcg+7gtC
-X-Gm-Message-State: AOJu0YzhxFeQzukWYKdEyG1AlyviBET/h+GfD/ClvwxQx0sxdnwM0zBP
-	qlBh0Sl36aYi6Ujb0+dB5uay3stGZ9MqNQapFFyy20cwm4N7ncVynq8UET2s+ercfNZdOsVESEs
-	ZV9JPyFLskXcVy1kixIXNM/zQKJNA8F6V7+7kEUDMp6Sds8NfNVtbWDI=
-X-Google-Smtp-Source: AGHT+IH9kPxUtSsZvDI6Vhhr/vuJLi/aZxSb2xniCmpohNijvH8as43eAvI/ffq3bj9qUamE4ZW+rA374GgBSmeN+LYG6zTYTAQ6
+	s=arc-20240116; t=1715273715; c=relaxed/simple;
+	bh=Op4baZkeYx4PycytPYJ+HGzm0cEAn1ct5A+MrtsKREk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prWC1NADbXc59cJ8v8y5LQIFwoN8esF45UWhlaSxzdO+2VPAnxAZkiPfwPTOv2icQIbcq7nJl4/CVg85ILAZFRGB/U5wR4cWxazw87U4Lx7FLGix8EFvc8TyWfKRZK1EJZd5ATWT9nvpWf+yI8NgX5fsJysPz5NYk+yxP7jYzuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=CLInEngq; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 560121C008B; Thu,  9 May 2024 18:55:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1715273703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4nfZrJNfA4kvIyfocScga5lNL685Pn0IbxsrfCfZxfk=;
+	b=CLInEngqiyFo+qFd013o5aB6NcOEoTHidDQg7ZrDKmxUqXp2MLWQ5Yx3ZK3AdrTpN1wemA
+	Np3Ru9bRj5VJVPtI+iXo519huoMRvXZHSvrXfe1RNyfbMmNjd6xfnFEyBhOOR0GhHrWij9
+	vuI5ZaqjJvsFypEOi/zZJ1QZFimETrs=
+Date: Thu, 9 May 2024 18:55:02 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Frank Wunderlich <linux@fw-web.de>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: leds: mark label as depected to match
+ description
+Message-ID: <Zjz/5slQk6XVy3us@duo.ucw.cz>
+References: <20240509110545.49889-1-linux@fw-web.de>
+ <c461b4cb-2f14-4793-a967-bf08e2b4ab88@linaro.org>
+ <fdce3c08-a3cb-4d5b-ad1a-0eeb8761778f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:13d0:b0:487:591e:6e04 with SMTP id
- 8926c6da1cb9f-48955bde8ebmr14344173.3.1715273661779; Thu, 09 May 2024
- 09:54:21 -0700 (PDT)
-Date: Thu, 09 May 2024 09:54:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004da3b0061808451e@google.com>
-Subject: [syzbot] [net?] possible deadlock in team_device_event (3)
-From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, jiri@resnulli.us, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    7367539ad4b0 Merge tag 'cxl-fixes-6.9-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c0a004980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
-dashboard link: https://syzkaller.appspot.com/bug?extid=b668da2bc4cb9670bf58
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8b1efa4e7ecb/disk-7367539a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba7142036852/vmlinux-7367539a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/17af3ae89832/bzImage-7367539a.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-
-mac80211_hwsim hwsim28 wlan0 (unregistering): left allmulticast mode
-======================================================
-WARNING: possible circular locking dependency detected
-6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0 Not tainted
-------------------------------------------------------
-kworker/u8:9/5208 is trying to acquire lock:
-ffff88806325cd20 (team->team_lock_key#12){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team.c:2995 [inline]
-ffff88806325cd20 (team->team_lock_key#12){+.+.}-{3:3}, at: team_device_event+0x11d/0x770 drivers/net/team/team.c:3021
-
-but task is already holding lock:
-ffff888051578768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:5953 [inline]
-ffff888051578768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: ieee80211_remove_interfaces+0xfe/0x760 net/mac80211/iface.c:2277
-
-which lock already depends on the new lock.
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dJIDwvg8nV2S1P4B"
+Content-Disposition: inline
+In-Reply-To: <fdce3c08-a3cb-4d5b-ad1a-0eeb8761778f@collabora.com>
 
 
-the existing dependency chain (in reverse order) is:
+--dJIDwvg8nV2S1P4B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--> #1 (&rdev->wiphy.mtx){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       wiphy_lock include/net/cfg80211.h:5953 [inline]
-       cfg80211_netdev_notifier_call+0x367/0x1110 net/wireless/core.c:1524
-       notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
-       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1950
-       call_netdevice_notifiers_extack net/core/dev.c:1988 [inline]
-       call_netdevice_notifiers net/core/dev.c:2002 [inline]
-       dev_open net/core/dev.c:1471 [inline]
-       dev_open+0x144/0x160 net/core/dev.c:1459
-       team_port_add drivers/net/team/team.c:1214 [inline]
-       team_add_slave+0xadc/0x2110 drivers/net/team/team.c:1974
-       do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2685
-       do_setlink+0xcaf/0x3ff0 net/core/rtnetlink.c:2891
-       __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3680
-       rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3727
-       rtnetlink_rcv_msg+0x3c7/0xe60 net/core/rtnetlink.c:6595
-       netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2559
-       netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
-       netlink_unicast+0x542/0x820 net/netlink/af_netlink.c:1361
-       netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1905
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg net/socket.c:745 [inline]
-       ____sys_sendmsg+0xab5/0xc90 net/socket.c:2584
-       ___sys_sendmsg+0x135/0x1e0 net/socket.c:2638
-       __sys_sendmsg+0x117/0x1f0 net/socket.c:2667
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Thu 2024-05-09 14:39:36, AngeloGioacchino Del Regno wrote:
+> Il 09/05/24 13:46, Krzysztof Kozlowski ha scritto:
+> > On 09/05/2024 13:05, Frank Wunderlich wrote:
+> > > From: Frank Wunderlich <frank-w@public-files.de>
+> > >=20
+> > > The description for property 'label' describes it as deprected, so
+> >=20
+> > Typos here and in subject.
+> >=20
+> >=20
+> > > add a option to mark it like that. Future devicetrees should use
+> > > function and color properties.
+> > >=20
+> > > Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@c=
+ollabora.com>
+> > > Fixes: 24a71afe05a8 ("dt-bindings: leds: Convert common LED binding t=
+o schema")
+> >=20
+> > Nooo, that's not a fix.
+> >=20
+> > I don't think there was conclusion to make it deprecated on last attemp=
+t:
+> >=20
+> > https://lore.kernel.org/all/20221122111124.6828-1-cniedermaier@dh-elect=
+ronics.com/
+> >=20
+>=20
+> It's not a fix, agreed.
+>=20
+> But that property being deprecated deserves to be marked as deprecated, a=
+nyway.
+> Otherwise the documentation shouldn't say in words that it is such.
 
--> #0 (team->team_lock_key#12){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       team_port_change_check drivers/net/team/team.c:2995 [inline]
-       team_device_event+0x11d/0x770 drivers/net/team/team.c:3021
-       notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
-       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1950
-       call_netdevice_notifiers_extack net/core/dev.c:1988 [inline]
-       call_netdevice_notifiers net/core/dev.c:2002 [inline]
-       dev_close_many+0x333/0x6a0 net/core/dev.c:1543
-       unregister_netdevice_many_notify+0x46d/0x19f0 net/core/dev.c:11080
-       macvlan_device_event+0x4ed/0x880 drivers/net/macvlan.c:1828
-       notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
-       call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1950
-       call_netdevice_notifiers_extack net/core/dev.c:1988 [inline]
-       call_netdevice_notifiers net/core/dev.c:2002 [inline]
-       unregister_netdevice_many_notify+0x8a1/0x19f0 net/core/dev.c:11105
-       unregister_netdevice_many net/core/dev.c:11163 [inline]
-       unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11042
-       unregister_netdevice include/linux/netdevice.h:3115 [inline]
-       _cfg80211_unregister_wdev+0x624/0x7f0 net/wireless/core.c:1206
-       ieee80211_remove_interfaces+0x36d/0x760 net/mac80211/iface.c:2302
-       ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1652
-       mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5560 [inline]
-       hwsim_exit_net+0x3ad/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6437
-       ops_exit_list+0xb0/0x180 net/core/net_namespace.c:170
-       cleanup_net+0x5b7/0xbf0 net/core/net_namespace.c:637
-       process_one_work+0x9a9/0x1ac0 kernel/workqueue.c:3267
-       process_scheduled_works kernel/workqueue.c:3348 [inline]
-       worker_thread+0x6c8/0xf70 kernel/workqueue.c:3429
-       kthread+0x2c1/0x3a0 kernel/kthread.c:388
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Fix the docs. We are not ready to deprecate that.
 
-other info that might help us debug this:
+Best regards,
+								Pavel
 
- Possible unsafe locking scenario:
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&rdev->wiphy.mtx);
-                               lock(team->team_lock_key#12);
-                               lock(&rdev->wiphy.mtx);
-  lock(team->team_lock_key#12);
+--dJIDwvg8nV2S1P4B
+Content-Type: application/pgp-signature; name="signature.asc"
 
- *** DEADLOCK ***
+-----BEGIN PGP SIGNATURE-----
 
-5 locks held by kworker/u8:9/5208:
- #0: ffff888015ecb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work+0x1296/0x1ac0 kernel/workqueue.c:3242
- #1: ffffc90003e5fd80 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work+0x906/0x1ac0 kernel/workqueue.c:3243
- #2: ffffffff8f2ec950 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0xbb/0xbf0 net/core/net_namespace.c:591
- #3: ffffffff8f301748 (rtnl_mutex){+.+.}-{3:3}, at: ieee80211_unregister_hw+0x4d/0x3a0 net/mac80211/main.c:1645
- #4: ffff888051578768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: wiphy_lock include/net/cfg80211.h:5953 [inline]
- #4: ffff888051578768 (&rdev->wiphy.mtx){+.+.}-{3:3}, at: ieee80211_remove_interfaces+0xfe/0x760 net/mac80211/iface.c:2277
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZjz/5gAKCRAw5/Bqldv6
+8gOgAJ90HGlgqKBZTk9S31H4rqMvmtkIGgCfTlPWwPFlqAonoICOLcwjXQdSPxs=
+=UHzF
+-----END PGP SIGNATURE-----
 
-stack backtrace:
-CPU: 1 PID: 5208 Comm: kworker/u8:9 Not tainted 6.9.0-rc6-syzkaller-00234-g7367539ad4b0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- team_port_change_check drivers/net/team/team.c:2995 [inline]
- team_device_event+0x11d/0x770 drivers/net/team/team.c:3021
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1950
- call_netdevice_notifiers_extack net/core/dev.c:1988 [inline]
- call_netdevice_notifiers net/core/dev.c:2002 [inline]
- dev_close_many+0x333/0x6a0 net/core/dev.c:1543
- unregister_netdevice_many_notify+0x46d/0x19f0 net/core/dev.c:11080
- macvlan_device_event+0x4ed/0x880 drivers/net/macvlan.c:1828
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1950
- call_netdevice_notifiers_extack net/core/dev.c:1988 [inline]
- call_netdevice_notifiers net/core/dev.c:2002 [inline]
- unregister_netdevice_many_notify+0x8a1/0x19f0 net/core/dev.c:11105
- unregister_netdevice_many net/core/dev.c:11163 [inline]
- unregister_netdevice_queue+0x307/0x3f0 net/core/dev.c:11042
- unregister_netdevice include/linux/netdevice.h:3115 [inline]
- _cfg80211_unregister_wdev+0x624/0x7f0 net/wireless/core.c:1206
- ieee80211_remove_interfaces+0x36d/0x760 net/mac80211/iface.c:2302
- ieee80211_unregister_hw+0x55/0x3a0 net/mac80211/main.c:1652
- mac80211_hwsim_del_radio drivers/net/wireless/virtual/mac80211_hwsim.c:5560 [inline]
- hwsim_exit_net+0x3ad/0x7d0 drivers/net/wireless/virtual/mac80211_hwsim.c:6437
- ops_exit_list+0xb0/0x180 net/core/net_namespace.c:170
- cleanup_net+0x5b7/0xbf0 net/core/net_namespace.c:637
- process_one_work+0x9a9/0x1ac0 kernel/workqueue.c:3267
- process_scheduled_works kernel/workqueue.c:3348 [inline]
- worker_thread+0x6c8/0xf70 kernel/workqueue.c:3429
- kthread+0x2c1/0x3a0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-team0: Port device macvlan2 removed
-hsr_slave_0: left promiscuous mode
-hsr_slave_1: left promiscuous mode
-batman_adv: batadv0: Interface deactivated: batadv_slave_0
-batman_adv: batadv0: Removing interface: batadv_slave_0
-batman_adv: batadv0: Interface deactivated: batadv_slave_1
-batman_adv: batadv0: Removing interface: batadv_slave_1
-veth1_macvtap: left promiscuous mode
-veth0_macvtap: left promiscuous mode
-veth1_vlan: left promiscuous mode
-veth0_vlan: left promiscuous mode
-team0 (unregistering): Port device virt_wifi0 removed
-team0 (unregistering): Port device team_slave_1 removed
-team0 (unregistering): Port device team_slave_0 removed
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--dJIDwvg8nV2S1P4B--
 
