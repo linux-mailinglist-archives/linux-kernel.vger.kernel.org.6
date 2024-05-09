@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-174054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459448C09AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:13:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A508C09A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:06:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C658DB2100F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3ED1F225ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF1613C9BD;
-	Thu,  9 May 2024 02:13:28 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DDE13C9AB;
+	Thu,  9 May 2024 02:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIFk27fG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69F410979
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 02:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6991810A11;
+	Thu,  9 May 2024 02:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715220807; cv=none; b=ej1lcEyuInXKfptarks8qPSzqwEPdqJJRycBenI26TyJKMH1HU9HSyRKMEJd1IHgrDmZaq/prrMJmzi5ZeoiwevR7nAK5aqD8xhbAqJe40gKjFgk3SrpInR0KG7NpsZYNW/h5U3Tk+P0rycSrHc6iBitAYrTxNhQGvEUzO3oPAY=
+	t=1715220370; cv=none; b=rkjomwLFqlXyfEBiKmnDznvEYdm7rFYn8Cgqf8F26fzccJInNpKRqBJmDI9i0RnY+pX/pEkAi7NwL5q4Rc2qqGafUbHcRIktDRc8POx9UeNWwWyj/f2rgecIr4JKQ3nyXpwrnhHZQDv/FW3My5R9SAII7ooaGtxbzrDVL8KTHFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715220807; c=relaxed/simple;
-	bh=b4x2StJjDGXWYMl11hb3SNY+I3gmk55FoDFhh7uOoVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQRul4v2eAdVVULhzgpzXray/XoujYj24RTa8CNcGFHLjUCnWpKAAuhmbVlM2QoIWUTuB0YBghNGsyOyrBiH3R+VFgcLS2QHBmxXEK/y05+8HYhL3YrndEJuJ+RNFci8vty+jPhvfCmZlbchftHFLVDar8IkVAHWB3TTCPQgzXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b32305160da611ef9305a59a3cc225df-20240509
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.37,REQID:d4e9c9e7-be4c-42f5-9076-be0cb2d8f9ae,IP:15,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:29
-X-CID-INFO: VERSION:1.1.37,REQID:d4e9c9e7-be4c-42f5-9076-be0cb2d8f9ae,IP:15,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:29
-X-CID-META: VersionHash:6f543d0,CLOUDID:6f405a4b03c2efc3573f107fc9420644,BulkI
-	D:240429110502VVCX1UY7,BulkQuantity:2,Recheck:0,SF:66|38|25|17|19|44|102,T
-	C:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,C
-	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
-	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
-	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED
-	SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-UUID: b32305160da611ef9305a59a3cc225df-20240509
-X-User: liweishi@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <liweishi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 761512348; Thu, 09 May 2024 09:51:49 +0800
-From: Weishi Li <liweishi@kylinos.cn>
-To: airlied@redhat.com,
-	kraxel@redhat.com,
-	gurchetansingh@chromium.org,
-	olvaffe@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	liweishi@kylinos.cn
-Subject: [PATCH] [PATCH RESEND] drm/virtio: fix memory leak of vbuf
-Date: Thu,  9 May 2024 09:52:25 +0800
-Message-Id: <20240509015225.38669-1-liweishi@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715220370; c=relaxed/simple;
+	bh=G7cFv9cF2cnjfjAGz44Yc56GefLQLwiyJxe2ewKnFKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qOe82ZJ/W51ZnSDyhjcdCuqK2/FjlYdiYhZj84zZ5d/3ucT97y6gk1wcB3d163Ntm5SpDCtOTj1b3aWJoB2R7wDWbCi1M/XQKi83RG4yqMgJy4geJSjZENiW7wnPVGAOruYk2BdPafd3k8ZWu9pcM4mzo/5r0sagCWzDzCMmRDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIFk27fG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED654C4AF0A;
+	Thu,  9 May 2024 02:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715220369;
+	bh=G7cFv9cF2cnjfjAGz44Yc56GefLQLwiyJxe2ewKnFKM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HIFk27fGvuQXEVMRzZy91iuiEyQjcTGd/3F+LVE/v2tcAYAAIAHOB0SqJ5p+6mHKH
+	 Hm71icex8Xie6TrK9DbNytuDsmayLDCbM4suzT0LNOCxCYKaixYUlSbcPPW+38WOG4
+	 5BIIyPQJ2jqPkuZmA2a8o1Cc1bNlw83WRkF2afJib4mTOMObnb1aiLBEP/elcSRcoF
+	 zZ2MA4OVsXruvYEuvudWLfDPIrglzfBAUSm3ykIKQI317nBke33EjS7KzyZxIoQ+FU
+	 2WCovFUeeg0io2DLXwDvgIcYVtnAKcXsIk9Ayv5SvZ2niiC/AaVXgHT5kIMrg6mXyb
+	 L1jKwf4OL0a1w==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51ff65b1e14so302266e87.2;
+        Wed, 08 May 2024 19:06:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVa+furTq9QhUZ8ikrP68f6drVNAxUlUGhCLx4+L7o27YwFM9+ZPi7ImmGOstRiDAbZcpYqt5T83Q4pxt3hVWQ473FKIYJtbUtOSacSCVTxdnSIxzJ8RPKjkjRujgwSmmzZ8+VCefSGjWvDsQ==
+X-Gm-Message-State: AOJu0YyoTcB6B0XIKmf2pcdZ6yK9WwbU8ifxxqjHeImd3Co0+Go53Dml
+	woYrJIxrxZL6QZgO4LYmrk5YRJoGCYGC0oCQnCxLu3Pix+1zmjOqkKKidVvzZBxROeAdTrz78Vm
+	ynWM6FXd1mBELL++TlJCrjtZA+0M=
+X-Google-Smtp-Source: AGHT+IG9jgW2EhldqJEU5OYVfvoRjo0wlRA5x/+WH/NBhi4EjV49pvu6Eqy1EviqeUURrwJaBPOetOpoppVu/vQSytA=
+X-Received: by 2002:a05:6512:3a8c:b0:521:b2b5:5ab2 with SMTP id
+ 2adb3069b0e04-521b2b55ab6mr2522757e87.46.1715220367602; Wed, 08 May 2024
+ 19:06:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com> <CAD=FV=Xa6LJEWZwdUXvFVPQ0-qnDZroDi6tkZaLFHiarJ2gyew@mail.gmail.com>
+In-Reply-To: <CAD=FV=Xa6LJEWZwdUXvFVPQ0-qnDZroDi6tkZaLFHiarJ2gyew@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 9 May 2024 11:05:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARZu1Jrqibn-PvjAa=dQwikMdWVH9d9oKwpe007JeVC6Q@mail.gmail.com>
+Message-ID: <CAK7LNARZu1Jrqibn-PvjAa=dQwikMdWVH9d9oKwpe007JeVC6Q@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
+To: Doug Anderson <dianders@chromium.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, freedreno@lists.freedesktop.org, 
+	Rob Clark <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+	seanpaul@chromium.org, swboyd@chromium.org, quic_jesszhan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Both virtio_gpu_queue_ctrl_buffer and virtio_gpu_queue_cursor use
-virtqueue_add_sgs to upload the structure virtio_gpu_vbuffer * vbuf
-to virtqueue. However, when the vbuf fails to upload and virtqueue_add_sgs
-returns -EIO or -ENOMEM, the vbuf will not be able to be free by
-virtio_gpu_dequeue_*_func, resulting in a continuous increase
-in memory allocated to vgdev ->vbufs.
+On Thu, May 9, 2024 at 9:28=E2=80=AFAM Doug Anderson <dianders@chromium.org=
+> wrote:
+>
+> Hi,
+>
+> On Tue, May 7, 2024 at 4:05=E2=80=AFPM Abhinav Kumar <quic_abhinavk@quici=
+nccom> wrote:
+> >
+> > Since commit 5acf49119630 ("drm/msm: import gen_header.py script from M=
+esa"),
+> > compilation is broken on machines having python versions older than 3.9
+> > due to dependency on argparse.BooleanOptionalAction.
+> >
+> > Switch to use simple bool for the validate flag to remove the dependenc=
+y.
+> >
+> > Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
+> > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> > ---
+> >  drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> No idea if we're supposed to allow python as a build dependency. That
+> being said, I can confirm that this fixes the problem for me since I
+> ran into it too [1].
+>
+> Tested-by: Douglas Anderson <dianders@chromium.org>
+>
+> [1] https://lore.kernel.org/r/CAD=3DFV=3DXnpS-=3DCookKxzFM8og9WCSEMxfESmf=
+TYH811438qg4ng@mail.gmail.com
+>
 
-Therefore, make virtio_gpu_queue_ctrl_sgs and virtio_gpu_queue_cursor
-free vbuf directly after virtqueue_add_sgs returns -EIO or -ENOMEM.
 
-Signed-off-by: Weishi Li <liweishi@kylinos.cn>
----
- drivers/gpu/drm/virtio/virtgpu_vq.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+I do not like Perl.
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index b1a00c0c25a7..6701ce9d0ee8 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -356,12 +356,14 @@ static int virtio_gpu_queue_ctrl_sgs(struct virtio_gpu_device *vgdev,
- 
- 	ret = virtqueue_add_sgs(vq, sgs, outcnt, incnt, vbuf, GFP_ATOMIC);
- 	WARN_ON(ret);
-+	if (ret < 0 && ret != -ENOSPC) {
-+		free_vbuf(vgdev, vbuf);
-+	} else {
-+		vbuf->seqno = ++vgdev->ctrlq.seqno;
-+		trace_virtio_gpu_cmd_queue(vq, virtio_gpu_vbuf_ctrl_hdr(vbuf), vbuf->seqno);
- 
--	vbuf->seqno = ++vgdev->ctrlq.seqno;
--	trace_virtio_gpu_cmd_queue(vq, virtio_gpu_vbuf_ctrl_hdr(vbuf), vbuf->seqno);
--
--	atomic_inc(&vgdev->pending_commands);
--
-+		atomic_inc(&vgdev->pending_commands);
-+	}
- 	spin_unlock(&vgdev->ctrlq.qlock);
- 
- 	drm_dev_exit(idx);
-@@ -469,6 +471,9 @@ static void virtio_gpu_queue_cursor(struct virtio_gpu_device *vgdev,
- 		wait_event(vgdev->cursorq.ack_queue, vq->num_free >= outcnt);
- 		spin_lock(&vgdev->cursorq.qlock);
- 		goto retry;
-+	} else if (ret < 0) {
-+		free_vbuf(vgdev, vbuf);
-+		notify = false;
- 	} else {
- 		vbuf->seqno = ++vgdev->cursorq.seqno;
- 		trace_virtio_gpu_cmd_queue(vq,
--- 
-2.25.1
+IMHO, Python should be OK if Perl is OK.
+I agree that the required version should be
+documented changes.rst, at least.
 
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
