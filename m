@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-174133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26938C0A8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:47:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302AF8C0A56
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AA951F22A7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5D3282653
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB01149002;
-	Thu,  9 May 2024 04:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hZHZiXpi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50633147C9F;
+	Thu,  9 May 2024 04:08:01 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208682747D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C06AD26D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715230033; cv=none; b=blZ+06BBcc/zazM9+qQUkhLUfV7RBQKZEe51R0tdAmIypSKUQGJqDFsIpCHrXvWZn0OU6YLv+mVHKSLXLxaq5m0LKDnsBNxEZ1DHwg4SwlkAnK5oK4jvYaRPrT6g9UrSO0FJntCcKvTSul0uZmHa0rTD/sm0yr60WPk9J+VZnZY=
+	t=1715227680; cv=none; b=f0yj8d7kohcHh83D08xq7QTA82Fkdl6kjNbU3Nxh4DOT8E3L9Mk6vesOkxgG3RkvGpBjYQdmbVwbLjl6+8izaG4+psA6WIqruIQPJo6j8Gs1YIk3SEYDD7FoCweTvrSLG1ndkGCYlV/nrh6kUN7VoIlnu/3qgeMsCXXCOJF3Ygc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715230033; c=relaxed/simple;
-	bh=buoPxiUYl4Q0c2MkWof6PRlmVIB+2DTKwveRiixfmSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H/6eD9hH7IBCW6Bvu0CWhCjgWwKRRBV9Qb8+SKeVBgNBrnECB6YTnfNtw6fvdedBd/rAbXFXtZvLCdGDijO6+abhYRPTVVFUNvDkqoAPwg2dBUjjAW+HkDfgZp3ZGo+eVLCc9hTP53WMQdxEOmMtX2XuLLP+Qy+rhRUr28zzWNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hZHZiXpi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715230030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UiDkouuHBxEQ48cCxAAxKmsT/M+EhKgEfBASxmW5rGA=;
-	b=hZHZiXpim9xsMXgv8pfV1hGA0eBILi5vFzShg7jKQRU+WU83LrytbJDpHf9qOwpwDRxJmC
-	AY3gwoWeppquG78Lud3qSvueMpv/xnFAltv0wb0HFcPWfEYdyLf3mSFGSyoOlByoNkYWuN
-	/1koHjqfFKGhvrxvNTZQLAlc9dqSE2U=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-448-W2BasM1vOn6Wfduln_v98Q-1; Thu, 09 May 2024 00:47:04 -0400
-X-MC-Unique: W2BasM1vOn6Wfduln_v98Q-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C613A8007BC;
-	Thu,  9 May 2024 04:47:03 +0000 (UTC)
-Received: from [10.22.32.103] (unknown [10.22.32.103])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5E8F7492CAB;
-	Thu,  9 May 2024 04:47:02 +0000 (UTC)
-Message-ID: <e7701346-6134-4bdc-8ccc-530be314a517@redhat.com>
-Date: Wed, 8 May 2024 13:01:58 -0400
+	s=arc-20240116; t=1715227680; c=relaxed/simple;
+	bh=sK7ZqVZ0WmnINWVkohi1gYJ4hOg8iPrUh76XEN7bZOA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=f/OeVoYDSq88MuWI+++Bz9HknoRHvU00AaycDk00R6Sc5t5YgX5YTBSWZv+vT2WsAvU3Xu5PNGoo8FFRou/JmtPpljQZQecMza0Yzqden1Xg3OFXhr3TAZwgIbUBiNXuhJXtn13jUlUoat8kTzMYV1FU48VhYir+317dkEAJ1cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e182885d98so42355839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 21:07:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715227679; x=1715832479;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qV8m368EfwLWYouVrPnNoYPwk1xOD88mW2b6+kNH4xA=;
+        b=IVUyjMzmPozQiG4TKserHa0fYh+y9IKwlFa4AOCzlzEwstpafIk6D/un9t81xQvnEy
+         21p1Sb6sy3HwoqVnnjtDN5ew+5We0gdeCrFZQIcyeUX2WRgVnRwLftLlPi1Z701rTnoD
+         CkqYYAlTjDuk2zwNDEed+B7c+itpSAxS9QWzgofxf5+y01lmr3I8+Bec725+YV5jji4t
+         q3dJBIZ2WW5vwr59WDakPkpZT7HyooqIpom1bHEMUDrtvYqCqPDhs7bsc0KZtlXScbDK
+         nnHxnwYzZ/m6kX9giGiR4Hib34qhwdgmfgbD4OCORqYnRa+wz2laVrsvPWlFFf4Htgyv
+         05Lw==
+X-Gm-Message-State: AOJu0YxmjEhUxIt47mX6bZRYdMz4pkDitsI5qReFIwhAOrQnkOguJHNi
+	KGzmq0LJmqPKKFU/XdXsdXc3N/yAspvPFp9J3K1/s9j0/o+4+FpqzF2PdNCWHpFTl/qZl52wuT5
+	jU2H3hyaoOwuO5MCH4208VTIQzEFvRAmnOgvA3x6d62UKhRPyUVXF+9w=
+X-Google-Smtp-Source: AGHT+IHzJMppdgO2HiPNkiF8NHxJxpRHMy4W04uU9TcaTRVxr/NqkZYzdVPhQV06EvcWhS4so5J4h80zWtflkMc2uWRAfJ/dmkQM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/proc: Print user_cpus_ptr for task status
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Xuewen Yan
- <xuewen.yan@unisoc.com>, akpm@linux-foundation.org, oleg@redhat.com,
- dylanbhatch@google.com, rick.p.edgecombe@intel.com, ke.wang@unisoc.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20240429084633.9800-1-xuewen.yan@unisoc.com>
- <20240429121000.GA40213@noisy.programming.kicks-ass.net>
- <CAB8ipk831xtAW2+sm-evm-oOsFspL=xSp6hFYYq1uKmWA+porQ@mail.gmail.com>
- <e402d623-1875-47a2-9db3-8299a54502ef@redhat.com>
- <CAB8ipk-yz+6X2E7BsJmNqVgZDjE8NkJFNdqFU+WLieKVhFaCuA@mail.gmail.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CAB8ipk-yz+6X2E7BsJmNqVgZDjE8NkJFNdqFU+WLieKVhFaCuA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+X-Received: by 2002:a05:6638:891b:b0:488:59cc:eb4f with SMTP id
+ 8926c6da1cb9f-488fd823b53mr424998173.1.1715227678846; Wed, 08 May 2024
+ 21:07:58 -0700 (PDT)
+Date: Wed, 08 May 2024 21:07:58 -0700
+In-Reply-To: <00000000000003b4af060de27f6b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000081c37d0617fd9008@google.com>
+Subject: Re: [syzbot] [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
+From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On 5/7/24 02:57, Xuewen Yan wrote:
->> These changes essentially reverts commit 851a723e45d1c("sched: Always
->> clear user_cpus_ptr in do_set_cpus_allowed()") except the additional
->> caller in the cpuset code.
->>
->> How about the following less invasive change?
->>
->>    diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 7019a40457a6..646837eab70c 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -2796,21 +2796,24 @@ __do_set_cpus_allowed(struct task_struct *p,
->> struct affinity_context *ctx)
->>    }
->>
->>    /*
->> - * Used for kthread_bind() and select_fallback_rq(), in both cases the user
->> - * affinity (if any) should be destroyed too.
->> + * Used for kthread_bind() and select_fallback_rq(). Destroy user affinity
->> + * if no intersection with the new mask.
->>     */
->>    void do_set_cpus_allowed(struct task_struct *p, const struct cpumask
->> *new_mask)
->>    {
->>           struct affinity_context ac = {
->>                   .new_mask  = new_mask,
->>                   .user_mask = NULL,
->> -               .flags     = SCA_USER,  /* clear the user requested mask */
->> +               .flags     = 0,
->>           };
->>           union cpumask_rcuhead {
->>                   cpumask_t cpumask;
->>                   struct rcu_head rcu;
->>           };
->>
->> +       if (current->user_cpus_ptr &&
->> !cpumask_intersects(current->user_cpus_ptr, new_mask))
-> Thanks for your suggestion, and I try it and as for me, it works well,
-> but I change the "current" to p.
-> I think “current” is inappropriate because what is changed here is the
-> mask of p.
-> It is possible that “p” and “current” are not equal.
->
-> I would send the next patch later and add your Suggested-by. Thanks
-> again for your advice!
+***
 
-You are right. It should be "p" instead of "current".
+Subject: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
+Author: ryasuoka@redhat.com
 
-Thanks,
-Longman
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
+
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index b133dc55304c..0aaff30cb68f 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
+ 				 ndev->ops->n_core_ops);
+ }
+ 
++static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
++{
++	if (skb->len < header_size ||
++	    !nci_plen(skb->data) ||
++	    skb->len < header_size + nci_plen(skb->data)) {
++		return false;
++	}
++	return true;
++}
++
+ /* ---- NCI TX Data worker thread ---- */
+ 
+ static void nci_tx_work(struct work_struct *work)
+@@ -1516,24 +1526,32 @@ static void nci_rx_work(struct work_struct *work)
+ 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
+ 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
+ 
+-		if (!nci_plen(skb->data)) {
++		if (!skb->len) {
+ 			kfree_skb(skb);
+-			kcov_remote_stop();
+-			break;
++			continue;
+ 		}
+ 
+ 		/* Process frame */
+ 		switch (nci_mt(skb->data)) {
+ 		case NCI_MT_RSP_PKT:
+-			nci_rsp_packet(ndev, skb);
++			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
++				nci_rsp_packet(ndev, skb);
++			else
++				kfree_skb(skb);
+ 			break;
+ 
+ 		case NCI_MT_NTF_PKT:
+-			nci_ntf_packet(ndev, skb);
++			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
++				nci_ntf_packet(ndev, skb);
++			else
++				kfree_skb(skb);
+ 			break;
+ 
+ 		case NCI_MT_DATA_PKT:
+-			nci_rx_data_packet(ndev, skb);
++			if (nci_valid_size(skb, NCI_DATA_HDR_SIZE))
++				nci_rx_data_packet(ndev, skb);
++			else
++				kfree_skb(skb);
+ 			break;
+ 
+ 		default:
 
 
