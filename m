@@ -1,230 +1,163 @@
-Return-Path: <linux-kernel+bounces-174792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB7C8C150B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A0E8C150D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EECA61F230D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:50:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE8D1C21E17
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD957EF0C;
-	Thu,  9 May 2024 18:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D9C7F7D9;
+	Thu,  9 May 2024 18:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ChmgI8Mn"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mhj3xzL+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D676F1A2C35
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EA67F460;
+	Thu,  9 May 2024 18:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715280632; cv=none; b=sb/UtNCb+8jnoZ6r0OZyO/ljyBYQmJZwYPtCeRRPegss8Apnh4L5mSvLiMy/SP8XL2+NwHtIVVs8bt9+bB2Igf0y/72eIiKXbVNqNpuXLf3bFIUdHc8Gx2cwQQVaahyQezxXV7c/e3QQTJlIkCroSmTgqCX3D1nCzA9/7Itrv4s=
+	t=1715280636; cv=none; b=A5+ewSKvj0iPU6ybYovrYS/j44FPeaHEEkX7r0SpNngD23jtlovkRQw/GD2aIRhR2/moyx+0clSDBlgotx1nZW5sw8qzzqxayflfOnl2iL3nVJ8Fkt5EAsvhAX0JGX0e9pjpa1wYyEUNqHDHX/EN9LZ5G4566hlPWTAJT92p0Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715280632; c=relaxed/simple;
-	bh=4QzClZ1gRVtyCX7YdwhFlyPn+GYCunj82D3LkrwSRjw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=AIRV6ttSDrV+PvvtZ8hAYmVxqfhgoIhozFB+JNzw9Fe/5NDap+0M7SBJXUdvQ2hU5tVrhfalOvDFxhydw/QOCB6R3XrXX+wv33tiLeQtHsCUFarqQpz89id70tQhSp8friPznzEqtnDsC/UwhRhNjNJR1y8427Hivyw06Vi5LqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ChmgI8Mn; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c5ee4ce695so427441b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715280630; x=1715885430; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rKMjOnnO0WYipffLPmzjc4/xyv9Lp/0n3YbamfBbS/w=;
-        b=ChmgI8MnbUlRiv6QJJb91iEE0D5qxeIxdWhg5auTYAkW6fpE5yIiKEVd+Y0wceQkz+
-         anvo1Hg7hJbHeykm6qWMBV1PhU9r3JLjw7NAaZPsrEbxoid2zMD3tK0ro6W7ejukHc0k
-         +60k42goOKTeuEdZf7Lz8ER8grvw1LFgyv5pw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715280630; x=1715885430;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rKMjOnnO0WYipffLPmzjc4/xyv9Lp/0n3YbamfBbS/w=;
-        b=s5/rueQOCJcfjClsOb6Kec3isoUTzfX2Rghnyisy8DZWgncsGwJFgWCd96LnxL0G+5
-         a5lgck7zVT8uIOsTNmEWE8nm+yqf/vzU5XxIpiepPa+NM87POX+mpAHazkK2sdvosvaX
-         Wv3aFcd1F2cGNEpsUIi6O8uYn1i4pHmhnT8fc/W+sxdQZDOD4A5kKUU/WRDgoP6/iygT
-         dCht9m9IH/mxQDm9SqARzMJ4wdmvp5s8lYAwYDotVavs3BhdlaUYk3ybQtEjvs4SdWGu
-         3l+y+87QCwm5XgoufglZFRU3Q00dqhKZ5BAd6LgDERdLYUFwXDQ5EPPKs3d+TVASOBWt
-         6Jzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaEEUBqBR3lRs9CusYNK1x9VEAhclKOsYqcNVKJJIk+bJGHa+iCMIeou9wKJb102tjqtKtQt6zvL5EQ9d9hSKbtnhmqOE3iUONVPwJ
-X-Gm-Message-State: AOJu0YyqR87vPRjAaXiL2hVnMrpr8Df96yxiKlyMq/1EO24YUY1En8sU
-	Sq0FA90u2M2PJB77PaonD/i5aBXfPAdEUXNt9SlAJilwIlfE16iS2psBFS+aG0kVPVSyD0JPCxx
-	1XA==
-X-Google-Smtp-Source: AGHT+IH9XgUI6eSWd/qvCQlRhN0fbF94DXFSpA7qKDsIoQLuEAMzYoQOfhgMTYObHRjT2G6CW3nxIg==
-X-Received: by 2002:aca:2412:0:b0:3c9:6d44:8210 with SMTP id 5614622812f47-3c99704c46amr480382b6e.17.1715280628243;
-        Thu, 09 May 2024 11:50:28 -0700 (PDT)
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com. [209.85.167.176])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3c9974a3a5csm50581b6e.17.2024.05.09.11.50.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 11:50:27 -0700 (PDT)
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c974a0647bso804908b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:50:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVeAwYSnQpvcruNZy25r1UN7WQ1ZMd0ets8+RsI0UUek3aotL1JTaMJ14+hwSV3vfHcoB6VYlEzuyvDECo2VdWj0cnrXY7Qkt1QuXKi
-X-Received: by 2002:aca:190e:0:b0:3c9:7aef:403 with SMTP id
- 5614622812f47-3c99706bb87mr458934b6e.26.1715280626326; Thu, 09 May 2024
- 11:50:26 -0700 (PDT)
+	s=arc-20240116; t=1715280636; c=relaxed/simple;
+	bh=XqSaXYcrYHr0Fk299cpkW8/+41zPwvYFBBODYi7ZPV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CLkjZ74pbLF/IxfzAET0rBRHne6mIsxoxRdmWOQ4A6JkFq2UFzqfapvR+Sg7Zgtx+E0AfJUIcX5bdIje7AhtDoT9EYvbGkdj3qXr//9E/sw5rFWuYfHtieszcr2Lm/6WR1Oq3lBrsQd0PZBY4sIyUreEhjwWNT/klP0yHzklyOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mhj3xzL+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715280634; x=1746816634;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=XqSaXYcrYHr0Fk299cpkW8/+41zPwvYFBBODYi7ZPV0=;
+  b=Mhj3xzL+EhyMUX1beZbci3u+HWbS7MMN0vGiZUfrQQebuu+RQqqoKFW6
+   s86700UWHs8fPT2gQzfFjg5qC5kZpui8hGQl58ffwRXEUguVcvrm1hru/
+   Xhf7LuOtMoOO1Mdp0GUPDar8yfDn2ncEyZiLT+BwqGYTMWEEfNBiLF3TZ
+   qY5xKwtkRGlwS4lJBgYSBXd2n9kp739ae2IuNJZSvvkloI7prWzuyEPX2
+   ptho6h95ObNQnmcY41SkU7Ux5GbrpFDLHX9rBhkFJpcZuQDLvvcPQ9LdN
+   GrCR9oHlU5dyhT0F7DwjYQyc+74lyf1qEPvmtpBl2Ic8SA9oS+VGHiacL
+   Q==;
+X-CSE-ConnectionGUID: k+oNI6J+TuGroy9Hnn7qEw==
+X-CSE-MsgGUID: Pvy56McTRvuy15iyoJ0juw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11352728"
+X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
+   d="scan'208";a="11352728"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 11:50:34 -0700
+X-CSE-ConnectionGUID: 6r8a4nBDTdiuOtt+yZbnyQ==
+X-CSE-MsgGUID: 81tL3rngTUehJxWpGmuyaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
+   d="scan'208";a="34199101"
+Received: from epinckar-mobl.amr.corp.intel.com (HELO [10.209.98.74]) ([10.209.98.74])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 11:50:33 -0700
+Message-ID: <228b8157-9148-4175-b5b7-0e0f8da6bad6@intel.com>
+Date: Thu, 9 May 2024 11:50:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
- <20240507-cocci-flexarray-v2-1-7aea262cf065@chromium.org> <Zjs9h40l9gfaiOei@pengutronix.de>
-In-Reply-To: <Zjs9h40l9gfaiOei@pengutronix.de>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 9 May 2024 20:50:14 +0200
-X-Gmail-Original-Message-ID: <CANiDSCvon2eW4aHk8JD2_GDR9hG1FBhgbCOEZ+W2RC2HHsXM5A@mail.gmail.com>
-Message-ID: <CANiDSCvon2eW4aHk8JD2_GDR9hG1FBhgbCOEZ+W2RC2HHsXM5A@mail.gmail.com>
-Subject: Re: [PATCH v2 01/18] media: allegro: nal-hevc: Refactor nal_hevc_sub_layer_hrd_parameters
-To: Michael Tretter <m.tretter@pengutronix.de>, Ricardo Ribalda <ribalda@chromium.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
-	Andy Walls <awalls@md.metrocast.net>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
-	Vikash Garodia <quic_vgarodia@quicinc.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] x86/fpu: Extend kernel_fpu_begin_mask() to
+ initialize AMX state
+To: "Chang S. Bae" <chang.seok.bae@intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, platform-driver-x86@vger.kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, tony.luck@intel.com,
+ ashok.raj@intel.com, jithu.joseph@intel.com
+References: <20240430212508.105117-1-chang.seok.bae@intel.com>
+ <20240507235344.249103-1-chang.seok.bae@intel.com>
+ <20240507235344.249103-2-chang.seok.bae@intel.com>
+ <f82879a5-f3ca-436f-8c4a-96d4c5d90354@intel.com>
+ <7e589b35-4ff8-43fa-99dd-d3b17f56d3ea@intel.com>
+ <fde6149c-7ddf-488f-98c0-04f336b7092e@intel.com>
+ <758089a4-52d5-4649-8aee-89e60044918a@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <758089a4-52d5-4649-8aee-89e60044918a@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Michael
+On 5/9/24 11:41, Chang S. Bae wrote:
+> On 5/9/2024 10:36 AM, Dave Hansen wrote:
+>>
+>> I'd probably just do this:
+>>
+>> +    kernel_fpu_begin();
+>> +    // AMX *MUST* be in the init state for the wrmsr() to work.
+>> +    // But, the more in the init state, the less state the test
+>> +    // has to save and restore.  Just zap everything.
+>> +    restore_fpregs_from_fpstate(&init_fpstate,   
+>> +                    fpu_user_cfg.max_features);
+>> +
+> 
+> I assume that this snippet goes to the IFS driver side. Then, we need
+> to introduce and export a new wrapper for this. 
+> restore_fpregs_from_fpstate() and its arguments are not accessible as
+> of now.
 
-On Wed, 8 May 2024 at 10:53, Michael Tretter <m.tretter@pengutronix.de> wrote:
->
-> On Tue, 07 May 2024 16:27:06 +0000, Ricardo Ribalda wrote:
-> > Replace all the single elements arrays with the element itself.
-> >
-> > Pahole shows the same padding and alignment for x86 and arm in both
-> > situations.
-> >
-> > This fixes this cocci warning:
-> > drivers/media/platform/allegro-dvt/nal-hevc.h:102:14-22: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
->
-> Thanks for the patch.
->
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/platform/allegro-dvt/allegro-core.c |  6 +++---
-> >  drivers/media/platform/allegro-dvt/nal-hevc.c     | 11 +++--------
-> >  drivers/media/platform/allegro-dvt/nal-hevc.h     |  6 +++---
-> >  3 files changed, 9 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/allegro-dvt/allegro-core.c b/drivers/media/platform/allegro-dvt/allegro-core.c
-> > index da61f9beb6b4..369bd88cc0ae 100644
-> > --- a/drivers/media/platform/allegro-dvt/allegro-core.c
-> > +++ b/drivers/media/platform/allegro-dvt/allegro-core.c
-> > @@ -1852,14 +1852,14 @@ static ssize_t allegro_hevc_write_sps(struct allegro_channel *channel,
-> >       hrd->dpb_output_delay_length_minus1 = 30;
-> >
-> >       hrd->bit_rate_scale = ffs(channel->bitrate_peak) - 6;
-> > -     hrd->vcl_hrd[0].bit_rate_value_minus1[0] =
-> > +     hrd->vcl_hrd[0].bit_rate_value_minus1 =
-> >               (channel->bitrate_peak >> (6 + hrd->bit_rate_scale)) - 1;
-> >
-> >       cpb_size = v4l2_ctrl_g_ctrl(channel->mpeg_video_cpb_size) * 1000;
-> >       hrd->cpb_size_scale = ffs(cpb_size) - 4;
-> > -     hrd->vcl_hrd[0].cpb_size_value_minus1[0] = (cpb_size >> (4 + hrd->cpb_size_scale)) - 1;
-> > +     hrd->vcl_hrd[0].cpb_size_value_minus1 = (cpb_size >> (4 + hrd->cpb_size_scale)) - 1;
-> >
-> > -     hrd->vcl_hrd[0].cbr_flag[0] = !v4l2_ctrl_g_ctrl(channel->mpeg_video_frame_rc_enable);
-> > +     hrd->vcl_hrd[0].cbr_flag = !v4l2_ctrl_g_ctrl(channel->mpeg_video_frame_rc_enable);
-> >
-> >       size = nal_hevc_write_sps(&dev->plat_dev->dev, dest, n, sps);
-> >
-> > diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.c b/drivers/media/platform/allegro-dvt/nal-hevc.c
-> > index 9cdf2756e0a3..575089522df5 100644
-> > --- a/drivers/media/platform/allegro-dvt/nal-hevc.c
-> > +++ b/drivers/media/platform/allegro-dvt/nal-hevc.c
-> > @@ -210,14 +210,9 @@ static void nal_hevc_rbsp_vps(struct rbsp *rbsp, struct nal_hevc_vps *vps)
-> >  static void nal_hevc_rbsp_sub_layer_hrd_parameters(struct rbsp *rbsp,
-> >                                                  struct nal_hevc_sub_layer_hrd_parameters *hrd)
-> >  {
-> > -     unsigned int i;
-> > -     unsigned int cpb_cnt = 1;
-> > -
-> > -     for (i = 0; i < cpb_cnt; i++) {
-> > -             rbsp_uev(rbsp, &hrd->bit_rate_value_minus1[i]);
-> > -             rbsp_uev(rbsp, &hrd->cpb_size_value_minus1[i]);
-> > -             rbsp_bit(rbsp, &hrd->cbr_flag[i]);
-> > -     }
-> > +     rbsp_uev(rbsp, &hrd->bit_rate_value_minus1);
-> > +     rbsp_uev(rbsp, &hrd->cpb_size_value_minus1);
-> > +     rbsp_bit(rbsp, &hrd->cbr_flag);
-> >  }
-> >
-> >  static void nal_hevc_rbsp_hrd_parameters(struct rbsp *rbsp,
-> > diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h b/drivers/media/platform/allegro-dvt/nal-hevc.h
-> > index eb46f12aae80..afa7a9d7d654 100644
-> > --- a/drivers/media/platform/allegro-dvt/nal-hevc.h
-> > +++ b/drivers/media/platform/allegro-dvt/nal-hevc.h
-> > @@ -97,9 +97,9 @@ struct nal_hevc_vps {
-> >  };
-> >
-> >  struct nal_hevc_sub_layer_hrd_parameters {
-> > -     unsigned int bit_rate_value_minus1[1];
-> > -     unsigned int cpb_size_value_minus1[1];
-> > -     unsigned int cbr_flag[1];
-> > +     unsigned int bit_rate_value_minus1;
-> > +     unsigned int cpb_size_value_minus1;
-> > +     unsigned int cbr_flag;
->
-> The struct is modeled after the specification in ITU-T H.265, which
-> defines the fields as arrays. It's a limitation of the current
-> implementation that only a single element is supported.
->
-> Maybe replacing the hard coded values with a constant would be more
-> appropriate to document this limitation.
+Yes, a new wrapper to initialize all the user FPU state is fine.
 
-A define seems to convince coccinelle of our intentions :). I will
-upload the fix in v3
+> Also, I think we should encapsulate them. If we follow this style, we
+> could have invoked tilerelease() directly from the idle driver, right?
 
-diff --git a/drivers/media/platform/allegro-dvt/nal-hevc.h
-b/drivers/media/platform/allegro-dvt/nal-hevc.h
-index eb46f12aae80..361e2f55c254 100644
---- a/drivers/media/platform/allegro-dvt/nal-hevc.h
-+++ b/drivers/media/platform/allegro-dvt/nal-hevc.h
-@@ -96,10 +96,11 @@ struct nal_hevc_vps {
-        unsigned int extension_data_flag;
- };
+You could have...  But I think the point there truly was to do a minimal
+amount of work because you're going idle and need to race to get there.
+The path to idle is super hot and you don't want to do _any_ additional
+work.  It's worth writing highly AMX-specific code because generic code
+would be slow there.
 
-+#define N_HRD_PARAMS 1
- struct nal_hevc_sub_layer_hrd_parameters {
--       unsigned int bit_rate_value_minus1[1];
--       unsigned int cpb_size_value_minus1[1];
--       unsigned int cbr_flag[1];
-+       unsigned int bit_rate_value_minus1[N_HRD_PARAMS];
-+       unsigned int cpb_size_value_minus1[N_HRD_PARAMS];
-+       unsigned int cbr_flag[N_HRD_PARAMS];
- };
-
- struct nal_hevc_hrd_parameters {
-
-
-Thanks.
-
-
->
-> Michael
->
-> >  };
-> >
-> >  struct nal_hevc_hrd_parameters {
-> >
-> > --
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> >
-> >
-
-
-
---
-Ricardo Ribalda
+The IFS path is a super duper slow one.  It takes *FOREVER*.  I like the
+idea of being simple, dumb and slow.
 
