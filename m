@@ -1,157 +1,124 @@
-Return-Path: <linux-kernel+bounces-174416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F0888C0E6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:48:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC158C0E6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A090B1C20F2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:48:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C13B1F213AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B54F12F37C;
-	Thu,  9 May 2024 10:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619D61304A3;
+	Thu,  9 May 2024 10:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dWuTFvrq"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kSLMi02n"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F5B322E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A791322E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251678; cv=none; b=DnkWqulytge0GmJ/3KEB1KGMauDwwoHjgX9/Ben2NvuXXFQ2xszmDAF7ZLasVkWUPy7ex10cbPr7/V1y02VrMel6ys1J9nKol9aMeoVcjnwHijgCAtrAXm8V8o6i8qyu7bd3HLwbGnCxCUXrCpcxWDBzLad3O2d5miw2kzfQxrI=
+	t=1715251692; cv=none; b=qqablFbmCNIJ8jvImr2HZ3j+PbxVgGbyQV8tIw4N5bXfiAr2xHkex8O6q4KBt78gcMX5nussCjlIanMhEXjd8wXlGXEm79pF0wossGOIBHBh2hyxTp/stDdEyiygGVan5rQMrsewnAusfqEB+hlGaxg75PC/0mQop1XtzXs0vqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251678; c=relaxed/simple;
-	bh=OQni8xvnYy9WGLxuioB/twwX1etnlijk5yX08S2h+Lc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iQH86h8dxe/LsUI2l8f2M6DIT62s+q9DIJBrpRdbXflO502O0ShOrEaVOZ1OCYHoTVTJWR3mfGN27Nbp/92aq3hcRd7HsYO8aCpJp1MU50PwQDhAbxwyLokxbjxTGgES0FyoHgnYQp+53bi0SSMvekMEzrta8Fjewg0FkA4kyrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dWuTFvrq; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1715251692; c=relaxed/simple;
+	bh=EAmmvUuXUCvQhVJyhOjnloUwsHV7hU6+Z0N6I4QkxKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tSH26XW/Ij2XkUlP5M6k1CMakLZTFTlHfrdNDAs7Gkpfc9tOKYlxT5VxAssCcE2AuLs2A07mWisPD/ugooA02BKr+u1KGd+33duqmxxutH0loInZewZlxH8QvvysbGdUTEe+87EsCqBJqQgfh06j8iMMsssntYVmLnRTDG0X1m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kSLMi02n; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a4702457ccbso178488766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:47:56 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59b49162aeso164308666b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251675; x=1715856475; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FR+x8sKExGfyELSBtCHiRo7zGgjRFCGjuQW294Rt+84=;
-        b=dWuTFvrqOaHm4EOefjAct63wRausS/vS0xBZ01eIbZ8Y7LI2B/ewqQsusYxZAr0W5f
-         Nq9XXJ+J5prbW6Gnjy7L+BvIsUVXpXKWbP4EReI5RpYirzfbsL3anIoU7FD8GZVxhGdG
-         zSq+yO6rv1CtfGsl9tMiN0p5FQ3tikyKrt4QkfEzJmCxYEjAIQgi7g48yPsDEtt0+4Z0
-         EQGwqBhopoYmfsyAhhOER+konyKDCgTJbVhBIMslJZ82OTHIq2Hf9Z+1YEd/12iYfVDs
-         8Y2EMmYukQWihWvEoEWorm6iKy8gmYvMeoc3wVX/a4airHXTrMzNR3i4DG7c76IjcsSo
-         5WFg==
+        d=linaro.org; s=google; t=1715251689; x=1715856489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qlZtZk75coxcr32t+mJEdsIgCn5e7In21AxtT9MXDc=;
+        b=kSLMi02n7NAwcdlaLMJ0lWD8/Lr9jOYvdvnDDWEf81jzisupG21zC9AkK5LJaqkxN2
+         JW2TI3pXpHNn4cjfssxNLaMT4cG5MBBaoTt1moRnFdLvyvfv1DlpbMLvlRI2TlR8Qw5d
+         nBYzg7wKRoPcj2WHksU0Jlu0uoyeyNKSIjZ9zJ2W+HUA2nmp7sanhS90PPQ2Ytyr+0ht
+         ug00jlRzAvhVDCnbnaQYo8LtvY2Rx+ellXzC4bA4JbI8Pj3aAeKBamB8bQsT68cxOvJX
+         eiq1bPp9QMECb+BGC9TTnBNZW3JpVqLMUhs05KT49HwsCyhYlyLunA5uKsuGO+UVjKEm
+         HFPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251675; x=1715856475;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715251689; x=1715856489;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FR+x8sKExGfyELSBtCHiRo7zGgjRFCGjuQW294Rt+84=;
-        b=UGTbJjkH5k7m41Lpsqd6vKF3XI8QgUJWjYnaQje2hzHYF4DQRupbuwygKdkr3z+BcA
-         fzyNeJS2WElCMWIDZb9jFGhyfDKJpeOL4De3VvUe+yE7KRPwgfNxPU8puUCvwmH6ROoO
-         ZZkDGwrXViVxSbFMfmBReL+8BWgLtfUUtsfO+gkCXHcoidf2eUnllBFoSgWbnJOPh9OG
-         W28dbL777Bki+oKzWUkPQx3WcdLMTROp7eGkxPd+0HANP3y5gHf8q1hzhaBS1aHpbPUZ
-         NJoiQln6NKE74xTHspmuhwI9LIX1w1p1InOQBw04LzU5yOeGInHA0iHpK39rK61AQRxf
-         hoWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSQjkwwQPNyaNvg7Za8mqgOklUSFR+E7e36k/d9M/ROtgVELqw4cuTTOWDuFRzjKfAmUl8ZXRK2W4yd2/6MLKMdzL//ZBRy3LcH5hS
-X-Gm-Message-State: AOJu0YzWqvAzjYxfq+5FEBJf7IDSQQJjHeV+dZARj+q3N55dpHUJF3Fa
-	hhw0BKZkwEiFKo2ERrQ9dz5DMp57Rjjy7QYy8dWefgSoKztdxna1jSJFQpMkL9ww9oqBElNAoaT
-	i
-X-Google-Smtp-Source: AGHT+IE2edGeC5X3qKaBM4AttahM0ZV4LqNcNkCLMrXATw1Lh+N+0G/Wq2ZQZT8l7qjwdwAJ0EegoA==
-X-Received: by 2002:a17:906:455a:b0:a59:ccb9:846d with SMTP id a640c23a62f3a-a59fb95d605mr322034766b.37.1715251675192;
-        Thu, 09 May 2024 03:47:55 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7fc4sm60588666b.135.2024.05.09.03.47.53
+        bh=7qlZtZk75coxcr32t+mJEdsIgCn5e7In21AxtT9MXDc=;
+        b=am4djIugee821bn0CQmAVukfjrQJ3P5LBgBAVNGGVRnPdPSHxsC6pt+DPUxPs5z2WG
+         krW+QN1llpfrG2rtbu4G+4XbjFGzlTSFb2kgwqQpFVpUm6ckYKVFdpG8jM2ubeKIch5M
+         YV7+YA2Mq3njwkXu2bepLUHonxd+qyCeiJWzxZ767SR9pfRDVI7530zp4WXdIAGR5srR
+         gc7FrYcW7UDjGCO5R7Aszzf8gG0mhQ8Jcsmv5n2f5AT32UNKO6qsCpDmu512XXGkEeEv
+         nlP+qEXPaI5A0AeHY/pnDfYGEFF4mR10/EuI3Ifkq44j+iAy46jpsjnJPBsTfVEw5umc
+         lQxA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4WFEME00RiI5IJEy7di9+UCJQYlnrTpf1MfA2l90A8AiHKJ7c/C3ZkPbGRt492EAcoK9u/DyYsd0ouu4abJZ9OHoX4WRVcsR7/N69
+X-Gm-Message-State: AOJu0YwaykY/FuVoHkjCEc1oMfD24Vleba7sVXIOSHBfBadsgHGFpSdB
+	e8dvHR2wz+Bt+xZDtg+jePpF+nLUrqxZWTBPGk0nD3kRpqvcO/iutVE8ROUpu5s=
+X-Google-Smtp-Source: AGHT+IGOSEuA2npGO9GewqwIXTPylXogor9RcnRiDhrr39n3ApUuc/Uzk7+5WHH+SNpvw9TtEXjwgA==
+X-Received: by 2002:a50:d595:0:b0:572:a7ec:1a5f with SMTP id 4fb4d7f45d1cf-5731d9f1eb8mr3880773a12.24.1715251689505;
+        Thu, 09 May 2024 03:48:09 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bfe2dd1sm572297a12.58.2024.05.09.03.48.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:47:54 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ARM: dts: vt8500: align panel timings node name with dtschema
-Date: Thu,  9 May 2024 12:47:49 +0200
-Message-ID: <20240509104749.216605-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        Thu, 09 May 2024 03:48:09 -0700 (PDT)
+Date: Thu, 9 May 2024 13:48:05 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH 1/2] SUNRPC: prevent integer overflow in XDR_QUADLEN()
+Message-ID: <bbf929d6-18d2-4b7e-a660-a19460af0a3c@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <332d1149-988e-4ece-8aef-1e3fb8bf8af4@moroto.mountain>
+X-Mailer: git-send-email haha only kidding
 
-DT schema expects panel timings node to follow certain pattern,
-dtbs_check warnings:
+The "l + 3" addition can have integer overflow on 32 bit systems
+when it is used in __xdr_inline_decode().  The overflowed value
+would be zero and the check "nwords > xdr->nwords" would not work
+as intended.
 
-  vt8500-bv07.dtb: display-timings: '800x480' does not match any of the regexes: '^timing', 'pinctrl-[0-9]+'
-
-Linux drivers do not care about node name, so this should not have
-effect on Linux.
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: ba8e452a4fe6 ("SUNRPC: Add a helper function xdr_inline_peek")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- arch/arm/boot/dts/vt8500/vt8500-bv07.dts  | 2 +-
- arch/arm/boot/dts/vt8500/wm8505-ref.dts   | 2 +-
- arch/arm/boot/dts/vt8500/wm8650-mid.dts   | 2 +-
- arch/arm/boot/dts/vt8500/wm8850-w70v2.dts | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/sunrpc/xdr.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/vt8500/vt8500-bv07.dts b/arch/arm/boot/dts/vt8500/vt8500-bv07.dts
-index e9f55bd30bd4..38a2da5e2c5d 100644
---- a/arch/arm/boot/dts/vt8500/vt8500-bv07.dts
-+++ b/arch/arm/boot/dts/vt8500/vt8500-bv07.dts
-@@ -16,7 +16,7 @@ &fb {
- 	bits-per-pixel = <16>;
- 	display-timings {
- 		native-mode = <&timing0>;
--		timing0: 800x480 {
-+		timing0: timing-800x480 {
- 			clock-frequency = <0>; /* unused but required */
- 			hactive = <800>;
- 			vactive = <480>;
-diff --git a/arch/arm/boot/dts/vt8500/wm8505-ref.dts b/arch/arm/boot/dts/vt8500/wm8505-ref.dts
-index 2d77c087676e..8ce9e2ef0a81 100644
---- a/arch/arm/boot/dts/vt8500/wm8505-ref.dts
-+++ b/arch/arm/boot/dts/vt8500/wm8505-ref.dts
-@@ -16,7 +16,7 @@ &fb {
- 	bits-per-pixel = <32>;
- 	display-timings {
- 		native-mode = <&timing0>;
--		timing0: 800x480 {
-+		timing0: timing-800x480 {
- 			clock-frequency = <0>; /* unused but required */
- 			hactive = <800>;
- 			vactive = <480>;
-diff --git a/arch/arm/boot/dts/vt8500/wm8650-mid.dts b/arch/arm/boot/dts/vt8500/wm8650-mid.dts
-index f6a42149a0a0..7977b6c1e8eb 100644
---- a/arch/arm/boot/dts/vt8500/wm8650-mid.dts
-+++ b/arch/arm/boot/dts/vt8500/wm8650-mid.dts
-@@ -17,7 +17,7 @@ &fb {
+diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
+index 2f8dc47f1eb0..585059f2afca 100644
+--- a/include/linux/sunrpc/xdr.h
++++ b/include/linux/sunrpc/xdr.h
+@@ -14,6 +14,7 @@
+ #include <linux/uio.h>
+ #include <asm/byteorder.h>
+ #include <asm/unaligned.h>
++#include <linux/overflow.h>
+ #include <linux/scatterlist.h>
  
- 	display-timings {
- 		native-mode = <&timing0>;
--		timing0: 800x480 {
-+		timing0: timing-800x480 {
- 			clock-frequency = <0>; /* unused but required */
- 			hactive = <800>;
- 			vactive = <480>;
-diff --git a/arch/arm/boot/dts/vt8500/wm8850-w70v2.dts b/arch/arm/boot/dts/vt8500/wm8850-w70v2.dts
-index c7a6fe0ce48f..5d409323b10c 100644
---- a/arch/arm/boot/dts/vt8500/wm8850-w70v2.dts
-+++ b/arch/arm/boot/dts/vt8500/wm8850-w70v2.dts
-@@ -28,7 +28,7 @@ &fb {
- 	bits-per-pixel = <16>;
- 	display-timings {
- 		native-mode = <&timing0>;
--		timing0: 800x480 {
-+		timing0: timing-800x480 {
- 			clock-frequency = <0>; /* unused but required */
- 			hactive = <800>;
- 			vactive = <480>;
+ struct bio_vec;
+@@ -29,7 +30,7 @@ struct rpc_rqst;
+ /*
+  * Buffer adjustment
+  */
+-#define XDR_QUADLEN(l)		(((l) + 3) >> 2)
++#define XDR_QUADLEN(l)		(size_add(l, 3) >> 2)
+ 
+ /*
+  * Generic opaque `network object.'
 -- 
 2.43.0
 
