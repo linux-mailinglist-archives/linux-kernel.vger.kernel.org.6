@@ -1,181 +1,220 @@
-Return-Path: <linux-kernel+bounces-174311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DECCA8C0CEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99CE58C0CEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 396DCB21F94
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E45E8B22701
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA2C14A09D;
-	Thu,  9 May 2024 08:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4428F14A0A3;
+	Thu,  9 May 2024 08:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rcm3ARhZ"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkUeArbY"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDF813D289
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BAA14A09D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715244998; cv=none; b=lUipcaR0KCmwrQFLORAV2Zn/KkWOcdHqFpF7buuADPeCynbO68D7lrscB1KESaDYVU96xTJjofFeklfAmOgIUh+AyL53+tIXpa4YH+Vi43rgg41wANI42wz6M1xkp+RMEb8YvaIuYOR686DHA3Wm9jXtdz9UjBTThT1Iy76N8fc=
+	t=1715245035; cv=none; b=YBJbKtLg+tD5j1G4wpq82B3zcwGD0yFtBEaZysx7wIDBjZGIvJFuoyN7BBUSxUdJzvIwsEYOwPQk6mDHjo0GK3lXJa4VoSZ7kdw2lHsyxW0zc9JoKtP4PLusIhkeom6wniDcEuj/EcoUBpZYHPmlfRRP3WRz9achOnhHd2bCnGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715244998; c=relaxed/simple;
-	bh=hKQYUBLwlyNCoeOE+Q2Xm1KRZvxccgpo7Pa182uqSBo=;
+	s=arc-20240116; t=1715245035; c=relaxed/simple;
+	bh=zmrIhCP7JxRQY/Beh0wu2cp0ImuYtIcEh7ZxUNRpu8U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rNifvlOzkSfiLx3D7mhkk3RS9GRSwC24PA2k/IlY7ds2Ayrc1FlOV3HSMYcfGHph3LRiVdzvZfjfz/X6godEwoi5C8/cyc2SnsvqAWfpRJIrHvIafwaU2TxSm819QkmY/ESW/XcTlgwUzLCUqP6HU8LDQ/G3TU2WPULO2RIA+Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rcm3ARhZ; arc=none smtp.client-ip=209.85.218.46
+	 To:Cc:Content-Type; b=aQH+IzarrWV06/Fcff+Cy5diuMxcXY7P7H4zyAEXAXDU+Tw94BAjgrpZj0G7VvZF4M0ZFDvreXFUcV87+6//5lY9NTGiw8FZxdKCuMwe4iTnvBM6gu8f7FP4LKwKe02hBkOE2ibO3MT1b+0OjBcj6hYE9LT2YhhxTh1dE8RcQlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkUeArbY; arc=none smtp.client-ip=209.85.222.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so144317166b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:56:36 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-7f170dc5f70so227064241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:57:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715244995; x=1715849795; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715245033; x=1715849833; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pq74kVZCKggMGSqhPRfk3K/aawyZk/HKiHXpQRgHcaE=;
-        b=Rcm3ARhZw80y71GuBED6PQ8uqyNo+X+UtTHgxXMdGhWig/5WbjKRoUXV7FLdxyM2lI
-         T4EC/dP+O1b+HcsBgP3fErrfnHm34zuOkDvRcipWzg3a/Ks9MVEy1WeflvOt1YWcGZkl
-         QEWZaoQ1V6UPSDNoVcLH1J8HlNEnpbUNSbewjPq50/DJPv8C8v88ZZsxfOGHfd9zhbFX
-         461NYaivmcgiZTpV09VwRH2TTtXZwjMxslsME/yh+/cM3vcGcUmkuRHm/blcISWUEkAU
-         dBxGWCNkTkudMU8233T57ByKpwae39irEvpIxRFAR8RMt97rz3zaT5MBmnMFCJSrZsXe
-         vYxQ==
+        bh=hfKhm+2hvPQl8Oso+dQHqxM5T+rG2L/B/sQ5bPGSyGY=;
+        b=DkUeArbY3sPRoJw2MYj9kp3ZmXybLXh6Qv4jMVWbkgTFWCGhGyp8Z+1/Vd09Bhh78P
+         Td10qhS/EV04sw0dHKDPtupti+eCHvClcddEB9mz/Ec/aZ35I08RboykpQPrgcm8ryYm
+         vIkEIxuJnu8O/bYJgaO7cIna9L56ac1BnC3DsQm2rhjmyPCJvkcyLsbeDNMK3xr2V8RW
+         iWjaCzZByodL0Mp2ibIScb9qc5AvlCXF6MP0zJb1IO2ICRRBXVBdFvBch4RdOoRQeGot
+         sSLKBHgzJPUqW/XRBeAM+vvL3RL7UmACh5xQ1ABmW8yyd3qM2vIqzM8r4gyPe08OMNiZ
+         iJDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715244995; x=1715849795;
+        d=1e100.net; s=20230601; t=1715245033; x=1715849833;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pq74kVZCKggMGSqhPRfk3K/aawyZk/HKiHXpQRgHcaE=;
-        b=X1f3KmPTJPvb9j7Z3p0K07Sn2+LTgt84kIYVfI9to3V39zx0JUMQ4G5+gHucjgy+/Z
-         aQXPGsuupMqIqOf0FZs+jzoNzcl+YDL1dpD72gYDBgNlaKcMqqw4UmFN7ZdDp1Drd0Fo
-         478unpWRxJSSWShLVxyef6UToHn8YN8rhT9PbN6j3p+Lt4nFMxay6Te95SAjw+MtCEs+
-         s76Es0SlnMpXNP/IW1qJ1VKlDHtbbyjRuw+Fg38l3q0gkA2zQM8UypocBHkGgP1POIkF
-         +87I6cqQDBB3z6+9tZhG0preaZ7nZlbY0Bv1INL0zuAxAjl4lvj9ce63DL8MJOgogG+o
-         VfKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4wDw166Gvl7nPuLcUDlpOf3v9H5gHg+/Vp1co1W+Y/ETA+1f+HRzgtVhjgZWk5gSuyeHMWLLwTI+IJpJw/HiqozgVsOnnR7wLxd/q
-X-Gm-Message-State: AOJu0Yz+oHD0kGP07t7HR4RX7OoyCy08IFV7lc4jK92EU6Z3mR/W/Ty7
-	OcxXrbJlRBIHtR9ne97gsZxrVCiiwyyoeF6dp5bd90LfusCK2sAtpAkgqcSEHk3yaSHUTjWV8tB
-	Cu9sih6iUpwAg1kKEUpfdFa9l7Uc=
-X-Google-Smtp-Source: AGHT+IFf3DIUwmiY+4i/GSvSJb9oJjCKLSIZdz2EWw0j3fhcOrCw1FZQVqPnPxpkqZHcM/2OVrJ96OfTUKuCkyh5E5M=
-X-Received: by 2002:a50:bb48:0:b0:56f:e7b9:e67d with SMTP id
- 4fb4d7f45d1cf-5731d9d17damr4410968a12.12.1715244994728; Thu, 09 May 2024
- 01:56:34 -0700 (PDT)
+        bh=hfKhm+2hvPQl8Oso+dQHqxM5T+rG2L/B/sQ5bPGSyGY=;
+        b=qT0t1ys9qTrbwPhRN8/r027eegc7aw7BDX93OzH2sBuV+GgaSPNrhIcIq2WOK7l1Zs
+         r1tTxzU5m8dQGL2Lyw16208uDupJ35MtGHvs62otO7WFeNQ5levQBET8oKlBhCq6sZpT
+         FVdzD2PhMh7P7mIRTacaRcvnwg+BqpH9W0gpDgWYDUDJuCSkfS1DkEQqgv5jqdfqNli3
+         l2pfTs0G/5JoK4KX7CluPwG5PIJv4d+yxch0xDlVSf3P2MIpLw5nOqGOg1S0aJXMuUAQ
+         cRClz8dtSvsnqsDgWMM5HsWtL80Xr3mYC2br6VE+qUOIO1Q6YUmSDdfQqbw54Hn6sMZY
+         L47Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8cNOClPPZucQ4bpwNq6aRu4uvjQ8Fs72BiaUUI9+OtFCdkPbzwmUgqd55yViyLTkplzYiiNOFcAZYjUf59Zp2iwO6AWzPd/Wzcok0
+X-Gm-Message-State: AOJu0YxJYJue61hkPvA0l0FmfS86q7VpYLTFSIT5JtiEAg0Tx9evnu1D
+	tq0bIimYR/+7VDDiCfTRnDTkEJE10Cb0MRFsWYh2+dO1bx7ryY6ekajSqCBdMGyI9E1iFfk6igS
+	S5WPj+3h0YGi+PUarXQ1of4cw56k=
+X-Google-Smtp-Source: AGHT+IFYUDF9N+GGbD4pPAwt0Qso0dyrFmiNKcjQMb09BOpKvCTUFL9zPSEJaYJ38fr6aytRinvJmqD7kfFiAp1NNPg=
+X-Received: by 2002:a05:6102:345:b0:47e:f593:2b8a with SMTP id
+ ada2fe7eead31-47f3c38ff83mr4773563137.24.1715245032831; Thu, 09 May 2024
+ 01:57:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-3-ioworker0@gmail.com>
- <0077A412-0AF1-4022-8F49-EE77AE601ECB@nvidia.com> <CAK1f24mRVam3w9CZkq4O0smGUTVUQfdvA48mqsU+NKxMUxdz1A@mail.gmail.com>
- <B1DA2DA4-AFEA-4541-8DFC-0D815249A064@nvidia.com> <CAK1f24mpt+ZGow4LLdXKZcwopmkZDrM_eh15SnkEgpiBXTmOwA@mail.gmail.com>
- <10BA9EED-A2BB-44C2-B80A-26527CDFFA50@nvidia.com> <1B2017A4-A252-4C1F-9608-D43ECEAD53B1@nvidia.com>
- <20240508155253.GK4650@nvidia.com> <30469615-2DDC-467E-A810-5EE8E1CFCB43@nvidia.com>
- <20240508163526.GM4650@nvidia.com>
-In-Reply-To: <20240508163526.GM4650@nvidia.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 9 May 2024 16:56:23 +0800
-Message-ID: <CAK1f24knjnKkHDp+bRkpfWqe6v5-GPJF=sSWPo6zQUydT9aMaw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Zi Yan <ziy@nvidia.com>, Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org, 
-	willy@infradead.org, sj@kernel.org, maskray@google.com, ryan.roberts@arm.com, 
-	david@redhat.com, 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com, 
-	zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com, 
-	libang.li@antgroup.com, wangkefeng.wang@huawei.com, songmuchun@bytedance.com, 
-	peterx@redhat.com, minchan@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20240508125808.28882-1-hailong.liu@oppo.com> <Zjx_6F3Fti_EBD_e@tiehlicka>
+ <20240509080636.bauxbgpqdluzpein@oppo.com> <CAGsJ_4wLF2+O2ydr8EvPqgrsOPsWStUxpzRvi3rJpktU_FSP1w@mail.gmail.com>
+In-Reply-To: <CAGsJ_4wLF2+O2ydr8EvPqgrsOPsWStUxpzRvi3rJpktU_FSP1w@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 9 May 2024 20:57:00 +1200
+Message-ID: <CAGsJ_4xqg7+xwsbXpU1yp_HkTBcpJwRN-ErEwzOZx915hgsyrQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
+ called with __GFP_NOFAIL
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, urezki@gmail.com, 
+	hch@infradead.org, lstoakes@gmail.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, xiang@kernel.org, chao@kernel.org, 
+	Oven <liyangouwen1@oppo.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hey Jason,
-
-Thanks a lot for clarifying!
-
-On Thu, May 9, 2024 at 12:35=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
+On Thu, May 9, 2024 at 8:32=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
+:
 >
-> On Wed, May 08, 2024 at 12:22:08PM -0400, Zi Yan wrote:
-> > On 8 May 2024, at 11:52, Jason Gunthorpe wrote:
+> On Thu, May 9, 2024 at 8:21=E2=80=AFPM Hailong Liu <hailong.liu@oppo.com>=
+ wrote:
 > >
-> > > On Wed, May 08, 2024 at 10:56:34AM -0400, Zi Yan wrote:
+> > On Thu, 09. May 09:48, Michal Hocko wrote:
+> > > On Wed 08-05-24 20:58:08, hailong.liu@oppo.com wrote:
+> > > > From: "Hailong.Liu" <hailong.liu@oppo.com>
+> > > >
+> > > > Commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmallo=
+c")
+> > > > includes support for __GFP_NOFAIL, but it presents a conflict with
+> > > > commit dd544141b9eb ("vmalloc: back off when the current task is
+> > > > OOM-killed"). A possible scenario is as belows:
+> > > >
+> > > > process-a
+> > > > kvcalloc(n, m, GFP_KERNEL | __GFP_NOFAIL)
+> > > >     __vmalloc_node_range()
+> > > >     __vmalloc_area_node()
+> > > >         vm_area_alloc_pages()
+> > > >             --> oom-killer send SIGKILL to process-a
+> > > >             if (fatal_signal_pending(current)) break;
+> > > > --> return NULL;
+> > > >
+> > > > to fix this, do not check fatal_signal_pending() in vm_area_alloc_p=
+ages()
+> > > > if __GFP_NOFAIL set.
+> > > >
+> > > > Reported-by: Oven <liyangouwen1@oppo.com>
+> > > > Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
+> > > > ---
+> > > >  mm/vmalloc.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index 6641be0ca80b..2f359d08bf8d 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -3560,7 +3560,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+> > > >
+> > > >     /* High-order pages or fallback path if "bulk" fails. */
+> > > >     while (nr_allocated < nr_pages) {
+> > > > -           if (fatal_signal_pending(current))
+> > > > +           if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(curre=
+nt))
 > > >
-> > >> Lance is improving try_to_unmap_one() to support unmapping PMD THP a=
-s a whole,
-> > >> so he moves split_huge_pmd_address() inside while (page_vma_mapped_w=
-alk(&pvmw))
-> > >> and after mmu_notifier_invalidate_range_start() as split_huge_pmd_lo=
-cked()
-> > >> and does not include the mmu notifier ops inside split_huge_pmd_addr=
-ess().
-> > >> I wonder if that could cause issues, since the mmu_notifier_invalida=
-te_range_start()
-> > >> before the while loop only has range of the original address and
-> > >> split huge pmd can affect the entire PMD address range and these two=
- ranges
-> > >> might not be the same.
+> > > Use nofail instead of gfp & __GFP_NOFAIL.
 > > >
-> > > That does not sound entirely good..
+> > > Other than that looks good to me. After that is fixed, please feel fr=
+ee
+> > > to add Acked-by: Michal Hocko <mhocko@suse.com>
 > > >
-> > > I suppose it depends on what split does, if the MM page table has the
-> > > same translation before and after split then perhaps no invalidation
-> > > is even necessary.
+> > > I believe this should also have Fixes: 9376130c390a ("mm/vmalloc: add=
+ support for __GFP_NOFAIL")
+> > > --
+> > > Michal Hocko
+> > > SUSE Labs
 > >
-> > Before split, it is a PMD mapping to a PMD THP (order-9). After split,
-> > they are 512 PTEs mapping to the same THP. Unless the secondary TLB
-> > does not support PMD mapping and use 512 PTEs instead, it seems to
-> > be an issue from my understanding.
+> > Thanks for the review and the Ack!
+> >
+> > Add Fixes in V2 patch.
+> >
+> > IIUC, nofail could not used for this case.
+> >
+> >         /*
+> >          * For order-0 pages we make use of bulk allocator, if
+> >          * the page array is partly or not at all populated due
+> >          * to fails, fallback to a single page allocator that is
+> >          * more permissive.
+> >          */
+> >         if (!order) {
+> >                 /* bulk allocator doesn't support nofail req. officiall=
+y */
+> >                 xxx
+> > -> nofail =3D false;
 >
-> I may not recall fully, but I don't think any secondaries are
-> so sensitive to the PMD/PTE distinction.. At least the ones using
-> hmm_range_fault() are not.
->
-> When the PTE eventually comes up for invalidation then the secondary
-> should wipe out any granual they may have captured.
->
-> Though, perhaps KVM should be checked carefully.
+> isn't it another bug that needs a fix?
 
-Agreed. IIUC,  the secondary mappings are teardown in
-mmu_notifier_invalidate_range_start() and allowed to be established again
-only mmu_notifier_invalidate_range_end(), then all modifications will be
-picked up by the secondary MMU. I just image that the secondary MMU
-like a TLB, where you only invalidate, and then it will be refilled later (=
-after
-mmu_notifier_invalidate_range_end()).
+Upon further examination, it's not a bug, but we can still utilize 'nofail'=
+.
+The current code is very hard to read about gfp and "nofail" :-)
 
-Thanks again for the lesson!
-Lance
+maybe:
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 6641be0ca80b..7c66fe16c2ad 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3498,7 +3498,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+ {
+        unsigned int nr_allocated =3D 0;
+        gfp_t alloc_gfp =3D gfp;
+-       bool nofail =3D false;
++       bool nofail =3D !!(gfp & __GFP_NOFAIL);
+        struct page *page;
+        int i;
+
+@@ -3555,7 +3555,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+                 * and compaction etc.
+                 */
+                alloc_gfp &=3D ~__GFP_NOFAIL;
+-               nofail =3D true;
+        }
+
+        /* High-order pages or fallback path if "bulk" fails. */
 
 >
-> > In terms of two mmu_notifier ranges, first is in the split_huge_pmd_add=
-ress()[1]
-> > and second is in try_to_unmap_one()[2]. When try_to_unmap_one() is unma=
-pping
-> > a subpage in the middle of a PMD THP, the former notifies about the PMD=
- range
-> > change due to one PMD split into 512 PTEs and the latter only needs to =
-notify
-> > about the invalidation of the unmapped PTE. I do not think the latter c=
-an
-> > replace the former, although a potential optimization can be that the l=
-atter
-> > can be removed as it is included in the range of the former.
->
-> I think we probably don't need both, either size might be fine, but
-> the larger size is definately fine..
->
-> > Regarding Lance's current code change, is it OK to change mmu_notifier =
-range
-> > after mmu_notifier_invalidate_range_start()?
->
-> No, it cannot be changed during a start/stop transaction.
->
-> Jason
->
->
+> >         } else if (gfp & __GFP_NOFAIL) {
+> >                 /*
+> >                  * Higher order nofail allocations are really expensive=
+ and
+> >                  * potentially dangerous (pre-mature OOM, disruptive re=
+claim
+> >                  * and compaction etc.
+> >                  */
+> >                 alloc_gfp &=3D ~__GFP_NOFAIL;
+> >                 nofail =3D true;
+> >         }
+> >
+> >         /* High-order pages or fallback path if "bulk" fails. */
+> >         while (nr_allocated < nr_pages) {
+> >
+> > -> nofail is false here if bulk allocator fails.
+> >                 if (fatal_signal_pending(current))
+> >                         break;
+> >
+> > --
+> >
+> > Best Regards,
+> > Hailong.
 
