@@ -1,152 +1,134 @@
-Return-Path: <linux-kernel+bounces-174438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219BA8C0EAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E06F8C0EB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADDE1F233F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:06:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6F7284037
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E281304BD;
-	Thu,  9 May 2024 11:06:29 +0000 (UTC)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBA2130E4D;
+	Thu,  9 May 2024 11:13:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C550913049B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F5312FF8E;
+	Thu,  9 May 2024 11:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715252788; cv=none; b=X7hxq2wG5jEzm1p2ydC9vGOIMEAq79/GefDLa+1eiSJ8WwDTCLUGI2U3w0YHfBUGt/75sXkgkNCLPp/ofqUmcs/YNVZGDn8syBWAPHrPIfZL7hHASpnnbElHljk4X0+t1HpVZVw9/CXylGOc/teak4rZoY0HysJOb/rmiTBH+cM=
+	t=1715253220; cv=none; b=HwB6cX6lpQMZnZ8pR8Lf//a9YVrCGK6elp60+LmfNt3IFuWGss/R6un48x3RmJO6ojlWCE+CQSE8SO1dEr9B7QTvYmmHw80abV0v4nkflkZ+wDqzZP3G+g9ohQYK1jilLleaRq9TybNkiABAQctAbZRxPFh1wB/C8GsUv5ZeI74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715252788; c=relaxed/simple;
-	bh=ecK8QbwY+FbLhxp6lSCIUfjMi/AkMP6XgV33l1ouTVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fj20DkNH4Tg/8JoJYabcdA5pn9exqzXLVojjfbienzPcU/e/atBXX041+BsxtWUReMKmg/RzvO2H5p+Vd8UbmjFtqp8SBUywlfdDjgyAml7c4R97RCyhpJv1a8LW8BtYuLehdoLvaTGC7MXppzCb4htQfDQb066kCOfADrh+8xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a387fbc9so184015466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:06:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715252784; x=1715857584;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/LOIjIMPO5ush8EPTSynnMiO8zIIbVtcBE/cd84blNw=;
-        b=Yzb3zbpBidxa8eML3gJD8Oir+s+h5geLNGrAMkH43h1rMhs/pwNctbmQwoZSyc19/+
-         t6iOzb5myncgbnkPetQ7Dd+j/iHAYU7J/7j/joFtOfRhthOHktfZCUsjJKf3bPm/pW2d
-         pMCQDuHQ4VmzK0nId/DjwA59unGPamaZNyX68ODW2FkKushAXewuvB/siaqXFkpWyrWR
-         4izmc0qw7xQaXw6+yqSQJdzV+3AZS9w1IF2kr0aFUpJN9FipxUAz1JgbiQXw74V5QK9m
-         1PfXviotyCjMAN9lwCdP9PN5gIY3iBUB3wNT7ReKXJ6Wg/zFSFiL198MxZ2iBY1Ahlql
-         VE1A==
-X-Forwarded-Encrypted: i=1; AJvYcCW1ZWCPo65JJeQ561rN3WP+0KvoTyknKoPwQrr9ZVk3o02kC+2AV5ZXXYFVodUURJkQimCPJSYb4qGFQOnk86k7tvPDKxIYRs3IuR5i
-X-Gm-Message-State: AOJu0YylxPshuHeDhp8ZyxhBIWe/B4DC1zqdcH8rw2eOLE8ulfRkY6+X
-	MbTB1AS43kNHdnMVuOaGZedR3SizPdkUEzdbFGs82BiBlsyGrCzS
-X-Google-Smtp-Source: AGHT+IFv50vbS7G34ZPIAFTwl7ijWXO9Zfn6DELJkCn77gEcJv4UYypJew7dQkQjwEnBcVv4Na7GWA==
-X-Received: by 2002:a17:906:e211:b0:a59:ab57:7413 with SMTP id a640c23a62f3a-a59fb9e7488mr309642266b.73.1715252783829;
-        Thu, 09 May 2024 04:06:23 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-119.fbsv.net. [2a03:2880:30ff:77::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17892444sm61867766b.76.2024.05.09.04.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 04:06:23 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: paulmck@kernel.org,
-	linux-kernel@vger.kernel.org (open list:DEBUGOBJECTS:)
-Subject: [PATCH] debugobjects: Fix potential data race in debug_objects_maxchain
-Date: Thu,  9 May 2024 04:06:11 -0700
-Message-ID: <20240509110612.768196-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715253220; c=relaxed/simple;
+	bh=BHSGlKUMbh6We/MDoY819/cZjVhr7tCn9O1b/b0XEdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XdzDTW88p9HspoMZBovvVgEYw23L93xK1OdmS/y5k6wZK2Q806G6is5wWqj5d2Bj3QReHEfW7+AAZUWV8GFKkwRM7QDVxHxejGHdVBRsiaanaT/mt2S1Q9pjOOI4sPq6JpnojnrJhWWHpBfv7sdSptexi7It3PdyNOJGvbaRHaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21B24C116B1;
+	Thu,  9 May 2024 11:13:33 +0000 (UTC)
+Date: Thu, 9 May 2024 12:13:31 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Will Deacon <will@kernel.org>, Hector Martin <marcan@marcan.st>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Zayd Qumsieh <zayd_qumsieh@apple.com>,
+	Justin Lu <ih_justin@apple.com>,
+	Ryan Houdek <Houdek.Ryan@fex-emu.org>,
+	Mark Brown <broonie@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Miguel Luis <miguel.luis@oracle.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Christoph Paasch <cpaasch@apple.com>,
+	Kees Cook <keescook@chromium.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Baoquan He <bhe@redhat.com>, Joel Granados <j.granados@samsung.com>,
+	Dawei Li <dawei.li@shingroup.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florent Revest <revest@chromium.org>,
+	David Hildenbrand <david@redhat.com>,
+	Stefan Roesch <shr@devkernel.io>, Andy Chiu <andy.chiu@sifive.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Oleg Nesterov <oleg@redhat.com>, Helge Deller <deller@gmx.de>,
+	Zev Weiss <zev@bewilderbeest.net>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Asahi Linux <asahi@lists.linux.dev>
+Subject: Re: [PATCH 0/4] arm64: Support the TSO memory model
+Message-ID: <Zjyv23IuJFrk9Zh0@arm.com>
+References: <20240411-tso-v1-0-754f11abfbff@marcan.st>
+ <20240411132853.GA26481@willie-the-truck>
+ <87seythqct.fsf@draig.linaro.org>
+ <CAMj1kXFqG7D2Q_T_NXZ-y3NYOjK6d8bP8ihJTeFz8TUJ77W7tw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMj1kXFqG7D2Q_T_NXZ-y3NYOjK6d8bP8ihJTeFz8TUJ77W7tw@mail.gmail.com>
 
-KCSAN has identified a potential data race in debugobjects, where the
-global variable debug_objects_maxchain is accessed for both reading and
-writing simultaneously in separate and parallel data paths. This results
-in the following splat printed by KCSAN:
+On Tue, May 07, 2024 at 04:52:30PM +0200, Ard Biesheuvel wrote:
+> On Tue, 7 May 2024 at 12:24, Alex Bennée <alex.bennee@linaro.org> wrote:
+> > I think the main use case here is for emulation. When we run x86-on-arm
+> > in QEMU we do currently insert lots of extra barrier instructions on
+> > every load and store. If we can probe and set a TSO mode I can assure
+> > you we'll do the right thing ;-)
+> 
+> Without a public specification of what TSO mode actually entails,
+> deciding which of those barriers can be dropped is not going to be as
+> straight-forward as you make it out to be.
+> 
+> Apple's TSO mode is vertically integrated with Rosetta, which means
+> that TSO mode provides whatever Rosetta needs to run x86 code
+> correctly, and that it could mean different things on different
+> generations of the micro-architecture. And whether Apple's TSO is the
+> same as Fujitsu's is anyone's guess afaik.
 
-	BUG: KCSAN: data-race in debug_check_no_obj_freed / debug_object_activate
+Indeed. Apart from using impdef registers, that's what I think is the
+second biggest problem with this feature (and the corresponding
+patches). We don't know the precise memory model, we can't tell whether
+this TSO bit is stored in the TLB. If it is, is it per ASID/VMID? The
+other problem Marc raised is what memory model is between two CPUs where
+only one has the TSO bit set? Does it only break the TSO model or is
+there a chance that it also breaks the default relaxed model? What other
+TSO flavours are out there, how do they compare with the Apple one?
 
-	write to 0xffffffff847ccfc8 of 4 bytes by task 734 on cpu 41:
-	debug_object_activate (lib/debugobjects.c:199
-			       lib/debugobjects.c:564 lib/debugobjects.c:710)
-	call_rcu (kernel/rcu/rcu.h:227
-		  kernel/rcu/tree.c:2719 kernel/rcu/tree.c:2838)
-	security_inode_free (security/security.c:1626)
-	__destroy_inode (./include/linux/fsnotify.h:222 fs/inode.c:287)
-	evict (fs/inode.c:310 fs/inode.c:682)
-	iput (fs/inode.c:1769)
-	dentry_unlink_inode (fs/dcache.c:401)
-	__dentry_kill (fs/dcache.c:?)
-	dput (fs/dcache.c:846)
-	__fput (fs/file_table.c:431)
-	____fput (fs/file_table.c:451)
-	task_work_run (kernel/task_work.c:181)
-	do_exit (kernel/exit.c:879)
-	do_group_exit (kernel/exit.c:1027)
-	__pfx___ia32_sys_exit_group (kernel/exit.c:1038)
-	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-	do_syscall_64 (arch/x86/entry/common.c:?)
-	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> Running a game and seeing it perform better is great, but it is not
+> the kind of rigor we usually attempt to apply when adding support for
+> architectural features. Hopefully, there will be some architectural
+> support for this in the future, but without any spec that defines the
+> memory model it implements, I am not convinced we should merge this.
 
-	read to 0xffffffff847ccfc8 of 4 bytes by task 384 on cpu 31:
-	debug_check_no_obj_freed (lib/debugobjects.c:1000 lib/debugobjects.c:1019)
-	kfree (mm/slub.c:2081 mm/slub.c:4280 mm/slub.c:4390)
-	percpu_ref_exit (lib/percpu-refcount.c:147)
-	css_free_rwork_fn (kernel/cgroup/cgroup.c:5357)
-	process_scheduled_works (kernel/workqueue.c:3272 kernel/workqueue.c:3348)
-	worker_thread (./include/linux/list.h:373
-			kernel/workqueue.c:955 kernel/workqueue.c:3430)
-	kthread (kernel/kthread.c:389)
-	ret_from_fork (arch/x86/kernel/process.c:153)
-	ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+There is FEAT_LRCPC (available on Apple Silicon from M2 onwards). Rather
+than having a big knob to turn TSO on or off, this feature introduces
+instructions that permit a code generator to get the TSO semantics in a
+more efficient way (e.g. using LDAPR+STLR instead of the stricter
+LDAR+STLR; not sure how well these are implemented on the Apple
+Silicon). There are further improvements in FEAT_LRCPC{2,3} (with the
+latter adding support for SIMD but not available in hardware yet). So
+the direction from Arm is pretty clear, acknowledging that there is a
+need for such TSO emulation but not in the way of undocumented impdef
+registers. Whether more is needed here, I guess people working on
+emulators could reach out to Arm or CPU vendors with suggestions (the
+path to the architects is not straightforward, usually legal has a say,
+but it's doable, there are formal channels already).
 
-	value changed: 0x00000070 -> 0x00000071
+I see the impdef hardware TSO options as temporary until CPU
+implementations catch up to architected FEAT_LRCPC*. Given the problems
+already stated in this thread, I think such hacks should be carried
+downstream and (hopefully) will eventually vanish. Maybe those TSO knobs
+currently make an emulation faster than FEAT_LRCPC* but that's feedback
+to go to the microarchitects on the implementation (or architects on
+what other instructions should be covered).
 
-Include READ_ONCE()/WRITE_ONCE() annotations on the accesses to
-debug_objects_maxchain to prevent potential data corruption, explicitly
-indicating that this data is shared across two parallel data paths.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- lib/debugobjects.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index fb12a9bacd2f..fbd262aa6b29 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -195,8 +195,8 @@ static struct debug_obj *lookup_object(void *addr, struct debug_bucket *b)
- 		if (obj->object == addr)
- 			return obj;
- 	}
--	if (cnt > debug_objects_maxchain)
--		debug_objects_maxchain = cnt;
-+	if (cnt > READ_ONCE(debug_objects_maxchain))
-+		WRITE_ONCE(debug_objects_maxchain, cnt);
- 
- 	return NULL;
- }
-@@ -997,8 +997,8 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
- 		}
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
- 
--		if (cnt > debug_objects_maxchain)
--			debug_objects_maxchain = cnt;
-+		if (cnt > READ_ONCE(debug_objects_maxchain))
-+			WRITE_ONCE(debug_objects_maxchain, cnt);
- 
- 		objs_checked += cnt;
- 	}
 -- 
-2.43.0
-
+Catalin
 
