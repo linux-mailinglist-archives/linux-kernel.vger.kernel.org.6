@@ -1,160 +1,258 @@
-Return-Path: <linux-kernel+bounces-174426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38A18C0E84
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:50:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C37E8C0E8E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1541F22CAA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:50:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83517B238D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242114E2FA;
-	Thu,  9 May 2024 10:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="st/At1eO"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121A0130488;
+	Thu,  9 May 2024 10:51:31 +0000 (UTC)
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55BD14C596
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEF212FB1B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251733; cv=none; b=l8VAumYgjVykhTC1C7vJLjuwVr2cExaK8wwDnAM4bgRP6vE90PSeUSRIb54m6IJ83S45QwJR5/54dtvMWmUjiWyruSxBVb1pOsrgtqMEMC7XP0eNU4F3fdJDGqckdHPZ9GxnQttgpRnT63y6mHeNdpWjF9dPveRPS8s365SKDjc=
+	t=1715251890; cv=none; b=tD/Jq2a3FAbGirMjkDoXio0Lr4Twy2Wx8aMEMamyOCGOahAsoPqed+Wb3+b8BmaZX7+a+UwmKfI3SWAhW0Kw29BQ7Nuns1bdyxnW5Gcw1Wkk2KBeMg6F7dPV07pWZ+QrlOb9lIOA3bg3g9mxO6217QWTU4rp2P0rl/+M51BbOrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251733; c=relaxed/simple;
-	bh=8s5CSyd/XLbgiSPGylu8EmjQ7QDKYBFmeE5ErG7toDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pTpjaTXkmj1+4//35AVUdUXnVJ5Dk/MSTKp40rtbMBoJbmYuy590O4W63VNP22eTyXjfxdc133HChqXekxVi3nI0s/29g541kAcJX9tqwMWfCvVWSHXbgj5hAykui+xGkkwCSZqEK9+P3McMmUM/avc8/B1NpkjvM336uorNitY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=st/At1eO; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51ffff16400so1154922e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251730; x=1715856530; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nxOuwvgu7vIPeq1UiZIJt6cAqtzNCiq0jwfBAlXCxvg=;
-        b=st/At1eONzpsPXyX90y6VQg6nA+2380zLAIGKDbHwmKwdnoxyErSn27MkafDewptrh
-         pt68jTdlF+jmwdvledZTQMfoS2Q6dABqRE9TEUIy/kpnyD8SO1BTSQA/M6nC1wL35+2D
-         QwHB/NZnhMbh9J/dbY5dn1yqlxejNZDG9AGx9FQKNt9UQfWpdFGxDpJhSy34xyMTrV4N
-         jymlTtaSzc4ZTciGK/Q8g5eeopHPG0vZPrEJJPpMbX3mjMVyTIB/Yvsl5lcktshXeBj8
-         kMVC7ul0gbIpqZ/aXgwSe7weuU03YT3JXcuw7s1dCh0nQc00nF6/OX6X4KcgVOSbm5Tw
-         EepA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251730; x=1715856530;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nxOuwvgu7vIPeq1UiZIJt6cAqtzNCiq0jwfBAlXCxvg=;
-        b=HUv0AlJn67ebSDFIYP35+REZOxv8Ywq2VztmJiVrwzjvBDtumOKpaGS6GdtyiWmDpN
-         a0gdERdZF2tu7nBOfjxfDP1BYgkZyPbDevvdwWH13iX627yMrjztj65GBE3VALL+gfgc
-         IFATyEUY3VLJWAVJ0zk+yS5dK9lek0Ns1FFDM23XM2WkAsf2Iz0a1yuWtb+8udByW7Ts
-         GHD2OdAIyAfgoDSABbne1arN3/8e2NimtxiewesD5e5TsqrBoGuOMGfGohEKUDaFoT9M
-         bSo/9rmiRCX078uJnIKf1NRkZAfR02QqSI9NVcXTsRffnNp/kQ/l1Jm2peQtVvxnI11+
-         AjaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWK/G8/M9pXt3bevUeTnrnjfujc8o+zq9y5Gqi1bypwLgRtlUpI+TWXj6cqdX8Vru/YQotyqkTbNjTBA6MRHUR4DeOscWAK5Lch0Bl+
-X-Gm-Message-State: AOJu0YxNTJqBp288n1h191V/1c6i4XQYEMa2TK+3FY2dz8teSi/iTFWo
-	poJv9qtU6tbOarI7PYotzD2oOoTZ68Tu8XXx8Gla9dg4YqzqBRbjCY/huPh8Mm8=
-X-Google-Smtp-Source: AGHT+IHLD2gIMOkPBD+A9kauwL3dxUht5OhDxERrvQNI9J20Gmyp3rqdIBVZJKilkJXzKEKqkqbJiA==
-X-Received: by 2002:ac2:5986:0:b0:51f:6223:21ff with SMTP id 2adb3069b0e04-5217c760a08mr4174927e87.39.1715251730109;
-        Thu, 09 May 2024 03:48:50 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d85sm60195966b.72.2024.05.09.03.48.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:48:49 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 5/5] ARM: dts: imx28-tx28: drop redundant 'panel-name' property
-Date: Thu,  9 May 2024 12:48:38 +0200
-Message-ID: <20240509104838.216773-5-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240509104838.216773-1-krzysztof.kozlowski@linaro.org>
-References: <20240509104838.216773-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1715251890; c=relaxed/simple;
+	bh=c1hPixAJvj3AHl/3CV8F+R2t09WL5v2tVYkTtNhiEpM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IAikkcTw3Ob6TWP8yIZt4JNAgvb8+bOFjBiIekTyNx6AF7F9CP2KOPngbn0EKLAL3CAOjQnRskIZ82M+bRqwWypAAzi1xAwc42Au2Q+LlmdJVhDPL4nSZ/O0T2LbEoDu57U0LkomLVp3PtrnzIT+jSUlTb4WZ5YtPSl42qlJEsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.141])
+	by sina.com (172.16.235.25) with ESMTP
+	id 663CAA1900006869; Thu, 9 May 2024 18:49:00 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 29018234210318
+X-SMAIL-UIID: DA2DDA9809B844E8B5B5CAF31DD56CD1-20240509-184900-1
+From: Hillf Danton <hdanton@sina.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-pm@vger.kernel.org
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
+Date: Thu,  9 May 2024 18:48:48 +0800
+Message-Id: <20240509104848.2403-1-hdanton@sina.com>
+In-Reply-To: <CAOQ4uxhDBbSh-4xbLgS=e6LtaZe2-E9Scgb9uP4ysCZEGG2skA@mail.gmail.com>
+References: <00000000000091228c0617eaae32@google.com> <20240508231904.2259-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Panel timing bindings do not allow 'panel-name' and there seems to be no
-users of it: neither Linux kernel drivers, nor U-boot as of
-v2024.07-rc2.
+On Thu, 9 May 2024 09:37:24 +0300 Amir Goldstein <amir73il@gmail.com>
+> On Thu, May 9, 2024 at 2:19 AM Hillf Danton <hdanton@sina.com> wrote:
+> > On Tue, 07 May 2024 22:36:18 -0700
+> > > syzbot has found a reproducer for the following issue on:
+> > >
+> > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > > git tree:       upstream
+> > > console+strace: https://syzkaller.appspot.com/x/log.txt?x=137daa6c980000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4c493dcd5a68168a94b2
+> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1134f3c0980000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1367a504980000
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/ea1961ce01fe/disk-dccb07f2.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/445a00347402/vmlinux-dccb07f2.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/461aed7c4df3/bzImage-dccb07f2.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com
+> > >
+> > > ======================================================
+> > > WARNING: possible circular locking dependency detected
+> > > 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0 Not tainted
+> > > ------------------------------------------------------
+> > > syz-executor149/5078 is trying to acquire lock:
+> > > ffff88802a978888 (&of->mutex){+.+.}-{3:3}, at: kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
+> > >
+> > > but task is already holding lock:
+> > > ffff88802d80b540 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
+> > >
+> > > which lock already depends on the new lock.
+> > >
+> > >
+> > > the existing dependency chain (in reverse order) is:
+> > >
+> > > -> #4 (&p->lock){+.+.}-{3:3}:
+> > >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> > >        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+> > >        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+> > >        seq_read_iter+0xb7/0xd60 fs/seq_file.c:182
+> > >        call_read_iter include/linux/fs.h:2104 [inline]
+> > >        copy_splice_read+0x662/0xb60 fs/splice.c:365
+> > >        do_splice_read fs/splice.c:985 [inline]
+> > >        splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
+> > >        do_sendfile+0x515/0xdc0 fs/read_write.c:1301
+> > >        __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+> > >        __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
+> > >        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >        do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > >        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >
+> > > -> #3 (&pipe->mutex){+.+.}-{3:3}:
+> > >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> > >        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+> > >        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+> > >        iter_file_splice_write+0x335/0x14e0 fs/splice.c:687
+> > >        backing_file_splice_write+0x2bc/0x4c0 fs/backing-file.c:289
+> > >        ovl_splice_write+0x3cf/0x500 fs/overlayfs/file.c:379
+> > >        do_splice_from fs/splice.c:941 [inline]
+> > >        do_splice+0xd77/0x1880 fs/splice.c:1354
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts | 6 ------
- 1 file changed, 6 deletions(-)
+		file_start_write(out);
+		ret = do_splice_from(ipipe, out, &offset, len, flags);
+		file_end_write(out);
 
-diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts b/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts
-index 5485fe118dc4..d38183edf0fd 100644
---- a/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts
-+++ b/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts
-@@ -323,7 +323,6 @@ display0: display0 {
- 		display-timings {
- 			native-mode = <&timing5>;
- 			timing0: timing0 {
--				panel-name = "VGA";
- 				clock-frequency = <25175000>;
- 				hactive = <640>;
- 				vactive = <480>;
-@@ -340,7 +339,6 @@ timing0: timing0 {
- 			};
- 
- 			timing1: timing1 {
--				panel-name = "ETV570";
- 				clock-frequency = <25175000>;
- 				hactive = <640>;
- 				vactive = <480>;
-@@ -357,7 +355,6 @@ timing1: timing1 {
- 			};
- 
- 			timing2: timing2 {
--				panel-name = "ET0350";
- 				clock-frequency = <6500000>;
- 				hactive = <320>;
- 				vactive = <240>;
-@@ -374,7 +371,6 @@ timing2: timing2 {
- 			};
- 
- 			timing3: timing3 {
--				panel-name = "ET0430";
- 				clock-frequency = <9000000>;
- 				hactive = <480>;
- 				vactive = <272>;
-@@ -391,7 +387,6 @@ timing3: timing3 {
- 			};
- 
- 			timing4: timing4 {
--				panel-name = "ET0500", "ET0700";
- 				clock-frequency = <33260000>;
- 				hactive = <800>;
- 				vactive = <480>;
-@@ -408,7 +403,6 @@ timing4: timing4 {
- 			};
- 
- 			timing5: timing5 {
--				panel-name = "ETQ570";
- 				clock-frequency = <6400000>;
- 				hactive = <320>;
- 				vactive = <240>;
--- 
-2.43.0
+The correct locking order is
 
+		sb_writers
+		inode lock
+
+> > >        __do_splice fs/splice.c:1436 [inline]
+> > >        __do_sys_splice fs/splice.c:1652 [inline]
+> > >        __se_sys_splice+0x331/0x4a0 fs/splice.c:1634
+> > >        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >        do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > >        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >
+> > > -> #2 (sb_writers#4){.+.+}-{0:0}:
+> > >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> > >        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+> > >        __sb_start_write include/linux/fs.h:1664 [inline]
+> > >        sb_start_write+0x4d/0x1c0 include/linux/fs.h:1800
+> > >        mnt_want_write+0x3f/0x90 fs/namespace.c:409
+
+but inverse order occurs here.
+
+> > >        ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:629
+> > >        lookup_open fs/namei.c:3497 [inline]
+> > >        open_last_lookups fs/namei.c:3566 [inline]
+> > >        path_openat+0x1425/0x3240 fs/namei.c:3796
+> > >        do_filp_open+0x235/0x490 fs/namei.c:3826
+> > >        do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+> > >        do_sys_open fs/open.c:1421 [inline]
+> > >        __do_sys_open fs/open.c:1429 [inline]
+> > >        __se_sys_open fs/open.c:1425 [inline]
+> > >        __x64_sys_open+0x225/0x270 fs/open.c:1425
+> > >        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >        do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > >        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >
+> > > -> #1 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
+> > >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> > >        down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+> > >        inode_lock_shared include/linux/fs.h:805 [inline]
+> > >        lookup_slow+0x45/0x70 fs/namei.c:1708
+> > >        walk_component+0x2e1/0x410 fs/namei.c:2004
+> > >        lookup_last fs/namei.c:2461 [inline]
+> > >        path_lookupat+0x16f/0x450 fs/namei.c:2485
+> > >        filename_lookup+0x256/0x610 fs/namei.c:2514
+> > >        kern_path+0x35/0x50 fs/namei.c:2622
+> > >        lookup_bdev+0xc5/0x290 block/bdev.c:1136
+> > >        resume_store+0x1a0/0x710 kernel/power/hibernate.c:1235
+> > >        kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
+> > >        call_write_iter include/linux/fs.h:2110 [inline]
+> > >        new_sync_write fs/read_write.c:497 [inline]
+> > >        vfs_write+0xa84/0xcb0 fs/read_write.c:590
+> > >        ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+> > >        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >        do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > >        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >
+> > > -> #0 (&of->mutex){+.+.}-{3:3}:
+> > >        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+> > >        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+> > >        validate_chain+0x18cb/0x58e0 kernel/locking/lockdep.c:3869
+> > >        __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+> > >        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+> > >        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+> > >        __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+> > >        kernfs_seq_start+0x53/0x3b0 fs/kernfs/file.c:154
+> > >        traverse+0x14f/0x550 fs/seq_file.c:106
+> > >        seq_read_iter+0xc5e/0xd60 fs/seq_file.c:195
+> > >        call_read_iter include/linux/fs.h:2104 [inline]
+> > >        copy_splice_read+0x662/0xb60 fs/splice.c:365
+> > >        do_splice_read fs/splice.c:985 [inline]
+> > >        splice_file_to_pipe+0x299/0x500 fs/splice.c:1295
+> > >        do_sendfile+0x515/0xdc0 fs/read_write.c:1301
+> > >        __do_sys_sendfile64 fs/read_write.c:1362 [inline]
+> > >        __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1348
+> > >        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > >        do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > >        entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > >
+> > > other info that might help us debug this:
+> > >
+> > > Chain exists of:
+> > >   &of->mutex --> &pipe->mutex --> &p->lock
+> > >
+> > >  Possible unsafe locking scenario:
+> > >
+> > >        CPU0                    CPU1
+> > >        ----                    ----
+> > >   lock(&p->lock);
+> > >                                lock(&pipe->mutex);
+> > >                                lock(&p->lock);
+> > >   lock(&of->mutex);
+> > >
+> > >  *** DEADLOCK ***
+> >
+> > This shows 16b52bbee482 ("kernfs: annotate different lockdep class for
+> > of->mutex of writable files") is a bandaid.
+> 
+> Well, nobody said that it fixes the root cause.
+> But the annotation fix is correct, because the former report was
+> really false positive one.
+> 
+> The root cause is resume_store() doing vfs path lookup.
+
+resume_store() looks innocent before locking order above is explained.
+
+> If we could deprecate this allegedly unneeded UAPI we should.
+> 
+> That said, all those lockdep warnings indicate a possible deadlock
+> if someone tries to hibernate into an overlayfs file.
+> 
+> If root tries to do that then, this is either an attack or stupidity.
+> Either Way the news flash from this report is "root may be able
+> to deadlock kernel on purpose"
+> Not very exciting and not likely to happen in the real world.
+> 
+> The remaining question is what to do about the lockdep reports.
+> 
+> Questions to PM maintainers:
+> Any chance to deprecate writing path to /sys/power/resume?
+> Userspace should have no problem getting the same done
+> with writing dev number.
+> 
+> Thanks,
+> Amir.
 
