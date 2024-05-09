@@ -1,208 +1,149 @@
-Return-Path: <linux-kernel+bounces-174266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E24E8C0C54
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:14:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F93C8C0C56
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251231F21D57
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:14:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A28F1C218AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E76C149DE9;
-	Thu,  9 May 2024 08:14:30 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44918149DE9;
+	Thu,  9 May 2024 08:15:10 +0000 (UTC)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5C7149C7C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60D13C801;
+	Thu,  9 May 2024 08:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715242469; cv=none; b=jlZBN/rBQEqE0+Z00Ys0anx/xfyQ+8lfzjsojdZnpfNgU6BoMqZOLU9QN9lbtF02IgpTLKud9PXsHg91FMJ0MTFj3n48azX0sQODfrXI5xeV5v9cVK21t2ABLH1hcEtpYlNZlZp1JhNMUsFsTq5XWeom/rvFjGNE18gK317j+Rk=
+	t=1715242509; cv=none; b=aSPxGynkG9GgtorV0U9mlKH54AhFyOX5GrFHYxkSAwizxpTVzLB7nh54DNd6hORH+PlObYdghMqDOnce2d6nO1B+VTD3pXComTRyPG33DprjLRBKPybPmXzWhOahLI5VwUHHLAT4EnVPRz2wUgIuPM56z+UV0fIHYDgsUpCGDvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715242469; c=relaxed/simple;
-	bh=S+++mKsRIHHx7sZeviVcG6JunQ5p0RGx6gJDPMnwkF4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DuQ7tlQJOyIqvnPaR2jUryappym0GF/dolwTG/+DsUVi6fuW0in86znLjr+j6U7wFLXw3kmHZY55AnEHjLRZzz5LRH93RzC1Af7lvz91xGpjf9baxY7FRfSsY+VVQE8uy0bbQIkjhYaTHT3n2q0/t4bp7BmVAyf+Ezv54qB+HpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d6bf30c9e3so62200439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:14:27 -0700 (PDT)
+	s=arc-20240116; t=1715242509; c=relaxed/simple;
+	bh=//abasO0ur86MmKKOqLlg3ovsKIvJeX8HxKXAetlzHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rzIiAddFlQJPBXYTFQ9RRISDo+qKbbxPPK0sLyBJeG17+4foMT9JDMQMh8mVrhwR2KEcQ7R6w3Ej0olPn1550rfN4A+fKfy/12PPsj43loscntroNaiMeWennq5aLf4KFFDOM6MsU2hFMEODv0pYcu3dfIFllqQEplThRgnuZ78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57342829409so250021a12.1;
+        Thu, 09 May 2024 01:15:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715242467; x=1715847267;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q2wEFOkf970B/8gVOx1KK4iqXyrR3ivy0jgsSs7YWss=;
-        b=K/uMjbcq7FfLZSU2XkY182gnT8gSygvLKJFAX2DrVKoHQbXrjXqwDgJSktEfAzPTuR
-         c0aLcoQ+1SJTs3knM40TMEEaiQKg5gS0RRwjPYJSaxZPMpHMg6Q0DbmZQq0xiqVYDWjE
-         welZ0b6jadL2iti1JXnTc9mdV3H306Eg9EeA8Mdbd6dw8Vrc2/gILmc29LrDaS6dxWoa
-         OsbLIZjyPYzZimCOqjRAyKEc3Cwq/tmLeZ/XY8jlgVXMghUFHg/O6hlDS71c+sG+iRTQ
-         p6YCc/Rd/7fWpIl1YT7b4I9c/HTadCsbXVkBTnNv1X2Aa2xjiHxu8puiUCbUobezv3Oz
-         cgLg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/fuykdbOfavMXE8+eIvYcwPuGG3ZLbBTkzv0Fl1ml8noCXvGHesyX15/naFyN5yrrsf6TN5oMIbJzkCG++adZBARD3FNcRth/FkFU
-X-Gm-Message-State: AOJu0YxFrsXbBnEMDZZkAjb0HuKFsSVWyzQIdNKniwaMBpOUGafUSHi1
-	OICuhw88ETU08wkD8oL06vFAqJd0rFlsV2LFBIv2VeycCozgQq+kHc+WaDu8Jwyd/JfQA94kQFy
-	T2fwuW/wh1dtUivg1OHoILVf9E0s2m6BOPQwdZP//gEeNKXUv+SHe+WQ=
-X-Google-Smtp-Source: AGHT+IGdBWhaOUyhvH0HXpnyNmpHUtiReK74EtGA1qz2s4yQpc9tTEXsfEIRuq8hdUhaFQqRqlNa5WA2hKejrWShLZ/Kjw4W48Zi
+        d=1e100.net; s=20230601; t=1715242506; x=1715847306;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ncDKkzHVIzmJtEEJZ3QrocR62vJ2ZNL029Kbbf/WTLg=;
+        b=E3RVK1AgSmBme2hgIGmDasOrSbPhaa6zIGNaEGHEIc/0DG0Q6bmH1Zc9QSE8aRKDNy
+         flFiUWhMz01rdE2gs3ysiqxf4eHVza9E/O3WHHOarvjO1lkeFOoxEyB+kqlnf8qO8Kkn
+         UBzBUzDl4UfX+3ybvp+DeKmVi4j13xfE4KY7wjUK2OPqlgdsbDD9OpWUebl/fIWmwJ04
+         GCmL3aEHfoVSOm9+8dWcpsHaWrNpl+LlWwMSk3jBRrUZL85h2hB5nBTbTQayaTpyoyaJ
+         I9b/ZpejWbvDc03Tqz4Me76nlpgZ2f17ANT5qORJzUV33eByr5EAF9qEUWBReejNdXfe
+         rRQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+JfLZNqbN9e6EO5qQmkx8upBucpbpPRInh4FbjIBZ10PjAifdmmrRyy2qdtj6+MwoUcYQZBLda1tiB7lJekWAhxpvNjEaM2XdcJ5l
+X-Gm-Message-State: AOJu0YxLBsXnCA/DSUS4mUkf8Yt9qjG3FcLjfnNFx667yBl/SN/TJr20
+	y2cUXVWNHups6jFwtpsy8K9ZQd1eza4OYCHEk93Vkx3MmlaSJUEu
+X-Google-Smtp-Source: AGHT+IFlXUmtBulKpeLlhzuEmt1DBPgYXCfPybA+eX0ViyyLNayUjz7TC8jP49z6/dNQSj9GFNAWBA==
+X-Received: by 2002:aa7:d9d5:0:b0:572:a852:c756 with SMTP id 4fb4d7f45d1cf-573327f15e6mr1426390a12.12.1715242506351;
+        Thu, 09 May 2024 01:15:06 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-120.fbsv.net. [2a03:2880:30ff:78::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65e2sm444772a12.19.2024.05.09.01.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 01:15:05 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuniyu@amazon.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	horms@kernel.org,
+	paulmck@kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net v2] af_unix: Fix data races in unix_release_sock/unix_stream_sendmsg
+Date: Thu,  9 May 2024 01:14:46 -0700
+Message-ID: <20240509081459.2807828-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:270e:b0:488:75e3:f3c5 with SMTP id
- 8926c6da1cb9f-488fd34f405mr298385173.0.1715242467191; Thu, 09 May 2024
- 01:14:27 -0700 (PDT)
-Date: Thu, 09 May 2024 01:14:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f5f83206180101e7@google.com>
-Subject: [syzbot] [audit?] BUG: unable to handle kernel NULL pointer
- dereference in kauditd_hold_skb
-From: syzbot <syzbot+8ffdaad8822cadf6ff4e@syzkaller.appspotmail.com>
-To: audit@vger.kernel.org, eparis@redhat.com, linux-kernel@vger.kernel.org, 
-	paul@paul-moore.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+A data-race condition has been identified in af_unix. In one data path,
+the write function unix_release_sock() atomically writes to
+sk->sk_shutdown using WRITE_ONCE. However, on the reader side,
+unix_stream_sendmsg() does not read it atomically. Consequently, this
+issue is causing the following KCSAN splat to occur:
 
-syzbot found the following issue on:
+	BUG: KCSAN: data-race in unix_release_sock / unix_stream_sendmsg
 
-HEAD commit:    6d7ddd805123 Merge tag 'soc-fixes-6.9-3' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c901b8980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=758bb5b8f724c7ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=8ffdaad8822cadf6ff4e
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ed19b8980000
+	write (marked) to 0xffff88867256ddbb of 1 bytes by task 7270 on cpu 28:
+	unix_release_sock (net/unix/af_unix.c:640)
+	unix_release (net/unix/af_unix.c:1050)
+	sock_close (net/socket.c:659 net/socket.c:1421)
+	__fput (fs/file_table.c:422)
+	__fput_sync (fs/file_table.c:508)
+	__se_sys_close (fs/open.c:1559 fs/open.c:1541)
+	__x64_sys_close (fs/open.c:1541)
+	x64_sys_call (arch/x86/entry/syscall_64.c:33)
+	do_syscall_64 (arch/x86/entry/common.c:?)
+	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-6d7ddd80.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4c2b52b97a0d/vmlinux-6d7ddd80.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/73131a832637/zImage-6d7ddd80.xz
+	read to 0xffff88867256ddbb of 1 bytes by task 989 on cpu 14:
+	unix_stream_sendmsg (net/unix/af_unix.c:2273)
+	__sock_sendmsg (net/socket.c:730 net/socket.c:745)
+	____sys_sendmsg (net/socket.c:2584)
+	__sys_sendmmsg (net/socket.c:2638 net/socket.c:2724)
+	__x64_sys_sendmmsg (net/socket.c:2753 net/socket.c:2750 net/socket.c:2750)
+	x64_sys_call (arch/x86/entry/syscall_64.c:33)
+	do_syscall_64 (arch/x86/entry/common.c:?)
+	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8ffdaad8822cadf6ff4e@syzkaller.appspotmail.com
+	value changed: 0x01 -> 0x03
 
-audit: type=1400 audit(66.700:100): avc:  denied  { ioctl } for  pid=3015 comm="syz-executor.1" path="/dev/loop1" dev="devtmpfs" ino=636 ioctlcmd=0x4c01 scontext=root:sysadm_r:sysadm_t tcontext=system_u:object_r:device_t tclass=blk_file permissive=1
-8<--- cut here ---
-Unable to handle kernel NULL pointer dereference at virtual address 00000000 when read
-[00000000] *pgd=80000080004003, *pmd=00000000
-Internal error: Oops: 207 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 0 PID: 30 Comm: kauditd Not tainted 6.9.0-rc7-syzkaller #0
-Hardware name: ARM-Versatile Express
-PC is at printk_get_level include/linux/printk.h:21 [inline]
-PC is at printk_parse_prefix+0xc/0x90 kernel/printk/printk.c:2137
-LR is at printk_sprint+0x10c/0x164 kernel/printk/printk.c:2177
-pc : [<802bc524>]    lr : [<802bc6b4>]    psr: 60000093
-sp : df8d9d70  ip : df8d9d80  fp : df8d9d7c
-r10: 8262a180  r9 : 00000000  r8 : 00000000
-r7 : df8d9dc8  r6 : 00000000  r5 : 00000000  r4 : 00000000
-r3 : df8d9ebc  r2 : 00000000  r1 : 00000000  r0 : 00000000
-Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 30c5387d  Table: 84b70e80  DAC: fffffffd
-Register r0 information: NULL pointer
-Register r1 information: NULL pointer
-Register r2 information: NULL pointer
-Register r3 information: 2-page vmalloc region starting at 0xdf8d8000 allocated at kernel_clone+0xac/0x3cc kernel/fork.c:2797
-Register r4 information: NULL pointer
-Register r5 information: NULL pointer
-Register r6 information: NULL pointer
-Register r7 information: 2-page vmalloc region starting at 0xdf8d8000 allocated at kernel_clone+0xac/0x3cc kernel/fork.c:2797
-Register r8 information: NULL pointer
-Register r9 information: NULL pointer
-Register r10 information: non-slab/vmalloc memory
-Register r11 information: 2-page vmalloc region starting at 0xdf8d8000 allocated at kernel_clone+0xac/0x3cc kernel/fork.c:2797
-Register r12 information: 2-page vmalloc region starting at 0xdf8d8000 allocated at kernel_clone+0xac/0x3cc kernel/fork.c:2797
-Process kauditd (pid: 30, stack limit = 0xdf8d8000)
-Stack: (0xdf8d9d70 to 0xdf8da000)
-9d60:                                     df8d9d9c df8d9d80 802bc6b4 802bc524
-9d80: 00000000 00000000 dddc5595 00000000 df8d9e24 df8d9da0 802bc918 802bc5b4
-9da0: 81fce794 df8d9ebc 8029d704 0000000f ac9b579a df8d9dc0 0000001e 81fce794
-9dc0: 60000013 00000005 00000000 df8d9ebc 8263bdf8 00000000 00000000 8262a22c
-9de0: 60000093 3fffe339 00000000 75613501 00746964 3d7ed298 df8d9e44 00000000
-9e00: ffffffff 82622ec4 00000000 00000000 00000000 81fce794 df8d9e64 df8d9e28
-9e20: 802bda40 802bc718 df8d9ebc 3d7ed298 df8d9e7c 82ee8000 df8d9e6c 82ee8000
-9e40: 85080000 00000000 8033fd34 8462d6c0 00000000 00000000 df8d9e7c df8d9e68
-9e60: 802bdbdc 802bd948 df8d9ebc df8d9e78 df8d9e9c df8d9e80 802bec18 802bdbc0
-9e80: 81893374 818cdd00 8462d6c0 ffffff91 df8d9eb4 df8d9ea0 818a62e0 802bebb0
-9ea0: df8d9ebc 3d7ed298 df8d9ee4 df8d9ec8 803404e4 818a62bc 81fce794 00000579
-9ec0: 85080010 00000000 826fb6ec 8462d6c0 00000000 8033fd34 df8d9f24 df8d9ee8
-9ee0: 8033ff54 80340414 df8d9f04 00000001 00000000 8289fa50 df8d9f24 826fb6ec
-9f00: 8289f9f8 00000000 00000000 82e98300 00000000 00000000 df8d9f84 df8d9f28
-9f20: 8034080c 8033fe64 8033fd34 80340408 8027cd5c 80340408 8033fcdc 8033fd34
-9f40: 00000000 82ee8000 802a5074 df8d9f4c df8d9f4c 3d7ed298 df8d9f84 82f26480
-9f60: 82ee8000 8034058c 00000000 82e98300 df819e50 00000000 df8d9fac df8d9f88
-9f80: 802702a0 80340598 82f26480 8027019c 00000000 00000000 00000000 00000000
-9fa0: 00000000 df8d9fb0 80200104 802701a8 00000000 00000000 00000000 00000000
-9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-9fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-Call trace: 
-[<802bc518>] (printk_parse_prefix) from [<802bc6b4>] (printk_sprint+0x10c/0x164 kernel/printk/printk.c:2177)
-[<802bc5a8>] (printk_sprint) from [<802bc918>] (vprintk_store+0x20c/0x450 kernel/printk/printk.c:2279)
- r7:00000000 r6:dddc5595 r5:00000000 r4:00000000
-[<802bc70c>] (vprintk_store) from [<802bda40>] (vprintk_emit+0x104/0x278 kernel/printk/printk.c:2329)
- r10:81fce794 r9:00000000 r8:00000000 r7:00000000 r6:82622ec4 r5:ffffffff
- r4:00000000
-[<802bd93c>] (vprintk_emit) from [<802bdbdc>] (vprintk_default+0x28/0x30 kernel/printk/printk.c:2363)
- r10:00000000 r9:00000000 r8:8462d6c0 r7:8033fd34 r6:00000000 r5:85080000
- r4:82ee8000
-[<802bdbb4>] (vprintk_default) from [<802bec18>] (vprintk+0x74/0x94 kernel/printk/printk_safe.c:45)
-[<802beba4>] (vprintk) from [<818a62e0>] (_printk+0x34/0x58 kernel/printk/printk.c:2373)
- r6:ffffff91 r4:8462d6c0
-[<818a62ac>] (_printk) from [<803404e4>] (kauditd_printk_skb kernel/audit.c:546 [inline])
-[<818a62ac>] (_printk) from [<803404e4>] (kauditd_hold_skb+0xdc/0xf8 kernel/audit.c:581)
- r3:00000000 r2:85080010 r1:00000579 r0:81fce794
-[<80340408>] (kauditd_hold_skb) from [<8033ff54>] (kauditd_send_queue+0xfc/0x16c kernel/audit.c:766)
- r7:8033fd34 r6:00000000 r5:8462d6c0 r4:826fb6ec
-[<8033fe58>] (kauditd_send_queue) from [<8034080c>] (kauditd_thread+0x280/0x2d8 kernel/audit.c:890)
- r10:00000000 r9:00000000 r8:82e98300 r7:00000000 r6:00000000 r5:8289f9f8
- r4:826fb6ec
-[<8034058c>] (kauditd_thread) from [<802702a0>] (kthread+0x104/0x134 kernel/kthread.c:388)
- r10:00000000 r9:df819e50 r8:82e98300 r7:00000000 r6:8034058c r5:82ee8000
- r4:82f26480
-[<8027019c>] (kthread) from [<80200104>] (ret_from_fork+0x14/0x30 arch/arm/kernel/entry-common.S:134)
-Exception stack(0xdf8d9fb0 to 0xdf8d9ff8)
-9fa0:                                     00000000 00000000 00000000 00000000
-9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
- r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:8027019c r4:82f26480
-Code: e89da800 e1a0c00d e92dd800 e24cb004 (e5d03000) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	e89da800 	ldm	sp, {fp, sp, pc}
-   4:	e1a0c00d 	mov	ip, sp
-   8:	e92dd800 	push	{fp, ip, lr, pc}
-   c:	e24cb004 	sub	fp, ip, #4
-* 10:	e5d03000 	ldrb	r3, [r0] <-- trapping instruction
+The line numbers are related to commit dd5a440a31fa ("Linux 6.9-rc7").
 
+Commit e1d09c2c2f57 ("af_unix: Fix data races around sk->sk_shutdown.")
+addressed a comparable issue in the past regarding sk->sk_shutdown.
+However, it overlooked resolving this particular data path.
+This patch only offending unix_stream_sendmsg() function, since the
+other reads seem to be protected by unix_state_lock() as discussed in
+Link: https://lore.kernel.org/all/20240508173324.53565-1-kuniyu@amazon.com/
 
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changelog:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v2:
+	* Only fix the usecase reported by KCSAN
+	* Targeting net instead of net-next
+---
+ net/unix/af_unix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index dc1651541723..fa906ec5e657 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -2224,7 +2224,7 @@ static int unix_stream_sendmsg(struct socket *sock, struct msghdr *msg,
+ 			goto out_err;
+ 	}
+ 
+-	if (sk->sk_shutdown & SEND_SHUTDOWN)
++	if (READ_ONCE(sk->sk_shutdown) & SEND_SHUTDOWN)
+ 		goto pipe_err;
+ 
+ 	while (sent < len) {
+-- 
+2.43.0
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
