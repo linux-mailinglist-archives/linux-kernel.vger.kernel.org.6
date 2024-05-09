@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-174425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8445D8C0E82
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:50:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38A18C0E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6712B2367A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:50:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1541F22CAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AFB14B977;
-	Thu,  9 May 2024 10:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242114E2FA;
+	Thu,  9 May 2024 10:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tPr4wsQB"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="st/At1eO"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AC614C594
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55BD14C596
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251732; cv=none; b=BLQqDJmuTmUHW881xpKuPvA1eAZ+q5xoCbsLNd/eZslOAT+DwbeFv9Lwh06JENca9nPaigU3v//G2CUUAN5BuRzNHusH/T8swBsLH+vxWM/+NqqV1xKF/52Wnw5M1/wGYqYQKNdbVmInqDcsLZwghlW4jHhuv/qVlWut/OfmZWY=
+	t=1715251733; cv=none; b=l8VAumYgjVykhTC1C7vJLjuwVr2cExaK8wwDnAM4bgRP6vE90PSeUSRIb54m6IJ83S45QwJR5/54dtvMWmUjiWyruSxBVb1pOsrgtqMEMC7XP0eNU4F3fdJDGqckdHPZ9GxnQttgpRnT63y6mHeNdpWjF9dPveRPS8s365SKDjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251732; c=relaxed/simple;
-	bh=aPzqlco7XsixPyzCXTVco8ktdIB66kEc2nTRRwiR/3s=;
+	s=arc-20240116; t=1715251733; c=relaxed/simple;
+	bh=8s5CSyd/XLbgiSPGylu8EmjQ7QDKYBFmeE5ErG7toDE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b1RlEqm+TtHE/L5HglwupnO4Q6kj5IiMIGnBUqM9vMUhtNxwRnpwP7KOWNAC5UAAhILewvfaNIyu5K22OS3w0IOmJ3OaafWeKbah5/IcO4AYwU54JwNGF7/p/3KbV6MzPLObG09BJHoZosLeztPkhJRG8XXRVkzHo+f/ujIvyag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tPr4wsQB; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=pTpjaTXkmj1+4//35AVUdUXnVJ5Dk/MSTKp40rtbMBoJbmYuy590O4W63VNP22eTyXjfxdc133HChqXekxVi3nI0s/29g541kAcJX9tqwMWfCvVWSHXbgj5hAykui+xGkkwCSZqEK9+P3McMmUM/avc8/B1NpkjvM336uorNitY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=st/At1eO; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso173809966b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:49 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51ffff16400so1154922e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251728; x=1715856528; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715251730; x=1715856530; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fIdN4MR8ysP0CcOVaWDr/atwyhcItV6HcCM2wmXc11Y=;
-        b=tPr4wsQBcT81EcrXaBXOhKKqo67opPo1RxZPOa3OrZ7/CgAxrY+RI0pvn2D60Isx/u
-         NExw2AOojCBmQ5jCEOdTCKmil4vS+449YM/ouqIaYtoJlMO7dh1EoBCjUATvi8xad20d
-         QALNs0hpmdoEw6KiBPpLtfkFnh7yphrMB9dj1RtJL/FgVVmt9bJlWgcKK+S8QqtDRqFa
-         3QuaFxuwPvSOApADpU5Y7aHSZEDEq0S5Xyi5n5xX6BP7IpS5nuZ5KXDF7TlhaYijtm2I
-         Z5ST5DmyqFD7GobXm4X0m2gixyOy4j7Ia1O7WkKuh4u4cuQNVgZ/oVMSCNt+Gy0Z2pzJ
-         jUvg==
+        bh=nxOuwvgu7vIPeq1UiZIJt6cAqtzNCiq0jwfBAlXCxvg=;
+        b=st/At1eONzpsPXyX90y6VQg6nA+2380zLAIGKDbHwmKwdnoxyErSn27MkafDewptrh
+         pt68jTdlF+jmwdvledZTQMfoS2Q6dABqRE9TEUIy/kpnyD8SO1BTSQA/M6nC1wL35+2D
+         QwHB/NZnhMbh9J/dbY5dn1yqlxejNZDG9AGx9FQKNt9UQfWpdFGxDpJhSy34xyMTrV4N
+         jymlTtaSzc4ZTciGK/Q8g5eeopHPG0vZPrEJJPpMbX3mjMVyTIB/Yvsl5lcktshXeBj8
+         kMVC7ul0gbIpqZ/aXgwSe7weuU03YT3JXcuw7s1dCh0nQc00nF6/OX6X4KcgVOSbm5Tw
+         EepA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251728; x=1715856528;
+        d=1e100.net; s=20230601; t=1715251730; x=1715856530;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fIdN4MR8ysP0CcOVaWDr/atwyhcItV6HcCM2wmXc11Y=;
-        b=elKGiDvTSsuOSpiu07XNwMHyA+Sq7L+zsge/H3pPnCjwm4+ytYRCtjACbs/Qg3Foam
-         Qpf8XNBJJEYrmX+Z36kyETiVY7uE0e9mp/iE1H67N9W7YPTHFTDLTDeQC7tVTaJXP94x
-         pq6DxDbBgDoDxmiIEX+SEEsa73yqp4c7eT18uoNK7bImXa4etL7PW+lDoAlO8Rhwrzqu
-         RBLtWCtajGMRk0fjwfV/VmNVWIBi4k2FYHZbX0SP+YLcsHdN8qgVnBotuzGrPPBCJ5DB
-         5vPEctVRKAUHtFtb/rRGwG0L8fQLSpvNy/X+TOqORwoBOXCPha/vXU1NA2QMv7sQrz1+
-         FCow==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ3xgxFICTcx8L6l8c0jfDOncrhrWEj6y313hAH3EcPlDAxuA/ymrSqlx090+hPEs/uk6liVUuwREC75n6okL2eyzbkhAo88sctseE
-X-Gm-Message-State: AOJu0YwK0wFEIeo8Bmf2fMtmHZFW1kj0z6IiXTVAHFLdHU7QuZSM8AwJ
-	2Yd0jhLe0jQFxH6DllkwU3JxVQzDr3TyLeMdR/sYidEqtPNbtvWHHXHZsllqOk4=
-X-Google-Smtp-Source: AGHT+IHzxyO5fKOhzl1H1hoKpa6CXJoOBaKE4zW9xgfQNDPQNYWH/OVRT8MGIP39ltU081+X08S3Vg==
-X-Received: by 2002:a17:906:1b08:b0:a59:c9b1:cb68 with SMTP id a640c23a62f3a-a59fb94a628mr352359966b.7.1715251728286;
-        Thu, 09 May 2024 03:48:48 -0700 (PDT)
+        bh=nxOuwvgu7vIPeq1UiZIJt6cAqtzNCiq0jwfBAlXCxvg=;
+        b=HUv0AlJn67ebSDFIYP35+REZOxv8Ywq2VztmJiVrwzjvBDtumOKpaGS6GdtyiWmDpN
+         a0gdERdZF2tu7nBOfjxfDP1BYgkZyPbDevvdwWH13iX627yMrjztj65GBE3VALL+gfgc
+         IFATyEUY3VLJWAVJ0zk+yS5dK9lek0Ns1FFDM23XM2WkAsf2Iz0a1yuWtb+8udByW7Ts
+         GHD2OdAIyAfgoDSABbne1arN3/8e2NimtxiewesD5e5TsqrBoGuOMGfGohEKUDaFoT9M
+         bSo/9rmiRCX078uJnIKf1NRkZAfR02QqSI9NVcXTsRffnNp/kQ/l1Jm2peQtVvxnI11+
+         AjaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWK/G8/M9pXt3bevUeTnrnjfujc8o+zq9y5Gqi1bypwLgRtlUpI+TWXj6cqdX8Vru/YQotyqkTbNjTBA6MRHUR4DeOscWAK5Lch0Bl+
+X-Gm-Message-State: AOJu0YxNTJqBp288n1h191V/1c6i4XQYEMa2TK+3FY2dz8teSi/iTFWo
+	poJv9qtU6tbOarI7PYotzD2oOoTZ68Tu8XXx8Gla9dg4YqzqBRbjCY/huPh8Mm8=
+X-Google-Smtp-Source: AGHT+IHLD2gIMOkPBD+A9kauwL3dxUht5OhDxERrvQNI9J20Gmyp3rqdIBVZJKilkJXzKEKqkqbJiA==
+X-Received: by 2002:ac2:5986:0:b0:51f:6223:21ff with SMTP id 2adb3069b0e04-5217c760a08mr4174927e87.39.1715251730109;
+        Thu, 09 May 2024 03:48:50 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d85sm60195966b.72.2024.05.09.03.48.46
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d85sm60195966b.72.2024.05.09.03.48.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:48:47 -0700 (PDT)
+        Thu, 09 May 2024 03:48:49 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -79,9 +79,9 @@ To: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 4/5] ARM: dts: imx: drop redundant 'u-boot,panel-name' property
-Date: Thu,  9 May 2024 12:48:37 +0200
-Message-ID: <20240509104838.216773-4-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 5/5] ARM: dts: imx28-tx28: drop redundant 'panel-name' property
+Date: Thu,  9 May 2024 12:48:38 +0200
+Message-ID: <20240509104838.216773-5-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240509104838.216773-1-krzysztof.kozlowski@linaro.org>
 References: <20240509104838.216773-1-krzysztof.kozlowski@linaro.org>
@@ -93,98 +93,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Panel timing bindings do not allow 'u-boot,panel-name' and there seems
-to be no users of it: neither Linux kernel drivers, nor U-boot as of
-v2024.07-rc2.  Reported by dtbs_check:
-
-  imx6qp-tx6qp-8037.dtb: display-timings: timing-et0700: 'u-boot,panel-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+Panel timing bindings do not allow 'panel-name' and there seems to be no
+users of it: neither Linux kernel drivers, nor U-boot as of
+v2024.07-rc2.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lcd.dtsi  | 5 -----
- arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lvds.dtsi | 4 ----
- 2 files changed, 9 deletions(-)
+ arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lcd.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lcd.dtsi
-index 7ae495bdc48f..ded241a39906 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lcd.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lcd.dtsi
-@@ -127,7 +127,6 @@ timing-vga {
- 			};
- 
- 			timing-etv570 {
--				u-boot,panel-name = "edt,et057090dhu";
- 				clock-frequency = <25200000>;
+diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts b/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts
+index 5485fe118dc4..d38183edf0fd 100644
+--- a/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts
++++ b/arch/arm/boot/dts/nxp/mxs/imx28-tx28.dts
+@@ -323,7 +323,6 @@ display0: display0 {
+ 		display-timings {
+ 			native-mode = <&timing5>;
+ 			timing0: timing0 {
+-				panel-name = "VGA";
+ 				clock-frequency = <25175000>;
  				hactive = <640>;
  				vactive = <480>;
-@@ -144,7 +143,6 @@ timing-etv570 {
+@@ -340,7 +339,6 @@ timing0: timing0 {
  			};
  
- 			timing-et0350 {
--				u-boot,panel-name = "edt,et0350g0dh6";
- 				clock-frequency = <6413760>;
+ 			timing1: timing1 {
+-				panel-name = "ETV570";
+ 				clock-frequency = <25175000>;
+ 				hactive = <640>;
+ 				vactive = <480>;
+@@ -357,7 +355,6 @@ timing1: timing1 {
+ 			};
+ 
+ 			timing2: timing2 {
+-				panel-name = "ET0350";
+ 				clock-frequency = <6500000>;
  				hactive = <320>;
  				vactive = <240>;
-@@ -161,7 +159,6 @@ timing-et0350 {
+@@ -374,7 +371,6 @@ timing2: timing2 {
  			};
  
- 			timing-et0430 {
--				u-boot,panel-name = "edt,et0430g0dh6";
- 				clock-frequency = <9009000>;
+ 			timing3: timing3 {
+-				panel-name = "ET0430";
+ 				clock-frequency = <9000000>;
  				hactive = <480>;
  				vactive = <272>;
-@@ -194,7 +191,6 @@ timing-et0500 {
+@@ -391,7 +387,6 @@ timing3: timing3 {
  			};
  
- 			timing-et0700 { /* same as ET0500 */
--				u-boot,panel-name = "edt,etm0700g0dh6";
- 				clock-frequency = <33264000>;
+ 			timing4: timing4 {
+-				panel-name = "ET0500", "ET0700";
+ 				clock-frequency = <33260000>;
  				hactive = <800>;
  				vactive = <480>;
-@@ -227,7 +223,6 @@ timing-etq570 {
+@@ -408,7 +403,6 @@ timing4: timing4 {
  			};
  
- 			timing-comtft { /* same as ET0700 but with inverted pixel clock */
--				u-boot,panel-name = "edt,etm0700g0edh6";
- 				clock-frequency = <33264000>;
- 				hactive = <800>;
- 				vactive = <480>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lvds.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lvds.dtsi
-index dfbdbb87aec4..4eb53d5677a6 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lvds.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-tx6-lvds.dtsi
-@@ -128,7 +128,6 @@ lvds0_out: endpoint {
- 
- 		display-timings {
- 			timing-hsd100pxn1 {
--				u-boot,panel-name = "hannstar,hsd100pxn1";
- 				clock-frequency = <65000000>;
- 				hactive = <1024>;
- 				vactive = <768>;
-@@ -159,7 +158,6 @@ timing-vga {
- 			};
- 
- 			timing-nl12880bc20 {
--				u-boot,panel-name = "nlt,nl12880bc20-spwg-24";
- 				clock-frequency = <71000000>;
- 				hactive = <1280>;
- 				vactive = <800>;
-@@ -176,7 +174,6 @@ timing-nl12880bc20 {
- 			};
- 
- 			timing-et0700 {
--				u-boot,panel-name = "edt,etm0700g0dh6";
- 				clock-frequency = <33264000>;
- 				hactive = <800>;
- 				vactive = <480>;
-@@ -193,7 +190,6 @@ timing-et0700 {
- 			};
- 
- 			timing-etv570 {
--				u-boot,panel-name = "edt,et057090dhu";
- 				clock-frequency = <25200000>;
- 				hactive = <640>;
- 				vactive = <480>;
+ 			timing5: timing5 {
+-				panel-name = "ETQ570";
+ 				clock-frequency = <6400000>;
+ 				hactive = <320>;
+ 				vactive = <240>;
 -- 
 2.43.0
 
