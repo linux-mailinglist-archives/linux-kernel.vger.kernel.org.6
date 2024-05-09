@@ -1,292 +1,127 @@
-Return-Path: <linux-kernel+bounces-174339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52BE8C0D5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:17:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 532308C0D61
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBB6281CC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:17:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4D52840DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699B9126F09;
-	Thu,  9 May 2024 09:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162DD14A611;
+	Thu,  9 May 2024 09:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rrn6OczZ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h5Zlb1C0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4686B14A600
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DA414A4DF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715246246; cv=none; b=l6k+CyfKezCVB4so60sUeHEp3QRPiplNHNTGG+ZFGLrfbGhpt8u6E4SVMlloSKCBbRKK4Y25EYxKt0LYyIN/DqbesNTcYiA2YPsu7RPspdbF8IM0a79GM6ab9RHVVtgKRxcEM6tOn4sCrnM+q7uEyHPO10Pv20t0HqKEJXg9GEY=
+	t=1715246291; cv=none; b=kBvdFnFkD4XCy5vyANG3cSkHGpVca+DS+3RzgLxcLYiSUvNAYFAGyiSNuWL1Q4PmxfE0Igluf99D+dvt6CLpKImwUh09j5t7IfRZSprX+Zk91lGQ0X1wZQG5qLJDoyWNiUzP590R/9OqZzaAEtH7ckZpxiKieIVsaiksOcTKE2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715246246; c=relaxed/simple;
-	bh=MTiRf6y9CwK5s4EGi1w9HicVt5K4p9IXFySP3nBcgY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XNnoN3O8gTPCh4VI0LfxlYFAHlu+IYkSVhTWP9KhbT6s4k98s5noZl2W3RiJLRESKmmvnkOsnV0fuwGLZ4MIveKuRKMUsqrr6S9RRt1SWIKqEaE6MFVxVPewVqVy9XXIWB1ncRpA3AJDRiNybR+NHPNQHMh4IZ1r+sAKRPWMWBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rrn6OczZ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41b79451128so5179835e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 02:17:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715246243; x=1715851043; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5bO70t2wwFBE6k9WTC5h87uZcklzatJMH5IRVgedzqQ=;
-        b=rrn6OczZQHlDuww1pPk0Qk5rZ8RBIpjzG8Geumj50a10SrGhOpSmnt1b5qVNgzxpNz
-         l1yapl6vNiOrBxspbUeOfTql8mGh+PP4MEYpC2fcmaQzT4Yrb89xAFppmSvhQR9xk2fW
-         Az9/dWysSDaIOy+KlQAyFYi2YyI4cyMvxm1o1CkU1nh5LWVz9Q/dMw/hxsTdiFtqibhi
-         NyoMEElfPSWSkbe7LSZ8iem1WtkcDgJ7EhoaerBqqwK3KlHdl2cirxtziq90p0+xjNTu
-         RrLgP6ebEccnY4Imq+3jgR5xZt5znTMWi/mSQ6H8l8nQcFD3f0kaWyGjieHy4jjXdUlj
-         pW5Q==
+	s=arc-20240116; t=1715246291; c=relaxed/simple;
+	bh=N7Dch5i6H+Je+MBWVTY+QYDvPln4f7FI4vv+1ffoAlo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aNPqCjOjiuz5okMJVUauk0GBDrpcwtClfmrQyd4FOL1B9T20ex16izn0QoUGq3oXlc6u2N2iNWAhA0eoFmkF7RjU1JzL8PrqJXmv/xee5UNeuFFhjI7rU3qI0b7qyDFnhHKaMxevo1eCazE/OxmKGUi4uD+iASvUE8WgAq7NVTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h5Zlb1C0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715246288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=N7Dch5i6H+Je+MBWVTY+QYDvPln4f7FI4vv+1ffoAlo=;
+	b=h5Zlb1C0LTwINkJgTuP1gttsSHdeo9YWM62Su2Y5lyruMpvKqX5IOcmduVupR22JWO9Hrj
+	SCUlo6IKxes6QXlw1vmsUPujBWCRwb5aygAcl/xqaUMpe8uEu3qzWkUj72FAWaj03cijQO
+	lwy+K+J3k+D+XdwrXbM1bVKkf7vwgCk=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-lu7Dlw-yMmmOPK_4Zb9wNA-1; Thu, 09 May 2024 05:18:06 -0400
+X-MC-Unique: lu7Dlw-yMmmOPK_4Zb9wNA-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2e2288e5aebso1352451fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 02:18:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715246243; x=1715851043;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1715246284; x=1715851084;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bO70t2wwFBE6k9WTC5h87uZcklzatJMH5IRVgedzqQ=;
-        b=ZnmPlPwaaijc9J1BQqsIINr1ry3X0Z7eHMrjhax+lzKLfmp/LPcV+Y7iO5FHB3ANhb
-         a3h6lXluasRTyMyNuOrRVON0XOoGLXC+OPSxWmsfDAlmKsQvgtMxiPpGudB5SuwXjJAa
-         haefo6kGY6+JdpJrK/IqbO7ej9MMhfeD+F2zYB1FySpu7Mr8wLnuemqLiW8E/XLhiHfN
-         ujHLxU/6PA7aTnagqfRgKpZr1c0HLnOzIWHhkwXk5iqsYDcYbpPYjMIotwJpP1vjKoY3
-         2jbzFqJpkN3Kj5o4U2Ar2sjuFrnX+IVYk4PzIuRkdrIXGzy5K6ATbslOTs6rqsPz15fM
-         zenQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA1wXgDYBhwkeYXPrP5tc7xCWwtOfvuy6o/saJRayHRGUwjvv8RqviyamsKCNsPQaup26+n/iQoxYPPadf70g7vVaN1T+5yEMvAh1B
-X-Gm-Message-State: AOJu0YyjsqWXkN8ESiyYihG+gqrqjRnsFYRvL7ypPZHCo3trSjK22RjS
-	glslp9Z6fl8nZLqsFSy1ipX4jzHfbIor6iW9GLyqn6xAD3J5TQVuJHDwxQS2W/E=
-X-Google-Smtp-Source: AGHT+IGCauFH2yLFsnMMUE8CDtmkKT6iBzwdkH3n4+XpqeBKPgbCvrAfI3+5i8uo1Z4Oxn8hR675dg==
-X-Received: by 2002:a05:600c:1c12:b0:41b:f359:2b53 with SMTP id 5b1f17b1804b1-41f723a2496mr43405305e9.37.1715246242638;
-        Thu, 09 May 2024 02:17:22 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c24f8fsm53550235e9.15.2024.05.09.02.17.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 02:17:22 -0700 (PDT)
-Message-ID: <d3c78e43-44a9-4ef2-8e64-00f39b32172c@linaro.org>
-Date: Thu, 9 May 2024 10:17:21 +0100
+        bh=N7Dch5i6H+Je+MBWVTY+QYDvPln4f7FI4vv+1ffoAlo=;
+        b=uhR1jwpPozBoj+oIPs9bPK7809i9692mU++PwaGpdFX4JOw5ncCNxiP7tQ+XxwmLm+
+         1EvFS76iYrMMbh7zENoPzOgjXaPZAFnXhNNUb4kNmuK6twDPfX6w45uwAu1MnB3Xz41a
+         kRxGAWeLuo7Ld/lYf2PxJEZjEt5zhOu+uEDOFIXh+q+nnOrBm07s5fLJKLq7lqa09T8e
+         HzL1WDtQoDVC43rv4WmP4w3rY3FRRdKN8tkDSFjUXGiQHzuF3KSUAi6jNo26rpCb09z3
+         dTooVrHtMsNCI0VaSMK8Bgp+o3PDxhTpp5wauCAbB2Vx5qu6F4DCeB2qNWiZ6rx2k0Lp
+         9qrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJd0RigokSoUTvLZ4TLLmeXhJQiNE2S/U2exXoRm6GMKpcUlAwV1Tf2lm6678mwogX4BoFKjq6DPdTAR089VM3F+x3cT6H9A7xsNkK
+X-Gm-Message-State: AOJu0YzjTGAO43cu5tL0z2+hBFy1qA1SiA4+XsAuDWdqLGrkUyi3MuGH
+	jtwve5seevLmc/BGILXANBBWdCJWkfRZEvLJiKZmo5wVtUf3+to7k2jT64VPnp8oggaKeLRhyb2
+	rCUbcYtAId7i3kEMh79wR6MEcpi768+C/sHpNsrjoA7bekKZoSwlPNDsqDbNq5A==
+X-Received: by 2002:a2e:a715:0:b0:2e2:177c:5f6 with SMTP id 38308e7fff4ca-2e445f801cemr30614421fa.0.1715246284354;
+        Thu, 09 May 2024 02:18:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwApu8PzlUgxxifGYwxYuuV4Yo8alyXg8JU5pJPz6DGuMFEqviCNVNYNi+qAVPDLvGAn+D/Q==
+X-Received: by 2002:a2e:a715:0:b0:2e2:177c:5f6 with SMTP id 38308e7fff4ca-2e445f801cemr30614251fa.0.1715246283906;
+        Thu, 09 May 2024 02:18:03 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1b68:1b10:ff61:41fd:2ae4:da3a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee9673sm18475305e9.33.2024.05.09.02.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 02:18:03 -0700 (PDT)
+Message-ID: <080be4a402fe3e65a4e09070c0243b6887b6f9ae.camel@redhat.com>
+Subject: Re: [PATCH net] net: phy: air_en8811h: reset netdev rules when LED
+ is set manually
+From: Paolo Abeni <pabeni@redhat.com>
+To: Daniel Golle <daniel@makrotopia.org>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, SkyLake
+ Huang <skylake.huang@mediatek.com>, Eric Woudstra <ericwouds@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: John Crispin <john@phrozen.org>
+Date: Thu, 09 May 2024 11:18:01 +0200
+In-Reply-To: <9be9a00adfac8118b6d685e71696f83187308c66.1715125851.git.daniel@makrotopia.org>
+References: 
+	<9be9a00adfac8118b6d685e71696f83187308c66.1715125851.git.daniel@makrotopia.org>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] ASoC: qcom: qdsp6: Set channel mapping instead of
- fixed defaults
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- James Schulman <james.schulman@cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Banajit Goswami <bgoswami@quicinc.com>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
- <20240509-asoc-x1e80100-4-channel-mapping-v3-3-6f874552d7b2@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20240509-asoc-x1e80100-4-channel-mapping-v3-3-6f874552d7b2@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Thanks Krzysztof for the patch.
+Hi,
 
+On Wed, 2024-05-08 at 01:51 +0100, Daniel Golle wrote:
+> Setting LED_OFF via the brightness_set should deactivate hw control,
+> so make sure netdev trigger rules also get cleared in that case.
+> This matches the behaviour when using the 'netdev' trigger without
+> any hardware offloading and fixes unwanted memory of the default
+> netdev trigger rules when another trigger (or no trigger) had been
+> selected meanwhile.
+>=20
+> Fixes: 71e79430117d ("net: phy: air_en8811h: Add the Airoha EN8811H PHY d=
+river")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-On 09/05/2024 07:51, Krzysztof Kozlowski wrote:
-> When constructing packets to DSP, the Audioreach code uses 'struct
-> audioreach_module_config' to configure parameters like number of
-> channels, bitrate, sample rate etc, but uses defaults for the channel
-> mapping.
-> 
-> Rework this code to copy the channel mapping from 'struct
-> audioreach_module_config', instead of using the default.  This requires
-> all callers to fill that structure: add missing initialization of
-> channel mapping.
-Adding this new function call is logically fine but its going to 
-introducing some sequencing issues.
+The patch is marked for 'net' but it's actually targeting net-next,
+since the air_en8811h is only there. Does not apply to 'net' so our CI
+did not trigger. Could you please repost with a the correct target
+tree?
 
-set_channel_map might be overwritten by this if not done correctly.
+Thanks,
 
-One such instance is in this patch..
+Paolo
 
-> 
-> Entire patch makes code more logical and easier to follow:
-> 1. q6apm-dai and q6apm-lpass-dais code which allocates 'struct
->     audioreach_module_config' initializes it fully, so fills both
->     the number of channels and the channel mapping.
-> 2. Audioreach code, which uses 'struct audioreach_module_config' when
->     constructing packets, copies entire contents of passed config, not
->     only pieces of it.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v2:
-> 1. Extend commit msg, rationale.
-> 2. Rework to new approach, but most of the code stays.
-> 3. Export audioreach_set_channel_mapping() (needed by Q6APM DAIS and
->     LPASS DAIS)
-> 4. Correct channel mapping also in audioreach_mfc_set_media_format(),
->     because MFC DAI is now part of backend.
-> 5. Do not adjust dynamic DAIs (drop audioreach_dai_load()).
-> ---
->   sound/soc/qcom/qdsp6/audioreach.c       | 30 +++++++-----------------------
->   sound/soc/qcom/qdsp6/audioreach.h       |  1 +
->   sound/soc/qcom/qdsp6/q6apm-dai.c        |  2 ++
->   sound/soc/qcom/qdsp6/q6apm-lpass-dais.c |  5 ++++-
->   4 files changed, 14 insertions(+), 24 deletions(-)
-> 
-> diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
-> index 5291deac0a0b..750b8ba64211 100644
-> --- a/sound/soc/qcom/qdsp6/audioreach.c
-> +++ b/sound/soc/qcom/qdsp6/audioreach.c
-> @@ -267,7 +267,7 @@ void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t token
->   }
->   EXPORT_SYMBOL_GPL(audioreach_alloc_apm_cmd_pkt);
->   
-> -static void audioreach_set_channel_mapping(u8 *ch_map, int num_channels)
-> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels)
->   {
->   	if (num_channels == 1) {
->   		ch_map[0] =  PCM_CHANNEL_FL;
-> @@ -281,6 +281,7 @@ static void audioreach_set_channel_mapping(u8 *ch_map, int num_channels)
->   		ch_map[3] =  PCM_CHANNEL_RS;
->   	}
->   }
-> +EXPORT_SYMBOL_GPL(audioreach_set_channel_mapping);
->   
->   static void apm_populate_container_config(struct apm_container_obj *cfg,
->   					  struct audioreach_container *cont)
-> @@ -819,7 +820,7 @@ static int audioreach_mfc_set_media_format(struct q6apm_graph *graph,
->   	uint32_t num_channels = cfg->num_channels;
->   	int payload_size;
->   	struct gpr_pkt *pkt;
-> -	int rc;
-> +	int rc, i;
->   	void *p;
->   
->   	payload_size = APM_MFC_CFG_PSIZE(media_format, num_channels) +
-> @@ -842,18 +843,8 @@ static int audioreach_mfc_set_media_format(struct q6apm_graph *graph,
->   	media_format->sample_rate = cfg->sample_rate;
->   	media_format->bit_width = cfg->bit_width;
->   	media_format->num_channels = cfg->num_channels;
-> -
-> -	if (num_channels == 1) {
-> -		media_format->channel_mapping[0] = PCM_CHANNEL_FL;
-> -	} else if (num_channels == 2) {
-> -		media_format->channel_mapping[0] = PCM_CHANNEL_FL;
-> -		media_format->channel_mapping[1] = PCM_CHANNEL_FR;
-> -	} else if (num_channels == 4) {
-> -		media_format->channel_mapping[0] = PCM_CHANNEL_FL;
-> -		media_format->channel_mapping[1] = PCM_CHANNEL_FR;
-> -		media_format->channel_mapping[2] = PCM_CHANNEL_LS;
-> -		media_format->channel_mapping[3] = PCM_CHANNEL_RS;
-> -	}
-> +	for (i = 0; i < num_channels; i++)
-> +		media_format->channel_mapping[i] = cfg->channel_map[i];
->   
->   	rc = q6apm_send_cmd_sync(graph->apm, pkt, 0);
->   
-> @@ -883,9 +874,6 @@ static int audioreach_set_compr_media_format(struct media_format *media_fmt_hdr,
->   		mp3_cfg->q_factor = mcfg->bit_width - 1;
->   		mp3_cfg->endianness = PCM_LITTLE_ENDIAN;
->   		mp3_cfg->num_channels = mcfg->num_channels;
-> -
-> -		audioreach_set_channel_mapping(mp3_cfg->channel_mapping,
-> -					       mcfg->num_channels);
->   		break;
->   	case SND_AUDIOCODEC_AAC:
->   		media_fmt_hdr->data_format = DATA_FORMAT_RAW_COMPRESSED;
-> @@ -1104,9 +1092,7 @@ static int audioreach_pcm_set_media_format(struct q6apm_graph *graph,
->   	media_cfg->num_channels = mcfg->num_channels;
->   	media_cfg->q_factor = mcfg->bit_width - 1;
->   	media_cfg->bits_per_sample = mcfg->bit_width;
-> -
-> -	audioreach_set_channel_mapping(media_cfg->channel_mapping,
-> -				       num_channels);
-> +	memcpy(media_cfg->channel_mapping, mcfg->channel_map, mcfg->num_channels);
->   
->   	rc = q6apm_send_cmd_sync(graph->apm, pkt, 0);
->   
-> @@ -1163,9 +1149,7 @@ static int audioreach_shmem_set_media_format(struct q6apm_graph *graph,
->   		cfg->q_factor = mcfg->bit_width - 1;
->   		cfg->endianness = PCM_LITTLE_ENDIAN;
->   		cfg->num_channels = mcfg->num_channels;
-> -
-> -		audioreach_set_channel_mapping(cfg->channel_mapping,
-> -					       num_channels);
-> +		memcpy(cfg->channel_mapping, mcfg->channel_map, mcfg->num_channels);
->   	} else {
->   		rc = audioreach_set_compr_media_format(header, p, mcfg);
->   		if (rc) {
-> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
-> index eb9306280988..208b74e50445 100644
-> --- a/sound/soc/qcom/qdsp6/audioreach.h
-> +++ b/sound/soc/qcom/qdsp6/audioreach.h
-> @@ -766,6 +766,7 @@ struct audioreach_module_config {
->   /* Packet Allocation routines */
->   void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t
->   				    token);
-> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels);
->   void *audioreach_alloc_cmd_pkt(int payload_size, uint32_t opcode,
->   			       uint32_t token, uint32_t src_port,
->   			       uint32_t dest_port);
-> diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
-> index 00bbd291be5c..8ab55869e8a2 100644
-> --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
-> +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
-> @@ -243,6 +243,7 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
->   	cfg.num_channels = runtime->channels;
->   	cfg.bit_width = prtd->bits_per_sample;
->   	cfg.fmt = SND_AUDIOCODEC_PCM;
-> +	audioreach_set_channel_mapping(cfg.channel_map, runtime->channels);
->   
-
-Prepare can be called multiple times.. so we have channels overwritten here.
-
---srini
->   	if (prtd->state) {
->   		/* clear the previous setup if any  */
-> @@ -669,6 +670,7 @@ static int q6apm_dai_compr_set_params(struct snd_soc_component *component,
->   		cfg.num_channels = 2;
->   		cfg.bit_width = prtd->bits_per_sample;
->   		cfg.fmt = codec->id;
-> +		audioreach_set_channel_mapping(cfg.channel_map, cfg.num_channels);
->   		memcpy(&cfg.codec, codec, sizeof(*codec));
->   
->   		ret = q6apm_graph_media_format_shmem(prtd->graph, &cfg);
-> diff --git a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
-> index a4ad1d0e6abd..8340e4fb78f4 100644
-> --- a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
-> +++ b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
-> @@ -106,6 +106,7 @@ static int q6hdmi_hw_params(struct snd_pcm_substream *substream,
->   	cfg->bit_width = params_width(params);
->   	cfg->sample_rate = params_rate(params);
->   	cfg->num_channels = channels;
-> +	audioreach_set_channel_mapping(cfg->channel_map, channels);
->   
->   	switch (dai->id) {
->   	case DISPLAY_PORT_RX_0:
-> @@ -130,10 +131,12 @@ static int q6dma_hw_params(struct snd_pcm_substream *substream,
->   {
->   	struct q6apm_lpass_dai_data *dai_data = dev_get_drvdata(dai->dev);
->   	struct audioreach_module_config *cfg = &dai_data->module_config[dai->id];
-> +	int channels = hw_param_interval_c(params, SNDRV_PCM_HW_PARAM_CHANNELS)->max;
->   
->   	cfg->bit_width = params_width(params);
->   	cfg->sample_rate = params_rate(params);
-> -	cfg->num_channels = hw_param_interval_c(params, SNDRV_PCM_HW_PARAM_CHANNELS)->max;
-> +	cfg->num_channels = channels;
-> +	audioreach_set_channel_mapping(cfg->channel_map, channels);
->   
->   	return 0;
->   }
-> 
 
