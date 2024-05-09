@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-174141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A156D8C0ABB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9767E8C0AC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16981C21C9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2672D284A14
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21495149006;
-	Thu,  9 May 2024 05:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="G1RLaI/F"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5F61494BF;
+	Thu,  9 May 2024 05:08:23 +0000 (UTC)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D028373
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 05:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF391494B4;
+	Thu,  9 May 2024 05:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715230872; cv=none; b=VWNGrVPX1NvF5MEHAY6u6Z4FtmhnomKJVPUL94Q0XiGQXahptAhxAgYeeYPP64S22Ipz7Kp/0Y1X6r2wXfgXOvSrI50zi+//etjqFfIqAPHgqzuVCEOUQWIhieeqZiApGe5gpDI7aPdf02gElVrza9GXsEwNRsPzjkvc4qgvG2Y=
+	t=1715231303; cv=none; b=DS36HP3dghJwLOVfZsfHZje+x3yxUc+sl6jm0GSNQBBACkc0NndkE9bi7eMbT6qEe9IjWsBLN29Ub/q0Tc4IceBi/A6uvOszWhVvVm1odgcUi/kBnYRPYooMLsYRI2J2FTze0YNnpVJZeymKBj2NSOI5xP83m9xhHjgynxXqJfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715230872; c=relaxed/simple;
-	bh=4x0gsReYDFDPrW0BFz65xuSmqH37neQnQ6EMuel0kXA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k/A6kO5yTfN4r4daXbdTG2aejgFOkWT0Fdy4lAwjStAS4mxEgY+MZwuIvGM8sF60zhj+S65LMcIvJhu3Qt0X/cJ8vcOPxcHqnvlJGne4eIWoKQNohZCFpXeNgG12T8ug7Wg+wjaW/a1kI8W5Xkxf7LRKAwXI4SHT8yv9Y1btDMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=G1RLaI/F; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1715230816; x=1715835616; i=efault@gmx.de;
-	bh=UuxZzsTEELEHmQYULWtJiXtg8qSf5xzPaKf1Cp0y3CM=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=G1RLaI/FO7jzkt+V2FbbUBc7KynjNaITLCCJUqqJAJj3A5QgRfbqRkWC+HIW7ILX
-	 V2Ul2ALLFa593INGH9FakjCQ/V9Th7KTWkTo6CI+WodwjdM2XuX6eiKWgZqF8eCal
-	 Rqw8a8xEO8kd3ZIfhGHoPTe8Tnp1iOqxsB47TY/ri0l6bkH+viajIq28HGtJcVgY8
-	 Hp9Z76bTlRvnQJpm5CrXUKnuZr540es6rdBXegOatGgk/pgixLMj8g2I4jMOSqL/P
-	 pVsvqkQjp+GC98ZrQLOpgEm6w65B9Z8pNAQM17ggHzZyHGCqDZC+O8yrao6j/0JF1
-	 f0Z7nA9O2lCKpWttOA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([185.191.217.253]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MQ5rO-1sI2t544ci-00PIof; Thu, 09
- May 2024 07:00:16 +0200
-Message-ID: <ae4545e2004395f345ac030635ba72a1e16ec2fe.camel@gmx.de>
-Subject: Re: [RFC][PATCH 10/10] sched/eevdf: Use sched_attr::sched_runtime
- to set request/slice suggestion
-From: Mike Galbraith <efault@gmx.de>
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
- juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,  rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, bristot@redhat.com,  vschneid@redhat.com,
- linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
- wuyun.abel@bytedance.com, tglx@linutronix.de, tim.c.chen@intel.com, 
- yu.c.chen.y@gmail.com
-Date: Thu, 09 May 2024 07:00:13 +0200
-In-Reply-To: <ZjxHlLQv1WuFq+SC@chenyu5-mobl2>
-References: <20240405102754.435410987@infradead.org>
-	 <20240405110010.934104715@infradead.org> <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
-	 <9c360c0d337b124c71095f06889d1c69279a7c06.camel@gmx.de>
-	 <ZjxHlLQv1WuFq+SC@chenyu5-mobl2>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1715231303; c=relaxed/simple;
+	bh=YZYM2CEf8uF3eNWleBd8V23QDnmsujeg+l05B7XGpos=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nEpHdYfVhLHY2S413cFitaoSFcWWmr2t+/fhcAXnKC+iHlmlXK2YDyza69w9RbORwmnhet94uferbglhkgishiXFzmjq7LIxF1juGF9jCsGAtPTmKcMECZ16ZyciemhvKb8mSkaAfvtLSrOb9Afjw7zQIFLwp3LyEBVBCpQUMF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f453d2c5a1so484456b3a.2;
+        Wed, 08 May 2024 22:08:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715231301; x=1715836101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GwMe+/sDHvAVGtTIX3MapIIEfVLTv/14jv9BLJ1rN/g=;
+        b=fIK4A+tg0L+o7FTBy86+r9UE39wNtbCZ7gMdON+nxylFz3jjIDaaEJqJzY2w/FcAgl
+         lWeHbkBPxoHHOyPFCfLEAeScaUJZz43F29KI1mV0AIg+T6JmTX5dutN1eMwjNQRAYlNC
+         +PVlTXBs8pVNv9vNqGAabR+XLyJtQOioXnsWuZ5IC9QjMqF1KaPQ1Ntm/KzHqrQh21Ky
+         BQzwqFySDd1DZT99nGcaCFMPRURo98601HChpwfispKLO0VYmsI5siCQquv5o4r3bBdP
+         QHo3L2Nkz/CXK6gVp6xHXJLth9mX5URS3TLkcdYtj7Q3dkuyTSqCdiFz/M/KND0EWS+N
+         OGFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUT75mwEcBl0iXkSfke+0ivJaYA0QD0sPmKxisWPYkQCKEctAGnlr8GHZ4KFs/mAcVowpilarc692zDRyCSsYiZAGbfIjnj60FBGvKvF7TgKwrX5dOZH3FxQ7XOSDyyEr72QTEIlpfONQMNxYkAxA==
+X-Gm-Message-State: AOJu0Yxpc85qaRmMeQ6X9hrF/L4G/Y/ZF6ZFAWpfEC+RNF8uJtENl4S5
+	g6ANgwEgG7OBF6khZYWaNYbnx3sMUlGOGzHjIP7k5fcOBanc4OO9OKO45p8/n5H6/ggxMAaoEsS
+	uTHIcCHWF9oXuzpe285JcIADAuvQ=
+X-Google-Smtp-Source: AGHT+IFqm2U3yXtg/ZYc5/6d6UOHoDN7bEJnNOA970nvjSewNnc5HjBRr7m++V9HmQFJfrHNC9mngcmYUma/XowNJJc=
+X-Received: by 2002:a05:6a21:a108:b0:1a7:60d8:a6dd with SMTP id
+ adf61e73a8af0-1afc8dc8605mr5316420637.53.1715231301105; Wed, 08 May 2024
+ 22:08:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240508060427.417-1-ravi.bangoria@amd.com>
+In-Reply-To: <20240508060427.417-1-ravi.bangoria@amd.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 8 May 2024 22:08:09 -0700
+Message-ID: <CAM9d7cgFKcHXeTXxax7GRCK__0U3HUnG3Ls09GpnD8FipyJk1A@mail.gmail.com>
+Subject: Re: [RFC 0/4] perf sched: Introduce schedstat tool
+To: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	irogers@google.com, swapnil.sapkal@amd.com, mark.rutland@arm.com, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, rostedt@goodmis.org, 
+	vincent.guittot@linaro.org, bristot@redhat.com, adrian.hunter@intel.com, 
+	james.clark@arm.com, kan.liang@linux.intel.com, gautham.shenoy@amd.com, 
+	kprateek.nayak@amd.com, juri.lelli@redhat.com, yangjihong@bytedance.com, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:km7XOlV+iZTX5Pbj0mzycx9dHsKyHRgmw3Fzp554IWSdRIYgGmx
- PwiphjC48ndCXjI7Ww2hHcx3psPVvr4+2OTHLM6uPfVRjYqGjFtTtmvRAw+TUOTC+e6eF65
- GBAa9vcOdz1uEW1w6MlysWnKCXfHOqSyx7IipAzNwQsh9rbVlUtHRw4ky3x0sST7dDaoEIZ
- jw71wMp9CJJGiMaoeydpw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LuImmvoTdTw=;r6EDsHiqRYcZ1+UZD8fAbq0VGcv
- /oUkkMeYizoWIGWzB2rx5GxlqY/tYbnENXOAQfmFlHpM7fZ88h1YkpaAhErRySdwtDIMwn/Re
- jFpQQQzIrnEu1HqLtc6MCEWrssHm/vDRc5zk0CrGOVBKTIpc1y6UAyPBujZTxANcUGoSCX7ob
- sBQm8n2ri8Vw4VbSQ4TjrjqbPTw3P/Cr6zf0N7SDjrlyUj4G9fsUpV79yyxx1BUN+I2cjYQdi
- 16f5ObqME0ERky0ROZ4av6hPZ1VEYEPtB+MlaYCehHnhYxE0Tv4K+FbIWfhRv88rmljNVlqKO
- 8OC5F3iNJPHbWza95mMSTQ04cW3ixhLB3FGcMneez8fM/BJt7pQsFLeV+zbBafc1WMvLd5WBK
- qz19R6YtGxz+9pNya99ZWZS8/ncQm1plAsGyyPypfnEuPaki8dLx38olkAIaoVQxziLTPGngs
- xi8mOZv5IZpFX7vjpc52lQcsbIKyew97hkzckwdDxKwqlnJq2F1+1n3NELHszFRVrjfoKnI3K
- AtEaEgh/R0Ls1NdW6W58LIUgamnFfMVuWR6tzaVvCcbWVftWwOKuwQd6SYF1CPlKe8mHpo68L
- ajEtVpmc1oF1XVFDn6FhljhCzAzT9kaKY4xBdrI++2UStYLy6Th8QUIc7yN+K3TyzVhzUM8Ly
- WER1CRRH1MSYdBz4fy6DT0NKxxjaiK17bZzTRVORLbYN/NS2+UkT+XOH7jANgpfuFaThvs9rt
- 5F/WTkxg7nu2SAiM8b+LxkuBT1c0EObRy3RwKuZ1CQ93IRaxWYjjmApSvv3MnVQJzthv/lp8c
- ZuCAwM195FSjDjKreZmExKutYtjjrgo0vOltIWHreieYM=
 
-On Thu, 2024-05-09 at 11:48 +0800, Chen Yu wrote:
+Hi Ravi,
 
-> And I agree we should take the platform size(such
-> as CPU number) into consideration.
+On Tue, May 7, 2024 at 11:05=E2=80=AFPM Ravi Bangoria <ravi.bangoria@amd.co=
+m> wrote:
+>
+> MOTIVATION
+> ----------
+>
+> Existing `perf sched` is quite exhaustive and provides lot of insights
+> into scheduler behavior but it quickly becomes impractical to use for
+> long running or scheduler intensive workload. For ex, `perf sched record`
+> has ~7.77% overhead on hackbench (with 25 groups each running 700K loops
+> on a 2-socket 128 Cores 256 Threads 3rd Generation EPYC Server), and it
+> generates huge 56G perf.data for which perf takes ~137 mins to prepare
+> and write it to disk [1].
 
-I think you'll need more that that, because size agnostic, when it
-comes to latency, an idle CPU is damn hard to beat, making migration
-restrictions (traditional and obvious target) tend to leave highly
-annoying piles of collateral damage in their wake.
+Right, this is painful.
 
-(spoken from BTDT perspective, have t-shirt, got butt kicked;)
+>
+> Unlike `perf sched record`, which hooks onto set of scheduler tracepoints
+> and generates samples on a tracepoint hit, `perf sched schedstat record`
+> takes snapshot of the /proc/schedstat file before and after the workload,
+> i.e. there is zero interference on workload run. Also, it takes very
+> minimal time to parse /proc/schedstat, convert it into perf samples and
+> save those samples into perf.data file. Result perf.data file is much
+> smaller. So, overall `perf sched schedstat record` is much more light-
+> weight compare to `perf sched record`.
 
-	-Mike
+Nice work!
+
+>
+> We, internally at AMD, have been using this (a variant of this, known as
+> "sched-scoreboard"[2]) and found it to be very useful to analyse impact
+> of any scheduler code changes[3][4].
+>
+> Please note that, this is not a replacement of perf sched record/report.
+> The intended users of the new tool are scheduler developers, not regular
+> users.
+
+Great, I think it's very useful.
+
+>
+> USAGE
+> -----
+>
+>   # perf sched schedstat record
+>   # perf sched schedstat report
+
+Hmm. I think we can remove the duplication in 'sched'. :)
+Given you are thinking of taskstat, how about making it
+'cpustat' instead?
+
+Also I think it'd be easier if you also provide 'live' mode so that
+users can skip record + report steps and run the workload
+directly like uftrace does. :)
+
+Something like this
+
+  # perf sched cpustat  myworkload
+  (result here ...)
+
+Thanks,
+Namhyung
+
+>
+> Note: Although perf schedstat tool supports workload profiling syntax
+> (i.e. -- <workload> ), the recorded profile is still systemwide since
+> the /proc/schedstat is a systemwide file.
 
