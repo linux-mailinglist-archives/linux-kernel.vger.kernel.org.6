@@ -1,176 +1,85 @@
-Return-Path: <linux-kernel+bounces-174000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F958C08F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:11:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDB58C08FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44136B20B1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84B71F21A4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9712A13A400;
-	Thu,  9 May 2024 01:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOw8Z3Rn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151B613C3D0;
+	Thu,  9 May 2024 01:17:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D473213A3EF;
-	Thu,  9 May 2024 01:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5699513A3EE
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 01:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715217102; cv=none; b=XgEUA8Ctxm2HKI63R2eDfX1i3D2VYHmk/XJesyse6RmsuY5yOb3Jz4PgCzDNFrLtWumatie+LNiP0psnTvUlQf/kdmzm5EAmfyXZ/ndquMqHkJHM0imZ7zpmGMPWMGGQ5Gc6fvBzV6QBFDIdv4d+qqw92lPFv3/xWTcvAWNfAc4=
+	t=1715217425; cv=none; b=CjUg+pU8DLVHzrdZIalUoXNa216czcciwWIGzZLA3mXp1tpTAtFqfp7V2J/Sf/YTL1eguJlYuG+Esv7iZel5nGkW81WBeJ4YMJy/Y6G5cuZk/USElTLkDuxET/f3SJ8kEi9d27gCuTXQQNnwOeOszPo4fiUabBAzg7pFGEDsDb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715217102; c=relaxed/simple;
-	bh=3+R0pCEKlThoL5hIISvVv/GIFqbCo1l2qCt0ONSsQWw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qjEUcYBmjtvncEtdWOtpogcOHsHWiJXdMICffe/D/Wz2YAgFlzfTslZGHqvwSQ0vPxpo0drRXvMDwxpAmb19i3QXoUXoqzey6vPi65a/06gvsz6BDWwHH8Rk8g8tTuI0Mh5/hHfNa1m8yLNpKk43OMGjnjLXF+un7/26WGLL3ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOw8Z3Rn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF7AC113CC;
-	Thu,  9 May 2024 01:11:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715217102;
-	bh=3+R0pCEKlThoL5hIISvVv/GIFqbCo1l2qCt0ONSsQWw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oOw8Z3RnOmLh8zUevgyrTVy8JpBljKOS/WwdQ1vMzmoNfyy5j047nugQI/BFipREW
-	 RpGPu+0e6pJ7uG3DgzaG0//StbqYa1Njgm3kweFJyeuY9aXUgk8Oe1QJvdpefwsDgx
-	 lGxYoFfp/DHq2OHuVOiz/tFkRBG43kU9VkM7/4InTqN48hWdZ+X9xQqSEQvzWzhW+0
-	 CS0QO7e1ZivY4aQpe+as21qp1N/vKgF2xfREykFaTbD0anhPOCbMEKyzg42ATMy2iu
-	 1wPr5d8KbWn9gz0wgK4QXWb99JAwhDB26ZZKKypxB/C6j1VNh+LLxlRvYNlheVwwaj
-	 hjt56fgSVIrwQ==
-Date: Thu, 9 May 2024 10:11:36 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: James Clark <james.clark@arm.com>
-Cc: linux-perf-users@vger.kernel.org, leo.yan@linux.dev, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de
- Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf dwarf-aux: Fix build with HAVE_DWARF_CFI_SUPPORT
-Message-Id: <20240509101136.5b0e0f2bf8df640fc2e65624@kernel.org>
-In-Reply-To: <20240508141458.439017-1-james.clark@arm.com>
-References: <20240508141458.439017-1-james.clark@arm.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715217425; c=relaxed/simple;
+	bh=ghu4iV7dxEKHYr5FUcqTWc2WoZ7gzqCQuUFJNEIke7c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TSeNISNjC5siLs0wG46wFpyjIRATYMKI0AD4td/eVdZTIrM8LdK9/0Z01Uxbhde7m2FUTtww61DvLHxGMzCENIRMcHajk5yxeYST4Hi1/Wm+i9uk3cNBYRL1+znqyc8lX2A3qY0dKSZbp3ql5fCMgFw2K49xwL8OV0sT+sm2xYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dee502fae6so29306939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 18:17:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715217423; x=1715822223;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oftz16oysfnlKPaQe2lxtZscVIl7+JEIfdhzh74tyro=;
+        b=wD2kc/03Mgt/8FcHZnnNJObMPDtKtKAdBCVoU9iLoJEgVlNs8aO2UbeaC7bEwO/mpX
+         DS0Hsi91rQNho2yeQTiJxCGPN6yI0CC0HaFCe5JArfwRWvmIKjC3TXPup33gZ4ilfgG7
+         NsoWPvGFvT5NsZSpaRQnQnuKfGMIMC/Cdado8Ow+hFquD0ZkzIDjfyOh28toQCgJKZvo
+         1vq9sojxX1LQlpUr38w28n7BX0aOAvCGH0SCam20CUrgCuv5cQepNBAMKQn7/BsgrFMW
+         +sFi9779TyvVKr9NDNlkRgXaUdX1RMyoZf8bOVysVQLvRr6/KVrgvVUehiyEYjCLYQZ2
+         EQ1Q==
+X-Gm-Message-State: AOJu0YzNAZs70MBZVCE7VNJHzRGId/cIiIynpU4OsqXXMGMmX9dzIzg/
+	32XtbhNL/45aw1kRxMNzOxvrT9aw07C3SELOd7VJASknrC9wlFhdJSDP4GbrL1Vkc6iKnugpUnj
+	UeIn5XPb8wCNT2exYlYV9J67wVvkQOYm+nGXTT+fWtp8KtnFi0DmSTEg=
+X-Google-Smtp-Source: AGHT+IHpGuFTN5aAm7JsxOfjhe0MclTIcLoglEkqSaG+KYzG8SrpRelR5H692ffQYg1Yee8glg23u6wU3y3T805WillKUIXCtnby
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:2389:b0:488:cb5c:7044 with SMTP id
+ 8926c6da1cb9f-488fdd5568fmr258613173.6.1715217423574; Wed, 08 May 2024
+ 18:17:03 -0700 (PDT)
+Date: Wed, 08 May 2024 18:17:03 -0700
+In-Reply-To: <ZjwdgZftuDnkXa9Y@zeus>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003eb8460617fb2d12@google.com>
+Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work
+From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, ryasuoka@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed,  8 May 2024 15:14:57 +0100
-James Clark <james.clark@arm.com> wrote:
+Hello,
 
-> check_allowed_ops() is used from both HAVE_DWARF_GETLOCATIONS_SUPPORT
-> and HAVE_DWARF_CFI_SUPPORT sections, so move it into the right place so
-> that it's available when either are defined. This shows up when doing
-> a static cross compile for arm64:
-> 
->   $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LDFLAGS="-static" \
->     EXTRA_PERFLIBS="-lexpat"
-> 
->   util/dwarf-aux.c:1723:6: error: implicit declaration of function 'check_allowed_ops'
-> 
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks!
-
-> Fixes: 55442cc2f22d ("perf dwarf-aux: Check allowed DWARF Ops")
-> Signed-off-by: James Clark <james.clark@arm.com>
-> ---
->  tools/perf/util/dwarf-aux.c | 56 ++++++++++++++++++-------------------
->  1 file changed, 28 insertions(+), 28 deletions(-)
-> 
-> diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-> index c0a492e65388..c9584563cd56 100644
-> --- a/tools/perf/util/dwarf-aux.c
-> +++ b/tools/perf/util/dwarf-aux.c
-> @@ -1215,6 +1215,34 @@ static int offset_from_dwarf_op(Dwarf_Op *op)
->  	}
->  	return -1;
->  }
-> +
-> +static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
-> +{
-> +	/* The first op is checked separately */
-> +	ops++;
-> +	nops--;
-> +
-> +	/*
-> +	 * It needs to make sure if the location expression matches to the given
-> +	 * register and offset exactly.  Thus it rejects any complex expressions
-> +	 * and only allows a few of selected operators that doesn't change the
-> +	 * location.
-> +	 */
-> +	while (nops) {
-> +		switch (ops->atom) {
-> +		case DW_OP_stack_value:
-> +		case DW_OP_deref_size:
-> +		case DW_OP_deref:
-> +		case DW_OP_piece:
-> +			break;
-> +		default:
-> +			return false;
-> +		}
-> +		ops++;
-> +		nops--;
-> +	}
-> +	return true;
-> +}
->  #endif /* HAVE_DWARF_GETLOCATIONS_SUPPORT || HAVE_DWARF_CFI_SUPPORT */
->  
->  #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
-> @@ -1395,34 +1423,6 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
->  	return true;
->  }
->  
-> -static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
-> -{
-> -	/* The first op is checked separately */
-> -	ops++;
-> -	nops--;
-> -
-> -	/*
-> -	 * It needs to make sure if the location expression matches to the given
-> -	 * register and offset exactly.  Thus it rejects any complex expressions
-> -	 * and only allows a few of selected operators that doesn't change the
-> -	 * location.
-> -	 */
-> -	while (nops) {
-> -		switch (ops->atom) {
-> -		case DW_OP_stack_value:
-> -		case DW_OP_deref_size:
-> -		case DW_OP_deref:
-> -		case DW_OP_piece:
-> -			break;
-> -		default:
-> -			return false;
-> -		}
-> -		ops++;
-> -		nops--;
-> -	}
-> -	return true;
-> -}
-> -
->  /* Only checks direct child DIEs in the given scope. */
->  static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
->  {
-> -- 
-> 2.34.1
-> 
-> 
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+no output from test machine
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Tested on:
+
+commit:         02754103 Merge branch 'rxrpc-miscellaneous-fixes'
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
+console output: https://syzkaller.appspot.com/x/log.txt?x=1075e7c0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7da3ffba7152e6
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c1a83f180000
+
 
