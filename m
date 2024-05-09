@@ -1,143 +1,98 @@
-Return-Path: <linux-kernel+bounces-174381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 040588C0DE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:59:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C9958C0DE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398D21C21F75
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14F41F222BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB4A14B065;
-	Thu,  9 May 2024 09:59:35 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C3E14B062;
+	Thu,  9 May 2024 09:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W2qOQS6E"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A95F14AD1A;
-	Thu,  9 May 2024 09:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0747C14A636
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715248774; cv=none; b=kLPMb/V+EMG+3KEavF+f8NgvHQ6hw4l9W6NuRm7s8xSCb4valSUDV/JGDyUU1wiKCWDBFCEWqNZaDjegG7X7ZuuI0Um4OGafPJQCxA2A4h/J6eb6ahtVqlgrZnwjdqbdYo+iQ1FcGo2ZdtuieCh7kSpHbc3mrnU5fSvffTKtexs=
+	t=1715248791; cv=none; b=j+qf5qs6gJCHSmUzLhbAEYV5NZvrnvwEK1LHjji4mQsxLeKXz5qfrObpJ9KvH6cjc3JR7C7Hxh8W9KClfk/0Vf1v6eCoeCweH4Q1jaWz9xal9HG2udlku3TWmtVvOutEJMIo44hlSYO/h5FTk+p2XnJOawFar0DUDKawd9+bxCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715248774; c=relaxed/simple;
-	bh=dtQ5WtrGDhIWgT1qeZF8014MTF0JeO8/hPqjUWcHDGY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DHd44pzcD+A+i5/wl2GdIW/Z1RMA0wAhi38l8AvfKC65aOIuDNQaU/xV3ifyGD37rgEXV4eSnK6CLVPp79m+Qnmis0O/SqbC5abtbeBs32wsqZiGddoOWiIWyznwYJ831R+lrqpreKCzg0HiWvoNGutFoZWvzniXUU1zuRqvwZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4499x4Jd91475338, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 4499x4Jd91475338
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 9 May 2024 17:59:04 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 17:59:04 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 17:59:04 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Thu, 9 May 2024 17:59:04 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Ratheesh Kannoth <rkannoth@marvell.com>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org" <horms@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v18 02/13] rtase: Implement the .ndo_open function
-Thread-Topic: [PATCH net-next v18 02/13] rtase: Implement the .ndo_open
- function
-Thread-Index: AQHaoUT5RWh4TO7cuUeh1vkT8i8o3LGN87+AgACfZICAAApUsIAADPfg
-Date: Thu, 9 May 2024 09:59:04 +0000
-Message-ID: <feeecf2edbe54d999b09068718e9c8b5@realtek.com>
-References: <20240508123945.201524-1-justinlai0215@realtek.com>
- <20240508123945.201524-3-justinlai0215@realtek.com>
- <20240509065747.GB1077013@maili.marvell.com>
- <9267c5002e444000bb21e8eef4d4dc07@realtek.com>
- <MWHPR1801MB19187C10FEBB29BDACE499B1D3E62@MWHPR1801MB1918.namprd18.prod.outlook.com>
-In-Reply-To: <MWHPR1801MB19187C10FEBB29BDACE499B1D3E62@MWHPR1801MB1918.namprd18.prod.outlook.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1715248791; c=relaxed/simple;
+	bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLCx9xl5O61lVMJRa8MnLIH/Zy4hxRrB8Ls6yiD+uz32i5fzfqNlibcEcff3m4a5LQe4oXHOKRNcA1WMWfIEaXz+0/NrBNekZcjSv2N/Y9UDULRw0TSasFjkD4n/2SwuHa0z1/zg81CYCaisVfh/Ulxg0y1AwruRJXH1+JDurEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W2qOQS6E; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a5a157a1cd1so155101366b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 02:59:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715248788; x=1715853588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
+        b=W2qOQS6E3K4ahREBr8hrdQOAHM9nHaEvvnxWIm0vGbhDtw858+Wz1xTe3MbFdnnLN3
+         pTMNcsk9YyuFp5XONQBIj2lkmoxOyyiojnOWrFJXKyYbdu2ILlDrI1HEr8vRuevBjkw1
+         uKDsy4MSZGqaoi7s+pyGv71HhBmDTU1jRxbY7+BUMkuA/gFyyOYKrEslN2fbXBHMb5Cz
+         f8kXxPTf84fm45XSoOMAZhrt6P4Qz5prOJOVneJk9V3wcWXLHLhFt+LiW5nSr6HW3FZ7
+         Aai1jIoOR2mh2rk2N04Yz8rBqy7XYHyMbNrk61QX3qY2L1T0V5qMFJRiaLpnqAbLGDZg
+         tpXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715248788; x=1715853588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vAA13b7P3kVq/+RAFJXOYAjvaVdl9qZ3lyYPS5otTnA=;
+        b=TzihgrAjdS/iheiLwZtfRjruRqpoNAka79wpCaZrNxG/XnkSf5GkaK+4/0Oe75tncu
+         uxhJy+LxAgpD13gnSP/qd9DZcKkjToo84uo/eEnNttYwT3caH3qV8UdbuRx9ieg6d4A6
+         hPIUDxqmlcZ8auRFS/xWp2SXSpWkT8G7cxygHrkyGjA+3yRH2lhRUmATJeWkWfox8woM
+         ip56Fu7lVqo3LId1kc8kKwZwss2iRmVBsC+DJRe2Fmh8+nqAANafgPhTVtRw80LzVbZf
+         N4h9MrdpycoBdRwCz+7+F4Lmx72Z7cGEauwGtF2Gt6c5gX76Sdry7G2ImmdONSGmEA8A
+         uh8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVUqdOC0hfp6rf/tvb5z/6sTzNm3Rkbt/ItKfA3bymy0ivm7hSlrtvxoSx+MJchA3GxFcVfv10mu3olSBd/gy/75BXQ/Y3VT70GvcSH
+X-Gm-Message-State: AOJu0Yxp1qEEhLpZ+9RJ1SuIhfRfyUeajZobUVzmIX5Vg1iaWa4ia5QA
+	klHs3ORBNRzKpNKbI2G/7Bb7MCrBDyAYW26+P4XS3+syn07r1MrbrvUE9f9WwpA=
+X-Google-Smtp-Source: AGHT+IG6R7BLV/bmTcIFwSbDC1bMFzF1pWWCeqzJAHPNppoxKmA+Nqmks67h6FPVR0skwmyHv2tJtg==
+X-Received: by 2002:a17:906:3296:b0:a59:9ad4:6f42 with SMTP id a640c23a62f3a-a59fb9b8298mr343794666b.58.1715248788259;
+        Thu, 09 May 2024 02:59:48 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0193dsm54636866b.169.2024.05.09.02.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 02:59:48 -0700 (PDT)
+Date: Thu, 9 May 2024 12:59:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Levi Yun <ppbuk5246@gmail.com>, kernel-janitors@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] time/tick-sched: enable idle load balancing when
+ nohz_full cpu becomes idle.
+Message-ID: <c01a0e7b-96f6-42cf-9e71-8118640abf5b@moroto.mountain>
+References: <20240506213150.13608-1-ppbuk5246@gmail.com>
+ <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67be5fa1-3b5e-4ec9-ad8e-1e230e618e98@web.de>
 
->=20
-> > From: Justin Lai <justinlai0215@realtek.com>
-> > Sent: Thursday, May 9, 2024 2:29 PM
-> > > > +
-> > > > +     /* rx and tx descriptors needs 256 bytes alignment.
-> > > > +      * dma_alloc_coherent provides more.
-> > > > +      */
-> > > > +     for (i =3D 0; i < tp->func_tx_queue_num; i++) {
-> > > > +             tp->tx_ring[i].desc =3D
-> > > > +                             dma_alloc_coherent(&pdev->dev,
-> > > > +
-> > > RTASE_TX_RING_DESC_SIZE,
-> > > > +
-> > > &tp->tx_ring[i].phy_addr,
-> > > > +
-> GFP_KERNEL);
-> > > > +             if (!tp->tx_ring[i].desc)
-> > > You have handled errors gracefully very where else. why not here ?
-> >
-> > I would like to ask you, are you referring to other places where there
-> > are error description messages, but not here?
-> other functions, you are freeing allocated resources in case of failure, =
-but here,
-> you are returning error directly.
->=20
-After returning the error, I will do the corresponding error handling in rt=
-ase_open.
-.
->=20
-> > > Did you mark the skb for recycle ? Hmm ... did i miss to find the cod=
-e ?
-> > >
-> > We have done this part when using the skb and before finally releasing
-> > the skb resource. Do you think it would be better to do this part of
-> > the process when allocating the skb?
-> i think, you added skb_for_recycle() in the following patch. Sorry I miss=
-ed it .
-> ignore my comment.
->=20
+Markus, kernel-janitors doesn't need to be a part of these discussions.
+Could you please stop adding us to the CC list?
 
-OK, thank you for your feedback.
-
-> >
-> > > > +
-> > > > +err_free_all_allocated_irq:
-> > > You are allocating from i =3D 1, but freeing from j =3D 0;
-> >
-> > Hi Ratheesh,
-> > I have done request_irq() once before the for loop, so there should be
-> > no problem starting free from j=3D0 here.
-> Thanks for pointing out.
-
-Thank you also for your review.
+regards,
+dan carpenter
 
 
