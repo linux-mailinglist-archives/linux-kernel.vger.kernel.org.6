@@ -1,120 +1,202 @@
-Return-Path: <linux-kernel+bounces-174839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056608C15B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:57:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA888C1521
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:03:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A242844A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D822C1F231E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E5F84E02;
-	Thu,  9 May 2024 19:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eid0+pze"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDC17F489;
+	Thu,  9 May 2024 19:02:51 +0000 (UTC)
+Received: from mail-m17229.xmail.ntesmail.com (mail-m17229.xmail.ntesmail.com [45.195.17.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9154082871;
-	Thu,  9 May 2024 19:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C25653;
+	Thu,  9 May 2024 19:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.17.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284582; cv=none; b=u/NOMLsEAZnaDAmMzrAl3/KqA1yLwAl4G3PGYV8osW512prt9REHd5T6H6LSj6PTsYeD4iz9qmL8UgF3Fzy3dGgRuTMt22WtASQRhZZVqWTqGH5Hatvve9bfPEGHaPAUldlw4o5e7aXHlVCgUtYmQ2R1gflkK6wtzm5yYxPUi7c=
+	t=1715281371; cv=none; b=gS5RyhTAP0IP17+deH6yEFXsfqsGgf2RNAZJDnbwXAijRn9SHbH3AGwPd+DrJsHNRR2q7jQfZk2KWbrliNvn+HTEFqxwxBy3IywJeFvt1GCRtHzzh6Rzzv9JwKnqjJjqJoUozOVusIA5u6kIc0xufq20pEVjdN92Rbueof8ENSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284582; c=relaxed/simple;
-	bh=4Wcd+39Om11s8ru8Ou6OGHhyXSOIxsxL2t8MT1U07lI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MZP+y459BgmAG4Mde/ZwT85GQEkvJT8xbSedE14+8zihuFLOeoZ8FVUbBS6fEQihiXIUG7tXtvFr9B8H9QHoJMiN+n8bE1yh+zZIM8046gR2Obifg5oElygtMHVZC5xorFHbASnrnCioMLzjt/zStuOUlrO6L4ZZq34RCJ1irTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eid0+pze; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715284581; x=1746820581;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4Wcd+39Om11s8ru8Ou6OGHhyXSOIxsxL2t8MT1U07lI=;
-  b=Eid0+pze0Zu5zRp9jZHKNwtid5y40x/nf0FRLPr6p51RuW45bKYaYa4m
-   ajxHKW6M1CLAFCE0q47cIMxh+GR9kY/TYBk6agAI2MxQNN4FJ37HA1Vgk
-   4AwbZbrnifbU4p4I4LfaOv8J8mEfZYOPF+O2CuaQTC5YKF3srgzalf5Ua
-   QcTqob8tZ0KjyAVTwKSsyGzrP/3CpW8A2N2RazwTNLJA8zXBHI7AkK+tv
-   jfKj7UJVr7NDjXKqGdyIctN9HAdIb5FBGplohLee4+gFLu8VtoZS18I3M
-   gLdQel++7Y2zjo39jVsSNK1D+MhxzZ5+PSACjIkgZ8J/EIk93w6bPTbrU
-   g==;
-X-CSE-ConnectionGUID: kF31CffVR1myW6TjvPQEUg==
-X-CSE-MsgGUID: O0ms8CfRRUWF2hx81nP79Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11454265"
-X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
-   d="scan'208";a="11454265"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 12:56:20 -0700
-X-CSE-ConnectionGUID: ChKJjrjNSG29a/wMJpwFcw==
-X-CSE-MsgGUID: 2HJ/8Hz+TV+tf3jMAIWI6Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
-   d="scan'208";a="34213097"
-Received: from ajunnare-mobl.amr.corp.intel.com (HELO [10.213.181.85]) ([10.213.181.85])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 12:56:17 -0700
-Message-ID: <76a943f7-d839-4378-aa12-7fb32e3077e6@linux.intel.com>
-Date: Thu, 9 May 2024 08:02:49 -0500
+	s=arc-20240116; t=1715281371; c=relaxed/simple;
+	bh=4XnBz2lh+7YxriUGIom+RcfBIR64ijJxolblnDjagBQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CHchWtgmZK1r13FgNAiQNW2n+e5sa19I/i7JXuPU/TJT4shnsV4SCOurfsQ1Pcj5ZOz1IRGL0/SEYOsA4tiKjfiKNl+HWBvis6IF5kWHE8f1LPEfnN5HXzOSS8tBaO2rSwrXpZgZILv9EA4/MoRd0na1kWtUvfdu07zASnvvGds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn; spf=none smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.17.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=easystack.cn
+Received: from [192.168.122.189] (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 0F263860417;
+	Thu,  9 May 2024 21:03:43 +0800 (CST)
+Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+ Gregory Price <gregory.price@memverge.com>, axboe@kernel.dk,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev
+References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
+ <66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
+ <ZikhwAAIGFG0UU23@memverge.com>
+ <bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
+ <ZiuwyIVaKJq8aC6g@memverge.com>
+ <98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
+ <ZivS86BrfPHopkru@memverge.com>
+ <8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
+ <wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
+ <20240503105245.00003676@Huawei.com>
+ <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
+ <20240508131125.00003d2b@Huawei.com>
+ <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
+ <20240508164417.00006c69@Huawei.com>
+ <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
+ <20240509132134.00000ae9@Huawei.com>
+From: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Message-ID: <a571be12-2fd3-e0ee-a914-0a6e2c46bdbc@easystack.cn>
+Date: Thu, 9 May 2024 21:03:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 26/39] ASoC: qcom: qdsp6: Add support to track
- available USB PCM devices
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, lgirdwood@gmail.com, andersson@kernel.org,
- krzk+dt@kernel.org, gregkh@linuxfoundation.org, Thinh.Nguyen@synopsys.com,
- broonie@kernel.org, bgoswami@quicinc.com, tiwai@suse.com,
- bagasdotme@gmail.com, robh@kernel.org, konrad.dybcio@linaro.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-27-quic_wcheng@quicinc.com>
- <875b643f-af2c-4a1b-87e8-80cd6f236dea@linux.intel.com>
- <b1f8b531-6041-ec11-5932-13bf17b69d0b@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <b1f8b531-6041-ec11-5932-13bf17b69d0b@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240509132134.00000ae9@Huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGUNNVh1KTB0eSx8ZS0wZSFUZERMWGhIXJBQOD1
+	lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a8f5d73d560023ckunm0f263860417
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ngg6Fjo*FDc*EUo6Aj1JLj5J
+	GggwC0JVSlVKTEpOSU5CQ0lIQ0xIVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
+	V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBTE5JTjcG
 
 
 
-On 5/8/24 18:57, Wesley Cheng wrote:
-> Hi Pierre,
+在 2024/5/9 星期四 下午 8:21, Jonathan Cameron 写道:
+> On Thu, 9 May 2024 19:24:28 +0800
+> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
 > 
-> On 5/7/2024 2:23 PM, Pierre-Louis Bossart wrote:
+..
+>>> Yes. I think we are going to have to wait on architecture specific clarifications
+>>> before any software coherent use case can be guaranteed to work beyond the 3.1 ones
+>>> for temporal sharing (only one accessing host at a time) and read only sharing where
+>>> writes are dropped anyway so clean write back is irrelevant beyond some noise in
+>>> logs possibly (if they do get logged it is considered so rare we don't care!).
 >>
->>> @@ -113,6 +120,12 @@ static int q6usb_alsa_connection_cb(struct
->>> snd_soc_usb *usb,
->>>       if (connected) {
->>>           /* We only track the latest USB headset plugged in */
->>>           data->active_usb_chip_idx = sdev->card_idx;
->>> +
->>> +        set_bit(sdev->card_idx, &data->available_card_slot);
->>> +        data->status[sdev->card_idx].sdev = sdev;
+>> Hi Jonathan,
+>> 	Allow me to discuss further. As described in CXL 3.1:
+>> ```
+>> Software-managed coherency schemes are complicated by any host or device
+>> whose caching agents generate clean writebacks. A “No Clean Writebacks”
+>> capability bit is available for a host in the CXL System Description
+>> Structure (CSDS; see Section 9.18.1.6) or for a device in the DVSEC CXL
+>> Capability2 register (see Section 8.1.3.7).
+>> ```
 >>
->> Not following the 'only track the latest USB headset plugged in', I
->> don't see anything that discard the previously latest headset...
+>> If we check and find that the "No clean writeback" bit in both CSDS and
+>> DVSEC is set, can we then assume that software cache-coherency is
+>> feasible, as outlined below:
 >>
->> If you plug headset1, then headset2, how is headset1 marked as not
->> available for USB offload?
+>> (1) Both the writer and reader ensure cache flushes. Since there are no
+>> clean writebacks, there will be no background data writes.
 >>
+>> (2) The writer writes data to shared memory and then executes a cache
+>> flush. If we trust the "No clean writeback" bit, we can assume that the
+>> data in shared memory is coherent.
+>>
+>> (3) Before reading the data, the reader performs cache invalidation.
+>> Since there are no clean writebacks, this invalidation operation will
+>> not destroy the data written by the writer. Therefore, the data read by
+>> the reader should be the data written by the writer, and since the
+>> writer's cache is clean, it will not write data to shared memory during
+>> the reader's reading process. Additionally, data integrity can be ensured.
+>>
+>> The first step for CBD should depend on hardware cache coherence, which
+>> is clearer and more feasible. Here, I am just exploring the possibility
+>> of software cache coherence, not insisting on implementing software
+>> cache-coherency right away. :)
 > 
-> It won't mark headset1 as not available for offload, because offload
-> could happen on either depending on what is selected (from the kcontrol
-> as well).
+> Yes, if a platform sets that bit, you 'should' be fine.  What exact flush
+> is needed is architecture specific however and the DMA related ones
+> may not be sufficient. I'd keep an eye open for arch doc update from the
+> various vendors.
+> 
+> Also, the architecture that motivated that bit existing is a 'moderately
+> large' chip vendor so I'd go so far as to say adoption will be limited
+> unless they resolve that in a future implementation :)
 
-Right, so the wording 'only track the latest USB headset plugged in' is
-incorrect or obsolete, isn't it?
+Great, I think we've had a good discussion and reached a consensus on 
+this issue. The remaining aspect will depend on hardware updates. Thank 
+you for the information, that helps a lot.
+
+Thanx
+> 
+> Jonathan
+> 
+>>
+>> Thanx
+>>>    
+>>>>>       
+>>>>>>
+>>>>>> CBD can initially support (3), and then transition to (1) when hardware
+>>>>>> supports cache-coherency. If there's sufficient market demand, we can
+>>>>>> also consider supporting (2).
+>>>>> I'd assume only (3) works.  The others rely on assumptions I don't think
+>>>>
+>>>> I guess you mean (1), the hardware cache-coherency way, right?
+>>>
+>>> Indeed - oops!
+>>> Hardware coherency is the way to go, or a well defined and clearly document
+>>> description of how to play with the various host architectures.
+>>>
+>>> Jonathan
+>>>
+>>>    
+>>>>
+>>>> :)
+>>>> Thanx
+>>>>   
+>>>>> you can rely on.
+>>>>>
+>>>>> Fun fun fun,
+>>>>>
+>>>>> Jonathan
+>>>>>       
+>>>>>>
+>>>>>> How does this approach sound?
+>>>>>>
+>>>>>> Thanx
+>>>>>>>
+>>>>>>> J
+>>>>>>>          
+>>>>>>>>
+>>>>>>>> Keep in mind that I don't think anybody has cxl 3 devices or CPUs yet, and
+>>>>>>>> shared memory is not explicitly legal in cxl 2, so there are things a cpu
+>>>>>>>> could do (or not do) in a cxl 2 environment that are not illegal because
+>>>>>>>> they should not be observable in a no-shared-memory environment.
+>>>>>>>>
+>>>>>>>> CBD is interesting work, though for some of the reasons above I'm somewhat
+>>>>>>>> skeptical of shared memory as an IPC mechanism.
+>>>>>>>>
+>>>>>>>> Regards,
+>>>>>>>> John
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>         
+>>>>>>>
+>>>>>>> .
+>>>>>>>          
+>>>>>
+>>>>> .
+>>>>>       
+>>>
+>>>    
+> 
 
