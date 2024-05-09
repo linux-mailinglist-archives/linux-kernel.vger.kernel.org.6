@@ -1,285 +1,270 @@
-Return-Path: <linux-kernel+bounces-174406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBAE8C0E4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BCF8C0E53
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE93D1C21211
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:42:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 471161C21938
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8550A14A8C;
-	Thu,  9 May 2024 10:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7803F12F5B6;
+	Thu,  9 May 2024 10:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa9A5C0w"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kjfls3lh"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D96812DD9A;
-	Thu,  9 May 2024 10:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1307C3715E;
+	Thu,  9 May 2024 10:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251312; cv=none; b=eGge0aBitcug5MpizISPFOPQDzuvdalURevCNBaLHNfoVB+JfRcWFPkmgYDSfWOR6FncrOzwqe9/XMepU10lyE1cpvb6V+4FOc8rLKeIZaS/nS5sYvmbFik1sjyu9bNWdtMNEAMQ0Vv9JavBgAfWngqvYtNIB8lUXCRrS/0K1cA=
+	t=1715251457; cv=none; b=ijLnYLEHnu6O0ST0Xpu+tokvKSMvUW4n65Hbnbmt69hV+gmNobRsHWIB9IQ6wzv2qlHjI8nXEQoa4Gj386sP+ex/j283DAYkujyKrbkYt1fM+MTqXnkHfBMK9QrDycC7wk2/VVojzhuRRc46mlA5fihFPmfrs40C1R1PF7yMpOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251312; c=relaxed/simple;
-	bh=dWmcZ55RwlWzopdm2MrjCUbObr1JH+NBfWDA3eR0PC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8EuCNTmEshcZcQeNDKHqGzbFVOQxdpr2oDTS0KeLVOrStatOYrGFPpV0DFcFbjZYKyWNelmznFPpIKSAwo0mfBf4qIUgZTN6OnK0xxsWEqvGaaeBFeL8Kx9y2+MvbMVqdvt3tkhO9pVjToaW0or1drxWoMkx5n/FCnB6iCMHD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa9A5C0w; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1715251457; c=relaxed/simple;
+	bh=ALKJ9if8SMqpg8avRAb+V90+7Tr+oiNFq36asciKBCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pUMpE0SgnCzCpCr3t0ivOq+s5idEiN37psadWONNYm4gXD+U9uq8k9v1HeNEj/WijgnP+oPBRHPvqw6b0OtLNdxRt+EUZxuzY/HmzV8w7DjfmP1efjMo3xmiSX0DRAGCzeO+ISkPSHRnhC96OdP56xFUtZQiIrz7ntCUVvDU/oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kjfls3lh; arc=none smtp.client-ip=209.85.166.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f460e05101so536651b3a.1;
-        Thu, 09 May 2024 03:41:50 -0700 (PDT)
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36c846689d1so3171055ab.0;
+        Thu, 09 May 2024 03:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715251310; x=1715856110; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6RMqRZX0HIBUYzm8GMDrhg1RkSGNPy9fJGMUwnU3cVE=;
-        b=Wa9A5C0wLKywUHXVq9m+NXBcZLrU/6PrmXyQA3LGwvpeWjHnkqDo8KjMFS3wxw6ncL
-         +Z4Atj4cvfAFoXDGifoaF9ZsO/3RpjmNOPfMu1vnwrAiDtWvDnCMyFhuQf3btBm4nvd5
-         AgOurXVX8j0dFxGvEZxk3kaTP9hpEqg3dF/n9TzeuU5Yq9jRhAYbJGlmK3rDPhlJCbPd
-         C5Eb2+BuSHzuCKb81AhXXs55sNuODpw7QENOrOoCdT5tuwkX+WKxAJ2COvPiMiCAN92b
-         6AypryguXYi9UdBWO7+MjpWtyWF0hxgq3h2nH/q30A7QN8LuO/+2JUxY0NQCuugaLztI
-         ScFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251310; x=1715856110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1715251455; x=1715856255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6RMqRZX0HIBUYzm8GMDrhg1RkSGNPy9fJGMUwnU3cVE=;
-        b=Pr6ZbLTHaWhEJQnh1ilhWzwteB1SJyVoPydnPF+ylO+29Xipb65JdgFblpzJ5gqHz+
-         ktJaeo5pD4k/sveUB0TAnp4VvA0JhIpfspGd5GakeK20+z8lWDTLIkiC1oNk6bkWL+vh
-         ZKj/ypZxxz+U/IwotI3I9tE0m+b0GXMm5coCeGe5poFo1Y/jt+MR7wirN4qeoyP9Cl/o
-         LGVicTMV8DUOLyNhYqYamS0AsbjG8eGWM4249n/43Fvzew6ZW+6zPGUUZ01k/kFLgBYF
-         Kkdi2ElKS9H2WwcyRhqQSbATzCjYXKKQ2Hku805bqqq4Z2FvTBT0+Dq6cJoX/Bad99fQ
-         EZEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUD0iM+rYy7hRUIKb3JEyk/sYX5iOJBbkVAirEVNH680a9ooIQNH+6S6AcgNKpHht8yU73fO2yE7recDYZRymeVMZE+j8r4LTv9HIAG7atYunPMPUkR2XF2ldn1V/j/jwRloQvMyFoDrwGz
-X-Gm-Message-State: AOJu0Yw3mJMJdsxPmrpaCyRyrMAqVtvKjuygy0s3gBwX3LYEfbUxu+xB
-	LXTbD7zxhXkVg7Bmhud5Msp8uay1qVzztofFJH+ADq+BSw3vppZv
-X-Google-Smtp-Source: AGHT+IFShpc5EqZaSEqimhDxw5q2VLiTnTbYjMPFsUhO0YAAA+2DSBT05n9MeLgO4CftUumVO2HIDA==
-X-Received: by 2002:a05:6a00:1826:b0:6f4:4b35:d7b5 with SMTP id d2e1a72fcca58-6f4c908b5e0mr3906907b3a.1.1715251310214;
-        Thu, 09 May 2024 03:41:50 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af523csm1049662b3a.175.2024.05.09.03.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:41:49 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 805D6183B5E8A; Thu, 09 May 2024 17:41:45 +0700 (WIB)
-Date: Thu, 9 May 2024 17:41:45 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
-	Rodolfo Giometti <giometti@enneenne.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Serial <linux-serial@vger.kernel.org>,
-	Elvis <elvisimprsntr@gmail.com>,
-	"A. Steinmetz" <anstein99@googlemail.com>
-Subject: Re: Fwd: Add method to allow switching kernel level PPS signal from
- DCD to CTS serial pin
-Message-ID: <ZjyoaZ1zJhMVGjbS@archie.me>
-References: <Zjra2GZIDC7BPoZx@archie.me>
- <2024050853-basin-salsa-32bb@gregkh>
- <20240509062456.GE3620298@mit.edu>
+        bh=aCRj3t+xdNp1rsUvPmVB9uy83J7LGPcYV6vSNcPVNyA=;
+        b=Kjfls3lhyl85VB4xOVBKdfuIuw4/YM3aUUmY6Q6u9ozkO8wDXZSlBws2MFQJrHlZhD
+         HQh2F5jEJiE7D5jCGyFB/BpakMLGSaFvNPeRHy28uXfHVl6ojZ01eGqPjoctElA4ESBo
+         eUtgPC+o8MKo7FL6wvERL+becBpEUJHWtS7WzUZvKH5W7OqS/2OQsi0fRfSeMR1ITRcK
+         EVPpN9BSB9/B4iA/nuHVbh51bjD4Si++2ecYMK/jkSMILXCgdSz191ijCEE7HRoL0ZnZ
+         ohlBwVGtlKgrbtMukMrKD2PVEey9R28TMb3KNpnKZz0X2xEtGz+tJI5XyTloK3HweHmI
+         wLiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715251455; x=1715856255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aCRj3t+xdNp1rsUvPmVB9uy83J7LGPcYV6vSNcPVNyA=;
+        b=GkhX7QrSKfAOV3A/TbkvEdBi12egIMJ+AcqAv51ViNXq1rRsyXFqSbddJqW/iH+PLi
+         jwQTaF4bjdhouk7W2LrnkQAFGo1MJpQpXxT/KIRJEFd+orVkqCinXnbP22rWQtspXkHK
+         kisbRe4+qpsthFDAdYUqCQSrwU9qXRW0j1Q+a/8ywCkgD/uAXl2AM991n/RGHnChd2h9
+         E/Ee1wKASVdZymboTNnfVEbAWcVvxNYfr4fJLX6ZshEpT88njJ/2j6H4+vRPkdJAW229
+         +jmXaGCR4YsJHBTz7y5IwmNhq9Ct/rkuZ45qDRaTI0LOXm1N8z2uSjcpb3rxkJJG3X9y
+         mfBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWom5TNtcVc+1Ys71jTr6MqYQkPx6s2mMFvbLuhjfqwGNPfbGP4zmh/Vv9UOV6LxFD9XsbeBcVfohI3qsa23mEv2nZLYMOYuOd12l0+Z4AxvOqWjthGasuIhPVeN3kNcvTzikPQ3Z6BY5U=
+X-Gm-Message-State: AOJu0YxWh5R6PMYFz80o9LRr/ZewuElsHe1KUFxxZds8vOPvN20Z+0SU
+	EaREsjcccIcLR43ZBD3AH5YuvLnhlwb6TRZ2poE6TE4a4yV7AMIAf4SqqD3g2/h5msQ/itoWeDP
+	EJTvnG9ZVYqG4Eab5kb5OtcilXLY=
+X-Google-Smtp-Source: AGHT+IEi/mVwQ3GL+NyJ0D7UrdEjzf34Nyjn6VriSq2HIBSrDOCD/y/fvG9wSq1Mnww5djhfR6VpTbDKb6eS+PLmC44=
+X-Received: by 2002:a05:6e02:1a08:b0:36c:a46:e018 with SMTP id
+ e9e14a558f8ab-36caed5abd2mr53372115ab.24.1715251455116; Thu, 09 May 2024
+ 03:44:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nKxqMyvWjc07RdJB"
-Content-Disposition: inline
-In-Reply-To: <20240509062456.GE3620298@mit.edu>
-
-
---nKxqMyvWjc07RdJB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310> <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk>
+ <20240430172752.20ffcd56@sal.lan> <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk>
+ <87sez0k661.wl-tiwai@suse.de> <20240502095956.0a8c5b26@sal.lan>
+ <20240502102643.4ee7f6c2@sal.lan> <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk>
+ <20240503094225.47fe4836@sal.lan> <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
+ <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl> <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
+ <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
+ <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com> <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
+ <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
+In-Reply-To: <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 9 May 2024 18:44:03 +0800
+Message-ID: <CAA+D8AMJKPVR99jzYCR5EsbMa8P95jQrDL=4ayYMuz+Cu1d2mQ@mail.gmail.com>
+Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
+To: =?UTF-8?B?QW1hZGV1c3ogU8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.de>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+	sakari.ailus@iki.fi, tfiga@chromium.org, m.szyprowski@samsung.com, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com, 
+	lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-[+Cc Rodolfo and not1337 (kernel hack author)]
-On Thu, May 09, 2024 at 02:24:56AM -0400, Theodore Ts'o wrote:
-> I'd suggest that you reach out to Rondolfo as the maintainer, or to
-> the linuxpps mailing list.
->=20
-> First of all, looking at the patch referenced in the bugzilla (which
-> is actually found in github), it appears that the person who made the
-> request via Bugzilla is different from the the person who authored the
-> patch (apparently, github.com/not1337).
->=20
-> Secondly, the patch is really quite hacky.  First, the termonology
-> used of "4wire" is non-standard (e.g., uised nowhere but at
-> github.com/not1337/pss-stuff), and misleading.  A cable which only has
-> RxD, TxD, RTS, and CTS is not going to work well without GND, so "4
-> wire" is quite the misnomer".  This termonology is also not used by
-> FreeBSD, BTW.  Secondly, unconditionally mapping CTS to DCD when
-> setting a magic UART-level attribute is a bit hacky, since it will do
-> this magic ad-hoc mapping all of the time, not only if the PPS line
-> discpline is selected.
->=20
-> Now, I haven't been the tty maintainer in quite a while, but in my
-> opinion, a much cleaner way would be to plumb a new tty ldisc
-> function, cts_change, which is analogous to the dcd_change function
-> (which was introduced specifically for pps_ldisc).  Then for bonus
-> points, consider using the pps capture mode mde that FreeeBSD's UART
-> driver, including the invert option and narrow pulse mode, and eschew
-> using the non-standard "4wire" naming terminology.
+On Thu, May 9, 2024 at 6:28=E2=80=AFPM Amadeusz S=C5=82awi=C5=84ski
+<amadeuszx.slawinski@linux.intel.com> wrote:
+>
+> On 5/9/2024 12:12 PM, Shengjiu Wang wrote:
+> > On Thu, May 9, 2024 at 5:50=E2=80=AFPM Amadeusz S=C5=82awi=C5=84ski
+> > <amadeuszx.slawinski@linux.intel.com> wrote:
+> >>
+> >> On 5/9/2024 11:36 AM, Shengjiu Wang wrote:
+> >>> On Wed, May 8, 2024 at 4:14=E2=80=AFPM Amadeusz S=C5=82awi=C5=84ski
+> >>> <amadeuszx.slawinski@linux.intel.com> wrote:
+> >>>>
+> >>>> On 5/8/2024 10:00 AM, Hans Verkuil wrote:
+> >>>>> On 06/05/2024 10:49, Shengjiu Wang wrote:
+> >>>>>> On Fri, May 3, 2024 at 4:42=E2=80=AFPM Mauro Carvalho Chehab <mche=
+hab@kernel.org> wrote:
+> >>>>>>>
+> >>>>>>> Em Fri, 3 May 2024 10:47:19 +0900
+> >>>>>>> Mark Brown <broonie@kernel.org> escreveu:
+> >>>>>>>
+> >>>>>>>> On Thu, May 02, 2024 at 10:26:43AM +0100, Mauro Carvalho Chehab =
+wrote:
+> >>>>>>>>> Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
+> >>>>>>>>
+> >>>>>>>>>> There are still time control associated with it, as audio and =
+video
+> >>>>>>>>>> needs to be in sync. This is done by controlling the buffers s=
+ize
+> >>>>>>>>>> and could be fine-tuned by checking when the buffer transfer i=
+s done.
+> >>>>>>>>
+> >>>>>>>> ...
+> >>>>>>>>
+> >>>>>>>>> Just complementing: on media, we do this per video buffer (or
+> >>>>>>>>> per half video buffer). A typical use case on cameras is to hav=
+e
+> >>>>>>>>> buffers transferred 30 times per second, if the video was strea=
+med
+> >>>>>>>>> at 30 frames per second.
+> >>>>>>>>
+> >>>>>>>> IIRC some big use case for this hardware was transcoding so ther=
+e was a
+> >>>>>>>> desire to just go at whatever rate the hardware could support as=
+ there
+> >>>>>>>> is no interactive user consuming the output as it is generated.
+> >>>>>>>
+> >>>>>>> Indeed, codecs could be used to just do transcoding, but I would
+> >>>>>>> expect it to be a border use case. See, as the chipsets implement=
+ing
+> >>>>>>> codecs are typically the ones used on mobiles, I would expect tha=
+t
+> >>>>>>> the major use cases to be to watch audio and video and to partici=
+pate
+> >>>>>>> on audio/video conferences.
+> >>>>>>>
+> >>>>>>> Going further, the codec API may end supporting not only transcod=
+ing
+> >>>>>>> (which is something that CPU can usually handle without too much
+> >>>>>>> processing) but also audio processing that may require more
+> >>>>>>> complex algorithms - even deep learning ones - like background no=
+ise
+> >>>>>>> removal, echo detection/removal, volume auto-gain, audio enhancem=
+ent
+> >>>>>>> and such.
+> >>>>>>>
+> >>>>>>> On other words, the typical use cases will either have input
+> >>>>>>> or output being a physical hardware (microphone or speaker).
+> >>>>>>>
+> >>>>>>
+> >>>>>> All, thanks for spending time to discuss, it seems we go back to
+> >>>>>> the start point of this topic again.
+> >>>>>>
+> >>>>>> Our main request is that there is a hardware sample rate converter
+> >>>>>> on the chip, so users can use it in user space as a component like
+> >>>>>> software sample rate converter. It mostly may run as a gstreamer p=
+lugin.
+> >>>>>> so it is a memory to memory component.
+> >>>>>>
+> >>>>>> I didn't find such API in ALSA for such purpose, the best option f=
+or this
+> >>>>>> in the kernel is the V4L2 memory to memory framework I found.
+> >>>>>> As Hans said it is well designed for memory to memory.
+> >>>>>>
+> >>>>>> And I think audio is one of 'media'.  As I can see that part of Ra=
+dio
+> >>>>>> function is in ALSA, part of Radio function is in V4L2. part of HD=
+MI
+> >>>>>> function is in DRM, part of HDMI function is in ALSA...
+> >>>>>> So using V4L2 for audio is not new from this point of view.
+> >>>>>>
+> >>>>>> Even now I still think V4L2 is the best option, but it looks like =
+there
+> >>>>>> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
+> >>>>>> a duplication of code (bigger duplication that just add audio supp=
+ort
+> >>>>>> in V4L2 I think).
+> >>>>>
+> >>>>> After reading this thread I still believe that the mem2mem framewor=
+k is
+> >>>>> a reasonable option, unless someone can come up with a method that =
+is
+> >>>>> easy to implement in the alsa subsystem. From what I can tell from =
+this
+> >>>>> discussion no such method exists.
+> >>>>>
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>> my main question would be how is mem2mem use case different from
+> >>>> loopback exposing playback and capture frontends in user space with =
+DSP
+> >>>> (or other piece of HW) in the middle?
+> >>>>
+> >>> I think loopback has a timing control,  user need to feed data to pla=
+yback at a
+> >>> fixed time and get data from capture at a fixed time.  Otherwise ther=
+e
+> >>> is xrun in
+> >>> playback and capture.
+> >>>
+> >>> mem2mem case: there is no such timing control,  user feeds data to it
+> >>> then it generates output,  if user doesn't feed data, there is no xru=
+n.
+> >>> but mem2mem is just one of the components in the playback or capture
+> >>> pipeline, overall there is time control for whole pipeline,
+> >>>
+> >>
+> >> Have you looked at compress streams? If I remember correctly they are
+> >> not tied to time due to the fact that they can pass data in arbitrary
+> >> formats?
+> >>
+> >> From:
+> >> https://docs.kernel.org/sound/designs/compress-offload.html
+> >>
+> >> "No notion of underrun/overrun. Since the bytes written are compressed
+> >> in nature and data written/read doesn=E2=80=99t translate directly to =
+rendered
+> >> output in time, this does not deal with underrun/overrun and maybe dea=
+lt
+> >> in user-library"
+> >
+> > I checked the compress stream. mem2mem case is different with
+> > compress-offload case
+> >
+> > compress-offload case is a full pipeline,  the user sends a compress
+> > stream to it, then DSP decodes it and renders it to the speaker in real
+> > time.
+> >
+> > mem2mem is just like the decoder in the compress pipeline. which is
+> > one of the components in the pipeline.
+>
+> I was thinking of loopback with endpoints using compress streams,
+> without physical endpoint, something like:
+>
+> compress playback (to feed data from userspace) -> DSP (processing) ->
+> compress capture (send data back to userspace)
+>
+> Unless I'm missing something, you should be able to process data as fast
+> as you can feed it and consume it in such case.
+>
 
-I have pinged Rodolfo (and also Cc: linuxpps ML but the ML address bounces,
-essentially turned into private mail) and here's his comments about the
-feature request:
+Actually in the beginning I tried this,  but it did not work well.
+ALSA needs time control for playback and capture, playback and capture
+needs to synchronize.  Usually the playback and capture pipeline is
+independent in ALSA design,  but in this case, the playback and capture
+should synchronize, they are not independent.
 
-> The DCD-change information is delivered via struct tty_ldisc to the PPS c=
-lient pps-ldisc.c (file serial_core.c):
->
-> /**
->  * uart_handle_dcd_change - handle a change of carrier detect state
->  * @uport: uart_port structure for the open port
->  * @active: new carrier detect status
->  *
->  * Caller must hold uport->lock.
->  */
-> void uart_handle_dcd_change(struct uart_port *uport, bool active)
-> {
->         struct tty_port *port =3D &uport->state->port;
->         struct tty_struct *tty =3D port->tty;
->         struct tty_ldisc *ld;
->
->         lockdep_assert_held_once(&uport->lock);
->
->         if (tty) {
->                 ld =3D tty_ldisc_ref(tty);
->                 if (ld) {
->                         if (ld->ops->dcd_change)
->                                 ld->ops->dcd_change(tty, active);
->                         tty_ldisc_deref(ld);
->                 }
->         }
->
->         uport->icount.dcd++;
->
->         if (uart_dcd_enabled(uport)) {
->                 if (active)
->                         wake_up_interruptible(&port->open_wait);
->                 else if (tty)
->                         tty_hangup(tty);
->         }
-> }
-> EXPORT_SYMBOL_GPL(uart_handle_dcd_change);
->
-> But for CTS this is not (serial_core.c):
->
-> /**
->  * uart_handle_cts_change - handle a change of clear-to-send state
->  * @uport: uart_port structure for the open port
->  * @active: new clear-to-send status
->  *
->  * Caller must hold uport->lock.
->  */
-> void uart_handle_cts_change(struct uart_port *uport, bool active)
-> {
->         lockdep_assert_held_once(&uport->lock);
->
->         uport->icount.cts++;
->
->         if (uart_softcts_mode(uport)) {
->                 if (uport->hw_stopped) {
->                         if (active) {
->                                 uport->hw_stopped =3D false;
->                                 uport->ops->start_tx(uport);
->                                 uart_write_wakeup(uport);
->                         }
->                 } else {
->                         if (!active) {
->                                 uport->hw_stopped =3D true;
->                                 uport->ops->stop_tx(uport);
->                         }
->                 }
->
->         }
-> }
-> EXPORT_SYMBOL_GPL(uart_handle_cts_change);
->
-> This is because the struct tty_ldisc has no cts_change() method (file tty=
-_ldisc.h):
->
-> struct tty_ldisc_ops {
->         char    *name;
->         int     num;
->
->         /*
->          * The following routines are called from above.
->          */
->         int     (*open)(struct tty_struct *tty);
->         void    (*close)(struct tty_struct *tty);
->         void    (*flush_buffer)(struct tty_struct *tty);
->         ssize_t (*read)(struct tty_struct *tty, struct file *file, u8 *bu=
-f,
->                         size_t nr, void **cookie, unsigned long offset);
->         ssize_t (*write)(struct tty_struct *tty, struct file *file,
->                          const u8 *buf, size_t nr);
->         int     (*ioctl)(struct tty_struct *tty, unsigned int cmd,
->                         unsigned long arg);
->         int     (*compat_ioctl)(struct tty_struct *tty, unsigned int cmd,
->                         unsigned long arg);
->         void    (*set_termios)(struct tty_struct *tty, const struct kterm=
-ios *old);
->         __poll_t (*poll)(struct tty_struct *tty, struct file *file,
->                              struct poll_table_struct *wait);
->         void    (*hangup)(struct tty_struct *tty);
->
->         /*
->          * The following routines are called from below.
->          */
->         void    (*receive_buf)(struct tty_struct *tty, const u8 *cp,
->                                const u8 *fp, size_t count);
->         void    (*write_wakeup)(struct tty_struct *tty);
->         void    (*dcd_change)(struct tty_struct *tty, bool active);
->         size_t  (*receive_buf2)(struct tty_struct *tty, const u8 *cp,
->                                 const u8 *fp, size_t count);
->         void    (*lookahead_buf)(struct tty_struct *tty, const u8 *cp,
->                                  const u8 *fp, size_t count);
->
->         struct  module *owner;
-> };
->
-> So, in order to do what you suggest you have to add this feature first.
->
+Best regards
+Shengjiu Wang
 
->=20
-> Finally, note that the way kernel development works is that it's not
-> enough for a user to ask for a feature.  Someone has to create a high
-> quality, clean, maintainable patch.  Note all random hacks found in
-> random Bugzilla or Github git trees are suitable for inclusion in the
-> upstream kernel.  And if you don't know how to evaluate the patch for
-> quality, it might not be best thing to just ask the bugzilla requester
-> to follow the Submitting Patches procedure, given that (a) they might
-> not be a kernel developer, and (b) it might just frustrate the
-> bugzilla requester and maintainer if the patch isn't sufficient high
-> quality, especially if you've managed to set expectations that all the
-> bugzilla requestor needs to do is to submit the patch and it will be
-> accepted.
-
-I also expected the same (provide patches).
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---nKxqMyvWjc07RdJB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjyoZAAKCRD2uYlJVVFO
-oxUmAQDP92/mNAgiTMk/ZDg9tWCvhkHcwhlnjEUMlIZodcZ6AgEAv6dwG6ofkitj
-gfQ4umEXVPnPvO2XNcFNvcUCm0PZ9A4=
-=T0A1
------END PGP SIGNATURE-----
-
---nKxqMyvWjc07RdJB--
+> Amadeusz
 
