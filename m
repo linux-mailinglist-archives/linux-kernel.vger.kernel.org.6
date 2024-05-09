@@ -1,163 +1,145 @@
-Return-Path: <linux-kernel+bounces-174396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45458C0E0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 290418C0E1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AABC2838C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98FD28340E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946C514B09C;
-	Thu,  9 May 2024 10:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662D114B094;
+	Thu,  9 May 2024 10:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxmUVVIu"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pGtJ+4yH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42818D528;
-	Thu,  9 May 2024 10:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B49C13C9BC;
+	Thu,  9 May 2024 10:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715249780; cv=none; b=sO+R/vu5cKbSivdboQifYV4BBMLj+38bdsFJS7ba5CslO2oXhNj9UDziUiYKqFBPGW7bd06Urui1e0tB8qmwWlKywCApuLFDIPDEyv4o0kMsoQl/snbpnpUkArGmTmSMSYqU7mmZtEloZOHKgee+Fs4DFxUE2lNcDrgUsrkPgCg=
+	t=1715250265; cv=none; b=tlDaUZrI71Zw94KgpmiLlXthcqWhGRPjbkDqUEBjs9mU79QmTRb29kQZa3jEtwRPCJg2ffaOm+m8z4sLmAc7ZoF93qVlJhBmhaTmVkisuG9Iee9OYtkOE/Jx1z0Sbi2lp5TvSycwdLK94rtAJu0lYn16Ip2L+fWuL357QKaxhLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715249780; c=relaxed/simple;
-	bh=881zudWU6qfyucZG14Pc4Iu4wKaVIbgiMZki3Pu9CRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T1jQmk+HMsAFO93ZUwGsSQtYIcoUDvsiQ6wiCByHrYeOOP5lHhXGLf6+f/lGN2U3FPf0S4MaxVI2xrJamUJXvopjdOcV+eK+tpouJT2O2OF5OzSo8AmBIlkhky1/PikGWrG0O2RThKw6dke8YbhK4HorufZ9Erb++y5Y/tnVfuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxmUVVIu; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a5a1054cf61so161414266b.1;
-        Thu, 09 May 2024 03:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715249777; x=1715854577; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5I6sdfeuhGDQZEJYpwbwlRvLcoIJyVZFCXAeHmKIg6Q=;
-        b=RxmUVVIuw8gB2wvTb3DD7gEcMwpzhLX7cpI6vBeP+GPp+yuboH2udiL1Ah5eWtADDm
-         O9BS1TxqoZWxU3SlqTVy/b4w/ftsbrjvprB5c+eem4bgdqQtM6tmrPcUHWiPrWxdfpeI
-         gWSA3ywx4PNJo1o3o6UXyajQK5LC9fxDAzAWEqteJw35o97SDRvKTGnZfWeflSoy6exq
-         X9V3ZA1gxHMqpfE8ur6SJz/u9zAB/oHuLIBzqD4fySw0z8YQOlQxZVplTeKUmq+/8hb3
-         TZmY7abJYNsTfEusTr9gibifJM6TlApTwdjRYwkkrnEaRxmWhuMRlNbNwZg7bSpbckHZ
-         VYpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715249777; x=1715854577;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5I6sdfeuhGDQZEJYpwbwlRvLcoIJyVZFCXAeHmKIg6Q=;
-        b=t9xfnpW5xSvor6OhbPLQvsqm0BrVG/urVttWKJkEM+iI6i4wtMCao3zNFRkeD7CiRi
-         iX4LXAaxCZ5xwaWNOO7XXeVai8jWWgLbI0OZqR7x6HGNdQUvL3TM9cchvxPd+0puhKtH
-         un6qgxH/FC+lmHXgW6w+I3M89BqbNSx4PPhpHniC6Ig9izHa3m87Y5JW95lTGCDAvaTQ
-         3Adoz2IYQLTR3YrgkdYRGU6rS60oedtLIVFN9uYQ35I+hF+xHOk8ykfr0c8axyqYW0F/
-         9UtF5nLbM4+l1tkscr5yHABFxBf6oac7Ohz23Tuul3az5+tzIcdKLPqDfIedV9KkJ3M/
-         24hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUr3NOs21By4VhoNADb+6X/GYHdiAHfFI6GIaNGkBEF+LQZPzmui2agj22YGqhXc34EzYDqbbqLPWjALMw0idfcqERPiVYA5eVEZyN7BGXNAMa2QJQ8kh7rnfmh/eNh41U3Wav13BH+sWP4Em7y1IPSxFgsfLlMedlM66ezTwX9LA==
-X-Gm-Message-State: AOJu0YwQSaef48JVuutKv06rqVXlvxftonviyuThMkBrQIP/BLsQ+n1u
-	QjUEbBq0XG8ges/xn3g+w+BxmVi+YKqYmQq7lBPnxfefOoyfPryil5vdHg==
-X-Google-Smtp-Source: AGHT+IFKm8dFeKHTx6sWWFxm9MrFf3naXL6aZ59huxIUKNrPdiep+ncOyjwbUnW526jrZm80z8G/xg==
-X-Received: by 2002:a50:8d17:0:b0:571:bed1:3a36 with SMTP id 4fb4d7f45d1cf-5731da9adbdmr4789496a12.38.1715249777220;
-        Thu, 09 May 2024 03:16:17 -0700 (PDT)
-Received: from [172.27.51.192] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed2059sm543028a12.56.2024.05.09.03.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 03:16:16 -0700 (PDT)
-Message-ID: <32495a72-4d41-4b72-84e7-0d86badfd316@gmail.com>
-Date: Thu, 9 May 2024 13:16:15 +0300
+	s=arc-20240116; t=1715250265; c=relaxed/simple;
+	bh=yk6uqVhcar5j1V7oQZ9EbBSZxwvBhB3B5tcuOGI7iO0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=jkZguXddzSMxS9XLP7jr7DbbPM4aeJwBSO5kXuCZ5kSdVn5awtTI2itjcw4naBe4XcXQu+4RW5vzF+RPmIQaYOV61wjT5O7dutnbUqEprG3UIG1vbfCmbyYxMZVGwnhlTuxZSAeFs4M+lM63A9WT7dMtkjtNf3t7L1kmqsEM4rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pGtJ+4yH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4491Ncpe006633;
+	Thu, 9 May 2024 10:24:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding:to:cc; s=qcppdkim1; bh=7AqmFOT//hAEvY
+	C9P/mEzb+HLH1uCkNwEwa8JCe/YE0=; b=pGtJ+4yHH9dX6o+Runh0wg4NC02/Oq
+	C0bPYTqBiQgnS3LM/jVoK/w30OkiFe1SACvQyBBfTjIllnGtJOHGZn+2rwQv4gME
+	FYYkdz8SZwlSglMhmVCDVdeTTI+f7+fryak089rfR6KKkbukpFNhpCyUD3yEjCMs
+	lU75fk7o1yGOaYmttdDAcAW63wc+LDPcpnrj+IE+hzoQX2CyWtWTNlfRq0ImMsAt
+	FWIH5RlcjPuWdQOEX5Vnewb7bWY3qCD/LQXiMet5fVqzU6TXn9feNGRog9YNn7c1
+	Lhf+MO3WcK7DbiO7qCPSpW5d1p2VzUEQfUybTZ4Uh/MoOFn1/XlsJTAQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07wftkqy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 10:24:16 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449AOEDs016000
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 9 May 2024 10:24:14 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 9 May 2024 03:24:09 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH v4 0/2] Add DT support for video clock controller on SM8150
+Date: Thu, 9 May 2024 15:54:02 +0530
+Message-ID: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/1] mlx5: Add netdev-genl queue stats
-To: Joe Damato <jdamato@fastly.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Tariq Toukan <ttoukan.linux@gmail.com>, Zhu Yanjun
- <zyjzyj2000@gmail.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, saeedm@nvidia.com, gal@nvidia.com,
- nalramli@fastly.com, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Leon Romanovsky <leon@kernel.org>,
- "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Tariq Toukan <tariqt@nvidia.com>
-References: <ZjUwT_1SA9tF952c@LQ3V64L9R2> <20240503145808.4872fbb2@kernel.org>
- <ZjV5BG8JFGRBoKaz@LQ3V64L9R2> <20240503173429.10402325@kernel.org>
- <ZjkbpLRyZ9h0U01_@LQ3V64L9R2>
- <8678e62c-f33b-469c-ac6c-68a060273754@gmail.com>
- <ZjwJmKa6orPm9NHF@LQ3V64L9R2> <20240508175638.7b391b7b@kernel.org>
- <ZjwtoH1K1o0F5k+N@ubuntu> <20240508190839.16ec4003@kernel.org>
- <ZjxtejIZmJCwLgKC@ubuntu>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <ZjxtejIZmJCwLgKC@ubuntu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEOkPGYC/3XOwcrCMAzA8VeRnr9Kmm5d58n3EA8zzT5zcNVVi
+ yJ7d6sIgrLjP5BfcleJR+GkVou7GjlLkjiUqP4Wivbd8M9aQmmFgBVY8DpL4Eik08GbGnQ46yE
+ G1q43zu6qFvuGVFk+jtzL9QVvtqX3ks5xvL3uZPOcvklj58hsNOiOPZMlj0i4Pl2EZKAlxYN6o
+ hk/UAVmFsIC2Z1vKGAXQut+IfuBamhnIVugxtiaPTjo3ddH0zQ9AD2H21xQAQAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jonathan Marek
+	<jonathan@marek.ca>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>
+X-Mailer: b4 0.12.4
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YyzkSZhYYwTEr7u4gC1Mcuxu012WUd0r
+X-Proofpoint-ORIG-GUID: YyzkSZhYYwTEr7u4gC1Mcuxu012WUd0r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_06,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 malwarescore=0 mlxlogscore=665
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405090066
 
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Changes in v4:
+- Correct the Fixes tag in [1/2]
+- Link to v3: https://lore.kernel.org/r/20240509-videocc-sm8150-dt-node-v3-0-7135e8060f62@quicinc.com
 
+Changes in v3:
+- Adding the required-opps property back, which was removed in v2.
+- This is needed because the lowest power state for MMCX on sm8150 platform
+  is retention, but we want to enable the power domain in low_svs not retention.
+- Link to v2: https://lore.kernel.org/r/20240401-videocc-sm8150-dt-node-v2-0-3b87cd2add96@quicinc.com
 
-On 09/05/2024 9:30, Joe Damato wrote:
-> On Wed, May 08, 2024 at 07:08:39PM -0700, Jakub Kicinski wrote:
->> On Thu, 9 May 2024 01:57:52 +0000 Joe Damato wrote:
->>> If I'm following that right and understanding mlx5 (two things I am
->>> unlikely to do simultaneously), that sounds to me like:
->>>
->>> - mlx5e_get_queue_stats_rx and mlx5e_get_queue_stats_tx check if i <
->>>    priv->channels.params.num_channels (instead of priv->stats_nch),
->>
->> Yes, tho, not sure whether the "if i < ...num_channels" is even
->> necessary, as core already checks against real_num_rx_queues.
->>
->>>    and when
->>>    summing mlx5e_sq_stats in the latter function, it's up to
->>>    priv->channels.params.mqprio.num_tc instead of priv->max_opened_tc.
->>>
->>> - mlx5e_get_base_stats accumulates and outputs stats for everything from
->>>    priv->channels.params.num_channels to priv->stats_nch, and
->>
->> I'm not sure num_channels gets set to 0 when device is down so possibly
->> from "0 if down else ...num_channels" to stats_nch.
-> 
-> Yea, you were right:
-> 
->    if (priv->channels.num == 0)
->            i = 0;
->    else
->            i = priv->channels.params.num_channels;
->    
->    for (; i < priv->stats_nch; i++) {
-> 
-> Seems to be working now when I adjust the queue count and the test is
-> passing as I adjust the queue count up or down. Cool.
-> 
+Changes in v2:
+- As per Dmitry's comments, there is no need to update to index based
+  lookup for already existing drivers, hence keeping clock-names property.
+- Updated the videocc bindings to add AHB clock for the sm8150 platform.
+- Link to v1: https://lore.kernel.org/r/20240313-videocc-sm8150-dt-node-v1-0-ae8ec3c822c2@quicinc.com
 
-I agree that get_base should include all inactive queues stats.
-But it's not straight forward to implement.
+---
+Satya Priya Kakitapalli (2):
+      dt-bindings: clock: qcom: Add AHB clock for SM8150
+      arm64: dts: qcom: sm8150: Add video clock controller node
 
-A few guiding points:
+ .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
+ arch/arm64/boot/dts/qcom/sa8155p.dtsi                   |  4 ++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi                    | 14 ++++++++++++++
+ 3 files changed, 34 insertions(+), 1 deletion(-)
+---
+base-commit: 8ffc8b1bbd505e27e2c8439d326b6059c906c9dd
+change-id: 20240308-videocc-sm8150-dt-node-6f163b492f7c
 
-Use mlx5e_get_dcb_num_tc(params) for current num_tc.
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 
-txq_ix (within the real_num_tx_queues) is calculated by c->ix + tc * 
-params->num_channels.
-
-The txqsq stats struct is chosen by channel_stats[c->ix]->sq[tc].
-
-It means, in the base stats you should include SQ stats for:
-1. all SQs of non-active channels, i.e. ch in [params.num_channels, 
-priv->stats_nch), tc in [0, priv->max_opened_tc).
-2. all SQs of non-active TCs in active channels [0, 
-params.num_channels), tc in [mlx5e_get_dcb_num_tc(params), 
-priv->max_opened_tc).
-
-Now I actually see that the patch has issues in mlx5e_get_queue_stats_tx.
-You should not loop over all TCs of channel index i.
-You must do a reverse mapping from "i" to the pair/tuple [ch_ix, tc], 
-and then access a single TXQ stats by priv->channel_stats[ch_ix].sq[tc].
-
-> Adding TCs to the NIC triggers the test to fail, so there's still some bug
-> in how I'm accumulating stats from the hw TCs.
 
