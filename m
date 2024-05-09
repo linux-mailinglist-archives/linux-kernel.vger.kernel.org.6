@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-174745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D448C144F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942BF8C145B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:51:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46F96B202F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:49:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A8F1C20D6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0088EFBFD;
-	Thu,  9 May 2024 17:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0CB76F1D;
+	Thu,  9 May 2024 17:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AKc/J3k0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TTxlfAdS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B28B10979
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5248E770E3
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715276933; cv=none; b=LGO+ShWyKNV9dv0/pVzR6Fh/+CnXfMb0+FMYNUaa+TdMm9OxCmUcFqRwG6njNi5KxvrCJ6+vZGXcIThK13qvWuwL9Tw6PdHlTCuCuI08QHWqfu05NRs2yYFITM/hnjc2iXTHugLYXMASfZ7lnAMp+DeTSQYMEt0A2609YHDXA9Q=
+	t=1715277054; cv=none; b=KK17hgE+n3MvmEmKOqaQ20vcXY7fT1w3Rv85tEzFNFfLy9m/cTDF2RGEOHZJiv93fL/bvDq03usWqGjGkz42B/juYTTKl67ntAk5GMc4jGvggV14s5kP3JqCzcqlHkAO8UX/DT6jT5lTzebDs2EIHc6Ujdsb24wWX7NolKlJpCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715276933; c=relaxed/simple;
-	bh=fjrIqfLCcacQIwwbkR6Q2FTSjkEoTu7mJkxVdALUiT4=;
+	s=arc-20240116; t=1715277054; c=relaxed/simple;
+	bh=AuIHXH0kmLRTBlETMNM8nhbdKJGDtolDee+2wU48afg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a8fHQXi07QbvCDdTtsjZXLo3wgpopROta17lVj48YbuJOcm4OSks7M83y7fOtL17W5biU6BfFHr0ReL5SdvWcT94jL6IFDYbCoBexhGTBb3SRAiSAfL7Tltlla6FGpoWAry6W01SEBtnwm477ojeNQmDehxwhpfUq1OWE+72Las=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AKc/J3k0; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=eNU470zRy127IG3Zh5yTNfbCwC85YJS5/tALzM6ZW18+hC1rskGuvAlA3JjsbV9YwcsnPu7j4PYE+3kARWpoFgpvIYNfBJ/yUv+g0BsWZQoZMP9/VmT1ZdLI8xc33j0pgY+iM2bCoH5pjYyIT2dSsk6Q07DuDsrHopg79kjwDBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TTxlfAdS; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715276931;
+	s=mimecast20190719; t=1715277052;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=CcvU8eoRJ3v3bJAMRLSLp1zquftLdgbiPZewW3s0bAc=;
-	b=AKc/J3k0UfkQEyRkU7Pa26Ac9DYPGCgXkBdExmK6zZhSSwx7TadJwDC3S8c6Tsvwp0Nd/k
-	tatPp0FdBonU3LcG30rk2sa/4j8NYTCanwJ4UDt9gymkrEISKiSvcfyOzobxZAZY5W9VFZ
-	701vSZRMLL7Fy5+4DVbMKh9E74x0Y4g=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=h4lyeJxZNP6rRsBG/RwMIz9FaCWXE7ZXMgU1HQVLqJQ=;
+	b=TTxlfAdS+DeFg41Qif6baiuRppdrCsLwzLg9RAxpAY6S5f1A6BXbEm9zXxetqpQ34HagGg
+	Bs6SiU96GRa2can96+RSLmVSkwhA7+y132NHV5BFgp354hClKE0RCoYYJsWnmB+WTAJQG8
+	hQGgADtXfS6nwoEb57Ebw0wUKr+FSJA=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-536-QbFQeajtOEulP2NBNasV1w-1; Thu, 09 May 2024 13:48:49 -0400
-X-MC-Unique: QbFQeajtOEulP2NBNasV1w-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34da8f1bf7cso778651f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:48:49 -0700 (PDT)
+ us-mta-307-l1LkTnEtPTODSinxvVjgtg-1; Thu, 09 May 2024 13:50:50 -0400
+X-MC-Unique: l1LkTnEtPTODSinxvVjgtg-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2e2035036f5so12244581fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:50:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715276929; x=1715881729;
+        d=1e100.net; s=20230601; t=1715277049; x=1715881849;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=CcvU8eoRJ3v3bJAMRLSLp1zquftLdgbiPZewW3s0bAc=;
-        b=dv+/4ofY78hjfKg2d5YHg96O2MbXbfB8WssJJrfuHj+p2X8DN7tlaIwT2Tbu6PheAr
-         1uccejjl4rgmENPHrJgaaHwNFpY2J3mv8hf0l7QmWP+CXhbak6yo6DAvawmYVNUE1T6C
-         V+Uyz6lEipeyhCVmYX7CyX9pjqhBPkm+zK5fXP6C1yBw6tjHS6lRBoTkl6TMUqc6kMBX
-         7jdhaiRUvbezyRC1gAx56yeWQLN6ZL148+qoGkPbQR/bvpISzUgDRY1c6CeEsIxVjHI9
-         fjoy2pSb/CKkxQk5Gt+iFKBj8Aijxtl53yIbxShyaf3LIs/SA3JFiv8w+AoY9ZigIIs8
-         GCPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqsVVISJLP4EAgVf9e7AxT7AWMTnuwn6+u2pxaw8Z4cWL+kmbhHJm9EZLcy7Un58HgS8J+G5uBcBKl+13x5J+DOyZ/6EYVL1CD+IMN
-X-Gm-Message-State: AOJu0YzvDTGE8xpqRCJ/zLU9ui0npLaMRwlN4C6SHcBZpamt+RgYnkwn
-	L36FmYTQbXhXvljcDBAlB+oUANoorG+ifhm6WmplEkaeQqQRl/0PLkoM2gG58gFfm/K0aj5T3wa
-	6YjxZYh4Dqz45RzntF0TcfnYZ04vZAtAaHBN3O3eqmQM438Sg9jha4Vp1Cae3VA==
-X-Received: by 2002:a5d:4fd0:0:b0:34b:dc21:68f2 with SMTP id ffacd0b85a97d-3504a738229mr299178f8f.28.1715276928727;
-        Thu, 09 May 2024 10:48:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTnBUYUYuejfPBLLY8ZBtOjJentIBku5CpcFcyXBHDwatUcM7ykUFg7cpEbk2afbnfdUiNFQ==
-X-Received: by 2002:a5d:4fd0:0:b0:34b:dc21:68f2 with SMTP id ffacd0b85a97d-3504a738229mr299154f8f.28.1715276928297;
-        Thu, 09 May 2024 10:48:48 -0700 (PDT)
+        bh=h4lyeJxZNP6rRsBG/RwMIz9FaCWXE7ZXMgU1HQVLqJQ=;
+        b=VjQrSU9Ocx3aHzKfzJ+5Gtzs1lixOpOz+eqmIgFi2XtoxVT2Ri2O5r3wpXG8NkeARK
+         /LAzpfbZJkb3cuuzU4pav+i8C8GWuqqLxSC4XL3ascN/Fm/m7XI2wkK8JSG9LUJtD1Gh
+         3l25naCliLYAx5Ysi7xTARAxTejYWvNqnV6Yrq8XmOV+VhB6Ntdq3g9BjnJCD4nqQDDu
+         DjtG9WO5bY5zCcwkF0nL2nWVer0tS/PcGqi5dktWjG1Avn/+rtDlxUZYvpmd50deFfAA
+         Qa3A6+Wlh3FknPBhj08QglmRYhWuIh/7Wdtu/vyDm6h8W+YXjFJiBxZSQoRQe8ReW/Tp
+         jNsQ==
+X-Gm-Message-State: AOJu0YzDAh2uWeSuqI9ERHIaehJX09sRqhIYythUs47phOtN7w9KpMed
+	WzcsvLcjck8wHo11cAIQrqOazIj+C9/jXIJYEPfW75BMKFjcGU+N8eHyoj3q7U3le8RzWFY2J5F
+	LNa86o07xvhsiKCYwrNnQme45YvfndJv43q68PhVbta+iAjzSMnSFn6CibNUGO3Pt9j2Yiw==
+X-Received: by 2002:a2e:b0db:0:b0:2d9:fb60:9afa with SMTP id 38308e7fff4ca-2e5203b41ecmr1414971fa.40.1715277049183;
+        Thu, 09 May 2024 10:50:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7uCXu39bPVUe66dvyn+7wi4yVEmEfcVXB9UFtK53a2jWW0OU9CnRU0n1pOZHvuSe1PwNeDg==
+X-Received: by 2002:a2e:b0db:0:b0:2d9:fb60:9afa with SMTP id 38308e7fff4ca-2e5203b41ecmr1414671fa.40.1715277048619;
+        Thu, 09 May 2024 10:50:48 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c716:7600:ac6:a414:3c04:6f5a? (p200300cbc71676000ac6a4143c046f5a.dip0.t-ipconnect.de. [2003:cb:c716:7600:ac6:a414:3c04:6f5a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbde1sm2279992f8f.97.2024.05.09.10.48.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87c235e2sm67194785e9.12.2024.05.09.10.50.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 10:48:47 -0700 (PDT)
-Message-ID: <23ea6dbd-1d4e-4aeb-900b-646db880cfb6@redhat.com>
-Date: Thu, 9 May 2024 19:48:46 +0200
+        Thu, 09 May 2024 10:50:48 -0700 (PDT)
+Message-ID: <6b42ad9a-1f15-439a-8a42-34052fec017e@redhat.com>
+Date: Thu, 9 May 2024 19:50:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,28 +81,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
-To: Luis Chamberlain <mcgrof@kernel.org>, Matthew Wilcox
- <willy@infradead.org>, Christoph Lameter <christoph@lameter.com>,
- Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>
-Cc: Daniel Gomez <da.gomez@samsung.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "hughd@google.com" <hughd@google.com>,
- "ioworker0@gmail.com" <ioworker0@gmail.com>,
- "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
- "ying.huang@intel.com" <ying.huang@intel.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
- <ziy@nvidia.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <CGME20240508113934eucas1p13a3972f3f9955365f40155e084a7c7d5@eucas1p1.samsung.com>
- <fqtaxc5pgu3zmvbdad4w6xty5iozye7v5z2b5ckqcjv273nz7b@hhdrjwf6rai3>
- <f44dc19a-e117-4418-9114-b723c5dc1178@redhat.com>
- <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
+Subject: Re: 6.9/BUG: Bad page state in process kswapd0 pfn:d6e840
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Linux Memory Management List <linux-mm@kvack.org>
+References: <CABXGCsPktcHQOvKTbPaTwegMExije=Gpgci5NW=hqORo-s7diA@mail.gmail.com>
+ <CABXGCsOC2Ji7y5Qfsa33QXQ37T3vzdNPsivGoMHcVnCGFi5vKg@mail.gmail.com>
+ <0672f0b7-36f5-4322-80e6-2da0f24c101b@redhat.com>
+ <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -151,117 +136,38 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
+In-Reply-To: <CABXGCsN7LBynNk_XzaFm2eVkryVQ26BSzFkrxC2Zb5GEwTvc1g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08.05.24 21:23, Luis Chamberlain wrote:
-> On Wed, May 08, 2024 at 01:58:19PM +0200, David Hildenbrand wrote:
->> On 08.05.24 13:39, Daniel Gomez wrote:
->>> On Mon, May 06, 2024 at 04:46:24PM +0800, Baolin Wang wrote:
->>>> The primary strategy is similar to supporting anonymous mTHP. Introduce
->>>> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
->>>> which can have all the same values as the top-level
->>>> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
->>>> additional "inherit" option. By default all sizes will be set to "never"
->>>> except PMD size, which is set to "inherit". This ensures backward compatibility
->>>> with the shmem enabled of the top level, meanwhile also allows independent
->>>> control of shmem enabled for each mTHP.
->>>
->>> I'm trying to understand the adoption of mTHP and how it fits into the adoption
->>> of (large) folios that the kernel is moving towards. Can you, or anyone involved
->>> here, explain this? How much do they overlap, and can we benefit from having
->>> both? Is there any argument against the adoption of large folios here that I
->>> might have missed?
+On 09.05.24 13:59, Mikhail Gavrilov wrote:
+> On Wed, May 8, 2024 at 10:45 PM David Hildenbrand <david@redhat.com> wrote:
 >>
->> mTHP are implemented using large folios, just like traditional PMD-sized THP
->> are.
+>> "page dumped because: non-NULL mapping"
 >>
->> The biggest challenge with memory that cannot be evicted on memory pressure
->> to be reclaimed (in contrast to your ordinary files in the pagecache) is
->> memory waste, well, and placement of large chunks of memory in general,
->> during page faults.
+>> Is the relevant bit. We are freeing a page, but page->mapping is not
+>> NULL. IIUC, it might happen under memory pressure when reclaiming memory.
 >>
->> In the worst case (no swap), you allocate a large chunk of memory once and
->> it will stick around until freed: no reclaim of that memory.
+>> It's weird that only you are seeing that, if it would be something
+>> "obvious" I would expect multiple reports :/
 >>
->> That's the reason why THP for anonymous memory and SHMEM have toggles to
->> manually enable and configure them, in contrast to the pagecache. The same
->> was done for mTHP for anonymous memory, and now (anon) shmem follows.
->>
->> There are plans to have, at some point, have it all working automatically,
->> but a lot for that for anonymous memory (and shmem similarly) is still
->> missing and unclear.
 > 
-> Whereas the use for large folios for filesystems is already automatic,
-> so long as the filesystem supports it. We do this in readahead and write
-> path already for iomap, we opportunistically use large folios if we can,
-> otherwise we use smaller folios.
+> Maybe because the problem is really difficult to reproduce (rare
+> combination of the kernel build option and workload). I even thought
+> that the problem was fixed because it did not reproduce itself for a
+> week.
 > 
-> So a recommended approach by Matthew was to use the readahead and write
-> path, just as in iomap to determine the size of the folio to use [0].
-> The use of large folios would also be automatic and not require any
-> knobs at all.
-
-Yes, I remember discussing that with Willy at some point, including why 
-shmem is unfortunately a bit more "special", because you might not even 
-have a disk backend ("swap") at all where you could easily reclaim memory.
-
-In the extreme form, you can consider SHMEM as memory that might be 
-always mlocked, even without the user requiring special mlock limits ...
-
+> But yesterday when it happened again with the kworker process, I
+> stopped doubting that it was fixed.
 > 
-> The mTHP approach would be growing the "THP" use in filesystems by the
-> only single filesystem to use THP. Meanwhile use of large folios is already
-> automatic with the approach taken by iomap.
+> Now I am concerned with the question of how to be as useful as
+> possible when reproducing bug again?
 
-Yes, it's the extension of existing shmem_enabled (that -- I'm afraid -- 
-was added for good reasons).
+Do you have the other stracktrace as well?
 
-> 
-> We're at a crux where it does beg the question if we should continue to
-> chug on with tmpfs being special and doing things differently extending
-> the old THP interface with mTHP, or if it should just use large folios
-> using the same approach as iomap did.
-
-I'm afraid shmem will remain to some degree special. Fortunately it's 
-not alone, hugetlbfs is even more special ;)
-
-> 
->  From my perspective the more shared code the better, and the more shared
-> paths the better. There is a chance to help test swap with large folios
-> instead of splitting the folios for swap, and that would could be done
-> first with tmpfs. I have not evaluated the difference in testing or how
-> we could get the most of shared code if we take a mTHP approach or the
-> iomap approach for tmpfs, that should be considered.
-
-I don't have a clear picture yet of what might be best for ordinary 
-shmem (IOW, not MAP_SHARED|MAP_PRIVATE), and I'm afraid there is no easy 
-answer.
-
-As long as we don't end up wasting memory, it's not obviously bad. But 
-some things might be tricky (see my example about large folios stranding 
-in shmem and never being able to be really reclaimed+reused for better 
-purposes)
-
-I'll note that mTHP really is just (supposed to be) a user interface to 
-enable the various folio sizes (well, and to expose better per-size 
-stats), not more.
-
- From that point of view, it's just a filter. Enable all, and you get 
-the same behavior as you likely would in the pagecache mode.
-
- From a shared-code and testing point of view, there really wouldn't be 
-a lot of differences. Again, essentially just a filter.
-
-
-> 
-> Are there other things to consider? Does this require some dialog at
-> LSFMM?
-
-As raised in my reply to Daniel, I'll be at LSF/MM and happy to discuss. 
-I'm also not a SHMEM expert, so I'm hoping at some point we'd get 
-feedback from Hugh.
+Maybe triggering memory reclaim (e.g., using "stress" or "memhog") could 
+trigger it, that might be reasonable to trey. Once we have a reproducer 
+we could at least bisect.
 
 -- 
 Cheers,
