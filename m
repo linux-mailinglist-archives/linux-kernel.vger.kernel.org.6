@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-174016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F51F8C0931
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:34:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC508C0932
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89091F25D9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FC81C20F3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40B73F9E0;
-	Thu,  9 May 2024 01:34:22 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7972A2C683;
+	Thu,  9 May 2024 01:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="PJuFv5I7"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2423CBA2B;
-	Thu,  9 May 2024 01:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416D228DDF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 01:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715218462; cv=none; b=J/thVAsqkAyLOWybFIj8vwIpCDea1H6Tf38OzQrm7xjVzIDN1eQKkxr3aErzj00IE2j7faT85KxzKa0t82pIYuOBgdVJROLWPnIjiLTaPpXqdWNMqZZpStOsTUWujj7GTlgy59xO2FgYsZm2JRlP8+KhntU1G6H7NQ8OskHL85A=
+	t=1715218651; cv=none; b=fgLlOUaJPJbCMt76yBwYEsiRlIpBi/RB8xUXx9WqE9kjB0VadEqOIUT4ywkByyCBf9Ky43AL/mpvucbFQSc9QB+/1PAaBMftSix0KWqFJar1ElXNldAkIkK0y0+fo2S2XHOilahYbkNxh6FOap/AM2VlxRjfmzZoNQ9jQNyA2ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715218462; c=relaxed/simple;
-	bh=fqQkjF82diC2EzfU174t0iSDV9wYhGJFYbMGZP9Uw3s=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rEMAqMkGDh//MadsF9omL9PNrmLSyptSOJebSH7IRe4EGCLwin1EDjZ2Hv/4rB+mcUhiXiHQfIRxLbaR5lHcKftAWFxm80PhMhzKvXAOWFxu6AdKft21GGJ3FgU0mMr0A30sTiaY0fs2QirqazI5S71butlrLU3QBJc5dlzPkE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VZZLC57Kkz4f3kkk;
-	Thu,  9 May 2024 09:34:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 114101A016E;
-	Thu,  9 May 2024 09:34:17 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+REXKDxmQR2YMA--.39420S3;
-	Thu, 09 May 2024 09:34:16 +0800 (CST)
-Subject: Re: [PATCH] md: do not delete safemode_timer in mddev_suspend
-To: linan666@huaweicloud.com, song@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, houtao1@huawei.com, yangerkun@huawei.co,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240508092053.1447930-1-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <33185f65-b657-b15b-ffa8-e35319fa0a5f@huaweicloud.com>
-Date: Thu, 9 May 2024 09:34:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1715218651; c=relaxed/simple;
+	bh=bcfj/xRt+O38cd3vdFpTeGSWOTlfbp0sILXb+gyTHlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g35kd0xVD0VBl1yTQ8YY3W/Zb5BHBZlStpgO//17E6uIGvufvGtc5dCnGEh5tsTnqGAqGjD/ZNUitXM/rwiCnbgpGHWbT3eTZmAs8ViOf0tWAQlvtYWO+gm+q+KwYvfrJcTj+B+4REvHV714LOlUXOvpll3gK3Kfwza8wkpGVIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=PJuFv5I7; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e185d61f2aso14996039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 18:37:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715218649; x=1715823449; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w8nEiAnrrvoqrUnhic8kVR/TQCD7dz1dJX6ammFBF+s=;
+        b=PJuFv5I7lcWb+646x7rw6VXtO928worfITtThpurvskUB84cYLZ7SyAm223LULGlgv
+         LDt8JIShO3GRYy4qLpEJZgWuR/4Uaj5yHKwHQI9OJrdYIXSFkP/dYydu7iKd3+amiPJD
+         Vw6TkWB7dKUO216UekDRxhxjcFUh/nspreMx1pCtD+Dyd5pN0vHESEB9VvXuL/ciM/i/
+         BRlOp8KXXiOouvGAHrztOpNBfJsJccCjvobFYaBAZGzlDsHu5W8fWSzibVl8KvlEMlEi
+         xBd9T8T0ZCRbWz5lLplJewF5pCom8ZqXYzzSBUlxnze1s264PQvb78NnMX/UiPWLleKy
+         pLFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715218649; x=1715823449;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w8nEiAnrrvoqrUnhic8kVR/TQCD7dz1dJX6ammFBF+s=;
+        b=DzWkfIa9DkbnSGA/syOxIeX8iqqQpP7wrTyb1VY8AiPH4wZbs+NmpHRvXPeHTpBKhp
+         dNIEtviA+cRtQGKwp9ay+osRRQ7s7nFfty4Y2kRTxCA+IdQJ0JTFdp+xeuLlrWtkAqxS
+         fLU8gljKtf7sWbvFbWvc224tbhQJu2jrmGWUrraDxJimeK+/qmO9pE+fqHFAMJHN6Ql+
+         etvgfR2/MIk2p+LG9EM1rIYRNCXz9r49HMZv1dMwmagc9VifI2obyaRLwpubU8GGSSi2
+         Q2gcPEmfp7Vk8FKE+6ofUOK3LT2PdU+ofJ3DaMOC4qrXaP4PmlFYI8/5NcMzyROkOY1W
+         TB4A==
+X-Gm-Message-State: AOJu0YxuO2wn/u9cdb3LoYbVm1yKUxaYCkM0KyEXzVcNkvXRcaVJPq/3
+	DRXQSSD3C0JENVVLAQRDGTUwvLz+gn6SjjFsGpErd69xfSXyaHdgp1QBRNizad8=
+X-Google-Smtp-Source: AGHT+IHpSD4lyUmHxlYUauGGuGqZjazTVD9fSRC10uwBI/bVjd4EXQ/hPAJ0qb89iSq4E50z09RmTg==
+X-Received: by 2002:a05:6e02:20ea:b0:36c:4688:85aa with SMTP id e9e14a558f8ab-36caece2c35mr49616085ab.10.1715218649330;
+        Wed, 08 May 2024 18:37:29 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([4.53.31.132])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634117191f1sm178084a12.90.2024.05.08.18.37.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 18:37:28 -0700 (PDT)
+From: Samuel Holland <samuel.holland@sifive.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	kernel test robot <lkp@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Andrew Davis <afd@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	Rob Herring <robh@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] ARM: Do not select ARCH_HAS_KERNEL_FPU_SUPPORT
+Date: Wed,  8 May 2024 18:37:10 -0700
+Message-ID: <20240509013727.648600-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240508092053.1447930-1-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+REXKDxmQR2YMA--.39420S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KrWkGr1fur4kAry8Ar48tFb_yoW8CFWfp3
-	ySqw4agw18Jr4Ika1DGa1kWFyrXwn5KrWUtFy3WrZxZa13Xr18WF4agws8XFyUur97J3Zx
-	JF4F934rua48GFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
-	UdHUDUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-ÔÚ 2024/05/08 17:20, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
-> 
-> The deletion of safemode_timer in mddev_suspend() is redundant and
-> potentially harmful now. If timer is about to be woken up but gets
-> deleted, 'in_sync' will remain 0 until the next write, causing array
-> to stay in the 'active' state instead of transitioning to 'clean'.
-> 
-> Commit 0d9f4f135eb6 ("MD: Add del_timer_sync to mddev_suspend (fix
-> nasty panic))" introduced this deletion for dm, because if timer fired
-> after dm is destroyed, the resource which the timer depends on might
-> have been freed.
-> 
-> However, commit 0dd84b319352 ("md: call __md_stop_writes in md_stop")
-> added __md_stop_writes() to md_stop(), which is called before freeing
-> resource. Timer is deleted in __md_stop_writes(), and the origin issue
-> is resolved. Therefore, delete safemode_timer can be removed safely now.
-> 
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/md.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index aff9118ff697..09c55d9a2c54 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -479,7 +479,6 @@ int mddev_suspend(struct mddev *mddev, bool interruptible)
->   	 */
->   	WRITE_ONCE(mddev->suspended, mddev->suspended + 1);
->   
-> -	del_timer_sync(&mddev->safemode_timer);
+On 32-bit ARM, conversions between `double` and `long long` require
+runtime library support. Since the kernel does not currently provide
+this library support, the amdgpu driver fails to build:
 
-I don't understand why time is deleted here before, it's right based on
-git log, commit 0d9f4f135eb6 add this to fix panic for dm-raid, and it's
-not necessary now.
+  ERROR: modpost: "__aeabi_l2d" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+  ERROR: modpost: "__aeabi_d2ulz" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
 
-LGTM, feel free to add:
+As Arnd reports, there are likely no 32-bit ARM platforms which can use
+the amdgpu driver anyway, due to lack of features like 64-bit
+prefetchable BARs. Since amdgpu is currently the only real user of
+ARCH_HAS_KERNEL_FPU_SUPPORT, drop support for this option instead of
+bothering to implement the library functions.
 
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+Fixes: 12624fe2d707 ("ARM: implement ARCH_HAS_KERNEL_FPU_SUPPORT")
+Reported-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Closes: https://lore.kernel.org/lkml/87wmp4oo3y.fsf@linaro.org/
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202404042327.jRpt81kP-lkp@intel.com/
+Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+---
 
-However, since this behaviour is introduced since 2012, does anybody
-really care about array status is 'active' instead of 'clean' while
-there is no IO after suspend?
+ arch/arm/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-Thanks,
-Kuai
-
->   	/* restrict memory reclaim I/O during raid array is suspend */
->   	mddev->noio_flag = memalloc_noio_save();
->   
-> 
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index b1751c2cab87..b14aed3a17ab 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -15,7 +15,6 @@ config ARM
+ 	select ARCH_HAS_FORTIFY_SOURCE
+ 	select ARCH_HAS_KEEPINITRD
+ 	select ARCH_HAS_KCOV
+-	select ARCH_HAS_KERNEL_FPU_SUPPORT if KERNEL_MODE_NEON
+ 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
+ 	select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+ 	select ARCH_HAS_PTE_SPECIAL if ARM_LPAE
+-- 
+2.44.0
 
 
