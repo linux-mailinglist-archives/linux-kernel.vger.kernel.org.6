@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-174878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587E68C167A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:12:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65408C1681
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9FB1C230BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEE1285FB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9806013BC0F;
-	Thu,  9 May 2024 20:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8E313BACA;
+	Thu,  9 May 2024 20:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IFTp/NUm"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AxwfSOIx"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9AB13BACD
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879718615E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284935; cv=none; b=YHudh967mw17HW1CY9IZF1QGBElPI/Qw0uD6NpG5HauvCW4yrZTNo1gkZNTDtmQNpeXJBB5FoJJha5WTxSRn4Qv9xVEtiyrK5sJWUx1XR08en/4hk0G24Yck4UObrjvfCF5afnpnHie1FTHatUeEAxO4QFYLDZqF1SlmDr4WyZs=
+	t=1715284943; cv=none; b=Jk/TqwkjyRbKIrSQriuzt5xv9fixkQzFNWjHkCkOdZnONR04LHkBTUUPxqleksrZyiKOnwkqm8Mt9SAmzrGaB9h3FUpKxPw7v9z74VIPPWRBYIrscfb0s/pBhGH2cy7BdvHwjxZHeUYsHobdou+RbLq1DYv2WdqdpHiZZgDiNqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284935; c=relaxed/simple;
-	bh=Q8vMNdjv6oUz3ffMNcoe90QZDt2uRoBqgozhP5DTiA0=;
+	s=arc-20240116; t=1715284943; c=relaxed/simple;
+	bh=CvcWkJAQj9Bm62LgZlJ41X+wznoeEHyavNlXM2IT2VU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=d80/sMHeykQVNN7oKWeBG+MVbl0kPU9JyLPtZWoiTmWNrOfXeXiE2oUnxM+dtCHqpaOxuCzGA/wn3uJIHQlroJilJ90Nw360VZNjgpiwb5XCYPP24DrWMZe7que7NJEnfI0v7p/mGbjD91tkZ8tIvIeGBY7QkS0zFkXUDWzpX1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IFTp/NUm; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=lNFlK1LnJcHjx2hVifhRdwh7vqy6RUeM/86yjtth1sX1ErdCOKRUQ1EYxDLBJovwcn0P2cW0ajnc3QO4XGzz/7v9F7XSo4VtX5Fk7MyCenxpEb58dh9eZnWU866HkXZxhTi8FkUw2jpvJ7bc2BiyVrOxU92Cp7Ks0V/T1k35zZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AxwfSOIx; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbe9e13775aso2139810276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 13:02:14 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61bed763956so22061367b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 13:02:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715284933; x=1715889733; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715284940; x=1715889740; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ea0S0oR7atF2Lg5jk6+sVnhZ8gGTM0V6dmG3kMF6TeI=;
-        b=IFTp/NUmnUR+jPPz4ujog3zcMgIwi3YGl67rPta55u0EYf55NSd92iDLr2zqaMJ7Ge
-         a8fMNeB4LzFmiXwz34o3m+tI8GnDdJ+ie3emfW5JcPmxnXx7gYSvly1UWadyXOmY9h5v
-         kDWJ8Yp5IfDhmMylqCSkgemMI4oK0PtB7qXiuB1Kb50H2b55NXwB6rtUmNpzJexISHju
-         2oe0f9U4h+k54Ha7p1H16kdt5DE7mbYTMfvZpKiOy/x5QbcvoMkk8IJXCAGljyHI1G/5
-         D8tN38y3Nv52Blzefk+23RURsZW2ZEM29+cf1dl8TVik3dSk5Fc+GVXMU6sDuYCo/ALZ
-         lq3Q==
+        bh=d9gHi1CbuLmtBbPnbX9/epVkdMwUWIuJUi+ysiedamw=;
+        b=AxwfSOIxB7X4lCX7KlTTKj9P+KlvuHl4UFqAhx0nRYC+szBlTgXC+wk14QT01Q2WcW
+         BIreFKEMDJrsc4F3hISzNbmHzocwQp+pgTRmAgDj3gNNt2xfeRXZJPZnNWjLaw20Ip1h
+         CbhT6eZ2dIPJ+IFiQfo64wD+2YI+FGCG3HgE0QbbfO7V1YRbW5gFmpXmEokFpOJpC2bo
+         fxGYCX+Bcho33mVShaXRAE6wymuktjoId3onE1k1jwEEoPdgCcx8RU070VXGN3c0ONWe
+         dQzzwqUOHgls2x2X/RmhyfN7J3udQbmpUwEQLbTW9EGsHACQo4fwRA415xz0jObShuXZ
+         4qpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284933; x=1715889733;
+        d=1e100.net; s=20230601; t=1715284940; x=1715889740;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ea0S0oR7atF2Lg5jk6+sVnhZ8gGTM0V6dmG3kMF6TeI=;
-        b=rwYHyJQs4MASySDS6jtVmItXBqgf6Swqs9cJ0fmm4j2zIpY+R8ie/n0iRwL3pZb8h2
-         g8WHC+k6fXuYjodfL4vMwGFKYuifC8cVP43eFvcgrXbZYYnzoadLWvQjtmY4V+jQym1T
-         vSTOCQkenOgazCfK15eURp/MNTMXbOnZDFUOSW0EIDbO9uAADsTMRJpOHZN4ymTJeYx0
-         HTtpYwIcLTqh9EBH5CfUGfkrXfhV5OoqHLM8IkK2xdlGvB9HmxzROH0qMWcZ37lT1dET
-         X+Q76c2OR8PdqCLMgub+Hhq270p2LFk29aPs0RZQCzkQO/yFQj3gegI9hdj0Fez6yN4D
-         M7/Q==
-X-Gm-Message-State: AOJu0YwII2KzWRLj/Bsro0R9zN+UlNYBlhSVFSSVqf6EGnLf1hAouqJI
-	R5PR4cEn5WCiQzD46Cig8c+sBWUsARX6S596qNrzpO1Rx8BWNn1gFR8X+w3BQc8fdtTg7e+AuiY
-	OpA==
-X-Google-Smtp-Source: AGHT+IF/jnDS4ymNWQMUF/oWdD6iqbobUDLDZUHVjJQIP+SRjrwW5c29IOEMwIEB1XpBJKq7KUUsEHKahpI=
+        bh=d9gHi1CbuLmtBbPnbX9/epVkdMwUWIuJUi+ysiedamw=;
+        b=F2wgx4dy82wY3oGsLxsorQvR2LUWcOf2pJvaMN13z0N9Vn3npulBMwLtE2UsYW2u1n
+         3p5l3ETEem76pz0Zjh2S7LSk/hrHWSj15477eJkjQsnp1qragmeMWl/zwQSc1iKt2mEX
+         7fTYsfk75hI4f0eRaSfRLZXwoMzolaR7WV3ouMzDWrEfw1yfUCgOnRfKVnB08mymIi0g
+         NGbIqENCvCo27+S6H8Vbs0FPTkLnd//DoXw723tHz2wYNikbnV6RSkqcJhj3Blknx2W4
+         fvfvvITh/26iIP33fzGvdeABqE5mocO8yJTSRIbTzSnEtVs6d4po+ejzvWzSDhyb4Uce
+         YgJA==
+X-Gm-Message-State: AOJu0YxyoXp3UrwssiM3ecb9wds5meL20R4y6EZdXochpBXnBnPmaBWB
+	McHP/TXPPJk3Kef96X6z7BPovXriNmxSxFjbrGnaFx+vV96NPWX6Zfuvn2R/OeEiQXdOzGiGTVS
+	xbw==
+X-Google-Smtp-Source: AGHT+IH1HCGu1gIE3DSLG2ih1KsG2DZ9PZD+3gGDYLQl8TsAe58wSaCRg5bXsgFKtYHhpV1brH7f43Zpxyg=
 X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
- (user=edliaw job=sendgmr) by 2002:a05:6902:1002:b0:de5:9f2c:c17c with SMTP id
- 3f1490d57ef6-dee4f37bbfbmr149190276.9.1715284933545; Thu, 09 May 2024
- 13:02:13 -0700 (PDT)
-Date: Thu,  9 May 2024 19:58:23 +0000
+ (user=edliaw job=sendgmr) by 2002:a05:690c:6f8c:b0:61b:ea12:d0b with SMTP id
+ 00721157ae682-622aff85f0cmr1708317b3.2.1715284939723; Thu, 09 May 2024
+ 13:02:19 -0700 (PDT)
+Date: Thu,  9 May 2024 19:58:24 +0000
 In-Reply-To: <20240509200022.253089-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,8 +72,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240509200022.253089-1-edliaw@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240509200022.253089-32-edliaw@google.com>
-Subject: [PATCH v3 31/68] selftests/mincore: Drop define _GNU_SOURCE
+Message-ID: <20240509200022.253089-33-edliaw@google.com>
+Subject: [PATCH v3 32/68] selftests/mm: Drop define _GNU_SOURCE
 From: Edward Liaw <edliaw@google.com>
 To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
 	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
@@ -82,11 +82,12 @@ To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>
 	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
 	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
 	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Edward Liaw <edliaw@google.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, Edward Liaw <edliaw@google.com>
 Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
 	kernel-team@android.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 
 _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
@@ -95,20 +96,312 @@ redefinition warnings.
 Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
 Signed-off-by: Edward Liaw <edliaw@google.com>
 ---
- tools/testing/selftests/mincore/mincore_selftest.c | 3 ---
- 1 file changed, 3 deletions(-)
+ tools/testing/selftests/mm/cow.c                   | 1 -
+ tools/testing/selftests/mm/gup_longterm.c          | 1 -
+ tools/testing/selftests/mm/hugepage-mmap.c         | 1 -
+ tools/testing/selftests/mm/hugepage-mremap.c       | 2 --
+ tools/testing/selftests/mm/hugetlb-madvise.c       | 2 --
+ tools/testing/selftests/mm/hugetlb-read-hwpoison.c | 2 --
+ tools/testing/selftests/mm/khugepaged.c            | 1 -
+ tools/testing/selftests/mm/ksm_functional_tests.c  | 1 -
+ tools/testing/selftests/mm/madv_populate.c         | 1 -
+ tools/testing/selftests/mm/map_populate.c          | 2 --
+ tools/testing/selftests/mm/mdwe_test.c             | 1 -
+ tools/testing/selftests/mm/memfd_secret.c          | 2 --
+ tools/testing/selftests/mm/mlock2-tests.c          | 1 -
+ tools/testing/selftests/mm/mrelease_test.c         | 1 -
+ tools/testing/selftests/mm/mremap_dontunmap.c      | 1 -
+ tools/testing/selftests/mm/mremap_test.c           | 2 --
+ tools/testing/selftests/mm/mseal_test.c            | 1 -
+ tools/testing/selftests/mm/pagemap_ioctl.c         | 1 -
+ tools/testing/selftests/mm/pkey-helpers.h          | 1 -
+ tools/testing/selftests/mm/protection_keys.c       | 1 -
+ tools/testing/selftests/mm/seal_elf.c              | 1 -
+ tools/testing/selftests/mm/split_huge_page_test.c  | 2 --
+ tools/testing/selftests/mm/thuge-gen.c             | 2 --
+ tools/testing/selftests/mm/uffd-common.h           | 1 -
+ 24 files changed, 32 deletions(-)
 
-diff --git a/tools/testing/selftests/mincore/mincore_selftest.c b/tools/testing/selftests/mincore/mincore_selftest.c
-index e949a43a6145..e12398366523 100644
---- a/tools/testing/selftests/mincore/mincore_selftest.c
-+++ b/tools/testing/selftests/mincore/mincore_selftest.c
-@@ -4,9 +4,6 @@
+diff --git a/tools/testing/selftests/mm/cow.c b/tools/testing/selftests/mm/cow.c
+index 32c6ccc2a6be..8747ffef200f 100644
+--- a/tools/testing/selftests/mm/cow.c
++++ b/tools/testing/selftests/mm/cow.c
+@@ -6,7 +6,6 @@
   *
-  * Copyright (C) 2020 Collabora, Ltd.
+  * Author(s): David Hildenbrand <david@redhat.com>
+  */
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdbool.h>
+diff --git a/tools/testing/selftests/mm/gup_longterm.c b/tools/testing/selftests/mm/gup_longterm.c
+index 9423ad439a61..53c257f6159c 100644
+--- a/tools/testing/selftests/mm/gup_longterm.c
++++ b/tools/testing/selftests/mm/gup_longterm.c
+@@ -6,7 +6,6 @@
+  *
+  * Author(s): David Hildenbrand <david@redhat.com>
+  */
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdbool.h>
+diff --git a/tools/testing/selftests/mm/hugepage-mmap.c b/tools/testing/selftests/mm/hugepage-mmap.c
+index 267eea2e0e0b..edb46888222f 100644
+--- a/tools/testing/selftests/mm/hugepage-mmap.c
++++ b/tools/testing/selftests/mm/hugepage-mmap.c
+@@ -16,7 +16,6 @@
+  * range.
+  * Other architectures, such as ppc64, i386 or x86_64 are not so constrained.
+  */
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <unistd.h>
+diff --git a/tools/testing/selftests/mm/hugepage-mremap.c b/tools/testing/selftests/mm/hugepage-mremap.c
+index c463d1c09c9b..8e22822bb754 100644
+--- a/tools/testing/selftests/mm/hugepage-mremap.c
++++ b/tools/testing/selftests/mm/hugepage-mremap.c
+@@ -11,8 +11,6 @@
+  * To make sure the test triggers pmd sharing and goes through the 'unshare'
+  * path in the mremap code use 1GB (1024) or more.
   */
 -
 -#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <unistd.h>
+diff --git a/tools/testing/selftests/mm/hugetlb-madvise.c b/tools/testing/selftests/mm/hugetlb-madvise.c
+index e74107185324..70c40c67bc5d 100644
+--- a/tools/testing/selftests/mm/hugetlb-madvise.c
++++ b/tools/testing/selftests/mm/hugetlb-madvise.c
+@@ -11,8 +11,6 @@
+  * filesystem.  Therefore, a hugetlbfs filesystem must be mounted on some
+  * directory.
+  */
 -
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <unistd.h>
+diff --git a/tools/testing/selftests/mm/hugetlb-read-hwpoison.c b/tools/testing/selftests/mm/hugetlb-read-hwpoison.c
+index ba6cc6f9cabc..6b8b41b4f754 100644
+--- a/tools/testing/selftests/mm/hugetlb-read-hwpoison.c
++++ b/tools/testing/selftests/mm/hugetlb-read-hwpoison.c
+@@ -1,6 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
+diff --git a/tools/testing/selftests/mm/khugepaged.c b/tools/testing/selftests/mm/khugepaged.c
+index 829320a519e7..d18bf400dae6 100644
+--- a/tools/testing/selftests/mm/khugepaged.c
++++ b/tools/testing/selftests/mm/khugepaged.c
+@@ -1,4 +1,3 @@
+-#define _GNU_SOURCE
+ #include <ctype.h>
+ #include <errno.h>
+ #include <fcntl.h>
+diff --git a/tools/testing/selftests/mm/ksm_functional_tests.c b/tools/testing/selftests/mm/ksm_functional_tests.c
+index 37de82da9be7..b0af40ddb0fb 100644
+--- a/tools/testing/selftests/mm/ksm_functional_tests.c
++++ b/tools/testing/selftests/mm/ksm_functional_tests.c
+@@ -6,7 +6,6 @@
+  *
+  * Author(s): David Hildenbrand <david@redhat.com>
+  */
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdbool.h>
+diff --git a/tools/testing/selftests/mm/madv_populate.c b/tools/testing/selftests/mm/madv_populate.c
+index ef7d911da13e..f2c8223ff3d4 100644
+--- a/tools/testing/selftests/mm/madv_populate.c
++++ b/tools/testing/selftests/mm/madv_populate.c
+@@ -6,7 +6,6 @@
+  *
+  * Author(s): David Hildenbrand <david@redhat.com>
+  */
+-#define _GNU_SOURCE
+ #include <stdlib.h>
+ #include <string.h>
+ #include <stdbool.h>
+diff --git a/tools/testing/selftests/mm/map_populate.c b/tools/testing/selftests/mm/map_populate.c
+index 5c8a53869b1b..ff4d4079bd0e 100644
+--- a/tools/testing/selftests/mm/map_populate.c
++++ b/tools/testing/selftests/mm/map_populate.c
+@@ -4,8 +4,6 @@
+  *
+  * MAP_POPULATE | MAP_PRIVATE should COW VMA pages.
+  */
+-
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sys/mman.h>
+diff --git a/tools/testing/selftests/mm/mdwe_test.c b/tools/testing/selftests/mm/mdwe_test.c
+index 1e01d3ddc11c..200bedcdc32e 100644
+--- a/tools/testing/selftests/mm/mdwe_test.c
++++ b/tools/testing/selftests/mm/mdwe_test.c
+@@ -7,7 +7,6 @@
+ #include <linux/mman.h>
+ #include <linux/prctl.h>
+ 
+-#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/auxv.h>
+diff --git a/tools/testing/selftests/mm/memfd_secret.c b/tools/testing/selftests/mm/memfd_secret.c
+index 9a0597310a76..0ba721d45d35 100644
+--- a/tools/testing/selftests/mm/memfd_secret.c
++++ b/tools/testing/selftests/mm/memfd_secret.c
+@@ -4,8 +4,6 @@
+  *
+  * Author: Mike Rapoport <rppt@linux.ibm.com>
+  */
+-
+-#define _GNU_SOURCE
+ #include <sys/uio.h>
+ #include <sys/mman.h>
+ #include <sys/wait.h>
+diff --git a/tools/testing/selftests/mm/mlock2-tests.c b/tools/testing/selftests/mm/mlock2-tests.c
+index 7f0d50fa361d..99dc39bf2fec 100644
+--- a/tools/testing/selftests/mm/mlock2-tests.c
++++ b/tools/testing/selftests/mm/mlock2-tests.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sys/mman.h>
+ #include <stdint.h>
+ #include <unistd.h>
+diff --git a/tools/testing/selftests/mm/mrelease_test.c b/tools/testing/selftests/mm/mrelease_test.c
+index 100370a7111d..d78bf686e99f 100644
+--- a/tools/testing/selftests/mm/mrelease_test.c
++++ b/tools/testing/selftests/mm/mrelease_test.c
+@@ -2,7 +2,6 @@
+ /*
+  * Copyright 2022 Google LLC
+  */
+-#define _GNU_SOURCE
+ #include <errno.h>
+ #include <stdbool.h>
+ #include <stdio.h>
+diff --git a/tools/testing/selftests/mm/mremap_dontunmap.c b/tools/testing/selftests/mm/mremap_dontunmap.c
+index 1d75084b9ca5..934fa6b441b2 100644
+--- a/tools/testing/selftests/mm/mremap_dontunmap.c
++++ b/tools/testing/selftests/mm/mremap_dontunmap.c
+@@ -5,7 +5,6 @@
+  *
+  * Copyright 2020, Brian Geffon <bgeffon@google.com>
+  */
+-#define _GNU_SOURCE
+ #include <sys/mman.h>
+ #include <linux/mman.h>
+ #include <errno.h>
+diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
+index 1b03bcfaefdf..0d8dc16b63be 100644
+--- a/tools/testing/selftests/mm/mremap_test.c
++++ b/tools/testing/selftests/mm/mremap_test.c
+@@ -2,8 +2,6 @@
+ /*
+  * Copyright 2020 Google LLC
+  */
+-#define _GNU_SOURCE
+-
+ #include <errno.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
+index 41998cf1dcf5..d35ee37311a7 100644
+--- a/tools/testing/selftests/mm/mseal_test.c
++++ b/tools/testing/selftests/mm/mseal_test.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <linux/mman.h>
+ #include <sys/mman.h>
+ #include <stdint.h>
+diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
+index 2d785aca72a5..50d6bfc8db05 100644
+--- a/tools/testing/selftests/mm/pagemap_ioctl.c
++++ b/tools/testing/selftests/mm/pagemap_ioctl.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <fcntl.h>
+ #include <string.h>
+diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
+index 1af3156a9db8..37d6b01ce90a 100644
+--- a/tools/testing/selftests/mm/pkey-helpers.h
++++ b/tools/testing/selftests/mm/pkey-helpers.h
+@@ -1,7 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef _PKEYS_HELPER_H
+ #define _PKEYS_HELPER_H
+-#define _GNU_SOURCE
+ #include <string.h>
+ #include <stdarg.h>
+ #include <stdio.h>
+diff --git a/tools/testing/selftests/mm/protection_keys.c b/tools/testing/selftests/mm/protection_keys.c
+index 48dc151f8fca..9f7de92caeda 100644
+--- a/tools/testing/selftests/mm/protection_keys.c
++++ b/tools/testing/selftests/mm/protection_keys.c
+@@ -21,7 +21,6 @@
+  *	gcc -mxsave      -o protection_keys    -O2 -g -std=gnu99 -pthread -Wall protection_keys.c -lrt -ldl -lm
+  *	gcc -mxsave -m32 -o protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall protection_keys.c -lrt -ldl -lm
+  */
+-#define _GNU_SOURCE
+ #define __SANE_USERSPACE_TYPES__
+ #include <errno.h>
+ #include <linux/elf.h>
+diff --git a/tools/testing/selftests/mm/seal_elf.c b/tools/testing/selftests/mm/seal_elf.c
+index f2babec79bb6..0438695bc45a 100644
+--- a/tools/testing/selftests/mm/seal_elf.c
++++ b/tools/testing/selftests/mm/seal_elf.c
+@@ -1,5 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+ #include <sys/mman.h>
+ #include <stdint.h>
+ #include <unistd.h>
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index d3c7f5fb3e7b..ae6ac950d7a1 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -3,8 +3,6 @@
+  * A test of splitting PMD THPs and PTE-mapped THPs from a specified virtual
+  * address range in a process via <debugfs>/split_huge_pages interface.
+  */
+-
+-#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdarg.h>
+diff --git a/tools/testing/selftests/mm/thuge-gen.c b/tools/testing/selftests/mm/thuge-gen.c
+index ea7fd8fe2876..28a5c31bd791 100644
+--- a/tools/testing/selftests/mm/thuge-gen.c
++++ b/tools/testing/selftests/mm/thuge-gen.c
+@@ -12,8 +12,6 @@
+    ipcrm -m by hand, like this
+    sudo ipcs | awk '$1 == "0x00000000" {print $2}' | xargs -n1 sudo ipcrm -m
+    (warning this will remove all if someone else uses them) */
+-
+-#define _GNU_SOURCE 1
+ #include <sys/mman.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+diff --git a/tools/testing/selftests/mm/uffd-common.h b/tools/testing/selftests/mm/uffd-common.h
+index cc5629c3d2aa..abb44319264a 100644
+--- a/tools/testing/selftests/mm/uffd-common.h
++++ b/tools/testing/selftests/mm/uffd-common.h
+@@ -7,7 +7,6 @@
+ #ifndef __UFFD_COMMON_H__
+ #define __UFFD_COMMON_H__
+ 
+-#define _GNU_SOURCE
  #include <stdio.h>
  #include <errno.h>
  #include <unistd.h>
