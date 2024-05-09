@@ -1,113 +1,155 @@
-Return-Path: <linux-kernel+bounces-174925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B108C1786
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC4C8C1793
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4E921F24D84
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46351F258E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8B280BF8;
-	Thu,  9 May 2024 20:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908567E772;
+	Thu,  9 May 2024 20:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FbYCwU4s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIhFWTXo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FEC81ACB
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC47C29AF;
+	Thu,  9 May 2024 20:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715286593; cv=none; b=Vf9KR7tcUgw5kemI4FIL88iDv1aNg5YxFrVBZ/OcJZ5SJn50oFG9sOJAD2KTpaC2GT6PsoxrBF+mvNCzjWNeF0eWPlSP5Q8+CILXdjkGJ5sIRWQGp7c+M6Z63BD9P5qAkIg7pEqKFgy1gMKAJOIvaibyLvcs8cZ218WhuSvwpBs=
+	t=1715286683; cv=none; b=MxfK+HHZExRviTnS776143pl/fQuXzpFfRB1DTbA1SnNXBNI9mn3aQfIbPI4IYSNB9w4rw9xzaZCjRkKctJQRKpuDsP2/rTijmU2FMkcjfSoU7KxqLUC0JyP+dS9y1uHQebOTsXazlE87ZWmzPE0ZfMM6Emass15cQhWO0J2hgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715286593; c=relaxed/simple;
-	bh=5bx11u028iFBoNUssXgxzpOSCuhJJkvpiX5GDQ7rks8=;
+	s=arc-20240116; t=1715286683; c=relaxed/simple;
+	bh=3hRwl2K12SkRKNM78wLsl/4te3kJ4BT9nZoF6sCbxbA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-type; b=tfEETYwk1RCZwRAGO2x4pEmgnb4uMULXxSZES4UtD8yfw4SAymD+DHo+OdYSv+GIcVZIuQ0zS+678mODf/uGaAKABbHPMnbPVof3kzEgzFtc/395ZlbdtRTLgfwOh8HZMX7vZFMAirW4t8xpp0c5Qd11v3CJOt7BGHk8E136WTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FbYCwU4s; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715286576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u1GlnK+q8TY5qrTbDgo/iJ68l+D3mRMbytA6rZ1uGIY=;
-	b=FbYCwU4syjmVTHqxj7rNAAyjccVX4Kc96OVw8Pt0QdTNZv/viIZFVTdOkEppO3V/QkK076
-	3idjdaCrznMDmqYLALf35HbjRH7FZurSJ0AVCTmsAaB362ONTAiYH1waSbPZODSrXaUTfU
-	hCQ36GrgpnB4y8lBqoVLtQXVHiMxIRg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-594-bcSsqWtJOcuOP4joco4laQ-1; Thu, 09 May 2024 16:29:35 -0400
-X-MC-Unique: bcSsqWtJOcuOP4joco4laQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AEA7A8030A6;
-	Thu,  9 May 2024 20:29:34 +0000 (UTC)
-Received: from jmeneghi.bos.com (unknown [10.22.16.53])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 30C4620A4CC4;
-	Thu,  9 May 2024 20:29:34 +0000 (UTC)
-From: John Meneghini <jmeneghi@redhat.com>
-To: kbusch@kernel.org,
-	hch@lst.de,
-	sagi@grimberg.me,
-	emilne@redhat.com
-Cc: linux-nvme@lists.infradead.org,
+	 MIME-Version; b=Y6ORVS9/MHH8gFbRDYwZJhLkNKqr4JFJxkH3AUoj/kOCYYaeKjIfN4DoLs0hiYYB0PB6o8mTYUvLL4WU5l/kc4AFBDplL53pYWIbh7vOyD1Qfrs0/9Jgyk7g0RaRAs3k2tTyroZFVLLfc1v7dFAPKndPczpRGUSojeAyZTH37mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIhFWTXo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BEF6C116B1;
+	Thu,  9 May 2024 20:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715286683;
+	bh=3hRwl2K12SkRKNM78wLsl/4te3kJ4BT9nZoF6sCbxbA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fIhFWTXoUfrZEXYXnNpjyqAaUa4FKNKp1liB8UAZMze9KVv4hdAFmJylc4iA2ekx7
+	 0fhwWAgIWjmCNyvHeQ0baHNbtDX7ycaHfa2SXUNVmD1OT3lznGSH7W9ZOMYVq8XzPS
+	 XNdetjkAICbPLl6ZcBlFpBrF6uOo19eNlFEH04hmul98ViHyviLWxshHNPkuB4YW8R
+	 j/XqzRH4eUz9DNnhN6j1c2zTJ4wOzQvR5+5d/39yVSA5AWK7LBuN0WnPSyQoM+Na7F
+	 +byhIpw32XvdJTGUefGzhSRK/x2pK5XgOnr0McvVxwaDjfNk0mDdQZSj4xrD1fIuDV
+	 XVepSil5D0/gg==
+From: SeongJae Park <sj@kernel.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	shuah@kernel.org,
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>,
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
-	jmeneghi@redhat.com,
-	jrani@purestorage.com,
-	randyj@purestorage.com,
-	hare@kernel.org,
-	constg@il.ibm.com,
-	aviv.coro@ibm.com
-Subject: [PATCH v2 3/3] nvme: multipath: Invalidate current_path when changing iopolicy
-Date: Thu,  9 May 2024 16:29:29 -0400
-Message-Id: <20240509202929.831680-4-jmeneghi@redhat.com>
-In-Reply-To: <20231107212331.9413-1-emilne@redhat.com>
-References: <20231107212331.9413-1-emilne@redhat.com>
+	linux-kselftest@vger.kernel.org,
+	kernel-team@android.com,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	bpf@vger.kernel.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	mathieu.desnoyers@efficios.com
+Subject: Re: [PATCH v3 13/68] selftests/damon: Drop define _GNU_SOURCE
+Date: Thu,  9 May 2024 13:31:13 -0700
+Message-Id: <20240509203113.63537-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240509200022.253089-14-edliaw@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-From: "Ewan D. Milne" <emilne@redhat.com>
+Hi Edward,
 
-When switching back to numa from round-robin, current_path may refer to
-a different path than the one numa would have selected, and it is desirable
-to have consistent behavior.
+On Thu,  9 May 2024 19:58:05 +0000 Edward Liaw <edliaw@google.com> wrote:
 
-Tested-by: John Meneghini <jmeneghi@redhat.com>
-Signed-off-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- drivers/nvme/host/multipath.c | 1 +
- 1 file changed, 1 insertion(+)
+> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+> redefinition warnings.
+> 
+> Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 02baadb45c82..d916a5ddf5d4 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -862,6 +862,7 @@ void nvme_subsys_iopolicy_update(struct nvme_subsystem *subsys, int iopolicy)
- 	mutex_lock(&nvme_subsystems_lock);
- 	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
- 		atomic_set(&ctrl->nr_active, 0);
-+		nvme_mpath_clear_ctrl_paths(ctrl);
- 	}
- 	mutex_unlock(&nvme_subsystems_lock);
- }
--- 
-2.39.3
+I show Mathieu's comment on this[1].  I have no strong opinion on this, but if
+you conclude to remove or change this line, please apply same change to this
+patch.
 
+[1] https://lore.kernel.org/638a7831-493c-4917-9b22-5aa663e9ee84@efficios.com
+
+> Signed-off-by: Edward Liaw <edliaw@google.com>
+
+I also added trivial comments that coming from my personal and humble
+preferrence below.  Other than the above and the below comments,
+
+Reviewed-by: SeongJae Park <sj@kernel.org>
+
+> ---
+>  tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c    | 3 ---
+>  .../damon/debugfs_target_ids_read_before_terminate_race.c      | 2 --
+>  2 files changed, 5 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c b/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c
+> index 0cc2eef7d142..7a17a03d555c 100644
+> --- a/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c
+> +++ b/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c
+> @@ -2,9 +2,6 @@
+>  /*
+>   * Author: SeongJae Park <sj@kernel.org>
+>   */
+> -
+> -#define _GNU_SOURCE
+> -
+>  #include <fcntl.h>
+
+I'd prefer having one empty line between the comment and includes.
+
+>  #include <stdbool.h>
+>  #include <stdint.h>
+> diff --git a/tools/testing/selftests/damon/debugfs_target_ids_read_before_terminate_race.c b/tools/testing/selftests/damon/debugfs_target_ids_read_before_terminate_race.c
+> index b06f52a8ce2d..4aeac55ac93e 100644
+> --- a/tools/testing/selftests/damon/debugfs_target_ids_read_before_terminate_race.c
+> +++ b/tools/testing/selftests/damon/debugfs_target_ids_read_before_terminate_race.c
+> @@ -2,8 +2,6 @@
+>  /*
+>   * Author: SeongJae Park <sj@kernel.org>
+>   */
+> -#define _GNU_SOURCE
+> -
+>  #include <fcntl.h>
+
+Ditto.
+
+And I realize I also forgot adding one empty line before the above #define
+line.  That's why I'm saying this is just a trivial comment :)
+
+>  #include <stdbool.h>
+>  #include <stdint.h>
+> -- 
+> 2.45.0.118.g7fe29c98d7-goog
+
+
+Thanks,
+SJ
 
