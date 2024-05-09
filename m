@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-174417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC158C0E6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:48:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A8E8C0E71
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C13B1F213AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25224281442
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619D61304A3;
-	Thu,  9 May 2024 10:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63640131195;
+	Thu,  9 May 2024 10:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kSLMi02n"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nT0TXTna"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A791322E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D0D130493
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251692; cv=none; b=qqablFbmCNIJ8jvImr2HZ3j+PbxVgGbyQV8tIw4N5bXfiAr2xHkex8O6q4KBt78gcMX5nussCjlIanMhEXjd8wXlGXEm79pF0wossGOIBHBh2hyxTp/stDdEyiygGVan5rQMrsewnAusfqEB+hlGaxg75PC/0mQop1XtzXs0vqY=
+	t=1715251700; cv=none; b=edoD9hHNFC1LpusINuOE77j8iDuTZJCl4etTxUN3oBEaWqOIQHjriHqqZoZPwqimintgLw+zXE6kvuxpZ9Pm0P/LPVSZF5TU4VdX6WwtdJwd2jD0B9wRqOdJtO0GEC+CepXa8sKsC30Y+1l7tcyuLILnw6cH4Zx8CHF3gpZ02lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251692; c=relaxed/simple;
-	bh=EAmmvUuXUCvQhVJyhOjnloUwsHV7hU6+Z0N6I4QkxKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tSH26XW/Ij2XkUlP5M6k1CMakLZTFTlHfrdNDAs7Gkpfc9tOKYlxT5VxAssCcE2AuLs2A07mWisPD/ugooA02BKr+u1KGd+33duqmxxutH0loInZewZlxH8QvvysbGdUTEe+87EsCqBJqQgfh06j8iMMsssntYVmLnRTDG0X1m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kSLMi02n; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1715251700; c=relaxed/simple;
+	bh=AhGKHotUOundbhN4X2YTDc462SsKg+3ZxBuT3oDaWHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cd+9jEpDB+XenX47lbhzRObZia5YwMRG/JZ5eWjYFDnWscRDwxUj7yDVusSOrOhlgo2ptnri2oIUk9I4z4iET3o39w7C1ZXxwOl+PXmkUmDqHb2at2B0UvKt6PONmfe9ZM03fYXsTudLJ8ibJSiFjXoXQCiL/PKSYBBbaxCkBhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nT0TXTna; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59b49162aeso164308666b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:11 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59a64db066so173234766b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251689; x=1715856489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7qlZtZk75coxcr32t+mJEdsIgCn5e7In21AxtT9MXDc=;
-        b=kSLMi02n7NAwcdlaLMJ0lWD8/Lr9jOYvdvnDDWEf81jzisupG21zC9AkK5LJaqkxN2
-         JW2TI3pXpHNn4cjfssxNLaMT4cG5MBBaoTt1moRnFdLvyvfv1DlpbMLvlRI2TlR8Qw5d
-         nBYzg7wKRoPcj2WHksU0Jlu0uoyeyNKSIjZ9zJ2W+HUA2nmp7sanhS90PPQ2Ytyr+0ht
-         ug00jlRzAvhVDCnbnaQYo8LtvY2Rx+ellXzC4bA4JbI8Pj3aAeKBamB8bQsT68cxOvJX
-         eiq1bPp9QMECb+BGC9TTnBNZW3JpVqLMUhs05KT49HwsCyhYlyLunA5uKsuGO+UVjKEm
-         HFPg==
+        d=linaro.org; s=google; t=1715251697; x=1715856497; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nhk3/XajbYjebewXinPE0P/6g6ueIG9AsQRxMr6tmNE=;
+        b=nT0TXTnaL7FfAtbP7LrDzrvRKwzajzdgiNqJQqFfwCS86vqGJczlvppfzFE3o8cUdC
+         vWpSWvYDMGnoKd5oUFJMbYs64XWNBUqhhGS8lBqolhHPTUTL13wbiz/r4L6RS7hz3sSK
+         A6h5OGPcV2i/KTkWuy3IDnhrXzrUfSsD96CfS/TOFQtrYLqtT8jFnwIkksCIJUoahRt6
+         tjgLL+lNWJcc/blGeK2ksvzVzVHKaGqjEbTVM+X4o9xsioiimqEF2PwVEtDlBQFBplFv
+         2pqCAStUW1VV91/Yt5Mttyz+h61/OSA5TdRl3875TvYGSJuKibpJXgt9jrvKCysCDYY5
+         yX0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251689; x=1715856489;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715251697; x=1715856497;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7qlZtZk75coxcr32t+mJEdsIgCn5e7In21AxtT9MXDc=;
-        b=am4djIugee821bn0CQmAVukfjrQJ3P5LBgBAVNGGVRnPdPSHxsC6pt+DPUxPs5z2WG
-         krW+QN1llpfrG2rtbu4G+4XbjFGzlTSFb2kgwqQpFVpUm6ckYKVFdpG8jM2ubeKIch5M
-         YV7+YA2Mq3njwkXu2bepLUHonxd+qyCeiJWzxZ767SR9pfRDVI7530zp4WXdIAGR5srR
-         gc7FrYcW7UDjGCO5R7Aszzf8gG0mhQ8Jcsmv5n2f5AT32UNKO6qsCpDmu512XXGkEeEv
-         nlP+qEXPaI5A0AeHY/pnDfYGEFF4mR10/EuI3Ifkq44j+iAy46jpsjnJPBsTfVEw5umc
-         lQxA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4WFEME00RiI5IJEy7di9+UCJQYlnrTpf1MfA2l90A8AiHKJ7c/C3ZkPbGRt492EAcoK9u/DyYsd0ouu4abJZ9OHoX4WRVcsR7/N69
-X-Gm-Message-State: AOJu0YwaykY/FuVoHkjCEc1oMfD24Vleba7sVXIOSHBfBadsgHGFpSdB
-	e8dvHR2wz+Bt+xZDtg+jePpF+nLUrqxZWTBPGk0nD3kRpqvcO/iutVE8ROUpu5s=
-X-Google-Smtp-Source: AGHT+IGOSEuA2npGO9GewqwIXTPylXogor9RcnRiDhrr39n3ApUuc/Uzk7+5WHH+SNpvw9TtEXjwgA==
-X-Received: by 2002:a50:d595:0:b0:572:a7ec:1a5f with SMTP id 4fb4d7f45d1cf-5731d9f1eb8mr3880773a12.24.1715251689505;
-        Thu, 09 May 2024 03:48:09 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bfe2dd1sm572297a12.58.2024.05.09.03.48.08
+        bh=Nhk3/XajbYjebewXinPE0P/6g6ueIG9AsQRxMr6tmNE=;
+        b=eox2d+MGWTGhlmB5hgAc6oHnONGsotmrr3I/SkH/7MMP4ixkIaACimUkGfQoxtqVfJ
+         LeVrCUlztdXmb9yCae3BiKcpdcUVD1OF90Hp5hwEfzA/QZ0mqGd0Si9Kbu6ID4yq6wbL
+         T0ppxvRDIPr/irEXHrwWCywd2m9vmWB+aGrpNdw9vjglH9puDDhO4abPowtigxg4DJjM
+         zvsxdCifhwpnLKHcrKW5i0gdhVZR9U2/5JCfaZhnuLRCOLIhaJgHbQWoQ/YHGFkBCIBE
+         fBCKpbbmUER1qahpKsAWH/i62+V6hJc/f3nA8IolIgtlk5GDafNBjI7zVAOnPclp4+LS
+         yzlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwDMv+ywHw0RmTad4+AbGjv2/YKVqDhJ8AaQAZsUEeHCg9DpaaBYnmc++0bxAVs5FX1PEUpYrahup3E0sHvlE5FuAOxcAfYbsCaYI0
+X-Gm-Message-State: AOJu0YwsVwFelTlHH5DG2/B73v0UXXhD/+g93TTMCel21aG0KbTWWMgJ
+	rk1Pbkz2/KLVfeUmOBbQ9foUFtfyczcd8okuLeZaEZuWX6WmEQVdaS4ibMFEoQg=
+X-Google-Smtp-Source: AGHT+IHQyuhaOFCWDh8Y20z92N/LrJzqyIZFbrRKifXgh0S2UhxNL1L6D0CsxhO9kqq9QHRTuJH7rw==
+X-Received: by 2002:a17:906:db03:b0:a59:b590:5d71 with SMTP id a640c23a62f3a-a59fb6ed704mr459961166b.0.1715251697256;
+        Thu, 09 May 2024 03:48:17 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b014f6sm60466866b.145.2024.05.09.03.48.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:48:09 -0700 (PDT)
-Date: Thu, 9 May 2024 13:48:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Trond Myklebust <Trond.Myklebust@netapp.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH 1/2] SUNRPC: prevent integer overflow in XDR_QUADLEN()
-Message-ID: <bbf929d6-18d2-4b7e-a660-a19460af0a3c@moroto.mountain>
+        Thu, 09 May 2024 03:48:16 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ARM: dts: ti: align panel timings node name with dtschema
+Date: Thu,  9 May 2024 12:48:13 +0200
+Message-ID: <20240509104813.216655-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <332d1149-988e-4ece-8aef-1e3fb8bf8af4@moroto.mountain>
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
 
-The "l + 3" addition can have integer overflow on 32 bit systems
-when it is used in __xdr_inline_decode().  The overflowed value
-would be zero and the check "nwords > xdr->nwords" would not work
-as intended.
+DT schema expects panel timings node to follow certain pattern,
+dtbs_check warnings:
 
-Fixes: ba8e452a4fe6 ("SUNRPC: Add a helper function xdr_inline_peek")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+  am335x-pdu001.dtb: display-timings: '240x320p16' does not match any of the regexes: '^timing', 'pinctrl-[0-9]+'
+
+Linux drivers do not care about node name, so this should not have
+effect on Linux.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- include/linux/sunrpc/xdr.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/ti/davinci/da850-evm.dts    | 2 +-
+ arch/arm/boot/dts/ti/omap/am335x-guardian.dts | 2 +-
+ arch/arm/boot/dts/ti/omap/am335x-pdu001.dts   | 2 +-
+ arch/arm/boot/dts/ti/omap/am335x-pepper.dts   | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/sunrpc/xdr.h b/include/linux/sunrpc/xdr.h
-index 2f8dc47f1eb0..585059f2afca 100644
---- a/include/linux/sunrpc/xdr.h
-+++ b/include/linux/sunrpc/xdr.h
-@@ -14,6 +14,7 @@
- #include <linux/uio.h>
- #include <asm/byteorder.h>
- #include <asm/unaligned.h>
-+#include <linux/overflow.h>
- #include <linux/scatterlist.h>
+diff --git a/arch/arm/boot/dts/ti/davinci/da850-evm.dts b/arch/arm/boot/dts/ti/davinci/da850-evm.dts
+index 6c5936278e75..1f5cd35f8b74 100644
+--- a/arch/arm/boot/dts/ti/davinci/da850-evm.dts
++++ b/arch/arm/boot/dts/ti/davinci/da850-evm.dts
+@@ -65,7 +65,7 @@ panel-info {
  
- struct bio_vec;
-@@ -29,7 +30,7 @@ struct rpc_rqst;
- /*
-  * Buffer adjustment
-  */
--#define XDR_QUADLEN(l)		(((l) + 3) >> 2)
-+#define XDR_QUADLEN(l)		(size_add(l, 3) >> 2)
+ 		display-timings {
+ 			native-mode = <&timing0>;
+-			timing0: 480x272 {
++			timing0: timing-480x272 {
+ 				clock-frequency = <9000000>;
+ 				hactive = <480>;
+ 				vactive = <272>;
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
+index 56e5d954a490..4b070e634b28 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
+@@ -74,7 +74,7 @@ panel {
+ 		pinctrl-1 = <&lcd_pins_sleep>;
  
- /*
-  * Generic opaque `network object.'
+ 		display-timings {
+-			320x240 {
++			timing-320x240 {
+ 				hactive         = <320>;
+ 				vactive         = <240>;
+ 				hback-porch     = <68>;
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
+index f38f5bff2b96..17574d0d0525 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
+@@ -67,7 +67,7 @@ panel-info {
+ 		};
+ 
+ 		display-timings {
+-			240x320p16 {
++			timing-240x320p16 {
+ 				clock-frequency = <6500000>;
+ 				hactive = <240>;
+ 				vactive = <320>;
+diff --git a/arch/arm/boot/dts/ti/omap/am335x-pepper.dts b/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
+index d5a4a21889d1..e7d561a527fd 100644
+--- a/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
++++ b/arch/arm/boot/dts/ti/omap/am335x-pepper.dts
+@@ -202,7 +202,7 @@ panel-info {
+ 	};
+ 	display-timings {
+ 		native-mode = <&timing0>;
+-		timing0: 480x272 {
++		timing0: timing-480x272 {
+ 			clock-frequency = <18400000>;
+ 			hactive = <480>;
+ 			vactive = <272>;
 -- 
 2.43.0
 
