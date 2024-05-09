@@ -1,225 +1,151 @@
-Return-Path: <linux-kernel+bounces-174966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF748C1813
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D922F8C1811
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64BC41C21485
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E3A2825F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E6B84DEE;
-	Thu,  9 May 2024 21:08:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D5884E18;
+	Thu,  9 May 2024 21:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MZdX3SZ1"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2053.outbound.protection.outlook.com [40.107.237.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA937FBBE;
-	Thu,  9 May 2024 21:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715288932; cv=fail; b=axihYoDDGFmrYXqlaHzAEeDCwyFI1eb8iSzHzTEGBqTs7umZExgFSIG0QNXsKGHIFOUOckpvpWZhLEMZyuYUftEeSfj8blXQOiYBmBkr3xnXTxeHdYLLrGrZcP77n4PjOaNG5O6h5D9muFnYHLba2Ua39XlYJx86FBGVKl5myY0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715288932; c=relaxed/simple;
-	bh=JBdhjiRL6aJboGnqCEdGf1hX157RrW2SwxHfiffjFgA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rd4J2RDbftXE5TpXnJ8dToMVb5zNxaja36LQBTrDQHPBr8HB2t59rBn2m0Lyznjn5BxfXfbQalDBuwzv8Yl/FpsiWJpZ8OFREo+nZWb1yK3nzmgqd8gIfVF+kP54CKUf1NZLYmgf4ihvEAjH6hg89zmWXVxjhkfIeb4YW9zaHjM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MZdX3SZ1; arc=fail smtp.client-ip=40.107.237.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Whu6RO26po+FMiPK9FvRq44JH4P2Izh2j07wVPqAD+5jes8xSLDgV7iYqiE/J92beU0sX6jHZX0WPppF+ZaJlnYiXO6e0eaJjx/oIsSwx2xz4lLKoTWNF7utcer4vLoCo+cGTRcjM4IGmCq2VxrIX2fv+vn3LHQir5tr/bxHDLnhaoQCmkMgv6gQszUZOkJEvv2Xev4ADXlGShIFMtzBNCdCkSq3HG8YB8Qu1ia5XzY6rpZ95OBo0eyTVb07W0OBUBZOmCK301tz1bCt2KvGb/DPGbmebpHkjuF6WdGMF3mISZ5ewTcpJaw9/Q4OmH5Ql8a67YOfYkTYz57OoRyDFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tMm2NZjLRTdG0uRQrQadns3IDlpbKedncKQU9+BflrY=;
- b=BnjMeas/COa62gFqwaO7ZRVfKHDKQ/IrbCk5dOsWY7B6nsXsmv2kRl2fYhFSPVqIAdQanDq3anpgSaCnXmq/NFvMGSvNSWihRMBtbtjphJCLMwaepJsBCF4Oh5HmjDaXGOaQMWrQ/5UEvAGkINyRg8U+CyHQtGv9dBk7X6LzK5R4ehWcRX5OmDVFUkKjPfs7Wyn2UmkdHRepVTEvLUZ3G/auPGy7ve5VrJvzxTuNntn4jiUuYfsq9Pj3mc6m2Lu6jEp57wiiQHRRN431FWEVFFUDWH6smvtpnwYhhOE6HaliKl4J1aidqyzXIFy5gA48YvWxRAjrak4Xeamg1qGJ4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tMm2NZjLRTdG0uRQrQadns3IDlpbKedncKQU9+BflrY=;
- b=MZdX3SZ13wYrHHl9L2nXZ3r/BYKyBjzZsWrtuy288KULxFN0rFVliilByyu8FgwO7iMKFM+aaGOFVQIB86LzVVuVRs+oIMtA2fUBleZFUOffKjsw1unbz7jECZCDMy+y60lqVO9ZIBmSkoRw1R0xztJX9e7/VTW6afwjz85FyFa/fn4G/wEjNRXz8df+kMNyAKT/f3iSHqo+Q87GEV3BCaTp4MMRjHNL8fJzKXx8jG+PYq5aD9fvady8tFdaJP9kN276sICFBf5uytXMIF7Lojd41UYi2WvghLrJ6mWvdlkoSB8tGM7wFgYTg6sarDCS6qx/JEnaxzBMsWX9gXVCaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com (2603:10b6:a03:20b::16)
- by PH8PR12MB7256.namprd12.prod.outlook.com (2603:10b6:510:223::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43; Thu, 9 May
- 2024 21:08:36 +0000
-Received: from BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07]) by BY5PR12MB4130.namprd12.prod.outlook.com
- ([fe80::2cf4:5198:354a:cd07%4]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 21:08:36 +0000
-Message-ID: <fbc3f489-f8e2-4e1c-ad68-7a72b1bf3e70@nvidia.com>
-Date: Thu, 9 May 2024 14:08:24 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] arch/fault: don't print logs for simulated poison
- errors
-To: Axel Rasmussen <axelrasmussen@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Borislav Petkov <bp@alien8.de>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Helge Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Liu Shixin <liushixin2@huawei.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Muchun Song <muchun.song@linux.dev>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Nicholas Piggin <npiggin@gmail.com>, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-References: <20240509203907.504891-1-axelrasmussen@google.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240509203907.504891-1-axelrasmussen@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR05CA0209.namprd05.prod.outlook.com
- (2603:10b6:a03:330::34) To BY5PR12MB4130.namprd12.prod.outlook.com
- (2603:10b6:a03:20b::16)
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="zJYnrRIL"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1466F78C98;
+	Thu,  9 May 2024 21:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715288915; cv=none; b=PoG7t/6Du4ecwn2B4OBn3Yojo82v7XxceM2Hcrd3Za+aHtK53JeWQW9mDibUDI0oOPBTquDJYDrrpB1D/xS9P+2NBH5eH929Qb5/3R5tDGakUsqM0C5H65hriEi7oeYO5wCa0jyqpVohUBcW2DSbikd6laqwy4nJ/g5LlIz55Iw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715288915; c=relaxed/simple;
+	bh=B+tz+/pwbJIwID1oHTpk2MJK1jmegWdaI9yVJKU+6vo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=MnKAWRvRl+D3H2lWzGqMR/Kb8fJ+bMyjnQmVWfd+LmuLZLXsutcs8UtoMyteaYoZdhAbiyEsNpsxKw/MTIGHvbVkxgyakesuXBU11JMDuifeedWnvYOPG4UkF/rT9N5uWU7PVzRWsLEnBfectO16tTbfBmDQENrONs1P7N3Mnc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=zJYnrRIL; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:2:f8c1:ac3:4d22:e947] (unknown [IPv6:2a02:8010:6359:2:f8c1:ac3:4d22:e947])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id 301457D8BA;
+	Thu,  9 May 2024 22:08:27 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1715288907; bh=B+tz+/pwbJIwID1oHTpk2MJK1jmegWdaI9yVJKU+6vo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<e6939885-7ba3-e46c-779a-ac5f8367d08c@katalix.com>|
+	 Date:=20Thu,=209=20May=202024=2022:08:26=20+0100|MIME-Version:=201
+	 .0|To:=20Samuel=20Thibault=20<samuel.thibault@ens-lyon.org>,=0D=0A
+	 =20linux-kernel@vger.kernel.org,=20tparkin@katalix.com,=0D=0A=20Er
+	 ic=20Dumazet=20<edumazet@google.com>,=20Jakub=20Kicinski=20<kuba@k
+	 ernel.org>,=0D=0A=20Paolo=20Abeni=20<pabeni@redhat.com>|Cc:=20netd
+	 ev@vger.kernel.org|References:=20<20240509205812.4063198-1-samuel.
+	 thibault@ens-lyon.org>|From:=20James=20Chapman=20<jchapman@katalix
+	 .com>|Subject:=20Re:=20[PATCH]=20l2tp:=20Support=20different=20pro
+	 tocol=20versions=20with=20same=0D=0A=20IP/port=20quadruple|In-Repl
+	 y-To:=20<20240509205812.4063198-1-samuel.thibault@ens-lyon.org>;
+	b=zJYnrRILKLLXI1ewJyke6L392b/nG9jT18B90E0H/rk1qU5W1gPWsjO97mB36EG5p
+	 c54N8LLgG/V/afpyatLxFzbYH/J0szE305YcLy1/REOS90T/jVWIw8MZHelmY1d3+5
+	 WLsz7hv6NlLDyYbEufAGT6soVhR1kI+593Zyw8UfI0nirMgApUQtaHRV35zl8gr9Va
+	 h/Oe6VdAimUNX8uNVMz5j6LG4wdyjKGJE8Oeoe57OyH5Zs+MHDWTlhbTdGh0JJVEot
+	 K/z8oNQiqXqpwzbOI9dS8BfQrCysLxgFn2F0Uf0qq3mOBUceLDpLA10G1LT+46nnYi
+	 kQ5P2TGD/9Gcg==
+Message-ID: <e6939885-7ba3-e46c-779a-ac5f8367d08c@katalix.com>
+Date: Thu, 9 May 2024 22:08:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4130:EE_|PH8PR12MB7256:EE_
-X-MS-Office365-Filtering-Correlation-Id: 650a29bb-8fe3-4d76-8c2f-08dc706c30fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|7416005|366007|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Sm11akU4WndaYm02emJsdjE0TThwMm5BKzhGRitUR0hRTTlaVWQ0cGp5SVBM?=
- =?utf-8?B?TTlaUitWUUhla2RBTWFBQzZsdVhtOC9oN3o0dVA4OG5zZGwveDFZeDg4RmZj?=
- =?utf-8?B?MzF3YUFPR0RVSWVISGtQeUVjcTBmSjVxeXN6VG9Gc3RPV3pJM3BQOWFTbWJi?=
- =?utf-8?B?V0I1YVR3QTdoc0YrYmRISkJKY3Y0UW1aYzA3Y0JwMDJ5dUhuZmd3TG1oRGht?=
- =?utf-8?B?UjM4K3Z5L3NVUmphcitLZ2FMVzEvc2JVMVdIVWhDbHI5SXY2aEptSWFlakJz?=
- =?utf-8?B?V0U3V2pjVzZnM3pZQS9MMWhxOFRPZUsvb00rQWZla0NPbXdyM0JSWEYzblRi?=
- =?utf-8?B?VS90OVBKbGhpYWs4TmNHanRuY1NLZGVhYlVoRGhteDVqTCtnT1grakhOUzZO?=
- =?utf-8?B?NHZ5SGEzV2JDZGltSUkxM2pKRjZ3TGRPWkgreTk2L2d4MWtHd0hkb0s2Nk9s?=
- =?utf-8?B?QUQwZlZITGFNbnkrTndERk5DMlFqWldPSkc5UXNiaEowQnk3ME1MMENWQ2dm?=
- =?utf-8?B?dERTblErSW5WUmVDQWV4SzBKMGNRQkk3M2hlL00xOW54SnVkbGJiR1NIVjlX?=
- =?utf-8?B?QXp4aDl6QjhmZTRjcUFsd3VHWGxYelF0ZXBvSm9tYWNMd2tuYmVwNXBCd1dm?=
- =?utf-8?B?VFZ1ZTFYdFluam1lUzRGRk1YTDVLYm1HSGdFazJZZHBYUjhKTzhQYVFXczYw?=
- =?utf-8?B?cFRTNGNoQ28yTENWa0tDSGFsenBQck0vOFdQcmJEWXpUbENnSmgzMkdIOHFI?=
- =?utf-8?B?SVJvQWYzZjJNTGVNU1Y0WlVrT09EV3FkUkgyL3hlWjRyNm9OZHcyQmE1UUJW?=
- =?utf-8?B?M1ZVTGp2cU0zeWd4eUZWa0xRYUpyUWtsb055bkJUNXJxUG1PRk9zeGVWUGlj?=
- =?utf-8?B?MVUrb3IzU1loVUpDU3ZNUDBsTXJSRFRqMVVzOGh2amFCdmJPOW5WREZySFoz?=
- =?utf-8?B?bkxNMzlvZXJJb1crWndGQ1hDMGg3VGxzaFg5Mkl1UGtqTS9RMXA1dmQ2aW5Y?=
- =?utf-8?B?aUV6bHNkS1dGYUtvSDBid0FSZkp0N1RMR2dvY1Rjd0VZSFBxOXNHYm1SUHN4?=
- =?utf-8?B?ZTloWmR4OCswVExlZk9MblI1eTlBa0Q4ZURBamJmUmZPdEhFTGN0MjdHVm1I?=
- =?utf-8?B?U3pTMWRaUTNlNHBpM2QyN3NXdlNlWFBHamRPTHBHRkM3UzdoRjdxYkh2SFFh?=
- =?utf-8?B?QXNNMHZDeEIySHZkVUROTmFJeHJUVWVCTDVDVjMxTVMzS1dFRkhNZXZWeVZJ?=
- =?utf-8?B?UTRjbWhhbWlSNlhuR2FlQlI3K3kvQ3Q5Z1RrYThlS1lzdWdBdzFpU1NwZHZU?=
- =?utf-8?B?bmNtNzIvSm1TV0ZzYWczaEpxY2VoQ2tua2Nsbndjd3A3Tm1IcGJML3dkd0tJ?=
- =?utf-8?B?Q2NXRmhoM1hsYlBEeklKY0RZWm9qanZ0UTI4TC9halJqdStCY1NuTXFnb0xF?=
- =?utf-8?B?VjhNcUZocTVkR2xsS1VtWjl5eEhrUWUwSEN1ZGZpQ1d1ZnRzUi9jaHF0ZGxS?=
- =?utf-8?B?dThzQUM0bUNGU0ttZ1gzWWpHQVBQVTF1OU1Pd2o0MHNnQ0tIUGlvWkxnRkhv?=
- =?utf-8?B?UmNycmlycHRtUURUZHNhNWxWT1k5V3RtemRzeTlRbEVYbnhMTXRlRzROcVNX?=
- =?utf-8?B?TFI3aHliQSswVS9zWW1BZkdNN1g4RUNJa1dyUzBGVDdNTFpXblBFcVhCcndC?=
- =?utf-8?B?TlNnQXNHT212MDRHVkFBeDFKazduYXNOTWxBbjZvS2NiSk0zamdGSC85ME9n?=
- =?utf-8?B?NHRBbU02bFhaMHd6ekF5alBia0IvK2FBYlhUVHFKQTFOVWt6d1JqNHcvZUx5?=
- =?utf-8?B?dm9MOEdhV2JJOE1DVE8vUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4130.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RXp6L0U4NDlYN1I2VFpFcEFzaFowVWRES2IwRHlYU1hodnl1ZGpHMkZFRXhD?=
- =?utf-8?B?VzY3OW53M3NmMDB6cjIwdnp2VVA3SngvTlpzb3VmQVlyTzFQNmZiK284TGxj?=
- =?utf-8?B?bnhnR2hCdlBPNnFaSlZZMjJtSHpmSjdvRlROeURleCtYbEtKbnEyL0szanB2?=
- =?utf-8?B?b1ZTcDlyd3RmL0JzS3ZyL0toM0F1SlJuSVNTaXZyNTU0U2ptc0o3djZsL05S?=
- =?utf-8?B?WjQ1aXU4WEQ0aGU2ZStaRmI2MUh6V3VRUUdoRDVFSUpvVEZ3Mk9qNWRjVHVE?=
- =?utf-8?B?Q2hWaVVYbEpRTnArakc1VlBtcVRUdWtSZ3RDMVk3VFlPTjVnNHdqaG81YjNC?=
- =?utf-8?B?MGduWFRtcllTekVSNTFobWhNaWpvVXpxT08wMzA2U0h6cUVDTTRqb2hhQUNa?=
- =?utf-8?B?azl0Q1pZczkzWjVwakxVZkRqYmJPYzAzTUZFclIzNlhVOWF2enZtT2JJZTMr?=
- =?utf-8?B?enM1MkYyR0FEOXhFNmQ4dStKTVg2RzBwTE5lRzA2ZW1CK1BhcE5NVWpaUXBD?=
- =?utf-8?B?VVpvSmdDRFExQmZzdnY2UHZpMVhLWUh2T2ltS2ppYVI3THM1dGJMS1RQSk5V?=
- =?utf-8?B?Z0dBL01mWXEvVC9oWnFVN253KzJtYkg4eDgrT3oxQVFzcnphekhPM2x5cEd5?=
- =?utf-8?B?OTdZOEUyVmVua3YzSHlvUmNwbE9kcW1ic3NuVnkvYVFIc09SSVdFMnhDUmlj?=
- =?utf-8?B?VG5GMTZ1Q1QzbVpaU2N1STBCcFp4U0ZBL1M3MVh4cG9JZTN5d205em1WbFhY?=
- =?utf-8?B?U21UQW91dlloZmtrcXRjbzBoVGdTSHRXN3VZNVNBcEhPRENhcVFndU1ReU1W?=
- =?utf-8?B?WEtsejZaT1FPRHpueFpZYkhHVWErdHZRdFJWUHFzVVRmb2dCaW1teHZyN3Jm?=
- =?utf-8?B?OUEvK0ZSTTIxaTBwSWdScUtvY0JMU25veE1FbXRJVWtyZmxRQ0o3Nk0xaThX?=
- =?utf-8?B?TG40c3pjS2ZmV012bW9sN3ArRlA0NW5KcmFrcHgxVDlOV3FmYzZWUy9leFQw?=
- =?utf-8?B?T3h6WFMxUEIyYm5jaEU4M0dJMU9paTRXWkU5NGpmeUZFVXlsQkZIUkZSZjRD?=
- =?utf-8?B?YlVYLzFGTVk1SGE5VlIySXJPbmJML2N1djh6YkRoaG92WjUyalI2WmU4R1Ex?=
- =?utf-8?B?Z2U4aVpyZ3p5WDNRbzNGdEJreXlYeHFCU2NpSFdIWmtnNjRjbDR5emxXakJN?=
- =?utf-8?B?U0x6VVZYdmNpWWRVWjV4OG9IbWFDNTBRbmhRMUYxYW90Vm5XK1Y0U0llbzZT?=
- =?utf-8?B?WW0yaHIxbFo0RXJXL0wzWWNaZ2p1YVVrNXhUUWNZY0s3WjJlZGhXRkN6UDFK?=
- =?utf-8?B?NG8zeTQxV3RwNU00eXROSE9ETE83Z1dJa3k4b01qUE41bG1IS0pwM1o0NVVu?=
- =?utf-8?B?MExDNy8rWTAzSWFLek42OVFGbHJGVWtkbzQ0K3grRkdjQzFJTERCWEdDMVlC?=
- =?utf-8?B?TW8yWjludjVIS3FQQ1diTUpYZGx1Mzg4SGRNTVJWbTVTSHNFRkJ3TSticEhF?=
- =?utf-8?B?NVVXUHZQR1N5V2NQSno4RjlTdkRsZ1hWWlBHdkljL0FhSERUTTF5MTdhcSt0?=
- =?utf-8?B?ZjgzNXkvQjYyeUYzSXVTRG1pNUxZYnpZWVFnWS9wVGZGeWc3M2J0UjBJZGVz?=
- =?utf-8?B?N3JqaXpVNklNdW5mbW9yTkhhaXZFWHNlUThrQ2wwTzVuakt1Z0VXOVFIWGdo?=
- =?utf-8?B?ZTJwTXIvRW5UTllFMElHTUNxRU5GQVJua1hFUEl6Sllka015TDFTa1BRRUdh?=
- =?utf-8?B?eGxtY2c2bnhESzNUUXU2TVpMM2tDVGZGZ1dvdGdaQW9lRmg0NnE4eGJ1Ujcr?=
- =?utf-8?B?QVhmMHVSeVVGa0UxaS82eHJwckErNEg3UUJPTmxYa0VRZlhPeUlSdmswbnlE?=
- =?utf-8?B?bi9MSFlwMzZ3Tk9nVEF6d3A4QTJzbUtuWUpPMnFEMWhvcC9zdURYb0JqY2Nw?=
- =?utf-8?B?c0k3ckRvSUFNdUwvaEx4L1dkeHcvcUpIdlNubFl2aUtyaE4wWm03OEFUSVhT?=
- =?utf-8?B?MVg2ZkhTbVRqMS9TVHpnaHZwcithdERGNEE3emlEZ2RmWEgvaGF3VWcyMXdv?=
- =?utf-8?B?cUt6YVJ4TFNLRWxWWDVkd0xWTmJtUStnOEJCbkp1am5PaHdRd1Q3TzgzWGd5?=
- =?utf-8?B?TXJmZExvZ3FNOVNXS3RtV0xyQ241MG1PN29rbzJLZ05HQlU4anFxaXpOdUlD?=
- =?utf-8?B?Mnc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 650a29bb-8fe3-4d76-8c2f-08dc706c30fe
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4130.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 21:08:36.1841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nz7/oCRUi8Pk/s0L18OufHAymdPBILZ6BFtkupJ9Xemhc8egwtC8WLhb6/lyRHM3NyhAA3puYtgeEylPUlp0Zw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7256
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+ linux-kernel@vger.kernel.org, tparkin@katalix.com,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org
+References: <20240509205812.4063198-1-samuel.thibault@ens-lyon.org>
+Content-Language: en-US
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [PATCH] l2tp: Support different protocol versions with same
+ IP/port quadruple
+In-Reply-To: <20240509205812.4063198-1-samuel.thibault@ens-lyon.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 5/9/24 1:39 PM, Axel Rasmussen wrote:
-> This patch expects to be applied on top of both of the following related
-> fixes:
-> 
-> - x86/fault: speed up uffd-unit-test by 10x: rate-limit "MCE: Killing" logs
->    https://lore.kernel.org/r/20240507022939.236896-1-jhubbard@nvidia.com
+On 09/05/2024 21:58, Samuel Thibault wrote:
+> 628bc3e5a1be ("l2tp: Support several sockets with same IP/port quadruple")
+> added support for several L2TPv2 tunnels using the same IP/port quadruple,
+> but if an L2TPv3 socket exists it could eat all the trafic. We thus have to
+> first use the version from the packet to get the proper tunnel, and only
+> then check that the version matches.
+>
+> Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
-This got mostly effectively nacked. I disagree with that but do not
-intend to "appeal". :)
+LGTM
 
-> - [0/2] Minor fixups for hugetlb fault path
->    https://lore.kernel.org/r/20240509100148.22384-1-osalvador@suse.de
-> 
-> The latter is in mm-unstable currently, but the former is not (yet?). It
-> would need to be taken before this patch for it to apply cleanly.
-> 
-> Axel Rasmussen (1):
->    arch/fault: don't print logs for simulated poison errors
-> 
->   arch/parisc/mm/fault.c   | 7 +++++--
->   arch/powerpc/mm/fault.c  | 6 ++++--
->   arch/x86/mm/fault.c      | 6 ++++--
->   include/linux/mm_types.h | 5 +++++
->   mm/hugetlb.c             | 3 ++-
->   mm/memory.c              | 2 +-
->   6 files changed, 21 insertions(+), 8 deletions(-)
-> 
-> --
-> 2.45.0.118.g7fe29c98d7-goog
-> 
+Reviewed-by: James Chapman <jchapman@katalix.com>
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+
+> ---
+>   net/l2tp/l2tp_core.c | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
+> index 2ab45e3f48bf..7d519a46a844 100644
+> --- a/net/l2tp/l2tp_core.c
+> +++ b/net/l2tp/l2tp_core.c
+> @@ -820,13 +820,8 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb)
+>   	/* Get L2TP header flags */
+>   	hdrflags = ntohs(*(__be16 *)ptr);
+>   
+> -	/* Check protocol version */
+> +	/* Get protocol version */
+>   	version = hdrflags & L2TP_HDR_VER_MASK;
+> -	if (version != tunnel->version) {
+> -		pr_debug_ratelimited("%s: recv protocol version mismatch: got %d expected %d\n",
+> -				     tunnel->name, version, tunnel->version);
+> -		goto invalid;
+> -	}
+>   
+>   	/* Get length of L2TP packet */
+>   	length = skb->len;
+> @@ -838,7 +833,7 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb)
+>   	/* Skip flags */
+>   	ptr += 2;
+>   
+> -	if (tunnel->version == L2TP_HDR_VER_2) {
+> +	if (version == L2TP_HDR_VER_2) {
+>   		/* If length is present, skip it */
+>   		if (hdrflags & L2TP_HDRFLAG_L)
+>   			ptr += 2;
+> @@ -855,7 +850,7 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb)
+>   			struct l2tp_tunnel *alt_tunnel;
+>   
+>   			alt_tunnel = l2tp_tunnel_get(tunnel->l2tp_net, tunnel_id);
+> -			if (!alt_tunnel || alt_tunnel->version != L2TP_HDR_VER_2)
+> +			if (!alt_tunnel)
+>   				goto pass;
+>   			tunnel = alt_tunnel;
+>   		}
+> @@ -869,6 +864,13 @@ static int l2tp_udp_recv_core(struct l2tp_tunnel *tunnel, struct sk_buff *skb)
+>   		ptr += 4;
+>   	}
+>   
+> +	/* Check protocol version */
+> +	if (version != tunnel->version) {
+> +		pr_debug_ratelimited("%s: recv protocol version mismatch: got %d expected %d\n",
+> +				     tunnel->name, version, tunnel->version);
+> +		goto invalid;
+> +	}
+> +
+>   	/* Find the session context */
+>   	session = l2tp_tunnel_get_session(tunnel, session_id);
+>   	if (!session || !session->recv_skb) {
 
 
