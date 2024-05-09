@@ -1,194 +1,114 @@
-Return-Path: <linux-kernel+bounces-174722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5AF58C13AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:19:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1D28C13DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95781C20F7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90331F22AE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB1910A39;
-	Thu,  9 May 2024 17:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3568340BEE;
+	Thu,  9 May 2024 17:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="K0UToPLC"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="E/sGQ9XS"
+Received: from sonic301-32.consmr.mail.ne1.yahoo.com (sonic301-32.consmr.mail.ne1.yahoo.com [66.163.184.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBAACA73
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FF338DF2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715275134; cv=none; b=TirDV+9G+vktjL8IjmjW+BWfXlnJsYMpnna9rg7w5XtvptSDalHUwaYUeF0cgPpdsXJ2uzpLy7odKcxRs4Ea1yaF12DSa5amOEzBDpzPCPCK/OQus1zwDNRvcSt8Qa2figaS59tANHHPKoABSpfJ7GhWohnLGaJda+vCDRWjUgI=
+	t=1715275181; cv=none; b=KTUSM2FNPZdjYvV7LJfpc+lkGcDdBcrJAQKj9plwfnkqjN1QYMxA+GFBpukW0Xjn/qn/4Wgao9BMGPHbHivtzqUNUOUeVsAjs20UHiuHVJT9yLNw2m4Lk6C2/pz7FFmsRTwV5fjurU6INh49zuqfgSpzT41m8EOPRbwItLIRbpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715275134; c=relaxed/simple;
-	bh=klwN98vJikcInciKoqR7+Zevlt7k5sKPxKHnS9DyGBU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fPH7A1K/Mmzpjzzw5Po8qvL+abfL12dV4qS+0Mge7tTa/jcFE32+f4k/lLj3YYhCpo7Fvo+fbpvCcYVVKIc2rS6haFeF+yPwxJ5APOUnHCua/ckY7mmiRYXXc7Tlx6x2rCiTL5QAHBYQTLR7fpM+0XISXP98uDzRl9h5vjBtyKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=K0UToPLC; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-36c6da0d9b9so4699335ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715275131; x=1715879931; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yt+QW2UCYL57wBL46v9XH17e6fjbKh5ox8Y+dS7MDxQ=;
-        b=K0UToPLCSAYxIKe26CGv9nksBzDiZoo/7vdSHvmhnTPDlBTbHE05I6W6+5l31SEorQ
-         BttUmgaSV+405JO7pWUuiCnN2j9JugPB9npLtXClFaJVjsgwY+OGBPR186zCo8d3+0Xu
-         dVmMpAIPjwVa6Qp0esdd9Rtqx3NSYvELvKwGo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715275131; x=1715879931;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yt+QW2UCYL57wBL46v9XH17e6fjbKh5ox8Y+dS7MDxQ=;
-        b=lIRiyc6ealJ+ZhNpTRK1S9KsGDSWLMnHR2Lqmh//oAtCxglUXTdP5RNKFCRNeI35ls
-         Ddyma6VvEf+7Stw/OgXAR7ngU9SMHh+0zrFxd+AkFetJiolsh6yHLNjWE4tvjXo02EgK
-         EqQB83nzB6V3O/kyGStdn7l9LDBmqNqir0z7o6lAdQpn6/e3dXAgC8O2VG4VNzRledT1
-         R2P0EAhRkzUeChuQqPEViH6J/jEcfOIUfDnIeEama5pg7U6dGFTGeuIXdpHtqvvXkP7d
-         i8D2AEp/9aB+4JtqCO8u5eo30rSeUnlRLugpN5JMB4SaNe9Chq1HOsVBOFyq96jnEJOQ
-         0NMw==
-X-Forwarded-Encrypted: i=1; AJvYcCU12sdnQwVNPReYkX85EkJoReSshDUxIXpNtfxeKuZwwxF9ljqMgYNyICJIJdcvc3UJRgWXepT3S9Ib8dAUe2mI9mEFZoteWbFf0GOx
-X-Gm-Message-State: AOJu0YwleJxgYK4MyvpUMFzrx4U/wbC/NlvEgmPtcF9TU1eq/PDMsR61
-	5TcL3yFSs+DPSl+RmqhFtOV2U8jD/W4u7QKLo2iZhaRwr8eQznmIHprnJpLld/49NEbb0J3v4Jd
-	sW5+R4WYP0niqppfU9mD99QTiUIw9T9e75vMNxI5PwUq+Gcckk8i7YxBFepomWzYq1GU3qHm9IC
-	+9qiDi6pV6mCGRUm2n3KXycO52KgFhPNrYl3nemSc=
-X-Google-Smtp-Source: AGHT+IGYud45nusk59N0VhmiriD9iC4GrOQnmfNVWIdmq2ZMpFrkTPcsD75xuFQ6w7JAut8hfagQXQ0/AB+dQ8mSlNM=
-X-Received: by 2002:a92:cd87:0:b0:36c:4c03:b0d5 with SMTP id
- e9e14a558f8ab-36cc14f87f6mr3264685ab.24.1715275131066; Thu, 09 May 2024
- 10:18:51 -0700 (PDT)
+	s=arc-20240116; t=1715275181; c=relaxed/simple;
+	bh=lPwiKuRV4pwIKYvBI0L3A7kueSDCMOHQdhNSH02aozE=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:References; b=Agw8wMbZqHpxLH2J9tmS5qhPAmifiG3Xz+x4E9HrfQiIrHMRvvjWgklhrRXXBsjogwtVv8m7E+3hYDMx/6CkZ7bW1K7ldq7iOhc89SgECxnAAoYx6W5zQzwKwJg5SkjrC6w+Iz0tnB+blwI4vjXVhzHqv/dv1vxEl7qjI31kqTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=E/sGQ9XS; arc=none smtp.client-ip=66.163.184.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715275172; bh=NZbNRrxw4TZ5GUHo6xbduEkO3V+u7bBWuS3fZOqgnWw=; h=Date:From:To:Subject:References:From:Subject:Reply-To; b=E/sGQ9XSQAInYBcCAr59IhHBQXni3bhPlU8Kgm/Pj2cAKpb7uaK7/kw+fMjFppy3kOTBmW/jtCEybtg5MTLzsOTnCCpr3HUpu3TzWcIfIFQDJQu5759hjR4DtUBtmkafrOO2eNix8t9aF0lAj3kIdV8dhv5SfVUOu3od6OcBe3c4z4WpnsMxptvobPv1Pk8OeKjm3LRk4bVIS966ZDuofIppwtnj7qdm/nxtGlN663ayGGissB3ntg5xnJa1hlEnF12BJavjN7OlsU/yXiv2o01KflE0vMWU4TdLKYnq6cZMTc2ReWhkGOoPzFr2U2SdTFjFh1XMYh0PonQNfyaVhw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1715275172; bh=6PzBqGn1mN9HfO1K0PxSsW8pRPgg8FNbGJqdYvpAzIJ=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=TctDPwm9EgDLpZ/B2h55RnpXsINTP9p71zzI1BEiiBtvCvHK6dA3/YCzFgbDwKRsiuNglTgrYhgeBY1S5cYEoIAwID4w9u0NbQiayRURmi9d2MMmwwsXsXZ1t3lVdtm5xtJQAaBjeFmIqsoPSuDJHnVnZHkFuDjGQO4WAusoiaDmaGgDMcCiCcCX5rrPEDZcznVLcT18OXAJPjoWb18iqc9jLoepNM/HF9eM8gy16Nyy+IP4NelqwaY673PQgNBkgl51wGW0u49MaGfl2s9nRFwNvw2WvzsJXeTqNCGcpSN3W+jM1pKVDE/z5LM71ZbT2Vl8hCQNwbGRTpIfTt3bHw==
+X-YMail-OSG: PkdX.QkVM1kpyhiQ7hOHI.512rSweFleKGxwxW59QRIDbtep3ObYtuyUTwSuxff
+ AGaSjyJQsnB6yDFrwLl5iVQ3dNJ6YOFVA4fptDODHPf_y9mSfTjaD9McrOuOCsf6vGNW3MEZHk49
+ jA.xARcbFCCqbR14Nq7JCBA_KrFXRu8m3g81G_Dmz.XnIH4mr_t6npgLLarcq.V2jsucCDS1m2Jk
+ oEZViNZo_Ls78C91WAAeCRs_vEGQMns8eR4jdjXN14gdiwGcF5IA4BAARXHxZ_L0AXdb2E2G3hFz
+ 75lwFDVVypkctsXxNYeVYqhbgJD0NwUHycxRPNaZKO7gjO3YHFSxtZ.zqK7SeTITncn6C09nczVA
+ CXfSohnBV4vNf0FqPfMe4GBCX.5ahxuh6xeKk_M4OwSWmDK6rXmlsEGxtMxheds5Pkrh82p9Hl5a
+ eQWiayE2GYQlRmfZeDjzFb53uupFXxYxm00Pzgznc0yrPOmAXE.n4pbOe7AD1OW70Bwht9tjyMgW
+ b2cq2c_3BbF3xEMti2hM8l_SlsQ1q6rGUDDlFICDJ4s7fhsgPGknwJslqXrBznmhhYhguiatRJXg
+ KtS.RiZhpvCYt0Uc9o0H4f7enyEXGqjpRC1RFasWtRRPMUdLRsWgL8e3GfzfKhqz6Gfsaq0MCgxu
+ 0rqWszq_Y4_iB0YJo6_C.bt8BOoyKkWsxqYE49lsLKFgGSZZ7yorp25FxAlM2ks4erHf9I0EoGSW
+ asSbVHGJyCZ_w2JDWLOLg6iNVnMozj.dE.ua_L6kCF.KqLFr7guemEyuWiGLoYCoVpboEn6k9OK_
+ QKj1ZNkU6BB0DuNqYdfjNadhZE3yJvhOxBjfO2LmwJ7h56qvpeqfhCH5990jorXPK4vpeS12Ap8J
+ HkeY8g2vSdQqCBZSizCOeWWPljDPopP5a7JmxNRDqkrynzoLXCgAk6KQ0O0m_0t2W0hGZgg87wF1
+ aLpmntWbCcLlC6dJR7ZQrMgodV460CrRrg1qBAeGsKmbUFBm7joDLK6wMyeur9PjX3Q7xLYlYN2E
+ BEaPipw3TSD3xeDLOam3EaIN4o9viXOTasTRC_6871iskeYLJ6hgPwIV_10BlpG2QmazMxC_Yd_x
+ ymLm.ThPVTNmB.K5nWl5FbBzWg8JljuH5yvyvzcdZPSGQsvCCVJcWsDkPRlzt70ZBwQYOq09anuP
+ SyOtbvNgUisYCxgyikZX9Brf.tx4LJV9p6b28W2enzdiMZv4INj6bvKN2AbJetGrHaiOLSxcvD4Y
+ p3tBIK51D8hpbzZLC6xYUn0.y2YDonFezMIbMpngkJ1LdsS66Nl40FfPp2lteqtJvlAVtufr5GLE
+ I6bf6kl07TBCZN3L59QNceTG22lDe4C40E1qm4Rr7_b2iNmURWKr9mLBHECB98t4V4CIBalf8YH9
+ _mcUJP_a4R55nOWd.0VN31up_HbQ1DBsX0ds_CRBibSl8DlIvZI8.3oKsQEPrTOYZcGU2MiwK9Xv
+ 3HWcsQKjB_7fEsXuN0kSF8rJQhQ4CPZrYEHo65LvNbnMe9SFC0PmYFkymEcw7XyV1VSY5RvJaVDX
+ 3IeeFx8r_z9SeU3v5KrZ0idxMvLuZU9tiNsYZGZDaJXDaZgAw.jiy.szEZIMt_5yxETOLkiWn2Vf
+ ATR1_IjwgvJGkos5Ki9bodAMtycLm1ibnGuB8ZtXX9ahIDAbwRKtbN.C4nWnlHfjw7aL5sU4v1OV
+ mdpcCflLVin2haFqC7Gi_gjA0Coxsn_cFg73mdH3VxvqJS7J5vTPJkof7HVGGAMxFFNG29cM6q9o
+ UYGKEWV0Unv3_GGPu4VXJ3wx9GKRR0PIWCvq0sCsYGMR780K0yuOGET3jeQ73m79exLF.jMMvCWM
+ qHpUsdxEfyw7MAUiIZus_0BER_N6aUtRDj2o3OsKRsBqaZ8WfMmvfsHbDOEiof.t3CEvYkPyFTF5
+ c3TKCjl3q4MofUDMMMlhYLZnO.kfqpJg0.KwRv29iF.o.ZJ20zfNzIQFK1lK1ZunWVd6gbmKBYdR
+ NaCA6CMmMN0xq4IPpsacONpQLsGtgi7o0eUklNph_jVV_EonFhLQaW36Ji047gqf6.4CTFXpq2kS
+ 7SHGeg_x9XttOrknHlHix61fWTBwih3G4PXXbVvt5A6AstCbqd__7jLjQnYOesn8p7rKkPRXsJdZ
+ 382CdREwKOniRcxTqHvI6U9FI9Y3MzB7fGVU89c_lZRzoA.UALDNvtwX.S_CTe4vnhYpR5qfcLJV
+ 4Yzl0VgX.bzMUwXpK1wzoxDp.dpYm4_SkFSKeq7LjD.2srIBDXx9yWjP6rlkxoKjVFz5mXC01x6g
+ zGg--
+X-Sonic-MF: <ashokemailat@yahoo.com>
+X-Sonic-ID: baa26a51-26d1-4fe6-8191-d04c43177dae
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Thu, 9 May 2024 17:19:32 +0000
+Received: by hermes--production-bf1-5cc9fc94c8-dv569 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6f8786067ae67dbd6de1c4462c36a576;
+          Thu, 09 May 2024 17:19:26 +0000 (UTC)
+Date: Thu, 9 May 2024 10:19:23 -0700
+From: Ashok Kumar <ashokemailat@yahoo.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev
+Subject: [PATCH] staging:vme_user: Add blank line after struct decl
+Message-ID: <Zj0Fm+vBdzPHlZKS@c>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509094228.1035477-1-i.maximets@ovn.org>
-In-Reply-To: <20240509094228.1035477-1-i.maximets@ovn.org>
-From: Antonin Bas <antonin.bas@broadcom.com>
-Date: Thu, 9 May 2024 10:18:39 -0700
-Message-ID: <CAPq9N24QMvBzAfcemq0PCRGW50MGDwhHEWwwQaEmHqZkiyjV2A@mail.gmail.com>
-Subject: Re: [PATCH net] net: openvswitch: fix overwriting ct original tuple
- for ICMPv6
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org, Pravin B Shelar <pshelar@ovn.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Joe Stringer <joe@ovn.org>, 
-	Jarno Rajahalme <jarno@ovn.org>, dev@openvswitch.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+References: <Zj0Fm+vBdzPHlZKS.ref@c>
+X-Mailer: WebService/1.1.22321 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-I tested this patch by applying it to 6.8.9, and it addresses the
-issue I observed.
+Added blank line after struct declarions for improving readability indicated by
+checkpatch.pl
 
+Signed-off-by: Ashok Kumar <ashokemailat@yahoo.com>
+---
+ drivers/staging/vme_user/vme_user.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, May 9, 2024 at 2:41=E2=80=AFAM Ilya Maximets <i.maximets@ovn.org> w=
-rote:
->
-> OVS_PACKET_CMD_EXECUTE has 3 main attributes:
->  - OVS_PACKET_ATTR_KEY - Packet metadata in a netlink format.
->  - OVS_PACKET_ATTR_PACKET - Binary packet content.
->  - OVS_PACKET_ATTR_ACTIONS - Actions to execute on the packet.
->
-> OVS_PACKET_ATTR_KEY is parsed first to populate sw_flow_key structure
-> with the metadata like conntrack state, input port, recirculation id,
-> etc.  Then the packet itself gets parsed to populate the rest of the
-> keys from the packet headers.
->
-> Whenever the packet parsing code starts parsing the ICMPv6 header, it
-> first zeroes out fields in the key corresponding to Neighbor Discovery
-> information even if it is not an ND packet.
->
-> It is an 'ipv6.nd' field.  However, the 'ipv6' is a union that shares
-> the space between 'nd' and 'ct_orig' that holds the original tuple
-> conntrack metadata parsed from the OVS_PACKET_ATTR_KEY.
->
-> ND packets should not normally have conntrack state, so it's fine to
-> share the space, but normal ICMPv6 Echo packets or maybe other types of
-> ICMPv6 can have the state attached and it should not be overwritten.
->
-> The issue results in all but the last 4 bytes of the destination
-> address being wiped from the original conntrack tuple leading to
-> incorrect packet matching and potentially executing wrong actions
-> in case this packet recirculates within the datapath or goes back
-> to userspace.
->
-> ND fields should not be accessed in non-ND packets, so not clearing
-> them should be fine.  Executing memset() only for actual ND packets to
-> avoid the issue.
->
-> Initializing the whole thing before parsing is needed because ND packet
-> may not contain all the options.
->
-> The issue only affects the OVS_PACKET_CMD_EXECUTE path and doesn't
-> affect packets entering OVS datapath from network interfaces, because
-> in this case CT metadata is populated from skb after the packet is
-> already parsed.
->
-> Fixes: 9dd7f8907c37 ("openvswitch: Add original direction conntrack tuple=
- to sw_flow_key.")
-> Reported-by: Antonin Bas <antonin.bas@broadcom.com>
-> Closes: https://github.com/openvswitch/ovs-issues/issues/327
-> Signed-off-by: Ilya Maximets <i.maximets@ovn.org>
-> ---
->
-> Note: I'm working on a selftest for this issue, but it requires some
-> ground work first to add support for OVS_PACKET_CMD_EXECUTE into
-> opnevswitch selftests as well as parsing of ct tuples.  So it is going
-> to be a separate patch set.
->
->  net/openvswitch/flow.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/net/openvswitch/flow.c b/net/openvswitch/flow.c
-> index 33b21a0c0548..8a848ce72e29 100644
-> --- a/net/openvswitch/flow.c
-> +++ b/net/openvswitch/flow.c
-> @@ -561,7 +561,6 @@ static int parse_icmpv6(struct sk_buff *skb, struct s=
-w_flow_key *key,
->          */
->         key->tp.src =3D htons(icmp->icmp6_type);
->         key->tp.dst =3D htons(icmp->icmp6_code);
-> -       memset(&key->ipv6.nd, 0, sizeof(key->ipv6.nd));
->
->         if (icmp->icmp6_code =3D=3D 0 &&
->             (icmp->icmp6_type =3D=3D NDISC_NEIGHBOUR_SOLICITATION ||
-> @@ -570,6 +569,8 @@ static int parse_icmpv6(struct sk_buff *skb, struct s=
-w_flow_key *key,
->                 struct nd_msg *nd;
->                 int offset;
->
-> +               memset(&key->ipv6.nd, 0, sizeof(key->ipv6.nd));
-> +
->                 /* In order to process neighbor discovery options, we nee=
-d the
->                  * entire packet.
->                  */
-> --
-> 2.44.0
->
+diff --git a/drivers/staging/vme_user/vme_user.c b/drivers/staging/vme_user/vme_user.c
+index 36183f923768..5829a4141561 100644
+--- a/drivers/staging/vme_user/vme_user.c
++++ b/drivers/staging/vme_user/vme_user.c
+@@ -106,6 +106,7 @@ static struct vme_dev *vme_user_bridge;		/* Pointer to user device */
+ static const struct class vme_user_sysfs_class = {
+ 	.name = DRIVER_NAME,
+ };
++
+ static const int type[VME_DEVS] = {	MASTER_MINOR,	MASTER_MINOR,
+ 					MASTER_MINOR,	MASTER_MINOR,
+ 					SLAVE_MINOR,	SLAVE_MINOR,
+-- 
+2.34.1
 
---=20
-This electronic communication and the information and any files transmitted=
-=20
-with it, or attached to it, are confidential and are intended solely for=20
-the use of the individual or entity to whom it is addressed and may contain=
-=20
-information that is confidential, legally privileged, protected by privacy=
-=20
-laws, or otherwise restricted from disclosure to anyone else. If you are=20
-not the intended recipient or the person responsible for delivering the=20
-e-mail to the intended recipient, you are hereby notified that any use,=20
-copying, distributing, dissemination, forwarding, printing, or copying of=
-=20
-this e-mail is strictly prohibited. If you received this e-mail in error,=
-=20
-please return the e-mail to the sender, delete it from your computer, and=
-=20
-destroy any printed copy of it.
 
