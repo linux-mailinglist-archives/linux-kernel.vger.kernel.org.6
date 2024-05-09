@@ -1,173 +1,144 @@
-Return-Path: <linux-kernel+bounces-174343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACC28C0D6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:20:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EC0D8C0D6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED8C31C216FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225DC283828
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56BF14A62E;
-	Thu,  9 May 2024 09:19:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEBD14A611;
+	Thu,  9 May 2024 09:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YphcUNl/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C25814A4D6;
-	Thu,  9 May 2024 09:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860CD14A4F5;
+	Thu,  9 May 2024 09:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715246394; cv=none; b=ZiIs56Xx9c1+r/Me5bdfRydF2n/TiZ4dZm0ullirXDF7IOZQGuyXBatneD2sQPipxr2LcRrBFh+dSFXpNkCJIOi0/9N2/NOvKXshl53HCH3q5MD5aQI3IpZlJkJcNhcdeC6rFwc8xbU6yQdn5SrlNIcireJkcO4TZctSs8BUXv8=
+	t=1715246426; cv=none; b=eBS+izAeQCHGigXUuMFP51N8lSF417Vl5UsL8GFsls9NCpc+ZgP0JMKgQ5D9drZ4k7/T46syzwsscpHhq9CFSgJyVQxAx9k3QZ+7Nfy/iUbCFRuoXY6bsBDp8UlKPwExVtXSbLovrZJdZsdi3Vn5QG+NZXnUFOKsFOF/Bw6xWJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715246394; c=relaxed/simple;
-	bh=Wo1mgBAo3XVnCRSmoN/72bpcQl9w/zUeaNEQRe5EHhQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MlZiEorBIuBHuqborz2PmkpDhumRB7eopGaR6ALgDZjIoqJe8mi6ImMlF7FVf8nFpw57L392GaD/8wTRywWSm5EEWO0X31arA+/lmkA7l8wSKe0GI8MQJrB5j2ZVjH0kWKANTwl/yO9bKyZT4ijO4DdM/kN09QCPouVjDWZmKOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZmbq6JsKz6J9rQ;
-	Thu,  9 May 2024 17:16:39 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id CF873140C98;
-	Thu,  9 May 2024 17:19:41 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 9 May
- 2024 10:19:40 +0100
-Date: Thu, 9 May 2024 10:19:39 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Shiju Jose <shiju.jose@huawei.com>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
-	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
-	<ira.weiny@intel.com>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
-	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
-	<jiaqiyan@google.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "mike.malvestuto@intel.com"
-	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
-	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck
-	<linux@roeck-us.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240509101939.0000263a@Huawei.com>
-In-Reply-To: <20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
-References: <20240419164720.1765-1-shiju.jose@huawei.com>
-	<20240419164720.1765-2-shiju.jose@huawei.com>
-	<20240425101542.GAZiotThrq7bOE9Ieb@fat_crate.local>
-	<63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
-	<20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
-	<e0ce36eb80054440ab877ccee4e606de@huawei.com>
-	<20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
-	<4ceb38897d854cc095fca1220d49a4d2@huawei.com>
-	<20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715246426; c=relaxed/simple;
+	bh=5rpSr7Ybn4FuugiTBduCab0kHB71LSTX+pO9YxOqoTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvIWoroALlftPg3oJrCOPUdUog5xPOyMFo3Du8OlZRn2BrkxZv3KrxIHBU0Gk1Hthah/HJA74yqzFUDTRc4hb89vuhrfepWTk7MXAuCPZfafoJS08zJ9wI5hpmXsWaYnJgXJL6dHTAltG+0QZd2wQCi6qIZnO7c6lR5BLCKdb0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YphcUNl/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44993kQI010776;
+	Thu, 9 May 2024 09:20:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=6ZQgaWALZN0CtOTRXnpZfUTg6hqELQ8osXjMUy+R0QM=;
+ b=YphcUNl/msyenbtnuL8giUj1/AJOWu5KMlsOSoCm37bWR78g3ITIsmwKX4IIMHM2tPgc
+ QdpUD0klmDyN03EhDavxmCVNp9XxcKTmUMvgUJ4oFKr6IR9e5uwtyTm+t5S9OAdfQLIr
+ FNWZCUBNrjXn217wUP6g+o/JhU7GQx/QhGX+iJZMEs2QBge5Y2bXIuT+7BfPrrNYS8Hp
+ EFN7+wZYjqvxLESOogRHZoQWEjIhpcuG0wMWwDXNLR7/hBKQCohC2i4XX6ffDStAIO8R
+ EdE3XPQyFgZIWZU4R2XyGJzsiMK6tK+4DGoRVkSMaVHCJSd0CBQlAk0HPbL78gHtZrCH vQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0ugp80ys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 09:20:09 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4499HUMf030711;
+	Thu, 9 May 2024 09:20:09 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0ugp80yn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 09:20:09 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4498S4ED009823;
+	Thu, 9 May 2024 09:20:08 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xyshusy15-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 09:20:08 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4499K25E25428640
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 9 May 2024 09:20:04 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B1E7A20040;
+	Thu,  9 May 2024 09:20:02 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9EFEF2004E;
+	Thu,  9 May 2024 09:19:59 +0000 (GMT)
+Received: from li-3c92a0cc-27cf-11b2-a85c-b804d9ca68fa.ibm.com (unknown [9.109.199.72])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  9 May 2024 09:19:59 +0000 (GMT)
+Date: Thu, 9 May 2024 14:49:56 +0530
+From: Aditya Gupta <adityag@linux.ibm.com>
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf sched: Rename switches to count and add usage
+ description, options for latency
+Message-ID: <3buy7zyybshlphybersfof2acjcbrpxllrcvobizwyse4356nd@7sp74wyxbbfc>
+References: <20240328090005.8321-1-vineethr@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328090005.8321-1-vineethr@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3O8cVxwZCUAFIwm17-iVxCBqhTHU7hNF
+X-Proofpoint-ORIG-GUID: lDPzNrU9-GgNAV8nBMSv-DVGGoG2whAT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_04,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ bulkscore=0 spamscore=0 priorityscore=1501 clxscore=1011
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405090059
 
-On Wed, 8 May 2024 21:25:46 +0200
-Borislav Petkov <bp@alien8.de> wrote:
+Hello vineeth,
 
-> On Wed, May 08, 2024 at 05:44:03PM +0000, Shiju Jose wrote:
-> > I mean scrub subsystem module is not loaded and initialzed until
-> > a dependent  device module is loaded and a device does not get
-> > registered with the scrub subsystem on a machine which doesn't have
-> > the corresponding scrub features.  
+On Thu, Mar 28, 2024 at 02:30:05PM +0530, Madadi Vineeth Reddy wrote:
+> Rename 'Switches' to 'Count' and document metrics shown for perf
+> sched latency output. Also add options possible with perf sched
+> latency.
 > 
-> Stop this rambling blabla please. This should *not* happen:
+> Initially, after seeing the output of 'perf sched latency', the term
+> 'Switches' seemed like it's the number of context switches-in for a
+> particular task, but upon going through the code, it was observed that
+> it's actually keeping track of number of times a delay was calculated so
+> that it is used in calculation of the average delay.
 > 
-> # insmod ./memory_scrub.ko
-> # echo $?
-> 0
-> # lsmod
-> Module                  Size  Used by
-> memory_scrub           12288  0
+> Actually, the switches here is a subset of number of context switches-in
+> because there are some cases where the count is not incremented in
+> switch-in handler 'add_sched_in_event'. For example when a task is
+> switched-in while it's state is not ready to run(!= THREAD_WAIT_CPU).
 > 
-> This is on a silly guest which has none of those dependent devices crap.
+> commit d9340c1db3f5 ("perf sched: Display time in milliseconds, reorganize
+> output") changed it from the original count to switches.
 > 
-> Your scrub module should load only on a machine which has the hardware
-> - not just for fun and on anything.
+> So, renamed switches to count to make things a bit more clearer and
+> added the metrics description of latency in the document.
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 
-Fundamental question seems to be:  Why should it not load?
-Shiju and I think it should, you think it shouldn't.
-Note this is only if someone deliberately ignores all the infrastructure
-intended to make sure only relevant modules probe and modprobe / insmod
-by hand.
+Makes sense to me. 'Switches' seems to be context switches, so it might
+be better kept as 'Count' only.
 
-+CC some driver core folk and a few other subsystem maintainers who
- have subsystems doing the same as this one.
+Hence,
 
-Summary I think is:
-Borislav is asking for this new scrub subsystem core module to not
-successfully probe and call class_register() if it is manually
-inserted and there is no hardware on the particular system.
-It's a standard class type situation with core driver providing
-consistent ABI and /sys/class/ras/ with drivers hanging off various
-buses (currently ACPI and CXL) registering with that class.
+Reviewed-by: Aditya Gupta <adityag@linux.ibm.com>
 
-Many subsystem core drivers will probe and create subsystem specific
-sysfs directories on on systems that don't have any hardware needing
-drivers from that subsystem (if someone manually inserts them rather
-than relying on automatic module dependency handling.)
-I don't see why this class driver should be different and have to jump
-through hoops to satisfy this requirement.
-
-A quick look for callers of class_register() in their init functions
-found plenty of precedence.  Many of the cases that don't do this are
-single use - i.e. class that only ever has one driver. There are even
-more if we take sysfs buses into account. (edac and IIO for example) 
-
-A few examples of same handling of class registration.
-- input - that registers a lot more on class init, but sysfs class
-          registration is in there.
-- hwmon - other than some quirk setup same as the scrub driver.
-
-
-Other than embedded systems with a custom build and kernel developers,
-who actually probes modules manually?  Mostly people rely on modalias
-of the client drivers and them pulling in their dependencies.
-Modules are pretty pointless if you probe all the ones you've built
-whether or not the hardware is present.
-
-It would of course be easy to do the class_register() on first driver
-use but I'm not seeing a lot of precedence + the scrub class module would
-still insmod successfully. I think preventing load would be messy and
-complex at best.
-
-Jonathan
+Thanks,
+Aditya Gupta
 
 
