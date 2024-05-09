@@ -1,74 +1,144 @@
-Return-Path: <linux-kernel+bounces-174508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE56A8C0FC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3EB8C0FCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B1EEB229B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEA951C22653
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B039013BC04;
-	Thu,  9 May 2024 12:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MCsHHGGA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C687813AD33;
-	Thu,  9 May 2024 12:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63A81474A5;
+	Thu,  9 May 2024 12:43:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B7A13B5B6;
+	Thu,  9 May 2024 12:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715258527; cv=none; b=Wz7Pk6zObtkBWfPRZmON7/c82r+5EQe+R+efo9BITe2iguLaRbmQ6dBoiEbJdIuThyuz0yzYZCR9XONL8jTscxM0rHbZlxusmulCKcQukuVFmzqQuH8lTlqx4F+Rh0xRCW35cktjlPic/BjHGyrFU2+S46LO0wPX+9W5dQN5BIY=
+	t=1715258585; cv=none; b=DYhRDjljLJWRJTU79QbXxLnFUMJogW6cOco+OEFMxhagH9oeijqc/YXoau27MFvD5lUWaU5mDVWyTbrWLU6u7K+zPRo3vVffqo2v5oDwwP8iAFv72LePn/llxbKTTZ8gZL/kZKqspbwPfAxTeOYuPGDV9SM8hr13JIk50TLxK7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715258527; c=relaxed/simple;
-	bh=uOTQxuvQ8i7Oz5Vhw1Nb5t6RYRONDIv98MsW+Ken0ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8shlIUDVoyfppY/QjhOVpsEBf7GlZkUbwuFp78lg81rp7YgtKi5mlTmQ2PN8ED+velXxQm3/v7/qLg6bdK1i9ZbwZljfI1mYWtboVer4+bNdwacwvZNFWJw5hCYwouM2hJxRXfGH4qGy68pZ9WUMPilUbhNuUNymqvCZlh01i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MCsHHGGA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/NQShJ2vBOZuOn/Cc2uD7FM4Dkx1Wb4jgFli6QGjY7w=; b=MCsHHGGAephGlLZzNPjbmC4PGG
-	cjRzOpuDOZrEM9vsWhhzhq7GlEQsd2S63naSVU5QM/MmgmmEfy3V1rkQK5BFq8Fq6CZ53kCi73tp5
-	3wJhESpoyK2expDWbcVG0sKx5LtgIQv0PZHQzd7I9OnQOS7JdpghLp9hDcsRR//d3DMIhEq86Maqz
-	pkLyo4x8vBsgXtiOxeGBiNBO+vKu2H9OxLJMfXmB6RPheI7wtmr9wxx7pp2cSr1Mywib6kNdh/sHr
-	ugoX69LDlnd/gndbMiFKVsjEOhS2Jb1F1KJgSvk7cEGAPyMfBbrqRoDusn9IyS9xMRLg3XCgpOJJn
-	snTSSQPA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s5365-00000001SrE-1Dn6;
-	Thu, 09 May 2024 12:42:05 +0000
-Date: Thu, 9 May 2024 05:42:05 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCHv3 08/19] zram: add 842 compression backend support
-Message-ID: <ZjzEnbHGO_hYQN11@infradead.org>
-References: <20240508074223.652784-1-senozhatsky@chromium.org>
- <20240508074223.652784-9-senozhatsky@chromium.org>
+	s=arc-20240116; t=1715258585; c=relaxed/simple;
+	bh=8BmZZE6TqpdGCbZ9A4QnBHieZRxO5UaDwlFmlYZ9Nos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F6nVsZYtW4C5N3sWxiI2OaKDqirR/GyMUCPPtWUC5rOE+knYteuNlOXew3r590Q9tor/u0BzekS4VENT7Q/EXfH14+TOyxNpBgK96pjUavDQqRDlit3CpUv1O5N2QIEM/Pwh4NZdwooDdD+xg44czPUIRC887CMhit5akWhrSPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F6D1339;
+	Thu,  9 May 2024 05:43:28 -0700 (PDT)
+Received: from [10.1.38.172] (XHFQ2J9959.cambridge.arm.com [10.1.38.172])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59D6E3F6A8;
+	Thu,  9 May 2024 05:43:01 -0700 (PDT)
+Message-ID: <444612f4-8f3c-445f-bbdb-9b391dd5d5db@arm.com>
+Date: Thu, 9 May 2024 13:42:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508074223.652784-9-senozhatsky@chromium.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/mqueue: fix 5 warnings about signed/unsigned
+ mismatches
+Content-Language: en-GB
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, SeongJae Park <sj@kernel.org>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+References: <20240508200028.272513-1-jhubbard@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240508200028.272513-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 04:42:01PM +0900, Sergey Senozhatsky wrote:
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+On 08/05/2024 21:00, John Hubbard wrote:
+> When building with clang, via:
+> 
+>     make LLVM=1 -C tools/testing/selftest
+> 
+> ...clang warns about several cases of using a signed integer for the
+> priority argument to mq_receive(3), which expects an unsigned int.
+> 
+> Fix this by declaring the type as unsigned int in all cases.
+> 
+> Also, both input and output priority are unsigned, per the man pages, so
+> let's change the type of both priorities throughout, even though clang
+> did not warn about the prio_out variable.
+> 
+> Also, add an argument name to test->func(), in order to address another
+> warning from clang.
+> 
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Not a very useful commit message, made worse by the magic '842'
-name.  How is anyone stumbling over git-blame or looking at git
-logs supposed to make sense of this?
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+
+> ---
+>  tools/testing/selftests/mqueue/mq_perf_tests.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mqueue/mq_perf_tests.c b/tools/testing/selftests/mqueue/mq_perf_tests.c
+> index 5c16159d0bcd..9380c656581f 100644
+> --- a/tools/testing/selftests/mqueue/mq_perf_tests.c
+> +++ b/tools/testing/selftests/mqueue/mq_perf_tests.c
+> @@ -323,7 +323,8 @@ void *fake_cont_thread(void *arg)
+>  void *cont_thread(void *arg)
+>  {
+>  	char buff[MSG_SIZE];
+> -	int i, priority;
+> +	int i;
+> +	unsigned int priority;
+>  
+>  	for (i = 0; i < num_cpus_to_pin; i++)
+>  		if (cpu_threads[i] == pthread_self())
+> @@ -373,27 +374,27 @@ void *cont_thread(void *arg)
+>  
+>  struct test {
+>  	char *desc;
+> -	void (*func)(int *);
+> +	void (*func)(unsigned int *prio);
+>  };
+>  
+> -void const_prio(int *prio)
+> +void const_prio(unsigned int *prio)
+>  {
+>  	return;
+>  }
+>  
+> -void inc_prio(int *prio)
+> +void inc_prio(unsigned int *prio)
+>  {
+>  	if (++*prio == mq_prio_max)
+>  		*prio = 0;
+>  }
+>  
+> -void dec_prio(int *prio)
+> +void dec_prio(unsigned int *prio)
+>  {
+>  	if (--*prio < 0)
+>  		*prio = mq_prio_max - 1;
+>  }
+>  
+> -void random_prio(int *prio)
+> +void random_prio(unsigned int *prio)
+>  {
+>  	*prio = random() % mq_prio_max;
+>  }
+> @@ -425,7 +426,7 @@ struct test test2[] = {
+>  void *perf_test_thread(void *arg)
+>  {
+>  	char buff[MSG_SIZE];
+> -	int prio_out, prio_in;
+> +	unsigned int prio_out, prio_in;
+>  	int i;
+>  	clockid_t clock;
+>  	pthread_t *t;
+> 
+> base-commit: 45db3ab70092637967967bfd8e6144017638563c
+> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
 
 
