@@ -1,122 +1,183 @@
-Return-Path: <linux-kernel+bounces-175015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E0F8C18CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:59:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61C0A8C1920
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A84131C21B37
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12629282FD0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B181292F3;
-	Thu,  9 May 2024 21:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1045129A7B;
+	Thu,  9 May 2024 22:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="Djm6UYGC"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E810F1292CF;
-	Thu,  9 May 2024 21:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Xv5yUcpG"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9906A1292CF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 22:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715291973; cv=none; b=LaY44bBGBHP63n3XLuTEiz/CO+3UnUolzxW62CGSdccFx7o+ZLfCOuT59Uyp46heH+/9Tn2E70FWlIBDMHzN2mUNuTgxBYNC1FaHP9VVbVhI9bzvCMYl/GjpqOr7wp1b3oRTzQaVJr8GpCgYL8oHtwbBBSzpvAGIgj+XniZ+LZg=
+	t=1715292090; cv=none; b=CpGMR6jqT2DWOtq19CFfAflVYqOdhDefhKDpcR/NIDtXKpeSLb8xEx32/E4KTiSzwLDwAjO/6JZnR/UqSj63NblySGzsM8GNGfQIPeLhHwY1e9zfOti+iEYGO+dtc2oL/ClUJYsXkoBjI3vQ54sR09okgPCWXnuH4BuYaAwN/VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715291973; c=relaxed/simple;
-	bh=vQTSqcXkDJPaIBbcnpAEzAyTOeOOsBcfw+OQRd5OE80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tATYds8wxdUXg7cYJZBhIXZlJprS1kXVJtU85JTa4frr2gb2fjwtT4e6LHcsucRSMexe+2naTAuIe+p1SPtpjIoV+PchgQjJD324x/7A+OqFy41rIf8P6xgrAGk8rzY3ALoQDGPCnE+4SXTcqPnT9dH3evCzG+wM//pCQSNrYMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=Djm6UYGC; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 0229B14C2DB;
-	Thu,  9 May 2024 23:59:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1715291968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0iPoojjKgcH+TQ6GRd67EtYx4kNvRFbwZWP5w+OBCKw=;
-	b=Djm6UYGCuu4rndXevZy7UP2V8BnEec3M++zEJPI9+UUWspmBHME3aJJgPzG0EtX/Qbakl+
-	fUD3h3feYQuTeH3vT5gZNg57//xeLlImnRxZhccjywu8anD1O4dP7HZf1JfLL9cp9SFhpP
-	A+HA0ljILkymtIQsNriFR/NVrFPpIXk2nKHNe8mTO4xGwl58xuIFbe0xnwnEWQLkOvJqb2
-	nL/8ROkwZtDeimF4aNo18n90M3ytNfXk3RxjCosx90mdkIpqyqqq2FAMWdj5/wcOoZTued
-	JA9gvEOBDA4a2I4SAOBgHNVOeA981BsnbJ+4YnF4tzHbSZp0S5UqUmng7r+mrg==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id d6740ee3;
-	Thu, 9 May 2024 21:59:20 +0000 (UTC)
-Date: Fri, 10 May 2024 06:59:05 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] perf parse-events: pass parse_state to
- add_tracepoint
-Message-ID: <Zj1HKQVuQDQtk5cK@codewreck.org>
-References: <20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org>
- <20240505-perf_digit-v2-1-6ece307fdaad@codewreck.org>
- <CAP-5=fUmeyd3BR7njJEDQ-=qkpvLPMoQO-7De+3mqLaSOoZZxw@mail.gmail.com>
- <Zj0--YbYSm-s9vRh@x1>
- <Zj1EK8cO-Vxc-YuJ@x1>
+	s=arc-20240116; t=1715292090; c=relaxed/simple;
+	bh=c2+wGxwVoVYy08ApVv3oL/wqVIdU1UZ9aPHrnR2RtRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KTbo/K01CyWV3tf82+rLFM5dVaqSCDs9MBrnXghLV+rf16zZ7S3Q5sVVZbP3XW6P6pqjG3+BVQ7ji1MS8L6gtsQzWpou/zMeXxD0YkjaGvTvz0PKQukzbmyxv95EvJgehjf+jWtHkHuYVbNqSJWf9nrg+wVkmS5Wf3lYaqvuMjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Xv5yUcpG; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e2b468ea12so12121771fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 15:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715292086; x=1715896886; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xnHYOWAhVzx2MCZups8we2bGRU6BNZU/YkcsQyEzx7M=;
+        b=Xv5yUcpGuZtnsk43qJvifVUz3nx8ne9Gea7ryNvnPXEdpROkry3G58XKVch4fshDKx
+         4p2C3U9QoGLZcCWRLq/ppKw8qmrP8ZnM4E+tPcxsa83aRTgMDSC5QHvWulgRs5HTBuF8
+         93IjFbDNrJEyzie4Jlgytbn3+l9kYGysGSvZI6I84XOE+cm1yOqwuR9N02PqUwmWCkMw
+         c/ashvf1Y+IswlidsViuzrlDoe1kaliIs8OatsBx49ikaMVUYzAik7IQVCTiLHuv6/k3
+         51xx1XjFJ+csrTs97NzZsN/32OXmWRsZNthsHT0HqnSRyWmMgAQhL92jYkLDex43GRkY
+         S3sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715292086; x=1715896886;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xnHYOWAhVzx2MCZups8we2bGRU6BNZU/YkcsQyEzx7M=;
+        b=eqrXdM7RXU1pGiYqddZZtW+JKt2lxX4gQprtKFm1jZa5b+REHrigBE76WRqedQqgDA
+         ODG7TOQcvdsofasdw3bQOKhVPFQkGzd2kLkOIyJ5ddFucwA9oQJl/06FIlFr5ZLbKYUa
+         +90l3U6pWrasY+6k/6zsWrB6AZMYyFUoYRCWO6480YET+Vl+vW/ZDJNee4GsBRFFrImP
+         FQnRkkwMfaQp4+cfM3avMTCEgXXnR6Y3HkARDv3KQua1dBhXtE1T8S9SzhMd6cPECdru
+         Cf5oQxAWOAxUPLcjXZ3s0l0mr379lzq42rIn1SGVA+zu1JTEUpRng7ePgrX+k3Ff/6PB
+         ozlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWI60+f1wEWNVRIHfctst+Zn/vAN+Lou5nbJ8+PWL4h7QoNZl3n+yMb4Tacfz/Yl0TvcTHV3GHoYzFpdWkJINXVQOoq2SyVD4zCrwYO
+X-Gm-Message-State: AOJu0YzbPh40Cpr8u+0WBKbcZNwl8n4NoMtZOkLxIqVrh5ylEdUxpJL7
+	IJQrYenw+U+B3c4zpRVDm5q/lY/63vIa4wPZfuiFWuPGFD6stfh5A9UeuN1mqPTXWotV7g0Sm9C
+	N1JWzfvfSZLJz1X+pv9Knx+8wPqzqQafm28NQIA==
+X-Google-Smtp-Source: AGHT+IGmkxEYjc0NQpRPLrFtYmBmIEh6mip5P+yeU1oy78tdUBlhMD93wRggNq3UrVCx80wRD2xGwsM288TElhwGXLY=
+X-Received: by 2002:a2e:b617:0:b0:2e3:331e:e33d with SMTP id
+ 38308e7fff4ca-2e4b11109fbmr10692811fa.11.1715292085685; Thu, 09 May 2024
+ 15:01:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zj1EK8cO-Vxc-YuJ@x1>
+References: <20240501-adding-new-ad738x-driver-v6-0-3c0741154728@baylibre.com>
+ <20240501-adding-new-ad738x-driver-v6-9-3c0741154728@baylibre.com>
+ <20240506151725.10cf025e@jic23-huawei> <CAMknhBFx-KVPRbm1xmKeU8ZaA7qt_c0_6eiUT-5kqTWVAvf3hw@mail.gmail.com>
+ <20240508122556.00005f71@Huawei.com>
+In-Reply-To: <20240508122556.00005f71@Huawei.com>
+From: David Lechner <dlechner@baylibre.com>
+Date: Thu, 9 May 2024 17:01:14 -0500
+Message-ID: <CAMknhBH=R2D4yu6Psnh+gv=OpCNAEwi8fpvMcJd0n9-SBfNWqg@mail.gmail.com>
+Subject: Re: [PATCH RFC v6 09/10] iio: adc: ad7380: add support for rolling
+ average oversampling mode
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Julien Stephan <jstephan@baylibre.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	kernel test robot <lkp@intel.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Arnaldo Carvalho de Melo wrote on Thu, May 09, 2024 at 06:46:19PM -0300:
-> ⬢[acme@toolbox perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
-> [...]
-> tests/parse-events.c:2274:26: error: ‘test__checkevent_tracepoint’ undeclared here (not in a function); did you mean ‘test__checkevent_breakpoint’?
->  2274 |                 .check = test__checkevent_tracepoint,
->       |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->       |                          test__checkevent_breakpoint
-> make[6]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:105: tests/parse-events.o] Error 1
-> make[6]: *** Waiting for unfinished jobs....
+On Wed, May 8, 2024 at 6:26=E2=80=AFAM Jonathan Cameron
+<Jonathan.Cameron@huawei.com> wrote:
+>
+> On Mon, 6 May 2024 10:04:10 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+>
+> > On Mon, May 6, 2024 at 9:17=E2=80=AFAM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> > >
+> > > On Wed, 01 May 2024 16:55:42 +0200
+> > > Julien Stephan <jstephan@baylibre.com> wrote:
+> > >
+> > > > Adds support for rolling average oversampling mode.
+> > > >
+> > > > Rolling oversampling mode uses a first in, first out (FIFO) buffer =
+of
+> > > > the most recent samples in the averaging calculation, allowing the =
+ADC
+> > > > throughput rate and output data rate to stay the same, since we onl=
+y need
+> > > > to take only one sample for each new conversion.
+> > > >
+> > > > The FIFO length is 8, thus the available oversampling ratios are 1,=
+ 2, 4, 8
+> > > > in this mode (vs 1,  2, 4, 8, 16, 32 for the normal average)
+> > >
+> > > Ah. I should have read on!
+> > >
+> > > >
+> > > > In order to be able to change the averaging mode, this commit also =
+adds
+> > > > the new "oversampling_mode" and "oversampling_mode_available" custo=
+m
+> > > > attributes along with the according documentation file in
+> > > > Documentation/ABI/testing/sysfs-bus-iio-adc-ad7380 since no standar=
+d
+> > > > attributes correspond to this use case.
+> > >
+> > > This comes to the comment I stuck in the previous patch.
+> > >
+> > > To most people this is not a form of oversampling because the data ra=
+te
+> > > remains unchanged. It's a cheap low pass filter (boxcar) Google point=
+ed me at:
+> > > https://dsp.stackexchange.com/questions/9966/what-is-the-cut-off-freq=
+uency-of-a-moving-average-filter
+> > >
+> > > in_voltage_low_pass_3db_frequency would be the most appropriate stand=
+ard
+> > > ABI for this if we do treat it as a low pass filter control.
+> > >
+> > > I'm not necessarily saying we don't want new ABI for this, but I woul=
+d
+> > > like to consider the pros and cons of just using the 3db frequency.
+> > >
+> > > So would that work for this part or am I missing something?
+> > >
+> >
+> > I like the idea. But from the link, it looks like the 3dB frequency
+> > depends on the sampling frequency which is unknown (e.g. could come
+> > from hrtimer trigger).
+> >
+> > Would it be reasonable to calculate the 3db frequency at the max
+> > sample rate that the chip allows and just use those numbers?
+> >
+> Ah. So looking at datasheet the normal average oversampling is
+> self clocked, but this version is not.
+>
+> So, I'll ask the dumb question.  What is this feature for?
+> We have to pump the SPI bus anyway why not just do the maths in
+> userspace?  Oversampling is normally about data rate reduction
+> with a bonus in precision obtained.
+>
+> Jonathan
+>
 
-Sorry, didn't know about build-test; I've confirmed the problem [and
-will eventually want to check how to build this cleanly on nixos, it's a
-pain to shuffle the patch around to rebuild perf...]
+I asked the apps engineers and the answer I got is that it a way to
+enable oversampling while still maintaining a high sample rate.
 
+Another thing to consider here is that we can only enable the extra
+resolution bits if oversampling is enabled (normal or rolling mode).
+The chip might not work right if we try to enable the extra bits
+without oversampling enabled.
 
-It looks like the test case just needs an extra ifdef for
-LIBTRACEEVEENT?
-
-----
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 417d4782a520..edc2adcf1bae 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -2269,11 +2269,13 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_breakpoint_2_events,
- 		/* 3 */
- 	},
-+#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name = "9p:9p_client_req",
- 		.check = test__checkevent_tracepoint,
- 		/* 4 */
- 	},
-+#endif
- };
- 
- static const struct evlist_test test__events_pmu[] = {
-----
-
-I'll send a v4 with that rolled in after confirming the full build-test
-passes.
-
--- 
-Dominique Martinet | Asmadeus
+So my thinking is perhaps it is better to keep the rolling mode as
+oversampling rather than trying to call it a low pass filter. As you
+said, normal mode is about data rate reduction with bonus precision.
+Rolling average oversampling mode then would then just be for the
+bonus precision.
 
