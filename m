@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-174648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC898C122C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0849E8C1231
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C040E1F21CE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C401F21F9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C1816F277;
-	Thu,  9 May 2024 15:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775FE16F287;
+	Thu,  9 May 2024 15:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BxCIL8g8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8ndoIYlx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WLHj8jA9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yY9aGTSq"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0KiHvcM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2E716F282;
-	Thu,  9 May 2024 15:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1633BBE3;
+	Thu,  9 May 2024 15:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269529; cv=none; b=eqIIWg7WT2AqnI5L4bCVatYfwcnafq58i7N9gqaLztRCYdp2Vv71NJ6wl4KsSS9KodMvnn4uIeG9ihAvA3UdiHGAjpIih4qztPfLdw0I67A+Xym/UgzPU2Dv3eGlHVnGsZokPOG+r9dh61p5hscxMPyUnFWFFQP1FVr0VjTZ2g0=
+	t=1715269709; cv=none; b=uhhIWVzXrE7rgLKofgAH5Z4paTtzk2OnEs/H4M+yJv7S/nODekqyz6MTNBY1Ofhc6l0axTAygyTWHJn4frNElvBlJVdOSdTB1l5CyjDPNPk4HmO/trcgQKxu1pfwRcQimmchs86eG1IDpRcAZDxXFcAqNbt6rP+ST2YB/WE9Y6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269529; c=relaxed/simple;
-	bh=tDLTQZAb9SG1XdjocUm4pDKCouH3nPrdmMzpJmOQmfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NLbJL16kwZLOPqh2DRoWgl1mSdSkMJml12+BoU8yvBB/IHlLBBwIlNNOhizDQRTHJqqk6dscnSXsROVVHg0IuekoHh5FnPDww4uRqM34QJ/6Gxb0G7hyHgaCgGQ3p3XZsYmlz6eiB6HKIeBZDDwelKZRhu8MT2u8IShB3XZMMJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BxCIL8g8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8ndoIYlx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WLHj8jA9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yY9aGTSq; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0655A5BE4C;
-	Thu,  9 May 2024 15:45:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715269525;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uHl1CT8N0tfpIcW5kJoxII7Vd1TSpSdEssxUnTvGgjA=;
-	b=BxCIL8g8L3SE07XM4Tc5gLnSrv8ml4GZRwoPySghzYkEn69V7yCJETE7VKRty+ITVH3ED/
-	56hP1zFB7UdcNwpS6GBwKk1ZpQySZ/oqhfH3Z/2RunXjwzB82nLqxAGks9lZXBXCmmRkLs
-	XBx8djX7wZdNwfbbZDs6HLaTR7InyDM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715269525;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uHl1CT8N0tfpIcW5kJoxII7Vd1TSpSdEssxUnTvGgjA=;
-	b=8ndoIYlxlr6ojx4p8trp0/6zoOARhoxN8ABqMw8yXeYp8jzFbZ1ff+UJiHzQQBzB89BiHP
-	EXUB5loMdcmLBdAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=WLHj8jA9;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=yY9aGTSq
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715269524;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uHl1CT8N0tfpIcW5kJoxII7Vd1TSpSdEssxUnTvGgjA=;
-	b=WLHj8jA9is/QepOEATw5kVVLeWRsgS1ozPy4eamq0lksHouPMgYMXq6qgsHrvj+9F7UOx8
-	rn6JEfkecjU1tVmUB3xGn3lSaaq6u5RPnu6PwvlI3V96BViMqu74ZAk72q39bH5TD7kAun
-	DEx4tKs97MA3RttuTAer47E6j64Gojw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715269524;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uHl1CT8N0tfpIcW5kJoxII7Vd1TSpSdEssxUnTvGgjA=;
-	b=yY9aGTSqLFKut1egrKSMe4FP5Q2q2H+dmaMCqdEAzDYckZSo2kwtmxd7dtM5T0U9jk149+
-	79mso5iv4hpa5SAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D8DEB13941;
-	Thu,  9 May 2024 15:45:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IhOINJPvPGZWGQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 09 May 2024 15:45:23 +0000
-Date: Thu, 9 May 2024 17:45:20 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sam Sun <samsun1006219@gmail.com>, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, syzkaller-bugs@googlegroups.com,
-	xrivendell7@gmail.com, reiserfs-devel@vger.kernel.org
-Subject: Re: [Linux kernel bug] general protection fault in alloc_object
-Message-ID: <20240509154520.GH13977@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <CAEkJfYN_xh-zU-8ZgaSDdTgDejBv0uGHa_KW-Vi3CijZi5UZ+A@mail.gmail.com>
- <87pltwo056.ffs@tglx>
+	s=arc-20240116; t=1715269709; c=relaxed/simple;
+	bh=wcUJCc5Jd0sSuP3wsE984VDNHrBT9xCEyzalVdcN9ug=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fEdcKZM40L5JmKVbESjv9pnTiltgEJQRisUDD75v90zMnVOLk10QglzMWbcPmfp1df6Oe17ABA/repLf9DLcA8UcpQ+OqsHJ3nrUebod1Z3IyVBXOIaRNPVLtQyoU19fklwD9fKuOTj12t4X78WI9BSwv1DqMVHzAbbw2XNTSa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0KiHvcM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A463EC116B1;
+	Thu,  9 May 2024 15:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715269709;
+	bh=wcUJCc5Jd0sSuP3wsE984VDNHrBT9xCEyzalVdcN9ug=;
+	h=From:To:Cc:Subject:Date:From;
+	b=J0KiHvcMQ7bm6Z4VmXo/SfZXiaVOTRkl3gZY75q6NEFadKd5FxYTwb0t4Goz5ALXS
+	 jTqybRq90giV/HQTpXwydp9l/MzSLXsVjww828l9YcZK5BToNakDeJH3Dpa5z4+GhF
+	 8o/4vYhVAviaqv5pdBMQp5Oh++kT8nrV98FFAUxHJ0zH5mbPnoY24C53mKHuZXA8B/
+	 M/xqfCaeuEpn7lqqV8wNyzRbsowaANpp5DmIAlxuCTsvy+ZhfDLahdB1pAhJpN41Ah
+	 6ciuulS5PAfpr6XT8n7iPovQhblivyL+tC8UxOfSBoREhM45gsuWu48NgfxNolv1cM
+	 dqd4rH1a/GqFA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org
+Subject: [GIT PULL] trusted keys changes for v6.10-rc1
+Date: Thu,  9 May 2024 18:47:51 +0300
+Message-ID: <20240509154751.25983-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pltwo056.ffs@tglx>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,linux-foundation.org,googlegroups.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 0655A5BE4C
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.21
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 08, 2024 at 04:20:53PM +0200, Thomas Gleixner wrote:
-> On Tue, May 07 2024 at 14:32, Sam Sun wrote:
-> > ```
-> > general protection fault, probably for non-canonical address
-> > 0xdffffc0040000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> > KASAN: probably user-memory-access in range
-> > [0x0000000200000008-0x000000020000000f]
-> 
-> This is a reiserfs issue. It crashes at random places:
-> 
-> [  348.634665][ T5992] REISERFS (device loop0): Using tea hash to sort names
-> [  348.780602][ T5993] (udev-worker)[5993]: segfault at 200000001 ip 0000000200000001 sp 00007fffca0e6190 error 14 in udevadm[5613a8f19000+1a000] likely on CPU 3 (core 0, socket 3)
-> [  348.796165][ T5993] Code: Unable to access opcode bytes at 0x1ffffffd7.
-> [  348.831600][ T5016] systemd-journald[5016]: /var/log/journal/a042c4e41bfd4c9697a628486ba7707d/system.journal: Journal file corrupted, rotating.
-> [  348.840565][ T6004] systemd-udevd[6004]: segfault at 100040048 ip 00007fde601b58a3 sp 00007fffca0e6250 error 4 in libc.so.6[7fde60108000+155000] likely on CPU 5 (core 0, socket 5)
-> [  348.844214][ T6004] Code: 89 10 49 8b b4 24 a8 10 00 00 eb 34 0f 1f 00 4c 8b 2d 69 f5 0f 00 64 45 8b 75 00 e8 27 42 fc ff e8 52 fe fa ff e9 01 fe ff ff <48> 8b 0a 48 8b 42 08 48 89 41 08 48 89 08 49 8b b4 24 a8 10 00 00
-> [  356.765557][ T5992] ==================================================================
-> [  356.767188][ T5992] BUG: unable to handle page fault for address: 0000000100040058
-> [  356.767204][ T5992] #PF: supervisor read access in kernel mode
-> [  356.767219][ T5992] #PF: error_code(0x0000) - not-present page
-> [  356.767233][ T5992] PGD 80000004ca01f067 P4D 80000004ca01f067 PUD 0 
-> [  356.767266][ T5992] Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-> [  356.767294][ T5992] CPU: 4 PID: 5992 Comm: a Not tainted 6.9.0-rc7-00012-gdccb07f2914c-dirty #43
-> [  356.767325][ T5992] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [  356.767342][ T5992] RIP: 0010:stack_depot_save_flags+0x14b/0x8e0
-> 
-> Can we just get rid of this mess?
+  Merge tag '6.9-rc7-ksmbd-fixes' of git://git.samba.org/ksmbd (2024-05-08 10:39:53 -0700)
 
-It's been on the deprecation and removal path, scheduled for 2025.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=eb103a51640ee32ab01c51e13bf8fca211f25f61
-I wouldn't be surpised if somebody sends a patch on 1.1. to do that.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-6.10-rc1
+
+for you to fetch changes up to 28c5f596ae3d1790cdc96fa5fc7370f934abfb2e:
+
+  docs: trusted-encrypted: add DCP as new trust source (2024-05-09 18:29:03 +0300)
+
+----------------------------------------------------------------
+Hi,
+
+This is pull request for trusted keys subsystem containing a new key
+type for the Data Co-Processor (DCP), which is an IP core built into
+many NXP SoCs such as i.mx6ull.
+
+BR, Jarkko
+
+----------------------------------------------------------------
+David Gstir (6):
+      crypto: mxs-dcp: Add support for hardware-bound keys
+      KEYS: trusted: improve scalability of trust source config
+      KEYS: trusted: Introduce NXP DCP-backed trusted keys
+      MAINTAINERS: add entry for DCP-based trusted keys
+      docs: document DCP-backed trusted keys kernel params
+      docs: trusted-encrypted: add DCP as new trust source
+
+ Documentation/admin-guide/kernel-parameters.txt   |  13 +
+ Documentation/security/keys/trusted-encrypted.rst |  53 ++++
+ MAINTAINERS                                       |   9 +
+ drivers/crypto/mxs-dcp.c                          | 104 ++++++-
+ include/keys/trusted_dcp.h                        |  11 +
+ include/soc/fsl/dcp.h                             |  20 ++
+ security/keys/trusted-keys/Kconfig                |  18 +-
+ security/keys/trusted-keys/Makefile               |   2 +
+ security/keys/trusted-keys/trusted_core.c         |   6 +-
+ security/keys/trusted-keys/trusted_dcp.c          | 332 ++++++++++++++++++++++
+ 10 files changed, 554 insertions(+), 14 deletions(-)
+ create mode 100644 include/keys/trusted_dcp.h
+ create mode 100644 include/soc/fsl/dcp.h
+ create mode 100644 security/keys/trusted-keys/trusted_dcp.c
 
