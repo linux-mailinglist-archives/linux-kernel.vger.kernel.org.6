@@ -1,73 +1,75 @@
-Return-Path: <linux-kernel+bounces-174214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931EA8C0BBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:52:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A36D8C0BBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DCC1C22177
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E7E284A2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059E6130A65;
-	Thu,  9 May 2024 06:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E7913CAA8;
+	Thu,  9 May 2024 06:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcDDk0fh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qa9GreiK"
 Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E157C0AB
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F22DDF78
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715237527; cv=none; b=gm2JzhObTR228A1W//R1vWR2gT1NQgaNw/938j5OQXogssocXf+74aiat7YoMZlG+W5/6E3R8KS7TNqTQk6PzLIjD4GFLYEwD8+BEjpJbEJFNCa4fuG4sbMbl10KrlREfQ+Sk0Bmh0u4IwHxRwXulpMnKDAdu9DYVvZDGuEErg4=
+	t=1715237528; cv=none; b=kX2PSWoBkblhuz5ZJDyaa9ZvSvRWaZIu9kPCFN9fyaoXXUpbAKWYPlzDc8tyhNS3RJ5pSL/7Kv+rvMeH7AuZUTMZcva67Z7EMVe80YViaFaLdMMKSAFGPuosG2DnMBzGUHXua3UR+pJcYUupIgsAoWhxkPIY2JXUp41PRYfELq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715237527; c=relaxed/simple;
-	bh=rOxCVpuvUmbACYXpkXKZKRD3h2JXgl6Ma28qOmXdJFk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=L3RaHO3TuqBNzCOss0WOiE4OYhY/pSU7Z5MynDaVLOtS6IaAjfXjoCZGPVl8na0a53eCXe3IKZFjRxZBle5A7UEH5cclF/FWRsRK2YgfnjlqKU0HJU9vXBcXigMen1nAqkQhszqLrKXtsQfzwqiwmMsb+NNv+vgED2qwf9I929w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bcDDk0fh; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1715237528; c=relaxed/simple;
+	bh=YiPURdRPIqAFJS7UD4kJYMYIGLJ4QXIZkdL79YJ68+A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sFF+f92Ime/THV6VpKZG6/h1/KkSBZDH4rp7sDRoRLJ2Tx66qMG9Vrq8MUMQmmA6qoJsWdZpXtdmiVxTxRUCDH7xVor9CRf78nWC1jtOOlqih24pUDWKIxM8m+hlduzofrOYVLfK2ezRVLm5j8Nx1eKFxGeKxOn7LEfI7AzSZlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qa9GreiK; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so126420966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:52:04 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a17fcc6bso114970366b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715237523; x=1715842323; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rnP8lifwF80Zq93ecat3fo7l4f28X4MCb0bTfRERyQ=;
-        b=bcDDk0fhV6fH9poBnJOcTWuLPAyx1KxlO484Cdfxdb22oPFkdDivXS6q2VydScC629
-         Zj4hxL5I+Om9eKbpDP//BmeUytn8MJgUW4GF0Qz7bdCP6iwAwjrhmzsF7hVc83EX9iOF
-         eQ+EjWJzYqGeLl0h5w35C5QceYoEi0cVrn+YodrIyhzkxZP0EsiuivEk88+HJHD+n/WR
-         0MmnHIIXws3OEihsEwO4UyUm0I+xmHBBJnTdKyIDUM+LGNX+rs+3ye+srXzvwMb4Mk5n
-         jg7038BeY+r42HrlrLGyPUZr4Xt8nDia4uxF2qrSWscxKz/Tr7Spgp2y6ARYqw6BlPQc
-         PooQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715237523; x=1715842323;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1715237524; x=1715842324; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7rnP8lifwF80Zq93ecat3fo7l4f28X4MCb0bTfRERyQ=;
-        b=qrGyU4yCtWUma0xHUwzCRf3fbyGpfkdU+fjAKHGRlFXnurgvTXcUI9PP3RUi1PiV1n
-         uA0DHr6xtwLnAwwTIjPG2fm2XDstinG3Q4XRTtE9gIgn7CPRGf+DtG+BV1y65hjSoRa7
-         04tIWzEg3bG78Padd8xmhy/TkFwlSICNxsikTfpPaR06QNad3TRIVyWlA4l5F1YUm9dF
-         c7hJ9pVifaQJI4bDzAbj1uLoK9Lb/3d0SzgvscM+JGvSZEeV2Uf2W25KP+Zes3lcJ/Km
-         Dlbv0Gh8xPGu0OC1UiDrzEVGGb4fy/4Cfn5AOMdEX1zUzd9giJZQWVwYBOyz4xTk1+Ky
-         m2Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpN9uqr2i4V5+HyEgz48oEx/478JMNe6I8kzIKdMC0tQx7Z54EuQ+imscWwADREkor5kGpYd8uEEJRYVAU79YVPaKGHbDSCvduiPIt
-X-Gm-Message-State: AOJu0YxpOVbUAciCxeselWVRbb/JJgl5lAkxbGdrwy6t8S9gmi3BkvyG
-	kqTjH9O7wsuNvMTOLcpQQEgjC+d25hqNOqHDu+aOSJyLqy12uWaXFQE/t3U0Urk=
-X-Google-Smtp-Source: AGHT+IFdc13lszpf7lxX/nmLUxwCIGMYlPf62pSkNTQt4xpiimPjtHkcnxTGJfCijKqU+LZx+421gg==
-X-Received: by 2002:a17:906:3c08:b0:a5a:15ac:13fa with SMTP id a640c23a62f3a-a5a15ac1545mr60104166b.38.1715237522834;
-        Wed, 08 May 2024 23:52:02 -0700 (PDT)
+        bh=z9/i8BMDeVDAZrB3rSBEhJW+evUNFSRGKXs16mcLiyI=;
+        b=qa9GreiK8GAAHAXxfec3BU3pysoiv4rSX0HvBmX36CzcKxZMtfYS/6nlmVxuxPQ8Yu
+         y/LBd4Pi9E4Fv1Po5LpE1AD5zCj3facWfOkZunRRjHSo8DC+AseHOqaVv4oIR/CAJLbJ
+         2tnTM+e8Xz8fBD4QJi6WgJ4Uk5kTv2vvZYJ62yIotdG2K8FhZNrN32bpNRhJYn5HMVRw
+         kxvN287R2YS4dAYtWn3oyfGU2Fmq9Lr9MwYNSL2iDbffL8+7y54Le+jkG8JEl+yMPPjt
+         XdIC7H5naZq/DJBxpKU/xz7EGNwYfkoX+sKymNIi1NeEuat10A7r7lbDdtCvuz7atNcA
+         mPsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715237524; x=1715842324;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z9/i8BMDeVDAZrB3rSBEhJW+evUNFSRGKXs16mcLiyI=;
+        b=cXXSrTpUgze2WNDFAG3AOMs5iISPuzNswvE3/ym8SyLT87y6shcHyCDtoUeF+KPXry
+         w4M+1QRnJPP3m91cJ3ScKzALqP8yQiILSKDCWrYSrVOFEYYw67WM0SEWIbRoSF1XzmGA
+         PvjolQO64Rt4Rv8Q2hwP16Ba4KpKup5P2c0HH1hGa5SBxl8Hjh8ILE/RMXZgGM5XWpL7
+         mzkSUPGsNxytCoQGYMq4cAaASSWCbWI2gcWcrrL0ujg0LHyp3bPbVNMYBSyc313iD6KP
+         ciWd96OYLu/2/Cytl0JqsKLOH8yngnZL4pTiHpRFeKqI+33YVE6y2kSLXXzpuTAp2b6w
+         dCkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtd+OmFOb7lhzzwOlOb954BbanTufShVXAIU+z1FaKyV0XgrET+r7ye5JVD2mQGzBJmeUke7wRVF4I8dCsq5t0Dw7fuVrKXt055SUy
+X-Gm-Message-State: AOJu0YwgQ0kSfzyy5PIv26UOWLzhSpypqjQ8zt+YXR3F/XpzHLbTguw6
+	aPubQvhksyMn9/GM6Psy7K7/jfYe5lQZZk5iSfbmNPSZTvscI5ntStzjgHlz3dA=
+X-Google-Smtp-Source: AGHT+IETEpwMfLeq2gPmmhB/rIv1CeVgmU43nMRAnZc98Fdcu1wvTdb+YCThOZtvV9r7aFlTbVsw2A==
+X-Received: by 2002:a17:907:9919:b0:a59:af54:1657 with SMTP id a640c23a62f3a-a59fb949134mr302210966b.16.1715237524556;
+        Wed, 08 May 2024 23:52:04 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81b4sm40730966b.113.2024.05.08.23.52.01
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81b4sm40730966b.113.2024.05.08.23.52.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 23:52:02 -0700 (PDT)
+        Wed, 08 May 2024 23:52:04 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 0/4] ASoC: qcom: x1e80100: Correct channel mapping
-Date: Thu, 09 May 2024 08:51:51 +0200
-Message-Id: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
+Date: Thu, 09 May 2024 08:51:52 +0200
+Subject: [PATCH v3 1/4] ASoC: Constify channel mapping array arguments in
+ set_channel_map()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIdyPGYC/43NTQ6CMBCG4auQrh0zLZQfV97DuChlgCbYktY0G
- MLdLax0pct3Mnm+lQXyhgK7ZCvzFE0wzqbITxnTo7IDgelSM4GiQIkVqOA0LJxq5IhQwP5laYK
- HmmdjByAlexRtQ2VVs6TMnnqzHAu3e+rRhKfzr2Mw8v36vx05ILRcaJ4TKim762Ss8u7s/MB2P
- IpPsP4NigRqTX2jylLJSnyB27a9AS0hH3sgAQAA
+Message-Id: <20240509-asoc-x1e80100-4-channel-mapping-v3-1-6f874552d7b2@linaro.org>
+References: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
+In-Reply-To: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
 To: James Schulman <james.schulman@cirrus.com>, 
  David Rhodes <david.rhodes@cirrus.com>, 
  Richard Fitzgerald <rf@opensource.cirrus.com>, 
@@ -94,65 +95,38 @@ Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
  Charles Keepax <ckeepax@opensource.cirrus.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2549;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10094;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=rOxCVpuvUmbACYXpkXKZKRD3h2JXgl6Ma28qOmXdJFk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmPHKK+jVIzjueNuFIpjzLc9l0An3OYN7GlvfDY
- r/bfc0O8A+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZjxyigAKCRDBN2bmhouD
- 1xX3EACFu/Wuja+nxzB5jFUGdRcGxTyLQNgkhNQkHXBONE9jJdNSUm0BlyHE78b6wPVxwiYbuyM
- kkSxNw0UlZOHUrLn8eSWXDJYVXXOqDFUM5P4TXS3UVPbGguTL5hw6CZJWbDkVTGCgQ7PR1+ghWj
- J64mXAZdnY+BjQ7PPvP5MpxdfuHIrJu0jcNI6/Jgfam0GDcCADhXHzmITQsjZyjAUhKDolhSpVy
- Ln1DNg2myYcHCYSb+eZieOC68XEDzDCb5gkdLL95xe+36rXWVgN3obOsVXys4WSiIEXMKse6Lm9
- NYbCRq/OXov1nG0EFDae55WzY3upKHAGWNib3cGW7UDZ2MUkR7X501nII5BDB0s3SilXNmXmAuM
- sZT1/pufvqXxCCndfx8fwiarp1LVpwMaeHL262ODAcgSY/TPxQsGWjekujtAIVxJ2FRoounknfk
- rLN+umADyowLivtNDX/2rNywtuhhPHKVzMZz/wB/MAU6Ik82b9x0EIPawIkZMhnu8ENg9OddgeF
- LGnFCfSYP3OdxNPG6+Wun3P1mcB5MZmJ3Ujn5nPq0BtnT5r0sO0XkRBDzJSGiIj0v0Q9vte3CiA
- fywMS6aYF2xRvq94fU4wJgfda3xHAmEI7ktV7xD9UWFCOpRfVdk/c0rM9NmSUzf8x7HGzMx4fza
- SL4xj09R6U4NphQ==
+ bh=YiPURdRPIqAFJS7UD4kJYMYIGLJ4QXIZkdL79YJ68+A=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmPHKNw3apeixozr0FFijgWAjGbg2V+BjPJqhOb
+ bNc6tEt/VWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZjxyjQAKCRDBN2bmhouD
+ 1/beD/0WGM4JWNGkjHY4M130mPvsMf2h3h8pBA4enfEGLgJE5QoaDEPYHV3DQNSI9fLADfXBIMA
+ HFqsEADTZDc82fh+qmtIvy4r72s+YfyFJNPUR6S6l7iUrO1oyc6CiQjEubNER3pIvRyhARdEYkS
+ n5AUUAoEbiTIdizlj3BWODmJAZIsNnEpy8IQR3gd/EVLb902iJi6eGlD8r3/RHPYWhtKJ66Bjvo
+ wlXUFUHL8qjp/IdkVknlsFixbWvNEw4sOeYJvI+/d4LsI7Rx9Eae12PKwEFg1Uq1maO/T1DLpKi
+ +AsgV7uYmEdAO5yE38iPtF5o1Fz6kolz9MhmsBM8F/NUJDp5aGFna3bGH9ahZJHfQ25A1KB9aZv
+ 0MUYyDc/guAY0kSYgdk5Gb/cjBMeJjwhn/idh/CjE7JHoAbmW3Rovxg3WV9oDq1JCVrLVNdTOJl
+ WXMVnTAmXUQS5SPLHFk0HrbmqWRVspAQWHimD4QE7Vg7NDaHdFmgOQRUUMCfqTz+pAfU6YkGOLw
+ UH8d97CYmXs/7HgJUvkiayt9tnvUkWVn29Cwk+GuEV66/JzYPMreC/9zmqV+Fq0jnCnnuzNbjXa
+ D0P0tDH5eGeHdIKVH7ez5kBF21S/dPfux+vuY2w8/acwJjWvbmqDXyNaCcOvki5PxHnnUWOoE2B
+ LCkOO6c6PeIzc5A==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi,
+There is no need for implementations of DAI set_channel_map() to modify
+contents of passed arrays with actual channel mapping.  Additionally,
+the caller keeps full ownership of the array.
 
-First patch is a build dependency.
+Constify these pointer arguments so the code will be safer and easier to
+read (documenting the caller's ownership).
 
-Changes in v3:
-- Add missing Charles' Ack
-- Link to v2: https://lore.kernel.org/r/20240508-asoc-x1e80100-4-channel-mapping-v2-0-ccef9a66a572@linaro.org
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
 
 Changes in v2:
-- Re-work most of the idea according to Srini comments: set channel
-  mapping for backend DAIs, not frontend.
-- Patch #1: no changes
-- Patch #2 is entirely replaced - now channel mapping is implemented in
-  q6apm-lpass-dais.
-- Patch #3: rework to new approach, but most of the code stays.
-- Patch #4: rework significantly, because only backend DAIs is now
-  affected.
-- Link to v1: https://lore.kernel.org/r/20240507-asoc-x1e80100-4-channel-mapping-v1-0-b12c13e0a55d@linaro.org
-
-Description
-===========
-X1E80100 CRD is the first board, which comes with four speakers, so we
-still keep fixing and adding missing pieces.
-
-The board has speaker arranged as left front+back and then right
-front+back.  Using default channel mapping causes front right speaker to
-play left back stream.
-
-Adjust the channel maps for frontend DAIs to fix stereo and four-channel
-playback.
-
-Best regards,
-Krzysztof
-
+1. None
 ---
-Krzysztof Kozlowski (4):
-      ASoC: Constify channel mapping array arguments in set_channel_map()
-      ASoC: qcom: q6apm-lpass-dais: Implement proper channel mapping
-      ASoC: qcom: qdsp6: Set channel mapping instead of fixed defaults
-      ASoC: qcom: x1e80100: Correct channel mapping
-
  include/sound/cs35l41.h                 |  4 ++--
  include/sound/soc-dai.h                 |  8 ++++----
  sound/soc/codecs/adau7118.c             |  6 ++++--
@@ -161,20 +135,224 @@ Krzysztof Kozlowski (4):
  sound/soc/codecs/max98504.c             |  6 ++++--
  sound/soc/codecs/wcd9335.c              |  6 ++++--
  sound/soc/codecs/wcd934x.c              |  6 ++++--
- sound/soc/qcom/qdsp6/audioreach.c       | 30 +++++++-----------------------
- sound/soc/qcom/qdsp6/audioreach.h       |  2 +-
  sound/soc/qcom/qdsp6/q6afe-dai.c        | 16 ++++++++++------
- sound/soc/qcom/qdsp6/q6apm-dai.c        |  2 ++
- sound/soc/qcom/qdsp6/q6apm-lpass-dais.c | 21 +++++++++++++--------
- sound/soc/qcom/x1e80100.c               | 18 ++++++++++++++++++
+ sound/soc/qcom/qdsp6/q6apm-lpass-dais.c |  6 ++++--
  sound/soc/soc-dai.c                     |  4 ++--
- 15 files changed, 79 insertions(+), 57 deletions(-)
----
-base-commit: 2b84edefcad14934796fad37b16512b6a2ca467e
-change-id: 20240507-asoc-x1e80100-4-channel-mapping-ea5f02b9e678
+ 11 files changed, 42 insertions(+), 27 deletions(-)
 
-Best regards,
+diff --git a/include/sound/cs35l41.h b/include/sound/cs35l41.h
+index bb70782d15d0..43c6a9ef8d9f 100644
+--- a/include/sound/cs35l41.h
++++ b/include/sound/cs35l41.h
+@@ -896,8 +896,8 @@ int cs35l41_test_key_lock(struct device *dev, struct regmap *regmap);
+ int cs35l41_otp_unpack(struct device *dev, struct regmap *regmap);
+ int cs35l41_register_errata_patch(struct device *dev, struct regmap *reg, unsigned int reg_revid);
+ int cs35l41_set_channels(struct device *dev, struct regmap *reg,
+-			 unsigned int tx_num, unsigned int *tx_slot,
+-			 unsigned int rx_num, unsigned int *rx_slot);
++			 unsigned int tx_num, const unsigned int *tx_slot,
++			 unsigned int rx_num, const unsigned int *rx_slot);
+ int cs35l41_gpio_config(struct regmap *regmap, struct cs35l41_hw_cfg *hw_cfg);
+ void cs35l41_configure_cs_dsp(struct device *dev, struct regmap *reg, struct cs_dsp *dsp);
+ int cs35l41_set_cspl_mbox_cmd(struct device *dev, struct regmap *regmap,
+diff --git a/include/sound/soc-dai.h b/include/sound/soc-dai.h
+index adcd8719d343..15ef268c9845 100644
+--- a/include/sound/soc-dai.h
++++ b/include/sound/soc-dai.h
+@@ -188,8 +188,8 @@ int snd_soc_dai_set_tdm_slot(struct snd_soc_dai *dai,
+ 	unsigned int tx_mask, unsigned int rx_mask, int slots, int slot_width);
+ 
+ int snd_soc_dai_set_channel_map(struct snd_soc_dai *dai,
+-	unsigned int tx_num, unsigned int *tx_slot,
+-	unsigned int rx_num, unsigned int *rx_slot);
++	unsigned int tx_num, const unsigned int *tx_slot,
++	unsigned int rx_num, const unsigned int *rx_slot);
+ 
+ int snd_soc_dai_set_tristate(struct snd_soc_dai *dai, int tristate);
+ 
+@@ -305,8 +305,8 @@ struct snd_soc_dai_ops {
+ 		unsigned int tx_mask, unsigned int rx_mask,
+ 		int slots, int slot_width);
+ 	int (*set_channel_map)(struct snd_soc_dai *dai,
+-		unsigned int tx_num, unsigned int *tx_slot,
+-		unsigned int rx_num, unsigned int *rx_slot);
++		unsigned int tx_num, const unsigned int *tx_slot,
++		unsigned int rx_num, const unsigned int *rx_slot);
+ 	int (*get_channel_map)(struct snd_soc_dai *dai,
+ 			unsigned int *tx_num, unsigned int *tx_slot,
+ 			unsigned int *rx_num, unsigned int *rx_slot);
+diff --git a/sound/soc/codecs/adau7118.c b/sound/soc/codecs/adau7118.c
+index a663d37e5776..abc4764697a5 100644
+--- a/sound/soc/codecs/adau7118.c
++++ b/sound/soc/codecs/adau7118.c
+@@ -121,8 +121,10 @@ static const struct snd_soc_dapm_widget adau7118_widgets[] = {
+ };
+ 
+ static int adau7118_set_channel_map(struct snd_soc_dai *dai,
+-				    unsigned int tx_num, unsigned int *tx_slot,
+-				    unsigned int rx_num, unsigned int *rx_slot)
++				    unsigned int tx_num,
++				    const unsigned int *tx_slot,
++				    unsigned int rx_num,
++				    const unsigned int *rx_slot)
+ {
+ 	struct adau7118_data *st =
+ 		snd_soc_component_get_drvdata(dai->component);
+diff --git a/sound/soc/codecs/cs35l41-lib.c b/sound/soc/codecs/cs35l41-lib.c
+index e9993a39f7d0..1702f26049d3 100644
+--- a/sound/soc/codecs/cs35l41-lib.c
++++ b/sound/soc/codecs/cs35l41-lib.c
+@@ -936,8 +936,8 @@ int cs35l41_register_errata_patch(struct device *dev, struct regmap *reg, unsign
+ EXPORT_SYMBOL_GPL(cs35l41_register_errata_patch);
+ 
+ int cs35l41_set_channels(struct device *dev, struct regmap *reg,
+-			 unsigned int tx_num, unsigned int *tx_slot,
+-			 unsigned int rx_num, unsigned int *rx_slot)
++			 unsigned int tx_num, const unsigned int *tx_slot,
++			 unsigned int rx_num, const unsigned int *rx_slot)
+ {
+ 	unsigned int val, mask;
+ 	int i;
+diff --git a/sound/soc/codecs/cs35l41.c b/sound/soc/codecs/cs35l41.c
+index cb25c33cc9b9..1688c2c688f0 100644
+--- a/sound/soc/codecs/cs35l41.c
++++ b/sound/soc/codecs/cs35l41.c
+@@ -673,7 +673,8 @@ static const struct snd_soc_dapm_route cs35l41_audio_map[] = {
+ };
+ 
+ static int cs35l41_set_channel_map(struct snd_soc_dai *dai, unsigned int tx_n,
+-				   unsigned int *tx_slot, unsigned int rx_n, unsigned int *rx_slot)
++				   const unsigned int *tx_slot,
++				   unsigned int rx_n, const unsigned int *rx_slot)
+ {
+ 	struct cs35l41_private *cs35l41 = snd_soc_component_get_drvdata(dai->component);
+ 
+diff --git a/sound/soc/codecs/max98504.c b/sound/soc/codecs/max98504.c
+index 93412b966b33..6b6a7ece4cec 100644
+--- a/sound/soc/codecs/max98504.c
++++ b/sound/soc/codecs/max98504.c
+@@ -220,8 +220,10 @@ static int max98504_set_tdm_slot(struct snd_soc_dai *dai,
+ 	return 0;
+ }
+ static int max98504_set_channel_map(struct snd_soc_dai *dai,
+-		unsigned int tx_num, unsigned int *tx_slot,
+-		unsigned int rx_num, unsigned int *rx_slot)
++				    unsigned int tx_num,
++				    const unsigned int *tx_slot,
++				    unsigned int rx_num,
++				    const unsigned int *rx_slot)
+ {
+ 	struct max98504_priv *max98504 = snd_soc_dai_get_drvdata(dai);
+ 	struct regmap *map = max98504->regmap;
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index deb15b95992d..42a99978fe5a 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -1983,8 +1983,10 @@ static int wcd9335_trigger(struct snd_pcm_substream *substream, int cmd,
+ }
+ 
+ static int wcd9335_set_channel_map(struct snd_soc_dai *dai,
+-				   unsigned int tx_num, unsigned int *tx_slot,
+-				   unsigned int rx_num, unsigned int *rx_slot)
++				   unsigned int tx_num,
++				   const unsigned int *tx_slot,
++				   unsigned int rx_num,
++				   const unsigned int *rx_slot)
+ {
+ 	struct wcd9335_codec *wcd;
+ 	int i;
+diff --git a/sound/soc/codecs/wcd934x.c b/sound/soc/codecs/wcd934x.c
+index de870c7819ca..fcad2c9fba55 100644
+--- a/sound/soc/codecs/wcd934x.c
++++ b/sound/soc/codecs/wcd934x.c
+@@ -1923,8 +1923,10 @@ static int wcd934x_trigger(struct snd_pcm_substream *substream, int cmd,
+ }
+ 
+ static int wcd934x_set_channel_map(struct snd_soc_dai *dai,
+-				   unsigned int tx_num, unsigned int *tx_slot,
+-				   unsigned int rx_num, unsigned int *rx_slot)
++				   unsigned int tx_num,
++				   const unsigned int *tx_slot,
++				   unsigned int rx_num,
++				   const unsigned int *rx_slot)
+ {
+ 	struct wcd934x_codec *wcd;
+ 	int i;
+diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
+index a9c4f896a7df..7d9628cda875 100644
+--- a/sound/soc/qcom/qdsp6/q6afe-dai.c
++++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
+@@ -172,8 +172,8 @@ static int q6tdm_set_tdm_slot(struct snd_soc_dai *dai,
+ }
+ 
+ static int q6tdm_set_channel_map(struct snd_soc_dai *dai,
+-				unsigned int tx_num, unsigned int *tx_slot,
+-				unsigned int rx_num, unsigned int *rx_slot)
++				unsigned int tx_num, const unsigned int *tx_slot,
++				unsigned int rx_num, const unsigned int *rx_slot)
+ {
+ 
+ 	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
+@@ -250,8 +250,10 @@ static int q6tdm_hw_params(struct snd_pcm_substream *substream,
+ }
+ 
+ static int q6dma_set_channel_map(struct snd_soc_dai *dai,
+-				 unsigned int tx_num, unsigned int *tx_ch_mask,
+-				 unsigned int rx_num, unsigned int *rx_ch_mask)
++				 unsigned int tx_num,
++				 const unsigned int *tx_ch_mask,
++				 unsigned int rx_num,
++				 const unsigned int *rx_ch_mask)
+ {
+ 
+ 	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
+@@ -407,8 +409,10 @@ static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
+ }
+ 
+ static int q6slim_set_channel_map(struct snd_soc_dai *dai,
+-				unsigned int tx_num, unsigned int *tx_slot,
+-				unsigned int rx_num, unsigned int *rx_slot)
++				  unsigned int tx_num,
++				  const unsigned int *tx_slot,
++				  unsigned int rx_num,
++				  const unsigned int *rx_slot)
+ {
+ 	struct q6afe_dai_data *dai_data = dev_get_drvdata(dai->dev);
+ 	struct q6afe_port_config *pcfg = &dai_data->port_config[dai->id];
+diff --git a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+index 68a38f63a2db..6bfbb52345e1 100644
+--- a/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
++++ b/sound/soc/qcom/qdsp6/q6apm-lpass-dais.c
+@@ -25,8 +25,10 @@ struct q6apm_lpass_dai_data {
+ };
+ 
+ static int q6dma_set_channel_map(struct snd_soc_dai *dai,
+-				 unsigned int tx_num, unsigned int *tx_ch_mask,
+-				 unsigned int rx_num, unsigned int *rx_ch_mask)
++				 unsigned int tx_num,
++				 const unsigned int *tx_ch_mask,
++				 unsigned int rx_num,
++				 const unsigned int *rx_ch_mask)
+ {
+ 
+ 	struct q6apm_lpass_dai_data *dai_data = dev_get_drvdata(dai->dev);
+diff --git a/sound/soc/soc-dai.c b/sound/soc/soc-dai.c
+index fefe394dce72..03afd5efb24c 100644
+--- a/sound/soc/soc-dai.c
++++ b/sound/soc/soc-dai.c
+@@ -304,8 +304,8 @@ EXPORT_SYMBOL_GPL(snd_soc_dai_set_tdm_slot);
+  * configure the relationship between channel number and TDM slot number.
+  */
+ int snd_soc_dai_set_channel_map(struct snd_soc_dai *dai,
+-				unsigned int tx_num, unsigned int *tx_slot,
+-				unsigned int rx_num, unsigned int *rx_slot)
++				unsigned int tx_num, const unsigned int *tx_slot,
++				unsigned int rx_num, const unsigned int *rx_slot)
+ {
+ 	int ret = -ENOTSUPP;
+ 
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
