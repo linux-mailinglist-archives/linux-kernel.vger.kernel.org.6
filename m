@@ -1,264 +1,214 @@
-Return-Path: <linux-kernel+bounces-174259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9DD8C0C35
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:00:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5C08C0C37
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B226A1C21609
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97C411F22E40
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F48149C6C;
-	Thu,  9 May 2024 08:00:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF4F149C7C;
+	Thu,  9 May 2024 08:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ij0dZLF+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="itwoxSQn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B021E26AE7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFFA26AE7;
+	Thu,  9 May 2024 08:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715241609; cv=none; b=OAQEO9f+eoR0sLTTy/SNE/OjSrv2GI+i28VYi9Ecv01Dmzv8dzX2O7fS7V4RazSd6mwEPiSzsFJYdFldVhb5qg3P0DA2dVfz3DOThGKSKh+VYdzx175JcFZIZgFgRu2qFW4oKZMSVkO2zLbXld+IY5c/DzL1NBhk8wzjGPQ+cDE=
+	t=1715241704; cv=none; b=kl3DRZjD/AikRhwgZTC4lKKsI/KvZvmcst/4W4Uzlp2aOexrwTe8q4yWcSwlL2C0934QB/2bKwOUqtQ/7jJqyXaut4haMhL2OdC+Sg3Lwg8ZmeSO9FFGuxC6xxqWekA3Pnxw25ilw914+KpEs7pn16VjlX0O13hbulsXcbQjaHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715241609; c=relaxed/simple;
-	bh=CFP6cpywgu6LLPA8ZGT9tWCQKGbiCLjw8qglwJdPlwE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=euF7g4Icw1sp8x9s5bNNbjFnqBCfium+cN/bLDH72uplbAaKfs1bgJwP5ff55ddgGJxiv1uvq3WrM+wLv2aPA57Sv3IMoxqiAsjwwIfbhSeRGjIPpYwlyPBx3QVy6yZ+nBWUB/F9d8OjibUnKRqAJ6lPXjMzLr1p59siSC+/2vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ij0dZLF+; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715241608; x=1746777608;
-  h=date:from:to:cc:subject:message-id;
-  bh=CFP6cpywgu6LLPA8ZGT9tWCQKGbiCLjw8qglwJdPlwE=;
-  b=Ij0dZLF+tneRJy3uge4UoY/P3z4CYom6HcGJp9VaTLEeuSnsDut6rKCM
-   EjaDeoOSCm+kbIB0Mc9bPnoX1mJXl8qOWlqGo++ENH9kNemmWW9wGnsJG
-   4HZhaVdy3JLUbUo2EPxU/2dESdc0ZmzNaSFcwSkLmG2Y7otzFNBTaMCAl
-   n4UPvmSGBU2AWE+T3iyGNMiR8gxW1jJej7CeHgMA91gq/va8IFN+i19+a
-   dBLfqX7Je09lqdtpMQnRkMTopyco9oHeK2X1MX5OB45RQzhQ99yuh2ll7
-   cm05Hlj3UCyaBaEQ2KW1ZIjaCPB4XorE8jEzaxuzvxyXJKqO7c3JnFZld
-   Q==;
-X-CSE-ConnectionGUID: ++FHkcuQS7a+psRrAhn4Xw==
-X-CSE-MsgGUID: WQgmwvFEQjKTet+s1d4r0Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11300649"
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="11300649"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 01:00:07 -0700
-X-CSE-ConnectionGUID: i7jSqud7SdW9vqlMzFGrvA==
-X-CSE-MsgGUID: gxUMEMM9RIO0JoGBYFLgxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="29534270"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 09 May 2024 01:00:05 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s4yh8-0004cI-2j;
-	Thu, 09 May 2024 08:00:02 +0000
-Date: Thu, 09 May 2024 15:59:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- c064e5cb8336a5ee3471cc6a376cc19e19aa85de
-Message-ID: <202405091538.ChmwvMtI-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1715241704; c=relaxed/simple;
+	bh=hQd+IVfmyRxwLvvw11lLb5fWagwiMSbJTS97skYOggE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuWJX01kOIiH2vnZjskjNAeXqWEX6THbyQJ66/+T0EZnAXTgvI7TJjH64IUnlUoP/D671LMn1rFVygjHPbegyVtgYVKeiEAM2fczMVB7kbTi09dtYc/AhBPFfa//U+8Jd9qyTnDuy1pQOe85p1R8k+h7iCQIMlLO6J6lq8e1HgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=itwoxSQn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 25D252CF2;
+	Thu,  9 May 2024 10:01:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715241697;
+	bh=hQd+IVfmyRxwLvvw11lLb5fWagwiMSbJTS97skYOggE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=itwoxSQnsd4T7zfz85OrhwOxbBgzMVBKPL7DKN4MWu4o0kwZKIyva+J+pZQssXjn9
+	 MXFIr930H4QCSJll9eoNAV9RfJDHJ/omzlAcB/e3gA/7rlvvjK4cJGnOJf8xARhl7G
+	 8sBV2AY7+sscoWSLVSAg9pk6gTVy356Ype8Q9z0c=
+Date: Thu, 9 May 2024 10:01:37 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, "Paul J. Murphy" <paul.j.murphy@intel.com>, 
+	Martina Krasteva <quic_mkrastev@quicinc.com>, Daniele Alessandrelli <daniele.alessandrelli@intel.com>, 
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: i2c: Fix imx412 exposure control
+Message-ID: <qv5vzwgg4mpdo3yy73hrykmuum3rlkleixrgg5zc5n2kjj3wl3@wmbx34evysiy>
+References: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v2-1-2e665f072f8f@linaro.org>
+ <dvyed4grpazqk7a3tz6dqwpkd76ghtrt4euinxt3kycdeh63ez@ljgfjsfhypix>
+ <20a0300a-ac16-456c-840a-e272f49050a8@linaro.org>
+ <bppn2qglcya3xbfy7uey5cgybyanxthhweqv7foojwi5rvqwmk@temzdedvecfe>
+ <ca8865e9-b41c-49a6-a7b0-39b133be34a1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ca8865e9-b41c-49a6-a7b0-39b133be34a1@quicinc.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: c064e5cb8336a5ee3471cc6a376cc19e19aa85de  Merge branch into tip/master: 'x86/timers'
+Hi Gjorgji !
 
-elapsed time: 1469m
+On Wed, May 08, 2024 at 07:02:37PM GMT, Gjorgji Rosikopulos (Consultant) wrote:
+> Hi Bryan, Jacopo,
+>
+> On 5/8/2024 3:43 PM, Jacopo Mondi wrote:
+> > Hi Bryan
+> >
+> > On Wed, May 08, 2024 at 01:30:31PM GMT, Bryan O'Donoghue wrote:
+> >> On 08/05/2024 09:02, Jacopo Mondi wrote:
+> >>> Hi Bryan
+> >>>
+> >>> On Mon, May 06, 2024 at 11:38:26PM GMT, Bryan O'Donoghue wrote:
+> >>>> Currently we have the following algorithm to calculate what value should be
+> >>>> written to the exposure control of imx412.
+> >>>>
+> >>>> lpfr = imx412->vblank + imx412->cur_mode->height;
+> >>>> shutter = lpfr - exposure;
+> >>>>
+> >>>> The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
+> >>>> algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
+> >>>> decreasing as the requested exposure value from user-space goes up.
+> >>>>
+> >>>> e.g.
+> >>>> [ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
+> >>>> [ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
+> >>>> [ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
+> >>>> [ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
+> >>>> [ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
+> >>>> [ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
+> >>>>
+> >>>> This behaviour results in the image having less exposure as the requested
+> >>>> exposure value from user-space increases.
+> >>>>
+> >>>> Other sensor drivers such as ov5675, imx218, hid556 and others take the
+> >>>> requested exposure value and directly.
+> >>>
+> >>> has the phrase been truncated or is it me reading it wrong ?
+> >>
+> >> Sod's law says no matter how many times you send yourself a patch before
+> >> sending it to LKML you'll find a typo ~ 2 seconds after reading your patch
+> >> on LKML.
+> >>
+> >
+> > Sounds familiar enough
+> >
+> >>
+> >>>> Looking at the range of imx sensors, it appears this particular error has
+> >>>> been replicated a number of times but, I haven't so far really drilled into
+> >>>> each sensor.
+> >>>
+> >>> Ouch, what other driver have the same issue ?
+> >>
+> >> So without data sheet or sensor its hard to say if these are correct or
+> >> incorrect, it's the same basic calculation though.
+> >>
+> >> drivers/media/i2c/imx334.c::imx334_update_exp_gain()
+> >>
+> >>         lpfr = imx334->vblank + imx334->cur_mode->height;
+> >>         shutter = lpfr - exposure;
+> >>
+> >>         ret = imx334_write_reg(imx334, IMX334_REG_SHUTTER, 3, shutter);
+> >>
+> >>
+> >> drivers/media/i2c/imx335.c::imx335_update_exp_gain()
+> >>
+> >>         lpfr = imx335->vblank + imx335->cur_mode->height;
+> >>         shutter = lpfr - exposure;
+> >>
+> >>         ret = imx335_write_reg(imx335, IMX334_REG_SHUTTER, 3, shutter);
+> >>
+> >>
+> >> Looking again I'm inclined to believe the imx334/imx335 stuff is probably
+> >> correct for those sensors, got copied to imx412/imx577 and misapplied to the
+> >> EXPOSURE control in imx412.
+> >>
+> >
+> > Without datasheet/devices it really is hard to tell. Cargo cult at
+> > play most probably.
+>
+> I have explained in previous email. But i will post here as well :-)
+>
 
-configs tested: 172
-configs skipped: 8
+Thanks, I have probably missed it!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+>
+> As far as i know this issue is only for this imx412 sensor driver.
+> The sensor driver for imx412 was submitted along with imx335 and imx334,
+> maybe after all the reworking this was missed.
+> imx334 and imx335 are using shutter for setting the exposure from where
+> this calculation is taken.
 
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                        nsim_700_defconfig   gcc  
-arc                   randconfig-001-20240509   gcc  
-arc                   randconfig-002-20240509   gcc  
-arc                        vdk_hs38_defconfig   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                         at91_dt_defconfig   clang
-arm                                 defconfig   clang
-arm                   milbeaut_m10v_defconfig   clang
-arm                          pxa168_defconfig   clang
-arm                   randconfig-001-20240509   gcc  
-arm                   randconfig-004-20240509   clang
-arm                       spear13xx_defconfig   gcc  
-arm                       versatile_defconfig   gcc  
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240509   clang
-arm64                 randconfig-002-20240509   clang
-arm64                 randconfig-003-20240509   gcc  
-arm64                 randconfig-004-20240509   clang
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240509   gcc  
-csky                  randconfig-002-20240509   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20240509   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240509   gcc  
-i386         buildonly-randconfig-002-20240509   gcc  
-i386         buildonly-randconfig-003-20240509   clang
-i386         buildonly-randconfig-004-20240509   clang
-i386         buildonly-randconfig-005-20240509   gcc  
-i386         buildonly-randconfig-006-20240509   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240509   clang
-i386                  randconfig-002-20240509   clang
-i386                  randconfig-003-20240509   clang
-i386                  randconfig-004-20240509   gcc  
-i386                  randconfig-005-20240509   clang
-i386                  randconfig-006-20240509   gcc  
-i386                  randconfig-011-20240509   clang
-i386                  randconfig-012-20240509   gcc  
-i386                  randconfig-013-20240509   clang
-i386                  randconfig-014-20240509   gcc  
-i386                  randconfig-015-20240509   gcc  
-i386                  randconfig-016-20240509   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch                 loongson3_defconfig   gcc  
-loongarch             randconfig-001-20240509   gcc  
-loongarch             randconfig-002-20240509   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                  cavium_octeon_defconfig   gcc  
-mips                      fuloong2e_defconfig   gcc  
-mips                           mtx1_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240509   gcc  
-nios2                 randconfig-002-20240509   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240509   gcc  
-parisc                randconfig-002-20240509   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc                   lite5200b_defconfig   clang
-powerpc                       ppc64_defconfig   clang
-powerpc               randconfig-001-20240509   clang
-powerpc               randconfig-002-20240509   clang
-powerpc               randconfig-003-20240509   clang
-powerpc64             randconfig-001-20240509   clang
-powerpc64             randconfig-002-20240509   gcc  
-powerpc64             randconfig-003-20240509   clang
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240509   gcc  
-riscv                 randconfig-002-20240509   gcc  
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240509   gcc  
-s390                  randconfig-002-20240509   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240509   gcc  
-sh                    randconfig-002-20240509   gcc  
-sh                          sdk7780_defconfig   gcc  
-sh                           se7705_defconfig   gcc  
-sh                             sh03_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240509   gcc  
-sparc64               randconfig-002-20240509   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                    randconfig-002-20240509   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240509   clang
-x86_64       buildonly-randconfig-002-20240509   clang
-x86_64       buildonly-randconfig-003-20240509   gcc  
-x86_64       buildonly-randconfig-004-20240509   gcc  
-x86_64       buildonly-randconfig-005-20240509   gcc  
-x86_64       buildonly-randconfig-006-20240509   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240509   gcc  
-x86_64                randconfig-002-20240509   clang
-x86_64                randconfig-003-20240509   gcc  
-x86_64                randconfig-004-20240509   gcc  
-x86_64                randconfig-005-20240509   clang
-x86_64                randconfig-006-20240509   clang
-x86_64                randconfig-011-20240509   clang
-x86_64                randconfig-012-20240509   clang
-x86_64                randconfig-013-20240509   gcc  
-x86_64                randconfig-014-20240509   clang
-x86_64                randconfig-015-20240509   clang
-x86_64                randconfig-016-20240509   gcc  
-x86_64                randconfig-071-20240509   clang
-x86_64                randconfig-072-20240509   clang
-x86_64                randconfig-073-20240509   clang
-x86_64                randconfig-074-20240509   clang
-x86_64                randconfig-075-20240509   clang
-x86_64                randconfig-076-20240509   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-001-20240509   gcc  
-xtensa                randconfig-002-20240509   gcc  
+Thanks for clarifying and confirming the other drivers are correct.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> However imx412 uses number of lines for exposure.
+>
+> Reviewed-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
+>
+> ~Gjorgji
+>
+> >
+> >>
+> >>>> -	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
+> >>>> +	ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
+> >>>
+> >>> No datasheet here, can you confirm the IMX412_REG_EXPOSURE_CIT
+> >>> register is actually in lines ?
+> >>
+> >>
+> >> Looks like.
+> >>
+> >> From downstream "coarseIntgTimeAddr"
+> >>
+> >> imx577_sensor.xml
+> >>     <coarseIntgTimeAddr>0x0202</coarseIntgTimeAddr>
+> >>
+> >> imx586/imx586_sensor.cpp
+> >> pRegSettingsInfo->regSetting[regCount].registerAddr  =
+> >> pExposureData->pRegInfo->coarseIntgTimeAddr + 1;
+> >>
+> >> pRegSettingsInfo->regSetting[regCount].registerData  = (lineCount & 0xFF);
+> >>
+> >>> Apart from that, as the CID_EXPOSURE control limit are correctly
+> >>> updated when a new VBLANK is set by taking into account the exposure
+> >>> margins, I think writing the control value to the register is the
+> >>> right thing to do (if the register is in lines of course)
+> >>>
+> >>> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> >>>
+> >>> Thanks
+> >>>    j
+> >>>
+> >>
+> >> If that's good enough I'll fix the typo and apply your RB.
+> >
+> > Sure
+> >
+> > Thanks
+> >   j
+> >
+> >>
+> >> ---
+> >> bod
+> >>
+> >
 
