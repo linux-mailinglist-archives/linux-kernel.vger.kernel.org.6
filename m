@@ -1,337 +1,192 @@
-Return-Path: <linux-kernel+bounces-174555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9493E8C10AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA178C10B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABB8281952
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA693281CE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69C715B152;
-	Thu,  9 May 2024 13:49:57 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8100B15B130;
+	Thu,  9 May 2024 13:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b="fSGo6bwI"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D4415B112
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309C626AF2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715262597; cv=none; b=KY9pQmzfUdmkPkefVvRGChtoMRZlZTQxpigYXYCfPL6emHF3w/BBQkWqecgGuYCo5RX1Z43JOnHj6vUICnE6USZ0VktNY96yzlDftOcSgHHZhDLsTvyqQ0CuaCjZhmbK2wknmQQCGQ+0q90yBDc300+zDLlE1+UrR3xITw5l6Ag=
+	t=1715262800; cv=none; b=MuqkNsN83LHC5ZZO3FUk6DXemcqDQjQBYJs+SrvnBS9IHCSqS+qgBbu0A2mNTJ0b2z5/sZksOFn8nt1LyMDIkYVSTZzM3DOekjdRRNKo7R1QJeBmsKIwTCF2Tt3erpX0QMt60MhvMcSfNB86mUJIpzDSA371NP3yxb/0x5DPFQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715262597; c=relaxed/simple;
-	bh=BmcvuQ8My17Fs9sOOwtPlAMsWQHncARfP0NuiXWIsZ4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMrg7YGcgelVd9G+t6Pc27GY0xmVWXSiUZ2Y4VSYVISvhr1jYP5dgO3oWohNBOg+X+WmnDKxOMQYg44cnS/d6GCKuTi06NrTe/xxJmBwPR6tBP1yDnj94H/Y5jFlgGPrCjh5jvytHGbbWjj8SugziGHLPs9ZEucrLgc2nDRtaEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 0214a224-0e0b-11ef-b972-005056bdfda7;
-	Thu, 09 May 2024 16:49:52 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 9 May 2024 16:49:51 +0300
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v1 2/2] serial: 8250: Extract platform driver
-Message-ID: <ZjzUfznxVkyWGPAx@surfacebook.localdomain>
-References: <20240506140308.4040735-1-andriy.shevchenko@linux.intel.com>
- <20240506140308.4040735-3-andriy.shevchenko@linux.intel.com>
- <ZjxdR1UvNlB6ctDZ@sunil-laptop>
+	s=arc-20240116; t=1715262800; c=relaxed/simple;
+	bh=etRxQYnyTSJhlQA0xJ7YSbm6MYsu37W7y3Rk3gxAjcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aD7HfZBi79Ts7exQBJO2oB5gk7ynxmfH5wgJZ4edhLNy9AIDdGDCJ8RShTJhFcV8e1oMiSscm2eB+W+vg2MaSnvIM7N+qQ+t7ZmJZ2GxrtDaErFiu7fC/PLsnVKgW+uYzfZdJoUnz+chJV0HO6OVxpbU3uuU7hyE12HW9pdPgmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net; spf=pass smtp.mailfrom=tomeuvizoso.net; dkim=pass (2048-bit key) header.d=tomeuvizoso-net.20230601.gappssmtp.com header.i=@tomeuvizoso-net.20230601.gappssmtp.com header.b=fSGo6bwI; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tomeuvizoso.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tomeuvizoso.net
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-61ae4743d36so9449217b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 06:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tomeuvizoso-net.20230601.gappssmtp.com; s=20230601; t=1715262797; x=1715867597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wdFa90PddlvioOWqeSbKbQrk9EgH4c2dEjX31dZlhXM=;
+        b=fSGo6bwI5qrWkNULH9uznBEVseDWwHmvZGTnLXlFqzFZ1kEmYxdBTwalYU92Z55IUi
+         PFQ+FhzeCoI3WVvBPPcl66gpxFdNomAb8flA57NodxI94MakvyoFoQxLqJ1aE+iTsFiF
+         9MgMdSryUjE8GDIGm4BlFTU1RNud43dLq+ApaV5n2VcaE0xb+wGki09+42Ixw1/udpSd
+         XQmTuRcKwscDdHiEoD63G6+MghwCZSKawqeOx7XoE9JnAQj02ry/mMEMz090NLPoWRMv
+         b0X1sYl8+2JZx2v+ItAYbhwio5JXiXdash9xs1hudz/UzsWwBnqdC7DnV0w1QSgx0njG
+         s3SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715262797; x=1715867597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wdFa90PddlvioOWqeSbKbQrk9EgH4c2dEjX31dZlhXM=;
+        b=fC++hSHrsdkD/mlRM7JZE7EGMd0mZ34q7h7wTE9Dawhi5ZBaQZpfEmm2MjDxtv59Co
+         X5pCBfdt7fQqRA98w/b+oj9HL0/pVchlXdP8G3LZ2J0nQxYpzw7bQfSmeqCYNwf6qrQC
+         i13aG6PKK4TKvtSMX97F7Z6WW/W9JHCefXAr9nt6qt7wMZjhy4kjh2BqXk4YSm8MqbZq
+         r7C25GyvK65FQEMy3S2hjO9CasGM3PQJ11M7p3Ys9p2cnYfQ2ll/oY429Y9hFFjZt6o3
+         bYvxXMMIv/H+orTt4BkcEUqSmEnBR+a/U74XwNbQCuLSSaMgZO4wISnwJP4joOOHMTCc
+         CzHQ==
+X-Gm-Message-State: AOJu0YyHXAK+zPvfNwWmV3Sv+YppQ1QKVm6hWyEkKjm5RAQaO9t98tCI
+	K+3x1vo0Xl46wJGz0JlQTtNCiL6ZHyupnBQI4ADwK1reWLUw9fACKNmu6wdTfgGGb06AS/vb0BH
+	8KoE=
+X-Google-Smtp-Source: AGHT+IESkDsfKcajkzFueSJQwxd6+wafjtDL7ZNO4xsMv8mkG1vYkjvh1CLjd8ni0qLkHvWQE3qGeA==
+X-Received: by 2002:a25:b10f:0:b0:de5:4eef:542d with SMTP id 3f1490d57ef6-debb9e6f67emr6435112276.57.1715262796951;
+        Thu, 09 May 2024 06:53:16 -0700 (PDT)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e23480bsm2994657b3.24.2024.05.09.06.53.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 06:53:13 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-61bee45d035so8701327b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 06:53:13 -0700 (PDT)
+X-Received: by 2002:a25:1303:0:b0:de5:d1cd:b580 with SMTP id
+ 3f1490d57ef6-debb9db87famr5937174276.36.1715262792938; Thu, 09 May 2024
+ 06:53:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjxdR1UvNlB6ctDZ@sunil-laptop>
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <8c55dba5-6308-685e-13da-e728197d8101@quicinc.com> <CAAObsKD4-k7Ya4Mi=vEPaC9DucbnVGDO5SaEUt-_o2_Bg+_FgA@mail.gmail.com>
+In-Reply-To: <CAAObsKD4-k7Ya4Mi=vEPaC9DucbnVGDO5SaEUt-_o2_Bg+_FgA@mail.gmail.com>
+From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Date: Thu, 9 May 2024 15:53:01 +0200
+X-Gmail-Original-Message-ID: <CAAObsKCm49y-nUph=m9c+-eG37SaGKG93-1etwOQab4f5MXxOg@mail.gmail.com>
+Message-ID: <CAAObsKCm49y-nUph=m9c+-eG37SaGKG93-1etwOQab4f5MXxOg@mail.gmail.com>
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: linux-kernel@vger.kernel.org, Oded Gabbay <ogabbay@kernel.org>, 
+	Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thu, May 09, 2024 at 10:51:11AM +0530, Sunil V L kirjoitti:
+Oded, Dave,
 
-> Many thanks for helping with this!. Just few questions below for my
-> understanding.
+Do you have an opinion on this?
 
-You are welcome! Meanwhile, can you test these changes?
+Thanks,
 
-> On Mon, May 06, 2024 at 05:00:59PM +0300, Andy Shevchenko wrote:
+Tomeu
 
-..
-
-> > +void __init serial8250_isa_init_ports(void)
-> > +{
-> > +	static int first = 1;
-> > +	int i, irqflag = 0;
-> > +
-> > +	if (!first)
-> > +		return;
-> > +	first = 0;
-> > +
-> > +	if (nr_uarts > UART_NR)
-> > +		nr_uarts = UART_NR;
-> > +
-> > +	/*
-> > +	 * Set up initial isa ports based on nr_uart module param, or else
-> > +	 * default to CONFIG_SERIAL_8250_RUNTIME_UARTS. Note that we do not
-> > +	 * need to increase nr_uarts when setting up the initial isa ports.
-> > +	 */
-> > +	for (i = 0; i < nr_uarts; i++)
-> > +		serial8250_setup_port(i);
-> > +
-> > +	/* chain base port ops to support Remote Supervisor Adapter */
-> > +	univ8250_port_ops = *univ8250_port_base_ops;
-> > +	univ8250_rsa_support(&univ8250_port_ops);
-> > +
-> > +	if (share_irqs)
-> > +		irqflag = IRQF_SHARED;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(old_serial_port) && i < nr_uarts; i++) {
-> > +		struct uart_8250_port *up = serial8250_get_port(i);
-> > +		struct uart_port *port = &up->port;
-> > +
-> > +		port->iobase   = old_serial_port[i].port;
-> > +		port->irq      = irq_canonicalize(old_serial_port[i].irq);
-> > +		port->irqflags = 0;
-> > +		port->uartclk  = old_serial_port[i].baud_base * 16;
-> > +		port->flags    = old_serial_port[i].flags;
-> > +		port->hub6     = 0;
-> > +		port->membase  = old_serial_port[i].iomem_base;
-> > +		port->iotype   = old_serial_port[i].io_type;
-> > +		port->regshift = old_serial_port[i].iomem_reg_shift;
-> > +
-> > +		port->irqflags |= irqflag;
-> > +		if (serial8250_isa_config != NULL)
-> > +			serial8250_isa_config(i, &up->port, &up->capabilities);
-> > +
-> > +		serial_base_add_isa_preferred_console(serial8250_reg.dev_name, i);
-> > +	}
-> > +}
-> > +
-> > +/*
-> > + * Register a set of serial devices attached to a platform device.  The
-> > + * list is terminated with a zero flags entry, which means we expect
-> > + * all entries to have at least UPF_BOOT_AUTOCONF set.
-> > + */
-> > +static int serial8250_probe(struct platform_device *dev)
-> > +{
-> > +	struct plat_serial8250_port *p = dev_get_platdata(&dev->dev);
-
-> Not related to the change. But..
-> How is this supposed to work? When serial8250_init creates this ISA
-> platform device,
-> it doesn't add any platdata. In that case, entire loop
-> below appears dead code to me. Am I missing something?
-
-Yes, you are. Here is the answer:
-https://elixir.bootlin.com/linux/latest/C/ident/plat_serial8250_port
-
-I.o.w. it depends on the platform and actual drivers that instantiate the
-serial8250 platform device. You found only one case for which it's a dead
-code, but not for many others.
-
-> > +	struct uart_8250_port uart;
-> > +	int ret, i, irqflag = 0;
-> > +
-> > +	memset(&uart, 0, sizeof(uart));
-> > +
-> > +	if (share_irqs)
-> > +		irqflag = IRQF_SHARED;
-> > +
-> > +	for (i = 0; p && p->flags != 0; p++, i++) {
-> > +		uart.port.iobase	= p->iobase;
-> > +		uart.port.membase	= p->membase;
-> > +		uart.port.irq		= p->irq;
-> > +		uart.port.irqflags	= p->irqflags;
-> > +		uart.port.uartclk	= p->uartclk;
-> > +		uart.port.regshift	= p->regshift;
-> > +		uart.port.iotype	= p->iotype;
-> > +		uart.port.flags		= p->flags;
-> > +		uart.port.mapbase	= p->mapbase;
-> > +		uart.port.mapsize	= p->mapsize;
-> > +		uart.port.hub6		= p->hub6;
-> > +		uart.port.has_sysrq	= p->has_sysrq;
-> > +		uart.port.private_data	= p->private_data;
-> > +		uart.port.type		= p->type;
-> > +		uart.bugs		= p->bugs;
-> > +		uart.port.serial_in	= p->serial_in;
-> > +		uart.port.serial_out	= p->serial_out;
-> > +		uart.dl_read		= p->dl_read;
-> > +		uart.dl_write		= p->dl_write;
-> > +		uart.port.handle_irq	= p->handle_irq;
-> > +		uart.port.handle_break	= p->handle_break;
-> > +		uart.port.set_termios	= p->set_termios;
-> > +		uart.port.set_ldisc	= p->set_ldisc;
-> > +		uart.port.get_mctrl	= p->get_mctrl;
-> > +		uart.port.pm		= p->pm;
-> > +		uart.port.dev		= &dev->dev;
-> > +		uart.port.irqflags	|= irqflag;
-> > +		ret = serial8250_register_8250_port(&uart);
-> > +		if (ret < 0) {
-> > +			dev_err(&dev->dev, "unable to register port at index %d "
-> > +				"(IO%lx MEM%llx IRQ%d): %d\n", i,
-> > +				p->iobase, (unsigned long long)p->mapbase,
-> > +				p->irq, ret);
-> > +		}
-> > +	}
-> > +	return 0;
-> > +}
-
-> > +static struct platform_driver serial8250_isa_driver = {
-> > +	.probe		= serial8250_probe,
-> > +	.remove_new	= serial8250_remove,
-> > +	.suspend	= serial8250_suspend,
-> > +	.resume		= serial8250_resume,
-> > +	.driver		= {
-> > +		.name	= "serial8250",
-> > +	},
-> > +};
-> > +
-> > +/*
-> > + * This "device" covers _all_ ISA 8250-compatible serial devices listed
-> > + * in the table in include/asm/serial.h
-> > + */
-> > +struct platform_device *serial8250_isa_devs;
-> > +
-> > +static int __init serial8250_init(void)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (nr_uarts == 0)
-> > +		return -ENODEV;
-> > +
-> > +	serial8250_isa_init_ports();
-> > +
-> > +	pr_info("Serial: 8250/16550 driver, %d ports, IRQ sharing %s\n",
-> > +		nr_uarts, str_enabled_disabled(share_irqs));
-> > +
-> > +#ifdef CONFIG_SPARC
-> > +	ret = sunserial_register_minors(&serial8250_reg, UART_NR);
-> > +#else
-> > +	serial8250_reg.nr = UART_NR;
-> > +	ret = uart_register_driver(&serial8250_reg);
-> > +#endif
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	ret = serial8250_pnp_init();
-> > +	if (ret)
-> > +		goto unreg_uart_drv;
-> > +
-> > +	serial8250_isa_devs = platform_device_alloc("serial8250",
-> > +						    PLAT8250_DEV_LEGACY);
-> > +	if (!serial8250_isa_devs) {
-> > +		ret = -ENOMEM;
-> > +		goto unreg_pnp;
-> > +	}
-> > +
-> > +	ret = platform_device_add(serial8250_isa_devs);
-> > +	if (ret)
-> > +		goto put_dev;
-> > +
-> > +	serial8250_register_ports(&serial8250_reg, &serial8250_isa_devs->dev);
-> > +
-> > +	ret = platform_driver_register(&serial8250_isa_driver);
-> > +	if (ret == 0)
-> > +		goto out;
-> > +
-> > +	platform_device_del(serial8250_isa_devs);
-> > +put_dev:
-> > +	platform_device_put(serial8250_isa_devs);
-> > +unreg_pnp:
-> > +	serial8250_pnp_exit();
-> > +unreg_uart_drv:
-> > +#ifdef CONFIG_SPARC
-> > +	sunserial_unregister_minors(&serial8250_reg, UART_NR);
-> > +#else
-> > +	uart_unregister_driver(&serial8250_reg);
-> > +#endif
-> > +out:
-> > +	return ret;
-> > +}
-> > +module_init(serial8250_init);
-
-..
-
-> > +#ifdef CONFIG_SERIAL_8250_DEPRECATED_OPTIONS
-> > +#ifndef MODULE
-> > +/* This module was renamed to 8250_core in 3.7.  Keep the old "8250" name
-> > + * working as well for the module options so we don't break people.  We
-> > + * need to keep the names identical and the convenient macros will happily
-> > + * refuse to let us do that by failing the build with redefinition errors
-> > + * of global variables.  So we stick them inside a dummy function to avoid
-> > + * those conflicts.  The options still get parsed, and the redefined
-> > + * MODULE_PARAM_PREFIX lets us keep the "8250." syntax alive.
-> > + *
-> > + * This is hacky.  I'm sorry.
-> 
-> Should this comment be updated?
-
-Why? There is no change in this approach. It stays as it was.
-
-> > + */
-> > +static void __used s8250_options(void)
-> > +{
-> > +#undef MODULE_PARAM_PREFIX
-> > +#define MODULE_PARAM_PREFIX "8250_core."
-> > +
-> > +	module_param_cb(share_irqs, &param_ops_uint, &share_irqs, 0644);
-> > +	module_param_cb(nr_uarts, &param_ops_uint, &nr_uarts, 0644);
-> > +	module_param_cb(skip_txen_test, &param_ops_uint, &skip_txen_test, 0644);
-> > +}
-> > +#else
-> > +MODULE_ALIAS("8250_core");
-> 
-> Should this be 8250_platform or keeping it same for compatibility reason?
-
-No. The module name is still 8250_core if you carefully check the Makefile.
-
-> > +#endif
-> > +#endif
-
-..
-
-> > -obj-$(CONFIG_SERIAL_8250)		+= 8250.o 8250_base.o
-> > +obj-$(CONFIG_SERIAL_8250)		+= 8250.o
-> >  8250-y					:= 8250_core.o
-> > +8250-y					+= 8250_platform.o
-> >  8250-$(CONFIG_SERIAL_8250_PNP)		+= 8250_pnp.o
-> >  8250-$(CONFIG_SERIAL_8250_RSA)		+= 8250_rsa.o
-> > +
-> > +obj-$(CONFIG_SERIAL_8250)		+= 8250_base.o
-> 
-> Curious to know why this is split?
-
-The line
-
-obj-$(X) += foo.o bar.o
-
-means that if X=m, the foo and bar will be separate modules. Since we have a
-few object files per each of them it's better to split them in Makefile in
-order to have better readability and maintenance. It's pure done for these
-purposes.
-
-> Acked-by: Sunil V L <sunilvl@ventanamicro.com> 
-
-Thank you, but I would prefer Tested-by as it is kinda intrusive change.
-I tested it on Intel hardware but it might have (hidden) issues on other
-setups.
-
-> >  8250_base-y				:= 8250_port.o
-> >  8250_base-$(CONFIG_SERIAL_8250_DMA)	+= 8250_dma.o
-> >  8250_base-$(CONFIG_SERIAL_8250_DWLIB)	+= 8250_dwlib.o
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On Fri, Apr 26, 2024 at 8:10=E2=80=AFAM Tomeu Vizoso <tomeu@tomeuvizoso.net=
+> wrote:
+>
+> On Thu, Apr 25, 2024 at 8:59=E2=80=AFPM Jeffrey Hugo <quic_jhugo@quicinc.=
+com> wrote:
+> >
+> > On 4/24/2024 12:37 AM, Tomeu Vizoso wrote:
+> > > If we expose a render node for NPUs without rendering capabilities, t=
+he
+> > > userspace stack will offer it to compositors and applications for
+> > > rendering, which of course won't work.
+> > >
+> > > Userspace is probably right in not questioning whether a render node
+> > > might not be capable of supporting rendering, so change it in the ker=
+nel
+> > > instead by exposing a /dev/accel node.
+> > >
+> > > Before we bring the device up we don't know whether it is capable of
+> > > rendering or not (depends on the features of its blocks), so first tr=
+y
+> > > to probe a rendering node, and if we find out that there is no render=
+ing
+> > > hardware, abort and retry with an accel node.
+> > >
+> > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > > Cc: Oded Gabbay <ogabbay@kernel.org>
+> >
+> > I hope Oded chimes in as Accel maintainer.  I think Airlie/Vetter had
+> > also previously mentioned they'd have opinions on what is Accel vs DRM.
+> >
+> > This gets a nack from me in its current state.  This is not a strong
+> > nack, and I don't want to discourage you.  I think there is a path forw=
+ard.
+> >
+> > The Accel subsystem documentation says that accel drivers will reside i=
+n
+> > drivers/accel/ but this does not.
+>
+> Indeed, there is that code organization aspect.
+>
+> > Also, the commit text for "accel: add dedicated minor for accelerator
+> > devices" mentions -
+> >
+> > "for drivers that
+> > declare they handle compute accelerator, using a new driver feature
+> > flag called DRIVER_COMPUTE_ACCEL. It is important to note that this
+> > driver feature is mutually exclusive with DRIVER_RENDER. Devices that
+> > want to expose both graphics and compute device char files should be
+> > handled by two drivers that are connected using the auxiliary bus
+> > framework."
+> >
+> > I don't see any of that happening here (two drivers connected by aux
+> > bus, one in drivers/accel).
+>
+> Well, the text refers to devices, not drivers. The case we are talking
+> about is a driver that wants to sometimes expose an accel node, and
+> sometimes a render node, depending on the hardware it is dealing with.
+> So there would either be a device exposing a single render node, or a
+> device exposing a single accel node.
+>
+> Though by using the auxiliary bus we could in theory solve the code
+> organization problem mentioned above, I'm not quite seeing how to do
+> this in a clean way. The driver in /drivers/gpu/drm would have to be a
+> DRM driver that doesn't register a DRM device, but registers a device
+> in the auxiliary bus for the driver in /drivers/accel to bind to? Or
+> are you seeing some possibility that would fit better in the current
+> DRM framework?
+>
+> > I think this is the first case we've had of a combo DRM/Accel usecase,
+> > and so there isn't an existing example to refer you to on how to
+> > structure things.  I think you are going to be the first example where
+> > we figure all of this out.
+>
+> Yep, I will be grateful for any ideas on how to structure this.
+>
+> > On a more implementation note, ioctls for Accel devices should not be
+> > marked DRM_RENDER_ALLOW.  Seems like your attempt to reuse as much of
+> > the code as possible trips over this.
+>
+> Indeed, thanks.
+>
+> Cheers,
+>
+> Tomeu
+>
+> > -Jeff
 
