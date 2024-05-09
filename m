@@ -1,161 +1,175 @@
-Return-Path: <linux-kernel+bounces-174599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A328C1160
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:39:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A5D8C1167
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48EA1C208F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:39:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C67CDB210D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9266115E1F8;
-	Thu,  9 May 2024 14:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD623D3BC;
+	Thu,  9 May 2024 14:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvs4oONd"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I8tfpZT3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027A375811
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4122BCFF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715265570; cv=none; b=j77rlKjOB5GOYLDm1rNFukmTyXwNJGOchwt3yD+WX3lKxFQqYIRTO0Mxb7AUFC2nTOO7w7VJP9ndcWR5hP/nhD01dmewQ0q447QKozpJ9fAR8ZkCeWnmdmq/vhJG56Ha7xMlR1kmokETx0miQA4qb7NkF2mm3ltzA6oGE/16Wko=
+	t=1715265684; cv=none; b=CKvGgZqLp8FbhC8IvFO4PRbPPL3zGs87cAzg3px6qcuwMgxCO6bMrmrr0mtzINm5QXhR48xYgLbE3NlTkOqYB+DfrCC/aO1l2aqgSJ46Vqqc75NLa2ipOOQU2giLKInrdVn6qTTk8IC/l7A2tuoM9ElWLYZ+BK95aJwEtH8kspU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715265570; c=relaxed/simple;
-	bh=Oqw9hCVQzSIH3enl+rGm71JD1XIoGust4N0femSQBcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xep/io61WyTsIy6byvcVpQMoWBis4Yd/cc79EBmAJvfI5JNlomcXcMxEj3h9PRarhNNOFSIOlFxG6fLx08QSs/MPRQWrUxwnTUl8rYd1OTnI2DBSCb/Bdg3RwnGbu3DNXVF+eH9x6OSL0C8XCjqccr9YpyP2GBq6zhhpruJPVw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dvs4oONd; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59a17fcc6bso234230866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 07:39:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715265567; x=1715870367; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fgJc8E2KgKNGLKRWDqADYaZW8wGqtQXaUAbdG1wpeQ=;
-        b=dvs4oONdcrFA38TKdRlkc+gKW9q+qHwNjN8U5UXJhDCaTl7p/eD6Sh/Tjafm73bNua
-         KRSQsCPeBqnbPfb7k37vlt82xm2cRvd8lcxcr1fxDlvfZcUIF0mNFTI62Wx5DvLhFal4
-         MOCN1kg8/wZ/eRPcGQIIRCzDxFST8+zr09Z4Mq0/djqaexe7DuZwnp/tRGZ/iVFOs2NL
-         xVIdfTWoDKZdeiaAU16uu68wZMIvqUpssuIuJSzWOxRnNUdmvzYqHSNVioG+yW70jmv2
-         0uYfnIQAIvx4J0B51AOfe6w+70C9C1J4GQ9K83u0yqIUA2OmWMZ1GRPum8QkhbTHiCNQ
-         LHqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715265567; x=1715870367;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0fgJc8E2KgKNGLKRWDqADYaZW8wGqtQXaUAbdG1wpeQ=;
-        b=qqEDV1+kisGPy9VVBnprXND5HPEjJwZcwKzQfLkF6hNk5vmhLXWW/JHN+YYn+Rp1E2
-         VXGoMOJn2rA/bWubOQSuOE5DRA93Vu9GtnOKMYIoA4FIxmo52gI6UM93pZgHVm9GnVGA
-         VK8mjs+3kJi7SK5S+0SM8jiZ9CG5kqgP9m52hA72uHfEVgw5nDsHQdhMwaif0q0lMu+Z
-         1JgpCD+2R9gfQtdQz2Ciberu/eoawgveLZHQ5W+/Bs2t04a06G7huT7AjmKHRNIeiTXH
-         y5R+PbZ9KX6Fxa56DCUB0swkwWgijqHXAB943mON2GufedYlkf7lpReLEvzGRXrV0R5m
-         bwEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnTTI7C904Bl7rDzEoMmrKCMczDfMzIyJPbup7/17gfd+UURJopO5KoLF/2egOq5LZ2bXq07OgYTRXCpA9vniGkBAU9wf+9PGtc1OG
-X-Gm-Message-State: AOJu0YyfoapCVnBGlVEv7lvzp/wTau3fSKjs6qcrgdBDGmfDPvWwEWtZ
-	cImYhsDD5go91SjbIahNK50lGfPn05WXKkFSuN1BUgKYAKTwucHSglArEKUeZQM=
-X-Google-Smtp-Source: AGHT+IHAOUtraPit3LFUN1WYaxGf8dh4ewy5TUHSh7A4MPnn8ZSogz3m1n8IOCsvqL/uzks3qqb6eQ==
-X-Received: by 2002:a17:906:fac3:b0:a59:beb2:62cc with SMTP id a640c23a62f3a-a59fb9dbd48mr357841866b.61.1715265567328;
-        Thu, 09 May 2024 07:39:27 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a178a9d68sm80346866b.80.2024.05.09.07.39.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 07:39:26 -0700 (PDT)
-Message-ID: <a6958ed8-05dd-4ee6-bae2-a35293958271@linaro.org>
-Date: Thu, 9 May 2024 16:39:25 +0200
+	s=arc-20240116; t=1715265684; c=relaxed/simple;
+	bh=Qx8UYCxiWdEZ4Kjn0bUpA+c+/Rsek35U2CMylJmgrrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMEWiO3qervbP9NByXtRvmEw2vmPuniERunL/o7G8hkKt7SebTPRb8/9aSPGERWLb5XkGDU5l5SXwspjftORAWpaQ0T69+IzAMpW+bFqYnxLcLHBBEd++2LVgt3n8yKhcJSyAkn5ObEzkHijn2+qyvptwJxjCxzEMCJRVDk97Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I8tfpZT3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 062D0C116B1;
+	Thu,  9 May 2024 14:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715265683;
+	bh=Qx8UYCxiWdEZ4Kjn0bUpA+c+/Rsek35U2CMylJmgrrc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I8tfpZT3MWBxDBJqqm6VJ9H6mDt7SyXsxncWrj7mlqxx9K6SKXftE2lsPfpWyDnUt
+	 YJ98PkOTjLF3RcqkhhNsgwE41ejUH5gwRzbPjO4H+IrgFegvjdhwa7krBROfufNu+S
+	 CX11b8ZPxO2mqwZY6pIQZDrPXaY/SIHC7UZ5/WodIuE4AiaMvKqvVL/qIR+ohI6H8+
+	 XlOzV/2gjdB0AzS603AtgbTWywvyHSNC5QTx1nhxuVGFqsmFRlhn1ypYUGjT9+hXZ3
+	 TM25Qb8Bl0assu0kY4Eh6mES+WXCvM+0FkslNNe2sQZxMiiV8RPi4wED9+0zpKpGaL
+	 WjPS3E2SylA1Q==
+Date: Thu, 9 May 2024 17:41:18 +0300
+From: Oded Gabbay <ogabbay@kernel.org>
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-kernel@vger.kernel.org,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+Message-ID: <20240509144118.baib2pftmpk5nikr@GABBAY.>
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <8c55dba5-6308-685e-13da-e728197d8101@quicinc.com>
+ <CAAObsKD4-k7Ya4Mi=vEPaC9DucbnVGDO5SaEUt-_o2_Bg+_FgA@mail.gmail.com>
+ <CAAObsKCm49y-nUph=m9c+-eG37SaGKG93-1etwOQab4f5MXxOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syoshida@redhat.com, syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
-References: <20240509113036.362290-1-ryasuoka@redhat.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240509113036.362290-1-ryasuoka@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAObsKCm49y-nUph=m9c+-eG37SaGKG93-1etwOQab4f5MXxOg@mail.gmail.com>
 
-On 09/05/2024 13:30, Ryosuke Yasuoka wrote:
-> syzbot reported the following uninit-value access issue [1]
+On Thu, May 09, 2024 at 03:53:01PM +0200, Tomeu Vizoso wrote:
+> Oded, Dave,
 > 
-> nci_rx_work() parses received packet from ndev->rx_q. It should be
-> validated header size, payload size and total packet size before
-> processing the packet. If an invalid packet is detected, it should be
-> silently discarded.
+> Do you have an opinion on this?
 > 
-> Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
-> Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534 [1]
-> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
-> ---
-> v4
-> - v3 patch uses goto statement and it makes codes complicated. So this
->   patch simply calls kfree_skb inside loop and remove goto statement.
-> - [2] inserted kcov_remote_stop() to fix kcov check. However, as we
->   discuss about my v3 patch [3], it should not exit the for statement
->   and should continue processing subsequent packets. This patch removes
+> Thanks,
+> 
+> Tomeu
+Hi Tomeu,
 
+Sorry for not replying earlier, I was down with Covid (again...).
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To your question, I don't have an objection to what you are
+suggesting. My personal view of accel is that it is an integral part of 
+DRM and therefore, if there is an *existing* drm driver that wants to 
+create an accel node, I'm not against it. 
 
-Best regards,
-Krzysztof
+There is the question of why you want to expose an accel node, and
+here I would like to hear Dave's and Sima's opinion on your suggested
+solution as it may affect the direction of other drm drivers.
 
+Thanks,
+Oded.
+
+p.s.
+Please only use bottom-posting when replying, thanks :)
+
+> 
+> On Fri, Apr 26, 2024 at 8:10 AM Tomeu Vizoso <tomeu@tomeuvizoso.net> wrote:
+> >
+> > On Thu, Apr 25, 2024 at 8:59 PM Jeffrey Hugo <quic_jhugo@quicinc.com> wrote:
+> > >
+> > > On 4/24/2024 12:37 AM, Tomeu Vizoso wrote:
+> > > > If we expose a render node for NPUs without rendering capabilities, the
+> > > > userspace stack will offer it to compositors and applications for
+> > > > rendering, which of course won't work.
+> > > >
+> > > > Userspace is probably right in not questioning whether a render node
+> > > > might not be capable of supporting rendering, so change it in the kernel
+> > > > instead by exposing a /dev/accel node.
+> > > >
+> > > > Before we bring the device up we don't know whether it is capable of
+> > > > rendering or not (depends on the features of its blocks), so first try
+> > > > to probe a rendering node, and if we find out that there is no rendering
+> > > > hardware, abort and retry with an accel node.
+> > > >
+> > > > Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> > > > Cc: Oded Gabbay <ogabbay@kernel.org>
+> > >
+> > > I hope Oded chimes in as Accel maintainer.  I think Airlie/Vetter had
+> > > also previously mentioned they'd have opinions on what is Accel vs DRM.
+> > >
+> > > This gets a nack from me in its current state.  This is not a strong
+> > > nack, and I don't want to discourage you.  I think there is a path forward.
+> > >
+> > > The Accel subsystem documentation says that accel drivers will reside in
+> > > drivers/accel/ but this does not.
+> >
+> > Indeed, there is that code organization aspect.
+> >
+> > > Also, the commit text for "accel: add dedicated minor for accelerator
+> > > devices" mentions -
+> > >
+> > > "for drivers that
+> > > declare they handle compute accelerator, using a new driver feature
+> > > flag called DRIVER_COMPUTE_ACCEL. It is important to note that this
+> > > driver feature is mutually exclusive with DRIVER_RENDER. Devices that
+> > > want to expose both graphics and compute device char files should be
+> > > handled by two drivers that are connected using the auxiliary bus
+> > > framework."
+> > >
+> > > I don't see any of that happening here (two drivers connected by aux
+> > > bus, one in drivers/accel).
+> >
+> > Well, the text refers to devices, not drivers. The case we are talking
+> > about is a driver that wants to sometimes expose an accel node, and
+> > sometimes a render node, depending on the hardware it is dealing with.
+> > So there would either be a device exposing a single render node, or a
+> > device exposing a single accel node.
+> >
+> > Though by using the auxiliary bus we could in theory solve the code
+> > organization problem mentioned above, I'm not quite seeing how to do
+> > this in a clean way. The driver in /drivers/gpu/drm would have to be a
+> > DRM driver that doesn't register a DRM device, but registers a device
+> > in the auxiliary bus for the driver in /drivers/accel to bind to? Or
+> > are you seeing some possibility that would fit better in the current
+> > DRM framework?
+> >
+> > > I think this is the first case we've had of a combo DRM/Accel usecase,
+> > > and so there isn't an existing example to refer you to on how to
+> > > structure things.  I think you are going to be the first example where
+> > > we figure all of this out.
+> >
+> > Yep, I will be grateful for any ideas on how to structure this.
+> >
+> > > On a more implementation note, ioctls for Accel devices should not be
+> > > marked DRM_RENDER_ALLOW.  Seems like your attempt to reuse as much of
+> > > the code as possible trips over this.
+> >
+> > Indeed, thanks.
+> >
+> > Cheers,
+> >
+> > Tomeu
+> >
+> > > -Jeff
 
