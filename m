@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-174543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066E88C1070
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:34:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF798C107A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975C61F245D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:34:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11244285020
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936BC1527BE;
-	Thu,  9 May 2024 13:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC36D158D98;
+	Thu,  9 May 2024 13:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujzz7B1i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YX+3FdeO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBA814A62A;
-	Thu,  9 May 2024 13:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE4D1527A2;
+	Thu,  9 May 2024 13:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715261643; cv=none; b=WjCgWYCPILHoTdgOSHYEJTRgf+eVJZJRolgRqbizb4b7CDFfX57pmQbozfBKAtTNyDhVlhaKU9eTk72O4d6ZcEy33Zdu0BQLALrkC6DE5asDQfDQ3VnFilAEV+IRVSR+ZOnGh2mvYJO8X23zYc0KvM5BOGYS/btBSIc9uPIlFqc=
+	t=1715261968; cv=none; b=MKCPS9TdYVBARZr75ZU+y8k/0QgW8FpQlMM35+lpdiSSOUgU/+z4SXgTC2eui/M1GU1l9OND4SIDsUSDf8URF3qxsyYTdF4bBMCMLouNWB/c9w286B5nnvdOlzXXpQiuEntwO62O+q8VcUxckEPhKsi5ichr0M63guTQy3K3FLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715261643; c=relaxed/simple;
-	bh=2+YHYFlsCfhJDdkXDf1ER0vd6Y27waqfJtG7Kf2YXBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AYtAMeiHSjg4S/ma0novLnBr0z3ySryHjYe9db2ujrixAX/TJjsW8yPtt1AcX0L2M41v9PB6BtR52NinY8va7nVkjdw4yrtNuWAvPg5rjweZlr8MOED4dvIiyS/vhqfkzzLNDuqhxbvtyKIDzWCpDDGvKWGnYcoyKvIjuqB+k9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujzz7B1i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F104C116B1;
-	Thu,  9 May 2024 13:34:03 +0000 (UTC)
+	s=arc-20240116; t=1715261968; c=relaxed/simple;
+	bh=jUr68MLDbSUnFqAm1vse81ZVzM/+9WHZZ9/wSq3eCiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFHyIJWxk1VRb39glOBXW0Nd79IrIZC86gMpRkRAP/N8K7jZkojk83NWtz5REFFMUyIX8G/nskZrVIIhVcY1yiJ+BnzWkZlFXFrSM4Uac1gsXtSkiD+RXHYmOLW8bxBJZ6MBZZR/1UthLzUeHx8IuvJiWW+vCIvX64Lbr03D/J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YX+3FdeO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44001C116B1;
+	Thu,  9 May 2024 13:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715261643;
-	bh=2+YHYFlsCfhJDdkXDf1ER0vd6Y27waqfJtG7Kf2YXBo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ujzz7B1i+33eE8tAYa7zkh51+XgGAs/n39T/ILyKsvJwAIofrrPBIaQHDjrFROHOc
-	 tnYWwWBeVd56IS9J06SiiOSuaAwPc+HKff8RXp07BmRkYBeXxMMYwYWaPLWge8R6BO
-	 Tp/xDL0EFFPMRXT1TSEUwu9OZG5+0/lMeb/ZdoW6yCzcIfmLatL+rTNcURF7DhcdQT
-	 ADvte6L8om6PgP5bP6t8N3w4CB6AOXA9JfqEpM9UzGm4Xway828Zj7zQMNU7gJpj2E
-	 NPFfkVilMGvrKU92Cgooqjmutj/WizB/SFBrKTYI33YytbAz8vk5zUZ5z1AxXEdCKG
-	 OnUzgndFe/eVg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1s53uR-000000002Ko-0fMi;
-	Thu, 09 May 2024 15:34:07 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	stable@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] regulator: core: fix debugfs creation regression
-Date: Thu,  9 May 2024 15:33:04 +0200
-Message-ID: <20240509133304.8883-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.43.2
+	s=k20201202; t=1715261967;
+	bh=jUr68MLDbSUnFqAm1vse81ZVzM/+9WHZZ9/wSq3eCiI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YX+3FdeOTKKEw1qyHCMlwNbZqpZRGcwvdQ2kNdsWx+gcYh/014U2juYkWjLuxjGDe
+	 4GMEZfDaldxnl9OfrJMFNVkDJF7AV5zStr9B46GCkmKQUzRWa0CTbiX0Eg6G/qVGdk
+	 GG9JD+CtUiU7HMpnOUcf4iSP+JspX73jWsoSJB0nfASuFP9hcmOg9O1c/S0chuSwVq
+	 bBioBRMdOPs2x18C+4+Ip+o7wvW4rkK6tvxsZuONGCMwAUGQssPsS4JFguylg6VZ0I
+	 oC62okKZS0dFq7O4EldqCPgjG9rp+8vJfBPmW2zU3ZbwznKdDbwIFjcAplSouJd+gU
+	 CrxaKshJ8vsrg==
+Date: Thu, 9 May 2024 14:39:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rengarajan.S@microchip.com
+Cc: linux-usb@vger.kernel.org, davem@davemloft.net,
+	Woojung.Huh@microchip.com, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org, edumazet@google.com,
+	UNGLinuxDriver@microchip.com, kuba@kernel.org
+Subject: Re: [PATCH net-next v1] lan78xx: Enable 125 MHz CLK and Auto Speed
+ configuration for LAN7801 if NO EEPROM is detected
+Message-ID: <20240509133923.GZ1736038@kernel.org>
+References: <20240502045503.36298-1-rengarajan.s@microchip.com>
+ <20240504084931.GA3167983@kernel.org>
+ <d5727bf3d176e3d71abeba7f7c3aa86cf96262cc.camel@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5727bf3d176e3d71abeba7f7c3aa86cf96262cc.camel@microchip.com>
 
-regulator_get() may sometimes be called more than once for the same
-consumer device, something which before commit dbe954d8f163 ("regulator:
-core: Avoid debugfs: Directory ...  already present! error") resulted in
-errors being logged.
+On Thu, May 09, 2024 at 06:59:03AM +0000, Rengarajan.S@microchip.com wrote:
+> Hi Simon,
+> 
+> Apologies for the delay in response. Thanks for reviewing the patch.
+> Please find my comments inline.
+> 
+> On Sat, 2024-05-04 at 09:49 +0100, Simon Horman wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > know the content is safe
+> > 
+> > On Thu, May 02, 2024 at 10:25:03AM +0530, Rengarajan S wrote:
+> > > The 125MHz and 25MHz clock configurations are done in the
+> > > initialization
+> > > regardless of EEPROM (125MHz is needed for RGMII 1000Mbps
+> > > operation). After
+> > > a lite reset (lan78xx_reset), these contents go back to
+> > > defaults(all 0, so
+> > > no 125MHz or 25MHz clock and no ASD/ADD). Also, after the lite
+> > > reset, the
+> > > LAN7800 enables the ASD/ADD in the absence of EEPROM. There is no
+> > > such
+> > > check for LAN7801.
+> > > 
+> > > Signed-off-by: Rengarajan S <rengarajan.s@microchip.com>
+> > 
+> > Hi Rengarajan,
+> > 
+> > This patch seems address two issues.
+> > So I think it would be best to split it into two patches.
+> 
+> Sure. Will split the patch into two and will submit the updated patch
+> in the next revision shortly,
+> 
+> > 
+> > Also, are these problems bugs - do they have adverse effect visible
+> > by
+> > users? If so perhaps they should be targeted at 'net' rather than
+> > 'net-next', and an appropriate Fixes tag should appear just above
+> > the Signed-off-by line (no blank line in between).
+> 
+> The changes listed in the patch are feature additions where we give an
+> option of configuring the clock and speed in the absence of the EEPROM.
+> The current code does not have any bugs related to this. Since, these
+> are the additional features/requirements, we are targeting at 'net-
+> next' rather than 'net'.
 
-A couple of recent commits broke the handling of such cases so that
-attributes are now erroneously created in the debugfs root directory the
-second time a regulator is requested and the log is filled with errors
-like:
-
-	debugfs: File 'uA_load' in directory '/' already present!
-	debugfs: File 'min_uV' in directory '/' already present!
-	debugfs: File 'max_uV' in directory '/' already present!
-	debugfs: File 'constraint_flags' in directory '/' already present!
-
-on any further calls.
-
-Fixes: 2715bb11cfff ("regulator: core: Fix more error checking for debugfs_create_dir()")
-Fixes: 08880713ceec ("regulator: core: Streamline debugfs operations")
-Cc: stable@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/regulator/core.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index dabac9772741..2c33653ffdea 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1911,19 +1911,24 @@ static struct regulator *create_regulator(struct regulator_dev *rdev,
- 		}
- 	}
- 
--	if (err != -EEXIST)
-+	if (err != -EEXIST) {
- 		regulator->debugfs = debugfs_create_dir(supply_name, rdev->debugfs);
--	if (IS_ERR(regulator->debugfs))
--		rdev_dbg(rdev, "Failed to create debugfs directory\n");
-+		if (IS_ERR(regulator->debugfs)) {
-+			rdev_dbg(rdev, "Failed to create debugfs directory\n");
-+			regulator->debugfs = NULL;
-+		}
-+	}
- 
--	debugfs_create_u32("uA_load", 0444, regulator->debugfs,
--			   &regulator->uA_load);
--	debugfs_create_u32("min_uV", 0444, regulator->debugfs,
--			   &regulator->voltage[PM_SUSPEND_ON].min_uV);
--	debugfs_create_u32("max_uV", 0444, regulator->debugfs,
--			   &regulator->voltage[PM_SUSPEND_ON].max_uV);
--	debugfs_create_file("constraint_flags", 0444, regulator->debugfs,
--			    regulator, &constraint_flags_fops);
-+	if (regulator->debugfs) {
-+		debugfs_create_u32("uA_load", 0444, regulator->debugfs,
-+				   &regulator->uA_load);
-+		debugfs_create_u32("min_uV", 0444, regulator->debugfs,
-+				   &regulator->voltage[PM_SUSPEND_ON].min_uV);
-+		debugfs_create_u32("max_uV", 0444, regulator->debugfs,
-+				   &regulator->voltage[PM_SUSPEND_ON].max_uV);
-+		debugfs_create_file("constraint_flags", 0444, regulator->debugfs,
-+				    regulator, &constraint_flags_fops);
-+	}
- 
- 	/*
- 	 * Check now if the regulator is an always on regulator - if
--- 
-2.43.2
-
+Thanks, I agree net-next is appropriate for such changes.
 
