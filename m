@@ -1,145 +1,146 @@
-Return-Path: <linux-kernel+bounces-174143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9767E8C0AC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:08:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8268C0AC6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2672D284A14
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F201F2386C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5F61494BF;
-	Thu,  9 May 2024 05:08:23 +0000 (UTC)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81350149016;
+	Thu,  9 May 2024 05:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqZUvz5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF391494B4;
-	Thu,  9 May 2024 05:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C5E148FFB;
+	Thu,  9 May 2024 05:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715231303; cv=none; b=DS36HP3dghJwLOVfZsfHZje+x3yxUc+sl6jm0GSNQBBACkc0NndkE9bi7eMbT6qEe9IjWsBLN29Ub/q0Tc4IceBi/A6uvOszWhVvVm1odgcUi/kBnYRPYooMLsYRI2J2FTze0YNnpVJZeymKBj2NSOI5xP83m9xhHjgynxXqJfg=
+	t=1715231298; cv=none; b=g/QgXwWvduHNFwktoELsyvrvJuVEiySxeK5q4OgNisrq45CJ+vGk1Gw5fYoB1lypS1kD/NAfyBnUzZn/IcAG05pmsQDkrOclwPPuN6ILDd67vLpvnCoIuzCCOSpsU12vHe00lSuueJHR+IGSZQ/JEklUW84Hhe74Twm6L+C51Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715231303; c=relaxed/simple;
-	bh=YZYM2CEf8uF3eNWleBd8V23QDnmsujeg+l05B7XGpos=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nEpHdYfVhLHY2S413cFitaoSFcWWmr2t+/fhcAXnKC+iHlmlXK2YDyza69w9RbORwmnhet94uferbglhkgishiXFzmjq7LIxF1juGF9jCsGAtPTmKcMECZ16ZyciemhvKb8mSkaAfvtLSrOb9Afjw7zQIFLwp3LyEBVBCpQUMF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6f453d2c5a1so484456b3a.2;
-        Wed, 08 May 2024 22:08:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715231301; x=1715836101;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GwMe+/sDHvAVGtTIX3MapIIEfVLTv/14jv9BLJ1rN/g=;
-        b=fIK4A+tg0L+o7FTBy86+r9UE39wNtbCZ7gMdON+nxylFz3jjIDaaEJqJzY2w/FcAgl
-         lWeHbkBPxoHHOyPFCfLEAeScaUJZz43F29KI1mV0AIg+T6JmTX5dutN1eMwjNQRAYlNC
-         +PVlTXBs8pVNv9vNqGAabR+XLyJtQOioXnsWuZ5IC9QjMqF1KaPQ1Ntm/KzHqrQh21Ky
-         BQzwqFySDd1DZT99nGcaCFMPRURo98601HChpwfispKLO0VYmsI5siCQquv5o4r3bBdP
-         QHo3L2Nkz/CXK6gVp6xHXJLth9mX5URS3TLkcdYtj7Q3dkuyTSqCdiFz/M/KND0EWS+N
-         OGFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUT75mwEcBl0iXkSfke+0ivJaYA0QD0sPmKxisWPYkQCKEctAGnlr8GHZ4KFs/mAcVowpilarc692zDRyCSsYiZAGbfIjnj60FBGvKvF7TgKwrX5dOZH3FxQ7XOSDyyEr72QTEIlpfONQMNxYkAxA==
-X-Gm-Message-State: AOJu0Yxpc85qaRmMeQ6X9hrF/L4G/Y/ZF6ZFAWpfEC+RNF8uJtENl4S5
-	g6ANgwEgG7OBF6khZYWaNYbnx3sMUlGOGzHjIP7k5fcOBanc4OO9OKO45p8/n5H6/ggxMAaoEsS
-	uTHIcCHWF9oXuzpe285JcIADAuvQ=
-X-Google-Smtp-Source: AGHT+IFqm2U3yXtg/ZYc5/6d6UOHoDN7bEJnNOA970nvjSewNnc5HjBRr7m++V9HmQFJfrHNC9mngcmYUma/XowNJJc=
-X-Received: by 2002:a05:6a21:a108:b0:1a7:60d8:a6dd with SMTP id
- adf61e73a8af0-1afc8dc8605mr5316420637.53.1715231301105; Wed, 08 May 2024
- 22:08:21 -0700 (PDT)
+	s=arc-20240116; t=1715231298; c=relaxed/simple;
+	bh=S3wo7d6dVVVHJbHfUlKIIqEpnUYGY2iZwMogOjuJGx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbxQqzwcuAAcpVW+SyZr2GP81mXqH3fDOebXt+o3HPwcuHlWZniKiAQbOBSSGuOhoh+PrOx4r29s+MuXEmc+NoDHK4AEISnVwsWVZb8z74F3V0c2WPF8fMe18YW4/9FWfELZ19p5NpSEUnICK1bI/9fUChYn4G7s238RluMErfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqZUvz5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1BDC116B1;
+	Thu,  9 May 2024 05:08:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715231298;
+	bh=S3wo7d6dVVVHJbHfUlKIIqEpnUYGY2iZwMogOjuJGx8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DqZUvz5OrJ+ljxY18xYa63gis6+nDn5tcioIVdZDq8ho8RI6U5ijznAFS4hxiR60f
+	 LfV01nYVRzdQrQ0ATJcuPgPXTssf30nrDmi/evBw6Q+CJtIeqM/88fb91zTjdr/8Po
+	 q4uNnul58qGMheBbRlZ4cP0mGEPu+8G3zASJ8VF67CxTZxe8tyOdwdWdYKGe38Coyx
+	 WdRBOZCE5XXrSxQI7wAyLPZmZHp50ejFkSlSjllcNKS/VX7Sq8XVvU21u5a1yPV+tx
+	 b0KLCjIGyK7IN/xntAqgcFEvYqvZy+1uZrtL4PaHtIYT3XD7ZOx12YRQrux1z8hDv8
+	 Od5H+knND8F8A==
+Date: Thu, 9 May 2024 07:08:15 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 0/6] Support ROHM BD96801 scalable PMIC
+Message-ID: <ZjxaP_BNWVufJb_X@finisterre.sirena.org.uk>
+References: <cover.1712058690.git.mazziesaccount@gmail.com>
+ <f7d454ac-6ecb-4431-a1de-c9b5d1240969@gmail.com>
+ <eb03ec33-0627-4986-be04-8e35da390d6b@sirena.org.uk>
+ <b6279be8-cf7d-4608-b556-3c01587f0d43@gmail.com>
+ <f1e3d31d-8c24-4cdc-ae26-747f383a937b@gmail.com>
+ <b6ded975-1d16-46ea-84a2-8799b36e1270@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508060427.417-1-ravi.bangoria@amd.com>
-In-Reply-To: <20240508060427.417-1-ravi.bangoria@amd.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 8 May 2024 22:08:09 -0700
-Message-ID: <CAM9d7cgFKcHXeTXxax7GRCK__0U3HUnG3Ls09GpnD8FipyJk1A@mail.gmail.com>
-Subject: Re: [RFC 0/4] perf sched: Introduce schedstat tool
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	irogers@google.com, swapnil.sapkal@amd.com, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, rostedt@goodmis.org, 
-	vincent.guittot@linaro.org, bristot@redhat.com, adrian.hunter@intel.com, 
-	james.clark@arm.com, kan.liang@linux.intel.com, gautham.shenoy@amd.com, 
-	kprateek.nayak@amd.com, juri.lelli@redhat.com, yangjihong@bytedance.com, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	santosh.shukla@amd.com, ananth.narayan@amd.com, sandipan.das@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/PL7cyDLGd10Dqzd"
+Content-Disposition: inline
+In-Reply-To: <b6ded975-1d16-46ea-84a2-8799b36e1270@gmail.com>
+X-Cookie: Sorry.  Nice try.
 
-Hi Ravi,
 
-On Tue, May 7, 2024 at 11:05=E2=80=AFPM Ravi Bangoria <ravi.bangoria@amd.co=
-m> wrote:
->
-> MOTIVATION
-> ----------
->
-> Existing `perf sched` is quite exhaustive and provides lot of insights
-> into scheduler behavior but it quickly becomes impractical to use for
-> long running or scheduler intensive workload. For ex, `perf sched record`
-> has ~7.77% overhead on hackbench (with 25 groups each running 700K loops
-> on a 2-socket 128 Cores 256 Threads 3rd Generation EPYC Server), and it
-> generates huge 56G perf.data for which perf takes ~137 mins to prepare
-> and write it to disk [1].
+--/PL7cyDLGd10Dqzd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Right, this is painful.
+On Mon, Apr 22, 2024 at 01:52:27PM +0300, Matti Vaittinen wrote:
+> On 4/5/24 12:19, Matti Vaittinen wrote:
+> > On 4/4/24 16:15, Matti Vaittinen wrote:
 
->
-> Unlike `perf sched record`, which hooks onto set of scheduler tracepoints
-> and generates samples on a tracepoint hit, `perf sched schedstat record`
-> takes snapshot of the /proc/schedstat file before and after the workload,
-> i.e. there is zero interference on workload run. Also, it takes very
-> minimal time to parse /proc/schedstat, convert it into perf samples and
-> save those samples into perf.data file. Result perf.data file is much
-> smaller. So, overall `perf sched schedstat record` is much more light-
-> weight compare to `perf sched record`.
+> > > > I would expect each parent interrupt to show up as a separate remap_irq.
 
-Nice work!
+> > > > So if we arrange to supply a name when we register multiple domains
+> > > > things should work fine?
 
->
-> We, internally at AMD, have been using this (a variant of this, known as
-> "sched-scoreboard"[2]) and found it to be very useful to analyse impact
-> of any scheduler code changes[3][4].
->
-> Please note that, this is not a replacement of perf sched record/report.
-> The intended users of the new tool are scheduler developers, not regular
-> users.
+> > After my latest findings, yes, I think so. How to do this correctly is
+> > beyond me though. The __irq_domain_create() seems to me that the name is
+> > meant to be the dt-node name when the controller is backed by a real
+> > dt-node. Naming of the irq_domain_alloc_named_fwnode() sounds to me like
 
-Great, I think it's very useful.
+..
 
->
-> USAGE
-> -----
->
->   # perf sched schedstat record
->   # perf sched schedstat report
+> If we wanted to support multiple HWIRQs / regmap-IRQ controller, it would
+> require us to duplicate almost everything in the struct regmap_irq_chip for
+> every new parent IRQ. The status/mask register information, IRQ type, etc.
+> Naturally, it would require also duplicating lot of the data contained in
+> the struct regmap_irq_chip_data. I am not sure if this could be done so the
+> change is not reflected in the existing IRQ data initialization macros etc.
+> Furthermore, some API changes would be required like changes to
+> regmap_irq_get_domain().
 
-Hmm. I think we can remove the duplication in 'sched'. :)
-Given you are thinking of taskstat, how about making it
-'cpustat' instead?
+I don't understand what the difficulty is here - we're creating multiple
+interrupt controllers so I'd expect to have to have full definitions of
+each, and since everything is referenced by name from the root
+regmap_irq_chip which gets registered it's just a case of supplying
+different names and all the helpers should be fine?
 
-Also I think it'd be easier if you also provide 'live' mode so that
-users can skip record + report steps and run the workload
-directly like uftrace does. :)
+> Thus, forcing the regmap-IRQ to support multiple parents instead of having
+> own regmap-IRQ instance / parent IRQ feels like fitting square item to a
+> round hole. I am sure fixing all the bugs I caused would give donate a lot
+> of EXP-points though :rolleyes:
 
-Something like this
+Right, my suggestion is to register multiple regmap_irq instrances - one
+per parent - and supply a name that allows all the display/debugfs stuff
+that currently uses the dev_name() to deduplicate.  You'd end up
+sticking -primary, -secondary or whatever name was supplied onto the
+names we currently use.
 
-  # perf sched cpustat  myworkload
-  (result here ...)
+> Another option I see, is trying to think if irq-domain name could be
+> changed. (This is what the RFC v3 does, [ab]using the
+> irq_domain_update_bus_token()). I was a bit put off by the idea of
+> 'instantiating' multiple domains (or regmap-IRQ controllers) from a single
+> node, but more I think of this, more I lean towards it. Besides, this is not
 
-Thanks,
-Namhyung
+Yes, register mutliple controllers with different names.
 
->
-> Note: Although perf schedstat tool supports workload profiling syntax
-> (i.e. -- <workload> ), the recorded profile is still systemwide since
-> the /proc/schedstat is a systemwide file.
+--/PL7cyDLGd10Dqzd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY8WjwACgkQJNaLcl1U
+h9BlIgf/efaIkV0f4VqTTEAwN9jK2xqYQzUU/QYaEluaoaVtgKOVZ/Y2CA88QkDD
+gOs5ZkvkmijhpvI96By0iwMdNHM7St2qpr+QBOrRx1eMEgffLgVTTQC3L3ob+N5e
+/igyou5OM/aoQmqWKDpB3xbNrt3ALHZ5wkl4RM/bs3gKax7Nu2JuOTgK2LKqaVqL
+H2zf8A3U1HILV+T9CLWeF0Hy6euF1CaZTaAAhgDNVoyOKbV4BvyjRqbenGsMhhAa
+PjGnEt/d/o/zyZLwuIOz2ysbl0rsaW4RtK7zpTYFSjZFGCGlTCPWAfu1PrqD865l
+Q4d3hwpxu39VfTyfjb6bZ7JLfMbQHQ==
+=iZw5
+-----END PGP SIGNATURE-----
+
+--/PL7cyDLGd10Dqzd--
 
