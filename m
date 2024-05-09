@@ -1,66 +1,238 @@
-Return-Path: <linux-kernel+bounces-174464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3462C8C0F24
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:02:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1684D8C0ED6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6413B1C21503
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE22B282095
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5B214B959;
-	Thu,  9 May 2024 12:02:27 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF71311A0;
+	Thu,  9 May 2024 11:28:54 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE97414A90;
-	Thu,  9 May 2024 12:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E2F130A4D;
+	Thu,  9 May 2024 11:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256146; cv=none; b=HQUppc4PLoZockH1QNYfBmgSOkAewyEnCDSy7zpVXAZv80l9elN2nhGc3TKpQzaaN6EnV4FNVVvOmRHLxQRO4z5BqrfLFW/er8LybqXJZly0JZv7fVZH4+OO+a7iuQLEEdWpwcWiINAKvqsjOYHS/s0Y05jAS3eL/e98q464bWY=
+	t=1715254133; cv=none; b=XEGXTr5xq9L6UvRdlIbDa/+TXGJ+KHZG6c/9vL1cE6FVQQloKZFlxDonQC4ag5AFEsCcsgSY5ibTfvSQCuFeX/zAyg4rYIvwizSa4oSh96GtVGdV1xpm/9QGXPjiqUmqhN3KteVgsnkun9bBuaDCSl0VABCKS+d+KgeQ+QEpCn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256146; c=relaxed/simple;
-	bh=X2WOAQIVZvh19O6igpf5MGMHAkbbgGN0l/hQaACG2IE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jyVqTEKEm75PBfr7j7B9+iwC98DxFf105U0FeAPOKd7V7YSN6sSk9biXqXGRLymWUC7EfUTM+mHGwcB13vEr8WYuHWMGkDR7miO+5+53meZtwr2R+eXzqR3WF8rtL/M0GyRn29TnPoa1SXJTDvkNNAnoHOqf7r3c/amFqG4agik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 4AED8227A87; Thu,  9 May 2024 14:02:21 +0200 (CEST)
-Date: Thu, 9 May 2024 14:02:20 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Christoph Hellwig <hch@lst.de>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/7] dma: avoid redundant calls for sync operations
-Message-ID: <20240509120220.GB11327@lst.de>
-References: <20240507112026.1803778-1-aleksander.lobakin@intel.com> <CGME20240507112115eucas1p117bc01652d4cdbe810de841830227f47@eucas1p1.samsung.com> <20240507112026.1803778-3-aleksander.lobakin@intel.com> <46160534-5003-4809-a408-6b3a3f4921e9@samsung.com> <b4632761-3ec6-4070-a60e-b74c1bfdd579@intel.com> <3dce41a3-e5a9-43e7-b918-ecb8d688ea1c@intel.com>
+	s=arc-20240116; t=1715254133; c=relaxed/simple;
+	bh=sP2NP3C9j/mWnfkH0TckSp5PWwPjr51og+mRQV3iKoI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TzHI1X57GRvDcW+FmbE9pRaUCd4xMBKzIZP0Cx8MKdnn6ntUg5VL7RPzksM6q2v6JbVNeI9gCkycEBl/U7wcp8qVcpAlXsUtqCgHW6I5rpMydDoUeP+wCO9ceT0XTeO3FI0ZfILwjNi+bMfMP51DDEnVb3ejJSiQxYUV6vddERk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZqSJ1qzgztTVs;
+	Thu,  9 May 2024 19:25:20 +0800 (CST)
+Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7A1011800CA;
+	Thu,  9 May 2024 19:28:47 +0800 (CST)
+Received: from localhost.localdomain (10.67.175.61) by
+ dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 19:28:47 +0800
+From: Zheng Yejian <zhengyejian1@huawei.com>
+To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
+	<mathieu.desnoyers@efficios.com>
+CC: <Markus.Elfring@web.de>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <zhengyejian1@huawei.com>
+Subject: [PATCH v4] ftrace: Fix possible use-after-free issue in ftrace_location()
+Date: Fri, 10 May 2024 03:28:59 +0800
+Message-ID: <20240509192859.1273558-1-zhengyejian1@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240401125543.1282845-1-zhengyejian1@huawei.com>
+References: <20240401125543.1282845-1-zhengyejian1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3dce41a3-e5a9-43e7-b918-ecb8d688ea1c@intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500012.china.huawei.com (7.185.36.15)
 
-On Thu, May 09, 2024 at 01:59:41PM +0200, Alexander Lobakin wrote:
-> Or invert the flag, so that false would mean "it needs sync" and it
-> would be the default if dma_*mask*() wasn't called.
+KASAN reports a bug:
 
-That is probably the safest option.
+  BUG: KASAN: use-after-free in ftrace_location+0x90/0x120
+  Read of size 8 at addr ffff888141d40010 by task insmod/424
+  CPU: 8 PID: 424 Comm: insmod Tainted: G        W          6.9.0-rc2+
+  [...]
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x68/0xa0
+   print_report+0xcf/0x610
+   kasan_report+0xb5/0xe0
+   ftrace_location+0x90/0x120
+   register_kprobe+0x14b/0xa40
+   kprobe_init+0x2d/0xff0 [kprobe_example]
+   do_one_initcall+0x8f/0x2d0
+   do_init_module+0x13a/0x3c0
+   load_module+0x3082/0x33d0
+   init_module_from_file+0xd2/0x130
+   __x64_sys_finit_module+0x306/0x440
+   do_syscall_64+0x68/0x140
+   entry_SYSCALL_64_after_hwframe+0x71/0x79
+
+The root cause is that, in lookup_rec(), ftrace record of some address
+is being searched in ftrace pages of some module, but those ftrace pages
+at the same time is being freed in ftrace_release_mod() as the
+corresponding module is being deleted:
+
+           CPU1                       |      CPU2
+  register_kprobes() {                | delete_module() {
+    check_kprobe_address_safe() {     |
+      arch_check_ftrace_location() {  |
+        ftrace_location() {           |
+          lookup_rec() // USE!        |   ftrace_release_mod() // Free!
+
+To fix this issue:
+  1. Hold rcu lock as accessing ftrace pages in ftrace_location_range();
+  2. Use ftrace_location_range() instead of lookup_rec() in
+     ftrace_location();
+  3. Call synchronize_rcu() before freeing any ftrace pages both in
+     ftrace_process_locs()/ftrace_release_mod()/ftrace_free_mem().
+
+Fixes: ae6aa16fdc16 ("kprobes: introduce ftrace based optimization")
+Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Zheng Yejian <zhengyejian1@huawei.com>
+---
+ kernel/trace/ftrace.c | 39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
+
+v4:
+ - Simply add rcu locking into ftrace_location_range() as suggested by Steve.
+   Link: https://lore.kernel.org/linux-trace-kernel/20240502170743.15a5ff1c@gandalf.local.home/
+
+v3:
+ - Complete the commit description and add Suggested-by tag
+ - Add comments around where synchronize_rcu() is called
+ - Link: https://lore.kernel.org/linux-trace-kernel/20240417032830.1764690-1-zhengyejian1@huawei.com/
+
+v2:
+ - Link: https://lore.kernel.org/all/20240416112459.1444612-1-zhengyejian1@huawei.com/
+ - Use RCU lock instead of holding ftrace_lock as suggested by Steve.
+   Link: https://lore.kernel.org/all/20240410112823.1d084c8f@gandalf.local.home/
+
+v1:
+ - Link: https://lore.kernel.org/all/20240401125543.1282845-1-zhengyejian1@huawei.com/
+
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index da1710499698..1e12df9bb531 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -1595,12 +1595,15 @@ static struct dyn_ftrace *lookup_rec(unsigned long start, unsigned long end)
+ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
+ {
+ 	struct dyn_ftrace *rec;
++	unsigned long ip = 0;
+ 
++	rcu_read_lock();
+ 	rec = lookup_rec(start, end);
+ 	if (rec)
+-		return rec->ip;
++		ip = rec->ip;
++	rcu_read_unlock();
+ 
+-	return 0;
++	return ip;
+ }
+ 
+ /**
+@@ -1614,25 +1617,22 @@ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
+  */
+ unsigned long ftrace_location(unsigned long ip)
+ {
+-	struct dyn_ftrace *rec;
++	unsigned long loc;
+ 	unsigned long offset;
+ 	unsigned long size;
+ 
+-	rec = lookup_rec(ip, ip);
+-	if (!rec) {
++	loc = ftrace_location_range(ip, ip);
++	if (!loc) {
+ 		if (!kallsyms_lookup_size_offset(ip, &size, &offset))
+ 			goto out;
+ 
+ 		/* map sym+0 to __fentry__ */
+ 		if (!offset)
+-			rec = lookup_rec(ip, ip + size - 1);
++			loc = ftrace_location_range(ip, ip + size - 1);
+ 	}
+ 
+-	if (rec)
+-		return rec->ip;
+-
+ out:
+-	return 0;
++	return loc;
+ }
+ 
+ /**
+@@ -6596,6 +6596,8 @@ static int ftrace_process_locs(struct module *mod,
+ 	/* We should have used all pages unless we skipped some */
+ 	if (pg_unuse) {
+ 		WARN_ON(!skipped);
++		/* Need to synchronize with ftrace_location_range() */
++		synchronize_rcu();
+ 		ftrace_free_pages(pg_unuse);
+ 	}
+ 	return ret;
+@@ -6809,6 +6811,9 @@ void ftrace_release_mod(struct module *mod)
+  out_unlock:
+ 	mutex_unlock(&ftrace_lock);
+ 
++	/* Need to synchronize with ftrace_location_range() */
++	if (tmp_page)
++		synchronize_rcu();
+ 	for (pg = tmp_page; pg; pg = tmp_page) {
+ 
+ 		/* Needs to be called outside of ftrace_lock */
+@@ -7142,6 +7147,7 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
+ 	unsigned long start = (unsigned long)(start_ptr);
+ 	unsigned long end = (unsigned long)(end_ptr);
+ 	struct ftrace_page **last_pg = &ftrace_pages_start;
++	struct ftrace_page *tmp_page = NULL;
+ 	struct ftrace_page *pg;
+ 	struct dyn_ftrace *rec;
+ 	struct dyn_ftrace key;
+@@ -7183,12 +7189,8 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
+ 		ftrace_update_tot_cnt--;
+ 		if (!pg->index) {
+ 			*last_pg = pg->next;
+-			if (pg->records) {
+-				free_pages((unsigned long)pg->records, pg->order);
+-				ftrace_number_of_pages -= 1 << pg->order;
+-			}
+-			ftrace_number_of_groups--;
+-			kfree(pg);
++			pg->next = tmp_page;
++			tmp_page = pg;
+ 			pg = container_of(last_pg, struct ftrace_page, next);
+ 			if (!(*last_pg))
+ 				ftrace_pages = pg;
+@@ -7205,6 +7207,11 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
+ 		clear_func_from_hashes(func);
+ 		kfree(func);
+ 	}
++	/* Need to synchronize with ftrace_location_range() */
++	if (tmp_page) {
++		synchronize_rcu();
++		ftrace_free_pages(tmp_page);
++	}
+ }
+ 
+ void __init ftrace_free_init_mem(void)
+-- 
+2.25.1
 
 
