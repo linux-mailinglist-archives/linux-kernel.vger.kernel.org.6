@@ -1,198 +1,169 @@
-Return-Path: <linux-kernel+bounces-175012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534468C18AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:51:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32DB8C18C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BC8B22105
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8871F2569F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28211292E6;
-	Thu,  9 May 2024 21:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED291292D5;
+	Thu,  9 May 2024 21:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DKjs52i4"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fBXhR9tG"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC4282871
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E16C12838F;
+	Thu,  9 May 2024 21:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715291458; cv=none; b=I/xDxnpbjJwQRaLj/2JPB9mFPnQQXTILTSalNtjY1fu8vKs+JPZDfSA068HIJasQVQqgfLBxKW4IlJ+7BbTUo2zU43TSVFM8gE7EfZMP7APlWdIPEKwAIqc0fsTqJ3WHzoTe94GYYQRjxTHc+PsBDpDLe/gWoo0oXPsM4EhdTBg=
+	t=1715291569; cv=none; b=uqlT/+jC7sPGIH+XUF+BryMNt3i2/GqCgSO29swIAeaKjCpZ/+rwOSOn3eSc3+HCcmmdzwN+8L2a+RvSIlKloA490poOkOVB5+TfJj/bi8iMnVa/Dox2Qv6yMm23wOy4FijDL/uvmZN+4Q6qLfFkYQooUuWb/kn0iQ742UqO9Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715291458; c=relaxed/simple;
-	bh=bb0dF2CqfEI2bRgZH2VWNgit4IJI5S1YcgCig5aMvZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n7S9Yte83VeCLcGtDDQG+uk3N7l+4/cYTbLslFf+6v3FkgeGRkgGSeLC+4RuXj4Czgm3o0c4UvAjGfVK5BJMPu5gjnXdQ14RQywrwfheDwcF4I57Yy6QefgPEZ4wAcxsR4sQrkQKM+94CekmcWtl71eTrMmKXR3JTYoVB90CRjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DKjs52i4; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <868a4758-2873-4ede-83e5-65f42cb12b81@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715291453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x7hxte+yN2kBW0kbRz2/Qi+5X2Kn+BAGAuWpBF10X3k=;
-	b=DKjs52i4jmyGtfwbwo/aDOO4scg7otP0xU9TesqQGHy3gR0RiG3HaMz+xQsYejHm8aO2/B
-	jFwXbjrXnl34x8jZp8VRWC+NcXZVXpB4MYP7+cT1ef15sDfmcRZyz5XFX6PTxNDb/3sYz1
-	pJrwqVEcTl3s5FjsazqJS9FAcaRN7Ow=
-Date: Thu, 9 May 2024 22:50:46 +0100
+	s=arc-20240116; t=1715291569; c=relaxed/simple;
+	bh=3bwfLA39L9ZeBcaoofJ14Sx9si3+pwfwvAVG305iFhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovHEHPpRYrCbSHxMHGLzM5DPVhxDeikvjkADgeN4Dr22pv+f9Ce/3qx2QJUnVVa4A7x6zUhlVgcuPG3c0jF1Mv9hTSfYB8gwQr/Dgwj4Ijz/xhw3SH8Zi8XTzY+VeySftmaoOlDll6UzhxB7YEh9w14SbTh7CZer4IfblyZsHr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fBXhR9tG; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0289840E0192;
+	Thu,  9 May 2024 21:52:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id TOba2Rxo919j; Thu,  9 May 2024 21:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715291560; bh=tpDh3EbGnG3/bwl8KzPdGOE+DAN1ew75iViGriFZC/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fBXhR9tGWcdOWe23rNttop//56eTyyDpeXNpJ4lSMVVQPLYUrBtpTfBVn7gGo/QWj
+	 zyvH325uv/DDZMSFrXD4Q9RP3gX6kAwFV8tRfZxNbGLyxJ7WgJ4aYKD6mXWj+e6Qnv
+	 I6i4UVZXvLmVN1pExwumnJMdf9SiZJHWCmrQ+2xVJzNBt88vHm2m3B3S+sAXQ6pbmv
+	 5DSIrQWewjUb1nPUw1XgVc3FdErhFXT/hy3OFVKhZfdVU0oGIPs+e7p2IMgELyIz2I
+	 IIlxNcPJfuehKsogqTd5cLKphDvHoWpUsdScQtfqZZejGokQaiFQ88LR4xERD9bnZw
+	 qVLHWhNf3pz69YzJoMYo1dJBubzrzSdII69o1QJLbA/Y/1zgD5PK9OWZqfrlPG2lVZ
+	 tabluFfN+2Bm/BvKRVyrCmCEyk03K/SRxsP71Co0U81msPhvVQv1KOR3WDvat7iz4K
+	 8b08YGKo3HQQpH6gYWyqAFfudXshulv3DBQWFZna12k20MoR3lKsIDjlaNa9KzQb+U
+	 +ieZ5wwKXM2+GWcl3sAXbdapZSHeOFARb5t9AvptZu6nY9n8Zu96CXgktCMGwPxxXZ
+	 srf+BGCDDp/r6NqBQfaQh+g8XANaQw7sfMuLHaaERkbx59uPzCgafGKrZVuRz2nfVd
+	 eQ5btGVipzvCBQ3nTI/JzKKU=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E5EB940E0249;
+	Thu,  9 May 2024 21:51:53 +0000 (UTC)
+Date: Thu, 9 May 2024 23:51:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"dave@stgolabs.net" <dave@stgolabs.net>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+	"ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
+	"leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>,
+	"jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
+	"erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>,
+	"mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
+	"gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+	tanxiaofei <tanxiaofei@huawei.com>,
+	"Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
+	wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Message-ID: <20240509215147.GBZj1Fc06Ieg8EQfnR@fat_crate.local>
+References: <63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
+ <20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
+ <e0ce36eb80054440ab877ccee4e606de@huawei.com>
+ <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
+ <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
+ <20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
+ <20240509101939.0000263a@Huawei.com>
+ <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
+ <20240509200306.GAZj0r-h5Tnc0ecIOz@fat_crate.local>
+ <663d3e58a0f73_1c0a1929487@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH V1 8/9] bnxt_en: Add TPH support in BNXT driver
-To: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: bhelgaas@google.com, corbet@lwn.net, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com,
- ajit.khaparde@broadcom.com, manoj.panicker2@amd.com, Eric.VanTassell@amd.com
-References: <20240509162741.1937586-1-wei.huang2@amd.com>
- <20240509162741.1937586-9-wei.huang2@amd.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240509162741.1937586-9-wei.huang2@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <663d3e58a0f73_1c0a1929487@dwillia2-xfh.jf.intel.com.notmuch>
 
-On 09/05/2024 17:27, Wei Huang wrote:
-> From: Manoj Panicker <manoj.panicker2@amd.com>
-> 
-> As a usage example, this patch implements TPH support in Broadcom BNXT
-> device driver by invoking pcie_tph_set_st() function when interrupt
-> affinity is changed.
-> 
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-> Reviewed-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Manoj Panicker <manoj.panicker2@amd.com>
-> ---
->   drivers/net/ethernet/broadcom/bnxt/bnxt.c | 51 +++++++++++++++++++++++
->   drivers/net/ethernet/broadcom/bnxt/bnxt.h |  4 ++
->   2 files changed, 55 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> index 2c2ee79c4d77..be9c17566fb4 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> @@ -55,6 +55,7 @@
->   #include <net/page_pool/helpers.h>
->   #include <linux/align.h>
->   #include <net/netdev_queues.h>
-> +#include <linux/pci-tph.h>
->   
->   #include "bnxt_hsi.h"
->   #include "bnxt.h"
-> @@ -10491,6 +10492,7 @@ static void bnxt_free_irq(struct bnxt *bp)
->   				free_cpumask_var(irq->cpu_mask);
->   				irq->have_cpumask = 0;
->   			}
-> +			irq_set_affinity_notifier(irq->vector, NULL);
->   			free_irq(irq->vector, bp->bnapi[i]);
->   		}
->   
-> @@ -10498,6 +10500,45 @@ static void bnxt_free_irq(struct bnxt *bp)
->   	}
->   }
->   
-> +static void bnxt_rtnl_lock_sp(struct bnxt *bp);
-> +static void bnxt_rtnl_unlock_sp(struct bnxt *bp);
-> +static void bnxt_irq_affinity_notify(struct irq_affinity_notify *notify,
-> +				     const cpumask_t *mask)
-> +{
-> +	struct bnxt_irq *irq;
-> +
-> +	irq = container_of(notify, struct bnxt_irq, affinity_notify);
-> +	cpumask_copy(irq->cpu_mask, mask);
-> +
-> +	if (!pcie_tph_set_st(irq->bp->pdev, irq->msix_nr,
-> +			     cpumask_first(irq->cpu_mask),
-> +			     TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY))
-> +		pr_err("error in configuring steering tag\n");
-> +
-> +	if (netif_running(irq->bp->dev)) {
-> +		rtnl_lock();
-> +		bnxt_close_nic(irq->bp, false, false);
-> +		bnxt_open_nic(irq->bp, false, false);
-> +		rtnl_unlock();
-> +	}
+On Thu, May 09, 2024 at 02:21:28PM -0700, Dan Williams wrote:
+> Recall that there are 461 usages of module_pci_driver() in the kernel.
+> Every one of those arranges for just registering a PCI driver when the
+> module is loaded regardless of whether any devices that driver cares
+> about are present.
 
-Is it really needed? It will cause link flap and pause in the traffic
-service for the device. Why the device needs full restart in this case?
+Sorry, I read your text a bunch of times but I still have no clue what
+you're trying to tell me.
 
-> +}
-> +
-> +static void bnxt_irq_affinity_release(struct kref __always_unused *ref)
-> +{
-> +}
-> +
-> +static inline void __bnxt_register_notify_irqchanges(struct bnxt_irq *irq)
+All *I* am saying is since this is a new subsystem and the methods for
+detecting the scrub functionality are two - either an ACPI table or
+a GET_SUPPORTED_FEATURES command, then the init function of the
+subsystem:
 
-No inlines in .c files, please. Let compiler decide what to inline.
++static int __init memory_scrub_control_init(void)
++{
++       return class_register(&scrub_class);
++}
++subsys_initcall(memory_scrub_control_init);
 
-> +{
-> +	struct irq_affinity_notify *notify;
-> +
-> +	notify = &irq->affinity_notify;
-> +	notify->irq = irq->vector;
-> +	notify->notify = bnxt_irq_affinity_notify;
-> +	notify->release = bnxt_irq_affinity_release;
-> +
-> +	irq_set_affinity_notifier(irq->vector, notify);
-> +}
-> +
->   static int bnxt_request_irq(struct bnxt *bp)
->   {
->   	int i, j, rc = 0;
-> @@ -10543,6 +10584,7 @@ static int bnxt_request_irq(struct bnxt *bp)
->   			int numa_node = dev_to_node(&bp->pdev->dev);
->   
->   			irq->have_cpumask = 1;
-> +			irq->msix_nr = map_idx;
->   			cpumask_set_cpu(cpumask_local_spread(i, numa_node),
->   					irq->cpu_mask);
->   			rc = irq_set_affinity_hint(irq->vector, irq->cpu_mask);
-> @@ -10552,6 +10594,15 @@ static int bnxt_request_irq(struct bnxt *bp)
->   					    irq->vector);
->   				break;
->   			}
-> +
-> +			if (!pcie_tph_set_st(bp->pdev, i,
-> +					     cpumask_first(irq->cpu_mask),
-> +					     TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY)) {
-> +				netdev_err(bp->dev, "error in setting steering tag\n");
-> +			} else {
-> +				irq->bp = bp;
-> +				__bnxt_register_notify_irqchanges(irq);
-> +			}
->   		}
->   	}
->   	return rc;
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> index dd849e715c9b..0d3442590bb4 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> @@ -1195,6 +1195,10 @@ struct bnxt_irq {
->   	u8		have_cpumask:1;
->   	char		name[IFNAMSIZ + 2];
->   	cpumask_var_t	cpu_mask;
-> +
-> +	int		msix_nr;
-> +	struct bnxt	*bp;
-> +	struct irq_affinity_notify affinity_notify;
->   };
->   
->   #define HWRM_RING_ALLOC_TX	0x1
+can check for those two things before initializing.
 
+If there is no scrubbing functionality, then it can return an error and
+not load.
+
+The same as when we don't load x86 drivers on the wrong vendor and so
+on.
+
+If the check is easy, why not do it?
+
+Make more sense?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
