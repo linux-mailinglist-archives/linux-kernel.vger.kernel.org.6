@@ -1,196 +1,93 @@
-Return-Path: <linux-kernel+bounces-173960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54DF8C084C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:11:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E3B8C084E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6448E1F21FFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:11:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BCDB21DD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E145C82;
-	Thu,  9 May 2024 00:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F9717F5;
+	Thu,  9 May 2024 00:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="quGCd96A"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PdYVeo7h"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6D34C70
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 00:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D008A36C;
+	Thu,  9 May 2024 00:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715213454; cv=none; b=hX8DROjklChKa09k+0mrf27ODmaZH3xQTSxe4vdyZ6Zvft84zV36uc49GjwxhxwgdqUjW6rA2Z0/Yl2s8VG+PJXXAPHB5IJvyelFyZCQMoHrU1ozb8n5ui9DiPa4Y/zMU4170R2ZqqYui4RU9iIRYihQwg6/N581qpJVe2iWt4o=
+	t=1715213504; cv=none; b=Ek7cPpMyhKXIVXO2nFdxdlFUkGYLfv38lFLNlPb9oOoY5FaQJdiYjS2aHpeKywnZNNyIlwl2HMkMWRMBSKVy6UpPHfGvEEWNSKQHzMdFrh+vsvjEy9Slu+blvaPtWfGUY0AEQ7q0EOOJzH6RqjaH4LDFB9dMs5+NJHiKGk+wZno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715213454; c=relaxed/simple;
-	bh=qBebSFGe23qXNHpRvKnwFwAJnPuYEpMUnskY0mHPUrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NUuxYzBjPSUqEnuJCHo1yAn2jmQZilgzzc01Ec/1nKJ4NmImJhdyFOanHELeu4OJEsL2umMzTKQr93LyoVSCWQJoFdAKPft9MOlOM6NLVikY1caEUUWqnD7qKzYbS2rQrX//0M8QscqeLwHu/weiZ7NUMJIameJczOZBSmx+2tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=quGCd96A; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5b21e393debso185889eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 17:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715213450; x=1715818250; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZqIlWMGzBPFcGrSBngkQrJzMqDGPG9IZxXHGwlwCwA=;
-        b=quGCd96ArelnOE/6jR2PICNWYL+yjgcpBQTWGRz8858h7zcLdHpD4yPsXyGkceVeFx
-         6ZEZu31weRy09C/x775rqVrhKNRbS5J7WEgKuSAk+xS+90tVAj1uwO01MMPhQWiHAD7+
-         0w3ruqsIAVLJwZluydzAyxLMgTsqnGILCEDQQhYMcU3S50PlbiAGgJ3fUWMz2OdkE4L6
-         ZRBH/b+5SYIOVlbtRzQIhv7mPSgpfBFJ6fxvLzEw6yZWDON4Y9ukBqs2GjL3HbCzDP52
-         bFo8GOOsYRTVUTetLDgiUyv1Wt5Y5biG3p3u+GimpT6WhrwwZ7MsWXuLBdvmrWTwiELM
-         7XDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715213450; x=1715818250;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LZqIlWMGzBPFcGrSBngkQrJzMqDGPG9IZxXHGwlwCwA=;
-        b=Y4rOWWQ5rN7nHa5l4kPEQs/u79aiGJoVq90UY6c+nnfzixdJvzJMw/MQnQNlagUlfI
-         BlnIq/8JPywfeKw4N1mnDyydJBxtGAoIMz7ArTwicU2m2YQAFxd5cSlJyOwl409kBMDd
-         rYfNmekwlLJrmxYLkAE06tfZv+VQGE09TRmXnOlDyrk1xvUbGCyym1twZLCcbJRSBXGL
-         IJmCFVcqix5FXxTvojNtjA1MQifRmYxeUbyxxyWA2dW/JoKKgIs41geaSu58k5nAWYsZ
-         BFs6/2U0Y5S8HomjdPC7+ZV/itC7Oqy640pfnTQ4iGRqluzK/91mLfYRA3gTtzQwqstk
-         mTOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCjImVjhkLIu5TBXMZxWuQm8jevHBNEjcEFFuSgj69ajPNeLPe5RKSbuNvMBNrTUN9F01Nk4us7Pf2G7R2audCUyyFCAhCL6rEKnxA
-X-Gm-Message-State: AOJu0YyLpR4ZnFhjfRMay3+bXj1xcrEJ1UKpKyj38PIuqvAoTzWs4wzN
-	EAR8KvvhrD8kZnIdJMCtrkGSPFikW1gThVKn35BSygd81KyM288HK1CK85rdEV8=
-X-Google-Smtp-Source: AGHT+IGf3JRzZDV8fYaLM87bNAbWYV5rWVExMXqYWMFb1yCMw/X1461/R98MMrR2NY4Y0ojK0sDDKw==
-X-Received: by 2002:a05:6358:785:b0:18d:9114:eb1e with SMTP id e5c5f4694b2df-192d3778875mr506366755d.22.1715213450408;
-        Wed, 08 May 2024 17:10:50 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:4144:6911:574f:fec1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634103f727dsm81409a12.72.2024.05.08.17.10.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 17:10:49 -0700 (PDT)
-Date: Wed, 8 May 2024 17:10:46 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
-	keescook@chromium.org, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, cleger@rivosinc.com,
-	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
-	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	apatel@ventanamicro.com, mchitale@ventanamicro.com,
-	dbarboza@ventanamicro.com, sameo@rivosinc.com,
-	shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 01/29] riscv: envcfg save and restore on task switching
-Message-ID: <ZjwUhvLBv13qi77a@ghost>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-2-debug@rivosinc.com>
+	s=arc-20240116; t=1715213504; c=relaxed/simple;
+	bh=+KPhFjLngoYnYZyMFLCInl0AWsMSJZc/VrdY+nzvKnc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IE2Co794TbZvYDqnVmvTeUoakkQnKtddKehpCTE6/XfF26gZJEYmCwACzRNBOjvq5vacfHee+PslauXw6rTrLvj1u8gUa9oKXAPl0meas/FZZuXpirRVhUgrmav2OlUsd+TvGJjJVEJkVsemwM7LPmHIDcfQYV8ON4AwrYVrpNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PdYVeo7h; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=T0KfQdeJdUtDz1RkJ9GIAZyjFD1/YLa59kctlv5ebos=; b=PdYVeo7hcVJjaTya
+	7fWFVguYsCPthqheYzy7e1CohSRCSyBpgB0xOazXiRaPPRLJwXccEk7dejXVj3O1wimqVlMLPK79t
+	9NZeGH+IgzUALyzy2kCd0a4UKtJoHy7A2LVdC1riAXAj1wDRV00cwL0xYKs0LMNcVUjtmiIFT2szO
+	5hUD8YYV66Q51flu9MW4DLyI9uaalk19azT9Xvl+RdN5w0klkYxsgUlT71XvTWgMtbeK5zBzXwqQy
+	vmxNCrZ9a+97V5G7JieFQ7ezntlWywDnWaYGn2XDQ6hvEK0q4G40/F4FRGBWYFI7u3rPw4eke0Wd9
+	pgfj+14GQydcSQ0KvQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s4rNr-00071m-2I;
+	Thu, 09 May 2024 00:11:40 +0000
+From: linux@treblig.org
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	sre@kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] Bluetooth/nokia: Remove unused struct 'hci_nokia_radio_hdr'
+Date: Thu,  9 May 2024 01:11:38 +0100
+Message-ID: <20240509001138.204427-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403234054.2020347-2-debug@rivosinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 03, 2024 at 04:34:49PM -0700, Deepak Gupta wrote:
-> envcfg CSR defines enabling bits for cache management instructions and
-> soon will control enabling for control flow integrity and pointer
-> masking features.
-> 
-> Control flow integrity enabling for forward cfi and backward cfi are
-> controlled via envcfg and thus need to be enabled on per thread basis.
-> 
-> This patch creates a place holder for envcfg CSR in `thread_info` and
-> adds logic to save and restore on task switching.
-> 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/riscv/include/asm/switch_to.h   | 10 ++++++++++
->  arch/riscv/include/asm/thread_info.h |  1 +
->  2 files changed, 11 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-> index 7efdb0584d47..2d9a00a30394 100644
-> --- a/arch/riscv/include/asm/switch_to.h
-> +++ b/arch/riscv/include/asm/switch_to.h
-> @@ -69,6 +69,15 @@ static __always_inline bool has_fpu(void) { return false; }
->  #define __switch_to_fpu(__prev, __next) do { } while (0)
->  #endif
->  
-> +static inline void __switch_to_envcfg(struct task_struct *next)
-> +{
-> +	register unsigned long envcfg = next->thread_info.envcfg;
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-This doesn't need the register storage class.
+'hci_nokia_radio_hdr' looks like it was unused since it's
+initial commit.
 
-> +
-> +	asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0", 0,
-> +							  RISCV_ISA_EXT_XLINUXENVCFG, 1)
-> +							  :: "r" (envcfg) : "memory");
-> +}
-> +
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/bluetooth/hci_nokia.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Something like:
+diff --git a/drivers/bluetooth/hci_nokia.c b/drivers/bluetooth/hci_nokia.c
+index 97da0b2bfd17e..62633d9ba7c43 100644
+--- a/drivers/bluetooth/hci_nokia.c
++++ b/drivers/bluetooth/hci_nokia.c
+@@ -116,11 +116,6 @@ struct hci_nokia_neg_evt {
+ #define SETUP_BAUD_RATE		921600
+ #define INIT_BAUD_RATE		120000
+ 
+-struct hci_nokia_radio_hdr {
+-	u8	evt;
+-	u8	dlen;
+-} __packed;
+-
+ struct nokia_bt_dev {
+ 	struct hci_uart hu;
+ 	struct serdev_device *serdev;
+-- 
+2.45.0
 
-static inline void __switch_to_envcfg(struct task_struct *next)
-{
-	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
-		csr_write(CSR_ENVCFG, next->thread_info.envcfg);
-}
-
-would be easier to read, but the alternative you have written doesn't
-have the jump that riscv_has_extension_unlikely has so what you have
-will be more performant.
-
-Does envcfg need to be save/restored always or just with
-CONFIG_RISCV_USER_CFI?
-
-- Charlie
-
->  extern struct task_struct *__switch_to(struct task_struct *,
->  				       struct task_struct *);
->  
-> @@ -80,6 +89,7 @@ do {							\
->  		__switch_to_fpu(__prev, __next);	\
->  	if (has_vector())					\
->  		__switch_to_vector(__prev, __next);	\
-> +	__switch_to_envcfg(__next);				\
->  	((last) = __switch_to(__prev, __next));		\
->  } while (0)
->  
-> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
-> index 5d473343634b..a503bdc2f6dd 100644
-> --- a/arch/riscv/include/asm/thread_info.h
-> +++ b/arch/riscv/include/asm/thread_info.h
-> @@ -56,6 +56,7 @@ struct thread_info {
->  	long			user_sp;	/* User stack pointer */
->  	int			cpu;
->  	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
-> +	unsigned long envcfg;
->  #ifdef CONFIG_SHADOW_CALL_STACK
->  	void			*scs_base;
->  	void			*scs_sp;
-> -- 
-> 2.43.2
-> 
 
