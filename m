@@ -1,328 +1,207 @@
-Return-Path: <linux-kernel+bounces-174465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0408C0F26
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:03:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320B58C0ED8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EB0C1F22EB7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:03:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9B4B20E84
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6745B14B090;
-	Thu,  9 May 2024 12:02:50 +0000 (UTC)
-Received: from mail-m17214.xmail.ntesmail.com (mail-m17214.xmail.ntesmail.com [45.195.17.214])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551681311A1;
+	Thu,  9 May 2024 11:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CgcvKIg8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B8514AD32;
-	Thu,  9 May 2024 12:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.17.214
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DDB12FF93
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256169; cv=none; b=NhFzEI+QmX3JH2Sk/GvosOJA7zoqvfPD10kKcmO/KQ8FYyyDFcUZ0oET1vD21rRoeibU+ZMEQLhInnlrwSunfB9zCkWWkZir6UFnkcMDUcNpLjugi94uulVAn8qPjpUr368tW4yKIu5HzkK6/+tYqvE1nnC2kt8PQBcNG6+1MOU=
+	t=1715254279; cv=none; b=aa6hELWuI9q3WumG8w5HcpOLwkXsaA0/G7guEih8ZX/DLTYC72s1HykxIYZUfCLWKzv3IkE+8yIvendxotk839mizXsZGsUFRQxmbdAbzfybTA7/3Ct3fFlapNEbif6tp9I3sWsc02QJcumEYogJx02jAiUTw5csbnNzTC91Q7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256169; c=relaxed/simple;
-	bh=KnUfaCc3MpuPBR3EdwXghR15Y3buYrD1ThIZlSRopRE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=IZ0uQElDlYKSe9TGsWBnBCbsf/pA6yk69GOjetwHYvT3g4LzSsF7Wdu7P7sEyriCdz7M3g7F9Yq9ihGfrroveuYutYK/sO1lvtK6Hi8+Y+Y2P4JKfThsAdwOO9YrPcR0veh0GNuRHj4cSaZs1+V6o/kFcJrOBkIHp7UmyvwHXWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=45.195.17.214
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from [192.168.122.189] (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id D7F2986021B;
-	Thu,  9 May 2024 19:24:29 +0800 (CST)
-Subject: Re: [PATCH RFC 0/7] block: Introduce CBD (CXL Block Device)
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
- Gregory Price <gregory.price@memverge.com>, axboe@kernel.dk,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev
-References: <20240422071606.52637-1-dongsheng.yang@easystack.cn>
- <66288ac38b770_a96f294c6@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <ef34808b-d25d-c953-3407-aa833ad58e61@easystack.cn>
- <ZikhwAAIGFG0UU23@memverge.com>
- <bbf692ec-2109-baf2-aaae-7859a8315025@easystack.cn>
- <ZiuwyIVaKJq8aC6g@memverge.com>
- <98ae27ff-b01a-761d-c1c6-39911a000268@easystack.cn>
- <ZivS86BrfPHopkru@memverge.com>
- <8f373165-dd2b-906f-96da-41be9f27c208@easystack.cn>
- <wold3g5ww63cwqo7rlwevqcpmlen3fl3lbtbq3qrmveoh2hale@e7carkmumnub>
- <20240503105245.00003676@Huawei.com>
- <5b7f3700-aeee-15af-59a7-8e271a89c850@easystack.cn>
- <20240508131125.00003d2b@Huawei.com>
- <ef0ee621-a2d2-e59a-f601-e072e8790f06@easystack.cn>
- <20240508164417.00006c69@Huawei.com>
-From: Dongsheng Yang <dongsheng.yang@easystack.cn>
-Message-ID: <3d547577-e8f2-8765-0f63-07d1700fcefc@easystack.cn>
-Date: Thu, 9 May 2024 19:24:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+	s=arc-20240116; t=1715254279; c=relaxed/simple;
+	bh=KbSJqTXIym8X1LZZSbDqHy2oc5PTnuYaFn9rlqkiybc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XhE7u3TlM/Pf7L5S3XKeGUgwB9hS7IdQoLZ6aoQbLh1UkSHr5qMAKtKA+TNnSzzXnb3SyfEZTxHMtEJk0QG++AGv1mZ1EcYQkv+lEKrfmqDOvGGE4Ln6wwsJuReeNgCkmXK5r/5dVkcbwx/V51Vvc05uLmcLvrIk0cKxz6Usp3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CgcvKIg8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715254276;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kZ1oYNvf/jlHzYagQ7dAZFEVJALyTuqemntwu0w6jKw=;
+	b=CgcvKIg8TkwcLe8NWm7mS+8ORrGWGXJa1T+i7a2s9zpruDBKKynVz2w7RpOLXJdC64G1Jw
+	pA5DKiIlYJgmvA9kbmfdUy4DtEYIO83Lh3tn8s8t6v4dI1hwW0yrzJ/qpWTm1yhED7f7zz
+	b9VRAwaqrGBFcxLO9QokgEFr0z4bEzY=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-5WV20ux4MQmwWP1g_MQsmA-1; Thu, 09 May 2024 07:31:15 -0400
+X-MC-Unique: 5WV20ux4MQmwWP1g_MQsmA-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-5cf35636346so628930a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:31:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715254274; x=1715859074;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kZ1oYNvf/jlHzYagQ7dAZFEVJALyTuqemntwu0w6jKw=;
+        b=YUIvLmZXnZIIrg31mHuOF4+BNcH3pAKNdKiuRl5lptNOvU7GHy5LORPdM5p0ML/gma
+         w9/Uh6Rf8go1nDm4nmasDZOLQuSfXsfnUZzODOvGtDveHEvHlBkq7IhgYQTVTp6C9s19
+         mAqFVRMkKG9Gilqy1oI+8V4aYms8tJR49aEMmG8Q6jnDLXCeYaNTNoGTg2opU8EFYUGJ
+         0E0hbm6OVNBMxq/Prg2wjj3vTQQS64rn+yUsFnZ9Q9ZAYWtzLAP1MdsfI9IbWq/SfW+J
+         cMKYXAIX1/cJIc5F7IzSqWYDmxIFRmaamV9BzPY3yERlZFozVhTattYBz91/1HK/Mn1+
+         n0PA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgqERFnSXMZaQbDpDq3n98ql3gvWlU+Tf9R/deKzsTMW5xGgzxvoZ+MWjQkzrX576dQ3UYOCCqxFWFzFfHbaOIMewN2f2rIUHtq4wh
+X-Gm-Message-State: AOJu0YxZSh0P+rVZQG32VIig0dPhRrNAayQzSeJ8o5xjA8kN6Ak/gQH7
+	nOyj4eTAPBRnvJzetxgdyWhp/F6KeSLuiJdqOjtlbxS90k5kzrGfvXwekKTB3qksECnBAZERYTB
+	ZOtKjjeWg1FznT0UD6gdV2EVqStMEBugT4OZmin8VrmzfuI7XddAC153rhzieFg==
+X-Received: by 2002:a05:6a20:9494:b0:1af:c0f9:b155 with SMTP id adf61e73a8af0-1afc8d8eb58mr5402213637.38.1715254274439;
+        Thu, 09 May 2024 04:31:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEznRBomI8zqavjnHRv+qhrEvXhhgPA38IG4MHjby0WMFKowdUH6+SUrWT3PbTYHv67iCKEGw==
+X-Received: by 2002:a05:6a20:9494:b0:1af:c0f9:b155 with SMTP id adf61e73a8af0-1afc8d8eb58mr5402187637.38.1715254274006;
+        Thu, 09 May 2024 04:31:14 -0700 (PDT)
+Received: from zeus.elecom ([240b:10:83a2:bd00:6e35:f2f5:2e21:ae3a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c2567ccsm12023495ad.301.2024.05.09.04.31.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 04:31:13 -0700 (PDT)
+From: Ryosuke Yasuoka <ryasuoka@redhat.com>
+To: krzk@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syoshida@redhat.com,
+	syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+Subject: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
+Date: Thu,  9 May 2024 20:30:33 +0900
+Message-ID: <20240509113036.362290-1-ryasuoka@redhat.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240508164417.00006c69@Huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHh4YVkxKHRpMGUtLSUxCTVUZERMWGhIXJBQOD1
-	lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
-X-HM-Tid: 0a8f5d18fe9a023ckunmd7f2986021b
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PBw6Dhw5Qzc1EUouDEoKEw8j
-	LjhPFA5VSlVKTEpOSU5IQ0xLTUJCVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
-	V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSklDTk03Bg++
+
+syzbot reported the following uninit-value access issue [1]
+
+nci_rx_work() parses received packet from ndev->rx_q. It should be
+validated header size, payload size and total packet size before
+processing the packet. If an invalid packet is detected, it should be
+silently discarded.
+
+Fixes: d24b03535e5e ("nfc: nci: Fix uninit-value in nci_dev_up and nci_ntf_packet")
+Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534 [1]
+Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+---
+v4
+- v3 patch uses goto statement and it makes codes complicated. So this
+  patch simply calls kfree_skb inside loop and remove goto statement.
+- [2] inserted kcov_remote_stop() to fix kcov check. However, as we
+  discuss about my v3 patch [3], it should not exit the for statement
+  and should continue processing subsequent packets. This patch removes
+  them and simply insert continue statement.
+
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=19e35f24750d
+
+v3
+https://lore.kernel.org/netdev/20240502082323.250739-1-ryasuoka@redhat.com/T/
+- As Simon pointed out, the valid packets will reach invalid_pkt_free
+and kfree_skb(skb) after being handled correctly in switch statement.
+It can lead to double free issues, which is not intended. So this patch
+uses "continue" instead of "break" in switch statement.
+
+- In the current implementation, once zero payload size is detected, the
+for statement exits. It should continue processing subsequent packets. 
+So this patch just frees skb in invalid_pkt_free when the invalid 
+packets are detected. [3]
+
+v2
+https://lore.kernel.org/lkml/20240428134525.GW516117@kernel.org/T/
+
+- The v1 patch only checked whether skb->len is zero. This patch also
+  checks header size, payload size and total packet size.
 
 
+v1
+https://lore.kernel.org/linux-kernel/CANn89iJrQevxPFLCj2P=U+XSisYD0jqrUQpa=zWMXTjj5+RriA@mail.gmail.com/T/
 
-在 2024/5/8 星期三 下午 11:44, Jonathan Cameron 写道:
-> On Wed, 8 May 2024 21:03:54 +0800
-> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
-> 
->> 在 2024/5/8 星期三 下午 8:11, Jonathan Cameron 写道:
->>> On Wed, 8 May 2024 19:39:23 +0800
->>> Dongsheng Yang <dongsheng.yang@easystack.cn> wrote:
->>>    
->>>> 在 2024/5/3 星期五 下午 5:52, Jonathan Cameron 写道:
->>>>> On Sun, 28 Apr 2024 11:55:10 -0500
->>>>> John Groves <John@groves.net> wrote:
->>>>>       
->>>>>> On 24/04/28 01:47PM, Dongsheng Yang wrote:
->>>>>>>
->>>>>>>
->>>>>>> 在 2024/4/27 星期六 上午 12:14, Gregory Price 写道:
->>>>>>>> On Fri, Apr 26, 2024 at 10:53:43PM +0800, Dongsheng Yang wrote:
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> 在 2024/4/26 星期五 下午 9:48, Gregory Price 写道:
->>>>>>>>>>          
->>>>>>>>>      
->>>>
->>>> ...
->>>>>>
->>>>>> Just to make things slightly gnarlier, the MESI cache coherency protocol
->>>>>> allows a CPU to speculatively convert a line from exclusive to modified,
->>>>>> meaning it's not clear as of now whether "occasional" clean write-backs
->>>>>> can be avoided. Meaning those read-only mappings may be more important
->>>>>> than one might think. (Clean write-backs basically make it
->>>>>> impossible for software to manage cache coherency.)
->>>>>
->>>>> My understanding is that clean write backs are an implementation specific
->>>>> issue that came as a surprise to some CPU arch folk I spoke to, we will
->>>>> need some path for a host to say if they can ever do that.
->>>>>
->>>>> Given this definitely effects one CPU vendor, maybe solutions that
->>>>> rely on this not happening are not suitable for upstream.
->>>>>
->>>>> Maybe this market will be important enough for that CPU vendor to stop
->>>>> doing it but if they do it will take a while...
->>>>>
->>>>> Flushing in general is as CPU architecture problem where each of the
->>>>> architectures needs to be clear what they do / specify that their
->>>>> licensees do.
->>>>>
->>>>> I'm with Dan on encouraging all memory vendors to do hardware coherence!
->>>>
->>>> Hi Gregory, John, Jonathan and Dan:
->>>> 	Thanx for your information, they help a lot, and sorry for the late reply.
->>>>
->>>> After some internal discussions, I think we can design it as follows:
->>>>
->>>> (1) If the hardware implements cache coherence, then the software layer
->>>> doesn't need to consider this issue, and can perform read and write
->>>> operations directly.
->>>
->>> Agreed - this is one easier case.
->>>    
->>>>
->>>> (2) If the hardware doesn't implement cache coherence, we can consider a
->>>> DMA-like approach, where we check architectural features to determine if
->>>> cache coherence is supported. This could be similar to
->>>> `dev_is_dma_coherent`.
->>>
->>> Ok. So this would combine host support checks with checking if the shared
->>> memory on the device is multi host cache coherent (it will be single host
->>> cache coherent which is what makes this messy)
->>>>
->>>> Additionally, if the architecture supports flushing and invalidating CPU
->>>> caches (`CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE`,
->>>> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU`,
->>>> `CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL`),
->>>
->>> Those particular calls won't tell you much at all. They indicate that a flush
->>> can happen as far as a common point for DMA engines in the system. No
->>> information on whether there are caches beyond that point.
->>>    
->>>>
->>>> then we can handle cache coherence at the software layer.
->>>> (For the clean writeback issue, I think it may also require
->>>> clarification from the architecture, and how DMA handles the clean
->>>> writeback problem, which I haven't further checked.)
->>>
->>> I believe the relevant architecture only does IO coherent DMA so it is
->>> never a problem (unlike with multihost cache coherence).Hi Jonathan,
->>
->> let me provide an example,
->> In nvmeof-rdma, the `nvme_rdma_queue_rq` function places a request into
->> `req->sqe.dma`.
->>
->> (1) First, it calls `ib_dma_sync_single_for_cpu()`, which invalidates
->> the CPU cache:
->>
->>
->> ib_dma_sync_single_for_cpu(dev, sqe->dma,
->>                               sizeof(struct nvme_command), DMA_TO_DEVICE);
->>
->>
->> For example, on ARM64, this would call `arch_sync_dma_for_cpu`, followed
->> by `dcache_inval_poc(start, start + size)`.
-> 
-> Key here is the POC. It's a flush to the point of coherence of the local
-> system.  It has no idea about interhost coherency and is not necessarily
-> the DRAM (in CXL or otherwise).
-> 
-> If you are doing software coherence, those devices will plug into today's
-> hosts and they have no idea that such a flush means pushing out into
-> the CXL fabric and to the type 3 device.
-> 
->>
->> (2) Setting up data related to the NVMe request.
->>
->> (3) then Calls `ib_dma_sync_single_for_device` to flush the CPU cache to
->> DMA memory:
->>
->> ib_dma_sync_single_for_device(dev, sqe->dma,
->>                                   sizeof(struct nvme_command),
->> DMA_TO_DEVICE);
->>
->> Of course, if the hardware ensures cache coherency, the above operations
->> are skipped. However, if the hardware does not guarantee cache
->> coherency, RDMA appears to ensure cache coherency through this method.
->>
->> In the RDMA scenario, we also face the issue of multi-host cache
->> coherence. so I'm thinking, can we adopt a similar approach in CXL
->> shared memory to achieve data sharing?
-> 
-> You don't face the same coherence issues, or at least not in the same way.
-> In that case the coherence guarantees are actually to the RDMA NIC.
-> It is guaranteed to see the clean data by the host - that may involve
-> flushes to PoC.  A one time snapshot is then sent to readers on other
-> hosts. If writes occur they are also guarantee to replace cached copies
-> on this host - because there is well define guarantee of IO coherence
-> or explicit cache maintenance to the PoC
-right, the PoC is not point of cohenrence with other host. it sounds 
-correct. thanx.
-> 
->   
->>
->>>>
->>>> (3) If the hardware doesn't implement cache coherence and the cpu
->>>> doesn't support the required CPU cache operations, then we can run in
->>>> nocache mode.
->>>
->>> I suspect that gets you no where either.  Never believe an architecture
->>> that provides a flag that says not to cache something.  That just means
->>> you should not be able to tell that it is cached - many many implementations
->>> actually cache such accesses.
->>
->> Sigh, then that really makes thing difficult.
-> 
-> Yes. I think we are going to have to wait on architecture specific clarifications
-> before any software coherent use case can be guaranteed to work beyond the 3.1 ones
-> for temporal sharing (only one accessing host at a time) and read only sharing where
-> writes are dropped anyway so clean write back is irrelevant beyond some noise in
-> logs possibly (if they do get logged it is considered so rare we don't care!).
+ net/nfc/nci/core.c | 30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
-Hi Jonathan,
-	Allow me to discuss further. As described in CXL 3.1:
-```
-Software-managed coherency schemes are complicated by any host or device 
-whose caching agents generate clean writebacks. A “No Clean Writebacks” 
-capability bit is available for a host in the CXL System Description 
-Structure (CSDS; see Section 9.18.1.6) or for a device in the DVSEC CXL 
-Capability2 register (see Section 8.1.3.7).
-```
+diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
+index b133dc55304c..0aaff30cb68f 100644
+--- a/net/nfc/nci/core.c
++++ b/net/nfc/nci/core.c
+@@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
+ 				 ndev->ops->n_core_ops);
+ }
+ 
++static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
++{
++	if (skb->len < header_size ||
++	    !nci_plen(skb->data) ||
++	    skb->len < header_size + nci_plen(skb->data)) {
++		return false;
++	}
++	return true;
++}
++
+ /* ---- NCI TX Data worker thread ---- */
+ 
+ static void nci_tx_work(struct work_struct *work)
+@@ -1516,24 +1526,32 @@ static void nci_rx_work(struct work_struct *work)
+ 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
+ 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
+ 
+-		if (!nci_plen(skb->data)) {
++		if (!skb->len) {
+ 			kfree_skb(skb);
+-			kcov_remote_stop();
+-			break;
++			continue;
+ 		}
+ 
+ 		/* Process frame */
+ 		switch (nci_mt(skb->data)) {
+ 		case NCI_MT_RSP_PKT:
+-			nci_rsp_packet(ndev, skb);
++			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
++				nci_rsp_packet(ndev, skb);
++			else
++				kfree_skb(skb);
+ 			break;
+ 
+ 		case NCI_MT_NTF_PKT:
+-			nci_ntf_packet(ndev, skb);
++			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
++				nci_ntf_packet(ndev, skb);
++			else
++				kfree_skb(skb);
+ 			break;
+ 
+ 		case NCI_MT_DATA_PKT:
+-			nci_rx_data_packet(ndev, skb);
++			if (nci_valid_size(skb, NCI_DATA_HDR_SIZE))
++				nci_rx_data_packet(ndev, skb);
++			else
++				kfree_skb(skb);
+ 			break;
+ 
+ 		default:
+-- 
+2.44.0
 
-If we check and find that the "No clean writeback" bit in both CSDS and 
-DVSEC is set, can we then assume that software cache-coherency is 
-feasible, as outlined below:
-
-(1) Both the writer and reader ensure cache flushes. Since there are no 
-clean writebacks, there will be no background data writes.
-
-(2) The writer writes data to shared memory and then executes a cache 
-flush. If we trust the "No clean writeback" bit, we can assume that the 
-data in shared memory is coherent.
-
-(3) Before reading the data, the reader performs cache invalidation. 
-Since there are no clean writebacks, this invalidation operation will 
-not destroy the data written by the writer. Therefore, the data read by 
-the reader should be the data written by the writer, and since the 
-writer's cache is clean, it will not write data to shared memory during 
-the reader's reading process. Additionally, data integrity can be ensured.
-
-The first step for CBD should depend on hardware cache coherence, which 
-is clearer and more feasible. Here, I am just exploring the possibility 
-of software cache coherence, not insisting on implementing software 
-cache-coherency right away. :)
-
-Thanx
-> 
->>>    
->>>>
->>>> CBD can initially support (3), and then transition to (1) when hardware
->>>> supports cache-coherency. If there's sufficient market demand, we can
->>>> also consider supporting (2).
->>> I'd assume only (3) works.  The others rely on assumptions I don't think
->>
->> I guess you mean (1), the hardware cache-coherency way, right?
-> 
-> Indeed - oops!
-> Hardware coherency is the way to go, or a well defined and clearly document
-> description of how to play with the various host architectures.
-> 
-> Jonathan
-> 
-> 
->>
->> :)
->> Thanx
->>
->>> you can rely on.
->>>
->>> Fun fun fun,
->>>
->>> Jonathan
->>>    
->>>>
->>>> How does this approach sound?
->>>>
->>>> Thanx
->>>>>
->>>>> J
->>>>>       
->>>>>>
->>>>>> Keep in mind that I don't think anybody has cxl 3 devices or CPUs yet, and
->>>>>> shared memory is not explicitly legal in cxl 2, so there are things a cpu
->>>>>> could do (or not do) in a cxl 2 environment that are not illegal because
->>>>>> they should not be observable in a no-shared-memory environment.
->>>>>>
->>>>>> CBD is interesting work, though for some of the reasons above I'm somewhat
->>>>>> skeptical of shared memory as an IPC mechanism.
->>>>>>
->>>>>> Regards,
->>>>>> John
->>>>>>
->>>>>>
->>>>>>      
->>>>>
->>>>> .
->>>>>       
->>>
->>> .
->>>    
-> 
-> 
 
