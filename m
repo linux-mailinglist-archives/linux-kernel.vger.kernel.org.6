@@ -1,55 +1,102 @@
-Return-Path: <linux-kernel+bounces-174656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507E88C1249
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:53:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4D28C1250
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068FC1F21E99
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:53:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25863B21F25
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471F116F287;
-	Thu,  9 May 2024 15:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD2416F839;
+	Thu,  9 May 2024 15:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmxnUoNQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLK2/COY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="es8J8FjG";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mLK2/COY";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="es8J8FjG"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C27D3F8E2
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 15:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B5916F286;
+	Thu,  9 May 2024 15:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269980; cv=none; b=ql9YRQdnmVAhwiuJZpdvvs0nOR/VYRcHRqhFhmjEnhojytUapqpZJMu+Y1zooMXRz/G8wsTgPZxp3HZ0vkm51Dka2b03uzM6A3oI1vgEziek7jhKQhWCMEYgagO/9vCe1ED0IqDJc8BpgQcld6O4ZsFIUHFvS39Z2+nV0xc9rzM=
+	t=1715270041; cv=none; b=VCVhfX3RuQDhFOYCSUjsKAy4k3/5RYsQ9mwt/yZfE53d/hCcp3pdQaCl4HQDxkWVLfmY1eyNcA0oqu3GzNug07+VPMv2xOI6XRGbQHJy69BwqEGCi3kjd05GhvMSaSPUr/jH3blXt9RsY3Avagj3zBvcjjhaLCPeS8bOYz2YzL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269980; c=relaxed/simple;
-	bh=EyTwGmTH6PChSbRLYLFE7d/gisUiJhHgzpqM5Qc1hCk=;
+	s=arc-20240116; t=1715270041; c=relaxed/simple;
+	bh=kgl7POulRwkv6guf3DOlw60s3g+R1sh3voqGVyv5uHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKM2C0szJZBkyPNgzNvOi+L2LvWzbk/erJVxahPO3m+hzcO4pzKWh4iXC4AO8Ul5wEsvgxbfVGgDfNqBHHMOjXQuEdmqmQL4eZnYU8IkaF/gbYM7Q8WE/uduqWj89tbWUHL4m4eoWJjhHF8GQ1q5Jndrx8EYdkczjQgc6hwGj38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmxnUoNQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D57E6C116B1;
-	Thu,  9 May 2024 15:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715269980;
-	bh=EyTwGmTH6PChSbRLYLFE7d/gisUiJhHgzpqM5Qc1hCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fmxnUoNQ0HMljqxekQNwpiEU3pr0qzZotqFdeU4FWe3sUCVO+IoCENO4XfPH8b1Ul
-	 yogZ/YJVL48PLj6Ap7nnQAwUbF5OXNS9AznxxtHWMK3uGWbhAi4ba0JNNgrfCOgM2L
-	 WyCNt4Vxs8xQOEEJqm5jHhevpo6XNievOB+5oq7kEFKQkHTTpKzXLUe+XeJ17403wd
-	 mMkD4nphS0bsjc58yKG+4w2yerBPmBx0Q/D9U8WJAy+mbKo35/IZ/YHmk3ZMRh0anG
-	 jxCadXoIv7wLGBL7onfgPHfs/ppPgUWGk0Hl10u8yVivifSP3jY9Os6iPvLvYMipY7
-	 9FSyB/GP8xfVw==
-Date: Thu, 9 May 2024 15:52:58 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for
- inline_data inode
-Message-ID: <ZjzxWp4-wmpCzBeB@google.com>
-References: <20240506103313.773503-1-chao@kernel.org>
- <20240506103313.773503-3-chao@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8L+oW57gbxAyr00oibiNtFfZCczYHSgaPui1lwGbnbdfQoW+pdwU0lAF2I6KF5qp+AIyhCwIDML+ItCyz8vLVCuvDntveU2ZUtwc+fqNA+M0Mq3o3UUx9g2Q16mhKhzXbquHZgCaqKiPwtXDyX4DWbAzxm53WipOi0spAcBQAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLK2/COY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=es8J8FjG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mLK2/COY; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=es8J8FjG; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 76F14388B9;
+	Thu,  9 May 2024 15:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715270036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1ENRXJy8TOwBwRPUrho6blMoXPCSHd5Sswn+nQd1Hoc=;
+	b=mLK2/COYDcvh0WfuZFsir5Gt2C9Fpi/+cSUp9GmF6mCcYSzybDkVE4iMEjMsjkmdwTItZD
+	bP1XaXyqJEgIkPI9s20bE+lG/5eNSNn6N3K9jcGjC2qwXmpaemgQW58Z2d1fpsG8pA/kcE
+	3BCKuHVGeumNL7EahtNjU2Mfc+gBPTg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715270036;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1ENRXJy8TOwBwRPUrho6blMoXPCSHd5Sswn+nQd1Hoc=;
+	b=es8J8FjGXagPQbHbDg8VyS2kstKbPNTdaOSvVVxZW1e6aM3bWRE/tQeZA+bH84h973v5Hr
+	PeKt7dh36+wFUJCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715270036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1ENRXJy8TOwBwRPUrho6blMoXPCSHd5Sswn+nQd1Hoc=;
+	b=mLK2/COYDcvh0WfuZFsir5Gt2C9Fpi/+cSUp9GmF6mCcYSzybDkVE4iMEjMsjkmdwTItZD
+	bP1XaXyqJEgIkPI9s20bE+lG/5eNSNn6N3K9jcGjC2qwXmpaemgQW58Z2d1fpsG8pA/kcE
+	3BCKuHVGeumNL7EahtNjU2Mfc+gBPTg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715270036;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1ENRXJy8TOwBwRPUrho6blMoXPCSHd5Sswn+nQd1Hoc=;
+	b=es8J8FjGXagPQbHbDg8VyS2kstKbPNTdaOSvVVxZW1e6aM3bWRE/tQeZA+bH84h973v5Hr
+	PeKt7dh36+wFUJCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 696D913941;
+	Thu,  9 May 2024 15:53:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0iG3GZTxPGZ9GwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 09 May 2024 15:53:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0ECB2A0861; Thu,  9 May 2024 17:53:56 +0200 (CEST)
+Date: Thu, 9 May 2024 17:53:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] fs: remove accidental overflow during wraparound check
+Message-ID: <20240509155356.w274h4blmcykxej6@quack3>
+References: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,129 +105,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240506103313.773503-3-chao@kernel.org>
+In-Reply-To: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On 05/06, Chao Yu wrote:
-> syzbot reports a f2fs bug as below:
+On Tue 07-05-24 23:17:57, Justin Stitt wrote:
+> Running syzkaller with the newly enabled signed integer overflow
+> sanitizer produces this report:
 > 
-> ------------[ cut here ]------------
-> kernel BUG at fs/f2fs/inline.c:258!
-> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
-> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
-> Call Trace:
->  f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
->  f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
->  __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
->  f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
->  do_writepages+0x35b/0x870 mm/page-writeback.c:2612
->  __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
->  writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
->  wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
->  wb_do_writeback fs/fs-writeback.c:2264 [inline]
->  wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
->  process_one_work kernel/workqueue.c:3254 [inline]
->  process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
->  worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
->  kthread+0x2f2/0x390 kernel/kthread.c:388
->  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> 
-> The root cause is: inline_data inode can be fuzzed, so that there may
-> be valid blkaddr in its direct node, once f2fs triggers background GC
-> to migrate the block, it will hit f2fs_bug_on() during dirty page
-> writeback.
-> 
-> Let's add sanity check on i_nid field for inline_data inode, meanwhile,
-> forbid to migrate inline_data inode's data block to fix this issue.
-> 
-> Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/f2fs.h   |  2 +-
->  fs/f2fs/gc.c     |  6 ++++++
->  fs/f2fs/inline.c | 17 ++++++++++++++++-
->  fs/f2fs/inode.c  |  2 +-
->  4 files changed, 24 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index fced2b7652f4..c876813b5532 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
->   * inline.c
->   */
->  bool f2fs_may_inline_data(struct inode *inode);
-> -bool f2fs_sanity_check_inline_data(struct inode *inode);
-> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
->  bool f2fs_may_inline_dentry(struct inode *inode);
->  void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
->  void f2fs_truncate_inline_inode(struct inode *inode,
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index e86c7f01539a..041957750478 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->  				continue;
->  			}
->  
-> +			if (f2fs_has_inline_data(inode)) {
-> +				iput(inode);
-> +				set_sbi_flag(sbi, SBI_NEED_FSCK);
-> +				continue;
+> [  195.401651] ------------[ cut here ]------------
+> [  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
+> [  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
+> [  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+> [  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [  195.425804] Call Trace:
+> [  195.427360]  <TASK>
+> [  195.428791]  dump_stack_lvl+0x93/0xd0
+> [  195.431150]  handle_overflow+0x171/0x1b0
+> [  195.433640]  vfs_fallocate+0x459/0x4f0
 
-Any race condtion to get this as false alarm?
+Well, we compile the kernel with -fno-strict-overflow for a reason so I
+wouldn't consider this a bug. But check_add_overflow() is easier to digest
+since we don't have to worry about type details so I'm for this change.
 
-> +			}
-> +
->  			err = f2fs_gc_pinned_control(inode, gc_type, segno);
->  			if (err == -EAGAIN) {
->  				iput(inode);
-> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> index ac00423f117b..067600fed3d4 100644
-> --- a/fs/f2fs/inline.c
-> +++ b/fs/f2fs/inline.c
-> @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
->  	return !f2fs_post_read_required(inode);
->  }
+> @@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+>  		return -ENODEV;
 >  
-> -bool f2fs_sanity_check_inline_data(struct inode *inode)
-> +static bool has_node_blocks(struct inode *inode, struct page *ipage)
-> +{
-> +	struct f2fs_inode *ri = F2FS_INODE(ipage);
-> +	int i;
+> -	/* Check for wrap through zero too */
+> -	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
+> +	/* Check for wraparound */
+> +	if (check_add_overflow(offset, len, &sum))
+> +		return -EFBIG;
 > +
-> +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
-> +		if (ri->i_nid[i])
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
->  {
->  	if (!f2fs_has_inline_data(inode))
->  		return false;
->  
-> +	if (has_node_blocks(inode, ipage))
-> +		return false;
-> +
->  	if (!support_inline_data(inode))
->  		return true;
->  
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index c26effdce9aa..1423cd27a477 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->  		}
->  	}
->  
-> -	if (f2fs_sanity_check_inline_data(inode)) {
-> +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
->  		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
->  			  __func__, inode->i_ino, inode->i_mode);
->  		return false;
-> -- 
-> 2.40.1
+> +	/* Now, check bounds */
+> +	if (sum > inode->i_sb->s_maxbytes || sum < 0)
+>  		return -EFBIG;
+
+But why do you check for sum < 0? We know from previous checks offset >= 0
+&& len > 0 so unless we overflow, sum is guaranteed to be > 0.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
