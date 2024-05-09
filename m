@@ -1,86 +1,63 @@
-Return-Path: <linux-kernel+bounces-174536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED518C1052
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 426FC8C1055
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95718B22A4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BF9281171
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB53E15278F;
-	Thu,  9 May 2024 13:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q2BxL17A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AA4158208;
+	Thu,  9 May 2024 13:26:08 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BAA1272A8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB3115667B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715261162; cv=none; b=luUqnJ0NPfaqZF/bydARbnwUFGzXtmLjX5UyYv5Jwk1Sn4TeJq5YPopmOcy8ilQUG56ACGy7Ywr0tmx1G96eBTyJpobwcrA7KmCjew2vzx4Q0vu1U2ZuzFcHTO5eIJ687O8RxtMl17CRSb+u06c8s/J0uN1RtgKtpU93hMHeFFM=
+	t=1715261167; cv=none; b=OnoPZPi2g+GrGz/gJWSjIkoy3H7iDmWZ4ls5RZ2DlB69HBD2rGr04oT6DEfJ1wo9wiQ0TE3Fp8kDczBGmrpxjhIjK5556hRNZ5aFqiXoeYYFuTk1Mppk33GtsUjSkemBQb8z7xkQcrinZw7y1dE/IpvkRay464f7kjFwLP08/i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715261162; c=relaxed/simple;
-	bh=IwlJXIVeldRELa0/z+zt6CIvG1bWfjAC1EoduHYSA2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdqTkM9HwyJ4Oj+3/mxWGSAouz9c/AUwT/iUt9wH3sSEmU0cxXawJx6TOdFiQeysLuwk0/0Ycpmo8McfYlKPYA86mgRpruJy2jWxzRWXLc0WzYDxKOW1xU5TAZEkm5Fwg3hVXr8wqtqXE16sk18IdchtRaDmYhXb1/BMNkjHC10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q2BxL17A; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715261159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cYFPPJZKOGFD0i1KKljU7Qa1N+D0FkSOCXLk5sIs25c=;
-	b=Q2BxL17A1AhN8F7xHkjZ/tN4q8/9IkiM56YJxIF2V1wMwDzfRlZvjrAwT0VxzlF5FwLSgs
-	U/qOR386WiXBqvFkC6F5x8qX6UgWiaHcrdyGd08Dsc34xATKZEvgi98dTYXYRZpNu1iDDf
-	Z52ruNxSlSGFuVto203SetJwW62D4QQ=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-69ZMY2bdMyKltkRNZvWMTA-1; Thu, 09 May 2024 09:25:58 -0400
-X-MC-Unique: 69ZMY2bdMyKltkRNZvWMTA-1
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b22d772714so215450eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 06:25:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715261157; x=1715865957;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cYFPPJZKOGFD0i1KKljU7Qa1N+D0FkSOCXLk5sIs25c=;
-        b=gcAk/FWXBCRxSm/8ROtGrnfdZbbtt8acZDjtIXjc2EiXYwu697fE4AbKgtHwUl9bN6
-         Iem8W+D0mNh0V0L/zJGWzC3rSTxE3vR6BcgoiUQ0ckRQWzYoyZnXreEmQxStPDdwdoeV
-         uIdJG0VPkKmHanEg2C5aihZp7izo8mIvXlmYZ4retd9S7mq3A/ZirTinS7iZbTnFvwwz
-         2F7oM4eO+VzjAAj+uZW59NWzrdH5ZUEAx3ceBZRjrgMvaGZXHye+mFghGlyWy2awU/MP
-         AW0A0tqRI53h5C4cNzoXpy1XLQsdqreZiyjm8b12x2fNQLuQ9ImFNBqRlC9UD5VfuNak
-         zgGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPp38IQZWyoM2ymxlcv2b7vSVtvJy+BBHctEmWYyTWOKHJHr+OE5DWglTInKm3ODYotSx9KKngrowjgnL8Y0SIJwGFV+HTU7Jc7Xy5
-X-Gm-Message-State: AOJu0YxymlFXgUIlHVM+A5C9IbYys/UMOCyBssxrd+i42IMI6ircR72t
-	C3b5QiY24ETgb5U42Bgx4SoR4WYOLFJ6LHm+FAUjR6IHE6Ra5r2rnHWLkkw0l10DnbfFXI+8v4b
-	ieDD/IlHMe1EE/vkt4k2N9X3dsH5jZHgJHpmfaNYp7UQIjecfKGxW4rNAjXsvBA==
-X-Received: by 2002:a05:6359:4c21:b0:192:7817:5c4b with SMTP id e5c5f4694b2df-192d1b33924mr573402355d.0.1715261157104;
-        Thu, 09 May 2024 06:25:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF13ZO4QpA0wRGmKo1XMZHPduAQ3ows7Wg2xn1APAWAT/ID2YOC4hG5DXTPcgbEhwi/3LeK8A==
-X-Received: by 2002:a05:6359:4c21:b0:192:7817:5c4b with SMTP id e5c5f4694b2df-192d1b33924mr573398755d.0.1715261156412;
-        Thu, 09 May 2024 06:25:56 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1872f8sm6962456d6.55.2024.05.09.06.25.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 06:25:56 -0700 (PDT)
-Date: Thu, 9 May 2024 09:25:55 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Muchun Song <muchun.song@linux.dev>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Liu Shixin <liushixin2@huawei.com>
-Subject: Re: [PATCH 0/2] Minor fixups for hugetlb fault path
-Message-ID: <ZjzO4xH97Lu2UgEu@x1n>
-References: <20240509100148.22384-1-osalvador@suse.de>
+	s=arc-20240116; t=1715261167; c=relaxed/simple;
+	bh=D8LYzUgF3hHRALNDAuNfy+B9rBZtLYSpGxhdvjLQAyc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+h03gM/ogmKaRaabmIDDHHSNOd3RvQ6Xkl3lfzGcdv0xuypsD6SciOMDMcH6q++haJBs3zJ1Nr3Xsv4P4vnmvl8R8UyFLHzQx65Cuq8rp55hguG6rk/Kd3DMq6DbICTdkDyTgZ/61vVSCDw4QdATljDIqT3e0UHXogTHNBcPsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id aeaeacf0-0e07-11ef-b3cf-005056bd6ce9;
+	Thu, 09 May 2024 16:26:03 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 9 May 2024 16:26:02 +0300
+To: Johan Hovold <johan@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 02/13] mfd: pm8008: fix regmap irq chip initialisation
+Message-ID: <ZjzO6qB9_oExklaV@surfacebook.localdomain>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-3-johan+linaro@kernel.org>
+ <ZjknxSsyo20b5_Tm@surfacebook.localdomain>
+ <ZjpCL_NQD7X3hasO@hovoldconsulting.com>
+ <CAHp75Vf0raEoVmvRKNxDQ7wdAOtwWYp_fQ1m8WBdnWEFGFOrYA@mail.gmail.com>
+ <ZjyOGNAaWjRtOE0s@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,23 +66,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240509100148.22384-1-osalvador@suse.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjyOGNAaWjRtOE0s@hovoldconsulting.com>
 
-On Thu, May 09, 2024 at 12:01:46PM +0200, Oscar Salvador wrote:
-> Hi,
-> 
-> this series contains a couple of fixups for hugetlb_fault and hugetlb_wp
-> respectively, where a VM_FAULT_SET_HINDEX call was missing.
-> 
-> I did not bother with a Fixes tag because the missing piece here is that
-> we will not report to userspace the right extension of the faulty area
-> by adjusting struct kernel_siginfo.si_addr_lsb, but I do not consider that
-> to be a big issue because I assume that userspace already knows the size
-> of the mapping anyway.
+Thu, May 09, 2024 at 10:49:28AM +0200, Johan Hovold kirjoitti:
+> On Tue, May 07, 2024 at 08:16:45PM +0300, Andy Shevchenko wrote:
+> > On Tue, May 7, 2024 at 6:01 PM Johan Hovold <johan@kernel.org> wrote:
+> > > On Mon, May 06, 2024 at 09:56:05PM +0300, Andy Shevchenko wrote:
+> > > > Mon, May 06, 2024 at 05:08:19PM +0200, Johan Hovold kirjoitti:
+> > > > > The regmap irq array is potentially shared between multiple PMICs and
 
-Acked-by: Peter Xu <peterx@redhat.com>
+..
+
+> > > > > -                   dev_err(dev, "Failed to probe irq periphs: %d\n", rc);
+> > > > > +                   dev_err(dev, "failed to add IRQ chip: %d\n", rc);
+> > > >
+> > > > dev_err_probe(...); ?
+> > >
+> > > This function won't return -EPROBE_DEFER,
+> > 
+> > This is not an argument for a long time (since documentation of
+> > dev_err_probe() had been amended to encourage its use for any error
+> > cases in probe).
+> 
+> There was apparently a kernel doc update made in December 2023:
+> 
+> 	532888a59505 ("driver core: Better advertise dev_err_probe()")
+> 
+> to clarify that people are *allowed* to use it also for functions not
+> returning -EPROBE_DEFER. That's hardly a long time ago and, importantly,
+> this is of course still nothing that is *required*.
+
+Fair enough.
+
+> > > and that would be a separate
+> > > change in any case.
+> > 
+> > Sure, but why to add a technical debt? Perhaps a precursor cleanup patch?
+> 
+> This is not in any way technical debt.
+
+OK.
 
 -- 
-Peter Xu
+With Best Regards,
+Andy Shevchenko
+
 
 
