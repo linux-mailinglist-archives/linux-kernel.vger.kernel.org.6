@@ -1,118 +1,213 @@
-Return-Path: <linux-kernel+bounces-174254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B608C0C26
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:51:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E0F8C0C2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331A52819F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:51:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E94DEB2137F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB165149C6D;
-	Thu,  9 May 2024 07:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967BD149C74;
+	Thu,  9 May 2024 07:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6KniFDG"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dVxppJly"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8439E13C9C0
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDDC13C801;
+	Thu,  9 May 2024 07:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715241097; cv=none; b=hicJjckE4/byfSH5b8e6PoF3dt4r4jAXqy+jx2RpOcJNxyqLVWDrLJFyCfqncGf1xzZguzL3FNwyL7Od7mlKzffy85jx4Hu6hmOcmNH2sMFuOcVnqz820q8LR5qnZum1JfjFx/wdrhwjCGb11BRk3ESAwXq0OZgLV5aG2BB3C3o=
+	t=1715241304; cv=none; b=kIusQJo1BkcKuBPMLpI/crWJWokocuoOn9mEh1f3KSn0zRB+0+ewHQpSvK/901M2F5ACbFOnkzBKlU72DwYqtUWZ9jef5c0QCbnfCreZunisdgN8FgF0t9/UXcICZyp5ibEngeJpEx6Y40vdel7PBa2W0d/SWpjJAqNXdNf8CMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715241097; c=relaxed/simple;
-	bh=Qpetu/YpQMTZ8pAa1jeqlxfiWUijO299LmcayGsUaX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=j2wQiMbWGl3eLZYFA4L9xwm5MYyOK9fxVFkysU0mKc0EJglq55Z6g4s/uwxjwVQK4XiOIKfmUsTP2gLHFaoIcE6mMkR0hoIVRHpU9/2RRXakeIH/f8QqCQb58nFpAYmptRrvY6WkqgmvuL4Ij+R/8pUb8hIkfwjfMz+4gDw3E7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6KniFDG; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a597394af62so10390466b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715241094; x=1715845894; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=M6xNzfhaoWFm6sJlVLBh3GSwTzYAxKnIt/VRGk/R2Mk=;
-        b=b6KniFDGWuhfyMkL9MV5UD0YQ+Q1nKkm7nrWyK/4zHKPjTCeGKQ0oIMgB20Z5/gMmr
-         m4/Wz1SQnn0jSdWJ76CRUEHi6Zbc/ZZiBPjmpOfUKtukCb6yO6ijqUkipQzx+3b1JjpG
-         5p93q6XRI/L9wRwbKNY2pchKKYMmPmpZ5pQf0xiK6RTWQWNII90iX3583PifbK0HF2KW
-         KA1u1vRjbwbqjewQT4FMXSQHd1b4GDMT8tGhA7bIfphoC8odg0VFvCJ5YVK088gWIBGd
-         5zqS3EThNt2Sj7ItX7/hCTnOwj4NLtaUmfKXmmdLKvFBJsDNVYZC3M7C7yDnBoEzoL83
-         NLXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715241094; x=1715845894;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M6xNzfhaoWFm6sJlVLBh3GSwTzYAxKnIt/VRGk/R2Mk=;
-        b=KZjFYlK1VFJu3W8UTA2WkdgIx0gMSRVXXSebsu1Q2MIBOlQCnp+Mk2XpsUZT1W691o
-         6nDcJiPm22D4L+SL2ntiIqZMBWw1mPn6qxRofQxA/pBVrZzv7rQiJvtIRI0yNbe2qvby
-         4yl8gY+ljxuY6kkP3sGT1xQYUaJppH6ziJeI4r5xXKegYysIodDrVHy9UiefJ2otiElA
-         E1EL/cu/24MUq7LkNTnNXKHuNtXHwdrJnBbumgeXiVsGPAwoHotiD3T98sUUNe2NEQva
-         dX2l+y0p3thP/IXSPJXCqetFi030a+Zl/KAM8uiZ9XCigDE3TJXR90uPDjtaKxgiOtCr
-         9ldA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAJcyMvvgSkyythDWoyRwUoOjwZ60fnJi42O9nk9iqke/Rig+7NHSdghgKMZAD1Q6AKhb8uIjYmBUoLQlhj1wsjScApmKzKtjGTLlx
-X-Gm-Message-State: AOJu0YyrkZq/4R6g4Qkqg6jmOY+tgATOOT860wAp6bHk6t8/JMmpQ772
-	EjrWue2DwC5aD3PIRUvtcQRxhvEgRrFOb2z/UpHnNXYIgJ0ayB+c
-X-Google-Smtp-Source: AGHT+IHFBKDCvOz55Wyv8QIEsf4C9hOee+D6I/ijudRZT079I4yTV8oRLt6pk1px/3473/B+DRXWwg==
-X-Received: by 2002:a05:6402:3894:b0:572:543c:70eb with SMTP id 4fb4d7f45d1cf-5731da28059mr3237730a12.2.1715241093597;
-        Thu, 09 May 2024 00:51:33 -0700 (PDT)
-Received: from [192.168.0.103] (p57935690.dip0.t-ipconnect.de. [87.147.86.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfc24sm448399a12.42.2024.05.09.00.51.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 00:51:33 -0700 (PDT)
-Message-ID: <190dcc76-7753-4191-8578-482c2942583d@gmail.com>
-Date: Thu, 9 May 2024 09:51:32 +0200
+	s=arc-20240116; t=1715241304; c=relaxed/simple;
+	bh=GGccQTnqC8mHfE/l4F8QBhIaWm7K3vpcGZGfxrd99yA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qTcJm4+AtT226+u6TTWcTefZXci7cdFWYO2PyLcU9gYJzMGY9BjXbcwTQAyZDCTcVL+/+RPGJpC/vW6vF0ZobwJiFVPEru44JzdyfhlRYWo0kdgeQgQuA1UGNk+fpd+0hRxxHbHLFYhOhwvYP8oqI5ohMQlwKcidx/z9B2HV2pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dVxppJly; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715241303; x=1746777303;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GGccQTnqC8mHfE/l4F8QBhIaWm7K3vpcGZGfxrd99yA=;
+  b=dVxppJlyaILOqt8W9e6t6FDiorLunSsTQh7mwdZahuFHsSleBWlRj8a2
+   dsnuFQAOaFPc9JW7yYnz0G1lGCI/5C7mZnhM1qKJ8Iap98xqWQ3XiWD0A
+   dO4cutmPSo3sRbBwatp5SY8TepYQ+P7fYAGneSb6vbOv6yS0Slgwn+Z9x
+   Se2dUwb1Wb/SFmgXi102/rp2bv/FlHV2GQOZUBK/Zg19GZzKjlF+TFDLE
+   s2oZkADWu2jUIVb4mqKCLcSouJEHxSvlOn3brNFdTNMEBC9rAOu/z6gkx
+   EWMCEsTuISBqoLz4REkvxOONt9R4lvyNnq8m2pgPO/vOHmgwIjHsRzEpl
+   w==;
+X-CSE-ConnectionGUID: 4Tjlv7miQVizlyWp646h8g==
+X-CSE-MsgGUID: ZMhEEs4dSNu3/pAxmHqZwg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="28658406"
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="28658406"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:55:02 -0700
+X-CSE-ConnectionGUID: ozw2ceddTjKooZFGha8IMA==
+X-CSE-MsgGUID: IGR/x8u5R+CIeSIGQBrLAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="29268231"
+Received: from 984fee00a5ca.jf.intel.com ([10.165.9.183])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:55:02 -0700
+From: Yang Weijiang <weijiang.yang@intel.com>
+To: seanjc@google.com,
+	pbonzini@redhat.com,
+	mlevitsk@redhat.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Yang Weijiang <weijiang.yang@intel.com>
+Subject: [RFC PATCH 1/2] KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support
+Date: Thu,  9 May 2024 00:54:22 -0700
+Message-ID: <20240509075423.156858-1-weijiang.yang@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: rtl8192e: remove the r8192E_dev.c's
- unnecessary brace
-To: Chen shuo <1289151713@qq.com>, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <tencent_1992979C468AF087A1909000C6D0D5E61207@qq.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <tencent_1992979C468AF087A1909000C6D0D5E61207@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/8/24 17:13, Chen shuo wrote:
-> There is a unnecessary brace in r8192E_dev.c.Remove it to shorten
-> code and improve readability.
-> 
-> Signed-off-by: Chen shuo <1289151713@qq.com>
-> ---
-> v2:Make "Subject" line more unique.
->     Add space after : and driver name in the subject.
-> 
->   drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-> index e3ed709a7674..1862a9899966 100644
-> --- a/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-> +++ b/drivers/staging/rtl8192e/rtl8192e/r8192E_dev.c
-> @@ -1640,9 +1640,8 @@ bool rtl92e_get_rx_stats(struct net_device *dev, struct rtllib_rx_stats *stats,
->   	if (stats->Length < 24)
->   		stats->bHwError |= 1;
->   
-> -	if (stats->bHwError) {
-> +	if (stats->bHwError)
->   		return false;
-> -	}
->   
->   	stats->RxDrvInfoSize = pdesc->RxDrvInfoSize;
->   	stats->RxBufShift = (pdesc->Shift) & 0x03;
+Enable KVM_{G,S}ET_ONE_REG uAPIs so that userspace can access HW MSR or
+KVM synthetic MSR throught it.
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In CET KVM series [*], KVM "steals" an MSR from PV MSR space and access
+it via KVM_{G,S}ET_MSRs uAPIs, but the approach pollutes PV MSR space
+and hides the difference of synthetic MSRs and normal HW defined MSRs.
+
+Now carve out a separate room in KVM-customized MSR address space for
+synthetic MSRs. The synthetic MSRs are not exposed to userspace via
+KVM_GET_MSR_INDEX_LIST, instead userspace complies with KVM's setup and
+composes the uAPI params. KVM synthetic MSR indices start from 0 and
+increase linearly. Userspace caller should tag MSR type correctly in
+order to access intended HW or synthetic MSR.
+
+[*]:
+https://lore.kernel.org/all/20240219074733.122080-18-weijiang.yang@intel.com/
+
+Suggested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+---
+ arch/x86/include/uapi/asm/kvm.h | 10 ++++++
+ arch/x86/kvm/x86.c              | 62 +++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+)
+
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index ef11aa4cab42..ca2a47a85fa1 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -410,6 +410,16 @@ struct kvm_xcrs {
+ 	__u64 padding[16];
+ };
+ 
++#define KVM_X86_REG_MSR			(1 << 2)
++#define KVM_X86_REG_SYNTHETIC_MSR	(1 << 3)
++
++struct kvm_x86_reg_id {
++	__u32 index;
++	__u8 type;
++	__u8 rsvd;
++	__u16 rsvd16;
++};
++
+ #define KVM_SYNC_X86_REGS      (1UL << 0)
+ #define KVM_SYNC_X86_SREGS     (1UL << 1)
+ #define KVM_SYNC_X86_EVENTS    (1UL << 2)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 91478b769af0..d0054c52f24b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2244,6 +2244,31 @@ static int do_set_msr(struct kvm_vcpu *vcpu, unsigned index, u64 *data)
+ 	return kvm_set_msr_ignored_check(vcpu, index, *data, true);
+ }
+ 
++static int kvm_get_one_msr(struct kvm_vcpu *vcpu, u32 msr, u64 __user *value)
++{
++	u64 val;
++	int r;
++
++	r = do_get_msr(vcpu, msr, &val);
++	if (r)
++		return r;
++
++	if (put_user(val, value))
++		return -EFAULT;
++
++	return 0;
++}
++
++static int kvm_set_one_msr(struct kvm_vcpu *vcpu, u32 msr, u64 __user *value)
++{
++	u64 val;
++
++	if (get_user(val, value))
++		return -EFAULT;
++
++	return do_set_msr(vcpu, msr, &val);
++}
++
+ #ifdef CONFIG_X86_64
+ struct pvclock_clock {
+ 	int vclock_mode;
+@@ -5859,6 +5884,11 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
+ 	}
+ }
+ 
++static int kvm_translate_synthetic_msr(u32 *index)
++{
++	return 0;
++}
++
+ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 			 unsigned int ioctl, unsigned long arg)
+ {
+@@ -5976,6 +6006,38 @@ long kvm_arch_vcpu_ioctl(struct file *filp,
+ 		srcu_read_unlock(&vcpu->kvm->srcu, idx);
+ 		break;
+ 	}
++	case KVM_GET_ONE_REG:
++	case KVM_SET_ONE_REG: {
++		struct kvm_x86_reg_id *id;
++		struct kvm_one_reg reg;
++		u64 __user *value;
++
++		r = -EFAULT;
++		if (copy_from_user(&reg, argp, sizeof(reg)))
++			break;
++
++		r = -EINVAL;
++		id = (struct kvm_x86_reg_id *)&reg.id;
++		if (id->rsvd || id->rsvd16)
++			break;
++
++		if (id->type != KVM_X86_REG_MSR &&
++		    id->type != KVM_X86_REG_SYNTHETIC_MSR)
++			break;
++
++		if (id->type == KVM_X86_REG_SYNTHETIC_MSR) {
++			r = kvm_translate_synthetic_msr(&id->index);
++			if (r)
++				break;
++		}
++
++		value = u64_to_user_ptr(reg.addr);
++		if (ioctl == KVM_GET_ONE_REG)
++			r = kvm_get_one_msr(vcpu, id->index, value);
++		else
++			r = kvm_set_one_msr(vcpu, id->index, value);
++		break;
++	}
+ 	case KVM_TPR_ACCESS_REPORTING: {
+ 		struct kvm_tpr_access_ctl tac;
+ 
+-- 
+2.43.0
+
 
