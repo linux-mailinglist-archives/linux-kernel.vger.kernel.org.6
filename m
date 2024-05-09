@@ -1,218 +1,254 @@
-Return-Path: <linux-kernel+bounces-174819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C26C8C1567
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:24:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65EE8C156A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F10E282108
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5DC2825D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9EC17FBCF;
-	Thu,  9 May 2024 19:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2472D7FBAA;
+	Thu,  9 May 2024 19:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="rKEBpC/4"
-Received: from SG2PR03CU006.outbound.protection.outlook.com (mail-southeastasiaazrln10220000.outbound.protection.outlook.com [52.103.193.0])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BKFyxaE6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D867F3D3AC;
-	Thu,  9 May 2024 19:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.193.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715282665; cv=fail; b=BFp3NlCmIknBIqIXYc6mZN6qDQ5A28ANv26vcakncPnCRNSbPX7CQTtD/npwCfExcigf7qUOS2EVYUP51zqw+tlt568luWVko7Lmx1xxb5++P3UuN25x2Gt+yRlZ6woyRaFKvosht5dBpONlmKt51B599rAIJ0rt2+E4oQKQoDk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715282665; c=relaxed/simple;
-	bh=fBawpr2ty/iW2H9YZNwZ6uahwYYar/1q0tsrEPr2s5k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WOWPqUMiWuLrsL9AIyIpgMn6TBUFVOqUSOloqKjmKfyqo2Gr6MpVfQDXPw5bSveGeDMPZbGJM/rJSTgQxRg+uV5o3Y3QTLrFIVcrAsFzSeX81p7uxhxBAGqxkld1sVZlqqs7Y1L3lWjjqJ627/mKaWDRUZshq+b3UOWMzz6MNLs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=rKEBpC/4; arc=fail smtp.client-ip=52.103.193.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lLv4ejr3oRAWcQxMiOtmWpSeKmwDuBnMVqvL/ZBnYPgkEp1pWeErQFhg5uC6/tyMuyHWPkdEsFIA35ZpmzOipwtAvzUMQDbxgweGPyHxn7WcFa6Q/ktCnrsPqpx+s7G6cvWQ1CELigNOy+K90AXMMdCozTuX7g6EskMh6Ep/8C8CtpVRBzhpSmk+dMElsfLs+0BxudvNwwAVyUFq+npLyxKRMMWLTzo9KWVbbbgUyvSPOsZvkAacM8r9vfhdIlmgWUDQzPWHqrweM60xYuj81dDGmKm0q2BlPRk5U/Y2xxYlwtU5I9r152C3C+lCNCSGkOonl8kubpeXE84xWtygUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hrk5lnNE+YHeysnxbdGlrXsCv2zMIwxk/zuRUEsea9w=;
- b=Bmus8B/f8l225jE3qjtRwRy2Fbi/skUDk0JG6ZFI1/0HHjGCgzdFlpmyfiTuzcPIpbF+nsJ3CAfeOfI3QJJjj03oZFBUe7aDgvffysxLctSJ2ZQNCr3fSTSt9Q2kYcFwHRTkH2/I1thhamOT0iV9SRnqluWF5u3xHOWBts6szypkO526iP/hVGwW06U4N7Dolyo6ZyfDlE/zY16DjjTG2cKiZ0Xsr4+e5Rjtt2jy3BCOeB8nXB1bNwHWE1Nq2Zrl2C3+fHnG6/jsgN3fMDrukB/IvK2vobjv1hSk7xOuxfWDJMawK9nVQyYuXda93nn99A+ncolmmL4dVurdehQngQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 211.75.126.7) smtp.rcpttodomain=baylibre.com
- smtp.mailfrom=taln60.nuvoton.co.il; dmarc=fail (p=none sp=quarantine pct=100)
- action=none header.from=gmail.com; dkim=none (message not signed); arc=none
- (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hrk5lnNE+YHeysnxbdGlrXsCv2zMIwxk/zuRUEsea9w=;
- b=rKEBpC/4iBRyZ7srQx0z/feb3D6G+Oa+vhlVM/UyPI+Ds0MouVuFBzgW640zuMF93zRR7s0cEI3gOrOYXMRBAactOXPK8uG7q/fWVp/0RM7ueOCVKl4dvYqR1nDwEEorlCnOoJm30qLN1s/1ZZXNEE4RnquGPODW/F1xKYfXNvE=
-Received: from KL1PR01CA0080.apcprd01.prod.exchangelabs.com
- (2603:1096:820:2::20) by JH0PR03MB7981.apcprd03.prod.outlook.com
- (2603:1096:990:31::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42; Thu, 9 May
- 2024 19:24:19 +0000
-Received: from HK3PEPF0000021F.apcprd03.prod.outlook.com
- (2603:1096:820:2:cafe::87) by KL1PR01CA0080.outlook.office365.com
- (2603:1096:820:2::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49 via Frontend
- Transport; Thu, 9 May 2024 19:24:19 +0000
-X-MS-Exchange-Authentication-Results: spf=none (sender IP is 211.75.126.7)
- smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: None (protection.outlook.com: taln60.nuvoton.co.il does not
- designate permitted sender hosts)
-Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
- HK3PEPF0000021F.mail.protection.outlook.com (10.167.8.41) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Thu, 9 May 2024 19:24:18 +0000
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Fri, 10 May
- 2024 03:24:16 +0800
-Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Fri, 10 May 2024 03:24:15 +0800
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 30DD25F66B;
-	Thu,  9 May 2024 22:24:15 +0300 (IDT)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id 2EEABDC0BCE; Thu,  9 May 2024 22:24:15 +0300 (IDT)
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<tali.perry1@gmail.com>, <joel@jms.id.au>, <venture@google.com>,
-	<yuenn@google.com>, <benjaminfair@google.com>
-CC: <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
-	<tmaimon77@gmail.com>
-Subject: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk bindings
-Date: Thu, 9 May 2024 22:24:11 +0300
-Message-ID: <20240509192411.2432066-5-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240509192411.2432066-1-tmaimon77@gmail.com>
-References: <20240509192411.2432066-1-tmaimon77@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755FF58AD0;
+	Thu,  9 May 2024 19:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715282711; cv=none; b=cnUK8f3qpqWd+N+KdZbuy7rKKauK27RxgsXd2YuqBYxzBM8btNHBempBpjOlbOsmElRVOb7jTuY0V+VARtFZgExOHVVrt0uOclDeuM3OemcfoyVhc8dBeW8bO4y2B7WPyXfgeh4Da2wTvGsobYjJ3n6BVgygO05IDQZ8FR3zqPc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715282711; c=relaxed/simple;
+	bh=5aqb0P387QZx1UosCoAcJMRfHFMgFslVT6Dmc7NgopE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jJskJYHUvz3m7XeuudpUemO8t5sRuDCgkUuOJOS9h9HRt/eZfFMDl5ed5juLMSLFdf2wMvV6QGL8UsnwLe90YQi7PmPmCbL8gWOwNG/OkTZNd4ZZmDkkz+FqulOpuBid/XTA5mULWgo6UosdK2yoCWEyPqvndlPH6DRbySvEztc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BKFyxaE6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 449Ic6Kr017606;
+	Thu, 9 May 2024 19:24:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=bTk++dJUPn75cMEYvh7SMilpRzMGtp7tcM8WVq8ziEM=; b=BK
+	FyxaE6USt7Klr0U72mi90iytCaSYEX2aCoRiC60ix5P0qGWRKN/9GOjB18MjBV1V
+	3q5taTjKpYv4ncCHTTqL5HdYqnovvpxr9jfI60Jdt5m6MaZvLiIzMgAAmmB+7fTm
+	90oqnno4l1XdKp9GvOpvZ+DJdn9zN/b+iT/r23OZls+CjYjnTJlIfaWmG5UmOUSh
+	4dklr+vWwiINkrixpTnIWQJvr3lLN17rMFQm+Hp/WFaqFLicb/jsKxNhq0QPT1AY
+	b63Dj4NGEkhTtW0BcLGsU4AeZvtr51wxejhUAw4W8NCmex3czvyYdi1/P29e/qy3
+	Qff67ioQYq+y4F2Ydj0w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y0930uh7f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 19:24:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449JOfL7031869
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 9 May 2024 19:24:41 GMT
+Received: from [10.46.19.239] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
+ 12:24:37 -0700
+Message-ID: <3b9b51d4-95c5-4f31-afb1-246dd9b00467@quicinc.com>
+Date: Thu, 9 May 2024 12:24:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH bpf-next v7 3/3] selftests/bpf: Handle forwarding of
+ UDP CLOCK_TAI packets
+Content-Language: en-US
+To: Martin KaFai Lau <martin.lau@linux.dev>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Willem
+ de Bruijn" <willemdebruijn.kernel@gmail.com>,
+        Martin KaFai Lau
+	<martin.lau@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, bpf
+	<bpf@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20240508215842.2449798-1-quic_abchauha@quicinc.com>
+ <20240508215842.2449798-4-quic_abchauha@quicinc.com>
+ <c929dced-e70e-4f49-b812-026b2677bfd9@linux.dev>
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <c929dced-e70e-4f49-b812-026b2677bfd9@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NotSetDelaration: True
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021F:EE_|JH0PR03MB7981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a0385bf-a251-4c43-7db0-08dc705d9ef3
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|48200799009|82310400017|376005|7093399003|35950700004|61400799018|921011|35450700002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UU9hoOZvxpTZOTEKTYw3Z1Cpj3CziiL4eHD4WM+m5RwoH8LdGibc4/BG59Wo?=
- =?us-ascii?Q?JsxZ2BQ/j61DtkxBuimpdsjrcix28L9Ghowgcr3CtnXY/MTaDRtHQfn97UvV?=
- =?us-ascii?Q?4LfeITGkZm89/rskfdtd3sSCUOZqSb3fpXpDXIiJic3w99+TxiBX+w50gAHH?=
- =?us-ascii?Q?a4YkfZ/nSJ1bB8IvkGempB/2woQvwz8gNFrhynxaGvMhQGnXEZ1v2yaoFG3w?=
- =?us-ascii?Q?x+b/+IReLKHWlvSikCL1sNUGMmKeit9d3GZfG/hD9C1BnHz2W2Fd39EwbVG8?=
- =?us-ascii?Q?C9QSCf3KdnjcHlomaYcmnDDGf7cU65jvmNzg/qNLyN16R92LKvZ4l/XxX6Qf?=
- =?us-ascii?Q?Tj/IbaEVMRs90HUbZYZCKca937l1FRD8wJ7hb7HenVaSgcvdEd4Az66u9orG?=
- =?us-ascii?Q?vPUD1h+mrnnui/10BlWLdqFZgYxACjrOl70fEXfGfW1uEwPHXyvrRbj0WDpZ?=
- =?us-ascii?Q?wPD703sic0tSRt61mN1q5qxbV9z40XVyxvvnv16+r4FCDwmPDoNv8A8H7Ixp?=
- =?us-ascii?Q?YLcDRvfZ4IVDSAyEY+jben+s2jqpK9jCbSPoAXlM1ELgbALrWjTmfVbyJQnT?=
- =?us-ascii?Q?jH72VdwhOuCCWlcN2PJ5EI3MT/49zeyzRnaVfjqqYHi4gkgf6xeE9cgsFEEb?=
- =?us-ascii?Q?AKgVQqgB7nRzxpXwrxxVhKWnUT6QqlMhz/ShI4zChs4RKXHobKJx/XWKy++6?=
- =?us-ascii?Q?t8YMfPp6U4TJCTFEVUc7NCbEbXnlAruheRtLC3QxLmer8xWrfAt12mMQ7cAO?=
- =?us-ascii?Q?SyRYCeaLUfhyIZDiDvZ+hIT9GcvmHhLAMNgvpkh7ajlnd9optGn2tVcvBqb0?=
- =?us-ascii?Q?PAIlzbfpBb1yZ0YUW+XwBgT6LcmoBRBT05bMFMauumBP+Jhb5f6fsM2yemym?=
- =?us-ascii?Q?BBBdKITaJng1+BOv5MkyWy4Ag170qMN/pG7Av/7yQ/hjQUaaABciIbNsse0h?=
- =?us-ascii?Q?K/1YRE/+jFzJwtLeaRkdJMQwsr4cBM5sj2LhzWko3AP0ZKYzm+ckt0uw4q//?=
- =?us-ascii?Q?/3jTLC1Pbq0gEOkgvD6gtBA0MNWTBkLC9P/9VkBgBB3A0Fj2J5NPo5ONhkeS?=
- =?us-ascii?Q?szV0sggDNNvlKdbT/oKBM4tyLsaWzBzOSh8PhwyAkmXT28vTiVEhGgFvPaAT?=
- =?us-ascii?Q?MXXyN4K0UgGvc/AsSTjDvZneqQgjUy/3RVnueJbT/9PdGjTvcjan4I4I0Jk2?=
- =?us-ascii?Q?WxSWt3r2JMNUhX2qZt2tdIzeGrCSBJkfIQZhRUDq2kP93stairNKlUnBwKwo?=
- =?us-ascii?Q?lxRIH9ZHFvQ2tZQTrBNq2HfnKEjR+6cfiAmwoDHxw0kzqvGEdhA4ap+mXse8?=
- =?us-ascii?Q?KNDkAjCmc7Y01JKIFKPP3YXadeKJy4HsBSfqo+bJeGKAzFrDF2IjzYYroK2N?=
- =?us-ascii?Q?A9Mhaq8FD4iiGecAo4TcTxLwTYVF7Fjh2fpvtuFO0ufvmlgLrQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230031)(7416005)(48200799009)(82310400017)(376005)(7093399003)(35950700004)(61400799018)(921011)(35450700002);DIR:OUT;SFP:1022;
-X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 19:24:18.0482
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a0385bf-a251-4c43-7db0-08dc705d9ef3
-X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021F.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7981
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MoiFAyQTWuqt_PDZPNwIprIcsPZj5aCO
+X-Proofpoint-ORIG-GUID: MoiFAyQTWuqt_PDZPNwIprIcsPZj5aCO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_11,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 phishscore=0 mlxlogscore=999 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405090137
 
-Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
-using the auxiliary device framework and not the device tree framework.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- .../bindings/clock/nuvoton,npcm845-clk.yaml   | 49 -------------------
- 1 file changed, 49 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml b/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-deleted file mode 100644
-index b901ca13cd25..000000000000
---- a/Documentation/devicetree/bindings/clock/nuvoton,npcm845-clk.yaml
-+++ /dev/null
-@@ -1,49 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/clock/nuvoton,npcm845-clk.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Nuvoton NPCM8XX Clock Controller
--
--maintainers:
--  - Tomer Maimon <tmaimon77@gmail.com>
--
--description: |
--  Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller, which
--  generates and supplies clocks to all modules within the BMC.
--
--properties:
--  compatible:
--    enum:
--      - nuvoton,npcm845-clk
--
--  reg:
--    maxItems: 1
--
--  '#clock-cells':
--    const: 1
--    description:
--      See include/dt-bindings/clock/nuvoton,npcm8xx-clock.h for the full
--      list of NPCM8XX clock IDs.
--
--required:
--  - compatible
--  - reg
--  - '#clock-cells'
--
--additionalProperties: false
--
--examples:
--  - |
--    ahb {
--        #address-cells = <2>;
--        #size-cells = <2>;
--
--        clock-controller@f0801000 {
--            compatible = "nuvoton,npcm845-clk";
--            reg = <0x0 0xf0801000 0x0 0x1000>;
--            #clock-cells = <1>;
--        };
--    };
--...
--- 
-2.34.1
+On 5/9/2024 12:17 PM, Martin KaFai Lau wrote:
+> On 5/8/24 2:58 PM, Abhishek Chauhan wrote:
+>> With changes in the design to forward CLOCK_TAI in the skbuff
+>> framework,  existing selftest framework needs modification
+>> to handle forwarding of UDP packets with CLOCK_TAI as clockid.
+> 
+> The set lgtm. I have a few final nits on the test.
+> 
+>>
+>> Link: https://lore.kernel.org/netdev/bc037db4-58bb-4861-ac31-a361a93841d3@linux.dev/
+>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>> ---
+>> Changes since v7
+>> - Fixed  issues in the ctx_rewrite.c
+>>    with respect to dissembly in both
+>>    .read and .write
+>>
+>> Changes since v6
+>> - Moved all the selftest to another patch
+>>
+>> Changes since v1 - v5
+>> - Patch was not present
+>>
+>>   tools/include/uapi/linux/bpf.h                | 15 ++++---
+>>   .../selftests/bpf/prog_tests/ctx_rewrite.c    | 10 +++--
+>>   .../selftests/bpf/prog_tests/tc_redirect.c    |  3 --
+>>   .../selftests/bpf/progs/test_tc_dtime.c       | 39 +++++++++----------
+>>   4 files changed, 34 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
+>> index 90706a47f6ff..25ea393cf084 100644
+>> --- a/tools/include/uapi/linux/bpf.h
+>> +++ b/tools/include/uapi/linux/bpf.h
+> 
+> nit. Please move this bpf.h sync changes to patch 2 where the uapi changes happen.
+> 
+>> @@ -6207,12 +6207,17 @@ union {                    \
+>>       __u64 :64;            \
+>>   } __attribute__((aligned(8)))
+>>   +/* The enum used in skb->tstamp_type. It specifies the clock type
+>> + * of the time stored in the skb->tstamp.
+>> + */
+>>   enum {
+>> -    BPF_SKB_TSTAMP_UNSPEC,
+>> -    BPF_SKB_TSTAMP_DELIVERY_MONO,    /* tstamp has mono delivery time */
+>> -    /* For any BPF_SKB_TSTAMP_* that the bpf prog cannot handle,
+>> -     * the bpf prog should handle it like BPF_SKB_TSTAMP_UNSPEC
+>> -     * and try to deduce it by ingress, egress or skb->sk->sk_clockid.
+>> +    BPF_SKB_TSTAMP_UNSPEC = 0,        /* DEPRECATED */
+>> +    BPF_SKB_TSTAMP_DELIVERY_MONO = 1,    /* DEPRECATED */
+>> +    BPF_SKB_CLOCK_REALTIME = 0,
+>> +    BPF_SKB_CLOCK_MONOTONIC = 1,
+>> +    BPF_SKB_CLOCK_TAI = 2,
+>> +    /* For any future BPF_SKB_CLOCK_* that the bpf prog cannot handle,
+>> +     * the bpf prog can try to deduce it by ingress/egress/skb->sk->sk_clockid.
+>>        */
+>>   };
+>>   diff --git a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>> index 3b7c57fe55a5..08b6391f2f56 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/ctx_rewrite.c
+>> @@ -69,15 +69,17 @@ static struct test_case test_cases[] = {
+>>       {
+>>           N(SCHED_CLS, struct __sk_buff, tstamp),
+>>           .read  = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+>> -             "w11 &= 3;"
+>> -             "if w11 != 0x3 goto pc+2;"
+>> +             "if w11 & 0x4 goto pc+1;"
+>> +             "goto pc+4;"
+>> +             "if w11 & 0x3 goto pc+1;"
+>> +             "goto pc+2;"
+>>                "$dst = 0;"
+>>                "goto pc+1;"
+>>                "$dst = *(u64 *)($ctx + sk_buff::tstamp);",
+>>           .write = "r11 = *(u8 *)($ctx + sk_buff::__mono_tc_offset);"
+>> -             "if w11 & 0x2 goto pc+1;"
+>> +             "if w11 & 0x4 goto pc+1;"
+>>                "goto pc+2;"
+>> -             "w11 &= -2;"
+>> +             "w11 &= -4;"
+>>                "*(u8 *)($ctx + sk_buff::__mono_tc_offset) = r11;"
+>>                "*(u64 *)($ctx + sk_buff::tstamp) = $src;",
+>>       },
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/tc_redirect.c b/tools/testing/selftests/bpf/prog_tests/tc_redirect.c
+>> index b1073d36d77a..327d51f59142 100644
+>> --- a/tools/testing/selftests/bpf/prog_tests/tc_redirect.c
+>> +++ b/tools/testing/selftests/bpf/prog_tests/tc_redirect.c
+>> @@ -890,9 +890,6 @@ static void test_udp_dtime(struct test_tc_dtime *skel, int family, bool bpf_fwd)
+>>         ASSERT_EQ(dtimes[INGRESS_FWDNS_P100], 0,
+>>             dtime_cnt_str(t, INGRESS_FWDNS_P100));
+>> -    /* non mono delivery time is not forwarded */
+>> -    ASSERT_EQ(dtimes[INGRESS_FWDNS_P101], 0,
+>> -          dtime_cnt_str(t, INGRESS_FWDNS_P101));
+>>       for (i = EGRESS_FWDNS_P100; i < SET_DTIME; i++)
+>>           ASSERT_GT(dtimes[i], 0, dtime_cnt_str(t, i));
+>>   diff --git a/tools/testing/selftests/bpf/progs/test_tc_dtime.c b/tools/testing/selftests/bpf/progs/test_tc_dtime.c
+>> index 74ec09f040b7..21f5be202e4b 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_tc_dtime.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_tc_dtime.c
+>> @@ -222,13 +222,19 @@ int egress_host(struct __sk_buff *skb)
+>>           return TC_ACT_OK;
+>>         if (skb_proto(skb_type) == IPPROTO_TCP) {
+>> -        if (skb->tstamp_type == BPF_SKB_TSTAMP_DELIVERY_MONO &&
+>> +        if (skb->tstamp_type == BPF_SKB_CLOCK_MONOTONIC &&
+>> +            skb->tstamp)
+>> +            inc_dtimes(EGRESS_ENDHOST);
+>> +        else
+>> +            inc_errs(EGRESS_ENDHOST);
+>> +    } else if (skb_proto(skb_type) == IPPROTO_UDP) {
+>> +        if (skb->tstamp_type == BPF_SKB_CLOCK_TAI &&
+>>               skb->tstamp)
+>>               inc_dtimes(EGRESS_ENDHOST);
+>>           else
+>>               inc_errs(EGRESS_ENDHOST);
+>>       } else {
+>> -        if (skb->tstamp_type == BPF_SKB_TSTAMP_UNSPEC &&
+>> +        if (skb->tstamp_type == BPF_SKB_CLOCK_REALTIME &&
+>>               skb->tstamp)
+> 
+> Since the UDP+TAI can be handled properly in the above "else if" case now, I would like to further tighten the bolt on detecting the non-zero REALTIME skb->tstamp here since it should not happen at egress. Something like:
+> 
+>     } else {
+>         if (skb->tstamp_type == BPF_SKB_CLOCK_REALTIME &&
+>             skb->tstamp)
+>             inc_errs(EGRESS_ENDHOST);
+>     }
+> 
+> I ran the test (w or w/o the above inc_errs changes) in a loop and it consistently passes now.
+> 
+> Other than the above small nits, in the next re-spin, please remove the RFC tag and you can carry my reviewed-by to all 3 patches. Thanks.
+> 
+Noted! 
+Thank you Martin and Willem for helping me with this series. 
+And all the design discussion we had throughout the series. 
+Appreciate all the comments from yourside. 
+I will raise the last series with no RFC tag 
+1. carry Reviewed-by: 
+2. Fix all the above comments 
 
+
+
+> Reviewed-by: Martin KaFai Lau <martin.lau@kernel.org>
+> 
+>>               inc_dtimes(EGRESS_ENDHOST);
+>>           else
+> 
 
