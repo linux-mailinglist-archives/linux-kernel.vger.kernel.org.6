@@ -1,280 +1,98 @@
-Return-Path: <linux-kernel+bounces-174586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C328C112B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:25:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB498C112E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464FF1C219D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BCB284064
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167B515E7E4;
-	Thu,  9 May 2024 14:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73DE1514D3;
+	Thu,  9 May 2024 14:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zJcEjUAD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HFXPgYFu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zJcEjUAD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HFXPgYFu"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mq83i2Lv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7DF15B130
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F7C15E1F8;
+	Thu,  9 May 2024 14:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715264712; cv=none; b=TivYUtlFso/bqhBkoai8wV9p4sUjQ3X6AjBsBhsHZ1oDKNU97ErDtkvhh9C9evNJZ3zDmoc/W5iH9RXYHvEluXRl6p+MwYEm6IbxivYZw13MXHJdAxkN5ko0CP6QaFHgUNmHtYwhwHwOJb8HHZdFOK0M2rqedFjF3faX4QgBA4k=
+	t=1715264803; cv=none; b=fHTCcTIRhDXI2KUZflvUpOgA67aZhNh5uCogcRCrvCLvNVRj0xqH48I0ZYCH2CglxgdEvreEZ4v8jsbJ8PK7ViOIB/kA07ijSsy2GkW0vqvodtDOo/eC0y9j6zlglCeuiLjKJjGbRAnZTrYL1yoa+TnZ3sSWeLpasvakjvwfUq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715264712; c=relaxed/simple;
-	bh=bBIpM16SSg37TkKCJcNfvZpewLdzAeXnuS8VqydFTvI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=VYM6nri+sLZ6HHvgT2M+iduGOOgAC2KRSUqQxFbhN//wAnRpS1LboSN09BMrKrO+teE5RHupXTvF1E05fiJ7bNvhtE7owafgrueBqVV4kcoJefakhPiL5m/J0pK7BYsBP7vi5Z64t6bc9bgGRAMwlwSCL5OCws3jk7A+e30eiiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zJcEjUAD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HFXPgYFu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zJcEjUAD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HFXPgYFu; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5B5FD3872F;
-	Thu,  9 May 2024 14:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715264706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
-	b=zJcEjUADgmUdzL9apTmoZkkxDpecRwKnteb9CFfPZw2Ov5IzGZA4E7wDbJk6VLpkjCMRH1
-	xYz7knZJpj9GA6HVWLR9e+Ve6R1w+jQtgYX1GjQF43NVRsYoPJ+Lb353epiSkjZOR8Rdbk
-	vtznahS4T9eADzcYD7p9/KFkFGJi/TA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715264706;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
-	b=HFXPgYFuIowtyiHgGbYEKE2lKeURO+WWQ2/igkv6FZUvSx7Rx5hkL2SGrrpLdYgcGDQ2Nz
-	S/smmm4YvlwA+uBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715264706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
-	b=zJcEjUADgmUdzL9apTmoZkkxDpecRwKnteb9CFfPZw2Ov5IzGZA4E7wDbJk6VLpkjCMRH1
-	xYz7knZJpj9GA6HVWLR9e+Ve6R1w+jQtgYX1GjQF43NVRsYoPJ+Lb353epiSkjZOR8Rdbk
-	vtznahS4T9eADzcYD7p9/KFkFGJi/TA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715264706;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
-	b=HFXPgYFuIowtyiHgGbYEKE2lKeURO+WWQ2/igkv6FZUvSx7Rx5hkL2SGrrpLdYgcGDQ2Nz
-	S/smmm4YvlwA+uBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42ABB13941;
-	Thu,  9 May 2024 14:25:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rhL5D8LcPGb+AgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 09 May 2024 14:25:06 +0000
-Message-ID: <587f5e6b-d543-4028-85c8-93cc8f581d02@suse.cz>
-Date: Thu, 9 May 2024 16:25:05 +0200
+	s=arc-20240116; t=1715264803; c=relaxed/simple;
+	bh=SCaHMmd1m0QK7gnRTSHDhuSaxihiJErG4UxfHXLr1Go=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gi5qTBx/x1E5F0Nw0S2IELomZgibclEK5nSPVBMqvzRwI2gynOl7/j95pcjoaCv758gmGA8B+curXPm8aOk98U1vj4xAW3HkGOQ0H3NFOXQw3pqgRMx3PVh6TNzaphUyBV5mklEzXyENnOThALJiQug+QEzY/yxxkcHj6fYRhsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mq83i2Lv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00AD6C116B1;
+	Thu,  9 May 2024 14:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715264802;
+	bh=SCaHMmd1m0QK7gnRTSHDhuSaxihiJErG4UxfHXLr1Go=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mq83i2LvIcvAUmFlwWSbH9rp73iD39gAd6teIYv0nnXhd0pTxFeFkJ/E+RCWKq8jP
+	 WysFRGljckNhwwp8NmtcaRN6+GM9igeC0LHv7s1IM0ft9j1j31EQ3v+FbgiWaEtzgR
+	 9eMdZcQmjFf/L+gNkFNtMI7zhNroPa0lYNifqqRFabl3rycEV8n6uVCEze+xEVbv0P
+	 0Pl8Bh3P6TNgkbtZEQvjhJxYyfE7UHwinJ9yuLzMObfGDt0zhs/IMfx8e9ECo+S+bG
+	 d0valGYk5V7hBUpu3eLn2AUR7Mn+DMS5YCzE/ZI7jeWkd3VW6d++ktnXJbdk3a+6Gs
+	 3PR8LeXZbXmag==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org
+Subject: [GIT PULL] keys changes for v6.10-rc1
+Date: Thu,  9 May 2024 17:25:17 +0300
+Message-ID: <20240509142517.2787-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab updates for 6.10
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Joonsoo Kim
- <iamjoonsoo.kim@lge.com>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, patches@lists.linux.dev,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Chengming Zhou <chengming.zhou@linux.dev>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Flag: NO
-X-Spam-Score: -2.79
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[google.com,lge.com,linux.com,kernel.org,linux-foundation.org,kvack.org,vger.kernel.org,lists.linux.dev,linux.dev,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+  Merge tag '6.9-rc7-ksmbd-fixes' of git://git.samba.org/ksmbd (2024-05-08 10:39:53 -0700)
 
-please pull the latest slab updates from:
+are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.10
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-next-6.10-rc1
 
-Sending this early due to upcoming LSF/MM travel and chances there's no rc8.
+for you to fetch changes up to 9da27fb65a14c18efd4473e2e82b76b53ba60252:
 
-Thanks,
-Vlastimil
-
-======================================
-
-This time it's mostly random cleanups and fixes, with two performance fixes
-that might have significant impact, but limited to systems experiencing
-particular bad corner case scenarios rather than general performance
-improvements.
-
-The memcg hook changes are going through the mm tree due to dependencies.
-
-- Prevent stalls when reading /proc/slabinfo (Jianfeng Wang)
-
-  This fixes the long-standing problem that can happen with workloads that have
-  alloc/free patterns resulting in many partially used slabs (in e.g. dentry
-  cache). Reading /proc/slabinfo will traverse the long partial slab list under
-  spinlock with disabled irqs and thus can stall other processes or even
-  trigger the lockup detection. The traversal is only done to count free
-  objects so that <active_objs> column can be reported along with <num_objs>.
-
-  To avoid affecting fast paths with another shared counter (attempted in the
-  past) or complex partial list traversal schemes that allow rescheduling, the
-  chosen solution resorts to approximation - when the partial list is over
-  10000 slabs long, we will only traverse first 5000 slabs from head and tail
-  each and use the average of those to estimate the whole list. Both head and
-  tail are used as the slabs near head to tend to have more free objects than
-  the slabs towards the tail.
-
-  It is expected the approximation should not break existing /proc/slabinfo
-  consumers. The <num_objs> field is still accurate and reflects the overall
-  kmem_cache footprint. The <active_objs> was already imprecise due to cpu and
-  percpu-partial slabs, so can't be relied upon to determine exact cache usage.
-  The difference between <active_objs> and <num_objs> is mainly useful to
-  determine the slab fragmentation, and that will be possible even with the
-  approximation in place.
-
-- Prevent allocating many slabs when a NUMA node is full (Chen Jun)
-
-  Currently, on NUMA systems with a node under significantly bigger pressure
-  than other nodes, the fallback strategy may result in each kmalloc_node()
-  that can't be safisfied from the preferred node, to allocate a new slab on a
-  fallback node, and not reuse the slabs already on that node's partial list.
-
-  This is now fixed and partial lists of fallback nodes are checked even for
-  kmalloc_node() allocations. It's still preferred to allocate a new slab on
-  the requested node before a fallback, but only with a GFP_NOWAIT attempt,
-  which will fail quickly when the node is under a significant memory pressure.
-
-- More SLAB removal related cleanups (Xiu Jianfeng, Hyunmin Lee)
-
-- Fix slub_kunit self-test with hardened freelists (Guenter Roeck)
-
-- Mark racy accesses for KCSAN (linke li)
-
-- Misc cleanups (Xiongwei Song, Haifeng Xu, Sangyun Kim)
+  keys: Fix overwrite of key expiration on instantiation (2024-05-09 16:28:58 +0300)
 
 ----------------------------------------------------------------
-Chen Jun (1):
-      mm/slub: Reduce memory consumption in extreme scenarios
+Hi
 
-Guenter Roeck (1):
-      mm/slub, kunit: Use inverted data to corrupt kmem cache
+2nd trial of the earlier PR with more appropriate tag:
 
-Haifeng Xu (1):
-      slub: Set __GFP_COMP in kmem_cache by default
+1. Do no overwrite the key expiration once it is set.
+2. Early to quota updates for keys to key_put(), instead of
+   updating them in key_gc_unused_keys().
 
-Hyunmin Lee (2):
-      mm/slub: create kmalloc 96 and 192 caches regardless cache size order
-      mm/slub: remove the check for NULL kmalloc_caches
+[1] Earlier PR:
+    https://lore.kernel.org/linux-integrity/20240326143838.15076-1-jarkko@kernel.org/
 
-Jianfeng Wang (2):
-      slub: introduce count_partial_free_approx()
-      slub: use count_partial_free_approx() in slab_out_of_memory()
+BR, Jarkko
 
-Sangyun Kim (1):
-      mm/slub: remove duplicate initialization for early_kmem_cache_node_alloc()
+----------------------------------------------------------------
+Luis Henriques (1):
+      keys: update key quotas in key_put()
 
-Xiongwei Song (3):
-      mm/slub: remove the check of !kmem_cache_has_cpu_partial()
-      mm/slub: add slub_get_cpu_partial() helper
-      mm/slub: simplify get_partial_node()
+Silvio Gissi (1):
+      keys: Fix overwrite of key expiration on instantiation
 
-Xiu Jianfeng (2):
-      mm/slub: remove dummy slabinfo functions
-      mm/slub: correct comment in do_slab_free()
-
-linke li (2):
-      mm/slub: mark racy accesses on slab->slabs
-      mm/slub: mark racy access on slab->freelist
-
- lib/slub_kunit.c |   2 +-
- mm/slab.h        |   3 --
- mm/slab_common.c |  27 +++++--------
- mm/slub.c        | 118 ++++++++++++++++++++++++++++++++++++++++---------------
- 4 files changed, 96 insertions(+), 54 deletions(-)
+ security/keys/gc.c     |  8 --------
+ security/keys/key.c    | 35 ++++++++++++++++++++++++-----------
+ security/keys/keyctl.c | 11 ++++++-----
+ 3 files changed, 30 insertions(+), 24 deletions(-)
 
