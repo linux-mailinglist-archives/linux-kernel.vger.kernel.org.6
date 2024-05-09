@@ -1,89 +1,91 @@
-Return-Path: <linux-kernel+bounces-174844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9CE8C15CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:59:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D916A8C17A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6A31F2391D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929C32831B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F6880034;
-	Thu,  9 May 2024 19:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Et6KlpKC"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E7579DD5;
+	Thu,  9 May 2024 20:35:49 +0000 (UTC)
+Received: from server.joladcareservices.co.uk (unknown [162.214.0.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2B87FBA3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BCA376
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.214.0.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284743; cv=none; b=LZXybJsHjICPZmEabkfQ2HFSGAEqM/47/ly8WQVXaVmHnBxIXOd536BW1+ZxFoQgnrW5aExvpnsilsh0JOMWi/lLCE+Zkd+j5FHxrBzcS/RJofGs+A3Db9Zy6Rc/qBlvMvfvqG0iQDAqf630Sphf+Z3em8B/eMsmm4Kr1SLTsDM=
+	t=1715286949; cv=none; b=DvGYwEAz5E3GU28yfSEqSaRA370EoX2Uw+6ld9Y99WzBYfRYfACVEETio0nzXhha4EFKNNQcWYSxVdGBcFUMUIwlxybp25GsPiXGRxmJoj7ocI12fbrua6XOqKA84wtkwFNBFP61PaPsByyejhWsjgGpiiN8IlbwA8fMy3ZGZ1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284743; c=relaxed/simple;
-	bh=OnbQe+bCqY2rYw1sxfcLYriS5FEuZk4a26vibIkjt1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZ5NnRRxfS8ifDc/43T+8dgKd+kXGne5WMKEwQjhcTjzXpxqMFKfICkfBRdkq2dZjr7UTIfC1i0yyyA63btBiK5l5GuhH+/IwH5IrpoAzbffXaCFz+h5eStcg3B6mUAabb9z/bhWcee5p1ZIvEYIxU1w9C/mhQSAX5x+tpDp5o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Et6KlpKC; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 9 May 2024 15:58:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715284740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1xiXJpUfTT+mb4SIUCAoc8Fh3im5TmPn8g7fMC9GdA=;
-	b=Et6KlpKC7tLOBT+aJswTbWijbiptHMLJUNCE6RqFW2qwuz5t8GtY1irAH9CE7c4AQWZlk+
-	x7pCyfRSZAwg/UCz2L4di+O236Vpx2zjVjmGdMfih5zJ8VTyDlVJfKzifBGZR59xeDHZH/
-	dYnYIMiD+LOTZr8qrwwVj0ZYwTU1UJg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Coly Li <colyli@suse.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Matthew Mirvish <matthew@mm12.xyz>
-Subject: Re: linux-next: manual merge of the refactor-heap tree with the
- block tree
-Message-ID: <te64v6zwwor6jkco6uiu2zz7ern6ijhyu5okfvdz3bmj3w5qfp@mx4zdniwymqj>
-References: <20240509152745.08af752f@canb.auug.org.au>
+	s=arc-20240116; t=1715286949; c=relaxed/simple;
+	bh=zx83MejzDDttGLLYlxoEwoFl+NiFfOGqKcUjZEjjEI0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Udy18jl2ISXxtPJmnOEmIT5TahOLM/S2Cel7tlTeIHZLYAfO8Rj+ZkEQITZme08lcwJd+JjmRzFwOrBzrLdYkjloUnB93fpuHnVYG/YU2xZ3fmvC3AxkxKlCOd9fm9Lz8NwcuTpMgVf+dcbqzEm3suqzhP4erCDUUDtqbrd8jcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=houseofdisruption.com; spf=none smtp.mailfrom=houseofdisruption.com; arc=none smtp.client-ip=162.214.0.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=houseofdisruption.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=houseofdisruption.com
+Received: from [104.223.100.74] (port=65453 helo=houseofdisruption.com)
+	by server.joladcareservices.co.uk with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <akorede@houseofdisruption.com>)
+	id 1s55m8-0004nW-1a
+	for linux-kernel@vger.kernel.org;
+	Thu, 09 May 2024 09:33:39 -0600
+Reply-To: vendorscontractor@servicesetihadaviationgroup.com
+From: Etihad Aviation Group PJSC<akorede@houseofdisruption.com>
+To: linux-kernel@vger.kernel.org
+Subject: Etihad Aviation Group, UAE 2024/2025 projects
+Date: 9 May 2024 08:33:33 -0700
+Message-ID: <20240509083151.5EE69DA45E392683@houseofdisruption.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509152745.08af752f@canb.auug.org.au>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.joladcareservices.co.uk
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - houseofdisruption.com
+X-Get-Message-Sender-Via: server.joladcareservices.co.uk: authenticated_id: akorede@houseofdisruption.com
+X-Authenticated-Sender: server.joladcareservices.co.uk: akorede@houseofdisruption.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, May 09, 2024 at 03:27:45PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the refactor-heap tree got conflicts in:
-> 
->   drivers/md/bcache/bset.c
->   drivers/md/bcache/bset.h
->   drivers/md/bcache/btree.c
->   drivers/md/bcache/writeback.c
-> 
-> between commit:
-> 
->   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
-> 
-> from the block tree and commit:
-> 
->   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
-> 
-> from the refactor-heap tree.
-> 
-> Ok, these conflicts are too extensive, so I am dropping the refactor-heap
-> tree for today.  I suggest you all get together and sort something out.
 
-Coli and Kuan, you guys will need to get this sorted out quick if we
-want refactor-heap to make the merge window
+
+Attn: Sir/Madam,
+
+Greetings from  Etihad Aviation Group, UAE.
+
+We are inviting your esteemed company for Vendor/Contractor=20
+Partnership registration with Etihad Aviation Group, UAE=20
+2024/2025 projects.
+
+These projects are open for all companies around the world. If=20
+you have intention to participate in the process, please confirm=20
+your interest by asking for Vendor Questionnaire and EOI.
+
+Your prompt response would be greatly appreciated as it will help=20
+us expedite the vendor/contractor selection process.
+
+Looking forward to your reply.
+
+Kind Regards,
+
+Mr.George Ibrahim
+Contractors Coordinator
+Group Procurement & Contracts Shared Services Center
+Etihad Aviation Group PJSC
+Etihad Airways - Head office, New Airport Road,
+Khalifa City, PO Box 35566, Abu Dhabi
+United Arab Emirates.
 
