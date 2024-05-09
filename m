@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-174105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A048C0A41
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1DB8C0A40
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78F21C21CAD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E53B223E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058B0148839;
-	Thu,  9 May 2024 03:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12FF148FF4;
+	Thu,  9 May 2024 03:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SpAzl1dV"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NEPcHmH2"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466641487E1
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 03:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115181487EB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 03:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715226149; cv=none; b=Va6RVZf6lPWQUcOLRsceO8pX4aFc4XjaKBiW0fLx8+cx0iNci6vUuvo1CTs5eGw2NSOLpYNHWe+F/FGbDyMD3IMk/i5iAIzeGhjSS6apI4dZ65fERsAdDq0kkrW0cyBttiuk89ocoemnDHrNQlpPsdpHoMYqsYjtDRKngTeteZI=
+	t=1715226148; cv=none; b=INCFDV1wNEGLLL3t1TurdAzaFvmv3WE6xJd0NzhDFQrf4m6C7g0w4pHxo+qpVaLy9dUVayJTQTNy5ZyZ3HduEj52mW1miczI3RQkLomG2Rfkta2IA/1D/drRXu8Uz2BMeyimNSyBvaiBG/KKgIu2h68tlCrVm3CW8ehRy+yDCwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715226149; c=relaxed/simple;
-	bh=bTyF+t9QjpdTL+BbqNoUvznJ1O9ci4mnQXMAicSZ+AU=;
+	s=arc-20240116; t=1715226148; c=relaxed/simple;
+	bh=4ulQN+HvNPj275WmEBxyI3azpUdeKNE29LrUt7rnPL0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=egPbximVutyEblG0YgGhxOzekxEJEwj4OntFuOZIMwMICoMzIdNDuX1t+etQ7y/wcZsB6mSUNLRuOVrmXHvCMMuPXrUuiomF1y2iojTVB3yXxS1lKuH5BuayixQ9eP0wHE5iMjOpazLRSzX2CEvbm1bLrE+sXgfLCC5iiU0YG2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SpAzl1dV; arc=none smtp.client-ip=95.215.58.186
+	 MIME-Version; b=geISg1YSp7FrXI3zLR9J5pl9Ojx2td0yeikPz1u56YaLRv9HYWw4DjNMBAKtgJDdWoHiWJoM76fn1mRM8i8LVvS088e8QcnQUT6pcklcBrTJqRk6pVsh0z9b5/dXxIxVSEmy63pCHcVEI84cX2BI6DY+FQEXX7/7c2B4u1ljYXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NEPcHmH2; arc=none smtp.client-ip=95.215.58.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715226142;
+	t=1715226144;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FahYJsnGNMAVOqpqAKoouEmDf+g2I+jBcjHL24grq/o=;
-	b=SpAzl1dVlTr/zB9ErJ8MLvGOYTSgQJTkA6MR+Q4IlMLYIQt/NHGlapbqKAiEMT76kZwn5A
-	Hkj+wiRs5wOQDcAs5Kyvnlv/R/uJnemJSmwPqQBG6YLs0K/92PCVv7wvlpZZgtOMGWXqA5
-	wyooAIWNgnJz/Z2m2GTMnyDb+jyYlvs=
+	bh=b9lUdssqcdP+CrtmSgsIzouILJvuOsKGGEAvcTP1mqg=;
+	b=NEPcHmH2DSzCrY//6NP0Bi4GvSl4OSSVZtie/gEZgChaQTJBZDgCrJCkjX4BVns83i/UBf
+	cxeWGIqyE+J7wItvNZt3VjQy9rWQ2AZ6Nmlmnk2Y6jEvt8wYXfVGgyqFHH/Y4ZTMzhKvyY
+	noBAfFs68sT8nTfsE5YLtVRvjiqQWik=
 From: Roman Gushchin <roman.gushchin@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Muchun Song <muchun.song@linux.dev>,
@@ -51,9 +51,9 @@ Cc: Muchun Song <muchun.song@linux.dev>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: [PATCH rfc 6/9] mm: memcg: move cgroup v1 oom handling code into memcontrol-v1.c
-Date: Wed,  8 May 2024 20:41:35 -0700
-Message-ID: <20240509034138.2207186-7-roman.gushchin@linux.dev>
+Subject: [PATCH rfc 7/9] mm: memcg: put cgroup v1-specific code under a config option
+Date: Wed,  8 May 2024 20:41:36 -0700
+Message-ID: <20240509034138.2207186-8-roman.gushchin@linux.dev>
 In-Reply-To: <20240509034138.2207186-1-roman.gushchin@linux.dev>
 References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
 Precedence: bulk
@@ -65,522 +65,189 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Cgroup v1 supported a complicated OOM handling mechanism in userspace,
-which is not supported by cgroup v2. Let's move the corresponding code
-into memcontrol-v1.c.
-
-Aside from mechanical code movement this patch introduces two new
-functions: mem_cgroup_v1_oom_prepare() and mem_cgroup_v1_oom_finish().
-Those are implementing cgroup v1-specific parts of the common memcg
-OOM handling path.
+Put legacy cgroup v1 memory controller code under a new
+CONFIG_MEMCG_V1 config option. The option is turned on by default
+as of now to keep things backward-compatible. But users who have fully
+adopted cgroup v2 and don't use cgroup v1 anymore can turn it off
+and benefit from a smaller memory footprint and small CPU wins on
+some memcg paths.
 
 Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 ---
- mm/internal.h      |   4 +-
- mm/memcontrol-v1.c | 229 +++++++++++++++++++++++++++++++++++++++++++++
- mm/memcontrol.c    | 220 +------------------------------------------
- 3 files changed, 234 insertions(+), 219 deletions(-)
+ include/linux/memcontrol.h | 13 ++++++++++---
+ init/Kconfig               |  7 +++++++
+ mm/Makefile                |  3 ++-
+ mm/internal.h              | 24 +++++++++++++++++++++++-
+ mm/memcontrol.c            | 10 +++++++---
+ 5 files changed, 49 insertions(+), 8 deletions(-)
 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index fc4aaa73aa5e..d2a4145b1909 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -954,7 +954,14 @@ static inline bool task_in_memcg_oom(struct task_struct *p)
+ 	return p->memcg_in_oom;
+ }
+ 
++#ifdef CONFIG_MEMCG_V1
+ bool mem_cgroup_oom_synchronize(bool wait);
++#else
++static inline bool mem_cgroup_oom_synchronize(bool wait)
++{
++	return false;
++}
++#endif
+ struct mem_cgroup *mem_cgroup_get_oom_group(struct task_struct *victim,
+ 					    struct mem_cgroup *oom_domain);
+ void mem_cgroup_print_oom_group(struct mem_cgroup *memcg);
+@@ -1872,7 +1879,7 @@ static inline bool mem_cgroup_zswap_writeback_enabled(struct mem_cgroup *memcg)
+ 
+ /* Cgroup v1-specific definitions */
+ 
+-#ifdef CONFIG_MEMCG
++#ifdef CONFIG_MEMCG_V1
+ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+ 						gfp_t gfp_mask,
+ 						unsigned long *total_scanned);
+@@ -1895,7 +1902,7 @@ static inline void mem_cgroup_unlock_pages(void)
+ {
+ 	rcu_read_unlock();
+ }
+-#else /* CONFIG_MEMCG */
++#else /* CONFIG_MEMCG_V1 */
+ 
+ static inline
+ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+@@ -1924,6 +1931,6 @@ static inline void mem_cgroup_unlock_pages(void)
+ {
+ 	rcu_read_unlock();
+ }
+-#endif /* CONFIG_MEMCG */
++#endif /* CONFIG_MEMCG_V1 */
+ 
+ #endif /* _LINUX_MEMCONTROL_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index 10d4a638d9ae..ce9b78279627 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -969,6 +969,13 @@ config MEMCG
+ 	help
+ 	  Provides control over the memory footprint of tasks in a cgroup.
+ 
++config MEMCG_V1
++	bool "Legacy memory controller"
++	depends on MEMCG
++	default y
++	help
++	  Legacy cgroup v1 memory controller.
++
+ config MEMCG_KMEM
+ 	bool
+ 	depends on MEMCG
+diff --git a/mm/Makefile b/mm/Makefile
+index c717a3ee612e..4e2fe5f6637c 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -96,7 +96,8 @@ obj-$(CONFIG_NUMA) += memory-tiers.o
+ obj-$(CONFIG_DEVICE_MIGRATION) += migrate_device.o
+ obj-$(CONFIG_TRANSPARENT_HUGEPAGE) += huge_memory.o khugepaged.o
+ obj-$(CONFIG_PAGE_COUNTER) += page_counter.o
+-obj-$(CONFIG_MEMCG) += memcontrol.o memcontrol-v1.o vmpressure.o
++obj-$(CONFIG_MEMCG_V1) += memcontrol-v1.o
++obj-$(CONFIG_MEMCG) += memcontrol.o vmpressure.o
+ ifdef CONFIG_SWAP
+ obj-$(CONFIG_MEMCG) += swap_cgroup.o
+ endif
 diff --git a/mm/internal.h b/mm/internal.h
-index 533aa999a450..1b94e2169e19 100644
+index 1b94e2169e19..8c5640ef85f8 100644
 --- a/mm/internal.h
 +++ b/mm/internal.h
-@@ -1614,8 +1614,10 @@ enum res_type {
- };
+@@ -1559,7 +1559,6 @@ static inline int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ }
  
- void memcg_check_events(struct mem_cgroup *memcg, int nid);
--void mem_cgroup_oom_notify(struct mem_cgroup *memcg);
- void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
-+bool mem_cgroup_v1_oom_prepare(struct mem_cgroup *memcg, gfp_t mask, int order,
-+			       bool *locked);
-+void mem_cgroup_v1_oom_finish(struct mem_cgroup *memcg, bool *locked);
+ void mem_cgroup_charge_statistics(struct mem_cgroup *memcg, int nr_pages);
+-void memcg_oom_recover(struct mem_cgroup *memcg);
+ void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n);
+ void mem_cgroup_id_put_many(struct mem_cgroup *memcg, unsigned int n);
+ 
+@@ -1589,6 +1588,7 @@ unsigned long memcg_events_local(struct mem_cgroup *memcg, int event);
+ void drain_all_stock(struct mem_cgroup *root_memcg);
+ 
+ /* Memory cgroups v1-specific definitions */
++#ifdef CONFIG_MEMCG_V1
+ void mem_cgroup_update_tree(struct mem_cgroup *memcg, int nid);
+ void mem_cgroup_remove_from_trees(struct mem_cgroup *memcg);
+ void mem_cgroup_soft_limit_reset(struct mem_cgroup *memcg);
+@@ -1618,9 +1618,31 @@ void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+ bool mem_cgroup_v1_oom_prepare(struct mem_cgroup *memcg, gfp_t mask, int order,
+ 			       bool *locked);
+ void mem_cgroup_v1_oom_finish(struct mem_cgroup *memcg, bool *locked);
++void memcg_oom_recover(struct mem_cgroup *memcg);
  void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg);
  
  extern struct cftype memsw_files[];
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index cd711f6b8386..15356bbbc058 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -2675,6 +2675,235 @@ struct cftype memsw_files[] = {
- 	{ },	/* terminate */
- };
+ extern struct cftype mem_cgroup_legacy_files[];
  
-+#ifdef CONFIG_LOCKDEP
-+static struct lockdep_map memcg_oom_lock_dep_map = {
-+	.name = "memcg_oom_lock",
-+};
-+#endif
++#else /* CONFIG_MEMCG_V1 */
++static inline void mem_cgroup_remove_from_trees(struct mem_cgroup *memcg) {}
++static inline void mem_cgroup_soft_limit_reset(struct mem_cgroup *memcg) {}
 +
-+DEFINE_SPINLOCK(memcg_oom_lock);
-+
-+/*
-+ * Check OOM-Killer is already running under our hierarchy.
-+ * If someone is running, return false.
-+ */
-+static bool mem_cgroup_oom_trylock(struct mem_cgroup *memcg)
++static inline bool mem_cgroup_wait_acct_move(struct mem_cgroup *memcg)
 +{
-+	struct mem_cgroup *iter, *failed = NULL;
-+
-+	spin_lock(&memcg_oom_lock);
-+
-+	for_each_mem_cgroup_tree(iter, memcg) {
-+		if (iter->oom_lock) {
-+			/*
-+			 * this subtree of our hierarchy is already locked
-+			 * so we cannot give a lock.
-+			 */
-+			failed = iter;
-+			mem_cgroup_iter_break(memcg, iter);
-+			break;
-+		} else
-+			iter->oom_lock = true;
-+	}
-+
-+	if (failed) {
-+		/*
-+		 * OK, we failed to lock the whole subtree so we have
-+		 * to clean up what we set up to the failing subtree
-+		 */
-+		for_each_mem_cgroup_tree(iter, memcg) {
-+			if (iter == failed) {
-+				mem_cgroup_iter_break(memcg, iter);
-+				break;
-+			}
-+			iter->oom_lock = false;
-+		}
-+	} else
-+		mutex_acquire(&memcg_oom_lock_dep_map, 0, 1, _RET_IP_);
-+
-+	spin_unlock(&memcg_oom_lock);
-+
-+	return !failed;
++	return false;
 +}
 +
-+static void mem_cgroup_oom_unlock(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+
-+	spin_lock(&memcg_oom_lock);
-+	mutex_release(&memcg_oom_lock_dep_map, _RET_IP_);
-+	for_each_mem_cgroup_tree(iter, memcg)
-+		iter->oom_lock = false;
-+	spin_unlock(&memcg_oom_lock);
-+}
-+
-+static void mem_cgroup_mark_under_oom(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+
-+	spin_lock(&memcg_oom_lock);
-+	for_each_mem_cgroup_tree(iter, memcg)
-+		iter->under_oom++;
-+	spin_unlock(&memcg_oom_lock);
-+}
-+
-+static void mem_cgroup_unmark_under_oom(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+
-+	/*
-+	 * Be careful about under_oom underflows because a child memcg
-+	 * could have been added after mem_cgroup_mark_under_oom.
-+	 */
-+	spin_lock(&memcg_oom_lock);
-+	for_each_mem_cgroup_tree(iter, memcg)
-+		if (iter->under_oom > 0)
-+			iter->under_oom--;
-+	spin_unlock(&memcg_oom_lock);
-+}
-+
-+bool mem_cgroup_v1_oom_prepare(struct mem_cgroup *memcg, gfp_t mask, int order,
++static inline void memcg_check_events(struct mem_cgroup *memcg, int nid) {}
++static inline void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s) {}
++static inline bool mem_cgroup_v1_oom_prepare(struct mem_cgroup *memcg, gfp_t mask, int order,
 +			       bool *locked)
 +{
-+	/*
-+	 * We are in the middle of the charge context here, so we
-+	 * don't want to block when potentially sitting on a callstack
-+	 * that holds all kinds of filesystem and mm locks.
-+	 *
-+	 * cgroup1 allows disabling the OOM killer and waiting for outside
-+	 * handling until the charge can succeed; remember the context and put
-+	 * the task to sleep at the end of the page fault when all locks are
-+	 * released.
-+	 *
-+	 * On the other hand, in-kernel OOM killer allows for an async victim
-+	 * memory reclaim (oom_reaper) and that means that we are not solely
-+	 * relying on the oom victim to make a forward progress and we can
-+	 * invoke the oom killer here.
-+	 *
-+	 * Please note that mem_cgroup_out_of_memory might fail to find a
-+	 * victim and then we have to bail out from the charge path.
-+	 */
-+	if (READ_ONCE(memcg->oom_kill_disable)) {
-+		if (current->in_user_fault) {
-+			css_get(&memcg->css);
-+			current->memcg_in_oom = memcg;
-+			current->memcg_oom_gfp_mask = mask;
-+			current->memcg_oom_order = order;
-+		}
-+		return false;
-+	}
-+
-+	mem_cgroup_mark_under_oom(memcg);
-+
-+	*locked = mem_cgroup_oom_trylock(memcg);
-+
-+	if (*locked)
-+		mem_cgroup_oom_notify(memcg);
-+
-+	mem_cgroup_unmark_under_oom(memcg);
-+
 +	return true;
 +}
++static inline void mem_cgroup_v1_oom_finish(struct mem_cgroup *memcg, bool *locked) {}
++static inline void memcg_oom_recover(struct mem_cgroup *memcg) {}
++static inline void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg) {}
++#endif /* CONFIG_MEMCG_V1 */
 +
-+void mem_cgroup_v1_oom_finish(struct mem_cgroup *memcg, bool *locked)
-+{
-+	if (*locked)
-+		mem_cgroup_oom_unlock(memcg);
-+}
-+
-+static DECLARE_WAIT_QUEUE_HEAD(memcg_oom_waitq);
-+
-+struct oom_wait_info {
-+	struct mem_cgroup *memcg;
-+	wait_queue_entry_t	wait;
-+};
-+
-+static int memcg_oom_wake_function(wait_queue_entry_t *wait,
-+	unsigned mode, int sync, void *arg)
-+{
-+	struct mem_cgroup *wake_memcg = (struct mem_cgroup *)arg;
-+	struct mem_cgroup *oom_wait_memcg;
-+	struct oom_wait_info *oom_wait_info;
-+
-+	oom_wait_info = container_of(wait, struct oom_wait_info, wait);
-+	oom_wait_memcg = oom_wait_info->memcg;
-+
-+	if (!mem_cgroup_is_descendant(wake_memcg, oom_wait_memcg) &&
-+	    !mem_cgroup_is_descendant(oom_wait_memcg, wake_memcg))
-+		return 0;
-+	return autoremove_wake_function(wait, mode, sync, arg);
-+}
-+
-+void memcg_oom_recover(struct mem_cgroup *memcg)
-+{
-+	/*
-+	 * For the following lockless ->under_oom test, the only required
-+	 * guarantee is that it must see the state asserted by an OOM when
-+	 * this function is called as a result of userland actions
-+	 * triggered by the notification of the OOM.  This is trivially
-+	 * achieved by invoking mem_cgroup_mark_under_oom() before
-+	 * triggering notification.
-+	 */
-+	if (memcg && memcg->under_oom)
-+		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
-+}
-+
-+/**
-+ * mem_cgroup_oom_synchronize - complete memcg OOM handling
-+ * @handle: actually kill/wait or just clean up the OOM state
-+ *
-+ * This has to be called at the end of a page fault if the memcg OOM
-+ * handler was enabled.
-+ *
-+ * Memcg supports userspace OOM handling where failed allocations must
-+ * sleep on a waitqueue until the userspace task resolves the
-+ * situation.  Sleeping directly in the charge context with all kinds
-+ * of locks held is not a good idea, instead we remember an OOM state
-+ * in the task and mem_cgroup_oom_synchronize() has to be called at
-+ * the end of the page fault to complete the OOM handling.
-+ *
-+ * Returns %true if an ongoing memcg OOM situation was detected and
-+ * completed, %false otherwise.
-+ */
-+bool mem_cgroup_oom_synchronize(bool handle)
-+{
-+	struct mem_cgroup *memcg = current->memcg_in_oom;
-+	struct oom_wait_info owait;
-+	bool locked;
-+
-+	/* OOM is global, do not handle */
-+	if (!memcg)
-+		return false;
-+
-+	if (!handle)
-+		goto cleanup;
-+
-+	owait.memcg = memcg;
-+	owait.wait.flags = 0;
-+	owait.wait.func = memcg_oom_wake_function;
-+	owait.wait.private = current;
-+	INIT_LIST_HEAD(&owait.wait.entry);
-+
-+	prepare_to_wait(&memcg_oom_waitq, &owait.wait, TASK_KILLABLE);
-+	mem_cgroup_mark_under_oom(memcg);
-+
-+	locked = mem_cgroup_oom_trylock(memcg);
-+
-+	if (locked)
-+		mem_cgroup_oom_notify(memcg);
-+
-+	schedule();
-+	mem_cgroup_unmark_under_oom(memcg);
-+	finish_wait(&memcg_oom_waitq, &owait.wait);
-+
-+	if (locked)
-+		mem_cgroup_oom_unlock(memcg);
-+cleanup:
-+	current->memcg_in_oom = NULL;
-+	css_put(&memcg->css);
-+	return true;
-+}
-+
- void mem_cgroup_v1_offline_memcg(struct mem_cgroup *memcg)
- {
- 	struct mem_cgroup_event *event, *tmp;
+ #endif	/* __MM_INTERNAL_H */
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index cd7e5f67d9b5..805efc98ae12 100644
+index 805efc98ae12..d5883f748330 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -1610,130 +1610,6 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	return ret;
- }
+@@ -4435,18 +4435,20 @@ struct cgroup_subsys memory_cgrp_subsys = {
+ 	.css_free = mem_cgroup_css_free,
+ 	.css_reset = mem_cgroup_css_reset,
+ 	.css_rstat_flush = mem_cgroup_css_rstat_flush,
+-	.can_attach = mem_cgroup_can_attach,
+ #if defined(CONFIG_LRU_GEN) || defined(CONFIG_MEMCG_KMEM)
+ 	.attach = mem_cgroup_attach,
+ #endif
+-	.cancel_attach = mem_cgroup_cancel_attach,
+-	.post_attach = mem_cgroup_move_task,
+ #ifdef CONFIG_MEMCG_KMEM
+ 	.fork = mem_cgroup_fork,
+ 	.exit = mem_cgroup_exit,
+ #endif
+ 	.dfl_cftypes = memory_files,
++#ifdef CONFIG_MEMCG_V1
++	.can_attach = mem_cgroup_can_attach,
++	.cancel_attach = mem_cgroup_cancel_attach,
++	.post_attach = mem_cgroup_move_task,
+ 	.legacy_cftypes = mem_cgroup_legacy_files,
++#endif
+ 	.early_init = 0,
+ };
  
--#ifdef CONFIG_LOCKDEP
--static struct lockdep_map memcg_oom_lock_dep_map = {
--	.name = "memcg_oom_lock",
--};
--#endif
--
--DEFINE_SPINLOCK(memcg_oom_lock);
--
--/*
-- * Check OOM-Killer is already running under our hierarchy.
-- * If someone is running, return false.
-- */
--static bool mem_cgroup_oom_trylock(struct mem_cgroup *memcg)
--{
--	struct mem_cgroup *iter, *failed = NULL;
--
--	spin_lock(&memcg_oom_lock);
--
--	for_each_mem_cgroup_tree(iter, memcg) {
--		if (iter->oom_lock) {
--			/*
--			 * this subtree of our hierarchy is already locked
--			 * so we cannot give a lock.
--			 */
--			failed = iter;
--			mem_cgroup_iter_break(memcg, iter);
--			break;
--		} else
--			iter->oom_lock = true;
--	}
--
--	if (failed) {
--		/*
--		 * OK, we failed to lock the whole subtree so we have
--		 * to clean up what we set up to the failing subtree
--		 */
--		for_each_mem_cgroup_tree(iter, memcg) {
--			if (iter == failed) {
--				mem_cgroup_iter_break(memcg, iter);
--				break;
--			}
--			iter->oom_lock = false;
--		}
--	} else
--		mutex_acquire(&memcg_oom_lock_dep_map, 0, 1, _RET_IP_);
--
--	spin_unlock(&memcg_oom_lock);
--
--	return !failed;
--}
--
--static void mem_cgroup_oom_unlock(struct mem_cgroup *memcg)
--{
--	struct mem_cgroup *iter;
--
--	spin_lock(&memcg_oom_lock);
--	mutex_release(&memcg_oom_lock_dep_map, _RET_IP_);
--	for_each_mem_cgroup_tree(iter, memcg)
--		iter->oom_lock = false;
--	spin_unlock(&memcg_oom_lock);
--}
--
--static void mem_cgroup_mark_under_oom(struct mem_cgroup *memcg)
--{
--	struct mem_cgroup *iter;
--
--	spin_lock(&memcg_oom_lock);
--	for_each_mem_cgroup_tree(iter, memcg)
--		iter->under_oom++;
--	spin_unlock(&memcg_oom_lock);
--}
--
--static void mem_cgroup_unmark_under_oom(struct mem_cgroup *memcg)
--{
--	struct mem_cgroup *iter;
--
--	/*
--	 * Be careful about under_oom underflows because a child memcg
--	 * could have been added after mem_cgroup_mark_under_oom.
--	 */
--	spin_lock(&memcg_oom_lock);
--	for_each_mem_cgroup_tree(iter, memcg)
--		if (iter->under_oom > 0)
--			iter->under_oom--;
--	spin_unlock(&memcg_oom_lock);
--}
--
--static DECLARE_WAIT_QUEUE_HEAD(memcg_oom_waitq);
--
--struct oom_wait_info {
--	struct mem_cgroup *memcg;
--	wait_queue_entry_t	wait;
--};
--
--static int memcg_oom_wake_function(wait_queue_entry_t *wait,
--	unsigned mode, int sync, void *arg)
--{
--	struct mem_cgroup *wake_memcg = (struct mem_cgroup *)arg;
--	struct mem_cgroup *oom_wait_memcg;
--	struct oom_wait_info *oom_wait_info;
--
--	oom_wait_info = container_of(wait, struct oom_wait_info, wait);
--	oom_wait_memcg = oom_wait_info->memcg;
--
--	if (!mem_cgroup_is_descendant(wake_memcg, oom_wait_memcg) &&
--	    !mem_cgroup_is_descendant(oom_wait_memcg, wake_memcg))
--		return 0;
--	return autoremove_wake_function(wait, mode, sync, arg);
--}
--
--void memcg_oom_recover(struct mem_cgroup *memcg)
--{
--	/*
--	 * For the following lockless ->under_oom test, the only required
--	 * guarantee is that it must see the state asserted by an OOM when
--	 * this function is called as a result of userland actions
--	 * triggered by the notification of the OOM.  This is trivially
--	 * achieved by invoking mem_cgroup_mark_under_oom() before
--	 * triggering notification.
--	 */
--	if (memcg && memcg->under_oom)
--		__wake_up(&memcg_oom_waitq, TASK_NORMAL, 0, memcg);
--}
--
- /*
-  * Returns true if successfully killed one or more processes. Though in some
-  * corner cases it can return true even without killing any process.
-@@ -1747,106 +1623,14 @@ static bool mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
+@@ -5618,7 +5620,9 @@ static int __init mem_cgroup_swap_init(void)
+ 		return 0;
  
- 	memcg_memory_event(memcg, MEMCG_OOM);
- 
--	/*
--	 * We are in the middle of the charge context here, so we
--	 * don't want to block when potentially sitting on a callstack
--	 * that holds all kinds of filesystem and mm locks.
--	 *
--	 * cgroup1 allows disabling the OOM killer and waiting for outside
--	 * handling until the charge can succeed; remember the context and put
--	 * the task to sleep at the end of the page fault when all locks are
--	 * released.
--	 *
--	 * On the other hand, in-kernel OOM killer allows for an async victim
--	 * memory reclaim (oom_reaper) and that means that we are not solely
--	 * relying on the oom victim to make a forward progress and we can
--	 * invoke the oom killer here.
--	 *
--	 * Please note that mem_cgroup_out_of_memory might fail to find a
--	 * victim and then we have to bail out from the charge path.
--	 */
--	if (READ_ONCE(memcg->oom_kill_disable)) {
--		if (current->in_user_fault) {
--			css_get(&memcg->css);
--			current->memcg_in_oom = memcg;
--			current->memcg_oom_gfp_mask = mask;
--			current->memcg_oom_order = order;
--		}
-+	if (!mem_cgroup_v1_oom_prepare(memcg, mask, order, &locked))
- 		return false;
--	}
--
--	mem_cgroup_mark_under_oom(memcg);
--
--	locked = mem_cgroup_oom_trylock(memcg);
--
--	if (locked)
--		mem_cgroup_oom_notify(memcg);
--
--	mem_cgroup_unmark_under_oom(memcg);
- 	ret = mem_cgroup_out_of_memory(memcg, mask, order);
--
--	if (locked)
--		mem_cgroup_oom_unlock(memcg);
-+	mem_cgroup_v1_oom_finish(memcg, &locked);
- 
- 	return ret;
- }
- 
--/**
-- * mem_cgroup_oom_synchronize - complete memcg OOM handling
-- * @handle: actually kill/wait or just clean up the OOM state
-- *
-- * This has to be called at the end of a page fault if the memcg OOM
-- * handler was enabled.
-- *
-- * Memcg supports userspace OOM handling where failed allocations must
-- * sleep on a waitqueue until the userspace task resolves the
-- * situation.  Sleeping directly in the charge context with all kinds
-- * of locks held is not a good idea, instead we remember an OOM state
-- * in the task and mem_cgroup_oom_synchronize() has to be called at
-- * the end of the page fault to complete the OOM handling.
-- *
-- * Returns %true if an ongoing memcg OOM situation was detected and
-- * completed, %false otherwise.
-- */
--bool mem_cgroup_oom_synchronize(bool handle)
--{
--	struct mem_cgroup *memcg = current->memcg_in_oom;
--	struct oom_wait_info owait;
--	bool locked;
--
--	/* OOM is global, do not handle */
--	if (!memcg)
--		return false;
--
--	if (!handle)
--		goto cleanup;
--
--	owait.memcg = memcg;
--	owait.wait.flags = 0;
--	owait.wait.func = memcg_oom_wake_function;
--	owait.wait.private = current;
--	INIT_LIST_HEAD(&owait.wait.entry);
--
--	prepare_to_wait(&memcg_oom_waitq, &owait.wait, TASK_KILLABLE);
--	mem_cgroup_mark_under_oom(memcg);
--
--	locked = mem_cgroup_oom_trylock(memcg);
--
--	if (locked)
--		mem_cgroup_oom_notify(memcg);
--
--	schedule();
--	mem_cgroup_unmark_under_oom(memcg);
--	finish_wait(&memcg_oom_waitq, &owait.wait);
--
--	if (locked)
--		mem_cgroup_oom_unlock(memcg);
--cleanup:
--	current->memcg_in_oom = NULL;
--	css_put(&memcg->css);
--	return true;
--}
--
- /**
-  * mem_cgroup_get_oom_group - get a memory cgroup to clean up after OOM
-  * @victim: task to be killed by the OOM killer
+ 	WARN_ON(cgroup_add_dfl_cftypes(&memory_cgrp_subsys, swap_files));
++#ifdef CONFIG_MEMCG_V1
+ 	WARN_ON(cgroup_add_legacy_cftypes(&memory_cgrp_subsys, memsw_files));
++#endif
+ #if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_ZSWAP)
+ 	WARN_ON(cgroup_add_dfl_cftypes(&memory_cgrp_subsys, zswap_files));
+ #endif
 -- 
 2.43.2
 
