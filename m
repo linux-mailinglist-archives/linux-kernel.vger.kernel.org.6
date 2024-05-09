@@ -1,152 +1,94 @@
-Return-Path: <linux-kernel+bounces-174122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2368C0A74
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:25:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F1B8C0A77
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172132839A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD0CB1F225C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A77148300;
-	Thu,  9 May 2024 04:24:57 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1417C1482F3;
+	Thu,  9 May 2024 04:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkK1WhgX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F7813C91F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519D313B2A4;
+	Thu,  9 May 2024 04:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715228697; cv=none; b=cNYzAfwDYybv+aPa9U6S/huGVaanSk5bGbGXGuzUY06fXD31WX3p8zcEjP2LUX4yUaqqKA7HfGvd972x4g/AWzJ/1T8xJHXZHxGc/rx6jzpM3KflGXLrDrC2+fK2ASE9HQvbthQo3hgculNfKQv4Nv/l/9LhK3adYqoXXh3uPJQ=
+	t=1715228705; cv=none; b=B23VMRlZOTbwabkP3FZq/xwy/4LUBm+kF4tV1Si/acbkeZJgzeSkJWhX7yi82zQ1WUUOHgOmTW5Ererycybb1tcA3AKua3XNJXEkfy94JWWI9eIUbpgRz0ayTfjaKA8Cb2us3DRllICJe6CnH5KwIi44/q9Ynb9O+8dnfvB7wJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715228697; c=relaxed/simple;
-	bh=wbluDtpkgkqI4b6uOnSnk0JaOqE8O/8A4tFQH+1zXWw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELme65V0e8xhztSEwUTkqmFymGm/XK9xuPjhdkJ5qH101fGPbygZaaXUbNiuDxuU4iFNQtaIZLgtXAJA2zMiwo3jK+IpYBVxXi0y3P87l+Douugslm+uTI0oXrD+rQhzjwpcTtQM+UiGBpYqaU/8bZPPWGfGSdjpArZjDInJPQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 14224eb4-0dbc-11ef-b972-005056bdfda7;
-	Thu, 09 May 2024 07:24:52 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 9 May 2024 07:24:51 +0300
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Frank Li <frank.li@nxp.com>,
-	Krzysztof =?utf-8?B?V2lsY3p577+977+9c2tp?= <kwilczynski@kernel.org>,
-	"linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?B?V2lsY3p577+977+9c2tp?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v4 4/5] PCI: imx6: Convert to agnostic GPIO API
-Message-ID: <ZjxQE8h0-BABxybu@surfacebook.localdomain>
-References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
- <20240506142142.4042810-5-andriy.shevchenko@linux.intel.com>
- <AS8PR04MB867668870DD2DC029C8B98048CE62@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1715228705; c=relaxed/simple;
+	bh=6HMpt//iy5ul/2zvPh0UXT6YXRvV0LGvSjzXl6xMbJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1L4Xzieg5FnY7q13dmJqnvLRDxXV9L5LcmodkR+Y4Gr3NOcqslYWErV/ewKWBdFynhh/ihGW5paD29PiCKGPCK0NU51JcP4i6mkZUjmbJVde7Dp63nn6CRso1rQ/tnm2az5j35SWaZL8wH8V70+bbVkh2XQI+NJeoRvb5+qOeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkK1WhgX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5983C116B1;
+	Thu,  9 May 2024 04:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715228705;
+	bh=6HMpt//iy5ul/2zvPh0UXT6YXRvV0LGvSjzXl6xMbJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mkK1WhgXxEb58hvEtKOpPilq6s7ovX1CgptaWZkaoVON9UAOv+HG3ayV5TSUxLODp
+	 UTlP3JhwsnoC40fipbLtTPEvUdiJgPn83VJJIEsjtZzj0NYaS7lk/8Nj/dUWW0cFtz
+	 8rlCCcyd7XSmKtEtd1gsT1+6lVduhuqOnuB3+mGqYfGTATi1UMaCurYP3xms6fgFNi
+	 hJCz+LJfNZgrTPjezaP3RKzs55KapM0oDls4UWdkjwV8v46k8EcR7eTvYaRq8Kpud+
+	 lcrHYLjmR/Wd1ikuGDSJ1If8w3hdJnHCKWaI0WO3eDL6mLGAOc86BTlzFOn25wPyv7
+	 qFCqaS5cE/RTA==
+Date: Thu, 9 May 2024 12:25:01 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Mario Limonciello <mario.limonciello@amd.com>,
+	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Dustin Howett <dustin@howett.net>
+Subject: Re: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing
+ through EC_FEATURE_PWM_KEYB
+Message-ID: <ZjxQHV9FPovvm_CY@google.com>
+References: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
+ <cd9c5b6a-0155-434a-b868-a9ea52e878c9@amd.com>
+ <ae29f036-5e39-47ee-98d3-c023a263a3ef@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB867668870DD2DC029C8B98048CE62@AS8PR04MB8676.eurprd04.prod.outlook.com>
+In-Reply-To: <ae29f036-5e39-47ee-98d3-c023a263a3ef@t-8ch.de>
 
-Thu, May 09, 2024 at 01:24:45AM +0000, Hongxing Zhu kirjoitti:
-> > -----Original Message-----
-> > From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Sent: 2024å¹´5æœˆ6æ—¥ 22:21
+On Mon, May 06, 2024 at 07:38:09PM +0200, Thomas Weißschuh wrote:
+> On 2024-05-05 08:42:21+0000, Mario Limonciello wrote:
+> > On 5/5/2024 04:41, Thomas Weißschuh wrote:
+> > > The ChromeOS EC used in Framework laptops supports the standard cros
+> > > keyboard backlight protocol.
+> > > However the firmware on these laptops don't implement the ACPI ID
+> > > GOOG0002 that is recognized by cros_kbd_led_backlight and they also
+> > > don't use device tree.
 
-..
+If implementing ACPI ID GOOG0002 is not an option, how about adding a new ACPI
+ID?  For the new ACPI ID, it can use EC PWM for setting the brightness.
 
-> > -	imx6_pcie->gpio_active_high = of_property_read_bool(node,
-> > -						"reset-gpio-active-high");
-> > -	if (gpio_is_valid(imx6_pcie->reset_gpio)) {
-> > -		ret = devm_gpio_request_one(dev, imx6_pcie->reset_gpio,
-> > -				imx6_pcie->gpio_active_high ?
-> > -					GPIOF_OUT_INIT_HIGH :
-> > -					GPIOF_OUT_INIT_LOW,
-> > -				"PCIe reset");
-> > -		if (ret) {
-> > -			dev_err(dev, "unable to get reset gpio\n");
-> > -			return ret;
-> > -		}
-> > -	} else if (imx6_pcie->reset_gpio == -EPROBE_DEFER) {
-> > -		return imx6_pcie->reset_gpio;
-> > -	}
+> > Something I'd wonder is if the GOOG0002 ACPI ID can go away entirely with
+> > this type of change.  Presumably the Chromebooks with ChromeOS EC /also/
+> > advertise EC_FEATURE_PWM_KEYB.
+> 
+> Sounds good to me in general. It would make the code cleaner.
+> 
+> But I have no idea how CrOS kernels are set up in general.
+> If they are not using CONFIG_MFD_CROS_EC_DEV for some reason that
+> wouldn't work.
+> 
+> If the CrOS folks agree with that aproach I'll be happy to implement it.
 
-> Please correct me if my understand is wrong.
-> The "reset-gpio-active-high" property is added for some buggy board designs.
-> On these buggy boards, the reset gpio is active high.
-
-This is my understanding too.
-
-> In the other words, the PERST# is active and remote endpoint device would
-> be in reset stat when this gpio is high on these buggy boards.
-
-Yes.
-
-> I'm afraid that the PCIe would be broken on these boards, If these codes
->  are removed totally,
-
-No. Linus W. explained in the previous version review round how it's supposed
-to work.
-
-> and toggle the reset GPIO pin like below.
-> ...
-> gpio_set_value_cansleep(imx6_pcie->reset_gpio, 0);
-> msleep(100);
-> gpio_set_value_cansleep(imx6_pcie->reset_gpio, 1);
-> ...
-
-It's not the code that this patch adds. I'm not sure if I understand starting
-from here what you mean.
-
-> By the way, this reset GPIO pin should be high at end in
-> imx6_pcie_deassert_core_reset() if the imx6_pcie->gpio_active_high is zero. 
-
-This seems a terminology mixup. You probably meant "inactive".
-And this is exactly the case with this patch.
-
-If you start thinking in terms of "active"/"inactive" you will see that there
-is no contradiction and no behaviour change. The quirk itself is located in
-gpiolib-of.c..
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+I would say NO as some existing devices (with legacy firmware and kernel) may
+rely on it.
 
