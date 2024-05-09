@@ -1,85 +1,88 @@
-Return-Path: <linux-kernel+bounces-174002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EDB58C08FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:17:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27EC8C0903
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84B71F21A4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF521C20D91
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151B613C3D0;
-	Thu,  9 May 2024 01:17:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A26413C66B;
+	Thu,  9 May 2024 01:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YksXqOMI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5699513A3EE
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 01:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344C45BF0;
+	Thu,  9 May 2024 01:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715217425; cv=none; b=CjUg+pU8DLVHzrdZIalUoXNa216czcciwWIGzZLA3mXp1tpTAtFqfp7V2J/Sf/YTL1eguJlYuG+Esv7iZel5nGkW81WBeJ4YMJy/Y6G5cuZk/USElTLkDuxET/f3SJ8kEi9d27gCuTXQQNnwOeOszPo4fiUabBAzg7pFGEDsDb0=
+	t=1715217471; cv=none; b=jQfH6phB4FpR2ZD1Mwx14O4YwgxOX/WNDMobD/MpK2XLroGmwUn7XlNVQVhnbbveQZ5MBQ/yUzva9bnaV+fU9YUOOswLfngdx6+JtIBlAKNKz6HzkF7eoIxmf/ENGFNLjBQyeWWynBn2V4cUQn88kPUewWBxp4SyoX+fkijatXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715217425; c=relaxed/simple;
-	bh=ghu4iV7dxEKHYr5FUcqTWc2WoZ7gzqCQuUFJNEIke7c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TSeNISNjC5siLs0wG46wFpyjIRATYMKI0AD4td/eVdZTIrM8LdK9/0Z01Uxbhde7m2FUTtww61DvLHxGMzCENIRMcHajk5yxeYST4Hi1/Wm+i9uk3cNBYRL1+znqyc8lX2A3qY0dKSZbp3ql5fCMgFw2K49xwL8OV0sT+sm2xYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7dee502fae6so29306939f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 18:17:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715217423; x=1715822223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oftz16oysfnlKPaQe2lxtZscVIl7+JEIfdhzh74tyro=;
-        b=wD2kc/03Mgt/8FcHZnnNJObMPDtKtKAdBCVoU9iLoJEgVlNs8aO2UbeaC7bEwO/mpX
-         DS0Hsi91rQNho2yeQTiJxCGPN6yI0CC0HaFCe5JArfwRWvmIKjC3TXPup33gZ4ilfgG7
-         NsoWPvGFvT5NsZSpaRQnQnuKfGMIMC/Cdado8Ow+hFquD0ZkzIDjfyOh28toQCgJKZvo
-         1vq9sojxX1LQlpUr38w28n7BX0aOAvCGH0SCam20CUrgCuv5cQepNBAMKQn7/BsgrFMW
-         +sFi9779TyvVKr9NDNlkRgXaUdX1RMyoZf8bOVysVQLvRr6/KVrgvVUehiyEYjCLYQZ2
-         EQ1Q==
-X-Gm-Message-State: AOJu0YzNAZs70MBZVCE7VNJHzRGId/cIiIynpU4OsqXXMGMmX9dzIzg/
-	32XtbhNL/45aw1kRxMNzOxvrT9aw07C3SELOd7VJASknrC9wlFhdJSDP4GbrL1Vkc6iKnugpUnj
-	UeIn5XPb8wCNT2exYlYV9J67wVvkQOYm+nGXTT+fWtp8KtnFi0DmSTEg=
-X-Google-Smtp-Source: AGHT+IHpGuFTN5aAm7JsxOfjhe0MclTIcLoglEkqSaG+KYzG8SrpRelR5H692ffQYg1Yee8glg23u6wU3y3T805WillKUIXCtnby
+	s=arc-20240116; t=1715217471; c=relaxed/simple;
+	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Nhdcgx+efV6ziCACDB/rY6zwGnu4byWfV/SE9wxH7Hj4/f6mKYdS/KDzrpdWPeaFSath+jVfdz5GwjEfrHyXofRuHCG5QRN3V4/ZA35XV171L/jpnblsbfNOqGHCM5W1x6OHjMuMKwq3J+9iCkzCQP7gD/eJYqCUtVfoHOSJ80o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YksXqOMI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CFCC113CC;
+	Thu,  9 May 2024 01:17:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715217470;
+	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=YksXqOMI4lsIaZqx0A5/i0JLSUHcsO6uruynoyRGSTcqWF903u/LNNb6O00rrl71F
+	 cJoCY9K10j5YsDpFFHaW+Q/GDTqNdnFWxJZYEJtbqXcGypoZ9L2+lfbeRhWCjdQ5Fc
+	 I2f/XBoH04xYOYY2Kv45HjT4EJgTKItrn6caanPg57Ooh/8V7a7CC8OeP8k5gXlVmk
+	 wSEbxqrnDWea86AU7J9YgABLuuA35vwEF8jtn2Y/GO18uMF9XLAmCYiNY11uWwmdnR
+	 aBt3zDugGxm3jz5EmWt6uOeJ0qm0hpePouEkYn/Q0TpQ4GSGlw3M9WAKm9hX28rbhj
+	 xS2d+YmPOdkQA==
+Message-ID: <9e2440caa122d05cfc0ee3cf64b46e48.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2389:b0:488:cb5c:7044 with SMTP id
- 8926c6da1cb9f-488fdd5568fmr258613173.6.1715217423574; Wed, 08 May 2024
- 18:17:03 -0700 (PDT)
-Date: Wed, 08 May 2024 18:17:03 -0700
-In-Reply-To: <ZjwdgZftuDnkXa9Y@zeus>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003eb8460617fb2d12@google.com>
-Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, ryasuoka@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
+References: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10, fixed pull, 2nd try
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 08 May 2024 18:17:48 -0700
+User-Agent: alot/0.10
 
-Hello,
+Quoting Krzysztof Kozlowski (2024-05-08 08:31:56)
+> Hi,
+>=20
+> Updated pull request with fixed issue of non-used local const data.
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
+95:
+>=20
+>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-6.10-2
+>=20
+> for you to fetch changes up to 7c18b0a5aa46cc7e5d3a7ef3f9f8e3aa91bb780f:
+>=20
+>   clk: samsung: gs101: drop unused HSI2 clock parent data (2024-05-07 11:=
+47:39 +0200)
+>=20
+> ----------------------------------------------------------------
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-no output from test machine
-
-
-
-Tested on:
-
-commit:         02754103 Merge branch 'rxrpc-miscellaneous-fixes'
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
-console output: https://syzkaller.appspot.com/x/log.txt?x=1075e7c0980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7da3ffba7152e6
-dashboard link: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c1a83f180000
-
+Thanks. Pulled into clk-next
 
