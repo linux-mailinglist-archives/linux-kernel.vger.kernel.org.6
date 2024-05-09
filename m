@@ -1,116 +1,145 @@
-Return-Path: <linux-kernel+bounces-174563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B57C8C10CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:03:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400748C10CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F91C218EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:03:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0D13B21E82
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8E315E5C3;
-	Thu,  9 May 2024 14:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4445715D5B3;
+	Thu,  9 May 2024 14:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="muU3qvzm"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBnmRBeg"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AAE15B98B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA7012E1F6;
+	Thu,  9 May 2024 14:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715263379; cv=none; b=ShPBzhm+VQNTC7Zpohc5TZFf9AOD5yQnUVBg50nnigmXjLb3+6dHYGqCADeI7CDGu6vveZQwMlJxlVq4i+0DkPSNdg88a9aOpNL9lP3Hsg04jM9PXL9kyRrzZqXIDCjGCpNJHTmvL2Si2PXgh+Y0sxonWFxO51+bL7z4lHxGHek=
+	t=1715263492; cv=none; b=IOnhzh+GYOuuugjFVu5NWK1SEKJ89IAcf9JNTL69iZIRTomHl8saHXqcAqiXGCGOD0s9RnQWW+/Uu12qLZ9RQ0k3GS33OI7wcGyqZCRM464c4dFczDGdjp/QrZJ+TVRY5W8qIUwPPYtdxP9tnO6mRxcPmiYplKhKjrz4R9Bi/3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715263379; c=relaxed/simple;
-	bh=av1zIpw3rn8LqXzh68+trwgf6saFpEfQEGO/uFLFw/c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=un9deHwm+nE5v753s5H0EVc5Ykrs9AGvUTyUqtxXikQvhHqho52G3fYXAND207l2QTc/s6H03cOsTBgUp+zMaSpt6MWr3JmGn8K1hmDStvm+81cL2Y4OKxm+rO6lsIbx4LNY0yfTjqPOGqG6TySdjJiJx+Mh+dFycpv83tU0kjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=muU3qvzm; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7e186367651so8189139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 07:02:57 -0700 (PDT)
+	s=arc-20240116; t=1715263492; c=relaxed/simple;
+	bh=cOoaeffNqgYSpa66yVAcVPa2PM0favsqNw+tl7uH6GA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=flBXfVzbq06iOhtLOvhHH04H8bDc/ozgk/wXD1PgEv0FX+BAmyNGOR8oSraou9Sg5sKFrE+ss/+az+bYebFmqNjCdJsBttE10zQLZ//JGVbNi287Ly1TLnR8VoeZuk5bW59EqTyC/9IplI5DfjKnE/zUYGGcFXNyi8kuHqybKFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBnmRBeg; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-34f52fc2191so529422f8f.1;
+        Thu, 09 May 2024 07:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715263376; x=1715868176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+TA/edpRJXMeLEprDOn75xEWqfIhyfxD+4NC6q2mBXw=;
-        b=muU3qvzmsgIdhUWNj0SdgSlNjIKWgXrmpd84+Feww8D9F2ImLN0Fm2xZEpVslhN1ng
-         5jjJqIlTnuoMUqPSdNq4EHNBSyeUhUVkoj8iBNIdzCLAm4XzFWaQzddUyXZ6e3g0YhCu
-         xL4uJNH7eBNxa0aefPciHtH0jkLKU92TnCm+YDXeZyYMq5PGbJAeW89K4Lki+wxz2ayU
-         1TAcUtx51ZYh9EjWvPmi+c+p6Gw0JotNibXsCG6z98kFRK8Dtnq2iU4FB/u+rJJWys8G
-         +/krVFeExgm7MQwBZHnNn0UhwFP+YYqhZ77nJaavsyqWy6uOps6BzxFkjvZqBv7vhqbc
-         3YMw==
+        d=gmail.com; s=20230601; t=1715263489; x=1715868289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ygKOaLULm9Ty8/azGUq2u8NIEd5rcobuUSoqUbVVSBY=;
+        b=nBnmRBegxuJEtxUjkbR8RZJ5HqFZo/E756GMakCdylRJnYgsFrCUp8+xIpk0rV0mtO
+         IgFkLar9itDDAmr4/EQfXrwrzR4TRBmx6whxK89/dSh8DPE1Vp/WmDmi91P44pr24hJ4
+         a565vNgvkoutxX1YQ9i6XfnUCxDnSs48qxwQ7rQxmGPtia70qpBDv0pj1ZMo10iDsMgJ
+         vv0JfJg4H263wK0AWxjI/PDJg2ZfuDJ3xGrgrq7j+CMxMVgl4mV6cHFuHS4zO9tFH9U8
+         8avOiv9rkk47Xsjqg7IEgZ2XajyOm7Kfq/ocU7jXAL24QmV1Saz/w3Cqv8qe4le7yVNi
+         WQpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715263376; x=1715868176;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+TA/edpRJXMeLEprDOn75xEWqfIhyfxD+4NC6q2mBXw=;
-        b=SXCoirdhpcj5m9RcZ9ILXb7mlP4oj5RpvZQouABK/QJ4yxpumAd9IJy6Bain0N8iF0
-         NCj94SnCVn4yOYqzU4wuDCXsCVMLNfJQ/ix2HuygoGc05zvoLhz6QC/aNzJyk9/JTTTy
-         onuB9CJsUe+EfErHeznLRCumMGQ88UHnpXwXqPJ2pDJgqjopTIGg/nX+9/n//0Y/UQpL
-         8wv+M9VIYaK7nlNo6zRtNw3h3WLse8pMzhrphP4ytLrZjn8l5O26pQ2m1mfjm4PGVZAT
-         zFZDmIq+7wOwbAul7jnvBrHItrr+L/NMUls87kAqt4a8D5cIfyAw8fCABRSdzGUx5sGZ
-         ABjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmb4cAszpkZxyn0Vg5G6x9VhipxolSCS7ImDNnEsr0ZxDwQYL/ZTyTTGG/X4NJ42nQaf6yxduM0EP7uwBYGF7LcXbdwY+zlReFOI4I
-X-Gm-Message-State: AOJu0Yy7WKkkHvwwNkhrPv/NtS5nSRtqFiQjo3/DUACM8V9Evw/xHOfN
-	+8hG9qXnq+azv7nN7mQLJcWG0w3oe/xqCuiFDh4IpGU9/S8Xiwi4njQxFyr4HqPuEWysJu1yrzb
-	J
-X-Google-Smtp-Source: AGHT+IF4KYubSLdPHVbuhS5ztl4eiR3W4T4uNHOwRLPmKdD+n8RCiV6pIRiCAF5jANZ1ChQQVyXYmQ==
-X-Received: by 2002:a5d:9c17:0:b0:7e1:8bc8:8228 with SMTP id ca18e2360f4ac-7e18fbcc8f1mr607300839f.0.1715263375731;
-        Thu, 09 May 2024 07:02:55 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376fb1f1sm371961173.163.2024.05.09.07.02.54
+        d=1e100.net; s=20230601; t=1715263489; x=1715868289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ygKOaLULm9Ty8/azGUq2u8NIEd5rcobuUSoqUbVVSBY=;
+        b=ozUK82hVLjoY7zQLgm5OeIPuhzGgQNjm0hA4QqYh5dx7YzP+UeZ2kEEV5URGYRDLNZ
+         ukl2qypa9BrTCr4mFvJS6WX6OVIxBNUrJSFsRu/H3NRasRvhbOVXeOmZaZTIl4enn3wA
+         Eb0xcKNi+f9sYTJRv8xh7OzV4ghIE9OBY2Xb9T/xkEMdwi+1xse3OmoClg6zTYUtso1Q
+         5vvOom6yqd17drAxbwHX/Y3qcJsAdOUADYhUhtoPhNTHc6LMThgnUKyBfSaX9qCxHL9S
+         Sm2C6TJxrFgJJ3wsQpzCOgdvm6R3Yr9IJfTXziKcbsqX4xkSv176piSAWh0yY5Y2cjca
+         kh1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWgbTs+0ZmDKYp/SKcP+HCuVwgT0YAnUtSsY0ikbGvu/iDiMOvLsYypS4fBQUhJQ5015vVjRy8im5tNVj6IFK3Mmgtuc5pFMHI8B97lAvOsE+tlFjpJFxSgNY5whnn/9kRlKRvBJndYv48ciAb0HHPzKe/lCyCk/8xrQb2ERhycJQk5bg==
+X-Gm-Message-State: AOJu0YwZsFveudyGdXYaqYWNXC5FwM+yTruhWkyzxBt4tXQvMHjpkQjB
+	HtDvYS262IUqyQLbks31QRG6uNReGu3geEkIh+wD1ixyqq6daPw=
+X-Google-Smtp-Source: AGHT+IGJQUoq4KBpZVLF1jIA/JtqfJbPLkQQBLMgSeQVY1xajdJgFURlR2LWCEqpPMRCfEMg1QA8dQ==
+X-Received: by 2002:a5d:6e55:0:b0:34a:3f3d:bb14 with SMTP id ffacd0b85a97d-34fca242709mr3566295f8f.27.1715263489393;
+        Thu, 09 May 2024 07:04:49 -0700 (PDT)
+Received: from U4.lan ([2a02:810b:f40:4600:b44:d8c3:6fa8:c46f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b896a29sm1788467f8f.43.2024.05.09.07.04.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 07:02:55 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: ming.lei@redhat.com, hch@infradead.org, mpatocka@redhat.com, 
- snitzer@redhat.com, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-In-Reply-To: <20240509123717.3223892-1-yukuai1@huaweicloud.com>
-References: <20240509123717.3223892-1-yukuai1@huaweicloud.com>
-Subject: Re: [PATCH v2 for-6.10/block 0/2] block: fix user-aware inaccurate
- util
-Message-Id: <171526337498.20280.13592590390769873653.b4-ty@kernel.dk>
-Date: Thu, 09 May 2024 08:02:54 -0600
+        Thu, 09 May 2024 07:04:48 -0700 (PDT)
+From: Alex Bee <knaerzche@gmail.com>
+To: Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH v3 0/7] Add DSI support for RK3128
+Date: Thu,  9 May 2024 16:04:32 +0200
+Message-ID: <20240509140438.168429-2-knaerzche@gmail.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.5-dev-2aabd
+Content-Transfer-Encoding: 8bit
 
+This series aims to add support for the DesignWare MIPI DSI controller and
+the Innoslicon D-PHY found in RK3128 SoCs. The code additions are rather
+tiny: It only need some code in the Rockchip dw-mipi-dsi glue layer for
+this SoC and do some changes in the SoC's clock driver. Support for the phy
+was already added when the Innosilicon D-PHY driver was initially
+submitted. I tested it with a 800x1280 DSI panel where all 4 lanes that are
+supported are used.
 
-On Thu, 09 May 2024 20:37:15 +0800, Yu Kuai wrote:
-> Changes in v2:
->  - just replace blk_mq_in_flight() with part_in_flight() for
->  diskstats_show() and part_stat_show() in patch 2;
-> 
-> Yu Kuai (2):
->   block: support to account io_ticks precisely
->   block: fix that util can be greater than 100%
-> 
-> [...]
+changes in v2:
+  To improve power-efficiency when the DSI controller is not in use, I
+  dropped the patch which made hclk_vio_h2p a critical clock and instead
+  added support for an AHB clock to the DSI controller driver and updated
+  the bindings and the addition to the SoC DT accordingly.
 
-Applied, thanks!
+Link to v1:
+https://lore.kernel.org/linux-kernel/20240506194343.282119-1-knaerzche@gmail.com/
 
-[1/2] block: support to account io_ticks precisely
-      commit: 99dc422335d8b2bd4d105797241d3e715bae90e9
-[2/2] block: fix that util can be greater than 100%
-      commit: 7be835694daebbb4adffbc461519081aa0cf28e1
+changes in v3:
+ Dropped the changes for the additional AHB clock for the DSI controller,
+ as it's not part of the IP block. (Heiko)
 
-Best regards,
+Link to v2:
+https://lore.kernel.org/linux-kernel/20240509120715.86694-1-knaerzche@gmail.com/
+
+Please see individual patches for details about the changes.
+
+Alex Bee (7):
+  dt-bindings: display: rockchip,dw-mipi-dsi: Document RK3128 DSI
+  dt-bindings: clock: rk3128: Add PCLK_MIPIPHY
+  clk: rockchip: rk3128: Export PCLK_MIPIPHY
+  clk: rockchip: rk3128: Add hclk_vio_h2p to critical clocks
+  drm/rockchip: dsi: Add support for RK3128
+  ARM: dts: rockchip: Add D-PHY for RK3128
+  ARM: dts: rockchip: Add DSI for RK3128
+
+ .../rockchip/rockchip,dw-mipi-dsi.yaml        |  2 +
+ arch/arm/boot/dts/rockchip/rk3128.dtsi        | 50 +++++++++++++++++++
+ drivers/clk/rockchip/clk-rk3128.c             |  3 +-
+ .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 20 ++++++++
+ include/dt-bindings/clock/rk3128-cru.h        |  1 +
+ 5 files changed, 75 insertions(+), 1 deletion(-)
+
 -- 
-Jens Axboe
-
-
+2.43.2
 
 
