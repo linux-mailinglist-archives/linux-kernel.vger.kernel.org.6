@@ -1,245 +1,334 @@
-Return-Path: <linux-kernel+bounces-174972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E258C1825
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:12:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352A98C1829
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 484021C22091
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:12:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AD92B20CF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F68385940;
-	Thu,  9 May 2024 21:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B2284FBC;
+	Thu,  9 May 2024 21:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VvJoCnb7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="beAhfGBX"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5446984E05;
-	Thu,  9 May 2024 21:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715289122; cv=fail; b=TFkDWeHz4K+Pc/Axlehgt36+OguVRipTIYzoBC4uhGr+r1aOrLZ7lG2P9QDOpLIpzwYu3D2RyhHLyQHZP/O6TKePdKXnbIIvbGf3bFdogd3raEM+3CKElXlIFdMpqZ7whvi3TnuxVm7gLstGsO8EcLvwO/HjKQ2xLXwba4Xospw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715289122; c=relaxed/simple;
-	bh=ywuOvghb9F/6CKk1BW3GbkLqJZzEyBQTLUJD9VS/2K8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=a5gMC1/TuhiWcqi9d+kTgM0vvU4b/y0+mWgDsqI0AdbAUmxu28sNj00jMFU5j6+p9M0ibWA3ne6L1BQaPvtwuaW1KhPghjLD8KzAmIwjm/jg/JtgDeIEFobwcMX9pmNPVj2GkOgWT2tsGR7MTFMX8/HAGYadQo68JHQkaNF2EGE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VvJoCnb7; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715289121; x=1746825121;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ywuOvghb9F/6CKk1BW3GbkLqJZzEyBQTLUJD9VS/2K8=;
-  b=VvJoCnb781GvjP5fcPtZopYXpQJfbv5T4QlhSSk9OjixJ7WCZxPJ208o
-   Icp95BMMDUa2PzyUPHmTSTMS7RGCTQ9Uf6+jqo32XXLQr3UVcHsNceO45
-   Mmyf7GXhKtobdL86wgGvgvORFRo/7FDlAMLyMxJT8v9n1AfkrJkS4QWvC
-   YDDHcR3PyuNZuk4UwsNZwAXK5F91dDhOPnNxLOiAc+m2ZIhv7SumH0R4O
-   49dBaMGlR4Pm3ut2D4mg2vIOeGONTEp7VkmJly08N2kp+VTJcCMecGoBR
-   ZztEl1lUneEQxgXPpVJT8Y7Nsi7aJfiM+UxBxUv+XhANPVA8bLnhMhPhJ
-   w==;
-X-CSE-ConnectionGUID: Cnua0Z+HQ0ae9NyKBxAgRQ==
-X-CSE-MsgGUID: +L46U6DGR6K4HnzuT8evlg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="14192930"
-X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
-   d="scan'208";a="14192930"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 14:12:01 -0700
-X-CSE-ConnectionGUID: GoxRoT9+QPubQaczFtsY6g==
-X-CSE-MsgGUID: cP/IyOoqRNajBGZG1xVfzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
-   d="scan'208";a="29241498"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 May 2024 14:12:00 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 9 May 2024 14:12:00 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Thu, 9 May 2024 14:12:00 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.40) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 14:12:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SPmncAV3PnhDBUx3DkvdujTAlnrK6pUD9VbHI6tRGe8B9Z+voc4oCuBZ7egaR7Q75NYcvWqDj8UAmOTPs9WM7yTSG3h9wUKomM6S0SM2NYnyzcAxfcwlUQ5+qlQuadyhDbKLvoLRChuEiGMqsSS7z1CnzskrDzRwqksGYEfnbyPMQ4cdeh/MRxWPXS6EQy66gpR391evNxMBV7g4GJZCGWXd1OeRqpmBLdtAuLVor+e8gu1hsy2MFlDLBpMc1DozLgUl6/+Dm3Q03Rcz48pjlj2JIJMn2QFWEzqkMcBLDEb3uVJ99fl8AwNvjYT9n7SZdGlwKYwkKo/KNBuXx6DEDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uEQpnWb3lZmGLuz5iAOd3Fu9y3FkRllm1Xb0ySslvFY=;
- b=n4j+x01IiiBX98mXVyYvgSzmMQvmkDMHxMNeyfwJGhqtRfAqNETn52MsZfIlviNRx7wtoayAhk/Uo5AZD6hwvXpn+fYvOyKXl5ws4Zy2ZdHukRHNtXGk00ve1mDTqSAxROJGBlcAtI9XaM01QSaRH1w9ch0ABPVeUjznpE58r29ZA0DWXgAIcUTafU7FDpEiujyedQZR7eujmwcqWKJMtYkRJ3koLoZxdS9390qnAOYd/COO+IrNJqF6FG+TDjV2o54y04K0sbejzAUThUXYUeRoOcGtyloOeST+s/sUn6Emu0rSdBqzZrOQ8//trf/0rXpmHx54TQuWMmaYo5ux5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by BY1PR11MB8008.namprd11.prod.outlook.com (2603:10b6:a03:534::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Thu, 9 May
- 2024 21:11:57 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::b394:287f:b57e:2519]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::b394:287f:b57e:2519%4]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 21:11:57 +0000
-Message-ID: <b5b081a1-9e80-4173-8449-36d5c93185a6@intel.com>
-Date: Thu, 9 May 2024 14:11:55 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] selftests/resctrl: Enable MBA/MBA tests on AMD
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, Babu Moger
-	<babu.moger@amd.com>
-CC: <fenghua.yu@intel.com>, <shuah@kernel.org>, LKML
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	=?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
-	<peternewman@google.com>, <eranian@google.com>
-References: <cover.1708637563.git.babu.moger@amd.com>
- <cover.1714073751.git.babu.moger@amd.com>
- <e3bf1fbbe3ab2d9c2dc1d9669a791de140dea248.1714073751.git.babu.moger@amd.com>
- <911547f7-e952-f771-867a-57c1de738c39@linux.intel.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <911547f7-e952-f771-867a-57c1de738c39@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR04CA0141.namprd04.prod.outlook.com
- (2603:10b6:303:84::26) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353380034
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715289384; cv=none; b=oYlmoSpvJ3nV3TgjPYXV9AJgAkif1YRZl/5OVEBtchFdAAWUTON5lxRLKeKqFDbAnJC/XZb/rW+ZlVN5ps1b01eDWM8kd7WgDUXVJBEMZgMt1HKj7G7BsqD8o7sZqUDZGPkQSFS9o8r5oqgTnw3i/xnsdRDHC0L9QFTJKSRoY9g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715289384; c=relaxed/simple;
+	bh=xYf+guDhlgJMVbpiTSeHjwwwZiWqu9X3yAfFMIyvs8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFPvGf5jarellBUUHUd5fzuQ4KWxXJDM/TqzEZGPWju/POiBbRUq1L9YHVrQgTx4WPafT2leCs2kYJzIRPKqcyUVEznMND+HmXRaYB4Bu+/dKAwlMWRRZWP8bZYtWyTOfVxZic6PvfC/Aa+qlB0/ygL+rn66xbvhSbLkR9GRhcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=beAhfGBX; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-628a551d10cso1006891a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:16:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715289381; x=1715894181; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GtrpmPs/8tWjRF/kXS6kBYaf57q1eTrsr00lK1K2fwo=;
+        b=beAhfGBXO7fiGUHhqENKu9/71d4bjy/KUpEQi55ydz/FsjhKQlk7XAWKdrXlQ70BNc
+         TiWZZL9c9hBHHnbg0IapWbmljjKwyz8y/a/9iflk/swn2lxRjygV+vfBgXyLJhczkkSL
+         69KleuIw23ZTU0Rcq+Nq67fQBOAPlr2wCbVplcNzjlJGObt7xrrpssA0G4EcVWe5ZTT/
+         vTCO+hK1obkX1TiRRxUrApc77FA83Rz0leVCSa0CudozvXzVYwtAJy0qeqh1JLBp5cLe
+         bOSAp4RLaFblI4+pCce2pP7xuWxmI2aoKLViHVkrJbs89JCLHhgsFJYSfO0ctJDziHWG
+         HuHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715289381; x=1715894181;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GtrpmPs/8tWjRF/kXS6kBYaf57q1eTrsr00lK1K2fwo=;
+        b=l8FNr5KWL8FG7SMFeMdAnTLQvVCPlYxamU1egnHc4crUCMvU/BxY1Xto7Fgzsnu0Jp
+         eUR3FUg4lrB+HFXghK0qSTxmgJ2eXpxiqwKjuZDLrUERemf75qCz/EzvjgnHiyRjDVNh
+         N9QePXTy7mVnXZ/brXAsKt5zJo/R1egc+JTKsNayU1LmbSthznfXO1vRv8TaBrEWWSAT
+         c4Q+P+XdLNSuGez7f8Epzti+d9P/NkB7LnVMMHsULF/BkJ8QB/e1ypyNrX0jsN22au/B
+         hC0jD/jfnQkkcv4TXCaeCxg3UFH83BPCa4mrpfPUlRTJnzuKHiSoc1vf+YStuQ+WuqiQ
+         07Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWOUVDz4eC9XpRc3ewVmy/FZvgfyQPTg70PYuh2jF2jrnF4S/cnI+13Om1RCQATUcniQBoK8LFY0vX9Hkv4UjM1rIe5Cffs/4k4ynUq
+X-Gm-Message-State: AOJu0Ywz2ckx4jH7l3PPmlPWEa0lyprbLTaZSuF/rVN9KqUNB4LQCP0S
+	6H2/wSgP8axVbfsPnK9Yx9cFcW3C96rusG2zvjZj9Yei7ff23vkzxVmJ56qK+bQ=
+X-Google-Smtp-Source: AGHT+IHWAM1NQAisbSoFl3DqX2pmOe5hG2saLWkI1jbMADpZg5qPqsRMf5AT6IKOFvfnMFU1diTshw==
+X-Received: by 2002:a17:90a:c7d1:b0:2b6:2067:dde0 with SMTP id 98e67ed59e1d1-2b6cc342832mr778629a91.5.1715289381313;
+        Thu, 09 May 2024 14:16:21 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:3668:6b5b:d71d:2683])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62884a265sm3820721a91.19.2024.05.09.14.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 14:16:20 -0700 (PDT)
+Date: Thu, 9 May 2024 14:16:17 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Song Liu <song@kernel.org>, Xi Wang <xi.wang@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] riscv: Support compiling the kernel with more
+ extensions
+Message-ID: <Zj09IUE5k1EJL08X@ghost>
+References: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
+ <20240509-uptown-aging-5bdec4730d70@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|BY1PR11MB8008:EE_
-X-MS-Office365-Filtering-Correlation-Id: 484bd863-eb3b-40a3-79e4-08dc706ca8f6
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?STFEaG40OGh1VFBSUjU5NFVWeFoveVllS3NZR1EzTGhRN3RmaG10SitNdkgv?=
- =?utf-8?B?bHFCRUNSWG5LM2k0QW5iTDdnYkJKYTY4K0dvMEZFYTJuVkVyNnowamxxUDR5?=
- =?utf-8?B?bHlMYmMwQi80dGp0MGRwRXprSStZd2RTQkFsc0pWQzBEeUM0N1hKVTNheE9I?=
- =?utf-8?B?b0tQK2NqTjQ2MWtxbjJrbDdxZDZwN2JHVDluRWlTRDh1dUI3WkZQZmE3cjdJ?=
- =?utf-8?B?S3dJd1B0SnBZNnlxaTZFcU9EUCtJQ2RIUE45SXBGcnpNMjkwZmJpbE00QVBn?=
- =?utf-8?B?b3AwVUY0QjRuNW5QZkVIVm02NTZRTXM1UCtiSFRYdEZQaGU3Y093eTlQSSsz?=
- =?utf-8?B?dzlDR011bmpiZ3d5bmwvZDF6QkNxeXVzU2pKMGVReS9kTWxsa2dyNSs5dkli?=
- =?utf-8?B?VGlaeW1MY0xBN21jZkNqc2V2VVBNZWZJLzR3Y0ljZjM2Q1VFVHF2OW5TK0pU?=
- =?utf-8?B?NHE2TEhrMGhZVVJCRk1rWTdHei9MRGw3cXpBQnpoN1BmOVkxQ2lNVGZtMGNo?=
- =?utf-8?B?MVlRa05iK0w1MThka0dPWVc5Uk0vRjBpdVhmalFKYmYyNnRaVlAxMDBKTW0w?=
- =?utf-8?B?dVF6Z1NkdENOMk5Lam94NkFFNzl1SXM1NXpmNnlZeENab3REY25FRS9JUVRH?=
- =?utf-8?B?WmpkbVNKTEZOWEpMQTEvNWNtSG9aQzZPT01ZVGxGVzBaa3BsQnNRbDQ1RWtk?=
- =?utf-8?B?YlNILytiZHozRm92NjdRbE9uMTY1NkRnVjNNNnFnNzFaY0ttK0d4WDJPc3Ny?=
- =?utf-8?B?aklNK3dsYWY3Ni80bk54VEE3S2trL3lQdUxCNk9aUHpYWmVTVnY3TUhFUGth?=
- =?utf-8?B?SHZCeU5aOFQyYzR3aVFabi9LYnVpV2dxeEZHakhJMnJNZzJwNW0xdmVOd1dr?=
- =?utf-8?B?T2tacEZlajk4alpyRWlqc1JPNllEemFIaDJ4RUJUbHZpQ0lzdzVyMHJYVzht?=
- =?utf-8?B?eUtubUxlN1d4US8vRVNGU01vV3FvTDEyZWx5eUhtcXNVbjVWNnZkR3FITTI2?=
- =?utf-8?B?b1NxQXhhYnZJdXhqd2FNNmJWbjlmRTRVSTcvM1dIY0ZqaDk5MllHb2JIZmFk?=
- =?utf-8?B?c0pJN01RMVZSc3plZ1YyM0dPZWtEMzdxcFZ1QlpYK2JsRTNWRitHZWxuMk9O?=
- =?utf-8?B?Q0c3Qmd3YW9ZS2RyQ1R1VzNMNGRWUDVSVkd4WGgrN0t2WEtrNCs2K1U4QlRQ?=
- =?utf-8?B?aCs4ZW1VZi96cWN0REliNm1WcmNEbVlyL00xL3NVYmphSEw2Z2JJYjVRdGJW?=
- =?utf-8?B?TDN2SzRDM2gySHlEQWx0Wkc4amdRRk02bVpkaERlemJwR1BNVGVKNTdzY2pE?=
- =?utf-8?B?bEZ3RktHdFNnR0ZlZU1sNXM1WWJOdEo3cElvTkx1bFUwN1UwL2hENEV3M3Zu?=
- =?utf-8?B?Rm54UWJ6VDUyeEZkMWF4enp6dWNqTFBEMFJkSzdOR0MrTGRiUktieFo5QkZG?=
- =?utf-8?B?NnJGcXNaY3dDYUx0clNMc3J2MlgweHNZMmh5UnRFaks0VWFCSWxsSThTYUkz?=
- =?utf-8?B?SXBVQmZQdndYVDlWVnhUSnNNMCszWjFJSG0vZEJxU2c1MTc0YVpvTW5JUk5B?=
- =?utf-8?B?aVh0bGxVaVkyWUUyRDdmRE5QWnBTZkVOcklKZTlrUUNjczU3RHVnQzVvWTlY?=
- =?utf-8?B?RUw0ckVWc0liaTlWNkVOUkpPUmlUSnppWmVIQUVNY2dqaEU2TFZqZlJzTnUz?=
- =?utf-8?B?UWZUL3dUWUNHTWlwN1pKUzVOQ2svRFdxSEdVV2NJamNsY2NPaWlycmRBPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MVJkZEU5UmY5Ulc2KzJKSEpTeWFwSkcva1dsc2lUODcxK2pRZzhmK2MyTG1h?=
- =?utf-8?B?ZXZETEgvTzFRbFhjN0tyV1VWZHllcFMxMGp2YmVsVk04R0tva0FDbElkbUxF?=
- =?utf-8?B?RFhDRThRVzB2b1RXdjFMT3R0VVFvWEJIRi8wNENsYnB5N3p3VnRRS2pjVStp?=
- =?utf-8?B?Q2cxYklkZ2trS3VUM3RXeGlrdU05SmRvZlFqdUh2TkhOYUpwZzhzNjRUKzN5?=
- =?utf-8?B?RGR6N2wxdzA5RGwxcnJhK1dBcFV6cWJxSzYxa1BHbktIL1dRNTlJVW1HWndE?=
- =?utf-8?B?THE4Tmx5YUFtR1VIa2s3RXJRMlY2ODRTaWQwWDFvNkpqdERFeWNJdTNiQnR5?=
- =?utf-8?B?dk0veDEwZFRFOXk2TE5nR0VSa0tiUnovWTA1enJpZTFRZDVycFVNSDRZaUpS?=
- =?utf-8?B?SVNRMWgyVDNEVVN2cm1ucFRsS0RsK001YlIwZkhLTDNtdnUraHJQS2x3ckpq?=
- =?utf-8?B?ZDhqdHpEUkU4anZTSlJteFpWN0w2ZzMyVVZKai9VMjZMMXI2eFI2cHI1MGsy?=
- =?utf-8?B?V015Zks3VDIyMzE0MHJDRVFyZVJ2SGJYL1RoUFlRbHl6cHBmVnpWSHBuTXF5?=
- =?utf-8?B?cjFiSGo1cW9leXJ6MEh5ZUF5UW1LbDdaRmpKK1pHR2pOcDdEdFY2R1VwZ1ND?=
- =?utf-8?B?ODgxdlhWQzBjRzFLL1NtdzQxeERwc2QxSTBmaFNUeDhhWFpQc1l3MHBnMWF5?=
- =?utf-8?B?azR5R1c3cjdhaSsvRXQwL3hscGVndVY0dlArRnN2MmthN0FnS3ZyWVZwbTgw?=
- =?utf-8?B?SEVmcXJqWTlWRk9MYmt5bCtlcWdYZFgwQm41QjJXdkNGcm0wNFludlBHU1Fa?=
- =?utf-8?B?azc4ZnhkOU44Z1hEd3VQa0Z6bnN1dC9vcmJZdUMvLzhMd0tFYnpqQmFYbGxH?=
- =?utf-8?B?cU4yV1NobzltaTBkWmxBSmhBdEFZdmlTUUFtYTVoZGpSb1REZStGQUpzZ3Vi?=
- =?utf-8?B?ekRvTi95OG1aSjV4VG1ENUxZYnd6dDA4MWhqNWxNR1VSZ2hWbzIxd0NsOVJF?=
- =?utf-8?B?TWREbTgzN055SnJ2Z0lkK2NsMnRIL1NxZjNrVUdaOGhxM1V0THNjc2d6YnZx?=
- =?utf-8?B?cnJXNDRpRjJHSlNDN1VtdGdMRzkybDZGUzh5dnNJQS9MNnBZMHJWVFV5Y0V1?=
- =?utf-8?B?NTRma1R0eEYyb1dCNzBmcS9IVlNOdkRqbm4vV3NiNXdJOEFQM3kzRUpvaHR0?=
- =?utf-8?B?NXErUXlIVWhxN3JubHBkVXR1NVpYbWVGVXZMbTl6eUJWY0NINWtrazlPRmxG?=
- =?utf-8?B?UVkvc0NIdEQ0MkY0SVpOc1Y2VnRLV2NSeDJVc012NklMYjNrbkdVakxncVlN?=
- =?utf-8?B?N0I0UWRhM2QvNGVqaEdlTzVkeVh3TU5ISHNLczEzanduQm5qZUQyQVBUb0Yx?=
- =?utf-8?B?OWpraXpWbnJCK2pBTU56K0dkcnVVUnpKWTV6RnBURVpkRGQwKzA1MjdRamln?=
- =?utf-8?B?Wkh4eWZrb1hqdzdPMEpkNTRsNHBzMmVMS0xSNVlEdUU2RzBXajBtKzAyTk9v?=
- =?utf-8?B?dWh4b0k0bzExNnpkeVlDSWlqamZIbVdDYnJwQzFQR2x0T1ZEa3h1a3FRUkFO?=
- =?utf-8?B?V0VLQ2RWQUVzMjhXb2xwYmd0RkYzR2FMZnJYaENERVFTNDRDUUIwVnRJMTEx?=
- =?utf-8?B?ekJ4RlZlR3FycVlHZnllK05pZ0VlZDQwVUI2ZmN1TmUxakpqOFd0SllHVGw3?=
- =?utf-8?B?SEhPNmt2S2ZaL3AyQXk4NXlGTnJueEZQVDVxRXd2ZFNMcmRRM3RzdU1qWG1K?=
- =?utf-8?B?aVRUbkg4LzBWYkx5RE9oRlpZby9xdk9BWFpxdDMweEkrTW5Tb2NoY1dmN3Z1?=
- =?utf-8?B?bU9ydmVJcDBhRkNUOXZFL1lhR2lBNENuVndYVCszMVZZY1RBcFlUWWtkTHF1?=
- =?utf-8?B?WTdlMGlxeExHUlMyVTk1NTRGemt4ZVBJQlhYWjVXc1FoRlhLTkVuWnFXMVpG?=
- =?utf-8?B?QmltZlhDR3B0YjNhdmg4TGVKVlhpQmc0SmtwUjRzMytGclp4eitmWGdGUmRI?=
- =?utf-8?B?bG40M2NPMXQ4eWlXTkpQa3hheU1LZWM5NW9XNGF6cUJPRy92a2RuUXJ1emJS?=
- =?utf-8?B?cnlSRlRMR0RNYnFjYk5lQ3lZaWxDbUxQQmNoUDM5UDVkYjlMcTM0SjY2Q3lD?=
- =?utf-8?B?b3MyZUhwck9EUUJuZUw5UkFwc2FMMENLYlRsZzlQcEgyUU5VdTlYbHZqT1I3?=
- =?utf-8?B?c0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 484bd863-eb3b-40a3-79e4-08dc706ca8f6
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 21:11:57.4459
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C3nOJ36cawdrCdbYtGqGol8rB17efhT70V/hQLgflm0jH79E7ouRNs6T47SiYIKqbj8g0ch9+Fi/taShs3N/Z1WmKdxeL38vaxiYYICil3U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8008
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509-uptown-aging-5bdec4730d70@spud>
 
-
-
-On 4/26/2024 12:06 AM, Ilpo Järvinen wrote:
-> On Thu, 25 Apr 2024, Babu Moger wrote:
+On Thu, May 09, 2024 at 09:25:10PM +0100, Conor Dooley wrote:
+> Hey Charlie,
 > 
->> Enable MBA/MBM tests if UMC (Unified Memory Controller) support is
->> available on the system. Tests will be skipped otherwise.
->>
->> Update noncont_cat_run_test to check for vendor. AMD supports
->> non contiguous CBM masks but does not report it via CPUID.
->>
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> ---
->>  tools/testing/selftests/resctrl/cat_test.c | 2 +-
->>  tools/testing/selftests/resctrl/mba_test.c | 1 -
->>  tools/testing/selftests/resctrl/mbm_test.c | 1 -
->>  3 files changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/tools/testing/selftests/resctrl/cat_test.c b/tools/testing/selftests/resctrl/cat_test.c
->> index 4cb991be8e31..b682eaf65bfd 100644
->> --- a/tools/testing/selftests/resctrl/cat_test.c
->> +++ b/tools/testing/selftests/resctrl/cat_test.c
->> @@ -314,7 +314,7 @@ static int noncont_cat_run_test(const struct resctrl_test *test,
->>  	else
->>  		return -EINVAL;
->>  
->> -	if (sparse_masks != ((ecx >> 3) & 1)) {
->> +	if ((get_vendor() == ARCH_INTEL) && sparse_masks != ((ecx >> 3) & 1)) {
+> Don't mean to subject you to a rant here, but that's kinda what it seems
+> to have become. I wish the Zbb example I use below was something someone
+> else had written, so that it doesn't feel like I am tryna kick you while
+> you're down, but that was the thing I happened across this evening :/
+
+Don't feel bad! I wrote it so I can take it :)
+
 > 
-> This looks independent change to me which should be put into own patch.
+> On Tue, May 07, 2024 at 06:36:26PM -0700, Charlie Jenkins wrote:
+> > The kernel currently has the restriction that it can only be compiled
+> > with the extensions that are hardcoded in arch/risc/Makefile.
+> > 
+> > Any extension that is not listed in the Makefile can still be used by
+> > explicitly writing the assembly and using alternative patching.
+> > 
+> > This series introduces Kconfig options that allow the kernel to be
+> > compiled with additional extensions.
+> > 
+> > The motivation for this patch is the performance improvements that come
+> > along with compiling the kernel with these extra instructions. Allowing
+> > the compiler to emit arbitrary Zb* instructions achieves a 4.9%
+> > reduction of dynamic instruction count for a test ran in Spike that
+> > boots the kernel and runs a user space program that prints to the
+> > console.
+> > 
+> > Additionally, alternatives that check if an extension is supported can
+> > be eliminated when the Kconfig options to assume hardware support is
+> > enabled.
+> 
+> I brought this up yesterday at the weekly patchwork call and meant to
+> reply here yesterday, but I didn't get a chance to. I'll start off with
+> my thoughts on the idea and the implementation and then mention some of
+> what was said at the call.
+> 
+> Firstly, I don't like an implementation of this behaviour that requires
+> doing ifdeffery around alternative sites. I think that iff this is done,
+> the alternative itself should be evaluated at compile time, rather than
+> having to add more decoration to callsites. That becomes particular
+> important in the cases where the alternative may not be a simple a or b
+> case, although I don't think there are any of those in the extensions
+> you've looked at so far - or at least, you've not tackled those cases.
+> 
+> I am curious about the Svpbmt patch, as you say
+> > Svpbmt would not benefit from having PLATFORM_SUPPORTS_RISCV_ISA_SVPBMT
+> > so just move the definition of RISCV_ISA_SVPBMT to Kconfig.isa.
+> without any any justification for why it would not benefit. There's
+> alternatives in the codebase right now for Svpbmt, why wouldn't those
+> get evaluated at build time also? Or why not Zicbom? Was your rationale
+> for the extensions chosen just the ones that the compiler can actually
+> generate code for?
+
+It's only used in a place that has errata so I wasn't sure how to
+handle that.
+
+> That aside, the series seems to address the easiest parts of doing
+> compile-time extension configuration rather than the messier cases like
+> Zicbom. To me it seems like the messier cases is actually where we should
+> be starting, so that we have a scheme that works well.
+
+That's good advice. I wanted to send out something to start the
+conversation on what people were interested in optimizing here. I can
+look more into Zicbom.
+
+> 
+> Ben mentioned something along the same lines for the
+> has_extension_likely() stuff, which should be far simpler, and can be
+> implemented via a macro, as you already pointed out.
+
+I was hesistant to change "too much" as I was expecting push back and
+didn't want to have to re-write everything ;)
+
+> 
+> I did notice that you left the riscv_isa_extension_available() stuff
+> alone. I think that's reasonable as that code serves more than one
+> purpose and is intended for use in either in probe functions where
+> there's no perf (or even code-size impact really, just disable the
+> driver if you don't want it) or in cases where the user provides its own
+> bitmap, like KVM.
+> 
+> I haven't actually reviewed the content line by line yet, so I don't
+> have any detailed comment on any patches, but I think the two things
+> being done here deserve to be split apart - the first element is
+> evaluating things that are using alternatives at build time and the
+> other is adding extensions to the toolchain's march.
+
+That will double the size of the series but if you think that's better
+than I can do that.
+
+>
+> Moving onto the objection to the series that I have though, at least at
+> the moment. Adding more and more optimisations to the kernel already has
+> potential to balloon to silly levels, and that's before we even consider
+> the permutations of different build-time options. Both of those things
+> feel like "where does it stop?" situation, with every single extension
+> that could have code-gen impact becoming another build-time option for
+> the kernel. As a result, I'm not convinced that we should do this at all,
+> and I am starting to wonder about some of stuff that we have already
+> merged..
 > 
 
-Own patch that is separate from this series. This should go in
-as a fix with
-Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
+Vendors that expect a high level of performance need a way to be able to
+compile the kernel with more extensions than the base extensions. We are
+leaving 5% that can easily be gained by not allowing this.
 
-Reinette
+> I don't think the configurability this series adds is worth the burden of
+> maintaining support for all the various configurations you're proposing
+> here (and the others that someone will come along with the week after
+> this would be merged. After all, with extant hardware that distros are
+> supporting, albeit in developer or bring-up type builds, one of these
+> options could even be enabled. Which I suppose could be translated to
+> a NAK from me on doing something like this at the moment...
+
+By migrating everything into more refined macros I think I can ease this
+burden. I don't see this as a burden, these options are all so closly
+tied to each other and only matter when a kernel developer explicitly
+wants to use an extension. If this is all wrapped up into the macros
+that check if an extension is available it won't even be an extra step
+than what it currently is.
+
+> 
+> Palmer suggested in the weekly call that what would make more sense is
+> having established bases, that align with what distros are likely to
+> ship, which probably means something approximating the mandatory set for
+> profiles, although he also said that the rva23 profiles had already been
+> given the kibosh by folks. He'll have to provide more information on
+> that one though.
+> I think that that seems like a sane approach, as it would produce a far
+> more limited set of combinations to maintain, but it also means not doing
+> something like this until the point that distros commit to some specific
+> set of extensions that is not rv64gc... As well as reducing the
+> combinations that we need to reason about as developers, I think that the
+> "user story" for people deciding what is worth enabling in their kernel
+> config before simpler too.
+
+There is a chicken and the egg problem here. The
+hardware/software/distros all want to support the same thing. Somebody
+needs to step up and make a decision. With a patch like this, a distro
+can see all of the functionality and select what they want. This can
+then be rolled up into a config that selects something like all of the
+bitmanip options.
+
+> 
+> * Something else that came up during that call, and I think it was
+> Palmer's suggestion was having a hard think about what we are
+> currently accepting optimisations for in the kernel. I think we need to
+> up the "burden of proof" for what we will merge optimisations for to
+> things that are demonstrated to have significant benefits. I don't mean
+> to single you out here, cos I did ack the patch after all and it was
+> just the random example I stumbled on this evening while looking at some
+> alternative users in the course of writing a reply here. Take this code
+> for example:
+> 
+> 	/*
+> 	 * ZBB only saves three instructions on 32-bit and five on 64-bit so not
+> 	 * worth checking if supported without Alternatives.
+> 	 */
+> 	if (IS_ENABLED(CONFIG_RISCV_ISA_ZBB) &&
+> 	    IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
+> 		unsigned long fold_temp;
+> 
+> 		asm goto(ALTERNATIVE("j %l[no_zbb]", "nop", 0,
+> 					      RISCV_ISA_EXT_ZBB, 1)
+> 		    :
+> 		    :
+> 		    :
+> 		    : no_zbb);
+> 
+> 		if (IS_ENABLED(CONFIG_32BIT)) {
+> 			asm(".option push				\n\
+> 			.option arch,+zbb				\n\
+> 				not	%[fold_temp], %[csum]		\n\
+> 				rori	%[csum], %[csum], 16		\n\
+> 				sub	%[csum], %[fold_temp], %[csum]	\n\
+> 			.option pop"
+> 			: [csum] "+r" (csum), [fold_temp] "=&r" (fold_temp));
+> 		} else {
+> 			asm(".option push				\n\
+> 			.option arch,+zbb				\n\
+> 				rori	%[fold_temp], %[csum], 32	\n\
+> 				add	%[csum], %[fold_temp], %[csum]	\n\
+> 				srli	%[csum], %[csum], 32		\n\
+> 				not	%[fold_temp], %[csum]		\n\
+> 				roriw	%[csum], %[csum], 16		\n\
+> 				subw	%[csum], %[fold_temp], %[csum]	\n\
+> 			.option pop"
+> 			: [csum] "+r" (csum), [fold_temp] "=&r" (fold_temp));
+> 		}
+> 		return (__force __sum16)(csum >> 16);
+> 	}
+> 
+> The comment there made me think as to why we even have this optimisation
+> for Zbb at all - is the saving of 3 - 1 or 5 - 1 instructions actually
+> worth having 3 code paths? The commit message for this contains no
+> information on the performance benefit of the code at, and while the cover
+> letter has some information, it was not actually tested in hardware and
+> does not look to be a real-word benchmark. This one is already merged,
+> but something like this in the future would really need to be subjected to
+> significantly more scrutiny! At the very least, "optimisations" need to be
+> proved to be beneficial in hardware.
+
+I put the justification in the cover letter of the series:
+
+"Tested on QEMU, this series allows the CHECKSUM_KUNIT tests to complete
+an average of 50.9% faster."
+
+I did a lot of testing locally to ensure that every combination was as
+performant as it possibly could be. I did not provide numbers for every
+case simply because the combination with 64-bit and Zbb was the
+primary target of the series and nobody asked about the other cases.
+
+There is pretty much only this code and the bitops optimization in the
+kernel that try to do anything extreme for the sake of performance.
+These checksum functions are very critical to performance as these
+checksums are computed on every network packet that is received by the
+kernel. Networking drivers rely on these functions and they need to be
+as fast as possible. 50% improvement is very good even if it's only
+qemu.
+
+We could just say we don't care about performance if you are running
+32-bit linux or don't have Zbb, but we would be making that decision
+because we don't feel like maintaining the code. The code was written,
+tested, reviewed, and it provided large performance gains. I fail to
+understand why this is a burden to maintain.
+
+- Charlie
+
+> 
+> Anyways, that's my thoughts on this. IIRC it was mainly Palmer and I
+> doing the talking about this on the call, with Paul I think having some
+> comments. Hopefully Palmer can chime in :)
+> 
+> Cheers,
+> Conor.
+
+
 
