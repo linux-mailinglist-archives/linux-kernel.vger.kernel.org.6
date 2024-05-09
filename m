@@ -1,196 +1,163 @@
-Return-Path: <linux-kernel+bounces-174480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF6B68C0F5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:10:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4079C8C0F5F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9913280FD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:10:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0C00B23173
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E201914D70A;
-	Thu,  9 May 2024 12:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22DF152196;
+	Thu,  9 May 2024 12:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Bub+Bivc"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="V/0hlFlh"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8609714D297
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 12:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C3914D297
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 12:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256516; cv=none; b=Pns4+2r8EMN4/T/gRTqqqJ8RqDydyJe10VKaSczYZ/taAyjPKkYjE+a6KqZOg80JkRj13R/MZoElrIccLQIHq6ApE0FxeNpyToy6kmMkYi1yjihNSgwRaE6OAyXUa6FHKxzDsEDNY2WjoC5I5uIJkkXFZ9BCstOemWgXUTdyAng=
+	t=1715256541; cv=none; b=Tc4EBjFzyg/bWMMVmk7E0M2Slcn8PqA+0IvXqPU0uoxx0Z6qU0LUHqcYDJoAU9ZR/nqjVLlA3CYQD3Zy3WUyO4c08xIEXi2R7l7EzY0jqYqfK5Mu0M5URobp0iGZ3s6ws/EArsDl9Co8J38Qr+/OcLWOqSAq0FQqXm4y3PsL56s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256516; c=relaxed/simple;
-	bh=kWgF3tD9Ik2YdBsN+KBUHfHvGZhsFYBdloxc7qbA964=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tTGG1RF67mjBRA98Ca7TUtjrZdJEFxGOZRS5sxwbnHDqh9ds8FUOrSrWqddOQ5t5x4i0GbOcZLBeWl9fc2aCrq8A/0QIm4kDDTXx6gND/CQpdmBLCmWPAYcJP1iIv4ldz6W9t3fO2VVmxY1kW8PX7FEbQL4vhc/Ipc4rBDOn3wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Bub+Bivc; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-6eb86b69e65so434252a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 05:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1715256512; x=1715861312; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJC14KI5N51a3HwicqFWcq+QiW6+wpgCB8tEHpU3Fus=;
-        b=Bub+BivcoOJb4874MGTs33YFce8MgDeGN7oGRdZcSK+wzmnoZys1C5MvZNQ2jp+Prg
-         QP7Uu4g8+xz6kVKlnMVSSPGpzraRknVblr/QQApriuMJkTF2qIBtgs1+CzIY3c3HHmJr
-         mRfpfcw4Yc67XUNJSdWRLaIDCUiCqC1aPsnni4W0xbjm+qFu5v7UTHxx8BToNVHI0Bs9
-         Ycki7NNEWnI7Np2/ggO+1Q/49jtTdem4lGKjJ70kPzSvy9M8hx7Y6AJgblmmH3vrzxs1
-         Q81Co80vsa16RIr97TZ1kCAgnbqsTwA6co2E1YRHwLAPrpwfPxXWVnA+ssA1lB2tiUKY
-         pvqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715256512; x=1715861312;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nJC14KI5N51a3HwicqFWcq+QiW6+wpgCB8tEHpU3Fus=;
-        b=p4oFFfZGcqXArSsPm514lXOQCM2+wImiwemjie02yqAdcmc3VDNuec+MJgJGQrAlzC
-         XU+B68GOmTDPOeWCSIgpiosuhsqaYrXzoloiO+sTv1RqftGf3hgbZC5q4DmcQFL1XUjr
-         6DZv1TNGbvzomrOaaCrBdGL9G1JNqSIu2VIKAF7i660h7an0qAly6W9vGHZmjoLMWnQT
-         UHuM+iTo+LXSrRAtfL8z2WtLXrZYONL4OEYvE2+2XEZTHYq9PKGWulF3WEBlBcn50Mgi
-         FVl9OkWSnkqEM2GYFBj3IqBQa23vM9ezuWqMs7dZeksIc6jZggTVzNkxmlGl0fwyPZt9
-         4i7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWgessPB/uQDxTC1MFbln2HGucrN9Z+Lo3uPNEMZ0yY1dRS2sqzykjuE8YXdznFRrolZV21OAqfBN3ublz9LCe5OrINm9H0tvjMrf35
-X-Gm-Message-State: AOJu0YxrudQCJ7iDIVQ+AODRbMGSFee6RC6HfayjKRuFqAqK8QtM0gtI
-	6k3xHtVubImfzHKTutub+CEsLKUVhjpHB7M7MlYglp0CsUqV93zGM78CiupjuB4=
-X-Google-Smtp-Source: AGHT+IH1//7mPrENMJuaAc7GRP3ThX3QDeZJnAjj0f7u85adSm4sgjE+6KayPsN8zcIL2M9Mq+lMbQ==
-X-Received: by 2002:a05:6808:1795:b0:3c9:9339:6fba with SMTP id 5614622812f47-3c9933974a7mr1186822b6e.16.1715256512343;
-        Thu, 09 May 2024 05:08:32 -0700 (PDT)
-Received: from anup-ubuntu-vm.localdomain ([103.97.165.210])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3c98fc97a8bsm174350b6e.17.2024.05.09.05.08.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 05:08:31 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v4] of: property: Add fw_devlink support for interrupt-map property
-Date: Thu,  9 May 2024 17:38:20 +0530
-Message-Id: <20240509120820.1430587-1-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715256541; c=relaxed/simple;
+	bh=MheGQE/mJWoO4vRhqhUVOcqkrd5yQj8kOf03Ylf9vEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uBCmEjfrFecFkey1lK7fvKFGyZwNzZlu86BPkoyNeI7S/ar0mDAS5WVdF83dAtTT1rSlFi1LbWsQVxK0HvesgawzSTmn8eio6ub1ULkBo+eWn5etRdo1t4dKULf92pdI9AM/uFoZNDXWpIilPrOJI762WVNqjDBZ0zgVV0GLCbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=V/0hlFlh; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=jmn3ELwSO3SoaQE9A/DU9RdheTNewmzS+o05cKdEnIc=; b=V/0hlFlhP867wZxl
+	Oc7CTsJrHy7I0PYqfbnmc78cXOuYHE32ZyZ/RBjx5b9T9aINeUmAujQFgH7mN2s+9vcNUs3UiHJQ8
+	PRy7+rD11n/q+sDUvB64+1Q+VxbNsdzBU4W7JZwFGPfxxJemws+M0ll9iZQly/aqwcu822huF9kUF
+	7v2g3CU61fOCeUQ+mhOYbYakWs++zeWdMg5ZF5TGh40sXaogC9qJGqan0MFaExhsE3/fBd/gqUyuy
+	frb0D34Usx0M8xB+6sgvrAvLqi1r5CUNeBplDWqeYA+gXX4MAuVAxGPs+ehz8t2I1Qtju4nbu+RaF
+	Rgh/gX+kPYo29Ytblw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1s52a0-000BVP-1g;
+	Thu, 09 May 2024 12:08:56 +0000
+Date: Thu, 9 May 2024 12:08:56 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: linux-kernel@vger.kernel.org
+Cc: keescook@chromium.org, nathan@kernel.org, luc.vanoostenryck@gmail.com
+Subject: thoughts wanted on dead code hunting?
+Message-ID: <Zjy82Ja6G2iIHl75@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 11:29:50 up 22:43,  1 user,  load average: 0.00, 0.00, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Some of the PCI host controllers (such as generic PCI host controller)
-use "interrupt-map" DT property to describe the mapping between PCI
-endpoints and PCI interrupt pins. This is the only case where the
-interrupts are not described in DT.
+Hi,
+  I've stumbled into finding various types of dead code in the kernel
+and am after peoples thoughts and suggestions.
+  Apologies if this is a bit long.
 
-Currently, there is no fw_devlink created based on "interrupt-map"
-DT property so interrupt controller is not guaranteed to be probed
-before the PCI host controller. This affects every platform where
-both PCI host controller and interrupt controllers are probed as
-regular platform devices.
+  It started off after I noticed an unused LIST_HEAD in the parallel
+code, so I sent some patches to clean that and related code up
+(waiting review!), but then wrote a hacky script to find more
+(and then mutex's); and there's a handful of patches removing those
+on list (please review!).
 
-This creates fw_devlink between consumers (PCI host controller) and
-supplier (interrupt controller) based on "interrupt-map" DT property.
+  But then I noticed associated with those were some unused structs;
+so I went struct hunting, and that's where I've got a problem.
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-Reviewed-by: Saravana Kannan <saravanak@google.com>
----
-Changes since v3:
-- Added a comment about of_irq_parse_raw()
-- Removed redundant NULL assignments to sup_args.np
-Changes since v2:
-- No need for a loop to find #interrupt-cells property value
-- Fix node de-reference leak when index is greater than number
-  of entries in interrupt-map property
-Changes since v1:
-- Updated commit description based on Rob's suggestion
-- Use of_irq_parse_raw() for parsing interrupt-map DT property
----
- drivers/of/property.c | 52 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+  That's found me ~200 candidates; where I guess 150ish are probably
+real; but my hacky script is, well trivial and hacky, so they each
+need eyeballing, then a git lookup to see why they're unused, and a
+compile just to make there's not some subtle macro somewhere.
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index a6358ee99b74..2d749a18b037 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1311,6 +1311,57 @@ static struct device_node *parse_interrupts(struct device_node *np,
- 	return of_irq_parse_one(np, index, &sup_args) ? NULL : sup_args.np;
- }
- 
-+static struct device_node *parse_interrupt_map(struct device_node *np,
-+					       const char *prop_name, int index)
-+{
-+	const __be32 *imap, *imap_end, *addr;
-+	struct of_phandle_args sup_args;
-+	u32 addrcells, intcells;
-+	int i, imaplen;
-+
-+	if (!IS_ENABLED(CONFIG_OF_IRQ))
-+		return NULL;
-+
-+	if (strcmp(prop_name, "interrupt-map"))
-+		return NULL;
-+
-+	if (of_property_read_u32(np, "#interrupt-cells", &intcells))
-+		return NULL;
-+	addrcells = of_bus_n_addr_cells(np);
-+
-+	imap = of_get_property(np, "interrupt-map", &imaplen);
-+	if (!imap || imaplen <= (addrcells + intcells))
-+		return NULL;
-+	imap_end = imap + imaplen;
-+
-+	while (imap < imap_end) {
-+		addr = imap;
-+		imap += addrcells;
-+
-+		sup_args.np = np;
-+		sup_args.args_count = intcells;
-+		for (i = 0; i < intcells; i++)
-+			sup_args.args[i] = be32_to_cpu(imap[i]);
-+		imap += intcells;
-+
-+		/*
-+		 * Upon success, the function of_irq_parse_raw() returns
-+		 * interrupt controller DT node pointer in sup_args.np.
-+		 */
-+		if (of_irq_parse_raw(addr, &sup_args))
-+			return NULL;
-+
-+		if (!index)
-+			return sup_args.np;
-+
-+		of_node_put(sup_args.np);
-+		imap += sup_args.args_count + 1;
-+		index--;
-+	}
-+
-+	return NULL;
-+}
-+
- static struct device_node *parse_remote_endpoint(struct device_node *np,
- 						 const char *prop_name,
- 						 int index)
-@@ -1359,6 +1410,7 @@ static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_msi_parent, },
- 	{ .parse_prop = parse_gpio_compat, },
- 	{ .parse_prop = parse_interrupts, },
-+	{ .parse_prop = parse_interrupt_map, },
- 	{ .parse_prop = parse_regulators, },
- 	{ .parse_prop = parse_gpio, },
- 	{ .parse_prop = parse_gpios, },
+ ** Questions:
+  a) Can anyone think of a better tool than my script (see bottom)?
+   The simplicity is a blessing & a curse - it doesn't know about
+   #ifdef's so I don't need to try lots of configs, but at the same
+   time, it can't tell if the struct actually gets used in a macro
+   and I have to eyeball for a struct which is assigned to as
+   a variable at declaration time.
+
+  b) The dead structs are all over; so they've mostly been individual
+  patches rather than a big patch series - how do people feel about
+  another 150ish similar patches ?
+
+ ** other Thoughts
+  * The dead code is all over; from incredibly obscure drivers, to
+   common stuff like ftrace and iscsi.
+
+  * Most of them seem to be the remains of previous cleanups or
+   refactors where someone has removed the function that used
+   it but forgot to remove the list or struct.  Sometimes that happened
+   prior to the first commit, so it's always been dead in the tree.
+
+  * There's a few cases where people have added 'static' to a variable
+   to cleanup compiler warnings, but actually they just needed to
+   delete the variable.
+
+  * A harder problem is unused structure members; some I've spotted
+   by accident, some follow from what else I delete; e.g. if you
+   delete a LIST_HEAD, there's a good chance there's a struct somewhere
+   with the list entry in it that's no longer used.
+
+  * It's not just the kernel; I've just mopped up a few struct's in Mesa
+    as well; but different coding standards make the script harder in
+    places; e.g. X uses typedef struct... everywhere so then you have
+    the problem of hunting the use of the typedef name.
+
+Anyway, that's way too long, all thoughts welcome.
+(Reviews, even more welcome, as they get merged I'll work through my list
+for a few more).
+
+Scripts below,
+
+Dave
+(I've cc'd a few people at a guess for people who might suggest tools;
+but please copy in anyone else who might)
+
+* hacky script for finding unused LIST_HEAD
+
+  (ie print a count of times the name of the list is used in the same file;
+   if it's 1 it's worth looking at)
+
+ag 'static LIST_HEAD'| sed -e 's/[():]/ /'g |
+while read FNAME LINE STATIC DEF VARNAME TRAIL
+do
+echo ">>>" $FNAME ' : ' $VARNAME
+echo -n "Count: "
+grep $VARNAME $FNAME | wc -l 
+grep $VARNAME $FNAME
+done
+
+* hacky script for finding unused struct's
+
+  (ie print a count of time the name of the struct is used in the same file;
+  only bother with .c files; doesn't spot assignments to initialise the struct
+  on later lines, gets confused by struct's with short names etc).
+
+grep -r '^struct [^(=]* {'| tr ':' ' ' |
+while read FNAME STRUCT NAME TAIL
+do
+  echo "$FNAME" | grep -q '[.]c$' || continue
+echo ">>>" $FNAME ' : ' $NAME
+echo -n "Count: "
+grep $NAME $FNAME | wc -l 
+#grep $VARNAME $FNAME
+done
+
 -- 
-2.34.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
