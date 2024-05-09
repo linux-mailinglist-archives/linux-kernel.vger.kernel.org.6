@@ -1,270 +1,299 @@
-Return-Path: <linux-kernel+bounces-175056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFFC8C19AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7E98C19B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF06B2212D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:02:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4B9D285BD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A6812D766;
-	Thu,  9 May 2024 23:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1305A12D769;
+	Thu,  9 May 2024 23:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LIh951Tb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bz0Mn4KH"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9182A86245;
-	Thu,  9 May 2024 23:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715295740; cv=fail; b=RiHTvW46Wh8heLkxi86hX47ReAqwGSRnJRO02jEGCzIuR6pYDznVFmda8er8nBs4KGQ95qSUS4CtjKqNr0amsGG1ow8h0VRanGloscEFanH1vB5sAQtxTv25Oqivtm2dAeMTiy+GZTKhJuyoWibNc9QpzVYdgA87ACq5MWqpcWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715295740; c=relaxed/simple;
-	bh=ZvdkV6ATFrGzasxGwpHnxr6aWrKpe76F1FJt9gZg9pE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=O7NKF8cLGUJcMbBcIhMhcA64B+fiAqOHcUE4wminOZmh9QYoBjUe3H48fL7OgEKGu1u2t6eatCnvcJEnlKhrZNqyvpk2Z6BaoghWOWNNlhPHqkFhXWgrgTIRw1GefSazBT4Y4Wa1/lRJJMLKeSYJ6PDZkXFiC6cQF4456tvMewQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LIh951Tb; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715295739; x=1746831739;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ZvdkV6ATFrGzasxGwpHnxr6aWrKpe76F1FJt9gZg9pE=;
-  b=LIh951Tb8x1SnLxuVTb8q1/xq64v1dIKNA5EfGGIzAWFHYPlP2Kfq7lp
-   5XUaOVqNmUiQuRXqJW2CctTt8c/2zeaFSg0zrtN+bRQlCcDM/3hMuLeoe
-   9KJAf2a6WpCmOADpB0sEBJNpPkN4vJVIkH0kYBmI8xk7jyNLSzwQfK+Lm
-   1Q/t85rEF1zyuWxDAgah5WMFH+70+RhIN0C46qZTP/faCYvALIDknhsV0
-   AZasw91pf06W+KPgxLLyMesaSifjOn6KsJs3yhmu2xy9Gde/AwSahrqn3
-   1fPfmJHBDxcG0Wgr5zYvoO2xkZj6SmI50LHJwkxv6N3Du94SKOdFfo0Z1
-   g==;
-X-CSE-ConnectionGUID: 1/MGw441RaiHDth+M12+dA==
-X-CSE-MsgGUID: XSBCB+AsRamZ8fTIJeDH5g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11381040"
-X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
-   d="scan'208";a="11381040"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 16:02:09 -0700
-X-CSE-ConnectionGUID: eo+smvnZQ6OU+59w8KioFg==
-X-CSE-MsgGUID: Gz63K/L4RPqW2S/4DZKYVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
-   d="scan'208";a="34260333"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 May 2024 16:02:09 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 9 May 2024 16:02:08 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Thu, 9 May 2024 16:02:08 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 16:02:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pu0HqrxIBh3HQJndFVq4czp5PgGLnVbspljws9HVTNvsHT+H7PxSMhd+xNaObhYiHYCaiJYQNMxTgG/YMdWDlWptX6Er0CQgM650MTe2Kbu62rbg0+SDFAnaPK1zV96kVYP26RupPtwVTJ7UW1Kn1lwD6pau+7KrMaoEJ5+TLHLmiXn6UOBs7kW+Ld86INxatUJ8ZtkmUOoIXipLYGPm8uMyDYgWhoKIcZqrtXJj0q81xa1KQVRGrv8+wy0Yx9DPgfQrdhq415qBW5uEsTnRDMcNfPMdW522oAaGUuuiIYIDEOV07T4Fbk6yPR8dJO8BfGfuWTYLObSP2JY2wuqXqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vNdafmmyU+iuYj97gM9FzWyW0H+HM7ysegZyL7twP3Y=;
- b=ZF9B59VkH8VCu1tQeYtPP+L/hJ1dGYWSViB4lqXP1IQTgw6kDJ7DQGAjAPqYXBWy+ZZu4BeuelW/fq5V/475cKfhlmVA0JYAzkpAEMITkMmY4IwKpQCoUnu7LyR+QKd0PkSdn3P+4S+o/5/M50Ar/gH61lvKQ5IUYb8U4Kh/y3EHpsU96EKzSEf268nBreTV/v04f0juedex9kCOn80BdMBrpPkW5mvj+QSNJeQGcgrwOE4aZL5wFEHcK1plt9kIb9hHs3tGHFGVgV+AZrfD7iBaPb/j8GwXtsMo2zQzD5faD+U/3Ob4FRPUegvHU0/ztUGe2OWTsolxoXPnKtmzLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MW4PR11MB5911.namprd11.prod.outlook.com (2603:10b6:303:16b::16)
- by DM6PR11MB4706.namprd11.prod.outlook.com (2603:10b6:5:2a5::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
- 2024 23:01:58 +0000
-Received: from MW4PR11MB5911.namprd11.prod.outlook.com
- ([fe80::6446:3cb8:5fd5:c636]) by MW4PR11MB5911.namprd11.prod.outlook.com
- ([fe80::6446:3cb8:5fd5:c636%7]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 23:01:58 +0000
-From: "Singh, Krishneil K" <krishneil.k.singh@intel.com>
-To: "Zaremba, Larysa" <larysa.zaremba@intel.com>, "Nguyen, Anthony L"
-	<anthony.l.nguyen@intel.com>, "intel-wired-lan@lists.osuosl.org"
-	<intel-wired-lan@lists.osuosl.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>
-CC: "Zaremba, Larysa" <larysa.zaremba@intel.com>, "Brady, Alan"
-	<alan.brady@intel.com>, "Fijalkowski, Maciej" <maciej.fijalkowski@intel.com>,
-	"Brandeburg, Jesse" <jesse.brandeburg@intel.com>, "Tantilov, Emil S"
-	<emil.s.tantilov@intel.com>, "Linga, Pavan Kumar"
-	<pavan.kumar.linga@intel.com>, "Hay, Joshua A" <joshua.a.hay@intel.com>,
-	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>, "Bagnucki, Igor"
-	<igor.bagnucki@intel.com>
-Subject: RE: [PATCH iwl-net] idpf: Interpret .set_channels() input differently
-Thread-Topic: [PATCH iwl-net] idpf: Interpret .set_channels() input
- differently
-Thread-Index: AQHal/EVpUvpxq7QukW7Rz83X0cLl7GPmKKA
-Date: Thu, 9 May 2024 23:01:58 +0000
-Message-ID: <MW4PR11MB591177888AFF2E9EFF199E8ABAE62@MW4PR11MB5911.namprd11.prod.outlook.com>
-References: <20240426154125.235977-1-larysa.zaremba@intel.com>
-In-Reply-To: <20240426154125.235977-1-larysa.zaremba@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MW4PR11MB5911:EE_|DM6PR11MB4706:EE_
-x-ms-office365-filtering-correlation-id: f9f4cc34-249d-44dd-419a-08dc707c079f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|1800799015|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?mLxFk+PU4hV0HCfVk7RF74RqDKXcgJWEGbwwksWm/jew2+w2pjlLXz2TFd4U?=
- =?us-ascii?Q?vfsnHNR+S89q8SHhlWnROxHqNuCUQrC1wJK+jNIMgOiU5H1QaTzMcJwvSyfC?=
- =?us-ascii?Q?aXE7ijH120tFLsGEWL2Wu8/H3Q96ydAsJVOnMa1qxvI7qlZdyV4FW67PQJcE?=
- =?us-ascii?Q?0yw37dOQ7GQRW176y7OwXiZYuKw5B+phYAr/fIZdU/01F7B15S+R18a3Dq33?=
- =?us-ascii?Q?9R/4l20RbqkXlWWtqeXVU8dMQ3CG/dUuKD6kpRwE8EmpKLfyC0ASpTJ2+1GP?=
- =?us-ascii?Q?SQE+myRS/nGnhsXnY7x2mWevL64KSr2tdAOj24dey8uPSbpo3OjaYfb1ZNWI?=
- =?us-ascii?Q?cnqUFjy7GE7qExa8Nx+16oVWrABvCzxBVroIgS0Tdtnim5W8ibNUMhaLhydb?=
- =?us-ascii?Q?wYggu5HzAq9WjXj1f6SKe/X+wwuXZ6ulmgaxS0gt5NFtmakMnGx89vcTS4Bc?=
- =?us-ascii?Q?h5hXJzp1ZZv2cxl+uZ/wHMmZzEsTYzQkxOTS9ItCKER+pUuWnGpYk3fLZeVP?=
- =?us-ascii?Q?o9m/GEK5AFuEe23CfM//T3AIUBd8nGQSwxdrXVM3RCZP177qjFWtzj7eCkO0?=
- =?us-ascii?Q?BZgllYvtxyWbR08VADCjZhDpcM9aD/DeMrd3FQkRYj/HxcFBbs/TFQKKlJRa?=
- =?us-ascii?Q?udH3jZBHNiUShOq0/8pkx9Ow7ppJPO4Er8trIHnW3rFj3xa9FjuoFKmt5t77?=
- =?us-ascii?Q?dL0zpJEQYS0zHbEA65vmcsiESxK5ganxF3ZuoPx+pXUdLtRpSFMJ6jU9PoNB?=
- =?us-ascii?Q?XHvrAGUJu3mpzQ2XUdeOMneeChbAB88/zH46bcpellSa0W7Jjdz4gXpxtYh+?=
- =?us-ascii?Q?eS7CKr5PtrgzXtcJFuslWN6MDTNIBkTZs22Zleznn77K54Cs/dvEfjS+nIXU?=
- =?us-ascii?Q?Qls1RF1p5UeU5jHc/K8F2xgBM2xdtx3BJDhUrYqtl4UndHCBFRZvwczXolB8?=
- =?us-ascii?Q?+RPxjkdQFZGygz8yjTHX0RXgX8sQObcK4/zjymI+XHhTw79kFQykt3WJ48js?=
- =?us-ascii?Q?UPhQyrrXTvaKDReicGPd5/3ZsR6OsBGnN3Y9dPTr12qnCVTKdLEMroTyF1Dj?=
- =?us-ascii?Q?rI9sBu7jS0rWxtnUOZU8JoXNqleTaandG7OgYlPS2dMMayYAXHNLUWZt+coX?=
- =?us-ascii?Q?ArlOcTeSNeBzQ7p5VDtlFy4sgFOlT6VsTrKAHFzEqAISzdfe95xoNotnmEqk?=
- =?us-ascii?Q?MBr+QlOYsGTMGLIewf+Q9l9kGqaV8x7oseiA2UX2xzGGTzC2KYVR/AMROSoh?=
- =?us-ascii?Q?eqjAr0zHKiAp9SFV1FlpG2MAKa8dSfr2i1dgxnma4JvP8ggDWabgbvhG5fe2?=
- =?us-ascii?Q?smU=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB5911.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wqCt8myj7s194RrHTGvRsvzIOGXxvgcmizQyYu0ipNb5l6ILdQ8iqFew9/kJ?=
- =?us-ascii?Q?4lYMyWXp0b18yeDs/g2e2WGn9mm3MhqntRLewj1mFJg3hDMTOeUsoX+woTvc?=
- =?us-ascii?Q?q23cWTJDhdHK58HftdBuGIUNJHr44psNV3Tsj4ixxWrCBRLHLAYcSSxGGTBx?=
- =?us-ascii?Q?Yk9wrDF2wphBeQw3V3TF2enh5RzFy4s36LHNar/XFCANjo+RnuPpuR2Jz+u5?=
- =?us-ascii?Q?VdKX6pf0uVoeW2PadrCwqjxDeXHNsw2ddw/SCRuXKl8w2KMO9/tniEETo3xS?=
- =?us-ascii?Q?Jj33RUnZRCdP4fXeePO2lCOQUcTfhkRaMZ25yndrf6JxlcfTmPSX8uIuXlq+?=
- =?us-ascii?Q?fZ7R9t2drD1TyAlHkw2gTxFP6pBRjimwkquFj+8EOJBKnptaFB591bydfQFF?=
- =?us-ascii?Q?4MKQgiuTvkuvfU6EqKC3OaZulrRSbO/cAB+wBTUQyr+8TxgThUxQOhk/Ar+G?=
- =?us-ascii?Q?K/HcS3ue8jCpxavc4uwZGJHroi0KdtPANHIYa/5dQUUpaYog87IquT2zKCsk?=
- =?us-ascii?Q?aywbVXT8zzCRPtpbzqbe5k3dB8x0qdBSnp1IRivfR2OSjpP3rZMBdm4aM5AO?=
- =?us-ascii?Q?EBaEIXyET/0UfFDT8BNegjfoUg1zDvUFUzBLCN3LlNu7iuNXaMOvQ7/jmWvc?=
- =?us-ascii?Q?eNPwSUId4cGdnvGqPRhbpGEhMeEUQ0vGhRZ5ulG23hAMBV9oaCev47bnnJDn?=
- =?us-ascii?Q?tUHEjOct8dFiAVkbcKAkRJ17ZyYUnFMEBTWctvslnJZMN/YBdFaN83KSJWGn?=
- =?us-ascii?Q?8XvNUIvL3iU0/2UbiFuOz4oBGeXdYHN3OXw/S7bAd0Sx5f9xExdX1PclZXD8?=
- =?us-ascii?Q?UmoYon2qkUJMo0vfuN0R3jS8r0IsPAuHPT2SQHpJDPOe0Qe0LYANW4IaKWhh?=
- =?us-ascii?Q?jeRoAhUznn2kErog1cdsP674FtWslx5mHm8UVgPTJ3YNKjaJfWizf0fNQx9l?=
- =?us-ascii?Q?dMmBkEh4i3Ppp43Tds2yX/PUL2yqtNoYmeX3YuyQIAKwtAe8Zp9cwaBNLmkR?=
- =?us-ascii?Q?hv4NxUo1iWJEb/G9ABcDxhBQCNKeCnbsSkWH6ZGNHqJU465fGDja+I01eKVn?=
- =?us-ascii?Q?MYsP5N6NU3B1DePZ85U67C3ogXjkCoIHT+iJoLbHYPht0iYeDHYHd1DZaILL?=
- =?us-ascii?Q?XWxzK1T9lcTcqe3MzNrZrcHFhmG011Q0tkdLC8PDsQ0cTjZb282s8s0VQLzN?=
- =?us-ascii?Q?eJXEhPg554d192of2GgRZey3I22R5yNdzKfirn0B2n+0Noe7cIy6Ip9uFdvm?=
- =?us-ascii?Q?NZ3AAulVz3gBEm8e8iTZdbbXbynSNchOzDAfFnmwc7J98tFTabETN0R81RBR?=
- =?us-ascii?Q?FzcdznrGgpgqhhn5x1tvdeBBWZsxiJTSK/qlQrlN76jx3LVLgp2Dui1NFrub?=
- =?us-ascii?Q?I4TE0rjxk3cjaYBT7MuKElKCZNE9smakelkjSSh23PiHZ1rZCsmS4If0Tecb?=
- =?us-ascii?Q?bPJ9aO45PmXxgZLnSIjA4kBcW1usaupFUwg+evVUPgstk5Ck5rimLR+e5H+B?=
- =?us-ascii?Q?r5M/SZ9Ni0RZTHj7n6keT37abTqPPwy4xpvohhBeNBbl6EfmJzv+AchOogUY?=
- =?us-ascii?Q?LPzyvkBB5RtVSElDJ80Yv5sgFUxhdgJHSLPGkeDtx+wCEBQhattN+jsoj4So?=
- =?us-ascii?Q?yg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13001129E62
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 23:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715295796; cv=none; b=UFi8r7p+dLO6FpCI1gYd9DSiCz5+itTEQq4mM9gagqJ/RUUcHdOmphQ2ipTBgkmtBefT+YDc0s2QUppcJF2MbT2M5xxvgnErFoWQbfpmeE434LMoqJngFGNZA/MeAKF7QM/qcLvWLOf36ef0bu61N77b2tUfHH8s7uVbo1dQtHA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715295796; c=relaxed/simple;
+	bh=ougFZIosBTctHM8zWtMpj8Ny38PANKNU6OYVXuPbtLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s9H3cGZtDFRih2iqc0zcyQqvZLp+6W45Sa5+SjrKxrV+vmbhvRsETluwGVzIBoJITn1555oQDm4So3cKquKIfHsP/MyqMYIPNAKfPgjQylUWlRPPoMU2x09iSdJh+zqd2LuHQbpQFo6gb4cELJaTCl0plYNoEPowyHWHzvaYRg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bz0Mn4KH; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41fe54cb0e3so5528525e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 16:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715295792; x=1715900592; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cPbSvLzfel2aidHv4944fpA4agv4jm4lmrU+rS2yRC4=;
+        b=Bz0Mn4KH+LsXaKm37WnHMPcyUH5RBOUurbFAU5WiZgP/4AT1fIYuImcdSB9Bph118N
+         hnC8b8OR41TqTAhdp9eYcLDmKGi+ro2WUJg/17kXJrBK8GJX1eklQjxWeDeHdYkDBlA9
+         V4ozYePVfHQ9MMSLulAG89Ur2izUJafkvZcSb8WMfJUb0wX2fToKIRARbVymNT4W/cS0
+         CM4HDL/COWzaziG5tBN+DifTKYjuG9zlEmxApxh3itH5Qf8ADKcswMfLTbUv/GrAXshm
+         UPTwU60rRgjMuHqZg9XlYnbr3eKhZ27mKZfQ29Ukkc6C6XM47Cqzi0A0NS3vVvwjE/8X
+         7SNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715295792; x=1715900592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cPbSvLzfel2aidHv4944fpA4agv4jm4lmrU+rS2yRC4=;
+        b=oplkbbZFRsvvKqxgWJOdcVZQOuAFefgF/WbBcqfVsSkSR/0edVFihPILnArjn+6MyH
+         /dak5jOdl6qUUyoPU8Vwwi59Mf0SG5s/S1NpLgcvv8REx/h+E2SCQNysmKvvMi12Ylpc
+         hWfQz9bKnf/8yFbUTzbXP0aVg3YQ88fzhMrhiSL17Yz90Y0PtKW1iIv9KigFMpJBdn7y
+         6lMB0j8wNFlDIYbzIZ4GEhGAF79Khg9Bu+R/6yoxMBCVQ1Boepath+0Qw1ym+eYoUlKi
+         x6Y206XJzAFhQtRjrO+FqV9K58FdlB/R0fdaG5jf/QKWgziFxVo9rj/Cb3Ld5Na9Jfij
+         nJ5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXghy4rCCjKnfZMBvqk6WhHr5SlDDnC++e1+AVHta1Ycy9t1uVpUKl5Lhiwl+hgQ2MXReuNRNaW7T1kmqOLaKZTYaMXvrGeS5F6NRd9
+X-Gm-Message-State: AOJu0YxbIdP1E0rASeEGXEhu8n/BzVyE4Gq/K2TTUa0MLnMrxdyiRxXT
+	eW+78034nQZ+H7ocCfFg0+NYSigzXLKV7stz4E1QwA/s6/SJoGIWOl1HjNgXrdGuYdY8UyCLMWi
+	n/QVWT4LbaKlHQ6wnMdg/E1D5OaMhyvdeYjSc
+X-Google-Smtp-Source: AGHT+IFhmWSmgHAekjGKzRtk8e+YHHuEDjTnB0xuUIijeYWCpcIdqwfIqifcfRX9laqU/XyPu9INnEX+SjRuGN5KTmg=
+X-Received: by 2002:a05:6000:e43:b0:34e:21cd:dbf3 with SMTP id
+ ffacd0b85a97d-3504a73ec96mr677219f8f.36.1715295792241; Thu, 09 May 2024
+ 16:03:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB5911.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9f4cc34-249d-44dd-419a-08dc707c079f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2024 23:01:58.5665
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: md8VV/lr/f3ht5vQuD4efqxxMmknan5rFw1/6eSGXbJFGxILeoT/a4JP2zo/oWUvK1x4JNQOSCEteQKIR0n+f7mPz3gTexHe09FMAndF6g4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4706
-X-OriginatorOrg: intel.com
+References: <20240509203907.504891-1-axelrasmussen@google.com>
+ <20240509203907.504891-2-axelrasmussen@google.com> <Zj06qh2U0wTwAZLK@x1n>
+In-Reply-To: <Zj06qh2U0wTwAZLK@x1n>
+From: Axel Rasmussen <axelrasmussen@google.com>
+Date: Thu, 9 May 2024 16:02:33 -0700
+Message-ID: <CAJHvVcj1+GQoweAU0X=0Q-jx2ZC1yUsm1GsCQLsFRQ8fCzNWNw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arch/fault: don't print logs for simulated poison errors
+To: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>, 
+	Ingo Molnar <mingo@redhat.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, John Hubbard <jhubbard@nvidia.com>, 
+	Liu Shixin <liushixin2@huawei.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Muchun Song <muchun.song@linux.dev>, 
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, 
+	Oscar Salvador <osalvador@suse.de>, Peter Zijlstra <peterz@infradead.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Larysa Zaremba <larysa.zaremba@intel.com>
-> Sent: Friday, April 26, 2024 8:41 AM
-> To: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; intel-wired-
-> lan@lists.osuosl.org; linux-kernel@vger.kernel.org; netdev@vger.kernel.or=
-g
-> Cc: Zaremba, Larysa <larysa.zaremba@intel.com>; Brady, Alan
-> <alan.brady@intel.com>; Fijalkowski, Maciej <maciej.fijalkowski@intel.com=
->;
-> Brandeburg, Jesse <jesse.brandeburg@intel.com>; Tantilov, Emil S
-> <emil.s.tantilov@intel.com>; Linga, Pavan Kumar
-> <pavan.kumar.linga@intel.com>; Hay, Joshua A <joshua.a.hay@intel.com>;
-> Kitszel, Przemyslaw <przemyslaw.kitszel@intel.com>; Bagnucki, Igor
-> <igor.bagnucki@intel.com>
-> Subject: [PATCH iwl-net] idpf: Interpret .set_channels() input differentl=
-y
->=20
-> Unlike ice, idpf does not check, if user has requested at least 1 combine=
-d
-> channel. Instead, it relies on a check in the core code. Unfortunately, t=
-he
-> check does not trigger for us because of the hacky .set_channels()
-> interpretation logic that is not consistent with the core code.
->=20
-> This naturally leads to user being able to trigger a crash with an invali=
-d
-> input. This is how:
->=20
-> 1. ethtool -l <IFNAME> -> combined: 40
-> 2. ethtool -L <IFNAME> rx 0 tx 0
->    combined number is not specified, so command becomes {rx_count =3D 0,
->    tx_count =3D 0, combined_count =3D 40}.
-> 3. ethnl_set_channels checks, if there is at least 1 RX and 1 TX channel,
->    comparing (combined_count + rx_count) and (combined_count + tx_count)
->    to zero. Obviously, (40 + 0) is greater than zero, so the core code
->    deems the input OK.
-> 4. idpf interprets `rx 0 tx 0` as 0 channels and tries to proceed with su=
-ch
->    configuration.
->=20
-> The issue has to be solved fundamentally, as current logic is also known =
-to
-> cause AF_XDP problems in ice [0].
->=20
-> Interpret the command in a way that is more consistent with ethtool
-> manual [1] (--show-channels and --set-channels) and new ice logic.
->=20
-> Considering that in the idpf driver only the difference between RX and TX
-> queues forms dedicated channels, change the correct way to set number of
-> channels to:
->=20
-> ethtool -L <IFNAME> combined 10 /* For symmetric queues */
-> ethtool -L <IFNAME> combined 8 tx 2 rx 0 /* For asymmetric queues */
->=20
-> [0] https://lore.kernel.org/netdev/20240418095857.2827-1-
-> larysa.zaremba@intel.com/
-> [1] https://man7.org/linux/man-pages/man8/ethtool.8.html
->=20
-> Fixes: 02cbfba1add5 ("idpf: add ethtool callbacks")
-> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> Reviewed-by: Igor Bagnucki <igor.bagnucki@intel.com>
-> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
-> ---
->  .../net/ethernet/intel/idpf/idpf_ethtool.c    | 21 ++++++-------------
->  1 file changed, 6 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/idpf/idpf_ethtool.c
-> b/drivers/net/ethernet/intel/idpf/idpf_ethtool.c
-> index 986d429d1175..1cf3067a9c31 100644
-> --- a/drivers/net/ethernet/intel/idpf/idpf_ethtool.c
-> +++ b/drivers/net/ethernet/intel/idpf/idpf_ethtool.c
+On Thu, May 9, 2024 at 2:05=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Thu, May 09, 2024 at 01:39:07PM -0700, Axel Rasmussen wrote:
+> > For real MCEs, various architectures print log messages when poisoned
+> > memory is accessed (which results in a SIGBUS). These messages can be
+> > important for users to understand the issue.
+> >
+> > On the other hand, we have the userfaultfd UFFDIO_POISON operation,
+> > which can "simulate" memory poisoning. That particular process will get
+>
+> It also coveres swapin errors as we talked before, so not always SIM.
+>
+> I was thinking we should also do that report for swapin errors, however
+> then I noticed it wasn't reported before the replacement of pte markers,
+> in commit 15520a3f04, since 2022:
+>
+> @@ -3727,8 +3731,6 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>                         put_page(vmf->page);
+>                 } else if (is_hwpoison_entry(entry)) {
+>                         ret =3D VM_FAULT_HWPOISON;
+> -               } else if (is_swapin_error_entry(entry)) {
+> -                       ret =3D VM_FAULT_SIGBUS;
+>                 } else if (is_pte_marker_entry(entry)) {
+>                         ret =3D handle_pte_marker(vmf);
+>                 } else {
+>
+> So I am guessing it could be fine to just turn this report off to syslog.
+> There will be a back-and-forth on this behavior, but hopefully this is ev=
+en
+> rarer than hwpoison so nobody will notice.
+>
+> With that, the idea looks valid to me, but perhaps a rename is needed.
+> Maybe _QUIESCE or _SILENT?
 
-Tested-by: Krishneil Singh <krishneil.k.singh@intel.com>
+Ah, I had forgotten about the swapin error case.
+
+I think it still makes sense to silence the log in that case; if we
+consider a scenario like disk error, it could seem weird to get an MCE
+message for that, since the physical memory is fine and it wouldn't
+show up in mcelog or similar.
+
+I like _SILENT, I'll do the rename and update my comments to better
+explain in v2.
+
+>
+> > SIGBUS on access to the memory, but this effect is tied to an MM, rathe=
+r
+> > than being global like a real poison event. So, we don't want to log
+> > about this case to the global kernel log; instead, let the process
+> > itself log or whatever else it wants to do. This avoids spamming the
+> > kernel log, and avoids e.g. drowning out real events with simulated
+> > ones.
+> >
+> > To identify this situation, add a new VM_FAULT_HWPOISON_SIM flag. This
+> > is expected to be set *in addition to* one of the existing
+> > VM_FAULT_HWPOISON or VM_FAULT_HWPOISON_LARGE flags (which are mutually
+> > exclusive).
+> >
+> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> > ---
+> >  arch/parisc/mm/fault.c   | 7 +++++--
+> >  arch/powerpc/mm/fault.c  | 6 ++++--
+> >  arch/x86/mm/fault.c      | 6 ++++--
+> >  include/linux/mm_types.h | 5 +++++
+> >  mm/hugetlb.c             | 3 ++-
+> >  mm/memory.c              | 2 +-
+> >  6 files changed, 21 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
+> > index c39de84e98b0..e5370bcadf27 100644
+> > --- a/arch/parisc/mm/fault.c
+> > +++ b/arch/parisc/mm/fault.c
+> > @@ -400,9 +400,12 @@ void do_page_fault(struct pt_regs *regs, unsigned =
+long code,
+> >  #ifdef CONFIG_MEMORY_FAILURE
+> >               if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) =
+{
+> >                       unsigned int lsb =3D 0;
+> > -                     printk(KERN_ERR
+> > +
+> > +                     if (!(fault & VM_FAULT_HWPOISON_SIM)) {
+> > +                             pr_err(
+> >       "MCE: Killing %s:%d due to hardware memory corruption fault at %0=
+8lx\n",
+> > -                     tsk->comm, tsk->pid, address);
+> > +                             tsk->comm, tsk->pid, address);
+> > +                     }
+> >                       /*
+> >                        * Either small page or large page may be poisone=
+d.
+> >                        * In other words, VM_FAULT_HWPOISON_LARGE and
+> > diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+> > index 53335ae21a40..ac5e8a3c7fba 100644
+> > --- a/arch/powerpc/mm/fault.c
+> > +++ b/arch/powerpc/mm/fault.c
+> > @@ -140,8 +140,10 @@ static int do_sigbus(struct pt_regs *regs, unsigne=
+d long address,
+> >       if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) {
+> >               unsigned int lsb =3D 0; /* shutup gcc */
+> >
+> > -             pr_err("MCE: Killing %s:%d due to hardware memory corrupt=
+ion fault at %lx\n",
+> > -                     current->comm, current->pid, address);
+> > +             if (!(fault & VM_FAULT_HWPOISON_SIM)) {
+> > +                     pr_err("MCE: Killing %s:%d due to hardware memory=
+ corruption fault at %lx\n",
+> > +                             current->comm, current->pid, address);
+> > +             }
+> >
+> >               if (fault & VM_FAULT_HWPOISON_LARGE)
+> >                       lsb =3D hstate_index_to_shift(VM_FAULT_GET_HINDEX=
+(fault));
+> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+> > index e4f3c7721f45..16d077a3ad14 100644
+> > --- a/arch/x86/mm/fault.c
+> > +++ b/arch/x86/mm/fault.c
+> > @@ -928,9 +928,11 @@ do_sigbus(struct pt_regs *regs, unsigned long erro=
+r_code, unsigned long address,
+> >               struct task_struct *tsk =3D current;
+> >               unsigned lsb =3D 0;
+> >
+> > -             pr_err_ratelimited(
+> > +             if (!(fault & VM_FAULT_HWPOISON_SIM)) {
+> > +                     pr_err_ratelimited(
+> >       "MCE: Killing %s:%d due to hardware memory corruption fault at %l=
+x\n",
+> > -                     tsk->comm, tsk->pid, address);
+> > +                             tsk->comm, tsk->pid, address);
+> > +             }
+> >               if (fault & VM_FAULT_HWPOISON_LARGE)
+> >                       lsb =3D hstate_index_to_shift(VM_FAULT_GET_HINDEX=
+(fault));
+> >               if (fault & VM_FAULT_HWPOISON)
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 5240bd7bca33..7f8fc3efc5b2 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -1226,6 +1226,9 @@ typedef __bitwise unsigned int vm_fault_t;
+> >   * @VM_FAULT_HWPOISON_LARGE: Hit poisoned large page. Index encoded
+> >   *                           in upper bits
+> >   * @VM_FAULT_SIGSEGV:                segmentation fault
+> > + * @VM_FAULT_HWPOISON_SIM    Hit poisoned, PTE marker; this indicates =
+a
+> > + *                           simulated poison (e.g. via usefaultfd's
+> > + *                              UFFDIO_POISON), not a "real" hwerror.
+> >   * @VM_FAULT_NOPAGE:         ->fault installed the pte, not return pag=
+e
+> >   * @VM_FAULT_LOCKED:         ->fault locked the returned page
+> >   * @VM_FAULT_RETRY:          ->fault blocked, must retry
+> > @@ -1245,6 +1248,7 @@ enum vm_fault_reason {
+> >       VM_FAULT_HWPOISON       =3D (__force vm_fault_t)0x000010,
+> >       VM_FAULT_HWPOISON_LARGE =3D (__force vm_fault_t)0x000020,
+> >       VM_FAULT_SIGSEGV        =3D (__force vm_fault_t)0x000040,
+> > +     VM_FAULT_HWPOISON_SIM   =3D (__force vm_fault_t)0x000080,
+> >       VM_FAULT_NOPAGE         =3D (__force vm_fault_t)0x000100,
+> >       VM_FAULT_LOCKED         =3D (__force vm_fault_t)0x000200,
+> >       VM_FAULT_RETRY          =3D (__force vm_fault_t)0x000400,
+> > @@ -1270,6 +1274,7 @@ enum vm_fault_reason {
+> >       { VM_FAULT_HWPOISON,            "HWPOISON" },   \
+> >       { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },     \
+> >       { VM_FAULT_SIGSEGV,             "SIGSEGV" },    \
+> > +     { VM_FAULT_HWPOISON_SIM,        "HWPOISON_SIM" },       \
+> >       { VM_FAULT_NOPAGE,              "NOPAGE" },     \
+> >       { VM_FAULT_LOCKED,              "LOCKED" },     \
+> >       { VM_FAULT_RETRY,               "RETRY" },      \
+> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> > index 65456230cc71..2b4e0173e806 100644
+> > --- a/mm/hugetlb.c
+> > +++ b/mm/hugetlb.c
+> > @@ -6485,7 +6485,8 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, st=
+ruct vm_area_struct *vma,
+> >                               pte_marker_get(pte_to_swp_entry(entry));
+> >
+> >                       if (marker & PTE_MARKER_POISONED) {
+> > -                             ret =3D VM_FAULT_HWPOISON_LARGE |
+> > +                             ret =3D VM_FAULT_HWPOISON_SIM |
+> > +                                   VM_FAULT_HWPOISON_LARGE |
+> >                                     VM_FAULT_SET_HINDEX(hstate_index(h)=
+);
+> >                               goto out_mutex;
+> >                       }
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index d2155ced45f8..29a833b996ae 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -3910,7 +3910,7 @@ static vm_fault_t handle_pte_marker(struct vm_fau=
+lt *vmf)
+> >
+> >       /* Higher priority than uffd-wp when data corrupted */
+> >       if (marker & PTE_MARKER_POISONED)
+> > -             return VM_FAULT_HWPOISON;
+> > +             return VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_SIM;
+> >
+> >       if (pte_marker_entry_uffd_wp(entry))
+> >               return pte_marker_handle_uffd_wp(vmf);
+> > --
+> > 2.45.0.118.g7fe29c98d7-goog
+> >
+>
+> --
+> Peter Xu
+>
 
