@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-174485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1C58C0F6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:15:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CC58C0F73
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F17282C13
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C4D1F22E87
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3D014B94C;
-	Thu,  9 May 2024 12:15:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F29D14B95A;
+	Thu,  9 May 2024 12:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pkwvLWqy"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712E112F5B3;
-	Thu,  9 May 2024 12:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9F712F5B3;
+	Thu,  9 May 2024 12:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256924; cv=none; b=WC9ak9MUo0smBj8ZNDS4rIa3hHBi2XP6E+JyHg3xvqEpKG6UcE+ObdTi4dxmMpfAJqm+zugaFMdN+FsewIDwGcGxGUf6yFMoHpH5Eq20GOn6MF9WHxB3tDuZ9vvX2EDxuWnAqu/WTIwD/s3smOjSDUwEkxgztH40UIwLy2pnynY=
+	t=1715256977; cv=none; b=O1erYhD+a1m4CtCfPnk5IF84uU+oYDoD8kZv8I9/KPHLi0v7MkvFrVoz227fKWmxelXECRg06xGxMMvQes/pAMpaP41RgzPiujqRBzoo9sc2NQbOo9tOelVvJlMCg2eQw9ccmIcET8qizJYhMRwt3CiT1SUPZhao3U3gYU+Ul7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256924; c=relaxed/simple;
-	bh=zWT3ymlFxwD1jj5/NTWP2UJ28d/C7S3KjCv0sFfGABM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aLcZETkR9YwfBgb510umLjLvdIBQ7FeZ4wJHOvYr4KE1tLd37bS6QBE4pAxnri2mAm/SHQuJdwmGIVx1ghQtiGC+bY+8dXPIUEtF/YhFm96SfwAkLE+r82cMopSdZv+EWgD8a3kf1LIm5RDP4hxUdUJfdn003dQjJOkpaiw+CBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZrVR1JScz6JB46;
-	Thu,  9 May 2024 20:12:15 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 79801140B33;
-	Thu,  9 May 2024 20:15:17 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 9 May
- 2024 13:15:17 +0100
-Date: Thu, 9 May 2024 13:15:16 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-CC: Jonathan Cameron <jic23@kernel.org>, Matti Vaittinen
-	<matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chenyuan Yang
-	<chenyuan0y@gmail.com>
-Subject: Re: [PATCH v2 0/2] Fix the iio-gts-helpers available times table
- sorting
-Message-ID: <20240509131516.000049d4@Huawei.com>
-In-Reply-To: <f5215081-c993-4147-8c50-fba1f56279b4@gmail.com>
-References: <cover.1714480171.git.mazziesaccount@gmail.com>
-	<20240505185027.18809bfd@jic23-huawei>
-	<11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
-	<20240506135356.7babe20f@jic23-huawei>
-	<f5215081-c993-4147-8c50-fba1f56279b4@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715256977; c=relaxed/simple;
+	bh=xv+8EY80PprWDIrphFPGiwYWzI8mMjfVvHBAlRZAjVQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FxBWpfdh8KZHpcXPebSYFqQwFwRzgSM3XiRzecIiZNM3Q8TSlPrw8+tnjyOestwFXmciB37yhraXlNI1+7TDljrqBZQMBlEeYKhvgbdeVnyfEmdzGCJqYov/1sH5bYaPdF0cQJnIO9hlUUI+3fqUemBEPqFa3JKgCunbBDTfepo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pkwvLWqy; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715256976; x=1746792976;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xv+8EY80PprWDIrphFPGiwYWzI8mMjfVvHBAlRZAjVQ=;
+  b=pkwvLWqyPRzp7aj8gNQ0+TO3LKqnUqEWaUDdamLTVh1L8RtW7w7pUi+G
+   WQmC284hb/tJ+NJ6o8aibecJHDgpHQlm3Ru9DvrcA2lrk6Ojb46eijqKu
+   fkBt9czV4vKQXknAELT9uilp90Ibhu1K1gIit5hWY56k7RddDnGYVk4Gu
+   HWLGj6G85shFzrX/QR0lsbNG71vPpuy+tWkl1ApbjlCnfc1Oz5Rzonb1Y
+   VqCP0+abFD9tvbEJetM8iyZfrV6lI52f9sSS8ACBhbjUV/GMWnI+pz3xt
+   RIQPOczZjV+WF1ey2RHPy/8nwCKmKb/73TYSLrlvYHRd3yriiahP4QTsa
+   Q==;
+X-CSE-ConnectionGUID: vyZ8CGhFQVqGx8FDY47/hA==
+X-CSE-MsgGUID: CXov5e8bRyuYi+nK6g4mHg==
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="asc'?scan'208";a="24313807"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 May 2024 05:16:14 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 9 May 2024 05:15:41 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 9 May 2024 05:15:40 -0700
+Date: Thu, 9 May 2024 13:15:30 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Yangyu Chen <cyy@cyyself.name>
+CC: <linux-riscv@lists.infradead.org>, Conor Dooley <conor@kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] riscv: dts: fix isa string for Canaan Kendryte K230
+Message-ID: <20240509-humility-sliceable-fc22f8d64d90@wendy>
+References: <tencent_B61C1370E7632842D61BB7F9FA0515B44D09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yzTCDg/qHC1C/s+B"
+Content-Disposition: inline
+In-Reply-To: <tencent_B61C1370E7632842D61BB7F9FA0515B44D09@qq.com>
 
-On Tue, 7 May 2024 09:14:15 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+--yzTCDg/qHC1C/s+B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 5/6/24 15:53, Jonathan Cameron wrote:
-> > On Mon, 6 May 2024 08:09:27 +0300
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> On 5/5/24 20:50, Jonathan Cameron wrote:  
-> >>> On Tue, 30 Apr 2024 15:44:26 +0300
-> >>> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >>>      
-> >>>> Fix the available times table sorting in iio-gts-helpers
-> >>>>
-> >>>> This series contains a fix and test for the sorting of the available times in
-> >>>> IIO-gts helpers. Fix was originally developed and posted by Chenyuan Yang.
-> >>>>
-> >>>> Revision history:
-> >>>> 	v1 => v2:
-> >>>> 	  - Fix the sender for patch 1/2 (Sic!)
-> >>>> 	  - Fix Co-Developed-by tag (drop this from Chenyuan who
-> >>>> 	    is the original author)
-> >>>> 	  - Fix the From: tag as instructed in:
-> >>>> 	    https://www.kernel.org/doc/html/latest/process/submitting-patches.html  
-> >>>
-> >>> Am I right in thinking this doesn't matter for existing drivers?  
-> >>
-> >> I think this is right. Only couple of in-tree drivers are using these
-> >> helpers for now, and all of them sorted the tables already in driver.
-> >>  
-> >>> As such not high priority for back porting?  
-> >>
-> >> The bug is pretty nasty as it causes invalid memory accesses. Hence I'd
-> >> like to see this landing in the longterm kernels. It seems to me the GTS
-> >> helpers got merged in 6.4, so getting the fix backported to 6.6 might
-> >> make sense.
-> >>  
-> >>> I'll assume that and queue it up for 6.11. If someone shouts I can pull the fix
-> >>> forwards, but then we have the mess of chasing the testing in later.  
-> >>
-> >> I am sorry Jonathan but I'm not quite sure what you mean by "pulling fix
-> >> forward", or what is the "mess of chasing the testing in later" :)  
-> > 
-> > Hmm. That was an odd choice of words :)  I just meant that I could send
-> > the fix in the first set of fixes after 6.10-rc1 rather than waiting for 6.11.  
-> 
-> Oh, right :)
-> 
-> > For now I'll leave it queued for 6.11 on the basis there are a lot of ways
-> > a driver writer can cause similar out of bounds accesses and they should
-> > notice it not working during testing.  So it 'should' not be a problem to
-> > not rush this in.
-> >   
-> 
-> I guess this means the 6.10 won't have the fix? I believe this is fine - 
-> assuming the 6.10 is not going to be an LTS. Thanks for taking care of 
-> this! :)
-It may well get backported anyway, but after 6.11 merge window.
+On Thu, May 09, 2024 at 05:33:11PM +0800, Yangyu Chen wrote:
+> The original is a string in dts that has no "zfh" or "zvfh" extension,
+> but the K230 chip has them, so I am adding them to the dts. This
+> patch also reordered the Z* extension in the isa string and used
+> canonical order for the category as the first key and then alphabet
+> order as the second key to meet RISC-V ISA Extension Naming
+> Conventions.
+>=20
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 
-J
-> 
-> Yours,
-> 	-- Matti
-> 
-> 
+I'm just gonna squash this one into the original patch, since I had to
+drop it from v6.10 material.
 
+Cheers,
+Conor.
+
+--yzTCDg/qHC1C/s+B
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjy+YgAKCRB4tDGHoIJi
+0jGiAQD7pc1KyZymIGJlsegKO1WYvefd963SGPkomtSKGL1bfwD/Xnsyh56Pzfcd
+OXdMDHsYbfBT7F78lGFCKrwFVRE03AQ=
+=XNdt
+-----END PGP SIGNATURE-----
+
+--yzTCDg/qHC1C/s+B--
 
