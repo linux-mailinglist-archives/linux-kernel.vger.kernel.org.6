@@ -1,125 +1,153 @@
-Return-Path: <linux-kernel+bounces-174805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588548C1540
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:16:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892BB8C154F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C3C1C21B5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:16:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17FF81F21DDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA70F7F7C6;
-	Thu,  9 May 2024 19:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB1D80043;
+	Thu,  9 May 2024 19:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZBcnF8Ym"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="jtddYvtT"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3227EEE7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0427EEE7;
+	Thu,  9 May 2024 19:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715282162; cv=none; b=V76JRviImmltvMfiE2pRghBuBfTnBDHys5roTx65TTCmb0UE/VzE+Oh/WqPOnHqddM1jbtOqTqb1CCnpooiWwktDsGsVYr4tuFEljgb3sT4wbnUU+dRwU3ktXZW163RCOXE1BVQgSYZm/Z+1lana2hgX1nl3tmTN/SbwuYMC0EM=
+	t=1715282271; cv=none; b=vBVb9UPJIiiVUzAOuYTklh/1gHBIRKCwdb+uz42OOlQBKoveX5H6Ydbt2CTR1cBm6snMIN8K2vGUN70EugmWhn3ONnYxXN81Dn9HrlMRuzpep5mFUqkYiDarwd9JRGy6tJLrutaI3vJ0JsZ2nodMhKX0u4pjSKuxA6hnlvgYXLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715282162; c=relaxed/simple;
-	bh=f5hTjmwtrBNmeRfEZwqwz3MoeEtUyLOcEt2AbxYcVbw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bfrCXtiESEpVHeBgpz4pWxkrcvPJmF0SUqYMqdSRGCGIXgky/SE0OmKMioNqj+3quVvFSMSnz+VzRXdNLfuK7FtiHTzai5PxwBIpIHTwwmE5lJC3e0j8CiIXAV7CcSeVKOf8GzmR0xxlnnvexd2jvVKQHuZ+EjcX6ELevXMYOwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZBcnF8Ym; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a64db066so316880766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715282158; x=1715886958; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9PPjpFCo1HBrR3dhTun969JD1naScZ8g1ToZzUTce0=;
-        b=ZBcnF8YmhrjyvmPATrpxIJwnO/LAVDHVpKlE2c2K0TTYwfVyk9f3esVGbFrHqF70n7
-         dlptd/NDbOgWA8FsY8w0ZecCKbH23DM236FhxJ9dY/rAXpG5bWE+9XnOs8dhTzPLfDvb
-         uqR1LLMUB1GxE8mixDpUWggKypq9UmjV7DQkM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715282158; x=1715886958;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C9PPjpFCo1HBrR3dhTun969JD1naScZ8g1ToZzUTce0=;
-        b=kRD1kc6W5iN4ALNjz5H1ToqRYIDOFuPzYudwq4ktPmiHA7omfKQvOyzHL+VhWcIw/j
-         /nwDVPzgBxbYvZ6JZeruukgtNspAYkFdwk7UUUcrSPzcxNQVnyhj/Xb5/4lH/SWuH0ie
-         NagERzPfa43DMgfGiyrKRvMZVEKrmh5v26BJ550WEOcmw/ScNSGtWz2O+sseJP0LJkWX
-         AnGinlG512Bu+LbQtl3uPPbjC/Vmron3A2mF0mWrpV/Nc3cMmCN5ybzoWJw1PJXr35VM
-         7akxMlcKoDpxjJ6H3e3HYgmKBrgXgDDtSRJdsNbygZI2Wz7vIJA6igzpCXXHqALC+d9F
-         bbUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQsjn/Ic1Fk93KvbOsRDyM6qv+Jh11u0Gau3Q/Fs8nBer24pIwdm9EVTrmcA3KdfHJu+BUY/9FEiGLMNvSgl+CDsDAP4sE0tQdT8ZH
-X-Gm-Message-State: AOJu0YzkBe5u+1lCYcPEFrRvpnKeZQiSFWPtVMguey33BgGe5mcgUMVU
-	426JButwCf+Ana/d2pfL1WTPXjMJIUG871rhXObZaYB0ha2pkGHNiqS/DU8ydQvwUS6pqrvGhji
-	i3yeHdg==
-X-Google-Smtp-Source: AGHT+IHq5fD2MbPQl2PRK0m59BgcnSyrMm32j7q6/9EbTIisAWkmaLnBnag8YWoR0nDsmxvHuXb6GQ==
-X-Received: by 2002:a17:907:20a2:b0:a59:a3ef:21f9 with SMTP id a640c23a62f3a-a5a2d6656b2mr33290266b.52.1715282158415;
-        Thu, 09 May 2024 12:15:58 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d1fcsm102989466b.35.2024.05.09.12.15.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 12:15:57 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599c55055dso332163066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:15:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJp9foXcNrwkASZ5w2PYq4ophlVH5eHpOSyU5pTBG0WRep4BfortuycXtXJF3C7BR13lErR2xCuXmTjvUAKyufULs18Ep9pO8PnSPM
-X-Received: by 2002:a17:906:f88c:b0:a59:c52b:9938 with SMTP id
- a640c23a62f3a-a5a2d6653bamr36083966b.55.1715282157122; Thu, 09 May 2024
- 12:15:57 -0700 (PDT)
+	s=arc-20240116; t=1715282271; c=relaxed/simple;
+	bh=IZfPLcRxXHmj113Atg8plIho0l7kxPY7n+YKdJVy0Rw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e60pz6kzxfFtuaoKQfBIwBUbhKJbKxZwwUCOrb1lRFB5aij4b4s7L/F8uEjOt1HlHILj3R3QvoGU3YcT9EJVytFl3Zr4tGQ81Kj/Srbl/ouoQz7s3XNlaVvchsQhAEgBzGO7oWEv0CmcAUX/n4rUUyxiQ7G6FioIJZtVaD6yZKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=jtddYvtT reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
+ id c48abd1f18dfa5b3; Thu, 9 May 2024 21:17:42 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id A3333A524E7;
+	Thu,  9 May 2024 21:17:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1715282262;
+	bh=IZfPLcRxXHmj113Atg8plIho0l7kxPY7n+YKdJVy0Rw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=jtddYvtTWV8Zm3UP/CV42APo3S+UakPAIG0iHaSmZMh+WYA7EiL3jaQb/bIoDyIoH
+	 jxTxufoHTnWmYbM43QbRgmPIyoL1pV5nY+7GKb65laXW0RgCsC2oTIMLPCTFm6TtqH
+	 Q3rK/QJNjMWYA+3VXveS7XBkI8ONsKF1drTEa+UiBgIa5OKPht352HuMW+giKaMs+L
+	 NVa+SWnG/Adxf3DZqDKGNUZG6Uyf1QFXKiI9XN1Cf9KW8FU1hU7XNpMrkuh9NRuevv
+	 K1Lr5gCGeZjPa75TJf6nHwYSy4MTDX24bbVP5NVoM6h7+IT7Z0Lzg0VSRldFXgbPn9
+	 ibfBTHNUWxGJA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject:
+ [PATCH v1 6/7] thermal/debugfs: Move some statements from under
+ thermal_dbg->lock
+Date: Thu, 09 May 2024 21:16:22 +0200
+Message-ID: <8376520.T7Z3S40VBb@kreacher>
+In-Reply-To: <12438864.O9o76ZdvQC@kreacher>
+References: <12438864.O9o76ZdvQC@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <202405081949.0565810E46@keescook> <20240509140854.GF3620298@mit.edu>
- <CAHk-=wgKyP2ffZPa6aKYtytzzFibiNVN5MS=D2cn7_UGCECKdw@mail.gmail.com>
- <20240509175417.GR2118490@ZenIV> <CAHk-=wgXm15gZHvt8waSFhXS9yZTfvMV95xyvNtPc6FSEA_rvA@mail.gmail.com>
- <CAHk-=wgBprh=8Us-MtwH9sVNELZK2hdOkFn3EoauwecYgtXOCQ@mail.gmail.com> <20240509184806.GS2118490@ZenIV>
-In-Reply-To: <20240509184806.GS2118490@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 May 2024 12:15:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjHA8Di-cpT0pKcScwcWNVYRFvmhBwMrug=Mj5WUwa2rw@mail.gmail.com>
-Message-ID: <CAHk-=wjHA8Di-cpT0pKcScwcWNVYRFvmhBwMrug=Mj5WUwa2rw@mail.gmail.com>
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Kees Cook <keescook@chromium.org>, 
-	Justin Stitt <justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefvddgudeffecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
+ tggrnhhosehlihhnrghrohdrohhrgh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On Thu, 9 May 2024 at 11:48, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> FWIW, the thing that somewhat worries me about having a helper along
-> the lines of combine_to_u64(low, high) is that
->         foo->splat = combine_to_u64(something, something_else);
-> would be inviting hard-to-catch brainos -
->         foo->splat = combine_to_u64(something_else, something);
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Yeah, we'd have to be very clear about naming and ordering. So it
-would probably have to be something like
+The tz_dbg local variable assignments in thermal_debug_tz_trip_up(),
+thermal_debug_tz_trip_down(), and thermal_debug_update_trip_stats()
+need not be carried out under thermal_dbg->lock, so move them from
+under that lock (to avoid possible future confusion).
 
-        result = combine_to_u64_hi_lo(high, low);
+While at it, reorder local variable definitions in
+thermal_debug_tz_trip_up() for more clarity.
 
-to be easy to use.
+No functional impact.
 
-The good news is that if you *do* get it wrong despite clear naming,
-the resulting value will be so obviously wrong that it's generally a
-"Duh!" thing if you do any testing what-so-ever.
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_debugfs.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Of course, I say that as somebody who always points out that I haven't
-tested my own patches at all, and they are "something like this,
-perhaps?".
+Index: linux-pm/drivers/thermal/thermal_debugfs.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_debugfs.c
++++ linux-pm/drivers/thermal/thermal_debugfs.c
+@@ -568,19 +568,19 @@ static struct tz_episode *thermal_debugf
+ void thermal_debug_tz_trip_up(struct thermal_zone_device *tz,
+ 			      const struct thermal_trip *trip)
+ {
+-	struct tz_episode *tze;
+-	struct tz_debugfs *tz_dbg;
+ 	struct thermal_debugfs *thermal_dbg = tz->debugfs;
+ 	int trip_id = thermal_zone_trip_id(tz, trip);
+ 	ktime_t now = ktime_get();
++	struct tz_debugfs *tz_dbg;
++	struct tz_episode *tze;
+ 
+ 	if (!thermal_dbg)
+ 		return;
+ 
+-	mutex_lock(&thermal_dbg->lock);
+-
+ 	tz_dbg = &thermal_dbg->tz_dbg;
+ 
++	mutex_lock(&thermal_dbg->lock);
++
+ 	/*
+ 	 * The mitigation is starting. A mitigation can contain
+ 	 * several episodes where each of them is related to a
+@@ -667,10 +667,10 @@ void thermal_debug_tz_trip_down(struct t
+ 	if (!thermal_dbg)
+ 		return;
+ 
+-	mutex_lock(&thermal_dbg->lock);
+-
+ 	tz_dbg = &thermal_dbg->tz_dbg;
+ 
++	mutex_lock(&thermal_dbg->lock);
++
+ 	/*
+ 	 * The temperature crosses the way down but there was not
+ 	 * mitigation detected before. That may happen when the
+@@ -719,10 +719,10 @@ void thermal_debug_update_trip_stats(str
+ 	if (!thermal_dbg)
+ 		return;
+ 
+-	mutex_lock(&thermal_dbg->lock);
+-
+ 	tz_dbg = &thermal_dbg->tz_dbg;
+ 
++	mutex_lock(&thermal_dbg->lock);
++
+ 	if (!tz_dbg->nr_trips)
+ 		goto out;
+ 
 
-But having "hi_lo" kind of naming would hopefully make it really
-obvious even when just looking at the source code.
 
-              Linus
+
 
