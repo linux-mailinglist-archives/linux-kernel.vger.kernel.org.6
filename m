@@ -1,168 +1,127 @@
-Return-Path: <linux-kernel+bounces-174399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 522B78C0E22
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:25:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0898C0E24
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087B92837D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:25:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBDF1C21473
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764D614B09F;
-	Thu,  9 May 2024 10:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E8514B951;
+	Thu,  9 May 2024 10:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GTU3r4V5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QcGnC3jm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4050014B06E;
-	Thu,  9 May 2024 10:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43CA13C9BC
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715250278; cv=none; b=gsQn/tLYICZEcxcfAbhFIUMEnYuCGvSR/ZaZS+d4i2ha0vTMfrOLny6WcgDB815DVgiwpWGxNodmzWqVEtrPFpo3XkAwRgq8I0ueaRJD9PpY64s08O/So468q17bn/ZJlXt0sy3U4qY0hX2sENbhXvGWdbc9RS5Dz7VfvJtrceo=
+	t=1715250297; cv=none; b=a0N+hIE+nYFRhf1nWT3C+XEEYk0PDSEgjFPVwQ/WfN+934SVO1Q2ZQrBIccNnjJq80hBp92NxJt6VC/tfRyBq3rVwDie6hbjQLQPvc8msaeBRx041XNSOCGYXJz1WOaklgGZnPLrnL1CNnuT2PU4QzdxV4PdRhoGdSk8jYkCwLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715250278; c=relaxed/simple;
-	bh=BekQdQptTQpvGpRyGlUbj2l5mkL6Bnv5K9rBAJ8HL1U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=AGt1cKg+lqJSfV5huUh+uwNIMpGjg6leLiS1Hxfw5SE3MmiVs7QRKSRbfod0iggcgeA7BPyz+y7g0Qz6YKXhmnUfix9scI8OREV2Ck0rVG0VIfhlRzk+QH5HEMpsLAZSqS3pxUBhcKZvowqovagHHl2PKFns72gsGYE/468TiiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GTU3r4V5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4490t8D4006648;
-	Thu, 9 May 2024 10:24:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:references:in-reply-to:to
-	:cc; s=qcppdkim1; bh=5aovpYcRm3B2nPdzz98yDMi5tfJer7t+Yw3vCW5iLVU
-	=; b=GTU3r4V5GLchN9vqZb2G9GP2l/isZ7mUA2yEpGZ8HZHROJg/PGwLFsCSAgM
-	S0D9LchE4EMVbNyH8tGolqU/9+a6S19tGmlNORqEUUvsUpj5+uUDZk6230C/hZo/
-	6bsreGsWMdz64vD+bFL61hBzqqu/ELxzp0XahKA6UHjTYAMWXmB87fJnzwkgPIW8
-	dXb6TjWANLuuQAa+gkVcq6iweoDioryumDU/qjUrPHa94ngIxCD9Ppy7FDI+Uh34
-	ZDtI9LC2Cltv8Y/clOimB/hnpF4c05MPBGwlcO9izm5vsVgCi3U0AC3F5REpltaj
-	bydceMtbomtgDp8ECRFVsaAHO1w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07wftkr7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 10:24:27 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449AOPL6016151
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 10:24:25 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 9 May 2024 03:24:20 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Date: Thu, 9 May 2024 15:54:04 +0530
-Subject: [PATCH v4 2/2] arm64: dts: qcom: sm8150: Add video clock
- controller node
+	s=arc-20240116; t=1715250297; c=relaxed/simple;
+	bh=pbFU41RJ6FcZOxKZe+Ud+0dEC/T1KjTODn5fDzyhkQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKko7OrSBGZJxldjXaOg/KJMxQxYC9ceP4JOH7L5+mDoFNsq4Tm+woY17HnU3EJn/+dbKNJvuvECZuuU7J7MRxLgVObURuPUEdcs62lB+Y8sQ9fon0uHqdqhpwu4njrhHc5HWeQauvDUhT/Qu7BHTlZQsAWsKryenbI/rNjutLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QcGnC3jm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715250294;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7zHc7fs9O/huou8M4UloljeK6K5aZsWXnMgzdP+3PJ8=;
+	b=QcGnC3jmWv8UKdH7fU1q/7IX32YqJ/6+5GQS24pY1s06aRhZL6qwXlq6PKGS79T6OB7UGO
+	twEu86QhKAimU9aBPU1QVdyLACwF66afSPB/zLUsT/jDZN+hm+CV3fmrFRlRT2VF5ZK0np
+	rSbNxUKVCkf0N5CMGspFISbmymgGMrU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-92-PfHLc4ubOxasLZxexH-nBw-1; Thu, 09 May 2024 06:24:51 -0400
+X-MC-Unique: PfHLc4ubOxasLZxexH-nBw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 517E3101A525;
+	Thu,  9 May 2024 10:24:51 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.72])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C38BC36EC;
+	Thu,  9 May 2024 10:24:49 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: mcgrof@kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: lucas.demarchi@intel.com,
+	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Subject: [PATCH v2] module: create weak dependecies
+Date: Thu,  9 May 2024 12:24:40 +0200
+Message-ID: <20240509102442.176958-1-jtornosm@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240509-videocc-sm8150-dt-node-v4-2-e9617f65e946@quicinc.com>
-References: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
-In-Reply-To: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jonathan Marek
-	<jonathan@marek.ca>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-X-Mailer: b4 0.12.4
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RyG4z2hdbsjxu0-PCAlX_nCu4M5Pul3e
-X-Proofpoint-ORIG-GUID: RyG4z2hdbsjxu0-PCAlX_nCu4M5Pul3e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_06,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 malwarescore=0 mlxlogscore=928
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405090066
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-Add device node for video clock controller on Qualcomm
-SM8150 platform.
+It has been seen that for some network mac drivers (i.e. lan78xx) the
+related module for the phy is loaded dynamically depending on the current
+hardware. In this case, the associated phy is read using mdio bus and then
+the associated phy module is loaded during runtime (kernel function
+phy_request_driver_module). However, no software dependency is defined, so
+the user tools will no be able to get this dependency. For example, if
+dracut is used and the hardware is present, lan78xx will be included but no
+phy module will be added, and in the next restart the device will not work
+from boot because no related phy will be found during initramfs stage.
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+In order to solve this, we could define a normal 'pre' software dependency
+in lan78xx module with all the possible phy modules (there may be some),
+but proceeding in that way, all the possible phy modules would be loaded
+while only one is necessary.
+
+The idea is to create a new type of dependency, that we are going to call
+'weak' to be used only by the user tools that need to detect this situation.
+In that way, for example, dracut could check the 'weak' dependency of the
+modules involved in order to install these dependencies in initramfs too.
+That is, for the commented lan78xx module, defining the 'weak' dependency
+with the possible phy modules list, only the necessary phy would be loaded
+on demand keeping the same behavior, but all the possible phy modules would
+be available from initramfs.
+
+The 'weak' dependency support has been included in kmod:
+https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
+
+Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
 ---
- arch/arm64/boot/dts/qcom/sa8155p.dtsi |  4 ++++
- arch/arm64/boot/dts/qcom/sm8150.dtsi  | 14 ++++++++++++++
- 2 files changed, 18 insertions(+)
+V1 -> V2:
+- Include reference to 'weak' dependency support in kmod.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8155p.dtsi b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-index ffb7ab695213..9e70effc72e1 100644
---- a/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-@@ -38,3 +38,7 @@ &rpmhpd {
- 	 */
- 	compatible = "qcom,sa8155p-rpmhpd";
- };
-+
-+&videocc {
-+	power-domains = <&rpmhpd SA8155P_CX>;
-+};
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index a35c0852b5a1..55c9046f4fb9 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/qcom,dispcc-sm8150.h>
- #include <dt-bindings/clock/qcom,gcc-sm8150.h>
- #include <dt-bindings/clock/qcom,gpucc-sm8150.h>
-+#include <dt-bindings/clock/qcom,videocc-sm8150.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sm8150.h>
- #include <dt-bindings/thermal/thermal.h>
-@@ -3715,6 +3716,19 @@ usb_2_dwc3: usb@a800000 {
- 			};
- 		};
+ include/linux/module.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 1153b0d99a80..231e710d8736 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -173,6 +173,11 @@ extern void cleanup_module(void);
+  */
+ #define MODULE_SOFTDEP(_softdep) MODULE_INFO(softdep, _softdep)
  
-+		videocc: clock-controller@ab00000 {
-+			compatible = "qcom,sm8150-videocc";
-+			reg = <0 0x0ab00000 0 0x10000>;
-+			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bi_tcxo";
-+			power-domains = <&rpmhpd SM8150_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
++/* Weak module dependencies. See man modprobe.d for details.
++ * Example: MODULE_WEAKDEP("module-foo")
++ */
++#define MODULE_WEAKDEP(_weakdep) MODULE_INFO(weakdep, _weakdep)
 +
- 		camnoc_virt: interconnect@ac00000 {
- 			compatible = "qcom,sm8150-camnoc-virt";
- 			reg = <0 0x0ac00000 0 0x1000>;
-
+ /*
+  * MODULE_FILE is used for generating modules.builtin
+  * So, make it no-op when this is being built as a module
 -- 
-2.25.1
+2.44.0
 
 
