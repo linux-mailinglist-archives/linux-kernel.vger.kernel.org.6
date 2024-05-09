@@ -1,119 +1,159 @@
-Return-Path: <linux-kernel+bounces-174180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F168C0B4D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F0D8C0B57
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302B31C2230F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E61B1F23909
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DF31494C9;
-	Thu,  9 May 2024 06:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E52149C6E;
+	Thu,  9 May 2024 06:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xidul/9/"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WEm/VoPd"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E873938DE8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE061494BF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715235192; cv=none; b=rXUPJIFxfJcaJIivVnA373FO2mHoCR2ZWwExcUA5AlpPeig/BY6s5BW/YznCXKHZ8/7KHJxT9Y9pHVDmK+x15CQ2pc40U2VU2mEdEnaoSlQ3FpIX32kXuqT84pKNDrkmKNFwkhTQkCll/Rj7TrNvZSH99moCT8JwRqlVdXPwc78=
+	t=1715235262; cv=none; b=JP8rTVVCIoqe02XvKripmxuACeWDAc+VpJ1wguZHnpzC3Smpy9ttW0N54K2h//dzHu4W7WhepHO2llNOt8IpI2rwC9j1NpOUd58SQC+vJSOop/XslysTTv334jI63eHsh/T1eSX/uDQIe2ozV5PBjdRJdpYvLd0PnAlFzXgfwHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715235192; c=relaxed/simple;
-	bh=5sxmFsI2pvyRDZT2dBR9z4g7uJi8JaMwokUE63AQ8qc=;
+	s=arc-20240116; t=1715235262; c=relaxed/simple;
+	bh=EL59YAvQ+NejbE+MgsQ0pGcYE6qA6HsEuHDusaEk0N4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bQ2B4SbnDswFzpdvkwlfX+LoyIOTopXp2xzRDOOriXw4cLcf/pe9luSS/2W0xj1BaRgTs9+BB406WNduUiaEoXx8kRyEbArw20ckQUW3O9L2yE9247g/3r1qpTiHwPvKswZ8UqJcW7ONiArAwYbfCq4qLtLCF02OWu8I4NFHQaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xidul/9/; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4df29c84f60so319370e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:13:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=PrjWmM55ddye6/pa6xuI23c0IxDulKYbv+IcpBXJNIJqsOd05p8H19fyUbnj34XlfFXinf4ZKTyIe+6RLL/zJGzXlZEvCug4i+nZ6/oxJ2SDYMj1P3cTRHFIpoi37MDRXijSgavAf7aDVxeUvWK8qdtQh50U5jKhhfk/egcMwkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WEm/VoPd; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso10523a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715235190; x=1715839990; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715235259; x=1715840059; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6F6BKpRJQNg/VL1hLJe69exk1Y5QwBVu9m/6Ynps7qA=;
-        b=Xidul/9/7jFGeiWFClcmNw3/bDjh8ITYhGPRWiORj2UKsqiYSNCKNl9Tfio3Mydg6X
-         0Ot4KPf3kozAfS68tqaSobz0QO7flin2XOvHsJoAlZrZUVhg8TAB1Qgx/0ARqjupsA2a
-         x/cl63Bd8mSl+f/wAaGWEN3RR1QLMgozKt7gWo1azXT53AuOqCZbwvy14NVOcC4HQ/eX
-         gqNj3ZumhH+rEwRFTMMhsVptaQ4RIv6Sh7hg70YTl6kvDNoAqRSji2QFidQpDjlXeCWr
-         DAvLJpPTcuyQuNrngSUnSf585B3izK/BDN72+3LCo+/EtFN9tKAwuKgvZlJGEDfXb/kx
-         sS/Q==
+        bh=72bWBwjQodIuSi8MsUtQvKNvKwdUWjXGREUei480Xwo=;
+        b=WEm/VoPdoWkj0T759QWiuYvMX4pHXbQGtGV6B8BdS6/Cq0VFDkresAaaMIYb++Xv07
+         NGG+jf4a1dEnvAy0YaC/s7lcBHZYg4XfdFyn0UE/NSSxuV4NI+ONOzRkSN7wuCtF7G6m
+         GTOO87BGuQVGfzWL5T65/lgJj6fjNzyMISuP7RyGnMi7ZT8v5eJ20/bJPOff/6tMEzYf
+         htFF4m10x/m7ACoxg+H+qSKb1axBk/xf7pNTnIFlBhJxau06TJtioZB85NLY3yGUoNGf
+         qsBS4tNQxQMxJEtkUampvrB3zly877wqooUCzxdQkmiqESGQ2AKpeP3mEO/CMSG07Le0
+         wmxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715235190; x=1715839990;
+        d=1e100.net; s=20230601; t=1715235259; x=1715840059;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6F6BKpRJQNg/VL1hLJe69exk1Y5QwBVu9m/6Ynps7qA=;
-        b=R8vE8b9TdvZTbNJ+rlRkzEZ32Vmo1XSah51HsMDKuwugLYT//wL39XuPU6m11ppZ8D
-         ivO5PARsNQ3t6n8L2fG62rbSOxfMNHFf6BJ3NeXrYH8fMbprCDRDkxt3Vz9O246Sf6S5
-         jQ6Iw8ElHrznNKrYBOvSVHoiDRON45IOVKJkhXSShE3bWCFpiZuEoajR31f9EgDaEVnW
-         aKZMrwHIluuIw/x6EMHE3p/Cpsu5Vo6Xj0g7/fj+Zf5JKM4lw4zaNMKz2D1ZnEhz3DQ9
-         D5mo2u/OTQD55BgcnjigKBLehAdqMbvQVRAiY7C1VC9wnyP1Qgy1cN7Pp3L7qRuIQyXW
-         Ebiw==
-X-Forwarded-Encrypted: i=1; AJvYcCU43/TEfxSHnYpEiS0+hZ93xerFJlG3Oo+KgEc9Rhnp2kNkU1jEAV8ZmkQvXra0Dcl7pgobLA+SIGJm2qSXOtg5pr5Miwf2AnX+NdJH
-X-Gm-Message-State: AOJu0Yxlc17oWYjl3WXiMWaaCb8eAh4s+oV+lAVNR13tWGs7lGojYVX5
-	772vqsbG10II++j25IvYAODztdBhwwqEcXNYXuEgIsAgEnZd0KPf2ydKgl4HfRD2mwKm9DZG8d5
-	+jbN4yz09GGYV+Vw0WUXWm+luTJo=
-X-Google-Smtp-Source: AGHT+IGVdIq1ZWy7m4bpS8XSGo5Gde81s0E0aZg6rWvS3bVTSyhJlxf/E2s0PdrLPIq/d/NF1HRPZWnhBfATpEVIiBM=
-X-Received: by 2002:a05:6122:2504:b0:4b9:e8bd:3b2 with SMTP id
- 71dfb90a1353d-4df78edca00mr1587765e0c.2.1715235189744; Wed, 08 May 2024
- 23:13:09 -0700 (PDT)
+        bh=72bWBwjQodIuSi8MsUtQvKNvKwdUWjXGREUei480Xwo=;
+        b=bRuvHmikdOgwbx1zM0CPWVeA+fJn9bfTL9uVmu2EfoEYHmFw4i/7zfDlPYdcwBiScJ
+         dERVznwjmAdE+UzdyA2aSL3ox34G8dywT0OBYpCr/TbnQWITXuPVRWhBkNL9fO6vFl9S
+         Fx6V4Q6JhQv4i7iu58gWvKM1RqHXQjqT/C+spgiLCBuOYB9WhMMVpt3C/0EUPwv3Prob
+         mGke3t3d3mKqzv3fIPLRQgxubdCPdinJ4DM6jGStvOZWLlaovDiqIh+uSXUx7Ri2H1Wi
+         pekMv2wnpin3fS3AKI1oNZYaGgMsGazP3FRbEwg8zPN90HmtRgTXGpoJADZ1La/yHhHC
+         7/dg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0V90wI4aApUY86kjb5tbjL1pIxoGh70U2EgDtLeLgiHoMTOEhw1IXJ+z+xVO+xa5zXcP7BqBWJMoUIDfGdo8kCx/gzrT5GQ5S/5n0
+X-Gm-Message-State: AOJu0YxKNaGewTlgg+jdxuyakRNYRAFrz2HPiGXrSug3sdMKBLIrnblp
+	xAhbWXLxRFjJ9PRMIc0auPeGoXigZLrkc9EpYvdz3P6q7BNHD+BJYOgKH6zwQ/mxw2lApLuSDAq
+	asTyFdJR0hrzWaF+8cagKbkTT0CgFIw4T/SYx
+X-Google-Smtp-Source: AGHT+IHsPAG0LEeM4cJXnAxgH06RrdZlxemOxK5bdPXtb66jyshH3jVsPNC7i5pX8kAB1x6smMgaq3eKTmHMEonCtFw=
+X-Received: by 2002:a05:6402:5206:b0:572:a23b:1d81 with SMTP id
+ 4fb4d7f45d1cf-5733b9d3b3emr79412a12.5.1715235258767; Wed, 08 May 2024
+ 23:14:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508125808.28882-1-hailong.liu@oppo.com> <CAGsJ_4xN0MBz_73wUvMp74upd9SaQ+TCRJufEj26Y619Rtr7Zw@mail.gmail.com>
- <ZjxWkleEdk5iUxI8@infradead.org>
-In-Reply-To: <ZjxWkleEdk5iUxI8@infradead.org>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 9 May 2024 18:12:58 +1200
-Message-ID: <CAGsJ_4wW-Z+H=vZ44AJZEhJA1QXgoBn=mN+JUYJxNCUyAadfog@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
- called with __GFP_NOFAIL
-To: Christoph Hellwig <hch@infradead.org>
-Cc: hailong.liu@oppo.com, akpm@linux-foundation.org, urezki@gmail.com, 
-	lstoakes@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	xiang@kernel.org, chao@kernel.org, Oven <liyangouwen1@oppo.com>
+References: <20240507214254.2787305-1-edliaw@google.com> <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
+In-Reply-To: <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
+From: Edward Liaw <edliaw@google.com>
+Date: Wed, 8 May 2024 23:13:51 -0700
+Message-ID: <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
+	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Seth Forshee <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>, 
+	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
+	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 9, 2024 at 4:52=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
-> wrote:
+On Wed, May 8, 2024 at 4:10=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
 >
-> On Thu, May 09, 2024 at 02:20:03PM +1200, Barry Song wrote:
-> > reverting the fix intended to address the OOM-killer issue in commit
-> > dd544141b9eb.
-> > Should we indeed permit the NOFAIL flag for large kvmalloc allocations?
+> On 5/7/24 15:38, Edward Liaw wrote:
+> > 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
+> > asprintf into kselftest_harness.h, which is a GNU extension and needs
+> > _GNU_SOURCE to either be defined prior to including headers or with the
+> > -D_GNU_SOURCE flag passed to the compiler.
+> >
+> > v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-ed=
+liaw@google.com/
+> > v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
+> > location.  Remove #define _GNU_SOURCE from source code to resolve
+> > redefinition warnings.
+> >
+> > Edward Liaw (5):
+> >    selftests: Compile kselftest headers with -D_GNU_SOURCE
+> >    selftests/sgx: Include KHDR_INCLUDES in Makefile
 >
-> What is large?  When you don't allow actually use cases people will
-> just reimplement it poorly.  E.g. we'd probably have to add back the
-> XFS kmem_ wrappers.
+> I appled patches 1/5 and 2.5 - The rest need to be split up.
+>
+> >    selftests: Include KHDR_INCLUDES in Makefile
+> >    selftests: Drop define _GNU_SOURCE
+> >    selftests: Drop duplicate -D_GNU_SOURCE
+> >
+>
+> Please split these patches pwe test directory. Otherwise it will
+> cause merge conflicts which can be hard to resolve.
 
-Xiang gave his number 24KiB in erofs, but probably we still have some
-"naughty" users allocating much more than 24KiB with NOFAIL in other
-subsystems. We should never return NULL for NOFAIL.  So, in any case,
-we require Hailong's patch in some form.
-
-However, commit dd544141b9eb ("vmalloc: back off when the current task is
-OOM-killed") is also tackling an issue. If we can find a way to preserve it=
-s
-benefits even in the NOFAIL scenario, it would be preferable, though it
-seems improbable. Thus, I'm considering if we could at least include a
-WARN_ON_ONCE((gfp & NOFAIL) && size > LARGE) to aid in debugging
-potential issues we might encounter. Furthermore, compelling a large
-allocation with NOFAIL also appears pointless, as it could lead to
-unpredictable long latency.
-
-But I don't know what the proper "LARGE" value is.
-
-Thanks
-Barry
+Hi Shuah,
+Sean asked that I rebase the patches on linux-next, and I will need to
+remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
+be reviewed, then split it afterwards?  I'm concerned that it will be
+difficult to review with ~70 patches once split.
 
