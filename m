@@ -1,120 +1,218 @@
-Return-Path: <linux-kernel+bounces-174334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF548C0D43
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:12:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3721E8C0CD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2EAC1F2513F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:12:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4116B1C20F57
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB73514A4F7;
-	Thu,  9 May 2024 09:12:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8014C14A081;
+	Thu,  9 May 2024 08:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="l0Nfxtls"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RMyNR/Ec"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC0F1494D9;
-	Thu,  9 May 2024 09:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FB2128396;
+	Thu,  9 May 2024 08:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715245936; cv=none; b=KahqqbdyBTRTHVpwxtCR7uySlmMBq9vWax42kkkOIQEjrU4+V5dnYWNWDWGcXpt3w9ynUY6wWcuRSsGJsiFDBD8fh3n7cHQ6ETjKeeIdB1U5Dvx//6mEkL6SsxOxNRPT41ciqisxDRCdw2RgLGqBQAqNGi3VN6OKrwCGGimcY24=
+	t=1715244684; cv=none; b=kHwplKIhuX6UJmPrGW1bj1WJqISoY2QgMQJ6U0Mr7jpgPVOCSeLcqD0SlS+7zeaSPAlWpeiQXA0Iah/cS5C7svYjXBmdPBVzGmGTFcwQlUs77HKAE8Sr8V9NWhAGCkr/6FjDL7IId3n7BwjT8bcf6AMIsITWj2axU+yvlsp46MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715245936; c=relaxed/simple;
-	bh=tIrasCcyV33AYR5O1egEtEOiQXsAZNYT11I2V7GFPPw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iwd7eRXuHMYy1rjgJdDrpCasT3pYmzumWfGztioOPYU2rvEb5SsUVv9WKXC0E5cuoVHbtRLE7eTpcW4oTRHQwUXUu0pVuo7PGNo7NYjLVq1Bv43HCzhxDJeeF3049e7VQUoyDLC9O51X4pQ/UEm1dYWDEVN8JO0jB85uHGCyBJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=l0Nfxtls; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=yfHOQBr6dYYpRW7k8Z7MK8HKsShTr3RZAMKrgndv9oc=;
-	t=1715245933; x=1716455533; b=l0NfxtlsCjeSF7DbWgNMVjegulwCTZ/o6ysRh408+PoJC3Z
-	BfgJKmeAfsAWmC+4YyMAzKvNZj9ubk2JqgCcrBEnFlVGAcSFJiifXMQ+nS9iqdsihnKxFqF2SaIi6
-	QLhNDzR6XGauqrq7MLySwOgaOUC9YzgTdoktCNGMs4yYAtGzvOTJEmWX1YIk/Y6wgLgLAkbrWCjA8
-	HtvNkBEe/3nr/a94T/rkdguSc37T2Fg7lfVpEkyEyshwNWoYgZ4Yuu0wSHakOMfWQmIRybXallySR
-	YnNb4aHN4C7H0dFBLQS2MyUPtNzpcFkfsb8rgOuUqUhAxXghraBaZPrmRhULIwtg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1s4zRq-0000000CuiJ-3TvE;
-	Thu, 09 May 2024 10:48:19 +0200
-Message-ID: <12b6ac611c1a44b4eadbb1316636b7268ab66a50.camel@sipsolutions.net>
-Subject: Re: Fwd: UBSAN: array-index-out-of-bounds in net/wireless/nl80211.c
- and net/mac80211/scan.c
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Networking <netdev@vger.kernel.org>, 
- Linux Wireless <linux-wireless@vger.kernel.org>
-Cc: Jouni Malinen <jouni.malinen@atheros.com>, "John W. Linville"
- <linville@tuxdriver.com>, Kalle Valo <kvalo@kernel.org>, Emmanuel Grumbach
- <emmanuel.grumbach@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>,  Jannik =?ISO-8859-1?Q?Gl=FCckert?=
- <jannik.glueckert@gmail.com>
-Date: Thu, 09 May 2024 10:48:17 +0200
-In-Reply-To: <ZjwTyGqcey0HXxTT@archie.me>
-References: <ZjwTyGqcey0HXxTT@archie.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1715244684; c=relaxed/simple;
+	bh=UuNlm3kDCVruMLI+aaRK5geLMaD9c7v7/gptoRxJydY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h8hcvvW+ThRUAnkPdSGOkV7OWLzrn1qkWppvZjwLC+Zs8xMPubIN24DrX08mhT0pLop8KrJE9aZdRWIWBmWhGllOAWxZ1n/tyn8tlcTIAEGlKDmGXP5XZJLqI1VZrBtIMfBND+sBucFF0r9TbxyhZE2x7JOd5RtscmeJdOd8f04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RMyNR/Ec; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715244682; x=1746780682;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UuNlm3kDCVruMLI+aaRK5geLMaD9c7v7/gptoRxJydY=;
+  b=RMyNR/EcVFQOxXyLFLRmBurfxGOC8YkGdVZ1LAonFcHqAHwJ8r2Lzq8d
+   e9n3Uu/FsBO8zxXtL5fFDBzXGQWT1om9bEeEcFyHjBxRl0nsvP9IbmwMQ
+   2hVepN1FkUb0biScrIgm8KJih6waZagSwbF+Nbci9r9+Vd9K+miFxzao1
+   NdnApebteGmI4Cr/I5njbSdJAUCp+4thgt+QZiaaVvMWFx7xZE/7hKAsa
+   T++SUQ0BGEYpjYau7xQiXV3vfEbm6J9wYAl4i0JKQug/Q3yD8spTCY5Xm
+   rMiESZ22if64vrJO8yqYTuDycZY5s3mVHh5USxLUfbfUr3Qb1K9gk1q3W
+   A==;
+X-CSE-ConnectionGUID: Q6Yonj0MQHCS+l+XbYm81Q==
+X-CSE-MsgGUID: +ANTXSGVQzO1UH5wRBMG/Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="14103950"
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="14103950"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 01:51:21 -0700
+X-CSE-ConnectionGUID: 6b+qMRU8QoKFRQ8UJLIHDw==
+X-CSE-MsgGUID: yt2Ktp1zSJqdCQpMpq1diw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="29060665"
+Received: from unknown (HELO SPR-S2600BT.bj.intel.com) ([10.240.192.124])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 01:51:14 -0700
+From: Zhenzhong Duan <zhenzhong.duan@intel.com>
+To: linux-pci@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-acpi@vger.kernel.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	james.morse@arm.com,
+	tony.luck@intel.com,
+	bp@alien8.de,
+	dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	bhelgaas@google.com,
+	helgaas@kernel.org,
+	mahesh@linux.ibm.com,
+	oohall@gmail.com,
+	linmiaohe@huawei.com,
+	shiju.jose@huawei.com,
+	adam.c.preble@intel.com,
+	lukas@wunner.de,
+	Smita.KoralahalliChannabasappa@amd.com,
+	rrichter@amd.com,
+	linux-cxl@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	erwin.tsaur@intel.com,
+	sathyanarayanan.kuppuswamy@intel.com,
+	dan.j.williams@intel.com,
+	feiting.wanyan@intel.com,
+	yudong.wang@intel.com,
+	chao.p.peng@intel.com,
+	qingshun.wang@linux.intel.com,
+	Zhenzhong Duan <zhenzhong.duan@intel.com>
+Subject: [PATCH v4 0/3] PCI/AER: Handle Advisory Non-Fatal error
+Date: Thu,  9 May 2024 16:48:30 +0800
+Message-Id: <20240509084833.2147767-1-zhenzhong.duan@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-05-09 at 07:07 +0700, Bagas Sanjaya wrote:
-> Hi,
->=20
-> Jannik Gl=C3=BCckert <jannik.glueckert@gmail.com> reported on Bugzilla ar=
-ray index
-> out-of-bounds catched by ubsan along with full kernel trace dump (see
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D218810):
->=20
-> > I am seeing multiple array-index-out-of-bounds related to `ieee80211_ch=
-annel[]` iteration.
-> >=20
-> > This is with a Mediatek MT7921 chipset.
-> > I have only tested with kernel 6.8.9, but I don't see any channel index=
- related fixes in master.
-> >=20
-> > This was discovered as part of Gentoo Hardened enabling CONFIG_UBSAN_AR=
-RAY_BOUNDS
-> >=20
-> >=20
-> > [  106.194465] UBSAN: array-index-out-of-bounds in /var/tmp/portage/sys=
--kernel/gentoo-kernel-6.8.9/work/linux-6.8/net/wireless/nl80211.c:9203:29
-> > [  106.195063] index 42 is out of range for type 'struct ieee80211_chan=
-nel *[]'
+Hi,
 
-> > [  106.200924] UBSAN: array-index-out-of-bounds in /var/tmp/portage/sys=
--kernel/gentoo-kernel-6.8.9/work/linux-6.8/net/wireless/nl80211.c:9252:5
-> > [  106.200926] index 0 is out of range for type 'struct ieee80211_chann=
-el *[]'
+This is a relay work of Qingshun's v2 [1], but changed to focus on ANFE
+processing as subject suggests and drops trace-event for now. I think it's
+a bit heavy to do extra IOes to get PCIe registers only for trace purpose
+and not see it a community request for now.
 
-At least one of these should be fixed by
-https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git/commi=
-t/?id=3D838c7b8f1f278404d9d684c34a8cb26dc41aaaa1
+According to PCIe Base Specification Revision 6.1, Sections 6.2.3.2.4 and
+6.2.4.3, certain uncorrectable errors will signal ERR_COR instead of
+ERR_NONFATAL, logged as Advisory Non-Fatal Error(ANFE), and set bits in
+both Correctable Error(CE) Status register and Uncorrectable Error(UE)
+Status register. Currently, when handling AER events the kernel will only
+look at CE status or UE status, but never both. In the ANFE case, bits set
+in the UE status register will not be reported and cleared until the next
+FE/NFE arrives.
 
-> > [  106.201036] UBSAN: array-index-out-of-bounds in /var/tmp/portage/sys=
--kernel/gentoo-kernel-6.8.9/work/linux-6.8/net/mac80211/scan.c:364:4
-> > [  106.201037] index 0 is out of range for type 'struct ieee80211_chann=
-el *[]'
+For instance, previously, when the kernel receives an ANFE with Poisoned
+TLP in OS native AER mode, only the status of CE will be reported and
+cleared:
 
-No idea about that one. Send patches.
+  AER: Correctable error message received from 0000:b7:02.0
+  PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+    device [8086:0db0] error status/mask=00002000/00000000
+     [13] NonFatalErr
 
-(Seriously. If you're running with bleeding edge toolchains that pretty
-much nobody has yet, send patches.)
+If the kernel receives a Malformed TLP after that, two UEs will be
+reported, which is unexpected. The Malformed TLP Header is lost since
+the previous ANFE gated the TLP header logs:
 
-johannes
+  PCIe Bus Error: severity="Uncorrectable (Fatal), type=Transaction Layer, (Receiver ID)
+    device [8086:0db0] error status/mask=00041000/00180020
+     [12] TLP                    (First)
+     [18] MalfTLP
+
+To handle this case properly, calculate potential ANFE related status bits
+and save in aer_err_info. Use this information to determine the status bits
+that need to be cleared.
+
+Now, for the previous scenario, both CE status and related UE status will
+be reported and cleared after ANFE:
+
+  AER: Correctable error message received from 0000:b7:02.0
+  PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+    device [8086:0db0] error status/mask=00002000/00000000
+     [13] NonFatalErr
+    Uncorrectable errors that may cause Advisory Non-Fatal:
+     [18] TLP
+
+Note:
+checkpatch.pl will produce following warnings on PATCH2/3:
+
+WARNING: 'UE' may be misspelled - perhaps 'USE'?
+#22:
+uncorrectable error(UE) status should be cleared. However, there is no
+
+..similar warnings omitted...
+
+This is a false-positive, so not fixed.
+
+WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+#10:
+  PCIe Bus Error: severity=Correctable, type=Transaction Layer, (Receiver ID)
+
+..similar warnings omitted...
+
+For readability reasons, these warnings are not fixed.
+
+
+
+[1] https://lore.kernel.org/linux-pci/20240125062802.50819-1-qingshun.wang@linux.intel.com
+
+Thanks
+Qingshun, Zhenzhong
+
+Changelog:
+v4:
+  - Fix a race in anfe_get_uc_status() (Jonathan)
+  - Add a comment to explain side effect of processing ANFE as NFE (Jonathan)
+  - Drop the check for PCI_EXP_DEVSTA_NFED
+
+v3:
+  - Split ANFE print and processing to two patches (Bjorn)
+  - Simplify ANFE handling, drop trace event
+  - Polish comments and patch description
+  - Add Tested-by
+
+v2:
+  - Reference to the latest PCIe Specification in both commit messages
+    and comments, as suggested by Bjorn Helgaas.
+  - Describe the reason for storing additional information in
+    aer_err_info in the commit message of PATCH 1, as suggested by Bjorn
+    Helgaas.
+  - Add more details of behavior changes in the commit message of PATCH
+    2, as suggested by Bjorn Helgaas.
+
+v3: https://lore.kernel.org/lkml/20240417061407.1491361-1-zhenzhong.duan@intel.com
+v2: https://lore.kernel.org/linux-pci/20240125062802.50819-1-qingshun.wang@linux.intel.com
+v1: https://lore.kernel.org/linux-pci/20240111073227.31488-1-qingshun.wang@linux.intel.com
+
+Zhenzhong Duan (3):
+  PCI/AER: Store UNCOR_STATUS bits that might be ANFE in aer_err_info
+  PCI/AER: Print UNCOR_STATUS bits that might be ANFE
+  PCI/AER: Clear UNCOR_STATUS bits that might be ANFE
+
+ drivers/pci/pci.h      |  1 +
+ drivers/pci/pcie/aer.c | 75 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 75 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
 
 
