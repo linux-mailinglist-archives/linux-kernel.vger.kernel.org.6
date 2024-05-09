@@ -1,192 +1,178 @@
-Return-Path: <linux-kernel+bounces-174245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0973B8C0C11
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F50D8C0BAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B7C01C2143C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAED8284833
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3DA149DEE;
-	Thu,  9 May 2024 07:42:51 +0000 (UTC)
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb1122.securemx.jp [210.130.202.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A934913C8E7;
+	Thu,  9 May 2024 06:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDUPRgcS"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220211487C4;
-	Thu,  9 May 2024 07:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7717C0AB;
+	Thu,  9 May 2024 06:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240570; cv=none; b=KskHDtYyg4wyLbbU+T3B/GHLHeMMC8tFrZEaB4s3WBT4fdMUkA7Pu0eGpLYGkglk4LICGZUXUxFjSonkTmCzsMubl1MSGtTPNB6V6mpNqTOHs6LxkUEk/d2kSoTcPF0wJcsTdlhz75uayk0Ym7qOqWxHps82Cp5+BvJJHmhA51Q=
+	t=1715237298; cv=none; b=GnGm8bxVnIVA5MoVO5ulLLC0vmPJbjOrAZ+aVRUALS9noyU2olab+akVCuENOWCxgVc87K3/UKWFIdk5z8LzfwXIrTKVSinilSop/QnjCcLAC70rPwHcgFeKXo3L8Pm1Knb1DJXmeoKm2Vlc0JxdnIYVOmrYV1SloeaSKumq6kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240570; c=relaxed/simple;
-	bh=Q8A4ZWBhm+FkdjNTyel34h10uhabTN0TdGEkGQPyJlY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YgiWOt7LWgWN3dIzjsvy7L67VJV4oDJQkxTFL2D1Q94sOGRKsvbt7OoM17Ntu8LzcjfmUcgOdzhVx+eA7ZfkXWH6mdEExXmkS5MD3heOxqog7dAG/dZwde4JE0fRjQ6TkT+hXAn/NTbd5wiQIF5nV+RumKCdW7pZiY4nhgRdQSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kioxia.com; spf=pass smtp.mailfrom=kioxia.com; arc=none smtp.client-ip=210.130.202.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kioxia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kioxia.com
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1122) id 4496lJ8E3038899; Thu, 9 May 2024 15:47:19 +0900
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 4496kgSH1189120; Thu, 9 May 2024 15:46:43 +0900
-X-Iguazu-Qid: 2rWhAUbYjDZzAIbjO5
-X-Iguazu-QSIG: v=2; s=0; t=1715237202; q=2rWhAUbYjDZzAIbjO5; m=rVo8ivCXEV/8n6eXdPXY2XauacTTqXsZoNFpmTS+/tE=
-Received: from CNN1EMTA03.test.kioxia.com ([202.248.33.144])
-	by relay.securemx.jp (mx-mr1121) id 4496keNB2614440
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 9 May 2024 15:46:40 +0900
-Received: from Switcher-Post_Send (gateway [10.232.20.1])
-	by CNN1EMTA03.test.kioxia.com (Postfix) with ESMTP id 4D7EF2FE0E;
-	Thu,  9 May 2024 15:46:40 +0900 (JST)
-Received: from CNN1ESTR04.kioxia.com (localhost [127.0.0.1])
-	by Switcher-Post_Send (Postfix) with ESMTP id 3E9921900001E1;
-	Thu,  9 May 2024 15:33:42 +0900 (JST)
-Received: from localhost [127.0.0.1] 
-	 by CNN1ESTR04.kioxia.com with ESMTP id 0003RAAAAAA00CDC;
-	 Thu, 9 May 2024 15:33:42 +0900
-Received: from CNN1EXMB01.r1.kioxia.com (CNN1EXMB01.r1.kioxia.com [10.232.20.150])
-	by Switcher-Pre_Send (Postfix) with ESMTP id 330E4A29E1A01;
-	Thu,  9 May 2024 15:33:42 +0900 (JST)
-Received: from CNN1EXMB03.r1.kioxia.com (10.232.20.152) by
- CNN1EXMB01.r1.kioxia.com (10.232.20.150) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 9 May 2024 15:46:39 +0900
-Received: from CNN1EXMB03.r1.kioxia.com ([10.13.100.22]) by
- CNN1EXMB03.r1.kioxia.com ([10.13.100.22]) with mapi id 15.01.2507.035; Thu, 9
- May 2024 15:46:39 +0900
-From: tada keisuke <keisuke1.tada@kioxia.com>
-To: Paul E Luse <paul.e.luse@linux.intel.com>
-CC: Yu Kuai <yukuai1@huaweicloud.com>, "song@kernel.org" <song@kernel.org>,
-        "yukuai (C)" <yukuai3@huawei.com>,
-        "linux-raid@vger.kernel.org"
-	<linux-raid@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Luse, Paul E" <paul.e.luse@intel.com>
-Subject: RE: [PATCH v2 08/11] md: add atomic mode switching in RAID 1/10
-Thread-Topic: [PATCH v2 08/11] md: add atomic mode switching in RAID 1/10
-Thread-Index: AdqLx+XD0n9rpAUxRba5DThcEUS6pAF1ejgc//zL4YD/937IgIAVxDgA/+myr2A=
-Date: Thu, 9 May 2024 06:46:39 +0000
-Message-ID: <170ff038967543228fef9d0868332620@kioxia.com>
-References: <47c035c3e741418b80eb6b73d96e7e92@kioxia.com>
-	<8d21354c-9e67-b19c-1986-b4c027dff125@huaweicloud.com>
-	<20240416073806.50e3ff5d@peluse-desk5>	<20240416154113.114dc42f@peluse-desk5>
-	<4b8f2f7499bd497c9db280775ae4ea81@kioxia.com>
- <20240425021224.6419ee2c@peluse-desk5>
-In-Reply-To: <20240425021224.6419ee2c@peluse-desk5>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-as-product-ver: ISME-14.0.0.2080-9.0.1002-28370.001
-x-tm-as-result: No-10--5.508700-8.000000
-x-tmase-matchedrid: OcgHo5wAKs6magT1k9kBpu5i6weAmSDKQV99ahimM1VYC5LPd7Bvbf3c
-	g9WGG5V+HkAOv6n9gx5hoUIS5GGeElqzeP+fKaZirltvlARhKR0Jlr1xKkE5ucC5DTEMxpeQfiq
-	1gj2xET/uo3YBjUsFh2kzi5An54UG0UwGeYlGH8nOvXpg7ONnXYiuaoNXJrK/njPfVXLnMPpdvd
-	jb5IwdboBsLAy4Xg8nk60UwrkrF+Q7mT8/EEC+/t5x7RpGJf1aWC/7aMfV0JHyXa/7gO3s/eQ5w
-	ujMC0dGS8TZctow9KAknOGoeIQzlp8vF/w0o6V88irf7wNB3Siy2aVB7PCjFdWM2x6EZ/S9ZGW8
-	RjUnk4hyoaUUcpft+zbrDVUpYRxNexXX42Ne5dSeAiCmPx4NwHJnzNw42kCxxEHRux+uk8h+ICq
-	uNi0WJHlopxU3vsREUA/xSjvb0UyfhQMuJvQjg2rpSf8F71FIftwZ3X11IV0=
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-x-tmase-result: 10--5.508700-8.000000
-x-tmase-version: ISME-14.0.0.2080-9.0.1002-28370.001
-x-tm-snts-smtp: 739F0219183FC94ECBD3494D1D761986D5367130C8B67479549B9001C8A02CB62000:8
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1715237298; c=relaxed/simple;
+	bh=9fO7Sh5EZvY64yUxjL2+G14A1JjtaSjuLrIZNlIVsr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j6lpEtuKora+trukyx/sk8HmAzMjr+9Cl06UGXp0fXVe6o1nhKWHr3F4pk3al2Lnm4E9EDBHp3I+s3UeIVaDJrPZyZFpdCue0Thoxh4hrWDRz1HHrvP7UIIqM/Toazb5ETJ53+uyw0Sopr18GZbJr/v00J4xNCCNMBSyf1g0OD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDUPRgcS; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1eeabda8590so3728975ad.0;
+        Wed, 08 May 2024 23:48:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715237296; x=1715842096; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jZJ/qPvhWmaN0bPAlkl54j0+0U9B8BSbeBplUAy1OJA=;
+        b=CDUPRgcSqfh3fEqXSLLVUrtUUgLjvBBTDLKpN2V3AcO58FV7Fs7YVVUUPffa/DGohX
+         OsOQvKtbtnJx35xexgZqyXx/idaJvE9jhcETVo1NRc9jCZZdHWlCOCFTSpEVGPU9aAMO
+         /JU+5AKMUiYE3YOM7lcunrP3EffMdPJZgIOkHYTX0jKwSm8di5GJ6hsPsEUWdbtP138G
+         TWfIj0KAzRWZgwrndxjGu4XBPsH53zzXobYktTmKmrHH6U7aIfOXkN7IeRRJUpWyl9iS
+         viSX6fbWp7VV7FkI3XfUEmfAtOV7fBag7RLLUhRNu0JXUKzpov350hQnbTKMEykvK9qZ
+         IbUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715237296; x=1715842096;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jZJ/qPvhWmaN0bPAlkl54j0+0U9B8BSbeBplUAy1OJA=;
+        b=RPlE8r6gwbd9p7ojpXEf62NTXJNHX5u269y6krgF8Zmymtu+JPBIGafMdaA2o6YA8i
+         B+XGtYd1nlj6YLwxSTRrfuWtWWx+ZFeA9ZWg3QW1+4ODZzWOqb0v2APb9ja5Z2uusr6C
+         /KKQbFaQg1B6tRJT4NpUBpC527ASm675k19rHNuWvQNI8eZmNQqKn7WBnnS1RPJUUjGk
+         r7dDIARcMsyhmurUrh2VKxDKaUcgI8OarU7b7oL2Wunn8OuytAR49Dec6IH60sSDBPeo
+         jhULk8AnEeaRj0F+qmn+F1xcNxEkWcV4XMUpMNqxCnZ6Qkzq4t0wG5ilf61f+9+3jd0F
+         zCPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxdCf47EIElc2egvPLHXosQiToi70pCQdoDq5JjmdgkaiX6N6Dj5pfRfuMS84l5BpFx85EBAxsyBFWXzNdefSuOjhx6uoOT8Rnj/OjtIUFVpIhYnMe03ZhxjL1q5rvnsS9dLTuwHMirBuEasAX6IZRkljx1gDT5osqFuYRzd4+18IJmbCUR38OPg==
+X-Gm-Message-State: AOJu0YwH+YhL+gh7uZTZ/fE8ZcI+vH0xEFf2MNaSubJJ4Bcy8pfgFY8c
+	gH3yr/ZwWgA3mhPAP1wWpkON5Oq0lmUR1RvYyUR3AJNyTGONTqST
+X-Google-Smtp-Source: AGHT+IHuANNmgdYBKLvlqBD4TQvuUL2BgBfhsM6ZChKBoBdTPu/89MPDHwGCEaMcOqarwXUh+xlqsw==
+X-Received: by 2002:a17:903:2451:b0:1eb:57a9:53f1 with SMTP id d9443c01a7336-1eeb03a56a8mr59339955ad.1.1715237295838;
+        Wed, 08 May 2024 23:48:15 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31da2sm6685885ad.165.2024.05.08.23.48.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 23:48:15 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] PM / devfreq: exynos: Use Use devm_clk_get_enabled() helpers
+Date: Thu,  9 May 2024 12:17:48 +0530
+Message-ID: <20240509064754.10082-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CrossPremisesHeadersFilteredBySendConnector: CNN1EXMB01.r1.kioxia.com
-X-OrganizationHeadersPreserved: CNN1EXMB01.r1.kioxia.com
+Content-Transfer-Encoding: 8bit
 
-PiA+ID4gPiA+IEhpLA0KPiA+ID4gPiA+DQo+ID4gPiA+ID4g5ZyoIDIwMjQvMDQvMTggMTM6NDQs
-IHRhZGEga2Vpc3VrZSDlhpnpgZM6DQo+ID4gPiA+ID4gPiBUaGlzIHBhdGNoIGRlcGVuZHMgb24g
-cGF0Y2ggMDcuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gQWxsIHJkZXZzIHJ1bm5pbmcgaW4g
-UkFJRCAxLzEwIHN3aXRjaCBucl9wZW5kaW5nIHRvIGF0b21pYw0KPiA+ID4gPiA+ID4gbW9kZS4g
-VGhlIHZhbHVlIG9mIG5yX3BlbmRpbmcgaXMgcmVhZCBpbiBhIG5vcm1hbCBvcGVyYXRpb24NCj4g
-PiA+ID4gPiA+IChjaG9vc2VfYmVzdF9yZGV2KCkpLiBUaGVyZWZvcmUsIG5yX3BlbmRpbmcgbXVz
-dCBhbHdheXMgYmUNCj4gPiA+ID4gPiA+IGNvbnNpc3RlbnQuDQo+ID4gPiA+ID4gPg0KPiA+ID4g
-PiA+ID4gU2lnbmVkLW9mZi1ieTogS2Vpc3VrZSBUQURBIDxrZWlzdWtlMS50YWRhQGtpb3hpYS5j
-b20+DQo+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBUb3NoaWZ1bWkgT0hUQUtFIDx0b3NoaWZ1
-bWkub290YWtlQGtpb3hpYS5jb20+DQo+ID4gPiA+ID4gPiAtLS0NCj4gPiA+ID4gPiA+ICAgZHJp
-dmVycy9tZC9tZC5oICAgICB8IDE0ICsrKysrKysrKysrKysrDQo+ID4gPiA+ID4gPiAgIGRyaXZl
-cnMvbWQvcmFpZDEuYyAgfCAgNyArKysrKysrDQo+ID4gPiA+ID4gPiAgIGRyaXZlcnMvbWQvcmFp
-ZDEwLmMgfCAgNCArKysrDQo+ID4gPiA+ID4gPiAgIDMgZmlsZXMgY2hhbmdlZCwgMjUgaW5zZXJ0
-aW9ucygrKQ0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21k
-L21kLmggYi9kcml2ZXJzL21kL21kLmgNCj4gPiA+ID4gPiA+IGluZGV4IGFiMDllMzEyYzliYi4u
-NTdiMDliNTY3ZmZhIDEwMDY0NA0KPiA+ID4gPiA+ID4gLS0tIGEvZHJpdmVycy9tZC9tZC5oDQo+
-ID4gPiA+ID4gPiArKysgYi9kcml2ZXJzL21kL21kLmgNCj4gPiA+ID4gPiA+IEBAIC0yMzYsNiAr
-MjM2LDIwIEBAIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZw0KPiA+ID4gPiA+ID4gbnJfcGVu
-ZGluZ19yZWFkKHN0cnVjdCBtZF9yZGV2ICpyZGV2KSByZXR1cm4NCj4gPiA+ID4gPiA+IGF0b21p
-Y19sb25nX3JlYWQoJnJkZXYtPm5yX3BlbmRpbmcuZGF0YS0+Y291bnQpOyB9DQo+ID4gPiA+ID4g
-Pg0KPiA+ID4gPiA+ID4gK3N0YXRpYyBpbmxpbmUgYm9vbCBucl9wZW5kaW5nX2lzX3BlcmNwdV9t
-b2RlKHN0cnVjdCBtZF9yZGV2DQo+ID4gPiA+ID4gPiAqcmRldikgK3sNCj4gPiA+ID4gPiA+ICsJ
-dW5zaWduZWQgbG9uZyBfX3BlcmNwdSAqcGVyY3B1X2NvdW50Ow0KPiA+ID4gPiA+ID4gKw0KPiA+
-ID4gPiA+ID4gKwlyZXR1cm4gX19yZWZfaXNfcGVyY3B1KCZyZGV2LT5ucl9wZW5kaW5nLA0KPiA+
-ID4gPiA+ID4gJnBlcmNwdV9jb3VudCk7ICt9DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiAr
-c3RhdGljIGlubGluZSBib29sIG5yX3BlbmRpbmdfaXNfYXRvbWljX21vZGUoc3RydWN0IG1kX3Jk
-ZXYNCj4gPiA+ID4gPiA+ICpyZGV2KSArew0KPiA+ID4gPiA+ID4gKwl1bnNpZ25lZCBsb25nIF9f
-cGVyY3B1ICpwZXJjcHVfY291bnQ7DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiArCXJldHVy
-biAhX19yZWZfaXNfcGVyY3B1KCZyZGV2LT5ucl9wZW5kaW5nLA0KPiA+ID4gPiA+ID4gJnBlcmNw
-dV9jb3VudCk7ICt9DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiAgIHN0YXRpYyBpbmxpbmUg
-aW50IGlzX2JhZGJsb2NrKHN0cnVjdCBtZF9yZGV2ICpyZGV2LA0KPiA+ID4gPiA+ID4gc2VjdG9y
-X3QgcywgaW50IHNlY3RvcnMsIHNlY3Rvcl90ICpmaXJzdF9iYWQsIGludA0KPiA+ID4gPiA+ID4g
-KmJhZF9zZWN0b3JzKSB7DQo+ID4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZC9yYWlk
-MS5jIGIvZHJpdmVycy9tZC9yYWlkMS5jDQo+ID4gPiA+ID4gPiBpbmRleCAxMjMxOGZiMTVhODgu
-LmMzOGFlMTNhYWRhYiAxMDA2NDQNCj4gPiA+ID4gPiA+IC0tLSBhL2RyaXZlcnMvbWQvcmFpZDEu
-Yw0KPiA+ID4gPiA+ID4gKysrIGIvZHJpdmVycy9tZC9yYWlkMS5jDQo+ID4gPiA+ID4gPiBAQCAt
-Nzg0LDYgKzc4NCw3IEBAIHN0YXRpYyBpbnQgY2hvb3NlX2Jlc3RfcmRldihzdHJ1Y3QgcjFjb25m
-DQo+ID4gPiA+ID4gPiAqY29uZiwgc3RydWN0IHIxYmlvICpyMV9iaW8pIGlmIChjdGwucmVhZGFi
-bGVfZGlza3MrKyA9PSAxKQ0KPiA+ID4gPiA+ID4gICAJCQlzZXRfYml0KFIxQklPX0ZhaWxGYXN0
-LA0KPiA+ID4gPiA+ID4gJnIxX2Jpby0+c3RhdGUpOw0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+
-ICsNCj4gPiA+ID4gPiA+IFdBUk5fT05fT05DRShucl9wZW5kaW5nX2lzX3BlcmNwdV9tb2RlKHJk
-ZXYpKTsgcGVuZGluZyA9DQo+ID4gPiA+ID4gPiBucl9wZW5kaW5nX3JlYWQocmRldik7IGRpc3Qg
-PSBhYnMocjFfYmlvLT5zZWN0b3IgLQ0KPiA+ID4gPiA+ID4gY29uZi0+bWlycm9yc1tkaXNrXS5o
-ZWFkX3Bvc2l0aW9uKTsNCj4gPiA+ID4gPiA+IEBAIC0xOTMwLDYgKzE5MzEsNyBAQCBzdGF0aWMg
-aW50IHJhaWQxX2FkZF9kaXNrKHN0cnVjdCBtZGRldg0KPiA+ID4gPiA+ID4gKm1kZGV2LCBzdHJ1
-Y3QgbWRfcmRldiAqcmRldikgaWYgKGVycikNCj4gPiA+ID4gPiA+ICAgCQkJCXJldHVybiBlcnI7
-DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gcGVyY3B1X3JlZl9zd2l0
-Y2hfdG9fYXRvbWljX3N5bmMoJnJkZXYtPm5yX3BlbmRpbmcpOw0KPiA+ID4gPiA+ID4gcmFpZDFf
-YWRkX2NvbmYoY29uZiwgcmRldiwgbWlycm9yLCBmYWxzZSk7IC8qIEFzIGFsbCBkZXZpY2VzDQo+
-ID4gPiA+ID4gPiBhcmUgZXF1aXZhbGVudCwgd2UgZG9uJ3QgbmVlZCBhIGZ1bGwgcmVjb3ZlcnkN
-Cj4gPiA+ID4gPiA+ICAgCQkJICogaWYgdGhpcyB3YXMgcmVjZW50bHkgYW55IGRyaXZlDQo+ID4g
-PiA+ID4gPiBvZiB0aGUgYXJyYXkgQEAgLTE5NDksNiArMTk1MSw3IEBAIHN0YXRpYyBpbnQNCj4g
-PiA+ID4gPiA+IHJhaWQxX2FkZF9kaXNrKHN0cnVjdCBtZGRldiAqbWRkZXYsIHN0cnVjdCBtZF9y
-ZGV2ICpyZGV2KQ0KPiA+ID4gPiA+ID4gc2V0X2JpdChSZXBsYWNlbWVudCwgJnJkZXYtPmZsYWdz
-KTsgcmFpZDFfYWRkX2NvbmYoY29uZiwNCj4gPiA+ID4gPiA+IHJkZXYsIHJlcGxfc2xvdCwgdHJ1
-ZSk7IGVyciA9IDA7DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiBwZXJjcHVfcmVmX3N3aXRj
-aF90b19hdG9taWNfc3luYygmcmRldi0+bnJfcGVuZGluZyk7DQo+ID4gPiA+ID4NCj4gPiA+ID4g
-PiBJIGRvbid0IHVuZGVyc3RhbmQgd2hhdCdzIHRoZSBwb2ludCBoZXJlLCAnbnJfcGVuZGluZycg
-d2lsbCBiZQ0KPiA+ID4gPiA+IHVzZWQgd2hlbiB0aGUgcmRldiBpc3N1aW5nIElPLCBhbmQgaXQn
-cyBhbHdheXMgdXNlZCBhcyBhdG9taWMNCj4gPiA+ID4gPiBtb2RlLCB0aGVyZSBpcyBubyBkaWZm
-ZXJlbmNlLg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gQ29uc2lkZXIgdGhhdCAnbnJfcGVuZGluZycg
-bXVzdCBiZSByZWFkIGZyb20gSU8gZmFzdCBwYXRoLCB1c2UNCj4gPiA+ID4gPiBpdCBhcyBhdG9t
-aWMgaXMgc29tZXRoaW5nIHdlIG11c3QgYWNjZXB0LiBVbmxlc3Mgc29tZW9uZSBjb21lcw0KPiA+
-ID4gPiA+IHVwIHdpdGggYSBwbGFuIHRvIGF2b2lkIHJlYWRpbmcgJ2luZmxpZ2h0JyBjb3VudGVy
-IGZyb20gZmFzdA0KPiA+ID4gPiA+IHBhdGggbGlrZSBnZW5lcmljIGJsb2NrIGxheWVyLCBpdCdz
-IG5vdCBvayB0byBtZSB0byBzd2l0Y2ggdG8NCj4gPiA+ID4gPiBwZXJjcHVfcmVmIGZvciBub3cu
-DQo+ID4NCj4gPiBUaGUgbWFpbiBwdXJwb3NlIG9mIHRoaXMgcGF0Y2hzZXQgaXMgdG8gaW1wcm92
-ZSBSQUlENSBwZXJmb3JtYW5jZS4NCj4gPiBJbiB0aGUgY3VycmVudCBSQUlEIDEvMTAgZGVzaWdu
-LCB0aGUgdmFsdWUgb2YgbnJfcGVuZGluZyBpcw0KPiA+IGludGVudGlvbmFsbHkgYWx3YXlzIGlu
-IGF0b21pYyBtb2RlIGJlY2F1c2UgaXQgbXVzdCBiZSByZWFkIGluIElPDQo+ID4gZmFzdCBwYXRo
-LiBVbmxlc3MgdGhlIGRlc2lnbiBvZiByZWFkaW5nIHRoZSB2YWx1ZSBvZiBucl9wZW5kaW5nIGhh
-cw0KPiA+IGNoYW5nZWQsIEkgYmVsaWV2ZSB0aGF0IHRoaXMgcGF0Y2hzZXQgaXMgYSByZWFzb25h
-YmxlIGRlc2lnbiBhbmQNCj4gPiBSQUlEMSBwZXJmb3JtYW5jZSBpcyBhYm91dCB0aGUgc2FtZSBh
-cyBhdG9taWNfdCBiZWZvcmUgdGhpcyBwYXRjaHNldA0KPiA+IHdhcyBhcHBsaWVkLiBQYXVsJ3Mg
-cmVzdWx0cyBhbHNvIHNob3cgdGhhdC4NCj4gPg0KPiA+IEJlc3QgUmVnYXJkcywNCj4gPiBLZWlz
-dWtlDQo+IA0KPiBJIG9ubHkgdGVzdGVkIFJBSUQxIGFuZCBkbyBiZWxpZXZlIHRoYXQgc2ltcGxl
-ciBpcyBiZXR0ZXIgc28gd291bGQNCj4gcHJlZmVyIG5vdCB0byBjaGFuZ2UgdGhlIFJBSUQxIGNv
-ZGUuICBJIGNhbiBydW4gc29tZSBSQUlENSB0ZXN0cyBvbg0KPiB0aGlzIGFzIHdlbGwgdW5sZXNz
-IHlvdSBoYXZlIHNvbWUgd2lkZSBzd2VlcGluZyByZXN1bHRzPyBXb3VsZCBsb3ZlIHRvDQo+IHNl
-ZSBtb3JlIFJBSUQ1IHBlcmZvcm1hbmNlIGltcHJvdm1lbnRzLiAgU2h1c2h1IGhhcyBhbm90aGVy
-IFJBSUQ1IHBlcmYNCj4gcGF0Y2ggb3V0IHRoZXJlIHRoYXQgSSB0aGluayBoYXMgc29tZSB2ZXJ5
-IGdvb2QgcG90ZW50aWFsLCBpdCB3b3VsZCBiZQ0KPiBnb29kIGlmIHlvdSBjb3VsZCB0YWtlIGEg
-bG9vayBhdCB0aGF0IG9uZS4NCj4gDQo+IC1QYXVsDQoNCldlIGFyZSBwbGFubmluZyB0byBtZWFz
-dXJlIHRoZSBwZXJmb3JtYW5jZSBvZiBSQUlENSB1c2luZyBTU0RzLg0KDQpLZWlzdWtlDQo=
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
+
+This simplifies the code and avoids the calls to clk_disable_unprepare().
+
+While at it, use dev_err_probe consistently, and use its return value
+to return the error code.
+
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+V4 - wrap up the error messagee within 80 char
+v3 - No change
+v2 - No change
+---
+ drivers/devfreq/exynos-bus.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 00118580905a..7d06c476d8e9 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -160,7 +160,6 @@ static void exynos_bus_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ }
+ 
+@@ -171,7 +170,6 @@ static void exynos_bus_passive_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ }
+ 
+ static int exynos_bus_parent_parse_of(struct device_node *np,
+@@ -247,23 +245,16 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 	int ret;
+ 
+ 	/* Get the clock to provide each bus with source clock */
+-	bus->clk = devm_clk_get(dev, "bus");
+-	if (IS_ERR(bus->clk)) {
+-		dev_err(dev, "failed to get bus clock\n");
+-		return PTR_ERR(bus->clk);
+-	}
+-
+-	ret = clk_prepare_enable(bus->clk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to get enable clock\n");
+-		return ret;
+-	}
++	bus->clk = devm_clk_get_enabled(dev, "bus");
++	if (IS_ERR(bus->clk))
++		return dev_err_probe(dev, PTR_ERR(bus->clk),
++				"failed to get bus clock\n");
+ 
+ 	/* Get the freq and voltage from OPP table to scale the bus freq */
+ 	ret = dev_pm_opp_of_add_table(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to get OPP table\n");
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	rate = clk_get_rate(bus->clk);
+@@ -281,8 +272,6 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dev);
+-err_clk:
+-	clk_disable_unprepare(bus->clk);
+ 
+ 	return ret;
+ }
+@@ -453,7 +442,6 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ err_reg:
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ 
+-- 
+2.44.0
 
 
