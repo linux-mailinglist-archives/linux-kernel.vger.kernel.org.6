@@ -1,123 +1,85 @@
-Return-Path: <linux-kernel+bounces-174049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96C48C099D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:04:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7358D8C0943
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5312A1F22253
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:04:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0BBDB215CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CB413C9AB;
-	Thu,  9 May 2024 02:03:42 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E060213B2BC;
+	Thu,  9 May 2024 01:45:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4AE13D26D;
-	Thu,  9 May 2024 02:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249512C184
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 01:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715220221; cv=none; b=iQBDukAWRyRAIzKfaKWR6qSB5QX+XsbOI6ha3QRb/kUaCOSnc1dtTIID6Il+h4PhQw4sYsjtn6sluHvvIcRzDDbD438Y3ZNPUWV1+jsHCswvU2mYac+0xYS2FZUeLx9u/4pjxSwAQfwNsDPlOYslvbG0Cx2AKWS7Q6QxAUealKA=
+	t=1715219106; cv=none; b=W9tAaIVOm1tyyuqQyyFvGvVKzJdO+Gl+LaKO+r4xjbmDRk45vEglzUuT8CMviL6n29AlN++8WPe56Qf1o+Umh0uVhnJhvRCoy08JS8xUkYJTN7oX+VtauNdHMshj8/AHeK04djp5AJgB0MDu4C+isteLjjzR8OlTTZcwI+XbcNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715220221; c=relaxed/simple;
-	bh=eUwcL9aI2F0Cu45RR1S0pmgtx3YEe7LfV3/UpkyDPg4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=LLbXpEICAGFckcI9fk9JHkQOycYBwtvvhy1mKru2+qg0olO7v5VqVNy6TB+xv6L5IbZgqZ6iO2++/Eh31l/R9jBboATup1L/qmZHO4gxPD96+UV6wLOHkgLDwRNdamD3hI2423cUjadi/nV9kHK0d7DrrGFKiKJJWBvS1MdWykA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EAD1E1A1829;
-	Thu,  9 May 2024 04:03:32 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AD2D11A156B;
-	Thu,  9 May 2024 04:03:32 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9D509180222F;
-	Thu,  9 May 2024 10:03:30 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	imx@lists.linux.dev,
-	shengjiu.wang@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2 4/4] clk: imx: clk-audiomix: Corrent parent clock for earc_phy and audpll
-Date: Thu,  9 May 2024 09:43:58 +0800
-Message-Id: <1715219038-32453-5-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1715219106; c=relaxed/simple;
+	bh=vSVL60bh16yhR+ctxekFRNTh9Af0jyPIzqa8o3T8MrU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Jkx/KbzYReYHX7+NulAmojqQbvPpuyYZ/KYcqobV5w4f663/bn5T8ro2W5Ixtp8IwNXKJsUQJtwK7u7Rq8XwL8hqmsGtZRYS48j0QQZ+bjT6P9YxrX+Jazd2LOdclTTjTNlJFLuUUBO1yuMfH6x4qDU4COcATGyiuT22tVl97QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7d9d0936d6aso34588039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 18:45:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715219104; x=1715823904;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z9e5GxcHfGQd4FmL3tkaCSV5wErLtu9uIQtGUuzPB0Q=;
+        b=c0fql01njPcyx0H4zOfUn9jkpDNOqbV6urBECHVtcIx0bExd9RY5r0Gg+5SvMYLI2C
+         V389u32oJEjUyKibkRSOJrHPopkcADWqaZjvn6Cja1eG8KAi5wm+v37TzbPNr9enzEgG
+         GMEWpCm564xCrYVNoQaHp7q6BfG/nDaLZNEvdSnYfy6h4cNPcEo5udmQqKbNYHz1kq9w
+         xjw5TX3L0pPZji4zNjrMj48PZaPGrdjBjFc+6qfpmS1hZ4T/aVWaIcKSATJUqvH8uppv
+         mP2O63rfybZY974wIU6y1rlYhURs6P9F7gtP1rrOpBMbDHuwyadxweEsji+kC+ZBqRC1
+         QO2Q==
+X-Gm-Message-State: AOJu0YzF5biNSTDOtbkOmpJYEEWV+qpXnlXT1K9IhI+k7Bq61cgbjsAg
+	fyicoO2lvwZCGtRenJKsP7/95ZS4qPGIbP77DNELAhaf7NPXMasW8N8V1CeI5q+8O+zpEJYEo4L
+	+a+XO5Rf9f9A5uLlRjb4IwX2vjt2EK3yLcjQKVr4JL2DIBWhAtBbqIag=
+X-Google-Smtp-Source: AGHT+IEFj2L/AOCgoUghYZTuSkLhq5eXkd5sf+lGcGQSLjxODxn2w5cY7JLa9PIj7+LmzIq0ZMfFI6GDu9Z9DTefwJ0Q8oIyOVSs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1cac:b0:36c:1004:9aa1 with SMTP id
+ e9e14a558f8ab-36caed1d1e4mr2690515ab.3.1715219104385; Wed, 08 May 2024
+ 18:45:04 -0700 (PDT)
+Date: Wed, 08 May 2024 18:45:04 -0700
+In-Reply-To: <ZjweBJTpThEQSw4u@zeus>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006ddccf0617fb9184@google.com>
+Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_rx_work
+From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, ryasuoka@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-According to Reference Manual of i.MX8MP
-The parent clock of "earc_phy" is "sai_pll_out_div2",
-The parent clock of "audpll" is "osc_24m".
+Hello,
 
-Add CLK_GATE_PARENT() macro for usage of specifying parent clock.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Reported-and-tested-by: syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 6ed44cd5001b..11a29bd46a9e 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -157,6 +157,15 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
- 		PDM_SEL, 2, 0						\
- 	}
- 
-+#define CLK_GATE_PARENT(gname, cname, pname)						\
-+	{								\
-+		gname"_cg",						\
-+		IMX8MP_CLK_AUDIOMIX_##cname,				\
-+		{ .fw_name = pname, .name = pname }, NULL, 1,		\
-+		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
-+		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
-+	}
-+
- struct clk_imx8mp_audiomix_sel {
- 	const char			*name;
- 	int				clkid;
-@@ -174,14 +183,14 @@ static struct clk_imx8mp_audiomix_sel sels[] = {
- 	CLK_GATE("earc", EARC_IPG),
- 	CLK_GATE("ocrama", OCRAMA_IPG),
- 	CLK_GATE("aud2htx", AUD2HTX_IPG),
--	CLK_GATE("earc_phy", EARC_PHY),
-+	CLK_GATE_PARENT("earc_phy", EARC_PHY, "sai_pll_out_div2"),
- 	CLK_GATE("sdma2", SDMA2_ROOT),
- 	CLK_GATE("sdma3", SDMA3_ROOT),
- 	CLK_GATE("spba2", SPBA2_ROOT),
- 	CLK_GATE("dsp", DSP_ROOT),
- 	CLK_GATE("dspdbg", DSPDBG_ROOT),
- 	CLK_GATE("edma", EDMA_ROOT),
--	CLK_GATE("audpll", AUDPLL_ROOT),
-+	CLK_GATE_PARENT("audpll", AUDPLL_ROOT, "osc_24m"),
- 	CLK_GATE("mu2", MU2_ROOT),
- 	CLK_GATE("mu3", MU3_ROOT),
- 	CLK_PDM,
--- 
-2.34.1
+Tested on:
 
+commit:         02754103 Merge branch 'rxrpc-miscellaneous-fixes'
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
+console output: https://syzkaller.appspot.com/x/log.txt?x=1796266c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5e7da3ffba7152e6
+dashboard link: https://syzkaller.appspot.com/bug?extid=d7b4dc6cd50410152534
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=110ae54c980000
+
+Note: testing is done by a robot and is best-effort only.
 
