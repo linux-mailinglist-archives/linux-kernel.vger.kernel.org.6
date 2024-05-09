@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-175070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F8C8C19E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:22:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96FC78C19EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0B21F23FCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:22:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F141C22115
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9BB12DD98;
-	Thu,  9 May 2024 23:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TCxLAsxu"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C7B12FB0B;
+	Thu,  9 May 2024 23:26:39 +0000 (UTC)
+Received: from mail115-80.sinamail.sina.com.cn (mail115-80.sinamail.sina.com.cn [218.30.115.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76016129A6F;
-	Thu,  9 May 2024 23:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2646E130E20
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 23:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715296933; cv=none; b=WzH1ggb0JPpHqPrKsaN3W1GfQUnCVIbzDpqTZS5uuOUAzXb8ZtLKS48ibXHkCGntOneY09fozyrMAqefmCPCzupk9eHGde4s+E2wc5E0sGz2yNK2aEEw26Is1PJ0q9U2UXgyq4RVr2Sq5c9bUZa8lKLHEB0I6CAI004fNUBGVTU=
+	t=1715297199; cv=none; b=VeADS7j4pcEl8NEumBCMoKQ7txPxXhg0mcd9XopZFI+Z9OU/Yda7NTydAiW9vsDbqDk81v/UDSDMS829IPn9ZnSv/exaJ9ZDB8T4Omf+zvBUOMm1ZA4+6ZcYQzDDy2/i/Spvse6zBjbFMLwBAHSzgy5sbcLm5F9oBBwQwmKl5Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715296933; c=relaxed/simple;
-	bh=hDrY//Uiqhy+HCq634k7pNbJivqBAegZvoPN3T2Hg94=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cXo4+pr+xh/JHerIOI5/lGYHnP17mt3GkgnEWrb8CXSjxWd8Ib8t62tNhhsdKHWpAGIY4wz0s40tx8SyfPkW6w1Aq3tWZeVnhHIN2sT4p89cyO3dCLMdHhNVbdFBz1e3D3IIQQ5VSZcORIiXWviiSU6GgHqsVRCFakICnUn0oyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TCxLAsxu; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715296926;
-	bh=2XRqo6Zz6CVYNzebclt601u06+nXtaM0cV/6U2ljK9M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TCxLAsxuA/IQDf0eFqWRRE+NIPfJw0h34vh8SmT1+MN2Il7HLeM6xDCbdwXDmsZit
-	 /CH7G8JSLbhl8Cr9hMbUez4jLMOwERNGYKOENMv6xf+bjw76cBQY7xTCspxDBXEOnt
-	 ZsPLmisg0VSxCkX7JdfXHG2EsLl+xlsaOq3c0HPWREJ+Z8f61OtBRdysXzryDU2CZS
-	 0YcZw90gwMkv1dEpoOWbCS49gxH7BpbbJhItCNlWcwy2P6/iUWoCehwyBeeXrKLD5e
-	 VmbnYA8OMXJS0EG5lt7QaYPyOs0ZaQRQg3nQnAemSe542aOd0gWGdVe8++iuUjl0J2
-	 R+eSRynjyoQog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vb7MK40Zfz4wyY;
-	Fri, 10 May 2024 09:22:05 +1000 (AEST)
-Date: Fri, 10 May 2024 09:22:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tao Su <tao1.su@linux.intel.com>
-Subject: linux-next: manual merge of the mm tree with Linus' tree
-Message-ID: <20240510092202.5d7df5a6@canb.auug.org.au>
+	s=arc-20240116; t=1715297199; c=relaxed/simple;
+	bh=V+rCr67uHkl0wFx0HPMuybpjVQOyY8Iy1PgN91wLt/8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CDgb5SchBsVignM4VgScwjOvUkJ4SVDZFqtv27SBZ8M+jn0JNtps0ZnH5Ko1lzEd5LhY6WOSRgcFYyW0HEAWKP1/0Lg7WFcJS96PBCdeuDex80RQljNJ6mgVIgJX0hP9IM7WZZAyegpqgu3NNJcBxl28ZFP+fp+BR3gG+hmRWcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.62])
+	by sina.com (10.75.12.45) with ESMTP
+	id 663D5B9E00002727; Thu, 10 May 2024 07:26:26 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 90088931457849
+X-SMAIL-UIID: EC1BAA6034F24FC3BF2264438E715D3A-20240510-072626-1
+From: Hillf Danton <hdanton@sina.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-pm@vger.kernel.org
+Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
+Date: Fri, 10 May 2024 07:26:13 +0800
+Message-Id: <20240509232613.2459-1-hdanton@sina.com>
+In-Reply-To: <CAOQ4uxg8karas=5JxmCg0P5Wxhfzn41evgs_OUxd1GxBRpb4zQ@mail.gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/UMbiVPOBNRoNU7ZDd1PCN63";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/UMbiVPOBNRoNU7ZDd1PCN63
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 9 May 2024 17:52:21 +0300 Amir Goldstein <amir73il@gmail.com>
+> On Thu, May 9, 2024 at 1:49 PM Hillf Danton <hdanton@sina.com> wrote:
+> >
+> > The correct locking order is
+> >
+> >                 sb_writers
+> 
+> This is sb of overlayfs
+> 
+> >                 inode lock
+> 
+> This is real inode
+> 
+WRT sb_writers the order
 
-Hi all,
+	lock inode parent
+	lock inode kid
 
-Today's linux-next merge of the mm tree got a conflict in:
+becomes
+	lock inode kid
+	sb_writers
+	lock inode parent 
 
-  tools/testing/selftests/kselftest_harness.h
+given call trace
 
-between commit:
+> -> #2 (sb_writers#4){.+.+}-{0:0}:
+>        lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1664 [inline]
+>        sb_start_write+0x4d/0x1c0 include/linux/fs.h:1800
+>        mnt_want_write+0x3f/0x90 fs/namespace.c:409
+>        ovl_create_object+0x13b/0x370 fs/overlayfs/dir.c:629
+>        lookup_open fs/namei.c:3497 [inline]
+>        open_last_lookups fs/namei.c:3566 [inline]
 
-  caed8eba2215 ("selftests: kselftest_harness: fix Clang warning about zero=
--length format")
+and code snippet [1]
 
-from Linus' tree and commit:
+	if (open_flag & O_CREAT)
+		inode_lock(dir->d_inode);
+	else
+		inode_lock_shared(dir->d_inode);
+	dentry = lookup_open(nd, file, op, got_write);
 
-  89bc631bb87f ("Revert "selftests/harness: remove use of LINE_MAX"")
-
-from the mm-nonmm-unstable branch of the mm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/kselftest_harness.h
-index d98702b6955d,7eca89267962..000000000000
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@@ -1208,8 -1201,7 +1204,7 @@@ void __run_test(struct __fixture_metada
-  		diagnostic =3D "unknown";
- =20
-  	ksft_test_result_code(t->exit_code, test_name,
- -			      diagnostic ? "%s" : "", diagnostic);
- +			      diagnostic ? "%s" : NULL, diagnostic);
-- 	free(test_name);
-  }
- =20
-  static int test_harness_run(int argc, char **argv)
-
---Sig_/UMbiVPOBNRoNU7ZDd1PCN63
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY9WpoACgkQAVBC80lX
-0Gzx7Af/csdy9gKml+ESzh/6FujKznPX23xqzbgVonDIEHEwjIRCM0qiNk2mKseG
-sa4KgquC3dpzCnwa6CUwFcwZ6gvnZdNmvyWKkDN9NIKaHNDW31eRF3S2HI0b6+zZ
-eTcwhhL5NadKYHzNjnSDG5txe02FpgpbLJROLSW0TQgOXLY6d4qs0EXPLb8nK7KI
-Fu2T1WmIb0W3VQlHaeZ2JWUeJX6lR+hCrUED04XW8zifJllsoa+Oz82Sn0t4FoD/
-o47P5lLejs8Gr7t8yaBhtQYy4AGhLJ4DCsSBibZynPygoNa4eQTbKJiLTF08Crkw
-cNBJuYAkle0b6ZXVo5IJdnsEI4gkxg==
-=dSVX
------END PGP SIGNATURE-----
-
---Sig_/UMbiVPOBNRoNU7ZDd1PCN63--
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/namei.c?id=dccb07f2914c#n3566
 
