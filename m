@@ -1,169 +1,102 @@
-Return-Path: <linux-kernel+bounces-174079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317268C0A00
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:12:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC928C0A04
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55BE31C212F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BCDE282E6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A635C13CAA4;
-	Thu,  9 May 2024 03:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CE3147C71;
+	Thu,  9 May 2024 03:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="WnOqDtna"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="O87Cd2ap"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24DD517
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 03:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700CDD517;
+	Thu,  9 May 2024 03:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715224322; cv=none; b=Z0L1T4KHzq5Ooj0sQLeGhGk1FYe6LIU9r5MNAPvjac/FE7C1emkGM5DGWTVyea2yVRdOPBR7m2byUq+HtMrQPZkzkcPf0yDy2C0ptlcfHIW92r96uYSDSFGWl4ANUt3s+VZEq9yOPkzAV02s8+ejF5ygepuoiAp7AC1bP+r5nRU=
+	t=1715224392; cv=none; b=ogwcolegQLjz487lBT0n4RuL7wxEzwsGN3QtYxbSQjoittF5mofn4cUxGzEP1H8Ib4CVC1cUTJOQiVsDdh4+M+8BauHuNZMoq8ywIZGVkV14iltaS7SIdoT/L3ECordqc8qSgN0PLcfkUtQHj7AEY8dMVLIu3+ocFkJHXYOWvfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715224322; c=relaxed/simple;
-	bh=YfG0ih3FfAYJAHhpAgMhMaRIbJyjTL6x7d81gfZXnZo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qAlUCrZGa4NWbvzvOaeYcmq3AjcqXBNTpYBgpLGptxn1lxCiGOT/AYRlKOv6rMSBBNnNQ4x2V5qSlrQof3Nposn4CrVLuSW3OeUjx/oaEYYzglzrJyg4nW9wascXgdEA3J9LHhUPq/nhP8A7KGbsnyl+FSrS1KrZuA8bUDywSdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=WnOqDtna; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715224317; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=27nn0gbmoM0S5j5G2H5A+L8Sx0+wcMP1UH2vqgqnJH0=;
-	b=WnOqDtnaeEEVjw2JcrPJeBrQFyj0ftn0io5w0nbsz9BRkeXBHWQlQv69Ud4zC+JHFSOZJAlYGNl0Sl+3wJYf0U/VO3H7Qd0Rh7/VNmfjem7QAuakbAG1aFXVsFOvww2Tyklqvm0lPGWOlPSfqGOcFgqvFTYOkoBizoOzHz5KlcM=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R881e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W65FCcV_1715224314;
-Received: from 30.97.48.191(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W65FCcV_1715224314)
-          by smtp.aliyun-inc.com;
-          Thu, 09 May 2024 11:11:56 +0800
-Message-ID: <c1f461e6-742b-45c1-9a35-4f2225ae8179@linux.alibaba.com>
-Date: Thu, 9 May 2024 11:11:54 +0800
+	s=arc-20240116; t=1715224392; c=relaxed/simple;
+	bh=7aBwxO2CipScIGLBEjHWmQgZZx67CZNWp8onHyyobcM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p0zij9PbNsygCYCFZoQZKbYCGZ1bmlyoxbl4+G1rYS4kPBASp6gorTdIVpuxUrG0F6jl6eEhJ0d53cayCy2LGthUTaRCNTzfckdP+LuIS0c7n2jjfl8DwakSZjIWDoLIIiOgvSX8gSLlqwhdsdtACVlrdv85zQe/pd33dLLE7oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=O87Cd2ap; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448NOrbp003000;
+	Wed, 8 May 2024 20:12:59 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pfpt0220; bh=NIN1SoqsKzzoR1CfLY8RZC
+	nwsAX8ymAGByQHK0QnZHA=; b=O87Cd2apgUI/luHEUjpzz7eLB5961pH5ddIQbP
+	vqQBGLla7b9C9Qh/7jeNVyWaURNz3Um5Egq3Id852F4gZkUDHor3JNQdBfa6dOT+
+	Q4HeaAOeiaxRtd4cKgYVP16kJxBSj5ZgfeKCvI89a7pQKgWxEVtN8MugAVvp/piB
+	RugysNPV7IIFR3tOURe2EGzIBiarQxPCvUuXvZEVhqZOvC3EqxRAY2IrbzZdGwFm
+	h/QDvopSvXLgIsG383jjOpbr/gwq/yBDf2+qtk/ZYMZNWoyWeEFxMHQo3liPZHAk
+	mCrHDyyhj4bm2WldGGKUAKRSHmxSBXgU1HFlY0U/ARvqoHbA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3y0b2d321n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 20:12:58 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 8 May 2024 20:12:58 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 8 May 2024 20:12:58 -0700
+Received: from maili.marvell.com (unknown [10.28.36.165])
+	by maili.marvell.com (Postfix) with SMTP id EC58F5B6D03;
+	Wed,  8 May 2024 20:12:54 -0700 (PDT)
+Date: Thu, 9 May 2024 08:42:53 +0530
+From: Ratheesh Kannoth <rkannoth@marvell.com>
+To: Duoming Zhou <duoming@zju.edu.cn>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hams@vger.kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
+        <edumazet@google.com>, <davem@davemloft.net>, <jreuter@yaina.de>,
+        <dan.carpenter@linaro.org>
+Subject: Re: [PATCH net v6 1/3] ax25: Use kernel universal linked list to
+ implement ax25_dev_list
+Message-ID: <20240509031253.GA1077013@maili.marvell.com>
+References: <cover.1715219007.git.duoming@zju.edu.cn>
+ <d52c1f4dbd6e09769007233aa343010e98c85f0d.1715219007.git.duoming@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
- called with __GFP_NOFAIL
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: Barry Song <21cnbao@gmail.com>, hailong.liu@oppo.com,
- Michal Hocko <mhocko@suse.com>
-Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
- lstoakes@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- xiang@kernel.org, chao@kernel.org, Oven <liyangouwen1@oppo.com>
-References: <20240508125808.28882-1-hailong.liu@oppo.com>
- <CAGsJ_4xN0MBz_73wUvMp74upd9SaQ+TCRJufEj26Y619Rtr7Zw@mail.gmail.com>
- <20d782ad-c059-4029-9c75-0ef278c98d81@linux.alibaba.com>
-In-Reply-To: <20d782ad-c059-4029-9c75-0ef278c98d81@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d52c1f4dbd6e09769007233aa343010e98c85f0d.1715219007.git.duoming@zju.edu.cn>
+X-Proofpoint-GUID: l2QN4S6jGK8w_e9CzPGmE2I-1-2mgNaB
+X-Proofpoint-ORIG-GUID: l2QN4S6jGK8w_e9CzPGmE2I-1-2mgNaB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_10,2024-05-08_01,2023-05-22_02
 
+On 2024-05-09 at 07:26:12, Duoming Zhou (duoming@zju.edu.cn) wrote:
+>  		if (ax25cmp(addr, (const ax25_address *)ax25_dev->dev->dev_addr) == 0) {
+>  			res = ax25_dev;
+>  			ax25_dev_hold(ax25_dev);
+> @@ -52,6 +53,9 @@ void ax25_dev_device_up(struct net_device *dev)
+>  {
+>  	ax25_dev *ax25_dev;
+>
+> +	/* Initialized the list for the first entry */
+> +	if (!ax25_dev_list.next)
+will there be any case where this condition is true ? LIST_HEAD() or list_del() will never
+make this condition true.
 
-
-On 2024/5/9 10:39, Gao Xiang wrote:
-> Hi,
-> 
-> On 2024/5/9 10:20, Barry Song wrote:
->> On Thu, May 9, 2024 at 12:58 AM <hailong.liu@oppo.com> wrote:
->>>
->>> From: "Hailong.Liu" <hailong.liu@oppo.com>
->>>
->>> Commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmalloc")
->>> includes support for __GFP_NOFAIL, but it presents a conflict with
->>> commit dd544141b9eb ("vmalloc: back off when the current task is
->>> OOM-killed"). A possible scenario is as belows:
->>>
->>> process-a
->>> kvcalloc(n, m, GFP_KERNEL | __GFP_NOFAIL)
->>>      __vmalloc_node_range()
->>>          __vmalloc_area_node()
->>>              vm_area_alloc_pages()
->>>              --> oom-killer send SIGKILL to process-a
->>>              if (fatal_signal_pending(current)) break;
->>> --> return NULL;
->>>
->>> to fix this, do not check fatal_signal_pending() in vm_area_alloc_pages()
->>> if __GFP_NOFAIL set.
->>>
->>> Reported-by: Oven <liyangouwen1@oppo.com>
->>> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
->>> ---
->>>   mm/vmalloc.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->>> index 6641be0ca80b..2f359d08bf8d 100644
->>> --- a/mm/vmalloc.c
->>> +++ b/mm/vmalloc.c
->>> @@ -3560,7 +3560,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->>>
->>>          /* High-order pages or fallback path if "bulk" fails. */
->>>          while (nr_allocated < nr_pages) {
->>> -               if (fatal_signal_pending(current))
->>> +               if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
->>>                          break;
->>
->> why not !nofail ?
->>
->> This seems a correct fix, but it undermines the assumption made in
->> commit dd544141b9eb
->>   ("vmalloc: back off when the current task is OOM-killed")
->>
->> "
->>      This may trigger some hidden problems, when caller does not handle
->>      vmalloc failures, or when rollaback after failed vmalloc calls own
->>      vmallocs inside.  However all of these scenarios are incorrect: vmalloc
->>      does not guarantee successful allocation, it has never been called with
->>      __GFP_NOFAIL and threfore either should not be used for any rollbacks or
->>      should handle such errors correctly and not lead to critical failures.
->> "
->>
->> If a significant kvmalloc operation is performed with the NOFAIL flag, it risks
->> reverting the fix intended to address the OOM-killer issue in commit
->> dd544141b9eb.
->> Should we indeed permit the NOFAIL flag for large kvmalloc allocations?
-> 
-> Just from my perspective, I don't really care about kmalloc, vmalloc
-> or kvmalloc (__GFP_NOFAIL).  I even don't care if it returns three
-> order-0 pages or a high-order page.   I just would like to need a
-> virtual consecutive buffer (even it works slowly.) with __GFP_NOFAIL.
-> 
-> Because in some cases, writing fallback code may be tough and hard to
-> test if such fallback path is correct since it only triggers in extreme
-> workloads, and even such buffers are just used in a very short lifetime.
-
-add some words...
-
-    ^ here extreme cases were mostly just generated by syzkaller fuzzing
-tests, but if real users try to use some configuration to compress more,
-I still think it needs to be handled (even such kvmalloc may be slow if
-falling back to order-0 allocations due to memory pressures)
-
-> Also see other FS discussion of __GFP_NOFAIL, e.g.
-> https://lore.kernel.org/all/ZcUQfzfQ9R8X0s47@tiehlicka/
-> 
-> In the worst cases, it usually just needs < 5 order-0 pages (for many
-> cases it only needs one page), but with kmalloc it will trigger WARN
-> if it occurs to > order-1 allocation. as I mentioned before.
-> 
-> With my limited understanding I don't see why it could any problem with
-> kvmalloc(__GFP_NOFAIL) since it has no difference of kmalloc(GFP_NOFAIL)
-> with order-0 allocation.
-
-. kvmalloc with order-0 pages to form a virtual consecutive buffer
-just like several kmalloc(__GFP_NOFAIL) allocations together in the
-callers, I don't see any difference of memory pressure here.
-
-Thanks,
-Gao Xiang
-
-> 
-> 
-> Thanks,
-> Gao XIang
+> +		INIT_LIST_HEAD(&ax25_dev_list);
+>  	ax25_dev = kzalloc(sizeof(*ax25_dev), GFP_KERNEL);
+>
 
