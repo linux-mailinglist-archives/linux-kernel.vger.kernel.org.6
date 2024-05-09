@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-174642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267D38C1211
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C0A8C1215
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615621C20F8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB77C1C21180
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D413616F27B;
-	Thu,  9 May 2024 15:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2273816F277;
+	Thu,  9 May 2024 15:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="l2NteKRJ"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AltqiRLm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A3D12A179;
-	Thu,  9 May 2024 15:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C65415F416;
+	Thu,  9 May 2024 15:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269098; cv=none; b=bjKAKIF4sqhNBqX7LcZ1pa0gDg+By3Gxn7o4zGFWMVSP54LKhXYodt4W5Nv5Swrdj5DLGjJKX8RxcYhi5IreXTBXKfrqrd5kZXq6VOfZwePTE242dIXuu5fDa0RaFatR74VrFnzLZIKikL2yNdEuPzi2bkhqQYHijeBpZ1Yngxk=
+	t=1715269110; cv=none; b=tfilu2IAnAzJJhYIAX4cm1oig0aq0W5rhp+Us6E/vztGcnQ3AeLQCc7UMDu+341BKUjn1pe7ubZugp+i+C9v+k/liflskOrxJXiotMakq6jzILXKv0UY192Pl+w6acBSCEwDNxSW2j4WKmpJS+1UzL19HZ6ey++vA5+lDZUHg+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269098; c=relaxed/simple;
-	bh=nANHlT8bQuzaSmFK3lwpS7Cj4BPy1dbSvsaWfROiQuQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LNgFo3//ZuQ+/JuGMqaZYmjWuRg27I/wXvE5PIA3Sepsy0skYgK3NNJfSbMmuFoZ8jqhhYEUIIR9Vghr1mImk0FsqGd2XmK+45AyezDZI6A2Ps+FYM8c7gesAj3gqBsoL5nLKDycdX9QpRv7yLoHhCYKFCjrhkwHYMhFxTarKLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=l2NteKRJ; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=50SVXh7j8YqDqiQBc6TkcGnGUn+l90zrT0o1BlM2Ags=; b=l2NteKRJVsFxAzIoByojnt/Vfu
-	qGc+PJQHO+cCUCM6K4zGy6fOQD5KE+qffxitaRdbqmKL5FVtNuvHqa1CUlzu9Dd2/QgtUgGQfmXdD
-	6HHEkXyCZ8e1zJVkxBx6tUYdJdsjIJTQF2XY+fNNcCHzSwtscyCuT9OFRzvQLn0X+KnpYwRmybtAi
-	mu/DURR1YvT4emFjagxsU1an1mnNDGaEOR3m4AN++mm/crvPkK3CcqbYwLReek35RrX8ONz0XZ004
-	PS2E0AmL6FxHEC1zYtrUPgjkl4gidrmvmNdZ2riFTfsxHbbSFHd0eRchxnv9/V+oH5owo6jzDCxCJ
-	EkdfNMQQ==;
-Received: from [167.98.27.226] (helo=ct-lt-2504.office.codethink.co.uk)
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1s55qI-000cg5-FA; Thu, 09 May 2024 16:37:59 +0100
-From: Ivan Orlov <ivan.orlov@codethink.co.uk>
-To: pbonzini@redhat.com,
-	shuah@kernel.org
-Cc: Ivan Orlov <ivan.orlov@codethink.co.uk>,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: selftests: Check API version when creating VM
-Date: Thu,  9 May 2024 16:37:57 +0100
-Message-Id: <20240509153757.42032-1-ivan.orlov@codethink.co.uk>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715269110; c=relaxed/simple;
+	bh=Z6nBTl2tub15cRbE+wOBz8S45tv8vy9jvzdxn61d2bQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KyK/YKx1kiXDLlLsztsAWxB+YwdiNw3nUlETONJvF/N5cPIq/mOjVWo5kfWOYk2DYZx2CLn2jlYbXYWSMmN7Vw4J5rBeQ5+xWLhluP35lcJST/XsEn6LftD4aMeXW8+PLx0JnTaJlyVB42sMXNlyYOBbEkR4lhnAz7oAn8kDaYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AltqiRLm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F545C116B1;
+	Thu,  9 May 2024 15:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715269109;
+	bh=Z6nBTl2tub15cRbE+wOBz8S45tv8vy9jvzdxn61d2bQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AltqiRLmTEUGA2qwnUvx5AvO6VfxaZWmKYCao4I5+C6/RK/ZB5CBvT0AWZNltbJg5
+	 JhMhCPozurJcVts1pjCLpzN/GWovS6D/w14hZVmQwjWCO88NCdZZzd1AaQzVzECuTc
+	 dOwX1+EMMVV03NkMIlbmV11Q9jn9MNyRET6BpootdvSb6QPVdSqDbP/6sY5IcSA3Pb
+	 2s0nQA6XPOmY0O/v171JB2AsMdrDAXhxsfiVGTFhq6OtsDwc/j9wwgXccTHX8pkXNC
+	 szM2AEbNnsJPwh3sJsw5tpSjNy6M500tuOpY2H6IAADpnb/BRzZI3SDq9hFi9XG4Lc
+	 xjecXzTeqcEng==
+Date: Thu, 9 May 2024 17:38:26 +0200
+From: Mark Brown <broonie@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 0/6] Support ROHM BD96801 scalable PMIC
+Message-ID: <Zjzt8mOW6dO_7XNV@finisterre.sirena.org.uk>
+References: <cover.1712058690.git.mazziesaccount@gmail.com>
+ <f7d454ac-6ecb-4431-a1de-c9b5d1240969@gmail.com>
+ <eb03ec33-0627-4986-be04-8e35da390d6b@sirena.org.uk>
+ <b6279be8-cf7d-4608-b556-3c01587f0d43@gmail.com>
+ <f1e3d31d-8c24-4cdc-ae26-747f383a937b@gmail.com>
+ <b6ded975-1d16-46ea-84a2-8799b36e1270@gmail.com>
+ <ZjxaP_BNWVufJb_X@finisterre.sirena.org.uk>
+ <0674ca23-2cf2-48a6-84d3-e0936d50dd8c@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: ivan.orlov@codethink.co.uk
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="EXBB/dSJ5rRrt8TM"
+Content-Disposition: inline
+In-Reply-To: <0674ca23-2cf2-48a6-84d3-e0936d50dd8c@gmail.com>
+X-Cookie: Sorry.  Nice try.
 
-As it is said in the docs, we should always check the KVM API version
-before running the KVM-based applications. Add the function which
-queries the current KVM API version through `ioctl` to the `kvm_util.c`
-file.
 
-Add a new TEST_REQUIRE statement to the `vm_open` function in order
-to verify the version of the KVM API before creating a VM.
+--EXBB/dSJ5rRrt8TM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Ivan Orlov <ivan.orlov@codethink.co.uk>
----
- .../testing/selftests/kvm/include/kvm_util_base.h  |  2 ++
- tools/testing/selftests/kvm/lib/kvm_util.c         | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
+On Thu, May 09, 2024 at 10:03:43AM +0300, Matti Vaittinen wrote:
+> On 5/9/24 08:08, Mark Brown wrote:
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tools/testing/selftests/kvm/include/kvm_util_base.h
-index 3e0db283a46a..d7a83387ae33 100644
---- a/tools/testing/selftests/kvm/include/kvm_util_base.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
-@@ -38,6 +38,7 @@
- #define kvm_static_assert(expr, ...) __kvm_static_assert(expr, ##__VA_ARGS__, #expr)
- 
- #define KVM_DEV_PATH "/dev/kvm"
-+#define KVM_DEFAULT_API_VERSION 12
- #define KVM_MAX_VCPUS 512
- 
- #define NSEC_PER_SEC 1000000000L
-@@ -275,6 +276,7 @@ int get_kvm_intel_param_integer(const char *param);
- int get_kvm_amd_param_integer(const char *param);
- 
- unsigned int kvm_check_cap(long cap);
-+int kvm_get_api_version(void);
- 
- static inline bool kvm_has_cap(long cap)
- {
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index b2262b5fad9e..58a5deccb388 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -176,6 +176,19 @@ unsigned int kvm_check_cap(long cap)
- 	return (unsigned int)ret;
- }
- 
-+int kvm_get_api_version(void)
-+{
-+	int ret;
-+	int kvm_fd;
-+
-+	kvm_fd = open_kvm_dev_path_or_exit();
-+	ret = __kvm_ioctl(kvm_fd, KVM_GET_API_VERSION, NULL);
-+
-+	close(kvm_fd);
-+
-+	return ret;
-+}
-+
- void vm_enable_dirty_ring(struct kvm_vm *vm, uint32_t ring_size)
- {
- 	if (vm_check_cap(vm, KVM_CAP_DIRTY_LOG_RING_ACQ_REL))
-@@ -190,6 +203,7 @@ static void vm_open(struct kvm_vm *vm)
- 	vm->kvm_fd = _open_kvm_dev_path_or_exit(O_RDWR);
- 
- 	TEST_REQUIRE(kvm_has_cap(KVM_CAP_IMMEDIATE_EXIT));
-+	TEST_REQUIRE(kvm_get_api_version() == KVM_DEFAULT_API_VERSION);
- 
- 	vm->fd = __kvm_ioctl(vm->kvm_fd, KVM_CREATE_VM, (void *)vm->type);
- 	TEST_ASSERT(vm->fd >= 0, KVM_IOCTL_ERROR(KVM_CREATE_VM, vm->fd));
--- 
-2.34.1
+> > > > > > So if we arrange to supply a name when we register multiple domains
+> > > > > > things should work fine?
 
+> Thanks for the guidance Mark. The controller name is not a problem. Problem
+> is that I don't see a (proper) way to supply a name for the IRQ domain which
+> gets registered by regmap-IRQ. IRQ domain code picks the name for the domain
+> by the device-tree node. Both of our IRQ controllers would be instantiated
+> from same node => the IRQ domain will get same name => debugfs will
+> conflict.
+
+That's why I'm suggesting to add something - just put a name field in
+the struct.
+
+> My "solution" was simply dropping the ERRB IRQ from the driver (for now at
+> least). I did send that as a series without 'RFC' - but made a mistake and
+> restarted the versioning from v1. I am currently working with 2 other PMICs,
+> one of them does also provide similar setup of two IRQ lines. Thus, I think
+> being able to provide a name (suffix?) for IRQ domain when registering it
+> instead of just using the name of the DT node is something I should look
+> into. It's just nice to know someone else thinks it is valid approach.
+
+Yes.
+
+--EXBB/dSJ5rRrt8TM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY87fIACgkQJNaLcl1U
+h9CVlAf/acARHE9oLNx/H5/+ylgEpV9IP4mlgCrINDGVbXsV3GC0CUug/nmiJsiQ
+YBLdl280Fq0Gd1wOAnIfLLqEbvs05J9fcjkzTzXkQ8t0TtPN7B5taf4Hsnm0bHEm
+5mevVDR7BSV/ZvLMq5VFEl3SALsmPcso5LVsD/j5ZSfPs7Vpg/pGkTruihBMPUp5
+DQGaddEJYXm1Dy1rOY3CPuHsnjPOuVdyUEVouTARyrluafKT819eqhMd8jpYtrDX
+36RNbVfxrwirUBKTZpuOlj/a4zxxtpp2BV3iWSoyWXK5lipnpLYlJGXb4KQrDr2S
+LBJcz8g+LS2wF2OVXtakMVzunxOAsA==
+=Ry6h
+-----END PGP SIGNATURE-----
+
+--EXBB/dSJ5rRrt8TM--
 
