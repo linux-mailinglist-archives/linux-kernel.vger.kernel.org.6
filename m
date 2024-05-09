@@ -1,117 +1,348 @@
-Return-Path: <linux-kernel+bounces-175080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FA78C1A0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B478C1A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD45E1F24217
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8792845A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D475B128373;
-	Thu,  9 May 2024 23:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488A0130E31;
+	Thu,  9 May 2024 23:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtYPG1Ts"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbOvzQxo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858CB81741
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 23:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E8A12838D;
+	Thu,  9 May 2024 23:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715298199; cv=none; b=TsDz9rvge5wVzOYz0C9BZN5zNmZE92QML2Od0kF7pnzhOa2iAZ7JtsgCZA1O+MtK2ISMwHraOpBakHZ0xOFKWjsTrUju+ffLtNxrpv+KxX5LUzen6m0URq5nJvhSy1ARDA/zt6Y2qSy1Gf/5Bg4Jusi2+lcE0XRTB3b/7npyEiA=
+	t=1715298354; cv=none; b=fs+oro4gfe/v4s07+90mYvsrvPLez9wmTOxUYtOXNHceYcVO6u6qfKzsXmHULx/uaUGnxIS6iD6sBjQHNsZphQELMl0eNqoZjPkEDbvNG7dzPMXLIj5KZeVn/9qqvZDJlOeR+wIA6uVk5hvmezk3Om+EzwNFrSdAN/hDzsaZe38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715298199; c=relaxed/simple;
-	bh=tR7u35z/O3DzUlNxDohM6rNNIcQO7MsfbTygHbV3Iko=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RO2vVxkVpDzRxC0sVvr8l7BlddZWiiwZPzv8ysfcgmTdWvBlCt0Y89scXhPBKqrIdDGT/IOpRxrDlbOzy3kIPuVPUU7yVSO7N4b/AEyz8fOGhVvMWr8PeiYp73qY15yTvcEQ9XzfAD4OjljdhjuAP0sfEhiDj4BKnibwCWa9y0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtYPG1Ts; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41fe54cb0e3so5690025e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 16:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715298196; x=1715902996; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9sTIErt9M9JswTN2jkwtlH/RNJOorHYqcXTsUzk8xHA=;
-        b=LtYPG1Ts7MAQeN4+DcH+3VjcIDouBkIggf1oNcmllIdc+n3AKeJpsKN8H9d5sqU+Gd
-         9YZ+olAIogAhdjL4Q6FmSROU7CAy9gdZqUu5KYJxd6qbRsAhndZAre0ySrE85/jUbqBa
-         tviEf5geueHl4eMe0w90XHpqbw4tVSv7mEthPLHfYuhJEqzWLVZg7JgQJReUJOQOKSfR
-         OgNCq9RwzAYt/L1ePGgDr4UZYen8gXiigXSgwgvFRnY9lBRqgWOcjSVCy5SkuR8rGGNJ
-         2BO1716vY5jINKcWPV0QmKm1L0T74ACTebULUcYsK88+u75xBX/QvyxTR0YoghxiJNoh
-         TsJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715298196; x=1715902996;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sTIErt9M9JswTN2jkwtlH/RNJOorHYqcXTsUzk8xHA=;
-        b=Z5N8Fm70qct6kASjJl4D51i9uV4QdtyrPkyT9t7CjV2FaKqIJHzd2cSv3WR77mXObM
-         VJwkqEupyBJ4Xm+Gs6AOZiKMazWoMaGDMM6w44kfSkaEPnoErNDS3xYPNkSJlImNOVt4
-         VUCSssUWnbyX5S5DU0knuOA5BeSkXcLdIEiUzkvmZGwwuXqE2y5Mq/TvXZ34sjNw6v8+
-         GwJe+PJWvbpARUIk8zhMxkgaA+H3GJ/E8UmVnPbonPBw94AyAvsr+GrDtRZ3kPXolzeN
-         CbdL5kJDeC0WnnyjGW4O3gNTPDnErKFFgoBYLmVHKQ7sw01GVNxCdsVvj0WLoA9n5oxA
-         lFIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGRa70o5CEblsTJmNMTLx1Aqo9dn7KzEuBhhre7LOTze77CdMfa4uhvS/Z+YAyB2ST5g/FCbkByORm5ovTtwrG1eHK8RkFirgYBJW6
-X-Gm-Message-State: AOJu0YxvzRYwc6GRQElMOeEVhxqoudV/ofoW5MWubmmc2y0K1M6qhq06
-	64DvALHS4s2juz4lq+BJF8H+6lUe/ar+Yb842/jMKtViP9xFamaHyK09dg7+tWU=
-X-Google-Smtp-Source: AGHT+IG8b+2tz7hbEPlBkghjB5Anfa+zpDUXWfEE8VBKaJO4wF1nKq8GtQCyZaOn+d+NiX1BJAFIug==
-X-Received: by 2002:a7b:c412:0:b0:41b:13a3:6183 with SMTP id 5b1f17b1804b1-41feab40c32mr7572955e9.24.1715298196057;
-        Thu, 09 May 2024 16:43:16 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce25d5sm41222755e9.14.2024.05.09.16.43.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 16:43:15 -0700 (PDT)
-Message-ID: <81a50925-0c38-435c-b423-6c4c97486b2a@linaro.org>
-Date: Fri, 10 May 2024 00:43:14 +0100
+	s=arc-20240116; t=1715298354; c=relaxed/simple;
+	bh=dXX9FejIHEoX0pCMuOMNJObUXYtKqe5D48APctrcVoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLLbm4JVSb+FY48iPIdUHi38u/ywwNYUxfaK4WmnuZqzZdRkX1lc5vmWuHwpT2ANjYs8Fs5rjUh14rS7bxkZLRg6Jq0FY9PaYXKyd+Cfl/lAJVQqv8Q3EonA0vN+yHXUmhAFn+LGPNBG0v6MsnDGdjvbmOUJjDd9lJL+BvaivMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbOvzQxo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D74CC116B1;
+	Thu,  9 May 2024 23:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715298353;
+	bh=dXX9FejIHEoX0pCMuOMNJObUXYtKqe5D48APctrcVoU=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=DbOvzQxoEIMccgX7ley779DoOKsLNfgplu7yjQVp/2K7w4dlepOUlO0mAkkvo1FBC
+	 M6PEuZ8fPa74bLHjxy1lpi2j/kQPG3RpYBKEMXx1G2e/Hn421X1ysK7Le+Or1UJYkX
+	 AkW1s/wkCHNO71WgzLVuW+VcMvZE2s46cwpM3Qhx5rjGBX5Vw8GCUBGsA4q2UIL3WG
+	 RbDOxYpoLoRGLwsqr8E3RJ6aaRP9fOxpdDxx2pv6xvx5xzgmcG7IqgvE0Yoyq/bA4T
+	 LWFG16QVjTAYXBEiE4IXedgTnGnLWZMNOnfvSM8c8J+GL0zEIKl2K7RXF8TwWG11++
+	 LIHiULxydoqJg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 49B33CE04A9; Thu,  9 May 2024 16:45:53 -0700 (PDT)
+Date: Thu, 9 May 2024 16:45:53 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+Message-ID: <09a8f4f6-a692-4586-bb68-b0a524b7a5d8@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <0e239143-65ed-445a-9782-e905527ea572@paulmck-laptop>
+ <Zjq9okodmvkywz82@google.com>
+ <ZjrClk4Lqw_cLO5A@google.com>
+ <Zjroo8OsYcVJLsYO@LeoBras>
+ <b44962dd-7b8a-4201-90b7-4c39ba20e28d@paulmck-laptop>
+ <ZjsZVUdmDXZOn10l@LeoBras>
+ <ZjuFuZHKUy7n6-sG@google.com>
+ <5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop>
+ <ZjyGefTZ8ThZukNG@LeoBras>
+ <Zjyh-qRt3YewHsdP@LeoBras>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/18] media: venus: Refactor struct
- hfi_session_get_property_pkt
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Andy Walls <awalls@md.metrocast.net>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-References: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
- <20240507-cocci-flexarray-v2-12-7aea262cf065@chromium.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240507-cocci-flexarray-v2-12-7aea262cf065@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zjyh-qRt3YewHsdP@LeoBras>
 
-On 07/05/2024 17:27, Ricardo Ribalda wrote:
-> -	u32 num_properties;
-> -	u32 data[1];
-> +	u32 one;
-> +	u32 data;
+On Thu, May 09, 2024 at 07:14:18AM -0300, Leonardo Bras wrote:
+> On Thu, May 09, 2024 at 05:16:57AM -0300, Leonardo Bras wrote:
 
-The conversion of `data[1]` to plain `data` is fine but, the conversion 
-of `num_properties` to `one` doesn't fit the naming convention of this 
-code which uses `num_something` extensively.
+[ . . . ]
 
-Please retain the name `num_properties` for that reason.
+> > Here I suppose something like this can take care of not needing to convert 
+> > ms -> jiffies every rcu_pending():
+> > 
+> > +	nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
+> > 
+> 
+> Uh, there is more to it, actually. We need to make sure the user 
+> understands that we are rounding-down the value to multiple of a jiffy 
+> period, so it's not a surprise if the delay value is not exactly the same 
+> as the passed on kernel cmdline.
+> 
+> So something like bellow diff should be ok, as this behavior is explained 
+> in the docs, and pr_info() will print the effective value.
+> 
+> What do you think?
 
-Then add.
+Good point, and I have taken your advice on making the documentation
+say what it does.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Thanks!
+> Leo
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 0a3b0fd1910e..9a50be9fd9eb 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4974,20 +4974,28 @@
+>                         otherwise be caused by callback floods through
+>                         use of the ->nocb_bypass list.  However, in the
+>                         common non-flooded case, RCU queues directly to
+>                         the main ->cblist in order to avoid the extra
+>                         overhead of the ->nocb_bypass list and its lock.
+>                         But if there are too many callbacks queued during
+>                         a single jiffy, RCU pre-queues the callbacks into
+>                         the ->nocb_bypass queue.  The definition of "too
+>                         many" is supplied by this kernel boot parameter.
+>  
+> +       rcutree.nocb_patience_delay= [KNL]
+> +                       On callback-offloaded (rcu_nocbs) CPUs, avoid
+> +                       disturbing RCU unless the grace period has
+> +                       reached the specified age in milliseconds.
+> +                       Defaults to zero.  Large values will be capped
+> +                       at five seconds. Values rounded-down to a multiple
+> +                       of a jiffy period.
+> +
+>         rcutree.qhimark= [KNL]
+>                         Set threshold of queued RCU callbacks beyond which
+>                         batch limiting is disabled.
+>  
+>         rcutree.qlowmark= [KNL]
+>                         Set threshold of queued RCU callbacks below which
+>                         batch limiting is re-enabled.
+>  
+>         rcutree.qovld= [KNL]
+>                         Set threshold of queued RCU callbacks beyond which
+> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+> index fcf2b4aa3441..62ede401420f 100644
+> --- a/kernel/rcu/tree.h
+> +++ b/kernel/rcu/tree.h
+> @@ -512,20 +512,21 @@ do {                                                              \
+>         local_irq_save(flags);                                  \
+>         if (rcu_segcblist_is_offloaded(&(rdp)->cblist)) \
+>                 raw_spin_lock(&(rdp)->nocb_lock);               \
+>  } while (0)
+>  #else /* #ifdef CONFIG_RCU_NOCB_CPU */
+>  #define rcu_nocb_lock_irqsave(rdp, flags) local_irq_save(flags)
+>  #endif /* #else #ifdef CONFIG_RCU_NOCB_CPU */
+>  
+>  static void rcu_bind_gp_kthread(void);
+>  static bool rcu_nohz_full_cpu(void);
+> +static bool rcu_on_patience_delay(void);
+
+I don't think we need an access function, but will check below.
+
+>  /* Forward declarations for tree_stall.h */
+>  static void record_gp_stall_check_time(void);
+>  static void rcu_iw_handler(struct irq_work *iwp);
+>  static void check_cpu_stall(struct rcu_data *rdp);
+>  static void rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp,
+>                                      const unsigned long gpssdelay);
+>  
+>  /* Forward declarations for tree_exp.h. */
+>  static void sync_rcu_do_polled_gp(struct work_struct *wp);
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index 340bbefe5f65..639243b0410f 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -5,20 +5,21 @@
+>   * or preemptible semantics.
+>   *
+>   * Copyright Red Hat, 2009
+>   * Copyright IBM Corporation, 2009
+>   *
+>   * Author: Ingo Molnar <mingo@elte.hu>
+>   *        Paul E. McKenney <paulmck@linux.ibm.com>
+>   */
+>  
+>  #include "../locking/rtmutex_common.h"
+> +#include <linux/jiffies.h>
+
+This is already pulled in by the enclosing tree.c file, so it should not
+be necessary to include it again.  (Or did you get a build failure when
+leaving this out?)
+
+>  static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
+>  {
+>         /*
+>          * In order to read the offloaded state of an rdp in a safe
+>          * and stable way and prevent from its value to be changed
+>          * under us, we must either hold the barrier mutex, the cpu
+>          * hotplug lock (read or write) or the nocb lock. Local
+>          * non-preemptible reads are also safe. NOCB kthreads and
+>          * timers have their own means of synchronization against the
+> @@ -86,20 +87,33 @@ static void __init rcu_bootup_announce_oddness(void)
+>         if (rcu_kick_kthreads)
+>                 pr_info("\tKick kthreads if too-long grace period.\n");
+>         if (IS_ENABLED(CONFIG_DEBUG_OBJECTS_RCU_HEAD))
+>                 pr_info("\tRCU callback double-/use-after-free debug is enabled.\n");
+>         if (gp_preinit_delay)
+>                 pr_info("\tRCU debug GP pre-init slowdown %d jiffies.\n", gp_preinit_delay);
+>         if (gp_init_delay)
+>                 pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
+>         if (gp_cleanup_delay)
+>                 pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
+> +       if (nocb_patience_delay < 0) {
+> +               pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n",
+> +                       nocb_patience_delay);
+> +               nocb_patience_delay = 0;
+> +       } else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
+> +               pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n",
+> +                       nocb_patience_delay, 5 * MSEC_PER_SEC);
+> +               nocb_patience_delay = msecs_to_jiffies(5 * MSEC_PER_SEC);
+> +       } else if (nocb_patience_delay) {
+> +               nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
+> +               pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n",
+> +                       jiffies_to_msecs(nocb_patience_delay);
+> +       }
+
+I just did this here at the end:
+
+	nocb_patience_delay_jiffies = msecs_to_jiffies(nocb_patience_delay);
+
+Ah, you are wanting to print out the milliseconds after the rounding
+to jiffies.
+
+I am going to hold off on that for the moment, but I hear your request
+and I have not yet said "no".  ;-)
+
+>         if (!use_softirq)
+>                 pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.\n");
+>         if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
+>                 pr_info("\tRCU debug extended QS entry/exit.\n");
+>         rcupdate_announce_bootup_oddness();
+>  }
+>  
+>  #ifdef CONFIG_PREEMPT_RCU
+>  
+>  static void rcu_report_exp_rnp(struct rcu_node *rnp, bool wake);
+> @@ -1260,10 +1274,29 @@ static bool rcu_nohz_full_cpu(void)
+>  
+>  /*
+>   * Bind the RCU grace-period kthreads to the housekeeping CPU.
+>   */
+>  static void rcu_bind_gp_kthread(void)
+>  {
+>         if (!tick_nohz_full_enabled())
+>                 return;
+>         housekeeping_affine(current, HK_TYPE_RCU);
+>  }
+> +
+> +/*
+> + * Is this CPU a NO_HZ_FULL CPU that should ignore RCU if the time since the
+> + * start of current grace period is smaller than nocb_patience_delay ?
+> + *
+> + * This code relies on the fact that all NO_HZ_FULL CPUs are also
+> + * RCU_NOCB_CPU CPUs.
+> + */
+> +static bool rcu_on_patience_delay(void)
+> +{
+> +#ifdef CONFIG_NO_HZ_FULL
+
+You lost me on this one.  Why do we need the #ifdef instead of
+IS_ENABLED()?  Also, please note that rcu_nohz_full_cpu() is already a
+compile-time @false in CONFIG_NO_HZ_FULL=n kernels.
+
+> +       if (!nocb_patience_delay)
+> +               return false;
+
+We get this automatically with the comparison below, right?  If so, we
+are not gaining much by creating the helper function.  Or am I missing
+some trick here?
+
+							Thanx, Paul
+
+> +       if (time_before(jiffies, READ_ONCE(rcu_state.gp_start) + nocb_patience_delay))
+> +               return true;
+> +#endif /* #ifdef CONFIG_NO_HZ_FULL */
+> +       return false;
+> +}
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 7560e204198b..7a2d94370ab4 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -169,20 +169,22 @@ static int kthread_prio = IS_ENABLED(CONFIG_RCU_BOOST) ? 1 : 0;
+>  module_param(kthread_prio, int, 0444);
+>  
+>  /* Delay in jiffies for grace-period initialization delays, debug only. */
+>  
+>  static int gp_preinit_delay;
+>  module_param(gp_preinit_delay, int, 0444);
+>  static int gp_init_delay;
+>  module_param(gp_init_delay, int, 0444);
+>  static int gp_cleanup_delay;
+>  module_param(gp_cleanup_delay, int, 0444);
+> +static int nocb_patience_delay;
+> +module_param(nocb_patience_delay, int, 0444);
+>  
+>  // Add delay to rcu_read_unlock() for strict grace periods.
+>  static int rcu_unlock_delay;
+>  #ifdef CONFIG_RCU_STRICT_GRACE_PERIOD
+>  module_param(rcu_unlock_delay, int, 0444);
+>  #endif
+>  
+>  /*
+>   * This rcu parameter is runtime-read-only. It reflects
+>   * a minimum allowed number of objects which can be cached
+> @@ -4340,25 +4342,27 @@ static int rcu_pending(int user)
+>         lockdep_assert_irqs_disabled();
+>  
+>         /* Check for CPU stalls, if enabled. */
+>         check_cpu_stall(rdp);
+>  
+>         /* Does this CPU need a deferred NOCB wakeup? */
+>         if (rcu_nocb_need_deferred_wakeup(rdp, RCU_NOCB_WAKE))
+>                 return 1;
+>  
+>         /* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if so.) */
+> -       if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu())
+> +       gp_in_progress = rcu_gp_in_progress();
+> +       if ((user || rcu_is_cpu_rrupt_from_idle() ||
+> +            (gp_in_progress && rcu_on_patience_delay())) &&
+> +           rcu_nohz_full_cpu())
+>                 return 0;
+>  
+>         /* Is the RCU core waiting for a quiescent state from this CPU? */
+> -       gp_in_progress = rcu_gp_in_progress();
+>         if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm && gp_in_progress)
+>                 return 1;
+>  
+>         /* Does this CPU have callbacks ready to invoke? */
+>         if (!rcu_rdp_is_offloaded(rdp) &&
+>             rcu_segcblist_ready_cbs(&rdp->cblist))
+>                 return 1;
+>  
+>         /* Has RCU gone idle with this CPU needing another grace period? */
+>         if (!gp_in_progress && rcu_segcblist_is_enabled(&rdp->cblist) &&
+> 
+> 
+> 
 
