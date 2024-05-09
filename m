@@ -1,412 +1,1040 @@
-Return-Path: <linux-kernel+bounces-174026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652B88C0949
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CF88C097D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E1E11C21463
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80CC81C21571
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499F313C693;
-	Thu,  9 May 2024 01:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA3413C90F;
+	Thu,  9 May 2024 01:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YLHQ7ooQ"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2057.outbound.protection.outlook.com [40.107.105.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LElaPjvq"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DFE3F9FC;
-	Thu,  9 May 2024 01:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715219370; cv=fail; b=jyug+SzBD3fmMlOOkre4XQbjsTH5T71W9k8zueCKSfM4KzbDxb7OLHJSwOZ2nuDLu+ryGqaIB/84hIK+JP4ECGtdVlU4Mwpgv2WOjFeI9iaoHI0mmC5mjVmK27iRP61wPDJxlrUnjHGBO4D5u1jVn0gorPrf2PrK8zLYZ7HKcBo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715219370; c=relaxed/simple;
-	bh=VJ71iT4TaGUqlwW/Dq5pOEehwiqamVJzcp/zcwEAAXM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=AUEjCoRpcIlrmiyquzEmyEjs+cOjaKvK8sk/DH+RerneVgDzI6IJE49YrXVbqpkRmkArUYKW83Xg8WP6lSc/z288FeaBVqG9uUzeLfNrzQ4uaFwKEb/U0IsgzSWDKz1HmV/7L371P+1HxoaDPQurZKmWqQnwmpNpw04Wrju4Er8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=YLHQ7ooQ; arc=fail smtp.client-ip=40.107.105.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aVGYNSIH2l2NXFt6Yt7eFaKAtu4qFQ82KqHyeZ9J4VpQdZ/BeURZmlwkpHIcMtBgJD1cl5hq+pOl53C2JjVbeBMV3HBWxGtCZf3cQlf8yQYUjw9SArPtXj8NzXkfJIClJRtpj9YXl9J/Q+20OLo4gtBAT1kjKbndhRZ9ZBh+Ab7CZuJPBRH5zIfYcwl5yvlr1brvKTuvo9hU6nU8qgCUDylTkMWtHFUyazLVgVFjpilA83wvN9l5ZafiTOlIE9UtsHwEDcfC04uJwe+2hiLzDvq8CIePn6CtH8GJlhKLqudbDlH9BpLjwwh24JKkZFcIP5Ypbg4cRk13XpkEViOjqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/m0+tv90vMZFn7i1/6uTfRTSwqocicSApsOPbTk/tsk=;
- b=bnQEQUS1WmeYM7e22r7WYpe4LcO+QTtclOyfGZiGUu8sPKMtR2CmMR58mEiFi+u4biSwpS9NnkhbigwrYylAKvxW7f9gF9LjSjR/wf64JOLajgMUOF0GvtH08pJMuwFCRFb/2GIuGJ/1okVGyPhARYjZC4xEUQefdiVu1zppYhDivQRVEtc1zBkNBhtap3eYL06QPUm2eUCQFrh4WJfhs25rwIYRAHeAODCYvgyJjsTLJO7tny/DDxsrCwMNtyPhMwsSSHwnXk4Lqww/1jyPBBuSRAla2eZOxDgSPMdQSBNhKeSgogQ7WXSMHVYHDnX7T7GiegRBjRvkKjha4BDsJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/m0+tv90vMZFn7i1/6uTfRTSwqocicSApsOPbTk/tsk=;
- b=YLHQ7ooQ/s+/UFpQ0E25IPNIvQCGr2iRyPxaweNRVOIOPY+Kz1QSCryJt1OlC2ah+Fhv2g4BJHgFhIEYhBe9jy8BfM0GCHIVprMI2O6mCCDTib3YcHoMo0TZxrqVLLeEq4JLai6koyKubKlP3P8FIArco8lCBZKp6sAoLBVLPNE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com (2603:10a6:20b:4e9::8)
- by PA2PR04MB10087.eurprd04.prod.outlook.com (2603:10a6:102:40b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Thu, 9 May
- 2024 01:49:24 +0000
-Received: from AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::4f24:3f44:d5b1:70ba]) by AS4PR04MB9386.eurprd04.prod.outlook.com
- ([fe80::4f24:3f44:d5b1:70ba%7]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 01:49:24 +0000
-From: Joy Zou <joy.zou@nxp.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Joy Zou <joy.zou@nxp.com>
-Subject: [PATCH] arm64: dts: imx93-11x11-evk: reoder lpi2c2 and lpi2c3 label
-Date: Thu,  9 May 2024 09:57:08 +0800
-Message-Id: <20240509015709.3668405-1-joy.zou@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0180.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::36) To AS4PR04MB9386.eurprd04.prod.outlook.com
- (2603:10a6:20b:4e9::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F17813C8EE
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 01:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715219888; cv=none; b=VlFbdOIvoe94fElpdXrlP1drzr2GdstbzKP1Vb6GD6MOXodiZA4nGpvpRLEHGvltZOFMk+HNJSp/Rv4AJajdXgJ+l+8AT8FXcnC9iBQfAz1R+Q5OV/ADAR75dyRfRZnbv/majARubhD2RlxoGYFHaqvm9c6jIVO2GCJdFu0gFdY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715219888; c=relaxed/simple;
+	bh=MslVLgIxgHBl+0Lt+ft238DkzNbMCXbaWK7L/yXgtwg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aPZtLy61cedg+5XBLypQJ4KMaXw+g46I0ikEF5Xz8D4vA8r3nPk9GHuaMWE6rN1uOgCa3Y0dFjDH2ioIimldh8e4C6qXp4IoIhS+63TwASBHjQtuxsOOK0mXZ/5MbSguNDMsfCPE5B9uBd93U7Jbl8jmZjqBnYSASYeBrEpqkcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=LElaPjvq; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-36c90b7f4c8so1803465ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 18:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715219885; x=1715824685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YFbPdyNXAmPDgRMnsXkYwRU/eurcP6NCi2ubSK27CbY=;
+        b=LElaPjvq0ErnA6xJhwNAyQhHnoWlpczwLWYpKXjme7IBxLXLneHg5xBovimnu9QbMz
+         VjsJinGxiDeRCWWu1WH6T2yDUPrZmv6KijPzTltiFm+A9gzd6hmcqVdgJE92Bm4fhlD0
+         bv/66kBORxbBrF0mGbCr9W3LkMsWTkpVOFijChiO7tQV25zcvB1jUS3+45VfdETF4tU8
+         aNDHKR+gj1Lg3iHF1jd9EtbKG8HDVESF+1yojmgZi+epkAy9UJYZdISBLYc3VXB+yT0L
+         BQwgVyUIssoUoYhYys+Bcq7bE72D3Kntt83khT43ysbikWJyGRAmUfWefu7h4qt3x+2G
+         3umQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715219885; x=1715824685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YFbPdyNXAmPDgRMnsXkYwRU/eurcP6NCi2ubSK27CbY=;
+        b=ZrVwPxepIG6n7XKoushoolWlKPzyVs1gaXoAcpZBive6us1oYebqJksNRcNK/6JpCY
+         I08UPbOxTC5TuNW7C6JAyJzeCKf2zjCk5TgUoiicu71r4gnNEouz5VfZyJfqK1e8vT5V
+         HaTxJfnQtUzHIdnQmYaDGbQk2Q6JN7oQjOf8g11Z/9/hfTv5VikZaMWpqRuVdmHbgBbf
+         Boxw2bcM60cd3jE5zks9sz5Yr88aGNH8jr7ZtVdVwRkdkzx17paloBp9tOGw5C8lZvXt
+         x2maM5kIK0mQbcLevFtYqcfB1hYOLf3y3llZYrcDenjiQdCNylZ5qY7foQPNHaOq6hYq
+         9uMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxcgP4EHWZgytHdHkLEVzQcuthwVKAKxdE4LNugVNHWdn6c1Fj6bcxH3JKGCYZ0QG7Euz6C5UD9u+sdKthrZvM3vctQ117Q+G5wgKu
+X-Gm-Message-State: AOJu0YwEcFAsqZlY3rocAvGJiEg391+6JWZvAGA63AiDewe5N7zuG0Br
+	9M9cPTcurHQutPhpOMoA9sWuPqz85qIz+xWzPwMDY2PcFRpP7JfUJ8iFsRYUteXBVR39KSNIz2n
+	XUdMcXBTMzca6ijeCqZH+NHP0YgEuICxJDsS5sg==
+X-Google-Smtp-Source: AGHT+IF4RVogvPfjo/ijFH9x2U3bkaDZmtp/UsQSkST5lELnt8YqnwCHSoL3O17W6xCugrrQFjtRXoK6GgZZy/otp9w=
+X-Received: by 2002:a05:6e02:1c8e:b0:36c:5124:eb35 with SMTP id
+ e9e14a558f8ab-36caeba7990mr48591615ab.3.1715219884531; Wed, 08 May 2024
+ 18:58:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR04MB9386:EE_|PA2PR04MB10087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5be7c87c-10c2-4d1b-6f75-08dc6fca40d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|52116005|1800799015|376005|366007|38350700005|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0vLi2jX2l/sx9GTx5dm1IEYbCzqrpEuta+fzq5jiwNplq5D+43MsyfYNaBnR?=
- =?us-ascii?Q?krXG4PZk1puGnCtstB6XdfHkZFui2bDmHiWbQypbDktYlD4bOlyWh7Lmoed2?=
- =?us-ascii?Q?rClrhciIscFfTEeCRp6mRDvN9+mGE3n/JHA5UUtZhqzpC5HKg/p3B3ZhqJjS?=
- =?us-ascii?Q?L825ZTdnRNk9Grpo7AkeYhf34vPxEPzunzkT42J9PdYX+k8SoItRnrxm11Pk?=
- =?us-ascii?Q?LMIGUnKiDXEM4TEBLDiMEBUECLntv0bsp2SOtutvJ0+lbBIbi7ofJl/ECVGh?=
- =?us-ascii?Q?KSgR9AYjZkr0uvnNFkKy3aAyC9gFWdsldPLw34NA9/eORoO/yum3D7ksaA3X?=
- =?us-ascii?Q?4H7cAFoBjIL8HLkFAAKi9oCd/nUmWkHickKZjuQS1rOOJN5d00B6kN14yOG5?=
- =?us-ascii?Q?d8OMc6ib16kGEaMdRBgVp0FuysR3g0z/wHtgbpWj27AphE6smS8MYeOSZ7PF?=
- =?us-ascii?Q?uOJUnLFgsqsK5mFHE8kO+pgOsfPAE5O+XGQlqjCZMw850XDKCrGClZHn5pGf?=
- =?us-ascii?Q?LegGe13oP8FU1dxbl3ENvaRNJAFZlBxyItZmaJV6gdQuIEw8IGX2XdWbpW4s?=
- =?us-ascii?Q?d64Fn/AD/abR3svKCc0oxvoc5QsBQdwdP2e2AOWaTvt1EQlT7x+EmUJ0oYqz?=
- =?us-ascii?Q?jxh/OAG9+wW9yH6VxMtSfLIi7xsNEFSI8U60S2gT5MDCYRZNjftI+nE0/Gwe?=
- =?us-ascii?Q?lMysQspm84iOT6rZQEmxGvyHcqV4NCDH7d1Zc1cQumESntChnnygNF1/mh7D?=
- =?us-ascii?Q?R668SU4AVbn1EgxUAcL1fsQLgsTQnVk+6qs/rfM4zfwxUxTTotl4a93ke37N?=
- =?us-ascii?Q?0keUvKAXq/dDKt31M75PY+HObmWV9dVNA042IcMBzqz9FlX8JmCalSiMYZ4N?=
- =?us-ascii?Q?//0/ulekovmkuy2xrBlhwdQKycFxLY0OoThIk0mxxgwqk94zsGE4EMfLt7Lv?=
- =?us-ascii?Q?AbX/TbJJvqmqUyRrIwXPCC375QYWuNKipAvcs9+Xbw69GHiiT9RcUNg5YorK?=
- =?us-ascii?Q?eoQTedPQtd/WtA2e7kanj8tDRdw45Zl0mem6EJM3vCYsnJv1aNVpnB2ahAlx?=
- =?us-ascii?Q?+fNYvOosRlYKO08WhYgfA0VPVVVAn3RE6H/d3VZvrJsh9V2n/5kZluYGSdsU?=
- =?us-ascii?Q?qPWpeuRA+nWkfhoxJ4s4BPfFNk1tFPj313IwJQbmiCgjycovoTx7Iqr2BgLP?=
- =?us-ascii?Q?zEUNuJ+MXCelkkmNpD0YErPrt0a1p6dSY1i5VPxphcV1r4+34IuZ964N9Etn?=
- =?us-ascii?Q?X1nEa7GnL2egpfNlebld4cNzbyp4CxJ5GimUplXQF+pSD5Zyzb93jQwK1IiM?=
- =?us-ascii?Q?kCnwUBBzHOmjQi/31otmte6DkE9AVZP+FnloZY6UTXA6ca9P2GOHSXwYFsNR?=
- =?us-ascii?Q?1b95fGk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9386.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(52116005)(1800799015)(376005)(366007)(38350700005)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9vxRFiO+R9WApyXUCAc60ohs/VH4Pa0qdnpttWbGJ/fy0HhetC2VWApzJet7?=
- =?us-ascii?Q?v/+xe4P24xSLsi+6RJzOg/YZpSwt0TLHOugvH2c4YgUI/ZzQ3Ut7F7kXATN8?=
- =?us-ascii?Q?LxtyRwK99FSgvMFxkiZiPPAFtz8EVnPmkh36N6Gwd6PL2X8gIDk8aL85HjIG?=
- =?us-ascii?Q?arvLArQNFYmkvXEYigOEKS3O3ZMkso/jPTm2gFowVEKYMcIIbIfAprLjGkk4?=
- =?us-ascii?Q?WThLMWXipfhFRhfStgDy3zopMAFlTXmpPCJk6L6DSp1VeY9JlLT6dQg6vSXk?=
- =?us-ascii?Q?tqMR9iYCLeK0llCOXFc7o6khCCUg/w54PYEBU7aRD2g1hq5w1q4BehboG6VP?=
- =?us-ascii?Q?+aPxYAE88jtEjzZ5ZMD2xyok+SuNXDXfPrFiuhYJmOsy6/GmOOJqk8FelgYI?=
- =?us-ascii?Q?hmvBsCK8STsKy4Oc59krx/fyY2IyvWfdcBBTw5J2ICgQTNWjQHEAiD01Af4O?=
- =?us-ascii?Q?W4y0YzH2kYKBO6LbVmtUbEfE5eRNC7xsxlYVU2LN8oSIywCPlCsBSLZSuxqy?=
- =?us-ascii?Q?0Mf+iQHUwriIyLFOpxXCXT+rkd9lR6cThj6vMOUhtap5SSDgZPyMZIWsinbH?=
- =?us-ascii?Q?tqdKnvezoQqF98FEIq/SviWMQBYIA0e+09KGVkdby6jUS+r5cBXrIYAgmz7e?=
- =?us-ascii?Q?X3VNrFGpPciF0f40U5hJtzwaPkFa6T866KiqkOAri8rP5YVJGvuRBgc/jIha?=
- =?us-ascii?Q?3BBKafbgcpxrXTf4kUDAWXJzdyjE1d+GEtZeqVI21qeIaiaxNZj2HOG4ctJv?=
- =?us-ascii?Q?alVMQvsXLx/NHYF4L8BIOxeXKe/rfZgdh9AKH5Y0EmgQom94s4VNEm3iO8ki?=
- =?us-ascii?Q?B5e3wOT821ctqK1we9Sxj4VTWYBeJxjoo8YwIfcYWHJYGtFz3LOI44GiLs8/?=
- =?us-ascii?Q?t3Q3UNz/9xSoL3Qw5oSl5OM8m038ytmpxYLKtP+93+sT+YuIPal5m22zvbsf?=
- =?us-ascii?Q?jush77//vdtTVLCSod1Z3NvrUDZZasx5fQEI6q5cZBg+MK6dFHXkpYbvSVvR?=
- =?us-ascii?Q?lVrV2sL9z+gDjLCgmS/Hyc1I9+RDe6TXWd1DOJRyIfbIDYLc9vMEuX9/hjfg?=
- =?us-ascii?Q?1aXidWAA5CGh7RD8JpTdnikR/zxAJMqbOOF+3BhzwetO05TFNXE6jK7BNc+I?=
- =?us-ascii?Q?6TyLDbIM4DU7txS3bcoFx19YrxXef+G1eTEU8AT1Ll3h15Ec2qFkmxcaxQZu?=
- =?us-ascii?Q?XHzi269Sik1Pg7Cx8w5Y2uUeOTgEFHky7i9GTbaZrSkx4GsLQWoa7/AUx0Us?=
- =?us-ascii?Q?PsSEfvP6rclhcXX4kKLdpVDW0wRyRZuXv2nHIi6fhDJxiug/FGxTHw0LPLrm?=
- =?us-ascii?Q?5fiHz4qG5tkH396TlO8JSqYSs3h6nXpDze8wrrnuYncjr3LWWfGzGF5T/OtM?=
- =?us-ascii?Q?yY2JEro2q4eJ9lVAtu5YQRea3iMDOWzxK8zaj6AE+xZgzfYtboCAge2ZXQPJ?=
- =?us-ascii?Q?QRFfBVtCKoeFo/B/qpNO6rywT8i2A7rNKogthJmoJn3S9xiuNebq1bW/lVWD?=
- =?us-ascii?Q?LGf6G79r0WkSySxCSLwEgBvQHcBoB3SQoAV3JHFvRyT4jNbS/iUpfS8zmuOq?=
- =?us-ascii?Q?7HNAGpltWtKXBI630gt53+wOKHNxANKcleCPT+lK?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5be7c87c-10c2-4d1b-6f75-08dc6fca40d9
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9386.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 01:49:24.3443
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7MeMe8dpJ9rbEP1E1Bbp3WY524IS36RWJRI8SqPzGBfua87ZjwOJFA9nGYAq4gDe
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10087
+References: <cover.1714752293.git.tjeznach@rivosinc.com> <f63635cd72fd0d1b0026a6839dbfeaa2cd154eaa.1714752293.git.tjeznach@rivosinc.com>
+ <CANXhq0qD-9d5Nbh3By2zf6BORNOsM3W4CN4J8H94c_n3_xT_Pg@mail.gmail.com> <CAH2o1u5wHZr-BHU0zbvq_DHzXY6xshyF1EkDDffGuAqZ670bXQ@mail.gmail.com>
+In-Reply-To: <CAH2o1u5wHZr-BHU0zbvq_DHzXY6xshyF1EkDDffGuAqZ670bXQ@mail.gmail.com>
+From: Zong Li <zong.li@sifive.com>
+Date: Thu, 9 May 2024 09:57:52 +0800
+Message-ID: <CANXhq0osw1rjRnuB-s18trEPw+x5woLiEUt5MQ7+wmjg+WAgLA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/7] iommu/riscv: Command and fault queue support
+To: Tomasz Jeznach <tjeznach@rivosinc.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Anup Patel <apatel@ventanamicro.com>, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, linux@rivosinc.com, 
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
+	Sebastien Boeuf <seb@rivosinc.com>, iommu@lists.linux.dev, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Nick Kossifidis <mick@ics.forth.gr>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, 
+	Lu Baolu <baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reorder lpi2c2 and lpi2c3 label in alphabetical order.
+On Thu, May 9, 2024 at 12:03=E2=80=AFAM Tomasz Jeznach <tjeznach@rivosinc.c=
+om> wrote:
+>
+> On Wed, May 8, 2024 at 8:39=E2=80=AFAM Zong Li <zong.li@sifive.com> wrote=
+:
+> >
+> > On Sat, May 4, 2024 at 12:13=E2=80=AFAM Tomasz Jeznach <tjeznach@rivosi=
+nc.com> wrote:
+> > >
+> > > Introduce device command submission and fault reporting queues,
+> > > as described in Chapter 3.1 and 3.2 of the RISC-V IOMMU Architecture
+> > > Specification.
+> > >
+> > > Command and fault queues are instantiated in contiguous system memory
+> > > local to IOMMU device domain, or mapped from fixed I/O space provided
+> > > by the hardware implementation. Detection of the location and maximum
+> > > allowed size of the queue utilize WARL properties of queue base contr=
+ol
+> > > register. Driver implementation will try to allocate up to 128KB of
+> > > system memory, while respecting hardware supported maximum queue size=
+.
+> > >
+> > > Interrupts allocation is based on interrupt vectors availability and
+> > > distributed to all queues in simple round-robin fashion. For hardware
+> > > Implementation with fixed event type to interrupt vector assignment
+> > > IVEC WARL property is used to discover such mappings.
+> > >
+> > > Address translation, command and queue fault handling in this change
+> > > is limited to simple fault reporting without taking any action.
+> > >
+> > > Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > > Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+> > > ---
+> > >  drivers/iommu/riscv/iommu-bits.h |  75 +++++
+> > >  drivers/iommu/riscv/iommu.c      | 496 +++++++++++++++++++++++++++++=
++-
+> > >  drivers/iommu/riscv/iommu.h      |  21 ++
+> > >  3 files changed, 590 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/iommu/riscv/iommu-bits.h b/drivers/iommu/riscv/i=
+ommu-bits.h
+> > > index ba093c29de9f..40c379222821 100644
+> > > --- a/drivers/iommu/riscv/iommu-bits.h
+> > > +++ b/drivers/iommu/riscv/iommu-bits.h
+> > > @@ -704,4 +704,79 @@ struct riscv_iommu_msi_pte {
+> > >  #define RISCV_IOMMU_MSI_MRIF_NPPN      RISCV_IOMMU_PPN_FIELD
+> > >  #define RISCV_IOMMU_MSI_MRIF_NID_MSB   BIT_ULL(60)
+> > >
+> > > +/* Helper functions: command structure builders. */
+> > > +
+> > > +static inline void riscv_iommu_cmd_inval_vma(struct riscv_iommu_comm=
+and *cmd)
+> > > +{
+> > > +       cmd->dword0 =3D FIELD_PREP(RISCV_IOMMU_CMD_OPCODE, RISCV_IOMM=
+U_CMD_IOTINVAL_OPCODE) |
+> > > +                     FIELD_PREP(RISCV_IOMMU_CMD_FUNC, RISCV_IOMMU_CM=
+D_IOTINVAL_FUNC_VMA);
+> > > +       cmd->dword1 =3D 0;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_inval_set_addr(struct riscv_iommu=
+_command *cmd,
+> > > +                                                 u64 addr)
+> > > +{
+> > > +       cmd->dword1 =3D FIELD_PREP(RISCV_IOMMU_CMD_IOTINVAL_ADDR, phy=
+s_to_pfn(addr));
+> > > +       cmd->dword0 |=3D RISCV_IOMMU_CMD_IOTINVAL_AV;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_inval_set_pscid(struct riscv_iomm=
+u_command *cmd,
+> > > +                                                  int pscid)
+> > > +{
+> > > +       cmd->dword0 |=3D FIELD_PREP(RISCV_IOMMU_CMD_IOTINVAL_PSCID, p=
+scid) |
+> > > +                      RISCV_IOMMU_CMD_IOTINVAL_PSCV;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_inval_set_gscid(struct riscv_iomm=
+u_command *cmd,
+> > > +                                                  int gscid)
+> > > +{
+> > > +       cmd->dword0 |=3D FIELD_PREP(RISCV_IOMMU_CMD_IOTINVAL_GSCID, g=
+scid) |
+> > > +                      RISCV_IOMMU_CMD_IOTINVAL_GV;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_iofence(struct riscv_iommu_comman=
+d *cmd)
+> > > +{
+> > > +       cmd->dword0 =3D FIELD_PREP(RISCV_IOMMU_CMD_OPCODE, RISCV_IOMM=
+U_CMD_IOFENCE_OPCODE) |
+> > > +                     FIELD_PREP(RISCV_IOMMU_CMD_FUNC, RISCV_IOMMU_CM=
+D_IOFENCE_FUNC_C) |
+> > > +                     RISCV_IOMMU_CMD_IOFENCE_PR | RISCV_IOMMU_CMD_IO=
+FENCE_PW;
+> > > +       cmd->dword1 =3D 0;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_iofence_set_av(struct riscv_iommu=
+_command *cmd,
+> > > +                                                 u64 addr, u32 data)
+> > > +{
+> > > +       cmd->dword0 =3D FIELD_PREP(RISCV_IOMMU_CMD_OPCODE, RISCV_IOMM=
+U_CMD_IOFENCE_OPCODE) |
+> > > +                     FIELD_PREP(RISCV_IOMMU_CMD_FUNC, RISCV_IOMMU_CM=
+D_IOFENCE_FUNC_C) |
+> > > +                     FIELD_PREP(RISCV_IOMMU_CMD_IOFENCE_DATA, data) =
+|
+> > > +                     RISCV_IOMMU_CMD_IOFENCE_AV;
+> > > +       cmd->dword1 =3D addr >> 2;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_iodir_inval_ddt(struct riscv_iomm=
+u_command *cmd)
+> > > +{
+> > > +       cmd->dword0 =3D FIELD_PREP(RISCV_IOMMU_CMD_OPCODE, RISCV_IOMM=
+U_CMD_IODIR_OPCODE) |
+> > > +                     FIELD_PREP(RISCV_IOMMU_CMD_FUNC, RISCV_IOMMU_CM=
+D_IODIR_FUNC_INVAL_DDT);
+> > > +       cmd->dword1 =3D 0;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_iodir_inval_pdt(struct riscv_iomm=
+u_command *cmd)
+> > > +{
+> > > +       cmd->dword0 =3D FIELD_PREP(RISCV_IOMMU_CMD_OPCODE, RISCV_IOMM=
+U_CMD_IODIR_OPCODE) |
+> > > +                     FIELD_PREP(RISCV_IOMMU_CMD_FUNC, RISCV_IOMMU_CM=
+D_IODIR_FUNC_INVAL_PDT);
+> > > +       cmd->dword1 =3D 0;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_iodir_set_did(struct riscv_iommu_=
+command *cmd,
+> > > +                                                unsigned int devid)
+> > > +{
+> > > +       cmd->dword0 |=3D FIELD_PREP(RISCV_IOMMU_CMD_IODIR_DID, devid)=
+ |
+> > > +                      RISCV_IOMMU_CMD_IODIR_DV;
+> > > +}
+> > > +
+> > > +static inline void riscv_iommu_cmd_iodir_set_pid(struct riscv_iommu_=
+command *cmd,
+> > > +                                                unsigned int pasid)
+> > > +{
+> > > +       cmd->dword0 |=3D FIELD_PREP(RISCV_IOMMU_CMD_IODIR_PID, pasid)=
+;
+> > > +}
+> > > +
+> > >  #endif /* _RISCV_IOMMU_BITS_H_ */
+> > > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.=
+c
+> > > index 71b7903d83d4..4349ac8a3990 100644
+> > > --- a/drivers/iommu/riscv/iommu.c
+> > > +++ b/drivers/iommu/riscv/iommu.c
+> > > @@ -25,7 +25,14 @@
+> > >  #include "iommu.h"
+> > >
+> > >  /* Timeouts in [us] */
+> > > -#define RISCV_IOMMU_DDTP_TIMEOUT       50000
+> > > +#define RISCV_IOMMU_QCSR_TIMEOUT       150000
+> > > +#define RISCV_IOMMU_QUEUE_TIMEOUT      150000
+> > > +#define RISCV_IOMMU_DDTP_TIMEOUT       10000000
+> > > +#define RISCV_IOMMU_IOTINVAL_TIMEOUT   90000000
+> > > +
+> > > +/* Number of entries per CMD/FLT queue, should be <=3D INT_MAX */
+> > > +#define RISCV_IOMMU_DEF_CQ_COUNT       8192
+> > > +#define RISCV_IOMMU_DEF_FQ_COUNT       4096
+> > >
+> > >  /* RISC-V IOMMU PPN <> PHYS address conversions, PHYS <=3D> PPN[53:1=
+0] */
+> > >  #define phys_to_ppn(va)  (((va) >> 2) & (((1ULL << 44) - 1) << 10))
+> > > @@ -89,6 +96,432 @@ static void riscv_iommu_free_pages(struct riscv_i=
+ommu_device *iommu, void *addr)
+> > >                        riscv_iommu_devres_pages_match, &devres);
+> > >  }
+> > >
+> > > +/*
+> > > + * Hardware queue allocation and management.
+> > > + */
+> > > +
+> > > +/* Setup queue base, control registers and default queue length */
+> > > +#define RISCV_IOMMU_QUEUE_INIT(q, name) do {                        =
+   \
+> > > +       struct riscv_iommu_queue *_q =3D q;                          =
+     \
+> > > +       _q->qid =3D RISCV_IOMMU_INTR_ ## name;                       =
+     \
+> > > +       _q->qbr =3D RISCV_IOMMU_REG_ ## name ## B;                   =
+     \
+> > > +       _q->qcr =3D RISCV_IOMMU_REG_ ## name ## CSR;                 =
+     \
+> > > +       _q->mask =3D _q->mask ?: (RISCV_IOMMU_DEF_ ## name ## _COUNT)=
+ - 1;\
+> > > +} while (0)
+> > > +
+> > > +/* Note: offsets are the same for all queues */
+> > > +#define Q_HEAD(q) ((q)->qbr + (RISCV_IOMMU_REG_CQH - RISCV_IOMMU_REG=
+_CQB))
+> > > +#define Q_TAIL(q) ((q)->qbr + (RISCV_IOMMU_REG_CQT - RISCV_IOMMU_REG=
+_CQB))
+> > > +#define Q_ITEM(q, index) ((q)->mask & (index))
+> > > +#define Q_IPSR(q) BIT((q)->qid)
+> > > +
+> > > +/*
+> > > + * Discover queue ring buffer hardware configuration, allocate in-me=
+mory
+> > > + * ring buffer or use fixed I/O memory location, configure queue bas=
+e register.
+> > > + * Must be called before hardware queue is enabled.
+> > > + *
+> > > + * @queue - data structure, configured with RISCV_IOMMU_QUEUE_INIT()
+> > > + * @entry_size - queue single element size in bytes.
+> > > + */
+> > > +static int riscv_iommu_queue_alloc(struct riscv_iommu_device *iommu,
+> > > +                                  struct riscv_iommu_queue *queue,
+> > > +                                  size_t entry_size)
+> > > +{
+> > > +       unsigned int logsz;
+> > > +       u64 qb, rb;
+> > > +
+> > > +       /*
+> > > +        * Use WARL base register property to discover maximum allowe=
+d
+> > > +        * number of entries and optional fixed IO address for queue =
+location.
+> > > +        */
+> > > +       riscv_iommu_writeq(iommu, queue->qbr, RISCV_IOMMU_QUEUE_LOGSZ=
+_FIELD);
+> > > +       qb =3D riscv_iommu_readq(iommu, queue->qbr);
+> > > +
+> > > +       /*
+> > > +        * Calculate and verify hardware supported queue length, as r=
+eported
+> > > +        * by the field LOGSZ, where max queue length is equal to 2^(=
+LOGSZ + 1).
+> > > +        * Update queue size based on hardware supported value.
+> > > +        */
+> > > +       logsz =3D ilog2(queue->mask);
+> > > +       if (logsz > FIELD_GET(RISCV_IOMMU_QUEUE_LOGSZ_FIELD, qb))
+> > > +               logsz =3D FIELD_GET(RISCV_IOMMU_QUEUE_LOGSZ_FIELD, qb=
+);
+> > > +
+> > > +       /*
+> > > +        * Use WARL base register property to discover an optional fi=
+xed IO
+> > > +        * address for queue ring buffer location. Otherwise allocate=
+ contigus
+> > > +        * system memory.
+> > > +        */
+> > > +       if (FIELD_GET(RISCV_IOMMU_PPN_FIELD, qb)) {
+> > > +               const size_t queue_size =3D entry_size << (logsz + 1)=
+;
+> > > +
+> > > +               queue->phys =3D ppn_to_phys(FIELD_GET(RISCV_IOMMU_PPN=
+_FIELD, qb));
+> > > +               queue->base =3D devm_ioremap(iommu->dev, queue->phys,=
+ queue_size);
+> > > +       } else {
+> > > +               do {
+> > > +                       const size_t queue_size =3D entry_size << (lo=
+gsz + 1);
+> > > +                       const int order =3D get_order(queue_size);
+> > > +
+> > > +                       queue->base =3D riscv_iommu_get_pages(iommu, =
+order);
+> > > +                       queue->phys =3D __pa(queue->base);
+> > > +               } while (!queue->base && logsz-- > 0);
+> > > +       }
+> > > +
+> > > +       if (!queue->base)
+> > > +               return -ENOMEM;
+> > > +
+> > > +       qb =3D phys_to_ppn(queue->phys) |
+> > > +            FIELD_PREP(RISCV_IOMMU_QUEUE_LOGSZ_FIELD, logsz);
+> > > +
+> > > +       /* Update base register and read back to verify hw accepted o=
+ur write */
+> > > +       riscv_iommu_writeq(iommu, queue->qbr, qb);
+> > > +       rb =3D riscv_iommu_readq(iommu, queue->qbr);
+> > > +       if (rb !=3D qb) {
+> > > +               dev_err(iommu->dev, "queue #%u allocation failed\n", =
+queue->qid);
+> > > +               return -ENODEV;
+> > > +       }
+> > > +
+> > > +       /* Update actual queue mask */
+> > > +       queue->mask =3D (2U << logsz) - 1;
+> > > +
+> > > +       dev_dbg(iommu->dev, "queue #%u allocated 2^%u entries",
+> > > +               queue->qid, logsz + 1);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +/* Check interrupt queue status, IPSR */
+> > > +static irqreturn_t riscv_iommu_queue_ipsr(int irq, void *data)
+> > > +{
+> > > +       struct riscv_iommu_queue *queue =3D (struct riscv_iommu_queue=
+ *)data;
+> > > +
+> > > +       if (riscv_iommu_readl(queue->iommu, RISCV_IOMMU_REG_IPSR) & Q=
+_IPSR(queue))
+> > > +               return IRQ_WAKE_THREAD;
+> > > +
+> > > +       return IRQ_NONE;
+> > > +}
+> > > +
+> > > +static int riscv_iommu_queue_vec(struct riscv_iommu_device *iommu, i=
+nt n)
+> > > +{
+> > > +       /* Reuse IVEC.CIV mask for all interrupt vectors mapping. */
+> > > +       return (iommu->ivec >> (n * 4)) & RISCV_IOMMU_IVEC_CIV;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Enable queue processing in the hardware, register interrupt handl=
+er.
+> > > + *
+> > > + * @queue - data structure, already allocated with riscv_iommu_queue=
+_alloc()
+> > > + * @irq_handler - threaded interrupt handler.
+> > > + */
+> > > +static int riscv_iommu_queue_enable(struct riscv_iommu_device *iommu=
+,
+> > > +                                   struct riscv_iommu_queue *queue,
+> > > +                                   irq_handler_t irq_handler)
+> > > +{
+> > > +       const unsigned int irq =3D iommu->irqs[riscv_iommu_queue_vec(=
+iommu, queue->qid)];
+> > > +       u32 csr;
+> > > +       int rc;
+> > > +
+> > > +       if (queue->iommu)
+> > > +               return -EBUSY;
+> > > +
+> > > +       /* Polling not implemented */
+> > > +       if (!irq)
+> > > +               return -ENODEV;
+> > > +
+> > > +       queue->iommu =3D iommu;
+> > > +       rc =3D request_threaded_irq(irq, riscv_iommu_queue_ipsr, irq_=
+handler,
+> > > +                                 IRQF_ONESHOT | IRQF_SHARED,
+> > > +                                 dev_name(iommu->dev), queue);
+> > > +       if (rc) {
+> > > +               queue->iommu =3D NULL;
+> > > +               return rc;
+> > > +       }
+> > > +
+> > > +       /*
+> > > +        * Enable queue with interrupts, clear any memory fault if an=
+y.
+> > > +        * Wait for the hardware to acknowledge request and activate =
+queue
+> > > +        * processing.
+> > > +        * Note: All CSR bitfields are in the same offsets for all qu=
+eues.
+> > > +        */
+> > > +       riscv_iommu_writel(iommu, queue->qcr,
+> > > +                          RISCV_IOMMU_QUEUE_ENABLE |
+> > > +                          RISCV_IOMMU_QUEUE_INTR_ENABLE |
+> > > +                          RISCV_IOMMU_QUEUE_MEM_FAULT);
+> > > +
+> > > +       riscv_iommu_readl_timeout(iommu, queue->qcr,
+> > > +                                 csr, !(csr & RISCV_IOMMU_QUEUE_BUSY=
+),
+> > > +                                 10, RISCV_IOMMU_QCSR_TIMEOUT);
+> > > +
+> > > +       if (RISCV_IOMMU_QUEUE_ACTIVE !=3D (csr & (RISCV_IOMMU_QUEUE_A=
+CTIVE |
+> > > +                                               RISCV_IOMMU_QUEUE_BUS=
+Y |
+> > > +                                               RISCV_IOMMU_QUEUE_MEM=
+_FAULT))) {
+> > > +               /* Best effort to stop and disable failing hardware q=
+ueue. */
+> > > +               riscv_iommu_writel(iommu, queue->qcr, 0);
+> > > +               free_irq(irq, queue);
+> > > +               queue->iommu =3D NULL;
+> > > +               dev_err(iommu->dev, "queue #%u failed to start\n", qu=
+eue->qid);
+> > > +               return -EBUSY;
+> > > +       }
+> > > +
+> > > +       /* Clear any pending interrupt flag. */
+> > > +       riscv_iommu_writel(iommu, RISCV_IOMMU_REG_IPSR, Q_IPSR(queue)=
+);
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Disable queue. Wait for the hardware to acknowledge request and
+> > > + * stop processing enqueued requests. Report errors but continue.
+> > > + */
+> > > +static void riscv_iommu_queue_disable(struct riscv_iommu_queue *queu=
+e)
+> > > +{
+> > > +       struct riscv_iommu_device *iommu =3D queue->iommu;
+> > > +       u32 csr;
+> > > +
+> > > +       if (!iommu)
+> > > +               return;
+> > > +
+> > > +       free_irq(iommu->irqs[riscv_iommu_queue_vec(iommu, queue->qid)=
+], queue);
+> > > +       riscv_iommu_writel(iommu, queue->qcr, 0);
+> > > +       riscv_iommu_readl_timeout(iommu, queue->qcr,
+> > > +                                 csr, !(csr & RISCV_IOMMU_QUEUE_BUSY=
+),
+> > > +                                 10, RISCV_IOMMU_QCSR_TIMEOUT);
+> > > +
+> > > +       if (csr & (RISCV_IOMMU_QUEUE_ACTIVE | RISCV_IOMMU_QUEUE_BUSY)=
+)
+> > > +               dev_err(iommu->dev, "fail to disable hardware queue #=
+%u, csr 0x%x\n",
+> > > +                       queue->qid, csr);
+> > > +
+> > > +       queue->iommu =3D NULL;
+> > > +}
+> > > +
+> > > +/*
+> > > + * Returns number of available valid queue entries and the first ite=
+m index.
+> > > + * Update shadow producer index if necessary.
+> > > + */
+> > > +static int riscv_iommu_queue_consume(struct riscv_iommu_queue *queue=
+,
+> > > +                                    unsigned int *index)
+> > > +{
+> > > +       unsigned int head =3D atomic_read(&queue->head);
+> > > +       unsigned int tail =3D atomic_read(&queue->tail);
+> > > +       unsigned int last =3D Q_ITEM(queue, tail);
+> > > +       int available =3D (int)(tail - head);
+> > > +
+> > > +       *index =3D head;
+> > > +
+> > > +       if (available > 0)
+> > > +               return available;
+> > > +
+> > > +       /* read hardware producer index, check reserved register bits=
+ are not set. */
+> > > +       if (riscv_iommu_readl_timeout(queue->iommu, Q_TAIL(queue),
+> > > +                                     tail, (tail & ~queue->mask) =3D=
+=3D 0,
+> > > +                                     0, RISCV_IOMMU_QUEUE_TIMEOUT)) =
+{
+> > > +               dev_err_once(queue->iommu->dev,
+> > > +                            "Hardware error: queue access timeout\n"=
+);
+> > > +               return 0;
+> > > +       }
+> > > +
+> > > +       if (tail =3D=3D last)
+> > > +               return 0;
+> > > +
+> > > +       /* update shadow producer index */
+> > > +       return (int)(atomic_add_return((tail - last) & queue->mask, &=
+queue->tail) - head);
+> > > +}
+> > > +
+> > > +/*
+> > > + * Release processed queue entries, should match riscv_iommu_queue_c=
+onsume() calls.
+> > > + */
+> > > +static void riscv_iommu_queue_release(struct riscv_iommu_queue *queu=
+e, int count)
+> > > +{
+> > > +       const unsigned int head =3D atomic_add_return(count, &queue->=
+head);
+> > > +
+> > > +       riscv_iommu_writel(queue->iommu, Q_HEAD(queue), Q_ITEM(queue,=
+ head));
+> > > +}
+> > > +
+> > > +/* Return actual consumer index based on hardware reported queue hea=
+d index. */
+> > > +static unsigned int riscv_iommu_queue_cons(struct riscv_iommu_queue =
+*queue)
+> > > +{
+> > > +       const unsigned int cons =3D atomic_read(&queue->head);
+> > > +       const unsigned int last =3D Q_ITEM(queue, cons);
+> > > +       unsigned int head;
+> > > +
+> > > +       if (riscv_iommu_readl_timeout(queue->iommu, Q_HEAD(queue), he=
+ad,
+> > > +                                     !(head & ~queue->mask),
+> > > +                                     0, RISCV_IOMMU_QUEUE_TIMEOUT))
+> > > +               return cons;
+> > > +
+> > > +       return cons + ((head - last) & queue->mask);
+> > > +}
+> > > +
+> > > +/* Wait for submitted item to be processed. */
+> > > +static int riscv_iommu_queue_wait(struct riscv_iommu_queue *queue,
+> > > +                                 unsigned int index,
+> > > +                                 unsigned int timeout_us)
+> > > +{
+> > > +       unsigned int cons =3D atomic_read(&queue->head);
+> > > +
+> > > +       /* Already processed by the consumer */
+> > > +       if ((int)(cons - index) > 0)
+> > > +               return 0;
+> > > +
+> > > +       /* Monitor consumer index */
+> > > +       return readx_poll_timeout(riscv_iommu_queue_cons, queue, cons=
+,
+> > > +                                (int)(cons - index) > 0, 0, timeout_=
+us);
+> > > +}
+> >
+> > Apart from iofence command, it seems to me that we might not be able
+> > to use the head pointer to determine whether the command is executed,
+> > because spec mentioned that the IOMMU advancing cqh is not a guarantee
+> > that the commands fetched by the IOMMU have been executed or
+> > committed. For iofence completion, perhaps using ADD and AV to write
+> > memory would be better as well.
+> >
+>
+> I'll update the comment to the function that this is *only* allowed to
+> track IOFENCE.C completion. Call to riscv_iommu_queue_wait() is used
+> only for this purpose (unless specification will be extended to track
+> other commands with head/tail updates).
 
-Signed-off-by: Joy Zou <joy.zou@nxp.com>
----
- .../boot/dts/freescale/imx93-11x11-evk.dts    | 217 +++++++++---------
- 1 file changed, 105 insertions(+), 112 deletions(-)
+I'm not sure whether it is a good idea if we check the opcode around
+there, but adding comment is ok to me. Thanks
 
-diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-index d400d85f42a9..6be1eb920c02 100644
---- a/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts
-@@ -105,6 +105,104 @@ &mu2 {
- 	status = "okay";
- };
- 
-+&lpi2c2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&pinctrl_lpi2c2>;
-+	pinctrl-1 = <&pinctrl_lpi2c2>;
-+	status = "okay";
-+
-+	pcal6524: gpio@22 {
-+		compatible = "nxp,pcal6524";
-+		reg = <0x22>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pcal6524>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	pmic@25 {
-+		compatible = "nxp,pca9451a";
-+		reg = <0x25>;
-+		interrupt-parent = <&pcal6524>;
-+		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "BUCK1";
-+				regulator-min-microvolt = <610000>;
-+				regulator-max-microvolt = <950000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			buck2: BUCK2 {
-+				regulator-name = "BUCK2";
-+				regulator-min-microvolt = <600000>;
-+				regulator-max-microvolt = <670000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			buck4: BUCK4{
-+				regulator-name = "BUCK4";
-+				regulator-min-microvolt = <1620000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck5: BUCK5{
-+				regulator-name = "BUCK5";
-+				regulator-min-microvolt = <1620000>;
-+				regulator-max-microvolt = <3400000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck6: BUCK6 {
-+				regulator-name = "BUCK6";
-+				regulator-min-microvolt = <1060000>;
-+				regulator-max-microvolt = <1140000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo1: LDO1 {
-+				regulator-name = "LDO1";
-+				regulator-min-microvolt = <1620000>;
-+				regulator-max-microvolt = <1980000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo4: LDO4 {
-+				regulator-name = "LDO4";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <840000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo5: LDO5 {
-+				regulator-name = "LDO5";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
- &lpi2c3 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-@@ -113,6 +211,13 @@ &lpi2c3 {
- 	pinctrl-0 = <&pinctrl_lpi2c3>;
- 	status = "okay";
- 
-+	pcf2131: rtc@53 {
-+		compatible = "nxp,pcf2131";
-+		reg = <0x53>;
-+		interrupt-parent = <&pcal6524>;
-+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+
- 	ptn5110: tcpc@50 {
- 		compatible = "nxp,ptn5110", "tcpci";
- 		reg = <0x50>;
-@@ -304,118 +409,6 @@ &wdog3 {
- 	status = "okay";
- };
- 
--&lpi2c2 {
--	#address-cells = <1>;
--	#size-cells = <0>;
--	clock-frequency = <400000>;
--	pinctrl-names = "default", "sleep";
--	pinctrl-0 = <&pinctrl_lpi2c2>;
--	pinctrl-1 = <&pinctrl_lpi2c2>;
--	status = "okay";
--
--	pcal6524: gpio@22 {
--		compatible = "nxp,pcal6524";
--		reg = <0x22>;
--		pinctrl-names = "default";
--		pinctrl-0 = <&pinctrl_pcal6524>;
--		gpio-controller;
--		#gpio-cells = <2>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
--	};
--
--	pmic@25 {
--		compatible = "nxp,pca9451a";
--		reg = <0x25>;
--		interrupt-parent = <&pcal6524>;
--		interrupts = <11 IRQ_TYPE_EDGE_FALLING>;
--
--		regulators {
--			buck1: BUCK1 {
--				regulator-name = "BUCK1";
--				regulator-min-microvolt = <610000>;
--				regulator-max-microvolt = <950000>;
--				regulator-boot-on;
--				regulator-always-on;
--				regulator-ramp-delay = <3125>;
--			};
--
--			buck2: BUCK2 {
--				regulator-name = "BUCK2";
--				regulator-min-microvolt = <600000>;
--				regulator-max-microvolt = <670000>;
--				regulator-boot-on;
--				regulator-always-on;
--				regulator-ramp-delay = <3125>;
--			};
--
--			buck4: BUCK4{
--				regulator-name = "BUCK4";
--				regulator-min-microvolt = <1620000>;
--				regulator-max-microvolt = <3400000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			buck5: BUCK5{
--				regulator-name = "BUCK5";
--				regulator-min-microvolt = <1620000>;
--				regulator-max-microvolt = <3400000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			buck6: BUCK6 {
--				regulator-name = "BUCK6";
--				regulator-min-microvolt = <1060000>;
--				regulator-max-microvolt = <1140000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			ldo1: LDO1 {
--				regulator-name = "LDO1";
--				regulator-min-microvolt = <1620000>;
--				regulator-max-microvolt = <1980000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			ldo4: LDO4 {
--				regulator-name = "LDO4";
--				regulator-min-microvolt = <800000>;
--				regulator-max-microvolt = <840000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--
--			ldo5: LDO5 {
--				regulator-name = "LDO5";
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-boot-on;
--				regulator-always-on;
--			};
--		};
--	};
--};
--
--&lpi2c3 {
--	clock-frequency = <400000>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_lpi2c3>;
--	status = "okay";
--
--	pcf2131: rtc@53 {
--		compatible = "nxp,pcf2131";
--		reg = <0x53>;
--		interrupt-parent = <&pcal6524>;
--		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
--	};
--};
--
- &iomuxc {
- 	pinctrl_eqos: eqosgrp {
- 		fsl,pins = <
--- 
-2.37.1
+>
+> Previous version of the command tracking used address/AV notifier, but
+> after several iterations and testing we've considered tracking
+> head/tail as best approach.
 
+Thanks for bringing the information back here again.
+
+>
+> > > +
+> > > +/* Enqueue an entry and wait to be processed if timeout_us > 0
+> > > + *
+> > > + * Error handling for IOMMU hardware not responding in reasonable ti=
+me
+> > > + * will be added as separate patch series along with other RAS featu=
+res.
+> > > + * For now, only report hardware failure and continue.
+> > > + */
+> > > +static void riscv_iommu_queue_send(struct riscv_iommu_queue *queue,
+> > > +                                  void *entry, size_t entry_size,
+> > > +                                  unsigned int timeout_us)
+> > > +{
+> > > +       unsigned int prod;
+> > > +       unsigned int head;
+> > > +       unsigned int tail;
+> > > +       unsigned long flags;
+> > > +
+> > > +       /* Do not preempt submission flow. */
+> > > +       local_irq_save(flags);
+> > > +
+> > > +       /* 1. Allocate some space in the queue */
+> > > +       prod =3D atomic_inc_return(&queue->prod) - 1;
+> > > +       head =3D atomic_read(&queue->head);
+> > > +
+> > > +       /* 2. Wait for space availability. */
+> > > +       if ((prod - head) > queue->mask) {
+> > > +               if (readx_poll_timeout(atomic_read, &queue->head,
+> > > +                                      head, (prod - head) < queue->m=
+ask,
+> > > +                                      0, RISCV_IOMMU_QUEUE_TIMEOUT))
+> > > +                       goto err_busy;
+> > > +       } else if ((prod - head) =3D=3D queue->mask) {
+> > > +               const unsigned int last =3D Q_ITEM(queue, head);
+> > > +
+> > > +               if (riscv_iommu_readl_timeout(queue->iommu, Q_HEAD(qu=
+eue), head,
+> > > +                                             !(head & ~queue->mask) =
+&& head !=3D last,
+> > > +                                             0, RISCV_IOMMU_QUEUE_TI=
+MEOUT))
+> > > +                       goto err_busy;
+> > > +               atomic_add((head - last) & queue->mask, &queue->head)=
+;
+> > > +       }
+> > > +
+> > > +       /* 3. Store entry in the ring buffer. */
+> > > +       memcpy(queue->base + Q_ITEM(queue, prod) * entry_size, entry,=
+ entry_size);
+> > > +
+> > > +       /* 4. Wait for all previous entries to be ready */
+> > > +       if (readx_poll_timeout(atomic_read, &queue->tail, tail, prod =
+=3D=3D tail,
+> > > +                              0, RISCV_IOMMU_QUEUE_TIMEOUT))
+> > > +               goto err_busy;
+> > > +
+> > > +       /* 5. Complete submission and restore local interrupts */
+> > > +       dma_wmb();
+> > > +       riscv_iommu_writel(queue->iommu, Q_TAIL(queue), Q_ITEM(queue,=
+ prod + 1));
+> > > +       atomic_inc(&queue->tail);
+> > > +       local_irq_restore(flags);
+> > > +
+> > > +       if (timeout_us && riscv_iommu_queue_wait(queue, prod, timeout=
+_us))
+> > > +               dev_err_once(queue->iommu->dev,
+> > > +                            "Hardware error: command execution timeo=
+ut\n");
+> > > +
+> > > +       return;
+> > > +
+> > > +err_busy:
+> > > +       local_irq_restore(flags);
+> > > +       dev_err_once(queue->iommu->dev, "Hardware error: command enqu=
+eue failed\n");
+> > > +}
+> > > +
+> > > +/*
+> > > + * IOMMU Command queue chapter 3.1
+> > > + */
+> > > +
+> > > +/* Command queue interrupt handler thread function */
+> > > +static irqreturn_t riscv_iommu_cmdq_process(int irq, void *data)
+> > > +{
+> > > +       const struct riscv_iommu_queue *queue =3D (struct riscv_iommu=
+_queue *)data;
+> > > +       unsigned int ctrl;
+> > > +
+> > > +       /* Clear MF/CQ errors, complete error recovery to be implemen=
+ted. */
+> > > +       ctrl =3D riscv_iommu_readl(queue->iommu, queue->qcr);
+> > > +       if (ctrl & (RISCV_IOMMU_CQCSR_CQMF | RISCV_IOMMU_CQCSR_CMD_TO=
+ |
+> > > +                   RISCV_IOMMU_CQCSR_CMD_ILL | RISCV_IOMMU_CQCSR_FEN=
+CE_W_IP)) {
+> > > +               riscv_iommu_writel(queue->iommu, queue->qcr, ctrl);
+> >
+> > For RISCV_IOMMU_CQCSR_CMD_ILL and RISCV_IOMMU_CQCSR_CMD_TO, I think we
+> > need to adjust the head/tail pointer, otherwise, IOMMU might keep
+> > trying to execute the problematic command.
+> >
+> > > +               dev_warn(queue->iommu->dev,
+> > > +                        "Queue #%u error; fault:%d timeout:%d illega=
+l:%d fence_w_ip:%d\n",
+> >
+> > It might be a bit weird if we view fence_w_ip as queue error and print
+> > the message as error?
+>
+> Driver does not set WSI bit in IOFENCE.C command structure, so it's
+> unexpected to see fence_w_ip set. This message is warning only about
+> unexpected command queue interrupt, listing state of possible
+> triggers.
+
+Okay, perhaps we can adjust it in the future when we actually enable
+the fence_w_ip. Thanks
+
+>
+> >
+> > > +                        queue->qid,
+> > > +                        !!(ctrl & RISCV_IOMMU_CQCSR_CQMF),
+> > > +                        !!(ctrl & RISCV_IOMMU_CQCSR_CMD_TO),
+> > > +                        !!(ctrl & RISCV_IOMMU_CQCSR_CMD_ILL),
+> > > +                        !!(ctrl & RISCV_IOMMU_CQCSR_FENCE_W_IP));
+> > > +       }
+> > > +
+> > > +       /* Placeholder for command queue interrupt notifiers */
+> > > +
+> > > +       /* Clear command interrupt pending. */
+> > > +       riscv_iommu_writel(queue->iommu, RISCV_IOMMU_REG_IPSR, Q_IPSR=
+(queue));
+> > > +
+> > > +       return IRQ_HANDLED;
+> > > +}
+> > > +
+> > > +/* Send command to the IOMMU command queue */
+> > > +static void riscv_iommu_cmd_send(struct riscv_iommu_device *iommu,
+> > > +                                struct riscv_iommu_command *cmd,
+> > > +                                unsigned int timeout_us)
+> > > +{
+> > > +       riscv_iommu_queue_send(&iommu->cmdq, cmd, sizeof(*cmd), timeo=
+ut_us);
+> > > +}
+> > > +
+> > > +/*
+> > > + * IOMMU Fault/Event queue chapter 3.2
+> > > + */
+> > > +
+> > > +static void riscv_iommu_fault(struct riscv_iommu_device *iommu,
+> > > +                             struct riscv_iommu_fq_record *event)
+> > > +{
+> > > +       unsigned int err =3D FIELD_GET(RISCV_IOMMU_FQ_HDR_CAUSE, even=
+t->hdr);
+> > > +       unsigned int devid =3D FIELD_GET(RISCV_IOMMU_FQ_HDR_DID, even=
+t->hdr);
+> > > +
+> > > +       /* Placeholder for future fault handling implementation, repo=
+rt only. */
+> > > +       if (err)
+> > > +               dev_warn_ratelimited(iommu->dev,
+> > > +                                    "Fault %d devid: 0x%x iotval: %l=
+lx iotval2: %llx\n",
+> > > +                                    err, devid, event->iotval, event=
+->iotval2);
+> > > +}
+> > > +
+> > > +/* Fault queue interrupt handler thread function */
+> > > +static irqreturn_t riscv_iommu_fltq_process(int irq, void *data)
+> > > +{
+> > > +       struct riscv_iommu_queue *queue =3D (struct riscv_iommu_queue=
+ *)data;
+> > > +       struct riscv_iommu_device *iommu =3D queue->iommu;
+> > > +       struct riscv_iommu_fq_record *events;
+> > > +       unsigned int ctrl, idx;
+> > > +       int cnt, len;
+> > > +
+> > > +       events =3D (struct riscv_iommu_fq_record *)queue->base;
+> > > +
+> > > +       /* Clear fault interrupt pending and process all received fau=
+lt events. */
+> > > +       riscv_iommu_writel(iommu, RISCV_IOMMU_REG_IPSR, Q_IPSR(queue)=
+);
+> > > +
+> > > +       do {
+> > > +               cnt =3D riscv_iommu_queue_consume(queue, &idx);
+> > > +               for (len =3D 0; len < cnt; idx++, len++)
+> > > +                       riscv_iommu_fault(iommu, &events[Q_ITEM(queue=
+, idx)]);
+> > > +               riscv_iommu_queue_release(queue, cnt);
+> > > +       } while (cnt > 0);
+> > > +
+> > > +       /* Clear MF/OF errors, complete error recovery to be implemen=
+ted. */
+> > > +       ctrl =3D riscv_iommu_readl(iommu, queue->qcr);
+> > > +       if (ctrl & (RISCV_IOMMU_FQCSR_FQMF | RISCV_IOMMU_FQCSR_FQOF))=
+ {
+> > > +               riscv_iommu_writel(iommu, queue->qcr, ctrl);
+> > > +               dev_warn(iommu->dev,
+> > > +                        "Queue #%u error; memory fault:%d overflow:%=
+d\n",
+> > > +                        queue->qid,
+> > > +                        !!(ctrl & RISCV_IOMMU_FQCSR_FQMF),
+> > > +                        !!(ctrl & RISCV_IOMMU_FQCSR_FQOF));
+> > > +       }
+> > > +
+> > > +       return IRQ_HANDLED;
+> > > +}
+> > > +
+> > >  /* Lookup and initialize device context info structure. */
+> > >  static struct riscv_iommu_dc *riscv_iommu_get_dc(struct riscv_iommu_=
+device *iommu,
+> > >                                                  unsigned int devid)
+> > > @@ -250,6 +683,7 @@ static int riscv_iommu_iodir_set_mode(struct risc=
+v_iommu_device *iommu,
+> > >         struct device *dev =3D iommu->dev;
+> > >         u64 ddtp, rq_ddtp;
+> > >         unsigned int mode, rq_mode =3D ddtp_mode;
+> > > +       struct riscv_iommu_command cmd;
+> > >
+> > >         ddtp =3D riscv_iommu_read_ddtp(iommu);
+> > >         if (ddtp & RISCV_IOMMU_DDTP_BUSY)
+> > > @@ -317,6 +751,18 @@ static int riscv_iommu_iodir_set_mode(struct ris=
+cv_iommu_device *iommu,
+> > >         if (mode !=3D ddtp_mode)
+> > >                 dev_dbg(dev, "DDTP hw mode %u, requested %u\n", mode,=
+ ddtp_mode);
+> > >
+> > > +       /* Invalidate device context cache */
+> > > +       riscv_iommu_cmd_iodir_inval_ddt(&cmd);
+> > > +       riscv_iommu_cmd_send(iommu, &cmd, 0);
+> > > +
+> > > +       /* Invalidate address translation cache */
+> > > +       riscv_iommu_cmd_inval_vma(&cmd);
+> > > +       riscv_iommu_cmd_send(iommu, &cmd, 0);
+> > > +
+> > > +       /* IOFENCE.C */
+> > > +       riscv_iommu_cmd_iofence(&cmd);
+> > > +       riscv_iommu_cmd_send(iommu, &cmd, RISCV_IOMMU_IOTINVAL_TIMEOU=
+T);
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -492,6 +938,26 @@ static int riscv_iommu_init_check(struct riscv_i=
+ommu_device *iommu)
+> > >                         return -EINVAL;
+> > >         }
+> > >
+> > > +       /*
+> > > +        * Distribute interrupt vectors, always use first vector for =
+CIV.
+> > > +        * At least one interrupt is required. Read back and verify.
+> > > +        */
+> > > +       if (!iommu->irqs_count)
+> > > +               return -EINVAL;
+> > > +
+> > > +       iommu->ivec =3D 0;
+> > > +       iommu->ivec |=3D FIELD_PREP(RISCV_IOMMU_IVEC_FIV, 1 % iommu->=
+irqs_count);
+> > > +       iommu->ivec |=3D FIELD_PREP(RISCV_IOMMU_IVEC_PIV, 2 % iommu->=
+irqs_count);
+> > > +       iommu->ivec |=3D FIELD_PREP(RISCV_IOMMU_IVEC_PMIV, 3 % iommu-=
+>irqs_count);
+> > > +       riscv_iommu_writeq(iommu, RISCV_IOMMU_REG_IVEC, iommu->ivec);
+> > > +
+> > > +       iommu->ivec =3D riscv_iommu_readq(iommu, RISCV_IOMMU_REG_IVEC=
+);
+> > > +       if (riscv_iommu_queue_vec(iommu, RISCV_IOMMU_IVEC_CIV) >=3D R=
+ISCV_IOMMU_INTR_COUNT ||
+> > > +           riscv_iommu_queue_vec(iommu, RISCV_IOMMU_IVEC_FIV) >=3D R=
+ISCV_IOMMU_INTR_COUNT ||
+> > > +           riscv_iommu_queue_vec(iommu, RISCV_IOMMU_IVEC_PIV) >=3D R=
+ISCV_IOMMU_INTR_COUNT ||
+> > > +           riscv_iommu_queue_vec(iommu, RISCV_IOMMU_IVEC_PMIV) >=3D =
+RISCV_IOMMU_INTR_COUNT)
+> > > +               return -EINVAL;
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -500,12 +966,17 @@ void riscv_iommu_remove(struct riscv_iommu_devi=
+ce *iommu)
+> > >         iommu_device_unregister(&iommu->iommu);
+> > >         iommu_device_sysfs_remove(&iommu->iommu);
+> > >         riscv_iommu_iodir_set_mode(iommu, RISCV_IOMMU_DDTP_MODE_OFF);
+> > > +       riscv_iommu_queue_disable(&iommu->cmdq);
+> > > +       riscv_iommu_queue_disable(&iommu->fltq);
+> > >  }
+> > >
+> > >  int riscv_iommu_init(struct riscv_iommu_device *iommu)
+> > >  {
+> > >         int rc;
+> > >
+> > > +       RISCV_IOMMU_QUEUE_INIT(&iommu->cmdq, CQ);
+> > > +       RISCV_IOMMU_QUEUE_INIT(&iommu->fltq, FQ);
+> > > +
+> > >         rc =3D riscv_iommu_init_check(iommu);
+> > >         if (rc)
+> > >                 return dev_err_probe(iommu->dev, rc, "unexpected devi=
+ce state\n");
+> > > @@ -514,10 +985,28 @@ int riscv_iommu_init(struct riscv_iommu_device =
+*iommu)
+> > >         if (rc)
+> > >                 return rc;
+> > >
+> > > -       rc =3D riscv_iommu_iodir_set_mode(iommu, RISCV_IOMMU_DDTP_MOD=
+E_MAX);
+> > > +       rc =3D riscv_iommu_queue_alloc(iommu, &iommu->cmdq,
+> > > +                                    sizeof(struct riscv_iommu_comman=
+d));
+> > > +       if (rc)
+> > > +               return rc;
+> > > +
+> > > +       rc =3D riscv_iommu_queue_alloc(iommu, &iommu->fltq,
+> > > +                                    sizeof(struct riscv_iommu_fq_rec=
+ord));
+> > > +       if (rc)
+> > > +               return rc;
+> > > +
+> > > +       rc =3D riscv_iommu_queue_enable(iommu, &iommu->cmdq, riscv_io=
+mmu_cmdq_process);
+> > >         if (rc)
+> > >                 return rc;
+> > >
+> > > +       rc =3D riscv_iommu_queue_enable(iommu, &iommu->fltq, riscv_io=
+mmu_fltq_process);
+> > > +       if (rc)
+> > > +               goto err_queue_disable;
+> > > +
+> > > +       rc =3D riscv_iommu_iodir_set_mode(iommu, RISCV_IOMMU_DDTP_MOD=
+E_MAX);
+> > > +       if (rc)
+> > > +               goto err_queue_disable;
+> > > +
+> > >         rc =3D iommu_device_sysfs_add(&iommu->iommu, NULL, NULL, "ris=
+cv-iommu@%s",
+> > >                                     dev_name(iommu->dev));
+> > >         if (rc) {
+> > > @@ -537,5 +1026,8 @@ int riscv_iommu_init(struct riscv_iommu_device *=
+iommu)
+> > >         iommu_device_sysfs_remove(&iommu->iommu);
+> > >  err_iodir_off:
+> > >         riscv_iommu_iodir_set_mode(iommu, RISCV_IOMMU_DDTP_MODE_OFF);
+> > > +err_queue_disable:
+> > > +       riscv_iommu_queue_disable(&iommu->fltq);
+> > > +       riscv_iommu_queue_disable(&iommu->cmdq);
+> > >         return rc;
+> > >  }
+> > > diff --git a/drivers/iommu/riscv/iommu.h b/drivers/iommu/riscv/iommu.=
+h
+> > > index f1696926582c..03e0c45bc7e1 100644
+> > > --- a/drivers/iommu/riscv/iommu.h
+> > > +++ b/drivers/iommu/riscv/iommu.h
+> > > @@ -17,6 +17,22 @@
+> > >
+> > >  #include "iommu-bits.h"
+> > >
+> > > +struct riscv_iommu_device;
+> > > +
+> > > +struct riscv_iommu_queue {
+> > > +       atomic_t prod;                          /* unbounded producer=
+ allocation index */
+> > > +       atomic_t head;                          /* unbounded shadow r=
+ing buffer consumer index */
+> > > +       atomic_t tail;                          /* unbounded shadow r=
+ing buffer producer index */
+> > > +       unsigned int mask;                      /* index mask, queue =
+length - 1 */
+> > > +       unsigned int irq;                       /* allocated interrup=
+t number */
+> > > +       struct riscv_iommu_device *iommu;       /* iommu device handl=
+ing the queue when active */
+> > > +       void *base;                             /* ring buffer kernel=
+ pointer */
+> > > +       dma_addr_t phys;                        /* ring buffer physic=
+al address */
+> > > +       u16 qbr;                                /* base register offs=
+et, head and tail reference */
+> > > +       u16 qcr;                                /* control and status=
+ register offset */
+> > > +       u8 qid;                                 /* queue identifier, =
+same as RISCV_IOMMU_INTR_XX */
+> > > +};
+> > > +
+> > >  struct riscv_iommu_device {
+> > >         /* iommu core interface */
+> > >         struct iommu_device iommu;
+> > > @@ -34,6 +50,11 @@ struct riscv_iommu_device {
+> > >         /* available interrupt numbers, MSI or WSI */
+> > >         unsigned int irqs[RISCV_IOMMU_INTR_COUNT];
+> > >         unsigned int irqs_count;
+> > > +       unsigned int ivec;
+> > > +
+> > > +       /* hardware queues */
+> > > +       struct riscv_iommu_queue cmdq;
+> > > +       struct riscv_iommu_queue fltq;
+> > >
+> > >         /* device directory */
+> > >         unsigned int ddt_mode;
+> > > --
+> > > 2.34.1
+> > >
+>
+> Best,
+> - Tomasz
+>
+> > >
+> > > _______________________________________________
+> > > linux-riscv mailing list
+> > > linux-riscv@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
