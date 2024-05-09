@@ -1,185 +1,162 @@
-Return-Path: <linux-kernel+bounces-174789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A748C1500
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:46:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186868C1505
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:48:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 211D91C20C64
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74A528219D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D917EEF2;
-	Thu,  9 May 2024 18:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4B77E59A;
+	Thu,  9 May 2024 18:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="G1C0l0pS"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErY7zMum"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84F37711E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA8E1DFC5;
+	Thu,  9 May 2024 18:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715280394; cv=none; b=PXyAVq5beXj2zmkcxt6962Txr1HqjhXtS5ru/tJcpwe4n6gFJdVMiHvnkoLknn7LaNyZ33xaf5+WeVXkcqiEjrWofUBzzUxLy7x5Pks1srp25HgvVUqUP0rTORiyaLnfq5AgRvSRA3r0KI05Q/+iZDO4vx+oKB+nk8DSXtCQ6PQ=
+	t=1715280490; cv=none; b=fyNaP5BtQd2dCwXzSSzaP5nqGMiKUV/LL8XvG9C5+6iRy/Tk2nW8w65nHnKr4nMVI0VPR5XUeKD/BHE0i9yhvpbKeiI324jHA0xvxEBkqXxAw857fSngXbxuuvg9cMs/ikAs6DvLkNkePqtovPcQCfW+rgW5basPlbuxJVOUSqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715280394; c=relaxed/simple;
-	bh=bVYyI3uNK8Ue9unjuecRzNC8ZDWp+FAsR3nmvBep48k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JpvwHR9rOlWL8GccLe4fplDYBkd+IBU4tEgJoJjg+xc0OF5BmflbWrximpPD4/G7tLMH3xjUtthJkArgv406N/cIyzVFayKjU9jDLaci+qFAFeiuykzps+Psv6TIisvVmDpc/t17L3cndN4Z9HTS+hxf7iP9hbG0cjssjiq9XqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=G1C0l0pS; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f44ed6e82fso1108608b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:46:32 -0700 (PDT)
+	s=arc-20240116; t=1715280490; c=relaxed/simple;
+	bh=tqQE8DbEcNTGyVwC9ZlW1KXdlFxeZtTQjFzsbunffK8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ob5LePanO0Pi+ZD7Hm8+b3tdnCqjm8BaOcJxWTvshwHxTgaz1GFR04+qjv7qd7/ydxTtjHDG29f8hva7aE/SmJFttbF/M+Hfo35fVqJh2WaZckZ410bRN0Lnr94MUahN2xmtBxtaNvRxP58DOifrF5ChU/loC4LLglcafAuLrHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErY7zMum; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34da35cd01cso1025795f8f.2;
+        Thu, 09 May 2024 11:48:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715280392; x=1715885192; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8qs+zeJ73xYDCsb+04oKc8vKm2skXM6Yjmk5Cex/hmQ=;
-        b=G1C0l0pSZ9WKAz3yBAJ34cjzN7oLHUiu/xl/t1kyW/hxNH3yObcTPTGas/rr/p2Z18
-         /TXyiuu6/TX3ekHxPDwIu3N+lBaSAi9iKKdEFvy5eUnPV0f73jC564DS9vL+HnHwoIRm
-         Ngy7IoO02hvOIrhdOLsNkc58Y8l05eJFsccJym3MqvSJb9SZOms5a843QXrC03zhxTIY
-         0pi422VZEonhd7O2QA3fHRz5Tz7vQmjEX1CLFDGIf5eVOP8IBjTvmOhcY1I/WZ96zGqM
-         a7BegrvAs4EmhgMXGWTAfqsbPYBtYIvgDf/muwMD0qsv1G2HjT+L28xrXuG7B5oakLsv
-         oxjA==
+        d=gmail.com; s=20230601; t=1715280487; x=1715885287; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DYTxoAU9R8PdCA3DTF+Msdy/qnJrq3ZddQpwOU9eM8s=;
+        b=ErY7zMumbS+8UTZSZ1B4ljxiOXJhg3jpMahuJiRmMrF7AyDV5h2zDcD9CJe9YDb4ub
+         e6rE+99sc2ZJ1LVn0sGQdFKutVgNQliko06IDzKAJHyh66Y430J/9T3a7gKhwBKEZ9B2
+         ZTGwqPBtxbroP41USy9VYtPvI3lWP1z43+yb7vTTOYUOvW2OMFl01f/LDE+pl1kgc6bB
+         mVzKQ8Dy9UdzeeqFlWvYE2MfAdlCCVueFE5QPH2y+6nSnnhVb5PhKRA1pBiqKYXde3EA
+         fdK0kw4O1c8cweLMNWhsWASs5YyFk5OL+5LYFKXhChbji9PQxVv1iZ42jlxX6M3E0cW3
+         BzFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715280392; x=1715885192;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1715280487; x=1715885287;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qs+zeJ73xYDCsb+04oKc8vKm2skXM6Yjmk5Cex/hmQ=;
-        b=so/1W37tJnmmj1iq5bwjbA6ktQQ2A4AfbWCaM+QwH8fX2iqI7NDBJ+BBLSzfdrCvjE
-         xqkZImRDT1lZ4oQDAxOIsIXpWw3Cvqcv3llV0Pn2UWUE7/EUgmBHm4mf+vId/d6q3hwL
-         I2JdujQaulQXcbM4XIrEICG5hdG2VIDsimyU44+U9hJVRpI+MVS1adJzWswk1fUDWgMb
-         rhLM7wnXcO54FczvcCMN7rUiFJsPE0dPiYvmU/uuLu1iOn1ltd8nnRaAqOFcNQDRAhk3
-         YGaXfeGcGBvY+FVuBSquesuIXgRdhkc2niM1Sed/n6jsOSRiO47wDKpuL5c1AhCqASFB
-         a3eg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9OuOhgTzSCufmOUts0JMBZTxLbI6yuvCqjPDN/KjYHHRYBeMekbDAQU4dF2Cl7RiWanoX/X5CNCN2LgnNZoabv2dhf5E0/t6fvmvm
-X-Gm-Message-State: AOJu0Yx6BodOeCeuS4vX+iTD5ZZLHydJ17OvMSpi+r9n5/q9agmRGM4i
-	SPHaexrC4puZkmJBcda4g1kC8Nm8bX3Fdc01drv0vpXf5OTfyT3ZR5+yvjzRTJg=
-X-Google-Smtp-Source: AGHT+IHSkbFTtM14eAz4leAGtq7pP+xnyJh4LBmDtig93VWvmXkOMQqIKOUJFRYjpBP4l5vncaDl3Q==
-X-Received: by 2002:a05:6a20:7486:b0:1af:889e:8b06 with SMTP id adf61e73a8af0-1afde10ad77mr864261637.35.1715280392190;
-        Thu, 09 May 2024 11:46:32 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2afa7b5sm1607660b3a.163.2024.05.09.11.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 11:46:31 -0700 (PDT)
-Date: Thu, 9 May 2024 11:46:26 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, paul.walmsley@sifive.com,
-	rick.p.edgecombe@intel.com, broonie@kernel.org,
-	Szabolcs.Nagy@arm.com, kito.cheng@sifive.com, keescook@chromium.org,
-	ajones@ventanamicro.com, conor.dooley@microchip.com,
-	cleger@rivosinc.com, atishp@atishpatra.org, alex@ghiti.fr,
-	bjorn@rivosinc.com, alexghiti@rivosinc.com,
-	samuel.holland@sifive.com, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-mm@kvack.org,
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	corbet@lwn.net, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	charlie@rivosinc.com, apatel@ventanamicro.com,
-	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
-	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 04/29] riscv: zicfilp / zicfiss in dt-bindings
- (extensions.yaml)
-Message-ID: <Zj0aAiZiTrt9ACjj@debug.ba.rivosinc.com>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-5-debug@rivosinc.com>
- <20240410115806.GA4044117-robh@kernel.org>
- <CAKC1njSsZ6wfvJtXkp4J4J6wXFtU92W9JGca-atKxBy8UvUwRg@mail.gmail.com>
- <20240415194105.GA94432-robh@kernel.org>
- <Zh6c0FH2OvrfDLje@debug.ba.rivosinc.com>
- <20240509-cornflake-foyer-e6589c2bc364@spud>
+        bh=DYTxoAU9R8PdCA3DTF+Msdy/qnJrq3ZddQpwOU9eM8s=;
+        b=C4Vn/5PNh/mXVDdC0rnQ81kyKQMBPIvExITTsx3x4bPr1HitwcQT3PWOIAKcX0DI9i
+         qau3DEcMIzQbOASD1hSvXmJpRgY7QVlSK/feXSWx5dcbXfTc8wEX5x3qMV6qYXBnV5Uy
+         ytxm3x3Yn20FBgRSmF7TecDKfz2JUbSXqaXIJxamvpCi/90VdDasDNvUXgDZZYkAfuq+
+         fhL/GEJ6Fn0pjXeAQRJclXrgkyr+lS0CDHcIBYwvokBB8zrKeKSWdtKDXlejGEbyjIUl
+         yxOI1IfgNr6ytdtXXrNw7NhlRlWQUZgO0KEqWimon+4dgy0iVqHzL8Jt9JmcWeJlpv0Z
+         QsVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuxefx6DYkZXxQeM+4dazfDl0AGx1Dt6L0b1BOiUD7frbhbE+KXuGCW7DJ9447d4cBFSoV3cwEVLlb78FTi10ScQjGj5GC9JaLNTKEqrNRXLPX9RglRTlW/4cBSAa66WbaiRh2iqXmDA==
+X-Gm-Message-State: AOJu0YyMuZG902mRiAORrQIvlLnKuzvWPjbFwMyCzg+q0ertj+GyLV+S
+	Llo4Kl6zV+9dDEvcg0GuCjhxaao3+5hJ05Hvc3bzUiIEv1foTZ3XUFGtrR3I
+X-Google-Smtp-Source: AGHT+IEZrPYMQWA87qEgbWGVE9lGIcF3sO7Q+rX+visOsuQ4eN6ZgNF/ss1X+uJz5qD/wFXiBH5o2w==
+X-Received: by 2002:a05:6000:a88:b0:34c:e62a:db70 with SMTP id ffacd0b85a97d-3504aa63447mr418641f8f.67.1715280486648;
+        Thu, 09 May 2024 11:48:06 -0700 (PDT)
+Received: from ?IPV6:2a02:2f00:503:7c00:1884:a725:4a68:962c? ([2a02:2f00:503:7c00:1884:a725:4a68:962c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacf47sm2374485f8f.78.2024.05.09.11.48.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 11:48:06 -0700 (PDT)
+Message-ID: <799c3c81-fc33-4f76-bd0b-287e8b8a6f5a@gmail.com>
+Date: Thu, 9 May 2024 21:48:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240509-cornflake-foyer-e6589c2bc364@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: add schema for 8ulp AVD-SIM
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, Liu Ying <victor.liu@nxp.com>,
+ Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240418203720.8492-1-laurentiumihalcea111@gmail.com>
+ <20240418203720.8492-3-laurentiumihalcea111@gmail.com>
+ <20240422142906.GB1207218-robh@kernel.org>
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20240422142906.GB1207218-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 09, 2024 at 07:14:26PM +0100, Conor Dooley wrote:
->On Tue, Apr 16, 2024 at 08:44:16AM -0700, Deepak Gupta wrote:
->> On Mon, Apr 15, 2024 at 02:41:05PM -0500, Rob Herring wrote:
->> > On Wed, Apr 10, 2024 at 02:37:21PM -0700, Deepak Gupta wrote:
->> > > On Wed, Apr 10, 2024 at 4:58 AM Rob Herring <robh@kernel.org> wrote:
->> > > >
->> > > > On Wed, Apr 03, 2024 at 04:34:52PM -0700, Deepak Gupta wrote:
->> > > > > Make an entry for cfi extensions in extensions.yaml.
->> > > > >
->> > > > > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> > > > > ---
->> > > > >  .../devicetree/bindings/riscv/extensions.yaml          | 10 ++++++++++
->> > > > >  1 file changed, 10 insertions(+)
->> > > > >
->> > > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
->> > > > > index 63d81dc895e5..45b87ad6cc1c 100644
->> > > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
->> > > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
->> > > > > @@ -317,6 +317,16 @@ properties:
->> > > > >              The standard Zicboz extension for cache-block zeroing as ratified
->> > > > >              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
->> > > > >
->> > > > > +        - const: zicfilp
->> > > > > +          description:
->> > > > > +            The standard Zicfilp extension for enforcing forward edge control-flow
->> > > > > +            integrity in commit 3a20dc9 of riscv-cfi and is in public review.
->> > > >
->> > > > Does in public review mean the commit sha is going to change?
->> > > >
->> > >
->> > > Less likely. Next step after public review is to gather comments from
->> > > public review.
->> > > If something is really pressing and needs to be addressed, then yes
->> > > this will change.
->> > > Else this gets ratified as it is.
->> >
->> > If the commit sha can change, then it is useless. What's the guarantee
->> > someone is going to remember to update it if it changes?
+
+
+On 4/22/2024 5:29 PM, Rob Herring wrote:
+> On Thu, Apr 18, 2024 at 11:37:19PM +0300, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >>
->> Sorry for late reply.
+>> Add schema for i.MX8ULP's AVD-SIM module.
 >>
->> I was following existing wordings and patterns for messaging in this file.
->> You would rather have me remove sha and only mention that spec is in public
->> review?
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  .../bindings/mfd/fsl,imx8ulp-avd-sim.yaml     | 42 +++++++++++++++++++
+>>  1 file changed, 42 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mfd/fsl,imx8ulp-avd-sim.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/mfd/fsl,imx8ulp-avd-sim.yaml b/Documentation/devicetree/bindings/mfd/fsl,imx8ulp-avd-sim.yaml
+>> new file mode 100644
+>> index 000000000000..4020c6e37f80
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mfd/fsl,imx8ulp-avd-sim.yaml
+>> @@ -0,0 +1,42 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mfd/fsl,imx8ulp-avd-sim.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: NXP i.MX8ULP Audio-Video Domain System Integration Module
+>> +
+>> +maintainers:
+>> +  - Liu Ying <victor.liu@nxp.com>
+>> +
+>> +description: |
+>> +  The AVD-SIM module provides configuration options for components of AVD.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: fsl,imx8ulp-avd-sim
+>> +      - const: syscon
+>> +      - const: simple-mfd
+> 'simple-mfd' means you have child nodes, but you have none defined.
+
+Thanks for the clarification! These were intentionally omitted since they're
+not needed for the DSP.
+
 >
->Nope, having a commit sha is desired. None of this is mergeable until at
->least the spec becomes frozen, so the sha can be updated at that point
->to the freeze state - or better yet to the ratified state. Being in
->public review is not sufficient.
-
-Spec is frozen.
-As per RVI spec lifecycle, spec freeze is a prior step to public review.
-Public review concluded on 25th April
-https://lists.riscv.org/g/tech-ss-lp-cfi/message/91
-
-Next step is ratification whenever board meets.
-
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+> If you do add child nodes, 'simple-mfd' also means there is not any 
+> dependency on the parent node such as needing this clock to be enabled 
+> for the child nodes.
 >
->Cheers,
->Conor
+> Rob
 
+The plan was to add the children later on as required.
+Given the children would in fact depend on the parent's clock being
+enabled, I wonder if just removing 'simple-mfd' from the compatible
+list would do the trick?
 
 
