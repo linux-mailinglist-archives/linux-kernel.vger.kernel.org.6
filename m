@@ -1,123 +1,162 @@
-Return-Path: <linux-kernel+bounces-174946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4D18C17D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:47:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2648C17DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18E41F21DE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDA041F21CAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F6A80C02;
-	Thu,  9 May 2024 20:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8E180C04;
+	Thu,  9 May 2024 20:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VnpqV795";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DG9geJXN"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HY6q1azC"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65B1C2ED;
-	Thu,  9 May 2024 20:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA5F770EB;
+	Thu,  9 May 2024 20:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715287649; cv=none; b=MoqwX3YVgasu7ZAH5UhlW2BOTYZLmG4adPOu/KoNFzPk3XCWvj6KpX+tmVesOBLHVijzo6TGBqIdSjjMPU3xNdYn4fauqzkOreTkrGkvdcOqLs+tAK+XkyhYrLGAnFuedyJuEpIIO91JyFglwS3a7lN5UkdTalIwoTaUxu/jgfk=
+	t=1715287686; cv=none; b=gUX7md0IaIM55kB31kz7maAZJ2Ceq6nvrB/uwzOWDHy5hVrLv54Xg/4pbWOezL3Zod1A5xppTBUfve7gyikmPl85PfomhPquAwz5p5b+z9g2ojlS0kx4NZWXD5o/l9jLmi0P/tNxFcOZex7NwX0sUf4pTr4Jfsgd2QCdmcjvzzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715287649; c=relaxed/simple;
-	bh=LzRm47B1O70Prbd444BZbXlXNsdgncurpsO/SnH5gXY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=i07qdLqjQyAFx9oe6i579+jqI22u7SlqNhTCzldE64rLq0hte8gmo5gI/00KDSZs+p77EmwMz2UMHSQAK9+1xfK6ASSz+qNCB20j/xV3o68Yya8WsJg5OSEaPdbWNf1ZM5Bvk6UE7MpdpHrUwOWuPJag7vK2hAd7r5G+Mk5Ukrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VnpqV795; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DG9geJXN; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 9D498114008E;
-	Thu,  9 May 2024 16:47:26 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Thu, 09 May 2024 16:47:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1715287646; x=1715374046; bh=mz6niMhiXS
-	bLSWvYwWOExvotvdMEBuYNMUreHlPi8so=; b=VnpqV795gpWGS7wq6klfXzFl9U
-	K2r97slcHjlY3xygj3TbEaTlIhCuB5WSAClDhG+E5NOA7zArW0W+H4RlKTE25g7q
-	qHBhyPama1AwBLJmpCoHyb42leGLLuiAvD9YYUkU8RUnY+ydX2hWJk/j8ThneDS6
-	d60XKyiW7GAUVIlhKjVShxIsLDqJvi/RW9OlKYCPsDA1+OzVHS3dQ1N4sh4lJCKb
-	I7XMc/MmtjwmP/RVIKyD2MkFL2Bo1JYVWtK69geDU6w1XcUsxxiBPH98fB7/jnLp
-	NDBEoM5RzJsfF1v5gp4PD0jDLUv0hwAax3/8Jegn3FziTkU7H6I5JXmDvpmw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715287646; x=1715374046; bh=mz6niMhiXSbLSWvYwWOExvotvdME
-	BuYNMUreHlPi8so=; b=DG9geJXNLCdb5rb4NIbiHrw1LctXxlTqKiIyw38Z+l2E
-	XQyrNgal50nSSYsKSJDCeYRuQ3Kmy/pR3yeHCMmK4BD0OJIcZLbYbw5N65uLkt6N
-	vCZ83+PFqcySnZaasG6hYcam2eZTCz/P4Vle5BgNDzbU/aBjTqCLM0AXgA4jkqG1
-	CJexCmrI7oM+5oex/7fIZnkcGDOsHIEA9yzVFzAOrF2d8+4MI1L9yfINqvgm64Qt
-	F2jIc0mnuaJ8RMHrV8vONYhWdg2YH9ClmscY5X7kBgLvtvmKPoOOy2I8NQUOKGyK
-	+FGElKk93BpYAgSVVS7eFO5kRP+prs3ji+dS5uDtqQ==
-X-ME-Sender: <xms:XTY9ZgJtA5SiJm7iyC3wLLJhcdz_b1TSSuxo6ovNZL1hGLAsY4CpnQ>
-    <xme:XTY9ZgJSM5u_eRdKY6LLf62sOOyCTXnH-Wf4lTKfpOgiwonkTE8f9ttJ3BGCWuWMD
-    VAifkn3ibTNk3AGOio>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefvddgudehtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:XTY9ZgsPwH1bgF9Zp_etqbWKxo9KsF2t6NMx9ldb0r0v4yctjDOlIw>
-    <xmx:XTY9Zta1UcUWnIyhAYeerCbfKg_wQgVNM4Vsry35_Y9jZnYngdGMvg>
-    <xmx:XTY9ZnZ0tN7ONANjJVzGmeX_LJjEwisOkYF8jC1C4F5lT6nF57MnQg>
-    <xmx:XTY9ZpA2JiVmKSfw06C4g7GRsJkFkDgukqew-Thssr90GcXoDfUPag>
-    <xmx:XjY9Zhn4N3_RhJoq78BYrT2kZfHfuVjZCtc-zFZn2pIz4F1pTYYllIcq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A53E8B60092; Thu,  9 May 2024 16:47:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715287686; c=relaxed/simple;
+	bh=bPfwfGtUUAbKsRwmUNakzpzYYounVkoGJrqqKv10akE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sf1f769pQcCaK5/k0UKFTjx+WISEe6vmSO9wI8zH/AQtsEXFd0s1QL7bl1f+1/hi/aAWKNP/VABaip28ljEfbWDnNk6toK8RJFShMl6NL+J2dDxWoO/DrFNrIOHyp1iGbOScpuxN0pDj3eLdH1dNJL/rO3aZoFZVcWdue2Ye/84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HY6q1azC; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34da04e44a2so871357f8f.1;
+        Thu, 09 May 2024 13:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715287683; x=1715892483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gIhJ2uqcfnSzx179NdZNb/jXDpfOuXacsoL5bKYKdrM=;
+        b=HY6q1azCR8bodNtms2jYT+9VW16WhxKqgnM0YdD0AOC88f3hpjQPdjb78+Ioqzwj09
+         F0bQVG48eosiUwvHUJbRIGojmXCDCoyHchzwzHhlCZkR90uoSCS5PdurDip/hKU13eS4
+         NNFNGe+4prRnILZu0lL28CsFvYhbQoCXwzpYG62jxADtDMIrrjintNqNgjaBYh4MjnO3
+         kINM9bQ+u/WW7wblfZWF0ryYjRRZftTvbbAElr7qv/IIRUOlBaAmDWcjq6K7LORVjr1m
+         DOMIKj/nOTLauOFSENJiW3SwK1K+QM4Blxs30EkKzBp3cLmKD8aynZWVvDaNHKfAPtd3
+         J15w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715287683; x=1715892483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gIhJ2uqcfnSzx179NdZNb/jXDpfOuXacsoL5bKYKdrM=;
+        b=tUj5BcT28mrdhGLHgq4SfRHkeinmeVmF/NVy/enzq4hHk6hV6w9cOP4PG2hmox5Faa
+         9T1mcAfdnUV4EXL2JTv4ldJLZGl6oKG7BVjxHyrU+MOQEXNvWvwitq+aQEdOEL6jnJCl
+         DbXTcl4NdbN7+V9w0yDz3oAnVEvpRwb1IgZsunUiqNyWVkRRJeIhKcEfFu+1HIOqOWKz
+         N6LlzwD1ZFxWKODfoZL/Shm1K8l+qPDBoNBMKOV8yle+FB6OpMzCw4kMetYx0L3o5NtK
+         j77mk3LHVK0mBb+sjG0vTU+Hh9XoO3SqV0Gr5g96i4xPxYEYVV6/ChMhLwfsatbc8+Bs
+         3bxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPJMrcsAZMC8QMtqgLHXFn5AZAPmnZs5fzqhEIwUq1qYdQnPVCJezaG/0s73Snkj5x/MwsujF+sIJGLth8E868Htn0BBijMstXEfW6D/Chh9bJTeizibhQItQnaFf8iuqkgsn6cctyhLTrsdy7Giq155RGHOZZdEgVA2/lVhdnrMl0euA=
+X-Gm-Message-State: AOJu0Yw0UBNANz2a5dUDR3vVjSdm6xAEz6pfBklmUBvVK8JIJEmq7IjJ
+	wDYyS0NSVHYu9oUvcXb/3bkokY5CQqwJo/7Y61aEOAC/HdiKIj8G
+X-Google-Smtp-Source: AGHT+IE6QuwvRB9pIhd6+zBAEZLwKTyH/jJjFlRTPattgAySp7+XJZnAqJkuFi2pc740kQpujvXX1A==
+X-Received: by 2002:a05:6000:c6:b0:34c:f989:e4a5 with SMTP id ffacd0b85a97d-3504a96d562mr414645f8f.66.1715287682354;
+        Thu, 09 May 2024 13:48:02 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3502bbbbf08sm2588185f8f.96.2024.05.09.13.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 13:48:01 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] mips: bmips: improve handling of RAC and CBR addr
+Date: Thu,  9 May 2024 22:47:44 +0200
+Message-ID: <20240509204750.1538-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <2ef3df08-ffc7-4925-82bf-0813c8b0b439@app.fastmail.com>
-In-Reply-To: <20240509121713.190076-2-thorsten.blum@toblux.com>
-References: <20240509121713.190076-2-thorsten.blum@toblux.com>
-Date: Thu, 09 May 2024 22:47:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thorsten Blum" <thorsten.blum@toblux.com>,
- "Nicolas Pitre" <nico@fluxnic.net>, "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
-Cc: Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
- "Greg Ungerer" <gerg@linux-m68k.org>
-Subject: Re: [PATCH] net: smc91x: Fix m68k kernel compilation for ColdFire CPU
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 9, 2024, at 14:17, Thorsten Blum wrote:
-> 
-> +static inline unsigned short _swapw(volatile unsigned short v)
-> +{
-> +	return ((v << 8) | (v >> 8));
-> +}
-> +
->  #define SMC_inw(a, r)		_swapw(readw((a) + (r)))
->  #define SMC_outw(lp, v, a, r)	writew(_swapw(v), (a) + (r))
->  #define SMC_insw(a, r, p, l)	mcf_insw(a + r, p, l)
+Hi,
 
-I think you can just use iowrite16_be() and ioread16_be()
-here in place of the little-endian access plus swap.
+this simple series improve handling of RAC and CBR address and try to
+upstream these simple patch we have in OpenWrt for a while.
 
-Also, it looks like it's been broken for six years without
-anyone noticing the problem, so I wonder if there are even
-still any machines that use this driver and get kernel
-updates.
+The first patch fix a straight kernel panic where some Bootloader might
+enable RAC but misconfigure the CBR address. The current logic only
+check if RAC is enabled but doesn't verify if the CBR address is usable.
 
-     Arnd
+The DMA sync function cause a kernel panic for invalid write. (as CBR is
+0 or something like 0xa)
+
+The second is preparation for making the CBR address configurable in DT.
+Since this address doesn't change, we can cache it and reference it with
+a local variable instead of calling the register to access the value.
+
+The 4th patch make it configurable with 2 DT property, one to actually
+set the reg and the other to force set it.
+
+The first property is used when CBR is set to 0. The second property is
+to force it if the Bootloader sets it to something wrong.
+
+If the CBR value is not 0 and is not forced with the second property a
+WARN is printed and the DT value is ignored.
+
+The 4th patch enable RAC on BMIPS4350.
+
+These has been tested on BCM6358 (HG556a) and BCM6368 (VH4032N) and
+reported correct functionality.
+
+Changes v4:
+- Fix compilation error with legacy brcm target
+- Improve property description in DT commit (give
+  CBR meaning and drop reference to linux functions)
+- Use only __read_mostly as we can't add variable to
+  multiple data sections
+- In patch 4 use local cbr variable instead of global
+  one.
+Changes v3:
+- Drop broken-cbr-reg property
+- Fix anyOf+const with enum
+Changes v2:
+- Prefix brcm vendor in the added property
+- Drop last patch (cpu switch from DMA sync)
+- Validate CBR addr from DT to be outside DRAM
+- Reduce indentation in DT CBR check
+- Reduce delta and use local variable for CBR where possible
+- Fix and improve typo and spelling mistake
+- Use 0xf instead of 0xa for BCM6358 RAC enable
+
+Christian Marangi (3):
+  mips: bmips: rework and cache CBR addr handling
+  dt-bindings: mips: brcm: Document brcm,bmips-cbr-reg property
+  mips: bmips: setup: make CBR address configurable
+
+Daniel González Cabanelas (1):
+  mips: bmips: enable RAC on BMIPS4350
+
+ .../devicetree/bindings/mips/brcm/soc.yaml    | 24 ++++++++++++++++
+ arch/mips/bcm47xx/prom.c                      |  2 ++
+ arch/mips/bcm63xx/prom.c                      |  3 ++
+ arch/mips/bmips/dma.c                         |  2 +-
+ arch/mips/bmips/setup.c                       | 28 +++++++++++++++++--
+ arch/mips/include/asm/bmips.h                 |  1 +
+ arch/mips/kernel/smp-bmips.c                  | 27 ++++++++++++++++--
+ 7 files changed, 82 insertions(+), 5 deletions(-)
+
+-- 
+2.43.0
+
 
