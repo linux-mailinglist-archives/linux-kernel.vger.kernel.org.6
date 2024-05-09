@@ -1,195 +1,280 @@
-Return-Path: <linux-kernel+bounces-174585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6B38C112A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C328C112B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B94751F2381C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464FF1C219D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D78B15E810;
-	Thu,  9 May 2024 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167B515E7E4;
+	Thu,  9 May 2024 14:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfP6Tliv"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zJcEjUAD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HFXPgYFu";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zJcEjUAD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HFXPgYFu"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D78414B95C;
-	Thu,  9 May 2024 14:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7DF15B130
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715264698; cv=none; b=YfjULLv1UeyO8OEcNMdYBnhpCRumZDrCxYmjheGhVbrHQOaz0DigFLNJg4C5DFhlxfzXpmsmO0D7tE8wwsxswvf4CnwrY6ArZ/3iF0TbVHR+VmE/0VClzsRpAX9XTfE0yg/Id7yalTSPOJhNISoe+VqaLWNdlqpoKhjjvE3kSKw=
+	t=1715264712; cv=none; b=TivYUtlFso/bqhBkoai8wV9p4sUjQ3X6AjBsBhsHZ1oDKNU97ErDtkvhh9C9evNJZ3zDmoc/W5iH9RXYHvEluXRl6p+MwYEm6IbxivYZw13MXHJdAxkN5ko0CP6QaFHgUNmHtYwhwHwOJb8HHZdFOK0M2rqedFjF3faX4QgBA4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715264698; c=relaxed/simple;
-	bh=ApIc6TXPNOl7QssVveAqbBpF15Kts83ge8Y5RpmDh1I=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=lJUX2v5qV1HsawLdPy1vX1GVfE8N7v3giAlRqQTNB1ZOGDknvq7NOf5EkmEemdfrZI6EP1CoxNoChPs0J3X0PRNzHe05KFHn6CUMjfnuP8jEUMtzEubMVPcCB/hG299sSqg+PkA4DLJyM1wqZ7Dbl4cUng358ZYmr2CCiNcqLLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfP6Tliv; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-43abc28f73fso2628331cf.1;
-        Thu, 09 May 2024 07:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715264696; x=1715869496; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3zs16QG8OBEhYviVc8HMUKq/xgwrRdNsgy9DJTA2Hlk=;
-        b=dfP6Tliv8t4ARwzP6lHCuMN2psEulQzvQgC7bo6UDOh4wH2+6Np/fOL/585NGMW1Mp
-         AFeqtLpOPr3kuK/g6s/BCviRXXl2JBhpCQbyGxhu5Z+M3F7SRvFu9FYrrSCllQ3UJ++Y
-         0Ji4OSDIayxLUAjCMUqYzNdOqPtZ3DvmJ9eYPtyWbE++ZGbEYrqCq0z89bXSLVduwYJb
-         bQ5uJ765YhvVYIBR7WpKzQvww2MPoTieTpHMSxdkT2vojmFZ/A4ioCzOPpmBx9k34Bcw
-         R5iM+mc9czkaUhjh71bPwbIQEZyH0zJAuf86rAJ/T627GyeYkJznD6+eiIpi/B0BuNJV
-         m90A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715264696; x=1715869496;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3zs16QG8OBEhYviVc8HMUKq/xgwrRdNsgy9DJTA2Hlk=;
-        b=e6MDVj5STNWkE1H4/Xqqd1IE9qpA6g3XjSAFED+9nZk52R/LyT8a2JsfUqvsAEMEVr
-         1BS/p8GrEIxyAeTuIuGmT7Mo2+pN0BIYswcXtLFy/MFcwVtu9+Zujy+VsRqzHnzJ8d8I
-         vvxkqh6XdAh1hLGMN8UuPWHBzFDrkBt3dU3YLyNlb46760uGnjigHLpQ+C5tBzXTFDZy
-         2TpP1W7voRni0uzdT725HWNsB7rJzTV7v2/mUvz7TtIPxCUrCflwn2NOaIjkCyXUbIex
-         MkTyUyYHxR4WuQX3jEwdZsRkkj6VdeEo7sBiC1JiJkqrs7wglReHDo2AZ/AUdpUmnTWo
-         KHcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTbYpyZF6H58ArzUsaOja7fNeIbcWA6E3G45hUol6KtgJ/Rr7N0FwCiZMvxodcU/Whw+b4KcXtN3fZGQhA2HRWlcTtUDUxA28wX8IXxlnGIvp14k25AWxGzfhsp4yiP1K216yNjNjtOg6tiJhZT/OO0RMM0HJpC1HP8iiCbmCtNx7F6b+7
-X-Gm-Message-State: AOJu0Yxsmxg0tQ2B9NZgzSNWXAm8T08g2LaKxCYWaWTMmVib3SIw3jJA
-	80A82JWgRGnEj5qEe4rl4MTO8H9BuR+FHDBVB70C2Z87fWPSuMOS
-X-Google-Smtp-Source: AGHT+IErNF5o1AhRplGAtweo9Eb0uwDNJjg9rqHt+RUHvGW8d8hxL8YBlgOk/OurMBVSmOBGgAbuaA==
-X-Received: by 2002:ac8:5f09:0:b0:43a:a8ad:7954 with SMTP id d75a77b69052e-43dbf4e74d7mr70501511cf.28.1715264695997;
-        Thu, 09 May 2024 07:24:55 -0700 (PDT)
-Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54d922esm8730591cf.22.2024.05.09.07.24.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 07:24:55 -0700 (PDT)
-Date: Thu, 09 May 2024 10:24:55 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Richard Gobert <richardbgobert@gmail.com>, 
- richardbgobert@gmail.com
-Cc: alexander.duyck@gmail.com, 
- davem@davemloft.net, 
- dsahern@kernel.org, 
- edumazet@google.com, 
- kuba@kernel.org, 
- linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- shuah@kernel.org, 
- willemdebruijn.kernel@gmail.com
-Message-ID: <663cdcb73953_126914294b5@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240507163021.130466-1-richardbgobert@gmail.com>
-References: <20240507162349.130277-1-richardbgobert@gmail.com>
- <20240507163021.130466-1-richardbgobert@gmail.com>
-Subject: Re: [PATCH net-next v9 2/3] net: gro: move L3 flush checks to
- tcp_gro_receive and udp_gro_receive_segment
+	s=arc-20240116; t=1715264712; c=relaxed/simple;
+	bh=bBIpM16SSg37TkKCJcNfvZpewLdzAeXnuS8VqydFTvI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=VYM6nri+sLZ6HHvgT2M+iduGOOgAC2KRSUqQxFbhN//wAnRpS1LboSN09BMrKrO+teE5RHupXTvF1E05fiJ7bNvhtE7owafgrueBqVV4kcoJefakhPiL5m/J0pK7BYsBP7vi5Z64t6bc9bgGRAMwlwSCL5OCws3jk7A+e30eiiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zJcEjUAD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HFXPgYFu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zJcEjUAD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HFXPgYFu; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5B5FD3872F;
+	Thu,  9 May 2024 14:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715264706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
+	b=zJcEjUADgmUdzL9apTmoZkkxDpecRwKnteb9CFfPZw2Ov5IzGZA4E7wDbJk6VLpkjCMRH1
+	xYz7knZJpj9GA6HVWLR9e+Ve6R1w+jQtgYX1GjQF43NVRsYoPJ+Lb353epiSkjZOR8Rdbk
+	vtznahS4T9eADzcYD7p9/KFkFGJi/TA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715264706;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
+	b=HFXPgYFuIowtyiHgGbYEKE2lKeURO+WWQ2/igkv6FZUvSx7Rx5hkL2SGrrpLdYgcGDQ2Nz
+	S/smmm4YvlwA+uBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715264706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
+	b=zJcEjUADgmUdzL9apTmoZkkxDpecRwKnteb9CFfPZw2Ov5IzGZA4E7wDbJk6VLpkjCMRH1
+	xYz7knZJpj9GA6HVWLR9e+Ve6R1w+jQtgYX1GjQF43NVRsYoPJ+Lb353epiSkjZOR8Rdbk
+	vtznahS4T9eADzcYD7p9/KFkFGJi/TA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715264706;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
+	bh=eQMUPtPgke+IOygEjdGv24BFpnZ9oI+w+PtJ6GJCSVM=;
+	b=HFXPgYFuIowtyiHgGbYEKE2lKeURO+WWQ2/igkv6FZUvSx7Rx5hkL2SGrrpLdYgcGDQ2Nz
+	S/smmm4YvlwA+uBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42ABB13941;
+	Thu,  9 May 2024 14:25:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rhL5D8LcPGb+AgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 09 May 2024 14:25:06 +0000
+Message-ID: <587f5e6b-d543-4028-85c8-93cc8f581d02@suse.cz>
+Date: Thu, 9 May 2024 16:25:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Vlastimil Babka <vbabka@suse.cz>
+Subject: [GIT PULL] slab updates for 6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Rientjes <rientjes@google.com>, Joonsoo Kim
+ <iamjoonsoo.kim@lge.com>, Christoph Lameter <cl@linux.com>,
+ Pekka Enberg <penberg@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>, patches@lists.linux.dev,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Chengming Zhou <chengming.zhou@linux.dev>
+Content-Language: en-US
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -2.79
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[google.com,lge.com,linux.com,kernel.org,linux-foundation.org,kvack.org,vger.kernel.org,lists.linux.dev,linux.dev,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 
-Richard Gobert wrote:
-> {inet,ipv6}_gro_receive functions perform flush checks (ttl, flags,
-> iph->id, ...) against all packets in a loop. These flush checks are used in
-> all merging UDP and TCP flows.
-> 
-> These checks need to be done only once and only against the found p skb,
-> since they only affect flush and not same_flow.
-> 
-> This patch leverages correct network header offsets from the cb for both
-> outer and inner network headers - allowing these checks to be done only
-> once, in tcp_gro_receive and udp_gro_receive_segment. As a result,
-> NAPI_GRO_CB(p)->flush is not used at all. In addition, flush_id checks are
-> more declarative and contained in inet_gro_flush, thus removing the need
-> for flush_id in napi_gro_cb.
-> 
-> This results in less parsing code for non-loop flush tests for TCP and UDP
-> flows.
-> 
-> To make sure results are not within noise range - I've made netfilter drop
-> all TCP packets, and measured CPU performance in GRO (in this case GRO is
-> responsible for about 50% of the CPU utilization).
-> 
-> perf top while replaying 64 parallel IP/TCP streams merging in GRO:
-> (gro_receive_network_flush is compiled inline to tcp_gro_receive)
-> net-next:
->         6.94% [kernel] [k] inet_gro_receive
->         3.02% [kernel] [k] tcp_gro_receive
-> 
-> patch applied:
->         4.27% [kernel] [k] tcp_gro_receive
->         4.22% [kernel] [k] inet_gro_receive
-> 
-> perf top while replaying 64 parallel IP/IP/TCP streams merging in GRO (same
-> results for any encapsulation, in this case inet_gro_receive is top
-> offender in net-next)
-> net-next:
->         10.09% [kernel] [k] inet_gro_receive
->         2.08% [kernel] [k] tcp_gro_receive
-> 
-> patch applied:
->         6.97% [kernel] [k] inet_gro_receive
->         3.68% [kernel] [k] tcp_gro_receive
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+Hi Linus,
 
-> +static inline int inet_gro_flush(const struct iphdr *iph, const struct iphdr *iph2,
-> +				 struct sk_buff *p, bool outer)
-> +{
-> +	const u32 id = ntohl(*(__be32 *)&iph->id);
-> +	const u32 id2 = ntohl(*(__be32 *)&iph2->id);
-> +	const u16 ipid_offset = (id >> 16) - (id2 >> 16);
-> +	const u16 count = NAPI_GRO_CB(p)->count;
-> +	const u32 df = id & IP_DF;
-> +	int flush;
-> +
-> +	/* All fields must match except length and checksum. */
-> +	flush = (iph->ttl ^ iph2->ttl) | (iph->tos ^ iph2->tos) | (df ^ (id2 & IP_DF));
-> +
-> +	if (outer && df)
-> +		return flush;
+please pull the latest slab updates from:
 
-    if (flush)
-            return 1;
+  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.10
 
-To be able to avoid the two flush | below?
-Or to avoid adding a branch
+Sending this early due to upcoming LSF/MM travel and chances there's no rc8.
 
-    if (flush | (outer && df))
-            return 1;
+Thanks,
+Vlastimil
 
-> +
-> +	/* When we receive our second frame we can make a decision on if we
-> +	 * continue this flow as an atomic flow with a fixed ID or if we use
-> +	 * an incrementing ID.
-> +	 */
-> +	if (count == 1 && df && !ipid_offset)
-> +		NAPI_GRO_CB(p)->ip_fixedid = true;
-> +
-> +	if (NAPI_GRO_CB(p)->ip_fixedid && df)
-> +		return flush | ipid_offset;
-> +
-> +	return flush | (ipid_offset ^ count);
+======================================
 
-And then simply
+This time it's mostly random cleanups and fixes, with two performance fixes
+that might have significant impact, but limited to systems experiencing
+particular bad corner case scenarios rather than general performance
+improvements.
 
-    if (NAPI_GRO_CB(p)->ip_fixedid)
-            return ipid_offset;
-    else
-            return ipid_offset ^ count;
+The memcg hook changes are going through the mm tree due to dependencies.
 
-Since NAPI_GRO_CB(p)->ip_fixedid is only set if DF is set on the first
-two segments, and df ^ id2 & IP_DF is tested above, no need to test
-that again.
+- Prevent stalls when reading /proc/slabinfo (Jianfeng Wang)
 
-> +}
+  This fixes the long-standing problem that can happen with workloads that have
+  alloc/free patterns resulting in many partially used slabs (in e.g. dentry
+  cache). Reading /proc/slabinfo will traverse the long partial slab list under
+  spinlock with disabled irqs and thus can stall other processes or even
+  trigger the lockup detection. The traversal is only done to count free
+  objects so that <active_objs> column can be reported along with <num_objs>.
+
+  To avoid affecting fast paths with another shared counter (attempted in the
+  past) or complex partial list traversal schemes that allow rescheduling, the
+  chosen solution resorts to approximation - when the partial list is over
+  10000 slabs long, we will only traverse first 5000 slabs from head and tail
+  each and use the average of those to estimate the whole list. Both head and
+  tail are used as the slabs near head to tend to have more free objects than
+  the slabs towards the tail.
+
+  It is expected the approximation should not break existing /proc/slabinfo
+  consumers. The <num_objs> field is still accurate and reflects the overall
+  kmem_cache footprint. The <active_objs> was already imprecise due to cpu and
+  percpu-partial slabs, so can't be relied upon to determine exact cache usage.
+  The difference between <active_objs> and <num_objs> is mainly useful to
+  determine the slab fragmentation, and that will be possible even with the
+  approximation in place.
+
+- Prevent allocating many slabs when a NUMA node is full (Chen Jun)
+
+  Currently, on NUMA systems with a node under significantly bigger pressure
+  than other nodes, the fallback strategy may result in each kmalloc_node()
+  that can't be safisfied from the preferred node, to allocate a new slab on a
+  fallback node, and not reuse the slabs already on that node's partial list.
+
+  This is now fixed and partial lists of fallback nodes are checked even for
+  kmalloc_node() allocations. It's still preferred to allocate a new slab on
+  the requested node before a fallback, but only with a GFP_NOWAIT attempt,
+  which will fail quickly when the node is under a significant memory pressure.
+
+- More SLAB removal related cleanups (Xiu Jianfeng, Hyunmin Lee)
+
+- Fix slub_kunit self-test with hardened freelists (Guenter Roeck)
+
+- Mark racy accesses for KCSAN (linke li)
+
+- Misc cleanups (Xiongwei Song, Haifeng Xu, Sangyun Kim)
+
+----------------------------------------------------------------
+Chen Jun (1):
+      mm/slub: Reduce memory consumption in extreme scenarios
+
+Guenter Roeck (1):
+      mm/slub, kunit: Use inverted data to corrupt kmem cache
+
+Haifeng Xu (1):
+      slub: Set __GFP_COMP in kmem_cache by default
+
+Hyunmin Lee (2):
+      mm/slub: create kmalloc 96 and 192 caches regardless cache size order
+      mm/slub: remove the check for NULL kmalloc_caches
+
+Jianfeng Wang (2):
+      slub: introduce count_partial_free_approx()
+      slub: use count_partial_free_approx() in slab_out_of_memory()
+
+Sangyun Kim (1):
+      mm/slub: remove duplicate initialization for early_kmem_cache_node_alloc()
+
+Xiongwei Song (3):
+      mm/slub: remove the check of !kmem_cache_has_cpu_partial()
+      mm/slub: add slub_get_cpu_partial() helper
+      mm/slub: simplify get_partial_node()
+
+Xiu Jianfeng (2):
+      mm/slub: remove dummy slabinfo functions
+      mm/slub: correct comment in do_slab_free()
+
+linke li (2):
+      mm/slub: mark racy accesses on slab->slabs
+      mm/slub: mark racy access on slab->freelist
+
+ lib/slub_kunit.c |   2 +-
+ mm/slab.h        |   3 --
+ mm/slab_common.c |  27 +++++--------
+ mm/slub.c        | 118 ++++++++++++++++++++++++++++++++++++++++---------------
+ 4 files changed, 96 insertions(+), 54 deletions(-)
 
