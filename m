@@ -1,159 +1,137 @@
-Return-Path: <linux-kernel+bounces-174727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3C68C13F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:24:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828FF8C13FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB21F24112
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:24:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A926281D21
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7042134CE;
-	Thu,  9 May 2024 17:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5305710A3C;
+	Thu,  9 May 2024 17:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PVQeG805"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4IDdgAB"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C748F44;
-	Thu,  9 May 2024 17:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62040111A2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715275432; cv=none; b=sO83ZCm6P5vKjjxlzddjj67B4a0CoO49aHJCeWK7a50GQI8ZNBOv5huOXUxfhiDAt0Zd2I/PrFGmWdxeeM6Mia7IkV2yqQ6vhiSnAeTJOuaGwSdOEoLzN0ByZWJJB+5187jDpZ9far3irGc8qHgD0goZgHMPGX2MpLTa2El6S9s=
+	t=1715275459; cv=none; b=sAVDm7ADoJFKAW/SCpCU5gzNRUqtbsE9yiruP82zs+am2e55ebfb+vTYkzeQaaB7WQqTg2sRVvcsQP5T4Jc7kyK2+JXRwDL5G5Z4YAJKEuTBQAWY+H/qnpM71ANh7Q0FndGMxR9ah25sfZjxSTVdXabQwOi/ExEffodrSBBhboc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715275432; c=relaxed/simple;
-	bh=0ugMAx4PhzHKyv40ZuZGgNyOkcOW1v642VlMhmrdgvY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Jlcmm+3sR8VpXW+8CfvL2wWxtILjHF59xPMDUnuvGQ3Oek9vqiOIR3uCpBc5CUVYYKVHyEycqYq1vMty8WGCNZjTXHa0JAFiYc8NWa/FUTCrQ+YMRIx5VAl39Sy5xlExc642Od4VfuCcXUyfk5rCqAKJvPDXS4jjv0Ws0Oc5fQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PVQeG805; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715275427;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q5NwpyR9OTSf8oGKU+ne7+xoirIi77/iJlT2WIV8ttY=;
-	b=PVQeG805+z+rJd0kTIjdCzK2cBySgUA9thg2xKhNXMZcGZUpBLTZNP3FCARPpKo1Q2tRBR
-	UpdM1F7kDC2VbJ+YFTS7gITG/HiZbizfrTU/PQ+bWzgYoS27DCpOdfcPGCm5AD68HNxTX8
-	WTP771jM/gN3ebtg173XF8De52UvCBo=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Luis Henriques <luis.henriques@linux.dev>,  Zhang Yi
- <yi.zhang@huaweicloud.com>,  linux-ext4@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  adilger.kernel@dilger.ca,  jack@suse.cz,
-  ritesh.list@gmail.com,  hch@infradead.org,  djwong@kernel.org,
-  willy@infradead.org,  zokeefe@google.com,  yi.zhang@huawei.com,
-  chengzhihao1@huawei.com,  yukuai3@huawei.com,  wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v3 03/26] ext4: correct the hole length returned by
- ext4_map_blocks()
-In-Reply-To: <20240509163953.GI3620298@mit.edu> (Theodore Ts'o's message of
-	"Thu, 9 May 2024 12:39:53 -0400")
-References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
-	<20240127015825.1608160-4-yi.zhang@huaweicloud.com>
-	<87zfszuib1.fsf@brahms.olymp> <20240509163953.GI3620298@mit.edu>
-Date: Thu, 09 May 2024 18:23:44 +0100
-Message-ID: <87h6f6vqzj.fsf@brahms.olymp>
+	s=arc-20240116; t=1715275459; c=relaxed/simple;
+	bh=wYTJaF8JxZfB6p9pfrZ9UzFnXVfNFMMSBvDLM2/Agrw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q9LX9dtDPNdKQ0cIo0wEDGBj4GjMD6dB5AOsQmMQqQ7LzHY9cvkr1BGK0C1Tv8E6PAPrVEO+RDfRfXoAcwLufKfa+QKkZRiD/0Cs7S/mISQenZrWU9AGS/dLYGZZyUdMtpt05LsMrhbDm4Okmf5itlH6FnbBbDA1qxuBfVZcepg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4IDdgAB; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-48071b76e48so291561137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:24:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715275455; x=1715880255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GJd+PuqR17Eq0A33REJzZo/D4RiASDpPnK9j9wlnmj0=;
+        b=H4IDdgABBN0yQ8EnKqAciIg5/9mM7CYvQTVg5E7K93Ijk4CA8wl7RT+ZjOP2Y0fxJr
+         nk3TBLYmJoeK2etE5cTBZKvgG68jX4Eb3MbbTozJA+ooPX3l9dcFLjgaZ7567gFzyr89
+         T9NnrD7k2qEYxjYOcBrxKq5Ufxeeo6tD4dnSe8TlaVCf23d6WVPxKojJOR9ElKlVrVu3
+         b5ukslgdKKn+i73a/a5Qh18TDVEqXjH0ioe9E5dmrkVfEYp5pbcesZLG2EoucLfn10Tt
+         VvHlp5gXt1rgnpUfZMXoOsgEQqYORpxaLGzWtnNqvrMBmUlVdPPsn9yA1o50RetK04zP
+         +N1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715275455; x=1715880255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GJd+PuqR17Eq0A33REJzZo/D4RiASDpPnK9j9wlnmj0=;
+        b=YYmo6Za7gKGI2rVfB2Yb4qbvWDrxbVCNjr2jDdO6eB+l1Y+iaXTNsi2Ci0G8pqMy6F
+         thYZp8/6LuZermiKqP+SN3cisaVrCDxCo9ynUKIBPLVS9c4oJQ7k1iiZr8R3PICF0sZk
+         PTHjMMJpejG6irAwiqYyGxxt7stnBgJOQGju9C1PbYyPe6qeKSfBByQzH7vhnSDceSCq
+         L/7hXvN90ZaG9b4s9SpyB2l5/BBWTVOKbW7/tYHi6LFXZP0nlhxa8Xu+FJcLKwQCqnjL
+         RJzI7sns7LTOkvzl1R9plu89zNFZDqHhmwAduI1VKXYIUnCtc/AgZqnTzUjZoQeeUCNP
+         wLfw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ZIQ47pVRqSsxZMzs4Iy7wLbbGaGyh3OB6+HSm1RBzyq7vX/MSNBImNa/Imp9/ZVHJmP18mEtfBjEjXh/HiXZkCupCB+3D6FMAX4i
+X-Gm-Message-State: AOJu0YzUlwsgS+7LFjknc+MXREB3gGNbvrGuSsfhjgR+yubJ1XQdFckw
+	GXcCnng+QHPFiZoEGnrxE6OZnHroqaxs2WmVVL8RLTiktekH+Xu7l7RPNWKl6mLpBi+GBY9YBBg
+	L/6dar28iNv5oXRdtuVAOi4kfi+Q=
+X-Google-Smtp-Source: AGHT+IFIfCPVf9kp5qmitEYk8xDqLze2HZWBff7JeN7fK57HlQlsrtYhoPHxCRxQqqzqofCsWzPXPyIKBQYvrDLRxn4=
+X-Received: by 2002:a05:6102:162a:b0:47b:9844:8f8 with SMTP id
+ ada2fe7eead31-48077b68500mr680273137.6.1715275455196; Thu, 09 May 2024
+ 10:24:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+References: <20240509085758.123046-1-oushixiong@kylinos.cn>
+In-Reply-To: <20240509085758.123046-1-oushixiong@kylinos.cn>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 9 May 2024 13:24:03 -0400
+Message-ID: <CADnq5_PB_6Cz0UuYh+jEZeuE0Ld4f_ehf_H4N_rO=-ZqdfSQdw@mail.gmail.com>
+Subject: Re: [PATCH] drm/radeon: Delay Connector detecting when HPD singals is unstable
+To: oushixiong <oushixiong@kylinos.cn>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Xinhui.Pan@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 09 May 2024 12:39:53 PM -04, Theodore Ts'o wrote;
-
-> On Thu, May 09, 2024 at 04:16:34PM +0100, Luis Henriques wrote:
->> 
->> It's looks like it's easy to trigger an infinite loop here using fstest
->> generic/039.  If I understand it correctly (which doesn't happen as often
->> as I'd like), this is due to an integer overflow in the 'if' condition,
->> and should be fixed with the patch below.
+On Thu, May 9, 2024 at 4:58=E2=80=AFAM oushixiong <oushixiong@kylinos.cn> w=
+rote:
 >
-> Thanks for the report.  However, I can't reproduce the failure, and
-> looking at generic/039, I don't see how it could be relevant to the
-> code path in question.  Generic/039 creates a test symlink with two
-> hard links in the same directory, syncs the file system, and then
-> removes one of the hard links, and then drops access to the block
-> device using dmflakey.  So I don't see how the extent code would be
-> involved at all.  Are you sure that you have the correct test listed?
-
-Yep, I just retested and it's definitely generic/039.  I'm using a simple
-test environment, with virtme-ng.
-
-> Looking at the code in question in fs/ext4/extents.c:
+> From: Shixiong Ou <oushixiong@kylinos.cn>
 >
-> again:
-> 	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, hole_start,
-> 				  hole_start + len - 1, &es);
-> 	if (!es.es_len)
-> 		goto insert_hole;
+> In some causes, HPD signals will jitter when plugging in
+> or unplugging HDMI.
 >
->   	 * There's a delalloc extent in the hole, handle it if the delalloc
->   	 * extent is in front of, behind and straddle the queried range.
->   	 */
->  -	if (lblk >= es.es_lblk + es.es_len) {
->  +	if (lblk >= ((__u64) es.es_lblk) + es.es_len) {
->   		/*
->   		 * The delalloc extent is in front of the queried range,
->   		 * find again from the queried start block.
-> 		len -= lblk - hole_start;
-> 		hole_start = lblk;
-> 		goto again;
+> Rescheduling the hotplug work for a second when EDID may still be
+> readable but HDP is disconnected, and fixes this issue.
 >
-> lblk and es.es_lblk are both __u32.  So the infinite loop is
-> presumably because es.es_lblk + es.es_len has overflowed.  This should
-> never happen(tm), and in fact we have a test for this case which
+> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 
-If I instrument the code, I can see that es.es_len is definitely set to
-EXT_MAX_BLOCKS, which will overflow.
+Applied.  Thanks!
 
-> *should* have gotten tripped when ext4_es_find_extent_range() calls
-> __es_tree_search() in fs/ext4/extents_status.c:
+Alex
+
+> ---
+>  drivers/gpu/drm/radeon/radeon_connectors.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
-> static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
-> {
-> 	BUG_ON(es->es_lblk + es->es_len < es->es_lblk);
-> 	return es->es_lblk + es->es_len - 1;
-> }
+> diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm=
+/radeon/radeon_connectors.c
+> index b84b58926106..cf0114ca59a4 100644
+> --- a/drivers/gpu/drm/radeon/radeon_connectors.c
+> +++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+> @@ -1267,6 +1267,16 @@ radeon_dvi_detect(struct drm_connector *connector,=
+ bool force)
+>                         goto exit;
+>                 }
+>         }
+> +
+> +       if (dret && radeon_connector->hpd.hpd !=3D RADEON_HPD_NONE &&
+> +           !radeon_hpd_sense(rdev, radeon_connector->hpd.hpd) &&
+> +           connector->connector_type =3D=3D DRM_MODE_CONNECTOR_HDMIA) {
+> +               DRM_DEBUG_KMS("EDID is readable when HPD disconnected\n")=
+;
+> +               schedule_delayed_work(&rdev->hotplug_work, msecs_to_jiffi=
+es(1000));
+> +               ret =3D connector_status_disconnected;
+> +               goto exit;
+> +       }
+> +
+>         if (dret) {
+>                 radeon_connector->detected_by_load =3D false;
+>                 radeon_connector_free_edid(connector);
+> --
+> 2.17.1
 >
-> So the patch is harmless, and I can see how it might fix what you were
-> seeing --- but I'm a bit nervous that I can't reproduce it and the
-> commit description claims that it reproduces easily; and we should
-> have never allowed the entry to have gotten introduced into the
-> extents status tree in the first place, and if it had been introduced,
-> it should have been caught before it was returned by
-> ext4_es_find_extent_range().
->
-> Can you give more details about the reproducer; can you double check
-> the test id, and how easily you can trigger the failure, and what is
-> the hardware you used to run the test?
-
-So, here's few more details that may clarify, and that I should have added
-to the commit description:
-
-When the test hangs, the test is blocked mounting the flakey device:
-
-   mount -t ext4 -o acl,user_xattr /dev/mapper/flakey-test /mnt/scratch
-
-which will eventually call into ext4_ext_map_blocks(), triggering the bug.
-
-Also, some more code instrumentation shows that after the call to
-ext4_ext_find_hole(), the 'hole_start' will be set to '1' and 'len' to
-'0xfffffffe'.  This '0xfffffffe' value is a bit odd, but it comes from the
-fact that, in ext4_ext_find_hole(), the call to
-ext4_ext_next_allocated_block() will return EXT_MAX_BLOCKS and 'len' will
-thus be set to 'EXT_MAX_BLOCKS - 1'.
-
-Does this make sense?
-
-Cheers,
--- 
-Luis
 
