@@ -1,106 +1,77 @@
-Return-Path: <linux-kernel+bounces-174505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FC78C0FB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:39:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CADB8C0FBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91F1C1F23313
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECBA7283E60
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6979713BAC2;
-	Thu,  9 May 2024 12:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91774147C96;
+	Thu,  9 May 2024 12:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jGBTBGe5"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ee/2otxe"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA0313119B;
-	Thu,  9 May 2024 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F25513B2BB;
+	Thu,  9 May 2024 12:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715258381; cv=none; b=a+HYxsZpgXbJGT2ocFgDuCqLObOHJy4Dqwqo0d9q90JRKeCPimDELdlMnKUvwxkPUL4YWN+zQarKJXLK5/ZRNKrIRwESzpX5e9AoW0k665eVDzgLt98zNlzHlDV+4B616TAW8DoHbMs+fAR6x6lWc283hQERQ9ZTBKIr9VMmV+s=
+	t=1715258409; cv=none; b=rMF8CZatXp46Vkf1Gniy7fih2RCbFo1vnSwGDTnPwzcv96gKkiPSvG6YwAkHGiK5MfQ3Z2YGZ769mE8F1DLlBw+f2VMuhFltFY1ndhaUpTgyeQ5sk/y4WyVzBPVl5f7kYOYshGC9vFDKokCZyvYHpNEJWznnAgk91PFfqGDBQeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715258381; c=relaxed/simple;
-	bh=h/H+VWcrKdPCeRsMnTJ5qIW/usfR2btKbHYoM/e3sD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jga2T4g1SrS1zUwh9gAZctc2dazrMjTSeovcAkw75/+RZKtintphZJHdLntEmJT2AF4Lu+c1n5nSjXej3VRUXjfn9PY3nbU8cRoGL52E8glWtbmdkYoK9DusGKJoP821bJZXkKVpOXrNo583rqHcz3eVObf7z8IQiRkOLk8O3+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jGBTBGe5; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715258378;
-	bh=h/H+VWcrKdPCeRsMnTJ5qIW/usfR2btKbHYoM/e3sD0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jGBTBGe57sd0zXCM40msbfzUhN3DdM19CrtaY0pKzsFqrj/Zk8Dq7VMsBy0vr8LjD
-	 HCaw103NG8IgiSE5e+Rl3UbhMo+xn/s3c8gN+746bkRoHgARaPBf8saDRif2aBpv4i
-	 VBdcJF1LOWox2DwYr91aMANTUO0fkoOySbgdBDoPLt/Xrg8HO0s7HKCb6tNJP0MlZW
-	 ULqu/bktBbVdv1y1lMtdKbpiBV3JXyGk7XSWXV/E3g6Xf5ZCg3tvmyi1DsRK1XTPGd
-	 0Ktk3LQ5ZgUv74FatyvLZpT08HJVxRRQsICZrwDYISOz/M8qPZmA1R8g4Cbk8NTFsq
-	 oRommdfpEWppA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 622373782172;
-	Thu,  9 May 2024 12:39:37 +0000 (UTC)
-Message-ID: <fdce3c08-a3cb-4d5b-ad1a-0eeb8761778f@collabora.com>
-Date: Thu, 9 May 2024 14:39:36 +0200
+	s=arc-20240116; t=1715258409; c=relaxed/simple;
+	bh=o4EJzw5BUXuBgoy2uU4zb1qMLA37I4KNAPe8azdAsNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdxdhDeNnXWjmQGNtV4e7YlWadJAOU+vZg0hYOTC4Ip/kBGHZhePfbn0K3Nh1T+0VTprg9EZZWYCuCKr3Yuw8sCujWm2tDUlD1CvsraJkWsuDhM7Xqu3ovDZ+d/tEjkUzQRQFJsdhWelrX9osv2joFyhy7dGRJbC1y5mAI5coCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ee/2otxe; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=P/Yh6fmWOx0S3hHFDnR/3XNxSMU0c5O7DQ9VhEI3qZ4=; b=Ee/2otxepDaoDyWBcWwFyiIctq
+	nqoj0uR7R7rKU2RVLehLlBSEbFOIzg3Ei49vP9t0eZfHXbnK7Clo4ViqVb2Eja8jvDoFoOTO7KzS2
+	mx0+KGb840gHS36HB/TO+kOV3kAi9xSNAap53ofcOVYJn54tWWpd/4UJL62TiOyvKVqCS9AMgY1H1
+	E8R41KbrN0wd6lmELud0Aer8PlF9GNud2sqoOAkxfMREoWS8Fpdn+2hR+mRQyF706nSm7HCCNFC7P
+	sKuzRooBCw5ovFR3K20jpikuGw2ivt218HNx5m6JJwCgrgrc3OArj4I8OPVW2Pp+0bUA1SLr+L/1P
+	3czW+isA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s5343-00000001STi-2Jqg;
+	Thu, 09 May 2024 12:39:59 +0000
+Date: Thu, 9 May 2024 05:39:59 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, Zhaoyang Huang <huangzhaoyang@gmail.com>,
+	steve.kang@unisoc.com
+Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
+Message-ID: <ZjzEH5fFGHgnqbLj@infradead.org>
+References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
+ <20240509023937.1090421-3-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: leds: mark label as depected to match
- description
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Frank Wunderlich <linux@fw-web.de>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240509110545.49889-1-linux@fw-web.de>
- <c461b4cb-2f14-4793-a967-bf08e2b4ab88@linaro.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <c461b4cb-2f14-4793-a967-bf08e2b4ab88@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509023937.1090421-3-zhaoyang.huang@unisoc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Il 09/05/24 13:46, Krzysztof Kozlowski ha scritto:
-> On 09/05/2024 13:05, Frank Wunderlich wrote:
->> From: Frank Wunderlich <frank-w@public-files.de>
->>
->> The description for property 'label' describes it as deprected, so
-> 
-> Typos here and in subject.
-> 
-> 
->> add a option to mark it like that. Future devicetrees should use
->> function and color properties.
->>
->> Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> Fixes: 24a71afe05a8 ("dt-bindings: leds: Convert common LED binding to schema")
-> 
-> Nooo, that's not a fix.
-> 
-> I don't think there was conclusion to make it deprecated on last attempt:
-> 
-> https://lore.kernel.org/all/20221122111124.6828-1-cniedermaier@dh-electronics.com/
-> 
+> +	unsigned long budgt = inode->i_sb->s_bdev ?
+> +			blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
 
-It's not a fix, agreed.
-
-But that property being deprecated deserves to be marked as deprecated, anyway.
-Otherwise the documentation shouldn't say in words that it is such.
-
-Cheers,
-Angelo
+The readahead code is used for all file systems, you can't just call
+into block layer code here.
 
 
