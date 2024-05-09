@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-174916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 212DF8C1742
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:26:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA948C173D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF5F8285A93
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3BF1F21E7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46C614D2A2;
-	Thu,  9 May 2024 20:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30C912B17A;
+	Thu,  9 May 2024 20:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EdbGzmPW"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZGSXJzU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534A3129E86;
-	Thu,  9 May 2024 20:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01463129A68;
+	Thu,  9 May 2024 20:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715285048; cv=none; b=nmxdxCeLjrGBdGrNoDMeUNUbEobbe2jyFMgIUrhRMUYjLE/m0knETxk0p5mr6DySPHzCJO4f7MYx73MYPXKERC3zHPJjELBch6CVw+VaXPjUFWeUoDyDWkOBwJSwMXOBPPDwQbjx6Bp/qibpc5o14f9FW/ShUrn+kivXRvrWDKU=
+	t=1715285048; cv=none; b=uSGKwvn6S9imxKizH773tmgI7wspkriEzWTdJM8zG8ZLIKTjgT+GY0zCJrshOyMe+8wj2jUkVFkAn6+YU8bTYK45Ap/eO8v1dvslJs/1hSLqlpTRuQPf4FZ6WpP3EGl2h4wxORzuAggNrxrm6t2I1PQGnJb0FSOddJNMXUfWDBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715285048; c=relaxed/simple;
-	bh=pxGd4CDP41NclFRXMdY20h/Qs6nREZrAp6NTkT2Uv7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EN6Uw12v3erEj9MZTu42J4aTryrWpJuamyayVdVZ94VUnxvF/mHkjrsv7k8IKT52hdtIM742rShpNNQP8By1vlFiTiNXCdLYLcQeyUwOc+SKmmMXkILPH920Gau7CDnYR3KTCQmotBlZtbeOp7ImoT0/dAITKQeflPS2y/8Q4LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EdbGzmPW; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2383C40E024D;
-	Thu,  9 May 2024 20:04:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id A2zAiRG3Y64e; Thu,  9 May 2024 20:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715285039; bh=hTxyMbW2JqF7oP0XGaZ6IM3jMn36gRHXPNQMDzL/rlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EdbGzmPWCDxbDlP5o2UbdaxZLhzj6Nqr8fbkFRCtQrLqH1wLYuXYQ7H6KJvdguKbD
-	 LQOkmBBKv3kVyIYOm+lBFqFfEIR8ClWe37eivEmyWCE12wB5UulxQ0qSBcMkS5XM64
-	 a4JggIPXNmrdZMWXvBTF19mUGyf67zJRTli/VY6OCU5htm5jh8jouPYCklLGvp1LaV
-	 mHxhO5BV/bEYqZFcbsdWOuWWiP31PcNg6HCv/TKCMMvaMLm0vleYB/JOtxOG6DTJEb
-	 yri9poMX/YwXG5AH/Cnro5m3Vp2FB/a+D4hQmVhQuZ0ffiUvbahAhrUAq0DuuU6oE6
-	 pXKAIcMttmKUrDMN47lno4ZTeU+DY3kRgzD3Riwhos1o58MyNcQ3AVsguPQmD2sjMp
-	 RAG8UDIweLAzM4G0P62VSWvXaJpAImHHMi8qCEiOJQ4VIg7qgVS8uXdkn73JoYN40H
-	 X8tqQIFeYEqnCWvOPRtGh1BnHjRO0SiOvoAOg7niSj5lGZpMSDrEPcs5dutbD7f2CQ
-	 CYDArNPhZCqFjtu8GUBRIcHLBjFzeXRvAnXsAWpa9s8B/2C8PRyZCLZ0nmC+dVAeDg
-	 0LyOCWhwm89Qyg6PH923mA0yyekwqjlxOghpP8E4cQqLp06WlRJMQlkwjSKAUg7c1z
-	 UizAsoNJPKZ2Z0FI+jqWOnWw=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1242840E0249;
-	Thu,  9 May 2024 20:03:13 +0000 (UTC)
-Date: Thu, 9 May 2024 22:03:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Shiju Jose <shiju.jose@huawei.com>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240509200306.GAZj0r-h5Tnc0ecIOz@fat_crate.local>
-References: <20240419164720.1765-2-shiju.jose@huawei.com>
- <20240425101542.GAZiotThrq7bOE9Ieb@fat_crate.local>
- <63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
- <20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
- <e0ce36eb80054440ab877ccee4e606de@huawei.com>
- <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
- <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
- <20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
- <20240509101939.0000263a@Huawei.com>
- <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
+	bh=LTGAalsVHpHpS5kUBwPeinahoR1Fg29UOnSYLyQsWm8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=SOULK/eL/ey/A0KnWeYanYLp78y7mSQnpUhWbEwNFoPdiY+LrbWXhOcbw0cmlSicCtblYB+I1U/3bK0Tt3tswFfosMXtAa2UbUgaclEJTy1FQxR1eV7ELD1AShrZmyOFXXqxjoguHQDPpfMPIlEOc0V4AD/iEAemcN5RiTH1tRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZGSXJzU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8D2C3277B;
+	Thu,  9 May 2024 20:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715285047;
+	bh=LTGAalsVHpHpS5kUBwPeinahoR1Fg29UOnSYLyQsWm8=;
+	h=Date:Cc:Subject:From:To:From;
+	b=DZGSXJzUlXWtqZ08KEc16seehl3da9D7WSUTOFxgddVb2emt334emFMc546tW77KV
+	 oF8RBgTkJ4wDQHiLvoIYMUBFuhnew1BjTqNRWDNlzBj18vT5uQxAi+WQfEavMz1DBz
+	 jXO68LqxOx5IsKZ8qlru4xzcpEt4hsquDZtutRm3gXJaO+RocvzARPyAchuzqR/4FB
+	 eWfGYdwMeW3v99Fs5JAoIGUsbZlg3eaG8UJX8c6+mpT1jtrdHhfAr9zml4QM6UJyoo
+	 oAo2VfHOqATgmLRn2xL76lSK1GP5ELBmx/NefeWWeWzenXaOnTAXYXDMUaU2ZU7BHf
+	 6WBc1vNaVjkuw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 09 May 2024 23:04:04 +0300
+Message-Id: <D15DSV117DQZ.3GJOTXCTGZHE9@kernel.org>
+Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.10-rc1
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+X-Mailer: aerc 0.17.0
 
-On Thu, May 09, 2024 at 05:52:18PM +0200, Borislav Petkov wrote:
-> Are you arguing for the nonsensical "it should load" case because it
-> is simply easier this way? How hard is that "jump through hoops" thing
-> anyway?
+The following changes since commit 45db3ab70092637967967bfd8e6144017638563c=
+:
 
-Let's see: the following patches add something called
-GET_SUPPORTED_FEATURES which is used to detect whether the system has
-patrol scrub functionality etc.
+  Merge tag '6.9-rc7-ksmbd-fixes' of git://git.samba.org/ksmbd (2024-05-08 =
+10:39:53 -0700)
 
-Then there's ras2_acpi_init() which checks for a RAS2 ACPI table.
+are available in the Git repository at:
 
-Are you saying that checking for those two things in the init function
-is jumping through hoops?
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
+/tpmdd-next-6.10-rc1
 
--- 
-Regards/Gruss,
-    Boris.
+for you to fetch changes up to 1d479e3cd6520085832a6b432d521eeead2691ba:
 
-https://people.kernel.org/tglx/notes-about-netiquette
+  Documentation: tpm: Add TPM security docs toctree entry (2024-05-09 22:30=
+:52 +0300)
+
+----------------------------------------------------------------
+Hi,
+
+These are the changes for the TPM driver with a single major new
+feature: TPM bus encryption and integrity protection. The key pair
+on TPM side is generated from so called null random seed per power
+on of the machine [1]. This supports the TPM encryption of the hard
+drive by adding layer of protection against bus interposer attacks.
+
+Other than the pull request a few minor fixes and documentation for
+tpm_tis to clarify basics of TPM localities for future patch review
+discussions (will be extended and refined over times, just a seed).
+
+[1] https://lore.kernel.org/linux-integrity/20240429202811.13643-1-James.Bo=
+ttomley@HansenPartnership.com/
+
+BR, Jarkko
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      crypto: lib - implement library version of AES in CFB mode
+
+Bagas Sanjaya (1):
+      Documentation: tpm: Add TPM security docs toctree entry
+
+Colin Ian King (1):
+      tpm/eventlog: remove redundant assignment to variabel ret
+
+James Bottomley (14):
+      tpm: Move buffer handling from static inlines to real functions
+      tpm: add buffer function to point to returned parameters
+      tpm: export the context save and load commands
+      tpm: Add NULL primary creation
+      tpm: Add TCG mandated Key Derivation Functions (KDFs)
+      tpm: Add HMAC session start and end functions
+      tpm: Add HMAC session name/handle append
+      tpm: Add the rest of the session HMAC API
+      tpm: add hmac checks to tpm2_pcr_extend()
+      tpm: add session encryption protection to tpm2_get_random()
+      KEYS: trusted: Add session encryption protection to the seal/unseal p=
+ath
+      tpm: add the null key name as a sysfs export
+      Documentation: add tpm-security.rst
+      tpm: disable the TPM if NULL name changes
+
+Jarkko Sakkinen (8):
+      Documentation: tpm_tis
+      tpm: Remove unused tpm_buf_tag()
+      tpm: Remove tpm_send()
+      tpm: Update struct tpm_buf documentation comments
+      tpm: Store the length of the tpm_buf data separately.
+      tpm: TPM2B formatted buffers
+      tpm: Add tpm_buf_read_{u8,u16,u32}
+      KEYS: trusted: tpm2: Use struct tpm_buf for sized buffers
+
+Michael Haener (1):
+      dt-bindings: tpm: Add st,st33ktpm2xi2c
+
+Niklas Schnelle (2):
+      char: tpm: handle HAS_IOPORT dependencies
+      char: tpm: Keep TPM_INF_IO_PORT define for HAS_IOPORT=3Dn
+
+ .../devicetree/bindings/tpm/tcg,tpm-tis-i2c.yaml   |    1 +
+ Documentation/security/tpm/index.rst               |    2 +
+ Documentation/security/tpm/tpm-security.rst        |  216 ++++
+ Documentation/security/tpm/tpm_tis.rst             |   46 +
+ drivers/char/tpm/Kconfig                           |   17 +-
+ drivers/char/tpm/Makefile                          |    2 +
+ drivers/char/tpm/eventlog/acpi.c                   |    1 -
+ drivers/char/tpm/tpm-buf.c                         |  252 ++++
+ drivers/char/tpm/tpm-chip.c                        |    6 +
+ drivers/char/tpm/tpm-interface.c                   |   26 +-
+ drivers/char/tpm/tpm-sysfs.c                       |   18 +
+ drivers/char/tpm/tpm.h                             |   14 +
+ drivers/char/tpm/tpm2-cmd.c                        |   53 +-
+ drivers/char/tpm/tpm2-sessions.c                   | 1286 ++++++++++++++++=
+++++
+ drivers/char/tpm/tpm2-space.c                      |   11 +-
+ drivers/char/tpm/tpm_infineon.c                    |   14 +-
+ drivers/char/tpm/tpm_tis_core.c                    |   19 +-
+ include/crypto/aes.h                               |    5 +
+ include/keys/trusted_tpm.h                         |    2 -
+ include/linux/tpm.h                                |  316 +++--
+ lib/crypto/Kconfig                                 |    5 +
+ lib/crypto/Makefile                                |    3 +
+ lib/crypto/aescfb.c                                |  257 ++++
+ security/keys/trusted-keys/trusted_tpm1.c          |   23 +-
+ security/keys/trusted-keys/trusted_tpm2.c          |  136 ++-
+ 25 files changed, 2519 insertions(+), 212 deletions(-)
+ create mode 100644 Documentation/security/tpm/tpm-security.rst
+ create mode 100644 Documentation/security/tpm/tpm_tis.rst
+ create mode 100644 drivers/char/tpm/tpm-buf.c
+ create mode 100644 drivers/char/tpm/tpm2-sessions.c
+ create mode 100644 lib/crypto/aescfb.c
 
