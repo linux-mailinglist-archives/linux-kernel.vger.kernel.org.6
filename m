@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-174488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD6E08C0F7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:19:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A568C0F81
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A70C1C217FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:19:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 991E8281BB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC6414BF98;
-	Thu,  9 May 2024 12:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE41414BFB0;
+	Thu,  9 May 2024 12:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="xrFJ1d1f"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="aH/K5NP/"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A86114B088
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 12:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B938B14B088;
+	Thu,  9 May 2024 12:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715257139; cv=none; b=ZxPnXvUZClWCnMK4DYdSeMKsourj/RqZntrP2qrGbdTSxzgSwDAHu4Vr3Ll6imaqfwwxkDKeCT/7g0QrwpXziTukiRwkxAnjfjYUxs01hAnZoUtWi0GLzY0QdOh6+QdPtfSHyFFR4KeKkmjR43OizdTn1bzvWsdMmAEqTbkA1MA=
+	t=1715257152; cv=none; b=L1rD1g5Em+3GfNpVBUKZqdT8YgjLYsSndTMJ+g3r33PE6WC4LN71RtcPQJeAUHpJReieHomD5wAj26BXeUIUnQMzae+vCtetZZxB0DF7B8FeMQFIwjUqV8UoYzvMgqAAIcQfsxeFsITlOGE2UcHy2+fiS1+wbv+cyAWNIJ5sc0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715257139; c=relaxed/simple;
-	bh=I4J2AgOYxhBQgAFZ1wo+lSl1T+rt+Z0V1hfBJkl2e/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ML0vwZyJ9zSQffzcPCZJnkp8woQTtJdRBLZ6iJoAT6rwe4JOAWE8oTxpMwCGxBMqmGv7xsbDBzc8yyVEqQrVcDIyyQUL3t/gNTYcJ0wYXldXfj51R8CFRKn0W6dA5wMBh36EXS2XrIABU18SJt77PgANR44x9Ywp85LUbAmFy9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=xrFJ1d1f; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59ae3efbb3so83312666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 05:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715257135; x=1715861935; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OFeEjeHJx+pU6UTBEcenyMWxNjqm06RNmgZPQXXxQ28=;
-        b=xrFJ1d1fRsr0H7R74v1YGLsQaCAau3dLszSD25E5yIHWd4uYcpiYU66XYNiMuPFwLC
-         O7wG0P9x0Vx9PCE0OhCA9NZtprHc3FmCYHCc3fPc/Pxo+3Sv5/bOFlSbtXe3bGayM5Kp
-         bcuEMsK7iaRgaskq6jEDLOrR63D81QC3HMxlLRcMKqOU/uWEfmDA86UV0Vwx9luEoIlk
-         sYUqNH/2qWG+UGV5ozR0AAB4mPlEzoY3a9cL8A0pfQelbjq0D87h9e9vHN+csySeiWUG
-         lb1qCNux6g9urg5LJxzRESwXJfU19e3LSUflOVhI4Tx8Im8Dp3WlaXDkiOAU58eYApr9
-         gtHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715257135; x=1715861935;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OFeEjeHJx+pU6UTBEcenyMWxNjqm06RNmgZPQXXxQ28=;
-        b=VJ7wgZBHGx50M6Kc/8x/cfNHMUCohI+icIsKSoXWBi1QxjU80h5m6jULeMmL5gCi/3
-         KtJyRtDGQHXVMd6X5TwUea+pvc+jyaaMSE3aV3SA6urocYbxmDXHqfjc10QoHZA9y9+9
-         kt0UCtXnVknFSzmyrozRdGXXPBO3v8b+3mQywBxrKHkvL5SYmGV+BPjo/YuviG5g6lYk
-         pv7e9IWe6bNoB+v9rzMsDPo9lPLd76oveM4kBXJhLagS1y5ti4QpNWlOlel9EHD9ZUq6
-         F6mwAu2XUDBfnF1CA8D4H+jlubU88hfNdMDnTTajZXLAsxqw+XqOjcbqZiMRtBkYNhi9
-         m6rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlKbQeCxBiWDSrj/28/56SLBqkwAMs5zvbeHQL/bIuLvl/GLtCSkp2ze1VYd6UMU4JIZTpfA72GGn3imAGuimLtvCfYxWQuN8bfpdY
-X-Gm-Message-State: AOJu0YxvEKqUdU5+eQVh05MOcLB11oaYEKHbSf5Mq83qvJGEtRUHoLKH
-	A5PBXB5VSdLWGZNkxDPxLEA6Vz67O6vMumgBqWfDJvuIV/D2CTvF0IxAJJkn9nA=
-X-Google-Smtp-Source: AGHT+IEcKVW8vRKW2Ve8BbYrxzT4IrhDLFJEIQ+tI3fo2JcERX+I4G6dFY1DGQXBC5Da1pvch0fkew==
-X-Received: by 2002:a50:9e85:0:b0:572:a089:75cc with SMTP id 4fb4d7f45d1cf-5731d9a2825mr4182852a12.5.1715257134718;
-        Thu, 09 May 2024 05:18:54 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322be7sm657075a12.80.2024.05.09.05.18.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 05:18:54 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: Nicolas Pitre <nico@fluxnic.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] net: smc91x: Fix m68k kernel compilation for ColdFire CPU
-Date: Thu,  9 May 2024 14:17:14 +0200
-Message-ID: <20240509121713.190076-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715257152; c=relaxed/simple;
+	bh=liY7xyqJ29EA6WjUap8sIM7syRjEZKuDkchrVqdO63M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r2vNjTrIi9Q4a7gqJ5xdaB5mcvE5hmC5RuCIlNfnmmc5ZiEvbOAL2WXgJkMew9vBwKmDe5WP0EGiOdIPDWiAPei+gBi3dBB4om5J669G4gH7nEB8V2EXWxFA0JeHz4lFTecXrMmxFDGb4UqCV97le7ZsMm+MwzP9ChqFUC9B1ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=aH/K5NP/; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=pKxLXBr8aMZgY/cRH4ndqqJPVr8PJOiyb+StxvVtko4=; t=1715257149;
+	x=1715689149; b=aH/K5NP/1iXzHxpQ0Uso+OGtXa0qvqd9rgpeFhCo4PuvMjZuO0BgSN6ir67w7
+	aCLJTjlWgdoPN3ST34O5eZZqC9VLg5VILKYHQkTLpHCu9A5OMXgJTZCiEzazVttFm+GzbpZq0LArc
+	zmVNLJyqdAZjrbRL1b3/ba0Hc4sHEveRhjEpvKeKVX1JargBPcZ+yuZAauey9PI6+2+mqbbWyCiBO
+	YJMJ3H7zlJFwaMWKwtSsQ/JBbubB+v/3yj/ZGowRpK2FfeNTc9NksskZxEgbm1rea/rBGHggB8XLo
+	VmiklgsKx65RVXqYZ58ruSTI0O7XDaiwHhKcW+yFT78bKKy6gA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1s52jp-0002bM-7O; Thu, 09 May 2024 14:19:05 +0200
+Message-ID: <3529c128-15f0-47c2-8c36-34a1afb1de79@leemhuis.info>
+Date: Thu, 9 May 2024 14:19:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/entry_32: Move CLEAR_CPU_BUFFERS before CR3 switch
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Robert Gill <rtgill82@gmail.com>, antonio.gomez.iglesias@linux.intel.com,
+ daniel.sneddon@linux.intel.com,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715257149;77bf00c3;
+X-HE-SMSGID: 1s52jp-0002bM-7O
 
-Compiling the m68k kernel with support for the ColdFire CPU family fails
-with the following error:
+On 27.04.24 01:48, Pawan Gupta wrote:
+> As the mitigation for MDS and RFDS, CLEAR_CPU_BUFFERS macro executes VERW
+> instruction that is used to clear the CPU buffers before returning to user
+> space. Currently, VERW is executed after the user CR3 is restored. This
+> leads to vm86() to fault because VERW takes a memory operand that is not
+> mapped in user page tables when vm86() syscall returns. This is an issue
+> with 32-bit kernels only, as 64-bit kernels do not support vm86().
+> 
+> Move the VERW before the CR3 switch for 32-bit kernels as a workaround.
+> This is slightly less secure because there is a possibility that the data
+> in the registers may be sensitive, and doesn't get cleared from CPU
+> buffers. As 32-bit kernels haven't received some of the other transient
+> execution mitigations, this is a reasonable trade-off to ensure that
+> vm86() syscall works.
+> 
+> Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+> Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+> Reported-by: Robert Gill <rtgill82@gmail.com>
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 
-In file included from drivers/net/ethernet/smsc/smc91x.c:80:
-drivers/net/ethernet/smsc/smc91x.c: In function ‘smc_reset’:
-drivers/net/ethernet/smsc/smc91x.h:160:40: error: implicit declaration of function ‘_swapw’; did you mean ‘swap’? [-Werror=implicit-function-declaration]
-  160 | #define SMC_outw(lp, v, a, r)   writew(_swapw(v), (a) + (r))
-      |                                        ^~~~~~
-drivers/net/ethernet/smsc/smc91x.h:904:25: note: in expansion of macro ‘SMC_outw’
-  904 |                         SMC_outw(lp, x, ioaddr, BANK_SELECT);           \
-      |                         ^~~~~~~~
-drivers/net/ethernet/smsc/smc91x.c:250:9: note: in expansion of macro ‘SMC_SELECT_BANK’
-  250 |         SMC_SELECT_BANK(lp, 2);
-      |         ^~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
+Did this fall through the cracks? Just wondering, as from here it looks
+like for about two weeks now nothing happened to fix the regression
+linked above. But I might have missed something.
 
-The function _swapw() was removed in commit d97cf70af097 ("m68k: use
-asm-generic/io.h for non-MMU io access functions"), but is still used in
-drivers/net/ethernet/smsc/smc91x.h.
+Cioa, Thorsten
 
-Re-adding the previously deleted _swapw() function resolves the error.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- drivers/net/ethernet/smsc/smc91x.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/net/ethernet/smsc/smc91x.h b/drivers/net/ethernet/smsc/smc91x.h
-index 46eee747c699..e5d7f49915c6 100644
---- a/drivers/net/ethernet/smsc/smc91x.h
-+++ b/drivers/net/ethernet/smsc/smc91x.h
-@@ -156,6 +156,11 @@ static inline void mcf_outsw(void *a, unsigned char *p, int l)
- 		writew(*wp++, a);
- }
- 
-+static inline unsigned short _swapw(volatile unsigned short v)
-+{
-+	return ((v << 8) | (v >> 8));
-+}
-+
- #define SMC_inw(a, r)		_swapw(readw((a) + (r)))
- #define SMC_outw(lp, v, a, r)	writew(_swapw(v), (a) + (r))
- #define SMC_insw(a, r, p, l)	mcf_insw(a + r, p, l)
--- 
-2.45.0
-
+> ---
+>  arch/x86/entry/entry_32.S | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index d3a814efbff6..1b9c1587f06e 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -837,6 +837,7 @@ SYM_FUNC_START(entry_SYSENTER_32)
+>  	jz	.Lsyscall_32_done
+>  
+>  	STACKLEAK_ERASE
+> +	CLEAR_CPU_BUFFERS
+>  
+>  	/* Opportunistic SYSEXIT */
+>  
+> @@ -881,7 +882,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
+>  	BUG_IF_WRONG_CR3 no_user_check=1
+>  	popfl
+>  	popl	%eax
+> -	CLEAR_CPU_BUFFERS
+>  
+>  	/*
+>  	 * Return back to the vDSO, which will pop ecx and edx.
+> @@ -941,6 +941,7 @@ SYM_FUNC_START(entry_INT80_32)
+>  	STACKLEAK_ERASE
+>  
+>  restore_all_switch_stack:
+> +	CLEAR_CPU_BUFFERS
+>  	SWITCH_TO_ENTRY_STACK
+>  	CHECK_AND_APPLY_ESPFIX
+>  
+> @@ -951,7 +952,6 @@ restore_all_switch_stack:
+>  
+>  	/* Restore user state */
+>  	RESTORE_REGS pop=4			# skip orig_eax/error_code
+> -	CLEAR_CPU_BUFFERS
+>  .Lirq_return:
+>  	/*
+>  	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
+> 
+> ---
+> base-commit: 0bbac3facb5d6cc0171c45c9873a2dc96bea9680
+> change-id: 20240426-fix-dosemu-vm86-dd111a01737e
+> 
+> 
 
