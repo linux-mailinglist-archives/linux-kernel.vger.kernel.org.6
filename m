@@ -1,111 +1,95 @@
-Return-Path: <linux-kernel+bounces-174559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39818C10B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:58:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABCBF8C10BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FBFCB21B9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600D61F22D93
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237215CD57;
-	Thu,  9 May 2024 13:58:49 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3232E15D5AB;
+	Thu,  9 May 2024 14:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXl13fo4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97251158A21
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7514C158A21;
+	Thu,  9 May 2024 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715263129; cv=none; b=jvm0afapZNOH+HCf/ao67c/FGHKs7Dh79TvCKG342fcsUW/JXKGoKZxzoGCqFUIn7QwedmXNFaS9e8+T0lrA2QwlQTf8VIUfO65ZTlCrxSO3RmLQ6IHA5bkdACvjXOilaOR9u6y/V+qRQ7SMj/RydFZyCGnTpMbHzLxsQEoxGw0=
+	t=1715263228; cv=none; b=WkvQNL1UU+pk4688FSnP14FqyHeVEMBC758EFa2yILjWRH9iSj/h8OVuGUM25G+xW6MRb4KH5l27heUWSqkPpJzCg1keYQtiEjyld6rd6EEY6ugLBcOpRh1D0bc5yBiT791M6rQuKSN3doILAGYftz9rUMsXzo3yWfM/GSQiS1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715263129; c=relaxed/simple;
-	bh=djhplCSiyljApt2TBAA0zMJsT6uxaDKYjtdFumqPhTM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KenVUxlLsXcC0++Ir9WLXOROca0DpZfJAO+TYrCldYDl8FgPP7D+aABAk1Lx+8NgdvC/0pTzwtGx5kabMmO16uqiP2p9oSI8Lz88zRuXRCvIWAvT6wZGFnMaM3+mP2TDmDSScoayGQd29XIZTi8WZPnfGx9HSFrqlWGbaNr5ZRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 4003d86a-0e0c-11ef-b972-005056bdfda7;
-	Thu, 09 May 2024 16:58:45 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 9 May 2024 16:58:44 +0300
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] gpiolib: Return label, if set, for IRQ only line
-Message-ID: <ZjzWlNdDVVBRD-Ma@surfacebook.localdomain>
-References: <20240508144741.1270912-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=Me3XOy6HfqjxDQBwnSW9pOCtK_Ry7keJ2LiXGFB88t4nA@mail.gmail.com>
+	s=arc-20240116; t=1715263228; c=relaxed/simple;
+	bh=Nrm46WmZGyIT35cwvy1Yk+kqTYBFw1zdT4d5rEEvf2w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=t2f8E3tbVBEG60orO4GtFLG33a3XaUQjsSeUOoh/ZGhsx/6gmLSxQB1lDm26iReOR7zswXQ+/9qfhCDvDT512gpIvHdB6kmy8bR095v0DL5xZwrPVPQ4AXPSeQXG24911jNf2Wz3qCxSzLW3Ag9g1hovg08E4Lt3vdsmopPQNKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXl13fo4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 08F57C32783;
+	Thu,  9 May 2024 14:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715263228;
+	bh=Nrm46WmZGyIT35cwvy1Yk+kqTYBFw1zdT4d5rEEvf2w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HXl13fo4VJoiARF43IiqWR7aDoOTz4RTR1WUcx2kpxZFPJBwlHbZuO1bD+p9XoSL6
+	 ix0A5PaiWL8AwTXLn5Z+nT5HRCHLviA7mcOI0FxPruUirhhJQXbYXXb+24b5CuoU+v
+	 i5RXANdz+yXgpni04JsFtI5kw2liebQL2M6ZjdysL74kF0caM7IBsygCe0H5Ag/roN
+	 2rYpv23bviiQlAnik0CTgVZSs9vlDwFulzaVqyBQ5VxR91gderKOfR/pEX+7AGMl7F
+	 780JVy4tgbJOQfqQvSpAb9YMMx75oRJZIFYaMeRxDZ4cTcnP/A1P8Go1Q8HWLfWgEc
+	 0EgZ1WPq9rUdQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E537BE7C0E0;
+	Thu,  9 May 2024 14:00:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me3XOy6HfqjxDQBwnSW9pOCtK_Ry7keJ2LiXGFB88t4nA@mail.gmail.com>
+Subject: Re: [PATCHv2] l2tp: Support several sockets with same IP/port quadruple
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171526322793.14863.3674169086267452877.git-patchwork-notify@kernel.org>
+Date: Thu, 09 May 2024 14:00:27 +0000
+References: <20240506215336.1470009-1-samuel.thibault@ens-lyon.org>
+In-Reply-To: <20240506215336.1470009-1-samuel.thibault@ens-lyon.org>
+To: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Cc: tparkin@katalix.com, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, jchapman@katalix.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
 
-Thu, May 09, 2024 at 03:15:05PM +0200, Bartosz Golaszewski kirjoitti:
-> On Wed, May 8, 2024 at 4:47 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > If line has been locked as IRQ without requesting,
-> > still check its label and return it, if not NULL.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  drivers/gpio/gpiolib.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> > index db536ec9734d..1f1673552767 100644
-> > --- a/drivers/gpio/gpiolib.c
-> > +++ b/drivers/gpio/gpiolib.c
-> > @@ -105,16 +105,16 @@ const char *gpiod_get_label(struct gpio_desc *desc)
-> >         unsigned long flags;
-> >
-> >         flags = READ_ONCE(desc->flags);
-> > -       if (test_bit(FLAG_USED_AS_IRQ, &flags) &&
-> > -           !test_bit(FLAG_REQUESTED, &flags))
-> > -               return "interrupt";
-> > -
-> > -       if (!test_bit(FLAG_REQUESTED, &flags))
-> > -               return NULL;
-> >
-> >         label = srcu_dereference_check(desc->label, &desc->srcu,
-> >                                        srcu_read_lock_held(&desc->srcu));
-> >
-> > +       if (test_bit(FLAG_USED_AS_IRQ, &flags))
-> > +               return label->str ?: "interrupt";
-> > +
-> > +       if (!test_bit(FLAG_REQUESTED, &flags))
-> > +               return NULL;
-> > +
-> >         return label->str;
-> >  }
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Mon,  6 May 2024 23:53:35 +0200 you wrote:
+> Some l2tp providers will use 1701 as origin port and open several
+> tunnels for the same origin and target. On the Linux side, this
+> may mean opening several sockets, but then trafic will go to only
+> one of them, losing the trafic for the tunnel of the other socket
+> (or leaving it up to userland, consuming a lot of cpu%).
 > 
-> What good would it be if gpiochip_dup_line_label() returns NULL for
-> unrequested lines anyway?
+> This can also happen when the l2tp provider uses a cluster, and
+> load-balancing happens to migrate from one origin IP to another one,
+> for which a socket was already established. Managing reassigning
+> tunnels from one socket to another would be very hairy for userland.
+> 
+> [...]
 
-Then it should be handled differently in those cases. So, consider it as
-a preparatory patch which doesn't change current behaviour.
+Here is the summary with links:
+  - [PATCHv2] l2tp: Support several sockets with same IP/port quadruple
+    https://git.kernel.org/netdev/net-next/c/628bc3e5a1be
 
-(Yes, I have some hack patches locally which do something useful, but they are
-not ready. In any case this one looks to me as a good cleanup on its own for
-the sake of readability of the code and reduced amount of checks.)
-
+You are awesome, thank you!
 -- 
-With Best Regards,
-Andy Shevchenko
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
