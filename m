@@ -1,147 +1,193 @@
-Return-Path: <linux-kernel+bounces-174855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A067F8C1608
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E448C160F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40EF41F2312D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7FDC1F21E1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E01D80633;
-	Thu,  9 May 2024 20:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C71212CDB2;
+	Thu,  9 May 2024 20:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y0RCS5xi"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wg/hIfvO"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5053129E76;
-	Thu,  9 May 2024 20:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E9512C48F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284877; cv=none; b=VPlUZyzfwnZtyPF88VF+MHkLxsEJrkP1mNnlwHs06kLIJzPqs2I/vNi5eYKPJ7m5Lj2TUywth3BZNpdkXqj543pf+gp4jp0WDXJnZFh8Q9wcuh04UVRfIxhftQwpgvstaFPS7TzGs+iO0nU/3hnSyzW+ZjNtGjCKlEAaptxyx7Q=
+	t=1715284880; cv=none; b=R6cEQcLHw1cuEdhqMF/Sal3h+PCQ0xfctSshDjq1rGywjaYiLgtuMNc+X68SEcC0ep1sk0Kog9FRZE4LGknLKvuW5DW6Ms7iGhDSFRbr2yKUSFxgb3rdZYXmGZu0mPJigqRjCQQ/Ax6GyneUJjOPr8eCYUHtuCgQ0qgJP42Lmaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284877; c=relaxed/simple;
-	bh=sRaSSg2FFDTPDk8c0zgqQf1W2ss6flB+SQnVqYy9dz0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Rp9eAEda9Kp1JQlOyhlHngfZsKXhfB7l5263lmNinRT/C4OY57Kph7lvwXVBykZcN7GMHx3OCkf1IUu1Bsxx3y2LqU++QcBfDv7tBmZLjquKKKdFWOxjDhG4gljlrsKfOF7ykb1x+IIRTJX44zjnDvQAaGG2VypnlTi1xQEU5WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y0RCS5xi; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 449B7BB4006645;
-	Thu, 9 May 2024 18:59:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=TGevrFxx2sEOPvGB+uwSE8YqKDHduVwVRYRlUxcJcic=; b=Y0
-	RCS5xi8DUFJJFXkFIvslJpUQrX4N2B3rw2xR16vtDShPPd+qYZIuNsuxZ8i6m4fc
-	7sv6KhcKZSZi7c7QPjJ9wFHg9qg7QGVQt/snMIATkReTj2iuIbCpa3/ALDME/h2B
-	CU7nyRmq6odr22bXb3x44XSJ0rPwr9nR7AxroyipgFa+PXmO9HUJNZ1CM0yxMbFX
-	duZCvXpDtkiw1xsot3uNogv4dk35QIk1CJFL2qZ/2v/glgh5QRyU3/dDK6KTsk8B
-	+YnTz2quCwc3krndrS/xLXeunhRMKGwonDR7tfPtXM+ymDcBxxXnyH9HAl60UaVR
-	id5pYbUb6pp0XEgHAJgA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07wfup54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 18:59:55 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449IxsG5018864
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 18:59:54 GMT
-Received: from [10.110.104.129] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
- 11:59:53 -0700
-Message-ID: <1e043ff3-58e0-7fd0-00b6-9117bc81e9ff@quicinc.com>
-Date: Thu, 9 May 2024 11:59:52 -0700
+	s=arc-20240116; t=1715284880; c=relaxed/simple;
+	bh=I/StWvCKS3Dv4OeTH5aI03p7PaglUOESCGcwVHlL8fM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nsQeLgHKX0zOBUpFl0/RKz+qr5kyX9o4M+T7bWs8SL3MBeQ7SJRzhloApQuay0SjxT9VuBBaGWl+mUtQ2S591ag0d/IwF2KfNnSljOotzf9su77iejWSBZ9qTBvWm2aEY7Qs/rdFK/CW0OO/yJKrGZsEs0e2ciCyEl47aSPKo54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wg/hIfvO; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--edliaw.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dcc0bcf9256so1998463276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 13:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715284878; x=1715889678; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rvw1r0YiZ9FWMZEUFCynhvM36Z8DTNYRZhlWsu0lkBc=;
+        b=Wg/hIfvO9aJb3kjfgcDdw/uFDpldCChWbHLUVctTZD9h/mmyxj8KgWAi5JpGpBZDDY
+         i1ck6brxG1nMTAPRl/njLJLq5kDff08webY88wEkqsfaPt3j58JJ+yVlWWODuximd2it
+         n2WBKLnyaCcNd3IrmUe01jT2g5nkRwY8iRbppKt0gwnmoWpqkDvn/d7vOeRW9CwuxS4d
+         PDxrl6yasyaxKshx1WIxtOIJayDZiKZU/d2SILtziVJ/Id4cJH4gvsbJGmNuixTJXIgv
+         rJr1jcm8lh2Fgxfo/tVz8OxClbX08lmluE0n5uV/kmVJr2ReRxQyeNUVDyFo2SL3Uf3u
+         VM/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715284878; x=1715889678;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rvw1r0YiZ9FWMZEUFCynhvM36Z8DTNYRZhlWsu0lkBc=;
+        b=rQH6sLwvTtb1KzHL0wEp2p/LBwGiO1/YC+C4HEkP0axOcGRxHGU5AAxUBJri7hFVk0
+         VugARvWp+fqVLQxa2TReRzGFBwnxuzHo4LLuZ1XiH7ev6RfVtaqGJ0bDTUFL2mr6TkJS
+         Zkc+rZ1eR5HS7rTYv1yGHHdzCIrBUeqq3tVjnuqT1RA0MWXHZFef/PAKq69e1KcUlSX9
+         /ftBRRisKkDx7PeKcTseRlOjxc7Ky7HI5ZXncLQzjbB8dChlLa4+Y0Ia0vKe+qgOdLWU
+         rzaRbTo0Ov3FXMnlRwHAez66yAK/nuInjSoxvBPmyzqQM0vr1MJ4DxLieJJ1VIgrZ2Mb
+         Zx5A==
+X-Gm-Message-State: AOJu0Yw4CUK9dg1y03x+fvRSd20fdggv2+LvPTw9+TudTuds3R7vgrhk
+	BPdAg/cWSS2bLf2dNjctenjCD5e35oUNGHl17CL7uiaeRGVgZZoMJxTPJk/R8vGS9AktANKXuEU
+	X7w==
+X-Google-Smtp-Source: AGHT+IHpOYcnCKAgNxLWCv5PxWZfMXvL8C7Gz/+Il/03alKml+KTIw816t0RgfA9erd/ilyxF8Kqzz2DP5U=
+X-Received: from edliaw.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:305d])
+ (user=edliaw job=sendgmr) by 2002:a25:8d03:0:b0:de5:1ea2:fc75 with SMTP id
+ 3f1490d57ef6-dee4f2deb83mr57084276.7.1715284877769; Thu, 09 May 2024 13:01:17
+ -0700 (PDT)
+Date: Thu,  9 May 2024 19:58:02 +0000
+In-Reply-To: <20240509200022.253089-1-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] docs: document python version used for compilation
-Content-Language: en-US
-To: Jonathan Corbet <corbet@lwn.net>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-CC: <workflows@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
- <87o79faq4a.fsf@meer.lwn.net>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <87o79faq4a.fsf@meer.lwn.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UTN9o-NiCFp8SHChNih0iPS8RnlyCSRO
-X-Proofpoint-ORIG-GUID: UTN9o-NiCFp8SHChNih0iPS8RnlyCSRO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_10,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 phishscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405090133
+Mime-Version: 1.0
+References: <20240509200022.253089-1-edliaw@google.com>
+X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
+Message-ID: <20240509200022.253089-11-edliaw@google.com>
+Subject: [PATCH v3 10/68] selftests/cgroup: Drop define _GNU_SOURCE
+From: Edward Liaw <edliaw@google.com>
+To: shuah@kernel.org, "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, 
+	"=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Christian Brauner <brauner@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Tejun Heo <tj@kernel.org>, 
+	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Edward Liaw <edliaw@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kernel-team@android.com, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
+_GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+redefinition warnings.
 
+Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
+Signed-off-by: Edward Liaw <edliaw@google.com>
+---
+ tools/testing/selftests/cgroup/cgroup_util.c        | 3 ---
+ tools/testing/selftests/cgroup/test_core.c          | 2 --
+ tools/testing/selftests/cgroup/test_cpu.c           | 2 --
+ tools/testing/selftests/cgroup/test_hugetlb_memcg.c | 2 --
+ tools/testing/selftests/cgroup/test_kmem.c          | 2 --
+ tools/testing/selftests/cgroup/test_memcontrol.c    | 2 --
+ tools/testing/selftests/cgroup/test_zswap.c         | 2 --
+ 7 files changed, 15 deletions(-)
 
-On 5/9/2024 9:48 AM, Jonathan Corbet wrote:
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
-> 
->> The drm/msm driver had adopted using Python3 script to generate register
->> header files instead of shipping pre-generated header files. Document
->> the minimal Python version supported by the script.
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   Documentation/process/changes.rst | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
->> index 5685d7bfe4d0..8d225a9f65a2 100644
->> --- a/Documentation/process/changes.rst
->> +++ b/Documentation/process/changes.rst
->> @@ -63,6 +63,7 @@ cpio                   any              cpio --version
->>   GNU tar                1.28             tar --version
->>   gtags (optional)       6.6.5            gtags --version
->>   mkimage (optional)     2017.01          mkimage --version
->> +Python (optional)      3.5.x            python3 --version
->>   ====================== ===============  ========================================
-> 
-> Is it really optional - can you build the driver without it?
-> 
+diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
+index 432db923bced..ce16a50ecff8 100644
+--- a/tools/testing/selftests/cgroup/cgroup_util.c
++++ b/tools/testing/selftests/cgroup/cgroup_util.c
+@@ -1,7 +1,4 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-
+-#define _GNU_SOURCE
+-
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <linux/limits.h>
+diff --git a/tools/testing/selftests/cgroup/test_core.c b/tools/testing/selftests/cgroup/test_core.c
+index a5672a91d273..de8baad46022 100644
+--- a/tools/testing/selftests/cgroup/test_core.c
++++ b/tools/testing/selftests/cgroup/test_core.c
+@@ -1,6 +1,4 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-
+-#define _GNU_SOURCE
+ #include <linux/limits.h>
+ #include <linux/sched.h>
+ #include <sys/types.h>
+diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
+index dad2ed82f3ef..5a4a314f6af7 100644
+--- a/tools/testing/selftests/cgroup/test_cpu.c
++++ b/tools/testing/selftests/cgroup/test_cpu.c
+@@ -1,6 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-
+-#define _GNU_SOURCE
+ #include <linux/limits.h>
+ #include <sys/sysinfo.h>
+ #include <sys/wait.h>
+diff --git a/tools/testing/selftests/cgroup/test_hugetlb_memcg.c b/tools/testing/selftests/cgroup/test_hugetlb_memcg.c
+index 856f9508ea56..80d05d50a42d 100644
+--- a/tools/testing/selftests/cgroup/test_hugetlb_memcg.c
++++ b/tools/testing/selftests/cgroup/test_hugetlb_memcg.c
+@@ -1,6 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+-
+ #include <linux/limits.h>
+ #include <sys/mman.h>
+ #include <stdio.h>
+diff --git a/tools/testing/selftests/cgroup/test_kmem.c b/tools/testing/selftests/cgroup/test_kmem.c
+index 96693d8772be..2e453ac50c0d 100644
+--- a/tools/testing/selftests/cgroup/test_kmem.c
++++ b/tools/testing/selftests/cgroup/test_kmem.c
+@@ -1,6 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+-
+ #include <linux/limits.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+diff --git a/tools/testing/selftests/cgroup/test_memcontrol.c b/tools/testing/selftests/cgroup/test_memcontrol.c
+index 41ae8047b889..c871630d62a3 100644
+--- a/tools/testing/selftests/cgroup/test_memcontrol.c
++++ b/tools/testing/selftests/cgroup/test_memcontrol.c
+@@ -1,6 +1,4 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-#define _GNU_SOURCE
+-
+ #include <linux/limits.h>
+ #include <linux/oom.h>
+ #include <fcntl.h>
+diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
+index d13954256335..87512e91845e 100644
+--- a/tools/testing/selftests/cgroup/test_zswap.c
++++ b/tools/testing/selftests/cgroup/test_zswap.c
+@@ -1,6 +1,4 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#define _GNU_SOURCE
+-
+ #include <linux/limits.h>
+ #include <unistd.h>
+ #include <stdio.h>
+-- 
+2.45.0.118.g7fe29c98d7-goog
 
-True, we cannot build the driver now without it. So we should be 
-dropping the optional tag.
-
-With that addressed,
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-
-> This document needs some help... I'm missing a number of things that are
-> *not* marked as "optional" (jfsutils, reiserfsprogs, pcmciautils, ppp,
-> ...) and somehow my system works fine :)  It would be nice to document
-> *why* users might need a specific tool.
-> 
-> But I guess we aren't going to do that now.  I can apply this, but I do
-> wonder about the "optional" marking.
-> 
-> Thanks,
-> 
-> jon
 
