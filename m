@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-174423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4C88C0E7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C25C8C0E80
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E8EAB233B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:50:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6F8BB246AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE4C114BFB0;
-	Thu,  9 May 2024 10:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A7C14C59C;
+	Thu,  9 May 2024 10:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sDjbA+k8"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xip6jgRd"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388CB130487
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C7714B977
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251728; cv=none; b=kMwmmGNeQ2u/imT9tMyZYo1bJrYje1GeLwdwk9gjDLeNohmvCZfT+qBdG2qsuFjBHm5IO2Mgb7W7hTGplKML/qxeJx3sJJ3ZHDyDfgGCeJGM86EkN88RvrHJQvHqf1E3IchXi6JT3nR1eRD4fLn7/HcxXo1v/wZ0Z8OI+SWdI4E=
+	t=1715251729; cv=none; b=KoBYiFQUvl+hJW2UlMdJRni1S96LF+H8wRqoU5SrPalYYNQXCKdt40XaaGRpSU+krB3TCdR2vQhls8lmOzac1HWZ0uCQ6k2RYhnxrXSvR+0HbNgcJKiFJCGAszI+Sgxf9FPbWF6qDLmx5BDNoODUZh/9GK2sdPrVohdwlQ65iFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251728; c=relaxed/simple;
-	bh=gcpdIFHr8ER34Z3GWGDwVi8dmpRY0WZC3XvZC+2j07g=;
+	s=arc-20240116; t=1715251729; c=relaxed/simple;
+	bh=vr0JkEDr29fBsYwVrEj21BsVRokcN68DvXqh0duEgEk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Aac+si/DPQZOju8JSrEjMVme5eNGfpYv5BLspr+l+uNnTdoD7ekXQ7jneFoCWsdXMWkg25h5iaS66GwttSNGWOMMrtqApjK3kFHXxiPMjj5f62m4IHDyyT0/Am+XTF/KdMUPUDRbIj9FYxFGM1+a7q0AokAuYE6bE+iJHYZ+Xiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sDjbA+k8; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=PQWiEGJRai/gBJrWLZGY0/T9f7lalY4fQ40Y6uJuD3cdmuKpVMlbPF28O/gCdh+Zg19+7INFVPMrTpHZt4b97Ah5sm5RhdtTjAKwPaGszAGFNigG3P3r0xcpjnPE0UttK26O0AWr8ffqmQgdksDtCjWyxBCoI8hpBLUFYqHrUiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xip6jgRd; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59cf8140d0so163782566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:45 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a599a298990so168658966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:48:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715251724; x=1715856524; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715251726; x=1715856526; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QnzQs4M8STg8v5mtXmoZjumL7kiGXFglN5V5NIOcQXY=;
-        b=sDjbA+k8EdKzEaw9SXcZO7tbWFoeYXGVbtOdO9+oiOkf/6zFj09tF1z77WGHF0aKKk
-         PlZbk7jC9Fy9W2soNYc62vLn1YmSS+sZ5flB6purxzLYabjX4rL8UzFdbxSfnKn9+F1j
-         rJuLNsERkHncd7hK7420xHwiR3Ut6DZ529C/6M+wQvuy0sOTJWW6hrjag0LObHjUHsyv
-         uhW2YvN/U5Grhi6q00nyKbn9UfyOcQHVoqN8za4vetihv6yBRaDkEdC4Jvu/xp/JxYE1
-         OdEKWXYbaltrio15qfP1ussHtFubS00oxspqprFml/woOPIGrOD2xV9xTBo25w4RQT6B
-         dM+w==
+        bh=NAnteY4Ku2+wEU6Dmp4nyfLK0/g/WbuTESaTngARvs4=;
+        b=xip6jgRdHdqsodVLL4ptrQsc9jfnz5yoKwn1RgC34OopUeqqOq6hBGT7sF0H2lELLT
+         6vb2gUqvhlfj9LMAGp/+5b2JkEIoCWeVMb23pvRc1cvxpuDByfG7PWWGzCbpBvOijhG2
+         YBWc8zQ0lQcIbxLTv9n5VaC2T4bkGmkBN/4sEC15nvVpmYosdfdaVyQGjbs3vcPpyrQR
+         WTuH1jFpdxPdk6OPnT0T0KIypba6TY1QkQUA8w1PsNsJSmVvnVnxJgw1pFTNpGdetDWR
+         tuuCXLYd5AoKbvCI81An64DQub+K8HOFGi/oI6E7QKjP6dojSZDAiniD6G0y8fqYgaJl
+         ZnJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251724; x=1715856524;
+        d=1e100.net; s=20230601; t=1715251726; x=1715856526;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QnzQs4M8STg8v5mtXmoZjumL7kiGXFglN5V5NIOcQXY=;
-        b=IKkbzTYJ4F3NLIXCiAeEwQdgvAZnLJY2UnhJp+SMho13gTNh88u0jI0+0PS/3Oi1Ef
-         xDB8oOm72EkI/6kO22NAvT0p5UlOFwoGcnEbOjc/w7VqQrF5LArowUBEfgRsinrb3qAe
-         +AZlBBjtuQmAkl0HgtYZx0hydR7hs/oayqKqjVsnfqlXoK7S9YWVJLlT5grmU61Frhps
-         kh8oS/8p++ODA4JJMF1PHSp7ADw64ATbQuAJ75IjLu4VE22WtRzvioGrTz5gHllZ4zW6
-         037pUzPLjHnhKto30KqAsH1ol1gbbklnd5fVcFwkk591ugG80Gh2rGeIr3KGZX7FEaDW
-         9e3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV0/C94svyTOqB6/Zi78r7eJNdijOrlTp0JbaytBlNynObt5rGcABbF0fcM2+ZNnWo1lIgxirPy/YME25WbyyVi2xvLX8S9R0/E2oFu
-X-Gm-Message-State: AOJu0YyHlsIHDk0257LsuX8ib3+65ak1xXuRyJLFFECjE6CMDn32X3+O
-	5ftZt23fkMzpwoAKV3jqRpVjdcUw1B+bgdFHfBfgXNS33Se6gR/+gqZB1ROBxpUPeoeoTUyUinV
-	2
-X-Google-Smtp-Source: AGHT+IHczS5CGAbdxg981H0G+SH61xNrLiSFw+Z1T9VXSEXNVrCC1Lb8qrk7DjDkFnik5BB2nKDB1A==
-X-Received: by 2002:a17:906:61a:b0:a59:9ef3:f6df with SMTP id a640c23a62f3a-a59fb941d7bmr290673566b.22.1715251724582;
-        Thu, 09 May 2024 03:48:44 -0700 (PDT)
+        bh=NAnteY4Ku2+wEU6Dmp4nyfLK0/g/WbuTESaTngARvs4=;
+        b=tNi6VlXQEddIeUZDu4bCrtfhNlw2aKe6TZpa/azZ6yj2eXTtDyWCZlRzKeagKE1I6a
+         COXFbYihLMx4qJFQkz4p6dO//93ChHA9Vasys18w2cbAl1eOsRWMXNTZjPx4Qpv/VucP
+         0WlLgDQq2LR1ZcvpHSIfObReh+BXBgzgMLAeo7a8MmQ81IxdQVSGfYHw+X0i1F7pWmkO
+         xv7elfzw7Orn4KgIIwP6sN7s5zbWVBw29juD7rKeMgxMb1fKjKRCW7CC//Ha88czNQa1
+         LrqZhz0Ttf48VY7iSWV95H0iR9SIQsQQ6hx/dHLOIozzc/6oKVjCFrm1JZpiJ5hRpTX6
+         zlDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhpRFMvRaw2HhEKyq7ULs2SKlzNI6d9ZEpaLGEri9nDQ8PG3MEmw/+Pppk7c8hUvtVpbeRh3cJAjcxX2la7u2e2V50hrPNsqZyjjIM
+X-Gm-Message-State: AOJu0Yw2WvLPXIaWe1hhHCsXYTcKD+9Tox5ayjA8dz+H59HH3Ze6BXPp
+	mLH/QHBbfCA1ChF1qnc6wS6xRpoKzy9wG9Caz+RLJpl3hzWmjElwQjarfS4Lrik=
+X-Google-Smtp-Source: AGHT+IFOTVe25O3pIsAX/rCgSborCXKvhCmHmsBLt39hPOEhp1TeTMpFQcZ8/4M/6lj5v0rs2vv/ug==
+X-Received: by 2002:a17:907:2685:b0:a59:a3ef:21eb with SMTP id a640c23a62f3a-a59fb9dce5fmr414990366b.73.1715251726392;
+        Thu, 09 May 2024 03:48:46 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d85sm60195966b.72.2024.05.09.03.48.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d85sm60195966b.72.2024.05.09.03.48.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 03:48:43 -0700 (PDT)
+        Thu, 09 May 2024 03:48:45 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,9 +79,9 @@ To: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/5] ARM: dts: imx: correct choice of panel native mode
-Date: Thu,  9 May 2024 12:48:35 +0200
-Message-ID: <20240509104838.216773-2-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 3/5] ARM: dts: imx6dl-aristainetos2_4: drop redundant 'power-on-delay' property
+Date: Thu,  9 May 2024 12:48:36 +0200
+Message-ID: <20240509104838.216773-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240509104838.216773-1-krzysztof.kozlowski@linaro.org>
 References: <20240509104838.216773-1-krzysztof.kozlowski@linaro.org>
@@ -94,110 +93,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Bindings and Linux driver expect native-mode to be a phandle to one of
-the timings node, not a boolean property.  Correct the DTS to fix
-dtbs_check warnings like:
+LG4573 panel bindings do not allow 'power-on-delay' property.  Linux
+driver does not use it, either.  Reported by dtbs_check:
 
-  imx53-m53evk.dtb: display-timings: timing-800x480p60: 'native-mode' does not match any of the regexes: 'pinctrl-[0-9]+'
-
-This should not have actual effect for Linux kernel (no real bug
-affecting choice of native-mode), because the first timing node is
-chosen in absence of proper native-mode property.
+  imx6dl-aristainetos2_4.dtb: display@0: Unevaluated properties are not allowed ('power-on-delay' was unexpected)
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- arch/arm/boot/dts/nxp/imx/imx51-apf51dev.dts         | 2 +-
- arch/arm/boot/dts/nxp/imx/imx51-ts4800.dts           | 2 +-
- arch/arm/boot/dts/nxp/imx/imx53-m53evk.dts           | 2 +-
- arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dts | 2 +-
- arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_4.dts  | 2 +-
- arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_7.dts  | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx51-apf51dev.dts b/arch/arm/boot/dts/nxp/imx/imx51-apf51dev.dts
-index f72e109342bc..de6b7607510a 100644
---- a/arch/arm/boot/dts/nxp/imx/imx51-apf51dev.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx51-apf51dev.dts
-@@ -25,8 +25,8 @@ disp1 {
- 		pinctrl-0 = <&pinctrl_ipu_disp1>;
- 
- 		display-timings {
-+			native-mode = <&timing0>;
- 			timing0: timing-lw700 {
--				native-mode;
- 				clock-frequency = <33000033>;
- 				hactive = <800>;
- 				vactive = <480>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx51-ts4800.dts b/arch/arm/boot/dts/nxp/imx/imx51-ts4800.dts
-index 87a34cbdf233..079bd3d14999 100644
---- a/arch/arm/boot/dts/nxp/imx/imx51-ts4800.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx51-ts4800.dts
-@@ -58,8 +58,8 @@ display1: disp1 {
- 		pinctrl-0 = <&pinctrl_lcd>;
- 
- 		display-timings {
-+			native-mode = <&timing0>;
- 			timing0: timing-800x480p60 {
--				native-mode;
- 				clock-frequency = <30066000>;
- 				hactive = <800>;
- 				vactive = <480>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx53-m53evk.dts b/arch/arm/boot/dts/nxp/imx/imx53-m53evk.dts
-index f0f92ee7ba95..ba0c62994f75 100644
---- a/arch/arm/boot/dts/nxp/imx/imx53-m53evk.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx53-m53evk.dts
-@@ -17,8 +17,8 @@ display1: disp1 {
- 		pinctrl-0 = <&pinctrl_ipu_disp1>;
- 
- 		display-timings {
-+			native-mode = <&timing0>;
- 			timing0: timing-800x480p60 {
--				native-mode;
- 				clock-frequency = <31500000>;
- 				hactive = <800>;
- 				vactive = <480>;
 diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dts
-index c75606fc4abd..ec806b8d503a 100644
+index ec806b8d503a..c9b2ea2b24b2 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dts
 +++ b/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos2_4.dts
-@@ -85,8 +85,8 @@ lcd_panel: display@0 {
- 		power-on-delay = <10>;
+@@ -82,7 +82,6 @@ lcd_panel: display@0 {
+ 		compatible = "lg,lg4573";
+ 		spi-max-frequency = <10000000>;
+ 		reg = <0>;
+-		power-on-delay = <10>;
  
  		display-timings {
-+			native-mode = <&timing0>;
- 			timing0: timing-480x800p57 {
--				native-mode;
- 				clock-frequency = <27000027>;
- 				hactive = <480>;
- 				vactive = <800>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_4.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_4.dts
-index 0d86927819c2..9ec038f1d0ff 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_4.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_4.dts
-@@ -36,8 +36,8 @@ display0: disp0 {
- 		status = "okay";
- 
- 		display-timings {
-+			native-mode = <&timing0>;
- 			timing0: timing-480x800p60 {
--				native-mode;
- 				clock-frequency = <30000000>;
- 				hactive = <480>;
- 				vactive = <800>;
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_7.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_7.dts
-index 66271daf97d9..b3129832f471 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_7.dts
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-aristainetos_7.dts
-@@ -25,8 +25,8 @@ display0: disp0 {
- 		status = "okay";
- 
- 		display-timings {
-+			native-mode = <&timing0>;
- 			timing0: timing-800x480p60 {
--				native-mode;
- 				clock-frequency = <33246000>;
- 				hactive = <800>;
- 				vactive = <480>;
+ 			native-mode = <&timing0>;
 -- 
 2.43.0
 
