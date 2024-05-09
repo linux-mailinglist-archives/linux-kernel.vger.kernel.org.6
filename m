@@ -1,87 +1,60 @@
-Return-Path: <linux-kernel+bounces-174956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7B28C17F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B31E8C182B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010A51F219E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE46A1C20DD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC31127E31;
-	Thu,  9 May 2024 20:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E7985264;
+	Thu,  9 May 2024 21:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="jXh2kqeU"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="bJKZuPBW"
+Received: from terminus.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CDD8594C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 20:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F3F80617;
+	Thu,  9 May 2024 21:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715287874; cv=none; b=ltyBi2f+RYy8UGs8yf3U+yv3XgjSshOd/jBfWd0L0OCiXNF3vTObFkMND7rtfe1cLWp3zh1hOQDzALXeg1UY23dfuiP8aCNs7QmEtnQzEO8UinlEg7UUlddMCAKfyqhB1ZnLpKeoV0H0nOrKqcP3Q3ByfyaFap585TxtNSNOqhY=
+	t=1715289478; cv=none; b=IYpz+bKWAFf9MtuBPm3CTaF3iZ1CeAf+0pkmGN6vzTcE0IEP2Na4wb9xr7QdqjefVKRZro84h+bH2XELj7a+UpP+IUvQ5rgQnwPG4E6bm2KnPYOV/vADLp41mCZ1rCnZbrref9JuenGtNE8VCfD7UT6gL2WrI920rXs1H4HkKkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715287874; c=relaxed/simple;
-	bh=jh0q0ulQ5LcPy3XQUg0Ue3n4pGfewvXGaX+N3ICGH+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bGEDKufsvxZR7Km5+K35YRookfADO/ilEs7e7tW4BbqoF3JU2hhny2ABmaOYQoFC+7lQ94HPjmMHauWxdPtk5b/nnsDnn80/IGCo8Ln0O3SqM1A/FboMPV1bkzDpswcOuAqmW8CF5ptF/XH//vVaBgEwcQtCelBpDN9MIDIeo1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=jXh2kqeU; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso8219855ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 13:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715287869; x=1715892669; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=No8/jmvB2lIMy6tK61c0Wm+y+Z2VaVEhQDXdDb8ENDg=;
-        b=jXh2kqeUaVQ0nhfXGHTIL23aws5KMCR8Yscd7r1sehBwfSwQRHDjCnXqcnG0IRr0oH
-         3a+hKH2nHUvzXiXJA9/y/H35CGqSW2LAh6Wx5h13meATPrwl3nalSImdxrrhXHWILNuv
-         4JPlAyjSq+MMJEmRPYcZXa80RgNMRcWQWZ1i8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715287869; x=1715892669;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=No8/jmvB2lIMy6tK61c0Wm+y+Z2VaVEhQDXdDb8ENDg=;
-        b=rjgk6kTy2f8b8RllptdGNjokgXDUrbBU+cvzh5pUrMJG7gjTQFDlapT5Qjq9rQnNRH
-         ZPlpxTdrQwi509/Thc7PqwGb46q6N+q22BHmY1iSFFZc239Jo4scpUnrqxdfG5R/V305
-         MMcvIuLvZojUACgjFuI1CdLP4WeGYomV+r0kDgkUJ9dMQ/q5ovlKR40TjWbeo6to7eV8
-         4VUezAjcSx2TU+uRqDrRGPJXC3oVbGOzmn1DRiqbK8z/wp54/dE1QJnkoHwCOABYJThe
-         8F3qVePAWyHgC7PdhfzxK+IRDywQxh1/iUTX2ipY2LB2oY7rBDq6dmuxFplogvLBjyQU
-         JHXw==
-X-Gm-Message-State: AOJu0YxvM3ystQaMTz0vDWzQOPUsaloAVlIU5DpxkMAGWlzdtg7G+mRo
-	aiUcSJZ6+QzdZVEW9LHiLu3g4AN3WEQisDgq4Uyh5QEkrOHmFOmvAktAVGQHIgWIC2LKF093WqM
-	KYoLNcVCqPMoz7EcmFgPMSASPOLSgM64oxjXypS94+t8tPs7x+4W0tJBqznUfbVEXUNjFTGejzz
-	WCbR33NTqp1WhkvhmelK9TE+FzVaVqkLhckeEbcrH/ouo=
-X-Google-Smtp-Source: AGHT+IFdJzoOlK3+2PZn0yWAVQ5SUDkUUcQQGgjCs9iyqPeiJ5XXgMJqnpVya2oFF/6RdwbW0XGY1w==
-X-Received: by 2002:a17:902:f812:b0:1eb:1474:5ef5 with SMTP id d9443c01a7336-1ef43d2ea72mr6154495ad.33.1715287868873;
-        Thu, 09 May 2024 13:51:08 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0badb959sm18677365ad.85.2024.05.09.13.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 13:51:08 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	nalramli@fastly.com,
-	Joe Damato <jdamato@fastly.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-rdma@vger.kernel.org (open list:MELLANOX MLX4 core VPI driver)
-Subject: [PATCH net-next v4 3/3] net/mlx4: support per-queue statistics via netlink
-Date: Thu,  9 May 2024 20:50:56 +0000
-Message-Id: <20240509205057.246191-4-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240509205057.246191-1-jdamato@fastly.com>
-References: <20240509205057.246191-1-jdamato@fastly.com>
+	s=arc-20240116; t=1715289478; c=relaxed/simple;
+	bh=vsD/zS7+TFNOgtj4eanUGUTBn6O+1OLB13dUHr9Udzo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tMAaFdlaXZXBsJZ+4AS8OyrZOntXU0hTYeUsYoMefdpPyPrNqjUe2649Xp3VRrMdGa3br9XyKIFvvS1KQUrvDjULWt2uu8+1u785EJ7MrtcsoqA1k3L5BuBamv4ot4Kmy9Zf4Lmo7VT0nxJYR4WoL4Gd8LFkWUbKiTi4eMTeaX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=bJKZuPBW; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 449KrevR275586
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Thu, 9 May 2024 13:53:45 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 449KrevR275586
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024041401; t=1715288025;
+	bh=3NuCs54JWW873zlaANJk0I8LXskrd6ND/8ULrWrDZMg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bJKZuPBWMjo6D5z4eedNLPsqZX5F9DCry5XXycBGAGXUQ2k3bUoRS7krdyZDCQxHt
+	 aSvktQc92znztwdLHbwdZYwUr1PYMvdWe+6dngGMtHZETY3GSVT25Jj9Yb8JU0vyGw
+	 /BnLYVloXn5GovPOiU13q6V8JWz5HGoStfV6O4jOMfBtvNa7hdQP7Oqdi0U7BJAsuY
+	 bgF/cMLB4csUcibVMluYybYEocwlfpErKcSiXfVSkB8BTo6BKVEgdrX1WLsg0wfFoL
+	 Tvp8zuYij/E2B1HWFgOG5zch288fe4oCb4fflTKwzC540UOB9x6Eaza2PEVqqscHjZ
+	 +kFWL5asQzWiQ==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
+        acme@kernel.org, namhyung@kernel.org
+Subject: [RESEND v1 0/3] x86/cpufeatures: Automatically generate required and disabled feature masks
+Date: Thu,  9 May 2024 13:53:37 -0700
+Message-ID: <20240509205340.275568-1-xin@zytor.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,113 +63,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make mlx4 compatible with the newly added netlink queue stats API.
+This is a rebase and resend of: https://lore.kernel.org/lkml/20240201054629.3816748-1-xin@zytor.com/.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
----
- .../net/ethernet/mellanox/mlx4/en_netdev.c    | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
+The x86 build process first generates required and disabled feature
+masks based on current build config, and then uses these generated
+masks to compile the source code. When a CPU feature is not enabled
+in a build config, e.g., when CONFIG_X86_FRED=n, its feature disable
+flag, i.e., DISABLE_FRED, needs to be properly defined and added to
+a specific disabled CPU features mask in <asm/disabled-features.h>,
+as the following patch does:
+https://lore.kernel.org/all/20231205105030.8698-8-xin3.li@intel.com/.
+As a result, the FRED feature bit is surely cleared in the generated
+kernel binary when CONFIG_X86_FRED=n.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-index 4c089cfa027a..fd79e957b5d8 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -43,6 +43,7 @@
- #include <net/vxlan.h>
- #include <net/devlink.h>
- #include <net/rps.h>
-+#include <net/netdev_queues.h>
- 
- #include <linux/mlx4/driver.h>
- #include <linux/mlx4/device.h>
-@@ -3099,6 +3100,77 @@ void mlx4_en_set_stats_bitmap(struct mlx4_dev *dev,
- 	last_i += NUM_PHY_STATS;
- }
- 
-+static void mlx4_get_queue_stats_rx(struct net_device *dev, int i,
-+				    struct netdev_queue_stats_rx *stats)
-+{
-+	struct mlx4_en_priv *priv = netdev_priv(dev);
-+	const struct mlx4_en_rx_ring *ring;
-+
-+	spin_lock_bh(&priv->stats_lock);
-+
-+	if (!priv->port_up || mlx4_is_master(priv->mdev->dev))
-+		goto out_unlock;
-+
-+	ring = priv->rx_ring[i];
-+	stats->packets = READ_ONCE(ring->packets);
-+	stats->bytes   = READ_ONCE(ring->bytes);
-+	stats->alloc_fail = READ_ONCE(ring->alloc_fail);
-+
-+out_unlock:
-+	spin_unlock_bh(&priv->stats_lock);
-+}
-+
-+static void mlx4_get_queue_stats_tx(struct net_device *dev, int i,
-+				    struct netdev_queue_stats_tx *stats)
-+{
-+	struct mlx4_en_priv *priv = netdev_priv(dev);
-+	const struct mlx4_en_tx_ring *ring;
-+
-+	spin_lock_bh(&priv->stats_lock);
-+
-+	if (!priv->port_up || mlx4_is_master(priv->mdev->dev))
-+		goto out_unlock;
-+
-+	ring = priv->tx_ring[TX][i];
-+	stats->packets = READ_ONCE(ring->packets);
-+	stats->bytes   = READ_ONCE(ring->bytes);
-+
-+out_unlock:
-+	spin_unlock_bh(&priv->stats_lock);
-+}
-+
-+static void mlx4_get_base_stats(struct net_device *dev,
-+				struct netdev_queue_stats_rx *rx,
-+				struct netdev_queue_stats_tx *tx)
-+{
-+	struct mlx4_en_priv *priv = netdev_priv(dev);
-+
-+	spin_lock_bh(&priv->stats_lock);
-+
-+	if (!priv->port_up || mlx4_is_master(priv->mdev->dev))
-+		goto out_unlock;
-+
-+	if (priv->rx_ring_num) {
-+		rx->packets = 0;
-+		rx->bytes = 0;
-+		rx->alloc_fail = 0;
-+	}
-+
-+	if (priv->tx_ring_num[TX]) {
-+		tx->packets = 0;
-+		tx->bytes = 0;
-+	}
-+
-+out_unlock:
-+	spin_unlock_bh(&priv->stats_lock);
-+}
-+
-+static const struct netdev_stat_ops mlx4_stat_ops = {
-+	.get_queue_stats_rx     = mlx4_get_queue_stats_rx,
-+	.get_queue_stats_tx     = mlx4_get_queue_stats_tx,
-+	.get_base_stats         = mlx4_get_base_stats,
-+};
-+
- int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
- 			struct mlx4_en_port_profile *prof)
- {
-@@ -3262,6 +3334,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
- 	netif_set_real_num_tx_queues(dev, priv->tx_ring_num[TX]);
- 	netif_set_real_num_rx_queues(dev, priv->rx_ring_num);
- 
-+	dev->stat_ops = &mlx4_stat_ops;
- 	dev->ethtool_ops = &mlx4_en_ethtool_ops;
- 
- 	/*
+Recently there is another case to repeat the same exercise for the
+AMD SEV-SNP CPU feature:
+https://lore.kernel.org/all/20240126041126.1927228-2-michael.roth@amd.com/.
+https://lore.kernel.org/all/20240126041126.1927228-23-michael.roth@amd.com/.
+
+It was one thing when there were four of CPU feature masks, but with
+over 20 it is going to cause mistakes, e.g.,
+https://lore.kernel.org/lkml/aaed79d5-d683-d1bc-7ba1-b33c8d6db618@suse.com/.
+
+We want to eliminate the stupidly repeated exercise to manually assign
+features to CPU feature words through introducing an AWK script to
+automatically generate a header with required and disabled CPU feature
+masks based on current build config, and this patch set does that.
+
+
+H. Peter Anvin (Intel) (2):
+  x86/cpufeatures: Add {required,disabled} feature configs
+  x86/cpufeatures: Generate a feature mask header based on build config
+
+Xin Li (Intel) (1):
+  x86/cpufeatures: Remove {disabled,required}-features.h
+
+ arch/x86/Kconfig                              |   4 +-
+ arch/x86/Kconfig.cpu                          |  16 +-
+ arch/x86/Kconfig.cpufeatures                  | 153 +++++++++++++++++
+ arch/x86/Makefile                             |  17 +-
+ arch/x86/boot/cpucheck.c                      |   3 +-
+ arch/x86/boot/cpuflags.c                      |   1 -
+ arch/x86/boot/mkcpustr.c                      |   3 +-
+ arch/x86/include/asm/Kbuild                   |   1 +
+ arch/x86/include/asm/asm-prototypes.h         |   2 +-
+ arch/x86/include/asm/atomic64_32.h            |   2 +-
+ arch/x86/include/asm/bitops.h                 |   4 +-
+ arch/x86/include/asm/cmpxchg_32.h             |   2 +-
+ arch/x86/include/asm/cpufeature.h             |   1 +
+ arch/x86/include/asm/cpufeatures.h            |   8 -
+ arch/x86/include/asm/disabled-features.h      | 161 ------------------
+ arch/x86/include/asm/required-features.h      | 105 ------------
+ arch/x86/kernel/verify_cpu.S                  |   1 +
+ arch/x86/lib/Makefile                         |   2 +-
+ arch/x86/lib/cmpxchg8b_emu.S                  |   2 +-
+ arch/x86/tools/featuremasks.awk               | 108 ++++++++++++
+ lib/atomic64_test.c                           |   2 +-
+ tools/arch/x86/include/asm/cpufeatures.h      |   8 -
+ .../arch/x86/include/asm/disabled-features.h  | 161 ------------------
+ .../arch/x86/include/asm/required-features.h  | 105 ------------
+ tools/perf/check-headers.sh                   |   2 -
+ 25 files changed, 306 insertions(+), 568 deletions(-)
+ create mode 100644 arch/x86/Kconfig.cpufeatures
+ delete mode 100644 arch/x86/include/asm/disabled-features.h
+ delete mode 100644 arch/x86/include/asm/required-features.h
+ create mode 100755 arch/x86/tools/featuremasks.awk
+ delete mode 100644 tools/arch/x86/include/asm/disabled-features.h
+ delete mode 100644 tools/arch/x86/include/asm/required-features.h
+
+
+base-commit: c064e5cb8336a5ee3471cc6a376cc19e19aa85de
 -- 
-2.25.1
+2.45.0
 
 
