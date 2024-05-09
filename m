@@ -1,220 +1,121 @@
-Return-Path: <linux-kernel+bounces-174312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CE58C0CEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:57:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1810D8C0CF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E45E8B22701
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:57:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48E0B1C20F27
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4428F14A0A3;
-	Thu,  9 May 2024 08:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkUeArbY"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296C14A0A9;
+	Thu,  9 May 2024 08:58:14 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BAA14A09D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B0F13C8F8
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715245035; cv=none; b=YBJbKtLg+tD5j1G4wpq82B3zcwGD0yFtBEaZysx7wIDBjZGIvJFuoyN7BBUSxUdJzvIwsEYOwPQk6mDHjo0GK3lXJa4VoSZ7kdw2lHsyxW0zc9JoKtP4PLusIhkeom6wniDcEuj/EcoUBpZYHPmlfRRP3WRz9achOnhHd2bCnGc=
+	t=1715245094; cv=none; b=eRl1rSHT6NVgkPDQb8xdhGGnYm4n8j9FipoDKPoRaCxV4n60BwhObwq2DK6HRugwCBQy6OD3J/1MSA1u0rnmJz7Tv0wPK4xqhkXxJPUUIK9Ch5idJge43TNUMwXLrnbWYtxqJ4Wpxqn06oM3qidQjmynjjSFDxIhiQDb7+Q0XWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715245035; c=relaxed/simple;
-	bh=zmrIhCP7JxRQY/Beh0wu2cp0ImuYtIcEh7ZxUNRpu8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aQH+IzarrWV06/Fcff+Cy5diuMxcXY7P7H4zyAEXAXDU+Tw94BAjgrpZj0G7VvZF4M0ZFDvreXFUcV87+6//5lY9NTGiw8FZxdKCuMwe4iTnvBM6gu8f7FP4LKwKe02hBkOE2ibO3MT1b+0OjBcj6hYE9LT2YhhxTh1dE8RcQlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkUeArbY; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-7f170dc5f70so227064241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715245033; x=1715849833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hfKhm+2hvPQl8Oso+dQHqxM5T+rG2L/B/sQ5bPGSyGY=;
-        b=DkUeArbY3sPRoJw2MYj9kp3ZmXybLXh6Qv4jMVWbkgTFWCGhGyp8Z+1/Vd09Bhh78P
-         Td10qhS/EV04sw0dHKDPtupti+eCHvClcddEB9mz/Ec/aZ35I08RboykpQPrgcm8ryYm
-         vIkEIxuJnu8O/bYJgaO7cIna9L56ac1BnC3DsQm2rhjmyPCJvkcyLsbeDNMK3xr2V8RW
-         iWjaCzZByodL0Mp2ibIScb9qc5AvlCXF6MP0zJb1IO2ICRRBXVBdFvBch4RdOoRQeGot
-         sSLKBHgzJPUqW/XRBeAM+vvL3RL7UmACh5xQ1ABmW8yyd3qM2vIqzM8r4gyPe08OMNiZ
-         iJDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715245033; x=1715849833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hfKhm+2hvPQl8Oso+dQHqxM5T+rG2L/B/sQ5bPGSyGY=;
-        b=qT0t1ys9qTrbwPhRN8/r027eegc7aw7BDX93OzH2sBuV+GgaSPNrhIcIq2WOK7l1Zs
-         r1tTxzU5m8dQGL2Lyw16208uDupJ35MtGHvs62otO7WFeNQ5levQBET8oKlBhCq6sZpT
-         FVdzD2PhMh7P7mIRTacaRcvnwg+BqpH9W0gpDgWYDUDJuCSkfS1DkEQqgv5jqdfqNli3
-         l2pfTs0G/5JoK4KX7CluPwG5PIJv4d+yxch0xDlVSf3P2MIpLw5nOqGOg1S0aJXMuUAQ
-         cRClz8dtSvsnqsDgWMM5HsWtL80Xr3mYC2br6VE+qUOIO1Q6YUmSDdfQqbw54Hn6sMZY
-         L47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8cNOClPPZucQ4bpwNq6aRu4uvjQ8Fs72BiaUUI9+OtFCdkPbzwmUgqd55yViyLTkplzYiiNOFcAZYjUf59Zp2iwO6AWzPd/Wzcok0
-X-Gm-Message-State: AOJu0YxJYJue61hkPvA0l0FmfS86q7VpYLTFSIT5JtiEAg0Tx9evnu1D
-	tq0bIimYR/+7VDDiCfTRnDTkEJE10Cb0MRFsWYh2+dO1bx7ryY6ekajSqCBdMGyI9E1iFfk6igS
-	S5WPj+3h0YGi+PUarXQ1of4cw56k=
-X-Google-Smtp-Source: AGHT+IFYUDF9N+GGbD4pPAwt0Qso0dyrFmiNKcjQMb09BOpKvCTUFL9zPSEJaYJ38fr6aytRinvJmqD7kfFiAp1NNPg=
-X-Received: by 2002:a05:6102:345:b0:47e:f593:2b8a with SMTP id
- ada2fe7eead31-47f3c38ff83mr4773563137.24.1715245032831; Thu, 09 May 2024
- 01:57:12 -0700 (PDT)
+	s=arc-20240116; t=1715245094; c=relaxed/simple;
+	bh=Xu2WCirexobQIh25VikC3MIOnC63W3f4KDUKltXAkeA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hhyXpeXjP3Z9GX3OQdygIUW4LyXwC78vDemEh2+uxwNTJ3Wz44nrXR/kIKhsZ6TvrmicJzGd8LkmTGdtb/iKG/Ovn3JAeaJAKOQ1WyONvmb83r49vCJZe4IbL8XD7I+5GWc0lapRfWvVvErxLchuVApwU1yk23y3pV6JlPKmdBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3dbb7bfa0de211ef9305a59a3cc225df-20240509
+X-CID-O-RULE: Release_Ham
+X-CID-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.37,REQID:4de40844-5ccd-4772-b5d8-70320bbaec82,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-1
+X-CID-INFO: VERSION:1.1.37,REQID:4de40844-5ccd-4772-b5d8-70320bbaec82,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-1
+X-CID-META: VersionHash:6f543d0,CLOUDID:8d15c9d744e307d403f4a7dd4da8004e,BulkI
+	D:240509165804T4MFGNYY,BulkQuantity:0,Recheck:0,SF:25|17|19|44|66|102,TC:n
+	il,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
+	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-CTIC-Tags:
+	HR_CC_CHARSET, HR_CC_CHARSET_NUM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME
+	HR_CC_NO_NAME, HR_CHARSET, HR_CHARSET_NUM, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_LANG
+	HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN
+	HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME, DN_TRUSTED
+	SRC_TRUSTED, SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD
+	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-UUID: 3dbb7bfa0de211ef9305a59a3cc225df-20240509
+X-User: oushixiong@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.169)] by mailgw.kylinos.cn
+	(envelope-from <oushixiong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 931486327; Thu, 09 May 2024 16:58:02 +0800
+From: oushixiong <oushixiong@kylinos.cn>
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Xinhui.Pan@amd.com,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/radeon: Delay Connector detecting when HPD singals is unstable
+Date: Thu,  9 May 2024 16:57:58 +0800
+Message-Id: <20240509085758.123046-1-oushixiong@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508125808.28882-1-hailong.liu@oppo.com> <Zjx_6F3Fti_EBD_e@tiehlicka>
- <20240509080636.bauxbgpqdluzpein@oppo.com> <CAGsJ_4wLF2+O2ydr8EvPqgrsOPsWStUxpzRvi3rJpktU_FSP1w@mail.gmail.com>
-In-Reply-To: <CAGsJ_4wLF2+O2ydr8EvPqgrsOPsWStUxpzRvi3rJpktU_FSP1w@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 9 May 2024 20:57:00 +1200
-Message-ID: <CAGsJ_4xqg7+xwsbXpU1yp_HkTBcpJwRN-ErEwzOZx915hgsyrQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
- called with __GFP_NOFAIL
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, urezki@gmail.com, 
-	hch@infradead.org, lstoakes@gmail.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, xiang@kernel.org, chao@kernel.org, 
-	Oven <liyangouwen1@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 9, 2024 at 8:32=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> On Thu, May 9, 2024 at 8:21=E2=80=AFPM Hailong Liu <hailong.liu@oppo.com>=
- wrote:
-> >
-> > On Thu, 09. May 09:48, Michal Hocko wrote:
-> > > On Wed 08-05-24 20:58:08, hailong.liu@oppo.com wrote:
-> > > > From: "Hailong.Liu" <hailong.liu@oppo.com>
-> > > >
-> > > > Commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmallo=
-c")
-> > > > includes support for __GFP_NOFAIL, but it presents a conflict with
-> > > > commit dd544141b9eb ("vmalloc: back off when the current task is
-> > > > OOM-killed"). A possible scenario is as belows:
-> > > >
-> > > > process-a
-> > > > kvcalloc(n, m, GFP_KERNEL | __GFP_NOFAIL)
-> > > >     __vmalloc_node_range()
-> > > >     __vmalloc_area_node()
-> > > >         vm_area_alloc_pages()
-> > > >             --> oom-killer send SIGKILL to process-a
-> > > >             if (fatal_signal_pending(current)) break;
-> > > > --> return NULL;
-> > > >
-> > > > to fix this, do not check fatal_signal_pending() in vm_area_alloc_p=
-ages()
-> > > > if __GFP_NOFAIL set.
-> > > >
-> > > > Reported-by: Oven <liyangouwen1@oppo.com>
-> > > > Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
-> > > > ---
-> > > >  mm/vmalloc.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index 6641be0ca80b..2f359d08bf8d 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -3560,7 +3560,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
-> > > >
-> > > >     /* High-order pages or fallback path if "bulk" fails. */
-> > > >     while (nr_allocated < nr_pages) {
-> > > > -           if (fatal_signal_pending(current))
-> > > > +           if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(curre=
-nt))
-> > >
-> > > Use nofail instead of gfp & __GFP_NOFAIL.
-> > >
-> > > Other than that looks good to me. After that is fixed, please feel fr=
-ee
-> > > to add Acked-by: Michal Hocko <mhocko@suse.com>
-> > >
-> > > I believe this should also have Fixes: 9376130c390a ("mm/vmalloc: add=
- support for __GFP_NOFAIL")
-> > > --
-> > > Michal Hocko
-> > > SUSE Labs
-> >
-> > Thanks for the review and the Ack!
-> >
-> > Add Fixes in V2 patch.
-> >
-> > IIUC, nofail could not used for this case.
-> >
-> >         /*
-> >          * For order-0 pages we make use of bulk allocator, if
-> >          * the page array is partly or not at all populated due
-> >          * to fails, fallback to a single page allocator that is
-> >          * more permissive.
-> >          */
-> >         if (!order) {
-> >                 /* bulk allocator doesn't support nofail req. officiall=
-y */
-> >                 xxx
-> > -> nofail =3D false;
->
-> isn't it another bug that needs a fix?
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-Upon further examination, it's not a bug, but we can still utilize 'nofail'=
-.
-The current code is very hard to read about gfp and "nofail" :-)
+In some causes, HPD signals will jitter when plugging in
+or unplugging HDMI.
 
-maybe:
+Rescheduling the hotplug work for a second when EDID may still be
+readable but HDP is disconnected, and fixes this issue.
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 6641be0ca80b..7c66fe16c2ad 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3498,7 +3498,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- {
-        unsigned int nr_allocated =3D 0;
-        gfp_t alloc_gfp =3D gfp;
--       bool nofail =3D false;
-+       bool nofail =3D !!(gfp & __GFP_NOFAIL);
-        struct page *page;
-        int i;
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
+---
+ drivers/gpu/drm/radeon/radeon_connectors.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-@@ -3555,7 +3555,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
-                 * and compaction etc.
-                 */
-                alloc_gfp &=3D ~__GFP_NOFAIL;
--               nofail =3D true;
-        }
+diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
+index b84b58926106..cf0114ca59a4 100644
+--- a/drivers/gpu/drm/radeon/radeon_connectors.c
++++ b/drivers/gpu/drm/radeon/radeon_connectors.c
+@@ -1267,6 +1267,16 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
+ 			goto exit;
+ 		}
+ 	}
++
++	if (dret && radeon_connector->hpd.hpd != RADEON_HPD_NONE &&
++	    !radeon_hpd_sense(rdev, radeon_connector->hpd.hpd) &&
++	    connector->connector_type == DRM_MODE_CONNECTOR_HDMIA) {
++		DRM_DEBUG_KMS("EDID is readable when HPD disconnected\n");
++		schedule_delayed_work(&rdev->hotplug_work, msecs_to_jiffies(1000));
++		ret = connector_status_disconnected;
++		goto exit;
++	}
++
+ 	if (dret) {
+ 		radeon_connector->detected_by_load = false;
+ 		radeon_connector_free_edid(connector);
+-- 
+2.17.1
 
-        /* High-order pages or fallback path if "bulk" fails. */
-
->
-> >         } else if (gfp & __GFP_NOFAIL) {
-> >                 /*
-> >                  * Higher order nofail allocations are really expensive=
- and
-> >                  * potentially dangerous (pre-mature OOM, disruptive re=
-claim
-> >                  * and compaction etc.
-> >                  */
-> >                 alloc_gfp &=3D ~__GFP_NOFAIL;
-> >                 nofail =3D true;
-> >         }
-> >
-> >         /* High-order pages or fallback path if "bulk" fails. */
-> >         while (nr_allocated < nr_pages) {
-> >
-> > -> nofail is false here if bulk allocator fails.
-> >                 if (fatal_signal_pending(current))
-> >                         break;
-> >
-> > --
-> >
-> > Best Regards,
-> > Hailong.
 
