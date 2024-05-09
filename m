@@ -1,167 +1,118 @@
-Return-Path: <linux-kernel+bounces-175023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E08F8C193C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0A98C193E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709DE1C21A57
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4BF2817AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E65E129E76;
-	Thu,  9 May 2024 22:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4160C129A75;
+	Thu,  9 May 2024 22:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eSOPKI0x"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="di5Mko6G"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25829129A6F;
-	Thu,  9 May 2024 22:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2577B129A6F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 22:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715292563; cv=none; b=Ia2tZQJZJ5bOL0JUqAZOC8TMCzFUJy9cR7hNRjEKwkEIdnJe13aS/tmqUh0KmfhAjW/856uNDurVWmU+6Iu6ap8VybRgIDK4E7A8tZ7cNB+aa5e1GQaz/9lCfbugJ7W0MdOZHGQskA1ZG7Z+KRkq1GWUM5BeDRAxzWO9GyW5nVQ=
+	t=1715292622; cv=none; b=cljO4bKbWkcNBOoiHvqR7mAtAntbYbrpH3Q6H4mi9ujft3YGeOQyNC1p7cUjcaSwO544RiO0gcY+39N5D5fPnqQVRrB4hXIvtCQRJbeWFdcHNvb8jm8DKEcecIMeO7zrBaJBA+WPsyX+3kDEsFrsp8ingBQbt37aM0mBxBU85po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715292563; c=relaxed/simple;
-	bh=dSr0oxLlibKNvuTG5gujhJneI5aqNdgz3TUp6moOfds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TLEsi/aayRdAaQj0qWeiS8+LODNenOoJ/chJDrlhgaiFuBM5NI7eYi7fE10jQK19Mr7XoDL6+hCugduwIRR8VAx23ve8cvNs/M7k9ieC4sBUuonJfLp0hZWd/JL42McUWlD3z8fuHJNpXVGuQAHig0CnuL/hUQDxUF/srxRQoI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eSOPKI0x; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 449M04T1014634;
-	Thu, 9 May 2024 22:09:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=duuW4RPEH3OftDT3NUAKs6T19v0gBVzrmpREhIv0D1Y=; b=eS
-	OPKI0xJbEG2v45oQ7va5DfqzXPveE9N9ZokpdZuY1122uprUGZW4xg9S5ceLPlow
-	SiuoZMgogOnQ0ONj2+2SfLT99jtvC47/rOJqJ9UzMI8Cim98A+jXoj6nHOGUXE5F
-	nZu5AGHDpNDDzZDNP6oSMYBPUpDcbJMoN6513791QcxDQFkV3vEcySAp8BRkQPk8
-	WuWVNie1kc5DnH+g8RUOKeAzky1q0IAor8a4qzuxn+Y3FIRlp6lmJMj83/1E3gz8
-	1LdyyRtKzTvteBSNvqvBlYGJCxC0uY/kDmCJDIuoUhjNh9l3E5bCGeO29zZ1+Qrd
-	9MUSR2popFDzLbK/KUUQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w180gn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 22:09:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449M9235023015
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 22:09:02 GMT
-Received: from [10.71.112.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
- 15:09:01 -0700
-Message-ID: <96fe827b-e65f-570c-30de-1e51793f61a2@quicinc.com>
-Date: Thu, 9 May 2024 15:09:01 -0700
+	s=arc-20240116; t=1715292622; c=relaxed/simple;
+	bh=59mEgVC4lkz46VEjh2qNmxWDlTxiAqyCrQSnZR5NBDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QAILzXc/8e7858zV9SZ+jvrh/MwBxnyHVVE60HpLdfrAiIR/UuXI0gPB5rb0ae3zzYLcLvd7qs/IJNZRNBVPPKy2l9+oLpA+U7JalNUW7hhNfCDnNye5z3lRZoY2PDZNXuwtHj3fjHM6EWNLftBzz3O3yftCZnPVJaPYfacgPso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=di5Mko6G; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-48072da2f56so283534137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 15:10:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715292620; x=1715897420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MKdICX+lX8CE08nIGqEYXYRJN4FhWDTtg4wUvpl3cAY=;
+        b=di5Mko6GC7T7epR4LNQTDzrknh0xtFQHeQAXuVd9spUmCnpwF/AZHDFEqRR+lW2AJz
+         QEQVTH0+KQXE9z4+MITUgcl21Yw5nSjABKPfQ/GOexgxGBQaDp+Nfi4X2oGcRombOJMZ
+         Bkg609DfQZUQNQj2APCsc0t34flj+rl3fFdd1QvKMI/w+m4wFaB86vDkTSQgF54hRnjJ
+         zgddmDMEjPGwzcRp1XOeiW2H1CcMx/llFwTsSQYBA4qkCP27EUOezHfiwL1lSnkwDfBc
+         XKbZx2TIzujommW622COfx9bohLNHdhyFI4Vi5tulbnJAuASS/M2xyVFHJmRXvFi3kE5
+         qAVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715292620; x=1715897420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MKdICX+lX8CE08nIGqEYXYRJN4FhWDTtg4wUvpl3cAY=;
+        b=D0ypINjNF2Uj8v2MAu+THEwaKEAKfkXY6xG9Qvp/Gm4vzwE501U7msD+0aEt6Y6jN8
+         uR1B7czRbdjxWnWTy2KeBOv9gn8gnXD3HSuikTaYxa5F+OpsehHwu144BacDosybtUaE
+         WLhOpHw8mOws9T7qY8H9eBdXd001cTokyUlgqNX63yrZfYeQbbZ4s+8Z2mbCsvTd+xMP
+         OIVurq+M30j/+0txkBRZXvQ91vpzykl+IGaRKzclNlFtBYSeiB/DwLBGnXMGLZ9KzjxO
+         GWFnoIjuXoay03u0zhC2Ts056ygTjvvaGMtQ3C0Rr/PeHtvrWo8LEzzILaP/LKvHtgOl
+         WDtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYqj9yLREO6lC+UgQQCdV+0K5ZqRC9Lmc3CJQqimf4ZaGp1opR0oKtXNA0mUJiA5IJlUbemYRS45mleEEMJVn/kJdmCoAwm/Q3U/kk
+X-Gm-Message-State: AOJu0YyR3u/D4/jd4yasuhEC1Dz8W80KcPJ6FpzIpiJgFtPwf6jnue1n
+	8jwAEa/FVDCZ9DCmnvv1QWbUUMcPITGlLMjQBM8rr9FO69w8xhzuT1YrofrvzBjpHbFh1Lxppu8
+	4Co8lcQXYzyzpU6GHF2ERDl6g02BOfgcBwQD0
+X-Google-Smtp-Source: AGHT+IG9UCFfCI7smAQh5zYoU5+Q/8AopDE+XLvDQt4XHypQBrcuB26D5dwcSEX6FTb7qgBIbqU5zgrv8BJ4OSYe5Bc=
+X-Received: by 2002:a05:6102:3053:b0:47a:22cd:9716 with SMTP id
+ ada2fe7eead31-48077e07a05mr1112057137.17.1715292619999; Thu, 09 May 2024
+ 15:10:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v21 38/39] ASoC: qcom: Populate SoC components string
-Content-Language: en-US
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <lgirdwood@gmail.com>, <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
-        <broonie@kernel.org>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <bagasdotme@gmail.com>, <robh@kernel.org>, <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
- <20240507195116.9464-39-quic_wcheng@quicinc.com>
- <cb864ea4-95e3-4e99-920d-341188006291@linux.intel.com>
- <cdee0eb7-7fb7-f267-8203-7dfb0ea2d31d@quicinc.com>
- <92abca40-5eda-49d0-bc9d-eeb1a76e3461@linux.intel.com>
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <92abca40-5eda-49d0-bc9d-eeb1a76e3461@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FIieVROshBWYeBTCKPjUthilHzKh18GX
-X-Proofpoint-ORIG-GUID: FIieVROshBWYeBTCKPjUthilHzKh18GX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=712
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2405010000 definitions=main-2405090157
+References: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com> <20240509155356.w274h4blmcykxej6@quack3>
+In-Reply-To: <20240509155356.w274h4blmcykxej6@quack3>
+From: Justin Stitt <justinstitt@google.com>
+Date: Thu, 9 May 2024 15:10:07 -0700
+Message-ID: <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
+Subject: Re: [PATCH] fs: remove accidental overflow during wraparound check
+To: Jan Kara <jack@suse.cz>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pierre,
+On Thu, May 9, 2024 at 8:53=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> > @@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, lof=
+f_t offset, loff_t len)
+> >       if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+> >               return -ENODEV;
+> >
+> > -     /* Check for wrap through zero too */
+> > -     if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len)=
+ < 0))
+> > +     /* Check for wraparound */
+> > +     if (check_add_overflow(offset, len, &sum))
+> > +             return -EFBIG;
+> > +
+> > +     /* Now, check bounds */
+> > +     if (sum > inode->i_sb->s_maxbytes || sum < 0)
+> >               return -EFBIG;
+>
+> But why do you check for sum < 0? We know from previous checks offset >=
+=3D 0
+> && len > 0 so unless we overflow, sum is guaranteed to be > 0.
 
-On 5/9/2024 6:17 AM, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 5/8/24 15:06, Wesley Cheng wrote:
->> Hi Pierre,
->>
->> On 5/7/2024 2:40 PM, Pierre-Louis Bossart wrote:
->>>
->>>
->>> On 5/7/24 14:51, Wesley Cheng wrote:
->>>> For userspace to know about certain capabilities of the current platform
->>>> card, add tags to the components string that it can use to enable
->>>> support
->>>> for that audio path.  In case of USB offloading, the "usboffldplybk:
->>>> 1" tag
->>>
->>> usboffloadplayback?
->>>
->>> same question as before, do we need spaces?
->>>
->>
->> I think spaces are currently used as a delimiter, so I'll remove the
->> spaces.
->>
->>> And if we have controls, why do we need component strings? The component
->>> string is not dynamic to the best of my knowledge, this could be
->>> problematic if the card is no longer capable of supporting this stream,
->>> while a control can be updated at will.
->>>
->>
->> Maybe I misunderstood your comment here:
->>
->> https://lore.kernel.org/linux-usb/925d7c03-c288-49a4-8bcd-395b32810d75@linux.intel.com/
->>
->> At the time, I didn't include the kcontrols on the USB SND portion of
->> it, which was added after this series.  My interpretation was that there
->> were userspace entities that could query for general information about
->> what the card supports based on the components string, or sound card
->> name.  I treated this as an independent identifier, since the change to
->> add the offload capable jack was present.
-> 
-> My comment at the time stands: it's very hard to figure out that a
-> random card supports USB and is connected to a given endpoint.
-> 
-> It'd be much easier as you wrote in the comments on patch 34 to have a
-> control in the "regular" USB card to point to the 'better' offloaded
-> path exposed by another card. Applications wouldn't need to know what
-> this other card is, they would then use the card:device information
-> directly.
+Fair enough. I suppose with the overflow check in place we can no
+longer have a sum less than zero there. If nothing else, it tells
+readers of this code what the domain of (offset+len) is. I don't mind
+sending a new version, though.
 
-OK, then it might be fine to remove the components tag if patch#34 is 
-there.  That kcontrol is exposed as part of the sound card created for 
-the USB device, so if applications queried, it would signify that there 
-is an offload path available.
-
-For this kcontrol, it will return the ASoC platform card index, would 
-that be sufficient?
-
-Thanks
-Wesley Cheng
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
