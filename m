@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-174317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 901378C0CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:59:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB65C8C0CFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:00:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C571C20FA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:59:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7991F221D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A6D14A4DA;
-	Thu,  9 May 2024 08:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FC514A4FF;
+	Thu,  9 May 2024 08:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekolDwrK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B96uMNGA"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A04149C7C;
-	Thu,  9 May 2024 08:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D4E149C7C
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715245177; cv=none; b=ZO85iDGCsw5f4oN3imweyt30iFI6Grtgvs6ptzdwSMCu4YLYiD4RTB3Dec1RAjB5APLOKY0AbOIMJfFPlmBP15IjXo87zRqBijOgTLyRZDHlVT69CDU3mcDUZNYPXq48b3bU2CjqtGkjFnRZ8Tm5NM7KQQSc8Ht538ujjaUYK6I=
+	t=1715245185; cv=none; b=UPeVf7oS9jphizsdXJb5uQeDQvVU8DFMkSQCJ6rUTUPliPGGxMzrz5+XhCj7LYQI0jm6tr4Ui0W1isF53Q5BRwARl2HWQg5kjB9F7KgqrxbRwP3iL+sF4ELVbiyIctPx2vgLOuoXeeCpO65Ex9W+xzDppgWQfaDwbm/MRUUXrmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715245177; c=relaxed/simple;
-	bh=8zBl1SOCaihhNk8sPzTaVWMbbQ1AZ9KxaeAQlQYk1q8=;
+	s=arc-20240116; t=1715245185; c=relaxed/simple;
+	bh=6tEP5W7E5rNrTuVQkJNbh1NgFDLzBuXP4UK9b2HnLcQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s5PXk+zO89Mc3dooSeOGi57zV0QG0dxSjckKoRVMZ8HaxsaakmaZAo/HhJHLsMdrkfbvyDfLNb4QzbKFOdUmmM12pk7Pl0wrQMj1sEcBaK1prdkH9sl18xDizPF+9awoaJ/PMXguUrgLmk8q/POjCBoJk94KZ4filVjoRfxRzgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekolDwrK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A99C116B1;
-	Thu,  9 May 2024 08:59:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715245177;
-	bh=8zBl1SOCaihhNk8sPzTaVWMbbQ1AZ9KxaeAQlQYk1q8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ekolDwrKaVXqeExUIzSCKQOTYxnPn0VDge6FHFws5Eb3+JnsQhkQzAGvk4hsbBpl0
-	 7h+XlStY/h+ES4m4ab6KJKCygVQJX4c9iee0EPazZA9O319f+kL4UK6yEQW9JhxauE
-	 XzRy/rsdAEKiXjMSimFx7ukvup+c9wzkTBYUhbUrXsJSxnxkPiEw3lUnp9QcBDOjud
-	 +JDeEorGh8Z9qWnzeNnOSR1s/u4wSA8HOkNMXeptBzbrjbqrTK+KjYs9cZkEP6oBJS
-	 b/Ds0IP9aEJ9nLO5a4C6D5u+wUr6VA1wyBIghXqynatxfyrmVek3xKIunxg3fh0YXT
-	 NzKnTTH47e8tA==
-Message-ID: <ea24aa9b-291d-47bc-98cf-5893926ff8da@kernel.org>
-Date: Thu, 9 May 2024 10:59:32 +0200
+	 In-Reply-To:Content-Type; b=PBVyRyfoL+Yc5RX4k6YPlI7sLBnvqQbpjJliGOIr4hP3bz/xgicvvouZb87nLDsv5rt2ZmCbCLCexKctrDDN4jIQhAkfJkbwONxZVo1arlesezOg//aon1DkDKvTo2d0mJg8PeHtgCmfx27tO6R/M+tXsizGN+vdhyTF7TcNW4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B96uMNGA; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41fd5dc04f0so1576625e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715245182; x=1715849982; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3RC6fstJDXsghafNDD46lbDOhml+R8Iq6EzCaj20EYo=;
+        b=B96uMNGA6WLQOb3UYdEwS51ErXDtRe15S7uALNp4UCO/mAlsZ1g3KNbrDRPFOXrg3V
+         VJ8GgiL2MpRBhv2mN9JxBxNlbb6660Y1jEjkRz5y8tglsbjGFTYJib3G39BHlZxd+7Gz
+         51gMBzFRoAOl3aIUR3b/vPYYmrQmavc4eIrlYZrMVkQamdFJIfQxHgxB2qhrc/6t5r3s
+         O4kb5TrSOurlFOBgqqLryvVNefppNsQYDR1PqBV998CV1TAyg9rUs1KMC+e6YoS297QG
+         gjDjxzpWcvHWLHgiYxRH+n6z0V7X0IPt6ecy7GsXML0tgycx78QjJAlLuXCq16CvnmgM
+         iWgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715245182; x=1715849982;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3RC6fstJDXsghafNDD46lbDOhml+R8Iq6EzCaj20EYo=;
+        b=Mnk3VsJkTTxUpTQIgmwkhusjGAkg309s/Z+0AsJ2HUDeNVX1Oy4rrmAvLXSIylSF7h
+         6RDalRf22qTAQlNWILGMavbohTkiVhdN3f4aqTe7iB3EZ8KCX/LVm8ngWFjjIJ63xRku
+         DR8OnCypXJkPWN6y01lgitwCvObmw0WjjKV93cnPoLelLJnvWsDYyiAPlrsP/FfoMenH
+         t9MiT+KizD0CpkSHSf4sqROeIqGmbjIINHaaW5tTYuxg4VLn5TnrAibU5Nu6BNAm96vz
+         UejrRy/a0gNgJp69Ed7SOk5VfAWWX/zFrFbqoC1txBS9x9tt1JjuXuFj2QdkYShtP8gH
+         M/HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUepebonbaXY67SeQPUzxQP3DU9DXzaN82vVUqs6P9iobRbjB8ac0SRqjylmSgHttv1Lpcp+un5zxJI7+Xy78VzhYF7B7K/NWjoD0l/
+X-Gm-Message-State: AOJu0YwCUB3lF/8sZq+qJDhHtmoQiPelunFb03BNfdVdryy72KsVPC2u
+	Kc1y0ebiAK95txJMHKftgxW4p6rvbQRKAz2mCc4SqKD+fyVjAvYWjZgivDTYoko=
+X-Google-Smtp-Source: AGHT+IFGM+zedQ3XccNEQmdxXTeGO/UYm0MlRcoX4lJrzzJEQVjrWdPX/UOeEIf8JIQxHSLjdaIf3w==
+X-Received: by 2002:a05:600c:4755:b0:41b:9e4f:d2b2 with SMTP id 5b1f17b1804b1-41f71cc1c66mr50020535e9.2.1715245181948;
+        Thu, 09 May 2024 01:59:41 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c235b4sm52614135e9.11.2024.05.09.01.59.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 01:59:41 -0700 (PDT)
+Message-ID: <a980d7a5-0d80-4ff1-93e1-b5f5806980c3@linaro.org>
+Date: Thu, 9 May 2024 09:59:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,110 +75,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] kbuild: use $(src) instead of $(srctree)/$(src)
- for source directory
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Nicolas Schier <nicolas@fjasle.eu>,
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <20240427145502.2804311-1-masahiroy@kernel.org>
- <20240427145502.2804311-5-masahiroy@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 2/4] ASoC: qcom: common: add Display port Jack function
+To: Johan Hovold <johan@kernel.org>
+Cc: broonie@kernel.org, perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com,
+ alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20240422134354.89291-1-srinivas.kandagatla@linaro.org>
+ <20240422134354.89291-3-srinivas.kandagatla@linaro.org>
+ <ZiejT5yddioQ8upR@hovoldconsulting.com>
+ <b9d0e2fd-069c-439c-a85f-1e99bf9018c3@linaro.org>
+ <Zi-0kSU6TMcev05r@hovoldconsulting.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240427145502.2804311-5-masahiroy@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <Zi-0kSU6TMcev05r@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 27/04/2024 16:55, Masahiro Yamada wrote:
-> Kbuild conventionally uses $(obj)/ for generated files, and $(src)/ for
-> checked-in source files. It is merely a convention without any functional
-> difference. In fact, $(obj) and $(src) are exactly the same, as defined
-> in scripts/Makefile.build:
-> 
->     src := $(obj)
-> 
-> When the kernel is built in a separate output directory, $(src) does
-> not accurately reflect the source directory location. While Kbuild
-> resolves this discrepancy by specifying VPATH=$(srctree) to search for
-> source files, it does not cover all cases. For example, when adding a
-> header search path for local headers, -I$(srctree)/$(src) is typically
-> passed to the compiler.
-> 
-> This introduces inconsistency between upstream and downstream Makefiles
-> because $(src) is used instead of $(srctree)/$(src) for the latter.
-> 
-> To address this inconsistency, this commit changes the semantics of
-> $(src) so that it always points to the directory in the source tree.
-> 
-> Going forward, the variables used in Makefiles will have the following
-> meanings:
-> 
->   $(obj)     - directory in the object tree
->   $(src)     - directory in the source tree  (changed by this commit)
->   $(objtree) - the top of the kernel object tree
->   $(srctree) - the top of the kernel source tree
-> 
-> Consequently, $(srctree)/$(src) in upstream Makefiles need to be replaced
-> with $(src).
-> 
 
-This patch, since yesterday's next, causes build issues with my
-(completely) standard and typical workflow:
 
-alias crosc64='CROSS_COMPILE="ccache aarch64-linux-gnu-" ARCH=arm64 KBUILD_OUTPUT=out/'
-crosc64 make defconfig
-crosc64 make dt_binding_check
+On 29/04/2024 15:54, Johan Hovold wrote:
+> On Tue, Apr 23, 2024 at 04:55:32PM +0100, Srinivas Kandagatla wrote:
+>> On 23/04/2024 13:02, Johan Hovold wrote:
+>>> On Mon, Apr 22, 2024 at 02:43:52PM +0100, Srinivas Kandagatla wrote:
+>>>    
+>>>>    static const struct snd_soc_dapm_widget qcom_jack_snd_widgets[] = {
+>>>>    	SND_SOC_DAPM_HP("Headphone Jack", NULL),
+>>>>    	SND_SOC_DAPM_MIC("Mic Jack", NULL),
+>>>> +	SND_SOC_DAPM_SPK("HDMI/DP0 Jack", NULL),
+>>>> +	SND_SOC_DAPM_SPK("HDMI/DP1 Jack", NULL),
+>>>> +	SND_SOC_DAPM_SPK("HDMI/DP2 Jack", NULL),
+>>>
+>>> Shouldn't these be split in dedicated HDMI and DP jacks too? What if you
+>>> have a machine with HDMI and DP jacks which would otherwise both claim
+>>> "HDMI/DP0"?
+>>
+>> These map to the Jack's added as part of qcom_snd_dp_jack_setup and
+>> belong to DISPLAY_PORT_RX_0, DISPLAY_PORT_RX_1, DISPLAY_PORT_RX_2.
+>>
+>> If its going via USB-C DP controller it will be either DP or an HDMI ?
+> 
+> It will always be DP out of the machine even if an adapter can convert
+> to HDMI internally.
+> 
+> The DRM ports are called "DP-1" and "DP-2" so it seems we should match
+> that.
+> 
+>> This is the most common naming for the USB-C DP/HDMI jack events.
+> 
+> It looks like some Intel machines use names like "HDMI/DP, pcm=%d Jack"
+> (with a pcm device number), but we also have "DP Jack". Not sure which
+> are are used with USB-C, though. (Or if the former actually support HDMI
+> altmode.)
 
-Errors:
+I checked this on my machine which has usb-c and I can confirm using 
+HDMI/DP naming for these jack.
 
-No rule to make target 'Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.example.dtb', needed by 'dt_binding_check'. Stop.
+Either way I don't mind having any names, but my point here is to be 
+more consistent across.
 
-Please revert/drop from next.
 
-Best regards,
-Krzysztof
-
+--srini
+> 
+>> Qualcomm LPASS in some older SoCs had a dedicated HDMI interface which
+>> is different to this one.
+>>
+>> Usual Other ways to connect HDMI is via external HDMI Bridge using I2S
+>> interface which totally different to this DP interface.
+> 
+> Sure, but if there's ever a design with such a port then it will be
+> called "HDMI Jack" and then the "HDMI in "HDMI/DP0 Jack" is unnecessary
+> and confusing when it is always DP out.
+> 
+> Johan
 
