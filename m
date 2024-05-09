@@ -1,140 +1,124 @@
-Return-Path: <linux-kernel+bounces-174233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25118C0BF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:26:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FAEC8C0BF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1511F22707
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA83B284BD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6961494D2;
-	Thu,  9 May 2024 07:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D941494D2;
+	Thu,  9 May 2024 07:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MZsAud3t"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lr/LXdoM"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD4513D270;
-	Thu,  9 May 2024 07:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E3113C830
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715239592; cv=none; b=rl7vppMn5FkvV0sX96NV4guY05kSh6QaNsbE9wwJVmHlR2d9vHFDje8IEpUU1FXHauNQhexjDezIus3y6pqDCoOXpRbNW0UyR/sKpglpSIs9e4pIZPN6F9ChHTemS6S06vfMYzzPWK5luvBa35yLP2x1tqDYt7IZIms1f6mHnv8=
+	t=1715239897; cv=none; b=T45JPjuQqHaer9baxeqVJaYunTnaBLjETGr36V5/JRBdDu6oyaCe3FNpKalh+9IKlsni0uJsBQO51V707nfbOqQHMtQjSnZLF+MuDWMXI4cV7vw1zYPXcmTxQjDhcN70CUf7RnoTJ7ie2kpYhCBVZ6ZLZ1xb6RSOJAg8mfY7cCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715239592; c=relaxed/simple;
-	bh=mSbNo9wFHWoeq8V0swf9aBjuFrGvwAyLh7olQz08M8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PBEONpus4SOhrYOpxJuBoPxH0kvheb/vrAjlC8zvVQI6vuHf/QiMPYYkPhAJJDCv2C+n/AWYV5fwdpGDLUAzDmVDJRIVE/jzCQMkwd3AQakiB++PB3hDud6+RQDromJLqoX47kEjJ3m0QpR/nYRRpelGfWzZ4R55iMlYHMlLay0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MZsAud3t; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43df3b00becso1373471cf.2;
-        Thu, 09 May 2024 00:26:30 -0700 (PDT)
+	s=arc-20240116; t=1715239897; c=relaxed/simple;
+	bh=hKlzg7n2M91QHuHzIH/i/jIkyPsZmX7wBR+g4EMToUY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BxFHS3tZ5luKk3P4o8cKkgxwBL30Z44C52dgdBiXlb6PhYp7KdFah9G7wKvtHxbkModmEIZLAUJobxDAcSsx62TXDNKFu3oy5aCcJu0o2OIwWqfSf7W4SXhyUTP2QuZfdnALACoSrvABgEYgk9U/HOSaVM+3cISigkVXhDZZyzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Lr/LXdoM; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b2733389f9so138979eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715239590; x=1715844390; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9y2y2IHmFNbKKYaQSA05sZKLTZb4i48PMVBUG60zwM=;
-        b=MZsAud3tS4hA2lEt/DuDWV+2VzvliXY7aItgfWowAyLTq36UsgXy1HoWVsQwIPTDR0
-         B6n59zE7YF39EgdXCIY5ljE2cwDyeDJJVUS1PRK9cqt2uuoJBW/t5M8uowZDDZ4cokh3
-         9fOu12uGXtcIQL7DApVd4o6aAUZeT2N7LggDRzrAo7Okv04xzDf/6aRXds8TLagTqRJF
-         AXW4Scy0mukvmvr7ketGkGqkVRHlYatoP2Su3Dsa3LtgA3hIFQwF4NzLhWxadez3hM5S
-         /506r3Vf5IW3XtsHHr/943x0+eLlMhEPBbqcW7jKSRkWxHsWUh3ceqQCFbqs7/4Okr7C
-         RfUw==
+        d=chromium.org; s=google; t=1715239895; x=1715844695; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFIJqrgUYRufZO44ifi0BeHH43Pj5mRVkX8VaE4POmU=;
+        b=Lr/LXdoMbExDeLTbSKvH0ycJjU5V9bM7H0nFJRN5U0jfbF8CvKMGkociBxhie2YERj
+         yOvmCYLeI3vRMQ7CUU13LEA6Nt0kknsMkdeHvpjtpeCJ0bHz0ioyopVD4dePZpCptJ5w
+         tYaT0UsBg/NnC13AwQTy+N4vZ3sgb58gauj40=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715239590; x=1715844390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R9y2y2IHmFNbKKYaQSA05sZKLTZb4i48PMVBUG60zwM=;
-        b=arjGHSdjKTMTyxdUzGuxLRP3ypZFzhMwt4R/EB7CP3T+cWuMDZa+quBDhYgKm16YwK
-         s9iz728T04iiZBlUc1g2aOmHLB09af8r2Gc4FJqOXtmYmDAUJpTpegO0Ol02S005W27m
-         TqkXE1WSjKuUai/TvU+XLrvB5pWNwNOg/BqNGVc5szwaGAssGeBaTeoHaAIVeD9PdvR+
-         4QmD/vH1ma0Z9Dt/zaoiBmOQJIQaaCvzS1FC0K3enhrRARrrOsJG2heIIsky3JN4ME6l
-         DTvxfzu7ulL21yDlq/hQZynpAMrJdCRz51rs7Skdd6rNfc2P6xcq5eP8J1taa4pWj111
-         JV7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXV3YhzNWfr/ylpKUtOIaE1A45yaOwGFjnNTx5SFXe8sfz35ns8FwpmYYA6Wr+EVLWUEmcylBw+8fMM8Kj5bkG5yu7n+qH8amwNng7/
-X-Gm-Message-State: AOJu0YxoEAC9VH/lJflFJ/reONqWqmX7BiSryw5vwM7+UPJPqsPJLrEB
-	f1glfsqrhyn0nQ9SC25kZM/nPyPHpGaid3JY/mUrvjEhvyf5EgxSEOLt+OzwSZwbVbLHAEKlBcm
-	yvVOXl2ZZIEPTAMkTmRwG08KAmxU=
-X-Google-Smtp-Source: AGHT+IHZUWb+ZeLYyGH7omMVRhmmW6OAFOMgBEPLsq4PMidPUfZP0K1/ru2MJg5PuFbGt8u6o0RJlvW0G9CiTfdNr8Y=
-X-Received: by 2002:ac8:7f8d:0:b0:43a:be54:ea0b with SMTP id
- d75a77b69052e-43dbf861d81mr50578151cf.64.1715239589766; Thu, 09 May 2024
- 00:26:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715239895; x=1715844695;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFIJqrgUYRufZO44ifi0BeHH43Pj5mRVkX8VaE4POmU=;
+        b=C0AjWf7U1deYcl/1mCQly2/46WD8fwHgKjPGD+RRIM19rsedkVOivptqann1qFy058
+         bEl12x/5x7+dIOBVZoQtEIXXt38EAMWIb6smrvlkeEr9EfN2bflWy3sCScWWuDaHVjF2
+         wIE3TFrZCY228Iy/VCgzShCneqwnUKxJ/QcVM1FA9bQ5shmTyxXJxTos1K06Y0R4z6oU
+         kXNAQrHyHUVjcs8MiIYMgQQESgpXwzhAgYaoIF6LX9d/z99EX9fjnDkpdAGJ1gSxVFn/
+         4cqtbfJcBGy4eHfywQu5U24XUdm18Ok+v5OszHf0tIwKfTrD/wDOtWpaAnQHwZy83pSv
+         SKTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOtpnqlMK/te4hI9aMSfUCLVaf8gvYItlPA297lhytTnDvOl3KmSV7Vj7xlfBtaczqqgb6nNUj/Y3tNIiAbTpAWoT0MwSIdN504fYh
+X-Gm-Message-State: AOJu0Ywfhi/4RZg0dVpRWQtZRGLXw/7nZ5tvW1RYwl2evgNxKQHmfyyB
+	IJW2XDE/KJyMsxigs2ZdVZpp/iAHgcKMih3lHUfDquktF9OOYnSxfiQP0QyPOQ==
+X-Google-Smtp-Source: AGHT+IFxCbiVVPSFIyPcWAzqs1t5rme6BYl/0xBEXZ775m3VFUNpwbdtD+YpUNB1N0N06kSsvGevfg==
+X-Received: by 2002:a05:6358:54a2:b0:18e:a0ce:a35c with SMTP id e5c5f4694b2df-192d2c2b383mr578760355d.14.1715239895370;
+        Thu, 09 May 2024 00:31:35 -0700 (PDT)
+Received: from yuanhsinte1.c.googlers.com (150.221.124.34.bc.googleusercontent.com. [34.124.221.150])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411346d46sm586459a12.79.2024.05.09.00.31.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 00:31:34 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Thu, 09 May 2024 07:31:29 +0000
+Subject: [PATCH] ASoC: mediatek: mt8192: fix register configuration for tdm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508172621.30069-1-ppbuk5246@gmail.com> <20240508192213.31050-1-ppbuk5246@gmail.com>
- <a407d12f-6845-4f51-a112-6bdc17641ff1@web.de>
-In-Reply-To: <a407d12f-6845-4f51-a112-6bdc17641ff1@web.de>
-From: Yun Levi <ppbuk5246@gmail.com>
-Date: Thu, 9 May 2024 08:26:18 +0100
-Message-ID: <CAM7-yPS6ecODhv-FQpYE5OE_LufmtKRg4htp9JH6MBUF03N4rA@mail.gmail.com>
-Subject: Re: [PATCH v3] time/tick-sched: idle load balancing when nohz_full
- cpu becomes idle.
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: kernel-janitors@vger.kernel.org, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240509-8192-tdm-v1-1-530b54645763@chromium.org>
+X-B4-Tracking: v=1; b=H4sIANB7PGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUwNLXQtDSyPdkpRc3eSkNKNEc+Nky5QUYyWg8oKi1LTMCrBR0bG1tQD
+ PHd/7WgAAAA==
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Jiaxin Yu <jiaxin.yu@mediatek.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.12.4
 
-> Would you eventually like to add the tag =E2=80=9CFixes=E2=80=9D once mor=
-e?
+For DSP_A, data is a BCK cycle behind LRCK trigger edge. For DSP_B, this
+delay doesn't exist. Fix the delay configuration to match the standard.
 
-Sorry. I forgot :(
+Fixes: 52fcd65414abfc ("ASoC: mediatek: mt8192: support tdm in platform driver")
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+ sound/soc/mediatek/mt8192/mt8192-dai-tdm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > +++ b/kernel/time/tick-sched.c
-> > @@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
-> >               ts->idle_sleeps++;
-> >               ts->idle_expires =3D expires;
-> >
-> > -             if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOP=
-PED)) {
-> > -                     ts->idle_jiffies =3D ts->last_jiffies;
-> > +             if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
-> > +                     if (!was_stopped)
-> > +                             ts->idle_jiffies =3D ts->last_jiffies;
-> > +
-> >                       nohz_balance_enter_idle(cpu);
-> >               }
-> =E2=80=A6
->
-> I interpret these diff data in the way that you propose to reorder
-> two condition checks.
->
-> But I wonder still how =E2=80=9Cgood=E2=80=9D the presented change descri=
-ption fits to
-> the suggested source code adjustment.
+diff --git a/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c b/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c
+index 9ce06821c7d0f..49440db370af0 100644
+--- a/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c
++++ b/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c
+@@ -566,10 +566,10 @@ static int mtk_dai_tdm_hw_params(struct snd_pcm_substream *substream,
+ 		tdm_con |= 1 << DELAY_DATA_SFT;
+ 		tdm_con |= get_tdm_lrck_width(format) << LRCK_TDM_WIDTH_SFT;
+ 	} else if (tdm_priv->tdm_out_mode == TDM_OUT_DSP_A) {
+-		tdm_con |= 0 << DELAY_DATA_SFT;
++		tdm_con |= 1 << DELAY_DATA_SFT;
+ 		tdm_con |= 0 << LRCK_TDM_WIDTH_SFT;
+ 	} else if (tdm_priv->tdm_out_mode == TDM_OUT_DSP_B) {
+-		tdm_con |= 1 << DELAY_DATA_SFT;
++		tdm_con |= 0 << DELAY_DATA_SFT;
+ 		tdm_con |= 0 << LRCK_TDM_WIDTH_SFT;
+ 	}
+ 
 
-FWIW it doesn't need to check !was_stopped to
-call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick().
-Formerly, __tick_nohz_idle_enter() is called in both
-tick_nohz_irq_exit() and in do_idle().
-That's why it's required for nohz full cpu which already stop the
-tick, but not idle
-to prevent enter idle balance.
-(but it makes nohz full cpu enter nohz idle balance as side effect i think?=
-)
+---
+base-commit: 45db3ab70092637967967bfd8e6144017638563c
+change-id: 20240509-8192-tdm-cbf2a73c9dd3
 
- but after some reorganizing code tick_nohz_idle_stop_tick() becomes
-the code called in
-only when enter idle.
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
-What I point is that it doesn't need to check !was_stopped to call
-nohz_balance_enter_idle()
-in tick_nohz_idle_stop_tick().
-
-So, I think it's enough in commit message?
-
-Am I wrong?
-
-Thanks.
 
