@@ -1,151 +1,151 @@
-Return-Path: <linux-kernel+bounces-174613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236338C1195
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCCA8C1196
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08A7283C8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BCC31F21DD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA4514B083;
-	Thu,  9 May 2024 14:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE42152783;
+	Thu,  9 May 2024 14:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klGyd6SO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NDnw5hW4"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B1D3F8E2;
-	Thu,  9 May 2024 14:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7772A1A2C3A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715266750; cv=none; b=FThwP1kWDNSsOJvX85Gj4glFMexO3srt97TbhZGCI7LtZ6GShnj06Tcs5kdTphX05kwf6BQ1/s4vBlTqYRAvnsyF6gkvliTAylwMzDmYgTVlrRVjI5h+Kia9ku8tuhP+wOX9b9Q2/venkGPXIRtN5lHNAwoC9R8zRN4y6kpy8Z8=
+	t=1715266769; cv=none; b=KaNqe6M0EreddKJvJi55LA5zjhu+iw3/h0AxDMYZsfeSEVzlg/4Mp/gLWMevS0F4c0zaOsTBw5DHkq8apG/J436p+vFFZow09KATXGhK5KYZQ1fK9hWLXsOSkYONH4UHQ8r/N1I48IgQWovIlB1H20GRSqi4Oju5ZLuD3eHEv30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715266750; c=relaxed/simple;
-	bh=ONQFfxoq6nX3ZjhRvSjEIkGU69Pv5KZ5idzzML/ed/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFR9IVineg/K4n4or/JLDd6bL/KKWY8I3gCj0UgAU6jWlsFKtmm1W7sXAbfJoIgeXUAdjmy1K46ZiclkSAcsCMH67wBTWYJfYHU+fjxhCcq1KvkhTsV3PpY4gAX7+bdBHeERxKLCJMMP4lpdwuAMQt5AAXPEF6KMnsZq1QxuNyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=klGyd6SO; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715266748; x=1746802748;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ONQFfxoq6nX3ZjhRvSjEIkGU69Pv5KZ5idzzML/ed/0=;
-  b=klGyd6SORqRLKqC10sMA7+yhZfaHxNxAGgze81kRRk3YVCiQ/Kk7I2nV
-   G7q6tfHQ5hMXUIb/HDoTMi3x5AlAUtWFXVIhxEkloVZKzMu3WPlUNpLq2
-   L5kSQ2YyIpnWL83JXJhpkTfdfVN8eoSTsAKkD2U3wHSJS78aXHTJla8ZB
-   2IAKqNonJSmeIZ5T4E+PqIbPDbZ0zVEfddt5nJizT4sIqs8Pts+DRl/z5
-   zAc/5i4LGSqRvqZ4PanRNKtwtNQZvSuQhlvpL7JE9MuX8BqYhddh99clF
-   jPRQedcGbcFufe1x6prkDqiJmyxZ8PC48uoAEUTipxnablz9sdh3mDfW9
-   A==;
-X-CSE-ConnectionGUID: oeihvIf+RP+nAVNp/IQplw==
-X-CSE-MsgGUID: G+nFu1QvQA6t11Kwwkwp9Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="28677324"
-X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
-   d="scan'208";a="28677324"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 07:59:08 -0700
-X-CSE-ConnectionGUID: fgiAiV85R3CU3d12Foc8fw==
-X-CSE-MsgGUID: ktwK0UUDTsOZwYSX6PfqIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
-   d="scan'208";a="29340923"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 09 May 2024 07:59:05 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s55Ed-00050y-1G;
-	Thu, 09 May 2024 14:59:03 +0000
-Date: Thu, 9 May 2024 22:58:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] usb: fotg210: Add missing kernel doc description
-Message-ID: <202405092220.8mfNBVyo-lkp@intel.com>
-References: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1715266769; c=relaxed/simple;
+	bh=tCD+L+VvuerRjgMAiszpRPFFSvc4JDjxToq8q+1CXO0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WlKz6j/CjQzlmPzhU6Ree0katFU6AnPZMwk1J8wyExpyK4wbrTRck2jQVN5hDH1uvuHrS2x2tWG+Lv1kO6wRL6+BoHuTAWbie0w/RQhFHWhlE9svTisi5Ybf+0IP9iBvx8LGOayJwB3H3HaJf+Tp9ovUrbDpX9txJT2hA3I7hyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NDnw5hW4; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1ecb7e1e3fdso8022995ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 07:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715266768; x=1715871568; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SRILAk7h01/fT5BGJbVj7y6a6cEN0j9+rCMJHje+Tu8=;
+        b=NDnw5hW4ZjeidZTMRcTQ4WP0RY4CDXHhREte/f104nTDyioOyiMRsKVJF8tGB5FvGZ
+         ruDorRL/ARhp0NEAAxsRU2qYw9hY+amo3AK/z/XEfuh1MErFM2lcqaDa2JkXuh7j2/kh
+         uxfUHdVw1uij3Ophz1l9g90qT+6WjF91KqoqIf3L9b6yQ2ODLg+FxFVaCR2nHaOZbQA0
+         2VphIjf/65lrMCJrEjywirGeEycyi4MOFe0d7AhAF6pN5KQQQQ8xoGdJ4DbeKO86QPi4
+         dFkNd3KwlJDjgcSBGTc2Qua7yNkNuHrFElhH1J1JNUxdeqy3IHukIr9Ja4V4PLdV6T6f
+         b7xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715266768; x=1715871568;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SRILAk7h01/fT5BGJbVj7y6a6cEN0j9+rCMJHje+Tu8=;
+        b=vrMfwwB/E0MVnjECHEpjMZc8tjnoWZt97g34xO9jgnJkFYkBW//vZWZTvwOWAGfeOB
+         86w6kBrkVrlikgfJVcEUX6fRgTuu+DLdl3y+TrfFTr2m/YGf9l+JZnwgKxN2/OVwlRwP
+         DfvjkHHuARwC8FcfcTRPM1LFCzTPtYm8me7u+pfbFvASHsgncL4IAaJwvG9au+1ShOMi
+         3tcJ1zXu2X26kvd7FdV4wWP78//QsfEPgZT/mq4z9DRZnwy6wsFLTfy3OUGHop6xi7wD
+         0IHOCpSyQyu8WhizJpvV806WSIZ2yG0Rk3B8TorsGvUFkXTsb+3+dQkFwx4UQMSRVjYM
+         emUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKdaDrDcYweNSRsFmAsFwF8GSiDGzIpVnju+XnlVl9T4VvAR7dGzWvjP2QYUZjmPaIxPKk3twMMRc5iyXyjtiprREYNS15H10MZe70
+X-Gm-Message-State: AOJu0YxtzyQKRPYHUAJ0aQDdEDkfhB0x38I/8qUj9QO8ravl5XfmbtT7
+	WZvTdHKhCUZFAPceeWyt0p6bH+cRijRtSYIXuAGTC+5ppRaoQffspQFi4/sgQDyTMMeDYx7AHRl
+	0Zg==
+X-Google-Smtp-Source: AGHT+IHK988GVPbIdB5zCuGdw7y1k+VuVsH8cph3YTDGdrjAWgKSTPaD2BUAym95OZHpCCMbUFtpNFD6Nok=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:2844:b0:1ec:e716:60d3 with SMTP id
+ d9443c01a7336-1eefa239c99mr73705ad.2.1715266767690; Thu, 09 May 2024 07:59:27
+ -0700 (PDT)
+Date: Thu, 9 May 2024 07:59:26 -0700
+In-Reply-To: <202405091030597804KUqLDPPj2FpTIBrZZ5Eo@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
+Mime-Version: 1.0
+References: <ZjuhDH_i9QWL4vyz@google.com> <202405091030597804KUqLDPPj2FpTIBrZZ5Eo@zte.com.cn>
+Message-ID: <Zjzkzu3gVUQt8gJG@google.com>
+Subject: Re: [PATCH] KVM: introduce vm's max_halt_poll_ns to debugfs
+From: Sean Christopherson <seanjc@google.com>
+To: cheng.lin130@zte.com.cn
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jiang.yong5@zte.com.cn, wang.liang82@zte.com.cn, jiang.xuexin@zte.com.cn
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Andy,
+On Thu, May 09, 2024, cheng.lin130@zte.com.cn wrote:
+> > From: seanjc <seanjc@google.com>
+> > > From: Cheng Lin <cheng.lin130@zte.com.cn>
+> > >
+> > > Introduce vm's max_halt_poll_ns and override_halt_poll_ns to
+> > > debugfs. Provide a way to check and modify them.
+> > Why?
+> If a vm's max_halt_poll_ns has been set using KVM_CAP_HALT_POLL,
+> the module parameter kvm.halt_poll.ns will no longer indicate the maximum
+> halt pooling interval for that vm. After introducing these two attributes into
+> debugfs, it can be used to check whether the individual configuration of the
+> vm is enabled and the working value.
 
-kernel test robot noticed the following build warnings:
+But why is max_halt_poll_ns special enough to warrant debugfs entries?  There is
+a _lot_ of state in KVM that is configurable per-VM, it simply isn't feasible to
+dump everything into debugfs.
 
-[auto build test WARNING on usb/usb-testing]
-[also build test WARNING on usb/usb-next usb/usb-linus westeri-thunderbolt/next linus/master v6.9-rc7 next-20240509]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I do think it would be reasonable to capture the max allowed polling time in
+the existing tracepoint though, e.g.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/usb-fotg210-Add-missing-kernel-doc-description/20240508-230440
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20240508150335.1378629-1-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v1 1/1] usb: fotg210: Add missing kernel doc description
-config: arc-randconfig-001-20240509 (https://download.01.org/0day-ci/archive/20240509/202405092220.8mfNBVyo-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405092220.8mfNBVyo-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405092220.8mfNBVyo-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/usb/fotg210/fotg210-core.c:102: warning: Function parameter or struct member 'fotg' not described in 'fotg210_vbus'
->> drivers/usb/fotg210/fotg210-core.c:102: warning: Excess function parameter 'fotg210' description in 'fotg210_vbus'
-
-
-vim +102 drivers/usb/fotg210/fotg210-core.c
-
-00fb05ff87bc63 Linus Walleij   2022-11-09   95  
-3e679bde529e89 Linus Walleij   2023-01-18   96  /**
-3e679bde529e89 Linus Walleij   2023-01-18   97   * fotg210_vbus() - Called by gadget driver to enable/disable VBUS
-16544cb7676b90 Andy Shevchenko 2024-05-08   98   * @fotg210: pointer to a private fotg210 object
-3e679bde529e89 Linus Walleij   2023-01-18   99   * @enable: true to enable VBUS, false to disable VBUS
-3e679bde529e89 Linus Walleij   2023-01-18  100   */
-3e679bde529e89 Linus Walleij   2023-01-18  101  void fotg210_vbus(struct fotg210 *fotg, bool enable)
-3e679bde529e89 Linus Walleij   2023-01-18 @102  {
-3e679bde529e89 Linus Walleij   2023-01-18  103  	u32 mask;
-3e679bde529e89 Linus Walleij   2023-01-18  104  	u32 val;
-3e679bde529e89 Linus Walleij   2023-01-18  105  	int ret;
-3e679bde529e89 Linus Walleij   2023-01-18  106  
-3e679bde529e89 Linus Walleij   2023-01-18  107  	switch (fotg->port) {
-3e679bde529e89 Linus Walleij   2023-01-18  108  	case GEMINI_PORT_0:
-3e679bde529e89 Linus Walleij   2023-01-18  109  		mask = GEMINI_MISC_USB0_VBUS_ON;
-3e679bde529e89 Linus Walleij   2023-01-18  110  		val = enable ? GEMINI_MISC_USB0_VBUS_ON : 0;
-3e679bde529e89 Linus Walleij   2023-01-18  111  		break;
-3e679bde529e89 Linus Walleij   2023-01-18  112  	case GEMINI_PORT_1:
-3e679bde529e89 Linus Walleij   2023-01-18  113  		mask = GEMINI_MISC_USB1_VBUS_ON;
-3e679bde529e89 Linus Walleij   2023-01-18  114  		val = enable ? GEMINI_MISC_USB1_VBUS_ON : 0;
-3e679bde529e89 Linus Walleij   2023-01-18  115  		break;
-3e679bde529e89 Linus Walleij   2023-01-18  116  	default:
-3e679bde529e89 Linus Walleij   2023-01-18  117  		return;
-3e679bde529e89 Linus Walleij   2023-01-18  118  	}
-3e679bde529e89 Linus Walleij   2023-01-18  119  	ret = regmap_update_bits(fotg->map, GEMINI_GLOBAL_MISC_CTRL, mask, val);
-3e679bde529e89 Linus Walleij   2023-01-18  120  	if (ret)
-3e679bde529e89 Linus Walleij   2023-01-18  121  		dev_err(fotg->dev, "failed to %s VBUS\n",
-3e679bde529e89 Linus Walleij   2023-01-18  122  			enable ? "enable" : "disable");
-3e679bde529e89 Linus Walleij   2023-01-18  123  	dev_info(fotg->dev, "%s: %s VBUS\n", __func__, enable ? "enable" : "disable");
-3e679bde529e89 Linus Walleij   2023-01-18  124  }
-3e679bde529e89 Linus Walleij   2023-01-18  125  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/include/trace/events/kvm.h b/include/trace/events/kvm.h
+index 74e40d5d4af4..7e66e9b2e497 100644
+--- a/include/trace/events/kvm.h
++++ b/include/trace/events/kvm.h
+@@ -41,24 +41,26 @@ TRACE_EVENT(kvm_userspace_exit,
+ );
+ 
+ TRACE_EVENT(kvm_vcpu_wakeup,
+-           TP_PROTO(__u64 ns, bool waited, bool valid),
+-           TP_ARGS(ns, waited, valid),
++           TP_PROTO(__u64 ns, __u32 max_ns, bool waited, bool valid),
++           TP_ARGS(ns, max_ns, waited, valid),
+ 
+        TP_STRUCT__entry(
+                __field(        __u64,          ns              )
++               __field(        __u32,          max_ns          )
+                __field(        bool,           waited          )
+                __field(        bool,           valid           )
+        ),
+ 
+        TP_fast_assign(
+                __entry->ns             = ns;
++               __entry->max_ns         = max_ns;
+                __entry->waited         = waited;
+                __entry->valid          = valid;
+        ),
+ 
+-       TP_printk("%s time %lld ns, polling %s",
++       TP_printk("%s time %llu ns (max poll %u ns), polling %s",
+                  __entry->waited ? "wait" : "poll",
+-                 __entry->ns,
++                 __entry->ns, __entry->max_ns,
+                  __entry->valid ? "valid" : "invalid")
+ );
+ 
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2e388972d856..f093138f3cd7 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3846,7 +3846,8 @@ void kvm_vcpu_halt(struct kvm_vcpu *vcpu)
+                }
+        }
+ 
+-       trace_kvm_vcpu_wakeup(halt_ns, waited, vcpu_valid_wakeup(vcpu));
++       trace_kvm_vcpu_wakeup(halt_ns, max_halt_poll_ns, waited,
++                             vcpu_valid_wakeup(vcpu));
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_halt);
 
