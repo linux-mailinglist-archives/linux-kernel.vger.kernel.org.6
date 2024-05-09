@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-174619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FFD28C11BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:11:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8C578C11C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF425B21992
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:11:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 763CAB21986
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4AF15ECD1;
-	Thu,  9 May 2024 15:11:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2A912FF9B;
-	Thu,  9 May 2024 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD4715ECCB;
+	Thu,  9 May 2024 15:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dgJJeTI4"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBB1157A41;
+	Thu,  9 May 2024 15:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715267493; cv=none; b=ifT8W+iyyMD/bw19qK9hR0FFasNAH2FSq1wmu8tEW4nvrAmMtDwNf2EQQH1Lw3i7corpTeBK9L/loO64eo7zDItu1vKpE9D61f55gC+AodbHwlnn8WfKaDXkgKkeF0sngIRilVzXyokwIH3z3IpYh2RusEuNCOkPrd/ewMaxaAc=
+	t=1715267584; cv=none; b=MzR4woCna3AMJTmrl5Mt+aDcu966QpO3iSYyhnKDYj3GY17htC3fWjqRxzWLFaE6SzDyyvsa2zGSH4YoI+tdneX5avsh6Siob8xU66QUqZPdY4JE12BLLkE1A61QWGfnUXpop1z/9ZfuMgOy1NcEgVwOniehwJJwMDBo5A638/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715267493; c=relaxed/simple;
-	bh=GPbYouet8G2wsKDht1TdOXTnqgewPV/olDc41m19SKs=;
+	s=arc-20240116; t=1715267584; c=relaxed/simple;
+	bh=8lKKZpJbPGF4Ani9x2yzwoaFUOf2+SAvjrEoKCY/6b8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VK5a8EA5jiFGOXKRXgxZFO9qa8brZztCqwbUf29xlEGTEw+zKJhCXTYtGbuNqhuhRUq95+MnbJcuN6+m7qGJwzSdB/y2rTAPGB5d44aKTt29/hNMRk+UmtGRdcoXQfaut+kg8n+rW30nbsBCjgusJStCeZIpxAw7t2T71WQs8jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39396106F;
-	Thu,  9 May 2024 08:11:56 -0700 (PDT)
-Received: from [10.1.28.39] (e122027.cambridge.arm.com [10.1.28.39])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB8F63F641;
-	Thu,  9 May 2024 08:11:27 -0700 (PDT)
-Message-ID: <ce83b3b8-2246-4006-a111-f2da0740bd8e@arm.com>
-Date: Thu, 9 May 2024 16:11:26 +0100
+	 In-Reply-To:Content-Type; b=LqFrPz2emip760tz/O+bAEPaocavX5CeXBo3tspq3Nmg/AW1VhmXWCYuYK8gysxIyU+YKS9LvxBYm/jksn8/VnX7GdhTGaIOp+9y1HTMKLAHkCYVUtV+6PNfZb2dNKnsC9tvQiWlPMOCV2WhbL7kwfEGptQ1po09jqFWjyvHdqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dgJJeTI4; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715267579;
+	bh=8lKKZpJbPGF4Ani9x2yzwoaFUOf2+SAvjrEoKCY/6b8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dgJJeTI4VC6HVio0YMhzY2T/au6hlCtrozPI+CNVt9+bbNmx7HV+7eTrkp3qvF7kR
+	 QyNmye2Lkapq9CscALNuaRXLgwOCpbO4sZhMqgJojh4C4+QzYxmTiw5KQ+DfQhLcmv
+	 v2ilcycsTHH47XGOKy93eeD+j6coEkrPM2GFG7Md+k7TM9aX4xvMYmOQCg1INx2coG
+	 BQCTviXy0QnDpUJM1VAMBcgrPnsM8uPSiO/qXBS6do9tGlv0BfaioyLkHUaLWN0NON
+	 8BWw4ahwv4cJSteFjaqjBCktxCjac4BPjx+SkeUUVdKnnXN1N/V6+VQ8XgWYZTKC7I
+	 dL1xcKQoBLx1w==
+Received: from [100.90.194.27] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ehristev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 80E7737811CD;
+	Thu,  9 May 2024 15:12:58 +0000 (UTC)
+Message-ID: <1c4eae9a-ad82-4a89-9c0e-a0d61a4667f1@collabora.com>
+Date: Thu, 9 May 2024 18:12:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,159 +56,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dma: fix DMA sync for drivers not calling dma_set_mask*()
-To: Alexander Lobakin <aleksander.lobakin@intel.com>,
- Christoph Hellwig <hch@lst.de>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
- netdev@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240509144616.938519-1-aleksander.lobakin@intel.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240509144616.938519-1-aleksander.lobakin@intel.com>
+Subject: Re: [PATCH v16 0/9] Cache insensitive cleanup for ext4/f2fs
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Matthew Wilcox <willy@infradead.org>, tytso@mit.edu,
+ adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, jaegeuk@kernel.org,
+ chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, ebiggers@kernel.org
+References: <20240405121332.689228-1-eugen.hristev@collabora.com>
+ <Zg_sF1uPG4gdnJxI@casper.infradead.org>
+ <ec3a3946-d6d6-40e1-8645-34b258d8b507@collabora.com>
+ <87le5r3gw7.fsf@mailhost.krisman.be>
+Content-Language: en-US
+From: Eugen Hristev <eugen.hristev@collabora.com>
+In-Reply-To: <87le5r3gw7.fsf@mailhost.krisman.be>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/05/2024 15:46, Alexander Lobakin wrote:
-> There are several reports that the DMA sync shortcut broke non-coherent
-> devices.
-> dev->dma_need_sync is false after the &device allocation and if a driver
-> didn't call dma_set_mask*(), it will still be false even if the device
-> is not DMA-coherent and thus needs synchronizing. Due to historical
-> reasons, there's still a lot of drivers not calling it.
-> Invert the boolean, so that the sync will be performed by default and
-> the shortcut will be enabled only when calling dma_set_mask*().
+Hello Krisman,
+
+On 4/5/24 19:37, Gabriel Krisman Bertazi wrote:
+> Eugen Hristev <eugen.hristev@collabora.com> writes:
 > 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/lkml/46160534-5003-4809-a408-6b3a3f4921e9@samsung.com
-> Reported-by: Steven Price <steven.price@arm.com>
-> Closes: https://lore.kernel.org/lkml/010686f5-3049-46a1-8230-7752a1b433ff@arm.com
-> Fixes: 32ba8b823252 ("dma: avoid redundant calls for sync operations")
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+>> On 4/5/24 15:18, Matthew Wilcox wrote:
+>>> On Fri, Apr 05, 2024 at 03:13:23PM +0300, Eugen Hristev wrote:
+>>>> Hello,
+>>>>
+>>>> I am trying to respin the series here :
+>>>> https://www.spinics.net/lists/linux-ext4/msg85081.html
+>>>
+>>> The subject here is "Cache insensitive cleanup for ext4/f2fs".
+>>> Cache insensitive means something entirely different
+>>> https://en.wikipedia.org/wiki/Cache-oblivious_algorithm
+>>>
+>>> I suspect you mean "Case insensitive".
+>>
+>> You are correct, I apologize for the typo.
+> 
+> Heh. I completely missed it in the previous submissions. I guess we both
+> just mentally auto-corrected.
+> 
+> Since we are here, I think I contributed to the typo in the cover letter
+> with the summary lines of patch 1 and 2.  Differently from the rest of
+> the series, these two are actually working on a "cache of
+> casefolded strings".  But their summary lines are misleading.
+> 
+> Can you rename them to:
+> 
+> [PATCH v16 1/9] ext4: Simplify the handling of cached casefolded names
+> [PATCH v16 2/9] f2fs: Simplify the handling of cached casefolded names
+> 
+> From a quick look, the series is looking good and the strict mode issue
+> pointed in the last iteration seems fixed, though I didn't run it yet.
+> I'll take a closer look later today and fully review.
+> 
 
-Tested-by: Steven Price <steven.price@arm.com>
-
-Thanks for the quick fix.
-
-Note that the fixes hash (32ba8b823252) is not the one in linux-next -
-that's f406c8e4b770. If the branch is getting rebased then no problem, I
-just thought I should point that out.
+Have you managed to take a look ? What would be the future of the series ? I didn't
+want to send another version for just a subject change, but I can if that's the
+only change required .
 
 Thanks,
-Steve
-
-> ---
->  include/linux/device.h      |  4 ++--
->  include/linux/dma-map-ops.h |  4 ++--
->  include/linux/dma-mapping.h |  2 +-
->  kernel/dma/mapping.c        | 10 +++++-----
->  kernel/dma/swiotlb.c        |  2 +-
->  5 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index ed95b829f05b..d4b50accff26 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -691,7 +691,7 @@ struct device_physical_location {
->   *		and optionall (if the coherent mask is large enough) also
->   *		for dma allocations.  This flag is managed by the dma ops
->   *		instance from ->dma_supported.
-> - * @dma_need_sync: The device needs performing DMA sync operations.
-> + * @dma_skip_sync: DMA sync operations can be skipped for coherent buffers.
->   *
->   * At the lowest level, every device in a Linux system is represented by an
->   * instance of struct device. The device structure contains the information
-> @@ -805,7 +805,7 @@ struct device {
->  	bool			dma_ops_bypass : 1;
->  #endif
->  #ifdef CONFIG_DMA_NEED_SYNC
-> -	bool			dma_need_sync:1;
-> +	bool			dma_skip_sync:1;
->  #endif
->  };
->  
-> diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
-> index 4893cb89cb52..5217b922d29f 100644
-> --- a/include/linux/dma-map-ops.h
-> +++ b/include/linux/dma-map-ops.h
-> @@ -280,8 +280,8 @@ static inline void dma_reset_need_sync(struct device *dev)
->  {
->  #ifdef CONFIG_DMA_NEED_SYNC
->  	/* Reset it only once so that the function can be called on hotpath */
-> -	if (unlikely(!dev->dma_need_sync))
-> -		dev->dma_need_sync = true;
-> +	if (unlikely(dev->dma_skip_sync))
-> +		dev->dma_skip_sync = false;
->  #endif
->  }
->  
-> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-> index eb4e15893b6c..f693aafe221f 100644
-> --- a/include/linux/dma-mapping.h
-> +++ b/include/linux/dma-mapping.h
-> @@ -295,7 +295,7 @@ bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr);
->  static inline bool dma_dev_need_sync(const struct device *dev)
->  {
->  	/* Always call DMA sync operations when debugging is enabled */
-> -	return dev->dma_need_sync || IS_ENABLED(CONFIG_DMA_API_DEBUG);
-> +	return !dev->dma_skip_sync || IS_ENABLED(CONFIG_DMA_API_DEBUG);
->  }
->  
->  static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
-> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> index 3524bc92c37f..3f77c3f8d16d 100644
-> --- a/kernel/dma/mapping.c
-> +++ b/kernel/dma/mapping.c
-> @@ -392,7 +392,7 @@ bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr)
->  
->  	if (dma_map_direct(dev, ops))
->  		/*
-> -		 * dma_need_sync could've been reset on first SWIOTLB buffer
-> +		 * dma_skip_sync could've been reset on first SWIOTLB buffer
->  		 * mapping, but @dma_addr is not necessary an SWIOTLB buffer.
->  		 * In this case, fall back to more granular check.
->  		 */
-> @@ -407,20 +407,20 @@ static void dma_setup_need_sync(struct device *dev)
->  
->  	if (dma_map_direct(dev, ops) || (ops->flags & DMA_F_CAN_SKIP_SYNC))
->  		/*
-> -		 * dma_need_sync will be reset to %true on first SWIOTLB buffer
-> +		 * dma_skip_sync will be reset to %false on first SWIOTLB buffer
->  		 * mapping, if any. During the device initialization, it's
->  		 * enough to check only for the DMA coherence.
->  		 */
-> -		dev->dma_need_sync = !dev_is_dma_coherent(dev);
-> +		dev->dma_skip_sync = dev_is_dma_coherent(dev);
->  	else if (!ops->sync_single_for_device && !ops->sync_single_for_cpu &&
->  		 !ops->sync_sg_for_device && !ops->sync_sg_for_cpu)
->  		/*
->  		 * Synchronization is not possible when none of DMA sync ops
->  		 * is set.
->  		 */
-> -		dev->dma_need_sync = false;
-> +		dev->dma_skip_sync = true;
->  	else
-> -		dev->dma_need_sync = true;
-> +		dev->dma_skip_sync = false;
->  }
->  #else /* !CONFIG_DMA_NEED_SYNC */
->  static inline void dma_setup_need_sync(struct device *dev) { }
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index ae3e593eaadb..068134697cf1 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -1409,7 +1409,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *dev, phys_addr_t orig_addr,
->  	}
->  
->  	/*
-> -	 * If dma_need_sync wasn't set, reset it on first SWIOTLB buffer
-> +	 * If dma_skip_sync was set, reset it on first SWIOTLB buffer
->  	 * mapping to always sync SWIOTLB buffers.
->  	 */
->  	dma_reset_need_sync(dev);
-
+Eugen
 
