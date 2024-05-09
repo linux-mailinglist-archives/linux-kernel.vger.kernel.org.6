@@ -1,127 +1,377 @@
-Return-Path: <linux-kernel+bounces-175064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8998F8C19C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:06:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972088C19C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B07284593
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA8751C219A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23CB12DD90;
-	Thu,  9 May 2024 23:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3287212DD94;
+	Thu,  9 May 2024 23:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rtGMrxWN"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iHDn6mqx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C853B12838D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 23:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB82985C56
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 23:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715296002; cv=none; b=B0tGtfNyMf+ASY5bljnqeswmF8XGYAnLcBUXy8fs/MQqr193YA4nbjw2wamfaq/vWHNqOqjIwXEFxqPGr2sQEqbTimGjw4VnfdJbUWdZdHHIzSp7T5LprUynFzCqXVZ7WR6hmxtq3V5sEUkCE3YkcsyhoAGgZVPwiagnm6tAq9A=
+	t=1715296062; cv=none; b=HFxTkWieFXguchgA7n90VkQf7cRn1eScC+J4x21btpwNregLrLms9CqLVqpxXt0pZQbz6shv3xkkyxxl/hDkLQHzVngXiwr+Wy8wwyt2ZxiXmKlVSwlqwLLUWyy8VLqJvVNML/97+NTC/ctPfLCRNHrNpUIiOs+hXPDsL3WxTGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715296002; c=relaxed/simple;
-	bh=Ng18fVP8U39tP/Yi0NGN1v5+V+jbpidoZX+xxyxIFck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Po7Haq5Xc88b4zf9aIEJCTeq9DEIUGnWLuO41bdbfaMf+TBAukSOnFw4QgW49B4DNLsE1rhf8brzRhBDmoT1NxshBL5YwoSxCIMy2mIORMgdkJiDlH2N+Yt4WTWZMtNF8wPFUpgZ3jzsQb8X3mT5iNFjt4CeWbU2oIE6v43alOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rtGMrxWN; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-620e30d8f37so1190642a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 16:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715296000; x=1715900800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FrQui9B6BoEIY/rh+mexhaF7aELyfYWuHXoeSmqlVL0=;
-        b=rtGMrxWNHvsrkMZKxcoyo6lwbgezQ83jdWTAEPN9zbjUSXotTl9RE2f6Fs3xdTVffl
-         4uAWy+bwDKNqRWpz/eMnxUU3Bf7dopkdxgMffIbQzOWLqRfdlTk+trm0Qp4r+nNoVist
-         KdaJUO5LS0ctg48P6RS9t3n1y2TEnO1nDikuw=
+	s=arc-20240116; t=1715296062; c=relaxed/simple;
+	bh=gp8pOF3IuXWxQKBZ6DWNOxyiPHT5bmd27HVxhF2Y3GY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WYRJqwk8Ul+EOx3pNxBCa4GFzqUX4L+VIhnfe4CGrRLY9xqyEpfIg41Qvp97jXsOPJJuzR7a2Ssw9CF7IDXapI+D6rK8SX3N6K2v0ovxOMYTzoZ1UwQIN6hslRX9qssWRs0mMcNyF3cxykmoCEFxEI1/kAvL9n9vixZ1D8MX72E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iHDn6mqx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715296057;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFaELFWpjddYkl/64kvLJs1WRRF9HXHu9i0yKLDkOEs=;
+	b=iHDn6mqx1hIbGMiVBoSBdx8RqMPbtgrnXc7j6ibt+2iHh4tGY9cN6nAVcwhizqdy8L8zMM
+	7mDDmwY0KYMKI57Nfv4dOEgAXccMoylihdpqUvK7z1NQ24T+842DQLnOcsFIr3tG1rz/DS
+	MoQqQe4i+TJEH04gxjRqMk5sGBhnwEc=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-84-9KR1ilGVOO26Y8cReHzPsA-1; Thu, 09 May 2024 19:07:36 -0400
+X-MC-Unique: 9KR1ilGVOO26Y8cReHzPsA-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2b3756e6333so1361095a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 16:07:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715296000; x=1715900800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FrQui9B6BoEIY/rh+mexhaF7aELyfYWuHXoeSmqlVL0=;
-        b=aAeO1MnPVqxJ5Iq+iUeNVDe5K14V5yCSykKenHWcp5EF2N8mmtCWioKpR0Ev6oVeGC
-         +Bw18gb6y6o/bIFBkLeJBgrA+hM+c7mmXnnNYe8VDL3hxZre6R9VlC6sbZ0M0mh9m1pB
-         A+bRHjkDjOg6lc/IScypxNgK/w8duuJW06yHe88DjB8aRqNmjXF7fO/nyhx4GB7NRVcS
-         9T5AlXiIP6Zdek4jxZ9rh5DL+sRT7ciIAIxqqHbHxV1xGt9BTOJ1dcby69h/KVaIizCE
-         VemCla4nb91CGY56mqfsDMIfcC2FAEfK5VIkGFKx+kYfsEuxooB6s9oYK7JXddADF7jx
-         K/IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlkrz9XrLIbKvhpQyuQvgcBHCIhdeRX5ucPRHLHWs79OmI/YQRkEbsg/qQXnIcyxe2wAyze0vh20jaSvE3JFmvmD+/igu1eCAK5c/E
-X-Gm-Message-State: AOJu0YxTjCOebQpfY+WvOm1SpWtcK5F+d7MkVYEvQkqnPaPN8vTf6QER
-	ygfFu6mYTfZQTZJXlv44K3j3m/TJ6sX48iMzznfKu2fgwALfi6h7flqIripLUro=
-X-Google-Smtp-Source: AGHT+IGc/iwlNZZmQjVUxnvbLuwphUnwPD4l0hWq3QPzh+j7dh2oKcWhg374+QqVtMcUzqahlUUnGg==
-X-Received: by 2002:a17:90a:8a96:b0:2b2:c6f8:70b0 with SMTP id 98e67ed59e1d1-2b6cc357aefmr1012739a91.11.1715296000115;
-        Thu, 09 May 2024 16:06:40 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b695f8d058sm1186647a91.2.2024.05.09.16.06.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 16:06:39 -0700 (PDT)
-Date: Thu, 9 May 2024 16:06:36 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	saeedm@nvidia.com, gal@nvidia.com, nalramli@fastly.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next 0/1] mlx5: Add netdev-genl queue stats
-Message-ID: <Zj1W_JH-k3skeHPj@LQ3V64L9R2>
-References: <20240503022549.49852-1-jdamato@fastly.com>
- <c3f4f1a4-303d-4d57-ae83-ed52e5a08f69@linux.dev>
- <ZjUwT_1SA9tF952c@LQ3V64L9R2>
- <20240503145808.4872fbb2@kernel.org>
- <ZjV5BG8JFGRBoKaz@LQ3V64L9R2>
- <20240503173429.10402325@kernel.org>
- <ZjkbpLRyZ9h0U01_@LQ3V64L9R2>
- <8678e62c-f33b-469c-ac6c-68a060273754@gmail.com>
- <ZjwJmKa6orPm9NHF@LQ3V64L9R2>
- <05317efb-14e9-433b-b0b6-657a98500efd@gmail.com>
+        d=1e100.net; s=20230601; t=1715296055; x=1715900855;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CFaELFWpjddYkl/64kvLJs1WRRF9HXHu9i0yKLDkOEs=;
+        b=VhFrJ6uQ/K2xAWzCpycOxGCldQtGtWFr1PLIhKtO8qT5ltom16NK7SEEirB4kp34ot
+         MQfdw1I2dlxwfygZHNgPEBccQ2gQoZP/UBUg6V6cPkeLidUZtGUclcx6/OKWld56Yuyh
+         JhXEtQT+b0O7qam+M3lfIObuKrHzdcvfq3qE5abccydAZJlgrrBaapO9if/J7EIYPSrb
+         4q3n0CJBJFH9XeU4Dtp47/BuyrSMgg4QKQAo0XjfYpKtVwEuLvhts9qy9TwCM6ZwXU4Z
+         xwc0Hlxpaezms5HlgjOKfX5jEyFxk0ijNgTcf4unFz+N6Snaucy4kazZMhDNyF3/B6fq
+         JOxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8kHFEZinv1/ckZCNKnXsqqjO4dKk7QlrFczZiYxpcFKLphQUui5VYg/ZXnJ2xXLVGMBTGHb978JckeVWimAqY2VbSedqoD6vfyohQ
+X-Gm-Message-State: AOJu0YzOnn4SjywDvFvcC0RzD3YmiieY+A46pIZJeADAl7zcP7ifXT6y
+	aD0qi9FJGQ1ENOWkt7c4vpOkiwXGCecLtGW8jFXACpI4LmLHCNmGhtksF5L4KS6M2nlqDYRmYWC
+	ipP+fNRbLH9W53tKY9AV9tCa0yxor6awyU1Q33UdlTAfld7dB3wLN5FteDyTNpFdQS21DUhRf4x
+	7qttmBNFXZDU+rpoGLaTVEYwWVYz5WUlF9mvYe
+X-Received: by 2002:a17:90a:7e11:b0:2b6:c4d7:fd9d with SMTP id 98e67ed59e1d1-2b6ccc72f75mr943297a91.35.1715296055206;
+        Thu, 09 May 2024 16:07:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/tETTTwQT03sxCmkOb4viliHZXHbh2TuSgm6BrIdm/xGbTuTZd5G6B8tBSHad3DKv/GtsmDGttKuAYWvYpho=
+X-Received: by 2002:a17:90a:7e11:b0:2b6:c4d7:fd9d with SMTP id
+ 98e67ed59e1d1-2b6ccc72f75mr943264a91.35.1715296054648; Thu, 09 May 2024
+ 16:07:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05317efb-14e9-433b-b0b6-657a98500efd@gmail.com>
+References: <ZjqWXPFuoYWWcxP3@google.com> <0e239143-65ed-445a-9782-e905527ea572@paulmck-laptop>
+ <Zjq9okodmvkywz82@google.com> <ZjrClk4Lqw_cLO5A@google.com>
+ <Zjroo8OsYcVJLsYO@LeoBras> <b44962dd-7b8a-4201-90b7-4c39ba20e28d@paulmck-laptop>
+ <ZjsZVUdmDXZOn10l@LeoBras> <ZjuFuZHKUy7n6-sG@google.com> <5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop>
+ <ZjyGefTZ8ThZukNG@LeoBras> <4e368040-05b0-46ab-bafa-59710d5de549@paulmck-laptop>
+In-Reply-To: <4e368040-05b0-46ab-bafa-59710d5de549@paulmck-laptop>
+From: Leonardo Bras Soares Passos <leobras@redhat.com>
+Date: Thu, 9 May 2024 20:07:22 -0300
+Message-ID: <CAJ6HWG4LyyLuQ9ZZ2ayLRt79_m_6-=ZePhHyQV8VTMPjFG+kYg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
+To: paulmck@kernel.org
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay <quic_neeraju@quicinc.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Marcelo Tosatti <mtosatti@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 09, 2024 at 12:42:11PM +0300, Tariq Toukan wrote:
-> ..
-> 
-> > > The off-channels queues (like PTP) do not exist in default. So they are out
-> > > of the game unless you explicitly enables them.
-> > 
-> > I did not enable them, but if you saw the thread, it sounds like Jakub's
-> > preference is that in the v2 I include the PTP stats in get_base_stats.
-> > 
-> > Are you OK with that?
-> 
-> Sounds good.
-> 
-> > Are there other queue stats I should include as well?
-> > 
-> 
-> The QOS/HTB queues.
-> See mlx5e_stats_grp_sw_update_stats_qos.
+On Thu, May 9, 2024 at 7:44=E2=80=AFPM Paul E. McKenney <paulmck@kernel.org=
+> wrote:
+>
+> On Thu, May 09, 2024 at 05:16:57AM -0300, Leonardo Bras wrote:
+> > On Wed, May 08, 2024 at 08:32:40PM -0700, Paul E. McKenney wrote:
+> > > On Wed, May 08, 2024 at 07:01:29AM -0700, Sean Christopherson wrote:
+> > > > On Wed, May 08, 2024, Leonardo Bras wrote:
+> > > > > Something just hit me, and maybe I need to propose something more=
+ generic.
+> > > >
+> > > > Yes.  This is what I was trying to get across with my complaints ab=
+out keying off
+> > > > of the last VM-Exit time.  It's effectively a broad stroke "this ta=
+sk will likely
+> > > > be quiescent soon" and so the core concept/functionality belongs in=
+ common code,
+> > > > not KVM.
+> > >
+> > > OK, we could do something like the following wholly within RCU, namel=
+y
+> > > to make rcu_pending() refrain from invoking rcu_core() until the grac=
+e
+> > > period is at least the specified age, defaulting to zero (and to the
+> > > current behavior).
+> > >
+> > > Perhaps something like the patch shown below.
+> >
+> > That's exactly what I was thinking :)
+> >
+> > >
+> > > Thoughts?
+> >
+> > Some suggestions below:
+> >
+> > >
+> > >                                                     Thanx, Paul
+> > >
+> > > ---------------------------------------------------------------------=
+---
+> > >
+> > > commit abc7cd2facdebf85aa075c567321589862f88542
+> > > Author: Paul E. McKenney <paulmck@kernel.org>
+> > > Date:   Wed May 8 20:11:58 2024 -0700
+> > >
+> > >     rcu: Add rcutree.nocb_patience_delay to reduce nohz_full OS jitte=
+r
+> > >
+> > >     If a CPU is running either a userspace application or a guest OS =
+in
+> > >     nohz_full mode, it is possible for a system call to occur just as=
+ an
+> > >     RCU grace period is starting.  If that CPU also has the schedulin=
+g-clock
+> > >     tick enabled for any reason (such as a second runnable task), and=
+ if the
+> > >     system was booted with rcutree.use_softirq=3D0, then RCU can add =
+insult to
+> > >     injury by awakening that CPU's rcuc kthread, resulting in yet ano=
+ther
+> > >     task and yet more OS jitter due to switching to that task, runnin=
+g it,
+> > >     and switching back.
+> > >
+> > >     In addition, in the common case where that system call is not of
+> > >     excessively long duration, awakening the rcuc task is pointless.
+> > >     This pointlessness is due to the fact that the CPU will enter an =
+extended
+> > >     quiescent state upon returning to the userspace application or gu=
+est OS.
+> > >     In this case, the rcuc kthread cannot do anything that the main R=
+CU
+> > >     grace-period kthread cannot do on its behalf, at least if it is g=
+iven
+> > >     a few additional milliseconds (for example, given the time durati=
+on
+> > >     specified by rcutree.jiffies_till_first_fqs, give or take schedul=
+ing
+> > >     delays).
+> > >
+> > >     This commit therefore adds a rcutree.nocb_patience_delay kernel b=
+oot
+> > >     parameter that specifies the grace period age (in milliseconds)
+> > >     before which RCU will refrain from awakening the rcuc kthread.
+> > >     Preliminary experiementation suggests a value of 1000, that is,
+> > >     one second.  Increasing rcutree.nocb_patience_delay will increase
+> > >     grace-period latency and in turn increase memory footprint, so sy=
+stems
+> > >     with constrained memory might choose a smaller value.  Systems wi=
+th
+> > >     less-aggressive OS-jitter requirements might choose the default v=
+alue
+> > >     of zero, which keeps the traditional immediate-wakeup behavior, t=
+hus
+> > >     avoiding increases in grace-period latency.
+> > >
+> > >     Link: https://lore.kernel.org/all/20240328171949.743211-1-leobras=
+@redhat.com/
+> > >
+> > >     Reported-by: Leonardo Bras <leobras@redhat.com>
+> > >     Suggested-by: Leonardo Bras <leobras@redhat.com>
+> > >     Suggested-by: Sean Christopherson <seanjc@google.com>
+> > >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > >
+> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docume=
+ntation/admin-guide/kernel-parameters.txt
+> > > index 0a3b0fd1910e6..42383986e692b 100644
+> > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > @@ -4981,6 +4981,13 @@
+> > >                     the ->nocb_bypass queue.  The definition of "too
+> > >                     many" is supplied by this kernel boot parameter.
+> > >
+> > > +   rcutree.nocb_patience_delay=3D [KNL]
+> > > +                   On callback-offloaded (rcu_nocbs) CPUs, avoid
+> > > +                   disturbing RCU unless the grace period has
+> > > +                   reached the specified age in milliseconds.
+> > > +                   Defaults to zero.  Large values will be capped
+> > > +                   at five seconds.
+> > > +
+> > >     rcutree.qhimark=3D [KNL]
+> > >                     Set threshold of queued RCU callbacks beyond whic=
+h
+> > >                     batch limiting is disabled.
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index 7560e204198bb..6e4b8b43855a0 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -176,6 +176,8 @@ static int gp_init_delay;
+> > >  module_param(gp_init_delay, int, 0444);
+> > >  static int gp_cleanup_delay;
+> > >  module_param(gp_cleanup_delay, int, 0444);
+> > > +static int nocb_patience_delay;
+> > > +module_param(nocb_patience_delay, int, 0444);
+> > >
+> > >  // Add delay to rcu_read_unlock() for strict grace periods.
+> > >  static int rcu_unlock_delay;
+> > > @@ -4334,6 +4336,8 @@ EXPORT_SYMBOL_GPL(cond_synchronize_rcu_full);
+> > >  static int rcu_pending(int user)
+> > >  {
+> > >     bool gp_in_progress;
+> > > +   unsigned long j =3D jiffies;
+> >
+> > I think this is probably taken care by the compiler, but just in case I=
+ would move the
+> > j =3D jiffies;
+> > closer to it's use, in order to avoid reading 'jiffies' if rcu_pending
+> > exits before the nohz_full testing.
+>
+> Good point!  I just removed j and used jiffies directly.
+>
+> > > +   unsigned int patience =3D msecs_to_jiffies(nocb_patience_delay);
+> >
+> > What do you think on processsing the new parameter in boot, and saving =
+it
+> > in terms of jiffies already?
+> >
+> > It would make it unnecessary to convert ms -> jiffies every time we run
+> > rcu_pending.
+> >
+> > (OOO will probably remove the extra division, but may cause less impact=
+ in
+> > some arch)
+>
+> This isn't exactly a fastpath, but it is easy enough to do the conversion
+> in rcu_bootup_announce_oddness() and place it into another variable
+> (for the benefit of those using drgn or going through crash dumps).
+>
+> > >     struct rcu_data *rdp =3D this_cpu_ptr(&rcu_data);
+> > >     struct rcu_node *rnp =3D rdp->mynode;
+> > >
+> > > @@ -4347,11 +4351,13 @@ static int rcu_pending(int user)
+> > >             return 1;
+> > >
+> > >     /* Is this a nohz_full CPU in userspace or idle?  (Ignore RCU if =
+so.) */
+> > > -   if ((user || rcu_is_cpu_rrupt_from_idle()) && rcu_nohz_full_cpu()=
+)
+> > > +   gp_in_progress =3D rcu_gp_in_progress();
+> > > +   if ((user || rcu_is_cpu_rrupt_from_idle() ||
+> > > +        (gp_in_progress && time_before(j + patience, rcu_state.gp_st=
+art))) &&
+> >
+> > I think you meant:
+> >       time_before(j, rcu_state.gp_start + patience)
+> >
+> > or else this always fails, as we can never have now to happen before a
+> > previously started gp, right?
+> >
+> > Also, as per rcu_nohz_full_cpu() we probably need it to be read with
+> > READ_ONCE():
+> >
+> >       time_before(j, READ_ONCE(rcu_state.gp_start) + patience)
+>
+> Good catch on both counts, fixed!
+>
+> > > +       rcu_nohz_full_cpu())
+> > >             return 0;
+> > >
+> > >     /* Is the RCU core waiting for a quiescent state from this CPU? *=
+/
+> > > -   gp_in_progress =3D rcu_gp_in_progress();
+> > >     if (rdp->core_needs_qs && !rdp->cpu_no_qs.b.norm && gp_in_progres=
+s)
+> > >             return 1;
+> > >
+> > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> > > index 340bbefe5f652..174333d0e9507 100644
+> > > --- a/kernel/rcu/tree_plugin.h
+> > > +++ b/kernel/rcu/tree_plugin.h
+> > > @@ -93,6 +93,15 @@ static void __init rcu_bootup_announce_oddness(voi=
+d)
+> > >             pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_=
+init_delay);
+> > >     if (gp_cleanup_delay)
+> > >             pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", =
+gp_cleanup_delay);
+> > > +   if (nocb_patience_delay < 0) {
+> > > +           pr_info("\tRCU NOCB CPU patience negative (%d), resetting=
+ to zero.\n", nocb_patience_delay);
+> > > +           nocb_patience_delay =3D 0;
+> > > +   } else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
+> > > +           pr_info("\tRCU NOCB CPU patience too large (%d), resettin=
+g to %ld.\n", nocb_patience_delay, 5 * MSEC_PER_SEC);
+> > > +           nocb_patience_delay =3D 5 * MSEC_PER_SEC;
+> > > +   } else if (nocb_patience_delay) {
+> >
+> > Here you suggest that we don't print if 'nocb_patience_delay =3D=3D 0',
+> > as it's the default behavior, right?
+>
+> Exactly, in keeping with the function name rcu_bootup_announce_oddness().
+>
+> This approach allows easy spotting of deviations from default settings,
+> which can be very helpful when debugging.
+>
+> > I think printing on 0 could be useful to check if the feature exists, e=
+ven
+> > though we are zeroing it, but this will probably add unnecessary verbos=
+ity.
+>
+> It could be quite useful to people learning the RCU implementation,
+> and I encourage those people to remove all those "if" statements from
+> rcu_bootup_announce_oddness() in order to get the full story.
+>
+> > > +           pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\=
+n", nocb_patience_delay);
+> > > +   }
+> >
+> > Here I suppose something like this can take care of not needing to conv=
+ert
+> > ms -> jiffies every rcu_pending():
+> >
+> > +     nocb_patience_delay =3D msecs_to_jiffies(nocb_patience_delay);
+>
+> Agreed, but I used a separate variable to help people looking at crash
+> dumps or using drgn.
+>
+> And thank you for your review and comments!  Applying these changes
+> with attribution.
+>
 
-Sure, thanks, I can take a look. I think maybe an issue might be that if
-I include QOS/HTB queues then tools/testing/selftests/drivers/net/stats.py
-will start to fail.
+Thank you!
+Leo
 
-I could be mistaken, but it seems that QOS/HTB are not included in the rtnl
-stats, is that right?
+>                                                         Thanx, Paul
+>
+> > >     if (!use_softirq)
+> > >             pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.=
+\n");
+> > >     if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
+> > >
+> >
+> >
+> > Thanks!
+> > Leo
+> >
+>
 
-If the goal is for queue stats to match rtnl then maybe I should leave
-QOS/HTB out and they can be added to both RTNL and queue stats together at
-a later time.
 
