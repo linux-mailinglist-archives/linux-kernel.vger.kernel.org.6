@@ -1,88 +1,109 @@
-Return-Path: <linux-kernel+bounces-174003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27EC8C0903
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:17:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A441D8C0913
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EF521C20D91
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 310A3B21ABF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A26413C66B;
-	Thu,  9 May 2024 01:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YksXqOMI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1504813C835;
+	Thu,  9 May 2024 01:29:10 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344C45BF0;
-	Thu,  9 May 2024 01:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B863113C3ED;
+	Thu,  9 May 2024 01:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715217471; cv=none; b=jQfH6phB4FpR2ZD1Mwx14O4YwgxOX/WNDMobD/MpK2XLroGmwUn7XlNVQVhnbbveQZ5MBQ/yUzva9bnaV+fU9YUOOswLfngdx6+JtIBlAKNKz6HzkF7eoIxmf/ENGFNLjBQyeWWynBn2V4cUQn88kPUewWBxp4SyoX+fkijatXk=
+	t=1715218149; cv=none; b=vFlkyiN30WFUTNCfTzCW+xRg7RFseuLwS9cKrbtceUD8TTUdJjufJMRisrKuGCB5tN/zlQg5fBXRgJZIE79DCdQhSR/di6+XCFjOKSlKujIP0O0cYN0RdA/Q3H0VFN74vE2O6x1wVJIVTL0LXWrDkkQ+tSmQ/NlpLy2Tf1dktbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715217471; c=relaxed/simple;
-	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Nhdcgx+efV6ziCACDB/rY6zwGnu4byWfV/SE9wxH7Hj4/f6mKYdS/KDzrpdWPeaFSath+jVfdz5GwjEfrHyXofRuHCG5QRN3V4/ZA35XV171L/jpnblsbfNOqGHCM5W1x6OHjMuMKwq3J+9iCkzCQP7gD/eJYqCUtVfoHOSJ80o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YksXqOMI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CFCC113CC;
-	Thu,  9 May 2024 01:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715217470;
-	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YksXqOMI4lsIaZqx0A5/i0JLSUHcsO6uruynoyRGSTcqWF903u/LNNb6O00rrl71F
-	 cJoCY9K10j5YsDpFFHaW+Q/GDTqNdnFWxJZYEJtbqXcGypoZ9L2+lfbeRhWCjdQ5Fc
-	 I2f/XBoH04xYOYY2Kv45HjT4EJgTKItrn6caanPg57Ooh/8V7a7CC8OeP8k5gXlVmk
-	 wSEbxqrnDWea86AU7J9YgABLuuA35vwEF8jtn2Y/GO18uMF9XLAmCYiNY11uWwmdnR
-	 aBt3zDugGxm3jz5EmWt6uOeJ0qm0hpePouEkYn/Q0TpQ4GSGlw3M9WAKm9hX28rbhj
-	 xS2d+YmPOdkQA==
-Message-ID: <9e2440caa122d05cfc0ee3cf64b46e48.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715218149; c=relaxed/simple;
+	bh=U03wBk7HDXB0sFrPIc2tbiab0SncvyWu7xn1xRY1pmQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ktcnu+97VMcDlXh0CyCRDlWbE10uz9icCHcd41tRV6vGe+Ajix/YcLWMmXM5nAZLFkARsc9xzT1ATMqItZkV4EYXx3cj8ZaoRo2kYfBS7TlcBuTnNODZM9mp9RWXja3rZcv3lTneTGwYKRH0olnB8Q1YJW+fUHBSiuJM96S3rPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VZZD56JK1z4f3nKH;
+	Thu,  9 May 2024 09:28:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id BCA2B1A058D;
+	Thu,  9 May 2024 09:29:03 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxDeJjxm5MuXMA--.59814S4;
+	Thu, 09 May 2024 09:29:03 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	song@kernel.org,
+	xni@redhat.com
+Cc: dm-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC md-6.10 0/9] md: refactor and cleanup for sync action
+Date: Thu,  9 May 2024 09:18:51 +0800
+Message-Id: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
-References: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10, fixed pull, 2nd try
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 08 May 2024 18:17:48 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDHlxDeJjxm5MuXMA--.59814S4
+X-Coremail-Antispam: 1UD129KBjvdXoWruFy8JF4fCF4DKw15Zw48tFb_yoWfWwcEga
+	4kXFy3Jw45uF1UJFy5tr1S9rWjka1Ygrs7Ja43trWSyr97ZF17GF1jkrWfXw1fZrZF9r1Y
+	vry8C3yfArsFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+	UZa9-UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Quoting Krzysztof Kozlowski (2024-05-08 08:31:56)
-> Hi,
->=20
-> Updated pull request with fixed issue of non-used local const data.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
-95:
->=20
->   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.10-2
->=20
-> for you to fetch changes up to 7c18b0a5aa46cc7e5d3a7ef3f9f8e3aa91bb780f:
->=20
->   clk: samsung: gs101: drop unused HSI2 clock parent data (2024-05-07 11:=
-47:39 +0200)
->=20
-> ----------------------------------------------------------------
+From: Yu Kuai <yukuai3@huawei.com>
 
-Thanks. Pulled into clk-next
+Motivation of this patchset is that during code review, I found some
+places is not good coded, and I decide to make code more readable.
+
+Yu Kuai (9):
+  md: rearrange recovery_flage
+  md: add a new enum type sync_action
+  md: add new helpers for sync_action
+  md: factor out helper to start reshape from action_store()
+  md: replace sysfs api sync_action with new helpers
+  md: use new helers in md_do_sync()
+  md: replace last_sync_action with new enum type
+  md: factor out helpers for different sync_action in md_do_sync()
+  md: pass in max_sectors for pers->sync_request()
+
+ drivers/md/dm-raid.c |   2 +-
+ drivers/md/md.c      | 367 ++++++++++++++++++++++++++++---------------
+ drivers/md/md.h      | 122 +++++++++++---
+ drivers/md/raid1.c   |   5 +-
+ drivers/md/raid10.c  |   8 +-
+ drivers/md/raid5.c   |   3 +-
+ 6 files changed, 344 insertions(+), 163 deletions(-)
+
+-- 
+2.39.2
+
 
