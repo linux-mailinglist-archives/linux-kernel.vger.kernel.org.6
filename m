@@ -1,228 +1,285 @@
-Return-Path: <linux-kernel+bounces-174405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E008C0E46
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:40:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBAE8C0E4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 457E6B225FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:40:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE93D1C21211
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BC212EBFA;
-	Thu,  9 May 2024 10:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8550A14A8C;
+	Thu,  9 May 2024 10:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HrGjPV6+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wa9A5C0w"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C03107B6
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D96812DD9A;
+	Thu,  9 May 2024 10:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715251192; cv=none; b=FkMWcV3yo+98jFW2kM7JtKV7TNF9MuGGyZjaN5i5KhDAmCMmlNbgiSEjtE0Ggq/VWQygcN6ATisG62wTY7hKj4rTikYg3aDEkakbEDC9WQ5wftsz8587sR3vBBvNcYH6UbGPtKGfyanQYBbzXK0bdBff7mjWu93CuQBW4j0pBGE=
+	t=1715251312; cv=none; b=eGge0aBitcug5MpizISPFOPQDzuvdalURevCNBaLHNfoVB+JfRcWFPkmgYDSfWOR6FncrOzwqe9/XMepU10lyE1cpvb6V+4FOc8rLKeIZaS/nS5sYvmbFik1sjyu9bNWdtMNEAMQ0Vv9JavBgAfWngqvYtNIB8lUXCRrS/0K1cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715251192; c=relaxed/simple;
-	bh=XwAe7hsJy7qg8dMMncNStWTJhklGzle31UBgcs6zbqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hqP0UcfNoUduJVoj0jCnpFBiItOlrJWfCUO0UNjd1L8NoBpH3H9VQh7EJnB78mHEdknrTa2xgwbwG5hTjO6BTcJGUGOVTDaVnZECFvvjLn3yDy8gNSdgzrJwsMiwNsUUqoo3cBoenjg2aimRU7beIEQSIzUDNtQqaZsIE4bAXMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HrGjPV6+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715251190;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmseUmPhFZwwAtIyCLb6QGTIVFuL3jOx0Fm3gQHch+g=;
-	b=HrGjPV6+trPemKKgpDKU7XGX3v1NzIYYe2s+TIBKTChNZjhKB0Zkl0EIiDlPXW1A5mRE+R
-	6QwDfVos5+IQg+BuKzZ9EfK6KjDSVUjKRvqBG4LztM3O3lW46PzMjVvj8O9hfOUcrBUOjZ
-	uFNVCbQmP2k4MxkrWwIroe2FA7FbzbA=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-438-u-Y21pgwNiOaYLih8Q3ROQ-1; Thu, 09 May 2024 06:39:43 -0400
-X-MC-Unique: u-Y21pgwNiOaYLih8Q3ROQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a59e9ac4c74so38484466b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 03:39:43 -0700 (PDT)
+	s=arc-20240116; t=1715251312; c=relaxed/simple;
+	bh=dWmcZ55RwlWzopdm2MrjCUbObr1JH+NBfWDA3eR0PC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8EuCNTmEshcZcQeNDKHqGzbFVOQxdpr2oDTS0KeLVOrStatOYrGFPpV0DFcFbjZYKyWNelmznFPpIKSAwo0mfBf4qIUgZTN6OnK0xxsWEqvGaaeBFeL8Kx9y2+MvbMVqdvt3tkhO9pVjToaW0or1drxWoMkx5n/FCnB6iCMHD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wa9A5C0w; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f460e05101so536651b3a.1;
+        Thu, 09 May 2024 03:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715251310; x=1715856110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6RMqRZX0HIBUYzm8GMDrhg1RkSGNPy9fJGMUwnU3cVE=;
+        b=Wa9A5C0wLKywUHXVq9m+NXBcZLrU/6PrmXyQA3LGwvpeWjHnkqDo8KjMFS3wxw6ncL
+         +Z4Atj4cvfAFoXDGifoaF9ZsO/3RpjmNOPfMu1vnwrAiDtWvDnCMyFhuQf3btBm4nvd5
+         AgOurXVX8j0dFxGvEZxk3kaTP9hpEqg3dF/n9TzeuU5Yq9jRhAYbJGlmK3rDPhlJCbPd
+         C5Eb2+BuSHzuCKb81AhXXs55sNuODpw7QENOrOoCdT5tuwkX+WKxAJ2COvPiMiCAN92b
+         6AypryguXYi9UdBWO7+MjpWtyWF0hxgq3h2nH/q30A7QN8LuO/+2JUxY0NQCuugaLztI
+         ScFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715251182; x=1715855982;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wmseUmPhFZwwAtIyCLb6QGTIVFuL3jOx0Fm3gQHch+g=;
-        b=nEphpOgFWmGZctn8iX3fs0JkDfjWH9/dWmlr6wjhNvzsoKykEc9g3X99x/SfZtkgNF
-         OQ+W8nB8O4z3zNcmrV7yWCjwq+vwq5eBvyGhV0cDmHaL54xTFTwIKqCRVFfr+H9m9ycS
-         flA7pFywMvx96qm77kEbZ954VP+YdVLONvrQNs5lfMW2aJemXInA8GOEHsAJ0I2RW89K
-         U56ZLaD39z8+YY6MVvTJXOj0rzVml2osgs8E8haojdPbn40UdR5NnrioHgBbPgQuQBwh
-         yjk7Be/oa7sVErjN2H0MShUberMXbLY22CKLxjIs/Kx5y1nBoSWAt5v4F4Zjtw33BTUY
-         1uyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX52FlfsDzSbcag+N2sdJmvGnNVLLmwcM4mDKykIr2QeHQhGUDuk+8OBlsifpkwP2O/vGQZXJJUaOexLvUsQUI1vq1ZRI5lgUaUI5s+
-X-Gm-Message-State: AOJu0YziouOkMISzpPa8W3J1uRNtE1C3X0jiIlHSPRXn+s8USX5rwa0u
-	EyeEbD6mTfzYtHmT9B4kZrDmpng0OZnUA3PHM/mpDzd+RNK3JUYG9CCzROHbFGGXEqBvjEOpj+J
-	wbwMmP957r1f8iBNZhjzWsvv/AYHrYsZZtYld42m5ko1UUFW6J7DOxtiBXI98kQ==
-X-Received: by 2002:a17:907:7286:b0:a59:bacc:b07f with SMTP id a640c23a62f3a-a59fb9d6452mr442079866b.52.1715251182276;
-        Thu, 09 May 2024 03:39:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEP9HeudRj+sW+HsFxhFyijpF8DR6PcEjVGvrG6HU+yPQToGKbszMb8r3CLhU3EOGpeZeUUpA==
-X-Received: by 2002:a17:907:7286:b0:a59:bacc:b07f with SMTP id a640c23a62f3a-a59fb9d6452mr442077966b.52.1715251181801;
-        Thu, 09 May 2024 03:39:41 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7da8sm59465366b.99.2024.05.09.03.39.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 03:39:41 -0700 (PDT)
-Message-ID: <5408b3fd-3ca9-47b7-83f1-567bea1387a0@redhat.com>
-Date: Thu, 9 May 2024 12:39:40 +0200
+        d=1e100.net; s=20230601; t=1715251310; x=1715856110;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6RMqRZX0HIBUYzm8GMDrhg1RkSGNPy9fJGMUwnU3cVE=;
+        b=Pr6ZbLTHaWhEJQnh1ilhWzwteB1SJyVoPydnPF+ylO+29Xipb65JdgFblpzJ5gqHz+
+         ktJaeo5pD4k/sveUB0TAnp4VvA0JhIpfspGd5GakeK20+z8lWDTLIkiC1oNk6bkWL+vh
+         ZKj/ypZxxz+U/IwotI3I9tE0m+b0GXMm5coCeGe5poFo1Y/jt+MR7wirN4qeoyP9Cl/o
+         LGVicTMV8DUOLyNhYqYamS0AsbjG8eGWM4249n/43Fvzew6ZW+6zPGUUZ01k/kFLgBYF
+         Kkdi2ElKS9H2WwcyRhqQSbATzCjYXKKQ2Hku805bqqq4Z2FvTBT0+Dq6cJoX/Bad99fQ
+         EZEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUD0iM+rYy7hRUIKb3JEyk/sYX5iOJBbkVAirEVNH680a9ooIQNH+6S6AcgNKpHht8yU73fO2yE7recDYZRymeVMZE+j8r4LTv9HIAG7atYunPMPUkR2XF2ldn1V/j/jwRloQvMyFoDrwGz
+X-Gm-Message-State: AOJu0Yw3mJMJdsxPmrpaCyRyrMAqVtvKjuygy0s3gBwX3LYEfbUxu+xB
+	LXTbD7zxhXkVg7Bmhud5Msp8uay1qVzztofFJH+ADq+BSw3vppZv
+X-Google-Smtp-Source: AGHT+IFShpc5EqZaSEqimhDxw5q2VLiTnTbYjMPFsUhO0YAAA+2DSBT05n9MeLgO4CftUumVO2HIDA==
+X-Received: by 2002:a05:6a00:1826:b0:6f4:4b35:d7b5 with SMTP id d2e1a72fcca58-6f4c908b5e0mr3906907b3a.1.1715251310214;
+        Thu, 09 May 2024 03:41:50 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af523csm1049662b3a.175.2024.05.09.03.41.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 03:41:49 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 805D6183B5E8A; Thu, 09 May 2024 17:41:45 +0700 (WIB)
+Date: Thu, 9 May 2024 17:41:45 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Rob Herring <robh@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+	Rodolfo Giometti <giometti@enneenne.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Serial <linux-serial@vger.kernel.org>,
+	Elvis <elvisimprsntr@gmail.com>,
+	"A. Steinmetz" <anstein99@googlemail.com>
+Subject: Re: Fwd: Add method to allow switching kernel level PPS signal from
+ DCD to CTS serial pin
+Message-ID: <ZjyoaZ1zJhMVGjbS@archie.me>
+References: <Zjra2GZIDC7BPoZx@archie.me>
+ <2024050853-basin-salsa-32bb@gregkh>
+ <20240509062456.GE3620298@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] extcon: Add LC824206XA microUSB switch driver
-To: Chanwoo Choi <chanwoo@kernel.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org
-References: <20240406140621.18355-1-hdegoede@redhat.com>
- <CAGTfZH1_-x+Z5+t=GCrJ+uEsuV2DPm9m+sKFYDXXXFprAVXekA@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAGTfZH1_-x+Z5+t=GCrJ+uEsuV2DPm9m+sKFYDXXXFprAVXekA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Hi,
-
-On 5/8/24 5:21 PM, Chanwoo Choi wrote:
-> On Sat, Apr 6, 2024 at 11:07 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Add a new driver for the ON Semiconductor LC824206XA microUSB switch and
->> accessory detector chip.
->>
->> ON Semiconductor has an "Advance Information" datasheet available
->> (ENA2222-D.PDF), but no full datasheet. So there is no documentation
->> available for the registers.
->>
->> This driver is based on the register info from the extcon-fsa9285.c driver,
->> from the Lollipop Android sources for the Lenovo Yoga Tablet 2 (Pro)
->> 830 / 1050 / 1380 models. Note despite the name this is actually a driver
->> for the LC824206XA not the FSA9285.
->>
->> This has only been tested on a Lenovo Yoga Tablet 2 Pro 1380 and
->> using the driver on other setups may require additional work.
->>
->> So far this driver is only used on x86/ACPI (non devicetree) devs.
->> Therefor there is no devicetree bindings documentation for this driver's
->> "onnn,enable-miclr-for-dcp" property since this is not used in actual
->> devicetree files and the dt bindings maintainers have requested properties
->> with no actual dt users to _not_ be added to the dt bindings.
->>
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-
-<snip>
-
-> Firstly, I'm sorry for late reply.
-> 
-> When I check the patch with checkpatch script, there are following warnings.
-> Could you please fix it?
-
-Weird, I normally always run checkpatch myself before submitting
-I must have forgotten that this time.
-
-I'll submit a new version addressing the checkpatch issues.
-
-Regards,
-
-Hans
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nKxqMyvWjc07RdJB"
+Content-Disposition: inline
+In-Reply-To: <20240509062456.GE3620298@mit.edu>
 
 
+--nKxqMyvWjc07RdJB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Traceback (most recent call last):
->   File "scripts/spdxcheck.py", line 11, in <module>
->     import git
-> ModuleNotFoundError: No module named 'git'
-> WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-> #71:
-> new file mode 100644
-> 
-> ERROR: trailing whitespace
-> #241: FILE: drivers/extcon/extcon-lc824206xa.c:166:
-> +^I$
-> 
-> ERROR: code indent should use tabs where possible
-> #322: FILE: drivers/extcon/extcon-lc824206xa.c:247:
-> +        struct lc824206xa_data *data = container_of(work, struct
-> lc824206xa_data, work);$
-> 
-> WARNING: please, no spaces at the start of a line
-> #322: FILE: drivers/extcon/extcon-lc824206xa.c:247:
-> +        struct lc824206xa_data *data = container_of(work, struct
-> lc824206xa_data, work);$
-> 
-> ERROR: code indent should use tabs where possible
-> #323: FILE: drivers/extcon/extcon-lc824206xa.c:248:
-> +        bool vbus_boost_enable = false;$
-> 
-> WARNING: please, no spaces at the start of a line
-> #323: FILE: drivers/extcon/extcon-lc824206xa.c:248:
-> +        bool vbus_boost_enable = false;$
-> 
-> ERROR: code indent should use tabs where possible
-> #324: FILE: drivers/extcon/extcon-lc824206xa.c:249:
-> +        int status, id;$
-> 
-> WARNING: please, no spaces at the start of a line
-> #324: FILE: drivers/extcon/extcon-lc824206xa.c:249:
-> +        int status, id;$
-> 
-> ERROR: code indent should use tabs where possible
-> #326: FILE: drivers/extcon/extcon-lc824206xa.c:251:
-> +        status = lc824206xa_read_reg(data, REG_STATUS);$
-> 
-> WARNING: please, no spaces at the start of a line
-> #326: FILE: drivers/extcon/extcon-lc824206xa.c:251:
-> +        status = lc824206xa_read_reg(data, REG_STATUS);$
-> 
-> ERROR: code indent should use tabs where possible
-> #327: FILE: drivers/extcon/extcon-lc824206xa.c:252:
-> +        if (status < 0)$
-> 
-> WARNING: please, no spaces at the start of a line
-> #327: FILE: drivers/extcon/extcon-lc824206xa.c:252:
-> +        if (status < 0)$
-> 
-> ERROR: code indent should use tabs where possible
-> #328: FILE: drivers/extcon/extcon-lc824206xa.c:253:
-> +        ^Ireturn;$
-> 
-> WARNING: please, no space before tabs
-> #328: FILE: drivers/extcon/extcon-lc824206xa.c:253:
-> +        ^Ireturn;$
-> 
-> WARNING: please, no spaces at the start of a line
-> #328: FILE: drivers/extcon/extcon-lc824206xa.c:253:
-> +        ^Ireturn;$
-> 
-> ERROR: trailing whitespace
-> #430: FILE: drivers/extcon/extcon-lc824206xa.c:355:
-> +^Ischedule_work(&data->work);^I^I$
-> 
-> ERROR: trailing whitespace
-> #553: FILE: drivers/extcon/extcon-lc824206xa.c:478:
-> +^Ischedule_work(&data->work);^I^I$
-> 
-> total: 9 errors, 8 warnings, 524 lines checked
-> 
-> NOTE: For some of the reported defects, checkpatch may be able to
->       mechanically convert to the typical style using --fix or --fix-inplace.
-> 
-> NOTE: Whitespace errors detected.
->       You may wish to use scripts/cleanpatch or scripts/cleanfile
-> 
-> 
-> 
+[+Cc Rodolfo and not1337 (kernel hack author)]
+On Thu, May 09, 2024 at 02:24:56AM -0400, Theodore Ts'o wrote:
+> I'd suggest that you reach out to Rondolfo as the maintainer, or to
+> the linuxpps mailing list.
+>=20
+> First of all, looking at the patch referenced in the bugzilla (which
+> is actually found in github), it appears that the person who made the
+> request via Bugzilla is different from the the person who authored the
+> patch (apparently, github.com/not1337).
+>=20
+> Secondly, the patch is really quite hacky.  First, the termonology
+> used of "4wire" is non-standard (e.g., uised nowhere but at
+> github.com/not1337/pss-stuff), and misleading.  A cable which only has
+> RxD, TxD, RTS, and CTS is not going to work well without GND, so "4
+> wire" is quite the misnomer".  This termonology is also not used by
+> FreeBSD, BTW.  Secondly, unconditionally mapping CTS to DCD when
+> setting a magic UART-level attribute is a bit hacky, since it will do
+> this magic ad-hoc mapping all of the time, not only if the PPS line
+> discpline is selected.
+>=20
+> Now, I haven't been the tty maintainer in quite a while, but in my
+> opinion, a much cleaner way would be to plumb a new tty ldisc
+> function, cts_change, which is analogous to the dcd_change function
+> (which was introduced specifically for pps_ldisc).  Then for bonus
+> points, consider using the pps capture mode mde that FreeeBSD's UART
+> driver, including the invert option and narrow pulse mode, and eschew
+> using the non-standard "4wire" naming terminology.
 
+I have pinged Rodolfo (and also Cc: linuxpps ML but the ML address bounces,
+essentially turned into private mail) and here's his comments about the
+feature request:
+
+> The DCD-change information is delivered via struct tty_ldisc to the PPS c=
+lient pps-ldisc.c (file serial_core.c):
+>
+> /**
+>  * uart_handle_dcd_change - handle a change of carrier detect state
+>  * @uport: uart_port structure for the open port
+>  * @active: new carrier detect status
+>  *
+>  * Caller must hold uport->lock.
+>  */
+> void uart_handle_dcd_change(struct uart_port *uport, bool active)
+> {
+>         struct tty_port *port =3D &uport->state->port;
+>         struct tty_struct *tty =3D port->tty;
+>         struct tty_ldisc *ld;
+>
+>         lockdep_assert_held_once(&uport->lock);
+>
+>         if (tty) {
+>                 ld =3D tty_ldisc_ref(tty);
+>                 if (ld) {
+>                         if (ld->ops->dcd_change)
+>                                 ld->ops->dcd_change(tty, active);
+>                         tty_ldisc_deref(ld);
+>                 }
+>         }
+>
+>         uport->icount.dcd++;
+>
+>         if (uart_dcd_enabled(uport)) {
+>                 if (active)
+>                         wake_up_interruptible(&port->open_wait);
+>                 else if (tty)
+>                         tty_hangup(tty);
+>         }
+> }
+> EXPORT_SYMBOL_GPL(uart_handle_dcd_change);
+>
+> But for CTS this is not (serial_core.c):
+>
+> /**
+>  * uart_handle_cts_change - handle a change of clear-to-send state
+>  * @uport: uart_port structure for the open port
+>  * @active: new clear-to-send status
+>  *
+>  * Caller must hold uport->lock.
+>  */
+> void uart_handle_cts_change(struct uart_port *uport, bool active)
+> {
+>         lockdep_assert_held_once(&uport->lock);
+>
+>         uport->icount.cts++;
+>
+>         if (uart_softcts_mode(uport)) {
+>                 if (uport->hw_stopped) {
+>                         if (active) {
+>                                 uport->hw_stopped =3D false;
+>                                 uport->ops->start_tx(uport);
+>                                 uart_write_wakeup(uport);
+>                         }
+>                 } else {
+>                         if (!active) {
+>                                 uport->hw_stopped =3D true;
+>                                 uport->ops->stop_tx(uport);
+>                         }
+>                 }
+>
+>         }
+> }
+> EXPORT_SYMBOL_GPL(uart_handle_cts_change);
+>
+> This is because the struct tty_ldisc has no cts_change() method (file tty=
+_ldisc.h):
+>
+> struct tty_ldisc_ops {
+>         char    *name;
+>         int     num;
+>
+>         /*
+>          * The following routines are called from above.
+>          */
+>         int     (*open)(struct tty_struct *tty);
+>         void    (*close)(struct tty_struct *tty);
+>         void    (*flush_buffer)(struct tty_struct *tty);
+>         ssize_t (*read)(struct tty_struct *tty, struct file *file, u8 *bu=
+f,
+>                         size_t nr, void **cookie, unsigned long offset);
+>         ssize_t (*write)(struct tty_struct *tty, struct file *file,
+>                          const u8 *buf, size_t nr);
+>         int     (*ioctl)(struct tty_struct *tty, unsigned int cmd,
+>                         unsigned long arg);
+>         int     (*compat_ioctl)(struct tty_struct *tty, unsigned int cmd,
+>                         unsigned long arg);
+>         void    (*set_termios)(struct tty_struct *tty, const struct kterm=
+ios *old);
+>         __poll_t (*poll)(struct tty_struct *tty, struct file *file,
+>                              struct poll_table_struct *wait);
+>         void    (*hangup)(struct tty_struct *tty);
+>
+>         /*
+>          * The following routines are called from below.
+>          */
+>         void    (*receive_buf)(struct tty_struct *tty, const u8 *cp,
+>                                const u8 *fp, size_t count);
+>         void    (*write_wakeup)(struct tty_struct *tty);
+>         void    (*dcd_change)(struct tty_struct *tty, bool active);
+>         size_t  (*receive_buf2)(struct tty_struct *tty, const u8 *cp,
+>                                 const u8 *fp, size_t count);
+>         void    (*lookahead_buf)(struct tty_struct *tty, const u8 *cp,
+>                                  const u8 *fp, size_t count);
+>
+>         struct  module *owner;
+> };
+>
+> So, in order to do what you suggest you have to add this feature first.
+>
+
+>=20
+> Finally, note that the way kernel development works is that it's not
+> enough for a user to ask for a feature.  Someone has to create a high
+> quality, clean, maintainable patch.  Note all random hacks found in
+> random Bugzilla or Github git trees are suitable for inclusion in the
+> upstream kernel.  And if you don't know how to evaluate the patch for
+> quality, it might not be best thing to just ask the bugzilla requester
+> to follow the Submitting Patches procedure, given that (a) they might
+> not be a kernel developer, and (b) it might just frustrate the
+> bugzilla requester and maintainer if the patch isn't sufficient high
+> quality, especially if you've managed to set expectations that all the
+> bugzilla requestor needs to do is to submit the patch and it will be
+> accepted.
+
+I also expected the same (provide patches).
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--nKxqMyvWjc07RdJB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZjyoZAAKCRD2uYlJVVFO
+oxUmAQDP92/mNAgiTMk/ZDg9tWCvhkHcwhlnjEUMlIZodcZ6AgEAv6dwG6ofkitj
+gfQ4umEXVPnPvO2XNcFNvcUCm0PZ9A4=
+=T0A1
+-----END PGP SIGNATURE-----
+
+--nKxqMyvWjc07RdJB--
 
