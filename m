@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-175030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5933A8C195A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:22:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906528C195D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A8D1F22E24
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:22:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3C851C21EE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34493129A8D;
-	Thu,  9 May 2024 22:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BF9129E81;
+	Thu,  9 May 2024 22:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMrZFnIS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC4E770E0;
-	Thu,  9 May 2024 22:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="sAo0OW22"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD9129A75;
+	Thu,  9 May 2024 22:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715293369; cv=none; b=G3CYs8NWBiz8e6VSywXRTIeXjeB/wrAFUSs0msdewYG6XHShezubhlnF9dkTY6FKzbknGa42itB3vb5NxbWjQ5lDL+f2Z2bbu0LIcYQ4JhtRG1Yu4h+Dc0pGHDu2AEN9QOATKd82eTYq8cbgTVepNhxEW3HR2UWyInvA1K1xZEo=
+	t=1715293507; cv=none; b=DNa+Z6P9WzOcZXRQ4jxJqOD/fOQLqRtdlA4kXkg7SR+Ybx27y1VqekjSPKkeiHnJQSsewc9B1d2ToWcvzVdDNM3CZi+gEhfiBO9BrWPHzYVUjjosXYCYaXYJpgXN4QbeZlwxbFqN++VdNRQvt+F8ibH1LUj5ONOO5y65QA4xF94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715293369; c=relaxed/simple;
-	bh=t3AE0C2YacrUZCTb4JRj3hzsa+lHuEvQQO/PQSjoxNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJYrTv5WPVZHy7Dm4Ugi7LbBS0Y1jjiAxEvkB57T4jhDapnTM6k5FxbWuypqeuu/q2N+nrDlN2sdtmgBJeorMdm/PAihdpmSmv4nHBlNCFOqVh2mjtGRBw3X0MLBgx4HjozfO0QP824awvszrOkw8AYhDHGXTIuadgKrXNjpP14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMrZFnIS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F940C116B1;
-	Thu,  9 May 2024 22:22:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715293368;
-	bh=t3AE0C2YacrUZCTb4JRj3hzsa+lHuEvQQO/PQSjoxNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZMrZFnIShdbR6UvQ01rcp+t1LeIHoY5Y2AD+JRKCHUBoS0NA48p0xLWusq5PPoEfX
-	 FE3e8OnlE0uxdq8cvSJDbZIsuAu4/IX3P57NaXUGqyLDgdSbeDoTSjl29Y+pg68HtX
-	 g+wEsi+avkRq7uNrdLBzNTge88GJ2sOi1PhKgMp13WZK3fh7bDMaqi/YUSdUQdEY5E
-	 yqznvKm1XK8vv0D+cKhoBpvCDOcjSnyKq7oJBXr5GTjfClVWnwK9Y9/hnG7FH29vtu
-	 vqtks0t3/Ft8vxVis2DUczaQTTa0zzGoSA2AZ3PWKpfVSLBNY8VoKRV+xI0SGiRS8W
-	 VqayPJ/5ZbbSA==
-Date: Thu, 9 May 2024 23:22:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Andy Chiu <andy.chiu@sifive.com>, Eric Biggers <ebiggers@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Heiko Stuebner <heiko@sntech.de>,
-	Guo Ren <guoren@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Jonathan Corbet <corbet@lwn.net>, Evan Green <evan@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Shuah Khan <shuah@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
-	Vincent Chen <vincent.chen@sifive.com>,
-	Greentime Hu <greentime.hu@sifive.com>, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Joel Granados <j.granados@samsung.com>,
-	Jerry Shih <jerry.shih@sifive.com>,
-	Charlie Jenkins <charlie@rivosinc.com>
-Subject: Re: [PATCH v4 7/9] riscv: vector: adjust minimum Vector requirement
- to ZVE32X
-Message-ID: <20240509-irritant-morphing-a25428a4f750@spud>
-References: <20240412-zve-detection-v4-7-e0c45bb6b253@sifive.com>
- <20240418-brook-chili-4d3e61d1a55c@wendy>
- <20240418155256.GA2410@sol.localdomain>
- <20240418-ultimatum-yam-11de4b063b83@spud>
- <20240418173203.GA1081@sol.localdomain>
- <20240418173946.GB1081@sol.localdomain>
- <20240418-sterling-sanding-d59c3b0a2aaa@spud>
- <CABgGipU74TA3KgCH4pPuRefbnYt3q6RKcQwfyspenisEtY6eqw@mail.gmail.com>
- <20240509-mandatory-monsieur-dfa4d7881fa9@wendy>
- <20240509-habitable-unrefined-02322f228d5a@wendy>
+	s=arc-20240116; t=1715293507; c=relaxed/simple;
+	bh=kr/ZNHJe3spo1D73S8skNdfLjRrNUc3DVoBssZVUO0A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Y14UM/1KMU7T+Xt2Z4OqQvGQRJLWF8R/szz9XCbJe1J9zVb79Vi1LJAa1gumLIB/HW66aWmme2oQeADgM69ViCnb6KZhVOasHOSUeTgT7APV9dhuVO+WXQaVa155Wkf8qUpcGuefEjRq+jflYy2oJRUuOWyGPr20lax6QD7Alzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=sAo0OW22; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id C29AB14C2DB;
+	Fri, 10 May 2024 00:24:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1715293502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DWHEKSwlaTW2I1c9ZQNwSBEzyucWLndKRYjge2yxE14=;
+	b=sAo0OW22vx6bx0E/WcND8x8g0nH9lX5Z48gKk34Gbk3dE80xW6h0pN1IpMWUA6OGIYBSCG
+	OfhkL40EXRN+YffyMbxag3WGCmQgUC+invDYzQvJRA24l9XTfxrOEnVfjMnHJ4FoZbmye7
+	i/3cXka8D6b6VSHSAl1M4wB1tMabCwfM7s7sMiQwvXJYK8Ggn4y9X5Y4lU+GMfI6JmWYgU
+	HxuyUljTr7kcgrVjyDHkTqtPRIiH3OB+8POTIebTUcNrvSddSZDPYN4qv1EAGZYlYzPDZt
+	qQywzvpjWL9yKPqPC7KWtxtf6SdXN2P+kI9Iw5O5DMLwLIAdeCIG+htjMkvW+g==
+Received: from [127.0.0.1] (localhost.lan [::1])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 18db1a50;
+	Thu, 9 May 2024 22:24:55 +0000 (UTC)
+From: Dominique Martinet <asmadeus@codewreck.org>
+Subject: [PATCH v4 0/3] perf probe: Allow names to start with digits
+Date: Fri, 10 May 2024 07:24:29 +0900
+Message-Id: <20240510-perf_digit-v4-0-db1553f3233b@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TLKFE95zt1kQU6Bl"
-Content-Disposition: inline
-In-Reply-To: <20240509-habitable-unrefined-02322f228d5a@wendy>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB5NPWYC/23Nyw6CMBAF0F8xXVstfVDqyv8wxvQxQKOhpiWoI
+ fy7xY1i2MzkJvfMjChB9JDQYTOiCINPPnQ58O0G2VZ3DWDvckaUUE44kfgOsb443/geS8q5MAK
+ cKSnKwOgE2ETd2XYmc3M/D9yHcEu4g2c/11qf+hBfn5dDkddp9fpQYIKFBMukLRlT/GiDg0cEe
+ 92F2KBzPjXQLxdELDjNvAQLjMjaae3WOPvlasFZ5oqw0tSyUpXT/3yapjfzxMOXPQEAAA==
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dominique Martinet <asmadeus@codewreck.org>
+X-Mailer: b4 0.14-dev-87f09
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3040;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=kr/ZNHJe3spo1D73S8skNdfLjRrNUc3DVoBssZVUO0A=;
+ b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBmPU02lfGzMfwl2j9V/WvrwVcTMP2flg2RXt4bE
+ epnYiRq2PaJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZj1NNgAKCRCrTpvsapjm
+ cLYUEACbSNy4VjSDW8iZCoqCo0LdIgm9jz9I4phR11eIRzNJzXI7gnSuaQ1/Ww42VdTU5BET8JX
+ b8snkXw20EKYCXJyaH2hZUU0UtBTT3Pbx0yOp619Ldz6og7uFPuBvamoGsHdqJq0LaKsyEFXvrW
+ LoGvknUx/68bF0DyXNJ+Mb1ty+Wan0KxMQUDfVVak2BvqVthykVVWgyCNvtB2ipqkM+xHx/dOgB
+ TFUV3AYyCNwaawixBCVOaMbxCIOnESiUD7YffvRtyBfLz1WkwBZ0lHLdNMJUfxJJpYW3vVFI7AT
+ P3KvT5jeuyoPqI3/aJdlwyDk8rEKh7sQfhYpwmvPJPhlakByEyOKSrWHg26Z45wjljmJFL8/s5x
+ /w1nm1KiS80QJ1yPjQQZAuSsJUjAxercvAyu3J/A0e4iqir4zjIs1Q4YoQHosJqGOX+c8OCWBkJ
+ /vl3wS7C59uHInEiu70oK6xqpY+MxzU7va/RPIMqfb2ULXbrWDLukye8KxWiB798qgZSyJB0pLU
+ KRzK0vcep+XHT743za7D1zCDCEYj4MzkPem6l3l/F73y4q1qJ7RijD5Qt/lmZPTBipPaiDVO8Oz
+ yQuWfAK9GwMbplE4ugGbkOScWluSJbnybbRkj39DrEEMJOVYNqVQ+M5Bm7hyz6gliqdUdHfZ/Bf
+ Bhp1/2jZ1ynYDAQ==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
 
+This is a rebase of the patch orginally sent almost two years ago here:
+https://lkml.kernel.org/r/20220612061508.1449636-1-asmadeus@codewreck.org
 
---TLKFE95zt1kQU6Bl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+At the time I was asked to add tests, and Jiri whipped up something to
+make the test pass even for probes that don't exist on most systems but
+that ended up never being formatted or sent... I asked what happened of
+it and got asked to send it myself, but obviously also totally forget
+about it myself until I needed it again now.
 
-On Thu, May 09, 2024 at 09:25:25AM +0100, Conor Dooley wrote:
-> On Thu, May 09, 2024 at 08:48:09AM +0100, Conor Dooley wrote:
-> > On Thu, May 09, 2024 at 02:56:30PM +0800, Andy Chiu wrote:
-> > > Hi Conor,
-> > >=20
-> > > Should we check if "v" presents for vector crypto extensions in
-> > > riscv_isa_extension_check()? We are not checking this for now. So a
-> > > kernel compiled with RISCV_ISA_V still has a problem if its isa-string
-> > > includes any of vector crypto ("zvbb, zvkg, etc") but not "v".
-> >=20
-> >=20
-> > Yeah, one of the things I took away from this discussion is that we need
-> > to improve the implementation of both the methods we have at the moment
-> > for drivers etc to check if extensions are present and usable.
-> > In general, I don't think checks like that are "safe" to do in
-> > riscv_isa_extension_check(), because the dependencies may not all have
-> > been resolved when we probe an extension (Clement's current Zca etc
-> > series improves the situation though by only calling the checks after
-> > we probe all extensions).
-> >=20
-> > The simple V cases are all fine though - the DT binding and ACPI rules
-> > for compatible strings all mandate that single-letter extensions must
-> > come before multi-letter ones. For riscv,isa-extensions we control the
-> > probe ordering and probe V before any multi-letter stuff. Additionally,
-> > we should make it a requirement for V to be present if things that
-> > depend on it are.
-> >=20
-> > That said, is it permitted by the specs to have any of the extensions
-> > you mention without the full V extension, but with one of the cut-down
-> > variants you mention here? If not, I'd be more interested in figuring
-> > out the non-extension dependencies: whether or not the kernel itself
-> > supports vector and if the kernel has opted to disable vector due to
-> > detecting that harts have mismatching vector lengths.
-> >=20
-> > TL;DR: I think we should add some checks in riscv_isa_extension_check().
->=20
-> Also, unless this only becomes a problem with this series that adds the
-> cut-down forms of vector, I think this is a separate problem to solve
-> and I can send some patches for it (along with some other cleanup I'd like
-> to do as a result of Eric's comments) and you can just submit the v2 you
-> were planning to without it. I can't, off the top of my head, think of
-> why this particular series would break the vector crypto stuff though,
-> the problems with enabling extensions seem underlying.
+I've taken the diff from that thread, adapted it a little bit to the
+current master branch and checked things still fall in place -- I didn't
+see any obvious problem.
 
-Here's something buggy that I chucked together as an idea of what I
-meant:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/commit/?h=
-=3Driscv-check_vector
-Beware, it is entirely untested :)
-It's based on both this series and patches 2 & 3 of Charlie's series doing
-the T-Head vector stuff. It really needs Clement's extension_check()
-rework that I mentioned 2 mails ago to function correctly for any of these
-vector subsets. Without Clement's stuff, it'll have "random" behaviour
-depending on probe order for riscv,isa and a determinate, but incorrect,
-behaviour otherwise.
+Thanks!
 
-Cheers,
-Conor.
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@redhat.com>
+To: Namhyung Kim <namhyung@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Ian Rogers <irogers@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+To: Liang, Kan <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 
---TLKFE95zt1kQU6Bl
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v4:
+- add missing ifdef LIBTRACEEVENT for new test case
+Note build-test still failed on my setup due to some bpf/cgroup problem,
+which is more likely a setup problem but means I couldn't verify build
+all the way:
+util/bpf_skel/bperf_cgroup.bpf.c:71:10: error: incomplete definition of type 'struct cgroup'
+- Link to v3: https://lore.kernel.org/r/20240509-perf_digit-v3-0-9036bf7898da@codewreck.org
 
------BEGIN PGP SIGNATURE-----
+Changes in v3:
+- fix evsel__newtp_idx typo in commit 1's message
+- rebase onto perf-tools-next
+- add trailers
+- Link to v2: https://lore.kernel.org/r/20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj1MsgAKCRB4tDGHoIJi
-0vmgAQD45tbvFJoRsUpsMY9T6rtZpE9/d1MUPNtjjZBcCvk81wEA9NHuzDQWVqos
-TKv6UR8HGOSqtTdK0XRrTlDGxoRiZQo=
-=ulWy
------END PGP SIGNATURE-----
+Changes in v2:
+- update Jiri's email in commit tags
+- (not a change, but after being brain-dead and Ian helpful
+reply I'm confirming patch 3/3 works as expected)
+- Link to v1: https://lore.kernel.org/r/20240407-perf_digit-v1-0-57ec37c63394@codewreck.org
 
---TLKFE95zt1kQU6Bl--
+---
+Dominique Martinet (3):
+      perf parse-events: pass parse_state to add_tracepoint
+      perf parse-events: Add new 'fake_tp' parameter for tests
+      perf parse: Allow names to start with digits
+
+ tools/perf/tests/parse-events.c | 13 +++++++++++--
+ tools/perf/tests/pmu-events.c   |  2 +-
+ tools/perf/util/evlist.c        |  3 ++-
+ tools/perf/util/evsel.c         | 20 +++++++++++++-------
+ tools/perf/util/evsel.h         |  4 ++--
+ tools/perf/util/metricgroup.c   |  3 ++-
+ tools/perf/util/parse-events.c  | 38 +++++++++++++++++++++++---------------
+ tools/perf/util/parse-events.h  |  9 ++++++---
+ tools/perf/util/parse-events.l  |  4 ++--
+ tools/perf/util/parse-events.y  |  2 +-
+ 10 files changed, 63 insertions(+), 35 deletions(-)
+---
+base-commit: 187c219b57eaf3e1b7a3cab2c6a8b7909bdbf4a9
+change-id: 20240407-perf_digit-72445b5edb62
+
+Best regards,
+-- 
+Dominique Martinet | Asmadeus
+
 
