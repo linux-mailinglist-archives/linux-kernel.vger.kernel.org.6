@@ -1,140 +1,298 @@
-Return-Path: <linux-kernel+bounces-174455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581418C0F07
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAF98C0F09
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0DE1F22236
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382CB1F226F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E718614AD1A;
-	Thu,  9 May 2024 11:54:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DCB14A4EC;
+	Thu,  9 May 2024 11:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YmsDNynS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D84312FF8E;
-	Thu,  9 May 2024 11:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48C113174D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715255646; cv=none; b=AmPMl+uTwUAF8RXqG4U10TGmM4/7v9VNPW+TypjZehstWQ9qUTyYWqWqnaUyp1MiMRPshqUWvVfscYK9lr/Q/BhJA7rEcjMR7pEWSYOYkda+VUH/wbtGbnTHUl+9iIFpgrEUfsm46Vt0iAu5Ml39lpxl1CiNN+H7PRj5r/7DmlU=
+	t=1715255671; cv=none; b=ssgZm+L4nqEH3+G1CyF9qAcfmjxW0yN4hnSqItv8k7RnuocKdHXxnQDGpxnbqvlHMVvTpJ71z3gASacJjL9uXcGNFmk0vB/EpROx1G08nefbpsO15iCxvoZ3MDF+w2WwMKmJgXEbcaipToqsAitKgCP7OFKqKENmMoSs+CpzIBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715255646; c=relaxed/simple;
-	bh=xO5f8wq/0P5imNfCwCvl1FvQaw5qFdKKDOFvrT8KFfw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A/CxQAM244jZmr02h42lrLq+3loMFyjt2lfNZzpObyZLmnMo/Va6gwfN4qIGGxy00d3vY5gEVQuAoeOQ6dVGmJe8FvJOjA5P9ACKBj0DBOAXwqZ9y7u+gZiuYVP5sgvHdooTOTO2uZGUByaEiishZVx6br8HTL9CySfO3RIfnqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VZr1l70Dvz6K6vN;
-	Thu,  9 May 2024 19:50:51 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0E39140B33;
-	Thu,  9 May 2024 19:54:00 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 9 May
- 2024 12:53:59 +0100
-Date: Thu, 9 May 2024 12:53:58 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, "Lorenzo
- Pieralisi" <lorenzo.pieralisi@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Lukas Wunner
-	<lukas@wunner.de>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, "Krishna
- chaitanya chundru" <quic_krichai@quicinc.com>, Srinivas Pandruvada
-	<srinivas.pandruvada@linux.intel.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Christophe
- JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v5 6/8] PCI/bwctrl: Add API to set PCIe Link Speed
-Message-ID: <20240509125358.00004c55@Huawei.com>
-In-Reply-To: <20240508134744.52134-7-ilpo.jarvinen@linux.intel.com>
-References: <20240508134744.52134-1-ilpo.jarvinen@linux.intel.com>
-	<20240508134744.52134-7-ilpo.jarvinen@linux.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715255671; c=relaxed/simple;
+	bh=vfzbXmrl/AwHVMDZUI8PRatAwjjoI5XimVa1uLdey4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NCVZE1PhRAhB/lRSj3lNWKDIS7La3Jte0DBmATpuJc++TCWMgS1QHysSCkc5N0Sue6gKiVNU/728WGEQEanP5G72LzdLNTOk/8y+u5LVJ++0VX0lWE+RJqyJqrtOR/ygTWITLE8SD7Jnj56+4DNd0cb2OiZPz8E/InVtBi4eR08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YmsDNynS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715255668;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Y3JZ5LkzbJDwZzWqwn1ukS8ZJVZyGGaxdZIhbOgoOzQ=;
+	b=YmsDNynSyQC9W1LUBFSyvYDdqUY9hff9d8Z9/xmx44L4HxgGbiwgA1fX9Y3aXk6DC572jh
+	d3bXcMvL6j1FHDuNmbzQOiBR54aBCrbQhIn2GrQZ5osW5p1dY4DheTtpUmXJoQcEu/Wb2s
+	B2OJziqy1jBgSN4gQS8Dqa+hutvjfuU=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-206-Nd94kMKCP5WJOtrd0EZe4Q-1; Thu,
+ 09 May 2024 07:54:25 -0400
+X-MC-Unique: Nd94kMKCP5WJOtrd0EZe4Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3F8601C3F0FB;
+	Thu,  9 May 2024 11:54:25 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.225.82])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 0670136EC;
+	Thu,  9 May 2024 11:54:23 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.9-rc8
+Date: Thu,  9 May 2024 13:54:11 +0200
+Message-ID: <20240509115411.30032-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Wed,  8 May 2024 16:47:42 +0300
-Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
+Hi Linus!
 
-> Currently, PCIe Link Speeds are adjusted by custom code rather than in
-> a common function provided in PCI core. PCIe bandwidth controller
-> (bwctrl) introduces an in-kernel API to set PCIe Link Speed. Convert
-> Target Speed quirk to use the new API.
->=20
-> The new API is also intended to be used in an upcoming commit that adds
-> a thermal cooling device to throttle PCIe bandwidth when thermal
-> thresholds are reached.
->=20
-> The PCIe bandwidth control procedure is as follows. The highest speed
-> supported by the Port and the PCIe device which is not higher than the
-> requested speed is selected and written into the Target Link Speed in
-> the Link Control 2 Register. Then bandwidth controller retrains the
-> PCIe Link.
->=20
-> Bandwidth Notifications enable the cur_bus_speed in the struct pci_bus
-> to keep track PCIe Link Speed changes. While Bandwidth Notifications
-> should also be generated when bandwidth controller alters the PCIe Link
-> Speed, a few platforms do not deliver LMBS interrupt after Link
-> Training as expected. Thus, after changing the Link Speed, bandwidth
-> controller makes additional read for the Link Status Register to ensure
-> cur_bus_speed is consistent with the new PCIe Link Speed.
->=20
-> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> ---
->  drivers/pci/pci.h         |  13 ++++
->  drivers/pci/pcie/Makefile |   2 +-
->  drivers/pci/pcie/bwctrl.c | 147 ++++++++++++++++++++++++++++++++++++++
->  drivers/pci/quirks.c      |  12 +---
->  include/linux/pci.h       |   3 +
->  5 files changed, 166 insertions(+), 11 deletions(-)
->=20
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 416540baf27b..324899fbad0a 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -270,6 +270,19 @@ void pci_disable_bridge_window(struct pci_dev *dev);
->  struct pci_bus *pci_bus_get(struct pci_bus *bus);
->  void pci_bus_put(struct pci_bus *bus);
-> =20
-> +#define PCIE_LNKCAP_SLS2SPEED(lnkcap)					\
-> +({									\
-> +	u32 _lnkcap =3D (lnkcap) & PCI_EXP_LNKCAP_SLS;			\
+The following changes since commit 545c494465d24b10a4370545ba213c0916f70b95:
 
-Why the inconsistency wrt to PCIE_LNKCAP2_SLS2SPEED which doesn't bother wi=
-th
-this initial mask. It's not needed afterall as the bits checked are all in =
-the
-mask anyway?
+  Merge tag 'net-6.9-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-05-02 08:51:47 -0700)
 
-I don't really mind which form but they should look the same.
+are available in the Git repository at:
 
-> +									\
-> +	(_lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_64_0GB ? PCIE_SPEED_64_0GT :	\
-> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_32_0GB ? PCIE_SPEED_32_0GT :	\
-> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_16_0GB ? PCIE_SPEED_16_0GT :	\
-> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_8_0GB ? PCIE_SPEED_8_0GT :	\
-> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_5_0GB ? PCIE_SPEED_5_0GT :	\
-> +	 _lnkcap =3D=3D PCI_EXP_LNKCAP_SLS_2_5GB ? PCIE_SPEED_2_5GT :	\
-> +	 PCI_SPEED_UNKNOWN);						\
-> +})
-> +
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.9-rc8
 
+for you to fetch changes up to 6e7ffa180a532b6fe2e22aa6182e02ce988a43aa:
 
+  net: dsa: mv88e6xxx: read cmode on mv88e6320/21 serdes only ports (2024-05-09 11:48:20 +0200)
+
+----------------------------------------------------------------
+Including fixes from bluetooth and IPsec.
+
+The bridge patch is actually a follow-up to a recent fix in the same
+area. We have a pending v6.8 AF_UNIX regression; it should be solved
+soon, but not in time for this PR.
+
+Current release - regressions:
+
+ - eth: ks8851: Queue RX packets in IRQ handler instead of disabling BHs
+
+ - net: bridge: fix corrupted ethernet header on multicast-to-unicast
+
+Current release - new code bugs:
+
+ - xfrm: fix possible bad pointer derferencing in error path
+
+Previous releases - regressionis:
+
+ - core: fix out-of-bounds access in ops_init
+
+ - ipv6:
+   - fix potential uninit-value access in __ip6_make_skb()
+   - fib6_rules: avoid possible NULL dereference in fib6_rule_action()
+
+ - tcp: use refcount_inc_not_zero() in tcp_twsk_unique().
+
+ - rtnetlink: correct nested IFLA_VF_VLAN_LIST attribute validation
+
+ - rxrpc: fix congestion control algorithm
+
+ - bluetooth:
+   - l2cap: fix slab-use-after-free in l2cap_connect()
+   - msft: fix slab-use-after-free in msft_do_close()
+
+ - eth: hns3: fix kernel crash when devlink reload during initialization
+
+ - eth: dsa: mv88e6xxx: add phylink_get_caps for the mv88e6320/21 family
+
+Previous releases - always broken:
+
+ - xfrm: preserve vlan tags for transport mode software GRO
+
+ - tcp: defer shutdown(SEND_SHUTDOWN) for TCP_SYN_RECV sockets
+
+ - eth: hns3: keep using user config after hardware reset
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Antony Antony (2):
+      xfrm: fix possible derferencing in error path
+      xfrm: Correct spelling mistake in xfrm.h comment
+
+Chen-Yu Tsai (1):
+      arm64: dts: mediatek: mt8183-pico6: Fix bluetooth node
+
+Daniel Golle (1):
+      dt-bindings: net: mediatek: remove wrongly added clocks and SerDes
+
+David Howells (2):
+      rxrpc: Fix congestion control algorithm
+      rxrpc: Only transmit one ACK per jumbo packet received
+
+Donald Hunter (1):
+      netlink: specs: Add missing bridge linkinfo attrs
+
+Duoming Zhou (2):
+      Bluetooth: Fix use-after-free bugs caused by sco_sock_timeout
+      Bluetooth: l2cap: fix null-ptr-deref in l2cap_chan_timeout
+
+Eric Dumazet (4):
+      tcp: defer shutdown(SEND_SHUTDOWN) for TCP_SYN_RECV sockets
+      phonet: fix rtm_phonet_notify() skb allocation
+      ipv6: fib6_rules: avoid possible NULL dereference in fib6_rule_action()
+      ipv6: prevent NULL dereference in ip6_output()
+
+Felix Fietkau (1):
+      net: bridge: fix corrupted ethernet header on multicast-to-unicast
+
+Gregor Herburger (1):
+      net: phy: marvell-88q2xxx: add support for Rev B1 and B2
+
+Gregory Detal (1):
+      mptcp: only allow set existing scheduler for net.mptcp.scheduler
+
+Ido Schimmel (1):
+      selftests: test_bridge_neigh_suppress.sh: Fix failures due to duplicate MAC
+
+Jakub Kicinski (3):
+      Merge tag 'for-net-2024-05-03' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
+      Merge tag 'ipsec-2024-05-02' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec
+      Merge branch 'rxrpc-miscellaneous-fixes'
+
+Jian Shen (1):
+      net: hns3: direct return when receive a unknown mailbox message
+
+Johan Hovold (7):
+      Bluetooth: qca: fix wcn3991 device address check
+      Bluetooth: qca: add missing firmware sanity checks
+      Bluetooth: qca: fix NVM configuration parsing
+      Bluetooth: qca: generalise device address check
+      Bluetooth: qca: fix info leak when fetching fw build id
+      Bluetooth: qca: fix info leak when fetching board id
+      Bluetooth: qca: fix firmware check error path
+
+Kuniyuki Iwashima (1):
+      tcp: Use refcount_inc_not_zero() in tcp_twsk_unique().
+
+Lukasz Majewski (1):
+      hsr: Simplify code for announcing HSR nodes timer setup
+
+Marek Vasut (1):
+      net: ks8851: Queue RX packets in IRQ handler instead of disabling BHs
+
+Paolo Abeni (1):
+      Merge branch 'there-are-some-bugfix-for-the-hns3-ethernet-driver'
+
+Paul Davey (1):
+      xfrm: Preserve vlan tags for transport mode software GRO
+
+Peiyang Wang (4):
+      net: hns3: using user configure after hardware reset
+      net: hns3: change type of numa_node_mask as nodemask_t
+      net: hns3: release PTP resources if pf initialization failed
+      net: hns3: use appropriate barrier function after setting a bit value
+
+Potnuri Bharat Teja (1):
+      MAINTAINERS: update cxgb4 and cxgb3 network drivers maintainer
+
+Roded Zats (1):
+      rtnetlink: Correct nested IFLA_VF_VLAN_LIST attribute validation
+
+Shigeru Yoshida (1):
+      ipv6: Fix potential uninit-value access in __ip6_make_skb()
+
+Steffen Bätz (2):
+      net: dsa: mv88e6xxx: add phylink_get_caps for the mv88e6320/21 family
+      net: dsa: mv88e6xxx: read cmode on mv88e6320/21 serdes only ports
+
+Sungwoo Kim (3):
+      Bluetooth: L2CAP: Fix slab-use-after-free in l2cap_connect()
+      Bluetooth: msft: fix slab-use-after-free in msft_do_close()
+      Bluetooth: HCI: Fix potential null-ptr-deref
+
+Tetsuo Handa (1):
+      nfc: nci: Fix kcov check in nci_rx_work()
+
+Thadeu Lima de Souza Cascardo (1):
+      net: fix out-of-bounds access in ops_init
+
+Vincent Duvert (1):
+      appletalk: Improve handling of broadcast packets
+
+Wen Gu (1):
+      net/smc: fix neighbour and rtable leak in smc_ib_find_route()
+
+Yonglong Liu (2):
+      net: hns3: fix port vlan filter not disabled issue
+      net: hns3: fix kernel crash when devlink reload during initialization
+
+ .../devicetree/bindings/net/mediatek,net.yaml      |  22 +---
+ Documentation/netlink/specs/rt_link.yaml           |   6 ++
+ MAINTAINERS                                        |   6 +-
+ .../dts/mediatek/mt8183-kukui-jacuzzi-pico6.dts    |   3 +-
+ drivers/bluetooth/btqca.c                          | 110 +++++++++++++++----
+ drivers/bluetooth/btqca.h                          |   3 +-
+ drivers/net/dsa/mv88e6xxx/chip.c                   |  39 +++++--
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   2 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  52 ++++-----
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   5 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |   7 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |  20 ++--
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |   2 +-
+ drivers/net/ethernet/micrel/ks8851_common.c        |  16 +--
+ drivers/net/phy/marvell-88q2xxx.c                  | 119 ++++++++++++++++++---
+ include/linux/skbuff.h                             |  15 +++
+ include/net/xfrm.h                                 |   3 +
+ include/uapi/linux/xfrm.h                          |   2 +-
+ net/appletalk/ddp.c                                |  19 +++-
+ net/bluetooth/hci_core.c                           |   3 +-
+ net/bluetooth/hci_event.c                          |   2 +
+ net/bluetooth/l2cap_core.c                         |  24 +++--
+ net/bluetooth/msft.c                               |   2 +-
+ net/bluetooth/msft.h                               |   4 +-
+ net/bluetooth/sco.c                                |   4 +
+ net/bridge/br_forward.c                            |   9 +-
+ net/core/net_namespace.c                           |  13 ++-
+ net/core/rtnetlink.c                               |   2 +-
+ net/hsr/hsr_device.c                               |  27 +++--
+ net/ipv4/tcp.c                                     |   4 +-
+ net/ipv4/tcp_input.c                               |   2 +
+ net/ipv4/tcp_ipv4.c                                |   8 +-
+ net/ipv4/tcp_output.c                              |   4 +-
+ net/ipv4/xfrm4_input.c                             |   6 +-
+ net/ipv6/fib6_rules.c                              |   6 +-
+ net/ipv6/ip6_output.c                              |   4 +-
+ net/ipv6/xfrm6_input.c                             |   6 +-
+ net/mptcp/ctrl.c                                   |  39 ++++++-
+ net/nfc/nci/core.c                                 |   1 +
+ net/phonet/pn_netlink.c                            |   2 +-
+ net/rxrpc/ar-internal.h                            |   2 +-
+ net/rxrpc/call_object.c                            |   7 +-
+ net/rxrpc/input.c                                  |  49 ++++++---
+ net/smc/smc_ib.c                                   |  19 ++--
+ net/xfrm/xfrm_input.c                              |   8 ++
+ net/xfrm/xfrm_policy.c                             |   2 +
+ .../selftests/net/test_bridge_neigh_suppress.sh    |  14 +--
+ 47 files changed, 519 insertions(+), 205 deletions(-)
 
 
