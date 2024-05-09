@@ -1,129 +1,177 @@
-Return-Path: <linux-kernel+bounces-174170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4E38C0B17
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:43:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7CC8C0B32
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23A2628643B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:43:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60556B20E7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915071494BE;
-	Thu,  9 May 2024 05:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF2F1494BD;
+	Thu,  9 May 2024 05:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YsREM3FC"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5uTbjO7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B85B148FF9;
-	Thu,  9 May 2024 05:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CEE1A2C2A;
+	Thu,  9 May 2024 05:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715233375; cv=none; b=FdK+5qupopeDaJECZR+Ojr62Q5BvaUkwvAS1s3rh6OyeMLql5A8Ii0mn291kz+Z9bh/92WYsB+RNeO4sVXBK/fE3H8v0wiL2R0FDgZV/aloPr9XMZfckzI6io/Q0rpPBGGg9KQ74Vd3vi3FXuIDhNZRsuAGtUwpjV8FRfnVlP2U=
+	t=1715233873; cv=none; b=UVWsx7zP5PFfdVclzEv6o+E4QaaslF7b4KspheZhbH20lv6TBK6oxZP5YSWIlLiuQ8jEfae3NyY44l1QXMj55ScxwWPAaiIJ0L+pHZMgtL4jtFeEPAeuWvjkVtAzYFqdaZr8AeXy9WcVR8qoVZZr5swE4txpgXxO1ks7hjfnLq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715233375; c=relaxed/simple;
-	bh=K6sEhlFSI+vssE8QH3XGgfU71DAVwiWBzjwkLw8plMQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P4RnPx0DNCmEvnH8QcJ3X36XCQF9mWxr9DUUQ+Ic0NPAB6iMi3dsNezWlK+lolJN/5p/CZZ9EFeE51qmE3H/eEPtYDlc6+r8mnC+ZJz41rWAiOsECHjj2qvt+0Q2Hnpa2iGrYNBpCdHXc256XMKxeLENB1LuiQ86LZRI1kIOqEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YsREM3FC; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7e1803a4290so23246239f.2;
-        Wed, 08 May 2024 22:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715233374; x=1715838174; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YPVPOugjACikRDkDRBDlmRlOvI7PSTQC76vgEtwmocw=;
-        b=YsREM3FCJYksmdcZDZw3vA/EFmtrcCt/jJISQDU8c2bJ5R6GGZp9xgZzosiKzt2oob
-         oloQGyC5T8kYMxZexJd41V1KOPzJFdo2FB3ktV+qfFBpQ6UEyLZpEKiT/8c9E5FfWcOs
-         0jmWLIMhQymgJmQ1GCIfBfN09yb0QmliucUSwLvMCmmIk2HAfXRLczBaS7SPWWoSjCrq
-         kvW2dYtznsnQhnzT71swtSs0k2ChoSV6WkOrgY45eRl6lMuCkog9HLaeXpMuY7uGmU/b
-         ovx+oOuKW9vQ3axyj8ZzxFz+fh8CYgHCve/ElSMRQVihlWmcJpGlPE3TG+xr9IxIxsmW
-         TwrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715233374; x=1715838174;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YPVPOugjACikRDkDRBDlmRlOvI7PSTQC76vgEtwmocw=;
-        b=EBQKMWeJ9T+wteZMmTG0g8k194V4SxO2GeqpnXnqXzP2vdTKsg+7m7rI/W9oPOM95k
-         rbcuLn0GbsV/WSFk8VTWaFX63y0q8mgU47onI9j94id+j9OTMOVBmHH/+Y178btfxDzj
-         sGSMc1dc8HPxmCLQZpG7W0PNkj01Pn12IgZiohgYccUlFt1JZj1jruFlwWbGFxLs1grL
-         rfxCuap5lzlDkszdu1LqYH5e5ccUXAJVEsvXvzbjXSkr+BzDAUGaO2mU/6sBIbBa/tPE
-         XU3H3Cre/HwHWey4kUMP0CQ/UFCn+wUPz3EoZGsMzk+BqxFQmsb1QtT4oUyvaTVn3YpG
-         2hmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWu8cLTKfyAP8nbyQcBN7Idpn93rtF2vHzkP8QwZjkYLA7IufGiC2qfiBJYmuA2I7b2xjOptl2AIseEjRZUZygQ6tAs+SKum+2dEfYHTmj5wH/7fpx6zLAbPfIHVoIknqZC
-X-Gm-Message-State: AOJu0Yzr+91SmFCnz904kG9pv588N4acJwigO2KQlTErK04E5GDxPvES
-	HFyz2r94G1HaTSPR01Znl+LEKCT3/5KJHz3/D3ya8AWcuA6fhgDUobiwLA==
-X-Google-Smtp-Source: AGHT+IGaX1LBzAaXSqkJ7mPuBzhTnF/6aDKQom/GvTfcRaMg49BEJwfb5g2n1M+BUs7ywSg4q7wtsQ==
-X-Received: by 2002:a05:6e02:160e:b0:36c:51c0:555e with SMTP id e9e14a558f8ab-36caecd6ea3mr54883395ab.5.1715233373672;
-        Wed, 08 May 2024 22:42:53 -0700 (PDT)
-Received: from localhost (220-245-239-57.tpgi.com.au. [220.245.239.57])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340c99be0esm495803a12.45.2024.05.08.22.42.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 May 2024 22:42:53 -0700 (PDT)
+	s=arc-20240116; t=1715233873; c=relaxed/simple;
+	bh=JrahC9u3iZ2EEYCRi1f+9st8RuDxEJwQs/PRe7O4KYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ko4mnI9o1RR0VrEtFIrUnIt0CpWhA0i3dqBn6A5627NKmUJoB1CVFSiRd6854m6lPYJaJpufn9GL+J+29/pBMRdAzafG5R1LC9FeHRxLLCly0YAbdS8WqmsclXdUJ9fu6SrXoovzr5CnwFBNbtxhWCyLJ4XQa0XhG/1FE6uxUTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5uTbjO7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86399C116B1;
+	Thu,  9 May 2024 05:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715233873;
+	bh=JrahC9u3iZ2EEYCRi1f+9st8RuDxEJwQs/PRe7O4KYw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M5uTbjO7YOZrR6uyg9Ln6X3dHgEXn5rzLsp44/fz/cE0Da+km5F8Sb+XR3IbzwjSP
+	 GvUEHkNWvlg0RTFy5SVFO+220c2Xs69+7rjaie0iu6gJFz3qD1A08of+OeHt7THvEo
+	 ZvFeAterHuHXDbZrFXpmEy6MQsTbkouyKQz6LMG2teauAQwGhbYSdmOcNcjb7BVaVp
+	 OIfX5jnu3mhxQ53HUGjQFbZPRVNd0RbrxDTjBiin/Vo5glWlUPLR/yS6ijzjDUkKlu
+	 c/xlhNJQXBv2iLaEd4WkpfDX3n5qYqXCdf7jwjwp2Tdh+olMQZHMsi273EBKgm0eC5
+	 Maf7OUf7KR42Q==
+Message-ID: <81241dde-da0a-4817-90f4-37741d652600@kernel.org>
+Date: Thu, 9 May 2024 07:51:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] soc: imx: secvio: Add secvio support
+To: Vabhav Sharma <vabhav.sharma@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Franck LENORMAND <franck.lenormand@nxp.com>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ Varun Sethi <V.Sethi@nxp.com>, Silvano Di Ninno <silvano.dininno@nxp.com>,
+ Pankaj Gupta <pankaj.gupta@nxp.com>, frank.li@nxp.com,
+ daniel.baluta@nxp.com, Iuliana Prodan <iuliana.prodan@nxp.com>,
+ Horia Geanta <horia.geanta@nxp.com>
+References: <20240509-secvio-v1-0-90fbe2baeda2@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240509-secvio-v1-0-90fbe2baeda2@nxp.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 09 May 2024 15:42:46 +1000
-Message-Id: <D14VHEQLAB3V.30DDBZFDKZVGY@gmail.com>
-Cc: <linuxppc-dev@lists.ozlabs.org>, <kvm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vaibhav Jain" <vaibhav@linux.ibm.com>
-Subject: Re: [PATCH v6] arch/powerpc/kvm: Add support for reading VPA
- counters for pseries guests
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Michael Ellerman" <mpe@ellerman.id.au>, "Gautam Menghani"
- <gautam@linux.ibm.com>, <christophe.leroy@csgroup.eu>,
- <naveen.n.rao@linux.ibm.com>
-X-Mailer: aerc 0.17.0
-References: <20240506145605.73794-1-gautam@linux.ibm.com>
- <87o79gmqek.fsf@mail.lhotse>
-In-Reply-To: <87o79gmqek.fsf@mail.lhotse>
+Content-Transfer-Encoding: 7bit
 
-On Wed May 8, 2024 at 10:36 PM AEST, Michael Ellerman wrote:
-> Gautam Menghani <gautam@linux.ibm.com> writes:
-> > PAPR hypervisor has introduced three new counters in the VPA area of
-> > LPAR CPUs for KVM L2 guest (see [1] for terminology) observability - 2
-> > for context switches from host to guest and vice versa, and 1 counter
-> > for getting the total time spent inside the KVM guest. Add a tracepoint
-> > that enables reading the counters for use by ftrace/perf. Note that thi=
-s
-> > tracepoint is only available for nestedv2 API (i.e, KVM on PowerVM).
-> ...
-> > diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.=
-c
-> > index 8e86eb577eb8..ed69ad58bd02 100644
-> > --- a/arch/powerpc/kvm/book3s_hv.c
-> > +++ b/arch/powerpc/kvm/book3s_hv.c
-> > @@ -4108,6 +4108,54 @@ static void vcpu_vpa_increment_dispatch(struct k=
-vm_vcpu *vcpu)
-> >  	}
-> >  }
-> > =20
-> > +static inline int kvmhv_get_l2_counters_status(void)
-> > +{
-> > +	return get_lppaca()->l2_counters_enable;
-> > +}
->
-> This is breaking the powernv build:
+On 09/05/2024 02:45, Vabhav Sharma wrote:
+> The tampers are security feature available on i.MX products and
+> managed by SNVS block.The tamper goal is to detect the variation
+> of hardware or physical parameters, which can indicate an attack.
+> 
+> The SNVS, which provides secure non-volatile storage, allows to
+> detect some hardware attacks against the SoC.They are connected
+> to the security-violation ports, which send an alert when an
+> out-of-range value is detected.
+> 
+> This detection is done by:
+> -Analog tampers: measure analogic values
+> 	- External clock frequency.
+> 	- Temperature.
+> 	- Voltage.
+> 
+> - Digital tampers:
+> 	- External tamper
+> 	- Other detectors:
+> 		- Secure real-time counter rollover tamper.
+> 		- Monotonic counter rollover tamper.
+> 		- Power supply glitch tamper.
+> 
+> The on-chip sensors for voltage, temperature, and clock frequency
+> indicate if tamper scenarios may be present. These sensors generate an
+> out-of-range signal that causes a security violation to clear the
+> authentication and storage keys and to block access to sensitive
+> information.
+> 
+> Add linux module secvio driver to handle security violation interrupt.
+> 
+> The "imx-secvio-sc" module is designed to report security violations
+> and tamper triggering to the user.
+> 
+> The functionalities of the module are accessible via the "debugfs"
+> kernel.The folder containing the interface files for the module is
+> "<kernel_debugfs>/secvio/".
+> 
+> Get status
+> Reading from the "info" file will return the status of security:
+> - Fuse related to security tampers.
+> - SNVS readable registers.
+> - DGO registers.
+> 
+> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> ---
+> Vabhav Sharma (4):
+>       dt-bindings: firmware: secvio: Add device tree bindings
+>       firmware: imx: Add SC APIs required for secvio module
+>       soc: imx: secvio: Add support for SNVS secvio and tamper via SCFW
+>       arm64: dts: imx8q: Add node for Security Violation
 
-[...]
+Please version your patches correctly and provide changelog.
 
-All the nested KVM code should really go under CONFIG_PSERIES.
-Possibly even moved out to its own file.
+I wrote about b4 already, which solves this as well.
 
-For now maybe you could just ifdef these few functions and
-replace with noop variants for !PSERIES.
+What changed here?
 
-Thanks,
-Nick
+Best regards,
+Krzysztof
+
 
