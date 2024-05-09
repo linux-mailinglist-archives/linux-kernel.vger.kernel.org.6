@@ -1,71 +1,74 @@
-Return-Path: <linux-kernel+bounces-174450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1238C0EF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCC48C0EF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0269B2141E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:41:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C16C5B2140B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B06313173B;
-	Thu,  9 May 2024 11:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C567131750;
+	Thu,  9 May 2024 11:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LUsluixc"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VIyTcFs4"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1982D12FF8E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C673912FB0A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715254890; cv=none; b=YlN3AtZII0B8J1aA1GzQpBbGyEeew2ubKlunqczWmPAriBwwxJoIM8mhj9V8KufPym8L7R3yR6QubF0EHv0Qi44NXXbwq+0It42Lfc1BeXWYsMWK0pAmCTKnaJYdcM4JUvG0zUFV9PwLQbQIOL2JX87a6razscdeTnIEeLPDgks=
+	t=1715255006; cv=none; b=Gls0nkWxD7LLba459N0vgX7onEuze8Sxd52WryEyolfPbh77SJb9c2fut9nXg733puP6VNkT1XaOKuICRpKEngcCeTZaQRc0JUHVdMc3QcFYciVRQJuAFdNdF5oUHtPKlDCiredfKaEP1YowEIJjekPaw2VQ6uBei2hIMTR9+vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715254890; c=relaxed/simple;
-	bh=1jdDjfryC/Txk3Ehog5XJe8lFu+V6W6ew2Ru5wmFwlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=qPN0FcU+FKQbMGq/JC9tWPZdfEOQIuBrXiyHrGXxsxs6mt8smlEWZoGiscA7wwZkbFajOcNm7dN3Jpe/8AtlBK1fvZWQb1wkNTLj/PHV75BlI3LXQyjEmomjiaU4sbvCGeLrSU4eSPDl63HRqtJTkMRvd78BsHkaAoi5JE456sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LUsluixc; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240509114120euoutp02b3084ce42d499f0d9ef504ba0d14a1ea~NzznHdaGz0039600396euoutp02B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:41:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240509114120euoutp02b3084ce42d499f0d9ef504ba0d14a1ea~NzznHdaGz0039600396euoutp02B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715254880;
-	bh=sFuV/tFX3qlWPW5/hEAfuW4Mb0Qblw1Ko/UBLqs3gjE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=LUsluixcUNWf9hRnJ/2qvWhFlr35sBCrH2g1GJ1Rxaa276Rw1LDURgZ5IJwkb+ywL
-	 XMhJgaAVYKz/dCGoc7nqEVfoIsqm/hfiN62oL+WHJ86PVCt1qwmy45ZrW+NBLZEO82
-	 GfWpTPga8Li3tYceMBah/WO8CftrSSJC6P25dQQY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240509114119eucas1p2587f7335c4115d3633d2237e25638521~Nzzm3f-NM2502625026eucas1p2r;
-	Thu,  9 May 2024 11:41:19 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 10.7C.09624.F56BC366; Thu,  9
-	May 2024 12:41:19 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240509114119eucas1p232697f21d70fde9a42d6d6488aa5d31a~NzzmfrTEZ2502625026eucas1p2q;
-	Thu,  9 May 2024 11:41:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240509114119eusmtrp238e878d6f387c6d0e266316b035d27a9~Nzzme36xc0201902019eusmtrp2P;
-	Thu,  9 May 2024 11:41:19 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-02-663cb65f2399
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 45.9A.08810.F56BC366; Thu,  9
-	May 2024 12:41:19 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240509114118eusmtip1f4321fd1d43f2b0bab0d3c1116a1d9e6~NzzlViG3C1979819798eusmtip1r;
-	Thu,  9 May 2024 11:41:18 +0000 (GMT)
-Message-ID: <46160534-5003-4809-a408-6b3a3f4921e9@samsung.com>
-Date: Thu, 9 May 2024 13:41:16 +0200
+	s=arc-20240116; t=1715255006; c=relaxed/simple;
+	bh=6XWYnkdFEBRgr4Uvci/np65/qXyvHuEamHU0e+LhQAU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jJA5vISDC08NkHTQjfeTAH6kh3e06X6L8P1/zIyt2Qz/PuBUvi2KwzFT1rrvXzlRh4twpxfGOVzUQV9xkSy8UzYr7XPPF9pAXRbYeEYDAEF3+gfLyxf67m2nTsbbbZJwsOJfriyUg4Pi6441Yz1EBA+tRcvbreham5D4gyVPuFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VIyTcFs4; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59a352bbd9so141647966b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715255003; x=1715859803; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vq2mjCOsl6Marf6zjWHcGKLeoXAkUCwpfDkn/dtXyOo=;
+        b=VIyTcFs4mz7qjz4U5I0AW5YqukWoXYX730YVDrfNyJqY87SchHQoTziFgcYfVIzEPd
+         aFSr/++OwE2a7z3kgzmki8ZGIso9xmUy5HLz0M+zZyf+MkWaO/IRzl9cqztD0mOj1MQS
+         kHmkTADmLGs8kqE4fyStpGcQ5Jn5itjdT92ixQPFV0GWeMqwHC7ZbKZM7imTm6C/BZcs
+         th835n04XwUHN3m2SK8hRSRS1EbagkYQ3YyciOVRbLgSxiUB8Bc/f12qFgKIRmYXV8vj
+         Oz/BXOlOD9pXZCwG8xo1nte5JMtlAITrasLXSZ+0nuEg9oRHzK4eccJQtuVLDPZ/edSI
+         3zpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715255003; x=1715859803;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vq2mjCOsl6Marf6zjWHcGKLeoXAkUCwpfDkn/dtXyOo=;
+        b=J0WSWAQuQ494CnF2nLsIZxPVLCeYhLdk2SFG1qYyseHqXgOxtCAYetgK++5+NiolmU
+         wZYApLTfjbeoXgPhRyd81Kx92AoQmmBpJKVXrbMsZVB6F27A0F7YOb/RzgztJJi09haB
+         5596A/Hv2A3Mj8SfQhemh8LcZ8rDSTL0QN5UI7H0M06jcH9IdvgxUEvyvkzjC/ktKjYI
+         pIMMwuR4Kq4QBnhrCU4W9cpjw5byMx0S0q/SrFYT0dmSAZOvmk48wjtcDU+Pa7uO8j9r
+         bMLTuSVOaozEBZ0rpcfhekIOJqV9vJ87VH1WzpQG5qIJYU80z6XAy9TibUPrXu87bx1U
+         EBtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdZ4eD1FgK/BLRR8TCKzJ6DfvIJrxbHsX7rdIu6qvhoZMp9EtTciPx5+rXr2za872Bglgdpg/gg9VIr92IfhYJe4oW3W15kg3Scu4S
+X-Gm-Message-State: AOJu0YyOCxFVodgcyRTNoh2bZ0Nnz05mcBhR/qQjaKpgEA3E8HHHSE4s
+	c009dFhI4tmAOsEkJk2duUMvq7nrvKoIeK2gxA0w8a5Gd3WX0nbLuvK9UDT3MBg=
+X-Google-Smtp-Source: AGHT+IFY6unMbN4p9pYJIT2AycmXTiYpLv9QQKRaBCdUcVvoOF6h0h+PYyclhHWQzoIYzRw6ncZl4A==
+X-Received: by 2002:a17:906:6a10:b0:a59:9636:f3e with SMTP id a640c23a62f3a-a5a118c520bmr221662566b.33.1715255003249;
+        Thu, 09 May 2024 04:43:23 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d1fcsm64999066b.35.2024.05.09.04.43.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 04:43:22 -0700 (PDT)
+Message-ID: <aa8509c9-7475-40b3-82cb-9bfc1e33b202@linaro.org>
+Date: Thu, 9 May 2024 13:43:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,122 +76,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/7] dma: avoid redundant calls for sync operations
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, Christoph Hellwig
-	<hch@lst.de>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will
-	Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Magnus
-	Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] ASoC: qcom: qdsp6: Set channel mapping instead of
+ fixed defaults
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ James Schulman <james.schulman@cirrus.com>,
+ David Rhodes <david.rhodes@cirrus.com>,
+ Richard Fitzgerald <rf@opensource.cirrus.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Banajit Goswami <bgoswami@quicinc.com>
+Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
+ <20240509-asoc-x1e80100-4-channel-mapping-v3-3-6f874552d7b2@linaro.org>
+ <d3c78e43-44a9-4ef2-8e64-00f39b32172c@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20240507112026.1803778-3-aleksander.lobakin@intel.com>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <d3c78e43-44a9-4ef2-8e64-00f39b32172c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLKsWRmVeSWpSXmKPExsWy7djP87rx22zSDC7sMrS4+Hkhq8XnI8fZ
-	LJ4ee8RusXL1USaLX18sLDpnb2C3uLCtj9Xi8q45bBYrDp1gtzi2QMxixu2lzBZzv0xltjj4
-	4QmrRcsdUwc+jycH5zF5rJm3htFjwaZSj8V7XjJ5bFrVyebxYvNMRo/dNxvYPD5vkgvgiOKy
-	SUnNySxLLdK3S+DKuH5/DXvBK5GK1wcnsjQwtgt2MXJySAiYSPw79pipi5GLQ0hgBaPEkgvT
-	2CGcL4wSj7q3MYNUCQl8ZpS4ssgapuPR/H5WiKLljBJ3L29lhHA+MkqsmHeNEaSKV8BOYuLj
-	1UwgNouAikTrorfMEHFBiZMzn7CA2KIC8hL3b81gB7GFBbwkDr/rBbNFBMIkHh3tARvKLDCL
-	WeLUzedgzcwC4hK3nswHG8omYCjR9baLDcTmFHCRONuznhWiRl5i+9s5zCDNEgKzOSU+tF5n
-	gbjbReLS3X+sELawxKvjW9ghbBmJ/zvnM0E0tDNKLPh9H8qZwCjR8PwWI0SVtcSdc7+A1nEA
-	rdCUWL9LHyLsKLFgxz6wsIQAn8SNt4IQR/BJTNo2nRkizCvR0SYEUa0mMev4Ori1By9cYp7A
-	qDQLKVxmIXlzFpJ3ZiHsXcDIsopRPLW0ODc9tdgwL7Vcrzgxt7g0L10vOT93EyMwxZ3+d/zT
-	Dsa5rz7qHWJk4mA8xCjBwawkwltVY50mxJuSWFmVWpQfX1Sak1p8iFGag0VJnFc1RT5VSCA9
-	sSQ1OzW1ILUIJsvEwSnVwKQ3xcvs58aNlSkeooJHPncGvmGeVBG3x6t42Qa3olftkpNybFeE
-	3vudPMfxZlh4rkO3qm7CF4srmzQq7VwK86JfvPc+nbNfuFLrziH5Pv732zg6PnKdD8pgsWna
-	eZN57kRR7XJz3SzjdnFL2YlL3fryBK8kd+Sv26K55v2XxSVimf1ZeWGil3J2mK5mfq1jY3f5
-	OVvVM8PbKdvm8j/h4XLRu/32rd89f46F+bZz0h4I/tq8c0Gh3rTNPa/uG2X6Smcql5bnSDqZ
-	OTw9eo/tpOaUdatD3NpNXx96ZLFWb7eZ6ZV4/lDlo56HLBsdNrZc2L10TfrGPN20/y9TJp/z
-	+e52pueqdeLRSzGXrj4LUWIpzkg01GIuKk4EAJlRwO/gAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRmVeSWpSXmKPExsVy+t/xu7rx22zSDGZeEre4+Hkhq8XnI8fZ
-	LJ4ee8RusXL1USaLX18sLDpnb2C3uLCtj9Xi8q45bBYrDp1gtzi2QMxixu2lzBZzv0xltjj4
-	4QmrRcsdUwc+jycH5zF5rJm3htFjwaZSj8V7XjJ5bFrVyebxYvNMRo/dNxvYPD5vkgvgiNKz
-	KcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuH5/DXvB
-	K5GK1wcnsjQwtgt2MXJySAiYSDya38/axcjFISSwlFHi99YbzBAJGYmT0xpYIWxhiT/Xutgg
-	it4zShzpXA5WxCtgJzHx8WomEJtFQEWiddFbqLigxMmZT1hAbFEBeYn7t2awg9jCAl4Sh9/1
-	gtkiAmESDT0rwBYwC8xiluibGwex4CKjxKmHS5ggEuISt57MB7PZBAwlut6CXMHJwSngInG2
-	Zz1Us5lE19YuRghbXmL72znMExiFZiG5YxaSUbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5x
-	aV66XnJ+7iZGYExvO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMJbVWOdJsSbklhZlVqUH19UmpNa
-	fIjRFBgYE5mlRJPzgUklryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mD
-	U6qBKTOUdfV9FoboSxrV2wW9LP9ts1fqOFH4JVDgm99uwQeVc3ScU9I+81sJy50Le72iMPqM
-	9KT7ZRGsv/imvZy4+M6Ne/7eK17JFD/dx3ku1trz1O3MB3fDP73ZeD6wbrdI0lKni0WSBiFH
-	jhk+Xrtg3bl7K3ZMq9JN0uY+vLd3cp5q3RUu97Ue6f2lm06nfeuZyj+JfY7fkRBnmW990zdH
-	tHE7vzft2C1021t1xUvVnZO45msVv/i3VuKJboybm/ka/uluF9a5+douv/9N4rTGll5L5cWf
-	fl3ZeK3Pqt77vpvSMQ63xfP1NY9NaC6eZNkdJ5clz1TEt+S+eO8942Kt3gfPM+yEH176VfbZ
-	h3/RSiWW4oxEQy3mouJEAJGPshlyAwAA
-X-CMS-MailID: 20240509114119eucas1p232697f21d70fde9a42d6d6488aa5d31a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240507112115eucas1p117bc01652d4cdbe810de841830227f47
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240507112115eucas1p117bc01652d4cdbe810de841830227f47
-References: <20240507112026.1803778-1-aleksander.lobakin@intel.com>
-	<CGME20240507112115eucas1p117bc01652d4cdbe810de841830227f47@eucas1p1.samsung.com>
-	<20240507112026.1803778-3-aleksander.lobakin@intel.com>
 
-Dear All,
+On 09/05/2024 11:17, Srinivas Kandagatla wrote:
+>> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
+>> index eb9306280988..208b74e50445 100644
+>> --- a/sound/soc/qcom/qdsp6/audioreach.h
+>> +++ b/sound/soc/qcom/qdsp6/audioreach.h
+>> @@ -766,6 +766,7 @@ struct audioreach_module_config {
+>>   /* Packet Allocation routines */
+>>   void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t
+>>   				    token);
+>> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels);
+>>   void *audioreach_alloc_cmd_pkt(int payload_size, uint32_t opcode,
+>>   			       uint32_t token, uint32_t src_port,
+>>   			       uint32_t dest_port);
+>> diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
+>> index 00bbd291be5c..8ab55869e8a2 100644
+>> --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
+>> +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
+>> @@ -243,6 +243,7 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
+>>   	cfg.num_channels = runtime->channels;
+>>   	cfg.bit_width = prtd->bits_per_sample;
+>>   	cfg.fmt = SND_AUDIOCODEC_PCM;
+>> +	audioreach_set_channel_mapping(cfg.channel_map, runtime->channels);
+>>   
+> 
+> Prepare can be called multiple times.. so we have channels overwritten here.
 
-On 07.05.2024 13:20, Alexander Lobakin wrote:
-> Quite often, devices do not need dma_sync operations on x86_64 at least.
-> Indeed, when dev_is_dma_coherent(dev) is true and
-> dev_use_swiotlb(dev) is false, iommu_dma_sync_single_for_cpu()
-> and friends do nothing.
->
-> However, indirectly calling them when CONFIG_RETPOLINE=y consumes about
-> 10% of cycles on a cpu receiving packets from softirq at ~100Gbit rate.
-> Even if/when CONFIG_RETPOLINE is not set, there is a cost of about 3%.
->
-> Add dev->need_dma_sync boolean and turn it off during the device
-> initialization (dma_set_mask()) depending on the setup:
-> dev_is_dma_coherent() for the direct DMA, !(sync_single_for_device ||
-> sync_single_for_cpu) or the new dma_map_ops flag, %DMA_F_CAN_SKIP_SYNC,
-> advertised for non-NULL DMA ops.
-> Then later, if/when swiotlb is used for the first time, the flag
-> is reset back to on, from swiotlb_tbl_map_single().
->
-> On iavf, the UDP trafficgen with XDP_DROP in skb mode test shows
-> +3-5% increase for direct DMA.
->
-> Suggested-by: Christoph Hellwig <hch@lst.de> # direct DMA shortcut
-> Co-developed-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->   include/linux/device.h      |  4 +++
->   include/linux/dma-map-ops.h | 12 ++++++++
->   include/linux/dma-mapping.h | 53 +++++++++++++++++++++++++++++++----
->   kernel/dma/mapping.c        | 55 +++++++++++++++++++++++++++++--------
->   kernel/dma/swiotlb.c        |  6 ++++
->   5 files changed, 113 insertions(+), 17 deletions(-)
+Which is expected - just like we overwrite number of channels.
 
-
-This patch landed in today's linux-next as commit f406c8e4b770 ("dma: 
-avoid redundant calls for sync operations"). Unfortunately I found that 
-it breaks some of the ARM 32bit boards by forcing skipping DMA sync 
-operations on non-coherent systems. This happens because this patch 
-hooks dma_need_sync=true initialization into set_dma_mask(), but 
-set_dma_mask() is not called from all device drivers, especially from 
-those which operates properly with the default 32bit dma mask (like most 
-of the platform devices created by the OF layer).
-
-Frankly speaking I have no idea how this should be fixed. I expect that 
-there are lots of broken devices after this change, because I don't 
-remember that calling set_dma_mask() is mandatory for device drivers.
-
-After adding dma_set_mask(dev, DMA_BIT_MASK(32)) to the drivers relevant 
-for my boards the issues are gone, but I'm not sure this is the right 
-approach...
-
-
-> ...
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+Krzysztof
 
 
