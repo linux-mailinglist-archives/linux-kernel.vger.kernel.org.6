@@ -1,74 +1,91 @@
-Return-Path: <linux-kernel+bounces-174606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4748C117B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:46:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBC98C1182
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC2A281BD5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5417C1F21500
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AF313174A;
-	Thu,  9 May 2024 14:46:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407BA1BC4B;
-	Thu,  9 May 2024 14:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7B013C672;
+	Thu,  9 May 2024 14:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="dqCnAh1B"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F04E12A179
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 14:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715266003; cv=none; b=PUT5thYbrWAqJYSuZIN4eQF2Tczq/BmXUE28wHQ0oh3TBZKomGHcke8xjODLyVbfR2GiLsz2WB/PHDbV0TEeRt6Col+C6d18dmgen5mSg4u9ecEMd9rHyqJkU/Bp5bwmaG4TbGRk7UkZ291Kx+XHg5hwMCRs4HlhvpTrcYjcLhI=
+	t=1715266302; cv=none; b=Vv4km0jjpdlWN/VrpvUf34SkczEMGGqDjIUi/96QUWshux2di3x3pslI9d7kSSEkti9qj4WYw2uAsqeACrWMvZLFkvURM0VfstuXC8rBkaJgYwhVcN7labYx91r3sIENL5rLmwv8g0Lf1zluXX1Wv+6cVEiZahfyJ2t2dVNiJ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715266003; c=relaxed/simple;
-	bh=rucQE/twYzCIsQtJnDOh9iW/UvTTt3EfUCzRoR2xgt8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YxS7DMcbkP8rZtlg1ZvE7NvrVduU+rXjSaXvpd7GSO8VHSglhnzadsamiJ0S8NvoIxH5wLj/kTwftTR/JBYHL8wYH5CS1KOtbLOh89yvVvVK17Tc7vbCiq/nXecItBqvpCCjtocRF2N3cROL/1MSKyQuXDdmSZ3+J6a8wSTeWdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD7B4106F;
-	Thu,  9 May 2024 07:47:05 -0700 (PDT)
-Received: from [10.1.31.15] (PF4Q20KV.arm.com [10.1.31.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A3653F641;
-	Thu,  9 May 2024 07:46:38 -0700 (PDT)
-Message-ID: <438f8725-ef3f-462f-90e2-840cab478ee5@arm.com>
-Date: Thu, 9 May 2024 15:46:28 +0100
+	s=arc-20240116; t=1715266302; c=relaxed/simple;
+	bh=ROuxEhTpbRtsfE1hnzOUvo+e32DRlMNGBViWysD4b0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnQgQScvBM/Ql9JRVQrZYOl3GDXita6//HE0JT1rDNNXrSIh4UAvbC8Ini2uIX+GJiw2VPHzRBNfMOIVd8rR+8Nl84wsrFG70b8bx4+vJ9hn7VAHtF2duXfrWFD6//l0mKt6oUYL7Egsodqfs48nAa153dxwOzlQ5BlrJO+gJgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=dqCnAh1B; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-113-2.bstnma.fios.verizon.net [173.48.113.2])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 449EpO0m025071
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 9 May 2024 10:51:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1715266288; bh=2rkEFPmAsmSs8bT9V5fpjO3Bmf+kooXnTHTcPwtoDyU=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=dqCnAh1BbLC4UUZqacrs2RhKEUbD1BMQI787FnPh0381EMB0HKLqo/8ChzOndcjFF
+	 Ff7f6DQ79rxj/usVfMc3B0mk0FHLqezX4AW8zcALNEN2n5Gaj6clKYcoFkR21J+vhk
+	 +PH6O+XX5Wp5CP+pbN+sqgVYSJtPWGmKC26Ecu2dE/QTZimw3AdYNVNBhGyfS1qfZE
+	 QYxDkG4Ey+vMUYe24LNge+fRZ/QyuOuPlMmeEibZgdrq91HigjePWCflbW6LCU/7vJ
+	 Eq3ehcZsTsF0EUMZ2cxGxWKOwXD7b6N1Y0X9FZEwQ4E2df02Z8zx8lkjbVkCAO0jc9
+	 rQY8thg16H7QQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id A812215C026D; Thu, 09 May 2024 10:51:24 -0400 (EDT)
+Date: Thu, 9 May 2024 10:51:24 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Mikhail Ukhin <mish.uxin2012@yandex.ru>
+Cc: stable@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michail Ivanov <iwanov-23@bk.ru>,
+        Pavel Koshutin <koshutin.pavel@yandex.ru>,
+        lvc-project@linuxtesting.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        Artem Sadovnikov <ancowi69@gmail.com>
+Subject: Re: [PATCH v2] ext4: fix i_data_sem unlock order in
+ ext4_ind_migrate()
+Message-ID: <20240509145124.GH3620298@mit.edu>
+References: <20240405210803.9152-1-mish.uxin2012@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf maps: Process kcore maps in order
-To: Markus Elfring <Markus.Elfring@web.de>, linux-perf-users@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ian Rogers
- <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- James Clark <james.clark@arm.com>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240505202805.583253-1-leo.yan@arm.com>
- <4294f69b-a317-4f09-b775-52439e2ea6fc@web.de>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <4294f69b-a317-4f09-b775-52439e2ea6fc@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240405210803.9152-1-mish.uxin2012@yandex.ru>
 
-On 5/8/2024 6:02 PM, Markus Elfring wrote:
->>                                                        … To fix it, this
->> patch adds kcore maps in the tail of list, …
+On Sat, Apr 06, 2024 at 12:08:03AM +0300, Mikhail Ukhin wrote:
+> Fuzzing reports a possible deadlock in jbd2_log_wait_commit.
 > 
-> * How do you think about to add the tag “Fixes”?
+> The problem occurs in ext4_ind_migrate due to an incorrect order of
+> unlocking of the journal and write semaphores - the order of unlocking
+> must be the reverse of the order of locking.
 > 
-> * Would you like to use imperative wordings for an improved changelog?
+> Found by Linux Verification Center (linuxtesting.org) with syzkaller.
+> 
+> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Artem Sadovnikov <ancowi69@gmail.com>
+> Signed-off-by: Mikhail Ukhin <mish.uxin2012@yandex.ru>
 
-I will add Fixes tag and refine changelog. Thanks for suggestions.
+Thanks.  This has been addressed by commit 00d873c17e29 ("ext4: avoid
+deadlock in fs reclaim with page writeback"), with the same code
+change.
 
-Leo
+						- Ted
 
