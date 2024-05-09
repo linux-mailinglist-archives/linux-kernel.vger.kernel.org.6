@@ -1,294 +1,560 @@
-Return-Path: <linux-kernel+bounces-174460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E378C0F1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:01:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64808C0F1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D30282E55
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:01:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452621F22D96
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A57014B08F;
-	Thu,  9 May 2024 12:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D64714BF89;
+	Thu,  9 May 2024 12:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jR6ay5Kf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="stYgXDz5"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D023D14A90;
-	Thu,  9 May 2024 12:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256091; cv=fail; b=K1CmYmueLFErigtGVMB88onF0551wgua4F8JKCQprNJrK34p+n40+PUrNpY0eQIyOsOBbrNrTau0RkKJG/xAm+Y5CFuL59vnPj3qYM+y9Vf9Sn7hyKixRKQ3bSSWS0p9/KIHP91jcqYHWefqX8l0AolmQTMfNo2/O50Z4cMjvEk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256091; c=relaxed/simple;
-	bh=ciMFhbCrt0j+WssCqAEmlKTeIXQneEqYsNNxj7w+Gsc=;
-	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oCtgffgWhm2t801LBw6TNC2EZTyu26jFrcslu6LfSUXolb+SuhMJBN5iMqdeeSeVfcJpXDgxmpiCi5pWUT/rOKrQ3cDfh7FW5yLe0VrBaS8CtWe4N6gUAKnNzLE9Lws/KGis28nVoXU2e5cjaOTqoYP2jCXksf6TaTreBXeTC+0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jR6ay5Kf; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715256088; x=1746792088;
-  h=message-id:date:subject:from:to:cc:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ciMFhbCrt0j+WssCqAEmlKTeIXQneEqYsNNxj7w+Gsc=;
-  b=jR6ay5Kfyh/68Sxp1zA/z+KwWZYIZpQpgrDsDOb9wqyvMqfuHmql+xSw
-   lPc4ezA42J0PcHn6AFu2hRaTxZfvwizW3no/s50w7GeEoKMNvGfYwVTur
-   eluQSzrww3zNOgegjRPrwUa7Ox6Vx1OpB8b2sKDjPCFDVqNyqxagNXK0o
-   A3P5JnmkTtQWE3cFL4tmj76Od+eCBxl6iXSPD7Sj53yo7xcSORXM6SeON
-   taWDsZDQLmUm+qbWnac7bLMiNOnO2MIsgvRUbsCOuUN+07ZkNo45PEUMP
-   2bl0rrvV68cv0NohurUydrl/YYPhf4BS9Tpbtm3+4FK6oRgx0StLcoQk5
-   w==;
-X-CSE-ConnectionGUID: o/BCSFQ0Qei9Uisiwg1F+Q==
-X-CSE-MsgGUID: /p/MvvAdSdGwDjEKbmUjtg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="21739671"
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="21739671"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 05:01:27 -0700
-X-CSE-ConnectionGUID: 40C5EGSbTlCBh5lrOmmveA==
-X-CSE-MsgGUID: C0614FdyRfm99SpuFzRTRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="29293239"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 May 2024 05:01:25 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 9 May 2024 05:00:47 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 9 May 2024 05:00:17 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Thu, 9 May 2024 05:00:17 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.100)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 05:00:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fxqOzGK/NrCYlTJ0BckCn3sEED5rA3PGVvfFFmILKlmbky4K1uw2Oav4oSAilMBZaQrSaI8sickbNAmyzXLMz6holD4EmGFJeMlqyKIYANqsZ6uwsjhT+L+eRauxgsRwLOpCklZPqkhiQTJXK+NvNn/rYkdiPXGi0aOsxO84+AUacrbS7pVzl4pud8czFNHPOt9tRNZHThy6OR0ruJzNoWQU63ZrzurhfJ3kbsX4EMIV1KbuWAc6Bm2LqrtoUc0MPVM3kj/F5sLfWzsLzp2og/Y5+sNRYzy7Paa06eQv3Uokg46ksu3Wcqro/SH44Bsgx7AwNX56K9NqyImxmnIbRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0IKBjkJG8l3nXmCCaApA9waI/vAT+pLV51ulxf1L9+g=;
- b=IGMiEIl1I+GRu21jIIK9GBeR2JKVHMwcvoMA6W5VbpJAMZmYYk9T5PQK/jBW/k6DBXp//a0fMYrgmybXMEh4EZYIGTsgz7M54ny7xNi5AclrpvfFWjInoVbGAnbD4LB5eAi1+cHGPj3SYebwxGSq6WEHDIuLuySKszFMaDz8WakfxObt210pWvPB1TJoTAl+Y/BFYFk8wGk3d9ed0vwhoDtB64+ivZcYoKMSElkkpHaWdxh8nCtYkF3dWUqr2AsskDJ02trYR+Eco9MFOUSQPjL6q6Hmcyy3d0hPTgwazQ4AsdiZYmyDt6Y3/c9aUotnTC8+MDzw7UIdC5TYKlXwNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
- by PH0PR11MB4917.namprd11.prod.outlook.com (2603:10b6:510:32::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
- 2024 12:00:14 +0000
-Received: from DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
- ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 12:00:14 +0000
-Message-ID: <3dce41a3-e5a9-43e7-b918-ecb8d688ea1c@intel.com>
-Date: Thu, 9 May 2024 13:59:41 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/7] dma: avoid redundant calls for sync operations
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Christoph Hellwig
-	<hch@lst.de>
-CC: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Magnus
- Karlsson" <magnus.karlsson@intel.com>,
-	<nex.sw.ncis.osdt.itp.upstreaming@intel.com>, <bpf@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-References: <20240507112026.1803778-1-aleksander.lobakin@intel.com>
- <CGME20240507112115eucas1p117bc01652d4cdbe810de841830227f47@eucas1p1.samsung.com>
- <20240507112026.1803778-3-aleksander.lobakin@intel.com>
- <46160534-5003-4809-a408-6b3a3f4921e9@samsung.com>
- <b4632761-3ec6-4070-a60e-b74c1bfdd579@intel.com>
-Content-Language: en-US
-In-Reply-To: <b4632761-3ec6-4070-a60e-b74c1bfdd579@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB3PR08CA0018.eurprd08.prod.outlook.com (2603:10a6:8::31)
- To DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D753D149DEA;
+	Thu,  9 May 2024 12:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715256093; cv=none; b=hXpMIifzucDY4xafKNow4o1VXYguy6PUDbGcKp7KOYmjGt3b6IE6RyafMX8TpD0sxyO41v4L37qFWKFT3nW+1axo0F5N135YjntF/RiYYKvT/iGYCQ4Di3nWA9Ye1F8ALHDLexePYZgJcxbkneEhGXjlTNUjJ4Li0rkti8aHxP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715256093; c=relaxed/simple;
+	bh=NZZLyJDGLZNRli8nJWyfhkdqu/3Uq/TaG9ZH8peVufE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HjBqiTTRsmgY9YhhsKxva/hErBlfmZFQXJUwLUb3IeFNDjyRuZ5kzi9GXP+mqvvy4XvKrOVQ8sSoKVGzVzi4IWOcd+SKGmYMkJLIbDY6REv7SGNcBa6uiLZ0Yhez+c4/V2UOVZI2xmS9oGHsV5egF+utDBoh8XKyCsCSfYy+Ia0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=stYgXDz5; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [94.142.239.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 424066356CD3;
+	Thu, 09 May 2024 14:01:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1715256080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7vIAVJt2VE30osPxzi8z8hFVMXnbvUT3aPuW66map1o=;
+	b=stYgXDz5ZKTBTvW7R981K7KXEfQHPNS4QKIOthXyR98Rs5pgR/vZTa1r2vrba55cI8S9Fn
+	1ysnBkfg9SrpZe1oCzPZijg+Cw7NOJ+bIgQw6tUJxt4DvvMFUqbE8nI7FVU+ryfpJWnTxy
+	JY6zNFXqkGbzIxBG4pW/1/F75GjhvEU=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: rafael.j.wysocki@intel.com, viresh.kumar@linaro.org, Ray.Huang@amd.com,
+ gautham.shenoy@amd.com, Borislav.Petkov@amd.com,
+ Perry Yuan <perry.yuan@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>
+Cc: Alexander.Deucher@amd.com, Xinmei.Huang@amd.com, Xiaojian.Du@amd.com,
+ Li.Meng@amd.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 0/7] AMD Pstate Driver Core Performance Boost
+Date: Thu, 09 May 2024 14:01:05 +0200
+Message-ID: <5777236.DvuYhMxLoT@natalenko.name>
+In-Reply-To: <5b4f0361-a456-4e6a-983b-7c534783c643@amd.com>
+References:
+ <cover.1715152592.git.perry.yuan@amd.com>
+ <12430912.O9o76ZdvQC@natalenko.name>
+ <5b4f0361-a456-4e6a-983b-7c534783c643@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|PH0PR11MB4917:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf8ab2f7-0d32-4938-5970-08dc701f963f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015|7416005;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dExrQWdRS3lHRDZlM1pTVzFwbCtqTjRvV01GTER3VGRzd09TLzVoYjducWdW?=
- =?utf-8?B?MnQ5RFJHVERBdVM0QW4wY2tUbWl0T3BIa0NmcnhkWWx6UjYwUTZCYUFFeEsw?=
- =?utf-8?B?NnFxLzFzL2hkeG1KRGZiclpGTlJhS0F6ZTIxSEVQalFMWmQrOHZWVXFrSUlm?=
- =?utf-8?B?TFpCbzN3cE8xc0VmVFlkMGc5dWk0R1psRDRKdTZ4SXNNVjZDVWp3NUdjaHVj?=
- =?utf-8?B?MmtnT3pqait4UElBeU5yNEwxK0ZDNXBLV2J4bjc1dmRzUHpiRjh6LzgyeG9E?=
- =?utf-8?B?dzRzektUVGlOUE5BUzAwVlQ4a1R5SGVXb3g3S0ZYMVdLc2hLakhzVHV4WkdY?=
- =?utf-8?B?NUNRV3ZrNEtqdlVrZDBPdFNDSmg2OUpYRktmVHVjNTkrT2UzelhpOGFhbEhM?=
- =?utf-8?B?Q3c3aVNoTE1FSWl5MFI2OW00aHFhWmUraHhYZ3B0NlhnVVBVdmtFaFhOOVE4?=
- =?utf-8?B?Y3Q1UE5JRTR4NVB0V0xrdFFRc1k2TkNNT1AwZnQ2dUgxaFdmYzY0bWMzc0JZ?=
- =?utf-8?B?Z2FHL1lVVkxrbzhTaThxaDNzM3JlSThsYTBnaEZtS3djVUdNd0hyOGQ5YUFB?=
- =?utf-8?B?UnF3dzJUWklBZWJUcHhmOHVqaU1FUytySGZxVkYvUDRwbkNiU2lPbGh5cE91?=
- =?utf-8?B?TWs3UEtsSUhDb0Q5Qy81TVlkWjd5ZU51ZG5XSEVMMWJxS05HeGV6L0YvQU9p?=
- =?utf-8?B?bEZIcm5VdVpnWUIyYWJCQ0Q3eTk3WWJuV1hxT1REcDJyZG5LNjdXdmZRYTFS?=
- =?utf-8?B?REEvdnFFNkMyc2o5ZlRWNkk0U3lGaXI2aXFjVEk5d2djZnQ3dkVyY0FGNC9w?=
- =?utf-8?B?T2tuY0xVNk5jQ2tGUmRQRXV4cjJHbml5MFdTd3I0cktxWFpWU0s0aFhST08w?=
- =?utf-8?B?ZFhXSm4rdUQySmRuU2ExaFAzRFQ2b29MOW51SzVVV1pYL3NiRzVTT1NzUjB1?=
- =?utf-8?B?ZXVDQW91ODM2VXZMbmJzY2tQVTg3UGFZME4wai84cUZWY2VQUEF3SUQ0ZEQ5?=
- =?utf-8?B?MHRvbFdDUEpqN3lJYmIvNURkWGZ6LzdReVVNOEw2bjdJSCs2NDFjb1loL3c3?=
- =?utf-8?B?RDlUWHp2c1RvSVEzN2FBOXd2VWR6RUl4RG8ybDFuUXJibU1kSm9xbE12TXJE?=
- =?utf-8?B?dU1JSXJGN1FpU05kSEl6L3V4OCtkNnVCcjZObEVMcE0yaUhoNFNHTWRmdjJk?=
- =?utf-8?B?bkJlZFRtRnhxbHdLUytUOExrdTZwVmN3OGFXeGhLekxnWk41czZtMytBNWVa?=
- =?utf-8?B?RkdvOW1qbFZCYTlBaTRVbkd5d3ZBRkkxRDlKc3NORFFqbDB6S3RBb1RJYXo2?=
- =?utf-8?B?TnBKenR0Q2s4aEQ2a2FPM09DYS91b2ZpbHRQclVkaFppWFN1RGJWQmgvbUdy?=
- =?utf-8?B?MXljZVB4SGxSRjlFbnhMYkhCZXJQb1VDMUZiQ09JNGpFbWFpYmtmaFA5YVls?=
- =?utf-8?B?UEVhYW5teXJjdklwRkp5c2dOSnJUQzZ6V0RxNEZYR01vK3puSTRERU1HVk4v?=
- =?utf-8?B?N0h5a1pzSFlYNFg2Z0RFWER5b0ZLVnZJcy9UL3RTTU55bkZlenVFZjk0YXdz?=
- =?utf-8?B?bFJnNW1ZVkxqcWRZZUVEaDNRc2UzOUExTnBuMytBWk1OMWFXTDF0UDNmVDFK?=
- =?utf-8?B?MFFwY3lya3I1NzBzQU41WDBjTXRRSXIxL0lzbG5qa1M2V2pINmVjdERHRjNk?=
- =?utf-8?B?QXFYc3hJeVppL2NlZ1EzZjlGVk84VENYVXRDMEpCMllJRlhRcGRyNzN3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a2RkNkJVbUlNcTFNUjZETS9oQ3gzMDBvTm1hRVpISXZjQlJDUmd0YTJNemY4?=
- =?utf-8?B?NnhPWTBvQ3J4WGMwMVYvUkduMlpHTlh0ODRReDdDampSYjNrUkk0dWlnaFBS?=
- =?utf-8?B?eDFsSHVXZ0V3SSt5bHBybTdGNjFrNG1PNXdlZWQrY3pZOGg4OFJDZnBocWt5?=
- =?utf-8?B?UXFMbE1CdW9CWGR2eHV4R3JINmczdkpFUnlTMUMvSW9YUHV3OTFwRVlDQ0FI?=
- =?utf-8?B?Um4yRS9XQzhXY0xPODE0WkIvT0JWVjBHdkZ2QW9BQ1hIUDR4eHBFMHE1Y3VB?=
- =?utf-8?B?NHYrTFo3aVFudUx6cWlwd2xicjdzQ1dnTi9pWitrbDVCVUt0UjJBRHNxSDhh?=
- =?utf-8?B?OFFteFdPMlRZeGMzc3lJdXM4WVo4YktYTnhaS1JtRGF3S2xZbzU1L2pFUDJz?=
- =?utf-8?B?SWFvczBFL2N5b25CeEhGUUtxU3NyVUwzSitoRWp6QVkzWk95VE81OG9hTlhI?=
- =?utf-8?B?VTM5aWk2cW9JMUhhRmN5UVpXZHluZXV3eEQ5Slo0Qm9wTnUvc1pFVFNibjBR?=
- =?utf-8?B?YVJSdEIxK3VtV1NYcWp6Wkd5Q21LSHJ6NzZzckJQVkFHYXBVY1h0U0ZRUUpt?=
- =?utf-8?B?elRpTzVwb3FybGF6Q1F4M3lPK2NKMWpEKzJROEZGNEdGQ0JRd3RaUE5jMEhh?=
- =?utf-8?B?YUNoeE54QWlhREpvK2t1SmxBeXdGVEFaOVFEZ1VxekhMa2tyUjRON0EzUXlJ?=
- =?utf-8?B?b1hSUStiQ1pvMHQ0ZXlETzdOTXpuT0pjdmIxZDVSVEJsNjA4azZZcDlvL0dn?=
- =?utf-8?B?cEtFOEw3K3YvaWo3c3dvNE1IbUxTbzZtNXJzdjF2NXZBMWM2elhUbTZiaHll?=
- =?utf-8?B?b1kwTGRwb0FTYlRIc3pYbTdGZnV5YzZUc0ZKMVgvMzRxT0ZIbW96U0xiTEF1?=
- =?utf-8?B?UGdjUXVGMG5uZEt6MXFzYlNYMjN2RFYzelpNZGJIUGNKVFY2SXgwbXZxc1VM?=
- =?utf-8?B?SFBBUkJhSVpoVUtVaThXWG9XNFlKUjFsek9oTmZoQmRBQlp6NEtHOWJ5eUtp?=
- =?utf-8?B?UDh3djBrMWV5b25aZCtEYWtlWWJxZnFUWG93VVJXSnh2MmwwMmVKSlRMaTky?=
- =?utf-8?B?NU5MQ2UvZTAzVVoxRU95UG1ueUFVMldtZmR1Yy8wdUtNck5IbmpYMTZKZHdp?=
- =?utf-8?B?ZWNkYndtenhFZGxFOHlleHFTTFVJcitzeFFpcHJjUWhIR3ZSa08zNnVOb1J4?=
- =?utf-8?B?bFdkN2YrcyszaHRtU3o1NzlpV2hMVXVJcDNucXRlTXM2RkZMdnRVRWp1VzRi?=
- =?utf-8?B?cmUvNVFMczBaaHB2OERHdW5mRGVZMmtrRFg5QVI3VFZ3MmloSmVvaUIxQWdN?=
- =?utf-8?B?SVFBTHhBNWw5L1JUc3dTTlNBSVR5ekpuYXNBbUxQcGJtQUpTd1V3cVlQNTA1?=
- =?utf-8?B?YlR3T0xVS3BIbHA0MklWbDM2ek9DYkVBS3VBTFdXL0pWclJxQ0ZLdjFxZUhF?=
- =?utf-8?B?S1h3dUhibldtTmN5cndGTC9HbkgxZnllc3dRTzFWcytNVGFJVEpWY2hSTlRD?=
- =?utf-8?B?REpISTM4RXo3QUlNaHo2Q2V2UFRjMTIwUy8vRDZsVHFmOHFZT2dvbVNMd1FX?=
- =?utf-8?B?UjJvWitJTkpod2l3S0liYzdDc1pkaWdGSFNZTTVENE5VZ3BaY1NPMmc0TXdS?=
- =?utf-8?B?RTJZb1p6cHFXL1NTcHpCWUw5bFRtaUllT3IzSjNOTkhPazNjTnZZaFlxSnBN?=
- =?utf-8?B?Z2NHZ1l1dGd5OUg3SSs2eXVORlFTOXJsYjZOUm9manUxVlU2V2lBeU50MHZ6?=
- =?utf-8?B?L205eWFZWlFYQnloc3lJQ1UrQVlKWDAybE1adVFmKzYwMVpObThhUXRvQlNH?=
- =?utf-8?B?QXord0NRQi8rd2Y5eXppeVcwTHNMb0RrQ1Q5cWY1MlFXZ0NTL05FYVdVVVVi?=
- =?utf-8?B?Y3JJbDVDNDFxS0JFQStaWTlud2Q5SitCamMrWUlHK1hpVXUrZE56Z3JHeVVo?=
- =?utf-8?B?YytqZ3o2b2NZMlYzNFdQc2JNbm9adzJnc3F6QVgrOEFnUG9CbmVXOWR6ZWEz?=
- =?utf-8?B?ekRpbWJpUE84NWVhMjRKZHZZOHlROXFOQVNzRC9qYncvT0NsQWFIWWp6RzhT?=
- =?utf-8?B?SmR4aTB3ZnYrTzVCU1JDS3pyMldkYjJCVUw5QUtEZ3hneHdaZFNPa3A2b3Rq?=
- =?utf-8?B?am40Vm0xVG9SbDV0djRoTEFsSFRja2ljcWRpNnUwU01kcTByZlk2NnVycXJ2?=
- =?utf-8?Q?nrZWdy/NFiqIsRBXWEhYB2o=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf8ab2f7-0d32-4938-5970-08dc701f963f
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 12:00:14.8262
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Rp2SjCauwSVjT7+jiX3xVtWivn8rxc8DzY8shb5mXt7Y0US1KYl+kY15g5Tc2zBLHZJz0B5FuOQbi/gbyZNKPj0ZrDLoNREY2CeodTV4Qsg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4917
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; boundary="nextPart6041598.lOV4Wx5bFT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-Date: Thu, 9 May 2024 13:44:37 +0200
+--nextPart6041598.lOV4Wx5bFT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Subject: Re: [PATCH v10 0/7] AMD Pstate Driver Core Performance Boost
+Date: Thu, 09 May 2024 14:01:05 +0200
+Message-ID: <5777236.DvuYhMxLoT@natalenko.name>
+In-Reply-To: <5b4f0361-a456-4e6a-983b-7c534783c643@amd.com>
+MIME-Version: 1.0
 
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
-> Date: Thu, 9 May 2024 13:41:16 +0200
-> 
->> Dear All,
->>
->> On 07.05.2024 13:20, Alexander Lobakin wrote:
->>> Quite often, devices do not need dma_sync operations on x86_64 at least.
->>> Indeed, when dev_is_dma_coherent(dev) is true and
->>> dev_use_swiotlb(dev) is false, iommu_dma_sync_single_for_cpu()
->>> and friends do nothing.
->>>
->>> However, indirectly calling them when CONFIG_RETPOLINE=y consumes about
->>> 10% of cycles on a cpu receiving packets from softirq at ~100Gbit rate.
->>> Even if/when CONFIG_RETPOLINE is not set, there is a cost of about 3%.
->>>
->>> Add dev->need_dma_sync boolean and turn it off during the device
->>> initialization (dma_set_mask()) depending on the setup:
->>> dev_is_dma_coherent() for the direct DMA, !(sync_single_for_device ||
->>> sync_single_for_cpu) or the new dma_map_ops flag, %DMA_F_CAN_SKIP_SYNC,
->>> advertised for non-NULL DMA ops.
->>> Then later, if/when swiotlb is used for the first time, the flag
->>> is reset back to on, from swiotlb_tbl_map_single().
->>>
->>> On iavf, the UDP trafficgen with XDP_DROP in skb mode test shows
->>> +3-5% increase for direct DMA.
->>>
->>> Suggested-by: Christoph Hellwig <hch@lst.de> # direct DMA shortcut
->>> Co-developed-by: Eric Dumazet <edumazet@google.com>
->>> Signed-off-by: Eric Dumazet <edumazet@google.com>
->>> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
->>> ---
->>>   include/linux/device.h      |  4 +++
->>>   include/linux/dma-map-ops.h | 12 ++++++++
->>>   include/linux/dma-mapping.h | 53 +++++++++++++++++++++++++++++++----
->>>   kernel/dma/mapping.c        | 55 +++++++++++++++++++++++++++++--------
->>>   kernel/dma/swiotlb.c        |  6 ++++
->>>   5 files changed, 113 insertions(+), 17 deletions(-)
->>
->>
->> This patch landed in today's linux-next as commit f406c8e4b770 ("dma: 
->> avoid redundant calls for sync operations"). Unfortunately I found that 
->> it breaks some of the ARM 32bit boards by forcing skipping DMA sync 
->> operations on non-coherent systems. This happens because this patch 
->> hooks dma_need_sync=true initialization into set_dma_mask(), but 
->> set_dma_mask() is not called from all device drivers, especially from 
->> those which operates properly with the default 32bit dma mask (like most 
->> of the platform devices created by the OF layer).
->>
->> Frankly speaking I have no idea how this should be fixed. I expect that 
->> there are lots of broken devices after this change, because I don't 
->> remember that calling set_dma_mask() is mandatory for device drivers.
->>
->> After adding dma_set_mask(dev, DMA_BIT_MASK(32)) to the drivers relevant 
->> for my boards the issues are gone, but I'm not sure this is the right 
->> approach...
-> 
-> If I remember correctly, *all* device drivers which use DMA *must* call
-> dma_set_*mask() on probe. That's why we added it there and didn't care.
-> Alternatively, if it really breaks a lot of drivers, we can set
-> dma_need_sync = true by default before the driver probing. I thought of
+On =C4=8Dtvrtek 9. kv=C4=9Btna 2024 0:13:49, SEL=C4=8C Mario Limonciello wr=
+ote:
+> On 5/8/2024 16:31, Oleksandr Natalenko wrote:
+> > On st=C5=99eda 8. kv=C4=9Btna 2024 21:21:39, SEL=C4=8C Oleksandr Natale=
+nko wrote:
+> >> On st=C5=99eda 8. kv=C4=9Btna 2024 21:13:40, SEL=C4=8C Oleksandr Natal=
+enko wrote:
+> >>> On st=C5=99eda 8. kv=C4=9Btna 2024 17:11:42, SEL=C4=8C Oleksandr Nata=
+lenko wrote:
+> >>>> Hello.
+> >>>>
+> >>>> On st=C5=99eda 8. kv=C4=9Btna 2024 9:21:05, SEL=C4=8C Perry Yuan wro=
+te:
+> >>>>> Hi all,
+> >>>>> The patchset series add core performance boost feature for AMD psta=
+te
+> >>>>> driver including passisve ,guide and active mode support.
+> >>>>>
+> >>>>> User can change core frequency boost control with a new sysfs entry:
+> >>>>>
+> >>>>> "/sys/devices/system/cpu/amd_pstate/cpb_boost"
+> >>>>>
+> >>>>>
+> >>>>> 1) globally disable core boost:
+> >>>>> $ sudo bash -c "echo 0 > /sys/devices/system/cpu/amd_pstate/cpb_boo=
+st"
+> >>>>> $ lscpu -ae
+> >>>>> CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ      M=
+HZ
+> >>>>>    0    0      0    0 0:0:0:0          yes 4201.0000 400.0000 2983.=
+578
+> >>>>>    1    0      0    1 1:1:1:0          yes 4201.0000 400.0000 2983.=
+578
+> >>>>>    2    0      0    2 2:2:2:0          yes 4201.0000 400.0000 2583.=
+855
+> >>>>>    3    0      0    3 3:3:3:0          yes 4201.0000 400.0000 2983.=
+578
+> >>>>>    4    0      0    4 4:4:4:0          yes 4201.0000 400.0000 2983.=
+578
+> >>>>>
+> >>>>> 2) globally enable core boost:
+> >>>>> $ sudo bash -c "echo 1 > /sys/devices/system/cpu/amd_pstate/cpb_boo=
+st"
+> >>>>> $ lscpu -ae
+> >>>>>     0    0      0    0 0:0:0:0          yes 5759.0000 400.0000 2983=
+=2E578
+> >>>>>    1    0      0    1 1:1:1:0          yes 5759.0000 400.0000 2983.=
+578
+> >>>>>    2    0      0    2 2:2:2:0          yes 5759.0000 400.0000 2983.=
+578
+> >>>>>    3    0      0    3 3:3:3:0          yes 5759.0000 400.0000 2983.=
+578
+> >>>>>    4    0      0    4 4:4:4:0          yes 5759.0000 400.0000 2983.=
+578
+> >>>>>
+> >>>>>
+> >>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> >>>>> The V9 patches add per CPU boost control, user can enable/disable C=
+PUs boost
+> >>>>> as the below command tested on a laptop system.
+> >>>>> # before
+> >>>>>    CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ    =
+   MHZ
+> >>>>>    0    0      0    0 0:0:0:0          yes 4208.0000 400.0000 1666.=
+7740
+> >>>>>    1    0      0    0 0:0:0:0          yes 4208.0000 400.0000  400.=
+0000
+> >>>>>    2    0      0    1 1:1:1:0          yes 4208.0000 400.0000 3386.=
+1260
+> >>>>>    3    0      0    1 1:1:1:0          yes 4208.0000 400.0000  400.=
+0000
+> >>>>> $ sudo rdmsr 0xc00102b3 -p 0
+> >>>>> 10a6
+> >>>>>
+> >>>>> $ sudo bash -c "echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/boost"
+> >>>>> # after
+> >>>>>    CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ    =
+   MHZ
+> >>>>>      0    0      0    0 0:0:0:0          yes 3501.0000 400.0000  40=
+0.0000
+> >>>>>      1    0      0    0 0:0:0:0          yes 4208.0000 400.0000 139=
+1.0690
+> >>>>>      2    0      0    1 1:1:1:0          yes 4208.0000 400.0000 365=
+4.4541
+> >>>>>      3    0      0    1 1:1:1:0          yes 4208.0000 400.0000  40=
+0.0000
+> >>>>> $ sudo rdmsr 0xc00102b3 -p 0
+> >>>>> 108a
+> >>>>>
+> >>>>>
+> >>>>> The patches have been tested with the AMD 7950X processor and many =
+users
+> >>>>> would like to get core boost control enabled for power saving.
+> >>>>>
+> >>>>> Perry.
+> >>>>>
+> >>>>>
+> >>>>> Changes from v9:
+> >>>>>   * change per CPU boost sysfs file name to `boost` (Mario)
+> >>>>>   * rebased to latest linux-pm/bleeding-edge
+> >>>>>
+> >>>>> Changes from v8:
+> >>>>>   * pick RB flag for patch 4 (Mario)
+> >>>>>   * change boot_cpu_has to cpu_feature_enabled for patch 2 (Boris)
+> >>>>>   * merge patch 6 into patch 3 (Mario)
+> >>>>>   * add two patch for per CPU boost control patch 6 & 7(Mario)
+> >>>>>   * rebased to latest linux-pm/bleeding-edge
+> >>>>>
+> >>>>> Changes from v7:
+> >>>>>   * fix the mutext locking issue in the sysfs file update(Ray, Mari=
+o)
+> >>>>>   * pick ack flag from Ray
+> >>>>>   * use X86_FEATURE_CPB to verify the CPB function in Patch #2(Ray)
+> >>>>>   * rerun the testing to check function works well
+> >>>>>   * rebased to linux-pm/bleeding-edge latest
+> >>>>>
+> >>>>> Changes from v6:
+> >>>>>   * reword patch 2 commit log (Gautham)
+> >>>>>   * update cover letter description(Gautham)
+> >>>>>   * rebase to kernel v6.9-rc5
+> >>>>>
+> >>>>> Changes from v4:
+> >>>>>   * drop the legacy boost remove patch, let us keep the legacy inte=
+rface
+> >>>>>     in case some applications break.
+> >>>>>   * rebase to linux-pm/bleeding-edge branch
+> >>>>>   * rework the patchset base on [PATCH v8 0/8] AMD Pstate Fixes And
+> >>>>>     Enhancements which has some intial work done there.
+> >>>>>
+> >>>>> Changes from v4:
+> >>>>>   * move MSR_K7_HWCR_CPB_DIS_BIT into msr-index.h
+> >>>>>   * pick RB flag from Gautham R. Shenoy
+> >>>>>   * add Cc Oleksandr Natalenko <oleksandr@natalenko.name>
+> >>>>>   * rebase to latest linux-pm/bleeding-edge branch
+> >>>>>   * rebase the patch set on top of [PATCH v7 0/6] AMD Pstate Fixes =
+And Enhancements
+> >>>>>   * update  [PATCH v7 2/6] to use MSR_K7_HWCR_CPB_DIS_BIT
+> >>>>>
+> >>>>> Changes from v3:
+> >>>>>   * rebased to linux-pm/bleeding-edge v6.8
+> >>>>>   * rename global to amd_pstate_global_params(Oleksandr Natalenko)
+> >>>>>   * remove comments for boot_supported in amd_pstate.h
+> >>>>>   * fix the compiler warning for amd-pstate-ut.ko
+> >>>>>   * use for_each_online_cpu in cpb_boost_store which fix the null p=
+ointer
+> >>>>>     error during testing
+> >>>>>   * fix the max frequency value to be KHz when cpb boost disabled(G=
+autham R. Shenoy)
+> >>>>>
+> >>>>> Changes from v2:
+> >>>>>   * move global struct to amd-pstate.h
+> >>>>>   * fix the amd-pstate-ut with new cpb control interface
+> >>>>>
+> >>>>> Changes from v1:
+> >>>>>   * drop suspend/resume fix patch 6/7 because of the fix should be =
+in
+> >>>>>     another fix series instead of CPB feature
+> >>>>>   * move the set_boost remove patch to the last(Mario)
+> >>>>>   * Fix commit info with "Closes:" (Mario)
+> >>>>>   * simplified global.cpb_supported initialization(Mario)
+> >>>>>   * Add guide mode support for CPB control
+> >>>>>   * Fixed some Doc typos and add guide mode info to Doc as well.
+> >>>>>
+> >>>>> v1: https://lore.kernel.org/all/cover.1706255676.git.perry.yuan@amd=
+=2Ecom/
+> >>>>> v2: https://lore.kernel.org/lkml/cover.1707047943.git.perry.yuan@am=
+d.com/
+> >>>>> v3: https://lore.kernel.org/lkml/cover.1707297581.git.perry.yuan@am=
+d.com/
+> >>>>> v4: https://lore.kernel.org/lkml/cover.1710322310.git.perry.yuan@am=
+d.com/
+> >>>>> v5: https://lore.kernel.org/lkml/cover.1710473712.git.perry.yuan@am=
+d.com/
+> >>>>> v6: https://lore.kernel.org/lkml/cover.1710754236.git.perry.yuan@am=
+d.com/
+> >>>>> v7: https://lore.kernel.org/lkml/cover.1713861200.git.perry.yuan@am=
+d.com/
+> >>>>> v8: https://lore.kernel.org/lkml/cover.1714112854.git.perry.yuan@am=
+d.com/
+> >>>>> v9: https://lore.kernel.org/lkml/cover.1714989803.git.perry.yuan@am=
+d.com/
+> >>>>>
+> >>>>> Perry Yuan (7):
+> >>>>>    cpufreq: acpi: move MSR_K7_HWCR_CPB_DIS_BIT into msr-index.h
+> >>>>>    cpufreq: amd-pstate: initialize new core precision boost state
+> >>>>>    cpufreq: amd-pstate: implement cpb_boost sysfs entry for boost c=
+ontrol
+> >>>>>    cpufreq: amd-pstate: fix the MSR highest perf will be reset issue
+> >>>>>      while cpb boost off
+> >>>>>    Documentation: cpufreq: amd-pstate: introduce the new cpu boost
+> >>>>>      control method
+> >>>>>    cpufreq: amd-pstate: introduce per CPU frequency boost control
+> >>>>>    Documentation: cpufreq: amd-pstate: update doc for Per CPU boost
+> >>>>>      control method
+> >>>>>
+> >>>>>   Documentation/admin-guide/pm/amd-pstate.rst |  30 ++++
+> >>>>>   arch/x86/include/asm/msr-index.h            |   2 +
+> >>>>>   drivers/cpufreq/acpi-cpufreq.c              |   2 -
+> >>>>>   drivers/cpufreq/amd-pstate-ut.c             |   2 +-
+> >>>>>   drivers/cpufreq/amd-pstate.c                | 189 +++++++++++++++=
++++--
+> >>>>>   include/linux/amd-pstate.h                  |  14 ++
+> >>>>>   6 files changed, 225 insertions(+), 14 deletions(-)
+> >>>>
+> >>>> I've applied this series along with fixes and improvements [1], and =
+I cannot get guided mode to work with my CPU any more.
+> >>>>
+> >>>> The CPU is:
+> >>>>
+> >>>> ```
+> >>>> Vendor ID:                AuthenticAMD
+> >>>>    Model name:             AMD Ryzen 9 5950X 16-Core Processor
+> >>>>      CPU family:           25
+> >>>>      Model:                33
+> >>>>      Thread(s) per core:   2
+> >>>>      Core(s) per socket:   16
+> >>>>      Socket(s):            1
+> >>>>      Stepping:             2
+> >>>> ```
+> >>>>
+> >>>> I've got `amd_pstate=3Dguided` set in the kernel cmdline, but `amd-p=
+state-epp` gets loaded anyway.
+> >>>
+> >>> OK, this part is solved like below:
+> >>>
+> >>> ```
+> >>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstat=
+e.c
+> >>> index aafa4466e5ced..5aee7d2b8cfd7 100644
+> >>> --- a/drivers/cpufreq/amd-pstate.c
+> >>> +++ b/drivers/cpufreq/amd-pstate.c
+> >>> @@ -66,7 +66,7 @@
+> >>>   static struct cpufreq_driver *current_pstate_driver;
+> >>>   static struct cpufreq_driver amd_pstate_driver;
+> >>>   static struct cpufreq_driver amd_pstate_epp_driver;
+> >>> -static int cppc_state;
+> >>> +static int cppc_state =3D CONFIG_X86_AMD_PSTATE_DEFAULT_MODE;
+> >>>   static bool cppc_enabled;
+> >>>   static bool amd_pstate_prefcore =3D true;
+> >>>   static struct quirk_entry *quirks;
+> >>> @@ -1958,10 +1958,6 @@ static int __init amd_pstate_init(void)
+> >>>   	/* check if this machine need CPPC quirks */
+> >>>   	dmi_check_system(amd_pstate_quirks_table);
+> >>>  =20
+> >>> -	/* get default driver mode for loading*/
+> >>> -	cppc_state =3D CONFIG_X86_AMD_PSTATE_DEFAULT_MODE;
+> >>> -	pr_debug("cppc working state set to mode:%d\n", cppc_state);
+> >>> -
+> >>>   	switch (cppc_state) {
+> >>>   	case AMD_PSTATE_DISABLE:
+> >>>   		pr_info("driver load is disabled, boot with specific mode to enab=
+le this\n");
+> >>> ```
+> >>>
+> >>> as we have discussed here [1].
+> >>>
+> >>> [1] https://lore.kernel.org/lkml/CYYPR12MB865554562BE018D46FF0108C9CE=
+52@CYYPR12MB8655.namprd12.prod.outlook.com/
+> >>
+> >> Ah no, scratch it, it's not solved. With `amd_pstate=3Dguided` the dri=
+ver fails to register during the boottime with the same `sysfs` error:
+> >>
+> >> ```
+> >> kernel: sysfs: cannot create duplicate filename '/devices/system/cpu/c=
+pufreq/policy0/boost'
+> >> kernel: Hardware name: ASUS System Product Name/Pro WS X570-ACE, BIOS =
+4805 03/18/2024
+> >> kernel: Call Trace:
+> >> kernel:  <TASK>
+> >> kernel:  dump_stack_lvl+0x47/0x60
+> >> kernel:  sysfs_warn_dup+0x5a/0x70
+> >> kernel:  sysfs_create_file_ns+0x196/0x1b0
+> >> kernel:  cpufreq_online+0x244/0xde0
+> >> kernel:  cpufreq_add_dev+0x7b/0x90
+> >> kernel:  subsys_interface_register+0x19e/0x1d0
+> >> kernel:  cpufreq_register_driver+0x177/0x2f0
+> >> kernel:  amd_pstate_init+0x1b8/0x2c0
+> >> kernel:  do_one_initcall+0x5b/0x320
+> >> kernel:  kernel_init_freeable+0x1dc/0x380
+> >> kernel:  kernel_init+0x1a/0x1c0
+> >> kernel:  ret_from_fork+0x34/0x50
+> >> kernel:  ret_from_fork_asm+0x1b/0x30
+> >> kernel:  </TASK>
+> >> ```
+> >>
+> >> and things revert to `acpi_cpufreq` instead.
+> >>
+> >> What's wrong?
+> >=20
+> > This happens with both `amd_pstate=3Dguided` and `amd_pstate=3Dpassive`=
+, while with `amd_pstate=3Dactive` it works. Also note I've got:
+> >=20
+> > ```
+> > CONFIG_X86_AMD_PSTATE=3Dy
+> > CONFIG_X86_AMD_PSTATE_DEFAULT_MODE=3D3
+> > ```
+> >=20
+> > aka "active" by default.
+> >=20
+> > It seems I miss to understand something in the init sequence.
+> >=20
+>=20
+> I think what's going on is that by reusing the same name as acpi_cppc=20
+> does for sysfs when amd pstate is changing modes the sysfs file from=20
+> amd-pstate isn't cleared and so acpi_cppc tries to make it.
 
-Or invert the flag, so that false would mean "it needs sync" and it
-would be the default if dma_*mask*() wasn't called.
+Seems so. I've renamed `amd_pstate`'s `boost` file to `amd_pstate_boost`, a=
+nd now I'm able to boot with `amd_pstate=3Dguided`, and after boot under `/=
+sys/devices/system/cpu/cpufreq/policyX` I see both `boost` (from `acpi_cppc=
+`, apparently) and `amd_pstate_boost` at the same time.
 
-Chris, what do you think?
+Not sure the fact both files are present is as intended.
 
-> this, but the correct approach would be to call dma_set_*mask() from the
-> respective drivers.
-> 
->>
->>
->>> ...
->>
->> Best regards
+>=20
+> Don't get me wrong - I do think that we should keep the same sysfs name=20
+> for both, it's easier for users.
+>=20
+> But if we're going to keep mode switching from amd-pstate at runtime we=20
+> really need to make sure that amd-pstate-ut explicitly tests all these=20
+> combinations to catch these types of problems.
 
-Thanks,
-Olek
+Not sure it's runtime switching only that is affected. I guess having `CONF=
+IG_X86_AMD_PSTATE_DEFAULT_MODE` set to `active` and then having `amd_pstate=
+=3Dguided` on the kernel cmdline is not considered to be a runtime switchin=
+g (or is it?), yet it doesn't work either due to filename conflict.
+
+> >>
+> >>>
+> >>> But this part:
+> >>>
+> >>>> When I try to set `guided` manually via `echo guided | sudo tee /sys=
+/devices/system/cpu/amd_pstate/status`, the status gets dropped to `disable=
+`, `tee` errors out with `-ENODEV`, and there's this in the kernel log:
+> >>>>
+> >>>> ```
+> >>>> $ jctl -kb | grep sysfs: | cut -d ' ' -f 5-
+> >>>> kernel: sysfs: cannot create duplicate filename '/devices/system/cpu=
+/cpufreq/policy0/boost'
+> >>>> =E2=80=A6
+> >>>> kernel: sysfs: cannot create duplicate filename '/devices/system/cpu=
+/cpufreq/policy31/boost'
+> >>>> ```
+> >>>
+> >>> is not. I've successfully booted with `amd_pstate=3Dguided`, then did=
+ this:
+> >>>
+> >>> ```
+> >>> $ echo active | sudo tee /sys/devices/system/cpu/amd_pstate/status
+> >>> ```
+> >>>
+> >>> just for the sake of test, and got this:
+> >>>
+> >>> ```
+> >>> tee: /sys/devices/system/cpu/amd_pstate/status: File exists
+> >>> ```
+> >>>
+> >>> and this:
+> >>>
+> >>> ```
+> >>> kernel: WARNING: CPU: 9 PID: 8528 at drivers/cpufreq/cpufreq.c:2961 c=
+pufreq_unregister_driver+0x1a/0xc0
+> >>> ```
+> >>>
+> >>> which corresponds to:
+> >>>
+> >>> ```
+> >>> 2957 void cpufreq_unregister_driver(struct cpufreq_driver *driver)
+> >>> 2958 {
+> >>> 2959         unsigned long flags;
+> >>> 2960
+> >>> 2961         if (WARN_ON(!cpufreq_driver || (driver !=3D cpufreq_driv=
+er)))
+> >>> 2962                 return;
+> >>> ```
+> >>>
+> >>> I haven't conducted this test before, so I don't know whether this be=
+haviour is new, or it was present in older iterations. I also don't know if=
+ this belongs to the "boost" series or the "fixes", and just letting you kn=
+ow so that you can test the runtime switching yourself and see if it is rep=
+roducible in your environment as well or not.
+> >>>
+> >>>> The following is applied on top of v6.9-rc7:
+> >>>>
+> >>>> ```
+> >>>> cpufreq: amd-pstate: automatically load pstate driver by default
+> >>>> cpufreq: amd-pstate: fix the highest frequency issue which limit per=
+formance
+> >>>> cpufreq: amd-pstate: implement heterogeneous core topology for highe=
+st performance initialization
+> >>>> x86/cpufeatures: Add feature bits for AMD heterogeneous processor
+> >>>> cpufreq: amd-pstate: switch boot_cpu_has() to cpu_feature_enabled()
+> >>>> Documentation: PM: amd-pstate: add guide mode to the Operation mode
+> >>>> Documentation: PM: amd-pstate: add debugging section for driver load=
+ing failure
+> >>>> Documentation: PM: amd-pstate: introducing recommended reboot requir=
+ement during driver switch
+> >>>> cpufreq: amd-pstate: add debug message while CPPC is supported and d=
+isabled by SBIOS
+> >>>> cpufreq: amd-pstate: show CPPC debug message if CPPC is not supported
+> >>>> cpufreq: amd-pstate: optimiza the initial frequency values verificat=
+ion
+> >>>> Documentation: cpufreq: amd-pstate: update doc for Per CPU boost con=
+trol method
+> >>>> cpufreq: amd-pstate: introduce per CPU frequency boost control
+> >>>> Documentation: cpufreq: amd-pstate: introduce the new cpu boost cont=
+rol method
+> >>>> cpufreq: amd-pstate: fix the MSR highest perf will be reset issue wh=
+ile cpb boost off
+> >>>> cpufreq: amd-pstate: implement cpb_boost sysfs entry for boost contr=
+ol
+> >>>> cpufreq: amd-pstate: initialize new core precision boost state
+> >>>> cpufreq: acpi: move MSR_K7_HWCR_CPB_DIS_BIT into msr-index.h
+> >>>> cpufreq: amd-pstate: remove unused variable lowest_nonlinear_freq
+> >>>> cpufreq: amd-pstate: fix code format problems
+> >>>> cpufreq: amd-pstate: Add quirk for the pstate CPPC capabilities miss=
+ing
+> >>>> cpufreq: amd-pstate: get transition delay and latency value from ACP=
+I tables
+> >>>> cpufreq: amd-pstate: Bail out if min/max/nominal_freq is 0
+> >>>> cpufreq: amd-pstate: Remove amd_get_{min,max,nominal,lowest_nonlinea=
+r}_freq()
+> >>>> cpufreq: amd-pstate: Unify computation of {max,min,nominal,lowest_no=
+nlinear}_freq
+> >>>> cpufreq: amd-pstate: Document the units for freq variables in amd_cp=
+udata
+> >>>> cpufreq: amd-pstate: Document *_limit_* fields in struct amd_cpudata
+> >>>> ```
+> >>>>
+> >>>> Previously, with your submissions, it was possible to use `guided` m=
+ode with my Zen 3.
+> >>>>
+> >>>> [1] https://lore.kernel.org/lkml/cover.1715065568.git.perry.yuan@amd=
+=2Ecom/
+> >>>>
+> >>>>
+> >>>
+> >>>
+> >>>
+> >>
+> >>
+> >>
+> >=20
+> >=20
+>=20
+>=20
+
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart6041598.lOV4Wx5bFT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmY8uwEACgkQil/iNcg8
+M0sF4hAA1Fs0lhZFlWK/MEZGAHpBhS6gPs7IxFbuPXNnvzEtbfCPWJXm64nJpc6t
+IreVK0tdZxvJ8Vdt8Mxh0yZLhlLWKvJgwo/UW+l/9mnKoqV9DN/13euRAbs95oMN
+5VHhBQPylzYl+joaYLqSWOlND68c7+0S4yEXFWMdhnhvfiI+viMbCDwi7s7FgfT6
+gyoeiAPkVYyWWk/uNldcyVR/IMqT7xk/eTHgY2Z3pjzKZCmeGUz+vVK1gtVS5Lh5
+a4kQiFeU6yU90feQEC9wKe6hnCllIpCMvLGI29nT3BtEltaWTmq/aqMY84TH4PTZ
+9wGiJhLE/U4R0Y7dFNGJ2JdghPpFhB5nep9FTiuY7nPZswdvb3ye7nhFDZaGFcun
+mWqeiJ82SNKsMXWqTGUN6Hb4U1yrKf5AfRffuZbkZQe9rmzykrn02X/szVKceIEZ
+Q7/F6idsDCDGJWid8MI9opE+2BYjkltKtGgmOjJpP/NZZfmqkMFxCV4yfa0Phi3w
+WZLBtV5TRDIeeRW7OksTwaIMVKsLxlca+DTkb8b9T5eGcI1AILYtt/G6CaL/AGbQ
+a7YNyOWvHDoIEzmGcF+KNwIKPmyJpOfordz+idJPTC9SkXvHo7qqPn/tAeR2gfuG
+9j4AarTx3iajfvcfbgPlTBMgu6ZnFzZ7kPWM/Hm/CF1pzI1tVnQ=
+=j1Dd
+-----END PGP SIGNATURE-----
+
+--nextPart6041598.lOV4Wx5bFT--
+
+
+
 
