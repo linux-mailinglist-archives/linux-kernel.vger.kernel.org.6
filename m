@@ -1,182 +1,100 @@
-Return-Path: <linux-kernel+bounces-174988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD2B8C1852
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:22:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F47D8C1853
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EB5286C9F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04F21F2249E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AE91292E6;
-	Thu,  9 May 2024 21:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yu8nQ5Mi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACDF8594C;
+	Thu,  9 May 2024 21:24:02 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0584E84FB1;
-	Thu,  9 May 2024 21:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9950380632
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715289719; cv=none; b=Iqs52Ci1x+6pmOcqfYTElEscbsjteyFQEDsVZrfhvEV68sYLxyAsoJKEfZSc1gxFrJQtHBPZNQhAaeqREeCk6y6WfRWyekIU6HomCAToJNzrF6EZrdtq/ld4acZ50p7RDO7h6h1922QlmACAK1UvhbXYsfnp7995q0FIJE3QuaU=
+	t=1715289842; cv=none; b=kiPy/07Cc65kyMBMbwOSE5DrpxEh5zq03/Q94Jhgga4KGVVzbjTgizCoHtguusZ5kYZfCvkaKyVUzCYlD3mmQ6xiEwxbvMBB8Ldd0dcb7TdkyvU4uAuLfxnEEQQjJybvl6Ou5choL9cWpn8QRHUxoTShHdh0kel2GOqumdzcX68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715289719; c=relaxed/simple;
-	bh=8NaOu27Ba2DQElXCBlj4VoleD/3dxECCUoAuTR9sKFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jSb9fjg7xfQ9pcZA6zPXPO6N4ptC5lu2LM0eNucyDKjKtQf28UMMshzoAygbGL+PXMAgwDvxcfkSnnK++eBGVtbAXCn/T08o795o7EamDsE9/KoBe9r6q3OxAkzRZQQEDhMWhKIVnFtKtNwLSYgyYNz4J53tG1U85LhASI16aMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yu8nQ5Mi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C9CC116B1;
-	Thu,  9 May 2024 21:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715289718;
-	bh=8NaOu27Ba2DQElXCBlj4VoleD/3dxECCUoAuTR9sKFs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Yu8nQ5MiN7odJjnzNR2c3eKPT6s7qgplI70Ls9HuGzcyRqLCrE+6D4jn1U1IwWDfi
-	 o0F+b24A1yNq/pkvfpN8GoUFVNNVplYev8d2dm63z9r+bPUClT7mFKRLhAicfYrgiq
-	 UbjlliqVuaj6cVlZQXdNSJJ+UrgUyGvFVe/EPKW0k7OTJLF/Yy0/dv4mmEZ3hpAfCA
-	 a+VGUeWxFMepzOlEcAlNw78VOp/5H6TDcZaPtaUiNkRu8sg1w4EZu1flGUZYIkrdji
-	 S7sb2rvyGCzBcoXYe2s0Cw2AJ++P0IMqJbWW2OG3G+HibF3RZitMjXQp79OwatN5IS
-	 3mdaaMxIq0KHw==
-Date: Thu, 9 May 2024 18:21:55 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org,
-	leo.yan@linux.dev, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf dwarf-aux: Fix build with HAVE_DWARF_CFI_SUPPORT
-Message-ID: <Zj0-c7Ac0qHkuLNt@x1>
-References: <20240508141458.439017-1-james.clark@arm.com>
- <20240509101136.5b0e0f2bf8df640fc2e65624@kernel.org>
+	s=arc-20240116; t=1715289842; c=relaxed/simple;
+	bh=SEFpFTBcxfnU5YKbgVM3TPjMbGxapd0haMRAIoOJewg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=QjCTnxQEQ150bS+d1uoaiPo991ULIhWRNWS/B/l0SvMrwEQx5oUmKXq1hlZfphnWYUqFvfN3Bl8/5muMBX1EVe/7aARz/rITeWd1j/kZPzLLScXFPQ99Qk8PPUPHOjDndPOmBK983H22Ku0rwol9/S3/x35Z9lRoHyX/5cBfia4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-262-ZHxZcEbrMxKlg_Jm_e8yvA-1; Thu, 09 May 2024 22:23:57 +0100
+X-MC-Unique: ZHxZcEbrMxKlg_Jm_e8yvA-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Thu, 9 May
+ 2024 22:23:29 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Thu, 9 May 2024 22:23:29 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Kees Cook
+	<keescook@chromium.org>
+CC: Justin Stitt <justinstitt@google.com>, Peter Zijlstra
+	<peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: RE: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Topic: [RFC] Mitigating unexpected arithmetic overflow
+Thread-Index: AQHaoaITK91jQ1nmYEmzGISNIfAGlrGPZyIw
+Date: Thu, 9 May 2024 21:23:29 +0000
+Message-ID: <f41cd250b90d4eb883ea5ff245718200@AcuMS.aculab.com>
+References: <202404291502.612E0A10@keescook>
+ <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
+ <202405081144.D5FCC44A@keescook>
+ <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+ <202405081354.B0A8194B3C@keescook>
+ <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509101136.5b0e0f2bf8df640fc2e65624@kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Thu, May 09, 2024 at 10:11:36AM +0900, Masami Hiramatsu wrote:
-> On Wed,  8 May 2024 15:14:57 +0100
-> James Clark <james.clark@arm.com> wrote:
-> 
-> > check_allowed_ops() is used from both HAVE_DWARF_GETLOCATIONS_SUPPORT
-> > and HAVE_DWARF_CFI_SUPPORT sections, so move it into the right place so
-> > that it's available when either are defined. This shows up when doing
-> > a static cross compile for arm64:
-> > 
-> >   $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LDFLAGS="-static" \
-> >     EXTRA_PERFLIBS="-lexpat"
-> > 
-> >   util/dwarf-aux.c:1723:6: error: implicit declaration of function 'check_allowed_ops'
-> > 
-> 
-> Looks good to me.
-> 
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Thanks!
+Li4uDQo+IEkgdGhpbmsgdGhhdCB3b3VsZCBiZSBhIGNvbXBsZXRlbHkgZGlmZmVyZW50IGFyZWEg
+dGhhdCBtaWdodCBiZSB3b3J0aA0KPiBsb29raW5nIGF0OiBpbnN0cnVtZW50aW5nIGltcGxpY2l0
+IGNhc3RzIGZvciAiZHJvcHMgYml0cyIuIEknbSBhZnJhaWQNCj4gdGhhdCBpdCdzIGp1c3QgKnNv
+KiBjb21tb24gdGhhbiB3ZSBtaWdodCBub3QgYmUgYWJsZSB0byBkbyB0aGF0DQo+IHNhbmVseS4N
+Cg0KVGhpbmdzIGxpa2U6DQoJYnVmWzBdID0gdmFsOw0KCWJ1ZlsxXSA9IHZhbCA+Pj0gODsNCgli
+dWZbMl0gPSB2YWwgPj49IDg7DQoJYnVmWzNdID0gdmFsID4+PSA4Ow0KZm9yIHdyaXRpbmcgYSB2
+YWx1ZSBsaXR0bGUtZW5kaWFuIGFuZCBwb3RlbnRpYWxseSBtaXNhbGlnbmVkLg0KUmVhbGx5IGRv
+ZXNuJ3Qgd2FudCBhbnkgYW5ub3RhdGlvbi4NCg0KSSd2ZSBhbHNvIHNlZW4gY29kZSBsaWtlOg0K
+CWJ1ZlswXSA9ICh1bnNpZ25lZCBjaGFyKSh2YWwgJiAweGZmKTsNCm5vdCBvbmx5IHVnbHkgYnkg
+aXQgZ290IGNvbXBpbGVkIHRvOg0KCXZhbCAmPSAweGZmIC8vIGZvciB0aGUgJg0KCXZhbCAmPSAw
+eGZmIC8vIGZvciB0aGUgY2FzdA0KCWJ5dGUgd3JpdGUgdG8gbWVtb3J5Lg0KTW9kZXJuIGdjYyBk
+b2Vzbid0IGRvIHRoYXQsIGJ1dC4uLg0KDQpUaGVyZSBhcmUgc29tZSBzcHVyaW91cyBjYXN0cyB0
+aGF0IGRyb3AgYml0cy4NCkkgZm91bmQgcGxlbnR5IG9mIGR1YmlvdXMgbWluX3QodTgvdTE2LC4u
+LikgZXhhbXBsZXMuDQooV2VsbCB0aGV5IGFyZSBkdWJpb3VzLCBzb21lIGFyZSBqdXN0IGEgbG90
+IG1vcmUgZHViaW91cyB0aGFuIG90aGVycy4pDQpUaGUgcHJvYmxlbSBpcyB0aGF0IGV2ZXJ5IG9u
+ZSBuZWVkcyBjYXJlZnVsIGluc3BlY3Rpb24ganVzdCBpbiBjYXNlDQp0aGUgc3RyYW5nZSBiZWhh
+dmlvdXIgaXMgcmVxdWlyZWQgbGlrZSBtaW5fdCh1OCwgdmFsIC0gMSwgbG9fbGltIC0gMSkNCndo
+aWNoIHRyZWF0cyBsb19saW0gb2YgemVybyBhcyAnbm90IGEgbGltaXQnIGFuZCBJIHRoaW5rIHdh
+cyBvay4NCg0KQSBzbG93LCBjb25jZXJ0ZWQgZWZmb3J0IHRvIHJlbW92ZSBtaW5fdCgpIGNhbGxz
+IHdvdWxkbid0IGJlIGEgYmFkIHRoaW5nLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRy
+ZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1L
+MSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Thanks, applied to perf-tools-next,
-
-- Arnaldo
- 
-> > Fixes: 55442cc2f22d ("perf dwarf-aux: Check allowed DWARF Ops")
-> > Signed-off-by: James Clark <james.clark@arm.com>
-> > ---
-> >  tools/perf/util/dwarf-aux.c | 56 ++++++++++++++++++-------------------
-> >  1 file changed, 28 insertions(+), 28 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
-> > index c0a492e65388..c9584563cd56 100644
-> > --- a/tools/perf/util/dwarf-aux.c
-> > +++ b/tools/perf/util/dwarf-aux.c
-> > @@ -1215,6 +1215,34 @@ static int offset_from_dwarf_op(Dwarf_Op *op)
-> >  	}
-> >  	return -1;
-> >  }
-> > +
-> > +static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
-> > +{
-> > +	/* The first op is checked separately */
-> > +	ops++;
-> > +	nops--;
-> > +
-> > +	/*
-> > +	 * It needs to make sure if the location expression matches to the given
-> > +	 * register and offset exactly.  Thus it rejects any complex expressions
-> > +	 * and only allows a few of selected operators that doesn't change the
-> > +	 * location.
-> > +	 */
-> > +	while (nops) {
-> > +		switch (ops->atom) {
-> > +		case DW_OP_stack_value:
-> > +		case DW_OP_deref_size:
-> > +		case DW_OP_deref:
-> > +		case DW_OP_piece:
-> > +			break;
-> > +		default:
-> > +			return false;
-> > +		}
-> > +		ops++;
-> > +		nops--;
-> > +	}
-> > +	return true;
-> > +}
-> >  #endif /* HAVE_DWARF_GETLOCATIONS_SUPPORT || HAVE_DWARF_CFI_SUPPORT */
-> >  
-> >  #ifdef HAVE_DWARF_GETLOCATIONS_SUPPORT
-> > @@ -1395,34 +1423,6 @@ static bool match_var_offset(Dwarf_Die *die_mem, struct find_var_data *data,
-> >  	return true;
-> >  }
-> >  
-> > -static bool check_allowed_ops(Dwarf_Op *ops, size_t nops)
-> > -{
-> > -	/* The first op is checked separately */
-> > -	ops++;
-> > -	nops--;
-> > -
-> > -	/*
-> > -	 * It needs to make sure if the location expression matches to the given
-> > -	 * register and offset exactly.  Thus it rejects any complex expressions
-> > -	 * and only allows a few of selected operators that doesn't change the
-> > -	 * location.
-> > -	 */
-> > -	while (nops) {
-> > -		switch (ops->atom) {
-> > -		case DW_OP_stack_value:
-> > -		case DW_OP_deref_size:
-> > -		case DW_OP_deref:
-> > -		case DW_OP_piece:
-> > -			break;
-> > -		default:
-> > -			return false;
-> > -		}
-> > -		ops++;
-> > -		nops--;
-> > -	}
-> > -	return true;
-> > -}
-> > -
-> >  /* Only checks direct child DIEs in the given scope. */
-> >  static int __die_find_var_reg_cb(Dwarf_Die *die_mem, void *arg)
-> >  {
-> > -- 
-> > 2.34.1
-> > 
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
