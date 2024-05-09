@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-174228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A478C0BDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:03:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9708C0BE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:07:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23FB11C21374
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:03:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014D3B22384
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA2B13C9B3;
-	Thu,  9 May 2024 07:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4591F13CA80;
+	Thu,  9 May 2024 07:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTrOPr/B"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5U9eGsf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D642F4A;
-	Thu,  9 May 2024 07:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75830624;
+	Thu,  9 May 2024 07:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715238228; cv=none; b=bRXUbvW5JcJTIl8+1oJ1ftC+Vh6WODIgQfVuaxC6pKP5r6bHRuoJ49i+692E5s8/ayfgGIhkr4IfAG0R1IwvTs56cHqMzrJNbAfSj5RpDDqh9YjhPdX3ClNMwyc+PCtMgdwGh1hD3eI5tlx7h1ZHrcz+1ehmZlFC+1bf/kC7GBE=
+	t=1715238415; cv=none; b=KutUIsIINs2wHyN7bbCD37BfEzPwzC7jH0NSI68KInTpHlDrebMq5OaCz46g6YpkJJ3jp15TulTrlQsfa7Nfs3ZOJMuX+JdiGzNjUXKlsYzGl3rrJN34dMTn9VkOQzzassYJk1JBHz4EVdROZEG2Jw0oeLxal9zmpYVfoFcBoOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715238228; c=relaxed/simple;
-	bh=qGxIb+yN4QJ5lbflcHzZ289CJV8WK+EAGAfTzoHSU5Y=;
+	s=arc-20240116; t=1715238415; c=relaxed/simple;
+	bh=D0YNdCj72T33QDAW/BxiXgYB+ixQvL7O7umDUwM2hUw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y0u5ziZIRHytSJ8WZ+w8cBU5TQD76fzOSaC/KMbdOETi8Pf2HWRdPbB0om7k/JL4h3kX/qhSCXisJtgS1ABhHgLGtkCcQ8YdfEzNyt83wtazKnmuC2dm7hgMJ9EvREwrWqb5sVwjmZSDUrVtZ9yDjoQP1urxdTMbcYakqasg5JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTrOPr/B; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f3761c96aso656303e87.3;
-        Thu, 09 May 2024 00:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715238225; x=1715843025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kV3VXr3FzBHHc86etbARcMDYosOYMN7pyry12cUs17I=;
-        b=aTrOPr/BMAf8QgbzyQTQ0vyl2kDuO+59HlJVO9AKSZOr/pqZ7fV5pPDGUV/OZpv+MY
-         K4cwdfgQE/laHA4wMur8XLWci3bKbPNV8j0zi+/1rofUgJ+h1ADHIfLvy1/5rY7Up0cT
-         dJKMqdacJQRvbOgxzHKlgYNvkvfFVhVwi0pL1I5XERji0pBVqZ+qdZj8jPnhhD3Ya49y
-         nIbcwkD4MTw2sh07lJi2IKHiphWmjKg82wGDQmYvMIeHxdZRvWuvaUWWjz5jpkSL6uA4
-         aFUlr5i+llcED2pNBMSFmL8ao2QPpyxGkoM/vmGqN6dZsB5lvns4OYBba7icGWoDDlbh
-         3bKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715238225; x=1715843025;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kV3VXr3FzBHHc86etbARcMDYosOYMN7pyry12cUs17I=;
-        b=Rx2VojXDIsVbHzTxLZr+4B2JHQFDMIMwAYGWskP7IDF0Z9fKLLg82H4rhFEXPBpK3J
-         1W8RgVlbXkKadBDU616VPlH56fWGRDISJGFq1JXAssx8/VBjNgdW+dy21ZflgbR7dV5R
-         oYaJJb1fUX8S5Qmmoe8M2+e6tY/UgJe0EQp1ZBgDCkAMgNS9if0uXguXoRj78uwg1B0J
-         kquNRwGo2pqzx+eaHFHCLtLUZ2e5i7+XkSwRdBnWfGcEVTiXPZ8lDZLHPauPWQZWc7u2
-         3sLie6OBlucvo0OaKfkoIOQc8vmDuQnahl1Z287UFNkH85Ax2PPsDQuYM+ZO+oYbidqK
-         iIqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOPEks0PTGd+I8AaOvwaCldJwl9njhp/O2HwKrdij9fpX40j4bL4Rrpsf4N3M6t/3gmoRnRssrExdnsvjeUFOxxcqY73VzYNZV4wdQI2WSf9VaxqD5pgfR004xU7oupkN9lCUqOUpj/3XOgBLhwKMtTHnrqBI0Abl9SllaCvqqxO8fkuhQBly0
-X-Gm-Message-State: AOJu0YyhKoxQ1s4RH+37xQEnHkJ1+fEaLlGv1zNrCmO0VvAA7RNGdICY
-	RuMCJIVGuRKO5J/F+fv8U0EkfKoeBUYv8gsNUE5DpRavF9F/PS4m
-X-Google-Smtp-Source: AGHT+IFH0nSj1Sl2zFNlZBn03COxstGselG/PVwJSfHFEuveurl+egnMUQf/L31IPth8h1fRjaPcEw==
-X-Received: by 2002:a05:6512:3b28:b0:51d:1d42:3eef with SMTP id 2adb3069b0e04-5217c6673f2mr5419056e87.29.1715238224762;
-        Thu, 09 May 2024 00:03:44 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba5bfsm161189e87.79.2024.05.09.00.03.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 00:03:44 -0700 (PDT)
-Message-ID: <0674ca23-2cf2-48a6-84d3-e0936d50dd8c@gmail.com>
-Date: Thu, 9 May 2024 10:03:43 +0300
+	 In-Reply-To:Content-Type; b=PFnc5KjL34e3tL03Ru2Lalml7UdZdN6RWzbyUcE+N2OHyj2SVgIsxm/JOc+Fvw9CoXPbMSfYo8r0DsBNmjjcdivVaHnRMGrtyMtbp8TcbwSWy3HlPJ39qEA7xHKiGF3b3i3Gq8ht2Ydth+0hEN5fcOym7qDn3RUNtPdxkKBv6go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5U9eGsf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF35AC116B1;
+	Thu,  9 May 2024 07:06:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715238415;
+	bh=D0YNdCj72T33QDAW/BxiXgYB+ixQvL7O7umDUwM2hUw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K5U9eGsf5CBo92Qm6hl7dhtzryo7duhyQtWuE+zitvv3s1+m+FYHsHVp3uPlFCLDQ
+	 KmbMGdh2/kPFMeyroYW7iAHbySc2hT3PWDQwwdLe3JUexMPiJk1sQu/m9QcB/wdlMh
+	 5AIfLz0qZyffZcL6sCbre8kpYph580qtqs6f+5QsGxsptYyspHRS9gN+8Oeh/CrH37
+	 ccvCD8+8fu/eTZd0VQJ80GXdlV8xdKnVXREnvUyai7xp291d10n7F3QhBuR0TEbzw4
+	 os7C01+2zf2Ds0berdKsrZbsnuCB4vyjimDYsB3JUm8utttL0VKZeEliNK2H1YBY7X
+	 NC9PLItFxXQjw==
+Message-ID: <fe5b3af9-b307-45e1-b190-ba2b3327a8df@kernel.org>
+Date: Thu, 9 May 2024 09:06:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,108 +49,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/6] Support ROHM BD96801 scalable PMIC
-Content-Language: en-US, en-GB
-To: Mark Brown <broonie@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>
-References: <cover.1712058690.git.mazziesaccount@gmail.com>
- <f7d454ac-6ecb-4431-a1de-c9b5d1240969@gmail.com>
- <eb03ec33-0627-4986-be04-8e35da390d6b@sirena.org.uk>
- <b6279be8-cf7d-4608-b556-3c01587f0d43@gmail.com>
- <f1e3d31d-8c24-4cdc-ae26-747f383a937b@gmail.com>
- <b6ded975-1d16-46ea-84a2-8799b36e1270@gmail.com>
- <ZjxaP_BNWVufJb_X@finisterre.sirena.org.uk>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <ZjxaP_BNWVufJb_X@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: Document adt7475 PWM initial
+ duty cycle
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
+ linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240508215504.300580-1-chris.packham@alliedtelesis.co.nz>
+ <20240508215504.300580-2-chris.packham@alliedtelesis.co.nz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240508215504.300580-2-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/9/24 08:08, Mark Brown wrote:
-> On Mon, Apr 22, 2024 at 01:52:27PM +0300, Matti Vaittinen wrote:
->> On 4/5/24 12:19, Matti Vaittinen wrote:
->>> On 4/4/24 16:15, Matti Vaittinen wrote:
+On 08/05/2024 23:55, Chris Packham wrote:
+> Add documentation for the pwm-initial-duty-cycle and
+> pwm-initial-frequency properties. These allow the starting state of the
+> PWM outputs to be set to cater for hardware designs where undesirable
+> amounts of noise is created by the default hardware state.
 > 
->>>>> I would expect each parent interrupt to show up as a separate remap_irq.
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 > 
->>>>> So if we arrange to supply a name when we register multiple domains
->>>>> things should work fine?
+> Notes:
+>     Changes in v2:
+>     - Document 0 as a valid value (leaves hardware as-is)
 > 
->>> After my latest findings, yes, I think so. How to do this correctly is
->>> beyond me though. The __irq_domain_create() seems to me that the name is
->>> meant to be the dt-node name when the controller is backed by a real
->>> dt-node. Naming of the irq_domain_alloc_named_fwnode() sounds to me like
+>  .../devicetree/bindings/hwmon/adt7475.yaml    | 27 ++++++++++++++++++-
+>  1 file changed, 26 insertions(+), 1 deletion(-)
 > 
-> ...
-> 
->> If we wanted to support multiple HWIRQs / regmap-IRQ controller, it would
->> require us to duplicate almost everything in the struct regmap_irq_chip for
->> every new parent IRQ. The status/mask register information, IRQ type, etc.
->> Naturally, it would require also duplicating lot of the data contained in
->> the struct regmap_irq_chip_data. I am not sure if this could be done so the
->> change is not reflected in the existing IRQ data initialization macros etc.
->> Furthermore, some API changes would be required like changes to
->> regmap_irq_get_domain().
-> 
-> I don't understand what the difficulty is here - we're creating multiple
-> interrupt controllers so I'd expect to have to have full definitions of
-> each, and since everything is referenced by name from the root
-> regmap_irq_chip which gets registered it's just a case of supplying
-> different names and all the helpers should be fine?
-> 
->> Thus, forcing the regmap-IRQ to support multiple parents instead of having
->> own regmap-IRQ instance / parent IRQ feels like fitting square item to a
->> round hole. I am sure fixing all the bugs I caused would give donate a lot
->> of EXP-points though :rolleyes:
-> 
-> Right, my suggestion is to register multiple regmap_irq instrances - one
-> per parent - and supply a name that allows all the display/debugfs stuff
-> that currently uses the dev_name() to deduplicate.  You'd end up
-> sticking -primary, -secondary or whatever name was supplied onto the
-> names we currently use.
-> 
->> Another option I see, is trying to think if irq-domain name could be
->> changed. (This is what the RFC v3 does, [ab]using the
->> irq_domain_update_bus_token()). I was a bit put off by the idea of
->> 'instantiating' multiple domains (or regmap-IRQ controllers) from a single
->> node, but more I think of this, more I lean towards it. Besides, this is not
-> 
-> Yes, register mutliple controllers with different names.
+> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
+> index 051c976ab711..97deda082b4a 100644
+> --- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
+> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
+> @@ -51,6 +51,30 @@ properties:
+>        enum: [0, 1]
+>        default: 1
+>  
+> +  adi,pwm-initial-duty-cycle:
+> +    description: |
+> +      Configures the initial duty cycle for the PWM outputs. The hardware
+> +      default is 100% but this may cause unwanted fan noise at startup. Set
+> +      this to a value from 0 (0% duty cycle) to 255 (100% duty cycle).
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    minItems: 3
+> +    maxItems: 3
+> +    items:
+> +      minimum: 0
+> +      maximum: 255
+> +      default: 255
+> +
+> +  adi,pwm-initial-frequency:
 
-Thanks for the guidance Mark. The controller name is not a problem. 
-Problem is that I don't see a (proper) way to supply a name for the IRQ 
-domain which gets registered by regmap-IRQ. IRQ domain code picks the 
-name for the domain by the device-tree node. Both of our IRQ controllers 
-would be instantiated from same node => the IRQ domain will get same 
-name => debugfs will conflict.
+Frequency usually has some units, so use appropriate unit suffix and
+drop $ref.  Maybe that's just target-rpm property?
 
-My "solution" was simply dropping the ERRB IRQ from the driver (for now 
-at least). I did send that as a series without 'RFC' - but made a 
-mistake and restarted the versioning from v1. I am currently working 
-with 2 other PMICs, one of them does also provide similar setup of two 
-IRQ lines. Thus, I think being able to provide a name (suffix?) for IRQ 
-domain when registering it instead of just using the name of the DT node 
-is something I should look into. It's just nice to know someone else 
-thinks it is valid approach.
+But isn't this duplicating previous property? This is fan controller,
+not PWM provider (in any case you miss proper $refs to pwm.yaml or
+fan-common.yaml), so the only thing you initially want to configure is
+the fan rotation, not specific PWM waveform. If you you want to
+configure specific PWM waveform, then it's a PWM provider... but it is
+not... Confused.
 
-Thanks for the input!
-
-Yours,
-	-- Matti
-
-
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
+Best regards,
+Krzysztof
 
 
