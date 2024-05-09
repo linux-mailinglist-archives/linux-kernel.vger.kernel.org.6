@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-174234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAEC8C0BF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:31:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81C08C0BFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA83B284BD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA6C6B2159D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D941494D2;
-	Thu,  9 May 2024 07:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475E7149C4C;
+	Thu,  9 May 2024 07:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lr/LXdoM"
-Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aqfQ01hI"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E3113C830
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F4148318
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715239897; cv=none; b=T45JPjuQqHaer9baxeqVJaYunTnaBLjETGr36V5/JRBdDu6oyaCe3FNpKalh+9IKlsni0uJsBQO51V707nfbOqQHMtQjSnZLF+MuDWMXI4cV7vw1zYPXcmTxQjDhcN70CUf7RnoTJ7ie2kpYhCBVZ6ZLZ1xb6RSOJAg8mfY7cCw=
+	t=1715240035; cv=none; b=mZ2uALJlFAV2jBAHLC0utvxQKtHfgq0/oWphZcDmZSX10kaCFkbuKAr8KRKtNodDShuArIpfKhHYgwXWZ8Xd3WOhT9yzjm4PzJVIstHyjQ5cFGGOczvQNAt2SRQN6IiA+m+eEN3dqbFa7YQNB4eb23qlrCuwhXtvPxjGPZbYBD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715239897; c=relaxed/simple;
-	bh=hKlzg7n2M91QHuHzIH/i/jIkyPsZmX7wBR+g4EMToUY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=BxFHS3tZ5luKk3P4o8cKkgxwBL30Z44C52dgdBiXlb6PhYp7KdFah9G7wKvtHxbkModmEIZLAUJobxDAcSsx62TXDNKFu3oy5aCcJu0o2OIwWqfSf7W4SXhyUTP2QuZfdnALACoSrvABgEYgk9U/HOSaVM+3cISigkVXhDZZyzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Lr/LXdoM; arc=none smtp.client-ip=209.85.161.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b2733389f9so138979eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:31:36 -0700 (PDT)
+	s=arc-20240116; t=1715240035; c=relaxed/simple;
+	bh=f1DDzJv3xHeLtz/8Uh38H6uqD2mqnmTd8LGL7fsQk2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YGHF8i7IvN9ZQyVhwHbIq1EJ1dt/h2NSj+vQIf7j6tunhXYNn71z8DaQfIamgSEoOqhNtqzcxXOvN7e38C3nDaCjKYi8dO1ue1uLQdsWNkWSPx6SmKio3R8za6QDBcOrh/rvKsA3urr2ytgx2x6dMUC3gRQ+J1YRFKnslx2vp/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aqfQ01hI; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1e9ffd3f96eso4611805ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715239895; x=1715844695; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFIJqrgUYRufZO44ifi0BeHH43Pj5mRVkX8VaE4POmU=;
-        b=Lr/LXdoMbExDeLTbSKvH0ycJjU5V9bM7H0nFJRN5U0jfbF8CvKMGkociBxhie2YERj
-         yOvmCYLeI3vRMQ7CUU13LEA6Nt0kknsMkdeHvpjtpeCJ0bHz0ioyopVD4dePZpCptJ5w
-         tYaT0UsBg/NnC13AwQTy+N4vZ3sgb58gauj40=
+        d=bytedance.com; s=google; t=1715240033; x=1715844833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+aKuxY2Fk4OLcsa0CSr6w7+nYt28fnnuhVioZfggdrc=;
+        b=aqfQ01hIYY6LFNp/UQ5dLvubDCRG2/sLLSALQUBi+Wlplrx5tk2Wx5rdy/FJPMWMLI
+         zjGNDZGSl8+Aay5pLWs3V1ncqpUwnPrD8B5bK1pBums+YbqOizIDpn//cX8Do0+moepi
+         nuxLZ5uU8tTJlCW5rlfmTQRuqCsEuwpE5T4gZ3mY6BGk+2ls7gNpTFYHp9ZcC49FSO1P
+         +bd0pqsih40lvi0ApqXUKbLHdHD5B+6rX89NjUbry4HeyG+ty44px2pK6tzqVqIoGnhO
+         lAvnXludBgkIgs/3LQ8O/vJDJeNw/4tFlqK01xHLE/MJR/d410QFFgJVTv7xey3gDFVB
+         dOVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715239895; x=1715844695;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715240033; x=1715844833;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yFIJqrgUYRufZO44ifi0BeHH43Pj5mRVkX8VaE4POmU=;
-        b=C0AjWf7U1deYcl/1mCQly2/46WD8fwHgKjPGD+RRIM19rsedkVOivptqann1qFy058
-         bEl12x/5x7+dIOBVZoQtEIXXt38EAMWIb6smrvlkeEr9EfN2bflWy3sCScWWuDaHVjF2
-         wIE3TFrZCY228Iy/VCgzShCneqwnUKxJ/QcVM1FA9bQ5shmTyxXJxTos1K06Y0R4z6oU
-         kXNAQrHyHUVjcs8MiIYMgQQESgpXwzhAgYaoIF6LX9d/z99EX9fjnDkpdAGJ1gSxVFn/
-         4cqtbfJcBGy4eHfywQu5U24XUdm18Ok+v5OszHf0tIwKfTrD/wDOtWpaAnQHwZy83pSv
-         SKTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOtpnqlMK/te4hI9aMSfUCLVaf8gvYItlPA297lhytTnDvOl3KmSV7Vj7xlfBtaczqqgb6nNUj/Y3tNIiAbTpAWoT0MwSIdN504fYh
-X-Gm-Message-State: AOJu0Ywfhi/4RZg0dVpRWQtZRGLXw/7nZ5tvW1RYwl2evgNxKQHmfyyB
-	IJW2XDE/KJyMsxigs2ZdVZpp/iAHgcKMih3lHUfDquktF9OOYnSxfiQP0QyPOQ==
-X-Google-Smtp-Source: AGHT+IFxCbiVVPSFIyPcWAzqs1t5rme6BYl/0xBEXZ775m3VFUNpwbdtD+YpUNB1N0N06kSsvGevfg==
-X-Received: by 2002:a05:6358:54a2:b0:18e:a0ce:a35c with SMTP id e5c5f4694b2df-192d2c2b383mr578760355d.14.1715239895370;
-        Thu, 09 May 2024 00:31:35 -0700 (PDT)
-Received: from yuanhsinte1.c.googlers.com (150.221.124.34.bc.googleusercontent.com. [34.124.221.150])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411346d46sm586459a12.79.2024.05.09.00.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 00:31:34 -0700 (PDT)
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Thu, 09 May 2024 07:31:29 +0000
-Subject: [PATCH] ASoC: mediatek: mt8192: fix register configuration for tdm
+        bh=+aKuxY2Fk4OLcsa0CSr6w7+nYt28fnnuhVioZfggdrc=;
+        b=tpqgxT5u50pklICo7KqAf8+7Nr1wcAaTM35VfyLm1LJm2qjdy7Tf0Au7pPPFFrCBh7
+         FUHRAOB7K580Cif7WqjO/9btwOOXjSf/h72xHSm5RSaf3Eu/urcvvVj3Fnfm1fX81dIh
+         EbNkJtj4T9/g9Z3sJJCZwYxHPvxahh0YVqkl6LInWVQqz/ankvsg/ean7Eu3/1GjSMAf
+         jRHXjbH8jaTVEs8OYJC+7GYnhHMkSndSY3fpOBu1CZPsajqXPacmB+x4XhJVbPsirSGn
+         l3cRNhoAvUdIDBhaC5R/SL3H0BrMQmvFa/mwrdDlLimW3BCOAbvgmNYzIe9F6/rvap2b
+         f1Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCXF6xLRTgcmDfouOG6oKi+ehSPPz7h4hwVLFuSt/YujEpyEalLSaji2/qKfZTtSzzbE1+ohtRibEA0KPVNSIhHP2AYZ1eKcn8LMKeT+
+X-Gm-Message-State: AOJu0YygxPg0z2AbQnyn4j5AVuU+YkWWryTw0vTq3/BVjsi5ifl4ai+b
+	NUpkuamXwYCzo78yW3Qan7LilMTYSmDV8zDAQztRbawJ8XBjdjmkk5QbvHdzeRZvfk5EpW01HH3
+	jDvM=
+X-Google-Smtp-Source: AGHT+IGAYwKBi2oqjWz3LiGpENreMeENH67yYk920FAgS7TcHb0bpY6oL9Li9tUP+YyE2Ur4qM9EGA==
+X-Received: by 2002:a17:903:40ce:b0:1ea:9596:11eb with SMTP id d9443c01a7336-1eeb07973fcmr50940325ad.60.1715240032758;
+        Thu, 09 May 2024 00:33:52 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.14])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0badcbacsm7519045ad.97.2024.05.09.00.33.47
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 09 May 2024 00:33:52 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	sunilvl@ventanamicro.com,
+	aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org,
+	bhelgaas@google.com,
+	james.morse@arm.com,
+	jhugo@codeaurora.org,
+	jeremy.linton@arm.com,
+	john.garry@huawei.com,
+	Jonathan.Cameron@huawei.com,
+	pierre.gondois@arm.com,
+	sudeep.holla@arm.com,
+	tiantao6@huawei.com
+Cc: Yunhui Cui <cuiyunhui@bytedance.com>
+Subject: [PATCH v5 1/3] riscv: cacheinfo: remove the useless input parameter (node) of ci_leaf_init()
+Date: Thu,  9 May 2024 15:32:58 +0800
+Message-Id: <20240509073300.4968-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240509-8192-tdm-v1-1-530b54645763@chromium.org>
-X-B4-Tracking: v=1; b=H4sIANB7PGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDUwNLXQtDSyPdkpRc3eSkNKNEc+Nky5QUYyWg8oKi1LTMCrBR0bG1tQD
- PHd/7WgAAAA==
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Jiaxin Yu <jiaxin.yu@mediatek.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-X-Mailer: b4 0.12.4
+Content-Transfer-Encoding: 8bit
 
-For DSP_A, data is a BCK cycle behind LRCK trigger edge. For DSP_B, this
-delay doesn't exist. Fix the delay configuration to match the standard.
+ci_leaf_init() is a declared static function. The implementation of the
+function body and the caller do not use the parameter (struct device_node
+*node) input parameter, so remove it.
 
-Fixes: 52fcd65414abfc ("ASoC: mediatek: mt8192: support tdm in platform driver")
-Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Fixes: 6a24915145c9 ("Revert "riscv: Set more data to cacheinfo"")
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Reviewed-by: Jeremy Linton <jeremy.linton@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- sound/soc/mediatek/mt8192/mt8192-dai-tdm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/riscv/kernel/cacheinfo.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c b/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c
-index 9ce06821c7d0f..49440db370af0 100644
---- a/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c
-+++ b/sound/soc/mediatek/mt8192/mt8192-dai-tdm.c
-@@ -566,10 +566,10 @@ static int mtk_dai_tdm_hw_params(struct snd_pcm_substream *substream,
- 		tdm_con |= 1 << DELAY_DATA_SFT;
- 		tdm_con |= get_tdm_lrck_width(format) << LRCK_TDM_WIDTH_SFT;
- 	} else if (tdm_priv->tdm_out_mode == TDM_OUT_DSP_A) {
--		tdm_con |= 0 << DELAY_DATA_SFT;
-+		tdm_con |= 1 << DELAY_DATA_SFT;
- 		tdm_con |= 0 << LRCK_TDM_WIDTH_SFT;
- 	} else if (tdm_priv->tdm_out_mode == TDM_OUT_DSP_B) {
--		tdm_con |= 1 << DELAY_DATA_SFT;
-+		tdm_con |= 0 << DELAY_DATA_SFT;
- 		tdm_con |= 0 << LRCK_TDM_WIDTH_SFT;
- 	}
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index 09e9b88110d1..30a6878287ad 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -64,7 +64,6 @@ uintptr_t get_cache_geometry(u32 level, enum cache_type type)
+ }
  
-
----
-base-commit: 45db3ab70092637967967bfd8e6144017638563c
-change-id: 20240509-8192-tdm-cbf2a73c9dd3
-
-Best regards,
+ static void ci_leaf_init(struct cacheinfo *this_leaf,
+-			 struct device_node *node,
+ 			 enum cache_type type, unsigned int level)
+ {
+ 	this_leaf->level = level;
+@@ -80,11 +79,11 @@ int populate_cache_leaves(unsigned int cpu)
+ 	int levels = 1, level = 1;
+ 
+ 	if (of_property_read_bool(np, "cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_UNIFIED, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+ 	if (of_property_read_bool(np, "i-cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_INST, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+ 	if (of_property_read_bool(np, "d-cache-size"))
+-		ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
++		ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
+ 
+ 	prev = np;
+ 	while ((np = of_find_next_cache_node(np))) {
+@@ -97,11 +96,11 @@ int populate_cache_leaves(unsigned int cpu)
+ 		if (level <= levels)
+ 			break;
+ 		if (of_property_read_bool(np, "cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_UNIFIED, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+ 		if (of_property_read_bool(np, "i-cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_INST, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+ 		if (of_property_read_bool(np, "d-cache-size"))
+-			ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
++			ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
+ 		levels = level;
+ 	}
+ 	of_node_put(np);
 -- 
-Hsin-Te Yuan <yuanhsinte@chromium.org>
+2.20.1
 
 
