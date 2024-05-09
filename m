@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-174649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0849E8C1231
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:48:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF568C1233
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C401F21F9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:48:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD77E283455
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775FE16F287;
-	Thu,  9 May 2024 15:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920F415EFA2;
+	Thu,  9 May 2024 15:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0KiHvcM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RQpbrtA0"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1633BBE3;
-	Thu,  9 May 2024 15:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE0013C68C
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 15:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269709; cv=none; b=uhhIWVzXrE7rgLKofgAH5Z4paTtzk2OnEs/H4M+yJv7S/nODekqyz6MTNBY1Ofhc6l0axTAygyTWHJn4frNElvBlJVdOSdTB1l5CyjDPNPk4HmO/trcgQKxu1pfwRcQimmchs86eG1IDpRcAZDxXFcAqNbt6rP+ST2YB/WE9Y6w=
+	t=1715269720; cv=none; b=n3GcE5Ml7/P17B4BUcBbHRiiPdJVC/X1M1SEVPt2S9LluYboeGZNO1pSj8snunqeh66+k9sO4IVASJ9kLALjWH6Fwew+nAyQ4mJ0GzERAdd6q9yoiBZgZZrBCoFQ/b810bk8aX7DdyZiqOrn5PZmUormpkcUvMcTn+YHO8bQ1Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269709; c=relaxed/simple;
-	bh=wcUJCc5Jd0sSuP3wsE984VDNHrBT9xCEyzalVdcN9ug=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fEdcKZM40L5JmKVbESjv9pnTiltgEJQRisUDD75v90zMnVOLk10QglzMWbcPmfp1df6Oe17ABA/repLf9DLcA8UcpQ+OqsHJ3nrUebod1Z3IyVBXOIaRNPVLtQyoU19fklwD9fKuOTj12t4X78WI9BSwv1DqMVHzAbbw2XNTSa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0KiHvcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A463EC116B1;
-	Thu,  9 May 2024 15:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715269709;
-	bh=wcUJCc5Jd0sSuP3wsE984VDNHrBT9xCEyzalVdcN9ug=;
-	h=From:To:Cc:Subject:Date:From;
-	b=J0KiHvcMQ7bm6Z4VmXo/SfZXiaVOTRkl3gZY75q6NEFadKd5FxYTwb0t4Goz5ALXS
-	 jTqybRq90giV/HQTpXwydp9l/MzSLXsVjww828l9YcZK5BToNakDeJH3Dpa5z4+GhF
-	 8o/4vYhVAviaqv5pdBMQp5Oh++kT8nrV98FFAUxHJ0zH5mbPnoY24C53mKHuZXA8B/
-	 M/xqfCaeuEpn7lqqV8wNyzRbsowaANpp5DmIAlxuCTsvy+ZhfDLahdB1pAhJpN41Ah
-	 6ciuulS5PAfpr6XT8n7iPovQhblivyL+tC8UxOfSBoREhM45gsuWu48NgfxNolv1cM
-	 dqd4rH1a/GqFA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org
-Subject: [GIT PULL] trusted keys changes for v6.10-rc1
-Date: Thu,  9 May 2024 18:47:51 +0300
-Message-ID: <20240509154751.25983-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715269720; c=relaxed/simple;
+	bh=mA/fCF0Hyf2s0C0NAXcut1RdJ0/A1Vl70kRKZc0yNVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I+TPZFVaogpFWyZ/uY6nSJE7o+xqDA2ZjOHSUOzPGDu1aSjrvGoDJXD5bpGKpNTCn+UAguHB6OZovX1E2JJ2mFwXOqWW79ZYEAbdmHu1fphE+EIjoPWbR1Zx+LhteOZvNnYNfg7vrQtk4bIp/rbedLJ4ZL/iWxwl5yiM8j7Feio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RQpbrtA0; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so3958468a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 08:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715269717; x=1715874517; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=38BuvpIpkB3oaxq+zw4VsWBKcS3P81IEjFcYuWVYCpU=;
+        b=RQpbrtA0ArSgez7nh7jtI6MECUxUKjBpGDth1PWgzyQnl1IT4dZZIQWfxnrhCvQMMh
+         kVKoF+TtkLtJ05WcAbK8Wh2ZU+SpGGzITb7RM84gj/T33NQI8ffaIyadAlWiR3T3ohCC
+         qHA88+DOAoOiwGLeGCrpWn5NsYS12GI3J8nxo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715269717; x=1715874517;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=38BuvpIpkB3oaxq+zw4VsWBKcS3P81IEjFcYuWVYCpU=;
+        b=oHE5lfPHt2zBqg8IMle20EiXE2vbrGM1PAZLlD3QDU1dry4VrYDQso86NT0UKqtOmL
+         z0LU+ZiaMImcwqIkwLY9KCdy48iI6OL8Eqng8qEFlN0YH4OFs2JXwpcL0nshEocLl/u5
+         ArcpTcFczlip+leGVn+zU2OjGDhDOlLzcigndYS7kpH2z8jyRXTbuX1T2W5FdvwtM42c
+         Z9OlU+DZkeFfvJ91vVu01ilNjH/6mO5+Du+nuY4txZPo754qDDOzR3stVm6UdV7jFRVF
+         QFYekj2oxEf4nR4KSZV5rmIdCPVJ8bapFGQK6Q8AYRMsNpwITADsMUFX1AtuJGiwb/ge
+         n7ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTUo97aEhlC69VgNxNmTrbvkG1+fhNM0BVMViBDmhuTo5whOv1gIxMP/IVWKCf4ScxecLjnvYRaB07OTvyyDfPKCkFcEibuG+TAlPM
+X-Gm-Message-State: AOJu0YyVVgJZFMy29c7gakZUyXjte3oe87CuIw1dmMEtktXJ9YLTob8C
+	SwbrwiP8SMhzJIXdPO7tkS7m43cVI8mbjYh+LfD3pASJtkIJ3cUoyp8GgY/H4CZifCWJD0fmFET
+	7CWy9pw==
+X-Google-Smtp-Source: AGHT+IHjlNPmBtz6rerizzRxTi8e3437FfPjfigDdQaaaGJJb3LRLKHYtXn4uBYgOOlKvHvyxsNmIQ==
+X-Received: by 2002:a50:870d:0:b0:572:9503:4f8a with SMTP id 4fb4d7f45d1cf-5734d5c1889mr84422a12.1.1715269717219;
+        Thu, 09 May 2024 08:48:37 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea65e2sm815546a12.19.2024.05.09.08.48.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 08:48:37 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so3958439a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 08:48:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXlTTU8h1GUtq3H8AXg4iWknVqY9++Z5fMuRSnkUR8Pq2ODv5Ej8MdiQmdLktVDNxS1obXGfh9wcNonxbk++palWsKsst0Em5DMMwWa
+X-Received: by 2002:a17:906:19d0:b0:a59:fb06:5d35 with SMTP id
+ a640c23a62f3a-a5a1156665fmr240732966b.8.1715269716628; Thu, 09 May 2024
+ 08:48:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com> <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+ <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
+ <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+ <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
+ <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com> <20240509-kutschieren-tacker-c3968b8d3853@brauner>
+In-Reply-To: <20240509-kutschieren-tacker-c3968b8d3853@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 9 May 2024 08:48:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
+Message-ID: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+To: Christian Brauner <brauner@kernel.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <pekka.paalanen@collabora.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, axboe@kernel.dk, 
+	christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, 
+	linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-  Merge tag '6.9-rc7-ksmbd-fixes' of git://git.samba.org/ksmbd (2024-05-08 10:39:53 -0700)
+On Thu, 9 May 2024 at 04:39, Christian Brauner <brauner@kernel.org> wrote:
+>
+> Not worth it without someone explaining in detail why imho. First pass
+> should be to try and replace kcmp() in scenarios where it's obviously
+> not needed or overkill.
 
-are available in the Git repository at:
+Ack.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-6.10-rc1
+> I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
+> anyway which means that your comparison patch becomes even simpler imho.
+> I've also added a selftest patch:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
 
-for you to fetch changes up to 28c5f596ae3d1790cdc96fa5fc7370f934abfb2e:
+LGTM.
 
-  docs: trusted-encrypted: add DCP as new trust source (2024-05-09 18:29:03 +0300)
+Maybe worth adding an explicit test for "open same file, but two
+separate opens, F_DUPFD_QUERY returns 0? Just to clarify the "it's not
+testing the file on the filesystem for equality, but the file pointer
+itself".
 
-----------------------------------------------------------------
-Hi,
-
-This is pull request for trusted keys subsystem containing a new key
-type for the Data Co-Processor (DCP), which is an IP core built into
-many NXP SoCs such as i.mx6ull.
-
-BR, Jarkko
-
-----------------------------------------------------------------
-David Gstir (6):
-      crypto: mxs-dcp: Add support for hardware-bound keys
-      KEYS: trusted: improve scalability of trust source config
-      KEYS: trusted: Introduce NXP DCP-backed trusted keys
-      MAINTAINERS: add entry for DCP-based trusted keys
-      docs: document DCP-backed trusted keys kernel params
-      docs: trusted-encrypted: add DCP as new trust source
-
- Documentation/admin-guide/kernel-parameters.txt   |  13 +
- Documentation/security/keys/trusted-encrypted.rst |  53 ++++
- MAINTAINERS                                       |   9 +
- drivers/crypto/mxs-dcp.c                          | 104 ++++++-
- include/keys/trusted_dcp.h                        |  11 +
- include/soc/fsl/dcp.h                             |  20 ++
- security/keys/trusted-keys/Kconfig                |  18 +-
- security/keys/trusted-keys/Makefile               |   2 +
- security/keys/trusted-keys/trusted_core.c         |   6 +-
- security/keys/trusted-keys/trusted_dcp.c          | 332 ++++++++++++++++++++++
- 10 files changed, 554 insertions(+), 14 deletions(-)
- create mode 100644 include/keys/trusted_dcp.h
- create mode 100644 include/soc/fsl/dcp.h
- create mode 100644 security/keys/trusted-keys/trusted_dcp.c
+             Linus
 
