@@ -1,206 +1,241 @@
-Return-Path: <linux-kernel+bounces-174057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463828C09BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:24:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C7C8C09BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD626B21713
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:24:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93A11F225C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BCD13CAB4;
-	Thu,  9 May 2024 02:24:24 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2099.outbound.protection.partner.outlook.cn [139.219.146.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84F913CA8B;
+	Thu,  9 May 2024 02:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYiPHLg1"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E39513CA83;
-	Thu,  9 May 2024 02:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715221464; cv=fail; b=dKhGm3EbOhoR6s9i9+zSGM1FrUJLEd8/F881U9s43/eRmHarurm1kgQMmMw498uBOyIzeLvgqKC8LrTrjK3AQKWqT07brZk31aXWzjX+Q1H0LYn4bJWoARmUYiFqupg8rY87suOTHwE6th+QXncq2xvvHvj2CWsWKpt9iR+Eqcw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715221464; c=relaxed/simple;
-	bh=CdaaH8VTHMOis4IawMI5sw+emcoJzif5qCmpIHh77Ns=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QAuAxC7enwZb7VUphmqI92hofJ9wgVGLiajEAXwjaUqVRcqMlpwdv4/40SOtTCAN1Q3Ts2dc7xi8Bld4kXODzNaDAo8vobYbr7k74KY8bDPTir6+VASAFX0PWw4X1MsjsLy0GszfUfCRLYNAvsSHP3gHUcVayeXFQYwt1Kv7vWc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T6NnfagripZzYJfZXAQNCcj6Nhrlwh+/cT8PuVe/16aWbLqEVfA2PROiiU4nd+Js/BXz4gMof39QQi1FwpWNNO04IXIUm0MNjC2skZGAETeXkitHdGMGV/TLwC5EuQEcPv5pM8VIGixxrZDFcKfMBNiXCrTTzfFuyvdkuLWQ8ATIgvp7RxZWukmbyThCCPuwpuwOPTkiZq//MvTs//8/arxh3hdlfZ1xGmURzJZW3/uJVU/QioZ7c/eH9er66YUsLLyuB9DLzonMm85T7n9xqEaNRh5HDj6SCSu4a5CLFqx6WqEJFVimk1XdAqkQbv+5BVBnCwpzt6E2eKWWooae1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RHOfTe2NDSm8IX70nCtwPxIKNOvsa5X47EeFmMGRxEA=;
- b=FjJ0xr9yUqI8mZ9lfuhSgH5V8rympna+TanaJoGcigWREGWrEed966CS97oyxMWhYRKzqaJfh1v2EhLRGeR2xh/NDhF3dP7GTWKIVt21/EBuKsxd9kS9mQmRS7HbJ54dHs9FNsJMTzG4ptNDMvxRpPSPxJ37FEV6tNbnbMC+41MD4U5MUbBLcvksgL4P2vLzjiiCimHHOhQ0i5S/EsgyK252gLxE+KDNUL8KgqgxwjnJ1kO8PdBKLRk2dwFx5FoCcVow/AaWqYoeqxJcGmZpekhd0BkYyRgjIRQ2lEn+eUV4L52LLS5sIPHQRX52iZNtGVcr3hlRUAAgcqe4TKed0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ0PR01MB1176.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:19::9) by ZQ0PR01MB0965.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Thu, 9 May
- 2024 02:24:10 +0000
-Received: from ZQ0PR01MB1176.CHNPR01.prod.partner.outlook.cn
- ([fe80::feb4:a4b4:1132:58f4]) by
- ZQ0PR01MB1176.CHNPR01.prod.partner.outlook.cn ([fe80::feb4:a4b4:1132:58f4%5])
- with mapi id 15.20.7472.044; Thu, 9 May 2024 02:24:09 +0000
-From: Yuklin Soo <yuklin.soo@starfivetech.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>, Hal Feng <hal.feng@starfivetech.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>, Jianlong Huang
-	<jianlong.huang@starfivetech.com>, Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Drew
- Fustini <drew@beagleboard.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Subject: RE: [RFC PATCH v3 1/7] dt-bindings: pinctrl: starfive: Add JH8100
- pinctrl
-Thread-Topic: [RFC PATCH v3 1/7] dt-bindings: pinctrl: starfive: Add JH8100
- pinctrl
-Thread-Index: AQHanUsd82+KI3pjk0uPcQoiFxOkhLGFrVeAgAiF91A=
-Date: Thu, 9 May 2024 02:24:09 +0000
-Message-ID:
- <ZQ0PR01MB1176A591EE2AB5487D45D2F9F6E62@ZQ0PR01MB1176.CHNPR01.prod.partner.outlook.cn>
-References: <20240503111436.113089-1-yuklin.soo@starfivetech.com>
- <20240503111436.113089-2-yuklin.soo@starfivetech.com>
- <20240503-undress-mantra-e5e46b2f6360@spud>
-In-Reply-To: <20240503-undress-mantra-e5e46b2f6360@spud>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ0PR01MB1176:EE_|ZQ0PR01MB0965:EE_
-x-ms-office365-filtering-correlation-id: 4d1aec90-cf48-413e-aaff-08dc6fcf1bff
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- mHdulBqYTTxXlv6LckIUT+I0xj1miPqhHtOxJVUGGFis91Kvi7/pNhf3hA134N9uo2ElsTCCVdwnhlrnhPj9D0605rozN0jr0rvbv5IfNTOGBUknQfdFpg7tRAQZVnZgHCoWP7BfuXtOm1CV+7VaKK+SCql3L7YpvzNWJHOQKQy39Jxd1svZborKxNexDkwjBDwS6GvqfAPCRx4kSPzGRZe8mQByXGqDPNig7BrrkQK2pQD96GxiM6ATCQWrv5hGidZ8UxaXv8gfrgTE4gUG2zgRUIjs/6z+uzYXB6iI6tR2zuODq8Al7yRTqSnbHTDwgwgFD1Ukkj/I02BGCLAMP+RVBY1OVkH0ewCx3PdJNYzRfqKf5m3/WYlFJ+4sAEJKa60h2SQummco4efn2GeiWROK0RO8g6S6Pk6WBysePVed3fzFGAkQDQ+PkeQKi0MBf5vJGh2/BKYqMDq35DIT2RkX7EiCL+KoTfpZCM2b06tmxsa6u4uRiqZOGhFhOoDkT9Avlhcr5m6ABV8j4puRZw0YS7zdNxKdpEo/dNZ7OHYZyjq6EgFSsXfhkdLW2+hIk8rpf/mGoGnwM04dilHaoEPABSeguOE3DVmSmXu39ykx3DBp0Fwwemzv+DiOj+3/
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1176.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(7416005)(41320700004)(366007)(1800799015)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?4U0+XR0sl2A7Cg8UwNerBnWSqVqLG8hqRA0D3LtqYUN9G1B4vQsYxQTE5PHs?=
- =?us-ascii?Q?ifMeTwXyPNCbbNASRjOPGyejdsSEd+92DyFcT2yB09X/iGWXpY74kGeCLvoM?=
- =?us-ascii?Q?0NougcwsrBmvnIX9Kj5gw5oKZxWdmVYMcBFwerYffR+SfYVVk2l822naLPTl?=
- =?us-ascii?Q?tJS+7WwlFuwRk7PsusZTwtnKepph2i4EYNgPrm5Sl4X2HDIPKNfjx0hJ3YAj?=
- =?us-ascii?Q?XRrgCwmWfmy9Z9WuQqPwrtyuqVq8WBmtivAzhi/hCqhRxUFtGCiQYbEvDJiP?=
- =?us-ascii?Q?FSYMwqH9+jNWm7d7llEivwTKUDslIcwHjngD212qBO7e1l0Ajw4rUa+Nt4V9?=
- =?us-ascii?Q?Py1to9FvA6jJiyERLhMz0lkOx0BTFJtl1EyWkAEtdmkAA1ya77bDKQJ/9PU6?=
- =?us-ascii?Q?fYWH5eW5eMYvGlWt0KsFxpylcb38eUwzXmnHpMmnDSaQ316u5EoAJxjkmfx3?=
- =?us-ascii?Q?eyI3M5c3aP6D4DLzj3Oo6kT+IVtNXk/yAtqHl3x/fxELOILhS0dD8mT6/hb+?=
- =?us-ascii?Q?ChYAdQ1IGFbIXP7t1m32+kuC/7BwXnZ1/y0IcGPnSirQK8kOxWxYRO7laeoI?=
- =?us-ascii?Q?E8Iy6afgbpC5H5yt4qSdeNO4HBWeGlaLfA1lswPXJ8hdrbk4RdzST0UTjI6w?=
- =?us-ascii?Q?JkwFUlQZSUADLVW+2yVbuXtGa3J3xo+8DuHQzDaVY9nZF6EqOf6sGuckm4B7?=
- =?us-ascii?Q?/igIrPARIriT4ykRZ9LU7KmotiJ8Pou2h4ZJ3/Mp0wWOXPjiF4BOKJhBpe5E?=
- =?us-ascii?Q?JA1A4Jk6noo8OrH0zYcg22lCkIQKNoG9+l9j60O2W+durmXPQMNoxX3M+IL8?=
- =?us-ascii?Q?V785C0q8+XMLpVllRVK+D461OCT/cTxlbGpfFu2CuA0y+bqTjdoXJKg+tAvG?=
- =?us-ascii?Q?3BodpjXE4a27wuyqBMAczWeIlhI39sUQ69NAtiwNZV1vANiDywVi/7Spw2zf?=
- =?us-ascii?Q?caNwxxEIfkIWAMTwgQNRHWGovBy/wNhOWRIQBWFkC5cEPIQ7D9Kb4MfEeh0m?=
- =?us-ascii?Q?vkTvS4HhRIHo3j5vqk3GSbGSPGPwVOlyf2IuNFnGrr01VZG1Epa5EFoHzPF6?=
- =?us-ascii?Q?wdCITDHWJrD/azQyl/+jAobDlI8VLCVCiVCBQNTky1b5bnTE1fC31ZIArpQf?=
- =?us-ascii?Q?cCfKse07Dw3TyLv/ha5d0Joj3HY3dPu9/k4CIZWXLi2e8Fo0FIe38qKYJ56P?=
- =?us-ascii?Q?yIcjvsElKUfnhyjj2XrXHusgwJrpXQwJ3APGfBbzJ5V+mbjM/lOcNFCgscW+?=
- =?us-ascii?Q?sHiFX2GrGsCjWVu5Gp57TvDNiwmHJwzFpecISdUjDXqd1y0+WPpYqgyXZ4BY?=
- =?us-ascii?Q?iC6eNb3jex+bewMg1lwJDrg2UPH7rvWG6PJ+KjaIWAp9TkYGcysA85ezeTVn?=
- =?us-ascii?Q?3I54AWh0r28gMF7oBOR1KpaeoF/hu0/9Rir7CaLJSHg2HqISbAsRijUdUH7m?=
- =?us-ascii?Q?mJ/lAggoJ9iH0NXwp9UmHwY9PFzgBSZnc7lX+mBMAdeQXECA7lsXUtrO9+oE?=
- =?us-ascii?Q?XfLl2yAeZttqciLlWIepZ90CvDRv0/Lb5Y8vmBsPXcCNwate7cQsqVSgBzwI?=
- =?us-ascii?Q?Qfeb6hVeVydI+oJvUTrLSdnmz6lyBiX13FuaX2rSlK7WZpXmF7bwI0DOBW35?=
- =?us-ascii?Q?Cw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E216E3FBB2;
+	Thu,  9 May 2024 02:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715221486; cv=none; b=P1bhKR7sRU+nL6eeUUBPvMiKuoN1rMkqOesSS8n0PtlZP/2lPRcZakjbIqJ304+rYXazTLqxbtdG/YG9j+dC5UPqA98A88Rqvtie+K61GoXAC+DzrPz1pjSr+eU4SISkf61IFQlFipxdnenFbqcDEcgLay+0agv9gmI2L+41FvE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715221486; c=relaxed/simple;
+	bh=9rSPZR5cYVC/s/XK6Sl9HqlPQQom/UHopyaHLvwlDt8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ElEI/t6fkk2K7wRKuC2EppULc6WguJ/XyPfdTXthH+YyS/bPMWV65HnQ/wD+eVXB/IJouuco7oAJAX/fVWhaeAIGhnDElsJN5POkx/h2d0KrwpqPfUT9m7/7XGiiNYZ3u6Cv/CRV0pxUzr6eG3sFTSYsBV4vK3+aOWc1LwL7cKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYiPHLg1; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b273b9f1deso50747eaf.3;
+        Wed, 08 May 2024 19:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715221483; x=1715826283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ODud8ohb8vpikiOmz/uYlWu4zxPb834x4SbMz1JshM=;
+        b=jYiPHLg1YX8UP/SAGueUOZsyylX5KIurNv9MkV8VAidoXqEjTsbZ5yicIreH5jqahz
+         1+dLO40b6zczk4NoetAD9UqrBb8Bn58nKR1uwp+mS3rySt2C5Nnr8N6uemCWGEft/+T6
+         cF6LGtUQ/SnLx34L6UT3/M3DfbC8zpi/cU+J0XriqClq3RvVr88Vj40YF/mJSj0KehLD
+         S4BO/WkX5insDCXGDaDk7BShHXEVywJQFJHb4EuukQk8O5vINNiNHJ+D8xZx7ENBOPjw
+         r9bXI/REJB/z7STlmksknrhEYlRV2Fuf7Gr+O4GTNrgzqo/Oodbnh0Xd/jP69oY3nP5V
+         62Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715221483; x=1715826283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ODud8ohb8vpikiOmz/uYlWu4zxPb834x4SbMz1JshM=;
+        b=azkhzI1R49FZU4W5p/6gCBY01CYegSjbuZbok20mZJ9HiGbld3N+MGqF3xnHWUBqct
+         VXGChjc47OzRjXftetLUuFBLHpZnjL9NqfW2o6YDCdtmYKn7TwNsyNK0nabGu3brIdWr
+         VzPhCQZ8qDwPsY2m4ywkAg5qPdVS/rNaOSs6DBiPSW3VUWDMZh1HeVZlhGlUV0iwsoUu
+         MCgDYPmhRvX3XxXPAFlCQPjE0SwjtUkRbU1wAp/ZguEbXCrY1CRZyaCYdqzzvRNLgyQM
+         q2Y/smPfZZFpBnYoJiIU+H0qn9/pM/tOs801dy6VEZfn3p+rBu+RMDy+Vu2CFjMdxhMI
+         xYrw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4tdYra4bT6xGc4roKhoV8XEBc25QxmCD9nufPhateNllFlS+PTfJnsQXq3AjtgIuRbIAtcXU4mMl7ad7wAFxrXoi48r6v50R7wmMDs7TLm97XjNobhfJDYqYb5RRAbLv25Hki5i7b
+X-Gm-Message-State: AOJu0Yw2lPdW7ieMDT0avm9mSWJHTmL3QNeiKkiJ7QJblO1RDaBrZEdI
+	r/kplpn9Q4MMxsvw2HArku6mLrB47nAcH1CXalFRG27UgjV1W+isWxA3KYCSDdVhG1nsYZ0XyzJ
+	50MRz9ETr+IUeBORXA3OJ1GqVxKE=
+X-Google-Smtp-Source: AGHT+IHPtJmrIA4PS0UqfTwetCTRC73/sxh2Pe5BaF4GGn+EKZ2xoKu1uQJfkBEJ9Pkx5GApEskitQZ/A4Vcd/cPG7o=
+X-Received: by 2002:a4a:98a8:0:b0:5b2:bc0:f38b with SMTP id
+ 006d021491bc7-5b24d5c905amr4961812eaf.5.1715221482912; Wed, 08 May 2024
+ 19:24:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1176.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d1aec90-cf48-413e-aaff-08dc6fcf1bff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2024 02:24:09.8198
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D+zMvUVdEMz1aTNzFny6n/pL8qrJNFUkTWuQhmOg2gpY2cG/rMupiU8vRYFGdpjOTWKTXZSaGd+ni9/v5cr8E5xnEpVFOiM3T2f1MEUa0YA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB0965
+References: <20240507122228.5288-1-zhangtianyang@loongson.cn>
+In-Reply-To: <20240507122228.5288-1-zhangtianyang@loongson.cn>
+From: Dongliang Mu <mudongliangabcd@gmail.com>
+Date: Thu, 9 May 2024 10:24:16 +0800
+Message-ID: <CAD-N9QV82w1_7ksGAWJDNVcRDyKHLgiEbx13b3sr4cTazobW5g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] docs: Add advanced extended IRQ model description
+To: Tianyang Zhang <zhangtianyang@loongson.cn>
+Cc: chenhuacai@kernel.org, kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org, 
+	siyanteng@loongson.cn, loongarch@lists.linux.dev, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, May 7, 2024 at 8:24=E2=80=AFPM Tianyang Zhang <zhangtianyang@loongs=
+on.cn> wrote:
+>
+> From 3C6000, Loongarch began to support advanced extended
+> interrupt mode, in which each CPU has an independent interrupt
+> vector number.This will enhance the architecture's ability
+> to support modern devices
+>
+> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+> ---
+>  .../arch/loongarch/irq-chip-model.rst         | 33 +++++++++++++++++
+>  .../zh_CN/arch/loongarch/irq-chip-model.rst   | 37 +++++++++++++++++--
+>  2 files changed, 67 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentat=
+ion/arch/loongarch/irq-chip-model.rst
+> index 7988f4192363..79228741d1b9 100644
+> --- a/Documentation/arch/loongarch/irq-chip-model.rst
+> +++ b/Documentation/arch/loongarch/irq-chip-model.rst
+> @@ -85,6 +85,39 @@ to CPUINTC directly::
+>      | Devices |
+>      +---------+
+>
+> +Advanced Extended IRQ model
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer inter=
+rupt go
+> +to CPUINTC directly, CPU UARTS interrupts go to LIOINTC, MSI interrupts =
+go to AVEC,
+> +and then go to CPUINTC, Other devices interrupts go to PCH-PIC/PCH-LPC a=
+nd gathered
+> +by EIOINTC, and then go to CPUINTC directly::
+> +
+> + +-----+     +--------------------------+     +-------+
+> + | IPI | --> |           CPUINTC        | <-- | Timer |
+> + +-----+     +--------------------------+     +-------+
+> +              ^        ^             ^
+> +              |        |             |
+> +      +--------+  +---------+ +---------+     +-------+
+> +      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
+> +      +--------+  +---------+ +---------+     +-------+
+> +           ^            ^
+> +           |            |
+> +         +---------+  +---------+
+> +         |   MSI   |  | PCH-PIC |
+> +         +---------+  +---------+
+> +            ^          ^       ^
+> +            |          |       |
+> +    +---------+ +---------+ +---------+
+> +    | Devices | | PCH-LPC | | Devices |
+> +    +---------+ +---------+ +---------+
+> +                     ^
+> +                     |
+> +                +---------+
+> +                | Devices |
+> +                +---------+
+> +
+> +
+>  ACPI-related definitions
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-mod=
+el.rst b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+> index f1e9ab18206c..7ccde82dd666 100644
+> --- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+> +++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+> @@ -9,9 +9,8 @@
+>  LoongArch=E7=9A=84IRQ=E8=8A=AF=E7=89=87=E6=A8=A1=E5=9E=8B=EF=BC=88=E5=B1=
+=82=E7=BA=A7=E5=85=B3=E7=B3=BB=EF=BC=89
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> -=E7=9B=AE=E5=89=8D=EF=BC=8C=E5=9F=BA=E4=BA=8ELoongArch=E7=9A=84=E5=A4=84=
+=E7=90=86=E5=99=A8=EF=BC=88=E5=A6=82=E9=BE=99=E8=8A=AF3A5000=EF=BC=89=E5=8F=
+=AA=E8=83=BD=E4=B8=8ELS7A=E8=8A=AF=E7=89=87=E7=BB=84=E9=85=8D=E5=90=88=E5=
+=B7=A5=E4=BD=9C=E3=80=82LoongArch=E8=AE=A1=E7=AE=97=E6=9C=BA
+> -=E4=B8=AD=E7=9A=84=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=B6=E5=99=A8=EF=BC=88=
+=E5=8D=B3IRQ=E8=8A=AF=E7=89=87=EF=BC=89=E5=8C=85=E6=8B=ACCPUINTC=EF=BC=88CP=
+U Core Interrupt Controller=EF=BC=89=E3=80=81LIOINTC=EF=BC=88
+> -Legacy I/O Interrupt Controller=EF=BC=89=E3=80=81EIOINTC=EF=BC=88Extende=
+d I/O Interrupt Controller=EF=BC=89=E3=80=81
+> +LoongArch=E8=AE=A1=E7=AE=97=E6=9C=BA=E4=B8=AD=E7=9A=84=E4=B8=AD=E6=96=AD=
+=E6=8E=A7=E5=88=B6=E5=99=A8=EF=BC=88=E5=8D=B3IRQ=E8=8A=AF=E7=89=87=EF=BC=89=
+=E5=8C=85=E6=8B=ACCPUINTC=EF=BC=88CPU Core Interrupt Controller=EF=BC=89=E3=
+=80=81
+> +LIOINTC=EF=BC=88Legacy I/O Interrupt Controller=EF=BC=89=E3=80=81EIOINTC=
+=EF=BC=88Extended I/O Interrupt Controller=EF=BC=89=E3=80=81
+>  HTVECINTC=EF=BC=88Hyper-Transport Vector Interrupt Controller=EF=BC=89=
+=E3=80=81PCH-PIC=EF=BC=88LS7A=E8=8A=AF=E7=89=87=E7=BB=84=E7=9A=84=E4=B8=BB=
+=E4=B8=AD
+>  =E6=96=AD=E6=8E=A7=E5=88=B6=E5=99=A8=EF=BC=89=E3=80=81PCH-LPC=EF=BC=88LS=
+7A=E8=8A=AF=E7=89=87=E7=BB=84=E7=9A=84LPC=E4=B8=AD=E6=96=AD=E6=8E=A7=E5=88=
+=B6=E5=99=A8=EF=BC=89=E5=92=8CPCH-MSI=EF=BC=88MSI=E4=B8=AD=E6=96=AD=E6=8E=
+=A7=E5=88=B6=E5=99=A8=EF=BC=89=E3=80=82
+>
+> @@ -87,6 +86,38 @@ PCH-LPC/PCH-MSI=EF=BC=8C=E7=84=B6=E5=90=8E=E8=A2=ABEIO=
+INTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=
+=A5=E5=88=B0=E8=BE=BECPUINTC::
+>      | Devices |
+>      +---------+
+>
+> +=E9=AB=98=E7=BA=A7=E6=89=A9=E5=B1=95IRQ=E6=A8=A1=E5=9E=8B
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +=E5=9C=A8=E8=BF=99=E7=A7=8D=E6=A8=A1=E5=9E=8B=E9=87=8C=E9=9D=A2=EF=BC=8C=
+IPI=EF=BC=88Inter-Processor Interrupt=EF=BC=89=E5=92=8CCPU=E6=9C=AC=E5=9C=
+=B0=E6=97=B6=E9=92=9F=E4=B8=AD=E6=96=AD=E7=9B=B4=E6=8E=A5=E5=8F=91=E9=80=81=
+=E5=88=B0CPUINTC=EF=BC=8C
+> +CPU=E4=B8=B2=E5=8F=A3=EF=BC=88UARTs=EF=BC=89=E4=B8=AD=E6=96=AD=E5=8F=91=
+=E9=80=81=E5=88=B0LIOINTC=EF=BC=8CMSI=E4=B8=AD=E6=96=AD=E5=8F=91=E9=80=81=
+=E5=88=B0AVEC,=E8=80=8C=E5=90=8E=E9=80=9A=E8=BF=87AVEC=E9=80=81=E8=BE=BECPU=
+INTC=EF=BC=8C=E8=80=8C
 
+AVEC is followed by an English comma (Translation: AVEC =E5=90=8E=E9=9D=A2=
+=E4=B8=80=E4=B8=AA=E8=8B=B1=E6=96=87=E9=80=97=E5=8F=B7)
+Dongliang Mu
 
-> -----Original Message-----
-> From: Conor Dooley <conor@kernel.org>
-> Sent: Saturday, May 4, 2024 12:07 AM
-> To: Yuklin Soo <yuklin.soo@starfivetech.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski
-> <bartosz.golaszewski@linaro.org>; Hal Feng <hal.feng@starfivetech.com>;
-> Leyfoon Tan <leyfoon.tan@starfivetech.com>; Jianlong Huang
-> <jianlong.huang@starfivetech.com>; Emil Renner Berthing <kernel@esmil.dk>=
-;
-> Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> <krzysztof.kozlowski+dt@linaro.org>; Conor Dooley <conor+dt@kernel.org>;
-> Drew Fustini <drew@beagleboard.org>; linux-gpio@vger.kernel.org; linux-
-> kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> riscv@lists.infradead.org; Paul Walmsley <paul.walmsley@sifive.com>; Palm=
-er
-> Dabbelt <palmer@dabbelt.com>; Albert Ou <aou@eecs.berkeley.edu>
-> Subject: Re: [RFC PATCH v3 1/7] dt-bindings: pinctrl: starfive: Add JH810=
-0 pinctrl
->=20
-> On Fri, May 03, 2024 at 07:14:30PM +0800, Alex Soo wrote:
-> > Add documentation and header file for JH8100 pinctrl driver.
-> >
-> > Signed-off-by: Alex Soo <yuklin.soo@starfivetech.com>
->=20
-> > diff --git a/include/dt-bindings/pinctrl/starfive,jh8100-pinctrl.h
-> > b/include/dt-bindings/pinctrl/starfive,jh8100-pinctrl.h
-> > new file mode 100644
-> > index 000000000000..153ba950c062
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/starfive,jh8100-pinctrl.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> > +/*
-> > + * Copyright (C) 2023-2024 StarFive Technology Co., Ltd.
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JH8100_H__
-> > +#define __DT_BINDINGS_PINCTRL_STARFIVE_JH8100_H__
-> > +
-> > +/* Pad Slew Rates */
-> > +#define PAD_SLEW_RATE_FAST		1
-> > +#define PAD_SLEW_RATE_SLOW		0
->=20
-> Should this really be in the bindings? I don't see it having a direct use=
-r in the
-> driver.
->=20
-> Also, if this is the only header you have, I think the RFC tag could be d=
-ropped,
-> since there'll not be a header we need to worry about getting into U-Boot=
- etc
-> with values that may change when the SoC moves from an FPGA etc to tape o=
-ut.
-
-I will drop the PAD_SLEW_RATE_* macros from dt-bindings header and move the=
-m
-to the DTS header file. Will submit the next version (V4) without the "RFC =
-PATCH"
-subject prefix.
-
->=20
-> Cheers,
-> Conor.
+> +=E5=85=B6=E4=BB=96=E6=89=80=E6=9C=89=E8=AE=BE=E5=A4=87=E7=9A=84=E4=B8=AD=
+=E6=96=AD=E5=88=99=E5=88=86=E5=88=AB=E5=8F=91=E9=80=81=E5=88=B0=E6=89=80=E8=
+=BF=9E=E6=8E=A5=E7=9A=84PCH-PIC/PCH-LPC=EF=BC=8C=E7=84=B6=E5=90=8E=E7=94=B1=
+EIOINTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=BC=8C=E5=86=8D=E7=9B=B4
+> +=E6=8E=A5=E5=88=B0=E8=BE=BECPUINTC::
+> +
+> + +-----+     +--------------------------+     +-------+
+> + | IPI | --> |           CPUINTC        | <-- | Timer |
+> + +-----+     +--------------------------+     +-------+
+> +              ^        ^             ^
+> +              |        |             |
+> +      +--------+  +---------+ +---------+     +-------+
+> +      | AVEC   |  | EIOINTC | | LIOINTC | <-- | UARTs |
+> +      +--------+  +---------+ +---------+     +-------+
+> +              ^        ^
+> +              |        |
+> +      +---------+  +-------------+
+> +      |   MSI   |  |   PCH-PIC   |
+> +      +---------+  +-------------+
+> +            ^          ^       ^
+> +            |          |       |
+> +    +---------+ +---------+ +---------+
+> +    | Devices | | PCH-LPC | | Devices |
+> +    +---------+ +---------+ +---------+
+> +                     ^
+> +                     |
+> +                +---------+
+> +                | Devices |
+> +                +---------+
+> +
+>  ACPI=E7=9B=B8=E5=85=B3=E7=9A=84=E5=AE=9A=E4=B9=89
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> --
+> 2.20.1
+>
+>
 
