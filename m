@@ -1,246 +1,128 @@
-Return-Path: <linux-kernel+bounces-174825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218B18C157A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B3F08C157D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBC18B22A6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:32:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E732B22600
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ACF7FBAE;
-	Thu,  9 May 2024 19:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBC87FBB0;
+	Thu,  9 May 2024 19:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XploBwL/"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="njMxRWO2"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BCD7F7CC
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695547F7EF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715283149; cv=none; b=GFBNU1J279aweCo9VTKZrgae4GAubbwcZQWCs1Y1Veseh032Nw1W9q0uZmilAbSOLq0zRd1hEm3T/lMJfQCaK05YrHf/TJOBbdoVcgTpyIE4W6X0oEHuNZoE+7dqcqqpHL2Qpa1ihqmw5zxofqVsWJ7OXQ7hlWkKFaEsk72e39E=
+	t=1715283321; cv=none; b=NGBqJVI9oOHAt9EM68R2oXtrx+5JYKVTKLATRg0pK3+0NOgBsLD3OKlWC+2zBVnq0mg7QDrPTq9+YGJm4WgX3PxDkfw3v2Xgqks1F0EWkT0ExSElHmBcPEhSXQFn1M5I1rCyobGGzwxek/ze47rFEeUz8YkOridYD8v37rzhmBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715283149; c=relaxed/simple;
-	bh=s2TYtBfBeijGY2qR+HyjFf/zHVL+F9y8E+zetnHVtQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4ZnW2ki8YqH7Y5ca6Wl6Flpxo6WtCbYAYzwTJMrdKp8F+cE/y3mLTqXaLofcKdLlmeb4mDn08CcepJ01fRvCpCQdjqoA7zpmqZbU0/B/sz5KnSjU2I88qqh/KI7TZqo+oIBREkxQFobTbEy6Ec7pus7z2F6QTw343J1ojj0ORk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XploBwL/; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 9 May 2024 15:32:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715283143;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BxtZvAQIwy3tRjZg+7GyLrseN3zxMNyVyd3LKLpf4iQ=;
-	b=XploBwL/Z32I6PjY7cwf0f3uPtf1hHELji6r0Lspy1VodilW7lH4NV3TbUff0Cc34+mCaz
-	+ZCQmJ71QmJyetKU5wlzMDFlPFYvheKqXK8dtDvUfI7rIPpL5OEN7OYlg/CLhDVNE1uOhz
-	e1UdCI6XQby6uNk65uPM97TIC13EXmo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Camila Alvarez <cam.alvarez.i@gmail.com>
-Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: guard against invalid bits_per_field in
- bch2_bkey_format_invalid
-Message-ID: <ygq5bsdf4suuqp3sfa4lj5ko6afk3kbhtyuo6e6fe6eiwr2uv5@u3igdwmfaful>
-References: <20240509014030.671222-1-cam.alvarez.i@gmail.com>
+	s=arc-20240116; t=1715283321; c=relaxed/simple;
+	bh=EaYjQrX+/02VwYCtKZW3vScrvUW670G05eaMa5VkSl0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=prQQtJrXCNtEwLljxIFWHSpCysZeV269h8qdMbKbgHlJqMcmeIGFDDilq6B1nuOWL414VIFGhmGhMQF+TDCXstp4jETxn4YpzAtEKg5G0A3kXUF/9OAxW9/aAMHWnPqnA0cLvnwlt8TsN6oW7njleasrgUjzrcNekHgv65iSY78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=njMxRWO2; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-792b934de39so99282885a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:35:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715283317; x=1715888117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xw1OkgMZ/krnn9QK21TBDDqRd4Ysk40xlaOCf58rQec=;
+        b=njMxRWO218VOr9i4CwliCfguyyPAJOD0LTGrOz+F2sjEDkdwEXGyx27PO5rp13gvnt
+         2WNCPzckhZFz6G7qiH6J9/z1qgBJXc127CnbTSBSHPckFqrCH9kMeZtfPS/UybVTS6Bz
+         RPWsnqDxkw8uNXcJfM0k9PW80kjPyLQFSpSIA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715283317; x=1715888117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xw1OkgMZ/krnn9QK21TBDDqRd4Ysk40xlaOCf58rQec=;
+        b=FsYM3547m/AQi1K/LynzvVtJt8i2iZpRK0TtjBoj+81VRdzI0Cs+5+cj47BwnENpzj
+         jjgeNzupVZH1PlcE12LroRJhXo/Fn4nAdxrPluS46bMPI6oSN1LTMp+hgAzvBwyaPPl2
+         kavIMNsccCo3RO0GIGswEWmaA0MwMX97MLRTowFZip7A8uCOpPlFPg1NcFQK3Z49jmfW
+         /JExu0YJF0qw4SGuYIwmE0LboIyp7A1mFH+TdGL9L53P2b2AwCPAutA1OSDkZpTrzEGM
+         kCGK3umCQzOZVg71azrxVqZ1uyty+k2wc05cM9Dkyq++ZKW9kYIrsyigOPVFu+BY5ydb
+         eFdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUO+7T5oy9vCiqgG/FX2o8Qeb/mwHjgqBoIlm1+Zul44WqhkywEkqIQVTMp1Fktj3Hsucq1NFgILL4/EiPW/NjrHP9ZGDmlIRQsMZS+
+X-Gm-Message-State: AOJu0Yyev68LKsFz1alEysKgq380Atwe8SwJuqSopsryvi7Zy76H2mbx
+	r7WTF5WRtCLA2OgVcJ5yYFusvAmcE85kUJQjvqe/nEL3OMiNi1mCpW/Kvgfs2T6XsmYZ2d8UYp6
+	Zp5mN
+X-Google-Smtp-Source: AGHT+IEAxU/vvfljdc2R4lNItw0AGhwdQkLrGTifCEPIE5dYovoUqZ0FcMO4wKT5CMNuU8GGSsV2nA==
+X-Received: by 2002:a05:620a:70e8:b0:792:a4e0:1404 with SMTP id af79cd13be357-792c75abf3dmr44405585a.38.1715283317622;
+        Thu, 09 May 2024 12:35:17 -0700 (PDT)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf276dd6sm99795285a.13.2024.05.09.12.35.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 12:35:16 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-439b1c72676so3291cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:35:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSVU4O17AFS4Q9xBAuJjuRdBmOhoKjqF+txUgs9tLAU2NsicnUdk66WqX2DMNu1Jnc4iONtgEo0B2A8ui/Lq7wtTL7D8OUYoYEXUFW
+X-Received: by 2002:a05:622a:429b:b0:43a:b977:d611 with SMTP id
+ d75a77b69052e-43dfdcde1cfmr333451cf.24.1715283315822; Thu, 09 May 2024
+ 12:35:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509014030.671222-1-cam.alvarez.i@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240509184129.3924422-1-swboyd@chromium.org>
+In-Reply-To: <20240509184129.3924422-1-swboyd@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 9 May 2024 12:34:59 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VP+DDQbdb-pD2JJKrZ+MrkgcuyzBj4H-4oTDVvBpTOtQ@mail.gmail.com>
+Message-ID: <CAD=FV=VP+DDQbdb-pD2JJKrZ+MrkgcuyzBj4H-4oTDVvBpTOtQ@mail.gmail.com>
+Subject: Re: [PATCH] soc: qcom: rpmh-rsc: Ensure irqs aren't disabled by
+ rpmh_rsc_send_data() callers
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	patches@lists.linux.dev, Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 08, 2024 at 09:40:32PM -0400, Camila Alvarez wrote:
-> A check for a valid value for bits_per_field is performed for each field before computing packed_max.
-> If bits_per_field is invalid for any field the whole format is deemed
-> invalid.
-> 
-> Reported-by: syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com
-> Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+Hi,
+
+On Thu, May 9, 2024 at 11:41=E2=80=AFAM Stephen Boyd <swboyd@chromium.org> =
+wrote:
+>
+> Dan pointed out that Smatch is concerned about this code because it uses
+> spin_lock_irqsave() and then calls wait_event_lock_irq() which enables
+> irqs before going to sleep. The comment above the function says it
+> should be called with interrupts enabled, but we simply hope that's true
+> without really confirming that. Let's add a might_sleep() here to
+> confirm that interrupts and preemption aren't disabled. Once we do that,
+> we can change the lock to be non-saving, spin_lock_irq(), to clarify
+> that we don't expect irqs to be disabled. If irqs are disabled by
+> callers they're going to be enabled anyway in the wait_event_lock_irq()
+> call which would be bad.
+>
+> This should make Smatch happier and find bad callers faster with the
+> might_sleep(). We can drop the WARN_ON() in the caller because we have
+> the might_sleep() now, simplifying the code.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/911181ed-c430-4592-ad26-4dc948834e08@mo=
+roto.mountain
+> Fixes: 2bc20f3c8487 ("soc: qcom: rpmh-rsc: Sleep waiting for tcs slots to=
+ be free")
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 > ---
->  fs/bcachefs/bcachefs_format.h |  8 ++++++++
->  fs/bcachefs/bkey.c            | 18 ++++++++++++++++--
->  2 files changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-> index d5b90439e581..9e688a8d780f 100644
-> --- a/fs/bcachefs/bcachefs_format.h
-> +++ b/fs/bcachefs/bcachefs_format.h
-> @@ -318,6 +318,14 @@ enum bch_bkey_fields {
->  #define bkey_format_field(name, field)					\
->  	[BKEY_FIELD_##name] = (sizeof(((struct bkey *) NULL)->field) * 8)
->  
-> +#define BCH_BKEY_FIELDS()						\
-> +	x(INODE,        p.inode)					\
-> +	x(OFFSET,       p.offset)					\
-> +	x(SNAPSHOT,     p.snapshot)					\
-> +	x(SIZE,         size)						\
-> +	x(VERSION_HI,   version.hi)					\
-> +	x(VERSION_LO,   version.lo)	
-> +
->  #define BKEY_FORMAT_CURRENT						\
->  ((struct bkey_format) {							\
->  	.key_u64s	= BKEY_U64s,					\
-> diff --git a/fs/bcachefs/bkey.c b/fs/bcachefs/bkey.c
-> index 76e79a15ba08..f7847c96a105 100644
-> --- a/fs/bcachefs/bkey.c
-> +++ b/fs/bcachefs/bkey.c
-> @@ -638,6 +638,13 @@ struct bkey_format bch2_bkey_format_done(struct bkey_format_state *s)
->  	return ret;
->  }
->  
-> +static unsigned bch2_max_bits_per_field[] = {
-> +#define x(name, field) \
-> +	bkey_format_field(name, field),
-> +	BCH_BKEY_FIELDS()
-> +#undef x
-> +};
-> +
->  int bch2_bkey_format_invalid(struct bch_fs *c,
->  			     struct bkey_format *f,
->  			     enum bkey_invalid_flags flags,
-> @@ -659,8 +666,15 @@ int bch2_bkey_format_invalid(struct bch_fs *c,
->  		if (!c || c->sb.version_min >= bcachefs_metadata_version_snapshot) {
->  			unsigned unpacked_bits = bch2_bkey_format_current.bits_per_field[i];
->  			u64 unpacked_max = ~((~0ULL << 1) << (unpacked_bits - 1));
-> -			u64 packed_max = f->bits_per_field[i]
-> -				? ~((~0ULL << 1) << (f->bits_per_field[i] - 1))
-> +			unsigned bits_per_field = f->bits_per_field[i];
-> +
-> +			if (bits_per_field > bch2_max_bits_per_field[i]) {
-> +				prt_printf(err, "field %u uses more bits than allowed: %u > %u",
-> +						i, bits_per_field, bch2_max_bits_per_field[i]);
-> +				return -BCH_ERR_invalid;
-> +			}
-> +			u64 packed_max = bits_per_field
-> +				? ~((~0ULL << 1) << (bits_per_field - 1))
->  				: 0;
->  			u64 field_offset = le64_to_cpu(f->field_offset[i]);
->  
-> -- 
-> 2.34.1
-> 
+>  drivers/soc/qcom/rpmh-rsc.c | 7 ++++---
+>  drivers/soc/qcom/rpmh.c     | 1 -
+>  2 files changed, 4 insertions(+), 4 deletions(-)
 
-Already applied this patch:
-
-commit 61692c7812ab2aca17a3751f6e7798acbdae4b6b
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed May 8 10:58:26 2024 -0400
-
-    bcachefs: bch2_bkey_format_field_overflows()
-    
-    Fix another shift-by-64 by factoring out a common helper for
-    bch2_bkey_format_invalid() and bformat_needs_redo() (where it was
-    already fixed).
-    
-    Reported-by: syzbot+9833a1d29d4a44361e2c@syzkaller.appspotmail.com
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/fs/bcachefs/bkey.c b/fs/bcachefs/bkey.c
-index 76e79a15ba08..952299a2e416 100644
---- a/fs/bcachefs/bkey.c
-+++ b/fs/bcachefs/bkey.c
-@@ -656,20 +656,17 @@ int bch2_bkey_format_invalid(struct bch_fs *c,
- 	 * unpacked format:
- 	 */
- 	for (i = 0; i < f->nr_fields; i++) {
--		if (!c || c->sb.version_min >= bcachefs_metadata_version_snapshot) {
-+		if ((!c || c->sb.version_min >= bcachefs_metadata_version_snapshot) &&
-+		    bch2_bkey_format_field_overflows(f, i)) {
- 			unsigned unpacked_bits = bch2_bkey_format_current.bits_per_field[i];
- 			u64 unpacked_max = ~((~0ULL << 1) << (unpacked_bits - 1));
- 			u64 packed_max = f->bits_per_field[i]
- 				? ~((~0ULL << 1) << (f->bits_per_field[i] - 1))
- 				: 0;
--			u64 field_offset = le64_to_cpu(f->field_offset[i]);
- 
--			if (packed_max + field_offset < packed_max ||
--			    packed_max + field_offset > unpacked_max) {
--				prt_printf(err, "field %u too large: %llu + %llu > %llu",
--					   i, packed_max, field_offset, unpacked_max);
--				return -BCH_ERR_invalid;
--			}
-+			prt_printf(err, "field %u too large: %llu + %llu > %llu",
-+				   i, packed_max, le64_to_cpu(f->field_offset[i]), unpacked_max);
-+			return -BCH_ERR_invalid;
- 		}
- 
- 		bits += f->bits_per_field[i];
-diff --git a/fs/bcachefs/bkey.h b/fs/bcachefs/bkey.h
-index 3a45d128f608..1bb0bd4371b0 100644
---- a/fs/bcachefs/bkey.h
-+++ b/fs/bcachefs/bkey.h
-@@ -574,6 +574,29 @@ static inline void bch2_bkey_format_add_key(struct bkey_format_state *s, const s
- 
- void bch2_bkey_format_add_pos(struct bkey_format_state *, struct bpos);
- struct bkey_format bch2_bkey_format_done(struct bkey_format_state *);
-+
-+static inline bool bch2_bkey_format_field_overflows(struct bkey_format *f, unsigned i)
-+{
-+	unsigned f_bits = f->bits_per_field[i];
-+	unsigned unpacked_bits = bch2_bkey_format_current.bits_per_field[i];
-+	u64 unpacked_mask = ~((~0ULL << 1) << (unpacked_bits - 1));
-+	u64 field_offset = le64_to_cpu(f->field_offset[i]);
-+
-+	if (f_bits > unpacked_bits)
-+		return true;
-+
-+	if ((f_bits == unpacked_bits) && field_offset)
-+		return true;
-+
-+	u64 f_mask = f_bits
-+		? ~((~0ULL << (f_bits - 1)) << 1)
-+		: 0;
-+
-+	if (((field_offset + f_mask) & unpacked_mask) < field_offset)
-+		return true;
-+	return false;
-+}
-+
- int bch2_bkey_format_invalid(struct bch_fs *, struct bkey_format *,
- 			     enum bkey_invalid_flags, struct printbuf *);
- void bch2_bkey_format_to_text(struct printbuf *, const struct bkey_format *);
-diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
-index 4d94b7742dbb..45984a688e5b 100644
---- a/fs/bcachefs/move.c
-+++ b/fs/bcachefs/move.c
-@@ -975,26 +975,10 @@ static bool migrate_btree_pred(struct bch_fs *c, void *arg,
-  */
- static bool bformat_needs_redo(struct bkey_format *f)
- {
--	for (unsigned i = 0; i < f->nr_fields; i++) {
--		unsigned f_bits = f->bits_per_field[i];
--		unsigned unpacked_bits = bch2_bkey_format_current.bits_per_field[i];
--		u64 unpacked_mask = ~((~0ULL << 1) << (unpacked_bits - 1));
--		u64 field_offset = le64_to_cpu(f->field_offset[i]);
--
--		if (f_bits > unpacked_bits)
--			return true;
--
--		if ((f_bits == unpacked_bits) && field_offset)
-+	for (unsigned i = 0; i < f->nr_fields; i++)
-+		if (bch2_bkey_format_field_overflows(f, i))
- 			return true;
- 
--		u64 f_mask = f_bits
--			? ~((~0ULL << (f_bits - 1)) << 1)
--			: 0;
--
--		if (((field_offset + f_mask) & unpacked_mask) < field_offset)
--			return true;
--	}
--
- 	return false;
- }
- 
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
