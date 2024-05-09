@@ -1,191 +1,192 @@
-Return-Path: <linux-kernel+bounces-174774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E78A8C14CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:35:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A5B8C14DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2E21B21CCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:35:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B6A2839FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2A87E112;
-	Thu,  9 May 2024 18:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0DA7F7D1;
+	Thu,  9 May 2024 18:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jVfJY8Iv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sxDXrfqk"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBDEC2ED;
-	Thu,  9 May 2024 18:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C92F7711E;
+	Thu,  9 May 2024 18:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715279699; cv=none; b=pYGeHbIkvsVKw3qnhhikMuMVyc4RSUlEajMtNa83c120b6O7ZJTIKTQKGuHCL4Lln/nKSO50Ovjc/5IZVvTmIO9bK3nfxPrnWGy8wUAkhpfp2XoIKnzoa4Pt+7bRBVhfkXLPebujOG4Fku4AE+vQoHcFOZc21op0z3SO4/aVFlk=
+	t=1715279968; cv=none; b=CGH4haPL0JGqMuVpCvpfHPBRcpRUqQNvnLclE0VfsMZ1q8Q2ncEUhZHRwwN+7WlIzSE5vrigCYriOQATJl8PbFAwqqCciD+o6VQiAH2S5wPAWBrSB30QDfw6Kaq8vV/No4WDAW+2ESmuZ6ocXEQltIuarRaLQT/qj62ZGUYlTPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715279699; c=relaxed/simple;
-	bh=i06qz+Ewc1F2GzNxYBKo2Ffrx2bf5FSB8oMTTxYIVPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cp8YtONmCcXyXIRh6yyaC2V5tM4f5Fqtr/aWN6s0kgqeH4x5WcSK1R6XJjJ86sqsErGuD+qUKGfJRnpqtFi6wTPfZUEtottewFuaD3WTFe1Xi/Nl4CwPB+UzuiSjSBQvxKMHRNf+aIaUN2KBSFADiLGJLskC8ftbo7H7Z9BTI4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jVfJY8Iv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 449F8ZrK019979;
-	Thu, 9 May 2024 18:34:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=99WYyI9vlXZSEFdK7/orUJbo3u1ic/cbbZEy9v9qzxo=; b=jV
-	fJY8IvObaakyRANoXA6UjZsMye8djuXXRfgCIaRj6UA2fw8u5zNJMTsvAp3tHAJy
-	dL/v7CWpMhR2bPQPH6p8xdjTQebD7g9DsEc5o7n7RUEz7x+NNHy0DQZ9psuM9lQP
-	PTOqDrOlj2bWLwXZYBoO/YjPuNpU8qcMHmYpGsDYSIlBoxyOo12ObN6UruqfdDtG
-	wOROC4btHqudOuYmwRG6oinQA2EH016nWkEX8Cf9NQquyFsKAokg3Jjbppux3LFB
-	NhGy5zRDzHvY14TJS+JeueAdxJaGO7JpBl9+1ODOrfJWcgS4rm6pjJZo0av0zQ75
-	ZfN/CEODisy0ohl8RJ1A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y09g5kbed-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 18:34:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449IYWTg018499
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 18:34:32 GMT
-Received: from [10.110.110.113] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
- 11:34:31 -0700
-Message-ID: <60e92614-5e56-46c4-ab4f-1f0261a3a9ab@quicinc.com>
-Date: Thu, 9 May 2024 11:34:31 -0700
+	s=arc-20240116; t=1715279968; c=relaxed/simple;
+	bh=YFk7gfrCyhRUbiaBKEU6P8eXBw7FlSAj1nozW8WnlUo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tuENfi07cQrQAjF3hQom9Ru8jfG1BjEM3+9eE1GyxcJ03ys34dzCGKINEHmOzX59Ynp5jHK2m/hw0kDEa8Mo0DcJIcABgJksTvTk5XQSIfajjFg1XlX2toQiWwb2Nmw/NnejzoUVg33gBdDfqW/ag6jRlCzDWtibWj+IbCjb1Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sxDXrfqk; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 449Icp2o059675;
+	Thu, 9 May 2024 13:38:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715279931;
+	bh=+EBsg+MBavvoLe4uw8H9uyV1BuH7NSV3Xnw72/49t8I=;
+	h=From:To:CC:Subject:Date;
+	b=sxDXrfqk2zVS185lviPF7OTRtVV01UEs9crR72p8RdzBPcT22jZrNj9t59nfysEq6
+	 8MaHm48CW1GzF1Oq1gt25Z9E9yjnhnFbAhckDFzKc3Zi6nUMYCGfSlF7YhOIYqzElE
+	 kvSi6wRGSPj92mlySBa3ecplabnAzPPHf7mIWmzE=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 449Icpqc028334
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 9 May 2024 13:38:51 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 9
+ May 2024 13:38:51 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 9 May 2024 13:38:50 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 449Ico8E003719;
+	Thu, 9 May 2024 13:38:50 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <andriy.shevchenko@linux.intel.com>,
+        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <jani.nikula@intel.com>,
+        <linux-rockchip@lists.infradead.org>
+Subject: [PATCH v7 0/8] [PATCH v7 0/8] Add V4L2 M2M Driver for E5010 JPEG Encoder
+Date: Fri, 10 May 2024 00:08:49 +0530
+Message-ID: <20240509183849.4060521-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 2/6] PCI: qcom: Add ICC bandwidth vote for CPU to PCIe
- path
-Content-Language: en-US
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
-	<kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, <johan+linaro@kernel.org>,
-        <bmasney@redhat.com>, <djakov@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <vireshk@kernel.org>, <quic_vbadigan@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_parass@quicinc.com>, <krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>
-References: <20240427-opp_support-v12-0-f6beb0a1f2fc@quicinc.com>
- <20240427-opp_support-v12-2-f6beb0a1f2fc@quicinc.com>
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20240427-opp_support-v12-2-f6beb0a1f2fc@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WCAhRzdDdrrCuc6XE6SSFZk7BgsvpH83
-X-Proofpoint-GUID: WCAhRzdDdrrCuc6XE6SSFZk7BgsvpH83
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_10,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1011 malwarescore=0 adultscore=0 mlxscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 mlxlogscore=999 suspectscore=0
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405090130
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Krishna
+This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
+which is a stateful JPEG encoder from Imagination technologies
+and is present in TI AM62A SoC.
 
-On 4/26/2024 6:52 PM, Krishna chaitanya chundru wrote:
-> To access the host controller registers of the host controller and the
-> endpoint BAR/config space, the CPU-PCIe ICC (interconnect) path should
-> be voted otherwise it may lead to NoC (Network on chip) timeout.
-> We are surviving because of other driver voting for this path.
-> 
-> As there is less access on this path compared to PCIe to mem path
-> add minimum vote i.e 1KBps bandwidth always which is sufficient enough
-> to keep the path active and is recommended by HW team.
-> 
-> During S2RAM (Suspend-to-RAM), the DBI access can happen very late (while
-> disabling the boot CPU). So do not disable the CPU-PCIe interconnect path
-> during S2RAM as that may lead to NoC error.
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->   drivers/pci/controller/dwc/pcie-qcom.c | 44 ++++++++++++++++++++++++++++++----
->   1 file changed, 40 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 14772edcf0d3..465d63b4be1c 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -245,6 +245,7 @@ struct qcom_pcie {
->   	struct phy *phy;
->   	struct gpio_desc *reset;
->   	struct icc_path *icc_mem;
-> +	struct icc_path *icc_cpu;
->   	const struct qcom_pcie_cfg *cfg;
->   	struct dentry *debugfs;
->   	bool suspended;
-> @@ -1409,6 +1410,9 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
->   	if (IS_ERR(pcie->icc_mem))
->   		return PTR_ERR(pcie->icc_mem);
->   
-> +	pcie->icc_cpu = devm_of_icc_get(pci->dev, "cpu-pcie");
-> +	if (IS_ERR(pcie->icc_cpu))
-> +		return PTR_ERR(pcie->icc_cpu);
->   	/*
->   	 * Some Qualcomm platforms require interconnect bandwidth constraints
->   	 * to be set before enabling interconnect clocks.
-> @@ -1418,7 +1422,20 @@ static int qcom_pcie_icc_init(struct qcom_pcie *pcie)
->   	 */
->   	ret = icc_set_bw(pcie->icc_mem, 0, QCOM_PCIE_LINK_SPEED_TO_BW(1));
->   	if (ret) {
-> -		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
-> +		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Since the CPU-PCIe path is only used for activities like register
-> +	 * access of the host controller and endpoint Config/BAR space access,
-> +	 * HW team has recommended to use a minimal bandwidth of 1KBps just to
-> +	 * keep the path active.
-> +	 */
-> +	ret = icc_set_bw(pcie->icc_cpu, 0, kBps_to_icc(1));
-> +	if (ret) {
-> +		dev_err(pci->dev, "Failed to set bandwidth for CPU-PCIe interconnect path: %d\n",
->   			ret);
-Is it needed to undo icc_mem related bus bandwidth vote here ?
->   		return ret;
->   	}
-> @@ -1448,7 +1465,7 @@ static void qcom_pcie_icc_update(struct qcom_pcie *pcie)
->   
->   	ret = icc_set_bw(pcie->icc_mem, 0, width * QCOM_PCIE_LINK_SPEED_TO_BW(speed));
->   	if (ret) {
-> -		dev_err(pci->dev, "failed to set interconnect bandwidth: %d\n",
-> +		dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
->   			ret);
->   	}
->   }
+While adding support for it, following additional framework changes were
+made:
+ - Moved reference quantization and huffman tables provided in
+   ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
+ - Add macros to round to closest integer (either higher or lower) while
+   rounding in order of 2.
+
+v4l2-compliance test :
+Link: https://gist.github.com/devarsht/1f039c631ca953a57f405cfce1b69e49
+
+E5010 JPEG Encoder Manual tests :
+
+Performance:
+Link: https://gist.github.com/devarsht/c40672944fd71c9a53ab55adbfd9e28b
+
+Functionality:
+Link: https://gist.github.com/devarsht/8e88fcaabff016bb2bac83d89c9d23ce
+
+Compression Quality:
+Link: https://gist.github.com/devarsht/cbcc7cd97e8c48ba1486caa2b7884655
+
+Multi Instance:
+Link: https://gist.github.com/devarsht/22c2fca08cd3441fb40f2c7a4cebc95a
+
+Crop support:
+Link: https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd
+
+Runtime PM:
+Link: https://gist.github.com/devarsht/70cd95d4440ddc678489d93885ddd4dd
+
+[1]: 
+https://lore.kernel.org/all/de46aefe-36da-4e1a-b4fa-b375b2749181@xs4all.nl/
+
+Changelog:
+V6->V7:
+ - Fix cropping support
+ - Move reference huffman and quantization tables to v4l2-jpeg.c
+ - Fix suspend/resume use-case
+
+Patch-Diff between the series :
+
+V3->V4 Range diff :
+https://gist.github.com/devarsht/22a744d999080de6e813bcfb5a596272
+
+V4->V5 Range diff :
+https://gist.github.com/devarsht/298790af819f299a0a05fec89371097b
+
+V5->V6 Range diff :
+https://gist.github.com/devarsht/c89180ac2b0d2814614f2b59d0705c19
+
+V6->V7 Range diff :
+https://gist.github.com/devarsht/1db185b1e187eaf397e9e4c37066777e
+
+Previous patch series:
+V2: https://lore.kernel.org/all/20230727112546.2201995-1-devarsht@ti.com/
+V3: https://lore.kernel.org/all/20230816152210.4080779-1-devarsht@ti.com/
+V4: https://lore.kernel.org/all/20240205114239.924697-1-devarsht@ti.com/
+V5: https://lore.kernel.org/all/20240215134641.3381478-1-devarsht@ti.com/
+V6: https://lore.kernel.org/all/20240228141140.3530612-1-devarsht@ti.com/
+
+Devarsh Thakkar (8):
+  media: dt-bindings: Add Imagination E5010 JPEG Encoder
+  media: imagination: Add E5010 JPEG Encoder driver
+  media: v4l2-jpeg: Export reference quantization and huffman tables
+  media: imagination: Use exported tables from v4l2-jpeg core
+  media: verisilcon : Use exported tables from v4l2-jpeg for hantro
+    codec
+  math.h Add macros to round to closest specified power of 2
+  media: imagination: Round to closest multiple for cropping region
+  gpu: ipu-v3: Use generic macro for rounding to nearest multiple
+
+ .../bindings/media/img,e5010-jpeg-enc.yaml    |   75 +
+ MAINTAINERS                                   |    7 +
+ drivers/gpu/ipu-v3/ipu-image-convert.c        |    4 +-
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/imagination/Kconfig    |   12 +
+ drivers/media/platform/imagination/Makefile   |    3 +
+ .../platform/imagination/e5010-core-regs.h    |  585 ++++++
+ .../platform/imagination/e5010-jpeg-enc-hw.c  |  267 +++
+ .../platform/imagination/e5010-jpeg-enc-hw.h  |   42 +
+ .../platform/imagination/e5010-jpeg-enc.c     | 1646 +++++++++++++++++
+ .../platform/imagination/e5010-jpeg-enc.h     |  168 ++
+ .../platform/imagination/e5010-mmu-regs.h     |  311 ++++
+ .../media/platform/verisilicon/hantro_jpeg.c  |  128 +-
+ drivers/media/v4l2-core/v4l2-jpeg.c           |  162 +-
+ include/linux/math.h                          |   36 +
+ include/media/v4l2-jpeg.h                     |   11 +
+ 17 files changed, 3341 insertions(+), 118 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/img,e5010-jpeg-enc.yaml
+ create mode 100644 drivers/media/platform/imagination/Kconfig
+ create mode 100644 drivers/media/platform/imagination/Makefile
+ create mode 100644 drivers/media/platform/imagination/e5010-core-regs.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc-hw.h
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.c
+ create mode 100644 drivers/media/platform/imagination/e5010-jpeg-enc.h
+ create mode 100644 drivers/media/platform/imagination/e5010-mmu-regs.h
+
+-- 
+2.39.1
 
 
