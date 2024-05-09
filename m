@@ -1,277 +1,140 @@
-Return-Path: <linux-kernel+bounces-174836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9328C15A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79188C15CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248FC1F21E8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849DA1F23C09
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2EA680029;
-	Thu,  9 May 2024 19:55:44 +0000 (UTC)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F203A7FBD1;
+	Thu,  9 May 2024 19:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kkVOTHAK"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81C92907;
-	Thu,  9 May 2024 19:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C1E2907
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284544; cv=none; b=kQ2I9OhrvYH8we45ISEIRko5o6uvBnNwYRNsLmtjHPPPmNrGo9ZM9hYwfdyKPFVWXco3dYcmQYwm0gYGlwDgDvlcY9P1AgOYEEsISSzLIzv/Yt5FBLNrvNzlbPbrgsqmr4648HkQSIrZtOyb8QQN1LU7kF5M1Z1tZify+rnbzjE=
+	t=1715284665; cv=none; b=YyxNBVacpRCUzIEHYfbsSBRlpBMPVzmIzmAZWchpbWT3V5dyzXbTXdlcwGer5q9NZp17K7q0mIJBh2mUNLLNpTdNB66cZQ84Rtr7orDZOkhrmn49TuF3YwPTt3ySs5lGNzGHwojccRDHhcjBJKp2j6b+NmCdu7rsv8JcnArc5Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284544; c=relaxed/simple;
-	bh=zbu/IGQfUBc/Eq+bOd62MWZ17jU/HCjaq7V/oU5X5d8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=os4QJe/0xyk//XFXcWjQ97nMoe36UL0S3nJF60B+/YVl9Q9RhNSKqocu+hKv5c2Ca2IM6SERLB6X2hfi7b29Epz9xlCl8Q69C3hF0iWH8YEJrI4ftBKlNPo+wpkamaqZ/3HcKXxM/dYmwuLUyCxCCHL3obd7aGcBZ7CKT7M85rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2b37731c118so1070809a91.1;
-        Thu, 09 May 2024 12:55:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284542; x=1715889342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/Ml7CX2KT81liQorKyRALPGhqTOeMdtMPyFG6ydCgw=;
-        b=VSd0+KZzC/deghSAqirUr7t/13riAszeZPxmdRxBzJ4qOn4X4iLTTsDFI0rlosHxOy
-         jr3gBOUn2cbznQYaUOB+8TyyQhdBOLuX92NCCm7F7IE2V0xQ0rIhlR9e4LakRqmd8nb2
-         e0oVlHJMzM2+b8sNSf0buczGqqirFhmJ/ww5YojRjRyrenPUKZ5IQORQgqhsTiHAJlJ6
-         dtUiWV61UO9BFg6Jm8WzJuVyCZDNTr/UT9T7h5RsQENzp+Z8n7E3PZ6RI5THqDuyej9Z
-         IKrezniSZN5yois9ppgWL7ICXVdqMpaVey9VTV11CjNxmml4t9nyxIeUwcINT3ITVqlp
-         BvgA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+pIsTjnYTRyiHCYTe/hzB4KIULt9oWId9MGyBX4VfvnQ95I7/HUv0gO/Omi7GD0SAYLTrr8mDs67am+bYSmAx6Ejb1qizKWcHb2oQPZ8lVVWCJnkRQMDKhYb1GwtJDyOTitEDnJJv6b2p2MtYewJq89/anQmMzN5v0cn8+gDjYGoJdQ==
-X-Gm-Message-State: AOJu0YyfH3j2pWgnkkINXl+b11WvBUfiUYNxnSIauJgNIjxK3W3iAwR9
-	91x1wHbAJ1L1ofUSElGhZci2OfKel9jAFnxIcgGWJDlDBRerV9U8vTDRa3X/V1RP11wolekScK5
-	zxXgPGWoXMhPX6/QWIgb70ul4tnk=
-X-Google-Smtp-Source: AGHT+IGQnK5k9VmctCtJUB7NtGIF2piUgInCtKQzIzp36Q/QXeaOWXRPQeFgx7BkHN2t9nR29dSOVZBvNnQzxcoaRrE=
-X-Received: by 2002:a17:90a:17c4:b0:2a9:f861:223e with SMTP id
- 98e67ed59e1d1-2b6cc7800edmr460740a91.29.1715284541779; Thu, 09 May 2024
- 12:55:41 -0700 (PDT)
+	s=arc-20240116; t=1715284665; c=relaxed/simple;
+	bh=25PFL8O7LUiyWR/XgauuhKM/SlCV7k8rJDcEP1QNg88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CuUKFeehEyy0i15QKoUKT1mRFrYLQzlzUCdg6f3U22xyhOVzdrDfmzrRIsVZ4L3ioqF3184sBs4bgNjgRxWOLd1R+FvsUh6ByaulSuOvzTRPA0PHMN9zavgU0XmwvDKVpnK8FkV6EOFcrS/NJ38VzIV8cCSOLRzcg17ekaOtCsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kkVOTHAK; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 9 May 2024 15:57:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715284660;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yUOp3tD7dHB3td/tNecroqkm1TIas/9UKBvrzjN3teU=;
+	b=kkVOTHAKbEANBp0vEYqjB99ffbNovfw6vt7NbodmwcBMEoPQDq7deOcFUwhWRVGjfcq2rX
+	4sq50B7t7nIGBu9k02RL7vXWrTc2vTlV2olwrlOlsnGrb8JgvFflLSjILeltgMcZa4vn6/
+	L0TLm5NS01menxQZOJQ98s5RaiTgmUg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Ubisectech Sirius <bugreport@ubisectech.com>
+Cc: linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: kernel BUG in ptr_stale
+Message-ID: <f227oabmqv43kx4ftezqjao3zs6ryq7gacn5j6p4z2q4yolja2@zqiluasr3wzd>
+References: <c9f0326b-c90f-4764-ae1a-cefc50726283.bugreport@ubisectech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502000602.753861-1-yabinc@google.com> <CAM9d7cj2WUdbXz1E4kQCYY=7tO+C9XXQidMJuQNp=WP6dudLkw@mail.gmail.com>
-In-Reply-To: <CAM9d7cj2WUdbXz1E4kQCYY=7tO+C9XXQidMJuQNp=WP6dudLkw@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 9 May 2024 12:55:30 -0700
-Message-ID: <CAM9d7cg0vCLf+X30PnmR9wcXT9+taXKntJoeAdWae+_G6mWjvw@mail.gmail.com>
-Subject: Re: [PATCH v2] perf/core: Save raw sample data conditionally based on
- sample type
-To: Yabin Cui <yabinc@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9f0326b-c90f-4764-ae1a-cefc50726283.bugreport@ubisectech.com>
+X-Migadu-Flow: FLOW_OUT
 
-Another thought.
+On Thu, May 09, 2024 at 02:26:24PM +0800, Ubisectech Sirius wrote:
+> Hello.
+> We are Ubisectech Sirius Team, the vulnerability lab of China ValiantSec. Recently, our team has discovered a issue in Linux kernel 6.7. Attached to the email were a PoC file of the issue.
 
-On Thu, May 9, 2024 at 12:45=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hello,
->
-> On Wed, May 1, 2024 at 5:06=E2=80=AFPM Yabin Cui <yabinc@google.com> wrot=
-e:
-> >
-> > Currently, space for raw sample data is always allocated within sample
-> > records for both BPF output and tracepoint events. This leads to unused
-> > space in sample records when raw sample data is not requested.
->
-> Oh, I thought it was ok because even if it sets _RAW bit in the
-> data->sample_flags unconditionally, perf_prepare_sample() and
-> perf_output_sample() checks the original event's attr->sample_type
-> so the raw data won't be recorded.
->
-> But I've realized that it increased data->dyn_size already. :(
-> Which means the sample would have garbage at the end.
->
-> I need to check if there are other places that made the same
-> mistake for other sample types.
->
-> >
-> > This patch checks sample type of an event before saving raw sample data
-> > in both BPF output and tracepoint event handling logic. Raw sample data
-> > will only be saved if explicitly requested, reducing overhead when it
-> > is not needed.
-> >
-> > Fixes: 0a9081cf0a11 ("perf/core: Add perf_sample_save_raw_data() helper=
-")
-> > Signed-off-by: Yabin Cui <yabinc@google.com>
->
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
->
-> Thanks,
-> Namhyung
->
-> > ---
-[SNIP]
-> > @@ -10180,13 +10181,18 @@ static void __perf_tp_event_target_task(u64 c=
-ount, void *record,
-> >         /* Cannot deliver synchronous signal to other task. */
-> >         if (event->attr.sigtrap)
-> >                 return;
-> > -       if (perf_tp_event_match(event, data, regs))
-> > +       if (perf_tp_event_match(event, raw, regs)) {
-> > +               perf_sample_data_init(data, 0, 0);
-> > +               if (event->attr.sample_type & PERF_SAMPLE_RAW)
-> > +                       perf_sample_save_raw_data(data, raw);
+This (and several of your others) are fixed in Linus's tree.
 
-Hmm.. to prevent future mistakes, maybe we can move the
-check into the perf_sample_save_raw_data() itself.
+> 
+> Stack dump:
+> 
+> bcachefs (loop1): mounting version 1.7: (unknown version) opts=metadata_checksum=none,data_checksum=none,nojournal_transaction_names
+> ------------[ cut here ]------------
+> kernel BUG at fs/bcachefs/buckets.h:114!
+> invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 1 PID: 9472 Comm: syz-executor.1 Not tainted 6.7.0 #2
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> RIP: 0010:bucket_gen fs/bcachefs/buckets.h:114 [inline]
+> RIP: 0010:ptr_stale+0x474/0x4e0 fs/bcachefs/buckets.h:188
+> Code: 48 c7 c2 80 8c 1b 8b be 67 00 00 00 48 c7 c7 e0 8c 1b 8b c6 05 ea a6 72 0b 01 e8 57 55 9c fd e9 fb fc ff ff e8 9d 02 bd fd 90 <0f> 0b 48 89 04 24 e8 31 bb 13 fe 48 8b 04 24 e9 35 fc ff ff e8 23
+> RSP: 0018:ffffc90007c4ec38 EFLAGS: 00010246
+> RAX: 0000000000040000 RBX: 0000000000000080 RCX: ffffc90002679000
+> RDX: 0000000000040000 RSI: ffffffff83ccf3b3 RDI: 0000000000000006
+> RBP: 0000000000000000 R08: 0000000000000006 R09: 0000000010000028
+> R10: 0000000000000080 R11: 0000000000000000 R12: 0000000010000028
+> R13: ffff88804dee5100 R14: 0000000000000000 R15: ffff88805b1a4110
+> FS:  00007f79ba8ab640(0000) GS:ffff88807ec00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f0bbda3f000 CR3: 000000005f37a000 CR4: 0000000000750ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  bch2_bkey_ptrs_to_text+0xb4e/0x1760 fs/bcachefs/extents.c:1012
+>  bch2_btree_ptr_v2_to_text+0x288/0x330 fs/bcachefs/extents.c:215
+>  bch2_val_to_text fs/bcachefs/bkey_methods.c:287 [inline]
+>  bch2_bkey_val_to_text+0x1c8/0x210 fs/bcachefs/bkey_methods.c:297
+>  journal_validate_key+0x7ab/0xb50 fs/bcachefs/journal_io.c:322
+>  journal_entry_btree_root_validate+0x31c/0x380 fs/bcachefs/journal_io.c:411
+>  bch2_journal_entry_validate+0xc7/0x130 fs/bcachefs/journal_io.c:752
+>  bch2_sb_clean_validate_late+0x14b/0x1e0 fs/bcachefs/sb-clean.c:32
+>  bch2_read_superblock_clean+0xbb/0x250 fs/bcachefs/sb-clean.c:160
+>  bch2_fs_recovery+0x113/0x52d0 fs/bcachefs/recovery.c:691
+>  bch2_fs_start+0x365/0x5e0 fs/bcachefs/super.c:978
+>  bch2_fs_open+0x1ac9/0x3890 fs/bcachefs/super.c:1968
+>  bch2_mount+0x538/0x13c0 fs/bcachefs/fs.c:1863
+>  legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+>  vfs_get_tree+0x93/0x380 fs/super.c:1771
+>  do_new_mount fs/namespace.c:3337 [inline]
+>  path_mount+0x679/0x1e40 fs/namespace.c:3664
+>  do_mount fs/namespace.c:3677 [inline]
+>  __do_sys_mount fs/namespace.c:3886 [inline]
+>  __se_sys_mount fs/namespace.c:3863 [inline]
+>  __x64_sys_mount+0x287/0x310 fs/namespace.c:3863
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0x43/0x120 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> RIP: 0033:0x7f79b9a91b3e
+> Code: 48 c7 c0 ff ff ff ff eb aa e8 be 0d 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f79ba8aae38 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00000000000119f4 RCX: 00007f79b9a91b3e
+> RDX: 0000000020011a00 RSI: 0000000020011a40 RDI: 00007f79ba8aae90
+> RBP: 00007f79ba8aaed0 R08: 00007f79ba8aaed0 R09: 000000000181c050
+> R10: 000000000181c050 R11: 0000000000000202 R12: 0000000020011a00
+> R13: 0000000020011a40 R14: 00007f79ba8aae90 R15: 00000000200001c0
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> 
+> 
+> Thank you for taking the time to read this email and we look forward to working with you further.
+> 
+> 
+> 
+> 
+> 
+> 
 
-And it'd be great if you could do the same for callchain
-and brstack too. :)
 
-Thanks,
-Namhyung
-
-
-> >                 perf_swevent_event(event, count, data, regs);
-> > +       }
-> >  }
-> >
-> >  static void perf_tp_event_target_task(u64 count, void *record,
-> >                                       struct pt_regs *regs,
-> >                                       struct perf_sample_data *data,
-> > +                                     struct perf_raw_record *raw,
-> >                                       struct perf_event_context *ctx)
-> >  {
-> >         unsigned int cpu =3D smp_processor_id();
-> > @@ -10194,15 +10200,15 @@ static void perf_tp_event_target_task(u64 cou=
-nt, void *record,
-> >         struct perf_event *event, *sibling;
-> >
-> >         perf_event_groups_for_cpu_pmu(event, &ctx->pinned_groups, cpu, =
-pmu) {
-> > -               __perf_tp_event_target_task(count, record, regs, data, =
-event);
-> > +               __perf_tp_event_target_task(count, record, regs, data, =
-raw, event);
-> >                 for_each_sibling_event(sibling, event)
-> > -                       __perf_tp_event_target_task(count, record, regs=
-, data, sibling);
-> > +                       __perf_tp_event_target_task(count, record, regs=
-, data, raw, sibling);
-> >         }
-> >
-> >         perf_event_groups_for_cpu_pmu(event, &ctx->flexible_groups, cpu=
-, pmu) {
-> > -               __perf_tp_event_target_task(count, record, regs, data, =
-event);
-> > +               __perf_tp_event_target_task(count, record, regs, data, =
-raw, event);
-> >                 for_each_sibling_event(sibling, event)
-> > -                       __perf_tp_event_target_task(count, record, regs=
-, data, sibling);
-> > +                       __perf_tp_event_target_task(count, record, regs=
-, data, raw, sibling);
-> >         }
-> >  }
-> >
-> > @@ -10220,15 +10226,10 @@ void perf_tp_event(u16 event_type, u64 count,=
- void *record, int entry_size,
-> >                 },
-> >         };
-> >
-> > -       perf_sample_data_init(&data, 0, 0);
-> > -       perf_sample_save_raw_data(&data, &raw);
-> > -
-> >         perf_trace_buf_update(record, event_type);
-> >
-> >         hlist_for_each_entry_rcu(event, head, hlist_entry) {
-> > -               if (perf_tp_event_match(event, &data, regs)) {
-> > -                       perf_swevent_event(event, count, &data, regs);
-> > -
-> > +               if (perf_tp_event_match(event, &raw, regs)) {
-> >                         /*
-> >                          * Here use the same on-stack perf_sample_data,
-> >                          * some members in data are event-specific and
-> > @@ -10238,7 +10239,9 @@ void perf_tp_event(u16 event_type, u64 count, v=
-oid *record, int entry_size,
-> >                          * because data->sample_flags is set.
-> >                          */
-> >                         perf_sample_data_init(&data, 0, 0);
-> > -                       perf_sample_save_raw_data(&data, &raw);
-> > +                       if (event->attr.sample_type & PERF_SAMPLE_RAW)
-> > +                               perf_sample_save_raw_data(&data, &raw);
-> > +                       perf_swevent_event(event, count, &data, regs);
-> >                 }
-> >         }
-> >
-> > @@ -10255,7 +10258,7 @@ void perf_tp_event(u16 event_type, u64 count, v=
-oid *record, int entry_size,
-> >                         goto unlock;
-> >
-> >                 raw_spin_lock(&ctx->lock);
-> > -               perf_tp_event_target_task(count, record, regs, &data, c=
-tx);
-> > +               perf_tp_event_target_task(count, record, regs, &data, &=
-raw, ctx);
-> >                 raw_spin_unlock(&ctx->lock);
-> >  unlock:
-> >                 rcu_read_unlock();
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index 9dc605f08a23..4b3ff71b4c0a 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -620,7 +620,8 @@ static const struct bpf_func_proto bpf_perf_event_r=
-ead_value_proto =3D {
-> >
-> >  static __always_inline u64
-> >  __bpf_perf_event_output(struct pt_regs *regs, struct bpf_map *map,
-> > -                       u64 flags, struct perf_sample_data *sd)
-> > +                       u64 flags, struct perf_raw_record *raw,
-> > +                       struct perf_sample_data *sd)
-> >  {
-> >         struct bpf_array *array =3D container_of(map, struct bpf_array,=
- map);
-> >         unsigned int cpu =3D smp_processor_id();
-> > @@ -645,6 +646,9 @@ __bpf_perf_event_output(struct pt_regs *regs, struc=
-t bpf_map *map,
-> >         if (unlikely(event->oncpu !=3D cpu))
-> >                 return -EOPNOTSUPP;
-> >
-> > +       if (event->attr.sample_type & PERF_SAMPLE_RAW)
-> > +               perf_sample_save_raw_data(sd, raw);
-> > +
-> >         return perf_event_output(event, sd, regs);
-> >  }
-> >
-> > @@ -688,9 +692,8 @@ BPF_CALL_5(bpf_perf_event_output, struct pt_regs *,=
- regs, struct bpf_map *, map,
-> >         }
-> >
-> >         perf_sample_data_init(sd, 0, 0);
-> > -       perf_sample_save_raw_data(sd, &raw);
-> >
-> > -       err =3D __bpf_perf_event_output(regs, map, flags, sd);
-> > +       err =3D __bpf_perf_event_output(regs, map, flags, &raw, sd);
-> >  out:
-> >         this_cpu_dec(bpf_trace_nest_level);
-> >         preempt_enable();
-> > @@ -749,9 +752,8 @@ u64 bpf_event_output(struct bpf_map *map, u64 flags=
-, void *meta, u64 meta_size,
-> >
-> >         perf_fetch_caller_regs(regs);
-> >         perf_sample_data_init(sd, 0, 0);
-> > -       perf_sample_save_raw_data(sd, &raw);
-> >
-> > -       ret =3D __bpf_perf_event_output(regs, map, flags, sd);
-> > +       ret =3D __bpf_perf_event_output(regs, map, flags, &raw, sd);
-> >  out:
-> >         this_cpu_dec(bpf_event_output_nest_level);
-> >         preempt_enable();
-> > --
-> > 2.45.0.rc0.197.gbae5840b3b-goog
-> >
 
