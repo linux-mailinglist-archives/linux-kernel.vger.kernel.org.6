@@ -1,101 +1,362 @@
-Return-Path: <linux-kernel+bounces-174548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C8758C108D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:43:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4D48C1091
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D90D1C218C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3767B20DFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809E515AAD7;
-	Thu,  9 May 2024 13:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XZxZkzZf"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DB01514F4
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 13:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD50315B98B;
+	Thu,  9 May 2024 13:44:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826B5158208;
+	Thu,  9 May 2024 13:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715262222; cv=none; b=i6noBhkfVkH0glt5m2eHfWK5X5q8lrIlZV0rB6nGa3CEq/hmdMKYaA8lqfjVQw48GfvDsJNvEv9G7zJluupcHLGlyGgdWbfgK/s2GR+LQJUTC8Yw1yoC+H3/njQSShTY8KYIxDWyPBZwIITUIUz099IFXd9LiSQL8x4Iy6QKojY=
+	t=1715262241; cv=none; b=Aii/FURSVq3QKVBuRRTU2vuCPcCtu94sprbvKql2AMytGvQhjak0dxYcG2CRcpsQufyWLBdSwWUE6m2KzHhsrZT/XdnNvin1bbavEAVqiZSlZ4gJAaXef8Oa21eU0oXr5Fjhejvnt9c3zvwte0AEIbjLzRcO87KRAp8hQCQ1Reo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715262222; c=relaxed/simple;
-	bh=SosXJ4ElQ643TZEOH3NiSIC1TFuDHjGhhBOhpLT9iDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nkgWCqmsicZWSfAhWuSVDq6vXBq/8xi8zm8Vn+DcOi0WS31+8EUk/F0pLcvLs+uS42cYu2j+9kUOPIiS/TYpbaVgW0kXL7YvnyMUioOHmW8SK5TVnhW4jmylIQwvVA4ZlHory4i6w1a6MSbHtBEXF+SrPotLM1ktzQAgaJ+WvF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XZxZkzZf; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41b794510cdso6955035e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 06:43:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715262219; x=1715867019; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6X3OJ4CDNvDG+N388kEs3vaDpQBTgIoXa48tqsoYMZw=;
-        b=XZxZkzZfgo/6eYcqd8oEWQ1ziygNYRiDpZjm1W/f+EFLHkQwwKWBKG8Wrspap1Ewzh
-         pFVG2QP29/3Si7x6+SGN5q8Y9BQo9vp6NzJUpOogQ9lXMdwIogYNmjOCLCUtsOnFsqzh
-         xXkfXObakKiQ99c0RPOS9QA4BZaKtRuSTfUe9L/3NpdhW6dSun0VB1+18dESaVsRXs8a
-         bRw27TSCbAFYFibDreiCx6UhqPG7JZCwker4QTcirIpcWlutaZiarHPV2i8JE459Xugb
-         LADgYNvptes1l+iN/D2t1h2XAZeWG2NTym32EQlnHnkdMKRBwTS0NELmViBbceZnx190
-         o7Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715262219; x=1715867019;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6X3OJ4CDNvDG+N388kEs3vaDpQBTgIoXa48tqsoYMZw=;
-        b=l+yQamQi1Gyi7boVgMHPkvYS3POde2I/7Pn3/us3lQkoR++F2NOFuFVn2/PlkdkJ2I
-         qbTxlS7gHYWztMbKY32lC0bYEnosMsPme/3AqPHLxIX8mICykAxdZDvEbAFjm4OeXdTm
-         O/oBBM4XFpK78kg9SOvFqh9PetkrseDNJ2LW5z1N8pnGlSvNPsY5NN9Oa77r44aZfxK9
-         7HXHyaaHACzFE4+Dqa/0GUfRzMCdgblPdHAGfRkk69Ncu8yiqBkWueR61T3a2uMGzy9w
-         M3ISBkgUmUseB0FIhPJX7LBKQqCHWneQbME2cCmm9o30LRfARHxdyoV4W8wUt4Y2/06p
-         J49w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0XHxbL5fG4EHdtjM1wCmMAizlhoepzrU/0h6qM7uIjBXs72fBfxzPYLq27AVq00JWjAIOAJJ4KDK6gSdEJ6FuhkANvPIP9VBB0mkm
-X-Gm-Message-State: AOJu0YwTwMxbgpDTt+6ATGcs5qDarjVM7CQVS6SvaS/AKYFVGpAdfQLf
-	/cUmIFiVYZsva1CA8vq/nrXczYQxG76DCcEni1em8QxDhp+Jc/Q1if+IlD06Wrw=
-X-Google-Smtp-Source: AGHT+IGJQsdMisyKB4MWWpNGA9ecg6F77mgAh+dcmzqub10NxvT8m5m4URuRi3BqowJD+/fsnmpqkA==
-X-Received: by 2002:a05:600c:1913:b0:41a:b961:9495 with SMTP id 5b1f17b1804b1-41f719d5e9amr39625135e9.25.1715262219115;
-        Thu, 09 May 2024 06:43:39 -0700 (PDT)
-Received: from pathway ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad042sm1735897f8f.80.2024.05.09.06.43.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 06:43:38 -0700 (PDT)
-Date: Thu, 9 May 2024 15:43:37 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: zhangwarden@gmail.com
-Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] livepatch: Rename KLP_* to KLP_TRANSITION_*
-Message-ID: <ZjzTCTgaHU-Hqrqw@pathway>
-References: <20240507050111.38195-1-zhangwarden@gmail.com>
- <20240507050111.38195-2-zhangwarden@gmail.com>
+	s=arc-20240116; t=1715262241; c=relaxed/simple;
+	bh=c82Jh2kfWLAyCc6IgAx1YTplgTe2tNDmsAysonjUwGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q6WU45f6jj+KoI6eMhH1i7xXGnfwZFjtoAW+p+d8cYH0kGY638GMSXbFHae6DeCr3C0gZgRCQ5DZSeyG4KzAxiNwhQOKko7fRJzlWoaWbnA8DoVM4l66C21ycAdtwUkhLGdP8pNqs3C9hwueRgNBKVI7FUS6LRMjs2qVDAIFwcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3ECB106F;
+	Thu,  9 May 2024 06:44:23 -0700 (PDT)
+Received: from [10.1.28.39] (e122027.cambridge.arm.com [10.1.28.39])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E6B083F6A8;
+	Thu,  9 May 2024 06:43:54 -0700 (PDT)
+Message-ID: <010686f5-3049-46a1-8230-7752a1b433ff@arm.com>
+Date: Thu, 9 May 2024 14:43:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507050111.38195-2-zhangwarden@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/7] dma: avoid redundant calls for sync operations
+To: Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+ netdev@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240507112026.1803778-1-aleksander.lobakin@intel.com>
+ <20240507112026.1803778-3-aleksander.lobakin@intel.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240507112026.1803778-3-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue 2024-05-07 13:01:11, zhangwarden@gmail.com wrote:
-> From: Wardenjohn <zhangwarden@gmail.com>
+On 07/05/2024 12:20, Alexander Lobakin wrote:
+> Quite often, devices do not need dma_sync operations on x86_64 at least.
+> Indeed, when dev_is_dma_coherent(dev) is true and
+> dev_use_swiotlb(dev) is false, iommu_dma_sync_single_for_cpu()
+> and friends do nothing.
 > 
-> The original macros of KLP_* is about the state of the transition.
-> Rename macros of KLP_* to KLP_TRANSITION_* to fix the confusing
-> description of klp transition state.
+> However, indirectly calling them when CONFIG_RETPOLINE=y consumes about
+> 10% of cycles on a cpu receiving packets from softirq at ~100Gbit rate.
+> Even if/when CONFIG_RETPOLINE is not set, there is a cost of about 3%.
 > 
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+> Add dev->need_dma_sync boolean and turn it off during the device
+> initialization (dma_set_mask()) depending on the setup:
+> dev_is_dma_coherent() for the direct DMA, !(sync_single_for_device ||
+> sync_single_for_cpu) or the new dma_map_ops flag, %DMA_F_CAN_SKIP_SYNC,
+> advertised for non-NULL DMA ops.
+> Then later, if/when swiotlb is used for the first time, the flag
+> is reset back to on, from swiotlb_tbl_map_single().
+> 
+> On iavf, the UDP trafficgen with XDP_DROP in skb mode test shows
+> +3-5% increase for direct DMA.
+> 
+> Suggested-by: Christoph Hellwig <hch@lst.de> # direct DMA shortcut
+> Co-developed-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-JFYI, the patch has been comitted into livepatching.git, branch for-10.
+I've bisected a boot failure (on a Firefly RK3288) to this commit.
+AFAICT the problem is that I have (at least) two drivers which don't
+call dma_set_mask() and therefore never initialise the new dma_need_sync
+variable.
 
-Best regards,
-Petr
+The specific drivers are "rockchip-drm" and "rk_gmac-dwmac". Is it a
+requirement that all drivers engaging in DMA should call dma_set_mask()
+- and therefore this has uncovered a bug in those drivers. Or is the
+assumption that all drivers call dma_set_mask() faulty?
+
+Thanks,
+
+Steve
+
+> ---
+>  include/linux/device.h      |  4 +++
+>  include/linux/dma-map-ops.h | 12 ++++++++
+>  include/linux/dma-mapping.h | 53 +++++++++++++++++++++++++++++++----
+>  kernel/dma/mapping.c        | 55 +++++++++++++++++++++++++++++--------
+>  kernel/dma/swiotlb.c        |  6 ++++
+>  5 files changed, 113 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index b9f5464f44ed..ed95b829f05b 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -691,6 +691,7 @@ struct device_physical_location {
+>   *		and optionall (if the coherent mask is large enough) also
+>   *		for dma allocations.  This flag is managed by the dma ops
+>   *		instance from ->dma_supported.
+> + * @dma_need_sync: The device needs performing DMA sync operations.
+>   *
+>   * At the lowest level, every device in a Linux system is represented by an
+>   * instance of struct device. The device structure contains the information
+> @@ -803,6 +804,9 @@ struct device {
+>  #ifdef CONFIG_DMA_OPS_BYPASS
+>  	bool			dma_ops_bypass : 1;
+>  #endif
+> +#ifdef CONFIG_DMA_NEED_SYNC
+> +	bool			dma_need_sync:1;
+> +#endif
+>  };
+>  
+>  /**
+> diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
+> index 4abc60f04209..4893cb89cb52 100644
+> --- a/include/linux/dma-map-ops.h
+> +++ b/include/linux/dma-map-ops.h
+> @@ -18,8 +18,11 @@ struct iommu_ops;
+>   *
+>   * DMA_F_PCI_P2PDMA_SUPPORTED: Indicates the dma_map_ops implementation can
+>   * handle PCI P2PDMA pages in the map_sg/unmap_sg operation.
+> + * DMA_F_CAN_SKIP_SYNC: DMA sync operations can be skipped if the device is
+> + * coherent and it's not an SWIOTLB buffer.
+>   */
+>  #define DMA_F_PCI_P2PDMA_SUPPORTED     (1 << 0)
+> +#define DMA_F_CAN_SKIP_SYNC            (1 << 1)
+>  
+>  struct dma_map_ops {
+>  	unsigned int flags;
+> @@ -273,6 +276,15 @@ static inline bool dev_is_dma_coherent(struct device *dev)
+>  }
+>  #endif /* CONFIG_ARCH_HAS_DMA_COHERENCE_H */
+>  
+> +static inline void dma_reset_need_sync(struct device *dev)
+> +{
+> +#ifdef CONFIG_DMA_NEED_SYNC
+> +	/* Reset it only once so that the function can be called on hotpath */
+> +	if (unlikely(!dev->dma_need_sync))
+> +		dev->dma_need_sync = true;
+> +#endif
+> +}
+> +
+>  /*
+>   * Check whether potential kmalloc() buffers are safe for non-coherent DMA.
+>   */
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index a569b56b25e2..eb4e15893b6c 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -282,16 +282,59 @@ static inline int dma_mmap_noncontiguous(struct device *dev,
+>  #endif /* CONFIG_HAS_DMA */
+>  
+>  #if defined(CONFIG_HAS_DMA) && defined(CONFIG_DMA_NEED_SYNC)
+> -void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr, size_t size,
+> +void __dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr, size_t size,
+>  		enum dma_data_direction dir);
+> -void dma_sync_single_for_device(struct device *dev, dma_addr_t addr,
+> +void __dma_sync_single_for_device(struct device *dev, dma_addr_t addr,
+>  		size_t size, enum dma_data_direction dir);
+> -void dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+> +void __dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+>  		int nelems, enum dma_data_direction dir);
+> -void dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+> +void __dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>  		int nelems, enum dma_data_direction dir);
+> -bool dma_need_sync(struct device *dev, dma_addr_t dma_addr);
+> +bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr);
+> +
+> +static inline bool dma_dev_need_sync(const struct device *dev)
+> +{
+> +	/* Always call DMA sync operations when debugging is enabled */
+> +	return dev->dma_need_sync || IS_ENABLED(CONFIG_DMA_API_DEBUG);
+> +}
+> +
+> +static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+> +		size_t size, enum dma_data_direction dir)
+> +{
+> +	if (dma_dev_need_sync(dev))
+> +		__dma_sync_single_for_cpu(dev, addr, size, dir);
+> +}
+> +
+> +static inline void dma_sync_single_for_device(struct device *dev,
+> +		dma_addr_t addr, size_t size, enum dma_data_direction dir)
+> +{
+> +	if (dma_dev_need_sync(dev))
+> +		__dma_sync_single_for_device(dev, addr, size, dir);
+> +}
+> +
+> +static inline void dma_sync_sg_for_cpu(struct device *dev,
+> +		struct scatterlist *sg, int nelems, enum dma_data_direction dir)
+> +{
+> +	if (dma_dev_need_sync(dev))
+> +		__dma_sync_sg_for_cpu(dev, sg, nelems, dir);
+> +}
+> +
+> +static inline void dma_sync_sg_for_device(struct device *dev,
+> +		struct scatterlist *sg, int nelems, enum dma_data_direction dir)
+> +{
+> +	if (dma_dev_need_sync(dev))
+> +		__dma_sync_sg_for_device(dev, sg, nelems, dir);
+> +}
+> +
+> +static inline bool dma_need_sync(struct device *dev, dma_addr_t dma_addr)
+> +{
+> +	return dma_dev_need_sync(dev) ? __dma_need_sync(dev, dma_addr) : false;
+> +}
+>  #else /* !CONFIG_HAS_DMA || !CONFIG_DMA_NEED_SYNC */
+> +static inline bool dma_dev_need_sync(const struct device *dev)
+> +{
+> +	return false;
+> +}
+>  static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+>  		size_t size, enum dma_data_direction dir)
+>  {
+> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+> index c78b78e95a26..3524bc92c37f 100644
+> --- a/kernel/dma/mapping.c
+> +++ b/kernel/dma/mapping.c
+> @@ -330,7 +330,7 @@ void dma_unmap_resource(struct device *dev, dma_addr_t addr, size_t size,
+>  EXPORT_SYMBOL(dma_unmap_resource);
+>  
+>  #ifdef CONFIG_DMA_NEED_SYNC
+> -void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr, size_t size,
+> +void __dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr, size_t size,
+>  		enum dma_data_direction dir)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> @@ -342,9 +342,9 @@ void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr, size_t size,
+>  		ops->sync_single_for_cpu(dev, addr, size, dir);
+>  	debug_dma_sync_single_for_cpu(dev, addr, size, dir);
+>  }
+> -EXPORT_SYMBOL(dma_sync_single_for_cpu);
+> +EXPORT_SYMBOL(__dma_sync_single_for_cpu);
+>  
+> -void dma_sync_single_for_device(struct device *dev, dma_addr_t addr,
+> +void __dma_sync_single_for_device(struct device *dev, dma_addr_t addr,
+>  		size_t size, enum dma_data_direction dir)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> @@ -356,9 +356,9 @@ void dma_sync_single_for_device(struct device *dev, dma_addr_t addr,
+>  		ops->sync_single_for_device(dev, addr, size, dir);
+>  	debug_dma_sync_single_for_device(dev, addr, size, dir);
+>  }
+> -EXPORT_SYMBOL(dma_sync_single_for_device);
+> +EXPORT_SYMBOL(__dma_sync_single_for_device);
+>  
+> -void dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+> +void __dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+>  		    int nelems, enum dma_data_direction dir)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> @@ -370,9 +370,9 @@ void dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+>  		ops->sync_sg_for_cpu(dev, sg, nelems, dir);
+>  	debug_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
+>  }
+> -EXPORT_SYMBOL(dma_sync_sg_for_cpu);
+> +EXPORT_SYMBOL(__dma_sync_sg_for_cpu);
+>  
+> -void dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+> +void __dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>  		       int nelems, enum dma_data_direction dir)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+> @@ -384,18 +384,47 @@ void dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+>  		ops->sync_sg_for_device(dev, sg, nelems, dir);
+>  	debug_dma_sync_sg_for_device(dev, sg, nelems, dir);
+>  }
+> -EXPORT_SYMBOL(dma_sync_sg_for_device);
+> +EXPORT_SYMBOL(__dma_sync_sg_for_device);
+>  
+> -bool dma_need_sync(struct device *dev, dma_addr_t dma_addr)
+> +bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr)
+>  {
+>  	const struct dma_map_ops *ops = get_dma_ops(dev);
+>  
+>  	if (dma_map_direct(dev, ops))
+> +		/*
+> +		 * dma_need_sync could've been reset on first SWIOTLB buffer
+> +		 * mapping, but @dma_addr is not necessary an SWIOTLB buffer.
+> +		 * In this case, fall back to more granular check.
+> +		 */
+>  		return dma_direct_need_sync(dev, dma_addr);
+> -	return ops->sync_single_for_cpu || ops->sync_single_for_device;
+> +	return true;
+>  }
+> -EXPORT_SYMBOL_GPL(dma_need_sync);
+> -#endif /* CONFIG_DMA_NEED_SYNC */
+> +EXPORT_SYMBOL_GPL(__dma_need_sync);
+> +
+> +static void dma_setup_need_sync(struct device *dev)
+> +{
+> +	const struct dma_map_ops *ops = get_dma_ops(dev);
+> +
+> +	if (dma_map_direct(dev, ops) || (ops->flags & DMA_F_CAN_SKIP_SYNC))
+> +		/*
+> +		 * dma_need_sync will be reset to %true on first SWIOTLB buffer
+> +		 * mapping, if any. During the device initialization, it's
+> +		 * enough to check only for the DMA coherence.
+> +		 */
+> +		dev->dma_need_sync = !dev_is_dma_coherent(dev);
+> +	else if (!ops->sync_single_for_device && !ops->sync_single_for_cpu &&
+> +		 !ops->sync_sg_for_device && !ops->sync_sg_for_cpu)
+> +		/*
+> +		 * Synchronization is not possible when none of DMA sync ops
+> +		 * is set.
+> +		 */
+> +		dev->dma_need_sync = false;
+> +	else
+> +		dev->dma_need_sync = true;
+> +}
+> +#else /* !CONFIG_DMA_NEED_SYNC */
+> +static inline void dma_setup_need_sync(struct device *dev) { }
+> +#endif /* !CONFIG_DMA_NEED_SYNC */
+>  
+>  /*
+>   * The whole dma_get_sgtable() idea is fundamentally unsafe - it seems
+> @@ -785,6 +814,8 @@ int dma_set_mask(struct device *dev, u64 mask)
+>  
+>  	arch_dma_set_mask(dev, mask);
+>  	*dev->dma_mask = mask;
+> +	dma_setup_need_sync(dev);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(dma_set_mask);
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 046da973a7e2..ae3e593eaadb 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -1408,6 +1408,12 @@ phys_addr_t swiotlb_tbl_map_single(struct device *dev, phys_addr_t orig_addr,
+>  		return (phys_addr_t)DMA_MAPPING_ERROR;
+>  	}
+>  
+> +	/*
+> +	 * If dma_need_sync wasn't set, reset it on first SWIOTLB buffer
+> +	 * mapping to always sync SWIOTLB buffers.
+> +	 */
+> +	dma_reset_need_sync(dev);
+> +
+>  	/*
+>  	 * Save away the mapping from the original address to the DMA address.
+>  	 * This is needed when we sync the memory.  Then we sync the buffer if
+
 
