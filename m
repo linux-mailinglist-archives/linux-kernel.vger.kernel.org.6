@@ -1,64 +1,65 @@
-Return-Path: <linux-kernel+bounces-174439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F188C0EB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:12:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219BA8C0EAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4383FB22513
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADDE1F233F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E336E130E55;
-	Thu,  9 May 2024 11:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="oHGl6lqv"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E281304BD;
+	Thu,  9 May 2024 11:06:29 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A96D12FF8E;
-	Thu,  9 May 2024 11:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C550913049B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 11:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715253121; cv=none; b=ljE30nUmwXOe924FD4YkBopTKFZqpXbKmF31nhkHcYwr4AIHed42vIUw9HuQEFpOy/thEUx/kTbu2DU9eSCoN61zcxfpVidyS+Wg6e323SNQMKMUimuZXIbIUe2vZJvEHblT/ZwceAlTDaf4PBC9anKoIbV3juP0wQdMwdvC96k=
+	t=1715252788; cv=none; b=X7hxq2wG5jEzm1p2ydC9vGOIMEAq79/GefDLa+1eiSJ8WwDTCLUGI2U3w0YHfBUGt/75sXkgkNCLPp/ofqUmcs/YNVZGDn8syBWAPHrPIfZL7hHASpnnbElHljk4X0+t1HpVZVw9/CXylGOc/teak4rZoY0HysJOb/rmiTBH+cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715253121; c=relaxed/simple;
-	bh=nGsf/MgdZntlw0hqfgzXJ+zVt8pES0HjD57dZf4Vxgc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LGyRpKdOPaXp36OkKkoBk/tRYcs5YB3aOqh/tXxr93rZCXV70y8j2O5RjYAjc7nxm7g3d/gp9UG9LFfEtzuRwf76JZosa1m5lkyb4IAzwXm2A27GuWybjx9cqYNsAucFHDZKoRd2CffeW706ofGYrYl23rm3rYu+fS9zxr9+jGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=oHGl6lqv; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout1.routing.net (Postfix) with ESMTP id 42EFF40271;
-	Thu,  9 May 2024 11:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1715252750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GEGFfh9MxXz9dR3HLGIfZ2niDiQZQ2wIMR9m2PmyxWc=;
-	b=oHGl6lqvK/Me32lsZ92xikGNsJke3oyJ0mrV4F9TxKoo5ES/ugyyCwsPzv6hQ1N2v7nM/y
-	VKho7DcjnQl3kBthVsfjsonrTm4YxdZnY97sn37R/un02KAHknX4r3pbph/srZg0UMfKmC
-	MjS3m8l+em19NcEg0ML3rp4Fue/QYWQ=
-Received: from frank-G5.. (fttx-pool-217.61.150.116.bambit.de [217.61.150.116])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 7410A100294;
-	Thu,  9 May 2024 11:05:49 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: [PATCH] dt-bindings: leds: mark label as depected to match description
-Date: Thu,  9 May 2024 13:05:45 +0200
-Message-Id: <20240509110545.49889-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715252788; c=relaxed/simple;
+	bh=ecK8QbwY+FbLhxp6lSCIUfjMi/AkMP6XgV33l1ouTVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fj20DkNH4Tg/8JoJYabcdA5pn9exqzXLVojjfbienzPcU/e/atBXX041+BsxtWUReMKmg/RzvO2H5p+Vd8UbmjFtqp8SBUywlfdDjgyAml7c4R97RCyhpJv1a8LW8BtYuLehdoLvaTGC7MXppzCb4htQfDQb066kCOfADrh+8xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a387fbc9so184015466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 04:06:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715252784; x=1715857584;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/LOIjIMPO5ush8EPTSynnMiO8zIIbVtcBE/cd84blNw=;
+        b=Yzb3zbpBidxa8eML3gJD8Oir+s+h5geLNGrAMkH43h1rMhs/pwNctbmQwoZSyc19/+
+         t6iOzb5myncgbnkPetQ7Dd+j/iHAYU7J/7j/joFtOfRhthOHktfZCUsjJKf3bPm/pW2d
+         pMCQDuHQ4VmzK0nId/DjwA59unGPamaZNyX68ODW2FkKushAXewuvB/siaqXFkpWyrWR
+         4izmc0qw7xQaXw6+yqSQJdzV+3AZS9w1IF2kr0aFUpJN9FipxUAz1JgbiQXw74V5QK9m
+         1PfXviotyCjMAN9lwCdP9PN5gIY3iBUB3wNT7ReKXJ6Wg/zFSFiL198MxZ2iBY1Ahlql
+         VE1A==
+X-Forwarded-Encrypted: i=1; AJvYcCW1ZWCPo65JJeQ561rN3WP+0KvoTyknKoPwQrr9ZVk3o02kC+2AV5ZXXYFVodUURJkQimCPJSYb4qGFQOnk86k7tvPDKxIYRs3IuR5i
+X-Gm-Message-State: AOJu0YylxPshuHeDhp8ZyxhBIWe/B4DC1zqdcH8rw2eOLE8ulfRkY6+X
+	MbTB1AS43kNHdnMVuOaGZedR3SizPdkUEzdbFGs82BiBlsyGrCzS
+X-Google-Smtp-Source: AGHT+IFv50vbS7G34ZPIAFTwl7ijWXO9Zfn6DELJkCn77gEcJv4UYypJew7dQkQjwEnBcVv4Na7GWA==
+X-Received: by 2002:a17:906:e211:b0:a59:ab57:7413 with SMTP id a640c23a62f3a-a59fb9e7488mr309642266b.73.1715252783829;
+        Thu, 09 May 2024 04:06:23 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-119.fbsv.net. [2a03:2880:30ff:77::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17892444sm61867766b.76.2024.05.09.04.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 04:06:23 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: paulmck@kernel.org,
+	linux-kernel@vger.kernel.org (open list:DEBUGOBJECTS:)
+Subject: [PATCH] debugobjects: Fix potential data race in debug_objects_maxchain
+Date: Thu,  9 May 2024 04:06:11 -0700
+Message-ID: <20240509110612.768196-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,34 +67,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 610a2f7a-8cfa-4aff-82f7-52b52ec676cf
 
-From: Frank Wunderlich <frank-w@public-files.de>
+KCSAN has identified a potential data race in debugobjects, where the
+global variable debug_objects_maxchain is accessed for both reading and
+writing simultaneously in separate and parallel data paths. This results
+in the following splat printed by KCSAN:
 
-The description for property 'label' describes it as deprected, so
-add a option to mark it like that. Future devicetrees should use
-function and color properties.
+	BUG: KCSAN: data-race in debug_check_no_obj_freed / debug_object_activate
 
-Suggested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Fixes: 24a71afe05a8 ("dt-bindings: leds: Convert common LED binding to schema")
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+	write to 0xffffffff847ccfc8 of 4 bytes by task 734 on cpu 41:
+	debug_object_activate (lib/debugobjects.c:199
+			       lib/debugobjects.c:564 lib/debugobjects.c:710)
+	call_rcu (kernel/rcu/rcu.h:227
+		  kernel/rcu/tree.c:2719 kernel/rcu/tree.c:2838)
+	security_inode_free (security/security.c:1626)
+	__destroy_inode (./include/linux/fsnotify.h:222 fs/inode.c:287)
+	evict (fs/inode.c:310 fs/inode.c:682)
+	iput (fs/inode.c:1769)
+	dentry_unlink_inode (fs/dcache.c:401)
+	__dentry_kill (fs/dcache.c:?)
+	dput (fs/dcache.c:846)
+	__fput (fs/file_table.c:431)
+	____fput (fs/file_table.c:451)
+	task_work_run (kernel/task_work.c:181)
+	do_exit (kernel/exit.c:879)
+	do_group_exit (kernel/exit.c:1027)
+	__pfx___ia32_sys_exit_group (kernel/exit.c:1038)
+	x64_sys_call (arch/x86/entry/syscall_64.c:33)
+	do_syscall_64 (arch/x86/entry/common.c:?)
+	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+
+	read to 0xffffffff847ccfc8 of 4 bytes by task 384 on cpu 31:
+	debug_check_no_obj_freed (lib/debugobjects.c:1000 lib/debugobjects.c:1019)
+	kfree (mm/slub.c:2081 mm/slub.c:4280 mm/slub.c:4390)
+	percpu_ref_exit (lib/percpu-refcount.c:147)
+	css_free_rwork_fn (kernel/cgroup/cgroup.c:5357)
+	process_scheduled_works (kernel/workqueue.c:3272 kernel/workqueue.c:3348)
+	worker_thread (./include/linux/list.h:373
+			kernel/workqueue.c:955 kernel/workqueue.c:3430)
+	kthread (kernel/kthread.c:389)
+	ret_from_fork (arch/x86/kernel/process.c:153)
+	ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+
+	value changed: 0x00000070 -> 0x00000071
+
+Include READ_ONCE()/WRITE_ONCE() annotations on the accesses to
+debug_objects_maxchain to prevent potential data corruption, explicitly
+indicating that this data is shared across two parallel data paths.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- Documentation/devicetree/bindings/leds/common.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ lib/debugobjects.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
-index 8a3c2398b10c..2d7331bba1fc 100644
---- a/Documentation/devicetree/bindings/leds/common.yaml
-+++ b/Documentation/devicetree/bindings/leds/common.yaml
-@@ -58,6 +58,7 @@ properties:
-       no other LED class device can be assigned the same label. This property is
-       deprecated - use 'function' and 'color' properties instead.
-       function-enumerator has no effect when this property is present.
-+    deprecated: true
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index fb12a9bacd2f..fbd262aa6b29 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -195,8 +195,8 @@ static struct debug_obj *lookup_object(void *addr, struct debug_bucket *b)
+ 		if (obj->object == addr)
+ 			return obj;
+ 	}
+-	if (cnt > debug_objects_maxchain)
+-		debug_objects_maxchain = cnt;
++	if (cnt > READ_ONCE(debug_objects_maxchain))
++		WRITE_ONCE(debug_objects_maxchain, cnt);
  
-   default-state:
-     description:
+ 	return NULL;
+ }
+@@ -997,8 +997,8 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
+ 		}
+ 		raw_spin_unlock_irqrestore(&db->lock, flags);
+ 
+-		if (cnt > debug_objects_maxchain)
+-			debug_objects_maxchain = cnt;
++		if (cnt > READ_ONCE(debug_objects_maxchain))
++			WRITE_ONCE(debug_objects_maxchain, cnt);
+ 
+ 		objs_checked += cnt;
+ 	}
 -- 
-2.34.1
+2.43.0
 
 
