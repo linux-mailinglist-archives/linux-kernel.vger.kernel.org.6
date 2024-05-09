@@ -1,75 +1,97 @@
-Return-Path: <linux-kernel+bounces-174391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2893C8C0DF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:05:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD87E8C0DFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78A3281D8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:05:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE3A91C21E62
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3508914AD3D;
-	Thu,  9 May 2024 10:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F6A14B083;
+	Thu,  9 May 2024 10:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="beHB5W2t"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUKRQo7i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D976014AD26
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF7414AD3B;
+	Thu,  9 May 2024 10:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715249132; cv=none; b=SlgnrLDJyGZzFmxfQfyTSeea5+w3N3twoeOydQhLv84g2wcDhAGevi0VgXpA+xSm0blorJQ6i5iVjqP0gdlWMxD3HqTdUhxcmw0S1FoZckEWW5FeAtT7sj1Q1rsrv4qhbZpbnx0rCtu4dtJ4Ja2Oha6kcRPAExv/nD2d4p+yVhg=
+	t=1715249447; cv=none; b=t/k6kTNWWs3umfYNzq2tm2SSyuHcEJVHmf61AeNskkQoExezxI//cfMzhu+/UgQhHGJcg8iTfxnjKgrPt3M0Stdp4lamNziGDL/rSuTkgqkQWMVO+vdopeUdhXKIpF/eLKS0/oeH+YVJTy30pw0cvw13L4+4kLeSLDZe6EJc59w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715249132; c=relaxed/simple;
-	bh=CvzPEilGtzvon2L9oAaK/hxv7NEicpni86f9YU/v208=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=dh9LA3tgEqD0+rVcmf6R7fyd9s5GmOYMxGNC6obSyJhlaS0Y3lo9E3CESYP0XwbQ+o17LFIn8E34QQoJPnys0qZhu2NwfaiclsP2qzTmzPCH+r4HPn8xEb0VzIfy2FZ5AofxDgKYOqt+GhEMvIXfUeydmk4YLfgEUR3Y2I1VfeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=beHB5W2t; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
-	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=eNfDugfn6puVmWDozYaWwa+wHf6uzTL2bTYh8bKDd00=; b=beHB5W2tGsWd6+qanbZ/2OYfBA
-	8DcWfuFfmW/ASEsuRmtpTRPblYCKg8Vz2ZE/efTuxTRQR5LPTX58cGls0ff/arFGzy44wz0FsDN+B
-	V8RVtOkl8Do+v12jwy7nhb4KmmUwCqWksnb095b8iKTMWnv5x71vGmBft5E0QKvFpUTpo8c2EUJGm
-	bHsA7qkG6xuK6F64qR9+BqIsqiqODUUbL4tj1hluvw//uV2PQiNAmXSLe3fSvt6bnQi6pAyDmJoOS
-	+iUM7d13yR9sNfHKPUHs8zVrXDw0rz5eeSxLcD+tEps58MM0QKfG6pKqLeMfnp269hNcvfqUQZfi6
-	XVlTjI5g==;
-Received: from [2a02:fe1:7001:f100:649e:57c0:89e2:8035] (port=53150)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <ywe_caerlyn@bit-x.org>)
-	id 1s50eQ-004LCG-8i
-	for linux-kernel@vger.kernel.org;
-	Thu, 09 May 2024 12:05:22 +0200
-Message-ID: <4abbed08-28b1-4ef6-8b12-8153043f7ea8@bit-x.org>
-Date: Thu, 9 May 2024 12:05:21 +0200
+	s=arc-20240116; t=1715249447; c=relaxed/simple;
+	bh=EXtXbepvP4iR59x5J74rICFVtzzQQF1iiGPwONJRT4M=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YOD0sZ3DoE6JnvNphSYxWdPp5gjSott1kWiFL9huIsgjheSZ5V7tXBTXjKCTQ0V8d4EBGgALvCi6uWWAfmLorgZiiMts8PriCFKgSlpYM6++SDYrKfP8sNBkbqYRnkyBvYHEny9ee0r/SntwcFN3KYa3Ybc0E6t+fsT3MEtWM1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUKRQo7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 77913C116B1;
+	Thu,  9 May 2024 10:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715249446;
+	bh=EXtXbepvP4iR59x5J74rICFVtzzQQF1iiGPwONJRT4M=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=SUKRQo7i1biPOgjkYxhePyIHeFImfUW3yHsVr70wUfUi9kY45xiIzus4ET7nhF/2s
+	 snUPlI4+0euN81e2ieAd3lHqKmK+pvLb4WFsp20sYQuNZHPWpvm4rAdI2Y6GMWBKhD
+	 amPkZ2HDJxamcGdWakb+uHatCAJIS6Kk6ewKq5ppHNgw6ETYhzJHghTyyYDluD89oV
+	 /bLb0xfvOI2hJJwd4Z3Fc/pX94WDHIaBnG7/83+lj+ZLxKRPK2BkDjSuBxD8SVG6T7
+	 K9bJxFKtfq/xE58/G48Gj+XvIn2wAWWM6b8rS9VkeQuBxKro3Glnf+Cgr/IVMscNDB
+	 eomzHFSwqxaCg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6C14FE7C114;
+	Thu,  9 May 2024 10:10:46 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
-Subject: =?UTF-8?Q?Research_Summary=2C_Added_Saints_of_H=C3=A1q_Graphics?=
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 net 0/2] net: dsa: mv88e6xxx: fix marvell 6320/21 switch
+ probing
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171524944643.18591.2478308617241575951.git-patchwork-notify@kernel.org>
+Date: Thu, 09 May 2024 10:10:46 +0000
+References: <20240508072944.54880-1-steffen@innosonix.de>
+In-Reply-To: <20240508072944.54880-1-steffen@innosonix.de>
+To: =?utf-8?q?Steffen_B=C3=A4tz_=3Csteffen=40innosonix=2Ede=3E?=@codeaurora.org
+Cc: andrew@lunn.ch, f.fainelli@gmail.com, olteanv@gmail.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux@armlinux.org.uk, rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Added some Saints of Haq to my research summary on 
-https://bit-x.org/BIT/BIT.html
+Hello:
 
-Hamas, St. Paul, Native American, St. Hallvard, New Orleans Saints 
-(football).
+This series was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Please do read, this wide cultural impact effort.
+On Wed,  8 May 2024 09:29:42 +0200 you wrote:
+> As of commit de5c9bf40c45 ("net: phylink: require supported_interfaces to
+> be filled")
+> Marvell 88e6320/21 switches fail to be probed:
+> 
+> ...
+> mv88e6085 30be0000.ethernet-1:00: phylink: error: empty supported_interfaces
+> error creating PHYLINK: -22
+> ...
+> 
+> [...]
 
-The Light Be With You.
+Here is the summary with links:
+  - [v2,net,1/2] net: dsa: mv88e6xxx: add phylink_get_caps for the mv88e6320/21 family
+    https://git.kernel.org/netdev/net/c/f39bf3cf08a4
+  - [v2,net,2/2] net: dsa: mv88e6xxx: read cmode on mv88e6320/21 serdes only ports
+    https://git.kernel.org/netdev/net/c/6e7ffa180a53
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
