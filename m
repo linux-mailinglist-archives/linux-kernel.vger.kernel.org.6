@@ -1,121 +1,180 @@
-Return-Path: <linux-kernel+bounces-175025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37988C1945
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:13:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7978C1947
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F4DEB20CDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:13:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0531F22051
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03814129A7C;
-	Thu,  9 May 2024 22:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536A0129A7C;
+	Thu,  9 May 2024 22:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMIa1+9V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHyMfY73"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393ED770E0;
-	Thu,  9 May 2024 22:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADFB770E0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 22:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715292825; cv=none; b=swBGIlQHwNQjMP+iXLWPVGaS+h97X6HYtJ2T/hEjn8eiuC4OFL8P1u10MaPJZLtHHfAYDJK5wDBd5c4Oiqd6FB47G0Pkq/nibClyFD8rYDlg3fGP52pBGNDlfmN7lSL7takEf3Z4nGKbSinwt9do29fsLTNwr8zYV43QFdJvB3I=
+	t=1715293046; cv=none; b=Fhavu6ZSWJV0lWXiyJIkEQAnNjSD0TcOpu+KCyvaYPiD/GHB+/qZ4DNEYlACqiKwGI7OTxlldLtvUDQ9xqHms0lFOIOV18GrOnsrhWBjW5v6Ix9WfaTIvwSC98uiBOlb81UymLTh2CYClgrIG9Q+bk3JKV1dSWru9ORf3moTZeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715292825; c=relaxed/simple;
-	bh=HsXBbYKsnaH2cBNxCbmFsxNH4L35JJ8rnzTl2hLvMCA=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Amsb1zWaWEl8RIvjxz8LgYlD1IgvY2Xr0dBoEN+Y9fc9frhGNVMf1xq1D0iioiFoiW0gbASTfwuciGI45w0PhwM+drHl/xS7cXUYJpdSshDHvfxW79nCsUJ0ZFoO/GpTPpFb1wpMBDaE89ekluLnBuqGsd7QbaiLun8z9I2jC8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMIa1+9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9462BC116B1;
-	Thu,  9 May 2024 22:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715292824;
-	bh=HsXBbYKsnaH2cBNxCbmFsxNH4L35JJ8rnzTl2hLvMCA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nMIa1+9VKO+e1tZRZY1J27ygFKsItAYeEY0WnZ2gS4xAWON9xuiIzp5JHk14e4JVR
-	 YCvpBBRmVL+ZcIfLdrAafXSiWdDLkOnVvgL+HKszgvlRpnrrxsJk/Ae+aQLoxI35Xj
-	 BlamZ/Mmr/BReIi8DffdEfn+O2LcYk4n1JPTIUgiEZerM3kws7qi2PlOcMCtbcLKHk
-	 3+BGzqu974gMMGcmR1qOnP7jpY/95gkF8jgC266QHH7fkER2qpocZrGJ5iOuj609J+
-	 EHJl0GiO0z+InjRy3cZdNuMBFZck8h4IEv/Z7WF5HztSpzcXe2D87lzqjOC2Ehe7iq
-	 P+STj6tLfJYsg==
-Message-ID: <8dc03fdc36b72888bd1b59cec6feebad.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715293046; c=relaxed/simple;
+	bh=my5K/hG8Y7wBz+tmEptk9NBFv6kQ+KaoOJUViiniPIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNB/DQh4W/buWdNwgLpt0d7koKyGu73t5ra8W75wWbP4D8KYor3rO0cpbHkcO8IWnRjVxlwIrKEe1Fj8zdkTSmgH+Fn8XWFAUwFGTwizLKEnaHuFWbFFpSDyETvC+nUGRgi6GpL74hXl6HyZR1NQO9J/S2L873mTwYt/xL0Zaqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHyMfY73; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715293045; x=1746829045;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=my5K/hG8Y7wBz+tmEptk9NBFv6kQ+KaoOJUViiniPIM=;
+  b=FHyMfY732gQ3HdOuw9uQJp+1LzTrAxDaPof7dl1kHa331K4+5TePMBgH
+   cN9Imt8szKrIJZmNRqh7ihOU4BFGn6cDwMRCZwPTCUSfEFg6xwLPm7kdF
+   E9ZHqgAtQMq3jlqZI3vzDsvcxaFKtSRhQSp6lvWhzYWc02vnMJA+VgjXA
+   PUNU5xjLizV5B157XXwceeePbRyh8v3Rw2aKfRe9oAaZ5nZrLLyT9Pim5
+   pgAtnPNs3CTnpO8nQVtIU8WNBUXdK52LMd2kbrLtVvaZF7aRMkGUKJ33g
+   aurJ0HuuxG+5nELeAm1hmN5SN2XvFbD5w97Qs9LXTudqJbyYoVdnIgpVE
+   A==;
+X-CSE-ConnectionGUID: nAL6xopxQKmiyZ0aur+EJA==
+X-CSE-MsgGUID: n83BCL9aRiOB6sKazQhu1Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="28759438"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="28759438"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 15:17:24 -0700
+X-CSE-ConnectionGUID: Fo0QRr0pRLmGfWbMiaEbcw==
+X-CSE-MsgGUID: tbhiktdVQ8GVmWIAqsdq9A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="29953367"
+Received: from vuongchr-mobl.amr.corp.intel.com (HELO desk) ([10.209.114.189])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 15:17:24 -0700
+Date: Thu, 9 May 2024 15:17:17 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com
+Subject: Re: [PATCH] x86/entry_32: Move CLEAR_CPU_BUFFERS before CR3 switch
+Message-ID: <20240509221425.zcl6c45thb7wxyza@desk>
+References: <20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com>
+ <5b5e597d-7620-4a5a-9bfa-bae26f0b0fa3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
-References: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com> <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
-Subject: Re: [PATCH RFC v3 2/7] dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS controller
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
-To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
-Date: Thu, 09 May 2024 15:13:42 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b5e597d-7620-4a5a-9bfa-bae26f0b0fa3@intel.com>
 
-Quoting Drew Fustini (2024-05-06 21:55:15)
-> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.=
-yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> new file mode 100644
-> index 000000000000..d7e665c1534a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/thead,th1520-clk-ap.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: T-HEAD TH1520 AP sub-system clock controller
-> +
-> +description: |
-> +  The T-HEAD TH1520 AP sub-system clock controller configures the
-> +  CPU, DPU, GMAC and TEE PLLs.
-> +
-> +  SoC reference manual
-> +  https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH=
-1520%20System%20User%20Manual.pdf
-> +
-> +maintainers:
-> +  - Jisheng Zhang <jszhang@kernel.org>
-> +  - Wei Fu <wefu@redhat.com>
-> +  - Drew Fustini <dfustini@tenstorrent.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: thead,th1520-clk-ap
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: main oscillator (24MHz)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: osc
+On Thu, May 09, 2024 at 09:14:01AM -0700, Dave Hansen wrote:
+> On 4/26/24 16:48, Pawan Gupta wrote:
+> > As the mitigation for MDS and RFDS, CLEAR_CPU_BUFFERS macro executes VERW
+> > instruction that is used to clear the CPU buffers before returning to user
+> > space. Currently, VERW is executed after the user CR3 is restored. This
+> > leads to vm86() to fault because VERW takes a memory operand that is not
+> > mapped in user page tables when vm86() syscall returns. This is an issue
+> > with 32-bit kernels only, as 64-bit kernels do not support vm86().
+> 
+> entry.S has this handy comment:
+> 
+>  /*
+>   * Define the VERW operand that is disguised as entry code so that
+>   * it can be referenced with KPTI enabled. This ensure VERW can be
+>   * used late in exit-to-user path after page tables are switched.
+>   */
+> 
+> Why isn't that working?
 
-I recommend dropping clock-names so that you don't rely on anything
-besides the cell index when describing clk_parent_data.
+It works in general, but not for vm86() syscall. I don't know much about
+how vm86() works, but it seems to emulate 16-bit real mode with limited
+memory mapped in user page table. Most likely, user page table doesn't have
+a mapping for mds_ver_sel is not mapped resulting in #GP fault.
 
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/thead,th1520-clk-ap.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
+[...]
+> Right now, this code basically does:
+> 
+> 	STACKLEAK_ERASE
+> 	/* Restore user registers and segments */
+> 	movl    PT_EIP(%esp), %edx
+> 	...
+> 	SWITCH_TO_USER_CR3 scratch_reg=%eax
+> 	...
+> 	CLEAR_CPU_BUFFERS
+> 
+> The proposed patch is:
+> 
+> 	STACKLEAK_ERASE
+> +	CLEAR_CPU_BUFFERS
+> 	/* Restore user registers and segments */
+> 	movl    PT_EIP(%esp), %edx
+> 	...
+> 	SWITCH_TO_USER_CR3 scratch_reg=%eax
+> 	...
+> -	CLEAR_CPU_BUFFERS
+> 
+> That's a bit confusing to me.  I would have expected the
+> CLEAR_CPU_BUFFERS to go _just_ before the SWITCH_TO_USER_CR3 and after
+> the user register restore.
+> 
+> Is there a reason it can't go there?  I think only %eax is "live" with
+> kernel state at that point and it's only an entry stack pointer, so not
+> a secret.
 
-If you can't drop it at least make it optional.
+It probably can go right before the SWITCH_TO_USER_CR3. I didn't have
+32-bit setup with dosemu to experiment with. I will attach a debug patch to
+the bugzilla and request the reporter to test it.
+
+> >  	/*
+> >  	 * Return back to the vDSO, which will pop ecx and edx.
+> > @@ -941,6 +941,7 @@ SYM_FUNC_START(entry_INT80_32)
+> >  	STACKLEAK_ERASE
+> >  
+> >  restore_all_switch_stack:
+> > +	CLEAR_CPU_BUFFERS
+> >  	SWITCH_TO_ENTRY_STACK
+> >  	CHECK_AND_APPLY_ESPFIX
+> >  
+> > @@ -951,7 +952,6 @@ restore_all_switch_stack:
+> >  
+> >  	/* Restore user state */
+> >  	RESTORE_REGS pop=4			# skip orig_eax/error_code
+> > -	CLEAR_CPU_BUFFERS
+> >  .Lirq_return:
+> >  	/*
+> >  	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
+> 
+> There is a working stack here, on both sides of the CR3 switch.  It's
+> annoying to do another push/pop which won't get patched out, but this
+> _could_ just do:
+> 
+> 	RESTORE_REGS pop=4
+> 	CLEAR_CPU_BUFFERS
+> 
+> 	pushl %eax
+> 	SWITCH_TO_USER_CR3 scratch_reg=%eax
+> 	popl %eax
+> 
+> right?
+
+We can probably avoid the push/pop as well, because CLEAR_CPU_BUFFERS will
+only clobber the ZF.
+
+> That would only expose the CR3 value, which isn't a secret.
+
+Right.
 
