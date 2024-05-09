@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-175024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0A98C193E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:10:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37988C1945
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4BF2817AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:10:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F4DEB20CDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4160C129A75;
-	Thu,  9 May 2024 22:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03814129A7C;
+	Thu,  9 May 2024 22:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="di5Mko6G"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMIa1+9V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2577B129A6F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 22:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393ED770E0;
+	Thu,  9 May 2024 22:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715292622; cv=none; b=cljO4bKbWkcNBOoiHvqR7mAtAntbYbrpH3Q6H4mi9ujft3YGeOQyNC1p7cUjcaSwO544RiO0gcY+39N5D5fPnqQVRrB4hXIvtCQRJbeWFdcHNvb8jm8DKEcecIMeO7zrBaJBA+WPsyX+3kDEsFrsp8ingBQbt37aM0mBxBU85po=
+	t=1715292825; cv=none; b=swBGIlQHwNQjMP+iXLWPVGaS+h97X6HYtJ2T/hEjn8eiuC4OFL8P1u10MaPJZLtHHfAYDJK5wDBd5c4Oiqd6FB47G0Pkq/nibClyFD8rYDlg3fGP52pBGNDlfmN7lSL7takEf3Z4nGKbSinwt9do29fsLTNwr8zYV43QFdJvB3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715292622; c=relaxed/simple;
-	bh=59mEgVC4lkz46VEjh2qNmxWDlTxiAqyCrQSnZR5NBDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QAILzXc/8e7858zV9SZ+jvrh/MwBxnyHVVE60HpLdfrAiIR/UuXI0gPB5rb0ae3zzYLcLvd7qs/IJNZRNBVPPKy2l9+oLpA+U7JalNUW7hhNfCDnNye5z3lRZoY2PDZNXuwtHj3fjHM6EWNLftBzz3O3yftCZnPVJaPYfacgPso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=di5Mko6G; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-48072da2f56so283534137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 15:10:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715292620; x=1715897420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MKdICX+lX8CE08nIGqEYXYRJN4FhWDTtg4wUvpl3cAY=;
-        b=di5Mko6GC7T7epR4LNQTDzrknh0xtFQHeQAXuVd9spUmCnpwF/AZHDFEqRR+lW2AJz
-         QEQVTH0+KQXE9z4+MITUgcl21Yw5nSjABKPfQ/GOexgxGBQaDp+Nfi4X2oGcRombOJMZ
-         Bkg609DfQZUQNQj2APCsc0t34flj+rl3fFdd1QvKMI/w+m4wFaB86vDkTSQgF54hRnjJ
-         zgddmDMEjPGwzcRp1XOeiW2H1CcMx/llFwTsSQYBA4qkCP27EUOezHfiwL1lSnkwDfBc
-         XKbZx2TIzujommW622COfx9bohLNHdhyFI4Vi5tulbnJAuASS/M2xyVFHJmRXvFi3kE5
-         qAVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715292620; x=1715897420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MKdICX+lX8CE08nIGqEYXYRJN4FhWDTtg4wUvpl3cAY=;
-        b=D0ypINjNF2Uj8v2MAu+THEwaKEAKfkXY6xG9Qvp/Gm4vzwE501U7msD+0aEt6Y6jN8
-         uR1B7czRbdjxWnWTy2KeBOv9gn8gnXD3HSuikTaYxa5F+OpsehHwu144BacDosybtUaE
-         WLhOpHw8mOws9T7qY8H9eBdXd001cTokyUlgqNX63yrZfYeQbbZ4s+8Z2mbCsvTd+xMP
-         OIVurq+M30j/+0txkBRZXvQ91vpzykl+IGaRKzclNlFtBYSeiB/DwLBGnXMGLZ9KzjxO
-         GWFnoIjuXoay03u0zhC2Ts056ygTjvvaGMtQ3C0Rr/PeHtvrWo8LEzzILaP/LKvHtgOl
-         WDtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYqj9yLREO6lC+UgQQCdV+0K5ZqRC9Lmc3CJQqimf4ZaGp1opR0oKtXNA0mUJiA5IJlUbemYRS45mleEEMJVn/kJdmCoAwm/Q3U/kk
-X-Gm-Message-State: AOJu0YyR3u/D4/jd4yasuhEC1Dz8W80KcPJ6FpzIpiJgFtPwf6jnue1n
-	8jwAEa/FVDCZ9DCmnvv1QWbUUMcPITGlLMjQBM8rr9FO69w8xhzuT1YrofrvzBjpHbFh1Lxppu8
-	4Co8lcQXYzyzpU6GHF2ERDl6g02BOfgcBwQD0
-X-Google-Smtp-Source: AGHT+IG9UCFfCI7smAQh5zYoU5+Q/8AopDE+XLvDQt4XHypQBrcuB26D5dwcSEX6FTb7qgBIbqU5zgrv8BJ4OSYe5Bc=
-X-Received: by 2002:a05:6102:3053:b0:47a:22cd:9716 with SMTP id
- ada2fe7eead31-48077e07a05mr1112057137.17.1715292619999; Thu, 09 May 2024
- 15:10:19 -0700 (PDT)
+	s=arc-20240116; t=1715292825; c=relaxed/simple;
+	bh=HsXBbYKsnaH2cBNxCbmFsxNH4L35JJ8rnzTl2hLvMCA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Amsb1zWaWEl8RIvjxz8LgYlD1IgvY2Xr0dBoEN+Y9fc9frhGNVMf1xq1D0iioiFoiW0gbASTfwuciGI45w0PhwM+drHl/xS7cXUYJpdSshDHvfxW79nCsUJ0ZFoO/GpTPpFb1wpMBDaE89ekluLnBuqGsd7QbaiLun8z9I2jC8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMIa1+9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9462BC116B1;
+	Thu,  9 May 2024 22:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715292824;
+	bh=HsXBbYKsnaH2cBNxCbmFsxNH4L35JJ8rnzTl2hLvMCA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=nMIa1+9VKO+e1tZRZY1J27ygFKsItAYeEY0WnZ2gS4xAWON9xuiIzp5JHk14e4JVR
+	 YCvpBBRmVL+ZcIfLdrAafXSiWdDLkOnVvgL+HKszgvlRpnrrxsJk/Ae+aQLoxI35Xj
+	 BlamZ/Mmr/BReIi8DffdEfn+O2LcYk4n1JPTIUgiEZerM3kws7qi2PlOcMCtbcLKHk
+	 3+BGzqu974gMMGcmR1qOnP7jpY/95gkF8jgC266QHH7fkER2qpocZrGJ5iOuj609J+
+	 EHJl0GiO0z+InjRy3cZdNuMBFZck8h4IEv/Z7WF5HztSpzcXe2D87lzqjOC2Ehe7iq
+	 P+STj6tLfJYsg==
+Message-ID: <8dc03fdc36b72888bd1b59cec6feebad.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com> <20240509155356.w274h4blmcykxej6@quack3>
-In-Reply-To: <20240509155356.w274h4blmcykxej6@quack3>
-From: Justin Stitt <justinstitt@google.com>
-Date: Thu, 9 May 2024 15:10:07 -0700
-Message-ID: <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
-Subject: Re: [PATCH] fs: remove accidental overflow during wraparound check
-To: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
+References: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com> <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
+Subject: Re: [PATCH RFC v3 2/7] dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS controller
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
+To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
+Date: Thu, 09 May 2024 15:13:42 -0700
+User-Agent: alot/0.10
 
-On Thu, May 9, 2024 at 8:53=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
-> > @@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, lof=
-f_t offset, loff_t len)
-> >       if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
-> >               return -ENODEV;
-> >
-> > -     /* Check for wrap through zero too */
-> > -     if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len)=
- < 0))
-> > +     /* Check for wraparound */
-> > +     if (check_add_overflow(offset, len, &sum))
-> > +             return -EFBIG;
-> > +
-> > +     /* Now, check bounds */
-> > +     if (sum > inode->i_sb->s_maxbytes || sum < 0)
-> >               return -EFBIG;
->
-> But why do you check for sum < 0? We know from previous checks offset >=
-=3D 0
-> && len > 0 so unless we overflow, sum is guaranteed to be > 0.
+Quoting Drew Fustini (2024-05-06 21:55:15)
+> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.=
+yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> new file mode 100644
+> index 000000000000..d7e665c1534a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/thead,th1520-clk-ap.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: T-HEAD TH1520 AP sub-system clock controller
+> +
+> +description: |
+> +  The T-HEAD TH1520 AP sub-system clock controller configures the
+> +  CPU, DPU, GMAC and TEE PLLs.
+> +
+> +  SoC reference manual
+> +  https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH=
+1520%20System%20User%20Manual.pdf
+> +
+> +maintainers:
+> +  - Jisheng Zhang <jszhang@kernel.org>
+> +  - Wei Fu <wefu@redhat.com>
+> +  - Drew Fustini <dfustini@tenstorrent.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: thead,th1520-clk-ap
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: main oscillator (24MHz)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: osc
 
-Fair enough. I suppose with the overflow check in place we can no
-longer have a sum less than zero there. If nothing else, it tells
-readers of this code what the domain of (offset+len) is. I don't mind
-sending a new version, though.
+I recommend dropping clock-names so that you don't rely on anything
+besides the cell index when describing clk_parent_data.
 
->
->                                                                 Honza
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description:
+> +      See <dt-bindings/clock/thead,th1520-clk-ap.h> for valid indices.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+
+If you can't drop it at least make it optional.
 
