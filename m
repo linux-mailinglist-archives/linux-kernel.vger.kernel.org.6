@@ -1,107 +1,140 @@
-Return-Path: <linux-kernel+bounces-174264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B298C0C51
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:13:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28538C0C52
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F69C1F21DBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:13:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FAD2B2244F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF02149C7E;
-	Thu,  9 May 2024 08:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B714B149DE5;
+	Thu,  9 May 2024 08:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="h/Btutn7"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Bb/8n/y1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ui0kQ/Gs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kEF1Qade";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3MeOmRFc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF657149C73
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87727149C6D;
+	Thu,  9 May 2024 08:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715242428; cv=none; b=n6Ff8qwQMm+E0gPMUPKvLxWOCkOkAjVI2E9OhX+Vb2DabRQoxrU7vx/mwU7Lrq+9TFuP3M/+woY3v2wCOB1vGIPxpUmA4Eqh850jIEMAxPCYbaf7VU1A4xJEdO0iWsWI6TNN2cdPoy/UNK++SbfaGTRE93e8s0vNWeJx8anMDAU=
+	t=1715242442; cv=none; b=eJdoLslLo1t7y8mANMy8FwBTc7XUhAl07ZRLkz2oDkAY4hSsTI8U774howqXqtmnGuHdvLKMOQ3TPDQ5k7haNpVjCAwe7NycDksoeuQlRSJcq8P+ID1dKFApcx800PWFFaBQXlV8/1SUaO4CqTBlM9a5sCkiNwIXgCcJNTo0Sf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715242428; c=relaxed/simple;
-	bh=lHKi0i+Sh9dU0tv5mcRO6DSSVX4y5N1Jy0QuwxVUbw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sepUGA8pN6SK98vy0TQoXrUomZ7V0nHu45PzaA1egHZ5PpISC6nKTAsza6TTmuKshVmLYGlWineDBeNDK2crumPgehkLkQ+bUnl2Lvk/xPvUz2paiXqiGa+P7fShnFxafE1c4+WyEAmb6lVamREsmn7Ip2WYreWQ+9irzaEKRgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=h/Btutn7; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715242418;
-	bh=lHKi0i+Sh9dU0tv5mcRO6DSSVX4y5N1Jy0QuwxVUbw8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h/Btutn7RgorRwF1FYvdhvD4IemNLoebxsAr3nteozWA+iTGmbeXj125qfCfW0mVW
-	 80qmmrYxTZfZmr+SPH5PpX38ROPzwd6ATsNfwykn8VKXlkvtKTRRH0hOY+Me7ZOD0f
-	 0cVa39mwR/LukIGUagygLWqOrBI5wkRrl7/zvNTE=
-Date: Thu, 9 May 2024 10:13:37 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Mario Limonciello <mario.limonciello@amd.com>, 
-	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Dustin Howett <dustin@howett.net>
-Subject: Re: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing
- through EC_FEATURE_PWM_KEYB
-Message-ID: <9b594929-a827-4682-b4aa-98a2c85a536b@t-8ch.de>
-References: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
- <cd9c5b6a-0155-434a-b868-a9ea52e878c9@amd.com>
- <ae29f036-5e39-47ee-98d3-c023a263a3ef@t-8ch.de>
- <ZjxQHV9FPovvm_CY@google.com>
+	s=arc-20240116; t=1715242442; c=relaxed/simple;
+	bh=C1+cC2PmS3JnHtCEEjDWYLV1Z0/biU7APqqmr/1IrIE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eOYUVZXtP9QQIqoNmc8MZ/4IMqJOpncnh/tiQU0L+8vFpZnXEsjS7ivl2qhzjR+8pEx/MVOPZ8lqOQ50teZwlH2sZltvAseoEAN5lyGJxN8ydivfVv+LFQQDcqTLH4nuV8zBQV58vM9Swgsdzk9gIpg/U24eOgb3zE6x1xAhrr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Bb/8n/y1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ui0kQ/Gs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kEF1Qade; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3MeOmRFc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 51FDA5FA72;
+	Thu,  9 May 2024 08:13:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715242438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1Wu7N6byPVboE3rdUC7zL9Eq6yvwdKjLQ5dDI/khmk=;
+	b=Bb/8n/y19pz+BlZP9keaWv0I0MKuotzdlQ75FhZcop6w34fGAYcMUeR7nVR1uPJzvz5JTb
+	ljt+xXTFM42MRv8k6ZObNPjLAyGeQnBJhtibFs+kXX6te9sBsYkINPDcUN7ZYsrQOPAXcD
+	KoTkOm11YMoBB6QhaeFRlddsVqwYFuE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715242438;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1Wu7N6byPVboE3rdUC7zL9Eq6yvwdKjLQ5dDI/khmk=;
+	b=ui0kQ/Gslkq0wssH4iiB/zeULPKhAGOHCyYMeXHtl6bewkUHtFzgCTw5T3jVqo7a8lybIw
+	p3vpi5uomoLAOHDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715242437; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1Wu7N6byPVboE3rdUC7zL9Eq6yvwdKjLQ5dDI/khmk=;
+	b=kEF1QadeyYYTa5HsIR0q6rtROnea4eBJayIQhjk7qkcPezJgJF5as6P2FMr3xLc8Xq76mU
+	m+xOjUkdT86vmij56s6YyX+g57i3Fxmsh4bMdAFdcPu3NwbL65CeslB76doawH+AaNVEfi
+	cwdsso2d9C5CX06VydfIwUKnqu5ak5A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715242437;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1Wu7N6byPVboE3rdUC7zL9Eq6yvwdKjLQ5dDI/khmk=;
+	b=3MeOmRFcBCb7UOtaivsoCQ9qZMgTrplIS08icmxYK6uM6s9uRCmSbNwPrQDKDsCKdyJBGW
+	G9bgr+GdzjWUzJBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 293FA13941;
+	Thu,  9 May 2024 08:13:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /OTQCMWFPGYtGgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 09 May 2024 08:13:57 +0000
+Date: Thu, 09 May 2024 10:14:12 +0200
+Message-ID: <877cg3bdwr.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Steven 'Steve' Kendall <skend@chromium.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Add name for HP Engage Go dock
+In-Reply-To: <20240508-usb-audio-hp-engage-go-dock-v1-1-9e2984d49e63@chromium.org>
+References: <20240508-usb-audio-hp-engage-go-dock-v1-1-9e2984d49e63@chromium.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZjxQHV9FPovvm_CY@google.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.22 / 50.00];
+	BAYES_HAM(-2.92)[99.67%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,chromium.org:email]
+X-Spam-Score: -3.22
+X-Spam-Flag: NO
 
-On 2024-05-09 12:25:01+0000, Tzung-Bi Shih wrote:
-> On Mon, May 06, 2024 at 07:38:09PM +0200, Thomas Weißschuh wrote:
-> > On 2024-05-05 08:42:21+0000, Mario Limonciello wrote:
-> > > On 5/5/2024 04:41, Thomas Weißschuh wrote:
-> > > > The ChromeOS EC used in Framework laptops supports the standard cros
-> > > > keyboard backlight protocol.
-> > > > However the firmware on these laptops don't implement the ACPI ID
-> > > > GOOG0002 that is recognized by cros_kbd_led_backlight and they also
-> > > > don't use device tree.
+On Thu, 09 May 2024 00:29:25 +0200,
+Steven 'Steve' Kendall wrote:
 > 
-> If implementing ACPI ID GOOG0002 is not an option, how about adding a new ACPI
-> ID?  For the new ACPI ID, it can use EC PWM for setting the brightness.
-
-Adding a new ACPI ID would be easier than a full-blown ACPI interface.
-This would still need changes to the drivers probing setup, however.
-
-What are the advantages of the ACPI ID aproach over EC_FEATURE_PWM_KEYB?
-The EC feature also automatically works on device-tree platforms and
-without any work from system vendors.
-
-Adding ACPI ID only for signalling without using ACPI for
-communication on the other hand seems weird.
-Also with MFD the device hierarchy is much better.
-
-> > > Something I'd wonder is if the GOOG0002 ACPI ID can go away entirely with
-> > > this type of change.  Presumably the Chromebooks with ChromeOS EC /also/
-> > > advertise EC_FEATURE_PWM_KEYB.
-> > 
-> > Sounds good to me in general. It would make the code cleaner.
-> > 
-> > But I have no idea how CrOS kernels are set up in general.
-> > If they are not using CONFIG_MFD_CROS_EC_DEV for some reason that
-> > wouldn't work.
-> > 
-> > If the CrOS folks agree with that aproach I'll be happy to implement it.
+> This dock previously presented as 'generic USB Audio'.
+> UCM may now be applied specific to this dock.
 > 
-> I would say NO as some existing devices (with legacy firmware and kernel) may
-> rely on it.
+> Signed-off-by: Steven 'Steve' Kendall <skend@chromium.org>
 
-Ack, makes sense.
+Thanks, applied now to for-next branch.
 
-You mention legacy kernels, but these would not be affected.
+
+Takashi
 
