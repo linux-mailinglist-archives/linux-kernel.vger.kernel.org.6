@@ -1,74 +1,89 @@
-Return-Path: <linux-kernel+bounces-174479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E7A8C0F5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:10:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79ED8C0F49
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9770C1F22F56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815A41F21D2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81B114C5BF;
-	Thu,  9 May 2024 12:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B4315217A;
+	Thu,  9 May 2024 12:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="Ph7A3Lic";
-	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="Vkx+UJ/E"
-Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AB4+tWfl"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34E18E0E;
-	Thu,  9 May 2024 12:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEB314BF92;
+	Thu,  9 May 2024 12:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715256511; cv=none; b=oAcLX8RZ59jYoTVOiejdWaORwnGzJhv+CKbx5C56DfdXdO7pgSmwqden2x7GB0YjsYIRSJtXyJqI1xVg+q44uks2iAe1j7dMujyfKhvTls9stEPbKfddC7keTNDsz31qh5HpNitpkY1YG5n7n6eDm6aFPJdVK+wOfT7jIZj+YcM=
+	t=1715256449; cv=none; b=cwHzmoR8NHihal9kgyoqsTgwcd+RIWNo4vP3jcNN0FjJ+4LtygfbRqj7y7kLi8SJnaBpJqdKZbUnVy2gfbsxX9LXeN1Q8Je/flmWTQaxpsVeQuXYvnm6QpL+4HP4lA7eFiPtET+ELuRds9VPigS2tDvGrPu/eZidrmKaS8i1F6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715256511; c=relaxed/simple;
-	bh=k+8ktLJhujlCEcrtylMtNbUYtqQY1OvRPCIur+o7it0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IUWbP2kQUVLS7vFZUCGN5GqUUMyMbqyccbLB5Qwse9IzwAwKd6RtNi0bC/ybCrb/g9IR1h/XMc7Q0K1T/QIyHlbkGenmrQ7XDIgaqSDBdit8JHmJkVkkBmVoiEomuuTB+tgdWnRf3wXWv2JZ4yAFu/OFUWeW5NZ3RG6Rxwtx+cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=Ph7A3Lic; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=Vkx+UJ/E; arc=none smtp.client-ip=24.134.29.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
-Received: from localhost (localhost [127.0.0.1])
-	by honk.sigxcpu.org (Postfix) with ESMTP id 1A27CFB03;
-	Thu,  9 May 2024 14:00:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1715256051; bh=k+8ktLJhujlCEcrtylMtNbUYtqQY1OvRPCIur+o7it0=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=Ph7A3LicOVk/nBXEyXfAlunaorM4dMrLkzLXKHKotd8w56qjjUfdyYLEAx4QaGiA1
-	 9J+DiXMSDq3EhbUZbIQq/wT2Vq4EFR1r8p9GwhiBbPDAV8YnGQ575xFlGbtdq8Ekp0
-	 XoqLqgCOgzY5CiqnT1p+1ILJzwBkwmCJyVl6IR93Lxw8XiXdn4pt4TD2fUXCurSTK2
-	 jVF/IptTJNiow9Y7b9Sztr8oxMeDwEm2+b8bWK+CvWj7MElnSaLhrutknqAwyLR0Cu
-	 JtwCwNEWQ4hPGDykmaQndAApWvZhc4x2PHeH4yh9vjURDtPUJtRNsZN4FAl0RIgPau
-	 a4KxoPztoK9pg==
-Received: from honk.sigxcpu.org ([127.0.0.1])
-	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 8-h3AaQ5H_a7; Thu,  9 May 2024 14:00:50 +0200 (CEST)
-From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
-	t=1715256049; bh=k+8ktLJhujlCEcrtylMtNbUYtqQY1OvRPCIur+o7it0=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=Vkx+UJ/Exq6tecjLez5mqSdHP7b7mwB+rJ5xt2OhMz5Mg6o72pQo8Ot7CZ2651eic
-	 Ltv/j8WEmkbEMf9xAemSyNXXcRrgDAbax5/TnwQCy8tYbXuzVplaTCmgSPe3h0Cbee
-	 9EeF9rFIt4coF6ZI3t/TXkEEMU6KO6/gfunLwoWO7Zh1GxH5U+9lhUQ2LpthR680PA
-	 9VKauEOqmgwbO+q1L2zVDUTXqatkhoznShsofquBU7uYXP0UBNjPN43Numg5yF86vX
-	 i6xinTWAMN7jktf70Unb7e/eVkV14yHyE753GZhztm/+aaAEv0+r2FsSxWmErPD0hf
-	 1xK8jEupLRqHw==
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Hermes Zhang <chenhuiz@axis.com>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	phone-devel@vger.kernel.org
-Subject: [PATCH v1 1/1] Input: gpio-keys - expose wakeup keys in sysfs
-Date: Thu,  9 May 2024 14:00:28 +0200
-Message-ID: <2b6eb6c3f68509aa35cdf2e2a586689ae97681ab.1715255980.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1715255980.git.agx@sigxcpu.org>
-References: <cover.1715255980.git.agx@sigxcpu.org>
+	s=arc-20240116; t=1715256449; c=relaxed/simple;
+	bh=b3Lw6QyOOe/F0A2wbbC5aMnHbGBJhpHoP64jYjfjjKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fKrwhfOG01DriXHhOOFUJGxMzMFRHI3Ddmu8LRb8bkm0tiCXQmDwX3frvdMWDipbKYCHcDhZ8MahVaINpL0pXW+ZW9HyZAVOllIgx3BRCewj5BNIWp1HByVSK6oUKSfOh2Drjy92tiZnkwGXM6rvMZGlOkhL3bq5gcQ71zYeJpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AB4+tWfl; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 449AwH8o010769;
+	Thu, 9 May 2024 12:07:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=pp1;
+ bh=wB/RWoAJV2Kfx9dgeYhfSibcvHgEFIlPM4CBDF2TtHk=;
+ b=AB4+tWfl8spiWQqwneYWVcKOFIuDl7ua2n1SJa74QISK6sCl52gpfiL0C75UqSxDdxyt
+ Xjea4wpL11Tnh8N+nChF0DlaR2xoQ4bHbFo+aFas64Knuv30aG6Xe0yxFOTZUcngZlVp
+ 1psr2jPtxGTN/QUwsELFfBfCKqxuSZ040fI722yz8KgN+/HSf4qwpWs55vLyaC765JBi
+ 68+nrfGF2D8emaHwK6OuQ0rwZCLYH09MRsdcPGpGxxBMA5RHV/xh4CGCHx6ClQQ5ss1/
+ lgDmshvKYr+XqVJ9uXVYwosupxw+dcla/FFUs7Vd1FFTsQODipPPTyWl2WNiIqI4zgyI Yg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0w6rg4ub-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 12:07:06 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 449C76je020859;
+	Thu, 9 May 2024 12:07:06 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y0w6rg4u7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 12:07:06 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 449Bn23i009823;
+	Thu, 9 May 2024 12:07:05 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xyshutpgd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 12:07:05 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 449C70Ih57016742
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 9 May 2024 12:07:02 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 054E620043;
+	Thu,  9 May 2024 12:07:00 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1198120040;
+	Thu,  9 May 2024 12:06:57 +0000 (GMT)
+Received: from li-a50b8fcc-3415-11b2-a85c-f1daa4f09788.in.ibm.com (unknown [9.109.241.85])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  9 May 2024 12:06:56 +0000 (GMT)
+From: Krishna Kumar <krishnak@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, brking@linux.vnet.ibm.com,
+        gbatra@linux.ibm.com, aneesh.kumar@kernel.org,
+        christophe.leroy@csgroup.eu, nathanl@linux.ibm.com,
+        bhelgaas@google.com, oohall@gmail.com, tpearson@raptorengineering.com,
+        mahesh.salgaonkar@in.ibm.com, Krishna Kumar <krishnak@linux.ibm.com>
+Subject: [PATCH 0/2] PCI hotplug driver fixes
+Date: Thu,  9 May 2024 17:35:52 +0530
+Message-ID: <20240509120644.653577-1-krishnak@linux.ibm.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,90 +92,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: EONjMsdldPhPf2sVN8g05O0_NZS1G4S_
+X-Proofpoint-GUID: MhXk9jPgL08IGT3MtvuJymytL3kTsmxG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_06,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 clxscore=1011 suspectscore=0
+ impostorscore=0 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ mlxlogscore=673 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405090080
 
-This helps user space to figure out which keys should be used to unidle a
-device. E.g on phones the volume rocker should usually not unblank the
-screen.
+The fix of Powerpc hotplug driver (drivers/pci/hotplug/pnv_php.c)
+addresses below two issues.
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/input/keyboard/gpio_keys.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+1. Kernel Crash during hot unplug of bridge/switch slot.
 
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 9f3bcd41cf67..84f43d1d4375 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -198,7 +198,8 @@ static void gpio_keys_enable_button(struct gpio_button_data *bdata)
-  */
- static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
- 					  char *buf, unsigned int type,
--					  bool only_disabled)
-+					  bool only_disabled,
-+					  bool only_wakeup)
- {
- 	int n_events = get_n_events_by_type(type);
- 	unsigned long *bits;
-@@ -218,6 +219,9 @@ static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
- 		if (only_disabled && !bdata->disabled)
- 			continue;
- 
-+		if (only_wakeup && !bdata->button->wakeup)
-+			continue;
-+
- 		__set_bit(*bdata->code, bits);
- 	}
- 
-@@ -297,7 +301,7 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
- 	return error;
- }
- 
--#define ATTR_SHOW_FN(name, type, only_disabled)				\
-+#define ATTR_SHOW_FN(name, type, only_disabled, only_wakeup)		\
- static ssize_t gpio_keys_show_##name(struct device *dev,		\
- 				     struct device_attribute *attr,	\
- 				     char *buf)				\
-@@ -306,22 +310,26 @@ static ssize_t gpio_keys_show_##name(struct device *dev,		\
- 	struct gpio_keys_drvdata *ddata = platform_get_drvdata(pdev);	\
- 									\
- 	return gpio_keys_attr_show_helper(ddata, buf,			\
--					  type, only_disabled);		\
-+					  type, only_disabled,		\
-+					  only_wakeup);			\
- }
- 
--ATTR_SHOW_FN(keys, EV_KEY, false);
--ATTR_SHOW_FN(switches, EV_SW, false);
--ATTR_SHOW_FN(disabled_keys, EV_KEY, true);
--ATTR_SHOW_FN(disabled_switches, EV_SW, true);
-+ATTR_SHOW_FN(keys, EV_KEY, false, false);
-+ATTR_SHOW_FN(switches, EV_SW, false, false);
-+ATTR_SHOW_FN(disabled_keys, EV_KEY, true, false);
-+ATTR_SHOW_FN(disabled_switches, EV_SW, true, false);
-+ATTR_SHOW_FN(wakeup_keys, EV_KEY, false, true);
- 
- /*
-  * ATTRIBUTES:
-  *
-  * /sys/devices/platform/gpio-keys/keys [ro]
-  * /sys/devices/platform/gpio-keys/switches [ro]
-+ * /sys/devices/platform/gpio-keys/wakeup_keys [ro]
-  */
- static DEVICE_ATTR(keys, S_IRUGO, gpio_keys_show_keys, NULL);
- static DEVICE_ATTR(switches, S_IRUGO, gpio_keys_show_switches, NULL);
-+static DEVICE_ATTR(wakeup_keys, S_IRUGO, gpio_keys_show_wakeup_keys, NULL);
- 
- #define ATTR_STORE_FN(name, type)					\
- static ssize_t gpio_keys_store_##name(struct device *dev,		\
-@@ -361,6 +369,7 @@ static struct attribute *gpio_keys_attrs[] = {
- 	&dev_attr_switches.attr,
- 	&dev_attr_disabled_keys.attr,
- 	&dev_attr_disabled_switches.attr,
-+	&dev_attr_wakeup_keys.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(gpio_keys);
+2. DPC-Support Enablement - Previously, when we do a hot-unplug
+operation on a bridge slot, all the ports and devices behind the
+bridge-ports would be hot-unplugged/offline, but when we do a hot-plug
+operation on the same bridge slot, all the ports and devices behind the
+bridge would not get hot-plugged/online. In this case, Only the first
+port of the bridge gets enabled and the remaining port/devices remain
+unplugged/offline.  After the fix, The hot-unplug and hot-plug
+operations on the slot associated with the bridge started behaving
+correctly and became in sync. Now, after the hot plug operation on the
+same slot, all the bridge ports and devices behind the bridge become
+hot-plugged/online/restored in the same manner as it was before the
+hot-unplug operation.
+
+
+
+Krishna Kumar (2):
+  pci/hotplug/pnv_php: Fix hotplug driver crash on Powernv
+  arch/powerpc: hotplug driver bridge support
+
+ arch/powerpc/include/asm/ppc-pci.h |  4 +++
+ arch/powerpc/kernel/pci-hotplug.c  |  5 ++--
+ arch/powerpc/kernel/pci_dn.c       | 42 ++++++++++++++++++++++++++++++
+ drivers/pci/hotplug/pnv_php.c      |  3 +--
+ 4 files changed, 49 insertions(+), 5 deletions(-)
+
 -- 
-2.43.0
+2.44.0
 
 
