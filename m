@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-174263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C4C8C0C4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:08:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B298C0C51
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F8232831D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F69C1F21DBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549BA13C83D;
-	Thu,  9 May 2024 08:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF02149C7E;
+	Thu,  9 May 2024 08:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBZjU86l"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="h/Btutn7"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD413C9C4;
-	Thu,  9 May 2024 08:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF657149C73
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715242109; cv=none; b=R+2Kl7VXU5Is/6YTTve8ropHA82GJodYd+VzHSBZnjmtNPWIocMnEItm5zGcxbFBtxSSxwZw4c93vHV8VhYlygkIOubZGZ0N/eme4UHWNuByLSMSFGkOw4I8xji/fqZbZpVABCtCvJxEqbh7yxLa2tPyWgVTe7f/y7kj4Nurf08=
+	t=1715242428; cv=none; b=n6Ff8qwQMm+E0gPMUPKvLxWOCkOkAjVI2E9OhX+Vb2DabRQoxrU7vx/mwU7Lrq+9TFuP3M/+woY3v2wCOB1vGIPxpUmA4Eqh850jIEMAxPCYbaf7VU1A4xJEdO0iWsWI6TNN2cdPoy/UNK++SbfaGTRE93e8s0vNWeJx8anMDAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715242109; c=relaxed/simple;
-	bh=gGihO4uBNHk9osA5UTXwEkO6FL32D0ENpNDtkOv5YG4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K6CtBOXdrJT2eYWsgjO/NZCzEV+4Ucenz01qDdXf2mv+gOGWotXTtJJbesGLwu7/k1Hhu6b6DISlMT0RtQfBnWcT9ZitLxikIYhol/gLjHJ3Ke268mHXUM7tsyytcJpeTpXb12bazmA9NrAFrRIeqv0R1ZSeFCXnkP/d+UTLttY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBZjU86l; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so8239661fa.0;
-        Thu, 09 May 2024 01:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715242106; x=1715846906; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Va5CBhgS4YlEntgDj+lB7xMw3P3JCYpHFdQk9HzfcS0=;
-        b=SBZjU86lm6uSWDf2ZfXO+5AT9zYjHvbJvAjOrXQwII7BMozoSEN3PCa896561MSL+W
-         5+htEm94O4VTFkf5uaT/fMHbh4XcIGVcEA3jT0l4jlGzXkyzsAwfo4uTvyNDcydXFSAg
-         UuLvMQ8GC03br6DEoAULEqp9VgDCglI7/G3IblbiOCt0miZgBmhPOldyTXOiaeZTw96N
-         369oJ4GCd0aaNaAbS1B5R0rLrIH16nS9qRJX9bszfy6PwS5si8pbC4RzZAG2gcXkUXPB
-         u6tXVmtF7iYVwOQ90+760VHSDf1TzsCCgh/q00iwQuDh9NLif5GDUJYMEOczxmue//N7
-         V9sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715242106; x=1715846906;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Va5CBhgS4YlEntgDj+lB7xMw3P3JCYpHFdQk9HzfcS0=;
-        b=bg59yyEIGAL09CEAbpQalfBX1LXNcaCnMOO/cbGLLzpYJQkzLFJ+PN+O5S/zjOxEF/
-         gtnEZalMWReqpd31VfLgL503bbrfE/lBtXer9YoMm3KBRR5ldcxVokMxqFCr2EKARWbS
-         VHdA976CgJRKwAxmZHVVvkceJNbDN3TdVGOvOS1FscX1nLWF3+94Ysf/xIjM9p6QkC5t
-         vlRWPsw5tDrZ5pLZ8cI+mrb4S8u/AJuBMiLYaha7bWfaoSDsu8xX+ocDsz9pV8c4WAmQ
-         qlF15lQj1G3sB0xpN4Z4LiMvAMPXiLNWcYPBbji30Grs5FKaeXUg3dKxL4fFA8Fn4TRs
-         rh1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX/sq7xly46ASiDcUNsXtzAoD/nRRLaxMw56UPadaSVcFI6qWX1JCx5jvLeM/b1+SK79Wa/qQ207DY519yPgFt6In78xNoFArfqjQ7QUgDMd4XgGIwanAEvoec2X/4bfs9zNg2EwNAf
-X-Gm-Message-State: AOJu0Ywq5ViXJW/ndUKkvDjofxDFrF1QBjCrUkxZXccOj4/7CWmfFd8b
-	uPYFLbOpnpyrDuLPzW0kcRKoqm+CPQzgxfUXjsSObOxf3tauEDCV9UgTI391
-X-Google-Smtp-Source: AGHT+IHw5kJvcuqlfuDNh48yh3D1+EoKZYjlJf5IGaHB4/GOviTBm0Q+n9TvIng/h2Z39xb/KSM1zQ==
-X-Received: by 2002:a2e:a613:0:b0:2d9:f7f8:3e87 with SMTP id 38308e7fff4ca-2e4475a0fcemr31361781fa.32.1715242105694;
-        Thu, 09 May 2024 01:08:25 -0700 (PDT)
-Received: from [169.254.60.140] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f9bc3b12fsm23029565e9.0.2024.05.09.01.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 01:08:25 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Thu, 09 May 2024 10:08:04 +0200
-Subject: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
- Stromer pll configs
+	s=arc-20240116; t=1715242428; c=relaxed/simple;
+	bh=lHKi0i+Sh9dU0tv5mcRO6DSSVX4y5N1Jy0QuwxVUbw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sepUGA8pN6SK98vy0TQoXrUomZ7V0nHu45PzaA1egHZ5PpISC6nKTAsza6TTmuKshVmLYGlWineDBeNDK2crumPgehkLkQ+bUnl2Lvk/xPvUz2paiXqiGa+P7fShnFxafE1c4+WyEAmb6lVamREsmn7Ip2WYreWQ+9irzaEKRgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=h/Btutn7; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715242418;
+	bh=lHKi0i+Sh9dU0tv5mcRO6DSSVX4y5N1Jy0QuwxVUbw8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/Btutn7RgorRwF1FYvdhvD4IemNLoebxsAr3nteozWA+iTGmbeXj125qfCfW0mVW
+	 80qmmrYxTZfZmr+SPH5PpX38ROPzwd6ATsNfwykn8VKXlkvtKTRRH0hOY+Me7ZOD0f
+	 0cVa39mwR/LukIGUagygLWqOrBI5wkRrl7/zvNTE=
+Date: Thu, 9 May 2024 10:13:37 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, 
+	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>, 
+	Guenter Roeck <groeck@chromium.org>, chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Dustin Howett <dustin@howett.net>
+Subject: Re: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing
+ through EC_FEATURE_PWM_KEYB
+Message-ID: <9b594929-a827-4682-b4aa-98a2c85a536b@t-8ch.de>
+References: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
+ <cd9c5b6a-0155-434a-b868-a9ea52e878c9@amd.com>
+ <ae29f036-5e39-47ee-98d3-c023a263a3ef@t-8ch.de>
+ <ZjxQHV9FPovvm_CY@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGOEPGYC/x3MSwqEMBBF0a1Ijbsg/jDtVhoHEp9aYCdSCSKIe
- zc4PIN7L4pQQaS+uEhxSJTgM8pPQW4d/QKWKZsqUzWmNV+OScMfyi74WRZ2aWPrAAvbdihryuG
- umOV8p7/hvh+7Qv6QZAAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
- Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjxQHV9FPovvm_CY@google.com>
 
-Since the CONFIG_CTL register is only 32 bits wide in the Stromer
-and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
-IPQ5018 and IPQ5332 configurations are not used so remove those.
+On 2024-05-09 12:25:01+0000, Tzung-Bi Shih wrote:
+> On Mon, May 06, 2024 at 07:38:09PM +0200, Thomas Weißschuh wrote:
+> > On 2024-05-05 08:42:21+0000, Mario Limonciello wrote:
+> > > On 5/5/2024 04:41, Thomas Weißschuh wrote:
+> > > > The ChromeOS EC used in Framework laptops supports the standard cros
+> > > > keyboard backlight protocol.
+> > > > However the firmware on these laptops don't implement the ACPI ID
+> > > > GOOG0002 that is recognized by cros_kbd_led_backlight and they also
+> > > > don't use device tree.
+> 
+> If implementing ACPI ID GOOG0002 is not an option, how about adding a new ACPI
+> ID?  For the new ACPI ID, it can use EC PWM for setting the brightness.
 
-No functional changes.
+Adding a new ACPI ID would be easier than a full-blown ACPI interface.
+This would still need changes to the drivers probing setup, however.
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Based on 'qcom-clk-for-6.10'
----
- drivers/clk/qcom/apss-ipq-pll.c | 2 --
- 1 file changed, 2 deletions(-)
+What are the advantages of the ACPI ID aproach over EC_FEATURE_PWM_KEYB?
+The EC feature also automatically works on device-tree platforms and
+without any work from system vendors.
 
-diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-index 5f7f537e4ecb..e8632db2c542 100644
---- a/drivers/clk/qcom/apss-ipq-pll.c
-+++ b/drivers/clk/qcom/apss-ipq-pll.c
-@@ -70,7 +70,6 @@ static struct clk_alpha_pll ipq_pll_stromer_plus = {
- static const struct alpha_pll_config ipq5018_pll_config = {
- 	.l = 0x2a,
- 	.config_ctl_val = 0x4001075b,
--	.config_ctl_hi_val = 0x304,
- 	.main_output_mask = BIT(0),
- 	.aux_output_mask = BIT(1),
- 	.early_output_mask = BIT(3),
-@@ -84,7 +83,6 @@ static const struct alpha_pll_config ipq5018_pll_config = {
- static const struct alpha_pll_config ipq5332_pll_config = {
- 	.l = 0x2d,
- 	.config_ctl_val = 0x4001075b,
--	.config_ctl_hi_val = 0x304,
- 	.main_output_mask = BIT(0),
- 	.aux_output_mask = BIT(1),
- 	.early_output_mask = BIT(3),
+Adding ACPI ID only for signalling without using ACPI for
+communication on the other hand seems weird.
+Also with MFD the device hierarchy is much better.
 
----
-base-commit: 3c5b3e17b8fd1f1add5a9477306c355fab126977
-change-id: 20240509-stromer-config-ctl-8cee8e857e13
+> > > Something I'd wonder is if the GOOG0002 ACPI ID can go away entirely with
+> > > this type of change.  Presumably the Chromebooks with ChromeOS EC /also/
+> > > advertise EC_FEATURE_PWM_KEYB.
+> > 
+> > Sounds good to me in general. It would make the code cleaner.
+> > 
+> > But I have no idea how CrOS kernels are set up in general.
+> > If they are not using CONFIG_MFD_CROS_EC_DEV for some reason that
+> > wouldn't work.
+> > 
+> > If the CrOS folks agree with that aproach I'll be happy to implement it.
+> 
+> I would say NO as some existing devices (with legacy firmware and kernel) may
+> rely on it.
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+Ack, makes sense.
 
+You mention legacy kernels, but these would not be affected.
 
