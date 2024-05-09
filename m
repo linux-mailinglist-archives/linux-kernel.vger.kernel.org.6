@@ -1,215 +1,74 @@
-Return-Path: <linux-kernel+bounces-174607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114778C117E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:47:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4748C117B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44521B21E21
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC2A281BD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D3C15279A;
-	Thu,  9 May 2024 14:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0lEfVc/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3641A291;
-	Thu,  9 May 2024 14:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AF313174A;
+	Thu,  9 May 2024 14:46:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407BA1BC4B;
+	Thu,  9 May 2024 14:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715266022; cv=none; b=gQlvuQGf4MtndP7j5d7v+ELT4B/d8YGxv8uK2by/avkkqGG0+G8YD1l9fL149kFAu/PAx3pBJVcAJbbRrtpzs0q+1PIxYrrsPh+FTh1KnYwRilYPX7SX74IpBYxZuKBO5tx68uVVlIoyCSsYrUwJ0vFwey7ktMGCkKGJJitdJ3Q=
+	t=1715266003; cv=none; b=PUT5thYbrWAqJYSuZIN4eQF2Tczq/BmXUE28wHQ0oh3TBZKomGHcke8xjODLyVbfR2GiLsz2WB/PHDbV0TEeRt6Col+C6d18dmgen5mSg4u9ecEMd9rHyqJkU/Bp5bwmaG4TbGRk7UkZ291Kx+XHg5hwMCRs4HlhvpTrcYjcLhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715266022; c=relaxed/simple;
-	bh=44nu8TQxim7F3121JfCwQxg3SRkVOTAgI+q5yLgxXI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcAzPGLKLtB3ogsUbKpT/Ow82wHgtF2urIXwNbv/hSrbZ+xxOOuQA4xcwMsrH0ch3yI2fvvjfW2Es9Wwip9Pgj8wKjWaq4HX0mSfdjGY9NexIbGrMaSJvTAa9KJgGnOCp8NTvv4PdThOw+0RmsX7T/vvEXTfu15+w1N7/fLs/QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0lEfVc/; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715266021; x=1746802021;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=44nu8TQxim7F3121JfCwQxg3SRkVOTAgI+q5yLgxXI8=;
-  b=P0lEfVc/s//qXkMO627xZy+p0BBx7WJJJ0g4j6v0EFv3W2VbF6eHhIqx
-   xqf4bVWpl2+dQGB9kzC8of36SZ3ocUOcgrkqs78j/q0d8euETfOJYKBh0
-   1XiVEgnxyoKmM5BB/x+37ZQh+PqRGPrWie5WGK//2hq6PrRNYLr18HZ0d
-   AyCCEcYG8NxqyChLZrNMQal3svf63oZ04gYHfo6F4XafrJ5yobh+RLf5f
-   A7DMdf3NzJmKlJaAOqWkO64qC8SCEXs/RalcWxjvUrTwEJfyO4qum/3zC
-   cxqi3Zr/WIY/QyAKiaLwHlCIX+CXgHLv3MSO4QuuI3AplMmU4aUzMDpb2
-   A==;
-X-CSE-ConnectionGUID: CbB/oyKlTlq2wMwVOZKbKQ==
-X-CSE-MsgGUID: js4hFtT2R7um2Kt/2su+7A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11052035"
-X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
-   d="scan'208";a="11052035"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 07:47:00 -0700
-X-CSE-ConnectionGUID: tiVKl2c0RcGZ8zyTSJAfAw==
-X-CSE-MsgGUID: WSHUraYDR+CfMCbB9uynSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,148,1712646000"; 
-   d="scan'208";a="34119686"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa004.jf.intel.com with ESMTP; 09 May 2024 07:46:56 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Steven Price <steven.price@arm.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dma: fix DMA sync for drivers not calling dma_set_mask*()
-Date: Thu,  9 May 2024 16:46:16 +0200
-Message-ID: <20240509144616.938519-1-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715266003; c=relaxed/simple;
+	bh=rucQE/twYzCIsQtJnDOh9iW/UvTTt3EfUCzRoR2xgt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxS7DMcbkP8rZtlg1ZvE7NvrVduU+rXjSaXvpd7GSO8VHSglhnzadsamiJ0S8NvoIxH5wLj/kTwftTR/JBYHL8wYH5CS1KOtbLOh89yvVvVK17Tc7vbCiq/nXecItBqvpCCjtocRF2N3cROL/1MSKyQuXDdmSZ3+J6a8wSTeWdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD7B4106F;
+	Thu,  9 May 2024 07:47:05 -0700 (PDT)
+Received: from [10.1.31.15] (PF4Q20KV.arm.com [10.1.31.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A3653F641;
+	Thu,  9 May 2024 07:46:38 -0700 (PDT)
+Message-ID: <438f8725-ef3f-462f-90e2-840cab478ee5@arm.com>
+Date: Thu, 9 May 2024 15:46:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf maps: Process kcore maps in order
+To: Markus Elfring <Markus.Elfring@web.de>, linux-perf-users@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ian Rogers
+ <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+ James Clark <james.clark@arm.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240505202805.583253-1-leo.yan@arm.com>
+ <4294f69b-a317-4f09-b775-52439e2ea6fc@web.de>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <4294f69b-a317-4f09-b775-52439e2ea6fc@web.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-There are several reports that the DMA sync shortcut broke non-coherent
-devices.
-dev->dma_need_sync is false after the &device allocation and if a driver
-didn't call dma_set_mask*(), it will still be false even if the device
-is not DMA-coherent and thus needs synchronizing. Due to historical
-reasons, there's still a lot of drivers not calling it.
-Invert the boolean, so that the sync will be performed by default and
-the shortcut will be enabled only when calling dma_set_mask*().
+On 5/8/2024 6:02 PM, Markus Elfring wrote:
+>>                                                        … To fix it, this
+>> patch adds kcore maps in the tail of list, …
+> 
+> * How do you think about to add the tag “Fixes”?
+> 
+> * Would you like to use imperative wordings for an improved changelog?
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Closes: https://lore.kernel.org/lkml/46160534-5003-4809-a408-6b3a3f4921e9@samsung.com
-Reported-by: Steven Price <steven.price@arm.com>
-Closes: https://lore.kernel.org/lkml/010686f5-3049-46a1-8230-7752a1b433ff@arm.com
-Fixes: 32ba8b823252 ("dma: avoid redundant calls for sync operations")
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/linux/device.h      |  4 ++--
- include/linux/dma-map-ops.h |  4 ++--
- include/linux/dma-mapping.h |  2 +-
- kernel/dma/mapping.c        | 10 +++++-----
- kernel/dma/swiotlb.c        |  2 +-
- 5 files changed, 11 insertions(+), 11 deletions(-)
+I will add Fixes tag and refine changelog. Thanks for suggestions.
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index ed95b829f05b..d4b50accff26 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -691,7 +691,7 @@ struct device_physical_location {
-  *		and optionall (if the coherent mask is large enough) also
-  *		for dma allocations.  This flag is managed by the dma ops
-  *		instance from ->dma_supported.
-- * @dma_need_sync: The device needs performing DMA sync operations.
-+ * @dma_skip_sync: DMA sync operations can be skipped for coherent buffers.
-  *
-  * At the lowest level, every device in a Linux system is represented by an
-  * instance of struct device. The device structure contains the information
-@@ -805,7 +805,7 @@ struct device {
- 	bool			dma_ops_bypass : 1;
- #endif
- #ifdef CONFIG_DMA_NEED_SYNC
--	bool			dma_need_sync:1;
-+	bool			dma_skip_sync:1;
- #endif
- };
- 
-diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
-index 4893cb89cb52..5217b922d29f 100644
---- a/include/linux/dma-map-ops.h
-+++ b/include/linux/dma-map-ops.h
-@@ -280,8 +280,8 @@ static inline void dma_reset_need_sync(struct device *dev)
- {
- #ifdef CONFIG_DMA_NEED_SYNC
- 	/* Reset it only once so that the function can be called on hotpath */
--	if (unlikely(!dev->dma_need_sync))
--		dev->dma_need_sync = true;
-+	if (unlikely(dev->dma_skip_sync))
-+		dev->dma_skip_sync = false;
- #endif
- }
- 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index eb4e15893b6c..f693aafe221f 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -295,7 +295,7 @@ bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr);
- static inline bool dma_dev_need_sync(const struct device *dev)
- {
- 	/* Always call DMA sync operations when debugging is enabled */
--	return dev->dma_need_sync || IS_ENABLED(CONFIG_DMA_API_DEBUG);
-+	return !dev->dma_skip_sync || IS_ENABLED(CONFIG_DMA_API_DEBUG);
- }
- 
- static inline void dma_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 3524bc92c37f..3f77c3f8d16d 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -392,7 +392,7 @@ bool __dma_need_sync(struct device *dev, dma_addr_t dma_addr)
- 
- 	if (dma_map_direct(dev, ops))
- 		/*
--		 * dma_need_sync could've been reset on first SWIOTLB buffer
-+		 * dma_skip_sync could've been reset on first SWIOTLB buffer
- 		 * mapping, but @dma_addr is not necessary an SWIOTLB buffer.
- 		 * In this case, fall back to more granular check.
- 		 */
-@@ -407,20 +407,20 @@ static void dma_setup_need_sync(struct device *dev)
- 
- 	if (dma_map_direct(dev, ops) || (ops->flags & DMA_F_CAN_SKIP_SYNC))
- 		/*
--		 * dma_need_sync will be reset to %true on first SWIOTLB buffer
-+		 * dma_skip_sync will be reset to %false on first SWIOTLB buffer
- 		 * mapping, if any. During the device initialization, it's
- 		 * enough to check only for the DMA coherence.
- 		 */
--		dev->dma_need_sync = !dev_is_dma_coherent(dev);
-+		dev->dma_skip_sync = dev_is_dma_coherent(dev);
- 	else if (!ops->sync_single_for_device && !ops->sync_single_for_cpu &&
- 		 !ops->sync_sg_for_device && !ops->sync_sg_for_cpu)
- 		/*
- 		 * Synchronization is not possible when none of DMA sync ops
- 		 * is set.
- 		 */
--		dev->dma_need_sync = false;
-+		dev->dma_skip_sync = true;
- 	else
--		dev->dma_need_sync = true;
-+		dev->dma_skip_sync = false;
- }
- #else /* !CONFIG_DMA_NEED_SYNC */
- static inline void dma_setup_need_sync(struct device *dev) { }
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index ae3e593eaadb..068134697cf1 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -1409,7 +1409,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *dev, phys_addr_t orig_addr,
- 	}
- 
- 	/*
--	 * If dma_need_sync wasn't set, reset it on first SWIOTLB buffer
-+	 * If dma_skip_sync was set, reset it on first SWIOTLB buffer
- 	 * mapping to always sync SWIOTLB buffers.
- 	 */
- 	dma_reset_need_sync(dev);
--- 
-2.45.0
-
+Leo
 
