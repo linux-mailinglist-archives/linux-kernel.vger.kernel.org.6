@@ -1,307 +1,119 @@
-Return-Path: <linux-kernel+bounces-174646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5148C1227
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F3A8C122A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D920D283329
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:43:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0631F220E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9086D16F832;
-	Thu,  9 May 2024 15:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2447B13C68C;
+	Thu,  9 May 2024 15:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fSq9NB12"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="voXvVGm9"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8845015F416;
-	Thu,  9 May 2024 15:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B076914B097
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 15:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715269427; cv=none; b=gEt2XepatjnX4eWVSGHsJ5XDt2PnpjV701J1ods9AceMzKmyJJohxKQdFVhJ0o95a5cm+2HT2raMbS+1cLC+meQIopOM4JjNohYAvhRT0o2yC55kdqN13tGHmfb3oYore87fmQSC1+s0oeLxv7O9nQveofCd34KY94rKiQNYFnY=
+	t=1715269518; cv=none; b=tZkgLHfxBpGYOOD1NyZAijnM+8Im7XIDOnsvQIDz6hVHXSmrSr/IeKi1gPrgZTMYxdbrKzqK5oOAdYHr8gc1/T6Fh3SuoHODnVE+/d35OVfu43KpVO55reIZRUruSB6lJ7FvWOuej/ncrJxZ6Nu8uus/2k3fFJGm0sii+xmG28M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715269427; c=relaxed/simple;
-	bh=hPpRspYVVr7KicvBPbJ0ItLbKSRPjGj8NE5U0VN1MeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SClnaZ/IBF3m821fAVkum1GP40INPi9SMlgr4PjCjeOJHyMAtlKD4oSCy2tZJHKSo0jNbwrojMw4FVoasiSqdaAgLVLHWSffsIWpktfSGGJNQCY4r3xb1Q7s2OprTOcH2naCkmMsL4mJ+2HqCaLyjEaEyC9aisTccgdAiAlUilQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fSq9NB12; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715269423;
-	bh=hPpRspYVVr7KicvBPbJ0ItLbKSRPjGj8NE5U0VN1MeM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fSq9NB12LfPNu+cUvvT8Klfh+LPo0On6xloWGUiTgDhMJ40hwvWEt3hZE6Kja3i/J
-	 6CQjQzHlRmq/7irCU4XZvPfdddIRKYEAaUv8A0UML9atDBsf3icvEiVXfb2CnIJjLa
-	 s13p8v3sOHLsPcQ59Nia0bZr/8SMz/2OuvpjGNKHF4ZhlP+QtdcrBagbTgI5HuL/7c
-	 KJKbMKYH438zbh5ODe2U21QaGj45+0HrSQTeAkj8GB9f/aXbAgPWp+OulmsyF71UgP
-	 Utx51vBT8DT3jNMlwp7WDyNpoYEGWa46LBUoJI+3wKkxeZMpcY3inQEgGdSvdYWyR4
-	 W7PwAg1qxUaLg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 606AE37820FA;
-	Thu,  9 May 2024 15:43:43 +0000 (UTC)
-Message-ID: <c721f2b9-2b08-45f3-adb5-09b163924fbc@collabora.com>
-Date: Thu, 9 May 2024 17:43:42 +0200
+	s=arc-20240116; t=1715269518; c=relaxed/simple;
+	bh=DZNYdSr3PQT2Ytv6yKADnFDz0/6OYvMONIsLOfnnwGs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OhzQk4Q9ivqImV7nXamTIvL+7MXNnIyJUHK5Ft4cuKx34BWpnOxqQtdMvMHlwY5rKFrF17Y6rgpZXEOFLE+Yjb7Sj/Qud5YQhdZS04D5tWBjuVKUOHtWLdbtHtb1rYKWvFCCPBaDKhm56zFN8/ThonKclNl0JFpdD/BEeHrj3M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=voXvVGm9; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e1b520812fso307739f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 08:45:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1715269516; x=1715874316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5gUCh8FY7gsl2h4E/kN2GFyVm9t1B96kSbiEPvae8u0=;
+        b=voXvVGm9DxyhKNpswr3aTjHPpm7BA4skpcAlucDP/KtSdxGEdDPyL3Qcp56FU6CmBm
+         XZZxBgORT6zm9Pw/DtGJrbf/4Q3rk1oJ52ZqJD83ILZF1C96Dsp0WOjOhUy8pDXbIzlu
+         +y+9Ctw8VFDJLF8w4u0Tgbg+FW9qHIgGEB4HnxlIxP9LTiqs8MCCSz3unRnqYSsnznLA
+         LURo9WWxwoaUb5QHSV+x5quV0diNqOIxmFrWBq3oLJm4Z//vdHfqY0jDuT0MUwuThWFp
+         DOSgfAu1TFLNX7knZayA5ADJSEf02dBObEMJ0pHAZ+CjHPQeWAU9S6vXWkiote5Ul5+B
+         AHyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715269516; x=1715874316;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5gUCh8FY7gsl2h4E/kN2GFyVm9t1B96kSbiEPvae8u0=;
+        b=mEMd1ASgP/q4Q6yvfxfSwwiZvgOLeg32J9RDNdwslKDa0ZGB+pQ0U+obq2ajUdvfnN
+         c6qQ0c6w35yV1MEd4z5gWXh9i2iH6XM2IyvhRpvTFS3GgsGv8lWIPjZewZTCGZD9FTkB
+         5KFsLo2of9d5H6/vko3/qi5AHpAvr+oOoIp1PoAGYcrq0pla04cVbdxWqqzLo98c/3jO
+         BUuOIOTG68DF+ZdOdllodz2rKFHHcedCX0MVbfsMGI4zhjrFpz+SR1YB3a9cCTUsjvHF
+         4ZRh145cgZG5vfZ/ADANJ9Tl3on3PpAYsRpQYbcKBR0l93/Mz57bVDY4o3BmvMT0M/Px
+         xY3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Aj+Jy3+4ezAHQYJVxFcv7L5gTBxOY0Vd0EvoR46baCo9KghO5sJaob3iss6LXGg8uB08PpzVW7UTFxyu4AAwJ9jE1pS4NAiWIs+9
+X-Gm-Message-State: AOJu0YzbdSTb5oC3BPligHgbKt9woQtV04b0dZoBHuh2ImMCJXrK8QAY
+	xlQTfTv7b8tqmb5fk+a93n609/C65ApkKh8ndewOpc59Qs2Nh2ubgKcY/9iBniI=
+X-Google-Smtp-Source: AGHT+IEonISz5k6S+QhuL+vpC60UupW6zWwKsP/6j7LitGl0JXGDRiQ702VSRrcsV4zjn3bncreQ3Q==
+X-Received: by 2002:a6b:d101:0:b0:7e1:86e1:cd46 with SMTP id ca18e2360f4ac-7e1b520b2f8mr8525739f.2.1715269514443;
+        Thu, 09 May 2024 08:45:14 -0700 (PDT)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376de473sm416106173.154.2024.05.09.08.45.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 08:45:13 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: chenhuacai@kernel.org, tj@kernel.org, josef@toxicpanda.com, 
+ victor@mojatatu.com, raven@themaw.net, yukuai3@huawei.com, 
+ twoerner@gmail.com, zhaotianrui@loongson.cn, svenjoac@gmx.de, 
+ jhs@mojatatu.com, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ loongarch@lists.linux.dev, cgroups@vger.kernel.org, yi.zhang@huawei.com, 
+ yangerkun@huawei.com
+In-Reply-To: <20240509121107.3195568-1-yukuai1@huaweicloud.com>
+References: <20240509121107.3195568-1-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH for-6.10/block 0/2] blk-throtl: delete throtl low and
+ lay initialization
+Message-Id: <171526951316.85538.15766009475504777468.b4-ty@kernel.dk>
+Date: Thu, 09 May 2024 09:45:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] power: supply: sbs-battery: Handle unsupported
- PROP_TIME_TO_EMPTY_NOW
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: Sebastian Reichel <sre@kernel.org>, kernel@collabora.com,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pin-yen Lin <treapking@chromium.org>
-References: <20240418-sbs-time-empty-now-error-v3-1-f286e29e3fca@collabora.com>
- <cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano>
- <CAHc4DNJ0prAQOw89Hvw8n9KhY+8xB3D77pJvoPfU-X7ZFDYu7Q@mail.gmail.com>
- <924db470-8163-4454-8f59-f7372a132186@notapiano>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <924db470-8163-4454-8f59-f7372a132186@notapiano>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-Il 09/05/24 17:25, Nícolas F. R. A. Prado ha scritto:
-> On Mon, Apr 22, 2024 at 04:10:23PM +0800, Hsin-Te Yuan wrote:
->> On Sat, Apr 20, 2024 at 12:03 AM Nícolas F. R. A. Prado
->> <nfraprado@collabora.com> wrote:
->>>
->>> On Thu, Apr 18, 2024 at 01:34:23PM -0400, Nícolas F. R. A. Prado wrote:
->>>> Despite the RunTimeToEmpty() (0x11) function being defined in the SBS
->>>> specification as required, it seems that not all batteries implement it.
->>>> On platforms with such batteries, reading the property will cause an
->>>> error to be printed:
->>>>
->>>> power_supply sbs-8-000b: driver failed to report `time_to_empty_now' property: -5
->>>>
->>>> This not only pollutes the log, distracting from real problems on the
->>>> device, but also prevents the uevent file from being read since it
->>>> contains all properties, including the faulty one.
->>>>
->>>> The following table summarizes the findings for a handful of platforms:
->>>>
->>>> Platform                                Status  Manufacturer    Model
->>>> ------------------------------------------------------------------------
->>>> mt8186-corsola-steelix-sku131072        OK      BYD             L22B3PG0
->>>> mt8195-cherry-tomato-r2                 NOT OK  PANASON         AP16L5J
->>>> mt8192-asurada-spherion-r0              NOT OK  PANASON         AP15O5L
->>>> mt8183-kukui-jacuzzi-juniper-sku16      NOT OK  LGC KT0         AP16L8J
->>>> mt8173-elm-hana                         OK      Sunwoda         L18D3PG1
->>>> sc7180-trogdor-lazor-limozeen-nots-r5   NOT OK  Murata          AP18C4K
->>>> sc7180-trogdor-kingoftown               NOT OK  333-AC-0D-A     GG02047XL
->>>> rk3399-gru-kevin                        OK      SDI             4352D51
->>>>
->>>> Detect if this is one of the quirky batteries during presence update, so
->>>> that hot-plugging works as expected, and if so report -ENODATA for
->>>> POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW, which removes it from uevent and
->>>> prevents throwing errors.
->>>>
->>>> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>>> ---
->>>
->>> Hi,
->>>
->>> I'm coming back with more information after some more testing has been done.
->>>
->>> Most importantly, in the meantime, a parallel investigation uncovered that the
->>> time_to_empty_now issue was actually in the EC firmware:
->>> https://chromium-review.googlesource.com/c/chromiumos/platform/ec/+/5465747
->>>
->>> So the other faulty properties (which I'll mention below) could also be due to
->>> the EC firmware. These are the EC firmware version for the platforms with
->>> additional issues:
->>> * RW version:    juniper_v2.0.2509-9101a0730
->>> * RW version:    lazor_v2.0.6519-9923041f79
->>>
->>> Hsin-Te, do you have information on whether it's an EC issue in this case as
->>> well?
->>>
->>> The following table shows all the faulty properties per platform:
->>>
->>> Platform                               Manufacturer  Model      Faulty properties
->>> ---------------------------------------------------------------------------------
->>> mt8186-corsola-steelix-sku131072       BYD           L22B3PG0   -
->>> mt8195-cherry-tomato-r2                PANASON       AP16L5J    time_to_empty_now
->>> mt8192-asurada-spherion-r0             PANASON       AP15O5L    time_to_empty_now
->>> mt8183-kukui-jacuzzi-juniper-sku16     LGC KT0       AP16L8J    time_to_empty_now
->>>                                                                  capacity_error_margin
->>>                                                                  constant_charge_current_max
->>>                                                                  constant_charge_voltage_max
->>>                                                                  current_avg
->>>                                                                  technology
->>>                                                                  manufacture_year
->>>                                                                  manufacture_month
->>>                                                                  manufacture_day
->>>                                                                  SPEC_INFO
->>> mt8173-elm-hana                        Sunwoda       L18D3PG1   -
->>> sc7180-trogdor-lazor-limozeen-nots-r5  Murata        AP18C4K    time_to_empty_now
->>>                                                                  capacity_error_margin
->>>                                                                  constant_charge_current_max
->>>                                                                  constant_charge_voltage_max
->>>                                                                  current_avg
->>> sc7180-trogdor-kingoftown              333-AC-0D-A   GG02047XL  time_to_empty_now
->>> rk3399-gru-kevin                       SDI           4352D51    -
->>>
-> [..]
->>
->> It looks like the firmware version of juniper is too old. Could you
->> update the firmware and test it again?
->> Also, Could you provide the error you get from lazor?
+
+On Thu, 09 May 2024 20:11:05 +0800, Yu Kuai wrote:
+> Tested with the new blktests:
 > 
-> Getting back on this, we were finally able to update the EC firmware for both
-> juniper and limozeen and all the issues were fixed. I have added the logs below
-> just for reference. So I guess the only change we could have upstream would be a
-> message suggesting the user to update the EC firmware in case the SBS is behind
-> the CrosEC and it starts throwing errors. I'll prepare a patch for that.
+> https://lore.kernel.org/all/20240420084505.3624763-1-yukuai1@huaweicloud.com/
 > 
-
-..yes, but then you can't do that in the sbs-battery driver, but rather in the
-CrOS EC - so you'd have to link this and the other driver (beware: I'm not
-proposing to do that!), which wouldn't be the cleanest of options.
-
-Perhaps we could check "how many times *in a row, from boot*" the readout is
-failing and dynamically add the quirk with a big pr_warn().
-
-I guess that could work but, at the same time, that's code to engineer very
-carefully, or we'd risk breaking machines that would get that reading to work,
-for example, only after a suspend-resume cycle (which is bad, yes, but still)
-or other oddities...
-
-Any other ideas?
-
-Cheers,
-Angelo
-
-
-> Thanks,
-> Nícolas
+> Changes from RFC:
+>  - remove patches to support build blk-throtl as module;
+>  - add ack tag for patch 1, also rebase on the top of for-6.10/block;
+>  - some small changes for patch 2;
 > 
-> limozeen:
-> + cat /sys/class/power_supply/sbs-12-000b/time_to_empty_now
-> 3932100
-> + cat /sys/class/power_supply/sbs-12-000b/capacity_error_margin
-> 3
-> + cat /sys/class/power_supply/sbs-12-000b/constant_charge_current_max
-> 0
-> + cat /sys/class/power_supply/sbs-12-000b/constant_charge_voltage_max
-> 0
-> + cat /sys/class/power_supply/sbs-12-000b/current_avg
-> 0
-> + cat /sys/class/power_supply/sbs-12-000b/uevent
-> DEVTYPE=power_supply
-> OF_NAME=sbs-battery
-> OF_FULLNAME=/soc@0/geniqup@ac0000/spi@a80000/ec@0/i2c-tunnel/sbs-battery@b
-> OF_COMPATIBLE_0=sbs,sbs-battery
-> OF_COMPATIBLE_N=1
-> POWER_SUPPLY_NAME=sbs-12-000b
-> POWER_SUPPLY_TYPE=Battery
-> POWER_SUPPLY_STATUS=Full
-> POWER_SUPPLY_CAPACITY_LEVEL=Full
-> POWER_SUPPLY_HEALTH=Unknown
-> POWER_SUPPLY_PRESENT=1
-> POWER_SUPPLY_TECHNOLOGY=Li-poly
-> POWER_SUPPLY_CYCLE_COUNT=2
-> POWER_SUPPLY_VOLTAGE_NOW=12293000
-> POWER_SUPPLY_CURRENT_NOW=0
-> POWER_SUPPLY_CURRENT_AVG=0
-> POWER_SUPPLY_CAPACITY=97
-> POWER_SUPPLY_CAPACITY_ERROR_MARGIN=3
-> POWER_SUPPLY_TEMP=194
-> POWER_SUPPLY_TIME_TO_EMPTY_NOW=3932100
-> POWER_SUPPLY_TIME_TO_EMPTY_AVG=3932100
-> POWER_SUPPLY_TIME_TO_FULL_AVG=3932100
-> POWER_SUPPLY_SERIAL_NUMBER=023e
-> POWER_SUPPLY_VOLTAGE_MIN_DESIGN=11400000
-> POWER_SUPPLY_VOLTAGE_MAX_DESIGN=11400000
-> POWER_SUPPLY_ENERGY_NOW=42420000
-> POWER_SUPPLY_ENERGY_FULL=43700000
-> POWER_SUPPLY_ENERGY_FULL_DESIGN=51630000
-> POWER_SUPPLY_CHARGE_NOW=3451000
-> POWER_SUPPLY_CHARGE_FULL=3555000
-> POWER_SUPPLY_CHARGE_FULL_DESIGN=4200000
-> POWER_SUPPLY_CONSTANT_CHARGE_CURRENT_MAX=0
-> POWER_SUPPLY_CONSTANT_CHARGE_VOLTAGE_MAX=0
-> POWER_SUPPLY_MANUFACTURE_YEAR=2021
-> POWER_SUPPLY_MANUFACTURE_MONTH=3
-> POWER_SUPPLY_MANUFACTURE_DAY=14
-> POWER_SUPPLY_MANUFACTURER=Murata KT00304012
-> POWER_SUPPLY_MODEL_NAME=AP18C4K
-> + cat /sys/class/chromeos/cros_ec/version
-> RO version:    lazor_v2.0.23149-099cd3e539
-> RW version:    lazor_v2.0.23149-099cd3e539
-> 
-> juniper:
-> + cat /sys/class/power_supply/sbs-12-000b/time_to_empty_now
-> 3932100
-> + cat /sys/class/power_supply/sbs-12-000b/capacity_error_margin
-> 3
-> + cat /sys/class/power_supply/sbs-12-000b/constant_charge_current_max
-> 0
-> + cat /sys/class/power_supply/sbs-12-000b/constant_charge_voltage_max
-> 0
-> + cat /sys/class/power_supply/sbs-12-000b/current_avg
-> 0
-> + cat /sys/class/power_supply/sbs-12-000b/technology
-> Li-ion
-> + cat /sys/class/power_supply/sbs-12-000b/manufacture_year
-> 2020
-> + cat /sys/class/power_supply/sbs-12-000b/manufacture_month
-> 10
-> + cat /sys/class/power_supply/sbs-12-000b/manufacture_day
-> 7
-> + cat /sys/class/power_supply/sbs-12-000b/uevent
-> DEVTYPE=power_supply
-> OF_NAME=sbs-battery
-> OF_FULLNAME=/soc/spi@11012000/cros-ec@0/i2c-tunnel/sbs-battery@b
-> OF_COMPATIBLE_0=sbs,sbs-battery
-> OF_COMPATIBLE_N=1
-> POWER_SUPPLY_NAME=sbs-12-000b
-> POWER_SUPPLY_TYPE=Battery
-> POWER_SUPPLY_STATUS=Full
-> POWER_SUPPLY_CAPACITY_LEVEL=Full
-> POWER_SUPPLY_HEALTH=Unknown
-> POWER_SUPPLY_PRESENT=1
-> POWER_SUPPLY_TECHNOLOGY=Li-ion
-> POWER_SUPPLY_CYCLE_COUNT=8
-> POWER_SUPPLY_VOLTAGE_NOW=8210000
-> POWER_SUPPLY_CURRENT_NOW=0
-> POWER_SUPPLY_CURRENT_AVG=0
-> POWER_SUPPLY_CAPACITY=99
-> POWER_SUPPLY_CAPACITY_ERROR_MARGIN=3
-> POWER_SUPPLY_TEMP=215
-> POWER_SUPPLY_TIME_TO_EMPTY_NOW=3932100
-> POWER_SUPPLY_TIME_TO_EMPTY_AVG=3932100
-> POWER_SUPPLY_TIME_TO_FULL_AVG=3932100
-> POWER_SUPPLY_SERIAL_NUMBER=26c9
-> POWER_SUPPLY_VOLTAGE_MIN_DESIGN=7500000
-> POWER_SUPPLY_VOLTAGE_MAX_DESIGN=7500000
-> POWER_SUPPLY_ENERGY_NOW=34990000
-> POWER_SUPPLY_ENERGY_FULL=35170000
-> POWER_SUPPLY_ENERGY_FULL_DESIGN=39940000
-> POWER_SUPPLY_CHARGE_NOW=4262000
-> POWER_SUPPLY_CHARGE_FULL=4284000
-> POWER_SUPPLY_CHARGE_FULL_DESIGN=4865000
-> POWER_SUPPLY_CONSTANT_CHARGE_CURRENT_MAX=0
-> POWER_SUPPLY_CONSTANT_CHARGE_VOLTAGE_MAX=0
-> POWER_SUPPLY_MANUFACTURE_YEAR=2020
-> POWER_SUPPLY_MANUFACTURE_MONTH=10
-> POWER_SUPPLY_MANUFACTURE_DAY=7
-> POWER_SUPPLY_MANUFACTURER=LGC KT0
-> POWER_SUPPLY_MODEL_NAME=AP16L8J
-> + cat /sys/class/chromeos/cros_ec/version
-> RO version:    juniper_v2.0.2796-7246101293
-> RW version:    juniper_v2.0.2796-7246101293
-> _______________________________________________
+> [...]
+
+Applied, thanks!
+
+[1/2] blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW
+      commit: bf20ab538c81bb32edab86f503fc0c55d8243bbc
+[2/2] blk-throttle: delay initialization until configuration
+      commit: a3166c51702bb00b8f8b84022090cbab8f37be1a
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
