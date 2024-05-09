@@ -1,641 +1,288 @@
-Return-Path: <linux-kernel+bounces-174670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED248C1299
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:16:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A22C8C12A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D4F1C21AEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147D01F21C0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB4816F900;
-	Thu,  9 May 2024 16:16:40 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C28116F915;
+	Thu,  9 May 2024 16:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqSd014o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC3E16F832;
-	Thu,  9 May 2024 16:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3918C16F85D;
+	Thu,  9 May 2024 16:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715271399; cv=none; b=H26ZT6TodjEI6xIwQsqjfOoJLAgvTZziE7db3yUJT+Y0tGlC+God9IuGfLsjkwjp/MPBAElH3emc6YACLCFHBBm1iGb4QzdFso9jxq9DFEnVivO1nM4juee+LkwHJ+ywUGa7t3e/GJnMmDPM3nx6v+DPB1Kx65FO8NNqwRohZi0=
+	t=1715271728; cv=none; b=UK0bYPTa7NORf1TXQeuwyMJIYlUNnjMe7BKME8GGS1XyfzXxDgiN0sFcwIOR0GfRsQ1AP9HCMmJ9XntMdRoEe8agxQAqqrKtsNC3+zKdprHJ7LDckpBUnugR7EUj/IjeqV8j4a3Ge1QdzRuSpkR/lKdhXTm+D/6zKtgK26onjII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715271399; c=relaxed/simple;
-	bh=QvxJGTGS4mwLgnS0xtMjkHGpoJAiZv1+KvY8N7BDM7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJZzeHOCzPY8cutfgzwPDHzW2FmfVEhBe8C54mz8S59i+HwFz1LROcTIeb27yf47jljGB9Q70yuLnth+Vo1UHnKS9lTyZ+D3s07zZj/xkAsvp8NTUPkw8bKKq22MrwjmjMktpy0wqZLeZQexOu/ymACh5Bs4lvwFLY6Qxog4Kys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1s56RK-000000008Vk-1VOx;
-	Thu, 09 May 2024 16:16:14 +0000
-Date: Thu, 9 May 2024 17:16:09 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, Tianling Shen <cnsztl@immortalwrt.org>,
-	netdev@vger.kernel.org, Tianling Shen <cnsztl@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Eric Woudstra <ericwouds@gmail.com>, linux-clk@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: Add  mt7986 based Bananapi
- R3 Mini
-Message-ID: <Zjz2yeUFdoVmBXIc@makrotopia.org>
-References: <20240509152157.10162-1-linux@fw-web.de>
- <20240509152157.10162-3-linux@fw-web.de>
+	s=arc-20240116; t=1715271728; c=relaxed/simple;
+	bh=IL8r0xvUD4MebH1iIU9DukAU1bJeaYL6vvG94QxaVag=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Eh26W0gr5+qBn46ZhOl5K7kUAOC9TLJPq8LCkV+je0osDmDyNN6FNSBos3nqy8BB9n81MFUbkjf/vieU7G1r50ZG5+sTkEZIUdKs32L4hskoJmS+onEv2rjgLjJG8rh2GlD4ZBxb8Y6NCv764uMMD+QIvpU2efZZc1NfZ57SlwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqSd014o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A560C116B1;
+	Thu,  9 May 2024 16:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715271727;
+	bh=IL8r0xvUD4MebH1iIU9DukAU1bJeaYL6vvG94QxaVag=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=mqSd014oPs9qMHfbf/w8UGWecJ/yMDeavDW24z8I4EtEKoQeD7wUBGkkSeaQbqviB
+	 7Hhh2L/zrybj872eMv3TTgYZMkgsoczJhjH1hgBU9UXXo86WNk2fiPGXZurnJialdC
+	 BVgFon/xiKXRw6Sp584BztAToQj1JJIDU11EPN+7FBnaFG+IH2HtB3NOGP32Lswvtc
+	 a6hrGif9DMQkpjLlBGXx4lpNNU6GAR+1Rgwi98ywB3s10lSkOAoN58c6LpFRthelWY
+	 JDQYpaAZErNik/8VqDYJwKChrTECMtGImS7jCCS/sjSt5xFlbtFQP9Il14xUowCWx4
+	 TOjoj1Wxr7vWQ==
+Date: Thu, 9 May 2024 09:22:05 -0700 (PDT)
+From: Mat Martineau <martineau@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Alexander Duyck <alexander.duyck@gmail.com>, 
+    Ayush Sawal <ayush.sawal@chelsio.com>, Eric Dumazet <edumazet@google.com>, 
+    Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+    Jason Wang <jasowang@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+    Vincent Guittot <vincent.guittot@linaro.org>, 
+    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+    Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+    Mel Gorman <mgorman@suse.de>, 
+    Daniel Bristot de Oliveira <bristot@redhat.com>, 
+    Valentin Schneider <vschneid@redhat.com>, 
+    John Fastabend <john.fastabend@gmail.com>, 
+    Jakub Sitnicki <jakub@cloudflare.com>, David Ahern <dsahern@kernel.org>, 
+    Matthieu Baerts <matttbe@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+    Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
+    Jiri Pirko <jiri@resnulli.us>, Boris Pismenny <borisp@nvidia.com>, 
+    bpf@vger.kernel.org, mptcp@lists.linux.dev
+Subject: Re: [PATCH net-next v3 11/13] net: replace page_frag with
+ page_frag_cache
+In-Reply-To: <20240508133408.54708-12-linyunsheng@huawei.com>
+Message-ID: <334a8c67-87c8-a918-9517-0afbfae0d02b@kernel.org>
+References: <20240508133408.54708-1-linyunsheng@huawei.com> <20240508133408.54708-12-linyunsheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240509152157.10162-3-linux@fw-web.de>
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 
-On Thu, May 09, 2024 at 05:21:57PM +0200, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add devicetree for Bananapi R3 Mini SBC.
-> 
-> Key features:
-> - MediaTek MT7986A(Filogic 830) Quad core ARM Cortex A53
-> - Wifi 6 2.4G/5G（MT7976C）
-                  ^^       ^^
-Those are full-width unicode parentheses.
-Consider using normal 7-bit ASCII parentheses instead to keep the
-commit message readable also on non-unicode terminals.
+On Wed, 8 May 2024, Yunsheng Lin wrote:
 
-  Unicode    vs    ASCII
-  （ 0xff08  vs    ( 0x28
-  ） 0xff09  vs    ) 0x29
-
-
-> - 2G DDR RAM
-> - 8G eMMC flash
-> - 128MB Nand flash
-> - 2x 2.5GbE network port
-> - 1x M.2 Key B USB interface
-> - 1x M.2 KEY M PCIe interface
-> - 1x USB2.0 interface
-> 
-> source: https://wiki.banana-pi.org/Banana_Pi_BPI-R3_Mini
-> 
-> Co-developed-by: Eric Woudstra <ericwouds@gmail.com>
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-> Co-developed-by: Tianling Shen <cnsztl@gmail.com>
-> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-
-Reviewed-by: Daniel Golle <daniel@makrotopia.org>
-
+> Use the newly introduced prepare/probe/commit API to
+> replace page_frag with page_frag_cache for sk_page_frag().
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 > ---
-> v2:
-> - add missing node for nand
-> - add some information about the board in description
-> 
-> change dts based on review from angelo+krzysztof
-> 
-> - drop fan status
-> - rename phy14 to phy0 and phy15 to phy1
-> - drop default-trigger from phys and so also the binding-patch
-> - use regulator names based on regexp regulator-[0-9]+v[0-9]+
-> - add comment for pwm
-> ---
->  arch/arm64/boot/dts/mediatek/Makefile         |   1 +
->  .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 493 ++++++++++++++++++
->  2 files changed, 494 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-> index 37b4ca3a87c9..1763b001ab06 100644
-> --- a/arch/arm64/boot/dts/mediatek/Makefile
-> +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> @@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7981b-xiaomi-ax3000t.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-acelink-ew-7886cax.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3.dtb
-> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-mini.dtb
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
->  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-> new file mode 100644
-> index 000000000000..e2a2fea7adf0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
-> @@ -0,0 +1,493 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2021 MediaTek Inc.
-> + * Authors: Frank Wunderlich <frank-w@public-files.de>
-> + *          Eric Woudstra <ericwouds@gmail.com>
-> + *          Tianling Shen <cnsztl@immortalwrt.org>
-> + */
+> .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
+> .../chelsio/inline_crypto/chtls/chtls_io.c    | 100 ++++---------
+> .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
+> drivers/net/tun.c                             |  28 ++--
+> include/linux/sched.h                         |   4 +-
+> include/net/sock.h                            |  14 +-
+> kernel/exit.c                                 |   3 +-
+> kernel/fork.c                                 |   3 +-
+> net/core/skbuff.c                             |  32 ++--
+> net/core/skmsg.c                              |  22 +--
+> net/core/sock.c                               |  46 ++++--
+> net/ipv4/ip_output.c                          |  33 +++--
+> net/ipv4/tcp.c                                |  35 ++---
+> net/ipv4/tcp_output.c                         |  28 ++--
+> net/ipv6/ip6_output.c                         |  33 +++--
+> net/kcm/kcmsock.c                             |  30 ++--
+> net/mptcp/protocol.c                          |  70 +++++----
+> net/sched/em_meta.c                           |   2 +-
+> net/tls/tls_device.c                          | 139 ++++++++++--------
+> 19 files changed, 331 insertions(+), 297 deletions(-)
+>
+
+<snip>
+
+> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> index bb8f96f2b86f..ab844011d442 100644
+> --- a/net/mptcp/protocol.c
+> +++ b/net/mptcp/protocol.c
+> @@ -960,17 +960,18 @@ static bool mptcp_skb_can_collapse_to(u64 write_seq,
+> }
+>
+> /* we can append data to the given data frag if:
+> - * - there is space available in the backing page_frag
+> - * - the data frag tail matches the current page_frag free offset
+> + * - there is space available for the current page
+> + * - the data frag tail matches the current page and offset
+>  * - the data frag end sequence number matches the current write seq
+>  */
+> static bool mptcp_frag_can_collapse_to(const struct mptcp_sock *msk,
+> -				       const struct page_frag *pfrag,
+> +				       const struct page *page,
+> +				       const unsigned int offset,
+> +				       const unsigned int size,
+
+Hi Yunsheng -
+
+Why add the 'size' parameter here? It's checked to be a nonzero value, but 
+it can only be 0 if page is also NULL. In this case "page == df->page" 
+will be false, so the function will return false even without checking 
+'size'.
+
+Thanks,
+
+Mat
+
+> 				       const struct mptcp_data_frag *df)
+> {
+> -	return df && pfrag->page == df->page &&
+> -		pfrag->size - pfrag->offset > 0 &&
+> -		pfrag->offset == (df->offset + df->data_len) &&
+> +	return df && size && page == df->page &&
+> +		offset == (df->offset + df->data_len) &&
+> 		df->data_seq + df->data_len == msk->write_seq;
+> }
+>
+> @@ -1085,30 +1086,36 @@ static void mptcp_enter_memory_pressure(struct sock *sk)
+> /* ensure we get enough memory for the frag hdr, beyond some minimal amount of
+>  * data
+>  */
+> -static bool mptcp_page_frag_refill(struct sock *sk, struct page_frag *pfrag)
+> +static struct page *mptcp_page_frag_alloc_prepare(struct sock *sk,
+> +						  struct page_frag_cache *pfrag,
+> +						  unsigned int *offset,
+> +						  unsigned int *size, void **va)
+> {
+> -	if (likely(skb_page_frag_refill(32U + sizeof(struct mptcp_data_frag),
+> -					pfrag, sk->sk_allocation)))
+> -		return true;
+> +	struct page *page;
 > +
-> +/dts-v1/;
+> +	page = page_frag_alloc_prepare(pfrag, offset, size, va,
+> +				       sk->sk_allocation);
+> +	if (likely(page))
+> +		return page;
+>
+> 	mptcp_enter_memory_pressure(sk);
+> -	return false;
+> +	return NULL;
+> }
+>
+> static struct mptcp_data_frag *
+> -mptcp_carve_data_frag(const struct mptcp_sock *msk, struct page_frag *pfrag,
+> -		      int orig_offset)
+> +mptcp_carve_data_frag(const struct mptcp_sock *msk, struct page *page,
+> +		      unsigned int orig_offset)
+> {
+> 	int offset = ALIGN(orig_offset, sizeof(long));
+> 	struct mptcp_data_frag *dfrag;
+>
+> -	dfrag = (struct mptcp_data_frag *)(page_to_virt(pfrag->page) + offset);
+> +	dfrag = (struct mptcp_data_frag *)(page_to_virt(page) + offset);
+> 	dfrag->data_len = 0;
+> 	dfrag->data_seq = msk->write_seq;
+> 	dfrag->overhead = offset - orig_offset + sizeof(struct mptcp_data_frag);
+> 	dfrag->offset = offset + sizeof(struct mptcp_data_frag);
+> 	dfrag->already_sent = 0;
+> -	dfrag->page = pfrag->page;
+> +	dfrag->page = page;
+>
+> 	return dfrag;
+> }
+> @@ -1793,7 +1800,7 @@ static u32 mptcp_send_limit(const struct sock *sk)
+> static int mptcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+> {
+> 	struct mptcp_sock *msk = mptcp_sk(sk);
+> -	struct page_frag *pfrag;
+> +	struct page_frag_cache *pfrag;
+> 	size_t copied = 0;
+> 	int ret = 0;
+> 	long timeo;
+> @@ -1832,9 +1839,12 @@ static int mptcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+> 	while (msg_data_left(msg)) {
+> 		int total_ts, frag_truesize = 0;
+> 		struct mptcp_data_frag *dfrag;
+> -		bool dfrag_collapsed;
+> -		size_t psize, offset;
+> +		bool dfrag_collapsed = false;
+> +		unsigned int offset, size;
+> +		struct page *page;
+> +		size_t psize;
+> 		u32 copy_limit;
+> +		void *va;
+>
+> 		/* ensure fitting the notsent_lowat() constraint */
+> 		copy_limit = mptcp_send_limit(sk);
+> @@ -1845,21 +1855,26 @@ static int mptcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+> 		 * page allocator
+> 		 */
+> 		dfrag = mptcp_pending_tail(sk);
+> -		dfrag_collapsed = mptcp_frag_can_collapse_to(msk, pfrag, dfrag);
+> +		page = page_frag_alloc_probe(pfrag, &offset, &size, &va);
+> +		dfrag_collapsed = mptcp_frag_can_collapse_to(msk, page, offset,
+> +							     size, dfrag);
+> 		if (!dfrag_collapsed) {
+> -			if (!mptcp_page_frag_refill(sk, pfrag))
+> +			size = 32U + sizeof(struct mptcp_data_frag);
+> +			page = mptcp_page_frag_alloc_prepare(sk, pfrag, &offset,
+> +							     &size, &va);
+> +			if (!page)
+> 				goto wait_for_memory;
+>
+> -			dfrag = mptcp_carve_data_frag(msk, pfrag, pfrag->offset);
+> +			dfrag = mptcp_carve_data_frag(msk, page, offset);
+> 			frag_truesize = dfrag->overhead;
+> +			va += dfrag->overhead;
+> 		}
+>
+> 		/* we do not bound vs wspace, to allow a single packet.
+> 		 * memory accounting will prevent execessive memory usage
+> 		 * anyway
+> 		 */
+> -		offset = dfrag->offset + dfrag->data_len;
+> -		psize = pfrag->size - offset;
+> +		psize = size - frag_truesize;
+> 		psize = min_t(size_t, psize, msg_data_left(msg));
+> 		psize = min_t(size_t, psize, copy_limit);
+> 		total_ts = psize + frag_truesize;
+> @@ -1867,8 +1882,7 @@ static int mptcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+> 		if (!sk_wmem_schedule(sk, total_ts))
+> 			goto wait_for_memory;
+>
+> -		ret = do_copy_data_nocache(sk, psize, &msg->msg_iter,
+> -					   page_address(dfrag->page) + offset);
+> +		ret = do_copy_data_nocache(sk, psize, &msg->msg_iter, va);
+> 		if (ret)
+> 			goto do_error;
+>
+> @@ -1877,7 +1891,6 @@ static int mptcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+> 		copied += psize;
+> 		dfrag->data_len += psize;
+> 		frag_truesize += psize;
+> -		pfrag->offset += frag_truesize;
+> 		WRITE_ONCE(msk->write_seq, msk->write_seq + psize);
+>
+> 		/* charge data on mptcp pending queue to the msk socket
+> @@ -1885,11 +1898,14 @@ static int mptcp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+> 		 */
+> 		sk_wmem_queued_add(sk, frag_truesize);
+> 		if (!dfrag_collapsed) {
+> -			get_page(dfrag->page);
+> +			page_frag_alloc_commit(pfrag, frag_truesize);
+> 			list_add_tail(&dfrag->list, &msk->rtx_queue);
+> 			if (!msk->first_pending)
+> 				WRITE_ONCE(msk->first_pending, dfrag);
+> +		} else {
+> +			page_frag_alloc_commit_noref(pfrag, frag_truesize);
+> 		}
 > +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/pinctrl/mt65xx.h>
-> +
-> +#include "mt7986a.dtsi"
-> +
-> +/ {
-> +	model = "Bananapi BPI-R3 Mini";
-> +	chassis-type = "embedded";
-> +	compatible = "bananapi,bpi-r3mini", "mediatek,mt7986a";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +		ethernet0 = &gmac0;
-> +		ethernet1 = &gmac1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	dcin: regulator-12v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "12vd";
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	fan: pwm-fan {
-> +		compatible = "pwm-fan";
-> +		#cooling-cells = <2>;
-> +		/*
-> +		 * The signal is inverted on this board and the PWM driver
-> +		 * does not support polarity inversion.
-> +		 */
-> +		/* cooling level (0, 1, 2) */
-> +		cooling-levels = <255 96 0>;
-> +		pwms = <&pwm 0 10000>;
-> +	};
-> +
-> +	reg_1p8v: regulator-1v8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "1.8vd";
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		vin-supply = <&dcin>;
-> +	};
-> +
-> +	reg_3p3v: regulator-3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "3.3vd";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		vin-supply = <&dcin>;
-> +	};
-> +
-> +	usb_vbus: regulator-5v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb_vbus";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		gpios = <&pio 20 GPIO_ACTIVE_LOW>;
-> +		regulator-boot-on;
-> +	};
-> +
-> +	en8811_a: regulator-phy1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "phy1";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&pio 16 GPIO_ACTIVE_LOW>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	en8811_b: regulator-phy2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "phy2";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		gpio = <&pio 17 GPIO_ACTIVE_LOW>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		green_led: led-0 {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_POWER;
-> +			gpios = <&pio 19 GPIO_ACTIVE_HIGH>;
-> +			default-state = "on";
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		reset-key {
-> +			label = "reset";
-> +			linux,code = <KEY_RESTART>;
-> +			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
-> +		};
-> +	};
-> +
-> +};
-> +
-> +&cpu_thermal {
-> +	cooling-maps {
-> +		map0 {
-> +			/* active: set fan to cooling level 2 */
-> +			cooling-device = <&fan 2 2>;
-> +			trip = <&cpu_trip_active_high>;
-> +		};
-> +
-> +		map1 {
-> +			/* active: set fan to cooling level 1 */
-> +			cooling-device = <&fan 1 1>;
-> +			trip = <&cpu_trip_active_med>;
-> +		};
-> +
-> +		map2 {
-> +			/* active: set fan to cooling level 0 */
-> +			cooling-device = <&fan 0 0>;
-> +			trip = <&cpu_trip_active_low>;
-> +		};
-> +	};
-> +};
-> +
-> +&crypto {
-> +	status = "okay";
-> +};
-> +
-> +&eth {
-> +	status = "okay";
-> +
-> +	gmac0: mac@0 {
-> +		compatible = "mediatek,eth-mac";
-> +		reg = <0>;
-> +		phy-mode = "2500base-x";
-> +		phy-handle = <&phy0>;
-> +	};
-> +
-> +	gmac1: mac@1 {
-> +		compatible = "mediatek,eth-mac";
-> +		reg = <1>;
-> +		phy-mode = "2500base-x";
-> +		phy-handle = <&phy1>;
-> +	};
-> +
-> +	mdio: mdio-bus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +	};
-> +};
-> +
-> +&mmc0 {
-> +	pinctrl-names = "default", "state_uhs";
-> +	pinctrl-0 = <&mmc0_pins_default>;
-> +	pinctrl-1 = <&mmc0_pins_uhs>;
-> +	vmmc-supply = <&reg_3p3v>;
-> +	vqmmc-supply = <&reg_1p8v>;
-> +};
-> +
-> +
-> +&i2c0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&i2c_pins>;
-> +	status = "okay";
-> +
-> +	/* MAC Address EEPROM */
-> +	eeprom@50 {
-> +		compatible = "atmel,24c02";
-> +		reg = <0x50>;
-> +
-> +		address-width = <8>;
-> +		pagesize = <8>;
-> +		size = <256>;
-> +	};
-> +};
-> +
-> +&mdio {
-> +	phy0: ethernet-phy@14 {
-> +		reg = <14>;
-> +		interrupts-extended = <&pio 48 IRQ_TYPE_EDGE_FALLING>;
-> +		reset-gpios = <&pio 49 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10000>;
-> +		reset-deassert-us = <20000>;
-> +		phy-mode = "2500base-x";
-> +		full-duplex;
-> +		pause;
-> +		airoha,pnswap-rx;
-> +
-> +		leds {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			led@0 { /* en8811_a_gpio5 */
-> +				reg = <0>;
-> +				color = <LED_COLOR_ID_YELLOW>;
-> +				function = LED_FUNCTION_LAN;
-> +				function-enumerator = <1>;
-> +				default-state = "keep";
-> +			};
-> +			led@1 { /* en8811_a_gpio4 */
-> +				reg = <1>;
-> +				color = <LED_COLOR_ID_GREEN>;
-> +				function = LED_FUNCTION_LAN;
-> +				function-enumerator = <2>;
-> +				default-state = "keep";
-> +			};
-> +		};
-> +	};
-> +
-> +	phy1: ethernet-phy@15 {
-> +		reg = <15>;
-> +		interrupts-extended = <&pio 46 IRQ_TYPE_EDGE_FALLING>;
-> +		reset-gpios = <&pio 47 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <10000>;
-> +		reset-deassert-us = <20000>;
-> +		phy-mode = "2500base-x";
-> +		full-duplex;
-> +		pause;
-> +		airoha,pnswap-rx;
-> +
-> +		leds {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			led@0 { /* en8811_b_gpio5 */
-> +				reg = <0>;
-> +				color = <LED_COLOR_ID_YELLOW>;
-> +				function = LED_FUNCTION_WAN;
-> +				function-enumerator = <1>;
-> +				default-state = "keep";
-> +			};
-> +			led@1 { /* en8811_b_gpio4 */
-> +				reg = <1>;
-> +				color = <LED_COLOR_ID_GREEN>;
-> +				function = LED_FUNCTION_WAN;
-> +				function-enumerator = <2>;
-> +				default-state = "keep";
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&pcie {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_pins>;
-> +	status = "okay";
-> +};
-> +
-> +&pcie_phy {
-> +	status = "okay";
-> +};
-> +
-> +&pio {
-> +	i2c_pins: i2c-pins {
-> +		mux {
-> +			function = "i2c";
-> +			groups = "i2c";
-> +		};
-> +	};
-> +
-> +	mmc0_pins_default: mmc0-pins {
-> +		mux {
-> +			function = "emmc";
-> +			groups = "emmc_51";
-> +		};
-> +		conf-cmd-dat {
-> +			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
-> +			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
-> +			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
-> +			input-enable;
-> +			drive-strength = <4>;
-> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-> +		};
-> +		conf-clk {
-> +			pins = "EMMC_CK";
-> +			drive-strength = <6>;
-> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-> +		};
-> +		conf-ds {
-> +			pins = "EMMC_DSL";
-> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-> +		};
-> +		conf-rst {
-> +			pins = "EMMC_RSTB";
-> +			drive-strength = <4>;
-> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-> +		};
-> +	};
-> +
-> +	mmc0_pins_uhs: mmc0-uhs-pins {
-> +		mux {
-> +			function = "emmc";
-> +			groups = "emmc_51";
-> +		};
-> +		conf-cmd-dat {
-> +			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
-> +			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
-> +			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
-> +			input-enable;
-> +			drive-strength = <4>;
-> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-> +		};
-> +		conf-clk {
-> +			pins = "EMMC_CK";
-> +			drive-strength = <6>;
-> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-> +		};
-> +		conf-ds {
-> +			pins = "EMMC_DSL";
-> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
-> +		};
-> +		conf-rst {
-> +			pins = "EMMC_RSTB";
-> +			drive-strength = <4>;
-> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
-> +		};
-> +	};
-> +
-> +	pcie_pins: pcie-pins {
-> +		mux {
-> +			function = "pcie";
-> +			groups = "pcie_clk", "pcie_wake", "pcie_pereset";
-> +		};
-> +	};
-> +
-> +	pwm_pins: pwm-pins {
-> +		mux {
-> +			function = "pwm";
-> +			groups = "pwm0";
-> +		};
-> +	};
-> +
-> +	spi_flash_pins: spi-flash-pins {
-> +		mux {
-> +			function = "spi";
-> +			groups = "spi0", "spi0_wp_hold";
-> +		};
-> +	};
-> +
-> +	usb_ngff_pins: usb-ngff-pins {
-> +		ngff-gnss-off-conf {
-> +			pins = "GPIO_6";
-> +			drive-strength = <8>;
-> +			mediatek,pull-up-adv = <1>;
-> +		};
-> +		ngff-pe-rst-conf {
-> +			pins = "GPIO_7";
-> +			drive-strength = <8>;
-> +			mediatek,pull-up-adv = <1>;
-> +		};
-> +		ngff-wwan-off-conf {
-> +			pins = "GPIO_8";
-> +			drive-strength = <8>;
-> +			mediatek,pull-up-adv = <1>;
-> +		};
-> +		ngff-pwr-off-conf {
-> +			pins = "GPIO_9";
-> +			drive-strength = <8>;
-> +			mediatek,pull-up-adv = <1>;
-> +		};
-> +		ngff-rst-conf {
-> +			pins = "GPIO_10";
-> +			drive-strength = <8>;
-> +			mediatek,pull-up-adv = <1>;
-> +		};
-> +		ngff-coex-conf {
-> +			pins = "SPI1_CS";
-> +			drive-strength = <8>;
-> +			mediatek,pull-up-adv = <1>;
-> +		};
-> +	};
-> +
-> +	wf_2g_5g_pins: wf-2g-5g-pins {
-> +		mux {
-> +			function = "wifi";
-> +			groups = "wf_2g", "wf_5g";
-> +		};
-> +		conf {
-> +			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
-> +			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
-> +			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
-> +			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
-> +			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
-> +			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
-> +			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-> +			drive-strength = <4>;
-> +		};
-> +	};
-> +
-> +	wf_dbdc_pins: wf-dbdc-pins {
-> +		mux {
-> +			function = "wifi";
-> +			groups = "wf_dbdc";
-> +		};
-> +		conf {
-> +			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
-> +			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
-> +			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
-> +			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
-> +			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
-> +			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
-> +			       "WF1_TOP_CLK", "WF1_TOP_DATA";
-> +			drive-strength = <4>;
-> +		};
-> +	};
-> +
-> +	wf_led_pins: wf-led-pins {
-> +		mux {
-> +			function = "led";
-> +			groups = "wifi_led";
-> +		};
-> +	};
-> +};
-> +
-> +&pwm {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pwm_pins>;
-> +	status = "okay";
-> +};
-> +
-> +&spi0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&spi_flash_pins>;
-> +	status = "okay";
-> +
-> +	flash@0 {
-> +		compatible = "spi-nand";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		reg = <0>;
-> +
-> +		spi-max-frequency = <20000000>;
-> +		spi-tx-bus-width = <4>;
-> +		spi-rx-bus-width = <4>;
-> +	};
-> +};
-> +
-> +&ssusb {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&usb_ngff_pins>;
-> +	vusb33-supply = <&reg_3p3v>;
-> +	vbus-supply = <&usb_vbus>;
-> +	status = "okay";
-> +};
-> +
-> +&trng {
-> +	status = "okay";
-> +};
-> +
-> +&uart0 {
-> +	status = "okay";
-> +};
-> +
-> +&usb_phy {
-> +	status = "okay";
-> +};
-> +
-> +&watchdog {
-> +	status = "okay";
-> +};
-> +
-> +&wifi {
-> +	status = "okay";
-> +	pinctrl-names = "default", "dbdc";
-> +	pinctrl-0 = <&wf_2g_5g_pins>, <&wf_led_pins>;
-> +	pinctrl-1 = <&wf_dbdc_pins>, <&wf_led_pins>;
-> +
-> +	led {
-> +		led-active-low;
-> +	};
-> +};
-> +
-> -- 
-> 2.34.1
-> 
-> 
+> 		pr_debug("msk=%p dfrag at seq=%llu len=%u sent=%u new=%d", msk,
+> 			 dfrag->data_seq, dfrag->data_len, dfrag->already_sent,
+> 			 !dfrag_collapsed);
+
 
