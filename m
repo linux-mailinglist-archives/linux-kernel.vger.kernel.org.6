@@ -1,127 +1,226 @@
-Return-Path: <linux-kernel+bounces-174400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B0898C0E24
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:25:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882BA8C0E2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBDF1C21473
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17DF71F23118
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E8514B951;
-	Thu,  9 May 2024 10:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154A914B09C;
+	Thu,  9 May 2024 10:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QcGnC3jm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZsZ8inD0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43CA13C9BC
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 10:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AE14AD1B;
+	Thu,  9 May 2024 10:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715250297; cv=none; b=a0N+hIE+nYFRhf1nWT3C+XEEYk0PDSEgjFPVwQ/WfN+934SVO1Q2ZQrBIccNnjJq80hBp92NxJt6VC/tfRyBq3rVwDie6hbjQLQPvc8msaeBRx041XNSOCGYXJz1WOaklgGZnPLrnL1CNnuT2PU4QzdxV4PdRhoGdSk8jYkCwLQ=
+	t=1715250492; cv=none; b=uu/1lDR/rmXzvzOL0fAKvZ4rR5EWXyqRsoCxWKGnHLWrVwJsCcGF1TNm8cBtyzVCVP2yiPcBcOMVqsxlzBIPI7dgQpnol9TKhGOS/MR7URIVJ4L2BF53vSjzLXCuVhFsqS22IPVjrU6Y6CLlHVWZvXJ2OPJ3ihX2JopWSJAeq2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715250297; c=relaxed/simple;
-	bh=pbFU41RJ6FcZOxKZe+Ud+0dEC/T1KjTODn5fDzyhkQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKko7OrSBGZJxldjXaOg/KJMxQxYC9ceP4JOH7L5+mDoFNsq4Tm+woY17HnU3EJn/+dbKNJvuvECZuuU7J7MRxLgVObURuPUEdcs62lB+Y8sQ9fon0uHqdqhpwu4njrhHc5HWeQauvDUhT/Qu7BHTlZQsAWsKryenbI/rNjutLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QcGnC3jm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715250294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7zHc7fs9O/huou8M4UloljeK6K5aZsWXnMgzdP+3PJ8=;
-	b=QcGnC3jmWv8UKdH7fU1q/7IX32YqJ/6+5GQS24pY1s06aRhZL6qwXlq6PKGS79T6OB7UGO
-	twEu86QhKAimU9aBPU1QVdyLACwF66afSPB/zLUsT/jDZN+hm+CV3fmrFRlRT2VF5ZK0np
-	rSbNxUKVCkf0N5CMGspFISbmymgGMrU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-PfHLc4ubOxasLZxexH-nBw-1; Thu, 09 May 2024 06:24:51 -0400
-X-MC-Unique: PfHLc4ubOxasLZxexH-nBw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 517E3101A525;
-	Thu,  9 May 2024 10:24:51 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.72])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id C38BC36EC;
-	Thu,  9 May 2024 10:24:49 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: mcgrof@kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: lucas.demarchi@intel.com,
-	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Subject: [PATCH v2] module: create weak dependecies
-Date: Thu,  9 May 2024 12:24:40 +0200
-Message-ID: <20240509102442.176958-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1715250492; c=relaxed/simple;
+	bh=WyFpQ0k8HdqYaWkmfZ1u2cEJdO2FRTL/hHX9iaGsmUo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QFoUiEvlOCUkbdgLFfJ8gq3dYiwffsoaWGDNeNaCu5TuhgTW8ngPLD8+kjngXpC0lXXl5hae3tFlx77QNtJgbV0CD11gD0nJDwAiLg4ACTZ8F5D0HpOfr6euphOhQBqJZch6tprcpUfT20KAFaL82n7QioseSXsgd+Sxb4ueae4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZsZ8inD0; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715250490; x=1746786490;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WyFpQ0k8HdqYaWkmfZ1u2cEJdO2FRTL/hHX9iaGsmUo=;
+  b=ZsZ8inD0G5pRgZ/i36TpG/jQ2indCe2RJI+YZvUwHbIoQlxc5HlCGkSi
+   L3nfOD8rchG9i9anorSm/um9HuNInIFTsbPQfj5r0Y7Y88w1Q9q04epKD
+   jEpTSDlxLs935jNFXiA8FJ/YgLR+t+VBs3KL02jGE6Hz8iBSX07pQj3fj
+   a8404/lnjkQ1n6/oRqVx44FCbbYGYfG18r2X7Y2OtSUf/qY76tapo34Yl
+   ghSqKrD0iVefiqRpycBdzant48avg9d1OUQFZAnanXdarwHAg2s3knaKh
+   CGhQzRxnNKbADDir8D87r5bfXRtY03YLRP3Fswci4JrWDY6711vIlIaHG
+   A==;
+X-CSE-ConnectionGUID: kSHLTh7jSxuEFN5oyAtb1Q==
+X-CSE-MsgGUID: DPwd7Un2QlimJhSql+C9pw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11323102"
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="11323102"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 03:28:10 -0700
+X-CSE-ConnectionGUID: n6mAF0lMSFOEwlyT/akNtw==
+X-CSE-MsgGUID: phT5cmTqTSmNBKWBoblhUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="29274939"
+Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 03:28:05 -0700
+Message-ID: <2f771fe9-7c09-4e74-9b04-de52581133fd@linux.intel.com>
+Date: Thu, 9 May 2024 12:28:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
+Content-Language: en-US
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Takashi Iwai <tiwai@suse.de>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
+ tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
+References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
+ <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
+ <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
+ <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
+ <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
+ <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
+ <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
+ <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
+ <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
+ <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
+ <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
+From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+In-Reply-To: <CAA+D8AMpLB0N++_iLWLN_qettNz-gKGQz2c2yLsY8qSycibkYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-It has been seen that for some network mac drivers (i.e. lan78xx) the
-related module for the phy is loaded dynamically depending on the current
-hardware. In this case, the associated phy is read using mdio bus and then
-the associated phy module is loaded during runtime (kernel function
-phy_request_driver_module). However, no software dependency is defined, so
-the user tools will no be able to get this dependency. For example, if
-dracut is used and the hardware is present, lan78xx will be included but no
-phy module will be added, and in the next restart the device will not work
-from boot because no related phy will be found during initramfs stage.
+On 5/9/2024 12:12 PM, Shengjiu Wang wrote:
+> On Thu, May 9, 2024 at 5:50 PM Amadeusz Sławiński
+> <amadeuszx.slawinski@linux.intel.com> wrote:
+>>
+>> On 5/9/2024 11:36 AM, Shengjiu Wang wrote:
+>>> On Wed, May 8, 2024 at 4:14 PM Amadeusz Sławiński
+>>> <amadeuszx.slawinski@linux.intel.com> wrote:
+>>>>
+>>>> On 5/8/2024 10:00 AM, Hans Verkuil wrote:
+>>>>> On 06/05/2024 10:49, Shengjiu Wang wrote:
+>>>>>> On Fri, May 3, 2024 at 4:42 PM Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
+>>>>>>>
+>>>>>>> Em Fri, 3 May 2024 10:47:19 +0900
+>>>>>>> Mark Brown <broonie@kernel.org> escreveu:
+>>>>>>>
+>>>>>>>> On Thu, May 02, 2024 at 10:26:43AM +0100, Mauro Carvalho Chehab wrote:
+>>>>>>>>> Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
+>>>>>>>>
+>>>>>>>>>> There are still time control associated with it, as audio and video
+>>>>>>>>>> needs to be in sync. This is done by controlling the buffers size
+>>>>>>>>>> and could be fine-tuned by checking when the buffer transfer is done.
+>>>>>>>>
+>>>>>>>> ...
+>>>>>>>>
+>>>>>>>>> Just complementing: on media, we do this per video buffer (or
+>>>>>>>>> per half video buffer). A typical use case on cameras is to have
+>>>>>>>>> buffers transferred 30 times per second, if the video was streamed
+>>>>>>>>> at 30 frames per second.
+>>>>>>>>
+>>>>>>>> IIRC some big use case for this hardware was transcoding so there was a
+>>>>>>>> desire to just go at whatever rate the hardware could support as there
+>>>>>>>> is no interactive user consuming the output as it is generated.
+>>>>>>>
+>>>>>>> Indeed, codecs could be used to just do transcoding, but I would
+>>>>>>> expect it to be a border use case. See, as the chipsets implementing
+>>>>>>> codecs are typically the ones used on mobiles, I would expect that
+>>>>>>> the major use cases to be to watch audio and video and to participate
+>>>>>>> on audio/video conferences.
+>>>>>>>
+>>>>>>> Going further, the codec API may end supporting not only transcoding
+>>>>>>> (which is something that CPU can usually handle without too much
+>>>>>>> processing) but also audio processing that may require more
+>>>>>>> complex algorithms - even deep learning ones - like background noise
+>>>>>>> removal, echo detection/removal, volume auto-gain, audio enhancement
+>>>>>>> and such.
+>>>>>>>
+>>>>>>> On other words, the typical use cases will either have input
+>>>>>>> or output being a physical hardware (microphone or speaker).
+>>>>>>>
+>>>>>>
+>>>>>> All, thanks for spending time to discuss, it seems we go back to
+>>>>>> the start point of this topic again.
+>>>>>>
+>>>>>> Our main request is that there is a hardware sample rate converter
+>>>>>> on the chip, so users can use it in user space as a component like
+>>>>>> software sample rate converter. It mostly may run as a gstreamer plugin.
+>>>>>> so it is a memory to memory component.
+>>>>>>
+>>>>>> I didn't find such API in ALSA for such purpose, the best option for this
+>>>>>> in the kernel is the V4L2 memory to memory framework I found.
+>>>>>> As Hans said it is well designed for memory to memory.
+>>>>>>
+>>>>>> And I think audio is one of 'media'.  As I can see that part of Radio
+>>>>>> function is in ALSA, part of Radio function is in V4L2. part of HDMI
+>>>>>> function is in DRM, part of HDMI function is in ALSA...
+>>>>>> So using V4L2 for audio is not new from this point of view.
+>>>>>>
+>>>>>> Even now I still think V4L2 is the best option, but it looks like there
+>>>>>> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
+>>>>>> a duplication of code (bigger duplication that just add audio support
+>>>>>> in V4L2 I think).
+>>>>>
+>>>>> After reading this thread I still believe that the mem2mem framework is
+>>>>> a reasonable option, unless someone can come up with a method that is
+>>>>> easy to implement in the alsa subsystem. From what I can tell from this
+>>>>> discussion no such method exists.
+>>>>>
+>>>>
+>>>> Hi,
+>>>>
+>>>> my main question would be how is mem2mem use case different from
+>>>> loopback exposing playback and capture frontends in user space with DSP
+>>>> (or other piece of HW) in the middle?
+>>>>
+>>> I think loopback has a timing control,  user need to feed data to playback at a
+>>> fixed time and get data from capture at a fixed time.  Otherwise there
+>>> is xrun in
+>>> playback and capture.
+>>>
+>>> mem2mem case: there is no such timing control,  user feeds data to it
+>>> then it generates output,  if user doesn't feed data, there is no xrun.
+>>> but mem2mem is just one of the components in the playback or capture
+>>> pipeline, overall there is time control for whole pipeline,
+>>>
+>>
+>> Have you looked at compress streams? If I remember correctly they are
+>> not tied to time due to the fact that they can pass data in arbitrary
+>> formats?
+>>
+>> From:
+>> https://docs.kernel.org/sound/designs/compress-offload.html
+>>
+>> "No notion of underrun/overrun. Since the bytes written are compressed
+>> in nature and data written/read doesn’t translate directly to rendered
+>> output in time, this does not deal with underrun/overrun and maybe dealt
+>> in user-library"
+> 
+> I checked the compress stream. mem2mem case is different with
+> compress-offload case
+> 
+> compress-offload case is a full pipeline,  the user sends a compress
+> stream to it, then DSP decodes it and renders it to the speaker in real
+> time.
+> 
+> mem2mem is just like the decoder in the compress pipeline. which is
+> one of the components in the pipeline.
 
-In order to solve this, we could define a normal 'pre' software dependency
-in lan78xx module with all the possible phy modules (there may be some),
-but proceeding in that way, all the possible phy modules would be loaded
-while only one is necessary.
+I was thinking of loopback with endpoints using compress streams, 
+without physical endpoint, something like:
 
-The idea is to create a new type of dependency, that we are going to call
-'weak' to be used only by the user tools that need to detect this situation.
-In that way, for example, dracut could check the 'weak' dependency of the
-modules involved in order to install these dependencies in initramfs too.
-That is, for the commented lan78xx module, defining the 'weak' dependency
-with the possible phy modules list, only the necessary phy would be loaded
-on demand keeping the same behavior, but all the possible phy modules would
-be available from initramfs.
+compress playback (to feed data from userspace) -> DSP (processing) -> 
+compress capture (send data back to userspace)
 
-The 'weak' dependency support has been included in kmod:
-https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
+Unless I'm missing something, you should be able to process data as fast 
+as you can feed it and consume it in such case.
 
-Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
----
-V1 -> V2:
-- Include reference to 'weak' dependency support in kmod.
-
- include/linux/module.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 1153b0d99a80..231e710d8736 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -173,6 +173,11 @@ extern void cleanup_module(void);
-  */
- #define MODULE_SOFTDEP(_softdep) MODULE_INFO(softdep, _softdep)
- 
-+/* Weak module dependencies. See man modprobe.d for details.
-+ * Example: MODULE_WEAKDEP("module-foo")
-+ */
-+#define MODULE_WEAKDEP(_weakdep) MODULE_INFO(weakdep, _weakdep)
-+
- /*
-  * MODULE_FILE is used for generating modules.builtin
-  * So, make it no-op when this is being built as a module
--- 
-2.44.0
-
+Amadeusz
 
