@@ -1,225 +1,641 @@
-Return-Path: <linux-kernel+bounces-174669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729B88C1293
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:15:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ED248C1299
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28830281B0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D4F1C21AEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA0016F85D;
-	Thu,  9 May 2024 16:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="KNXSTwoX"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2117.outbound.protection.outlook.com [40.107.20.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB4816F900;
+	Thu,  9 May 2024 16:16:40 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FFC14B097;
-	Thu,  9 May 2024 16:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715271325; cv=fail; b=ETl818QOsLfG4rbSmoJ1M+dSnYyxN1a4SfuKHtrTnhQ1FEaSX8wuHqsQEKZh4zwdVnonsJw51GNirVNqdcR8PPQaWQgOye3N5DX8x2r2oji0fSVI7WOeCDBVXdSEYjcFeyuBEuKFUz9oRdDjUbkN19b3qhha8mJAb2p8jMSyhvk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715271325; c=relaxed/simple;
-	bh=kHawvgQ0XBrAMisqnqW0HlaI8j0y0ACPDkbiOhVX2rA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dlxBkCDtFl+Er+Su+UFXuJordz6iOhUYO1MkYRG9YAbeOi/8uVMqfBTRcGcsMmEzg2pSRaDMTuThrJ4ZoPDn6D6sd9mL3r4Vkw7vrz5DmnnOAyt8hzYZks7llHiUVYC8XPD33bI9Q6QC7OKIIYPwRPQaKj4+gIcyqEbzwbzhfZA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=KNXSTwoX; arc=fail smtp.client-ip=40.107.20.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XLz1C53fQdqE2ni64AiiPK+d+as8PKkA13HuspepYOsZgaN8HfKkynV7taeSSem69f9kdkIy5v9toYYXYPoaE3B8Qi91ejWTgLSRnR0ikkp4xE9dtR5elV+bT5OsSTGY9c6sSGzlh9iwW/cX78l1+tAe+z/abGqSVK2o6J96gc2TwVgCeJ4rSQWHbAqiSTrsqEWT104kICQgK2fNDOjy7E6VBO9kwYyHf6UjtvHh435DQQxCFp6PPRcMXjR6+2TYB2WfI3fY+odAwnNkMDH1qcokPXN0jjsFXvfbDXS83vzGQRmOoxfbEDRReBFtduKBLKgE71Pu33MRHhvrSz5p1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kHawvgQ0XBrAMisqnqW0HlaI8j0y0ACPDkbiOhVX2rA=;
- b=SCK0aF7IxjjUqTY4K/Mwkwn8M1Ya4uC+UcnHdVE08ChsHwKc0GYFdGhZOBWaILiEwdgWJ52ZnIkHiDqfBgRRHS9KSk6YBv8DyzPbaIZDDhbh0CrYGbzyqJ2pKFZlPkebV9GYjOvoLmFA0MGKWHUwmjT3/2x2JC8QKlv4xMEdZbsWKJeWXo/tVjLIQryHys5NKF7cYhlAAWuUPR1+BjqdwhwsNYtb53RPmZ5go90nBF1aGax1QBi/9KRdzP6+sZ6PE+udNeO+90Mhqn9xOFdjqvNaP77zgbfy7m0Wcl+l7fX2lqgYkTwBVL/+MJ+gi/4rVhsnC9pH2pD/ZKt6vny2Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=solid-run.com; dmarc=pass action=none
- header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kHawvgQ0XBrAMisqnqW0HlaI8j0y0ACPDkbiOhVX2rA=;
- b=KNXSTwoXVb7CZtZFedkLaoTBEwwryzRpe0rkLeD7/TGsJSAKWiR2oBUgjM2j1xoM5088i0NdtSa/0nTkY/cTs9VqfAVa85mnSPZNeCPthuBh8wPdQG112qP/pP95bVAuGEBERRZNtjAmYakeUKbzOhlagchsAX3X1Cjcuc8oh8k=
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
- by DB8PR04MB7164.eurprd04.prod.outlook.com (2603:10a6:10:129::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
- 2024 16:15:20 +0000
-Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
- ([fe80::c04e:8a97:516c:5529%7]) with mapi id 15.20.7544.045; Thu, 9 May 2024
- 16:15:20 +0000
-From: Josua Mayer <josua@solid-run.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Andrew Lunn <andrew@lunn.ch>, Gregory Clement
-	<gregory.clement@bootlin.com>, Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
-	<conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, Yazan Shhady
-	<yazan.shhady@solid-run.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 2/4] dt-bindings: arm64: marvell: add solidrun cn9132
- CEX-7 evaluation board
-Thread-Topic: [PATCH v5 2/4] dt-bindings: arm64: marvell: add solidrun cn9132
- CEX-7 evaluation board
-Thread-Index: AQHaof4bfE9Ueli+tk+h7rTggD3oW7GOuREAgABW2ICAAARGgA==
-Date: Thu, 9 May 2024 16:15:20 +0000
-Message-ID: <4ba3114b-14d5-491f-b697-0e4406a1e622@solid-run.com>
-References: <20240509-cn9130-som-v5-0-95493eb5c79d@solid-run.com>
- <20240509-cn9130-som-v5-2-95493eb5c79d@solid-run.com>
- <5da207e2-1579-4056-9e3f-c25f5b14e225@solid-run.com>
- <20240509-recycler-flask-0b3b7e2802f9@spud>
-In-Reply-To: <20240509-recycler-flask-0b3b7e2802f9@spud>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=solid-run.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM9PR04MB7586:EE_|DB8PR04MB7164:EE_
-x-ms-office365-filtering-correlation-id: 50a95419-9822-4907-cf90-08dc704338fd
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|376005|7416005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NWhYeW5aT3h4RGpJUjh3am94L3FaMWNKYU9NRjRNNytPOFNBMGZ6RlhDWk5G?=
- =?utf-8?B?dEtYQ0NNMFdjS0RVdGFxcmtnSXF2U2RUZTM0TWRwam1LMElPZmFDbDhtTFpE?=
- =?utf-8?B?RThhY2hDU0x4dS9rNFNKdXlFYTYyUS85OG04TjdmeXZSNlBzeVUxdjl3clkv?=
- =?utf-8?B?elBoNUJGSCtKUzYwZ2NzYm9uZ21BSkpNZ082NWNkOGwxRGhIM2Rvc2VtTGFO?=
- =?utf-8?B?c1V4dWtDUEpPdFFMQlpMb3Z6YXFvK2o5VXAwT04zYlNCN1pEWFpmczA4K0k3?=
- =?utf-8?B?dkdsaVAvNzRDeDdCZ1J2TVRQbm8wam9JK1ZPd1FDYWhidjB5RzdJUytZYjdy?=
- =?utf-8?B?MEkrenVPMXFtWCtlaHZ5UHFqcWluTUM3U0xHdHRZa09WZEVnV2tTQmxwMFE3?=
- =?utf-8?B?cEp4WnJxZ1dnS0RRR25yekdBbHptSDhGTzJPcnRid0dqM25XL0hSQVRVazRs?=
- =?utf-8?B?UU1teU9mVVk0RVBUL2dQalZ2VVJGSFRpZklCWVhYS1lEb1lUdG9TTnFsbVRx?=
- =?utf-8?B?VmFHcnZJcHV6STJLdTE5QXNLVUdkRjhlWWxmSEFmclEyZFAwYVB6WURScjdT?=
- =?utf-8?B?ZW5DdjM0WGVSMTRpYXlRNHZqSmUwS2pSbDFsS2Z4a250elR4dFJmSE92SlJ6?=
- =?utf-8?B?MU9WazdQYVlUQ09zOExtSHhqZ1NUdkRYUUR5OS9BRGpqa0xLd3g5Y1IwNnVp?=
- =?utf-8?B?cmxFR2xndXByY1g1U3VFeG9kaXJmREYzTmtRV1dXTEpRU2lxOUJ3ZmVVUCtB?=
- =?utf-8?B?dmFpZHFpLzV5ei9XSXhIT1FjL1NEMS9DUDBFSStjcFdocFo5UVh2djNrbUxG?=
- =?utf-8?B?c0U2L3RDcXdxVm5pYXhPVDVkZFNtekNOSEQrY3Ftd1BqUjZjc0x5dkZ1Z25U?=
- =?utf-8?B?T3pndnR1cmZQd20yWlNwVnlYZU5iUW5TM0kxcUpIN3VReldCNjAyMWIveitx?=
- =?utf-8?B?aWVRTXVtWEVoaUppS3d5cDdwaVV5UVQrZ2ZCR3ZYa0M1ZVZsZkxMem5HdFAz?=
- =?utf-8?B?eTBDK3lEUVF1SVlqa3RrdThNajNLeVROcU9YTzdnTU9EY3dJUE1Ba2JQeEdU?=
- =?utf-8?B?Y3hwcGhiTjBOUlRDRjBlMyt1ZkVDUHU4VUZMWFJoNyt4NkFwbEF3OEhiajdD?=
- =?utf-8?B?V3dBSk1jN3pQcy9RZGI1K0t0UElYZjJaT2piZG5ISHNScDZvcGE1dXB6Qll1?=
- =?utf-8?B?VjRmRUp6eWdCYTMzS0doZHZZRW9mV2doKzB2Ukt0U21EYWM3c2ZXZnZJOGQ0?=
- =?utf-8?B?TDRhZDBQNUFoSFB6akpjTGRWcHFTZEM4MGdqeUJtQno3V0FDSmZuQWFLcXJI?=
- =?utf-8?B?ZjZhYkdkZVBhR1hjcVI2elVOMGMvRk5UR2hBM1VKam05SkN4OFdIeS8rK3lL?=
- =?utf-8?B?czVBMDBKYkJDenN6b1hncWkxbWlRbWlxOGJXamV1eVJZQzFMSFNwRkM4aFFT?=
- =?utf-8?B?NDRiWkdPaDJ3V21uWGs1YjNiZlhEUm9vM3NDK1JSdmpQYk1WaDZIeFJUNHUv?=
- =?utf-8?B?eTNwZ0VKK2VkdWt4cDF0YVFmTnUrRjFPWHBzY0F0ZkV0MHc0dUsvamNPclBE?=
- =?utf-8?B?WlVnUDAvbXBIWGlPSEZCK0VMbTVvNGpnR2FkM0FBVi9rb0hEVFJoVzgxeEJK?=
- =?utf-8?B?djV5QVd3d3dEZnY4MndlTndIaTg5c2llUDF5ZCtoNWZnNk9hdEtRVy9QSzFx?=
- =?utf-8?B?YjBBdjZaSjZrS0JGdUY3aUhoMXRpcGhBSlFTUzhLaUpUZW82SGxlMFlBYVVP?=
- =?utf-8?B?VXFjZ1lCUXB2R0dpTmlCMVFBRE1velhWSlpzSXMybFVUWlZIdE0ybEVtQnpY?=
- =?utf-8?B?UVhWU2JnMXhadEQ5QXA5Zz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?dVBsU1R5MC9VQ0JhYk9qdFkrQUx6cWlYVjJ0Z0JobzNtVjN6T2wzTFdtaEZr?=
- =?utf-8?B?WGVoUXRiaTMxd0F3aFJ3ejNDSitjQlJ5b0trWFdwVjFmYXluYVA3eDVMWDhS?=
- =?utf-8?B?WE1NSE90dDlyM1ZBUERFMDB6T2VjRkxiS0NDYzJiM1R0ZFFDRDNxMk9qOVFi?=
- =?utf-8?B?c3dTVDFlSDJmM2Z2azJXMzE1TTFkVlp4dGoyV0JPbzNZbHFIUkNjU0VONVNO?=
- =?utf-8?B?czlDQlFNaUJzMGFuT1UyTVkrOThtTllIcEltZVVQcUlxN1dTdHFHN1pNRTFw?=
- =?utf-8?B?QTRrK3hrSXhFWFNQcXFEeG1DdEU2Q1ordTRYWHpWZ21qZ3M3STA2VVpId3pQ?=
- =?utf-8?B?SmVUekY4NENOMXk2SUVsN0huY2JpYjd3bVVickNiQUhNK0tVQkJxS3lSdjZN?=
- =?utf-8?B?RlArV0hyM1lrT1VPMGZBSENqMkFLQlNNZ2RyUWFJblB1bFphY3lRYUJVOXBF?=
- =?utf-8?B?U01NUEhuRVFFbGxqdzlsVzBtaG05RVEreHpvSHREbW1sYVdONHBERU5aa3Ft?=
- =?utf-8?B?RzFwYyt0R09OaDlLeVEwZ2hST1k3MW5IaHY3Wk1rU0FiUnN1c3Y4RVlHUERp?=
- =?utf-8?B?N0ZYZi9vNm9EcExHL0RHM0F0TWFXemFnSHlXNTM3VnltYmpHaXhnWW45NTF2?=
- =?utf-8?B?TUh0VkRiT1c4ekRmNHlnQ0k3Q0J5Q0s5VE1XakNxNTJwR094WnQyUzRWL29F?=
- =?utf-8?B?bjl6Skg3aERZYlE5MnE5YXhRTFRBN28vdXloQmlOYUl5Z25uVTVSTWRKd0lt?=
- =?utf-8?B?MlVXTzZTUDQzWmVxWTFPRlZxaHdWc045WGYxNlcwc1hqajRFM2J0bmZDNlRz?=
- =?utf-8?B?bkkzbktiVldFa3ZzTXYrZVVTanpEbzNodUJVZytwU2xIaGQyTWlwM1g5WjE0?=
- =?utf-8?B?RXpTcFVPOU5NM1hpUVlEZzBNM2M5WlVqdXZTYmtWSUg1akNmMkdLTDk4eFRK?=
- =?utf-8?B?UXhiRlV2M0FTSmoxQUw3UDZzV0FFN1VBV2tGYjdlOW9HODhCOFB4NFdNQjFn?=
- =?utf-8?B?bVpJcUYvTGhmMVg2WkoxNnc0OHo3ek4xZHVGT0g3b09YcWw4UjhSV2NPSjJo?=
- =?utf-8?B?OE5Ua01lMzlvbG5KaHRGdUxlSWEwNWpZb050Z2tTTDdYNFVoenUvVVRyOHF1?=
- =?utf-8?B?TWlwVEVmUnh5RUloSUU0Y0VCRm50M0JTbHpFU0x0WVVUbXppM1lvdEMzNEY0?=
- =?utf-8?B?ZTZvNlc5L2N5bklDZ2tQdjRQVDlRcmhkU3BkMHAyd0ZyZjNOeUNMdnkvZjFL?=
- =?utf-8?B?TTZ2OXhxUDR4eEZsMnFNTisvSW5XY0x3TkRkSnZsMm9PcmJYRi90RVBleG81?=
- =?utf-8?B?UCtqMDFVTG5jZVBQVjg4UGs3UVQ2ZDdBREZJYUUra3A5Tzd4RGxITExKeUY4?=
- =?utf-8?B?NUlhVVZMVDhTa0VZRXVaYTU3ekNydVVpWTdmMEpweWdzSHZRUDhOQkVTWGpl?=
- =?utf-8?B?U21pVDdYR0duYTJ2ZFFxaE01UFBrUmJ4bnE4dGJxeW8yZlVTbVdxays1ZnhX?=
- =?utf-8?B?aHk0M3BFUUxNU3pHMVJhd3pwODdmY3hVbldRVGRvOGIvcHIwUnZXSmZyTVcx?=
- =?utf-8?B?TWRWTDFkVEFPdm5XbHByZUV0SzBqbzlJTjVNOS9CbTZJM0N1TGpYbzY4NmZD?=
- =?utf-8?B?SEw0Z0NmRG9Lc1NLZ21rQSs2eUo5YnJzTzBnRDNUeUJBV1VpOUhucjladGtm?=
- =?utf-8?B?SVN5MmROcGFMQjdQc1p1RDI3dTh0WDNpcWZxbG9BVUR1dVBKb3ExaEFmN0w4?=
- =?utf-8?B?cDlHcHFUTHcrM0w1UXlMcGoxZ0tQV3MyeEREWGNsekN5bXNQRzFMM3Vwamto?=
- =?utf-8?B?bHRTT2o1MnY1a2FhblhEeGlGUnhPc3dmZExiOUpvM0FZeGVkZFVZdEY4OW85?=
- =?utf-8?B?MDlHTW1qUWZXMEZYL21rMFprZnVaSUZpRWRkRy9LLzV5TWFRSlF1VjJ1Nk9L?=
- =?utf-8?B?YzVPR3IycU5xVWFiUTdnbUpGcy9HZTlQcVdxQkczNHc3aWxzakxTMVFhQjZC?=
- =?utf-8?B?UEZlSmxlV0tKK0JCTmhkZXkyUGpWUjBYNk42dFAzeVhWUGxmTzRCVUdZTFNp?=
- =?utf-8?B?YkxUclJhY0Mrb21Cb3daT2M5SFJKNWhZcFBXd0sxcW96WnRZcm1FamNTTEVq?=
- =?utf-8?Q?x+ITRa1xdzs/AQ4yn/JnuNQBz?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1E429E452917944290BD61461D5CA5CF@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC3E16F832;
+	Thu,  9 May 2024 16:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715271399; cv=none; b=H26ZT6TodjEI6xIwQsqjfOoJLAgvTZziE7db3yUJT+Y0tGlC+God9IuGfLsjkwjp/MPBAElH3emc6YACLCFHBBm1iGb4QzdFso9jxq9DFEnVivO1nM4juee+LkwHJ+ywUGa7t3e/GJnMmDPM3nx6v+DPB1Kx65FO8NNqwRohZi0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715271399; c=relaxed/simple;
+	bh=QvxJGTGS4mwLgnS0xtMjkHGpoJAiZv1+KvY8N7BDM7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PJZzeHOCzPY8cutfgzwPDHzW2FmfVEhBe8C54mz8S59i+HwFz1LROcTIeb27yf47jljGB9Q70yuLnth+Vo1UHnKS9lTyZ+D3s07zZj/xkAsvp8NTUPkw8bKKq22MrwjmjMktpy0wqZLeZQexOu/ymACh5Bs4lvwFLY6Qxog4Kys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1s56RK-000000008Vk-1VOx;
+	Thu, 09 May 2024 16:16:14 +0000
+Date: Thu, 9 May 2024 17:16:09 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, Tianling Shen <cnsztl@immortalwrt.org>,
+	netdev@vger.kernel.org, Tianling Shen <cnsztl@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Eric Woudstra <ericwouds@gmail.com>, linux-clk@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: Add  mt7986 based Bananapi
+ R3 Mini
+Message-ID: <Zjz2yeUFdoVmBXIc@makrotopia.org>
+References: <20240509152157.10162-1-linux@fw-web.de>
+ <20240509152157.10162-3-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: solid-run.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50a95419-9822-4907-cf90-08dc704338fd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2024 16:15:20.0584
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5BMDe2CJs2PjrDstQA4IT5ZrtknP6+ejBAinbYqWAjicFjH2OZ/yHWSKhgrcKpVB66deJHspgxNracQbgm6KmA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7164
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240509152157.10162-3-linux@fw-web.de>
 
-QW0gMDkuMDUuMjQgdW0gMTg6MDAgc2NocmllYiBDb25vciBEb29sZXk6DQo+IE9uIFRodSwgTWF5
-IDA5LCAyMDI0IGF0IDEwOjQ5OjEzQU0gKzAwMDAsIEpvc3VhIE1heWVyIHdyb3RlOg0KPj4gQW0g
-MDkuMDUuMjQgdW0gMTI6NDYgc2NocmllYiBKb3N1YSBNYXllcjoNCj4+PiBBZGQgYmluZGluZ3Mg
-Zm9yIHRoZSBTb2xpZFJ1biBDTjkxMzIgQ09NLUV4cHJlc3MgVHlwZSA3IGV2YWx1YXRpb24gYm9h
-cmQuDQo+Pj4gVGhlIENFWCBpcyBiYXNlZCBvbiBDTjkxMzAgU29DIGFuZCBpbmNsdWRlcyB0d28g
-c291dGhicmlkZ2VzLg0KPj4+DQo+Pj4gQmVjYXVzZSBDTjkxMzIgYW5kIDkxMzEgYXJlIGp1c3Qg
-bmFtZXMgZm9yIGRpZmZlcmVudCBkZXNpZ25zIGFyb3VuZCB0aGUNCj4+PiBzYW1lIFNvQywgbm8g
-c29jIGNvbXBhdGlibGVzIGJlc2lkZSBtYXJ2ZWxsLGNuOTEzMCBhcmUgbmVlZGVkLg0KPj4+DQo+
-Pj4gU2lnbmVkLW9mZi1ieTogSm9zdWEgTWF5ZXIgPGpvc3VhQHNvbGlkLXJ1bi5jb20+DQo+Pj4g
-QWNrZWQtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyenlzenRvZi5rb3psb3dza2lAbGluYXJv
-Lm9yZz4NCj4+PiBSZXZpZXdlZC1ieTogQW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNoPg0KPj4+
-IC0tLQ0KPj4+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21hcnZlbGwv
-YXJtYWRhLTdrLThrLnlhbWwgfCA4ICsrKysrKysrDQo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCA4IGlu
-c2VydGlvbnMoKykNCj4+Pg0KPj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvYXJtL21hcnZlbGwvYXJtYWRhLTdrLThrLnlhbWwgYi9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21hcnZlbGwvYXJtYWRhLTdrLThrLnlhbWwNCj4+PiBp
-bmRleCA3NGQ5MzVlYTI3OWMuLjUzOGQ5MWJlODg1NyAxMDA2NDQNCj4+PiAtLS0gYS9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21hcnZlbGwvYXJtYWRhLTdrLThrLnlhbWwN
-Cj4+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21hcnZlbGwv
-YXJtYWRhLTdrLThrLnlhbWwNCj4+PiBAQCAtOTIsNCArOTIsMTIgQEAgcHJvcGVydGllczoNCj4+
-PiAgICAgICAgICAgIC0gY29uc3Q6IHNvbGlkcnVuLGNuOTEzMC1zci1zb20NCj4+PiAgICAgICAg
-ICAgIC0gY29uc3Q6IG1hcnZlbGwsY245MTMwDQo+Pj4gIA0KPj4+ICsgICAgICAtIGRlc2NyaXB0
-aW9uOg0KPj4+ICsgICAgICAgICAgU29saWRSdW4gQ045MTMyIENPTS1FeHByZXNzIFR5cGUgNyBi
-YXNlZCBzaW5nbGUtYm9hcmQgY29tcHV0ZXJzDQo+Pj4gKyAgICAgICAgaXRlbXM6DQo+Pj4gKyAg
-ICAgICAgICAtIGVudW06DQo+Pj4gKyAgICAgICAgICAgICAgLSBzb2xpZHJ1bixjbjkxMzItY2xl
-YXJmb2cNCj4+PiArICAgICAgICAgIC0gY29uc3Q6IHNvbGlkcnVuLGNuOTEzMi1zci1jZXg3DQo+
-Pj4gKyAgICAgICAgICAtIGNvbnN0OiBtYXJ2ZWxsLGNuOTEzMA0KPj4+ICsNCj4+PiAgYWRkaXRp
-b25hbFByb3BlcnRpZXM6IHRydWUNCj4+Pg0KPj4gSXQgYXBwZWFycyBJIHdpbGwgbm90IGJlIGFi
-bGUgdG8gc3VibWl0IGFjdHVhbCBkZXZpY2UtdHJlZSBmb3IgdGhpcw0KPj4gYm9hcmQuIFRoZXJl
-Zm9yZSB3aGVuIGFwcGx5aW5nIHRoaXMgcGF0Y2gtc2V0LCBpdCBtYXkgYmUgc2tpcHBlZC4NCj4+
-DQo+PiBJIGFtIG5vdCBzdXJlIGFib3V0IHRoZSBwb2xpY3kgaW4gdGhpcyBjYXNlLA0KPj4gaWYg
-aXQgaXMgYmV0dGVyIHRvIHBpY2sgb3Igc2tpcC4NCj4gV2hhdCBkbyB5b3UgbWVhbiBteSAibm90
-IGJlIGFibGUgdG8iPw0KSSBtYXkgbm90IGJlIGFibGUgdG8gZG8gaXQgaW4gdGltZSBmb3IgY2xv
-c2luZyBvZiBtZXJnZSB3aW5kb3cuDQo+IERvZXMgdGhlIGRldmljZSBleGlzdD8NClllcywgaXQg
-ZXhpc3RzLCBhbmQgd2UgaGF2ZSBhIChsb3cgcXVhbGl0eSkgZG93bnN0cmVhbSBkdHMuDQo+IElm
-IGl0IGRvZXMNCj4gdGhlbiwgSSBhdCBsZWFzdCwgaGF2ZSBubyBvYmplY3Rpb24gdG8gZG9jdW1l
-bnRpbmcgYSBjb21wYXRpYmxlIGZvciBpdC4NCkdyZWF0LCBpbiB0aGlzIGNhc2UgcGxlYXNlIGtl
-ZXAgaXQsIHRoYW5rcyENCg==
+On Thu, May 09, 2024 at 05:21:57PM +0200, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Add devicetree for Bananapi R3 Mini SBC.
+> 
+> Key features:
+> - MediaTek MT7986A(Filogic 830) Quad core ARM Cortex A53
+> - Wifi 6 2.4G/5G（MT7976C）
+                  ^^       ^^
+Those are full-width unicode parentheses.
+Consider using normal 7-bit ASCII parentheses instead to keep the
+commit message readable also on non-unicode terminals.
+
+  Unicode    vs    ASCII
+  （ 0xff08  vs    ( 0x28
+  ） 0xff09  vs    ) 0x29
+
+
+> - 2G DDR RAM
+> - 8G eMMC flash
+> - 128MB Nand flash
+> - 2x 2.5GbE network port
+> - 1x M.2 Key B USB interface
+> - 1x M.2 KEY M PCIe interface
+> - 1x USB2.0 interface
+> 
+> source: https://wiki.banana-pi.org/Banana_Pi_BPI-R3_Mini
+> 
+> Co-developed-by: Eric Woudstra <ericwouds@gmail.com>
+> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+> Co-developed-by: Tianling Shen <cnsztl@gmail.com>
+> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+
+Reviewed-by: Daniel Golle <daniel@makrotopia.org>
+
+> ---
+> v2:
+> - add missing node for nand
+> - add some information about the board in description
+> 
+> change dts based on review from angelo+krzysztof
+> 
+> - drop fan status
+> - rename phy14 to phy0 and phy15 to phy1
+> - drop default-trigger from phys and so also the binding-patch
+> - use regulator names based on regexp regulator-[0-9]+v[0-9]+
+> - add comment for pwm
+> ---
+>  arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+>  .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 493 ++++++++++++++++++
+>  2 files changed, 494 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> index 37b4ca3a87c9..1763b001ab06 100644
+> --- a/arch/arm64/boot/dts/mediatek/Makefile
+> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> @@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-bananapi-bpi-r64.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7981b-xiaomi-ax3000t.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-acelink-ew-7886cax.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3.dtb
+> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-mini.dtb
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
+>  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> new file mode 100644
+> index 000000000000..e2a2fea7adf0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> @@ -0,0 +1,493 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +/*
+> + * Copyright (C) 2021 MediaTek Inc.
+> + * Authors: Frank Wunderlich <frank-w@public-files.de>
+> + *          Eric Woudstra <ericwouds@gmail.com>
+> + *          Tianling Shen <cnsztl@immortalwrt.org>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/pinctrl/mt65xx.h>
+> +
+> +#include "mt7986a.dtsi"
+> +
+> +/ {
+> +	model = "Bananapi BPI-R3 Mini";
+> +	chassis-type = "embedded";
+> +	compatible = "bananapi,bpi-r3mini", "mediatek,mt7986a";
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		ethernet0 = &gmac0;
+> +		ethernet1 = &gmac1;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	dcin: regulator-12v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "12vd";
+> +		regulator-min-microvolt = <12000000>;
+> +		regulator-max-microvolt = <12000000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +	};
+> +
+> +	fan: pwm-fan {
+> +		compatible = "pwm-fan";
+> +		#cooling-cells = <2>;
+> +		/*
+> +		 * The signal is inverted on this board and the PWM driver
+> +		 * does not support polarity inversion.
+> +		 */
+> +		/* cooling level (0, 1, 2) */
+> +		cooling-levels = <255 96 0>;
+> +		pwms = <&pwm 0 10000>;
+> +	};
+> +
+> +	reg_1p8v: regulator-1v8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "1.8vd";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		vin-supply = <&dcin>;
+> +	};
+> +
+> +	reg_3p3v: regulator-3v3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "3.3vd";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		vin-supply = <&dcin>;
+> +	};
+> +
+> +	usb_vbus: regulator-5v {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "usb_vbus";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		gpios = <&pio 20 GPIO_ACTIVE_LOW>;
+> +		regulator-boot-on;
+> +	};
+> +
+> +	en8811_a: regulator-phy1 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "phy1";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		gpio = <&pio 16 GPIO_ACTIVE_LOW>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	en8811_b: regulator-phy2 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "phy2";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		gpio = <&pio 17 GPIO_ACTIVE_LOW>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	leds {
+> +		compatible = "gpio-leds";
+> +
+> +		green_led: led-0 {
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_POWER;
+> +			gpios = <&pio 19 GPIO_ACTIVE_HIGH>;
+> +			default-state = "on";
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		reset-key {
+> +			label = "reset";
+> +			linux,code = <KEY_RESTART>;
+> +			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
+> +		};
+> +	};
+> +
+> +};
+> +
+> +&cpu_thermal {
+> +	cooling-maps {
+> +		map0 {
+> +			/* active: set fan to cooling level 2 */
+> +			cooling-device = <&fan 2 2>;
+> +			trip = <&cpu_trip_active_high>;
+> +		};
+> +
+> +		map1 {
+> +			/* active: set fan to cooling level 1 */
+> +			cooling-device = <&fan 1 1>;
+> +			trip = <&cpu_trip_active_med>;
+> +		};
+> +
+> +		map2 {
+> +			/* active: set fan to cooling level 0 */
+> +			cooling-device = <&fan 0 0>;
+> +			trip = <&cpu_trip_active_low>;
+> +		};
+> +	};
+> +};
+> +
+> +&crypto {
+> +	status = "okay";
+> +};
+> +
+> +&eth {
+> +	status = "okay";
+> +
+> +	gmac0: mac@0 {
+> +		compatible = "mediatek,eth-mac";
+> +		reg = <0>;
+> +		phy-mode = "2500base-x";
+> +		phy-handle = <&phy0>;
+> +	};
+> +
+> +	gmac1: mac@1 {
+> +		compatible = "mediatek,eth-mac";
+> +		reg = <1>;
+> +		phy-mode = "2500base-x";
+> +		phy-handle = <&phy1>;
+> +	};
+> +
+> +	mdio: mdio-bus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +};
+> +
+> +&mmc0 {
+> +	pinctrl-names = "default", "state_uhs";
+> +	pinctrl-0 = <&mmc0_pins_default>;
+> +	pinctrl-1 = <&mmc0_pins_uhs>;
+> +	vmmc-supply = <&reg_3p3v>;
+> +	vqmmc-supply = <&reg_1p8v>;
+> +};
+> +
+> +
+> +&i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c_pins>;
+> +	status = "okay";
+> +
+> +	/* MAC Address EEPROM */
+> +	eeprom@50 {
+> +		compatible = "atmel,24c02";
+> +		reg = <0x50>;
+> +
+> +		address-width = <8>;
+> +		pagesize = <8>;
+> +		size = <256>;
+> +	};
+> +};
+> +
+> +&mdio {
+> +	phy0: ethernet-phy@14 {
+> +		reg = <14>;
+> +		interrupts-extended = <&pio 48 IRQ_TYPE_EDGE_FALLING>;
+> +		reset-gpios = <&pio 49 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <10000>;
+> +		reset-deassert-us = <20000>;
+> +		phy-mode = "2500base-x";
+> +		full-duplex;
+> +		pause;
+> +		airoha,pnswap-rx;
+> +
+> +		leds {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			led@0 { /* en8811_a_gpio5 */
+> +				reg = <0>;
+> +				color = <LED_COLOR_ID_YELLOW>;
+> +				function = LED_FUNCTION_LAN;
+> +				function-enumerator = <1>;
+> +				default-state = "keep";
+> +			};
+> +			led@1 { /* en8811_a_gpio4 */
+> +				reg = <1>;
+> +				color = <LED_COLOR_ID_GREEN>;
+> +				function = LED_FUNCTION_LAN;
+> +				function-enumerator = <2>;
+> +				default-state = "keep";
+> +			};
+> +		};
+> +	};
+> +
+> +	phy1: ethernet-phy@15 {
+> +		reg = <15>;
+> +		interrupts-extended = <&pio 46 IRQ_TYPE_EDGE_FALLING>;
+> +		reset-gpios = <&pio 47 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <10000>;
+> +		reset-deassert-us = <20000>;
+> +		phy-mode = "2500base-x";
+> +		full-duplex;
+> +		pause;
+> +		airoha,pnswap-rx;
+> +
+> +		leds {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			led@0 { /* en8811_b_gpio5 */
+> +				reg = <0>;
+> +				color = <LED_COLOR_ID_YELLOW>;
+> +				function = LED_FUNCTION_WAN;
+> +				function-enumerator = <1>;
+> +				default-state = "keep";
+> +			};
+> +			led@1 { /* en8811_b_gpio4 */
+> +				reg = <1>;
+> +				color = <LED_COLOR_ID_GREEN>;
+> +				function = LED_FUNCTION_WAN;
+> +				function-enumerator = <2>;
+> +				default-state = "keep";
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&pcie {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pcie_pins>;
+> +	status = "okay";
+> +};
+> +
+> +&pcie_phy {
+> +	status = "okay";
+> +};
+> +
+> +&pio {
+> +	i2c_pins: i2c-pins {
+> +		mux {
+> +			function = "i2c";
+> +			groups = "i2c";
+> +		};
+> +	};
+> +
+> +	mmc0_pins_default: mmc0-pins {
+> +		mux {
+> +			function = "emmc";
+> +			groups = "emmc_51";
+> +		};
+> +		conf-cmd-dat {
+> +			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
+> +			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
+> +			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
+> +			input-enable;
+> +			drive-strength = <4>;
+> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
+> +		};
+> +		conf-clk {
+> +			pins = "EMMC_CK";
+> +			drive-strength = <6>;
+> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
+> +		};
+> +		conf-ds {
+> +			pins = "EMMC_DSL";
+> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
+> +		};
+> +		conf-rst {
+> +			pins = "EMMC_RSTB";
+> +			drive-strength = <4>;
+> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
+> +		};
+> +	};
+> +
+> +	mmc0_pins_uhs: mmc0-uhs-pins {
+> +		mux {
+> +			function = "emmc";
+> +			groups = "emmc_51";
+> +		};
+> +		conf-cmd-dat {
+> +			pins = "EMMC_DATA_0", "EMMC_DATA_1", "EMMC_DATA_2",
+> +			       "EMMC_DATA_3", "EMMC_DATA_4", "EMMC_DATA_5",
+> +			       "EMMC_DATA_6", "EMMC_DATA_7", "EMMC_CMD";
+> +			input-enable;
+> +			drive-strength = <4>;
+> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
+> +		};
+> +		conf-clk {
+> +			pins = "EMMC_CK";
+> +			drive-strength = <6>;
+> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
+> +		};
+> +		conf-ds {
+> +			pins = "EMMC_DSL";
+> +			bias-pull-down = <MTK_PUPD_SET_R1R0_10>; /* pull-down 50K */
+> +		};
+> +		conf-rst {
+> +			pins = "EMMC_RSTB";
+> +			drive-strength = <4>;
+> +			bias-pull-up = <MTK_PUPD_SET_R1R0_01>; /* pull-up 10K */
+> +		};
+> +	};
+> +
+> +	pcie_pins: pcie-pins {
+> +		mux {
+> +			function = "pcie";
+> +			groups = "pcie_clk", "pcie_wake", "pcie_pereset";
+> +		};
+> +	};
+> +
+> +	pwm_pins: pwm-pins {
+> +		mux {
+> +			function = "pwm";
+> +			groups = "pwm0";
+> +		};
+> +	};
+> +
+> +	spi_flash_pins: spi-flash-pins {
+> +		mux {
+> +			function = "spi";
+> +			groups = "spi0", "spi0_wp_hold";
+> +		};
+> +	};
+> +
+> +	usb_ngff_pins: usb-ngff-pins {
+> +		ngff-gnss-off-conf {
+> +			pins = "GPIO_6";
+> +			drive-strength = <8>;
+> +			mediatek,pull-up-adv = <1>;
+> +		};
+> +		ngff-pe-rst-conf {
+> +			pins = "GPIO_7";
+> +			drive-strength = <8>;
+> +			mediatek,pull-up-adv = <1>;
+> +		};
+> +		ngff-wwan-off-conf {
+> +			pins = "GPIO_8";
+> +			drive-strength = <8>;
+> +			mediatek,pull-up-adv = <1>;
+> +		};
+> +		ngff-pwr-off-conf {
+> +			pins = "GPIO_9";
+> +			drive-strength = <8>;
+> +			mediatek,pull-up-adv = <1>;
+> +		};
+> +		ngff-rst-conf {
+> +			pins = "GPIO_10";
+> +			drive-strength = <8>;
+> +			mediatek,pull-up-adv = <1>;
+> +		};
+> +		ngff-coex-conf {
+> +			pins = "SPI1_CS";
+> +			drive-strength = <8>;
+> +			mediatek,pull-up-adv = <1>;
+> +		};
+> +	};
+> +
+> +	wf_2g_5g_pins: wf-2g-5g-pins {
+> +		mux {
+> +			function = "wifi";
+> +			groups = "wf_2g", "wf_5g";
+> +		};
+> +		conf {
+> +			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
+> +			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
+> +			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
+> +			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
+> +			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
+> +			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
+> +			       "WF1_TOP_CLK", "WF1_TOP_DATA";
+> +			drive-strength = <4>;
+> +		};
+> +	};
+> +
+> +	wf_dbdc_pins: wf-dbdc-pins {
+> +		mux {
+> +			function = "wifi";
+> +			groups = "wf_dbdc";
+> +		};
+> +		conf {
+> +			pins = "WF0_HB1", "WF0_HB2", "WF0_HB3", "WF0_HB4",
+> +			       "WF0_HB0", "WF0_HB0_B", "WF0_HB5", "WF0_HB6",
+> +			       "WF0_HB7", "WF0_HB8", "WF0_HB9", "WF0_HB10",
+> +			       "WF0_TOP_CLK", "WF0_TOP_DATA", "WF1_HB1",
+> +			       "WF1_HB2", "WF1_HB3", "WF1_HB4", "WF1_HB0",
+> +			       "WF1_HB5", "WF1_HB6", "WF1_HB7", "WF1_HB8",
+> +			       "WF1_TOP_CLK", "WF1_TOP_DATA";
+> +			drive-strength = <4>;
+> +		};
+> +	};
+> +
+> +	wf_led_pins: wf-led-pins {
+> +		mux {
+> +			function = "led";
+> +			groups = "wifi_led";
+> +		};
+> +	};
+> +};
+> +
+> +&pwm {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pwm_pins>;
+> +	status = "okay";
+> +};
+> +
+> +&spi0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&spi_flash_pins>;
+> +	status = "okay";
+> +
+> +	flash@0 {
+> +		compatible = "spi-nand";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		reg = <0>;
+> +
+> +		spi-max-frequency = <20000000>;
+> +		spi-tx-bus-width = <4>;
+> +		spi-rx-bus-width = <4>;
+> +	};
+> +};
+> +
+> +&ssusb {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&usb_ngff_pins>;
+> +	vusb33-supply = <&reg_3p3v>;
+> +	vbus-supply = <&usb_vbus>;
+> +	status = "okay";
+> +};
+> +
+> +&trng {
+> +	status = "okay";
+> +};
+> +
+> +&uart0 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_phy {
+> +	status = "okay";
+> +};
+> +
+> +&watchdog {
+> +	status = "okay";
+> +};
+> +
+> +&wifi {
+> +	status = "okay";
+> +	pinctrl-names = "default", "dbdc";
+> +	pinctrl-0 = <&wf_2g_5g_pins>, <&wf_led_pins>;
+> +	pinctrl-1 = <&wf_dbdc_pins>, <&wf_led_pins>;
+> +
+> +	led {
+> +		led-active-low;
+> +	};
+> +};
+> +
+> -- 
+> 2.34.1
+> 
+> 
 
