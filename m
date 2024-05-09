@@ -1,108 +1,94 @@
-Return-Path: <linux-kernel+bounces-174498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0831A8C0F9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E6E8C0F91
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A68452817ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256841F22E4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2490514D2B2;
-	Thu,  9 May 2024 12:22:31 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15014EC57;
+	Thu,  9 May 2024 12:21:25 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B0714BF8F;
-	Thu,  9 May 2024 12:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369B714D297;
+	Thu,  9 May 2024 12:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715257350; cv=none; b=OcuU3klH5F9p4t6U4A0osrzokED6gAHwL6VSe4T+Ho/GbvIzvgJH+NaFT6j5fWWjIkZdvdbeZRm804F2ZXbcNLvXeKVJJvGoYtLECBTQWTMkAETtpIbrh7QVUUIEB9Br75Ec+q6JooYEXy79k6u65kJenlI/Mi79C85J+OHU8I0=
+	t=1715257284; cv=none; b=rCW/5uoT6C2mulmrxajro0nal9Mdgw+CkWadmzCJBd9dkId6hTq36QjZAQt2al63JHz5Ov9rv1n6lBxjfDWpT9kdzT+5vD/N8u2MggPmylFxW/XnGxCg5MXfrnXtTW7ghAiJX1bYkPQR7taKEfh9yRXJ7GdFYWJY/oY8F3uSbHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715257350; c=relaxed/simple;
-	bh=uDM27zrD39kvvURwdlNFw/NK0u0FOAXSDBMaCJTa3lI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EK0qZ85UBgGcNtxamB+ni5DJ0XJgf8dL5XcfZ0CXfdSTLduBNbDwSeWEXcIcbcIFVCkhjn6+YgoMsJulCWmp3TX01pb3EATHFwGlCgFKV9tokXuRp2SG8nofjO2uwKxVvtHnbsPe91zbQkiGtnllgAG043PWmSheJT5sGrfmC+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b5d.versanet.de ([83.135.91.93] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1s52mU-0007xX-8U; Thu, 09 May 2024 14:21:50 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Alex Bee <knaerzche@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Alex Bee <knaerzche@gmail.com>, sebastian.reichel@collabora.com
-Subject: Re: [PATCH v2 0/7] Add DSI support for RK3128
-Date: Thu, 09 May 2024 14:21:47 +0200
-Message-ID: <38423821.XM6RcZxFsP@diego>
-In-Reply-To: <20240509120715.86694-1-knaerzche@gmail.com>
-References: <20240509120715.86694-1-knaerzche@gmail.com>
+	s=arc-20240116; t=1715257284; c=relaxed/simple;
+	bh=qPkKMd3dRk5PSqSUr6KcBI4uTLGKQmmLveiJ2qXLVKA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gAriNtumKlV+n3i42s8A4yo/IiHhmtWKWoh1pK4oXQrT5mLB2aJ4iwGJ8wA6DAY9uF0U1luLBSSpe3tpZ2Xv5vxpCHH6wh+x/K6vhWfhgjuwC+IZRN92+ZrrZ3ABDAKTyW5JEoNRkHOoh+B3AMgffmizmzZlkFPSi80Mrv2DFfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VZrhm0fCBz4f3jMS;
+	Thu,  9 May 2024 20:21:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 6DFB31A0C85;
+	Thu,  9 May 2024 20:21:20 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP1 (Coremail) with SMTP id cCh0CgAn+RG+vzxm2lnBMA--.55991S4;
+	Thu, 09 May 2024 20:21:20 +0800 (CST)
+From: Hou Tao <houtao@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Zhao Chen <winters.zc@antgroup.com>,
+	linux-kernel@vger.kernel.org,
+	houtao1@huawei.com
+Subject: [PATCH 0/2] fuse: two tiny fixes for fuse_resend()
+Date: Thu,  9 May 2024 20:21:52 +0800
+Message-Id: <20240509122154.782930-1-houtao@huaweicloud.com>
+X-Mailer: git-send-email 2.29.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn+RG+vzxm2lnBMA--.55991S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5L7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
+	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxG
+	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
+	vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
+	x2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26c
+	xKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi Alex,
+From: Hou Tao <houtao1@huawei.com>
 
-Am Donnerstag, 9. Mai 2024, 14:07:08 CEST schrieb Alex Bee:
-> This series aims to add support for the DesignWare MIPI DSI controller and
-> the Innoslicon D-PHY found in RK3128 SoCs. The code additions are rather
-> tiny: It only need some code in the Rockchip dw-mipi-dsi glue layer for
-> this SoC, add support for an additional clock and do some changes in the
-> SoC's clock driver. Support for the phy was already added when the
-> Innosilicon D-PHY driver was initially submitted. I tested it with a
-> 800x1280 DSI panel where all 4 lanes that are supported are used.
-> 
-> changes in v2:
->   To improve power-efficiency when the DSI controller is not in use, I
->   dropped the patch which made hclk_vio_h2p a critical clock and instead
->   added support for an AHB clock to the DSI controller driver and updated
->   the bindings and the addition to the SoC DT accordingly.
+Hi,
 
-The naming already suggests that hclk_vio_h2p is not a clock-part of
-the actual dsi controller, but more an internal thing inside the clock
-controller.
+The patch set just includes two tiny fixes for fuse_resend(). Patch #1
+replaces __set_bit() by set_bit() to set FR_PENDING atomically. Patch #2
+clears FR_SENT when moving requests from processing lists to pending
+list.
 
-At least naming and perceived functionality would suggest a chain of
-	hclk_vio -> hclk_vio_h2p -> pclk_mipi
+Please check the individual patches for more details. And comments are
+always welcome.
 
-In any case, I really don't see hclk_vio_h2p to be in the realm of the
-actual DSI controller, but more a part of clock-controller / interconnect.
-Similar to the NIU clocks for the interconnect.
+Hou Tao (2):
+  fuse: set FR_PENDING atomically in fuse_resend()
+  fuse: clear FR_SENT when re-adding requests into pending list
 
-rk3588 actually tries to implement this already and while the
-gate-link clocks are described as "recent", I think this definitly the same
-concept used a most/all older Rockchip SoCs, just nobody cared about that
-till now ;-) [0] .
+ fs/fuse/dev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So TL;DR I'd really prefer to not leak CRU-details into the DSI controller.
-
-
-Heiko
-
-[0] Which reminds me that I should look at Sebastian's make GATE-LINK
-actually-work-patch.
-
-
-
+-- 
+2.29.2
 
 
