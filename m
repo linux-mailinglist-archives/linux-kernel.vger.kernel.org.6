@@ -1,154 +1,137 @@
-Return-Path: <linux-kernel+bounces-174256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28198C0C2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:55:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BF18C0C2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799FE28358D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571001C2171D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89315149E11;
-	Thu,  9 May 2024 07:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JwsfaD/l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9A2149C7B;
+	Thu,  9 May 2024 07:59:27 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27673149C57;
-	Thu,  9 May 2024 07:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961B11A2C37;
+	Thu,  9 May 2024 07:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715241306; cv=none; b=IF338GXerhfYRTYtNY9L3eRzku3szJ/Ie8/bJAVn9GGfYD6lT9gSsqvHSjqDKvXEhJ9WjseJDN8eh1s8Cab7OEfYiz6GRprwhPT3GpuobHHVLmT1ybZ4+eBSaxc6FrJt5BszGQUGTLsp2Bik0G4gUYmeWWFSO8DsnjqPJIlmfM8=
+	t=1715241567; cv=none; b=hq1A+yMUGq4iuAS1yshQeG7ovE1XJeFtXqsV3x0hUAhpnyS1aljgUS8HIwnzPAOlJAwwjHBcF5AZoDgh4lMTrBnoCQNGWfYn/Ta9lo9092Hh0FUJf2nZAdLA78lZj3dwqG9jT7oFNQat0Ywf7TxsInVNsBIv7aUclm9LyWp87eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715241306; c=relaxed/simple;
-	bh=h4H3AtpMz9WPnsicHUMxE6jo8aseXELd2qgCjjZMN78=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iNFSfMpx938yXwAd3Dm+BUrS60tQXGVG38SgFi5N18JMDi2oUGPp0p/7fqyJoJPyC7E38wJlL9XVllJX37IEiTvOThYgBD+Eems6NVp+pMONRonlQsq6vIdVd8z/cZ3yId5ABh1FHu/daDhdcKzQQ6wagXctbLD2leE3Us6KZ9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JwsfaD/l; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715241305; x=1746777305;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=h4H3AtpMz9WPnsicHUMxE6jo8aseXELd2qgCjjZMN78=;
-  b=JwsfaD/l3UwABalxCYHqTIHFicRQxiUJJhTz/OlWe/Ad9NMvItXoqVIb
-   4uBi3KG0jlnTHwoZ4i0RB2X0SxF8wpAJxd/Bkf92ZH9hCBHasn6bfSKE3
-   k79MnAIxvVn27hRIFYjPVWawHo7nhket87lkS6WcP1o0fxh1iIqAVy9E9
-   5HBMohYhuTL1gR3uKdyKK2KKD56dkkdsUG4Vx9bO2kQs0kO0OvXyXBjHJ
-   y8ALC5BuaiLoC1XVQ/Jcb+2vMnbIUSgRs28+kpgvLRK7zKu4E8uGmsZNC
-   w/Ekmja4bAE3Lun1FQu3OtAGTsK/yk37dWmY2tcF891eYYN9DU5iSSdO0
-   g==;
-X-CSE-ConnectionGUID: xpxvqZduSo6yAfzS788etg==
-X-CSE-MsgGUID: kQfCRb+8Rc6B5opKuhGAvw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="28658409"
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="28658409"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:55:02 -0700
-X-CSE-ConnectionGUID: sko8dQaKSA2vWHqsfgWe/A==
-X-CSE-MsgGUID: aEqM31FzSjeX5jJvX8yaMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="29268233"
-Received: from 984fee00a5ca.jf.intel.com ([10.165.9.183])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:55:02 -0700
-From: Yang Weijiang <weijiang.yang@intel.com>
-To: seanjc@google.com,
-	pbonzini@redhat.com,
-	mlevitsk@redhat.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Yang Weijiang <weijiang.yang@intel.com>
-Subject: [RFC PATCH 2/2] KVM: x86: Enable guest SSP read/write interface with new uAPIs
-Date: Thu,  9 May 2024 00:54:23 -0700
-Message-ID: <20240509075423.156858-2-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240509075423.156858-1-weijiang.yang@intel.com>
-References: <20240509075423.156858-1-weijiang.yang@intel.com>
+	s=arc-20240116; t=1715241567; c=relaxed/simple;
+	bh=j1fYyZ9BekfWCAvIhL5f+MAVLok5fQykKrvz7StbT4Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pqzjrIpdw01iie//yW/HVj7KDeV3YMkNHNB5Ki0jcLXXaCW5zTHLi++r2VwKaDi4YtCxmlB1io2y6/HYZH8T4aJt63MxLReRsOgt7qriIV7NFRgdN4FJ4P3q4Z9JuLVw597IODqVG69KW7NeqLe78mO/TYSn/Uw/Uz5f+3tiItk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4497x2Ax91364205, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 4497x2Ax91364205
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 9 May 2024 15:59:02 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 15:59:02 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 15:59:02 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Thu, 9 May 2024 15:59:02 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Breno Leitao <leitao@debian.org>
+CC: Kalle Valo <kvalo@kernel.org>, "leit@meta.com" <leit@meta.com>,
+        "open
+ list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>,
+        "open
+ list" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH wireless] wifi: rtw89: Un-embed dummy device
+Thread-Topic: [PATCH wireless] wifi: rtw89: Un-embed dummy device
+Thread-Index: AQHalnSYD4Tb/iMnEk2tnRSMUSm6/rF4e3YAgAACc82AAAD0RYAAAhhAgBWWcwCAAIefEA==
+Date: Thu, 9 May 2024 07:59:01 +0000
+Message-ID: <acf2f82e7f424776835ffbc1f52ba996@realtek.com>
+References: <20240424182351.3936556-1-leitao@debian.org>
+ <f46ae94488d1468e9a9a669320e4cfb9@realtek.com> <87ttjqgf2r.fsf@kernel.org>
+ <87mspigex0.fsf@kernel.org> <acda4194c8d44690b05b83adccb3aa22@realtek.com>
+ <Zjx/sKB++v8FJMXx@gmail.com>
+In-Reply-To: <Zjx/sKB++v8FJMXx@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Enable guest shadow stack pointer(SSP) access interface with new uAPIs.
-CET guest SSP is HW register which has corresponding VMCS field to save
-/restore guest values when VM-{Exit,Entry} happens. KVM handles SSP as
-a synthetic MSR for userspace access.
+Breno Leitao <leitao@debian.org> wrote:
+>=20
+> On Thu, Apr 25, 2024 at 06:15:21AM +0000, Ping-Ke Shih wrote:
+> > Kalle Valo <kvalo@kernel.org> wrote:
+> > > Kalle Valo <kvalo@kernel.org> writes:
+> > >
+> > > > Ping-Ke Shih <pkshih@realtek.com> writes:
+> > > >
+> > > >> Breno Leitao <leitao@debian.org> wrote:
+> > > >>> Embedding net_device into structures prohibits the usage of flexi=
+ble
+> > > >>> arrays in the net_device structure. For more details, see the dis=
+cussion
+> > > >>> at [1].
+> > > >>>
+> > > >>> Un-embed the net_device from the private struct by converting it
+> > > >>> into a pointer. Then use the leverage the new alloc_netdev_dummy(=
+)
+> > > >>> helper to allocate and initialize dummy devices.
+> > > >>>
+> > > >>> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.or=
+g/
+> > > >>>
+> > > >>> Signed-off-by: Breno Leitao <leitao@debian.org>
+> > > >>
+> > > >> I think this patch should go via net-next tree, because wireless-n=
+ext tree
+> > > >> doesn't have patch of dummy devices yet.
+> > > >>
+> > > >> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> > > >
+> > > > FWIW I sent the wireless-next pull request yesterday and once it pu=
+lled
+> > > > we will fast forward wireless-next to latest net-next.
+> > >
+> > > Oh, I just realised that this is not CCed to netdev so their patchwor=
+k
+> > > won't even see the patch. Ping, I recommend that you wait for the
+> > > dependency commits to trickle down to your tree and then apply the
+> > > patch. That's the simplest approach and no need to resend anything.
+> >
+> > Okay. If we don't hurry to get this patch merged, I will apply this pat=
+ch
+> > to my tree.
+>=20
+> There is no hurry to get this patch merged.
 
-Use a translation helper to set up mapping for SSP synthetic index and
-KVM-internal MSR index so that userspace doesn't need to take care of
-KVM's management for synthetic MSRs and avoid conflicts.
+I merged this patch today.=20
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
----
- arch/x86/include/uapi/asm/kvm.h |  3 +++
- arch/x86/kvm/x86.c              |  7 +++++++
- arch/x86/kvm/x86.h              | 10 ++++++++++
- 3 files changed, 20 insertions(+)
+>=20
+> Out of curiosity, why don't you rebase your tree to net-next/linux-next
+> frequently?
 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index ca2a47a85fa1..81c8d9ea2e58 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -420,6 +420,9 @@ struct kvm_x86_reg_id {
- 	__u16 rsvd16;
- };
- 
-+/* KVM synthetic MSR index staring from 0 */
-+#define MSR_KVM_GUEST_SSP	0
-+
- #define KVM_SYNC_X86_REGS      (1UL << 0)
- #define KVM_SYNC_X86_SREGS     (1UL << 1)
- #define KVM_SYNC_X86_EVENTS    (1UL << 2)
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d0054c52f24b..a970bd26ce2c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5886,6 +5886,13 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- 
- static int kvm_translate_synthetic_msr(u32 *index)
- {
-+	switch (*index) {
-+	case MSR_KVM_GUEST_SSP:
-+		*index = MSR_KVM_INTERNAL_GUEST_SSP;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
- 	return 0;
- }
- 
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index a8b71803777b..6ac86a75aedc 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -57,6 +57,16 @@ void kvm_spurious_fault(void);
- #define KVM_SVM_DEFAULT_PLE_WINDOW_MAX	USHRT_MAX
- #define KVM_SVM_DEFAULT_PLE_WINDOW	3000
- 
-+/*
-+ * KVM's internal, non-ABI indices for synthetic MSRs. The values themselves
-+ * are arbitrary and have no meaning, the only requirement is that they don't
-+ * conflict with "real" MSRs that KVM supports. Use values at the uppper end
-+ * of KVM's reserved paravirtual MSR range to minimize churn, i.e. these values
-+ * will be usable until KVM exhausts its supply of paravirtual MSR indices.
-+ */
-+
-+#define MSR_KVM_INTERNAL_GUEST_SSP	0x4b564dff
-+
- static inline unsigned int __grow_ple_window(unsigned int val,
- 		unsigned int base, unsigned int modifier, unsigned int max)
- {
--- 
-2.43.0
+My tree goes to wireless-next, so I think it should be always based on
+wireless-next. Once wirelss-next rebase (ff-merge) net-next, my tree will
+have them also.=20
+
 
 
