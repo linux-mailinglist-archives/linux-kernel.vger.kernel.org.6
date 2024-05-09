@@ -1,205 +1,133 @@
-Return-Path: <linux-kernel+bounces-174376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 541908C0DD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C818C0DE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC122828EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC0E1F23BA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B1314AD33;
-	Thu,  9 May 2024 09:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="njHpLvDQ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4047101E3;
-	Thu,  9 May 2024 09:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D32014AD2E;
+	Thu,  9 May 2024 09:56:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A86BE68;
+	Thu,  9 May 2024 09:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715248476; cv=none; b=Guu6eaTEROBgKXlsQoj+TA/Kp8F63KXz3S3d4yjEJF201czMZ4Da+kGBeomFlVu5dbYTVgNsq6Ul4pZJYme7Dl93fWePXdaY53HGXwWmNEVHvPTy1pdCAUhP4ymSxNCWe4b613Q0rZd2QUzR5MNdVvN6Bjl/PpKO6nBmOVUf6gU=
+	t=1715248595; cv=none; b=NWgZl+LptOdGgm0kQHazBOibozwWlb0Bi2KX6IaloACF8U+Y1CPUKUsF2Dle00O4K1QadJ7GySf4N2jJHAjfS9FtRLJ2XKDNznEq/lZeRD6v1EqM8Ho7iDcc1R/gnu+u8wZMYFoo+dpwE2oY8jqO88dgqSCmyfRTtCLoKAo9/nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715248476; c=relaxed/simple;
-	bh=vlum46Tb8PK1ROm2H5JtmPI6YiTvRNegUq7mRooArb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vBilxlkS8ZkAg5+KwBg4vdsHY+tSGFDjhMjXL2KuV3Pca4eGFFJY+WSlh1IMgiiDqAwCwCTysmt2EBlO5yE6Ui11zHqf4e50pEVHLVVaH31u2dareE/Wcis5gPQ7m7w0mD48jBZ38NdGmBf+x0108JkyL15Kz79vufA2RsFoZEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=njHpLvDQ; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715248472;
-	bh=vlum46Tb8PK1ROm2H5JtmPI6YiTvRNegUq7mRooArb4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=njHpLvDQoHLR62SJqkphCa4t2y6tge0nUhsPjiEp71pkNWsyrAN9BxUS304Kx7X7p
-	 gNzc+DR86MGpZTq+PcN5NGK7RqX1XBRruJSACmb0wweYeaAXtNL9djgi9y32NYf7Fp
-	 z7IBKnI5nwAd7fhzO8nGjt/Kl/UTDQaQRXAETNW7sYcIYYl3xj6ufid1lfBQmy9dOr
-	 1JKijGa9ezVTF6Aj3opG0KkReV/MAVHTvZx24CDxcp7a9nysq14/ymKDQ+MAVnSeez
-	 9hsjM1FNr3fdjZEE7DZu18QYbwQvt3fFVSNeBM7HbE06eEI+geyYFFWJQoOCfG+UVr
-	 1szJShnvwrpvA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C518637820FA;
-	Thu,  9 May 2024 09:54:31 +0000 (UTC)
-Message-ID: <2aefd938-f70a-4133-a3a8-9c96464c9f5f@collabora.com>
-Date: Thu, 9 May 2024 11:54:31 +0200
+	s=arc-20240116; t=1715248595; c=relaxed/simple;
+	bh=bkdnPTqguEmErPjetrOrTQt4B1ja9Q8ssDLo3J3S05o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tc3nJ1Zz6cyGFfqsco5msY7IwSkaeLASOCWPPtjylHIsXXNaoYk2gceB1yidVebA1LpV9RVc8A1NKuXpiufM8C+KC9FSvy2lfp2k4whdYbUv+DWviKClnKdY8sr2SQVH7WsWq2fHfSgm/rt8wOtFDWsp2I5trrSnMelcuZv0o+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF7C0106F;
+	Thu,  9 May 2024 02:56:51 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D9FD63F6A8;
+	Thu,  9 May 2024 02:56:23 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	shuah@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Anshuman.Khandual@arm.com,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH] selftests/mm: hugetlb_madv_vs_map: Avoid test skipping by querying hugepage size at runtime
+Date: Thu,  9 May 2024 15:24:47 +0530
+Message-Id: <20240509095447.3791573-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: mediatek: vcodec: add decoder command to
- support stateless decoder
-To: Yunfei Dong <yunfei.dong@mediatek.com>,
- =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Nathan Hebert <nhebert@chromium.org>,
- Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
- Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20240316081344.4262-1-yunfei.dong@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240316081344.4262-1-yunfei.dong@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 16/03/24 09:13, Yunfei Dong ha scritto:
-> The supported decoder commands are different for stateless and
-> stateful architecture. Add stateless decoder commands to fix
-> the v4l2-compliance test error below.
-> 
-> Codec ioctls:
->      VIDIOC_ENCODER_CMD returned -1 (Inappropriate ioctl for device)
->      VIDIOC_TRY_ENCODER_CMD returned -1 (Inappropriate ioctl for device)
->   test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->      VIDIOC_G_ENC_INDEX returned -1 (Inappropriate ioctl for device)
->   test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->      VIDIOC_DECODER_CMD returned -1 (Invalid argument)
->      VIDIOC_TRY_DECODER_CMD returned -1 (Invalid argument)
->      VIDIOC_TRY_DECODER_CMD returned -1 (Invalid argument)
->      fail: v4l2-test-codecs.cpp(126): ret
->   test VIDIOC_(TRY_)DECODER_CMD: FAIL
-> 
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
+Currently, the size used in mmap() is statically defined, leading to
+skipping of the test on a hugepage size other than 2 MB, since munmap()
+won't free the hugepage for a size greater than 2 MB. Hence, query the
+size at runtime.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Also, there is no reason why a hugepage allocation should fail, since we
+are using a simple mmap() using MAP_HUGETLB; hence, instead of skipping
+the test, make it fail.
+ 
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ tools/testing/selftests/mm/hugetlb_madv_vs_map.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-Nicolas, Sebastian, anything to add?
-
-Cheers,
-Angelo
-
-> ---
-> changed with v1:
-> - remove the static function prefix.
-> - fix some messages not reasonable.
-> ---
->   .../mediatek/vcodec/decoder/mtk_vcodec_dec.c  | 60 +++++++++++++++++--
->   1 file changed, 54 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
-> index ba742f0e391d..c2b64a528028 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec.c
-> @@ -80,21 +80,18 @@ static struct mtk_q_data *mtk_vdec_get_q_data(struct mtk_vcodec_dec_ctx *ctx,
->   	return &ctx->q_data[MTK_Q_DATA_DST];
->   }
->   
-> -static int vidioc_try_decoder_cmd(struct file *file, void *priv,
-> -				struct v4l2_decoder_cmd *cmd)
-> +static int stateful_try_decoder_cmd(struct file *file, void *priv, struct v4l2_decoder_cmd *cmd)
->   {
->   	return v4l2_m2m_ioctl_try_decoder_cmd(file, priv, cmd);
->   }
->   
-> -
-> -static int vidioc_decoder_cmd(struct file *file, void *priv,
-> -				struct v4l2_decoder_cmd *cmd)
-> +static int stateful_decoder_cmd(struct file *file, void *priv, struct v4l2_decoder_cmd *cmd)
->   {
->   	struct mtk_vcodec_dec_ctx *ctx = fh_to_dec_ctx(priv);
->   	struct vb2_queue *src_vq, *dst_vq;
->   	int ret;
->   
-> -	ret = vidioc_try_decoder_cmd(file, priv, cmd);
-> +	ret = stateful_try_decoder_cmd(file, priv, cmd);
->   	if (ret)
->   		return ret;
->   
-> @@ -128,6 +125,57 @@ static int vidioc_decoder_cmd(struct file *file, void *priv,
->   	return 0;
->   }
->   
-> +static int stateless_try_decoder_cmd(struct file *file, void *priv, struct v4l2_decoder_cmd *cmd)
-> +{
-> +	return v4l2_m2m_ioctl_stateless_try_decoder_cmd(file, priv, cmd);
-> +}
-> +
-> +static int stateless_decoder_cmd(struct file *file, void *priv, struct v4l2_decoder_cmd *cmd)
-> +{
-> +	struct mtk_vcodec_dec_ctx *ctx = fh_to_dec_ctx(priv);
-> +	int ret;
-> +
-> +	ret = v4l2_m2m_ioctl_stateless_try_decoder_cmd(file, priv, cmd);
-> +	if (ret)
-> +		return ret;
-> +
-> +	mtk_v4l2_vdec_dbg(3, ctx, "decoder cmd=%u", cmd->cmd);
-> +	switch (cmd->cmd) {
-> +	case V4L2_DEC_CMD_FLUSH:
-> +		/*
-> +		 * If the flag of the output buffer is equals V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF,
-> +		 * this command will prevent dequeueing the capture buffer containing the last
-> +		 * decoded frame. Or do nothing
-> +		 */
-> +		break;
-> +	default:
-> +		mtk_v4l2_vdec_err(ctx, "invalid stateless decoder cmd=%u", cmd->cmd);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int vidioc_try_decoder_cmd(struct file *file, void *priv, struct v4l2_decoder_cmd *cmd)
-> +{
-> +	struct mtk_vcodec_dec_ctx *ctx = fh_to_dec_ctx(priv);
-> +
-> +	if (ctx->dev->vdec_pdata->uses_stateless_api)
-> +		return stateless_try_decoder_cmd(file, priv, cmd);
-> +
-> +	return stateful_try_decoder_cmd(file, priv, cmd);
-> +}
-> +
-> +static int vidioc_decoder_cmd(struct file *file, void *priv, struct v4l2_decoder_cmd *cmd)
-> +{
-> +	struct mtk_vcodec_dec_ctx *ctx = fh_to_dec_ctx(priv);
-> +
-> +	if (ctx->dev->vdec_pdata->uses_stateless_api)
-> +		return stateless_decoder_cmd(file, priv, cmd);
-> +
-> +	return stateful_decoder_cmd(file, priv, cmd);
-> +}
-> +
->   void mtk_vdec_unlock(struct mtk_vcodec_dec_ctx *ctx)
->   {
->   	mutex_unlock(&ctx->dev->dec_mutex[ctx->hw_id]);
-
-
+diff --git a/tools/testing/selftests/mm/hugetlb_madv_vs_map.c b/tools/testing/selftests/mm/hugetlb_madv_vs_map.c
+index d01e8d4901d0..8f122a0f0828 100644
+--- a/tools/testing/selftests/mm/hugetlb_madv_vs_map.c
++++ b/tools/testing/selftests/mm/hugetlb_madv_vs_map.c
+@@ -27,9 +27,9 @@
+ #include "vm_util.h"
+ #include "../kselftest.h"
+ 
+-#define MMAP_SIZE (1 << 21)
+ #define INLOOP_ITER 100
+ 
++size_t mmap_size;
+ char *huge_ptr;
+ 
+ /* Touch the memory while it is being madvised() */
+@@ -44,7 +44,7 @@ void *touch(void *unused)
+ void *madv(void *unused)
+ {
+ 	for (int i = 0; i < INLOOP_ITER; i++)
+-		madvise(huge_ptr, MMAP_SIZE, MADV_DONTNEED);
++		madvise(huge_ptr, mmap_size, MADV_DONTNEED);
+ 
+ 	return NULL;
+ }
+@@ -59,7 +59,7 @@ void *map_extra(void *unused)
+ 	void *ptr;
+ 
+ 	for (int i = 0; i < INLOOP_ITER; i++) {
+-		ptr = mmap(NULL, MMAP_SIZE, PROT_READ | PROT_WRITE,
++		ptr = mmap(NULL, mmap_size, PROT_READ | PROT_WRITE,
+ 			   MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+ 			   -1, 0);
+ 
+@@ -93,14 +93,16 @@ int main(void)
+ 			       free_hugepages);
+ 	}
+ 
++	mmap_size = default_huge_page_size();
++
+ 	while (max--) {
+-		huge_ptr = mmap(NULL, MMAP_SIZE, PROT_READ | PROT_WRITE,
++		huge_ptr = mmap(NULL, mmap_size, PROT_READ | PROT_WRITE,
+ 				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
+ 				-1, 0);
+ 
+ 		if ((unsigned long)huge_ptr == -1) {
+-			ksft_exit_skip("Failed to allocated huge page\n");
+-			return KSFT_SKIP;
++			ksft_test_result_fail("Failed to allocate huge page\n");
++			return KSFT_FAIL;
+ 		}
+ 
+ 		pthread_create(&thread1, NULL, madv, NULL);
+@@ -117,7 +119,7 @@ int main(void)
+ 		}
+ 
+ 		/* Unmap and restart */
+-		munmap(huge_ptr, MMAP_SIZE);
++		munmap(huge_ptr, mmap_size);
+ 	}
+ 
+ 	return KSFT_PASS;
+-- 
+2.39.2
 
 
