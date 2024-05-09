@@ -1,238 +1,166 @@
-Return-Path: <linux-kernel+bounces-174445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1684D8C0ED6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 13:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E7A8C0F5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE22B282095
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9770C1F22F56
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF71311A0;
-	Thu,  9 May 2024 11:28:54 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81B114C5BF;
+	Thu,  9 May 2024 12:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="Ph7A3Lic";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="Vkx+UJ/E"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E2F130A4D;
-	Thu,  9 May 2024 11:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34E18E0E;
+	Thu,  9 May 2024 12:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715254133; cv=none; b=XEGXTr5xq9L6UvRdlIbDa/+TXGJ+KHZG6c/9vL1cE6FVQQloKZFlxDonQC4ag5AFEsCcsgSY5ibTfvSQCuFeX/zAyg4rYIvwizSa4oSh96GtVGdV1xpm/9QGXPjiqUmqhN3KteVgsnkun9bBuaDCSl0VABCKS+d+KgeQ+QEpCn8=
+	t=1715256511; cv=none; b=oAcLX8RZ59jYoTVOiejdWaORwnGzJhv+CKbx5C56DfdXdO7pgSmwqden2x7GB0YjsYIRSJtXyJqI1xVg+q44uks2iAe1j7dMujyfKhvTls9stEPbKfddC7keTNDsz31qh5HpNitpkY1YG5n7n6eDm6aFPJdVK+wOfT7jIZj+YcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715254133; c=relaxed/simple;
-	bh=sP2NP3C9j/mWnfkH0TckSp5PWwPjr51og+mRQV3iKoI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TzHI1X57GRvDcW+FmbE9pRaUCd4xMBKzIZP0Cx8MKdnn6ntUg5VL7RPzksM6q2v6JbVNeI9gCkycEBl/U7wcp8qVcpAlXsUtqCgHW6I5rpMydDoUeP+wCO9ceT0XTeO3FI0ZfILwjNi+bMfMP51DDEnVb3ejJSiQxYUV6vddERk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZqSJ1qzgztTVs;
-	Thu,  9 May 2024 19:25:20 +0800 (CST)
-Received: from dggpeml500012.china.huawei.com (unknown [7.185.36.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7A1011800CA;
-	Thu,  9 May 2024 19:28:47 +0800 (CST)
-Received: from localhost.localdomain (10.67.175.61) by
- dggpeml500012.china.huawei.com (7.185.36.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 19:28:47 +0800
-From: Zheng Yejian <zhengyejian1@huawei.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
-	<mathieu.desnoyers@efficios.com>
-CC: <Markus.Elfring@web.de>, <linux-kernel@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <zhengyejian1@huawei.com>
-Subject: [PATCH v4] ftrace: Fix possible use-after-free issue in ftrace_location()
-Date: Fri, 10 May 2024 03:28:59 +0800
-Message-ID: <20240509192859.1273558-1-zhengyejian1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240401125543.1282845-1-zhengyejian1@huawei.com>
-References: <20240401125543.1282845-1-zhengyejian1@huawei.com>
+	s=arc-20240116; t=1715256511; c=relaxed/simple;
+	bh=k+8ktLJhujlCEcrtylMtNbUYtqQY1OvRPCIur+o7it0=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IUWbP2kQUVLS7vFZUCGN5GqUUMyMbqyccbLB5Qwse9IzwAwKd6RtNi0bC/ybCrb/g9IR1h/XMc7Q0K1T/QIyHlbkGenmrQ7XDIgaqSDBdit8JHmJkVkkBmVoiEomuuTB+tgdWnRf3wXWv2JZ4yAFu/OFUWeW5NZ3RG6Rxwtx+cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=Ph7A3Lic; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=Vkx+UJ/E; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id 1A27CFB03;
+	Thu,  9 May 2024 14:00:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1715256051; bh=k+8ktLJhujlCEcrtylMtNbUYtqQY1OvRPCIur+o7it0=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=Ph7A3LicOVk/nBXEyXfAlunaorM4dMrLkzLXKHKotd8w56qjjUfdyYLEAx4QaGiA1
+	 9J+DiXMSDq3EhbUZbIQq/wT2Vq4EFR1r8p9GwhiBbPDAV8YnGQ575xFlGbtdq8Ekp0
+	 XoqLqgCOgzY5CiqnT1p+1ILJzwBkwmCJyVl6IR93Lxw8XiXdn4pt4TD2fUXCurSTK2
+	 jVF/IptTJNiow9Y7b9Sztr8oxMeDwEm2+b8bWK+CvWj7MElnSaLhrutknqAwyLR0Cu
+	 JtwCwNEWQ4hPGDykmaQndAApWvZhc4x2PHeH4yh9vjURDtPUJtRNsZN4FAl0RIgPau
+	 a4KxoPztoK9pg==
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 8-h3AaQ5H_a7; Thu,  9 May 2024 14:00:50 +0200 (CEST)
+From: =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1715256049; bh=k+8ktLJhujlCEcrtylMtNbUYtqQY1OvRPCIur+o7it0=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=Vkx+UJ/Exq6tecjLez5mqSdHP7b7mwB+rJ5xt2OhMz5Mg6o72pQo8Ot7CZ2651eic
+	 Ltv/j8WEmkbEMf9xAemSyNXXcRrgDAbax5/TnwQCy8tYbXuzVplaTCmgSPe3h0Cbee
+	 9EeF9rFIt4coF6ZI3t/TXkEEMU6KO6/gfunLwoWO7Zh1GxH5U+9lhUQ2LpthR680PA
+	 9VKauEOqmgwbO+q1L2zVDUTXqatkhoznShsofquBU7uYXP0UBNjPN43Numg5yF86vX
+	 i6xinTWAMN7jktf70Unb7e/eVkV14yHyE753GZhztm/+aaAEv0+r2FsSxWmErPD0hf
+	 1xK8jEupLRqHw==
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Hermes Zhang <chenhuiz@axis.com>,
+	Tony Lindgren <tony@atomide.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org
+Subject: [PATCH v1 1/1] Input: gpio-keys - expose wakeup keys in sysfs
+Date: Thu,  9 May 2024 14:00:28 +0200
+Message-ID: <2b6eb6c3f68509aa35cdf2e2a586689ae97681ab.1715255980.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1715255980.git.agx@sigxcpu.org>
+References: <cover.1715255980.git.agx@sigxcpu.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500012.china.huawei.com (7.185.36.15)
 
-KASAN reports a bug:
+This helps user space to figure out which keys should be used to unidle a
+device. E.g on phones the volume rocker should usually not unblank the
+screen.
 
-  BUG: KASAN: use-after-free in ftrace_location+0x90/0x120
-  Read of size 8 at addr ffff888141d40010 by task insmod/424
-  CPU: 8 PID: 424 Comm: insmod Tainted: G        W          6.9.0-rc2+
-  [...]
-  Call Trace:
-   <TASK>
-   dump_stack_lvl+0x68/0xa0
-   print_report+0xcf/0x610
-   kasan_report+0xb5/0xe0
-   ftrace_location+0x90/0x120
-   register_kprobe+0x14b/0xa40
-   kprobe_init+0x2d/0xff0 [kprobe_example]
-   do_one_initcall+0x8f/0x2d0
-   do_init_module+0x13a/0x3c0
-   load_module+0x3082/0x33d0
-   init_module_from_file+0xd2/0x130
-   __x64_sys_finit_module+0x306/0x440
-   do_syscall_64+0x68/0x140
-   entry_SYSCALL_64_after_hwframe+0x71/0x79
-
-The root cause is that, in lookup_rec(), ftrace record of some address
-is being searched in ftrace pages of some module, but those ftrace pages
-at the same time is being freed in ftrace_release_mod() as the
-corresponding module is being deleted:
-
-           CPU1                       |      CPU2
-  register_kprobes() {                | delete_module() {
-    check_kprobe_address_safe() {     |
-      arch_check_ftrace_location() {  |
-        ftrace_location() {           |
-          lookup_rec() // USE!        |   ftrace_release_mod() // Free!
-
-To fix this issue:
-  1. Hold rcu lock as accessing ftrace pages in ftrace_location_range();
-  2. Use ftrace_location_range() instead of lookup_rec() in
-     ftrace_location();
-  3. Call synchronize_rcu() before freeing any ftrace pages both in
-     ftrace_process_locs()/ftrace_release_mod()/ftrace_free_mem().
-
-Fixes: ae6aa16fdc16 ("kprobes: introduce ftrace based optimization")
-Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Zheng Yejian <zhengyejian1@huawei.com>
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
 ---
- kernel/trace/ftrace.c | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+ drivers/input/keyboard/gpio_keys.c | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-v4:
- - Simply add rcu locking into ftrace_location_range() as suggested by Steve.
-   Link: https://lore.kernel.org/linux-trace-kernel/20240502170743.15a5ff1c@gandalf.local.home/
-
-v3:
- - Complete the commit description and add Suggested-by tag
- - Add comments around where synchronize_rcu() is called
- - Link: https://lore.kernel.org/linux-trace-kernel/20240417032830.1764690-1-zhengyejian1@huawei.com/
-
-v2:
- - Link: https://lore.kernel.org/all/20240416112459.1444612-1-zhengyejian1@huawei.com/
- - Use RCU lock instead of holding ftrace_lock as suggested by Steve.
-   Link: https://lore.kernel.org/all/20240410112823.1d084c8f@gandalf.local.home/
-
-v1:
- - Link: https://lore.kernel.org/all/20240401125543.1282845-1-zhengyejian1@huawei.com/
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index da1710499698..1e12df9bb531 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -1595,12 +1595,15 @@ static struct dyn_ftrace *lookup_rec(unsigned long start, unsigned long end)
- unsigned long ftrace_location_range(unsigned long start, unsigned long end)
- {
- 	struct dyn_ftrace *rec;
-+	unsigned long ip = 0;
- 
-+	rcu_read_lock();
- 	rec = lookup_rec(start, end);
- 	if (rec)
--		return rec->ip;
-+		ip = rec->ip;
-+	rcu_read_unlock();
- 
--	return 0;
-+	return ip;
- }
- 
- /**
-@@ -1614,25 +1617,22 @@ unsigned long ftrace_location_range(unsigned long start, unsigned long end)
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 9f3bcd41cf67..84f43d1d4375 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -198,7 +198,8 @@ static void gpio_keys_enable_button(struct gpio_button_data *bdata)
   */
- unsigned long ftrace_location(unsigned long ip)
+ static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
+ 					  char *buf, unsigned int type,
+-					  bool only_disabled)
++					  bool only_disabled,
++					  bool only_wakeup)
  {
--	struct dyn_ftrace *rec;
-+	unsigned long loc;
- 	unsigned long offset;
- 	unsigned long size;
+ 	int n_events = get_n_events_by_type(type);
+ 	unsigned long *bits;
+@@ -218,6 +219,9 @@ static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
+ 		if (only_disabled && !bdata->disabled)
+ 			continue;
  
--	rec = lookup_rec(ip, ip);
--	if (!rec) {
-+	loc = ftrace_location_range(ip, ip);
-+	if (!loc) {
- 		if (!kallsyms_lookup_size_offset(ip, &size, &offset))
- 			goto out;
- 
- 		/* map sym+0 to __fentry__ */
- 		if (!offset)
--			rec = lookup_rec(ip, ip + size - 1);
-+			loc = ftrace_location_range(ip, ip + size - 1);
++		if (only_wakeup && !bdata->button->wakeup)
++			continue;
++
+ 		__set_bit(*bdata->code, bits);
  	}
  
--	if (rec)
--		return rec->ip;
--
- out:
--	return 0;
-+	return loc;
+@@ -297,7 +301,7 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+ 	return error;
  }
  
- /**
-@@ -6596,6 +6596,8 @@ static int ftrace_process_locs(struct module *mod,
- 	/* We should have used all pages unless we skipped some */
- 	if (pg_unuse) {
- 		WARN_ON(!skipped);
-+		/* Need to synchronize with ftrace_location_range() */
-+		synchronize_rcu();
- 		ftrace_free_pages(pg_unuse);
- 	}
- 	return ret;
-@@ -6809,6 +6811,9 @@ void ftrace_release_mod(struct module *mod)
-  out_unlock:
- 	mutex_unlock(&ftrace_lock);
- 
-+	/* Need to synchronize with ftrace_location_range() */
-+	if (tmp_page)
-+		synchronize_rcu();
- 	for (pg = tmp_page; pg; pg = tmp_page) {
- 
- 		/* Needs to be called outside of ftrace_lock */
-@@ -7142,6 +7147,7 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
- 	unsigned long start = (unsigned long)(start_ptr);
- 	unsigned long end = (unsigned long)(end_ptr);
- 	struct ftrace_page **last_pg = &ftrace_pages_start;
-+	struct ftrace_page *tmp_page = NULL;
- 	struct ftrace_page *pg;
- 	struct dyn_ftrace *rec;
- 	struct dyn_ftrace key;
-@@ -7183,12 +7189,8 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
- 		ftrace_update_tot_cnt--;
- 		if (!pg->index) {
- 			*last_pg = pg->next;
--			if (pg->records) {
--				free_pages((unsigned long)pg->records, pg->order);
--				ftrace_number_of_pages -= 1 << pg->order;
--			}
--			ftrace_number_of_groups--;
--			kfree(pg);
-+			pg->next = tmp_page;
-+			tmp_page = pg;
- 			pg = container_of(last_pg, struct ftrace_page, next);
- 			if (!(*last_pg))
- 				ftrace_pages = pg;
-@@ -7205,6 +7207,11 @@ void ftrace_free_mem(struct module *mod, void *start_ptr, void *end_ptr)
- 		clear_func_from_hashes(func);
- 		kfree(func);
- 	}
-+	/* Need to synchronize with ftrace_location_range() */
-+	if (tmp_page) {
-+		synchronize_rcu();
-+		ftrace_free_pages(tmp_page);
-+	}
+-#define ATTR_SHOW_FN(name, type, only_disabled)				\
++#define ATTR_SHOW_FN(name, type, only_disabled, only_wakeup)		\
+ static ssize_t gpio_keys_show_##name(struct device *dev,		\
+ 				     struct device_attribute *attr,	\
+ 				     char *buf)				\
+@@ -306,22 +310,26 @@ static ssize_t gpio_keys_show_##name(struct device *dev,		\
+ 	struct gpio_keys_drvdata *ddata = platform_get_drvdata(pdev);	\
+ 									\
+ 	return gpio_keys_attr_show_helper(ddata, buf,			\
+-					  type, only_disabled);		\
++					  type, only_disabled,		\
++					  only_wakeup);			\
  }
  
- void __init ftrace_free_init_mem(void)
+-ATTR_SHOW_FN(keys, EV_KEY, false);
+-ATTR_SHOW_FN(switches, EV_SW, false);
+-ATTR_SHOW_FN(disabled_keys, EV_KEY, true);
+-ATTR_SHOW_FN(disabled_switches, EV_SW, true);
++ATTR_SHOW_FN(keys, EV_KEY, false, false);
++ATTR_SHOW_FN(switches, EV_SW, false, false);
++ATTR_SHOW_FN(disabled_keys, EV_KEY, true, false);
++ATTR_SHOW_FN(disabled_switches, EV_SW, true, false);
++ATTR_SHOW_FN(wakeup_keys, EV_KEY, false, true);
+ 
+ /*
+  * ATTRIBUTES:
+  *
+  * /sys/devices/platform/gpio-keys/keys [ro]
+  * /sys/devices/platform/gpio-keys/switches [ro]
++ * /sys/devices/platform/gpio-keys/wakeup_keys [ro]
+  */
+ static DEVICE_ATTR(keys, S_IRUGO, gpio_keys_show_keys, NULL);
+ static DEVICE_ATTR(switches, S_IRUGO, gpio_keys_show_switches, NULL);
++static DEVICE_ATTR(wakeup_keys, S_IRUGO, gpio_keys_show_wakeup_keys, NULL);
+ 
+ #define ATTR_STORE_FN(name, type)					\
+ static ssize_t gpio_keys_store_##name(struct device *dev,		\
+@@ -361,6 +369,7 @@ static struct attribute *gpio_keys_attrs[] = {
+ 	&dev_attr_switches.attr,
+ 	&dev_attr_disabled_keys.attr,
+ 	&dev_attr_disabled_switches.attr,
++	&dev_attr_wakeup_keys.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(gpio_keys);
 -- 
-2.25.1
+2.43.0
 
 
