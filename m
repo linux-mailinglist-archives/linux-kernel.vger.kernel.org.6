@@ -1,177 +1,121 @@
-Return-Path: <linux-kernel+bounces-174241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F6C8C0C0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:39:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14288C0C0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0909A1C21466
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9AF284ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE9D149C67;
-	Thu,  9 May 2024 07:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9511494D9;
+	Thu,  9 May 2024 07:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="P2VJ968e"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OX6tjU7k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E3A13C801;
-	Thu,  9 May 2024 07:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739142747D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240379; cv=none; b=OyryR2bOcJRVkgJSiLCGAKGUMWtJmJqtKTQgNhDdnfj8XVWo/7TDij9qFNoKE/zn5BMdpCQPOsjJa2Sj4U2n+Bg0CCQoGq36kSiKCcWvlH/o1TD3fQwXJP30ZF9AC/N9AOpRDHQfcBi+5qBZCW0kKpsSDXLkwCu0Udkt6q3B138=
+	t=1715240416; cv=none; b=Jde+WXezxs6GIyzdGibIwkanNd4QnhrTT2dnUUc7a0Q7ERQ3WMy2fm6VD1iNjDvISTBaeHXSloexEGCvmYshsPnwEPv72NEDQMAi3WDI4ArNFPrQMTRaJCvlWI9yHPFkHbmasbqL4X8K/Bm7sLx7WeCab4q92SuNRj7JOM2CJSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240379; c=relaxed/simple;
-	bh=NR+aHobmWpAYaS/hy8DzHoqrid+V4JMWYZ9tG8o70F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gM+ZIylXEj15cUE0R5hw7rPEnVbN+m+LjpDj/cwWJA6QPMNLNcTJvonw6kMaKAhsoOakRJXQVmx5eUGROtK7FS742edsfdcswBbzqCJ/BYyL9s2WA+1cxSHCeQ+/ArGNtFkpQ1qu9xUhC/caA2HKihTgtKrmRHPIzMTnRiTBbbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=P2VJ968e; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=mY1s/3BUpSW1F3P6Unr2ROLBPmXhaw86B6iU+7jDLCE=; b=P2VJ968eJwKn+gT47YaYICWjbI
-	1dsGtvfti1EwXkFhMPWX6AYEdk3i71Rro4nmAGpZIL4YuH9LIRCSBdsVXLDMQnRCuxeqAAdxqdnO+
-	NMLD9TGtd7facUFbox7oiCQzOeAjeRLRk/HNxjwBa2/IAYQcUeAizSFma9l8VNeIEidu9K1J/sJIh
-	PhMe3NdvaFWoMImBge72O1riAwElq6cQYuk1zRVRhhouwGAkuJPOxKTrs4Tmbz8zZX0eckv21ESui
-	alR0tVFgrtPZY3odqT3kQAzpsFcSHihR1MkyQzRkzsheKwoWWqG/gzEyMXnti2LT/2HMCxE5nY3gK
-	Wf2LV3lA==;
-Received: from [175.114.83.198] (helo=[192.168.45.92])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1s4yMM-003eD0-5T; Thu, 09 May 2024 09:38:34 +0200
-Message-ID: <344145d4-ec56-423f-a016-cbddada8abe5@igalia.com>
-Date: Thu, 9 May 2024 16:38:16 +0900
+	s=arc-20240116; t=1715240416; c=relaxed/simple;
+	bh=yzJlvEP6EPeyVWNOBhOkHxYozpxhkCLY09/TTdV6+cE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bT3ufyw0xLpLnTJurMheqLKIGp/m06kunmArSlkJcJcn6WsAyLrD1ccufidT7iJtcqVVV/ULe9HwhdeZMUsOWEsF9cAjeloVAhQ07qXg1dqB6Sefb/FOkpD9hOKUldv2C430aKIN2cOKppcEr0Stll7JpXSg1tob4r7iJXXSxF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OX6tjU7k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1463FC4AF07
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715240416;
+	bh=yzJlvEP6EPeyVWNOBhOkHxYozpxhkCLY09/TTdV6+cE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OX6tjU7kbRupzn/1DgRF/4+EPO+bSy4pUQcX7huZZ80pyX6t1GkyXdFPoLPfwl0Zx
+	 M2cucwR82XKrRWW2tJqJnOVuzfeUNOkjW8J6HWd/C3s/6YQU9zRRoTVwK/iVm4THNQ
+	 xhbHOrtso8iBHcyjzzv7A3fufJOpbzKLcgl8PrCHEuA247vaeUwn6zv9pQ4/wLRGZP
+	 Gxr1cV0r2kWfh7tT97szxdgTKA3jF6ZlaK7HlRa/Y2a8m9eLPftt7UEjimBqwEUM0r
+	 Jei3jb6lgD7O96qfZ4DGmZL2IKhQ3Tatk3wRdkewa9T2UgG3LUo3v7LlaGrfnF4e0w
+	 Ec+XcCJsAE3xw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f45104ef0so537111e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:40:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUipyzmkisvqM+yaWELB3TRsS9xLm7OmUFWI4gnA12EHHUznr8Hj4CcwBKkRe/TFQx6gw4RxzcEnhns1+8/HodDbnV3k0yDdPtjgS6V
+X-Gm-Message-State: AOJu0YzzTKJL2H8+oZpruoQ6/iHWbgMNQPMrDxN0pvU7597E+hiAB4xE
+	shOOwD2+O5JyxlfsJIH7Sm+hOsxeiAk08hhIQTJmH9c9kuIAF5WwNP8f5av3zhwPzETdbqYpgxC
+	5VlaS/pRzxwuR+OwVXt/PD2f2b1M=
+X-Google-Smtp-Source: AGHT+IHoxCV6i7T4XTVJNNw0o8lBtSlgZpO4LspzYKigkwmqilUfZq0Hiwz+mywlWqe1siJO2orEYe/2lOUQneQ69lw=
+X-Received: by 2002:ac2:592d:0:b0:516:d692:5e0b with SMTP id
+ 2adb3069b0e04-5217cc45778mr2873222e87.54.1715240414406; Thu, 09 May 2024
+ 00:40:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, torvalds@linux-foundation.org,
- mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
- joshdon@google.com, brho@google.com, pjt@google.com, derkling@google.com,
- haoluo@google.com, dvernet@meta.com, dschatzberg@meta.com,
- dskarlat@cs.cmu.edu, riel@surriel.com, himadrics@inria.fr, memxor@gmail.com,
- andrea.righi@canonical.com, joel@joelfernandes.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com,
- kernel-dev@igalia.com
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240502084800.GY30852@noisy.programming.kicks-ass.net>
- <ZjPnb1vdt80FrksA@slm.duckdns.org>
- <20240503085232.GC30852@noisy.programming.kicks-ass.net>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20240503085232.GC30852@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240509013727.648600-1-samuel.holland@sifive.com>
+In-Reply-To: <20240509013727.648600-1-samuel.holland@sifive.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 9 May 2024 09:39:59 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFfWKh-oM8q11eEF94mPOENHxW+fdvkYLSbUDs0ZG8Sow@mail.gmail.com>
+Message-ID: <CAMj1kXFfWKh-oM8q11eEF94mPOENHxW+fdvkYLSbUDs0ZG8Sow@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Do not select ARCH_HAS_KERNEL_FPU_SUPPORT
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, 
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>, kernel test robot <lkp@intel.com>, Andrew Davis <afd@ti.com>, 
+	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Eric DeVolder <eric.devolder@oracle.com>, Rob Herring <robh@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Thu, 9 May 2024 at 03:37, Samuel Holland <samuel.holland@sifive.com> wrote:
+>
+> On 32-bit ARM, conversions between `double` and `long long` require
+> runtime library support. Since the kernel does not currently provide
+> this library support, the amdgpu driver fails to build:
+>
+>   ERROR: modpost: "__aeabi_l2d" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+>   ERROR: modpost: "__aeabi_d2ulz" [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+>
+> As Arnd reports, there are likely no 32-bit ARM platforms which can use
+> the amdgpu driver anyway, due to lack of features like 64-bit
+> prefetchable BARs. Since amdgpu is currently the only real user of
+> ARCH_HAS_KERNEL_FPU_SUPPORT, drop support for this option instead of
+> bothering to implement the library functions.
+>
+> Fixes: 12624fe2d707 ("ARM: implement ARCH_HAS_KERNEL_FPU_SUPPORT")
 
-I'd like to reaffirm Valve and Igalia's backing for the sched_ext
-proposal.
+This commit is not in mainline yet. Could we just drop the original
+patch instead?
 
-Let's delve into the context first. Valve, in collaboration with
-Igalia and other firms, has been dedicated to enhancing the
-gaming experience on Linux. Our endeavor involves utilizing
-a standard Linux distribution (SteamOS) to execute unaltered
-Windows games on the Linux kernel with the aid of Wine and
-various other software components. The overarching objective is
-to refine the Linux desktop environment for gaming and
-interactive purposes. As part of our commitment, we adhere to an
-"upstream everything" policy, contributing to the Linux kernel
-and numerous open-source projects. For those interested, you can
-explore the details of our contributions through the following
-link:
-
- 
-https://osseu2023.sched.com/event/1Qv8y/how-steamos-is-contributing-to-the-linux-ecosystem-alberto-garcia-igalia
-
-
- From our perspective, sched_ext holds significant promise and
-utility, particularly in facilitating rapid experimentation with
-new ideas. Our experimental ideas may or may not align with the
-existing scheduler designs, be it CFS or EEVDF.
-
-Specifically, our research into the characteristics of gaming
-workloads for schedulers has unveiled intriguing insights that
-could inform better scheduling decisions. For instance, tasks
-within the gaming software stack, such as game engines, Wine, and
-graphics drivers, often exhibit very short duration when
-scheduled, necessitating frequent scheduling activities.
-Moreover, multiple tasks across software layers collaborate to
-complete a single application-level task, forming task chains.
-Inadequate scheduling decisions within these chains can lead to
-high tail latency, commonly known as "stuttering" in the gaming
-community.
-
-
-> Witness the metric ton of toy schedulers written for it, that's all
-> effort not put into improving the existing code.
-
-While these properties offer valuable insights for improving
-scheduling decisions for gaming workloads, their applicability to
-general-purpose schedulers like EEVDF remains uncertain. The most
-effective means to evaluate their broader utility is through
-practical experimentation. In this regard, sched_ext provides an
-excellent platform for rapid testing of new ideas.
-
-One may question why not just experiment out-of-tree? In reality,
-we can’t just trivially patch _general-purpose_ EEVDF (and CFS
-too) to be better for _all_ use cases, especially when upstream
-has resisted tons of niche complexity in the upstream scheduler.
-It is a very hard problem, and we believe having the sched_ext
-upstream for more users/distros will encourage more progress. Our
-case of Linux gaming demonstrates that working on the existing
-code is neither always possible nor effective. Further details of
-our findings can be found through the following link:
-
- 
-https://ossna2024.sched.com/event/1aBOT/optimizing-scheduler-for-linux-gaming-changwoo-min-igalia
-
-
-> situation that's been created is solved. And even then, I fundamentally
-> believe the approach to be detrimental to the scheduler eco-system.
-
-Contrary to the notion that sched_ext might prove detrimental to
-the scheduler ecosystem, we hold a different view. The successful
-implementation of sched_ext enriches the scheduler community with
-fresh insights, ideas, and code. For instance, our adoption of
-a virtual deadline-based approach in designing LAVD
-(Latency-criticality Aware Virtual Deadline), our sched_ext-based
-scheduler for gaming, represents a deliberate design choice.
-Aligning our heuristics and findings with EEVDF through a similar
-virtual deadline-based approach enables us to contribute our
-discoveries to EEVDF in the future once proven to be more
-universally applicable. Notably, the concept of "latency
-criticality" in LAVD holds promise beyond gaming workloads,
-potentially benefiting various interactive workloads. If you are
-interested in, you can find the source code of LAVD in the
-following link:
-
-     https://github.com/sched-ext/scx/tree/main/scheds/rust/scx_lavd
-
-
-In essence, I envision sched_ext and its community as an
-incubator for new ideas, invigorating the scheduler ecosystem.
-Some of the "toy" schedulers may evolve into specialized
-solutions tailored for specific problem domains, such as HPC,
-AI/ML, or gaming. Lessons learned from these experimental
-schedulers will invariably contribute, directly or indirectly, to
-the evolution of the EEVDF scheduler.
-
-Sincerely,
-Changwoo Min
+> Reported-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+> Closes: https://lore.kernel.org/lkml/87wmp4oo3y.fsf@linaro.org/
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202404042327.jRpt81kP-lkp@intel.com/
+> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+>
+>  arch/arm/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index b1751c2cab87..b14aed3a17ab 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -15,7 +15,6 @@ config ARM
+>         select ARCH_HAS_FORTIFY_SOURCE
+>         select ARCH_HAS_KEEPINITRD
+>         select ARCH_HAS_KCOV
+> -       select ARCH_HAS_KERNEL_FPU_SUPPORT if KERNEL_MODE_NEON
+>         select ARCH_HAS_MEMBARRIER_SYNC_CORE
+>         select ARCH_HAS_NON_OVERLAPPING_ADDRESS_SPACE
+>         select ARCH_HAS_PTE_SPECIAL if ARM_LPAE
+> --
+> 2.44.0
+>
 
