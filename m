@@ -1,69 +1,115 @@
-Return-Path: <linux-kernel+bounces-174625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98C98C11DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:19:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B68D8C11E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2EAB21637
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:19:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4CD1C20F7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 15:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D816EC0C;
-	Thu,  9 May 2024 15:19:09 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DDF16F0CB;
+	Thu,  9 May 2024 15:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="pZGwikcb"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111B916E893;
-	Thu,  9 May 2024 15:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF20015279B;
+	Thu,  9 May 2024 15:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715267949; cv=none; b=cOaPYjNxy+eMZ6ub95HLUxkANbTHL+Aw25YX2wfHI7h92MxYTHLODTrF0If1QHli3vHsrW0Q736vqlYd4mh7NCWXSQAjWr2EJweh76p1wRTjQETXtWKaGoFTJhK8L4nvwuM55Dh4Mck9m0ciCTPvhlo1uA8p6kl0Q2P805ZsyYQ=
+	t=1715268132; cv=none; b=J2xz7SNOTadkEYGDnqG48NB5VC8hmhsR594TepZNVmOGgmGgGFwR/tTakB9iRsXSXhEjP7nMsO9TQefHXvdtWy7coMtbJOxS/rBKGyKEk1yeUjoLyUo6k9g8AxMGK+kIn4Y2W97lCqgHZA4RQqYcr7tDMP9eb1iJoapdCu3W3vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715267949; c=relaxed/simple;
-	bh=5aL9wZ+3v1zrCPnnvPdqxIqX0SQD7VGQLpZb5iRs/9s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OwPjyGSGFxp6/ig0oEQHjh+g6dAbeCTO5Ku0p7P5Z9HaMRsLjd7FC4bRFD9LpilMVr8qPtT9CBxXVVU6gkV64k+UufUwMSDFfbaYJ5GuNOe+EGRmuswAA22TRv8IUomhee0L1B2p3xNl1IxTttzSurrWMbfBSfdyNjUfQ9NJ8Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B907268BFE; Thu,  9 May 2024 17:19:01 +0200 (CEST)
-Date: Thu, 9 May 2024 17:19:01 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Steven Price <steven.price@arm.com>, Christoph Hellwig <hch@lst.de>,
+	s=arc-20240116; t=1715268132; c=relaxed/simple;
+	bh=Ws8I3Ql5U94+kEXDdzcb5l55Jyb/IE5FKK+9XzxVTjI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V8RLvE6rWUyfcpfE1Ls7nsU4IZvKsmvI05gAdzlFs1+sctuOKGUTWS+vPR4MaCQ9RovHorSExrMBVK8qT+xJKBwLAlLAngDjmTypWXLtfRyBXTbeFSlaXKJAgMNVGkyJ44G+XZmAcBbfYkuC6xniezR3jp/du1wL5dv23WzOAP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=pZGwikcb; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
+	by mxout2.routing.net (Postfix) with ESMTP id 591226024A;
+	Thu,  9 May 2024 15:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1715268126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fotgTM148ZqesmSfyYXvxrplZmNhg1acut380A13LMw=;
+	b=pZGwikcb0fsbAnFSwhOmJmJNL+0A2wQOMwfNjjzcAj22oltjQL3GjN20xnOEnqYHVNOoVV
+	REm5ejw0Mgx31iV60ZmucqomylPsXnLM0aTrabFSw0IBcbmX/Q+46paSNjj2BZWKaI0zrV
+	OotCNlOIyCPo3WMRuYr0/9V0+VI8CA8=
+Received: from frank-G5.. (fttx-pool-217.61.150.116.bambit.de [217.61.150.116])
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 0BF403604D4;
+	Thu,  9 May 2024 15:22:05 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Magnus Karlsson <magnus.karlsson@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma: fix DMA sync for drivers not calling
- dma_set_mask*()
-Message-ID: <20240509151901.GA15306@lst.de>
-References: <20240509144616.938519-1-aleksander.lobakin@intel.com> <ce83b3b8-2246-4006-a111-f2da0740bd8e@arm.com> <6ce428e6-3585-4ef5-af08-debef0a7c308@intel.com>
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>,
+	Tianling Shen <cnsztl@immortalwrt.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/2] Add Bananapi R3 Mini
+Date: Thu,  9 May 2024 17:21:55 +0200
+Message-Id: <20240509152157.10162-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ce428e6-3585-4ef5-af08-debef0a7c308@intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 576f1382-99ca-463f-b168-02acee2867b6
 
-On Thu, May 09, 2024 at 05:16:13PM +0200, Alexander Lobakin wrote:
-> Oh crap, it really should be f406. Wrong tree again >_<
+From: Frank Wunderlich <frank-w@public-files.de>
 
-I've fixed this up and added the Tested-by in my local tree.  I'll push
-it out after a bit of testing.  More reviews or tested-bys are still
-welcome.
+Add mt7986 based BananaPi R3 Mini SBC.
+
+changes in v2:
+- dropped patches for unrealated binding fixes which are already fixed in next.
+- add missing node for nand
+- add some information about the board in description
+    
+change dts based on review from angelo+krzysztof
+    
+ - drop fan status
+ - rename phy14 to phy0 and phy15 to phy1
+ - drop default-trigger from phys and so also the binding-patch
+ - use regulator names based on regexp regulator-[0-9]+v[0-9]+
+ - add comment for pwm
+
+Frank Wunderlich (2):
+  dt-bindings: arm64: dts: mediatek: add BananaPi R3 Mini
+  arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
+
+ .../devicetree/bindings/arm/mediatek.yaml     |   1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+ .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 493 ++++++++++++++++++
+ 3 files changed, 495 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+
+-- 
+2.34.1
 
 
