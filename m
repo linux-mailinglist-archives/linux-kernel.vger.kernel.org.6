@@ -1,184 +1,172 @@
-Return-Path: <linux-kernel+bounces-174761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D8D8C14A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A288C14A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBEBA28200C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF60D2819A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7017D075;
-	Thu,  9 May 2024 18:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y0vwhbgp"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E18E7EF12;
+	Thu,  9 May 2024 18:20:34 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E2770FE;
-	Thu,  9 May 2024 18:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A897EF02
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715278820; cv=none; b=FMnsZIY44/vqA75SH/j64Qx9W8BkojnH0OKF/6pHkqu+PSJXJZw3KgOwzamhxeDDDd2UoJjPJ4El4zKeCoTPZXmZo4wYuCKbM9qDoCzMro2p7Q2N6LhcUDD4xBfWsG0O9b66ynchtn0OhjY2aPSdQzdUIauiyXuQhEJW2oA0v74=
+	t=1715278834; cv=none; b=EWDri19fBGLXpA1bHE7IN7uVMKW9MsgF+L1vtxP4HDdWD7dbq8UlGqEPyPTxicDTdeWtrCcqjP7QWj6iOukWAPv+B90fj+iz01qpdLT+lIpKOq4O6haqQUIWJapWPPR0+TUubeX5rMpek6/QWxWtC8I1j48YqXnlRUgtgmL+ii4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715278820; c=relaxed/simple;
-	bh=JCJaK6QpOrmmUJdi/1h2/P/m5VnuJoQJ8ijlBJBZs2E=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E8cxY7+zC++X+urFqgMQxq9ZHtP3Hq7NmNm/UjICxXOYm1BDbRQBrLLrvkcx4eevo3SS4zdA7JPsxuskc651xjxDmubUe41XgC+ZoOYcC5nW0OBgZSnXB0PfR7hC1vsJ14nkqv5QoQeYiiGCoshy1wqB//9TaELbAy9RKwmTkVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y0vwhbgp; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715278815;
-	bh=JCJaK6QpOrmmUJdi/1h2/P/m5VnuJoQJ8ijlBJBZs2E=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Y0vwhbgpxSGiErJBlZANaCoV14K1sUaA4F/ooMPA8bO48t72Fpno5DrnfALIMJiFY
-	 oMSvCEfOkwdTnfzldtNTgWgnNeYnX0lnmSBwYV+uUcXI50biIzPUgTSdbJDAk9h9/N
-	 bVUTOACTMW2U5cMSjfFt9b0R/BiIAN1Kzg0OIMCCtoqr8O1bj2D1Led/rtVGtGTVC8
-	 kz3S35qqjR2mswHsIzoVynyPqK+vGV6uTv4IAVR+VARRqE/hZwUo8M6kQ1/zzNJO7N
-	 IQqLkWeZKdjhwuxngilpfTAlT58QqNdElQbuZGDixBXFgx76yRt8hchoMtP4P0BWps
-	 4uG5Wxt7oOVIg==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3ED82378214F;
-	Thu,  9 May 2024 18:19:55 +0000 (UTC)
-Message-ID: <57f47bc1-972c-45b5-81ef-d8269dcadebb@collabora.com>
-Date: Thu, 9 May 2024 23:20:19 +0500
+	s=arc-20240116; t=1715278834; c=relaxed/simple;
+	bh=A/E0A/P32TGhxzHZi+5Gm0N8XE0PiUO4vgwJsfWz51s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lRAJKVRTFyFIS+OaQ1szyEuXYT+SrrRn4NablydDFym1x3dmgm2ovbT3JZM+s5m0txZf8vvFvJ/+NyYOfsXXJ59lZy+eI6mSVoX02naePb7ROz1dkNbls3hBchIhtNC6hFYqb8n2I/dsNlBw7Vpr9hPtdKERuEjx5Zrnf0zNfOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1b65780b7so11714539f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:20:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715278831; x=1715883631;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T1RH5NVOJ+gNod5M6x8WPGgAaUoOxvUyj5zzhvkcIvU=;
+        b=R2MqMgtFqbzdDXz+0fpyrKkkviCBAYGQJUuxwMUmq97+g5UVrLk/cc+6ZqanoF16ST
+         N/Zsm4KE9AWIGrrYsc5OQDZF5mvfhtFil+Yg/nlw0nLw+naY5miWrMHx71jjBAk3oT3h
+         Bo2YU99FDNC1Fv2X58fKeHrtTsjXgd8zgHhpu3O81YJwFw3JaJkFg7ShFuOg7mkfP6TP
+         G9wnEJI+P+nC3xkCTmBhvSy7RadLiVOf+jyQYiOqazSMyO8Hzx5AklWmDU0wu6PFjP+x
+         QvtB499yftJzG5nVk6/LtEDCxqqcdBWiv6O9ewMV7NtmXLmPOtTRojARWTp1HEDZRDMd
+         6PcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7xlHRdZtT85yqO5nBSEpSTqJP5XrATQkV/pu+AHEGeSUE6Q/Luh1rxaLYGZrMJ6DqUpmirC0vB3AWmFgGEv9aaV1zNQXF3MZnbc6X
+X-Gm-Message-State: AOJu0YxlFw2Stgqny4L8rS7RxqOujYAnHZ+1vwcMA/l93UJcHZSWppAm
+	MGATv6ktevPz6j63+vwRptDvOkAKoqdIJBGCI8iYnf2kFz8Q7JBBLinnId9Q7V5eobkE79cgEW/
+	2dqxzG0wm4TKGTp66PIhAaviPtEqPBl9V07GZso4Yhoa+Tap/izjco1c=
+X-Google-Smtp-Source: AGHT+IFbd2uWtX7GAvoAVSd1xCJ/tlrYyHTVLjM85FEUU5xUsKaYlzv89TmJ8tLw5WXIb4pYwsPYWD+dRIUlFj7yOKVOH9Dv0sTI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, shuah@kernel.org,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Christian Brauner
- <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>,
- Kees Cook <keescook@chromium.org>,
- OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
- Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
- <andrealmeid@igalia.com>, Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>,
- Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>,
- Atish Patra <atishp@atishpatra.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- David Hildenbrand <david@redhat.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Andrew Morton <akpm@linux-foundation.org>, Seth Forshee
- <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>,
- Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-team@android.com,
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev,
- kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
- linux-actions@lists.infradead.org, mptcp@lists.linux.dev,
- linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
-To: Edward Liaw <edliaw@google.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240507214254.2787305-1-edliaw@google.com>
- <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
- <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com>
- <946ae22f-a4af-448a-92e1-60afb6ed9261@linuxfoundation.org>
- <CAG4es9V2CcBJr0josSoGNsD+ZPQ6vasVXh_Hc_j88oeSqn__yQ@mail.gmail.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CAG4es9V2CcBJr0josSoGNsD+ZPQ6vasVXh_Hc_j88oeSqn__yQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8506:b0:488:f465:f4cd with SMTP id
+ 8926c6da1cb9f-4895856fa08mr14460173.1.1715278831552; Thu, 09 May 2024
+ 11:20:31 -0700 (PDT)
+Date: Thu, 09 May 2024 11:20:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000721c2f06180979fc@google.com>
+Subject: [syzbot] [ntfs3?] WARNING in indx_insert_into_buffer (2)
+From: syzbot <syzbot+67f60a88fd6facb063c5@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/9/24 10:45 PM, Edward Liaw wrote:
-> On Thu, May 9, 2024 at 7:37 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 5/9/24 00:13, Edward Liaw wrote:
->>> On Wed, May 8, 2024 at 4:10 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>>>
->>>> On 5/7/24 15:38, Edward Liaw wrote:
->>>>> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
->>>>> asprintf into kselftest_harness.h, which is a GNU extension and needs
->>>>> _GNU_SOURCE to either be defined prior to including headers or with the
->>>>> -D_GNU_SOURCE flag passed to the compiler.
->>>>>
->>>>> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-edliaw@google.com/
->>>>> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
->>>>> location.  Remove #define _GNU_SOURCE from source code to resolve
->>>>> redefinition warnings.
->>>>>
->>>>> Edward Liaw (5):
->>>>>     selftests: Compile kselftest headers with -D_GNU_SOURCE
->>>>>     selftests/sgx: Include KHDR_INCLUDES in Makefile
->>>>
->>>> I appled patches 1/5 and 2.5 - The rest need to be split up.
->>>>
->>>>>     selftests: Include KHDR_INCLUDES in Makefile
->>>>>     selftests: Drop define _GNU_SOURCE
->>>>>     selftests: Drop duplicate -D_GNU_SOURCE
->>>>>
->>>>
->>>> Please split these patches pwe test directory. Otherwise it will
->>>> cause merge conflicts which can be hard to resolve.
->>>
->>> Hi Shuah,
->>> Sean asked that I rebase the patches on linux-next, and I will need to
->>> remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
->>> be reviewed, then split it afterwards?  I'm concerned that it will be
->>> difficult to review with ~70 patches once split.
->>
->> Please send them split - it will be easier to review and apply. You
->> might as well wait until the merge window is done. I don't think
->> anybody would have time to review now since merge window starts
->> next week.
-> 
-> Sorry, I have them split already; is it ok if I send them now?  I will
-> be on leave soon and may not be able to get back to it in a while.
-Feel free to send the patches. There is no restriction on that.
+Hello,
 
-> 
-> Thanks,
-> Edward
-> 
->>
->>
->> thanks,
->> -- Shuah
-> 
+syzbot found the following issue on:
 
--- 
-BR,
-Muhammad Usama Anjum
+HEAD commit:    b9158815de52 Merge tag 'char-misc-6.9-rc7' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157f69df180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3310e643b6ef5d69
+dashboard link: https://syzkaller.appspot.com/bug?extid=67f60a88fd6facb063c5
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11cce8a7180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e90b54980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/df94a89cedc6/disk-b9158815.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2ba4fcae1454/vmlinux-b9158815.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f238a9413b64/bzImage-b9158815.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/2be1818fa274/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/210e60e68a3d/mount_3.gz
+
+The issue was bisected to:
+
+commit 63e92a0c5a0d5816803907a3e30a91ef72c903a5
+Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Date:   Tue Feb 14 09:57:09 2023 +0000
+
+    fs/ntfs3: Undo critial modificatins to keep directory consistency
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11b99824980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13b99824980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b99824980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+67f60a88fd6facb063c5@syzkaller.appspotmail.com
+Fixes: 63e92a0c5a0d ("fs/ntfs3: Undo critial modificatins to keep directory consistency")
+
+------------[ cut here ]------------
+memcpy: detected field-spanning write (size 3656) of single field "hdr1" at fs/ntfs3/index.c:1912 (size 16)
+WARNING: CPU: 1 PID: 6119 at fs/ntfs3/index.c:1912 indx_insert_into_buffer.isra.0+0x103a/0x12a0 fs/ntfs3/index.c:1912
+Modules linked in:
+CPU: 1 PID: 6119 Comm: syz-executor897 Not tainted 6.9.0-rc6-syzkaller-00290-gb9158815de52 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:indx_insert_into_buffer.isra.0+0x103a/0x12a0 fs/ntfs3/index.c:1912
+Code: 4c 7e b9 fe c6 05 f0 b0 b4 0c 01 90 48 8b 74 24 68 b9 10 00 00 00 48 c7 c2 60 81 43 8b 48 c7 c7 c0 81 43 8b e8 d7 e8 7b fe 90 <0f> 0b 90 90 e9 e1 fd ff ff e8 08 ca 14 ff e9 56 f4 ff ff e8 fe c9
+RSP: 0018:ffffc90009f876c0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 00000000ffffffe4 RCX: ffffffff81503279
+RDX: ffff888023540000 RSI: ffffffff81503286 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffff88807248c471
+R13: ffff88802caecc00 R14: ffff88807b610800 R15: ffff888025a46018
+FS:  00007fc54202e6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fc539c1b000 CR3: 0000000023d38000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ indx_insert_entry+0x1a5/0x460 fs/ntfs3/index.c:1981
+ ni_add_name+0x4db/0x820 fs/ntfs3/frecord.c:3055
+ ni_rename+0xa1/0x1a0 fs/ntfs3/frecord.c:3087
+ ntfs_rename+0x96f/0xf20 fs/ntfs3/namei.c:334
+ vfs_rename+0xf84/0x20a0 fs/namei.c:4880
+ do_renameat2+0xc54/0xdc0 fs/namei.c:5037
+ __do_sys_rename fs/namei.c:5084 [inline]
+ __se_sys_rename fs/namei.c:5082 [inline]
+ __x64_sys_rename+0x81/0xa0 fs/namei.c:5082
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc542099289
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc54202e218 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007fc54215f6d8 RCX: 00007fc542099289
+RDX: 0000000000000000 RSI: 0000000020000f00 RDI: 0000000020000400
+RBP: 00007fc54215f6d0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc54212c0ac
+R13: 00007fc5420ed06b R14: 00007fc54212bfa8 R15: 0030656c69662f2e
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
