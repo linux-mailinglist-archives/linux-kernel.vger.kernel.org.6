@@ -1,87 +1,90 @@
-Return-Path: <linux-kernel+bounces-174020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9D748C0939
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:39:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7A388C093C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 03:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67518282D9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:39:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EAC92823C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 01:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D0B13C8E9;
-	Thu,  9 May 2024 01:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyqeTfDu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68E513C806;
-	Thu,  9 May 2024 01:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6960613C693;
+	Thu,  9 May 2024 01:40:38 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A06510979;
+	Thu,  9 May 2024 01:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715218754; cv=none; b=Pd5OlxAUN7SLpCEPGp9cz8wdIDhN6f9uE7QpGchWkcbFusn/qXTXei+etVvpLpJdzpMdI6GOTNCm+befCxROCzi8c5Q9F8O9413nZPugWxkWhfzVhlhJppVdSjPlE1KEluemTzJbGbaxs5IR7fVA0YPc+2/GQMV4i1uOdRBa9RE=
+	t=1715218838; cv=none; b=QM+LeTde4rUpvNAawTioelN7Xuc4W7AR/GWSg+gvBnr2fgdau02QBeOJm0NYqbkAYwyKSIji953dluHAiPZ4CD6i+pyANik0NZuytA8XCuff7WZBt/IDF+e+bsjmKfllUzZ8yEKVN63ochzV2qgOciSmIY0VOJzTFughnRhvmYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715218754; c=relaxed/simple;
-	bh=C59DV07EAbIh77RRqSpx0oC1Y+VhMFF3FPzCuCWRsNY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tOcSReQXtqqdcI2IIiwn0lSMPoFZBrP+VB/pIcl8qvzkrjxV5BFdgBQ9Hl6Kha57UEBuwKLyzXNuz1oJJdsCZ0Zpifbkk63ly3zeIHDJ93XjOfs3vufg5l5jZEzXeHPbURJdwr2DwoTBnRsNxOEO9qtouxKJu8NWBFpiR8/Ssj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyqeTfDu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626AFC2BD11;
-	Thu,  9 May 2024 01:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715218754;
-	bh=C59DV07EAbIh77RRqSpx0oC1Y+VhMFF3FPzCuCWRsNY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jyqeTfDuxumlqe0iaFrrMby2E+2aU4/aySDp55xAR49+VmyATJZDcXj3vNKuqLnow
-	 5GxrPaRMPq0cyV2KpvACi127L3HBvCCmZ4A7DBgWp7W32Jyo/2ZxfRRrCz3L9Y2VDx
-	 8rRCOhLKGdrzublp7j++fu4LwlgFXxtsbXW7jL569LHNDENDzy2o+UPZ0QZa34eBpu
-	 o7Zor/vwSsWOXQiRLeXUgNHSxmo5u71V7IU+bMacuMLCpYyt+oTymJM7SSpSpWWgeK
-	 EFVFMrIcwmtBYaZcYeTm0+IPFVt+ARs0S9k16yJrjUFmgoJpfnzircTjvpERFMi/TM
-	 dCOESj352OGqw==
-Message-ID: <cf80c2e6ab5aee23c4425419324bca32.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715218838; c=relaxed/simple;
+	bh=vypeUuzuRONIjZ7ZibBQrbY2ZXTNxfDGI+HhUXXdBN4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=NiIafw/TTINftVGfcWSDAd8ZC6P71+g8P+ETiBWkLtUPswzy8IuaZYtP4ldHe0HMcnGD3lbBZH4oADWKHm+bXNhvRRGfOS858ms23C2sDQcU02UUJtXxhItoAcWznQUeO0aCBAra7nbPy1wGt3EdbPoKwVWJNl7V3ZxF4DQIAww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from duoming$zju.edu.cn ( [221.192.180.131] ) by
+ ajax-webmail-mail-app4 (Coremail) ; Thu, 9 May 2024 09:40:02 +0800
+ (GMT+08:00)
+Date: Thu, 9 May 2024 09:40:02 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: duoming@zju.edu.cn
+To: "Dan Carpenter" <dan.carpenter@linaro.org>
+Cc: "Lars Kellogg-Stedman" <lars@oddbit.com>, linux-hams@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+	davem@davemloft.net, jreuter@yaina.de
+Subject: Re: [PATCH net] ax25: Fix refcount leak issues of ax25_dev
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT5 build
+ 20231205(37e20f0e) Copyright (c) 2002-2024 www.mailtech.cn zju.edu.cn
+In-Reply-To: <79dc1067-76dc-43b2-9413-7754f96fe08e@moroto.mountain>
+References: <20240501060218.32898-1-duoming@zju.edu.cn>
+ <my4l7ljo35dnwxl33maqhyvw7666dmuwtduwtyhnzdlb6bbf5m@5sbp4tvg246f>
+ <78ae8aa0-eac5-4ade-8e85-0479a22e98a3@moroto.mountain>
+ <ekgwuycs3hioz6vve57e6z7igovpls6s644rvdxpxqqr7v7is6@u5lqegkuwcex>
+ <1e14f4f1-29dd-4fe5-8010-de7df0866e93@moroto.mountain>
+ <movur4qy7wwavdyw2ugwfsz6kvshrqlvx32ym3fyx5gg66llge@citxuw5ztgwc>
+ <eb5oil2exor2bq5n3pn62575phxjdex6wdjwwjxjd3pd4je55o@4k4iu2xobel5>
+ <79dc1067-76dc-43b2-9413-7754f96fe08e@moroto.mountain>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240508-unabashed-cheese-8f645b4f69ba@spud>
-References: <20240508-unabashed-cheese-8f645b4f69ba@spud>
-Subject: Re: [PATCH v1] clk, reset: microchip: mpfs: fix incorrect preprocessor conditions
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>, kernel test robot <lkp@intel.com>, Daire McNamara <daire.mcnamara@microchip.com>, linux-kernel@vger.kernel.org
-To: Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org
-Date: Wed, 08 May 2024 18:39:12 -0700
-User-Agent: alot/0.10
+Message-ID: <5a4e0ffa.6776.18f5b01e5e0.Coremail.duoming@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:cS_KCgDHVLJyKTxmyi1MAA--.5246W
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwIQAWY7nwoGrwABsw
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VW7Jw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-Quoting Conor Dooley (2024-05-08 14:33:24)
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> While moving all the reset code in the PolarFire SoC clock driver to the
-> reset subsystem, I removed an `#if IS_ENABLED(RESET_CONTROLLER)` from
-> the driver and moved it to the header, however this was not the correct
-> thing to do. In the driver such a condition over-eagerly provided a
-> complete implementation for mpfs_reset_{read,write}() when the reset
-> subsystem was enabled without the PolarFire SoC reset driver, but in the
-> header it meant that when the subsystem was enabled and the driver was
-> not, no implementation for mpfs_reset_controller_register() was
-> provided. Fix the condition so that the stub implementation of
-> mpfs_reset_controller_register() is used when the reset driver is
-> disabled.
->=20
-> Fixes: 098c290a490d ("clock, reset: microchip: move all mpfs reset code t=
-o the reset subsystem")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405082259.44DzHvaN-lkp@i=
-ntel.com/
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405082200.tBrEs5CZ-lkp@i=
-ntel.com/
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-
-Applied to clk-next
+T24gVHVlLCA3IE1heSAyMDI0IDExOjA4OjE0ICswMzAwIERhbiBDYXJwZW50ZXIgd3JvdGU6Cj4g
+ZGlmZiAtLWdpdCBhL25ldC9heDI1L2FmX2F4MjUuYyBiL25ldC9heDI1L2FmX2F4MjUuYwo+IGlu
+ZGV4IDkxNjllZmIyZjQzYS4uNGQxYWIyOTZkNTJjIDEwMDY0NAo+IC0tLSBhL25ldC9heDI1L2Fm
+X2F4MjUuYwo+ICsrKyBiL25ldC9heDI1L2FmX2F4MjUuYwo+IEBAIC05Miw2ICs5Miw3IEBAIHN0
+YXRpYyB2b2lkIGF4MjVfa2lsbF9ieV9kZXZpY2Uoc3RydWN0IG5ldF9kZXZpY2UgKmRldikKPiAg
+CQkJCXNwaW5fdW5sb2NrX2JoKCZheDI1X2xpc3RfbG9jayk7Cj4gIAkJCQlheDI1X2Rpc2Nvbm5l
+Y3QocywgRU5FVFVOUkVBQ0gpOwo+ICAJCQkJcy0+YXgyNV9kZXYgPSBOVUxMOwo+ICsJCQkJYXgy
+NV9kZXZfcHV0KGF4MjVfZGV2KTsKPiAgCQkJCWF4MjVfY2JfZGVsKHMpOwo+ICAJCQkJc3Bpbl9s
+b2NrX2JoKCZheDI1X2xpc3RfbG9jayk7Cj4gIAkJCQlnb3RvIGFnYWluOwo+IEBAIC0xMDEsMTEg
+KzEwMiw4IEBAIHN0YXRpYyB2b2lkIGF4MjVfa2lsbF9ieV9kZXZpY2Uoc3RydWN0IG5ldF9kZXZp
+Y2UgKmRldikKPiAgCQkJbG9ja19zb2NrKHNrKTsKPiAgCQkJYXgyNV9kaXNjb25uZWN0KHMsIEVO
+RVRVTlJFQUNIKTsKPiAgCQkJcy0+YXgyNV9kZXYgPSBOVUxMOwo+IC0JCQlpZiAoc2stPnNrX3Nv
+Y2tldCkgewo+IC0JCQkJbmV0ZGV2X3B1dChheDI1X2Rldi0+ZGV2LAo+IC0JCQkJCSAgICZzLT5k
+ZXZfdHJhY2tlcik7Cj4gLQkJCQlheDI1X2Rldl9wdXQoYXgyNV9kZXYpOwo+IC0JCQl9Cj4gKwkJ
+CW5ldGRldl9wdXQoYXgyNV9kZXYtPmRldiwgJnMtPmRldl90cmFja2VyKTsKPiArCQkJYXgyNV9k
+ZXZfcHV0KGF4MjVfZGV2KTsKCldlIHNob3VsZCBub3QgZGVjcmVhc2UgdGhlIHJlZmNvdW50IHdp
+dGhvdXQgY2hlY2tpbmcgImlmIChzay0+c2tfc29ja2V0KSIsIGJlY2F1c2UgCnRoZXJlIGlzIGEg
+cmFjZSBjb25kaXRpb24gYmV0d2VlbiBheDI1X2tpbGxfYnlfZGV2aWNlKCkgYW5kIGF4MjVfcmVs
+ZWFzZSgpLCBpZiB3ZQpkZWNyZWFzZSB0aGUgcmVmY291bnQgaW4gYXgyNV9yZWxlYXNlKCksIHdl
+IHNob3VsZCBub3QgZGVjcmVhc2UgaXQgaGVyZSwgb3RoZXJ3aXNlIAp0aGUgcmVmY291bnQgdW5k
+ZXJmbG93IHdpbGwgaGFwcGVuLgoKQmVzdCByZWdhcmRzLApEdW9taW5nIFpob3UKCgo=
 
