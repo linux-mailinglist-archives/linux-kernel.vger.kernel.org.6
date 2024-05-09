@@ -1,121 +1,83 @@
-Return-Path: <linux-kernel+bounces-174333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51028C0D30
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:11:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9358C0D4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CA51C210B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79DE1F256BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291AC14A4EB;
-	Thu,  9 May 2024 09:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937FB14A4EF;
+	Thu,  9 May 2024 09:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="j3V+3T4w"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FA51D6A5;
-	Thu,  9 May 2024 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aRvGTQiF"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ED1BE68;
+	Thu,  9 May 2024 09:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715245887; cv=none; b=s3cfn3TMCHIDxy2RNbSylkDzHJrBtgBG0IeHxcclM8rcmN4j8guvEW1t8LMPw1eX9VWr3RbGmnbMjPWsJ9/k5g9xxFRu2rSgypg3I10Qr+z8zf7l7no482uIFu6/4NAel6ZT2t0T/ElB4ifWQa0ZmUQCw0pZNd34C8Fx8y/bIWs=
+	t=1715246008; cv=none; b=iozlwACnv+LMmN4ywOej83swLOg4srH0u4CGPJ9pNtU+XUGgKnP1Iw0s9Sj3ROhF1T8wUxIq0cxN5/HhkLKZ3jhWttiK7V4exbnmMZiF9zvPySC0ABqK+B8yT/rkgNSAB7KO2c4XhwygujiqWMmLEa5+sYOjNYzzW5armsU+XiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715245887; c=relaxed/simple;
-	bh=PhA2isl0xqvqqwLsz+Hq49gLXJdHdLhs9QtkmvjsCjI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=QTNjpXJHBQreyXjhdb1R35TtucE/Kw5bAizIoVa8Yv2ono0wpPOLlVKYxJ51wq2fcS+bYpViSFt+h8q3sbuuAN49CtXSurBg6W+sNhviCJMgS8L8jugCCfGo8VR86VY+iBS7VcqeieuY6ebmVKlpXTu3kFNSgOSIU8UqLE/sfUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=j3V+3T4w; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 9BC172085C24; Thu,  9 May 2024 02:11:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9BC172085C24
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715245885;
-	bh=OMMgT6984I7d/5ikV2+Qam6oJc08svn3gC0xGzvFYrk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=j3V+3T4wpPWaAbVLE7UwJwpWCtJd6qf/YO83D0MhXTAH0JQMNd+RdjI7H5fnYNm8+
-	 K59ePRjPuvZ4fN51yeTBwrEFKSF09Ws/VWqz26z1iyj0OAkYlux88dDGE6IxagOmKq
-	 +hUMJwjiXuAudUIZv04TG0o+qS/a+Q8Wtu53RV6I=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH net-next v3] net: Add sysfs atttribute for max_mtu
-Date: Thu,  9 May 2024 02:11:23 -0700
-Message-Id: <1715245883-3467-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1715246008; c=relaxed/simple;
+	bh=NKeC3HSPrcO8YGQah7jVicYXn1UrXm0HIq2+GZU4qb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bl2KB0EGrkC9ZjVFBzr125nT2EZ0meuhQze3+eKIx6GAf4Pg+GnuLxVxskyl9eP6a5GmeMJxjfDSmxh8j6t8REEnos5L966oC9iCxz5OrGILncZPRB8IyfQ20lgtCd3b3f6NzMGptxXiDPDye3n0ly7Fc7z4Tsg6z9gTGW20j0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aRvGTQiF; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715245999;
+	bh=NKeC3HSPrcO8YGQah7jVicYXn1UrXm0HIq2+GZU4qb8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aRvGTQiF85dxBDSN9fPkXOnIxpElVdaX7KpVKTj40xDidst6eL2eqnswdPhgJUiFi
+	 PNHR0gTmZBcx31tDijXxnLOSw7ShYMkm9O3lueWNdiBa42INll3QIiVMVa+pbslzcj
+	 lp3jANfu7BxQkq9jikVQu/8ihHTpPRRmK7Knk5vdP+dwkgS+OdCYp4QMbvK4F37N1M
+	 YCuQXPG8fYfibrlQv8v+Xd436g7BncoUBCmFLit4wT+dp+AyFxs+rxkagPyXKblmn8
+	 /aRagpfQ1G41xvOQF7+IRZMhna8WD2FqCG0y1kozJb/mMKjCwgHcVAAI6J41g7HV6J
+	 Cd51XjsIAPtKA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2B0C33780894;
+	Thu,  9 May 2024 09:13:19 +0000 (UTC)
+Message-ID: <f0548f88-fe81-4c07-9583-ef1a1c5ae519@collabora.com>
+Date: Thu, 9 May 2024 11:13:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: mediatek: mt8192: fix register configuration for
+ tdm
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Jiaxin Yu <jiaxin.yu@mediatek.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240509-8192-tdm-v1-1-530b54645763@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240509-8192-tdm-v1-1-530b54645763@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For drivers like MANA, max_mtu value is populated with the value of
-maximum MTU that the underlying hardware can support.
-Exposing this attribute as sysfs param, would be helpful in debugging
-and customization of config issues with such drivers.
+Il 09/05/24 09:31, Hsin-Te Yuan ha scritto:
+> For DSP_A, data is a BCK cycle behind LRCK trigger edge. For DSP_B, this
+> delay doesn't exist. Fix the delay configuration to match the standard.
+> 
+> Fixes: 52fcd65414abfc ("ASoC: mediatek: mt8192: support tdm in platform driver")
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- Changes in v3:
- * Removed the min_mtu sysfs attribute as it was not needed
- * Improved the commit message to explain the need for the changes
- * Seperated this patch from other mana attributes requirements.
----
- Documentation/ABI/testing/sysfs-class-net | 8 ++++++++
- net/core/net-sysfs.c                      | 2 ++
- 2 files changed, 10 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-class-net b/Documentation/ABI/testing/sysfs-class-net
-index ebf21beba846..5dcab8648283 100644
---- a/Documentation/ABI/testing/sysfs-class-net
-+++ b/Documentation/ABI/testing/sysfs-class-net
-@@ -352,3 +352,11 @@ Description:
- 		0  threaded mode disabled for this dev
- 		1  threaded mode enabled for this dev
- 		== ==================================
-+
-+What:           /sys/class/net/<iface>/max_mtu
-+Date:           April 2024
-+KernelVersion:  6.10
-+Contact:        netdev@vger.kernel.org
-+Description:
-+                Indicates the interface's maximum supported MTU value, in
-+                bytes, and in decimal format.
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index e3d7a8cfa20b..381becdd73a8 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -114,6 +114,7 @@ NETDEVICE_SHOW_RO(addr_len, fmt_dec);
- NETDEVICE_SHOW_RO(ifindex, fmt_dec);
- NETDEVICE_SHOW_RO(type, fmt_dec);
- NETDEVICE_SHOW_RO(link_mode, fmt_dec);
-+NETDEVICE_SHOW_RO(max_mtu, fmt_dec);
- 
- static ssize_t iflink_show(struct device *dev, struct device_attribute *attr,
- 			   char *buf)
-@@ -660,6 +661,7 @@ static struct attribute *net_class_attrs[] __ro_after_init = {
- 	&dev_attr_ifalias.attr,
- 	&dev_attr_carrier.attr,
- 	&dev_attr_mtu.attr,
-+	&dev_attr_max_mtu.attr,
- 	&dev_attr_flags.attr,
- 	&dev_attr_tx_queue_len.attr,
- 	&dev_attr_gro_flush_timeout.attr,
--- 
-2.34.1
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
