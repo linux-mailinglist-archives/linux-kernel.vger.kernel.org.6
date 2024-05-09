@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-174718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D778C1399
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C36C8C13A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994A61F21CD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C18D91F21DAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CA210A0D;
-	Thu,  9 May 2024 17:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42BB1401E;
+	Thu,  9 May 2024 17:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNltURwB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="jfTDpJk9"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B94DDBE;
-	Thu,  9 May 2024 17:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8077610A36
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715274878; cv=none; b=ehiqA8xysjaRKQ/fgF+ZggYQrwwSjkkMR4FJXEB9CMbkOEiQBnw6e1xG2B0RUo/X/w73IYbumXDdK+bM5O1ZaZIdXRnOGpy2ZyLMTmWKyT4fXTYvIdcYYYU2e2pU1j3ii6ETGKER0hNGJiOdhQyKdqP2WyZmuDY3/06kj+bt6As=
+	t=1715274941; cv=none; b=Q8vtn4f8b/KnBq+4qF0ZBDLky9NxSeuK9zgulAnL6X+MPduygT1ZZ0h/lPeJIreIr9cdMQ1anORWmYmPStWBIA5RXmO1NqG+kr82TuZ4JaZRwJ6ojnhS7FMZlTbsZGyQKnwI4GxmcWyz9fxXe5sQLH9QM+fOXMqw5TOBCl15TEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715274878; c=relaxed/simple;
-	bh=YwUKTYOpoxA/NOjHV7A/q7cg5e41+QOvCr4wGh3um4g=;
+	s=arc-20240116; t=1715274941; c=relaxed/simple;
+	bh=I2b3mZDphqAOw1CzA9XXn8owOPYBXLxuDEHOZbykNDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pXEor1R62bhk6ZZ8f5fRRYZO7t2n1g2zvFHZYYKK7xlLw0FI3APf/pcbgVKMTOqKK/zd9fYSOrGGsiIgkVZBVUEu1T4/mkAVBxhwvEB0VW3q+lr46beQD9b7he2roco/G8FaCOhbLYNph6HyTrzwmP3yFFPvp5oXN2zzFQKK6CE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNltURwB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D799FC116B1;
-	Thu,  9 May 2024 17:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715274878;
-	bh=YwUKTYOpoxA/NOjHV7A/q7cg5e41+QOvCr4wGh3um4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qNltURwBHZ0ugcWbLrUYJc6RkDUcNQgiYSfZKjEwL9+mHhuhW146bkl+HHiyqOY7D
-	 wNNuItMLZg9XcI1JEb6/M6vYSge5p3d/Jqj/OmYtbmVYnvKDIu/qETs5sRmCps6IOQ
-	 4LZSSh8xcEqDzkYGMQlizUe3dBHJGeJ27fyMc2GPvTmQUB2fR1FDljGOCifTUgm44z
-	 tODVfJsI9WuQ5oCQ1S/mdwWcfvfMNNaHEiYnNaps8KLZaGtfuR9Xjg2wUSON1ihOC1
-	 qDjHDw8Jt0BWhP/UqDK3LVzv0+Cy99DGUte0fmFAja8ZXPpS+oNlfndpyWeqf3uBUo
-	 7ppc6G/TeWG3A==
-Date: Thu, 9 May 2024 18:14:32 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	shengjiu.wang@gmail.com, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Xiubo.Lee@gmail.com, festevam@gmail.com, nicoleotsuka@gmail.com,
-	perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/4] ASoC: dt-bindings: fsl,xcvr: Add two PLL clock
- sources
-Message-ID: <20240509-repurpose-dumping-156b57c25960@spud>
-References: <1715223460-32662-1-git-send-email-shengjiu.wang@nxp.com>
- <1715223460-32662-3-git-send-email-shengjiu.wang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xpmub8P2vKEgWs5gSvSTdGQiILIrpwljYFBo0Og4b4SG2J/JW7TIQJ2hcROtz6T3BuUVOqWlFCz/mPjl+JHjmClfbuIXKdC60tNyENeNuh/3cSTroDeFrr87ytpR2RJJm3qm7uql2GI0G1yZIX50RIwfJ8tkPWt2S+TBHoczr9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=jfTDpJk9; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CC69E411FD
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715274931;
+	bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=jfTDpJk9q6zsy8oZFwZ7HCMxbqbfLjcGbav/51M9Fm4+eTXRvos2ySsnq89ZXrNNS
+	 1VcvnR7ZJHGaPw5gzygz5GDjkk5zkh4S6a+KiD+kc2SBSk5SAwd+l3mQXIF8iWDoJT
+	 L2PrVEzpj9gjSd4ECS9md71qGtQzzKP+56ndq3PP6iEzNKo55xMwdwpa1EFespM9ni
+	 UfBGS8uzTTJ00eCdW7Jc8j94605ezTLe6iCY10QGNheCFNZbpSHXRN1Oj5OK1Fzall
+	 B+orPH+7QPrJEHyMQbg1cBVzykUyFmo5wl79+wpABZ6dwjVE9+y0U9WJrvLxI5FagB
+	 aekqH4pn1IjYQ==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a59c3cf5f83so72962466b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:15:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715274931; x=1715879731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
+        b=LDkh4QvwaVv9yh9R1w87EBhMG5RI7WjiXZQUwPLhi071Gij85ro1PpPXKK1Y2d0H60
+         rUL8HMq7hC+6RIPgfN/+LdTHuRb1CzkOKNOXoGXi9RKzMcw4BnIBJZSm45m8uGTiCUXh
+         +ZLEssZZ0M898M0/t40rVtQiXVuGK8C1GCVeUWcCkAg5zDdlahaGJ7h8deH0HK+0LK9r
+         v2uoaXBfxS+PJjOstf7xU0rFoNdumtzFjTKQIG/KX1x2WzWjoWSoD0snW+/NgVNLt4/Z
+         dq6aHI8zW4uk9h6yYY6gvC+uHgFnN/JuZXtyLf0uHlMHRtQTgLe7NODLbZDV+IsjUsCn
+         xExw==
+X-Forwarded-Encrypted: i=1; AJvYcCVITNGwKDfZaO85ZVJztaccIFI/9jhuJXgiKRIryfYziZ7yDbw2LJggfv9MySmnSfnhyAwQBBfCwG/q+5ZH+ExSZNP51PurT8S3d2cz
+X-Gm-Message-State: AOJu0YyTBsXA3H2pLwMpdSKv16cU8UKZY+C9Sig3kFIoozelOzrsChl5
+	OHUocpsqSFxMGVa58qNQgi2jkwuSpbv3USW4REnK47vX6gCXPeVeYY8Hvxu6X8sC4yYr01o0hgL
+	zwZlSUv0VaLT4sirPd2GLF8ooJPpk1S7K1jp8BP0QTfJVb5pMD5wdHH1oAYhrIVBnF3jwEpWLra
+	aeSQ==
+X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15003666b.54.1715274930674;
+        Thu, 09 May 2024 10:15:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRId3ZK7jZnEUqxnKrbYMBDrOXsoSZ6C8TgHiChCG3zHZRXUk/mhnLLXZdmjv+NVtyVoseaw==
+X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15001366b.54.1715274929765;
+        Thu, 09 May 2024 10:15:29 -0700 (PDT)
+Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm93194566b.129.2024.05.09.10.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 10:15:29 -0700 (PDT)
+Date: Thu, 9 May 2024 19:15:27 +0200
+From: Andrea Righi <andrea.righi@canonical.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
+Message-ID: <Zj0ErxVBE3DYT2Ea@gpd>
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-41-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9OB7iJL8uyGYmSbm"
-Content-Disposition: inline
-In-Reply-To: <1715223460-32662-3-git-send-email-shengjiu.wang@nxp.com>
-
-
---9OB7iJL8uyGYmSbm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231221132400.1601991-41-dhowells@redhat.com>
 
-On Thu, May 09, 2024 at 10:57:38AM +0800, Shengjiu Wang wrote:
-> Add two PLL clock sources, they are the parent clocks of the root clock
-> one is for 8kHz series rates, named as 'pll8k', another one is for
-> 11kHz series rates, named as 'pll11k'. They are optional clocks,
-> if there are such clocks, then the driver can switch between them to
-> support more accurate sample rates.
->=20
-> As 'pll8k' and 'pll11k' are optional, then add 'minItems: 4' for
-> clocks and clock-names properties.
+On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
+> Use netfslib's read and write iteration helpers, allowing netfslib to take
+> over the management of the page cache for 9p files and to manage local disk
+> caching.  In particular, this eliminates write_begin, write_end, writepage
+> and all mentions of struct page and struct folio from 9p.
+> 
+> Note that netfslib now offers the possibility of write-through caching if
+> that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
+> v9inode->netfs.flags in v9fs_set_netfs_context().
+> 
+> Note also this is untested as I can't get ganesha.nfsd to correctly parse
+> the config to turn on 9p support.
 
-Despite the detail given here in the commit message, the series this is
-appearing in and one of the driver patches makes me a bit "suspicious"
-of this patch. Are these newly added clocks available on all devices, or
-just on the imx95, or?
+It looks like this patch has introduced a regression with autopkgtest,
+see: https://bugs.launchpad.net/bugs/2056461
+
+I haven't looked at the details yet, I just did some bisecting and
+apparently reverting this one seems to fix the problem.
+
+Let me know if you want me to test something in particular or if you
+already have a potential fix. Otherwise I'll take a look.
 
 Thanks,
-Conor.
-
->=20
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/sound/fsl,xcvr.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml b/Docu=
-mentation/devicetree/bindings/sound/fsl,xcvr.yaml
-> index 1c74a32def09..c4660faed404 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
-> +++ b/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
-> @@ -50,6 +50,9 @@ properties:
->        - description: PHY clock
->        - description: SPBA clock
->        - description: PLL clock
-> +      - description: PLL clock source for 8kHz series
-> +      - description: PLL clock source for 11kHz series
-> +    minItems: 4
-> =20
->    clock-names:
->      items:
-> @@ -57,6 +60,9 @@ properties:
->        - const: phy
->        - const: spba
->        - const: pll_ipg
-> +      - const: pll8k
-> +      - const: pll11k
-> +    minItems: 4
-> =20
->    dmas:
->      items:
-> --=20
-> 2.34.1
->=20
-
---9OB7iJL8uyGYmSbm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj0EeAAKCRB4tDGHoIJi
-0kPzAP43Zn5AesCX1kKOSIjtrW5Vpt8hIHrIlOUZhE9kMqS8CgD+MljoXShCv6Tw
-G/iLAeB3RppsSsV+7vuOr03Tr0FXKAw=
-=oPv2
------END PGP SIGNATURE-----
-
---9OB7iJL8uyGYmSbm--
+-Andrea
 
