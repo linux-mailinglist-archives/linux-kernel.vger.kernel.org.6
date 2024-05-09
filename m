@@ -1,366 +1,167 @@
-Return-Path: <linux-kernel+bounces-175022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5498C1937
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E08F8C193C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806252812FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709DE1C21A57
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF595129A73;
-	Thu,  9 May 2024 22:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E65E129E76;
+	Thu,  9 May 2024 22:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYNm80ob"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eSOPKI0x"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A31D1A2C03
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 22:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25829129A6F;
+	Thu,  9 May 2024 22:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715292519; cv=none; b=uisfLc38I93pPLKHbN02FFrHuTtFsKTIx8IX9O8B9G98WiG7eoVIumlypuE/98JR7Bd76xBxpjPG0/oG/obGXiAQToSCkTBM9OoAaD8dLztZw4EuPmNWUgj+ZV/Fy0vl7+a9gK/1FucL9+7L/x92qIcWGR4RWrYVESHGfjrtb1A=
+	t=1715292563; cv=none; b=Ia2tZQJZJ5bOL0JUqAZOC8TMCzFUJy9cR7hNRjEKwkEIdnJe13aS/tmqUh0KmfhAjW/856uNDurVWmU+6Iu6ap8VybRgIDK4E7A8tZ7cNB+aa5e1GQaz/9lCfbugJ7W0MdOZHGQskA1ZG7Z+KRkq1GWUM5BeDRAxzWO9GyW5nVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715292519; c=relaxed/simple;
-	bh=Hg44u7ibQJGu7rYhd2A4qsD9a8Yna0KkwhFe6+PAAfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pZmWumLdRzU4/ZA8nKEf3zfALrboQp8lO/ZS/7nOJ+TZBi2scLpjlm5sW/MYcmGBc44LXQKw4QBXrLmqfDaXZ3e9e9ggHuzdRdndlK2TYTOx7j8TLwE1bxjeahOeKifsevz2tAP4K6ELPDZw8zLWPeWP3ROz45/XxRg22WiL6ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYNm80ob; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B0BC116B1;
-	Thu,  9 May 2024 22:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715292519;
-	bh=Hg44u7ibQJGu7rYhd2A4qsD9a8Yna0KkwhFe6+PAAfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WYNm80obu3MGlsXeF1YOPHK4rkvGtvXHQdLiFAer1aYQ2VxHWQZID6yoE2C7Sd5rd
-	 1T+CvNL2r9T1QHmq1D3GyEZ3wOfErWJcuVSZ9bwD7pd+QXH9FQIncyKKalP5uKimiU
-	 pKPSMwvBcL2YXVlm4Px7HPxlzgq4ycgx80Oy3CNF5kaNhdVwDJouCO1/it7owHVseB
-	 bR+GHb6+L+5vhPg2kT4OVyFPSgHnN7FWtd2MRyrOyewsAbsrMvlpvD22xxq7DHctM7
-	 X0ax2Cw3Tf/R04GzF1bD55sS+IDyN7XSM+xFqPT56NjmExzHhuWkdE5RW99bVQib+G
-	 hOX05ORoxFhsQ==
-Date: Thu, 9 May 2024 23:08:34 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Song Liu <song@kernel.org>, Xi Wang <xi.wang@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] riscv: Support compiling the kernel with more
- extensions
-Message-ID: <20240509-google-passing-3e7577235c44@spud>
-References: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
- <20240509-uptown-aging-5bdec4730d70@spud>
- <Zj09IUE5k1EJL08X@ghost>
+	s=arc-20240116; t=1715292563; c=relaxed/simple;
+	bh=dSr0oxLlibKNvuTG5gujhJneI5aqNdgz3TUp6moOfds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TLEsi/aayRdAaQj0qWeiS8+LODNenOoJ/chJDrlhgaiFuBM5NI7eYi7fE10jQK19Mr7XoDL6+hCugduwIRR8VAx23ve8cvNs/M7k9ieC4sBUuonJfLp0hZWd/JL42McUWlD3z8fuHJNpXVGuQAHig0CnuL/hUQDxUF/srxRQoI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eSOPKI0x; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 449M04T1014634;
+	Thu, 9 May 2024 22:09:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=duuW4RPEH3OftDT3NUAKs6T19v0gBVzrmpREhIv0D1Y=; b=eS
+	OPKI0xJbEG2v45oQ7va5DfqzXPveE9N9ZokpdZuY1122uprUGZW4xg9S5ceLPlow
+	SiuoZMgogOnQ0ONj2+2SfLT99jtvC47/rOJqJ9UzMI8Cim98A+jXoj6nHOGUXE5F
+	nZu5AGHDpNDDzZDNP6oSMYBPUpDcbJMoN6513791QcxDQFkV3vEcySAp8BRkQPk8
+	WuWVNie1kc5DnH+g8RUOKeAzky1q0IAor8a4qzuxn+Y3FIRlp6lmJMj83/1E3gz8
+	1LdyyRtKzTvteBSNvqvBlYGJCxC0uY/kDmCJDIuoUhjNh9l3E5bCGeO29zZ1+Qrd
+	9MUSR2popFDzLbK/KUUQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w180gn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 May 2024 22:09:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 449M9235023015
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 9 May 2024 22:09:02 GMT
+Received: from [10.71.112.114] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
+ 15:09:01 -0700
+Message-ID: <96fe827b-e65f-570c-30de-1e51793f61a2@quicinc.com>
+Date: Thu, 9 May 2024 15:09:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UsyF7h4OVwtBkffN"
-Content-Disposition: inline
-In-Reply-To: <Zj09IUE5k1EJL08X@ghost>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v21 38/39] ASoC: qcom: Populate SoC components string
+Content-Language: en-US
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <lgirdwood@gmail.com>, <andersson@kernel.org>, <krzk+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <Thinh.Nguyen@synopsys.com>,
+        <broonie@kernel.org>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <bagasdotme@gmail.com>, <robh@kernel.org>, <konrad.dybcio@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240507195116.9464-1-quic_wcheng@quicinc.com>
+ <20240507195116.9464-39-quic_wcheng@quicinc.com>
+ <cb864ea4-95e3-4e99-920d-341188006291@linux.intel.com>
+ <cdee0eb7-7fb7-f267-8203-7dfb0ea2d31d@quicinc.com>
+ <92abca40-5eda-49d0-bc9d-eeb1a76e3461@linux.intel.com>
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <92abca40-5eda-49d0-bc9d-eeb1a76e3461@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FIieVROshBWYeBTCKPjUthilHzKh18GX
+X-Proofpoint-ORIG-GUID: FIieVROshBWYeBTCKPjUthilHzKh18GX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=712
+ malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405010000 definitions=main-2405090157
 
+Hi Pierre,
 
---UsyF7h4OVwtBkffN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 5/9/2024 6:17 AM, Pierre-Louis Bossart wrote:
+> 
+> 
+> On 5/8/24 15:06, Wesley Cheng wrote:
+>> Hi Pierre,
+>>
+>> On 5/7/2024 2:40 PM, Pierre-Louis Bossart wrote:
+>>>
+>>>
+>>> On 5/7/24 14:51, Wesley Cheng wrote:
+>>>> For userspace to know about certain capabilities of the current platform
+>>>> card, add tags to the components string that it can use to enable
+>>>> support
+>>>> for that audio path.  In case of USB offloading, the "usboffldplybk:
+>>>> 1" tag
+>>>
+>>> usboffloadplayback?
+>>>
+>>> same question as before, do we need spaces?
+>>>
+>>
+>> I think spaces are currently used as a delimiter, so I'll remove the
+>> spaces.
+>>
+>>> And if we have controls, why do we need component strings? The component
+>>> string is not dynamic to the best of my knowledge, this could be
+>>> problematic if the card is no longer capable of supporting this stream,
+>>> while a control can be updated at will.
+>>>
+>>
+>> Maybe I misunderstood your comment here:
+>>
+>> https://lore.kernel.org/linux-usb/925d7c03-c288-49a4-8bcd-395b32810d75@linux.intel.com/
+>>
+>> At the time, I didn't include the kcontrols on the USB SND portion of
+>> it, which was added after this series.  My interpretation was that there
+>> were userspace entities that could query for general information about
+>> what the card supports based on the components string, or sound card
+>> name.  I treated this as an independent identifier, since the change to
+>> add the offload capable jack was present.
+> 
+> My comment at the time stands: it's very hard to figure out that a
+> random card supports USB and is connected to a given endpoint.
+> 
+> It'd be much easier as you wrote in the comments on patch 34 to have a
+> control in the "regular" USB card to point to the 'better' offloaded
+> path exposed by another card. Applications wouldn't need to know what
+> this other card is, they would then use the card:device information
+> directly.
 
-On Thu, May 09, 2024 at 02:16:17PM -0700, Charlie Jenkins wrote:
-> On Thu, May 09, 2024 at 09:25:10PM +0100, Conor Dooley wrote:
-> > On Tue, May 07, 2024 at 06:36:26PM -0700, Charlie Jenkins wrote:
-> > > The kernel currently has the restriction that it can only be compiled
-> > > with the extensions that are hardcoded in arch/risc/Makefile.
-> > >=20
-> > > Any extension that is not listed in the Makefile can still be used by
-> > > explicitly writing the assembly and using alternative patching.
-> > >=20
-> > > This series introduces Kconfig options that allow the kernel to be
-> > > compiled with additional extensions.
-> > >=20
-> > > The motivation for this patch is the performance improvements that co=
-me
-> > > along with compiling the kernel with these extra instructions. Allowi=
-ng
-> > > the compiler to emit arbitrary Zb* instructions achieves a 4.9%
-> > > reduction of dynamic instruction count for a test ran in Spike that
-> > > boots the kernel and runs a user space program that prints to the
-> > > console.
-> > >=20
-> > > Additionally, alternatives that check if an extension is supported can
-> > > be eliminated when the Kconfig options to assume hardware support is
-> > > enabled.
-> >=20
-> > I brought this up yesterday at the weekly patchwork call and meant to
-> > reply here yesterday, but I didn't get a chance to. I'll start off with
-> > my thoughts on the idea and the implementation and then mention some of
-> > what was said at the call.
-> >=20
-> > Firstly, I don't like an implementation of this behaviour that requires
-> > doing ifdeffery around alternative sites. I think that iff this is done,
-> > the alternative itself should be evaluated at compile time, rather than
-> > having to add more decoration to callsites. That becomes particular
-> > important in the cases where the alternative may not be a simple a or b
-> > case, although I don't think there are any of those in the extensions
-> > you've looked at so far - or at least, you've not tackled those cases.
-> >=20
-> > I am curious about the Svpbmt patch, as you say
-> > > Svpbmt would not benefit from having PLATFORM_SUPPORTS_RISCV_ISA_SVPB=
-MT
-> > > so just move the definition of RISCV_ISA_SVPBMT to Kconfig.isa.
-> > without any any justification for why it would not benefit. There's
-> > alternatives in the codebase right now for Svpbmt, why wouldn't those
-> > get evaluated at build time also? Or why not Zicbom? Was your rationale
-> > for the extensions chosen just the ones that the compiler can actually
-> > generate code for?
->=20
-> It's only used in a place that has errata so I wasn't sure how to
-> handle that.
->=20
-> > That aside, the series seems to address the easiest parts of doing
-> > compile-time extension configuration rather than the messier cases like
-> > Zicbom. To me it seems like the messier cases is actually where we shou=
-ld
-> > be starting, so that we have a scheme that works well.
->=20
-> That's good advice. I wanted to send out something to start the
-> conversation on what people were interested in optimizing here. I can
-> look more into Zicbom.
->=20
-> >=20
-> > Ben mentioned something along the same lines for the
-> > has_extension_likely() stuff, which should be far simpler, and can be
-> > implemented via a macro, as you already pointed out.
->=20
-> I was hesistant to change "too much" as I was expecting push back and
-> didn't want to have to re-write everything ;)
->=20
-> >=20
-> > I did notice that you left the riscv_isa_extension_available() stuff
-> > alone. I think that's reasonable as that code serves more than one
-> > purpose and is intended for use in either in probe functions where
-> > there's no perf (or even code-size impact really, just disable the
-> > driver if you don't want it) or in cases where the user provides its own
-> > bitmap, like KVM.
-> >=20
-> > I haven't actually reviewed the content line by line yet, so I don't
-> > have any detailed comment on any patches, but I think the two things
-> > being done here deserve to be split apart - the first element is
-> > evaluating things that are using alternatives at build time and the
-> > other is adding extensions to the toolchain's march.
->=20
-> That will double the size of the series but if you think that's better
-> than I can do that.
->=20
-> >
-> > Moving onto the objection to the series that I have though, at least at
-> > the moment. Adding more and more optimisations to the kernel already has
-> > potential to balloon to silly levels, and that's before we even consider
-> > the permutations of different build-time options. Both of those things
-> > feel like "where does it stop?" situation, with every single extension
-> > that could have code-gen impact becoming another build-time option for
-> > the kernel. As a result, I'm not convinced that we should do this at al=
-l,
-> > and I am starting to wonder about some of stuff that we have already
-> > merged..
-> >=20
->=20
-> Vendors that expect a high level of performance need a way to be able to
-> compile the kernel with more extensions than the base extensions. We are
-> leaving 5% that can easily be gained by not allowing this.
+OK, then it might be fine to remove the components tag if patch#34 is 
+there.  That kcontrol is exposed as part of the sound card created for 
+the USB device, so if applications queried, it would signify that there 
+is an offload path available.
 
-Maybe we are, but if people want their 5% they need to show up with
-evidence that there is actually 5% to be gained. Also, if you read on, I
-am not saying we should never do this, and leave that 5% permanently on
-the table, only that we should significantly constrain the permutations
-that we are allowing. And honestly, if some vendor is really desperate to
-compile the kernel with Zxy in march but not whatever other extensions
-that may be in a profile's mandatory set, they can always do it out of
-tree. Carrying a single out of tree patch is nothing to most vendors...
+For this kcontrol, it will return the ASoC platform card index, would 
+that be sufficient?
 
-> > I don't think the configurability this series adds is worth the burden =
-of
-> > maintaining support for all the various configurations you're proposing
-> > here (and the others that someone will come along with the week after
-> > this would be merged. After all, with extant hardware that distros are
-> > supporting, albeit in developer or bring-up type builds, one of these
-> > options could even be enabled. Which I suppose could be translated to
-> > a NAK from me on doing something like this at the moment...
->=20
-> By migrating everything into more refined macros I think I can ease this
-> burden. I don't see this as a burden, these options are all so closly
-> tied to each other
-
-What does "closely tied to each other" actually mean?
-
-> and only matter when a kernel developer explicitly
-> wants to use an extension.
-
-Unless your definition of "kernel developer" extends to "people that
-compile their own kernel based on menuconfig", then I don't think you
-and I are on the same page about what the series actually does.
-Remember, there's the making alternatives and other optimisations
-unconditional /and/ the addition of stuff to march going on in this
-series.
-
-> If this is all wrapped up into the macros
-> that check if an extension is available it won't even be an extra step
-> than what it currently is.
->=20
-> >=20
-> > Palmer suggested in the weekly call that what would make more sense is
-> > having established bases, that align with what distros are likely to
-> > ship, which probably means something approximating the mandatory set for
-> > profiles, although he also said that the rva23 profiles had already been
-> > given the kibosh by folks. He'll have to provide more information on
-> > that one though.
-> > I think that that seems like a sane approach, as it would produce a far
-> > more limited set of combinations to maintain, but it also means not doi=
-ng
-> > something like this until the point that distros commit to some specific
-> > set of extensions that is not rv64gc... As well as reducing the
-> > combinations that we need to reason about as developers, I think that t=
-he
-> > "user story" for people deciding what is worth enabling in their kernel
-> > config before simpler too.
->=20
-> There is a chicken and the egg problem here. The
-> hardware/software/distros all want to support the same thing. Somebody
-> needs to step up and make a decision. With a patch like this, a distro
-> can see all of the functionality and select what they want. This can
-> then be rolled up into a config that selects something like all of the
-> bitmanip options.
-
-I don't think there's a chicken and egg problem, or at least not one
-that kernel config options for every extension solves. I expect distros
-to work with RVI to define something, which may well be the platform
-spec (hopefully it's the platform spec...) and then we can make that a
-config option.
-
-> > * Something else that came up during that call, and I think it was
-> > Palmer's suggestion was having a hard think about what we are
-> > currently accepting optimisations for in the kernel. I think we need to
-> > up the "burden of proof" for what we will merge optimisations for to
-> > things that are demonstrated to have significant benefits. I don't mean
-> > to single you out here, cos I did ack the patch after all and it was
-> > just the random example I stumbled on this evening while looking at some
-> > alternative users in the course of writing a reply here. Take this code
-> > for example:
-> >=20
-> > 	/*
-> > 	 * ZBB only saves three instructions on 32-bit and five on 64-bit so n=
-ot
-> > 	 * worth checking if supported without Alternatives.
-> > 	 */
-> > 	if (IS_ENABLED(CONFIG_RISCV_ISA_ZBB) &&
-> > 	    IS_ENABLED(CONFIG_RISCV_ALTERNATIVE)) {
-> > 		unsigned long fold_temp;
-> >=20
-> > 		asm goto(ALTERNATIVE("j %l[no_zbb]", "nop", 0,
-> > 					      RISCV_ISA_EXT_ZBB, 1)
-> > 		    :
-> > 		    :
-> > 		    :
-> > 		    : no_zbb);
-> >=20
-> > 		if (IS_ENABLED(CONFIG_32BIT)) {
-> > 			asm(".option push				\n\
-> > 			.option arch,+zbb				\n\
-> > 				not	%[fold_temp], %[csum]		\n\
-> > 				rori	%[csum], %[csum], 16		\n\
-> > 				sub	%[csum], %[fold_temp], %[csum]	\n\
-> > 			.option pop"
-> > 			: [csum] "+r" (csum), [fold_temp] "=3D&r" (fold_temp));
-> > 		} else {
-> > 			asm(".option push				\n\
-> > 			.option arch,+zbb				\n\
-> > 				rori	%[fold_temp], %[csum], 32	\n\
-> > 				add	%[csum], %[fold_temp], %[csum]	\n\
-> > 				srli	%[csum], %[csum], 32		\n\
-> > 				not	%[fold_temp], %[csum]		\n\
-> > 				roriw	%[csum], %[csum], 16		\n\
-> > 				subw	%[csum], %[fold_temp], %[csum]	\n\
-> > 			.option pop"
-> > 			: [csum] "+r" (csum), [fold_temp] "=3D&r" (fold_temp));
-> > 		}
-> > 		return (__force __sum16)(csum >> 16);
-> > 	}
-> >=20
-> > The comment there made me think as to why we even have this optimisation
-> > for Zbb at all - is the saving of 3 - 1 or 5 - 1 instructions actually
-> > worth having 3 code paths? The commit message for this contains no
-> > information on the performance benefit of the code at, and while the co=
-ver
-> > letter has some information, it was not actually tested in hardware and
-> > does not look to be a real-word benchmark. This one is already merged,
-> > but something like this in the future would really need to be subjected=
- to
-> > significantly more scrutiny! At the very least, "optimisations" need to=
- be
-> > proved to be beneficial in hardware.
->=20
-> I put the justification in the cover letter of the series:
-
-If you read what I wrote I acknowledge that there's info in the cover,
-but if you continue reading you'll note I said that "it was not tested
-in hardware and does not look to be a real-word [sic] benchmark".
-
-> "Tested on QEMU, this series allows the CHECKSUM_KUNIT tests to complete
-> an average of 50.9% faster."
->=20
-> I did a lot of testing locally to ensure that every combination was as
-> performant as it possibly could be. I did not provide numbers for every
-> case simply because the combination with 64-bit and Zbb was the
-> primary target of the series and nobody asked about the other cases.
->=20
-> There is pretty much only this code and the bitops optimization in the
-> kernel that try to do anything extreme for the sake of performance.
-> These checksum functions are very critical to performance as these
-> checksums are computed on every network packet that is received by the
-> kernel. Networking drivers rely on these functions and they need to be
-> as fast as possible. 50% improvement is very good even if it's only
-> qemu.
->=20
-> We could just say we don't care about performance if you are running
-> 32-bit linux or don't have Zbb, but we would be making that decision
-> because we don't feel like maintaining the code. The code was written,
-> tested, reviewed, and it provided large performance gains. I fail to
-> understand why this is a burden to maintain.
-
-Maybe if you read what I wrote you'd see what I was getting at, or maybe
-not as I might not have been sufficiently clear. I'm not saying that this
-particular optimisation is not worth having, but rather than I wanted to
-see why this particular optimisation was worth maintaining 3 code paths
-for but the commit message does not detail any of the benefits, and
-looking at the cover I discovered that it was not tested in hardware nor
-seemingly with a real test case.
-I am saying that the future standard should require both of those things,
-not that I think your optimisation is not worthwhile and should therefore
-be thrown out.
-
-Hope that helps,
-Conor.
-
---UsyF7h4OVwtBkffN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj1JYgAKCRB4tDGHoIJi
-0jSZAQCjxGD+rECe8QH48LKnrjN84x50ogXkkRnw9zhscMf50wD/YxwAUp8+fjAx
-feEqZl9tzlOLBJZep5VY9fmnpdLIEQo=
-=wUyu
------END PGP SIGNATURE-----
-
---UsyF7h4OVwtBkffN--
+Thanks
+Wesley Cheng
 
