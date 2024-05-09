@@ -1,399 +1,109 @@
-Return-Path: <linux-kernel+bounces-174140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 436388C0ABA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:56:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A156D8C0ABB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABDEFB21DFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:56:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16981C21C9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1096149007;
-	Thu,  9 May 2024 04:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21495149006;
+	Thu,  9 May 2024 05:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zTPDy5c5"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2048.outbound.protection.outlook.com [40.107.223.48])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="G1RLaI/F"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9535A10E5
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715230590; cv=fail; b=itz0Sn6BtYGFq6MshWuaS007Rr0fJ3TwljuFSelBC4fb3GGlDvnpAPf4o6yR2jEmVkzyOX7ILT3OZERTtrB7+ciM/W02QP7LouqcQ/T742xP63gkv90wHNZ+fXj42pOBjn6/LzUQNC4DuHbwObSACSqtfulwLtzp7IzoZsAoNEc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715230590; c=relaxed/simple;
-	bh=RiwmLvIEujZ2vLeAQ/7N2fdSlvA2Q6N9Ef5WKg0LUJ0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=u3FWwwnvbRlWTy5qNya1zSjc+JYKAoGkmS+MTlfZPZ0+PfKdjRdvyCfM2vZSu4/BUQiUpkSHCtsJhnq/SutRbaJsZYADCpCsn0LFiyl/njbYnoj5K9tyWsTPzxWqSjjSu89+YIhp/r81aWtvrJnq+x6M9ExQd8dco8QO9e6XD6M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zTPDy5c5; arc=fail smtp.client-ip=40.107.223.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FpcKFEVZ+O1x8jgicI8eiopcYvy1UfjdVBF0MK3A32GRp0BedaATHaT/p7ZTfsxieQ9yr/FTnNOXPvJGVwf0dAtmhUH52cESgc8NQU/oQsZK1Q/51NFbbRa9QH0yvWfEnht6buT7HbM3f1xthPnKSjoVPKQ4iNCh2X6MxvEJV7SKUoFHbHdqh4GorblyeYAlrqncAPuio1Ih32IdFlgDYsIKOPrYNbP7f7LfHTFKbB6K9v66wyCmC9cR1CfoHT43EJIEv0KkwQzE46/hPSQiOVb/VaB40f48E6Y6TD6T7WdIn/5h6zp6CdyP9Pl4TDc+iLE4BYrasZ5Y+VFp0eDgwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yogfTCmgtveTpi9P8R4DHcyFFnDwWdqpgioZsrQngpA=;
- b=HsWZF6oLe3yeZZU91KaMxXPTeHbQ6UXOuO1FvWY0hi0OJodZUkqVcle1NuRNjNn1ozLvxrvg/TDHXj0d8LP5mIgxfjG4FOMc+pM8cq/Ay9n34VqX+BV3p/3KDk4bFn0ISkujnc58xDHFPb42szOwyte5WoEU/G5H9oVKoXJnvRS/WuXHHc/Vr8uXWiVK3qeqPkxvOXy4H6GGLlRXR9KWc9ivfTV9UBurp0PMbRPFqYaGX4yQsC3n7DY2xW+5/0hgGxBrRRqriFv91Fb4PZmXI+6GEc3SW5kyQ2bBzBNBKdhXrYQrHqPTeneAbwS1xh9WZckuiLroPo4oLZ8K/CYlTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yogfTCmgtveTpi9P8R4DHcyFFnDwWdqpgioZsrQngpA=;
- b=zTPDy5c5EIbRvN3GBt9Zpjwbt73LB/d8pZMaS4AFS7rLGVcOQZGWU+XILnF7hHh5ZMjU89v3ayAZLxEymCY5T2y20W/CUxgGo2TK7SYCnLtbowWw38BTXFM7dHnjNS217fowPN1p/p49VelnIY9k6uL0YckX4/D1dzI3/JMCRZE=
-Received: from SJ0PR03CA0083.namprd03.prod.outlook.com (2603:10b6:a03:331::28)
- by MW6PR12MB8833.namprd12.prod.outlook.com (2603:10b6:303:23f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
- 2024 04:56:25 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:331:cafe::ca) by SJ0PR03CA0083.outlook.office365.com
- (2603:10b6:a03:331::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42 via Frontend
- Transport; Thu, 9 May 2024 04:56:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Thu, 9 May 2024 04:56:24 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 8 May
- 2024 23:56:22 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 8 May
- 2024 23:56:22 -0500
-Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 8 May 2024 23:56:22 -0500
-From: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-To: <michal.simek@amd.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Jay Buddhabhatti <jay.buddhabhatti@amd.com>
-Subject: [PATCH v2 RESEND] soc: xilinx: Add cb event for subsystem restart
-Date: Wed, 8 May 2024 21:56:16 -0700
-Message-ID: <20240509045616.22338-1-jay.buddhabhatti@amd.com>
-X-Mailer: git-send-email 2.17.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59D028373
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 05:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715230872; cv=none; b=VWNGrVPX1NvF5MEHAY6u6Z4FtmhnomKJVPUL94Q0XiGQXahptAhxAgYeeYPP64S22Ipz7Kp/0Y1X6r2wXfgXOvSrI50zi+//etjqFfIqAPHgqzuVCEOUQWIhieeqZiApGe5gpDI7aPdf02gElVrza9GXsEwNRsPzjkvc4qgvG2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715230872; c=relaxed/simple;
+	bh=4x0gsReYDFDPrW0BFz65xuSmqH37neQnQ6EMuel0kXA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=k/A6kO5yTfN4r4daXbdTG2aejgFOkWT0Fdy4lAwjStAS4mxEgY+MZwuIvGM8sF60zhj+S65LMcIvJhu3Qt0X/cJ8vcOPxcHqnvlJGne4eIWoKQNohZCFpXeNgG12T8ug7Wg+wjaW/a1kI8W5Xkxf7LRKAwXI4SHT8yv9Y1btDMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=G1RLaI/F; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1715230816; x=1715835616; i=efault@gmx.de;
+	bh=UuxZzsTEELEHmQYULWtJiXtg8qSf5xzPaKf1Cp0y3CM=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=G1RLaI/FO7jzkt+V2FbbUBc7KynjNaITLCCJUqqJAJj3A5QgRfbqRkWC+HIW7ILX
+	 V2Ul2ALLFa593INGH9FakjCQ/V9Th7KTWkTo6CI+WodwjdM2XuX6eiKWgZqF8eCal
+	 Rqw8a8xEO8kd3ZIfhGHoPTe8Tnp1iOqxsB47TY/ri0l6bkH+viajIq28HGtJcVgY8
+	 Hp9Z76bTlRvnQJpm5CrXUKnuZr540es6rdBXegOatGgk/pgixLMj8g2I4jMOSqL/P
+	 pVsvqkQjp+GC98ZrQLOpgEm6w65B9Z8pNAQM17ggHzZyHGCqDZC+O8yrao6j/0JF1
+	 f0Z7nA9O2lCKpWttOA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([185.191.217.253]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MQ5rO-1sI2t544ci-00PIof; Thu, 09
+ May 2024 07:00:16 +0200
+Message-ID: <ae4545e2004395f345ac030635ba72a1e16ec2fe.camel@gmx.de>
+Subject: Re: [RFC][PATCH 10/10] sched/eevdf: Use sched_attr::sched_runtime
+ to set request/slice suggestion
+From: Mike Galbraith <efault@gmx.de>
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
+ juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,  rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com,  vschneid@redhat.com,
+ linux-kernel@vger.kernel.org, kprateek.nayak@amd.com, 
+ wuyun.abel@bytedance.com, tglx@linutronix.de, tim.c.chen@intel.com, 
+ yu.c.chen.y@gmail.com
+Date: Thu, 09 May 2024 07:00:13 +0200
+In-Reply-To: <ZjxHlLQv1WuFq+SC@chenyu5-mobl2>
+References: <20240405102754.435410987@infradead.org>
+	 <20240405110010.934104715@infradead.org> <ZjpFruUiBiNi6VSO@chenyu5-mobl2>
+	 <9c360c0d337b124c71095f06889d1c69279a7c06.camel@gmx.de>
+	 <ZjxHlLQv1WuFq+SC@chenyu5-mobl2>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|MW6PR12MB8833:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac8baeab-e1b4-4d2c-cc98-08dc6fe460db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|376005|82310400017|36860700004;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9s6Ob5IdCcToUwzgZOa8w9uHUv6B9zPDBh6fhgoH44mOuOWjBh7UpjVRON+1?=
- =?us-ascii?Q?YCha8A79wXQgAmJT4wdOt3szI/+o7IHnd98rao1/qVrRnd+krKMOisbhIOFG?=
- =?us-ascii?Q?9as6jj5tsKFryIV935tcPkn48IDDWmGPFFVhJeuhm5K2LUGbbanFRioQ3tmd?=
- =?us-ascii?Q?apEmNiwaAV8OjSZeIopzq0yRTt7QyLNfJnCVE3VF4ihmVcttFyh+4oymL9QS?=
- =?us-ascii?Q?G+nApDitCp+gLAmTYsEmplvuEZ1tzKYzc1hYBbP/a0UOlQcOOebKHWFTtHax?=
- =?us-ascii?Q?mdWOSfjPGbmNbBNHgB/qV4+sPYt2YuS1asqPs4dfKXROZfOHYNGSt8yvpnWb?=
- =?us-ascii?Q?NjliBe83hWTocUuFSf7HuWf54kTK/bZlzkg5+EFQL1qHUfdhEpAFQX1/miRH?=
- =?us-ascii?Q?GLH+fN8c5qpKV7XULBPvqCJJQPJ511Mk3pzLPfdpKQoQKyE6EFFCCPpzBN3L?=
- =?us-ascii?Q?pwCdMUiofMTOVVZGGoQeiFDwfh7S+eC5zsAJkGdt55/BZcA07Kyz49juEEu5?=
- =?us-ascii?Q?RBzswSwNH/CgDYnYJC/4IJCCozFrSRpkT2HMMK70jvEwXhMyTOxp+2rj6Gjg?=
- =?us-ascii?Q?zyFgPr7RK1IxaHyDP4YXgsG5j1aeWDa0uQTF73HaETqZNyvho92W2qKtyw7R?=
- =?us-ascii?Q?GsNF64/7Dcy+9blhxo+IIlPYMZSMn3BIg7RKo4tDhd621O+Fh52T+Hvej4Ih?=
- =?us-ascii?Q?yjXDG206AacX7NdTiKIPbuq5TxItCgYZGdtyY8OFFx7skHGjqAcGMP3d3Tw3?=
- =?us-ascii?Q?FcSXEVj35vCKZqVsxFWRNx1jpsolVTDpWUXzGEjpbhoJbS8GWWAzGHuaEFc3?=
- =?us-ascii?Q?3/56430qo/pEoNNKtb6YHCAqett/ajLlVAvK6qwAv9FKZn6CxAjMHJs56kSR?=
- =?us-ascii?Q?XoUmuKhWSfICJOxRo7zkOQSbmkuhBg6OgutFs7vKOW1r6XlbtyVCrJ5Id8BP?=
- =?us-ascii?Q?HdQKabP802Rnqg6JdpJAZsFDVDfCfSIjqvvK5i8NHqZcRx1657I58fAE457D?=
- =?us-ascii?Q?ZTU4ird1c5Nn3MGzl6E+JVyNZvM/81PKTET//EZJoq2BymY5z4v3ci5qgB+H?=
- =?us-ascii?Q?6ukalVDaGFak2OmhdPpJhpHvebpH4zTT1vdamBX0evOHz67BKCmRZW58wojl?=
- =?us-ascii?Q?cIEWVQVpGr1sxy2RaTe84udyy7Dgk8p+najkYE/mkEmKZzXFpoDX5jjoSAo+?=
- =?us-ascii?Q?FyJ66nxqfcOQH526tUwkqDJHFsQqXR5JmI4ALakPXfsckAELuKdXZDe6udU2?=
- =?us-ascii?Q?Z3fqMC34uHfrTO/vEpa53hEfvYez3+ougfziFfZYSyaWbedDI73+ORm4wWww?=
- =?us-ascii?Q?gUbh1L4P4vKrXXawELjl75pL?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(376005)(82310400017)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 04:56:24.6761
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac8baeab-e1b4-4d2c-cc98-08dc6fe460db
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8833
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:km7XOlV+iZTX5Pbj0mzycx9dHsKyHRgmw3Fzp554IWSdRIYgGmx
+ PwiphjC48ndCXjI7Ww2hHcx3psPVvr4+2OTHLM6uPfVRjYqGjFtTtmvRAw+TUOTC+e6eF65
+ GBAa9vcOdz1uEW1w6MlysWnKCXfHOqSyx7IipAzNwQsh9rbVlUtHRw4ky3x0sST7dDaoEIZ
+ jw71wMp9CJJGiMaoeydpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:LuImmvoTdTw=;r6EDsHiqRYcZ1+UZD8fAbq0VGcv
+ /oUkkMeYizoWIGWzB2rx5GxlqY/tYbnENXOAQfmFlHpM7fZ88h1YkpaAhErRySdwtDIMwn/Re
+ jFpQQQzIrnEu1HqLtc6MCEWrssHm/vDRc5zk0CrGOVBKTIpc1y6UAyPBujZTxANcUGoSCX7ob
+ sBQm8n2ri8Vw4VbSQ4TjrjqbPTw3P/Cr6zf0N7SDjrlyUj4G9fsUpV79yyxx1BUN+I2cjYQdi
+ 16f5ObqME0ERky0ROZ4av6hPZ1VEYEPtB+MlaYCehHnhYxE0Tv4K+FbIWfhRv88rmljNVlqKO
+ 8OC5F3iNJPHbWza95mMSTQ04cW3ixhLB3FGcMneez8fM/BJt7pQsFLeV+zbBafc1WMvLd5WBK
+ qz19R6YtGxz+9pNya99ZWZS8/ncQm1plAsGyyPypfnEuPaki8dLx38olkAIaoVQxziLTPGngs
+ xi8mOZv5IZpFX7vjpc52lQcsbIKyew97hkzckwdDxKwqlnJq2F1+1n3NELHszFRVrjfoKnI3K
+ AtEaEgh/R0Ls1NdW6W58LIUgamnFfMVuWR6tzaVvCcbWVftWwOKuwQd6SYF1CPlKe8mHpo68L
+ ajEtVpmc1oF1XVFDn6FhljhCzAzT9kaKY4xBdrI++2UStYLy6Th8QUIc7yN+K3TyzVhzUM8Ly
+ WER1CRRH1MSYdBz4fy6DT0NKxxjaiK17bZzTRVORLbYN/NS2+UkT+XOH7jANgpfuFaThvs9rt
+ 5F/WTkxg7nu2SAiM8b+LxkuBT1c0EObRy3RwKuZ1CQ93IRaxWYjjmApSvv3MnVQJzthv/lp8c
+ ZuCAwM195FSjDjKreZmExKutYtjjrgo0vOltIWHreieYM=
 
-Add support to register subsystem restart events from firmware for Versal
-and Versal NET platforms. This event is received when firmware requests
-for subsystem restart. After receiving this event, the kernel needs to be
-restarted.
+On Thu, 2024-05-09 at 11:48 +0800, Chen Yu wrote:
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
----
-V1: https://lore.kernel.org/lkml/20240424095937.2448-1-jay.buddhabhatti@amd.com/
-V1->V2: Updated copyright header in xlnx-event-manager.h
----
- drivers/soc/xilinx/zynqmp_power.c           | 151 +++++++++++++++++---
- include/linux/firmware/xlnx-event-manager.h |  10 ++
- 2 files changed, 141 insertions(+), 20 deletions(-)
+> And I agree we should take the platform size(such
+> as CPU number) into consideration.
 
-diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
-index 965b1143936a..fced6bedca43 100644
---- a/drivers/soc/xilinx/zynqmp_power.c
-+++ b/drivers/soc/xilinx/zynqmp_power.c
-@@ -30,9 +30,27 @@ struct zynqmp_pm_work_struct {
- 	u32 args[CB_ARG_CNT];
- };
- 
--static struct zynqmp_pm_work_struct *zynqmp_pm_init_suspend_work;
-+/**
-+ * struct zynqmp_pm_event_info - event related information
-+ * @cb_fun:	Function pointer to store the callback function.
-+ * @cb_type:	Type of callback from pm_api_cb_id,
-+ *			PM_NOTIFY_CB - for Error Events,
-+ *			PM_INIT_SUSPEND_CB - for suspend callback.
-+ * @node_id:	Node-Id related to event.
-+ * @event:	Event Mask for the Error Event.
-+ * @wake:	Flag specifying whether the subsystem should be woken upon
-+ *		event notification.
-+ */
-+struct zynqmp_pm_event_info {
-+	event_cb_func_t cb_fun;
-+	enum pm_api_cb_id cb_type;
-+	u32 node_id;
-+	u32 event;
-+	bool wake;
-+};
-+
-+static struct zynqmp_pm_work_struct *zynqmp_pm_init_suspend_work, *zynqmp_pm_init_restart_work;
- static struct mbox_chan *rx_chan;
--static bool event_registered;
- 
- enum pm_suspend_mode {
- 	PM_SUSPEND_MODE_FIRST = 0,
-@@ -54,6 +72,19 @@ static void zynqmp_pm_get_callback_data(u32 *buf)
- 	zynqmp_pm_invoke_fn(GET_CALLBACK_DATA, buf, 0);
- }
- 
-+static void subsystem_restart_event_callback(const u32 *payload, void *data)
-+{
-+	/* First element is callback API ID, others are callback arguments */
-+	if (work_pending(&zynqmp_pm_init_restart_work->callback_work))
-+		return;
-+
-+	/* Copy callback arguments into work's structure */
-+	memcpy(zynqmp_pm_init_restart_work->args, &payload[0],
-+	       sizeof(zynqmp_pm_init_restart_work->args));
-+
-+	queue_work(system_unbound_wq, &zynqmp_pm_init_restart_work->callback_work);
-+}
-+
- static void suspend_event_callback(const u32 *payload, void *data)
- {
- 	/* First element is callback API ID, others are callback arguments */
-@@ -119,6 +150,37 @@ static void ipi_receive_callback(struct mbox_client *cl, void *data)
- 	}
- }
- 
-+/**
-+ * zynqmp_pm_subsystem_restart_work_fn - Initiate Subsystem restart
-+ * @work:	Pointer to work_struct
-+ *
-+ * Bottom-half of PM callback IRQ handler.
-+ */
-+static void zynqmp_pm_subsystem_restart_work_fn(struct work_struct *work)
-+{
-+	int ret;
-+	struct zynqmp_pm_work_struct *pm_work = container_of(work, struct zynqmp_pm_work_struct,
-+							     callback_work);
-+
-+	/* First element is callback API ID, others are callback arguments */
-+	if (pm_work->args[0] == PM_NOTIFY_CB) {
-+		if (pm_work->args[2] == EVENT_SUBSYSTEM_RESTART) {
-+			ret = zynqmp_pm_system_shutdown(ZYNQMP_PM_SHUTDOWN_TYPE_SETSCOPE_ONLY,
-+							ZYNQMP_PM_SHUTDOWN_SUBTYPE_SUBSYSTEM);
-+			if (ret) {
-+				pr_err("unable to set shutdown scope\n");
-+				return;
-+			}
-+
-+			kernel_restart(NULL);
-+		} else {
-+			pr_err("%s Unsupported Event - %d\n", __func__, pm_work->args[2]);
-+		}
-+	} else {
-+		pr_err("%s() Unsupported Callback %d\n", __func__, pm_work->args[0]);
-+	}
-+}
-+
- /**
-  * zynqmp_pm_init_suspend_work_fn - Initialize suspend
-  * @work:	Pointer to work_struct
-@@ -184,10 +246,46 @@ static ssize_t suspend_mode_store(struct device *dev,
- 
- static DEVICE_ATTR_RW(suspend_mode);
- 
-+static void unregister_event(struct device *dev, void *res)
-+{
-+	struct zynqmp_pm_event_info *event_info = res;
-+
-+	xlnx_unregister_event(event_info->cb_type, event_info->node_id,
-+			      event_info->event, event_info->cb_fun, NULL);
-+}
-+
-+static int register_event(struct device *dev, const enum pm_api_cb_id cb_type, const u32 node_id,
-+			  const u32 event, const bool wake, event_cb_func_t cb_fun)
-+{
-+	int ret;
-+	struct zynqmp_pm_event_info *event_info;
-+
-+	event_info = devres_alloc(unregister_event, sizeof(struct zynqmp_pm_event_info),
-+				  GFP_KERNEL);
-+	if (!event_info)
-+		return -ENOMEM;
-+
-+	event_info->cb_type = cb_type;
-+	event_info->node_id = node_id;
-+	event_info->event = event;
-+	event_info->wake = wake;
-+	event_info->cb_fun = cb_fun;
-+
-+	ret = xlnx_register_event(event_info->cb_type, event_info->node_id,
-+				  event_info->event, event_info->wake, event_info->cb_fun, NULL);
-+	if (ret) {
-+		devres_free(event_info);
-+		return ret;
-+	}
-+
-+	devres_add(dev, event_info);
-+	return 0;
-+}
-+
- static int zynqmp_pm_probe(struct platform_device *pdev)
- {
- 	int ret, irq;
--	u32 pm_api_version;
-+	u32 pm_api_version, pm_family_code, pm_sub_family_code, node_id;
- 	struct mbox_client *client;
- 
- 	zynqmp_pm_get_api_version(&pm_api_version);
-@@ -203,21 +301,43 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
- 	 * is not available to use) or -ENODEV(Xilinx Event Manager not compiled),
- 	 * then use ipi-mailbox or interrupt method.
- 	 */
--	ret = xlnx_register_event(PM_INIT_SUSPEND_CB, 0, 0, false,
--				  suspend_event_callback, NULL);
-+	ret = register_event(&pdev->dev, PM_INIT_SUSPEND_CB, 0, 0, false,
-+			     suspend_event_callback);
- 	if (!ret) {
- 		zynqmp_pm_init_suspend_work = devm_kzalloc(&pdev->dev,
- 							   sizeof(struct zynqmp_pm_work_struct),
- 							   GFP_KERNEL);
--		if (!zynqmp_pm_init_suspend_work) {
--			xlnx_unregister_event(PM_INIT_SUSPEND_CB, 0, 0,
--					      suspend_event_callback, NULL);
-+		if (!zynqmp_pm_init_suspend_work)
- 			return -ENOMEM;
--		}
--		event_registered = true;
- 
- 		INIT_WORK(&zynqmp_pm_init_suspend_work->callback_work,
- 			  zynqmp_pm_init_suspend_work_fn);
-+
-+		ret = zynqmp_pm_get_family_info(&pm_family_code, &pm_sub_family_code);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (pm_sub_family_code == VERSALNET_SUB_FAMILY_CODE)
-+			node_id = PM_DEV_ACPU_0_0;
-+		else
-+			node_id = PM_DEV_ACPU_0;
-+
-+		ret = register_event(&pdev->dev, PM_NOTIFY_CB, node_id, EVENT_SUBSYSTEM_RESTART,
-+				     false, subsystem_restart_event_callback);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Failed to Register with Xilinx Event manager %d\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		zynqmp_pm_init_restart_work = devm_kzalloc(&pdev->dev,
-+							   sizeof(struct zynqmp_pm_work_struct),
-+							   GFP_KERNEL);
-+		if (!zynqmp_pm_init_restart_work)
-+			return -ENOMEM;
-+
-+		INIT_WORK(&zynqmp_pm_init_restart_work->callback_work,
-+			  zynqmp_pm_subsystem_restart_work_fn);
- 	} else if (ret != -EACCES && ret != -ENODEV) {
- 		dev_err(&pdev->dev, "Failed to Register with Xilinx Event manager %d\n", ret);
- 		return ret;
-@@ -264,15 +384,8 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = sysfs_create_file(&pdev->dev.kobj, &dev_attr_suspend_mode.attr);
--	if (ret) {
--		if (event_registered) {
--			xlnx_unregister_event(PM_INIT_SUSPEND_CB, 0, 0, suspend_event_callback,
--					      NULL);
--			event_registered = false;
--		}
--		dev_err(&pdev->dev, "unable to create sysfs interface\n");
-+	if (ret)
- 		return ret;
--	}
- 
- 	return 0;
- }
-@@ -280,8 +393,6 @@ static int zynqmp_pm_probe(struct platform_device *pdev)
- static void zynqmp_pm_remove(struct platform_device *pdev)
- {
- 	sysfs_remove_file(&pdev->dev.kobj, &dev_attr_suspend_mode.attr);
--	if (event_registered)
--		xlnx_unregister_event(PM_INIT_SUSPEND_CB, 0, 0, suspend_event_callback, NULL);
- 
- 	if (!rx_chan)
- 		mbox_free_channel(rx_chan);
-diff --git a/include/linux/firmware/xlnx-event-manager.h b/include/linux/firmware/xlnx-event-manager.h
-index 82e8254b0f80..645dd34155e6 100644
---- a/include/linux/firmware/xlnx-event-manager.h
-+++ b/include/linux/firmware/xlnx-event-manager.h
-@@ -1,4 +1,9 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Xilinx Event Management Driver
-+ *
-+ * Copyright (C) 2024, Advanced Micro Devices, Inc.
-+ */
- 
- #ifndef _FIRMWARE_XLNX_EVENT_MANAGER_H_
- #define _FIRMWARE_XLNX_EVENT_MANAGER_H_
-@@ -7,6 +12,11 @@
- 
- #define CB_MAX_PAYLOAD_SIZE	(4U) /*In payload maximum 32bytes */
- 
-+#define EVENT_SUBSYSTEM_RESTART		(4U)
-+
-+#define PM_DEV_ACPU_0_0			(0x1810c0afU)
-+#define PM_DEV_ACPU_0			(0x1810c003U)
-+
- /************************** Exported Function *****************************/
- 
- typedef void (*event_cb_func_t)(const u32 *payload, void *data);
--- 
-2.17.1
+I think you'll need more that that, because size agnostic, when it
+comes to latency, an idle CPU is damn hard to beat, making migration
+restrictions (traditional and obvious target) tend to leave highly
+annoying piles of collateral damage in their wake.
 
+(spoken from BTDT perspective, have t-shirt, got butt kicked;)
+
+	-Mike
 
