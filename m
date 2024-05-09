@@ -1,200 +1,326 @@
-Return-Path: <linux-kernel+bounces-174178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6598C0B4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:06:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 734FB8C0B4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C9F31C217C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:06:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87501F23062
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D25D1494C7;
-	Thu,  9 May 2024 06:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F30B1494CA;
+	Thu,  9 May 2024 06:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m+tcDo+Z"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gv009ieR"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C05149DE7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E686F1494B8
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 06:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715234756; cv=none; b=pRWEXOca8OxsKxLIld7BjUbPLZcFPn2dRxMHiqtCRCEnI39/4a8FlyvZjptP17p3TGHXLuO7EqMi/8k2ybcrYa3bP9O4YWzd6G6aSEVCXvekhK58BoHgnNowOxuxbmG8EBsD7jev9uw/0VFknArdLu0evx6axQp5e4CRLDlNzc0=
+	t=1715235100; cv=none; b=flh3BLkC45r83rCg4YzoHuGmhZPOiTMq22Tu9iLtmjtY3CvtuBjyZIcN5oCdZOb63rVTiCzJhzJ6n45qZEZ7sm+Zt8UPA5twB5Jgu7RRM17Uy1NHiHa+FGM3VH6aw5ZUnSQivBcq2fXNNvJMP461IE2BSOCP1XtRaqHxVqA0a2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715234756; c=relaxed/simple;
-	bh=pgD+0W9yeHmmC7c3WvZTKmhifxbqaolBtyTipVxviKo=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ARyPE7h8iZBrJWhkDTcPHz/5qpiBjUgkkj1owH/YWANqHDAOUlmRHnZmCQbmDs1BvynB7nc67vZFEamTcHRHeRWCWDXmgc+YroIhlEHBDAlcKkPsQn/x3Hty0Y9mUE1QyHuW2aO6Uub6auR1pfbSONEQHy4AAof0/8gzZOpn6Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m+tcDo+Z; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de604d35ec0so939653276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:05:46 -0700 (PDT)
+	s=arc-20240116; t=1715235100; c=relaxed/simple;
+	bh=VSaW/apPlrArKcvmW8VTwX9WHVoo/UgeeO0M3uw7v94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5YcBjQPSHfkSeSkA49nA8qjITtfCoTqNy+lQXBRQIHfpUguEl1eJJEGOxquIBrQw5fCaeUQYjpFwbwKmh+k9GatWmnw0CN5mwJ00usnpq76n0K4GCrRxXUYu5FVaeUnVynTaDerM35EH5rC4RXZgEDZJ7B4Wpwe5h64P4juBRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gv009ieR; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f4178aec15so528897b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 23:11:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715234745; x=1715839545; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dWBQzxnsaSGEllxaEO7SuOF/16QtdKzfhd7ItKVVFaQ=;
-        b=m+tcDo+ZfImrwHRmUNqBgjM2ntgDyHPzjaeo/g43qMnJxI65UFSEcj6TATcyswqqdW
-         +xkEow4uwceV1OPQrSUFdh4JV+NuuuBjX5U/wd2ejbJcAtfAh0Qn3+DywHZh/GovMURy
-         2aUV6zwQbHZ96qB6aZieVJQYHMcCbZjtcnZP5h1MNHisa33YX+nhY9aDsN/BTYx1dX6w
-         zGcgRH6SGKjalTczPwjfiNEiSNbYICnpjKP+Pe0I0YzmN8N67HCP3ybVxtMycxz4Rk3T
-         b6+euARIJWTO6dpEeRVEpOsgygXQdyhXMUCqgMqAK12/1YR9y3fE7WEFNugamEP58VcK
-         aadg==
+        d=chromium.org; s=google; t=1715235097; x=1715839897; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T0K8G3AglPkL2fIAqhVyBG1qXwEcXVUsVnaW1DyqOlQ=;
+        b=Gv009ieRQ6JquxobBfTQDQeuvMRzJVzc2JVdAnAMNWTDN8fvsiYLkc9/YGDaMEYreF
+         wsVF0rL8LQMDBd/Krp/C7/bTfgRj1ogmttb46gQjXmXNqsUeo7qCyjEwIEaw6BcAI/st
+         heOZ0pznOdSOYIg+oXb67+pguZRZVxEOopFKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715234745; x=1715839545;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dWBQzxnsaSGEllxaEO7SuOF/16QtdKzfhd7ItKVVFaQ=;
-        b=OAyTJ58KhPWmVWEFGNnNvZdnlIOAT+lItSiTAqEtkSWBrYR2jV0r0URiGaUX+sC0zj
-         WtrYCIcoH4nsGh/7gQcSVBz4NXaHi1aWFiZx80FDnY4NsXymZjRxjFNsyFem+a+0A7EM
-         6RIKMx/iHDDv7WNr/gIyILQdNrtAi2hJMj5v20RdeLkKuKj7ReDwXHqVnDAzBgX9CeKL
-         xnBt1WVjwpMpdiFM/uNNEJ45ikhFyyZemS4rT7cNIVR1q/Ci67995+9rz0VrsWiLCq7T
-         wUuELhhXEBcgZa3zNwBh2GIIku2oI5z4DYk44h7GjKEIwS96/8CPLGY6hGFbTiW9kmZG
-         MKjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU51rIdXSB/cwIVq2FJ1B1OdT5tFuvREBRbAMwcI7atZ5VsyPgorobp6GlC7E6fSZ6GOncYPg7eoWGu99EU3QSQ7+1eJkopvgBmBhhd
-X-Gm-Message-State: AOJu0Ywd+N0CPefc3TgDRHpXGfELuppcyvhX/Wr7oLP1f/PqZZIT5bY5
-	Fi3M+7XTO1z1epd1k5wSL0534dovkhzSbvX5kfVT4xjg21Ow3NoV+ObaA/8XxMmHuVO2lanWFWj
-	+2iINuA==
-X-Google-Smtp-Source: AGHT+IFuVF5HJJ6GECg1hr/NuqA8TcqultYdnMTPw3cOgfcd2bPRuL4Z14sAN69wnhGbn7nYu+CGll6/KffC
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:3887:270c:55a5:15aa])
- (user=irogers job=sendgmr) by 2002:a05:6902:703:b0:dcc:c57c:8873 with SMTP id
- 3f1490d57ef6-debb9e399ebmr1497574276.9.1715234745311; Wed, 08 May 2024
- 23:05:45 -0700 (PDT)
-Date: Wed,  8 May 2024 23:05:41 -0700
-Message-Id: <20240509060541.1928390-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1715235097; x=1715839897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T0K8G3AglPkL2fIAqhVyBG1qXwEcXVUsVnaW1DyqOlQ=;
+        b=rsVmU1QBh+pNBC7Bw3sVZ1WIIoB8ZjMcg7b7sAS0a4gzLMZ1m2YCCnH1gQGeULE+Ki
+         HCZ1aXRnkxXFLXg5x5R1y9QPZDygN83pjOa6oCq1BFxg5tR0S/6kL+02NQAlTOVlqV+L
+         TFko+gXBp1NuGLLXsehcfCMVmcsoMt3bPAPaafN4UBE0GEGGF7so5FzT8m5MoBeEeZAp
+         nb8O+K0BpsBXgVIkTGmO7//X/JV11mUSFQPlSoXl7tXpz89QfehluT24XFRt3GQ8Hk00
+         I255FWmKjNI+b9i3TFFAZzQEm4QE9rn6aY46NOADdGV77zHKGVnf21VYZsdSGnopslQh
+         e2Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWL6U8NztMOFoMw57WLW+dj8ZdmDgy9fyJuuOiFPaObiGfVfphnPgAYBnasFFTDlDmY52IwaEx/jAL/gzKWRf1lxZGCfot3tJ/Yys6h
+X-Gm-Message-State: AOJu0YxWmWZDTRQbjrjCJmSuO22FoRvbOty5AUR73W6gZnqdpl5n9Z9y
+	Brkq6Nt9FCcQNEBU+o902njztmEiU8xBouOhpPa6lEWSdMphTwpcaRi55T8cPA==
+X-Google-Smtp-Source: AGHT+IHWnG8slcBCx8M7TXvghTiOSC/MA43D+v+CR+3pMR/oyw+4KROq/kc704i6kih9FsKtpDdP7g==
+X-Received: by 2002:a05:6a21:4981:b0:1aa:6a28:cf6e with SMTP id adf61e73a8af0-1afc8dc6e23mr4710728637.48.1715235097166;
+        Wed, 08 May 2024 23:11:37 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a66c54sm594794b3a.40.2024.05.08.23.11.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 23:11:36 -0700 (PDT)
+Date: Wed, 8 May 2024 23:11:35 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Justin Stitt <justinstitt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
+Message-ID: <202405081949.0565810E46@keescook>
+References: <202404291502.612E0A10@keescook>
+ <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
+ <202405081144.D5FCC44A@keescook>
+ <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+ <202405081354.B0A8194B3C@keescook>
+ <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
-Subject: [PATCH v1] perf tracepoint: Don't scan all tracepoints to test if one exists
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
 
-In is_valid_tracepoint, rather than scanning
-"/sys/kernel/tracing/events/*/*" skipping any path where
-"/sys/kernel/tracing/events/*/*/id" doesn't exist, and then testing if
-"*:*" matches the tracepoint name, just use the given tracepoint name
-replace the ':' with '/' and see if the id file exists. This turns a
-nested directory search into a single file available test.
+On Wed, May 08, 2024 at 04:47:25PM -0700, Linus Torvalds wrote:
+> For example, the most common case of overflow we've ever had has very
+> much been array indexing. Now, sometimes that has actually been actual
+> undefined behavior, because it's been overflow in signed variables,
+> and those are "easy" to find in the sense that you just say "no, can't
+> do that". UBSAN finds them, and that's good.
 
-Rather than return 1 for valid and 0 for invalid, return true and
-false.
+Yes, the array bounds checking work has been going well. It's been
+about 5 years now, plucking out all the weird compiler behaviors,
+refactoring code to get rid of ambiguous patterns, etc. It's turtles
+and compiler extensions all the way down. It's been a real education on
+"this will be easy: the compiler already has all the information". Only
+to find, no, it's not, because no one has tried to make any of it work
+together sanely in 50 years. But we're finally at the tail end of it,
+with clear and unambiguous semantics and mitigations now.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/tracepoint.c | 53 ++++++++++++++----------------------
- tools/perf/util/tracepoint.h |  3 +-
- 2 files changed, 23 insertions(+), 33 deletions(-)
+> So I'd suggest seeing if we can catch the cases that *technically*
+> aren't UB, but match dangerous overflow situations. IOW, start with
+> very limited and very targeted things to look out for.
 
-diff --git a/tools/perf/util/tracepoint.c b/tools/perf/util/tracepoint.c
-index 92dd8b455b90..cca6808f7951 100644
---- a/tools/perf/util/tracepoint.c
-+++ b/tools/perf/util/tracepoint.c
-@@ -4,10 +4,12 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <stdio.h>
-+#include <stdlib.h>
- #include <sys/param.h>
- #include <unistd.h>
- 
- #include <api/fs/tracing_path.h>
-+#include "fncache.h"
- 
- int tp_event_has_id(const char *dir_path, struct dirent *evt_dir)
- {
-@@ -26,39 +28,26 @@ int tp_event_has_id(const char *dir_path, struct dirent *evt_dir)
- /*
-  * Check whether event is in <debugfs_mount_point>/tracing/events
-  */
--int is_valid_tracepoint(const char *event_string)
-+bool is_valid_tracepoint(const char *event_string)
- {
--	DIR *sys_dir, *evt_dir;
--	struct dirent *sys_dirent, *evt_dirent;
--	char evt_path[MAXPATHLEN];
--	char *dir_path;
--
--	sys_dir = tracing_events__opendir();
--	if (!sys_dir)
--		return 0;
-+	char *dst, *path = malloc(strlen(event_string) + 4); /* Space for "/id\0". */
-+	const char *src;
-+	bool have_file;
- 
--	for_each_subsystem(sys_dir, sys_dirent) {
--		dir_path = get_events_file(sys_dirent->d_name);
--		if (!dir_path)
--			continue;
--		evt_dir = opendir(dir_path);
--		if (!evt_dir)
--			goto next;
--
--		for_each_event(dir_path, evt_dir, evt_dirent) {
--			snprintf(evt_path, MAXPATHLEN, "%s:%s",
--				 sys_dirent->d_name, evt_dirent->d_name);
--			if (!strcmp(evt_path, event_string)) {
--				closedir(evt_dir);
--				put_events_file(dir_path);
--				closedir(sys_dir);
--				return 1;
--			}
--		}
--		closedir(evt_dir);
--next:
--		put_events_file(dir_path);
-+	if (!path) {
-+		/* Conservatively return false if memory allocation failed. */
-+		return false;
- 	}
--	closedir(sys_dir);
--	return 0;
-+	/* Copy event_string replacing the ':' with '/'. */
-+	for (src = event_string, dst = path; *src; src++, dst++)
-+		*dst = (*src == ':') ? '/' : *src;
-+	/* Add "/id\0". */
-+	memcpy(dst, "/id", 4);
-+
-+	dst = get_events_file(path);
-+	if (dst)
-+		have_file = file_available(dst);
-+	free(dst);
-+	free(path);
-+	return have_file;
- }
-diff --git a/tools/perf/util/tracepoint.h b/tools/perf/util/tracepoint.h
-index c4a110fe87d7..65ccb01fc312 100644
---- a/tools/perf/util/tracepoint.h
-+++ b/tools/perf/util/tracepoint.h
-@@ -4,6 +4,7 @@
- 
- #include <dirent.h>
- #include <string.h>
-+#include <stdbool.h>
- 
- int tp_event_has_id(const char *dir_path, struct dirent *evt_dir);
- 
-@@ -20,6 +21,6 @@ int tp_event_has_id(const char *dir_path, struct dirent *evt_dir);
- 		    (strcmp(sys_dirent->d_name, ".")) &&	\
- 		    (strcmp(sys_dirent->d_name, "..")))
- 
--int is_valid_tracepoint(const char *event_string);
-+bool is_valid_tracepoint(const char *event_string);
- 
- #endif /* __PERF_TRACEPOINT_H */
+Yes, exactly. What I'd said in the RFC was that from a terminology
+perspective I don't want to focus on "undefined behavior", this means
+a very specific thing to the compiler folks. I'm focused on what
+_unexpected_ things actually happens in the real world that lead to
+exploitable flaws.
+
+> So *that* I feel could be something where you can warn without a ton
+> of compiler smarts at all. If you see an *implicit* cast to unsigned
+> and then the subsequent operations wraps around, it's probably worth
+> being a lot more worried about.
+
+I agree, implicit casts are worth exploring. It's a more limited set of
+behaviors, but I remain skeptical about the utility of catching them since
+the visibility of those kinds of promotions can quickly go out of scope.
+
+> And basically try to catch cases where arithmetic is explicitly used
+> for a size calculation: things like 'kmalloc()' etc are the obvious
+> things. And yes, the result will then have an (implicit) cast to
+> 'size_t' as part of the calling convention.
+
+We've been doing this kind of static analysis of allocation size
+mistakes for a while, but it remains not very well introspected by the
+compiler, making it a long game of whack-a-mole. And generally speaking
+all the wrapping around has already happened way before it hits the
+allocator. We've mostly dealt with all the low hanging code pattern fruit
+in this area, but it could be a place to add type-based compiler smarts.
+
+> And, finally, simply pointer arithmetic. Again, this is *not* some
+> "omniscience required". This is something very obvious where the
+> compiler is *very* aware of it being pointer arithmetic, because
+> pointer arithmetic has that implicit (and important) "take size of
+> object into account".
+
+Yes, that is already in progress too. Now that we've got __counted_by for
+flex arrays, the next addition is __counted_by for pointers. Coverage
+there will continue to grow. There is, unfortunately, a rather lot of
+alloc-and-forget going on in the kernel where object sizes are just
+thrown away. We've done some refactoring in places to add it, but I
+suspect the need for that will become more common once we gain coverage
+for pointer offsets.
+
+> So again, if you see an integer expression that leads to pointer
+> arithmetic, at that point the overflow very much is relevant.
+
+Right, and we've already been doing all of these things. They do all share
+the common root cause, though: unexpected wrap-around. But I hear you:
+don't go after the root cause, find high-signal things that are close to
+it.
+
+> So what I object to - loudly - is some completely bogus argument of
+> "integer wraparound is always wrong".
+
+Just so it's not mistaken, I didn't say "always": I said "can be". This
+was never a proposal to outlaw all wrap-around. :P
+
+> But catching wrap-around in *specific* cases, if you can argue for why
+> it's wrong in *those* cases: that sounds fine.
+
+Right. I mean, that is basically what I proposed. It was just over a
+much larger class than it seems you'll tolerate. :P You're asking to keep
+the scope smaller, and aimed at places where we know it can go wrong. I
+still think this is backwards from what would be best coverage. For the
+highest level of flaw mitigation, we want to exclude that which is proven
+safe, not try to catch things that might be unsafe. But I do try to be
+pragmatic, and it doesn't sound like that approach will be accepted here.
+
+> So in *that* case, you actually have a much more interesting
+> situation. Not wrap-around, not overflow, but "implicit cast drops
+> significant bits".
+
+Yup! This is what I was talking about in the RFC: implicit integer
+truncation. It *is* very nasty, I agree. We can get started on this next
+then. I poked around at it earlier this year[1]. My plan was to tackle
+it after finishing signed integer overflows (which is well underway).
+
+> And yes, I do think implicit integer casts are dangerous. Often *more*
+> dangerous than arithmetic overflow and wrapping. We've had absolutely
+> tons of them. Some of our most traditional bugs have very much been
+> about implicit casting losing bits and causing problems as a result.
+
+I really started screaming when I saw this one:
+
+https://git.kernel.org/linus/6311071a056272e1e761de8d0305e87cc566f734
+
+	u8 num_elems = 0;
+	...
+	nla_for_each_nested(nl_elems, attrs, rem_elems)
+		num_elems++; /* Whoops */
+
+	elems = kzalloc(struct_size(elems, elem, num_elems), GFP_KERNEL);
+	...
+	nla_for_each_nested(nl_elems, attrs, rem_elems) {
+		elems->elem[i].data = nla_data(nl_elems);
+	        ...
+
+(The good news for this particular case is that the fix for this bug
+almost literally crossed paths with the wave of __counted_by annotations
+we landed[2], after which overflows of the elems->elem[] array would
+have been noticed by CONFIG_UBSAN_BOUNDS.)
+
+> I think that would be a completely different area that might be worth
+> looking at: instrumenting implicit casts for "drops bits". I'm afraid
+> that it's just *so* common than we might not be able to do that
+> sanely.
+
+During the initial investigation, I tripped over several idioms we'll
+need to deal with (possibly in the compiler). (2 are basically variations
+of ones from the overflow calculation cases.)
+
+- truncation of constant expressions:
+	u8 var = ~(1 << 3);
+  This becomes int, and then all the high bits are thrown away. But
+  intention is nearly universally that the expression should be
+  applied only to the variable width. i.e. what is meant is:
+	u8 var = (u8)~(1 << 3);
+  Allowing this from the compiler side makes sense since it's a constant
+  expression. There may be cases where it is NOT intended, though, if
+  there is some mismatch of type widths hiding in macros that resolve
+  to a constant expression. But refactoring all these instances to
+  include an explicit cast seems prone to inducing maintainer rage.
+
+- basically all cases where the assigned variable is smaller than u32:
+	...checksum(const u8 *buf, u8 len)
+		...
+		u8 sum;
+ 		int a;
+
+		for (a = 0; a < len; a++)
+			sum += buf[a];
+
+	buf[a] goes from u8 to int, then added to a u8 value (no
+	overflow), but then written back and truncated.
+
+	This gets immediately to the ambiguity case, though. This is
+	nearly indistinguishable from the "num_elems++" example above.
+
+	So what do we do? We can add the "wraps" attribute to "sum"?
+	We can use a helper for the "+="?
+
+	Or even just simple math between u8s:
+
+	while (xas->xa_offset == 255) {
+		xas->xa_offset = xas->xa_node->offset - 1;
+
+	Is it expecting to wrap (truncate)? How is it distinguished from
+	the "num_elems++" case?
+
+- "while (var--)" when var is a smaller type than u32: the final
+  post-decrement gets truncated from the promoted "0 - 1" int expression.
+	Ignore post decrements only when the variable is not read again?
+	Ignore it only in "while" cases?
+
+- ERR_PTR() returns long. But all cases of its assignment are into int
+  variables. I need to spend more time looking at this. There
+  shouldn't be any loss of information here, since it's all low negative
+  values. The sanitizer may be upset that 0xffffffffffffffff being
+  converted to 0xffffffff is "losing bits" but they're both just -1.
+  We might also just be able to change ERR_PTR() to return int, and add
+  the cast directly:
+	-	return (long) ptr;
+	+	return (int)(long) ptr;
+
+
+>[...thread merge...]
+> I think it would be interesting in general to have some kind of
+> warning for "implicit cast drops bits".
+> 
+> I fear that we'd have an enormous about of them, and maybe they'd be
+> unsolvable without making the code *much* uglier (and sometimes the
+> fix might be to add an explicit cast to document intentionally dropped
+> bits, but explicit casts have their own issues).
+
+This is immediately the place we find ourselves. :)
+
+> So that's why I feel like it might be interesting to see if limiting
+> such checks to only "unusual" types might give us a manageable list of
+> worrisome places.
+
+Well, we'd want to catch the "num_elems++" case, and that's not
+involving any unusual types. How do you propose we distinguish that from
+the u8 checksum case, etc? I had been planning to use the "wraps"
+attribute on the variable. I.e. mark all the places where we expect
+truncation.
+
+>[...thread merge...]
+> I still suspect the "implicit truncating cast at assignment" is likely
+> a much more common case of loss of information than actual arithmetic
+> wrap-around, but clearly the two have commonalities.
+
+Both of the "real world" examples we had in this thread were due
+to implicit truncation. I do think it's less noisy than the unsigned
+arithmetic cases, but it does have significant commonalities. So much so
+that it still looks to me like using the "wraps" attribute makes sense
+for this.
+
+> Summary: targeted baby steps, not some draconian "wrap-around is wrong".
+
+I still think we should bite the bullet, but let's finish up signed
+overflow (this just keeps finding accidental but mostly harmless
+overflows), and then dig into implicit integer truncation next.
+
+Thank you for spending the time to look at all of this. It's a big topic
+that many people feel very strongly about, so it's good to get some
+"approved" direction on it. :)
+
+-Kees
+
+[1] These are NOT meant to be upstreamed as-is. We have idiom exclusions
+    to deal with, etc, but here's the tree I haven't refreshed yet:
+    https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=dev/v6.8-rc2/signed-trunc-sanitizer
+
+[2] c14679d7005a ("wifi: cfg80211: Annotate struct cfg80211_mbssid_elems with __counted_by")
+
 -- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
-
+Kees Cook
 
