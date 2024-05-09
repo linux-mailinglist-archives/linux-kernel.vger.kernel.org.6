@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-174337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E514E8C0D56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:15:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAC68C0D5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:17:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141B81C2119A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:15:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BBD71F228EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E6714A605;
-	Thu,  9 May 2024 09:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B017514A622;
+	Thu,  9 May 2024 09:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="length tag value exceeds body size" (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="SOByTSSB"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E6D1474A1
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFXtP5uW"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8E9126F09;
+	Thu,  9 May 2024 09:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715246128; cv=none; b=BwN4vEVkuVi1y3ZSFzJ+9IcaPMNnS6oms1EZdvsqB4JAIOLhfs2CteVqopgVczNDjlx/zegALTbK/FDJVig/9KwFjKDvMe+S3fYzlDU2/BifoqThUdNZdsS4THjhOCB5r2YyW9Bamv40FDq+YOND1znCjogekDp533Ifg3Bi6+I=
+	t=1715246244; cv=none; b=mYC0RmZBq2gq4TjaOihTGRPf1MR/VkZbcj76HsXaX4I/0cgzHFmMOHhgjAILN17NWD0O75Epkr8lkvS4S/XVdiOOZBpJvr08aoxawTPTqkX7Cl5hMpSoLkL7Pb3eRYZYcRX1Qnqp73938O6a017REmM+g/8m18iDFs8NwYlv3gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715246128; c=relaxed/simple;
-	bh=P173fWMVNHTR1ZQpRlogFXq6/3I7t2uQTLPwTK+qyTM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UR9cEmyNe76d4n/WD0L77FthN83MPoSv2ebxh9BWJ/vUgEPvi7mIwgA4SSQ8x1O5QnYLEwF7uYywpc13prgmAQx5OPpiidPWDStiQM17V54cRtxtcDbfep3oxDqjGrR7iaK+2ddgfU4cj/17eS61tfh/RKMApL2Xc1bwx12x1pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=SOByTSSB; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1715246118;
-	bh=uCosmU2s3pdhSW4GMXoslxKx+KxLesjNk36SXmel0xs=; l=1204;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=SOByTSSBxi4kpdDIyz27PxS02QHCcgwpBFTi98o8JIfw5pVHUPPyaTykH4cE6+Hsh
-	 BwhBzvzlbzeh4C8/qfVYlduQCW43UxgqLz1LjTv0t6Z6E4Z26uw7SIiih+Cz8uCXyY
-	 ugTKlD7RXARnvl8Vt7FrJJ6W2fA3SFE1lg53iNHj6Ptp3h5USjeVlTJlr3vQYxu+lo
-	 RNccTSQTwbulleBGBDaV8NlyBEK6dnBGfIgmNtReoFj1cGxvTwANo0a3KbcFa23VxL
-	 0gGJmcxweYcu4bO/KDuiC+g32k1vIW56cnJZcypAMtgkqGsP9IGfXwiWxN82hOJ+6e
-	 kJBSs2MdZ/g/w==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3885223:0:AUTH_RELAY)
-	(envelope-from <alina_yu@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Thu, 09 May 2024 17:15:04 +0800 (CST)
-Received: from ex4.rt.l (192.168.10.47) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 9 May 2024
- 17:15:03 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex4.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 9 May 2024 17:15:03 +0800
-Date: Thu, 9 May 2024 17:15:03 +0800
-From: Alina Yu <alina_yu@richtek.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<johnny_lai@richtek.com>, <cy_huang@richtek.com>
-Subject: Re: [PATCH v2 2/4] regulator: rtq2208: Fix LDO to be compatible with
- both fixed and adjustable vout
-Message-ID: <20240509091503.GA32333@linuxcarl2.richtek.com>
-References: <cover.1714467553.git.alina_yu@richtek.com>
- <ffeecd61c194df1f7f049bd50cb2bbbad3cf1025.1714467553.git.alina_yu@richtek.com>
- <ZjGmmYWHu-ZQQdIh@finisterre.sirena.org.uk>
- <20240502073029.GA4055@linuxcarl2.richtek.com>
- <20240502092614.GA31518@linuxcarl2.richtek.com>
- <ZjRAsJHn57pZy5UH@finisterre.sirena.org.uk>
- <20240503073536.GA12846@linuxcarl2.richtek.com>
- <ZjjwFTtiopqsYdeJ@finisterre.sirena.org.uk>
- <20240508065402.GA7462@linuxcarl2.richtek.com>
- <ZjtnvjlJpfNn7qVT@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1715246244; c=relaxed/simple;
+	bh=RcxOhT/V7KXIlWcQwuEx3ss/+vW9JjLBhRq3LZF7R+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmhXgboSpGeuI9J7pCNNfAskQ04kLoMCRa7Md85PaJQG16hJDuHLzc+1COi9VC5cgDdXLEeOfOMUdgb/QYyyiEbSnF2ExQbiDrJSDTh8ozY9N3Mv7xaE2Rulvw4Mebr+lO6jgFZWOjiTIquuexw2HogvO0Kkvo0AXyvl861XZ14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EFXtP5uW; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f44dd41a5cso696395b3a.0;
+        Thu, 09 May 2024 02:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715246242; x=1715851042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0tq5v84OomZlKxGDp0ZtPVfBntdt78gOntENcePWMnc=;
+        b=EFXtP5uWLM+4S+GqsezpjauzdvFd3yxyABc4CDtDTmssUwdk1PUUEGAGDC9S+jcoyE
+         oIgsibgI2+ZumjhCiFxfB1AClOj0Kw09FITdh+NfsrbSMVDq6BWcYZqOfJBUjqX6wt0B
+         67JI5t2EZZ3WM+jev8cZZibJhBI7EMEFt135gaekGYqBteqSd6sKjIeA+TsiKnm/0IC2
+         eDi/RZV1dBPPznqMecAUiIYCP1HSWyJlsp4eNoZV6pIrj+jPaiqq8HOPyqoDLW+FIN0e
+         Ijs6NbyzRKO0+KoiXMxk4k4E+S/h3MM5DV4pHl9B17rFe05zky4UT9oQDsMGVqYChK0l
+         BwyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715246242; x=1715851042;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0tq5v84OomZlKxGDp0ZtPVfBntdt78gOntENcePWMnc=;
+        b=eY53qHoUQ7mje3XSEu4zYV2ci1X/PCfI87I32VdgVD0WZXvzJJR5XXlFpWkLrnUc67
+         Xuw3ncBJRPT8bAt/+m5S1jaJqym7ka/qhu3W/WxypngA43mqjZUDwrO4kUTnmh2Clpv+
+         JHnZgvgNKfi1BpBJe3BRDS4ZEB/l4ct6Gdi6/BNULCks5xIMKFtWGQ91HHZB1z1DCwCL
+         cji8d+qvlb8t+z6X8w7NPojUrriuDmR2bgp/6OCW1emnUDiHbKfgJWP1ickd+IElOLsX
+         qEdHxD5/o2scfoZEEbBmjEZOgW2Vw9CrC0DNVejOleow5J2xojtBh5/NxUqdVE/Q1dAY
+         BhXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZP12NSQ6jDsG/+biXuxEJa4q6nbZAmZqEg6aHcTSzo6XbBy4ABDvDyWsHDaBxx0TUBvJ2VKiPhMcJ99eLKtmfgy39PBekyKJoQOEkCI8tywEUXXU/x/2H95JQh0BXh37TdbBEpT/zzA2gBy0Cf7wi3xX6/YeevsvBF4al8+RddkXMiHo=
+X-Gm-Message-State: AOJu0YztR3mE8D9HH8+WZmwyXk00XhW+B1N31ILqYDBiPiFfad5t8YqB
+	IVKwBSOfvi0JCC6oGn2AexxHe7htL+3i2ATraVvaXeNRdhJcuLic
+X-Google-Smtp-Source: AGHT+IHz72VVvsp4Wvvreufo/JuMhKuZ85VBqCyJe4feD8NM0KM450tvljPetl4jwWZXhog8dnplDg==
+X-Received: by 2002:a05:6a21:193:b0:1a7:3b4a:3e8 with SMTP id adf61e73a8af0-1afc8d05b2fmr6101404637.7.1715246241921;
+        Thu, 09 May 2024 02:17:21 -0700 (PDT)
+Received: from [192.168.0.107] ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b254cfsm868973b3a.200.2024.05.09.02.17.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 02:17:21 -0700 (PDT)
+Message-ID: <7acbf5d9-975d-4005-92e3-fd78cc3a249c@gmail.com>
+Date: Thu, 9 May 2024 16:17:12 +0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZjtnvjlJpfNn7qVT@finisterre.sirena.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fwd: UBSAN: array-index-out-of-bounds in net/wireless/nl80211.c
+ and net/mac80211/scan.c
+To: Johannes Berg <johannes@sipsolutions.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Networking <netdev@vger.kernel.org>,
+ Linux Wireless <linux-wireless@vger.kernel.org>
+Cc: Jouni Malinen <jouni.malinen@atheros.com>,
+ "John W. Linville" <linville@tuxdriver.com>, Kalle Valo <kvalo@kernel.org>,
+ Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Jannik_Gl=C3=BCckert?= <jannik.glueckert@gmail.com>
+References: <ZjwTyGqcey0HXxTT@archie.me>
+ <12b6ac611c1a44b4eadbb1316636b7268ab66a50.camel@sipsolutions.net>
+Content-Language: en-US
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+In-Reply-To: <12b6ac611c1a44b4eadbb1316636b7268ab66a50.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 08:53:34PM +0900, Mark Brown wrote:
-> On Wed, May 08, 2024 at 02:54:02PM +0800, Alina Yu wrote:
+On 5/9/24 15:48, Johannes Berg wrote:
+> On Thu, 2024-05-09 at 07:07 +0700, Bagas Sanjaya wrote:
+>>> [  106.201036] UBSAN: array-index-out-of-bounds in /var/tmp/portage/sys-kernel/gentoo-kernel-6.8.9/work/linux-6.8/net/mac80211/scan.c:364:4
+>>> [  106.201037] index 0 is out of range for type 'struct ieee80211_channel *[]'
 > 
-> > May I modify the code into this ?
-> > I'll add 'richtek,fixed-microvolt' property in dtsi; remove 'regulator-min-microvolt' and 'regulator-max-microvolt'
-> > to prevent fail caused by constraints->apply_uV.
+> No idea about that one. Send patches.
 > 
-> Adding the new property seems fine.  You still need to permit the
-> min/max microvolt properties for the case where the regulator is in
-> normal mode and can vary, you could write rules that ensure that the
-> constraints line up in the case where a fixed voltage is specified but
-> I'm not sure it's worth the effort.
+> (Seriously. If you're running with bleeding edge toolchains that pretty
+> much nobody has yet, send patches.)
+> 
 
-Or may I add the following condition to check the constraints.min_uV and constraints.max_uV match the specified fixed voltage ?
+I'm not expert in networking (let alone wireless), so I ask BZ reporter.
 
+FYI, when I asked the reporter to reproduce this bug on vanilla (kernel.org)
+kernel, he said that he was already running that [1] despite that his
+kernel is actually patched, distribution kernel [2] (the patches itself
+are in [3]).
 
-+       u32 fixed_uV;
-        int ret, i;
+Thanks.
 
-..
+[1]: https://bugzilla.kernel.org/show_bug.cgi?id=218810#c2
+[2]: https://gitweb.gentoo.org/repo/sync/gentoo.git/tree/sys-kernel/gentoo-kernel/gentoo-kernel-6.8.9.ebuild
+[3]: https://gitweb.gentoo.org/proj/linux-patches.git/tree/?h=6.8-12
 
-+               /* specify working fixed voltage if the propery exists */
-+               ret = of_property_read_u32(match->of_node, "richtek,fixed-microvolt", &fixed_uV);
-+
-+               if (!ret) {
-+                       if (fixed_uV != init_data->constraints.min_uV ||
-+                               fixed_uV != init_data->constraints.max_uV)
-+                               return -EINVAL;
-+
-			desc->n_voltages = 1;
-+                       desc->fixed_uV = fixed_uV;
+-- 
+An old man doll... just what I always wanted! - Clara
 
-..
-
-Thanks,
-Alina
 
