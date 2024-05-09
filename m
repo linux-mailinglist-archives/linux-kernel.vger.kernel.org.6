@@ -1,135 +1,100 @@
-Return-Path: <linux-kernel+bounces-174707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62958C1340
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:50:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A738C1344
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:54:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BDCB2116A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:50:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85B901C20CE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 16:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9038C0B;
-	Thu,  9 May 2024 16:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6169FC152;
+	Thu,  9 May 2024 16:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CqCwZqh9"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="o2RUXFJX"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D6B4C70;
-	Thu,  9 May 2024 16:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B44D6FD0;
+	Thu,  9 May 2024 16:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715273396; cv=none; b=qRXfPCn0gQfsiXvAibHiz6g+vzRETitmuPCJ58kY/yPd/d/mFIUCukER3qBB12lGDZUP9VWY9+3PbYAGTvxJ0FcQEe8cXVR6+c0rfIrLaN4pP9e8exXnZHxgJo/OCWA65481HNGWxCpalLRje2gwAgwQ3rYfi/uCSII35GfIt80=
+	t=1715273630; cv=none; b=D9IQpcJiL/XYWcHUbzFsxOT816zu1ndCLPWC98zjBKTpNPEjP3MtL/HcWM/f/50ptfPeHKKMgnxWGzoiQzCg9WVLkqPDup6mW8+Q9poAVw6KGhgU43/M8Q8AKHsvFKTSagT6EeciJyniBfW/RUoNAtHxnIn7np7WGO1sobz2rO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715273396; c=relaxed/simple;
-	bh=Gf9y6jAuMcgqo9Gd+TKKg5IoxCdtOXzzseeLVLgbN/E=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n7m6qN4FT1Hta53QVf2JoX/yCUBGg+5SnFCWG2dL3j5Z+29HyYJZcPwdz18fldfcLhdvNKeRutoIcCsfEXq2au1b6g/n+1L/OVlo9XGSwmEHvnnpmGQIU/H/wX/gFYOZ97FJjywEbGNB3FPCs9FNjMnTHJDQeD2xy2c2uva5LdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CqCwZqh9; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1715273380; x=1715532580;
-	bh=C60PPXrDiM6US9HUzSb1J44PAIcjYzqF9scPyqWaHcQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=CqCwZqh98z416mS2XCKqzmuiyUHMyT0Y7GpREyNWr0KK8SXQJj9rtR148itRyPaUx
-	 cNn6GMjx1gIS5AuK1/E/BQIgB17tmnazOQypBfHRiWndN5EdDBtJXsBtPYHAX1/dkH
-	 vBkfA2BY6/lzqcHw8SssMw2/OqQjg/klxkHNqMPPnQFWejgh84NHN9E/3Z3w5PteyL
-	 IZwHYMZ+HcW/ZpuBxPW52JQmk2dVu0QJooQA4E9AOeLwsorToK0oRYk8DAx4i1f18Z
-	 7vMqY2W0hBfb/SAuOxtIck6yLIQiX5PB+q3AIk8FvstCPM6O0SRcOTfRcUR8vS1w7/
-	 kyrDRiw9GdxLw==
-Date: Thu, 09 May 2024 16:49:34 +0000
-To: Hans de Goede <hdegoede@redhat.com>, =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-From: bcfradella@proton.me
-Cc: Ben Fradella <bfradell@netapp.com>, Ranjan Dutta <ranjan.dutta@intel.com>, Yifan2 Li <yifan2.li@intel.com>, Jonathan Yong <jonathan.yong@intel.com>
-Subject: [PATCH] p2sb: Don't init until unassigned resources have been assigned.
-Message-ID: <20240509164905.41016-1-bcfradella@proton.me>
-Feedback-ID: 52522960:user:proton
-X-Pm-Message-ID: b9b1474f879f010a3fa2db3d7408df99edc412c6
+	s=arc-20240116; t=1715273630; c=relaxed/simple;
+	bh=WrrxmjCdbSQrx82x24gxrtpbnXLGGWA/COa+oD/wCDw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hoOVep3w8+LZUDoSwphBxvRSrknuTssnpboki1PBOKX9F+NRmPxgnpLjsKXjFMo/oRLElIHm3U6+NPAPnmzzX1LtxEaDyplvGq5y6vRRSHm6NjaWUetiHX+DxNad3qBkwy4T99Eb0MOzTle7TLzlX9+bDNIIrs6iMJdSPU03nuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=o2RUXFJX; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5334B47C39
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1715273628; bh=Swp5U3+6z/DT5it4gIm6NL5VrQp9grZhimL+5b+AEoI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=o2RUXFJXTbO1fcWArXD2TKUDbl5Rzz9sWzwhPRACq8FLmSQJ7VTYr6H0I/p6w4qiq
+	 RDGoOv4y2jMMPcoqIwT+IFGKTOfAG8Ff5FvoSWDEAnEQKWq+KhDOYw8hUINSvGDOzI
+	 YGD2dsMkAFceDEVno9UUF/M7U0w9lfe+Q43KbcAltk6ejXye6BU5H6D8X9LvkmJFtA
+	 gL7BxLRF9osD0xACMIjS7tLzCPyK4nKpRJ7yQTB1ezAXGcs4+BeX/bJP0wARd8j2Hd
+	 eI3GYddIt7wBdhnxVm1ip7OYPtaBe0I6VNceJQjbHCjYYBgk+inSrtQgxt7wF6LaS3
+	 nxHsQhJsshvCw==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 5334B47C39;
+	Thu,  9 May 2024 16:53:48 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Usama Arif <usamaarif642@gmail.com>, hannes@cmpxchg.org, tj@kernel.org,
+ lizefan.x@bytedance.com, nphamcs@gmail.com
+Cc: linux-mm@kvack.org, cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, Usama Arif
+ <usamaarif642@gmail.com>
+Subject: Re: [PATCH v2 1/1] cgroup: Add documentation for missing zswap
+ memory.stat
+In-Reply-To: <20240502185307.3942173-2-usamaarif642@gmail.com>
+References: <20240502185307.3942173-1-usamaarif642@gmail.com>
+ <20240502185307.3942173-2-usamaarif642@gmail.com>
+Date: Thu, 09 May 2024 10:53:47 -0600
+Message-ID: <87jzk3apus.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-From: Ben Fradella <bfradell@netapp.com>
+Usama Arif <usamaarif642@gmail.com> writes:
 
-The P2SB could get an invalid BAR from the BIOS, and that won't be fixed
-up until pcibios_assign_resources(), which is an fs_initcall().
+> This includes zswpin, zswpout and zswpwb.
+>
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index 17e6e9565156..eaf9e66e472a 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1572,6 +1572,15 @@ PAGE_SIZE multiple when read back.
+>  	  pglazyfreed (npn)
+>  		Amount of reclaimed lazyfree pages
+>  
+> +	  zswpin
+> +		Number of pages moved in to memory from zswap.
+> +
+> +	  zswpout
+> +		Number of pages moved out of memory to zswap.
+> +
+> +	  zswpwb
+> +		Number of pages written from zswap to swap.
+> +
 
-- Move p2sb_fs_init() to an fs_initcall_sync(). This is still early
-  enough to avoid a race with any dependent drivers.
+Applied, thanks.
 
-- Add a check for IORESOURCE_UNSET in p2sb_valid_resource() to catch
-  unset BARs going forward.
-
-- Return error values from p2sb_fs_init() so that the 'initcall_debug'
-  cmdline arg provides useful data.
-
-Signed-off-by: Ben Fradella <bfradell@netapp.com>
----
- drivers/platform/x86/p2sb.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/platform/x86/p2sb.c b/drivers/platform/x86/p2sb.c
-index 3d66e1d4eb1f..1938a3ef9480 100644
---- a/drivers/platform/x86/p2sb.c
-+++ b/drivers/platform/x86/p2sb.c
-@@ -56,12 +56,9 @@ static int p2sb_get_devfn(unsigned int *devfn)
- =09return 0;
- }
-=20
--static bool p2sb_valid_resource(struct resource *res)
-+static bool p2sb_valid_resource(const struct resource *res)
- {
--=09if (res->flags)
--=09=09return true;
--
--=09return false;
-+=09return res->flags & ~IORESOURCE_UNSET;
- }
-=20
- /* Copy resource from the first BAR of the device in question */
-@@ -220,16 +217,20 @@ EXPORT_SYMBOL_GPL(p2sb_bar);
-=20
- static int __init p2sb_fs_init(void)
- {
--=09p2sb_cache_resources();
--=09return 0;
-+=09return p2sb_cache_resources();
- }
-=20
- /*
-- * pci_rescan_remove_lock to avoid access to unhidden P2SB devices can
-- * not be locked in sysfs pci bus rescan path because of deadlock. To
-- * avoid the deadlock, access to P2SB devices with the lock at an early
-- * step in kernel initialization and cache required resources. This
-- * should happen after subsys_initcall which initializes PCI subsystem
-- * and before device_initcall which requires P2SB resources.
-+ * pci_rescan_remove_lock() can not be locked in sysfs pci bus rescan path
-+ * because of deadlock. To avoid the deadlock, access P2SB devices with th=
-e lock
-+ * at an early step in kernel initialization and cache required resources.
-+ *
-+ * We want to run as early as possible. If the P2SB was assigned a bad BAR=
-,
-+ * we'll need to wait on pcibios_assign_resources() to fix it. So, our lis=
-t of
-+ * initcall dependencies looks something like this:
-+ *
-+ * ...
-+ * subsys_initcall (pci_subsys_init)
-+ * fs_initcall     (pcibios_assign_resources)
-  */
--fs_initcall(p2sb_fs_init);
-+fs_initcall_sync(p2sb_fs_init);
---=20
-2.43.0
-
-
+jon
 
