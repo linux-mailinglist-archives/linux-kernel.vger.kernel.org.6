@@ -1,117 +1,155 @@
-Return-Path: <linux-kernel+bounces-174250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CB68C0C1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:48:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A8C8C0C24
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:49:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F91C2150B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:48:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16077B22EF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23F4149C70;
-	Thu,  9 May 2024 07:48:06 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F9014830B;
+	Thu,  9 May 2024 07:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sibTL0dW"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B82613C9A9;
-	Thu,  9 May 2024 07:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35C513C9C0;
+	Thu,  9 May 2024 07:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240886; cv=none; b=Ot5TBiaDUCotQtM6gFSE06c8e1avCsNmdjqaizAp5QZVyPTy+g4vAiWZit2i/J7AQDs+RFdus5iXesLqO4cg0cv/Cm90yt0ANK/zG3E4IB8Sf5j2q4mEVNECu0/et5kKoM3YTu3ZE3Yky3mAkWXHd5tC/04FajVFGkxtKLNgPMU=
+	t=1715240953; cv=none; b=GD2fjvZDuvIzq7pJoemrMGRte+hTs8PNoJnf39nqDGAZOGO3gcdczQBeNrJPggv77PQ+8Kiu2FkvgMQcbEY5lwYiSc1uH+WqiKK3IJ/UZP49EhQGVZmIv3mB2C90mmVa1eB78FgDy2+nUE6GhPcLVXfLnqs4wZBIuldMm3nUATI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240886; c=relaxed/simple;
-	bh=kN+bKRWuS9MvO+76b3+xoXzaruyf/lT+taQHwjLtY14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKCnPT7yJXNSvFpiHPKARhwxK28XsVB9chZdk6NmXd3a4vqdl2D34wdV6MXPIgE70Qiz6sbBFohq2xQvW2h+10QhppgApnYLtHh3XUh8GytBan6H/SpnPb4fcDGHiznTBazIablLB+iUQZSyzEtGam9Mg7jdOB1bSZfYRrkM3aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599eedc8eeso139755966b.1;
-        Thu, 09 May 2024 00:48:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715240883; x=1715845683;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DxfOpPMsocBoDaEIN71vPXTKGsCKIeOGUMJaK6ulrpg=;
-        b=NP7jrO7BF1cC9oleKfv2/H+LAA0u8jKf8K2H3mtvH899fyZAM37Y5d4FlM9FRI4Cn0
-         oXaL9vMWRDTapmol1OEdRwwgOhR9/laEOoVg8Jw2MuqIMbMtngKgqyCqm8MFDQjvjwGW
-         XapHXJwEeE1HjanIot6jeLGvubDAhQ8tmMXuUqxI9Z3CL5DhECIIM/FPehwZ8tC51O9m
-         Yzr4xmnK9EWqokFMHsszb69PontEMWEqavRnJFo3XtPQg0Zctm27M7/EYNLsXkFWvNZU
-         gkufQ3HaNstTyjirJKc3/XaSYfsbcdccWJAGYicJ2hScfg2/uoV3DHb8FrM0q6pMNNN8
-         zuig==
-X-Forwarded-Encrypted: i=1; AJvYcCWA8evcqQojlj7NPLgTm68n2sF8El/Weh/2f9WMocvHwkqsdGqHtEp5kSfUitt+G88vlkH5FYEWJtsF8Jp4jdC74YEn9Jjc0VbcqKKanitQ9Al4mRJ/apAvonvj4riTlhl33Dtv3xQobT3vteI=
-X-Gm-Message-State: AOJu0YxOD9dUVlL701CcLI7ImEOkmIIUNgqg0ApUllquzqGXfoKXQqMo
-	jPAOZSiOrjbOB1aoCYuPQx8wYawoNL8L9GZKV3Pki5pF3mqoFAHzCvsf7A==
-X-Google-Smtp-Source: AGHT+IEsCEKh9Z9Jdg775iWofQ3lVXXivWgv02ahksqj0qaQJVuDtBqjcMD77dWZbIcqAK5u4pyzKg==
-X-Received: by 2002:a50:8e4a:0:b0:572:a731:dd14 with SMTP id 4fb4d7f45d1cf-5731da5b711mr3204050a12.28.1715240882494;
-        Thu, 09 May 2024 00:48:02 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6592sm422836a12.2.2024.05.09.00.48.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 00:48:02 -0700 (PDT)
-Date: Thu, 9 May 2024 00:48:00 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: Kalle Valo <kvalo@kernel.org>, "leit@meta.com" <leit@meta.com>,
-	"open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH wireless] wifi: rtw89: Un-embed dummy device
-Message-ID: <Zjx/sKB++v8FJMXx@gmail.com>
-References: <20240424182351.3936556-1-leitao@debian.org>
- <f46ae94488d1468e9a9a669320e4cfb9@realtek.com>
- <87ttjqgf2r.fsf@kernel.org>
- <87mspigex0.fsf@kernel.org>
- <acda4194c8d44690b05b83adccb3aa22@realtek.com>
+	s=arc-20240116; t=1715240953; c=relaxed/simple;
+	bh=sDwPafMpIIsl7Mu2sC8mUTOsijZlaGt+V4EsD8yPch4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hp1GKOd+InBotM3fe/O0nvBulhag2NM3S+Jou3RvBd0sqm2BooRUv9Jgu24zE4tPMGZlGFmvHEY8tuvbGwegoXulLWc6wCtY5+arcI+mJFzwsfvMg7lW7odFquxE+npCt55E1VnubiIQtvtBIo44lTjKoPQ2Qyj7WEp3XFFngbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=sibTL0dW; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715240950; x=1746776950;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sDwPafMpIIsl7Mu2sC8mUTOsijZlaGt+V4EsD8yPch4=;
+  b=sibTL0dWHltkqoG9/79SI/g3961GGl49C0NOZk1xzzGFx5uxjPTDYSqM
+   m97+EU60v2YFxWuZ7Qvl8EjJCi6ItYpj6X3bUlV88oHgGxLEtbWyk5RMo
+   qR4FnTK/EhHaVkfA7f1YJ5DJGsUstvOzTuJP/Yf3xBNkjYO7YVXpPnvkg
+   kIN093h3owUFPCNhDpY5qegz4aPYGmnOUeGXtozQG5JGBY95AscCw5Ems
+   SFDhcdVGIQck758msQv3unoMbsRGKoN+gVzOMYM6fjIceqhdGuK6cEhKm
+   o7L9J1+t+Dwl5Tr2N3gHpaguzoeN0xUoD/FioUwJ/lW4jQsv8p66kq/f+
+   g==;
+X-CSE-ConnectionGUID: b4TAGUWbRRaXvl7Tlp/mVw==
+X-CSE-MsgGUID: 0hMmNNlFTQa1/hvoYYDwrg==
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="asc'?scan'208";a="191609229"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 May 2024 00:49:03 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 9 May 2024 00:48:23 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Thu, 9 May 2024 00:48:19 -0700
+Date: Thu, 9 May 2024 08:48:09 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andy Chiu <andy.chiu@sifive.com>
+CC: Conor Dooley <conor@kernel.org>, Eric Biggers <ebiggers@kernel.org>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Heiko Stuebner <heiko@sntech.de>, Guo Ren
+	<guoren@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Jonathan Corbet <corbet@lwn.net>, Evan
+ Green <evan@rivosinc.com>, =?iso-8859-1?Q?Cl=E9ment_L=E9ger?=
+	<cleger@rivosinc.com>, Shuah Khan <shuah@kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Palmer
+ Dabbelt <palmer@rivosinc.com>, Vincent Chen <vincent.chen@sifive.com>,
+	Greentime Hu <greentime.hu@sifive.com>, <devicetree@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>, Joel Granados
+	<j.granados@samsung.com>, Jerry Shih <jerry.shih@sifive.com>
+Subject: Re: [PATCH v4 7/9] riscv: vector: adjust minimum Vector requirement
+ to ZVE32X
+Message-ID: <20240509-mandatory-monsieur-dfa4d7881fa9@wendy>
+References: <20240412-zve-detection-v4-0-e0c45bb6b253@sifive.com>
+ <20240412-zve-detection-v4-7-e0c45bb6b253@sifive.com>
+ <20240418-brook-chili-4d3e61d1a55c@wendy>
+ <20240418155256.GA2410@sol.localdomain>
+ <20240418-ultimatum-yam-11de4b063b83@spud>
+ <20240418173203.GA1081@sol.localdomain>
+ <20240418173946.GB1081@sol.localdomain>
+ <20240418-sterling-sanding-d59c3b0a2aaa@spud>
+ <CABgGipU74TA3KgCH4pPuRefbnYt3q6RKcQwfyspenisEtY6eqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ILfmNxMoEmQr18uK"
+Content-Disposition: inline
+In-Reply-To: <CABgGipU74TA3KgCH4pPuRefbnYt3q6RKcQwfyspenisEtY6eqw@mail.gmail.com>
+
+--ILfmNxMoEmQr18uK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <acda4194c8d44690b05b83adccb3aa22@realtek.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 25, 2024 at 06:15:21AM +0000, Ping-Ke Shih wrote:
-> Kalle Valo <kvalo@kernel.org> wrote:
-> > Kalle Valo <kvalo@kernel.org> writes:
-> > 
-> > > Ping-Ke Shih <pkshih@realtek.com> writes:
-> > >
-> > >> Breno Leitao <leitao@debian.org> wrote:
-> > >>> Embedding net_device into structures prohibits the usage of flexible
-> > >>> arrays in the net_device structure. For more details, see the discussion
-> > >>> at [1].
-> > >>>
-> > >>> Un-embed the net_device from the private struct by converting it
-> > >>> into a pointer. Then use the leverage the new alloc_netdev_dummy()
-> > >>> helper to allocate and initialize dummy devices.
-> > >>>
-> > >>> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
-> > >>>
-> > >>> Signed-off-by: Breno Leitao <leitao@debian.org>
-> > >>
-> > >> I think this patch should go via net-next tree, because wireless-next tree
-> > >> doesn't have patch of dummy devices yet.
-> > >>
-> > >> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-> > >
-> > > FWIW I sent the wireless-next pull request yesterday and once it pulled
-> > > we will fast forward wireless-next to latest net-next.
-> > 
-> > Oh, I just realised that this is not CCed to netdev so their patchwork
-> > won't even see the patch. Ping, I recommend that you wait for the
-> > dependency commits to trickle down to your tree and then apply the
-> > patch. That's the simplest approach and no need to resend anything.
-> 
-> Okay. If we don't hurry to get this patch merged, I will apply this patch
-> to my tree.
+On Thu, May 09, 2024 at 02:56:30PM +0800, Andy Chiu wrote:
+> Hi Conor,
+>=20
+> Should we check if "v" presents for vector crypto extensions in
+> riscv_isa_extension_check()? We are not checking this for now. So a
+> kernel compiled with RISCV_ISA_V still has a problem if its isa-string
+> includes any of vector crypto ("zvbb, zvkg, etc") but not "v".
 
-There is no hurry to get this patch merged.
 
-Out of curiosity, why don't you rebase your tree to net-next/linux-next
-frequently?
+Yeah, one of the things I took away from this discussion is that we need
+to improve the implementation of both the methods we have at the moment
+for drivers etc to check if extensions are present and usable.
+In general, I don't think checks like that are "safe" to do in
+riscv_isa_extension_check(), because the dependencies may not all have
+been resolved when we probe an extension (Clement's current Zca etc
+series improves the situation though by only calling the checks after
+we probe all extensions).
+
+The simple V cases are all fine though - the DT binding and ACPI rules
+for compatible strings all mandate that single-letter extensions must
+come before multi-letter ones. For riscv,isa-extensions we control the
+probe ordering and probe V before any multi-letter stuff. Additionally,
+we should make it a requirement for V to be present if things that
+depend on it are.
+
+That said, is it permitted by the specs to have any of the extensions
+you mention without the full V extension, but with one of the cut-down
+variants you mention here? If not, I'd be more interested in figuring
+out the non-extension dependencies: whether or not the kernel itself
+supports vector and if the kernel has opted to disable vector due to
+detecting that harts have mismatching vector lengths.
+
+TL;DR: I think we should add some checks in riscv_isa_extension_check().
+
+Thanks,
+Conor.
+
+
+--ILfmNxMoEmQr18uK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjx/qQAKCRB4tDGHoIJi
+0nmVAP9L+cHjupn5RAFkHpZYc5Cnnq2E5GdciRokz+M5dfaZiwEA9ymnxi2cQa7X
+f5iK/7u9QwmQNblOabpPI5z1wq28rAo=
+=dW2A
+-----END PGP SIGNATURE-----
+
+--ILfmNxMoEmQr18uK--
 
