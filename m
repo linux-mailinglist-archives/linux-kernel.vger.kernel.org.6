@@ -1,66 +1,81 @@
-Return-Path: <linux-kernel+bounces-174321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A9F8C0D06
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DD48C0D1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6C82819AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071C61F226FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FDD14A4DD;
-	Thu,  9 May 2024 09:02:03 +0000 (UTC)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B3314A4EF;
+	Thu,  9 May 2024 09:06:13 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C6212E1C4;
-	Thu,  9 May 2024 09:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA13C14C5BF
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715245323; cv=none; b=cF5YRBFx1W8HHEcM1JnXkdFrmvhmRhR9OqcyeYO1zyoCWuWR0ONbM/y5HQUdvSBua6ihxCdIscBIqfnrU6GXu0POr8fmGCgzgvXN2ILF3ViSsdM1Ke8wZj5cz4q3odb584T9GEv3RuMkqZPPcpRngQsEgYd9xiM3vLQtwGhfSFw=
+	t=1715245572; cv=none; b=DxXdB4lBfiBODR7xh0irkzMju2qI9I6ZNcH4lMHEHvy7c/V+FG27P+HxsY0tTWGjwfZjIhyNFYVlBm0W5Hpft8uL7uUFIG3qtqu8pAoQ0Toha1QViCdY0fCzLyqvaP9wS2Tlb3avcgWDz8NGWCiD0BYNoml+pH7AoyaxpetG+sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715245323; c=relaxed/simple;
-	bh=GZat9LINhFY7HET0Bfu5/n99u2tVBTaKeJXrhTXoj84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RIwg1IgBH1BUTFU4LYBMzVmHS8xwmyJJomgM5XLJLbS0bHS4SNro7m2uSb+6UDAI4sgTYQXTw2/SbnYNOX3MtoqRfgl3Dgg66uD+Gr2aeFFHi7ZdTdA8tD7HK8xe0+POsfEs/jct5jfyD/p5dUfDZNnXuqmjg1x8g6C0LK5o6vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59cf0bda27so76319666b.0;
-        Thu, 09 May 2024 02:02:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715245320; x=1715850120;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Oi3yojxJ4xAGQp2FG233vt0UC3eonUyTb4YkLIyjxjs=;
-        b=ft2ydMk5JUysektUjav+vUek8+vIZ5U4V6kZfRS+Xkm+yWsaFWLWib7Gsn7usPK84h
-         +xkRCGhOxhTUyyR+XTyUk/NYoiOeaptmsZOQHKXMCJYIecWTr7yZ67g4iaG7bDX2MEQR
-         UT3NhX3m9LeZ69zW4Js7BotFJ+I2pkcqWrLgoWseozFUP3CBpE4AXciKClk9yIyVy9cg
-         MuKOrMnjzhTP2K2KxnVphv/s3bLAftEdM9a+Ufwe3B+Att4L5PI2Ia18bEPSpit2jRrI
-         5GCAvRev40o5jQrTOfW1kJM7YieXxwhe873TgpkaWmA9jf6wpSy60TVvzk8Al7wvS2jU
-         oAUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEXeCLUv/kpBxYFXlXBewsWDCaJ52htzcGyBwGtqVTNXP5iiYKSH4uUVInfJYWaOyHJjM/2/qSsr1+c6PRJSKUXRWozgHak7JBcZuBK8aVqIxxSizT9CAz8an2/2Dyj++1
-X-Gm-Message-State: AOJu0YzBVFA7vdkTeAl6mr+O+sMAZpNTBAk3B9a4DiyHCe4NgQ8Lu3Vf
-	80g5vhy9izC1jYJzp7Y27uaL2GtpLcmcq4UAk2wrF5bv2cjN9e86
-X-Google-Smtp-Source: AGHT+IG4oJw3MuRp847dXHlmTNFINDozRfgyJ8e2lLWZZJYAwbdZJ1OY0RijrHZsXTKvJ/WWawo7Ag==
-X-Received: by 2002:a50:d58b:0:b0:572:3f41:25aa with SMTP id 4fb4d7f45d1cf-5731d9b5f29mr4693125a12.11.1715245319838;
-        Thu, 09 May 2024 02:01:59 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6704sm486670a12.3.2024.05.09.02.01.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 02:01:59 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: rbc@meta.com,
-	paulmck@kernel.org,
-	kvm@vger.kernel.org (open list:KERNEL VIRTUAL MACHINE (KVM)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] KVM: Addressing a possible race in kvm_vcpu_on_spin:
-Date: Thu,  9 May 2024 02:01:46 -0700
-Message-ID: <20240509090146.146153-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715245572; c=relaxed/simple;
+	bh=vYC5NvNJ4aJ9CJ6rl24BmigQQLD96y14k7heirDSbpc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UP0SGO5pYUbkFt5nc7eA7RwNZ0MHCURkZbKO6Q1YMBNBLp2TTn+yale7U9kSCv4I9Y+ORJimvIuGNAk6FxDgPz+Mrrdbj6775SJvdyfmEAgVehpYjDnZejmY0KJCpk0kqXzNKfzOmpvK+dCwverPRzuXg+6HSs/4LvlqV+gev3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5b94af880de311ef9305a59a3cc225df-20240509
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.37,REQID:f99393cb-0013-4c06-972b-1c94c77f2aa8,IP:10,
+	URL:0,TC:0,Content:-25,EDM:25,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,A
+	CTION:release,TS:-1
+X-CID-INFO: VERSION:1.1.37,REQID:f99393cb-0013-4c06-972b-1c94c77f2aa8,IP:10,UR
+	L:0,TC:0,Content:-25,EDM:25,RT:0,SF:-11,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:-1
+X-CID-META: VersionHash:6f543d0,CLOUDID:03449bcc8d4fcf2644a010ca5f18e3b8,BulkI
+	D:240509170604U15SBRAY,BulkQuantity:0,Recheck:0,SF:66|25|17|19|44|102,TC:n
+	il,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL
+	:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
+	DN_TRUSTED, SRC_TRUSTED, SA_TRUSTED, SA_EXISTED, SN_TRUSTED
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-UUID: 5b94af880de311ef9305a59a3cc225df-20240509
+X-User: oushixiong@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.169)] by mailgw.kylinos.cn
+	(envelope-from <oushixiong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 95223455; Thu, 09 May 2024 17:06:01 +0800
+From: oushixiong <oushixiong@kylinos.cn>
+To: Xinliang Liu <xinliang.liu@linaro.org>
+Cc: Tian Tao <tiantao6@hisilicon.com>,
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Yongqin Liu <yongqin.liu@linaro.org>,
+	John Stultz <jstultz@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Shixiong Ou <oushixiong@kylinos.cn>
+Subject: [PATCH] drm/hisilicon: Fix a NULL pointer access when call hibmc_unload
+Date: Thu,  9 May 2024 17:05:01 +0800
+Message-Id: <20240509090501.127975-1-oushixiong@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,82 +84,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are two workflow paths that access the same address
-simultaneously, creating a potential data race in kvm_vcpu_on_spin. This
-occurs when one workflow reads kvm->last_boosted_vcpu while another
-parallel path writes to it.
+From: Shixiong Ou <oushixiong@kylinos.cn>
 
-KCSAN produces the following output when enabled.
+If Calling hibmc_mm_init() failed in hibmc_load(), the hibmc_unload()
+will access a NULL pointer, as it don't call ww_mutex_init() to
+initialize mode_config.connection_mutex but try to lock it when
+calling drm_atomic_helper_shutdown().
 
-	BUG: KCSAN: data-race in kvm_vcpu_on_spin [kvm] / kvm_vcpu_on_spin [kvm]
+[   50.939211][  0] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000018
+	......
+[   51.149882][  0] Call trace:
+[   51.152750][  0]  ww_mutex_lock+0xf0/0x1e0
+[   51.156829][  0]  drm_modeset_lock+0x184/0x2c0
+[   51.161254][  0]  drm_modeset_lock_all_ctx+0x98/0x188
+[   51.166284][  0]  drm_atomic_helper_shutdown+0xa4/0x128
+[   51.171487][  0]  hibmc_unload+0x50/0x2f0
+[   51.175479][  0]  hibmc_load+0x5d8/0x888
+[   51.179386][  0]  drm_dev_register+0x280/0x558
+[   51.183811][  0]  drm_get_pci_dev+0x140/0x3c8
+[   51.188150][  0]  hibmc_pci_probe+0x148/0x190
+[   51.192489][  0]  local_pci_probe+0xc4/0x180
+[   51.196742][  0]  pci_device_probe+0x328/0x530
+[   51.201167][  0]  really_probe+0x498/0x9a0
+[   51.205248][  0]  driver_probe_device+0x224/0x308
+[   51.209932][  0]  device_driver_attach+0xec/0x128
+[   51.214616][  0]  __driver_attach+0x144/0x280
+[   51.218955][  0]  bus_for_each_dev+0x120/0x1a0
+[   51.223380][  0]  driver_attach+0x48/0x60
+[   51.227372][  0]  bus_add_driver+0x328/0x578
+[   51.231625][  0]  driver_register+0x148/0x398
+[   51.235965][  0]  __pci_register_driver+0x15c/0x1c8
+[   51.240823][  0]  hibmc_init+0x2c/0x34
+[   51.244557][  0]  do_one_initcall+0xc8/0x4a8
+[   51.248810][  0]  kernel_init_freeable+0x678/0x75c
+[   51.253582][  0]  kernel_init+0x18/0x128
+[   51.257489][  0]  ret_from_fork+0x10/0x18
 
-	write to 0xffffc90025a92344 of 4 bytes by task 4340 on cpu 16:
-	kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4112) kvm
-	handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
-	vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
-	vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
-	kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
-	kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
-	__se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
-	__x64_sys_ioctl (fs/ioctl.c:890)
-	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-	do_syscall_64 (arch/x86/entry/common.c:?)
-	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+Add a initialized flag to avoid this.
 
-	read to 0xffffc90025a92344 of 4 bytes by task 4342 on cpu 4:
-	kvm_vcpu_on_spin (arch/x86/kvm/../../../virt/kvm/kvm_main.c:4069) kvm
-	handle_pause (arch/x86/kvm/vmx/vmx.c:5929) kvm_intel
-	vmx_handle_exit (arch/x86/kvm/vmx/vmx.c:? arch/x86/kvm/vmx/vmx.c:6606) kvm_intel
-	vcpu_run (arch/x86/kvm/x86.c:11107 arch/x86/kvm/x86.c:11211) kvm
-	kvm_arch_vcpu_ioctl_run (arch/x86/kvm/x86.c:?) kvm
-	kvm_vcpu_ioctl (arch/x86/kvm/../../../virt/kvm/kvm_main.c:?) kvm
-	__se_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:904 fs/ioctl.c:890)
-	__x64_sys_ioctl (fs/ioctl.c:890)
-	x64_sys_call (arch/x86/entry/syscall_64.c:33)
-	do_syscall_64 (arch/x86/entry/common.c:?)
-	entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-
-	value changed: 0x00000012 -> 0x00000000
-
-Given that both operations occur simultaneously without any locking
-mechanisms in place, let's ensure atomicity to prevent possible data
-corruption. We'll achieve this by employing READ_ONCE() for the reading
-operation and WRITE_ONCE() for the writing operation.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
 ---
- virt/kvm/kvm_main.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 8 ++++++--
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ff0a20565f90..9768307d5e6c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -4066,12 +4066,13 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+index 57c21ec452b7..343f64d66e75 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+@@ -99,6 +99,7 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+ 	ret = drmm_mode_config_init(dev);
+ 	if (ret)
+ 		return ret;
++	priv->mode_config_initialized = true;
+ 
+ 	dev->mode_config.min_width = 0;
+ 	dev->mode_config.min_height = 0;
+@@ -240,9 +241,12 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
+ static int hibmc_unload(struct drm_device *dev)
  {
- 	struct kvm *kvm = me->kvm;
- 	struct kvm_vcpu *vcpu;
--	int last_boosted_vcpu = me->kvm->last_boosted_vcpu;
-+	int last_boosted_vcpu;
- 	unsigned long i;
- 	int yielded = 0;
- 	int try = 3;
- 	int pass;
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
++	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
  
-+	last_boosted_vcpu = READ_ONCE(me->kvm->last_boosted_vcpu);
- 	kvm_vcpu_set_in_spin_loop(me, true);
- 	/*
- 	 * We boost the priority of a VCPU that is runnable but not
-@@ -4109,7 +4110,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+-	drm_atomic_helper_shutdown(dev);
+-
++	if(priv->mode_config_initialized){
++		drm_atomic_helper_shutdown(dev);
++		priv->mode_config_initialized = false;
++	}
+ 	free_irq(pdev->irq, dev);
  
- 			yielded = kvm_vcpu_yield_to(vcpu);
- 			if (yielded > 0) {
--				kvm->last_boosted_vcpu = i;
-+				WRITE_ONCE(kvm->last_boosted_vcpu, i);
- 				break;
- 			} else if (yielded < 0) {
- 				try--;
+ 	pci_disable_msi(to_pci_dev(dev->dev));
+diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+index 207aa3f660b0..08fd7cb59bb5 100644
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
+@@ -37,6 +37,7 @@ struct hibmc_drm_private {
+ 	struct drm_crtc crtc;
+ 	struct drm_encoder encoder;
+ 	struct hibmc_connector connector;
++	bool mode_config_initialized;
+ };
+ 
+ static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
 -- 
-2.43.0
+2.25.1
 
 
