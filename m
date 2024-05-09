@@ -1,148 +1,109 @@
-Return-Path: <linux-kernel+bounces-174061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE3D8C09D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:39:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF968C09DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106111C217CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:39:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9661F22E8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2829B146A78;
-	Thu,  9 May 2024 02:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="m0rQ3P5a"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7187146D4A;
+	Thu,  9 May 2024 02:41:29 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475C7380
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 02:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D616C146A67;
+	Thu,  9 May 2024 02:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715222380; cv=none; b=Yk9i0vnVT44pquw7J+tkcmnckBAMY+vwCyuQyzYVwq75+xFDi6nsbe5EX0xaHoEymP687VfeDPcyzJ0nVNzW7IQAwC9Dnl3vvOuFQsskff7bzzkj4vDak1v7mcYUTV/egu4rNchCpxhCX2WtuULCj150iaK/nXOTkp5BVRJgJSo=
+	t=1715222489; cv=none; b=bswlfNKitqleiPccwOjuhx/0yy6MorYZB/CvQmMPaIv7pHA0p6Xp7a+mNgNbcroKCLe0eJ/5ClP5yGYqGNPsSy7shKyTOPMb22ZXNhkz8xrgfFmIZ+NnJ82L6hd2Ror97OoLuHQIrjoehudAXvi5bvc2r4UhX7tlx07J+vKGxjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715222380; c=relaxed/simple;
-	bh=sS0PWwSVmuY6ke3uD6YjWPykPsFgxqa8lQhRYGi2Vq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=og+s8NZjZ0AnQt/O5u3k9wpEfzWOTTzEO++9kzK28+5aomrc/5Jr4eCMkDWICxc4AECIfdIOKtXQlGUkzNfp+JJNcNsxSo2m0WxAZl5emTphGnOPoC3ZRKMXjUM9kiCHo7KBHkj3YSr/S57O1n34FyvntLzNB/pRtNvOVoOfQDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=m0rQ3P5a; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715222374; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=GmlupQEObKD3hcpHsT80fX0O66yCosUf38s2RUlYQ0I=;
-	b=m0rQ3P5aZfnpT/UyC+KgxEHsMm2T3l2169NDY8EUboiOq1n2ookzSVngOzCuuHwKPGfB7CT6gSvJ1zKaZ/b6VvB/CcX3nQ1cGrsycwmF6hbL9c25M4LWOPwQDQVKTNLCnegp5pI8DXb7nPUdLXhgM4ZrJ9r4IW0RhIQe/5JtWo4=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W65JQwU_1715222372;
-Received: from 30.97.48.191(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W65JQwU_1715222372)
-          by smtp.aliyun-inc.com;
-          Thu, 09 May 2024 10:39:33 +0800
-Message-ID: <20d782ad-c059-4029-9c75-0ef278c98d81@linux.alibaba.com>
-Date: Thu, 9 May 2024 10:39:31 +0800
+	s=arc-20240116; t=1715222489; c=relaxed/simple;
+	bh=lEewC/Whf/QntDU1BLQrxCoQoo0Ce9K5wSuMQsc8PaA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oh7SSBkqLoD9SLw2i+iDiSze5wsaD/P97iYCRBq65uQeSmHpfwOrRiPtilrUIoUBsjC4lqtIE94zh0Gz9RVvPpyj2+aDrcGwNs/05pc5HeXJGCrMIXY1K5A8AqM06MF0OHfvIRhJt8ts2CyXlUCUsCX6sv9XCPNQe6OrEqCv6Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4492dhtm051819;
+	Thu, 9 May 2024 10:39:43 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4VZbkD2Xj6z2PGl6X;
+	Thu,  9 May 2024 10:36:36 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Thu, 9 May 2024 10:39:40 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox
+	<willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo
+	<tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>, <linux-mm@kvack.org>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <cgroups@vger.kernel.org>, Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        <steve.kang@unisoc.com>
+Subject: [RFC PATCH 0/2] introduce budgt control in readahead
+Date: Thu, 9 May 2024 10:39:35 +0800
+Message-ID: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
- called with __GFP_NOFAIL
-To: Barry Song <21cnbao@gmail.com>, hailong.liu@oppo.com
-Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
- lstoakes@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- xiang@kernel.org, chao@kernel.org, Oven <liyangouwen1@oppo.com>
-References: <20240508125808.28882-1-hailong.liu@oppo.com>
- <CAGsJ_4xN0MBz_73wUvMp74upd9SaQ+TCRJufEj26Y619Rtr7Zw@mail.gmail.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAGsJ_4xN0MBz_73wUvMp74upd9SaQ+TCRJufEj26Y619Rtr7Zw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 4492dhtm051819
 
-Hi,
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-On 2024/5/9 10:20, Barry Song wrote:
-> On Thu, May 9, 2024 at 12:58 AM <hailong.liu@oppo.com> wrote:
->>
->> From: "Hailong.Liu" <hailong.liu@oppo.com>
->>
->> Commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmalloc")
->> includes support for __GFP_NOFAIL, but it presents a conflict with
->> commit dd544141b9eb ("vmalloc: back off when the current task is
->> OOM-killed"). A possible scenario is as belows:
->>
->> process-a
->> kvcalloc(n, m, GFP_KERNEL | __GFP_NOFAIL)
->>      __vmalloc_node_range()
->>          __vmalloc_area_node()
->>              vm_area_alloc_pages()
->>              --> oom-killer send SIGKILL to process-a
->>              if (fatal_signal_pending(current)) break;
->> --> return NULL;
->>
->> to fix this, do not check fatal_signal_pending() in vm_area_alloc_pages()
->> if __GFP_NOFAIL set.
->>
->> Reported-by: Oven <liyangouwen1@oppo.com>
->> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
->> ---
->>   mm/vmalloc.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->> index 6641be0ca80b..2f359d08bf8d 100644
->> --- a/mm/vmalloc.c
->> +++ b/mm/vmalloc.c
->> @@ -3560,7 +3560,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
->>
->>          /* High-order pages or fallback path if "bulk" fails. */
->>          while (nr_allocated < nr_pages) {
->> -               if (fatal_signal_pending(current))
->> +               if (!(gfp & __GFP_NOFAIL) && fatal_signal_pending(current))
->>                          break;
-> 
-> why not !nofail ?
-> 
-> This seems a correct fix, but it undermines the assumption made in
-> commit dd544141b9eb
->   ("vmalloc: back off when the current task is OOM-killed")
-> 
-> "
->      This may trigger some hidden problems, when caller does not handle
->      vmalloc failures, or when rollaback after failed vmalloc calls own
->      vmallocs inside.  However all of these scenarios are incorrect: vmalloc
->      does not guarantee successful allocation, it has never been called with
->      __GFP_NOFAIL and threfore either should not be used for any rollbacks or
->      should handle such errors correctly and not lead to critical failures.
-> "
-> 
-> If a significant kvmalloc operation is performed with the NOFAIL flag, it risks
-> reverting the fix intended to address the OOM-killer issue in commit
-> dd544141b9eb.
-> Should we indeed permit the NOFAIL flag for large kvmalloc allocations?
+Over-limit bw value is observed during fio test in the throttling group
+which caused by over-sized bio as there is no control on ra->size during
+readahead. This series patches would like to introduce the helper
+function to provide the bytes limit and apply it on readahead.
 
-Just from my perspective, I don't really care about kmalloc, vmalloc
-or kvmalloc (__GFP_NOFAIL).  I even don't care if it returns three
-order-0 pages or a high-order page.   I just would like to need a
-virtual consecutive buffer (even it works slowly.) with __GFP_NOFAIL.
+Please find below for the fio test result on v6.6 which presents 2%-10%
+improvement for BW and lat. Besides, we can also observed stable BW
+instantaneous value during the test.
 
-Because in some cases, writing fallback code may be tough and hard to
-test if such fallback path is correct since it only triggers in extreme
-workloads, and even such buffers are just used in a very short lifetime.
-Also see other FS discussion of __GFP_NOFAIL, e.g.
-https://lore.kernel.org/all/ZcUQfzfQ9R8X0s47@tiehlicka/
+blkio.throttle.read_bps_device = 1MB/s
+   before:  read: IOPS=223, BW=894KiB/s (915kB/s)(175MiB/200919msec)
+   after :  read: IOPS=239, BW=960KiB/s (983kB/s)(153MiB/163105msec)
 
-In the worst cases, it usually just needs < 5 order-0 pages (for many
-cases it only needs one page), but with kmalloc it will trigger WARN
-if it occurs to > order-1 allocation. as I mentioned before.
-
-With my limited understanding I don't see why it could any problem with
-kvmalloc(__GFP_NOFAIL) since it has no difference of kmalloc(GFP_NOFAIL)
-with order-0 allocation.
+   before:  clat (usec): min=4, max=16795k, avg=4468.74, stdev=265746.14
+            lat  (usec): min=6, max=16795k, avg=4470.57, stdev=265746.14
+   after :  clat (usec): min=11, max=209193, avg=4105.22, stdev=27188.04
+            lat  (usec): min=16, max=209197, avg=4120.03, stdev=27188.04
 
 
-Thanks,
-Gao XIang
+blkio.throttle.read_bps_device = 10MB/s
+   before:  read: IOPS=2380, BW=9524KiB/s (9752kB/s)(1007MiB/108311msec)
+   after :  read: IOPS=2438, BW=9754KiB/s (9989kB/s)(1680MiB/176405msec)
+
+   before:  clat (usec): min=4, max=201817, avg=399.58, stdev=8268.85
+            lat  (usec): min=6, max=201819, avg=402.10, stdev=8268.85
+   after :  clat (usec): min=4, max=2494.6k, avg=412.72, stdev=25783.51
+            lat  (usec): min=6, max=2494.6k, avg=414.48, stdev=25783.51
+
+Zhaoyang Huang (2):
+  block: introduce helper function to calculate bps budgt
+  mm: introduce budgt control in readahead
+
+ block/blk-throttle.c       | 44 ++++++++++++++++++++++++++++++++++++++
+ include/linux/blk-cgroup.h | 10 +++++++++
+ mm/readahead.c             | 33 ++++++++++++++++++++--------
+ 3 files changed, 78 insertions(+), 9 deletions(-)
+
+-- 
+2.25.1
+
 
