@@ -1,181 +1,271 @@
-Return-Path: <linux-kernel+bounces-174744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795EA8C1447
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:46:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D448C144F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F3FC281ED3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46F96B202F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 17:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4484C77117;
-	Thu,  9 May 2024 17:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0088EFBFD;
+	Thu,  9 May 2024 17:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fxjG3anD"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AKc/J3k0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8927581A
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B28B10979
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 17:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715276763; cv=none; b=SQACKrUzro9zFzMi2pBAnBlubYJzXBQ12xBc61lgy9Z6GsN35M0IBtnODK2OMiPpJz654DowohmY3CjUoGqCeXLUEPTNAB4AQr8UGI3sh+0Yn+JY3sRXjzpMo3vULcWOykep3jIxD1fEWBE08fSdukdUdymmuyMy0Gyi3JyAo64=
+	t=1715276933; cv=none; b=LGO+ShWyKNV9dv0/pVzR6Fh/+CnXfMb0+FMYNUaa+TdMm9OxCmUcFqRwG6njNi5KxvrCJ6+vZGXcIThK13qvWuwL9Tw6PdHlTCuCuI08QHWqfu05NRs2yYFITM/hnjc2iXTHugLYXMASfZ7lnAMp+DeTSQYMEt0A2609YHDXA9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715276763; c=relaxed/simple;
-	bh=/oSWOWjkap8fv/UuIsI6Isx0EXquObmcwzLznfIJKkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SlcXOxukjJH1Z2odCciDVAFQ7wykaTAm3WdPOmhFxxshwqVDmBKjLeNFW2oTtd1nkGVLPFe8pvMoJWHJH62hKHvHPStMMO5Cz3jCODIB9IR0JQfw0anppbcKxHnND+VoVHWHNX87BGBnn42aVNuZCUmffrVp3LtfMnPMUfX/PWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fxjG3anD; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso1526a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:46:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715276760; x=1715881560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9dUf6h0ZONDc1o4IvKX4JCSR1LfcFcW4NQit96LWug=;
-        b=fxjG3anD83hFoJAGJtRblIDGAlzmSLRG8ntKPrhQt+HieXxnkLfNrfeXZDA4DRCfMe
-         sREmIk4QaB74Bb5+DiGkytekIaBjk/rvNTyhi/v/+B08R+Q8xkpAkxzNLVstuVDGDd25
-         GEmOAe0DeZO+QlgQrqL3aR3rKTQi9U4Emep9ofkbHs2DXyOlZ4NdO4/806fVK2YkNxcS
-         68XAqfV/h5ZcRctT01utJ8bJz8tN/N7w4zhbOHBNLRylB0WWfQX5euwEKpNKnO8tR0BU
-         G2FjQBn80cFSqwU79je9zjjKho3HbMYZc8xJ1oeIamcwBM68P2fSXUSvRXeo5wFqsQOv
-         z1BQ==
+	s=arc-20240116; t=1715276933; c=relaxed/simple;
+	bh=fjrIqfLCcacQIwwbkR6Q2FTSjkEoTu7mJkxVdALUiT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a8fHQXi07QbvCDdTtsjZXLo3wgpopROta17lVj48YbuJOcm4OSks7M83y7fOtL17W5biU6BfFHr0ReL5SdvWcT94jL6IFDYbCoBexhGTBb3SRAiSAfL7Tltlla6FGpoWAry6W01SEBtnwm477ojeNQmDehxwhpfUq1OWE+72Las=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AKc/J3k0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715276931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=CcvU8eoRJ3v3bJAMRLSLp1zquftLdgbiPZewW3s0bAc=;
+	b=AKc/J3k0UfkQEyRkU7Pa26Ac9DYPGCgXkBdExmK6zZhSSwx7TadJwDC3S8c6Tsvwp0Nd/k
+	tatPp0FdBonU3LcG30rk2sa/4j8NYTCanwJ4UDt9gymkrEISKiSvcfyOzobxZAZY5W9VFZ
+	701vSZRMLL7Fy5+4DVbMKh9E74x0Y4g=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-536-QbFQeajtOEulP2NBNasV1w-1; Thu, 09 May 2024 13:48:49 -0400
+X-MC-Unique: QbFQeajtOEulP2NBNasV1w-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-34da8f1bf7cso778651f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 10:48:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715276760; x=1715881560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R9dUf6h0ZONDc1o4IvKX4JCSR1LfcFcW4NQit96LWug=;
-        b=g7gNTk5fhZaPALVocBSsetrybXeyOeGJ1Dx7jsu7tQcn5euDd7717k0uCiNhtGy3Iw
-         sqif5kGz4au1tq0Vx7PGTRdM67Ow4IG8G7hhsDIRru8NZ9CN3SzdbTPeqPdmDE0OJMCN
-         zVSwxZab2IAGifGiXtxokIkercnihVpf+1BJ1J7TVNtvwqCmyvNpdW2JbkWoPqFBId53
-         vuMKe6inqVSuY+2C+0pqxW0Y4bmMXRJhVtMgC4sfH+iWGogxWU2qqBs/VPA7WSnRUVof
-         jvdQ6ztnRrW7b2QWLxKgQp7Q/4ei55xU023DtpaGeGc+n2mESUiI3pWSNeylr9n2qwZO
-         q2DA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ+46pjsv80SVyd1PBatAYr7fcxPhD92ysJrHibWKeYF03w1elVIqZwjuyswCRFG/EMsrVLOC8EZvlcj0MhaJMyKWubqvRHkhvc4kX
-X-Gm-Message-State: AOJu0YxLwurYAo+G+Hz5tSIinhIaRL28FQLc57RXQvmKMq2hTBE/qidT
-	3b2250zr78ysKjsLWJeOMYh31+8yqwARaOJNaBshsWKXCkjR2hhYA8cqJ68XuCwgJTGMWRa3VbI
-	A1Qr9q+dlR7TvuXpMG9YWt7paJNUBPlzwZNYP
-X-Google-Smtp-Source: AGHT+IFG+qZVP+GdGsJ0bfuXNwufKAJIRBglqYr60vsLU06TQKxk62S9P+fDwyd1v4jS3rVgg+dEQp+BJ2xOYW96LJk=
-X-Received: by 2002:a50:cac7:0:b0:572:988f:2f38 with SMTP id
- 4fb4d7f45d1cf-5734f8fe9f6mr3018a12.6.1715276759326; Thu, 09 May 2024 10:45:59
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715276929; x=1715881729;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CcvU8eoRJ3v3bJAMRLSLp1zquftLdgbiPZewW3s0bAc=;
+        b=dv+/4ofY78hjfKg2d5YHg96O2MbXbfB8WssJJrfuHj+p2X8DN7tlaIwT2Tbu6PheAr
+         1uccejjl4rgmENPHrJgaaHwNFpY2J3mv8hf0l7QmWP+CXhbak6yo6DAvawmYVNUE1T6C
+         V+Uyz6lEipeyhCVmYX7CyX9pjqhBPkm+zK5fXP6C1yBw6tjHS6lRBoTkl6TMUqc6kMBX
+         7jdhaiRUvbezyRC1gAx56yeWQLN6ZL148+qoGkPbQR/bvpISzUgDRY1c6CeEsIxVjHI9
+         fjoy2pSb/CKkxQk5Gt+iFKBj8Aijxtl53yIbxShyaf3LIs/SA3JFiv8w+AoY9ZigIIs8
+         GCPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqsVVISJLP4EAgVf9e7AxT7AWMTnuwn6+u2pxaw8Z4cWL+kmbhHJm9EZLcy7Un58HgS8J+G5uBcBKl+13x5J+DOyZ/6EYVL1CD+IMN
+X-Gm-Message-State: AOJu0YzvDTGE8xpqRCJ/zLU9ui0npLaMRwlN4C6SHcBZpamt+RgYnkwn
+	L36FmYTQbXhXvljcDBAlB+oUANoorG+ifhm6WmplEkaeQqQRl/0PLkoM2gG58gFfm/K0aj5T3wa
+	6YjxZYh4Dqz45RzntF0TcfnYZ04vZAtAaHBN3O3eqmQM438Sg9jha4Vp1Cae3VA==
+X-Received: by 2002:a5d:4fd0:0:b0:34b:dc21:68f2 with SMTP id ffacd0b85a97d-3504a738229mr299178f8f.28.1715276928727;
+        Thu, 09 May 2024 10:48:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTnBUYUYuejfPBLLY8ZBtOjJentIBku5CpcFcyXBHDwatUcM7ykUFg7cpEbk2afbnfdUiNFQ==
+X-Received: by 2002:a5d:4fd0:0:b0:34b:dc21:68f2 with SMTP id ffacd0b85a97d-3504a738229mr299154f8f.28.1715276928297;
+        Thu, 09 May 2024 10:48:48 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c716:7600:ac6:a414:3c04:6f5a? (p200300cbc71676000ac6a4143c046f5a.dip0.t-ipconnect.de. [2003:cb:c716:7600:ac6:a414:3c04:6f5a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbde1sm2279992f8f.97.2024.05.09.10.48.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 10:48:47 -0700 (PDT)
+Message-ID: <23ea6dbd-1d4e-4aeb-900b-646db880cfb6@redhat.com>
+Date: Thu, 9 May 2024 19:48:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507214254.2787305-1-edliaw@google.com> <f4e45604-86b0-4be6-9bea-36edf301df33@linuxfoundation.org>
- <CAG4es9XE2D94BNboRSf607NbJVW7OW4xkVq4jZ8pDZ_AZsb3nQ@mail.gmail.com> <946ae22f-a4af-448a-92e1-60afb6ed9261@linuxfoundation.org>
-In-Reply-To: <946ae22f-a4af-448a-92e1-60afb6ed9261@linuxfoundation.org>
-From: Edward Liaw <edliaw@google.com>
-Date: Thu, 9 May 2024 10:45:31 -0700
-Message-ID: <CAG4es9V2CcBJr0josSoGNsD+ZPQ6vasVXh_Hc_j88oeSqn__yQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Define _GNU_SOURCE for sources using
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: shuah@kernel.org, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, Andy Lutomirski <luto@amacapital.net>, 
-	Will Drewry <wad@chromium.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, David Hildenbrand <david@redhat.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Seth Forshee <sforshee@kernel.org>, Bongsu Jeon <bongsu.jeon@samsung.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Steffen Klassert <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	=?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Matthieu Baerts <matttbe@kernel.org>, 
-	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mm@kvack.org, linux-input@vger.kernel.org, iommu@lists.linux.dev, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-actions@lists.infradead.org, mptcp@lists.linux.dev, 
-	linux-rtc@vger.kernel.org, linux-sgx@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
+To: Luis Chamberlain <mcgrof@kernel.org>, Matthew Wilcox
+ <willy@infradead.org>, Christoph Lameter <christoph@lameter.com>,
+ Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>
+Cc: Daniel Gomez <da.gomez@samsung.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "hughd@google.com" <hughd@google.com>,
+ "ioworker0@gmail.com" <ioworker0@gmail.com>,
+ "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+ "ying.huang@intel.com" <ying.huang@intel.com>,
+ "21cnbao@gmail.com" <21cnbao@gmail.com>,
+ "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+ "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
+ <ziy@nvidia.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>
+References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
+ <CGME20240508113934eucas1p13a3972f3f9955365f40155e084a7c7d5@eucas1p1.samsung.com>
+ <fqtaxc5pgu3zmvbdad4w6xty5iozye7v5z2b5ckqcjv273nz7b@hhdrjwf6rai3>
+ <f44dc19a-e117-4418-9114-b723c5dc1178@redhat.com>
+ <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 9, 2024 at 7:37=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.or=
-g> wrote:
->
-> On 5/9/24 00:13, Edward Liaw wrote:
-> > On Wed, May 8, 2024 at 4:10=E2=80=AFPM Shuah Khan <skhan@linuxfoundatio=
-n.org> wrote:
-> >>
-> >> On 5/7/24 15:38, Edward Liaw wrote:
-> >>> 809216233555 ("selftests/harness: remove use of LINE_MAX") introduced
-> >>> asprintf into kselftest_harness.h, which is a GNU extension and needs
-> >>> _GNU_SOURCE to either be defined prior to including headers or with t=
-he
-> >>> -D_GNU_SOURCE flag passed to the compiler.
-> >>>
-> >>> v1: https://lore.kernel.org/linux-kselftest/20240430235057.1351993-1-=
-edliaw@google.com/
-> >>> v2: add -D_GNU_SOURCE to KHDR_INCLUDES so that it is in a single
-> >>> location.  Remove #define _GNU_SOURCE from source code to resolve
-> >>> redefinition warnings.
-> >>>
-> >>> Edward Liaw (5):
-> >>>     selftests: Compile kselftest headers with -D_GNU_SOURCE
-> >>>     selftests/sgx: Include KHDR_INCLUDES in Makefile
-> >>
-> >> I appled patches 1/5 and 2.5 - The rest need to be split up.
-> >>
-> >>>     selftests: Include KHDR_INCLUDES in Makefile
-> >>>     selftests: Drop define _GNU_SOURCE
-> >>>     selftests: Drop duplicate -D_GNU_SOURCE
-> >>>
-> >>
-> >> Please split these patches pwe test directory. Otherwise it will
-> >> cause merge conflicts which can be hard to resolve.
-> >
-> > Hi Shuah,
-> > Sean asked that I rebase the patches on linux-next, and I will need to
-> > remove additional _GNU_SOURCE defines.  Should I send an unsplit v3 to
-> > be reviewed, then split it afterwards?  I'm concerned that it will be
-> > difficult to review with ~70 patches once split.
->
-> Please send them split - it will be easier to review and apply. You
-> might as well wait until the merge window is done. I don't think
-> anybody would have time to review now since merge window starts
-> next week.
+On 08.05.24 21:23, Luis Chamberlain wrote:
+> On Wed, May 08, 2024 at 01:58:19PM +0200, David Hildenbrand wrote:
+>> On 08.05.24 13:39, Daniel Gomez wrote:
+>>> On Mon, May 06, 2024 at 04:46:24PM +0800, Baolin Wang wrote:
+>>>> The primary strategy is similar to supporting anonymous mTHP. Introduce
+>>>> a new interface '/mm/transparent_hugepage/hugepage-XXkb/shmem_enabled',
+>>>> which can have all the same values as the top-level
+>>>> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', with adding a new
+>>>> additional "inherit" option. By default all sizes will be set to "never"
+>>>> except PMD size, which is set to "inherit". This ensures backward compatibility
+>>>> with the shmem enabled of the top level, meanwhile also allows independent
+>>>> control of shmem enabled for each mTHP.
+>>>
+>>> I'm trying to understand the adoption of mTHP and how it fits into the adoption
+>>> of (large) folios that the kernel is moving towards. Can you, or anyone involved
+>>> here, explain this? How much do they overlap, and can we benefit from having
+>>> both? Is there any argument against the adoption of large folios here that I
+>>> might have missed?
+>>
+>> mTHP are implemented using large folios, just like traditional PMD-sized THP
+>> are.
+>>
+>> The biggest challenge with memory that cannot be evicted on memory pressure
+>> to be reclaimed (in contrast to your ordinary files in the pagecache) is
+>> memory waste, well, and placement of large chunks of memory in general,
+>> during page faults.
+>>
+>> In the worst case (no swap), you allocate a large chunk of memory once and
+>> it will stick around until freed: no reclaim of that memory.
+>>
+>> That's the reason why THP for anonymous memory and SHMEM have toggles to
+>> manually enable and configure them, in contrast to the pagecache. The same
+>> was done for mTHP for anonymous memory, and now (anon) shmem follows.
+>>
+>> There are plans to have, at some point, have it all working automatically,
+>> but a lot for that for anonymous memory (and shmem similarly) is still
+>> missing and unclear.
+> 
+> Whereas the use for large folios for filesystems is already automatic,
+> so long as the filesystem supports it. We do this in readahead and write
+> path already for iomap, we opportunistically use large folios if we can,
+> otherwise we use smaller folios.
+> 
+> So a recommended approach by Matthew was to use the readahead and write
+> path, just as in iomap to determine the size of the folio to use [0].
+> The use of large folios would also be automatic and not require any
+> knobs at all.
 
-Sorry, I have them split already; is it ok if I send them now?  I will
-be on leave soon and may not be able to get back to it in a while.
+Yes, I remember discussing that with Willy at some point, including why 
+shmem is unfortunately a bit more "special", because you might not even 
+have a disk backend ("swap") at all where you could easily reclaim memory.
 
-Thanks,
-Edward
+In the extreme form, you can consider SHMEM as memory that might be 
+always mlocked, even without the user requiring special mlock limits ...
 
->
->
-> thanks,
-> -- Shuah
+> 
+> The mTHP approach would be growing the "THP" use in filesystems by the
+> only single filesystem to use THP. Meanwhile use of large folios is already
+> automatic with the approach taken by iomap.
+
+Yes, it's the extension of existing shmem_enabled (that -- I'm afraid -- 
+was added for good reasons).
+
+> 
+> We're at a crux where it does beg the question if we should continue to
+> chug on with tmpfs being special and doing things differently extending
+> the old THP interface with mTHP, or if it should just use large folios
+> using the same approach as iomap did.
+
+I'm afraid shmem will remain to some degree special. Fortunately it's 
+not alone, hugetlbfs is even more special ;)
+
+> 
+>  From my perspective the more shared code the better, and the more shared
+> paths the better. There is a chance to help test swap with large folios
+> instead of splitting the folios for swap, and that would could be done
+> first with tmpfs. I have not evaluated the difference in testing or how
+> we could get the most of shared code if we take a mTHP approach or the
+> iomap approach for tmpfs, that should be considered.
+
+I don't have a clear picture yet of what might be best for ordinary 
+shmem (IOW, not MAP_SHARED|MAP_PRIVATE), and I'm afraid there is no easy 
+answer.
+
+As long as we don't end up wasting memory, it's not obviously bad. But 
+some things might be tricky (see my example about large folios stranding 
+in shmem and never being able to be really reclaimed+reused for better 
+purposes)
+
+I'll note that mTHP really is just (supposed to be) a user interface to 
+enable the various folio sizes (well, and to expose better per-size 
+stats), not more.
+
+ From that point of view, it's just a filter. Enable all, and you get 
+the same behavior as you likely would in the pagecache mode.
+
+ From a shared-code and testing point of view, there really wouldn't be 
+a lot of differences. Again, essentially just a filter.
+
+
+> 
+> Are there other things to consider? Does this require some dialog at
+> LSFMM?
+
+As raised in my reply to Daniel, I'll be at LSF/MM and happy to discuss. 
+I'm also not a SHMEM expert, so I'm hoping at some point we'd get 
+feedback from Hugh.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
