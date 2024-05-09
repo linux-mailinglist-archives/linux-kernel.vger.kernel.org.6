@@ -1,137 +1,135 @@
-Return-Path: <linux-kernel+bounces-174257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BF18C0C2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:59:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834848C0C31
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571001C2171D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:59:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1BD2B213C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9A2149C7B;
-	Thu,  9 May 2024 07:59:27 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FC0149E15;
+	Thu,  9 May 2024 07:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ug9yakA9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961B11A2C37;
-	Thu,  9 May 2024 07:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C3B1A2C37
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715241567; cv=none; b=hq1A+yMUGq4iuAS1yshQeG7ovE1XJeFtXqsV3x0hUAhpnyS1aljgUS8HIwnzPAOlJAwwjHBcF5AZoDgh4lMTrBnoCQNGWfYn/Ta9lo9092Hh0FUJf2nZAdLA78lZj3dwqG9jT7oFNQat0Ywf7TxsInVNsBIv7aUclm9LyWp87eU=
+	t=1715241571; cv=none; b=K0SKPHfWVPs4rv+uUaoVSEy7gTUd1Pylx0SRBZIHIbeOsX/O0AdwfufCQGD4rlAOwFMdEq1gnMOMJYE5YREGzm0kJ6adIuQq/w0n4FaXdVwEvVMYtytSUDqR7Wm4qKoZozEaJdC4sTD78hd/eUap6PJjF4YDPH5ZCwvlSnUFeKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715241567; c=relaxed/simple;
-	bh=j1fYyZ9BekfWCAvIhL5f+MAVLok5fQykKrvz7StbT4Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pqzjrIpdw01iie//yW/HVj7KDeV3YMkNHNB5Ki0jcLXXaCW5zTHLi++r2VwKaDi4YtCxmlB1io2y6/HYZH8T4aJt63MxLReRsOgt7qriIV7NFRgdN4FJ4P3q4Z9JuLVw597IODqVG69KW7NeqLe78mO/TYSn/Uw/Uz5f+3tiItk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4497x2Ax91364205, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 4497x2Ax91364205
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 9 May 2024 15:59:02 +0800
-Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 15:59:02 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 15:59:02 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Thu, 9 May 2024 15:59:02 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Breno Leitao <leitao@debian.org>
-CC: Kalle Valo <kvalo@kernel.org>, "leit@meta.com" <leit@meta.com>,
-        "open
- list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>,
-        "open
- list" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH wireless] wifi: rtw89: Un-embed dummy device
-Thread-Topic: [PATCH wireless] wifi: rtw89: Un-embed dummy device
-Thread-Index: AQHalnSYD4Tb/iMnEk2tnRSMUSm6/rF4e3YAgAACc82AAAD0RYAAAhhAgBWWcwCAAIefEA==
-Date: Thu, 9 May 2024 07:59:01 +0000
-Message-ID: <acf2f82e7f424776835ffbc1f52ba996@realtek.com>
-References: <20240424182351.3936556-1-leitao@debian.org>
- <f46ae94488d1468e9a9a669320e4cfb9@realtek.com> <87ttjqgf2r.fsf@kernel.org>
- <87mspigex0.fsf@kernel.org> <acda4194c8d44690b05b83adccb3aa22@realtek.com>
- <Zjx/sKB++v8FJMXx@gmail.com>
-In-Reply-To: <Zjx/sKB++v8FJMXx@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
+	s=arc-20240116; t=1715241571; c=relaxed/simple;
+	bh=0jZ43QwfPkiBipK0twPxmlWJCKVbIdNETVAtX95REhk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Hm72TKXqnWu4pxmqetMhRrtqyB1dUllPM4LYcCDRU72YC5p99rX5WVzBfd8Z04oey60Y/l9LYB+xsbzx2WRuxOC0vqgM14eywUNoFqdRT2oG/d+jHzIOmpd7KF+w84of8Sfivn387+duE1eDXGOuJB/Hjeg2lxHB6PcWfq/tXeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ug9yakA9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715241569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yjn42W/o/LOj/jSJgIWj/Vg3N4yLF7R5ejTMZiQDXvM=;
+	b=Ug9yakA99tM6TscDHY6KklxHdNYcGoS/n134dxw1o4+/R31QIFjp3nIBAjhBEVAKXjctWR
+	mdKP/0G/r6rDhUrMDsN7Md/fJcHuHVFo5oBFxs3u4a6zKMiCoS1htVmhq9f4IZ1emhfh3v
+	VewaCPuqhpKt+Mpswq632taG6c+wjNc=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-52-8iN5aNtIPKKYA1ivkaj-oA-1; Thu, 09 May 2024 03:59:27 -0400
+X-MC-Unique: 8iN5aNtIPKKYA1ivkaj-oA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34da4d75ceeso67028f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:59:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715241566; x=1715846366;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yjn42W/o/LOj/jSJgIWj/Vg3N4yLF7R5ejTMZiQDXvM=;
+        b=OsmPp3zKCFRObwGZG0qzOIdEo0lsKz3joWrygz6Lnl50tX1UmqWmReW08yXJP12w/3
+         6r6y0q1wsNd2BFl+egXI3uaFz1f6GDndKRoLvJH2WDnuDT+2b787TeW70SXoAfhB6Ohq
+         pjnA2MLcAGWGm2lotvufFXMXBwtMt1CtralxV2vhPTKhVG9lcOCnqglPaABADL6DJMaG
+         uksuPgeTdQXkq9YagMHF7sjAwTmrcpNvHiRfuNHlD/kU54kfSnXze9yBssgYUr12Gr6A
+         DeRJ2TOOzBItB4Oxm3Zn3e1mYi9ykzHjohyQfKtB1pyG8RMYKoii3z5WNrq3vksGXhJr
+         qNoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwUGjyn/haG2fmh9SP13/D6ckCOK125XdGi0Za4VUhYhH20v1mGArRjaiEnRtSyV5wrzNWR++Zo8aKpb1P5QhnLUTPv0fv8Xx17oDo
+X-Gm-Message-State: AOJu0YyP/qvosOTjA8pYE8e22FjFwkjumtfGlnZYjiW4h25pVAA0nnRX
+	yQyTYYNMilyzpB2tRoBfCsCVdN64ncBJ7nb8Hmg/wP8pC75QAShENSXMdK5yuEYq49LJ2RMeuG/
+	vplGZTlPEtLklIBrBLvY7cTox12UpphLGNfeUA5L/cuXLPCDukFupIfROimdBkg==
+X-Received: by 2002:a05:600c:b44:b0:41f:cfe6:3648 with SMTP id 5b1f17b1804b1-41fcfe63810mr6921575e9.1.1715241566722;
+        Thu, 09 May 2024 00:59:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwrk8LgSZgMX3L0wE/e/4bo7w9alQYn6RfI6mS+/NPJ8rwhS/tbGTF5kFnddiBXFQPikowKA==
+X-Received: by 2002:a05:600c:b44:b0:41f:cfe6:3648 with SMTP id 5b1f17b1804b1-41fcfe63810mr6921195e9.1.1715241566345;
+        Thu, 09 May 2024 00:59:26 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1b68:1b10:ff61:41fd:2ae4:da3a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8fb5sm15844475e9.9.2024.05.09.00.59.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 00:59:25 -0700 (PDT)
+Message-ID: <e9633d41d0d004db3ec6e2b6d9dcb95d029dbb94.camel@redhat.com>
+Subject: Re: [PATCH 1/1] [RFC] ethernet: Convert from tasklet to BH workqueue
+From: Paolo Abeni <pabeni@redhat.com>
+To: Simon Horman <horms@kernel.org>, Allen <allen.lkml@gmail.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Allen Pais
+ <apais@linux.microsoft.com>, netdev@vger.kernel.org,
+ jes@trained-monkey.org,  davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, kda@linux-powerpc.org,  cai.huoqing@linux.dev,
+ dougmill@linux.ibm.com, npiggin@gmail.com,  christophe.leroy@csgroup.eu,
+ aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, 
+ nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, 
+ marcin.s.wojtas@gmail.com, mlindner@marvell.com,
+ stephen@networkplumber.org,  nbd@nbd.name, sean.wang@mediatek.com,
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org,  matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com,  borisp@nvidia.com,
+ bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
+ louis.peens@corigine.com, richardcochran@gmail.com,
+ linux-rdma@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-acenic@sunsite.dk,  linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org,  linux-mediatek@lists.infradead.org,
+ oss-drivers@corigine.com,  linux-net-drivers@amd.com
+Date: Thu, 09 May 2024 09:59:22 +0200
+In-Reply-To: <20240508201654.GA2248333@kernel.org>
+References: <20240507190111.16710-1-apais@linux.microsoft.com>
+	 <20240507190111.16710-2-apais@linux.microsoft.com>
+	 <Zjp/kgBE2ddjV044@shell.armlinux.org.uk>
+	 <CAOMdWSKfkT4K9MAOn-rL44pycHPhVDj4CtiYkru5y_s0S-sPeQ@mail.gmail.com>
+	 <20240508201654.GA2248333@kernel.org>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Breno Leitao <leitao@debian.org> wrote:
->=20
-> On Thu, Apr 25, 2024 at 06:15:21AM +0000, Ping-Ke Shih wrote:
-> > Kalle Valo <kvalo@kernel.org> wrote:
-> > > Kalle Valo <kvalo@kernel.org> writes:
-> > >
-> > > > Ping-Ke Shih <pkshih@realtek.com> writes:
-> > > >
-> > > >> Breno Leitao <leitao@debian.org> wrote:
-> > > >>> Embedding net_device into structures prohibits the usage of flexi=
-ble
-> > > >>> arrays in the net_device structure. For more details, see the dis=
-cussion
-> > > >>> at [1].
-> > > >>>
-> > > >>> Un-embed the net_device from the private struct by converting it
-> > > >>> into a pointer. Then use the leverage the new alloc_netdev_dummy(=
-)
-> > > >>> helper to allocate and initialize dummy devices.
-> > > >>>
-> > > >>> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.or=
-g/
-> > > >>>
-> > > >>> Signed-off-by: Breno Leitao <leitao@debian.org>
-> > > >>
-> > > >> I think this patch should go via net-next tree, because wireless-n=
-ext tree
-> > > >> doesn't have patch of dummy devices yet.
-> > > >>
-> > > >> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
-> > > >
-> > > > FWIW I sent the wireless-next pull request yesterday and once it pu=
-lled
-> > > > we will fast forward wireless-next to latest net-next.
-> > >
-> > > Oh, I just realised that this is not CCed to netdev so their patchwor=
-k
-> > > won't even see the patch. Ping, I recommend that you wait for the
-> > > dependency commits to trickle down to your tree and then apply the
-> > > patch. That's the simplest approach and no need to resend anything.
-> >
-> > Okay. If we don't hurry to get this patch merged, I will apply this pat=
-ch
-> > to my tree.
->=20
-> There is no hurry to get this patch merged.
+On Wed, 2024-05-08 at 21:16 +0100, Simon Horman wrote:
+> * As this patch seems to involve many non-trivial changes
+>   it seems to me that it would be best to break it up somehow.
+>   To allow proper review.
 
-I merged this patch today.=20
+I would like to stress this latest point: it looks like the changes to
+all the drivers are completely independent. If so, you have to break
+the series on a per driver basis. Since the total number of patch will
+be higher then 15 (maximum size allowed on netdev) you will have to
+split this in several smaller series.
 
->=20
-> Out of curiosity, why don't you rebase your tree to net-next/linux-next
-> frequently?
+Beyond making the change reviewable, it will allow eventually reverting
+the changes individually, should that cause any regressions.
 
-My tree goes to wireless-next, so I think it should be always based on
-wireless-next. Once wirelss-next rebase (ff-merge) net-next, my tree will
-have them also.=20
+Thanks,
 
+Paolo
 
 
