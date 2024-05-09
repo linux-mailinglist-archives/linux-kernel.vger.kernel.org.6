@@ -1,201 +1,179 @@
-Return-Path: <linux-kernel+bounces-174372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AB48C0DC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:50:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6F58C0DC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936A8283D86
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27CE1F22CAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6210714AD1C;
-	Thu,  9 May 2024 09:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E80B14A636;
+	Thu,  9 May 2024 09:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DN9oMxal"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="a6emw48k"
+Received: from SG2PR03CU006.outbound.protection.outlook.com (mail-southeastasiaazon11010001.outbound.protection.outlook.com [52.101.133.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34CD101E3;
-	Thu,  9 May 2024 09:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715248229; cv=none; b=Juu02yBePjpM4kUnMjhHHcCK6uuN5JWxXxAeRICnQxV9uLaWq84VbyB1MSakaPwPwSXQ//Re5myWOGD9iNRvmOKL3K7avg3ZMMQqdsNzt8830a99+VMtoFR2fmn3xv3hHQAh1zCiZVfZlz6ApDIE0wXw7U66xPoWdqk/gOAWlbA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715248229; c=relaxed/simple;
-	bh=i8Tcy47JtAfE3qGJMX+JxGT4J+DXn0tOPIC16byV3A8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TimHsnOyz2P7m/9t8kxvWQxlDD8Vz4uYpY4gVqTSAN9E/aTu8aYm84ZRxaN0Ihf26p6UaPn8wQ2fSyZsv3KnoaWuCfzsfQZcIFcO9tZfPHAg9fqRGPXezzpsC5HEf5jM+JvcJCcqARW88cl76ZG0BjxFlTGUQikYiup4uH2ePMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DN9oMxal; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715248228; x=1746784228;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=i8Tcy47JtAfE3qGJMX+JxGT4J+DXn0tOPIC16byV3A8=;
-  b=DN9oMxal9x5cSD9gxTaLtqbZkHFJmtt/T08V60vXvJ+4iOgA8DP/A1yx
-   Yg8ajQUNiVk8AeV332C39s8qYHhXkCsqNOpEExaXjsRP3Z7kamFMMVkZM
-   bYlyAi8Xt93PoRPrUatq2ultf3rBOZ72wZJA3c84A2cWOXCJ1lMs7W/Ys
-   XsxHN3bE1PetUZg8kdi75jS7mlnVPFptxvDkjp7rBEhMyDsxAssOO/zPf
-   mkfvJ367duHjRCgQEkzTe8BTbraYhgbuU8s8Wor8JAneI7A7tpfyBz1Js
-   0ovXSYJurzyJRRAopMjAjRQwnKvUX9SNAeR9YEDX91W5fBMUpuPKWupqq
-   w==;
-X-CSE-ConnectionGUID: AYOmQteFSomGoDnj2eGxgA==
-X-CSE-MsgGUID: JbTviSOtTnOkEKctYxcrrA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="11027320"
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="11027320"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 02:50:27 -0700
-X-CSE-ConnectionGUID: 6vFJtDrKTBGjOGnCrQwHrw==
-X-CSE-MsgGUID: r+G2E7a9R/2WR9uMvSaRZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="33984324"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 02:50:22 -0700
-Message-ID: <cd71e8e8-b4dc-40ed-935e-a84c222997e6@linux.intel.com>
-Date: Thu, 9 May 2024 11:50:19 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDEC101E3
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.133.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715248245; cv=fail; b=r9DSjp5wS8bA4D8mREJ/1YdyOlYO7luyTmGcoc5nNJmuSWWe/zNq7DHY8rClkSx2deWm4qSH0AECgfTm6DNERysyFVppPKEHHf5Y1N67Bn5NsmOMSmOZE4rmRmX+3StrM9cut0KwzlLciQ6sL5WK9RSSefmjs8wlQu2bnBGPi38=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715248245; c=relaxed/simple;
+	bh=+bq+oXL4xxQ9EWm5RteLOgm0f3Kkzeb51lKw7lrkx+Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZljKZ6azpxYpPl1loGuT9CwIkyHMYpCg5Rm3VUDWFkN++PowKybORoI5YMZlgXKeCeGHiNpC4wOcuQTGHaflcw3BtNYh6GeQziT6CdawCD5mJeuUmvwJEUaDbFnjaBJ4+AQdRliw+fUM1u/29kHTBVhmov36nVlBZASdPIpLxk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=a6emw48k; arc=fail smtp.client-ip=52.101.133.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=io8j3GwHyoCBETH/0VHVe6nHZXT7uRiwkmbjKlP7h5h+QkLt0UjejYixxNc6h03c7cqp+Zn520oUW/EI3OUlMvF9WR4I2QmaoBCifGrKeHrwbgoXD9I5GVlb0LPPVAjUYIBmJWK+4DNl8rx8VEwAzrq8zPlZVFp0UW3LS2CCNMqyLqKD5FDX209L9tfBxk0kMxy3TZKa/3D/nQRzj6kljk/HDD2Ysz8gv4N6g0Xzn2M4HOAnPqrUP2zRrogZ32v1zEai4tuTRO+O4xkoVIv2vszxecmwasRqsqE2peVn2cD8DpifIuTdq+QBs+WzgiDJ5wOyDenCJjVmkp4Itd4vNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nBAHCqNjS+nRL8okVH68OkxP7wlmg4Nzy9MajaaT8OE=;
+ b=nHCkKQo8pYqEA25IEWI4jLawB7QZ2wOnPKlVbgftzpr+J+L+mp2gE98rYRmFkZZd+tzD3PUF30dk6Ly7zRqxzVDTljmCww9EK3H/8tOX+9gaCIdWiUWzLmoBhtwS37BoB9HSn8TbRuqsXX/S//lW2NxlsmHeIR/ZwbriPhi1s004mTPHdomkMXpOTkvhyy1m0L4sknyp3DtF6q+Us83+YGr5FgGGJyalNVYaZ5f5+UWqkJusHe9hcYtlVvkt2z9kgB9+LyLEkGfKmkKTt12VC5rsu44hFrWOa424sC9LlO9yrGlgtCe80NWhONQB4+s96wVv+mAuUMcsNak+kdzt0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=gmail.com smtp.mailfrom=oppo.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nBAHCqNjS+nRL8okVH68OkxP7wlmg4Nzy9MajaaT8OE=;
+ b=a6emw48kMIfhKP/jvG8mEuz+98ex8d1NivtL5bZnshlu19rMxqebgNz3vKGax9kc0bFctxloZPe0izlFujv0/ntTzuk3xSwD4Wug0W+6t1YxpfRnj/+BbrMwXVnUXuPO/OGH5yoYxXCuUHM057+4nW4SVIC76+yAlDnfyZ2K9xc=
+Received: from KL1PR02CA0028.apcprd02.prod.outlook.com (2603:1096:820:d::15)
+ by SEYPR02MB5559.apcprd02.prod.outlook.com (2603:1096:101:54::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Thu, 9 May
+ 2024 09:50:39 +0000
+Received: from HK3PEPF0000021D.apcprd03.prod.outlook.com
+ (2603:1096:820:d:cafe::3c) by KL1PR02CA0028.outlook.office365.com
+ (2603:1096:820:d::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45 via Frontend
+ Transport; Thu, 9 May 2024 09:50:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK3PEPF0000021D.mail.protection.outlook.com (10.167.8.39) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Thu, 9 May 2024 09:50:38 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Thu, 9 May
+ 2024 17:50:35 +0800
+Date: Thu, 9 May 2024 17:50:30 +0800
+From: Hailong Liu <hailong.liu@oppo.com>
+To: Barry Song <21cnbao@gmail.com>
+CC: Michal Hocko <mhocko@suse.com>, <akpm@linux-foundation.org>,
+	<urezki@gmail.com>, <hch@infradead.org>, <lstoakes@gmail.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <xiang@kernel.org>,
+	<chao@kernel.org>, Oven <liyangouwen1@oppo.com>
+Subject: Re: [RFC PATCH] mm/vmalloc: fix vmalloc which may return null if
+ called with __GFP_NOFAIL
+Message-ID: <20240509095030.t3gnhkuntj6t3w6p@oppo.com>
+References: <20240508125808.28882-1-hailong.liu@oppo.com>
+ <Zjx_6F3Fti_EBD_e@tiehlicka>
+ <20240509080636.bauxbgpqdluzpein@oppo.com>
+ <CAGsJ_4wLF2+O2ydr8EvPqgrsOPsWStUxpzRvi3rJpktU_FSP1w@mail.gmail.com>
+ <CAGsJ_4xqg7+xwsbXpU1yp_HkTBcpJwRN-ErEwzOZx915hgsyrQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/16] Add audio support in v4l2 framework
-Content-Language: en-US
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Mark Brown <broonie@kernel.org>,
- Takashi Iwai <tiwai@suse.de>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, sakari.ailus@iki.fi,
- tfiga@chromium.org, m.szyprowski@samsung.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-References: <1710834674-3285-1-git-send-email-shengjiu.wang@nxp.com>
- <20240430082112.jrovosb6lgblgpfg@basti-XPS-13-9310>
- <ZjEEKyvb02CWz3l4@finisterre.sirena.org.uk> <20240430172752.20ffcd56@sal.lan>
- <ZjGhPz-bokg6ZbDJ@finisterre.sirena.org.uk> <87sez0k661.wl-tiwai@suse.de>
- <20240502095956.0a8c5b26@sal.lan> <20240502102643.4ee7f6c2@sal.lan>
- <ZjRCJ2ZcmKOIo7_p@finisterre.sirena.org.uk> <20240503094225.47fe4836@sal.lan>
- <CAA+D8APfM3ayXHAPadHLty52PYE9soQM6o780=mZs+R4px-AOQ@mail.gmail.com>
- <22d94c69-7e9f-4aba-ae71-50cc2e5dd8ab@xs4all.nl>
- <51408e79-646d-4d23-bc5b-cd173d363327@linux.intel.com>
- <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <CAA+D8AM7+SvXBi=LKRqvJkLsrYW=nkHTfFe957z2Qzm89bc48g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAGsJ_4xqg7+xwsbXpU1yp_HkTBcpJwRN-ErEwzOZx915hgsyrQ@mail.gmail.com>
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021D:EE_|SEYPR02MB5559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e7e2c8d-e4cd-440c-23dd-08dc700d7b95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|7416005|376005|36860700004|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?yImaRPJplACeYLZB73H5azWMxlUFcN1FWzF7asqNufGJctwAvQg5PoWljtr3?=
+ =?us-ascii?Q?FANeTahEFyZ2wIDiRGEUt/olmTou0YLfpnyp0YHgAPxqdW+VCnvuY241X+Nq?=
+ =?us-ascii?Q?zwH7yJ/9Cukdr7weVEbXpt0Cau8gymgxCiOvvepsfODlBdAZYMpdwziz7Bwa?=
+ =?us-ascii?Q?t2ZV1ekmYrA+0Gp390fXSjzPxMEDXp8IEPMI+BJEEdHB40dPrIQHwXHejSqZ?=
+ =?us-ascii?Q?uN2rcB7CsaP/fHKFXNhLL9IQ0WDCJpPZ8VxCyYdzOMWLDV9j1WHjIquE/l1t?=
+ =?us-ascii?Q?uHqggBH9cL49Buuk1qKB0n3Ue9pBFimX25mvHo7D2/tk7wPHFMw2ylUpCLFS?=
+ =?us-ascii?Q?NVeAvQoR04Sjy8NlzeK2czp9G+jLmBHHAI2+TnvnOoKiMq6lsULLHZPQSdu2?=
+ =?us-ascii?Q?HTuvgjL4+XbaErP3r/KFtAEyQhY1wSd6bNYTkGgwaDam3iOo/O+qCyGFegLt?=
+ =?us-ascii?Q?tl6pjsTnsa93RdXusZb8k2wDCjw0PFUOP5u3I56Nb8z/vQyrlgVdOjXGQemf?=
+ =?us-ascii?Q?selFgGsiZxGo8S+E03OaTx94s4mXNKG3DsxVzk4x+M1fClMbhFTIv0RrfQG3?=
+ =?us-ascii?Q?t4mYluhtBkmIAU5pFyR9f+bmsOUmxfT78vwgLuWE3J7GUUfaqrNlXcZveuMN?=
+ =?us-ascii?Q?/6b+3yKIUrYfyx8RUf/hfky6Lk5WktZjUjZCZ9mRbcMMqMnBefzbSqSapJpe?=
+ =?us-ascii?Q?AkFT/fhFniPXapSmlIHWm4Qq0iasXi4BO0uRRO6oEBAHiMqXpu8JhUYt4NQ0?=
+ =?us-ascii?Q?xLyborQJ5VvYKvn/RKjNIuRmmJLFTWx41IeobXHHG28EkbjtbG11askqBxAm?=
+ =?us-ascii?Q?GcnmBFm7AprxiWS8VO6FadByqY6lwYzQKL8dY+w8M30ELKWy6pCJFAi9yHoh?=
+ =?us-ascii?Q?J2Fnf6wTwAoKPVz5Cs8XpOiYyANHDmRSDGxEW2HuIeKiNdnYFUdIHlzlGAYZ?=
+ =?us-ascii?Q?UbE0zE4qhb/f3rVnWsg73pmA7BF6DXh9V6IpyNHQ9afyA5X3Vt2/dPYKmXVp?=
+ =?us-ascii?Q?t18mdWAIDl4e7a0CDiyoCdN1JOrhT7zdDCNdmD9c23LhJG91syJXVZ8Zuz08?=
+ =?us-ascii?Q?fOWKtmECQsomS2E6tuNHpDKkEHfF2gd7EA+GY8ilvRQzgob9/moYVPqRCxVq?=
+ =?us-ascii?Q?o03dI5wsrTkLpTVXXLu+cDeu/GxzraGk5qR1FIgPl9zBICXk+8sh+Jz1+hkC?=
+ =?us-ascii?Q?3G2TkQL5WwHcrNnJx+DxuWb3qPCFjdUGzuPwk3wF9HF+r2V3SIQh6IJUwUeR?=
+ =?us-ascii?Q?NIlb7HVcw5buwueF/fTGgP1r4LW6UMW7jhEV6qo3w/CzpIgV2r2K6wmybjt6?=
+ =?us-ascii?Q?JRCg/UA8Iat3zcWNMJYvw6LL4dEqdezWRt4SFd87z5sRNWhjcV3lfhTM+izB?=
+ =?us-ascii?Q?EkzT+SHg2rPEeY3Qb4Oe5pPZ2gkL?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(376005)(36860700004)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 09:50:38.8462
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e7e2c8d-e4cd-440c-23dd-08dc700d7b95
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK3PEPF0000021D.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB5559
 
-On 5/9/2024 11:36 AM, Shengjiu Wang wrote:
-> On Wed, May 8, 2024 at 4:14 PM Amadeusz Sławiński
-> <amadeuszx.slawinski@linux.intel.com> wrote:
->>
->> On 5/8/2024 10:00 AM, Hans Verkuil wrote:
->>> On 06/05/2024 10:49, Shengjiu Wang wrote:
->>>> On Fri, May 3, 2024 at 4:42 PM Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
->>>>>
->>>>> Em Fri, 3 May 2024 10:47:19 +0900
->>>>> Mark Brown <broonie@kernel.org> escreveu:
->>>>>
->>>>>> On Thu, May 02, 2024 at 10:26:43AM +0100, Mauro Carvalho Chehab wrote:
->>>>>>> Mauro Carvalho Chehab <mchehab@kernel.org> escreveu:
->>>>>>
->>>>>>>> There are still time control associated with it, as audio and video
->>>>>>>> needs to be in sync. This is done by controlling the buffers size
->>>>>>>> and could be fine-tuned by checking when the buffer transfer is done.
->>>>>>
->>>>>> ...
->>>>>>
->>>>>>> Just complementing: on media, we do this per video buffer (or
->>>>>>> per half video buffer). A typical use case on cameras is to have
->>>>>>> buffers transferred 30 times per second, if the video was streamed
->>>>>>> at 30 frames per second.
->>>>>>
->>>>>> IIRC some big use case for this hardware was transcoding so there was a
->>>>>> desire to just go at whatever rate the hardware could support as there
->>>>>> is no interactive user consuming the output as it is generated.
->>>>>
->>>>> Indeed, codecs could be used to just do transcoding, but I would
->>>>> expect it to be a border use case. See, as the chipsets implementing
->>>>> codecs are typically the ones used on mobiles, I would expect that
->>>>> the major use cases to be to watch audio and video and to participate
->>>>> on audio/video conferences.
->>>>>
->>>>> Going further, the codec API may end supporting not only transcoding
->>>>> (which is something that CPU can usually handle without too much
->>>>> processing) but also audio processing that may require more
->>>>> complex algorithms - even deep learning ones - like background noise
->>>>> removal, echo detection/removal, volume auto-gain, audio enhancement
->>>>> and such.
->>>>>
->>>>> On other words, the typical use cases will either have input
->>>>> or output being a physical hardware (microphone or speaker).
->>>>>
->>>>
->>>> All, thanks for spending time to discuss, it seems we go back to
->>>> the start point of this topic again.
->>>>
->>>> Our main request is that there is a hardware sample rate converter
->>>> on the chip, so users can use it in user space as a component like
->>>> software sample rate converter. It mostly may run as a gstreamer plugin.
->>>> so it is a memory to memory component.
->>>>
->>>> I didn't find such API in ALSA for such purpose, the best option for this
->>>> in the kernel is the V4L2 memory to memory framework I found.
->>>> As Hans said it is well designed for memory to memory.
->>>>
->>>> And I think audio is one of 'media'.  As I can see that part of Radio
->>>> function is in ALSA, part of Radio function is in V4L2. part of HDMI
->>>> function is in DRM, part of HDMI function is in ALSA...
->>>> So using V4L2 for audio is not new from this point of view.
->>>>
->>>> Even now I still think V4L2 is the best option, but it looks like there
->>>> are a lot of rejects.  If develop a new ALSA-mem2mem, it is also
->>>> a duplication of code (bigger duplication that just add audio support
->>>> in V4L2 I think).
->>>
->>> After reading this thread I still believe that the mem2mem framework is
->>> a reasonable option, unless someone can come up with a method that is
->>> easy to implement in the alsa subsystem. From what I can tell from this
->>> discussion no such method exists.
->>>
->>
->> Hi,
->>
->> my main question would be how is mem2mem use case different from
->> loopback exposing playback and capture frontends in user space with DSP
->> (or other piece of HW) in the middle?
->>
-> I think loopback has a timing control,  user need to feed data to playback at a
-> fixed time and get data from capture at a fixed time.  Otherwise there
-> is xrun in
-> playback and capture.
-> 
-> mem2mem case: there is no such timing control,  user feeds data to it
-> then it generates output,  if user doesn't feed data, there is no xrun.
-> but mem2mem is just one of the components in the playback or capture
-> pipeline, overall there is time control for whole pipeline,
-> 
+On Thu, 09. May 20:57, Barry Song wrote:
+>
+> Upon further examination, it's not a bug, but we can still utilize 'nofail'.
+> The current code is very hard to read about gfp and "nofail" :-)
+>
+> maybe:
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6641be0ca80b..7c66fe16c2ad 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3498,7 +3498,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>  {
+>         unsigned int nr_allocated = 0;
+>         gfp_t alloc_gfp = gfp;
+> -       bool nofail = false;
+> +       bool nofail = !!(gfp & __GFP_NOFAIL);
+>         struct page *page;
+>         int i;
+>
+> @@ -3555,7 +3555,6 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>                  * and compaction etc.
+>                  */
+>                 alloc_gfp &= ~__GFP_NOFAIL;
+> -               nofail = true;
+>         }
 
-Have you looked at compress streams? If I remember correctly they are 
-not tied to time due to the fact that they can pass data in arbitrary 
-formats?
+Thanks for suggestion. I think that makes more clearly. Will
+try it in next version.
 
-From:
-https://docs.kernel.org/sound/designs/compress-offload.html
+--
 
-"No notion of underrun/overrun. Since the bytes written are compressed 
-in nature and data written/read doesn’t translate directly to rendered 
-output in time, this does not deal with underrun/overrun and maybe dealt 
-in user-library"
-
-Amadeusz
+Best Regards,
+Hailong.
 
