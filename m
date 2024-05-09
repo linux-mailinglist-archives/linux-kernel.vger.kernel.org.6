@@ -1,54 +1,71 @@
-Return-Path: <linux-kernel+bounces-174352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0DF8C0D84
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:33:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF7C8C0D86
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C429E1F239F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:33:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1512842CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DC114A62D;
-	Thu,  9 May 2024 09:33:46 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF851494D9;
+	Thu,  9 May 2024 09:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="reG0mO/y"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EFA1494D9;
-	Thu,  9 May 2024 09:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06BC14A4DF;
+	Thu,  9 May 2024 09:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715247226; cv=none; b=AHx1E1UiO15sIt8hbq+Fwy6audNCilfuqZPqcP9dRW0GDj3pJLmzANs6lTlHPvSVGJ2YkhHNBQtchnkyUeh6R3Ch3TiAycntlL03bAu1Bk9lx8PiTpEEup92lczrukMjX+R1Bjh2a8h3X78Mz7P1+JV8m7iGHUgid3O6e7muiH0=
+	t=1715247243; cv=none; b=IoFTKVeQFkZTPVBjpIqFmUVEie6Fm2QwzYHcbMY2taAKHWlt9yypdeb/7k1of2oZEHlqCxZgJhHqfflLlhgNR+M03c5mfNuC26jLgxvsUAQcPP+QFnzf4NZcjXZEcgI16+6CehGTYjhWPi9zJ6aGg46fGDcA4E2ZIbZup7KyCvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715247226; c=relaxed/simple;
-	bh=aHW5/vIQ8c227jwhESnXTgt/7c8ZoU4PkjaXxYwerYI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JRMLEkIX31k2hgxoyrSJt7OD2C63JBnqT/x9ioFa00PFjfjG5zTLXwdRuJKPKEtUGo6AlTUt1cr/rSgiaSc3JCaBzrF0yT11DmOEs2S4u37rUUmJLEvPKYDBya1+vdXkbaVLNvOU9TZVrT1hXkPvvJJcKJnIIrFtmAZSlEiQm7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4VZmvf4ljyz2CfJY;
-	Thu,  9 May 2024 17:30:22 +0800 (CST)
-Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
-	by mail.maildlp.com (Postfix) with ESMTPS id 13F701A016C;
-	Thu,  9 May 2024 17:33:40 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
- (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Thu, 9 May
- 2024 17:33:39 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <axboe@kernel.dk>, <dlemoal@kernel.org>, <hare@suse.de>,
-	<johannes.thumshirn@wdc.com>, <ming.lei@redhat.com>,
-	<zhouchengming@bytedance.com>, <nj.shetty@samsung.com>,
-	<justinstitt@google.com>, <john.g.garry@oracle.com>,
-	<shinichiro.kawasaki@wdc.com>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] null_blk: Add __must_hold macro for null_flush_cache_page()
-Date: Thu, 9 May 2024 17:33:04 +0800
-Message-ID: <20240509093304.1618775-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715247243; c=relaxed/simple;
+	bh=MtCUZOEf09vm2s3UfRmmEbhe99AQfnhKa18eN3mnrso=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=nzfu62I+wxVyDe9fUayoBcsWaS0p7wlEZWdSlxLaiyIVfz61CUQZPGwv3UTnX/PLFuLDpGpzb8rBhQM03bO6sRsU6C7kCZLS7CBL633Ik2I4XnW8pty9AAEC9N3k7Lc2USxBXOhRy1jiMm54Mmwm9Hk577ZT0GwatpasTXW17pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=reG0mO/y; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1715247227; bh=uHRrkhKKY/U0upUZfJkXb4BY8bCTGf1SFZ8EyfT1G3g=;
+	h=From:To:Cc:Subject:Date;
+	b=reG0mO/yMD0Allajl/2aMO1ahdJMd1FG86iTLZ031D7u5g0tYM1mYE3kORENzH04s
+	 GQ9UC1LP2QjvCQCjOcF/3MrO5DJk6oNrTrboudF6/TXbLNoe+iijW7tiuiGnvAeRzw
+	 zVyBPSiMtLFK0Vh+p7YsW2wjyYMX9DX/LXbR0ZiU=
+Received: from cyy-pc.lan ([240e:379:225f:c000:ddd2:5a64:482:d6f2])
+	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+	id 86B97886; Thu, 09 May 2024 17:33:43 +0800
+X-QQ-mid: xmsmtpt1715247223taum3m4ji
+Message-ID: <tencent_B61C1370E7632842D61BB7F9FA0515B44D09@qq.com>
+X-QQ-XMAILINFO: NkHKfw09D6j8uL2HVuJBhrc2zAVCXYqfSMQbCILL5ryFnjPQlfSSZSmyhy0OIS
+	 51hz1Aj5/VjBhn/J3uDwgpLwGwdPxe6mo0HKpyqEVWoVZD1ju4+BSdIZLKYcr1FqxTGvLrKobGz6
+	 9MRknHCRtI6YvQTjMv3elKw/uuseaZvLe+uwd92wJ+4Y/ZrEBJg6rV4kXrp+581iAqZbVyxiE19W
+	 WuqjyKz1jdnZWTG747f/PaHiKP+38krSpqFhgycfkgnsx77GiKoMDxQfI8x8Y8ynZhDQV//Qz+DH
+	 xja4FqphOyVQUcnHNPIf4uVLUaA47Lp18wJpQqGO8sLWnqs8+8gnoYXvOFgHXuzv4rwFCCOPU02C
+	 dgxsiD+mjvY16vcI6QgHkd2+clL+jKlA4liQst7W0+bF7OEvuvmpIksFU703rPDhAQY0lByg1bVG
+	 ooud3Hq4c4KlTsDwIhRKRnbenhW0cfSmOya03euiBpH9xJuJ4WdlsSaQygHYiD76It9XTfoFRpZw
+	 tUTkXSz3rxx4e4pl3SIQROzzZZ0qkcnl4G+Vg1/C3QaTcdEp0eo2xcwrcW6CrY/Sk168Y/YAwTqt
+	 zzQEhV8Z+EqwzKDRo9/tpCfx9ry+bkjCr6VEiK1dlBNkwwmk14el1KiG9m/vN6p79Bvc040hha0O
+	 3p7hySI/w3VOuB9/Xqemjuf+YtRjntvFCkMmknFI9LTnryALuCB/mlExTlcVbY0e2DD4POPIn8Fd
+	 qQPXkgf7XZtsX8q5+kRyWUA5tYZqz7ekw+SJo+QHKvLNhRL6nn4JorQDFnNzolMgQTUkLlS4Xjhp
+	 p7zpW/I7ccH83nQ+Euqv2R3XFEXfHzlFhinZw1Uo78unA2WVwgDed+rOCOkipJwUMTRwI5zgvIdv
+	 b6FoBWxUi16ON2TOOzjICCTvV0QGfeNVVNxKW7D/7HrCnH2TB5xwJHLBl5QXxUC0rglWkdMCB7Gc
+	 zOluQZfO+YuXCG5LlxNL0YfrT1qh/lAlRQpTHEKQCxYrqqYQ98BTPdz9W/qVQBsPHEDBEWuro=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Yangyu Chen <cyy@cyyself.name>
+To: linux-riscv@lists.infradead.org
+Cc: Conor Dooley <conor@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yangyu Chen <cyy@cyyself.name>
+Subject: [PATCH] riscv: dts: fix isa string for Canaan Kendryte K230
+Date: Thu,  9 May 2024 17:33:11 +0800
+X-OQ-MSGID: <20240509093311.1943337-1-cyy@cyyself.name>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,35 +73,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi500008.china.huawei.com (7.221.188.139)
 
-It seems that call null_flush_cache_page() must hold nullb->lock and it
-returns with nullb->lock held. However, this is not clearly described, and
-the caller may forget to hold the lock. Therefore, add __must_hold() macro
-to the function entry to show that the lock is held on function entry and
-exit, which allows sparse to do lock checking.
+The original is a string in dts that has no "zfh" or "zvfh" extension,
+but the K230 chip has them, so I am adding them to the dts. This
+patch also reordered the Z* extension in the isa string and used
+canonical order for the category as the first key and then alphabet
+order as the second key to meet RISC-V ISA Extension Naming
+Conventions.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 ---
- drivers/block/null_blk/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+prerequisite-patchset: https://lore.kernel.org/linux-riscv/tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com/
+---
+ arch/riscv/boot/dts/canaan/k230.dtsi | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-index ed33cf7192d2..adca31e55deb 100644
---- a/drivers/block/null_blk/main.c
-+++ b/drivers/block/null_blk/main.c
-@@ -1013,7 +1013,7 @@ static int null_flush_cache_page(struct nullb *nullb, struct nullb_page *c_page)
- 	return 0;
- }
- 
--static int null_make_cache_space(struct nullb *nullb, unsigned long n)
-+static int null_make_cache_space(struct nullb *nullb, unsigned long n) __must_hold(&nullb->lock)
- {
- 	int i, err, nr_pages;
- 	struct nullb_page *c_pages[FREE_BATCH];
+diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
+index 95c1a3d8fb11..104e08ef5869 100644
+--- a/arch/riscv/boot/dts/canaan/k230.dtsi
++++ b/arch/riscv/boot/dts/canaan/k230.dtsi
+@@ -24,11 +24,12 @@ cpu@0 {
+ 			compatible = "thead,c908", "riscv";
+ 			device_type = "cpu";
+ 			reg = <0>;
+-			riscv,isa = "rv64imafdcv_zba_zbb_zbc_zbs_zicbom_zicbop_zicboz_svpbmt";
++			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zfh_zba_zbb_zbc_zbs_zvfh_svpbmt";
+ 			riscv,isa-base = "rv64i";
+-			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zba", "zbb",
+-					       "zbc", "zbs", "zicbom", "zicbop", "zicboz",
+-					       "zicntr", "zicsr", "zifencei", "zihpm", "svpbmt";
++			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
++					       "zicbop", "zicboz", "zicntr", "zicsr", "zifencei",
++					       "zihpm", "zfh", "zba", "zbb", "zbc", "zbs", "zvfh",
++					       "svpbmt";
+ 			riscv,cbom-block-size = <64>;
+ 			riscv,cbop-block-size = <64>;
+ 			riscv,cboz-block-size = <64>;
 -- 
-2.34.1
+2.43.0
 
 
