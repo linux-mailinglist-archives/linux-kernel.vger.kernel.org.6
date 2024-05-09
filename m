@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-174752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63FD8C1480
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9268C1487
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 20:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7090D28268F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:08:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790C7282225
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 18:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD78679DD5;
-	Thu,  9 May 2024 18:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9C1770FC;
+	Thu,  9 May 2024 18:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IwKBi4r0"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="K1Nw+mtv"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DCA6EB62
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E576EB62
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 18:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715278115; cv=none; b=ahPnasSyDgCBICQDPLqrW0iIyQQeAcGW5Sa0N7JstMJv9606msQsOYwj39CwQO4DzVCV+TZ8sCaj7Qts357lWhhAIT0mx1pbG3t6XLdSCf3tABkprsXX/Ug4iTOsF8n1g24H1HB7YB3DLsKY+BKMBCFH+Cw2hrw6/DeLrnTXPs0=
+	t=1715278198; cv=none; b=dyg9kkWFT2aQ/i+kUf0iNG6++rjOHN2uM9iFbgJhSrof3n9Sx6XP/4MNfZccdSSMZxdLz5Y3FhemdksSCqChchnqK7NpJJ3HIHtza63KCDbD0s4xjXxjc1N+qeeDTOnLTqt4OqcWSCL7FG7hGT0Se77bg7m/q3WylcbKHiSmyTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715278115; c=relaxed/simple;
-	bh=B/fLZgJ1kMx5q/e/aqEvOH6JUgyuZ+Q/2hXPHkpLqEo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lsQYiIM4ahhLLpOrV1N/+HpK8zjd6IGZIN/Jyi7C9GkW9UOIPZsqIYXKjo5VcUCX2f+Wk3qxoHmQVOBhv2SpEqOHDshWjARjH7WrjXzDkZhG08ZMR2BjUTWPmoj4LLH1l6aK9qlD28eAdcFl6vqhMkeBHtESRv2HNP8vn1c2KO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IwKBi4r0; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a599eedc8eeso313376166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:08:31 -0700 (PDT)
+	s=arc-20240116; t=1715278198; c=relaxed/simple;
+	bh=mVAlrsqmGe3vk35le2tnYkIvTR7PVyC+QldNcM5L7OA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eEjsvrQ7Sw8q1EKaBqsn3HUudvdpH6UECShSRe1D1nccYMi32ygJQTD7b09L0IyWiGmnSsyGgw/10w+x9bzIYQ1wRmLID94gdLrhFfr/IW3+vplmag90CrMpObY+BpFLzNW7vInOFWWfPzaEDIA9X4EJvAGGzFYBMbmPGtizMtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=K1Nw+mtv; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so1094591b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:09:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715278110; x=1715882910; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2M1QRjYBDT1Zd0NqfbgFR5skSig9YZV6L8U7l1RklbU=;
-        b=IwKBi4r0DT2bnZC3xar/In+2PnJV7LJaN1eie2qTgFhmDjRZ13MDTwKaDCw2FlhKMT
-         wwNbiuEaH7IrVbrtP2rxP8+MXmSzpEV8h7HUpEfKF7llk8CHCwCGUfLGpm+IOkLEsLtD
-         m7mF+qBviPAQYt3g6aeryOJQXsw/bG3uFgHYc=
+        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1715278196; x=1715882996; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cAFQ1pXnscaNYourVZhjgkuHX4JeH6ZyCE9xtGGuVew=;
+        b=K1Nw+mtvhTt9hUg4iHOEr7RFWGifly79q7A3HkYygXKeVu9k3fE8YAi/hCiE9PmveY
+         KZ0giZ77yVXLyqw7+wK9cgXxtcRuzA4I6pyns6cl71hpxPYpPfcPbw4jcK3Ez0LcOYSg
+         1+3wdmCdyjFHrrLXJlhyn6dyJ9fvccSH2BXHYe+j+cXyId9QInTn3euYLK8yOKt1JDho
+         Le7Xkxgk0BT7pO7/zukIAJscipk/ARc2Vnkh4WIR6eNjhqOEd/awQCwYehoZJfWrcJGa
+         /YHLgrzRSjuT3Wp6lS11XpdSmd66jiPi8lWIiG4+HjRku5smupmP3XEd3jy9Zfnk1Hbg
+         QqgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715278110; x=1715882910;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2M1QRjYBDT1Zd0NqfbgFR5skSig9YZV6L8U7l1RklbU=;
-        b=g2g1WqzkjdfQk7xa+LwS8o9GW5DsavLYipdVrQ6jZ9oSnkEjcJB89WUA7e/sEliKU3
-         rK0AhXqC/kfDshE6W3eROXsoS6dMl7SANNPTy5eobfP50aD7ELBrJZyrCtGeXogbE5AE
-         obbpvg8k3EPhQrTrrXyGtqGd83AtJZGSw0puaI4HD+dnIgXecyX51a+Gxk/6Ne9xWZ8g
-         CZJNb7JkRxvhgswqjJtc/Du7T3ti0xPEA+fHzij33QzGAgQPKY5F15/QeOqQZ0QGSCvM
-         wNZCONNz4cXGmrRGQtAAPZnKt0Qrte0AZ9c/tn1akKmVIEEi2IXoqmvKBpQPKomPPdhE
-         tY7A==
-X-Forwarded-Encrypted: i=1; AJvYcCU+DxJGOdSHBgt6tesuPYk9GT245F2QbTIUieN4pwxSJ+sbS2+PvnMXEnBNOBjHJxF7nRFwLYImaSpWpUrSk1ANnCrqiLVRRsd8QvSq
-X-Gm-Message-State: AOJu0YyNQNGBkyds3g9iQiBoxP2WYD+vV3WfQSxlTYasGCOce/Rx7gae
-	es5twJOaRhAGfREDWLHBmDtV/weyLDb/WwCFwGBZGGVdZd3uhnkfEw3j9d/zblfMb0SDvQZs2VW
-	XPfM=
-X-Google-Smtp-Source: AGHT+IGdTUsLvwp8goaa8jCEDWhBloqH8BlZs3z4DqgmM5sWInqTn1acByFn3swgncPOGggFG+y88A==
-X-Received: by 2002:a17:906:81cf:b0:a59:a7b7:2b8e with SMTP id a640c23a62f3a-a5a2d5853b3mr20622066b.29.1715278110313;
-        Thu, 09 May 2024 11:08:30 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781c269sm97927266b.38.2024.05.09.11.08.29
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1715278196; x=1715882996;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cAFQ1pXnscaNYourVZhjgkuHX4JeH6ZyCE9xtGGuVew=;
+        b=Yj4NTRFokh/KUzpl2aa62Me2L8gXICkOYX/2VEiztiXjPHrLNxIxPFZk6WRaKWUUfE
+         GqFzx2k6CI4GP4j4gkcXQjwuvzLOksei5IkAyad8d7V2T53rYYDVHmgPt9x0tFQkCHA3
+         y7pDIEDe3bm5m+Qb54sDEs4TQJd74XVXM+wj41uXZw6XsvQXa3e9KSJcV9zfp5JpYhzA
+         iEZJuhCEG6bp5vRhNCvgdHHp0e8ZS2716Q+ozO0k9VArszZcPykZEGkDKbFFDb/4olcq
+         rca0KtxBf9g58zVpEf39MM09afjRIYIZwK5QmKTgOYJ2inSfbfe3/E7AbdcG8g8jfE/N
+         vrAw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1WcuUgMMG4Yin4qi4aC5zuLip6e75aXVUALB/nwHBgbhWdrFtPpH5OFmvgAaL0Qy4H5jkJizj9SqzO7RwRHR0JYEP2AofANlvBVIJ
+X-Gm-Message-State: AOJu0YwF2mCQqaP0X4d5KZVtmZaxH7PLKg3h416EDyBy6JEDSsRjhwkU
+	0t/8Bm/5dQLYtBCA8uHKSUnwwrjPq3QnPibTvBIrVzjPHKpPR/C3yy7uXiszr+c=
+X-Google-Smtp-Source: AGHT+IFxmYJaEZMycBwCktGS2JRoQMzjPs2ACXgv7iXVhtolq9hdV25hRc+e4jTDZ9ebNKJLLNmWig==
+X-Received: by 2002:a05:6a20:565b:b0:1af:d44c:cfc3 with SMTP id adf61e73a8af0-1afde104374mr528069637.32.1715278196152;
+        Thu, 09 May 2024 11:09:56 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1256:2:c51:2090:e106:83fa? ([2620:10d:c090:500::5:c55])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634024a3eb4sm1651671a12.0.2024.05.09.11.09.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 11:08:29 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a599eedc8eeso313369966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 11:08:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVU/j6t7zuskBMvoTtg9kg4DTwGHbt6fWbioDj4NpsdPxPenpSTg4mYd2+2YOoyTP2/urhmdRv5PRLwHllJbXDY6falD0NbtcRSAgQy
-X-Received: by 2002:a17:907:1118:b0:a59:c5c2:a320 with SMTP id
- a640c23a62f3a-a5a2d581b19mr26210766b.23.1715278109328; Thu, 09 May 2024
- 11:08:29 -0700 (PDT)
+        Thu, 09 May 2024 11:09:55 -0700 (PDT)
+Message-ID: <9aafe0de-7e46-4255-915e-2cf2969377d0@davidwei.uk>
+Date: Thu, 9 May 2024 11:09:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202404291502.612E0A10@keescook> <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <202405081949.0565810E46@keescook> <20240509140854.GF3620298@mit.edu>
- <CAHk-=wgKyP2ffZPa6aKYtytzzFibiNVN5MS=D2cn7_UGCECKdw@mail.gmail.com> <20240509175417.GR2118490@ZenIV>
-In-Reply-To: <20240509175417.GR2118490@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 May 2024 11:08:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgXm15gZHvt8waSFhXS9yZTfvMV95xyvNtPc6FSEA_rvA@mail.gmail.com>
-Message-ID: <CAHk-=wgXm15gZHvt8waSFhXS9yZTfvMV95xyvNtPc6FSEA_rvA@mail.gmail.com>
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Kees Cook <keescook@chromium.org>, 
-	Justin Stitt <justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] : [PATCH 1/2] tcp: fix get_tcp4_sock() output error
+ info
+Content-Language: en-GB
+To: Mohith Kumar Thummaluru <mohith.k.kumar.thummaluru@oracle.com>,
+ Yuan Fang <yf768672249@gmail.com>, "edumazet@google.com"
+ <edumazet@google.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240509044323.247606-1-yf768672249@gmail.com>
+ <DS0PR10MB6056248B2DFFC393E31B4A1B8FE62@DS0PR10MB6056.namprd10.prod.outlook.com>
+From: David Wei <dw@davidwei.uk>
+In-Reply-To: <DS0PR10MB6056248B2DFFC393E31B4A1B8FE62@DS0PR10MB6056.namprd10.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 9 May 2024 at 10:54, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, May 09, 2024 at 08:38:28AM -0700, Linus Torvalds wrote:
->
-> > Going the other way is similar:
-> >
-> >         all_bits = low_bits + ((u64) high_bits << 16) << 16);
-> >
-> > and again, the compiler will recognize this idiom and do the right
-> > thing (and if 'all_bits' is only 32-bit, the compiler will optimize
-> > the high bit noise away).
->
-> Umm...  That would make sense if it was
->         all_bits = low_bits + ((T) high_bits << 16) << 16);
-> with possibly 32bit T.  But the way you wrote that (with u64) it's
-> pointless - u64 _can_ be shifted by 32 just fine.
+On 2024-05-09 10:29, Mohith Kumar Thummaluru wrote:
+> Good catch! Thanks for this fix. 
 
-Casting to 'T' is probably a clearer option but doesn't work very well
-in a helper functions that may not know what the final type is.
+If this is a fix, can you please add a Fixes tag? And in general some
+surrounding context in a cover letter? Thanks.
 
- Any half-way decent compiler will end up optimizing away the shifts
-and adds for the high bits because they see the assignment to
-'all_bits'. There's no point in generating high bits that just get
-thrown away.
-
-                Linus
+> 
+> LGTM.
+> 
+> Reviewed-by : Mohith Kumar Thummaluru <mohith.k.kumar.thummaluru@oracle.com>
+> Tested-by: Mohith Kumar Thummaluru <mohith.k.kumar.thummaluru@oracle.com>
+> 
+> Regards,
+> Mohith
+> 
 
