@@ -1,196 +1,141 @@
-Return-Path: <linux-kernel+bounces-174284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33108C0C7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BD08C0C7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB141F216AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:22:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CE0E1C21893
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A7714A4C0;
-	Thu,  9 May 2024 08:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3F4149C7B;
+	Thu,  9 May 2024 08:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtqR681b"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Wa44uraL"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F69D14A4DA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2461414A0AA
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715242915; cv=none; b=V9ApfPiylzvwkgMvM4AmwFPKSL7NM0/xYn7FoQO+Mt3qjpPZDN6w6aHDfVXI1qdGRSC4IrN+N4D+XE7VCWa2aEbJiOkLly59QWhtUhpVaoKaU2fjEL1LGXn5Dm9gvMtkcgbKXj9rHnkWGfzl3bsCP66u6LCjzfspeY78Km898JE=
+	t=1715242910; cv=none; b=U1LzPuH+JoJ0goGBMS+7TQgOet30EFL97Ikh4Ab+F0VsNrCwAu/KiArKUwNRn2/UN58ddkmih3exPJ9u2+fczN70QTIuahbdXZsNTu47deA48oAd4KS7cXhHO5gdqwLEZnK81GYvixiJtltjqbPq5PGQMPQ59Ydt3XabLpPhjMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715242915; c=relaxed/simple;
-	bh=3uvc5L0N0IrJvhHtxGTt/rLIh4P1YRMBVY8Tc45LZiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VNZfX9Psn6U41Wpd21NuCFYDOyTc7GDocpdR9ZrXv+QhoCR3kvDgHN/4JeQEuWbmZI+JnNxJtJPTG4ZEoGDM715Nv3OK1+vQMK9RVdUkUZSpnb+HnalUUT+W9sEgNotHf45JYy4lZZAiM+SWC5of8a8i7R2ytNc5eO+wfbgGaOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtqR681b; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-572baf393ddso2814080a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:21:53 -0700 (PDT)
+	s=arc-20240116; t=1715242910; c=relaxed/simple;
+	bh=IXqoH3hnQ35zr7yeunibtDNWu/kksJKf+G6m/To04QM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BDaVPV8Xxce2b3Tp6SofbN6RrjduSxhB3m1EL8llr0nihmf4MTw27NoRu9uYLA4YsQwN9W5B2aVKNfVGaxFJj9kRD6XZAul+qA01U8SqAgNB8yOimfvdBlVDHFgHgOg63OEIPmVSZt8/8DAboU7qlqD7kCu3Bpu7zSDxIiFXWGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Wa44uraL; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41c7ac6f635so3733035e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 01:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715242912; x=1715847712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3uvc5L0N0IrJvhHtxGTt/rLIh4P1YRMBVY8Tc45LZiE=;
-        b=XtqR681bGiGahPCj5dY+dfvQ5RzH7OUrEvETUGor65+YzazNBSAGRm62c0IW/BqpOF
-         ZWHPFQ+I8Suy8goI/c7AsND3zu6BphnOjes2qPnKRMiVxhXk3TqfPgUQKxdSPpvOY30X
-         5jilcyZrbQEXYPCDZxYbI8STzNjbCQ7co5fnahnD9QnjCfvkWBOKk5xrznAQC0BKwK0F
-         ZH16Oovk8ltwmK6CotWZoNi3mZaBVCdt1qmaevkMjRQ/1S9kDg1wOzfnNC7Dx6R30GFU
-         0XX/LmQ4vukgH2jXNkaerTtA2wDpaeBot64J34i2ttLGQBKtBtBs2YjriziIQB1je9Tv
-         hfgw==
+        d=suse.com; s=google; t=1715242906; x=1715847706; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L9OBZbvS0WP26j2hKZQO9jjPKnz/pC2a+sctlFlJyyM=;
+        b=Wa44uraLCCwKvAboiaLFGAQe6hi2rSBb2mhvrZhIoWItBTJ6QGn1RDrPuKLfBPOQgV
+         Z0tAuJDH+TgULe9dnvtb9KyupCj5mGNdQ5FnkERz+AI1Sp1OeP04m5LtCdgLZhLR1hnt
+         cMFL/kWN5F8Q1UfERy3mnwaXBtEqQp0fHX3hop63meSMLoAVevKdfrDlTtsWgQJklbQz
+         bmrhYnK7df0cPIrnuH4OhZ272+D/k8TUb4L4SDrgndG3qqBZq5ANAQ/jpe6wekPIqcMh
+         YkhfMoMOGW2Bk7FQJNvoQkSBwFNXPLtgz27rqLvn+zHtfKUKhoQxl0cazyg4OyA5gt6x
+         8Xyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715242912; x=1715847712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3uvc5L0N0IrJvhHtxGTt/rLIh4P1YRMBVY8Tc45LZiE=;
-        b=MrHTQ936UT8n05AtFY+ErflH1zYe67JC/HKGbW3mDODslt8p5Gza72rdNulK8nUCS6
-         31yTzTTdHCJJfBEf+6w+B2ckrimLpbqNxe+nEAWy6ThzLL85ZofoDDgFASH3UfeoGVvk
-         IDREMURo+83Hlj33KsQgrNizyhQASgC//8gk06xtY+2Bbfex5fLznxkQvZVgIQUrr0vP
-         XkxZywcTA9xI8tEePiYZLZPp4WFRefUErU5YwBa1ex55Aj9LBL63Cqi9OaGWWElGMFhc
-         mvm+czSmG2iTGtqBSYOCj2z3DLVu04wworSHqnNq61+rvn1hJOzhrEItYXNZSwPdGlJw
-         IVyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUylHksJ0Xz5nHNGjMQf5/zBQsB6aR6heJKi0v4t5xL31kce/SQEf3mNKpOMBSep4pFj9AVC1qM21KEBun8fxtKz3Dwfv46W1NFoh0j
-X-Gm-Message-State: AOJu0Ywb54310tWfYV5ObSbzj2A1TDNGn/lmMzAbjU8SihPoqHFhINLb
-	L7/a8RmZMfa1VDwuI9ME023/bG35m5/EG7eDaGum67kgruM1UwByg8V2n4vC2F7nsaV9pEs8GQH
-	saqh1Gis9swT2zGm52M9s4Bja/ME=
-X-Google-Smtp-Source: AGHT+IHESwZO+wOaWv8ASTC/Ph6luCzkAHQV4yOwfchkcprT6g3v71swVJ1O67hKJtn3VP9US4nDOVonhvmWH8LcfXY=
-X-Received: by 2002:aa7:c485:0:b0:572:7d77:179d with SMTP id
- 4fb4d7f45d1cf-573326edde8mr1337387a12.5.1715242911497; Thu, 09 May 2024
- 01:21:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715242906; x=1715847706;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L9OBZbvS0WP26j2hKZQO9jjPKnz/pC2a+sctlFlJyyM=;
+        b=MNF0Q+3dZQhxIqkD4GWh4InphBJ4ga2gPIb1+2eaSt1MqwQG0Ycz1Kl1lFbmnYz1o/
+         v4dfJYnci2WiywnhF3DIOasP/AT80ttd+4Q+IMDl9TCKi/KfY3yck5hfwrmh2dFK4cyL
+         IIfhIP4R+yki3Zq4EPhB5ey9rL4rl0nyi+hvEsdJa+M7870DnpAbSNbB40aqyYD+H1Jt
+         38jOE3/jMoi6wUypK3zMrXwH7r9546HBqQyeFvC4jG6sKiI/RkqXigsHXbj+sL+7TSyb
+         G8idtfIOeToJa1mxZdCRt07TJ1RXzLTDJK5tCrejzI+G0tCDiLDscE0fcC/IOyBgQbkd
+         jHNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPvcaPlVwskl7fRirAcnEBo21gVzAOEyqHTwnVBE2yV1BPiQoS245S4KH2dEJU9tkg320euV6FltKEB8hTXB4g5NQH0tjiO57RZsgp
+X-Gm-Message-State: AOJu0YyTOBoa4Ug9UAmLGuHn64aVJx6Y/HYSCKKQe9SlOb9NxrZJBS6n
+	4mtuWtAEpLD08UcMb8YGoHw1vb7N7MnRNh6Er3eTKBF0dkktlS6l79YN+KYF5Wg=
+X-Google-Smtp-Source: AGHT+IHPuleqIxD3VbBswpLKPEot5Wdxn0zjeY5Ob4s7b7lk2pbEtcKSrp4v7UithB94OfgjP9O2xA==
+X-Received: by 2002:a05:6000:136d:b0:34c:5e02:7875 with SMTP id ffacd0b85a97d-34fca433f91mr5870618f8f.7.1715242906276;
+        Thu, 09 May 2024 01:21:46 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7315:9ae2:bce:2143:58f1? ([2a10:bac0:b000:7315:9ae2:bce:2143:58f1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbc3e4sm1025016f8f.108.2024.05.09.01.21.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 01:21:46 -0700 (PDT)
+Message-ID: <60ddec81-5102-4984-848a-ae3adb8c4c38@suse.com>
+Date: Thu, 9 May 2024 11:21:44 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501042700.83974-1-ioworker0@gmail.com> <20240501042700.83974-3-ioworker0@gmail.com>
- <0077A412-0AF1-4022-8F49-EE77AE601ECB@nvidia.com> <CAK1f24mRVam3w9CZkq4O0smGUTVUQfdvA48mqsU+NKxMUxdz1A@mail.gmail.com>
- <B1DA2DA4-AFEA-4541-8DFC-0D815249A064@nvidia.com> <CAK1f24mpt+ZGow4LLdXKZcwopmkZDrM_eh15SnkEgpiBXTmOwA@mail.gmail.com>
- <10BA9EED-A2BB-44C2-B80A-26527CDFFA50@nvidia.com> <1B2017A4-A252-4C1F-9608-D43ECEAD53B1@nvidia.com>
- <20240508155253.GK4650@nvidia.com> <30469615-2DDC-467E-A810-5EE8E1CFCB43@nvidia.com>
- <20240508163526.GM4650@nvidia.com>
-In-Reply-To: <20240508163526.GM4650@nvidia.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 9 May 2024 16:21:39 +0800
-Message-ID: <CAK1f24=PmS1RMQ6=0dgX_q9xqUthWOjJBz_FE-Ndb7MwGLWYdg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] mm/rmap: integrate PMD-mapped folio splitting into
- pagewalk loop
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Zi Yan <ziy@nvidia.com>, Alistair Popple <apopple@nvidia.com>, akpm@linux-foundation.org, 
-	willy@infradead.org, sj@kernel.org, maskray@google.com, ryan.roberts@arm.com, 
-	david@redhat.com, 21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com, 
-	zokeefe@google.com, shy828301@gmail.com, xiehuan09@gmail.com, 
-	libang.li@antgroup.com, wangkefeng.wang@huawei.com, songmuchun@bytedance.com, 
-	peterx@redhat.com, minchan@kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Baolin Wang <baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Alexandre Chartre <alexandre.chartre@oracle.com>,
+ Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sean Christopherson <seanjc@google.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, KP Singh <kpsingh@kernel.org>,
+ Waiman Long <longman@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@kernel.org>, Maksim Davydov <davydov-max@yandex-team.ru>
+References: <cover.1715059256.git.jpoimboe@kernel.org>
+ <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
+ <f48601e1-e8a6-4161-9a77-32ad10c887de@suse.com>
+ <20240509052447.kwdlruqad7r5h4pi@treble>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240509052447.kwdlruqad7r5h4pi@treble>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hey Zi and Jason,
 
-Thanks a lot for reaching out!
 
-On Thu, May 9, 2024 at 12:35=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> wr=
-ote:
->
-> On Wed, May 08, 2024 at 12:22:08PM -0400, Zi Yan wrote:
-> > On 8 May 2024, at 11:52, Jason Gunthorpe wrote:
-> >
-> > > On Wed, May 08, 2024 at 10:56:34AM -0400, Zi Yan wrote:
-> > >
-> > >> Lance is improving try_to_unmap_one() to support unmapping PMD THP a=
-s a whole,
-> > >> so he moves split_huge_pmd_address() inside while (page_vma_mapped_w=
-alk(&pvmw))
-> > >> and after mmu_notifier_invalidate_range_start() as split_huge_pmd_lo=
-cked()
-> > >> and does not include the mmu notifier ops inside split_huge_pmd_addr=
-ess().
+On 9.05.24 г. 8:24 ч., Josh Poimboeuf wrote:
+> On Wed, May 08, 2024 at 06:10:21PM +0300, Nikolay Borisov wrote:
+>>> @@ -1659,19 +1662,22 @@ static void __init bhi_select_mitigation(void)
+>>>    			return;
+>>>    	}
+>>> +	/* Mitigate in hardware if supported */
+>>>    	if (spec_ctrl_bhi_dis())
+>>>    		return;
+>>>    	if (!IS_ENABLED(CONFIG_X86_64))
+>>>    		return;
+>>> -	/* Mitigate KVM by default */
+>>> -	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+>>> -	pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit\n");
+>>> +	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
+>>> +		pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit only\n");
+>>> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+>>> +		return;
+>>> +	}
+>>
+>> nit: How about setting CLEAR_BHB_LOOP_ON_VMEXIT unconditionally, then
+>> afterwards checking if MITIGATION_VMEXIT_ONLY is set and if yes simply
+>> return, that way you don't duplicate the setup of the VMEXIT code
+> 
+> I think the duplication actually makes it more readable.  In both cases
+> it puts the setting of the features together along with the
+> corresponding pr_info().
 
-IMO, It might be reasonable to exclude the mmu notifier ops in
-split_huge_pmd_locked(). IIUC, before acquiring the PTL, callers need to te=
-ar
-down the secondary mappings via mmu_notifier_invalidate_range_start() with
-the range aligned to HPAGE_PMD_SIZE.
+Right, my suggestion also meant that setting + pr info will be together, 
+unconditional and if MITIGATION_VMEXIT_ONLY is set we return early, 
+without setting X86_FEATURE_CLEAR_BHB_LOOP. In any case it's a minor 
+remark, feel free to ignore.
 
-> > >> I wonder if that could cause issues, since the mmu_notifier_invalida=
-te_range_start()
-> > >> before the while loop only has range of the original address and
-> > >> split huge pmd can affect the entire PMD address range and these two=
- ranges
-> > >> might not be the same.
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
-As Baolin mentioned [1] before:
-"For a PMD mapped THP, I think the address is already THP size alignment
-returned from vma_address(&folio->page, vma)."
-
-Given this, perhaps we don't need to re-align the input address after
-starting the pagewalk? IMO, if any corner cases arise, we should catch them
-by using VM_WARN_ON_ONCE() in split_huge_pmd_locked().
-
-Zi, what do you think?
-
-[1] https://lore.kernel.org/linux-mm/cc9fd23f-7d87-48a7-a737-acbea8e95fb7@l=
-inux.alibaba.com/
-
-> > >
-> > > That does not sound entirely good..
-> > >
-> > > I suppose it depends on what split does, if the MM page table has the
-> > > same translation before and after split then perhaps no invalidation
-> > > is even necessary.
-> >
-> > Before split, it is a PMD mapping to a PMD THP (order-9). After split,
-> > they are 512 PTEs mapping to the same THP. Unless the secondary TLB
-> > does not support PMD mapping and use 512 PTEs instead, it seems to
-> > be an issue from my understanding.
->
-> I may not recall fully, but I don't think any secondaries are
-> so sensitive to the PMD/PTE distinction.. At least the ones using
-> hmm_range_fault() are not.
->
-> When the PTE eventually comes up for invalidation then the secondary
-> should wipe out any granual they may have captured.
->
-> Though, perhaps KVM should be checked carefully.
->
-> > In terms of two mmu_notifier ranges, first is in the split_huge_pmd_add=
-ress()[1]
-> > and second is in try_to_unmap_one()[2]. When try_to_unmap_one() is unma=
-pping
-> > a subpage in the middle of a PMD THP, the former notifies about the PMD=
- range
-> > change due to one PMD split into 512 PTEs and the latter only needs to =
-notify
-> > about the invalidation of the unmapped PTE. I do not think the latter c=
-an
-> > replace the former, although a potential optimization can be that the l=
-atter
-> > can be removed as it is included in the range of the former.
->
-> I think we probably don't need both, either size might be fine, but
-> the larger size is definately fine..
->
-> > Regarding Lance's current code change, is it OK to change mmu_notifier =
-range
-> > after mmu_notifier_invalidate_range_start()?
->
-> No, it cannot be changed during a start/stop transaction.
-
-I understood and will keep that in mind - thanks!
-
-Thanks again for clarifying!
-Lance
-
->
-> Jason
->
->
+> 
 
