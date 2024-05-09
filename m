@@ -1,191 +1,254 @@
-Return-Path: <linux-kernel+bounces-174996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC768C186D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:34:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB3C8C187B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492D81F227B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2506A286B85
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983158626A;
-	Thu,  9 May 2024 21:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B605129A7C;
+	Thu,  9 May 2024 21:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZNOT+4tM"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LjAeEoVP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E5A86249
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE53129A67;
+	Thu,  9 May 2024 21:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715290455; cv=none; b=W6ijddd13YMc+0JnW1BPkpluURsUkvjoTDzizopwYwg4+2oJxUb1jEmOcTS/fxupYaHWqmtY18U3+TqRZe7ur/tmxgSlNHQ1QzBusCN8bmQBxXovA7yTLv4yY8s8+lA7CQ5nBMmlOYYKD8rc67FcIoGrZvlaE07uWi/5dFq6ApI=
+	t=1715290532; cv=none; b=VLp5qsW9KIVltr38/yR1pVNrP2pT+Q72uenBlBLd4tSzijrUZMxwJv1FO9JhaVSF61myAC9xqi3JuipKxW64OjpKUMd/ZgHK4bOe4FbWSuI3mzYjm2FP5PAsXmDrmx7kNIhnAEqlSXn/8Zu5iFowk5MydYWZUx6keT5JAxd8/FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715290455; c=relaxed/simple;
-	bh=dsIYCA7Gw9+kyy1UZZp5UyZsCiWcpS/kpqrtbClwnUc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fLQclkF9RPQe1va1C9wl661Mw45lVgUo7W7VFuAIB2p4K53a8C9E2LpuvpVwZa3zj0aGIp1i1lC7ytiHou7FPDKgzI2RlZey8FMuubTUrcGFHBBvzT/lYT0dywV5bSAGimsszJLAOTL5Dn2SFisyjFyKuGRFDEje/H32M5LQ/zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZNOT+4tM; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <32f0a97d-ab02-40ab-b637-e2a0583a5746@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715290452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CdGTO0c0Cfcs7uqDH0QslfK8bkzGZyWFzx0EviU8asY=;
-	b=ZNOT+4tMIRW3uV6JUqKuVkAyB2/XwJ1wJGc0Qup+F1zzFzimWIpxpR80AQ4kerTB1915hW
-	k+PcBTXH6wMtmFWrLJ96VghNbSXGVAvJBXLGsa/WjNsJba12IKsKtIS/v7sxegqMSFWPuX
-	yR1Q6+AexXD0rWnxI2dmQUeZryJxgcA=
-Date: Thu, 9 May 2024 17:34:08 -0400
+	s=arc-20240116; t=1715290532; c=relaxed/simple;
+	bh=lPh/nEqoGgLssGU9u/530CpaLB+yT+jCGmsBtzdaaQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhkCXmnxHsfP0PpoNCRvwynh5Imq9BD8MypjLpapDMKyfOaFB9KvygLzRrRZnOuZPBLOBdRDJ/JeFTHqtej4XrO1WUHVywsbDCEyhBCyAe+3g5SUwnvN2Me8TsdeT7hqidhUEaAPqoNYJtYKEXwW/RzTmlKfQ8Yb7rC8AYzNptQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LjAeEoVP; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715290530; x=1746826530;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lPh/nEqoGgLssGU9u/530CpaLB+yT+jCGmsBtzdaaQ8=;
+  b=LjAeEoVPVAFUC+99WvJfi0yLkaY84DyHdVIakvpW2Cj1LfteC6SjXcQi
+   TGfannFZGBSlkyZ97vo9w5iC+zNbJZzf2+8hNnnznc3tY7f8H8sYV1JNl
+   t39/SPnkIzvOjfmSN5+tcuThbbHFJqN479ZzQjb1cKsW836s3oWsESj6j
+   zj9rYAs6uUFRfAw2tIxJx6VyRWD5uVgJALucieUGzCFjnjZnWJhG5r+W2
+   aqn7+QtZiXcYg+WCP0/kduMZ5Ww3XT5H3S+g7MIDbmDxPcYKk45qgsopX
+   kwnLZMcMxuXtHof6M0u0ogFQIQ2ljoVGBOx+PF/cFMGX8K6+Lcrp6mzaJ
+   Q==;
+X-CSE-ConnectionGUID: OGv083x5SsOGUdCjNtyzEA==
+X-CSE-MsgGUID: UxWGLMjAQQ2oF/T9DU2NgA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="14195728"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="14195728"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 14:35:30 -0700
+X-CSE-ConnectionGUID: jZEUWdnKQRWUgZS/vlvJXg==
+X-CSE-MsgGUID: NoyrwYZmT1qL4g3agHmioQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="34240486"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 09 May 2024 14:35:26 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s5BQA-0005OV-2x;
+	Thu, 09 May 2024 21:35:22 +0000
+Date: Fri, 10 May 2024 05:34:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dan Carpenter <error27@gmail.com>,
+	Trond Myklebust <Trond.Myklebust@netapp.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>, Anna Schumaker <anna@kernel.org>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 1/2] SUNRPC: prevent integer overflow in XDR_QUADLEN()
+Message-ID: <202405100514.9QcoLUdp-lkp@intel.com>
+References: <bbf929d6-18d2-4b7e-a660-a19460af0a3c@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/7] PCI: xilinx-nwl: Fix off-by-one
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
- Michal Simek <michal.simek@amd.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Thippeswamy Havalige <thippeswamy.havalige@amd.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Bharat Kumar Gogada <bharatku@xilinx.com>
-References: <20240508015917.GA1746057@bhelgaas>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20240508015917.GA1746057@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbf929d6-18d2-4b7e-a660-a19460af0a3c@moroto.mountain>
 
-On 5/7/24 21:59, Bjorn Helgaas wrote:
-> Maybe the subject could include something about why this is important,
-> e.g., it's IRQ-related, we mask/unmask the wrong thing, etc?
-> 
-> On Mon, May 06, 2024 at 12:15:05PM -0400, Sean Anderson wrote:
->> IRQs start at 0, so we don't need to subtract 1.
-> 
-> What does "IRQ" refer to here?  Something to do with INTx, I guess,
-> but apparently not PCI_INTERRUPT_PIN, since 0 in that register means
-> the device doesn't use INTx, and 1=INTA, 2=INTB, etc.
+Hi Dan,
 
-This refers to INTx. MSGF_LEG_MASK is laid out with INTA in bit 0, INTB
-in bit 1, INTC in bit 2, and INTD in bit 3. Hardware IRQ numbers start
-at 0, and we register PCI_NUM_INTX irqs. So by subtracting 1, we try to
-set the -1st bit when enabling INTA.
+kernel test robot noticed the following build errors:
 
-> I assume this fixes a bug, e.g., we mask/unmask the wrong INTx?  What
-> does this look like for a user?  Unexpected IRQs?
+[auto build test ERROR on trondmy-nfs/linux-next]
+[also build test ERROR on linus/master v6.9-rc7 next-20240509]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Without this patch I get the following splat:
+url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/SUNRPC-prevent-integer-overflow-in-XDR_QUADLEN/20240509-185141
+base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
+patch link:    https://lore.kernel.org/r/bbf929d6-18d2-4b7e-a660-a19460af0a3c%40moroto.mountain
+patch subject: [PATCH 1/2] SUNRPC: prevent integer overflow in XDR_QUADLEN()
+config: s390-defconfig (https://download.01.org/0day-ci/archive/20240510/202405100514.9QcoLUdp-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project b910bebc300dafb30569cecc3017b446ea8eafa0)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240510/202405100514.9QcoLUdp-lkp@intel.com/reproduce)
 
-[    5.037483] ================================================================================
-[    5.046260] UBSAN: shift-out-of-bounds in ../drivers/pci/controller/pcie-xilinx-nwl.c:389:11
-[    5.054983] shift exponent 18446744073709551615 is too large for 32-bit type 'int'
-[    5.062813] CPU: 1 PID: 61 Comm: kworker/u10:1 Not tainted 6.6.20+ #268
-[    5.070008] Hardware name: xlnx,zynqmp (DT)
-[    5.074348] Workqueue: events_unbound deferred_probe_work_func
-[    5.080410] Call trace:
-[    5.082958] dump_backtrace (arch/arm64/kernel/stacktrace.c:235) 
-[    5.086850] show_stack (arch/arm64/kernel/stacktrace.c:242) 
-[    5.090292] dump_stack_lvl (lib/dump_stack.c:107) 
-[    5.094095] dump_stack (lib/dump_stack.c:114) 
-[    5.097540] __ubsan_handle_shift_out_of_bounds (lib/ubsan.c:218 lib/ubsan.c:387) 
-[    5.103227] nwl_unmask_leg_irq (drivers/pci/controller/pcie-xilinx-nwl.c:389 (discriminator 1)) 
-[    5.107386] irq_enable (kernel/irq/internals.h:234 kernel/irq/chip.c:170 kernel/irq/chip.c:439 kernel/irq/chip.c:432 kernel/irq/chip.c:345) 
-[    5.110838] __irq_startup (kernel/irq/internals.h:239 kernel/irq/chip.c:180 kernel/irq/chip.c:250) 
-[    5.114552] irq_startup (kernel/irq/chip.c:270) 
-[    5.118266] __setup_irq (kernel/irq/manage.c:1800) 
-[    5.121982] request_threaded_irq (kernel/irq/manage.c:2206) 
-[    5.126412] pcie_pme_probe (include/linux/interrupt.h:168 drivers/pci/pcie/pme.c:348) 
-[    5.130303] pcie_port_probe_service (drivers/pci/pcie/portdrv.c:528) 
-[    5.134915] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658) 
-[    5.138720] __driver_probe_device (drivers/base/dd.c:800) 
-[    5.143236] driver_probe_device (drivers/base/dd.c:830) 
-[    5.147571] __device_attach_driver (drivers/base/dd.c:959) 
-[    5.152179] bus_for_each_drv (drivers/base/bus.c:457) 
-[    5.156163] __device_attach (drivers/base/dd.c:1032) 
-[    5.160147] device_initial_probe (drivers/base/dd.c:1080) 
-[    5.164488] bus_probe_device (drivers/base/bus.c:532) 
-[    5.168471] device_add (drivers/base/core.c:3638) 
-[    5.172098] device_register (drivers/base/core.c:3714) 
-[    5.175994] pcie_portdrv_probe (drivers/pci/pcie/portdrv.c:309 drivers/pci/pcie/portdrv.c:363 drivers/pci/pcie/portdrv.c:695) 
-[    5.180338] pci_device_probe (drivers/pci/pci-driver.c:324 drivers/pci/pci-driver.c:392 drivers/pci/pci-driver.c:417 drivers/pci/pci-driver.c:460) 
-[    5.184410] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658) 
-[    5.188213] __driver_probe_device (drivers/base/dd.c:800) 
-[    5.192729] driver_probe_device (drivers/base/dd.c:830) 
-[    5.197064] __device_attach_driver (drivers/base/dd.c:959) 
-[    5.201672] bus_for_each_drv (drivers/base/bus.c:457) 
-[    5.205657] __device_attach (drivers/base/dd.c:1032) 
-[    5.209641] device_attach (drivers/base/dd.c:1074) 
-[    5.213357] pci_bus_add_device (drivers/pci/bus.c:352) 
-[    5.217518] pci_bus_add_devices (drivers/pci/bus.c:371 (discriminator 2)) 
-[    5.221774] pci_host_probe (drivers/pci/probe.c:3099) 
-[    5.225581] nwl_pcie_probe (drivers/pci/controller/pcie-xilinx-nwl.c:938) 
-[    5.229562] platform_probe (drivers/base/platform.c:1404) 
-[    5.233367] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658) 
-[    5.237169] __driver_probe_device (drivers/base/dd.c:800) 
-[    5.241685] driver_probe_device (drivers/base/dd.c:830) 
-[    5.246020] __device_attach_driver (drivers/base/dd.c:959) 
-[    5.250628] bus_for_each_drv (drivers/base/bus.c:457) 
-[    5.254612] __device_attach (drivers/base/dd.c:1032) 
-[    5.258596] device_initial_probe (drivers/base/dd.c:1080) 
-[    5.262938] bus_probe_device (drivers/base/bus.c:532) 
-[    5.266920] deferred_probe_work_func (drivers/base/dd.c:124) 
-[    5.271619] process_one_work (arch/arm64/include/asm/jump_label.h:21 include/linux/jump_label.h:207 include/trace/events/workqueue.h:108 kernel/workqueue.c:2632) 
-[    5.275788] worker_thread (kernel/workqueue.c:2694 (discriminator 2) kernel/workqueue.c:2781 (discriminator 2)) 
-[    5.279686] kthread (kernel/kthread.c:388) 
-[    5.283048] ret_from_fork (arch/arm64/kernel/entry.S:862) 
-[    5.286765] ================================================================================
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405100514.9QcoLUdp-lkp@intel.com/
 
-> 9a181e1093af is from seven years ago.  Should we be surprised that we
-> haven't tripped over this before?
+All errors (new ones prefixed by >>):
 
-I suppose no one enables UBSAN on this platform.
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2188:
+   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     509 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     516 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     528 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     537 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from fs/nfsd/nfs4callback.c:34:
+   In file included from include/linux/nfs4.h:19:
+   In file included from include/linux/sunrpc/msg_prot.h:205:
+   In file included from include/linux/inet.h:42:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from fs/nfsd/nfs4callback.c:34:
+   In file included from include/linux/nfs4.h:19:
+   In file included from include/linux/sunrpc/msg_prot.h:205:
+   In file included from include/linux/inet.h:42:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from fs/nfsd/nfs4callback.c:34:
+   In file included from include/linux/nfs4.h:19:
+   In file included from include/linux/sunrpc/msg_prot.h:205:
+   In file included from include/linux/inet.h:42:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     692 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     700 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     708 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     717 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     726 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     735 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> fs/nfsd/nfs4callback.c:832:2: error: initializer element is not a compile-time constant
+     832 |         PROC(CB_OFFLOAD,        COMPOUND,       cb_offload,     cb_offload),
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   fs/nfsd/nfs4callback.c:819:15: note: expanded from macro 'PROC'
+     819 |         .p_arglen  = NFS4_enc_##argtype##_sz,                           \
+         |                      ^~~~~~~~~~~~~~~~~~~~~~~
+   <scratch space>:133:1: note: expanded from here
+     133 | NFS4_enc_cb_offload_sz
+         | ^~~~~~~~~~~~~~~~~~~~~~
+   fs/nfsd/xdr4cb.h:43:33: note: expanded from macro 'NFS4_enc_cb_offload_sz'
+      43 | #define NFS4_enc_cb_offload_sz          (cb_compound_enc_hdr_sz +       \
+         |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      44 |                                         cb_sequence_enc_sz +            \
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      45 |                                         enc_nfs4_fh_sz +                \
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      46 |                                         enc_stateid_sz +                \
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      47 |                                         enc_cb_offload_info_sz)
+         |                                         ~~~~~~~~~~~~~~~~~~~~~~~
+   17 warnings and 1 error generated.
 
---Sean
 
->> Fixes: 9a181e1093af ("PCI: xilinx-nwl: Modify IRQ chip for legacy interrupts")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->> 
->> (no changes since v1)
->> 
->>  drivers/pci/controller/pcie-xilinx-nwl.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
->> index 0408f4d612b5..437927e3bcca 100644
->> --- a/drivers/pci/controller/pcie-xilinx-nwl.c
->> +++ b/drivers/pci/controller/pcie-xilinx-nwl.c
->> @@ -371,7 +371,7 @@ static void nwl_mask_intx_irq(struct irq_data *data)
->>  	u32 mask;
->>  	u32 val;
->>  
->> -	mask = 1 << (data->hwirq - 1);
->> +	mask = 1 << data->hwirq;
->>  	raw_spin_lock_irqsave(&pcie->leg_mask_lock, flags);
->>  	val = nwl_bridge_readl(pcie, MSGF_LEG_MASK);
->>  	nwl_bridge_writel(pcie, (val & (~mask)), MSGF_LEG_MASK);
->> @@ -385,7 +385,7 @@ static void nwl_unmask_intx_irq(struct irq_data *data)
->>  	u32 mask;
->>  	u32 val;
->>  
->> -	mask = 1 << (data->hwirq - 1);
->> +	mask = 1 << data->hwirq;
->>  	raw_spin_lock_irqsave(&pcie->leg_mask_lock, flags);
->>  	val = nwl_bridge_readl(pcie, MSGF_LEG_MASK);
->>  	nwl_bridge_writel(pcie, (val | mask), MSGF_LEG_MASK);
->> -- 
->> 2.35.1.1320.gc452695387.dirty
->> 
+vim +832 fs/nfsd/nfs4callback.c
+
+^1da177e4c3f415 Linus Torvalds    2005-04-16  824  
+499b4988109e91b Christoph Hellwig 2017-05-12  825  static const struct rpc_procinfo nfs4_cb_procedures[] = {
+7d93bd71cb3e262 Chuck Lever       2010-12-14  826  	PROC(CB_NULL,	NULL,		cb_null,	cb_null),
+7d93bd71cb3e262 Chuck Lever       2010-12-14  827  	PROC(CB_RECALL,	COMPOUND,	cb_recall,	cb_recall),
+c5c707f96fc9a6e Christoph Hellwig 2014-09-23  828  #ifdef CONFIG_NFSD_PNFS
+c5c707f96fc9a6e Christoph Hellwig 2014-09-23  829  	PROC(CB_LAYOUT,	COMPOUND,	cb_layout,	cb_layout),
+c5c707f96fc9a6e Christoph Hellwig 2014-09-23  830  #endif
+a188620ebd294b1 Jeff Layton       2016-09-16  831  	PROC(CB_NOTIFY_LOCK,	COMPOUND,	cb_notify_lock,	cb_notify_lock),
+9eb190fca8f9056 Olga Kornievskaia 2018-07-20 @832  	PROC(CB_OFFLOAD,	COMPOUND,	cb_offload,	cb_offload),
+3959066b697b5df Dai Ngo           2022-11-16  833  	PROC(CB_RECALL_ANY,	COMPOUND,	cb_recall_any,	cb_recall_any),
+^1da177e4c3f415 Linus Torvalds    2005-04-16  834  };
+^1da177e4c3f415 Linus Torvalds    2005-04-16  835  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
