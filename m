@@ -1,80 +1,125 @@
-Return-Path: <linux-kernel+bounces-175009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E2B8C189C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:46:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8038C189F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E4E28593C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:46:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DFB71C21BFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83B8128816;
-	Thu,  9 May 2024 21:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CFF1292C8;
+	Thu,  9 May 2024 21:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="cVLK9eyf"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2118.outbound.protection.outlook.com [40.107.212.118])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ec82F/Zf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2990385653
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9163C85653;
+	Thu,  9 May 2024 21:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715291193; cv=fail; b=NmgEDjIrfclwInNjJYkjW91CyunjwID5vwE7aQjA7I0s6c1LPv+n7cAZLCED+9eUxiHGzKW8yJWfUx1tj8/udkpzetSWEPdj99lod/O1FPUbExNFDSkoGbCfckCQEeBzYRQrt3hRwOuaOnVBdg39qAETyUHQa5LEqXHZHv5Octs=
+	t=1715291289; cv=fail; b=Ea5VgcQRQJI9Qzb6GN+uN/CeZtBaNHPLEVgkw2WosAZj4lpG60MhiMAdGqIj92wlITKIEFfgKWP3J6SufL0Hbv/JTRDeHmghcFhdsnoyuDqcAtJaK2NHr1A1CWKV4V2m4dqI4NsjtiJr0cvF4dWjVMA4Zt+PHQHGIFCUKJ+TUag=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715291193; c=relaxed/simple;
-	bh=5ehXQkr0Ylh6+IPEH/TpRYvQjS9dVjxT16mnjFR0duw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Bw45xk2qxa70eGtg/7svXh5gMsSXCBy7zJwEw6HclmUtvwYo7TUkhoS7Pc3K4JEuUnqHU8qlqchK4kLaAYCUq8B7kgz1Pa/Jj4MY+VkU4gUhtWLQNfcXaFXGwhYlKegp/3fkK61P80SF1wPjbmZh6tbs/8exNZZcCwXVgRV+AuE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=cVLK9eyf; arc=fail smtp.client-ip=40.107.212.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+	s=arc-20240116; t=1715291289; c=relaxed/simple;
+	bh=o7Wap/AISLcpYfL4eRxrvYHM7bC7MAmwHspkuKPwqdI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OBBvMUP/rn2yuakR+kITAaf3oddBZCbyzHwBNckwmmwhyPcbvgBajpx28lPVAnToEHyxXo0Bzf8VEciFedZPtO4yvZaSo60w4/JvwcKK/lLDLBMJOFvH0FzEqyUSl8L3y3Sas/+J/X37VidQlWMokcZBUPeZuVbXjREwUluLFKE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ec82F/Zf; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715291287; x=1746827287;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=o7Wap/AISLcpYfL4eRxrvYHM7bC7MAmwHspkuKPwqdI=;
+  b=ec82F/Zfs8i7d3iVBihWdXXPjX3Sroq58MKMZxQogtdjs1C6McOCd0UX
+   z6j8fu1tujWd7L8sle4V7cehP5yY8BC1LDMTcD95qINFQplhKlJIY/1kf
+   lU1CP83zbS3+scy2/W9FBomP/YoUTD/q+od1JDscB/sVEFR09BCcmz3Hp
+   KTuuBsOS9A/SEBApjINKZJVZCjgfPh/DyJl5n/05Rc1DYCBRKrGrH8QCy
+   qthHw/D4/CO2idH1aKJdCshykw2F7DZU8ecneNFu3p9POkjX5ObVY6s9A
+   FUX29hWJE8NUBr4i/mRiqv2pBmqFVh42ZCh8I4ceYnFA4LdVxuH/RUTAr
+   A==;
+X-CSE-ConnectionGUID: ASQacSfdRoy3UYkIqdVGuQ==
+X-CSE-MsgGUID: X+fx1iWiTumCTVedlIcAyg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11411660"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="11411660"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 14:48:06 -0700
+X-CSE-ConnectionGUID: 3hoLkPNwR2GU15O7UvynSw==
+X-CSE-MsgGUID: u3lF9k+oTeG17yrY0SEavw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="29939813"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 May 2024 14:48:05 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 9 May 2024 14:48:04 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 9 May 2024 14:48:04 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 14:48:04 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OhLd+E6qG7o8PZHLrU8ZrQA9xizfGc1Kqps8v6V7UHWlsbBrlX/kohqhgpPfCoVHABUyw2Bm6tRs2ysEG5IrIKyiUziY9iVWgLiyldQU83EPUstKm6K3Cx7U0A5gZ3+VSbP9f+yBiRLsBqQlNBz2Lo7yUMXm780x00G4hRcF5j2ni2vWGi5Oc6DH9wEzhThaSbQRTIRj4wkms6nvSddJ95M0Z6CC78ZLCP6UBSs4phGu5vz9LZzdz7zk7GkSq3Adx7wmWWD/ddglOrbn2bq4d329RK4ao5HYIxWdkSi0cYqXIn/7GQk6asq0kZrmR/VkoTXpGN0NUshrttjbkEYcpQ==
+ b=imy3nvvL1PFqmwCShaQjAfaPlRrnIeGGSqIGsEzdUszkZYMIkvrNjEeCiISsahUZQNLgee34DiXhwcbl+6stCtrYyacDPKc85oX4jWt7D4U74TjImGdo6haeONu11XUenF5edZPgf2BxfMohwAu3AwVKjUwViZOFsyBT7Bdv0AA6vhfgIbjcdJsMHjh9jXlHeZV1CvIy84RCy9sN9pVJ0vlLiPXNgnPkhstEz8/NnzGzqS+X72Kl8MF+fFE2W1vrJzqL8mALaW3kvnL01t3HwTc4RKmj5qRaA4bkH+jEbj3TIMNPIrqOkAyhgu78ptCV6W7PBT/MbldYBPRAaB/fuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q53mqEHhBO+wnQOveR60D8Br36bOwVqdj57EJPjcYrQ=;
- b=Fq++oYZK9ckC7wbISryFoFpM4O/nUcWowMnCDRYRj95WYxCt6zs61N5HSozUdyJL83lJoCit48o/NSo1XjQiHQLhGkofVT/eSHlP1zqUAztV1vfaxBfN9klO9ou9DsXzGcUreqLFIK7tNiCq8FiQWYB3cLl/XAQwQeeMBHLh9PTXoHt340zzipXkjRCXzHgHdRj0jfIIE9N8sJIgq+2+YJ3uxsvrAAEq6lxEilkP6+VjwywdeBqIdYZxLzAOGWqJ2oc0yNQ9qvdD0ZDCOYie6CfZ/aSDtvudf/6RX83WGMEjNTQjrKMNcxh5NAeyWnYyxzx0RJJiCuizJqwvPbnrlw==
+ bh=Px8sBMbabQu2hhAb2KzE6TpjFjQta0IO3DdiUYd2wmk=;
+ b=ef/eU77nX8BUAmfjCIW+MB03ifQBvIHFSbnGAiKMVSrAIDd3zbtzbCcgkh/2T6AknOWHwHOwnM0ctY3avsNVTVuVqIrnldqWKvKaHbOP4oyq0R0lyPWTE+3Xp9TaP/BMeB9+7mAPlS6Ehr1Yz9gdR6pYgeWNrnimWNHPNaxW7VWu/WQiH/oC8VJR9k2XOltuiBp8jw09WgaqErVyvYpZH/8U7RnhujCDkUqEJ/WvLrneHR0m3XH/EjEUS590+xtdDRgX4spgR+j73O02uyQXUE6yK+az/bw5GUHMpM2up6exV72UsYlpm68NXv2iXcnNeYq42wkmnuGdOEswfmoh2g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q53mqEHhBO+wnQOveR60D8Br36bOwVqdj57EJPjcYrQ=;
- b=cVLK9eyflPexnP02vIRBfutTwCzzcJkW/jwUKHTFsVzEgzlmYDt5FMbFji4/ZdM1Neyvfmu5HEth06BW3FfjVO0YxCRsbkz5GB0b19oPST2sV+xNauQalpabSnbTMiBCBduqlzw+douo8aycHkvDnJ3X14N8DqxRIBHD0XWdZRM=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from BYAPR01MB5463.prod.exchangelabs.com (2603:10b6:a03:11b::20) by
- SA0PR01MB6188.prod.exchangelabs.com (2603:10b6:806:da::21) with Microsoft
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by DM4PR11MB6504.namprd11.prod.outlook.com (2603:10b6:8:8d::5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.46; Thu, 9 May 2024 21:46:27 +0000
-Received: from BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955]) by BYAPR01MB5463.prod.exchangelabs.com
- ([fe80::4984:7039:100:6955%4]) with mapi id 15.20.7544.046; Thu, 9 May 2024
- 21:46:27 +0000
-Message-ID: <328c4c86-96c8-4896-8b6d-94f2facdac9a@os.amperecomputing.com>
-Date: Thu, 9 May 2024 14:46:20 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
-To: Anshuman Khandual <anshuman.khandual@arm.com>, catalin.marinas@arm.com,
- will@kernel.org, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
- <c9c3c0d5-bb61-4eed-8b89-b0341a2c6f5c@arm.com>
- <bb60d304-3341-472d-a4ee-d31b4754c39b@os.amperecomputing.com>
- <5e6158aa-09d3-4665-878e-17358aee10cb@arm.com>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <5e6158aa-09d3-4665-878e-17358aee10cb@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ 15.20.7544.46; Thu, 9 May 2024 21:48:01 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%6]) with mapi id 15.20.7544.041; Thu, 9 May 2024
+ 21:48:01 +0000
+Date: Thu, 9 May 2024 14:47:56 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: <shiju.jose@huawei.com>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<dan.j.williams@intel.com>, <dave@stgolabs.net>,
+	<jonathan.cameron@huawei.com>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>
+CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<david@redhat.com>, <Vilas.Sridharan@amd.com>, <leo.duran@amd.com>,
+	<Yazen.Ghannam@amd.com>, <rientjes@google.com>, <jiaqiyan@google.com>,
+	<tony.luck@intel.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <naoya.horiguchi@nec.com>,
+	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
+	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
+	<mike.malvestuto@intel.com>, <gthelen@google.com>,
+	<wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
+	<wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>,
+	<prime.zeng@hisilicon.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>, <shiju.jose@huawei.com>
+Subject: RE: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Message-ID: <663d448c2ef3_1c0a1929453@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240419164720.1765-1-shiju.jose@huawei.com>
+ <20240419164720.1765-2-shiju.jose@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CH2PR07CA0059.namprd07.prod.outlook.com
- (2603:10b6:610:5b::33) To BYAPR01MB5463.prod.exchangelabs.com
- (2603:10b6:a03:11b::20)
+In-Reply-To: <20240419164720.1765-2-shiju.jose@huawei.com>
+X-ClientProxiedBy: MW4PR03CA0134.namprd03.prod.outlook.com
+ (2603:10b6:303:8c::19) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,268 +127,287 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR01MB5463:EE_|SA0PR01MB6188:EE_
-X-MS-Office365-Filtering-Correlation-Id: 450c16bc-350c-4c1a-a632-08dc70717a5f
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DM4PR11MB6504:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4dec9619-3f2e-431d-28ef-08dc7071b2b4
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TjRTNmZWcnpxY2ZSTWpaaEQ4cEZ6Wkdobml6dHFYQUE1T1UxOFRBMExhY1Ex?=
- =?utf-8?B?SlJnTFc1N1BoMXlGS1VUWE9oclB3QjMxbklxaFlENFlYVUk4UWpNNmdBZXdP?=
- =?utf-8?B?SkE3dWFjK2QzS2hiV1hsenorNzVPOVQrVk8yUWl0dGRzMExydkRuRlJJWENR?=
- =?utf-8?B?K3dVd2ZYN043NU40SXRDK2xxKzJUbUJPUFZkVmdNRURoL01aZ3VERjBXOVd5?=
- =?utf-8?B?OGI3UGo4RExuNFZtY3JwdVhNNFZjL1BGSlRZc3c5Um5uK3NNRlFBaDU5NDNp?=
- =?utf-8?B?WE9McUlJNWVwcVp6eVhLUnB5dFQyaTNYY1BOUmVTRGJjZnR6Z1BMLzQ5WUZF?=
- =?utf-8?B?OUlQdHNHNXVBcGF5Vjg4dmN6VDVFcVh3Rkw0WlorTFdVTUpBQ2lGZnIxOGg2?=
- =?utf-8?B?ZVk1cmtod0E1bFhtZkNQb0tSbzZPVXhrZ2Y0ZlkxRjFvY29DTlUxejliQ0p6?=
- =?utf-8?B?cDJPTWl2SXlLdER0ajlZUHNQNE5zMkczeHE1bm15V1drQW81c0k0ZjlDWXJZ?=
- =?utf-8?B?OWJSd2lJWGNUbm01NUpsN3hneXE1RCtaMVdRY0hpbjlmc0QraDBzZUhqZGZi?=
- =?utf-8?B?eUxnNDRaYTBtWGNucVg2TWdYL2o4ZHdPelM0NUptaG9DVCtGdkJtaUpSbE9S?=
- =?utf-8?B?OGI5clVqRisrMVRJS1RhUXpsSml4UEIrT01HZXNDWTFmUGpvVnpxNDdrTlR1?=
- =?utf-8?B?ZVZUb1RKL1Y2TWtWL256WUx3NXgrZkF4S1IzS0dzSmVZZkFoZzVNSmxwQU5t?=
- =?utf-8?B?YnZ6WU0yWXRLNFFCS1hTclNuby9nRUUyYjQrNDByN0V4QUpFNGxJajFHYWpq?=
- =?utf-8?B?cnI5VURnMFNzaHYwbGh0cUhycWRnQVN6a0w3Z2dZNXhYaklJSkdaUkV0bThW?=
- =?utf-8?B?NG0vZDJjK1c3UU5ldG5tZ2RnQWw2NHVFdTZuNER3M29zTEJtUUprblpLdHk2?=
- =?utf-8?B?dDlXTmZ6eEU0aFhnVzBiejJCcUpXMS9PZkpKeVdtTlRPWmJneXNBZ0lrMVVZ?=
- =?utf-8?B?VGhaYlZTKzk3UFVyQmJRMCtnc2hVazdXN2o1dDdEZ0hIWkwxeWI4TnZvYVAx?=
- =?utf-8?B?a2x0NE1zcU1nSC9PbUJQbEVaRlNURHl3Z01JcEpacmlkN2ZwL2g4Q1Vyd1BB?=
- =?utf-8?B?L21VcXFmMVh3d1dHTXQ4aTBXMGZRZGJqOU4vcHVyck1ZOUtZOG9hR2M2UC82?=
- =?utf-8?B?ckJPMVVnc2tKRC9ZSEJ3cXMvbXZldGlTTE8wQkFSTVNhQ3RIb0ZPTnNHd1lS?=
- =?utf-8?B?aExIOXgrVGpMU2lZRVNYYUxLWFZTc0JoSDI0OG1ONEtvNE5PdkcyWGpSV0lr?=
- =?utf-8?B?WWlQMFlZeUdPQmRXTlUzbCtvLzVtTW1ZdmFVS0dRc3VwOENMMFNGOFoybDJO?=
- =?utf-8?B?ZTZOSnJlWlFneHpVcVRYK0dkWkFPYnF4bE5FWXF3U3VFNWI2WFZWZHQxNVNM?=
- =?utf-8?B?R2NrR3c2RzRaYmloVWREbHNsSHBaUFl4VUdUOUxoNTNNZ0pWNnlEWG8vKzRZ?=
- =?utf-8?B?M3g2Tm9MYVJhS0Q3Q0JDNllLRkFmZFd6NUdWL2J4RFNsYUZiaDdoT0h1VG9T?=
- =?utf-8?B?NkpMTFkwaXZHaVB6RVpuNlhqNW5yekhKQkg2YXJXV1lpenoxYmgvV3ZBbUdw?=
- =?utf-8?B?aU1VRlY3V1ZyeVRxbWtndnM2dU5LdS94RmFpQnZiZWRRVnpvTmc3TnJKd0Vm?=
- =?utf-8?B?enF1Q0JVMkIwOEE2dlhyV0VtbFBxaFc4alZyZ2xSK0h0WERtZ0NCd09RPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR01MB5463.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|7416005|376005|921011;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WnBPM0Z5ckJlSTdGeHBqOENXUVNvU0VzMkpjcUlZdnlpV3BOc1pGSUdkRzBN?=
+ =?utf-8?B?RDA4emZmWERsRU9UdGhBNjM4MlRSKyttbUVtOGFZU1B1QXFSOEZyR3AyZ1Q3?=
+ =?utf-8?B?Sms0N0dEd1ZNNGhuOHN2OWI1Y0xhWDNnNGNVT2s2bHVobE84MG5hNEZIMVZM?=
+ =?utf-8?B?dDRZbk1SaEdMK1ZxVFA5azhsQ1YweHBDclRUVXJNSmNrZ0NCMW9LMFZ3bVhB?=
+ =?utf-8?B?SU1UQzN1bG9TN2w5YUF6UUVhQnJ0bXV1LzY1RVdKR0dKZmxQbWRmR2VVOGhh?=
+ =?utf-8?B?ZTFLN0dUZFU1T1FZNGNsZkdsdGlpL0tXc0FOM3BHeWZIUGdSWERhS0gwYm4v?=
+ =?utf-8?B?U2xONjlPeDhhS0MrKzBRcWdkckVoMzRoSHF1U094VWhiZXFLV1ZuUTZ3VlU5?=
+ =?utf-8?B?ai9Za1g5TFpqaWl3MzgwazF1NTRiSEFDeEJnK0JPT1lRTGwwWVRPWWk1U0hl?=
+ =?utf-8?B?NWlPdi9wZFU2WEg2dUt5Ly9FQldqTk13azhvNk9nVHJjdUdETXlmN01NdFpS?=
+ =?utf-8?B?R0c2VzBnVDhlVlFEdHVoQVlwYzVwbStpRHNJNzJnT1dWV1FWcTUyc1pBdmJq?=
+ =?utf-8?B?QngwVGpLUnNIdzBtQWVERHcydkwvejAwYitWYVVsdnRkOEFhZmhzb1VrVVdS?=
+ =?utf-8?B?WFpQQjNiWFUrTkY5Q1BHVk1iTmNtcWhPK3ZQeTlJRnFscWtIZGZFRzNNdThD?=
+ =?utf-8?B?bU9SbTcwVzlSUDlySWp5MlRLdWlVU3QwUHJCK2Q5ZEVXQmxPTkV2bGtRa1dN?=
+ =?utf-8?B?L2hPRVVaOCtzVmhEejQ4cHNrMEJucVlCMGhBdXVjelBGRFRaczF3Y3dFdFVx?=
+ =?utf-8?B?YUhyR0g4RTdHcFh5M0NhT3RKVWxSeWc3NnBCVUtmZ3RQZnpNNXYzV1MzV1lp?=
+ =?utf-8?B?RkVGTTFHdGxxMHJCTjlQaUFGU2RWb054Q29OWFRvZWtPU1h0cW93VkU2MDVE?=
+ =?utf-8?B?c3lOT2hHMlVKUS9UK1kzRjJndllrbmtLMVBaanY5RklFbVFxS2Z0V0hiMXZW?=
+ =?utf-8?B?a1ZDL0tvOWo0aG9xMldmNDdacVBZUDNKQjlwcDBSMm41YmYvaVI5YTBUMGlz?=
+ =?utf-8?B?SjduV2VBczJSY3FMYWdqK2N4ck1jakNXUG16ZDZKdG9KVFVpU2ZDRHdhRzJu?=
+ =?utf-8?B?UktoY0VvU05xZGR0eUpsR3RCNkY4NEpnYzkwZHZLazEzTkRiUXVmeXJwUXd1?=
+ =?utf-8?B?UWRmbmI3UnVsd3NlbXZ1enNkVGZPYUtPNDJsRWNtMmNKclduTmZsMGJSeVBH?=
+ =?utf-8?B?NmdQS3JsQ0d5N0M2dUh1TTZzaHZDeEVtNmt1Y1QxREdXc3FWNFY0L1Z2Tk82?=
+ =?utf-8?B?Qm4xODcwUUNnVVhnK3hZQkp2LzcvbGw3L2NjSFB6cDRQVkFoTGpXRXVidklr?=
+ =?utf-8?B?RlgyTFE1U0RQVGI5UVNYSGRmcXZmQTlYdHZGb2lKUG1mZEJBOHY3a21CWWRO?=
+ =?utf-8?B?VUlWOXhnd2N5OWwzaXNCY0R6bU0ybUlIZ3llNmVGNmtEM3pONDFYMjBvRTQy?=
+ =?utf-8?B?L2RNOUJZYWl5WXRKQk11UHhERjlrWlVNZGE4WE9GeWRaWE9mZkxiWUhmUDMw?=
+ =?utf-8?B?Sk1FN25TNmlOY0JTQWpMOHoyNGxqNjZPN3A1M1UrajVBaXZNeHBnK2QyZm94?=
+ =?utf-8?B?QUN3SVBKNWVJTDR3Q1Rnd1lheUdsVmZUSEVxeUtHblgwSUhiMk5vc1p6d3R1?=
+ =?utf-8?B?TGRNcm9RcWdxcVVzNTJuSFpUeElVRWRnTktyZmd1cXl5S3hlQk1ObjlPaC82?=
+ =?utf-8?Q?YXqym/3xKzoZjPppXVgIu2s0vZb4+qJg4dp4mma?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005)(921011);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NU9mNSt5UmZtaW5rbEhFeVJVMVpEVFFXVUFiYk1TWlVuTnl4VEh4RWtiUFVI?=
- =?utf-8?B?WmR5NDhsYWtmdnR6ejB2KzhQdEpGQmJLMmlnNnJnN00yTUF0c3luVjRyNENI?=
- =?utf-8?B?VkMxcDl4V0oyZjRQMGJVTDhhQ2pVOEFxRTBmajdCdnFXZk1hT1paWnovV21N?=
- =?utf-8?B?U05DcURZL0JqOXczenZOS2wwRWV4Ri9iYW14QnVnNmM1dEo5MnhlVE1CUmJP?=
- =?utf-8?B?V09NNWlsK1BiM3p6cDJQM212WWZteFp2ZTFWNWZJNUJYUFJvTlhzcEY5L0oz?=
- =?utf-8?B?TVVXTUIvMFhLWVIxcU0xbjFKcjFLNkZLTUR0UlZmRUJYQm1aak9URWVLSE9C?=
- =?utf-8?B?NnBoeWxTTGhSOVRBMkZVS0N0OGUxR1V3ajJkK0dCYTF1VFZkVDRhY0dGWCtL?=
- =?utf-8?B?Wnd3eHY4ZDVkYkJnRTdPbm12T0ViVXVISkJKeGhMUUFiZmt3K2JmTEdRUk9X?=
- =?utf-8?B?Sk00WnBDakxTVzBtcnEwQzJEOUNpYXBJcTZsa21UTWdweXJqaHhUQjhxaGds?=
- =?utf-8?B?WGNVbmw1MG16WXBDa0NiVFI2NzFGZjlmbkxZSzNxbnB2K3E3ZW5XS3BqVTNy?=
- =?utf-8?B?STdzSWtoemdlMWllbEJTOXhjRGprOEpjQWtmVjNLMXYvUXVzUHR2dlZ5ZHR3?=
- =?utf-8?B?MWhpOHZLbmNLM09WYmZCUUUzRDZqRUJjeG4yS01ERXJzVHF3VllRdnI0cW1T?=
- =?utf-8?B?TkloWDVJaWZkWVJ0RjUxc2hZQ0ZkRkoxZGVhVjhsNGxiSEwrMloyajBhN1VG?=
- =?utf-8?B?akRxVEVXdGdsZElxR3JiL29PdlpvOFkvM2R1Q2xVUDhBL1JkUHJETDY0M2I4?=
- =?utf-8?B?ZmxKVXV1aCtmMTJnVmErTnprMWRJTE1EYVVhRzl0VTNOdmx3WlBLcEFIRlRK?=
- =?utf-8?B?UjlIbUw5b1lnd2g2VWU4aCtzK0JoN0psQlB5WG56TjY0cENKWWF0Zlc2NGdo?=
- =?utf-8?B?a0JUa0dLL3VlNGEzVDVuTjRnaWRxSTNTMjlzaWdudTcxVklYc3JMTnBNUmVX?=
- =?utf-8?B?K3hjWTVERHU0cWlCWGtsK1hCTysvZ04rVDl2T2hXSnRZbVJhcnZsU1B4dUJz?=
- =?utf-8?B?VlFmNU4xQ1lSYUNWQ1RFc1JXLytyQ0FKY3M2R2RiQVVibDM4VURNRWs2TlA5?=
- =?utf-8?B?Z3hlQnVsdG5ybmVCY3Znb3Fuc0pkQ0xCeFBWZ283TDBFdk8xNUF6OXViSmFY?=
- =?utf-8?B?RXQwVjNCZkJJVmdDMUlZVFpWZ2pjQ0xiU2lRQ2FjY2xETkNjemhzNUFsRE1o?=
- =?utf-8?B?RjRENGE0Qkg5MDNMSzJGS1dFTGhGQnhMUHhic0RMTTduVmVGakI5dDVqNHlm?=
- =?utf-8?B?aGVGOVI2endWZDNpaW13TEhrQUV3Y3VKdkt2OEVTZVMyWC8vWXBMSmYvWG51?=
- =?utf-8?B?S1RLR3N6U05GTkRPVGdoNm1KMm5KVmpZUW1yTHE5djVaT2hvOWFsQktWSzUw?=
- =?utf-8?B?bWYxa3BUM3QyVU5KSFNzOXNaaWNjb0dSRWJucGZtcU10M1FhV1E0VzdhQ2I1?=
- =?utf-8?B?Ky9rYUVIMmtJY3NKbXZnTDRNRkEzVUg4UnVPcHNzRTliK3JvM0tQV3Vlczhs?=
- =?utf-8?B?YW1kVzFNbEh0aGE5WkhBUHB4UC91VUprd0VTUVNDR00rb3Q3YUF2MEx4TUth?=
- =?utf-8?B?VndKYW1qVlNwU0dqK1J2b0RnOWdIUGJyZFg3ODVodXJhM2N6dEVDUTFJaUhp?=
- =?utf-8?B?S2JJS3JRY2hSKzdjNFlHcEI5YW5PZTJpeldxWFlSN3BZNUF6b2lqOFR0eEhw?=
- =?utf-8?B?RnVCaU82MGhpYXZWU1JGeWNGOUdnbnhHbFlTR2daOXZ0YS96N3hHNmRxZlc1?=
- =?utf-8?B?VFJFT1cwVzdwRHdhZGtOUDQxby9wbGZoR3VJODA2NlJaVU16QTE5VjExZVBU?=
- =?utf-8?B?Q2tZMjlqa2h3UnhubWdKMXRKV3h1MWkxcWFldEUydm9aR1k0anFRYnRGRDN0?=
- =?utf-8?B?WmtTN2VKU3doemFvK2paSzdjWCtSTzhMYkgvdEtrV3daZ3h2MWN3dGJuVE92?=
- =?utf-8?B?dk55WHRMZmZnSU5uTUxsK1ZLaUlYNit0SWxvTkRPK1dMbWdqSzM3ZjFjUW5R?=
- =?utf-8?B?NjRHdVdmZHZrRGV2bUx3UDRlOGVuSUpsYjVyUmUyZjdRSGhvU1RqcDR4eU9M?=
- =?utf-8?B?THJqczQ5WGcweVJhakNKaVdjcEJpTHBtdWo1cmF0NWhyR0g3VUYrdUpTU0ta?=
- =?utf-8?Q?K0W9jEg+yu2bGC+hLG3YL/E=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 450c16bc-350c-4c1a-a632-08dc70717a5f
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR01MB5463.prod.exchangelabs.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cVVqSmhReWp2UjRoVXI5S29LL0liSGdiZFNNcVd4UFBVaWh2RERYNlo2cVFs?=
+ =?utf-8?B?ejA5UWEzaWZIb0FQUzc1ckhDVCt2d3lzTGlraVk1eUVJRTFIRGpTbWJRK3BH?=
+ =?utf-8?B?NEdBOWVVTmpmaXlBSWgzWEppMjRtK1ZEWnlhMTRxZVFtSU9wRi8ya0ZITEkx?=
+ =?utf-8?B?ZXdoTGVXc1lObXFqeDZhaURhVUVmaUVDenROZHE1NzZGOHFCamxNUXN6cVdE?=
+ =?utf-8?B?UVVTRW5wM0poOFJ6VnBFQ3dpOXpqR3JhL3c0VWhtMXBORTltaVZLZWJHS1ll?=
+ =?utf-8?B?dnJTSERhRjQ2eDE3bTlXMjVzd1cwUEUwRXdjZnNKMVFJTHZQSEpNQmdlanM5?=
+ =?utf-8?B?QmZpTm5lTGN4SFZtRExwVnUyZUdXazJDcGE0VTd5U21PNjVXTm1TeXQ4MFJU?=
+ =?utf-8?B?cXFSVmpNdFF3dDlaZkJvSWl5NFo0WWdrVXA3bjNrMmZYRlp2dmhNempkWWl3?=
+ =?utf-8?B?SEFwTnVPUGsxdUpkSTc0ajNxM2Q2Vm1DOUJBWEtKNnJFa0NlemdDUU5JR2Y0?=
+ =?utf-8?B?TWtWYm0zNGFJY2lnWXNCbkVVSVhseXVkZFE4NlhsamNYUDlVU1RDTGJNakpq?=
+ =?utf-8?B?SW9VT0dRMmE0M29UTkh2OEhUQWRRRUlOTnFWVWVqRFJYaURmcFJCRExYUitR?=
+ =?utf-8?B?ejhFZ1ZsSitMelMranpPWlZWU3hrdHJxaDdGNi8vdmVmMHNDam1HVHN5QVls?=
+ =?utf-8?B?aElZak1hVnR6cDVyUDA5Zk1VQk5ORE4wWWdrQUcyN3BiSENTWnBnN1pzUGto?=
+ =?utf-8?B?MFlGMlE1YTdFRUxGNUZVcCtrQUswUzZxRjc4V25LMk12RjdFWGhQMmxIaWpa?=
+ =?utf-8?B?TkhrRTlYMW5wMVU4MFUxTWYvbmVRSTBUTTBWRnlUczlrdnl4a01SNHkrWmRy?=
+ =?utf-8?B?NTBpMUVZUmpDZzI1OTljK2RjUXpFSFZIdmg3Mk9rZ3VIcGNPVHUrRWFZaHBP?=
+ =?utf-8?B?aHFmaFR5SC9pOHVidllkMElPWjAwRGxnVnNMelZEQjBYS09mMnNCQXp2WjE4?=
+ =?utf-8?B?SGhxcFhmUk0wUDJDYXJCTURUb2IxVmJ2ZWRROUtKeWZhaVAwdlplL1V6Tzc3?=
+ =?utf-8?B?WkI2U1NDaGVUdDN2bTMvQzlyNEtxYXJrazcwRWtqZFdweEt3RmJmQmJoem1T?=
+ =?utf-8?B?MWdLK21zY2d4RSthWkUrcXdYekt1NllQYTFJTHAzam4rT2NVMUZYTUFjQ3lP?=
+ =?utf-8?B?QitHTGdsb1NkTndHV3gxWVVJYnVKQTYrclZ6cnZMb25HMzM4Ymw4ak1PZVh5?=
+ =?utf-8?B?cEVZcGhBZUJSUEVZYjRUUUk2L0VERkdRbENQUStmTng3Ui83T1Zic2lTVUlR?=
+ =?utf-8?B?RXBvOEIxZWlyNXdXd3VVS2RWTDJYQjBGMW41UGxoK21CTkdxelF5N2ZqREhz?=
+ =?utf-8?B?cExFRUl5SXlsazhCTVVwZTdmaTBxck1DZ1dxdGxubnY1S3E2b3FISFROUUFB?=
+ =?utf-8?B?ZkVuOURhNjkrU3JCR1IvT21DdHZWM3FkUXFsNTUzNlk0T3BPYjEwaTZyRXRa?=
+ =?utf-8?B?UW9rS0toL0ZWNnN0V1NaV05SWVpHcnN5Y3NMaEFYNnVYdWJMU3ljelloc1Zr?=
+ =?utf-8?B?Z0ZBMXBtdVptVGtPZHBtUmNzVnhWNG9teUpISlJtc1VJRHVSRWxCTUUwRk9Z?=
+ =?utf-8?B?TituM2U4SHZsak5OUStjYm9iUFVBZVJ4YXVBOCtvbDRnTVBjWDRzSlFCcnFi?=
+ =?utf-8?B?RmtUNFRKQzlSMTFXSUw3c1M0TjZrT0VVck9KSzdDL3FlT1gvWW9yL1YwU2t5?=
+ =?utf-8?B?RytNWGw2QWlnWG9VOXB3OW9aUXhkZE8vbENkMXo0SVlST3h2MmZITWlhRDQw?=
+ =?utf-8?B?N3Y3YmZnMjdBcGZDSGxTRzN5N1hPei9kSHlIL2VLQlBCL1ZtTGJPQzdiTnph?=
+ =?utf-8?B?cGZpVTI1SnYzd3U0YkYxSE54bWxEQ0JybEJvVnJjdUFORzVRRnZMbEV1MWdM?=
+ =?utf-8?B?dnFFUzUxR0ZQeW9sTTl1OGtzZExiZ2t0WHRzV2w1UWVUWUN0RjdmUXNpd0dI?=
+ =?utf-8?B?dFYyRGdxNEw3Q2o1ZGpBSWxYQVRqeVhIMkx3VkNnS3pFejlWMTRGT3AvVkFQ?=
+ =?utf-8?B?WE4rd2xtaHN1TDZRUTVndHVxeG1NQVhYRm5zMlVKOXp5WFdKVEM4Y3BIMjhr?=
+ =?utf-8?B?ZEs1ZVFvWmN5MlRzc3JyTGJ2ei9CV2hsYk1DVVcyK0IwVjdVUTBrZlNWUTl0?=
+ =?utf-8?B?alE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4dec9619-3f2e-431d-28ef-08dc7071b2b4
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 21:46:26.7928
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 21:48:01.2850
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Zg6u6hVbIjKSp5KZTwh8F9KvUzL/CKfCQXxA+MPqR8E05oFgayHitm64WdGTgk48tTGt0Yv2dGjWGK8GEyNQD1w2SZD5/zPErBaH1DGQtdc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR01MB6188
+X-MS-Exchange-CrossTenant-UserPrincipalName: oelbHCfZu+kzOKzK4rrW9eKm9BSXY6dgwF7mkkg7W8e2+ZMnGc5bMgcBZ/vnQ7PXw0TiZ6I8DfdTvSul019lLPuaY6hCg/PvDHFHd26TxfQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6504
+X-OriginatorOrg: intel.com
+
+shiju.jose@ wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Add scrub subsystem supports configuring the memory scrubbers
+> in the system. The scrub subsystem provides the interface for
+> registering the scrub devices. The scrub control attributes
+> are provided to the user in /sys/class/ras/rasX/scrub
+> 
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  .../ABI/testing/sysfs-class-scrub-configure   |  47 +++
+>  drivers/ras/Kconfig                           |   7 +
+>  drivers/ras/Makefile                          |   1 +
+>  drivers/ras/memory_scrub.c                    | 271 ++++++++++++++++++
+>  include/linux/memory_scrub.h                  |  37 +++
+>  5 files changed, 363 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-class-scrub-configure
+>  create mode 100755 drivers/ras/memory_scrub.c
+>  create mode 100755 include/linux/memory_scrub.h
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-class-scrub-configure b/Documentation/ABI/testing/sysfs-class-scrub-configure
+> new file mode 100644
+> index 000000000000..3ed77dbb00ad
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-class-scrub-configure
+> @@ -0,0 +1,47 @@
+> +What:		/sys/class/ras/
+> +Date:		March 2024
+> +KernelVersion:	6.9
+> +Contact:	linux-kernel@vger.kernel.org
+> +Description:
+> +		The ras/ class subdirectory belongs to the
+> +		common ras features such as scrub subsystem.
+
+Why create "ras" class versus just a "srcub" class? I am otherwise not
+aware of a precedent for class device hierarchy. For example, on my
+system there is:
+
+/sys/class/
+├── scsi_device
+├── scsi_disk
+├── scsi_generic
+└── scsi_host
+
+..not:
+
+/sys/class/scsi/
+├── device
+├── disk
+├── generic
+└── host
 
 
+> +
+> +What:		/sys/class/ras/rasX/scrub/
+> +Date:		March 2024
+> +KernelVersion:	6.9
+> +Contact:	linux-kernel@vger.kernel.org
+> +Description:
+> +		The /sys/class/ras/ras{0,1,2,3,...}/scrub directories
+> +		correspond to each scrub device registered with the
+> +		scrub subsystem.
 
-On 5/8/24 9:31 PM, Anshuman Khandual wrote:
->
-> On 5/9/24 00:07, Yang Shi wrote:
->>
->> On 5/7/24 11:45 PM, Anshuman Khandual wrote:
->>> Hello Yang,
->>>
->>> On 5/8/24 04:05, Yang Shi wrote:
->>>> The atomic RMW instructions, for example, ldadd, actually does load +
->>>> add + store in one instruction, it may trigger two page faults, the
->>>> first fault is a read fault, the second fault is a write fault.
->>> It may or it will definitely create two consecutive page faults. What
->>> if the second write fault never came about. In that case an writable
->>> page table entry would be created unnecessarily (or even wrongfully),
->>> thus breaking the CoW.
->>>
->>> Just trying to understand, is the double page fault a possibility or
->>> a certainty. Does that depend on architecture (please do provide some
->>> links) or is it implementation defined.
->> Christopher helped answer some questions, I will skip those if I have nothing to add.
->>
->> It is defined in ARM architecture reference manual, so it is not implementation defined.
-> Sure, but please replace the "may trigger" phrase above as appropriate.
+I notice there are some visibility rules in the code, but those
+expectations are not documented here.
 
-Yeah, sure.
+This documentation would also help developers writing new users of
+scrub_device_register().
 
->
->>>> Some applications use atomic RMW instructions to populate memory, for
->>>> example, openjdk uses atomic-add-0 to do pretouch (populate heap memory
->>> But why cannot normal store operation is sufficient for pre-touching
->>> the heap memory, why read-modify-write (RMW) is required instead ?
->> Memory write is fine, but it depends on applications. For example, JVM may want to "permit use of memory concurrently with pretouch". So they chose use atomic instead of memory write.
->>
->>>> at launch time) between v18 and v22.
->>> V18, V22 ?
->> v18/v19/v20/v21/v22
->>
->>>> But the double page fault has some problems:
->>>>
->>>> 1. Noticeable TLB overhead.  The kernel actually installs zero page with
->>>>      readonly PTE for the read fault.  The write fault will trigger a
->>>>      write-protection fault (CoW).  The CoW will allocate a new page and
->>>>      make the PTE point to the new page, this needs TLB invalidations.  The
->>>>      tlb invalidation and the mandatory memory barriers may incur
->>>>      significant overhead, particularly on the machines with many cores.
->>>>
->>>> 2. Break up huge pages.  If THP is on the read fault will install huge
->>>>      zero pages.  The later CoW will break up the huge page and allocate
->>>>      base pages instead of huge page.  The applications have to rely on
->>>>      khugepaged (kernel thread) to collapse huge pages asynchronously.
->>>>      This also incurs noticeable performance penalty.
->>>>
->>>> 3. 512x page faults with huge page.  Due to #2, the applications have to
->>>>      have page faults for every 4K area for the write, this makes the speed
->>>>      up by using huge page actually gone.
->>> The problems mentioned above are reasonable and expected.
->>>    If the memory address has some valid data, it must have already reached there
->>> via a previous write access, which would have caused initial CoW transition ?
->>> If the memory address has no valid data to begin with, why even use RMW ?
->>>
->>>> So it sounds pointless to have two page faults since we know the memory
->>>> will be definitely written very soon.  Forcing write fault for atomic RMW
->>>> instruction makes some sense and it can solve the aforementioned problems:
->>>>
->>>> Firstly, it just allocates zero'ed page, no tlb invalidation and memory
->>>> barriers anymore.
->>>> Secondly, it can populate writable huge pages in the first place and
->>>> don't break them up.  Just one page fault is needed for 2M area instrad
->>>> of 512 faults and also save cpu time by not using khugepaged.
->>>>
->>>> A simple micro benchmark which populates 1G memory shows the number of
->>>> page faults is reduced by half and the time spent by system is reduced
->>>> by 60% on a VM running on Ampere Altra platform.
->>>>
->>>> And the benchmark for anonymous read fault on 1G memory, file read fault
->>>> on 1G file (cold page cache and warm page cache) don't show noticeable
->>>> regression.
->>>>
->>>> Some other architectures also have code inspection in page fault path,
->>>> for example, SPARC and x86.
->>> Okay, I was about to ask, but is not calling get_user() for all data
->>> read page faults increase the cost for a hot code path in general for
->>> some potential savings for a very specific use case. Not sure if that
->>> is worth the trade-off.
->> I tested read fault latency (anonymous read fault and file read fault), I didn't see noticeable regression.
-> Could you please run a multi threaded application accessing one common
-> buffer while running these atomic operations. We just need to ensure
-> that pagefault_disable()-enable() window is not preventing concurrent
-> page faults and adding access latency to other threads.
+> +
+> +What:		/sys/class/ras/rasX/scrub/name
+> +Date:		March 2024
+> +KernelVersion:	6.9
+> +Contact:	linux-kernel@vger.kernel.org
+> +Description:
+> +		(RO) name of the memory scrubber
+> +
+> +What:		/sys/class/ras/rasX/scrub/enable_background
+> +Date:		March 2024
+> +KernelVersion:	6.9
+> +Contact:	linux-kernel@vger.kernel.org
+> +Description:
+> +		(RW) Enable/Disable background(patrol) scrubbing if supported.
+> +
+> +What:		/sys/class/ras/rasX/scrub/rate_available
+> +Date:		March 2024
+> +KernelVersion:	6.9
+> +Contact:	linux-kernel@vger.kernel.org
+> +Description:
+> +		(RO) Supported range for the scrub rate by the scrubber.
+> +		The scrub rate represents in hours.
+> +
+> +What:		/sys/class/ras/rasX/scrub/rate
+> +Date:		March 2024
+> +KernelVersion:	6.9
+> +Contact:	linux-kernel@vger.kernel.org
+> +Description:
+> +		(RW) The scrub rate specified and it must be with in the
+> +		supported range by the scrubber.
+> +		The scrub rate represents in hours.
+> diff --git a/drivers/ras/Kconfig b/drivers/ras/Kconfig
+> index fc4f4bb94a4c..181701479564 100644
+> --- a/drivers/ras/Kconfig
+> +++ b/drivers/ras/Kconfig
+> @@ -46,4 +46,11 @@ config RAS_FMPM
+>  	  Memory will be retired during boot time and run time depending on
+>  	  platform-specific policies.
+>  
+> +config SCRUB
+> +	tristate "Memory scrub driver"
+> +	help
+> +	  This option selects the memory scrub subsystem, supports
+> +	  configuring the parameters of underlying scrubbers in the
+> +	  system for the DRAM memories.
+> +
+>  endif
+> diff --git a/drivers/ras/Makefile b/drivers/ras/Makefile
+> index 11f95d59d397..89bcf0d84355 100644
+> --- a/drivers/ras/Makefile
+> +++ b/drivers/ras/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-$(CONFIG_RAS)	+= ras.o
+>  obj-$(CONFIG_DEBUG_FS)	+= debugfs.o
+>  obj-$(CONFIG_RAS_CEC)	+= cec.o
+> +obj-$(CONFIG_SCRUB)	+= memory_scrub.o
+>  
+>  obj-$(CONFIG_RAS_FMPM)	+= amd/fmpm.o
+>  obj-y			+= amd/atl/
+> diff --git a/drivers/ras/memory_scrub.c b/drivers/ras/memory_scrub.c
+> new file mode 100755
+> index 000000000000..7e995380ec3a
+> --- /dev/null
+> +++ b/drivers/ras/memory_scrub.c
+> @@ -0,0 +1,271 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Memory scrub subsystem supports configuring the registered
+> + * memory scrubbers.
+> + *
+> + * Copyright (c) 2024 HiSilicon Limited.
+> + */
+> +
+> +#define pr_fmt(fmt)     "MEM SCRUB: " fmt
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/bitops.h>
+> +#include <linux/delay.h>
+> +#include <linux/kfifo.h>
+> +#include <linux/memory_scrub.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +/* memory scrubber config definitions */
+> +#define SCRUB_ID_PREFIX "ras"
+> +#define SCRUB_ID_FORMAT SCRUB_ID_PREFIX "%d"
+> +
+> +static DEFINE_IDA(scrub_ida);
+> +
+> +struct scrub_device {
+> +	int id;
+> +	struct device dev;
+> +	const struct scrub_ops *ops;
+> +};
+> +
+> +#define to_scrub_device(d) container_of(d, struct scrub_device, dev)
+> +static ssize_t enable_background_store(struct device *dev,
+> +				       struct device_attribute *attr,
+> +				       const char *buf, size_t len)
+> +{
+> +	struct scrub_device *scrub_dev = to_scrub_device(dev);
+> +	bool enable;
+> +	int ret;
+> +
+> +	ret = kstrtobool(buf, &enable);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = scrub_dev->ops->set_enabled_bg(dev, enable);
+> +	if (ret)
+> +		return ret;
 
-I modified page_fault1 test in will-it-scale to make it just generate 
-read fault (the original code generated write fault), and anonymous read 
-fault should be the most sensitive case to this change. Then I ran the 
-test with different number of threads (1 - 160 because total 160 cores 
-on my test machine), please see the below table (hopefully my email 
-client won't mess it)
+It strikes me as somewhat pointless to have such a thin sysfs
+implementation whose only job is to call down into a callback to do the
+work. Unless there are other consumers of 'struct scrub_ops' outside of
+these sysfs files why not just have the low-level drivers register their
+corresponding attributes themselves?
 
-nr_threads           before                after            +/-
-1                      2056996            2048030        -0.4%
-20                    17836422          16718606      -6.27%
-40                    28536237          27958875      -2.03%
-60                    35947854          35236884      -2%
-80                    31646632          39209665      +24%
-100                  20836142          21017796      +0.9%
-120                  20350980          20635603      +1.4%
-140                  20041920          19904015      -0.7%
-160                  19561908          20264360      +3.6%
+Unless the functionality is truly generic just let the low-level driver
+be responsible for conforming to the sysfs ABI expectations, and, for
+example, each register their own "enable_background" attribute if they
+support that semantic.
 
-Sometimes the after is better than the before, sometimes opposite. There 
-are two outliers, other than them there is not noticeable regression.
-
-To rule out the worst case, I also ran the test 100 iterations with 160 
-threads then compared the worst case:
-
-     N           Min           Max        Median           Avg Stddev
-  100         34770         84979         65536       63537.7 10358.873
-  100         38077         87652         65536      63119.02 8792.7399
-
-Still no noticeable regression.
-
->
->>>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
->>>> ---
->>>>    arch/arm64/include/asm/insn.h |  1 +
->>>>    arch/arm64/mm/fault.c         | 19 +++++++++++++++++++
->>>>    2 files changed, 20 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
->>>> index db1aeacd4cd9..5d5a3fbeecc0 100644
->>>> --- a/arch/arm64/include/asm/insn.h
->>>> +++ b/arch/arm64/include/asm/insn.h
->>>> @@ -319,6 +319,7 @@ static __always_inline u32 aarch64_insn_get_##abbr##_value(void)    \
->>>>     * "-" means "don't care"
->>>>     */
->>>>    __AARCH64_INSN_FUNCS(class_branch_sys,    0x1c000000, 0x14000000)
->>>> +__AARCH64_INSN_FUNCS(class_atomic,    0x3b200c00, 0x38200000)
->>>>      __AARCH64_INSN_FUNCS(adr,    0x9F000000, 0x10000000)
->>>>    __AARCH64_INSN_FUNCS(adrp,    0x9F000000, 0x90000000)
->>>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
->>>> index 8251e2fea9c7..f7bceedf5ef3 100644
->>>> --- a/arch/arm64/mm/fault.c
->>>> +++ b/arch/arm64/mm/fault.c
->>>> @@ -529,6 +529,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->>>>        unsigned int mm_flags = FAULT_FLAG_DEFAULT;
->>>>        unsigned long addr = untagged_addr(far);
->>>>        struct vm_area_struct *vma;
->>>> +    unsigned int insn;
->>>>          if (kprobe_page_fault(regs, esr))
->>>>            return 0;
->>>> @@ -586,6 +587,24 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->>>>        if (!vma)
->>>>            goto lock_mmap;
->>>>    +    if (mm_flags & (FAULT_FLAG_WRITE | FAULT_FLAG_INSTRUCTION))
->>>> +        goto continue_fault;
->>>> +
->>>> +    pagefault_disable();
->>>> +
->>>> +    if (get_user(insn, (unsigned int __user *) instruction_pointer(regs))) {
->>>> +        pagefault_enable();
->>>> +        goto continue_fault;
->>>> +    }
->>>> +
->>>> +    if (aarch64_insn_is_class_atomic(insn)) {
->>>> +        vm_flags = VM_WRITE;
->>>> +        mm_flags |= FAULT_FLAG_WRITE;
->>>> +    }
->>>> +
->>>> +    pagefault_enable();
->>>> +
->>>> +continue_fault:
->>>>        if (!(vma->vm_flags & vm_flags)) {
->>>>            vma_end_read(vma);
->>>>            goto lock_mmap;
-
+So scrub_device_register() would grow a 'const struct attribute_group
+**groups' argument, or something along those lines.
 
