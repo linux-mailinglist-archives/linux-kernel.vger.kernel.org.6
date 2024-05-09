@@ -1,145 +1,108 @@
-Return-Path: <linux-kernel+bounces-174495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CDD8C0F95
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:22:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6056A8C0FA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 14:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D636281AE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 927841C216EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 12:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B0515278F;
-	Thu,  9 May 2024 12:21:26 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A28814BFA8;
+	Thu,  9 May 2024 12:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmJnbjrE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AD614D420;
-	Thu,  9 May 2024 12:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F258131724;
+	Thu,  9 May 2024 12:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715257286; cv=none; b=qaBapmF+Zaf29P3QLTAww7smgYDjhpNnQNlM3FaggsEYblfoZSqqjlA82sNXGPnrSZcRqDmEJ84uvnH4Jrbrhb4aPUaKBxdZuIeiZgtbjVxMB3wwF3NBTCu1JBEzSKdPASE7YZ4GeWZZ8IIrFxDzujn10ISMQPIIE9mweEjjlcE=
+	t=1715257598; cv=none; b=GOeqnkcs6tOmK3i27LPe/BAPS8MkS5VMUCdVKjISAE3VXNvaRxiWOCqv0cJoKa8mb11XgUlXNQ66Uq4YEOQm7h8umiRC6aZFy+kSwQzYPmsjW20j2lBgOKnzwYhqlvcBRT69OogSTKGwzWImcenlLIz0hBQ41SmYaeECFKAhxAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715257286; c=relaxed/simple;
-	bh=IkdJx82TC8CSPoXp0DmmD2UOyL9+5oahKUAWhpJCB1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WY98w0MBlzTLEX649miHOVOg7vWUYMFpkXwZl8JsWJwZ3iif8wnWGzV75dRBIbyV6KgSM1l5Amj2+XCygojXARdJG9cWZq8zQiHskvZo0i6BoIO7Ca9tapMhxWDTtqvi+p/+AHGJpEpyhIpi040c4LE1mi4uT9sdPWsyXynI0dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VZrhn50tKz4f3jJ2;
-	Thu,  9 May 2024 20:21:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0F8D61A0C85;
-	Thu,  9 May 2024 20:21:22 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP1 (Coremail) with SMTP id cCh0CgAn+RG+vzxm2lnBMA--.55991S6;
-	Thu, 09 May 2024 20:21:20 +0800 (CST)
-From: Hou Tao <houtao@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Zhao Chen <winters.zc@antgroup.com>,
-	linux-kernel@vger.kernel.org,
-	houtao1@huawei.com
-Subject: [PATCH 2/2] fuse: clear FR_SENT when re-adding requests into pending list
-Date: Thu,  9 May 2024 20:21:54 +0800
-Message-Id: <20240509122154.782930-3-houtao@huaweicloud.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20240509122154.782930-1-houtao@huaweicloud.com>
-References: <20240509122154.782930-1-houtao@huaweicloud.com>
+	s=arc-20240116; t=1715257598; c=relaxed/simple;
+	bh=muhLaR/99OohMazNTK3EQ6x8cOUF9aDaLDgAy9OKcnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNymEGVD2WZeTZVWog9vRF7eYt6qbKeMIyrWcM0S1MvHOvxXxH3e+aiEpmIiqQuuaAFb/MV1Zzd1AmlzerSGb/V3tbg0smQSct0v0q98BmvCIKfzrkS32iDAJOdO1oW5NN7iaLL9w3QYKJosHg9ADmgBCWTh10Cnqcty1bXYrpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmJnbjrE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2964C116B1;
+	Thu,  9 May 2024 12:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715257598;
+	bh=muhLaR/99OohMazNTK3EQ6x8cOUF9aDaLDgAy9OKcnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PmJnbjrEYJyK+T9V3AkzDCD8reMggyIyDpOGh93DB3EZkpRXPqj7aAaOWdSqQ5w/L
+	 YNEbf/Z5fa7OAGgLeejIvByuaYEMJrIq6aWXIXyyPQ6nrEIg5R0LHrYa//E/wIBP/j
+	 IEz3b+I1yG4lagxa9xL3i0G38xY2lwM/u9oOA+OFMN2Sxg6dbk4OyVh636daaLduYS
+	 N8U+FfTFuoHHAhEk3Ziw7DZfjXkFMdWwQZe3u1x9laGlytrtcJNshV26iKqS89Qps2
+	 cYsBuFmVwjykBlskqISRp8RjP0BStukDIykVjWQDnO9Kxg2GQKAnwchHK8KPp6FH5B
+	 HbTnJHd4gIX0A==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s52rC-000000004wl-0Rll;
+	Thu, 09 May 2024 14:26:42 +0200
+Date: Thu, 9 May 2024 14:26:42 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+Message-ID: <ZjzBAvgFt4UnPapk@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+ <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
+ <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
+ <CAHp75VdUFMvkj-r76H7GFZdpcoh_nb8v6CBj4wBHztNhiaWULQ@mail.gmail.com>
+ <8d2ea17c-f91e-4e14-a239-e5e999f6ac50@linaro.org>
+ <ZjyQFrqHT2HBOWY6@hovoldconsulting.com>
+ <1df61b7c-29c4-4537-a0b6-75785606eeae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAn+RG+vzxm2lnBMA--.55991S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw15ur1UXryrZry8try3CFg_yoW5XF18pr
-	WfCF42yr17Xr1UAayaq342ga4jvr93ZF43JryktryS9Fn3ZFZ0yFyYka4UWFy3AryxWr4j
-	qrWDurZ7u395X3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvGb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjxUzMKuUUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1df61b7c-29c4-4537-a0b6-75785606eeae@kernel.org>
 
-From: Hou Tao <houtao1@huawei.com>
+On Thu, May 09, 2024 at 12:48:18PM +0200, Krzysztof Kozlowski wrote:
+> On 09/05/2024 10:57, Johan Hovold wrote:
+> > On Tue, May 07, 2024 at 08:14:43PM +0200, Krzysztof Kozlowski wrote:
+> >> On 07/05/2024 19:22, Andy Shevchenko wrote:
 
-The following warning was reported by lee bruce:
+> >> Yeah, please use ID table, since this is a driver (unless I missed
+> >> something). Module alias does not scale, leads to stale and duplicated
+> >> entries, so should not be used as substitute of ID table. Alias is
+> >> suitable for different cases.
+> > 
+> > There's no scalability issue here. If the driver uses driver name
+> > matching then there will always be exactly one alias needed.
+> 
+> And then we add one more ID with driver data and how does it scale?
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 8264 at fs/fuse/dev.c:300
-  fuse_request_end+0x685/0x7e0 fs/fuse/dev.c:300
-  Modules linked in:
-  CPU: 0 PID: 8264 Comm: ab2 Not tainted 6.9.0-rc7
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
-  RIP: 0010:fuse_request_end+0x685/0x7e0 fs/fuse/dev.c:300
-  ......
-  Call Trace:
-  <TASK>
-  fuse_dev_do_read.constprop.0+0xd36/0x1dd0 fs/fuse/dev.c:1334
-  fuse_dev_read+0x166/0x200 fs/fuse/dev.c:1367
-  call_read_iter include/linux/fs.h:2104 [inline]
-  new_sync_read fs/read_write.c:395 [inline]
-  vfs_read+0x85b/0xba0 fs/read_write.c:476
-  ksys_read+0x12f/0x260 fs/read_write.c:619
-  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-  do_syscall_64+0xce/0x260 arch/x86/entry/common.c:83
-  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-  ......
-  </TASK>
+That's what I wrote in the part of my reply that you left out. If a
+driver is going to be used for multiple devices, then a module id table
+makes sense, but there is no need to go around adding redundant tables
+just for the sake of it when a simple alias will do.
 
-The warning is due to the FUSE_NOTIFY_RESEND notify sent by the write()
-syscall in the reproducer program and it happens as follows:
-
-(1) calls fuse_dev_read() to read the INIT request
-The read succeeds. During the read, bit FR_SENT will be set on the
-request.
-(2) calls fuse_dev_write() to send an USE_NOTIFY_RESEND notify
-The resend notify will resend all processing requests, so the INIT
-request is moved from processing list to pending list again.
-(3) calls fuse_dev_read() with an invalid output address
-fuse_dev_read() will try to copy the same INIT request to the output
-address, but it will fail due to the invalid address, so the INIT
-request is ended and triggers the warning in fuse_request_end().
-
-Fix it by clearing FR_SENT when re-adding requests into pending list.
-
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Reported-by: yue sun <samsun1006219@gmail.com>
-Closes: https://lore.kernel.org/linux-fsdevel/58f13e47-4765-fce4-daf4-dffcc5ae2330@huaweicloud.com/T/#m091614e5ea2af403b259e7cea6a49e51b9ee07a7
-Fixes: 760eac73f9f69 ("fuse: Introduce a new notification type for resend pending requests")
-Signed-off-by: Hou Tao <houtao1@huawei.com>
----
- fs/fuse/dev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 8eb2ce7c0b012..9eb191b5c4de1 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1814,6 +1814,7 @@ static void fuse_resend(struct fuse_conn *fc)
- 
- 	list_for_each_entry_safe(req, next, &to_queue, list) {
- 		set_bit(FR_PENDING, &req->flags);
-+		clear_bit(FR_SENT, &req->flags);
- 		/* mark the request as resend request */
- 		req->in.h.unique |= FUSE_UNIQUE_RESEND;
- 	}
--- 
-2.29.2
-
+Johan
 
