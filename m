@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-174308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440FA8C0CE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7858C0CE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 10:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7321F1C20F7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8FD1C20FC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025AA14A0A3;
-	Thu,  9 May 2024 08:52:24 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8333914A4C3;
+	Thu,  9 May 2024 08:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASAaYWBj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CAB13D289
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 08:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F7913D289;
+	Thu,  9 May 2024 08:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715244743; cv=none; b=kjVD6cPN2a46i0LNccuJZ3OGXcBnUcR/TN64XjksLCCNmpAzhXF/yjmGGWCkhtrM6lN6n179QiqIrVHGTe6nxbg6sS85xAvjPuVpydbnBVrkZWoWjPHGVTFm9yiukHYD/Ri4IInNl0XAX66E3t+R115vKiFgj7w5zzO0waa/Jws=
+	t=1715244778; cv=none; b=csuJm5Jfp6IRNXw8pSdZQMcC5+/TZli6++mme8aN+obDdTRA9pQPqxkbukOAI9DEwqMI1oZF6+JOOCWlR8ZblVY++97yKQwEhuHW8t2XA9ADkYt5eII45spesCPT7gE7rXPnB9Fa198/zwRpHegGezJC/yDMyK/cbFoSOfEzO8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715244743; c=relaxed/simple;
-	bh=aS+jJPZZRPiKHCX180z4+IsZWClUBunHD4Mtlw9ESBg=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fvoS4sGDWGwcTXciVRu9LLa7WT5tBKYOphtY8XxoP4Kx39Szx9xRKd6QZ2cnzL8ljNUWhmCtgiB/J+gFj7NaMtPKmTDOQtxulKuOdhX29X86/1w/WdGAyuTwrmm1vi/k1VIpRNXGswkN6GJ3TTBfsJxkwVFN02psGCQYxpwBo+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VZlzs1QQJzvXbS;
-	Thu,  9 May 2024 16:48:57 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6099C18007E;
-	Thu,  9 May 2024 16:52:18 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 9 May 2024 16:52:17 +0800
-Subject: Re: [PATCH 3/3] mm/memory-failure: send SIGBUS in the event of thp
- split fail
-To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240501232458.3919593-1-jane.chu@oracle.com>
- <20240501232458.3919593-4-jane.chu@oracle.com>
- <2e51deff-24ca-32d5-dbd2-9077f860723c@huawei.com>
- <56448498-96e4-4350-a915-15b97294bc62@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <9092ae5b-4910-95c6-14b6-a884f6fa9361@huawei.com>
-Date: Thu, 9 May 2024 16:52:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715244778; c=relaxed/simple;
+	bh=juspyWQDTCZdu0kbwUFZjaI2NP83vlBOJo13pP24/HY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMyU7Ys6u7Yc4bgX1cef6QMSeOK/opDfQ4T3cpwdO9691LGg6c5i1Jv5NRLL3iAB39pDcapPpKnXsxh0zDvocbB+UGoAveRWD/wgwpb5GEELPh1uLJCOTCQnkt6Tvci5Ax94h13eBXNHofPSawl/oXluPr6lN0+2XnXBU/vbqzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASAaYWBj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39286C116B1;
+	Thu,  9 May 2024 08:52:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715244778;
+	bh=juspyWQDTCZdu0kbwUFZjaI2NP83vlBOJo13pP24/HY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ASAaYWBjtmdcC5lbjF9kSzdupVpoBFM42zhqRa7R0g8LbyY9Fqbn5iDeFLYyNz+2g
+	 QNqMRla8iM+Xl5EfaY6AQsreE6ikaQgpJ4SfOczXB9+GDNNfIdNo2jL9us62Kk+1Av
+	 eqmGgYKP+x0NZcUE3yWWBpaLpp2ZrMcILlTkN6qpizFg0SR5nM9QdHJ/Tn7zl5a8fU
+	 SbztAv+tHZJ9x9DAlSDJMkjGBSpyxbxBMs9FppVynorHV8lYOjjgSvS9fAg/u32hUp
+	 yeBQ8lSJBIA/JGDa9VRFrNcUDX1GhbAQ2ZFwyyRqu17jvwBaUsYba/JhuV+qbpRJqE
+	 RlMlxaZW/G4zw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1s4zWQ-000000000S4-22Eh;
+	Thu, 09 May 2024 10:53:02 +0200
+Date: Thu, 9 May 2024 10:53:02 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>, Lee Jones <lee@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Das Srinagesh <quic_gurus@quicinc.com>,
+	Satya Priya <quic_c_skakit@quicinc.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+Message-ID: <ZjyO7uu6HKFYny9d@hovoldconsulting.com>
+References: <20240506150830.23709-1-johan+linaro@kernel.org>
+ <20240506150830.23709-13-johan+linaro@kernel.org>
+ <Zjkq_nWyvc6bUtiu@surfacebook.localdomain>
+ <ZjpMeVk_HiixZUEu@hovoldconsulting.com>
+ <CAHp75VdUFMvkj-r76H7GFZdpcoh_nb8v6CBj4wBHztNhiaWULQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <56448498-96e4-4350-a915-15b97294bc62@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- canpemm500002.china.huawei.com (7.192.104.244)
+In-Reply-To: <CAHp75VdUFMvkj-r76H7GFZdpcoh_nb8v6CBj4wBHztNhiaWULQ@mail.gmail.com>
 
-On 2024/5/9 0:56, Jane Chu wrote:
-> On 5/8/2024 2:03 AM, Miaohe Lin wrote:
-> 
->> On 2024/5/2 7:24, Jane Chu wrote:
->>> When handle hwpoison in a GUP longterm pin'ed thp page,
->>> try_to_split_thp_page() will fail. And at this point, there is little else
->>> the kernel could do except sending a SIGBUS to the user process, thus
->>> give it a chance to recover.
->> It seems the user process will still receive SIGBUS via kill_accessing_process()
->> when (re-)access thp later. So they should have a chance to recover already.
->> Or am I miss something?
-> 
-> The concern is about real UE consumption in which case, it's desirable to kill the process ASAP without having to relying on subsequent access.  Also to honor processes' MCE-early-kill request. kill_accessing_process() is very conservative in that, it doesn't check other processes that have the poisoned page mapped.
+On Tue, May 07, 2024 at 08:22:34PM +0300, Andy Shevchenko wrote:
+> On Tue, May 7, 2024 at 6:44 PM Johan Hovold <johan@kernel.org> wrote:
+> > On Mon, May 06, 2024 at 10:09:50PM +0300, Andy Shevchenko wrote:
+> > > Mon, May 06, 2024 at 05:08:29PM +0200, Johan Hovold kirjoitti:
 
-I see. Thanks for your explanation.
-Thanks.
-.
+> > > > [ johan: rework probe to match new binding, amend commit message and
+> > > >          Kconfig entry]
+> > >
+> > > Wouldn't be better on one line?
+> >
+> > Now you're really nit picking. ;) I think I prefer to stay within 72
+> > columns.
+> 
+> Not really. The tag block is special and the format is rather one
+> entry per line. This might break some scriptings.
 
-> 
-> thanks,
-> 
-> -jane
-> 
->>
->> Thanks.
->> .
->>
->>
-> .
+This is not a tag, and using line breaks here is perfectly fine.
 
+> > >                       return dev_err_probe(...);
+> >
+> > Nah, regmap won't trigger a probe deferral.
+> 
+> And it doesn't matter. What we gain with dev_err_probe() is:
+> - special handling of deferred probe
+> - unified format of messages in ->probe() stage
+> 
+> The second one is encouraged.
+
+I don't care about your personal preferences.
+
+Johan
 
