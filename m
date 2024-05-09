@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-174982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027AD8C1841
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:20:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FEC8C1848
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 23:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B801F22249
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533B21F21F44
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E062D86248;
-	Thu,  9 May 2024 21:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117AD127E25;
+	Thu,  9 May 2024 21:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RnFg9Uay"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="K2+KNowD"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E898564E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9114D1272CA
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 21:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715289577; cv=none; b=sWGcnanBbgyl9pQDSV2p5I9z36LbeWE12YkMRNOsOSGll8u4XaNuSgobhQ96SyxCp8H6SnGdpw0gm5XeS5Eq2Uvt4wX+j3R3yYQdpWk9OgwskJEGs4hS6yEhFmpiEVB/inQo5crJoaR1BQ1MY+dT9cKriLbDrw94+9gfma94b6Q=
+	t=1715289593; cv=none; b=jULxvi2YTQnPjr2UaFlIgEFh/rornPvV8WNsr5qR6w6z0WOXEBx+LGae9x+pbEIT6JS3TrjdpFgpLCIeSjEOdEfS8yvetHzdfw6kM4PW1APN8aZTcdCH2UGyV/EPLdSBCIaUN61rMzHVRC88PKxLUhdltEmqUbDBoqpnXXBqI4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715289577; c=relaxed/simple;
-	bh=Um2iaQ7WeSFO93nhxJoPQRrULk9qwBNcQZW38ADgIuI=;
+	s=arc-20240116; t=1715289593; c=relaxed/simple;
+	bh=XSTDg6D+nuKKMmgCY9p7yR4M1jZiN3nKiFZMyRMCGiE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gvvOhBs2QyhVhw5QoGU/oEi2R/SheXQ4KoYmrGvaiWZIytGrKEn9wbWY/5CNxxGrb7aYjTlnGZ8O6SnlKQe5ZcHdG1PxVVH1uusjxEimRxr6w4qYSkXn4/2eT9/DN3547WJXBQncsZULjim6ZvLQGFycon4u3Dlf8bGPP+Skd0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RnFg9Uay; arc=none smtp.client-ip=209.85.208.45
+	 To:Cc:Content-Type; b=HC5OmcuNEmFFTFBhaMKg5SNXXRpc9jO2sWZRb4tG2T7uuR/DQ/A/99qsSnQssSjJ8y9QMMw6omVsgbs2galfYYSTWpZ41CTucvxhEuvHVaYrSbrt0bae/zPyYYkmev70/qqu25Uc5DPAr/i0csx2mlMHznq18SjSeFbEwf9M7q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K2+KNowD; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso5067a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:19:34 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572a1b3d6baso1770a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 14:19:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715289573; x=1715894373; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715289589; x=1715894389; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aj/ruisSex0Kp0dBhUAYPvC4ARDFWMxrTjQLMO36++8=;
-        b=RnFg9Uaye0V/wEh+CofUbF/mTFaDJpOUF8VKlUbKgZlaCK0AURpyjQnS5iiUUeX+CI
-         380Gk+cOTxS4ES63Fm/f7YRVqECJNayQkwf7EmTz5hepGgr9pzF4M76aeWBmJ9fz2sUv
-         45rFJOHLglFzz83XZG3gl9OmXF7QibIStYoLr7v52nKMLwOgxUl6Tvo8MrFh7oRZni4d
-         R2tO8IgBonNDCIm5nNBU3WFFk06SDvKjyYXYk9bWfhoGvtUQq2IEUN8lXx9ElPKRjyjR
-         TNaTcaIT59ib+5cxbSeAYYE1rpVGXf71rszDUvJ884VTRnVvKMvG2BeBOkSZCbJcNzYn
-         phIQ==
+        bh=Qgi3h+IjdR+qGYdA2wxHQV5wR5eEl2tpr3YsgoeQfBs=;
+        b=K2+KNowDh/Yz/vPO9MXcNjzhsuN/gWefqx5FxmGiRNGlSzlZlMoSiGxPN60Xq/Ed2l
+         1/3Ozuph4mG4ufldGWP6gWVOi0kCMsTieIgwL11BFBxIByeSNiMkkgyEd0JgTKrgjOde
+         9eI5HKP3UYI4ye0ijUXnlyaGpUqzXzTC3uKPmib0Hv001oil5RlXORP2uYm/kcHiC4pE
+         HBqbIUSV18QJoagx3z+a4V3ofsIT0u4ahbQlCQYmrNYRr/pl/pElNRhaIYZ8nKaowLVg
+         A+7oZaw7IayZHTcznNMMW3jT628E52s7PqSCsf1cxnjOserKAWs720mlvlOlFpAkrsCm
+         SR7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715289573; x=1715894373;
+        d=1e100.net; s=20230601; t=1715289589; x=1715894389;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aj/ruisSex0Kp0dBhUAYPvC4ARDFWMxrTjQLMO36++8=;
-        b=ZCeEi2VYMfEKYcFZ7AOtONSkRtSM2bnOYpdsdbLOOh+1RxRDdSeLB5Hjra7l7tGI6T
-         lM7NMyjfFpKzZHP+3wAU8SAMRyzzaTMoFYA7xwSGpzWLQuKPcsVYxS/4O8xO4jFOXmhy
-         DINu0F4Psiv0oN3jVJqRq5AH5zARao4srxw3NzULv4t5HAYa7GIFtUraYGGde9SDQTqc
-         qEpwKoQUIgT7N4OFCnJe1UJti91YBzNQ1qyaBnylvKkznxwZBA3gJPM0TUUaBkyht41l
-         iby8iGEV206X/KhbmH2iZZ6vXQyzK4N6hgHBYwjlFD1gZfZChevPeG6Pxq3bOemBNDHk
-         Gncw==
-X-Forwarded-Encrypted: i=1; AJvYcCV11t0lvdpMM/G2RrKTXYSco8MDCalzrq0DD6Ozvo1P/LYNvQBG/Jb27m3CFU2ouODhssvwBaO7YoeYnm7cBFrZbVjnJMt5tH84OJz+
-X-Gm-Message-State: AOJu0YzSt/1EnzVtnDo2wN394Ik2asUcnCZ1edIJuNTgqUZ2qZKsgYt4
-	QLNaJ9aupufUURJV1oyRrwlJ2hNQxjxAM9C1VZlkfnpRKuKqnGNGXwkn4WpgEj1KT5ouQq0faN/
-	d4GObSPA1DHqMD0QX+rPUo+hIaPrD7rP4W2hm
-X-Google-Smtp-Source: AGHT+IGI4zzf79CVFYKmEZhPf2lhqJh1b8pYhjbZ5go+AXsEnSPUSUtKffiZRTXlmKPdbvdXpzTycKoV7ugVsV+l6ts=
-X-Received: by 2002:a05:6402:222a:b0:572:554b:ec66 with SMTP id
- 4fb4d7f45d1cf-57351ffc899mr8908a12.3.1715289570474; Thu, 09 May 2024 14:19:30
- -0700 (PDT)
+        bh=Qgi3h+IjdR+qGYdA2wxHQV5wR5eEl2tpr3YsgoeQfBs=;
+        b=ceE6c98LhgQoF/ic4AyheNQvEP3az7HFSQjKvvAQsRUSDb1W6A+Y/g1QKdu2OnERkj
+         8YbkZn3tj/zDyhPUuT7MYg39oyDoIpxp+Y4L2gM2lONBW4XsHzdZgWBgh9DX+aHIaKfs
+         D02IEF2mLBFy6IOnDnvfUqRPMdn619C/oc4iAXrQQtUDAIYk0QEtgCInfBPDPfZyZ6GL
+         /CQd5AGSgW6MHBoBTwsob5TvhUYHO+5wYo4Q/dkGzJTTWU579iX8O3WCc3KDpYETz48a
+         BtkuEeqncJldWd+FYCxuU48X4vG3bJPOaG2yHM9fycRJtgYAA1pndsaNJkGw5474wz9b
+         HgAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0lEP9jAX9IhIpWKo42M/fFDzMswttdXLfR+uoD6iqZduCNPjLxd+c+ftunXSyWL+Fy5IC/d+doUVxl7RWUeUoPbRCFfaLvFT5T5Mg
+X-Gm-Message-State: AOJu0YzHcosjgGTHjp3KY+0OTVgycq9yC3Xuv3Fz6Q0ZLNcBLa/wmewN
+	kXbMFOXCffWmPHQg+ZijiwPiGOrUIOuiXV0P8YtBiCTR8jtFDSMuetY04h8OrVEgGjLy2D1G/zt
+	L9IHTDtb9cSgAfr6zAhQNm8zl0BtYlX7RUKoK
+X-Google-Smtp-Source: AGHT+IESFwBeKEPJHXIvjKnYagQw1HEdTMzk6jry3RDX75zlENIpGV8y1GohMsEmGFBkNbvjuiuL//wMmjE86393x/o=
+X-Received: by 2002:a50:85cb:0:b0:573:438c:7789 with SMTP id
+ 4fb4d7f45d1cf-57351de5880mr11488a12.1.1715289588869; Thu, 09 May 2024
+ 14:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509200022.253089-1-edliaw@google.com> <20240509200022.253089-55-edliaw@google.com>
- <638a7831-493c-4917-9b22-5aa663e9ee84@efficios.com>
-In-Reply-To: <638a7831-493c-4917-9b22-5aa663e9ee84@efficios.com>
+References: <20240509200022.253089-14-edliaw@google.com> <20240509203113.63537-1-sj@kernel.org>
+In-Reply-To: <20240509203113.63537-1-sj@kernel.org>
 From: Edward Liaw <edliaw@google.com>
-Date: Thu, 9 May 2024 14:19:05 -0700
-Message-ID: <CAG4es9UxSmaSdRU7T5q2t_TgOJg+=8UPf8xmTV5bhP6gbDwJuA@mail.gmail.com>
-Subject: Re: [PATCH v3 54/68] selftests/rseq: Drop define _GNU_SOURCE
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Date: Thu, 9 May 2024 14:19:23 -0700
+Message-ID: <CAG4es9WMDZ6qD1+0MhDN_dD676tB1em34fpRe2wuoefkTGGPHA@mail.gmail.com>
+Subject: Re: [PATCH v3 13/68] selftests/damon: Drop define _GNU_SOURCE
+To: SeongJae Park <sj@kernel.org>
 Cc: shuah@kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
 	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
 	Christian Brauner <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
@@ -85,124 +84,103 @@ Cc: shuah@kernel.org, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
 	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
 	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
 	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kernel-team@android.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org, 
-	John Hubbard <jhubbard@nvidia.com>
+	John Fastabend <john.fastabend@gmail.com>, Muhammad Usama Anjum <usama.anjum@collabora.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, bpf@vger.kernel.org, damon@lists.linux.dev, 
+	linux-mm@kvack.org, mathieu.desnoyers@efficios.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 9, 2024 at 1:16=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
+On Thu, May 9, 2024 at 1:31=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
 >
-> On 2024-05-09 15:58, Edward Liaw wrote:
+> Hi Edward,
+>
+> On Thu,  9 May 2024 19:58:05 +0000 Edward Liaw <edliaw@google.com> wrote:
+>
 > > _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
 > > redefinition warnings.
 > >
 > > Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
 >
-> The patch per se looks fine, except for the "Fixes" tag.
->
-> Commit 809216233555 introduces use of asprintf in kselftest_harness.h
-> which is used by (all ?) selftests, including the rseq ones. However,
-> the rseq selftests each have the #define _GNU_SOURCE, which would have
-> been OK without those further changes.
->
-> So this patch is more about consolidating where the _GNU_SOURCE is
-> defined, which is OK with me, but not so much about "fixing" an
-> issue with commit 809216233555.
->
-> A "Fix" is something to be backported to stable kernels, and I
-> don't think this patch reaches that threshold.
->
-> If anything, this patch removes a warning that gets added by
-> https://lore.kernel.org/lkml/20240509200022.253089-1-edliaw@google.com/T/=
-#mf8438d03de6e2b613da4f86d4f60c5fe1c5f8483
-> within the same series.
->
-> Arguably, each #define _GNU_SOURCE could have been first protected
-> by a #ifndef guard to eliminate this transient warning, and there
-> would be nothing to "fix" in this consolidation series.
+> I show Mathieu's comment on this[1].  I have no strong opinion on this, b=
+ut if
+> you conclude to remove or change this line, please apply same change to t=
+his
+> patch.
 
-That makes sense.  I can remove the fixes tags.  809216233555 will
-likely be reverted first anyway, and you're right that the focus of
-this patch series is on consolidating _GNU_SOURCE.
-
+Will do, thanks for reviewing.
 
 >
-> Thoughts ?
+> [1] https://lore.kernel.org/638a7831-493c-4917-9b22-5aa663e9ee84@efficios=
+com
+>
+> > Signed-off-by: Edward Liaw <edliaw@google.com>
+>
+> I also added trivial comments that coming from my personal and humble
+> preferrence below.  Other than the above and the below comments,
+>
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+>
+> > ---
+> >  tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c    | 3 ---
+> >  .../damon/debugfs_target_ids_read_before_terminate_race.c      | 2 --
+> >  2 files changed, 5 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.=
+c b/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c
+> > index 0cc2eef7d142..7a17a03d555c 100644
+> > --- a/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c
+> > +++ b/tools/testing/selftests/damon/debugfs_target_ids_pid_leak.c
+> > @@ -2,9 +2,6 @@
+> >  /*
+> >   * Author: SeongJae Park <sj@kernel.org>
+> >   */
+> > -
+> > -#define _GNU_SOURCE
+> > -
+> >  #include <fcntl.h>
+>
+> I'd prefer having one empty line between the comment and includes.
+>
+> >  #include <stdbool.h>
+> >  #include <stdint.h>
+> > diff --git a/tools/testing/selftests/damon/debugfs_target_ids_read_befo=
+re_terminate_race.c b/tools/testing/selftests/damon/debugfs_target_ids_read=
+_before_terminate_race.c
+> > index b06f52a8ce2d..4aeac55ac93e 100644
+> > --- a/tools/testing/selftests/damon/debugfs_target_ids_read_before_term=
+inate_race.c
+> > +++ b/tools/testing/selftests/damon/debugfs_target_ids_read_before_term=
+inate_race.c
+> > @@ -2,8 +2,6 @@
+> >  /*
+> >   * Author: SeongJae Park <sj@kernel.org>
+> >   */
+> > -#define _GNU_SOURCE
+> > -
+> >  #include <fcntl.h>
+>
+> Ditto.
+>
+> And I realize I also forgot adding one empty line before the above #defin=
+e
+> line.  That's why I'm saying this is just a trivial comment :)
+
+No problem, I will add it back in.
+
+Thanks,
+Edward
+
+
+>
+> >  #include <stdbool.h>
+> >  #include <stdint.h>
+> > --
+> > 2.45.0.118.g7fe29c98d7-goog
+>
 >
 > Thanks,
->
-> Mathieu
->
-> > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> > Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> > Signed-off-by: Edward Liaw <edliaw@google.com>
-> > ---
-> >   tools/testing/selftests/rseq/basic_percpu_ops_test.c | 1 -
-> >   tools/testing/selftests/rseq/basic_test.c            | 2 --
-> >   tools/testing/selftests/rseq/param_test.c            | 1 -
-> >   tools/testing/selftests/rseq/rseq.c                  | 2 --
-> >   4 files changed, 6 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/rseq/basic_percpu_ops_test.c b/too=
-ls/testing/selftests/rseq/basic_percpu_ops_test.c
-> > index 2348d2c20d0a..5961c24ee1ae 100644
-> > --- a/tools/testing/selftests/rseq/basic_percpu_ops_test.c
-> > +++ b/tools/testing/selftests/rseq/basic_percpu_ops_test.c
-> > @@ -1,5 +1,4 @@
-> >   // SPDX-License-Identifier: LGPL-2.1
-> > -#define _GNU_SOURCE
-> >   #include <assert.h>
-> >   #include <pthread.h>
-> >   #include <sched.h>
-> > diff --git a/tools/testing/selftests/rseq/basic_test.c b/tools/testing/=
-selftests/rseq/basic_test.c
-> > index 295eea16466f..1fed749b4bd7 100644
-> > --- a/tools/testing/selftests/rseq/basic_test.c
-> > +++ b/tools/testing/selftests/rseq/basic_test.c
-> > @@ -2,8 +2,6 @@
-> >   /*
-> >    * Basic test coverage for critical regions and rseq_current_cpu().
-> >    */
-> > -
-> > -#define _GNU_SOURCE
-> >   #include <assert.h>
-> >   #include <sched.h>
-> >   #include <signal.h>
-> > diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/=
-selftests/rseq/param_test.c
-> > index 2f37961240ca..48a55d94eb72 100644
-> > --- a/tools/testing/selftests/rseq/param_test.c
-> > +++ b/tools/testing/selftests/rseq/param_test.c
-> > @@ -1,5 +1,4 @@
-> >   // SPDX-License-Identifier: LGPL-2.1
-> > -#define _GNU_SOURCE
-> >   #include <assert.h>
-> >   #include <linux/membarrier.h>
-> >   #include <pthread.h>
-> > diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selfte=
-sts/rseq/rseq.c
-> > index 96e812bdf8a4..88602889414c 100644
-> > --- a/tools/testing/selftests/rseq/rseq.c
-> > +++ b/tools/testing/selftests/rseq/rseq.c
-> > @@ -14,8 +14,6 @@
-> >    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-> >    * Lesser General Public License for more details.
-> >    */
-> > -
-> > -#define _GNU_SOURCE
-> >   #include <errno.h>
-> >   #include <sched.h>
-> >   #include <stdio.h>
->
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> https://www.efficios.com
->
+> SJ
 
