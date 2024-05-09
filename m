@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-174152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527B08C0AEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:24:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189D88C0AEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:26:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC63282B03
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC49B1F24073
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 05:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766241494AB;
-	Thu,  9 May 2024 05:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SmzWW8zg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE318D26D;
+	Thu,  9 May 2024 05:26:48 +0000 (UTC)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAD314901B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 05:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9D214901B;
+	Thu,  9 May 2024 05:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715232289; cv=none; b=ZA88F9KWvS10uRV38IcpMPFgv6hwdxuNSq9EH0pVbDBo8TRD1eGtTWI6SKyinvUvFCHwPrTbBxAe8LtCO2251ldLf9PCjeZfMR6mxa0jNql0uUKlHeTic/x453jcidqm41Y5O5mrkP7G+5mpKTB7otKXicCbhLgcVys2MqSBoxM=
+	t=1715232408; cv=none; b=giLiNdky+p7fV2C6Kll9l3xx+UGwoI+LsqaWkek5GGoU7s9Qy5qhyj1bbIZk1oOfSGIxNR6lZImz/TAejkMkceMAsvjlZFIuBmnRR6Eu1C4dlquryizERGA9eRpu2mSGCe4TlFwp8TUFT9HV/2Um3QGTieIKBzJladU/R+KEHkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715232289; c=relaxed/simple;
-	bh=ZMwEX+o/EJkHcRC3vFU2GlG5OYSdAKOVflztUOttcbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAjBNVT0FmRV0+GzDOQS4SPj8U67YNb86sj7PR6x33SR6uJ+8vsRcg6HmZ9lVMa4rUNjn9QUnu4ls+q4ionPx3alEG8Nb6pBR87JtRsxR96sOqJD/71kwdYbcryvyNOjCWJt5C07i6/ad6lNMxg9TDOcwku2I18FXcSTefcIEnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SmzWW8zg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC9B2C116B1;
-	Thu,  9 May 2024 05:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715232289;
-	bh=ZMwEX+o/EJkHcRC3vFU2GlG5OYSdAKOVflztUOttcbE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SmzWW8zg9hGq1aNGq5zj376fYeWWvFV1RPodmTzTuiLXGjPLihiIy4iQh7tP148ba
-	 1a0t9C/CKL1hNKXCq6XZC9k8eT6AyD2Na/xCcz9ugr1rEc2DBNwuRe8glbKgGFwoaU
-	 50neVaXpRtp0f8YgOHrGm73eAKPRNEtZmkzz0rjrJ4K8vuzXquKydVysgY7kPlsQIp
-	 0fk+ibm8nVlwypVXgFUelQ5JZA2bUEbUBxVTtYQZ/N7dANJJNBY4kbuMGbjp8FWGRV
-	 m19ee0koBSB3SSOk2KVs5ZcIAUBDvoF5z0eC6vgHUb1YVpLqrcuR15+hFt9pZztZtQ
-	 ZGveAl8Wa7gIw==
-Date: Wed, 8 May 2024 22:24:47 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-	Maksim Davydov <davydov-max@yandex-team.ru>
-Subject: Re: [PATCH v5 3/3] x86/bugs: Add 'spectre_bhi=vmexit' cmdline option
-Message-ID: <20240509052447.kwdlruqad7r5h4pi@treble>
-References: <cover.1715059256.git.jpoimboe@kernel.org>
- <66327dcf87284a09ed17ac24227695ea3ba1f287.1715059256.git.jpoimboe@kernel.org>
- <f48601e1-e8a6-4161-9a77-32ad10c887de@suse.com>
+	s=arc-20240116; t=1715232408; c=relaxed/simple;
+	bh=apyQisj0Vibf1irDRbxSoL5JY7lYjpi1CmS0djbCBBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cn2lKva8KZgD0zvysfq/B5l5mjhlnaYygY4gYjuXHPIu130LLNNfK07uiQ33szLjtsnLnmWyI93vwpusFptCnQc919JnPvFn4Vbl9shWQuKlqYbMqzywvGTtwHNpvNAbKtUxMV/FWNLtiN3QuJhymi9Ng8huKF5NwZCOyVSHksE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-5dca1efad59so404616a12.2;
+        Wed, 08 May 2024 22:26:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715232406; x=1715837206;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lrwlnJmatzPnGEjiAIUfkh9F7RO/oJDpBLzuWh0F9Z4=;
+        b=tKNUsKpHRcsHBzTZxIfosf6givNsgwB/HF8FLfDmUwRcW3O/+DO9hcUIUISEgiNFBP
+         NUcrx9b/73sVxyS0v19U0m+IAJvXdeJTR3VPtYuwVat5vBLJcbKq13gLf1xEetkE600W
+         Vw6vI6txwr+ll2WVroHFFB3Uw1eHONUYVazJv81wUysoNyqgoiD0mmVFrKa81kBki68P
+         RqZAv2R+przs/yu+g8/BJw+9N3ffLk2RcyoSIiNh5Tmhz7Mxre+C+K6xWbMN29hEbYJI
+         P2vGVeX6GrilabEpUhDwoHIETSWIN2NqfrKy8qm7nfRBj0FVnLwRIT6A6sHIhyCXtn31
+         ZBqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxRpQNJjGeF2qHx121BTy286w1DIVvjK2v2a0+V5+tzpxlfAqRsKh4dw0iqlpAjaWG8vq3ybaLPWawQjjfGG/+ehcmT+5IgCJ9n8iOyu97hEColk/T/wHDxkd1VG/bG83QssRXeFZrcZxUBKmrkA==
+X-Gm-Message-State: AOJu0Yy/9dkQY53bkjbRr7E/vc+Pic+vTc6Sm6vxWQiqsZHZAhs4oemF
+	ug9ofLdpP661kJdzkm34hcvtOj2cqRhniM4IydAu9/XbOvKgQSuPWPLBeOiVgAJ1T+HWeZu3stx
+	qXeIA/uIORCfMQ2CIRnb2AA/APNw=
+X-Google-Smtp-Source: AGHT+IFALoTNFBYi7lMOsNvjNZn6QuUn5d2pMz+I8EBXl+8Hopgak1Sqdd4UgyFzAyAGhx+Q9L6K/5KfSqcDb9cUYJ8=
+X-Received: by 2002:a05:6a20:1019:b0:1af:cf63:3742 with SMTP id
+ adf61e73a8af0-1afcf633926mr2603619637.42.1715232406354; Wed, 08 May 2024
+ 22:26:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f48601e1-e8a6-4161-9a77-32ad10c887de@suse.com>
+References: <20240508035301.1554434-1-irogers@google.com> <20240508035301.1554434-2-irogers@google.com>
+In-Reply-To: <20240508035301.1554434-2-irogers@google.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Wed, 8 May 2024 22:26:35 -0700
+Message-ID: <CAM9d7cgw45sv2fLm8Yea_RgrOLswSPErwMORCBaeYVb=OXjnZQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/4] perf ui browser: Avoid segv on title
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, Leo Yan <leo.yan@linux.dev>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 08, 2024 at 06:10:21PM +0300, Nikolay Borisov wrote:
-> > @@ -1659,19 +1662,22 @@ static void __init bhi_select_mitigation(void)
-> >   			return;
-> >   	}
-> > +	/* Mitigate in hardware if supported */
-> >   	if (spec_ctrl_bhi_dis())
-> >   		return;
-> >   	if (!IS_ENABLED(CONFIG_X86_64))
-> >   		return;
-> > -	/* Mitigate KVM by default */
-> > -	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
-> > -	pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit\n");
-> > +	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
-> > +		pr_info("Spectre BHI mitigation: SW BHB clearing on vm exit only\n");
-> > +		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
-> > +		return;
-> > +	}
-> 
-> nit: How about setting CLEAR_BHB_LOOP_ON_VMEXIT unconditionally, then
-> afterwards checking if MITIGATION_VMEXIT_ONLY is set and if yes simply
-> return, that way you don't duplicate the setup of the VMEXIT code
+On Tue, May 7, 2024 at 8:53=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> If the title is NULL then it can lead to a segv.
 
-I think the duplication actually makes it more readable.  In both cases
-it puts the setting of the features together along with the
-corresponding pr_info().
+Just out of curiosity, do you know where it sets to NULL?
 
--- 
-Josh
+Thanks,
+Namhyung
+
+>
+> Fixes: 769e6a1e15bd ("perf ui browser: Don't save pointer to stack memory=
+")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/ui/browser.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
+> index c4cdf2ea69b7..19503e838738 100644
+> --- a/tools/perf/ui/browser.c
+> +++ b/tools/perf/ui/browser.c
+> @@ -203,7 +203,7 @@ void ui_browser__refresh_dimensions(struct ui_browser=
+ *browser)
+>  void ui_browser__handle_resize(struct ui_browser *browser)
+>  {
+>         ui__refresh_dimensions(false);
+> -       ui_browser__show(browser, browser->title, ui_helpline__current);
+> +       ui_browser__show(browser, browser->title ?: "", ui_helpline__curr=
+ent);
+>         ui_browser__refresh(browser);
+>  }
+>
+> --
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+>
 
