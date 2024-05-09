@@ -1,142 +1,231 @@
-Return-Path: <linux-kernel+bounces-174130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0236A8C0A8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:44:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B258C0A8D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF111F2276F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:44:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CD73B21FEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A232B1494B9;
-	Thu,  9 May 2024 04:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3492810E5;
+	Thu,  9 May 2024 04:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/oM8gK5"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gjbG+/e+"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2040.outbound.protection.outlook.com [40.107.237.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D1C10E5;
-	Thu,  9 May 2024 04:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715229819; cv=none; b=mr8+sczOCrdXBCqdpWieRUwEB95foMZLTkRxpHQc+Ar0ZzItkSf37AeGmjsGs2WfmdxC1Ek1U9W6xbDpz9A1+Uj1nbajCsGfXT9gFe5Cvmpm4DCgeRRQib0ZjgsB0s/HzCKFBJehs+mIiRGVhAU/5PFXkyPFI9n+UFK+eVdrfIw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715229819; c=relaxed/simple;
-	bh=wC8ROQGMCBiyRkgcqeR1VWvYtgaUZqSR/VXIfZ3SVZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cVyASkgKg3CuCCQLdjzS81lErW2Ui49JPMerZ0f2FLHZIVxOqzZ+eoh9SERVWj7x/uNVOVz+sxTmOsAmx4TEmYK5ckGJ8Vrv7dRkvUuF5zZkRaAHvuK7lxDtluJ6vefwxQ2e1CCD4+rq2KZa/pPmwgvsup+8b35pLF2m3YRC2AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U/oM8gK5; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1edf506b216so3070335ad.2;
-        Wed, 08 May 2024 21:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715229817; x=1715834617; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RAVsowuKL8PpxwI/qtET9GJ7xFpj2lJ5HF1nhUYlHaY=;
-        b=U/oM8gK5HkUr96YdtUNs6WL4FTDYAFE8HDYcnCDLQzfviPNKKoRra5OdW6uyCxXWQM
-         pFstItpRfyI7mg4ERkHEXEZioVPDq4oj/HmvazZOYnZd+M9gzpnf9ReDhvvqYgG1b79P
-         M9C0sa//IoZtID69f27ixbq7aCQ+pKlQXJwqineSaeP20rB0ypXW6wB0jCJVnJmxrsaC
-         TBJ63lgtBvi0gtL+qtsXC51q7KtOI/VTRfQelAtZ3SWHzG5N2yImILb+UxJfsVKf7cE7
-         K4yluMWxLkhb0i7XYcfgPXcmy7mVHkHLi0Bh/BJeRGm3UmJTLhn04ETAyTiNxr/1Ht0G
-         0+mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715229817; x=1715834617;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RAVsowuKL8PpxwI/qtET9GJ7xFpj2lJ5HF1nhUYlHaY=;
-        b=KtHs+qHgcclHntvGAhbckfsRfGNfeK7maL9CgjP06pmS9XBaH/0Qoj7ZVmvEaUdQyC
-         6bO7GfR6l9t6qph4Hf8uI3lzs8M8nS2nQ9a+BsQSBtyeYBNoRfuaTQh6frxcsfLXHYhY
-         1VuMZLLYKjgYRfB2mUxXHb+XdbJcw09FfNLFi978DZMlR4HwzZzF0sD7q06jGZAn3Uug
-         oGNKhZVH3bgfB/abqCYoEYoaaiKSe+4weHzIy8XD1bNMT6WcBU230iwxfdPVhVMlu/Ix
-         aqmUB0DU2eaiDnrvYooSFUAmbutvWHzmCkzieRFpTDz75R913GNteHIWCgWwCyEsY7+W
-         jgRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWEW/T5T6eSBk3jHdA0cBiaa25xVUAT/iP958atK4vT9yHq9xy3qo7kA1eZZFGl4/zUDa/wPoZyIj8pIR63jKfTt7Sjt9arAQ5MnLYiAaz299i0EByYDoOXH55Nj88TyxmI9Hpg
-X-Gm-Message-State: AOJu0Ywi+/zyNezi8/XdOE5OpnkAY8PG17colc5ov27eRC0lWcMWnmGC
-	8UnkHCiMKpEIFOREzunJcF83OxAdu3s8chPockDuYeKUflq2gHpP
-X-Google-Smtp-Source: AGHT+IHjG84ykjAvUA3ORCTHT7UNqgZtDs11HRYoPIcMLVKsLvcqOsgyCDbW78ExK3X0UkfTlpXPcQ==
-X-Received: by 2002:a17:902:edc5:b0:1e4:60d4:916b with SMTP id d9443c01a7336-1eeb0aa49acmr38936125ad.64.1715229816966;
-        Wed, 08 May 2024 21:43:36 -0700 (PDT)
-Received: from localhost ([117.32.216.71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c13699dsm4066405ad.239.2024.05.08.21.43.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 21:43:36 -0700 (PDT)
-From: Yuan Fang <yf768672249@gmail.com>
-To: edumazet@google.com
-Cc: davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuan Fang <yf768672249@gmail.com>
-Subject: [PATCH 2/2] tcp/ipv6: fix get_tcp6_sock() output error info
-Date: Thu,  9 May 2024 12:43:23 +0800
-Message-ID: <20240509044323.247606-2-yf768672249@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240509044323.247606-1-yf768672249@gmail.com>
-References: <20240509044323.247606-1-yf768672249@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3705613BC3C
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715229867; cv=fail; b=LcmjOQuh43jFNk2koC+EAoxUiJ82B1tsCHUW2jjwzCEVsTosEjL7XW0lrj+eKf+vKn5zjsUxgEUAm9eqQjPknaf5FLdUPb3669yFkVnArov/54cpnAA73PUyp4m8sqcmsIfztnAVRZKkRY8CGDjF5lCBUziXc68sRbm22D0mEVU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715229867; c=relaxed/simple;
+	bh=4giIsb9r+dfxboJFitbfuWqZoE118UhGpBzfdy5dCOs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kxEkLjfSt9eFWgMvEhZYY0WH6jjC4CFmZR4bHHPn020EqKEr3dsqWGUzASUEn/iblo9BJroRpJ5/1Ev+CsSpHoPCpRYY6ISGhy5eYlIXRH4d1paNFsgcbZD1ATGjpt1V/zj7heLLLdJS2YN/KKSAwTz0eJpM0cVFmedl4Mdq838=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gjbG+/e+; arc=fail smtp.client-ip=40.107.237.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XzjrnCtmWrzctjb8LHHDCxh4/4Uz+HdoOz6osnrGB5hjVrJMHknPnH/QezWy5IZig/9VTMqzFKokQRs5ux5gpBCKfgaLeF9PSyAohrHmTusGBIF6YVxITH8R+7fzRNMSsJOTxssBaX/7QSgDe2tXe8x41dRZBBalc5YKHEGYu6JA0FAu84vE4V6FqDddm1ws8Py1EQXmtPnHf6qYQcIhqLmJcuJcynXH7FchxKpWbkZGC5US3CivJ9Vc1PlUBKd/hOeOWIYSA7uxeep/5l0oBac/GX9iYOA7KLfsBj3KZbr5Jnynk9N8leSpcIz2v+L0AhomCKktXaafEWdzlzSk9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NAj4Hl4Ej3ikJtQd+WA0hhpE8n5LNgIJcXfYekN7Jx8=;
+ b=kXjEGGcOvEj/VE8mu+wnulAWJTgSwJwG2Y3UmL9Pw8lxGDN/dFwk8U7D0zpVwbtAJOqFcZBr9cuca+4gI29pR7PZB6vtgBUz0Oe8RtIqVmZzyg7OEHZNzlE7vcDKGEDUAy3BO+RM6hTQt6irQs0634G+GjO744h89hTBJFU6TU5f4uUqG8sUx+XaeGIXTTwB5Azx/f0h2ovWulv7PV3ZRiFIWZuyrU/kxPML4k98DAqcongkwURSYLrt/ikUYXYP2/1zr6nYAKPo06fn6fv8krardLV7aROO9bk6jaLAZSE7gdYdW1fQV05XlMc+Mj2YVQRoISzK3MjqIm0mZISqgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NAj4Hl4Ej3ikJtQd+WA0hhpE8n5LNgIJcXfYekN7Jx8=;
+ b=gjbG+/e+jAKuKxxrloLUAYUgxTQvuVDUNVW+FiE+UlfmQPoIOqcuYurnIjuB6RwjbDckgCXoVD86HKuH+Ny22hS/kNnyTe0QSzYRSiInBfy0zVAYdx6oMoYqBDLaHWe3CmlVnlWW9adU5i2X6zv5OK7sRtzeQrLH9VK8o6E7q48=
+Received: from MW4PR03CA0078.namprd03.prod.outlook.com (2603:10b6:303:b6::23)
+ by DS0PR12MB9446.namprd12.prod.outlook.com (2603:10b6:8:192::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.41; Thu, 9 May
+ 2024 04:44:13 +0000
+Received: from MWH0EPF000971E2.namprd02.prod.outlook.com
+ (2603:10b6:303:b6:cafe::fe) by MW4PR03CA0078.outlook.office365.com
+ (2603:10b6:303:b6::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.43 via Frontend
+ Transport; Thu, 9 May 2024 04:44:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ MWH0EPF000971E2.mail.protection.outlook.com (10.167.243.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Thu, 9 May 2024 04:44:12 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 8 May
+ 2024 23:44:11 -0500
+Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 8 May 2024 23:44:11 -0500
+From: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+To: <michal.simek@amd.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+Subject: [PATCH RESEND] soc: xilinx: rename cpu_number1 to dummy_cpu_number
+Date: Wed, 8 May 2024 21:44:04 -0700
+Message-ID: <20240509044404.21673-1-jay.buddhabhatti@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB03.amd.com: jay.buddhabhatti@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E2:EE_|DS0PR12MB9446:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8838529-34fe-4d3a-dc5e-08dc6fe2ac66
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|82310400017|376005|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?h+MEcJXhBT1Mbxgf6ndH4ISU1Ah8N8AfhhAZTS42wboFLDSY64NWZbCHbs31?=
+ =?us-ascii?Q?f73sCLh0cfZb0+WJBRAobpnk9Py+tumtGJ8Wx9gRknm/A9FQ23GyPSgK+jZY?=
+ =?us-ascii?Q?orePnsn/gyU1vnHzjhWSdHO3uHfpg/svq/U9GLjU19J11prDrZ9pq9IzTIHG?=
+ =?us-ascii?Q?6pLuIfkyUrD4lH+WR2paPIC7but8Y/0aBzW+h6f1lhdofISKi56AiPUL2LEu?=
+ =?us-ascii?Q?6CoDSfUYRmoCeLui6mvn61Rop2vaUAaFfan8hRTf1IGv2MhrwrWNf8eC2s2J?=
+ =?us-ascii?Q?F48fxka/Gm4bFMcGl8TQt3TWdLwB/63SCUg4wtNwLazluQ45RD/S8eVAVUxB?=
+ =?us-ascii?Q?LKjG7t6wdVqdDoSz7C0imAbfXFDpUwvCHDFvMg4RBytc3td5rauyA9uZ40gf?=
+ =?us-ascii?Q?vUwUA+xMEKJUSmXsdTj2c8Rt2DfH9FC5TK/CnT5pPNsj60OkWeeXW6md/fqS?=
+ =?us-ascii?Q?WZblFu4EM46G4PCM80yF01f5vEzCkpY9iW4f3BDce6Phqn/uQuETWWgprMJc?=
+ =?us-ascii?Q?6+8CoCI8tEAzgDa8AaRwnR0RKlufWTfH2oWnlmXVyWcFoD5gORx4gPxWWYH5?=
+ =?us-ascii?Q?cNlGDHKHhuNIZrYahj9AsiX/w496JQIat6ugVg+Q61+mu+PGVrtYodXHrBzX?=
+ =?us-ascii?Q?oYtbjy4xjbp3bhyUqCdJEs1nhwhH9zvAhJj3p12C3mlM9t6Jtz6srgzcAn9+?=
+ =?us-ascii?Q?dPdvRTYNKS+8X3Itgzy7pYcfC4sO4nmyphiO6OpSJDNbs79KMfI9I6Dkn+6M?=
+ =?us-ascii?Q?rL67CZMl793DOjU6gPxNp57dvq/XMGBxRuVPD5y32l6bO+9vhWbkgxzpuXw+?=
+ =?us-ascii?Q?flb0IlwREES8JLsLHdVMTSj3v1JY0SMUV2fSz8NQ5z2Ss1HLzIzSE4/bvt+w?=
+ =?us-ascii?Q?AarEeKyzHqm2s3QhkYP/+tBo+LkA+MRNgbvr92xqqAlHyC+LOattFWrLW9+L?=
+ =?us-ascii?Q?MrgMuoHbM4TIwUW1fPWWaHsHS/To4ItkC1zMKxp0u78QAoRi5+1PY7N3CMZh?=
+ =?us-ascii?Q?C1iXlKLKqw0lPOMpeReBDHfv8v41w//jxVzMJHrdWz4xTMLkpre1l4ov7I7Y?=
+ =?us-ascii?Q?8pmwkzj3cmHnXp6FKTe2rsdkOohJF2d8o3U5gl90ruuJXcs68MDr4v4bfsq+?=
+ =?us-ascii?Q?u3e5HIBwvnkHq1tZvyB9GRu/9r+rqeqv972DW5pfKGuPVc2plr9Oefdoyk5z?=
+ =?us-ascii?Q?RzIEKTDDQJhww/7ZOCxSk2CiPQyttwIVqjpAoFG2k8TGuupzcJvSbGFu2heI?=
+ =?us-ascii?Q?V9h09J7+mZyGfE2t2V7/6Yg21BnbzpcDA16o70IM7fXVbxs6l00Zj/pIkFVm?=
+ =?us-ascii?Q?1FUmoQNqXlqVtTJWt0AtZPzChz09Yv4nwOSCNTuLDrrx+oA7kNKoBtMJlpis?=
+ =?us-ascii?Q?6Pb6ztDrqL2sRRPybVqm30vVLVIT?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(376005)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 04:44:12.4075
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8838529-34fe-4d3a-dc5e-08dc6fe2ac66
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000971E2.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9446
 
-Using the netstat command, the Send-Q is always 0 in TCP_LISTEN.
-Modify tx_queue to the value of sk->sk_max_ack_backlog.
+The per cpu variable cpu_number1 is passed to xlnx_event_handler as
+argument "dev_id", but it is not used in this function. So drop the
+initialization of this variable and rename it to dummy_cpu_number.
+This patch is to fix the following call trace when the kernel option
+CONFIG_DEBUG_ATOMIC_SLEEP is enabled:
 
-Signed-off-by: Yuan Fang <yf768672249@gmail.com>
+BUG: sleeping function called from invalid context at include/linux/sched/mm.h:274
+    in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 1, name: swapper/0
+    preempt_count: 1, expected: 0
+    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.0 #53
+    Hardware name: Xilinx Versal vmk180 Eval board rev1.1 (QSPI) (DT)
+    Call trace:
+     dump_backtrace+0xd0/0xe0
+     show_stack+0x18/0x40
+     dump_stack_lvl+0x7c/0xa0
+     dump_stack+0x18/0x34
+     __might_resched+0x10c/0x140
+     __might_sleep+0x4c/0xa0
+     __kmem_cache_alloc_node+0xf4/0x168
+     kmalloc_trace+0x28/0x38
+     __request_percpu_irq+0x74/0x138
+     xlnx_event_manager_probe+0xf8/0x298
+     platform_probe+0x68/0xd8
+
+Fixes: daed80ed0758 ("soc: xilinx: Fix for call trace due to the usage of smp_processor_id()")
+Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
 ---
- net/ipv6/tcp_ipv6.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/soc/xilinx/xlnx_event_manager.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 3f4cba49e9ee..07ea1be13151 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -2177,7 +2177,7 @@ static void get_tcp6_sock(struct seq_file *seq, struct sock *sp, int i)
- 	const struct tcp_sock *tp = tcp_sk(sp);
- 	const struct inet_connection_sock *icsk = inet_csk(sp);
- 	const struct fastopen_queue *fastopenq = &icsk->icsk_accept_queue.fastopenq;
--	int rx_queue;
-+	int rx_queue, tx_queue;
- 	int state;
+diff --git a/drivers/soc/xilinx/xlnx_event_manager.c b/drivers/soc/xilinx/xlnx_event_manager.c
+index 253299e4214d..366018f6a0ee 100644
+--- a/drivers/soc/xilinx/xlnx_event_manager.c
++++ b/drivers/soc/xilinx/xlnx_event_manager.c
+@@ -3,6 +3,7 @@
+  * Xilinx Event Management Driver
+  *
+  *  Copyright (C) 2021 Xilinx, Inc.
++ *  Copyright (C) 2024 Advanced Micro Devices, Inc.
+  *
+  *  Abhyuday Godhasara <abhyuday.godhasara@xilinx.com>
+  */
+@@ -19,7 +20,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
- 	dest  = &sp->sk_v6_daddr;
-@@ -2202,14 +2202,17 @@ static void get_tcp6_sock(struct seq_file *seq, struct sock *sp, int i)
- 	}
+-static DEFINE_PER_CPU_READ_MOSTLY(int, cpu_number1);
++static DEFINE_PER_CPU_READ_MOSTLY(int, dummy_cpu_number);
  
- 	state = inet_sk_state_load(sp);
--	if (state == TCP_LISTEN)
-+	if (state == TCP_LISTEN) {
- 		rx_queue = READ_ONCE(sp->sk_ack_backlog);
--	else
-+		tx_queue = READ_ONCE(sp->sk_max_ack_backlog);
-+	} else {
- 		/* Because we don't lock the socket,
- 		 * we might find a transient negative value.
- 		 */
- 		rx_queue = max_t(int, READ_ONCE(tp->rcv_nxt) -
- 				      READ_ONCE(tp->copied_seq), 0);
-+		tx_queue = READ_ONCE(tp->write_seq) - tp->snd_una;
-+	}
+ static int virq_sgi;
+ static int event_manager_availability = -EACCES;
+@@ -570,7 +571,6 @@ static void xlnx_disable_percpu_irq(void *data)
+ static int xlnx_event_init_sgi(struct platform_device *pdev)
+ {
+ 	int ret = 0;
+-	int cpu;
+ 	/*
+ 	 * IRQ related structures are used for the following:
+ 	 * for each SGI interrupt ensure its mapped by GIC IRQ domain
+@@ -607,11 +607,8 @@ static int xlnx_event_init_sgi(struct platform_device *pdev)
+ 	sgi_fwspec.param[0] = sgi_num;
+ 	virq_sgi = irq_create_fwspec_mapping(&sgi_fwspec);
  
- 	seq_printf(seq,
- 		   "%4d: %08X%08X%08X%08X:%04X %08X%08X%08X%08X:%04X "
-@@ -2220,7 +2223,7 @@ static void get_tcp6_sock(struct seq_file *seq, struct sock *sp, int i)
- 		   dest->s6_addr32[0], dest->s6_addr32[1],
- 		   dest->s6_addr32[2], dest->s6_addr32[3], destp,
- 		   state,
--		   READ_ONCE(tp->write_seq) - tp->snd_una,
-+		   tx_queue,
- 		   rx_queue,
- 		   timer_active,
- 		   jiffies_delta_to_clock_t(timer_expires - jiffies),
+-	cpu = get_cpu();
+-	per_cpu(cpu_number1, cpu) = cpu;
+ 	ret = request_percpu_irq(virq_sgi, xlnx_event_handler, "xlnx_event_mgmt",
+-				 &cpu_number1);
+-	put_cpu();
++				 &dummy_cpu_number);
+ 
+ 	WARN_ON(ret);
+ 	if (ret) {
+@@ -627,16 +624,12 @@ static int xlnx_event_init_sgi(struct platform_device *pdev)
+ 
+ static void xlnx_event_cleanup_sgi(struct platform_device *pdev)
+ {
+-	int cpu = smp_processor_id();
+-
+-	per_cpu(cpu_number1, cpu) = cpu;
+-
+ 	cpuhp_remove_state(CPUHP_AP_ONLINE_DYN);
+ 
+ 	on_each_cpu(xlnx_disable_percpu_irq, NULL, 1);
+ 
+ 	irq_clear_status_flags(virq_sgi, IRQ_PER_CPU);
+-	free_percpu_irq(virq_sgi, &cpu_number1);
++	free_percpu_irq(virq_sgi, &dummy_cpu_number);
+ 	irq_dispose_mapping(virq_sgi);
+ }
+ 
 -- 
-2.45.0
+2.17.1
 
 
