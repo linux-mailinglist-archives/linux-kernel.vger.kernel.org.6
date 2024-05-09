@@ -1,305 +1,117 @@
-Return-Path: <linux-kernel+bounces-174249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D1C8C0C19
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:48:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CB68C0C1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DD7CB22D0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9F91C2150B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C54149C71;
-	Thu,  9 May 2024 07:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E7bvP6ke"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23F4149C70;
+	Thu,  9 May 2024 07:48:06 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B513C9A9;
-	Thu,  9 May 2024 07:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B82613C9A9;
+	Thu,  9 May 2024 07:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240869; cv=none; b=eZTbW3FvkVIVSbWlVZSKfzcC1BV78MwkMmYtmyX7LFNg0YER2e2FdrPH+Ot+XY1LKsd3dqsDBLkAzTN/rp+h4UrB4zhOs+fXAAzjwIgs7RQTq0m7qrabQJ7UIVHJCM577BA4vitOov3YuyVFMLqGTVZl4VI03t+ONtrrH3gPrus=
+	t=1715240886; cv=none; b=Ot5TBiaDUCotQtM6gFSE06c8e1avCsNmdjqaizAp5QZVyPTy+g4vAiWZit2i/J7AQDs+RFdus5iXesLqO4cg0cv/Cm90yt0ANK/zG3E4IB8Sf5j2q4mEVNECu0/et5kKoM3YTu3ZE3Yky3mAkWXHd5tC/04FajVFGkxtKLNgPMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240869; c=relaxed/simple;
-	bh=WSpinETt9ddM11kZM/g7bBn58Ik9E4gtbJ2CZCu87TQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mp+bD8GUDXNS/t3sfU+SjBOE+ist2bMRTYku7chmXs2ViamEeETTPJPpTWGQ/LGosoX6VwxC3X63j6TBwkGcifKaQ6BDcse3okwflPy5f2mXgg5aAbq/z9Pwrh+h6o5kCLKJFwbdiVcn4GwOqUQooFKM1c9pVOtFUMSbphwTB2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E7bvP6ke; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4497AOWq002489;
-	Thu, 9 May 2024 07:47:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=OOkO59AaVpUJrC9ZzlQ801CtxogZJTDH0rDydpTKqFE=; b=E7
-	bvP6keAtfoFcnS49e7bEoSoWWCg+OPdwfPjGlfeTTAyeGpsVd7fWf1v8qtDIX+Hk
-	3pORv9C2eTpOvbvYr2dJ8rXT5goxaPUDuA4YlKs9vIpsxKFK6oNAp5/xr9YMY3Yh
-	z2grXBM/OXRgqAFjV3Vw4bJ2J62fslmDtQTfxM+LEg34ECe3vebsYkO3HoWIGl8G
-	JN0wIhrMnM3rFPttENK04r3j42fje3cRVT7h2nAljHbmPovkZUEu7snSxHO+gm0q
-	Y7Qovds73luxhWmrdsVAgh9fVcNXtE1WdQLcdmLGjv9dnGFLVGPqKpoW0MgDkMD9
-	wSfaECaxkZDK+VT0xWBg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y07u8tbdu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 May 2024 07:47:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4497lbV3031137
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 May 2024 07:47:37 GMT
-Received: from [10.251.44.50] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
- 00:47:34 -0700
-Message-ID: <2a244afe-db2a-4b4a-a770-5664c887c8ef@quicinc.com>
-Date: Thu, 9 May 2024 10:47:32 +0300
+	s=arc-20240116; t=1715240886; c=relaxed/simple;
+	bh=kN+bKRWuS9MvO+76b3+xoXzaruyf/lT+taQHwjLtY14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKCnPT7yJXNSvFpiHPKARhwxK28XsVB9chZdk6NmXd3a4vqdl2D34wdV6MXPIgE70Qiz6sbBFohq2xQvW2h+10QhppgApnYLtHh3XUh8GytBan6H/SpnPb4fcDGHiznTBazIablLB+iUQZSyzEtGam9Mg7jdOB1bSZfYRrkM3aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599eedc8eeso139755966b.1;
+        Thu, 09 May 2024 00:48:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715240883; x=1715845683;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DxfOpPMsocBoDaEIN71vPXTKGsCKIeOGUMJaK6ulrpg=;
+        b=NP7jrO7BF1cC9oleKfv2/H+LAA0u8jKf8K2H3mtvH899fyZAM37Y5d4FlM9FRI4Cn0
+         oXaL9vMWRDTapmol1OEdRwwgOhR9/laEOoVg8Jw2MuqIMbMtngKgqyCqm8MFDQjvjwGW
+         XapHXJwEeE1HjanIot6jeLGvubDAhQ8tmMXuUqxI9Z3CL5DhECIIM/FPehwZ8tC51O9m
+         Yzr4xmnK9EWqokFMHsszb69PontEMWEqavRnJFo3XtPQg0Zctm27M7/EYNLsXkFWvNZU
+         gkufQ3HaNstTyjirJKc3/XaSYfsbcdccWJAGYicJ2hScfg2/uoV3DHb8FrM0q6pMNNN8
+         zuig==
+X-Forwarded-Encrypted: i=1; AJvYcCWA8evcqQojlj7NPLgTm68n2sF8El/Weh/2f9WMocvHwkqsdGqHtEp5kSfUitt+G88vlkH5FYEWJtsF8Jp4jdC74YEn9Jjc0VbcqKKanitQ9Al4mRJ/apAvonvj4riTlhl33Dtv3xQobT3vteI=
+X-Gm-Message-State: AOJu0YxOD9dUVlL701CcLI7ImEOkmIIUNgqg0ApUllquzqGXfoKXQqMo
+	jPAOZSiOrjbOB1aoCYuPQx8wYawoNL8L9GZKV3Pki5pF3mqoFAHzCvsf7A==
+X-Google-Smtp-Source: AGHT+IEsCEKh9Z9Jdg775iWofQ3lVXXivWgv02ahksqj0qaQJVuDtBqjcMD77dWZbIcqAK5u4pyzKg==
+X-Received: by 2002:a50:8e4a:0:b0:572:a731:dd14 with SMTP id 4fb4d7f45d1cf-5731da5b711mr3204050a12.28.1715240882494;
+        Thu, 09 May 2024 00:48:02 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea6592sm422836a12.2.2024.05.09.00.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 00:48:02 -0700 (PDT)
+Date: Thu, 9 May 2024 00:48:00 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "leit@meta.com" <leit@meta.com>,
+	"open list:REALTEK WIRELESS DRIVER (rtw89)" <linux-wireless@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH wireless] wifi: rtw89: Un-embed dummy device
+Message-ID: <Zjx/sKB++v8FJMXx@gmail.com>
+References: <20240424182351.3936556-1-leitao@debian.org>
+ <f46ae94488d1468e9a9a669320e4cfb9@realtek.com>
+ <87ttjqgf2r.fsf@kernel.org>
+ <87mspigex0.fsf@kernel.org>
+ <acda4194c8d44690b05b83adccb3aa22@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: i2c: Fix imx412 exposure control
-Content-Language: en-US
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-CC: Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        "Paul J. Murphy" <paul.j.murphy@intel.com>,
-        "Martina
- Krasteva" <quic_mkrastev@quicinc.com>,
-        Daniele Alessandrelli
-	<daniele.alessandrelli@intel.com>,
-        Mauro Carvalho Chehab
-	<mchehab+huawei@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240506-b4-linux-next-camss-x13s-mmsol-integration-in-test-imx577-fix-v2-1-2e665f072f8f@linaro.org>
- <dvyed4grpazqk7a3tz6dqwpkd76ghtrt4euinxt3kycdeh63ez@ljgfjsfhypix>
- <20a0300a-ac16-456c-840a-e272f49050a8@linaro.org>
- <bppn2qglcya3xbfy7uey5cgybyanxthhweqv7foojwi5rvqwmk@temzdedvecfe>
- <171518540550.191612.743149233311332771@ping.linuxembedded.co.uk>
-From: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
-In-Reply-To: <171518540550.191612.743149233311332771@ping.linuxembedded.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: enAwVmUTNyEDS3ZRPNOhhkDun1VwGkvD
-X-Proofpoint-ORIG-GUID: enAwVmUTNyEDS3ZRPNOhhkDun1VwGkvD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_03,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- phishscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405090052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <acda4194c8d44690b05b83adccb3aa22@realtek.com>
 
-Hi Kieran,
+On Thu, Apr 25, 2024 at 06:15:21AM +0000, Ping-Ke Shih wrote:
+> Kalle Valo <kvalo@kernel.org> wrote:
+> > Kalle Valo <kvalo@kernel.org> writes:
+> > 
+> > > Ping-Ke Shih <pkshih@realtek.com> writes:
+> > >
+> > >> Breno Leitao <leitao@debian.org> wrote:
+> > >>> Embedding net_device into structures prohibits the usage of flexible
+> > >>> arrays in the net_device structure. For more details, see the discussion
+> > >>> at [1].
+> > >>>
+> > >>> Un-embed the net_device from the private struct by converting it
+> > >>> into a pointer. Then use the leverage the new alloc_netdev_dummy()
+> > >>> helper to allocate and initialize dummy devices.
+> > >>>
+> > >>> [1] https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/
+> > >>>
+> > >>> Signed-off-by: Breno Leitao <leitao@debian.org>
+> > >>
+> > >> I think this patch should go via net-next tree, because wireless-next tree
+> > >> doesn't have patch of dummy devices yet.
+> > >>
+> > >> Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+> > >
+> > > FWIW I sent the wireless-next pull request yesterday and once it pulled
+> > > we will fast forward wireless-next to latest net-next.
+> > 
+> > Oh, I just realised that this is not CCed to netdev so their patchwork
+> > won't even see the patch. Ping, I recommend that you wait for the
+> > dependency commits to trickle down to your tree and then apply the
+> > patch. That's the simplest approach and no need to resend anything.
+> 
+> Okay. If we don't hurry to get this patch merged, I will apply this patch
+> to my tree.
 
-On 5/8/2024 7:23 PM, Kieran Bingham wrote:
-> Quoting Jacopo Mondi (2024-05-08 13:43:34)
->> Hi Bryan
->>
->> On Wed, May 08, 2024 at 01:30:31PM GMT, Bryan O'Donoghue wrote:
->>> On 08/05/2024 09:02, Jacopo Mondi wrote:
->>>> Hi Bryan
->>>>
->>>> On Mon, May 06, 2024 at 11:38:26PM GMT, Bryan O'Donoghue wrote:
->>>>> Currently we have the following algorithm to calculate what value should be
->>>>> written to the exposure control of imx412.
->>>>>
->>>>> lpfr = imx412->vblank + imx412->cur_mode->height;
->>>>> shutter = lpfr - exposure;
->>>>>
->>>>> The 'shutter' value is given to IMX412_REG_EXPOSURE_CIT however, the above
->>>>> algorithm will result in the value given to IMX412_REG_EXPOSURE_CIT
->>>>> decreasing as the requested exposure value from user-space goes up.
->>>>>
->>>>> e.g.
->>>>> [ 2255.713989] imx412 20-001a: Received exp 1608, analog gain 0
->>>>> [ 2255.714002] imx412 20-001a: Set exp 1608, analog gain 0, shutter 1938, lpfr 3546
->>>>> [ 2256.302770] imx412 20-001a: Received exp 2586, analog gain 100
->>>>> [ 2256.302800] imx412 20-001a: Set exp 2586, analog gain 100, shutter 960, lpfr 3546
->>>>> [ 2256.753755] imx412 20-001a: Received exp 3524, analog gain 110
->>>>> [ 2256.753772] imx412 20-001a: Set exp 3524, analog gain 110, shutter 22, lpfr 3546
->>>>>
->>>>> This behaviour results in the image having less exposure as the requested
->>>>> exposure value from user-space increases.
->>>>>
->>>>> Other sensor drivers such as ov5675, imx218, hid556 and others take the
->>>>> requested exposure value and directly.
->>>>
->>>> has the phrase been truncated or is it me reading it wrong ?
->>>
->>> Sod's law says no matter how many times you send yourself a patch before
->>> sending it to LKML you'll find a typo ~ 2 seconds after reading your patch
->>> on LKML.
->>>
->>
->> Sounds familiar enough
->>
->>>
->>>>> Looking at the range of imx sensors, it appears this particular error has
->>>>> been replicated a number of times but, I haven't so far really drilled into
->>>>> each sensor.
->>>>
->>>> Ouch, what other driver have the same issue ?
->>>
->>> So without data sheet or sensor its hard to say if these are correct or
->>> incorrect, it's the same basic calculation though.
->>>
->>> drivers/media/i2c/imx334.c::imx334_update_exp_gain()
->>>
->>>         lpfr = imx334->vblank + imx334->cur_mode->height;
->>>         shutter = lpfr - exposure;
->>>
->>>         ret = imx334_write_reg(imx334, IMX334_REG_SHUTTER, 3, shutter);
->>>
->>>
->>> drivers/media/i2c/imx335.c::imx335_update_exp_gain()
->>>
->>>         lpfr = imx335->vblank + imx335->cur_mode->height;
->>>         shutter = lpfr - exposure;
->>>
->>>         ret = imx335_write_reg(imx335, IMX334_REG_SHUTTER, 3, shutter);
-> 
-> Is this a copy / paste error (IMX334), or are you using a downstream/alternative
-> driver?
+There is no hurry to get this patch merged.
 
-Those drivers was posted as part of intel keembay project upstream effort.
-
-The drivers where verified but they had some rework during the internal
-review process. And it seems there was copy/paste error on imx412 (which
-i also missed during the review).
-
-To remove the confusion. there are no issues with imx334 and imx335,
-those sensors are using shutter for setting exposure time.
-
-With this change imx412 is also working fine it was verified on our side.
-
-> 
-> Upstream implements this:
-> 
-> /**
->  * imx335_update_exp_gain() - Set updated exposure and gain
->  * @imx335: pointer to imx335 device
->  * @exposure: updated exposure value
->  * @gain: updated analog gain value
->  *
->  * Return: 0 if successful, error code otherwise.
->  */
-> static int imx335_update_exp_gain(struct imx335 *imx335, u32 exposure, u32 gain)
-> {
-> 	u32 lpfr, shutter;
-> 	int ret;
-> 
-> 	lpfr = imx335->vblank + imx335->cur_mode->height;
-> 	shutter = lpfr - exposure;
-> 
-> 	dev_dbg(imx335->dev, "Set exp %u, analog gain %u, shutter %u, lpfr %u\n",
-> 		exposure, gain, shutter, lpfr);
-> 
-> 	ret = imx335_write_reg(imx335, IMX335_REG_HOLD, 1, 1);
-> 	if (ret)
-> 		return ret;
-> 
-> 	ret = imx335_write_reg(imx335, IMX335_REG_LPFR, 3, lpfr);
-> 	if (ret)
-> 		goto error_release_group_hold;
-> 
-> 	ret = imx335_write_reg(imx335, IMX335_REG_SHUTTER, 3, shutter);
-> 	if (ret)
-> 		goto error_release_group_hold;
-> 
-> 	ret = imx335_write_reg(imx335, IMX335_REG_AGAIN, 2, gain);
-> 
-> error_release_group_hold:
-> 	imx335_write_reg(imx335, IMX335_REG_HOLD, 1, 0);
-> 
-> 	return ret;
-> }
-> 
->>>
->>>
->>> Looking again I'm inclined to believe the imx334/imx335 stuff is probably
->>> correct for those sensors, got copied to imx412/imx577 and misapplied to the
->>> EXPOSURE control in imx412.
-> 
-> We're directly using the IMX335 driver in mainline on the i.MX8MP (and
-> also validated on Raspberry Pi 5). AGC is operational on both those
-> platforms with the sensor, so I have no reason to believe there is any
-> error in the upstream driver:
-> 
->  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/media/i2c/imx335.c
-
-That is correct, there are no issues with imx334 and imx335.
-
-~Gjorgji
-
-> 
-> 
-> --
-> Kieran
-> 
-> 
->>>
->>
->> Without datasheet/devices it really is hard to tell. Cargo cult at
->> play most probably.
->>
->>>
->>>>> - ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, shutter);
->>>>> + ret = imx412_write_reg(imx412, IMX412_REG_EXPOSURE_CIT, 2, exposure);
->>>>
->>>> No datasheet here, can you confirm the IMX412_REG_EXPOSURE_CIT
->>>> register is actually in lines ?
->>>
->>>
->>> Looks like.
->>>
->>> From downstream "coarseIntgTimeAddr"
->>>
->>> imx577_sensor.xml
->>>     <coarseIntgTimeAddr>0x0202</coarseIntgTimeAddr>
->>>
->>> imx586/imx586_sensor.cpp
->>> pRegSettingsInfo->regSetting[regCount].registerAddr  =
->>> pExposureData->pRegInfo->coarseIntgTimeAddr + 1;
->>>
->>> pRegSettingsInfo->regSetting[regCount].registerData  = (lineCount & 0xFF);
->>>
->>>> Apart from that, as the CID_EXPOSURE control limit are correctly
->>>> updated when a new VBLANK is set by taking into account the exposure
->>>> margins, I think writing the control value to the register is the
->>>> right thing to do (if the register is in lines of course)
->>>>
->>>> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
->>>>
->>>> Thanks
->>>>    j
->>>>
->>>
->>> If that's good enough I'll fix the typo and apply your RB.
->>
->> Sure
->>
->> Thanks
->>   j
->>
->>>
->>> ---
->>> bod
->>>
-> 
+Out of curiosity, why don't you rebase your tree to net-next/linux-next
+frequently?
 
