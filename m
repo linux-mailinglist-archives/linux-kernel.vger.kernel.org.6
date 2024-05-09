@@ -1,115 +1,88 @@
-Return-Path: <linux-kernel+bounces-174353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF7C8C0D86
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:34:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A7B8C0D8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC1512842CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:34:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014E7B22085
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF851494D9;
-	Thu,  9 May 2024 09:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="reG0mO/y"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06BC14A4DF;
-	Thu,  9 May 2024 09:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDDB14A639;
+	Thu,  9 May 2024 09:36:49 +0000 (UTC)
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CC114A0BC;
+	Thu,  9 May 2024 09:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715247243; cv=none; b=IoFTKVeQFkZTPVBjpIqFmUVEie6Fm2QwzYHcbMY2taAKHWlt9yypdeb/7k1of2oZEHlqCxZgJhHqfflLlhgNR+M03c5mfNuC26jLgxvsUAQcPP+QFnzf4NZcjXZEcgI16+6CehGTYjhWPi9zJ6aGg46fGDcA4E2ZIbZup7KyCvM=
+	t=1715247408; cv=none; b=vEUEGzdgMv5T4o4nIT8OkTh3f+FdSlWtrm6bVddtKe2maTx0zokd+ZWH7lgrDEqQLqy5LEYgN/yjKJEJtvPjed8Nwbg2VQQGBFl9FlzQFFry+CG4drhqJHEBtRzDjCU8p76gNPpgi7dUUIIy58aK2drx2ggVNfUqTfOdYZbiWfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715247243; c=relaxed/simple;
-	bh=MtCUZOEf09vm2s3UfRmmEbhe99AQfnhKa18eN3mnrso=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=nzfu62I+wxVyDe9fUayoBcsWaS0p7wlEZWdSlxLaiyIVfz61CUQZPGwv3UTnX/PLFuLDpGpzb8rBhQM03bO6sRsU6C7kCZLS7CBL633Ik2I4XnW8pty9AAEC9N3k7Lc2USxBXOhRy1jiMm54Mmwm9Hk577ZT0GwatpasTXW17pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=reG0mO/y; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1715247227; bh=uHRrkhKKY/U0upUZfJkXb4BY8bCTGf1SFZ8EyfT1G3g=;
-	h=From:To:Cc:Subject:Date;
-	b=reG0mO/yMD0Allajl/2aMO1ahdJMd1FG86iTLZ031D7u5g0tYM1mYE3kORENzH04s
-	 GQ9UC1LP2QjvCQCjOcF/3MrO5DJk6oNrTrboudF6/TXbLNoe+iijW7tiuiGnvAeRzw
-	 zVyBPSiMtLFK0Vh+p7YsW2wjyYMX9DX/LXbR0ZiU=
-Received: from cyy-pc.lan ([240e:379:225f:c000:ddd2:5a64:482:d6f2])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 86B97886; Thu, 09 May 2024 17:33:43 +0800
-X-QQ-mid: xmsmtpt1715247223taum3m4ji
-Message-ID: <tencent_B61C1370E7632842D61BB7F9FA0515B44D09@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8uL2HVuJBhrc2zAVCXYqfSMQbCILL5ryFnjPQlfSSZSmyhy0OIS
-	 51hz1Aj5/VjBhn/J3uDwgpLwGwdPxe6mo0HKpyqEVWoVZD1ju4+BSdIZLKYcr1FqxTGvLrKobGz6
-	 9MRknHCRtI6YvQTjMv3elKw/uuseaZvLe+uwd92wJ+4Y/ZrEBJg6rV4kXrp+581iAqZbVyxiE19W
-	 WuqjyKz1jdnZWTG747f/PaHiKP+38krSpqFhgycfkgnsx77GiKoMDxQfI8x8Y8ynZhDQV//Qz+DH
-	 xja4FqphOyVQUcnHNPIf4uVLUaA47Lp18wJpQqGO8sLWnqs8+8gnoYXvOFgHXuzv4rwFCCOPU02C
-	 dgxsiD+mjvY16vcI6QgHkd2+clL+jKlA4liQst7W0+bF7OEvuvmpIksFU703rPDhAQY0lByg1bVG
-	 ooud3Hq4c4KlTsDwIhRKRnbenhW0cfSmOya03euiBpH9xJuJ4WdlsSaQygHYiD76It9XTfoFRpZw
-	 tUTkXSz3rxx4e4pl3SIQROzzZZ0qkcnl4G+Vg1/C3QaTcdEp0eo2xcwrcW6CrY/Sk168Y/YAwTqt
-	 zzQEhV8Z+EqwzKDRo9/tpCfx9ry+bkjCr6VEiK1dlBNkwwmk14el1KiG9m/vN6p79Bvc040hha0O
-	 3p7hySI/w3VOuB9/Xqemjuf+YtRjntvFCkMmknFI9LTnryALuCB/mlExTlcVbY0e2DD4POPIn8Fd
-	 qQPXkgf7XZtsX8q5+kRyWUA5tYZqz7ekw+SJo+QHKvLNhRL6nn4JorQDFnNzolMgQTUkLlS4Xjhp
-	 p7zpW/I7ccH83nQ+Euqv2R3XFEXfHzlFhinZw1Uo78unA2WVwgDed+rOCOkipJwUMTRwI5zgvIdv
-	 b6FoBWxUi16ON2TOOzjICCTvV0QGfeNVVNxKW7D/7HrCnH2TB5xwJHLBl5QXxUC0rglWkdMCB7Gc
-	 zOluQZfO+YuXCG5LlxNL0YfrT1qh/lAlRQpTHEKQCxYrqqYQ98BTPdz9W/qVQBsPHEDBEWuro=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Yangyu Chen <cyy@cyyself.name>
-To: linux-riscv@lists.infradead.org
-Cc: Conor Dooley <conor@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH] riscv: dts: fix isa string for Canaan Kendryte K230
-Date: Thu,  9 May 2024 17:33:11 +0800
-X-OQ-MSGID: <20240509093311.1943337-1-cyy@cyyself.name>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715247408; c=relaxed/simple;
+	bh=r0c0ahyUWvezkT2rASO2cH1RBbFGC1x3V4yiqp/3QCY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=n3pfdRZtxKZlQHDrHA2IEYcAOBF8zanW760jjXFQvpwGF5b2hVzZPmGrkNIUFfdC7RN+Sx+t+zIq+ZWNCPYwm8PaqkLodIWCWHbOHgoh0tTbbqJ0qTunpFASOPuDji3Nq6OM9deslp6q4prAHbWVneq2IhYNuer8tPAJCqzwnoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from ubuntu.localdomain (unknown [221.192.180.131])
+	by mail-app4 (Coremail) with SMTP id cS_KCgA3xLEBmTxmxsBPAA--.52084S2;
+	Thu, 09 May 2024 17:36:23 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-hams@vger.kernel.org,
+	pabeni@redhat.com,
+	kuba@kernel.org,
+	edumazet@google.com,
+	jreuter@yaina.de,
+	dan.carpenter@linaro.org,
+	rkannoth@marvell.com,
+	davem@davemloft.net,
+	lars@oddbit.com,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH net v7 0/3] ax25: Fix issues of ax25_dev and net_device
+Date: Thu,  9 May 2024 17:35:59 +0800
+Message-Id: <cover.1715247018.git.duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:cS_KCgA3xLEBmTxmxsBPAA--.52084S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYA7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2js
+	IEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l
+	FIxGxcIEc7CjxVA2Y2ka0xkIwI1lc2xSY4AK67AK6r4fMxAIw28IcxkI7VAKI48JMxAqzx
+	v26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbnNVDUU
+	UUU==
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwIQAWY7nwoPXwAcsU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The original is a string in dts that has no "zfh" or "zvfh" extension,
-but the K230 chip has them, so I am adding them to the dts. This
-patch also reordered the Z* extension in the isa string and used
-canonical order for the category as the first key and then alphabet
-order as the second key to meet RISC-V ISA Extension Naming
-Conventions.
+The first patch uses kernel universal linked list to implement
+ax25_dev_list, which makes the operation of the list easier.
+The second and third patch fix reference count leak issues of
+the object "ax25_dev" and "net_device".
 
-Signed-off-by: Yangyu Chen <cyy@cyyself.name>
----
-prerequisite-patchset: https://lore.kernel.org/linux-riscv/tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com/
----
- arch/riscv/boot/dts/canaan/k230.dtsi | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Duoming Zhou (3):
+  ax25: Use kernel universal linked list to implement ax25_dev_list
+  ax25: Fix reference count leak issues of ax25_dev
+  ax25: Fix reference count leak issue of net_device
 
-diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
-index 95c1a3d8fb11..104e08ef5869 100644
---- a/arch/riscv/boot/dts/canaan/k230.dtsi
-+++ b/arch/riscv/boot/dts/canaan/k230.dtsi
-@@ -24,11 +24,12 @@ cpu@0 {
- 			compatible = "thead,c908", "riscv";
- 			device_type = "cpu";
- 			reg = <0>;
--			riscv,isa = "rv64imafdcv_zba_zbb_zbc_zbs_zicbom_zicbop_zicboz_svpbmt";
-+			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zfh_zba_zbb_zbc_zbs_zvfh_svpbmt";
- 			riscv,isa-base = "rv64i";
--			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zba", "zbb",
--					       "zbc", "zbs", "zicbom", "zicbop", "zicboz",
--					       "zicntr", "zicsr", "zifencei", "zihpm", "svpbmt";
-+			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-+					       "zicbop", "zicboz", "zicntr", "zicsr", "zifencei",
-+					       "zihpm", "zfh", "zba", "zbb", "zbc", "zbs", "zvfh",
-+					       "svpbmt";
- 			riscv,cbom-block-size = <64>;
- 			riscv,cbop-block-size = <64>;
- 			riscv,cboz-block-size = <64>;
+ include/net/ax25.h  |  3 +--
+ net/ax25/ax25_dev.c | 48 +++++++++++++++------------------------------
+ 2 files changed, 17 insertions(+), 34 deletions(-)
+
 -- 
-2.43.0
+2.17.1
 
 
