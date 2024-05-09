@@ -1,282 +1,225 @@
-Return-Path: <linux-kernel+bounces-175050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6328C1995
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:48:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754CD8C1993
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4740DB21980
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E143B1F22D22
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 22:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466B312D215;
-	Thu,  9 May 2024 22:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7425A12D74B;
+	Thu,  9 May 2024 22:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AQ+rQdz7"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cI2mAntJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4493912DD94
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 22:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715294890; cv=none; b=BZaWKi54/O6WzSMcdLmzW7Ci2eJmesc7V7M/k12+mOCzTJoC7WPD7C6r8FGu5O1UQULVBHOTdYgAVtkjkkU0eBiGVMIWEFRladCT04hL0q4cNB4QFw/95yHFePs85n2W/eJiNiDnHfKrKgOjQ7jCDw1KGne4U0sbb678WYMHuHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715294890; c=relaxed/simple;
-	bh=3pQ2pM0pNtObEYnZAZ2vpgXGO/JvkW+6q5AWn6pdmPU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GHrxTPm30p0Bg0LtyHnSXLLWxrzP5hsU1wTNzfsohQ7+kGG2BNjWOjommraiBs/orF1eCQhDXANkV+9R0UZfjVmlCIiJgkZlXeiArD1Ye0GUAIOTBwQnHM85DslOC4DhWUca6YEFQeEmWib9z1POIAtt4KaCd9rpfCIKtM1ylsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AQ+rQdz7; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41dc9c83e57so13885055e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 15:48:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715294886; x=1715899686; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YIWDSYU6OuwVNwMdVt3NyqDL4ZMH/MF1rCPe+F0j3bE=;
-        b=AQ+rQdz7blSFCviCN7OMSRrL/kuEMFX8gKxUdd1G0Wo4RwuH2950mOhgddCaClrvKO
-         2zx6dggk+zGsqZz357yd9cqtCfuk5WAZV8vdrvim5dv0TUw6u5CnLPS/R1tA5eLE5sEP
-         Fj4TYbUb+nNX2ntkcLrhhjW/LHH+c+eC6vAD08ZOMUKK5wtM5K2XXAQa0dgBnqF8FInl
-         L/FPHtANzfU1NvjNwGowsgby5eHPmd51Gy/kVklAci4Mws24esDQh5DtUJ3wse3/bFXw
-         DhvfJ5S3pwofuEWoPKSIUdGrkruEMqGs/2hSxg6hQsLgoYlQRAWCJ8nh51Ymavg9YYEh
-         Fi2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715294886; x=1715899686;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YIWDSYU6OuwVNwMdVt3NyqDL4ZMH/MF1rCPe+F0j3bE=;
-        b=bbFCyGE4R65y6/UNpN7yse8Qc9HL/Ad60ckCBuLorz81IHK/wuWdzAM+0o4n65HvlT
-         qmMMcMgxabf0R7BfFfBhOjM6s2TkGg7FDiN54YhHBQtaF3OvOYpDfK7h50AH0Fb1EL/i
-         dbFJNAfHeZija8t4NJ+SN8X41xDH0WrfiyjROygogBEpOaQiFfKNN1ooGn2DFzs9K/q8
-         5OIg5Wy4q9Wl+movh71S0QJxyZUcWXitzr7O6UaiTa0yYenmL3XN+CiD8BiosFcCX2Ty
-         a64ksZx8PoFkTVWTuytPpm6DB7G0Q6SQXdl/Mmmw/sWpXtM6Tn9gzeMhVokYwKRx03ts
-         Q8/g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4Jr2cmUoPQIXen0yZYqIUm1Ndy8JZ2Fsfk4v6g3xvM8Op+pMT+cfsoFn5uh8k1vk+BPThhf3eR332YPl4vIJk8Ul7Fzm9FrHrY1d/
-X-Gm-Message-State: AOJu0Yx2I6SgEAWZfevVaInMQAdItpMLZu1RDbWgor9lm1PgdPu7EywA
-	tNgoVINeNfXgSqgDazIT6FMn/PP2D0OJ990YlviaRnZ7HZl8siWrooK4/+sLjZJZUhl/WviZs6X
-	08K2fmlGj70QVsdjGJWX+jT98mAPyR999KOk5
-X-Google-Smtp-Source: AGHT+IGJ/kKXUorUaZZLbLqtiS22JS9DgQC8DqDR6SQS2KcbUYgiLFSj2QMhwsrOQuNMZTIT+bZq0i18Q89RY9Bdtlc=
-X-Received: by 2002:a5d:5f4e:0:b0:350:4da3:db43 with SMTP id
- ffacd0b85a97d-3504da3dde7mr436361f8f.35.1715294886227; Thu, 09 May 2024
- 15:48:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0EA770E0;
+	Thu,  9 May 2024 22:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715294872; cv=fail; b=r6v0DQsV210EKYDoDqge+nC5VQ+mc+l7wtPLY4ULUsFT4J9m7KzX0xG2sxNp43M9VnqXHOiF9xwIH405HQCH/maIFy3Nutnuxc6DbW47P+WnRyKLXIVGPkMRk/lm/ytX79hNCIYV2sSIwpAizLSYNfesyoFaFgSrSNRZDdOQZBU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715294872; c=relaxed/simple;
+	bh=zpyqxGlmASClQmwzZHF22mZP234o2RLd+elfyhD2Tvk=;
+	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pJPXorEWYNgnB0z0shR5xLMBE6JR6L603Mrj1p6TvVYIhNRUsaUi4N4Mt+QTe2mylrV6orplUrSNlrbNW5BeMObJJWUehRESRi9oElN2nGr13s4hOghk7AfHfhzE1OybN/EuXWcFoUaeUeFPksgCGmvZJZJJjH9KCC7EO0Yxkss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cI2mAntJ; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715294871; x=1746830871;
+  h=message-id:date:subject:from:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zpyqxGlmASClQmwzZHF22mZP234o2RLd+elfyhD2Tvk=;
+  b=cI2mAntJumnT7JhikiFlD+54uV7MadW3AQCbqdxXn487prHH4waXH5Zd
+   7BY3Jl8NtqeUYrS6CoILdMLou6jq1vc2Om/v9X5DwsqyRs0R3ljdiJjy5
+   Y6LuoKJ0XRIamtCwC7r6EbQCLz7wkToI3JIDb4cT18CJc7C3P+zvyjn+I
+   NILm2rq1AdEzTFqwzPL2gx0+Sm0cP4i4/ulNVoMmc1lByB2cvhwy+N3X1
+   9W8vZx4C71l6KEH/i1lfoL4jD1Ve9HCwreRvtKia5Y9aS050SEmjyZ/A4
+   /fQvElXxlhZRvkzVxfYtq4xPsmBaQeKkBJm95P+r4oNiUYZ7K0Gow8Zpg
+   Q==;
+X-CSE-ConnectionGUID: yVp9woUSRMqEKc8aIszMaQ==
+X-CSE-MsgGUID: 5TLl4EaqRfmLy5z025CELQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11417950"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="11417950"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 15:47:50 -0700
+X-CSE-ConnectionGUID: sJcKuDyvStGm58ZD97agVg==
+X-CSE-MsgGUID: 0w5akJCgRP+ohDx/kJdzCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="34071332"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 May 2024 15:47:49 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 9 May 2024 15:47:49 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 9 May 2024 15:47:49 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.100)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 15:47:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RtgRk96Rt1THCE/j4Mmx6AoZY1LtDP39vKbaWUnD70zW+lFXDNeX5ECw6i6HC3JRrSlNHojvq6u3hzA6+0LwGED6Mgvs6tz5cojvkFDyPaiV3b+3luQQMwPaqohT2kP/784OPPItfmcxhZaIvOUsEpvKkEqrcAKRhvkfhRYgXtx2k9jXFgN54ppjFTmLNvIW9g2g9VWdOfH6lyUZ0MkP7DC+oglmqlVya1pe88gNDeXnV1u2MblfFld+ABApFNv2up9/NvX822V7sfFoho3P5rvxnUTQ231YcD/KtY97ztVFb4rMNlI0zjS2BSZJxRXcoFIrnCe6EHVNyUZ14UE+fA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VHa8BF4s2pXzRaD52utjRbOX4TaskYd/0DJydczEhJI=;
+ b=Rhcq4ajUb4E5/w26j5W01F0J7gqRNkDrL5rysH8NBqIabm3Nq3Nhb9bhjehZjKoiuDFFCUO7YBdLmcDFv4zsb9ScDGtIKWRZG9SQD1E3GVoOdBaoPelAN0//cDfL2KtsdsMUVfjbgNn0TjMW9ooUcclNwEqNbhSCWL1enl9Et7G4vQdLG6wn3vAwoq2F7vxtICevu+B3x1kbSJE+LzM0Gdvcx8vYmqe++4sRJJw4xilEa/4sDxcPmL4aDVnAI/qSoTbl6g9iGYK2M95DMvqqffq2mdJAD88kVgttL6VPm2TYiz5i8ORVpq6ezStZq4d2CK/j/Fdzr9ljBqxgu5TvRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by MW3PR11MB4667.namprd11.prod.outlook.com (2603:10b6:303:53::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Thu, 9 May
+ 2024 22:47:46 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7544.048; Thu, 9 May 2024
+ 22:47:46 +0000
+Message-ID: <473ccee3-81dd-4abf-829c-a0ce71c2ff7e@intel.com>
+Date: Fri, 10 May 2024 10:47:37 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 037/130] KVM: TDX: Make KVM_CAP_MAX_VCPUS backend
+ specific
+From: "Huang, Kai" <kai.huang@intel.com>
+To: Sean Christopherson <seanjc@google.com>, <isaku.yamahata@intel.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<isaku.yamahata@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>,
+	<erdemaktas@google.com>, Sagi Shahar <sagis@google.com>, <chen.bo@intel.com>,
+	<hang.yuan@intel.com>, <tina.zhang@intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <9bd868a287599eb2a854f6983f13b4500f47d2ae.1708933498.git.isaku.yamahata@intel.com>
+ <Zjz7bRcIpe8nL0Gs@google.com>
+ <5ba2b661-0db5-4b49-9489-4d3e72adf7d2@intel.com>
+Content-Language: en-US
+In-Reply-To: <5ba2b661-0db5-4b49-9489-4d3e72adf7d2@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0135.namprd03.prod.outlook.com
+ (2603:10b6:303:8c::20) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509203907.504891-1-axelrasmussen@google.com>
- <20240509203907.504891-2-axelrasmussen@google.com> <d04a838b-848d-405d-9317-40282cd58c36@nvidia.com>
-In-Reply-To: <d04a838b-848d-405d-9317-40282cd58c36@nvidia.com>
-From: Axel Rasmussen <axelrasmussen@google.com>
-Date: Thu, 9 May 2024 15:47:29 -0700
-Message-ID: <CAJHvVciOwHNFBfhQhaQLwaby0VojNNw6Mx1kJ38dgc4cQgEksA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] arch/fault: don't print logs for simulated poison errors
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	David Hildenbrand <david@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>, 
-	Ingo Molnar <mingo@redhat.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Liu Shixin <liushixin2@huawei.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Muchun Song <muchun.song@linux.dev>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Nicholas Piggin <npiggin@gmail.com>, Oscar Salvador <osalvador@suse.de>, Peter Xu <peterx@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|MW3PR11MB4667:EE_
+X-MS-Office365-Filtering-Correlation-Id: f34bacd1-135c-4baf-f2f7-08dc707a0ba4
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?bEU2Tnh3S3JITHpoZHBMa1o4dDAzVVMzbGRKRmRsRGZIcnpUYXF5dVdYazlL?=
+ =?utf-8?B?ZUhIaDkvZkgzeTR1dGJ0OTJPOVQxR2l2VDB0L1RpYWdmU2Q0M3VuRGhoUVJH?=
+ =?utf-8?B?U1U3VmVpZ1NWV2dTdW81Q2JmRzU0bnZ3OTZXSXozZWViYkVOTmNCZWxGUlhO?=
+ =?utf-8?B?bGVZTnRlRkcwOWdGNEZpVkVianRoUFZmVlFlbVhhSDh4alI3cngzM081akVX?=
+ =?utf-8?B?ZEozTWZyUVROb3dTWE9wNFZaQkdKWVJiemIyanlzZDlwSkkvQTliZCs4b2lI?=
+ =?utf-8?B?blBBWndDY3ZIeFRsekU3eWY0bmY3N1ltUzY3UzRuLzhMMldOUjdrbnNMKzJJ?=
+ =?utf-8?B?MkVuRUFIMUFLYzdBWXhxYXNBSGk0SzYxUk1QcGo3UlRzcGhJZFVvUlFnRjhH?=
+ =?utf-8?B?ODJQTi93SkdGb0pVYkZ6WFJ6RFpjWXp2WXdlRVo3QkNrQURVdlpoY0VkYkJV?=
+ =?utf-8?B?OWRXVFVkTlNvWmlHTlhmQ0RIam4vV0NpZ0ZjM3hyTEFhSVNqS2JubmFITkpL?=
+ =?utf-8?B?TjJTV1lIbG0zTUo0MkxSNEJueTR5QjM2RTQ3NzRvVzBOUmU5aXVzeCtMTGsz?=
+ =?utf-8?B?Q1VCcm1hQTFtWWpNR3hMUUJyUFBaMzdranNIRGFJL3BoY2FKTnNBdVdka1dU?=
+ =?utf-8?B?bjg2NWV2SkhvQXRXSmRWQTJ1YXFzV1diVlBGR2ZrYjhXdUFzTDVLWUUweU8y?=
+ =?utf-8?B?OWJzejBkS3orQjFlWEVKd1V6K1N5UDVuZjdJN0J3STQ4UkUyQ2oxTHk1RURO?=
+ =?utf-8?B?RERBZzJlUVZHdVJBVm0vbFFHSCtCd2pWWnU0RmlTQzE0ZVg3ODRLZWxYSHAx?=
+ =?utf-8?B?aHorM2QzaUQvVFhpMjNKQVgrbzZyb2drNHJKYzRqazRJQTlVRDkzMFB1bDZa?=
+ =?utf-8?B?azNEV204dnFLUmJFUlJnV1FhY2JubmdITUxLUTdyMFlIemZsa0NXNWlVNVBM?=
+ =?utf-8?B?SjE4S2VsMkR3LzE1RDZvK2FpZkI2dHhrWDBiQlhEWTQvSlZqRkFyYWg4M3hX?=
+ =?utf-8?B?VStYR2tiMHZGaDE1VC9mQzRaUUdnYVZZM3VSaWRzaG1qM2phNUxqWXoyOGpq?=
+ =?utf-8?B?dURvODJhZFFQS201NWU3RUZpaHBQbWlEMHl1elUxaGMxRDdmNTV2YlF1eklx?=
+ =?utf-8?B?cGdBR1RxTCtSVnhOSXRvM2pqdWlmeXhSZmVGd25rL3psZ1grNTltbkwyQkw2?=
+ =?utf-8?B?WENmRDhHODNBOGgvcVRTR3FXNXQwQndBQWk0MlNSM1lBakdLaG13RGw5UG84?=
+ =?utf-8?B?YnhIYlhjREVXT29QeWxlejRURGdyMmFNNHZrZVdkUCtPeUhHeVBDanJJdjd4?=
+ =?utf-8?B?NVFZTzVWUmZRQ1h6c1l3bGdiaTlVR0YxS1o2VTYzRUN6QUgrVmNlZzQyZjBZ?=
+ =?utf-8?B?YnFOYmJMQ1Q4V2JBSmd6eDhJRjZFZ09aYW9jU05uenRKR2ZMc1ZvVE40dG1V?=
+ =?utf-8?B?SnBNb3NoYXhJM0Rra3FnQytHNzBLM0xvVmdqNE9pYmdBTTBkejJoNGd3NHNC?=
+ =?utf-8?B?VDNQVDhWS3hXeU1KbEEzNkwyQUE0dzR0bStWTUJadll6dnhLSFZsV0pmemxt?=
+ =?utf-8?B?RXFpZzlFLzkrTXg3NDBaa3dWSUw0QVFxam5PcS9QeGhYdEN1SjVDSmp0MUdz?=
+ =?utf-8?B?bk1mdXNOZzN4eUhvcjNqUzFoVUNBeDFYbGRpNEFhN2tHVFMvQUc0U2R0NWpT?=
+ =?utf-8?B?VVpQbmM3MVpzc1BCaUt5OXlsblorMnkyMmNBWEhubTdYQ3ZPMXdLcmNRPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RG1veXBHc0lJVCtIQVJDdDlSOTJqdlR5ZGlEdnRweTI4RWdyamRvQ3FIN01Y?=
+ =?utf-8?B?L1JvdytyNEhkV0lQNEFqdFFlMzA1TGVEeVdaeFM5ZHRDMnU4UjYvSUtPVzBP?=
+ =?utf-8?B?eHZCUm1QWmN5SzR3TkpHWkRZT3VQOVUwWFM3WVhRaldBaHFIbzRPYlNlWW1H?=
+ =?utf-8?B?MVdwaTlwSWEvblB5Vm9rUWZGM1JZOU9XQWxEdU9scWRWNXVtaUFxU3FJTFVp?=
+ =?utf-8?B?Z1NzdDFoM1ZML05lUE91NDY1c0RPRWhOWTFnYW10aDA0VlI3S0VJc21kUk1X?=
+ =?utf-8?B?Rmp5ZlA0TDI4VlZteG9mcjF4NC8zMk5HdDUzS2thUlFhWjJGSHlSb1lSaXRQ?=
+ =?utf-8?B?Q0wzUy9Sck1nUFAzTEcvYUtDZlJkdnF1dzBBMFhxanFTd3pVVU1jSnhETzVJ?=
+ =?utf-8?B?YWtaMTNxS1FzSC9ZRmNBQ25scTFGbUxLNXJSeC9LSEhpY2tReWQwcHZGVE9B?=
+ =?utf-8?B?Sm5UV3Azcm4zTHpnSVQvMmRZZnR0cUdDU2Q0ZjZBczYvNUFjOEcvUEtJY1Zq?=
+ =?utf-8?B?REZ0ejhvTml1ZjFlbGNUZEY3NFpKblBuRnU5RWNnZk5SbzlUeWN4blZXTWla?=
+ =?utf-8?B?SURTVUIrSjZqNkVoZFM4eUZ1VTJvNGlNQkNxUFJ2RkxtOTBzVmljTVpRbjRK?=
+ =?utf-8?B?bHJ6Mk9EU2dWYmFmR1huYk81MENaNjhBbEhmNDgzSmZDWDEvMU04VWNqWjVN?=
+ =?utf-8?B?a1dSMTlFVE0reTYzVG9UKzBkSG1ocjNMUUxIelJKY0xDcVB2SzFDc3ZBQ1ht?=
+ =?utf-8?B?eUp4c25mYkZGZVNTN09aUytrWElUOVNKSmRGVkRwbFJkd2hXYlpNLzkxbzMw?=
+ =?utf-8?B?MU15czN0TG9FUXd6dWdGOXNsSTBFV3dhZDRnd28xc3RyUm9yOFpkSzhKM1hS?=
+ =?utf-8?B?SnNtd1p1M2JUS3N5ZUhmZm1jeGI0WVR6V3RhdFRsVTdiaHNkb3grcjZOSm5r?=
+ =?utf-8?B?dGlwazdnTjZxdDFaNlVzTkxSektzcDJOeElPMXBZeDAzVTdBdlhlOWxKRExS?=
+ =?utf-8?B?WllXRi9haEJrZGZMRTFheUpoRHp5eDl5MDZud3J0RjdGVVNuSVY4N1VyUVVi?=
+ =?utf-8?B?QlQyTUUxYjVCUWlQTzQ3N2cxYkJGUWhiZ3BaSVdkNUcxN1ZsaWVaaE5EdmlG?=
+ =?utf-8?B?TER5TWxaNnFoUXdKTC9RMWNsVlhsVEV2aGpmcWR4Y2hZTTM1aGJmNkltbHlm?=
+ =?utf-8?B?WnR1dXZWQml0VS9LWXRpYzJUdHJHSnJlR013K01IQnFTTWhNaHJyYWpvOEEy?=
+ =?utf-8?B?eEN6QlkxMm43ZWs2cWJCSlFGZndJUFZJTWtzTzI5ZVcyZUt3NTlkbXpHR09P?=
+ =?utf-8?B?bmc1SHR6SkRQRTc0YUk5Ullmd2FySXBBczQ2YkNkWkVJWTIvMUFhWWF0UkVJ?=
+ =?utf-8?B?NFJ5R2tVcHVuZ09ESVl4aXVoZ29vblRGWUh5Y0RMRE1jTC96V0ZGbFU1SmRw?=
+ =?utf-8?B?TzdUcGV3ZTkyOXNINjlrT2JXU29Ob2JvcExLZXNockxuOXlDT1Y5VlpVMk1O?=
+ =?utf-8?B?N3Z1VjRCaTE2UVF3cmFsMVZJTFJTcWdMTkxqQjA2MTZSSms5QytVbmFPTFFq?=
+ =?utf-8?B?R3JlVWpTS3NXeC85eEl1bklFeVZ3Rkpqd0JvcmFUanhnTTg1M2xMY2I3VEtL?=
+ =?utf-8?B?bDlDRnZVMG12N0pwaWp0b3VpZEMrcGNrN09YalV5b0NxeTBMbkgwWnBmWWp3?=
+ =?utf-8?B?TXdNWXEvMUZhRFROdmc2aFNMN25WQWw1NXlVZS9DMFZjbXVETHp6bHBVWUtG?=
+ =?utf-8?B?OGdFUEU4ckc5bU5XM01uUGk3ZzR1ZVg0N2JOZFNId3FOY2FmamdpLzdOWnEz?=
+ =?utf-8?B?c0paMzh4UGY4Mk85cGpxTFpTNmtYY1RnaDBpZjE4WE12azVCQzBuQlZzcm5N?=
+ =?utf-8?B?Tlp0MTNmT1V5V1N2NjlvQUFTQkVRN0QyQzVocW5sTWVUbG1WVS9MRzFQUzBY?=
+ =?utf-8?B?VmtJb3cxaGRUdU5ObklXcWFhUHdTN1dPZThzV0JaOG04Q0d1WUZSeWNIZ203?=
+ =?utf-8?B?Y0Y1TnMybXRTenB1SFVRcjFoY29PQk9YTnRHd3VwcVV5VGJqVktMK3lScVBQ?=
+ =?utf-8?B?VVF0OWJkUnN0WFh0VlJnMmQ5UktZYmJNZDRkME9XYWFYYnRUWGh1QnJjTmRa?=
+ =?utf-8?Q?5e4Ad4MJBExPmNhNA3aDj5Szi?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f34bacd1-135c-4baf-f2f7-08dc707a0ba4
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 22:47:46.5256
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HhZN46WckB25CRQLIWIeVpgqQGqMhMq+YoEaVTCCsuw/0C+W2Q+LM+IcXeF38uV8Y8Vqb1rkAmxpZ9H/qRUAkw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4667
+X-OriginatorOrg: intel.com
 
-On Thu, May 9, 2024 at 2:30=E2=80=AFPM John Hubbard <jhubbard@nvidia.com> w=
-rote:
->
-> On 5/9/24 1:39 PM, Axel Rasmussen wrote:
-> > For real MCEs, various architectures print log messages when poisoned
-> > memory is accessed (which results in a SIGBUS). These messages can be
-> > important for users to understand the issue.
-> >
-> > On the other hand, we have the userfaultfd UFFDIO_POISON operation,
-> > which can "simulate" memory poisoning. That particular process will get
-> > SIGBUS on access to the memory, but this effect is tied to an MM, rathe=
-r
-> > than being global like a real poison event. So, we don't want to log
-> > about this case to the global kernel log; instead, let the process
-> > itself log or whatever else it wants to do. This avoids spamming the
-> > kernel log, and avoids e.g. drowning out real events with simulated
-> > ones.
-> >
-> > To identify this situation, add a new VM_FAULT_HWPOISON_SIM flag. This
-> > is expected to be set *in addition to* one of the existing
-> > VM_FAULT_HWPOISON or VM_FAULT_HWPOISON_LARGE flags (which are mutually
-> > exclusive).
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >   arch/parisc/mm/fault.c   | 7 +++++--
-> >   arch/powerpc/mm/fault.c  | 6 ++++--
-> >   arch/x86/mm/fault.c      | 6 ++++--
-> >   include/linux/mm_types.h | 5 +++++
-> >   mm/hugetlb.c             | 3 ++-
-> >   mm/memory.c              | 2 +-
-> >   6 files changed, 21 insertions(+), 8 deletions(-)
-> >
->
-> This completely fixes the uffd-unit-test behavior, I just did a quick
-> test run to be sure as well.
->
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 
-Thanks John!
+> 
+> Implement the callback for TDX guest to check whether the maximum vCPUs
+> passed from usrspace can be supported by TDX, and if it can, override
+> Accordingly, in the KVM_CHECK_EXTENSION IOCTL(), change to return the
+> 'struct kvm::max_vcpus' for a given VM for the KVM_CAP_MAX_VCPUS.
 
-And, no problem about the other patch, they aren't functionally
-dependent, I just hoped to save Andrew dealing with the small merge
-conflict. :) I'll base a v2 on mm-unstable directly and that should
-clear everything up.
+Sorry some error during copy/paste.  The above should be:
 
->
-> thanks,
-> --
-> John Hubbard
-> NVIDIA
->
->
-> > diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
-> > index c39de84e98b0..e5370bcadf27 100644
-> > --- a/arch/parisc/mm/fault.c
-> > +++ b/arch/parisc/mm/fault.c
-> > @@ -400,9 +400,12 @@ void do_page_fault(struct pt_regs *regs, unsigned =
-long code,
-> >   #ifdef CONFIG_MEMORY_FAILURE
-> >               if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) =
-{
-> >                       unsigned int lsb =3D 0;
-> > -                     printk(KERN_ERR
-> > +
-> > +                     if (!(fault & VM_FAULT_HWPOISON_SIM)) {
-> > +                             pr_err(
-> >       "MCE: Killing %s:%d due to hardware memory corruption fault at %0=
-8lx\n",
-> > -                     tsk->comm, tsk->pid, address);
-> > +                             tsk->comm, tsk->pid, address);
-> > +                     }
-> >                       /*
-> >                        * Either small page or large page may be poisone=
-d.
-> >                        * In other words, VM_FAULT_HWPOISON_LARGE and
-> > diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> > index 53335ae21a40..ac5e8a3c7fba 100644
-> > --- a/arch/powerpc/mm/fault.c
-> > +++ b/arch/powerpc/mm/fault.c
-> > @@ -140,8 +140,10 @@ static int do_sigbus(struct pt_regs *regs, unsigne=
-d long address,
-> >       if (fault & (VM_FAULT_HWPOISON|VM_FAULT_HWPOISON_LARGE)) {
-> >               unsigned int lsb =3D 0; /* shutup gcc */
-> >
-> > -             pr_err("MCE: Killing %s:%d due to hardware memory corrupt=
-ion fault at %lx\n",
-> > -                     current->comm, current->pid, address);
-> > +             if (!(fault & VM_FAULT_HWPOISON_SIM)) {
-> > +                     pr_err("MCE: Killing %s:%d due to hardware memory=
- corruption fault at %lx\n",
-> > +                             current->comm, current->pid, address);
-> > +             }
-> >
-> >               if (fault & VM_FAULT_HWPOISON_LARGE)
-> >                       lsb =3D hstate_index_to_shift(VM_FAULT_GET_HINDEX=
-(fault));
-> > diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > index e4f3c7721f45..16d077a3ad14 100644
-> > --- a/arch/x86/mm/fault.c
-> > +++ b/arch/x86/mm/fault.c
-> > @@ -928,9 +928,11 @@ do_sigbus(struct pt_regs *regs, unsigned long erro=
-r_code, unsigned long address,
-> >               struct task_struct *tsk =3D current;
-> >               unsigned lsb =3D 0;
-> >
-> > -             pr_err_ratelimited(
-> > +             if (!(fault & VM_FAULT_HWPOISON_SIM)) {
-> > +                     pr_err_ratelimited(
-> >       "MCE: Killing %s:%d due to hardware memory corruption fault at %l=
-x\n",
-> > -                     tsk->comm, tsk->pid, address);
-> > +                             tsk->comm, tsk->pid, address);
-> > +             }
-> >               if (fault & VM_FAULT_HWPOISON_LARGE)
-> >                       lsb =3D hstate_index_to_shift(VM_FAULT_GET_HINDEX=
-(fault));
-> >               if (fault & VM_FAULT_HWPOISON)
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 5240bd7bca33..7f8fc3efc5b2 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -1226,6 +1226,9 @@ typedef __bitwise unsigned int vm_fault_t;
-> >    * @VM_FAULT_HWPOISON_LARGE:        Hit poisoned large page. Index en=
-coded
-> >    *                          in upper bits
-> >    * @VM_FAULT_SIGSEGV:               segmentation fault
-> > + * @VM_FAULT_HWPOISON_SIM    Hit poisoned, PTE marker; this indicates =
-a
-> > + *                           simulated poison (e.g. via usefaultfd's
+Implement the callback for TDX guest to check whether the maximum vCPUs
+passed from usrspace can be supported by TDX, and if it can, override
+the 'struct kvm::max_vcpus'.  Leave VMX guests and all AMD guests
+unsupported to avoid any side-effect for those VMs.
 
-I'll also fix this small typo in a v2. :P
+Accordingly, in the KVM_CHECK_EXTENSION IOCTL(), change to return the
+'struct kvm::max_vcpus' for a given VM for the KVM_CAP_MAX_VCPUS.
 
-> > + *                              UFFDIO_POISON), not a "real" hwerror.
-> >    * @VM_FAULT_NOPAGE:                ->fault installed the pte, not re=
-turn page
-> >    * @VM_FAULT_LOCKED:                ->fault locked the returned page
-> >    * @VM_FAULT_RETRY:         ->fault blocked, must retry
-> > @@ -1245,6 +1248,7 @@ enum vm_fault_reason {
-> >       VM_FAULT_HWPOISON       =3D (__force vm_fault_t)0x000010,
-> >       VM_FAULT_HWPOISON_LARGE =3D (__force vm_fault_t)0x000020,
-> >       VM_FAULT_SIGSEGV        =3D (__force vm_fault_t)0x000040,
-> > +     VM_FAULT_HWPOISON_SIM   =3D (__force vm_fault_t)0x000080,
-> >       VM_FAULT_NOPAGE         =3D (__force vm_fault_t)0x000100,
-> >       VM_FAULT_LOCKED         =3D (__force vm_fault_t)0x000200,
-> >       VM_FAULT_RETRY          =3D (__force vm_fault_t)0x000400,
-> > @@ -1270,6 +1274,7 @@ enum vm_fault_reason {
-> >       { VM_FAULT_HWPOISON,            "HWPOISON" },   \
-> >       { VM_FAULT_HWPOISON_LARGE,      "HWPOISON_LARGE" },     \
-> >       { VM_FAULT_SIGSEGV,             "SIGSEGV" },    \
-> > +     { VM_FAULT_HWPOISON_SIM,        "HWPOISON_SIM" },       \
-> >       { VM_FAULT_NOPAGE,              "NOPAGE" },     \
-> >       { VM_FAULT_LOCKED,              "LOCKED" },     \
-> >       { VM_FAULT_RETRY,               "RETRY" },      \
-> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> > index 65456230cc71..2b4e0173e806 100644
-> > --- a/mm/hugetlb.c
-> > +++ b/mm/hugetlb.c
-> > @@ -6485,7 +6485,8 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, st=
-ruct vm_area_struct *vma,
-> >                               pte_marker_get(pte_to_swp_entry(entry));
-> >
-> >                       if (marker & PTE_MARKER_POISONED) {
-> > -                             ret =3D VM_FAULT_HWPOISON_LARGE |
-> > +                             ret =3D VM_FAULT_HWPOISON_SIM |
-> > +                                   VM_FAULT_HWPOISON_LARGE |
-> >                                     VM_FAULT_SET_HINDEX(hstate_index(h)=
-);
-> >                               goto out_mutex;
-> >                       }
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index d2155ced45f8..29a833b996ae 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -3910,7 +3910,7 @@ static vm_fault_t handle_pte_marker(struct vm_fau=
-lt *vmf)
-> >
-> >       /* Higher priority than uffd-wp when data corrupted */
-> >       if (marker & PTE_MARKER_POISONED)
-> > -             return VM_FAULT_HWPOISON;
-> > +             return VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_SIM;
-> >
-> >       if (pte_marker_entry_uffd_wp(entry))
-> >               return pte_marker_handle_uffd_wp(vmf);
->
->
+
 
