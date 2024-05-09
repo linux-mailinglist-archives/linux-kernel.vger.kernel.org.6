@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-174115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302AF8C0A56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:08:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D098C0A57
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5D3282653
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:08:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 651D21C20F66
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50633147C9F;
-	Thu,  9 May 2024 04:08:01 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA791482EA;
+	Thu,  9 May 2024 04:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="imqr+ZwP"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C06AD26D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233B7D26D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 04:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715227680; cv=none; b=f0yj8d7kohcHh83D08xq7QTA82Fkdl6kjNbU3Nxh4DOT8E3L9Mk6vesOkxgG3RkvGpBjYQdmbVwbLjl6+8izaG4+psA6WIqruIQPJo6j8Gs1YIk3SEYDD7FoCweTvrSLG1ndkGCYlV/nrh6kUN7VoIlnu/3qgeMsCXXCOJF3Ygc=
+	t=1715227785; cv=none; b=EsaxZ/4gRBpcxMUhr6ghioB5Hwe4Ceuk0OERz4drHdb+DK8jgLKu+ZusbUK+I/RgtAB+4wTzWzrnl7x252gYc59Sve9fSQg6VKiaOXtSxEeUDdqqgPASSpKlei+9aHbRHk6cy6fiP1GvhnGTnvm4fdUDNCUdzkXvzvmauCSckcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715227680; c=relaxed/simple;
-	bh=sK7ZqVZ0WmnINWVkohi1gYJ4hOg8iPrUh76XEN7bZOA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=f/OeVoYDSq88MuWI+++Bz9HknoRHvU00AaycDk00R6Sc5t5YgX5YTBSWZv+vT2WsAvU3Xu5PNGoo8FFRou/JmtPpljQZQecMza0Yzqden1Xg3OFXhr3TAZwgIbUBiNXuhJXtn13jUlUoat8kTzMYV1FU48VhYir+317dkEAJ1cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e182885d98so42355839f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 21:07:59 -0700 (PDT)
+	s=arc-20240116; t=1715227785; c=relaxed/simple;
+	bh=23vCA1XKs+nRdjU1pvcA/EBdpT4zwEbG7+QpaozbrTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdwefKwNMcxnMJk/8fw3X0uCeIP8OWWEHvCtSZEYEduJhHAsahNYzuvS6I3rIhstRgkWTsNBden3Z/pj+m/ZKZb0tOy+HuXM7JyT9bT5ck3qGIVw2Nbcj5mIh/ccxsvf54RqeoggEvX3o5IHZQ5Ye/WcpRuZHubaFtlf/qLzQGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=imqr+ZwP; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b2735f217aso79813eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 21:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1715227783; x=1715832583; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9sruuI+Av6fzoUWEPO1CK46vHbYhEGu93ccm0253NU=;
+        b=imqr+ZwPGLv/6rXFy6q1dYONo6UN0plgd+k6rhDs9cWFQn/9EHDh0YpCu79ABSx7Rp
+         8wDsol/x35erWf0PQLvL5i3CyNHlsOcjZ19kucCBXw7KeT2YR+DFzfUzvkrYhBCUsuVS
+         TRGcTgi4ZItun3EoiZBApAwV4lraVKjKTfBJIVXQJGXg4lih7nsITigaNNcpTqS0n3LY
+         fRWzPETqKApmlKKPVM0Z14sKTA769bPez5qm7cfCtJEkdtW8m3OBAsuI7kg3bQgjVjwg
+         rO00ZNemshBE2bkyoUicxXXLCXmA5/Y8LXQvU1lJqvt50swSmDkmpvfgHQubnvUQQDPf
+         wR5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715227679; x=1715832479;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qV8m368EfwLWYouVrPnNoYPwk1xOD88mW2b6+kNH4xA=;
-        b=IVUyjMzmPozQiG4TKserHa0fYh+y9IKwlFa4AOCzlzEwstpafIk6D/un9t81xQvnEy
-         21p1Sb6sy3HwoqVnnjtDN5ew+5We0gdeCrFZQIcyeUX2WRgVnRwLftLlPi1Z701rTnoD
-         CkqYYAlTjDuk2zwNDEed+B7c+itpSAxS9QWzgofxf5+y01lmr3I8+Bec725+YV5jji4t
-         q3dJBIZ2WW5vwr59WDakPkpZT7HyooqIpom1bHEMUDrtvYqCqPDhs7bsc0KZtlXScbDK
-         nnHxnwYzZ/m6kX9giGiR4Hib34qhwdgmfgbD4OCORqYnRa+wz2laVrsvPWlFFf4Htgyv
-         05Lw==
-X-Gm-Message-State: AOJu0YxmjEhUxIt47mX6bZRYdMz4pkDitsI5qReFIwhAOrQnkOguJHNi
-	KGzmq0LJmqPKKFU/XdXsdXc3N/yAspvPFp9J3K1/s9j0/o+4+FpqzF2PdNCWHpFTl/qZl52wuT5
-	jU2H3hyaoOwuO5MCH4208VTIQzEFvRAmnOgvA3x6d62UKhRPyUVXF+9w=
-X-Google-Smtp-Source: AGHT+IHzJMppdgO2HiPNkiF8NHxJxpRHMy4W04uU9TcaTRVxr/NqkZYzdVPhQV06EvcWhS4so5J4h80zWtflkMc2uWRAfJ/dmkQM
+        d=1e100.net; s=20230601; t=1715227783; x=1715832583;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y9sruuI+Av6fzoUWEPO1CK46vHbYhEGu93ccm0253NU=;
+        b=OyN5VsZLoMOpQOSEfJHmtUxRoqdbI25Xx6gXJhLULv8rmjxPGNJ7v/217AvK57aTzQ
+         /9xR8RR9CX1lwhqGJGUFsJY6fCa3ZeEJUmrWU4bLwqSdrCI6OL+OADHXT2stDH0GhdyE
+         nn+YJc3J0PnfmBxbN4f/9PFiOHmq/y3pnqApdi6rYfJWWXGlNns7IxnU4gEDz+mIQ97a
+         eQC7UAelBYrYG6vesMVA6iVSbr32sClTlKDVWRZVNLfjv4xL6Wbi/PaZOvxKpB/ZanWT
+         raUX5ccBe76m9EsXvDgg0ELf0umPN0ZWNnKIfn+E2AKZ0Xc1eCxUoAnNx0jOIbwhrY98
+         efcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqT0gSlNG/CHueNiRHOJDr3Erm3oyJxl7PFIXhDmdEaFL0Og4ZpmWo9Zahbd+A+VrGKC0lt7504DQbFz0tnphcICAQcf1dSHyVfQ1d
+X-Gm-Message-State: AOJu0Yx7CSbMFvlQiTMefO1D6Z0U8UzNqjmrhiBa7ah0L4TxN0fyEDa7
+	tB3iV0E0h0DDhI1AHw8M2EjUJgenfx68l7vVjj/uMzmiaMfWjirN94oRmHVQjtE=
+X-Google-Smtp-Source: AGHT+IHnfdRkD37024/1NkpgcVLNuDSAm5SAjj46xEeBcOG4M0xTGOaXer2jGvjhTifAxtxNdttDAg==
+X-Received: by 2002:a05:6358:c90:b0:18d:9d6a:e484 with SMTP id e5c5f4694b2df-192d290f02emr675633955d.6.1715227783188;
+        Wed, 08 May 2024 21:09:43 -0700 (PDT)
+Received: from sunil-laptop ([106.51.188.31])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340b767b36sm343814a12.32.2024.05.08.21.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 21:09:42 -0700 (PDT)
+Date: Thu, 9 May 2024 09:39:33 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	linux-riscv@lists.infradead.org, bhelgaas@google.com,
+	james.morse@arm.com, jhugo@codeaurora.org, jeremy.linton@arm.com,
+	john.garry@huawei.com, Jonathan.Cameron@huawei.com,
+	pierre.gondois@arm.com, sudeep.holla@arm.com, tiantao6@huawei.com
+Subject: Re: [PATCH v4 2/3] riscv: cacheinfo: initialize cacheinfo's level
+ and type from ACPI PPTT
+Message-ID: <ZjxMfQOqc8ML8nrD@sunil-laptop>
+References: <20240418034330.84721-1-cuiyunhui@bytedance.com>
+ <20240418034330.84721-2-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:891b:b0:488:59cc:eb4f with SMTP id
- 8926c6da1cb9f-488fd823b53mr424998173.1.1715227678846; Wed, 08 May 2024
- 21:07:58 -0700 (PDT)
-Date: Wed, 08 May 2024 21:07:58 -0700
-In-Reply-To: <00000000000003b4af060de27f6b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000081c37d0617fd9008@google.com>
-Subject: Re: [syzbot] [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-From: syzbot <syzbot+d7b4dc6cd50410152534@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240418034330.84721-2-cuiyunhui@bytedance.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, Apr 18, 2024 at 11:43:29AM +0800, Yunhui Cui wrote:
+> Before cacheinfo can be built correctly, we need to initialize level
+> and type. Since RSIC-V currently does not have a register group that
 
-***
+NIT: Typo RISC-V
 
-Subject: [PATCH net v4] nfc: nci: Fix uninit-value in nci_rx_work
-Author: ryasuoka@redhat.com
+> describes cache-related attributes like ARM64, we cannot obtain them
+> directly, so now we obtain cache leaves from the ACPI PPTT table
+> (acpi_get_cache_info()) and set the cache type through split_levels.
+> 
+> Suggested-by: Jeremy Linton <jeremy.linton@arm.com>
+> Suggested-by: Sudeep Holla <sudeep.holla@arm.com>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>  arch/riscv/kernel/cacheinfo.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+> index 30a6878287ad..e47a1e6bd3fe 100644
+> --- a/arch/riscv/kernel/cacheinfo.c
+> +++ b/arch/riscv/kernel/cacheinfo.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/cpu.h>
+>  #include <linux/of.h>
+>  #include <asm/cacheinfo.h>
+> +#include <linux/acpi.h>
+>  
+Can this be added in the order? Like, include acpi.h prior to cpu.h?
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git main
+>  static struct riscv_cacheinfo_ops *rv_cache_ops;
+>  
+> @@ -78,6 +79,27 @@ int populate_cache_leaves(unsigned int cpu)
+>  	struct device_node *prev = NULL;
+>  	int levels = 1, level = 1;
+>  
+> +	if (!acpi_disabled) {
+> +		int ret, fw_levels, split_levels;
+> +
+> +		ret = acpi_get_cache_info(cpu, &fw_levels, &split_levels);
+> +		if (ret)
+> +			return ret;
+> +
+> +		BUG_ON((split_levels > fw_levels) ||
+> +		       (split_levels + fw_levels > this_cpu_ci->num_leaves));
+> +
+> +		for (; level <= this_cpu_ci->num_levels; level++) {
+> +			if (level <= split_levels) {
+> +				ci_leaf_init(this_leaf++, CACHE_TYPE_DATA, level);
+> +				ci_leaf_init(this_leaf++, CACHE_TYPE_INST, level);
+> +			} else {
+> +				ci_leaf_init(this_leaf++, CACHE_TYPE_UNIFIED, level);
+> +			}
+> +		}
+> +		return 0;
+> +	}
+> +
+Other than above nits, it looks good to me. Thanks for the patch!
 
-diff --git a/net/nfc/nci/core.c b/net/nfc/nci/core.c
-index b133dc55304c..0aaff30cb68f 100644
---- a/net/nfc/nci/core.c
-+++ b/net/nfc/nci/core.c
-@@ -1463,6 +1463,16 @@ int nci_core_ntf_packet(struct nci_dev *ndev, __u16 opcode,
- 				 ndev->ops->n_core_ops);
- }
- 
-+static bool nci_valid_size(struct sk_buff *skb, unsigned int header_size)
-+{
-+	if (skb->len < header_size ||
-+	    !nci_plen(skb->data) ||
-+	    skb->len < header_size + nci_plen(skb->data)) {
-+		return false;
-+	}
-+	return true;
-+}
-+
- /* ---- NCI TX Data worker thread ---- */
- 
- static void nci_tx_work(struct work_struct *work)
-@@ -1516,24 +1526,32 @@ static void nci_rx_work(struct work_struct *work)
- 		nfc_send_to_raw_sock(ndev->nfc_dev, skb,
- 				     RAW_PAYLOAD_NCI, NFC_DIRECTION_RX);
- 
--		if (!nci_plen(skb->data)) {
-+		if (!skb->len) {
- 			kfree_skb(skb);
--			kcov_remote_stop();
--			break;
-+			continue;
- 		}
- 
- 		/* Process frame */
- 		switch (nci_mt(skb->data)) {
- 		case NCI_MT_RSP_PKT:
--			nci_rsp_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
-+				nci_rsp_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		case NCI_MT_NTF_PKT:
--			nci_ntf_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_CTRL_HDR_SIZE))
-+				nci_ntf_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		case NCI_MT_DATA_PKT:
--			nci_rx_data_packet(ndev, skb);
-+			if (nci_valid_size(skb, NCI_DATA_HDR_SIZE))
-+				nci_rx_data_packet(ndev, skb);
-+			else
-+				kfree_skb(skb);
- 			break;
- 
- 		default:
-
+Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
 
