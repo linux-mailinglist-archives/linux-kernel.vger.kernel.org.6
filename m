@@ -1,213 +1,125 @@
-Return-Path: <linux-kernel+bounces-174811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86FB8C1556
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:18:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588548C1540
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C382831A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C3C1C21B5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77AC81741;
-	Thu,  9 May 2024 19:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA70F7F7C6;
+	Thu,  9 May 2024 19:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="xz1jHswN"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZBcnF8Ym"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93677F7C5;
-	Thu,  9 May 2024 19:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3227EEE7
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715282272; cv=none; b=fF/6qP1nsTVV1sP4+sGCkO28+q5uYqRZd59TwKDft4brtLnzNrugaI+IAZtwFkaBgLsOPp7q1Ac8O3H5aj2n9ubPvSBV7OziNHJNhUIWZA9gI5ebW9JjOdt+p0sx6hcYbhLubatXZ7RTPMhdTrIrH5m8O/DlXYWbMUbF5F9WmDs=
+	t=1715282162; cv=none; b=V76JRviImmltvMfiE2pRghBuBfTnBDHys5roTx65TTCmb0UE/VzE+Oh/WqPOnHqddM1jbtOqTqb1CCnpooiWwktDsGsVYr4tuFEljgb3sT4wbnUU+dRwU3ktXZW163RCOXE1BVQgSYZm/Z+1lana2hgX1nl3tmTN/SbwuYMC0EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715282272; c=relaxed/simple;
-	bh=5drquzHN/2repaWJ8vxzq1JrgQ2MYkM3g4AKrXEP0v4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FW/fla1tSbX2aHYttf6FNLVgMijWwXuhdFln/uDfKEUoUdEgzW/fDinHBn+H2V+o+InP/bJDt/vRNiGR/l0LgeF+rlMsZr1wL77+hQZuBePRnErLYpBBXl3+cDNK+2J0NWvPLOTqKAelUoSHd39FzrbzvLJ7VI6nZ0Jy/1HxthQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=xz1jHswN reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
- id 2e676b0e8bb40e3b; Thu, 9 May 2024 21:17:43 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 75E2DA524E7;
-	Thu,  9 May 2024 21:17:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1715282262;
-	bh=5drquzHN/2repaWJ8vxzq1JrgQ2MYkM3g4AKrXEP0v4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=xz1jHswNQg11lQA+L1RKulpPb6znnjf1ojZRr1CpUv1Fb9T+2/tVaBaJT5zpgonor
-	 hxa6yr3L8vFY09oMiYKN/m+EJwhWTOXKRTMF7SnbyxMIQ0hGoK2PyE30NWfj1xv4lT
-	 TdrHZu9kOZXHHf98StiE+cebXOJyVL4KR13t2zIhSSKnfhd0k4JNOKdLnA/U0bHdQ2
-	 OiqiPRxIf+KstUXsXAJofoyuKkn6UatNw838sB7INhm3lgz/ZsRyeo56niPVtSDJb4
-	 dvbeLJ4Rq2LZs0Iu/cjchmhufan5t7ObOKsZyYCrISUAT35u2RrpsNstzWoJpfhYx3
-	 qk5z/NfRjoclw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject:
- [PATCH v1 5/7] thermal/debugfs: Compute maximum temperature for mitigation
- episode as a whole
-Date: Thu, 09 May 2024 21:15:19 +0200
-Message-ID: <3295271.aeNJFYEL58@kreacher>
-In-Reply-To: <12438864.O9o76ZdvQC@kreacher>
-References: <12438864.O9o76ZdvQC@kreacher>
+	s=arc-20240116; t=1715282162; c=relaxed/simple;
+	bh=f5hTjmwtrBNmeRfEZwqwz3MoeEtUyLOcEt2AbxYcVbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bfrCXtiESEpVHeBgpz4pWxkrcvPJmF0SUqYMqdSRGCGIXgky/SE0OmKMioNqj+3quVvFSMSnz+VzRXdNLfuK7FtiHTzai5PxwBIpIHTwwmE5lJC3e0j8CiIXAV7CcSeVKOf8GzmR0xxlnnvexd2jvVKQHuZ+EjcX6ELevXMYOwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZBcnF8Ym; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a64db066so316880766b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715282158; x=1715886958; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C9PPjpFCo1HBrR3dhTun969JD1naScZ8g1ToZzUTce0=;
+        b=ZBcnF8YmhrjyvmPATrpxIJwnO/LAVDHVpKlE2c2K0TTYwfVyk9f3esVGbFrHqF70n7
+         dlptd/NDbOgWA8FsY8w0ZecCKbH23DM236FhxJ9dY/rAXpG5bWE+9XnOs8dhTzPLfDvb
+         uqR1LLMUB1GxE8mixDpUWggKypq9UmjV7DQkM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715282158; x=1715886958;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C9PPjpFCo1HBrR3dhTun969JD1naScZ8g1ToZzUTce0=;
+        b=kRD1kc6W5iN4ALNjz5H1ToqRYIDOFuPzYudwq4ktPmiHA7omfKQvOyzHL+VhWcIw/j
+         /nwDVPzgBxbYvZ6JZeruukgtNspAYkFdwk7UUUcrSPzcxNQVnyhj/Xb5/4lH/SWuH0ie
+         NagERzPfa43DMgfGiyrKRvMZVEKrmh5v26BJ550WEOcmw/ScNSGtWz2O+sseJP0LJkWX
+         AnGinlG512Bu+LbQtl3uPPbjC/Vmron3A2mF0mWrpV/Nc3cMmCN5ybzoWJw1PJXr35VM
+         7akxMlcKoDpxjJ6H3e3HYgmKBrgXgDDtSRJdsNbygZI2Wz7vIJA6igzpCXXHqALC+d9F
+         bbUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQsjn/Ic1Fk93KvbOsRDyM6qv+Jh11u0Gau3Q/Fs8nBer24pIwdm9EVTrmcA3KdfHJu+BUY/9FEiGLMNvSgl+CDsDAP4sE0tQdT8ZH
+X-Gm-Message-State: AOJu0YzkBe5u+1lCYcPEFrRvpnKeZQiSFWPtVMguey33BgGe5mcgUMVU
+	426JButwCf+Ana/d2pfL1WTPXjMJIUG871rhXObZaYB0ha2pkGHNiqS/DU8ydQvwUS6pqrvGhji
+	i3yeHdg==
+X-Google-Smtp-Source: AGHT+IHq5fD2MbPQl2PRK0m59BgcnSyrMm32j7q6/9EbTIisAWkmaLnBnag8YWoR0nDsmxvHuXb6GQ==
+X-Received: by 2002:a17:907:20a2:b0:a59:a3ef:21f9 with SMTP id a640c23a62f3a-a5a2d6656b2mr33290266b.52.1715282158415;
+        Thu, 09 May 2024 12:15:58 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d1fcsm102989466b.35.2024.05.09.12.15.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 May 2024 12:15:57 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a599c55055dso332163066b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:15:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWJp9foXcNrwkASZ5w2PYq4ophlVH5eHpOSyU5pTBG0WRep4BfortuycXtXJF3C7BR13lErR2xCuXmTjvUAKyufULs18Ep9pO8PnSPM
+X-Received: by 2002:a17:906:f88c:b0:a59:c52b:9938 with SMTP id
+ a640c23a62f3a-a5a2d6653bamr36083966b.55.1715282157122; Thu, 09 May 2024
+ 12:15:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <202405081144.D5FCC44A@keescook> <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+ <202405081354.B0A8194B3C@keescook> <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+ <202405081949.0565810E46@keescook> <20240509140854.GF3620298@mit.edu>
+ <CAHk-=wgKyP2ffZPa6aKYtytzzFibiNVN5MS=D2cn7_UGCECKdw@mail.gmail.com>
+ <20240509175417.GR2118490@ZenIV> <CAHk-=wgXm15gZHvt8waSFhXS9yZTfvMV95xyvNtPc6FSEA_rvA@mail.gmail.com>
+ <CAHk-=wgBprh=8Us-MtwH9sVNELZK2hdOkFn3EoauwecYgtXOCQ@mail.gmail.com> <20240509184806.GS2118490@ZenIV>
+In-Reply-To: <20240509184806.GS2118490@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 9 May 2024 12:15:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjHA8Di-cpT0pKcScwcWNVYRFvmhBwMrug=Mj5WUwa2rw@mail.gmail.com>
+Message-ID: <CAHk-=wjHA8Di-cpT0pKcScwcWNVYRFvmhBwMrug=Mj5WUwa2rw@mail.gmail.com>
+Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Kees Cook <keescook@chromium.org>, 
+	Justin Stitt <justinstitt@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Mark Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefvddgudeffecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedtvdefgeelvdefvdevveehvdetfeefhedvueeiudekieeltdetgfdviefhgfetteenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgii
- tggrnhhosehlihhnrghrohdrohhrgh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-=46rom: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 9 May 2024 at 11:48, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> FWIW, the thing that somewhat worries me about having a helper along
+> the lines of combine_to_u64(low, high) is that
+>         foo->splat = combine_to_u64(something, something_else);
+> would be inviting hard-to-catch brainos -
+>         foo->splat = combine_to_u64(something_else, something);
 
-Notice that the maximum temperature above the trip point must be the
-same for all of the trip points involved in a given mitigation episode,
-so it need not be computerd for each of them separately.
+Yeah, we'd have to be very clear about naming and ordering. So it
+would probably have to be something like
 
-It is sufficient to compute the maximum temperature for the mitigation
-episode as a whole and print it accordingly, so do that.
+        result = combine_to_u64_hi_lo(high, low);
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-=2D--
- drivers/thermal/thermal_debugfs.c |   30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+to be easy to use.
 
-Index: linux-pm/drivers/thermal/thermal_debugfs.c
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=2D-- linux-pm.orig/drivers/thermal/thermal_debugfs.c
-+++ linux-pm/drivers/thermal/thermal_debugfs.c
-@@ -92,7 +92,6 @@ struct cdev_record {
-  * @timestamp: the trip crossing timestamp
-  * @duration: total time when the zone temperature was above the trip point
-  * @count: the number of times the zone temperature was above the trip poi=
-nt
-=2D * @max: maximum recorded temperature above the trip point
-  * @min: minimum recorded temperature above the trip point
-  * @avg: average temperature above the trip point
-  */
-@@ -100,7 +99,6 @@ struct trip_stats {
- 	ktime_t timestamp;
- 	ktime_t duration;
- 	int count;
-=2D	int max;
- 	int min;
- 	int avg;
- };
-@@ -115,15 +113,17 @@ struct trip_stats {
-  * the way up and down if there are multiple trip described in the
-  * firmware after the lowest temperature trip point.
-  *
-+ * @node: a list element to be added to the list of tz events
-  * @timestamp: first trip point crossed the way up
-  * @duration: total duration of the mitigation episode
-=2D * @node: a list element to be added to the list of tz events
-+ * @max_temp: maximum zone temperature during this episode
-  * @trip_stats: per trip point statistics, flexible array
-  */
- struct tz_episode {
-+	struct list_head node;
- 	ktime_t timestamp;
- 	ktime_t duration;
-=2D	struct list_head node;
-+	int max_temp;
- 	struct trip_stats trip_stats[];
- };
-=20
-@@ -557,11 +557,10 @@ static struct tz_episode *thermal_debugf
- 	INIT_LIST_HEAD(&tze->node);
- 	tze->timestamp =3D now;
- 	tze->duration =3D KTIME_MIN;
-+	tze->max_temp =3D THERMAL_TEMP_INVALID;
-=20
-=2D	for (i =3D 0; i < tz->num_trips; i++) {
-+	for (i =3D 0; i < tz->num_trips; i++)
- 		tze->trip_stats[i].min =3D INT_MAX;
-=2D		tze->trip_stats[i].max =3D INT_MIN;
-=2D	}
-=20
- 	return tze;
- }
-@@ -729,11 +728,13 @@ void thermal_debug_update_trip_stats(str
-=20
- 	tze =3D list_first_entry(&tz_dbg->tz_episodes, struct tz_episode, node);
-=20
-+	if (tz->temperature > tze->max_temp)
-+		tze->max_temp =3D tz->temperature;
-+
- 	for (i =3D 0; i < tz_dbg->nr_trips; i++) {
- 		int trip_id =3D tz_dbg->trips_crossed[i];
- 		struct trip_stats *trip_stats =3D &tze->trip_stats[trip_id];
-=20
-=2D		trip_stats->max =3D max(trip_stats->max, tz->temperature);
- 		trip_stats->min =3D min(trip_stats->min, tz->temperature);
- 		trip_stats->avg +=3D (tz->temperature - trip_stats->avg) /
- 					++trip_stats->count;
-@@ -789,10 +790,10 @@ static int tze_seq_show(struct seq_file
- 		c =3D '=3D';
- 	}
-=20
-=2D	seq_printf(s, ",-Mitigation at %llums, duration%c%llums\n",
-=2D		   ktime_to_ms(tze->timestamp), c, duration_ms);
-+	seq_printf(s, ",-Mitigation at %llums, duration%c%llums, max. temp=3D%dm=
-=C2=B0C\n",
-+		   ktime_to_ms(tze->timestamp), c, duration_ms, tze->max_temp);
-=20
-=2D	seq_printf(s, "| trip |     type | temp(m=C2=B0C) | hyst(m=C2=B0C) | du=
-ration(ms) |  avg(m=C2=B0C) |  min(m=C2=B0C) |  max(m=C2=B0C) |\n");
-+	seq_printf(s, "| trip |     type | temp(m=C2=B0C) | hyst(m=C2=B0C) | dura=
-tion(ms) |  avg(m=C2=B0C) |  min(m=C2=B0C) |\n");
-=20
- 	for_each_trip_desc(tz, td) {
- 		const struct thermal_trip *trip =3D &td->trip;
-@@ -814,7 +815,7 @@ static int tze_seq_show(struct seq_file
- 		trip_stats =3D &tze->trip_stats[trip_id];
-=20
- 		/* Skip trips without any stats. */
-=2D		if (trip_stats->min > trip_stats->max)
-+		if (trip_stats->min =3D=3D INT_MAX)
- 			continue;
-=20
- 		if (trip->type =3D=3D THERMAL_TRIP_PASSIVE)
-@@ -837,15 +838,14 @@ static int tze_seq_show(struct seq_file
- 			c =3D ' ';
- 		}
-=20
-=2D		seq_printf(s, "| %*d | %*s | %*d | %*d | %c%*lld | %*d | %*d | %*d |\n=
-",
-+		seq_printf(s, "| %*d | %*s | %*d | %*d | %c%*lld | %*d | %*d |\n",
- 			   4 , trip_id,
- 			   8, type,
- 			   9, trip->temperature,
- 			   9, trip->hysteresis,
- 			   c, 11, duration_ms,
- 			   9, trip_stats->avg,
-=2D			   9, trip_stats->min,
-=2D			   9, trip_stats->max);
-+			   9, trip_stats->min);
- 	}
-=20
- 	return 0;
+The good news is that if you *do* get it wrong despite clear naming,
+the resulting value will be so obviously wrong that it's generally a
+"Duh!" thing if you do any testing what-so-ever.
 
+Of course, I say that as somebody who always points out that I haven't
+tested my own patches at all, and they are "something like this,
+perhaps?".
 
+But having "hi_lo" kind of naming would hopefully make it really
+obvious even when just looking at the source code.
 
+              Linus
 
