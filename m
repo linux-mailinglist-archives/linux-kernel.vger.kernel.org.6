@@ -1,236 +1,208 @@
-Return-Path: <linux-kernel+bounces-174224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4508C0BD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 08:59:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8E18C0BD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2EBD1C20C8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 06:59:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C174AB22624
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D65F13CAA3;
-	Thu,  9 May 2024 06:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350A613C9A4;
+	Thu,  9 May 2024 07:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qLm4lh5J";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RWoCmAWG"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gdb0OgJO"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F53637;
-	Thu,  9 May 2024 06:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715237954; cv=fail; b=rb+JRwwJR4fosEb7rjOWMzydh5dnceNerl47dVPolKRgxstcyZvVC0qhKolUg6+oMXcldzfhakh4g/vj8s6SdHtYwVZ1EAsPIVbfN+xgX3joTqonVgabCdh6SH3La7PdvFxoL64wA7xYUkQ8l5BN4q14i7I9nBedn9+y8nfvNHE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715237954; c=relaxed/simple;
-	bh=/J3YqBiAfxGjPSa2HOMfGv0vGJuLnpGdDIXOdtL3+1s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=e/0aEpGe6UJu8Eokw+aiQJCydkENlwzr1jfassgtiVg8KGNkXDh1c4ZjYT3DfxJhar+por+X2qGnIStPqoQ8gwTuuoaYP6ZVgqiXv4ZAK/h9GLBEF4w80QhfPEZiEkLwPW2CKyElLzBCvndzFpbNmfGWR1VyzzfpgbmUyPEI3hU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qLm4lh5J; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RWoCmAWG; arc=fail smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715237952; x=1746773952;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=/J3YqBiAfxGjPSa2HOMfGv0vGJuLnpGdDIXOdtL3+1s=;
-  b=qLm4lh5Jb2Ow1Uw45QhJb6/9FpqHfN5fH+SToHgkrFpxcHm3Fi/cCbrF
-   jRAyKqYAWPoY7huVnMG8ZXYPzCaRoGDDNbaKz7LgcPRM1hOVkE+Mfes6a
-   QzRYHBWW4Cd9RPcXk0Urdn3s78zMv4irqY6EhkVRItfwqngTQh1GFw3nP
-   2F+8qLe/R6pcPv8Vy4mtyU3Fa4fteJm70KOTuartpJ3xmz6Bh6bnAESjk
-   z6qxNaCTz0YItD7OlyT2GwBWgJEKIbA5FXesPJTKnN61diLUhQUk8hyOb
-   FzbS+uSenRlyLMh7xqDZX/HZpOdndCnasC8qmnTv834TXWT2OnB85r/rx
-   w==;
-X-CSE-ConnectionGUID: GNRYmCwMS4CgryDxK7uw2A==
-X-CSE-MsgGUID: 0zaFJhDWT3+Ro1W3vTEymg==
-X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
-   d="scan'208";a="24281477"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 May 2024 23:59:11 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 8 May 2024 23:59:08 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 8 May 2024 23:59:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XxqTx9PARRmpg5SiegZTn+szta+auvBpEc2ExPIZLmiO8RN8HZXa7knk79txTad5JZS9pPsDdEPZGJ+HFqF/N10+2AySh2ZGyIvMYcJBBrD9FjAWGhx379CGOAtB9yDGYczB0PAPrkwvqSeTiYhQVoMOlY+J/jLNaJ1pdA0P1LpgXIbKbq1C90A8zZdW348jcC2b/evJSq7Tp6Nay7pftTCgSbdTkAGDkt4iT9uZ0WsxHBJYQMU7zF42H1vA84RHMIouXa6PuJk8+PVJf4V8VHahWKQXXCyVnJE4Kyso0VZPd5tH8tiplaA9J3CQozZYSyx/+93dtRkrLDr2WgxYXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/J3YqBiAfxGjPSa2HOMfGv0vGJuLnpGdDIXOdtL3+1s=;
- b=KEI9MtUq8WODcXxEYYNHfhn57FVqRKJFUYE+bx21brWwroXLXYbS3XIBkqm7kqgwfhHJHeXrmNaYnyEPc26adTKPQGvHrB+oOabD9jRr4qarJVqgsxR69UpwHJ7drAnZAw1mePTppDRfq+FV27cURXFtlZFQ4vi06hvu4TF8HflS+rq8jkz34gNpqVQhoRXz4Ue09IUIAD29NvLZ+2yHSYxcTvYH7txnLDb/ynmPtiXBY70Sv1lZyNa0eEmM9OncVwEQbO/MDn3dRYKK8i+0BhpR4rMig4lFjKYeh/hEk/ktdL6oRpBc3ZqlmNEHEINc5H8rmHAMM04qNlLpvCPjcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/J3YqBiAfxGjPSa2HOMfGv0vGJuLnpGdDIXOdtL3+1s=;
- b=RWoCmAWGb64jbJGtAkhfQqN0Bcyze0fqYxpJJwaYfbgzQxysV02aIrLTPEQH1B2rLFo6N8Ok8bCCVGJKShNYYGPQ85Epyy4+n1PjnXwLsotY3nacwiqWT3N6Qr5GScRlVF/JTPmQtdt1cU2lCow9GC0DkCZYw0xp8UJWKG03wRY4/KHfyBMdsyCSuGlEv5Q96Gg5g9ocgQD1Ix6ESF92Oy3Wgdfo924Ay3oBQAeqmAa0e/PMufiUZH6kxY6rnifXKHcWiHqCCFMg2iM4rLT5HigOuHr6HY8yIJcdjCPeemx0Z1kGdgFdEbpxmkyGOQXsoaZ5awhjC4uCfu1SOrzr+Q==
-Received: from DS0PR11MB7481.namprd11.prod.outlook.com (2603:10b6:8:14b::16)
- by SJ0PR11MB5865.namprd11.prod.outlook.com (2603:10b6:a03:428::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
- 2024 06:59:04 +0000
-Received: from DS0PR11MB7481.namprd11.prod.outlook.com
- ([fe80::3a8a:2d38:64c0:cc4f]) by DS0PR11MB7481.namprd11.prod.outlook.com
- ([fe80::3a8a:2d38:64c0:cc4f%5]) with mapi id 15.20.7544.041; Thu, 9 May 2024
- 06:59:03 +0000
-From: <Rengarajan.S@microchip.com>
-To: <horms@kernel.org>
-CC: <linux-usb@vger.kernel.org>, <davem@davemloft.net>,
-	<Woojung.Huh@microchip.com>, <linux-kernel@vger.kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <edumazet@google.com>,
-	<UNGLinuxDriver@microchip.com>, <kuba@kernel.org>
-Subject: Re: [PATCH net-next v1] lan78xx: Enable 125 MHz CLK and Auto Speed
- configuration for LAN7801 if NO EEPROM is detected
-Thread-Topic: [PATCH net-next v1] lan78xx: Enable 125 MHz CLK and Auto Speed
- configuration for LAN7801 if NO EEPROM is detected
-Thread-Index: AQHanE0W355Z0SUftkipxbImkHa6jrGGx1uAgAe9mIA=
-Date: Thu, 9 May 2024 06:59:03 +0000
-Message-ID: <d5727bf3d176e3d71abeba7f7c3aa86cf96262cc.camel@microchip.com>
-References: <20240502045503.36298-1-rengarajan.s@microchip.com>
-	 <20240504084931.GA3167983@kernel.org>
-In-Reply-To: <20240504084931.GA3167983@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS0PR11MB7481:EE_|SJ0PR11MB5865:EE_
-x-ms-office365-filtering-correlation-id: 3fa80f32-ccd8-4788-2fc8-08dc6ff5830c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|376005|1800799015|366007|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?VW10K0JCbk1kM0lEWnpSTlQ1djZwenliVkhnRzVyNEhCYzA3aW00UUdVVVUr?=
- =?utf-8?B?S3VUUGpRaVJCSTRNZ0tQR1lTR2xVNDNhdWozZ0JicldCYUtDQkoycEVWVXd4?=
- =?utf-8?B?R2RWUTlnM1Y2WFlDRi9JV0M0M3lqSXlac01zZ2REdFI0U3ZoMjNESnAzd0xn?=
- =?utf-8?B?ZVlRT1VlYzZPYWk3b08yN1F1dWY3MmNPR2habHY5TTdSMjdtc0JiLzg0bmxF?=
- =?utf-8?B?NTkyeFhQY3NoQUd0YTRNWEMxSWJoVWZWdlE2cmszZ2gxSHNROTVDN29keWNh?=
- =?utf-8?B?NnpTVThFb2h1cHZsUWtpcWNvN0NyQkdOOEgvM2F1OXFkRVN1a2JYM3A5QWcx?=
- =?utf-8?B?bGNxaWVQQXRwSmVublZtbTF5RHNheHNUa3BkV1RiTS94cU9YT3J3eHVuN1Mw?=
- =?utf-8?B?MDYvY0Z5WGMzcVpmNTVqaE9CUmdLWENJa0NxYWNOSUpJajlOczZ4eEtUN3dy?=
- =?utf-8?B?OVhKaTdFeWx2N1J4U1BOQ2tNYUJydkxXcUFQVjV5K012S0hWS1l1bUpIVTBW?=
- =?utf-8?B?M0c4SmNvdEZNWVNLS083cERwcWRzWERTek5ERlFtMms3aEI2ejZZR2dmaE1K?=
- =?utf-8?B?UzJQUnlBaUl0aVhlSEtEZ1BFbHcxNlNDbmhpUU5FdndLbnBGbzVMcDVDVmNs?=
- =?utf-8?B?U2FFRDN5bnAwV2JmY0RRSnBZSEtwcTd4Y1N6ZGhmaU5HRmVZRzF1QUNUSFEz?=
- =?utf-8?B?NUdrb21yN3ZYQzlYbjFCZWgydEEvbHRiUFd2RzhWaEYvVmtKQmdkcUJWd0Fz?=
- =?utf-8?B?dVFsSHFLbnZpeEpxaGZTeHpqSE91T0grMjI0d2ZUclBkcDRVME5aaUtHZEJm?=
- =?utf-8?B?SWkyVkl1bVJrM2lKS0dQaGZHQWl0UitrOEtKVXliZEFvejRYSXR3VWptZkQv?=
- =?utf-8?B?VHVpbnp4L2dMUFMwckRPUmdYY25sdEdFMisycVMwQnRHYTNqUWpiMjVQSVZz?=
- =?utf-8?B?ak5PV2Z1L1dGd3RzY3JZSE96OGtMNVBRMitjMTdKMnRIZHlGcnNta0VzTVBQ?=
- =?utf-8?B?V2RvVFV0Zm1FMklxc1BrZ3JTdmJ0Y1ZaaExkUTNHeitDRXd5N013VDIrcVhi?=
- =?utf-8?B?WW43YW83djdOSmt2RmZYejNOWG1JUGdMZUFhNXdjZUJqT3c0eEQ2ZGZpNVls?=
- =?utf-8?B?emNQRFZ3UHpvQUQ2KzJTYnVOZWNadG1IU3BxaEZxODF4MXBWS1loNFlibUYw?=
- =?utf-8?B?QzJYdXFMT2d5Zk9SMENLUlVETmcyc3JUSkQ3bmVtT0t2c1BycnMxSnRnNjIz?=
- =?utf-8?B?RDlCYVdXZUtQOThIeXFIOXluaDVXVXhvVmlTYUFydTF0bFdlOEZ6MUZ4Y0dW?=
- =?utf-8?B?WnczVFp2aXphZ3V5cVN4bjFnVFpqc0ovYVVDbEJ3YnNJc2VxMHhmaWViMk9L?=
- =?utf-8?B?eXM5OUovK3VGMmt3Mnlldnpua2dienFqdmc5WGZoWTBwUDViVGhkN3Y1WXdh?=
- =?utf-8?B?bmJiZSsyQ1RTd0pXQVp4WEgxNllJQU4rRkJUaWxTK05SZ3hncE5JMFBsZmF4?=
- =?utf-8?B?bG81Yi9RVWErSTVDZ1A1L1RvQlJCMjVjTU9hQzVJdXRLM2hPeS9rZzRhVHJy?=
- =?utf-8?B?RnVPMnQxVlZFY0tCUUZ6NnF5aDl2ODRBeWNXRHBkSjhaNmljdHUzdVBtcXdm?=
- =?utf-8?B?UWdwMXdmS3BLeFU4YmZDUU5EOEkxUzZvTmM1L1VrM2xiS2hLTHo3MEM4UW5a?=
- =?utf-8?B?dG5KTmhia0JxZm5LbTJmUHJXaXZTN1llMHBDZTRnNzFxaFFSN2VwVW5NRitB?=
- =?utf-8?B?VlZkWmRJNzZ2aHhWdnYvSEFPOVBycEFYWTZLdDcrT0d1ZUJMdHpRYlp1SzR4?=
- =?utf-8?B?MXVnQjhScllnTEJaZ0ZIQT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7481.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WXVFbmNhRjNoRkNMazMvV2lqeEk4MHFrS242bVJJYUllODZVWXVLcnVrUk5H?=
- =?utf-8?B?U1k3VldJaW5BcWxOZzROMXhXQlU5SkVzV1NKRFRLK1lPYTR5UHVOT1BiaSs5?=
- =?utf-8?B?WmJFVzBQVG16M2l6cFZpR0c4eTdzNGdGNmNNbnZOSm5CWkU0aVBRb1J6SFBu?=
- =?utf-8?B?TTluekdqVEV0Nm1GdEQyOWJvc1FQa2xhRzZkRDJ5ZkpIOFZOWlFTeWk0ZjVH?=
- =?utf-8?B?NHNvWkFxTVIraUJVZDZrZUZ3TE1yWlpCc3JweUlNWXowWGNuZDAyZlhVYU0v?=
- =?utf-8?B?blF0aTZaQXp1bCszc01DdS8ybTEvM3d0NkFHc213VWJkcEthSVhtK3VBK3VD?=
- =?utf-8?B?L21wQUE2cHFveXQ4aC84c21oZDRPeVN2WWk3QW1iRUw2UUM1anVrR2QyL3Jk?=
- =?utf-8?B?T29RVlJETlJKWW4rRThzcHljanRTdXk2NHJNeE5rQzFMcUdwaXVGanB4Y2Fp?=
- =?utf-8?B?U09qS1V0aHBSVFRZTFpZQk5XUlVHT3BGVlZvQ1gzNDc0T2drSkFOTjBSNStw?=
- =?utf-8?B?dG5CTVplR2ZtcjFhaERTdWNzeFR5QUcrSXN6RTNCNGxLcFkwNTR0eHJVaW1E?=
- =?utf-8?B?ekEyTXdtSjQ2ck00dTlzdkRNdWRxbGx2QWswdWFRM05aQTZTSUhnOWJYQ0RB?=
- =?utf-8?B?Y2QvRVdFTVp6ZUZXYzJ0WlpLVmVPRGd2RWFFblNCS1ZsSy9hUFZhSnpFUFBu?=
- =?utf-8?B?NmNzWmVqV2xUTGRIV2U3K2g3V0tlaEg0RytEZUdROHVXSUc4aVkxL0tPQ1ZS?=
- =?utf-8?B?V0dRQlJScjBzbzM5c2RSRk5BSDA0aFVCeVVpaUNGME44dXROdUJVcEJ5N1Nl?=
- =?utf-8?B?bzNSM2U1WDZGYTgvTHZZY2tDdUhPVW84b05UR0NDeUlGVVp5VmJuNTFIRDdU?=
- =?utf-8?B?MUpQMXRyNktCSUJVTWhEQW9ORHlKMXZuVVdrMFJvZGltVzFBeW1IemZESWVp?=
- =?utf-8?B?emRGUm5hcnJZc1l0SFpxZEFhM05DelBDWkNyNkJWZ211MEdCazVDeTFYUExP?=
- =?utf-8?B?OWQ2RVNwdlVpRWxTTXhEMkpTTk9hYlBneEgyZHcwbE5QSDZ3WUZJT21SRGU4?=
- =?utf-8?B?OFJSYXk0WHV4UU5VelRnMG11Rndkb29FcHZJdGMwRG5haXU2Q0h0SUlxZ1Bv?=
- =?utf-8?B?Sk4vbmVhSnZnRVVyTnJ2M296a0I3WGwveUNwN2w2ZVV0MUJ4TnZmUWFwa2o5?=
- =?utf-8?B?Sk9lcjRmNDNqRGc0azBVT1VmSmVaTlNJa2RtM090YitDV3BKMW55dDhPQlVT?=
- =?utf-8?B?YlhqNjlhNDNGbkxyZmRCSmFNRmltNnZxbjRrQ1lTWXhJd1pOMnhxS2V2blM2?=
- =?utf-8?B?UFBuOTNQdkJVbEFFTUY4OTNGZnNhM3UrYlpkaU04TGNYcGRFbXluTHpLejZT?=
- =?utf-8?B?OVdGWDRDSTl1NVFNYXVjY2tYMTk2aFhUU25nTEE5Ym5maCt5Y1hWTm02Tnk0?=
- =?utf-8?B?bXBNWDYyaldTdXVDUkd1L2poUFBQL1E3Z1BEQk1NaUZVQTZrYWMySkd5L3Nh?=
- =?utf-8?B?Qnd0Vi9jaTRUalhLbGo1bEdJc29IYVBsNGtIeVhRYVBiZ040ZzZtOVl4bC9X?=
- =?utf-8?B?SkVZeWZPcSt3eFFGVkJ1YTIxTnRKbHk2WVJkQnU0YU9WU0phY0ZCQncwNlNv?=
- =?utf-8?B?N0Q2Q3pMYzN4QUlISzRPVUFsYzFSTG9qZkNLNDh5V1JnQm5WSlNNTCtOb2JO?=
- =?utf-8?B?YzBXU0t4Z1FZUE5DcHFUdFEzd2ZEbGRsbkUyendQTkd6TGtvWlo2YSs1U1pK?=
- =?utf-8?B?Qk1hQVNCaDBIUm1yeEN3czZTYjgxNWZqbTV0K1BlTHYwclp0SWhnQndyRkR4?=
- =?utf-8?B?RkxIT3dWY1NZODlSNWF0b21yUTZGUVBBUHN5ZzMrUmZ0eVZ4OG5UNmVJZkkr?=
- =?utf-8?B?STZKQzZTaExDbTcwYmVPNC80MHhMQTlXZFp1cmJJcDFkc2tjbHlaeDNNaUt0?=
- =?utf-8?B?Z1hzWlhxcGViUlZsUXNNR1JCcll0SXFJMnM2bW5KUTMwVDR3TVlZTGp6emp2?=
- =?utf-8?B?dWF2S1hPVUZXRFNzLytSNU96cCtCd2s1NU1DS2I5a2NBOWFWVWd1OWlFTlRJ?=
- =?utf-8?B?cXNXc1hodE1nYUJPTlZMbm5pdzRuNDRiT0gwVTNtZnZpTkNIaXdqbThua1I4?=
- =?utf-8?B?dXlsOXpFVzNkeThYSmVZd1hxa1QvWW5tUXpkSGQvN1Z4Wk9yMGxlUUQ3b2Vz?=
- =?utf-8?B?K0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A02E314CC4E4014481DDDD30960F12C9@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2275D12FF99
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715238113; cv=none; b=XjFCPhbp1IpGN1Q5QB+acNJFmA27D7i2yD5b1ChVmNVUDkCZ+iPK+Zl8wnS0uiGYGHZzJUJarbDaOeBaiMWpC8UIPfL8LiP3ncVSn8DAPGVNExJzo5V+pB7VKsoaDiFE69I1VWv9iVFzsz/zCOYo68u4Y7XGWzyyRhPRzJZaI1g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715238113; c=relaxed/simple;
+	bh=R/YwftwUnrsnD2ekPwpf6DG41P3dbIZt6arqycGLRs0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=rR7A5R6iDgh9MwUpx+SGZmlAXmmGXsI/nGpDKt22JetVOn16eskswFlCxDZn/p071R+cBagqr9jEu1HgZn587oFGFgnwJ3jMFNtnM0hYkxea03GE79C7nGqKc82Jj5mmvnGiCgR4hbY8q9x55EahhXc1JWDGBaiG+q3zQeNmYhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gdb0OgJO; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2db101c11beso7455911fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 00:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715238109; x=1715842909; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e41S4BwwMsWXaNjFvLtDtQWWdZXnGXjA1B5HEHxantk=;
+        b=gdb0OgJOuJFGRDaLsCqOVeLfakNxtHcd0r3Ghc8IgdMPciMJIdI0sv3N7jib6kI0cv
+         G6p30Q0SQ92Q3UK1BC1daPxgZRRYWWwCBRgXQjbxxjhWSTBE4e14c+jZoOmfSnKWh4yv
+         /156jZd9fey3+a54oe5fA0ndsaiVg/8eDCa3ldDC13SIf8jWfbGNfwzmvlxg6ySykn5m
+         sAqvRtcSPDxTwoUEXzW+TygonQH+gMJoG2JpDnTy0aYaf5G2VfVjeTf/p+K4xrShX9Mb
+         O3YD2FGiQcUN2KgMyXT4hngiiFdBDVc/8IIrozGdVeQ951ue3N6BGpBU13++MWYKm1x4
+         6Ivg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715238109; x=1715842909;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e41S4BwwMsWXaNjFvLtDtQWWdZXnGXjA1B5HEHxantk=;
+        b=tGxbFZBVqzBTLBJpDWe2za3ayBIgr0dTP+D0SQLu10sRImAwfC+SEc3EApIRPCUCz5
+         aLWbSPIvkfU/ihA98SegT2RGR0Ixrd/R1CrY5AYW1ULXQpWKo/lK8HUfK6N1Zlq4KYHN
+         JocbSqeCWN2V2kRSpuVAhB6de8MkPZAaBk5HyH1BuXo3EyY4W7E8X/P5C5Hyq89D0gOD
+         Ixh0VrUhcqWmdPyqc7xm1QYnQQ++UywA29hmFWD94LTafAq9ctJAvEM3i1hdkK0+gA7g
+         lJdYCGzn1B7mkpDjGzCHTTJSUUBCpVrL/YSCnq0tH9o65Fvojqh33t+kRqylF1tyf5SG
+         QbVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKCotbGb7sj03SCDUlYc4GcAWSdzTXjgQVz0M/GUG0NkA+kmSOO+tGZVxJB/esK6N/82gqZuYd7Fh4xc9DvSTsCKYKylAUOaS3OJQz
+X-Gm-Message-State: AOJu0YxLG81ot9821ulK6cGl8ELmqjLyBwsyZZqE72znz78IlUQYlCQL
+	ooJH9HxfZzWXThkBCf3i8PuK2s6Blu2cgBrNXsG8phMrebNZ2Ng7vhAATB38HBQ=
+X-Google-Smtp-Source: AGHT+IF2AYdO2e2kYJO5GoNt5HNgyNTtGqKIN6Haiic+0Yqn/wneiyEuaP3ZswRhhyD8HSCkHjA/qg==
+X-Received: by 2002:a2e:b60a:0:b0:2de:7046:b8f8 with SMTP id 38308e7fff4ca-2e446d86159mr31015791fa.5.1715238109246;
+        Thu, 09 May 2024 00:01:49 -0700 (PDT)
+Received: from smtpclient.apple ([23.247.139.60])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b671783519sm705720a91.57.2024.05.09.00.01.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 May 2024 00:01:48 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7481.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fa80f32-ccd8-4788-2fc8-08dc6ff5830c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2024 06:59:03.5513
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S/pyyqjWNeNSIq24lDQZf7Upnt1WC7ZO0hDFLeRplGHgcMqk6x8Pb+e1j11sI/HquBaMbQFVnxVxpISeP9r99jL3LRv4Tx1n7ZfSJHr5HPg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5865
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH v3 1/1] bcachefs: Move BCACHEFS_STATFS_MAGIC value to UAPI
+ magic.h
+From: Glass Su <glass.su@suse.com>
+In-Reply-To: <20240509061718.GA231218@pevik>
+Date: Thu, 9 May 2024 15:01:33 +0800
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ Su Yue <l@damenly.org>,
+ Brian Foster <bfoster@redhat.com>,
+ Coly Li <colyli@suse.de>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <37665ED1-9929-444F-B9A0-3CC7EADBC064@suse.com>
+References: <20240507153757.150891-1-pvorel@suse.cz>
+ <6D9FCB08-480D-4CA0-82E2-284B1F2BF8FD@suse.com>
+ <20240508211759.GA209026@pevik>
+ <fg3cvwvadldeglwrqdeeglswxwupyy2cjki7si7sz3jwsrpzpf@5pkugq7jyzb2>
+ <20240509061718.GA231218@pevik>
+To: Petr Vorel <pvorel@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-SGkgU2ltb24sDQoNCkFwb2xvZ2llcyBmb3IgdGhlIGRlbGF5IGluIHJlc3BvbnNlLiBUaGFua3Mg
-Zm9yIHJldmlld2luZyB0aGUgcGF0Y2guDQpQbGVhc2UgZmluZCBteSBjb21tZW50cyBpbmxpbmUu
-DQoNCk9uIFNhdCwgMjAyNC0wNS0wNCBhdCAwOTo0OSArMDEwMCwgU2ltb24gSG9ybWFuIHdyb3Rl
-Og0KPiBFWFRFUk5BTCBFTUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVu
-dHMgdW5sZXNzIHlvdQ0KPiBrbm93IHRoZSBjb250ZW50IGlzIHNhZmUNCj4gDQo+IE9uIFRodSwg
-TWF5IDAyLCAyMDI0IGF0IDEwOjI1OjAzQU0gKzA1MzAsIFJlbmdhcmFqYW4gUyB3cm90ZToNCj4g
-PiBUaGUgMTI1TUh6IGFuZCAyNU1IeiBjbG9jayBjb25maWd1cmF0aW9ucyBhcmUgZG9uZSBpbiB0
-aGUNCj4gPiBpbml0aWFsaXphdGlvbg0KPiA+IHJlZ2FyZGxlc3Mgb2YgRUVQUk9NICgxMjVNSHog
-aXMgbmVlZGVkIGZvciBSR01JSSAxMDAwTWJwcw0KPiA+IG9wZXJhdGlvbikuIEFmdGVyDQo+ID4g
-YSBsaXRlIHJlc2V0IChsYW43OHh4X3Jlc2V0KSwgdGhlc2UgY29udGVudHMgZ28gYmFjayB0bw0K
-PiA+IGRlZmF1bHRzKGFsbCAwLCBzbw0KPiA+IG5vIDEyNU1IeiBvciAyNU1IeiBjbG9jayBhbmQg
-bm8gQVNEL0FERCkuIEFsc28sIGFmdGVyIHRoZSBsaXRlDQo+ID4gcmVzZXQsIHRoZQ0KPiA+IExB
-Tjc4MDAgZW5hYmxlcyB0aGUgQVNEL0FERCBpbiB0aGUgYWJzZW5jZSBvZiBFRVBST00uIFRoZXJl
-IGlzIG5vDQo+ID4gc3VjaA0KPiA+IGNoZWNrIGZvciBMQU43ODAxLg0KPiA+IA0KPiA+IFNpZ25l
-ZC1vZmYtYnk6IFJlbmdhcmFqYW4gUyA8cmVuZ2FyYWphbi5zQG1pY3JvY2hpcC5jb20+DQo+IA0K
-PiBIaSBSZW5nYXJhamFuLA0KPiANCj4gVGhpcyBwYXRjaCBzZWVtcyBhZGRyZXNzIHR3byBpc3N1
-ZXMuDQo+IFNvIEkgdGhpbmsgaXQgd291bGQgYmUgYmVzdCB0byBzcGxpdCBpdCBpbnRvIHR3byBw
-YXRjaGVzLg0KDQpTdXJlLiBXaWxsIHNwbGl0IHRoZSBwYXRjaCBpbnRvIHR3byBhbmQgd2lsbCBz
-dWJtaXQgdGhlIHVwZGF0ZWQgcGF0Y2gNCmluIHRoZSBuZXh0IHJldmlzaW9uIHNob3J0bHksDQoN
-Cj4gDQo+IEFsc28sIGFyZSB0aGVzZSBwcm9ibGVtcyBidWdzIC0gZG8gdGhleSBoYXZlIGFkdmVy
-c2UgZWZmZWN0IHZpc2libGUNCj4gYnkNCj4gdXNlcnM/IElmIHNvIHBlcmhhcHMgdGhleSBzaG91
-bGQgYmUgdGFyZ2V0ZWQgYXQgJ25ldCcgcmF0aGVyIHRoYW4NCj4gJ25ldC1uZXh0JywgYW5kIGFu
-IGFwcHJvcHJpYXRlIEZpeGVzIHRhZyBzaG91bGQgYXBwZWFyIGp1c3QgYWJvdmUNCj4gdGhlIFNp
-Z25lZC1vZmYtYnkgbGluZSAobm8gYmxhbmsgbGluZSBpbiBiZXR3ZWVuKS4NCg0KVGhlIGNoYW5n
-ZXMgbGlzdGVkIGluIHRoZSBwYXRjaCBhcmUgZmVhdHVyZSBhZGRpdGlvbnMgd2hlcmUgd2UgZ2l2
-ZSBhbg0Kb3B0aW9uIG9mIGNvbmZpZ3VyaW5nIHRoZSBjbG9jayBhbmQgc3BlZWQgaW4gdGhlIGFi
-c2VuY2Ugb2YgdGhlIEVFUFJPTS4NClRoZSBjdXJyZW50IGNvZGUgZG9lcyBub3QgaGF2ZSBhbnkg
-YnVncyByZWxhdGVkIHRvIHRoaXMuIFNpbmNlLCB0aGVzZQ0KYXJlIHRoZSBhZGRpdGlvbmFsIGZl
-YXR1cmVzL3JlcXVpcmVtZW50cywgd2UgYXJlIHRhcmdldGluZyBhdCAnbmV0LQ0KbmV4dCcgcmF0
-aGVyIHRoYW4gJ25ldCcuDQoNCj4gDQo+IC4uLg0KPiANCj4gLS0NCj4gcHctYm90OiB1bmRlci1y
-ZXZpZXcNCg0K
+
+
+> On May 9, 2024, at 14:17, Petr Vorel <pvorel@suse.cz> wrote:
+>=20
+> Hi Kent,
+>=20
+>> On Wed, May 08, 2024 at 11:17:59PM +0200, Petr Vorel wrote:
+>>> Hi Su, Kent,
+>=20
+>>>>> On May 7, 2024, at 23:37, Petr Vorel <pvorel@suse.cz> wrote:
+>=20
+>>>>> Move BCACHEFS_STATFS_MAGIC value to UAPI <linux/magic.h> under
+>>>>> BCACHEFS_SUPER_MAGIC definition (use common approach for name) and =
+reuse the
+>>>>> definition in bcachefs_format.h BCACHEFS_STATFS_MAGIC.
+>=20
+>>>>> There are other bcachefs magic definitions: BCACHE_MAGIC, =
+BCHFS_MAGIC,
+>>>>> which use UUID_INIT() and are used only in libbcachefs. Therefore =
+move
+>>>>> only BCACHEFS_STATFS_MAGIC value, which can be used outside of
+>>>>> libbcachefs for f_type field in struct statfs in statfs() or =
+fstatfs().
+>=20
+>>>>> Suggested-by: Su Yue <l@damenly.org>
+>=20
+>>>> Would you kindly amend it to Su Yue <glass.su@suse.com> or
+>>>> Kent can help if the patch is going to be applied.
+>=20
+>>> Unfortunately Kent was faster, it's already merged without your SUSE =
+address
+>>> (and your RBT you added in the end):
+>=20
+>>> =
+https://evilpiepirate.org/git/bcachefs.git/commit/?h=3Dfor-next&id=3Dce8f9=
+355f23be9756e499682d0d642a741db6c3a
+>=20
+>>> @Kent: Maybe it can be even now amended (with Su Yue's RBT).
+>=20
+>> ...sure, make me invalidate my test results :)
+>=20
+> Thank you! FYI there was also his RBT (Reviewed-by: Su Yue =
+<glass.su@suse.com>)
+>=20
+Thanks both for you Petr and Kent :- )  Sorry for inconvenience due to =
+my email quirk...
+
+=E2=80=94=20
+Su
+> =
+https://lore.kernel.org/linux-bcachefs/6D9FCB08-480D-4CA0-82E2-284B1F2BF8F=
+D@suse.com/
+>=20
+> Kind regards,
+> Petr
+>=20
+>>>>> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+>>>>> ---
+>>>>> Changes v2->v3:
+>>>>> * Align tab with other entries.
+>>> ...
+>>>>> #include <linux/uuid.h>
+>>>>> +#include <uapi/linux/magic.h>
+>>>>> #include "vstructs.h"
+>=20
+>>>>> #ifdef __KERNEL__
+>>>>> @@ -1275,7 +1276,7 @@ enum bch_compression_opts {
+>>>>> UUID_INIT(0xc68573f6, 0x66ce, 0x90a9, \
+>>>>> 0xd9, 0x6a, 0x60, 0xcf, 0x80, 0x3d, 0xf7, 0xef)
+>=20
+>>>>> -#define BCACHEFS_STATFS_MAGIC 0xca451a4e
+>>>>> +#define BCACHEFS_STATFS_MAGIC BCACHEFS_SUPER_MAGIC
+>=20
+>>>>> #define JSET_MAGIC __cpu_to_le64(0x245235c1a3625032ULL)
+>>>>> #define BSET_MAGIC __cpu_to_le64(0x90135c78b99e07f5ULL)
+>>>>> diff --git a/include/uapi/linux/magic.h =
+b/include/uapi/linux/magic.h
+>>>>> index 1b40a968ba91..bb575f3ab45e 100644
+>>>>> --- a/include/uapi/linux/magic.h
+>>>>> +++ b/include/uapi/linux/magic.h
+>>>>> @@ -37,6 +37,7 @@
+>>>>> #define HOSTFS_SUPER_MAGIC 0x00c0ffee
+>>>>> #define OVERLAYFS_SUPER_MAGIC 0x794c7630
+>>>>> #define FUSE_SUPER_MAGIC 0x65735546
+>>>>> +#define BCACHEFS_SUPER_MAGIC 0xca451a4e
+>=20
+>>>> IIUC, due to some historical reasons bcachefs used to switched
+>>>> ondisk sb magic from BCACHE_MAGIC to BCHFS_MAGIC.
+>>>> Other major fses uses  *_SUPER_MAGIC both for ondisk=20
+>>>> sb magic, kstatfs::f_type and super_block::s_magic.
+>>>> However, for bcacehfs there are three magic numbers.
+>=20
+>>> Thanks for info. But for struct statfs in statfs() or fstatfs() only =
+0xca451a4e
+>>> is needed, right? I would not expose the other(s) unless it's really =
+needed.
+>>> Also we'd need to backport UUID_INIT() into UAPI :(.
+>=20
+>>>> Anyway, it looks good to me so far:
+>>>> Reviewed-by: Su Yue <glass.su@suse.com>=20
+>=20
+>>> And also without your RBT.
+>=20
+>>> Kind regards,
+>>> Petr
+>=20
+>>>> =E2=80=94=20
+>>>> Su
+
+
 
