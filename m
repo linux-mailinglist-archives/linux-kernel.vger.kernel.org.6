@@ -1,128 +1,146 @@
-Return-Path: <linux-kernel+bounces-174348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1DF8C0D7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:29:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABCF8C0D7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 11:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3900A1C21C8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:29:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC6AB21F4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B956414A619;
-	Thu,  9 May 2024 09:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7370614A619;
+	Thu,  9 May 2024 09:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lBw4nxwF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSEdW5a1"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07591D528;
-	Thu,  9 May 2024 09:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B814A096
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 09:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715246942; cv=none; b=pAqtuVWIPN4jvezq/5LbtPWuqcxlwEJmd5K4GrNlefPmHex/uVoBO6vrz7aXTOujOX9j613eIWRBrnqI2rU73hiSJV9EvunIryqjpqX4jHIhoFIgfuqp4SJHnkDZIOLy9+5A+ADDDaWrUZDKI4F3d6tAaLN8dwl/pTId6vlSVoI=
+	t=1715246993; cv=none; b=CtyH/ZiGA4GHAhBbd3vmcOzTG1SgrTR74VN3G1UaRKVoFgXre2vxllb0kbsDG53qsGMz/9O7LK3YvKDcX7lfAg6N9Z4skR3wWvUJVCMDwLha3vP1YhN5+KCbhGAHx+lS7aYfvRcEr8nH6YHoBLLYh3+cnmNY1znwNbLcftDviVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715246942; c=relaxed/simple;
-	bh=wZKrO8+x5D6FuMJ5ZBvR3E+b5O6QBa7DkTruok+Onyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOCcp85zUd8WGGVBmnIh+HGlsOC0ZIb4Mb1jSsQqt/NM2hAh6u1W7r/YvpxHn9cE68RiPja8+aHqLwZbL/dBx8qss9FPZU358B6nMc+ykexqenWEw3EFbgvPqaAh5wOwbi6YNh2nj6o2o4VDtzHJ+uP/nNMiob0ufaQEwXvMrag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lBw4nxwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ECD5C116B1;
-	Thu,  9 May 2024 09:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715246941;
-	bh=wZKrO8+x5D6FuMJ5ZBvR3E+b5O6QBa7DkTruok+Onyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lBw4nxwFm5vXM+XYMQ269h/KD+KGBB94ZKz2nVikiFUIzg32j5yyaDN8aVcahigay
-	 im91cM6Yuj13adOrCWAIHPvolZdLGlBIZN47UW5j2KT/kz28njMS2l2FXF2d7DxVbe
-	 ky4rS3hNNLKH9DOR8Rs4ALDWDbNLWXq39nYIIkGQ8GeyDYcNHLmRF+VVO68cptDoY2
-	 OBJ7RdC9xlrAujTjW8FGMVMThKxIuAXCmQZWxPw0PtkXATDSqhA/U4s/utBpDxOXxU
-	 YqpIKsGjQ2dP4EbKSjmk6WifDuK7V4tau8b8aqwEnyr/N45Epa4QTe92iQ0g5y+JSu
-	 ZVCrXLFSFMg0g==
-Date: Thu, 9 May 2024 17:28:58 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Lee Jones <lee@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dustin Howett <dustin@howett.net>
-Subject: Re: [PATCH] platform/chrome: cros_kbd_led_backlight: enable probing
- through EC_FEATURE_PWM_KEYB
-Message-ID: <ZjyXWrYIjE47--Hl@google.com>
-References: <20240505-cros_ec-kbd-led-framework-v1-1-bfcca69013d2@weissschuh.net>
- <cd9c5b6a-0155-434a-b868-a9ea52e878c9@amd.com>
- <ae29f036-5e39-47ee-98d3-c023a263a3ef@t-8ch.de>
- <ZjxQHV9FPovvm_CY@google.com>
- <9b594929-a827-4682-b4aa-98a2c85a536b@t-8ch.de>
+	s=arc-20240116; t=1715246993; c=relaxed/simple;
+	bh=guUV12xHeWZjLEN/heIpUBLc1w752dkq46c8cDI16K0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CGbyLyp9m2x9TNwvHef8F9riKIfHgMq69rE3HP8A6Wv2PCzzL4qJx2XHTfWoFVDUGzeMortz3WrUZTzysPy5fKVRlxsdp8uYk7hIoBb2PQsDqF/MopOowzNjRl4oXqEkcEeFtKASy1yIQZtzPUalFKphOIFsvO5xMmmlIG4Uv7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSEdW5a1; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41e82b78387so5073945e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 02:29:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715246990; x=1715851790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FeSjiIWiFPchsOxTg1Zyaw5gzDqd8TrDZhofZl4LluQ=;
+        b=XSEdW5a1Rq2b4ZOj4PrSlOj78a41xaJglpqPG6S/RLNYOzmAHNmhfPPyi/5epov7Wj
+         8jGcJZLadCDfqZN7l91wwPDgPHhjRNN5qHwsdbrxga3zRpd8QvFK8CqsImjUIfIQ3qXb
+         hPJg1fKAnb74XaIPFKYx1CWpYVv15X7L+lijO75tkjalb5bqLQ+DqsR8Ey+i1sPR54bI
+         43c4i5GRPCwQwsYeAZaNQKjepTFy/oNeFtfQpyaOi4mLUoOSRu+jcLWBhBcbhlwvOLXP
+         Pdpqusq5/laRmv7marrHRbmum6hc/kyj2oeMTq1Rz6/USbIHrxLHty0dGmrOqSKzx4Go
+         wOVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715246990; x=1715851790;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FeSjiIWiFPchsOxTg1Zyaw5gzDqd8TrDZhofZl4LluQ=;
+        b=Fk7gbZm+H7IMjEInlPO+aLpUp0jkOntCX06GzEIcQapda64w0uA8HY3xgPugPhr5Ek
+         FK719Xff5oxLDR7B7SGXdrzl9P/zdhuCXdXTdLBV4UsJOmHfOXGnOtg47MDyis5waXOt
+         ijksVHf9cS5C6jd7uzKE3ANvchQdBDVfpmbLQVeG2+lrHcwOvOrhUwxqKXCN2hlheQ/w
+         +QErnF0ioxgtZNyueY3bMdo5IUlNelhhXJh4nThDa7JeSkZ7AKJ7+gmuwDW9J70PW+N2
+         5u2s6gG6/MLyJxIReMVEOtXcPZ0Zkmq0RllfhkeGXRfWDTUUwFMn1E0FK/tx0wCTRlCb
+         Jwcg==
+X-Gm-Message-State: AOJu0YyePnTxTFumFf685eAJoCBiMrQcJNk11ucWyyr1DphnW0/6rzrT
+	NNFD9CHG3dfnPKpNXOkkuLyPOtTJ4BhOppmUmLqNWrxbWvrtEGeC
+X-Google-Smtp-Source: AGHT+IHvj9qr06dOMV/u73WUyhnxCUsHdsNa1EU1XXGOfei6YvCq89ajcHsuZQJaIBIx4xmJmGBSGA==
+X-Received: by 2002:a05:600c:4703:b0:41a:b56c:2929 with SMTP id 5b1f17b1804b1-41f721acb23mr43842505e9.34.1715246990351;
+        Thu, 09 May 2024 02:29:50 -0700 (PDT)
+Received: from localhost.localdomain ([85.255.237.66])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce24c0sm19004065e9.17.2024.05.09.02.29.48
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 09 May 2024 02:29:48 -0700 (PDT)
+From: Levi Yun <ppbuk5246@gmail.com>
+To: anna-maria@linutronix.de,
+	frederic@kernel.org,
+	mingo@kernel.org,
+	tglx@linutronix.de,
+	Markus.Elfring@web.de
+Cc: linux-kernel@vger.kernel.org,
+	Levi Yun <ppbuk5246@gmail.com>
+Subject: [PATCH v4] time/tick-sched: idle load balancing when nohz_full cpu becomes idle.
+Date: Thu,  9 May 2024 10:29:32 +0100
+Message-ID: <20240509092931.35209-2-ppbuk5246@gmail.com>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20240508172621.30069-1-ppbuk5246@gmail.com>
+References: <20240508172621.30069-1-ppbuk5246@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9b594929-a827-4682-b4aa-98a2c85a536b@t-8ch.de>
 
-On Thu, May 09, 2024 at 10:13:37AM +0200, Thomas Weißschuh wrote:
-> On 2024-05-09 12:25:01+0000, Tzung-Bi Shih wrote:
-> > On Mon, May 06, 2024 at 07:38:09PM +0200, Thomas Weißschuh wrote:
-> > > On 2024-05-05 08:42:21+0000, Mario Limonciello wrote:
-> > > > On 5/5/2024 04:41, Thomas Weißschuh wrote:
-> > > > > The ChromeOS EC used in Framework laptops supports the standard cros
-> > > > > keyboard backlight protocol.
-> > > > > However the firmware on these laptops don't implement the ACPI ID
-> > > > > GOOG0002 that is recognized by cros_kbd_led_backlight and they also
-> > > > > don't use device tree.
-> > 
-> > If implementing ACPI ID GOOG0002 is not an option, how about adding a new ACPI
-> > ID?  For the new ACPI ID, it can use EC PWM for setting the brightness.
-> 
-> Adding a new ACPI ID would be easier than a full-blown ACPI interface.
-> This would still need changes to the drivers probing setup, however.
-> 
-> What are the advantages of the ACPI ID aproach over EC_FEATURE_PWM_KEYB?
-> The EC feature also automatically works on device-tree platforms and
-> without any work from system vendors.
+When nohz_full CPU stops tick in tick_nohz_irq_exit(),
+It wouldn't be chosen to perform idle load balancing because it doesn't
+call nohz_balance_enter_idle() in tick_nohz_idle_stop_tick() when it
+becomes idle.
 
-Perhaps no advantages but just following its original design.  The driver uses
-ACPI table for matching devices since it appears.  We shouldn't remove the
-ACPI matching anyway as some existing devices may rely on it.
+Formerly, __tick_nohz_idle_enter() is called in both
+tick_nohz_irq_exit() and in do_idle().
+That's why commit a0db971e4eb6 ("nohz: Move idle balancer registration
+to the idle path") prevents nohz_full cpu which isn't yet
+idle state but tick is stopped from entering idle balance.
 
-In addition, adding a new ACPI ID sounds more reasonable than using
-keyboard_led_is_mfd_device() to me.
+However, this prevents nohz_full cpu which already stops tick from
+entering idle balacne when this cpu really becomes idle state.
 
-> Adding ACPI ID only for signalling without using ACPI for
-> communication on the other hand seems weird.
+Currently, tick_nohz_idle_stop_tick() is only called in idle state and
+it calls nohz_balance_enter_idle(). this function tracks the CPU
+which is part of nohz.idle_cpus_mask with rq->nohz_tick_stopped properly.
 
-I have a different view: using a new ACPI ID and another driver data fits
-current framework better.  I'm not sure if the reason is strong enough for
-applying a new ACPI ID though.
+Therefore, Change tick_nohz_idle_stop_tick() to call nohz_balance_enter_idle()
+without checking !was_stopped so that nohz_full cpu can be chosen to
+perform idle load balancing when it enters idle state.
 
-We could wait to see if others in the mailing list may have more inputs.
+Fixes: a0db971e4eb6 ("nohz: Move idle balancer registration to the idle path")
+Signed-off-by: Levi Yun <ppbuk5246@gmail.com>
+---
+v4:
+	- Add fixes tags.
 
-> > > > Something I'd wonder is if the GOOG0002 ACPI ID can go away entirely with
-> > > > this type of change.  Presumably the Chromebooks with ChromeOS EC /also/
-> > > > advertise EC_FEATURE_PWM_KEYB.
-> > > 
-> > > Sounds good to me in general. It would make the code cleaner.
-> > > 
-> > > But I have no idea how CrOS kernels are set up in general.
-> > > If they are not using CONFIG_MFD_CROS_EC_DEV for some reason that
-> > > wouldn't work.
-> > > 
-> > > If the CrOS folks agree with that aproach I'll be happy to implement it.
-> > 
-> > I would say NO as some existing devices (with legacy firmware and kernel) may
-> > rely on it.
-> 
-> Ack, makes sense.
-> 
-> You mention legacy kernels, but these would not be affected.
+v3:
+	- Rewording commit message.
 
-We never know if a device would run legacy firmware with new kernel in some
-day.
+v2:
+	- Fix typos in commit message.
+
+ kernel/time/tick-sched.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 71a792cd8936..31a4cd89782f 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -1228,8 +1228,10 @@ void tick_nohz_idle_stop_tick(void)
+ 		ts->idle_sleeps++;
+ 		ts->idle_expires = expires;
+
+-		if (!was_stopped && tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
+-			ts->idle_jiffies = ts->last_jiffies;
++		if (tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
++			if (!was_stopped)
++				ts->idle_jiffies = ts->last_jiffies;
++
+ 			nohz_balance_enter_idle(cpu);
+ 		}
+ 	} else {
+--
+2.41.0
 
