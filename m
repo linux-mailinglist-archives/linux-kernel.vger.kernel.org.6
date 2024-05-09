@@ -1,46 +1,76 @@
-Return-Path: <linux-kernel+bounces-174244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F5D8C0C0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EBD8C0C15
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79AE21C2153A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:42:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010D11F22CD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9FA149C42;
-	Thu,  9 May 2024 07:42:48 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58B624
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43E2149C6C;
+	Thu,  9 May 2024 07:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bXR0QiX2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2908A149C4E;
+	Thu,  9 May 2024 07:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240568; cv=none; b=FYTeXUuTI+5r0dtkqAnlpVmZNiuUIyUsIN8UTeDLdRKNkU9eYwhWqL7Hh5X5TpIHfhh03M3+yXCjnejT9Ug5q7GKIFc9sSo2LmrRYWmaIkTpE9Us6DHusxBCUhEupIfEJwUaDN4gqt8r2BZvA8guCzS1GHOnb4x9JBKWaGePgsM=
+	t=1715240714; cv=none; b=D9gvyYEp3iq9D07q24MtmxYRYXOM9X6j80o74OdpgUyL1mtxo0wIILhXOc9E6BP++V7SVMrv3XDVlY/Zz0UXRZn3+kFmS0aT244xy/xVcjrOHEyEDOPnux3Q+2ffxOqX/dC8aKasJ+h2aJtY7aT+/0taTaDucbhNjmyisnxI+V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240568; c=relaxed/simple;
-	bh=ewf10vTLz1xYFsLWcMEWRjpSHDEcjsPxr6tQrO1knEU=;
+	s=arc-20240116; t=1715240714; c=relaxed/simple;
+	bh=ofkwrzFtb6ZpRq3UIrAJijVaDQes2mgoEii7GdsNITE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RH3SbXR0kLFB0A7OelIwa5QsJrIieUPHkAxPIpMi/Yn1ZG7pdNxbDvX4XdDX4r4+XAeJFpduBKBzn+dIFNx/zGsKg4ASnjWWrSU+r5ZYrostBhl1JGqk7P2UtRUwK+NAuy5ylU72YHXn8lwWknX5jxtHFX14L/wnewac5WeDpZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-36-663c7e701b3d
-Date: Thu, 9 May 2024 16:42:34 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
-	willy@infradead.org, david@redhat.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v9 rebase on mm-unstable 0/8] Reduce tlb and interrupt
- numbers over 90% by improving folio migration
-Message-ID: <20240509074234.GA77328@system.software.com>
-References: <20240418061536.11645-1-byungchul@sk.com>
- <87cyqlyjh5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=urgG4gZ/eUrh3Qn6vy78rsMQiKPrGWLZO1+DQaXTj6P/Cu2r5dvrgzQXly+YWZUXgfmd7nddQy1NbqS8SrxFf7km4FsxCBnYmIz69IquV4zkWlaGnvP1CRv3XYMv/c/azRUgPkTw83yVjCg8ErbtK1LVpBobfhdvtFbjxNrrBqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bXR0QiX2; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715240710; x=1746776710;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ofkwrzFtb6ZpRq3UIrAJijVaDQes2mgoEii7GdsNITE=;
+  b=bXR0QiX2KlndHaFS725EG4lJ7nBshx1EhHOF89FT9zmGQykGuL/Qhmoz
+   q1jiJY7kkF750xuHUDd3f7dT9xCJPuyzUn5tF7EImuF4BGep29tyPGP1L
+   4HyHCy5Bb1HLqHcrbnsHndaJzUSoBwxff58sJx4fQihrpHlYNcq6aZim/
+   d8HXHJE/A69rxFEADHTXsFmwt0fyconVglzhqjfdl4Jb7nTRbfxkzq9Mk
+   fm2jKJI8l+uJIE0PGUtIcBnT6m/95tUzJWHRuQ6H+hcc4sLJ+jgGyq9Lr
+   UWQg0sNDJIm8+HGANjsC17/AaUrwWBiV1rH9b8I2axLU01ZPgatdlDz0f
+   w==;
+X-CSE-ConnectionGUID: Vvy9hHklRwyww/z1BYYD/A==
+X-CSE-MsgGUID: dhw52DoMTG+YmdCBXX5Ayw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11067"; a="21815361"
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="21815361"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 00:45:09 -0700
+X-CSE-ConnectionGUID: M3oxqwrFTJKB+sjIs7W9oQ==
+X-CSE-MsgGUID: kB9DGFscRHKWvaht3Yiu5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,147,1712646000"; 
+   d="scan'208";a="52352272"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 09 May 2024 00:45:07 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s4ySe-0004ak-2Y;
+	Thu, 09 May 2024 07:45:04 +0000
+Date: Thu, 9 May 2024 15:43:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>, brendan.higgins@linux.dev,
+	davidgow@google.com, rmoar@google.com
+Cc: oe-kbuild-all@lists.linux.dev, Ivan Orlov <ivan.orlov0322@gmail.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH v2] kunit: Cover 'assert.c' with tests
+Message-ID: <202405091540.XkfmDsAL-lkp@intel.com>
+References: <20240508132557.599213-1-ivan.orlov0322@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,294 +79,258 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87cyqlyjh5.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLIsWRmVeSWpSXmKPExsXC9ZZnkW5BnU2awfUJAhZz1q9hs/i84R+b
-	xYsN7YwWX9f/YrZ4+qmPxeLyrjlsFvfW/Ge1OL9rLavFjqX7mCwuHVjAZHG89wCTxfx7n9ks
-	Nm+aymxxfMpURovfP4CKT86azOIg4PG9tY/FY+esu+weCzaVemxeoeWxeM9LJo9NqzrZPDZ9
-	msTu8e7cOXaPEzN+s3jMOxno8X7fVTaPrb/sPBqnXmPz+LxJLoAvissmJTUnsyy1SN8ugSvj
-	aeMnxoI/kRW7F7YxNjBOtOti5OSQEDCRaFu4gQ3Gnn//GiOIzSKgInHg2WewOJuAusSNGz+Z
-	QWwRAQ2JTwuXs3cxcnEwCzxnkvj95jc7SEJYoEpi3e27YA28AhYSF3tbWUFsIYFMibv3NzBB
-	xAUlTs58wgJiMwtoSdz49xIozgFkS0ss/8cBEuYUsJN4/OUrWLmogLLEgW3HmUB2SQisYpdY
-	2rgf6lBJiYMrbrBMYBSYhWTsLCRjZyGMXcDIvIpRKDOvLDcxM8dEL6MyL7NCLzk/dxMjMBKX
-	1f6J3sH46ULwIUYBDkYlHl6HTOs0IdbEsuLK3EOMEhzMSiK8VTVAId6UxMqq1KL8+KLSnNTi
-	Q4zSHCxK4rxG38pThATSE0tSs1NTC1KLYLJMHJxSDYwmEg3zNe40vstRsDrtvLzQV533x4lN
-	PtP5XL+4m0+0/Lhh9zvmo+KsB/tDeyU/R7nO3+B8SF5kSdtNxoKlZxZJ/+iel5Foq9Syrf3V
-	+7l7jddvMgnW4BZUjZ/8te+emUaTskZT9wznFDXtOzeb9ucs590S3BEx4ZXl9gP3sydtM136
-	vvDTshAlluKMREMt5qLiRAAfLLyzwAIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsXC5WfdrFtQZ5NmMG87s8Wc9WvYLD5v+Mdm
-	8WJDO6PF1/W/mC2efupjsTg89ySrxeVdc9gs7q35z2pxftdaVosdS/cxWVw6sIDJ4njvASaL
-	+fc+s1ls3jSV2eL4lKmMFr9/ABWfnDWZxUHQ43trH4vHzll32T0WbCr12LxCy2PxnpdMHptW
-	dbJ5bPo0id3j3blz7B4nZvxm8Zh3MtDj/b6rbB6LX3xg8tj6y86jceo1No/Pm+QC+KO4bFJS
-	czLLUov07RK4Mp42fmIs+BNZsXthG2MD40S7LkZODgkBE4n5968xgtgsAioSB559ZgOx2QTU
-	JW7c+MkMYosIaEh8WricvYuRi4NZ4DmTxO83v9lBEsICVRLrbt8Fa+AVsJC42NvKCmILCWRK
-	3L2/gQkiLihxcuYTFhCbWUBL4sa/l0BxDiBbWmL5Pw6QMKeAncTjL1/BykUFlCUObDvONIGR
-	dxaS7llIumchdC9gZF7FKJKZV5abmJljqlecnVGZl1mhl5yfu4kRGFfLav9M3MH45bL7IUYB
-	DkYlHl6HTOs0IdbEsuLK3EOMEhzMSiK8VTVAId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxe4akJ
-	QgLpiSWp2ampBalFMFkmDk6pBkZXFgnpBDmZ7vbCbEdr/5a/zjvsvirO4ZsqW1rwxr503fOs
-	S6tXq0S/OT7D+35j+CHX0E6n95u/d9fGNTm/VgkINpi32jA3Nm5Xsaot5+Gfh4VceC0mefvp
-	vCuM3aWWyLYl6NuFqPcX7KVEqgSrM62u9eUKb5EOEFicavHC0/nSCrm0RVynlFiKMxINtZiL
-	ihMBtoXLgKcCAAA=
-X-CFilter-Loop: Reflected
+In-Reply-To: <20240508132557.599213-1-ivan.orlov0322@gmail.com>
 
-On Fri, Apr 19, 2024 at 02:06:30PM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > The test envitonment:
-> >
-> >    Architecture - x86_64
-> >    QEMU - kvm enabled, host cpu
-> 
-> The test is run in VM?  Do you have test results in bare metal
-> environment?
+Hi Ivan,
 
-I tested it in a bare metal server.  See the result below.
+kernel test robot noticed the following build warnings:
 
-> >    Numa - 2 nodes (16 CPUs 1GB, no CPUs 99GB)
-> 
-> The configuration looks quite abnormal.  Have you tested with other
-> configuration, such 1:4 or 1:8?
+[auto build test WARNING on shuah-kselftest/kunit]
+[also build test WARNING on shuah-kselftest/kunit-fixes linus/master v6.9-rc7 next-20240508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I tested with DRAM : CXL expander = 42GB : 98GB.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivan-Orlov/kunit-Cover-assert-c-with-tests/20240508-212654
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git kunit
+patch link:    https://lore.kernel.org/r/20240508132557.599213-1-ivan.orlov0322%40gmail.com
+patch subject: [PATCH v2] kunit: Cover 'assert.c' with tests
+config: i386-randconfig-004-20240509 (https://download.01.org/0day-ci/archive/20240509/202405091540.XkfmDsAL-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240509/202405091540.XkfmDsAL-lkp@intel.com/reproduce)
 
-> >    Linux Kernel - v6.9-rc4, numa balancing tiering on, demotion enabled
-> >
-> > < measurement: raw data - tlb and interrupt numbers >
-> >
-> >    $ perf stat -a \
-> >            -e itlb.itlb_flush \
-> >            -e tlb_flush.dtlb_thread \
-> >            -e tlb_flush.stlb_any \
-> >            -e dtlb-load-misses \
-> >            -e dtlb-store-misses \
-> >            -e itlb-load-misses \
-> >            XSBench -t 16 -p 50000000
-> >
-> >    $ grep "TLB shootdowns" /proc/interrupts
-> >
-> >    BEFORE
-> >    ------
-> >    40417078     itlb.itlb_flush
-> >    234852566    tlb_flush.dtlb_thread
-> >    153192357    tlb_flush.stlb_any
-> >    119001107892 dTLB-load-misses
-> >    307921167    dTLB-store-misses
-> >    1355272118   iTLB-load-misses
-> >
-> >    TLB: 1364803    1303670    1333921    1349607
-> >         1356934    1354216    1332972    1342842
-> >         1350265    1316443    1355928    1360793
-> >         1298239    1326358    1343006    1340971
-> >         TLB shootdowns
-> >
-> >    AFTER
-> >    -----
-> >    3316495      itlb.itlb_flush
-> >    138912511    tlb_flush.dtlb_thread
-> >    115199341    tlb_flush.stlb_any
-> >    117610390021 dTLB-load-misses
-> >    198042233    dTLB-store-misses
-> >    840066984    iTLB-load-misses
-> >
-> >    TLB: 117257     119219     117178     115737
-> >         117967     118948     117508     116079
-> >         116962     117266     117320     117215
-> >         105808     103934     115672     117610
-> >         TLB shootdowns
-> >
-> > < measurement: user experience - runtime >
-> >
-> >    $ time XSBench -t 16 -p 50000000
-> >
-> >    BEFORE
-> >    ------
-> >    Threads:     16
-> >    Runtime:     968.783 seconds
-> >    Lookups:     1,700,000,000
-> >    Lookups/s:   1,754,778
-> >
-> >    15208.91s user 141.44s system 1564% cpu 16:20.98 total
-> >
-> >    AFTER
-> >    -----
-> >    Threads:     16
-> >    Runtime:     913.210 seconds
-> >    Lookups:     1,700,000,000
-> >    Lookups/s:   1,861,565
-> >
-> >    14351.69s user 138.23s system 1565% cpu 15:25.47 total
-> 
-> IIUC, the memory footprint will be larger with the patchset.  Do you
-> have data?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405091540.XkfmDsAL-lkp@intel.com/
 
-As I already told you, from version 9, the footprint is exactly same
-between patched kernel and vanilla kernel because that let folios go as
-is, but controls TLB flush timing only.
+All warnings (new ones prefixed by >>):
 
-There's two things to note.
+>> lib/kunit/assert.c:35:6: warning: no previous prototype for 'kunit_assert_print_msg' [-Wmissing-prototypes]
+      35 | void kunit_assert_print_msg(const struct va_format *message,
+         |      ^~~~~~~~~~~~~~~~~~~~~~
+>> lib/kunit/assert.c:95:23: warning: no previous prototype for 'is_literal' [-Wmissing-prototypes]
+      95 | VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
+         |                       ^~~~~~~~~~
+>> lib/kunit/assert.c:173:23: warning: no previous prototype for 'is_str_literal' [-Wmissing-prototypes]
+     173 | VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value)
+         |                       ^~~~~~~~~~~~~~
+>> lib/kunit/assert.c:217:6: warning: no previous prototype for 'kunit_assert_hexdump' [-Wmissing-prototypes]
+     217 | void kunit_assert_hexdump(struct string_stream *stream,
+         |      ^~~~~~~~~~~~~~~~~~~~
 
-1. I changed the patchset and will post the next version shortly:
 
-	BEFORE - Defer TLB flush required until the interesting folios
-	         exiting either pcp or buddy.  The interesting folios
-		 are source folios unmapped during folio migration.
+vim +/kunit_assert_print_msg +35 lib/kunit/assert.c
 
-	AFTER  - Defer TLB flush required until the interesting folios
-	         exiting either pcp or buddy.  The interesting folios
-		 are source folios unmapped during folio migration,
-		 * plus, folios unmapped during reclaiming folios in
-		 shrink_folio_list()*.
+    33	
+    34	VISIBLE_IF_KUNIT
+  > 35	void kunit_assert_print_msg(const struct va_format *message,
+    36				    struct string_stream *stream)
+    37	{
+    38		if (message->fmt)
+    39			string_stream_add(stream, "\n%pV", message);
+    40	}
+    41	EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
+    42	
+    43	void kunit_fail_assert_format(const struct kunit_assert *assert,
+    44				      const struct va_format *message,
+    45				      struct string_stream *stream)
+    46	{
+    47		string_stream_add(stream, "%pV", message);
+    48	}
+    49	EXPORT_SYMBOL_GPL(kunit_fail_assert_format);
+    50	
+    51	void kunit_unary_assert_format(const struct kunit_assert *assert,
+    52				       const struct va_format *message,
+    53				       struct string_stream *stream)
+    54	{
+    55		struct kunit_unary_assert *unary_assert;
+    56	
+    57		unary_assert = container_of(assert, struct kunit_unary_assert, assert);
+    58	
+    59		if (unary_assert->expected_true)
+    60			string_stream_add(stream,
+    61					  KUNIT_SUBTEST_INDENT "Expected %s to be true, but is false\n",
+    62					  unary_assert->condition);
+    63		else
+    64			string_stream_add(stream,
+    65					  KUNIT_SUBTEST_INDENT "Expected %s to be false, but is true\n",
+    66					  unary_assert->condition);
+    67		kunit_assert_print_msg(message, stream);
+    68	}
+    69	EXPORT_SYMBOL_GPL(kunit_unary_assert_format);
+    70	
+    71	void kunit_ptr_not_err_assert_format(const struct kunit_assert *assert,
+    72					     const struct va_format *message,
+    73					     struct string_stream *stream)
+    74	{
+    75		struct kunit_ptr_not_err_assert *ptr_assert;
+    76	
+    77		ptr_assert = container_of(assert, struct kunit_ptr_not_err_assert,
+    78					  assert);
+    79	
+    80		if (!ptr_assert->value) {
+    81			string_stream_add(stream,
+    82					  KUNIT_SUBTEST_INDENT "Expected %s is not null, but is\n",
+    83					  ptr_assert->text);
+    84		} else if (IS_ERR(ptr_assert->value)) {
+    85			string_stream_add(stream,
+    86					  KUNIT_SUBTEST_INDENT "Expected %s is not error, but is: %ld\n",
+    87					  ptr_assert->text,
+    88					  PTR_ERR(ptr_assert->value));
+    89		}
+    90		kunit_assert_print_msg(message, stream);
+    91	}
+    92	EXPORT_SYMBOL_GPL(kunit_ptr_not_err_assert_format);
+    93	
+    94	/* Checks if `text` is a literal representing `value`, e.g. "5" and 5 */
+  > 95	VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
+    96	{
+    97		char *buffer;
+    98		int len;
+    99		bool ret;
+   100	
+   101		len = snprintf(NULL, 0, "%lld", value);
+   102		if (strlen(text) != len)
+   103			return false;
+   104	
+   105		buffer = kmalloc(len+1, GFP_KERNEL);
+   106		if (!buffer)
+   107			return false;
+   108	
+   109		snprintf(buffer, len+1, "%lld", value);
+   110		ret = strncmp(buffer, text, len) == 0;
+   111	
+   112		kfree(buffer);
+   113	
+   114		return ret;
+   115	}
+   116	EXPORT_SYMBOL_IF_KUNIT(is_literal);
+   117	
+   118	void kunit_binary_assert_format(const struct kunit_assert *assert,
+   119					const struct va_format *message,
+   120					struct string_stream *stream)
+   121	{
+   122		struct kunit_binary_assert *binary_assert;
+   123	
+   124		binary_assert = container_of(assert, struct kunit_binary_assert,
+   125					     assert);
+   126	
+   127		string_stream_add(stream,
+   128				  KUNIT_SUBTEST_INDENT "Expected %s %s %s, but\n",
+   129				  binary_assert->text->left_text,
+   130				  binary_assert->text->operation,
+   131				  binary_assert->text->right_text);
+   132		if (!is_literal(binary_assert->text->left_text, binary_assert->left_value))
+   133			string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT "%s == %lld (0x%llx)\n",
+   134					  binary_assert->text->left_text,
+   135					  binary_assert->left_value,
+   136					  binary_assert->left_value);
+   137		if (!is_literal(binary_assert->text->right_text, binary_assert->right_value))
+   138			string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT "%s == %lld (0x%llx)",
+   139					  binary_assert->text->right_text,
+   140					  binary_assert->right_value,
+   141					  binary_assert->right_value);
+   142		kunit_assert_print_msg(message, stream);
+   143	}
+   144	EXPORT_SYMBOL_GPL(kunit_binary_assert_format);
+   145	
+   146	void kunit_binary_ptr_assert_format(const struct kunit_assert *assert,
+   147					    const struct va_format *message,
+   148					    struct string_stream *stream)
+   149	{
+   150		struct kunit_binary_ptr_assert *binary_assert;
+   151	
+   152		binary_assert = container_of(assert, struct kunit_binary_ptr_assert,
+   153					     assert);
+   154	
+   155		string_stream_add(stream,
+   156				  KUNIT_SUBTEST_INDENT "Expected %s %s %s, but\n",
+   157				  binary_assert->text->left_text,
+   158				  binary_assert->text->operation,
+   159				  binary_assert->text->right_text);
+   160		string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT "%s == %px\n",
+   161				  binary_assert->text->left_text,
+   162				  binary_assert->left_value);
+   163		string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT "%s == %px",
+   164				  binary_assert->text->right_text,
+   165				  binary_assert->right_value);
+   166		kunit_assert_print_msg(message, stream);
+   167	}
+   168	EXPORT_SYMBOL_GPL(kunit_binary_ptr_assert_format);
+   169	
+   170	/* Checks if KUNIT_EXPECT_STREQ() args were string literals.
+   171	 * Note: `text` will have ""s where as `value` will not.
+   172	 */
+ > 173	VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value)
+   174	{
+   175		int len;
+   176	
+   177		len = strlen(text);
+   178		if (len < 2)
+   179			return false;
+   180		if (text[0] != '\"' || text[len - 1] != '\"')
+   181			return false;
+   182	
+   183		return strncmp(text + 1, value, len - 2) == 0;
+   184	}
+   185	EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
+   186	
+   187	void kunit_binary_str_assert_format(const struct kunit_assert *assert,
+   188					    const struct va_format *message,
+   189					    struct string_stream *stream)
+   190	{
+   191		struct kunit_binary_str_assert *binary_assert;
+   192	
+   193		binary_assert = container_of(assert, struct kunit_binary_str_assert,
+   194					     assert);
+   195	
+   196		string_stream_add(stream,
+   197				  KUNIT_SUBTEST_INDENT "Expected %s %s %s, but\n",
+   198				  binary_assert->text->left_text,
+   199				  binary_assert->text->operation,
+   200				  binary_assert->text->right_text);
+   201		if (!is_str_literal(binary_assert->text->left_text, binary_assert->left_value))
+   202			string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT "%s == \"%s\"\n",
+   203					  binary_assert->text->left_text,
+   204					  binary_assert->left_value);
+   205		if (!is_str_literal(binary_assert->text->right_text, binary_assert->right_value))
+   206			string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT "%s == \"%s\"",
+   207					  binary_assert->text->right_text,
+   208					  binary_assert->right_value);
+   209		kunit_assert_print_msg(message, stream);
+   210	}
+   211	EXPORT_SYMBOL_GPL(kunit_binary_str_assert_format);
+   212	
+   213	/* Adds a hexdump of a buffer to a string_stream comparing it with
+   214	 * a second buffer. The different bytes are marked with <>.
+   215	 */
+   216	VISIBLE_IF_KUNIT
+ > 217	void kunit_assert_hexdump(struct string_stream *stream,
+   218				  const void *buf,
+   219				  const void *compared_buf,
+   220				  const size_t len)
+   221	{
+   222		size_t i;
+   223		const u8 *buf1 = buf;
+   224		const u8 *buf2 = compared_buf;
+   225	
+   226		string_stream_add(stream, KUNIT_SUBSUBTEST_INDENT);
+   227	
+   228		for (i = 0; i < len; ++i) {
+   229			if (!(i % 16) && i)
+   230				string_stream_add(stream, "\n" KUNIT_SUBSUBTEST_INDENT);
+   231	
+   232			if (buf1[i] != buf2[i])
+   233				string_stream_add(stream, "<%02x>", buf1[i]);
+   234			else
+   235				string_stream_add(stream, " %02x ", buf1[i]);
+   236		}
+   237	}
+   238	EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
+   239	
 
-2. I changed workload for testing because XSBench doesn't struggle
-   against lack of memory in such a big server.  Instead, I picked a
-   very real workload, LLM inference engine, llama.cpp.
-
-I tested with the two changes.  The test result is like:
-
----
-
-   Kernel version: mm-unstable around v6.9-rc4
-   Machine: bare metal, x86_64, Intel(R) Xeon(R) Gold 6430
-   CPU: 1 socket 64 core with hyper thread on
-   Numa: 2 nodes (64 CPUs DRAM 42GB, no CPUs CXL(expander) 98GB)
-   Config: swap off, numa balancing tiering on, demotion enabled
-
-   1 set of test workload:
-
-      echo 3 > /proc/sys/vm/drop_caches
-      llama.cpp/main -m $(70G_model1) -p "who are you?" -s 1 -t 15 -n 20 &
-      llama.cpp/main -m $(70G_model2) -p "who are you?" -s 1 -t 15 -n 20 &
-      llama.cpp/main -m $(70G_model3) -p "who are you?" -s 1 -t 15 -n 20 &
-      wait
-   
-   where -t: nr of threads, -s: seed used to make the runtime stable,
-   -n: nr of tokens determinig the runtime, -p: prompt to ask, -m: LLM
-   model to use.
-
-   Run this set 10 times successively.  So I got 30 total runtimes since
-   each inference prints its runtime at the end of each run.  The result
-   is like:
-
-   BEFORE
-   ------
-   llama_print_timings:       total time = 1002461.95 ms /    24 tokens
-   llama_print_timings:       total time = 1044978.38 ms /    24 tokens
-   llama_print_timings:       total time = 1000653.09 ms /    24 tokens
-   llama_print_timings:       total time = 1047104.80 ms /    24 tokens
-   llama_print_timings:       total time = 1069430.36 ms /    24 tokens
-   llama_print_timings:       total time = 1068201.16 ms /    24 tokens
-   llama_print_timings:       total time = 1078092.59 ms /    24 tokens
-   llama_print_timings:       total time = 1073200.45 ms /    24 tokens
-   llama_print_timings:       total time = 1067136.00 ms /    24 tokens
-   llama_print_timings:       total time = 1076442.56 ms /    24 tokens
-   llama_print_timings:       total time = 1004142.64 ms /    24 tokens
-   llama_print_timings:       total time = 1042942.65 ms /    24 tokens
-   llama_print_timings:       total time =  999933.76 ms /    24 tokens
-   llama_print_timings:       total time = 1046548.83 ms /    24 tokens
-   llama_print_timings:       total time = 1068671.48 ms /    24 tokens
-   llama_print_timings:       total time = 1068285.76 ms /    24 tokens
-   llama_print_timings:       total time = 1077789.63 ms /    24 tokens
-   llama_print_timings:       total time = 1071558.93 ms /    24 tokens
-   llama_print_timings:       total time = 1066181.55 ms /    24 tokens
-   llama_print_timings:       total time = 1076767.53 ms /    24 tokens
-   llama_print_timings:       total time = 1004065.63 ms /    24 tokens
-   llama_print_timings:       total time = 1044522.13 ms /    24 tokens
-   llama_print_timings:       total time =  999725.33 ms /    24 tokens
-   llama_print_timings:       total time = 1047510.77 ms /    24 tokens
-   llama_print_timings:       total time = 1068010.27 ms /    24 tokens
-   llama_print_timings:       total time = 1068999.31 ms /    24 tokens
-   llama_print_timings:       total time = 1077648.05 ms /    24 tokens
-   llama_print_timings:       total time = 1071378.96 ms /    24 tokens
-   llama_print_timings:       total time = 1066326.32 ms /    24 tokens
-   llama_print_timings:       total time = 1077088.92 ms /    24 tokens
-
-   AFTER
-   -----
-   llama_print_timings:       total time =  988522.03 ms /    24 tokens
-   llama_print_timings:       total time =  997204.52 ms /    24 tokens
-   llama_print_timings:       total time =  996605.86 ms /    24 tokens
-   llama_print_timings:       total time =  991985.50 ms /    24 tokens
-   llama_print_timings:       total time = 1035143.31 ms /    24 tokens
-   llama_print_timings:       total time =  993660.18 ms /    24 tokens
-   llama_print_timings:       total time =  983082.14 ms /    24 tokens
-   llama_print_timings:       total time =  990431.36 ms /    24 tokens
-   llama_print_timings:       total time =  992707.09 ms /    24 tokens
-   llama_print_timings:       total time =  992673.27 ms /    24 tokens
-   llama_print_timings:       total time =  989285.43 ms /    24 tokens
-   llama_print_timings:       total time =  996710.06 ms /    24 tokens
-   llama_print_timings:       total time =  996534.64 ms /    24 tokens
-   llama_print_timings:       total time =  991344.17 ms /    24 tokens
-   llama_print_timings:       total time = 1035210.84 ms /    24 tokens
-   llama_print_timings:       total time =  994714.13 ms /    24 tokens
-   llama_print_timings:       total time =  984184.15 ms /    24 tokens
-   llama_print_timings:       total time =  990909.45 ms /    24 tokens
-   llama_print_timings:       total time =  991881.48 ms /    24 tokens
-   llama_print_timings:       total time =  993918.03 ms /    24 tokens
-   llama_print_timings:       total time =  990061.34 ms /    24 tokens
-   llama_print_timings:       total time =  998076.69 ms /    24 tokens
-   llama_print_timings:       total time =  997082.59 ms /    24 tokens
-   llama_print_timings:       total time =  990677.58 ms /    24 tokens
-   llama_print_timings:       total time = 1036054.94 ms /    24 tokens
-   llama_print_timings:       total time =  994125.93 ms /    24 tokens
-   llama_print_timings:       total time =  982467.01 ms /    24 tokens
-   llama_print_timings:       total time =  990191.60 ms /    24 tokens
-   llama_print_timings:       total time =  993319.24 ms /    24 tokens
-   llama_print_timings:       total time =  992540.57 ms /    24 tokens
-   
-   The difference of TLB shootdown(/proc/interrupts) is like:
-
-   BEFORE
-   ------
-   TLB:
-   125553646  141418810  161932620  176853972  186655697  190399283
-   192143823  196414038  192872439  193313658  193395617  192521416
-   190788161  195067598  198016061  193607347  194293972  190786732
-   191545637  194856822  191801931  189634535  190399803  196365922
-   195268398  190115840  188050050  193194908  195317617  190820190
-   190164820  185556071  226797214  229592631  216112464  209909495
-   205575979  205950252  204948111  197999795  198892232  205287952
-   199344631  195015158  195869844  198858745  195692876  200961904
-   203463252  205921722  199850838  206145986  199613202  199961345
-   200129577  203020521  207873649  203697671  197093386  204243803
-   205993323  200934664  204193128  194435376  TLB shootdowns                                                  
-
-   AFTER
-   -----
-   TLB:
-   5648092    6610142    7032849    7882308    8088518    8352310
-   8656536    8705136    8647426    8905583    8985408    8704522
-   8884344    9026261    8929974    8869066    8877575    8810096
-   8770984    8754503    8801694    8865925    8787524    8656432
-   8755912    8682034    8773935    8832925    8797997    8515777
-   8481240    8891258   10595243   10285973    9756935    9573681
-   9398968    9069244    9242984    8899009    9310690    9029095
-   9069758    9105825    9092703    9270202    9460287    9258546
-   9180415    9232723    9270611    9175020    9490420    9360316
-   9420818    9057663    9525631    9310152    9152242    8654483
-   9181804    9050847    8919916    8883856    TLB shootdowns                                                  
-
-   The difference of 'perf stat' for tlb numbers during one set of test
-   with drop cache excluded is like:
-
-   BEFORE
-   ------
-   3163679332	dTLB-load-misses     
-   2017751856	dTLB-store-misses    
-   327092903	iTLB-load-misses     
-   1357543886	tlb:tlb_flush        
-
-   AFTER
-   -----
-   2394694609	dTLB-load-misses     
-   861144167	dTLB-store-misses    
-   64055579	iTLB-load-misses     
-   69175002	tlb:tlb_flush        
-
----
-
-I'm happy to share great results.  I used a real workload that is super
-popular these days, and got good results.  I will post the next version
-of the patchset shortly after organizing and refining things.
-
-	Byungchul
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
