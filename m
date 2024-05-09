@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-174243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83E58C0C0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:41:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3556D8C0C12
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 09:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87066281F36
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:41:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5BE282A0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 07:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201A81494DC;
-	Thu,  9 May 2024 07:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283551494D9;
+	Thu,  9 May 2024 07:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nshiaoNo"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="eE3M+19/"
+Received: from smtpcmd04132.aruba.it (smtpcmd04132.aruba.it [62.149.158.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1949F2747D;
-	Thu,  9 May 2024 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F53C624
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 07:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715240459; cv=none; b=tifoVr5FXz46442XTuJBoQQgbcud5T0b9CAs51d7yFWqk+2C/fJ4V3ndF5DrAJ80SHxC8AAJFUAr43ICEm9ecd5HPqVTWZNh0hBrw0VfVvvzaxYM+TfutSK0YNgMCXbv03mQ9r1ieitpemyMqj6MX62T5fhHhHCW3M1h1Lxr9Fs=
+	t=1715240701; cv=none; b=I23GTZRO0CrPYBYRd7RiscG4QyP3xSxVucny1HuHXvPqGypUuNMT3W4WAqSIABO8+20+neK36M8jxY24Uv1b/ZY8a1IPo76DpZqsny2mYkkiBHEBGqrU8TYfbUUuDiNV0VVl4hTiV6wNQaKorEeopU2jM2CHEAt+W04rKkAynZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715240459; c=relaxed/simple;
-	bh=/Hk+HDUCApUoxRrI1cEqlgRHMEvYYo4NSGj6AmNqJRo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=jBaNi9WGpisirLAfAGiisZVWkFhDEw4sEUgrsnDOfB+CjL5RxRYz7jo5ZF+3HgCuIOF/h8i4iDzTYJLDm5fbA9+SLBLQSVIDMGo+fUAFZBShj593xIiGBD+J9AY5Dy/u8AIxqICr7rEWvXsJTJmwxxc5y9wj6Wui0Tmlb8DkAxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nshiaoNo; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-61aef9901deso491091a12.1;
-        Thu, 09 May 2024 00:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715240457; x=1715845257; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XKiSBeXRcVkUUdzkMxkRSXFHQgmY3xB5UE0hRtjhYGQ=;
-        b=nshiaoNoJHZhtaSYtDZwrThTj3gQTCbQlEuNPkhKmxGMHusLRozZZSRFx/ml6E7t9L
-         Mux5J8FtznMQBNGHhyXquEqv2wREcotkLcRnMBy71Dm5mCq6lt6S45lCLhSqc3KJ1i7k
-         frrfd8PrX7gi5uCwKxqav28pOAxRzmN105K1bVr+W0R2kw4GvNg4XZk2848lz4aQngEn
-         XH2ht2aivgJZuyx6A2UzrK8quXIx9/zxPDyMrbmxjY3wW73uX5WmcCdfaXpW1yB99Rws
-         ZgrQR1Y4m3pB/kHu5kHKJnBtrw+AkMZ0mBIq3RwyWsIW/AYRnRbwcp5AlErqeHrPQVDr
-         H3iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715240457; x=1715845257;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XKiSBeXRcVkUUdzkMxkRSXFHQgmY3xB5UE0hRtjhYGQ=;
-        b=JbOJORqyl9Ybh3Q3bZxKPiTQD3F5lh52As3+t2bIeEz69LlOuy0HV7NjE2HXxAym+J
-         pxES+RhUwJjENJ13UVjbqKAz7xmS1Pe/AN1TRBmoY13m7oiuHAmSvvfLyEy+4J5lS7jp
-         7y0z+kthLEBLJ0mTsYE2RI0w3u5I9nHVsVpaDU89pvj1w7ZTsawqrDvxm48cHHwt3c9E
-         6MyZECHbPF4T+gGKIv7pwnaNGOA/mGrlkzbb939tltLKQWWSKgXF8RvkNK6eMR2m7adj
-         dTHZdKNpnlPEKoOtgYyNxIsrwE4ny06/2DsXhazLJFBWI96SuzBYnpxqae698LCLqJoy
-         o0fg==
-X-Forwarded-Encrypted: i=1; AJvYcCWea6c3mut0Uro196W2g6WDaDerm5flQkIyJ15wqg/weEVdqPLD9ADmZYgf9ijHA9zfa9D1ENp3sYHXFx1fnSUtCu/sRkcsGodW6Poiq8ZXpdUlSa4lps2qGV02FigDKVgT
-X-Gm-Message-State: AOJu0YyG87l8iLYTtT4bibn6C7rSa3dVZeWhR7efOB4YkY0wFLZ87Qox
-	S057U2rlpVoU0Xt+acFU2tFCx/5wkVpYRma+Ud93vP0Vjl3OFf/R
-X-Google-Smtp-Source: AGHT+IHtF241YpleHFBSCoJUp2H3nJXVUq96ckEcjrHjq+yDTYMOICd2IbJGMGX7Rm32Y2XVRXvfxw==
-X-Received: by 2002:a05:6a20:2d23:b0:1ad:5325:d9b7 with SMTP id adf61e73a8af0-1afc8ddc16cmr6140115637.52.1715240457349;
-        Thu, 09 May 2024 00:40:57 -0700 (PDT)
-Received: from MSCND1355B05.fareast.nevint.com ([117.128.58.94])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c256299sm7569085ad.286.2024.05.09.00.40.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 00:40:57 -0700 (PDT)
-From: Zqiang <qiang.zhang1211@gmail.com>
-To: paulmck@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org
-Cc: qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] rcu/nocb: Fix using smp_processor_id() in preemptible warning
-Date: Thu,  9 May 2024 15:40:46 +0800
-Message-Id: <20240509074046.15629-1-qiang.zhang1211@gmail.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1715240701; c=relaxed/simple;
+	bh=ThdJPds+LGQXbpgqD3ptkuRAzIs3behnp7rruMXvtaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M7T5sQIYFTqcjWDbG1YLHM0WTa4EsoMQF99Y4Q/nmVelmvDEKqjpdloKcNpYNMgBjWeLnWG8ToP7V5vyWIjlX5tGbKBpf1XtLAg3Z2gIhsTuKzSc7ggAcCuCGiR5JdeIgXDLP/kPIphNZhD3EiJDFKDVZgavZtWzwh1yetbeUvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=eE3M+19/; arc=none smtp.client-ip=62.149.158.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+Received: from [192.168.1.59] ([79.0.204.227])
+	by Aruba Outgoing Smtp  with ESMTPSA
+	id 4yPTs3d6JF8HI4yPTs9FrL; Thu, 09 May 2024 09:41:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1715240507; bh=ThdJPds+LGQXbpgqD3ptkuRAzIs3behnp7rruMXvtaY=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=eE3M+19/MwvIfRLw8ifNyYfLh0dTkxp0706Ni9gKt+SpFxZVDxsbP3lXsq9WGt/BJ
+	 g4UfW4nY477LorhI9Ts7QahrAxO0XxqAkTTEoBnHViK1YP7qLgOfP+tVLA63DhgQRf
+	 sHaShD1NK6TmszN+e+KBvXs02NkBGdB6QC3ZKkXbpjEGQDLRLdSqesyFEJ1vGFTgVu
+	 FwX+M7/+zAp+SEQHuiPWmhfst/1j39+n8/SmTbgMgiS/j391Kkg20eFUh1uRBwz7t2
+	 Fs8ZLxO2EUoo/x2qGE3X+iwZ47VnmUNBfHXeMSS4I/vUaV9j7I47MjatRXs/wOmrbq
+	 1/b4/j99XM7Tg==
+Message-ID: <bd4799ab-9456-421a-8294-de6481543ad1@enneenne.com>
+Date: Thu, 9 May 2024 09:41:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pps: clients: gpio: Convert to platform remove callback
+ returning void
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: linux-kernel@vger.kernel.org, kernel@pengutronix.de
+References: <f4b9402af72e5f285c8b0f068076a76418f653f5.1709886922.git.u.kleine-koenig@pengutronix.de>
+ <6d73b0a4-34e6-44ce-8757-4f4931c3da85@enneenne.com>
+ <4iii7uxyfovs6ntm7hs2w546k3upbhkepgzxarjk4wnlqmeern@sh6gkyuiqpjs>
+ <v7sefhmq42ro2dfpxgipxxajxpuh3xy46c77uibmypyp34duqs@5vw5ava4ns7d>
+From: Rodolfo Giometti <giometti@enneenne.com>
+Content-Language: en-US
+In-Reply-To: <v7sefhmq42ro2dfpxgipxxajxpuh3xy46c77uibmypyp34duqs@5vw5ava4ns7d>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfFjOI/fdUmqGp2cAhacTpHu609kgQxiNzVpfZWqAH4XJ/MMIhvXD3+YHLx+DGn4zSE9nMrNvwkIy22WcwC7puXayUOSq0mOc8+tpb5fu0V3XnpyiNT0F
+ wWF4riGXs9D+f2kifMQcOq2CIA699qlXT6a+fAkkh/Q5aUEzsPyJctkwrf2pQrzMFoOX0uvEUtvLpg4BiPbLG3gMxXnSku+wWIELxhBvQiMf9cuBNXa547cD
+ UqMXZ97b3bTGN9XO6UdroVyoEHGmsT+VrJ2ido279Rc=
 
-Currently, the this_cpu_ptr(&rcu_data) in rcu_rdp_is_offloaded() is called
-before the condition "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())"
-is checked, and occurs in preemptible task context, this will trigger the
-following warning.
+On 08/05/24 15:57, Uwe Kleine-König wrote:
+> On Fri, Apr 12, 2024 at 02:26:48PM +0200, Uwe Kleine-König wrote:
+>> [Cc: += linuxpps@ml.enneenne.com]
+>>
+>> On Fri, Mar 08, 2024 at 09:57:29AM +0100, Rodolfo Giometti wrote:
+>>> On 08/03/24 09:51, Uwe Kleine-König wrote:
+>>>> The .remove() callback for a platform driver returns an int which makes
+>>>> many driver authors wrongly assume it's possible to do error handling by
+>>>> returning an error code. However the value returned is ignored (apart
+>>>> from emitting a warning) and this typically results in resource leaks.
+>>>>
+>>>> To improve here there is a quest to make the remove callback return
+>>>> void. In the first step of this quest all drivers are converted to
+>>>> .remove_new(), which already returns void. Eventually after all drivers
+>>>> are converted, .remove_new() will be renamed to .remove().
+>>>>
+>>>> Trivially convert this driver from always returning zero in the remove
+>>>> callback to the void returning variant.
+>>>>
+>>>> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+>>>
+>>> Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+>>
+>> The MAINTAINERS entry for drivers/pps lists you as single maintainer.
+>> Who is expected to pick up this patch given that you "only" send an ack
+>> but didn't pick up the patch? (Or only picked it up in a tree not
+>> included in next.)
+> 
+> In the meantime you sent an Ack to my patch. Does that mean I can/should
+> include this patch in the series changing struct platform_driver that I
+> intend to send to Greg after the upcoming merge window closes?
 
-[ 4.106221][ T18] BUG: using smp_processor_id() in preemptible [00000000] code: rcuop/0/18
-[ 4.107796][ T18] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
-[ 4.108547][ T18] CPU: 0 PID: 18 Comm: rcuop/0 Not tainted 6.9.0-rc2-00079-g4c66bc7cacc0 #1
-[ 4.109667][ T18] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-[ 4.111064][ T18] Call Trace:
-[ 4.111064][ T18]  <TASK>
-[ 4.111064][ T18] dump_stack_lvl (lib/dump_stack.c:116)
-[ 4.111064][ T18] dump_stack (lib/dump_stack.c:124)
-[ 4.111064][ T18] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 (discriminator 15) lib/smp_processor_id.c:53 (discriminator 15))
-[ 4.111064][ T18] debug_smp_processor_id (lib/smp_processor_id.c:61)
-[ 4.111064][ T18] rcu_rdp_is_offloaded (kernel/rcu/tree_plugin.h:27 (discriminator 1))
-[ 4.111064][ T18] nocb_cb_wait (kernel/rcu/tree_nocb.h:936 (discriminator 2))
-[ 4.111064][ T18] rcu_nocb_cb_kthread (kernel/rcu/tree_nocb.h:983 (discriminator 1))
-[ 4.111064][ T18] ? nocb_cb_wait (kernel/rcu/tree_nocb.h:976)
-[ 4.111064][ T18] kthread (kernel/kthread.c:388)
-[ 4.111064][ T18] ? kthread (kernel/kthread.c:373 (discriminator 2))
-[ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
-[ 4.111064][ T18] ret_from_fork (arch/x86/kernel/process.c:153)
-[ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
-[ 4.111064][ T18] ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
-[ 4.111064][ T18]  </TASK>
+Yes.
 
-This commit fix this warning by priority check the condition 
-"!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())" , to
-ensure whether the this_cpu_ptr(&rcu_data) can be executed in
-rcu_rdp_is_offloaded().
+Rodolfo
 
-Fixes: 8feeeba60711 ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
-Tested-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
----
- kernel/rcu/tree_plugin.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 340bbefe5f65..1bb73466a8a9 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -28,8 +28,8 @@ static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
- 		!(lockdep_is_held(&rcu_state.barrier_mutex) ||
- 		  (IS_ENABLED(CONFIG_HOTPLUG_CPU) && lockdep_is_cpus_held()) ||
- 		  rcu_lockdep_is_held_nocb(rdp) ||
--		  (rdp == this_cpu_ptr(&rcu_data) &&
--		   !(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())) ||
-+		   (!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible()) &&
-+			rdp == this_cpu_ptr(&rcu_data)) ||
- 		  rcu_current_is_nocb_kthread(rdp)),
- 		"Unsafe read of RCU_NOCB offloaded state"
- 	);
 -- 
-2.17.1
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
 
 
