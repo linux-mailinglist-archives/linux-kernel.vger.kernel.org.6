@@ -1,123 +1,345 @@
-Return-Path: <linux-kernel+bounces-174050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48A508C09A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:06:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BA38C09A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 04:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3ED1F225ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:06:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB79F1F22342
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DDE13C9AB;
-	Thu,  9 May 2024 02:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0636E13C9AA;
+	Thu,  9 May 2024 02:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIFk27fG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twKsIKe2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6991810A11;
-	Thu,  9 May 2024 02:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B62113A87C;
+	Thu,  9 May 2024 02:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715220370; cv=none; b=rkjomwLFqlXyfEBiKmnDznvEYdm7rFYn8Cgqf8F26fzccJInNpKRqBJmDI9i0RnY+pX/pEkAi7NwL5q4Rc2qqGafUbHcRIktDRc8POx9UeNWwWyj/f2rgecIr4JKQ3nyXpwrnhHZQDv/FW3My5R9SAII7ooaGtxbzrDVL8KTHFg=
+	t=1715220460; cv=none; b=H4ODhtCp5G19HHUIR9yvFpE9XZn86nDA8IQfRe2pCUs0JgVj/t8Ujkt0zRiraJqeCqVM2lvuWMQOq7mhpVPIAKe38aRzH8pOb08Wd3EK03YbdV6MDETyoMGOPY5d5V4WpHg7hZJL+SMBkyjZJo03jVsJ/IWqSSm1LC4ui/Zjfuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715220370; c=relaxed/simple;
-	bh=G7cFv9cF2cnjfjAGz44Yc56GefLQLwiyJxe2ewKnFKM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qOe82ZJ/W51ZnSDyhjcdCuqK2/FjlYdiYhZj84zZ5d/3ucT97y6gk1wcB3d163Ntm5SpDCtOTj1b3aWJoB2R7wDWbCi1M/XQKi83RG4yqMgJy4geJSjZENiW7wnPVGAOruYk2BdPafd3k8ZWu9pcM4mzo/5r0sagCWzDzCMmRDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIFk27fG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED654C4AF0A;
-	Thu,  9 May 2024 02:06:08 +0000 (UTC)
+	s=arc-20240116; t=1715220460; c=relaxed/simple;
+	bh=3L7YmCWw0bGIJuIk7BmEOcj2/e576OiWHsNquN3MXTs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=P/4JN9GwfPNKyUTGACZn/ACPUg1mEzXulQOuIe/SNkDMq+wdrXz/yjCY6pZnZHZdagaySOLjWMT2zr8tU/TNksPUfTYT8ieIKPolh3LWuEWqO5olOt9iCeFCzj0U2rovp950cyNoR8RQiDDCigI1jklYRi55Q/rNaJr0wEclJHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twKsIKe2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 84935C113CC;
+	Thu,  9 May 2024 02:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715220369;
-	bh=G7cFv9cF2cnjfjAGz44Yc56GefLQLwiyJxe2ewKnFKM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HIFk27fGvuQXEVMRzZy91iuiEyQjcTGd/3F+LVE/v2tcAYAAIAHOB0SqJ5p+6mHKH
-	 Hm71icex8Xie6TrK9DbNytuDsmayLDCbM4suzT0LNOCxCYKaixYUlSbcPPW+38WOG4
-	 5BIIyPQJ2jqPkuZmA2a8o1Cc1bNlw83WRkF2afJib4mTOMObnb1aiLBEP/elcSRcoF
-	 zZ2MA4OVsXruvYEuvudWLfDPIrglzfBAUSm3ykIKQI317nBke33EjS7KzyZxIoQ+FU
-	 2WCovFUeeg0io2DLXwDvgIcYVtnAKcXsIk9Ayv5SvZ2niiC/AaVXgHT5kIMrg6mXyb
-	 L1jKwf4OL0a1w==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51ff65b1e14so302266e87.2;
-        Wed, 08 May 2024 19:06:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVa+furTq9QhUZ8ikrP68f6drVNAxUlUGhCLx4+L7o27YwFM9+ZPi7ImmGOstRiDAbZcpYqt5T83Q4pxt3hVWQ473FKIYJtbUtOSacSCVTxdnSIxzJ8RPKjkjRujgwSmmzZ8+VCefSGjWvDsQ==
-X-Gm-Message-State: AOJu0YyoTcB6B0XIKmf2pcdZ6yK9WwbU8ifxxqjHeImd3Co0+Go53Dml
-	woYrJIxrxZL6QZgO4LYmrk5YRJoGCYGC0oCQnCxLu3Pix+1zmjOqkKKidVvzZBxROeAdTrz78Vm
-	ynWM6FXd1mBELL++TlJCrjtZA+0M=
-X-Google-Smtp-Source: AGHT+IG9jgW2EhldqJEU5OYVfvoRjo0wlRA5x/+WH/NBhi4EjV49pvu6Eqy1EviqeUURrwJaBPOetOpoppVu/vQSytA=
-X-Received: by 2002:a05:6512:3a8c:b0:521:b2b5:5ab2 with SMTP id
- 2adb3069b0e04-521b2b55ab6mr2522757e87.46.1715220367602; Wed, 08 May 2024
- 19:06:07 -0700 (PDT)
+	s=k20201202; t=1715220459;
+	bh=3L7YmCWw0bGIJuIk7BmEOcj2/e576OiWHsNquN3MXTs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=twKsIKe2wZSLV+6adQSeOOfGXHp/nM84QzN0EK7E0I6zUECldN6TGAhLHI3NDXqYF
+	 Ekud8Nlyzs2F7wkDLkZiXSC0NS7QCKCB8ETHzFM9OU9ObCGHsRPHC0mOc1P4aIWps3
+	 5ymhxTNPbz2PDxy9hOP3x/KpOkJvZjkumj7c7dvMekSDQue+g98KbvPCdRX5V6KNwN
+	 BVs8CCs2vzQcHRL0IxfsOgK1xN0HW4mTAZnUnA+/aWEmYBkaJCsedd0lff17o+dsvH
+	 L/w8AVFwntFR+7Y3X2NrIRP6bhA/S/clEHb3B/tDKbMe4Hc/MBKlD3frxUX6EbqzRL
+	 QPgGIm1Jf5NBQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9A2C04FFE;
+	Thu,  9 May 2024 02:07:39 +0000 (UTC)
+From: Fenglin Wu via B4 Relay <devnull+quic_fenglinw.quicinc.com@kernel.org>
+Date: Thu, 09 May 2024 10:07:23 +0800
+Subject: [PATCH] leds: flash: leds-qcom-flash: limit LED current based on
+ thermal condition
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com> <CAD=FV=Xa6LJEWZwdUXvFVPQ0-qnDZroDi6tkZaLFHiarJ2gyew@mail.gmail.com>
-In-Reply-To: <CAD=FV=Xa6LJEWZwdUXvFVPQ0-qnDZroDi6tkZaLFHiarJ2gyew@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 9 May 2024 11:05:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZu1Jrqibn-PvjAa=dQwikMdWVH9d9oKwpe007JeVC6Q@mail.gmail.com>
-Message-ID: <CAK7LNARZu1Jrqibn-PvjAa=dQwikMdWVH9d9oKwpe007JeVC6Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
-To: Doug Anderson <dianders@chromium.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, freedreno@lists.freedesktop.org, 
-	Rob Clark <robdclark@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	seanpaul@chromium.org, swboyd@chromium.org, quic_jesszhan@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240509-qcom_flash_thermal_derating-v1-1-1d5e68e5d71c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIANovPGYC/x3M0QqDIBQA0F+R+zzBrCbsV8YQs2teKN2uEkH07
+ 8kez8s5oSATFniJExh3KpRTQ/cQ4KNLC0qam0ErPahRGfnzebNhdSXaGpE3t9oZ2VVKi9RPNXW
+ h92Y0HtrwZQx0/Pf357pumP9dCW0AAAA=
+To: kernel@quicinc.com, Pavel Machek <pavel@ucw.cz>, 
+ Lee Jones <lee@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ David Collins <quic_collinsd@quicinc.com>, 
+ Subbaraman Narayanamurthy <quic_subbaram@quicinc.com>, 
+ Fenglin Wu <quic_fenglinw@quicinc.com>
+X-Mailer: b4 0.13-dev-83828
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715220458; l=8560;
+ i=quic_fenglinw@quicinc.com; s=20240327; h=from:subject:message-id;
+ bh=IlINF1oaHNMZjbRO9R8bFeDAu8tqXBHedM9NemxFGA0=;
+ b=hBVzmGY1QjXX5GjdW/81LEwJT0QjNKyYGJ1SH4py49MrwRuR4LzAyhx6pAEfArGMyo6StpH/b
+ MHU+3FtX3JSB7mS50nGfT07I1q9MZ3cy70/1wfhGgCWJqr4kSwQ6qdt
+X-Developer-Key: i=quic_fenglinw@quicinc.com; a=ed25519;
+ pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
+X-Endpoint-Received: by B4 Relay for quic_fenglinw@quicinc.com/20240327
+ with auth_id=146
+X-Original-From: Fenglin Wu <quic_fenglinw@quicinc.com>
+Reply-To: quic_fenglinw@quicinc.com
 
-On Thu, May 9, 2024 at 9:28=E2=80=AFAM Doug Anderson <dianders@chromium.org=
-> wrote:
->
-> Hi,
->
-> On Tue, May 7, 2024 at 4:05=E2=80=AFPM Abhinav Kumar <quic_abhinavk@quici=
-nccom> wrote:
-> >
-> > Since commit 5acf49119630 ("drm/msm: import gen_header.py script from M=
-esa"),
-> > compilation is broken on machines having python versions older than 3.9
-> > due to dependency on argparse.BooleanOptionalAction.
-> >
-> > Switch to use simple bool for the validate flag to remove the dependenc=
-y.
-> >
-> > Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
-> > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > ---
-> >  drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> No idea if we're supposed to allow python as a build dependency. That
-> being said, I can confirm that this fixes the problem for me since I
-> ran into it too [1].
->
-> Tested-by: Douglas Anderson <dianders@chromium.org>
->
-> [1] https://lore.kernel.org/r/CAD=3DFV=3DXnpS-=3DCookKxzFM8og9WCSEMxfESmf=
-TYH811438qg4ng@mail.gmail.com
->
+From: Fenglin Wu <quic_fenglinw@quicinc.com>
+
+The flash module has status bits to indicate different thermal
+conditions which are called as OTSTx. For each OTSTx status,
+there is a recommended total flash current for all channels to
+prevent the flash module entering into higher thermal level.
+For example, the total flash current should be limited to 1000mA/500mA
+respectively when the HW reaches the OTST1/OTST2 thermal level.
+
+Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
+---
+ drivers/leds/flash/leds-qcom-flash.c | 151 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 150 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
+index 7c99a3039171..036c9e3cf974 100644
+--- a/drivers/leds/flash/leds-qcom-flash.c
++++ b/drivers/leds/flash/leds-qcom-flash.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #include <linux/bitfield.h>
+@@ -14,6 +14,9 @@
+ #include <media/v4l2-flash-led-class.h>
+ 
+ /* registers definitions */
++#define FLASH_REVISION_REG		0x00
++#define FLASH_4CH_REVISION_V0P1		0x01
++
+ #define FLASH_TYPE_REG			0x04
+ #define FLASH_TYPE_VAL			0x18
+ 
+@@ -73,6 +76,16 @@
+ 
+ #define UA_PER_MA			1000
+ 
++/* thermal threshold constants */
++#define OTST_3CH_MIN_VAL		3
++#define OTST1_4CH_MIN_VAL		0
++#define OTST1_4CH_MIN_VAL_V0P1		3
++#define OTST2_4CH_MIN_VAL		0
++
++#define OTST1_MAX_CURRENT_MA		1000
++#define OTST2_MAX_CURRENT_MA		500
++#define OTST3_MAX_CURRENT_MA		200
++
+ enum hw_type {
+ 	QCOM_MVFLASH_3CH,
+ 	QCOM_MVFLASH_4CH,
+@@ -98,6 +111,7 @@ enum {
+ 	REG_IRESOLUTION,
+ 	REG_CHAN_STROBE,
+ 	REG_CHAN_EN,
++	REG_THERM_THRSH,
+ 	REG_MAX_COUNT,
+ };
+ 
+@@ -111,6 +125,7 @@ static struct reg_field mvflash_3ch_regs[REG_MAX_COUNT] = {
+ 	REG_FIELD(0x47, 0, 5),                  /* iresolution	*/
+ 	REG_FIELD_ID(0x49, 0, 2, 3, 1),         /* chan_strobe	*/
+ 	REG_FIELD(0x4c, 0, 2),                  /* chan_en	*/
++	REG_FIELD_ID(0x56, 0, 2, 3, 1),		/* therm_thrsh  */
+ };
+ 
+ static struct reg_field mvflash_4ch_regs[REG_MAX_COUNT] = {
+@@ -123,6 +138,7 @@ static struct reg_field mvflash_4ch_regs[REG_MAX_COUNT] = {
+ 	REG_FIELD(0x49, 0, 3),			/* iresolution	*/
+ 	REG_FIELD_ID(0x4a, 0, 6, 4, 1),		/* chan_strobe	*/
+ 	REG_FIELD(0x4e, 0, 3),			/* chan_en	*/
++	REG_FIELD_ID(0x7a, 0, 2, 2, 1),		/* therm_thrsh  */
+ };
+ 
+ struct qcom_flash_data {
+@@ -130,9 +146,11 @@ struct qcom_flash_data {
+ 	struct regmap_field     *r_fields[REG_MAX_COUNT];
+ 	struct mutex		lock;
+ 	enum hw_type		hw_type;
++	u32			total_ma;
+ 	u8			leds_count;
+ 	u8			max_channels;
+ 	u8			chan_en_bits;
++	u8			revision;
+ };
+ 
+ struct qcom_flash_led {
+@@ -143,6 +161,7 @@ struct qcom_flash_led {
+ 	u32				max_timeout_ms;
+ 	u32				flash_current_ma;
+ 	u32				flash_timeout_ms;
++	u32				current_in_use_ma;
+ 	u8				*chan_id;
+ 	u8				chan_count;
+ 	bool				enabled;
+@@ -172,6 +191,121 @@ static int set_flash_module_en(struct qcom_flash_led *led, bool en)
+ 	return rc;
+ }
+ 
++static int update_allowed_flash_current(struct qcom_flash_led *led, u32 *current_ma, bool strobe)
++{
++	struct qcom_flash_data *flash_data = led->flash_data;
++	u32 therm_ma, avail_ma, thrsh[3], min_thrsh, sts;
++	int rc;
++
++	mutex_lock(&flash_data->lock);
++	/*
++	 * Put previously allocated current into allowed budget in either of these two cases:
++	 * 1) LED is disabled;
++	 * 2) LED is enabled repeatedly
++	 */
++	if (!strobe || (strobe && led->current_in_use_ma != 0)) {
++		if (flash_data->total_ma >= led->current_in_use_ma)
++			flash_data->total_ma -= led->current_in_use_ma;
++		else
++			flash_data->total_ma = 0;
++
++		led->current_in_use_ma = 0;
++		if (!strobe) {
++			mutex_unlock(&flash_data->lock);
++			return 0;
++		}
++	}
++
++	/*
++	 * Cache the default thermal threshold settings, and set them to the lowest levels before
++	 * reading over-temp real time status. If over-temp has been triggered at the lowest
++	 * threshold, it's very likely that it would be triggered at a higher (default) threshold
++	 * when more flash current is requested. Prevent device from triggering over-temp condition
++	 * by limiting the flash current for the new request.
++	 */
++	rc = regmap_fields_read(flash_data->r_fields[REG_THERM_THRSH], 0, &thrsh[0]);
++	if (rc < 0)
++		goto unlock;
++
++	rc = regmap_fields_read(flash_data->r_fields[REG_THERM_THRSH], 1, &thrsh[1]);
++	if (rc < 0)
++		goto unlock;
++
++	if (flash_data->hw_type == QCOM_MVFLASH_3CH) {
++		rc = regmap_fields_read(flash_data->r_fields[REG_THERM_THRSH], 2, &thrsh[2]);
++		if (rc < 0)
++			goto unlock;
++	}
++
++	min_thrsh = OTST_3CH_MIN_VAL;
++	if (flash_data->hw_type == QCOM_MVFLASH_4CH)
++		min_thrsh = (flash_data->revision == FLASH_4CH_REVISION_V0P1) ?
++			OTST1_4CH_MIN_VAL_V0P1 : OTST1_4CH_MIN_VAL;
++	rc = regmap_fields_write(flash_data->r_fields[REG_THERM_THRSH], 0, min_thrsh);
++	if (rc < 0)
++		goto unlock;
++
++	if (flash_data->hw_type == QCOM_MVFLASH_4CH)
++		min_thrsh = OTST2_4CH_MIN_VAL;
++	rc = regmap_fields_write(flash_data->r_fields[REG_THERM_THRSH], 1, min_thrsh);
++	if (rc < 0)
++		goto restore;
++
++	if (flash_data->hw_type == QCOM_MVFLASH_3CH) {
++		rc = regmap_fields_write(flash_data->r_fields[REG_THERM_THRSH], 2, min_thrsh);
++		if (rc < 0)
++			goto restore;
++	}
++
++	/* read thermal level status to get corresponding derating flash current */
++	rc = regmap_field_read(flash_data->r_fields[REG_STATUS2], &sts);
++	if (rc)
++		goto restore;
++
++	therm_ma = FLASH_TOTAL_CURRENT_MAX_UA / 1000;
++	if (flash_data->hw_type == QCOM_MVFLASH_3CH) {
++		if (sts & FLASH_STS_3CH_OTST3)
++			therm_ma = OTST3_MAX_CURRENT_MA;
++		else if (sts & FLASH_STS_3CH_OTST2)
++			therm_ma = OTST2_MAX_CURRENT_MA;
++		else if (sts & FLASH_STS_3CH_OTST1)
++			therm_ma = OTST1_MAX_CURRENT_MA;
++	} else {
++		if (sts & FLASH_STS_4CH_OTST2)
++			therm_ma = OTST2_MAX_CURRENT_MA;
++		else if (sts & FLASH_STS_4CH_OTST1)
++			therm_ma = OTST1_MAX_CURRENT_MA;
++	}
++
++	/* calculate the allowed flash current for the request */
++	if (therm_ma <= flash_data->total_ma)
++		avail_ma = 0;
++	else
++		avail_ma = therm_ma - flash_data->total_ma;
++	*current_ma = min_t(u32, *current_ma, avail_ma);
++	led->current_in_use_ma = *current_ma;
++	flash_data->total_ma += led->current_in_use_ma;
++
++	dev_dbg(led->flash.led_cdev.dev, "allowed flash current: %dmA, total current: %dmA\n",
++					led->current_in_use_ma, flash_data->total_ma);
++restore:
++	/* Restore to default thermal threshold settings */
++	rc = regmap_fields_write(flash_data->r_fields[REG_THERM_THRSH], 0, thrsh[0]);
++	if (rc < 0)
++		goto unlock;
++
++	rc = regmap_fields_write(flash_data->r_fields[REG_THERM_THRSH], 1, thrsh[1]);
++	if (rc < 0)
++		goto unlock;
++
++	if (flash_data->hw_type == QCOM_MVFLASH_3CH)
++		rc = regmap_fields_write(flash_data->r_fields[REG_THERM_THRSH], 2, thrsh[2]);
++
++unlock:
++	mutex_unlock(&flash_data->lock);
++	return rc;
++}
++
+ static int set_flash_current(struct qcom_flash_led *led, u32 current_ma, enum led_mode mode)
+ {
+ 	struct qcom_flash_data *flash_data = led->flash_data;
+@@ -313,6 +447,10 @@ static int qcom_flash_strobe_set(struct led_classdev_flash *fled_cdev, bool stat
+ 	if (rc)
+ 		return rc;
+ 
++	rc = update_allowed_flash_current(led, &led->flash_current_ma, state);
++	if (rc < 0)
++		return rc;
++
+ 	rc = set_flash_current(led, led->flash_current_ma, FLASH_MODE);
+ 	if (rc)
+ 		return rc;
+@@ -429,6 +567,10 @@ static int qcom_flash_led_brightness_set(struct led_classdev *led_cdev,
+ 	if (rc)
+ 		return rc;
+ 
++	rc = update_allowed_flash_current(led, &current_ma, enable);
++	if (rc < 0)
++		return rc;
++
+ 	rc = set_flash_current(led, current_ma, TORCH_MODE);
+ 	if (rc)
+ 		return rc;
+@@ -703,6 +845,13 @@ static int qcom_flash_led_probe(struct platform_device *pdev)
+ 		flash_data->hw_type = QCOM_MVFLASH_4CH;
+ 		flash_data->max_channels = 4;
+ 		regs = mvflash_4ch_regs;
++		rc = regmap_read(regmap, reg_base + FLASH_REVISION_REG, &val);
++		if (rc < 0) {
++			dev_err(dev, "Read flash LED module revision failed, rc=%d\n", rc);
++			return rc;
++		}
++
++		flash_data->revision = val;
+ 	} else {
+ 		dev_err(dev, "flash LED subtype %#x is not yet supported\n", val);
+ 		return -ENODEV;
+
+---
+base-commit: ca66b10a11da3c445c9c0ca1184f549bbe9061f2
+change-id: 20240507-qcom_flash_thermal_derating-260b1f3c757c
+
+Best regards,
+-- 
+Fenglin Wu <quic_fenglinw@quicinc.com>
 
 
-I do not like Perl.
-
-IMHO, Python should be OK if Perl is OK.
-I agree that the required version should be
-documented changes.rst, at least.
-
-
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
