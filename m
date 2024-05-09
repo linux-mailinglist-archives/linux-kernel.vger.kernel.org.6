@@ -1,86 +1,123 @@
-Return-Path: <linux-kernel+bounces-173967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-173968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A088C0864
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C68C086A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 02:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C73111F225E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:24:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B611F2272C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 00:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F17217F5;
-	Thu,  9 May 2024 00:24:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE871FB2;
+	Thu,  9 May 2024 00:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ogFMQDTH"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4BC1843
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 00:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ADE17F5
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 00:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715214244; cv=none; b=BJF2GZnTNFme4EbR+S2+4lcUkWQPaO6ogYHx2pnbuLRzweBHi4BqLavVX5U2wjpRkBeY+2bFm3aoZfzwgeRpIdM31dDR9iDLMAzPuYBY9pOBIKi1QtnE+I6jOqvm1JvZch69x+kH/TvBDV+SEV5kwbt+JMB005UJkI0bZ67GZ7w=
+	t=1715214518; cv=none; b=a1YV4tyQ4MCHUJAc4zELDz4lCn4v7FdqJT+JPNz1bxP4TuGsD1aZm/bXoQh6y8AYTDnp0OmaBQ+dnjVjAlkIetLg9SXpOTZ+e0L9pG0J+tZkPJ6L+8V2cB5LMvto3WxZCVH7ffbryyIiE5meKPNlhDH1rObQ9ooXL15PwC4aLag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715214244; c=relaxed/simple;
-	bh=SFvL+wjmuOl95pHnqcSMxn8Bcf6t02SMa67Stfg0Pow=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GSEQI86I3kirk9iuTEuEV6VaX5/pGHqspOMrWfWhzyKphb9eV9Rx3bcogPr7BetBXsv3CauoZYNIbso4j67sen0ecVHXlPIzfFfazgJD7jp/BhMJRaVJptxus7W1iL2KLL0XvKG3+DazeqMHFYmRgXDdWVF5rUa/acjXi8/Y1Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-36c771adf01so2538405ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 17:24:03 -0700 (PDT)
+	s=arc-20240116; t=1715214518; c=relaxed/simple;
+	bh=V7Z93WRnPd6lnnQhJgTDhVba2h0S96dv3o2cjGDZJsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D8aKUbw75uATsVnWPhRpuEm/hcczqa0wap+3WN8i3v2uHB0NJvST/j6EClS+JbBCU6NJFiwPgawLq2wy9ZZeSgrJGPrV+coQotqLe7vTQJX4uM0hiIci23DafSI80LW4qifqcYw/tH0WuzaqWYg70tIHZixwGn08CmdsxV+io28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ogFMQDTH; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a387fbc9so69412966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 17:28:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715214513; x=1715819313; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZNeX2fBf0OvUGSKCQhqRKM/UWS2VcuqiFL3hMwMX2kY=;
+        b=ogFMQDTHiNt2oqVeLbRAHvatL0i++yHX93NlkXl7XdVLtypDk9HW0FD14XF0iXn6pI
+         stnn/0foDhyWHMTy0M5KS5WBnjDxd6TVjixW23cwNF+JARk3Kq88oXKF2vGIWwB+iZSc
+         AI9OnUCLVRPJ5+ZjiK/REHC6plOKiAcoUpw8c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715214243; x=1715819043;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=axCafnH4NmXcFjZ/2Cz83TJW0cEv6Hsi7bOxH3RKX5Q=;
-        b=tcsPjDl9hqWpGSHNd1t8g7FoNB59Q2G73KF2U9aePETHD7M4qgVOO2tlbXWpSSONXj
-         COYAlKoTBHsOGCaEFsb4NGPOoXuKgmHn5YPT59OSsT827+glbbFU0kJe9QxQfjSZl+RI
-         ly1ljxR2Oa55gOf+Q06TqyIQmdI0Iz/oJkxfsVfpPllrIDGhCh6R0uwUygk38vtBGk47
-         zcUfxcBacdycrCP2Y5oHyuTCnquc9kIqPjiauAJN0qav/7DzFcfqF4A1ebi9gDZKYImy
-         cxIw2/AZVEkLh2cWE2Hf+rZQiJtKLMnm6/aqTadCvxwrBEsq8d88Jwla1q918lJnjTmJ
-         iyOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTBqcCq53hKRGmi+U/R/KtfYJVqs5CTwxZrshJDp2hmOYZDSTH9S8ej/fmeXTyPzAFUS4XGE8UjCUGDvFeN2erv2L8GwAt0B0MJCoy
-X-Gm-Message-State: AOJu0YyYsD7WCxrBKLnO6m52RIUJh8O5aEqN4yTOTYFzarRFqH9C7opm
-	jUcOk6FOEzr1Bs9oysdOYRBeGkG1v0P/RZPGjk+Y8elI9eZ9GXPP4XfJsPweGy9jen4LLTmrUbv
-	9Xe8WHlxo2+UuslfhARNrQvpJ/MNSSA9zfQdpDibq+EEagMjVpwdG4+c=
-X-Google-Smtp-Source: AGHT+IHVPjwbEUr8poCKFPmvoGW2e5DVr+D4BijFy98e06Wriwo9idXxSUNTaUEiRfdpY1b7htRe00vxnGeH1ROWVM4H0SHlUZiw
+        d=1e100.net; s=20230601; t=1715214513; x=1715819313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZNeX2fBf0OvUGSKCQhqRKM/UWS2VcuqiFL3hMwMX2kY=;
+        b=NIgmrTop3tH5H4mR1up5Kk7O2uNhRrF6lFIVQPxtXpzju19sh3xNLIcWd3llieUQjS
+         UkkiOLMXAiQGFLel7BND86cR6SqXuP6OdYxaq1w+apW+II0WN0Rcts58zgQIonxQXho+
+         9l8i6FGXoaCn3vutteHDGWCYbkW7/MutfE7mrgTZjtHyISlqtbyu/cRe+TtlRXQPTbhW
+         8GUoxDEqmd/9yUNG6j18LNoHclIPm4u9GFrP4iYWBuu2SIdv9LTGeY6ILnjHTRPNfLfd
+         UR1C0tRmA79ao7OkfsE0MU1QsDY8V3YNVYa2KjIA7ZUOO8YS3E+WWd3ct6dhbcU1pLV8
+         z7kA==
+X-Forwarded-Encrypted: i=1; AJvYcCWG1HthhVQcVRXggZxkt7RRs0uvsKzcOFSibiQmjtrtwOnO1EcdW+SlFJMfXkAdnSZ8HBA6Dd4WG71joXHMwBcKgoYFDC9JfEk2R/Pm
+X-Gm-Message-State: AOJu0Yx/8uFYBiYvr+OMlkyj9987N7ZuCj1uGaD8F8qqIJoAblEJuuAN
+	MFkDKKRmkN8qzpsQ1r+IakUDtdIG0CtiTADhq5JtzqJNT/l8QRr8WhikVzQJJQa/MMk+/nFxEuS
+	EY3w7
+X-Google-Smtp-Source: AGHT+IHoyTpWGyaZQOtVrIVWPhCPZ33VyfJjLApwvpmP1btPh/eFGwhh/ryaHcj80hJrKk1+9FD5OQ==
+X-Received: by 2002:a17:906:8c5:b0:a59:a85c:a5c6 with SMTP id a640c23a62f3a-a59fb94db21mr198532566b.22.1715214512987;
+        Wed, 08 May 2024 17:28:32 -0700 (PDT)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d532sm16035966b.18.2024.05.08.17.28.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 May 2024 17:28:32 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-41a428374b9so17855e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 May 2024 17:28:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVk/ZMv/YAOcWwStei/qTP2DpF6zRPjVY7Nr6qbhDsZljwCvWadgLByR1Bz/z5/mv676V2dDhqn+ZgGVSNtS1hbtXuTsXHVJ42oXsb7
+X-Received: by 2002:a05:600c:35d1:b0:41f:a15d:2228 with SMTP id
+ 5b1f17b1804b1-41fc26b9f66mr933245e9.0.1715214511425; Wed, 08 May 2024
+ 17:28:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ea:b0:368:efa4:be00 with SMTP id
- e9e14a558f8ab-36caed6ac93mr1920625ab.3.1715214242845; Wed, 08 May 2024
- 17:24:02 -0700 (PDT)
-Date: Wed, 08 May 2024 17:24:02 -0700
-In-Reply-To: <20240508234053.2319-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a8a7740617fa6f5c@google.com>
-Subject: Re: [syzbot] [block?] [usb?] INFO: rcu detected stall in aoecmd_cfg (2)
-From: syzbot <syzbot+1e6e0b916b211bee1bd6@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
+In-Reply-To: <20240507230440.3384949-1-quic_abhinavk@quicinc.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 8 May 2024 17:28:14 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Xa6LJEWZwdUXvFVPQ0-qnDZroDi6tkZaLFHiarJ2gyew@mail.gmail.com>
+Message-ID: <CAD=FV=Xa6LJEWZwdUXvFVPQ0-qnDZroDi6tkZaLFHiarJ2gyew@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm: remove python 3.9 dependency for compiling msm
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, seanpaul@chromium.org, 
+	swboyd@chromium.org, quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Tue, May 7, 2024 at 4:05=E2=80=AFPM Abhinav Kumar <quic_abhinavk@quicinc=
+com> wrote:
+>
+> Since commit 5acf49119630 ("drm/msm: import gen_header.py script from Mes=
+a"),
+> compilation is broken on machines having python versions older than 3.9
+> due to dependency on argparse.BooleanOptionalAction.
+>
+> Switch to use simple bool for the validate flag to remove the dependency.
+>
+> Fixes: 5acf49119630 ("drm/msm: import gen_header.py script from Mesa")
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/registers/gen_header.py | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Reported-and-tested-by: syzbot+1e6e0b916b211bee1bd6@syzkaller.appspotmail.com
+No idea if we're supposed to allow python as a build dependency. That
+being said, I can confirm that this fixes the problem for me since I
+ran into it too [1].
 
-Tested on:
+Tested-by: Douglas Anderson <dianders@chromium.org>
 
-commit:         9221b281 Add linux-next specific files for 20240503
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1428705c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8ab537f51a6a0d98
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e6e0b916b211bee1bd6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15245350980000
-
-Note: testing is done by a robot and is best-effort only.
+[1] https://lore.kernel.org/r/CAD=3DFV=3DXnpS-=3DCookKxzFM8og9WCSEMxfESmfTY=
+H811438qg4ng@mail.gmail.com
 
