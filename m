@@ -1,107 +1,92 @@
-Return-Path: <linux-kernel+bounces-174835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-174834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9298C159E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0C58C159C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 21:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F18F11C213AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:47:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F752836AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 May 2024 19:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBD78063B;
-	Thu,  9 May 2024 19:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zDthsi/u"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E8680034;
+	Thu,  9 May 2024 19:47:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BB380632
-	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0907FBA3
+	for <linux-kernel@vger.kernel.org>; Thu,  9 May 2024 19:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715284031; cv=none; b=sA1lH+ET3GOP7bjZ6fwaRmIMCPtZfBw1h/U3ZtG1MuT1Cu5ko0JPZv+RMnV379jXFPSGoquC9gDB7XQ9nPcHk/MUwL5BaiqdlLAZpPtYKPqEUu/UTx64D3oXl+vxPr8w6D5xTZ6s26rVXrdm3JzzvOWudT8FagKca2c5fcS6SmY=
+	t=1715284025; cv=none; b=bTadDgq1C+LhomHNJXy+ZaJ11G2RWmZOhVNfM3bB9A5FscCf8rVtA3tL8a/aRKJtu7KaLOPNE+GsaXGsIdPRypHh08i23oG7RkdvIbpoA0/idRqs0Byh6A/KJYHrZhF2XCLOLInLMizBzAtWWajbvvBjdmKK8YuhNwfOCSdEBQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715284031; c=relaxed/simple;
-	bh=ZiH1zPLlQKa/SRZ6lleNveigp7s/byE/uEd8dR3ontI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nB/kN7nDAdz7r5ZbAEINJ6GBe15pC0TsTZqvKFE7A93sRxdQKB0l8Zs8EGF2XIOIpng5xTOgsIRh6F6JTsmv9kxzReEVKyY+aMHUCvemcsEiyn3EV8K9n6enj/NuqYCdUEfjj0zrbN/LasmASN9LJhlhbTXkzrYZNUWmxHQiR9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zDthsi/u; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso4164a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:47:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715284028; x=1715888828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZiH1zPLlQKa/SRZ6lleNveigp7s/byE/uEd8dR3ontI=;
-        b=zDthsi/uFefA3vU0zxVyd5oD3GKW6tIz5q8mQOFUIpQdKMOB5Pcu0Gra4nQhXPkbfp
-         /ei+P+KKk2LKTC19suROWTPO9XPgrHDMV1XYgjFgNXKYm3MTnS0G3E+gXQAEtHK+SyBL
-         J37l3WgYwKpXqcYQOJr2SUc/zgPP+K4WNljPGf9AdXYhwm6sQFPDRJf3Oxa0hFrnHPrR
-         dl1JyQRjzTIbcNb7+SLMfZwVJm1ZDytTF+iPtSxYBJXov9WZsaenclUD8S04AkEsifK3
-         +prBETPCmvQDf9g6afiY5DJuO1xK+lAnPmQ/FdFORIyfuoNFfiElEkAuIg2InBcVXr5G
-         cA4Q==
+	s=arc-20240116; t=1715284025; c=relaxed/simple;
+	bh=Kc+4KbDEOPf2dGokV72TS0X0dQSm9vXGDWnMVG+oKpg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=upufHGN8dRy20spVO5v6by30D4YJ840/Hs8IGzem4FaqdBYjvM/Te9SMvjm1UxMCeHhM1mDFvV3UwItK16uxEbtirxS2XQTmvfHwHW4aFFlS2wWUtWqOSQGn+Nfr0+Jjp3cRnR4kMcdv1OyfAgGZQd+dGdujXPbtNbfeBM5AfFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1a9dabe13so104521039f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 12:47:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715284028; x=1715888828;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZiH1zPLlQKa/SRZ6lleNveigp7s/byE/uEd8dR3ontI=;
-        b=N6dPaHITPtcFdvIBz2RKlddwP9hOfjlyfEk1ljkZ3CLmph86Z6YZmaLvu2bCsz3B6h
-         9QQ7kJYEapQTUmwAX7ZYB3ns/K3hGi2KQAw84ul2NoR1/uh4UMAI4UQ8+WVdX/3PTQfd
-         eHRqYbS4YO4sDDSBPRGFLNNa7CJF5jc14A3O+J/Odinql/tmeMA6lJHbvs8dLGZ5YnuB
-         PYjOoQZzlEd2ryi6nMlxeqVGhCIwsbpHWTGznBaZqI3/d/+B23+ZWGYfq2t6+DCw1g/U
-         Et02RKz7X62D/xqcKrgXIkJsL8z0WWoNTUbiQZjOwRPY8WGF6BsoNkfASGgM+EcxnaFV
-         HfCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTUNdXww3tfVgGEM114JCEGh+YNfGCAR4LsREI1ri5+lRpbf6MnxypwuHbIDJMOYB7+trAWCD9mpwURkylmpW2l9nNyVHWhZjMmAPM
-X-Gm-Message-State: AOJu0YxYj6CxJdx7rcxz4idnciNfFM6J6azA3/UGAPmRnSpKOhntLqJo
-	qjwGxnM2kdasB7k0RXek6M2dtjXXkBSEIYU0L/J6wqqEOJ1oyooqtJyWQWvi748uN4+M3drbuhX
-	FGbQkdYUEvpSf6nlwQ4FssPk1E9fmVbx1Lr+c
-X-Google-Smtp-Source: AGHT+IEZCDgbWkHGbZwcPCGwWduTsdt6r5RS+/glnkO4xpsrY20S5rSV2bbITuAGJGCPUGiYgD9i4gF1ZL/L0ggFKWU=
-X-Received: by 2002:a05:6402:2267:b0:572:57d8:4516 with SMTP id
- 4fb4d7f45d1cf-5734f603ae7mr39067a12.2.1715284027577; Thu, 09 May 2024
- 12:47:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715284023; x=1715888823;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eUpDWeNdwTu/kjq1nCV2ON4vsT4uwa9sN0FBco+5YAA=;
+        b=wOrFfRP5CsfEMqRmCVSkoxajvTa44qsXij/7PnDAy5m/plD1fmxUWyrK1kSHcovIk5
+         FR80Pdd5hedR+5X/99nfPZBOol2eDoL/ZqUu1jDDVMkyN82aX1ZAyCPgDjLDcB2Ajv4u
+         QPe+6PrQ0blvYKS/WXkgRVAyK4JUBARH12SvmLoHilHOrHYw9KhnoM7i38FN4M6RFQ1+
+         XxEN57+a5dJiWDh8EKz1lzT0gqi5icAdwQNSXdQHD7sdjSfTRXVY+nNlURnYwmQHzxE+
+         6+PN5Tk84waLKRkQ32WagZ9FJxi4WgAVo1nV2G/OvL4WJVyPUxdlOm0K7FOXI6EaWsOq
+         +8ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXhsRBhZnUrayFV60fZhVgb14M6PU0fZXr75/w0iMw22CVklTpMcrNt322psGWF/JAm3n7FNJidBGMoPI/Ri/LU8NBrw2h55OkeShdF
+X-Gm-Message-State: AOJu0YxqlrpF1OaRULAENvKdoU2lGwPXSxNCxERPKIiJyZ7fX+2n2iKT
+	2X6cE6uu/btDtixGF2F8hcR9lwf5krF9ula7dxKRt3TvzNlZllnZToM/UnMEAUdFnQiMUckcI3S
+	DRGT0HgH/mmTwX+bVNZln2YKNl6BMICiMmf2ZRR7WS7hf4HGnjFdppEw=
+X-Google-Smtp-Source: AGHT+IFL7mpUk3NvnsMAFAD0opjcqCMStNVhCeAo6AMI+GlYk2KsYMOEnWkz4hm+4MpqDd+OAdaM3pp3FucnoGoAOtmsWL18I/gC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509044323.247606-1-yf768672249@gmail.com>
- <DS0PR10MB6056248B2DFFC393E31B4A1B8FE62@DS0PR10MB6056.namprd10.prod.outlook.com>
- <9aafe0de-7e46-4255-915e-2cf2969377d0@davidwei.uk>
-In-Reply-To: <9aafe0de-7e46-4255-915e-2cf2969377d0@davidwei.uk>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 9 May 2024 21:46:54 +0200
-Message-ID: <CANn89iLfj3fPmCC+3-ZfAAvCMVh=E3j3xTAu6At2wdK2MK0-=A@mail.gmail.com>
-Subject: Re: [External] : [PATCH 1/2] tcp: fix get_tcp4_sock() output error info
-To: David Wei <dw@davidwei.uk>
-Cc: Mohith Kumar Thummaluru <mohith.k.kumar.thummaluru@oracle.com>, Yuan Fang <yf768672249@gmail.com>, 
-	"davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+X-Received: by 2002:a05:6638:2727:b0:488:7bb2:c9fd with SMTP id
+ 8926c6da1cb9f-48959341c45mr32573173.6.1715284022834; Thu, 09 May 2024
+ 12:47:02 -0700 (PDT)
+Date: Thu, 09 May 2024 12:47:02 -0700
+In-Reply-To: <0000000000009f0651061647bd5e@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000decb7906180aae28@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in stashed_dentry_prune (2)
+From: syzbot <syzbot+e25ef173c0758ea764de@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 9, 2024 at 8:09=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
->
-> On 2024-05-09 10:29, Mohith Kumar Thummaluru wrote:
-> > Good catch! Thanks for this fix.
->
-> If this is a fix, can you please add a Fixes tag? And in general some
-> surrounding context in a cover letter? Thanks.
+syzbot has bisected this issue to:
 
+commit 2558e3b23112adb82a558bab616890a790a38bc6
+Author: Christian Brauner <brauner@kernel.org>
+Date:   Wed Feb 21 08:59:51 2024 +0000
 
-I do not think it is a fix, and I am not sure we want this patch anyway.
+    libfs: add stashed_dentry_prune()
 
-/proc interface is legacy, we do not change it.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=111fb9d4980000
+start commit:   443574b03387 riscv, bpf: Fix kfunc parameters incompatibil..
+git tree:       bpf
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=131fb9d4980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=151fb9d4980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
+dashboard link: https://syzkaller.appspot.com/bug?extid=e25ef173c0758ea764de
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fb63f3180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e68f6d180000
 
-Please use TCP_INFO or inet_diag, because
-commit 5ee3afba88f5 "[TCP]: Return useful listenq info in tcp_info and
-INET_DIAG_INFO."
-took care of this in 2007.
+Reported-by: syzbot+e25ef173c0758ea764de@syzkaller.appspotmail.com
+Fixes: 2558e3b23112 ("libfs: add stashed_dentry_prune()")
 
-Already in 2007 we were considering /proc/net/tcp as a legacy.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
