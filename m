@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-175835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6B68C25EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:40:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312DF8C25EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77ABC2844C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC51D1F26A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5EF12C49C;
-	Fri, 10 May 2024 13:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FF712CD90;
+	Fri, 10 May 2024 13:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0f6tCSf"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQBqv7iR"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EAC12C47D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5DA12C80F;
+	Fri, 10 May 2024 13:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715348406; cv=none; b=BMtdcUEw7wUEATOXGaQ64+p/EzUMCLzEaPx5V/eq8RZVUHwWhU4O254KkTPmaeE2Clv/SqlGez+Lx0toUf3oquppDV8zVbOb74XlfKDvYm7W1GzLRf+iOIxYXHf8/ZgyilCe9TkrT6gSwdgGO8H3ww2TEoZ/84R6NzqZsArHYz8=
+	t=1715348412; cv=none; b=X5VbAjlInWnbqedcsUOqzjRVdd05yLbqvJYo9Q986CZLABomGdMCMq9DQRpzKwHfjdTejGyEVR0gOvaUXiYFfxPfiWHANo4lnfSYaMe9KCEXKbK8JhMcd+GSctEVJCNy22yq5gv15n415ALS2v2icw7lSRuNM59VraPLLaxbRKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715348406; c=relaxed/simple;
-	bh=G58itSBLMxq7Hnti9OjMcpU4zbraFRoaHyfISMmS3dQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pOrdoZ+Ysifk5IdlFTaoTtnm63ddThr4U/JxoNNMZ+3/4rE6vj3+qZB3sCpMFmotCHG90WxihXKmaLioEvMi52pOLAuE0rSPfHUJFPSeRBjnnC4XahUAyQaxMbQiG3fcKk5Agc5m4zzHmDr0B3u4ULRSAH72YbK63yLWe/lJ40k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0f6tCSf; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5a0013d551so234735366b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:40:03 -0700 (PDT)
+	s=arc-20240116; t=1715348412; c=relaxed/simple;
+	bh=1XGNUjPVitKhhjXuO83/2GVp0nYJ0Aeb9pCB5XMr1n4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UtTFctQfOdYrFaosMNtGlVjn8OKnWeL5KgxOyiJIb82pVcOdP2YEXq0f3U9SZZbXQ7CyOMy2aau/P3ld6HwZ5HIQOnTOOkDS0QosmERLxRHUk1lKE2T4LcbKTLstrZBZjDftTWD2Lfy5BeXowWcFMWtnPCtngsHW/b9+hEg52sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MQBqv7iR; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2b2bc7b37bcso1834832a91.2;
+        Fri, 10 May 2024 06:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715348402; x=1715953202; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ha8fz4Wr+IwPLlSAFxnrozj260YrkxhYC7xfmynUBWM=;
-        b=X0f6tCSfcKBxVAOAq0Qp98kKvEn/7k+bCYBm9fKN8BXzxbqGeD8Fn1kq4ID4iPIRP5
-         xWs0Hl+SI1IXwll8JrHLcSdAaMo5xL5Y6Ep1VUmlD5eA3+Xb4dLpASAJhyJe+Tf8FpQY
-         6dk9k1vwpff5i2m5/gaoTGAd/MHKEkZZ4QqWj1wKXCgcGcPuXB/ahrImtlwzXgGx81z/
-         s5EtRpwcsdaho71vs4NHoHcsb2O9P/B3ZGZAgDAdHpDPa4bI5orbwM6ZCbUqEL9mV87i
-         DJzI4eOtGr47gl2Xis5kWSJ6qeaGVWUEmiFRLP03jZGa7RmZB36u8i1DDZeSpCm7yhAD
-         iJFg==
+        d=gmail.com; s=20230601; t=1715348410; x=1715953210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=S1ijVzsoPBDrirJugKDkdAFNChA4uJX+cHWvWwlSmVM=;
+        b=MQBqv7iR9b/GCAYx3H8JNHap0meSYO95MUqBybNpW1cpmWcjXOkjSrfGcGyg09YF3T
+         lpS1br+VlL2/cFvUvAB3u31voAoyLzIOEIAJXJbJ3fBRndglJIUYPctFttrz5/hmfX2H
+         qKpjRlxbxijWeQdzw3tmmIoX/Sf6MGUhqLOSi/uTsy7EWKTEtWvHITwIy4e0rVVMmZfP
+         znrGwc3bCIVETF8z9yWMryzcOKUQS2MPfhwoTf0Ec7r0VY530Xnp5fvlyEFTrAgclmqM
+         wAjy98ntw1DOsyG6zH9xqe7yz4Ofo6BTCnJzxFFDtiC6ut+eXkQyh6b5EbBV4J5retE1
+         J6EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715348402; x=1715953202;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715348410; x=1715953210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ha8fz4Wr+IwPLlSAFxnrozj260YrkxhYC7xfmynUBWM=;
-        b=fJqCWSkuhM5g7UV1DAD1fcTGMWRVAzdwwJp66LgCLeyrd2PFRHXA0ulaUnmuFN5bBd
-         jHSlTlg7iTCBs4ldwuUdBl2Qp2TYNLy80wndYcLeZbXKpP78x0owVViYFqmaqHX5NX+q
-         tf+9hveoeQph7UGVp8DO82DiFx2cIR9Nau1KkAjXACR8KqetedkDjG2fr1W+sxXxQjPA
-         Sq/F207bD7d3ZOWlCMrH7XMaLzyuP3OzbYGDzO1E1kpTZjoAIqqiOezrDq2UwlnMsvlB
-         58QuhEs5P7nruc76tEeC9qugSucwBAOTVwEtyOxnR50rEcVal9JSwYI0wti7U3tweqnB
-         Ixlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWLZeRmjq3/oo+jLO9TEeSsCFI5D46jSOK5k5pFr85zCV1X0JZJCfzhOneTCaiheJVXKx151SQOE5jfpt8A8x1xv2fkDtdNMQpx3V8
-X-Gm-Message-State: AOJu0YxQ78qB/OhwYK990k86dkx47dsv2yMbq9vNAYm0GARhXuqJ+fsR
-	rGHSCdOR49oXA7mfag0sY31rwG9UXcZqDvb6h3kWRghkcxwlUevaxUAs6pQHjeQ=
-X-Google-Smtp-Source: AGHT+IH6BN4juUw4T+/Txsx7VnJHBlBsO2iEOHL3CdD35k1pZqHytie913QnQod0/ipiHQMnPn3xCA==
-X-Received: by 2002:a50:9fc9:0:b0:570:5b70:3407 with SMTP id 4fb4d7f45d1cf-5734d5c0c84mr2419289a12.10.1715348401718;
-        Fri, 10 May 2024 06:40:01 -0700 (PDT)
-Received: from [127.0.1.1] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d48dsm185200866b.5.2024.05.10.06.40.00
+        bh=S1ijVzsoPBDrirJugKDkdAFNChA4uJX+cHWvWwlSmVM=;
+        b=BTKCwWPXc+hRLoT34o4ydu0zaYgRtZuJaIsjZw6sESc75kiIllKAaKcRhA22osOXof
+         kZgZzjEe34k4FcECK8K/9VUcxdNRnsfsAPuMiCghn4l0hHRE4V/L53qQ8WfHqc34sNY1
+         SeOCcSDJXMERJZQU/bhnGnhyNtwgmTFV/v07JgCbuH1poHmLDkcNU/FIsvlSxTAhtvOc
+         g/aIlJ6KP+D2KpPOojbR0mNQrf1s4IiUOA+TUJspXZbUmlbSDWwvKYAcctoAGwMkiMna
+         +Q3GKCzPpaDVZ3wfW0MuMHL3KP5/uzfPF7Zg9QFp4nKTRQEqNhYMNquHUjeEfYjWJM8G
+         u1qg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1LpS1kgpSwZRh24HbHtqr0shmsGFxzEaXgq++hXInceJnGlmkDW3jrDfYfObhZbNx6YGTCcref5/73SULzk8kPHJJJrqJQmW2fR2/K4KF6c9cBXX0DHOcU+CMGKMBy4dRhM5ffU5d7pU=
+X-Gm-Message-State: AOJu0YwWA6nTyK6YgVydhkwZVvuKX4nB64JT0xUYFgkbskomOvHY3PG0
+	ZDkYdbyjLfNqTIwKbEJgN1kORw4PlbIc/6+m8OiN1WnseAe1T+nQdXIbAjwz
+X-Google-Smtp-Source: AGHT+IFUrsug2vB+Pywt/1aiWlfZ+P8BRoZJhjnnpH2KLKhCUWHRA1t0jNHtItXsQrecDk+9Y0YsEg==
+X-Received: by 2002:a17:90a:9281:b0:2b2:b99f:4d5b with SMTP id 98e67ed59e1d1-2b6cc454828mr2539648a91.18.1715348409574;
+        Fri, 10 May 2024 06:40:09 -0700 (PDT)
+Received: from ubuntukernelserver.. ([49.236.212.182])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628ca5109sm5074148a91.38.2024.05.10.06.40.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 06:40:01 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 10 May 2024 15:39:59 +0200
-Subject: [PATCH] arm64: dts: qcom: sc8280xp: Set status = "reserved" on
- PSHOLD
+        Fri, 10 May 2024 06:40:09 -0700 (PDT)
+From: Roshan Khatri <topofeverest8848@gmail.com>
+To: hdegoede@redhat.com,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	hpa@redhat.com,
+	andy.shevchenko@gmail.com,
+	gregkh@linuxfoundation.org
+Cc: Roshan Khatri <topofeverest8848@gmail.com>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: atomisp: Fix spelling mistakes in atomisp_platform.h
+Date: Fri, 10 May 2024 19:25:00 +0545
+Message-Id: <20240510134000.23848-1-topofeverest8848@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240510-topic-8280_off-v1-1-bcc70cda449e@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAK4jPmYC/x3MQQqAIBBA0avErBPUkrSrRETYTM0mRSMC6e5Jy
- 7f4v0DGxJhhbAokvDlzOCtU24A/1nNHwVs1aKl7aZQUV4jshdVWLoFIKGU6R94M5CzUKCYkfv7
- hNL/vB62AubFgAAAA
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>, 
- Steev Klimaszewski <steev@kali.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+Content-Transfer-Encoding: 8bit
 
-On most devices, TZ seems to be blocking access to the PSHOLD reboot
-register. This seems to be TZ, as even kicking the hypervisor doesn't
-seem to make it writable.
+Codespell reported misspelled streams and corresponding in
+atomisp_platform.h. This patch fixes the misspellings.
 
-Fixes: 865ff2e6f5da ("arm64: dts: qcom: sc8280xp: Add PS_HOLD restart")
-Reported-by: Steev Klimaszewski <steev@kali.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: Roshan Khatri <topofeverest8848@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ .../staging/media/atomisp/include/linux/atomisp_platform.h    | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-index 0549ba1fbeea..59f0a850671a 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-@@ -4623,6 +4623,8 @@ tsens0: thermal-sensor@c263000 {
- 		restart@c264000 {
- 			compatible = "qcom,pshold";
- 			reg = <0 0x0c264000 0 0x4>;
-+			/* TZ seems to block access */
-+			status = "reserved";
- 		};
+diff --git a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+index 487ef5846c24..9f55f0b65864 100644
+--- a/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
++++ b/drivers/staging/media/atomisp/include/linux/atomisp_platform.h
+@@ -134,7 +134,7 @@ struct atomisp_platform_data {
+ };
  
- 		tsens1: thermal-sensor@c265000 {
-
----
-base-commit: 704ba27ac55579704ba1289392448b0c66b56258
-change-id: 20240510-topic-8280_off-11539fc57f98
-
-Best regards,
+ /*
+- *  Sensor of external ISP can send multiple steams with different mipi data
++ *  Sensor of external ISP can send multiple streams with different mipi data
+  * type in the same virtual channel. This information needs to come from the
+  * sensor or external ISP
+  */
+@@ -156,7 +156,7 @@ struct atomisp_input_stream_info {
+ 	/*
+ 	 * if more isys_configs is more than 0, sensor needs to configure the
+ 	 * input format differently. width and height can be 0. If width and
+-	 * height is not zero, then the corresponsing data needs to be set
++	 * height is not zero, then the corresponding data needs to be set
+ 	 */
+ 	struct atomisp_isys_config_info isys_info[MAX_STREAMS_PER_CHANNEL];
+ };
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.34.1
 
 
