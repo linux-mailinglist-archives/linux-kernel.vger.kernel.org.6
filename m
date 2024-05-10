@@ -1,82 +1,83 @@
-Return-Path: <linux-kernel+bounces-176199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83878C2B90
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:13:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A4D8C2B95
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D523E1C20BD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815891F21B75
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC8613B592;
-	Fri, 10 May 2024 21:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285CA13B7B2;
+	Fri, 10 May 2024 21:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i3udHqOD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ATiCSB+w"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="isrf+GGa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J80B271F"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE3A10965
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1613B5A6
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715375579; cv=none; b=tyuu7zhJ0K/VsIySFy+UtyJr/iD39BtfH18C3Fgufdw791de8SqExlzYo0kgjuTBz67tTN7V72gUkmz1WXH7thNDA8W5o/EKvL/6dP74JsppS5gJPR3pUlla7z+0hT//ggPi96oP0NnpPfv+pNoYuYs37LuP+uqvP7cyKWrivhU=
+	t=1715375726; cv=none; b=fbHqIPbY6Uyw7UstlFf2xKhgHJihuuBe++C3vA8rS5dAz4gyyNgMPLYip8fjltHXLd2rcC5gUuoy9n+2gjlVnP5r1evIOnVfbXBEo520APgbnbIhkWFmM5pL80nAsQvF6a+U2h2l1Z6cyN1ZzSb6mOW5XnJmAJl9jnBGOR2Pe3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715375579; c=relaxed/simple;
-	bh=lv0fRbNf5vALFTpjW9XOcTk13frFXgHh6micYP5akM8=;
+	s=arc-20240116; t=1715375726; c=relaxed/simple;
+	bh=auGTu7esIT0vw90kFpXiYWwKZeOL11cQbE8q4dBOikw=;
 	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=YLCEa09dPhTon6zx47EnQ26G9CO9dvuyXdmlLFaqm4uGiheomMmxmRaq84NWCqQXctmGr+09ACpRZooKNY2ZCn6dXreWamYd99rt0i9pvSxOOf30RJIVPFpfkjMJ/E4p015c9LQmm+kCRCjJ2o0Ut5o96LMngHK9O6JmbkSe4DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i3udHqOD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ATiCSB+w; arc=none smtp.client-ip=103.168.172.152
+	 Subject:Content-Type; b=HqKnuhBJEZpUF09ys2JC+EeHTQgjBHhavl89X3FP+A1GG1Tdsl/3Thu6oTlsgawyQEB0boDaegUWHaK13vQJiJNRVtqLbhvnePRaLaSfziXXjBsGn+28z/kuLaazGTzOAcgdGvAP3LQ4JBy8LKcq7ngmTIl8cmfY8mx5hIt3cbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=isrf+GGa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J80B271F; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B6B9611400D1;
-	Fri, 10 May 2024 17:12:56 -0400 (EDT)
+	by mailfout.nyi.internal (Postfix) with ESMTP id DE3A91380396;
+	Fri, 10 May 2024 17:15:22 -0400 (EDT)
 Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 10 May 2024 17:12:56 -0400
+  by compute5.internal (MEProxy); Fri, 10 May 2024 17:15:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
 	:cc:content-type:content-type:date:date:from:from:in-reply-to
 	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1715375576; x=1715461976; bh=+A04hSqDZA
-	fectEaYhevQbQt0vFNJTAi4AGu5xEjLfA=; b=i3udHqODbkODbXptIFeddoxgHF
-	tFGEh/0FArlo2trZdU5uqsfAuZl+BHQdTTRoHYNgdfKScnrRqYoglQmAEorZqSUf
-	SrVz4RR6wzsQ8wW58KBgrBnR/smNoAYyvCnX09UclSes2pN+Zw4J/wid05cjduCG
-	f/matfYQTt913t+ehYTTd7ACUG0/5csSPlWpWB8lV5YW7u8lea8l9G1ebh60pgVC
-	jz9pdgegVJiNyE9vOg1Q6tPjLVpaVgbea/dmBPvTH6iFo6kCSNutXcqYYOVRBSDj
-	aSqCG9Y99KadtEa3hrvAffB4egqbPjaOh2xYrHUNeGVrcMyjDEwzz5TMjKgw==
+	:subject:to:to; s=fm3; t=1715375722; x=1715462122; bh=iMO1GaEnJx
+	wMSjVKJ+hpYFQaPPqa58048TbbEanpKyU=; b=isrf+GGaYho24FMdfxDvFyungK
+	SH4mZVvw0DFDx0yo5evVdTa+PWzi5IZdwgSeq3ah3uur7A1z8tzy4loxmv0U2/QK
+	na7lFAHt/Mt+fjAKnH8MOOXMSXPpm2MG3xlwlhmqhkeuzxPbIxLjK3mIRlmZlHrx
+	uGEzITHD/nYaHES1M6cctPWPQjq26nARkBmyhJxxGucRfReIFytYrjkEaUrkXo7Z
+	Sh7OEZwzRDhN7dFMH5c0pJrDRD2G6314kktZmg3BZZqNpW/P5/+pqM1dJYu2vF9R
+	7T0HtO9JBOWYNN3iWVE57u1NBbQJvtA+jJrsH4iDShKJAxPElNDacGnV30mg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:content-type:date:date
 	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
 	:message-id:mime-version:references:reply-to:subject:subject:to
 	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715375576; x=1715461976; bh=+A04hSqDZAfectEaYhevQbQt0vFN
-	JTAi4AGu5xEjLfA=; b=ATiCSB+wTsfOUI0nkbRZTn/iCLWw+g0vKfVAI68h2PUp
-	v49GQtMAA6fF4j/273y5jcTraO3xBfaq+0bMKk5T6h8xYf65dbS8FViUKZA9q77y
-	yk0NSFZtMjEaxIamHI6JuAGIvVxrkikYv2Dwt4+h1ELfhARaQ0dVqkBQ+E9QFUXY
-	fmR+mwUF+4SFbqRoLER/vqM5VCdPqryuNHjYQGCdhxqLpCCeeK7wTtVJktpsaHhu
-	lmHsVDlrPqeOsadjsmx3eEsr9HiZqv5wVzJOOwe2JlYNDR5P0MK33/t0O7WcFLN6
-	ec2SuW/gf6Di08mhu0u1k8soPyLan+IhGJpIwwFREQ==
-X-ME-Sender: <xms:2I0-Zs3XPeZpCNrbvAWoDRlTUpPfwSz4jSvBH23MZEIjASi6MXp3Zg>
-    <xme:2I0-ZnEsKZe3voudtPN7rbjpUJwEqru8kAGPwZHaiNC2kJLV9fwl36zVd7BbZUKb_
-    asBD4Dd3Z1BR_hsYvo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgudehjecutefuodetggdotefrod
+	fm3; t=1715375722; x=1715462122; bh=iMO1GaEnJxwMSjVKJ+hpYFQaPPqa
+	58048TbbEanpKyU=; b=J80B271FB6bIcSkTDOudg98EiUQsHbpuzDiTlS0bucmn
+	Tha4xYU7VVjiygMxZP2cARMPRxiOJFMrePjpWgxuZzWoEvACtU8vQ6FvedCeRzzW
+	R91INPTFpBg0IY7h9MLKXZiUJKqUGDwDD4ehhr4OKVa4iCySDUfUB5Tzzu7dlo63
+	pXnRTwAmERyvL97s+rOW+fonq2TtDJbKf2ovAXVwr6BjUGRfiMaIsHXpbljpg75C
+	yY86pEGH/Xdd1rXDjlV19frl/Z2LOP1TUa7jg5aFzJ2HWE8zxo8jU34aoob+5E2O
+	SWkYXQmDxoyTJcyxfExqCrr8dB015tBqRFp+N27TvA==
+X-ME-Sender: <xms:ao4-Zj-X9vgF6iMRwkwIMBLM7KepEgKuLm3offI2tUbLcL8JZBijqQ>
+    <xme:ao4-Zvsb6-QbQAVgKeJHhb99cXQVac0pJHzOF-dNsp5ckgSACcsLqiZ4eV9O5F2bq
+    toWh_wZDpP7sTfoJNo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgudehkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
     rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
-    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:2I0-Zk7KAUjSqsYxkkysamZNh7aIoKOTC_Sa7AC2KNwa8E9Ho6mtFA>
-    <xmx:2I0-Zl2jUK35iJcfFmTCNX793ULkNDiXeg1vRLkftx-sAylE6rSNAQ>
-    <xmx:2I0-ZvHgGro0z1qbAz78L_szkgBDwGMs6_qbrEozj4hmbEL8cDvrbw>
-    <xmx:2I0-Zu_onECDtITEoO5TFZxIXfDWx-mBhn8XYmlyAB-FY0eFOkQoLA>
-    <xmx:2I0-ZnDdGcq8nhxotnDycL4AAQx49G7_uiliRC1DUYMyUbMfV4JGcy-o>
+    htthgvrhhnpeeigeeuvdekheevudeiteegudfgjeehuefghfettddvteeuteekhfehudfh
+    tefgvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggv
+X-ME-Proxy: <xmx:ao4-ZhDEAiAjcWCOdfuhuJqu2OjOFveYHVe_MrYQ_4JIwBXaoKia0Q>
+    <xmx:ao4-ZvdG9wD01AxiiGK80pI-qhihS70gdmtM_mGQD2B0oA7czcKjOA>
+    <xmx:ao4-ZoPlAm3mk8RF6DNuGwKPPDI032IEdj-rrdMHo4ZUtHHXzaTenw>
+    <xmx:ao4-ZhkHGrQPTM3z_-ppzaIwXD3XDyFpNGoZqcNXzDDOsLDa7QUiGw>
+    <xmx:ao4-ZtrWCNXOE2whJXg_kOtwAuUFaEYfNMMMsykdsPDWE6bIZxFicBsO>
 Feedback-ID: i56a14606:Fastmail
 Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 7105EB6008D; Fri, 10 May 2024 17:12:56 -0400 (EDT)
+	id 947EBB6008D; Fri, 10 May 2024 17:15:22 -0400 (EDT)
 X-Mailer: MessagingEngine.com Webmail Interface
 User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
@@ -85,15 +86,15 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <0d70e9ef-5291-4134-b41f-183b1233b39b@app.fastmail.com>
+Message-Id: <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
 In-Reply-To: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com>
 References: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com>
-Date: Fri, 10 May 2024 23:12:36 +0200
+Date: Fri, 10 May 2024 23:13:38 +0200
 From: "Arnd Bergmann" <arnd@arndb.de>
 To: "Linus Torvalds" <torvalds@linux-foundation.org>
 Cc: soc@kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/4] soc: arm code changes for 6.10
+Subject: [GIT PULL 4/4] soc: defconfig updates for 6.10
 Content-Type: text/plain
 
 The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
@@ -102,44 +103,94 @@ The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-arm-6.10
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.10
 
-for you to fetch changes up to 428ae88ef519f2009fac37563de76ffa6f93046f:
+for you to fetch changes up to 78b08cf6313061499948126aebdf00e1079e4d21:
 
-  arm64: add Airoha EN7581 platform (2024-05-10 15:56:20 +0200)
-
-----------------------------------------------------------------
-soc: arm code changes for 6.10
-
-The code changes are fairly minimal, there is a bit of conversion of
-the old orion5x platform to modern gpio descriptors, the Kconfig entry
-for the added EN7581 platform and a sysfs change for the i.MX PMU
-device.
+  arm64: defconfig: enable Airoha platform (2024-05-10 15:56:33 +0200)
 
 ----------------------------------------------------------------
-Arnd Bergmann (2):
-      Merge tag 'imx-soc-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into soc/arm
-      Merge tag 'mvebu-arm-6.10-1' of git://git.kernel.org/pub/scm/linux/kernel/git/gclement/mvebu into soc/arm
+soc: defconfig updates for 6.10
+
+Most of the changes enable additional device driver modules and arm64
+platforms. In addition, the usb onboard-device support and ext4 security
+labels are turned on.
+
+----------------------------------------------------------------
+Adam Ford (1):
+      arm64: defconfig: Enable DRM_IMX8MP_DW_HDMI_BRIDGE as module
+
+Akhil R (1):
+      arm64: defconfig: Enable Tegra Security Engine
+
+Arnd Bergmann (9):
+      Merge tag 'v6.10-rockchip-defconfig64' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into soc/defconfig
+      Merge tag 'sunxi-config-for-6.10-1' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into soc/defconfig
+      Merge tag 'tegra-for-6.10-arm64-defconfig' of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into soc/defconfig
+      Merge tag 'qcom-arm64-defconfig-for-6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
+      Merge tag 'imx-defconfig-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into soc/defconfig
+      Merge tag 'renesas-arm-defconfig-for-v6.10-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/defconfig
+      Merge tag 'arm-soc/for-6.10/defconfig-arm64' of https://github.com/Broadcom/stblinux into soc/defconfig
+      Merge tag 'amlogic-defconfig-for-v6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux into soc/defconfig
+      Merge tag 'qcom-arm64-defconfig-for-6.10-2' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
+
+Bartosz Golaszewski (1):
+      arm64: defconfig: build ath12k as a module
+
+Biju Das (2):
+      arm64: defconfig: Enable Renesas RZ/G2L display unit DRM driver
+      arm64: defconfig: Enable Renesas DA9062 PMIC
+
+Bjorn Andersson (2):
+      Merge branch 'arm64-defconfig-for-6.10' onto 'v6.9-rc1'
+      arm64: defconfig: Enable sc7280 display and gpu clock controllers
 
 Daniel Danzberger (1):
-      arm64: add Airoha EN7581 platform
+      arm64: defconfig: enable Airoha platform
 
-Jonathan Cameron (1):
-      ARM: imx: Assign parents for mmdc event_source devices
+Dmitry Baryshkov (2):
+      arm64: defconfig: enable REGULATOR_QCOM_USB_VBUS
+      arm64: defconfig: select INTERCONNECT_QCOM_SM6115 as built-in
 
-Linus Walleij (5):
-      ARM: orion5x: Convert D2Net board to GPIO descriptors for LEDs
-      ARM: orion5x: Convert DNS323 board to GPIO descriptors for LEDs
-      ARM: orion5x: Convert MV2120 board to GPIO descriptors for LEDs
-      ARM: orion5x: Convert Net2big board to GPIO descriptors for LEDs
-      ARM: orion5x: Convert TS409 board to GPIO descriptors for LEDs
+Fabio Estevam (2):
+      ARM: imx_v6_v7_defconfig: Select CONFIG_USB_ONBOARD_HUB
+      ARM: imx_v6_v7_defconfig: Update ONBOARD_USB_HUB to ONBOAD_USB_DEV
 
- arch/arm/mach-imx/mmdc.c              |  1 +
- arch/arm/mach-orion5x/board-d2net.c   | 16 +++++++--
- arch/arm/mach-orion5x/dns323-setup.c  | 63 ++++++++++++++++++++++++++---------
- arch/arm/mach-orion5x/mv2120-setup.c  | 29 +++++++++++-----
- arch/arm/mach-orion5x/net2big-setup.c | 21 +++++++++---
- arch/arm/mach-orion5x/ts409-setup.c   | 25 +++++++++-----
- arch/arm64/Kconfig.platforms          |  7 ++++
- 7 files changed, 124 insertions(+), 38 deletions(-)
+Geert Uytterhoeven (1):
+      ARM: shmobile: defconfig: Refresh for v6.9-rc1
+
+Johan Hovold (1):
+      arm64: defconfig: enable ext4 security labels
+
+Krzysztof Kozlowski (2):
+      arm64: defconfig: enable reset-gpio driver as module
+      arm64: defconfig: qcom: enable X1E80100 sound card
+
+Lad Prabhakar (1):
+      arm64: defconfig: Enable R9A09G057 SoC
+
+Luca Ceresoli (1):
+      arm64: defconfig: enable Rockchip RK3308 internal audio codec driver
+
+Maxime Ripard (1):
+      ARM: configs: sunxi: Enable DRM_DW_HDMI
+
+Neil Armstrong (1):
+      arm64: defconfig: enable Khadas TS050 panel as module
+
+Ritesh Kumar (1):
+      arm64: defconfig: enable Novatek NT36672E DSI Panel driver
+
+Sebastian Reichel (2):
+      arm64: defconfig: support Mali CSF-based GPUs
+      arm64: defconfig: enable Rockchip Samsung USBDP PHY
+
+Stefan Wahren (1):
+      arm64: defconfig: build snd_bcm2835 as module
+
+ arch/arm/configs/imx_v6_v7_defconfig |  1 +
+ arch/arm/configs/shmobile_defconfig  |  3 ++-
+ arch/arm/configs/sunxi_defconfig     |  1 +
+ arch/arm64/configs/defconfig         | 23 +++++++++++++++++++++++
+ 4 files changed, 27 insertions(+), 1 deletion(-)
 
