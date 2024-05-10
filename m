@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-175719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE438C2408
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 026058C2404
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1701F25FC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57991F22A8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD7716F90D;
-	Fri, 10 May 2024 11:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XLgQjyR8"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF72716E894;
-	Fri, 10 May 2024 11:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA9B16F0EE;
+	Fri, 10 May 2024 11:52:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C05A16F0C6;
+	Fri, 10 May 2024 11:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341960; cv=none; b=lAVQXgqpeEU73SmQm0kz9MAnCwEV31q3orKu0Qcm3U9R9UbvsdhqeuLcX5gSJNcPetn/Xb65Imx7zkNSCBlXaA8YitB/TsT5OmsSfXL2ijZ2L3Iu8P2Bg89Ve3NNXiBdNQenAz9NmTRSn7h5VzZHD964riAs0+LJCQsM4bf1tNc=
+	t=1715341949; cv=none; b=OvE6e6+UB5Av39hsZm1IzPe6ep6849FJYIcEh9IJg/kO3IGOW+eew3BHkZ5BS/S6LbxeYqUI0CV/kdUc8eSv9mz0KooF1vFD6lUUJeR2FXVqSnYH/DZFxSCYhXJoMNzpitHlHgv4HMFE0PICR3SvEP7+OoNSUdnDnXcusx3nFnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341960; c=relaxed/simple;
-	bh=Guh5VZYFKjMQLQAhP0rT6QQW4U6WTlMZkptsToslItY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MAvgN+iFsVcWWVx6ZNwvXJr9I11RuCuJCfx6OO6RRtgNupJt8INXfVgMjZwHqueB5TEh6UeGQdrIxogRCEqwijdINK/GgbbRkRs/bpjpssD+AUH4Ie1aBWH7ZnRblm32PgvkSYgVtvUTubLDGCV2eZ+FVx7shq/nj0WlHyMwtsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XLgQjyR8; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715341932; x=1715946732; i=markus.elfring@web.de;
-	bh=Guh5VZYFKjMQLQAhP0rT6QQW4U6WTlMZkptsToslItY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XLgQjyR8o5LvICfsb0u5ZSGz0WKBZuQObQz1CC4A/RdHQC1mkUNuRFDq0RKWOuX2
-	 4Vh3Z2E8fTlYIQFr1KQ3xcre7plemsno4ihzvGIck1oIxlJJ6DhrXgzIeASaN8S9m
-	 mLDt2Sx9kU4xDSwuCoy00ahXy6HFJB38wwQZbhkPmL0Ka7xIZ76CfzIvusjeMT3Dp
-	 ElCJETM8faTfjNepQhplv/sQck65JKd1sC2J/Kc1D8unQqvhXDvbM+j30AgImo2bC
-	 DWYql6S+3ZqMZYzriInlgdVW7frjtXr2KmpgQKKu6KAYHJqM4yel4kJee38/EzjBB
-	 FcZpzegQ2PeHE29OJg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3Euv-1s2N3R1q17-003k5f; Fri, 10
- May 2024 13:52:12 +0200
-Message-ID: <51d46ce7-ea0f-401d-ad72-4bfb3f2474c5@web.de>
-Date: Fri, 10 May 2024 13:52:11 +0200
+	s=arc-20240116; t=1715341949; c=relaxed/simple;
+	bh=4L0SL06v1cpIz5eQUAyvbTAjNvRgK+vbaYhy/1joG/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YULHi4TNITrUwPWUN8OSDtdYmi51atHQMjrl9m5QMFT7BF1QWlNI4pggFquH61HcSgJ3I7Y3Gq/+gLOLOT9msLRwI8fxSqEP+TJ4tTaDWz9rMAiUGYSo8lGJHMjy4z3LMBCjw14rZoHnYpz8Qn0bQqlVJSA6PvkoaRrRjbKHriQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE4F6106F;
+	Fri, 10 May 2024 04:52:46 -0700 (PDT)
+Received: from [10.57.65.1] (unknown [10.57.65.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92B2F3F6A8;
+	Fri, 10 May 2024 04:52:19 -0700 (PDT)
+Message-ID: <c406383d-e08a-4a12-9e25-1c987b0d678f@arm.com>
+Date: Fri, 10 May 2024 12:52:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,71 +41,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Caleb Connolly <caleb.connolly@linaro.org>,
- ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Alexander Martinz <amartinz@shiftphones.com>,
- Luca Weiss <luca.weiss@fairphone.com>
-References: <0da17f9c-29bd-443d-882a-69c339288a02@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: qcom: Add QCM6490 SHIFTphone 8
+Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
+ -static-libasan, LOCAL_HDRS
 Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <0da17f9c-29bd-443d-882a-69c339288a02@kernel.org>
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
+ linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ llvm@lists.linux.dev
+References: <20240504044336.14411-1-jhubbard@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240504044336.14411-1-jhubbard@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+WcrWbrfOAtjFAQjN239/ZcsvvDaUEx+Q4x5acrBpy64bQb1nOh
- E6PdwlrmT01+dEVPBsaCLXuMBZNrf7UAdTQccD+EFN82VlS6TkmmH5t4vPB6UrgjI4n7zS7
- QPstY3HUPIroifjvAMswTqtwrXminHtVff6OpkTSqjeodvnQG+h/44kre1oaYlpJI25WfZa
- 6C+6vf/RV7zRkNgj7zvHQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eu5yCl4Qhw8=;9WFX63WP+SrIbyhdZy92EN5NqFx
- yWzDMhqCDgtX/Go3i31xOtdil+FjrqfQOWNO4V8z2JNbFbk+PSUR6/lB0CC40fQ+KXjC4KeJg
- cpNcdbYJFPOoiVogowpRhrBLDECsvLC6m3jT4zNLD6YGcjvl7Q3/0AAVR6c5e+nOt6Rs9r2vu
- bT/Hyi2bRoGm+AX7v91XTMwRbAOSW+GcO+10J+RBrc7fk3hMie2slICEzUCgb2I+paRZAL1rr
- OTvpZW1VXpoSZC4sBGk82rQfi/aAz11K/GkA0w+vRa9Eg4B7XnGA7AXcOg30pansLyndKDRO0
- buIwN1GAIHAp2hl04wa4LNmd6l10rV7/t04U29NL0RKG9z25A4+/TkIuSO6PkjV1SOsxTjSpg
- OwdjvzZp62SM1MOf34ej1Jg75yHzgHqyXfotV526k42dZ1YCRiqMe1TQCtvb6zfmF8YHke3wp
- OdKxJx2eB5LbiDTW19xQgh+qLkf0z3o8/6UGbcSZbOWYBAn6tEEVvD351MrH+0/dO+PxHqP/+
- f7s9It1cVy0XNNMRXg52xvv5pQTF0JubBv2RVCNTmhYLhEzfXDqJlyagZu5EAXsoORWLJlc/d
- YcKJyf/auc/hDdCuTRj8TMNDOWRmK8ODfoImURSy8ZFfH4SlooOHebTPGmwdFqhXhOBhENwbp
- NlMwxSIAEpSpXhqPtcMzq2Uj+8Nqk8XVYzlJW5ZmUyTxetKJf5aBXLWpVEmH91IGDsKfxDcGY
- TSGp1+cExGP5fJJSjyLke0aYq/qGrgON/pRNp0cX8EFhyPUv4IZenyelbw+5Uk77hastQ/QdB
- ncShkFn1iE7t/InH/cSnMIkmFR34jLcHcEmLdY1nGaNWU=
+Content-Transfer-Encoding: 7bit
 
-> > > The SHIFTphone 8 (codename otter) is a smartphone based on the QCM64=
-90
-> > > SoC.
-> >
-> > * I suggest to move the last word into the first text line.
-> >
-> > * Please add an imperative wording for a better change description.
->
-> Feel free to ignore all comments from Markus
+On 04/05/2024 05:43, John Hubbard wrote:
+> When building with clang via:
+> 
+>     make LLVM=1 -C tools/testing/selftests
+> 
+> two distinct failures occur:
+> 
+> 1) gcc requires -static-libasan in order to ensure that Address
+> Sanitizer's library is the first one loaded. However, this leads to
+> build failures on clang, when building via:
+> 
+>        make LLVM=1 -C tools/testing/selftests
+> 
+> However, clang already does the right thing by default: it statically
+> links the Address Sanitizer if -fsanitize is specified. Therefore, fix
+> this by simply omitting -static-libasan for clang builds. And leave
+> behind a comment, because the whole reason for static linking might not
+> be obvious.
+> 
+> 2) clang won't accept invocations of this form, but gcc will:
+> 
+>     $(CC) file1.c header2.h
+> 
+> Fix this by using selftests/lib.mk facilities for tracking local header
+> file dependencies: add them to LOCAL_HDRS, leaving only the .c files to
+> be passed to the compiler.
+> 
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  tools/testing/selftests/openat2/Makefile | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
+> index 254d676a2689..185dc76ebb5f 100644
+> --- a/tools/testing/selftests/openat2/Makefile
+> +++ b/tools/testing/selftests/openat2/Makefile
+> @@ -1,8 +1,18 @@
+>  # SPDX-License-Identifier: GPL-2.0-or-later
+>  
+> -CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined -static-libasan
+> +CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
+>  TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
+>  
+> +# gcc requires -static-libasan in order to ensure that Address Sanitizer's
+> +# library is the first one loaded. However, clang already statically links the
+> +# Address Sanitizer if -fsanitize is specified. Therefore, simply omit
+> +# -static-libasan for clang builds.
+> +ifeq ($(LLVM),)
+> +    CFLAGS += -static-libasan
+> +endif
 
-I hope that such a hint can be reconsidered.
+It just occured to me that the bug report I was fixing with my attempt was
+invoking make like this (see [1]):
+
+# tools/testing/selftests/fchmodat2$ make CC=clang
+# tools/testing/selftests/openat2$ make CC=clang
+
+So LLVM is not set in this case. Perhaps my approach [2] (suggested by Arnd) of
+using cc-option is more robust? (cc-option is alredy used by other selftests).
 
 
-> (or implement them - up to you).
-
-This would be nicer also according to another known information source.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+[1] https://lore.kernel.org/all/202404141807.LgsqXPY5-lkp@intel.com/
+[2]
+https://lore.kernel.org/linux-kselftest/20240417160740.2019530-1-ryan.roberts@arm.com/
 
 
-> He is banned from mailing lists
+> +
+> +LOCAL_HDRS += helpers.h
+> +
+>  include ../lib.mk
+>  
+> -$(TEST_GEN_PROGS): helpers.c helpers.h
+> +$(TEST_GEN_PROGS): helpers.c
+> 
+> base-commit: ddb4c3f25b7b95df3d6932db0b379d768a6ebdf7
+> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
 
-This was the case for a while.
-
-
-> and ignored by most of the maintainers.
-
-Several contributors occasionally adjust their change tolerance,
-don't they?
-
-Regards,
-Markus
 
