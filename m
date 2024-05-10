@@ -1,103 +1,104 @@
-Return-Path: <linux-kernel+bounces-176240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 009B48C2BEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2B98C2BF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2331C221C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894F82834BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367D613BADA;
-	Fri, 10 May 2024 21:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9027413BADA;
+	Fri, 10 May 2024 21:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fppYAeQb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpKIKi83"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B30313B789;
-	Fri, 10 May 2024 21:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC38B101E3;
+	Fri, 10 May 2024 21:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715376761; cv=none; b=PyfZ06Pw7C0NGZI/03v2BmG0nWdPhTlapp3angw5LCrabm4B9BhBRm5q/HS7PGmvEQ+VaqU97X6GaOXI4MLE7fTlCYouvLVzcu8BiF9HZdO+lRyT0pY8brqAb5F0tFaihUM0FySf67pVXlH9eazCj5/UVjaEwJ51eVGL4MbMlNc=
+	t=1715376797; cv=none; b=T2Kj0AJtZYc4rIBrQxOeCoO0HtsVknbeSvyCMO0SC6EdGw/MKP1firQsoD9LYBd+mSAInb+ZZt/j9i8EtUfejElf9r4G/HY4MnIJDWzn+qOB/CL4tJyNcSX5uf2aYzsn4FtkI1Ek4tzrZ2rOdT2yAtKlX7UiurmCuCU/L2XjtSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715376761; c=relaxed/simple;
-	bh=YHUkn0DBgRxNFkE5O93KhO8NvrS0xHwlSDnVGFKOBN4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OdArvvpAb+GRUPAV6QapH4zwCLxOr3AS2yGpsvkTHAbTbc1eWglqdd5ArUpVZmNqzSSqRE7JyclMpKdYZJCZlgFDTBU9pD0Anmkp8p19OZdvkR/uJUYZGyQm3Dg25y5lXnuORIK1bI8XdkfEmGy46inBj/FDPoJrqltlTzMJkyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fppYAeQb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A8CBC113CC;
-	Fri, 10 May 2024 21:32:40 +0000 (UTC)
+	s=arc-20240116; t=1715376797; c=relaxed/simple;
+	bh=bE3l+ev8VCdNSIPk1AtTtQU/j7iutwHYqRX+Ki/6+z8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POuwu6lpO3Ahz+QshP5kTMj8lKx6ELJxhwn46ydiCby0SeprEBLv16szucmAz3mV+uA+RwLqV9BXXQCakwK8Tu8E/jkOAYqs3duvj1xPYimTOskkZuEb163BiP0VRJ7cv6P0HRNsQViLAuIKWbwo3+d6PPlHcPJYtAQ1AcvchlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpKIKi83; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD64EC113CC;
+	Fri, 10 May 2024 21:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715376761;
-	bh=YHUkn0DBgRxNFkE5O93KhO8NvrS0xHwlSDnVGFKOBN4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fppYAeQbXB2EgJQKx9pxYFna2I03KFz39P7YCUvkBadoTP1+qt6vXnznE3DAj9mYK
-	 SQ+XaYqOteb3jqtYsuGc8No1ty8swNYYP6YsOfU26/HY66vaycABJvOyl/Cbp/mK4J
-	 FnzCjxiS3Z63Wf+6VFMGAFJFPVx7JIrwgsL40T7ykscfYjd61eG9koTnu5o+gFW5/O
-	 OqU8a9ha8IR3jW302KCktxOtekhSqip7pj/gFSUf8GotvSVeSCl4bJ9tq6DXGAu5Wp
-	 La7jjhkr5XS4Ubsn4dqQsw3EP2fhjHpuhc5MbpwLghIGU1BGR1wJQDWL2APvhbxqB1
-	 bjsZSKbnWsQug==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: lsf-pc@lists.linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] DAMON Updates and Plans: Automation of DAMON tuning, tiering, and VM guest scaling
-Date: Fri, 10 May 2024 14:32:37 -0700
-Message-Id: <20240510213237.83479-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240510212132.83346-1-sj@kernel.org>
-References: 
+	s=k20201202; t=1715376797;
+	bh=bE3l+ev8VCdNSIPk1AtTtQU/j7iutwHYqRX+Ki/6+z8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GpKIKi83K33KKgIADCaM+HXqApDGt+rjsvZsCqPFGnySlRFtpyKpFyYk69YyNFXVD
+	 lUPZ48F3qhgrHG1sqScGYcXFbzZ3VtJ/geTUPl9OpZKjCtsDNF6jqTzGVU7fOdFfZQ
+	 St1oW7BRdWt/Fp3uAFYtnVNvK8+n6NHsySYgA8JAVHLJ+Bo7s7dhv+w3JOxn/1ry0+
+	 lHJHoXl0qPjKAHwl+sHpNu9R+3KNjzEAwBYvCWl+kiB3PFNQ2yScIy9MHvV0DKWQfu
+	 e+4IsXCqSETqeTEEPlb4j/sSzQhTwHen8GY1QyScjMifWCD6kAx57qieUpzokxjloB
+	 mD06WRatX7YGg==
+Date: Fri, 10 May 2024 22:33:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>, Eric Anholt <eric@anholt.net>,
+	Stefan Wahren <wahrenst@gmx.net>, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: arm: bcm: Add BCM2712 SoC support
+Message-ID: <20240510-overreact-snare-05566341fd37@spud>
+References: <cover.1715332922.git.andrea.porta@suse.com>
+ <e60ee068f06cb2325e3d09c27b27002ba6db8572.1715332922.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-On Fri, 10 May 2024 14:21:32 -0700 SeongJae Park <sj@kernel.org> wrote:
-
-> Hello,
-> 
-> 
-> On Mon, 29 Jan 2024 12:47:49 -0800 SeongJae Park <sj@kernel.org> wrote:
-> 
-> > Hi all,
-> > 
-> > 
-> > Thanks to the discussions and feedback that we received last year from the
-> > LSF/MM/BPF 2023's DAMON updates and future plans session[1], DAMON made many
-> > advances and yet more future plans.  I'd like to again share/discuss the
-> > followup changes and status we made so far after the last year's session, and
-> > the future development plans on LSF/MM/BPF 2024.
-> 
-> The session is now scheduled for 2024-01-13 10:30[1].  A draft of the slides is
-
-Urgh, sorry for the typo.  s/01/05/ please.
-
-That is, it is scheduled for 2024-05-13 (Mon) 10:30 AM Mountain time (UTC-6).
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9NNELCBQicXb1IDn"
+Content-Disposition: inline
+In-Reply-To: <e60ee068f06cb2325e3d09c27b27002ba6db8572.1715332922.git.andrea.porta@suse.com>
 
 
-Thanks,
-SJ
+--9NNELCBQicXb1IDn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> also now available at DAMON slides repository[2].  Please note that the slides
-> are only a draft.  Those may be (significantly) updated until the beginning of
-> the session.
-> 
-> Looking forward to see you all at Salt Lake City!
-> 
-> [1] https://docs.google.com/spreadsheets/d/176LXLys9Uh6A-Eal2flrzcbUSJMUXGkGwyihr9jAAaQ/edit?usp=sharing
-> [2] https://github.com/damonitor/talks/blob/master/2024/lsfmmbpf/damon_lsfmmbpf_2024.pdf
-> 
-> 
-> Thanks,
-> SJ
-> 
-> [...]
+On Fri, May 10, 2024 at 04:35:27PM +0200, Andrea della Porta wrote:
+> The BCM2712 SoC is found on Raspberry Pi 5. Add compatible string to
+> acknowledge its new chipset.
+>=20
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--9NNELCBQicXb1IDn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj6SlwAKCRB4tDGHoIJi
+0ir4AP4y5rWoOar+b5VqUrLRqKg83y525THu9cNaei5eGlmReAD/bgLHKvey2sIN
+C+9FmgTwDpu57r0w81LZFtdTdzrpCwo=
+=C7UR
+-----END PGP SIGNATURE-----
+
+--9NNELCBQicXb1IDn--
 
