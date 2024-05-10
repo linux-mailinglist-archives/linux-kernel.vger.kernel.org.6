@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-175401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249388C1F01
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:33:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D96A88C1EFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE9F11F21CAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:33:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC951F217EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA36A15EFB7;
-	Fri, 10 May 2024 07:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B651E15ECEF;
+	Fri, 10 May 2024 07:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edgCFKau"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nuQUwfNq"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5681311B9;
-	Fri, 10 May 2024 07:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4865515ECEC;
+	Fri, 10 May 2024 07:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715326380; cv=none; b=WrCZE10nZhqLIPTefOo9U0zU2WYbskAaVL+CU7h/KtL3dVj4s/2iraZS97c7Ht3TJfKVLmlkSCi2nU2ikHGzeJIwK2BRzc+PJq+Add+ni2njbRv8AaODmRoxrCb7TQUhHmdkLqwZAuuaeYtLaxM6UCGJApDL7IPki1eF00ddzHA=
+	t=1715326329; cv=none; b=QYvtOMmNbTY3p+/ggu+//JZXRnWxww+FNu9+Fe32UEZOcncI1OEzJb+Ie3IiDaMltocrFu/LXEmE1JQ2ZLDCFmKQyyBAaMR85yO1B2qGFEtJxc2+U37AonEPhea6dp6NsWfuQSdxHnvIxQM+wuP4nDjt03eAuRiXTvQp6FH+zr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715326380; c=relaxed/simple;
-	bh=ByEC9kiMaabF3vVkEOp8v75OMBj+coHKSUUUS2mNNEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+/O89H9F9Ry9HlNUrNjYwMFOehPCeRSjywsDWC+sxTU7xv8I6xZ5zlvrW5hIyCTwt9nMjFDGB4UOA4qTEHuOP1pcZLDD4yILpIH2ghchJ4N+KrmSKiPquj6sDitZfX32QyomtR9ROYPBEHNS1FQVG0YT8K1uTxgOF/+1g0X1xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edgCFKau; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715326378; x=1746862378;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ByEC9kiMaabF3vVkEOp8v75OMBj+coHKSUUUS2mNNEA=;
-  b=edgCFKauxBiN6Fvb2QgyEqZvaoVcoCK8xIhGWzVcxo8kEf+LLmO68tPN
-   sT7dI9zDb443eoYEzJsE5S9kHr+ot9jNJX14n+JhcGTUEqjNEOBFUYOdh
-   udJZ1R9IaGP709RSeUSgeA8pWiRlquVRGR+5ZpBuiDU//zPoJHk2PIa4n
-   1qCfxztafrEva7MtdmIZF4DSfiL6IaNcOlwG90+MU8a3mmfM83PKjjK5P
-   yMbeQ4wtQqz54ZsnAR98IDGGootS036hVf+Ph3J+G8gb1m+GlAU+/UI5+
-   gXGoaFGDMkB+TVr6Pvkq/uDbIpwp2zB3kRo1T/ivB2OGDN1YBnkh2weOo
-   w==;
-X-CSE-ConnectionGUID: iNgg0imQSbCJeGBncwQCyw==
-X-CSE-MsgGUID: Al4nNiqbTF61MpUASuzhBQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="14245272"
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="14245272"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 00:32:58 -0700
-X-CSE-ConnectionGUID: ybRwEvJsRIG5YlmeO+pHBg==
-X-CSE-MsgGUID: mvMVWbM1Qkmt1ZMeJojlcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="29589840"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 10 May 2024 00:32:51 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s5KkK-0005qp-2s;
-	Fri, 10 May 2024 07:32:48 +0000
-Date: Fri, 10 May 2024 15:31:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-	mingo@redhat.com, tglx@linutronix.de
-Cc: oe-kbuild-all@lists.linux.dev, x86@kernel.org, netdev@vger.kernel.org,
-	richardcochran@gmail.com, linux-input@vger.kernel.org,
-	dmitry.torokhov@gmail.com, zackr@vmware.com,
-	linux-graphics-maintainer@vmware.com, pv-drivers@vmware.com,
-	timothym@vmware.com, akaher@vmware.com,
-	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
-	tzimmermann@suse.de, mripard@kernel.org,
-	maarten.lankhorst@linux.intel.com, horms@kernel.org,
-	kirill.shutemov@linux.intel.com,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Nadav Amit <nadav.amit@gmail.com>,
-	Zack Rusin <zack.rusin@broadcom.com>
-Subject: Re: [PATCH v9 6/8] drm/vmwgfx: Use VMware hypercall API
-Message-ID: <202405101512.NJRbYcaH-lkp@intel.com>
-References: <20240506215305.30756-7-alexey.makhalov@broadcom.com>
+	s=arc-20240116; t=1715326329; c=relaxed/simple;
+	bh=Fckdb3Fian35DrO+vC9ujlpyzWqeeX/x7xTu4QrzFlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PbmYlYIq26JPvYa4PIlrZAm13oVApYn/It3IK3rvk73gY9TP+9SUvjm7aEWLupVfbJ1WtEu7G4ozYQPFKENpKUMKw8QeJ8isfrC3hUIuDGvx8elmmz7hKCywEwUE+u7MFmrrZTqwDiStRXNMxRIXH5f4ikmODBxd5P9x4m1YT38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nuQUwfNq; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E2D6320008;
+	Fri, 10 May 2024 07:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715326319;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gy0lQX70PJvtSy4wE21NBe3LM5+X5IH8D2WT9ewXI5o=;
+	b=nuQUwfNqdtjSjH9txQZFKddvqweW0O0bXvsoAWLS3Gjl4smDIbDR3+Mmx56Pol2mkPjVKc
+	Q5+gZgEuNw6Vu1mThyKSTu4fuISqNrA7oQGaM9dX23bQ2Edr0F/Zd5r35Xm3VUKKy1wMaA
+	ZO+mEd89ImY+2pJOiqHVQo+fCvnAyIPrDVXJ28LZX3WTFz2Zg+HP3MspHMVJLJ4w9mWeAD
+	YzhcWmocPrA275DAB2iq+0X0zIxav0W2wMoVGBXN9LfdG5V8aiYOLmwVp9lQfnleUPnK0e
+	ij5NxkL8Q6m1jF/rrIhtX6RbYvJODmwsZDCQymmrXBcUQlbuRym3g5bXxC91tQ==
+Date: Fri, 10 May 2024 09:31:56 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Doug Anderson <dianders@chromium.org>, Chen-Yu
+ Tsai <wenst@chromium.org>, Matt Coster <Matt.Coster@imgtec.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, =?UTF-8?Q?Herv=C3=A9?= Codina
+ <herve.codina@bootlin.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: Hotplug hardware with (un)loadable DT overlays - unconference
+ meeting notes
+Message-ID: <20240510093156.13bfcd34@booty>
+In-Reply-To: <20240426115141.201f257a@booty>
+References: <20240426115141.201f257a@booty>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240506215305.30756-7-alexey.makhalov@broadcom.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hi Alexey,
+Hello,
 
-kernel test robot noticed the following build errors:
+On Fri, 26 Apr 2024 11:51:41 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on dtor-input/next dtor-input/for-linus linus/master v6.9-rc7 next-20240509]
-[cannot apply to tip/x86/vmware]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[...]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Makhalov/x86-vmware-Move-common-macros-to-vmware-h/20240507-055606
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20240506215305.30756-7-alexey.makhalov%40broadcom.com
-patch subject: [PATCH v9 6/8] drm/vmwgfx: Use VMware hypercall API
-config: x86_64-buildonly-randconfig-003-20240510 (https://download.01.org/0day-ci/archive/20240510/202405101512.NJRbYcaH-lkp@intel.com/config)
-compiler: gcc-11 (Ubuntu 11.4.0-4ubuntu1) 11.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240510/202405101512.NJRbYcaH-lkp@intel.com/reproduce)
+> We described 2 use cases we are working on at Bootlin.
+> 
+> One use case is for the LAN966x, a classic SoC that can be however be
+> started in "endpoint mode", i.e. with the CPU cores deactivated and a
+> PCI endpoint that allows an external CPU to access all the peripherals
+> over PCIe. In practice the whole SoC would be used as a peripheral chip
+> providing lots of devices for another SoC where the OS runs. This use
+> case has been described by Rob Herring and Lizhi Hou at LPC 2023 [4][5].
+> 
+> The other use case, which was discussed in more detail, is for an
+> industrial product under development by a Bootlin customer, which is a
+> regular, self-standing embedded Linux system with a connector allowing
+> to connect an add-on with additional peripherals. The add-on
+> peripherals are on I2C, MIPI DSI and potentially other non-discoverable
+> busses (there are also peripherals on natively hot-pluggable busses
+> such as USB and Ethernet, but by their nature they don't need special
+> work).
+> 
+> For both use cases (and perhaps others we are unaware of) runtime
+> loading/unloading DT overlays appears as the most fitting technique.
+> Except it is not yet ready for real usage.
+> 
+> For it to work, we highlighted 3 main areas in need of work in the
+> Linux kernel:
+> 
+>  1. how to describe the connector and the add-ons in device tree
+>     (bindings etc) -- only relevant for the 2nd use case
+>  2. implementation of DT overlays for adding/removing the add-on
+>     peripherals
+>  3. fixing issues with various subsystems and drivers that don't react
+>     well on device removal
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405101512.NJRbYcaH-lkp@intel.com/
+Quick update: I just sent a series with a proposal covering items 1 and
+2:
 
-All errors (new ones prefixed by >>):
+https://lore.kernel.org/all/20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com/
 
-   ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_port_hb_out':
-   vmwgfx_msg.c:(.text+0x182): undefined reference to `vmware_hypercall_mode'
-   ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_send_msg':
-   vmwgfx_msg.c:(.text+0x46d): undefined reference to `vmware_hypercall_mode'
-   ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o: in function `vmw_recv_msg':
-   vmwgfx_msg.c:(.text+0x6f4): undefined reference to `vmware_hypercall_mode'
->> ld: vmwgfx_msg.c:(.text+0x875): undefined reference to `vmware_hypercall_mode'
-   ld: vmwgfx_msg.c:(.text+0xae0): undefined reference to `vmware_hypercall_mode'
-   ld: drivers/gpu/drm/vmwgfx/vmwgfx_msg.o:vmwgfx_msg.c:(.text+0x136e): more undefined references to `vmware_hypercall_mode' follow
+Luca
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
