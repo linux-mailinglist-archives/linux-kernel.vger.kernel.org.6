@@ -1,113 +1,152 @@
-Return-Path: <linux-kernel+bounces-175921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E343A8C272E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:52:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72508C2733
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A361C283ABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:52:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F3841F257DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEF117108F;
-	Fri, 10 May 2024 14:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7975171644;
+	Fri, 10 May 2024 14:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pzcac8GP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xfq057j7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F6EEAC0;
-	Fri, 10 May 2024 14:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7606D17106B;
+	Fri, 10 May 2024 14:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715352741; cv=none; b=eExs1RxL4KI05ooziyp7x/z3L1NS3WRw1fU3dtNPE5X7O5dTqB8K0U8FXDu5RBwqJC7mbnhVoeo9ziY/tKZkQ3hbFRe/+NRARAfwcZOYBL7zRy5YNT/D1m3B0eVJmD8gbxAXbn24CAFi32cLnsfMzT6qAY0t49EEEjJVHeKtwb4=
+	t=1715352886; cv=none; b=eHKaSBDX7hniZT0Km6Brr2p7/bofP2fChBPIFEMlUX+OK3VY6IsJ+IlT54if87tOmx5Xp5DgSmanpxW9q1DFigD79A1uKxr0BzMT5ArSbLoydlY6Y0KMFNG4gqm1aX0kxt5SWNyewGFJC3ExczyRgnT75AK9Fe7ek4rEgeGG0lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715352741; c=relaxed/simple;
-	bh=Wk0q4vevPtsf1bHPHOHrkMoSDRobzZE5HMMZ/bpUMqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nOlVObwfC9fH2VOR+pf+jQQUD/dFn1+eMylCCt2WZ2RmJ8d7m0DjTLybHmemHKolKZ9Jo4kFBsE2QeZcUn6yhSQtsxhWT5YhIEoroj4wSqkjRmuzj/6PdK7N5gi4FBS1zeApgs2p5sxFbm5Zbo+uGO9LaoyJ94Pzdiz+Wcdza8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pzcac8GP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6582C113CC;
-	Fri, 10 May 2024 14:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715352740;
-	bh=Wk0q4vevPtsf1bHPHOHrkMoSDRobzZE5HMMZ/bpUMqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pzcac8GP99w+51uAaTDjeuzPJjGO2O2eMuXDs9L085Xbu7NvI9TtPBZ0Vp/HCfEKr
-	 JIBWYvcvVlRJx6ptANdfbBBOQbA5RRyJo8O/PO0Yj5N/nTIEaTc2FKB/h29H/LfeB2
-	 7tEhaCFBzx1UivzrgGVy1BVFEyQuyH2I6rO+lUOiqoSH+ZgIVkWvAhtJqR2fgtPB+4
-	 HfTdEIY/5S1nGhS+9VW47CZa3WnqClhYUs9rHIMwjrpaRXQAIkLIzJ/luZzgu9EhEf
-	 dVoqGFvP61P+qeHFTD7BSjXm+5Hn6AG7sSNUs5alWlTw27FVjUr5ls2iLN0T//0w3y
-	 1hPWMfP48ogBw==
-Date: Fri, 10 May 2024 15:52:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, Bhargav Raviprakash <bhargav.r@ltts.com>
-Cc: m.nirmaladevi@ltts.com, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	jpanis@baylibre.com, devicetree@vger.kernel.org, arnd@arndb.de,
-	gregkh@linuxfoundation.org, lgirdwood@gmail.com, broonie@kernel.org,
-	linus.walleij@linaro.org, linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, nm@ti.com, vigneshr@ti.com,
-	kristo@kernel.org, eblanc@baylibre.com
-Subject: [GIT PULL] Immutable branch between MFD, Misc, Pinctrl and Regulator
- due for the v6.10 merge window
-Message-ID: <20240510145214.GC6146@google.com>
-References: <0109018f2f24c15e-c50bfc29-5f1d-4368-a4b8-2c9f1d398abb-000000@ap-south-1.amazonses.com>
- <171472796178.1311350.4406575677999610125.b4-ty@kernel.org>
+	s=arc-20240116; t=1715352886; c=relaxed/simple;
+	bh=QiKKY9PSdLFE28M/Q7BzO99YFAu8REW5hZxTDsCrPWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t+qKyWOo/dDr6en7iDDdVe4fO69qfp7VMHKcXPKZLL15oWZb0Mv0YUw2x7byI/1fqmXcy0bHcoX7mtwT1qB0HpN1unwfVsxvUhX7SeJzVz/uAM3uT5LESJD3WJiBYde7YDide/rHc/kT+tHZJSYUhnB5qjMbxqldwI1gd4ggcUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xfq057j7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44ADBST1019386;
+	Fri, 10 May 2024 14:54:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=3ug0KQ5oaG2qwKoniCU5R5E+xTRuNofmc/DcAotezNQ=; b=Xf
+	q057j7MdmmGyrv/9L9F9UdHeRtQKFgVWNKxEBao/eurTy/ww7vMei8NPrwboMkoS
+	slTbkntwIcOcNO5niOS5Z/H61YUbtGx27oczCtWDfkPXdPusIU8Dh8y6tdx1EHj3
+	uLz7ILD9il3JM0Lne9QL+klznLt2GbSqT2y7kxGx1Dm+PLPET/nzmzuvtlJC8CjO
+	ubJjRRR7DswpI5xQFYD662eLgE0g62YrHMuMa1FJK7RisxDfbMkSWxbNmbJlHX5a
+	ncrx26mHZ5h3khEoJYaZ+Pzm7N0/wHdYTOrde06KQC9AOfPfiZ9dhcQ84SKwaMwb
+	PGOJTy+NNZ95XxKWIZWw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w1hs4t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 14:54:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44AEsOAQ005361
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 14:54:24 GMT
+Received: from [10.110.100.57] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 10 May
+ 2024 07:54:23 -0700
+Message-ID: <a56bd4f9-d76b-4924-a901-554d71ea17bd@quicinc.com>
+Date: Fri, 10 May 2024 07:54:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <171472796178.1311350.4406575677999610125.b4-ty@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
+ various chipsets
+Content-Language: en-US
+To: Christian Marangi <ansuelsmth@gmail.com>
+CC: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>,
+        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+        Steve deRosier <derosier@cal-sierra.com>,
+        Stefan Lippers-Hollmann
+	<s.l-h@gmx.de>
+References: <20230611080505.17393-1-ansuelsmth@gmail.com>
+ <878rcjbaqs.fsf@kernel.org> <648cdebb.5d0a0220.be7f8.a096@mx.google.com>
+ <648ded2a.df0a0220.b78de.4603@mx.google.com>
+ <CA+_ehUzzVq_sVTgVCM+r=oLp=GNn-6nJRBG=bndJjrRDhCodaw@mail.gmail.com>
+ <87v83nlhb3.fsf@kernel.org>
+ <7585e7c3-8be6-45a6-96b3-ecb4b98b12d8@quicinc.com>
+ <cce2700c-e54f-4a50-b3f0-0b8a82b961a4@quicinc.com>
+ <663e2bd9.5d0a0220.d970d.cbf8@mx.google.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <663e2bd9.5d0a0220.d970d.cbf8@mx.google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: qVnK9dRRwg18lc-CZ3pWZOj82YORCYY7
+X-Proofpoint-GUID: qVnK9dRRwg18lc-CZ3pWZOj82YORCYY7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-10_10,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ mlxlogscore=827 mlxscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405100107
 
-Enjoy!
+On 5/10/2024 7:14 AM, Christian Marangi wrote:
+> On Thu, May 09, 2024 at 09:48:08AM -0700, Jeff Johnson wrote:
+>> On 5/9/2024 9:37 AM, Jeff Johnson wrote:
+>>> On 5/8/2024 9:50 PM, Kalle Valo wrote:
+>>>> Sorry for the delay but finally I looked at this again. I decided to
+>>>> just remove the fixme and otherwise it looks good for me. Please check
+>>>> my changes:
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=688130a66ed49f20ca0ce02c3987f6a474f7c93a
+>>>>
+>>>
+>>> I have a question about the copyrights in the two new files:
+>>> + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
+>>>
+>>> My understanding is that Qualcomm's affiliation with Linux Foundation via Code
+>>> Aurora ended in December 2021, and hence any contributions in 2022-2023 should
+>>> be the copyright of Qualcomm Innovation Center, Inc.
+>>>
+>>>
+>>
+>> ok it seems like Kalle's v13 had:
+>>  + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>>
+>> and Ansuel's v14 has:
+>>  + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
+>>
+>> So Ansuel, is your work on behalf of The Linux Foundation?
+>>
+> 
+> When I resubmitted this at times, I just updated the copyright to the
+> current year so I guess it was wrong doing that?
+> 
+> As you can see from the copyright header this patch went all around and
+> I think at the end (around 2018) the Linux copyright was added as it was
+> submitted upstream. (can't remember if maintainers were asking that)
+> 
+> So me watching the old year and resubmitting it, just updated the date.
+> 
+> Soo I think we should revert to 2018?
+> 
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+Yes, in this case changing the Linux Foundation copyright back to 2018 is correct.
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-misc-pinctrl-regulator-v6.10
-
-for you to fetch changes up to 2088297159178ffc7c695fa34a7a88707371927d:
-
-  pinctrl: pinctrl-tps6594: Add TPS65224 PMIC pinctrl and GPIO (2024-05-03 10:07:11 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, Misc, Pinctrl and Regulator due for the v6.10 merge window
-
-----------------------------------------------------------------
-Bhargav Raviprakash (6):
-      mfd: tps6594: Use volatile_table instead of volatile_reg
-      dt-bindings: mfd: ti,tps6594: Add TI TPS65224 PMIC
-      mfd: tps6594-i2c: Add TI TPS65224 PMIC I2C
-      mfd: tps6594-spi: Add TI TPS65224 PMIC SPI
-      mfd: tps6594-core: Add TI TPS65224 PMIC core
-      misc: tps6594-pfsm: Add TI TPS65224 PMIC PFSM
-
-Nirmala Devi Mal Nadar (3):
-      mfd: tps6594: Add register definitions for TI TPS65224 PMIC
-      regulator: tps6594-regulator: Add TI TPS65224 PMIC regulators
-      pinctrl: pinctrl-tps6594: Add TPS65224 PMIC pinctrl and GPIO
-
- .../devicetree/bindings/mfd/ti,tps6594.yaml        |   1 +
- drivers/mfd/tps6594-core.c                         | 253 +++++++++++++--
- drivers/mfd/tps6594-i2c.c                          |  20 +-
- drivers/mfd/tps6594-spi.c                          |  20 +-
- drivers/misc/tps6594-pfsm.c                        |  48 ++-
- drivers/pinctrl/pinctrl-tps6594.c                  | 277 +++++++++++++---
- drivers/regulator/Kconfig                          |   4 +-
- drivers/regulator/tps6594-regulator.c              | 334 ++++++++++++++++----
- include/linux/mfd/tps6594.h                        | 351 ++++++++++++++++++++-
- 9 files changed, 1120 insertions(+), 188 deletions(-)
-
--- 
-Lee Jones [李琼斯]
+/jeff
 
