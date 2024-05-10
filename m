@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-175307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82818C1DEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:11:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1436A8C1DF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DE92833B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:11:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455131C20DBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C29153BE2;
-	Fri, 10 May 2024 06:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4D515B116;
+	Fri, 10 May 2024 06:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKIkVsf1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcxfVZkH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CCC1311BA
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8FF14D716
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715321491; cv=none; b=OCRSLIJQT2XAXkvRv4d9/FPgIKYCIS7ycWRQDPohfOY5H8v0Xc+r2O4fGxwccyuIfx9I6N/JCPI754jDukdOXuTEtRqKBcBF8vVcaR83s1KxkX9qxGW9yuvM65tYxitMsvTy/Lc43s9/WF+9aD6ZAixwVv+WYeQwt6gOWwgqNC0=
+	t=1715321647; cv=none; b=p86Wa3JseWvQXrhC2m0vFVmphRnt9/rZKrMfVC1RS0L/RzFp7cO33GEpDs0sZSAt+JdQkec2Zpha9pqq8nkHanmViojjpXhoeAhG7q5OVNl9qLoNSZYCJRtFZLENonObDf5wb01P6zBX+iwDs0yG5xgDN8tTq013UF1Lq/wglBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715321491; c=relaxed/simple;
-	bh=tVmNsvP0F79RlUZxEG/LA65KskpKIapcIo/v8yoB4ak=;
+	s=arc-20240116; t=1715321647; c=relaxed/simple;
+	bh=GcGGzGvYTnpARMt/AI5IU7S4k5OFyk1tpsWpYMoYjcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTU9UX9A/aNW1xQiyHHqMyTVk7O6ZUKoBU6Zhyw/XFCLQmGhmw+S1Z54rmpjUy0xK82I7gUmn85pERz5mUAboo/xIk+NE3VstCo2PGGHn5DIVhutoujz85UFfX/cI4l2kcIAMibOZKHe9bIah7ddGmh8B6XKikPnvCu0GwZIZzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKIkVsf1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F38C113CC;
-	Fri, 10 May 2024 06:11:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Df7kAR43GxV1p/CIoHR6GdwNcMsS8TB4D8OvDbkub3Gzw0ugm2U9XnRKUM4eD3mn0pKdbNo+PcJCjtTaZHVs7iFTuEekC1WwwMMBhVlQGl4UmEcJVZVxFSRRmcdfMxFpa8fI2BkVWBgDE5lF9QCvyR+3UQZAupaF12wYI4GJ5jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcxfVZkH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD07C113CC;
+	Fri, 10 May 2024 06:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715321490;
-	bh=tVmNsvP0F79RlUZxEG/LA65KskpKIapcIo/v8yoB4ak=;
+	s=k20201202; t=1715321646;
+	bh=GcGGzGvYTnpARMt/AI5IU7S4k5OFyk1tpsWpYMoYjcY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jKIkVsf1od6aPk7MnyWPjHXMFynzPXSzitJyehux5ITdgempS7Ky/BGauZ1LFfr4q
-	 u48+U1egGclO8lOKUPkEgr3ZTGLNo8Wiqbin0UlmczIbxjbgfqPh5sdlEFcjWRhMDq
-	 3vF3AWWbTz6kh7d5Q21DwCRwnFmNo16Kde9vF5A2GSPKfZu+9XTXYgE3r3JFnWvYCd
-	 wX7ECcY52y6b7haB1rNgqUHT9uJgVZPuNYigZwD1N+2viHnTTWV4HadJgtSL2hGJc4
-	 DcrHbLCrjSszwUsRy4Iy1y058wBu57KGjOOuSIZeHRgW9FvOXDemw0Yycz/3FDYfKK
-	 H6eArB6YW8+0A==
-Date: Fri, 10 May 2024 07:11:27 +0100
+	b=VcxfVZkHI2PN9GT/A6Ie2JpUCLXvDZ445sFIKtu6SteAEJNjUEIQmcSPtTL9Gaff4
+	 9F+i4dcWBCvQA+c2jHCvTcK0vTrEC72EQLiig7BopziafxXVX2gXJMX5OO7+kxyr0U
+	 p9U39b+JKiWRmO1xfVlfNzTKz8cRpti/PQnJsXkmEu7iwKFV97iUz3NhPSNUJt3O6G
+	 blDtJy+LTrw51bUX2cjujeqpByvrjN81pldB/ef8JVDGxdlKmoCR5PBsVS8RBdrIwF
+	 +xrQyRCT0mnb8Wh4oYrc7VdpvOdpR+NOnu1ivJh0UNUwHvAGF2ggVlRalqTlrAKONo
+	 weeHegGwXFt+Q==
+Date: Fri, 10 May 2024 07:14:04 +0100
 From: Mark Brown <broonie@kernel.org>
 To: Shenghao Ding <shenghao-ding@ti.com>
 Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
@@ -50,10 +50,11 @@ Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
 	yung-chuan.liao@linux.intel.com, kevin-lu@ti.com,
 	cameron.berkenpas@gmail.com, tiwai@suse.de, baojun.xu@ti.com,
 	soyer@irl.hu, Baojun.Xu@fpt.com
-Subject: Re: [PATCH v4 1/3] ALSA: ASoc/tas2781: Fix wrong loading calibrated
+Subject: Re: [PATCH v4 2/3] ALSA: ASoc/tas2781: Fix wrong loading calibrated
  data sequence
-Message-ID: <Zj26j5CrWA9PZI3l@finisterre.sirena.org.uk>
+Message-ID: <Zj27LHKXSFXx_6G2@finisterre.sirena.org.uk>
 References: <20240510034123.1181-1-shenghao-ding@ti.com>
+ <20240510034123.1181-2-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,57 +62,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IBGLJYrAp7PURpSa"
+	protocol="application/pgp-signature"; boundary="XFZRnGJeJ9yJiLPF"
 Content-Disposition: inline
-In-Reply-To: <20240510034123.1181-1-shenghao-ding@ti.com>
+In-Reply-To: <20240510034123.1181-2-shenghao-ding@ti.com>
 X-Cookie: Did I SELL OUT yet??
 
 
---IBGLJYrAp7PURpSa
+--XFZRnGJeJ9yJiLPF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 11:41:19AM +0800, Shenghao Ding wrote:
+On Fri, May 10, 2024 at 11:41:20AM +0800, Shenghao Ding wrote:
 
-> Calibrated data will be set to default after loading DSP config params,
-> which will cause speaker protection work abnormally. Reload calibrated
-> data after loading DSP config params.
+>  - Divide one patch into two individual patches. compiling warning patch
+>    has been upstream in another patch (Fixes: 1ae14f3520b1 ("ASoC: tas2781:
+>    Fix a warning reported by robot kernel test"))
 
-This changelog...
+Oh, I see what's going on - when you split a patch up into several
+patches each individual patch needs to have it's own changelog
+describing what's going on in that specific patch.  If you just
+replicate the changelog you had for the original patch into each of the
+split patches it will inevitably not describe the separated out patches
+well.
 
-> -#ifndef __TASDEVICE_DSP_H__
-> -#define __TASDEVICE_DSP_H__
-> +#ifndef __TAS2781_DSP_H__
-> +#define __TAS2781_DSP_H__
-> =20
->  #define MAIN_ALL_DEVICES			0x0d
->  #define MAIN_DEVICE_A				0x01
-> @@ -180,7 +180,6 @@ void tasdevice_calbin_remove(void *context);
->  int tasdevice_select_tuningprm_cfg(void *context, int prm,
->  	int cfg_no, int rca_conf_no);
->  int tasdevice_prmg_load(void *context, int prm_no);
-> -int tasdevice_prmg_calibdata_load(void *context, int prm_no);
->  void tasdevice_tuning_switch(void *context, int state);
->  int tas2781_load_calibration(void *context, char *file_name,
->  	unsigned short i);
+Please submit patches using subject lines reflecting the style for the
+subsystem, this makes it easier for people to identify relevant patches.
+Look at what existing commits in the area you're changing are doing and
+make sure your subject lines visually resemble what they're doing.
+There's no need to resubmit to fix this alone.
 
-=2E..doesn't seem to have much relationship with the change?
-
---IBGLJYrAp7PURpSa
+--XFZRnGJeJ9yJiLPF
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY9uo4ACgkQJNaLcl1U
-h9D4agf+I0bZ1B3cEZzcn8kwAbokayZK3bWdqamWTuNLb3Vcx2uhyC4/bvRK5qQn
-J6hS0j9LlmPaTipkl0Y7ztNShtj4T1VRNBY9RN3zRg9WuGh6ruQNGjFZO5gLMlr6
-pg6e0ZfZ1Ja76r2kTsr4VzmBuhuoaDSpemsDCbCHHj3ibiHVobR7k2T0YnBoOGyQ
-je4perE+5AwpAYiUrQUJklo14YYepi+ofoALKisnmpHva6wKFeq6L3l3IacPFBvM
-cmODN8eF+LcZWc9GEd7SRIkmW9esFWti/G84NItQC2V6v9JaIDG4APXcFYPAWn1N
-9s0AEBIhbb8SzQnWR1ajUfJH6zQR3A==
-=r0T+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY9uysACgkQJNaLcl1U
+h9C/xQf/cyPxlEXFdtS915Zzymf6A2TgMO5OeS1+5HrB001oEMTyOX9DmHRVNiZG
+53thK9VMJPUFZcw/qrjxtTRSV8Uf2zOx7YtC7QXCyonB3HM4MwRk6wvmF0n1AV/u
+jBamorjme2Bfv1lqfPvv/guVNWhl0AUOWnDlBNYfU9Q71/MBADrixWHqACG0GLO1
+MvgUgBYHXSj9uUbtcLNhyUY4chDk6lx7L2DP8lIC8dGrxK7r5W4j1y8Wodnn5RlB
+oehwsucjA/N5Pgw7ZuXRAcaXnZYgsdVPIlG7IKGjBXhAh0aK5+QDtWR9Td6bfmsb
+La3dh+SC1AEosVa63EqnSlaFgs1R4A==
+=VKsH
 -----END PGP SIGNATURE-----
 
---IBGLJYrAp7PURpSa--
+--XFZRnGJeJ9yJiLPF--
 
