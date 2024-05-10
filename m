@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-175842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1FF8C2610
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:52:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59EE58C2613
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52991F229E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:52:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBB03B2335C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FD512C539;
-	Fri, 10 May 2024 13:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338412D1E8;
+	Fri, 10 May 2024 13:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lk41rZJK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CdTIbV3p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2254912C46B;
-	Fri, 10 May 2024 13:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D50712C46B;
+	Fri, 10 May 2024 13:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715349132; cv=none; b=E4EMfDtej/wmmnWAeRw/aYbTSsOImzH/nPgLaRSGQbbVGN9wos+Pso9Iu8Faf7jPXpMYEmnKj23xSRzyW0HDPOsaogo93tqy6lBbCPrOKn2XrptmHI34AEUCDhJ3Gp7CrWxOzmVs+3iiTaZT5Y1KepgAd+QqxyGVki+H2XuUTxY=
+	t=1715349136; cv=none; b=nssW72WKJe7s5AQMjTtpI9Ph2G7n50zDPkwGxELBFHjKK9hbNp60A9Hr+nQnZ+fkMmBxcTGAdO4DYHs9HLlu0QNdXU2UZn2YNsyMtsh4FXaq4+IhcmudMXONWEuRfAFRpmKdEji+kpCSVxFI2B8QfzZRbXWtzn1twDFCQGS+wGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715349132; c=relaxed/simple;
-	bh=ry3Mqd5CmjJo1OW6t11otMfSZLHdOycNCf2A3sVc5zw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImMpl2HbJFde06gs1k8K5EsWeuTZG8ibRi0h+J+x8J3HM+53y7QG+pghzs9XzlyqcVEqz4fmOUvESXngzIuHd+aLQdqrcyH/tC/C4+uQK73aHr/lVinR5QZ00gPiXUM5RPbiiZwlTe9VdjONTlwK5fjbdIuD3+43ULrFqdcJNEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lk41rZJK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5F5C113CC;
-	Fri, 10 May 2024 13:52:10 +0000 (UTC)
+	s=arc-20240116; t=1715349136; c=relaxed/simple;
+	bh=P03mPsNFGR0/RNBmpmCMETYGOpewXcdJhDQnp92x98U=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=RdToRcoMLJhLFfSeALD9wMw59LWr+hiO6Q14FTRysi/LZzIfSJwN9l3Dwc+wSn1+ifQrXCbPWB+GmpQirR56oCkACHhO3wfA6djQmcFHDHPerrmWqe2rj5ReW8dclXzddCW+mwn4PJbNilPqjWaJjtaPuc5jwdSQTuPMUoWObCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CdTIbV3p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0484C32781;
+	Fri, 10 May 2024 13:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715349131;
-	bh=ry3Mqd5CmjJo1OW6t11otMfSZLHdOycNCf2A3sVc5zw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lk41rZJK3VuvbLw/K4mbJGEYZcZtQRKx+pJgrCgPbdgRvxSpLjtJ9yZ/qX7m9yWxN
-	 wZdKh1fDhReCZ2KLxtUH+AnNjlDSX3fFWnvgd0kIZr3YlT5ru2auVr4/t/afrLhskG
-	 yh/SgnmDejtZKH7QezfTnVkxqwo/OJyb+hxqGiwxDlcalJx2jgk3uaqO4IZ7DzTYap
-	 Z6lLZmK6obYPZJCe8ud0Lu+3IKzT/wb7wJZ1TIfCbYPERxRKgcaVv5dE0cPlaVCpF1
-	 KPZhuyUCxl8vm+16EivgnHHnF5/zX/BIxxck7FrznZNvVAoU3pNX9R4pbNK1R0aVK5
-	 mmIlM3k9qpIFg==
-Date: Fri, 10 May 2024 10:52:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] perf probe: Allow names to start with digits
-Message-ID: <Zj4miD9TguH5FrjL@x1>
-References: <20240510-perf_digit-v4-0-db1553f3233b@codewreck.org>
+	s=k20201202; t=1715349135;
+	bh=P03mPsNFGR0/RNBmpmCMETYGOpewXcdJhDQnp92x98U=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=CdTIbV3p+4e9dZYYzb9p0raW2kJxdErUtvbB2gTyAlJgbePLaNavSF0S+hRtzQvJv
+	 giA7CUdN2YZIOrk7XANyrFY5jsFCDzKxHXQZpHQGR1fp1Rod9/9XPQEuumQYSe1sZA
+	 1nAY/DLONdV+kC3ws88a7/6D5wCLzwQzyIWzG36sWz3EQSt2g6X8RsArbllW9jORcJ
+	 XJjrNAh5Hlv7JwWB+zX/POAWBGZglSTpJ0O8FqsYHc6ZBnHv6wY4owV2OOVdyv2zkx
+	 bXo/67Gzzo878XtRdQDgTa/2OViokNXOj50RP4qPSvGeeXyzfBT1/JPujSSXHzU6ca
+	 WZgiTxD7fU92Q==
+From: Kalle Valo <kvalo@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Ansuel Smith <ansuelsmth@gmail.com>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+  <linux-kernel@vger.kernel.org>,  <ath10k@lists.infradead.org>,
+  <linux-wireless@vger.kernel.org>,  <netdev@vger.kernel.org>,  Sebastian
+ Gottschall <s.gottschall@dd-wrt.com>,  Steve deRosier
+ <derosier@cal-sierra.com>,  Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
+ various chipsets
+References: <20230611080505.17393-1-ansuelsmth@gmail.com>
+	<878rcjbaqs.fsf@kernel.org>
+	<648cdebb.5d0a0220.be7f8.a096@mx.google.com>
+	<648ded2a.df0a0220.b78de.4603@mx.google.com>
+	<CA+_ehUzzVq_sVTgVCM+r=oLp=GNn-6nJRBG=bndJjrRDhCodaw@mail.gmail.com>
+	<87v83nlhb3.fsf@kernel.org>
+	<7585e7c3-8be6-45a6-96b3-ecb4b98b12d8@quicinc.com>
+	<cce2700c-e54f-4a50-b3f0-0b8a82b961a4@quicinc.com>
+Date: Fri, 10 May 2024 16:52:11 +0300
+In-Reply-To: <cce2700c-e54f-4a50-b3f0-0b8a82b961a4@quicinc.com> (Jeff
+	Johnson's message of "Thu, 9 May 2024 09:48:08 -0700")
+Message-ID: <875xvllqpg.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-perf_digit-v4-0-db1553f3233b@codewreck.org>
+Content-Type: text/plain
 
-On Fri, May 10, 2024 at 07:24:29AM +0900, Dominique Martinet wrote:
-> This is a rebase of the patch orginally sent almost two years ago here:
-> https://lkml.kernel.org/r/20220612061508.1449636-1-asmadeus@codewreck.org
-> 
-> At the time I was asked to add tests, and Jiri whipped up something to
-> make the test pass even for probes that don't exist on most systems but
-> that ended up never being formatted or sent... I asked what happened of
-> it and got asked to send it myself, but obviously also totally forget
-> about it myself until I needed it again now.
-> 
-> I've taken the diff from that thread, adapted it a little bit to the
-> current master branch and checked things still fall in place -- I didn't
-> see any obvious problem.
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
 
-Thanks, applied to perf-tools-next,
+> On 5/9/2024 9:37 AM, Jeff Johnson wrote:
+>> On 5/8/2024 9:50 PM, Kalle Valo wrote:
+>>> Sorry for the delay but finally I looked at this again. I decided to
+>>> just remove the fixme and otherwise it looks good for me. Please check
+>>> my changes:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=688130a66ed49f20ca0ce02c3987f6a474f7c93a
+>>>
+>> 
+>> I have a question about the copyrights in the two new files:
+>> + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
+>> 
+>> My understanding is that Qualcomm's affiliation with Linux Foundation via Code
+>> Aurora ended in December 2021, and hence any contributions in 2022-2023 should
+>> be the copyright of Qualcomm Innovation Center, Inc.
+>> 
+>> 
+>
+> ok it seems like Kalle's v13 had:
+>  + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>
+> and Ansuel's v14 has:
+>  + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
+>
+> So Ansuel, is your work on behalf of The Linux Foundation?
 
-- Arnaldo
- 
-> Thanks!
-> 
-> To: Arnaldo Carvalho de Melo <acme@kernel.org>
-> To: Jiri Olsa <jolsa@kernel.org>
-> To: Peter Zijlstra <peterz@infradead.org>
-> To: Ingo Molnar <mingo@redhat.com>
-> To: Namhyung Kim <namhyung@kernel.org>
-> To: Mark Rutland <mark.rutland@arm.com>
-> To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> To: Ian Rogers <irogers@google.com>
-> To: Adrian Hunter <adrian.hunter@intel.com>
-> To: Liang, Kan <kan.liang@linux.intel.com>
-> Cc: linux-perf-users@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> 
-> Changes in v4:
-> - add missing ifdef LIBTRACEEVENT for new test case
-> Note build-test still failed on my setup due to some bpf/cgroup problem,
-> which is more likely a setup problem but means I couldn't verify build
-> all the way:
-> util/bpf_skel/bperf_cgroup.bpf.c:71:10: error: incomplete definition of type 'struct cgroup'
-> - Link to v3: https://lore.kernel.org/r/20240509-perf_digit-v3-0-9036bf7898da@codewreck.org
-> 
-> Changes in v3:
-> - fix evsel__newtp_idx typo in commit 1's message
-> - rebase onto perf-tools-next
-> - add trailers
-> - Link to v2: https://lore.kernel.org/r/20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org
-> 
-> Changes in v2:
-> - update Jiri's email in commit tags
-> - (not a change, but after being brain-dead and Ian helpful
-> reply I'm confirming patch 3/3 works as expected)
-> - Link to v1: https://lore.kernel.org/r/20240407-perf_digit-v1-0-57ec37c63394@codewreck.org
-> 
-> ---
-> Dominique Martinet (3):
->       perf parse-events: pass parse_state to add_tracepoint
->       perf parse-events: Add new 'fake_tp' parameter for tests
->       perf parse: Allow names to start with digits
-> 
->  tools/perf/tests/parse-events.c | 13 +++++++++++--
->  tools/perf/tests/pmu-events.c   |  2 +-
->  tools/perf/util/evlist.c        |  3 ++-
->  tools/perf/util/evsel.c         | 20 +++++++++++++-------
->  tools/perf/util/evsel.h         |  4 ++--
->  tools/perf/util/metricgroup.c   |  3 ++-
->  tools/perf/util/parse-events.c  | 38 +++++++++++++++++++++++---------------
->  tools/perf/util/parse-events.h  |  9 ++++++---
->  tools/perf/util/parse-events.l  |  4 ++--
->  tools/perf/util/parse-events.y  |  2 +-
->  10 files changed, 63 insertions(+), 35 deletions(-)
-> ---
-> base-commit: 187c219b57eaf3e1b7a3cab2c6a8b7909bdbf4a9
-> change-id: 20240407-perf_digit-72445b5edb62
-> 
-> Best regards,
-> -- 
-> Dominique Martinet | Asmadeus
+BTW in the pending branch I can change the copyright back to original so
+no need to resend because of this. But I'll need guidance from Ansuel.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
