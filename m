@@ -1,183 +1,243 @@
-Return-Path: <linux-kernel+bounces-176174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EE868C2B39
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:37:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA598C2B3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06A71F25CCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3375F1F22489
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951204E1A2;
-	Fri, 10 May 2024 20:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149A24F211;
+	Fri, 10 May 2024 20:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLA2XLuU"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jVo6MiJM"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162314F881;
-	Fri, 10 May 2024 20:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A41D2E5
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 20:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715373448; cv=none; b=b9sbWo5jYYPhBqo7OmTtXNiq79Mbxj1cyV8oLxqFS4VMgD3Ibxk6ONtJ0uwpBHpQvp1AWKNME3RxgJDXxvHpm8UW2uKFmJF3NhTrj8Zrrc7bwbLZ1M4CzUr8Thlok7Os1JZpO2fMznlkEGzIkHDYwCpvaPB43DrJwNpsyyioJJs=
+	t=1715373729; cv=none; b=hAzdacfDs4REauHbuilxhScONlgEwSZWs6dHJ511VQALZDiQ+6WKE84fRtlzd4pdtGMqk5QlzDZ69bI5JvK1JzepwRvksU84X/r6oeKZaiypphl9BAyXxBniMv5Pvy2cIKxB2wbPTo6zMQihtU12qGCcvo9JDwoy9MIBnPxzgSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715373448; c=relaxed/simple;
-	bh=fdvro2SMQFvU7C5zN+OrfigUP0qDunUUywy2/UNF0SA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=jMKFUcNLVHlyzRdnVxjPJbU+eQy4zfnuyczTwGGBaFY9g/GyeZ0Iv2P0DUvC3DZ8JQgU2Iy9sknrm2dQkQrbVdBQI8v91DyvLuVfRMCOvOUBTEpGcWEh9mAJccM7PxCJtGFaSgh3T3mi5CrNlHwYUc0Y9IZQydmkPE+gARuBjkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLA2XLuU; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f40b5e059so2729276e87.0;
-        Fri, 10 May 2024 13:37:26 -0700 (PDT)
+	s=arc-20240116; t=1715373729; c=relaxed/simple;
+	bh=QaYvzBIYVoTMRj+JIXivj0EzwL27B7dR6rs7UcMotrY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bfNkvC2ja4EfzitqwK7T7CEvJ3mNSywoXFMfqmZSPrqZ2qur3UEyBDS1z+DQCr7Jf02O7S1OdNnRBi5PjfMWll3MPhoyn2Uqd8sF328l9RWUmsAaku7OC92ZchSpJ7k8rZfhnb2/9LTff6d19JAKY70C5QZTTRwRxX+8/4BD4Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jVo6MiJM; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ee5f3123d8so10615ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:42:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715373445; x=1715978245; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1715373727; x=1715978527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WMEM98RiYUq0hdtm/YdPk4weUn162VqCwHj8usxBrh0=;
-        b=iLA2XLuUOAj6fiiKkGy8WprNFBZH9xNMj4PzEydY7V3fYYZce+tkMHEfVo+L72VPFI
-         obvAZEvRcAvtbnr4Sduew6oanfOBZ18rLgM+gI09vNdeqgruMBX6IUWLm0mYy/NF4bCl
-         73uRvwl8DWejhet7F02a37CjMrCCtRTlGQT7ZPGdizeC3j4NiopeRGZXBlyQ3LsjcpH3
-         Js8PQjG1/VMH8wph8TjE2oEZvTl+gBYHX/gIEVH/qrcmvoR4Q1xVCPsyG64q5Laq+CP4
-         bPlBfpjCkP0cgpWvQzxUCMYTbvYRetG5yIRmJtMq8lmIiOxJP6/jU3PkFna6qdi55QkP
-         6ecw==
+        bh=p0Cd7G0GKoxhRORjevFmtxdm76EPV8+O9ixryuU5taE=;
+        b=jVo6MiJMnq2GCAOmV65UYSWhG4EVnD1+7XL8LhJ6l8K8S2GutlM/N2fNOh5Gx8kgoP
+         SBsn6BcEj7OfeAO3ACwZ28O9OtJ3k7Mf9mN/2eGBmjcHHCIgZcNrglcNb3OvGjFFvLMD
+         c3O/q4l+ENussk+9e0VGAqRFunyqoiRgA80qvrmHwQTiCodpw5KodCxWHujVdXxoaYKO
+         mnIRQmN/g7WZhXpdPR66Re2Uu0wx65TObyEwUowSqbQN3EIhG+os8X1xghwQ8TUJnp3l
+         kQfJt2Uuiv5FPJptWtvIIJwExo5VbklkXYkS/Q9uevMmAsvSBiBYOXRqBvCMcbxBJZq9
+         uU3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715373445; x=1715978245;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WMEM98RiYUq0hdtm/YdPk4weUn162VqCwHj8usxBrh0=;
-        b=fjVbU7ROh40fPFeJ2rgun2N9fzKVJbx8adYvueHbkdQwoE2GywqGtIRU5JFSHcKCK2
-         WXqrMfYnFDsoFCHgfe7lJsaS6vW0q9S5qwxvQuONklhpXdG0Eb6TkuR5T3dIEtXbO9+P
-         Zg5wXF8x5sHTlZM7ByEw6HHgrwWby0luQzB1xJLf2dTvmkhIMPbXpMqU7xPiZ5beVGS0
-         hFcNPH+BUwfBeXbJKZlgsPjzwbLYd5DbnqxyFJS3hQud9QHoVP7qQvbt9X5jDqk2Qdmq
-         kV43Xa+ERqXe4tblMlfyLKFvcrdYK+itYRExcHZIdp5xOVMXoNIlat42VDjnETobYAok
-         1o2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/NWEIVXmf8pyEBjKooOmdSigNotZwjsJcz0mZzA5M52EIZaCdwSeAc28CyiJdGAO+AGWrzDqgt8VoiORN8wSdLuzr06eBwaCnIDkbP5JavHAjXGB3PyMnMRU6d26NTtg2lxn9L/3Z
-X-Gm-Message-State: AOJu0YwBjwdq4E+2h+WbEEiCdT41ul3BzQW+Cl3w8fmzUCmOj+xN+V6W
-	1i3snY462/osHNlDoLu58xaEOEMweOT5kO3XpYwwmBT7Ied7C/VxFeQepyG6
-X-Google-Smtp-Source: AGHT+IFYRfcqAHHZlCT0YBLATYTXOOjY8VcpQZIfQCe9xsqALHHq2pklRgPZUZpo3EGvS0ilrFc1aA==
-X-Received: by 2002:a05:6512:2809:b0:51f:5760:dd34 with SMTP id 2adb3069b0e04-5220ff70be8mr2901131e87.55.1715373444614;
-        Fri, 10 May 2024 13:37:24 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-221.xnet.hr. [88.207.42.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894d57sm221186466b.73.2024.05.10.13.37.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 13:37:24 -0700 (PDT)
-Message-ID: <656c3b4a-0481-4634-9dd4-19bb9e4cd612@gmail.com>
-Date: Fri, 10 May 2024 22:37:22 +0200
+        d=1e100.net; s=20230601; t=1715373727; x=1715978527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p0Cd7G0GKoxhRORjevFmtxdm76EPV8+O9ixryuU5taE=;
+        b=CTpUJuotI+TI4hCK2zE9BJZAOxmdb9ymRDc1+sap78eN13U9eOiIM3dUBCnLQz4Vum
+         6uRR7lGOTWzHM+a6sK8cF69UcahBQe6lH1wweQpBK+dWfZ5RGomxvy2fG+BQjMal0OFC
+         XJId2m7FLcLzlnOjeuUqKI/pHv7nwrR0e0//ZjAkLZOMhTtzQaUV/95XO5yxKppwWSzB
+         ePrGQq2yUoUdUsy+HG5SjON4v0Rr8eMxzHXDiNbdLUoIkR2Mh5PGXO3AIsv5Ay6z4RMz
+         fnyMqWJPrH/r+ooBwpslYw990cAW9UnZG1od6NqdMTW8qiXSNCGIuAE3qhV7xTth9+9Q
+         849w==
+X-Forwarded-Encrypted: i=1; AJvYcCVTDcjonTKowV5XnQwRMeW7O6tOY1oMw7Rq4OVuqjwbubIPibhDWf4XJfBrnGh6bI4C++ES5+a2Sk3BkKlcXSLGk7ezQsp5FPFT92wI
+X-Gm-Message-State: AOJu0YxMZTbjzNTqVDY5DnNLvs4tLly8T0waPpaaaOhyiSiZyf7hZWKE
+	n2A+3K+xBrxsghi6lSBXpcL8JU8ivvpBBnQkPeIK+WWHPQRycnxC6KvIdciEM2pNyft1JMNfsFr
+	AUMDfgrL5Rb0eaqEMzeaUZa1+xjOSirDl1QU1
+X-Google-Smtp-Source: AGHT+IGltdnjZpCGK1xhXsR0KOQQDNNfjLrHpdZbQ6E9Y60FNq0nqN5rppgu4/eevMGpRBOC00Dd28rCiAcljWE78jA=
+X-Received: by 2002:a17:903:11cf:b0:1e5:d3d2:1af1 with SMTP id
+ d9443c01a7336-1f060c06f36mr39135ad.25.1715373726467; Fri, 10 May 2024
+ 13:42:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kselftest@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Shuah Khan <shuah@kernel.org>,
- linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
- Edward Liaw <edliaw@google.com>
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PATCH v1 1/1] selftests/sgx: Fix the implicit declaration of
- asprintf() compiler error
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240510024729.1075732-1-justin.he@arm.com> <20240510024729.1075732-3-justin.he@arm.com>
+ <CAP-5=fVGD-pK1igABj0wiq6-KVM+Z4i7rnRhM=Vy7bFHW4pLQA@mail.gmail.com> <DBBPR08MB4538A157B81F2BBD2DD9E40DF7E72@DBBPR08MB4538.eurprd08.prod.outlook.com>
+In-Reply-To: <DBBPR08MB4538A157B81F2BBD2DD9E40DF7E72@DBBPR08MB4538.eurprd08.prod.outlook.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 10 May 2024 13:41:55 -0700
+Message-ID: <CAP-5=fWgGOWi_YedpQgdK2DnBvtRk-79GEhKMsTehcfOVtxLNA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf pmu: Fix num_events calculation
+To: Justin He <Justin.He@arm.com>, John Garry <john.g.garry@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <Mark.Rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <James.Clark@arm.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, nd <nd@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The selftest/sgx/main.c didn't compile with [-Werror=implicit-function-declaration]
-[edited]:
+On Thu, May 9, 2024 at 11:52=E2=80=AFPM Justin He <Justin.He@arm.com> wrote=
+:
+>
+> Hi, Ian
+>
+> > -----Original Message-----
+> > From: Ian Rogers <irogers@google.com>
+> > Sent: Friday, May 10, 2024 2:17 PM
+> > To: Justin He <Justin.He@arm.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>; Ingo Molnar <mingo@redhat.co=
+m>;
+> > Arnaldo Carvalho de Melo <acme@kernel.org>; Namhyung Kim
+> > <namhyung@kernel.org>; Mark Rutland <Mark.Rutland@arm.com>; Alexander
+> > Shishkin <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.=
+org>;
+> > Adrian Hunter <adrian.hunter@intel.com>; Kan Liang
+> > <kan.liang@linux.intel.com>; James Clark <James.Clark@arm.com>;
+> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH 2/2] perf pmu: Fix num_events calculation
+> >
+> > On Thu, May 9, 2024 at 7:47=E2=80=AFPM Jia He <justin.he@arm.com> wrote=
+:
+> > >
+> > > When pe is NULL in the function perf_pmu__new_alias(), the total
+> > > number of events is added to loaded_json_aliases. However, if
+> > > pmu->events_table is NULL and cpu_aliases_added is false, the
+> > > calculation for the events number in perf_pmu__num_events() is incorr=
+ect.
+> > >
+> > > Then cause the error report after "perf list":
+> > > Unexpected event
+> > smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
+> > >
+> > > Fix it by adding loaded_json_aliases in the calculation under the
+> > > mentioned conditions.
+> > >
+> > > Test it also with "perf bench internals pmu-scan" and there is no
+> > > regression.
+> > >
+> > > Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
+> > > Signed-off-by: Jia He <justin.he@arm.com>
+> > > ---
+> > >  tools/perf/util/pmu.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c index
+> > > a1eef7b2e389..a53224e2ce7e 100644
+> > > --- a/tools/perf/util/pmu.c
+> > > +++ b/tools/perf/util/pmu.c
+> > > @@ -1639,6 +1639,8 @@ size_t perf_pmu__num_events(struct perf_pmu
+> > *pmu)
+> > >                  nr +=3D pmu->loaded_json_aliases;
+> > >         else if (pmu->events_table)
+> > >                 nr +=3D
+> > pmu_events_table__num_events(pmu->events_table,
+> > > pmu) - pmu->loaded_json_aliases;
+> > > +       else
+> > > +               nr +=3D pmu->loaded_json_aliases;
+> >
+> > Thanks for working on this! The "struct pmu_event *pe" in new_alias is =
+an entry
+> > from the json data, and "pmu->events_table" should NULL if there is no =
+json
+> > data. I believe the code is assuming that these lines aren't necessary =
+as it
+> > shouldn't be possible to load json data if the json events table doesn'=
+t exist for
+> > the PMU - if there is no json data then loaded_json_aliases should be 0=
+ and no
+> > addition is necessary. I'm wondering why this case isn't true for you.
+> On my Armv8a N2 server, "pmu->events_table" is NULL because perf_pmu__fin=
+d_events_table()
+> return NULL.
+>
+> I also noticed that pmu->loaded_json_aliases is *not* 0. The missing addi=
+ng calculation will cause
+> perf_pmu__num_events() less than normal case and will trigger latter chec=
+k failure in
+> perf_pmus__print_pmu_events__callback().
+> At last, perf list will report many lines similar as:
+> Unexpected event smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
 
-make[3]: Entering directory 'tools/testing/selftests/sgx'
-gcc -Wall -Werror -g -Itools/testing/selftests/../../../tools/include -fPIC -c main.c \
-        -o tools/testing/selftests/sgx/main.o
-In file included from main.c:21:
-./kselftest_harness.h: In function ‘__run_test’:
-./kselftest_harness.h:1169:13: error: implicit declaration of function ‘asprintf’; \
-        did you mean ‘vsprintf’? [-Werror=implicit-function-declaration]
- 1169 |         if (asprintf(&test_name, "%s%s%s.%s", f->name,
-      |             ^~~~~~~~
-      |             vsprintf
-cc1: all warnings being treated as errors
-make[3]: *** [Makefile:36: tools/testing/selftests/sgx/main.o] Error 1
+The issue is the sys events which currently are ARM only. Here is an
+lldb stack trace:
+```
+    frame #6: 0x0000aaaaabc9b49c
+perf`__assert_fail(assertion=3D"pmu->events_table",
+file=3D"tools/perf/util/pmu.c", line=3D522, function=3D"int
+perf_pmu__new_alias(struct perf_pmu *, const char *, const char *,
+const char *, FILE *, const struct pmu_event *)")
+    frame #7: 0x0000aaaaab41e018
+perf`perf_pmu__new_alias(pmu=3D0x00007377e7e09b40,
+name=3D"hnf_brd_snoops_sent", desc=3D"Counts number of multicast snoops
+sent (not including SF back invalidation)", val=3D"eventid=3D9,type=3D5",
+val_fd=3D0x0000000000000000, pe=3D0x0000ffffffffde88) at pmu.c:522:3
+    frame #8: 0x0000aaaaab4175cc
+perf`pmu_add_sys_aliases_iter_fn(pe=3D0x0000ffffffffde88,
+table=3D0x0000aaaaac299bb0, vdata=3D0x00007377e7e09b40) at pmu.c:939:3
+    frame #9: 0x0000aaaaaaf6d000
+perf`pmu_events_table__for_each_event_pmu(table=3D0x0000aaaaac299bb0,
+pmu=3D0x0000aaaaac299238, fn=3D(perf`pmu_add_sys_aliases_iter_fn at
+pmu.c:931), data=3D0x00007377e7e09b40) at pmu-events.c:5994:23
+    frame #10: 0x0000aaaaaaf6cd78
+perf`pmu_events_table__for_each_event(table=3D0x0000aaaaac299bb0,
+pmu=3D0x0000000000000000, fn=3D(perf`pmu_add_sys_aliases_iter_fn at
+pmu.c:931), data=3D0x00007377e7e09b40) at pmu-events.c:6057:23
+    frame #11: 0x0000aaaaaaf6ec44
+perf`pmu_for_each_sys_event(fn=3D(perf`pmu_add_sys_aliases_iter_fn at
+pmu.c:931), data=3D0x00007377e7e09b40) at pmu-events.c:6295:27
+    frame #12: 0x0000aaaaab41738c
+perf`pmu_add_sys_aliases(pmu=3D0x00007377e7e09b40) at pmu.c:955:2
+    frame #13: 0x0000aaaaab4179fc
+perf`perf_pmu__lookup(pmus=3D0x0000aaaaac500970, dirfd=3D34,
+name=3D"arm_cmn_0") at pmu.c:1037:2
+    frame #14: 0x0000aaaaab4242d0 perf`perf_pmu__find2(dirfd=3D34,
+name=3D"arm_cmn_0") at pmus.c:161:9
+    frame #15: 0x0000aaaaab421614 perf`pmu_read_sysfs(core_only=3Dfalse)
+at pmus.c:209:3
+    frame #16: 0x0000aaaaab42278c
+perf`perf_pmus__scan_skip_duplicates(pmu=3D0x0000000000000000) at
+pmus.c:297:3
+    frame #17: 0x0000aaaaab422078
+perf`perf_pmus__print_pmu_events(print_cb=3D0x0000ffffffffec68,
+print_state=3D0x0000ffffffffecd0) at pmus.c:462:16
+    frame #18: 0x0000aaaaab425d9c
+perf`print_events(print_cb=3D0x0000ffffffffec68,
+print_state=3D0x0000ffffffffecd0) at print-events.c:409:2
+    frame #19: 0x0000aaaaab093ef0 perf`cmd_list(argc=3D0,
+argv=3D0x0000fffffffff340) at builtin-list.c:592:3
+    frame #20: 0x0000aaaaaaf5b490
+perf`run_builtin(p=3D0x0000aaaaac4e8220, argc=3D1,
+argv=3D0x0000fffffffff340) at perf.c:349:11
+    frame #21: 0x0000aaaaaaf5a3e0 perf`handle_internal_command(argc=3D1,
+argv=3D0x0000fffffffff340) at perf.c:402:8
+    frame #22: 0x0000aaaaaaf5b1a0
+perf`run_argv(argcp=3D0x0000fffffffff1c8, argv=3D0x0000fffffffff1c0) at
+perf.c:446:2
+    frame #23: 0x0000aaaaaaf59f44 perf`main(argc=3D1,
+argv=3D0x0000fffffffff340) at perf.c:562:3
+```
 
-The cause is in the included <stdio.h> on Ubuntu 22.04 LTS:
+As such the fix here is incomplete. There may be both sys json events
+(detected by PMU/id name) and CPU json events (detected by CPUID). I'm
+looking into a fix.
 
- 19 /*
- 20  *      ISO C99 Standard: 7.19 Input/output     <stdio.h>
- 21  */
-.
-.
-.
-387 #if __GLIBC_USE (LIB_EXT2)
-388 /* Write formatted output to a string dynamically allocated with `malloc'.
-389    Store the address of the string in *PTR.  */
-390 extern int vasprintf (char **__restrict __ptr, const char *__restrict __f,
-391                       __gnuc_va_list __arg)
-392      __THROWNL __attribute__ ((__format__ (__printf__, 2, 0))) __wur;
-393 extern int __asprintf (char **__restrict __ptr,
-394                        const char *__restrict __fmt, ...)
-395      __THROWNL __attribute__ ((__format__ (__printf__, 2, 3))) __wur;
-396 extern int asprintf (char **__restrict __ptr,
-397                      const char *__restrict __fmt, ...)
-398      __THROWNL __attribute__ ((__format__ (__printf__, 2, 3))) __wur;
-399 #endif
+Thanks,
+Ian
 
-__GLIBC_USE (LIB_EXT2) expands into __GLIBC_USE_LIB_EXT2 as defined here:
-
-/usr/include/features.h:186:#define __GLIBC_USE(F)      __GLIBC_USE_ ## F
-
-Now, what is unobvious is that <stdio.h> includes
-
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-------------------------------------------------------
- 35 /* ISO/IEC TR 24731-2:2010 defines the __STDC_WANT_LIB_EXT2__
- 36    macro.  */
- 37 #undef __GLIBC_USE_LIB_EXT2
- 38 #if (defined __USE_GNU                                                  \
- 39      || (defined __STDC_WANT_LIB_EXT2__ && __STDC_WANT_LIB_EXT2__ > 0))
- 40 # define __GLIBC_USE_LIB_EXT2 1
- 41 #else
- 42 # define __GLIBC_USE_LIB_EXT2 0
- 43 #endif
-
-This makes <stdio.h> exclude line 396 and asprintf() prototype from normal
-include file processing.
-
-The fix defines __USE_GNU before including <stdio.h> in case it isn't already
-defined. After this intervention the module compiles OK.
-
-Converting snprintf() to asprintf() in selftests/kselftest_harness.h:1169
-created this new dependency and the implicit declaration broke the compilation.
-
-Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-Cc: Edward Liaw <edliaw@google.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-sgx@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mirsad Todorovac <mtodorov69@gmail.com>
----
- tools/testing/selftests/sgx/main.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 9820b3809c69..f5cb426bd797 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -6,6 +6,9 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <stdbool.h>
-+#ifndef __USE_GNU
-+#define __USE_GNU
-+#endif
- #include <stdio.h>
- #include <stdint.h>
- #include <stdlib.h>
--- 
-2.34.1
+> --
+> Cheers,
+> Justin (Jia He)
 
