@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-175889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0B18C26AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DAE8C2670
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F181C2216D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46378282B81
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02792171E75;
-	Fri, 10 May 2024 14:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A87612C49A;
+	Fri, 10 May 2024 14:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="FE9qX8ZW"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkcHxrTT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7429B1708A3;
-	Fri, 10 May 2024 14:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795A612D1F9;
+	Fri, 10 May 2024 14:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715350847; cv=none; b=niRG0sfXhzkxfm5a/1vZY2CfY2KAPDhdXpN8oO5ZBZaI7pEdPdPpJnAKeSpxuqvTn1zNkiWhPgP6fzVWU750aLcHwIxJC+7R8gWpRz9hQjfrftxHNuBoaFC5up1LwbbZzSIZGnjFI4IpV6YdUed9y3YE+QQrnEeVLQzgylyqxPI=
+	t=1715350266; cv=none; b=auBHmpRdln4w6BjH1uXu600ww4laRDDaqAlE4+5EtIgS270m3RiOIcz0qFOvQOd5oaOb/m1m3D6/ZPWAkvizFW5D/FlTIL1EV4gU0PFamnROaD6AE3gvURo9jDjX32tIBefilmMu+vzUZlaVeouWqXzEF5QgW+vkrUnMIdF5GWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715350847; c=relaxed/simple;
-	bh=lcVUbJpgBRjtlZ1jA0Huac2XwIHQMj0wmWM0G4IfuhE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CS5BOwNnDEO7QkKqFq1Dwx8MbSCp3ZgDdVBashS73T+uoCnnWNFm0aQKXuWusZWWfem1C9w6keVna/EhSczZ3zTenHJlfaZJa4zy/yUMsxmwBT9D30e61yxwcn6WFlvlF+bc0pXt5FHkfLUwi2ZfrUs/6NMtOlvMR7dhc4l8oiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=FE9qX8ZW; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
- id 4851dcd7d8e39ad0; Fri, 10 May 2024 16:20:43 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id DABA52102F3F;
-	Fri, 10 May 2024 16:20:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1715350843;
-	bh=lcVUbJpgBRjtlZ1jA0Huac2XwIHQMj0wmWM0G4IfuhE=;
-	h=From:To:Cc:Subject:Date;
-	b=FE9qX8ZWgmcVM4Y6qeFuuKmFtFEg+ZmW9BgP1+HTLkqhYpUBz4cwbFowFHp3gYihm
-	 2jQKwm60tgKld0OTtd1lH5JZleigXdZOzC5yZP6lHTODjOI0Z3pNjVXPUVyMqxO5o3
-	 gBYGcsWXAgNISTu0Y8EOuMsWllW9hsIoR/Ypd0sZgheowj7daWf8eUkz149Jo7+SHQ
-	 l4uYvuS5hQxiGad13s/CKVgivM9o/DfRkJXmzTBMNko+n1Em+keUsWJzIfO4vBu49W
-	 CPEGfM4MTynMmCwttxpUob3+79NRI5PqpSW6H7HlwSZ0+Du1mo1zQiJozvRebok3SM
-	 mCBbZt0UNlLEQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Subject: [PATCH v1 0/6] thermal: core: Assorted improvements for v6.11
-Date: Fri, 10 May 2024 16:11:05 +0200
-Message-ID: <13518388.uLZWGnKmhe@kreacher>
+	s=arc-20240116; t=1715350266; c=relaxed/simple;
+	bh=wjUxPSTMW89KBClswX64bM+rAjzGGEFKiWOsJ850sZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hz0L3qvVsl/3RxlBpnmhkTKZ4bIyRWwd/15PDpXMkZOfkZrNOgNkXahqKhg1pO59V6JjmpvUvJGEbRbEdJMTtSqglOVZkOgmonkqyKtKdiyblgHg6g9G5crIWZdByZCJH5tTd3LX1S5oj3vEP0RoA0qzTZYf+Im97O/IiUENq4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkcHxrTT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9506C113CC;
+	Fri, 10 May 2024 14:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715350266;
+	bh=wjUxPSTMW89KBClswX64bM+rAjzGGEFKiWOsJ850sZg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=TkcHxrTTHfnOnE0M4aFK5HDY8QY5FicBJftqHLd+AWdFnP4yymUYgfYrG1OA5DAzh
+	 09Z8zJQr1FBd0uYnULg3WakTx2a/ft+fAWvFnAX+O8JFyuvnhppKRD1YlZVNsklZNt
+	 t6Tao9G6QUpwqCjoIBfZmidnC5XUysalSzed9jopbMjLEJMaDpRmrOdNiAmsDWULnE
+	 FWu7XCFpwQTTXm6HjKVa2FBzBH2lfmJWhBX8LEMPAnE6BcdHaZBbO6cstPu6BSWL55
+	 ch3XkOi5sUkwZeKqtw/4KHMiy22Lq6k3Vz7iKsz34C9VMMoS1IRYkkgZf+bbe30DN7
+	 /VGjlk7H8AVXg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 826ADCE08A1; Fri, 10 May 2024 07:11:05 -0700 (PDT)
+Date: Fri, 10 May 2024 07:11:05 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Message-ID: <474ae55c-fe9e-4668-8f9b-23f819c76d10@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240507093530.3043-1-urezki@gmail.com>
+ <20240507093530.3043-26-urezki@gmail.com>
+ <ZjpAsYJIfzYSKgdA@redhat.com>
+ <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
+ <20240510131849.GB24764@redhat.com>
+ <20240510135057.GC24764@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgjeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeejpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhr
- tghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehsrhhinhhivhgrshdrphgrnhgurhhuvhgruggrsehlihhnuhigrdhinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510135057.GC24764@redhat.com>
 
-Hi Everyone,
+On Fri, May 10, 2024 at 03:50:57PM +0200, Oleg Nesterov wrote:
+> On 05/10, Oleg Nesterov wrote:
+> >
+> > On 05/07, Paul E. McKenney wrote:
+> > >
+> > > By the stricter data-race rules used in RCU code [1],
+> > ...
+> > > [1] https://docs.google.com/document/d/1FwZaXSg3A55ivVoWffA9iMuhJ3_Gmj_E494dLYjjyLQ/edit?usp=sharing
+> >
+> > I am getting more and more confused...
+> >
+> > Does this mean that KCSAN/etc treats the files in kernel/rcu/
+> > differently than the "Rest of Kernel"? Or what?
+> >
+> > And how is it enforced?
+> 
+> I can only find the strnstr(buf, "rcu") checks in skip_report(),
+> but they only cover the KCSAN_REPORT_VALUE_CHANGE_ONLY case...
 
-This series is for the 6.11 cycle, but since it is ready from my POV,
-here it goes in case people have the time to look at it in the meantime.
+Huh, new one on me!  When I run KCSAN, I set CONFIG_KCSAN_STRICT=y,
+which implies CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n, which should
+prevent skip_report() from even being invoked.
 
-The patches in the series address some shortcomings in the thermal
-core code (including the Bang-Bang governor) and clean it up somewhat.
+Which suggests that in the rest of the kernel, including "rcu_"
+in your function name gets you stricter KCSAN checking.  ;-)
 
-Please refer to the individual patch changelogs for details.
-
-This series is independent of the thermal debugfs one posted yesterday:
-
-https://lore.kernel.org/linux-pm/12438864.O9o76ZdvQC@kreacher/
-
-At one point I'm going to put this series on a git branch for easier
-access/testing.
-
-Thanks!
-
-
-
+							Thanx, Paul
 
