@@ -1,392 +1,123 @@
-Return-Path: <linux-kernel+bounces-175808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671C88C254F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:02:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749D38C256F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D224028720F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B1031F25C7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424CE172BCB;
-	Fri, 10 May 2024 12:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30CF12C483;
+	Fri, 10 May 2024 13:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aCXSgKdJ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4RM06yW"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2D5172764
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FED712C467;
+	Fri, 10 May 2024 13:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715345936; cv=none; b=Q3qq3LvheDd8C/PBeax5ejsu1UDIRfDNz86PClNy7i6mzhZSJJnexiFFbig6QE7riWzHMQBWYOatrL8byztNf6GlA/MSGtMD6XymTGRSOoke03RJ7wIlpbqqGPWEFahoL71aUuscZycbg219yVBPubLws8YxlCje2vUEprjkx9g=
+	t=1715346788; cv=none; b=RoPJycZtrPDzto2vFdA3jNodiKp04iMQhdJ3smEPSkgZzcQGy8zrLLDvsnhN6CaT/xXGt6G7VqHOg0+MRcB6y20zKwqbYTDqOB8CdM3+UocvsDf8Rd5KzFeSuBS7V1SOG/SoJV7vwzvLJEjWZbgyDtrOu6LygR5fw1yBBiV2d3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715345936; c=relaxed/simple;
-	bh=Cl7BuIrFlAl4aD4Z00HnjW4zAP6QqudUQ1OzmOr+xi0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nipGedVlVWcQqczZEHY8oKxxQJwLiHXuVgEpJ5RK0Tcprsqq3XVsWcOh93MzcLGdikTTtfVgm0ifXEUyNROC2u6d6Bj/6evn7NgKZOxt1av2dXksev59vBH+z+aXCpsytqHgLQIqD6Guw/e6gZciFlBH/E9xHrDlKnVGZzwIg0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aCXSgKdJ; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a0168c75so524252966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:58:54 -0700 (PDT)
+	s=arc-20240116; t=1715346788; c=relaxed/simple;
+	bh=quwH49lnHjzRFDaqGtfCyaHkqMkySDkqGB5yGE5eEcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TPSZi0hLS3m31twzFKwwQwX3e+0e5UHNrUYO5o1AWJdO+vAQin9qJoN3shc078TJ1FW/XZVnhktuAS+I1AtU07nl/uYLw3yIcX8NxZ7krTgQnCVJ7cRZIrz53lri25wsrK7JByGdBPp7HVzJ7tP/nvrYqBttPGODohjQOLx05Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4RM06yW; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51fb14816f6so2534269e87.0;
+        Fri, 10 May 2024 06:13:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715345933; x=1715950733; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GzNgccEjJJ10l5IzhJDmyxwX1t0d4Nd8C8K0mQGyahA=;
-        b=aCXSgKdJRS4C4o80IYRwlowg/iIz138wZ7jcqt/AM0R8vw26yutPcjoVzyDnUsn7AX
-         ETlNJEiSLSRLdYHWxqWOzQfbysg5JrZcACZ0CSsxApmRIIry2JjM7c7RsBlwX0rgQSpW
-         Fql2Y7QAl1tHRQ9IYYUJqT6YujSns/sS2Kh/Mt7ROKQDckKKY1c/EgALXkP8DdMmDNz4
-         BDWbcluzE8PHAs4hdlHu7KVJLxiufLY8nrOcalbKbW8eAfO4R8IYXUQ1zDv40SDXLV1R
-         3nbTasOXCBvaDhri4pgs2/916LXAZmsnxj0ZipEkIfE6IhafsYGbC0Fm7Y+Bpuy52+tr
-         FjhQ==
+        d=gmail.com; s=20230601; t=1715346784; x=1715951584; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=neD8kBMa+a8mByjSW095z/Jgzjs5CqZYPZVn+h9QyKM=;
+        b=B4RM06yWHbhNKD+z+94EjBLi2+UK4EGzCPp4wjclsXw3EBGm0n/OUL9hqc/WKDveT9
+         Pl6B+I4/TsuaktuX7t2Cc0TJRpcunS4IbCa69Ji4/26DFIRCc1rV/F90MFDzSL4xtE3f
+         HuQnxX/l/Gm4YOyMQEElOuKXvdQFLCq+/dXym8Y5nZSbeHU1EbqHoAUOGZDokSxU7pok
+         +FIcA6nhT74YvZZbddHraVApx9oOjsawc+cleMvDHQbo1w0Y9mlnAiZ7zRcmzBkJwByv
+         2JW1fvNTHf7zmr00Lk2xvfOOEkJUhY5ATIDlsoSSyyEITb0TBgQF/9ewDa6IbneeVOZx
+         lPQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715345933; x=1715950733;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GzNgccEjJJ10l5IzhJDmyxwX1t0d4Nd8C8K0mQGyahA=;
-        b=iog2Qb0Yft2MLe/ue/4yXrUEEJ2zqLmQJAN1S/46tjLkebUPdcFq0CMa4SBMilyxxu
-         wzWXvfBRPHJfX3PfSpgU2Yk6UUh6k2RQ+LTYqRcAD0N9ihT8VcPz1eNdZAIHk6no/GZX
-         JJZOi2R9Qac+UZ4JChsmxLg3Lunnsto9XN9wLEjo2Jfa78sWjUi2gId+xPkd0p8fFBrM
-         OcrL96JCWrzVY4sRhK2C7cTz3XAFx2bgZhJSMQzkDHmN+qVCRz/fmRlDGpBlHG/rCk0h
-         0vaxGUVL87rHm7pALosy0UN/oWln7ddXBW6h7bvAOkTYAi/PCxu3U6xQGmr0IWRwMDD0
-         QccQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5AYjc/4qsS9AXgo9v5OE7eCEV8WmGcUEcjJkSGjzhc6duAo6Fig+1fcYBR9G3fwiC8r2RYUAdBxEYAxWTmq4RckpjF8oOFZfrd9OJ
-X-Gm-Message-State: AOJu0Ywq5/pzXF7u09ktriy9bzNqLB2rfn414cmQufSX36kogTpilx60
-	VMVisBDIRpW94H2CbjcsF37+vVYQtDPYarOPdIEeFr3ZInbfkfXwnMWiNXfp4GM=
-X-Google-Smtp-Source: AGHT+IGz49EaXDJIZQ+dIlV387Idl3kbEJONmp6R+FnxXMvoNEpPp9bR6PYBM3a5UI0kgiLKhPl3Mg==
-X-Received: by 2002:a17:906:194a:b0:a58:e8c7:c0b8 with SMTP id a640c23a62f3a-a5a2d53ad9amr179754066b.7.1715345933040;
-        Fri, 10 May 2024 05:58:53 -0700 (PDT)
-Received: from [127.0.1.1] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d6bfsm181857366b.31.2024.05.10.05.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 05:58:52 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 10 May 2024 14:58:41 +0200
-Subject: [PATCH 12/12] arm64: dts: qcom: sm8650: Throttle the GPU when
- overheating
+        d=1e100.net; s=20230601; t=1715346784; x=1715951584;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=neD8kBMa+a8mByjSW095z/Jgzjs5CqZYPZVn+h9QyKM=;
+        b=SiPlN3pSpQkzJWUhS6UmaCnrWavLfa8Yp9XSFZ/S9yY489iDi50UQ9Wjkp202mU+1p
+         IxvFgsaMq4finLN0AFpvjVG3rJDko3HKajwE8784Kj2oeOGPdS/ccCw40L/pfJQlf9Vr
+         V+pUQB6bMzTjFscofRh62NZh997c98wa0s3q5f88pwuK/Xuftbua8SrS0MJbLarta546
+         emH7lDa1umQyXtMJhpSAD4JZ1Ky6gMF6RVhmv95y6xXDIXODUzDPW3ZZoJWwSe5kbHOX
+         NyVPgSzZzWtEQctRWwETGnBwXqUU+9xPC39TIP+fdmq9xvspEjkFkxy0T9hxvXLwi4oa
+         FZcw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2FMuHrV32MMELT/w1PJnDSowy6uczZkOmwRv60cCSJ2EOas4RfY94fQn0E7UK4vjngJdhnJfHWgmnQcW8eW1xEbDbssYfCrOe1ThqxM7GDjJCNsWEYH2useXJbuirWGkRK5Lst2Pudg==
+X-Gm-Message-State: AOJu0YwQXmYXqnvnmYfgIMdCnwJ5qq6XOahnUBXUZ8+uh1C7hEwONDUl
+	JbI3dL0ePDE1h02HwtW4LkpbG1GoSUtbBmFYpJbhONZPIwkHiL+L
+X-Google-Smtp-Source: AGHT+IGjdrz1sotzMq51gjCmOvNYzVwfzSwtbw4ybpXbIOEAnZb3TVbimikqGwdyXaeOz18/umfBrA==
+X-Received: by 2002:a05:6512:47b:b0:51c:f00c:2243 with SMTP id 2adb3069b0e04-5220fc842e6mr1652677e87.35.1715346784221;
+        Fri, 10 May 2024 06:13:04 -0700 (PDT)
+Received: from localhost (host-79-55-54-147.retail.telecomitalia.it. [79.55.54.147])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-a5a1781d350sm183515866b.23.2024.05.10.06.13.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 06:13:03 -0700 (PDT)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matteo Martelli <matteomartelli3@gmail.com>
+Subject: [PATCH 0/2] ASoC: codecs: add support for everest-semi es8311 codec
+Date: Fri, 10 May 2024 15:00:12 +0200
+Message-ID: <20240510131238.1319333-1-matteomartelli3@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240510-topic-gpus_are_cool_now-v1-12-ababc269a438@linaro.org>
-References: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
-In-Reply-To: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan+linaro@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14-dev
+Content-Transfer-Encoding: 8bit
 
-Add an 85C passive trip point to ensure the thermal framework takes
-sufficient action to prevent reaching junction temperature and a
-110C critical point to help avoid hw damage.
+This patch set adds support for the Everest-semi ES8311 codec.
 
-Also, register the GPU as a cooling device and hook it up to the
-right thermal zones.
+Everest-semi ES8311 codec is a low-power mono audio codec with I2S audio
+interface and I2C control.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8650.dtsi | 169 ++++++++++++++++++++++++++++-------
- 1 file changed, 137 insertions(+), 32 deletions(-)
+Implemented and tested most of the codec features, with few limitations
+listed in the driver commit message. The test setup was composed of a
+ESP32-LyraT-Mini board, which embeds the codec, connected via I2C and
+I2S to a Raspberry Pi Zero W host board. Some tests were also performed
+on a Pine64 A64 host board (e.g. to test the suspend/resume not
+supported by the rpi). The codec driver was bound with the simple-card
+driver running on kernel v6.9-rc7.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-index 39e789b21acc..1b20d0fcd3ef 100644
---- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
-@@ -2626,6 +2626,7 @@ gpu: gpu@3d00000 {
- 			operating-points-v2 = <&gpu_opp_table>;
- 
- 			qcom,gmu = <&gmu>;
-+			#cooling-cells = <2>;
- 
- 			status = "disabled";
- 
-@@ -6014,16 +6015,29 @@ gpuss0-thermal {
- 
- 			thermal-sensors = <&tsens2 1>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu0_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu0_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss0-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6034,16 +6048,29 @@ gpuss1-thermal {
- 
- 			thermal-sensors = <&tsens2 2>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu1_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu1_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss1-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6054,16 +6081,29 @@ gpuss2-thermal {
- 
- 			thermal-sensors = <&tsens2 3>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu2_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu2_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss2-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6074,16 +6114,29 @@ gpuss3-thermal {
- 
- 			thermal-sensors = <&tsens2 4>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu3_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu3_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss3-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6094,16 +6147,29 @@ gpuss4-thermal {
- 
- 			thermal-sensors = <&tsens2 5>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu4_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu4_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss4-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6114,16 +6180,29 @@ gpuss5-thermal {
- 
- 			thermal-sensors = <&tsens2 6>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu5_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu5_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss5-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6134,16 +6213,29 @@ gpuss6-thermal {
- 
- 			thermal-sensors = <&tsens2 7>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu6_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu6_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss6-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
-@@ -6154,16 +6246,29 @@ gpuss7-thermal {
- 
- 			thermal-sensors = <&tsens2 8>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&gpu7_alert0>;
-+					cooling-device = <&gpu THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
-+
- 			trips {
--				trip-point0 {
-+				gpu7_alert0: trip-point0 {
-+					temperature = <85000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				trip-point1 {
- 					temperature = <90000>;
--					hysteresis = <2000>;
-+					hysteresis = <1000>;
- 					type = "hot";
- 				};
- 
--				gpuss7-critical {
-+				trip-point2 {
- 					temperature = <110000>;
--					hysteresis = <0>;
-+					hysteresis = <1000>;
- 					type = "critical";
- 				};
- 			};
+Matteo Martelli (2):
+  ASoC: es8311: dt-bindings: add everest es8311 codec
+  ASoC: codecs: es8311: add everest es8311 codec support
 
+ .../bindings/sound/everest,es8311.yaml        |  52 +
+ sound/soc/codecs/Kconfig                      |   4 +
+ sound/soc/codecs/Makefile                     |   2 +
+ sound/soc/codecs/es8311.c                     | 970 ++++++++++++++++++
+ sound/soc/codecs/es8311.h                     | 162 +++
+ 5 files changed, 1190 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
+ create mode 100644 sound/soc/codecs/es8311.c
+ create mode 100644 sound/soc/codecs/es8311.h
+
+
+base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
 -- 
-2.40.1
+2.44.0
 
 
