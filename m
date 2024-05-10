@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-175566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1F78C2197
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:07:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9BB8C219F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1281C20B1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295842843AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115F0168AE4;
-	Fri, 10 May 2024 10:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAA5168AF6;
+	Fri, 10 May 2024 10:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="u8uF0CBu"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iw3ADmvS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B1E165FA1;
-	Fri, 10 May 2024 10:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337E4AEFA;
+	Fri, 10 May 2024 10:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335641; cv=none; b=bB1ROzI4dfQL0U4edS1Qxwg45C7JViyl64cNCUx+amD/mYDmJby2Do3b3LDp/yZ7+/RdH9UxlZV/Jl8dlH5TqMCIxxnAkbIVlDwalRp8bIDnadTxn+i382ez770oEwSZBPse/ja0Av6+9o/kJcBTKWRv/79USlViMGOfRNMabos=
+	t=1715335664; cv=none; b=JVvIdQBbhIthFvpspEECjwA4XNswgDNUxRNnY3p3I+uOvJkRhfZ8ihpm0gT58cRzM7nCG57aOP5mudjbcIrlNT68xXmRR4CnQcFqy8gmORM9272SUg9dWdrUpTkdoTW2dGreiryqmh/Py9sNN/P+Yr4P2GP8A9/cBYLKSfam4Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335641; c=relaxed/simple;
-	bh=ifYU/c+8V7OWSd9aaCKHF7gpCqv7cSdHzl7rv5oFs0w=;
-	h=MIME-Version:Content-Type:Date:Message-ID:Subject:From:To:CC:
-	 References:In-Reply-To; b=YhNoo8dTXzI9xhXo434xheWu7y4cS7i46GNXu0iiHxPXUSUY7ZXD0de3TW9tkr0v2CS3bUfmEbWOQgbzdg///Smde2sdMBcVKDhNw0j4Q5ULgB9mgbi2QCG+V48aYCICsRfil+6CRAIL8DIgaVtQRfEBNgL8imKn3XwtEtAVSUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=u8uF0CBu; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1715335639; x=1746871639;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   subject:from:to:cc:references:in-reply-to;
-  bh=ODj1UcfgLsilkOJ93AaBzpY+nLn2txKitmtJHEr2EDY=;
-  b=u8uF0CBug7c8zCvsxafKEvq0CDaBFQOMRdoDAtvAPf0o9JmSmUYIrbcd
-   8TMqV3Ny4NIBTlnCoa1vEds+0gHqP9iuyEqAQUw1JfywNJof5GxrLbPYe
-   iCLegTlVnHLZbVrZQVmWEj9Hxdln8O6Wz8aY2aLdaYMWupiifYGtj3XcQ
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.08,150,1712620800"; 
-   d="scan'208";a="88359429"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:07:15 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:54770]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.131:2525] with esmtp (Farcaster)
- id 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5; Fri, 10 May 2024 10:07:14 +0000 (UTC)
-X-Farcaster-Flow-ID: 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 10 May 2024 10:07:13 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Fri, 10 May
- 2024 10:07:03 +0000
+	s=arc-20240116; t=1715335664; c=relaxed/simple;
+	bh=OCWYMtnallfof9cmVRtJ1kPAbbWtnFDn34D2Owmif80=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=R4+kHNL7yJEzstgE1551vbjknicjLk7iZWLeuUzCh4BzphBObYTzZvbcZo1dQZeE2ZCvd7IEcQywLgeZ/j9PmUPpPeLglFbBlWD18LbJKYveaGMaA79HN5NjS5R8OVnlaGsgS8dHnLJ10u8+iQpRIO2gSQr5oR0GqbSE8sM1u8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iw3ADmvS; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715335663; x=1746871663;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OCWYMtnallfof9cmVRtJ1kPAbbWtnFDn34D2Owmif80=;
+  b=iw3ADmvSlN31zged0lShMKSPPp5H8SLX3KkNa2EbpDsNsirU1IKVTyWD
+   z57aYsmj4qr1KcTEvdiosOLph9RoxtSHf4UIpaQi8KRTlFUCCBpGpvQvS
+   wvyZlOtXLwonFGTJbNBSaT6RewFXStwWFb2hbiE9ZWzpm33GcMSxCs3bG
+   hpsSX6ERopzE+/L6xp+L1XHgl//1Y4wsrvqaM0oB0MFMNG9aHrUpcyDUG
+   ruK3e1hJe6VQGkLsJ3ZrxuepQzvPsjgaW7/hdHhXkpEOo0/V9tn2glSJH
+   L/R+nnb0kKyD2nECf7OYYOreeOgpr3J1SbBDYlXjZYHmmniGV/iz1rKz4
+   A==;
+X-CSE-ConnectionGUID: PSu2ol+FSKS9xh4DVcsdiA==
+X-CSE-MsgGUID: 38UwueWPSZaXNIR03L0Ryw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11144825"
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="11144825"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 03:07:42 -0700
+X-CSE-ConnectionGUID: TqrY0fPERpWwBY1Kjl+aIA==
+X-CSE-MsgGUID: iZwTQAU0TY6ihNHFo1S42A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="29588212"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.85])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 03:07:38 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Lukas Wunner <lukas@wunner.de>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH v4 0/7] PCI: Consolidate TLP Log reading and printing
+Date: Fri, 10 May 2024 13:07:23 +0300
+Message-Id: <20240510100730.18805-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 10 May 2024 10:07:00 +0000
-Message-ID: <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
-Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
- configuration and violation
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Sean Christopherson <seanjc@google.com>,
-	=?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kees
- Cook" <keescook@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>, Rick P Edgecombe
-	<rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, Angelina Vu
-	<angelinavu@linux.microsoft.com>, Anna Trikalinou
-	<atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>,
-	"Forrest Yuan Yu" <yuanyu@google.com>, James Gowans <jgowans@amazon.com>,
-	James Morris <jamorris@linux.microsoft.com>, John Andersen
-	<john.s.andersen@intel.com>, "Madhavan T . Venkataraman"
-	<madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>,
-	=?utf-8?q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
-	=?utf-8?q?Nicu=C8=99or_C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>, Thara
- Gopinath <tgopinath@microsoft.com>, "Trilok Soni" <quic_tsoni@quicinc.com>,
-	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, Yu Zhang
-	<yu.c.zhang@linux.intel.com>, =?utf-8?q?=C8=98tefan_=C8=98icleru?=
-	<ssicleru@bitdefender.com>, <dev@lists.cloudhypervisor.org>,
-	<kvm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
-	<virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
-	<xen-devel@lists.xenproject.org>
-X-Mailer: aerc 0.16.0-127-gec0f4a50cf77
-References: <20240503131910.307630-1-mic@digikod.net>
- <20240503131910.307630-4-mic@digikod.net> <ZjTuqV-AxQQRWwUW@google.com>
- <20240506.ohwe7eewu0oB@digikod.net> <ZjmFPZd5q_hEBdBz@google.com>
- <20240507.ieghomae0UoC@digikod.net> <ZjpTxt-Bxia3bRwB@google.com>
-In-Reply-To: <ZjpTxt-Bxia3bRwB@google.com>
-X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue May 7, 2024 at 4:16 PM UTC, Sean Christopherson wrote:
-> > If yes, that would indeed require a *lot* of work for something we're n=
-ot
-> > sure will be accepted later on.
->
-> Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM=
- support
-> is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible=
- to
-> design KVM support such that much of the development load can be shared b=
-etween
-> the projects.  And having 2+ use cases for a feature (set) makes it _much=
-_ more
-> likely that the feature(s) will be accepted.
+This series has the remaining patches of the AER & DPC TLP Log handling
+consolidation and now includes a few minor improvements to the earlier
+accepted TLP Logging code.
 
-Since Sean mentioned our VSM efforts, a small update. We were able to
-validate the concept of one KVM VM per VTL as discussed in LPC. Right
-now only for single CPU guests, but are in the late stages of bringing
-up MP support. The resulting KVM code is small, and most will be
-uncontroversial (I hope). If other obligations allow it, we plan on
-having something suitable for review in the coming months.
+v4:
+- Added patches:
+	- Remove EXPORT of pcie_read_tlp_log()
+	- Moved code to pcie/tlp.c and build only with AER enabled
+	- Match variables in prototype and function
+	- int -> unsigned int conversion
+	- eetlp_prefix_max into own patch
+- struct pcie_tlp_log param consistently called "log" within tlp.c
+- Moved function prototypes into drivers/pci/pci.h
+- Describe AER/DPC differences more clearly in one commit message
 
-Our implementation aims to implement all the VSM spec necessary to run
-with Microsoft Credential Guard. But note that some aspects necessary
-for HVCI are not covered, especially the ones that depend on MBEC
-support, or some categories of secure intercepts.
+v3:
+- Small rewording in a commit message
 
-Development happens
-https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
-branch, but I'd advice against looking into it until we add some order
-to the rework. Regardless, feel free to get in touch.
+v2:
+- Don't add EXPORT()s
+- Don't include igxbe changes
+- Don't use pr_cont() as it's incompatible with pci_err() and according
+  to Andy Shevchenko should not be used in the first place
 
-Nicolas
+Ilpo Järvinen (7):
+  PCI: Don't expose pcie_read_tlp_log() outside of PCI subsystem
+  PCI: Move TLP Log handling to own file
+  PCI: Make pcie_read_tlp_log() signature same
+  PCI: Use unsigned int i in pcie_read_tlp_log()
+  PCI: Store # of supported End-End TLP Prefixes
+  PCI: Add TLP Prefix reading into pcie_read_tlp_log()
+  PCI: Create helper to print TLP Header and Prefix Log
+
+ drivers/pci/ats.c             |   2 +-
+ drivers/pci/pci.c             |  28 ---------
+ drivers/pci/pci.h             |   9 +++
+ drivers/pci/pcie/Makefile     |   2 +-
+ drivers/pci/pcie/aer.c        |  14 ++---
+ drivers/pci/pcie/dpc.c        |  14 ++---
+ drivers/pci/pcie/tlp.c        | 107 ++++++++++++++++++++++++++++++++++
+ drivers/pci/probe.c           |  14 +++--
+ include/linux/aer.h           |   3 +-
+ include/linux/pci.h           |   2 +-
+ include/uapi/linux/pci_regs.h |   2 +
+ 11 files changed, 141 insertions(+), 56 deletions(-)
+ create mode 100644 drivers/pci/pcie/tlp.c
+
+-- 
+2.39.2
+
 
