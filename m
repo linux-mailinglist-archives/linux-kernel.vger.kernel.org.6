@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-175168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F768C1BAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:36:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184AB8C1BAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6061B218CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:36:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC21C21CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352B04C3C3;
-	Fri, 10 May 2024 00:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A596D1391;
+	Fri, 10 May 2024 00:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="38gz8D87"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h+m6vBKu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F875235
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA24514A81
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715300355; cv=none; b=ckX8Sljwae+E24vRXVxLsktM7SP89sWT3UOfrUv5K5jI/sGUKn5CxZ/4RXcPqIFGyrmnJDGz6jEHh3WfMyG9keOh/UNmSjEN5Kf9Mm1EB1proHtvBeBSGAZNL7G+AXy2gzv5Gte7b9Hpsp+8vBM+DAcyphNpJyxrvJ9LKSHUMe8=
+	t=1715300434; cv=none; b=SLYUZP/L+YX0XORLHpQtOCneEtXpJaqWBW5sc4C2LmQuiS7wpckOlofxiJ5y/ccrErD34nYDrRsJJUyo4v77R0AmAqh2quOCh7V80FIhmo0jVxl2GGRWSs9QtBtBf8C/4L0WhG9cMDOOTl+wsNR2BQH/Zo19dY6YTApTgMGegVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715300355; c=relaxed/simple;
-	bh=0XTehdgnUAu0DffyW0Hg/Nc8qFCKbP9Br4UL88WMW8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z4+XnG9xGc6IDUia7bwhiJvVyr6X98RMyyGxFqpfBHbWji5NHUUrUNBKQtp4D7pp14V2/uLZtwpuUj8oVyUpSmE1NMjrQZnwkkNvohL5U/WMwNsKFZ7nHIWvKnLWzKJoVf7JVyuM/2mPXXY/TeMEu4kU7RHof8R+FzgZwUAQsDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=38gz8D87; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41fc5645bb1so11758615e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715300352; x=1715905152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zDkg740tjVRPA7muszLKzifx+lB1m07et3SmwF5+y0o=;
-        b=38gz8D87AKgDP25titIU0RdCBhX5qbc9/dtCMMNs0YHRdy9f7XQwahJ4mqJwTr0ilx
-         QoVW4Idwe9XkVXtNDRsuMWNLXWvgkCdZemQDVL0ZJqlAkce2DTieFpT5mkyxGwMFsQOZ
-         QmlvEtcJrAf/c4JL/2Qn3Z4bFRfoPojF6GZmqmHq5VnkykdPqWKnH/KuM1JliGfMypo/
-         J8PK66W0AB+NANa9IJw5vbchEslM4SSHlRxxb9Ug81uhdEui5ESadoP3EM8xBTMoSzAQ
-         QBsiebr37SFDVxW75PFUa8o2TRsyS+5KhR82VDbt5n+bYcKNm0ivkUMMm9YssMH6XS2f
-         50OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715300352; x=1715905152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zDkg740tjVRPA7muszLKzifx+lB1m07et3SmwF5+y0o=;
-        b=bCHKM9SifVvQWpG6U/JNXqpun789CF5zVfPguFOLoAC9cRKx6SPIL/R2QNg000X3nv
-         gEzi3EhW603hu3iUONl4U3UQGq6X2Y3AicEkQM3FIR348IaqjdXQ7NmAsF5W/FGNpUZX
-         LM0ZkcG3s0R406MrKBFwUoaqHkcbCOj8qPN+Zx72BtgCPpdIZCFMpBruildJkdXEetaw
-         B0jbPcgbf5z7yfHLjcpesjHDqAHBDlvcPPnOWj/KBn6LSfD0iyTZqy5EnpTTrmJM3f53
-         DPg1OHEw9mUplIWCcKqzUKU4iGoLKqCjH9ahEwJV4Wof8NOZb/t9ABXhikHUqNFlaEO3
-         1CfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFjonkWMaeYAVd8WDapAY4H2VibnMXFkQhkNOL4sHQN+lt91zTh8pXCS0z6OQrX1ivOajokQ4gu388W+zCVxpktrdf72Y/+o3pMFsY
-X-Gm-Message-State: AOJu0YxZ5GIVu+xRlY1+ntHEpYBuNbJ0iHo6UFkBsgLlwXulBtMqQCIQ
-	xKFmurjmom6Z7Mc/SfxETztuCfZFdp7YTX4zoqf8fUATh8rejhF1HBXGd5cJGjRms0/yVbB5Xee
-	CXw8fY+kx0xX/shF2bPZ5ezWFK+1ZTbBJiDCt
-X-Google-Smtp-Source: AGHT+IHoymcx9p+FVAYDd+bxTKN3u67a8ICRxPdR9lToM+b7TuJWleoDYOV7HKWLMYCbcEXS6FL9j7W1pp3wwxvc5ms=
-X-Received: by 2002:a05:600c:4f42:b0:41e:8894:3f48 with SMTP id
- 5b1f17b1804b1-41feac59d64mr8641395e9.27.1715300352187; Thu, 09 May 2024
- 17:19:12 -0700 (PDT)
+	s=arc-20240116; t=1715300434; c=relaxed/simple;
+	bh=vCUy5Dvd4hAT0nyZjb4oARqXhkGR5imJb5Q5T45ImGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sn7FjStxgcFXFd+wj+DDXdC9QZCfPumiz1tj/qHu5TcTKmirBs6Mewg38jV0V/jF0vIqfzOv3nIvw7c1sSBxb7XOjZWj1EV0XT95IVQ/hJjjZn0gtEGVknW6VHlV3yQjcvj7HP3K9AuZbjiiuYU/CvL5ZdsPl3YG4ZvmdXrUxVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h+m6vBKu; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715300433; x=1746836433;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=vCUy5Dvd4hAT0nyZjb4oARqXhkGR5imJb5Q5T45ImGc=;
+  b=h+m6vBKudEu4AiodX37ZqZ7iIGzVD8ECeYdTp8u2l0971aZNRPPS06J+
+   Ml5M9mVBGxNxqkjJj3MuUuihOKP9e2hoE5xieBfh6FK0eXDscriwHP9N3
+   zQbydf5dwuUP9Yn0oJtkDG5N0mwzfc7LdYVLHX1bqoYvHq+ZmRg20UbAK
+   OKSVLRyB64d97LIiTjHnmCsXs5N4rN+hv5wpeAXFKcGxjUmeIejSasgMC
+   lQQwYaEF2hBF/CR5O0fw4NCKDRVL62mVpQ+Mfs/pLFmod4ZDP+UA7Cdpu
+   1m1w5WpcTAQa+Ng6/qs99RlT27wHTF2Jfm5vugUGmkLFGRaqMI0BRhQGy
+   g==;
+X-CSE-ConnectionGUID: 2gG6VbmJTcWM3ZxO5fyuFQ==
+X-CSE-MsgGUID: zxqYyxItQkitvD2qz+SD7g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11137384"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="11137384"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 17:20:32 -0700
+X-CSE-ConnectionGUID: 0gl70xbKRFWoypd5pPtyMw==
+X-CSE-MsgGUID: 16LG+qDzQIO/V9jDb1M1og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="34281785"
+Received: from epinckar-mobl.amr.corp.intel.com (HELO [10.209.98.74]) ([10.209.98.74])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 17:20:32 -0700
+Message-ID: <5b9a2cef-7b4f-41c3-9f64-4fea4d007cdf@intel.com>
+Date: Thu, 9 May 2024 17:20:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507225945.1408516-6-ziweixiao@google.com> <3e10ff86-902d-45ed-8671-6544ac4b3930@web.de>
-In-Reply-To: <3e10ff86-902d-45ed-8671-6544ac4b3930@web.de>
-From: Ziwei Xiao <ziweixiao@google.com>
-Date: Thu, 9 May 2024 17:19:00 -0700
-Message-ID: <CAG-FcCNGsP3FnB6HzrcQxX4kKEHzimYaQnFcBK63z_kFTEQKgw@mail.gmail.com>
-Subject: Re: [PATCH net-next 5/5] gve: Add flow steering ethtool support
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Jeroen de Borst <jeroendb@google.com>, netdev@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
-	Willem de Bruijn <willemb@google.com>, LKML <linux-kernel@vger.kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, John Fraker <jfraker@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Shailend Chand <shailend@google.com>, rushilg@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/entry_32: Move CLEAR_CPU_BUFFERS before CR3 switch
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Robert Gill <rtgill82@gmail.com>,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+ antonio.gomez.iglesias@linux.intel.com, daniel.sneddon@linux.intel.com
+References: <20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 8, 2024 at 7:09=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> =E2=80=A6
-> > +++ b/drivers/net/ethernet/google/gve/gve_ethtool.c
-> =E2=80=A6
-> > +static int gve_get_rxnfc(struct net_device *netdev, struct ethtool_rxn=
-fc *cmd, u32 *rule_locs)
-> > +{
-> > +     struct gve_priv *priv =3D netdev_priv(netdev);
-> > +     int err =3D 0;
-> > +
-> > +     dev_hold(netdev);
-> > +     rtnl_unlock();
-> =E2=80=A6
-> > +out:
-> > +     rtnl_lock();
-> > +     dev_put(netdev);
-> > +     return err;
-> > +}
-> =E2=80=A6
->
-> How do you think about to increase the application of scope-based resourc=
-e management
-> at such source code places?
->
-Is the suggestion to combine dev_hold(netdev) together with
-rtnl_unlock()? If so, I think there might be different usages for
-using rtnl_unlock. For example, some drivers will call rtnl_unlock
-after dev_close(netdev). Please correct me if I'm wrong. Thank you!
+On 4/26/24 16:48, Pawan Gupta wrote:
+> Move the VERW before the CR3 switch for 32-bit kernels as a workaround.
 
-> Regards,
-> Markus
+I look at the 32-bit code so rarely, I seem to forget have to re-learn
+this gunk every time I look at it.  Take a look at RESTORE_INT_REGS.  On
+32-bit, we actually restore %ds:
+
+	popl    %ds
+
+So even doing this:
+
+> +       CLEAR_CPU_BUFFERS
+>         /* Restore user state */
+>         RESTORE_REGS pop=4                      # skip orig_eax/error_code
+> -       CLEAR_CPU_BUFFERS
+>  .Lirq_return:
+
+fixes the issue.  Moving it above the CR3 switch also works of course,
+but I don't think this has anything to do with CR3.  It's just that
+userspace sets a funky %ds value and CLEAR_CPU_BUFFERS uses ds:.
+
+I don't think any of the segment registers can have secrets in them, can
+they?  I mean, it's possible, but in practice I can't imagine.
+
+So why not just do the CLEAR_CPU_BUFFERS in RESTORE_REGS but after
+RESTORE_INT_REGS?  You might be able to do it universally, or you could
+pass in a macro argument to do it conditionally.
+
+P.S. Can we remove 32-bit support yet?  Please? :)
 
