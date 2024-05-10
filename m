@@ -1,74 +1,55 @@
-Return-Path: <linux-kernel+bounces-175810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76438C255C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:03:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C638C2567
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D06B1F235DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6282857FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8C212AADB;
-	Fri, 10 May 2024 13:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623CF129A8D;
+	Fri, 10 May 2024 13:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ixa6xieg"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="nEg406pV"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1228127E30
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27A5537E8;
+	Fri, 10 May 2024 13:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715346174; cv=none; b=dCdNubAw5VQVCTFFhEG4LXIM1izEvxcY4MBzoGltnFsyCRuct6DEmGCHZ9chmJgOb/S7VI39PhiNAq9lEpMpcFv8O3ax8CvpCh7kkgO4Dv+YtzPkHye5afQCGTfnjAcrW3tVaN3UsdHSx5XlKXKlVvKEd7OvYxKmIWPnQBZcCj8=
+	t=1715346610; cv=none; b=DPLzM+7hD+Za+Rni2IW/rUcaZgDkSbfmdW0MZ8O/NrBIjiscG2i23+F/5TWi65oLULLa4XO8CzW3z0s5D9uhcMng7eGYyT9bWUSPADMdtYzT8QRKj0fe7ordBZMgr6iMK7hVCRmVDXnjprZZWh7/GurFi/cYbzpaxjgwUMpuSo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715346174; c=relaxed/simple;
-	bh=IDOoM5FN/jEaq3m/ykRVd6MkVbSLFiji4upzz0M1kAA=;
+	s=arc-20240116; t=1715346610; c=relaxed/simple;
+	bh=TEjOAr2RBcw1JCUNuulbRKnV4fRzOVevxCBZSShKBfI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtpBOA03P5qg1cX7FWFMvJ9xU/YrE4B/6KB5w34yPXegLifAT8wIsBp1XRZT4XjB3CuyLu+aGF1jOWK9IqDh0zIRyK0S2ENNbXMtyk5cDvN9zHnxjA+JYRLwmpCrPpHBuGVWRsy2jozxomxIBalK2V7YjGC3jmdzH7PxJAiJsSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ixa6xieg; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59ad344f7dso421188766b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:02:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715346170; x=1715950970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OHbA2aVTxqonA8Wb82h9NaQktmaQSCPyBhO9xRJSO4=;
-        b=Ixa6xiegHg5a0MvDnjGcI+QCQ21T4osPAc5881MyWnkJ7Lr4JnDcEjLbgUK+49h4Ol
-         xlT/ZVjO7rhKG5PHlk9GmEWkT/EoQZRaYQHTvZ2WEBqUjcHNUuwNt7wXyuPTkGeaXEIp
-         lG7V4nbZJILcMLYM5w+ItBQM7eCb+0F0FgzMs45Nzn0S9KLpxiufZBf5k0hOQsQNe+FF
-         XloijbR2XherTQ4dzMclaDM0MN+ZYpbsVBxECjm5RaEQAHUKjpT0vsvya2JkACW8S50U
-         WEda9zVAL9s9rVOFYZTBfVd37M5x576tYUySzngKcBjILPc/XL8UyJe9si1AEzhuvXpL
-         6DVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715346170; x=1715950970;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9OHbA2aVTxqonA8Wb82h9NaQktmaQSCPyBhO9xRJSO4=;
-        b=VZssSGyxTNl1PFt2li6ASFr8jbKn3y36RZfAbBJBj+rQ+TpQg8Rwp20MsPedxXv5MS
-         1ouYbBWlXOwyqk5FKCmyxb0xSvl6Upz0CeDKrdeAsyg0pok1tWatCcH6LpVcmvXh8Dfq
-         dTnzBZ3lQYK7bA0N3sGX9zrql5NLTFayQH2V0CICT3jt6kqOX6JrfNsTdgsGEwJmSQVW
-         tO7J+e6xi1rPhxo2D0q1I3cH11W2Fb3Lc24lDbueRfBPb2eD2X1weUvW3v3RRg6jVIWp
-         oP35pWMHDh7e/A9AkmR1PABZQObMLM4v0jTewRKsj4cLRgcJa9awW4hKIO4lY21XQBL4
-         CJGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWE4J+gTJH2kOtmMsuI1cwuu6WqFzbDC6G6e6Y8CfEd4dXNwWGB+kRVeIQwBLmOMxkUDCPZhGDmJwH6AHlpg05TULJD9Gn8rXSshNbu
-X-Gm-Message-State: AOJu0YxcvUC9HV6uWDwhtuYpYBekG51SEcwCg4PPNwztNQNGttSpCLSD
-	P+cWhLjdjFq5vCP+p6xI59Qf8pGu37yJ68EC1bbgknqnYaDQ7Rn5spi07AEPC+I=
-X-Google-Smtp-Source: AGHT+IGVtxPgtNd2rd4rODKiorsOsAs0qSpPYNSo8wWMMgqW1gANzgb4n2Wkjla3fBWd2TMEpAEAsg==
-X-Received: by 2002:a17:906:40d2:b0:a5a:1f4f:cb4c with SMTP id a640c23a62f3a-a5a2d54c80amr175360666b.7.1715346170095;
-        Fri, 10 May 2024 06:02:50 -0700 (PDT)
-Received: from [192.168.62.15] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17555sm180568566b.189.2024.05.10.06.02.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 06:02:49 -0700 (PDT)
-Message-ID: <51b2bd40-888d-4ee4-956f-c5239c5be9e9@linaro.org>
-Date: Fri, 10 May 2024 15:02:46 +0200
+	 In-Reply-To:Content-Type; b=fS+MFTrzfiWiAZrHsxZGUFR5Vew8Riq9458bmdymfGH8/pfSd023LwINnxmhu8gX0gMNPr/7x3L+8b7tE4DzC/vJzhGHiok/kC8YySxojVHZTkfewV/eVsew1MzqGzebGCP1Arv41rQZ3bfI/Ftl36SRVVbyx4t9qrZSjkP1MU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=nEg406pV; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1715346602; x=1715951402; i=deller@gmx.de;
+	bh=TfThBHnieEcrMXwxApoo4pCodB7Hvz/a15x0aREPaOg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=nEg406pVK+/SHrLvqGDyBOUokAajlV1nPrh+Kb3ew/2NV0nzoglpCYo/u+9cdWdz
+	 kqRYRrr+fSsbRGdBAEwqvSLm4jCcn3ftc6QAyqEbbKLQOSsaSIHBQZXXNIuoaFfpn
+	 IOEGye/evLUu1exc0Zd/+AP+UOBlEQ28HgIH/TAZrffQZORYnEpFZHPnJHjHrIwx+
+	 FA00m8XNgvJhEoR/eHEjMy+FXOAti0ulEQcg1zDK3qIM2BYXS477LP/IsoAaCQEzM
+	 piB8yWIjKd2iznMdnwpRj+wR5QbvuJ3fsNu3QISuyVEch7Qlm1TvmfKZ9xZfvIT87
+	 /4a1fMfJtjwDbYxtgQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([89.244.191.219]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Ml6mE-1sSfvq2XXw-00iGAu; Fri, 10
+ May 2024 15:10:02 +0200
+Message-ID: <d2da3581-7ca8-409d-97f1-6d3a19adc3c4@gmx.de>
+Date: Fri, 10 May 2024 15:10:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,122 +57,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/5] iommu/arm-smmu: introduction of ACTLR for custom
- prefetcher settings
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>,
- Rob Clark <robdclark@gmail.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- dmitry.baryshkov@linaro.org, jsnitsel@redhat.com, quic_bjorande@quicinc.com,
- mani@kernel.org, quic_eberman@quicinc.com, robdclark@chromium.org,
- u.kleine-koenig@pengutronix.de, robh@kernel.org, vladimir.oltean@nxp.com,
- quic_pkondeti@quicinc.com, quic_molvera@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240123144543.9405-1-quic_bibekkum@quicinc.com>
- <20240123144543.9405-4-quic_bibekkum@quicinc.com>
- <CAF6AEGs3_wBNo58EbGicFoQuq8--fDohTGv1JSFgoViygLS5Lg@mail.gmail.com>
- <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com>
+Subject: Re: [PATCH] parisc/math-emu: Remove unused struct 'exc_reg'
+To: linux@treblig.org, James.Bottomley@HansenPartnership.com
+Cc: linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240505231059.680502-1-linux@treblig.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <f2222714-1e00-424e-946d-c314d55541b8@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240505231059.680502-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jcVzNKRtFAfAV0vdl20vebHyWvs1WK+UeixILDbjxPPrq88xOZp
+ h8441K8u3axZlqa/AeQeGmlv31D0pzn6XeoT7SHaNVIGE3iLUgnzg2MFd13JUP6YQyNxCKL
+ h027ULpIXTpVVTxTEjUDrxJl4QZHCrFcU8VwnTqUR2O7sAI1zqSaY7XUEVYQ6c58hC4SmCL
+ dBfmaQ7gVrJmrEYxTG+YA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:bZ/gyKCu+d0=;fZneFa1EwKk+aeT3ouemToxEtSM
+ AGrmXipEM9EkmBNMdrkHHadUh4n3xsDpXk6Q71pHh9roVec+9KGV+GNCWJqt6kuf1leopfspi
+ flQiNJTLEErGdQ3FH6aIs8kJneYXH2pTwqD+WCkkuk5BsqRXf+3PBINGRfsb0MyURqNQQ7xFB
+ Jp0xy5rv4Ajb07FGcr875EO2CMRqLb81qvgbHTjMuBzxmsxTpsq1UUvaOeMmwGku12tbI7C9W
+ yeOgb7AvQjfJbwWWG+CJBR63RkfoogQW1iy5BpURNfpTvntUNNeLwegtZmVkBEkA9BxT7cgTF
+ uJwMAmnUeRQ3nF0ZQRIIQdVl7BgFyA60cZFWoAeC1ls7+axFH6zJBwCF8IMwVLRC9yxG16FVD
+ e7v/5kgIU3lb92uty6AfABAuS81FBhcGSnWExRG58Bd2XHRmn0qLiJciPNRVqsIMfMkNvyij/
+ 0qO9bcUOATUaGKnN5c63AZRfcehgxUHD4Q6G5WODlXXQH0tysTaBIBVAyNObx1y+yPMIVg3nv
+ PZwDCZdBFlbVXCsKUelMBNFAbqWtYWm0jGyIae4I5Bclpl6VbCMP8DhU6R9vK02hMUYa/YA8V
+ ImOV1AI448JLqHdqji69qfvEkmmi8mRHV3Qa02tk9FcYBLCJLb00oXVtNiF7x5FU2wkgvvZa2
+ MOfMRR/oBsNwOXHX/FNWYcAgHkuCK4XzUTLdb5XF0CL7ORuMyDPEQE/l0tKVrVpeZXo2mNI/4
+ N2pDpfeMpav2Ewia119XkjNxpePi2q8YjUeBRPR2VpXCvInHckvanldpBsVcjqmiHHD7p9B+L
+ 8gPE26sRyFAMkLosU9ZXsMHmDC0NxS5nLe6Ng+oj6/0Q0=
 
-On 10.05.2024 2:52 PM, Bibek Kumar Patro wrote:
-> 
-> 
-> On 5/1/2024 12:30 AM, Rob Clark wrote:
->> On Tue, Jan 23, 2024 at 7:00 AM Bibek Kumar Patro
->> <quic_bibekkum@quicinc.com> wrote:
->>>
->>> Currently in Qualcomm  SoCs the default prefetch is set to 1 which allows
->>> the TLB to fetch just the next page table. MMU-500 features ACTLR
->>> register which is implementation defined and is used for Qualcomm SoCs
->>> to have a custom prefetch setting enabling TLB to prefetch the next set
->>> of page tables accordingly allowing for faster translations.
->>>
->>> ACTLR value is unique for each SMR (Stream matching register) and stored
->>> in a pre-populated table. This value is set to the register during
->>> context bank initialisation.
->>>
->>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->>> ---
+On 5/6/24 01:10, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> This has been here since pre-git.
+>
+> Build tested.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-[...]
+applied.
+Thanks!
+Helge
 
->>> +
->>> +               for_each_cfg_sme(cfg, fwspec, j, idx) {
->>> +                       smr = &smmu->smrs[idx];
->>> +                       if (smr_is_subset(smr, id, mask)) {
->>> +                               arm_smmu_cb_write(smmu, cbndx, ARM_SMMU_CB_ACTLR,
->>> +                                               actlrcfg[i].actlr);
->>
->> So, this makes ACTLR look like kind of a FIFO.  But I'm looking at
->> downstream kgsl's PRR thing (which we'll need to implement vulkan
->> sparse residency), and it appears to be wanting to set BIT(5) in ACTLR
->> to enable PRR.
->>
->>          val = KGSL_IOMMU_GET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR);
->>          val |= FIELD_PREP(KGSL_IOMMU_ACTLR_PRR_ENABLE, 1);
->>          KGSL_IOMMU_SET_CTX_REG(ctx, KGSL_IOMMU_CTX_ACTLR, val);
->>
->> Any idea how this works?  And does it need to be done before or after
->> the ACTLR programming done in this patch?
->>
->> BR,
->> -R
->>
-> 
-> Hi Rob,
-> 
-> Can you please help provide some more clarification on the FIFO part? By FIFO are you referring to the storing of ACTLR data in the table?
-> 
-> Thanks for pointing to the downstream implementation of kgsl driver for
-> the PRR bit. Since kgsl driver is already handling this PRR bit's
-> setting, this makes setting the PRR BIT(5) by SMMU driver redundant.
+> ---
+>   arch/parisc/math-emu/driver.c | 6 ------
+>   1 file changed, 6 deletions(-)
+>
+> diff --git a/arch/parisc/math-emu/driver.c b/arch/parisc/math-emu/driver=
+c
+> index 6ce427b58836c..34495446e051c 100644
+> --- a/arch/parisc/math-emu/driver.c
+> +++ b/arch/parisc/math-emu/driver.c
+> @@ -26,12 +26,6 @@
+>
+>   #define FPUDEBUG 0
+>
+> -/* Format of the floating-point exception registers. */
+> -struct exc_reg {
+> -	unsigned int exception : 6;
+> -	unsigned int ei : 26;
+> -};
+> -
+>   /* Macros for grabbing bits of the instruction format from the 'ei'
+>      field above. */
+>   /* Major opcode 0c and 0e */
 
-The kgsl driver is not present upstream.
-
-> Thanks for bringing up this point.
-> I will send v10 patch series removing this BIT(5) setting from the ACTLR
-> table.
-
-I think it's generally saner to configure the SMMU from the SMMU driver..
-
-Konrad
 
