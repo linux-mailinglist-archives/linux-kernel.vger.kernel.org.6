@@ -1,202 +1,294 @@
-Return-Path: <linux-kernel+bounces-175207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8009D8C1C4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:14:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFC58C1C5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30981282AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 137B51F2181B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0474313BAC6;
-	Fri, 10 May 2024 02:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D540D13BAC7;
+	Fri, 10 May 2024 02:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzS1s3md"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PDFEemqR"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C27ECF
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A188A33EE
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715307263; cv=none; b=DUu5Vy5DNiSkvFCAu3w0xqoLIX1fmXcG2innUrInoQJyV1Bd+/evXtKzpyBloMtHh4Q+QmsE79PHgEips9QyWM6APjKaf/rk2nzlhXGXYNMlvAtbpartq642pnith1MTZTkHaDGQS6IB4En1icUECLnCIKuxEr3wQQsEw4BJywo=
+	t=1715307511; cv=none; b=cfIx+bjZQPpxGcPFKYvXyhZlLD68vow7cv1J8buCEKZkQ44Qk8WUQbvFazjOwds3aokD+ZdhJAtVjuMfiMMacvod+7/XphDX88TX+N/Khfhbn1HPLJxSLFVGeYUNnGpq5tKeZ0m3z7sbGs0QboBZpwhk0+xsigpsKhhfPAXg1k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715307263; c=relaxed/simple;
-	bh=KLfHnbFD+uEkKSd4duRK5xnz1EiKtw8fTYoJ0C5CV1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mGYzpUYXv7Tp/hA6QwRqJV5L1tz12MkhyzBrqjT1u0MeUVrdcd/T7DLAfX04uBjygCPEqWwrxWMP3sYtPou7bg/rF65oacF81MWrF+FDLqh0O+alZmutz1T4weJOIv2rfOYTl3uRCIQZIr0nhCA/lOg8tcE0/xpfStSovAlBtAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzS1s3md; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9515DC116B1;
-	Fri, 10 May 2024 02:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715307262;
-	bh=KLfHnbFD+uEkKSd4duRK5xnz1EiKtw8fTYoJ0C5CV1A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VzS1s3mdMDC8X+zXtHel+pe7gA8t6wKpa+vGFzi4VPz4NgwXqtue2leLfGcGH8PeJ
-	 xpYoTfHsYqaV+ttnt2c8mJy0V3os/V7JBGivcg6tweKAZBF/OgfWBHY1O9vg+BUlwc
-	 BtKfjCQbNelZ2THIrGw2iaVdJa02abJca/ckKgLUmXFqxKnnGRFWrbxvwOAdnZAjWa
-	 U62VvqnOpdBhQ3sFS9KW4Ize7OfLojXAwNSJTy4CgSbze34CCELIGHIWlBE9nla088
-	 14EIvtm61MI7wut8g1lVmqLv1AxcmOS8i9W60xdGEz2/6chBvTv3rKDThgQA+Jde78
-	 nkMMEPZ5MXsJA==
-Message-ID: <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
-Date: Fri, 10 May 2024 10:14:19 +0800
+	s=arc-20240116; t=1715307511; c=relaxed/simple;
+	bh=gv2mwQvttFbxQL4dtecKJZWQt0d7HSIevUE5zHR9jwA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=grC2ZoiBhrBzTkb34Gya+LBhT1jh/blDlhOpWapeYK1ySy+SKCKejQHfiLVwVlUw8MTeZ1P4G5Loo2gcck4x+8eHceAqyfdU2mpavrqBWtIKFy2+6XHpTVTCPN9aQ6i6YXfrayENRVSdSVKvFH+1mDAq+d3qBy6uRmLwEOO2REM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PDFEemqR; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 9197f03c0e7311ef8065b7b53f7091ad-20240510
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=DQMjWMZ5it8OZyRBbUrQVWokP1+YbLgDB/9+MCPLpVQ=;
+	b=PDFEemqR/w0/yqQQ7l/P/cErFe2kgjlMvWtMjC7+1eTYWdc6wOhqtBDESAspqaesZG5il+7hUZpt6p5qdjlH94hQW7JSyvxAplzA0gfTobJj3lD2beKzc/1dXtQbarchLBiGNiGkP7pgU92Pp93rwEfCm9rxWy1hviZmZ4Q/6hg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:8f3e01a1-1cb7-4e93-8d8e-9a87f5f31950,IP:0,U
+	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:0
+X-CID-META: VersionHash:82c5f88,CLOUDID:c3c72c87-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 9197f03c0e7311ef8065b7b53f7091ad-20240510
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 536206815; Fri, 10 May 2024 10:18:19 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 10 May 2024 10:18:14 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 10 May 2024 10:18:14 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>,
+	<mac.shen@mediatek.com>, <liankun.yang@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 1/1] Support YUV422 for DPTX.
+Date: Fri, 10 May 2024 10:15:29 +0800
+Message-ID: <20240510021810.19302-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for inline_data
- inode
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-References: <20240506103313.773503-1-chao@kernel.org>
- <20240506103313.773503-3-chao@kernel.org> <ZjzxWp4-wmpCzBeB@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZjzxWp4-wmpCzBeB@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.021300-8.000000
+X-TMASE-MatchedRID: UqpZKsHsMCd6C/DhL53MofU1Xpm2N12SEbxKVXd70tXfUZT83lbkEH3q
+	33AN90RFNEOprWfLXKfxmtEYLZtVoj3BvXglGRuk4pdq9sdj8LU7r2Gtb9iBYWHtZs6e3ZMHgSk
+	lFxt6Wp0ANcTxXeakRbFdDzVRJSPNxz6opuAAUJKO0rt0LpQGeVo1rFkFFs1atK3FOVf6Entlln
+	dVQSPeh37oxe7d+k8QcAwOsowI+VKlTHNxJDwdpELEoH0ynuZVFk73i4rVVIH4JyR+b5tvoBFG4
+	EGBR4d4XLIhLtaujX6/GjIHLzn7BgEzlKcqjzGckDpLRKO9xhThKQh1LCmGBpsoi2XrUn/Jn6Kd
+	MrRsL14qtq5d3cxkNRz4tF/sDU5vhRA3SI9h7KmYftgi7sAl3zpKgU6ixfgAeW4/xVzXMTY/l3L
+	cZRxL5jxLPNsXewJyspCzPmuFTck1skRKpMV4OkGv8R81e9TV82Gj2QC3yG0smXVK/H8eHzG7sr
+	7xobSAzcDEvJaUSgU=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.021300-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: E8F621250D14A1442EC801CC57FAB1D2DE56DC6ACD66D8FDC57EB1D2246BAA102000:8
+X-MTK: N
 
-On 2024/5/9 23:52, Jaegeuk Kim wrote:
-> On 05/06, Chao Yu wrote:
->> syzbot reports a f2fs bug as below:
->>
->> ------------[ cut here ]------------
->> kernel BUG at fs/f2fs/inline.c:258!
->> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
->> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
->> Call Trace:
->>   f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
->>   f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
->>   __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
->>   f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
->>   do_writepages+0x35b/0x870 mm/page-writeback.c:2612
->>   __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
->>   writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
->>   wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
->>   wb_do_writeback fs/fs-writeback.c:2264 [inline]
->>   wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
->>   process_one_work kernel/workqueue.c:3254 [inline]
->>   process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
->>   worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
->>   kthread+0x2f2/0x390 kernel/kthread.c:388
->>   ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->>
->> The root cause is: inline_data inode can be fuzzed, so that there may
->> be valid blkaddr in its direct node, once f2fs triggers background GC
->> to migrate the block, it will hit f2fs_bug_on() during dirty page
->> writeback.
->>
->> Let's add sanity check on i_nid field for inline_data inode, meanwhile,
->> forbid to migrate inline_data inode's data block to fix this issue.
->>
->> Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
->> Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->>   fs/f2fs/f2fs.h   |  2 +-
->>   fs/f2fs/gc.c     |  6 ++++++
->>   fs/f2fs/inline.c | 17 ++++++++++++++++-
->>   fs/f2fs/inode.c  |  2 +-
->>   4 files changed, 24 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index fced2b7652f4..c876813b5532 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
->>    * inline.c
->>    */
->>   bool f2fs_may_inline_data(struct inode *inode);
->> -bool f2fs_sanity_check_inline_data(struct inode *inode);
->> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
->>   bool f2fs_may_inline_dentry(struct inode *inode);
->>   void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
->>   void f2fs_truncate_inline_inode(struct inode *inode,
->> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->> index e86c7f01539a..041957750478 100644
->> --- a/fs/f2fs/gc.c
->> +++ b/fs/f2fs/gc.c
->> @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>   				continue;
->>   			}
->>   
->> +			if (f2fs_has_inline_data(inode)) {
->> +				iput(inode);
->> +				set_sbi_flag(sbi, SBI_NEED_FSCK);
->> +				continue;
-> 
-> Any race condtion to get this as false alarm?
+Adjust the training sequence.Detects the actual link condition
+and calculates the bandwidth where the relevant resolution resides.
 
-Since there is no reproducer for the bug, I doubt it was caused by metadata
-fuzzing, something like this:
+The bandwidth is recalculated and modes that exceed the bandwidth are
+filtered.
 
-- inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
-- SIT/SSA entry of the block is valid;
-- background GC migrates the block;
-- kworker writeback it, and trigger the bug_on().
+Example Modify bandwidth filtering requirements.
 
-Thoughts?
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 81 ++++++++++++++++++-------------
+ 1 file changed, 46 insertions(+), 35 deletions(-)
 
-Thanks,
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index 2136a596efa1..3e645bd6fe27 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -66,6 +66,13 @@ enum {
+ 	MTK_DP_CAL_MAX,
+ };
+ 
++enum mtk_dp_color_format {
++	MTK_DP_COLOR_FORMAT_RGB = 0,
++	MTK_DP_COLOR_FORMAT_YUV422 = 0x1,
++	MTK_DP_COLOR_FORMAT_YUV444 = 0x2,
++	MTK_DP_COLOR_FORMAT_YUV420 = 0x3,
++};
++
+ struct mtk_dp_train_info {
+ 	bool sink_ssc;
+ 	bool cable_plugged_in;
+@@ -84,7 +91,7 @@ struct mtk_dp_audio_cfg {
+ };
+ 
+ struct mtk_dp_info {
+-	enum dp_pixelformat format;
++	enum mtk_dp_color_format format;
+ 	struct videomode vm;
+ 	struct mtk_dp_audio_cfg audio_cur_cfg;
+ };
+@@ -457,7 +464,7 @@ static void mtk_dp_set_msa(struct mtk_dp *mtk_dp)
+ }
+ 
+ static int mtk_dp_set_color_format(struct mtk_dp *mtk_dp,
+-				   enum dp_pixelformat color_format)
++				   enum mtk_dp_color_format color_format)
+ {
+ 	u32 val;
+ 
+@@ -467,10 +474,10 @@ static int mtk_dp_set_color_format(struct mtk_dp *mtk_dp,
+ 			   DP_TEST_COLOR_FORMAT_MASK);
+ 
+ 	switch (color_format) {
+-	case DP_PIXELFORMAT_YUV422:
++	case MTK_DP_COLOR_FORMAT_YUV422:
+ 		val = PIXEL_ENCODE_FORMAT_DP_ENC0_P0_YCBCR422;
+ 		break;
+-	case DP_PIXELFORMAT_RGB:
++	case MTK_DP_COLOR_FORMAT_RGB:
+ 		val = PIXEL_ENCODE_FORMAT_DP_ENC0_P0_RGB;
+ 		break;
+ 	default:
+@@ -1322,7 +1329,7 @@ static void mtk_dp_initialize_priv_data(struct mtk_dp *mtk_dp)
+ 	mtk_dp->train_info.lane_count = mtk_dp->max_lanes;
+ 	mtk_dp->train_info.cable_plugged_in = plugged_in;
+ 
+-	mtk_dp->info.format = DP_PIXELFORMAT_RGB;
++	mtk_dp->info.format = MTK_DP_COLOR_FORMAT_YUV422;
+ 	memset(&mtk_dp->info.vm, 0, sizeof(struct videomode));
+ 	mtk_dp->audio_enable = false;
+ }
+@@ -1371,7 +1378,7 @@ static void mtk_dp_sdp_set_down_cnt_init_in_hblank(struct mtk_dp *mtk_dp)
+ 
+ 	drm_display_mode_from_videomode(vm, &mode);
+ 
+-	pix_clk_mhz = mtk_dp->info.format == DP_PIXELFORMAT_YUV420 ?
++	pix_clk_mhz = mtk_dp->info.format == MTK_DP_COLOR_FORMAT_YUV420 ?
+ 		      mode.clock / 2000 : mode.clock / 1000;
+ 
+ 	switch (mtk_dp->train_info.lane_count) {
+@@ -1870,6 +1877,7 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
+ 	struct mtk_dp *mtk_dp = dev;
+ 	unsigned long flags;
+ 	u32 status;
++	int ret;
+ 
+ 	if (mtk_dp->need_debounce && mtk_dp->train_info.cable_plugged_in)
+ 		msleep(100);
+@@ -1888,9 +1896,28 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
+ 			memset(&mtk_dp->info.audio_cur_cfg, 0,
+ 			       sizeof(mtk_dp->info.audio_cur_cfg));
+ 
++			mtk_dp->enabled = false;
++			/* power off aux */
++			mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
++			       DP_PWR_STATE_BANDGAP_TPLL,
++			       DP_PWR_STATE_MASK);
++
+ 			mtk_dp->need_debounce = false;
+ 			mod_timer(&mtk_dp->debounce_timer,
+ 				  jiffies + msecs_to_jiffies(100) - 1);
++		} else {
++			mtk_dp_aux_panel_poweron(mtk_dp, true);
++
++			ret = mtk_dp_parse_capabilities(mtk_dp);
++			if (ret)
++				drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
++
++			/* Training */
++			ret = mtk_dp_training(mtk_dp);
++			if (ret)
++				drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
++
++			mtk_dp->enabled = true;
+ 		}
+ 	}
+ 
+@@ -2057,16 +2084,6 @@ static struct edid *mtk_dp_get_edid(struct drm_bridge *bridge,
+ 
+ 	new_edid = drm_get_edid(connector, &mtk_dp->aux.ddc);
+ 
+-	/*
+-	 * Parse capability here to let atomic_get_input_bus_fmts and
+-	 * mode_valid use the capability to calculate sink bitrates.
+-	 */
+-	if (mtk_dp_parse_capabilities(mtk_dp)) {
+-		drm_err(mtk_dp->drm_dev, "Can't parse capabilities\n");
+-		kfree(new_edid);
+-		new_edid = NULL;
+-	}
+-
+ 	if (new_edid) {
+ 		struct cea_sad *sads;
+ 
+@@ -2243,14 +2260,10 @@ static void mtk_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+ 		return;
+ 	}
+ 
+-	mtk_dp_aux_panel_poweron(mtk_dp, true);
+-
+-	/* Training */
+-	ret = mtk_dp_training(mtk_dp);
+-	if (ret) {
+-		drm_err(mtk_dp->drm_dev, "Training failed, %d\n", ret);
+-		goto power_off_aux;
+-	}
++	/* power on aux */
++	mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
++			   DP_PWR_STATE_BANDGAP_TPLL_LANE,
++			   DP_PWR_STATE_MASK);
+ 
+ 	ret = mtk_dp_video_config(mtk_dp);
+ 	if (ret)
+@@ -2310,12 +2323,11 @@ mtk_dp_bridge_mode_valid(struct drm_bridge *bridge,
+ {
+ 	struct mtk_dp *mtk_dp = mtk_dp_from_bridge(bridge);
+ 	u32 bpp = info->color_formats & DRM_COLOR_FORMAT_YCBCR422 ? 16 : 24;
+-	u32 rate = min_t(u32, drm_dp_max_link_rate(mtk_dp->rx_cap) *
+-			      drm_dp_max_lane_count(mtk_dp->rx_cap),
+-			 drm_dp_bw_code_to_link_rate(mtk_dp->max_linkrate) *
+-			 mtk_dp->max_lanes);
++	u32 lane_count_min = mtk_dp->train_info.lane_count;
++	u32 rate = drm_dp_bw_code_to_link_rate(mtk_dp->train_info.link_rate) *
++			 lane_count_min;
+ 
+-	if (rate < mode->clock * bpp / 8)
++	if (rate * 97 / 100 < (mode->clock * bpp / 8))
+ 		return MODE_CLOCK_HIGH;
+ 
+ 	return MODE_OK;
+@@ -2356,10 +2368,9 @@ static u32 *mtk_dp_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+ 	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
+ 	struct drm_display_info *display_info =
+ 		&conn_state->connector->display_info;
+-	u32 rate = min_t(u32, drm_dp_max_link_rate(mtk_dp->rx_cap) *
+-			      drm_dp_max_lane_count(mtk_dp->rx_cap),
+-			 drm_dp_bw_code_to_link_rate(mtk_dp->max_linkrate) *
+-			 mtk_dp->max_lanes);
++	u32 lane_count_min = mtk_dp->train_info.lane_count;
++	u32 rate = drm_dp_bw_code_to_link_rate(mtk_dp->train_info.link_rate) *
++			 lane_count_min;
+ 
+ 	*num_input_fmts = 0;
+ 
+@@ -2406,9 +2417,9 @@ static int mtk_dp_bridge_atomic_check(struct drm_bridge *bridge,
+ 		 bridge_state->output_bus_cfg.format);
+ 
+ 	if (input_bus_format == MEDIA_BUS_FMT_YUYV8_1X16)
+-		mtk_dp->info.format = DP_PIXELFORMAT_YUV422;
++		mtk_dp->info.format = MTK_DP_COLOR_FORMAT_YUV422;
+ 	else
+-		mtk_dp->info.format = DP_PIXELFORMAT_RGB;
++		mtk_dp->info.format = MTK_DP_COLOR_FORMAT_RGB;
+ 
+ 	if (!crtc) {
+ 		drm_err(mtk_dp->drm_dev,
+-- 
+2.18.0
 
-> 
->> +			}
->> +
->>   			err = f2fs_gc_pinned_control(inode, gc_type, segno);
->>   			if (err == -EAGAIN) {
->>   				iput(inode);
->> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
->> index ac00423f117b..067600fed3d4 100644
->> --- a/fs/f2fs/inline.c
->> +++ b/fs/f2fs/inline.c
->> @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
->>   	return !f2fs_post_read_required(inode);
->>   }
->>   
->> -bool f2fs_sanity_check_inline_data(struct inode *inode)
->> +static bool has_node_blocks(struct inode *inode, struct page *ipage)
->> +{
->> +	struct f2fs_inode *ri = F2FS_INODE(ipage);
->> +	int i;
->> +
->> +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
->> +		if (ri->i_nid[i])
->> +			return true;
->> +	}
->> +	return false;
->> +}
->> +
->> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
->>   {
->>   	if (!f2fs_has_inline_data(inode))
->>   		return false;
->>   
->> +	if (has_node_blocks(inode, ipage))
->> +		return false;
->> +
->>   	if (!support_inline_data(inode))
->>   		return true;
->>   
->> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->> index c26effdce9aa..1423cd27a477 100644
->> --- a/fs/f2fs/inode.c
->> +++ b/fs/f2fs/inode.c
->> @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->>   		}
->>   	}
->>   
->> -	if (f2fs_sanity_check_inline_data(inode)) {
->> +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
->>   		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
->>   			  __func__, inode->i_ino, inode->i_mode);
->>   		return false;
->> -- 
->> 2.40.1
 
