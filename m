@@ -1,160 +1,122 @@
-Return-Path: <linux-kernel+bounces-175973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2EC8C2811
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:43:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A334F8C2813
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:43:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2480B1F224F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A4E4281A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB06171676;
-	Fri, 10 May 2024 15:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B1317277F;
+	Fri, 10 May 2024 15:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B7rTT8Lq"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lJAnfTAW"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBFB171647
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20275172763
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355813; cv=none; b=Hc8lqyJeEha6fgp7fJMYV0cGccF8ywcFpQhb+306DLMCLbZdR4SZTQg9YBQ6sr7YT36ZuCPd11pIQAoFzNPrx/ejwBnnYCcu/PrGdjN1H+dXfjTzdm3dRBA1v6PlkAH474Gsf+Od4Yzg6l0cava9xRjLAaw2Tf4XXI5/NLRn12c=
+	t=1715355818; cv=none; b=FmOUs6lLygt0a2dgpzYCl8Mu5KAluofbMfGLGIhh+yExt5nF/E4UogPkBEuy2qyvuCjAAOn3spqjL1hxH41gibCU9+Qs1SkhBDhzV8TIuOKpQIUFlJY637rp+uOljeKLpgZEaKflXrv9IYpY/ee4uLxyr1eiZH/TuO+3AmKwPxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355813; c=relaxed/simple;
-	bh=8ge9OcAQpy02pxdSG6GJDLs1Otucti+5yTOjo1VilHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kzelh4YcXnfm+5htKSjGcnhQ+kGAvQDRkV4G5fFNqu0CU//SUG+b+grsm3vimLexwQ2qX9u+xbdEH2U7HobavLLFugBAFwGtCVtQAXuDNb7WTb+tVlRsPcMky+33Ig6+lfuCy6/iyANtkorXeCLYIKc28eVxeV8c34BsgljUC4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B7rTT8Lq; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e3b1b6e9d1so26362231fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:43:31 -0700 (PDT)
+	s=arc-20240116; t=1715355818; c=relaxed/simple;
+	bh=G+xH4AF7qc1ighXdU78nJKRNV28XMKcLeMrlk66frcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HtUf9S9P8jOYVA4w5XWUxB80zhLG+ZbPgvhxhBa20DzUCBH+9BG84ar5vM9W/wjmvMMG0NhSMsxJdB1Noc1RGZvX0+b2a4SPAkcDNr42EuHBx1CBJi7Ipbe6BHYMmfkQzjeDJ2r2nfDXkyV4GckRYnTUAyoWcmdsrUh7l+B3HTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lJAnfTAW; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59a352bbd9so371687866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715355810; x=1715960610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yoyvh8Rxn6zCgMfa/t+tG3yD/3CbcjfLHaveMJsT484=;
-        b=B7rTT8LqcOCJHX9ytnmJOyTQ+SgfiLRuAmcVlrMgOpILI6tRM9rYej0arbsceV69mb
-         p+mwm13Q2184HW42HpTDfQi9MAb4pHWFYb2lWTwescDjisly41ozHU8XXXIRbigUqbIP
-         X+Xgp1O5hMzcN00u9mfLh30o4WfTe0olMiL2n5QsmPCbAPF5u66KCZoBiIruLHeJtiAh
-         XYzWVdUV+Q2G4Ib9kpDwj7vWtmD8+BpEcUDd4xygUbCuORWFjySOY1UDy78wUgLQWGk3
-         NmPC03xaYHltNhYgXZKySKJvfs/gc9nnLZWgt9r98Y2pUrYXPlmooX1dZNmXt0621YMq
-         vyPQ==
+        d=linaro.org; s=google; t=1715355815; x=1715960615; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8I2JjkdieyXRbDrING1zf6naqG91T7vTKCJRxlvQiF8=;
+        b=lJAnfTAWr0eB1d6zLYyals0T0hmKJdgXD2083m4Qck2tgYJuM+9RWaWPHbXmTB2Jyd
+         PpoSuQvD6rZJ1+mnscgQe92EaZNrN3xdlZJ3TtZSaOgrBVW+g0xQgJdAhenaHS/0RuzD
+         ZuTgBt+1ah6VdyCIttyrupILsEd5Wopg85SthMfUgFwXGLAZeirgWMeRXq7RVcQnh+vF
+         21mHwxTvPxsfo5/wXTAxlnhoXw17yKD9PE+IqOC+DVy0P/dWrp1AahAWCkb1z4LeD3ml
+         Sp7f70efSwRX42iKufIKrjsmEa7JWu0O0mehT5BuM5Qu3i51aV8b/AEM9jWPlsQXqpVC
+         yOeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715355810; x=1715960610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yoyvh8Rxn6zCgMfa/t+tG3yD/3CbcjfLHaveMJsT484=;
-        b=cflZYnkqme97Zfi9WjigF95bHu8tIK3JzG42YjxJgvH2+sMC6Yh6ggsYmJZPoTKaYs
-         1/By0XdZxrol5buLzWpqQNlfZCl0ayMtXvaAAw0r0B5GDiYj5PfW88eyiB9Z/11jr/lL
-         EGJQfP/No/VDH56govo+ndIUrK6shkUoqnbYTnetNi1NFa4NoA4ul5wsv2m5IAHIK5GI
-         i4pEUF7yuAs4nSeQ+TboN5otR6rMwN0Da0m8Yf3hK2zsvKcRzt2ub8Pk7L8QKJFqULy4
-         nA72ev1iE4K/tof/OgCXstWlBVACeG+heCCGxWKZRyb+JND4mXQsEMNsWLrEyX3m5z0D
-         JfdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq4pIot3hpItHSRRLKGb/AKIGhhWINu/fDUitpEZ4veFHhrpmACgvwEHf+sgEXAGw+EbqnqTZZTB0pDdbJqT5R3ipnk/jauwScy9E4
-X-Gm-Message-State: AOJu0YwdCK/bu+B7zNamR2s1qRr+5MOHWGadjYrqFKrz+SCqH9dtGrfl
-	oOHBywNd/haT2q9jTQjh45botiEkncGJBPd0Tu9WnkTtHH7j7m+Y4Jc6xDkd7gbLrcAbIcPMg3w
-	TWcfWwvwyEQMAzihNJoOczjI9U4O7LhbKXSQi2w==
-X-Google-Smtp-Source: AGHT+IG+a4LbocG+hZ2AszaZJTTWlZVoiSxMJlQjan5IizbCYWOINZG5FzwoAQRRO1D9Cg10+5o0fcjEP+y4hd/N74M=
-X-Received: by 2002:a2e:934b:0:b0:2df:d071:76ed with SMTP id
- 38308e7fff4ca-2e51fd4ae06mr18913471fa.10.1715355810234; Fri, 10 May 2024
- 08:43:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715355815; x=1715960615;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8I2JjkdieyXRbDrING1zf6naqG91T7vTKCJRxlvQiF8=;
+        b=jUY8CoAkqsWO1WKiEUbU5tEkM7YOaLkkDtaNkE8uZzCzfbH4C14qILv91m2vEnwJJH
+         674aKyNnjaxlESV591mddpOHT5CbkAwIGbbljfEhE+MawwlcSb90F5XnJ7Fu9FZg0GtJ
+         YmZIOlDHI36D1jgVBG5VX0TtX/Q9/Kz26mDbnrLDF6t9vXuBpZWtf+fPbkg0FR8dz1DS
+         JVEJO8gCD2t3/OfTmoJad5bmgEkC2YFepNvj+Q7FrkYEvbjSHWf9a8wWPXBTlUa0wFMz
+         FrAAPw9DYLXXVn875zJnd+kCQDvVj6t6ry9tYQeXA58j2lR49cph9Px4STL3ylR2tyrc
+         5a3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW6WxxnjeKtPpiUXHdexSPBRAKYL8vhCh7rhwCV2/rWuhtnve9KSxriVN8fv0nOrmbSbR9G5SKm+RAFtg5dIcpv/4JDLokSXKSN0mdW
+X-Gm-Message-State: AOJu0YzHCBYi3M/goRf32bZVUMCUhPRfCOLk/SAv+MogWyQ8pR3fpynq
+	sRaqRpGkKa0muGzdDh4PcOQDRNwZ9iB3/F6WesWfLSEDmyBiKwI5TmJVhZdoIto=
+X-Google-Smtp-Source: AGHT+IE3xlquVur7sdhTe5QiuL1P4R6FQeWnDOJzPQFLVv0j3JLJeMKX/K7tBPcM2yD5KDE1rCRCRQ==
+X-Received: by 2002:a17:906:b7c4:b0:a59:bb24:a61 with SMTP id a640c23a62f3a-a5a2d292a23mr261622066b.30.1715355815485;
+        Fri, 10 May 2024 08:43:35 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d27bsm194279066b.21.2024.05.10.08.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 08:43:35 -0700 (PDT)
+Date: Fri, 10 May 2024 18:43:31 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bingbu Cao <bingbu.cao@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510141836.1624009-1-adureghello@baylibre.org> <20240510141836.1624009-3-adureghello@baylibre.org>
-In-Reply-To: <20240510141836.1624009-3-adureghello@baylibre.org>
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 10 May 2024 10:43:18 -0500
-Message-ID: <CAMknhBGU8bXg7obzyjzb7a4AUbjnw_0b+mqEAYJJekAK2CB-CQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dt-bindings: iio: dac: fix ad3552r gain parameter names
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Fri, May 10, 2024 at 9:19=E2=80=AFAM Angelo Dureghello
-<adureghello@baylibre.com> wrote:
->
-> From: Angelo Dureghello <adureghello@baylibre.com>
->
-> The adi,gain-scaling-p/n values are an inverted log2,
-> so initial naiming was set correct, but the driver uses just
-> adi,gain-scaling-p/n, so uniforming documentation, that seems
-> a less-risk fix for future rebases, and still conformant to datasheet.
->
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b=
-/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> index 17442cdfbe27..9e3dbf890bfa 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> @@ -94,13 +94,13 @@ patternProperties:
->              maximum: 511
->              minimum: -511
->
-> -          adi,gain-scaling-p-inv-log2:
-> -            description: GainP =3D 1 / ( 2 ^ adi,gain-scaling-p-inv-log2=
-)
-> +          adi,gain-scaling-p:
-> +            description: GainP =3D 1 / ( 2 ^ adi,gain-scaling-p)
->              $ref: /schemas/types.yaml#/definitions/uint32
->              enum: [0, 1, 2, 3]
->
-> -          adi,gain-scaling-n-inv-log2:
-> -            description: GainN =3D 1 / ( 2 ^ adi,gain-scaling-n-inv-log2=
-)
-> +          adi,gain-scaling-n:
-> +            description: GainN =3D 1 / ( 2 ^ adi,gain-scaling-n)
->              $ref: /schemas/types.yaml#/definitions/uint32
->              enum: [0, 1, 2, 3]
->
-> @@ -109,8 +109,8 @@ patternProperties:
->
->          required:
->            - adi,gain-offset
-> -          - adi,gain-scaling-p-inv-log2
-> -          - adi,gain-scaling-n-inv-log2
-> +          - adi,gain-scaling-p
-> +          - adi,gain-scaling-n
->            - adi,rfb-ohms
->
->      required:
-> @@ -214,8 +214,8 @@ examples:
->                  reg =3D <1>;
->                  custom-output-range-config {
->                      adi,gain-offset =3D <5>;
-> -                    adi,gain-scaling-p-inv-log2 =3D <1>;
-> -                    adi,gain-scaling-n-inv-log2 =3D <2>;
-> +                    adi,gain-scaling-p =3D <1>;
-> +                    adi,gain-scaling-n =3D <2>;
->                      adi,rfb-ohms =3D <1>;
->                  };
->              };
-> --
-> 2.45.0.rc1
->
->
+Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
 
-The DT bindings are generally considered immutable. So unless we can
-prove that no one has ever put adi,gain-scaling-n-inv-log2 in a .dtb
-file, we probably need to fix this in the driver rather than in the
-bindings. (The driver can still handle adi,gain-scaling-p in the
-driver for backwards compatibility but the official binding should be
-what was already accepted in the .yaml file)
+Fixes: 881ca25978c6 ("media: ipu3-cio2: rename cio2 bridge to ipu bridge and move out of ipu3")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v2: style change
+
+ drivers/media/pci/intel/ipu-bridge.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
+index 61750cc98d70..44a9d9c15b05 100644
+--- a/drivers/media/pci/intel/ipu-bridge.c
++++ b/drivers/media/pci/intel/ipu-bridge.c
+@@ -839,9 +839,14 @@ int ipu_bridge_init(struct device *dev,
+ 		bridge->data_lanes[i] = i + 1;
+ 
+ 	ret = ipu_bridge_connect_sensors(bridge);
+-	if (ret || bridge->n_sensors == 0)
++	if (ret)
+ 		goto err_unregister_ipu;
+ 
++	if (bridge->n_sensors == 0) {
++		ret = -EINVAL;
++		goto err_unregister_ipu;
++	}
++
+ 	dev_info(dev, "Connected %d cameras\n", bridge->n_sensors);
+ 
+ 	fwnode = software_node_fwnode(&bridge->ipu_hid_node);
+-- 
+2.43.0
+
 
