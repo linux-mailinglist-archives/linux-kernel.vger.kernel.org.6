@@ -1,78 +1,58 @@
-Return-Path: <linux-kernel+bounces-175844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9655B8C2614
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:52:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1FF8C2610
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02BB9284567
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52991F229E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36AA812C55D;
-	Fri, 10 May 2024 13:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FD512C539;
+	Fri, 10 May 2024 13:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HLbacjPM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lk41rZJK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384BB12C539
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2254912C46B;
+	Fri, 10 May 2024 13:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715349151; cv=none; b=CBeJCcM/LfEoGMliWUx3ZBvPWucW3xj/1sIB1UmprULhjhWfIZL8IHuDNfJ2NwuSd/hzJY4Gl2hTWqSR7KKGr4QF5q7I74+UwjF/mNK+X9lhk28G62gQlAEbJSSY6QDd5aZbR0R2w0FpB/Ka48wlYZQPVRk0ZTfk9YjpY+m3uWQ=
+	t=1715349132; cv=none; b=E4EMfDtej/wmmnWAeRw/aYbTSsOImzH/nPgLaRSGQbbVGN9wos+Pso9Iu8Faf7jPXpMYEmnKj23xSRzyW0HDPOsaogo93tqy6lBbCPrOKn2XrptmHI34AEUCDhJ3Gp7CrWxOzmVs+3iiTaZT5Y1KepgAd+QqxyGVki+H2XuUTxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715349151; c=relaxed/simple;
-	bh=8WQKOarhlV+n52hs+H1jjdRUk7esOoGpFkk8kHxEvRo=;
+	s=arc-20240116; t=1715349132; c=relaxed/simple;
+	bh=ry3Mqd5CmjJo1OW6t11otMfSZLHdOycNCf2A3sVc5zw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFCt9NHNhRyiLNQZ+18izh99y/znLVc6FuGChC1iC/UbZ18Dw4M52Xc49uqQE0XGoA8dyt+/uPHWGe+I7d/ckwZihb0pyxD/jZ5rST24+i7V+WLrgxxiphNIjyZTSupTxZmr9EOxpPg9C2NiJ2vqizP3O6NQW0Dfol2gGXxYsNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HLbacjPM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715349149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8WQKOarhlV+n52hs+H1jjdRUk7esOoGpFkk8kHxEvRo=;
-	b=HLbacjPMQqrnFIZLRGVmCsiGs4JFVWCSX6ukQc8VfC891AueadFjDqu1OSzagAKJUrrdDR
-	GgXhnCZY03z85vMl9wfYINP89HzElPKhLsZXf/GzlyJ6bVCAs44PEdaoZIersWqOZt5r54
-	9GQsQKC0qqmDouRTP9L/f7Emenok6s0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-487-AV0Th6AeOAm7wyofLfpVvg-1; Fri, 10 May 2024 09:52:26 -0400
-X-MC-Unique: AV0Th6AeOAm7wyofLfpVvg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5CA13857A81;
-	Fri, 10 May 2024 13:52:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.196])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 22B35CF5E1B;
-	Fri, 10 May 2024 13:52:23 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 10 May 2024 15:51:00 +0200 (CEST)
-Date: Fri, 10 May 2024 15:50:57 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
-Message-ID: <20240510135057.GC24764@redhat.com>
-References: <20240507093530.3043-1-urezki@gmail.com>
- <20240507093530.3043-26-urezki@gmail.com>
- <ZjpAsYJIfzYSKgdA@redhat.com>
- <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
- <20240510131849.GB24764@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImMpl2HbJFde06gs1k8K5EsWeuTZG8ibRi0h+J+x8J3HM+53y7QG+pghzs9XzlyqcVEqz4fmOUvESXngzIuHd+aLQdqrcyH/tC/C4+uQK73aHr/lVinR5QZ00gPiXUM5RPbiiZwlTe9VdjONTlwK5fjbdIuD3+43ULrFqdcJNEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lk41rZJK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5F5C113CC;
+	Fri, 10 May 2024 13:52:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715349131;
+	bh=ry3Mqd5CmjJo1OW6t11otMfSZLHdOycNCf2A3sVc5zw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Lk41rZJK3VuvbLw/K4mbJGEYZcZtQRKx+pJgrCgPbdgRvxSpLjtJ9yZ/qX7m9yWxN
+	 wZdKh1fDhReCZ2KLxtUH+AnNjlDSX3fFWnvgd0kIZr3YlT5ru2auVr4/t/afrLhskG
+	 yh/SgnmDejtZKH7QezfTnVkxqwo/OJyb+hxqGiwxDlcalJx2jgk3uaqO4IZ7DzTYap
+	 Z6lLZmK6obYPZJCe8ud0Lu+3IKzT/wb7wJZ1TIfCbYPERxRKgcaVv5dE0cPlaVCpF1
+	 KPZhuyUCxl8vm+16EivgnHHnF5/zX/BIxxck7FrznZNvVAoU3pNX9R4pbNK1R0aVK5
+	 mmIlM3k9qpIFg==
+Date: Fri, 10 May 2024 10:52:08 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] perf probe: Allow names to start with digits
+Message-ID: <Zj4miD9TguH5FrjL@x1>
+References: <20240510-perf_digit-v4-0-db1553f3233b@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,28 +61,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240510131849.GB24764@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+In-Reply-To: <20240510-perf_digit-v4-0-db1553f3233b@codewreck.org>
 
-On 05/10, Oleg Nesterov wrote:
->
-> On 05/07, Paul E. McKenney wrote:
-> >
-> > By the stricter data-race rules used in RCU code [1],
-> ...
-> > [1] https://docs.google.com/document/d/1FwZaXSg3A55ivVoWffA9iMuhJ3_Gmj_E494dLYjjyLQ/edit?usp=sharing
->
-> I am getting more and more confused...
->
-> Does this mean that KCSAN/etc treats the files in kernel/rcu/
-> differently than the "Rest of Kernel"? Or what?
->
-> And how is it enforced?
+On Fri, May 10, 2024 at 07:24:29AM +0900, Dominique Martinet wrote:
+> This is a rebase of the patch orginally sent almost two years ago here:
+> https://lkml.kernel.org/r/20220612061508.1449636-1-asmadeus@codewreck.org
+> 
+> At the time I was asked to add tests, and Jiri whipped up something to
+> make the test pass even for probes that don't exist on most systems but
+> that ended up never being formatted or sent... I asked what happened of
+> it and got asked to send it myself, but obviously also totally forget
+> about it myself until I needed it again now.
+> 
+> I've taken the diff from that thread, adapted it a little bit to the
+> current master branch and checked things still fall in place -- I didn't
+> see any obvious problem.
 
-I can only find the strnstr(buf, "rcu") checks in skip_report(),
-but they only cover the KCSAN_REPORT_VALUE_CHANGE_ONLY case...
+Thanks, applied to perf-tools-next,
 
-Oleg.
-
+- Arnaldo
+ 
+> Thanks!
+> 
+> To: Arnaldo Carvalho de Melo <acme@kernel.org>
+> To: Jiri Olsa <jolsa@kernel.org>
+> To: Peter Zijlstra <peterz@infradead.org>
+> To: Ingo Molnar <mingo@redhat.com>
+> To: Namhyung Kim <namhyung@kernel.org>
+> To: Mark Rutland <mark.rutland@arm.com>
+> To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> To: Ian Rogers <irogers@google.com>
+> To: Adrian Hunter <adrian.hunter@intel.com>
+> To: Liang, Kan <kan.liang@linux.intel.com>
+> Cc: linux-perf-users@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> 
+> Changes in v4:
+> - add missing ifdef LIBTRACEEVENT for new test case
+> Note build-test still failed on my setup due to some bpf/cgroup problem,
+> which is more likely a setup problem but means I couldn't verify build
+> all the way:
+> util/bpf_skel/bperf_cgroup.bpf.c:71:10: error: incomplete definition of type 'struct cgroup'
+> - Link to v3: https://lore.kernel.org/r/20240509-perf_digit-v3-0-9036bf7898da@codewreck.org
+> 
+> Changes in v3:
+> - fix evsel__newtp_idx typo in commit 1's message
+> - rebase onto perf-tools-next
+> - add trailers
+> - Link to v2: https://lore.kernel.org/r/20240505-perf_digit-v2-0-6ece307fdaad@codewreck.org
+> 
+> Changes in v2:
+> - update Jiri's email in commit tags
+> - (not a change, but after being brain-dead and Ian helpful
+> reply I'm confirming patch 3/3 works as expected)
+> - Link to v1: https://lore.kernel.org/r/20240407-perf_digit-v1-0-57ec37c63394@codewreck.org
+> 
+> ---
+> Dominique Martinet (3):
+>       perf parse-events: pass parse_state to add_tracepoint
+>       perf parse-events: Add new 'fake_tp' parameter for tests
+>       perf parse: Allow names to start with digits
+> 
+>  tools/perf/tests/parse-events.c | 13 +++++++++++--
+>  tools/perf/tests/pmu-events.c   |  2 +-
+>  tools/perf/util/evlist.c        |  3 ++-
+>  tools/perf/util/evsel.c         | 20 +++++++++++++-------
+>  tools/perf/util/evsel.h         |  4 ++--
+>  tools/perf/util/metricgroup.c   |  3 ++-
+>  tools/perf/util/parse-events.c  | 38 +++++++++++++++++++++++---------------
+>  tools/perf/util/parse-events.h  |  9 ++++++---
+>  tools/perf/util/parse-events.l  |  4 ++--
+>  tools/perf/util/parse-events.y  |  2 +-
+>  10 files changed, 63 insertions(+), 35 deletions(-)
+> ---
+> base-commit: 187c219b57eaf3e1b7a3cab2c6a8b7909bdbf4a9
+> change-id: 20240407-perf_digit-72445b5edb62
+> 
+> Best regards,
+> -- 
+> Dominique Martinet | Asmadeus
 
