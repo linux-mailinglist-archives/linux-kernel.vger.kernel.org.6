@@ -1,112 +1,150 @@
-Return-Path: <linux-kernel+bounces-175529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562508C20E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:28:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD18E8C20E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF7B0B20A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:28:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68799282773
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3048161330;
-	Fri, 10 May 2024 09:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FDE160877;
+	Fri, 10 May 2024 09:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JZLPdWRa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z1KWDMqE"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F371581E3;
-	Fri, 10 May 2024 09:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A3F1581E3
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715333300; cv=none; b=dfGQ1WDicQewvK6ZUfGRZ1peeU5hSWYpI6K7a5Fa1LlCe17aC21oY4J5iGgkHUC9DFXedXVyKujtEKq5fS/wX1szf8x+/Yd5B1BjK0m3J2X5tVuc85W2rBn1uwwqrnUdA7Gp5LWZf1B7sP2frbWojQHCPYLu49FQDMtAIWtO9Yg=
+	t=1715333309; cv=none; b=H6rwPEiEnIuntiruRR7At9KwcJ/1cLCCCxqByn+lnBwsq5fy4LNYqy/53KBmHHA5ikVNkQQdYnA3xmutD3N+BjyrDx20648qwbjnLaS2qqGOr3vnchUeaZI9AxMCAvI1HoFE0euDqoN8OqDGUHfSTKeG/edTIz6w53sCS9dH9pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715333300; c=relaxed/simple;
-	bh=dxTRjOQB8hV7hmmGL+CDfSzZsS7tWt/RvqCgX+Aa4Nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uq99qK0ll5sgi0+HTg4dUu7ZbnWKKwTakO6QFr19OdJHL+SJ6Q6mjTdtbUANUSIm93pD2oWuV/IMx4yOcSEapBXoJ7GxoiVoHsagzYp1ylsU5HHHGciM5Odm/qBPPL8wpE0XAZ7KuSTMya1ZX1yBI+sBPj5AA4HHNrtDsxlNJX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JZLPdWRa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CFBC113CC;
-	Fri, 10 May 2024 09:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715333299;
-	bh=dxTRjOQB8hV7hmmGL+CDfSzZsS7tWt/RvqCgX+Aa4Nk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JZLPdWRaFF9cWZ1jbLzizYe53nqJZV9fwPKG5mQ8v0hCrqLuVNJx058fmrHjSq5AW
-	 2iX4dOByuR03/AEs6abnHDnvGp7dWIoDjqUBkk29ICt7ZCMGQIMjDrZi3wwgJj7f8q
-	 oL8oA5CRE1GZI/XZTu5SFF6O9pOFCXTveAbcFkqs=
-Date: Fri, 10 May 2024 10:28:14 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Krishna Kurapati <quic_kriskura@quicinc.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"quic_ppratap@quicinc.com" <quic_ppratap@quicinc.com>,
-	"quic_jackp@quicinc.com" <quic_jackp@quicinc.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] usb: dwc3: core: Fix unused variable warning in core
- driver
-Message-ID: <2024051050-pantomime-sudden-a382@gregkh>
-References: <20240506074939.1833835-1-quic_kriskura@quicinc.com>
- <20240508230839.utioi5i2c5kozm4d@synopsys.com>
+	s=arc-20240116; t=1715333309; c=relaxed/simple;
+	bh=npkEZI4MXw4nJIcvLl+P2EYGWqMbLDMcOWgp259eNj0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=fjFaBjhbfQgQd+o8ouLx2B/RMhrOt/4GOHz1Igy9flpi8A18Kh+jN6/VM0hVIGMI+McNho6L0CehUI7CsFflfIFvb4n/SA/y+PBNIMbFGo9VvVvQGKrF5fAGyfLR6k3j8758Ec4T2KmzGjhZ9V5X3gtiWbd9abb7rUpB9+gkd6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z1KWDMqE; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41f9ce16ed8so18610385e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:28:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715333306; x=1715938106; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wH7osSqVMbrj6VsQFgjVp/pbaHR3TYk56MkptLMlbMo=;
+        b=Z1KWDMqEGTg05/IsaK+D13jdU9ATHxjCul6A4xYZBsEKWffNSjp78oaw3Nsu8HV0uP
+         0PMsr0nx4SghSmGeCOQc+8OJ36lr9bX3WuEMprzaEdZ0xk/ru3A9A7qKq5T9Xoj1gjAc
+         lNZeryYvwf2GIpAgB278Y5SfT/8/tRvPbmoy6jObEb5oc5L1EUWaYOu9zlqIFQ56dNn1
+         4YF6B5x3BHU8oUalfb24IskQrxs+/wOiRJQVxXCqYKnRS7Z6LuGr2Jbdgj+Jz7yu8TfY
+         6jCbWuumDIiceJt/dJ9jtXTTLejOTOzDdOmAqCQTTb8wBax2zoMR94x4C3fv+YMra33s
+         a0Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715333306; x=1715938106;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wH7osSqVMbrj6VsQFgjVp/pbaHR3TYk56MkptLMlbMo=;
+        b=njq4/PUx5cxF6WFeiO7jZiRegbC1HeLM+qvH/tfAYxZFW2gtVAeY72rDJWpSq6xObP
+         7H7aoX4RGdXBwMaX6Q3nL6KwhtG1TeAi9FxJCxhGtn7Az4+aXtG5GlmeFpkrx4Pvr+5x
+         SJwWuQJF2wv3lk1IXrUmKdI4bAooGpFoQ1J9ZNnVsK6V1qmJnD3IAsxuSdB6SsLgdLHE
+         uox7H7NCGRpQ20tv5mBe9dEhluBOUSeIKIlyA7jBD/Lv72fPOT/rEiNtk854jfjT9sQA
+         5iGTnaLk17tj4aGq2Hn8E5KNa772K54mdj8uFeq+OSxusIbh24uOqQrFeUVwIul7YRjI
+         gXmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNx082yIP3ktKTKmQEyyKIEIe9IO0elwZZLsxQqVCmfQYZFXSbJGGz7+RQYy3QJ0O+CR5t4DpZJmkur2upmblXn1uG68uHVTpOi+dx
+X-Gm-Message-State: AOJu0YziAoahsoMPrgkzePxdtAXin1tTxkY8Mv8wtjN4n59M3NaBUxs1
+	w8AmMjOreWv9FSJ/H32MALcJ/Vqqus5j4YRfzqdnBqagI+oHqci3Uz+KEkcbH/0=
+X-Google-Smtp-Source: AGHT+IG/8TWcbU3oR2gbc1O+Jdy2h/xcTp99F0XzD8u9YQqAeOagcu6s3MA7ns0AfEWm4csQl3AdLg==
+X-Received: by 2002:adf:fd0b:0:b0:346:1443:27ea with SMTP id ffacd0b85a97d-3504aa6886dmr1678726f8f.68.1715333306012;
+        Fri, 10 May 2024 02:28:26 -0700 (PDT)
+Received: from [192.168.2.1] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41fcc6fd84bsm57306335e9.44.2024.05.10.02.28.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 02:28:25 -0700 (PDT)
+Message-ID: <69f74548-147b-43e3-acaf-8b62c51f131d@linaro.org>
+Date: Fri, 10 May 2024 11:28:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240508230839.utioi5i2c5kozm4d@synopsys.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Stephen Boyd <swboyd@chromium.org>,
+ Linux PM mailing list <linux-pm@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [GIT PULL] timer drivers material for v6.10-rc1
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 08, 2024 at 11:08:43PM +0000, Thinh Nguyen wrote:
-> On Mon, May 06, 2024, Krishna Kurapati wrote:
-> > While fixing a merge conflict in linux-next, hw_mode variable
-> > was left unused. Remove the unused variable in hs_phy_setup call.
-> > 
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://urldefense.com/v3/__https://lore.kernel.org/all/202405030439.AH8NR0Mg-lkp@intel.com/__;!!A4F2R9G_pg!aXN14tvkvwnNZ9N8-EDi-Seef9jgZBKlkZRYasINRgTOU2ijWbTvFIxkZIXOThGQQHmXc0FjiJPFI1cgdCOyAafAxB-70Q$ 
-> > Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
-> > ---
-> > Changes in v2:
-> > Added reported by and closes tags.
-> > 
-> >  drivers/usb/dwc3/core.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > index 8b6f7769fcd5..7f176ba25354 100644
-> > --- a/drivers/usb/dwc3/core.c
-> > +++ b/drivers/usb/dwc3/core.c
-> > @@ -676,11 +676,8 @@ static int dwc3_ss_phy_setup(struct dwc3 *dwc, int index)
-> >  
-> >  static int dwc3_hs_phy_setup(struct dwc3 *dwc, int index)
-> >  {
-> > -	unsigned int hw_mode;
-> >  	u32 reg;
-> >  
-> > -	hw_mode = DWC3_GHWPARAMS0_MODE(dwc->hwparams.hwparams0);
-> > -
-> >  	reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(index));
-> >  
-> >  	/* Select the HS PHY interface */
-> > -- 
-> > 2.34.1
-> > 
-> 
-> Looks like my response reporting the merge issue to Stephen fell through
-> the cracks.
-> 
-> Thanks for the patch.
-> 
-> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Hi Thomas,
 
-I think I already fixed this up when I did the merge a few hours ago, if
-not, please let me know.
+please consider pulling the following changes since commit 
+ddd9120983c3efbcaa3a4c7777da1440f8ce27d8:
 
-thanks,
+   rust: time: doc: Add missing C header links (2024-05-01 00:04:47 +0200)
 
-greg k-h
+are available in the Git repository at:
+
+   ssh://git@git.linaro.org/people/daniel.lezcano/linux.git 
+tags/timers-v6.10-rc1
+
+for you to fetch changes up to 2030a7e11f161b4067bd4eadd984cdb36446fcca:
+
+   clocksource/drivers/arm_arch_timer: Mark hisi_161010101_oem_info 
+const (2024-05-10 10:43:21 +0200)
+
+----------------------------------------------------------------
+- Add the R9A09G057 compatible bindings in the DT documentation and
+   add specific code to deal with the probe routine being called twice
+   (Geert Uytterhoeven)
+
+- Remove unused field in the struct dmtimer in the TI driver
+   (Christophe JAILLET)
+
+- Constify the hisi_161010101_oem_info variable in the ARM arch timer
+   (Stephen Boyd)
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+       clocksource/drivers/timer-ti-dm: Remove an unused field in struct 
+dmtimer
+
+Geert Uytterhoeven (1):
+       clocksource/drivers/renesas-ostm: Avoid reprobe after successful 
+early probe
+
+Lad Prabhakar (2):
+       dt-bindings: timer: renesas: ostm: Document Renesas RZ/V2H(P) SoC
+       clocksource/drivers/renesas-ostm: Allow OSTM driver to reprobe 
+for RZ/V2H(P) SoC
+
+Stephen Boyd (1):
+       clocksource/drivers/arm_arch_timer: Mark hisi_161010101_oem_info 
+const
+
+  Documentation/devicetree/bindings/timer/renesas,ostm.yaml | 2 ++
+  drivers/clocksource/arm_arch_timer.c                      | 2 +-
+  drivers/clocksource/renesas-ostm.c                        | 3 ++-
+  drivers/clocksource/timer-ti-dm.c                         | 1 -
+  4 files changed, 5 insertions(+), 3 deletions(-)
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
