@@ -1,205 +1,293 @@
-Return-Path: <linux-kernel+bounces-175444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1248C1FCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:35:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787BA8C1FD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF4901C20CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059931F21EAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A9C76020;
-	Fri, 10 May 2024 08:35:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8997C15F410;
+	Fri, 10 May 2024 08:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Eb0SHqsU"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249264C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D7D4C8E;
+	Fri, 10 May 2024 08:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715330099; cv=none; b=sCy8czvUph+dorH2y4s7U4H235teCHOA9UoMly3yuwPHp1cym72UgmHDDwM0FWfJSGsiS61XDLkQAkZsrLMci7xWkDa9W1VmANZGtEhmfbjoR8wYPLp1g7NUkgyCrMFdx9pxovcf3qZRFFyEcPYLMOd6kLDAM61pcwf57m/z4Kc=
+	t=1715330108; cv=none; b=qIW2FLZK8SZnywh9hRE5+uXasZjutH/MSF0pcDEPthO3opFjAP0hX1NVqYdCLYSk9aXL7FejSXnCOrjJ9V4bvI1PLTU3CDjRcF2ew4MDzJWEK+fGDq3lRMn+ychTiyIbTK31NrqKCJNfJZMRJYifhxf9wiLAwa/RXWrqxEcxNkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715330099; c=relaxed/simple;
-	bh=vZWUoNmqRjHSrak22YzHspxbzh2s/o2BGk72PD9s83M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ht8YZPYreQEV1DSH1xtFiItMIH29eIWn9/DHUA+h7Nsff9L5A4NUhW+7cnYYhw8Yfo/ophVWsWXX54bMnXU8mkryRAhFBkeqsDvoe4Px7UtJbfAfWnAMFxmQ6BhMAF4lC5ZXS54LMUeRQsP1jrJhWFFD+unLK22oku4Ua9F6J/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1s5LiP-0003WU-RF; Fri, 10 May 2024 10:34:53 +0200
-Message-ID: <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de>
-Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org
-Cc: Oded Gabbay <ogabbay@kernel.org>, Russell King
- <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
- <christian.gmeiner@gmail.com>,  David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org
-Date: Fri, 10 May 2024 10:34:47 +0200
-In-Reply-To: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
-References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1715330108; c=relaxed/simple;
+	bh=fSdv4N2WgM/j/qieDteB3FKPdnsZFU+2RzY5+6Ty8JY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U3p+d53AWRhBNP9+FudTgigctBQpxECiBo085gF0l9RTFFK832LM+nzomDYccy6EYVheAS83aH7ZXw9WXZ4XGRYC2KxgFjGMgx6drZ4w0KE4umeAg+1JC9FMpm94rqOxRurTHhGf8oMXfGNuZaKKMMwnKD7YPx+V1CANKmrayrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Eb0SHqsU; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44A8Yn5x050018;
+	Fri, 10 May 2024 03:34:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715330089;
+	bh=GI6oEA2QVWZJvhD/px+AWLRw8+LhpQZ7GSAyHEDFFac=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=Eb0SHqsUO9QvyYbz5aw+LfNtrYbYmB8n3yossa7QFQZIFuePhUPJQ1WheDijjt9o9
+	 8NDJCFskA2PnZsTESvEZzwSgjL48vGJDi4uTf9FaiX4P/X0i6aOKrM0KDdHSMxGYZO
+	 3C8q0YTQQQ8BmCYzXNy4KSEWm23hEFa6qUd7LnMY=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44A8YniC059965
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 10 May 2024 03:34:49 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 10
+ May 2024 03:34:49 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 10 May 2024 03:34:49 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44A8YmK1075386;
+	Fri, 10 May 2024 03:34:48 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>
+CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <devarsht@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>, <ezequiel@vanguardiasur.com.ar>,
+        <p.zabel@pengutronix.de>, <linux-rockchip@lists.infradead.org>
+Subject: [PATCH RESEND v7 4/8] media: imagination: Use exported tables from v4l2-jpeg core
+Date: Fri, 10 May 2024 14:04:48 +0530
+Message-ID: <20240510083448.1277908-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20240510082603.1263256-1>
+References: <20240510082603.1263256-1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Tomeu,
+Use exported huffman and quantization tables from v4l2-jpeg core library.
 
-Am Mittwoch, dem 24.04.2024 um 08:37 +0200 schrieb Tomeu Vizoso:
-> If we expose a render node for NPUs without rendering capabilities, the
-> userspace stack will offer it to compositors and applications for
-> rendering, which of course won't work.
->=20
-> Userspace is probably right in not questioning whether a render node
-> might not be capable of supporting rendering, so change it in the kernel
-> instead by exposing a /dev/accel node.
->=20
-> Before we bring the device up we don't know whether it is capable of
-> rendering or not (depends on the features of its blocks), so first try
-> to probe a rendering node, and if we find out that there is no rendering
-> hardware, abort and retry with an accel node.
->=20
-I thought about this for a while. My opinion is that this is the wrong
-approach. We are adding another path to the kernel driver, potentially
-complicating the userspace side, as now the NPU backend needs to look
-for both render and accel nodes. While currently accel and drm are
-pretty closely related and we can share most of the driver, it might
-still be a maintenance hassle in the long run.
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+V1->V6 (No change, patch introduced in V7)
+---
+ .../platform/imagination/e5010-jpeg-enc.c     | 140 +++---------------
+ 1 file changed, 19 insertions(+), 121 deletions(-)
 
-On the other hand we already have precedence of compute only DRM
-devices exposing a render node: there are AMD GPUs that don't expose a
-graphics queue and are thus not able to actually render graphics. Mesa
-already handles this in part via the PIPE_CAP_GRAPHICS and I think we
-should simply extend this to not offer a EGL display on screens without
-that capability.
-
-Regards,
-Lucas
-
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-> Cc: Oded Gabbay <ogabbay@kernel.org>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c | 46 ++++++++++++++++++++++-----
->  1 file changed, 38 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etna=
-viv/etnaviv_drv.c
-> index 6500f3999c5f..8e7dd23115f4 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -11,6 +11,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/uaccess.h>
-> =20
-> +#include <drm/drm_accel.h>
->  #include <drm/drm_debugfs.h>
->  #include <drm/drm_drv.h>
->  #include <drm/drm_file.h>
-> @@ -488,10 +489,10 @@ static const struct drm_ioctl_desc etnaviv_ioctls[]=
- =3D {
->  	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
->  };
-> =20
-> -DEFINE_DRM_GEM_FOPS(fops);
-> +DEFINE_DRM_GEM_FOPS(render_fops);
-> +DEFINE_DRM_ACCEL_FOPS(accel_fops);
-> =20
-> -static const struct drm_driver etnaviv_drm_driver =3D {
-> -	.driver_features    =3D DRIVER_GEM | DRIVER_RENDER,
-> +static struct drm_driver etnaviv_drm_driver =3D {
->  	.open               =3D etnaviv_open,
->  	.postclose           =3D etnaviv_postclose,
->  	.gem_prime_import_sg_table =3D etnaviv_gem_prime_import_sg_table,
-> @@ -500,7 +501,6 @@ static const struct drm_driver etnaviv_drm_driver =3D=
+diff --git a/drivers/media/platform/imagination/e5010-jpeg-enc.c b/drivers/media/platform/imagination/e5010-jpeg-enc.c
+index 5606d9c90d80..189e2a99c43d 100644
+--- a/drivers/media/platform/imagination/e5010-jpeg-enc.c
++++ b/drivers/media/platform/imagination/e5010-jpeg-enc.c
+@@ -32,116 +32,6 @@
+ #include "e5010-jpeg-enc.h"
+ #include "e5010-jpeg-enc-hw.h"
+ 
+-/* Luma and chroma qp table to achieve 50% compression quality
+- * This is as per example in Annex K.1 of ITU-T.81
+- */
+-static const u8 luma_q_table[64] = {
+-	16, 11, 10, 16, 24, 40, 51, 61,
+-	12, 12, 14, 19, 26, 58, 60, 55,
+-	14, 13, 16, 24, 40, 57, 69, 56,
+-	14, 17, 22, 29, 51, 87, 80, 62,
+-	18, 22, 37, 56, 68, 109, 103, 77,
+-	24, 35, 55, 64, 81, 104, 113, 92,
+-	49, 64, 78, 87, 103, 121, 120, 101,
+-	72, 92, 95, 98, 112, 100, 103, 99
+-};
+-
+-static const u8 chroma_q_table[64] = {
+-	17, 18, 24, 47, 99, 99, 99, 99,
+-	18, 21, 26, 66, 99, 99, 99, 99,
+-	24, 26, 56, 99, 99, 99, 99, 99,
+-	47, 66, 99, 99, 99, 99, 99, 99,
+-	99, 99, 99, 99, 99, 99, 99, 99,
+-	99, 99, 99, 99, 99, 99, 99, 99,
+-	99, 99, 99, 99, 99, 99, 99, 99,
+-	99, 99, 99, 99, 99, 99, 99, 99
+-};
+-
+-/* Zigzag scan pattern */
+-static const u8 zigzag[64] = {
+-	0,   1,  8, 16,  9,  2,  3, 10,
+-	17, 24, 32, 25, 18, 11,  4,  5,
+-	12, 19, 26, 33, 40, 48, 41, 34,
+-	27, 20, 13,  6,  7, 14, 21, 28,
+-	35, 42, 49, 56, 57, 50, 43, 36,
+-	29, 22, 15, 23, 30, 37, 44, 51,
+-	58, 59, 52, 45, 38, 31, 39, 46,
+-	53, 60, 61, 54, 47, 55, 62, 63
+-};
+-
+-/*
+- * Contains the data that needs to be sent in the marker segment of an interchange format JPEG
+- * stream or an abbreviated format table specification data stream.
+- * Specifies the huffman table used for encoding the luminance DC coefficient differences.
+- * The table represents Table K.3 of ITU-T.81
+- */
+-static const u8 luma_dc_table[] = {
+-	0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01,
+-	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
+-};
+-
+-/*
+- * Contains the data that needs to be sent in the marker segment of an interchange format JPEG
+- * stream or an abbreviated format table specification data stream.
+- * Specifies the huffman table used for encoding the luminance AC coefficients.
+- * The table represents Table K.5 of ITU-T.81
+- */
+-static const u8 luma_ac_table[] = {
+-	0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03,
+-	0x05, 0x05, 0x04, 0x04, 0x00, 0x00, 0x01, 0x7D,
+-	0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12, 0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61,
+-	0x07, 0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xA1, 0x08, 0x23, 0x42, 0xB1, 0xC1, 0x15, 0x52,
+-	0xD1, 0xF0, 0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0A, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x25,
+-	0x26, 0x27, 0x28, 0x29, 0x2A, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x43, 0x44, 0x45,
+-	0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x63, 0x64,
+-	0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x83,
+-	0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98, 0x99,
+-	0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6,
+-	0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xD2, 0xD3,
+-	0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7, 0xE8,
+-	0xE9, 0xEA, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
+-};
+-
+-/*
+- * Contains the data that needs to be sent in the marker segment of an interchange format JPEG
+- * stream or an abbreviated format table specification data stream.
+- * Specifies the huffman table used for encoding the chrominance DC coefficient differences.
+- * The table represents Table K.4 of ITU-T.81
+- */
+-static const u8 chroma_dc_table[] = {
+-	0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+-	0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
+-};
+-
+-/*
+- * Contains the data that needs to be sent in the marker segment of an interchange format JPEG
+- * stream or an abbreviated format table specification data stream.
+- * Specifies the huffman table used for encoding the chrominance AC coefficients.
+- * The table represents Table K.6 of ITU-T.81
+- */
+-static const u8 chroma_ac_table[] = {
+-	0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04,
+-	0x07, 0x05, 0x04, 0x04, 0x00, 0x01, 0x02, 0x77,
+-	0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21, 0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61,
+-	0x71, 0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91, 0xA1, 0xB1, 0xC1, 0x09, 0x23, 0x33,
+-	0x52, 0xF0, 0x15, 0x62, 0x72, 0xD1, 0x0A, 0x16, 0x24, 0x34, 0xE1, 0x25, 0xF1, 0x17, 0x18,
+-	0x19, 0x1A, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x43, 0x44,
+-	0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x63,
+-	0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A,
+-	0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97,
+-	0x98, 0x99, 0x9A, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xB2, 0xB3, 0xB4,
+-	0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA,
+-	0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7,
+-	0xE8, 0xE9, 0xEA, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA
+-};
+-
+-#define JPEG_LUM_HT		0x00
+-#define JPEG_CHR_HT		0x01
+-#define JPEG_DC_HT		0x00
+-#define JPEG_AC_HT		0x10
+-
+ /* forward declarations */
+ static const struct of_device_id e5010_of_match[];
+ 
+@@ -270,6 +160,9 @@ static void calculate_qp_tables(struct e5010_context *ctx)
  {
->  #endif
->  	.ioctls             =3D etnaviv_ioctls,
->  	.num_ioctls         =3D DRM_ETNAVIV_NUM_IOCTLS,
-> -	.fops               =3D &fops,
->  	.name               =3D "etnaviv",
->  	.desc               =3D "etnaviv DRM",
->  	.date               =3D "20151214",
-> @@ -508,15 +508,20 @@ static const struct drm_driver etnaviv_drm_driver =
-=3D {
->  	.minor              =3D 4,
->  };
-> =20
-> -/*
-> - * Platform driver:
-> - */
-> -static int etnaviv_bind(struct device *dev)
-> +static int etnaviv_bind_with_type(struct device *dev, u32 type)
->  {
->  	struct etnaviv_drm_private *priv;
->  	struct drm_device *drm;
-> +	bool is_compute_only =3D true;
->  	int ret;
-> =20
-> +	etnaviv_drm_driver.driver_features =3D DRIVER_GEM | type;
-> +
-> +	if (type =3D=3D DRIVER_RENDER)
-> +		etnaviv_drm_driver.fops =3D &render_fops;
-> +	else
-> +		etnaviv_drm_driver.fops =3D &accel_fops;
-> +
->  	drm =3D drm_dev_alloc(&etnaviv_drm_driver, dev);
->  	if (IS_ERR(drm))
->  		return PTR_ERR(drm);
-> @@ -553,6 +558,18 @@ static int etnaviv_bind(struct device *dev)
-> =20
->  	load_gpu(drm);
-> =20
-> +	for (unsigned int i =3D 0; i < ETNA_MAX_PIPES; i++) {
-> +		struct etnaviv_gpu *g =3D priv->gpu[i];
-> +
-> +		if (g && (g->identity.minor_features8 & chipMinorFeatures8_COMPUTE_ONL=
-Y) =3D=3D 0)
-> +			is_compute_only =3D false;
-> +	}
-> +
-> +	if (type =3D=3D DRIVER_RENDER && is_compute_only) {
-> +		ret =3D -EINVAL;
-> +		goto out_unbind;
-> +	}
-> +
->  	ret =3D drm_dev_register(drm, 0);
->  	if (ret)
->  		goto out_unbind;
-> @@ -571,6 +588,19 @@ static int etnaviv_bind(struct device *dev)
->  	return ret;
->  }
-> =20
-> +/*
-> + * Platform driver:
-> + */
-> +static int etnaviv_bind(struct device *dev)
-> +{
-> +	int ret =3D etnaviv_bind_with_type(dev, DRIVER_RENDER);
-> +
-> +	if (ret =3D=3D -EINVAL)
-> +		return etnaviv_bind_with_type(dev, DRIVER_COMPUTE_ACCEL);
-> +
-> +	return ret;
-> +}
-> +
->  static void etnaviv_unbind(struct device *dev)
->  {
->  	struct drm_device *drm =3D dev_get_drvdata(dev);
+ 	long long luminosity, contrast;
+ 	int quality, i;
++	const u8 *luma_q_table, *chroma_q_table;
++
++	v4l2_jpeg_get_reference_quantization_tables(&luma_q_table, &chroma_q_table);
+ 
+ 	quality = 50 - ctx->quality;
+ 
+@@ -281,7 +174,7 @@ static void calculate_qp_tables(struct e5010_context *ctx)
+ 		contrast *= INCREASE;
+ 	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(luma_q_table); i++) {
++	for (i = 0; i < V4L2_JPEG_PIXELS_IN_BLOCK; i++) {
+ 		long long delta = chroma_q_table[i] * contrast + luminosity;
+ 		int val = (int)(chroma_q_table[i] + delta);
+ 
+@@ -927,41 +820,46 @@ static void encode_marker_segment(struct e5010_context *ctx, void *addr, unsigne
+ {
+ 	u8 *buffer = (u8 *)addr;
+ 	int i;
++	const u8 *luma_dc_table, *chroma_dc_table, *luma_ac_table, *chroma_ac_table, *zigzag;
++
++	v4l2_jpeg_get_reference_huffman_tables(&luma_dc_table,  &luma_ac_table, &chroma_dc_table,
++					       &chroma_ac_table);
++	v4l2_jpeg_get_zig_zag_scan(&zigzag);
+ 
+ 	header_write(ctx, buffer, offset, 2, START_OF_IMAGE);
+ 	header_write(ctx, buffer, offset, 2, DQT_MARKER);
+ 	header_write(ctx, buffer, offset, 3, LQPQ << 4);
+-	for (i = 0; i < PELS_IN_BLOCK; i++)
++	for (i = 0; i < V4L2_JPEG_PIXELS_IN_BLOCK; i++)
+ 		header_write(ctx, buffer, offset, 1, ctx->luma_qp[zigzag[i]]);
+ 
+ 	header_write(ctx, buffer, offset, 2, DQT_MARKER);
+ 	header_write(ctx, buffer, offset, 3, (LQPQ << 4) | 1);
+-	for (i = 0; i < PELS_IN_BLOCK; i++)
++	for (i = 0; i < V4L2_JPEG_PIXELS_IN_BLOCK; i++)
+ 		header_write(ctx, buffer, offset, 1, ctx->chroma_qp[zigzag[i]]);
+ 
+ 	/* Huffman tables */
+ 	header_write(ctx, buffer, offset, 2, DHT_MARKER);
+ 	header_write(ctx, buffer, offset, 2, LH_DC);
+-	header_write(ctx, buffer, offset, 1, JPEG_LUM_HT | JPEG_DC_HT);
+-	for (i = 0 ; i < ARRAY_SIZE(luma_dc_table); i++)
++	header_write(ctx, buffer, offset, 1, V4L2_JPEG_LUM_HT | V4L2_JPEG_DC_HT);
++	for (i = 0 ; i < V4L2_JPEG_REF_HT_DC_LEN; i++)
+ 		header_write(ctx, buffer, offset, 1, luma_dc_table[i]);
+ 
+ 	header_write(ctx, buffer, offset, 2, DHT_MARKER);
+ 	header_write(ctx, buffer, offset, 2, LH_AC);
+-	header_write(ctx, buffer, offset, 1, JPEG_LUM_HT | JPEG_AC_HT);
+-	for (i = 0 ; i < ARRAY_SIZE(luma_ac_table); i++)
++	header_write(ctx, buffer, offset, 1, V4L2_JPEG_LUM_HT | V4L2_JPEG_AC_HT);
++	for (i = 0 ; i < V4L2_JPEG_REF_HT_AC_LEN; i++)
+ 		header_write(ctx, buffer, offset, 1, luma_ac_table[i]);
+ 
+ 	header_write(ctx, buffer, offset, 2, DHT_MARKER);
+ 	header_write(ctx, buffer, offset, 2, LH_DC);
+-	header_write(ctx, buffer, offset, 1, JPEG_CHR_HT | JPEG_DC_HT);
+-	for (i = 0 ; i < ARRAY_SIZE(chroma_dc_table); i++)
++	header_write(ctx, buffer, offset, 1, V4L2_JPEG_CHR_HT | V4L2_JPEG_DC_HT);
++	for (i = 0 ; i < V4L2_JPEG_REF_HT_DC_LEN; i++)
+ 		header_write(ctx, buffer, offset, 1, chroma_dc_table[i]);
+ 
+ 	header_write(ctx, buffer, offset, 2, DHT_MARKER);
+ 	header_write(ctx, buffer, offset, 2, LH_AC);
+-	header_write(ctx, buffer, offset, 1, JPEG_CHR_HT | JPEG_AC_HT);
+-	for (i = 0 ; i < ARRAY_SIZE(chroma_ac_table); i++)
++	header_write(ctx, buffer, offset, 1, V4L2_JPEG_CHR_HT | V4L2_JPEG_AC_HT);
++	for (i = 0 ; i < V4L2_JPEG_REF_HT_AC_LEN; i++)
+ 		header_write(ctx, buffer, offset, 1, chroma_ac_table[i]);
+ }
+ 
+-- 
+2.39.1
 
 
