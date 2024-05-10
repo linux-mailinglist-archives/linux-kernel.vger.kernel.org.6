@@ -1,94 +1,167 @@
-Return-Path: <linux-kernel+bounces-176149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0756D8C2AC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:46:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A48E8C2AC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B213F1F238F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC0CBB22A9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AD14CE05;
-	Fri, 10 May 2024 19:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DCA4C637;
+	Fri, 10 May 2024 19:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XKu1207C"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hJX3BQXB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323394AEC1
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 19:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E334317E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 19:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715370377; cv=none; b=Nvos/s1YDSfeN5puZOBetVY9Ng0b4BHvyKM3canZK2Amcq8q/n7FV8AbOKSWYVOuYuZM/cZn1X46EeGUqRl6QGRkQUs9DCIYXn04RCbo7sxp07M32zJvEWcBHPdIfW/D8b4HW1D5DuGjqpHHTiDMa4uo3I8P14o8sz1eZus6UH4=
+	t=1715370499; cv=none; b=UFlj8s80iRaQDzLi3NV6ixpUBFoql+FL2sOit3Cd4m2qQbS+z6dh+kYI60sP8EODhK/frY2am2e20BjaU62m9JdWHYY/G/CgO4OgcXML+SY7liiP8t3r0TTmkiGU/sUFmKrhMNmAvIqrtfvZ12qXerYdRQdqrBZKkj2g31k01Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715370377; c=relaxed/simple;
-	bh=g5kYHFJnjQGsLeTWX/w7fQ5Mz/mRyoUbOgayf2lFI9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J0bNTE3tiGCbiuruUzoz2HyHL4O2ViMdUrPiHPTwubvqr5zz2drKxXJzPs8SlV1Xyzggq7DXLnuOs6l3qd4+VbppXgna3FmrblNefwEUOGKfKiVI9ct/ocFpzKM20LO1cYoQnfESeX74WSY5uTO0q5GD2LD2HulzWUCfK1pqrqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XKu1207C; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-572aad902baso3043a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715370374; x=1715975174; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g5kYHFJnjQGsLeTWX/w7fQ5Mz/mRyoUbOgayf2lFI9I=;
-        b=XKu1207CLTpv13BSMASfjIq0j+rPfocvoMqR8wybjCG1jbmu+HfrjldiZhyOWqJ62w
-         Bx6URm5ZF2XDauEHQKNOvjaVs8iV81keTJNraBdPFC04NtuvKCnDeQ02Nc13bSOuZGfD
-         vuIo8DBJnCxaGY5BAPuMLllkVp28izCBzdKKMzF3qikQR+pE3OH1ZP0UAObwJXkD/iXt
-         p8DkJptgfCEt+upZ28T9HDhUvcB7vpZ3Oo+UQldbo/zV/9aSqQDIWyoYEYC37v7kwdZZ
-         5KWvPqLOnuf3R7fsu/GMcqM48c3hjGoG5A7OVRf3Qvs9VDje7gcZuedLLhuuh08/8dD6
-         aZPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715370374; x=1715975174;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g5kYHFJnjQGsLeTWX/w7fQ5Mz/mRyoUbOgayf2lFI9I=;
-        b=XZFqq/TCGfu6aHA9QWYNVKTyksyRX+nRiSLPIhZeuKSh74T/t4jLgL93s1nnn/eIxB
-         VyxrucrGM4SB604mJJCZnuZu73H85i/LvAxzh0jXCgF9RfsctlK9ovW7mx5IP9ulzL5b
-         NjWc2S1mDBMEGNv49FKA8INn3WhmWeP2dA5G2mCEuey/ItJTNTJOfT/LSRu8zwrvZmz6
-         VlkkVrfpy3zIXIINaCmPyQzGb5mceUa19fY9YhEyRgAHgKTFjXnXR2ig4/lBzWTn4TNg
-         4S2vdlF2zhojjrOp6HUCSRP6t80mM8St/z5otqTmJUDoROh6xhyIBYzFySlbflqgjYQQ
-         nC1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVa0O8FhzR/7YE9mO4wHa21kMM7Oy+PQ1crrK7Q21Tcdou8Oz6yHLEECiAKJDNp9ICDu9IEwZfTZh+uxptM+SzHxJqN+6BUs8U1mY55
-X-Gm-Message-State: AOJu0YwOPyaLAKTXiw8HfWylCiyAxyqLkklaTrTwlQoHj3/yhluSn4rS
-	7Yt0ORCKXRiAhzVoFNTQiNzeQWunkcOY2vxBCzjKJbqmKUf0KzoINgUXMJ9sAVuCLKpn77C11NY
-	c+WtJqvAkOtqj6kFmZxluLjgdB2TLiXWs5iu+
-X-Google-Smtp-Source: AGHT+IEjkKKgypzFApgZTL0z6ah3x9iM3bgP7Y8Zn5zYPWt30OoG1qkKTUQ+B4bmehmt0GxsYy1tZ9RDpD4OSamQU4Y=
-X-Received: by 2002:a05:6402:907:b0:572:988f:2f38 with SMTP id
- 4fb4d7f45d1cf-57443d4d9c7mr27979a12.6.1715370374302; Fri, 10 May 2024
- 12:46:14 -0700 (PDT)
+	s=arc-20240116; t=1715370499; c=relaxed/simple;
+	bh=CMiGL2sWd2aGfbdzvEKmNZY9N4FQgtR15I4ohL35fkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G/6CqFaixvUcLqTqvqG4ujAYBFXBwxGZAggAV4Ey2wfEnEEe5JG0pzSPK/XELh4BqAeZfW3InHJ57xYu1x+GwSIg2xRsQBlX1wT5WKL+XECj1YGZdsUpx0Exuk+GoGmPQJ8jL2M4k+G2/rEPqnnNAuyZxp0vI+UV2TcaIreElYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hJX3BQXB; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715370498; x=1746906498;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CMiGL2sWd2aGfbdzvEKmNZY9N4FQgtR15I4ohL35fkM=;
+  b=hJX3BQXBU1S9o3o/QEODwapJ+1HgO/mimDGFYdWP6pgSGLSMYyOkxMea
+   89VSYcJCGwyJ/yqIFL4tuqWQNL2paNxj+z9QBhUho29ZEV0Ery8XfpIom
+   i0bPEy46JmOKOi6/wB+UxkclxOLt0hc+fjvmk+wZzXYN2e9G73aPXWgZy
+   eDRDV8ZksZdzx75y9arVeqW2NQVebRMVfcKdQxeD20KBtlhGGqbr2vxkB
+   fJb/YQMbzjrCuD9Gz101uvGvzagzxsRFOkWkhusCWWckfEdUgNyQnGN57
+   hxGkLXBXNkdGNFKIo2MhM8SHp40ZIsg1kedS0hia5TVMrdPNjI4ylzU/T
+   w==;
+X-CSE-ConnectionGUID: 1fAO1QqWSfyVB5drgf4bmg==
+X-CSE-MsgGUID: +U0zX3mqSVy5s2A92YucXw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11534167"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="11534167"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 12:48:18 -0700
+X-CSE-ConnectionGUID: f/ugZBk2QXGZrOQ7kSzH3w==
+X-CSE-MsgGUID: UkmdNvhORKeQLtMkM2bQlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="29662577"
+Received: from viggo.jf.intel.com (HELO [127.0.0.1]) ([10.54.77.144])
+  by fmviesa008.fm.intel.com with ESMTP; 10 May 2024 12:48:15 -0700
+Message-ID: <e7047fd5-8bcf-42aa-9729-125bb7304f35@linux.intel.com>
+Date: Fri, 10 May 2024 12:48:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510184324.2944101-1-jthies@google.com> <20240510184324.2944101-2-jthies@google.com>
-In-Reply-To: <20240510184324.2944101-2-jthies@google.com>
-From: Jameson Thies <jthies@google.com>
-Date: Fri, 10 May 2024 12:46:01 -0700
-Message-ID: <CAMFSARcVjCUoGTnNAwy6+RDZ0J6x1hxhVQzdDGOpa0b4cEQJWQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] usb: typec: ucsi: Fix null pointer dereference in trace
-To: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org
-Cc: pmalani@chromium.org, bleung@google.com, abhishekpandit@chromium.org, 
-	andersson@kernel.org, dmitry.baryshkov@linaro.org, 
-	fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, hdegoede@redhat.com, 
-	neil.armstrong@linaro.org, rajaram.regupathy@intel.com, 
-	saranya.gopal@intel.com, linux-kernel@vger.kernel.org, 
-	Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] x86/vector: Fix vector leak during CPU offline
+To: Dongli Zhang <dongli.zhang@oracle.com>, x86@kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, Borislavbp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, joe.jin@oracle.com,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev
+References: <20240510190623.117031-1-dongli.zhang@oracle.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzU5EYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcyAjMikgPGRhdmUuaGFuc2VuQGxp
+ bnV4LmludGVsLmNvbT7CwXgEEwECACIFAlRAAv0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4B
+ AheAAAoJEGg1lTBwyZKwgjMP/19ErEr2gZW5HufybCDiyP/oYlPd3bNpp+iF85pcjN7+lT+K
+ eMUOaGAPxJ896ZdCChByqicVmgVaVZBghrLADCDhTbXmRohYf0naPI3qfHsnzvt6Z7QVaDb+
+ aXzROQvRnlVkTays23MkLwUM9vP259/FD3hAJVXQU+l3uNCGn4J41YtrJPmR5N7WpoU1U6RZ
+ UF0OgPnflG/h9cXYA8jgJbRulYneADIi7T95vf832Nexa4xZnBKat6usArH9B7Gw82jSZgv+
+ g1Nm+KA/KCSZMbRf9xbG+NWk3708q8nlDXN3JyXe+8RwnlRCJEzYSz7wO681/NKyfc0lMa8k
+ u1NtvjbIC3hA7VTD62dwLv/sxpCSywLlM9otgFJsQ3kRe7yCNila89GFasNepyQ1vv8p1tSJ
+ cD8tejoSUprAeSp1xhq2ZIFvvXh7Es76141oNIhusxah/wSfoE3bnUOOyrn8im6mpYhAtCKD
+ YQi03MPt2UG6+Jiy8Pb05W0wNpSRXato3xD4CIPdooYQHmQb3Gq/SF9nfN6qAG+w4k6uubjY
+ YKXWrFC7pFESQ5O+ZMyfbvSniPEVlR4eLQrlRh75PON6iojMHf33AsSKAJzvf+rgagGXXJ3u
+ 5x6kuaLffTkOD4gCe4S9VwP5/uJKyH+OfUqxxLzvye0p98sipmg3yl1qV4VSzsFNBFRjzmoB
+ EACyAxbvUEhdGDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzR
+ rgMZLVgo3uprMIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj5
+ 0ZEifEJ5qn/HNsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoA
+ K8gfgFHuO54BlI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2
+ SWKS9kCai2DR3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6P
+ NRj9mp8Z1kIGqjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc
+ 6eC/GxaiUGuHBNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83
+ E+AipPr09Caj0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g
+ 5KqDf83Fxqm/vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElG
+ MGQjdCcSQ+CiFCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJ
+ EGg1lTBwyZKwl4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp
+ 2XW6AnH1iaynyRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cO
+ vufXkBTm+whm+AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0
+ tBThaDdw1B2lasInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBH
+ sjOKifrVsYepWpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr
+ 2nPb561yjcB8sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothI
+ xzi8pndB8JjuKktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioF
+ ltsp1jUaRwQZMTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKD
+ JEXLIjYWo1PHhYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48
+ AinGPZ7PC7TFvUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20240510190623.117031-1-dongli.zhang@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hey everyone.
-Benson let me know that the submitter should be listed in the last
-Signed-off-by line. This is out of order in patch 1/4 and 2/4. My bad,
-I'll send out a v5 series fixing this. Sorry about all the email.
+On 5/10/24 12:06, Dongli Zhang wrote:
+>  	} else {
+> +		/*
+> +		 * This call borrows from the comments and implementation
+> +		 * of apic_update_vector(): "If the target CPU is offline
+> +		 * then the regular release mechanism via the cleanup
+> +		 * vector is not possible and the vector can be immediately
+> +		 * freed in the underlying matrix allocator.".
+> +		 */
+> +		irq_matrix_free(vector_matrix, apicd->prev_cpu,
+> +				apicd->prev_vector, apicd->is_managed);
+>  		apicd->prev_vector = 0;
+>  	}
 
-Thanks,
-Jameson
+I know it's just two sites, but I'd much rather spend the space on a
+helper function than a copy-and-pasted comment.  Wouldn't something like
+this make it like stupidly obvious what's going on:
+
+        if (cpu_online(cpu)) {
+		...
+        } else {
+		irq_matrix_free_offline(apicd->prev_cpu,
+					apicd->prev_vector,
+					apicd->is_managed);
+                apicd->prev_vector = 0;
+        }
+
+/* Free a vector when the target CPU is offline */
+static void irq_matrix_free_offline(...)
+{
+	lockdep_assert_held(&vector_lock);
+	WARN_ON_ONCE(!cpu_offline(apicd->prev_cpu));
+
+	/*
+	 * The regular release mechanism via the cleanup vector is not
+	 * possible.  Immediately free the vector in the underlying
+	 * matrix allocator.
+ 	 */
+	irq_matrix_free(&whatever, cpu, vector, managed);
+}
+
+It would also be rather hard to screw up even if someone called it on an
+online CPU because you'd get a nice warning.
 
