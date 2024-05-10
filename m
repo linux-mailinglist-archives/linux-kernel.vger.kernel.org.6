@@ -1,114 +1,154 @@
-Return-Path: <linux-kernel+bounces-176064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CC78C2983
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:46:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EF38C2985
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3DF28312C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:46:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7100B2830CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5E41C6A5;
-	Fri, 10 May 2024 17:46:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BD317BA3
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFB61F954;
+	Fri, 10 May 2024 17:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mo9r8pbZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C6B17BCE;
+	Fri, 10 May 2024 17:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715363161; cv=none; b=XmQ9FBMV3ZfZ36ZLkVc/dMZDOOZC9flqS3ZGo4ghOKRx9eXSaJSTiG66/UBD9F7jZUY5CLny5T9GGW9B3sDVqq/C8rwOmnZFPzSgijy71Ry56nJVbwJxpNZozwJRT32H7kcAMNC5qciSLsdMOTIQvM3msgpwQh3oFvK6FzDbGtw=
+	t=1715363236; cv=none; b=b6fvb+oFn2Qu4CkbvaK3GpXrtYISsyIgzRCkkwkqNoasKz8HS106o1HWRHEFm0b1Y3kiLfAogXqcN8SZ5XVsV8xlj+FEXLtUf7REg/qJUYrBd7ZU6oTb293zp42UNPxRdIf5x69Z7ES0iXTRljAkHAixYo9kII9XBevJJrkcVw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715363161; c=relaxed/simple;
-	bh=M7bKQrXhZKKs1kZ+tT4e3a2WllT3q6PZSQPGZbcvxR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OlYJOxtLitsK3CWUpcqODkPael5aQV380amwLVxSHLAQq1QFlM9LKnORDmS82Am6ayqvaDMV0Kgp4msQ7CAc2X1XLAl1jZwNsd8BNtc7HdDO+AMvVDLrijS7rjYhG/8XdGZMv1gYw1G9Q3Gs90bsQq3wYpov1KZfsbKFedNgwP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA2E611FB;
-	Fri, 10 May 2024 10:46:24 -0700 (PDT)
-Received: from [10.57.3.158] (unknown [10.57.3.158])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 81F9E3F6A8;
-	Fri, 10 May 2024 10:45:57 -0700 (PDT)
-Message-ID: <39f5190b-5011-4584-9748-e6d0ee5d279a@arm.com>
-Date: Fri, 10 May 2024 18:45:55 +0100
+	s=arc-20240116; t=1715363236; c=relaxed/simple;
+	bh=1Bjsxi6FLuGOj7RtmewtKis8IikuC8YQFkIP8lxG5to=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u5T3lJZqU+pYeeRUMrYRDVBrHjUkNOTTEMDWEjFRkOBgSVvBlWo2Yye1HXn7bbZGQqX3eRIJBywL+2Gy/FSl2oxmnMG6LD6IQhMpvSyRVrhMz7qqxDOrJznj+ey27zrbE6zjCtYoB2ju/NZhsAU338eoF6RDJStx6yVHedVG6Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mo9r8pbZ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715363233; x=1746899233;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=1Bjsxi6FLuGOj7RtmewtKis8IikuC8YQFkIP8lxG5to=;
+  b=mo9r8pbZaddQo66fKnUFxYa3VXdeT6zw22vXRzy+hrTnO5fvK60sOq7X
+   oTGvodPqOtSKQ61Hs09oCprMqHGmq6TD9BHj7Ggj1XBtP0TXpvu58EvK3
+   47LxBt4bmz5ObdYR78kUqwZdNfmApII5hqmsPU3uZ9ZgDjavOWlfDRVmY
+   ilXBCTgXwYJ0IwTTX8lkgu5Hg1zOD5MEZ74idNXAovMRfHdfI8PS0TlcU
+   7+dLado7JffDbe2plzBOfawUY3VEtTAxHBy4nUPSOZxOOjc75lh3N9QRw
+   po/wZkS9hP1G8emUrTwMZVEbH1H4P6JoWNNj8mDmlI7u5T7eOH+4h0ac4
+   w==;
+X-CSE-ConnectionGUID: erBKYM42T3SkBkru9IGRlw==
+X-CSE-MsgGUID: 9CUYCF3WQ5eBwE8kMPZ6wg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="22764913"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="22764913"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:47:02 -0700
+X-CSE-ConnectionGUID: 9BuGuE57RSmgVyrAKM/GPQ==
+X-CSE-MsgGUID: qwl5bYPFRgeN0WD4/7PfJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="29540130"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:47:01 -0700
+Date: Fri, 10 May 2024 10:47:00 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Michael Roth <michael.roth@amd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-coco@lists.linux.dev, linux-mm@kvack.org,
+	linux-crypto@vger.kernel.org, x86@kernel.org,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	jroedel@suse.de, thomas.lendacky@amd.com, hpa@zytor.com,
+	ardb@kernel.org, vkuznets@redhat.com, jmattson@google.com,
+	luto@kernel.org, dave.hansen@linux.intel.com, slp@redhat.com,
+	pgonda@google.com, peterz@infradead.org,
+	srinivas.pandruvada@linux.intel.com, rientjes@google.com,
+	dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de, vbabka@suse.cz,
+	kirill@shutemov.name, ak@linux.intel.com, tony.luck@intel.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com, alpergun@google.com,
+	jarkko@kernel.org, ashish.kalra@amd.com, nikunj.dadhania@amd.com,
+	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com,
+	Isaku Yamahata <isaku.yamahata@intel.com>,
+	isaku.yamahata@linux.intel.com, rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v15 21/23] KVM: MMU: Disable fast path for private
+ memslots
+Message-ID: <20240510174700.GB480079@ls.amr.corp.intel.com>
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240510015822.503071-1-michael.roth@amd.com>
+ <Zj4lebCMsRvGn7ws@google.com>
+ <CABgObfboqrSw8=+yZMDi_k9d6L3AoiU5o8d-sRb9Y5AXDTmp5w@mail.gmail.com>
+ <20240510152744.ejdy4jqawc2zd2dt@amd.com>
+ <Zj5ETYPTUo9T4Nuf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dma-mapping: benchmark: fix node id validation
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
- Xiang Chen <chenxiang66@hisilicon.com>, Barry Song <21cnbao@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
- lvc-project@linuxtesting.org
-References: <20240504114713.567164-1-pchelkin@ispras.ru>
- <20240504114713.567164-4-pchelkin@ispras.ru>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240504114713.567164-4-pchelkin@ispras.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zj5ETYPTUo9T4Nuf@google.com>
 
-On 2024-05-04 12:47 pm, Fedor Pchelkin wrote:
-> While validating node ids in map_benchmark_ioctl(), node_possible() may
-> be provided with invalid argument outside of [0,MAX_NUMNODES-1] range
-> leading to:
-> 
-> BUG: KASAN: wild-memory-access in map_benchmark_ioctl (kernel/dma/map_benchmark.c:214)
-> Read of size 8 at addr 1fffffff8ccb6398 by task dma_map_benchma/971
-> CPU: 7 PID: 971 Comm: dma_map_benchma Not tainted 6.9.0-rc6 #37
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)
-> Call Trace:
->   <TASK>
-> dump_stack_lvl (lib/dump_stack.c:117)
-> kasan_report (mm/kasan/report.c:603)
-> kasan_check_range (mm/kasan/generic.c:189)
-> variable_test_bit (arch/x86/include/asm/bitops.h:227) [inline]
-> arch_test_bit (arch/x86/include/asm/bitops.h:239) [inline]
-> _test_bit at (include/asm-generic/bitops/instrumented-non-atomic.h:142) [inline]
-> node_state (include/linux/nodemask.h:423) [inline]
-> map_benchmark_ioctl (kernel/dma/map_benchmark.c:214)
-> full_proxy_unlocked_ioctl (fs/debugfs/file.c:333)
-> __x64_sys_ioctl (fs/ioctl.c:890)
-> do_syscall_64 (arch/x86/entry/common.c:83)
-> entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-> 
-> Compare node ids with sane bounds first. NUMA_NO_NODE is considered a
-> special valid case meaning that benchmarking kthreads won't be bound to a
-> cpuset of a given node.
+On Fri, May 10, 2024 at 08:59:09AM -0700,
+Sean Christopherson <seanjc@google.com> wrote:
 
-Makes sense, and the style of the check looks like a reasonably common 
-pattern.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-
-> Found by Linux Verification Center (linuxtesting.org).
+> On Fri, May 10, 2024, Michael Roth wrote:
+> > On Fri, May 10, 2024 at 03:50:26PM +0200, Paolo Bonzini wrote:
+> > > On Fri, May 10, 2024 at 3:47 PM Sean Christopherson <seanjc@google.com> wrote:
+> > > >
+> > > > > +      * Since software-protected VMs don't have a notion of a shared vs.
+> > > > > +      * private that's separate from what KVM is tracking, the above
+> > > > > +      * KVM_EXIT_MEMORY_FAULT condition wouldn't occur, so avoid the
+> > > > > +      * special handling for that case for now.
+> > > >
+> > > > Very technically, it can occur if userspace _just_ modified the attributes.  And
+> > > > as I've said multiple times, at least for now, I want to avoid special casing
+> > > > SW-protected VMs unless it is *absolutely* necessary, because their sole purpose
+> > > > is to allow testing flows that are impossible to excercise without SNP/TDX hardware.
+> > > 
+> > > Yep, it is not like they have to be optimized.
+> > 
+> > Ok, I thought there were maybe some future plans to use sw-protected VMs
+> > to get some added protections from userspace. But even then there'd
+> > probably still be extra considerations for how to handle access tracking
+> > so white-listing them probably isn't right anyway.
+> > 
+> > I was also partly tempted to take this route because it would cover this
+> > TDX patch as well:
+> > 
+> >   https://lore.kernel.org/lkml/91c797997b57056224571e22362321a23947172f.1705965635.git.isaku.yamahata@intel.com/
 > 
-> Fixes: 65789daa8087 ("dma-mapping: add benchmark support for streaming DMA APIs")
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-> ---
->   kernel/dma/map_benchmark.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
+> Hmm, I'm pretty sure that patch is trying to fix the exact same issue you are
+> fixing, just in a less precise way.  S-EPT entries only support RWX=0 and RWX=111b,
+> i.e. it should be impossible to have a write-fault to a present S-EPT entry.
 > 
-> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
-> index a6edb1ef98c8..9f6c15f3f168 100644
-> --- a/kernel/dma/map_benchmark.c
-> +++ b/kernel/dma/map_benchmark.c
-> @@ -212,7 +212,8 @@ static long map_benchmark_ioctl(struct file *file, unsigned int cmd,
->   		}
->   
->   		if (map->bparam.node != NUMA_NO_NODE &&
-> -		    !node_possible(map->bparam.node)) {
-> +		    (map->bparam.node < 0 || map->bparam.node >= MAX_NUMNODES ||
-> +		     !node_possible(map->bparam.node))) {
->   			pr_err("invalid numa node\n");
->   			return -EINVAL;
->   		}
+> And if TDX is running afoul of this code:
+> 
+> 	if (!fault->present)
+> 		return !kvm_ad_enabled();
+> 
+> then KVM should do the sane thing and require A/D support be enabled for TDX.
+> 
+> And if it's something else entirely, that changelog has some explaining to do.
+
+Yes, it's for KVM_EXIT_MEMORY_FAULT case.  Because Secure-EPT has non-present or
+all RWX allowed, fast page fault always returns RET_PF_INVALID by
+is_shadow_present_pte() check.
+
+I lightly tested the patch at [1] and it works for TDX KVM.
+
+[1] https://github.com/mdroth/linux/commit/39643f9f6da6265d39d633a703c53997985c1208
+
+Just in case for that patch,
+Reviewed-by: Isaku Yamahata <isaku.yamahata@intel.com>
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
