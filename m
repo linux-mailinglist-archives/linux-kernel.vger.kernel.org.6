@@ -1,147 +1,147 @@
-Return-Path: <linux-kernel+bounces-175839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E4A8C2609
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:50:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE7618C260B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8A11F22D24
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124192845DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7DB12C520;
-	Fri, 10 May 2024 13:50:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087B112C486
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8EC12C48F;
+	Fri, 10 May 2024 13:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RfdWIkN3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5C412BF39
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715349002; cv=none; b=AmgHQ6aIhuXcpn+gHjFDBNcvF2j01hqar1iLBCLCWFWCq6UIHo85Hy7tNMaNdybYwAVDQbILRBE9713WRQ9tIKuGfoiaXeDf1A8fAzO77f62UjHKsXBoVs9PwPFr9IRvc+pGtZX0fBjztyNALwEacuUtx/+XTkTod20XtIlN68E=
+	t=1715349043; cv=none; b=WL6HygN5cT+qPSvUZqZnacdUQgS/75cUeamqFcq4BqJKNG2+QmoM2lo1h7yTtr5mzklp7v4p8bMNrC6lNc1Zyz0NA2beF0qgRKD3H3jebN5zPtMbTsYMT5ezWyAaO54eUlgoqxcDQBm2y+Qw4Qnt53GuWWQzY76WwuMC6dHoPJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715349002; c=relaxed/simple;
-	bh=t5Ev7zj12uW/2blEh5J2xR6/DrK8mV3pkE3PE3vDz4o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jVhzHP4tN2yoaxOHGzTFCpNdlaUBA+5lzr4/RJVQqWcXLSeWVhZc0Ec4irKtfE4UQk0NMvrXwcghcd+cE8GjwTKsB5atLILs9/vP68QxRpHdMeumRM6iXOBry7naSby+nPUuyke7Kf4SpI+i+EDiqnDCWZmRY9mjvdBybVlZnOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04CFE106F;
-	Fri, 10 May 2024 06:50:23 -0700 (PDT)
-Received: from [10.57.65.1] (unknown [10.57.65.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02C483F641;
-	Fri, 10 May 2024 06:49:55 -0700 (PDT)
-Message-ID: <6d37f914-d139-48ea-be63-c428ac767cc1@arm.com>
-Date: Fri, 10 May 2024 14:49:54 +0100
+	s=arc-20240116; t=1715349043; c=relaxed/simple;
+	bh=I7z5nYT1NGtQi+9Q7VZZIxP3Ystgb6nUWLm9idhStWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TTF2XE8nW5ivutEK8hDbKx0vXkqNEzVbjGTxK5QZDuzHFu+bLTNIsx5D1s1SxBkr4lyeAOMlvwgBiINnJ2MDiKdGEzT7NAyNsezMXWclTtKiXmOcPZKAFnXYn8b8VLL7h1FZHQEuvwSRhjZtlkWDzNmITYGD4twi/YI+SkV0ZpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RfdWIkN3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715349041;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pzf9kZEryhnm+5290e4qBYeBBj+VU2djvO6AxGd9L7w=;
+	b=RfdWIkN3VJkyeoi/fjRKbE3gcA3DhsSOBEJJj9kQ0HB4Dr8taEMxdBs2g/9jpUwxIkkIug
+	E8CDXESGdx+1o5gDNjVRedQFDzZi/iKA+68NUAgrY92ze5J7t20kHg04XDZrEuAd6ZMLxl
+	m/KPUixkfR86Jlf7sX4O69qNVxcz1eE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-694-j0ylN-VcMQqYw6wTctnElw-1; Fri, 10 May 2024 09:50:40 -0400
+X-MC-Unique: j0ylN-VcMQqYw6wTctnElw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34d7861a1f4so1089617f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:50:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715349039; x=1715953839;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pzf9kZEryhnm+5290e4qBYeBBj+VU2djvO6AxGd9L7w=;
+        b=WrFojzwRdI8jDKsI7tWnfFmNVFUvkWbgQS/ZAA7WHMGcehH8cX+6QJWzhx/Bbj9CP1
+         zA4VCUg/I4XHP1dpUT4uQUo1YtHlk+cRKqoBTAvCH3Mg9OC0mA7dRnVUgE9/u9aCS+6i
+         Fc1Vn5Ko1Gmo6WfGRCE9I/zzjgq3XJN6dFroJ6v0V39vBoC1k3nSfv6B5AQQ2FNzZWVr
+         v+VMVzDYiG5ejHhNTOMlsXzBKvqNWbeWjFxvJhJVGkGuwvOSKpLqGxMgUSNnvVat5fb6
+         +CcVPeYz/pS8mIsXo6c6Gv0oO9AzWSJUqk/g3diaYAORuOcvmZ6Z+mqYsqss2bfq4/8J
+         +F0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUoiyL4Ihyat4tNrI3BlmZ4KCxGgU4s1rZ3VeNaAAGEboQbt5yUO8/nh7ZG7gFb3cCKmVWKUv+1g7loMlSt7wZGcpblc3VDRcq1zczY
+X-Gm-Message-State: AOJu0Yxh5bSgnK/bRU06YV0Xw1luMhKaBWXnvgaAuDbY0GMGWU1UI9G7
+	W4OaWplmXmCBk+Ibi8gFl96B78m1mjCVy3TFEc/FxNjrWo181rS/o+q6s0WhtI2EndPazb+ySk9
+	bpjIzMUVACTOE/ZUXIoil3ABSmYyZDtQaGZfdHX+Yr1YUyRcdiDLu4DZx7NwrdVdeCC3Ix6GPpg
+	a3+q9bo6tkCtFliucMxt5+vIfKPzQspGcr0XY1
+X-Received: by 2002:a5d:5351:0:b0:343:e02f:1a46 with SMTP id ffacd0b85a97d-3504a62fb12mr2102076f8f.2.1715349038935;
+        Fri, 10 May 2024 06:50:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHucRBfWSHvPvamu1WRWuBFTrQrQkQyBe+ROxdfO0QRjONS8tJPWThU8+2GOiv3nf4H2QrNLg23m2TZKw0gXJM=
+X-Received: by 2002:a5d:5351:0:b0:343:e02f:1a46 with SMTP id
+ ffacd0b85a97d-3504a62fb12mr2102054f8f.2.1715349038422; Fri, 10 May 2024
+ 06:50:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 0/9] Merge arm64/riscv hugetlbfs contpte support
-Content-Language: en-GB
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton
- <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-mm@kvack.org
-References: <20240508113419.18620-1-alexghiti@rivosinc.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240508113419.18620-1-alexghiti@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240510015822.503071-1-michael.roth@amd.com> <Zj4lebCMsRvGn7ws@google.com>
+In-Reply-To: <Zj4lebCMsRvGn7ws@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 10 May 2024 15:50:26 +0200
+Message-ID: <CABgObfboqrSw8=+yZMDi_k9d6L3AoiU5o8d-sRb9Y5AXDTmp5w@mail.gmail.com>
+Subject: Re: [PATCH v15 21/23] KVM: MMU: Disable fast path for private memslots
+To: Sean Christopherson <seanjc@google.com>
+Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-mm@kvack.org, linux-crypto@vger.kernel.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	jroedel@suse.de, thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, 
+	vkuznets@redhat.com, jmattson@google.com, luto@kernel.org, 
+	dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com, 
+	peterz@infradead.org, srinivas.pandruvada@linux.intel.com, 
+	rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de, 
+	vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com, tony.luck@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, alpergun@google.com, 
+	jarkko@kernel.org, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
+	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/05/2024 12:34, Alexandre Ghiti wrote:
-> This patchset intends to merge the contiguous ptes hugetlbfs implementation
-> of arm64 and riscv.
-> 
-> Both arm64 and riscv support the use of contiguous ptes to map pages that
-> are larger than the default page table size, respectively called contpte
-> and svnapot.
-> 
-> The riscv implementation differs from the arm64's in that the LSBs of the
-> pfn of a svnapot pte are used to store the size of the mapping, allowing
-> for future sizes to be added (for now only 64KB is supported). That's an
-> issue for the core mm code which expects to find the *real* pfn a pte points
-> to. Patch 1 fixes that by always returning svnapot ptes with the real pfn
-> and restores the size of the mapping when it is written to a page table.
-> 
-> The following patches are just merges of the 2 different implementations
-> that currently exist in arm64 and riscv which are very similar. It paves
-> the way to the reuse of the recent contpte THP work by Ryan [1] to avoid
-> reimplementing the same in riscv.
+On Fri, May 10, 2024 at 3:47=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> > +      * Since software-protected VMs don't have a notion of a shared v=
+s.
+> > +      * private that's separate from what KVM is tracking, the above
+> > +      * KVM_EXIT_MEMORY_FAULT condition wouldn't occur, so avoid the
+> > +      * special handling for that case for now.
+>
+> Very technically, it can occur if userspace _just_ modified the attribute=
+s.  And
+> as I've said multiple times, at least for now, I want to avoid special ca=
+sing
+> SW-protected VMs unless it is *absolutely* necessary, because their sole =
+purpose
+> is to allow testing flows that are impossible to excercise without SNP/TD=
+X hardware.
 
-Hi Alexandre,
+Yep, it is not like they have to be optimized.
 
-I've skimmed through this series and the one that moves contpte. I can see there
-is definitely value in sharing the implementation, and the rough shape of things
-seems appropriate. I had some minor concerns about making it harder to implement
-potential future arm64 errata workarounds but on reflection, most of the
-now-shared code is really just wrapping the primitives that are still arch-specific.
+> > +      */
+> > +     if (kvm_slot_can_be_private(fault->slot) &&
+> > +         !(IS_ENABLED(CONFIG_KVM_SW_PROTECTED_VM) &&
+> > +           vcpu->kvm->arch.vm_type =3D=3D KVM_X86_SW_PROTECTED_VM))
+>
+> Heh, !(x && y) kills me, I misread this like 4 times.
+>
+> Anyways, I don't like the heuristic.  It doesn't tie the restriction back=
+ to the
+> cause in any reasonable way.  Can't this simply be?
+>
+>         if (fault->is_private !=3D kvm_mem_is_private(vcpu->kvm, fault->g=
+fn)
+>                 return false;
 
-I'm going to need to spend proper time reviewing it to give detailed feedback,
-but I'll be out on paternity leave for 3 weeks from end of Monday at the latest.
-So realistically I won't be able to do the detailed review until at least the
-first week of June.
+You beat me to it by seconds. And it can also be guarded by a check on
+kvm->arch.has_private_mem to avoid the attributes lookup.
 
-Some high level thoughts:
+> Which is much, much more self-explanatory.
 
- - huge_ptep_* functions could be working on different sized huge ptes - arm64
-supports contpte, pmd, contpmd and pud. Is keeping them in contpte.c
-appropriate? Perhaps it's better to keep huge_pte and contpte separate? Also, it
-only works on arm64 because we can get away with calling the lower-level pte
-functions even when the huge_pte is actually a contpmd/pmd/pud, because the
-format is the same. That might present challenges to other arches if the format
-is different?
+Both more self-explanatory and more correct.
 
- - It might be easier to review if the arm64 stuff is first moved (without
-changes) then modified to make it suitable for riscv, then for riscv to be
-hooked up. At the moment I'm trying to follow all 3 parts per-function.
-
-Thanks,
-Ryan
-
-
-> 
-> This patchset was tested by running the libhugetlbfs testsuite with 64KB
-> and 2MB pages on both architectures (on a 4KB base page size arm64 kernel).
-> 
-> [1] https://lore.kernel.org/linux-arm-kernel/20240215103205.2607016-1-ryan.roberts@arm.com/
-> 
-> Changes in v2:
->   - Rebase on top of 6.9-rc3
-> 
-> Alexandre Ghiti (9):
->   riscv: Restore the pfn in a NAPOT pte when manipulated by core mm code
->   riscv: Safely remove huge_pte_offset() when manipulating NAPOT ptes
->   mm: Use common huge_ptep_get() function for riscv/arm64
->   mm: Use common set_huge_pte_at() function for riscv/arm64
->   mm: Use common huge_pte_clear() function for riscv/arm64
->   mm: Use common huge_ptep_get_and_clear() function for riscv/arm64
->   mm: Use common huge_ptep_set_access_flags() function for riscv/arm64
->   mm: Use common huge_ptep_set_wrprotect() function for riscv/arm64
->   mm: Use common huge_ptep_clear_flush() function for riscv/arm64
-> 
->  arch/arm64/Kconfig                  |   1 +
->  arch/arm64/include/asm/pgtable.h    |  56 +++++-
->  arch/arm64/mm/hugetlbpage.c         | 291 +---------------------------
->  arch/riscv/Kconfig                  |   1 +
->  arch/riscv/include/asm/hugetlb.h    |   2 +-
->  arch/riscv/include/asm/pgtable-64.h |  11 ++
->  arch/riscv/include/asm/pgtable.h    | 153 +++++++++++++--
->  arch/riscv/mm/hugetlbpage.c         | 227 ----------------------
->  arch/riscv/mm/pgtable.c             |   6 +-
->  mm/Kconfig                          |   3 +
->  mm/Makefile                         |   1 +
->  mm/contpte.c                        | 272 ++++++++++++++++++++++++++
->  12 files changed, 480 insertions(+), 544 deletions(-)
->  create mode 100644 mm/contpte.c
-> 
+Paolo
 
 
