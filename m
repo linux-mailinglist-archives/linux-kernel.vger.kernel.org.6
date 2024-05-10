@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-175237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B5A8C1CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:13:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8D08C1CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B091C21266
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:13:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5172B20FB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B716148859;
-	Fri, 10 May 2024 03:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB5E1494C6;
+	Fri, 10 May 2024 03:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0gC8GNCY"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB48333CD1
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SZuWgeuR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E1F5490E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715310797; cv=none; b=u+ZHDR8N8peUTu3q+3Nf2fK3AlNHMw/j/aYy/AaOx5DVnZzgho5h6zTsPhmW30tF+narbkT0AfxGrPBAD58LVejBzaN3kUpSYpsmA7ICCubRJgaz9Ka4iTyW16+HqvPkayWWD/ax+IsHBY3DAuPaJv6ehPp+P4Yn07a0SImPzxw=
+	t=1715310967; cv=none; b=P1Z24nF4ZAt1XHRteWVheaDk3fk1y2XiScHq3ohr2wuEr83P2xyjORTd/JY+Qew4fbvndnLenY2n4qno78VO91m4Lw2IEJpb6mWkZytFp/8dz9CXlFlD8alYs+UkftVR0/c7owcSBVZQXXH+cYnUCUxwsCUHD+FAvfx/HJ9xFo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715310797; c=relaxed/simple;
-	bh=jHuBYJh1fWMU79daz3sn1J9/58kgK/BwHiHDGGVnTds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ojLjD1d1aJ294lvqdrFXpXJan69yPKbs9oGVr2dN3CW8tYDDv+yPx1FyztDVgCqUsuhYefctKD/JIg+ML/5pR0ZxpGn2SJXm38UxJVprxsqpYCTNBsogkyavn8AG9ixPbzaRgzqKjJvMkHB97U3CBjwc4OcHpVNgBOE388Y1c5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0gC8GNCY; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 3363514C2DB;
-	Fri, 10 May 2024 05:13:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1715310787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+QPtvYM7X3Y1l9pvLzIZVB30PRJqZmzc/z7JfxU/viA=;
-	b=0gC8GNCYZ1wj2RPqnwoAPoJ6D8SwRKAhpdqLYzrhbuZM/qWOlkJVBClAlbkeixv1ryqgaF
-	7VfZ6TLbRJ53YBZ9qi9vhmuFb9ftxoeq6v5icB+GpTPmnr0wG88iz4rqkmXFOXoi+hNMhk
-	goZ7pqib5At+Y7LrrJ6J/KQshBWDHTa2YWw/tDRB6h0odQiw2dOM1J9p+Vrj6fOYhxiLHH
-	A7OwOUONGAqLCmAsT8eQkHv6SL6b9Khz+IPIk85JDJCP1LslAbrhKiL8Am80Z8nC3sKPVz
-	AyWzmFnR7lPT98Vr7v8ajBvDulHO3ThJhtjNp1olvdPeqIt9/wKGpeqEbebqZA==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id a006931a;
-	Fri, 10 May 2024 03:13:01 +0000 (UTC)
-Date: Fri, 10 May 2024 12:12:46 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2022-48655: firmware: arm_scmi: Harden accesses to the reset
- domains
-Message-ID: <Zj2Qrt6_kJzqA0-S@codewreck.org>
-References: <2024042859-CVE-2022-48655-5feb@gregkh>
+	s=arc-20240116; t=1715310967; c=relaxed/simple;
+	bh=pDWGi20NXI+FF8nL+CvvJf3mfQcL2cl7VqETYXjiX7k=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=K9IJkbElcDbflOtwQkqKyDr+lar6XKrW8nZ9Zsc96nQm5azyxKkwiX8pv5Il02U/wMmkcAiKmAqAqXdWhg63T2D8jtnZgU572fQAhiQotwInuqqvODif4XZndlHeSmf4L6oXq+xZIo5EEMaH1KOCxUpsuEOZdF5328txGLvlnb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SZuWgeuR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715310965; x=1746846965;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pDWGi20NXI+FF8nL+CvvJf3mfQcL2cl7VqETYXjiX7k=;
+  b=SZuWgeuR4IZhr7+ndlRpQ8W+cf/zg8kUP0sJ8KGpP2i/7eHij+o8pWdr
+   soc/aM2fQ9PREYZmaf6zzkW5nrKNe8OctPrNOAuqTkZxNfgWhq5dzJ2fP
+   Mk+mDb3xGp9kKaYK5GclbbbcA0tI9e8gv9RYiUtnwlbLBFg5k8QOeEMR6
+   Uju1l1xhKnEQ5SelP0xd15NFDDW/ovsgLTWx/PZP9mAUW3FKM6CELzzQw
+   MkybSeJiywN8CkjKU1wiRGGpzl8kurjhGPVuXJ9mwzB0ZcrwknCDGQQQy
+   7beaCfELnhzsQBT87//XAUkvPpB7NIf9ftx4VZYk0wTyNw2OvSCknL4oN
+   A==;
+X-CSE-ConnectionGUID: a0QywTKbQC645POPEu8y5g==
+X-CSE-MsgGUID: kwfYdp1mR3ClG9o/H4qtEw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11209002"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="11209002"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 20:16:05 -0700
+X-CSE-ConnectionGUID: 6k3t8mu3T5CHeD2PV0HUGg==
+X-CSE-MsgGUID: yA5s8BzaQkajU6Im3Oq7sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="34324289"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by orviesa004.jf.intel.com with ESMTP; 09 May 2024 20:16:01 -0700
+Message-ID: <21ffbcc7-1103-4481-af14-5ee8856b9625@linux.intel.com>
+Date: Fri, 10 May 2024 11:14:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2024042859-CVE-2022-48655-5feb@gregkh>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+ virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/9] iommu: Add attachment handle to struct iopf_group
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-4-baolu.lu@linux.intel.com>
+ <20240508000454.GM4718@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240508000454.GM4718@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-meta-question: I've had a look at Documentation/process/cve.rst and
-while it describes how to report newly fixed issues, it doesn't describe
-how to add informations to already submitted CVEs.
+On 5/8/24 8:04 AM, Jason Gunthorpe wrote:
+> On Tue, Apr 30, 2024 at 10:57:04PM +0800, Lu Baolu wrote:
+>> @@ -206,8 +197,11 @@ void iommu_report_device_fault(struct device *dev, struct iopf_fault *evt)
+>>   	if (group == &abort_group)
+>>   		goto err_abort;
+>>   
+>> -	group->domain = get_domain_for_iopf(dev, fault);
+>> -	if (!group->domain)
+>> +	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) ||
+>> +	    get_attach_handle_for_iopf(dev, fault->prm.pasid, group))
+>> +		get_attach_handle_for_iopf(dev, IOMMU_NO_PASID, group);
+> That seems a bit weird looking?
 
-For some reason one of our customers saw this CVE through some news
-outlet and asked us if they were vulnerable (NVD flags this as
-high[1]...); so I had a quick look at the minimum version that could be
-updated for everyone.
-[1] https://nvd.nist.gov/vuln/detail/CVE-2022-48655
+Agreed.
 
-I can submit an edit as a patch to vulns.git json, but this doesn't seem
-overly important so for now a mail will probably do.
+> get_attach_handle_for_iopf(dev,
+>     (fault->prm.flags &
+>     IOMMU_FAULT_PAGE_REQUEST_PASID_VALID) ? fault->prm.pasid : IOMMU_NO_PASID,
+>     group);
 
-Greg Kroah-Hartman wrote on Sun, Apr 28, 2024 at 03:05:16PM +0200:
-> Affected and fixed versions
-> ===========================
-> 
-> 	Fixed in 5.15.71 with commit 1f08a1b26cfc
-> 	Fixed in 5.19.12 with commit 8e65edf0d376
-> 	Fixed in 6.0 with commit e9076ffbcaed
+The logic here is that it tries the PASID domain and if it doesn't
+exist, then tries the RID domain as well. I explained this in the commit
+message:
 
-These commits lacked a Fixes tag, so this CVE does not have a minimum
-version.
+"
+.. if the pasid table of a device is wholly managed by user space,
+there is no domain attached to the PASID of the device ...
+"
 
-From a quick look it would seem it fixes arm_scmi from the addition of
-scmi_domain_reset() in 95a15d80aa0d ("firmware: arm_scmi: Add RESET
-protocol in SCMI v2.0"), which first appeared in v5.4-rc1, and does not
-appear to have been backported to older kernels, so v5.4+ can be added
-as a requirement.
+Perhaps I can improve it like this,
 
-This means the current 5.4/5.10 trees are affected; the commit doesn't
-backport cleanly because of a trivial context conflict so if that helps
-I can send a couple of stable patch if that helps even if our systems
-are not using arm_scmi (CVEs also don't have any way of expressing
-whether the affected driver is used (or even built) at all, so I guess
-people with affected versions will have to check that themselves...)
+	int rc = -EINVAL;
+	...
+	if (fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_PASID_VALID)
+		rc = get_attach_handle_for_iopf(dev, fault->prm.pasid, group);
+	if (rc)
+		rc = get_attach_handle_for_iopf(dev, IOMMU_NO_PASID, group);
 
-Thanks,
--- 
-Dominique Martinet | Asmadeus
+	if (rc || !group->attach_handle->domain->iopf_handler)
+		goto err_abort;
+
+Best regards,
+baolu
 
