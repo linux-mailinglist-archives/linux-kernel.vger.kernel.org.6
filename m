@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-176245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213C18C2BFE
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CFD8C2BFF
 	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D893B22AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F901F21B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFF13C9C5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4917913C9DB;
 	Fri, 10 May 2024 21:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0jfJtlh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeBK2XsV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EFC13C8F7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8727913C917;
 	Fri, 10 May 2024 21:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715377154; cv=none; b=CucOcaMxJGPtIfQHGDkxhqQrNh1I7cXIoxuu0RCMQI1YYYHWLRqY+kvjzELw8aZnqiziNfPc00DHfiefXR2WGuAKpfcm5Txdw76R/UdyQlX65AQuZcZluOo96OGml/opbzXvmXMlh7kfbHlkvKrHkB7abdXLBHSk6YutTjY3rwk=
+	t=1715377154; cv=none; b=I0sYEuO4gqI1V8I7AeiF4S1pd+gK7eCLdwg0Yevy4CDsPPJtHwvOBWx2P+MQo+OHF+Jx4nGRnL/VxfqF3nFSjuivVJlF8hOUGxqGGSa/mfaanbNsySNIKI64zB3dhCHcwAbbKvis73MVm9hCfuDFOQpbUF3md62sVUZRtlUAfXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715377154; c=relaxed/simple;
-	bh=rZ9QLavP+85/69mir4EHwdbn91bcewFyRd+JIzhxmVA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jzG6yF4QbvxtKFZfQQ2NU5vBxIrfriw7dMaQnZzhZb02It4T+QV40T+U0v/xAu+H9zoX3tJyU1Ijn+Vl5lwXLg5kK43zozIBN1867ItNX6NCjmzvwhzzbqyvjuuV9AV+fCS8oPsNZsMMNX/uF2ZH5SkQ6fRANHDF0zIqJjgptnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0jfJtlh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 36442C32781;
+	bh=eQbK4t7LZ4AmfufELJBTSU2juM59XYEa7CN1Mh1aJBU=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ZulKnIXFP2hQcZEXC7vkSAGA/VdCpZVEp1v5NbluiKGXB4KRrVCQxC+2d9CE8HZcdqGRvF2eSpQyJwo7gISZaUNev6d5pEU7YL4a6ePq/pFsFRwxwhT16V/XEk+07wAUdVBfG4AnZfCoFJXXCK7F80IMBq2TdG2anNJLnKyFWvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeBK2XsV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6898AC32782;
 	Fri, 10 May 2024 21:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715377154;
-	bh=rZ9QLavP+85/69mir4EHwdbn91bcewFyRd+JIzhxmVA=;
+	bh=eQbK4t7LZ4AmfufELJBTSU2juM59XYEa7CN1Mh1aJBU=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=q0jfJtlhdrjh5L8paB5xLNycxF4G2zNxEX2bwKZDmMsKd90bVSTqXNy1Vrsz0NDz6
-	 QQ5CPHytkSkv5UI9QYBQBa9DlYcIQiiOmza6basXjp0Kk4R/YKMVrjQKUrzNCNw7cq
-	 2PJsuA7Ptz0XBzsuqwmjbPhy6erFeWPgA2nEhIW3OX/F9y1L02ASAzF3DeEmFVmKzI
-	 bNIblkWcjsN/ZuMKu99tXBBn7PjHHm1csvrmPR54FIlcpycGTDfdxS40ykk6P9b9vo
-	 /GvOQ5RR01cACUa7ex71Vcd6r19sTP0NwRonnM1oJYUdl+NypJVBJSpCJvfsOKDGHj
-	 ulHW0Z78WtCPg==
+	b=BeBK2XsV4+dlGMgnzEqNxxpHpGxEsjSn9dwBUuQEf1SJyNEGsxRnRYvYy3t41TsNX
+	 Ul0zgLooQZoKFF8FaXA9KyPcvyW/gPOxEVERuM4U5cyy4CWrbhYVw6fJoe6CCpfDYV
+	 vSPa6MYSYL9wBNYVXw4dej59CEg9LG04cjNExkox9lmyj80KrYoS7dEg5pgzp20vNp
+	 Lo2gKXQdek+v+YVHfHL2J5Y6Tb5ecMFQQhMZ0blDskFdTSOnuhhVwW9s4UL3y7HtBt
+	 YcBCIxPQuatIkuWTdaL6e/4bjyliaxxHNXvhCD5or1nfu1JJbl1bFgoISnrXYKRORR
+	 +YRL7ourBXooA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 29D27E7C114;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5CA3FE7C112;
 	Fri, 10 May 2024 21:39:14 +0000 (UTC)
-Subject: Re: [GIT PULL] gpio: fixes for v6.9
+Subject: Re: [GIT PULL] hotfixes for 6.10
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240510182640.44486-1-brgl@bgdev.pl>
-References: <20240510182640.44486-1-brgl@bgdev.pl>
+In-Reply-To: <20240510131743.cf12a22295edd6ae4c175d5b@linux-foundation.org>
+References: <20240510131743.cf12a22295edd6ae4c175d5b@linux-foundation.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240510182640.44486-1-brgl@bgdev.pl>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.9
-X-PR-Tracked-Commit-Id: ee0166b637a5e376118e9659e5b4148080f1d27e
+X-PR-Tracked-Message-Id: <20240510131743.cf12a22295edd6ae4c175d5b@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-05-10-13-14
+X-PR-Tracked-Commit-Id: 672614a3ed24150f39752365c57a85fca1bd0017
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cfb4be1a61200fbbd29f2699b11899789855bbe4
-Message-Id: <171537715415.8717.1758876426578615061.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: c22c3e0753807feee1391a22228b0d5e6ba39b74
+Message-Id: <171537715436.8717.12103384516961795701.pr-tracker-bot@kernel.org>
 Date: Fri, 10 May 2024 21:39:14 +0000
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 10 May 2024 20:26:40 +0200:
+The pull request you sent on Fri, 10 May 2024 13:17:43 -0700:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.9
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-05-10-13-14
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cfb4be1a61200fbbd29f2699b11899789855bbe4
+https://git.kernel.org/torvalds/c/c22c3e0753807feee1391a22228b0d5e6ba39b74
 
 Thank you!
 
