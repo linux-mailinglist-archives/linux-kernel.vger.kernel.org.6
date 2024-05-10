@@ -1,256 +1,207 @@
-Return-Path: <linux-kernel+bounces-176300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABFE8C2D99
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:29:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1258C2DA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21CCB225B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:29:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DA37B236B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C6F17557E;
-	Fri, 10 May 2024 23:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF96172BDA;
+	Fri, 10 May 2024 23:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EbCzuplo"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lWfYjjT/"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D90413CF92
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 23:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B22D28F3
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 23:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715383768; cv=none; b=n3Irzc6PR2YjZqpvQl5o1tav5yIWvuVS6vZS4juDGqPe2aC1vlqffG7MLpg+koI+RB+CWYyKIVau6+3FOBdVEVhsahMeDy/RDRby2ErfbVrZej332IptGYkloYnZoo2MRFcNh9dETGRaQSZ/pQeQG+7jZyfrCSXtTx6BprAuUcM=
+	t=1715384503; cv=none; b=grI8FCSfGZEX5VX1fsL9a2rHeYM63CJFBityBOuTiiIJfdnpTgU/ete56WKuA1PiPyJLRn/KiaQd3IbtXIC8EWRmciimgOYUoNhAFIgs0Og1EVpQnTt65bQ3MshkAw11A/KfN+5ipnnPBUIPZiyOviWIm3XCfrCmivN/ujDRAms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715383768; c=relaxed/simple;
-	bh=E7rGfOrSF7E1TwZm/9Gxf/skroZH98+3oQO8OhUUcys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CWosyrerocjCN/1NtSKGuRIj1ev8qzzCGBfjXBu9MbaCE4BnWzBemMOu+WOJfaasb4NhC3Nkbj1gRWpPue3OzXyVgeUNULxASoDd8mkPWBWV3h+GAeDKERiHUdoOwgXTM5Cbj4K52DBH72Y7o0FxZwB3vyjnaR7u9YdIUZbOXdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EbCzuplo; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5e42b4bbfa4so1503741a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:29:26 -0700 (PDT)
+	s=arc-20240116; t=1715384503; c=relaxed/simple;
+	bh=tdd3mEPr8R8mB7AxgVNrZK4bwy+sTsONs5ChPMw/qCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nJ8pqJ/Gl6KH/LJLqWgqAeFFDrBCEFKcOJflRal3QwyLGBjuVamXhWMMLh5p15l3MglkhJGdkrlBHP6RZHnUlw67tOwUGqEDISUA5lzqzKK7IZnnJP86PCOcCjXMjGzwkHeZ3S1I43bGTJVTCIUKq8+O/tgWf92GuM4paA//2f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lWfYjjT/; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6f0ecec6411so641694a34.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715383766; x=1715988566; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Vz2Ea5vDvTd7NZaHdWli7Zi0tzSRPfvayQLC9Zmwn4=;
-        b=EbCzuplog0nF/scl4+UlUuXFz8FMPe7kOvGXwd7NSGzg9JQy9PCPmqu15fmq4TQ51J
-         Xfi1B54r6TUcp1gjUEwQYO1UCshtOlmN7Rcll5DC7zbh/hzZ94I4SffWvQgfpgOLuHfx
-         W2sKNymOy8QiAw1r+o0CmhToS69kQ05XN4c8Q4BWdt1aJrWtoQ25tgyc4w2qWV13AXCv
-         ScO3SH1NR63S7CIW85S0F9MD7GN/pdhPAF+x8A5k7VFIwQ72/z1DlmxJGeUSbG0KwJUG
-         x3xHZWp944i5nwvaoTkSb1CG9M7INu9RHrCSgfAZ2ADw1SwsmB2hfJ43pfbOKBRf6TlZ
-         bYLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715383766; x=1715988566;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1715384500; x=1715989300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3Vz2Ea5vDvTd7NZaHdWli7Zi0tzSRPfvayQLC9Zmwn4=;
-        b=IkcPSgNbxSVVaGyHEC9Awm2RlpB3wxmvSS9t4b9wrADXU300/RVB6kMwh46q9Cngq7
-         v13wufzMYDkZmvPUjGC1R6hMe18yCb4Af8eeHSzgY74BljWB+uR+T3f6Li1Mm2MoZY1P
-         f3uHWML6Iuq1MYFaO+SdmbSOwAtIqjMnlQftT5MnQgtyjuVH6C6/mZ7UzrTZ1z0FOlnf
-         vs8Cx57U53L4djsWxHY1oRYktvG16uQFKlHtWVD7kKIbd4O2+v5lpWHz6rxaxZYGTQjh
-         v/29DGXj4Le6HONQnwV1v+0vDq5WYHMXOjj68raTWjG9QRS0EpFLH/iuYnOzF3edFF9K
-         tcpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU6RpZVzXmOp+zuoF54lDZ2lK2ikfhv6Stz3TJwxPLi53Lwyb+i58mPDGQCsPVnRPsqO61zei3ihUA8rVMv4FiVg+g04quXPXzkpBQ
-X-Gm-Message-State: AOJu0YwdDSpsczit4zzrh76RWYGci8G9OHLgCNMf7gQKAddE7mMp6qju
-	chyDyYeyjCWYE1s/yak/kUBVzeNIHUqVQ4z5rN+lKV7ZlSMP//z1TyE7RqQaYs8=
-X-Google-Smtp-Source: AGHT+IFtRGEgJNgaXpQi4rnaLmSdVV1xvKctjw8cDKjjnX0+o8uhHRNsHVhKbF+1oYccjQdTEuSLLg==
-X-Received: by 2002:a05:6a20:96d5:b0:1af:5d8b:87f3 with SMTP id adf61e73a8af0-1afde0d5537mr4236824637.23.1715383765853;
-        Fri, 10 May 2024 16:29:25 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:629e:3f2:f321:6c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67158c3b4sm3755016a91.45.2024.05.10.16.29.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 16:29:25 -0700 (PDT)
-Date: Fri, 10 May 2024 16:29:19 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
-	keescook@chromium.org, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, cleger@rivosinc.com,
-	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
-	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	apatel@ventanamicro.com, mchitale@ventanamicro.com,
-	dbarboza@ventanamicro.com, sameo@rivosinc.com,
-	shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 17/29] prctl: arch-agnostic prctl for indirect branch
- tracking
-Message-ID: <Zj6tzxWFj4H+250p@ghost>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-18-debug@rivosinc.com>
+        bh=RUDP9S9qW3rGQGeBPladTmxRNiWuw5gzHHPdJQsB0VM=;
+        b=lWfYjjT/BE73CGro5YAr4xPnpx+M42ETkBGnrNJDgdBQ+rkJDfeqrRSkLuitu9GRQK
+         lxboBnz3c4Fhk9wU5evN8BmrEd0sqiPNS0abCVttEbSkUbgie91a3yk5cBD+2nPFRQ4e
+         KUb0FjnFESdU+840DpLpTPMPjSZturBvEC5yM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715384500; x=1715989300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RUDP9S9qW3rGQGeBPladTmxRNiWuw5gzHHPdJQsB0VM=;
+        b=ruIYldwxwdxX4YijszH5QjEAvGf5fyOBQZ+Hwt+eRrSbztzVMk6UOhZQBORkM7tst5
+         hmwYooaMvxmvhIBAdKY03BkxkxJbOTxSHsXXRxVFDxr3sdIGgIsRuNhfRkxpPCnfFb0I
+         aDrN+3Hb5YzKcv7jrTJ9oIkPMn5Yu7bAU8b+wRDyPlVItKvP9wx92x8DlTbIywDGB3t+
+         jTSl8NIF5O5gQCKhYd8KatJhT1+CE1+DZ1nMhDTryQ1VA/bH8MjvxPuYd2y8ar6hzNIK
+         Rt1hiEdBP3i6g5tuj0juLO1gUrhp9XKmUSL9oQf5WrCQlrDhTFRH4MxbWVFISztZN/ye
+         V7vA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYWCRqKQy3dSH0NOBeYheUnhPwx4xnplSqQsaZzguBRaW2MBetgMdOs7tGtvvTsvhtpkKiWPmK3IFrjMQR0yRpI3En9xszkH6TogfI
+X-Gm-Message-State: AOJu0YyDi58ku1chMzQmyahcpacFe5vzoCCDyisagvvRXLChKhFGdWWi
+	nHz6ykL0ugpcusyW76ODc8e0CYkM/XdkuWwwTrxGzjIMGWtKZpHrVofQr/c7fkNtMc24W1qCLFs
+	=
+X-Google-Smtp-Source: AGHT+IFCt4R0dIec+QMvwty/khY4Z5DWYFxoMBLL8JgwW0oAI/0QVgwIYbx0Cp+vyAlFo+QsDDdUcQ==
+X-Received: by 2002:a05:6358:9046:b0:186:1abe:611e with SMTP id e5c5f4694b2df-193bd2f82e8mr436857955d.30.1715384499869;
+        Fri, 10 May 2024 16:41:39 -0700 (PDT)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com. [209.85.214.180])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411346dc1sm3144410a12.83.2024.05.10.16.41.39
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 16:41:39 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1ec76185c0fso31025ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:41:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSz0f+xPyz65wWQSQ0McWUKKGyFVsqlMTq4lk4CcLW9f8AyT12UY89iKDRnSy2bj7/99sbUjRmcO7bSq1Q0ljvtjK7/6GN8cUdXC8f
+X-Received: by 2002:a05:622a:1f13:b0:43d:fce9:684f with SMTP id
+ d75a77b69052e-43e094d0423mr1201921cf.10.1715384182762; Fri, 10 May 2024
+ 16:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240403234054.2020347-18-debug@rivosinc.com>
+References: <20240507144821.12275-1-johan+linaro@kernel.org> <20240507144821.12275-5-johan+linaro@kernel.org>
+In-Reply-To: <20240507144821.12275-5-johan+linaro@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 10 May 2024 16:36:08 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=V59t_tZ9Xk=uhbgOdTRYLKu+kZt8cpaksTkJo+D4yt8Q@mail.gmail.com>
+Message-ID: <CAD=FV=V59t_tZ9Xk=uhbgOdTRYLKu+kZt8cpaksTkJo+D4yt8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] HID: i2c-hid: elan: fix reset suspend current leakage
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Steev Klimaszewski <steev@kali.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 03, 2024 at 04:35:05PM -0700, Deepak Gupta wrote:
-> Three architectures (x86, aarch64, riscv) have support for indirect branch
-> tracking feature in a very similar fashion. On a very high level, indirect
-> branch tracking is a CPU feature where CPU tracks branches which uses
-> memory operand to perform control transfer in program. As part of this
-> tracking on indirect branches, CPU goes in a state where it expects a
-> landing pad instr on target and if not found then CPU raises some fault
-> (architecture dependent)
-> 
-> x86 landing pad instr - `ENDBRANCH`
-> aarch64 landing pad instr - `BTI`
-> riscv landing instr - `lpad`
-> 
-> Given that three major arches have support for indirect branch tracking,
-> This patch makes `prctl` for indirect branch tracking arch agnostic.
-> 
-> To allow userspace to enable this feature for itself, following prtcls are
-> defined:
->  - PR_GET_INDIR_BR_LP_STATUS: Gets current configured status for indirect
->    branch tracking.
->  - PR_SET_INDIR_BR_LP_STATUS: Sets a configuration for indirect branch
->    tracking.
->    Following status options are allowed
->        - PR_INDIR_BR_LP_ENABLE: Enables indirect branch tracking on user
->          thread.
->        - PR_INDIR_BR_LP_DISABLE; Disables indirect branch tracking on user
->          thread.
->  - PR_LOCK_INDIR_BR_LP_STATUS: Locks configured status for indirect branch
->    tracking for user thread.
-> 
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  include/uapi/linux/prctl.h | 27 +++++++++++++++++++++++++++
->  kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
->  2 files changed, 57 insertions(+)
-> 
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 3c66ed8f46d8..b7a8212a068e 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -328,4 +328,31 @@ struct prctl_mm_map {
->   */
->  #define PR_LOCK_SHADOW_STACK_STATUS      73
->  
-> +/*
-> + * Get the current indirect branch tracking configuration for the current
-> + * thread, this will be the value configured via PR_SET_INDIR_BR_LP_STATUS.
-> + */
-> +#define PR_GET_INDIR_BR_LP_STATUS      74
-> +
-> +/*
-> + * Set the indirect branch tracking configuration. PR_INDIR_BR_LP_ENABLE will
-> + * enable cpu feature for user thread, to track all indirect branches and ensure
-> + * they land on arch defined landing pad instruction.
-> + * x86 - If enabled, an indirect branch must land on `ENDBRANCH` instruction.
-> + * arch64 - If enabled, an indirect branch must land on `BTI` instruction.
-> + * riscv - If enabled, an indirect branch must land on `lpad` instruction.
-> + * PR_INDIR_BR_LP_DISABLE will disable feature for user thread and indirect
-> + * branches will no more be tracked by cpu to land on arch defined landing pad
-> + * instruction.
-> + */
-> +#define PR_SET_INDIR_BR_LP_STATUS      75
-> +# define PR_INDIR_BR_LP_ENABLE		   (1UL << 0)
-> +
-> +/*
-> + * Prevent further changes to the specified indirect branch tracking
-> + * configuration.  All bits may be locked via this call, including
-> + * undefined bits.
-> + */
-> +#define PR_LOCK_INDIR_BR_LP_STATUS      76
-> +
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 242e9f147791..c770060c3f06 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2330,6 +2330,21 @@ int __weak arch_lock_shadow_stack_status(struct task_struct *t, unsigned long st
->  	return -EINVAL;
->  }
->  
-> +int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
-> +{
-> +	return -EINVAL;
-> +}
-> +
+Hi,
 
-These weak references each cause a warning:
+On Tue, May 7, 2024 at 7:48=E2=80=AFAM Johan Hovold <johan+linaro@kernel.or=
+g> wrote:
+>
+> @@ -40,17 +41,17 @@ static int elan_i2c_hid_power_up(struct i2chid_ops *o=
+ps)
+>                 container_of(ops, struct i2c_hid_of_elan, ops);
+>         int ret;
+>
+> +       gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
 
-kernel/sys.c:2333:12: warning: no previous prototype for 'arch_get_indir_br_lp_status' [-Wmissing-prototypes]
- 2333 | int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sys.c:2338:12: warning: no previous prototype for 'arch_set_indir_br_lp_status' [-Wmissing-prototypes]
- 2338 | int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
-      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sys.c:2343:12: warning: no previous prototype for 'arch_lock_indir_br_lp_status' [-Wmissing-prototypes]
- 2343 | int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+Could probably use a comment above it saying that this is important
+when we have "no_reset_on_power_off" and doesn't do anything bad when
+we don't so we can just do it unconditionally.
 
-Can the definitions be added to include/linux/mm.h alongside the
-*_shadow_stack_status() definitions?
 
-- Charlie
+> +
+>         if (ihid_elan->vcc33) {
+>                 ret =3D regulator_enable(ihid_elan->vcc33);
+>                 if (ret)
+> -                       return ret;
+> +                       goto err_deassert_reset;
+>         }
+>
+>         ret =3D regulator_enable(ihid_elan->vccio);
+> -       if (ret) {
+> -               regulator_disable(ihid_elan->vcc33);
+> -               return ret;
+> -       }
+> +       if (ret)
+> +               goto err_disable_vcc33;
+>
+>         if (ihid_elan->chip_data->post_power_delay_ms)
+>                 msleep(ihid_elan->chip_data->post_power_delay_ms);
+> @@ -60,6 +61,15 @@ static int elan_i2c_hid_power_up(struct i2chid_ops *op=
+s)
+>                 msleep(ihid_elan->chip_data->post_gpio_reset_on_delay_ms)=
+;
+>
+>         return 0;
+> +
+> +err_disable_vcc33:
+> +       if (ihid_elan->vcc33)
+> +               regulator_disable(ihid_elan->vcc33);
+> +err_deassert_reset:
+> +       if (ihid_elan->no_reset_on_power_off)
+> +               gpiod_set_value_cansleep(ihid_elan->reset_gpio, 0);
 
->  #define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LOCAL_THROTTLE)
->  
->  #ifdef CONFIG_ANON_VMA_NAME
-> @@ -2787,6 +2802,21 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  			return -EINVAL;
->  		error = arch_lock_shadow_stack_status(me, arg2);
->  		break;
-> +	case PR_GET_INDIR_BR_LP_STATUS:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		error = arch_get_indir_br_lp_status(me, (unsigned long __user *) arg2);
-> +		break;
-> +	case PR_SET_INDIR_BR_LP_STATUS:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		error = arch_set_indir_br_lp_status(me, (unsigned long __user *) arg2);
-> +		break;
-> +	case PR_LOCK_INDIR_BR_LP_STATUS:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		error = arch_lock_indir_br_lp_status(me, (unsigned long __user *) arg2);
-> +		break;
->  	default:
->  		error = -EINVAL;
->  		break;
-> -- 
-> 2.43.2
-> 
+Small nit about the error label: it sounds as if when you go here you
+_will_ deassert reset when in actuality you might or might not
+(depending on no_reset_on_power_off). Personally I prefer to label
+error jumps based on things I've done instead of things that the error
+jump needs to do, so you could call them "err_enabled_vcc33" and
+"err_asserted_reset"...
+
+I don't feel that strongly about it, though, so if you love the label
+you have then no need to change it.
+
+
+> @@ -67,7 +77,14 @@ static void elan_i2c_hid_power_down(struct i2chid_ops =
+*ops)
+>         struct i2c_hid_of_elan *ihid_elan =3D
+>                 container_of(ops, struct i2c_hid_of_elan, ops);
+>
+> -       gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
+> +       /*
+> +        * Do not assert reset when the hardware allows for it to remain
+> +        * deasserted regardless of the state of the (shared) power suppl=
+y to
+> +        * avoid wasting power when the supply is left on.
+> +        */
+> +       if (!ihid_elan->no_reset_on_power_off)
+> +               gpiod_set_value_cansleep(ihid_elan->reset_gpio, 1);
+> +
+>         if (ihid_elan->chip_data->post_gpio_reset_off_delay_ms)
+>                 msleep(ihid_elan->chip_data->post_gpio_reset_off_delay_ms=
+);
+
+Shouldn't  the above two lines be inside the "if
+(!ihid_elan->no_reset_on_power_off)" test? If you're not setting the
+reset GPIO then you don't need to do the delay, right?
+
+
+> @@ -79,6 +96,7 @@ static void elan_i2c_hid_power_down(struct i2chid_ops *=
+ops)
+>  static int i2c_hid_of_elan_probe(struct i2c_client *client)
+>  {
+>         struct i2c_hid_of_elan *ihid_elan;
+> +       int ret;
+>
+>         ihid_elan =3D devm_kzalloc(&client->dev, sizeof(*ihid_elan), GFP_=
+KERNEL);
+>         if (!ihid_elan)
+> @@ -93,21 +111,38 @@ static int i2c_hid_of_elan_probe(struct i2c_client *=
+client)
+>         if (IS_ERR(ihid_elan->reset_gpio))
+>                 return PTR_ERR(ihid_elan->reset_gpio);
+>
+> +       ihid_elan->no_reset_on_power_off =3D of_property_read_bool(client=
+->dev.of_node,
+> +                                               "no-reset-on-power-off");
+
+Personally, I'd rather you query for the property before you request
+the GPIO and then request the GPIO in the "powered off" state just to
+keep everything in the most consistent state possible.
+
+
+-Doug
 
