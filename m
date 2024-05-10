@@ -1,163 +1,83 @@
-Return-Path: <linux-kernel+bounces-175722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF438C2410
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E3F8C2411
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5C31F214E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:57:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31608284088
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE8616EC08;
-	Fri, 10 May 2024 11:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DD216EBE5;
+	Fri, 10 May 2024 11:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="bQAriabN";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="bQAriabN"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO+CPuxH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B9421340;
-	Fri, 10 May 2024 11:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736B821340
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715342264; cv=none; b=VLbBC6yH9AD3wT06BHNpHtiO6D63VRGLTxOkiIArWLhj1y5G5GyvCrrvj5KpPpc6Bbnutjx9WEo2QfD5UqyjubSFWCMdzynX64X4d8J1An2ebzYNjI8P62DD/jZRM7NjfJbm55psGQlQWMsJYO3+o1n+uesmefmrMdxgjJlP594=
+	t=1715342301; cv=none; b=cwBwvSNOU2TstVPx0YoVeo8GhJkr5Up25X2jmCg3Z0NSgtkbVg7tQVWaJJK9be/dOPqhaLd6beehGN/jjuRNW/rwPtQ4DS0B95RWkRrorkYSmLSg+lp7uwCrFUB8LHsu68TYmloYrCCtMxQiNdB8dgYmPgW3gASv4BP0M/s5U5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715342264; c=relaxed/simple;
-	bh=+h0DH4aBy7AE34S2X04B+UROh2mSH4naMR406/7GhFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDRWkUsOLaSp/zC6Sa2jLIVyNtsIqx1DzV2P1MIBU90WPTrFEpVZDeQ5enWcyF4EYChjDHL7qmbMwRsmrwozxICjf+doou5Mq6dcQWnfvI72Q7Ggh3hGgU6bSwqIAvQhTIOV06eHMRa1wxgyy0OA/lpTe0VUoRFhTn/Tpt2ZO/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=bQAriabN; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=bQAriabN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B3493EC9C;
-	Fri, 10 May 2024 11:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715342260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fxWM34KiqX62IKR1RnVV3lWHklyyFYPYe1Bmn9kILe8=;
-	b=bQAriabNcwdwS00TgF7K7dc5ui7142wcn0+HDLCrs9cQMYCddKkZ0DnU38PKLhHvzcLB5n
-	ccjcNw7Q9m8Nh6nRGyzJgGpbxpRfKrz4YJf9M8rZV4+zg+uJPxQePftqeWeDIdiHk20Hw1
-	i6JGmXwPN4kbNKEpWQHFIVBpHczvJtc=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715342260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fxWM34KiqX62IKR1RnVV3lWHklyyFYPYe1Bmn9kILe8=;
-	b=bQAriabNcwdwS00TgF7K7dc5ui7142wcn0+HDLCrs9cQMYCddKkZ0DnU38PKLhHvzcLB5n
-	ccjcNw7Q9m8Nh6nRGyzJgGpbxpRfKrz4YJf9M8rZV4+zg+uJPxQePftqeWeDIdiHk20Hw1
-	i6JGmXwPN4kbNKEpWQHFIVBpHczvJtc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D2DF139AA;
-	Fri, 10 May 2024 11:57:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MTCrF7QLPma7ZgAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 10 May 2024 11:57:40 +0000
-Date: Fri, 10 May 2024 13:57:39 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH -next] memcg, oom: cleanup unused memcg_oom_gfp_mask and
- memcg_oom_order
-Message-ID: <Zj4Ls4aRW2Asyk7g@tiehlicka>
-References: <20240509032628.1217652-1-xiujianfeng@huawei.com>
+	s=arc-20240116; t=1715342301; c=relaxed/simple;
+	bh=l1+qHEhMt9OAwRHmaM4J/Mj6s8ThW/PsHrbGScytz3U=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=IaEFSjblqjcEPHX7qVLC+da0fEvswtZgry2/+k4OrWecxbtDnXdctCn7qLdjlZSot8VdrikAR3iE20ICDS1uBPqqCRDClEXyIuN/Ib9wlgvCq3twbPX4la8mHGUL7zyCsRhDzM832Vmmh6QqNlQrJeQl/P7oXhqqaa2U2BAEFc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO+CPuxH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9860BC113CC;
+	Fri, 10 May 2024 11:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715342301;
+	bh=l1+qHEhMt9OAwRHmaM4J/Mj6s8ThW/PsHrbGScytz3U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PO+CPuxHDeXr3dP49DI0viTOxFiKrkvueHFxHZS6aUPjHU5ty8yU4kw1/jlC5pBKy
+	 qoLjt6wKBA084dX0/ToKYBCBFAaNs5CgTgo/gV88fW1GrRpU9seSUjyES9tyyL+AC/
+	 Bv0mmavafFNQMglwkuxwX3mKFqv9TpPo4aPP6Fy2ucGIFUr8FSIt7/39VYvSAFQgGw
+	 rLEfFxceCQCqzm7sVcsHn6eZukZt4ZArNxWFVnZEPgFBKblFcBUvAd6EzAotVBrMPp
+	 syS12ta3ps7if1S2JuEiA+BweetfokGck0yofMiednXXwhLfMguMYrRBo7nFce1o5G
+	 vRFVk4LsFqOCg==
+Message-ID: <5a083c1fa21b73db20ea4b8a8c86a5c9.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator fixes for v6.9-rc7
+Date: Fri, 10 May 2024 12:58:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509032628.1217652-1-xiujianfeng@huawei.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.38 / 50.00];
-	BAYES_HAM(-2.58)[98.10%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Spam-Score: -3.38
-X-Spam-Flag: NO
 
-On Thu 09-05-24 03:26:28, Xiu Jianfeng wrote:
-> Since commit 857f21397f71 ("memcg, oom: remove unnecessary check in
-> mem_cgroup_oom_synchronize()"), memcg_oom_gfp_mask and memcg_oom_order
-> are no longer used any more.
-> 
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+The following changes since commit ff33132605c1a0acea59e4c523cb7c6fabe856b2:
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+  regulator: change devm_regulator_get_enable_optional() stub to return Ok (2024-04-24 10:13:30 +0900)
 
-Thanks!
-> ---
->  include/linux/sched.h | 2 --
->  mm/memcontrol.c       | 2 --
->  2 files changed, 4 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 8d1cf672ac4c..61591ac6eab6 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1449,8 +1449,6 @@ struct task_struct {
->  
->  #ifdef CONFIG_MEMCG
->  	struct mem_cgroup		*memcg_in_oom;
-> -	gfp_t				memcg_oom_gfp_mask;
-> -	int				memcg_oom_order;
->  
->  	/* Number of pages to reclaim on returning to userland: */
->  	unsigned int			memcg_nr_pages_over_high;
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 5d4da23264fa..d127c9c5fabf 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2192,8 +2192,6 @@ static bool mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int order)
->  		if (current->in_user_fault) {
->  			css_get(&memcg->css);
->  			current->memcg_in_oom = memcg;
-> -			current->memcg_oom_gfp_mask = mask;
-> -			current->memcg_oom_order = order;
->  		}
->  		return false;
->  	}
-> -- 
-> 2.34.1
+are available in the Git repository at:
 
--- 
-Michal Hocko
-SUSE Labs
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.9-rc7
+
+for you to fetch changes up to 2a4b49bb58123bad6ec0e07b02845f74c23d5e04:
+
+  regulator: core: fix debugfs creation regression (2024-05-09 17:43:57 +0200)
+
+----------------------------------------------------------------
+regulator: Fixes for v6.9
+
+Two fixes here, one from Johan which fixes error handling when we
+attempt to create duplicate debugfs files and one for an incorrect
+specification of ramp_delay with the rtq2208.
+
+----------------------------------------------------------------
+Alina Yu (1):
+      regulator: rtq2208: Fix the BUCK ramp_delay range to maximum of 16mVstep/us
+
+Johan Hovold (1):
+      regulator: core: fix debugfs creation regression
+
+ drivers/regulator/core.c              | 27 ++++++++++++++++-----------
+ drivers/regulator/rtq2208-regulator.c |  7 +++----
+ 2 files changed, 19 insertions(+), 15 deletions(-)
 
