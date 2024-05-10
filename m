@@ -1,85 +1,67 @@
-Return-Path: <linux-kernel+bounces-175489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B83EB8C2061
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CFBD8C2067
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C50721C2155A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83E5E1C21C94
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D39816131A;
-	Fri, 10 May 2024 09:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRWdVhOC"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9BD160887;
+	Fri, 10 May 2024 09:11:20 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA876160880;
-	Fri, 10 May 2024 09:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D4A165FCA;
+	Fri, 10 May 2024 09:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715332267; cv=none; b=okNUW1BbwGf+pC9NZWSdCQj/HQaFdGWujowDN5i0pk22IEL5p6UIm6rUwlcbgh1GQMZ5n7wXlKUXpIQ/M6bggBCwPKxLaSm+9JQzxeChdqEuM3S3/WqhMJkViXgQMvQYhLhSzmruJTtoL3X5cEfJS1jC3wVK/vecYX3oDIy1Y44=
+	t=1715332279; cv=none; b=Uou5GsIlNOr8gm2UQtGh27Uhnug1qCyxYngcusQYwhR6cfqcU34+nfZZFaTFv9wKFRJ2ncy66wP4RsMAedIQpxFxW+mmUY2xa+bbdtbaUwq6v2Tv69/5R9oLpY9p9g2ADJkPo5mKODwF5Sm2G0Dk2iv9FfvVBCUB5ZykeJKCoi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715332267; c=relaxed/simple;
-	bh=iy7T+nDEmQevJHgHb9cm4kq3bs7CgLJ1Dtnev5Merg0=;
+	s=arc-20240116; t=1715332279; c=relaxed/simple;
+	bh=oy8zZZH1tqYq6Cm1un3+J+lAe8+qsVk75JbBU5aux74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNLm8dQapLdzxw8Rq+I7dz2yJARqIHtT0/cxV817F9t4xN0K+c9wIfYiJYA0wK9FzqoqCcvmbX9qEcXBXdVSVCXWu4fuasGUVB5Zzp7G/b48TmRDecKtxyNKe+Ch++Vy0+uoXzzKAW3fSQVPgBc3GHtI21Rolos8THupWK50Fsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRWdVhOC; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOkekPyA75ASsreLMwu++GV8dPB/5IX2TrfGUmp1LPFI0O7KXpc0/0TEnHQISl5GzopMmwByqu15Cmt+wKqc7f2O5LPSdNgJZEaJAgTw/er02G1VbLWB5vaKdVmU/8+hkg86B9WCdd6igH+zeOuSsj3PJLI7P02K6ghMNnl5/8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2b6215bcd03so485140a91.1;
-        Fri, 10 May 2024 02:11:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715332263; x=1715937063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VyERfLizY6BgQpVDrcWfYPOa4d57tfajrLUm4Pmk48A=;
-        b=NRWdVhOCa561i8IV/o6EZ0ff888HpZbZHU91SWpoXsIgRT0lTcmLDya+QbpDKZPP6P
-         CmJqdW8PPPRLgvVM5eL8PZUO6qokPBDGlsdZLisBzsgWZyLZhVulS+JWBvUQMGWigsNm
-         pxQKE1/fVA33vEmsGOYSWZJh4wbD9ca+ricprIgdInHhFzdxIuU3QhbzzlKemEtKSoj0
-         2nu468r3Fk0j/o4dMDdVPW1+GjfAZGM/ZnMOMyPD0TXkJvBxoI/6jE6FEeqrrTqSrW5O
-         aDhTuWnAcXlnD7TSecoypvvYjHEfUUv3VLRYNOWcUg7Yp9YVD+xf/SPteiBdja8wostF
-         u5yA==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59b58fe083so416279766b.0;
+        Fri, 10 May 2024 02:11:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715332263; x=1715937063;
+        d=1e100.net; s=20230601; t=1715332276; x=1715937076;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VyERfLizY6BgQpVDrcWfYPOa4d57tfajrLUm4Pmk48A=;
-        b=N2bEMCAYkl8s6mjKK8IvcSN8TFeMHmYU7vesmo5Cnd0ArDY0+XTuHk53Y83rEYobYn
-         bOCRebmMHm4j3Wz7uJF2FEp02oAB3F+CZ0qrEOMR1xZXagzK5gAS+DkHWZmwEvD/yT4G
-         nIBPQ2P53dhHC9+sfkzEIuNt5Ut4IM6KzDkeqOBIlO+ZjSkXWowJBfWr2bANMWIAoVXF
-         SRrXTC5lEUh/hQeFWQKjeKOE1eUingEQSbyDYyaoCCG8kEdI/tyS3HBF1UmyZuMrcn5C
-         MXo7F9DNJC68idRr8cj+jQWpTtFQ+gPgL5idIimkjWjGvw2CGWv5gEBziZ5xNHPtThKi
-         RhoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcIF7m5726Pkmb/Wih2R0zHYhJVPL8SZzEd2UKHnJ3QuPgwl42RDoUTuGz+sytwHUBFDVxRYKYY2mpXoLNKpj9jRH+32PbHfKq3IqjZsdoEhYZhttaIIh+veTeZu8CWfRzylsifBEQJw==
-X-Gm-Message-State: AOJu0YzOni/X9c19BjK/T0RjdodAKRBQZQjOTUE8S4Q6MVN02hmnGKr8
-	OC+2kd+Ri5VvK1ci18QR0meQD7Es1oraf1EFOQ8KJWr72yJOoW9+
-X-Google-Smtp-Source: AGHT+IG6LoL7ehLAK7aJd4+hkhkaXGvXN764Pbud5L3mtmcuM9ZR6CtHCi03gTwJKAXL80A+Iubwxw==
-X-Received: by 2002:a17:902:cec6:b0:1eb:ac3c:e39f with SMTP id d9443c01a7336-1ef441b5da6mr23105225ad.6.1715332262517;
-        Fri, 10 May 2024 02:11:02 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d35fcsm28053615ad.25.2024.05.10.02.11.00
+        bh=XR6Ovo4ZWCEwmB95aywDLbYo5COB1k5E4akUH/B0OJI=;
+        b=Z5w9nbK5tbOb0ovsARhbVPzI8WEh9YadVpkBDgfuB+G505KNu6Nqb6dXOMQHRkI6hO
+         4zOGA8G5TpG8VOj2e6Yzxh6eOHootpFnzt5kFCS09y9Q7pDwPdk6LeggZJXVXQ+qfOZm
+         dRf3eTcMXxW0MUrabVfDyEhPNdeZ/0dvJuuWVRcaWmpeLJy/gKGBEoifg7Haig8YRwys
+         cVqaVCsIn2fg2zaI4whhD78BpASHmLbtsTCVvtqFdIEpiTGpop8xAmEUB2HhqnogP4Fi
+         dsMh/AzX7g+aSJocAd08D14zi8zYwCPY7WhsSZQqc5NR9khU5+qa+KYMUK1pt6+YhkJK
+         DCsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5SrHLYe84n8jidTYp/qe9XYpIjC96kFVzx7InpW9tH79MbSPC8/FkVHISs9ZOzWELrNK5PV6JCAiqFg6G7eaKfHGYHJX+awTU9afw3FaOPbXZraJPMic7529FsX3AGM0g
+X-Gm-Message-State: AOJu0YwvoI/k7Gn874GJxgwVE57Rg3qgpf5gELR9Vw4czSAtAvI+Yn5v
+	n2f5m9WnasagxACS7wr76R4r/EAibKXT1j+OCpgX7krg4yoTPuD0
+X-Google-Smtp-Source: AGHT+IEhPpf96zsgLjGLmAyDPP2WLUvjDRWdg00w6+mXfNk/ADqh5j745DUPW+2cmzFbBlZc54VBKg==
+X-Received: by 2002:a17:906:7853:b0:a59:cdc9:6fd9 with SMTP id a640c23a62f3a-a5a2d5750acmr117965166b.21.1715332275933;
+        Fri, 10 May 2024 02:11:15 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7deasm160048566b.103.2024.05.10.02.11.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 02:11:01 -0700 (PDT)
-Date: Fri, 10 May 2024 17:10:59 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Matthew Mirvish <matthew@mm12.xyz>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Coly Li <colyli@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the refactor-heap tree with the
- block tree
-Message-ID: <Zj3kowGa9XzJ0yak@visitorckw-System-Product-Name>
-References: <20240509152745.08af752f@canb.auug.org.au>
- <te64v6zwwor6jkco6uiu2zz7ern6ijhyu5okfvdz3bmj3w5qfp@mx4zdniwymqj>
- <Zj1RzZdtfL7UQax1@visitorckw-System-Product-Name>
- <buehluxvo234sj7onzl6wwjmuslmnkh7g6vnpru23kpti6qmpp@7nqak2ser7mw>
- <Zj2PX6Fy3BEnQc50@visitorckw-System-Product-Name>
- <20240510034618.GA3161190@mm12.xyz>
+        Fri, 10 May 2024 02:11:15 -0700 (PDT)
+Date: Fri, 10 May 2024 02:11:13 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, rbc@meta.com, paulmck@kernel.org,
+	"open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KVM: Addressing a possible race in kvm_vcpu_on_spin:
+Message-ID: <Zj3ksShWaFSWstii@gmail.com>
+References: <20240509090146.146153-1-leitao@debian.org>
+ <Zjz9CLAIxRXlWe0F@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,161 +70,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240510034618.GA3161190@mm12.xyz>
+In-Reply-To: <Zjz9CLAIxRXlWe0F@google.com>
 
-On Thu, May 09, 2024 at 11:46:18PM -0400, Matthew Mirvish wrote:
-> On Fri, May 10, 2024 at 11:07:11AM +0800, Kuan-Wei Chiu wrote:
-> > On Thu, May 09, 2024 at 07:16:31PM -0400, Kent Overstreet wrote:
-> > > On Fri, May 10, 2024 at 06:44:29AM +0800, Kuan-Wei Chiu wrote:
-> > > > On Thu, May 09, 2024 at 03:58:57PM -0400, Kent Overstreet wrote:
-> > > > > On Thu, May 09, 2024 at 03:27:45PM +1000, Stephen Rothwell wrote:
-> > > > > > Hi all,
-> > > > > > 
-> > > > > > Today's linux-next merge of the refactor-heap tree got conflicts in:
-> > > > > > 
-> > > > > >   drivers/md/bcache/bset.c
-> > > > > >   drivers/md/bcache/bset.h
-> > > > > >   drivers/md/bcache/btree.c
-> > > > > >   drivers/md/bcache/writeback.c
-> > > > > > 
-> > > > > > between commit:
-> > > > > > 
-> > > > > >   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
-> > > > > > 
-> > > > > > from the block tree and commit:
-> > > > > > 
-> > > > > >   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
-> > > > > > 
-> > > > > > from the refactor-heap tree.
-> > > > > > 
-> > > > > > Ok, these conflicts are too extensive, so I am dropping the refactor-heap
-> > > > > > tree for today.  I suggest you all get together and sort something out.
-> > > > > 
-> > > > > Coli and Kuan, you guys will need to get this sorted out quick if we
-> > > > > want refactor-heap to make the merge window
-> > > > 
-> > > > Hi Coli and Kent,
-> > > > 
-> > > > If I understand correctly, the reported bug is because we attempted to
-> > > > point (heap)->data to a dynamically allocated memory , but at that time
-> > > > (heap)->data was not a regular pointer but a fixed size array with a
-> > > > length of MAX_BSETS.
-> > > > 
-> > > > In my refactor heap patch series, I introduced a preallocated array and
-> > > > decided in min_heap_init() whether the data pointer should point to an
-> > > > incoming pointer or to the preallocated array. Therefore, I am
-> > > > wondering if my patch might have unintentionally fixed this bug?
-> > > > 
-> > > > I am unsure how to reproduce the reported issue. Could you assist me in
-> > > > verifying whether my assumption is correct?
-> > > 
-> > > This is a merge conflict, not a runtime. Can you rebase onto Coli's
-> > > tree? We'll have to retest.
-> > 
-> > Oh, sorry for the misunderstanding I caused. When I mentioned "bug" [1]
-> > earlier, I was referring to the bug addressed in
-> > 3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter"),
-> > not a merge conflict.
-> > 
-> > Here are the results after the rebase:
-> > https://github.com/visitorckw/linux.git refactor-heap
-> > 
-> > [1]: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2039368
+Hello Sean,
+
+On Thu, May 09, 2024 at 09:42:48AM -0700, Sean Christopherson wrote:
+> On Thu, May 09, 2024, Breno Leitao wrote:
+> >  	kvm_vcpu_set_in_spin_loop(me, true);
+> >  	/*
+> >  	 * We boost the priority of a VCPU that is runnable but not
+> > @@ -4109,7 +4110,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
+> >  
+> >  			yielded = kvm_vcpu_yield_to(vcpu);
+> >  			if (yielded > 0) {
+> > -				kvm->last_boosted_vcpu = i;
+> > +				WRITE_ONCE(kvm->last_boosted_vcpu, i);
+> >  				break;
+> >  			} else if (yielded < 0) {
+> >  				try--;
 > 
-> The ubuntu kernels build with UBSAN now, and the bug reported is just a
-> UBSAN warning. The original implementation's iterator has a fixed size
-> sets array that is indexed out of bounds when the iterator is allocated
-> on the heap with more space -- the patch restructures it a bit to have a
-> single iterator type with a flexible array and then a larger "stack"
-> type which embeds the iterator along with the preallocated region.
+> Side topic #1: am I the only one that finds these loops unnecessarily hard to
+> read?
+
+No. :-)
+
+In fact, when I skimmed over the code, I though that maybe the code was
+not covering the vCPUs before last_boosted_vcpu in the array.
+
+Now that I am looking at it carefully, the code is using `pass` to track
+if the vCPU passed last_boosted_vcpu in the index.
+
+> Unless I'm misreading the code, it's really just an indirect way of looping
+> over all vCPUs, starting at last_boosted_vcpu+1 and the wrapping.
 > 
-> I took a brief look at the refactor-heap branch but I'm not entirely
-> sure what's going on with the new min heaps: in the one place where the
-> larger iterators are used (in bch_btree_node_read_done) it doesn't look
-> like the heap is ever initialized (perhaps since the old iter_init
-> wasn't used here because of the special case it got missed in the
-> refactor?) With the new heaps it should be fairly easy to fix though;
-> just change the fill_iter mempool to be allocating only the minheap data
-> arrays and setup iter->heap.data properly with that instead.
+> IMO, reworking it to be like this is more straightforward:
+> 
+> 	int nr_vcpus, start, i, idx, yielded;
+> 	struct kvm *kvm = me->kvm;
+> 	struct kvm_vcpu *vcpu;
+> 	int try = 3;
+> 
+> 	nr_vcpus = atomic_read(&kvm->online_vcpus);
+> 	if (nr_vcpus < 2)
+> 		return;
+> 
+> 	/* Pairs with the smp_wmb() in kvm_vm_ioctl_create_vcpu(). */
+> 	smp_rmb();
 
-Thank you, Matthew.
-Not initializing the heap's data pointer was indeed my mistake.
-Following your advice, I made the following modifications to the code
-on the refactor-heap branch in my github repo. I hope this time it
-works well.
+Why do you need this now? Isn't the RCU read lock in xa_load() enough?
 
-Regards,
-Kuan-Wei
+> 	kvm_vcpu_set_in_spin_loop(me, true);
+> 
+> 	start = READ_ONCE(kvm->last_boosted_vcpu) + 1;
+> 	for (i = 0; i < nr_vcpus; i++) {
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index a2bb86d52ad4..ce9d729bc8ff 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -149,19 +149,19 @@ void bch_btree_node_read_done(struct btree *b)
- {
- 	const char *err = "bad btree header";
- 	struct bset *i = btree_bset_first(b);
--	struct btree_iter *iter;
-+	struct btree_iter iter;
+Why do you need to started at the last boosted vcpu? I.e, why not
+starting at 0 and skipping me->vcpu_idx and kvm->last_boosted_vcpu?
 
- 	/*
- 	 * c->fill_iter can allocate an iterator with more memory space
- 	 * than static MAX_BSETS.
- 	 * See the comment arount cache_set->fill_iter.
- 	 */
--	iter = mempool_alloc(&b->c->fill_iter, GFP_NOIO);
--	iter->heap.size = b->c->cache->sb.bucket_size / b->c->cache->sb.block_size;
--	iter->heap.nr = 0;
-+	iter.heap.data = mempool_alloc(&b->c->fill_iter, GFP_NOIO);
-+	iter.heap.size = b->c->cache->sb.bucket_size / b->c->cache->sb.block_size;
-+	iter.heap.nr = 0;
+> 		idx = (start + i) % nr_vcpus;
+> 		if (idx == me->vcpu_idx)
+> 			continue;
+> 
+> 		vcpu = xa_load(&kvm->vcpu_array, idx);
+> 		if (!READ_ONCE(vcpu->ready))
+> 			continue;
+> 		if (kvm_vcpu_is_blocking(vcpu) && !vcpu_dy_runnable(vcpu))
+> 			continue;
+> 
+> 		/*
+> 		 * Treat the target vCPU as being in-kernel if it has a pending
+> 		 * interrupt, as the vCPU trying to yield may be spinning
+> 		 * waiting on IPI delivery, i.e. the target vCPU is in-kernel
+> 		 * for the purposes of directed yield.
+> 		 */
+> 		if (READ_ONCE(vcpu->preempted) && yield_to_kernel_mode &&
+> 		    !kvm_arch_dy_has_pending_interrupt(vcpu) &&
+> 		    !kvm_arch_vcpu_preempted_in_kernel(vcpu))
+> 			continue;
+> 
+> 		if (!kvm_vcpu_eligible_for_directed_yield(vcpu))
+> 			continue;
+> 
+> 		yielded = kvm_vcpu_yield_to(vcpu);
+> 		if (yielded > 0) {
+> 			WRITE_ONCE(kvm->last_boosted_vcpu, i);
+> 			break;
+> 		} else if (yielded < 0 && !--try) {
+> 			break;
+> 		}
+> 	}
+> 
+> 	kvm_vcpu_set_in_spin_loop(me, false);
+> 
+> 	/* Ensure vcpu is not eligible during next spinloop */
+> 	kvm_vcpu_set_dy_eligible(me, false);
 
- #ifdef CONFIG_BCACHE_DEBUG
--	iter->b = &b->keys;
-+	iter.b = &b->keys;
- #endif
-
- 	if (!i->seq)
-@@ -199,7 +199,7 @@ void bch_btree_node_read_done(struct btree *b)
- 		if (i != b->keys.set[0].data && !i->keys)
- 			goto err;
-
--		bch_btree_iter_push(iter, i->start, bset_bkey_last(i));
-+		bch_btree_iter_push(&iter, i->start, bset_bkey_last(i));
-
- 		b->written += set_blocks(i, block_bytes(b->c->cache));
- 	}
-@@ -211,7 +211,7 @@ void bch_btree_node_read_done(struct btree *b)
- 		if (i->seq == b->keys.set[0].data->seq)
- 			goto err;
-
--	bch_btree_sort_and_fix_extents(&b->keys, iter, &b->c->sort);
-+	bch_btree_sort_and_fix_extents(&b->keys, &iter, &b->c->sort);
-
- 	i = b->keys.set[0].data;
- 	err = "short btree key";
-@@ -223,7 +223,7 @@ void bch_btree_node_read_done(struct btree *b)
- 		bch_bset_init_next(&b->keys, write_block(b),
- 				   bset_magic(&b->c->cache->sb));
- out:
--	mempool_free(iter, &b->c->fill_iter);
-+	mempool_free(iter.heap.data, &b->c->fill_iter);
- 	return;
- err:
- 	set_btree_node_io_error(b);
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index cba09660148a..c6f5592996a8 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1914,8 +1914,7 @@ struct cache_set *bch_cache_set_alloc(struct cache_sb *sb)
- 	INIT_LIST_HEAD(&c->btree_cache_freed);
- 	INIT_LIST_HEAD(&c->data_buckets);
-
--	iter_size = sizeof(struct btree_iter) +
--		    ((meta_bucket_pages(sb) * PAGE_SECTORS) / sb->block_size) *
-+	iter_size = ((meta_bucket_pages(sb) * PAGE_SECTORS) / sb->block_size) *
- 			    sizeof(struct btree_iter_set);
-
- 	c->devices = kcalloc(c->nr_uuids, sizeof(void *), GFP_KERNEL);
-
+I didn't tested it, but I reviewed it, and it seems sane and way easier
+to read. I agree this code is easier to read, from someone that has
+little KVM background.
 
