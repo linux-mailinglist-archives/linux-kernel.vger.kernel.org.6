@@ -1,184 +1,243 @@
-Return-Path: <linux-kernel+bounces-176195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CCA8C2B89
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EA08C2BA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0671C22628
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:10:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FBDC284694
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC1013B59A;
-	Fri, 10 May 2024 21:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECB413BAEC;
+	Fri, 10 May 2024 21:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FhcenxIo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Wk/T96gk"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N7LUcOCX"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F231910965
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715375410; cv=none; b=M5rjSFwxvfTrv/gIa+nFtFqdQXaKhOH5r6gcf4EirA3uRO9E/+6ykQKZ44l1rbz2YtoilDkGXeRi3DPlZhRJf7DcgOsfTjvLY8NgvBk456yOyl3V3O5LhbeOGwmOaqI+dojJ/oX5zn7Dh6wXPa7Y61EEvvyMPaLq6PFpPUwAM38=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715375410; c=relaxed/simple;
-	bh=Dh6AnZdSSPBb1iLqNAXse+tTR93JOCTsymGGYe9GFVI=;
-	h=MIME-Version:Message-Id:Date:From:To:Cc:Subject:Content-Type; b=imiP+wY1kOakBoAV6kOPkSXO8eiTl649AjrOcrDQo1sPDIYvilzXNGMdS5lrY9np2LoSiGVZpXkOvh0+x3mZ0Samh948yEbk7xwCAu5BLX2zANZHxrKcHga27b+O1hK2zVNEfTjF1UpmjW3/9m26fg2rYZW8gXG6j3NVOz3uipM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FhcenxIo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Wk/T96gk; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id CBB51114014A;
-	Fri, 10 May 2024 17:10:06 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 10 May 2024 17:10:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1715375406; x=1715461806; bh=Qp
-	0d37EeYSDGa8u2dFFm0dTX4imjRuYf1YYBDTaOs6o=; b=FhcenxIof2DD6UpUqu
-	jCphudh7MnIwzvCQ/sDF7WAZume5FH9kZqpqQIEhxe+6t0M2JLNEyACjiCf4aVI1
-	WvsuPYYidWyG2dHQwHkPfIPqAFUbUUMIp+Z0b4xid11n+zkcbHDDGWtK52UhRKsR
-	TMhVo3HqNLIED3k/HXp3urw9ZXzVDJLD0Pm0Bp870eMutv5SstzCGO7R2yU17Ts9
-	Ej0xoq+XFdUjkUfeCAChBUuaMMM+SVh/5ov/hjS36647SkdLeyp/qsvIHkRD9OIO
-	PpLmvBi0be12l5XTZnrpRgyvSsL954pOcicTf17eeyW5yGzbDa4+A2ySJmh8JVD1
-	/Rhg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1715375406; x=1715461806; bh=Qp0d37EeYSDGa
-	8u2dFFm0dTX4imjRuYf1YYBDTaOs6o=; b=Wk/T96gkfAnF29raJPb6hDrJVsK61
-	+3qGa+YSTJUEAyNpIeZ2TGS9ayjJ7AjV0f47dA2KgcWJtJTbvQpVtnK4KFB0hruV
-	11MGBgpnDSz/UJq8ys3/zMFTfuFebw3UQSEfP5vwrW6hhAzpfM3CBpxqdtfHEfy1
-	7EXlj844ebUlV6SmcpvYLztKzSKWjKRgkescVxVD7c3FBOdUZ3T6I+9eB6uCwMaJ
-	a6YsCJi0hmxWbePEdoJMkUtMOjPTIXmHKvYJIsrYpEAJqk9ufB0x3LEHuFismTQP
-	IEpVQWTveJT3GF/ymf9Aa4BkO9Wo3X9YpHSpW/QoCzIIElUxcflJfgazA==
-X-ME-Sender: <xms:Lo0-ZhZGnkGBQWM8bLdyNSVHyKW5j9dliSBY06CwGJIlkYzHb0EIdA>
-    <xme:Lo0-Zoa3mRsy-sLMdSGpARWmGBj9Dm4bxHt2pV1FA7NfoNrDnvHLDBg71HCjLRhku
-    QIm7gpzj42kP1TCTxc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgudehjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepfeehleefteehledvieeifeeftefhkedvheehudelteevieekhefhgefhveek
-    ffeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:Lo0-Zj_gPTY7oQRO2t3_Nl-4flAa-EH13nXhqGX8DRfY_ofpRfRDWQ>
-    <xmx:Lo0-ZvqAyFAEC5uR-wAnw1x_n00zvLCIQgf4xhRzmedSNBSTiymyfg>
-    <xmx:Lo0-ZspK-3fwFbm19iUH1ORUkkMYSfQ4kpcFXO2N4br0qlIxYkHhgg>
-    <xmx:Lo0-ZlTwTnqqfWhA1kB_NvUGhrGUoCX5j-qo3BeES4dZonO5QyQTXg>
-    <xmx:Lo0-ZnWMPZlbf54zJ6PzsmUP9qGGazEQOnoyzvL_GRuW4KALmokfT94T>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 644CDB6008D; Fri, 10 May 2024 17:10:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ECD13B789;
+	Fri, 10 May 2024 21:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715375852; cv=fail; b=fP9gPp+R8vc/d+WdgIEJQuydQZtbrjRRpghc7eY27IQcigp01vx83mR9M8TfeGFTVsACNAnbgoIQE80VzCSHHqKE5xX10+JDFCiarrbSBQDDkkvFAZPxPmPRskPpvVf1Emjnq4Ix5kNilF8B/U1qVhqtAgiCDrPzf4E76cOyxTQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715375852; c=relaxed/simple;
+	bh=SdxzBk3RSKT8Xyr1I4upt1yb/lQy+sKt+rrkfaA+Mj4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aXM8tbiPwMh4hKA4iyCzFnQlXIwDd/kqqKHDi3rgQxbeJYVxFl/GNrPfM1Zc9VZUdvP+3co35vr64orIYVQrBv260y3s899Rt0pvw5gX5CbRBU8xRobsAEYbzaKAe8VqzHpEzgi/WUD8Wyu6slsB0DDWAzuDQL1AJtuvOsHZFmY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N7LUcOCX; arc=fail smtp.client-ip=40.107.236.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k2rPu+9GqWSniPBphcn01u1c1DFKgwXY6ctADXryEGngTM2AqIRmmKn7is51Wst7oYrUZy0aCFY6l2NM+jjJcGnsSKTvPAKK6vFEHpRO+vB/pIzKqKKGLK4PraKQbqfDd7c+jhZOFwDtxSa0BDEDMZtqlpAdTB41GyEiPyMi0G6ubDmgFylBVy0lFeFhblMFbrMJDhT4vWMebC8p63IVziRAfSqHHYsd6trgvH7NTRyWJOGQLrlc8tpHKn0wX2rUZLAkbBm9gDAbmSGE+VZefZVvhxfTmkJ1CQXlwTTfyDmi4Wi/yccxRYFUO3QoF7rlOZ5IfOm/l8nNdWIp/NJEUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KFOgtx+8wInZQOhGHCpVFujiDx2uDMkuyEfJfrAM41A=;
+ b=E81UsNg92N7rU0aLqNtZYW4NRZscTkp+oLybX7iH+0ji4iAdCu52M3llZGrhS6Gby1qkYFJ1FFposjOWUCqruM7mpO2pezQKtRV4IHWrqdK+HPoNnhsQ+efsXVTBkVqanVugn5EAD/Zpbsa8SC7yQHTiZcmi1ylN8H7lXVSmYc70a90Cl6uJwfi2NkAbefGU3HpAPihm3+eB9y/zvF4FV1xV8wlXqhE6n30t+cehuVjh/frvDjyzJ8AkHOFbBcngI2Kq792oSvBg+3IXJdfDXtOWTglOlENjSc55N1SPUmtNurXRJZRGuT3mqJ9PluYihMpmd9vPJEV+3A25xoOF6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KFOgtx+8wInZQOhGHCpVFujiDx2uDMkuyEfJfrAM41A=;
+ b=N7LUcOCXbrgri0zpwT6WGXUQl+kgqYBNFnNjv/EI3Ex+mkz+mIPDW6IpoiDuNMf6Xo23zyowPmrrPzqMNZ45h+tuAeKw4MIZdOEr6FQVeMenzzaPswVulOQ38nGYzS+Bnc7S5+Jwkp7RaCugDjML59cHZXRotjLsG3iUpSj9MSQ=
+Received: from BN8PR12CA0007.namprd12.prod.outlook.com (2603:10b6:408:60::20)
+ by MN2PR12MB4472.namprd12.prod.outlook.com (2603:10b6:208:267::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 21:17:24 +0000
+Received: from BN1PEPF00004685.namprd03.prod.outlook.com
+ (2603:10b6:408:60:cafe::22) by BN8PR12CA0007.outlook.office365.com
+ (2603:10b6:408:60::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.51 via Frontend
+ Transport; Fri, 10 May 2024 21:17:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004685.mail.protection.outlook.com (10.167.243.86) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Fri, 10 May 2024 21:17:24 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 10 May
+ 2024 16:17:22 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sean Christopherson
+	<seanjc@google.com>, <linux-coco@lists.linux.dev>, <jroedel@suse.de>,
+	<thomas.lendacky@amd.com>, <vkuznets@redhat.com>, <pgonda@google.com>,
+	<rientjes@google.com>, <tobin@ibm.com>, <bp@alien8.de>, <vbabka@suse.cz>,
+	<alpergun@google.com>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
+	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, <papaluri@amd.com>
+Subject: [PULL 00/19] KVM: Add AMD Secure Nested Paging (SEV-SNP) Hypervisor Support
+Date: Fri, 10 May 2024 16:10:05 -0500
+Message-ID: <20240510211024.556136-1-michael.roth@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com>
-Date: Fri, 10 May 2024 23:09:45 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 0/4] arm soc changes for 6.10
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004685:EE_|MN2PR12MB4472:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0bab16a6-029b-43df-fb3b-08dc71369644
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|7416005|376005|1800799015|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UL7QpQskN+CXHSXI2Ypg1T68V4/ePlqEQ/DYzswkdS8SoYWMQUk6JKiIb6wx?=
+ =?us-ascii?Q?yC1t5HRWiesM652zay6sW5LtJxd8oq+nGUZ1LCbdQdaIDCvfGfCy00FWriNw?=
+ =?us-ascii?Q?Gufah6yDHCDCpPEGRdOEU7F6ZKI4tihPuasRSw1u/er580MzyKssoewg/v4n?=
+ =?us-ascii?Q?hUhuDkMDRkBoXTFzkocpQ7yhIBtIkRgK+CSbUzc3WCXRCX4tHdBKdY/BVsCg?=
+ =?us-ascii?Q?98B88JGEH5F044/ctuOxnTblPmviNuW/cM84BBPQUk4Pdjg87wQSUZ2BaZ6p?=
+ =?us-ascii?Q?9T4qYk3VWWnF3qP5XpuIq4/42h010pGWfjL75dZXxVTrONR8fT8c3kUm8pa3?=
+ =?us-ascii?Q?GVsLY+r8oDHD+npqD+xGOL3NQt3qZjkKp0w8hu8BQoWA3lYJTzJoPV/2BXaM?=
+ =?us-ascii?Q?bQwqLCNx9xaKzSNUp2HkaF5Lzv1gJ9pqRyipRxNX2drG0jvPygzSa/6uuJtv?=
+ =?us-ascii?Q?+y2YHX7kUemL5p9siPOx6lNPueLChtb8N3Q8dMiLX8jXKjGeaLn1+q79V0iC?=
+ =?us-ascii?Q?B9XeCgW/+F4qa59SjJflNFy2Se47kOq/NqzaaWiNwD2D4RVxDBquMK+2zAqr?=
+ =?us-ascii?Q?yJ7FSbG9rhAQN3cH8Vb0eNhHFzVmdbYarRi4GzwDvrU3w2xOwL3lI5LC9Mpo?=
+ =?us-ascii?Q?N9JnE787rqwtOupY/1R7sOOIZ58E44FIXXNELGOOOKciRJi5M95M5vAtut4C?=
+ =?us-ascii?Q?JW8NEowkAWwGe7cwp89GZoHxnkGAQUlqF6ziWyaVVU0dvfmhZnSPyhOVqK1M?=
+ =?us-ascii?Q?eg0Y0P1K5ZU6ITxZTLCctHbA0H2OeLu9o7lxBmaq1C8St9tkxpfl1JeMIvHy?=
+ =?us-ascii?Q?tqz/4RobqIQAg88KkHhfIvumshSzJFlNtmD7YE081bGbybPn6BKvM/L6uEYS?=
+ =?us-ascii?Q?xMMpJr5xQBLQnKxZlyLL8hC7Yj+PEeYUgZ6YOffTZqQuR01ICUTVyDbUD9id?=
+ =?us-ascii?Q?LOm0JCzDh5lUbdJvYO78GjOem7hnMMQNKlh6a8hh/72Xbp2xsnL41G4hV7vB?=
+ =?us-ascii?Q?9Zt/UjSiMA9wjyWlZ/7USw6YcygyA94JVlkxXUtjWQBLkaDwYrxX1N+R+18E?=
+ =?us-ascii?Q?ZGArfzRC6KYrvZJ/OlqW6IcqYks9XH1ZIIJpVrlsYpvoWuaePMh3Cwpb9HNs?=
+ =?us-ascii?Q?HgXGWNfQgy+raTQBPjF0EIr+JJ+sIOFIAq+nRMYX+/Up+ibx36vNPyctb88q?=
+ =?us-ascii?Q?4zMLhtdms4WjcX0RB7PUY3h3In0H0tUaovyRO72ClEGOc/D4YGm59e1ndoIv?=
+ =?us-ascii?Q?VIElHnbaMpfM1DSZE1/iRu4RXdbIB13GengCUsu5Oih3jvkNR8Hl4/YAvNFN?=
+ =?us-ascii?Q?eIDRaiYZOVMZ+teqe/clo6w0B3j1u759tY0mYzhzouChUA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(7416005)(376005)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 21:17:24.2731
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bab16a6-029b-43df-fb3b-08dc71369644
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004685.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4472
 
-This release is rather uneventful for the soc tree, with very
-little notable changes, and a smaller than usual total number
-of changes. There are five branches in total, but I'm sending
-only the first four today, as some of the devicetree changes
-came rather late.
+Hi Paolo,
 
-One notable addition is the ST "firewall" bus driver that
-was under work for a while, and a larger than usual number
-of changes to the various firmware drivers.
+This pull request contains v15 of the KVM SNP support patchset[1] along
+with fixes and feedback from you and Sean regarding PSC request processing,
+fast_page_fault() handling for SNP/TDX, and avoiding uncessary
+PSMASH/zapping for KVM_EXIT_MEMORY_FAULT events. It's also been rebased
+on top of kvm/queue (commit 1451476151e0), and re-tested with/without
+2MB gmem pages enabled.
 
-With all five branches, there are 821 non-merge changesets
-from 192 developers, notably these authors with 10 or more
-patches:
+Thanks!
 
-     88 Krzysztof Kozlowski
-     52 Uwe Kleine-K=C3=B6nig
-     20 Manivannan Sadhasivam
-     19 Dmitry Baryshkov
-     17 Tony Lindgren
-     17 Luca Weiss
-     17 Andrew Davis
-     14 Peter Yin
-     14 Peng Fan
-     13 Geert Uytterhoeven
-     12 Neil Armstrong
-     12 Konrad Dybcio
-     11 Yang Chen
-     11 Tudor Ambarus
-     11 Gatien Chevallier
-     11 Bjorn Andersson
-     10 Sebastian Reichel
-     10 Muhammed Efe Cetin
-     10 Frank Li
-     10 Fabio Estevam
-     10 Abel Vesa
+-Mike
 
-Dirstat
-   0.3% Documentation/devicetree/bindings/access-controllers/
-   0.4% Documentation/devicetree/bindings/arm/
-   0.5% Documentation/devicetree/bindings/bus/
-   0.2% Documentation/devicetree/bindings/soc/
-   0.6% Documentation/devicetree/bindings/
-   0.3% Documentation/tee/
-   0.8% arch/arm/boot/dts/allwinner/
-   9.7% arch/arm/boot/dts/aspeed/
-   0.9% arch/arm/boot/dts/broadcom/
-   3.7% arch/arm/boot/dts/nxp/imx/
-   6.4% arch/arm/boot/dts/qcom/
-   2.0% arch/arm/boot/dts/renesas/
-  10.0% arch/arm/boot/dts/st/
-   0.9% arch/arm/boot/dts/ti/omap/
-   0.2% arch/arm/boot/dts/
-   0.4% arch/arm/mach-orion5x/
-   1.4% arch/arm64/boot/dts/allwinner/
-   2.2% arch/arm64/boot/dts/amlogic/
-   3.1% arch/arm64/boot/dts/exynos/google/
-   8.1% arch/arm64/boot/dts/freescale/
-   0.5% arch/arm64/boot/dts/hisilicon/
-   0.3% arch/arm64/boot/dts/marvell/
-   0.2% arch/arm64/boot/dts/microchip/
-   6.6% arch/arm64/boot/dts/qcom/
-   2.2% arch/arm64/boot/dts/renesas/
-  12.8% arch/arm64/boot/dts/rockchip/
-   0.2% arch/arm64/boot/dts/sprd/
-   1.4% arch/arm64/boot/dts/st/
-   2.1% arch/arm64/boot/dts/ti/
-   0.6% arch/arm64/boot/dts/
-   0.2% arch/riscv/boot/dts/renesas/
-   0.4% arch/riscv/boot/dts/sophgo/
-   2.4% arch/riscv/boot/dts/starfive/
-   0.2% arch/
-   2.7% drivers/bus/
-   0.5% drivers/firmware/arm_ffa/
-   3.2% drivers/firmware/arm_scmi/
-   0.2% drivers/firmware/qcom/
-   1.5% drivers/pinctrl/
-   0.7% drivers/soc/mediatek/
-   0.3% drivers/soc/qcom/
-   0.3% drivers/tee/optee/
-   1.4% drivers/tee/tstee/
-   0.3% drivers/tee/
-   0.3% drivers/
-   0.5% include/dt-bindings/clock/
-   0.5% include/linux/bus/
-   0.5% include/linux/soc/mediatek/
-   2.2% include/linux/
+[1] https://lore.kernel.org/kvm/20240501085210.2213060-1-michael.roth@amd.com/
+
+The following changes since commit 1451476151e08e1e83ff07ce69dd0d1d025e976e:
+
+  Merge commit 'kvm-coco-hooks' into HEAD (2024-05-10 13:20:42 -0400)
+
+are available in the Git repository at:
+
+  https://github.com/mdroth/linux.git tags/tags/kvm-queue-snp
+
+for you to fetch changes up to 4b3f0135f759bb1a54bb28d644c38a7780150eda:
+
+  crypto: ccp: Add the SNP_VLEK_LOAD command (2024-05-10 14:44:31 -0500)
+
+----------------------------------------------------------------
+Base x86 KVM support for running SEV-SNP guests:
+
+ - add some basic infrastructure and introduces a new KVM_X86_SNP_VM
+   vm_type to handle differences versus the existing KVM_X86_SEV_VM and
+   KVM_X86_SEV_ES_VM types.
+
+ - implement the KVM API to handle the creation of a cryptographic
+   launch context, encrypt/measure the initial image into guest memory,
+   and finalize it before launching it.
+
+ - implement handling for various guest-generated events such as page
+   state changes, onlining of additional vCPUs, etc.
+
+ - implement the gmem/mmu hooks needed to prepare gmem-allocated pages
+   before mapping them into guest private memory ranges as well as
+   cleaning them up prior to returning them to the host for use as
+   normal memory. Because those cleanup hooks supplant certain
+   activities like issuing WBINVDs during KVM MMU invalidations, avoid
+   duplicating that work to avoid unecessary overhead.
+
+ - add support for the servicing of guest requests to handle things like
+   attestation, as well as some related host-management interfaces to
+   handle updating firmware's signing key for attestation requests
+
+----------------------------------------------------------------
+Ashish Kalra (1):
+      KVM: SEV: Avoid WBINVD for HVA-based MMU notifications for SNP
+
+Brijesh Singh (8):
+      KVM: SEV: Add initial SEV-SNP support
+      KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command
+      KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command
+      KVM: SEV: Add KVM_SEV_SNP_LAUNCH_FINISH command
+      KVM: SEV: Add support to handle GHCB GPA register VMGEXIT
+      KVM: SEV: Add support to handle RMP nested page faults
+      KVM: SVM: Add module parameter to enable SEV-SNP
+      KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event
+
+Michael Roth (9):
+      KVM: MMU: Disable fast path if KVM_EXIT_MEMORY_FAULT is needed
+      KVM: SEV: Select KVM_GENERIC_PRIVATE_MEM when CONFIG_KVM_AMD_SEV=y
+      KVM: SEV: Add support to handle MSR based Page State Change VMGEXIT
+      KVM: SEV: Add support to handle Page State Change VMGEXIT
+      KVM: SEV: Implement gmem hook for initializing private pages
+      KVM: SEV: Implement gmem hook for invalidating private pages
+      KVM: x86: Implement hook for determining max NPT mapping level
+      KVM: SEV: Provide support for SNP_EXTENDED_GUEST_REQUEST NAE event
+      crypto: ccp: Add the SNP_VLEK_LOAD command
+
+Tom Lendacky (1):
+      KVM: SEV: Support SEV-SNP AP Creation NAE event
+
+ Documentation/virt/coco/sev-guest.rst              |   19 +
+ Documentation/virt/kvm/api.rst                     |   87 ++
+ .../virt/kvm/x86/amd-memory-encryption.rst         |  110 +-
+ arch/x86/include/asm/kvm_host.h                    |    2 +
+ arch/x86/include/asm/sev-common.h                  |   25 +
+ arch/x86/include/asm/sev.h                         |    3 +
+ arch/x86/include/asm/svm.h                         |    9 +-
+ arch/x86/include/uapi/asm/kvm.h                    |   48 +
+ arch/x86/kvm/Kconfig                               |    3 +
+ arch/x86/kvm/mmu.h                                 |    2 -
+ arch/x86/kvm/mmu/mmu.c                             |   25 +-
+ arch/x86/kvm/svm/sev.c                             | 1546 +++++++++++++++++++-
+ arch/x86/kvm/svm/svm.c                             |   37 +-
+ arch/x86/kvm/svm/svm.h                             |   52 +
+ arch/x86/kvm/trace.h                               |   31 +
+ arch/x86/kvm/x86.c                                 |   17 +
+ drivers/crypto/ccp/sev-dev.c                       |   36 +
+ include/linux/psp-sev.h                            |    4 +-
+ include/uapi/linux/kvm.h                           |   23 +
+ include/uapi/linux/psp-sev.h                       |   27 +
+ include/uapi/linux/sev-guest.h                     |    9 +
+ virt/kvm/guest_memfd.c                             |    4 +-
+ 22 files changed, 2086 insertions(+), 33 deletions(-)
+
 
