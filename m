@@ -1,133 +1,75 @@
-Return-Path: <linux-kernel+bounces-175424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222E58C1F7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:09:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C53F8C1F79
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2471283520
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:09:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A65CFB21AED
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B660160877;
-	Fri, 10 May 2024 08:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C227812AAE5;
+	Fri, 10 May 2024 08:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PokyhJOC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lziRbQkx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DC31607AF;
-	Fri, 10 May 2024 08:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056D215F301;
+	Fri, 10 May 2024 08:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715328535; cv=none; b=tqIezC1n2HaRmOeWUM4Ve5wakp3TzQbe87p+1i2XaW5a18TlazAL4sHDwTvTXjs4lFrYtY7SBnkJg5DE4cDM97gab/5fojiGjOPYIuKVCOQjCs8egFZES0xcrMtMHMwwgoZFbn+HJm88d1ZnjphKgxWxGOw75hpKEIfNh8XinWA=
+	t=1715328527; cv=none; b=DR3hIkbmL9/Fgyo4sGBsKY/kvBdAcsXO8rzkGN1fzu170jOVXzlgdYj7ZKUwFGJ9dobMTMCj5+o88MrJq+86mbq4efm7JtY/urLBWhRwgPem/gmKLyU8EdAp/n0AdeJ3fe7bi6B+WqKltIL2FAcvobrhnR4Ey3/H7jQTMm/AehM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715328535; c=relaxed/simple;
-	bh=WLilInU9CMgqlUDg6TUAP/uNgawnkqlXH6y0EJ/kbsY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L2HVGOvghjVF2cXFLN7FFcClLvOqgoz2AVp5weUFj4nC7Ezryd5oeKK+oMVCVOm/qatL2xqv7bu3krHz6ZAQD6hK3iMP49q6zZmdyQP4YH3+dOC/YuDi7xzEGWUFYOrBx+8Bb8RtGmkTWjycRsIQBqtUaqRWUco9AdKjQ7Gp0pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PokyhJOC; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715328535; x=1746864535;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=WLilInU9CMgqlUDg6TUAP/uNgawnkqlXH6y0EJ/kbsY=;
-  b=PokyhJOCYpj2P9xO6UYcfWmElKwVzYPMrQQPSUz8SGpB5APEZRgG5Zqc
-   cGFG6lMyEuuTrMj4VWczTf2uKKh3yFEMg5J27fh4/8v/u+rKDHRnF/N2V
-   rL7SBSgwfCBtkyAl6VoRYB6IRyWVbKeeGNnXI5OEvDNrJSklIDaJnTKXF
-   PpOa6GxIAp4/AXkpButR9OugQbzDMocQCGkMGUevyx7mCEuVow2TfEZaG
-   x+72ihOC3R+ZNOoLtAItmbvlu6GkCjVGAktFiNXy5JTQLIzRiiXr1bmSH
-   kiQ88IuVVmGKpKVAhKLgxRiu6S349Nx/ARYebb6c3Ewz8JndGTzK3Z9eO
-   g==;
-X-CSE-ConnectionGUID: AEOasjWRTKywAOGeAyfM3g==
-X-CSE-MsgGUID: L0JUTdTWSUuOWFB5pKXAHQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11147188"
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="11147188"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 01:08:47 -0700
-X-CSE-ConnectionGUID: VpFEcPo4Q1uu90H6USjaQw==
-X-CSE-MsgGUID: etVPO+06Q8SoAzQO5D5a6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="30092333"
-Received: from ettammin-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.180])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 01:08:42 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jonathan Corbet
- <corbet@lwn.net>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org
-Subject: Re: [PATCH] docs: document python version used for compilation
-In-Reply-To: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
-Date: Fri, 10 May 2024 11:08:38 +0300
-Message-ID: <878r0ijdh5.fsf@intel.com>
+	s=arc-20240116; t=1715328527; c=relaxed/simple;
+	bh=/ApmeYDDAk+7joyT9QAfro3+bN4u7mRVnwE230NWwkU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QS7oYvEDDaemApHX7bD896kmTkr/ZKixeQXt/fKiw5DYqSHn4Efv4v4Iu4m/x+ft30VbNSRRpvbFDJSDFz373gRkcPZSTQkhuSJht/90EHvLNJfUuzgRr1QGCYzPfUBMk730dxRFlYGXVL/WfdkmFCx7VyUyZhp70BjzwGu15Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lziRbQkx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF2EC113CC;
+	Fri, 10 May 2024 08:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715328526;
+	bh=/ApmeYDDAk+7joyT9QAfro3+bN4u7mRVnwE230NWwkU=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=lziRbQkxssP9Cc+0P7e7L/uHMJhnXbHoSGxO8KJTyxj/LuMVNQcz84oBn4+G4KSYh
+	 M6X++JAiy7pP4y5ZVjUU1oXxVBesPR5c2kbOXfJ/8a6MLVIQDqEKIt/gXqa+yotI7d
+	 tv0cVRSEec9CEOZTC7V8UT2Ma/xlBxvHxFA09RMEH7+UnDzgJuCP0j4DzDE16Cyqqt
+	 SQ3uxSno63m5k6l5JEURmBD74nDv3550d5aC7pyR0jS47NLHnHgD4XLoal9tpqUjfZ
+	 hsUVhBD0wi3OQzpqIL51RmX/zh01XgSB6W9OKEvezhaq2RqrLQKIMaOeeczvGP5buY
+	 QId5DUnBSmz0A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 10 May 2024 11:08:42 +0300
+Message-Id: <D15T7OSYSX5S.3G35QSFEIHU8F@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <lukas@wunner.de>
+Subject: Re: [PATCH v3] crypto: ecc - Prevent ecc_digits_from_bytes from
+ reading too many bytes
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
+ <davem@davemloft.net>
+X-Mailer: aerc 0.17.0
+References: <20240510015921.179175-1-stefanb@linux.ibm.com>
+In-Reply-To: <20240510015921.179175-1-stefanb@linux.ibm.com>
 
-On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> The drm/msm driver had adopted using Python3 script to generate register
-> header files instead of shipping pre-generated header files. Document
-> the minimal Python version supported by the script.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  Documentation/process/changes.rst | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/ch=
-anges.rst
-> index 5685d7bfe4d0..8d225a9f65a2 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -63,6 +63,7 @@ cpio                   any              cpio --version
->  GNU tar                1.28             tar --version
->  gtags (optional)       6.6.5            gtags --version
->  mkimage (optional)     2017.01          mkimage --version
-> +Python (optional)      3.5.x            python3 --version
+On Fri May 10, 2024 at 4:59 AM EEST, Stefan Berger wrote:
+> +		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
 
-Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the point in
-using anything older than the oldest supported version of Python,
-i.e. 3.8 at this time?
+Not a review/NAK comment but I personally prefer to treat these
+like arrays:
 
-BR,
-Jani.
+&((u8 *)&msd)[sizeof(msd) - o]
 
+It is totally fine as it is.
 
-[1] https://devguide.python.org/versions/
-
-
-
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->=20=20
->  .. [#f1] Sphinx is needed only to build the Kernel documentation
->
-> ---
-> base-commit: 704ba27ac55579704ba1289392448b0c66b56258
-> change-id: 20240509-python-version-a8b6ca2125ff
->
-> Best regards,
-
---=20
-Jani Nikula, Intel
+BR, Jarkko
 
