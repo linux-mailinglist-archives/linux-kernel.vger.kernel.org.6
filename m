@@ -1,100 +1,113 @@
-Return-Path: <linux-kernel+bounces-175335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8ABD8C1E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:34:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B478C1E2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A09283D87
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDD51F2216A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227E415E5D7;
-	Fri, 10 May 2024 06:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9385E099;
+	Fri, 10 May 2024 06:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdyWyMgS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SSlw25eD";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TXVjyMoW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5105C2940D;
-	Fri, 10 May 2024 06:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4C81361;
+	Fri, 10 May 2024 06:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715322843; cv=none; b=YQlhI39pggUGQYYioV84/+v/ds2kDl1JfRN5Ag7HlpAMmAnNMWgjm92Ge+RAJaWKA5RGwhqmMERnbMnZ+eq3dj7KtAdRwa6BXN0gvxmnKwU8slvRKuAMzr+hFzLHgUpQW3yi0dTX2yrhw/83eOxjgKOg04o7dSKAAW4QuSZvN+c=
+	t=1715322948; cv=none; b=QF43W4dXAHRTu0oNm066RCN3KgMfcSMCDsd2Xn1xctC/kfJKJEqr0id2e7NvemBp9hrGgNbFbvVMCRvsOZqQbmvE0QW/oEUZFRV7iuLzDd3ZVPnX0Mpgm+SOrBPMOa5HMQxXIS/G9I7CXHZEJwmVIFq8s9Kw7fCE8WfRTDhVzEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715322843; c=relaxed/simple;
-	bh=wVgOOLtVKMV7bsilEbUlznVvVGVC/ysLZc58xE9C6/w=;
+	s=arc-20240116; t=1715322948; c=relaxed/simple;
+	bh=ySOiCZi6wZZeJVGNhwU2ndvXvo/rln8yGH6sP6bFd/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0mbDgFSg6hK5z9U7easKBmrJo4UC5L80vOg7hTPDeahY/blLt8v3CmNXr5L6/OkbE8uGlN1pMZwS4w0bBSCjHzFSThIHOJc+SYflkum0S3qoeS7UNZI6piDv9kEEHEHFTnAE9Yv20P3NA8bMy9zsxpv3fbtpBBZH30DBl+DOpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdyWyMgS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C318BC113CC;
-	Fri, 10 May 2024 06:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715322842;
-	bh=wVgOOLtVKMV7bsilEbUlznVvVGVC/ysLZc58xE9C6/w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jdyWyMgS+v9qUGAFlHih7XgvQwrmsyDQCIOGDIKvOfqMEFtpGPQ0OGCTu8jYydX/R
-	 D5aAXl+I3zxvW5NV9UXZpfwVEJ+cUvSc6GFxu267oR/eyntQ+aO7DUNJWJtaGnni47
-	 5yiXHQuv2uRwexYJnTqAVm4IxxgkCHS2sX7PBkpAWGQ+xjDDk1Z+FmTypT8l0+3tns
-	 YAVR2sp3FWUjEdwhxPam5R0321D2eTUJUx7qVrlAA/Tdugfyfca6c1Ao6f1pHPlIp5
-	 zi02q1WopIt+CS92a/E7+wnTqhdrRX2WrjomGr6uAH+TwysbzNY1rm6tT5Ire4VWc9
-	 cMw7Z7GkywhrQ==
-Date: Fri, 10 May 2024 08:33:54 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240510-abnehmen-klammheimlich-36242d03b7a0@brauner>
-References: <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
- <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
- <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
- <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
- <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
- <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
- <20240509-kutschieren-tacker-c3968b8d3853@brauner>
- <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C0RRDQWFBb+MgprgyVO93sulXjV5mgqYSNdS+6p0bFy2fabMHydmOtLi8XjgImSRi6aSiD26cVebkJE4kezaY5FWGzeTQVYFcmQUb9I//9P41GCgo3/jz70LgwtYxRRZ+l3+A7havW0t6aRr1VKrOXCNu/b+FF8Us2YFYUMeXDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SSlw25eD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TXVjyMoW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 10 May 2024 08:35:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715322945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wiWgwXZNUgYVT1P/WFHirbZXJDsaudwsuRNKyAlK2ok=;
+	b=SSlw25eDytsAMiPK9m+dJ2SXFuQcqByVDNzD1tV9nuh39DHN9vqUZt51VWVAskuGNcDESn
+	ztmFebpvF8RNYrYZsWuP9EtDWnTUODT2QuYonY7WabufV87j7KNvAmvKclXtbF0xKxV2Qz
+	/j6L6m3xKx18AZ9BJcxMTUyIqUFDiG6RDLYw2uEuwSgpfyAf+ntWIhih2nUCzBpfw1WvBL
+	GseN1BeiLWd/Q01I4mR5i3fglQHr8GxPq7hwy6TkeLOsZ/6tcN2FfemfzDXFvkJ+Fw+k5t
+	j6sH1NAO4gENYO3OaC9tyB8Q4fYCXkm8gUiIbw+eRF4F5YDCYThX5vJ13Drw+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715322945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wiWgwXZNUgYVT1P/WFHirbZXJDsaudwsuRNKyAlK2ok=;
+	b=TXVjyMoW8j4fu5MdczhZ1yVQwKOcnWrwxFr9fIBQppS3/LsD7p0B95utP1iiHD5tiHBQSb
+	v7w2TeqBOZRU1hBg==
+From: Nam Cao <namcao@linutronix.de>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Mike Rapoport <rppt@kernel.org>,
+	Andreas Dilger <adilger@dilger.ca>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
+	linux-riscv@lists.infradead.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"ndesaulniers @ google . com" <ndesaulniers@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>,
+	Krister Johansen <kjlx@templeofstupid.com>,
+	Changbin Du <changbin.du@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] init: fix allocated page overlapping with PTR_ERR
+Message-ID: <20240510063544.cAHy0hF8@linutronix.de>
+References: <20240418102943.180510-1-namcao@linutronix.de>
+ <CGME20240429125236eucas1p24219f2d332e0267794a2f87dea9f39c4@eucas1p2.samsung.com>
+ <20240429125230.s5pbeye24iw5aurz@joelS2.panther.com>
+ <20240430073056.bEG4-yk8@linutronix.de>
+ <0049995a-07d0-4aaa-abc7-5bfc0dc22ace@ghiti.fr>
+ <20240430154238.nu6pebmdlpkxnk7q@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
+In-Reply-To: <20240430154238.nu6pebmdlpkxnk7q@joelS2.panther.com>
 
-On Thu, May 09, 2024 at 08:48:20AM -0700, Linus Torvalds wrote:
-> On Thu, 9 May 2024 at 04:39, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Not worth it without someone explaining in detail why imho. First pass
-> > should be to try and replace kcmp() in scenarios where it's obviously
-> > not needed or overkill.
+On Tue, Apr 30, 2024 at 05:42:38PM +0200, Joel Granados wrote:
+> On Tue, Apr 30, 2024 at 10:37:59AM +0200, Alexandre Ghiti wrote:
+> > The config shows that it is a XIP kernel that comes with its own 
+> > limitations (text is limited to 32MB for example), so I'm not surprised 
+> > to see those overlaps.
+> > 
+> > We already discussed the removal of randconfig builds on XIP configs, 
+> > but IIRC it is not possible.
 > 
-> Ack.
+> I just tested this going back until "2023-09-20 602bf1830798 (HEAD)
+> Merge branch 'for-6.7' into for-next  [Petr Mladek]" and I still saw the
+> overlapping errors.
 > 
-> > I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
-> > anyway which means that your comparison patch becomes even simpler imho.
-> > I've also added a selftest patch:
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
-> 
-> LGTM.
-> 
-> Maybe worth adding an explicit test for "open same file, but two
-> separate opens, F_DUPFD_QUERY returns 0? Just to clarify the "it's not
-> testing the file on the filesystem for equality, but the file pointer
-> itself".
+> Is this just something that happens always?
 
-Yep, good point. Added now.
+Alex is write that this is due to the 32MB size limit on XIP kernel. This
+means build failure happens if too many configurations are enabled and the
+kernel gets too large.
+
+I just sent a series to lift the size restriction and fix this build failure:
+https://lore.kernel.org/lkml/cover.1715286093.git.namcao@linutronix.de/
+
+Best regards,
+Nam
 
