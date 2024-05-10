@@ -1,176 +1,177 @@
-Return-Path: <linux-kernel+bounces-175180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F92F8C1BCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385888C1BCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF20D1F2153E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:39:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C39D1C2223F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A000FC0B;
-	Fri, 10 May 2024 00:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C57134DE;
+	Fri, 10 May 2024 00:37:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="SrRg8syR"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b="WzsE+sp5"
+Received: from SG2PR03CU006.outbound.protection.outlook.com (mail-southeastasiaazon11020002.outbound.protection.outlook.com [52.101.133.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A576FC6
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715301354; cv=none; b=c7Z3tWam6lS4/4bmS0TOBYGj+xl3F72Vjaczo+Gy3kkhIpemOetlddK+Y8Ej84cDGoyt2zUnB7Pcum/pSPk4Lx8zJEECLeiLpVdpU/xtf2eS9uWXxkCTk4RnwYeLDa8DhxnCmaAS28gOpGweINUBY9p9YYvZUwjV7T2zbLkVYOw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715301354; c=relaxed/simple;
-	bh=A6Ud7RP+XPGEndCXwu0iH4gOduKG/AYC7ysUshGfKZQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ss0bxEtNroGsI0zjGLmda2T1++vt4CQGHe2zRtXU2euHj8JyH/d7asNU9OqhWg8w84Vca4sCVBvL63lqtL3lusaW0kBnvFw1p4ji5K4eMsH5WsMYWEAH/uAKYX/8XidT4wXOkDS6t/3oHRhQLf3cmQIZohA0LmB9uRP8rWzEU1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SrRg8syR; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6204c4f4240so22117597b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715301352; x=1715906152; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JRIoam0j1M49iTn2E355v3TI8UxS6k39m0Um4TZVhLw=;
-        b=SrRg8syRlktl/jJWW6gSttTzqFhpXWkgxsodKFtHHNjx6wQ8ryw6UookH19/m/9IwQ
-         /qTrxKOLKPozU3ac38JA545YZCXBfBgfzzeeZiJsHNfB6nitQoR4UKEhrw1X3RXLWN+2
-         8iQ9STeO45nkWiuMTKwX9OYuR0foxQuGdwfG4+Xq+CMABYjr66NeYTmAkMILB6W4NTtA
-         yIxuypOe96dzpAna5lZ0F0VbmIaPzwJOg9HZy4Yji1bYO7VHXLfXKE9mN3orpdn8c9Zu
-         JEO1wVsAxsqAKbYbsYUD8tIt8QXDyLtn1DONCpXqa9VYj/lnJIJx9IDtrefpk6X+EWxc
-         BeLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715301352; x=1715906152;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JRIoam0j1M49iTn2E355v3TI8UxS6k39m0Um4TZVhLw=;
-        b=Y3LlCZ5mqWZAOAsyCjxFRst6zm8Hxisq/ZTvtjrjJaQc3Fgn753VCbAbSHjLIDklns
-         3bbe5QwdXomXq96oEW5Dperp6NCXsm3zEBr+ViH3Q6gcfgNTNk+yyXzKG7nxyIkuvjT5
-         F/w4nVv+s1ibMMs6OLgRXf+8Um/jGFvElLmcnbz49b/AptiMOt7HmSa+1CNeN7U/LyCP
-         fKbNvDfg5/pOschHelOpA3jszhdFpLtsmKV1Kl7AlLlKpBddkKlJ5MzKGuYhF0l8SSX2
-         N/7zhpuwvK9eVZAsn/x5yjH73whCoNsa3PKEPxmBANPGsXiWbcPYkGRcbHFxz2QObmWE
-         bfDw==
-X-Forwarded-Encrypted: i=1; AJvYcCULLcrQCy9dPu063kPeVSHbVp/lrClNXs3YDOwMDQ/dlm5aXOhuG4rnUJzGBXJAqCpod1KrWN2HcGHJsYbUagYV5rmQ0yCaXwJp9p5B
-X-Gm-Message-State: AOJu0Yw+lw57aMbUYDmrGji+/Y7Q6Pg9bL+ypKxurQyN2AjHWVFLl3cy
-	exusBGUv0ZUBVxEt2zCro6G86U3whx6hIi4FqofaQpSh5DnPhfvhOgFliBan+WC5K638FLzq+Hu
-	Qk/cNqHhmJUIri4SJIGanzA==
-X-Google-Smtp-Source: AGHT+IHJL8hsG0mvnXN9NTELNsYrQvpZSdlZUdc+4IRp10nXSK7S/+o1UQOBYkTXbb92FFrUo0i8behfYeZs/OhBkw==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:690c:4d88:b0:61a:d161:ff8a with
- SMTP id 00721157ae682-622aff477f3mr3037367b3.1.1715301352393; Thu, 09 May
- 2024 17:35:52 -0700 (PDT)
-Date: Fri, 10 May 2024 00:35:51 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389494A33;
+	Fri, 10 May 2024 00:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.133.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715301477; cv=fail; b=lmds/ZUcONhZQzpeMvkRtFeHAkymegKKGAfGibdHGUjdSyA5umICBoiIkQ0zEBPfGVWR2k1u79jx4bwUipzZvB3HVMnCYmrDLKWXpa52dqN0msxIkrzyPbXI0oQsQkOgc1A2d1zVcTNvs2iclN/NWj7X5nyptF8aHv6phJENOKE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715301477; c=relaxed/simple;
+	bh=5vn1YGaQCnaKUz9iQLpCKwUxJi7HkkEnfYNsGr6hbpg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fL0hvMSIze4Q5qJgKfiy2ae6mvG5u1OELX/JYiFvLMlupLs7dczgDbukYYq0uEddLd3eLLqh+BXdVAnma6gSjLH0ugid79ZW5HHdHtuQvPUrSZ2SmTa7gSJfuvUni32lVTbZ4DPW3En2QDiH41C1sK4Xpn4r/AlCqraGxjS4q18=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com; spf=pass smtp.mailfrom=jaguarmicro.com; dkim=pass (2048-bit key) header.d=jaguarmicro.com header.i=@jaguarmicro.com header.b=WzsE+sp5; arc=fail smtp.client-ip=52.101.133.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jaguarmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jaguarmicro.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ewthdat6nnuBFVlKBMtNIxpLz/N3mpUmx56yoYmbPMjqvUC62fQLAU5mMqxbBUNZagbW0MDnjttEnEd2I8VIS4sgeBgYGzaT9llwHSNKr8Mf1pHae8W66ZVKs2p7H2Vv7bohjpB+XvZpWwwohp73hw3x6pSxm7zLfpba8oR77KyXZiLlKjehcC0HHEtIkvPPqbBLP2quip8e4j17ADkoOhPdoAV6vF7lQbYn1yzUwLsrTjFIm6wnpNze9vd6jkMtBtNL7eK9x1tey1ABdvssBwl+q5JQWfDjx7JauWwzNV1kTtPeFpOp6pWJrulzXLQeH1Z1eVYCu8IKvxihmvKwzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AC1JAacRssBq3LzzaU8NpbMnKNxIhvj9sWlUpaIlI6E=;
+ b=WRn9mP3OEiX44Zu2CrCZpA8OqAzkZcmA66U0LzYmBdw3Zo1JRHQuRCVZ/cZ2e8ssZKkXJBJjE2FMYixgQVwNIV92FpdHGgGiBSmjYWU8bUP3Pb2ieGvijGKFF3O8IYYZVWG808WeyXXw6ncRwSCjRrt1aez8czyuMiH8Z/DFnkLlpFz6D1mxLkHkfGmZVHDp54mDj46hdAzuqaURvgxpmYkKC1eoxuI99syN5vXbSQLPSVZVvEU9nmPiq9WN052CMlKk0kCrQqNkt3YBYbbMZ5fOAIO9jXggf+PDkx77RefeYfoLFMQeKg3N+waNurOXgH85h1IsRhKR3jFqW1tVdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AC1JAacRssBq3LzzaU8NpbMnKNxIhvj9sWlUpaIlI6E=;
+ b=WzsE+sp5yg18KK4Xw68hoKVNL8EMIesgsXIXOsMyfDLOxe7rkn8mq8rEqZICxgFGg/iFNB/XWXFmT4g4nL0LNogV5VfcylVZbM6E53ADZ/36TqBIpiL9AKtkljOw4HpIxqBBkaIAH6h6l77CHnGlqYE0wDHVse+1oQL8ze0tojrusvqDxquVCMcN3VK+JXgr/x36YRaFscF5pLG7YQ7OO43UWSdYU4y2qUNmRGDtpH+cS4hMtnUT2hfr7Wsj0I5pyvHbr0rkpDDCBLOVxpekHrKkACXwiR1blM3koTe/olGAbHfrSHRbV5Osap4d48Y4Q/QbHlH/dkmpby8H1BH1XQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from SEYPR06MB5256.apcprd06.prod.outlook.com (2603:1096:101:83::14)
+ by SG2PR06MB5431.apcprd06.prod.outlook.com (2603:1096:4:1bb::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Fri, 10 May
+ 2024 00:37:48 +0000
+Received: from SEYPR06MB5256.apcprd06.prod.outlook.com
+ ([fe80::ea7:4953:3160:4916]) by SEYPR06MB5256.apcprd06.prod.outlook.com
+ ([fe80::ea7:4953:3160:4916%3]) with mapi id 15.20.7544.048; Fri, 10 May 2024
+ 00:37:48 +0000
+From: "foryun.ma" <foryun.ma@jaguarmicro.com>
+To: corbet@lwn.net
+Cc: alex.williamson@redhat.com,
+	kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	angus.chen@jaguarmicro.com,
+	"foryun.ma" <foryun.ma@jaguarmicro.com>
+Subject: [PATCH] vfio: remove an extra semicolon
+Date: Fri, 10 May 2024 14:37:35 +1400
+Message-Id: <20240510003735.2766-1-foryun.ma@jaguarmicro.com>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0189.apcprd06.prod.outlook.com (2603:1096:4:1::21)
+ To SEYPR06MB5256.apcprd06.prod.outlook.com (2603:1096:101:83::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAOZrPWYC/x2MQQqAMAzAviI9W5izOvQr4mHTqgVRWUEE2d8dH
- gNJXlCOwgp98ULkW1TOI0NVFjBt/lgZZc4M1lgyjekwEGYHdwmLYus6cpbIk68hJ1fkRZ5/N4w pfa+vRBFeAAAA
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715301351; l=3359;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=A6Ud7RP+XPGEndCXwu0iH4gOduKG/AYC7ysUshGfKZQ=; b=Qz81LOMknGCFGBFXpjp8tTJXGsQ9A8sScMtbF2qSupAvT3AI53qskUBYHBt1xTlul7o8nliAo
- /rHuR0QAfQhDLKW/2/JBfllQFsn9fZ92VgMllO/zxN3OF004iyse9Hh
-X-Mailer: b4 0.12.3
-Message-ID: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
-Subject: [PATCH] libfs: fix accidental overflow in offset calculation
-From: Justin Stitt <justinstitt@google.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
-	Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR06MB5256:EE_|SG2PR06MB5431:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a87dd87-31f8-49ac-2e83-08dc70896ad1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|376005|366007|52116005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NZoCsTHzVblDhF+BPq6oGxqW93F61/HaqKH5jJLl59SqjXD8H0r9VrFTyXQ3?=
+ =?us-ascii?Q?2p+pWGerPT+Kr/YMjhc6vbjfo3JskVZhZvmk89cRusSFSEu+14N2UTiEiXAO?=
+ =?us-ascii?Q?moSw8SVgVCypvU2+Kck4z7gNj/o4sEfMhHBy+DHHrLkXPtloE7LsMt5FXBaQ?=
+ =?us-ascii?Q?4DyPf++AMn29e4zHD45Cipf5Fa6BcjtXHytGZQhXIznp7bEqE2xL125qr1fr?=
+ =?us-ascii?Q?25WBjGYRtcyJKynlrlnAWS3octgLpdIxUS10ZbDFNjRqvnoX5jyktIwTorMl?=
+ =?us-ascii?Q?CXHsZdn1ZOhtrWmDoLerdmPA6m06JW6Vxboif7XGusTr2hJRbq47oPbzV5ur?=
+ =?us-ascii?Q?Vdpsu39K0yeGgrvJkgiDsb6x1a+jCRYImBQQL4CouXMzqx6MepRMq+UIHS2u?=
+ =?us-ascii?Q?UMx59WJUG4WIcJlG5vh3g1iSIa4TZbUAc3XkGyRBagxFrlvrP9UR8FvtvIrN?=
+ =?us-ascii?Q?CxLSAUDymlE1bQI0rnW9Cq75fPiTrv0MFy7uEuzNy4Huj5GzH5i0mjoe3lk2?=
+ =?us-ascii?Q?H5Ftwk5bGRrkRDNXsPpe7bhGmHnSDi8ipZ2iqrJbPpf28KI8hLpr2w3JrCwA?=
+ =?us-ascii?Q?Sv2ImSQlSYSOEDv+0WQoPeFMHEBjTZtB1w8WKDfdF3RAQFTiOPgYodAsYoMe?=
+ =?us-ascii?Q?o9Vx5Q/UiXjFDUlom1IFznD74sB8GGgIs1oQa5cc/m39UUxlSE4g2ObiHrnt?=
+ =?us-ascii?Q?g3pbfLoLPCuSncovO4vdAzeKPxdKuCat7ESLKwMENZgzjTE3EuATASbyBFAH?=
+ =?us-ascii?Q?9HMeKONJ7e+LZ6HMxDkq+I8wi0HyFWrkoEPQ9ji2iHJSz17dqpK9jCazhS5y?=
+ =?us-ascii?Q?ueGhy08YAkYKqy4xhF/Qq8kLL/dgROrJTB4PGKIrdEvP1JWs6YXSWBKTQ9rZ?=
+ =?us-ascii?Q?dJ75f3HOIQCLxwXzwHD5pz2sqHYxm9jFSJ99j+yllYOJyqTi+FrdHlv0RIdy?=
+ =?us-ascii?Q?LWtJXc23YhsPaYEK/UeXXfwKeXpeVYzcCZFY+76cvyBji937oqdkgm+nzeSS?=
+ =?us-ascii?Q?idGAV4D+RTyjyEVRMfvkPPf7bqIX8L8OywFO/ZIjRB8BVd6Rilej436V2pZg?=
+ =?us-ascii?Q?BQEW2cKkp+573pDO/kboJc523pSEjkB1Wa1rIRHH5txdSIBeGE9rWrdgm0wY?=
+ =?us-ascii?Q?1trflqcqOfboyaXbfl1eaoatRNLKSsaoz9KzWVaev4DeIYSwu9/H89BfgK18?=
+ =?us-ascii?Q?wN7qLbvZeyj4Mp0p6sJRWEK3R8xeQOUGuAg/iwLkySWqUG+i1sfwC4feQ1mO?=
+ =?us-ascii?Q?aOAmR1HnSDOYy5esCrWRtSWRRPJhIaVZu9pzVmQhYyHkYyKDF3pqcQhxumZA?=
+ =?us-ascii?Q?RkQm1JowH/4jeMmUsX3XiiEtsDgKFFkxzwFsYgAkvvH1Mw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5256.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(52116005)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Yp1Ruv2J2PUewv0xdONTBvujy5qn2pjcWKL5HSo6Ml1n66OBZJo4EMU6MRU6?=
+ =?us-ascii?Q?pDxuLq6XEsY18csqyKdQcyOAe0B9o8KZEMgk9f0fdCaGHiCAI5jKmz3q5abb?=
+ =?us-ascii?Q?j93mHn5K4qYelaqnyyJIFa8CS+oFKsOR2eSLKzhOqWMZP2UvlaRb8LYKlCIv?=
+ =?us-ascii?Q?DrdAZdP7sKeGhURUck2avFwJKtU2XO7RabwecWyI9TS+QHdWJi5ZJoS+G4Kq?=
+ =?us-ascii?Q?Pxx1rjQsgnuX5t5tISec+Wi25yfKZS++AxqY8FmMuA2GSHlSc6WrjW7ky4oc?=
+ =?us-ascii?Q?JuhG7awdKPaCzrisjUZVmniuzcEu1AvUubMKZMhS4MVxwynpBEre14cTbQZ6?=
+ =?us-ascii?Q?zbF6KPAIor4LlR4PpuuirSyDhCbyaoH8WdeTT4hB+PI5BTCR3JoNjtVGadYH?=
+ =?us-ascii?Q?D4d8SvbH6xsvThUv1NgaTWJQOVR4gMAT9yHgVR0hgpjDHRxYFdVQt+3s/nXD?=
+ =?us-ascii?Q?20LlObANEAG7H9soNjc9GiuKuGWAXcfRTt2yqUw54Mkp2bc+wwFPWmuOjQBf?=
+ =?us-ascii?Q?l3Gn1LeZNXzImCDgeEhUMhIoWXNWv+2pfpAgFMIQriTt2QDBnqLzP/x4M2dC?=
+ =?us-ascii?Q?2gtJ5Ipa4MSGrvMb0GKiCIy1NigztfnWccjqoAiym+jm/mqQ0iAo2+VqnwZ5?=
+ =?us-ascii?Q?3L5LKWSC2dixSIHOjQtXX3Bd3vTcfe/6Tto2B8emfi+MuWk5SOzaOcCJ25vP?=
+ =?us-ascii?Q?/2Y2krk6ZhjYVgQ/TpSjdM65u3BB3L7XYWaSu3xvZRYZPYMLp86PYg3j9KPU?=
+ =?us-ascii?Q?5r9kaI0Cm54dfz4eRl/r+76voyQClV3n0Z5mf2Q/szXjUnYls+nXY52e0nE/?=
+ =?us-ascii?Q?gwVkca6s6xzWue5maVVkwDF9T2knj8elK2oxHYJwUnARIP3CxD0umTYfCW6M?=
+ =?us-ascii?Q?G0gpzgA1eoVRQ63mKK3BQu9zvGzBmt8q/cUHtN934ig+WkGvbTZDyiWtg9sn?=
+ =?us-ascii?Q?4itclaaV3hcYQqGRledl6ZmA9EvS8Zmm6Ab3kAHi+FwkM1tzeZ7ywyfybS3w?=
+ =?us-ascii?Q?g8A1RlKHbUG3vkHT2X0DHJw2VzH6Gm+g1LUdQziInE7MSPEXlABA8itO4Qn+?=
+ =?us-ascii?Q?AA2belKSlSI/5tHPmVW0VPsQh1enfpu3x87UkxKh8W0loHzVAbbGjtFI1F61?=
+ =?us-ascii?Q?Zxd1YlFP2mlc9LC7SQ83cC54IrGqY+A6LIxEdjdKoqgC5Ea80eIYGW5aUeRm?=
+ =?us-ascii?Q?Pgdg3JhV6gFMzRudKyXVN25CY6rMKZmEWH4ru+MLZi+6fRidY1224xZOkhOD?=
+ =?us-ascii?Q?Dfv3cWmTCpV3I08PujrTjZ9b7sLswcQFc5cuu2quUsaZ81oo7Fz7NvdONBHJ?=
+ =?us-ascii?Q?dbn43ODJwbV56hoea0mv5VhnTAnzghXqNZaWiDDyQypuFRAM4kXugMXCHFT6?=
+ =?us-ascii?Q?IMcIw9r5+4gnhQkmNPKcpI6HKVZMHxLNSx7+gpZjTF60jp4WnlAMdKfN7/cc?=
+ =?us-ascii?Q?Fag8LCBH92kXWYCe1w91m/3ttxeKHGGKU0q/eQHaQSK1vo00xBF2eYnBA2wu?=
+ =?us-ascii?Q?kKZ9067Jy8bRPlnKGK1jCVUJwE21SiK0tB9IW+EMuEN69zHQwO5L9VYiRf4T?=
+ =?us-ascii?Q?5mCvmYeDeL+0ldzagHEmxiGn+31QnL3PNBdt4sBSQ3Pnipk14is1uoPawsSw?=
+ =?us-ascii?Q?tw=3D=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a87dd87-31f8-49ac-2e83-08dc70896ad1
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5256.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 00:37:48.7044
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PsXwlyxbvCNOIpsqXc6ILexBAG0TNCORjBmXu8XKC+K7sp4dfgtu4qFhbSqwR+b2p4hqTF8K5/50FCh6J9UZO1Tnm+CSDRtqISfq5HP3zrc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR06MB5431
 
-Running syzkaller with the newly reintroduced signed integer overflow
-sanitizer gives this report:
+remove an extra semicolon from the example code
 
-[ 6008.464680] UBSAN: signed-integer-overflow in ../fs/libfs.c:149:11
-[ 6008.468664] 9223372036854775807 + 16387 cannot be represented in type 'loff_t' (aka 'long long')
-[ 6008.474167] CPU: 1 PID: 1214 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00041-gec7cb1052e44-dirty #15
-[ 6008.479662] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[ 6008.485276] Call Trace:
-[ 6008.486819]  <TASK>
-[ 6008.488258]  dump_stack_lvl+0x93/0xd0
-[ 6008.490535]  handle_overflow+0x171/0x1b0
-[ 6008.492957]  dcache_dir_lseek+0x3bf/0x3d0
-..
-
-Use the check_add_overflow() helper to gracefully check for
-unintentional overflow causing wraparound in our offset calculations.
-
-Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-Closes: https://github.com/KSPP/linux/issues/359
-Cc: linux-hardening@vger.kernel.org
-Signed-off-by: Justin Stitt <justinstitt@google.com>
+Signed-off-by: foryun.ma <foryun.ma@jaguarmicro.com>
 ---
+ Documentation/driver-api/vfio.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang. It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
-
-Here's the syzkaller reproducer:
-
-| # {Threaded:false Repeat:false RepeatTimes:0 Procs:1 Slowdown:1 Sandbox:
-| # SandboxArg:0 Leak:false NetInjection:false NetDevices:false
-| # NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false KCSAN:false
-| # DevlinkPCI:false NicVF:false USB:false VhciInjection:false Wifi:false
-| # IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
-| # HandleSegv:false Repro:false Trace:false LegacyOptions:{Collide:false
-| # Fault:false FaultCall:0 FaultNth:0}}
-| r0 = openat$sysfs(0xffffffffffffff9c, &(0x7f0000000000)='/sys/kernel/tracing', 0x0, 0x0)
-| lseek(r0, 0x4003, 0x0)
-| lseek(r0, 0x7fffffffffffffff, 0x1)
-
-.. which was used against Kees' tree here (v6.8rc2):
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
-
-.. with this config:
-https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
----
- fs/libfs.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 3a6f2cb364f8..3fdc1aaddd45 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -147,7 +147,9 @@ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
- 	struct dentry *dentry = file->f_path.dentry;
- 	switch (whence) {
- 		case 1:
--			offset += file->f_pos;
-+			/* cannot represent offset with loff_t */
-+			if (check_add_overflow(offset, file->f_pos, &offset))
-+				return -EOVERFLOW;
- 			fallthrough;
- 		case 0:
- 			if (offset >= 0)
-@@ -422,7 +424,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
- {
- 	switch (whence) {
- 	case SEEK_CUR:
--		offset += file->f_pos;
-+		/* cannot represent offset with loff_t */
-+		if (check_add_overflow(offset, file->f_pos, &offset))
-+			return -EOVERFLOW;
- 		fallthrough;
- 	case SEEK_SET:
- 		if (offset >= 0)
-
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240509-b4-sio-libfs-67947244a4a3
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
+diff --git a/Documentation/driver-api/vfio.rst b/Documentation/driver-api/vfio.rst
+index 633d11c7fa71..2a21a42c9386 100644
+--- a/Documentation/driver-api/vfio.rst
++++ b/Documentation/driver-api/vfio.rst
+@@ -364,7 +364,7 @@ IOMMUFD IOAS/HWPT to enable userspace DMA::
+ 				    MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
+ 	map.iova = 0; /* 1MB starting at 0x0 from device view */
+ 	map.length = 1024 * 1024;
+-	map.ioas_id = alloc_data.out_ioas_id;;
++	map.ioas_id = alloc_data.out_ioas_id;
+ 
+ 	ioctl(iommufd, IOMMU_IOAS_MAP, &map);
+ 
+-- 
+2.17.1
 
 
