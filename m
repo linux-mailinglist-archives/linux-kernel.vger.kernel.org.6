@@ -1,129 +1,207 @@
-Return-Path: <linux-kernel+bounces-176067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCDE8C2989
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:47:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF398C2988
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDB332832FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0FF1F218A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705BB1C6B8;
-	Fri, 10 May 2024 17:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A0F1D530;
+	Fri, 10 May 2024 17:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZFqhXuh"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="aGYUk32c"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E3B2D627;
-	Fri, 10 May 2024 17:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0F41CF83;
+	Fri, 10 May 2024 17:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715363260; cv=none; b=idX50NuQ88rVq2X7omKATG3vRC24Lk3/3Jhvp4TxRiMUkdDepgUHTQiBoD4l3f91B2M58qk6dQQTQ3/StZ9jp19dH+7OQkthFBdqfz0wYqR01xY+4ypEyIF9okeHkm5KLuAFHBfBMRPbyDC89qRpYYVMLuEKvKh6E2NrmF7zDv8=
+	t=1715363255; cv=none; b=YtgFF2O5T9ljzPnGedROw3zuAmPR0Ewq5tVxTHhPKxnPs44Heid4+yoEtjeDwqTPRgooxMAcPFGeh6K5ZnjL4LskCgXyMwj7+jGMUvXgYOgdVCpgNEDh7oKFiImFNLt0caeHSTM4tBRq/vXuSIw4t9E0y6vDeBjc7bjCMXg+/BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715363260; c=relaxed/simple;
-	bh=ZvztaxVhFppW+dunKXuw5owT3lFMAfjH/4VZOrtHlFo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nASwAaTNSgju11U+wN5LzUZnYJvtylwGhKxWo2siDQaj711w+laphPLtMuI92OrQbFPX+dPvoeoR0Z8sqfQU9cFoRchReTWwVYANNofbI7v8F6nRcU0aSXOB+wirPGY1+bx/7fI61ruUIU3kdFxsn7rUL7w8RKb/eLLv1R5tmtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZFqhXuh; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a5a1054cf61so594509666b.1;
-        Fri, 10 May 2024 10:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715363257; x=1715968057; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZvztaxVhFppW+dunKXuw5owT3lFMAfjH/4VZOrtHlFo=;
-        b=RZFqhXuh437CAqz3SRxvaNOafNasf8w9W46z4V1RbQyMLT/Nblu9L4IDu0s4fGf7tE
-         t5WByT1yaKK6pkuMx4fKxapfdU1J2n1OKvo2P5psrc7WvtF1312O9zEFbeTrssW0gCsJ
-         XiMaS9W6GDQHMYfvtN0RfjV7eUhonTIctTtVc+852/Sc+gEBdYvg33xi+/KjZRudYqAZ
-         zmul8PZvTijhViQYO7+YEx0Hnz2kXAbaHI1TyaFWLz16TJzFjFu4fTZt1NUJe1BjyCvW
-         V7zfYPagpAsuka+LPwVWKXcIvXJypKyN+JoyR2kIeVP+YoIHj7+46TelIUOV6bXoocA8
-         4wVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715363257; x=1715968057;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZvztaxVhFppW+dunKXuw5owT3lFMAfjH/4VZOrtHlFo=;
-        b=T9BGxiMSEF+8fVLpAXz38CXBBzqqonXM1iZdOvTrhqLj1EBMGFD4sHn8Y9KwZSp//3
-         SyanEn2Yl1wxPPxdXZbsl/l6SwSgdXmgAhOvJEgqeijrPh8lMQHolFrl/Znv12TmAhgO
-         12FlRvSyu+zC7EHVXaBUdxXNru0vAQw7jFKVHp35yj/Nm42TrQcagVypjDGHgbzusPhz
-         6OkiZbXWatYZeKK0TcsE841KJmHworg4nzOjOmeMvHGR8jqxttq+r5azd8naWigUJ1kI
-         ZoxFHzuzypqamM28D36/wg8ohRIoyErbD+GuinU4gj6jnYJP4af5q/Bb4r3eG8/nQpBE
-         2zcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWecf4XOj2AmPQsagsVepMAvrKsRTubfS6rQmiXRUEmrPezPhFZh7eVvrA70ZRSlRsFIuD65/beBmwuhdcZlR8YZcD39W4cTqxCiet9Zi3msgAnMyEoPdfBAHRzevKif4Ljou7BoxSuXg==
-X-Gm-Message-State: AOJu0Yy79mxO3OZ2jrDE7sTkMbqXZu8FtoJqy2WiafRvLxAxoK/jyiWn
-	4Ydj5yERxtu0x/1PEbAM7wB+t2ucwjFLQh95HZ02ZXw4DVx7li8JB8dZR2urtZ33KQHY7qHKuxf
-	glPeIv3X0J1amphVpz4rNfB1HmKzEkmId
-X-Google-Smtp-Source: AGHT+IFfIjdEBYXeEGAPCOmCf/e6psY+NI/VvqYiZJKMo1u8WflwScJdqblBG2EQsiGiUdDwHUx407iPQd76Yd/9lWI=
-X-Received: by 2002:a17:906:a010:b0:a59:a9c0:57e6 with SMTP id
- a640c23a62f3a-a5a2d675dafmr294429166b.75.1715363257287; Fri, 10 May 2024
- 10:47:37 -0700 (PDT)
+	s=arc-20240116; t=1715363255; c=relaxed/simple;
+	bh=QY880VpDrKLYkLIweQTEmSAibAJZgvDYkKXiQyBJy2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u4D/PTZjtHeuWzK7o+JNSJnS9bGzN9445hwOfd07+Vm29ov5Ym49Vsv/46lF+4bJAPKapKHLqPsP4eHgXdM166nEItanrIrr+K7S5eKTNZSexy0icAfqy8eSQD+EHFW/nVAP+FTnvVKYHP6v49fd7T6zol9TOlzs3E6XpcrASQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=aGYUk32c; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1715363237; x=1715968037; i=w_armin@gmx.de;
+	bh=QY880VpDrKLYkLIweQTEmSAibAJZgvDYkKXiQyBJy2Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=aGYUk32cac8X+wwRD1t/33aalJItWQnjQwDpAPcmZe0dXWXwj5DxC2E6v9QyuR8e
+	 QPgoYXtZDPdHHI1uWwjXLiCcrYHAbNi+ez9SClnLh40+NZ3VrUKe3+n2NrIrLJKiR
+	 AzcvqGBE1WpwTcll6Dck+xXnk/F7OivoP2PMxWwYvIXjPGlW/ELkfajqqNk9V3yYb
+	 G2jxDxtWdAjWGLhzpXUK3SzpePjZ3Fuw4q5YoyVEDDS59+7YwiwezhBoL28ii8NtD
+	 XEAalDW3nkztTn7qQXtLJXX5Py41OqNtj/fIStRRi6eF2yk0kVJj21plOr6gGZEF1
+	 xtqRXjnfyX1q1zX2Xg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuDXp-1stJZQ347Z-00ucg8; Fri, 10
+ May 2024 19:47:17 +0200
+Message-ID: <269412ef-13de-4192-9289-52e51507e0b5@gmx.de>
+Date: Fri, 10 May 2024 19:47:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508144741.1270912-1-andriy.shevchenko@linux.intel.com>
- <CAMRc=Me3XOy6HfqjxDQBwnSW9pOCtK_Ry7keJ2LiXGFB88t4nA@mail.gmail.com>
- <ZjzWlNdDVVBRD-Ma@surfacebook.localdomain> <CAMRc=MeuAQgos+=GmYr0X+5Pi+foJaRNwuNM0D3b4-FwxoD2mg@mail.gmail.com>
- <Zj5AZMycTCPUoT-l@smile.fi.intel.com> <Zj5B5ONDI7DB86on@smile.fi.intel.com>
- <Zj5F8tidsVPkDGEi@smile.fi.intel.com> <CAMRc=Mfq50x5RUM76yYXG9hGh4vGTO2hTgFeO8Ty1Z0p3oo_2Q@mail.gmail.com>
-In-Reply-To: <CAMRc=Mfq50x5RUM76yYXG9hGh4vGTO2hTgFeO8Ty1Z0p3oo_2Q@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 10 May 2024 20:47:00 +0300
-Message-ID: <CAHp75Ve1sNmq00OLz51gSTr5XEwOYNpMy7+RO8Pc=Wts9ZSh9Q@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] gpiolib: Return label, if set, for IRQ only line
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
+ namespace root
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux ACPI <linux-acpi@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
+References: <5787281.DvuYhMxLoT@kreacher> <4926735.31r3eYUQgx@kreacher>
+ <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
+ <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
+ <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
+ <Zj5ZdcQeaTo9ImT4@smile.fi.intel.com>
+ <0cdf0af6-851b-4781-83fe-99320c35544f@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <0cdf0af6-851b-4781-83fe-99320c35544f@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oZbyEHJ0wNGrLD50nPO99adfJf9qe0p9BgAn4ydUTA/NNyXvVGd
+ fNPu7BnQdCEgBvkJZ417/g1o9PwIhuB9NMDK6iD4qT7IqDu6me5RTrEqc5Op9iKcD3z39C3
+ fL5ZzdRsVZ1g8MiVj7okBkmhmHpf3/VfFMYw2w7cyucpsXC7yGtSWRGAi0nnKQZQ09JGI8Y
+ NLjVHuIOLZMnlpVQn8R1g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oHUl/hDCxWo=;AzpTXZuB7plqogmUY/9bxEW6iGX
+ Ewm3HzbOe3pmKMFxHG4HntAWL8KH4LWyKlwlIBpKHyJztif8b6flVLJEqo+iFHNh1d473yYgY
+ P9//MohkIYqL2yuIJo7YHerdZLqlNYGpgwZdPtyYSbi0nZsAEFisdbtrPfyvLZVhHkiPCvxL/
+ zj2ufifdfa+yjHsi8K37Zk6kMY36tlu975kjS4m8l85O90norHuJ5FN8SkP3R2WI2tYofMoWn
+ 65vJWxR8VucdHwaF97hFtnCXtXwQAX6uK03sfmrYTR7gHKcjnwxJUvNoCNp21TGcI5g0NJLGM
+ J3YE1zfln3MbqWS0+6PhEZGsYRsU/gXjbeuYMjP0kgpmhLCrMiPCCSV/C3wJBOix+6laJ8L6n
+ b+kZiwHrqOPlSKKM/Jlfhm6kGn1qCIfSSCN2hTy/QykJHAmW+SVCDjS1rV52zmJqv5P21apTU
+ rnLdlB+b2rOR06IPU90UjSzl2w4aYA00RzG/o4weFPQVl8FTWQJKNmeqlNxxdYxAHbaxUG0Wg
+ WW78hhSZK+C3odfLo78AFIcxwS9YjiFCXrtt05OP75FxMko1ii1w3hEC3I8KIU68Fvy7qy170
+ OjYy9/RFWDusfO9Q8ldnQPjLIM1lqHv15Ds0gUo6P058R83M+nCndQID2ZA6UHeXVbLvDwiLf
+ PyLDsqk53QGQ3fLKVap0FZz+R8ro6tytW4BhFvFMQ1gS59sv3+7fLzmnV5hmDm6ZKDmfVQXY8
+ yk6aOofW58GBiA3nPrS3Z33B1H1uZa7d7ZUHu2/XD53G4VhM5dkBkAw22Tuk07/VcYbXhWUYG
+ Sr1ZM6qYPEuFp18VUgOkscJ5RDiruYr+pUzoW53CJmzS4=
 
-On Fri, May 10, 2024 at 8:30=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
-> On Fri, May 10, 2024 at 6:06=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Fri, May 10, 2024 at 06:48:52PM +0300, Andy Shevchenko wrote:
-> > > On Fri, May 10, 2024 at 06:42:28PM +0300, Andy Shevchenko wrote:
-> > > > On Thu, May 09, 2024 at 04:23:07PM +0200, Bartosz Golaszewski wrote=
-:
-> > > > > On Thu, May 9, 2024 at 3:58=E2=80=AFPM Andy Shevchenko
-> > > > > <andy.shevchenko@gmail.com> wrote:
+Am 10.05.24 um 19:40 schrieb Mario Limonciello:
 
-..
-
-> > > > > Fair enough but I would like to know what your bigger plan is bef=
-ore
-> > > > > picking this up.
-> > > >
-> > > > I stand corrected, this patch has an immediate effect on the generi=
-c
-> > > > gpiolib_dbg_show() which does *not* use the above mentioned call..
-> > >
-> > > Ah, but it doesn't use gpiod_get_label() in the else branch either...
-> > >
-> > > I want to amend the else branch there to print similar or reuse the m=
-ain one.
-> > > For the latter I have locally a patch to modify gpiolib_dbg_show() to=
- show
-> > > the interrupt lines as well even if they are not requested.
-> >
-> > I just shared that patch, if you are okay with both, it would be nice
-> > to have them applied.
+> On 5/10/2024 12:29, Andy Shevchenko wrote:
+>> On Fri, May 10, 2024 at 06:52:41PM +0200, Armin Wolf wrote:
+>>> Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
+>>>> On Fri, May 10, 2024 at 6:10=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> w=
+rote:
+>>>>> Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
+>>>>>
+>>>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>>>
+>>>>>> It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on
+>>>>>> Lenovo
+>>>>>> IdeaPad Pro 5 due to a missing address space handler for the EC
+>>>>>> address
+>>>>>> space:
+>>>>>>
+>>>>>> =C2=A0=C2=A0=C2=A0 ACPI Error: No handler for Region [ECSI] (000000=
+007b8176ee)
+>>>>>> [EmbeddedControl] (20230628/evregion-130)
+>>>>>>
+>>>>>> This happens because the EC driver only registers the EC address
+>>>>>> space
+>>>>>> handler for operation regions defined in the EC device scope of the
+>>>>>> ACPI namespace while the operation region being accessed by the _DS=
+M
+>>>>>> in question is located beyond that scope.
+>>>>>>
+>>>>>> To address this, modify the ACPI EC driver to install the EC addres=
+s
+>>>>>> space handler at the root of the ACPI namespace.
+>>>>>>
+>>>>>> Note that this change is consistent with some examples in the ACPI
+>>>>>> specification in which EC operation regions located outside the EC
+>>>>>> device scope are used (for example, see Section 9.17.15 in ACPI
+>>>>>> 6.5),
+>>>>>> so the current behavior of the EC driver is arguably questionable.
+>>>>> Hi,
+>>>>>
+>>>>> the patch itself looks good to me, but i wonder what happens if
+>>>>> multiple
+>>>>> ACPI EC devices are present. How would we handle such a situation?
+>>>> I'm wondering if this is a theoretical question or do you have any
+>>>> existing or planned systems in mind?
+>>>>
+>>>> ec_read(), ec_write() and ec_transaction() use only the first EC that
+>>>> has been found anyway.
+>>>
+>>> Its a theoretical question, i do not know of any systems which have
+>>> more than
+>>> one ACPI EC device.
+>>
+>> The specification is clear about this case in the "ACPI Embedded
+>> Controller
+>> Interface Specification":
+>>
+>> =C2=A0 "The ACPI standard supports multiple embedded controllers in a s=
+ystem,
+>> =C2=A0=C2=A0 each with its own resources. Each embedded controller has =
+a flat
+>> =C2=A0=C2=A0 byte-addressable I/O space, currently defined as 256 bytes=
+"
+>>
+>> However, I haven't checked deeper, so it might be a leftover in the
+>> documentation.
+>>
+>> The OperationRegion() has no reference to the EC (or in general,
+>> device) which
+>> we need to speak to. The only possibility to declare OpRegion() for
+>> the second+
+>> EC is to use vendor specific RegionSpace, AFAIU. So, even if ACPI
+>> specification
+>> supports 2+ ECs, it doesn't support OpRegion():s for them under the sam=
+e
+>> RegionSpace.
+>>
+>> That said, the commit message might be extended to summarize this,
+>> but at
+>> the same time I see no way how this series can break anything even in
+>> 2+ ECs
+>> environments.
 >
-> Not for this merge window, we'll see in two weeks.
+> It's deviating from the patch, but in practice /why/ would you even
+> want to have a design with two ECs?=C2=A0 In general that is going to me=
+an
+> a much more complex state machine with synchronizing the interaction
+> between both of them and the host.
+>
+> Understanding the benefit of such a design might make it easier to
+> hypothesize impacts.
+>
+I am not saying that such designs would make sense, it was a theoretical q=
+uestion only.
 
-No hurry, I'm fine with your schedule.
+Maybe we can just add a small note to the Linux ACPI documentation saying =
+that we only
+support a single EC device?
 
---=20
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Armin Wolf
+
+>>
+>>> This patch would prevent any ACPI ECs other than the first one from
+>>> probing,
+>>> since they would fail to register their address space handler.
+>>> I am just curious if/how we want to handle such situations.
+>>
+>
 
