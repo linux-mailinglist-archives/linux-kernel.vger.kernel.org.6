@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-175758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECB48C2485
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:07:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6815B8C248B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7032B24AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:07:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A2DA1C2468B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F8017084C;
-	Fri, 10 May 2024 12:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383B6171086;
+	Fri, 10 May 2024 12:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="ZjZZtOMr"
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="rSp4xsks"
 Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FDC14F12B;
-	Fri, 10 May 2024 12:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132D116F82A;
+	Fri, 10 May 2024 12:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715342815; cv=none; b=MhD0TH0ImTWH2e7AUmG/h0hGpfP6WrzdkOQAbg+g+zSjly8wjvno8HQdhn+Y3bk5QiLSDke/NfeAI4NpViUJh48e7iwYQgzznhci1UWEQmfyxQe3a5bSoLmdQh53WB5BmcCRByLK5jlXoptAUbs5G1bURsTsPNuwGPJNRrOVYV0=
+	t=1715342817; cv=none; b=WNbQjN/Pc3pFUdROP6/jNRIMb8+Vl0BvDjqpz1djcbXgrICaojtPc81JNHmIalupBDez039zQhEWSJryqOv3fSaXs8WF5XLl2rvlT7BilJ5L/oNYrk/jV4X0orKp95JeoIzklRHw+2dniQOc4Y544nrlRAlKmkSi5e4smZW+zOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715342815; c=relaxed/simple;
-	bh=Tf5eDTSwc8EbTpl4ozjcwy7DapiyJLkYoTlSUSGDLcM=;
+	s=arc-20240116; t=1715342817; c=relaxed/simple;
+	bh=alAAcYWNGVr0LO9THbHu1S/9Bb/OIKBbEuXmlziafj0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PATEezTDTDCPlwoiTQ5oRGbh2d1iLNQCczpjJQc/6Ugb0/YaKX2yA0lfD0ZYHEUqapQAsQ06ywIHVhFFFMTxSBrhkc2aoYOAtC3+wZHSq1IfJB5NrxSEAwWjW4+F44y9H4fKvN9R7r40FhLcxg7sspVoxvLdFDFUiHJpgSD3AnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=ZjZZtOMr; arc=none smtp.client-ip=220.130.44.152
+	 MIME-Version:Content-Type; b=dWCVELJdEwvTA02xYpdqU9rYZjRDkc6vnlGWLbWKEW6wyCvkutH+uQb0pJ/ifSr9GKZKZlfvKfQslOlZM5ZISwg4NtqYv44lEaVsNUVwTz2pfOCfF5vNe7O/eu7D/MeNPZ8uaGDupPWJVmu2aCdkYJXC7EMmZgVVWRSF3e8Sy5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=rSp4xsks; arc=none smtp.client-ip=220.130.44.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
 X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
 	s=richtek; t=1715342805;
-	bh=SL/RjOhtIhnXMH6vwoa+9BEm372k7ntr2/TkWKgZrZ0=; l=3203;
+	bh=CyjaSK4ROBhTrLFjC+OEFF7KNjcR72P0QQWCODQsyf8=; l=1305;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ZjZZtOMrJGNs69C5YeecOKXpjN71O96jx/btRZ1x4gphc55+YDlalB4LwwyxBAFYS
-	 /2hasy+p3CP01XjflbDNMRUhJE58E37O1j0os80FTVcmr2LdmmOScjUS+7n+WPkSpO
-	 FftNxL014T6zUHBbELdscVe1FxBml9h2QsfiYJdpriwj+YX+ac90mCU+P8Fdcde1Ls
-	 Q/dqxMfawSz1o6aTR1Do+05I/V347gH81svKvs9hylDCc9hgEmS5f0079AdF3R8coL
-	 jqDyjRB7Rv/2yijaFYXCNSSAB4ZdzKsfeFYXDdAvJD0VuYRFAHSyg0Fm2BFEHOZvVw
-	 HU1l2pqWgRkpw==
+	b=rSp4xskspn2afF4ottBCrarrQXdhxnmclugK41/q/gjJgBdQCorKnXU+BuHguOTKz
+	 V7UtFt/ejnBpoBsrMRgFA/18tI711qXDKgqpb8cWZGevo/8Fa80ogU3ZyWW+aMsWFk
+	 jEakmFi2bl9LUm7jaEE9iT3CikLpq7GyNWJY9KpWjI6JTCOPh0zE40rCatk4KXlNT/
+	 47un43UgvPhFkIhjPEHFaI6YD10+Opmtdkut6FkYq6qnGVqvVRTuJmqvRX8GEHF6pY
+	 U/tbxeuqFElEZxDq4Bo4jo5X+XSd73FsdDHXf7c6WIEFePW9w3/I73DhD8L2Y6FKHx
+	 tsWncPCDKGzqg==
 Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213201:0:AUTH_RELAY)
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213196:0:AUTH_RELAY)
 	(envelope-from <alina_yu@richtek.com>)
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 10 May 2024 20:06:32 +0800 (CST)
 Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 10 May
- 2024 20:06:31 +0800
+ 2024 20:06:32 +0800
 Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
  (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 10 May 2024 20:06:31 +0800
+ Transport; Fri, 10 May 2024 20:06:32 +0800
 From: Alina Yu <alina_yu@richtek.com>
 To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>
 CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<alina_yu@richtek.com>, <johnny_lai@richtek.com>, <cy_huang@richtek.com>
-Subject: [PATCH v3 3/6] regulator: rtq2208: Fix LDO discharge register
-Date: Fri, 10 May 2024 20:06:22 +0800
-Message-ID: <a1248141d114fbaf0ce7b1ffe37d3fe023b1478b.1715340537.git.alina_yu@richtek.com>
+Subject: [PATCH v3 4/6] regulator: rtq2208: Fix the BUCK ramp_delay range to maximum of 16mVstep/us
+Date: Fri, 10 May 2024 20:06:23 +0800
+Message-ID: <77fc604a10f4a3055c2c29ff6aa7a253a8b9bc7f.1715340537.git.alina_yu@richtek.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <cover.1715340537.git.alina_yu@richtek.com>
 References: <cover.1715340537.git.alina_yu@richtek.com>
@@ -69,80 +69,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Since the discharge register has been moved to another position,
-the modification is to fit the new register setting.
+The maximum ramp up and down range of BUCK are shorten
+ from 64mVstep/us to 16mVstep/us.
+Therefore, the RTQ2208_RAMP_VALUE_MAX_uV is modified
+ to 16000uV in this version.
 
 Signed-off-by: Alina Yu <alina_yu@richtek.com>
 ---
-v3
-- Seperate LDO vsel and discharge change to seperate patches
----
- drivers/regulator/rtq2208-regulator.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/regulator/rtq2208-regulator.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/regulator/rtq2208-regulator.c b/drivers/regulator/rtq2208-regulator.c
-index 00da787..cea8e77 100644
+index cea8e77..2e9387f 100644
 --- a/drivers/regulator/rtq2208-regulator.c
 +++ b/drivers/regulator/rtq2208-regulator.c
-@@ -41,7 +41,9 @@
- #define RTQ2208_EN_DIS_MASK			BIT(0)
- #define RTQ2208_BUCK_RAMP_SEL_MASK		GENMASK(2, 0)
- #define RTQ2208_HD_INT_MASK			BIT(0)
-+#define RTQ2208_LDO1_DISCHG_EN_MASK		BIT(4)
- #define RTQ2208_LDO1_VOSEL_SD_MASK		BIT(5)
-+#define RTQ2208_LDO2_DISCHG_EN_MASK		BIT(6)
- #define RTQ2208_LDO2_VOSEL_SD_MASK		BIT(7)
+@@ -53,7 +53,7 @@
  
- /* Size */
-@@ -339,11 +341,12 @@ static irqreturn_t rtq2208_irq_handler(int irqno, void *devid)
- 	.name = _name,							\
- 	.base = RTQ2208_REG_LDO##_id##_CFG,				\
- 	.enable_reg = RTQ2208_REG_LDO##_id##_CFG,			\
-+	.dis_mask = RTQ2208_LDO##_id##_DISCHG_EN_MASK,			\
-+	.dis_on = RTQ2208_LDO##_id##_DISCHG_EN_MASK,			\
- 	.vsel_mask = RTQ2208_LDO##_id##_VOSEL_SD_MASK,			\
- }
+ /* Value */
+ #define RTQ2208_RAMP_VALUE_MIN_uV		500
+-#define RTQ2208_RAMP_VALUE_MAX_uV		64000
++#define RTQ2208_RAMP_VALUE_MAX_uV		16000
  
- #define BUCK_RG_SHIFT(_base, _shift)	(_base + _shift)
--#define LDO_RG_SHIFT(_base, _shift)	(_base + _shift)
- #define	VSEL_SHIFT(_sel)	(_sel ? 3 : 1)
- #define MTP_SEL_MASK(_sel)	RTQ2208_BUCK_EN_NR_MTP_SEL##_sel##_MASK
+ #define RTQ2208_BUCK_MASK(uv_irq, ov_irq)	(1 << ((uv_irq) % 8) | 1 << ((ov_irq) % 8))
  
-@@ -422,9 +425,7 @@ static void rtq2208_init_regulator_desc(struct rtq2208_regulator_desc *rdesc, in
- 	desc->owner = THIS_MODULE;
- 	desc->type = REGULATOR_VOLTAGE;
- 	desc->enable_mask = mtp_sel ? MTP_SEL_MASK(1) : MTP_SEL_MASK(0);
--	desc->active_discharge_on = RTQ2208_EN_DIS_MASK;
- 	desc->active_discharge_off = 0;
--	desc->active_discharge_mask = RTQ2208_EN_DIS_MASK;
- 	desc->enable_reg = curr_info->enable_reg;
+@@ -147,12 +147,11 @@ static int rtq2208_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ 	 * Because the relation of seleltion and value is like that
+ 	 *
+ 	 * seletion: value
+-	 * 000: 64mv
+-	 * 001: 32mv
++	 * 010: 16mv
+ 	 * ...
+ 	 * 111: 0.5mv
+ 	 *
+-	 * For example, if I would like to select 64mv, the fls(ramp_delay) - 1 will be 0b111,
++	 * For example, if I would like to select 16mv, the fls(ramp_delay) - 1 will be 0b010,
+ 	 * and I need to use 0b111 - sel to do the shifting
+ 	 */
  
- 	rdesc->mode_mask = RTQ2208_BUCK_NRMODE_MASK;
-@@ -438,8 +439,10 @@ static void rtq2208_init_regulator_desc(struct rtq2208_regulator_desc *rdesc, in
- 		desc->linear_ranges = rtq2208_vout_range;
- 		desc->n_linear_ranges = ARRAY_SIZE(rtq2208_vout_range);
- 		desc->ramp_reg = BUCK_RG_SHIFT(curr_info->base, 5);
--		desc->active_discharge_reg = curr_info->base;
- 		desc->of_map_mode = rtq2208_of_map_mode;
-+		desc->active_discharge_reg = curr_info->dis_reg;
-+		desc->active_discharge_on = RTQ2208_EN_DIS_MASK;
-+		desc->active_discharge_mask = RTQ2208_EN_DIS_MASK;
- 
- 		rdesc->mode_reg = BUCK_RG_SHIFT(curr_info->base, 2);
- 		rdesc->suspend_config_reg = BUCK_RG_SHIFT(curr_info->base, 4);
-@@ -447,9 +450,11 @@ static void rtq2208_init_regulator_desc(struct rtq2208_regulator_desc *rdesc, in
- 		rdesc->suspend_mode_mask = RTQ2208_BUCK_STRMODE_MASK;
- 	} else {
- 		/* init ldo desc */
--		desc->active_discharge_reg = LDO_RG_SHIFT(curr_info->base, 2);
- 		desc->vsel_reg = RTQ2208_REG_LDO_DVS_CTRL;
- 		desc->vsel_mask = curr_info->vsel_mask;
-+		desc->active_discharge_reg = RTQ2208_REG_LDO_DVS_CTRL;
-+		desc->active_discharge_on = curr_info->dis_on;
-+		desc->active_discharge_mask = curr_info->dis_mask;
- 
- 		rdesc->suspend_config_reg = curr_info->base;
- 		rdesc->suspend_enable_mask = RTQ2208_LDO_EN_STR_MASK;
 -- 
 2.7.4
 
