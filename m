@@ -1,70 +1,146 @@
-Return-Path: <linux-kernel+bounces-176165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98AB98C2B09
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:16:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6258C2B0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE111F2556A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E7B1C21E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43694E1D9;
-	Fri, 10 May 2024 20:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681AA4DA11;
+	Fri, 10 May 2024 20:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eq3rLu84"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mfdsXEmm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C77567D;
-	Fri, 10 May 2024 20:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D84617C98;
+	Fri, 10 May 2024 20:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715372163; cv=none; b=lo5eYCzoi/yWSxdE5FhrlCAbNDWeJnA4idtTOHQX/PHX1jszcvR3C6Kx4kNCRygqSrkM1ZdijIsYyCRgjBzEFR1Udrlh1AzrzE5Sfksgz5xx6h/WEkMiOlsugU9JRD5ZQN0m/iEnXfBgtHFYKyMJZ+zGO0pH59LwtTYsDH4A3PE=
+	t=1715372264; cv=none; b=SSlrFtrXCjJIlGCeKLdkOFpp36rFaTmcj2xBpA4HL1RgJrjQA8se1hgMZ53tpP+UWa4WHXVTgojMGzCSv1zJKFkqfo0ycn5ztd5UzQKu8N1MAu6uQvvjJP8Ko9gg2oS+HuMgMFxn5TBibMCu8w9fopjlFHQPmdbagW6L/vwz7IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715372163; c=relaxed/simple;
-	bh=pmQ9AQITJFZy+youh/0jj+z+qY75g9ys3kkz/LOAbwo=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=iPaudrB2+7c5f8tLTCvof0ZxX1OFxqzXwjXHYPtUqLsyw5ZxY0iUno1u7MoTrgf9rCcHfMBA+wVygqW7jF10jGPlvLF5mUsat5kxHU6CHLs1x0jS9MUsxOkyQwQ4ZJUbCd25XA+h8Z0xT5bPZeNESUPLSNSV6VWYBW6QXWZY1Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eq3rLu84; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F648C113CC;
-	Fri, 10 May 2024 20:16:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715372162;
-	bh=pmQ9AQITJFZy+youh/0jj+z+qY75g9ys3kkz/LOAbwo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=eq3rLu842lVFGjL//lACe/xYhdPHq7+5jm7/PIJyXOvBAhxNq1hQatlizQKAcrHbe
-	 e/vEDsQZTCS/ZmxHhuTtCMzeNq79kJGrvFaTD+gRETEoufZVFr08eE9EfVestsNmcN
-	 pF7shYpzPmHWAwgbLxc5ljRjOYRkx3FMfs4z/O4cMxHRWvDeT/s/mUvbTW1Bpze/5W
-	 d3cYj8uwV3aLkeZrSbJOM8OkAYgmLD6mxnLbTcvY6/QSpTeFSoRW1PnSB36SwLPkTC
-	 7b0Rf5HhPkPZMTsvEcCQ80Tg/FpL5PQSAQoSYqZ+iku9NbXqOOcRk89jVzxpF+DlbY
-	 0S9lyaZBIk4Iw==
-Message-ID: <d7ce7ea6b13f2da8e07a345365d8f2b3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715372264; c=relaxed/simple;
+	bh=kSFaSH7qNRJ1yVlXYgKexL8JfRsWVC/6Zdpx7ikK+F4=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=bkng7S2Un+c7sMK8mo1Tl+q8io7Kpumw+8/Ma0aI3ufHdOmwoosJ7jC2xBzz/lUGNaHhJOQsICMOnjwfjnk7oKuy4OLrGHIAnSP/5oIk0cJtYMnpdOkpRRwTl9LznhHd1FcyZZorb/kxdVaz+G092IO/YnVw94FZxHBn+azWAZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mfdsXEmm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8EA3C2BD11;
+	Fri, 10 May 2024 20:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1715372264;
+	bh=kSFaSH7qNRJ1yVlXYgKexL8JfRsWVC/6Zdpx7ikK+F4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mfdsXEmm+HC1ti7x9lINFWQ4YqsW+VaQsN4ON9YW3Efjvnve0jv8Wn1iw18xp1HxE
+	 T9HxrQLb+bUh/sQnr1/vrg353fWl31UGD/WV2fnExQgGoS9zZAjgBIHj1YnT89BlC8
+	 joKfCG83OM/rRuFhGffB/XDVXxlerKc7A0sw8U18=
+Date: Fri, 10 May 2024 13:17:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.10
+Message-Id: <20240510131743.cf12a22295edd6ae4c175d5b@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
-References: <20240510123018.3902184-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Conor Dooley <conor+dt@kernel.org>, David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Gregory Clement <gregory.clement@bootlin.com>, Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Paolo Abeni <pabeni@redhat.com>, Richard Weinberger <richard@nod.at>, Rob Herring (Arm) <robh@kernel.org>, Salil Mehta <salil.mehta@huawei.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, UNGLinuxDriver@microchip.com, Vignesh Raghavendra <vigneshr@ti.com>, Yisen Zhuang <yisen.zhuang@huawei.com>
-Date: Fri, 10 May 2024 13:16:00 -0700
-User-Agent: alot/0.10
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Rob Herring (Arm) (2024-05-10 05:30:14)
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Linus, please merge this batch of hotfixes, thanks.
+
+
+The following changes since commit 52ccdde16b6540abe43b6f8d8e1e1ec90b0983af:
+
+  mm/hugetlb: fix DEBUG_LOCKS_WARN_ON(1) when dissolve_free_hugetlb_folio() (2024-04-25 10:07:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-05-10-13-14
+
+for you to fetch changes up to 672614a3ed24150f39752365c57a85fca1bd0017:
+
+  mailmap: add entry for Barry Song (2024-05-10 12:55:36 -0700)
+
+----------------------------------------------------------------
+18 hotfixes, 7 of which are cc:stable.
+
+More fixups for this cycle's page_owner updates.  And a few userfaultfd
+fixes.  Otherwise, random singletons - see the individual changelogs for
+details.
+
+----------------------------------------------------------------
+Alexander Potapenko (1):
+      kmsan: compiler_types: declare __no_sanitize_or_inline
+
+Barry Song (1):
+      mailmap: add entry for Barry Song
+
+Christoph Hellwig (1):
+      mm,page_owner: don't remove __GFP_NOLOCKDEP in add_stack_record_to_list
+
+Hailong.Liu (1):
+      mm/vmalloc: fix return value of vb_alloc if size is 0
+
+Jarkko Sakkinen (1):
+      MAINTAINERS: update URL's for KEYS/KEYRINGS_INTEGRITY and TPM DEVICE DRIVER
+
+John Garry (1):
+      mailmap: add entry for John Garry
+
+Kefeng Wang (1):
+      mm: use memalloc_nofs_save() in page_cache_ra_order()
+
+Liam R. Howlett (1):
+      maple_tree: fix mas_empty_area_rev() null pointer dereference
+
+Luis Chamberlain (2):
+      tools: fix userspace compilation with new test_xarray changes
+      lib/test_xarray.c: fix error assumptions on check_xa_multi_store_adv_add()
+
+Maninder Singh (1):
+      mm: page_owner: fix wrong information in dump_page_owner
+
+Matthew Wilcox (Oracle) (1):
+      XArray: set the marks correctly when splitting an entry
+
+Michael Ellerman (1):
+      selftests/mm: fix powerpc ARCH check
+
+Peter Xu (1):
+      mm/userfaultfd: reset ptes when close() for wr-protected ones
+
+Ryan Roberts (2):
+      fs/proc/task_mmu: fix loss of young/dirty bits during pagemap scan
+      fs/proc/task_mmu: fix uffd-wp confusion in pagemap_scan_pmd_entry()
+
+Tiezhu Yang (2):
+      selftests/vDSO: fix building errors on LoongArch
+      selftests/vDSO: fix runtime errors on LoongArch
+
+ .mailmap                                           |  6 +++++
+ MAINTAINERS                                        |  3 ++-
+ fs/proc/task_mmu.c                                 | 24 +++++++++++--------
+ fs/userfaultfd.c                                   |  4 ++++
+ include/linux/compiler_types.h                     | 11 +++++++++
+ lib/maple_tree.c                                   | 16 ++++++-------
+ lib/test_xarray.c                                  | 27 ++++++++++++++++++----
+ lib/xarray.c                                       | 23 ++++++++++++++----
+ mm/page_owner.c                                    |  4 ++--
+ mm/readahead.c                                     |  4 ++++
+ mm/vmalloc.c                                       |  2 +-
+ tools/testing/radix-tree/linux/kernel.h            |  2 ++
+ tools/testing/selftests/mm/Makefile                |  6 ++---
+ tools/testing/selftests/vDSO/vdso_config.h         |  6 ++++-
+ tools/testing/selftests/vDSO/vdso_test_getcpu.c    | 16 +++++--------
+ .../selftests/vDSO/vdso_test_gettimeofday.c        | 26 ++++++---------------
+ 16 files changed, 116 insertions(+), 64 deletions(-)
+
 
