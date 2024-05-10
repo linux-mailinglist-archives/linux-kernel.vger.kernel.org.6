@@ -1,265 +1,134 @@
-Return-Path: <linux-kernel+bounces-175520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19B08C20BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:19:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E26B8C20C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A700F286F72
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAA51C21FA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555D01635C9;
-	Fri, 10 May 2024 09:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9911E1635A9;
+	Fri, 10 May 2024 09:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTbhV8fL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhD7eivR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB47F14901F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2CC1607A3;
+	Fri, 10 May 2024 09:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715332769; cv=none; b=tZ6yPa50oBw3jpd6MifVaPajuYI06MJrXEFAuN3c8DjTfVUJaDcKwC15faZkQcluvVVoe5hGPThC7KJ1EbLT/PJ/vT7sDsqynac2rlupuNN8gNlXeuNnZ5zeY9xMVxsxCIe2HBI8hO3y6jB1RZYFOLGwes5ZamU25YZ/2zCI2MI=
+	t=1715332853; cv=none; b=GjxIV7UiQ3GBWU9B/vIniV3a8zphzVRU1ZBn1oQr4QGzkVI7xSSqsJu0a5rcVGvc0o5ztyLTEfWeOJYPpR8BHAJDeglV+p7w1yH98JPyX5Z4spzSfTLwyxxP/fZDsU8cIYixHHlC891ukHUFL8pRoP33IF1JS0oHptnCmtOgLYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715332769; c=relaxed/simple;
-	bh=IhFb5Pgicuh3snztn4LKPQtE1fwjYlbAD7oCTha2wuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pet8AtB9K9hOAe0kICYZG0NUCi+Id66xsx8ZwQ9jgjNt46Wi3D4zxdlCy0FO0T/DyjRue2As+ezEinElxfSgNIym3S1cvLPITmzV2Ye3rM0SWttr66jnazLwyhplLDnTUWjn3dsr+d7INtAYVm5MjhOSwSfFz+s4iEBee49uH/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTbhV8fL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715332766;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=w0K49mR3hMRsaS3+WXflIxtYT2lACdM2QgyeFZGMIw0=;
-	b=RTbhV8fLBtz3GXwCnojN5c4B+JJi5JARnbyMWZhpwOVay5nRPCDwJeBiIQSiZmUdgq9MCU
-	em9XrnoiV65tJ4HKMnvZO0JKjf2RHlDxMXZ/iSfGs3ZWsC5lsXVqFTyA8dosmlirx1MkSX
-	TZwnZyaynitfDVOexXE7u7x5cNq71jg=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-Fzh2-okgOpeDjKw7uivW8w-1; Fri, 10 May 2024 05:19:24 -0400
-X-MC-Unique: Fzh2-okgOpeDjKw7uivW8w-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34da4921505so1035626f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:19:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715332763; x=1715937563;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w0K49mR3hMRsaS3+WXflIxtYT2lACdM2QgyeFZGMIw0=;
-        b=C9HjBoUNuUTGIJ7RcWDe2KPgS4A8Mnhks0McWnVKcbO13lQjV4VT3DUNVh4Dq+Q9+f
-         Oz9I2BiVTRZUKmchSWWCpq6OkmOHJv3lFDawum92afmYYSZe8vW9KSHpz+dDCGrzlsce
-         k+2+YM8SCBONNN6pq1/SiVLppmruoDYkwsxGba1y4iNNqSa0TeIA6UEhoEgNSObQ9hMW
-         1lDYIsCZjlkoAcZJGdZYt4ANnEYoiqFHUPYs9t10gXjPJ5faG9yV6ZeyVQ5NnBB4VcTR
-         9sQZxnBfRSsj2/EEGYJrRDKfm1+Tb+jh2uyhSL6R3zSm0CMztRpNSUb+/HbSdbr8i8KY
-         bu4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1l7M+uo3QUgHI2eWk3hHFoIy03gqHslGAnxfiCQ86nDYXPoiuErtKDH9qB8kvviu8DuDJv8XcKl79X+L3tmoqShginU0aVe7EXLaL
-X-Gm-Message-State: AOJu0Ywliw/dC4Zdx8XXbctVuhaGM8PAsbNg3mn/VeoFNHf9r3DUOV9f
-	Zu5vTZwugsNNMwESWPtcb8EAk1YvRk01iJoR3U/uFMm630uWNOUBVBQu7dzN8//M5lAkWWIxNg9
-	GoSjkfVYvjesqJLI92lQ7a8F1UN0obthIrm0RoXpBS68869ImdXl3Ewl7BNh4Dg==
-X-Received: by 2002:a5d:6650:0:b0:34d:7f17:1e22 with SMTP id ffacd0b85a97d-3504a61c818mr1654079f8f.14.1715332763321;
-        Fri, 10 May 2024 02:19:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDLI567jRNFDBdwdqfZ6nGf1Xf15xv0+TRyAm8U9bnx+S0TvouZY2YxcPUZgob0O4OHNWsmA==
-X-Received: by 2002:a5d:6650:0:b0:34d:7f17:1e22 with SMTP id ffacd0b85a97d-3504a61c818mr1654058f8f.14.1715332762858;
-        Fri, 10 May 2024 02:19:22 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c710:2b00:9c9f:9357:3f4c:5358? (p200300cbc7102b009c9f93573f4c5358.dip0.t-ipconnect.de. [2003:cb:c710:2b00:9c9f:9357:3f4c:5358])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad074sm4067920f8f.70.2024.05.10.02.19.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 02:19:22 -0700 (PDT)
-Message-ID: <cc719813-ba73-461f-8b45-4728f926c151@redhat.com>
-Date: Fri, 10 May 2024 11:19:21 +0200
+	s=arc-20240116; t=1715332853; c=relaxed/simple;
+	bh=AxwApNMrl0If02f8zgxWuzVZRRdNUt9GnNFM8XGVwGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BUDw8W8H5kO4tUvZj21CM8Chbl8nEw+vRvU1zO6+BnIPtA5rczEBRypaDuDNn0Ne60anh/3P9EVFJz+AM6im+ayRulJdKLi90cYMWaHSVZgxhqejdDQXkEBIzfxiZCqFRcAFXtCf2OjkCETWrludEcd2ueiqDKILLLCVSme/j/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhD7eivR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE08C2BD11;
+	Fri, 10 May 2024 09:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715332853;
+	bh=AxwApNMrl0If02f8zgxWuzVZRRdNUt9GnNFM8XGVwGE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HhD7eivRAHbJ3IYYPaM5LFruHmwMlsw66b4VN+OkyMT7k05DneC7BwsD/+ZCASNZM
+	 H5C4sl6cp23hvujJoJck5jF9/+WNJrsx8yHhFoxUJqvhmKIrn3mM+Uu4cxSU+luwrX
+	 DeQwKp/wiku5eg1u6nHC2hgYhxt54/P3KrSbRUxFweMO+nvH1J2F68YGFKrWeGl9BX
+	 LpvINgXg9f9Wuvx4zy0CfI2Ud3V9LkrQJWXTbcLVMeD8ZIw3djcDaMxHTyAzEhA482
+	 Du7npEWQ7r2vww0gblMOR32u2hUpIUO/BPqEfpkeIg9xN4svfNzVrush3wPUtnnQlK
+	 6s3SE8oWPYeMg==
+Date: Fri, 10 May 2024 10:20:44 +0100
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jonathan Corbet
+ <corbet@lwn.net>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada
+ <masahiroy@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH] docs: document python version used for compilation
+Message-ID: <20240510102036.3ea40b37@sal.lan>
+In-Reply-To: <878r0ijdh5.fsf@intel.com>
+References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
+	<878r0ijdh5.fsf@intel.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v22 2/5] ring-buffer: Introducing ring-buffer mapping
- functions
-To: Steven Rostedt <rostedt@goodmis.org>,
- Vincent Donnefort <vdonnefort@google.com>
-Cc: mhiramat@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
- kernel-team@android.com, rdunlap@infradead.org, rppt@kernel.org,
- linux-mm@kvack.org
-References: <20240430111354.637356-1-vdonnefort@google.com>
- <20240430111354.637356-3-vdonnefort@google.com>
- <20240507223402.206d6ddc@rorschach.local.home>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240507223402.206d6ddc@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 08.05.24 04:34, Steven Rostedt wrote:
-> On Tue, 30 Apr 2024 12:13:51 +0100
-> Vincent Donnefort <vdonnefort@google.com> wrote:
-> 
->> +#ifdef CONFIG_MMU
->> +static int __rb_map_vma(struct ring_buffer_per_cpu *cpu_buffer,
->> +			struct vm_area_struct *vma)
->> +{
->> +	unsigned long nr_subbufs, nr_pages, vma_pages, pgoff = vma->vm_pgoff;
->> +	unsigned int subbuf_pages, subbuf_order;
->> +	struct page **pages;
->> +	int p = 0, s = 0;
->> +	int err;
->> +
->> +	/* Refuse MP_PRIVATE or writable mappings */
->> +	if (vma->vm_flags & VM_WRITE || vma->vm_flags & VM_EXEC ||
->> +	    !(vma->vm_flags & VM_MAYSHARE))
->> +		return -EPERM;
->> +
->> +	/*
->> +	 * Make sure the mapping cannot become writable later. Also tell the VM
->> +	 * to not touch these pages (VM_DONTCOPY | VM_DONTEXPAND). Finally,
->> +	 * prevent migration, GUP and dump (VM_IO).
->> +	 */
->> +	vm_flags_mod(vma, VM_DONTCOPY | VM_DONTEXPAND | VM_IO, VM_MAYWRITE);
-> 
-> Do we really need the VM_IO?
-> 
-> When testing this in gdb, I would get:
-> 
-> (gdb) p tmap->map->subbuf_size
-> Cannot access memory at address 0x7ffff7fc2008
-> 
-> It appears that you can't ptrace IO memory. When I removed that flag,
-> gdb has no problem reading that memory.
-> 
-> I think we should drop that flag.
-> 
-> Can you send a v23 with that removed, Shuah's update, and also the
-> change below:
-> 
->> +
->> +	lockdep_assert_held(&cpu_buffer->mapping_lock);
->> +
->> +	subbuf_order = cpu_buffer->buffer->subbuf_order;
->> +	subbuf_pages = 1 << subbuf_order;
->> +
->> +	nr_subbufs = cpu_buffer->nr_pages + 1; /* + reader-subbuf */
->> +	nr_pages = ((nr_subbufs) << subbuf_order) - pgoff + 1; /* + meta-page */
->> +
->> +	vma_pages = (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
->> +	if (!vma_pages || vma_pages > nr_pages)
->> +		return -EINVAL;
->> +
->> +	nr_pages = vma_pages;
->> +
->> +	pages = kcalloc(nr_pages, sizeof(*pages), GFP_KERNEL);
->> +	if (!pages)
->> +		return -ENOMEM;
->> +
->> +	if (!pgoff) {
->> +		pages[p++] = virt_to_page(cpu_buffer->meta_page);
->> +
->> +		/*
->> +		 * TODO: Align sub-buffers on their size, once
->> +		 * vm_insert_pages() supports the zero-page.
->> +		 */
->> +	} else {
->> +		/* Skip the meta-page */
->> +		pgoff--;
->> +
->> +		if (pgoff % subbuf_pages) {
->> +			err = -EINVAL;
->> +			goto out;
->> +		}
->> +
->> +		s += pgoff / subbuf_pages;
->> +	}
->> +
->> +	while (s < nr_subbufs && p < nr_pages) {
->> +		struct page *page = virt_to_page(cpu_buffer->subbuf_ids[s]);
->> +		int off = 0;
->> +
->> +		for (; off < (1 << (subbuf_order)); off++, page++) {
->> +			if (p >= nr_pages)
->> +				break;
->> +
->> +			pages[p++] = page;
->> +		}
->> +		s++;
->> +	}
-> 
-> The above can be made to:
-> 
-> 	while (p < nr_pages) {
-> 		struct page *page;
-> 		int off = 0;
-> 
-> 		if (WARN_ON_ONCE(s >= nr_subbufs))
-> 			break;
+Em Fri, 10 May 2024 11:08:38 +0300
+Jani Nikula <jani.nikula@intel.com> escreveu:
 
-I'm not particularly happy about us calling vm_insert_pages with NULL 
-pointers stored in pages.
+> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> > The drm/msm driver had adopted using Python3 script to generate register
+> > header files instead of shipping pre-generated header files. Document
+> > the minimal Python version supported by the script.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  Documentation/process/changes.rst | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/process/changes.rst b/Documentation/process/=
+changes.rst
+> > index 5685d7bfe4d0..8d225a9f65a2 100644
+> > --- a/Documentation/process/changes.rst
+> > +++ b/Documentation/process/changes.rst
+> > @@ -63,6 +63,7 @@ cpio                   any              cpio --version
+> >  GNU tar                1.28             tar --version
+> >  gtags (optional)       6.6.5            gtags --version
+> >  mkimage (optional)     2017.01          mkimage --version
+> > +Python (optional)      3.5.x            python3 --version =20
+>=20
+> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the point in
+> using anything older than the oldest supported version of Python,
+> i.e. 3.8 at this time?
 
-Should we instead do
+What's the point of breaking compilation with on older distros?
+The idea of minimal versions here is to specify the absolute minimum
+version that it is required for the build to happen. If 3.5 is
+the minimal one, then be it.
 
-if (WARN_ON_ONCE(s >= nr_subbufs)) {
-	err = -EINVAL;
-	goto out;
-}
+-
 
-?
+Now, a criteria is needed to raise the minimal version. IMO, the
+minimal version shall be at least the minimal one present on most
+used LTS distros that are not EOL.
 
--- 
-Cheers,
+I would look for at least 4 such distros:
 
-David / dhildenb
+- Debian
 
+  Looking at https://wiki.debian.org/LTS, Debian 10 EOL will be on
+  June, 2024.
+
+  Looking at:
+
+	https://distrowatch.com/table.php?distribution=3Ddebian
+
+  Debian 10 uses python 3.7.3.
+
+- Looking at Distrowatch for openSUSE Leap 15.5, it uses Python
+  3.6.15 and has an EOL schedule for Dec, 2024.
+
+- RHEL 8.9 uses a bigger version than those two - 3.11.5 - again
+  looking at Distrowatch to check it.
+
+- SLES 15 SP4 and above uses Python 3.11, according with:
+  https://www.suse.com/c/python-3-11-stack-for-suse-linux-enterprise-15/
+
+=46rom the above, IMO kernel shall support building with Python 3.6=20
+at least until the end of this year.
+
+Regards,
+Mauro
 
