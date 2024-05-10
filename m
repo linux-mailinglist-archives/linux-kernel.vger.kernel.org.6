@@ -1,84 +1,109 @@
-Return-Path: <linux-kernel+bounces-175428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63EB88C1F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:12:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 836198C1F8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B582835D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:12:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC49283663
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343D015FA80;
-	Fri, 10 May 2024 08:12:45 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7969C15FA7D;
+	Fri, 10 May 2024 08:13:06 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B59131192;
-	Fri, 10 May 2024 08:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B156D15F40B;
+	Fri, 10 May 2024 08:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715328764; cv=none; b=FjVWntseeUEqeZhwFMsOixsznqRZpe6OKub4kPDi2t9+YSheq5zI6rLuDKC0Zu1+ly7kQGOFYcAuNZ6XW483ab+dMepgUlLznWriE1gBZTiiUBwR8lkUgu4TXhpM06M4Z4CcIgPQ6qErhvB6THhb5UcY+WsjEXOElt9RJTUjNj0=
+	t=1715328786; cv=none; b=opIimh3+rgHSTLtLTNEcoBC1k2TdWvHXCyXQBvQPyQFFhEKfgKS5L6hHNRN9mb+RI19PoPZeKy8/5lljFfnGG1nGOseOd0GYD6oXA6n091ILjbp3NleQMyTAnPmM23rrCLr8c2YfAXhagXDFjmUIz+hMAaEjcOhHlOVdt+4GZ94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715328764; c=relaxed/simple;
-	bh=/oP7Bpr10/EZ8eMNvRVeS4AOS3RDhZayb83Of5+S7Uc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9yku/uoKKqjFe917098zQAQzIx3d+2hTaXgA24z95vdjoaqIZioq7LW7c/jGjisMrHbk6AGzc1843WZyJNLonB+pHR4JYc18esbqtPn8EZuXF/+u1htL6V+M0Cd0jppKoLhVfqR9Dn2K9PCFK9qpE3zIOclzPrFjXjg0oQ8+Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1s5LMh-00DHkn-1Q;
-	Fri, 10 May 2024 16:12:28 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 May 2024 16:12:28 +0800
-Date: Fri, 10 May 2024 16:12:28 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org
-Subject: Re: [PATCHv3 00/19] zram: convert to custom compression API and
- allow algorithms tuning
-Message-ID: <Zj3W7OK9kDpneKXR@gondor.apana.org.au>
-References: <20240508074223.652784-1-senozhatsky@chromium.org>
- <ZjzFB2CzCh1NKlfw@infradead.org>
- <20240510051509.GI8623@google.com>
- <Zj3PXKcpqUPuFJRu@gondor.apana.org.au>
- <20240510080827.GB950946@google.com>
+	s=arc-20240116; t=1715328786; c=relaxed/simple;
+	bh=TZfiS6lrEsk38Jd6m1IXLmMxfZu6DuG/Z0mv+clT1Q8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=b1cxLKf8ipPZKjYzFxUlkh1pMYqiXt0HAJ+o4jc8QhrvsxzLBQYleAsgcmYVKNWj5YbFS2Rb/PTr6tgmob7t8vPvcy19aUm6MtaZNv4QvuPTxVpZn87EA1asF7YilUX54TKXv5mVbNxEUeHtkEzp8yz9UZsdwzWCBnYOCx64GDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44A8CTnmC2567408, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44A8CTnmC2567408
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 May 2024 16:12:29 +0800
+Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 10 May 2024 16:12:29 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 10 May 2024 16:12:28 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Fri, 10 May 2024 16:12:28 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "andrew@lunn.ch"
+	<andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Chiu
+	<larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v18 10/13] rtase: Implement ethtool function
+Thread-Topic: [PATCH net-next v18 10/13] rtase: Implement ethtool function
+Thread-Index: AQHaoUWgPXTTB14VD0aoQIyqdMTInbGPTwiAgADR5MA=
+Date: Fri, 10 May 2024 08:12:28 +0000
+Message-ID: <b5c86321761f4d24921b3a4a1f02c694@realtek.com>
+References: <20240508123945.201524-1-justinlai0215@realtek.com>
+	<20240508123945.201524-11-justinlai0215@realtek.com>
+ <20240509204047.149e226e@kernel.org>
+In-Reply-To: <20240509204047.149e226e@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510080827.GB950946@google.com>
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Fri, May 10, 2024 at 05:08:27PM +0900, Sergey Senozhatsky wrote:
->
-> For some algorithms params needs to be set before ctx is created.
-> For example zstd, crypto/zstd calls zstd_get_params(ZSTD_DEF_LEVEL, 0)
-> to estimate workspace size, which misses the opportunity to configure
-> it an way zram/zswap can benefit from, because those work with PAGE_SIZE
-> source buffer.  So for zram zstd_get_params(ZSTD_DEF_LEVEL, PAGE_SIZE)
-> is much better (it saves 1.2MB per ctx, which is per-CPU in zram).  Not
-> to mention that zstd_get_params(param->level, 0) is what we need at the
-> end.
+> On Wed, 8 May 2024 20:39:42 +0800 Justin Lai wrote:
+> > +     data[0] =3D le64_to_cpu(counters->tx_packets);
+> > +     data[1] =3D le64_to_cpu(counters->rx_packets);
+> > +     data[2] =3D le64_to_cpu(counters->tx_errors);
+> > +     data[3] =3D le32_to_cpu(counters->rx_errors);
+> > +     data[4] =3D le16_to_cpu(counters->rx_missed);
+> > +     data[5] =3D le16_to_cpu(counters->align_errors);
+> > +     data[6] =3D le32_to_cpu(counters->tx_one_collision);
+> > +     data[7] =3D le32_to_cpu(counters->tx_multi_collision);
+> > +     data[8] =3D le64_to_cpu(counters->rx_unicast);
+> > +     data[9] =3D le64_to_cpu(counters->rx_broadcast);
+> > +     data[10] =3D le32_to_cpu(counters->rx_multicast);
+> > +     data[11] =3D le16_to_cpu(counters->tx_aborted);
+> > +     data[12] =3D le16_to_cpu(counters->tx_underun);
+>=20
+> Please limit stats you report in ethtool -S to just the stats for which p=
+roper
+> interfaces don't exist. Don't duplicate what's already reported via
+> rtase_get_stats64(), also take a look at what can be reported via various
+> *_stats members of struct ethtool_ops.
 
-For these algorithms where the overhead of allocating a default
-set of parameters and then changing them on a setparam call is
-too high, we could stipulate that the tfm can only be used after
-a setparam call (just as we require a setkey before cipher ops).
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+OK, I will check this part and modify it.
 
