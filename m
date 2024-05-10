@@ -1,157 +1,116 @@
-Return-Path: <linux-kernel+bounces-176125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEA28C2A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:02:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C6D8C2A2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72174B251BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:02:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308931C231B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC2D45034;
-	Fri, 10 May 2024 19:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BDD45978;
+	Fri, 10 May 2024 19:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="TF7n/g/x"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fwBvBKqC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25DF45C1C;
-	Fri, 10 May 2024 19:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD5B43ADF;
+	Fri, 10 May 2024 19:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715367715; cv=none; b=eAGnCry9XMRC5YV97wu0glWuqwce/zz7NK/VKQD+m9VPav0KdK3r9F2pq0e04k/RQEGDjMYcw5ieWqYaFBymbjM4df+sz0+qZ/P+aO5P7xl0vePD5V5XoS+ucg75kGb2ycgQjNBMT+mYcXNoyFZV+Yo/UPvMJJChg7fHHU31qyQ=
+	t=1715367743; cv=none; b=Y/w8JyWMBMhBcLWQGFtKLuVXIzMxdYJIcisMd6J7J/kEx/G4xy8+sKkhGZzIgGqz3fBOOPzEFYXV/AEyO0rXIyaXjXqneUdVVlAY2Fq8ajmGlqLDSVpWx92c0IsdDB/OnE5F3c4RnD6LvTzuje/da443mPr3CrkgMYUVGLeCP2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715367715; c=relaxed/simple;
-	bh=OQ3cjp1YaVKAGDCN+Mm0n4QgaEEqNCP+eQ2CEyY2KCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EbeGDQ6/GO1WNWJi6JUpmJiS11OWXXBxPNO44XV0YrhxYdobMTG2+XLAU0BE6Xa37wbFeDXeWkBs5UM7GozWkEUYBrXS3TRDHXvk9ARj1jetLHrRX7yDq3nVN4MJ+LRyiHVwZL8dn/VWZGfMl6Hb1QpCa6iEyQs/2GMk0kPrCE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=TF7n/g/x; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1715367694; x=1715972494; i=wahrenst@gmx.net;
-	bh=r0K6LUzeSfFM3cfAryelCHAy7vdffcHD56EhNe6U6Fc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=TF7n/g/xGCdXYQrjRdgg1eTRWR39nlDmazQkPk1hdgRMWid7k2VfJClTmTKFSpFI
-	 yXQk8do7L3xXOB9jfHZgSh3rNfmiBb2QUIXz07D4EgIDOwu9tOh18lPd/A2MuxWsJ
-	 YMaQOJIEIcmHCT40Se32E5DvR0NiHUGx+iDLoOm30OkFBMKSzn2D6U5skg6jzNwm8
-	 M3OOi/XxysQQn1/rKv7P8OrBxeaj7ia54nJk4lmxqWGkekShLgWojmX4jniVWToNG
-	 fSThpJfP6Q0k74GmU1/ojU1LqQHVS4cAdFJMqdKI07lEO0FqdOnCNFw3yNmMGxMbO
-	 3vNcghzvrCLniwezwQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N9MpS-1si3Ks12CC-016NY0; Fri, 10
- May 2024 21:01:34 +0200
-Message-ID: <01a7a263-9de3-468c-b438-c16f2c73872c@gmx.net>
-Date: Fri, 10 May 2024 21:01:33 +0200
+	s=arc-20240116; t=1715367743; c=relaxed/simple;
+	bh=PY7yO/kkHqsNTacKId8oceYK4e1mSLzHNFzRpX8/Apc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GWG0HfpaVuRpNLCdev0COBA2quvnfasHstZNop3+0dohvZ5wP6vD9dKZmnha+2YvZVg8vZwXoTz1ULGyEIMmxaTyTW9o4TtN+zVgGiANuDMrsdA33QBAF+Lp4zgtdLZFJwQ6jCt0pSZiDCOBXObcmSwAUrf4GvbWuHiQVyJxvXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fwBvBKqC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44AE8udc029548;
+	Fri, 10 May 2024 19:02:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=Mlr
+	nFlTFcvQde5BLi/mz/csJVwz7jruJ6XQkyz94GJk=; b=fwBvBKqCCiUJSqRNmxU
+	Y1b1QlEQ3nGEghAIKU0e0jDtZH/neseSD4vlplVGTuzMNIVPGvSzTlQVTqTNqUdB
+	I//uaRbhDtDPv10OUarR2PzEHDKSAVWIVEckOHkLkKcw/NhjxU9wSlyZpdo11kl8
+	Q1aybFEJko6IotRnUfab7mjxBZANT8dqXszzBh7ej/SpkloCE5Qaanfz4xYEgbhj
+	Y2+bHV/LDlzV3A2ehHKbLm8PmGasxibaeba/QPA0eFBhLS67Gqbz0a2rq9vobf8D
+	pVaTZmZNmpbZNkgU8omO/hZ9v20teJczkXK6relYAydTpGVHKt16IFf/8swGdVT+
+	PEA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w1abt4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 19:02:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44AJ2GWJ027157
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 19:02:16 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 10 May
+ 2024 12:02:16 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Fri, 10 May 2024 12:02:15 -0700
+Subject: [PATCH] fs: ufs: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
- controller
-To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-References: <cover.1715332922.git.andrea.porta@suse.com>
- <1f0c4fa62d6849753e2138cce5498693cfc3a230.1715332922.git.andrea.porta@suse.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <1f0c4fa62d6849753e2138cce5498693cfc3a230.1715332922.git.andrea.porta@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VVVD62vh/QTwMPK7v84RK80zkzw/ZcaJNUYdmqwHzZHVl9s9ji7
- A6OlGA+19sAZuEiEd4SpvmYckNwKP03ZuCStO5U2fmMXGMNG0QhIHa8ODlRHVqKW42CKh52
- hgShO3qEqgNRUDdwrGsp19eQkjDX/dKou0BSoh/OYICHvGSTZHtwFRSFWy9uDwHoXctzhZS
- Tf4QXtNR0A0J1q9eBZuHQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JsqNtMBpAPQ=;WrE82vYxBS55rqDrrooFi6unvXR
- EVZjm4eXXeBxDQYx9R/kFrTZkdcVoWDx3LwaJ8+dgJh1PA/nMCAYyTrNwGzu2SayDpTebyC/o
- E4dZJwpzxA39NQ30/Kbty8XfqRPx/MbHe9NA9oS7GE/nMoGwkgaywx+I0Wk3LlU5/q/A10Nw6
- Vc9MF9JIH7Ex4HKSUu+5yO5jh/aQHG8qfHZk/W4jd5YGmQZEfCbrx7ThibyboCJxQQqUVB+if
- 4pN2vL2Z6ikCm5LfzIiAxWHz96zJny9wt9D13Q6jML2XjcnnUd6MTqZxTij00A1XGsYmS08LZ
- A0wkiHUXb5Q1GMHKktqP44jiaHRwdsTRb65/IUlcCdNLVwK53r/OidANRNmPAZBEDEvbR2wP3
- r2kHKPDsESbBlLZrOG+DmYRgZCPsBS9u5iBc25v2d7uAIAPn/P0CiBZQrG1OYHYkwuI4cK08E
- sOt+4ZKREHJQeK+rU8up2x27RinAkzGGPOvpH/ZqEnCIRAZYHwYp/fvt6X1aWr2//wjRcfoBg
- 66VsDiiuNj4/u2SlxGagz63VnWdowCJ/0qKIlEtCfdDhbSwGd3nHVAaE0/jIr9r4TzArXgjhi
- d5MdH0T1epNqZmXBpmgsHBMPt0EgOgisuACFwDY1xUHwwT81HTrb8uuj6qWcEVNwxdACFPGr2
- 2AH+Ll09Rq1fx4GcuVMAotUw3q5XoFivxljYUZmTzpF+FbJUPZteiu1FSXg0Zx/BRd5UjdUIS
- ve5VJ5h4tmJ0Gg8QTctizR0n/gDczdj/inbtheAsIORhtjY9sTVIPgOQHDJT+yzjLMbUm/jnV
- GKkOFK4DbZLk9a0y8qOHrkBN8IZM6I7OzutXowqQDOKfA=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240510-ufs-md-v1-1-85eaff8c6beb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIADZvPmYC/x3MwQqDQAwE0F+RnBtYxaL0V8RDdLMaqKsktQjiv
+ zf1MvBgZk4wVmGDV3GC8ldM1uwoHwWMM+WJUaIbqlDV4VkG3JPhErGhpo2tZ0o1eHlTTnLcR13
+ vHsgYB6U8zv/5W/J+4EL2YYXr+gFCbI6FdwAAAA==
+To: Evgeniy Dushistov <dushistov@mail.ru>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Iz2skDyZPPQtOvPxSAECxkZjmPsFbz_L
+X-Proofpoint-ORIG-GUID: Iz2skDyZPPQtOvPxSAECxkZjmPsFbz_L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-10_14,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 phishscore=0 mlxlogscore=787
+ malwarescore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405010000 definitions=main-2405100136
 
-Hi Andrea,
+Fix make W=1 warning:
 
-please drop E. Anholt from the recipients. AFAIK she is not interested
-in kernel development anymore.
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
 
-Am 10.05.24 um 16:35 schrieb Andrea della Porta:
-> The BCM2712 has an SDHCI capable host interface similar to the one found
-> in other STB chipsets. Add the relevant compatible string and relative
-> example.
->
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->   .../bindings/mmc/brcm,sdhci-brcmstb.yaml      | 23 +++++++++++++++++++
->   1 file changed, 23 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.ya=
-ml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> index cbd3d6c6c77f..404b75fa7adb 100644
-> --- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> @@ -13,6 +13,10 @@ maintainers:
->   properties:
->     compatible:
->       oneOf:
-> +      - items:
-> +          - enum:
-> +              - brcm,bcm2712-sdhci
-> +          - const: brcm,sdhci-brcmstb
->         - items:
->             - enum:
->                 - brcm,bcm7216-sdhci
-> @@ -114,3 +118,22 @@ examples:
->         clocks =3D <&scmi_clk 245>;
->         clock-names =3D "sw_sdio";
->       };
-> +
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    soc {
-> +      #address-cells =3D <2>;
-> +      #size-cells =3D <2>;
-Would be nice to have a short explanation in the commit message why this
-is necessary.
-> +
-> +      mmc@1000fff000 {
-> +        compatible =3D "brcm,bcm2712-sdhci",
-> +                     "brcm,sdhci-brcmstb";
-> +        reg =3D <0x10 0x00fff000  0x0 0x260>,
-> +              <0x10 0x00fff400  0x0 0x200>;
-> +        reg-names =3D "host", "cfg";
-> +        mmc-ddr-3_3v;
-> +        interrupts =3D <GIC_SPI 0x111 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks =3D <&clk_emmc2>;
-> +        clock-names =3D "sw_sdio";
-> +      };
-> +    };
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ fs/ufs/super.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 44666afc6209..bc625788589c 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -1540,4 +1540,5 @@ static void __exit exit_ufs_fs(void)
+ 
+ module_init(init_ufs_fs)
+ module_exit(exit_ufs_fs)
++MODULE_DESCRIPTION("UFS Filesystem");
+ MODULE_LICENSE("GPL");
+
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240510-ufs-md-7a78d87a7ff4
 
 
