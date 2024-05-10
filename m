@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-175425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103518C1F7E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:09:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5038C1F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D83AB21AA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:09:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8251F220D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFFA15F3FA;
-	Fri, 10 May 2024 08:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6003B15F40B;
+	Fri, 10 May 2024 08:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cMoa0j8g"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="V6F4acAT";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="V6F4acAT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7D5131192
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20529131192
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715328584; cv=none; b=bIlvzLd7C7NzvsvQlKB9nicpR7x+SzKN5e/CJz2vcGc62q2ejo2zIL4QpZXhGANzStRY5Nmt/m5+0N50zNVpWFtRRHULccBLci0rpYgPRi7bdJ8ArFW/Os2tQ/yiGYHkz8vFOcz3odwJEjgdOSFy6Z3IKJBib4a44X1fwVgmcNU=
+	t=1715328615; cv=none; b=B0LwnHBDR6/7l9kXwx7Wfn4q2uU4WyRNOf+fqe6IMnqHpLLOtq4jKbhpIq5Jm74mnsNRaN4E/zafPViLCqa+hYCesF417XKr3XiR3hX6Kc6+xzMd95q2UVAVU2RtfCdFmtValMjphA05L4QMgef50DViDFHQOc9uz0TZoFU/vZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715328584; c=relaxed/simple;
-	bh=Q6AprIm+FPvsG5tK9fG9ayU03oaAZouIa8QaOGqizCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g1PE/TXyZtz+cwCmYCtKEJu5cTbRyf3tvzcZ3z8a7sqBQG9byL/yHQtn67PCegbRygINGCq+gTKA1x54nWRSXujRHH1e98/3B4CbBjf3rwcXXFJYmtcvLVa7bLLf5T1v1z1utfZv6xMR+J2NXQanRncFsKf7eTPE7oevBo+2Ntw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cMoa0j8g; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1715328615; c=relaxed/simple;
+	bh=zgAuHVFHQr1ht3IEgbfanxeRqi+MyvpjdLBqSFhWuZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxwIrGTcFOAR8cTqYNR5A1H/pbMJk/30THNlkFgSXrDdQVwxXNQDN2M+pomK9yF/cT1iV2hf8ueXkauqniTvZ9bQcNvLzXWECdlEZTgu3l2LQfCD70dPXGmA/PnCxJtW9fA7EjBEXxQinUTYykjqvKGGn1Op9V9LNvqh/qNhDBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=V6F4acAT; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=V6F4acAT; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51ffff16400so2897047e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 01:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715328580; x=1715933380; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NOA3rf3iEwXBosJZswL8rY8kkufkCURmYw7VrB7WzZY=;
-        b=cMoa0j8gyzAjZBGQzG5lQtX5hI302Kxxdtlq0rEhI3XtUVmITqJmLEWFFfk2bBlQ4g
-         K0E84vCQo2pwuZ/tM8vbjz+lMOQcauIHc511Tm/zW20ZBgjiecZTVR0rBCoyPX5bEM0P
-         2LsvKFsdibm+cKpMjfjFCbCqFptLIbG65tMCtmpMutHACTUqDOtwagm4aEONmXG9eRA6
-         NZxzcvNNILYMI+osXfFW7fU01TiexDiE1BAVVMB3ASEa9PMWdb9iZax8t/W5P5q9xbnx
-         IOFIu7QjaX/sGHTWDK5ytexPrOltx5ROnFJMsDh3XH7Oavee0HIQWrTqRMIqmrql/yI3
-         JulQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715328580; x=1715933380;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOA3rf3iEwXBosJZswL8rY8kkufkCURmYw7VrB7WzZY=;
-        b=nTr5GRvWS5BPdv5+QHD9hoDBgx504IjbH+zyx/zIS17McADIjpT2lAlwumy53Ys4aW
-         AHyd1ox6sauG/En4hfp1ygF6zG8QRPbxs3aBYsTUnpMh6/IcPV3jDsiDRrASsikStuQT
-         aSBqYnlKQAS0U5UelRGiHSfZcUmElJ9fI6R7zzezYXe4vdJgrXUt33lnKK6AKs6Kg9Au
-         185CjxPR3avqPX9MLG78eAMo7QozAcI9otyKRyJjMP3U2NcUmWVBMQulNzStCNZwW/AN
-         2jU9Rv+7SQlc7DTgudUd71sng3kOWSA6gOKZk3Z4uxlwJIf7B4w/8wnCMVHDSrhUd21T
-         MFLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsGNsFqikHcAqv0a1aMr047a4sF+PqAtorxBfZa/QUuvwrox3XLFkH70kBk33N6+RSqBXhXCM3ZpOvn+3wQ0WAUOi433y+ZZa2Dr1m
-X-Gm-Message-State: AOJu0YwC6y5b++DtZvUsf13LvhrRIY/BbpEhkvpjqywoqtgPQfVAWWd0
-	pps5i/GgF/4YyRkKPElFgO4CfgbZgqD0zA353A6Bw6OWikQiMR+Z8gycQjnvUIA=
-X-Google-Smtp-Source: AGHT+IHtDaPtq3+zWdvt/+QCSVMqgZzNN1SJ3jMP1mQYF2RqhDLEuqTWeGEoaIonyooUIL8R+/1DAg==
-X-Received: by 2002:a05:6512:3f20:b0:51d:4383:9e59 with SMTP id 2adb3069b0e04-5220f86c902mr1439410e87.0.1715328579679;
-        Fri, 10 May 2024 01:09:39 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873c:a500:6aaf:b7a7:7c29:ae5c? (p200300e5873ca5006aafb7a77c29ae5c.dip0.t-ipconnect.de. [2003:e5:873c:a500:6aaf:b7a7:7c29:ae5c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7dd4sm156394666b.139.2024.05.10.01.09.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 01:09:39 -0700 (PDT)
-Message-ID: <817f6c43-101e-4e9c-9ab7-f99c960d3499@suse.com>
-Date: Fri, 10 May 2024 10:09:38 +0200
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5044B3EBAF;
+	Fri, 10 May 2024 08:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715328612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=khNvkzd8LR0P71VStresAD/ElP/DV4CPOO6yMG2z+nA=;
+	b=V6F4acATUac5VcSM2ZCsP4xzayjl4x+Gy2cVYGnxr8gm2PKSRphltaIxHfpctDxOzRXofe
+	yg/HOUkf8c9DcjibchUGpJ8EHIodzXVgpNt0Y+87+o/O7dhOoriZKK0Dugq0kuXQHJD0sc
+	Oup8aylmjo82XX4tUWEJfMUfNWQBNFY=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=V6F4acAT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715328612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=khNvkzd8LR0P71VStresAD/ElP/DV4CPOO6yMG2z+nA=;
+	b=V6F4acATUac5VcSM2ZCsP4xzayjl4x+Gy2cVYGnxr8gm2PKSRphltaIxHfpctDxOzRXofe
+	yg/HOUkf8c9DcjibchUGpJ8EHIodzXVgpNt0Y+87+o/O7dhOoriZKK0Dugq0kuXQHJD0sc
+	Oup8aylmjo82XX4tUWEJfMUfNWQBNFY=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 329CD1386E;
+	Fri, 10 May 2024 08:10:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wbIqCmTWPWbYHgAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Fri, 10 May 2024 08:10:12 +0000
+Date: Fri, 10 May 2024 10:10:03 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: David Rientjes <rientjes@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gthelen@google.coma,
+	Chris Li <chriscli@google.com>
+Subject: Re: [PATCH rfc 0/9] mm: memcg: separate legacy cgroup v1 code and
+ put under config option
+Message-ID: <Zj3WWwJ-21xWqRcL@tiehlicka>
+References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
+ <jf44dfyaenz6xmn2hcodaginrshw5d5hfhmakdxtj4x6szk6b2@cr2rxamkgj2m>
+ <edff9a60-a77f-bc6c-3d07-4f96a97f1e38@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] xen: sync elfnote.h from xen tree
-To: Jason Andryuk <jason.andryuk@amd.com>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Stefano Stabellini <sstabellini@kernel.org>,
- Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20240410194850.39994-1-jason.andryuk@amd.com>
- <20240410194850.39994-2-jason.andryuk@amd.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-In-Reply-To: <20240410194850.39994-2-jason.andryuk@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <edff9a60-a77f-bc6c-3d07-4f96a97f1e38@google.com>
+X-Spam-Flag: NO
+X-Spam-Score: -6.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 5044B3EBAF
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-6.01 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
 
-On 10.04.24 21:48, Jason Andryuk wrote:
-> Sync Xen's elfnote.h header from xen.git to pull in the
-> XEN_ELFNOTE_PHYS32_RELOC define.
+On Thu 09-05-24 19:59:19, David Rientjes wrote:
+> On Wed, 8 May 2024, Shakeel Butt wrote:
 > 
-> xen commit dfc9fab00378 ("x86/PVH: Support relocatable dom0 kernels")
+> > Hi Roman,
+> > 
+> > A very timely and important topic and we should definitely talk about it
+> > during LSFMM as well. I have been thinking about this problem for quite
+> > sometime and I am getting more and more convinced that we should aim to
+> > completely deprecate memcg-v1.
+> > 
 > 
-> This is a copy except for the removal of the emacs editor config at the
-> end of the file.
-> 
-> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+> I think this would be a very worthwhile discussion at LSF/MM, I'm not sure 
+> if it would be too late for someone to make a formal proposal for it to be 
+> included in the schedule.  Michal would know if there is a opportunity.
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
-
-
-Juergen
-
+yes, I think we can and should have this discussion. I will put that on
+the schedule. I will reference this email thread as a topic proposal
+with Shakeel and Roman to lead the session.
+-- 
+Michal Hocko
+SUSE Labs
 
