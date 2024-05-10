@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-175299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3BB8C1DC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:39:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE7A8C1DD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B27B1C2138E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:39:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B0B2154B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5530B165FCA;
-	Fri, 10 May 2024 05:38:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0D415E5D2;
+	Fri, 10 May 2024 05:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lc9/js3I"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F861527A4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F9812DD88
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715319520; cv=none; b=griXwNwGyCngxgL4Bf8lNfPpuZo/CsZNuYaSTT48WJKCnfbJ2QOxpSPU7YOMGkXxbj1uisRXPZRlOwFPXEK7aUcfMsExKqqrM/apNG35sr2hMCVPgukjrbjUBs5TIjmoM5THjhIoPNU4tYOdCtZya82TD4PO73lqYouGUiZ9tXM=
+	t=1715320440; cv=none; b=Vje6OhI7JuGvEMA2j8KWY9u7n30+N+N7q7R6LYD8XYJ/Iy6f5Re2qAjyIJuqXQBGz7TpVPzDCbDW4rtiFSMZEHeNjRVo0wE66VtaNHYvY/fZn6r9YP9Jhhchnjj+OOM7U/P3FcPR3rGhXDYjzo9WInXT8gzqORf2+KVJEjAtAME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715319520; c=relaxed/simple;
-	bh=NHVN4MqHOHW3M13mpXs/mfjl7P3OPbQtFM50LxC9nmQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sXIU4njwQ9HAyObes77s97Jd8cvRauFHhSehGFW64h+Rjq4AFKFqlDJDpsTh/fNYCfUi3vqWxJnVgPCooMl+OMRSP9vq2pIqymWYWkMRcXBgtwsOe+7NU3/egAwgujWN42+YxnU6GdWBysQqxh8wwOzODCcPaJOKyNRZJuUNFlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s5Ixk-0006Ra-4d; Fri, 10 May 2024 07:38:32 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s5Ixh-000a4G-Fw; Fri, 10 May 2024 07:38:29 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1s5Ixh-00A7cR-1M;
-	Fri, 10 May 2024 07:38:29 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	David Ahern <dsahern@kernel.org>,
-	Simon Horman <horms@kernel.org>,
-	Willem de Bruijn <willemb@google.com>,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
-Subject: [PATCH net-next v3 3/3] net: dsa: microchip: dcb: set default apptrust to PCP only
-Date: Fri, 10 May 2024 07:38:28 +0200
-Message-Id: <20240510053828.2412516-4-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240510053828.2412516-1-o.rempel@pengutronix.de>
-References: <20240510053828.2412516-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1715320440; c=relaxed/simple;
+	bh=4PEitjlgb+KO6v9/1VnUNw8pVTM6GDPJ4mUKQsGr/KM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQLy5eUgbGNlxvpoBancXQezrTV4nZkVgHPFvJUYBL/kgmP5i+4wPZK3PbmWq4gHOLcE4Q6hVVhWxWZAqe5AAbi8yzUkhnSmBjeBSZz4+3W3vzGetsOSdLWIfcXN1PC8depyH+aE3uKmPAZ9SYgL6wGZFRr++skOKYmw1Gd954Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lc9/js3I; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id AA3DB3F366
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715320435;
+	bh=pb53mmGBdA39Om/S6gifWUIT/OZjQtmNrFO1eNmJ+LA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=lc9/js3Igi2d+FF9o7mqGr1bWPXeF+NVTbzNHdvfAMidNges6cXEmNKSGevcQ/4pM
+	 IklAiEzrQGPOwgst6GRSlK9ry19SC9rYeJN/hLFjoD5Xd4nJWICTGO3u0uXpGOzvrc
+	 CiO+K2Kgpnew8vRm8YquRNA5tF4QH8uRYrg50eMkCLVLlfXbR2sJFS7CucTmr6PZgH
+	 Q/D7Cg/uALctuoEDkzFMLWJtJKna0FX93CkJSJ/EV2Zt5iSmb9BQDAq04WJrgnSLso
+	 XwrPCnNEJrkahJN7MjZpcI+xtx0TcKWYBCiqdEijFONaeL9h54EcFs58GUpIUW3tYR
+	 83YAaiON74HbQ==
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-572ef3eb368so635636a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 22:53:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715320435; x=1715925235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pb53mmGBdA39Om/S6gifWUIT/OZjQtmNrFO1eNmJ+LA=;
+        b=C7JKxid8BsSIF86Td/DwVYfNAdV2xyyQADWqRPpGmqIEc5CXIlnqBSkhMSTIWQoWyd
+         IjkNSwrv1oKwVu4N9X7GHj/AWWm/5fPFoKaq7D3v6wO/oamkJLhEXnfJsoDx/TOGcDXX
+         4yLhqjutCpE58yY2B0OwEYkCTrEvsye2cseJCZCi3kDR1o2043/E2spaqMYX0iBt5WWw
+         G2FzsLX89ihSp36kkd0UIgsk48XxcMhzxAdRb0Hld7SldCkz+tFcO7/yN4H2XzLu7+Aj
+         KvAaaRp6n6E5Ald03ZVERRmDqCQL3LVShZSKhFpjwLELTwYSLHSTvLGrh45aFchJIUp+
+         +UhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr3YzK1px98Ur13MC7wGGVsdjgu7KbnZcVdc6bAJTmNBQ4zZhW728TdhFwqryCrq7nb69uPr9bccJa4yuYr8quIBwT/+SnHh+TkILw
+X-Gm-Message-State: AOJu0Yxvkqu5xm2KAftEyThr8zsNVxtxMwmhlrPhFyT6YoTWvxs+F1Xh
+	rfe+TCQcKYeDqyjYjuPMTxxBUWH+0GaUQ+Vx/4Swg1CVyA0o57mfRH0OaXneBAnQTHm7dXacFIB
+	9RTfHI7nn3OYa+XhyYkG8uPJeuipVT1zaIFIZFT3pycRzXkAETutddcHOtYpL6Xs8VXANL2ftb1
+	bEVg==
+X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id 4fb4d7f45d1cf-5734d5c1692mr1161727a12.7.1715320435059;
+        Thu, 09 May 2024 22:53:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUERLBxoc5gVqjALyHDp2f85+2hPeKHWBMU3eKKrua9AkiVLI6CvgwDj1X1kdppOmcHMa0VA==
+X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id 4fb4d7f45d1cf-5734d5c1692mr1161698a12.7.1715320434315;
+        Thu, 09 May 2024 22:53:54 -0700 (PDT)
+Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c3229b5sm1436042a12.79.2024.05.09.22.53.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 22:53:53 -0700 (PDT)
+Date: Fri, 10 May 2024 07:53:52 +0200
+From: Andrea Righi <andrea.righi@canonical.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
+Message-ID: <Zj22cFnMynv_EF8x@gpd>
+References: <Zj0ErxVBE3DYT2Ea@gpd>
+ <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-41-dhowells@redhat.com>
+ <1567252.1715290417@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1567252.1715290417@warthog.procyon.org.uk>
 
-Before DCB support, the KSZ driver had only PCP as source of packet
-priority values. To avoid regressions, make PCP only as default value.
-User will need enable DSCP support manually.
+On Thu, May 09, 2024 at 10:33:37PM +0100, David Howells wrote:
+> Andrea Righi <andrea.righi@canonical.com> wrote:
+> 
+> > On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
+> > > Use netfslib's read and write iteration helpers, allowing netfslib to take
+> > > over the management of the page cache for 9p files and to manage local disk
+> > > caching.  In particular, this eliminates write_begin, write_end, writepage
+> > > and all mentions of struct page and struct folio from 9p.
+> > > 
+> > > Note that netfslib now offers the possibility of write-through caching if
+> > > that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
+> > > v9inode->netfs.flags in v9fs_set_netfs_context().
+> > > 
+> > > Note also this is untested as I can't get ganesha.nfsd to correctly parse
+> > > the config to turn on 9p support.
+> > 
+> > It looks like this patch has introduced a regression with autopkgtest,
+> > see: https://bugs.launchpad.net/bugs/2056461
+> > 
+> > I haven't looked at the details yet, I just did some bisecting and
+> > apparently reverting this one seems to fix the problem.
+> > 
+> > Let me know if you want me to test something in particular or if you
+> > already have a potential fix. Otherwise I'll take a look.
+> 
+> Do you have a reproducer?
+> 
+> I'll be at LSF next week, so if I can't fix it tomorrow, I won't be able to
+> poke at it until after that.
+> 
+> David
 
-This patch do not affect other KSZ8 related quirks. User will still be
-warned by setting not support configurations for the port 2.
+The only reproducer that I have at the moment is the autopkgtest command
+mentioned in the bug, that is a bit convoluted, I'll try to see if I can
+better isolate the problem and find a simpler reproducer, but I'll also
+be travelling next week to a Canonical event.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Acked-by: Arun Ramadoss <arun.ramadoss@microchip.com>
----
- drivers/net/dsa/microchip/ksz_dcb.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+At the moment I'll temporarily revert the commit (that seems to prevent
+the issue from happening) and I'll keep you posted if I find something.
 
-diff --git a/drivers/net/dsa/microchip/ksz_dcb.c b/drivers/net/dsa/microchip/ksz_dcb.c
-index 07f6742df41bd..dfe2c48e1066a 100644
---- a/drivers/net/dsa/microchip/ksz_dcb.c
-+++ b/drivers/net/dsa/microchip/ksz_dcb.c
-@@ -82,10 +82,6 @@ static const u8 ksz_supported_apptrust[] = {
- 	IEEE_8021QAZ_APP_SEL_DSCP,
- };
- 
--static const u8 ksz8_port2_supported_apptrust[] = {
--	DCB_APP_SEL_PCP,
--};
--
- static const char * const ksz_supported_apptrust_variants[] = {
- 	"empty", "dscp", "pcp", "dscp pcp"
- };
-@@ -771,9 +767,8 @@ int ksz_port_get_apptrust(struct dsa_switch *ds, int port, u8 *sel, int *nsel)
-  */
- int ksz_dcb_init_port(struct ksz_device *dev, int port)
- {
--	const u8 *sel;
-+	const u8 ksz_default_apptrust[] = { DCB_APP_SEL_PCP };
- 	int ret, ipm;
--	int sel_len;
- 
- 	if (is_ksz8(dev)) {
- 		ipm = ieee8021q_tt_to_tc(IEEE8021Q_TT_BE,
-@@ -789,18 +784,8 @@ int ksz_dcb_init_port(struct ksz_device *dev, int port)
- 	if (ret)
- 		return ret;
- 
--	if (ksz_is_ksz88x3(dev) && port == KSZ_PORT_2) {
--		/* KSZ88x3 devices do not support DSCP classification on
--		 * "Port 2.
--		 */
--		sel = ksz8_port2_supported_apptrust;
--		sel_len = ARRAY_SIZE(ksz8_port2_supported_apptrust);
--	} else {
--		sel = ksz_supported_apptrust;
--		sel_len = ARRAY_SIZE(ksz_supported_apptrust);
--	}
--
--	return ksz_port_set_apptrust(dev->ds, port, sel, sel_len);
-+	return ksz_port_set_apptrust(dev->ds, port, ksz_default_apptrust,
-+				     ARRAY_SIZE(ksz_default_apptrust));
- }
- 
- /**
--- 
-2.39.2
-
+Thanks,
+-Andrea
 
