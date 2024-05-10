@@ -1,450 +1,128 @@
-Return-Path: <linux-kernel+bounces-176202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9948C2B96
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:15:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F39F8C2B9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E55A1C20F41
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:15:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0AC0B21045
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5B513B5A8;
-	Fri, 10 May 2024 21:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D2A13B5AD;
+	Fri, 10 May 2024 21:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9aaCK+U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VV6lfcdM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4520413B795
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7246450A93;
+	Fri, 10 May 2024 21:16:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715375729; cv=none; b=fu8rNRE2cIRSk4/4rZhuxRP4KRZsSyzGx7PgAKVzi3umYSPfuXeuhv45ezQGdtSDxJ2DEQyLPtfkEPdAnqk2z+aUnCjDAKgduijruHj1ynlKW4vCtxLO4pjPDnrcH675FylMEDzNhSx4DH6VLSW6snGkZU2giD70Wcr3V5cNr8U=
+	t=1715375775; cv=none; b=U24OP4iKFcdyEechwB1Y4Rctesn8rDuHyPppVi0yvYBiv4sV9CJB39aULYihMflJyLIPgg9eHjdTnxqOslxGw7rCJBM9ZwUNYHYqAoz+/sZ8oUYLF6xF9zmUNcCXnVgC8eSsVGu6melxg0cjyE/YgIQd08hPrYkixGzYnrY0I4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715375729; c=relaxed/simple;
-	bh=Qj1QNhzNCSyxG+yBmaCaGRNrCXMg2pUwMRVhPqpsyGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=TQnlC5Z9YrBHn4a7a79cqRfxkLrf+wT1zhrOK3UnARJHiMTWiG1uPChLpafQA6XJohJp2cmx1ezyYXXvTpk2GgsamCHy3Meim45VRko+m7bTfgXQC18ngyOeDv06J5AVJumwiYo1ChzlRt8/LKdxE35zNq79CsCbRajKGrtfVeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9aaCK+U; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715375725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dXb/uGzf6QDtqkkTKaqYM6XALHf41ZfOokP/ZOcck6U=;
-	b=H9aaCK+U6X1jxHdefaI9qUYpSUnU38ZGAA60BF/LwHHILCOzqQHkjNGv1EaP8cHH6Ah66h
-	FO9rAOJLsEkPk2gav+uN5+MiG9D7ckjrOmmPsvJT7wP5cr6H+4jGZgrDnmA0jJ79sV54Ub
-	HV72KQL+I/pnjs2uTaN/2pq8MKdKsyI=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-2-4kxYckUVMFS3FJERpnYPvA-1; Fri, 10 May 2024 17:15:23 -0400
-X-MC-Unique: 4kxYckUVMFS3FJERpnYPvA-1
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1edcfcaa2a4so24009845ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:15:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715375723; x=1715980523;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXb/uGzf6QDtqkkTKaqYM6XALHf41ZfOokP/ZOcck6U=;
-        b=fgoOteN2TVbonRXNfzw3ayCNrwexDeIq8zwwDcQZCavorHsJltWSzY9EgWNYp0GfK9
-         Mn364dH8BJH/tEuUJh/ozqMfxQVL5w4rFLMAZdh0EfVSs+4R2U19ked8keFtdVybAXoe
-         XQw7loukiijC3HkXlZkFd7HzsO11HnWZ/yLkTEUnHbpDJ1RtVLg22e/tEkm5Ib9YgxUe
-         FkWP1CfentuIaFRI/LcOoMZ/7ngc9lbXMoIoT8KzGGDmtEN1Lk14gelBZdnA2TKlXHul
-         IeOW3SJAOR2rMBcz/oMKKjhcocH/c+2YJ62usnt4LuRLHTg071AZJ9TgJKol9OYk/V1r
-         pcwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCp2iuOH4cVjktqruVIXGMwU+qjibFl5PWdMHHqc7z59TDhR/CEHaTvnkt7gENzL29S5HPHYH2K61S/8N9OQWouDKFf0w/0g2oQR+s
-X-Gm-Message-State: AOJu0YxS7Y52hYUFhrxPOXhwtT9twm9ubcASKkK8I1F7JmYcOUZEgp+w
-	zDdpL55vGKic2jadxZHdWwLpQ3zaEX3uQaW3N4B5fVzfIZX+RrSVRm2F2rU+RqqDt1JFfA8Tdp1
-	DHjRxloGJk7v3KGRm5ExbcJiOFck6kVRtrs6ZYONzXHVRh/Ex48HQ4oAo2Qc4Bg==
-X-Received: by 2002:a17:903:184:b0:1e4:24bc:426e with SMTP id d9443c01a7336-1ef43d2eac1mr48828355ad.28.1715375722583;
-        Fri, 10 May 2024 14:15:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiqnKQu87FnOIqSQCrlqW5ilQ1Y76PmrvIX4ZXfyQ1snIwqq8+i3Is9avMiZ366RbkxisbtA==
-X-Received: by 2002:a17:903:184:b0:1e4:24bc:426e with SMTP id d9443c01a7336-1ef43d2eac1mr48828025ad.28.1715375722013;
-        Fri, 10 May 2024 14:15:22 -0700 (PDT)
-Received: from LeoBras.redhat.com ([2804:1b3:a800:8d87:eac1:dae4:8dd4:fe50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad61c7sm36934655ad.68.2024.05.10.14.15.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 14:15:20 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
-Date: Fri, 10 May 2024 18:15:14 -0300
-Message-ID: <Zj6OYvivXF7tUIqV@LeoBras>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <Zj56kVxuTJm4EsAn@LeoBras>
-References: <ZjuFuZHKUy7n6-sG@google.com> <5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop> <ZjyGefTZ8ThZukNG@LeoBras> <Zjyh-qRt3YewHsdP@LeoBras> <09a8f4f6-a692-4586-bb68-b0a524b7a5d8@paulmck-laptop> <Zj5GEK8bt3061TiD@LeoBras> <a5784417-d65d-45c2-a66f-310a494b9827@paulmck-laptop> <Zj5VgM_RzaDWQs1t@LeoBras> <d5021b48-09d6-4a54-9874-740051aab574@paulmck-laptop> <Zj56kVxuTJm4EsAn@LeoBras>
+	s=arc-20240116; t=1715375775; c=relaxed/simple;
+	bh=K6EhDqPaBDztZnvn/KM7LNk+8HMiGpLYxVSS9Ir0nE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWFw9O8oGGNcvHfLSBGnTR43d6w/Yhwzlfsne8UE3zYdNd9HYiQG2jvA04/b+hp2NobMUcyhRHPe9unKk0sNrqfIvOndkUQR7ZgCuadR1FGr88Te9tYXoSiU9ufdfhUGeizui2RHe3OCWMuT7WY3jxSZUqBGanv//xFsGc3T2uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VV6lfcdM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8C08C113CC;
+	Fri, 10 May 2024 21:16:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715375775;
+	bh=K6EhDqPaBDztZnvn/KM7LNk+8HMiGpLYxVSS9Ir0nE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VV6lfcdMZ0TEjobmN5Nzgr3+3HR8pdRWF9d4Tnw0OacGPSKaGVHIlittLNo2vJrfJ
+	 WHLsw1Dx9SSdjnHP4Fhea7jUQT/K8F1xt0pv0S6o4tbO96gx8ONtXYiIxV8Ygv75/z
+	 cjjqP5ML5eRiwqhovQDS7Jn+mbuVBzCvMGuR3sY1ujFgSBscZGBPlVpB0GxKWihM+x
+	 oJby08HePcWDP3vAiw++HgLIOXapLAZhB5wBd8C6bIHJgBlLXLI9v5UD8iDVlG0OIJ
+	 JOPmRKvMgaHqPzMpyxQ/KyLFhe1F00hbYN+rFEm5Esg2qTTXN82HpuFrjbU1d95o1Y
+	 eE2aByExTAlpQ==
+Date: Fri, 10 May 2024 16:16:13 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>
+Cc: airlied@gmail.com, akpm@linux-foundation.org, conor+dt@kernel.org,
+	daniel@ffwll.ch, dinguyen@kernel.org, hverkuil-cisco@xs4all.nl,
+	krzysztof.kozlowski+dt@linaro.org,
+	maarten.lankhorst@linux.intel.com, mchehab@kernel.org,
+	mripard@kernel.org, tzimmermann@suse.de, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, chromeos-krk-upstreaming@google.com
+Subject: Re: [PATCH v3 05/10] media: dt-bindings: video-interfaces: Support
+ DisplayPort MST
+Message-ID: <20240510211613.GA751688-robh@kernel.org>
+References: <20240507155413.266057-1-panikiel@google.com>
+ <20240507155413.266057-6-panikiel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240507155413.266057-6-panikiel@google.com>
 
-On Fri, May 10, 2024 at 04:50:41PM -0300, Leonardo Bras wrote:
-> On Fri, May 10, 2024 at 10:41:53AM -0700, Paul E. McKenney wrote:
-> > On Fri, May 10, 2024 at 02:12:32PM -0300, Leonardo Bras wrote:
-> > > On Fri, May 10, 2024 at 09:21:59AM -0700, Paul E. McKenney wrote:
-> > > > On Fri, May 10, 2024 at 01:06:40PM -0300, Leonardo Bras wrote:
-> > > > > On Thu, May 09, 2024 at 04:45:53PM -0700, Paul E. McKenney wrote:
-> > > > > > On Thu, May 09, 2024 at 07:14:18AM -0300, Leonardo Bras wrote:
-> > > > > > > On Thu, May 09, 2024 at 05:16:57AM -0300, Leonardo Bras wrote:
-> > > > > > 
-> > > > > > [ . . . ]
-> > > > > > 
-> > > > > > > > Here I suppose something like this can take care of not needing to convert 
-> > > > > > > > ms -> jiffies every rcu_pending():
-> > > > > > > > 
-> > > > > > > > +	nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Uh, there is more to it, actually. We need to make sure the user 
-> > > > > > > understands that we are rounding-down the value to multiple of a jiffy 
-> > > > > > > period, so it's not a surprise if the delay value is not exactly the same 
-> > > > > > > as the passed on kernel cmdline.
-> > > > > > > 
-> > > > > > > So something like bellow diff should be ok, as this behavior is explained 
-> > > > > > > in the docs, and pr_info() will print the effective value.
-> > > > > > > 
-> > > > > > > What do you think?
-> > > > > > 
-> > > > > > Good point, and I have taken your advice on making the documentation
-> > > > > > say what it does.
-> > > > > 
-> > > > > Thanks :)
-> > > > > 
-> > > > > > 
-> > > > > > > Thanks!
-> > > > > > > Leo
-> > > > > > > 
-> > > > > > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > > > > > > index 0a3b0fd1910e..9a50be9fd9eb 100644
-> > > > > > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > > > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > > > > > @@ -4974,20 +4974,28 @@
-> > > > > > >                         otherwise be caused by callback floods through
-> > > > > > >                         use of the ->nocb_bypass list.  However, in the
-> > > > > > >                         common non-flooded case, RCU queues directly to
-> > > > > > >                         the main ->cblist in order to avoid the extra
-> > > > > > >                         overhead of the ->nocb_bypass list and its lock.
-> > > > > > >                         But if there are too many callbacks queued during
-> > > > > > >                         a single jiffy, RCU pre-queues the callbacks into
-> > > > > > >                         the ->nocb_bypass queue.  The definition of "too
-> > > > > > >                         many" is supplied by this kernel boot parameter.
-> > > > > > >  
-> > > > > > > +       rcutree.nocb_patience_delay= [KNL]
-> > > > > > > +                       On callback-offloaded (rcu_nocbs) CPUs, avoid
-> > > > > > > +                       disturbing RCU unless the grace period has
-> > > > > > > +                       reached the specified age in milliseconds.
-> > > > > > > +                       Defaults to zero.  Large values will be capped
-> > > > > > > +                       at five seconds. Values rounded-down to a multiple
-> > > > > > > +                       of a jiffy period.
-> > > > > > > +
-> > > > > > >         rcutree.qhimark= [KNL]
-> > > > > > >                         Set threshold of queued RCU callbacks beyond which
-> > > > > > >                         batch limiting is disabled.
-> > > > > > >  
-> > > > > > >         rcutree.qlowmark= [KNL]
-> > > > > > >                         Set threshold of queued RCU callbacks below which
-> > > > > > >                         batch limiting is re-enabled.
-> > > > > > >  
-> > > > > > >         rcutree.qovld= [KNL]
-> > > > > > >                         Set threshold of queued RCU callbacks beyond which
-> > > > > > > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> > > > > > > index fcf2b4aa3441..62ede401420f 100644
-> > > > > > > --- a/kernel/rcu/tree.h
-> > > > > > > +++ b/kernel/rcu/tree.h
-> > > > > > > @@ -512,20 +512,21 @@ do {                                                              \
-> > > > > > >         local_irq_save(flags);                                  \
-> > > > > > >         if (rcu_segcblist_is_offloaded(&(rdp)->cblist)) \
-> > > > > > >                 raw_spin_lock(&(rdp)->nocb_lock);               \
-> > > > > > >  } while (0)
-> > > > > > >  #else /* #ifdef CONFIG_RCU_NOCB_CPU */
-> > > > > > >  #define rcu_nocb_lock_irqsave(rdp, flags) local_irq_save(flags)
-> > > > > > >  #endif /* #else #ifdef CONFIG_RCU_NOCB_CPU */
-> > > > > > >  
-> > > > > > >  static void rcu_bind_gp_kthread(void);
-> > > > > > >  static bool rcu_nohz_full_cpu(void);
-> > > > > > > +static bool rcu_on_patience_delay(void);
-> > > > > > 
-> > > > > > I don't think we need an access function, but will check below.
-> > > > > > 
-> > > > > > >  /* Forward declarations for tree_stall.h */
-> > > > > > >  static void record_gp_stall_check_time(void);
-> > > > > > >  static void rcu_iw_handler(struct irq_work *iwp);
-> > > > > > >  static void check_cpu_stall(struct rcu_data *rdp);
-> > > > > > >  static void rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp,
-> > > > > > >                                      const unsigned long gpssdelay);
-> > > > > > >  
-> > > > > > >  /* Forward declarations for tree_exp.h. */
-> > > > > > >  static void sync_rcu_do_polled_gp(struct work_struct *wp);
-> > > > > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > > > > > index 340bbefe5f65..639243b0410f 100644
-> > > > > > > --- a/kernel/rcu/tree_plugin.h
-> > > > > > > +++ b/kernel/rcu/tree_plugin.h
-> > > > > > > @@ -5,20 +5,21 @@
-> > > > > > >   * or preemptible semantics.
-> > > > > > >   *
-> > > > > > >   * Copyright Red Hat, 2009
-> > > > > > >   * Copyright IBM Corporation, 2009
-> > > > > > >   *
-> > > > > > >   * Author: Ingo Molnar <mingo@elte.hu>
-> > > > > > >   *        Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > > >   */
-> > > > > > >  
-> > > > > > >  #include "../locking/rtmutex_common.h"
-> > > > > > > +#include <linux/jiffies.h>
-> > > > > > 
-> > > > > > This is already pulled in by the enclosing tree.c file, so it should not
-> > > > > > be necessary to include it again. 
-> > > > > 
-> > > > > Even better :)
-> > > > > 
-> > > > > > (Or did you get a build failure when
-> > > > > > leaving this out?)
-> > > > > 
-> > > > > I didn't, it's just that my editor complained the symbols were not getting 
-> > > > > properly resolved, so I included it and it was fixed. But since clangd is 
-> > > > > know to make some mistakes, I should have compile-test'd before adding it.
-> > > > 
-> > > > Ah, got it!  ;-)
-> > > > 
-> > > > > > >  static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
-> > > > > > >  {
-> > > > > > >         /*
-> > > > > > >          * In order to read the offloaded state of an rdp in a safe
-> > > > > > >          * and stable way and prevent from its value to be changed
-> > > > > > >          * under us, we must either hold the barrier mutex, the cpu
-> > > > > > >          * hotplug lock (read or write) or the nocb lock. Local
-> > > > > > >          * non-preemptible reads are also safe. NOCB kthreads and
-> > > > > > >          * timers have their own means of synchronization against the
-> > > > > > > @@ -86,20 +87,33 @@ static void __init rcu_bootup_announce_oddness(void)
-> > > > > > >         if (rcu_kick_kthreads)
-> > > > > > >                 pr_info("\tKick kthreads if too-long grace period.\n");
-> > > > > > >         if (IS_ENABLED(CONFIG_DEBUG_OBJECTS_RCU_HEAD))
-> > > > > > >                 pr_info("\tRCU callback double-/use-after-free debug is enabled.\n");
-> > > > > > >         if (gp_preinit_delay)
-> > > > > > >                 pr_info("\tRCU debug GP pre-init slowdown %d jiffies.\n", gp_preinit_delay);
-> > > > > > >         if (gp_init_delay)
-> > > > > > >                 pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
-> > > > > > >         if (gp_cleanup_delay)
-> > > > > > >                 pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
-> > > > > > > +       if (nocb_patience_delay < 0) {
-> > > > > > > +               pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n",
-> > > > > > > +                       nocb_patience_delay);
-> > > > > > > +               nocb_patience_delay = 0;
-> > > > > > > +       } else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
-> > > > > > > +               pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n",
-> > > > > > > +                       nocb_patience_delay, 5 * MSEC_PER_SEC);
-> > > > > > > +               nocb_patience_delay = msecs_to_jiffies(5 * MSEC_PER_SEC);
-> > > > > > > +       } else if (nocb_patience_delay) {
-> > > > > > > +               nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
-> > > > > > > +               pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n",
-> > > > > > > +                       jiffies_to_msecs(nocb_patience_delay);
-> > > > > > > +       }
-> > > > > > 
-> > > > > > I just did this here at the end:
-> > > > > > 
-> > > > > > 	nocb_patience_delay_jiffies = msecs_to_jiffies(nocb_patience_delay);
-> > > > > > 
-> > > > > > Ah, you are wanting to print out the milliseconds after the rounding
-> > > > > > to jiffies.
-> > > > > 
-> > > > > That's right, just to make sure the user gets the effective patience time, 
-> > > > > instead of the before-rounding one, which was on input.
-> > > > > 
-> > > > > > I am going to hold off on that for the moment, but I hear your request
-> > > > > > and I have not yet said "no".  ;-)
-> > > > > 
-> > > > > Sure :)
-> > > > > It's just something I think it's nice to have (as a user).
-> > > > 
-> > > > If you would like to do a separate patch adding this, here are the
-> > > > requirements:
-> > > > 
-> > > > o	If the current code prints nothing, nothing additional should
-> > > > 	be printed.
-> > > > 
-> > > > o	If the rounding ended up with the same value (as it should in
-> > > > 	systems with HZ=1000), nothing additional should be printed.
-> > > > 
-> > > > o	Your choice as to whether or not you want to print out the
-> > > > 	jiffies value.
-> > > > 
-> > > > o	If the additional message is on a new line, it needs to be
-> > > > 	indented so that it is clear that it is subordinate to the
-> > > > 	previous message.
-> > > > 
-> > > > 	Otherwise, you can use pr_cont() to continue the previous
-> > > > 	line, of course being careful about "\n".
-> > > > 
-> > > > Probably also something that I am forgetting, but that is most of it.
-> > > 
-> > > Thanks!
-> > > I will work on a patch doing that :)
-> > 
-> > Very good, looking forward to seeing what you come up with!
-> > 
-> > My current state is on the "dev" branch of the -rcu tree, so please base
-> > on that.
+On Tue, May 07, 2024 at 03:54:08PM +0000, Paweł Anikiel wrote:
+> Add a DisplayPort bus type and a multi-stream-support property
+> indicating whether the interface supports MST.
 > 
-> Thanks! I used it earlier to send the previous diff :)
+> Signed-off-by: Paweł Anikiel <panikiel@google.com>
+> ---
+>  .../devicetree/bindings/media/video-interfaces.yaml        | 7 +++++++
+>  include/dt-bindings/media/video-interfaces.h               | 2 ++
+>  2 files changed, 9 insertions(+)
 > 
-> > 
-> > > > > > >         if (!use_softirq)
-> > > > > > >                 pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.\n");
-> > > > > > >         if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
-> > > > > > >                 pr_info("\tRCU debug extended QS entry/exit.\n");
-> > > > > > >         rcupdate_announce_bootup_oddness();
-> > > > > > >  }
-> > > > > > >  
-> > > > > > >  #ifdef CONFIG_PREEMPT_RCU
-> > > > > > >  
-> > > > > > >  static void rcu_report_exp_rnp(struct rcu_node *rnp, bool wake);
-> > > > > > > @@ -1260,10 +1274,29 @@ static bool rcu_nohz_full_cpu(void)
-> > > > > > >  
-> > > > > > >  /*
-> > > > > > >   * Bind the RCU grace-period kthreads to the housekeeping CPU.
-> > > > > > >   */
-> > > > > > >  static void rcu_bind_gp_kthread(void)
-> > > > > > >  {
-> > > > > > >         if (!tick_nohz_full_enabled())
-> > > > > > >                 return;
-> > > > > > >         housekeeping_affine(current, HK_TYPE_RCU);
-> > > > > > >  }
-> > > > > > > +
-> > > > > > > +/*
-> > > > > > > + * Is this CPU a NO_HZ_FULL CPU that should ignore RCU if the time since the
-> > > > > > > + * start of current grace period is smaller than nocb_patience_delay ?
-> > > > > > > + *
-> > > > > > > + * This code relies on the fact that all NO_HZ_FULL CPUs are also
-> > > > > > > + * RCU_NOCB_CPU CPUs.
-> > > > > > > + */
-> > > > > > > +static bool rcu_on_patience_delay(void)
-> > > > > > > +{
-> > > > > > > +#ifdef CONFIG_NO_HZ_FULL
-> > > > > > 
-> > > > > > You lost me on this one.  Why do we need the #ifdef instead of
-> > > > > > IS_ENABLED()?  Also, please note that rcu_nohz_full_cpu() is already a
-> > > > > > compile-time @false in CONFIG_NO_HZ_FULL=n kernels.
-> > > > > 
-> > > > > You are right. rcu_nohz_full_cpu() has a high chance of being inlined on
-> > > > > 	if ((...) && rcu_nohz_full_cpu())
-> > > > > And since it returns false, this whole statement will be compiled out, and 
-> > > > > the new function will not exist in CONFIG_NO_HZ_FULL=n, so there  is no 
-> > > > > need to test it.
-> > > > 
-> > > > Very good!  You had me going there for a bit.  ;-)
-> > > > 
-> > > > > > > +       if (!nocb_patience_delay)
-> > > > > > > +               return false;
-> > > > > > 
-> > > > > > We get this automatically with the comparison below, right?
-> > > > > 
-> > > > > Right
-> > > > > 
-> > > > > >   If so, we
-> > > > > > are not gaining much by creating the helper function.  Or am I missing
-> > > > > > some trick here?
-> > > > > 
-> > > > > Well, it's a fastpath. Up to here, we just need to read 
-> > > > > nocb_patience_delay{,_jiffies} from memory.
-> > > > 
-> > > > Just nocb_patience_delay_jiffies, correct?  Unless I am missing something,
-> > > > nocb_patience_delay is unused after boot.
-> > > 
-> > > Right, I used both because I was referring to the older version and the 
-> > > current version with _jiffies.
-> > 
-> > Fair enough!
-> > 
-> > > > > If we don't include the fastpath we have to read jiffies and 
-> > > > > rcu_state.gp_start, which can take extra time: up to 2 cache misses.
-> > > > > 
-> > > > > I thought it could be relevant, as we reduce the overhead of the new 
-> > > > > parameter when it's disabled (patience=0). 
-> > > > > 
-> > > > > Do you think that could be relevant?
-> > > > 
-> > > > Well, the hardware's opinion is what matters.  ;-)
-> > > > 
-> > > > But the caller's code path reads jiffies a few times, so it should
-> > > > be hot in the cache, correct?
-> > > 
-> > > Right, but I wonder how are the chances of it getting updated between  
-> > > caller's use and this function's. Same for gp_start.
-> > 
-> > Well, jiffies is updated at most once per millisecond, and gp_start is
-> > updated at most once per few milliseconds.  So the chances of it being
-> > updated within that code sequence are quite small.
-> 
-> Fair enough, and we probably don't need to worry about it getting 
-> cached-out in this sequence, as well. 
-> 
-> Also time_before() is a macro and we don't need to worry on the function 
-> call, so we just spend 2 extra L1-cache reads and a couple arithmetic 
-> instructions which are not supposed to take long, so it's fair to assume 
-> the fast-path would not be that much faster than the slow path, which means 
-> we don't need a fast path after all.
-> 
-> Thanks for helping me notice that :)
-> 
-> > 
-> > > > But that does lead to another topic, namely the possibility of tagging
-> > > > nocb_patience_delay_jiffies with __read_mostly. 
-> > > 
-> > > Oh, right. This was supposed to be in the diff I sent earlier, but I 
-> > > completelly forgot to change before sending. So, yeah, I agree on 
-> > > nocb_patience_delay being __read_mostly; 
-> > > 
-> > > > And there might be
-> > > > a number of other of RCU's variables that could be similarly tagged
-> > > > in order to avoid false sharing.  (But is there any false sharing?
-> > > > This might be worth testing.)
-> > > 
-> > > Maybe there isn't, but I wonder if it would hurt performance if they were 
-> > > tagged as __read_only anyway. 
-> > 
-> > Let's be at least a little careful here.  It is just as easy to hurt
-> > performance by marking things __read_mostly or __read_only as it is
-> > to help performance.  ;-)
-> 
-> Fair enough :)
-> 
-> > 
-> > 							Thanx, Paul
-> > 
-> 
+> diff --git a/Documentation/devicetree/bindings/media/video-interfaces.yaml b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+> index 26e3e7d7c67b..7bf3a2c09a5b 100644
+> --- a/Documentation/devicetree/bindings/media/video-interfaces.yaml
+> +++ b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+> @@ -94,6 +94,7 @@ properties:
+>        - 5 # Parallel
+>        - 6 # BT.656
+>        - 7 # DPI
+> +      - 8 # DisplayPort
+>      description:
+>        Data bus type.
+>  
+> @@ -217,4 +218,10 @@ properties:
+>        Whether the clock signal is used as clock (0) or strobe (1). Used with
+>        CCP2, for instance.
+>  
+> +  multi-stream-support:
 
-Oh, btw, for what it's worth:
-Reviewed-by: Leonardo Bras <leobras@redhat.com>
+If MST is a known term for DP, then perhaps "dp-mst-support" for the 
+name. In any case, 'dp' should be in there somewhere.
 
-Thanks!
-Leo
+> +    type: boolean
+> +    description:
+> +      Support transport of multiple independent streams. Used for
+> +      DisplayPort MST-capable interfaces.
 
+Wouldn't this be implied by the devices at each end of the link? The 
+drivers for each device should really list out features supported for 
+the link. The mode used is then the union of those 2 lists with DT 
+properties only used when the union is not definitive.
+
+
+> +
+>  additionalProperties: true
+> diff --git a/include/dt-bindings/media/video-interfaces.h b/include/dt-bindings/media/video-interfaces.h
+> index 68ac4e05e37f..b236806f4482 100644
+> --- a/include/dt-bindings/media/video-interfaces.h
+> +++ b/include/dt-bindings/media/video-interfaces.h
+> @@ -12,5 +12,7 @@
+>  #define MEDIA_BUS_TYPE_CSI2_DPHY		4
+>  #define MEDIA_BUS_TYPE_PARALLEL			5
+>  #define MEDIA_BUS_TYPE_BT656			6
+> +#define MEDIA_BUS_TYPE_DPI			7
+> +#define MEDIA_BUS_TYPE_DISPLAYPORT		8
+>  
+>  #endif /* __DT_BINDINGS_MEDIA_VIDEO_INTERFACES_H__ */
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+> 
 
