@@ -1,150 +1,193 @@
-Return-Path: <linux-kernel+bounces-176237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C200C8C2BE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F2C8C2BE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7131C21725
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C95E2837E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1448F13BACA;
-	Fri, 10 May 2024 21:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k/43edYX"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1D13BADA;
+	Fri, 10 May 2024 21:30:11 +0000 (UTC)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C41E13B783
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122711BDC8;
+	Fri, 10 May 2024 21:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715376479; cv=none; b=ml68TPMtIFQEuiGwpT4egHt4eG2qMIwYamBJOWe23FuMksvHUwGmGibVx9WK34dfMDpDSEXYM1T2tA8ko/SlbT+dIFd3kKTBDZsaVUbIQjIxlLP0wk1yM9WrjRdY6K2Er+b0Bp1ZVicGfG08BJs1tK8Fa7OuN3iMhwNejJnaTic=
+	t=1715376611; cv=none; b=V4UqNVcfFjqSOe8CGkEi7lgKasbG3C+LYjCVkqH8ZyQSJ2/LZiI4ToA+1VAPs8GA9wtlgnkapE8GRet/Kf6+k1QEQaZGaMIRhntLNi8s9prYVS5wIIv7MRRRZID75t5Q8d7578rhSyQebUxVKuaQS6krWD2Qyp73n4iTRpKYUkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715376479; c=relaxed/simple;
-	bh=jG1XzQGVqbPJVaV6zbgB4Vv73mJ0VYF0EnY5DNTHpfc=;
+	s=arc-20240116; t=1715376611; c=relaxed/simple;
+	bh=eS1QIdyLTdFWFAB2PrpvAfGPAebgZ8VSah0rayF6MeI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nPpvRx82hjsmu8/3D1+AwXuZW2rpE1s9V7nFRFI8a0qbnqweW9nxd5IueWytx24RZchfi8izMUCURxlSXjhE78nvayClA7QaL8hA1wA9JrgwApn3J9FVHQwqyQZ9P2hctNyainCUAyg3I1+rr2ceEUCnMhWS1imubDni0q0ca5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k/43edYX; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ec92e355bfso23054095ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715376477; x=1715981277; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3q3hqpMGXKwiEL9x8u2/jKIHxeOXTBiBSvlvRi/TduI=;
-        b=k/43edYX4lRVPreoWrJ1pG65IzPO5HYHH3wkGvwZ6byXewX4ES6DzaK9vLRAfHlKXq
-         wmSnuvZeFKzC3d9TLc9nlDzAcpOszpIofkUrA+/3T7KmxNxc6SARxrM2KtCqP4ORO/zR
-         Z9zpeGWFd7yr1MOxQ9Xdo4Yuc0645gzIs3q9SzBKs37uctNByDpI1I5BhwRjiOqe5Ayv
-         ltxyUTZHmYDrwQ3bxiSUSutALv080hMKvBBXWXQz+owk/7DBaIcXQgIuQ6uoPrpIK695
-         WdmyY5zHeGAxCW1NNgxU42gpNtTSxAYIbm3B6JGazfMLYBYO/nUoDk8kebSfnh+udpxJ
-         SD5Q==
+	 To:Cc:Content-Type; b=DVOMbY96HvfY0jetv/y+CY40lU4asbmSyqZ0r0WpzniUiNcGuUaTGuAtEg+JqmnmXVyxu6qSjTTrENGv2IUYhs+LIo2Ni6mH4xXX4Rf/C++YzBJosGLT0qfySOXyD2OWc6KruS1JW+O0y1cb9hzWgXEdbbCBiA48+P8OqLI1BmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b36232fa48so1943598a91.1;
+        Fri, 10 May 2024 14:30:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715376477; x=1715981277;
+        d=1e100.net; s=20230601; t=1715376609; x=1715981409;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3q3hqpMGXKwiEL9x8u2/jKIHxeOXTBiBSvlvRi/TduI=;
-        b=ux8Rc8uq+6Bx1PaSRhPdO8TLFTy94rO+Pmg6/r9LlNFqFTIqTGNBOz0og4OYNfAsDt
-         fPfYzR3q7D0IXxYg+kRuvI9E/GjQzqXUIJw0BeE3zFF66fos3iERkM6Z0liuR/Vugs11
-         4F1EhOlrapHIZiAS7eOPCCUEJoqKbIIEKJTKSELzWPtW5FCbJnAJJTkhKmuOHYJref+W
-         +SXB1f1RFaC4JM4sGYvDBEd6BaqEd23FM5Q8fyIXfURBstKNUu0hqPgzUkwwJNBT5Sh3
-         XVwru8KTbSIr8clCwum0s8Q+0HouqfnIi+7fHg4SwOA7CPw3yyzBUekqh7qgH1icPhIU
-         ju3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMcGNUHEx2CPFdJV7UWM2XAgVKYYMBhaPbHyB/dZ/T2UR1yGeULC9NkbRYuc03btqdaykx2fyjWnB8VPc3qZ66zD7nE7OGcGhBrUHB
-X-Gm-Message-State: AOJu0Yzr3YVNRdQ0lUnL/c0bj5UgZLM1LkdaToLrprgrADz34llapBz5
-	axiJHV+ss8D7b0Hk22/91VYPcC8sdNKVIAdaxvzinmY5rwspWjRebocFFW8COjw8tfeO31FQjgr
-	eDQ6G+dVEBna08zJvfeyvZAR8eybrDwoKmGFg
-X-Google-Smtp-Source: AGHT+IHi+uN9YAG1vR1pnN46m2nVsZ9AeJUZEm4EJmPOcrBsoA8vKk4oUGfskunfiAqx8BEU50tYATpFc9YLOtR0IqU=
-X-Received: by 2002:a17:90a:fe93:b0:2b2:ce88:c68c with SMTP id
- 98e67ed59e1d1-2b6cc44fa08mr3718925a91.19.1715376477090; Fri, 10 May 2024
- 14:27:57 -0700 (PDT)
+        bh=VMAf5rKeg6w+VI/gIYLoiifCQecVQKRvthW/4/8BwYI=;
+        b=R5O/sUHHIYW/puUQkGVtrc9X+AkD8yk67JDKaV78ke35tW1LKwYaBh+AvsvqMnogVH
+         RssM/edkdBC0BsA65H57j186FbtnKzxx5qdqxTe8tVSA/FkjWdVpWdrBwfgk5voS8rL0
+         Cql2jEWEk22Vir1tqBGvpSQeDSabwJNf29TIb/vKCVGiN3mlHtM4k+/R4JmFwGORUVTn
+         ENp1+dTvB3qj2V0WTwBuFj35k6Z8Idj1ZcBA5CDCXjUfklqhekIw7/xol91ydKIpNhNM
+         msAKy+Lf7mctms0itQSzDTnTE1ZO1EyLmyuQmIrE935ysxMsdnODXfFfjQpgO/GwSBbr
+         azmA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUD0ebiNAJrRg+goAfOkwdeEhKAKaEbc3Z9FNj0TZpj3ET5zxSita+Z97ic+isOTBu6OHsJdwltZC9tTX9m9XXVYv/P272QkqeAxahImhm3r0wqS0stBUyVWsYAN01hOpEYisL/82e5o8LJGqes5yGnAKb1vu8PG4wFSEvvNZ8lGTXDg==
+X-Gm-Message-State: AOJu0YyW5Xwp8n59q52xxJKzakjwT1+kxTWKaqrlZQ2kO0Fsw0SZX738
+	pNcdAUcY48ISxh3a7BYql+aqOw+YN2/YjRxNZTJHNXsjE943+Xfl4KSlLQTGpaVojrxWsK7CuBn
+	VCyE4ypCdn8CAzU8sZtZrRHSiVqE=
+X-Google-Smtp-Source: AGHT+IFZkbSenvkLhokyv4EMxK86TWp9XlqSlcLUgh3x5kwN3NGOIxUQGzTPrJdFy06QmvA9W3LCymPfU5Y4Ft3Wj+I=
+X-Received: by 2002:a17:90a:296:b0:2b3:463d:992b with SMTP id
+ 98e67ed59e1d1-2b6ccef6431mr3678869a91.42.1715376609286; Fri, 10 May 2024
+ 14:30:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502211047.2240237-1-maheshb@google.com> <87fruspxgt.ffs@tglx>
- <CAF2d9jigGhpSAj2hnUG2QSvYeSzTvD1FUf7tT8BW1NU8EouyOA@mail.gmail.com>
-In-Reply-To: <CAF2d9jigGhpSAj2hnUG2QSvYeSzTvD1FUf7tT8BW1NU8EouyOA@mail.gmail.com>
-From: Yuliang Li <yuliangli@google.com>
-Date: Fri, 10 May 2024 14:27:46 -0700
-Message-ID: <CADj8K+M9qjLGAKcsV_9YoPQ5SGXe3vmi69Y65m1RUyLOMrJeHg@mail.gmail.com>
-Subject: Re: [PATCHv4 net-next] ptp/ioctl: support MONOTONIC_RAW timestamps
- for PTP_SYS_OFFSET_EXTENDED
-To: =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS14KS+4KSwKQ==?= <maheshb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Don Hatchett <hatch@google.com>, 
-	Netdev <netdev@vger.kernel.org>, Linux <linux-kernel@vger.kernel.org>, 
-	David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Sagi Maimon <maimon.sagi@gmail.com>, Jonathan Corbet <corbet@lwn.net>, John Stultz <jstultz@google.com>, 
-	Mahesh Bandewar <mahesh@bandewar.net>
+References: <20240510191423.2297538-1-yabinc@google.com> <20240510191423.2297538-4-yabinc@google.com>
+In-Reply-To: <20240510191423.2297538-4-yabinc@google.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 10 May 2024 14:29:58 -0700
+Message-ID: <CAM9d7chNz8-84m28q5qSLjUjZ=Ni1CA_JzbB_P+YJooLQd85YA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] perf/core: Check sample_type in perf_sample_save_brstack
+To: Yabin Cui <yabinc@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thank you Mahesh. Please see my answers below.
+On Fri, May 10, 2024 at 12:14=E2=80=AFPM Yabin Cui <yabinc@google.com> wrot=
+e:
+>
+> Check sample_type in perf_sample_save_brstack() to prevent
+> saving branch stack data when it isn't required.
+>
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Yabin Cui <yabinc@google.com>
 
-The mono_raw allows PHC to correlate with a non-adjusted time. This
-enables other types of clock sync algorithms to be developed.
-For example, if we want to measure the drift rate between CPU
-oscillator and PHC. We could run a linear regression over multiple
-pairs of <phc, sys>. But if sys time itself is being adjusted (e.g.,
-clock_realtime), the linear regression is running over a polyline
-hence less effective. With mono_raw, linear regression truly measures
-the drift rate of the CPU oscillator.
-This capability allows more types of clock sync algorithms to be developed.
+It seems powerpc has the similar bug, then you need this:
+
+Fixes: eb55b455ef9c ("perf/core: Add perf_sample_save_brstack() helper")
 
 Thanks,
-Yuliang
+Namhyung
 
-
-On Wed, May 8, 2024 at 7:54=E2=80=AFPM Mahesh Bandewar (=E0=A4=AE=E0=A4=B9=
-=E0=A5=87=E0=A4=B6 =E0=A4=AC=E0=A4=82=E0=A4=A1=E0=A5=87=E0=A4=B5=E0=A4=BE=
-=E0=A4=B0)
-<maheshb@google.com> wrote:
+> ---
+>  arch/x86/events/amd/core.c |  3 +--
+>  arch/x86/events/core.c     |  3 +--
+>  arch/x86/events/intel/ds.c |  3 +--
+>  include/linux/perf_event.h | 13 ++++++++-----
+>  4 files changed, 11 insertions(+), 11 deletions(-)
 >
-> On Wed, May 8, 2024 at 12:35=E2=80=AFAM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
-> >
-> > On Thu, May 02 2024 at 14:10, Mahesh Bandewar wrote:
-> > > The ability to read the PHC (Physical Hardware Clock) alongside
-> > > multiple system clocks is currently dependent on the specific
-> > > hardware architecture. This limitation restricts the use of
-> > > PTP_SYS_OFFSET_PRECISE to certain hardware configurations.
-> > >
-> > > The generic soultion which would work across all architectures
-> > > is to read the PHC along with the latency to perform PHC-read as
-> > > offered by PTP_SYS_OFFSET_EXTENDED which provides pre and post
-> > > timestamps.  However, these timestamps are currently limited
-> > > to the CLOCK_REALTIME timebase. Since CLOCK_REALTIME is affected
-> > > by NTP (or similar time synchronization services), it can
-> > > experience significant jumps forward or backward. This hinders
-> > > the precise latency measurements that PTP_SYS_OFFSET_EXTENDED
-> > > is designed to provide.
-> >
-> > This is really a handwavy argument.
-> >
-> > Fact is that the time jumps of CLOCK_REALTIME caused by NTP (etc) are
-> > rare and significant enough to be easily filtered out. That's why this
-> > interface allows you to retrieve more than one sample.
-> >
-> > Can you please explain which problem you are actually trying to solve?
-> >
-> > It can't be PTP system time synchronization as that obviously requires
-> > CLOCK_REALTIME.
-> >
-> Let me add a couple of folks from the clock team. @Yuliang Li  @Don Hatch=
-ett
-> I'm just a nomad-kernel-net guy trying to fill-in gaps :(
+> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+> index 985ef3b47919..fb9bf3aa1b42 100644
+> --- a/arch/x86/events/amd/core.c
+> +++ b/arch/x86/events/amd/core.c
+> @@ -967,8 +967,7 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs=
+)
+>                 if (!x86_perf_event_set_period(event))
+>                         continue;
 >
-> > Thanks,
-> >
-> >         tglx
+> -               if (has_branch_stack(event))
+> -                       perf_sample_save_brstack(&data, event, &cpuc->lbr=
+_stack, NULL);
+> +               perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, =
+NULL);
+>
+>                 if (perf_event_overflow(event, &data, regs))
+>                         x86_pmu_stop(event, 0);
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 5b0dd07b1ef1..ff5577315938 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -1702,8 +1702,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
+>
+>                 perf_sample_data_init(&data, 0, event->hw.last_period);
+>
+> -               if (has_branch_stack(event))
+> -                       perf_sample_save_brstack(&data, event, &cpuc->lbr=
+_stack, NULL);
+> +               perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, =
+NULL);
+>
+>                 if (perf_event_overflow(event, &data, regs))
+>                         x86_pmu_stop(event, 0);
+> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+> index c2b5585aa6d1..f25236ffa28f 100644
+> --- a/arch/x86/events/intel/ds.c
+> +++ b/arch/x86/events/intel/ds.c
+> @@ -1754,8 +1754,7 @@ static void setup_pebs_fixed_sample_data(struct per=
+f_event *event,
+>         if (x86_pmu.intel_cap.pebs_format >=3D 3)
+>                 setup_pebs_time(event, data, pebs->tsc);
+>
+> -       if (has_branch_stack(event))
+> -               perf_sample_save_brstack(data, event, &cpuc->lbr_stack, N=
+ULL);
+> +       perf_sample_save_brstack(data, event, &cpuc->lbr_stack, NULL);
+>  }
+>
+>  static void adaptive_pebs_save_regs(struct pt_regs *regs,
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 8617815456b0..ecfbe22ff299 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -1269,6 +1269,11 @@ static inline void perf_sample_save_raw_data(struc=
+t perf_sample_data *data,
+>         data->sample_flags |=3D PERF_SAMPLE_RAW;
+>  }
+>
+> +static inline bool has_branch_stack(struct perf_event *event)
+> +{
+> +       return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
+> +}
+> +
+>  static inline void perf_sample_save_brstack(struct perf_sample_data *dat=
+a,
+>                                             struct perf_event *event,
+>                                             struct perf_branch_stack *brs=
+,
+> @@ -1276,6 +1281,9 @@ static inline void perf_sample_save_brstack(struct =
+perf_sample_data *data,
+>  {
+>         int size =3D sizeof(u64); /* nr */
+>
+> +       if (!has_branch_stack(event))
+> +               return;
+> +
+>         if (branch_sample_hw_index(event))
+>                 size +=3D sizeof(u64);
+>         size +=3D brs->nr * sizeof(struct perf_branch_entry);
+> @@ -1665,11 +1673,6 @@ extern void perf_bp_event(struct perf_event *event=
+, void *data);
+>  # define perf_arch_bpf_user_pt_regs(regs) regs
+>  #endif
+>
+> -static inline bool has_branch_stack(struct perf_event *event)
+> -{
+> -       return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
+> -}
+> -
+>  static inline bool needs_branch_stack(struct perf_event *event)
+>  {
+>         return event->attr.branch_sample_type !=3D 0;
+> --
+> 2.45.0.118.g7fe29c98d7-goog
+>
 
