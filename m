@@ -1,115 +1,138 @@
-Return-Path: <linux-kernel+bounces-175923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363D58C2736
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45818C273B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:55:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5194284568
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 846A11F25B43
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32533171646;
-	Fri, 10 May 2024 14:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0AE171647;
+	Fri, 10 May 2024 14:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MaRxi373"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qk+QHBRU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A1817106E;
-	Fri, 10 May 2024 14:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ABC168AFC;
+	Fri, 10 May 2024 14:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715352922; cv=none; b=kMN8RX2UIDCrN64cGNf4AXZuTVF3Hu9ioRXD4jR2WwoVxu8jWWxjjCikiX0q71icnZhi7gYeswB5dLd/vCfB7lTBoyDnfChTaLdtnozPmjLVfb1YwpvQtgfsC/5F9I9zncoaQ7e4TADdyDLq3wNgU26wPt9IMS3dUjasZ/xzhNw=
+	t=1715352942; cv=none; b=ZGYUFXvxWMHPFUU7kbYZIr023198we/j+wiGZ86sv7GOygbLOOY8fmr4xchowQFNEVQTtDzwDwxFBcp0cIOfw2qa1ZdT0qTkHYSgUcG+VEzeldlH4zKY5rnX+DE1epxWakWCkgw1mZfYc87i6KYfHsjkuKpvv5HM3UA6DRDh0p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715352922; c=relaxed/simple;
-	bh=bpcTd66QCrqPbkU8DpdDZoGNAxlz51z4EqF2NnOZKrc=;
+	s=arc-20240116; t=1715352942; c=relaxed/simple;
+	bh=sLxTchYz896sDj6qbtwDuUDSEIrv3OIFfIsIipZpE5U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rio0qnnRG6Cwyp71XJ/PtVRrvyg5xwDkWqbGdt0yUJEoDEWvGSCTbpWbKe8SB5wQck3LW6Fz3hVn+CHOkDdaDgeTPd2bJUX8F+Ed6cduk+QDsilhyrZ0eEyA0hWDK6SmdfPBqqm3V1kcoQBBYx7Hkk65XcCJYZjgbZtIqpR8L/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MaRxi373; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715352922; x=1746888922;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bpcTd66QCrqPbkU8DpdDZoGNAxlz51z4EqF2NnOZKrc=;
-  b=MaRxi373Xj+T+ENi86sw5nmH6CjoMDD0Cobk9crTgKv+Puo3j08O6A82
-   WoZ0ar/W7djC/MBZjq5wjrc/kwBH1paJSDW+KBq33PwtGi0/HlQ7hRZmg
-   zsL8ZzDm8EvEmbhdFws8CVuSEWSus14jqYkPtB1hUrOWSy1yrc3Zr1FIZ
-   Eqpdn8N+fPRMpf2HE3NJpc0SfSxUg10G0Nm0+dOsd3c6d3qyJz+3zu2MX
-   IaVg5MHA1+XW79G7bzsdMmIb4OMRq6Eh8E2+lKPAZCiK1HEQ6tXuFXd2c
-   V0IASZs4UtV1XSduUSKHmSqY633jlhPqU92bxQtASSfOd7vEAEv8wYJg8
-   A==;
-X-CSE-ConnectionGUID: nWc46PdOSPOjeOFhyoQQhA==
-X-CSE-MsgGUID: hGeimp1QQeCFCWCdAVxcOA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="15170026"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="15170026"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:55:21 -0700
-X-CSE-ConnectionGUID: s50Lh8JFRIGHTT0f+bQ46Q==
-X-CSE-MsgGUID: 1fYDxZKuRv+WCeOt5FRj5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="34078575"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:55:13 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5ReP-000000068S4-2BgO;
-	Fri, 10 May 2024 17:55:09 +0300
-Date: Fri, 10 May 2024 17:55:09 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devarsh Thakkar <devarsht@ti.com>
-Cc: mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, hverkuil-cisco@xs4all.nl,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
-	sebastian.fricke@collabora.com, laurent.pinchart@ideasonboard.com,
-	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
-	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
-	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
-	nicolas@ndufresne.ca, akpm@linux-foundation.org,
-	gregkh@linuxfoundation.org, adobriyan@gmail.com,
-	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
-	jani.nikula@intel.com, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v7 0/8] [PATCH v7 0/8] Add V4L2 M2M Driver for E5010 JPEG
- Encoder
-Message-ID: <Zj41TZllCRvEdYsW@smile.fi.intel.com>
-References: <20240509183849.4060521-1-devarsht@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGwqQCepcSKbgbemV/dptfixidGWezFD6/dE4IploauNfCurmQ5myBjBLUPnlODCanzScemsDf440nwX/Jbbk4vq+lvPirAb6YSAx1lZhBb2jm+YZaQyYCazmvkCNs2Azor6W0tb0mugwJy6b6SJKqN55pOATTlw/bgdf3OKCnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qk+QHBRU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B805BC113CC;
+	Fri, 10 May 2024 14:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715352942;
+	bh=sLxTchYz896sDj6qbtwDuUDSEIrv3OIFfIsIipZpE5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qk+QHBRUz835G4CYflpo32U3bgdyaL3BSq2dIP7JPTBxppCQBluDy5JvM3o97jF80
+	 iEALaNAdz3a/+xGsLAEiu9b9vQ8IOnPt5tIhImEP0eGpneYwpJjwpuG02fLkJ3yi68
+	 nhbRbKKys1TrAkL5vW0TVsZ1OZcRgEjvN426FUx7zeuaqiU+tMqyApz+JEHhGlVjsp
+	 zDEVo4rZ2XssiB7JTh43TEhLtOPYXIZhhcknhTJmh/C+HOdQCExA3ZWfYGTj7MIeOv
+	 FQzyk2hH6uVo11vyU+GDq7RXKXBnosQk38Lr2DJANEJLXeauHqnO5s9JAJ0Ew2Q7b5
+	 NjdJU+QN1zb3Q==
+Date: Fri, 10 May 2024 15:55:34 +0100
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>,
+	Bruno =?iso-8859-1?Q?Pr=E9mont?= <bonbons@linux-vserver.org>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-omap@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: [GIT PULL] Immutable branch between Backlight, HID and fbdev due for
+ the v6.10 merge window
+Message-ID: <20240510145534.GD6146@google.com>
+References: <20240424-video-backlight-lcd-ops-v2-0-1aaa82b07bc6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240509183849.4060521-1-devarsht@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240424-video-backlight-lcd-ops-v2-0-1aaa82b07bc6@kernel.org>
 
-On Fri, May 10, 2024 at 12:08:49AM +0530, Devarsh Thakkar wrote:
-> This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
-> which is a stateful JPEG encoder from Imagination technologies
-> and is present in TI AM62A SoC.
-> 
-> While adding support for it, following additional framework changes were
-> made:
->  - Moved reference quantization and huffman tables provided in
->    ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
->  - Add macros to round to closest integer (either higher or lower) while
->    rounding in order of 2.
+Enjoy!
 
-You have a problem with your emails. Either you missed --thread when preparing
-the series, or something wrong with your email setup / email servers you are
-using.
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git ib-backlight-hid-fbdev-lcd-scripts-v6.10
+
+for you to fetch changes up to 82b9007bc4f8c22975d640d7df6743366f25a353:
+
+  const_structs.checkpatch: add lcd_ops (2024-05-03 10:45:55 +0100)
+
+----------------------------------------------------------------
+Immutable branch between Backlight, HID and fbdev due for the v6.10 merge window
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (19):
+      backlight: lcd: Constify lcd_ops
+      backlight: ams369fg06: Constify lcd_ops
+      backlight: corgi_lcd: Constify lcd_ops
+      backlight: hx8357: Constify lcd_ops
+      backlight: ili922x: Constify lcd_ops
+      backlight: ili9320: Constify lcd_ops
+      backlight: jornada720_lcd: Constify lcd_ops
+      backlight: l4f00242t03: Constify lcd_ops
+      backlight: lms283gf05: Constify lcd_ops
+      backlight: lms501kf03: Constify lcd_ops
+      backlight: ltv350qv: Constify lcd_ops
+      backlight: otm3225a: Constify lcd_ops
+      backlight: platform_lcd: Constify lcd_ops
+      backlight: tdo24m: Constify lcd_ops
+      HID: picoLCD: Constify lcd_ops
+      fbdev: clps711x: Constify lcd_ops
+      fbdev: imx: Constify lcd_ops
+      fbdev: omap: lcd_ams_delta: Constify lcd_ops
+      const_structs.checkpatch: add lcd_ops
+
+ drivers/hid/hid-picolcd_lcd.c            | 2 +-
+ drivers/video/backlight/ams369fg06.c     | 2 +-
+ drivers/video/backlight/corgi_lcd.c      | 2 +-
+ drivers/video/backlight/hx8357.c         | 2 +-
+ drivers/video/backlight/ili922x.c        | 2 +-
+ drivers/video/backlight/ili9320.c        | 2 +-
+ drivers/video/backlight/jornada720_lcd.c | 2 +-
+ drivers/video/backlight/l4f00242t03.c    | 2 +-
+ drivers/video/backlight/lcd.c            | 4 ++--
+ drivers/video/backlight/lms283gf05.c     | 2 +-
+ drivers/video/backlight/lms501kf03.c     | 2 +-
+ drivers/video/backlight/ltv350qv.c       | 2 +-
+ drivers/video/backlight/otm3225a.c       | 2 +-
+ drivers/video/backlight/platform_lcd.c   | 2 +-
+ drivers/video/backlight/tdo24m.c         | 2 +-
+ drivers/video/fbdev/clps711x-fb.c        | 2 +-
+ drivers/video/fbdev/imxfb.c              | 2 +-
+ drivers/video/fbdev/omap/lcd_ams_delta.c | 2 +-
+ include/linux/lcd.h                      | 6 +++---
+ scripts/const_structs.checkpatch         | 1 +
+ 20 files changed, 23 insertions(+), 22 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Lee Jones [李琼斯]
 
