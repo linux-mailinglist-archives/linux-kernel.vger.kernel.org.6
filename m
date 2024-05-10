@@ -1,86 +1,99 @@
-Return-Path: <linux-kernel+bounces-175241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F43E8C1CEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:18:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04878C1CEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59DBF28347F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D14A1C21AC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177071494C7;
-	Fri, 10 May 2024 03:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JahM9Gxa"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D461494A0;
+	Fri, 10 May 2024 03:18:58 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60D533CD1;
-	Fri, 10 May 2024 03:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80557148FE0;
+	Fri, 10 May 2024 03:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715311122; cv=none; b=qapqURuMdyvd+/Zlv6ggWNMxASLtf6XwekPYnXotBAhoz1EP4dqlj7wLi2+e/CorUsFYwOmgPQYFp9XZvrC8hw8gZaVOhHtRTr9w8/bTc0ATW7G4vRNfeaxDLQdBFCfO2sGsT9ugJnqvJL+XmNbrN99ApocSlYfPWPtfgvqaBiw=
+	t=1715311137; cv=none; b=u+rWnB+u6IN6zboTPMN3ROO1yrRiL0LJK1VLnAqq3/ICVbJB8JEoo3jPaLoBqv7h1T/aNpy0IUlnF0j7i0qHgcFxSv52h6WRO860H9+47zV2/a6AeH7EXbfBS0lFdptucIvFQplD3tqWe3YhnU7ZLssaMJPfqP6jKlBY8LlsETM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715311122; c=relaxed/simple;
-	bh=foVyNGlbXIYrxPutsdsOkKH+iikzAmbsemiAiJGyawg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJuroIIFrnukH7eB1CFepQNEhPkbj6dN631NTRLw8NII46PUItRMS/eMcSrhd3dORijSWDIfMAiBgkoiODsiT7Qnfj2F/AV6+/wwPV6euPuMSRhJNLxoz/K6IbsMRyMAG09utih7SxOloeSSqx8F4UzsMevBZJ340Hw2+hQ4yr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JahM9Gxa; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3fHRsZcdj/tgFnGrPHUfac5A7YiWSFy0VDkIhuxQvAY=; b=JahM9GxavFkcw1GiYwoFbeXZo7
-	hcFNrP15sZGp+j0vhmRQ0G6ZfKgP9dPPg5G5l0K/IDzIuSD6+IfKkPzZqiIV9pMRybFuy/1XSpjFU
-	Qx60+DMZCAP/zLSQ7HilZ/jnUvLLmCXs9FnvdPd2KRQC4EY2nT/Q2bMA/uxgsypurem2mODz7kCiH
-	2vtMDgsB/2uHmynZbK1izGb+ni5nMu+FvFSQQdtFSiK1ZJiRCI1GqRpOE1jI22vOCDCTstvWgEHM6
-	hGYHAHhCnkMzIbsq+Nf9QMw6hO503eLiFNengNrvlafcNlzHgWNEUlfQzvPtQcFaC7G6FywWLgQ0T
-	gAEtjbYQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s5Gm5-000000027Oc-3RIv;
-	Fri, 10 May 2024 03:18:22 +0000
-Date: Fri, 10 May 2024 04:18:21 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, steve.kang@unisoc.com
-Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
-Message-ID: <Zj2R_UH0JMspexp5@casper.infradead.org>
-References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
- <20240509023937.1090421-3-zhaoyang.huang@unisoc.com>
- <Zjw_0UPKvGkPfKFO@casper.infradead.org>
- <CAGWkznGZP3KUBN2M6syrjTmVOdSM0zx23hcJ6+hqE8Drgz2f-A@mail.gmail.com>
+	s=arc-20240116; t=1715311137; c=relaxed/simple;
+	bh=IleNnU39C17nvFTpv4osFYDq9Q9V++izKYBe/MFz3KA=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=OdOl5h8ERD7Su9xpmCXEtuNJcjLg7YAg0JDrCRH4xmg4BFsXpw/RNCC0hvTnmSc2jMbvPf/tFQLUL92Fq2JgayKqhNPCqq6zo2bg9q/zE4DEyjH1I4yMckQr6wEAHxWDy9zXhIDNOKcC4iiYX4mrz1Xxg96MqIz9L+xZJoV/vRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxct.zte.com.cn (unknown [192.168.251.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VbDcP5N6Qz8XrX5;
+	Fri, 10 May 2024 11:18:45 +0800 (CST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4VbDc43SlHz4x6CW;
+	Fri, 10 May 2024 11:18:28 +0800 (CST)
+Received: from szxlzmapp06.zte.com.cn ([10.5.230.252])
+	by mse-fl1.zte.com.cn with SMTP id 44A3IKWP090570;
+	Fri, 10 May 2024 11:18:20 +0800 (+08)
+	(envelope-from cheng.lin130@zte.com.cn)
+Received: from mapi (szxlzmapp03[null])
+	by mapi (Zmail) with MAPI id mid14;
+	Fri, 10 May 2024 11:18:22 +0800 (CST)
+Date: Fri, 10 May 2024 11:18:22 +0800 (CST)
+X-Zmail-TransId: 2b05663d91feffffffff9e9-e8514
+X-Mailer: Zmail v1.0
+Message-ID: <20240510111822405PCAy6fW8F_-AfMPoCfT8u@zte.com.cn>
+In-Reply-To: <Zjzkzu3gVUQt8gJG@google.com>
+References: ZjuhDH_i9QWL4vyz@google.com,202405091030597804KUqLDPPj2FpTIBrZZ5Eo@zte.com.cn,Zjzkzu3gVUQt8gJG@google.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGWkznGZP3KUBN2M6syrjTmVOdSM0zx23hcJ6+hqE8Drgz2f-A@mail.gmail.com>
+Mime-Version: 1.0
+From: <cheng.lin130@zte.com.cn>
+To: <seanjc@google.com>
+Cc: <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <jiang.yong5@zte.com.cn>,
+        <wang.liang82@zte.com.cn>, <jiang.xuexin@zte.com.cn>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSF0gS1ZNOiBpbnRyb2R1Y2Ugdm0ncyBtYXhfaGFsdF9wb2xsX25zIHRvIGRlYnVnZnM=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 44A3IKWP090570
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 663D9215.001/4VbDcP5N6Qz8XrX5
 
-On Fri, May 10, 2024 at 10:43:20AM +0800, Zhaoyang Huang wrote:
-> Thanks for the prompt. I did some basic research on soft RAID and
-> wonder if applying the bps limit on /dev/md0 like below could make
-> this work.
+> > > From: seanjc <seanjc@google.com>
+> > > > From: Cheng Lin <cheng.lin130@zte.com.cn>
+> > > >
+> > > > Introduce vm's max_halt_poll_ns and override_halt_poll_ns to
+> > > > debugfs. Provide a way to check and modify them.
+> > > Why?
+> > If a vm's max_halt_poll_ns has been set using KVM_CAP_HALT_POLL,
+> > the module parameter kvm.halt_poll.ns will no longer indicate the maximum
+> > halt pooling interval for that vm. After introducing these two attributes into
+> > debugfs, it can be used to check whether the individual configuration of the
+> > vm is enabled and the working value.
+> But why is max_halt_poll_ns special enough to warrant debugfs entries?  There is
+> a _lot_ of state in KVM that is configurable per-VM, it simply isn't feasible to
+> dump everything into debugfs.
+If we want to provide a directly modification interface under /sys for per-vm
+max_halt_poll_ns, like module parameter /sys/module/kvm/parameters/halt_poll_ns,
+using debugfs may be worth.
+Further, if the override_halt_poll_ns under debugfs is set to be writable, it can even
+achieve the setting of per-vm max_halt_poll_ns, as the KVM_CAP_HALL_POLL interface
+does.
+> I do think it would be reasonable to capture the max allowed polling time in
+> the existing tracepoint though, e.g.
+Yes, I agree it. 
+It is sufficient to get per-vm max_halt_poll_ns through tracepoint if KVP_CAP_HALL_POLL
+is used as the unique setting interface.
 
-No.  Look at btrfs' raid support, for example.  it doesn't use md0.
-
-> I didn't find information about 'RAID internally'. Could we set the
-> limit on the root device(the one used for mount) to manage the whole
-> partition without caring about where the bio finally goes? Or ask the
-> user to decide if to use by making sure the device they apply will not
-> do RAID?
-
-No.
+Do you consider it is worth to provide a setting interface other than KVP_CAP_HALL_POLL?
 
