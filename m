@@ -1,430 +1,184 @@
-Return-Path: <linux-kernel+bounces-175857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527038C2645
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:06:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A6C8C264C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74DA11C208C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:06:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA5A285960
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7517109B;
-	Fri, 10 May 2024 14:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4D4172763;
+	Fri, 10 May 2024 14:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xtdA59GQ"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="MjV+YDeh"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4870A170893
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBFC171E70;
+	Fri, 10 May 2024 14:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715349894; cv=none; b=rJmO9Opvxb8OW7NEjHvlJyadOk1Rk6r21crPNbK6lK5rFFuuW3enxFBSJbJbqLeaylO37bm9eJm8kEAWdpuDjSCDP8v1ad95ctFMuKOPRdzwMjRm3q/Tpj43iDJWOQFwHOxYEgUIKpX1r1ZiCkM3RV7/9rf0C87Rpdz9zNMVhkU=
+	t=1715349904; cv=none; b=dUn98AXlH8nF6Be9JuMTOqYLJwuDoWiFYrJ/4WYRD+G1bO9/Mu/gooawy8drzSnEXMOevk6vWeehxvswCuDYENKWx3tb4eZL5nHSNxy7uOCz9102e1uai6t7MyYd/zcqy3uKPu4tdxqzwE+J5EE1LRp4WPwrcdiKtRO42DhpaNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715349894; c=relaxed/simple;
-	bh=MujKHSIgrtbfnILllwPdQKMT44DlKLJIWOTHYzn8uDs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jRM/qLiHeGoTDBIx8VNSit9nfzzu9EFQ3o4wt8ZCD5qQMKlYgvnPgUrZJbzW28ZE71+sGul224u+98M/tHhAxqxhA2GJkwBTkmhPtIet9sXLXTqRYkwHBXQHh2sPjuFShdkpaSuiV9knyT7GKH/Crw05GXUdMIjXx70qNKSu9+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xtdA59GQ; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de54be7066bso3271781276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:04:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715349891; x=1715954691; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WqGAkxZ2nlObBbg1zcUbRHzr41ahfYKK7MnBlN0GD4M=;
-        b=xtdA59GQIeHgVhsq2mULO+XNoMWIKcdDtq5WRw5NL45LIn7HcM5/RE7CAUxCH7fkAp
-         8OeJVW9Y/rxTaDvAYR9mJ/Z8kE+hQEQl/plMIZue6Ye3U6+wOd7VEJ1m/764fdey+eU1
-         ZgEQCR+ribXldx36kIzmOmV6PLSd65SWOmqurLVr3FR7TjNqLQEP6lzDq9UQBe6t9rSQ
-         pGJicnfoTbfYqH7lOzXVEBzROCZ+e5FlnKTdHX2hzf1VD9nmZDXpFyFeypDjeyQJYt3W
-         sn6AudUpCMcokFZnfg1Y02ADm4Tg1UhHzXEtbUKUh7CiZMtbKBPL0BMGbh8ZfrbHSFhK
-         YX0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715349891; x=1715954691;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WqGAkxZ2nlObBbg1zcUbRHzr41ahfYKK7MnBlN0GD4M=;
-        b=VmV8hDLsmS0LnVj8Po5SrlLC+HB+CwMOz0ofZfoNXQ/GIdFTltZwg5aPa2T3iUjtdv
-         3+mr0AxMoJ0pSutbqzQQ4jwwX+aMP3rZ2ei98aLFMDuKa1QqOrKaZJECtZYjJo9pIbYK
-         9WnsFTrn9GOXPpAkFLdX3rJJDsfrrWkZ8PkJqxhvbMoFIWwv1JdUjgBWHfIQc8Jg/waZ
-         VTNlgmY3FGkcZw1TQhvI2zVHKEbWKZU2YJY0pv5mzUhn6W+p30BHdnQ48pfDT/e4vxda
-         US0+ZliI5eWVo4RxHa4KRhcl9I+F6lLrd2sIgog9GPvVi7cuNbumXJ7POlhAm21w73in
-         1lSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcYnaD1IIzdfEFYneoLWDug1G0E5oSXqigUpjZTm1/YUhby5/QdfYt1AtReJHWh8KsBqru1eG79Q9e1FuruB8VYQcTF3XbZVM+D+XC
-X-Gm-Message-State: AOJu0YwNSU+5ElEKFpmB6tv3fBqlSegi3UsLgW7fOCwgGONL6mqk652G
-	Z8V3IxuKRjhRtREdw0dFSRFov+fcjjAPtVMpnfnBLmI+cSIy9F0iIefkKP+dneQ0C9NkaEP6MmP
-	Yqw5diDPaFNVIyH1BoA==
-X-Google-Smtp-Source: AGHT+IEUi4zAkqNjNK2wzXjW69LP86lTmd/9lM8Z+VAACdWihhq8AzJAza9Qh8dAa37QGKfJaRJO+/gMxHaLD1p1
-X-Received: from vdonnefort.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:2eea])
- (user=vdonnefort job=sendgmr) by 2002:a05:6902:c10:b0:de6:1301:600a with SMTP
- id 3f1490d57ef6-dee4f374414mr680985276.9.1715349891275; Fri, 10 May 2024
- 07:04:51 -0700 (PDT)
-Date: Fri, 10 May 2024 15:04:34 +0100
-In-Reply-To: <20240510140435.3550353-1-vdonnefort@google.com>
+	s=arc-20240116; t=1715349904; c=relaxed/simple;
+	bh=AigkgpHRx5u5xY7r4e5L9K+exbczmphxJ+c+WCFIIDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LiLfW93R5zzkVDCzv0Id4KXEnBMhKF2z0oJPkjUiWwqgj0WTBBN9rCAKMGGRqWBeL9YC8f1lsD0WOCSOHLbjE4Qb6kjClaWLF79l0MQA7Ls0Y899/UVCFrh7vaDLGEI5E47NCpY03zVhb8xbkHeS33tWA9kO1386v+ukno2ACVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=MjV+YDeh reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
+ id a7fd470ac8d4b3c8; Fri, 10 May 2024 16:04:59 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id BA58821031DA;
+	Fri, 10 May 2024 16:04:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1715349899;
+	bh=AigkgpHRx5u5xY7r4e5L9K+exbczmphxJ+c+WCFIIDE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=MjV+YDehwUHtsp2lTEOQugh+oqzekHf0mRoM2nu0a17A2RM7kZs3vyRTU35Do+hs9
+	 DHdTCxVRFTKtm63K8uACJc006JsyFeySnRtNc0nv+r9/kBz/gIEURLtXTAZUqn7wpL
+	 uydkDZ1qIj9e2pjXc1SDpP0l4pqYhd3y/dFeY4GuGpBO5hrQm8Z88y+wY65+LhMyWn
+	 hXxs161oUdoaBPAFQfz3M1UccJ5En0Ou14sPaKNsiFkkkV7QtNiK6sgIAYIjQ/WnHR
+	 K7gL05hWpvhc3WYU9tND39Fckvt7Ac3Emda3ZIghPmZeZA0RGmpxMLE7zKgJp8YD5s
+	 3fNhOKWjU1HIw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Mario Limonciello <mario.limonciello@amd.com>, Armin Wolf <w_armin@gmx.de>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject:
+ [PATCH v1 2/2] platform/x86: wmi: Remove custom EC address space handler
+Date: Fri, 10 May 2024 16:04:50 +0200
+Message-ID: <2332870.ElGaqSPkdT@kreacher>
+In-Reply-To: <5787281.DvuYhMxLoT@kreacher>
+References: <5787281.DvuYhMxLoT@kreacher>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240510140435.3550353-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240510140435.3550353-6-vdonnefort@google.com>
-Subject: [PATCH v23 5/5] ring-buffer/selftest: Add ring-buffer mapping test
-From: Vincent Donnefort <vdonnefort@google.com>
-To: rostedt@goodmis.org, mhiramat@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Cc: mathieu.desnoyers@efficios.com, kernel-team@android.com, 
-	rdunlap@infradead.org, rppt@kernel.org, david@redhat.com, 
-	Vincent Donnefort <vdonnefort@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-kselftest@vger.kernel.org, 
-	Muhammad Usama Anjum <usama.anjum@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhhgrthdrtghomhdp
+ rhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhmpdhrtghpthhtohepfigprghrmhhinhesghhmgidruggv
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
 
-Map a ring-buffer, validate the meta-page before and after emitting few
-events. Also check ring-buffer mapping boundaries and finally ensure the
-tracing snapshot is mutually exclusive.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux-kselftest@vger.kernel.org
-Acked-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+The custom EC address space handler in the WMI driver was only needed
+because the EC driver did not install its address space handler for
+EC operation regions beyond the EC device scope in the ACPI namespace.
 
-diff --git a/tools/testing/selftests/ring-buffer/.gitignore b/tools/testing/selftests/ring-buffer/.gitignore
-new file mode 100644
-index 000000000000..3aed1a2a6c67
---- /dev/null
-+++ b/tools/testing/selftests/ring-buffer/.gitignore
-@@ -0,0 +1 @@
-+map_test
-diff --git a/tools/testing/selftests/ring-buffer/Makefile b/tools/testing/selftests/ring-buffer/Makefile
-new file mode 100644
-index 000000000000..627c5fa6d1ab
---- /dev/null
-+++ b/tools/testing/selftests/ring-buffer/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+CFLAGS += -Wl,-no-as-needed -Wall
-+CFLAGS += $(KHDR_INCLUDES)
-+CFLAGS += -D_GNU_SOURCE
-+
-+TEST_GEN_PROGS = map_test
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/ring-buffer/config b/tools/testing/selftests/ring-buffer/config
-new file mode 100644
-index 000000000000..d936f8f00e78
---- /dev/null
-+++ b/tools/testing/selftests/ring-buffer/config
-@@ -0,0 +1,2 @@
-+CONFIG_FTRACE=y
-+CONFIG_TRACER_SNAPSHOT=y
-diff --git a/tools/testing/selftests/ring-buffer/map_test.c b/tools/testing/selftests/ring-buffer/map_test.c
-new file mode 100644
-index 000000000000..a9006fa7097e
---- /dev/null
-+++ b/tools/testing/selftests/ring-buffer/map_test.c
-@@ -0,0 +1,294 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Ring-buffer memory mapping tests
-+ *
-+ * Copyright (c) 2024 Vincent Donnefort <vdonnefort@google.com>
-+ */
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+
-+#include <linux/trace_mmap.h>
-+
-+#include <sys/mman.h>
-+#include <sys/ioctl.h>
-+
-+#include "../user_events/user_events_selftests.h" /* share tracefs setup */
-+#include "../kselftest_harness.h"
-+
-+#define TRACEFS_ROOT "/sys/kernel/tracing"
-+
-+static int __tracefs_write(const char *path, const char *value)
-+{
-+	int fd, ret;
-+
-+	fd = open(path, O_WRONLY | O_TRUNC);
-+	if (fd < 0)
-+		return fd;
-+
-+	ret = write(fd, value, strlen(value));
-+
-+	close(fd);
-+
-+	return ret == -1 ? -errno : 0;
-+}
-+
-+static int __tracefs_write_int(const char *path, int value)
-+{
-+	char *str;
-+	int ret;
-+
-+	if (asprintf(&str, "%d", value) < 0)
-+		return -1;
-+
-+	ret = __tracefs_write(path, str);
-+
-+	free(str);
-+
-+	return ret;
-+}
-+
-+#define tracefs_write_int(path, value) \
-+	ASSERT_EQ(__tracefs_write_int((path), (value)), 0)
-+
-+#define tracefs_write(path, value) \
-+	ASSERT_EQ(__tracefs_write((path), (value)), 0)
-+
-+static int tracefs_reset(void)
-+{
-+	if (__tracefs_write_int(TRACEFS_ROOT"/tracing_on", 0))
-+		return -1;
-+	if (__tracefs_write(TRACEFS_ROOT"/trace", ""))
-+		return -1;
-+	if (__tracefs_write(TRACEFS_ROOT"/set_event", ""))
-+		return -1;
-+	if (__tracefs_write(TRACEFS_ROOT"/current_tracer", "nop"))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+struct tracefs_cpu_map_desc {
-+	struct trace_buffer_meta	*meta;
-+	int				cpu_fd;
-+};
-+
-+int tracefs_cpu_map(struct tracefs_cpu_map_desc *desc, int cpu)
-+{
-+	int page_size = getpagesize();
-+	char *cpu_path;
-+	void *map;
-+
-+	if (asprintf(&cpu_path,
-+		     TRACEFS_ROOT"/per_cpu/cpu%d/trace_pipe_raw",
-+		     cpu) < 0)
-+		return -ENOMEM;
-+
-+	desc->cpu_fd = open(cpu_path, O_RDONLY | O_NONBLOCK);
-+	free(cpu_path);
-+	if (desc->cpu_fd < 0)
-+		return -ENODEV;
-+
-+	map = mmap(NULL, page_size, PROT_READ, MAP_SHARED, desc->cpu_fd, 0);
-+	if (map == MAP_FAILED)
-+		return -errno;
-+
-+	desc->meta = (struct trace_buffer_meta *)map;
-+
-+	return 0;
-+}
-+
-+void tracefs_cpu_unmap(struct tracefs_cpu_map_desc *desc)
-+{
-+	munmap(desc->meta, desc->meta->meta_page_size);
-+	close(desc->cpu_fd);
-+}
-+
-+FIXTURE(map) {
-+	struct tracefs_cpu_map_desc	map_desc;
-+	bool				umount;
-+};
-+
-+FIXTURE_VARIANT(map) {
-+	int	subbuf_size;
-+};
-+
-+FIXTURE_VARIANT_ADD(map, subbuf_size_4k) {
-+	.subbuf_size = 4,
-+};
-+
-+FIXTURE_VARIANT_ADD(map, subbuf_size_8k) {
-+	.subbuf_size = 8,
-+};
-+
-+FIXTURE_SETUP(map)
-+{
-+	int cpu = sched_getcpu();
-+	cpu_set_t cpu_mask;
-+	bool fail, umount;
-+	char *message;
-+
-+	if (getuid() != 0)
-+		SKIP(return, "Skipping: %s", "Please run the test as root");
-+
-+	if (!tracefs_enabled(&message, &fail, &umount)) {
-+		if (fail) {
-+			TH_LOG("Tracefs setup failed: %s", message);
-+			ASSERT_FALSE(fail);
-+		}
-+		SKIP(return, "Skipping: %s", message);
-+	}
-+
-+	self->umount = umount;
-+
-+	ASSERT_GE(cpu, 0);
-+
-+	ASSERT_EQ(tracefs_reset(), 0);
-+
-+	tracefs_write_int(TRACEFS_ROOT"/buffer_subbuf_size_kb", variant->subbuf_size);
-+
-+	ASSERT_EQ(tracefs_cpu_map(&self->map_desc, cpu), 0);
-+
-+	/*
-+	 * Ensure generated events will be found on this very same ring-buffer.
-+	 */
-+	CPU_ZERO(&cpu_mask);
-+	CPU_SET(cpu, &cpu_mask);
-+	ASSERT_EQ(sched_setaffinity(0, sizeof(cpu_mask), &cpu_mask), 0);
-+}
-+
-+FIXTURE_TEARDOWN(map)
-+{
-+	tracefs_reset();
-+
-+	if (self->umount)
-+		tracefs_unmount();
-+
-+	tracefs_cpu_unmap(&self->map_desc);
-+}
-+
-+TEST_F(map, meta_page_check)
-+{
-+	struct tracefs_cpu_map_desc *desc = &self->map_desc;
-+	int cnt = 0;
-+
-+	ASSERT_EQ(desc->meta->entries, 0);
-+	ASSERT_EQ(desc->meta->overrun, 0);
-+	ASSERT_EQ(desc->meta->read, 0);
-+
-+	ASSERT_EQ(desc->meta->reader.id, 0);
-+	ASSERT_EQ(desc->meta->reader.read, 0);
-+
-+	ASSERT_EQ(ioctl(desc->cpu_fd, TRACE_MMAP_IOCTL_GET_READER), 0);
-+	ASSERT_EQ(desc->meta->reader.id, 0);
-+
-+	tracefs_write_int(TRACEFS_ROOT"/tracing_on", 1);
-+	for (int i = 0; i < 16; i++)
-+		tracefs_write_int(TRACEFS_ROOT"/trace_marker", i);
-+again:
-+	ASSERT_EQ(ioctl(desc->cpu_fd, TRACE_MMAP_IOCTL_GET_READER), 0);
-+
-+	ASSERT_EQ(desc->meta->entries, 16);
-+	ASSERT_EQ(desc->meta->overrun, 0);
-+	ASSERT_EQ(desc->meta->read, 16);
-+
-+	ASSERT_EQ(desc->meta->reader.id, 1);
-+
-+	if (!(cnt++))
-+		goto again;
-+}
-+
-+TEST_F(map, data_mmap)
-+{
-+	struct tracefs_cpu_map_desc *desc = &self->map_desc;
-+	unsigned long meta_len, data_len;
-+	void *data;
-+
-+	meta_len = desc->meta->meta_page_size;
-+	data_len = desc->meta->subbuf_size * desc->meta->nr_subbufs;
-+
-+	/* Map all the available subbufs */
-+	data = mmap(NULL, data_len, PROT_READ, MAP_SHARED,
-+		    desc->cpu_fd, meta_len);
-+	ASSERT_NE(data, MAP_FAILED);
-+	munmap(data, data_len);
-+
-+	/* Map all the available subbufs - 1 */
-+	data_len -= desc->meta->subbuf_size;
-+	data = mmap(NULL, data_len, PROT_READ, MAP_SHARED,
-+		    desc->cpu_fd, meta_len);
-+	ASSERT_NE(data, MAP_FAILED);
-+	munmap(data, data_len);
-+
-+	/* Overflow the available subbufs by 1 */
-+	meta_len += desc->meta->subbuf_size * 2;
-+	data = mmap(NULL, data_len, PROT_READ, MAP_SHARED,
-+		    desc->cpu_fd, meta_len);
-+	ASSERT_EQ(data, MAP_FAILED);
-+}
-+
-+FIXTURE(snapshot) {
-+	bool	umount;
-+};
-+
-+FIXTURE_SETUP(snapshot)
-+{
-+	bool fail, umount;
-+	struct stat sb;
-+	char *message;
-+
-+	if (getuid() != 0)
-+		SKIP(return, "Skipping: %s", "Please run the test as root");
-+
-+	if (stat(TRACEFS_ROOT"/snapshot", &sb))
-+		SKIP(return, "Skipping: %s", "snapshot not available");
-+
-+	if (!tracefs_enabled(&message, &fail, &umount)) {
-+		if (fail) {
-+			TH_LOG("Tracefs setup failed: %s", message);
-+			ASSERT_FALSE(fail);
-+		}
-+		SKIP(return, "Skipping: %s", message);
-+	}
-+
-+	self->umount = umount;
-+}
-+
-+FIXTURE_TEARDOWN(snapshot)
-+{
-+	__tracefs_write(TRACEFS_ROOT"/events/sched/sched_switch/trigger",
-+			"!snapshot");
-+	tracefs_reset();
-+
-+	if (self->umount)
-+		tracefs_unmount();
-+}
-+
-+TEST_F(snapshot, excludes_map)
-+{
-+	struct tracefs_cpu_map_desc map_desc;
-+	int cpu = sched_getcpu();
-+
-+	ASSERT_GE(cpu, 0);
-+	tracefs_write(TRACEFS_ROOT"/events/sched/sched_switch/trigger",
-+		      "snapshot");
-+	ASSERT_EQ(tracefs_cpu_map(&map_desc, cpu), -EBUSY);
-+}
-+
-+TEST_F(snapshot, excluded_by_map)
-+{
-+	struct tracefs_cpu_map_desc map_desc;
-+	int cpu = sched_getcpu();
-+
-+	ASSERT_EQ(tracefs_cpu_map(&map_desc, cpu), 0);
-+
-+	ASSERT_EQ(__tracefs_write(TRACEFS_ROOT"/events/sched/sched_switch/trigger",
-+				  "snapshot"), -EBUSY);
-+	ASSERT_EQ(__tracefs_write(TRACEFS_ROOT"/snapshot",
-+				  "1"), -EBUSY);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-2.45.0.118.g7fe29c98d7-goog
+That has just changed, so the custom EC address handler is not needed
+any more and it can be removed.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/platform/x86/wmi.c |   62 ---------------------------------------------
+ 1 file changed, 62 deletions(-)
+
+Index: linux-pm/drivers/platform/x86/wmi.c
+===================================================================
+--- linux-pm.orig/drivers/platform/x86/wmi.c
++++ linux-pm/drivers/platform/x86/wmi.c
+@@ -1153,47 +1153,6 @@ static int parse_wdg(struct device *wmi_
+ 	return 0;
+ }
+ 
+-/*
+- * WMI can have EmbeddedControl access regions. In which case, we just want to
+- * hand these off to the EC driver.
+- */
+-static acpi_status
+-acpi_wmi_ec_space_handler(u32 function, acpi_physical_address address,
+-			  u32 bits, u64 *value,
+-			  void *handler_context, void *region_context)
+-{
+-	int result = 0;
+-	u8 temp = 0;
+-
+-	if ((address > 0xFF) || !value)
+-		return AE_BAD_PARAMETER;
+-
+-	if (function != ACPI_READ && function != ACPI_WRITE)
+-		return AE_BAD_PARAMETER;
+-
+-	if (bits != 8)
+-		return AE_BAD_PARAMETER;
+-
+-	if (function == ACPI_READ) {
+-		result = ec_read(address, &temp);
+-		*value = temp;
+-	} else {
+-		temp = 0xff & *value;
+-		result = ec_write(address, temp);
+-	}
+-
+-	switch (result) {
+-	case -EINVAL:
+-		return AE_BAD_PARAMETER;
+-	case -ENODEV:
+-		return AE_NOT_FOUND;
+-	case -ETIME:
+-		return AE_TIME;
+-	default:
+-		return AE_OK;
+-	}
+-}
+-
+ static int wmi_get_notify_data(struct wmi_block *wblock, union acpi_object **obj)
+ {
+ 	struct acpi_buffer data = { ACPI_ALLOCATE_BUFFER, NULL };
+@@ -1308,14 +1267,6 @@ static void acpi_wmi_remove_notify_handl
+ 	acpi_remove_notify_handler(acpi_device->handle, ACPI_ALL_NOTIFY, acpi_wmi_notify_handler);
+ }
+ 
+-static void acpi_wmi_remove_address_space_handler(void *data)
+-{
+-	struct acpi_device *acpi_device = data;
+-
+-	acpi_remove_address_space_handler(acpi_device->handle, ACPI_ADR_SPACE_EC,
+-					  &acpi_wmi_ec_space_handler);
+-}
+-
+ static void acpi_wmi_remove_bus_device(void *data)
+ {
+ 	struct device *wmi_bus_dev = data;
+@@ -1347,19 +1298,6 @@ static int acpi_wmi_probe(struct platfor
+ 
+ 	dev_set_drvdata(&device->dev, wmi_bus_dev);
+ 
+-	status = acpi_install_address_space_handler(acpi_device->handle,
+-						    ACPI_ADR_SPACE_EC,
+-						    &acpi_wmi_ec_space_handler,
+-						    NULL, NULL);
+-	if (ACPI_FAILURE(status)) {
+-		dev_err(&device->dev, "Error installing EC region handler\n");
+-		return -ENODEV;
+-	}
+-	error = devm_add_action_or_reset(&device->dev, acpi_wmi_remove_address_space_handler,
+-					 acpi_device);
+-	if (error < 0)
+-		return error;
+-
+ 	status = acpi_install_notify_handler(acpi_device->handle, ACPI_ALL_NOTIFY,
+ 					     acpi_wmi_notify_handler, wmi_bus_dev);
+ 	if (ACPI_FAILURE(status)) {
+
+
 
 
