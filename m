@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-176071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FDA8C2992
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:54:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B248C2995
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 618CC1C20C99
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:54:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D216288A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968851BF3A;
-	Fri, 10 May 2024 17:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507A81D68F;
+	Fri, 10 May 2024 17:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QVstNfWw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AA91BDCF;
-	Fri, 10 May 2024 17:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jp4/F3Wf"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5003F3A29A;
+	Fri, 10 May 2024 17:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715363672; cv=none; b=Gyh4r93aVzAXd0FJipO9JMooHS6fM2GWcKJSHO1XJgHebTzosl0dZKyoWXRVFHYY312I9hK72D18xSpdmmiPXJaGjk+T0pjk355gVT1iv9NAUPqYuMc7QuhfvSyKqErMOjYQYr1/iqfiAcV1rNNzim75xM6+YynH7MmC2J/wSII=
+	t=1715363691; cv=none; b=dalzUXoq0fVgl5q08wRsvyvisXrwB8CXX8obMlJJn+ONvZmoYuJRCrKlGmDaXSh0fwAyqEdKx8vwD+CY+CqzaBv0M+l5ocxgbcxkPWhG+/F3rBTrvF5xFYe8BCMUygiS3D9MC4byxKiA8gvi7GStaC64WYJFehmSPamCZFYzM3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715363672; c=relaxed/simple;
-	bh=ZthT0XY+04oFvxNJcybLHnQz5wQUYZpOp3sL1ZcV8PQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kb/dwqzLQ7IfVDrTWEO9yryvcU2Hu9WQKR9R/A4Q2U5FWGU+XPyK5I5Uce25g+xBxANQTtAAoXkdxfxUKrxCwBBwtDCFdWuF9pGRvGPIOo4KmqkfE5GHclDtx9SPxdcXBffDrBCshwUHWmEsZDkT3d6RlVEpXJwbvJYY3sI0O6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QVstNfWw; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715363671; x=1746899671;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZthT0XY+04oFvxNJcybLHnQz5wQUYZpOp3sL1ZcV8PQ=;
-  b=QVstNfWwW0lzMn9+X6VrtXqVa6YGULmcpouBPU+86M902a5AE/m1qhn+
-   nWZIuICZvDXG8awmiGETxb/mFLF+lQrSd5ksp7d3Q6z0G1hWxbFZqwmP1
-   NSe5RBWcs9tSnd9DADcTENIIVX+rW07T5yzv27H0CryyN7bI/ptXo6zRL
-   wViIt/d2kG7Ax6OyChM3gJJOQzilr6aU2+ULH4qdkNnNKNiT7TMW9SPf3
-   GPA+X4gmQerwVnytfTr4gUj72mhQXW2/2hoSWUaRNJJtXjthN9KGCutl5
-   1wTGnd7zPUacKc0sOkf4qY3jTPOuWN1zu9HonAUdbHj8wI0eyPdMNbGt6
-   A==;
-X-CSE-ConnectionGUID: X+qzHpYNRb6l6SnsvviXLQ==
-X-CSE-MsgGUID: rWx1InglSDqjFeQJ1vLODw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="22756287"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="22756287"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:54:30 -0700
-X-CSE-ConnectionGUID: rlHEUegSTsC6t59n6EYU5A==
-X-CSE-MsgGUID: oLcjAe9vQnik1yu6NAUP5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="30249637"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:54:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5URt-00000006Ch0-1uQp;
-	Fri, 10 May 2024 20:54:25 +0300
-Date: Fri, 10 May 2024 20:54:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
- namespace root
-Message-ID: <Zj5fUQ8ZZm4I9IPl@smile.fi.intel.com>
-References: <5787281.DvuYhMxLoT@kreacher>
- <4926735.31r3eYUQgx@kreacher>
- <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
- <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
- <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
- <Zj5ZdcQeaTo9ImT4@smile.fi.intel.com>
- <0cdf0af6-851b-4781-83fe-99320c35544f@amd.com>
- <Zj5eZKgpg3LFpne8@smile.fi.intel.com>
+	s=arc-20240116; t=1715363691; c=relaxed/simple;
+	bh=vP4A2cNoEDU3BHRV2UWqBoZFuXGL1RzbYffT+DgLkvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=G0ILKzuN6s9eK587qC5nqGDzV5fMuaKZYJ96BBG9Roc0SDhUAOC9whGYqLrlKU9Rgswg7q7pqvhjFRh/QK68eV1Dves+x8hET4Vj8Gbop+ztR2s6lq/mxASm6XD+eNX5s0B7vvsDsI4GJk+kdTTexa+uM1Sx84qS3GpKdiTsMLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jp4/F3Wf; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BADCE20B2C87;
+	Fri, 10 May 2024 10:54:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BADCE20B2C87
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1715363690;
+	bh=Qu2tPRqem1dQ4iklfODF8kUb57zN2BcGzR19ExYI5oQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=jp4/F3WfZ+1K9YFN2qFmQz3asAk4E1I8n/aK8HWolvZCKTkpS/RtrxSOSw8xiC7ao
+	 Rsjk96uSka4m/tNCbyRo/Nt7z0IW3gQOhT0V3TbpYF8rzgSVxr6SF3KccgtOIsZsJb
+	 8Rs9ULmh7Xh+k2Dt4TwrLtE6ePCpYYGAX+pUyXBQ=
+Message-ID: <807443f4-2442-4925-becc-6eb20887acf6@linux.microsoft.com>
+Date: Fri, 10 May 2024 10:54:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zj5eZKgpg3LFpne8@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] Documentation: hyperv: Improve synic and interrupt
+ handling description
+To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, kys@microsoft.com, corbet@lwn.net,
+ linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20240507131607.367571-1-mhklinux@outlook.com>
+ <20240507131607.367571-2-mhklinux@outlook.com>
+Content-Language: en-CA
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <20240507131607.367571-2-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 10, 2024 at 08:50:29PM +0300, Andy Shevchenko wrote:
-> On Fri, May 10, 2024 at 12:40:05PM -0500, Mario Limonciello wrote:
-> > On 5/10/2024 12:29, Andy Shevchenko wrote:
-> > > On Fri, May 10, 2024 at 06:52:41PM +0200, Armin Wolf wrote:
-> > > > Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
-> > > > > On Fri, May 10, 2024 at 6:10 PM Armin Wolf <W_Armin@gmx.de> wrote:
-> > > > > > Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
-> > > > > > 
-> > > > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > > 
-> > > > > > > It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
-> > > > > > > IdeaPad Pro 5 due to a missing address space handler for the EC address
-> > > > > > > space:
-> > > > > > > 
-> > > > > > >     ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [EmbeddedControl] (20230628/evregion-130)
-> > > > > > > 
-> > > > > > > This happens because the EC driver only registers the EC address space
-> > > > > > > handler for operation regions defined in the EC device scope of the
-> > > > > > > ACPI namespace while the operation region being accessed by the _DSM
-> > > > > > > in question is located beyond that scope.
-> > > > > > > 
-> > > > > > > To address this, modify the ACPI EC driver to install the EC address
-> > > > > > > space handler at the root of the ACPI namespace.
-> > > > > > > 
-> > > > > > > Note that this change is consistent with some examples in the ACPI
-> > > > > > > specification in which EC operation regions located outside the EC
-> > > > > > > device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
-> > > > > > > so the current behavior of the EC driver is arguably questionable.
-> > > > > > Hi,
-> > > > > > 
-> > > > > > the patch itself looks good to me, but i wonder what happens if multiple
-> > > > > > ACPI EC devices are present. How would we handle such a situation?
-> > > > > I'm wondering if this is a theoretical question or do you have any
-> > > > > existing or planned systems in mind?
-> > > > > 
-> > > > > ec_read(), ec_write() and ec_transaction() use only the first EC that
-> > > > > has been found anyway.
-> > > > 
-> > > > Its a theoretical question, i do not know of any systems which have more than
-> > > > one ACPI EC device.
-> > > 
-> > > The specification is clear about this case in the "ACPI Embedded Controller
-> > > Interface Specification":
-> > > 
-> > >   "The ACPI standard supports multiple embedded controllers in a system,
-> > >    each with its own resources. Each embedded controller has a flat
-> > >    byte-addressable I/O space, currently defined as 256 bytes."
-> > > 
-> > > However, I haven't checked deeper, so it might be a leftover in the documentation.
-> > > 
-> > > The OperationRegion() has no reference to the EC (or in general, device) which
-> > > we need to speak to. The only possibility to declare OpRegion() for the second+
-> > > EC is to use vendor specific RegionSpace, AFAIU. So, even if ACPI specification
-> > > supports 2+ ECs, it doesn't support OpRegion():s for them under the same
-> > > RegionSpace.
-> > > 
-> > > That said, the commit message might be extended to summarize this, but at
-> > > the same time I see no way how this series can break anything even in 2+ ECs
-> > > environments.
-> > 
-> > It's deviating from the patch, but in practice /why/ would you even want to
-> > have a design with two ECs?  In general that is going to mean a much more
-> > complex state machine with synchronizing the interaction between both of
-> > them and the host.
-> > 
-> > Understanding the benefit of such a design might make it easier to
-> > hypothesize impacts.
+On 5/7/2024 6:16 AM, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
 > 
-> First that comes to my mind (but hypothetical), is the separate CPU/EC add-on
-> cards. If the main firmware somehow supports all of these add-on platforms,
-> it might need to handle 2+ ECs.
+> Current documentation does not describe how Linux handles the synthetic
+> interrupt controller (synic) that Hyper-V provides to guest VMs, nor how
+> VMBus or timer interrupts are handled. Add text describing the synic and
+> reorganize existing text to make this more clear.
 > 
-> Again, it might be ACPI specification issue. For instance, the cited piece
-> doesn't tell about 16-bit EC accesses.
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>  Documentation/virt/hyperv/clocks.rst | 21 +++++---
+>  Documentation/virt/hyperv/vmbus.rst  | 79 ++++++++++++++++++----------
+>  2 files changed, 66 insertions(+), 34 deletions(-)
+> 
+> diff --git a/Documentation/virt/hyperv/clocks.rst b/Documentation/virt/hyperv/clocks.rst
+> index a56f4837d443..919bb92d6d9d 100644
+> --- a/Documentation/virt/hyperv/clocks.rst
+> +++ b/Documentation/virt/hyperv/clocks.rst
+> @@ -62,12 +62,21 @@ shared page with scale and offset values into user space.  User
+>  space code performs the same algorithm of reading the TSC and
+>  applying the scale and offset to get the constant 10 MHz clock.
+>  
+> -Linux clockevents are based on Hyper-V synthetic timer 0. While
+> -Hyper-V offers 4 synthetic timers for each CPU, Linux only uses
+> -timer 0. Interrupts from stimer0 are recorded on the "HVS" line in
+> -/proc/interrupts.  Clockevents based on the virtualized PIT and
+> -local APIC timer also work, but the Hyper-V synthetic timer is
+> -preferred.
+> +Linux clockevents are based on Hyper-V synthetic timer 0 (stimer0).
+> +While Hyper-V offers 4 synthetic timers for each CPU, Linux only uses
+> +timer 0. In older versions of Hyper-V, an interrupt from stimer0
+> +results in a VMBus control message that is demultiplexed by
+> +vmbus_isr() as described in the VMBus documentation.
 
-Chapter "4.8.4.2.2 Embedded Controller" among other says:
+Is VMBus documentation here referring to Documentation/virt/hyperv/vmbus.rst?
+If so, could you please add internal links with :ref:? See for example in
+Documentation/process/1.Intro.rst. If referring to Microsoft documentation, please
+provide a permalink. Please do also look for other opportunities to cross-link within
+Documentation or to external resources.
 
-  "Additionally the embedded controller can support up to 255 generic events
-   per embedded controller, referred to as query events."
+Thanks for the improvements!
 
-So, if specification needs an update, it should be very carefully proof-read.
-
-> > > > This patch would prevent any ACPI ECs other than the first one from probing,
-> > > > since they would fail to register their address space handler.
-> > > > I am just curious if/how we want to handle such situations.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Easwar
 
