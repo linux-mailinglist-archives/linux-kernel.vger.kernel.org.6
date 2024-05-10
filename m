@@ -1,128 +1,102 @@
-Return-Path: <linux-kernel+bounces-175373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4E78C1E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA018C1E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C11C1C221E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:03:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CCD11C221C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6B15490E;
-	Fri, 10 May 2024 07:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0836C15CD7D;
+	Fri, 10 May 2024 07:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KqtvNMlq"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="d1Z7pyrE"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995CA14F9DB;
-	Fri, 10 May 2024 07:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7410715217A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715324595; cv=none; b=jNDCSGJEepGT1JXomiz1Pj47Z+Ym4H7Fba562Rc/VJMtZsLNlX7I7k1mMG5JX3aSK9JBh5mX7L51FnRM0rbw9+8s6kv+vmxitQIgSycsDWKiUcV1HiTxMYKUVsNK+8TzpxeXlL8oRSY8Xr1jZapdH9Qxi0n5S/X0w+/BpE3L1vA=
+	t=1715324631; cv=none; b=QV+ir/64jo7i6HamQs/kXHwSdkVXUiXjs6eiJWMb1uHZv0IBjGOJrJyzqeO/fxlmpGUSpbk24y1el18df7lCVsOmU/VNKsDoDdFx3uVZu5nPPi3+tOBHBd0SPIQz+Dv3HtkSVHx/LWV0yOer9OGWB0E0uowGrd7oRHvIHkhOUQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715324595; c=relaxed/simple;
-	bh=fpiRgv+q0BCS/Rkr2TvadjpPkvPzVdibVwZ2R9BU+vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OZbUHLJZ7kCxNn+/SkOWB39VI5qDH+i69NE6UlcE/7zmVzImJTNY484OKo3b0rRS3OZ9voYUpY5BZbMUno3iDYh0D12QnruSG41WOauhSHUFm1eMf/rhMy+u+DTMtSLeEY8YVek8WmdF+LfqA1671+4klzehZZQoCr7fPF8ESTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KqtvNMlq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715324587;
-	bh=khTCdzIwr3mZnJlScdJiKIBBkUVtbCweZSp17fi6sHc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KqtvNMlqMOtNKDUWBeW+xzBKefWMvbMDsvd8JfVhmYvRuJVzphXuntluy3UFOCZdA
-	 kcIld6WFrGjth5A728SUO4icS7sGsx4SaddxncX6Cbk9tAW+jIu/DzLc/wfjqnC+fL
-	 RRCPX4Tvhf9shGVXbj6YgO5TiSCmrNuTeQiDhGB41EZW/sFksXmqA81lMY7PObQaie
-	 ejGbYfjbGZjzyrY0xVrDqt6LZE0Or+4bT9gSNALAukgaPUhkdEIveziQ8opk7mkOrN
-	 fqr5UfTN55qGGND8YQRXHjdFrQPs7qNEoifgD9hmKqQW4MRdgEfAxQEGHE7nMo1F/h
-	 ElDjSwZb5mONw==
+	s=arc-20240116; t=1715324631; c=relaxed/simple;
+	bh=SoDlZE87hfnURumY7SGIdDEMti6ngKTU8lVyyVE7Jgo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=t+TWzuXCB3kr5I97BZuD65MsPymxvU5iDzCO7Ok1TL8Np/ikkhrH5k6zzrbeeG9IjbwNxaHGfvLWPOs93uWgyB37Z6j41REFSeNP13jViU7lrorbV5Ee9rnYg1R+1P5vCwe9fXeLrmZ2tUtP30NJr/YFbsskEsvzw0p1lJ3VDKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=d1Z7pyrE; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1715324626;
+	bh=Wwz7PGF/2JLHmkgwfEtn4Lag7AXqlkDZb7B4D9iEdQI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=d1Z7pyrEGBrs6L0dz6cxVggbbbxS4Owx0CmDlA2znN4HgBBG3unC7rP44d4u5muzJ
+	 sW6V4HKKp5OuQRS5dDqKiVPOAJJdFBRzJjXVfKWS3xawstBOT548LbQUjb0K9AUi3m
+	 TIPnWU/d63yWYygXxoAoPG5Eu0nYq0rJy2yqmDx61YaPDYITg0L9haUpysurM+9Jis
+	 mNZz4QMY4q9wj8LBHjY47tQGLA2B4LSyqC0YLLcgDY6kyAZtOH/+cv9gtLPWhh7W3D
+	 /t0FWdL/FzbE3P03a5nRQSfQjoSC9TGSahFl4bvIlbbzVPdT15a51DEFnQfpQp5AB6
+	 yHZ62XQb2poTw==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VbKbH2v9kz4wc7;
-	Fri, 10 May 2024 17:03:07 +1000 (AEST)
-Date: Fri, 10 May 2024 17:03:05 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Takashi Iwai <tiwai@suse.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20240510170305.03b67d9f@canb.auug.org.au>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VbKc13n7cz4wcC;
+	Fri, 10 May 2024 17:03:45 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: linuxppc-dev@lists.ozlabs.org, arnd@arndb.de,
+ linux-kernel@vger.kernel.org, nathan@kernel.org
+Subject: Re: [PATCH v2 1/2] powerpc/io: Avoid clang null pointer arithmetic
+ warnings
+In-Reply-To: <CA+G9fYvo4--rSTHC1Vxdbbe62O6FhL_P2XdcF2Q7ZRku8HjpGg@mail.gmail.com>
+References: <20240503075619.394467-1-mpe@ellerman.id.au>
+ <CA+G9fYvo4--rSTHC1Vxdbbe62O6FhL_P2XdcF2Q7ZRku8HjpGg@mail.gmail.com>
+Date: Fri, 10 May 2024 17:03:45 +1000
+Message-ID: <87fruqm9m6.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/phaN6En8VyuvkREbJ+fNkXm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/phaN6En8VyuvkREbJ+fNkXm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Naresh Kamboju <naresh.kamboju@linaro.org> writes:
+> On Fri, 3 May 2024 at 13:26, Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> With -Wextra clang warns about pointer arithmetic using a null pointer.
+>> When building with CONFIG_PCI=n, that triggers a warning in the IO
+>> accessors, eg:
+>>
+>>   In file included from linux/arch/powerpc/include/asm/io.h:672:
+>>   linux/arch/powerpc/include/asm/io-defs.h:23:1: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>>      23 | DEF_PCI_AC_RET(inb, u8, (unsigned long port), (port), pio, port)
+>>         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>   ...
+>>   linux/arch/powerpc/include/asm/io.h:591:53: note: expanded from macro '__do_inb'
+>>     591 | #define __do_inb(port)          readb((PCI_IO_ADDR)_IO_BASE + port);
+>>         |                                       ~~~~~~~~~~~~~~~~~~~~~ ^
+>>
+>> That is because when CONFIG_PCI=n, _IO_BASE is defined as 0.
+>>
+>> Although _IO_BASE is defined as plain 0, the cast (PCI_IO_ADDR) converts
+>> it to void * before the addition with port happens.
+>>
+>> Instead the addition can be done first, and then the cast. The resulting
+>> value will be the same, but avoids the warning, and also avoids void
+>> pointer arithmetic which is apparently non-standard.
+>>
+>> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+>> Closes: https://lore.kernel.org/all/CA+G9fYtEh8zmq8k8wE-8RZwW-Qr927RLTn+KqGnq1F=ptaaNsA@mail.gmail.com
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>
+> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Hi all,
+Thanks.
 
-After merging the sound-asoc tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
-
-ld: warning: discarding dynamic section .glink
-ld: warning: discarding dynamic section .plt
-ld: linkage table error against `acp_dsp_stream_config'
-ld: stubs don't match calculated size
-ld: can not build stubs: bad value
-ld: sound/soc/sof/amd/acp-probes.o: in function `acp_probes_compr_shutdown':
-acp-probes.c:(.text.acp_probes_compr_shutdown+0x8c): undefined reference to=
- `acp_dsp_stream_put'
-ld: sound/soc/sof/amd/acp-probes.o: in function `acp_probes_compr_startup':
-acp-probes.c:(.text.acp_probes_compr_startup+0x84): undefined reference to =
-`acp_dsp_stream_get'
-ld: sound/soc/sof/amd/acp-probes.o: in function `acp_probes_compr_set_param=
-s':
-acp-probes.c:(.text.acp_probes_compr_set_params+0x108): undefined reference=
- to `acp_dsp_stream_config'
-ld: acp-probes.c:(.text.acp_probes_compr_set_params+0x140): undefined refer=
-ence to `acp_dsp_stream_put'
-ld: sound/soc/sof/amd/renoir.o:(.toc+0x0): undefined reference to `sof_acp_=
-common_ops'
-ld: sound/soc/sof/amd/rembrandt.o:(.toc+0x0): undefined reference to `sof_a=
-cp_common_ops'
-ld: sound/soc/sof/amd/vangogh.o:(.toc+0x0): undefined reference to `sof_acp=
-_common_ops'
-ld: sound/soc/sof/amd/acp63.o:(.toc+0x0): undefined reference to `sof_acp_c=
-ommon_ops'
-
-Caused by commit
-
-  9c2f5b6eb8b7 ("ASoC: SOF: Use *-y instead of *-objs in Makefile")
-
-I am not sure why, but reverting that commit fixed the build, so I have
-done that for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/phaN6En8VyuvkREbJ+fNkXm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY9xqkACgkQAVBC80lX
-0Gzycwf7B9CD+9R/kHdWOZtlcpMly+NFwaJydfgRtU0Ao17agvrMSMSWtXuyAbIl
-6tx1++38evnVQPciOnb9EnoG3TQw9um5RqcdTAcZoFO4hGbekCfVtALbKWMglIrh
-nCXUppw/33cqeMMkbQFswopgsuK8Lzi3maf+0YxYW/8OjMI2NHK0SlceNklQ/dio
-vFuV3glysPkLQiDrBcQQPJ8/6VSvxlKWk+PelJyEZr4W7GKyf7imxDFguMLj1d29
-VJyH5oIXFVXI1YMT5UcqBIum+DJKzNRW3LAHgaJ0G7Fx+rOTt9EroJbGldko4inc
-RulAsfoiTRmZwfO26DurjotbfHG5jQ==
-=Tfhq
------END PGP SIGNATURE-----
-
---Sig_/phaN6En8VyuvkREbJ+fNkXm--
+cheers
 
