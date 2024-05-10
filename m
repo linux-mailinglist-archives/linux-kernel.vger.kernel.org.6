@@ -1,267 +1,229 @@
-Return-Path: <linux-kernel+bounces-176055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316F08C2960
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 589038C2964
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552B61C221B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:36:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CBEB1C223D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 231DD1BDEF;
-	Fri, 10 May 2024 17:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE051BDD3;
+	Fri, 10 May 2024 17:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAWd2quK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8714E17C68;
-	Fri, 10 May 2024 17:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F53FC0E;
+	Fri, 10 May 2024 17:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715362554; cv=none; b=YpgQHAHmAWQ/fI/7QZ1P+j+Pym7AgGXxvGaA9YbfhhHL8uOrJiWP5qrPsFXNZsHrbYJRqOAfTSVzfjDLAXQoEMCCUmUrYz9YGGod9wAc0zkYY8qLmaZCvwIP21bdSg3Q+3ln9BDPNYXsoAwg6utGR26esbVIOYaAyoU1ZQuk3ts=
+	t=1715362693; cv=none; b=pPG3ZyAxzgpjlFagwl6Rz19HnNLtZuMq/FWGMUJtieIb1jYxsxKb4RefX8awKLEh4eCfm9DFPmkkneCCk2Fjih+RH0MBuueexpIudqMUB+7qZVZtmTjapPS98L1gE5c8nWZjw9ukB3gUzdtd6qCtOrWCjsyoW4i4RmQxJOvQfNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715362554; c=relaxed/simple;
-	bh=/beIqi8bAOLCu4vO/A4YsPuXEwyf7rU71KbEp3qpLE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbbDQkfpLra8qBLQjF8HZYbqqXOKVP5XjgWnJpabdEuZ2rXKohgmqj7trQCAgyeaft0kW8AGI8pWdZu/YzEA1B4eqQRNDVMer6dZVj2/VfkoNABCwQKfiyGETwQ5Ifg49s4aC48CrzV4LYznvRhbN/4MAEZpSrfWaYtxvYEmEkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEA9C113CC;
-	Fri, 10 May 2024 17:35:51 +0000 (UTC)
-Date: Fri, 10 May 2024 18:35:48 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v2 02/14] arm64: Detect if in a realm and set RIPAS RAM
-Message-ID: <Zj5a9Kt6r7U9WN5E@arm.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-3-steven.price@arm.com>
+	s=arc-20240116; t=1715362693; c=relaxed/simple;
+	bh=Bml2RlcHEC2xHGOGeIryyjJgZFXO87f5TXOhI7vR8FM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hwiOFAoAmZSc4XuLjhHt9GdY5wrWN3g0Kg8mNV1Zrogss3mABoAdB3VFdAEbrH5g35mev8y7AkP5L5RRNWyUHOHCRIoZjgMuiReSXL2r/VJd43QBo/oSXdJaXJaV5wVIGZFRQiSBrGrbFKliqE/A4C/JDLEv/5gq6bd67EUO46M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAWd2quK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBF8C113CC;
+	Fri, 10 May 2024 17:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715362692;
+	bh=Bml2RlcHEC2xHGOGeIryyjJgZFXO87f5TXOhI7vR8FM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=CAWd2quKnm8vjuP3pnD2QgCIYTIKHmtBJzxkM/o66d9Vkww1CzTgHXPuX78p9xHWd
+	 +CIBSgoi3GldfCfVskIJqPflUMzhcLXkEy3wGL8DOIBpDWD9hwtgRo+QwkCC6KE87c
+	 4bimXyttauHjFVGqa/clLeFWxU0a2ohYJ9aPfxRlWiJoMY3812rwat+fOmJjoYtDAA
+	 HT1rPFg4zanjusaRzUG7ktroXwdkNZ102OY6SLRpDWaQVow0u3cNsr37Jjs5h0OBOZ
+	 bl70VHvobiItbuiQ7xgJ/9IY1JLHu/wnokGxw3gUDTp/HTBxF1gXvZ020naex0Bfyx
+	 r1cKgfJ+YdS+g==
+Date: Fri, 10 May 2024 10:38:12 -0700 (PDT)
+From: Mat Martineau <martineau@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Alexander Duyck <alexander.duyck@gmail.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Subject: Re: [PATCH net-next v3 10/13] mm: page_frag: introduce prepare/probe/commit
+ API
+In-Reply-To: <20240508133408.54708-11-linyunsheng@huawei.com>
+Message-ID: <baa2238a-6af9-ae19-0383-9e279c0a7fcf@kernel.org>
+References: <20240508133408.54708-1-linyunsheng@huawei.com> <20240508133408.54708-11-linyunsheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240412084213.1733764-3-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 
-On Fri, Apr 12, 2024 at 09:42:01AM +0100, Steven Price wrote:
-> diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-> new file mode 100644
-> index 000000000000..3b56aac5dc43
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rsi.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
+On Wed, 8 May 2024, Yunsheng Lin wrote:
 
-You may want to update the year ;).
-
-> + */
-> +
-> +#ifndef __ASM_RSI_H_
-> +#define __ASM_RSI_H_
-> +
-> +#include <linux/jump_label.h>
-> +#include <asm/rsi_cmds.h>
-> +
-> +extern struct static_key_false rsi_present;
-
-Nitpick: we tend to use DECLARE_STATIC_KEY_FALSE(), it pairs with
-DEFINE_STATIC_KEY_FALSE().
-
-> +void arm64_setup_memory(void);
-> +
-> +void __init arm64_rsi_init(void);
-> +static inline bool is_realm_world(void)
+> There are many use cases that need minimum memory in order
+> for forward progressing, but more performant if more memory
+> is available or need to probe the cache info to use any
+> memory available for frag caoleasing reason.
+>
+> Currently skb_page_frag_refill() API is used to solve the
+> above usecases, caller need to know about the internal detail
+> and access the data field of 'struct page_frag' to meet the
+> requirement of the above use cases and its implementation is
+> similar to the one in mm subsystem.
+>
+> To unify those two page_frag implementations, introduce a
+> prepare API to ensure minimum memory is satisfied and return
+> how much the actual memory is available to the caller and a
+> probe API to report the current available memory to caller
+> without doing cache refilling. The caller needs to either call
+> the commit API to report how much memory it actually uses, or
+> not do so if deciding to not use any memory.
+>
+> As next patch is about to replace 'struct page_frag' with
+> 'struct page_frag_cache' in linux/sched.h, which is included
+> by the asm-offsets.s, using the virt_to_page() in the inline
+> helper of page_frag_cache.h cause a "???vmemmap??? undeclared"
+> compiling error for asm-offsets.s, use a macro for probe API
+> to avoid that compiling error.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+> include/linux/page_frag_cache.h |  86 ++++++++++++++++++++++++
+> mm/page_frag_cache.c            | 113 ++++++++++++++++++++++++++++++++
+> 2 files changed, 199 insertions(+)
+>
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
+> index 88e91ee57b91..30893638155b 100644
+> --- a/include/linux/page_frag_cache.h
+> +++ b/include/linux/page_frag_cache.h
+> @@ -71,6 +71,21 @@ static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
+> 	return encoded_page_pfmemalloc(nc->encoded_va);
+> }
+>
+> +static inline unsigned int page_frag_cache_page_size(struct encoded_va *encoded_va)
 > +{
-> +	return static_branch_unlikely(&rsi_present);
+> +#if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+> +	return PAGE_SIZE << encoded_page_order(encoded_va);
+> +#else
+> +	return PAGE_SIZE;
+> +#endif
 > +}
 > +
-> +static inline void set_memory_range(phys_addr_t start, phys_addr_t end,
-> +				    enum ripas state)
+> +static inline unsigned int __page_frag_cache_page_offset(struct encoded_va *encoded_va,
+> +							 unsigned int remaining)
 > +{
-> +	unsigned long ret;
-> +	phys_addr_t top;
-> +
-> +	while (start != end) {
-> +		ret = rsi_set_addr_range_state(start, end, state, &top);
-> +		BUG_ON(ret);
-> +		BUG_ON(top < start);
-> +		BUG_ON(top > end);
-
-Are these always fatal? BUG_ON() is frowned upon in general. The
-alternative would be returning an error code from the function and maybe
-printing a warning here (it seems that some people don't like WARN_ON
-either but it's better than BUG_ON; could use a pr_err() instead). Also
-if something's wrong with the RSI interface to mess up the return
-values, it will be hard to debug just from those BUG_ON().
-
-If there's no chance of continuing beyond the point, add a comment on
-why we have a BUG_ON().
-
-> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-> new file mode 100644
-> index 000000000000..1076649ac082
-> --- /dev/null
-> +++ b/arch/arm64/kernel/rsi.c
-> @@ -0,0 +1,58 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#include <linux/jump_label.h>
-> +#include <linux/memblock.h>
-> +#include <asm/rsi.h>
-> +
-> +DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
-> +EXPORT_SYMBOL(rsi_present);
-
-Does this need to be made available to loadable modules?
-
-> +
-> +static bool rsi_version_matches(void)
-> +{
-> +	unsigned long ver;
-> +	unsigned long ret = rsi_get_version(RSI_ABI_VERSION, &ver, NULL);
-
-I wonder whether rsi_get_version() is the right name (I know it was
-introduced in the previous patch but the usage is here, hence my
-comment). From the RMM spec, this looks more like an
-rsi_request_version() to me.
-
-TBH, the RMM spec around versioning doesn't fully make sense to me ;). I
-assume people working on it had some good reasons around the lower
-revision reporting in case of an error.
-
-> +
-> +	if (ret == SMCCC_RET_NOT_SUPPORTED)
-> +		return false;
-> +
-> +	if (ver != RSI_ABI_VERSION) {
-> +		pr_err("RME: RSI version %lu.%lu not supported\n",
-> +		       RSI_ABI_VERSION_GET_MAJOR(ver),
-> +		       RSI_ABI_VERSION_GET_MINOR(ver));
-> +		return false;
-> +	}
-
-The above check matches what the spec says but wouldn't it be clearer to
-just check for ret == RSI_SUCCESS? It saves one having to read the spec
-to figure out what lower revision actually means in the spec (not the
-actual lowest supported but the highest while still lower than the
-requested one _or_ equal to the higher revision if the lower is higher
-than the requested one - if any of this makes sense to people ;), I'm
-sure I missed some other combinations).
-
-> +
-> +	pr_info("RME: Using RSI version %lu.%lu\n",
-> +		RSI_ABI_VERSION_GET_MAJOR(ver),
-> +		RSI_ABI_VERSION_GET_MINOR(ver));
-> +
-> +	return true;
+> +	return page_frag_cache_page_size(encoded_va) - remaining;
 > +}
 > +
-> +void arm64_setup_memory(void)
-
-I would give this function a better name, something to resemble the RSI
-setup. Similarly for others like set_memory_range_protected/shared().
-Some of the functions have 'rsi' in the name like arm64_rsi_init() but
-others don't and at a first look they'd seem like some generic memory
-setup on arm64, not RSI-specific.
-
+> void page_frag_cache_drain(struct page_frag_cache *nc);
+> void __page_frag_cache_drain(struct page *page, unsigned int count);
+> void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
+> @@ -85,12 +100,83 @@ static inline void *page_frag_alloc_va_align(struct page_frag_cache *nc,
+> 	return __page_frag_alloc_va_align(nc, fragsz, gfp_mask, -align);
+> }
+>
+> +static inline unsigned int page_frag_cache_page_offset(const struct page_frag_cache *nc)
 > +{
-> +	u64 i;
-> +	phys_addr_t start, end;
-> +
-> +	if (!static_branch_unlikely(&rsi_present))
-> +		return;
-
-We have an accessor for rsi_present - is_realm_world(). Why not use
-that?
-
-> +
-> +	/*
-> +	 * Iterate over the available memory ranges
-> +	 * and convert the state to protected memory.
-> +	 */
-> +	for_each_mem_range(i, &start, &end) {
-> +		set_memory_range_protected(start, end);
-> +	}
+> +	return __page_frag_cache_page_offset(nc->encoded_va, nc->remaining);
 > +}
 > +
-> +void __init arm64_rsi_init(void)
-> +{
-> +	if (!rsi_version_matches())
-> +		return;
+> static inline void *page_frag_alloc_va(struct page_frag_cache *nc,
+> 				       unsigned int fragsz, gfp_t gfp_mask)
+> {
+> 	return __page_frag_alloc_va_align(nc, fragsz, gfp_mask, ~0u);
+> }
+>
+> +void *page_frag_alloc_va_prepare(struct page_frag_cache *nc, unsigned int *fragsz,
+> +				 gfp_t gfp);
 > +
-> +	static_branch_enable(&rsi_present);
+> +static inline void *page_frag_alloc_va_prepare_align(struct page_frag_cache *nc,
+> +						     unsigned int *fragsz,
+> +						     gfp_t gfp,
+> +						     unsigned int align)
+> +{
+> +	WARN_ON_ONCE(!is_power_of_2(align) || align > PAGE_SIZE);
+> +	nc->remaining = nc->remaining & -align;
+> +	return page_frag_alloc_va_prepare(nc, fragsz, gfp);
 > +}
-> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-> index 65a052bf741f..a4bd97e74704 100644
-> --- a/arch/arm64/kernel/setup.c
-> +++ b/arch/arm64/kernel/setup.c
-> @@ -43,6 +43,7 @@
->  #include <asm/cpu_ops.h>
->  #include <asm/kasan.h>
->  #include <asm/numa.h>
-> +#include <asm/rsi.h>
->  #include <asm/scs.h>
->  #include <asm/sections.h>
->  #include <asm/setup.h>
-> @@ -293,6 +294,8 @@ void __init __no_sanitize_address setup_arch(char **cmdline_p)
->  	 * cpufeature code and early parameters.
->  	 */
->  	jump_label_init();
-> +	/* Init RSI after jump_labels are active */
-> +	arm64_rsi_init();
->  	parse_early_param();
+> +
+> +struct page *page_frag_alloc_pg_prepare(struct page_frag_cache *nc,
+> +					unsigned int *offset,
+> +					unsigned int *fragsz, gfp_t gfp);
+> +
+> +struct page *page_frag_alloc_prepare(struct page_frag_cache *nc,
+> +				     unsigned int *offset,
+> +				     unsigned int *fragsz,
+> +				     void **va, gfp_t gfp);
+> +
+> +static inline struct encoded_va *__page_frag_alloc_probe(struct page_frag_cache *nc,
+> +							 unsigned int *offset,
+> +							 unsigned int *fragsz,
+> +							 void **va)
+> +{
+> +	struct encoded_va *encoded_va;
+> +
+> +	*fragsz = nc->remaining;
+> +	encoded_va = nc->encoded_va;
+> +	*offset = __page_frag_cache_page_offset(encoded_va, *fragsz);
+> +	*va = encoded_page_address(encoded_va) + *offset;
+> +
+> +	return encoded_va;
+> +}
+> +
+> +#define page_frag_alloc_probe(nc, offset, fragsz, va)			\
+> +({									\
+> +	struct encoded_va *__encoded_va;				\
+> +	struct page *__page = NULL;					\
+> +									\
 
-Does it need to be this early? It's fine for now but I wonder whether we
-may have some early parameter at some point that could influence what we
-do in the arm64_rsi_init(). I'd move it after or maybe even as part of
-the arm64_setup_memory(), though I haven't read the following patches if
-they update this function.
+Hi Yunsheng -
 
->  
->  	dynamic_scs_init();
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 03efd86dce0a..786fd6ce5f17 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -40,6 +40,7 @@
->  #include <asm/kvm_host.h>
->  #include <asm/memory.h>
->  #include <asm/numa.h>
-> +#include <asm/rsi.h>
->  #include <asm/sections.h>
->  #include <asm/setup.h>
->  #include <linux/sizes.h>
-> @@ -313,6 +314,7 @@ void __init arm64_memblock_init(void)
->  	early_init_fdt_scan_reserved_mem();
->  
->  	high_memory = __va(memblock_end_of_DRAM() - 1) + 1;
-> +	arm64_setup_memory();
->  }
+I made this suggestion for patch 13 (documentation), but want to clarify 
+my request here:
 
-This feels like a random placement. This function is about memblock
-initialisation. You might as well put it in paging_init(), it could make
-more sense there. But I'd rather keep it in setup_arch() immediately
-after arm64_memblock_init().
+> +	if (likely((nc)->remaining))					\
 
--- 
-Catalin
+I think it would be more useful to change this line to
+
+ 	if ((nc)->remaining >= *fragsz)
+
+That way the caller can use this function to "probe" for a specific amount 
+of available space, rather than "nonzero" space. If the caller wants to 
+check for available space, they can set *fragsz = 1.
+
+In other words, I think the functionality you described in the 
+documentation is better and the code should be changed to match!
+
+- Mat
+
+> +		__page = virt_to_page(__page_frag_alloc_probe(nc,	\
+> +							      offset,	\
+> +							      fragsz,	\
+> +							      va));	\
+> +									\
+> +	__page;								\
+> +})
+> +
+> +static inline void page_frag_alloc_commit(struct page_frag_cache *nc,
+> +					  unsigned int fragsz)
+> +{
+> +	VM_BUG_ON(fragsz > nc->remaining || !nc->pagecnt_bias);
+> +	nc->pagecnt_bias--;
+> +	nc->remaining -= fragsz;
+> +}
+> +
+> +static inline void page_frag_alloc_commit_noref(struct page_frag_cache *nc,
+> +						unsigned int fragsz)
+> +{
+> +	VM_BUG_ON(fragsz > nc->remaining);
+> +	nc->remaining -= fragsz;
+> +}
+> +
+> void page_frag_free_va(void *addr);
+>
+> #endif
+
 
