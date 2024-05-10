@@ -1,174 +1,87 @@
-Return-Path: <linux-kernel+bounces-175537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB068C2107
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:35:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C7DA8C210B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A203E1C21A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:35:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7AE281F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF5D1635B7;
-	Fri, 10 May 2024 09:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE8D165FA2;
+	Fri, 10 May 2024 09:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dfo5KVau"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jQIrxaMv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F72161330
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60CC161337;
+	Fri, 10 May 2024 09:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715333725; cv=none; b=Kzl/kbrfo1sz2QSdXJKEDSg58T2MxEe1tU3XdVMsJCPdFQaCrt7/1eP71zW+6P64nCZaVOiqew4wN3rFmYMRoStcb2Vg1FNFRGdiMAuqdNve0MkHyHNHHEGV+U7IJ53Up7UwDm/yA3xbf14GQy/DoDjMTFuaKPlJrZh7ki342mY=
+	t=1715333751; cv=none; b=hRxmw+Q7/6E3YKArpxBkmnkO4CUt4HjBhMvATtUoGt98l/bv849uiQmpidc6/k4vg5l05KDafnaCfQ2bKpmdlJ27i/rYhJcJtoYmakNuecvE4gjnbHCxt/4SCxCiF0+DFeuYj9SD2Z0ChZ4RkhDtSB+EdsG4XLjiTMq0pRjk4XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715333725; c=relaxed/simple;
-	bh=74mWvHLl9kkJWCjJ9c/58+OLihHsC5x2Bv4lj2v1YJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uWopl1xVo+uDEBmTD7dUoXjHqVPfGBrNiN8g+dJZxKwx4MAGBlSuV0kIBOfKh//tGy1QSU8y45gyuVqFjHYcVtQZ/jlt+b9Qbq7G890RtIqYcOdjTSL6z1dl9XhnsD0lxW53xyOyfilT8QOZK1XmL+E7cwiGcwF8ia4yg8E0HV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dfo5KVau; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dcc6fc978ddso1541192276.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715333722; x=1715938522; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ddAlHrV+azsymE+SBA7AG/w8GBAmFQuP9eNGcQBlcU4=;
-        b=dfo5KVaubq5BNK8KxOFO6OpXSqVEzSSNKPTtJJv3fFzCERqmY76eqwz9L3BfWmebDr
-         I9iy13RfJq8ACb+U2WT6fN9L4cyoBKYeRZnjZlYwlYWNlYWt0oDFbedAbT0xu/Tbvh78
-         lBuIEgnodFKPijQ+YjNWqFAOeB69WeV8hgy/2BE8JDqDNkkUaX+NDsu5F/mkdcsotnKb
-         3izG1hFNFy/e0HtBgMYX+leWCAtNzXyqGDUXXzimBQBvzXXhbyD7TqCtCpApXqdyyp9n
-         IWFTu936lXj7BHTlQZBCIvhemrRyNEonNoidkA0YBsOijVetEOoa0cjRleqvRsLeXb35
-         EM/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715333722; x=1715938522;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ddAlHrV+azsymE+SBA7AG/w8GBAmFQuP9eNGcQBlcU4=;
-        b=DPDZJDJy2bPvui6RK4ZBThmOiWZPaeO6I0tV3tPJY0GRoomohBLH4fD3EGRixye7l1
-         Xq1yt+c56zQPoUUx7CsIDtD/9GKgPXrJxuiT4fJU8xPDqoUlGc6+nA1fW//doJ8Q2JKM
-         0sqU0HQ5S+37WukZMye9CygrBfBFQG1LzFT3Wv44M2kQaelG0V5VjxFrRzlsjGdYFAI0
-         xBQq+2ZiMT9Ivp2p8PwuX53urM9queLI1IepFaZPq31DmMKMWDwNdyx7zrsFS53zG52c
-         5pihbXKV4TCnbrzeqqgnZmqxrNHFQSUMCJ4blMD/fjpCdkMiwMo08YF8M+U1grS6H4f2
-         hePQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+eoBM7pQzKzgbOuK76Vj4xAlIB1VHBL1NTYs0iVDCtGRbeydG9ljTE8B2ohO59ervACVCOFEWtxJvJPY+rOn0ZbgaLN0ejlq3tTwu
-X-Gm-Message-State: AOJu0Yy3I4T3CkLUUujVYQ5j0MHEIreY2GGPsN/xzDiGqQxlyR3W+nKY
-	SeIBHt2vq2X8u1dFxIZdQGoz49SQSMhPl7AQOM9jld4puZv6NZW9i4ls9ECVK0JElPkQAwCKJ3h
-	WQ8oaJdrpXVaxszR/JgfOZYSeDzZQp9snI1MLXg==
-X-Google-Smtp-Source: AGHT+IHe8KfUCxU0IUa3DtzKN6/EJhPBEHnlzpdRmt0ugkIOFNcugGXnt2P8F6W7CAtLpVfZDsqHHaqcjOrR3KSrOQ0=
-X-Received: by 2002:a5b:2d1:0:b0:de5:bc2e:467e with SMTP id
- 3f1490d57ef6-debcfb4e0b0mr3992499276.3.1715333722592; Fri, 10 May 2024
- 02:35:22 -0700 (PDT)
+	s=arc-20240116; t=1715333751; c=relaxed/simple;
+	bh=L+6AgakNTXIcMOAJNNHC8vZGom0I8qf1DFO1PdW1RqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ud/odVuIrOLgUVF80sHK6TvwdoT4gyHGYUVNo7ckaYIyFlhTatpov8iBmeaED/WrPjF/2g1+FsdgQaXiJPpDtkqeCmn514Tcjqt/aYvM2RQoT/hVq82fccAcuzuYmGTZayONvwEFhGSLDWYk/DVyfTCAoZIfmjVYjQyyxml+FkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jQIrxaMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47028C113CC;
+	Fri, 10 May 2024 09:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715333751;
+	bh=L+6AgakNTXIcMOAJNNHC8vZGom0I8qf1DFO1PdW1RqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jQIrxaMvMNcE0mSk6GpsIZ4aLjAtwbO52oQwGpRc3PfWva83FZbLpEM/etkFQaHv+
+	 9ZLYOpWvq8ryVathOVjUmMNQg8MyxUz93yDc5NmHdibWqrdecT7v82cBDpiC38H3vw
+	 gwoxH/azf4xsPMFsZVQ8blDxdT8SXARG3h+olSg4=
+Date: Fri, 10 May 2024 10:35:28 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Jameson Thies <jthies@google.com>, linux-usb@vger.kernel.org,
+	pmalani@chromium.org, bleung@google.com,
+	abhishekpandit@chromium.org, andersson@kernel.org,
+	dmitry.baryshkov@linaro.org, fabrice.gasnier@foss.st.com,
+	hdegoede@redhat.com, neil.armstrong@linaro.org,
+	rajaram.regupathy@intel.com, saranya.gopal@intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] usb: typec: ucsi: Fix null pointer dereference in
+ trace
+Message-ID: <2024051010-hungrily-scholar-7d23@gregkh>
+References: <20240503003920.1482447-1-jthies@google.com>
+ <20240503003920.1482447-2-jthies@google.com>
+ <Zjiq4PrL2ju8FOUz@kuha.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418155151.355133-1-ivitro@gmail.com>
-In-Reply-To: <20240418155151.355133-1-ivitro@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 10 May 2024 11:34:46 +0200
-Message-ID: <CAPDyKFr9Vzgm2C6Z57Bg5mUQxg5LK6goN2og3+RC3BkTZjiqJw@mail.gmail.com>
-Subject: Re: [PATCH v1] pmdomain: imx8m-blk-ctrl: fix suspend/resume order
-To: Vitor Soares <ivitro@gmail.com>, Lucas Stach <l.stach@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Vitor Soares <vitor.soares@toradex.com>, linux-pm@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zjiq4PrL2ju8FOUz@kuha.fi.intel.com>
 
-On Thu, 18 Apr 2024 at 17:52, Vitor Soares <ivitro@gmail.com> wrote:
->
-> From: Vitor Soares <vitor.soares@toradex.com>
->
-> During the probe, the genpd power_dev is added to the dpm_list after
-> blk_ctrl due to its parent/child relationship. Making the blk_ctrl
-> suspend after and resume before the genpd power_dev.
->
-> As a consequence, the system hangs when resuming the VPU due to the
-> power domain dependency.
->
-> To ensure the proper suspend/resume order, add a device link betweem
-> blk_ctrl and genpd power_dev. It guarantees genpd power_dev is suspended
-> after and resumed before blk-ctrl.
+On Mon, May 06, 2024 at 01:03:12PM +0300, Heikki Krogerus wrote:
+> On Fri, May 03, 2024 at 12:39:17AM +0000, Jameson Thies wrote:
+> > From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> > 
+> > ucsi_register_altmode checks IS_ERR on returned pointer and treats
+> > NULL as valid. When CONFIG_TYPEC_DP_ALTMODE is not enabled
+> > ucsi_register_displayport returns NULL which causese a NULL pointer
+> > dereference in trace. Rather than return NULL, call
+> > typec_port_register_altmode to register DisplayPort alternate mode
+> > as a non-controllable mode when CONFIG_TYPEC_DP_ALTMODE is not enabled.
+> > 
+> > Reviewed-by: Jameson Thies <jthies@google.com>
+> > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> 
+> You delivered the patch, so you should have used SoB instead of
+> Reviewed-by tag:
+> https://docs.kernel.org/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
 
-Before discussing $subject patch, would you mind explaining to me why
-imx8m-blk-ctrl needs to use the ->suspend() callback at all?
+Not "should", that would be "must". I can't take it like this, sorry.
 
-Looking closer at that code (imx8m_blk_ctrl_suspend()), it calls
-pm_runtime_get_sync() for devices to power on "everything". Why isn't
-that managed by the consumer drivers (on a case by case basis) that
-are managing the devices that are attached to the genpds instead?
-
-Kind regards
-Uffe
-
->
-> Cc: <stable@vger.kernel.org>
-> Closes: https://lore.kernel.org/all/fccbb040330a706a4f7b34875db1d896a0bf81c8.camel@gmail.com/
-> Link: https://lore.kernel.org/all/20240409085802.290439-1-ivitro@gmail.com/
-> Fixes: 2684ac05a8c4 ("soc: imx: add i.MX8M blk-ctrl driver")
-> Suggested-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-> ---
->
-> This is a new patch, but is a follow-up of:
-> https://lore.kernel.org/all/20240409085802.290439-1-ivitro@gmail.com/
->
-> As suggested by Lucas, we are addressing this PM issue in the imx8m-blk-ctrl
-> driver instead of in the imx8mm.dtsi.
->
->  drivers/pmdomain/imx/imx8m-blk-ctrl.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/pmdomain/imx/imx8m-blk-ctrl.c b/drivers/pmdomain/imx/imx8m-blk-ctrl.c
-> index ca942d7929c2..cd0d2296080d 100644
-> --- a/drivers/pmdomain/imx/imx8m-blk-ctrl.c
-> +++ b/drivers/pmdomain/imx/imx8m-blk-ctrl.c
-> @@ -283,6 +283,20 @@ static int imx8m_blk_ctrl_probe(struct platform_device *pdev)
->                         goto cleanup_pds;
->                 }
->
-> +               /*
-> +                * Enforce suspend/resume ordering by making genpd power_dev a
-> +                * provider of blk-ctrl. Genpd power_dev is suspended after and
-> +                * resumed before blk-ctrl.
-> +                */
-> +               if (!device_link_add(dev, domain->power_dev, DL_FLAG_STATELESS)) {
-> +                       ret = -EINVAL;
-> +                       dev_err_probe(dev, ret,
-> +                                     "failed to link to %s\n", data->name);
-> +                       pm_genpd_remove(&domain->genpd);
-> +                       dev_pm_domain_detach(domain->power_dev, true);
-> +                       goto cleanup_pds;
-> +               }
-> +
->                 /*
->                  * We use runtime PM to trigger power on/off of the upstream GPC
->                  * domain, as a strict hierarchical parent/child power domain
-> @@ -324,6 +338,7 @@ static int imx8m_blk_ctrl_probe(struct platform_device *pdev)
->         of_genpd_del_provider(dev->of_node);
->  cleanup_pds:
->         for (i--; i >= 0; i--) {
-> +               device_link_remove(dev, bc->domains[i].power_dev);
->                 pm_genpd_remove(&bc->domains[i].genpd);
->                 dev_pm_domain_detach(bc->domains[i].power_dev, true);
->         }
-> @@ -343,6 +358,7 @@ static void imx8m_blk_ctrl_remove(struct platform_device *pdev)
->         for (i = 0; bc->onecell_data.num_domains; i++) {
->                 struct imx8m_blk_ctrl_domain *domain = &bc->domains[i];
->
-> +               device_link_remove(&pdev->dev, domain->power_dev);
->                 pm_genpd_remove(&domain->genpd);
->                 dev_pm_domain_detach(domain->power_dev, true);
->         }
-> --
-> 2.34.1
->
+greg k-h
 
