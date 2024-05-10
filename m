@@ -1,162 +1,138 @@
-Return-Path: <linux-kernel+bounces-175246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67798C1CFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:26:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B90E8C1CFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBAA283FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B481C21E20
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FE7149C4A;
-	Fri, 10 May 2024 03:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD8F1494D0;
+	Fri, 10 May 2024 03:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="UC37spjJ"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB15A148FE0
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Jm0m7fbP"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F1148FE0;
+	Fri, 10 May 2024 03:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715311575; cv=none; b=a168aUwE3rcHD6FaYkEhYXsJdXNAQn6IHxorv2Nw8fLZZezE43aKqhsHX+iX/fm1nnQ9X54EaEn5Tp5LQgq+jwO4eIIDbO5zLi2qPrDu/WIpo9LAgdI5aThBMVvZs+0jcBvnjZmgMGOOCch55Y43iJBDmUd64jLoX9VtbDRK4O0=
+	t=1715311651; cv=none; b=YrU+XhHcnVNevkjJ3jpsDc81CXelbsnXfEjVFVCAQzYkfffrumVz1bjkPpevXDQQiSAJ0hQvQxaX5ZNxEk8BHbqOuuA6pjVebu+nVwbDrFKCwEGEx5FEIiSwM1XRnEyY4jBYBcdOAGZEmZUvUK1yTO1d41dEmGWALj1grvxfvUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715311575; c=relaxed/simple;
-	bh=KR9+aZtQF0/pSAuWezxC9nZ37UK13y4iod1lyaoIAd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z41t7vIb3ktfwNak1hwyTnqIoOkbLPV9Aa+YhlwKRWpOD4aGxF2msE74TR4e+5BKiuQBj8qferob6Sol29OjM34CrVt16e2YH8Ph2m/0/9utBimBJQ80b4iwajB+QFy8kTpBfpA8VKvAkKgiqOyG2+zQ63Yd2HK9fM75R57KfMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UC37spjJ; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7da37436e36so67381639f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 20:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715311573; x=1715916373; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zGxG2e2VKN3u+G1wPMCaUsbNuE8sBdNRV0fq8NAvdDA=;
-        b=UC37spjJSrJeRTnQpVFya+6hKbRsXS/cfRfD/wpp6qOH24VVtVLgzP8dxiKXJc4nU+
-         /3dU90BPG5soeMQKIhuIf+9zBX8VNMvBY54Vyoim+V9xlMKFoTrE2h1EopZrH5en+fgm
-         R/ByOuHcudp2VoiOpIRiU4TKfywizobTDEj9Q2f5zbkRp+K9bTr10M4/jy3MwV//Wctr
-         btQKqyTuV84+0a+QFXsfm5AG/N6dyfRZg9hS6fAhjb+KYdAgbosrY5CSFeHvXCz4mdKi
-         CS+mNf5YVE7ysNj1KXTyO3Uhh+9YBT/YlVsz5xpfVAl56TDqdvE5MjsB1MgCI0GSTpdy
-         /uZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715311573; x=1715916373;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zGxG2e2VKN3u+G1wPMCaUsbNuE8sBdNRV0fq8NAvdDA=;
-        b=X2LDEDA7Pp+4a1dECfXRPeDnNyM9EkvV4c5EqvpGlwnxXTLMeEwiyVbE8in8PRfUfq
-         +mb/57+GpnyLfO/RwDI2WPosvOh04v2BVk70lKGIoh9ImqeAHkRhdxLEXFPnzUEXvsLh
-         wME8L8+kecnsIuN4jjEttCSzIX4XIRvNVNnPUM8mc4w948nSXxr0CM2aakgMYOyC/pGi
-         gOXgfj4ONIoPta7TNvoshy44Nnc1apW4afotL2bfDFUg7raWZedNB5cTHZ6ayMDfqIYU
-         XtwldG7IYEUYaOtM9hZm9pyi4lWlENTemRIjHMmNGeIq1yAb7LewoytBS+jGieK2Sl2F
-         ubcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxgWw3Lw8OOhn6OaC3M0lAkI+d0nZOULl1IXswCi6XzH2BYCRP+04j/1mXOa0moE78Z3jtqSBntqRNFVpPJ6o9ulTrAp+mrVtdIiLm
-X-Gm-Message-State: AOJu0Yx9jM7zzBidhAoyHWPX7rYFiaoDb9+Z+0mc0Rw9bAi7O16gKBHS
-	RBRdZIuCeTRjbcRuF7Nr8TSYcrBsa5VP3W+FeCNmp+6gv8v2ukZel+B2B16t/w==
-X-Google-Smtp-Source: AGHT+IFjs2Y7MUqk7i3aTHdpOsTi/0KqnFICd1YQCAkvu8AdXH/Iyxc228RpFccF4GUU9d3ijbo4fw==
-X-Received: by 2002:a05:6e02:168c:b0:36a:2538:d70d with SMTP id e9e14a558f8ab-36cc14eca55mr17036045ab.28.1715311572814;
-        Thu, 09 May 2024 20:26:12 -0700 (PDT)
-Received: from google.com (195.121.66.34.bc.googleusercontent.com. [34.66.121.195])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489375c13f9sm710317173.97.2024.05.09.20.26.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 20:26:12 -0700 (PDT)
-Date: Fri, 10 May 2024 03:26:08 +0000
-From: Justin Stitt <justinstitt@google.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] libfs: fix accidental overflow in offset calculation
-Message-ID: <6oq7du4gkj3mvgzgnmqn7x44ccd3go2d22agay36chzvuv3zyt@4fktkazj4cvw>
-References: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
- <20240510004906.GU2118490@ZenIV>
- <20240510010451.GV2118490@ZenIV>
+	s=arc-20240116; t=1715311651; c=relaxed/simple;
+	bh=Z7MPoeMmZKPqqjt1uSdl2xiWuJE7dBoYnnwX8FfM10I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fNtIEsqemEcMjNNLPexHjZ4QD+0tdyv0V+exF6HbmQve1Mr/KUHNu6RPtP7Jwp41TgXkQyQQ/9fbgstrsf/zcAEGR7bBsObPBYRVB/RjCSsWi2dnsaG6LVRSuhRpDLd0qJtYjZ7glVuK61jdYgXC/KkJ8jOn4nLMI7Lr1PklYgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Jm0m7fbP; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jmv/e
+	Z0oj6B9M++CEv1uezXK3yVeNwJfrJ1xXJUCHHw=; b=Jm0m7fbPXu0lXqMbkZT9w
+	IKXhJc7PNi/cQY/OTENlzVL6iZ7cXI0yh8O5Wk+32uWHQhi9swJPOx/cICXEq0Fw
+	kPrGqbiOFhG7Pu/FXV1c48TADth5GCueSh/KOqndlFDFoa4bBdmv9z4hcwOzsYy4
+	GAiih1dCm64MfJXbDJX8xo=
+Received: from localhost.localdomain (unknown [223.160.225.215])
+	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wD3H9EDlD1mCPkAAQ--.22491S2;
+	Fri, 10 May 2024 11:27:00 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org,
+	loic.poulain@linaro.org
+Cc: mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
+Date: Fri, 10 May 2024 11:26:57 +0800
+Message-Id: <20240510032657.789629-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510010451.GV2118490@ZenIV>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3H9EDlD1mCPkAAQ--.22491S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCFW3JFy7Xr4rGr4UZr45Awb_yoW5CrWUpF
+	4fZ3y5taykJrWFgFW8A34DGas5Jan3Cr9xKFnrKw1I9w1Fy3yYqFWkK342gFyYy34qqFyS
+	yFykWa4a93WDJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRHlkcUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiowXaZGVODTtkoAAAsB
 
-Hi,
+Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
+And also, add firehose support since SDX72.
 
-On Fri, May 10, 2024 at 02:04:51AM +0100, Al Viro wrote:
-> On Fri, May 10, 2024 at 01:49:06AM +0100, Al Viro wrote:
-> > On Fri, May 10, 2024 at 12:35:51AM +0000, Justin Stitt wrote:
-> > > @@ -147,7 +147,9 @@ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
-> > >  	struct dentry *dentry = file->f_path.dentry;
-> > >  	switch (whence) {
-> > >  		case 1:
-> > > -			offset += file->f_pos;
-> > > +			/* cannot represent offset with loff_t */
-> > > +			if (check_add_overflow(offset, file->f_pos, &offset))
-> > > +				return -EOVERFLOW;
-> > 
-> > Instead of -EINVAL it correctly returns in such cases?  Why?
-> 
-> We have file->f_pos in range 0..LLONG_MAX.  We are adding a value in
-> range LLONG_MIN..LLONG_MAX.  The sum (in $\Bbb Z$) cannot be below
-> LLONG_MIN or above 2 * LLONG_MAX, so if it can't be represented by loff_t,
-> it must have been in range LLONG_MAX + 1 .. 2 * LLONG_MAX.  Result of
-> wraparound would be equal to that sum - 2 * LLONG_MAX - 2, which is going
-> to be in no greater than -2.  We will run
-> 			fallthrough;
-> 		case 0:
-> 			if (offset >= 0)
-> 				break;
-> 			fallthrough;
-> 		default:
-> 			return -EINVAL;
-> and fail with -EINVAL.
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+ drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-This feels like a case of accidental correctness. You demonstrated that
-even with overflow we end up going down a control path that returns an
-error code so all is good. However, I think finding the solution
-shouldn't require as much mental gymnastics. We clearly don't want our
-file offsets to wraparound and a plain-and-simple check for that lets
-readers of the code understand this.
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 08844ee79654..0fd94c193fc6 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+ 	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+ 	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+ 	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
++	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
++	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+ 	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+ 	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+ };
+@@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+ 	.event_cfg = mhi_foxconn_sdx55_events,
+ };
+ 
++static const struct mhi_controller_config modem_foxconn_sdx72_config = {
++	.max_channels = 128,
++	.timeout_ms = 20000,
++	.ready_timeout_ms = 50000,
++	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
++	.ch_cfg = mhi_foxconn_sdx55_channels,
++	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
++	.event_cfg = mhi_foxconn_sdx55_events,
++};
++
+ static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
+ 	.name = "foxconn-sdx24",
+ 	.config = &modem_foxconn_sdx55_config,
+@@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
+ 	.sideband_wake = false,
+ };
+ 
++static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
++	.name = "foxconn-sdx72",
++	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
++	.config = &modem_foxconn_sdx72_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.mru_default = 32768,
++	.sideband_wake = false,
++};
++
+ static const struct mhi_channel_config mhi_mv3x_channels[] = {
+ 	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
+ 	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
+@@ -680,6 +702,15 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+ 	/* DW5932e (sdx62), Non-eSIM */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
+ 		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
++	/* T99W515 (sdx72) */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe118),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
++	/* DW5934e(sdx72), With eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11d),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
++	/* DW5934e(sdx72), Non-eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11e),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
+ 	/* MV31-W (Cinterion) */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
+ 		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
+-- 
+2.25.1
 
-> 
-> Could you explain why would -EOVERFLOW be preferable and why should we
-> engage in that bit of cargo cult?
-
-I noticed some patterns in fs/ regarding -EOVERFLOW and thought this was
-a good application of this particular error code.
-
-Some examples:
-
-read_write.c::do_sendfile()
-  ...
-	if (unlikely(pos + count > max)) {
-		retval = -EOVERFLOW;
-		if (pos >= max)
-			goto fput_out;
-		count = max - pos;
-	}
-
-read_write.c::generic_copy_file_checks()
-  ...
-	/* Ensure offsets don't wrap. */
-	if (pos_in + count < pos_in || pos_out + count < pos_out)
-		return -EOVERFLOW;
-
-.. amongst others.
-
-So to answer your question, I don't have strong feelings about what the
-error code should be; I was just attempting to match patterns I had seen
-within this section of the codebase when handling overflow/wraparound.
-
-If -EOVERFLOW is technically incorrect or if it is just bad style, I'm
-happy to send a new version swapping it over to -EINVAL
-
-Thanks
-Justin
 
