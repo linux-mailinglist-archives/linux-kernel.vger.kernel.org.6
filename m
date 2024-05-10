@@ -1,118 +1,342 @@
-Return-Path: <linux-kernel+bounces-175473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554DF8C2027
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:03:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D908C202B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10CFC2819CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48C21F22170
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E512A15FA87;
-	Fri, 10 May 2024 09:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="S7dhuv4a"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005E616132E;
+	Fri, 10 May 2024 09:03:20 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02831A2C0F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3461607A3;
+	Fri, 10 May 2024 09:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715331793; cv=none; b=knghYaHxQVnGo3isDQOwBC61sBTBYjfZpWQd+j77p2m41jtHVxkjt4FPRbIDXFcJz4YmCjEoGJ2DPFCyQQAk5QKRlugnh3RglzxTbPhj0KKd74kKQaK64XgpWx41UFyFeCulhroNw6QBQLs04e13JT4id8bmQpMYgGLdhDWmicI=
+	t=1715331799; cv=none; b=uJOC1Buw+H/JVFVrFL+CkTB6Xe67HwgoYjwzsNXzPnWNglAqqeeCZ5vv09SxWgVpRTxzUmzhqfqe7+YXuCuegoNH8tvQG0dXSkhT266j/WCBXKqy4Chve6LAeHZtZMZ2N4Sbj9i2p6Ngu6pGmh7Sgi/jRDDSElIgMA9aDgvKAAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715331793; c=relaxed/simple;
-	bh=k1gtokQ4byZJTsBGp5EqYH6DueuKF5nY32DWjEDtT/I=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BdzBYwetgOOdBMWVwDzKjgWIh+RMVK48EAwwm7Ziq/mMM69v5lStmVhANGyyHZp+JWlkn/xyjBPZTuwEUNxPQj394Zuq6sHyeKzz0Y30bgWuGYTmg3+CiolS7CGwYOmjNYgpBnUCzM0W6R7bASqr5BPdBSieFQCrfxLQoGXtlB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=S7dhuv4a; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 2CC3C411F4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715331784;
-	bh=EZg3bZExhlWVK50gpSicBrX5JPsAAk8r1XrLNevR8+8=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=S7dhuv4aoJrL+kHYd2Qz6GL07TB7xMUu9J/swadqSReH+qjCIyb7ottpNHmjJqkp2
-	 ZjPQrniXiCf8dJ6Prd7AwP/OgHUi9zhMj1CDzd1qimXnNzGES9w95kaEE17Om8uJfq
-	 +VoT12p80mVgu2Y4rQJnPYQ8MXbdnTwq0aKxJglc660W/Qcqfk9DbC4xoQhtCkw7aS
-	 09RtI3KvyoRVXvXVGtWz0+s+fcUZyEZkh/ujKmoVGrVY+SIKqxKc2vC/S7v2yjo1lU
-	 65fnHTMp1bSustmQpCkoJNiPvR9+6t1gavzJ0QnRl4HuBcv4JrifaMLPH7X29Vbw0w
-	 qxl18Co0imKGg==
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-43de409b742so20170781cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:03:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715331780; x=1715936580;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EZg3bZExhlWVK50gpSicBrX5JPsAAk8r1XrLNevR8+8=;
-        b=Ih7o27HZUK5iHJTdGzjFipW+xsCd1/VaHzAyJhz26DpiJPJGmqCEOWp8rsOXLNYtmQ
-         /CfCCPS+LB2iZXzjnpLHleMrz7XQdnQoN37MAAGmEpwhmdCKYEtZ6psRX8sCFdU7WsvF
-         UYkk/jpIXt0mRvSxmItrVaXfREJPymFgv9QLXqll84M4NeKd8qj8iq0OEH9dhcsxx0D9
-         8c0ngSIAF9XPwbpocLlQE3ZOIoU5n+/kQA5O4DONYEJU1+uv/wER1NR3dkBFgSOrRPoE
-         ZOZBf99wmrG/U7B2nhqo8TgO+vAO7gJfqStbV6H8EWxEb5hYVvwK0GtEyJPl8QzK29B4
-         TJKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSWObtvEHHbtZJItplA0uine9fnpe5r04aUtrzhtU2wN8slGp395vE10WdMHeqbrwKtVxBOMM9rnVbvTdVZ9TvNQKCn2tPiYfWpN22
-X-Gm-Message-State: AOJu0Yxkr3p2jI1FmY6J0qscN0BAhFVxfqZhK2027vZfTp5II8i/JLEV
-	jdymLPvzuvXusOn/74I7egTOpvgliJnakYZwz968wr3iSMR7v10EIYz0xoSj3jFmyBkjsIkpdTc
-	jgQGdneIvZDHOzE+phEtzMxsnhcu3tZ2bgCy6nxlhae7L0ZKhoVsoVz2dgHmX1RCGJXvOpUM4Zl
-	y/15BSSSR01aoe9EdTne5QmEkB9iZlluhPS2vb84nM49M6otP2rWRb
-X-Received: by 2002:ac8:570a:0:b0:43a:fc66:35d8 with SMTP id d75a77b69052e-43dfdb06fccmr22804971cf.7.1715331779848;
-        Fri, 10 May 2024 02:02:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHm3BolVFsu22mYiTmhPkAgiTCxY6SWjICQtL4EpS7KCkeY9VWrwi7XisKP2lAOKpom9apfc0uDgJLCEOJTYis=
-X-Received: by 2002:ac8:570a:0:b0:43a:fc66:35d8 with SMTP id
- d75a77b69052e-43dfdb06fccmr22804731cf.7.1715331779539; Fri, 10 May 2024
- 02:02:59 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 10 May 2024 04:02:59 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <87wmo2nmee.fsf@linux-m68k.org>
-References: <20240508111604.887466-1-emil.renner.berthing@canonical.com> <87wmo2nmee.fsf@linux-m68k.org>
+	s=arc-20240116; t=1715331799; c=relaxed/simple;
+	bh=glmPpNnjWxfvpn59tClr8Pv6XgRUAHoo+HWFtiSoBv8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JmHUeWSvylNOt8z17V6/g9zn/X11laM/nX72fKfK0spASS05PyQaTmPjXN25rXUTeFLIpVHaWymv21BcLHtH1tm53zWBAraN1kizMZQ0t1CoycyoUxH6VGElmNg+WVAVvw9Kg61e80FNyOi81wt6LpUbPper8YvY68lRME3+NDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VbNBB6ypqz6JBH0;
+	Fri, 10 May 2024 17:00:02 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id B46771400D4;
+	Fri, 10 May 2024 17:03:07 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 10 May
+ 2024 10:03:06 +0100
+Date: Fri, 10 May 2024 10:03:05 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: <shiju.jose@huawei.com>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>, <dave@stgolabs.net>,
+	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<david@redhat.com>, <Vilas.Sridharan@amd.com>, <leo.duran@amd.com>,
+	<Yazen.Ghannam@amd.com>, <rientjes@google.com>, <jiaqiyan@google.com>,
+	<tony.luck@intel.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <naoya.horiguchi@nec.com>,
+	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
+	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
+	<mike.malvestuto@intel.com>, <gthelen@google.com>,
+	<wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
+	<wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>,
+	<prime.zeng@hisilicon.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
+Message-ID: <20240510100305.00000a2b@Huawei.com>
+In-Reply-To: <663d448c2ef3_1c0a1929453@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240419164720.1765-1-shiju.jose@huawei.com>
+	<20240419164720.1765-2-shiju.jose@huawei.com>
+	<663d448c2ef3_1c0a1929453@dwillia2-xfh.jf.intel.com.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 10 May 2024 04:02:58 -0500
-Message-ID: <CAJM55Z-F6N6ua5LoqyMFogDtLp=FaRPoDv4osXFDMjR1b8r9nw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] riscv: dts: starfive: Enable Bluetooth on JH7100 boards
-To: Andreas Schwab <schwab@linux-m68k.org>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Emil Renner Berthing <kernel@esmil.dk>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Andreas Schwab wrote:
-> On Mai 08 2024, Emil Renner Berthing wrote:
->
-> > This series enables the in-kernel Bluetooth driver to work with the
-> > Broadcom Wifi/Bluetooth module on the BeagleV Starlight and StarFive
-> > VisionFive V1 boards.
->
-> That does not work for me:
->
-> [  +0.369276] Bluetooth: hci0: command 0x1001 tx timeout
-> [  +0.025545] Bluetooth: hci0: BCM: Reading local version info failed (-110)
+On Thu, 9 May 2024 14:47:56 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-Hi Andreas,
+> shiju.jose@ wrote:
+> > From: Shiju Jose <shiju.jose@huawei.com>
+> >=20
+> > Add scrub subsystem supports configuring the memory scrubbers
+> > in the system. The scrub subsystem provides the interface for
+> > registering the scrub devices. The scrub control attributes
+> > are provided to the user in /sys/class/ras/rasX/scrub
+> >=20
+> > Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> > ---
+> >  .../ABI/testing/sysfs-class-scrub-configure   |  47 +++
+> >  drivers/ras/Kconfig                           |   7 +
+> >  drivers/ras/Makefile                          |   1 +
+> >  drivers/ras/memory_scrub.c                    | 271 ++++++++++++++++++
+> >  include/linux/memory_scrub.h                  |  37 +++
+> >  5 files changed, 363 insertions(+)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-class-scrub-configu=
+re
+> >  create mode 100755 drivers/ras/memory_scrub.c
+> >  create mode 100755 include/linux/memory_scrub.h
+> >=20
+> > diff --git a/Documentation/ABI/testing/sysfs-class-scrub-configure b/Do=
+cumentation/ABI/testing/sysfs-class-scrub-configure
+> > new file mode 100644
+> > index 000000000000..3ed77dbb00ad
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-class-scrub-configure
+> > @@ -0,0 +1,47 @@
+> > +What:		/sys/class/ras/
+> > +Date:		March 2024
+> > +KernelVersion:	6.9
+> > +Contact:	linux-kernel@vger.kernel.org
+> > +Description:
+> > +		The ras/ class subdirectory belongs to the
+> > +		common ras features such as scrub subsystem.=20
 
-You don't include any information useful for debugging this, but if it get's
-far enough to load the firmware could you at least make sure you run the
-version below, so that's at least the same.
+Hi Dan,
+=20
+>=20
+> Why create "ras" class versus just a "srcub" class? I am otherwise not
+> aware of a precedent for class device hierarchy. For example, on my
+> system there is:
 
-https://github.com/esmil/linux/blob/visionfive/firmware/brcm/BCM43430A1.hcd
+I think that's miss described - aim is on subsystem, the first feature
+supported is scrub.  Intent here is to group RAS features of a given
+device / interface etc into one place. This was a request in an review
+of an earlier version on basis these interfaces tend to get grouped together
+in a device.
+So options are
 
-/Emil
+/sys/class/ras/cxl_mem0/scrub/rate etc.
+/sys/class/ras/cxl_mem0/ecs/rate etc
+(maybe separate for ECS because it annoyingly looks nothing like scrub desp=
+ite name
+ and there are multiple impelmentations)
+
+vs
+/sys/class/ras/cxl_mem0_scrub
+/sys/class/ras/cxl_mem0_ecs
+etc
+Note that generic naming not including what the source was got
+negative reviews in favor of making that the device instance name here.
+So that rulled out simply
+/sys/class/ras/scrubX/
+/sys/class/ras/ecsX/
+
+I don't mind which way we go; both are extensible.
+
+>=20
+> /sys/class/
+> =E2=94=9C=E2=94=80=E2=94=80 scsi_device
+> =E2=94=9C=E2=94=80=E2=94=80 scsi_disk
+> =E2=94=9C=E2=94=80=E2=94=80 scsi_generic
+> =E2=94=94=E2=94=80=E2=94=80 scsi_host
+>=20
+> ...not:
+>=20
+> /sys/class/scsi/
+> =E2=94=9C=E2=94=80=E2=94=80 device
+> =E2=94=9C=E2=94=80=E2=94=80 disk
+> =E2=94=9C=E2=94=80=E2=94=80 generic
+> =E2=94=94=E2=94=80=E2=94=80 host
+
+That's a docs problem - this was never the intent.
+
+>=20
+>=20
+> > +
+> > +What:		/sys/class/ras/rasX/scrub/
+> > +Date:		March 2024
+> > +KernelVersion:	6.9
+> > +Contact:	linux-kernel@vger.kernel.org
+> > +Description:
+> > +		The /sys/class/ras/ras{0,1,2,3,...}/scrub directories
+> > +		correspond to each scrub device registered with the
+> > +		scrub subsystem. =20
+>=20
+> I notice there are some visibility rules in the code, but those
+> expectations are not documented here.
+>=20
+> This documentation would also help developers writing new users of
+> scrub_device_register().
+Agreed. One to improve.
+
+>=20
+> > +
+> > +What:		/sys/class/ras/rasX/scrub/name
+> > +Date:		March 2024
+> > +KernelVersion:	6.9
+> > +Contact:	linux-kernel@vger.kernel.org
+> > +Description:
+> > +		(RO) name of the memory scrubber
+> > +
+> > +What:		/sys/class/ras/rasX/scrub/enable_background
+> > +Date:		March 2024
+> > +KernelVersion:	6.9
+> > +Contact:	linux-kernel@vger.kernel.org
+> > +Description:
+> > +		(RW) Enable/Disable background(patrol) scrubbing if supported.
+> > +
+> > +What:		/sys/class/ras/rasX/scrub/rate_available
+> > +Date:		March 2024
+> > +KernelVersion:	6.9
+> > +Contact:	linux-kernel@vger.kernel.org
+> > +Description:
+> > +		(RO) Supported range for the scrub rate by the scrubber.
+> > +		The scrub rate represents in hours.
+> > +
+> > +What:		/sys/class/ras/rasX/scrub/rate
+> > +Date:		March 2024
+> > +KernelVersion:	6.9
+> > +Contact:	linux-kernel@vger.kernel.org
+> > +Description:
+> > +		(RW) The scrub rate specified and it must be with in the
+> > +		supported range by the scrubber.
+> > +		The scrub rate represents in hours.
+> > diff --git a/drivers/ras/Kconfig b/drivers/ras/Kconfig
+> > index fc4f4bb94a4c..181701479564 100644
+> > --- a/drivers/ras/Kconfig
+> > +++ b/drivers/ras/Kconfig
+> > @@ -46,4 +46,11 @@ config RAS_FMPM
+> >  	  Memory will be retired during boot time and run time depending on
+> >  	  platform-specific policies.
+> > =20
+> > +config SCRUB
+> > +	tristate "Memory scrub driver"
+> > +	help
+> > +	  This option selects the memory scrub subsystem, supports
+> > +	  configuring the parameters of underlying scrubbers in the
+> > +	  system for the DRAM memories.
+> > +
+> >  endif
+> > diff --git a/drivers/ras/Makefile b/drivers/ras/Makefile
+> > index 11f95d59d397..89bcf0d84355 100644
+> > --- a/drivers/ras/Makefile
+> > +++ b/drivers/ras/Makefile
+> > @@ -2,6 +2,7 @@
+> >  obj-$(CONFIG_RAS)	+=3D ras.o
+> >  obj-$(CONFIG_DEBUG_FS)	+=3D debugfs.o
+> >  obj-$(CONFIG_RAS_CEC)	+=3D cec.o
+> > +obj-$(CONFIG_SCRUB)	+=3D memory_scrub.o
+> > =20
+> >  obj-$(CONFIG_RAS_FMPM)	+=3D amd/fmpm.o
+> >  obj-y			+=3D amd/atl/
+> > diff --git a/drivers/ras/memory_scrub.c b/drivers/ras/memory_scrub.c
+> > new file mode 100755
+> > index 000000000000..7e995380ec3a
+> > --- /dev/null
+> > +++ b/drivers/ras/memory_scrub.c
+> > @@ -0,0 +1,271 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Memory scrub subsystem supports configuring the registered
+> > + * memory scrubbers.
+> > + *
+> > + * Copyright (c) 2024 HiSilicon Limited.
+> > + */
+> > +
+> > +#define pr_fmt(fmt)     "MEM SCRUB: " fmt
+> > +
+> > +#include <linux/acpi.h>
+> > +#include <linux/bitops.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/kfifo.h>
+> > +#include <linux/memory_scrub.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/spinlock.h>
+> > +
+> > +/* memory scrubber config definitions */
+> > +#define SCRUB_ID_PREFIX "ras"
+> > +#define SCRUB_ID_FORMAT SCRUB_ID_PREFIX "%d"
+> > +
+> > +static DEFINE_IDA(scrub_ida);
+> > +
+> > +struct scrub_device {
+> > +	int id;
+> > +	struct device dev;
+> > +	const struct scrub_ops *ops;
+> > +};
+> > +
+> > +#define to_scrub_device(d) container_of(d, struct scrub_device, dev)
+> > +static ssize_t enable_background_store(struct device *dev,
+> > +				       struct device_attribute *attr,
+> > +				       const char *buf, size_t len)
+> > +{
+> > +	struct scrub_device *scrub_dev =3D to_scrub_device(dev);
+> > +	bool enable;
+> > +	int ret;
+> > +
+> > +	ret =3D kstrtobool(buf, &enable);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret =3D scrub_dev->ops->set_enabled_bg(dev, enable);
+> > +	if (ret)
+> > +		return ret; =20
+>=20
+> It strikes me as somewhat pointless to have such a thin sysfs
+> implementation whose only job is to call down into a callback to do the
+> work. Unless there are other consumers of 'struct scrub_ops' outside of
+> these sysfs files why not just have the low-level drivers register their
+> corresponding attributes themselves?
+>=20
+> Unless the functionality is truly generic just let the low-level driver
+> be responsible for conforming to the sysfs ABI expectations, and, for
+> example, each register their own "enable_background" attribute if they
+> support that semantic.
+
+This was me pushing for this based on that approach having been a pain
+in subystems I've been involved with in the past. so I'll answer.
+
+Maybe if we think the number of scrub drivers remains very low we can
+rely on ABI review. However, it's painful.  Everyone wants to add
+their own custom ABI, so every review consists of 'no that is
+isn't consistent' reviews.  The callback schemes reduce that considerably.
+As someone with their name next to one of the largest sysfs ABIs in the
+kernel, maybe I'm projecting my pain points on this one.
+
+Note that this approach has failed for multiple similar simple subsystems
+in the past and they have migrated to a (mostly) tighter description for
+ABI simply because those constraints are useful.  A fairly recent one
+maybe 8 years ago? Was hwmon. There are other advantages that may not
+yet apply here (in kernel interfaces are much easier, even if they are
+only occasionally used for a given subsystem), but my motivation in=20
+pushing Shiju this way was to lock down the userspace interface.
+
+>=20
+> So scrub_device_register() would grow a 'const struct attribute_group
+> **groups' argument, or something along those lines.
+
+Sure. Shiju had that in an earlier version.  Personally I think it's
+an approach that may bite in the long run, but meh, maybe this will
+only ever have half a dozen drivers so it might remain manageable.
+If not, I love say 'I told you so' :)
+
+Jonathan
+
+
 
