@@ -1,431 +1,550 @@
-Return-Path: <linux-kernel+bounces-176225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DC48C2BCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:24:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263AD8C2B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783731C20C01
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:24:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7570DB22D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD8E13B5A6;
-	Fri, 10 May 2024 21:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nNMKU5xG"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5CA13B59F;
+	Fri, 10 May 2024 21:10:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEFA101E3;
-	Fri, 10 May 2024 21:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715376174; cv=fail; b=pyyvEXLCaBJvFx2zMPlKfckR7fmrQZ2V+/D2/QF/OWIOVnFY6aLu3vQNQDZFPoTKea+aQ1az3xyR3hsqG9kQit5fr4j2VdSay4P7irk9+hhBm6rICNq29g12dIM77wLPy2Srrh5t7m37h6twErrZaHbRHe+kH9OdFdTYOX0eMk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715376174; c=relaxed/simple;
-	bh=kXuO2PguL+6y37tazI+DhqEvcLxVKuhQx+Bt4z7DLXE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iWf7dgj7crz+0hlYJXevsdL3ZQVIZXo+DW4xN8ifsrnZOgDRihH6jfIUecc3dr4BOIw+65WPZ0DIQtnJiSa65qflhSR17cgl1kUPsZirYauY2mrMfmZ9t4SbHbSBYgnY8rL2Odt48WP8w6m7qpQ3qwjrkWy9sXyKgak9QJDRx/w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nNMKU5xG; arc=fail smtp.client-ip=40.107.93.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ko2a3UtbNhBPdaxaamhrCbwWGm3OoUihYSc8FZAItFvfCqV9JK1R1Rs+Kq9Q6e66MiZ0zRbzUZOF1AJG+fcHl0sQSCMvR/tnJrax74szTUGqx1WEvArqEtiEJlF2Psi4318sqBVyt+B856EPwShv2NuYXKxhF8wiZJAVRCVK1mi9Ln9Rrn41VZxsnVxglN/1MNdLNaeUB6vA6mb/In82yJ0QjUBLpJkwVBa3QepKlD5j+GfsjVfk9SF8eztElfm6PEPAIR8LFAyZY47GtJoWDnR9FzS0C3LdChsvZFq2UkJfVap0qW+Ie2HptRKuC6SwEcrtEHeCd6UjTUrqUoSeag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2BalY2yO3hco544+u2I2ziT93lRp0HqnIZddf65pI6Q=;
- b=E4kW48e6eo6juTUfIQOKXmHNR8vlFQ4FUNkKFeZRQPFoW/Hobjnf3rnGeOFYKW2f5lJJy36KRGi809D9wMYLTczPOdcrKnH6vU3GDkPjLUd0jbhrOLVjN5AfzgPYuNYFSQmk0VSu2BN+I2Hh0+nCWO7VaVswrdpyxosKSqb4CEVA1i+pDVHIaYZwEQpRj0eDOeYsyfeGjf1ZeiIX0LqyhiOFZupZ71sd61tIKodQrCMAX2s9sumAUxlCZA7TEqDDm8GC2oFFPw5sDrYmqNpxbtlRbGJcmkjdOEWeP2QBIqyaejPl78MxY0psTevUu8BdNwB1GA/uG/i+wMmmq7Vkig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2BalY2yO3hco544+u2I2ziT93lRp0HqnIZddf65pI6Q=;
- b=nNMKU5xGC6KNR9EGXJLut08XcKvsjP3db1+Dmk2zzemzgJaqlxQriem3Sg4QHH7tsmlVfVMNdVFQCHdJEMXXDslCXjS/xo6m2xHY8/IUt8PjEvbIKJi0UGLMvs01RAnMFXfbXQjc0rkCZUh4yDFOLlxSIU4QeOz51dxOEQGZWLU=
-Received: from BN1PR12CA0022.namprd12.prod.outlook.com (2603:10b6:408:e1::27)
- by CH2PR12MB4167.namprd12.prod.outlook.com (2603:10b6:610:7a::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
- 2024 21:22:50 +0000
-Received: from BN2PEPF000044A2.namprd02.prod.outlook.com
- (2603:10b6:408:e1:cafe::ca) by BN1PR12CA0022.outlook.office365.com
- (2603:10b6:408:e1::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45 via Frontend
- Transport; Fri, 10 May 2024 21:22:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000044A2.mail.protection.outlook.com (10.167.243.153) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7544.18 via Frontend Transport; Fri, 10 May 2024 21:22:50 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 10 May
- 2024 16:22:50 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Sean Christopherson
-	<seanjc@google.com>, Brijesh Singh <brijesh.singh@amd.com>, Harald Hoyer
-	<harald@profian.com>, Ashish Kalra <ashish.kalra@amd.com>
-Subject: [PULL 06/19] KVM: SEV: Add KVM_SEV_SNP_LAUNCH_FINISH command
-Date: Fri, 10 May 2024 16:10:11 -0500
-Message-ID: <20240510211024.556136-7-michael.roth@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240510211024.556136-1-michael.roth@amd.com>
-References: <20240510211024.556136-1-michael.roth@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340543AD9
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715375439; cv=none; b=W5DLs8Wlz6gg2wy8Pyl6KsXGh22AK2oIcg4GZNbv/Q9QhTVxHNNRK6yiqFHQZfEuoisRFDqXUFKOnoxQD657sjL35gt0ctiPWzzTKXvC7ffamZ7LNAffTl6QQbItBnY26omsUPrxKu9fZI3zVPyXAwM5EmBSBiO1RymSIOnXsKE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715375439; c=relaxed/simple;
+	bh=+rpWdopJAFSlVIYNSEBVqrD6Z/rY/Q2uU461TBjnPiE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sOAfW4bbItTqNFUxOEyAxj3TN4c19VKNDPr6MN9kFn/qPDxYIgKFo+YHMwGvIIRMVmCllC6Il0Fagiw48HJTLYAGzyWAebONJOnEB/Q75RQp+pHT2z7G2hdqjTB4/IQj+6GXakxUvYZfBMPRdhW9eOXSdrnYnu5JZetqollqvVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s5XVb-0003hi-OI; Fri, 10 May 2024 23:10:27 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s5XVb-000hKm-8H; Fri, 10 May 2024 23:10:27 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s5XVb-002Gqu-0W;
+	Fri, 10 May 2024 23:10:27 +0200
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH] mfd: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+Date: Fri, 10 May 2024 23:10:11 +0200
+Message-ID: <20240510211011.2273978-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14514; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=+rpWdopJAFSlVIYNSEBVqrD6Z/rY/Q2uU461TBjnPiE=; b=owGbwMvMwMXY3/A7olbonx/jabUkhjS7XuMUd+e3jY7tTcwPLW6yirGrzw5we7y24eAUWaFG9 4s//Tk7GY1ZGBi5GGTFFFnsG9dkWlXJRXau/XcZZhArE8gUBi5OAZhI+mP2/4EGHmk6v3XSf+5S Pr/3hOyj6/8bSieIcmm91FxuxMFQ4vkk0HLn04zG7WFxJzq3dOWzR3Fu+7VTIVR0eYSt6Vmf8v1 MVirF5wS/On0Pb3nr073uy5RFiqFGU9hmnVvSuHvq8muCFg3F+wOOihRtz9f62rTRR7r9t9Ocaq s3ps09WTO1HrjudJx0sLr+jEqj0WLpSo/nLpzuWUmHza9UF3OfjzRlqJ80pd2fn7Pkrdb9iqpMl 22vdMy8z5+P+L9lyVmVfSct93dsfBudl9l30kHHYM3tE+6bJ12xevzQ27+mYNJ3s9D36ifvOXAo 3hb5u+2T6BzG/3ni7FwyfPqry7JCnM5Zx0i6rYry9NgFAA==
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A2:EE_|CH2PR12MB4167:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1ada507-8570-4c84-2fa6-08dc713758b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|82310400017|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?T43wZQ7VnwORwcMc+zd28TG+Q5n7J8yxAU1u4I+ceeMLWkk+nyIZwg88GEC4?=
- =?us-ascii?Q?iAAHCPFuR56zOJTdIxWbUFs1VtKK3mE42P7iYUmql7XO5t9hwxrXfF4qgLDx?=
- =?us-ascii?Q?JcaeMUOk5Rf1yUiueKe4YaxVib2UUrk3/Fs+kwGQxwA4HuF7Ms+30TE9sfds?=
- =?us-ascii?Q?eeNmEDKLLFSaGWn2+zofA97I+4Au2iATV/TiMhbVPgENoqSydRpSXx83hrgG?=
- =?us-ascii?Q?8CuALlvNmXuaL0SYjnsXdf7rq2lBvLtRVlw1ng0dy8OBu3+k/BR4hdyMe3lQ?=
- =?us-ascii?Q?C2gOtCtQo2lMJscjCOijX3o099nRNePUz9QKVKpfSpqP5gf+kBjgw6f3yRq+?=
- =?us-ascii?Q?Whl2U3I+KvGVZzWCZ4hlAkekG0I5diTfaJ0Wfj0+U3c5pDL5L/ZrQNYpBjFF?=
- =?us-ascii?Q?ffPogGlIlXu+mjVB2bxY2I9xhCxlR5z1j6J9OIH0Q8JczX++5WefmFAHhyIa?=
- =?us-ascii?Q?3Iukgqx4xW+2IPebVebXUth9UpO7mqygZXWSNL3gQ2FhjNQUtY3TKT87wCuq?=
- =?us-ascii?Q?RYp++juf14yj/cW4gKMDgRH+b3qhgrfunLGnuluvf++fojpa+7YACjyoWT1T?=
- =?us-ascii?Q?4x/U/GpkPV++kKUfI7+al3czAFQDnE23OCrrixuWGCn3wEZIoVLClZzhkrD3?=
- =?us-ascii?Q?9T99pf/2arwZeIWfp6HhNdsN+d9cQ14f7BaenBnyVJyAhErErwwhrflREBvM?=
- =?us-ascii?Q?0hMIveQPBGqh4hoJa0sNADUOIISBo0oAEAeTYxvdloXWqptBG4NvsgPEnXiJ?=
- =?us-ascii?Q?NY8QScSMhZum/EfEB2G4ciamV3koXpI7S+YZythlxgI8+b++WnoIlUzRcMvd?=
- =?us-ascii?Q?aJhsH89cneetVauE0Ea78bpD7UuJLfFU9V7vR181Z+iJUPyuVXKcZ1xudL87?=
- =?us-ascii?Q?fUGXNC4VXe2cuJEJt/VVrCLZYOSNFtfxplWeGUWsLNVLOEUjvQQhXiTF6pP1?=
- =?us-ascii?Q?Zk6zhEGruMCuSLO4t9TEZAENU9hDPDOnqda+M9z6MRT3x2ZYVUG0DLo/JpN2?=
- =?us-ascii?Q?OsFNgWJj3VQLJ6+xdtWLcMbLEoRrAdk/Qxt8kP5sztE+eG0BiLCrmYqUqDnI?=
- =?us-ascii?Q?eF5d6jlyq0+dAYHkC/O2qKUDdLGBhiAn8A1W03QJvHIYJuDcQvzjIdCxRn7J?=
- =?us-ascii?Q?iAiClrID6eW+4y2uEDp7wFz718/BdqBI4FGc/ItNOxCcdP7zFscZJrf76ewu?=
- =?us-ascii?Q?2UrPM1YSexsqckbXOdij1TkrXCijKLQpB4SYSfCV8rnhPhKRAZ55cpkA8gDA?=
- =?us-ascii?Q?xHgvhQbbIGCSB5VcBBYbPsJW9LPj3RNF4Aputjz9h2PDjJOAU6raTWf6mpyb?=
- =?us-ascii?Q?OQO8ALgGdn694252RdgqlimSquclWZRABTs75GRDtY8TIVever3iskyTzQHo?=
- =?us-ascii?Q?CCdrqEY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400017)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 21:22:50.4667
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1ada507-8570-4c84-2fa6-08dc713758b2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A2.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4167
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Brijesh Singh <brijesh.singh@amd.com>
+These drivers don't use the driver_data member of struct i2c_device_id,
+so don't explicitly initialize this member.
 
-Add a KVM_SEV_SNP_LAUNCH_FINISH command to finalize the cryptographic
-launch digest which stores the measurement of the guest at launch time.
-Also extend the existing SNP firmware data structures to support
-disabling the use of Versioned Chip Endorsement Keys (VCEK) by guests as
-part of this command.
+This prepares putting driver_data in an anonymous union which requires
+either no initialization or named designators. But it's also a nice
+cleanup on its own.
 
-While finalizing the launch flow, the code also issues the LAUNCH_UPDATE
-SNP firmware commands to encrypt/measure the initial VMSA pages for each
-configured vCPU, which requires setting the RMP entries for those pages
-to private, so also add handling to clean up the RMP entries for these
-pages whening freeing vCPUs during shutdown.
+While add it, also remove commas after the sentinel entries.
 
-Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-Co-developed-by: Michael Roth <michael.roth@amd.com>
-Signed-off-by: Michael Roth <michael.roth@amd.com>
-Signed-off-by: Harald Hoyer <harald@profian.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-Message-ID: <20240501085210.2213060-8-michael.roth@amd.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- .../virt/kvm/x86/amd-memory-encryption.rst    |  28 ++++
- arch/x86/include/uapi/asm/kvm.h               |  17 +++
- arch/x86/kvm/svm/sev.c                        | 127 ++++++++++++++++++
- include/linux/psp-sev.h                       |   4 +-
- 4 files changed, 175 insertions(+), 1 deletion(-)
+Hello,
 
-diff --git a/Documentation/virt/kvm/x86/amd-memory-encryption.rst b/Documentation/virt/kvm/x86/amd-memory-encryption.rst
-index cc16a7426d18..1ddb6a86ce7f 100644
---- a/Documentation/virt/kvm/x86/amd-memory-encryption.rst
-+++ b/Documentation/virt/kvm/x86/amd-memory-encryption.rst
-@@ -544,6 +544,34 @@ where the allowed values for page_type are #define'd as::
- See the SEV-SNP spec [snp-fw-abi]_ for further details on how each page type is
- used/measured.
+this patch was created based on today's next. It it doesn't apply any
+more in a few files, feel free to drop the conflicting changes and apply
+the rest. I'll address the fallout later then.
+
+Best regards
+Uwe
+
+ drivers/mfd/88pm800.c       |  2 +-
+ drivers/mfd/88pm805.c       |  2 +-
+ drivers/mfd/88pm860x-core.c |  2 +-
+ drivers/mfd/aat2870-core.c  |  2 +-
+ drivers/mfd/act8945a.c      |  2 +-
+ drivers/mfd/as3722.c        |  4 ++--
+ drivers/mfd/axp20x-i2c.c    | 24 ++++++++++++------------
+ drivers/mfd/bd9571mwv.c     |  2 +-
+ drivers/mfd/da9055-i2c.c    |  2 +-
+ drivers/mfd/lm3533-core.c   |  4 ++--
+ drivers/mfd/lp3943.c        |  2 +-
+ drivers/mfd/lp873x.c        |  4 ++--
+ drivers/mfd/lp87565.c       |  4 ++--
+ drivers/mfd/lp8788.c        |  2 +-
+ drivers/mfd/max8907.c       |  2 +-
+ drivers/mfd/max8925-i2c.c   |  4 ++--
+ drivers/mfd/menelaus.c      |  2 +-
+ drivers/mfd/retu-mfd.c      |  4 ++--
+ drivers/mfd/stw481x.c       |  4 ++--
+ drivers/mfd/tps6105x.c      |  4 ++--
+ drivers/mfd/tps6507x.c      |  2 +-
+ drivers/mfd/tps65086.c      |  2 +-
+ drivers/mfd/tps65090.c      |  4 ++--
+ drivers/mfd/tps6586x.c      |  4 ++--
+ drivers/mfd/tps65912-i2c.c  |  2 +-
+ drivers/mfd/twl6040.c       |  6 +++---
+ drivers/mfd/wl1273-core.c   |  2 +-
+ drivers/mfd/wm8350-i2c.c    |  6 +++---
+ drivers/mfd/wm8400-core.c   |  2 +-
+ 29 files changed, 54 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/mfd/88pm800.c b/drivers/mfd/88pm800.c
+index 300caa067335..384ecf5301d2 100644
+--- a/drivers/mfd/88pm800.c
++++ b/drivers/mfd/88pm800.c
+@@ -116,7 +116,7 @@ enum {
+ #define PM800_CHIP_GEN_ID_NUM	0x3
  
-+20. KVM_SEV_SNP_LAUNCH_FINISH
-+-----------------------------
-+
-+After completion of the SNP guest launch flow, the KVM_SEV_SNP_LAUNCH_FINISH
-+command can be issued to make the guest ready for execution.
-+
-+Parameters (in): struct kvm_sev_snp_launch_finish
-+
-+Returns: 0 on success, -negative on error
-+
-+::
-+
-+        struct kvm_sev_snp_launch_finish {
-+                __u64 id_block_uaddr;
-+                __u64 id_auth_uaddr;
-+                __u8 id_block_en;
-+                __u8 auth_key_en;
-+                __u8 vcek_disabled;
-+                __u8 host_data[32];
-+                __u8 pad0[3];
-+                __u16 flags;                    /* Must be zero */
-+                __u64 pad1[4];
-+        };
-+
-+
-+See SNP_LAUNCH_FINISH in the SEV-SNP specification [snp-fw-abi]_ for further
-+details on the input parameters in ``struct kvm_sev_snp_launch_finish``.
-+
- Device attribute API
- ====================
- 
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 5935dc8a7e02..988b5204d636 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -700,6 +700,7 @@ enum sev_cmd_id {
- 	/* SNP-specific commands */
- 	KVM_SEV_SNP_LAUNCH_START = 100,
- 	KVM_SEV_SNP_LAUNCH_UPDATE,
-+	KVM_SEV_SNP_LAUNCH_FINISH,
- 
- 	KVM_SEV_NR_MAX,
+ static const struct i2c_device_id pm80x_id_table[] = {
+-	{"88PM800", 0},
++	{ "88PM800" },
+ 	{} /* NULL terminated */
  };
-@@ -854,6 +855,22 @@ struct kvm_sev_snp_launch_update {
- 	__u64 pad2[4];
+ MODULE_DEVICE_TABLE(i2c, pm80x_id_table);
+diff --git a/drivers/mfd/88pm805.c b/drivers/mfd/88pm805.c
+index 68417c3c4f5a..205f0762a928 100644
+--- a/drivers/mfd/88pm805.c
++++ b/drivers/mfd/88pm805.c
+@@ -30,7 +30,7 @@
+ #include <linux/delay.h>
+ 
+ static const struct i2c_device_id pm80x_id_table[] = {
+-	{"88PM805", 0},
++	{ "88PM805" },
+ 	{} /* NULL terminated */
+ };
+ MODULE_DEVICE_TABLE(i2c, pm80x_id_table);
+diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
+index 151bf03e772d..7f003f71e1af 100644
+--- a/drivers/mfd/88pm860x-core.c
++++ b/drivers/mfd/88pm860x-core.c
+@@ -1233,7 +1233,7 @@ static int pm860x_resume(struct device *dev)
+ static DEFINE_SIMPLE_DEV_PM_OPS(pm860x_pm_ops, pm860x_suspend, pm860x_resume);
+ 
+ static const struct i2c_device_id pm860x_id_table[] = {
+-	{ "88PM860x", 0 },
++	{ "88PM860x" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, pm860x_id_table);
+diff --git a/drivers/mfd/aat2870-core.c b/drivers/mfd/aat2870-core.c
+index 2fee62f1016c..8ef510e84688 100644
+--- a/drivers/mfd/aat2870-core.c
++++ b/drivers/mfd/aat2870-core.c
+@@ -439,7 +439,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(aat2870_pm_ops, aat2870_i2c_suspend,
+ 				aat2870_i2c_resume);
+ 
+ static const struct i2c_device_id aat2870_i2c_id_table[] = {
+-	{ "aat2870", 0 },
++	{ "aat2870" },
+ 	{ }
  };
  
-+#define KVM_SEV_SNP_ID_BLOCK_SIZE	96
-+#define KVM_SEV_SNP_ID_AUTH_SIZE	4096
-+#define KVM_SEV_SNP_FINISH_DATA_SIZE	32
-+
-+struct kvm_sev_snp_launch_finish {
-+	__u64 id_block_uaddr;
-+	__u64 id_auth_uaddr;
-+	__u8 id_block_en;
-+	__u8 auth_key_en;
-+	__u8 vcek_disabled;
-+	__u8 host_data[KVM_SEV_SNP_FINISH_DATA_SIZE];
-+	__u8 pad0[3];
-+	__u16 flags;
-+	__u64 pad1[4];
-+};
-+
- #define KVM_X2APIC_API_USE_32BIT_IDS            (1ULL << 0)
- #define KVM_X2APIC_API_DISABLE_BROADCAST_QUIRK  (1ULL << 1)
- 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index c966f2224624..208bb8170d3f 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -75,6 +75,8 @@ static u64 sev_supported_vmsa_features;
- 					 SNP_POLICY_MASK_DEBUG		| \
- 					 SNP_POLICY_MASK_SINGLE_SOCKET)
- 
-+#define INITIAL_VMSA_GPA 0xFFFFFFFFF000
-+
- static u8 sev_enc_bit;
- static DECLARE_RWSEM(sev_deactivate_lock);
- static DEFINE_MUTEX(sev_bitmap_lock);
-@@ -2348,6 +2350,115 @@ static int snp_launch_update(struct kvm *kvm, struct kvm_sev_cmd *argp)
- 	return ret;
+diff --git a/drivers/mfd/act8945a.c b/drivers/mfd/act8945a.c
+index 4e32ac3d573e..cafefb4451cb 100644
+--- a/drivers/mfd/act8945a.c
++++ b/drivers/mfd/act8945a.c
+@@ -54,7 +54,7 @@ static int act8945a_i2c_probe(struct i2c_client *i2c)
  }
  
-+static int snp_launch_update_vmsa(struct kvm *kvm, struct kvm_sev_cmd *argp)
-+{
-+	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
-+	struct sev_data_snp_launch_update data = {};
-+	struct kvm_vcpu *vcpu;
-+	unsigned long i;
-+	int ret;
-+
-+	data.gctx_paddr = __psp_pa(sev->snp_context);
-+	data.page_type = SNP_PAGE_TYPE_VMSA;
-+
-+	kvm_for_each_vcpu(i, vcpu, kvm) {
-+		struct vcpu_svm *svm = to_svm(vcpu);
-+		u64 pfn = __pa(svm->sev_es.vmsa) >> PAGE_SHIFT;
-+
-+		ret = sev_es_sync_vmsa(svm);
-+		if (ret)
-+			return ret;
-+
-+		/* Transition the VMSA page to a firmware state. */
-+		ret = rmp_make_private(pfn, INITIAL_VMSA_GPA, PG_LEVEL_4K, sev->asid, true);
-+		if (ret)
-+			return ret;
-+
-+		/* Issue the SNP command to encrypt the VMSA */
-+		data.address = __sme_pa(svm->sev_es.vmsa);
-+		ret = __sev_issue_cmd(argp->sev_fd, SEV_CMD_SNP_LAUNCH_UPDATE,
-+				      &data, &argp->error);
-+		if (ret) {
-+			if (!snp_page_reclaim(pfn))
-+				host_rmp_make_shared(pfn, PG_LEVEL_4K);
-+
-+			return ret;
-+		}
-+
-+		svm->vcpu.arch.guest_state_protected = true;
-+	}
-+
-+	return 0;
-+}
-+
-+static int snp_launch_finish(struct kvm *kvm, struct kvm_sev_cmd *argp)
-+{
-+	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
-+	struct kvm_sev_snp_launch_finish params;
-+	struct sev_data_snp_launch_finish *data;
-+	void *id_block = NULL, *id_auth = NULL;
-+	int ret;
-+
-+	if (!sev_snp_guest(kvm))
-+		return -ENOTTY;
-+
-+	if (!sev->snp_context)
-+		return -EINVAL;
-+
-+	if (copy_from_user(&params, u64_to_user_ptr(argp->data), sizeof(params)))
-+		return -EFAULT;
-+
-+	if (params.flags)
-+		return -EINVAL;
-+
-+	/* Measure all vCPUs using LAUNCH_UPDATE before finalizing the launch flow. */
-+	ret = snp_launch_update_vmsa(kvm, argp);
-+	if (ret)
-+		return ret;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL_ACCOUNT);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	if (params.id_block_en) {
-+		id_block = psp_copy_user_blob(params.id_block_uaddr, KVM_SEV_SNP_ID_BLOCK_SIZE);
-+		if (IS_ERR(id_block)) {
-+			ret = PTR_ERR(id_block);
-+			goto e_free;
-+		}
-+
-+		data->id_block_en = 1;
-+		data->id_block_paddr = __sme_pa(id_block);
-+
-+		id_auth = psp_copy_user_blob(params.id_auth_uaddr, KVM_SEV_SNP_ID_AUTH_SIZE);
-+		if (IS_ERR(id_auth)) {
-+			ret = PTR_ERR(id_auth);
-+			goto e_free_id_block;
-+		}
-+
-+		data->id_auth_paddr = __sme_pa(id_auth);
-+
-+		if (params.auth_key_en)
-+			data->auth_key_en = 1;
-+	}
-+
-+	data->vcek_disabled = params.vcek_disabled;
-+
-+	memcpy(data->host_data, params.host_data, KVM_SEV_SNP_FINISH_DATA_SIZE);
-+	data->gctx_paddr = __psp_pa(sev->snp_context);
-+	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_LAUNCH_FINISH, data, &argp->error);
-+
-+	kfree(id_auth);
-+
-+e_free_id_block:
-+	kfree(id_block);
-+
-+e_free:
-+	kfree(data);
-+
-+	return ret;
-+}
-+
- int sev_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
- {
- 	struct kvm_sev_cmd sev_cmd;
-@@ -2450,6 +2561,9 @@ int sev_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
- 	case KVM_SEV_SNP_LAUNCH_UPDATE:
- 		r = snp_launch_update(kvm, &sev_cmd);
- 		break;
-+	case KVM_SEV_SNP_LAUNCH_FINISH:
-+		r = snp_launch_finish(kvm, &sev_cmd);
-+		break;
- 	default:
- 		r = -EINVAL;
- 		goto out;
-@@ -2940,11 +3054,24 @@ void sev_free_vcpu(struct kvm_vcpu *vcpu)
+ static const struct i2c_device_id act8945a_i2c_id[] = {
+-	{ "act8945a", 0 },
++	{ "act8945a" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, act8945a_i2c_id);
+diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
+index bec047bdd088..6c0d89b0c7e3 100644
+--- a/drivers/mfd/as3722.c
++++ b/drivers/mfd/as3722.c
+@@ -430,8 +430,8 @@ static const struct of_device_id as3722_of_match[] = {
+ MODULE_DEVICE_TABLE(of, as3722_of_match);
  
- 	svm = to_svm(vcpu);
+ static const struct i2c_device_id as3722_i2c_id[] = {
+-	{ "as3722", 0 },
+-	{},
++	{ "as3722" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, as3722_i2c_id);
  
-+	/*
-+	 * If it's an SNP guest, then the VMSA was marked in the RMP table as
-+	 * a guest-owned page. Transition the page to hypervisor state before
-+	 * releasing it back to the system.
-+	 */
-+	if (sev_snp_guest(vcpu->kvm)) {
-+		u64 pfn = __pa(svm->sev_es.vmsa) >> PAGE_SHIFT;
-+
-+		if (host_rmp_make_shared(pfn, PG_LEVEL_4K))
-+			goto skip_vmsa_free;
-+	}
-+
- 	if (vcpu->arch.guest_state_protected)
- 		sev_flush_encrypted_page(vcpu, svm->sev_es.vmsa);
+diff --git a/drivers/mfd/axp20x-i2c.c b/drivers/mfd/axp20x-i2c.c
+index b8e7ac89f697..791a0b4cb64b 100644
+--- a/drivers/mfd/axp20x-i2c.c
++++ b/drivers/mfd/axp20x-i2c.c
+@@ -75,18 +75,18 @@ MODULE_DEVICE_TABLE(of, axp20x_i2c_of_match);
+ #endif
  
- 	__free_page(virt_to_page(svm->sev_es.vmsa));
+ static const struct i2c_device_id axp20x_i2c_id[] = {
+-	{ "axp152", 0 },
+-	{ "axp192", 0 },
+-	{ "axp202", 0 },
+-	{ "axp209", 0 },
+-	{ "axp221", 0 },
+-	{ "axp223", 0 },
+-	{ "axp313a", 0 },
+-	{ "axp717", 0 },
+-	{ "axp803", 0 },
+-	{ "axp806", 0 },
+-	{ "axp15060", 0 },
+-	{ },
++	{ "axp152" },
++	{ "axp192" },
++	{ "axp202" },
++	{ "axp209" },
++	{ "axp221" },
++	{ "axp223" },
++	{ "axp313a" },
++	{ "axp717" },
++	{ "axp803" },
++	{ "axp806" },
++	{ "axp15060" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, axp20x_i2c_id);
  
-+skip_vmsa_free:
- 	if (svm->sev_es.ghcb_sa_free)
- 		kvfree(svm->sev_es.ghcb_sa);
- }
-diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
-index 3705c2044fc0..903ddfea8585 100644
---- a/include/linux/psp-sev.h
-+++ b/include/linux/psp-sev.h
-@@ -658,6 +658,7 @@ struct sev_data_snp_launch_update {
-  * @id_auth_paddr: system physical address of ID block authentication structure
-  * @id_block_en: indicates whether ID block is present
-  * @auth_key_en: indicates whether author key is present in authentication structure
-+ * @vcek_disabled: indicates whether use of VCEK is allowed for attestation reports
-  * @rsvd: reserved
-  * @host_data: host-supplied data for guest, not interpreted by firmware
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 0a955178d469..e7c2ac74d998 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -268,7 +268,7 @@ static const struct of_device_id bd9571mwv_of_match_table[] = {
+ MODULE_DEVICE_TABLE(of, bd9571mwv_of_match_table);
+ 
+ static const struct i2c_device_id bd9571mwv_id_table[] = {
+-	{ "bd9571mwv", 0 },
++	{ "bd9571mwv" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, bd9571mwv_id_table);
+diff --git a/drivers/mfd/da9055-i2c.c b/drivers/mfd/da9055-i2c.c
+index 9a5f51b60bad..6c1981832aaf 100644
+--- a/drivers/mfd/da9055-i2c.c
++++ b/drivers/mfd/da9055-i2c.c
+@@ -54,7 +54,7 @@ static void da9055_i2c_remove(struct i2c_client *i2c)
+  * and CODEC, which must be different to operate together.
   */
-@@ -667,7 +668,8 @@ struct sev_data_snp_launch_finish {
- 	u64 id_auth_paddr;
- 	u8 id_block_en:1;
- 	u8 auth_key_en:1;
--	u64 rsvd:62;
-+	u8 vcek_disabled:1;
-+	u64 rsvd:61;
- 	u8 host_data[32];
- } __packed;
+ static const struct i2c_device_id da9055_i2c_id[] = {
+-	{"da9055-pmic", 0},
++	{ "da9055-pmic" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, da9055_i2c_id);
+diff --git a/drivers/mfd/lm3533-core.c b/drivers/mfd/lm3533-core.c
+index c211183cecb2..c1219e608c5f 100644
+--- a/drivers/mfd/lm3533-core.c
++++ b/drivers/mfd/lm3533-core.c
+@@ -614,8 +614,8 @@ static void lm3533_i2c_remove(struct i2c_client *i2c)
+ }
  
+ static const struct i2c_device_id lm3533_i2c_ids[] = {
+-	{ "lm3533", 0 },
+-	{ },
++	{ "lm3533" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lm3533_i2c_ids);
+ 
+diff --git a/drivers/mfd/lp3943.c b/drivers/mfd/lp3943.c
+index 7f749a23dca8..6764553147e4 100644
+--- a/drivers/mfd/lp3943.c
++++ b/drivers/mfd/lp3943.c
+@@ -126,7 +126,7 @@ static int lp3943_probe(struct i2c_client *cl)
+ }
+ 
+ static const struct i2c_device_id lp3943_ids[] = {
+-	{ "lp3943", 0 },
++	{ "lp3943" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lp3943_ids);
+diff --git a/drivers/mfd/lp873x.c b/drivers/mfd/lp873x.c
+index de7ab7aed3c6..e8c5c89c2a76 100644
+--- a/drivers/mfd/lp873x.c
++++ b/drivers/mfd/lp873x.c
+@@ -68,8 +68,8 @@ static const struct of_device_id of_lp873x_match_table[] = {
+ MODULE_DEVICE_TABLE(of, of_lp873x_match_table);
+ 
+ static const struct i2c_device_id lp873x_id_table[] = {
+-	{ "lp873x", 0 },
+-	{ },
++	{ "lp873x" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lp873x_id_table);
+ 
+diff --git a/drivers/mfd/lp87565.c b/drivers/mfd/lp87565.c
+index 08c62ddfb4f5..9488d3793c10 100644
+--- a/drivers/mfd/lp87565.c
++++ b/drivers/mfd/lp87565.c
+@@ -106,8 +106,8 @@ static void lp87565_shutdown(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id lp87565_id_table[] = {
+-	{ "lp87565-q1", 0 },
+-	{ },
++	{ "lp87565-q1" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lp87565_id_table);
+ 
+diff --git a/drivers/mfd/lp8788.c b/drivers/mfd/lp8788.c
+index f371eeb042e0..32f255378f5a 100644
+--- a/drivers/mfd/lp8788.c
++++ b/drivers/mfd/lp8788.c
+@@ -216,7 +216,7 @@ static void lp8788_remove(struct i2c_client *cl)
+ }
+ 
+ static const struct i2c_device_id lp8788_ids[] = {
+-	{"lp8788", 0},
++	{ "lp8788" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lp8788_ids);
+diff --git a/drivers/mfd/max8907.c b/drivers/mfd/max8907.c
+index accf426234b6..7bac1d651771 100644
+--- a/drivers/mfd/max8907.c
++++ b/drivers/mfd/max8907.c
+@@ -300,7 +300,7 @@ MODULE_DEVICE_TABLE(of, max8907_of_match);
+ #endif
+ 
+ static const struct i2c_device_id max8907_i2c_id[] = {
+-	{"max8907", 0},
++	{ "max8907" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, max8907_i2c_id);
+diff --git a/drivers/mfd/max8925-i2c.c b/drivers/mfd/max8925-i2c.c
+index 7608000488f9..556aea7ec0a0 100644
+--- a/drivers/mfd/max8925-i2c.c
++++ b/drivers/mfd/max8925-i2c.c
+@@ -127,8 +127,8 @@ EXPORT_SYMBOL(max8925_set_bits);
+ 
+ 
+ static const struct i2c_device_id max8925_id_table[] = {
+-	{ "max8925", 0 },
+-	{ },
++	{ "max8925" },
++	{ }
+ };
+ 
+ static int max8925_dt_init(struct device_node *np, struct device *dev,
+diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+index 662604ea97f2..4411e56d7847 100644
+--- a/drivers/mfd/menelaus.c
++++ b/drivers/mfd/menelaus.c
+@@ -1231,7 +1231,7 @@ static void menelaus_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id menelaus_id[] = {
+-	{ "menelaus", 0 },
++	{ "menelaus" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, menelaus_id);
+diff --git a/drivers/mfd/retu-mfd.c b/drivers/mfd/retu-mfd.c
+index b50cfa7f4b8f..9184e553fafd 100644
+--- a/drivers/mfd/retu-mfd.c
++++ b/drivers/mfd/retu-mfd.c
+@@ -300,8 +300,8 @@ static void retu_remove(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id retu_id[] = {
+-	{ "retu", 0 },
+-	{ "tahvo", 0 },
++	{ "retu" },
++	{ "tahvo" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, retu_id);
+diff --git a/drivers/mfd/stw481x.c b/drivers/mfd/stw481x.c
+index f35c3af680dd..5ed64d53c23d 100644
+--- a/drivers/mfd/stw481x.c
++++ b/drivers/mfd/stw481x.c
+@@ -222,8 +222,8 @@ static int stw481x_probe(struct i2c_client *client)
+  * the structure of the I2C core.
+  */
+ static const struct i2c_device_id stw481x_id[] = {
+-	{ "stw481x", 0 },
+-	{ },
++	{ "stw481x" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, stw481x_id);
+ 
+diff --git a/drivers/mfd/tps6105x.c b/drivers/mfd/tps6105x.c
+index 5601f6d0d874..0da1cecb5af6 100644
+--- a/drivers/mfd/tps6105x.c
++++ b/drivers/mfd/tps6105x.c
+@@ -191,8 +191,8 @@ static void tps6105x_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id tps6105x_id[] = {
+-	{ "tps61050", 0 },
+-	{ "tps61052", 0 },
++	{ "tps61050" },
++	{ "tps61052" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, tps6105x_id);
+diff --git a/drivers/mfd/tps6507x.c b/drivers/mfd/tps6507x.c
+index 95dafb0e9f00..9865512dc7cc 100644
+--- a/drivers/mfd/tps6507x.c
++++ b/drivers/mfd/tps6507x.c
+@@ -103,7 +103,7 @@ static int tps6507x_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id tps6507x_i2c_id[] = {
+-	{ "tps6507x", 0 },
++	{ "tps6507x" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, tps6507x_i2c_id);
+diff --git a/drivers/mfd/tps65086.c b/drivers/mfd/tps65086.c
+index fdce81b33f60..5ef0a7e0d61d 100644
+--- a/drivers/mfd/tps65086.c
++++ b/drivers/mfd/tps65086.c
+@@ -127,7 +127,7 @@ static void tps65086_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id tps65086_id_table[] = {
+-	{ "tps65086", 0 },
++	{ "tps65086" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, tps65086_id_table);
+diff --git a/drivers/mfd/tps65090.c b/drivers/mfd/tps65090.c
+index b764badaa62a..b82cd484ac85 100644
+--- a/drivers/mfd/tps65090.c
++++ b/drivers/mfd/tps65090.c
+@@ -225,8 +225,8 @@ static int tps65090_i2c_probe(struct i2c_client *client)
+ 
+ 
+ static const struct i2c_device_id tps65090_id_table[] = {
+-	{ "tps65090", 0 },
+-	{ },
++	{ "tps65090" },
++	{ }
+ };
+ 
+ static struct i2c_driver tps65090_driver = {
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index 03c65bbf2143..82714899efb2 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -642,8 +642,8 @@ static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
+ 			 tps6586x_i2c_resume);
+ 
+ static const struct i2c_device_id tps6586x_id_table[] = {
+-	{ "tps6586x", 0 },
+-	{ },
++	{ "tps6586x" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, tps6586x_id_table);
+ 
+diff --git a/drivers/mfd/tps65912-i2c.c b/drivers/mfd/tps65912-i2c.c
+index 3c5ac781b6c1..3cc1bc68be7c 100644
+--- a/drivers/mfd/tps65912-i2c.c
++++ b/drivers/mfd/tps65912-i2c.c
+@@ -50,7 +50,7 @@ static void tps65912_i2c_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id tps65912_i2c_id_table[] = {
+-	{ "tps65912", 0 },
++	{ "tps65912" },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, tps65912_i2c_id_table);
+diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
+index 9ce34dfd99b3..c184e8bfab7c 100644
+--- a/drivers/mfd/twl6040.c
++++ b/drivers/mfd/twl6040.c
+@@ -817,9 +817,9 @@ static void twl6040_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id twl6040_i2c_id[] = {
+-	{ "twl6040", 0, },
+-	{ "twl6041", 0, },
+-	{ },
++	{ "twl6040" },
++	{ "twl6041" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, twl6040_i2c_id);
+ 
+diff --git a/drivers/mfd/wl1273-core.c b/drivers/mfd/wl1273-core.c
+index e2a7fccaed01..2f185e93318e 100644
+--- a/drivers/mfd/wl1273-core.c
++++ b/drivers/mfd/wl1273-core.c
+@@ -13,7 +13,7 @@
+ #define DRIVER_DESC "WL1273 FM Radio Core"
+ 
+ static const struct i2c_device_id wl1273_driver_id_table[] = {
+-	{ WL1273_FM_DRIVER_NAME, 0 },
++	{ WL1273_FM_DRIVER_NAME },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, wl1273_driver_id_table);
+diff --git a/drivers/mfd/wm8350-i2c.c b/drivers/mfd/wm8350-i2c.c
+index c2a7d7069975..767c176b12a7 100644
+--- a/drivers/mfd/wm8350-i2c.c
++++ b/drivers/mfd/wm8350-i2c.c
+@@ -41,9 +41,9 @@ static int wm8350_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id wm8350_i2c_id[] = {
+-	{ "wm8350", 0 },
+-	{ "wm8351", 0 },
+-	{ "wm8352", 0 },
++	{ "wm8350" },
++	{ "wm8351" },
++	{ "wm8352" },
+ 	{ }
+ };
+ 
+diff --git a/drivers/mfd/wm8400-core.c b/drivers/mfd/wm8400-core.c
+index ddfb234849dd..8ecfe878a5ba 100644
+--- a/drivers/mfd/wm8400-core.c
++++ b/drivers/mfd/wm8400-core.c
+@@ -135,7 +135,7 @@ static int wm8400_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id wm8400_i2c_id[] = {
+-       { "wm8400", 0 },
++       { "wm8400" },
+        { }
+ };
+ 
+
+base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
 -- 
-2.25.1
+2.43.0
 
 
