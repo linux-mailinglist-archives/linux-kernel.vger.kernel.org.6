@@ -1,114 +1,86 @@
-Return-Path: <linux-kernel+bounces-175533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C88B8C20FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:33:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94868C20FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4691C21664
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:33:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55AE1C215E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4585D161333;
-	Fri, 10 May 2024 09:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9E5161B6A;
+	Fri, 10 May 2024 09:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZglHCqGD"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KMPebKyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB83161320
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E07110A3E;
+	Fri, 10 May 2024 09:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715333604; cv=none; b=QTpsGQfAe9FBZ7YJOiKAJ4VFEOyrMcj7TadIkl7Yks79iBksNW/bJxTr7NrNOLZIpz+p1AR55IuIcvIkhzqsb8PEGBOm6RoFK/xzHWFiZYt8Sw7ouCECHX4EohxyvAESjG4nJReJC87uS26bmQQ8WNzNInAbRoANvvIttYE56zk=
+	t=1715333651; cv=none; b=jYtwqJ+2H/9CiMdLs49Tr9dsLioKcjVvvOD6qdLcaEYnc0YegMIqJRpafwPSaD1ZGhOQhETuRXKKCcGixRZX6VzJjNKIJqDJBrGAbSUauoUAw47JObQcV3Yl28s8wJzlmUYniQGrfQI6Sjs9aRoehz42310m1xm1aNMDIjKTfy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715333604; c=relaxed/simple;
-	bh=efzkN/Q2La52OaF3L6FCw9JzyepB+Tla3zYLJlpuFbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OvpXS3L8csUcogQWj/EMi7T2wdp5Ym/zlc8uvrlfsbV1/XGWJ8Lqk8xuBkz/i4eZiI0bSoemZ/wZRvdiOc/8UBk98xtOlBP/FBGRk2CFGntnguU8oZrBl43nHDEjgarIIx95CYOlVn2mRu68dz5McwLgCMC/IMQ5+HpxSQnE/gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZglHCqGD; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A7ZIuP018888;
-	Fri, 10 May 2024 09:33:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=Mz+QntpnKV73Xce3+GpAUXu4jGV2SHVfVGWrzWB5ATM=;
- b=ZglHCqGD8u7Yvpkto//htCa/mRF69vAcGv1+HDfPLiCi0gQ+9w5XSYV+KAbv/gnd7ME7
- 1mXc/HOI/uLc921aNsOOdel6eBXnqkDrIFwB1xoMWYY8yyULlpVItko6bZsLmCTEjG+7
- 148UjbE78CRz+3P0th/guEsujUcGkfvXGZWndOSPiBwZudzNqOMajU+AN7XYBfJ8O0dQ
- i09it2nKhLE1wonEZhxtdeWlVnVgNv0D7VC5LGfOchzxmkump6Jic5H3uFodOKWA4Qkc
- bRz7IEvrF72X8CtVd3yvvoMrqQIw6Do+CZKwIRvF+odojjW9/qnQ/FcligbzXz/n81cD FA== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y17x7rrge-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 09:33:06 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44A98Mcw030898;
-	Fri, 10 May 2024 09:33:05 GMT
-Received: from localhost.uk.oracle.com (dhcp-10-175-179-215.vpn.oracle.com [10.175.179.215])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3xysfpka7v-1;
-	Fri, 10 May 2024 09:33:05 +0000
-From: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] objtool: builtin-check: Use "action" in opts_valid error message to be consistent with help
-Date: Fri, 10 May 2024 15:02:57 +0530
-Message-ID: <20240510093257.82634-1-siddh.raman.pant@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715333651; c=relaxed/simple;
+	bh=PYfpJSicKdob+Dew7EMxzG7V511iTL5iPZFXkg2MC4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NoyaFpUbkyKhxCwOGch36XlAIJGr8b3dKmP5MiCdDoIXasCKWHa8Kd4zge+oRsC4W8DfFUwGMixvHqQId3jOR4j0mt/dzLce+hF8wCE58VE6ql0361NryIJFlof7Nc3qqgJL03yZwcWZjrA+zq8wH7POWqySqaL4JJxdQST9+w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KMPebKyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4C5C113CC;
+	Fri, 10 May 2024 09:34:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715333649;
+	bh=PYfpJSicKdob+Dew7EMxzG7V511iTL5iPZFXkg2MC4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KMPebKyZhF1VD73UY+H2xHl6Zyc+b7YnTd7D8dBxwGZCuJd7OpAKc08BoXT/YsLib
+	 sWps0/rY8WjX2EDnbGL2iytunNZWmMOxQnq8C6eBUs9kjbj2k3KAXSUKpzlleIAjSP
+	 sy2hTvwoYMq3law1uLj5ug2lL+Jgqoq1TsIk7uF4=
+Date: Fri, 10 May 2024 10:34:05 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] usb: fotg210: Add missing kernel doc description
+Message-ID: <2024051047-scrabble-variable-6e29@gregkh>
+References: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_06,2024-05-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405100068
-X-Proofpoint-GUID: z8I8B-BGM0Ky-o-BL4foi0-3vN8xCN6h
-X-Proofpoint-ORIG-GUID: z8I8B-BGM0Ky-o-BL4foi0-3vN8xCN6h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
 
-The help message mentions the main options as "actions", which is
-different from the optional "options". But the check error messages
-outputs "option" or "command" for referring to actions.
+On Wed, May 08, 2024 at 06:03:35PM +0300, Andy Shevchenko wrote:
+> kernel-doc validator is not happy:
+> 
+>   warning: Function parameter or struct member 'fotg' not described in 'fotg210_vbus'
+> 
+> Add missing description.
+> 
+> Fixes: 3e679bde529e ("usb: fotg210-udc: Implement VBUS session")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/usb/fotg210/fotg210-core.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/fotg210/fotg210-core.c b/drivers/usb/fotg210/fotg210-core.c
+> index 958fc40eae86..00483da40f04 100644
+> --- a/drivers/usb/fotg210/fotg210-core.c
+> +++ b/drivers/usb/fotg210/fotg210-core.c
+> @@ -95,6 +95,7 @@ static int fotg210_gemini_init(struct fotg210 *fotg, struct resource *res,
+>  
+>  /**
+>   * fotg210_vbus() - Called by gadget driver to enable/disable VBUS
+> + * @fotg210: pointer to a private fotg210 object
+>   * @enable: true to enable VBUS, false to disable VBUS
+>   */
+>  void fotg210_vbus(struct fotg210 *fotg, bool enable)
 
-Hence, make the error messages consistent with help.
-
-Signed-off-by: Siddh Raman Pant <siddh.raman.pant@oracle.com>
----
- tools/objtool/builtin-check.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/objtool/builtin-check.c b/tools/objtool/builtin-check.c
-index 5e21cfb7661d..387d56a7f5fb 100644
---- a/tools/objtool/builtin-check.c
-+++ b/tools/objtool/builtin-check.c
-@@ -144,7 +144,7 @@ static bool opts_valid(void)
- 	    opts.static_call		||
- 	    opts.uaccess) {
- 		if (opts.dump_orc) {
--			ERROR("--dump can't be combined with other options");
-+			ERROR("--dump can't be combined with other actions");
- 			return false;
- 		}
- 
-@@ -159,7 +159,7 @@ static bool opts_valid(void)
- 	if (opts.dump_orc)
- 		return true;
- 
--	ERROR("At least one command required");
-+	ERROR("At least one action required");
- 	return false;
- }
- 
--- 
-2.43.0
-
+I don't think you actually built the documentation after this patch :(
 
