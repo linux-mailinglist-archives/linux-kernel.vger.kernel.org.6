@@ -1,152 +1,184 @@
-Return-Path: <linux-kernel+bounces-175203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918518C1C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:54:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B4F8C1C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66546B228AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:54:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C99681C212E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6087813B797;
-	Fri, 10 May 2024 01:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4863713B7BE;
+	Fri, 10 May 2024 01:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihL8ctWD"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fI3dHeba"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B2513B787;
-	Fri, 10 May 2024 01:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867AE33CD1;
+	Fri, 10 May 2024 01:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715306076; cv=none; b=PsnqMoEhqgSBTwck71YQDiHZTugxsgWfyWHftb0M7eXxPy1WOTkGeZj2Nr6mlZQbE4HdJuahgHzQLEUYk7tJPhBMqBtY0OO/91o6XItnMMvF0Sb0QH1toRYcbapYzKt5wMAjGIaPC6PDqQxvwhuVQ+kOf6F1K6dTp2AoD51tp0I=
+	t=1715306387; cv=none; b=FeQUq7MupVFP+alDRcutXdZei/F7jrfz9sEdWNDjvX2nZWegqi1fLcq1CT74rRXiwjDyTyir25OoWamFNTx6hGcZQ3MersY2t61juuHT0qp/xT/vmPWgwrl67nOZtZLHM64HiOLtKQHEKmJ09tT+J/vkBSIIkB/7ZawsabkX0P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715306076; c=relaxed/simple;
-	bh=mMkYUl68yZLTzGlW7UIXIbIlr64TygSr5Pw7nD57FbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d46SaiBFZdaP7YhqpF2INwg22EGofTempQ1BvszI7aMCdG1ZY+5TdOzNRVchrPMZHMEsOnDtFEERQ/UXxuaBljEDuf25T9XtECKfD3aw8rly5GEBKQ5VrTt38Uqi9leGckPp5+A5PZC2CVJqe/HUo+X3eg3NNUoB5LI74LNGh0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ihL8ctWD; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so340460966b.0;
-        Thu, 09 May 2024 18:54:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715306072; x=1715910872; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXTf1Spaxf38XUied9hUFPIkMdQ4wUBR6hmvOHQ103w=;
-        b=ihL8ctWDB15NzJkl74p0l4M2wLhTxQerKDJaxE4Q4y1BC06nGZ3WNqd83wBL0djq/2
-         K0jp0Qwt/7b+3L21oxgAPjQw7g6jvh+GFqmtTrHF7AdeN024XMSy9zpI+Qp6+65xaKW/
-         2S2eV9S8RkSiwtkNCn2qIHk8gxNlhYfnUySw88wfdEdCRvxmudwylCHD48I+hf1jvG+O
-         ryPnUZN2yFwlMpIqNjpDGlQXHi96Zt0DOErO59pg9zGNhU+MDieVoP5kb7t04VY57LvJ
-         vvD8dXpQQ5lzFRf8fMKW8X/evcOiF4ELT3IimjGnEeKH00xj9uW/HBt+9VZpbDfeMTLN
-         kVCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715306072; x=1715910872;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=aXTf1Spaxf38XUied9hUFPIkMdQ4wUBR6hmvOHQ103w=;
-        b=VYAlZX0MAUQPyHuuCEHfhPNBQPTxAhwqH/uVPElo8ASQBJ3Iaa5LoRr922lvC+Ix3J
-         JlQPAeCJqCEywTlZF1r6QVI0bRnwHINzEHHVVsYt8x/jEk3rV1B5/1USLM3Op8Qs/rnP
-         vZ0APmq8jaZuKAhERRuHcchUy2Rz+EyaCv8kmRPqA4K4WklYBhSnKtut+hKKLozNwUAO
-         fOv82F8PvNa/RBiO6R0R06/ie8I2Wtlmp0Lpb6AADTpgo1o2bwgLNqB1+8ooe5ihotvJ
-         wIFDK9bb6hGIQJhZO7xD61GXeeX6wxIYPbCsmoatJGUm5LerIjYjHtZVumcrLOrGrqBd
-         x5GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUq1NElITGZgSCZ4gqY6b8459WrOX2yWinVy+dThF9/ggDZ6tNAtpeeurh7AtZlOuk7XiDyCitjcodwT+gz4tJieDD03n53orYpBCQ/k+nAihFhIhYalDlrXO3cjqX0wPoTuFMiZZFHWA==
-X-Gm-Message-State: AOJu0Yz1OKWTGvkru17Mcbg3nIFIO0oudsF57DQVFpwHTX6erCPar7fI
-	RoRijqcjaemoR2CVLOZZEAh1VoGIF4b+3f7GSs3QB3HHi5eqi8we
-X-Google-Smtp-Source: AGHT+IFxjdKrr+AKIROCEwpZ+jZhaAJNBjXLnX+atHD9nS7kVMvzgP93kC4YAp2RFOhq++HSXzsgAA==
-X-Received: by 2002:a17:907:36cd:b0:a5a:1a:b0e6 with SMTP id a640c23a62f3a-a5a2d53b98dmr135177966b.9.1715306072358;
-        Thu, 09 May 2024 18:54:32 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7f27sm132954566b.127.2024.05.09.18.54.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 May 2024 18:54:31 -0700 (PDT)
-Date: Fri, 10 May 2024 01:54:30 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Yujie Liu <yujie.liu@intel.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, kernel test robot <lkp@intel.com>,
-	arnd@arndb.de, rppt@kernel.org, oe-kbuild-all@lists.linux.dev,
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] mm/memblock: discard .text/.data if
- CONFIG_ARCH_KEEP_MEMBLOCK not set
-Message-ID: <20240510015203.bige6ddog5o22zvr@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20240506012104.10864-1-richard.weiyang@gmail.com>
- <202405071200.YgYuuCBu-lkp@intel.com>
- <20240507084350.mc6e46gecyzaqnhb@master>
- <ZjrsRSryTFOZpT8o@yujie-X299>
+	s=arc-20240116; t=1715306387; c=relaxed/simple;
+	bh=1zvBhO11KU07W6//cXwWC2aMDcPdVMYA8rYU21wJ2M4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RfdNjo+8honSO/fV0VU0JiFGV/CHugtKPsVjXy3xv42QIl1yXDp+kpDp/JOvWJZUO8QrXov94I7jfiOpIBsDm3DmTFpcbiCZurG7+cnRi+Tt2Pdcx9PoWB/dHFQdBdq/z4eo8MFn54yux4D271WalR/W6NH3B0m7Gmtu+VvA49U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fI3dHeba; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A1lenh017504;
+	Fri, 10 May 2024 01:59:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=6hQdQWIJQzQJKZkddUQqTAvsAlR93yaL2HeF+Kt++gM=;
+ b=fI3dHebaSoPgdeo5SWBQxMdoME/WtTPJAhMDH8wd8I7e1aFBR1+hHtP2hmvNlBOz125A
+ TuQVPxWFQqZ83p3SMKPICox2DWSJ1qfVDYpWIzaJtMjnjcLR0mFmXxIJmh7V8jkqBNsY
+ ECgk+23EAzt9aJnYEjVCSVFQ2kgl4Sft7x8GjbuTExhlLW4uIJDevvV4C5hfttsf1YAM
+ CZynZsTno/nbIabtHZJECjrwRm5pake0aACvzhlTHg+gG9IRT3FK6UzEkFAlX12aVP3k
+ x/U8H/WtXEUeXYH7QCuTk2uqg6QuYQfkwQe0e+rOgi16PbuMxLqQTQTmWx9N9MHD57f4 3g== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y1a7p80jx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 01:59:31 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44A0Y2ZQ026745;
+	Fri, 10 May 2024 01:59:30 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xysfwxerx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 01:59:30 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44A1xRHY10355390
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 May 2024 01:59:30 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BF00C58061;
+	Fri, 10 May 2024 01:59:27 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 503105803F;
+	Fri, 10 May 2024 01:59:27 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 10 May 2024 01:59:27 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, lukas@wunner.de, jarkko@kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v3] crypto: ecc - Prevent ecc_digits_from_bytes from reading too many bytes
+Date: Thu,  9 May 2024 21:59:21 -0400
+Message-ID: <20240510015921.179175-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjrsRSryTFOZpT8o@yujie-X299>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OWCrg3R4g_-Y7GN8ak5RkX8wPvR2PPAC
+X-Proofpoint-ORIG-GUID: OWCrg3R4g_-Y7GN8ak5RkX8wPvR2PPAC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-10_01,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405100012
 
-On Wed, May 08, 2024 at 11:06:45AM +0800, Yujie Liu wrote:
->On Tue, May 07, 2024 at 08:43:50AM +0000, Wei Yang wrote:
->> On Tue, May 07, 2024 at 01:13:05PM +0800, kernel test robot wrote:
->> >Hi Wei,
->> >
->> >kernel test robot noticed the following build warnings:
->> >
->> >[auto build test WARNING on akpm-mm/mm-everything]
->> >
->> >url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Yang/mm-memblock-discard-text-data-if-CONFIG_ARCH_KEEP_MEMBLOCK-not-set/20240506-092345
->> >base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
->> >patch link:    https://lore.kernel.org/r/20240506012104.10864-1-richard.weiyang%40gmail.com
->> >patch subject: [PATCH] mm/memblock: discard .text/.data if CONFIG_ARCH_KEEP_MEMBLOCK not set
->> >config: powerpc-allnoconfig
->> >compiler: powerpc-linux-gcc (GCC) 13.2.0
->> >reproduce (this is a W=1 build):
->> >
->> >If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> >the same patch/commit), kindly add following tags
->> >| Reported-by: kernel test robot <lkp@intel.com>
->> >| Closes: https://lore.kernel.org/oe-kbuild-all/202405071200.YgYuuCBu-lkp@intel.com/
->> >
->> >All warnings (new ones prefixed by >>):
->> >
->> >>> powerpc-linux-ld: warning: orphan section `.mbinit.text' from `mm/memblock.o' being placed in section `.mbinit.text'
->> >>> powerpc-linux-ld: warning: orphan section `.mbinit.text' from `mm/memblock.o' being placed in section `.mbinit.text'
->> >>> powerpc-linux-ld: warning: orphan section `.mbinit.text' from `mm/memblock.o' being placed in section `.mbinit.text'
->> >
->> >-- 
->> >0-DAY CI Kernel Test Service
->> >https://github.com/intel/lkp-tests/wiki
->> 
->> >reproduce (this is a W=1 build):
->> >        git clone https://github.com/intel/lkp-tests.git ~/lkp-tests
->> >        git remote add akpm-mm https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git
->> >        git fetch akpm-mm mm-everything
->> >        git checkout akpm-mm/mm-everything
->> >        b4 shazam https://lore.kernel.org/r/20240506012104.10864-1-richard.weiyang@gmail.com
->> >        # save the config file
->> >        mkdir build_dir && cp config build_dir/.config
->> >        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
->> >        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-13.2.0 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash
->> 
->> Can I reproduce this on x86? I don't have a powerpc machine.
->
->The above steps are cross compiling for powerpc target on x86
->machine, so you can just follow the steps to reproduce on x86.
->
+Prevent ecc_digits_from_bytes from reading too many bytes from the input
+byte array in case an insufficient number of bytes is provided to fill the
+output digit array of ndigits. Therefore, initialize the most significant
+digits with 0 to avoid trying to read too many bytes later on. Convert the
+function into a regular function since it is getting too big for an inline
+function.
 
-Thanks, this one is helpful.
+If too many bytes are provided on the input byte array the extra bytes
+are ignored since the input variable 'ndigits' limits the number of digits
+that will be filled.
 
->Thanks,
->Yujie
+Fixes: d67c96fb97b5 ("crypto: ecdsa - Convert byte arrays with key coordinates to digits")
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
+---
+v3:
+ - Applied Jarkko's tag
+
+v2:
+ - un-inline function
+ - use memset
+---
+ crypto/ecc.c                  | 22 ++++++++++++++++++++++
+ include/crypto/internal/ecc.h | 15 ++-------------
+ 2 files changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index c1d2e884be1e..fe761256e335 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -68,6 +68,28 @@ const struct ecc_curve *ecc_get_curve(unsigned int curve_id)
+ }
+ EXPORT_SYMBOL(ecc_get_curve);
+ 
++void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
++			   u64 *out, unsigned int ndigits)
++{
++	int diff = ndigits - DIV_ROUND_UP(nbytes, sizeof(u64));
++	unsigned int o = nbytes & 7;
++	__be64 msd = 0;
++
++	/* diff > 0: not enough input bytes: set most significant digits to 0 */
++	if (diff > 0) {
++		ndigits -= diff;
++		memset(&out[ndigits - 1], 0, diff * sizeof(u64));
++	}
++
++	if (o) {
++		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
++		out[--ndigits] = be64_to_cpu(msd);
++		in += o;
++	}
++	ecc_swap_digits(in, out, ndigits);
++}
++EXPORT_SYMBOL(ecc_digits_from_bytes);
++
+ static u64 *ecc_alloc_digits_space(unsigned int ndigits)
+ {
+ 	size_t len = ndigits * sizeof(u64);
+diff --git a/include/crypto/internal/ecc.h b/include/crypto/internal/ecc.h
+index 7ca1f463d1ec..f7e75e1e71f3 100644
+--- a/include/crypto/internal/ecc.h
++++ b/include/crypto/internal/ecc.h
+@@ -64,19 +64,8 @@ static inline void ecc_swap_digits(const void *in, u64 *out, unsigned int ndigit
+  * @out       Output digits array
+  * @ndigits:  Number of digits to create from byte array
+  */
+-static inline void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
+-					 u64 *out, unsigned int ndigits)
+-{
+-	unsigned int o = nbytes & 7;
+-	__be64 msd = 0;
+-
+-	if (o) {
+-		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
+-		out[--ndigits] = be64_to_cpu(msd);
+-		in += o;
+-	}
+-	ecc_swap_digits(in, out, ndigits);
+-}
++void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
++			   u64 *out, unsigned int ndigits);
+ 
+ /**
+  * ecc_is_key_valid() - Validate a given ECDH private key
 -- 
-Wei Yang
-Help you, Help me
+2.43.0
+
 
