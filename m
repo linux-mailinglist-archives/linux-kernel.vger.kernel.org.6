@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-175830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0A18C25D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:33:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DA08C25E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B5A1C217D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C81B1F225BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8132D12C467;
-	Fri, 10 May 2024 13:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF0212C47D;
+	Fri, 10 May 2024 13:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LWA3yB3n";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LWA3yB3n"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="y6ng1k1C"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88D75339E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07AF5472A;
+	Fri, 10 May 2024 13:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715348019; cv=none; b=fUotG4ksyNXOGoOcvw2h4Mvh1eUF8COVY4apg5/cF0oWHZRPEhf+1zqRG3VvDDYm9fgOm4LREO/7EJLB+rXfY6NjkiMj3q6ONMaZO3fCuq7EQ9tSW9QIswJcGAHvXl4OPZF7GkPbGswxcn/ATqr16bH91mpu2P/AdzD9JGuD254=
+	t=1715348234; cv=none; b=XrP1/k+bm80sSrF3+zBXijSHNKOVZNGuTlR7i5x7RWXgpnrEUXWeqYXWGOROhZQSzB2+DP5ZMQJw/x1tx0nJO1TIFhIH4mje78pBDVE7/6L1mmB0kxLY7t/FKHlFiO94Eo0z0CcydMGe7PPqv7c2+sJ3zu0Dk/O/slOCafptNDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715348019; c=relaxed/simple;
-	bh=uDOukQ73ZJHi76qm9+oS4eVsH62iJdBg7hMZoNnyZ58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLPiABk9yeaGUvsPFsgYDPhFqDbkXGCvF+wFNHqAeZKjgz3iCfNph+tCqUfkm7PEVja6v7Ya9patv8kX2pYAIaRAkINeGc8u0kZFHebFnDSxNY9wTAvBgx3mUmzdmzBqGHGTlUFUANWT96hxwafGU6DbyTCztbQnrguJbL3rSTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=LWA3yB3n; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=LWA3yB3n; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1715348234; c=relaxed/simple;
+	bh=3Jq1Hi7P/s1vouFwybYjISD8sE06aiZGtuaccX8h5E4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NiGljH7inV01u/dGb4lOF3OwFyTwjnF94N2PGMOGAJOJc1+AfvO6y600qkBNf6CvBEp1w3jsnc0vXLTFrHcu9GtRa44eeNFMlfcjuWlrbE+g6V3MFPKdYWQaz77be5tZ05sCOyuCeRglVp70d9s77uYKJ7S8Qt5z/Uh+Q0L7OQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=y6ng1k1C; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715348230;
+	bh=3Jq1Hi7P/s1vouFwybYjISD8sE06aiZGtuaccX8h5E4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=y6ng1k1CJmLR2SuMPRKqpljD80OMMjZpbOloF8AOvEl6Eq1ivcCRtNcDPEgbdM9Vq
+	 YwryKLfdKhALR7DVA11jzg++215zWNssyG6VMw7lS0npoakBNJ/HBHYBLrMv3chicy
+	 JYvp4xYEaQheUuoDfOO9DZsL/rshooJcjEgmB3mYH0RiMwEM2cHpDxY5i0L4Zv3fV4
+	 7UiREiX6GLNcczr0CBuKCByAs3ifsG+xgndnrFzFrYekFEXJpI5kKquAtkb3BTEc/O
+	 BXmJjaPFg2Gd9taG3Uhyw89Givq1kQxjTYjQUYX/J4qQEL0Mr5+5II7ULDYrOYnH1F
+	 J5pdV33EB+QoA==
+Received: from [100.95.196.25] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A8834670C0;
-	Fri, 10 May 2024 13:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715348009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H7flCeeu/RqHijW2rCZbgRalVKYx9U95MIGkT6wJRF4=;
-	b=LWA3yB3n2h6A9F2zfs3K64ygwUTdGdLCEbzkEnqgEOHn6X/33t/f2M427FkntTdPcwULTA
-	TtV8ASS341OFDlmQkyZ9CwiSknvBxIHm2zOk5DeV43IRxOIzHvIwQ9ArLN34SpvWOiiE2z
-	wkCul0JoEamzw6mF/E/vYxPHLaQhqRw=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=LWA3yB3n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715348009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H7flCeeu/RqHijW2rCZbgRalVKYx9U95MIGkT6wJRF4=;
-	b=LWA3yB3n2h6A9F2zfs3K64ygwUTdGdLCEbzkEnqgEOHn6X/33t/f2M427FkntTdPcwULTA
-	TtV8ASS341OFDlmQkyZ9CwiSknvBxIHm2zOk5DeV43IRxOIzHvIwQ9ArLN34SpvWOiiE2z
-	wkCul0JoEamzw6mF/E/vYxPHLaQhqRw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A3B7139AA;
-	Fri, 10 May 2024 13:33:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bKHNHikiPmZpBwAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 10 May 2024 13:33:29 +0000
-Date: Fri, 10 May 2024 15:33:28 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rfc 0/9] mm: memcg: separate legacy cgroup v1 code and
- put under config option
-Message-ID: <Zj4iKJnp5wU6NkCf@tiehlicka>
-References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
+	(Authenticated sender: koike)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id CCA413781183;
+	Fri, 10 May 2024 13:37:05 +0000 (UTC)
+Message-ID: <c86ab913-dc0a-4ded-951a-5ae9ccb334b2@collabora.com>
+Date: Fri, 10 May 2024 10:37:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509034138.2207186-1-roman.gushchin@linux.dev>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: A8834670C0
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] drm/ci: validate drm/msm XML register files
+ against schema
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240503-fd-fix-lxml-v2-0-f80a60ce21a1@linaro.org>
+ <20240503-fd-fix-lxml-v2-2-f80a60ce21a1@linaro.org>
+ <69b593b7-109c-825f-3dbb-5e8cce63ff01@quicinc.com>
+ <CAA8EJpp4x+NEpMAGtgOmu-0NY8ycTu0iQX6-1Vv76mkKPea_Cw@mail.gmail.com>
+ <24fb0b07-af03-1341-d98c-46f4f167fbbb@quicinc.com>
+ <CAA8EJporB9jjKtT-XS4PcRSYzi+FJh1smsjnBCgy8f5JvDtjAg@mail.gmail.com>
+ <e082de17-f4f7-1923-cfe0-10916c2e3caa@quicinc.com>
+Content-Language: en-US
+From: Helen Koike <helen.koike@collabora.com>
+In-Reply-To: <e082de17-f4f7-1923-cfe0-10916c2e3caa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed 08-05-24 20:41:29, Roman Gushchin wrote:
-> Cgroups v2 have been around for a while and many users have fully adopted them,
-> so they never use cgroups v1 features and functionality. Yet they have to "pay"
-> for the cgroup v1 support anyway:
-> 1) the kernel binary contains useless cgroup v1 code,
-> 2) some common structures like task_struct and mem_cgroup have never used
->    cgroup v1-specific members,
-> 3) some code paths have additional checks which are not needed.
-> 
-> Cgroup v1's memory controller has a number of features that are not supported
-> by cgroup v2 and their implementation is pretty much self contained.
-> Most notably, these features are: soft limit reclaim, oom handling in userspace,
-> complicated event notification system, charge migration.
-> 
-> Cgroup v1-specific code in memcontrol.c is close to 4k lines in size and it's
-> intervened with generic and cgroup v2-specific code. It's a burden on
-> developers and maintainers.
-> 
-> This patchset aims to solve these problems by:
-> 1) moving cgroup v1-specific memcg code to the new mm/memcontrol-v1.c file,
-> 2) putting definitions shared by memcontrol.c and memcontrol-v1.c into the
->    mm/internal.h header
-> 3) introducing the CONFIG_MEMCG_V1 config option, turned on by default
-> 4) making memcontrol-v1.c to compile only if CONFIG_MEMCG_V1 is set
-> 5) putting unused struct memory_cgroup and task_struct members under
->    CONFIG_MEMCG_V1 as well.
 
-This makes sense and I have to admit I didn't think this was so much
-code to move. It will make the code base much esier to follow. I do not
-think we can drop that code anytime soon as there is still quite a lot
-of use of v1 out there. From my experience there is no good reason for
-many other than inertia and those are just waiting for somebody to move
-them to v2. There are some workloads which depend on v1 only features
-and we should discuss what to do about those.
--- 
-Michal Hocko
-SUSE Labs
+
+On 03/05/2024 21:07, Abhinav Kumar wrote:
+> 
+> 
+> On 5/3/2024 5:02 PM, Dmitry Baryshkov wrote:
+>> On Sat, 4 May 2024 at 01:38, Abhinav Kumar <quic_abhinavk@quicinc.com> 
+>> wrote:
+>>>
+>>>
+>>>
+>>> On 5/3/2024 1:20 PM, Dmitry Baryshkov wrote:
+>>>> On Fri, 3 May 2024 at 22:42, Abhinav Kumar 
+>>>> <quic_abhinavk@quicinc.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 5/3/2024 11:15 AM, Dmitry Baryshkov wrote:
+>>>>>> In order to validate drm/msm register definition files against 
+>>>>>> schema,
+>>>>>> reuse the nodebugfs build step. The validation entry is guarded by
+>>>>>> the EXPERT Kconfig option and we don't want to enable that option for
+>>>>>> all the builds.
+>>>>>>
+>>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>> ---
+>>>>>>     drivers/gpu/drm/ci/build.sh  | 3 +++
+>>>>>>     drivers/gpu/drm/ci/build.yml | 1 +
+>>>>>>     2 files changed, 4 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/ci/build.sh 
+>>>>>> b/drivers/gpu/drm/ci/build.sh
+>>>>>> index 106f2d40d222..28a495c0c39c 100644
+>>>>>> --- a/drivers/gpu/drm/ci/build.sh
+>>>>>> +++ b/drivers/gpu/drm/ci/build.sh
+>>>>>> @@ -12,6 +12,9 @@ rm -rf .git/rebase-apply
+>>>>>>     apt-get update
+>>>>>>     apt-get install -y libssl-dev
+>>>>>>
+>>>>>> +# for msm header validation
+>>>>>> +apt-get install -y python3-lxml
+>>>>>> +
+>>>>>>     if [[ "$KERNEL_ARCH" = "arm64" ]]; then
+>>>>>>         GCC_ARCH="aarch64-linux-gnu"
+>>>>>>         DEBIAN_ARCH="arm64"
+>>>>>> diff --git a/drivers/gpu/drm/ci/build.yml 
+>>>>>> b/drivers/gpu/drm/ci/build.yml
+>>>>>> index 17ab38304885..9c198239033d 100644
+>>>>>> --- a/drivers/gpu/drm/ci/build.yml
+>>>>>> +++ b/drivers/gpu/drm/ci/build.yml
+>>>>>> @@ -106,6 +106,7 @@ build-nodebugfs:arm64:
+>>>>>>       extends: .build:arm64
+>>>>>>       variables:
+>>>>>>         DISABLE_KCONFIGS: "DEBUG_FS"
+>>>>>> +    ENABLE_KCONFIGS: "EXPERT DRM_MSM_VALIDATE_XML"
+>>>>>>
+>>>>>
+>>>>> Wouldnt this end up enabling DRM_MSM_VALIDATE_XML for any arm64 
+>>>>> device.
+>>>>>
+>>>>> Cant we make this build rule msm specific?
+>>>>
+>>>> No need to. We just need to validate the files at least once during
+>>>> the whole pipeline build.
+>>>>
+>>>
+>>> ah okay, today the arm64 config anyway sets all arm64 vendor drm configs
+>>> to y.
+>>>
+>>> A couple of more questions:
+>>>
+>>> 1) Why is this enabled only for no-debugfs option?
+>>> 2) Will there be any concerns from other vendors to enable CONFIG_EXPERT
+>>> in their CI runs as the arm64 config is shared across all arm64 vendors.
+>>
+>> I don't get the second question. This option is only enabled for
+>> no-debugfs, which isn't used for execution.
+>>
+> 
+> Ah I see, makes sense.
+> 
+>> I didn't want to add an extra build stage, just for the sake of
+>> validating regs against the schema, nor did I want EXPERT to find its
+>> way into the actual running kernels.
+>>
+> 
+> This answered my second question actually. That basically I didnt also 
+> want EXPERT to find its way into actual running kernels.
+> 
+> Hence, I am fine with this change now
+> 
+> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
+> But, I will wait to hear from helen, vignesh about what they think of this.
+
+
+lgfm
+
+Acked-by: Helen Koike <helen.koike@collabora.com>
+
+Thanks
+Helen
 
