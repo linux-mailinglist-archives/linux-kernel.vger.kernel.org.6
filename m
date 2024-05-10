@@ -1,132 +1,130 @@
-Return-Path: <linux-kernel+bounces-175959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2418C27E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AD38C27E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:33:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48A2228831F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B93286A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0956171644;
-	Fri, 10 May 2024 15:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C41171658;
+	Fri, 10 May 2024 15:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FY24Fgx4"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FcOHoUCA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C2E12AAD5;
-	Fri, 10 May 2024 15:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49361E502;
+	Fri, 10 May 2024 15:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355178; cv=none; b=OKZmJBV7lCtKKUZBh3lP70sNCMjq0eCh3z6OIj9zF560/GwfnuzhZ+AmL3nj/OQrAXHjNj0cBi/0rj25ya5BXUDF3SymQgDyQbjJApfJHF/CV/1HFWj/cmTMzWk5TT9qfF9vCkqV9uuXZOekziPPY0WCpX2wNg0EhhBqR3lYsA8=
+	t=1715355221; cv=none; b=QPwcPcQxgnaEeszrOIwHDXxnUvtXxdvpY19bz0Um0U6A2B6c8dt8r4v+RtoSTaNxIKmMU9Yn/u0l7SYwTIMhXA9Xz8qWHEDLngjjCHFB5B3rrUwSd3hiJnu1YHxEwhGiHLY9DxxAT2Y8GMm9HZwf0A2/EemxBKDLi3188OUE0m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355178; c=relaxed/simple;
-	bh=ugaNMMw3t62NVbWHQEw5Wz57Ea7qNaXrEup61pOajsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YjjzuHM9T4pALYgWfRx3hlWgkvfBm4BaFSpS4zc6rtjzkbDwb9o7b9FaSQZIbm2SmZqI4G4EyKJo+STO4BgXbRYz3GSBZijn3r9EhskRxzhU/OPY7EFvn+SrtNIDN4FVV16eHq2trPsKgTy7fX7AHtS7PpQ7WFRy8csRTB4dlYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FY24Fgx4; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3152820009;
-	Fri, 10 May 2024 15:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715355173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NvpIh3MztCy78ewXd3YEalmoL2kGSw4XpNzZDNRi4V0=;
-	b=FY24Fgx49n4qxpJMFZ2zNBe4gD+NlYtYM+K2PWhBQIMz4VY3rBsbjivq51AzhfKaaPzBhL
-	Ny1rTrjzvpHiG/Qjeotb652MOoT2be5dc0tgEilX2ZBMygBFeCLBbNT5qjU4kDyhPpaNp7
-	UM0UxV2I0xVHNWGbkT32xL7p3F7RIm+T+RC/vfNHqeix/MI11t4mGJbSYFYhWWxcXm8BD2
-	q1xiL13YX42hg89tlNgFd3UYeZTHkZfOLp98HmkA7SLK9Rxt5wiBnmwklHF36EK+xFY1yg
-	ufym7uB3GJoauepOfcs0ghanlGM5elnTMzy/snz/qeOMAGthHqiM8kSMmmYolA==
-Date: Fri, 10 May 2024 17:32:48 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: "Arnd Bergmann" <arnd@arndb.de>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "laurent.pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Dave Airlie"
- <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- "derek.kiernan@amd.com" <derek.kiernan@amd.com>, "dragan.cvetic@amd.com"
- <dragan.cvetic@amd.com>, "Saravana Kannan" <saravanak@google.com>, "Paul
- Kocialkowski" <contact@paulk.fr>, "Herve Codina"
- <herve.codina@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, "Paul
- Kocialkowski" <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v2 5/5] misc: add ge-addon-connector driver
-Message-ID: <20240510173248.70fa3b60@booty>
-In-Reply-To: <a4c55013-048f-4056-9866-f0505507d501@app.fastmail.com>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
-	<20240510-hotplug-drm-bridge-v2-5-ec32f2c66d56@bootlin.com>
-	<2024051039-decree-shrimp-45c6@gregkh>
-	<a1970921-f00b-411d-832d-5289f9812ba0@app.fastmail.com>
-	<20240510125423.25d4b3ed@booty>
-	<a4c55013-048f-4056-9866-f0505507d501@app.fastmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715355221; c=relaxed/simple;
+	bh=FyxosxiDRe7kVFCrtSH8YTzfIKGevBBbWmNlhONBN+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsnWjpG6oAtzeRjVQpSYXW5DgUGTDf5+r986oJG05TCfrdhbly78qYnMsbLMkWJOfU6PfkAee7Cf3sNF1CiGyYfYmVc1hx8oeLcNogtuVVeJ6RALEQQGQyowcw18He1ppuaY7BBwsg4Hl6O1n+agscX/5CEEGheJ/hNHuGO5YXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FcOHoUCA; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715355220; x=1746891220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FyxosxiDRe7kVFCrtSH8YTzfIKGevBBbWmNlhONBN+4=;
+  b=FcOHoUCA3bNdNmI7gslYF1hKweA0i3tcyoyRzW+4qADsvDpXuqaNYFvj
+   tVNAT1w4hjpytKu+ruajkAxjBR+zgTQ1LzvPQFmEEyJnKZXpqBl22Sm4U
+   jvF/mhfHMIagzpPA4apwfJzmnnAKULSxLUtCx87Pg57t0j1uhKSVRJnGQ
+   zvBPzWhyOCcH4IDE9038G8vLdJwtW3MdVGrDsCXVLAJ1unsK19P0SqpaN
+   wzBJdpRYlchJb3tEdl8Ym5dNRoWGyjsZXhCCgYBDN0XeHx52Iu+SshGBm
+   wol+kEouprza9BRaYwfFAlk+qAf7x7gFPK6QCR0wbDFhbNlCyAWuQ6dkB
+   A==;
+X-CSE-ConnectionGUID: YAZIw3trSb2wRJ72spQlbA==
+X-CSE-MsgGUID: 2/a8OrCtQlekDlSiY9/reA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11473311"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="11473311"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:33:39 -0700
+X-CSE-ConnectionGUID: 89FEUiuBR0m5PfFMMwgE1w==
+X-CSE-MsgGUID: GBexyAV4TMKoXywh+6+7qQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="34090819"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:33:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5SFV-000000069Cb-2rTA;
+	Fri, 10 May 2024 18:33:29 +0300
+Date: Fri, 10 May 2024 18:33:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
+	sebastian.fricke@collabora.com, p.zabel@pengutronix.de,
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
+	nicolas@ndufresne.ca, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, adobriyan@gmail.com,
+	jani.nikula@intel.com
+Subject: Re: [PATCH v7 8/8] gpu: ipu-v3: Use generic macro for rounding to
+ nearest multiple
+Message-ID: <Zj4-SfdNjRHxpHhe@smile.fi.intel.com>
+References: <20240509184010.4065359-1-devarsht@ti.com>
+ <Zj43WDlT1aFpgdVv@smile.fi.intel.com>
+ <20240510151642.GA17158@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510151642.GA17158@pendragon.ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Greg, Arnd,
+On Fri, May 10, 2024 at 06:16:42PM +0300, Laurent Pinchart wrote:
+> On Fri, May 10, 2024 at 06:03:52PM +0300, Andy Shevchenko wrote:
+> > On Fri, May 10, 2024 at 12:10:10AM +0530, Devarsh Thakkar wrote:
+> > > Use generic macro round_closest_up for rounding to nearest multiple instead
+> > 
+> > round_closest_up()
+> > 
+> > We refer to the functions as func().
+> > 
+> > > of using local function.
 
-On Fri, 10 May 2024 12:57:24 +0200
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+..
 
-> On Fri, May 10, 2024, at 12:54, Luca Ceresoli wrote:
-> > On Fri, 10 May 2024 12:24:06 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:  
-> >> On Fri, May 10, 2024, at 09:55, Greg Kroah-Hartman wrote:  
-> >> > On Fri, May 10, 2024 at 09:10:41AM +0200, Luca Ceresoli wrote:    
-> >> >>  
-> >> >> +config GE_SUNH_CONNECTOR
-> >> >> +	tristate "GE SUNH hotplug add-on connector"
-> >> >> +	depends on OF
-> >> >> +	select OF_OVERLAY
-> >> >> +	select FW_LOADER
-> >> >> +	select NVMEM
-> >> >> +	select DRM_HOTPLUG_BRIDGE    
-> >> >
-> >> > Can these be depends instead of select?  'select' causes dependencies
-> >> > that are hard, if not almost impossible, to detect at times why
-> >> > something is being enabled.    
-> >> 
-> >> I think FW_LOADER needs to be 'select' since it is normally
-> >> a hidden symbol and gets selected by its users, all the other
-> >> ones should be 'depends on'.  
-> >
-> > I see, makes sense.
-> >
-> > And as you pointed that out, I realize perhaps DRM_HOTPLUG_BRIDGE could
-> > become a hidden symbol as it's not expected to be used alone.  
+> > > @@ -565,7 +563,7 @@ static void find_best_seam(struct ipu_image_convert_ctx *ctx,
+> > >  		 * The closest input sample position that we could actually
+> > >  		 * start the input tile at, 19.13 fixed point.
+> > >  		 */
+> > > -		in_pos_aligned = round_closest(in_pos, 8192U * in_align);
+> > > +		in_pos_aligned = round_closest_up(in_pos, 8192U * in_align);
+> > >  		/* Convert 19.13 fixed point to integer */
+> > >  		in_pos_rounded = in_pos_aligned / 8192U;
+> > 
+> > Oh, these seems to be better to use either ALIGN*(), or PFN_*() / PAGE_*()
+> > families of macros. What the semantic of 8192 is?
 > 
-> It's slightly easier to keep it as a visible symbol
-> with 'depends on' though, since otherwise you have to
-> add 'depends on' statments for anything that DRM_HOTPLUG_BRIDGE
-> in turn depends on, most notably DRM itself.
+> The comment mentions 19.13 fixed point, so I assume that's the
+> fractional part of the integer. It doesn't seem related to pages.
 
-I see, sure. Thanks both, changes applied locally.
-
-Luca
+Okay, and align word in all those variable names?
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
+
+
 
