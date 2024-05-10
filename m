@@ -1,135 +1,97 @@
-Return-Path: <linux-kernel+bounces-175362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4458C1E81
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:56:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 431E78C1E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 105F728224F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:56:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7431E1C2196C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A2915EFB8;
-	Fri, 10 May 2024 06:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA8D15E7F2;
+	Fri, 10 May 2024 06:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHxAbzVF"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="LoPMsBkp"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8C313BAE5;
-	Fri, 10 May 2024 06:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F119F9C9;
+	Fri, 10 May 2024 06:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715324032; cv=none; b=P+GH9DmoQq22VXxHKfV3edmk/WqmJABHKUJ55RneN/XaIOrDzlrEGbQzVD0Uwdh3GmsUODDjZ+1kG3XHqJpPujydWYFBx/DLBETt2mSFnNuYRBdI2Ng/8sgeSQHb94tGdzQP/qGdxdhBWuuEK7/MJMmQgxaBACxQh+d7HhmG8QU=
+	t=1715324293; cv=none; b=SzmC2VjVkGIzzMc6qvNH1l+x5qIlTEqyb/eFHzxsqNnjcYM7AHMNrTr8r9pSvMsmONnATxJG76SBcfDNH7X+dLPNeLxj+JVUgnCrYzcE6Cx6YC+20wNHnVKB5W0+TOitL/0qlpUp3t6R5y9xYk1o2zrROu2s3FXRGujMJtANgLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715324032; c=relaxed/simple;
-	bh=EsEjqVfurQEi6EaE+OnivMb6kc+dfAW6aZlvySrlEJ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XAceuzReLNhQi0BzzpItyzIhy3pxpKyEFfb3QEdME3k4Gq9b7juftk0128WP3AxB2aqWdcz4pmAZU0BjFv1ov6q92I8PsKR35ObqIkjHTPrg2pQ/NlLEZgRMf/4Aj7UCkqs6YHAG8Hx2KjMmaTLANWWdV3CG4ElGKUMwVfkihn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHxAbzVF; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-61c4ebd0c99so1108010a12.0;
-        Thu, 09 May 2024 23:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715324030; x=1715928830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6bttAWzIw7yUE9dMi4CPYP8/KpV+KHriPCsuJRLVxh0=;
-        b=kHxAbzVFW7HjfUOul8oeA4hvE80FUd5a3EHfmVDHvgDuGkLLk7akMJw4RK/ZFbxotA
-         h/CS50EhhnImqkGWgOiutA42dz7dO+Pjp8+gBSJjnxDymUE3NWwL+QIKii4oz9h7a2ML
-         2CXeNXY4hl+GSwB2fhmPQTaPnGgnm//maYbyCOWTD3DdQhbrW7wtX18ALk9cdLp9XymH
-         bEJXvrX4jEAR9mRmxcbefGyK8sj58CE8JcGKNQQsVqNy5U48I5EMoL8TurWDiUvPuS9l
-         eJOy9JXJWyDaOSdohUun9oI47o3YmFt2LvTMdzG01WWdR6TJJMu9wyEyPbOS6Xyo7oQ0
-         fLpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715324030; x=1715928830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6bttAWzIw7yUE9dMi4CPYP8/KpV+KHriPCsuJRLVxh0=;
-        b=DMTxzg6PfdEuqIE4bNDLQhXTrqUdgeQAHwc3Uo6ccuh2awCXExw8tvZNy8HZuVB3lb
-         pQNeUynwWNuqlTE7yH3n3FFu2xJKNFpfosGsgOnT47esgLHJXyZGNAExa5dlvpYr5uW3
-         eSgp/rP9CreNRcO/3wafUgHbZI/gdfVPAMrLFvdMQYoJ2AYIcTh8ITqhOq7dx+AVCaUp
-         KOZTEo8WQ36s4zUESThH4K477tKTcXJaEokAiCEyR1ZOQ/YFV/qYoA8/2p/WG/GCSno3
-         X619X8HDwdPjCRGFDigB73iXWXoZLRjfTUzeITGYelZ0bwVVR1kESvVSk4QAvq0x2/DM
-         6BTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMFK1P2pq3Ne1xp9KDMYddKmCX3IMxOXOTXVuh+3v6edch0PaLTwHGpDjZlGhrgj4fLS9xtWj5GUyPfLs7tLNSIJmZYCzAoAHgtg==
-X-Gm-Message-State: AOJu0YxI74Fj83LfpB8R0rEGGofxghBLkzLkTcrumr9aHbNMpQyXUY20
-	DR36w2lPVPdD9rHAovHx5NiPSLwGpVq6uEctbAUiJWJ7BhRBk+fnC195aA==
-X-Google-Smtp-Source: AGHT+IF8GQJf63MP69uLJd6CLJ5Gt+AVs0HTNZe2BkiOqmatoXe0KyWQ4LHwPTq6nDPvP0Ldo3sGlQ==
-X-Received: by 2002:a05:6a21:168e:b0:1a9:4964:726 with SMTP id adf61e73a8af0-1afde0bc494mr2426478637.21.1715324030616;
-        Thu, 09 May 2024 23:53:50 -0700 (PDT)
-Received: from rigel.home.arpa (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf2f4bdsm24951675ad.152.2024.05.09.23.53.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 23:53:49 -0700 (PDT)
-From: Kent Gibson <warthog618@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	brgl@bgdev.pl,
-	linus.walleij@linaro.org
-Cc: Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH] gpiolib: cdev: fix uninitialised kfifo
-Date: Fri, 10 May 2024 14:53:42 +0800
-Message-Id: <20240510065342.36191-1-warthog618@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715324293; c=relaxed/simple;
+	bh=ze4zdjo0fbz33aF2z7EukPA4jLCJ45hoe9ptXCI2FWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UxyRiQt7ZD6H2dfXVd065zwmac1fMRkGIoOR372z8Epszb2NAcojqaf+YVKZKugyEKlqZmi9IsRdMmJ8eSlFuGsx9KZn9IuzndHHiRvaX8TO6k7HQsRObdR1nSOsrhRPqFF2OuH8cBi5yml29wg8pWqGniW3bKlQoRL+8CKn5R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=LoPMsBkp; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1715324286;
+	bh=ze4zdjo0fbz33aF2z7EukPA4jLCJ45hoe9ptXCI2FWA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LoPMsBkp+4SADwS6jrdQNBJGi7DCW73il17aUnDwIa1oyXji8Q/4pc/iKFIzJLY/c
+	 Q+z//3FFDHszb0g6PtGL5I026GJFKPn+JmHgnAvadcY419eX/foh0ynFGckgalFFOq
+	 HLg577n8fZ8bMgT8eQfvMVA4UfdUCoQF6nttbLmM=
+Date: Fri, 10 May 2024 08:58:05 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Willy Tarreau <w@1wt.eu>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v4 37/66] selftests/nolibc: Drop define _GNU_SOURCE
+Message-ID: <b2ed9fed-0263-405d-9e5a-71c49421619a@t-8ch.de>
+References: <20240510000842.410729-1-edliaw@google.com>
+ <20240510000842.410729-38-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510000842.410729-38-edliaw@google.com>
 
-If a line is requested with debounce, and that results in debouncing
-in software, and the line is subsequently reconfigured to enable edge
-detection then the allocation of the kfifo to contain edge events is
-overlooked.  This results in events being written to and read from an
-unitialised kfifo.  Read events are returned to userspace.
+Hi Edward,
 
-Initialise the kfifo in the case where the software debounce is
-already active.
+On 2024-05-10 00:06:54+0000, Edward Liaw wrote:
+> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+> redefinition warnings.
 
-Fixes: 65cff7046406 ("gpiolib: cdev: support setting debounce")
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
- drivers/gpio/gpiolib-cdev.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+The nolibc tests do not use lib.mk.
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index d09c7d728365..57c92395219e 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -1193,6 +1193,8 @@ static int edge_detector_update(struct line *line,
- 				struct gpio_v2_line_config *lc,
- 				unsigned int line_idx, u64 edflags)
- {
-+	u64 eflags;
-+	int ret;
- 	u64 active_edflags = READ_ONCE(line->edflags);
- 	unsigned int debounce_period_us =
- 			gpio_v2_line_config_debounce_period(lc, line_idx);
-@@ -1204,6 +1206,18 @@ static int edge_detector_update(struct line *line,
- 	/* sw debounced and still will be...*/
- 	if (debounce_period_us && READ_ONCE(line->sw_debounced)) {
- 		line_set_debounce_period(line, debounce_period_us);
-+		/*
-+		 * ensure event fifo is initialised if edge detection
-+		 * is now enabled.
-+		 */
-+		eflags = edflags & GPIO_V2_LINE_EDGE_FLAGS;
-+		if (eflags && !kfifo_initialized(&line->req->events)) {
-+			ret = kfifo_alloc(&line->req->events,
-+					  line->req->event_buffer_size,
-+					  GFP_KERNEL);
-+			if (ret)
-+				return ret;
-+		}
- 		return 0;
- 	}
- 
--- 
-2.39.2
+This change breaks "make libc-test", please drop it.
 
+> Signed-off-by: Edward Liaw <edliaw@google.com>
+> ---
+>  tools/testing/selftests/nolibc/nolibc-test.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+> index 94bb6e11c16f..a28813f4367f 100644
+> --- a/tools/testing/selftests/nolibc/nolibc-test.c
+> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
+> @@ -1,6 +1,4 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+> -
+> -#define _GNU_SOURCE
+>  #define _LARGEFILE64_SOURCE
+>  
+>  /* libc-specific include files
+> -- 
+> 2.45.0.118.g7fe29c98d7-goog
+
+Thomas
 
