@@ -1,95 +1,98 @@
-Return-Path: <linux-kernel+bounces-175306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D6A8C1DE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:08:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD41D8C1DEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 515441C214C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:08:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 779A0282CD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0913815E81C;
-	Fri, 10 May 2024 06:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC0715E1E3;
+	Fri, 10 May 2024 06:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mg2GLgvd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p0xkDhDG"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1124150994
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741CB1527A8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715321319; cv=none; b=I9nJ0P4IdPFrSZe7n49A6UqjlEwwmJx0ORf+HQowgVdTnRHJXYi1quhEgwIuLORqo8lTuG5hvffRVo6junYmotOHC/xQ4gkuACt8Xl/RoE+6tXLyJRwHV/R6WKm/ux1EurPO2iMZ9psRzEJsF4+xYFL3lSxSoalUW929EHSf4Vs=
+	t=1715321509; cv=none; b=CDq7mHn0mpvGf5HdN7Mqs0WaeRxSkqfWXUMQvC0AEjUv/tgurWGaSSw7EZ5EAhj6d5bm32iEniQpoWe9gTgXi0qkeI6KzKJsmhCTzI5eNcGYTJNGaTHjlp0uawitEYntiOJ/gJkPPYudiar9L/sRX2ajfAnnSg1E1DAA5vbYnyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715321319; c=relaxed/simple;
-	bh=kzukn/78bSXY5Dhhy5AMZbJ50Gz3t4CkRwtDVGuL+mQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FZnoVlotHnYuqww/lE/BVIjhzDS80JpPThk2rR3qslagq4JVoFFHYtvoiVklVphsS0MhgIR/LwW9MuTuWV2PCwWHB/HiUr5JxWF2YWTxqlUlQ3DOluDg/WFZ4lUytQpTwS9m/B+S/PBykVYgQDEeRNHLIrsboYdpUVF+NzjZBTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mg2GLgvd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715321316;
+	s=arc-20240116; t=1715321509; c=relaxed/simple;
+	bh=HlmC0UjiQtAoSWC6vjrGsiGGVG3ulYA6PNHXK+VQfuw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ImIm1N8VD+NuHf8KTR4ZBBJOCcWpyCv3J29PqdkbGfsTPakfGGWojgD1rqahjpGiteKN6yma/DblezRU06MM4dzQa+6RIX8wSN6WW4XD3E64wZVVAnxolUHXdrfu6eUIx5lX67FsqkreRGwYxBPRfaZZqgtkF3RGzIaN0KlksDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p0xkDhDG; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715321505;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kzukn/78bSXY5Dhhy5AMZbJ50Gz3t4CkRwtDVGuL+mQ=;
-	b=Mg2GLgvdSPwn3YHQQiY1FDcGBWw2xmpYE4bL8H0vRlt2jSXwrL4pKiZbvNygOo76Q9pBRR
-	R1jlk9eRmh+W8x+d9G2ahLIl7gPbDHyXAPI3UOxf6DEBlHO7t2cGpyU78HO9YDsWVDQBoS
-	0so9Eu7rm9ECukUbjk3wv+Z/hMAyVq4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-612-Xn8wAd2VPgKC4kJP3uTGqQ-1; Fri, 10 May 2024 02:08:31 -0400
-X-MC-Unique: Xn8wAd2VPgKC4kJP3uTGqQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 91B2081227E;
-	Fri, 10 May 2024 06:08:30 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.109])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 731E81002048;
-	Fri, 10 May 2024 06:08:27 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: jefferymiller@google.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	inventor500@vivaldi.net,
-	jarkko.palviainen@gmail.com,
-	jtornosm@redhat.com,
-	kuba@kernel.org,
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hZhrcUEaCz3NJloTVX6GrdenLDm/0pV21Z4CgXpXVSA=;
+	b=p0xkDhDGFMw1npOCcR14CTUBw/AEO3G+1Kq0u3L63DlCquZLcXQPdrgJu8u33ak2kuFK58
+	Xju/XvaUBXg2rjm5kG27Z07mfklV5ILpzote/iFp8MrESY6xk75TwNeDQX5aIh9mvCInIX
+	UcnuT2giowntxKmEOOjQ1N3ISe557F8=
+From: Youling Tang <youling.tang@linux.dev>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	stable@vger.kernel.org,
-	vadim.fedorenko@linux.dev
-Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address before first reading
-Date: Fri, 10 May 2024 08:08:24 +0200
-Message-ID: <20240510060826.44673-1-jtornosm@redhat.com>
-In-Reply-To: <CAAzPG9M+KNowPwkoYo+QftrN3u6zdN1cWq0XMvgS8UBEmWt+0g@mail.gmail.com>
-References: <CAAzPG9M+KNowPwkoYo+QftrN3u6zdN1cWq0XMvgS8UBEmWt+0g@mail.gmail.com>
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: [PATCH] bcachefs: set FMODE_CAN_ODIRECT instead of a dummy direct_IO method
+Date: Fri, 10 May 2024 14:10:58 +0800
+Message-Id: <20240510061058.316819-1-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+X-Migadu-Flow: FLOW_OUT
 
-Hello Jeffery,
+From: Youling Tang <tangyouling@kylinos.cn>
 
-Sorry for the inconveniences.
+Since commit a2ad63daa88b ("VFS: add FMODE_CAN_ODIRECT file flag") file
+systems can just set the FMODE_CAN_ODIRECT flag at open time instead of
+wiring up a dummy direct_IO method to indicate support for direct I/O.
+Do that for bcachefs so that noop_direct_IO can eventually be removed.
 
-I am working on it, the fix will be very soon.
+Similar to commit b29434999371 ("xfs: set FMODE_CAN_ODIRECT instead of
+a dummy direct_IO method").
 
-Best regards
-José Ignacio
+Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+---
+ fs/bcachefs/fs.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+index a8d71cec1c17..7ef41ce2d8c6 100644
+--- a/fs/bcachefs/fs.c
++++ b/fs/bcachefs/fs.c
+@@ -1142,6 +1142,8 @@ static int bch2_open(struct inode *vinode, struct file *file)
+ 			return ret;
+ 	}
+ 
++	file->f_mode |= FMODE_CAN_ODIRECT;
++
+ 	return generic_file_open(vinode, file);
+ }
+ 
+@@ -1234,7 +1236,6 @@ static const struct address_space_operations bch_address_space_operations = {
+ 	.write_end	= bch2_write_end,
+ 	.invalidate_folio = bch2_invalidate_folio,
+ 	.release_folio	= bch2_release_folio,
+-	.direct_IO	= noop_direct_IO,
+ #ifdef CONFIG_MIGRATION
+ 	.migrate_folio	= filemap_migrate_folio,
+ #endif
+-- 
+2.34.1
 
 
