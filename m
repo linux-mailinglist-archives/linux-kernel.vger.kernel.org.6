@@ -1,240 +1,445 @@
-Return-Path: <linux-kernel+bounces-176131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA058C2A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:12:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48AF18C2A58
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 546362818CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28FD280DA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270B947A62;
-	Fri, 10 May 2024 19:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA1B4AEC3;
+	Fri, 10 May 2024 19:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q4mt06JC";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hFD5ykFQ"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="165O5gkM"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2059.outbound.protection.outlook.com [40.107.96.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6690CEAC0
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 19:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C7E481D5;
+	Fri, 10 May 2024 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715368342; cv=fail; b=BiVEqhbhA2HdL2ZXAlq54KvY6Ft+tCVBK2diW82yHEiNufMtVsoNdBkN+7JEdHmw8XE7bJdzUxWfvTgmzuO+UCVUkO7yof93HFHN8W0c343TMPSpPlZpodKFQwP8rKz1H8TTQ6hsuRjylMUyEb15vrBS/KHERQSyFiNSCEtRxL4=
+	t=1715368148; cv=fail; b=ZBUeA8COgARPpNQB6jkvY64gsh/5oiCQPGrJX603epJHzT1xvZDy6lUoNL4g7IdsRzsWrliMpzn1VhzdJY9ccN5VAYIEiNkWVbjO+wHFhdjyYE9OqnM36HjBaLVFCCayu7X6eSsqpfkcourbdrOfg6ukeFv/YA04mH/REOvHilQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715368342; c=relaxed/simple;
-	bh=HPvR1n+wOJdQBs9XxvHSXeRC69m44cX/uew3oQVCKnc=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Is8LfvT4rbFdUiRtE5voOE9KuQgpiJ8BusZ19waytY//iGjI9pl4Bj+q1xAhllbk2Dr4EiHR83fjKWhc+8uH+aEDdGJi3jdvTqBLM0edNNGBeYKeN+vHKnMWS9iCZUMq8CI2eSdnQC5B1fT9dI6wATUJq3tbJIF+93GckuhAsXg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Q4mt06JC; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hFD5ykFQ; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44AI2X5L031689;
-	Fri, 10 May 2024 19:11:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-transfer-encoding : content-type :
- mime-version; s=corp-2023-11-20;
- bh=sZIn7jNGX0lWEhyMs59As0EQSaT1V8jj6GfQtAqBTao=;
- b=Q4mt06JCfJDCq2pG2kHzxzyG9/85QJSm9Z/VDbWGAmN61IFjuKzkJb2xIYJGanHQs/Wj
- ULHyHI5Kx6sgCegq8dI4IjdUNpclQaZ5859/tmXimXuIWsl/rKyvQ8vNmb/H5k86yR+N
- x3LZFmO/eLxUG8p7KakO3kW+oepvSzMh4SvPVN+NAa1rPOv7Qjk6iEaKLB/fGoFa45Jn
- USbQbzpmYWet8QYVPlYfnKKICJo28q2aZjFZVc9i88iz9YUxVmRpD12M/jl/H6AF9u8B
- 8Pvja+MDrS3DXU00T02JJBUZb5kEMNKBuLeOpH0VaUfP/C/yXPjY8jgJUAAQAxwAYoQy Eg== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y1nfr8meb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 19:11:38 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44AHoXnS025085;
-	Fri, 10 May 2024 19:11:37 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfq5s4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 19:11:37 +0000
+	s=arc-20240116; t=1715368148; c=relaxed/simple;
+	bh=0ByqADji/+c2K66VLruGUyOTov8ON3fZ71VCLEC6eFk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kvSFn1AUH5FT8nIA3UaXx+aR6v3VhRXnfgyjeLt9ZS5U00b27/Wl++e0ztkwknxHUfAVEaosN4F9S1XTmBvSVBbJbu7F3EJqMtBNhp6OwkPsgXNG7Za4DUY6P9/Hz4k8AvQoX89TVmP84m/RiXiVN1z3W/l7hrfyiPBm9km5f+M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=165O5gkM; arc=fail smtp.client-ip=40.107.96.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fth0ktL3VAk5bZX1jq2uOwJKGUZuOP7oXgmzXSu1tMy5fw8W1Cwg9CDz0DklLuNtfIC/DfAVKxWZs2ZuVN992YzI8aZW64st18bYzBOs5iTp9Iv8c+6yomDJ/jHfLGZW+lZxjwtXgqzs/n7ichMdxxO2O0Qg1io5C78XcNhsFIcm9vorNBtvjezxDAXOREEVT6YFVodK8G88iiwJ6LrFlCSrh9aLYDgSMlxUrnMNv66mNYtbXbO5Xt72X/75lO0kKivy1ZdANM8gIr1Q51vKXjk/WBQMHPE5nxc0M5iENjijUNg9KKlQe9n6qxtXdPdlUFJ3il15KcLwoag+Dhfltg==
+ b=L2IB6QYsQAqla6mRFKJJBQzjQNh5AJBrmSjB2wHiG/0hQ0XRTXycKwmmMB1rwTxn8hZg7RXqZR+QUiOeLRGlZkJrY3ayyYJ1pnsS6tue0KBsDagel/CW7Y31WxGRreIzBMkeRSOWPnL41sEam9bK7dmrN7t0eKJJ/60Imx2hzRHQtJyB+ZGbuhHDN3oKqfa5s0+/8XG18rP4FWfypJEcRxzO0UVQk4nQMBPdOC5Eeq9E0VoFGrxbo6/VM5yCLdFWj94CF6t1yV+VUkRwlc3aNQf88ni/zXEL152wVZEHHlzE/CMrUv/GFbnqriHLbFbb7xrL9UArXhY1I9TgKbaomg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sZIn7jNGX0lWEhyMs59As0EQSaT1V8jj6GfQtAqBTao=;
- b=a8uL9yFOSrlO8RWWcBga48QmJ3mu2Exs4+gYqIGycztE6iOsPMhn02JHu23LTNG1gxS/VSeeT4l3r1PwnEVkJmMUpnjY/sZV91EqZz4lxcetKU5iineQnNsMA7i+R1XgVgcZieiBuOSkwikW4o8XIeuIor6SzCIpLfYllRqti+L54dmhjN006dXcOnGmvDQjoJ/MiYgylX+/OFCkFR3M1VQaqWBB1Key7U9a0Z15rQzXBMlyPO2ZXBVuvx6f0i1KXD9edDLO45n3jANF9TgzwpeLlo3dGyKwvJAAWwd5pQS2VLYIzgzfnY4giA4tL0gbN3qU6w3yhz9ls2gCk99TKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=Xrx6loo7EdKYmH9u5AM9rsavyb7lhvWfgqE+eRctvDs=;
+ b=FnFgI4Ns2kQIACdnQdxe4FMwyW5FIsBJnWH6UlfuUnD0cC5zg3w3E6rJlvpoPz+b3H+PEwLA6dvMu0MmYds9nszLhMGikEI/1fzYDruXPD9/7CHOpqQKJcRYN9DKQjr8KTxpwZQ8sSFgHZcIWE/SRgdwzE1zL4ActAtdi0MOBBMCZg/dd279TYvVlb+oMNil7uvQBpB+ydyIsOzEgx4pF1F6FMYWNsROCopmTzbCI6BW3fZ3wlyB9X4nP07dIfayfzzGkY5qR1cmcQOqz7aBpSHctlqoO+MISI1g7cogXFG3FeudHsPBlKeMEmzfukwkC7fYEkRofz5n9sPYDnM5pA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sZIn7jNGX0lWEhyMs59As0EQSaT1V8jj6GfQtAqBTao=;
- b=hFD5ykFQmTEihO4LSbsv4YwD6xbSPSrn4sZ61mCJTsQDgBehFUlrWSzaFUH66WuoLWdjFusdmKUBFuJrsqvKgeFa/tXG5fqeDytN5agbKy6pjDZF5ZmIRhKsgNEYd+uu4N5d1x2eh0HyQfxnCcIPmVlb5lId7shFp54/k3IqTIw=
-Received: from SA0PR10MB6425.namprd10.prod.outlook.com (2603:10b6:806:2c0::8)
- by IA1PR10MB7113.namprd10.prod.outlook.com (2603:10b6:208:3fb::9) with
+ bh=Xrx6loo7EdKYmH9u5AM9rsavyb7lhvWfgqE+eRctvDs=;
+ b=165O5gkM5c3qTp6+v4g3zeKaSLZgQ/8cYne+KbC+A4eLkPrEbjSMOlJM0X7u7viGL7KYnKzdhjmn8uSVtWKx1Gu+H38Ycmto7fDCb6mK6UxUV+dFesnC4Ss0VfxI7J6QVQ9LSiDbL6kn2BZdEvCkF827hvMV8T75e+gspyEQ570=
+Received: from BN9PR03CA0797.namprd03.prod.outlook.com (2603:10b6:408:13f::22)
+ by SJ1PR12MB6241.namprd12.prod.outlook.com (2603:10b6:a03:458::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.51; Fri, 10 May
- 2024 19:11:33 +0000
-Received: from SA0PR10MB6425.namprd10.prod.outlook.com
- ([fe80::447b:4d38:1f8b:28f1]) by SA0PR10MB6425.namprd10.prod.outlook.com
- ([fe80::447b:4d38:1f8b:28f1%5]) with mapi id 15.20.7544.049; Fri, 10 May 2024
- 19:11:31 +0000
-From: Dongli Zhang <dongli.zhang@oracle.com>
-To: x86@kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, Borislavbp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, joe.jin@oracle.com,
-        linux-kernel@vger.kernel.org, virtualization@lists.linux.dev
-Subject: [PATCH 1/1] x86/vector: Fix vector leak during CPU offline
-Date: Fri, 10 May 2024 12:06:23 -0700
-Message-Id: <20240510190623.117031-1-dongli.zhang@oracle.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR16CA0044.namprd16.prod.outlook.com
- (2603:10b6:208:234::13) To SA0PR10MB6425.namprd10.prod.outlook.com
- (2603:10b6:806:2c0::8)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48; Fri, 10 May
+ 2024 19:09:01 +0000
+Received: from BN3PEPF0000B075.namprd04.prod.outlook.com
+ (2603:10b6:408:13f:cafe::fc) by BN9PR03CA0797.outlook.office365.com
+ (2603:10b6:408:13f::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48 via Frontend
+ Transport; Fri, 10 May 2024 19:09:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B075.mail.protection.outlook.com (10.167.243.120) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Fri, 10 May 2024 19:09:01 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 10 May
+ 2024 14:09:00 -0500
+Date: Fri, 10 May 2024 14:08:43 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: <kvm@vger.kernel.org>, <linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-crypto@vger.kernel.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <hpa@zytor.com>,
+	<ardb@kernel.org>, <seanjc@google.com>, <vkuznets@redhat.com>,
+	<jmattson@google.com>, <luto@kernel.org>, <dave.hansen@linux.intel.com>,
+	<slp@redhat.com>, <pgonda@google.com>, <peterz@infradead.org>,
+	<srinivas.pandruvada@linux.intel.com>, <rientjes@google.com>,
+	<dovmurik@linux.ibm.com>, <tobin@ibm.com>, <bp@alien8.de>, <vbabka@suse.cz>,
+	<kirill@shutemov.name>, <ak@linux.intel.com>, <tony.luck@intel.com>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <alpergun@google.com>,
+	<jarkko@kernel.org>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
+	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, <papaluri@amd.com>
+Subject: Re: [PATCH v15 23/23] KVM: SEV: Fix PSC handling for SMASH/UNSMASH
+ and partial update ops
+Message-ID: <20240510190843.yivmiwaj5isvqyph@amd.com>
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240510015822.503071-1-michael.roth@amd.com>
+ <20240510015822.503071-3-michael.roth@amd.com>
+ <fe5cc86b-43e0-4685-99e7-998e61db333f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <fe5cc86b-43e0-4685-99e7-998e61db333f@redhat.com>
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA0PR10MB6425:EE_|IA1PR10MB7113:EE_
-X-MS-Office365-Filtering-Correlation-Id: efb45953-ea36-45a4-469e-08dc71250085
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B075:EE_|SJ1PR12MB6241:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef6650de-1de2-486c-902b-08dc7124a714
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?BqwUhTV4Q34Oc4jHZvwr3/Kxs55qLszxPh6JPHdGMRdkKX8WHfqcEJtmbTdv?=
- =?us-ascii?Q?f/If0AOa0jON07v5HayShvGzzdf/AZ8NNiYr9wgjyE+/hwTuPePqLyo4c8mM?=
- =?us-ascii?Q?9ucI0GarkzUTovry3Rx/mhTrURrfqrBkDM9qlgPN23KwVKj4BmQbZ3n46ltB?=
- =?us-ascii?Q?m3fqa3WfiyYS88WL0dX5CbMWNvu3qO3QVd9pwjCsV8mWWDC60qamkGJzgY5n?=
- =?us-ascii?Q?TYEIDuhBcVHVE2kZZ7SHAvFNup5Anuq3tY8A3wpdpA2LLfiIVvfyF/GG0HLE?=
- =?us-ascii?Q?NroYHyQ+OOL0nIoFhad9BgDlhG/vaywoPFUgUTSO826kh4Pu1njNxTljqk3l?=
- =?us-ascii?Q?8bqbR6S/ju5+aJztyjH3C9zALs7iUbpVFH+2gIi1X3iQRzIRxfLAMbU7NoK0?=
- =?us-ascii?Q?/h0qX5YHRua5H13msBTeTVJc7oqtBV0ppipH5dUJR3noNZxTotAxL6osXIcP?=
- =?us-ascii?Q?ZUZwJO6ziso/6PUYhrL+z8vi0ccGLCGmvBOTpEFsu+kgz6+EtJ288jXsiMLr?=
- =?us-ascii?Q?uhAB9n+94Zk8SXCWuC09+3kCJvES2ZbNSy0F+R+Z4kTjkIyctVsSFVmCSmRn?=
- =?us-ascii?Q?NrB7Yv4hBdPwytB4/7sLaiYC8Nw8gRFEmwkXAq8fzMcogmAlcE5Xk6QITlnw?=
- =?us-ascii?Q?EwMyEEGIaG4N9K2poU1rx43jeOZEomSsmgW/ngGcZajHt+s0oYtAyFmpEtqz?=
- =?us-ascii?Q?EU5GkY/le8v/PgDl8MubF9mBUrV10nmQmARjKkKXx35l6bfXdCMkUqqLNoQ1?=
- =?us-ascii?Q?jzG2qOnpPOBTCy5I7nAphh66TQv9+e7fH0wSQ5m+ECu5mBNietlOZdB0gZLd?=
- =?us-ascii?Q?WdVRPsru7G55zaLNx8F27MePXnos8SjrQNk/8E5ldl43kYm9tZb3tqbKtyUd?=
- =?us-ascii?Q?bLsinD+Uzb0CWYmBnB4z0TBxpkgpQx/AV/IwfgndFu+/cgEzbWZjT+8h50Wk?=
- =?us-ascii?Q?ztF/iLSgimxeKrwoZg1xVSBD+QJncaWSlq4pfZWTXqP5uBXGvugPQHda+3gt?=
- =?us-ascii?Q?/kUO4/d3x1BOWmQ5lGKo/vP11FUKhudQlEf4BghtIUnuLfl6sL9GoJSfFYvK?=
- =?us-ascii?Q?k5IrFfhqRTKybyAiAo5w86KpM6iyZG4zPmDT0Wp+cVlDNXpArOV8F2UA0nY6?=
- =?us-ascii?Q?UVLQPgD/KhS2FhcLM7iJU1/+S+tPQ16RllD3gJB7+c3cUIyw2NEfC3YfT8Eb?=
- =?us-ascii?Q?lMLRDaHI8KejXWAaF4HQWRCwsVQc1nouI9kTQhTYlTnmICWGu5mlZz9B1OcL?=
- =?us-ascii?Q?71H/2AI7Bll5uOSJ9Twv1rAioK6nI/zf4TJ9+oeSng=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR10MB6425.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?DAjITnozhBWV80DBaf9ttLEtSkSYBQXblL0bQ+htYa4OMSoiL3rub1+REwVB?=
- =?us-ascii?Q?Wzrgi11v+DOzKWF0tGn44Pl4iFqQJv0QquPyQeDV95ifOx/8XVOxAmd//EcC?=
- =?us-ascii?Q?/8nB3m4dr8wlavCeeikSTeX7UEFZsLq1od/FtvM9CaeoMOTK0jPWZWPL/Y5+?=
- =?us-ascii?Q?w1ooMJItkZ2JstVqV1iCInIrB60fwrZ/5zKqefkb8TysBLXo6/Gkf4UGpTKc?=
- =?us-ascii?Q?wE7jOrxVoCHHvsYI/l5Zje2r92QBsvCrYagcaqW4pt1T9HI3ns0f9nnRbSm4?=
- =?us-ascii?Q?Wck3UjsLs2/B+6EpB1I9kxxgqDdjhrUjh5CTOnrDutlNOvXC6onSZhLlBKO+?=
- =?us-ascii?Q?e0kuFoMYucdwtbcaf+4QJqeQW1NTKQYvALvAIoy5I3TKnNd0iSWir9zIa5Yt?=
- =?us-ascii?Q?K61Lii8nMmcAr87HbiEPbJrhj97+e3jMkJQBm9ndeO0WacdzmL2yCnpMBIRq?=
- =?us-ascii?Q?QedDe107XzTwaEmeflT2B3XLniJHB8GE+OyWpe699eTQPagrRaiJowF8gsGa?=
- =?us-ascii?Q?mlI45Mbs4OCeQmZuUUfnn3lxfT0TEIw3NDCrDv75J6vGun0DoIF/1z3ne5tW?=
- =?us-ascii?Q?762SdJ72hQ1o8NrwMcs2KFVrNyROdU1TEl2wvXa3bEmTtZSjMvzvOkwhRnBE?=
- =?us-ascii?Q?Cm+YtHEHmD2Nt6bdFwQhbxQ/IUP3F3VINrVRSkT4knByBhkgoOy5urLbwuyn?=
- =?us-ascii?Q?GE5uga7Et96ODc20p36mX4Edtp0nuL6WSdDBF0CC/vzP5Sm9huQFxxqBg1KU?=
- =?us-ascii?Q?wlHmbTu8rOP1gmqQWdyeoCcpJIEt2IMTDZ6HqWxPinunGb0FzFVpz/KPG3ib?=
- =?us-ascii?Q?ArQCxu7l9TrKtrvvzwRojmNatHetuC3FXzy2aI5SROsMHI3cBeqK2YE4P1Or?=
- =?us-ascii?Q?RilrplM7eNiuuKdXzFyEGQXOE6Z7O/v8OncGQiQclFSz0lWezNwkFsWRrnW+?=
- =?us-ascii?Q?J+PE+6NtmEXUw+4B1o8Wgsnoq3eyPpMDg51p77KOal6iMjOeMFFUgmaS+TYU?=
- =?us-ascii?Q?FBIOtSPMuZmHBhmpBVfJBR4WCB/YgutzjeRBWuIvm9jePeIPmSAidqet6HDU?=
- =?us-ascii?Q?QrZqANcxk++ftAfQLil0d8MfjLfO8dvyZ/qWhpNin6lpuJdH+k9Uof5q9Vqv?=
- =?us-ascii?Q?8Oe+/HzPLwO2E5DKiqypuc1vAZHZFU1IsIDymNzQfbJX5OKbRtOzQaffRzly?=
- =?us-ascii?Q?j19ITL/OPe1SmCXCSMIZipabtE/jauLuPVTSItQMZtpoCjVcY4JTJ4BvI3cY?=
- =?us-ascii?Q?T4cP5KumJ78RuAuLpq8wVBA4oUVDcd9uYRVU/tOkaQDkjHiv3JwiWx9KZrHe?=
- =?us-ascii?Q?dNHdu8O3NfqdAxqVBGQmDcoZb9CZskzqU34HnCMfcS4M32ID+ALuHQygAq1J?=
- =?us-ascii?Q?78hirr1GdUmqIZGwmfdSDSKkAFh05Cw8oY7KkPQ/bc2cdfF92AR5YROXIJou?=
- =?us-ascii?Q?jiLEFh681acePEaqRbMjdTZ9TiofXjrRuaJmqxUvvcJJxUG5PpwkNdtV7415?=
- =?us-ascii?Q?2Znu9u+UJORlNHKKy1gWLatfupFIgnyg2AqAKSxsFZAnNTech37rkg+HyPtc?=
- =?us-ascii?Q?Y7JS19T5+fnYx9c5WnZt4jJj39jlPu/gPF+NyvRs?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	CO958NW/uBZPi6bgtioq4Xiq4YNyiCK1/m471jRhLdvnTD60rx1yddr1bB+L8LxnR4eNLZ1qXxgem+n6PWluvChI94Z++fOiIlW0g0uvuxFpLRcw6WsLjlM7K+v0oZmq10dwlL/wzPJ6/WgA9sPWui2Khrh3D2zID337zQZHxLaCsNNiT5rcG5sLAaDUo7aVnEVV7fCHw53zcQJaxJfbfkwAUIKjMDRDB4d/c+2EjefAePJFGursvHfCGfMyuOHVOZmUjoYOBSvmDrc0++1CmGMoeGXw9H7z5GdooykbzMCXv32xMJcKkQJ5VIzUm/CO1VUE5/7dJmPHH5PJKM5MgmWGcTMlignHHzs2mlLkBLU+7pRQrmljmlgBa3KflN/vJBQDSePLzutlEdjrctn6LdIYnfjj5Q+B4B8fWdDdtK+JtShXXkjxgcS3u5Bt+q6VjcmvFcwKYZfliYQS0UQbc+3os6KAiXOg1GFnX6QPZlG/rErVW4aWcqL3rD4sUJjY6ST9tYxywqoC/r/69e4Lbvglm/oxyHAiRHh61Mii4zv0OBT53wDSlEX5ddvilcACXDkbkk4oeuxU7qbSepncaHyDqDUaM2zJnjI9qm3bygE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efb45953-ea36-45a4-469e-08dc71250085
-X-MS-Exchange-CrossTenant-AuthSource: SA0PR10MB6425.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 19:11:31.8058
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|36860700004|376005|1800799015|7416005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?g9NllTG9StPr6fyX6Rffgjd0j+LMafgEO7V2agCTYwvABitcTXeS4nG/G1MW?=
+ =?us-ascii?Q?6OdogbZleJGOFvJ6xJ4roRNpAWqhWQswjxqzQnP1GiMMeZA5hr2hjq83P2uj?=
+ =?us-ascii?Q?jqeEkVlmULiuqtkdlxuFXIoZL7Gc7JhFL44T+4ud0mszLSl13Ks33hp/wc6U?=
+ =?us-ascii?Q?EabgOX02DDvJHioGNUCf9nJEO4QFuBrkm6RzUnB0JzSApGAkYZFV46vIxbRt?=
+ =?us-ascii?Q?yuMexiqRPRzoByWveJP3TXOH9i7pruiSWJL0hXdc0aJdQutOYEsGBLtebO8Z?=
+ =?us-ascii?Q?8A9JFDQPZgrI9QnrNinKVRrYOazqCSnC2U0+JEVp8BzRODcRm1kXspDRDwbL?=
+ =?us-ascii?Q?AwOBdQCrgUGUHgXVWYHtGfsgED4/gHCWiINm8p8c3aAA9S63bPZCGniQGMgY?=
+ =?us-ascii?Q?/IiWmtnWQWQQezoQHpfrYR5ZuyiEz3OeV10riuAwAiXoRajUyMK2EreQNuiN?=
+ =?us-ascii?Q?a5SnLx0OGbIEEtykZOLvgP08PXERlBlytlI9GB8N+e6lpxzMRkF1H6Ex3gMK?=
+ =?us-ascii?Q?3OBirA2DgxSEeL421qPnCva9DlBJCNzjfje0p3dptp8cAhzJAeiRaOnf1uPR?=
+ =?us-ascii?Q?iSwYQGdTXTpZsbxpuxUzWVH2OOQXArH+qNk0HtZgzVrAOB1C3x1gmuH2yJXF?=
+ =?us-ascii?Q?3XlaBSXBIY8u/RXdLoMhu1OqcxgTfr5FGwWB7ogCbmfoJKVT3iCHx2LAB/8T?=
+ =?us-ascii?Q?V/APYljWFc8fq2p3iyleTDFWqQCcZTnyh05pM5pJrW11MlUsZY+ZLoXSlxXf?=
+ =?us-ascii?Q?s8ME+TyukqEhd7C0wndlwpLiha5dAFdJTKGXf/zpqDLwilE5AC9V+h3HMASW?=
+ =?us-ascii?Q?vhjfnGIDkqoaY9JbJsfBJ3YAOTk1nD0gWU7Cn8SRXqCYJKYDa9JsRS1yFyxF?=
+ =?us-ascii?Q?dvrs3zbLezPoggXktN0I0kmUebl30opBFKQK7FPNMzr7EqOTsvyo8BvDaJEK?=
+ =?us-ascii?Q?xvzzvllYEhRTyz3ilYubM50OOOlLrZ1ufemM7452DvoXOh0f1sDorshXwvVu?=
+ =?us-ascii?Q?kL+/zcDatBD+3sPMLJFGDWBhXXhJ1y7/EMzFx/lV3WrFId2LJx7jC/773zLV?=
+ =?us-ascii?Q?Twut7pcTtVIK2uM97UDpIEcjfC6AeWMjgSlzwObNdednh/nsqHKLFpx3zw4Q?=
+ =?us-ascii?Q?nFFf8wLLg7FWMuxyf+OZREwY7XZemQp3QYbiNLlhAOCybKhVK/4lgRtDqa5S?=
+ =?us-ascii?Q?lUzhNieflMkJjZ60ukR9q6CIbZmtKsXBV+xXREegmTxBSzgbRdtUUfmQdgmh?=
+ =?us-ascii?Q?q5WYOeNyzxtdQhr9hQf8rhmXQhuKCqUYihmk1lpAfvr7AmoH3xYq+Xx0Pp+n?=
+ =?us-ascii?Q?pgl5w5VXFdk0VRH+PoFJtnqf?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(82310400017)(36860700004)(376005)(1800799015)(7416005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 19:09:01.4890
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TNxG3fvWjY+sEFFSxA8r3+wMPRiHiCurR+5A8ygkAvpWEI1q7Y28E0Qt2Dei3goWZUkHIrYm3Fl7C46bd1mgMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7113
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_14,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- suspectscore=0 spamscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405100137
-X-Proofpoint-ORIG-GUID: IOHuvzSYcqHGZuzSdoB72_iEW2nMAomr
-X-Proofpoint-GUID: IOHuvzSYcqHGZuzSdoB72_iEW2nMAomr
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef6650de-1de2-486c-902b-08dc7124a714
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B075.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6241
 
-The absence of IRQD_MOVE_PCNTXT prevents immediate effectiveness of
-interrupt affinity reconfiguration via procfs. Instead, the change is
-deferred until the next instance of the interrupt being triggered on the
-original CPU.
+On Fri, May 10, 2024 at 07:09:07PM +0200, Paolo Bonzini wrote:
+> On 5/10/24 03:58, Michael Roth wrote:
+> > There are a few edge-cases that the current processing for GHCB PSC
+> > requests doesn't handle properly:
+> > 
+> >   - KVM properly ignores SMASH/UNSMASH ops when they are embedded in a
+> >     PSC request buffer which contains other PSC operations, but
+> >     inadvertantly forwards them to userspace as private->shared PSC
+> >     requests if they appear at the end of the buffer. Make sure these are
+> >     ignored instead, just like cases where they are not at the end of the
+> >     request buffer.
+> > 
+> >   - Current code handles non-zero 'cur_page' fields when they are at the
+> >     beginning of a new GPA range, but it is not handling properly when
+> >     iterating through subsequent entries which are otherwise part of a
+> >     contiguous range. Fix up the handling so that these entries are not
+> >     combined into a larger contiguous range that include unintended GPA
+> >     ranges and are instead processed later as the start of a new
+> >     contiguous range.
+> > 
+> >   - The page size variable used to track 2M entries in KVM for inflight PSCs
+> >     might be artifically set to a different value, which can lead to
+> >     unexpected values in the entry's final 'cur_page' update. Use the
+> >     entry's 'pagesize' field instead to determine what the value of
+> >     'cur_page' should be upon completion of processing.
+> > 
+> > While here, also add a small helper for clearing in-flight PSCs
+> > variables and fix up comments for better readability.
+> > 
+> > Fixes: 266205d810d2 ("KVM: SEV: Add support to handle Page State Change VMGEXIT")
+> > Signed-off-by: Michael Roth <michael.roth@amd.com>
+> 
+> There are some more improvements that can be made to the readability of
+> the code... this one is already better than the patch is fixing up, but I
+> don't like the code that is in the loop even though it is unconditionally
+> followed by "break".
+> 
+> Here's my attempt at replacing this patch, which is really more of a
+> rewrite of the whole function...  Untested beyond compilation.
 
-When the interrupt next triggers on the original CPU, the new affinity is
-enforced within __irq_move_irq(). A vector is allocated from the new CPU,
-but if the old vector on the original CPU remains online, it is not
-immediately reclaimed. Instead, apicd->move_in_progress is flagged, and the
-reclaiming process is delayed until the next trigger of the interrupt on
-the new CPU.
+Thanks for the suggested rework. I tested with/without 2MB pages and
+everything worked as-written. This is the full/squashed patch I plan to
+include in the pull request:
 
-Upon the subsequent triggering of the interrupt on the new CPU,
-irq_complete_move() adds a task to the old CPU's vector_cleanup list if it
-remains online. Subsequently, the timer on the old CPU iterates over its
-vector_cleanup list, reclaiming vectors.
+  https://github.com/mdroth/linux/commit/91f6d31c4dfc88dd1ac378e2db6117b0c982e63c
 
-However, if the old CPU is offline before the interrupt triggers again on
-the new CPU, irq_complete_move() simply resets both apicd->move_in_progress
-and apicd->prev_vector to 0. Consequently, the vector remains unreclaimed
-in vector_matrix, resulting in a CPU vector leak.
+-Mike
 
-To address this issue, the fix borrows from the comments and implementation
-of apic_update_vector(): "If the target CPU is offline then the regular
-release mechanism via the cleanup vector is not possible and the vector can
-be immediately freed in the underlying matrix allocator.".
-
-Cc: Joe Jin <joe.jin@oracle.com>
-Signed-off-by: Dongli Zhang <dongli.zhang@oracle.com>
----
- arch/x86/kernel/apic/vector.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
-index 185738c72766..aad189a3bac9 100644
---- a/arch/x86/kernel/apic/vector.c
-+++ b/arch/x86/kernel/apic/vector.c
-@@ -1036,6 +1036,15 @@ static void __vector_schedule_cleanup(struct apic_chip_data *apicd)
- 			add_timer_on(&cl->timer, cpu);
- 		}
- 	} else {
-+		/*
-+		 * This call borrows from the comments and implementation
-+		 * of apic_update_vector(): "If the target CPU is offline
-+		 * then the regular release mechanism via the cleanup
-+		 * vector is not possible and the vector can be immediately
-+		 * freed in the underlying matrix allocator.".
-+		 */
-+		irq_matrix_free(vector_matrix, apicd->prev_cpu,
-+				apicd->prev_vector, apicd->is_managed);
- 		apicd->prev_vector = 0;
- 	}
- 	raw_spin_unlock(&vector_lock);
--- 
-2.39.3
-
+> 
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 35f0bd91f92e..6e612789c35f 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3555,23 +3555,25 @@ struct psc_buffer {
+>  static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc);
+> -static int snp_complete_psc(struct kvm_vcpu *vcpu)
+> +static void snp_complete_psc(struct vcpu_svm *svm, u64 psc_ret)
+> +{
+> +	svm->sev_es.psc_inflight = 0;
+> +	svm->sev_es.psc_idx = 0;
+> +	svm->sev_es.psc_2m = 0;
+> +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
+> +}
+> +
+> +static void __snp_complete_one_psc(struct vcpu_svm *svm)
+>  {
+> -	struct vcpu_svm *svm = to_svm(vcpu);
+>  	struct psc_buffer *psc = svm->sev_es.ghcb_sa;
+>  	struct psc_entry *entries = psc->entries;
+>  	struct psc_hdr *hdr = &psc->hdr;
+> -	__u64 psc_ret;
+>  	__u16 idx;
+> -	if (vcpu->run->hypercall.ret) {
+> -		psc_ret = VMGEXIT_PSC_ERROR_GENERIC;
+> -		goto out_resume;
+> -	}
+> -
+>  	/*
+>  	 * Everything in-flight has been processed successfully. Update the
+> -	 * corresponding entries in the guest's PSC buffer.
+> +	 * corresponding entries in the guest's PSC buffer and zero out the
+> +	 * count of in-flight PSC entries.
+>  	 */
+>  	for (idx = svm->sev_es.psc_idx; svm->sev_es.psc_inflight;
+>  	     svm->sev_es.psc_inflight--, idx++) {
+> @@ -3581,17 +3583,22 @@ static int snp_complete_psc(struct kvm_vcpu *vcpu)
+>  	}
+>  	hdr->cur_entry = idx;
+> +}
+> +
+> +static int snp_complete_one_psc(struct kvm_vcpu *vcpu)
+> +{
+> +	struct vcpu_svm *svm = to_svm(vcpu);
+> +	struct psc_buffer *psc = svm->sev_es.ghcb_sa;
+> +
+> +	if (vcpu->run->hypercall.ret) {
+> +		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
+> +		return 1; /* resume guest */
+> +	}
+> +
+> +	__snp_complete_one_psc(svm);
+>  	/* Handle the next range (if any). */
+>  	return snp_begin_psc(svm, psc);
+> -
+> -out_resume:
+> -	svm->sev_es.psc_idx = 0;
+> -	svm->sev_es.psc_inflight = 0;
+> -	svm->sev_es.psc_2m = false;
+> -	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
+> -
+> -	return 1; /* resume guest */
+>  }
+>  static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+> @@ -3601,18 +3608,20 @@ static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+>  	struct psc_hdr *hdr = &psc->hdr;
+>  	struct psc_entry entry_start;
+>  	u16 idx, idx_start, idx_end;
+> -	__u64 psc_ret, gpa;
+> +	u64 gfn;
+>  	int npages;
+> -
+> -	/* There should be no other PSCs in-flight at this point. */
+> -	if (WARN_ON_ONCE(svm->sev_es.psc_inflight)) {
+> -		psc_ret = VMGEXIT_PSC_ERROR_GENERIC;
+> -		goto out_resume;
+> -	}
+> +	bool huge;
+>  	if (!(vcpu->kvm->arch.hypercall_exit_enabled & (1 << KVM_HC_MAP_GPA_RANGE))) {
+> -		psc_ret = VMGEXIT_PSC_ERROR_GENERIC;
+> -		goto out_resume;
+> +		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
+> +		return 1;
+> +	}
+> +
+> +next_range:
+> +	/* There should be no other PSCs in-flight at this point. */
+> +	if (WARN_ON_ONCE(svm->sev_es.psc_inflight)) {
+> +		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
+> +		return 1;
+>  	}
+>  	/*
+> @@ -3624,97 +3633,99 @@ static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+>  	idx_end = hdr->end_entry;
+>  	if (idx_end >= VMGEXIT_PSC_MAX_COUNT) {
+> -		psc_ret = VMGEXIT_PSC_ERROR_INVALID_HDR;
+> -		goto out_resume;
+> -	}
+> -
+> -	/* Nothing more to process. */
+> -	if (idx_start > idx_end) {
+> -		psc_ret = 0;
+> -		goto out_resume;
+> +		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_INVALID_HDR);
+> +		return 1;
+>  	}
+>  	/* Find the start of the next range which needs processing. */
+>  	for (idx = idx_start; idx <= idx_end; idx++, hdr->cur_entry++) {
+> -		__u16 cur_page;
+> -		gfn_t gfn;
+> -		bool huge;
+> -
+>  		entry_start = entries[idx];
+> -
+> -		/* Only private/shared conversions are currently supported. */
+> -		if (entry_start.operation != VMGEXIT_PSC_OP_PRIVATE &&
+> -		    entry_start.operation != VMGEXIT_PSC_OP_SHARED)
+> -			continue;
+> -
+>  		gfn = entry_start.gfn;
+> -		cur_page = entry_start.cur_page;
+>  		huge = entry_start.pagesize;
+> +		npages = huge ? 512 : 1;
+> -		if ((huge && (cur_page > 512 || !IS_ALIGNED(gfn, 512))) ||
+> -		    (!huge && cur_page > 1)) {
+> -			psc_ret = VMGEXIT_PSC_ERROR_INVALID_ENTRY;
+> -			goto out_resume;
+> +		if (entry_start.cur_page > npages || !IS_ALIGNED(gfn, npages)) {
+> +			snp_complete_psc(svm, VMGEXIT_PSC_ERROR_INVALID_ENTRY);
+> +			return 1;
+>  		}
+> +		if (entry_start.cur_page) {
+> +			/*
+> +			 * If this is a partially-completed 2M range, force 4K
+> +			 * handling for the remaining pages since they're effectively
+> +			 * split at this point. Subsequent code should ensure this
+> +			 * doesn't get combined with adjacent PSC entries where 2M
+> +			 * handling is still possible.
+> +			 */
+> +			npages -= entry_start.cur_page;
+> +			gfn += entry_start.cur_page;
+> +			huge = false;
+> +		}
+> +		if (npages)
+> +			break;
+> +
+>  		/* All sub-pages already processed. */
+> -		if ((huge && cur_page == 512) || (!huge && cur_page == 1))
+> -			continue;
+> -
+> -		/*
+> -		 * If this is a partially-completed 2M range, force 4K handling
+> -		 * for the remaining pages since they're effectively split at
+> -		 * this point. Subsequent code should ensure this doesn't get
+> -		 * combined with adjacent PSC entries where 2M handling is still
+> -		 * possible.
+> -		 */
+> -		svm->sev_es.psc_2m = cur_page ? false : huge;
+> -		svm->sev_es.psc_idx = idx;
+> -		svm->sev_es.psc_inflight = 1;
+> -
+> -		gpa = gfn_to_gpa(gfn + cur_page);
+> -		npages = huge ? 512 - cur_page : 1;
+> -		break;
+>  	}
+> +	if (idx > idx_end) {
+> +		/* Nothing more to process. */
+> +		snp_complete_psc(svm, 0);
+> +		return 1;
+> +	}
+> +
+> +	svm->sev_es.psc_2m = huge;
+> +	svm->sev_es.psc_idx = idx;
+> +	svm->sev_es.psc_inflight = 1;
+> +
+>  	/*
+>  	 * Find all subsequent PSC entries that contain adjacent GPA
+>  	 * ranges/operations and can be combined into a single
+>  	 * KVM_HC_MAP_GPA_RANGE exit.
+>  	 */
+> -	for (idx = svm->sev_es.psc_idx + 1; idx <= idx_end; idx++) {
+> +	while (++idx <= idx_end) {
+>  		struct psc_entry entry = entries[idx];
+>  		if (entry.operation != entry_start.operation ||
+> -		    entry.gfn != entry_start.gfn + npages ||
+> -		    !!entry.pagesize != svm->sev_es.psc_2m)
+> +		    entry.gfn != gfn + npages ||
+> +		    entry.cur_page ||
+> +		    !!entry.pagesize != huge)
+>  			break;
+>  		svm->sev_es.psc_inflight++;
+> -		npages += entry_start.pagesize ? 512 : 1;
+> +		npages += huge ? 512 : 1;
+>  	}
+> -	vcpu->run->exit_reason = KVM_EXIT_HYPERCALL;
+> -	vcpu->run->hypercall.nr = KVM_HC_MAP_GPA_RANGE;
+> -	vcpu->run->hypercall.args[0] = gpa;
+> -	vcpu->run->hypercall.args[1] = npages;
+> -	vcpu->run->hypercall.args[2] = entry_start.operation == VMGEXIT_PSC_OP_PRIVATE
+> -				       ? KVM_MAP_GPA_RANGE_ENCRYPTED
+> -				       : KVM_MAP_GPA_RANGE_DECRYPTED;
+> -	vcpu->run->hypercall.args[2] |= entry_start.pagesize
+> -					? KVM_MAP_GPA_RANGE_PAGE_SZ_2M
+> -					: KVM_MAP_GPA_RANGE_PAGE_SZ_4K;
+> -	vcpu->arch.complete_userspace_io = snp_complete_psc;
+> +	switch (entry_start.operation) {
+> +	case VMGEXIT_PSC_OP_PRIVATE:
+> +	case VMGEXIT_PSC_OP_SHARED:
+> +		vcpu->run->exit_reason = KVM_EXIT_HYPERCALL;
+> +		vcpu->run->hypercall.nr = KVM_HC_MAP_GPA_RANGE;
+> +		vcpu->run->hypercall.args[0] = gfn_to_gpa(gfn);
+> +		vcpu->run->hypercall.args[1] = npages;
+> +		vcpu->run->hypercall.args[2] = entry_start.operation == VMGEXIT_PSC_OP_PRIVATE
+> +			? KVM_MAP_GPA_RANGE_ENCRYPTED
+> +			: KVM_MAP_GPA_RANGE_DECRYPTED;
+> +		vcpu->run->hypercall.args[2] |= huge
+> +			? KVM_MAP_GPA_RANGE_PAGE_SZ_2M
+> +			: KVM_MAP_GPA_RANGE_PAGE_SZ_4K;
+> +		vcpu->arch.complete_userspace_io = snp_complete_one_psc;
+> -	return 0; /* forward request to userspace */
+> +		return 0; /* forward request to userspace */
+> -out_resume:
+> -	svm->sev_es.psc_idx = 0;
+> -	svm->sev_es.psc_inflight = 0;
+> -	svm->sev_es.psc_2m = false;
+> -	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
+> +	default:
+> +		/*
+> +		 * Only shared/private PSC operations are currently supported, so if the
+> +		 * entire range consists of unsupported operations (e.g. SMASH/UNSMASH),
+> +		 * then consider the entire range completed and avoid exiting to
+> +		 * userspace. In theory snp_complete_psc() can be called directly
+> +		 * at this point to complete the current range and start the next one,
+> +		 * but that could lead to unexpected levels of recursion.
+> +		 */
+> +		__snp_complete_one_psc(svm);
+> +		goto next_range;
+> +	}
+> -	return 1; /* resume guest */
+> +	unreachable();
+>  }
+>  static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
+> 
+> 
 
