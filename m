@@ -1,149 +1,177 @@
-Return-Path: <linux-kernel+bounces-175986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605F58C2852
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 878718C2854
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83FB31C22644
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:58:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D06F1C2344B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074DD171E76;
-	Fri, 10 May 2024 15:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07206171E62;
+	Fri, 10 May 2024 15:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LLi2EZKL"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GGrQgTA0"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687CF12C49A;
-	Fri, 10 May 2024 15:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB196171E6A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356702; cv=none; b=IGm+jmrUS6q9YHwtFBBHM815EWt8u8bXDpSQlBjiXyMuyrtG+G8qFMZ/9mChQuy6e2Gw+u/op1sUJANl7loScMUFVaQ2boi7RW1zHPBWuYdSA4hx/F/PKXgIqGzvy0cTb0BBkjPeO5vyWzIF1DyKwe0iTtAz9T1+vKXD/FWzXhc=
+	t=1715356753; cv=none; b=lUhsdg0J5601LOXy0y2ymBw4xlEllpTB5M7o4VerrlUsdPY05+CxJKsBw+mr7a1Bd76kSdFz2F+hxXcSP6eP/LxVbKJFyeu7SKo5Bn2kykmLN+Dzrw9txFGNaWW1uX2S0PTa2spoVHhwVqYI2irQ9FHE+5QS/waXig7uL5C83ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356702; c=relaxed/simple;
-	bh=Hwe326E8935ZNJYnxxoQqAlJkhlmJgJLfvrF7b5k4gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hyl/pr5H103Z9hXA915UJZuCx7fFg9tI9tKI/xTRyXV04mFbZfTaj5rslPazrf0NlunOFyu2jE5GM1KZHhEY4QaRkqUl7xPIuIGDIEOpJEl2wKcI1Vu/keqpAP/OZMnky/jwADeUe7+4qnI0n3VNkj/NHmbdx8WDvlAwMj+kcMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LLi2EZKL; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.8.193.2] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EF28640ECA;
-	Fri, 10 May 2024 15:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715356697;
-	bh=ViFi4HxWbpqfMxysdikD00ETw3UnUCRAI9fPcedKST8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=LLi2EZKLcfw2dON0LQHGZk+Eb8VEw2RtxLiJ7xNDib1Jw/d+YZTVAS3t3QAFzNCkM
-	 MsGxpTqaJ6aLN30EJqsiAEwKKOdmlWluVDMB4UNNqnWIbgkQ//hthQEpHgV7LrSagk
-	 pvDxopcsKUnnKRpROLcUMZGSJs6nDEh6t7cYhnvKObi5z74GaaN5a3wa/Yuw5WEuFZ
-	 vJXIf7Jt0ZL+uxKYaG7IHQEIx4iPs3WWpReG1mi5Ysz0azTA+bEh3cP2+SGmsa4otn
-	 BMExuCanRo/VIuRa8feHGx5Jixf/vi+UB3+ryDvh+KUKH4+sPm5eYYC6ex5wPIqAqX
-	 atncwXQ95n+4Q==
-Message-ID: <00107f4f-9a14-43b0-8204-45978a487e33@canonical.com>
-Date: Fri, 10 May 2024 08:58:10 -0700
+	s=arc-20240116; t=1715356753; c=relaxed/simple;
+	bh=wOvswIgcj7A85/iWWRMpGp1HmKr+2AtLRKfC8hiX6pE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GkR6ANFiuRNKdC6C2WJV/7HYPa3KcQPtlmGb4C6uk6q4KykHmZHvbHfajUjXelSq8LzgDhXOqIcJWlZkNxg+F+9dfP0jp4KUYunjkd+rOfZN+Oc6Jf/2Ocn1v3MbQsP4P0WyjrPx2JdPvltoVZ6g6QiLJu3w8wqFpE1DmHay5mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GGrQgTA0; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de61a10141fso3069147276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715356751; x=1715961551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u5ISVPYL6PmEyuY/FQRwjKLZdHccDsXxGbSGsjEmQJk=;
+        b=GGrQgTA0UokjBsx21Vr1X12GgMRrPPoQuIS8yL8EuO4JT0Sm/qISP7XrbN/VmB72eM
+         BvlMClqH9p/cCjGOrw86v//5cjMgPcWsECWnorwcbAxsu/JxBSDa185rowjTR6orz5vj
+         TfV9TYwJsJnhDfWEW9jHfpK26T2Ir1sXEpmZMGvMxS/ZujB3zmu+n18L3EjqYJQZfL/A
+         rH/pdGoFM5iVv2fvIAlh3mrhPRGHmGzN//YM2e8g0OFY76PLjjTWisdaWwc/wqtVs8Po
+         otRzkX8KZqNUDTcQQsLV/oDmqf3yYq7G4L+SSRsXhrWX30D9s9T9WxWhNiJ68Bbq49y2
+         xHYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715356751; x=1715961551;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u5ISVPYL6PmEyuY/FQRwjKLZdHccDsXxGbSGsjEmQJk=;
+        b=mOFbedCYsoVDtIjuInEl/5pRV7DRmhKLCyE3Rm/3eiwwhtHyS6Sc3idimDRPIQdIxi
+         W8osJNP7oNwg5eDAdt1ST53VziQnLhNyaNw6R6jvrvWFbRoM1RIxJw6aqODi8BnDWGA0
+         XXCWffX1uE0vYuXbINf3VvxjnurbbaRei5QcC0I1L15FfaDoVFgo2pbokzcBSYq176fo
+         sdfpFLe7a0F40HpPZF4XCwzbBoxJa8kdVXz8vufdi3Mz2xsYzOQITuKm5FFqslsL2rAK
+         62XfTqIsaYmcfSOv+wP1dTi/mErY3BgIUrKdud+BR0tYpu+Z6f/Uw/wye+GAGb8DaW5d
+         TfGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUb36pfrwx3lQPQttpzK3W7+OGO2M305pfaFvys7+X9EDXkrolwK+ZHngyk4+HVI0QAnzj48NQtZI7+/W2cbG72BWJATv2g1OKyGjWi
+X-Gm-Message-State: AOJu0Yxt2PkUOYFvAG/ts8CdEJEIuAaq1SqlkzETz77bhN/7HpdzDh3X
+	CRmENXDzHgCJQlWxjCXb9YIIy43PJ45biAYG12YY7aC+IMcJhv/qQreIlznrYzEHzOHlWKTcp+o
+	INg==
+X-Google-Smtp-Source: AGHT+IEX/OuQG0ZhfJrRj7k8BAEO/RM7nxjVnIQb2HXfQAss9M//0E1w+F9Y0UfoI1zSWZuVX2x+Zkq5Z94=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1006:b0:dc6:c94e:fb85 with SMTP id
+ 3f1490d57ef6-dee4f1b1019mr242036276.2.1715356750717; Fri, 10 May 2024
+ 08:59:10 -0700 (PDT)
+Date: Fri, 10 May 2024 08:59:09 -0700
+In-Reply-To: <20240510152744.ejdy4jqawc2zd2dt@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix apparmor_socket_post_create() kernel-doc
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240505-apparmor_socket_post_create-kdoc-v1-1-1fd88e546e92@quicinc.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240505-apparmor_socket_post_create-kdoc-v1-1-1fd88e546e92@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240510015822.503071-1-michael.roth@amd.com> <Zj4lebCMsRvGn7ws@google.com>
+ <CABgObfboqrSw8=+yZMDi_k9d6L3AoiU5o8d-sRb9Y5AXDTmp5w@mail.gmail.com> <20240510152744.ejdy4jqawc2zd2dt@amd.com>
+Message-ID: <Zj5ETYPTUo9T4Nuf@google.com>
+Subject: Re: [PATCH v15 21/23] KVM: MMU: Disable fast path for private memslots
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Roth <michael.roth@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-mm@kvack.org, linux-crypto@vger.kernel.org, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com, 
+	jroedel@suse.de, thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, 
+	vkuznets@redhat.com, jmattson@google.com, luto@kernel.org, 
+	dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com, 
+	peterz@infradead.org, srinivas.pandruvada@linux.intel.com, 
+	rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de, 
+	vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com, tony.luck@intel.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, alpergun@google.com, 
+	jarkko@kernel.org, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
+	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/5/24 15:39, Jeff Johnson wrote:
-> make C=1 reports:
-> 
-> security/apparmor/lsm.c:1138: warning: Function parameter or struct member 'protocol' not described in 'apparmor_socket_post_create'
-> 
-> Fix this by correcting the misspelling of 'protocol'.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+On Fri, May 10, 2024, Michael Roth wrote:
+> On Fri, May 10, 2024 at 03:50:26PM +0200, Paolo Bonzini wrote:
+> > On Fri, May 10, 2024 at 3:47=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > > +      * Since software-protected VMs don't have a notion of a shar=
+ed vs.
+> > > > +      * private that's separate from what KVM is tracking, the abo=
+ve
+> > > > +      * KVM_EXIT_MEMORY_FAULT condition wouldn't occur, so avoid t=
+he
+> > > > +      * special handling for that case for now.
+> > >
+> > > Very technically, it can occur if userspace _just_ modified the attri=
+butes.  And
+> > > as I've said multiple times, at least for now, I want to avoid specia=
+l casing
+> > > SW-protected VMs unless it is *absolutely* necessary, because their s=
+ole purpose
+> > > is to allow testing flows that are impossible to excercise without SN=
+P/TDX hardware.
+> >=20
+> > Yep, it is not like they have to be optimized.
+>=20
+> Ok, I thought there were maybe some future plans to use sw-protected VMs
+> to get some added protections from userspace. But even then there'd
+> probably still be extra considerations for how to handle access tracking
+> so white-listing them probably isn't right anyway.
+>=20
+> I was also partly tempted to take this route because it would cover this
+> TDX patch as well:
+>=20
+>   https://lore.kernel.org/lkml/91c797997b57056224571e22362321a23947172f.1=
+705965635.git.isaku.yamahata@intel.com/
 
-Hey Jeff, thanks for the patch, unfortunately Christian Göttsche version of the patch came in before yours so that is the one I committed
+Hmm, I'm pretty sure that patch is trying to fix the exact same issue you a=
+re
+fixing, just in a less precise way.  S-EPT entries only support RWX=3D0 and=
+ RWX=3D111b,
+i.e. it should be impossible to have a write-fault to a present S-EPT entry=
+.
 
-> ---
->   security/apparmor/lsm.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index cef8c466af80..d0485fb0ed63 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1124,7 +1124,7 @@ static int apparmor_socket_create(int family, int type, int protocol, int kern)
->    * @sock: socket that is being setup
->    * @family: family of socket being created
->    * @type: type of the socket
-> - * @ptotocol: protocol of the socket
-> + * @protocol: protocol of the socket
->    * @kern: socket is a special kernel socket
->    *
->    * Note:
-> 
-> ---
-> base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
-> change-id: 20240505-apparmor_socket_post_create-kdoc-897c7ad5d007
-> 
+And if TDX is running afoul of this code:
 
+	if (!fault->present)
+		return !kvm_ad_enabled();
+
+then KVM should do the sane thing and require A/D support be enabled for TD=
+X.
+
+And if it's something else entirely, that changelog has some explaining to =
+do.
+
+> and avoid any weirdness about checking kvm_mem_is_private() without
+> checking mmu_invalidate_seq, but I think those cases all end up
+> resolving themselves eventually and added some comments around that.
+
+Yep, checking state that is protected by mmu_invalidate_seq outside of mmu_=
+lock
+is definitely allowed, e.g. the entire fast page fault path operates outsid=
+e of
+mmu_lock and thus outside of mmu_invalidate_seq's purview.
+
+It's a-ok because the SPTE are done with an atomic CMPXCHG, and so KVM only=
+ needs
+to ensure its page tables aren't outright _freed_.  If the zap triggered by=
+ the
+attributes change "wins", then the fast #PF path will fail the CMPXCHG and =
+be an
+expensive NOP.  If the fast #PF wins, the zap will pave over the fast #PF f=
+ix,
+and the IPI+flush that is needed for all zaps, to ensure vCPUs don't have s=
+tale
+references, does the rest.
+
+And if there's an attributes race that causes the fast #PF to bail early, t=
+he vCPU
+will see the correct state on the next page fault.
 
