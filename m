@@ -1,156 +1,111 @@
-Return-Path: <linux-kernel+bounces-175696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF88C23C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:44:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BD88C23CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F99EB237FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1AE3282E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A99716DEC7;
-	Fri, 10 May 2024 11:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B30216EBE5;
+	Fri, 10 May 2024 11:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="U5kqXRV5"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4UmmJf9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6CE168AFC;
-	Fri, 10 May 2024 11:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA7D165FB6;
+	Fri, 10 May 2024 11:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341417; cv=none; b=UGuIIerQSFPfNqUrU78eGCQMSBt6aacwVS/HCjv5IywCWo3JwIAHRL0FZRYt90Jiis5/y7XqqruFwlaxqPt1d+uX0uP+asK4uGopvuWEpUFl2OTq3sUB4SaAPZ77E8qH0cgI+nl8ItGnAWGM1KF+39B4VhEAfbpcrcJwIPTxg98=
+	t=1715341577; cv=none; b=Cgbvdn0znaeEYaL8q6pKGKtfCdn9xPON3LK09BIT07ITE38neVQuZ/huSnNUqNAHvCLlr5FKWJuQ+CvF+PM/tVDBMhX2lw4ztpapomhWgobTEkKkTbUv8lG0fvZMUPiuzuCbWlQWCBqTUEA5vjoA3OXWKuKsbke5uh0XwhkBMf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341417; c=relaxed/simple;
-	bh=VnFYmd5eagRdmO3dT+SD1QaxL8kEM7ZQt9iQ3Sag8OQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Py+w1Op5Etg8/c2mAVl8noKkUSmyX6Vst++uiYjkGATrS4Tu3jBksmdQZVVcgmaA4UGXK9GLV39/cunssczWXcrVFyIXajptpKfOFUT095r0/G+Da2kNcxpI1pceSl5pd5kRHBoy6l3cFURGonLwDYPkY/a1Y96APhnEr4XajPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=U5kqXRV5; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715341414;
-	bh=VnFYmd5eagRdmO3dT+SD1QaxL8kEM7ZQt9iQ3Sag8OQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=U5kqXRV5vEWrItkWwAo3TbB+hxGkCLN+mMMDUyeroiE73WlOpgy0lQp8HSNWr+hDZ
-	 PX7sw5fe85RqNK71/IBtJNI5+KhKCdQWiqAKQBKAVsFumj63IPa4PL+G2fJ4LpYbQB
-	 IUNVrE6HSV4BavZMkc++rnax8FS3Ik5M4GYJpRhne92fSqPuV5MsxWY4nNPDqvZSic
-	 ifLJdFS+hYG83vWQfqk4vMwE4nBueol0sygcDnPUD+1stLWZB2jLQZ/TE9dYYHUyjn
-	 HxGzwsmo1UXTc9nnnTAGIQPubXMVgz5AR7GbekpsfKWzKVIMqj0kra2cSzjvPzXOp3
-	 gTE375TNFNg/A==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 67BDD3782185;
-	Fri, 10 May 2024 11:43:32 +0000 (UTC)
-Message-ID: <79677d57-379e-4cdc-ab89-899817a72206@collabora.com>
-Date: Fri, 10 May 2024 16:43:56 +0500
+	s=arc-20240116; t=1715341577; c=relaxed/simple;
+	bh=xiNFywutRxJOIrL6dR0v3bJ9hRBnTqScacCpQJv4x2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+gshfhKTx4X0BBNYFVbpvNix6308Yzz7BxB3/Wb9COE7YlCXZxLXEeqbQs8KSlU0nkmITUowuiPPZR5f8hZ69ZwyiVWCDjFkCOX5K010WRv6LZRy7B358FEBoZQVdXRsHabISygwg7TeF94B5hkVSstDiEBrqDfKLUn7qUx+PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4UmmJf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7408BC113CC;
+	Fri, 10 May 2024 11:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715341576;
+	bh=xiNFywutRxJOIrL6dR0v3bJ9hRBnTqScacCpQJv4x2s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=C4UmmJf9kkfhbAeBMuC7fr8N2/cQDeIFlMQosK+ARyq7ELs+QC+iUSATa9P1uT3cE
+	 72Zz4D3d0Y5DMuxfXq0Yf3Si8orcBv0RS3ZJpnCTyNZWZ6IEyxGOZPe+8XtTzRdFxv
+	 n3gut3VUtrbufUY4z51ENySAJhkSLL8Btx7jo/LNRrPbEIupYEHJg5akY5DLgFIrWH
+	 CV99veNI4zd44qOMqrFZolYJHMDSzDssaR3ToIRRi3ookaP0WYeVKpyAL4xrds4gKV
+	 t26zQSO4EnIB4NRIuWe+ug8ITzigkqcFLyRKZwlByi9zG49BfKOhhMwjLi9sDuXhNI
+	 d4xbshbTjIVWw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs iomap
+Date: Fri, 10 May 2024 13:45:49 +0200
+Message-ID: <20240510-vfs-iomap-eec693bccb02@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Anshuman.Khandual@arm.com
-Subject: Re: [PATCH] selftests/mm: hugetlb_madv_vs_map: Avoid test skipping by
- querying hugepage size at runtime
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, shuah@kernel.org
-References: <20240509095447.3791573-1-dev.jain@arm.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240509095447.3791573-1-dev.jain@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1593; i=brauner@kernel.org; h=from:subject:message-id; bh=xiNFywutRxJOIrL6dR0v3bJ9hRBnTqScacCpQJv4x2s=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTZcTLcObaoeOnZewEPXS7EvjrPosLs63U74NR7hUl39 Df4aG3e1VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARg2CG/xXrfwvfvd4ysdLu d4Hyl88/i86UTU0uDH+bKXC6VuRtdTLD/4SP8vpCnn/2Rtx7NfFYR8aHFXL3zBZVrjdO6Y/TXPX Clw0A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 5/9/24 2:54 PM, Dev Jain wrote:
-> Currently, the size used in mmap() is statically defined, leading to
-> skipping of the test on a hugepage size other than 2 MB, since munmap()
-> won't free the hugepage for a size greater than 2 MB. Hence, query the
-> size at runtime.
-> 
-> Also, there is no reason why a hugepage allocation should fail, since we
-> are using a simple mmap() using MAP_HUGETLB; hence, instead of skipping
-> the test, make it fail.
->  
-> Signed-off-by: Dev Jain <dev.jain@arm.com>
-LGTM
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Hey Linus,
 
-> ---
->  tools/testing/selftests/mm/hugetlb_madv_vs_map.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/mm/hugetlb_madv_vs_map.c b/tools/testing/selftests/mm/hugetlb_madv_vs_map.c
-> index d01e8d4901d0..8f122a0f0828 100644
-> --- a/tools/testing/selftests/mm/hugetlb_madv_vs_map.c
-> +++ b/tools/testing/selftests/mm/hugetlb_madv_vs_map.c
-> @@ -27,9 +27,9 @@
->  #include "vm_util.h"
->  #include "../kselftest.h"
->  
-> -#define MMAP_SIZE (1 << 21)
->  #define INLOOP_ITER 100
->  
-> +size_t mmap_size;
->  char *huge_ptr;
->  
->  /* Touch the memory while it is being madvised() */
-> @@ -44,7 +44,7 @@ void *touch(void *unused)
->  void *madv(void *unused)
->  {
->  	for (int i = 0; i < INLOOP_ITER; i++)
-> -		madvise(huge_ptr, MMAP_SIZE, MADV_DONTNEED);
-> +		madvise(huge_ptr, mmap_size, MADV_DONTNEED);
->  
->  	return NULL;
->  }
-> @@ -59,7 +59,7 @@ void *map_extra(void *unused)
->  	void *ptr;
->  
->  	for (int i = 0; i < INLOOP_ITER; i++) {
-> -		ptr = mmap(NULL, MMAP_SIZE, PROT_READ | PROT_WRITE,
-> +		ptr = mmap(NULL, mmap_size, PROT_READ | PROT_WRITE,
->  			   MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
->  			   -1, 0);
->  
-> @@ -93,14 +93,16 @@ int main(void)
->  			       free_hugepages);
->  	}
->  
-> +	mmap_size = default_huge_page_size();
-> +
->  	while (max--) {
-> -		huge_ptr = mmap(NULL, MMAP_SIZE, PROT_READ | PROT_WRITE,
-> +		huge_ptr = mmap(NULL, mmap_size, PROT_READ | PROT_WRITE,
->  				MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB,
->  				-1, 0);
->  
->  		if ((unsigned long)huge_ptr == -1) {
-> -			ksft_exit_skip("Failed to allocated huge page\n");
-> -			return KSFT_SKIP;
-> +			ksft_test_result_fail("Failed to allocate huge page\n");
-> +			return KSFT_FAIL;
->  		}
->  
->  		pthread_create(&thread1, NULL, madv, NULL);
-> @@ -117,7 +119,7 @@ int main(void)
->  		}
->  
->  		/* Unmap and restart */
-> -		munmap(huge_ptr, MMAP_SIZE);
-> +		munmap(huge_ptr, mmap_size);
->  	}
->  
->  	return KSFT_PASS;
+/* Summary */
+This contains a few cleanups to the iomap code. Nothing particularly
+stands out.
 
--- 
-BR,
-Muhammad Usama Anjum
+/* Testing */
+clang: Debian clang version 16.0.6 (26)
+gcc: (Debian 13.2.0-24)
+
+All patches are based on v6.9-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+No known conflicts.
+
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.10.iomap
+
+for you to fetch changes up to e1f453d4336d5d7fbbd1910532201b4a07a20a5c:
+
+  iomap: do some small logical cleanup in buffered write (2024-04-25 14:23:54 +0200)
+
+Please consider pulling these changes from the signed vfs-6.10.iomap tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.10.iomap
+
+----------------------------------------------------------------
+Christoph Hellwig (1):
+      iomap: convert iomap_writepages to writeack_iter
+
+Zhang Yi (5):
+      iomap: drop the write failure handles when unsharing and zeroing
+      iomap: don't increase i_size if it's not a write operation
+      iomap: use a new variable to handle the written bytes in iomap_write_iter()
+      iomap: make iomap_write_end() return a boolean
+      iomap: do some small logical cleanup in buffered write
+
+ fs/iomap/buffered-io.c | 119 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 65 insertions(+), 54 deletions(-)
 
