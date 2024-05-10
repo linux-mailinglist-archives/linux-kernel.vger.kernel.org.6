@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-175966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D2BC8C27FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:39:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94FB8C2800
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ED011C2153E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:39:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B841F213D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E2B17109E;
-	Fri, 10 May 2024 15:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8793817166E;
+	Fri, 10 May 2024 15:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ggzEC1lF"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="axsPjNSI"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3CF12AAD5
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416F717109E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355563; cv=none; b=Esh9u9vjNu8iQZKsNdd+t1oLaHYu42T/t33eins9Fky03DGZKmd5+LTjqccD0oohMy0OcTsnnc0H9LFO9lUUttMN9d+Aw8qSQ34nxNIplKIZlyaZj39brepb6EMCOYYAIKqUFKQ1o11JM1R7jNHxRvH9gXt9iV7lqZJDKpbR2So=
+	t=1715355587; cv=none; b=awDAm3qI8W4Ft/mVuLxvV9z0A3F3dKhNOgQ+MrLn3OA4pz0eZfZ9dDf+jZXzDpLqd6Ma0MQSVRFv2uOOoEf89D3xVwtu8emlLmlnLFDeO7oqtOnKYJn31n373DcwiPvRes+b+tHnOqgueqI9FYiHdl4onhnx/j5fiWWDAj2nu9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355563; c=relaxed/simple;
-	bh=ACx1uvyWtWuXvtWHFMekx8GERUUvgaoNeVkzE29kgyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MVrdJ8NMmmZjfU475T5nO9H/dexKGCbJ41uu7ZNZa2mKnWewL5KatjGWNZD/KghBWXRytCaLFk8Cg2hnBMfjYqE53cnPs86p/MAqIKLIjsV136NIkapts4oRWqMUDRzsJx1GB+K0sbRmNcwMJAzADR43AwanXfYqng+2Sw+Avk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ggzEC1lF; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e538a264e0so13818351fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:39:21 -0700 (PDT)
+	s=arc-20240116; t=1715355587; c=relaxed/simple;
+	bh=HvWEHSRJd6IvYIb/63G1QS6o1Crb2nY1hmA2zf0cIX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tp3w74xGOSaF0Rh9UA8vETEoWq6tlg1+LNFscf63MypSR6Xng0jclC2IKeOaBbGbF8rxsYr4stZ1W1fT9N/lyxzEJxUCI+bZPeXYCfgbX+KHtaKFZUmBKpBgURADjgDLHhnZeUaFchp4nGyD1AF5tsWsvLPmvkG/5o7f1FzVi2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=axsPjNSI; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e0933d3b5fso30942661fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715355560; x=1715960360; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zCGimXM0s95/gK/0gBrT6bfMmBtbTT9QqvxRV5ToZt8=;
-        b=ggzEC1lFO7oPa94W+0cVHn7tgW3mRDiur8F72FPcjxPmqg28x/638W250ZHHOIoR7r
-         FRQ3IiRrOQTUUj1WnUVE4acLXLAtlaMfM3/d6IDSSdAqRLhK6i4CmWEPqxjzOwtQQp5v
-         2CJa/9Zgcf8TyQyj+dwp2y7OwE1l/5CaZc+NWYUTgSUC14HZAnUyNUfzMZKK6kc1itFt
-         eayiH73qkrfqwfPTdwUTEcvlOfIWL4wpcYGi+e9qz/3GVn3TohdtoCjfqnhMFxlqUwUP
-         UbGawxLDmOGdGFPlTwrf5G5XlINQoSQXIu7pZxjh8H6BEUQjbmqr0/vnwjAB0stt3VCT
-         Ktfw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715355583; x=1715960383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x+69akUanwgyaCNLHvZQ4aJZ/iUQNzDFDBetcAZ8+1g=;
+        b=axsPjNSI/b1f8QwE4NVvhVDymU5avjHQAZB4KlT7CYSosUK+Zxto7Ix10bRybrsbJn
+         h8+spQuR+5ckqYR3kZZhA/WVaiuZ7riGLGF+w7Bj8OlfUrs8dL7k40R/ewjP8SstNQeE
+         pE1WapnLVaaFuYngkASiY9zdQHn2VJS8uxP7ryi8KOKogA6N3mLRdvSu1+XzVSYQ7EX2
+         giggcg5BXP3qxVLoUgFIepavuxnH/zjUylejOAZrn3Nhpcj2tOTY0iWI5IO3Ulf7E8xG
+         uEY/V7yTd9w4kOLmEjwus/WWBCoA3y+jH07jZcFX+0azLAJTvdcELmfy9lOg8LcI16q8
+         RVJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715355560; x=1715960360;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCGimXM0s95/gK/0gBrT6bfMmBtbTT9QqvxRV5ToZt8=;
-        b=ttaFfeqyu1gXRZTMyKjdF+z1iBFxFFgSlsXTpDWQgrrfp5ZAbpFAa4RDoMxlZufmWq
-         gzjVFQgIuTgxwxaXGfdSBiqR0JGlzjekFqQuGY8f7CPp0Y9oXBkZBHYyajeF14KqMdAg
-         Gx2ES6u7ZEc20hlMo8UDmED1QwXBuMGX5sd/MfYfJe4zP/STxB6GcyPwI0ETFzxCQgpa
-         TKwl90fUw2jTeeIKxGPsjCo5te5bjM/SZ2TXk/7XTXq+NvgKDE0qTRsk0XeuFNIA8hoh
-         DKilRZG1RbqoQG8OaGt2KHFHzdCDOcOSEok9ux/HcwQ1HHjoLEu45rcflsUBxbxvxgY9
-         yQJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtJlbRg/ETRUwRFP0klqLznUR23fke0OwCLBsDu8HTj3i4pasTjTX1S5BWmuDCFY4p0yxiCybFGGOHd9ZrkSxf2rR2Ij1icTlX3C98
-X-Gm-Message-State: AOJu0YzQE8lFBKC0sSRL+R4tT3LMSMRucf/yNhYMypGpK25ei/Hl1qyd
-	D1NtJjfS8ha5VBEv2Wvgc017fP8lLZ7/SsoxADQjDOKlRXW7kefmYhpsxzQi3Yg=
-X-Google-Smtp-Source: AGHT+IF7TN741mMkhPYgttssExz8B4IDN3HPogI6xNSBiOv89abZm4bMmHO6ARPMs21agKthCxa3lw==
-X-Received: by 2002:a2e:7d09:0:b0:2e2:1647:f671 with SMTP id 38308e7fff4ca-2e5205c817emr25268691fa.47.1715355559934;
-        Fri, 10 May 2024 08:39:19 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41ff7a840d2sm27051475e9.39.2024.05.10.08.39.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 08:39:19 -0700 (PDT)
-Message-ID: <adde3972-f055-464b-83ac-8d8a2d874e29@linaro.org>
-Date: Fri, 10 May 2024 16:39:18 +0100
+        d=1e100.net; s=20230601; t=1715355583; x=1715960383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x+69akUanwgyaCNLHvZQ4aJZ/iUQNzDFDBetcAZ8+1g=;
+        b=PXpzm8MqP23/r+YbOK7wq4gLzOngBTpPrpZjUT9RiDzozA2R/oFb0wtxateLLwQxDs
+         W68WUbe2HkQ3HU0Q3mJLp85Ak3POLsoLcEDtG7hkKEFA066enI3QYhJGOlHadvxoP6ww
+         WXZIcBXfAUNpPEQosm3JRbPcY4sDIJlZPuYejL3d6vVRTI+7VeoWVuBH0tNOAQK57tjC
+         JBcvywYh+oG9xDGekGnrNUe+qPLLBZCXda6CO/7YEDOwsQSj7FCXbviKwvswpnscgPKk
+         S4uNAxqOvXUMBw4+g833uYZpx6zro5Q7Rckocz6MsanpCspTqbDVRkQiz5G1I+tUxG+J
+         tJ0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWHZ7Hp3jEK45w2N7FopaFHHi435W1NqHk/KfHgMxOf5G0qFiNXLb+Z95KuC9YIplkS+3wau/V2Ykr4pH4xQrlWv9e49uYGkk+XkTS
+X-Gm-Message-State: AOJu0YxmxLeVZhBmokQX4f7Si7YkASLFv2s37cdHJJKKVN6atbt1jRdt
+	vl4fI7o34hIw6k3OY/tyzmL4LDjMi2nEx1HEVfRIPEd2BEt1bipCmUC1CkeyBoj0U5UpN3H9BuD
+	Va4Q1oLL+USDpRi+G4zpr3yhTh77SIeWmkO9YEA==
+X-Google-Smtp-Source: AGHT+IGvAUhvYlrtXZu2653xvaGDm6s2fzNFAgaftNCnvvM/30wdVu20vvVqDYxJw62jeNpNorB/ZBPheswDD4t/bgI=
+X-Received: by 2002:a2e:9d82:0:b0:2e1:aafb:6a2 with SMTP id
+ 38308e7fff4ca-2e52038a43emr20484121fa.36.1715355583503; Fri, 10 May 2024
+ 08:39:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] ASoC: qcom: qdsp6: Set channel mapping instead of
- fixed defaults
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- James Schulman <james.schulman@cirrus.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Banajit Goswami <bgoswami@quicinc.com>
-Cc: alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240509-asoc-x1e80100-4-channel-mapping-v3-0-6f874552d7b2@linaro.org>
- <20240509-asoc-x1e80100-4-channel-mapping-v3-3-6f874552d7b2@linaro.org>
- <d3c78e43-44a9-4ef2-8e64-00f39b32172c@linaro.org>
- <aa8509c9-7475-40b3-82cb-9bfc1e33b202@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <aa8509c9-7475-40b3-82cb-9bfc1e33b202@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240510141836.1624009-1-adureghello@baylibre.org>
+In-Reply-To: <20240510141836.1624009-1-adureghello@baylibre.org>
+From: David Lechner <dlechner@baylibre.com>
+Date: Fri, 10 May 2024 10:39:31 -0500
+Message-ID: <CAMknhBFUUCvxbuHz0pPKd-KBcG3zfXNr8wu=AnrZx0C495RKOQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: iio: dac: add ad35xxr single output variants
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 10, 2024 at 9:19=E2=80=AFAM Angelo Dureghello
+<adureghello@baylibre.com> wrote:
+>
+> From: Angelo Dureghello <adureghello@baylibre.com>
+>
+> Add support for ad3541r and ad3551r single output variants.
+>
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml       | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b=
+/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> index 8265d709094d..17442cdfbe27 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
 
+It would be nice to also add the datasheet links in the description.
 
-On 09/05/2024 12:43, Krzysztof Kozlowski wrote:
-> On 09/05/2024 11:17, Srinivas Kandagatla wrote:
->>> diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
->>> index eb9306280988..208b74e50445 100644
->>> --- a/sound/soc/qcom/qdsp6/audioreach.h
->>> +++ b/sound/soc/qcom/qdsp6/audioreach.h
->>> @@ -766,6 +766,7 @@ struct audioreach_module_config {
->>>    /* Packet Allocation routines */
->>>    void *audioreach_alloc_apm_cmd_pkt(int pkt_size, uint32_t opcode, uint32_t
->>>    				    token);
->>> +void audioreach_set_channel_mapping(u8 *ch_map, int num_channels);
->>>    void *audioreach_alloc_cmd_pkt(int payload_size, uint32_t opcode,
->>>    			       uint32_t token, uint32_t src_port,
->>>    			       uint32_t dest_port);
->>> diff --git a/sound/soc/qcom/qdsp6/q6apm-dai.c b/sound/soc/qcom/qdsp6/q6apm-dai.c
->>> index 00bbd291be5c..8ab55869e8a2 100644
->>> --- a/sound/soc/qcom/qdsp6/q6apm-dai.c
->>> +++ b/sound/soc/qcom/qdsp6/q6apm-dai.c
->>> @@ -243,6 +243,7 @@ static int q6apm_dai_prepare(struct snd_soc_component *component,
->>>    	cfg.num_channels = runtime->channels;
->>>    	cfg.bit_width = prtd->bits_per_sample;
->>>    	cfg.fmt = SND_AUDIOCODEC_PCM;
->>> +	audioreach_set_channel_mapping(cfg.channel_map, runtime->channels);
->>>    
->>
->> Prepare can be called multiple times.. so we have channels overwritten here.
-> 
-> Which is expected - just like we overwrite number of channels.
-This will work in q6apm-dai.c case as there is no set_channel_map callback.
+> @@ -19,7 +19,9 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> +      - adi,ad3541r
+>        - adi,ad3542r
+> +      - adi,ad3551r
+>        - adi,ad3552r
+>
+>    reg:
+> @@ -128,7 +130,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: adi,ad3542r
+> +            enum:
+> +              - adi,ad3541r
+> +              - adi,ad3542r
+>      then:
+>        patternProperties:
+>          "^channel@([0-1])$":
+> @@ -158,7 +162,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: adi,ad3552r
+> +            enum:
+> +              - adi,ad3551r
+> +              - adi,ad3552r
+>      then:
+>        patternProperties:
+>          "^channel@([0-1])$":
+> --
+> 2.45.0.rc1
+>
+>
 
-lgtm.
-
-Can you rename audioreach_set_channel_mapping to 
-audioreach_set_default_channel_mapping which makes it more obvious that 
-we are setting a default channel mappings.
-
-
---srini
-> 
-> Best regards,
-> Krzysztof
-> 
+Since these are single channel, it would not hurt to restrict the
+`reg` property of of the `channel@` nodes to 1.
 
