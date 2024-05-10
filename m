@@ -1,78 +1,111 @@
-Return-Path: <linux-kernel+bounces-176247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8449B8C2C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1D88C2C03
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:40:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 396241F215E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E9F21F21540
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BB213C81A;
-	Fri, 10 May 2024 21:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF33613C915;
+	Fri, 10 May 2024 21:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mg/MUTOD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Tvv+EtWH"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DE613C9B7
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F8713C835;
+	Fri, 10 May 2024 21:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715377154; cv=none; b=uz2JMAf/PMxEWs+ktQnW8yrLQRrxav3g7zeI1DXFunjeEyyVGChOi7Wr9rGzCFTO1pRfuV6SoojGjZHWaCZtDQmz4aZKL6Jx8I0KU6sGyQU2whFQUG73DZV9KS8Z/Q9JfORIsJKrDvRrSuwNgtHvjnMkh6COpZn54RGSty4F1fY=
+	t=1715377219; cv=none; b=EIda4YonpbjNSFRtlsNqUi5m2rzx69fyBfYWqFcVxW/CQQYHu7oA3pB3o/2KRnHLQuyiIxpzUMkk5q3X4GZZF2jXUdkRl1KnqwrqzIVJU/FgFsObFSuZWxiOcXRu5VWFcsMti41xJIJoK4GOlk4cCU8xLByKiDcOTkhd2u6/XrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715377154; c=relaxed/simple;
-	bh=JAgo/kCzjYOr+03CJubu4G+6gTUVGg0w6nMVy9R0Ho8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=q0OJ29+23lvUhyZ1nuP1XcYLKQfojhAjZg1c9zXkyBrVNLc2covdJ1PL6UCjHep8DxHdySpa9Fc3u5Z4OCrrMkcGOiiPRMNbQOp3tQ2EOAKQjPlimq7/3CahdCvwyXXzhNXI0Yv88ua0dF6Z3uTWSLNl5UamhuJkdxkaRybMmgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mg/MUTOD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B34CBC32781;
-	Fri, 10 May 2024 21:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715377154;
-	bh=JAgo/kCzjYOr+03CJubu4G+6gTUVGg0w6nMVy9R0Ho8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mg/MUTODtTBT4c1uDbudAadKDt8WBGRe87HANmUpO6JmBwNYfX7HsMomnmLgi/Fmr
-	 s8kC4B8mG6EzFa0cT6OKbutuizVzNRm3wM32/k87Idw+reBzvf+gY1UMjiffEqs31d
-	 g29ea+Q2cuKH8B4bvvtzNUNQySZca8lqM7iZkPOi1D/605u6ehzyeybYGR/MdOUyMP
-	 7ze5PYrpn/r0NYfPxSOLimI3pb5gn62u5YU+xzusOU6/7jJmelDVVPUxD4f/7lJCyc
-	 AQb/50U6jQxqIToz1q3ISPUu8U45xdp2h7TYH8L7AfIzImR832UFVvj4jcg49ZDhhx
-	 ONAjD70gUsmSg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A98F9E7C112;
-	Fri, 10 May 2024 21:39:14 +0000 (UTC)
-Subject: Re: [git pull] drm fixes for 6.9 final
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAPM=9tzZ8edq4gpxJpube9EOAVDFXr-n7Hwh9qwZ=_aBP34esA@mail.gmail.com>
-References: <CAPM=9tzZ8edq4gpxJpube9EOAVDFXr-n7Hwh9qwZ=_aBP34esA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAPM=9tzZ8edq4gpxJpube9EOAVDFXr-n7Hwh9qwZ=_aBP34esA@mail.gmail.com>
-X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-05-11
-X-PR-Tracked-Commit-Id: a222a6470d7eea91193946e8162066fa88da64c2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cf87f46fd34d6c19283d9625a7822f20d90b64a4
-Message-Id: <171537715468.8717.9971362074870569846.pr-tracker-bot@kernel.org>
-Date: Fri, 10 May 2024 21:39:14 +0000
-To: Dave Airlie <airlied@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1715377219; c=relaxed/simple;
+	bh=RN2RLnSPUFXzW3xUJJZQDApAf3jTnTsIoO+w2b3IB10=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Or5b+l0M9pytD3vM12UxqrIKPEDQIuXQobgO0u4bUOySAv8vGDwG+HUw8MkEuBttOzMn8jEUNuJvbzCWe9NNkW46rQ2lSr19EdE6S7AkZQDa6i/7QoJD6rEqIRASkOHwZyr2RzhlXlOc52sWsJ7PLibNO9DTW/0oYTgjgWJGGWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Tvv+EtWH; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TzU2SbNt+iXCBZhtBGRIE1m2A+NSaMq0YWH+J4e8lbQ=; t=1715377214; x=1715982014; 
+	b=Tvv+EtWHOm7Gm8vPP+4JLnJezhhQjFV6QZ1RvpTPEYUGDJfvIv2sIkG6g3hv0poqzkEDMpFai8q
+	d8U9EqnZwNmIFIdS7P2e4dobw9Biw4osU7IqALLlP/rGW4hKL5MSzOuSZcDJ7/QtVac1ABawZkO8W
+	jbRYsEherrG2heHQdlEEiselAPZ/4EE09WkVIrlNJ8Yf2qdorlMQA5WgiewbMkl1jtoHRDDSPx31j
+	pIXxt96bzRsn9EDLcNCc7wwvuoVkroXLyG6mnpPKIS/yI/bR11Q6CNqFbh8mnty5aPWepXlnUu9bX
+	DDUzyvWNaRJo8hz5V39ADtt9AjABuxOpTfIg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s5XyH-00000000cLs-1xwd; Fri, 10 May 2024 23:40:05 +0200
+Received: from dynamic-077-011-138-145.77.11.pool.telefonica.de ([77.11.138.145] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s5XyH-00000002dgQ-12bt; Fri, 10 May 2024 23:40:05 +0200
+Message-ID: <6e6dae45ffbf7a6ab54175695a3e21207c6f5126.camel@physik.fu-berlin.de>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+ linux-alpha@vger.kernel.org, Richard Henderson
+ <richard.henderson@linaro.org>,  Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, "Paul E. McKenney" <paulmck@kernel.org>
+Date: Fri, 10 May 2024 23:40:04 +0200
+In-Reply-To: <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+	 <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-The pull request you sent on Sat, 11 May 2024 07:18:11 +1000:
+On Fri, 2024-05-10 at 23:19 +0200, Arnd Bergmann wrote:
+> The following changes since commit fec50db7033ea478773b159e0e2efb135270e3=
+b7:
+>=20
+>   Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git ta=
+gs/asm-generic-alpha
+>=20
+> for you to fetch changes up to a4184174be36369c3af8d937e165f28a43ef1e02:
+>=20
+>   alpha: drop pre-EV56 support (2024-05-06 12:05:00 +0200)
 
-> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-05-11
+I'm still against dropping pre-EV56 so quickly without a proper phaseout pe=
+riod.
+Why not wait for the next LTS release? AFAIK pre-EV56 support is not broken=
+, is
+it?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cf87f46fd34d6c19283d9625a7822f20d90b64a4
+Adrian
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
