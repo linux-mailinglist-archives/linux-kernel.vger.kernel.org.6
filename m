@@ -1,72 +1,76 @@
-Return-Path: <linux-kernel+bounces-175690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169878C23B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:37:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278F18C23B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20722893C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:37:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A5AB25DCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224C116F8EB;
-	Fri, 10 May 2024 11:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848F316EC06;
+	Fri, 10 May 2024 11:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKKX7of/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpkkZ62Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C9F165FDB;
-	Fri, 10 May 2024 11:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB21D21340;
+	Fri, 10 May 2024 11:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341019; cv=none; b=fsGUKMhQFsrUdOLZt7eYBu93Jmb+2HzbWgukGkBS2EiFMxJlAPHj5M0gtZibOi/t8nhdVi8IpQAsvWWp134JskjY9NfJ+hwiQdpwq7psmmL65qvA4d+O1ZlVb9J3UTlljPdXw99MNu/BHSyiDS7oMAW2UwsEoH/W3UtKMgAFmmQ=
+	t=1715341105; cv=none; b=F7zNiV9egLgiR2gR0HxcTNhJuQFeswdNMLMQzjC+vOE8la7he0VjbaDzkaF7jfAzO9IqNKPnGHeWO3Sq0L4te4+CMZ8GmdBCSFRn0sL/KkTRc3HHq3JyKIO4xrgoF4Wb2jE8Y+EaG5gN5kdmmiPqaS7gVAeEbh6TuFnfNfcSdv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341019; c=relaxed/simple;
-	bh=5z9iBvSKEdgu9Xl5Hny1G4TaDtGgtLK/fL7E2bgJydQ=;
+	s=arc-20240116; t=1715341105; c=relaxed/simple;
+	bh=w3BI4D5JBPl2WXO21E0L6qbAIpFhZSt6nwXLcFPR5QI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=utv0mDP+GKc8c7sBiYDYexdQspj2xFNAciLE/zatvys2zATRJVG067FDB1Sfmkrrku9J2dp+KbdSRHEVEPlNub7E6F4KHssJrn4nEbOMoNsAu+jjM9tvWNhNAki1tUS8V1VhMgI7P248Fv7VVJTC/7VqqjippC/9I9/8iivbgt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKKX7of/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A056C113CC;
-	Fri, 10 May 2024 11:36:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IzobMuZRNka8JG/QG8UVkz+jhsFKh1r7BhW6RMzKSUV88u9seUZ+0xGyAgOZ5PA8qlRHlUlzPatRgdhI89EGVjibbES8mC3KEmXf1gWPn3wVb7jIBETe+nc91DSRfDKOWA7NbgwP6dchmaPogsz6so5WGPYJ/0yFz9YsSS+vhBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpkkZ62Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40505C113CC;
+	Fri, 10 May 2024 11:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715341018;
-	bh=5z9iBvSKEdgu9Xl5Hny1G4TaDtGgtLK/fL7E2bgJydQ=;
+	s=k20201202; t=1715341104;
+	bh=w3BI4D5JBPl2WXO21E0L6qbAIpFhZSt6nwXLcFPR5QI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IKKX7of/ht+MREMXRj7s1k+gk3W3k9hnHsSeGYXFH0989S7Dii8AWlo//k6ucQKTJ
-	 ZCafRoqUTRdpSCnSMPtzZ7IqJRydapqfcqaByBY6FpBsyocjig52ATxf3ogzclEkCt
-	 m9MjyKgbYVADGz0EZU7Llp5WcoGSky89E/UeociOc+6wdGEpPiGuyGhxwk9806jJrf
-	 8WhtrAKzSbaf8PGhokBSz+Om9oCuOYTOk85uNwlY4evZvA79XB3ZOctFexUnq49Z67
-	 afpGw+P+6Rls/T7mF6hU9uWBjGGswn29AxyIJ8BVczR4Ch4CypFWxOdiBPjC7oaj/M
-	 s+YHJCwIRT/TQ==
-Date: Fri, 10 May 2024 12:36:53 +0100
-From: Simon Horman <horms@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest: epoll_busy_poll: Fix spelling mistake
- "couldnt" -> "couldn't"
-Message-ID: <20240510113653.GR2347895@kernel.org>
-References: <20240510084811.3299685-1-colin.i.king@gmail.com>
+	b=CpkkZ62YAEEoEIAyF5eXcSUuk/m62T9XYGeBgMong1LMUDOuEOWgDuThCSVJaTEZk
+	 RAXjF9wpNp6SwmIXKtCfcZgEXZtrZMnLy5i5NSbLziB2oQlzxvJtOL6LtKI2C0bKl6
+	 SnwjXy99V53wWbaTtXWvU5ZFcQjtgfF82PEhHjAle7jUebtmV0SykQxsHX04xG6CHn
+	 hQbUkr5C61PkSqKlLMSTfUgsLS2L7lTr7caAYB1nFDYE9GV2sCrBkqaXdtXVJddgky
+	 wmgUYIOmZ7/LojmFQM413k1SE96WG0z+ZCC0F3o4WHmTgCAzgNMtV/uEBYaV9o2baF
+	 qqUwKvYSNQHeQ==
+Date: Fri, 10 May 2024 13:38:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, 
+	Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ext4: Don't reduce symlink i_mode by umask if no ACL
+ support
+Message-ID: <20240510-golfball-tastsinn-d148a67476ea@brauner>
+References: <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com>
+ <1553599.1715262072@warthog.procyon.org.uk>
+ <1554509.1715263637@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240510084811.3299685-1-colin.i.king@gmail.com>
+In-Reply-To: <1554509.1715263637@warthog.procyon.org.uk>
 
-On Fri, May 10, 2024 at 09:48:11AM +0100, Colin Ian King wrote:
-> There is a spelling mistake in a TH_LOG message. Fix it.
+On Thu, May 09, 2024 at 03:07:17PM +0100, David Howells wrote:
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> > I think this should just be removed unconditionally, since the VFS now
+> > takes care of mode masking in vfs_prepare_mode().
+> 
+> That works for symlinks because the symlink path doesn't call it?
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+All of the mode handling should now be done correctly in the VFS (see
+Miklos reply as well). In general the less fs specific mode handling we
+have, the better because we've been bitten by this before.
 
