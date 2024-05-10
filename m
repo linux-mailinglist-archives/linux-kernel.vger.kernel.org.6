@@ -1,92 +1,178 @@
-Return-Path: <linux-kernel+bounces-176068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F41948C298C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:48:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1A48C298E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91C80B253D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D7A1F22A7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364CD3D982;
-	Fri, 10 May 2024 17:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5791D530;
+	Fri, 10 May 2024 17:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9o3owcH"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SzZyoRd0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059EC1F954
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0668717C7F;
+	Fri, 10 May 2024 17:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715363267; cv=none; b=uvf3DML/yUz6AlM3C+KZECWwVwlwA7KSNOgETHhvWr4qZ+2lQKv/V6ct4RPwDTcyl59CoEyjrMYM5gzLz4PFVPWQI6yYzTRF5btMObGJED88iG6ZnYOqk67sIypqfLnzfL97CG8xL3h2NwHQ4OBjq82zpJfNV+sKx5V3h31iOS4=
+	t=1715363437; cv=none; b=F5g+qOyV0PM+1nAtqGSfYS3O/+cjgxHezETuF50/ipQW2mVq+iedDRqbesriV7fwl/+G6GrMDclxM+Q1H9rHWd34UXJaJe3RNLmR/lPa7+59w6UQOzAn1n/mSxC5iCg9S/aTqz8FBW4032NpXAA4il26XUwpgrAy+qeizW8M0xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715363267; c=relaxed/simple;
-	bh=wtIQIip5nVPfkbjixVWdphytuwonMdaHcOLroeIqLNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d8sju3OKvbdBe+gb3sGpaQC6rdVdDOceo/pxRB+V77ZMh6RS2WjrahhG0KVdVt+eOlkJjUgIzgiGFZGUzy50giR/lIjQAveqg7mlY9CYTaugb4EPsBjlJv1UZkN+Qd4UIiCgiWDK54sjH1yzVck1TluJlZesrrGMRMOwwxGOX0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9o3owcH; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso789a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715363264; x=1715968064; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wtIQIip5nVPfkbjixVWdphytuwonMdaHcOLroeIqLNo=;
-        b=s9o3owcHBlN0toIX6BKL0MzUXBeLlkQL6SZ4zEQE32E0GloumirZ417QDlmBZ0NrhC
-         sH+xN1mnTienVbnHSErnxstvVIxfJZKzL/Wu9aywNdItoMJtgALS9esesmit1Tska0+z
-         nZ5ChHFtiCio4iprFxbhFhTexHx4XzDWQE3ENOgJPmgRQRIZKdra6Zy3/vZDOR5sxTPP
-         35MVlV9XdficZ4H1nCIOn0PVd3RX+Gmj4ryhgB83Zr/ci2HBWXOekQaclnTl1xMK5kbQ
-         CjCpVh+2Wsl9REFxg0slxrmC74vhhnrpPboC7nU2flYzmhodqr7RY8L6/FT3W7WLYH1w
-         sTXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715363264; x=1715968064;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wtIQIip5nVPfkbjixVWdphytuwonMdaHcOLroeIqLNo=;
-        b=fN//YnGSrspPSetC9BH33eV8FeJiW9rl+lFn7XffBM/XeQuBMT3SwwRm+a6iixLkGG
-         0uRg7oGpdtBIWLvOyp/HJJ33R8f6h+IBmK8TmHwZf8meck3sC8mt1+o4J1F0BU75sRUU
-         LoHCDJmBRVBPSr6YktSwkhFW58FRtKOEtag8/chMq0HV+DGdRovkGjujgd0Ei6Ul7GjO
-         5NuU7RcB0AfCsTSOmjny+rD4yfhEojhTw0XdEQMHJstOV3rKjj/sGSyzKEkdeqGCrCwo
-         PCK8fjqyLu7Os9UxyEnpfe+19yGnzeu1o/92q/594SzofV0JstTuMFjIkNH4XiNHgQY7
-         OUsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVerYR5bHSJin+ACs6YiDFzMYQIcS9ldj823mxR8IeD/RpDo5AJvDjp1eukZXE2dJqjp4NfKNXo9GJ+eJWgta0WFmaUOduES4+OiZ7C
-X-Gm-Message-State: AOJu0YxKjWosLZENTJQiZZPp2YOwKcvVW6zh+vwskXevEAJ/P5aziOHT
-	g7JB71T+tpBddmxJpKAb4BlspT57ukEKbVqhy0Ze0/Kep29patMpxcU+IRgcWxaqS26hhk2RPRy
-	7X/f7tnyq8EC45wvjA8mxWju3NsVTUnqcM9ZP
-X-Google-Smtp-Source: AGHT+IHa5FsJxGeGgllWY9Q4tH+ll2VsmZa3DhLaRjKNVSrW18OHO9wNIjfKJEwokkqsTG8piczzmGTMpNstjiLBz5M=
-X-Received: by 2002:a05:6402:1e87:b0:572:554b:ec4f with SMTP id
- 4fb4d7f45d1cf-574499eff4cmr162a12.3.1715363264154; Fri, 10 May 2024 10:47:44
- -0700 (PDT)
+	s=arc-20240116; t=1715363437; c=relaxed/simple;
+	bh=LH3ma9kabQkMoptj6dmpENxipMXJcBlX0fBO5XwwGTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbG1iSuBzMiIPnm2ENlFP/36nH+8onCUhQ1779QX5MFG7+2qqIeJ4LzcTS65QGYpVHGKBkfTxEnqsxacaHxZeqG5EcNm5E5V0JSbmrWV009kpkNB9q8t3s1strZkXGlm1cfiU9JBSRZtlrSpRW38sfmF03l7RaXxsNg4F6k4/40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SzZyoRd0; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715363435; x=1746899435;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=LH3ma9kabQkMoptj6dmpENxipMXJcBlX0fBO5XwwGTk=;
+  b=SzZyoRd0YFwJC7SWsvRzS0FvH7p7GMg4AUMI4hmQNJFVg2Lfpqbt8/KU
+   qswtkUDnVQwwZtJJ/gsLkcMWrXGuoC7yQnpM3YqSmYskxkXvYAM58vkoO
+   Cr5lcEzv+qPFA58QwHCsRydukLVLpE7CwCnS4vjLylsGdDVB6YfjvJeof
+   sKN6zdvORxO1Z9ROWmVgMBRL9s/qdpUC1+oNpz4vG7G6GicGBQtCNCd/b
+   tBYzoRqHp8iHNUuBdQxkRpRI/KZfWqHkWmSGjEu9n/cHbhOIg+LjLoJM5
+   Gn+LGMUSJnS1zbsDnUVjiZRLnsYkfZKiMheWXAt7thpdBx6K78TeV9PmP
+   Q==;
+X-CSE-ConnectionGUID: VsQn48lSTmK4pzWxgZCUrg==
+X-CSE-MsgGUID: CrNroRcyRgGSwSXykqFyAg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11520917"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="11520917"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:50:34 -0700
+X-CSE-ConnectionGUID: wyYjuQEFTUe2nLo9LTRGeQ==
+X-CSE-MsgGUID: Z/kqLkQ7Q5iCCPTQ1N2Nqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="67174972"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:50:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5UO5-00000006CbM-0TN8;
+	Fri, 10 May 2024 20:50:29 +0300
+Date: Fri, 10 May 2024 20:50:28 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux ACPI <linux-acpi@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
+ namespace root
+Message-ID: <Zj5eZKgpg3LFpne8@smile.fi.intel.com>
+References: <5787281.DvuYhMxLoT@kreacher>
+ <4926735.31r3eYUQgx@kreacher>
+ <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
+ <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
+ <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
+ <Zj5ZdcQeaTo9ImT4@smile.fi.intel.com>
+ <0cdf0af6-851b-4781-83fe-99320c35544f@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503003920.1482447-1-jthies@google.com> <20240503003920.1482447-2-jthies@google.com>
- <Zjiq4PrL2ju8FOUz@kuha.fi.intel.com> <2024051010-hungrily-scholar-7d23@gregkh>
-In-Reply-To: <2024051010-hungrily-scholar-7d23@gregkh>
-From: Jameson Thies <jthies@google.com>
-Date: Fri, 10 May 2024 10:47:32 -0700
-Message-ID: <CAMFSARfBu1vBbuA-jMgD0fWJL1_zfQ2X1P0XB-ysQNrJL7+B5g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] usb: typec: ucsi: Fix null pointer dereference in trace
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-usb@vger.kernel.org, 
-	pmalani@chromium.org, bleung@google.com, abhishekpandit@chromium.org, 
-	andersson@kernel.org, dmitry.baryshkov@linaro.org, 
-	fabrice.gasnier@foss.st.com, hdegoede@redhat.com, neil.armstrong@linaro.org, 
-	rajaram.regupathy@intel.com, saranya.gopal@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0cdf0af6-851b-4781-83fe-99320c35544f@amd.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Thank you for the feedback, I'll post a v4 series fixing these issues.
+On Fri, May 10, 2024 at 12:40:05PM -0500, Mario Limonciello wrote:
+> On 5/10/2024 12:29, Andy Shevchenko wrote:
+> > On Fri, May 10, 2024 at 06:52:41PM +0200, Armin Wolf wrote:
+> > > Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
+> > > > On Fri, May 10, 2024 at 6:10 PM Armin Wolf <W_Armin@gmx.de> wrote:
+> > > > > Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
+> > > > > 
+> > > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > > > 
+> > > > > > It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
+> > > > > > IdeaPad Pro 5 due to a missing address space handler for the EC address
+> > > > > > space:
+> > > > > > 
+> > > > > >     ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [EmbeddedControl] (20230628/evregion-130)
+> > > > > > 
+> > > > > > This happens because the EC driver only registers the EC address space
+> > > > > > handler for operation regions defined in the EC device scope of the
+> > > > > > ACPI namespace while the operation region being accessed by the _DSM
+> > > > > > in question is located beyond that scope.
+> > > > > > 
+> > > > > > To address this, modify the ACPI EC driver to install the EC address
+> > > > > > space handler at the root of the ACPI namespace.
+> > > > > > 
+> > > > > > Note that this change is consistent with some examples in the ACPI
+> > > > > > specification in which EC operation regions located outside the EC
+> > > > > > device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
+> > > > > > so the current behavior of the EC driver is arguably questionable.
+> > > > > Hi,
+> > > > > 
+> > > > > the patch itself looks good to me, but i wonder what happens if multiple
+> > > > > ACPI EC devices are present. How would we handle such a situation?
+> > > > I'm wondering if this is a theoretical question or do you have any
+> > > > existing or planned systems in mind?
+> > > > 
+> > > > ec_read(), ec_write() and ec_transaction() use only the first EC that
+> > > > has been found anyway.
+> > > 
+> > > Its a theoretical question, i do not know of any systems which have more than
+> > > one ACPI EC device.
+> > 
+> > The specification is clear about this case in the "ACPI Embedded Controller
+> > Interface Specification":
+> > 
+> >   "The ACPI standard supports multiple embedded controllers in a system,
+> >    each with its own resources. Each embedded controller has a flat
+> >    byte-addressable I/O space, currently defined as 256 bytes."
+> > 
+> > However, I haven't checked deeper, so it might be a leftover in the documentation.
+> > 
+> > The OperationRegion() has no reference to the EC (or in general, device) which
+> > we need to speak to. The only possibility to declare OpRegion() for the second+
+> > EC is to use vendor specific RegionSpace, AFAIU. So, even if ACPI specification
+> > supports 2+ ECs, it doesn't support OpRegion():s for them under the same
+> > RegionSpace.
+> > 
+> > That said, the commit message might be extended to summarize this, but at
+> > the same time I see no way how this series can break anything even in 2+ ECs
+> > environments.
+> 
+> It's deviating from the patch, but in practice /why/ would you even want to
+> have a design with two ECs?  In general that is going to mean a much more
+> complex state machine with synchronizing the interaction between both of
+> them and the host.
+> 
+> Understanding the benefit of such a design might make it easier to
+> hypothesize impacts.
 
-Thanks,
-Jameson
+First that comes to my mind (but hypothetical), is the separate CPU/EC add-on
+cards. If the main firmware somehow supports all of these add-on platforms,
+it might need to handle 2+ ECs.
+
+Again, it might be ACPI specification issue. For instance, the cited piece
+doesn't tell about 16-bit EC accesses.
+
+> > > This patch would prevent any ACPI ECs other than the first one from probing,
+> > > since they would fail to register their address space handler.
+> > > I am just curious if/how we want to handle such situations.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
