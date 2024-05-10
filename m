@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-175372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5378C1E9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4E78C1E9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E2AB22475
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:02:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C11C1C221E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D044A15E7F2;
-	Fri, 10 May 2024 07:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6B15490E;
+	Fri, 10 May 2024 07:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pOYYVDPa"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KqtvNMlq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC47E5490E;
-	Fri, 10 May 2024 07:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995CA14F9DB;
+	Fri, 10 May 2024 07:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715324560; cv=none; b=FI4d7B6LsUbX85hMYghkOE8up3NJXszulboSltQ12gfKqerWWLVkEGSmgmLDyvvnwndnNqnovHs12omh+Xj03Vmgh3lnJ8Q+9dwg9Y1zyaJoSWb4rfZi7GCl4LM4q+G2+KSpkfWrmefQpBCVK9bhPjt65j65ENJ7kCDyUXvHFFo=
+	t=1715324595; cv=none; b=jNDCSGJEepGT1JXomiz1Pj47Z+Ym4H7Fba562Rc/VJMtZsLNlX7I7k1mMG5JX3aSK9JBh5mX7L51FnRM0rbw9+8s6kv+vmxitQIgSycsDWKiUcV1HiTxMYKUVsNK+8TzpxeXlL8oRSY8Xr1jZapdH9Qxi0n5S/X0w+/BpE3L1vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715324560; c=relaxed/simple;
-	bh=I9q2/LE7OixOeEBOotIdBWSBIomAbjME2L8JXihXNWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ucLKuSkAzrLZrLzHj8eEFumCWzAC9ja3exzK0Wl0Eg3ZOPgg8cQ+TYOOo4sO78PezrKaNVFK7DxEK9d6IysNIQyniApQgcWzY22l5YqlFxElZu+hrnGrlNromT15mb5Fpd8njWbfuddC93zC3Gvq//OAJpBH3Fa6uq8JbDbOqzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pOYYVDPa; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9BEIrQ+9MvvMRnuPmQrJgc1/AxggZCBl/hYSbaTzqVY=; b=pOYYVDPa7cVJDbdcvYoD4wfRNM
-	xwNDLjiie4qeT3z15wFQqeGABjlPtifo1iQjjPye49GUPseiI6nXut1fWigs5y4sT044H9jFKJ75k
-	QCcTDjW7uASr80yCwVSwB1qOsZZgEJuIJhj479327r5LuU9RM8MTDYYSshbyMcn1D7M04+Wo88WQq
-	jiBgRAvAT9kaJ6lJdXRT3jQ3azXQ0aA6VCYuKZigc0ohSdSFDIlgfHC29mEfdgHOEsKwoCDyC5qcp
-	KS8dQJdHFljNZtVfyKUiEefcvnfx5Lr6jEo4Z5r2zviNJ5csO4xAhSr3NDZsDRMYWI4ue1rjjfaNk
-	/+H/Eybg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s5KGy-002BnN-1U;
-	Fri, 10 May 2024 07:02:28 +0000
-Date: Fri, 10 May 2024 08:02:28 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] libfs: fix accidental overflow in offset calculation
-Message-ID: <20240510070228.GY2118490@ZenIV>
-References: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
- <20240510004906.GU2118490@ZenIV>
- <20240510010451.GV2118490@ZenIV>
- <6oq7du4gkj3mvgzgnmqn7x44ccd3go2d22agay36chzvuv3zyt@4fktkazj4cvw>
- <20240510044805.GW2118490@ZenIV>
- <20240510063312.GX2118490@ZenIV>
+	s=arc-20240116; t=1715324595; c=relaxed/simple;
+	bh=fpiRgv+q0BCS/Rkr2TvadjpPkvPzVdibVwZ2R9BU+vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OZbUHLJZ7kCxNn+/SkOWB39VI5qDH+i69NE6UlcE/7zmVzImJTNY484OKo3b0rRS3OZ9voYUpY5BZbMUno3iDYh0D12QnruSG41WOauhSHUFm1eMf/rhMy+u+DTMtSLeEY8YVek8WmdF+LfqA1671+4klzehZZQoCr7fPF8ESTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KqtvNMlq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715324587;
+	bh=khTCdzIwr3mZnJlScdJiKIBBkUVtbCweZSp17fi6sHc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KqtvNMlqMOtNKDUWBeW+xzBKefWMvbMDsvd8JfVhmYvRuJVzphXuntluy3UFOCZdA
+	 kcIld6WFrGjth5A728SUO4icS7sGsx4SaddxncX6Cbk9tAW+jIu/DzLc/wfjqnC+fL
+	 RRCPX4Tvhf9shGVXbj6YgO5TiSCmrNuTeQiDhGB41EZW/sFksXmqA81lMY7PObQaie
+	 ejGbYfjbGZjzyrY0xVrDqt6LZE0Or+4bT9gSNALAukgaPUhkdEIveziQ8opk7mkOrN
+	 fqr5UfTN55qGGND8YQRXHjdFrQPs7qNEoifgD9hmKqQW4MRdgEfAxQEGHE7nMo1F/h
+	 ElDjSwZb5mONw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VbKbH2v9kz4wc7;
+	Fri, 10 May 2024 17:03:07 +1000 (AEST)
+Date: Fri, 10 May 2024 17:03:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20240510170305.03b67d9f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510063312.GX2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: multipart/signed; boundary="Sig_/phaN6En8VyuvkREbJ+fNkXm";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, May 10, 2024 at 07:33:12AM +0100, Al Viro wrote:
+--Sig_/phaN6En8VyuvkREbJ+fNkXm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> As the matter of fact, it would be interesting to find out
-> which instances, if any, do *not* have that relationship
-> between SEEK_CUR and SEEK_SET.  If such are rare, it might
-> make sense to mark them as such in file_operations and
-> have vfs_llseek() check that - it would've killed a whole
-> lot of boilerplate.  And there it a careful handling of
-> overflow checks (or a clear comment explaining what's
-> going on) would make a lot more sense.
-> 
-> IF we know that an instance deals with SEEK_CUR as SEEK_SET to
-> offset + ->f_pos, we can translate SEEK_CUR into SEEK_SET
-> in the caller.
+Hi all,
 
-FWIW, weird instances do exist.
+After merging the sound-asoc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-kernel/printk/printk.c:devkmsg_llseek(), for example.  Or this
-gem in drivers/fsi/i2cr-scom.c:
-static loff_t i2cr_scom_llseek(struct file *file, loff_t offset, int whence)
-{
-        switch (whence) {
-        case SEEK_CUR:
-                break;
-        case SEEK_SET:
-                file->f_pos = offset;
-                break;
-        default:
-                return -EINVAL;
-        }
+ld: warning: discarding dynamic section .glink
+ld: warning: discarding dynamic section .plt
+ld: linkage table error against `acp_dsp_stream_config'
+ld: stubs don't match calculated size
+ld: can not build stubs: bad value
+ld: sound/soc/sof/amd/acp-probes.o: in function `acp_probes_compr_shutdown':
+acp-probes.c:(.text.acp_probes_compr_shutdown+0x8c): undefined reference to=
+ `acp_dsp_stream_put'
+ld: sound/soc/sof/amd/acp-probes.o: in function `acp_probes_compr_startup':
+acp-probes.c:(.text.acp_probes_compr_startup+0x84): undefined reference to =
+`acp_dsp_stream_get'
+ld: sound/soc/sof/amd/acp-probes.o: in function `acp_probes_compr_set_param=
+s':
+acp-probes.c:(.text.acp_probes_compr_set_params+0x108): undefined reference=
+ to `acp_dsp_stream_config'
+ld: acp-probes.c:(.text.acp_probes_compr_set_params+0x140): undefined refer=
+ence to `acp_dsp_stream_put'
+ld: sound/soc/sof/amd/renoir.o:(.toc+0x0): undefined reference to `sof_acp_=
+common_ops'
+ld: sound/soc/sof/amd/rembrandt.o:(.toc+0x0): undefined reference to `sof_a=
+cp_common_ops'
+ld: sound/soc/sof/amd/vangogh.o:(.toc+0x0): undefined reference to `sof_acp=
+_common_ops'
+ld: sound/soc/sof/amd/acp63.o:(.toc+0x0): undefined reference to `sof_acp_c=
+ommon_ops'
 
-        return offset;
-}
-SEEK_CUR handling in particular is just plain bogus: lseek(fd, -9, SEEK_CUR)
-doing nothing to current position and returning EBADF.  Even if you've done
-lseek(fd, 9, SEEK_SET) just before that...
+Caused by commit
 
-I suspect that some of those might be outright bugs; /dev/kmsg one probably
-isn't, but by the look of it those should be rare.
+  9c2f5b6eb8b7 ("ASoC: SOF: Use *-y instead of *-objs in Makefile")
 
-Then there's orangefs_dir_llseek(), with strange handling of SEEK_SET
-(but not SEEK_CUR); might or might not be a bug...
+I am not sure why, but reverting that commit fixed the build, so I have
+done that for today.
 
-From the quick look it does appear that it might be a project worth
-attempting - exceptions are very rare.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/phaN6En8VyuvkREbJ+fNkXm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY9xqkACgkQAVBC80lX
+0Gzycwf7B9CD+9R/kHdWOZtlcpMly+NFwaJydfgRtU0Ao17agvrMSMSWtXuyAbIl
+6tx1++38evnVQPciOnb9EnoG3TQw9um5RqcdTAcZoFO4hGbekCfVtALbKWMglIrh
+nCXUppw/33cqeMMkbQFswopgsuK8Lzi3maf+0YxYW/8OjMI2NHK0SlceNklQ/dio
+vFuV3glysPkLQiDrBcQQPJ8/6VSvxlKWk+PelJyEZr4W7GKyf7imxDFguMLj1d29
+VJyH5oIXFVXI1YMT5UcqBIum+DJKzNRW3LAHgaJ0G7Fx+rOTt9EroJbGldko4inc
+RulAsfoiTRmZwfO26DurjotbfHG5jQ==
+=Tfhq
+-----END PGP SIGNATURE-----
+
+--Sig_/phaN6En8VyuvkREbJ+fNkXm--
 
