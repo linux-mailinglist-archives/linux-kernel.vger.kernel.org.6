@@ -1,87 +1,84 @@
-Return-Path: <linux-kernel+bounces-176107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B948C29FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:37:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D9F8C29FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DF80B24FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 998061C21557
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B764436C;
-	Fri, 10 May 2024 18:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4D53D968;
+	Fri, 10 May 2024 18:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wZT1hI6p"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2075.outbound.protection.outlook.com [40.107.93.75])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SXJyHIoE"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2078.outbound.protection.outlook.com [40.107.20.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7364A18044
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 18:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6625D2EE;
+	Fri, 10 May 2024 18:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.78
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715366207; cv=fail; b=K03MbraHURkKpwqYqW30a1xklKrUV0X/hXkUzikNIwLIwGI8Nit2SPWOEj6O1k/IS5o1oQMB4aA7Hkrhpnho3MShVYaBBVG8A+ZJ9YBtoUPs8cttCZfDUU2NqQ9rHS3pwf35Tgzg/h1rSoXpXNst1AMgEbQzQA02Bh+Uu/OYwZA=
+	t=1715366335; cv=fail; b=CCRsBnLiaT2n07LEvXMMb+Fe5kNkbvWKwkyS1iUw3JndzSFkWRv8KCXUdsIsCXoTluXC1mrfrCRK4bWa12d7DY6H7uHfyw3AXvPc3ouDW75wKEzw6+TWHGqPs7HUMnPK4lPflJRhsImf2KAHdXNDQ1FMr8v8xrHI09SitxbQo3g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715366207; c=relaxed/simple;
-	bh=39jQrtdFRTJ8GxcRWGno0d64GrWOKqwSO/yyJK5mPU4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OmLYHMK210ErZ76Hk3Fd3+n1rRoTc5TDTKyETU6U37HmQEcSdKPSqj9M+D6WyRqbrmptUbVoNgFmjINBHrq+VAfJjlR/W5xbkKb2FgbcVRdoHhAVkiXWSYjg+l3C7huU8PhmhK4qo2INfFDtSfpPlqR3tSonxapHpTUmmiT5p/Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wZT1hI6p; arc=fail smtp.client-ip=40.107.93.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1715366335; c=relaxed/simple;
+	bh=WMwUtuir+gAPNuI6ez0vCQ2KHH4EWRfAqISPXSWrhWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ib6cgMBPBR4eRtiuhE1rDGUPktPz3KbuwNJAkr7uK7UM+2/cmAeY3K9Xn/YUDaiZebUXahDa1X67oeQCIQI1hZowDdP8sRfuQF0h9EfaAOxEYGpukQtc52p2ASbzjXsh5/VrF2DHbzp2WcSsmArvJZiTorJribHfUrqjOpR751s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=SXJyHIoE; arc=fail smtp.client-ip=40.107.20.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L6pyJULv9XhOIIuPFopI0v4tU4gueLpHrE22oaTk6L9TJHS1ctqsfwG/Sqj5nTHs401O67rxzxOfoX85cwlBmvWi/1ECLW3+iYHxpkAIaa6sfZgTEPDPoqpoHgVYt73T8zt1EiLyEwZN3EgbC7QD/ERzG7Z3SAphTFIMqDVr6VWFEN5DESTAPZH3Aw0KUAQq+8Z+Xa2tOzdfQ2h2fHhsH7wFR5Jjq0gxfMlfyc8PUy81k7x/pYbUmXLCYJFHJ0GtPjVX99r0uhs/MtxF7fjTi5uEKX8/hm52z4ANxqJ3h+ZJIdSRwn5/bEdYOACdW3wAplX7BwbFZ4J6MOyGcHSYiQ==
+ b=GE9fztAdiShWmj6AyIh65/ZRuzkTIO1EPW94VrQOTDHjx05LljRI97cS5YW4KnfrLQQ2dqtXnDhS5Tcx2iMY2H5ji1jsg8vagPe1o07A8QOkYRp8GSuqEPimxxCbePmMLYpDtfQCuuH7O7fI2MX2RDikCt37znwcYcZYRQZQhG69kYuHY6P3KGfsgBKgCMY4uIABVFrKy9kyW14FTBwksx2OGXSf2uIsRzGs4DHT0hU55PhN9pPR3XhKm4597YT0m3+5hfD3vbcWijFaS+KjimbBZIGrazKiWxP8yUkZvlRl/TnOHKhMS0qfQA5FTiBDrIEqqm3Ym10CXvEt6hysKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fonZj/KQCxyy+x7E1h9+pYGVnIBcN6fuWcTQBH2fITc=;
- b=KdMFKCQgFw7t9kCTP5+E3DFzZt3RlnrbvYyNkmYfgxYvJRuimbpS5gD9i8YyJjrzUYL7P2hYFFMkKqkruoSir5D/QRL7pkE00hF/n97ONTgbnwK1yYepVsO1eX6WEsdMHNIJocbbm4QMpCosW3eREgL1frvrnCtetP+ZRjih7/MCSijqP0H2EjNck9Pop5/Dr6A1Y9Zuuk7gfRls1TlzGQomJd63wBKGS3HUNql02VfltAFvlvlpKnRG7FIg/XnpOpYSh673NsJZLitC+WuuiNYmz1DBOtVCptzdfYRHsTNyu2EmxqG1+TC+jCz9y5z9rCRqic+MRAiHDi26JJ0WCw==
+ bh=rUy05h7JmmTSJGy6G5zAcOkdejCJaKJgbL8tFFVYLpQ=;
+ b=Pz0o5Up8o1w4/3Wybu0Btlkidr+ESFsUouGWQ0b8/PgcDBjLg0RRkn+O6I4voPkotksrNyms6vsrptMThZB8kiaCWX7ngAVZNgxOQ9Uzp2e0Mu1HkmCMCP8CzwabS17MMzliwTEkb0MpisQZ7d2Oe3Pa5R1n8PpgDueIapWIsli9VpON+GL94kV4Hd3zK/ocJB3KNWHWxUwli++JreszxpAfHAsMMHtYdO5bVkI6z4jehHi32FP3ju755a33LeuoLBIDP1jDqn/Hk7dbhrjs1ObwYi8Fzar+SNaIhyjuRjQoWQiFMrpZ5TPVmrwA5OW86PkLaOLyfdj2oqAAj4mzSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fonZj/KQCxyy+x7E1h9+pYGVnIBcN6fuWcTQBH2fITc=;
- b=wZT1hI6pQJoEHrTjcTQj+HM/buHqI+WKEmoPTJsblZsPbWKPCS8cydp5jvsDmGK8K+6RujLlS9kh1dApUds3yRq1uYd0VZWHvGqyVlRAVfart6YAyLaBSpDXyOiI9H/JBRuYptkWlH28bcn5LBWc3QdITlc0R0TuCOs4gtOnkWI=
+ bh=rUy05h7JmmTSJGy6G5zAcOkdejCJaKJgbL8tFFVYLpQ=;
+ b=SXJyHIoEjGBH6GPaPPFex3ZFF05loFZX2ZuDg+0LzF34eM8ZlZucjEK8cnPW3c1CYrjkJzUWm6K4GeZn1ZdKcEkR8Gcls8WiVad584FMKSSIqti6acB2WcsYfHFnRf4AAURiFHSdkq2YTQUTEzm8/jRjoN5yPsHiUPXS/4AqUl0=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SN6PR12MB2767.namprd12.prod.outlook.com (2603:10b6:805:75::23)
- by PH8PR12MB7184.namprd12.prod.outlook.com (2603:10b6:510:227::14) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM7PR04MB6821.eurprd04.prod.outlook.com (2603:10a6:20b:105::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.38; Fri, 10 May
- 2024 18:36:41 +0000
-Received: from SN6PR12MB2767.namprd12.prod.outlook.com
- ([fe80::d73f:2f29:b54f:3111]) by SN6PR12MB2767.namprd12.prod.outlook.com
- ([fe80::d73f:2f29:b54f:3111%3]) with mapi id 15.20.7544.048; Fri, 10 May 2024
- 18:36:41 +0000
-Message-ID: <adc782c1-eac9-4525-9f44-cd546dc14beb@amd.com>
-Date: Fri, 10 May 2024 13:36:37 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] efi/x86: Fix EFI memory map corruption with kexec
-Content-Language: en-US
-To: Ruirui Yang <ruirui.yang@linux.dev>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org,
- hpa@zytor.com, peterz@infradead.org, adrian.hunter@intel.com,
- sathyanarayanan.kuppuswamy@linux.intel.com, jun.nakajima@intel.com,
- rick.p.edgecombe@intel.com, thomas.lendacky@amd.com, michael.roth@amd.com,
- seanjc@google.com, kai.huang@intel.com, bhe@redhat.com,
- kirill.shutemov@linux.intel.com, bdas@redhat.com, vkuznets@redhat.com,
- dionnaglaze@google.com, anisinha@redhat.com, jroedel@suse.de,
- ardb@kernel.org, kexec@lists.infradead.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <cover.1712694667.git.ashish.kalra@amd.com>
- <cover.1714148366.git.ashish.kalra@amd.com>
- <6dfe98fb95d7193ba2d692a2b6900a4d5d73db26.1714148366.git.ashish.kalra@amd.com>
- <Zjydu25Z26dH81NX@darkstar.users.ipa.redhat.com>
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <Zjydu25Z26dH81NX@darkstar.users.ipa.redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN4PR0501CA0118.namprd05.prod.outlook.com
- (2603:10b6:803:42::35) To SN6PR12MB2767.namprd12.prod.outlook.com
- (2603:10b6:805:75::23)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 18:38:49 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7544.048; Fri, 10 May 2024
+ 18:38:49 +0000
+Date: Fri, 10 May 2024 14:38:41 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, imx@lists.linux.dev, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: imx: imx8mp: Add delay after power up
+Message-ID: <Zj5psV6ZIFZ/OPth@lizhi-Precision-Tower-5810>
+References: <1714966502-27784-1-git-send-email-shengjiu.wang@nxp.com>
+ <Zjkftwr4/6KV39sD@lizhi-Precision-Tower-5810>
+ <CAA+D8AN9kFdgojkrR0ORUyrtOW=JOn0AfbXFTJ70RE7JxgA2pA@mail.gmail.com>
+ <Zjmi4Qc3C3OYJU5n@lizhi-Precision-Tower-5810>
+ <CAA+D8AMC41oUEWLuHb-f=U9pEzqWYon22McvT4MucYK=ajNuFQ@mail.gmail.com>
+ <Zjmn1jRW2E2kpSlI@lizhi-Precision-Tower-5810>
+ <CAA+D8ANuNtaC90fHtGoYiofPTLQHcyCm0p_dcsYTVgT7gsKtMg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8ANuNtaC90fHtGoYiofPTLQHcyCm0p_dcsYTVgT7gsKtMg@mail.gmail.com>
+X-ClientProxiedBy: BYAPR04CA0015.namprd04.prod.outlook.com
+ (2603:10b6:a03:40::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,235 +86,267 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2767:EE_|PH8PR12MB7184:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ec9a646-a989-4f34-5058-08dc7120220a
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM7PR04MB6821:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4aee70d-444f-43f2-5b18-08dc71206ee4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007|7416005;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|52116005|7416005|376005|366007|38350700005;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TEFROXZlWFBrZlFDMmRJaVExRlNEcFUzMUV2cDdPaEk4TDFIQXIxVXpiczB6?=
- =?utf-8?B?UXBzSjVOQWJJY2pnbFJNdXlxQzVmMzFtdGprQlN2cXNoa01XUzAwNFN5ZEtl?=
- =?utf-8?B?YjFpc1NiRG1UYzNhN3lkNUZObEUvOUMxMUJxa3FMeS9kNjNNRCtZVHorUHp6?=
- =?utf-8?B?MVZ1MXV3dGswd0QxTVpMcloyVDNDK1hvY1FmVU9EZ20zTm9ONjZaZ2cwbGFX?=
- =?utf-8?B?U0xMaG1tYTV1Ukgvc1JKVCtzenZ4NHpQZWJSZEhtZHRLWkZLMVN2d0h2UlRo?=
- =?utf-8?B?ZUFqZCtPSWx1d1dZNkRZVC93Si9zcnJqTmptTFpsZ0pyVGlWY043UWM3STRC?=
- =?utf-8?B?bVJNbEJVdnJDYlhZK1RrRElsb3RiNWdldmxKbkUwNHdrdGJlcTNGdDlpME5I?=
- =?utf-8?B?cmRjTzA4b3JZQ1RVa2haTkc3VUgyQldlK1hSRnRKNzU2K3d6cEJiVXRQL2dE?=
- =?utf-8?B?cmF6eDB2YjhZOHQ4b0p2L1RqWGNhelJJOUtaMlpuUlI1YjlnelN5OEdsR2RR?=
- =?utf-8?B?b0JFL0kzWFJrOGpqUk5GZUpIVElKRzNXdVJObGQ4QnJpdm5oN0NpenhpdEIw?=
- =?utf-8?B?YjhHS04vWlNkSVB4Rzk0Ync1TlRtSE0zRjhudFlUemw3Z1dBSHA1SUVoak80?=
- =?utf-8?B?eEVqWlgxaHlUL0ZyWjNtdU5vNmFtZnowQ3NaSlN4dlZYcHBFYmNkTHlZTVdO?=
- =?utf-8?B?RGd2K29SbVUyNGY5QU9IUXZIMnkweDA0NmtlcmFmZXU5MXlhTUpnTVZBKzRN?=
- =?utf-8?B?cDhDNVkvbDJTcUJJeUtoWVZDWXptWk85YWw0OHdaQVVlSUQreEFsTzhadE83?=
- =?utf-8?B?WUZvSWJ6UGwrUGUyR3p3K1JXU3MzU1hEMks0NHR4WkpySzBGd1lJSEhickRt?=
- =?utf-8?B?Ymhld0tTZ3FkTzUrK3lYc2xHNUJGYzlOckNjR0VZNUNKZDhaWjR3QlNzVWdo?=
- =?utf-8?B?WHc5bWQ3dFd0eU1VdHZVeXFQMmVINkZsZ2dJZDBPV0RxYmlrVXRBZFdxV21z?=
- =?utf-8?B?eXFMWDVjQ3dkY2gyTStpUXFoR084b3FxNG5RRWF3enRLUjNUelNnTHhKT3U5?=
- =?utf-8?B?bUNqdEZleFU2YWVLWHRERzhTSmJXZGl2V1ZWTDJrUFpac1lZS1JBZDd0NjhI?=
- =?utf-8?B?eENkYm5nQjQ0MFVxNFlSL3hkUUZQajJidjBYQ2VQdlRjMUhxRkVWTXJFRnFZ?=
- =?utf-8?B?Nyt6NTEzUit1QU5SeG55SmN3UldBZjJ4UWdnT0NRalZ5K3RDdy82S2lIVmFC?=
- =?utf-8?B?bjUraVl2N21tT0owVzJxbzZSODM0Zm0xQVFOTHJkR2JLRGlZYlBmeE9ON2s4?=
- =?utf-8?B?dUNNVm5ZcE53TFVPQ3VySGgxZ3h3WllDVDBnbGR1eVIrVU5wQSt1blFGWHJ1?=
- =?utf-8?B?VnVtWjk4dW9QRDlnSHZ3TTZGclIrWnRhQmY4dWhoMkZEWXNuL01lazZEWjAw?=
- =?utf-8?B?Smp4R0RuYmhlWjlKWnkzOFVIYnpock9Mckt3RmVXWTV2ZkhVajB2V1p0T0xR?=
- =?utf-8?B?azMvYVF4Q1Ayb1RsUWZidkt1N3FwTitQVitBQUcwbFlXOU1xd3BaYVVGdTRS?=
- =?utf-8?B?V1QxaDIwVzQ0YkYvcHFRVDdiMFVGTTBiWnptazRqZ1FjZ083b0V4RTZPblRX?=
- =?utf-8?B?NGFuTGEvNkJONS9YTUlxcUdRUlg1UjJyaHdPd25PNlViZS9scTlPcnFpZ203?=
- =?utf-8?B?RlEzZlFVd0s5OVphdmNabG9DaUorRnlxcWx3R3I4TnBwK3FDdjBZeXFnPT0=?=
+	=?utf-8?B?UCtvN0taTDVXSGNsRHIrbVhZTlI5cW5zMVpjTmtjdzRMeVlLZHY4Nlo4TXVF?=
+ =?utf-8?B?OTRjNmhUNXI2cUkvcC82VzdJMEM1NGgvZThiYTA4NHpvcFlwc2pVY1BjWmd4?=
+ =?utf-8?B?REFwSXY4Mk1NYktjZ0VUYmx6bWx0TXBLMjJnSWRIcGdHbTRHMWF3Z3V4OTFo?=
+ =?utf-8?B?UWdMZGVyajVlWjM1Qlc2SHAwcU9VS1EybVkvaGFUZEU1OU13NlNGL0ZLelQ1?=
+ =?utf-8?B?cGl2SXZZMktYMkpQYlh6OHRXaCtaNUQ0TzZwT280ZysyOWtPc3l3TGEyYjAy?=
+ =?utf-8?B?T05pREIxdUNCcDU3RHlhRE5wL0l1VlZpVWxEb0R1cGZ2ZmZDOEUrb3o0OHJR?=
+ =?utf-8?B?dU5QbW44Sjg0VHNyMlBmeko1SEVtVUFZV0NFbG5xWjBhNXl2THVDWWcxSC9z?=
+ =?utf-8?B?ODd0aHVPVWF1R1p0Q0Q0cmVycnhrNkJ6TFFHdllPT2oydm5SSE9ocFBUaThO?=
+ =?utf-8?B?ZGFiRldOVW55Wk11VVFNNE5tZHNCd0lyUm80Slo1OWdjMS81a3dJTTJtL1gx?=
+ =?utf-8?B?aERJZkljN0VocnNYQTIzMXdoc3J5U2ErdnZzTUNEZ3hkbldnRjFsTGZJTlFq?=
+ =?utf-8?B?VXJKamk2cWYvQS9DMDZYVG03NUVDR3UyblcrM2ZNM2J0U0VxN3lqbnJNaWFD?=
+ =?utf-8?B?emxrTWpSSnc0UE05TVh2Q0FoaERHQWVSbGlhQ0VTNEJGSzBpbmMwVEFTYVpB?=
+ =?utf-8?B?ZG9meVBBaEJjbGhUWWtUUUtoWVNEckdidGRJaTJ2eWJSUU9QSTZLa3plZXhP?=
+ =?utf-8?B?VndMSVR3eUxKVGRzaWhZZ1BtZDhTY2ptbk0vczNlL2hKQWI4TzhUYlNWUkk0?=
+ =?utf-8?B?Q0Z5Q0V2TTIwOVhzVUlxZGFvTDNZOG1xMy9BMkVmL1lLOUdYdFMvaUZUVmpH?=
+ =?utf-8?B?a1lhcmdpLytmVHpyVHN2dlIraVpTYTVtS1FMd1M5NmFzV3ZRdFVwYzk1TWJ4?=
+ =?utf-8?B?TlBka0FsSjBGT0ZJbFRRb3JhK0NtMmZjOGRhdGkrSXVPVGpSbnVNc0tuemR5?=
+ =?utf-8?B?eXR1M1NqSmxXaVgxcmdXd01RdlBkTjlVdWpCSFZPdVpCTGJYMkFyWTM5eTVG?=
+ =?utf-8?B?S0JxRHF6UmRSNG9mZVRQTHplT1VPQWVyV3JITHNCNElVS1VMTFJtYTRUTHow?=
+ =?utf-8?B?UEJwWDFBdUk5amNPYXB6WGd2L2RtQ3EwdEtqUnF0SWxrMEhYNXI5S2RHaWFO?=
+ =?utf-8?B?eUVYL0l3TWZBdGY1eThYZ0NSRmhOcktyYVcvb21tcGc5VDJGTGZ1ZzdnOXdI?=
+ =?utf-8?B?QlVJaFFSVUVKSjdScS9TNW9MTEdCdFF5TjhGQTE0QmlHaDYzWTdLRWdzUHFz?=
+ =?utf-8?B?cmE3QTd2M3hGK3k5T2o0TUJsVHhESEpGYUlTODdTQmFCN2VmSHhYbmh5K2NL?=
+ =?utf-8?B?ZEUrUlhMYmFoazFOK2VPRnhrd2pIelhaMzljeHIvQ0tWeWpaWjVFTWNEeC9B?=
+ =?utf-8?B?eDhKbld1MU94L1Y4MU5oTWRwY0R0RDBjL1o3cGwrM0RXazNjSHhady8zOWdj?=
+ =?utf-8?B?VnFDSnJPLzJ3bXc5cHJVRFI4SjJjUDBnVk9WQktqbDNZQ2EzVUZhQy9XdkZx?=
+ =?utf-8?B?MkV0RFA1d25ncmtqMU5Vb0ZKbEpZOFZiN3lkemZacnVxQllkc29oOC9meS9S?=
+ =?utf-8?B?ZkN2TDl3bXBlVm5VMjVKaE5QaS9HN0F0OE1PeVk2TDNLS3Rxc2ZzU0gxdTk5?=
+ =?utf-8?B?S0dpRmxtUVV5V28xWmsvQkNkNlpsSFJyL3V2L1cwRHRMakNuaVJXcDdsVmZn?=
+ =?utf-8?B?ckFScm12MGYyYllnT2w4cEJOYjZkb1liRjc2WXFmeldiNTkyT05mUm1YNUhX?=
+ =?utf-8?B?UHpvMndaOHVLRmF0dmREUT09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR12MB2767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(7416005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(52116005)(7416005)(376005)(366007)(38350700005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZVpQaFF1MnhNSmgyVVZVRkx1bFgzclRtelcxcWo1VWMrL3JCN2s0TTU4dnhv?=
- =?utf-8?B?c1ZhOThiTG1lb0JJTUlPc29xelNiWFgyRmE4MFNrTlR1TjUzWGNVR0xQVDlJ?=
- =?utf-8?B?anlTaFNmamZZNkdRVWo0TnlhT1E2dVNuV1BYU1JwSlZxN2xuYW1Tak9MV0RM?=
- =?utf-8?B?T2VVOVJtYVRJR3FYYkZaQ0J6b0gxZTFPSFVGK1BsWnRzL1dPQlJDZEVNVXRI?=
- =?utf-8?B?TTF1WGdKbmlrODVIaFlvTEU3YUtSWHBZbTBiSHR3Y1ZORUtVRVU4WWNPblRx?=
- =?utf-8?B?M2w4bktONlhJck1JWk81MG1Ybzd4Y1EwWDNyK2pDdmh6NkRTL1hyS2ExS214?=
- =?utf-8?B?SGdCTDFYUTl4eWh0MWFXRnRDZFYvcHVOc21KdUtwRHhyMWxpUWpDL1Zsa2JH?=
- =?utf-8?B?T0hRVFBoaXhlcUxuZzZOVkU0QUZOQ3BCbnFQMTFmeUFoaDhBNlNTYWZnNUlR?=
- =?utf-8?B?eXlCZWo1M1JBc0l4QW5PNzZiMDFqQnFEZnk5MmJWZE5ySldBOGM4aWlXRnJL?=
- =?utf-8?B?eEVOa215U3cyY1FMMVFsM3ZOSDRPTVNlSHRBT3JyS2tXVHE1WnBaQXdKQTNX?=
- =?utf-8?B?U2VZMSs5djJwakt3V3pBaWZFemJlMFg3RlRyRm1idWg4K0V6c2ZOKzVLVGlw?=
- =?utf-8?B?U2ZvdFlIREMvYUpLbGRwQ1d5YlVtMnZBazc5WkFQOEF0V0R4aDNUajdSdGpm?=
- =?utf-8?B?a1dxNUZyRE9XWk13SHpJdmM4UE43aTVFQm5tcVlDNTRnKzVYS0ZCWVJHeUFS?=
- =?utf-8?B?YzBhMHpuU0kwR2tkNzAwc0hlU1QvMmN6VkhnTVdnN2pMK2JYZ1Noa2ljSkhX?=
- =?utf-8?B?a0VCR3Rld3EyMURpSnF0Tk5rbWhxbmM5bWtGRU1UWnNiKzZMMm1qWURvSExK?=
- =?utf-8?B?djFPalRHOGwwYVdqbFdyS2tRTHVLVEFPeEhuem9pNGp0SGl3L2JxTlpzZWlv?=
- =?utf-8?B?TE1WVzliNzF1K0tjSlZpb1NMMWtSZU94TFBnbldTNlJxMkNxVmlkcGpMd2gx?=
- =?utf-8?B?N0k2L3pLekhtU01reElQc2Zkd2d4Y1I3KzZkRzRCdUpCRTNscWtucWgrOEQw?=
- =?utf-8?B?VHNHVXNNVitIQ08vSDJpdTc4NEVCZGZhNitwQ0hVcElkbGdhVTVmQndyZXhi?=
- =?utf-8?B?RDVqUnA3bnhvc0dzVmJyYndFL2cxRy9pMURWU1U1b1FneW5kRWUrd3A5SzhC?=
- =?utf-8?B?OGh6TEN1K0dGZ1ZCMWlicTN6Z3Q5OWNyWHAva093dHlCbU9jN1ZLa1JzWnI0?=
- =?utf-8?B?d0RMbzBsZDIxM3BKaVNLaC9CMExqQmJsNm5wTmdPOHhpWHBYekZtMmIxYUty?=
- =?utf-8?B?dmdJV3d5Yzk1VlhldmFNNm5uYzBnbUxscTgrZjFXZzlneEkvQ3AwUldtTmxs?=
- =?utf-8?B?am9NNzVTRjFLZkMrVUhpanFOUE9sblBNdlhVWFZzZGQ4d0szckZKbFQ4RkF5?=
- =?utf-8?B?UHZGZEkrQll0L3BkT3VIRy9TSGFlQXlXV0F4cTRiRks2c2NOMVA4Tkp1ajB6?=
- =?utf-8?B?eFdiYThxbnFvdlFjUE5GY0hZeUhMU2J1VjFwaERRTElXSlhjOXdPTnRwTG5n?=
- =?utf-8?B?WS9wb1hjTW12QUcvK09Gb1NKVHkyejBjZ0l1MG1lRGQ2Ly9OOXNDdE1WU3oy?=
- =?utf-8?B?VjcrVnF5cDZGR285cVVzYk1nNmgyYVRqci9iYUE0MTMwcXlyOG92eVhjVVZ0?=
- =?utf-8?B?YWl6SGF1clplSEJBTmIyZ05WT3BDaS93bGlpRE1wOUpuTHVmS2dRNkIxRWVw?=
- =?utf-8?B?U1BDVldXZXpyVHhYQURUR3hSQjJoN3p2Y0pVTE1ZS2JkaVVveitLd29GaXVQ?=
- =?utf-8?B?cXhLSnNzN1ZrNGRlck1uVzZnOHZTNHU0QUxlRGVxSDhtZEltbmJRVzA0cUJl?=
- =?utf-8?B?UGtDQnBrVHdHRzFtY0V3aHlKQllReUlRZWszKzJzUXZqYjVxMDV0dno5RWJN?=
- =?utf-8?B?ekM1R1c0V0Njd3FhQm1seUVENjkrL3l4bUhKV1h0VXBXSmdvbTEwNUZEUDF0?=
- =?utf-8?B?VWpBeGhKUHJEdngrNzZ0dE5GQnJYQmhqRS80d05nWE1MR0dFZDJXQ3UySm1O?=
- =?utf-8?B?SzJvLzV2ektkdC8xYktvSkJYRWJXbDNDcS84RFB0citxeEloWWQwdHpHakZn?=
- =?utf-8?Q?3uDa0GPK2w5Lp5uKqgwX6S3bc?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ec9a646-a989-4f34-5058-08dc7120220a
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR12MB2767.namprd12.prod.outlook.com
+	=?utf-8?B?Rzk4OW9zczNRTG40dWF2QVRiSExZTjgvdHAwVWZxcCtJcWNaOENFLzJEc1lv?=
+ =?utf-8?B?UlQ3TWdEVVRyODF4RVpITnhXYlZnMUxjV2hIdVh6Q29uTlVwT1RrR05JdmNn?=
+ =?utf-8?B?TmlZZ0o5OWhnMmJwTXhEVGtjb1hCWGRpaVNCQWNvUDdPOFZtUGRlNlVodmpT?=
+ =?utf-8?B?cUh3b2VOTUdzcmVZczZtTTBkaVgwSDE4U2UzcWkzNFZyNmlDU0FHZDZ6MlhL?=
+ =?utf-8?B?NkxwdFd1VWZWQnE5cXdocm11bHZuR2I5RVJ5RER1MHdWSS9UUVprZnovWHBC?=
+ =?utf-8?B?S3dKaEU5YVFiU0h6b3JQeVR6RmkvVXN1VkNReXJuc2krWkJiNXRibkxQSUpZ?=
+ =?utf-8?B?SFVldmFZb1BCNml3MXV1aGQ3dHFMR25UeVlRdnVzT2tOZnZkYjFKUEJoOXFi?=
+ =?utf-8?B?eWt1RDY2RmdER0gxaVcvZk9LR21WQnhCUitxb3UyRHJxUDNNcnp6eXNyL3BY?=
+ =?utf-8?B?Rm1mRlgxU1hmd3V5aFo0VlZ1NW1odCtiSjBlWm5lVUtUL0V6UGNOc1VYOHl3?=
+ =?utf-8?B?UnZmSVZUd09UYzh2TGErVTJoeE1XRjdPcUdRalA5WkRWdEFTY1JWaThjbWNz?=
+ =?utf-8?B?cElkR2JkMUdCU3Zkc01oQkFrZ0FUVGY3WVFJOElRSW5WeUsxUlEvWDF0ZHFi?=
+ =?utf-8?B?ay9yLzhnbDZkQkszTXhDUTRwWTB4Nmw0a3A5KzhraVRFVFZKNEl0OU9tWEQ4?=
+ =?utf-8?B?UnFzT0VDaVB2dWdFWlIvRTNWK05maTdGQTdudFovRTJ5NjlpMmIzS2ZPUXZN?=
+ =?utf-8?B?Y2ZsRUFFRVZ1bmJwZDMyV3dIUlZvSlBaL01rQmRmTW1KdzZBT3ZVSEpZeit5?=
+ =?utf-8?B?S1UrOFBvZXMwNEJPY1IwM3FRMVVXRG9TZVlLVFFjYkNFUmg5bzY5bjFiN2ZS?=
+ =?utf-8?B?RFJ6ZDMrZEk2SXhsejlkdm9HaGRnVkhmejl1dFV6T0JsTnpXRHNTYkRsb2pp?=
+ =?utf-8?B?RlQ5bXExL25LU3hUT2tpcHgzd1ZsWkdXbWVtRVc0RStTQXhka0FGL3BrZFdk?=
+ =?utf-8?B?dnZtM214azNIa0xMbkcvZ0ZqSksya1RLZ3RkU1I1VHpLNTc1M2t5eVhhcGpJ?=
+ =?utf-8?B?TStIb3ZpNExZZkdSVFBxWVAwSHZuRjlLZmMvZGIzNzN3Zi9MWTJId3FDRFlm?=
+ =?utf-8?B?Q0NtcHh3d2dsajJOaWJxUWE5UG9RTVYvUzFyZlhzV2dRUFdCcWtlVDBBNllC?=
+ =?utf-8?B?RnM2RnNDR2RkYjloQmlTQk16anpqWDFDbFR6Y3F0WGNqMTAwTXBYOEpVSVIx?=
+ =?utf-8?B?NHZhWmRTc1dYZGFHZ0l0SFV5UUZhcWhlVTJTQzRmSzVac05qM2xvRUpJZUlQ?=
+ =?utf-8?B?bmttUDZaVmFveWt1WUJlTENzZDFpNWFXQkxQOFNtaklCaTF1T2NLLzBYSUY3?=
+ =?utf-8?B?ZSttMFkya1lncXl2bUNHck9EekZkVEFSS1k3L0xobFFlclI1QlFrRElGNW1s?=
+ =?utf-8?B?K3NBL3YyUmtoVWN5THpNdDhZSUo3UUdack1UMW9wRVRnNlJSVXVFVkVQNVBL?=
+ =?utf-8?B?QVZ1QWRxUG40VUhyallYZGtIdGZqaXkvQzdnUlAzNzVDbVYrTkRRYWU4NVo2?=
+ =?utf-8?B?US9lblB1S0FZL3ptVmN6OUI3c2JlL20vTzNId3kvN3p6YlpIdndjNHo2MFJY?=
+ =?utf-8?B?WWJLTExYcjA1YU9hVHVKNVBmMlBZeFlTdnNJM1pNT200Z0hINklGYnFYTU5F?=
+ =?utf-8?B?YzYyOXUzK1FDSFRGdzhJRHo0YTc0VGxYTGdqMXpVczI5ZENXRVBGZG1EeDJs?=
+ =?utf-8?B?MkhGaENqQVZZMU9YVzgzaXM3b1RVRWVzcVIvejNleUtjKys5Z3NjYytmOUhM?=
+ =?utf-8?B?Y29nazQyeFp6VUhYaTNKdDZKNzVsS1Y4blFKUDZVMW1SK2tiNmd6bTZQcGRj?=
+ =?utf-8?B?VFM5WFU1TjBOMXVSeHpJSjRBeUl6UU5KK2FKQkNOZHhwWE9pbTVZUWR5Znpa?=
+ =?utf-8?B?NlJCS0tJRS9jSjBEaTQ0Yis2QmtRM1RLN1ZwTHpTWW9CU2JKeFE4eCtvRkxw?=
+ =?utf-8?B?M1hDUmRRMmhTMDFNV0dWcVlobXJneDdGQVcvQkFyQ3lJSmFwT2t0dEs4OUlH?=
+ =?utf-8?B?ZHJZcXdoM3FwVHMvZWVKaWxqb0p1bWpxN2g3cXhBQWFvYkM0OWlLbi9HcWl2?=
+ =?utf-8?Q?59EkZ9kMFiUm6FDFtALamDK26?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4aee70d-444f-43f2-5b18-08dc71206ee4
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 18:36:41.2112
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 18:38:49.4240
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Scg0zI+n/EOlCoFdh60LU7kOxJPg4M0cYRvF4Op8WVwb1u0q9DWRDKz6smNPe2+XEVuCjKejhLAqOQAEGdAq+A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7184
+X-MS-Exchange-CrossTenant-UserPrincipalName: oWWOf0tp1wEAQfaxjbJ3REcmCsBFMuHwdASw1Q+nHTml3opTInBha97sfhwqS1zzicS874Gl59iKaxzHVF8Qiw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6821
 
-On 5/9/2024 4:56 AM, Ruirui Yang wrote:
+On Tue, May 07, 2024 at 04:04:14PM +0800, Shengjiu Wang wrote:
+> On Tue, May 7, 2024 at 12:02 PM Frank Li <Frank.li@nxp.com> wrote:
+> >
+> > On Tue, May 07, 2024 at 11:44:32AM +0800, Shengjiu Wang wrote:
+> > > On Tue, May 7, 2024 at 11:41 AM Frank Li <Frank.li@nxp.com> wrote:
+> > > >
+> > > > On Tue, May 07, 2024 at 09:44:19AM +0800, Shengjiu Wang wrote:
+> > > > > On Tue, May 7, 2024 at 2:22 AM Frank Li <Frank.li@nxp.com> wrote:
+> > > > > >
+> > > > > > On Mon, May 06, 2024 at 11:35:02AM +0800, Shengjiu Wang wrote:
+> > > > > > > According to comments in drivers/pmdomain/imx/gpcv2.c:
+> > > > > > >
+> > > > > > >       /* request the ADB400 to power up */
+> > > > > > >       if (domain->bits.hskreq) {
+> > > > > > >               regmap_update_bits(domain->regmap, domain->regs->hsk,
+> > > > > > >                                  domain->bits.hskreq, domain->bits.hskreq);
+> > > > > > >
+> > > > > > >               /*
+> > > > > > >                * ret = regmap_read_poll_timeout(domain->regmap, domain->regs->hsk, reg_val,
+> > > > > > >                *                                (reg_val & domain->bits.hskack), 0,
+> > > > > > >                *                                USEC_PER_MSEC);
+> > > > > > >                * Technically we need the commented code to wait handshake. But that needs
+> > > > > > >                * the BLK-CTL module BUS clk-en bit being set.
+> > > > > > >                *
+> > > > > > >                * There is a separate BLK-CTL module and we will have such a driver for it,
+> > > > > > >                * that driver will set the BUS clk-en bit and handshake will be triggered
+> > > > > > >                * automatically there. Just add a delay and suppose the handshake finish
+> > > > > > >                * after that.
+> > > > > > >                */
+> > > > > > >       }
+> > > > > > >
+> > > > > > > The BLK-CTL module needs to add delay to wait for a handshake request finished
+> > > > > > > before accessing registers, which is just after the enabling of the power domain.
+> > > > > > >
+> > > > > > > Otherwise there is error:
+> > > > > > >
+> > > > > > > [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
+> > > > > > > [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
+> > > > > > > [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
+> > > > > > > [    2.181050] Workqueue: events_unbound deferred_probe_work_func
+> > > > > > > [    2.181064] Call trace:
+> > > > > > > [...]
+> > > > > > > [    2.181142]  arm64_serror_panic+0x6c/0x78
+> > > > > > > [    2.181149]  do_serror+0x3c/0x70
+> > > > > > > [    2.181157]  el1h_64_error_handler+0x30/0x48
+> > > > > > > [    2.181164]  el1h_64_error+0x64/0x68
+> > > > > > > [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
+> > > > > > > [    2.181183]  __genpd_runtime_resume+0x30/0x80
+> > > > > > > [    2.181195]  genpd_runtime_resume+0x110/0x244
+> > > > > > > [    2.181205]  __rpm_callback+0x48/0x1d8
+> > > > > > > [    2.181213]  rpm_callback+0x68/0x74
+> > > > > > > [    2.181224]  rpm_resume+0x468/0x6c0
+> > > > > > > [    2.181234]  __pm_runtime_resume+0x50/0x94
+> > > > > > > [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
+> > > > > > > [    2.181258]  __driver_probe_device+0x48/0x12c
+> > > > > > > [    2.181268]  driver_probe_device+0xd8/0x15c
+> > > > > > > [    2.181278]  __device_attach_driver+0xb8/0x134
+> > > > > > > [    2.181290]  bus_for_each_drv+0x84/0xe0
+> > > > > > > [    2.181302]  __device_attach+0x9c/0x188
+> > > > > > > [    2.181312]  device_initial_probe+0x14/0x20
+> > > > > > > [    2.181323]  bus_probe_device+0xac/0xb0
+> > > > > > > [    2.181334]  deferred_probe_work_func+0x88/0xc0
+> > > > > > > [    2.181344]  process_one_work+0x150/0x290
+> > > > > > > [    2.181357]  worker_thread+0x2f8/0x408
+> > > > > > > [    2.181370]  kthread+0x110/0x114
+> > > > > > > [    2.181381]  ret_from_fork+0x10/0x20
+> > > > > > > [    2.181391] SMP: stopping secondary CPUs
+> > > > > > >
+> > > > > > > Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power saving")
+> > > > > > > Reported-by: Francesco Dolcini <francesco@dolcini.it>
+> > > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > > > > Revewied-by: Peng Fan <peng.fan@nxp.com>
+> > > > > > > ---
+> > > > > > > changes in v2:
+> > > > > > > - reduce size of panic log in commit message
+> > > > > > >
+> > > > > > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 7 +++++++
+> > > > > > >  1 file changed, 7 insertions(+)
+> > > > > > >
+> > > > > > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > > > > > index b381d6f784c8..ae2c0f254225 100644
+> > > > > > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > > > > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > > > > > @@ -6,6 +6,7 @@
+> > > > > > >   */
+> > > > > > >
+> > > > > > >  #include <linux/clk-provider.h>
+> > > > > > > +#include <linux/delay.h>
+> > > > > > >  #include <linux/device.h>
+> > > > > > >  #include <linux/io.h>
+> > > > > > >  #include <linux/mod_devicetable.h>
+> > > > > > > @@ -360,6 +361,12 @@ static int clk_imx8mp_audiomix_runtime_suspend(struct device *dev)
+> > > > > > >
+> > > > > > >  static int clk_imx8mp_audiomix_runtime_resume(struct device *dev)
+> > > > > > >  {
+> > > > > > > +     /*
+> > > > > > > +      * According to the drivers/pmdomain/imx/gpcv2.c
+> > > > > > > +      * need to wait for handshake request to propagate
+> > > > > > > +      */
+> > > > > > > +     udelay(5);
+> > > > > > > +
+> > > > > >
+> > > > > > Did you address the issue I comments at v1?
+> > > > > > It should not fix at here, I think it should be gpcv2.c to delay 5us.
+> > > > >
+> > > > > Other BLK CTRL drivers already delay 5us in its own drivers, if
+> > > > > add delay in gpcv2.c, for these drivers, it will delay 10us totally.
+> > > >
+> > > > We should go forward as correct direction. If udelay should be gpcv2.c,
+> > > > it should be there and remove other udelay in BLK CTRL drivers gradually.
+> > > >
+> > > With Peng's reply:
+> > >
+> > > "No. Because BLK CTRL enable BUS_EN, before enable BUS_EN, udelay does
+> > > not help. For the audiomix, move to gpcv2 would work, but gpcv2 is
+> > > not only for i.MX8MP audiomix. For mixes, default not enable BUS_EN
+> > > after power on, the udelay must be in blk ctrl driver."
+> > >
+> > > So gpcv2.c is not correct place for all BLK CTRL drivers.
+> >
+> > where BLK-CTRL driver source code?
+> 
+> drivers/pmdomain/imx/imx8m-blk-ctrl.c
+> drivers/pmdomain/imx/imx8mp-blk-ctrl.c
+> drivers/pmdomain/imx/imx93-blk-ctrl.c
 
-> On Fri, Apr 26, 2024 at 04:33:48PM +0000, Ashish Kalra wrote:
->> From: Ashish Kalra <ashish.kalra@amd.com>
->>
->> With SNP guest kexec observe the following efi memmap corruption :
->>
->> [    0.000000] efi: EFI v2.7 by EDK II
->> [    0.000000] efi: SMBIOS=0x7e33f000 SMBIOS 3.0=0x7e33d000 ACPI=0x7e57e000 ACPI 2.0=0x7e57e014 MEMATTR=0x7cc3c018 Unaccepted=0x7c09e018
->> [    0.000000] efi: [Firmware Bug]: Invalid EFI memory map entries:
->> [    0.000000] efi: mem03: [type=269370880|attr=0x0e42100e42180e41] range=[0x0486200e41038c18-0x200e898a0eee713ac17] (invalid)
->> [    0.000000] efi: mem04: [type=12336|attr=0x0e410686300e4105] range=[0x100e420000000176-0x8c290f26248d200e175] (invalid)
->> [    0.000000] efi: mem06: [type=1124304408|attr=0x000030b400000028] range=[0x0e51300e45280e77-0xb44ed2142f460c1e76] (invalid)
->> [    0.000000] efi: mem08: [type=68|attr=0x300e540583280e41] range=[0x0000011affff3cd8-0x486200e54b38c0bcd7] (invalid)
->> [    0.000000] efi: mem10: [type=1107529240|attr=0x0e42280e41300e41] range=[0x300e41058c280e42-0x38010ae54c5c328ee41] (invalid)
->> [    0.000000] efi: mem11: [type=189335566|attr=0x048d200e42038e18] range=[0x0000318c00000048-0xe42029228ce4200047] (invalid)
->> [    0.000000] efi: mem12: [type=239142534|attr=0x0000002400000b4b] range=[0x0e41380e0a7d700e-0x80f26238f22bfe500d] (invalid)
->> [    0.000000] efi: mem14: [type=239207055|attr=0x0e41300e43380e0a] range=[0x8c280e42048d200e-0xc70b028f2f27cc0a00d] (invalid)
->> [    0.000000] efi: mem15: [type=239210510|attr=0x00080e660b47080e] range=[0x0000324c0000001c-0xa78028634ce490001b] (invalid)
->> [    0.000000] efi: mem16: [type=4294848528|attr=0x0000329400000014] range=[0x0e410286100e4100-0x80f252036a218f20ff] (invalid)
->> [    0.000000] efi: mem19: [type=2250772033|attr=0x42180e42200e4328] range=[0x41280e0ab9020683-0xe0e538c28b39e62682] (invalid)
->> [    0.000000] efi: mem20: [type=16|   |  |  |  |  |  |  |  |  |   |WB|  |WC|  ] range=[0x00000008ffff4438-0xffff44340090333c437] (invalid)
->> [    0.000000] efi: mem22: [Reserved    |attr=0x000000c1ffff4420] range=[0xffff442400003398-0x1033a04240003f397] (invalid)
->> [    0.000000] efi: mem23: [type=1141080856|attr=0x080e41100e43180e] range=[0x280e66300e4b280e-0x440dc5ee7141f4c080d] (invalid)
->> [    0.000000] efi: mem25: [Reserved    |attr=0x0000000affff44a0] range=[0xffff44a400003428-0x1034304a400013427] (invalid)
->> [    0.000000] efi: mem28: [type=16|   |  |  |  |  |  |  |  |  |   |WB|  |WC|  ] range=[0x0000000affff4488-0xffff448400b034bc487] (invalid)
->> [    0.000000] efi: mem30: [Reserved    |attr=0x0000000affff4470] range=[0xffff447400003518-0x10352047400013517] (invalid)
->> [    0.000000] efi: mem33: [type=16|   |  |  |  |  |  |  |  |  |   |WB|  |WC|  ] range=[0x0000000affff4458-0xffff445400b035ac457] (invalid)
->> [    0.000000] efi: mem35: [type=269372416|attr=0x0e42100e42180e41] range=[0x0486200e44038c18-0x200e8b8a0eee823ac17] (invalid)
->> [    0.000000] efi: mem37: [type=2351435330|attr=0x0e42100e42180e42] range=[0x470783380e410686-0x2002b2a041c2141e685] (invalid)
->> [    0.000000] efi: mem38: [type=1093668417|attr=0x100e420000000270] range=[0x42100e42180e4220-0xfff366a4e421b78c21f] (invalid)
->> [    0.000000] efi: mem39: [type=76357646|attr=0x180e42200e42280e] range=[0x0e410686300e4105-0x4130f251a0710ae5104] (invalid)
->> [    0.000000] efi: mem40: [type=940444268|attr=0x0e42200e42280e41] range=[0x180e42200e42280e-0x300fc71c300b4f2480d] (invalid)
->> [    0.000000] efi: mem41: [MMIO        |attr=0x8c280e42048d200e] range=[0xffff479400003728-0x42138e0c87820292727] (invalid)
->> [    0.000000] efi: mem42: [type=1191674680|attr=0x0000004c0000000b] range=[0x300e41380e0a0246-0x470b0f26238f22b8245] (invalid)
->> [    0.000000] efi: mem43: [type=2010|attr=0x0301f00e4d078338] range=[0x45038e180e42028f-0xe4556bf118f282528e] (invalid)
->> [    0.000000] efi: mem44: [type=1109921345|attr=0x300e44000000006c] range=[0x44080e42100e4218-0xfff39254e42138ac217] (invalid)
->> ...
->>
->> This EFI memap corruption is happening with efi_arch_mem_reserve() invocation in case of kexec boot.
->>
->> ( efi_arch_mem_reserve() is invoked with the following call-stack: )
->>
->> [    0.310010]  efi_arch_mem_reserve+0xb1/0x220
->> [    0.311382]  efi_mem_reserve+0x36/0x60
->> [    0.311973]  efi_bgrt_init+0x17d/0x1a0
->> [    0.313265]  acpi_parse_bgrt+0x12/0x20
->> [    0.313858]  acpi_table_parse+0x77/0xd0
->> [    0.314463]  acpi_boot_init+0x362/0x630
->> [    0.315069]  setup_arch+0xa88/0xf80
->> [    0.315629]  start_kernel+0x68/0xa90
->> [    0.316194]  x86_64_start_reservations+0x1c/0x30
->> [    0.316921]  x86_64_start_kernel+0xbf/0x110
->> [    0.317582]  common_startup_64+0x13e/0x141
->>
->> efi_arch_mem_reserve() calls efi_memmap_alloc() to allocate memory for
->> EFI memory map and due to early allocation it uses memblock allocation.
->>
->> Later during boot, efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
->> in case of a kexec-ed kernel boot.
->>
->> This function kexec_enter_virtual_mode() installs the new EFI memory map by
->> calling efi_memmap_init_late() which remaps the efi_memmap physically allocated
->> in efi_arch_mem_reserve(), but this remapping is still using memblock allocation.
->>
->> Subsequently, when memblock is freed later in boot flow, this remapped
->> efi_memmap will have random corruption (similar to a use-after-free scenario).
->>
->> The corrupted EFI memory map is then passed to the next kexec-ed kernel
->> which causes a panic when trying to use the corrupted EFI memory map.
->>
->> Fix this EFI memory map corruption by skipping efi_arch_mem_reserve() for kexec.
->>
->> Additionally, skipping this function for kexec altogther makes sense
->> as for kexec use case need to use the the EFI memmap passed from first
->> kernel via setup_data and avoid any additional EFI memory map
->> additions/updates.
->>
->> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
->> ---
->>   arch/x86/platform/efi/quirks.c | 20 ++++++++++++++++++++
->>   1 file changed, 20 insertions(+)
->>
->> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
->> index f0cc00032751..af7126d9c540 100644
->> --- a/arch/x86/platform/efi/quirks.c
->> +++ b/arch/x86/platform/efi/quirks.c
->> @@ -258,6 +258,26 @@ void __init efi_arch_mem_reserve(phys_addr_t addr, u64 size)
->>   	int num_entries;
->>   	void *new;
->>   
->> +	/*
->> +	 * efi_arch_mem_reserve() calls efi_memmap_alloc() to allocate memory for
->> +	 * EFI memory map and due to early allocation it uses memblock allocation.
->> +	 * Later during boot, efi_enter_virtual_mode() calls kexec_enter_virtual_mode()
->> +	 * in case of a kexec-ed kernel boot. This function kexec_enter_virtual_mode()
->> +	 * installs the new EFI memory map by calling efi_memmap_init_late() which
->> +	 * remaps the efi_memmap physically allocated here in efi_arch_mem_reserve(),
->> +	 * but this remapping is still using memblock allocation.
->> +	 * Subsequently, when memblock is freed later in boot flow, this remapped
->> +	 * efi_memmap will have random corruption (similar to a use-after-free scenario).
->> +	 * The corrupted EFI memory map is then passed to the next kexec-ed kernel
->> +	 * which causes a panic when trying to use the corrupted EFI memory map.
->> +	 * Additionally, skipping this function for kexec altogther makes sense
->> +	 * as for kexec use case need to use the the EFI memmap passed from first
->> +	 * kernel via setup_data and avoid any additional EFI memory map
->> +	 * additions/updates.
->> +	 */
->> +	if (efi_setup)
->> +		return;
->> +
-> efi_mem_reserve is used to reserve boot service memory eg. bgrt, but
-> it is not necessary for kexec boot, as there are no boot services in
-> kexec reboot at all after the 1st kernel ExitBootServices().
->
-> The UEFI memmap passed to kexec kernel includes not only the runtime
-> service memory map but also the boot service memory ranges which were
-> reserved by the 1st kernel with efi_mem_reserve, and those boot service
-> memory ranges have already been marked "EFI_MEMORY_RUNTIME" attribute.
->
-> Take example of bgrt, the saved memory is there only for people to check
-> the bgrt image info via /sys/firmware/acpi/bgrt/*, and it is not used in
-> early boot phase by boot services.
->
-> Above is the reason why the efi_mem_reserve can be skipped for kexec
-> booting.  But as I suggested before I personally think that checking
-> EFI_MEMORY_RUNTIME attribute set or not looks better than checking
-> efi_setup.
+I still think it should put in gpcv2.c. Call power_on/off happen at very
+low frequency. Even there are additional 5us delay for other BLK-CTRL
+drivers, it will tiny impact to system performance. It is not worth to add
+additonal software check to disingiush these two cases.
 
-Thanks for reviewing the patch.
+But correct power on is more important. 
 
-I will move back to checking the md attribute instead of checking 
-efi_setup as i was doing previously and resubmit this patch.
+So readl() follow a udelay(5) is more important then additional 5us delay
+for other BLK-CTRL driver since there are many 5us delay already in gpcv2.
 
-Thanks, Ashish
+Frank 
 
->
->>   	if (efi_mem_desc_lookup(addr, &md) ||
->>   	    md.type != EFI_BOOT_SERVICES_DATA) {
->>   		pr_err("Failed to lookup EFI memory descriptor for %pa\n", &addr);
->> -- 
->> 2.34.1
->>
->>
+> 
+> Best regards
+> Shengjiu Wang
+> >
+> > even if put clk_imx8mp_audiomix_runtime_resume(), it need read any
+> > register before udelay. all regiser read and write is strong ordered.
+> > when get value from a register, all previous write must be done.
+> >
+> > all udelay (5) in gpcv2 may not delay 5us at all.
+> >
+> > Frank
+> > >
+> > > Best regards
+> > > Shengjiu Wang
+> > >
+> > > > If sometime found 5us is not enough, need change to 6us, we just need
+> > > > change at one place.
+> > > >
+> > > > Frank
+> > > >
+> > > > >
+> > > > > Best regards
+> > > > > Shengjiu Wang
+> > > > >
+> > > > >
+> > > > >
+> > > > > >
+> > > > > > Frank
+> > > > > >
+> > > > > > >       clk_imx8mp_audiomix_save_restore(dev, false);
+> > > > > > >
+> > > > > > >       return 0;
+> > > > > > > --
+> > > > > > > 2.34.1
+> > > > > > >
 
