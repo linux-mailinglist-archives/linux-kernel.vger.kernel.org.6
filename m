@@ -1,231 +1,1204 @@
-Return-Path: <linux-kernel+bounces-175528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049008C20E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6972E8C20DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839CC1F22C8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F0A2836DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233B4161904;
-	Fri, 10 May 2024 09:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD07161333;
+	Fri, 10 May 2024 09:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XUfzHMep"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d5A6pwIy"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B643F16132C;
-	Fri, 10 May 2024 09:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C8215FA87;
+	Fri, 10 May 2024 09:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715333177; cv=none; b=OuSFi/LnkajaO3GM2/K0PViDZAebnE6RQ4cyJix8rdfFYSsANO3OTK7YbXChdR7CwlzdPAB9ZoW77OEU+/QeZmBPGVHSnVPMQI9vsJcMoHVE239asAziVqpkiEB4eME0WAPfCpjkl+9uP0f9ndXFqF6hWYzf3O6cBomLHVCZZZ0=
+	t=1715333160; cv=none; b=kCxlxwRpBK2n6qMOXIMIup+l0z+CO2Dfl6MIIbkR4n9SInYwhYa1ttMSZZasGOQ4sUTYU4I+nZkF1k025yNIjIcDKJNW2d03JSIR+NY9XMqjeSp4WuC3VxalSXgrPGcAqf5Z+JYfpLmtTgXuf3I/0sTwe2jy3gAASh89uJJ/DeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715333177; c=relaxed/simple;
-	bh=y09aU3jLc3FuTNGiBAOkD/IJp3wci1UlfN8un8+6Sv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nP4V6SDhffLEqWtr69M/k+/4L7o3yMBnBbdg4b1bfn+C9wgQ+cQH9AEPaZBEQlgk1Xh4V9RGtn62WwvD7WUV6tI0Pd0R1/VJnvuKBO3OXrDftQAT8sLS0xGbHc7I/yC0c6uxiHgdM3NpkOMSos4xSYDumOTuYbVfdjBET37CK5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XUfzHMep; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 17A2440E0249;
-	Fri, 10 May 2024 09:26:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id plVXWEu6CSsG; Fri, 10 May 2024 09:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715333163; bh=fRAsiqdaxYNLWRPjqSgsM/ZnfQQhG+p8NwrR51D23nw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XUfzHMepSn4/+ARY812zuUTZb37qycJWK1yUQ/J5b0dM1vo/H4JxUPvCeFPJtXZ92
-	 4tDsOc1Gxve7TVkNl8IITGIAZTp3mCJ+0esUpdjY5h3ZfLe2exvjxxd9KxEUwEIfIb
-	 UtyEIUDSTywR16SF8+u/T8bO8Z4r3V8zHVf0NfIqKwwx3XgMKSAYHkHSVASdFtQSd0
-	 v2m3vSCRS/j7npFX/QRO9qzkWpdh6ywBiQ5Q6qnn323/AWpecrLBHX/BBAYEM0bXcE
-	 8CrYjb/Xlu5pBV7KJmCCI1D9zISrgytBG+8w0KE+QGfp+8Bx8F2xbusnHqF6+8ptB3
-	 ppUjQgSuH0QGyOcHpP7z9ykO7LWPIJkALa5s+08UjIB+WZIIdRIfzBdnJqeg9W+gjP
-	 9gx1i5OeCuBTPDZ39+2l4dJCMFm/p6p2D/d87x8KYrLjcGeHx+hf+oz4ECjUIX7XM7
-	 20wxMOHyLhstOSOvcDEBUIirXRXu5rv8UdTa+it96/mfIfoNpzXQ0Bzs4sa4ZgZOSv
-	 j7oRwPSN53LFchyK9MyjIha7+u6ObleFB20Y0TM+jvFCR9p7FyoyyebUyFps7NWjDr
-	 PjRYNWCqDrNjuQ3/QkiVrNTKVI/qx2Eo5vghzBSGYvaeFF7oyFmp/V6eQZVyGmjRNz
-	 VFI/97BiGc+9OZSKaGWZj0dA=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	s=arc-20240116; t=1715333160; c=relaxed/simple;
+	bh=XHjXtA0rguIe/z+uS8NKm1XMbLxDniD9FmYkU1zg6NQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TuhBV9phaDeuT8q3WOK8RhAbs0YCQseoZqsQdExW5kiEO+0bcMxZQ/5yCPMZVyUsMUIFzmq2oJ6sqq5rovrtU9Fl8qomwfdvlkRSLcyuMv96brnqf6cocaxLWIzA8tI8EpaYZgifKOUZNLk2o046sCiFGJraxrLMPMDxgmbrN4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d5A6pwIy; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715333148;
+	bh=XHjXtA0rguIe/z+uS8NKm1XMbLxDniD9FmYkU1zg6NQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d5A6pwIy+52GTu+KObTqHgG4vRqntMgXvU93ErPG2L7Sz6rOMUtHcZ4QEd2PjToSi
+	 GW0YowbjDoXeE5EB3ZLh/IETLVearMNkXA1E4euoq5ROob3wdPsW25rnv2mc5dAoRc
+	 /Lfal1+ThA7MV8+Q6I7zynRp3QGscx5AHUMOro2iTuI2AGurPTawwZkYcer+1DpvHN
+	 kLJrtNmCvLiYQrkCRKyb3g5e5gkPDf/ZmvcC64ueZbZuHNem6NR9k04jQnE3FUv282
+	 CDpuqqcn7IEFFk306QRh+yFmvLNeB80NTSmknNBwUhNJDwMlx8D5YTdVEqXWDd4rbY
+	 5TClR0NlkGPMw==
+Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AE34040E0187;
-	Fri, 10 May 2024 09:25:16 +0000 (UTC)
-Date: Fri, 10 May 2024 11:25:11 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"mike.malvestuto@intel.com" <mike.malvestuto@intel.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240510092511.GBZj3n9ye_BCSepFZy@fat_crate.local>
-References: <e0ce36eb80054440ab877ccee4e606de@huawei.com>
- <20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
- <4ceb38897d854cc095fca1220d49a4d2@huawei.com>
- <20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
- <20240509101939.0000263a@Huawei.com>
- <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
- <20240509200306.GAZj0r-h5Tnc0ecIOz@fat_crate.local>
- <663d3e58a0f73_1c0a1929487@dwillia2-xfh.jf.intel.com.notmuch>
- <20240509215147.GBZj1Fc06Ieg8EQfnR@fat_crate.local>
- <663d55515a2d9_db82d2941e@dwillia2-xfh.jf.intel.com.notmuch>
+	(Authenticated sender: andrzej.p)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C2E223782182;
+	Fri, 10 May 2024 09:25:47 +0000 (UTC)
+Message-ID: <c78c9e88-bd53-4ae5-8f78-d8b1c468a5cd@collabora.com>
+Date: Fri, 10 May 2024 11:25:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <663d55515a2d9_db82d2941e@dwillia2-xfh.jf.intel.com.notmuch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] net/9p/usbg: Add new usb gadget function transport
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
+ <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ kernel@pengutronix.de
+References: <20240116-ml-topic-u9p-v4-0-722ed28b0ade@pengutronix.de>
+ <20240116-ml-topic-u9p-v4-2-722ed28b0ade@pengutronix.de>
+Content-Language: en-US
+From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+In-Reply-To: <20240116-ml-topic-u9p-v4-2-722ed28b0ade@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 03:59:29PM -0700, Dan Williams wrote:
-> No, at a minimum that's a layering violation. This is a generic library
-> facility that should not care if it is being called for a CXL device or
-> an ACPI device.
+Hi Michael,
 
-Really?
-
-Because this looks like creating a subsystem for those two newfangled
-scrubbing functionalities which will be present in CXL devices and
-by that ACPI RAS2 thing.
-
-Because we have a *lot* of hw scrubbing functionality already. Just do:
-
-git grep "scrub"
-
-Some of it controls hw scrubbing. If this is a generic facility, does
-this mean that all those older scrubbers should be converted to it?
-
-Or is this thing going to support only new stuff? I.e., we want to
-disable our scrubbers when doing performance-sensitive workloads and
-reenable them after that but we don't care about old systems?
-
-And all that other bla about controlling scrubbers from userspace.
-
-So which is it?
-
-> I think it works for x86 drivers because the functionality in those
-> modules is wholly contained within that one module. This scrub module is
-> a service library for other modules.
-
-Well, you have that thing in EDAC. edac_core.ko is that service module
-and the chipset-specific drivers - at least on x86 - use a match_id to
-load only on the systems they should load on.
-
-If I had a BIOS table which had "EDAC" in it, I won't load edac_core.ko
-either but there isn't one.
-
-> It is functionally the wrong place to do the check. When module_init()
-> fails it causes not only the current module to be unloaded but any
-> dependent modules will also fail to load.
-
-See above. I'm under the assumption that this is using two methods to
-detect scrubbing functionality.
-
-> Let's take an example of the CXL driver wanting to register with this
-> scrub interface to support the capability that *might* be available on
-> some CXL devices. The cxl_pci.ko module, that houses cxl_pci_driver,
-> grows a call to scrub_device_register(). That scrub_device_register()
-> call is statically present in cxl_pci.ko so that when cxl_pci.ko loads
-> symbol resolution requires scrub.ko to load.
+W dniu 30.04.2024 o 01:33, Michael Grzeschik pisze:
+> Add the new gadget function for 9pfs transport. This function is
+> defining an simple 9pfs transport interface that consists of one in and
+> one out endpoint. The endpoints transmit and receive the 9pfs protocol
+> payload when mounting a 9p filesystem over usb.
 > 
-> Neither of those modules (cxl_pci.ko or scrub.ko) load automatically.
-> Either udev loads cxl_pci.ko because it sees a device that matches
-> cxl_mem_pci_tbl, or the user manually insmods those modules because they
-> think they know better. No memory wasted unless the user explicitly asks
-> for memory to be wasted.
-
-The scrub.ko goes and asks the system: "Do you have a CXL device with
-scrubbing functionality?" "Yes: load." "No: ok, won't."
-
-> If no CXL devices in the system have scrub capabilities, great, then
-> scrub_device_register() will never be called.
+> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 > 
-> Now, if memory_scrub_control_init() did its own awkward and redundant
-> CXL scan, and fails with "no CXL scrub capable devices found" it would
-> not only block scrub.ko from loading, but also cxl_pci.ko since
-> cxl_pci.ko needs to resolve that symbol to load.
+> ---
+> v3 -> v4:
+>    - implemented conn_cancel
 
-Why would it fail the scan?
+I tried this scenario:
 
-Isn't this fancy GET_SUPPORTED_FEATURES command giving you all info you
-need?
+1) run all the components and have 9pfs up and running
+2) stop the forwarder
+3) umount -f at the gadget side - this indeed succeeds now in v4
+4) start the forwarder again
+5) mount at the gadget side - this hangs.
 
-> I would not say "no" to a generic facility that patches out module
-> dependencies until the first call, just not sure the return on
-> investment would be worth it.
+Did this scenario work for you?
 
-From the discussion so far yeah, I think you're right, it is not worth
-the effort.
+Regards,
 
-> Lastly I think drivers based on ACPI tables are awkward. They really
-> need to have an ACPI device to attach so that typical automatic Linux
-> module loading machinery can be used. The fact this function is a
-> subsys_initcall() is a red-flag since nothing should be depending on the
-> load order of a little driver to control scrub parameters.
+Andrzej
 
-Yeah, it is becoming a mess before it has even started.
+>    - moved from mount_tag to device name like ffs does
+>    - renamed function_list to usb9pfs_instance
+>    - renamed usbg_function_list to usb9pfs_instance_list
+>    - renamed rx/tx_fill to queue_rx/tx
+>    - added use of retvals
+>    - added locking comment over usb9pfs_transmit
+>    - using if_else instead of two pathed switch calls
+>    - fixed return values of completion handler
+>    - using void pointer as parameter in rx_header
+>    - added a missed req_put in rx_header
+>    - removed extra disable function but call disable_ep directly
+>    - repaired several return values
+>    - remove the suspicious disable / enable path in usbg_create
+> v2 -> v3: -
+> v1 -> v2:
+>    - move the driver to net/9p/trans_usbg.c
+>    - fixed the commit title
+>    - fix %zu usage in p9_debug for size_t type
+>    - define functions static that are only used localy
+>    - return 0 in alloc_requests
+>    - use id_alloc_max instead of ida_simple_get
+>    - call ida_free in usb9pfs_free_func
+>    - call kfree for usb9pfs->tag and usb9pfs in usb9pfs_free_func
+>    - add MODULE_ALIAS_9P to load this module automatic when mounting
+>    - improved the documentation
+>    - added depends on USB_GADGET in Kconfig
+> ---
+>   Documentation/filesystems/9p.rst |  17 +-
+>   net/9p/Kconfig                   |   6 +
+>   net/9p/Makefile                  |   4 +
+>   net/9p/trans_usbg.c              | 983 +++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 1009 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
+> index 1e0e0bb6fdf91..10cf79dc287f8 100644
+> --- a/Documentation/filesystems/9p.rst
+> +++ b/Documentation/filesystems/9p.rst
+> @@ -48,11 +48,25 @@ For server running on QEMU host with virtio transport::
+>   
+>   	mount -t 9p -o trans=virtio <mount_tag> /mnt/9
+>   
+> -where mount_tag is the tag associated by the server to each of the exported
+> +where mount_tag is the tag generated by the server to each of the exported
+>   mount points. Each 9P export is seen by the client as a virtio device with an
+>   associated "mount_tag" property. Available mount tags can be
+>   seen by reading /sys/bus/virtio/drivers/9pnet_virtio/virtio<n>/mount_tag files.
+>   
+> +USBG Usage
+> +==========
+> +
+> +To mount a 9p FS on a USB Host accessible via the gadget at runtime::
+> +
+> +	mount -t 9p -o trans=usbg,aname=/path/to/fs <device> /mnt/9
+> +
+> +To mount a 9p FS on a USB Host accessible via the gadget as root filesystem::
+> +
+> +	root=<device> rootfstype=9p rootflags=trans=usbg,cache=loose,uname=root,access=0,dfltuid=0,dfltgid=0,aname=/path/to/rootfs
+> +
+> +where <device> is the tag associated by the usb gadget transport.
+> +It is defined by the configfs instance name.
+> +
+>   Options
+>   =======
+>   
+> @@ -68,6 +82,7 @@ Options
+>   			virtio	  connect to the next virtio channel available
+>   				  (from QEMU with trans_virtio module)
+>   			rdma	  connect to a specified RDMA channel
+> +			usbg	  connect to a specified usb gadget channel
+>   			========  ============================================
+>   
+>     uname=name	user name to attempt mount as on the remote server.  The
+> diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+> index 00ebce9e5a657..c3d357eb8bb37 100644
+> --- a/net/9p/Kconfig
+> +++ b/net/9p/Kconfig
+> @@ -39,6 +39,12 @@ config NET_9P_XEN
+>   	  This builds support for a transport for 9pfs between
+>   	  two Xen domains.
+>   
+> +config NET_9P_USBG
+> +	bool "9P USB Gadget Transport"
+> +	depends on USB_GADGET
+> +	help
+> +	  This builds support for a transport for 9pfs over
+> +	  usb gadget.
+>   
+>   config NET_9P_RDMA
+>   	depends on INET && INFINIBAND && INFINIBAND_ADDR_TRANS
+> diff --git a/net/9p/Makefile b/net/9p/Makefile
+> index 1df9b344c30bd..22794a451c3f7 100644
+> --- a/net/9p/Makefile
+> +++ b/net/9p/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_NET_9P_FD) += 9pnet_fd.o
+>   obj-$(CONFIG_NET_9P_XEN) += 9pnet_xen.o
+>   obj-$(CONFIG_NET_9P_VIRTIO) += 9pnet_virtio.o
+>   obj-$(CONFIG_NET_9P_RDMA) += 9pnet_rdma.o
+> +obj-$(CONFIG_NET_9P_USBG) += 9pnet_usbg.o
+>   
+>   9pnet-objs := \
+>   	mod.o \
+> @@ -23,3 +24,6 @@ obj-$(CONFIG_NET_9P_RDMA) += 9pnet_rdma.o
+>   
+>   9pnet_rdma-objs := \
+>   	trans_rdma.o \
+> +
+> +9pnet_usbg-objs := \
+> +	trans_usbg.o \
+> diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+> new file mode 100644
+> index 0000000000000..bc440033cbe68
+> --- /dev/null
+> +++ b/net/9p/trans_usbg.c
+> @@ -0,0 +1,983 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * trans_usbg.c - USB peripheral usb9pfs configuration driver and transport.
+> + *
+> + * Copyright (C) 2024 Michael Grzeschik <m.grzeschik@pengutronix.de>
+> + */
+> +
+> +/* Gadget usb9pfs only needs two bulk endpoints, and will use the usb9pfs
+> + * transport to mount host exported filesystem via usb gadget.
+> + */
+> +
+> +/*     +--------------------------+    |    +--------------------------+
+> + *     |  9PFS mounting client    |    |    |  9PFS exporting server   |
+> + *  SW |                          |    |    |                          |
+> + *     |   (this:trans_usbg)      |    |    |(e.g. diod or nfs-ganesha)|
+> + *     +-------------^------------+    |    +-------------^------------+
+> + *                   |                 |                  |
+> + * ------------------|------------------------------------|-------------
+> + *                   |                 |                  |
+> + *     +-------------v------------+    |    +-------------v------------+
+> + *     |                          |    |    |                          |
+> + *  HW |   USB Device Controller  <--------->   USB Host Controller    |
+> + *     |                          |    |    |                          |
+> + *     +--------------------------+    |    +--------------------------+
+> + */
+> +
+> +#include <linux/slab.h>
+> +#include <linux/kernel.h>
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/err.h>
+> +#include <linux/usb/composite.h>
+> +#include <linux/usb/u_f.h>
+> +
+> +#include <net/9p/9p.h>
+> +#include <net/9p/client.h>
+> +#include <net/9p/transport.h>
+> +
+> +#define DEFAULT_BUFLEN        16384
+> +
+> +struct f_usb9pfs {
+> +	struct p9_client *client;
+> +
+> +	struct p9_req_t *p9_tx_req;
+> +
+> +	struct list_head tx_req_list;
+> +
+> +	/* 9p request lock for en/dequeue */
+> +	spinlock_t lock;
+> +	/* usb request lock for en/dequeue */
+> +	spinlock_t req_lock;
+> +
+> +	struct usb_request *in_req;
+> +	struct usb_request *out_req;
+> +
+> +	struct usb_ep *in_ep;
+> +	struct usb_ep *out_ep;
+> +
+> +	unsigned int buflen;
+> +
+> +	struct usb_function function;
+> +};
+> +
+> +static inline struct f_usb9pfs *func_to_usb9pfs(struct usb_function *f)
+> +{
+> +	return container_of(f, struct f_usb9pfs, function);
+> +}
+> +
+> +struct f_usb9pfs_opts {
+> +	struct usb_function_instance func_inst;
+> +	unsigned int buflen;
+> +
+> +	struct f_usb9pfs_dev *dev;
+> +
+> +	/* Read/write access to configfs attributes is handled by configfs.
+> +	 *
+> +	 * This is to protect the data from concurrent access by read/write
+> +	 * and create symlink/remove symlink.
+> +	 */
+> +	struct mutex lock;
+> +	int refcnt;
+> +};
+> +
+> +struct f_usb9pfs_dev {
+> +	struct f_usb9pfs *usb9pfs;
+> +	struct f_usb9pfs_opts *opts;
+> +	char tag[41];
+> +	bool inuse;
+> +
+> +	struct list_head usb9pfs_instance;
+> +};
+> +
+> +static DEFINE_MUTEX(usb9pfs_lock);
+> +static struct list_head usbg_instance_list;
+> +
+> +static int usb9pfs_queue_tx(struct f_usb9pfs *usb9pfs, struct usb_request *req,
+> +			    gfp_t gfp_flags)
+> +{
+> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
+> +	int ret = -ENOMEM;
+> +
+> +	if (!(usb9pfs->p9_tx_req->tc.size % usb9pfs->in_ep->maxpacket))
+> +		req->zero = 1;
+> +
+> +	req->buf = usb9pfs->p9_tx_req->tc.sdata;
+> +	req->length = usb9pfs->p9_tx_req->tc.size;
+> +
+> +	dev_dbg(&cdev->gadget->dev, "%s usb9pfs send --> %d/%d, zero: %d\n",
+> +		usb9pfs->in_ep->name, req->actual, req->length, req->zero);
+> +
+> +	ret = usb_ep_queue(usb9pfs->in_ep, req, gfp_flags);
+> +
+> +	dev_dbg(&cdev->gadget->dev, "tx submit --> %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static int usb9pfs_queue_rx(struct f_usb9pfs *usb9pfs, struct usb_request *req,
+> +			    gfp_t gfp_flags)
+> +{
+> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
+> +	int ret = -ENOMEM;
+> +
+> +	ret = usb_ep_queue(usb9pfs->out_ep, req, gfp_flags);
+> +
+> +	dev_dbg(&cdev->gadget->dev, "rx submit --> %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +/* This needs to be called with usb9pfs->req_lock held */
+> +static int usb9pfs_transmit(struct f_usb9pfs *usb9pfs)
+> +{
+> +	struct p9_req_t *p9_req = NULL;
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	spin_lock_irqsave(&usb9pfs->lock, flags);
+> +
+> +	if (usb9pfs->p9_tx_req) {
+> +		spin_unlock_irqrestore(&usb9pfs->lock, flags);
+> +		return -EBUSY;
+> +	}
+> +
+> +	p9_req = list_first_entry_or_null(&usb9pfs->tx_req_list,
+> +					  struct p9_req_t, req_list);
+> +	if (!p9_req) {
+> +		spin_unlock_irqrestore(&usb9pfs->lock, flags);
+> +		return -ENOENT;
+> +	}
+> +
+> +	list_del(&p9_req->req_list);
+> +
+> +	usb9pfs->p9_tx_req = p9_req;
+> +
+> +	p9_req_get(usb9pfs->p9_tx_req);
+> +
+> +	ret = usb9pfs_queue_tx(usb9pfs, usb9pfs->in_req, GFP_ATOMIC);
+> +
+> +	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+> +
+> +	return ret;
+> +}
+> +
+> +static void usb9pfs_tx_complete(struct usb_ep *ep, struct usb_request *req)
+> +{
+> +	struct f_usb9pfs *usb9pfs = ep->driver_data;
+> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
+> +	int ret = 0;
+> +
+> +	if (req->status) {
+> +		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+> +			ep->name, req->status, req->actual, req->length);
+> +		goto free_req;
+> +	}
+> +
+> +	/* reset zero packages */
+> +	req->zero = 0;
+> +
+> +	dev_dbg(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+> +		ep->name, req->status, req->actual, req->length);
+> +
+> +	spin_lock(&usb9pfs->req_lock);
+> +
+> +	WRITE_ONCE(usb9pfs->p9_tx_req->status, REQ_STATUS_SENT);
+> +
+> +	p9_req_put(usb9pfs->client, usb9pfs->p9_tx_req);
+> +
+> +	ret = usb9pfs_queue_rx(usb9pfs, usb9pfs->out_req, GFP_ATOMIC);
+> +	if (ret) {
+> +		spin_unlock(&usb9pfs->req_lock);
+> +		goto free_req;
+> +	}
+> +
+> +	spin_unlock(&usb9pfs->req_lock);
+> +
+> +	return;
+> +
+> +free_req:
+> +	usb_ep_free_request(ep == usb9pfs->in_ep ?
+> +			    usb9pfs->out_ep : usb9pfs->in_ep,
+> +			    req->context);
+> +	free_ep_req(ep, req);
+> +}
+> +
+> +static struct p9_req_t *usb9pfs_rx_header(struct f_usb9pfs *usb9pfs, void *buf)
+> +{
+> +	struct p9_req_t *p9_rx_req;
+> +	struct p9_fcall	rc;
+> +	int ret;
+> +
+> +	/* start by reading header */
+> +	rc.sdata = buf;
+> +	rc.offset = 0;
+> +	rc.capacity = P9_HDRSZ;
+> +	rc.size = P9_HDRSZ;
+> +
+> +	p9_debug(P9_DEBUG_TRANS, "mux %p got %zu bytes\n", usb9pfs,
+> +		 rc.capacity - rc.offset);
+> +
+> +	ret = p9_parse_header(&rc, &rc.size, NULL, NULL, 0);
+> +	if (ret) {
+> +		p9_debug(P9_DEBUG_ERROR,
+> +			 "error parsing header: %d\n", ret);
+> +		return NULL;
+> +	}
+> +
+> +	p9_debug(P9_DEBUG_TRANS,
+> +		 "mux %p pkt: size: %d bytes tag: %d\n",
+> +		 usb9pfs, rc.size, rc.tag);
+> +
+> +	p9_rx_req = p9_tag_lookup(usb9pfs->client, rc.tag);
+> +	if (!p9_rx_req || p9_rx_req->status != REQ_STATUS_SENT) {
+> +		p9_debug(P9_DEBUG_ERROR, "Unexpected packet tag %d\n", rc.tag);
+> +		return NULL;
+> +	}
+> +
+> +	if (rc.size > p9_rx_req->rc.capacity) {
+> +		p9_debug(P9_DEBUG_ERROR,
+> +			 "requested packet size too big: %d for tag %d with capacity %zd\n",
+> +			 rc.size, rc.tag, p9_rx_req->rc.capacity);
+> +		p9_req_put(usb9pfs->client, p9_rx_req);
+> +		return NULL;
+> +	}
+> +
+> +	if (!p9_rx_req->rc.sdata) {
+> +		p9_debug(P9_DEBUG_ERROR,
+> +			 "No recv fcall for tag %d (req %p), disconnecting!\n",
+> +			 rc.tag, p9_rx_req);
+> +		p9_req_put(usb9pfs->client, p9_rx_req);
+> +		return NULL;
+> +	}
+> +
+> +	return p9_rx_req;
+> +}
+> +
+> +static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
+> +{
+> +	struct f_usb9pfs *usb9pfs = ep->driver_data;
+> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
+> +	struct p9_req_t *p9_rx_req;
+> +	unsigned long flags;
+> +	int ret = 0;
+> +
+> +	if (req->status) {
+> +		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
+> +			ep->name, req->status, req->actual, req->length);
+> +		goto free_req;
+> +	}
+> +
+> +	spin_lock_irqsave(&usb9pfs->req_lock, flags);
+> +
+> +	p9_rx_req = usb9pfs_rx_header(usb9pfs, req->buf);
+> +	if (!p9_rx_req) {
+> +		spin_unlock_irqrestore(&usb9pfs->req_lock, flags);
+> +		goto free_req;
+> +	}
+> +
+> +	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
+> +
+> +	p9_rx_req->rc.size = req->actual;
+> +
+> +	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_RCVD);
+> +	p9_req_put(usb9pfs->client, p9_rx_req);
+> +
+> +	usb9pfs->p9_tx_req = NULL;
+> +
+> +	ret = usb9pfs_transmit(usb9pfs);
+> +	if (ret) {
+> +		spin_unlock_irqrestore(&usb9pfs->req_lock, flags);
+> +		return;
+> +	}
+> +
+> +	spin_unlock_irqrestore(&usb9pfs->req_lock, flags);
+> +
+> +	return;
+> +
+> +free_req:
+> +	usb_ep_free_request(ep == usb9pfs->in_ep ?
+> +			    usb9pfs->out_ep : usb9pfs->in_ep,
+> +			    req->context);
+> +	free_ep_req(ep, req);
+> +
+> +	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_ERROR);
+> +}
+> +
+> +static void disable_ep(struct usb_composite_dev *cdev, struct usb_ep *ep)
+> +{
+> +	int value;
+> +
+> +	value = usb_ep_disable(ep);
+> +	if (value < 0)
+> +		dev_info(&cdev->gadget->dev,
+> +			 "disable %s --> %d\n", ep->name, value);
+> +}
+> +
+> +static void disable_usb9pfs(struct f_usb9pfs *usb9pfs)
+> +{
+> +	struct usb_composite_dev *cdev =
+> +		usb9pfs->function.config->cdev;
+> +
+> +	disable_ep(cdev, usb9pfs->in_ep);
+> +	disable_ep(cdev, usb9pfs->out_ep);
+> +	dev_dbg(&cdev->gadget->dev, "%s disabled\n",
+> +		usb9pfs->function.name);
+> +}
+> +
+> +static int alloc_requests(struct usb_composite_dev *cdev,
+> +			  struct f_usb9pfs *usb9pfs)
+> +{
+> +	int ret = 0;
+> +
+> +	usb9pfs->in_req = usb_ep_alloc_request(usb9pfs->in_ep, GFP_ATOMIC);
+> +	if (!usb9pfs->in_req) {
+> +		ret = -ENOENT;
+> +		goto fail;
+> +	}
+> +
+> +	usb9pfs->out_req = alloc_ep_req(usb9pfs->out_ep, usb9pfs->buflen);
+> +	if (!usb9pfs->out_req) {
+> +		ret = -ENOENT;
+> +		goto fail_in;
+> +	}
+> +
+> +	usb9pfs->in_req->complete = usb9pfs_tx_complete;
+> +	usb9pfs->out_req->complete = usb9pfs_rx_complete;
+> +
+> +	/* length will be set in complete routine */
+> +	usb9pfs->in_req->context = usb9pfs;
+> +	usb9pfs->out_req->context = usb9pfs;
+> +
+> +	return ret;
+> +
+> +fail_in:
+> +	usb_ep_free_request(usb9pfs->in_ep, usb9pfs->in_req);
+> +fail:
+> +	return ret;
+> +}
+> +
+> +static int enable_endpoint(struct usb_composite_dev *cdev,
+> +			   struct f_usb9pfs *usb9pfs, struct usb_ep *ep)
+> +{
+> +	int ret;
+> +
+> +	ret = config_ep_by_speed(cdev->gadget, &usb9pfs->function, ep);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = usb_ep_enable(ep);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ep->driver_data = usb9pfs;
+> +
+> +	return ret;
+> +}
+> +
+> +static int
+> +enable_usb9pfs(struct usb_composite_dev *cdev, struct f_usb9pfs *usb9pfs)
+> +{
+> +	int result = 0;
+> +
+> +	result = enable_endpoint(cdev, usb9pfs, usb9pfs->in_ep);
+> +	if (result)
+> +		goto out;
+> +
+> +	result = enable_endpoint(cdev, usb9pfs, usb9pfs->out_ep);
+> +	if (result)
+> +		goto disable_in;
+> +
+> +	result = alloc_requests(cdev, usb9pfs);
+> +	if (result)
+> +		goto disable_out;
+> +
+> +	dev_dbg(&cdev->gadget->dev, "%s enabled\n", usb9pfs->function.name);
+> +	return 0;
+> +
+> +disable_out:
+> +	usb_ep_disable(usb9pfs->out_ep);
+> +disable_in:
+> +	usb_ep_disable(usb9pfs->in_ep);
+> +out:
+> +	return result;
+> +}
+> +
+> +static int p9_usbg_create(struct p9_client *client, const char *devname, char *args)
+> +{
+> +	struct usb_composite_dev *cdev;
+> +	struct f_usb9pfs_dev *dev;
+> +	struct f_usb9pfs_dev *tmp;
+> +	struct f_usb9pfs *usb9pfs;
+> +	struct usb_function *f;
+> +	int ret = -ENOENT;
+> +	int found = 0;
+> +
+> +	if (!devname)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&usb9pfs_lock);
+> +	list_for_each_entry_safe(dev, tmp, &usbg_instance_list, usb9pfs_instance) {
+> +		if (!strncmp(devname, dev->tag, strlen(devname))) {
+> +			if (!dev->inuse) {
+> +				dev->inuse = true;
+> +				found = 1;
+> +				break;
+> +			}
+> +			ret = -EBUSY;
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&usb9pfs_lock);
+> +
+> +	if (!found) {
+> +		pr_err("no channels available for device %s\n", devname);
+> +		return ret;
+> +	}
+> +
+> +	usb9pfs = dev->usb9pfs;
+> +	if (!usb9pfs)
+> +		return -EINVAL;
+> +
+> +	INIT_LIST_HEAD(&usb9pfs->tx_req_list);
+> +
+> +	spin_lock_init(&usb9pfs->lock);
+> +	spin_lock_init(&usb9pfs->req_lock);
+> +
+> +	f = &usb9pfs->function;
+> +	cdev = f->config->cdev;
+> +
+> +	client->trans = (void *)usb9pfs;
+> +	client->status = Connected;
+> +	usb9pfs->client = client;
+> +
+> +	client->trans_mod->maxsize = usb9pfs->buflen;
+> +
+> +	return enable_usb9pfs(cdev, usb9pfs);
+> +}
+> +
+> +static void p9_usbg_close(struct p9_client *client)
+> +{
+> +	struct f_usb9pfs *usb9pfs;
+> +	struct f_usb9pfs_dev *dev;
+> +	struct p9_req_t *req;
+> +	struct f_usb9pfs_opts *opts;
+> +
+> +	if (!client)
+> +		return;
+> +
+> +	usb9pfs = client->trans;
+> +	if (!usb9pfs)
+> +		return;
+> +
+> +	client->status = Disconnected;
+> +
+> +	spin_lock(&usb9pfs->req_lock);
+> +
+> +	req = usb9pfs->p9_tx_req;
+> +	if (req) {
+> +		if (!req->t_err)
+> +			req->t_err = -ECONNRESET;
+> +		p9_client_cb(usb9pfs->client, req, REQ_STATUS_ERROR);
+> +	}
+> +
+> +	spin_unlock(&usb9pfs->req_lock);
+> +
+> +	disable_usb9pfs(usb9pfs);
+> +
+> +	opts = container_of(usb9pfs->function.fi,
+> +			    struct f_usb9pfs_opts, func_inst);
+> +
+> +	dev = opts->dev;
+> +
+> +	mutex_lock(&usb9pfs_lock);
+> +	dev->inuse = false;
+> +	mutex_unlock(&usb9pfs_lock);
+> +}
+> +
+> +static int p9_usbg_request(struct p9_client *client, struct p9_req_t *p9_req)
+> +{
+> +	struct f_usb9pfs *usb9pfs = client->trans;
+> +	unsigned long flags;
+> +
+> +	if (client->status != Connected)
+> +		return -EBUSY;
+> +
+> +	spin_lock_irqsave(&usb9pfs->lock, flags);
+> +	list_add_tail(&p9_req->req_list, &usb9pfs->tx_req_list);
+> +	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+> +
+> +	spin_lock_irqsave(&usb9pfs->req_lock, flags);
+> +	usb9pfs_transmit(usb9pfs);
+> +	spin_unlock_irqrestore(&usb9pfs->req_lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int p9_usbg_cancel(struct p9_client *client, struct p9_req_t *req)
+> +{
+> +	struct f_usb9pfs *usb9pfs = client->trans;
+> +	int ret = 1;
+> +
+> +	p9_debug(P9_DEBUG_TRANS, "client %p req %p\n", client, req);
+> +
+> +	spin_lock(&usb9pfs->req_lock);
+> +
+> +	if (req->status == REQ_STATUS_UNSENT) {
+> +		list_del(&req->req_list);
+> +		WRITE_ONCE(req->status, REQ_STATUS_FLSHD);
+> +		p9_req_put(client, req);
+> +		ret = 0;
+> +	}
+> +	spin_unlock(&usb9pfs->req_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static struct p9_trans_module p9_usbg_trans = {
+> +	.name = "usbg",
+> +	.create = p9_usbg_create,
+> +	.close = p9_usbg_close,
+> +	.request = p9_usbg_request,
+> +	.cancel = p9_usbg_cancel,
+> +	.owner = THIS_MODULE,
+> +};
+> +
+> +/*-------------------------------------------------------------------------*/
+> +
+> +#define USB_PROTOCOL_9PFS	0x09
+> +
+> +static struct usb_interface_descriptor usb9pfs_intf = {
+> +	.bLength =		sizeof(usb9pfs_intf),
+> +	.bDescriptorType =	USB_DT_INTERFACE,
+> +
+> +	.bNumEndpoints =	2,
+> +	.bInterfaceClass =	USB_CLASS_VENDOR_SPEC,
+> +	.bInterfaceSubClass =	USB_SUBCLASS_VENDOR_SPEC,
+> +	.bInterfaceProtocol =   USB_PROTOCOL_9PFS,
+> +
+> +	/* .iInterface = DYNAMIC */
+> +};
+> +
+> +/* full speed support: */
+> +
+> +static struct usb_endpoint_descriptor fs_usb9pfs_source_desc = {
+> +	.bLength =		USB_DT_ENDPOINT_SIZE,
+> +	.bDescriptorType =	USB_DT_ENDPOINT,
+> +
+> +	.bEndpointAddress =	USB_DIR_IN,
+> +	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
+> +};
+> +
+> +static struct usb_endpoint_descriptor fs_usb9pfs_sink_desc = {
+> +	.bLength =		USB_DT_ENDPOINT_SIZE,
+> +	.bDescriptorType =	USB_DT_ENDPOINT,
+> +
+> +	.bEndpointAddress =	USB_DIR_OUT,
+> +	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
+> +};
+> +
+> +static struct usb_descriptor_header *fs_usb9pfs_descs[] = {
+> +	(struct usb_descriptor_header *)&usb9pfs_intf,
+> +	(struct usb_descriptor_header *)&fs_usb9pfs_sink_desc,
+> +	(struct usb_descriptor_header *)&fs_usb9pfs_source_desc,
+> +	NULL,
+> +};
+> +
+> +/* high speed support: */
+> +
+> +static struct usb_endpoint_descriptor hs_usb9pfs_source_desc = {
+> +	.bLength =		USB_DT_ENDPOINT_SIZE,
+> +	.bDescriptorType =	USB_DT_ENDPOINT,
+> +
+> +	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
+> +	.wMaxPacketSize =	cpu_to_le16(512),
+> +};
+> +
+> +static struct usb_endpoint_descriptor hs_usb9pfs_sink_desc = {
+> +	.bLength =		USB_DT_ENDPOINT_SIZE,
+> +	.bDescriptorType =	USB_DT_ENDPOINT,
+> +
+> +	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
+> +	.wMaxPacketSize =	cpu_to_le16(512),
+> +};
+> +
+> +static struct usb_descriptor_header *hs_usb9pfs_descs[] = {
+> +	(struct usb_descriptor_header *)&usb9pfs_intf,
+> +	(struct usb_descriptor_header *)&hs_usb9pfs_source_desc,
+> +	(struct usb_descriptor_header *)&hs_usb9pfs_sink_desc,
+> +	NULL,
+> +};
+> +
+> +/* super speed support: */
+> +
+> +static struct usb_endpoint_descriptor ss_usb9pfs_source_desc = {
+> +	.bLength =		USB_DT_ENDPOINT_SIZE,
+> +	.bDescriptorType =	USB_DT_ENDPOINT,
+> +
+> +	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
+> +	.wMaxPacketSize =	cpu_to_le16(1024),
+> +};
+> +
+> +static struct usb_ss_ep_comp_descriptor ss_usb9pfs_source_comp_desc = {
+> +	.bLength =		USB_DT_SS_EP_COMP_SIZE,
+> +	.bDescriptorType =	USB_DT_SS_ENDPOINT_COMP,
+> +	.bMaxBurst =		0,
+> +	.bmAttributes =		0,
+> +	.wBytesPerInterval =	0,
+> +};
+> +
+> +static struct usb_endpoint_descriptor ss_usb9pfs_sink_desc = {
+> +	.bLength =		USB_DT_ENDPOINT_SIZE,
+> +	.bDescriptorType =	USB_DT_ENDPOINT,
+> +
+> +	.bmAttributes =		USB_ENDPOINT_XFER_BULK,
+> +	.wMaxPacketSize =	cpu_to_le16(1024),
+> +};
+> +
+> +static struct usb_ss_ep_comp_descriptor ss_usb9pfs_sink_comp_desc = {
+> +	.bLength =		USB_DT_SS_EP_COMP_SIZE,
+> +	.bDescriptorType =	USB_DT_SS_ENDPOINT_COMP,
+> +	.bMaxBurst =		0,
+> +	.bmAttributes =		0,
+> +	.wBytesPerInterval =	0,
+> +};
+> +
+> +static struct usb_descriptor_header *ss_usb9pfs_descs[] = {
+> +	(struct usb_descriptor_header *)&usb9pfs_intf,
+> +	(struct usb_descriptor_header *)&ss_usb9pfs_source_desc,
+> +	(struct usb_descriptor_header *)&ss_usb9pfs_source_comp_desc,
+> +	(struct usb_descriptor_header *)&ss_usb9pfs_sink_desc,
+> +	(struct usb_descriptor_header *)&ss_usb9pfs_sink_comp_desc,
+> +	NULL,
+> +};
+> +
+> +/* function-specific strings: */
+> +static struct usb_string strings_usb9pfs[] = {
+> +	[0].s = "usb9pfs input to output",
+> +	{  }			/* end of list */
+> +};
+> +
+> +static struct usb_gadget_strings stringtab_usb9pfs = {
+> +	.language	= 0x0409,	/* en-us */
+> +	.strings	= strings_usb9pfs,
+> +};
+> +
+> +static struct usb_gadget_strings *usb9pfs_strings[] = {
+> +	&stringtab_usb9pfs,
+> +	NULL,
+> +};
+> +
+> +/*-------------------------------------------------------------------------*/
+> +
+> +static int usb9pfs_func_bind(struct usb_configuration *c,
+> +			     struct usb_function *f)
+> +{
+> +	struct f_usb9pfs *usb9pfs = func_to_usb9pfs(f);
+> +	struct f_usb9pfs_opts *opts;
+> +	struct usb_composite_dev *cdev = c->cdev;
+> +	int ret;
+> +	int id;
+> +
+> +	/* allocate interface ID(s) */
+> +	id = usb_interface_id(c, f);
+> +	if (id < 0)
+> +		return id;
+> +	usb9pfs_intf.bInterfaceNumber = id;
+> +
+> +	id = usb_string_id(cdev);
+> +	if (id < 0)
+> +		return id;
+> +	strings_usb9pfs[0].id = id;
+> +	usb9pfs_intf.iInterface = id;
+> +
+> +	/* allocate endpoints */
+> +	usb9pfs->in_ep = usb_ep_autoconfig(cdev->gadget,
+> +					   &fs_usb9pfs_source_desc);
+> +	if (!usb9pfs->in_ep)
+> +		goto autoconf_fail;
+> +
+> +	usb9pfs->out_ep = usb_ep_autoconfig(cdev->gadget,
+> +					    &fs_usb9pfs_sink_desc);
+> +	if (!usb9pfs->out_ep)
+> +		goto autoconf_fail;
+> +
+> +	/* support high speed hardware */
+> +	hs_usb9pfs_source_desc.bEndpointAddress =
+> +		fs_usb9pfs_source_desc.bEndpointAddress;
+> +	hs_usb9pfs_sink_desc.bEndpointAddress =
+> +		fs_usb9pfs_sink_desc.bEndpointAddress;
+> +
+> +	/* support super speed hardware */
+> +	ss_usb9pfs_source_desc.bEndpointAddress =
+> +		fs_usb9pfs_source_desc.bEndpointAddress;
+> +	ss_usb9pfs_sink_desc.bEndpointAddress =
+> +		fs_usb9pfs_sink_desc.bEndpointAddress;
+> +
+> +	ret = usb_assign_descriptors(f, fs_usb9pfs_descs, hs_usb9pfs_descs,
+> +				     ss_usb9pfs_descs, ss_usb9pfs_descs);
+> +	if (ret)
+> +		return ret;
+> +
+> +	opts = container_of(f->fi, struct f_usb9pfs_opts, func_inst);
+> +	opts->dev->usb9pfs = usb9pfs;
+> +
+> +	dev_dbg(&cdev->gadget->dev, "%s speed %s: IN/%s, OUT/%s\n",
+> +		(gadget_is_superspeed(c->cdev->gadget) ? "super" :
+> +		(gadget_is_dualspeed(c->cdev->gadget) ? "dual" : "full")),
+> +			f->name, usb9pfs->in_ep->name, usb9pfs->out_ep->name);
+> +
+> +	return 0;
+> +
+> +autoconf_fail:
+> +	ERROR(cdev, "%s: can't autoconfigure on %s\n",
+> +	      f->name, cdev->gadget->name);
+> +	return -ENODEV;
+> +}
+> +
+> +static void usb9pfs_free_func(struct usb_function *f)
+> +{
+> +	struct f_usb9pfs *usb9pfs = func_to_usb9pfs(f);
+> +	struct f_usb9pfs_opts *opts;
+> +
+> +	kfree(usb9pfs);
+> +
+> +	opts = container_of(f->fi, struct f_usb9pfs_opts, func_inst);
+> +
+> +	mutex_lock(&opts->lock);
+> +	opts->refcnt--;
+> +	mutex_unlock(&opts->lock);
+> +
+> +	usb_free_all_descriptors(f);
+> +}
+> +
+> +static int usb9pfs_set_alt(struct usb_function *f,
+> +			   unsigned int intf, unsigned int alt)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void usb9pfs_disable(struct usb_function *f)
+> +{
+> +	struct f_usb9pfs *usb9pfs = func_to_usb9pfs(f);
+> +	struct p9_req_t *req;
+> +
+> +	spin_lock(&usb9pfs->req_lock);
+> +
+> +	req = usb9pfs->p9_tx_req;
+> +
+> +	if (!req->t_err)
+> +		req->t_err = -ECONNRESET;
+> +	p9_client_cb(usb9pfs->client, req, REQ_STATUS_ERROR);
+> +
+> +	spin_unlock(&usb9pfs->req_lock);
+> +}
+> +
+> +static struct usb_function *usb9pfs_alloc(struct usb_function_instance *fi)
+> +{
+> +	struct f_usb9pfs_opts *usb9pfs_opts;
+> +	struct f_usb9pfs *usb9pfs;
+> +
+> +	usb9pfs = kzalloc(sizeof(*usb9pfs), GFP_KERNEL);
+> +	if (!usb9pfs)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	usb9pfs_opts = container_of(fi, struct f_usb9pfs_opts, func_inst);
+> +
+> +	mutex_lock(&usb9pfs_opts->lock);
+> +	usb9pfs_opts->refcnt++;
+> +	mutex_unlock(&usb9pfs_opts->lock);
+> +
+> +	usb9pfs->buflen = usb9pfs_opts->buflen;
+> +
+> +	usb9pfs->function.name = "usb9pfs";
+> +	usb9pfs->function.bind = usb9pfs_func_bind;
+> +	usb9pfs->function.set_alt = usb9pfs_set_alt;
+> +	usb9pfs->function.disable = usb9pfs_disable;
+> +	usb9pfs->function.strings = usb9pfs_strings;
+> +
+> +	usb9pfs->function.free_func = usb9pfs_free_func;
+> +
+> +	return &usb9pfs->function;
+> +}
+> +
+> +static inline struct f_usb9pfs_opts *to_f_usb9pfs_opts(struct config_item *item)
+> +{
+> +	return container_of(to_config_group(item), struct f_usb9pfs_opts,
+> +			    func_inst.group);
+> +}
+> +
+> +static inline struct f_usb9pfs_opts *fi_to_f_usb9pfs_opts(struct usb_function_instance *fi)
+> +{
+> +	return container_of(fi, struct f_usb9pfs_opts, func_inst);
+> +}
+> +
+> +static void usb9pfs_attr_release(struct config_item *item)
+> +{
+> +	struct f_usb9pfs_opts *usb9pfs_opts = to_f_usb9pfs_opts(item);
+> +
+> +	usb_put_function_instance(&usb9pfs_opts->func_inst);
+> +}
+> +
+> +static struct configfs_item_operations usb9pfs_item_ops = {
+> +	.release		= usb9pfs_attr_release,
+> +};
+> +
+> +static ssize_t f_usb9pfs_opts_buflen_show(struct config_item *item, char *page)
+> +{
+> +	struct f_usb9pfs_opts *opts = to_f_usb9pfs_opts(item);
+> +	int result;
+> +
+> +	mutex_lock(&opts->lock);
+> +	result = sprintf(page, "%d\n", opts->buflen);
+> +	mutex_unlock(&opts->lock);
+> +
+> +	return result;
+> +}
+> +
+> +static ssize_t f_usb9pfs_opts_buflen_store(struct config_item *item,
+> +					   const char *page, size_t len)
+> +{
+> +	struct f_usb9pfs_opts *opts = to_f_usb9pfs_opts(item);
+> +	int ret;
+> +	u32 num;
+> +
+> +	mutex_lock(&opts->lock);
+> +	if (opts->refcnt) {
+> +		ret = -EBUSY;
+> +		goto end;
+> +	}
+> +
+> +	ret = kstrtou32(page, 0, &num);
+> +	if (ret)
+> +		goto end;
+> +
+> +	opts->buflen = num;
+> +	ret = len;
+> +end:
+> +	mutex_unlock(&opts->lock);
+> +	return ret;
+> +}
+> +
+> +CONFIGFS_ATTR(f_usb9pfs_opts_, buflen);
+> +
+> +static struct configfs_attribute *usb9pfs_attrs[] = {
+> +	&f_usb9pfs_opts_attr_buflen,
+> +	NULL,
+> +};
+> +
+> +static const struct config_item_type usb9pfs_func_type = {
+> +	.ct_item_ops	= &usb9pfs_item_ops,
+> +	.ct_attrs	= usb9pfs_attrs,
+> +	.ct_owner	= THIS_MODULE,
+> +};
+> +
+> +static struct f_usb9pfs_dev *_usb9pfs_do_find_dev(const char *tag)
+> +{
+> +	struct f_usb9pfs_dev *usb9pfs_dev;
+> +	struct f_usb9pfs_dev *tmp;
+> +
+> +	if (!tag)
+> +		return NULL;
+> +
+> +	list_for_each_entry_safe(usb9pfs_dev, tmp, &usbg_instance_list, usb9pfs_instance) {
+> +		if (strcmp(usb9pfs_dev->tag, tag) == 0)
+> +			return usb9pfs_dev;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static int usb9pfs_tag_instance(struct f_usb9pfs_dev *dev, const char *tag)
+> +{
+> +	struct f_usb9pfs_dev *existing;
+> +	int ret = 0;
+> +
+> +	mutex_lock(&usb9pfs_lock);
+> +	existing = _usb9pfs_do_find_dev(tag);
+> +	if (!existing)
+> +		strscpy(dev->tag, tag, ARRAY_SIZE(dev->tag));
+> +	else if (existing != dev)
+> +		ret = -EBUSY;
+> +	mutex_unlock(&usb9pfs_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int usb9pfs_set_inst_tag(struct usb_function_instance *fi, const char *tag)
+> +{
+> +	if (strlen(tag) >= sizeof_field(struct f_usb9pfs_dev, tag))
+> +		return -ENAMETOOLONG;
+> +	return usb9pfs_tag_instance(fi_to_f_usb9pfs_opts(fi)->dev, tag);
+> +}
+> +
+> +static void usb9pfs_free_instance(struct usb_function_instance *fi)
+> +{
+> +	struct f_usb9pfs_opts *usb9pfs_opts;
+> +
+> +	usb9pfs_opts = container_of(fi, struct f_usb9pfs_opts, func_inst);
+> +	kfree(usb9pfs_opts);
+> +}
+> +
+> +static struct usb_function_instance *usb9pfs_alloc_instance(void)
+> +{
+> +	struct f_usb9pfs_opts *usb9pfs_opts;
+> +	struct f_usb9pfs_dev *dev;
+> +
+> +	usb9pfs_opts = kzalloc(sizeof(*usb9pfs_opts), GFP_KERNEL);
+> +	if (!usb9pfs_opts)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	mutex_init(&usb9pfs_opts->lock);
+> +
+> +	usb9pfs_opts->func_inst.set_inst_name = usb9pfs_set_inst_tag;
+> +	usb9pfs_opts->func_inst.free_func_inst = usb9pfs_free_instance;
+> +
+> +	usb9pfs_opts->buflen = DEFAULT_BUFLEN;
+> +
+> +	mutex_lock(&usb9pfs_lock);
+> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+> +	if (IS_ERR(dev)) {
+> +		mutex_unlock(&usb9pfs_lock);
+> +		kfree(usb9pfs_opts);
+> +		return ERR_CAST(dev);
+> +	}
+> +	list_add_tail(&dev->usb9pfs_instance, &usbg_instance_list);
+> +	mutex_unlock(&usb9pfs_lock);
+> +
+> +	usb9pfs_opts->dev = dev;
+> +	dev->opts = usb9pfs_opts;
+> +
+> +	config_group_init_type_name(&usb9pfs_opts->func_inst.group, "",
+> +				    &usb9pfs_func_type);
+> +
+> +	return &usb9pfs_opts->func_inst;
+> +}
+> +DECLARE_USB_FUNCTION(usb9pfs, usb9pfs_alloc_instance, usb9pfs_alloc);
+> +
+> +static int __init usb9pfs_modinit(void)
+> +{
+> +	int ret;
+> +
+> +	INIT_LIST_HEAD(&usbg_instance_list);
+> +
+> +	ret = usb_function_register(&usb9pfsusb_func);
+> +	if (!ret)
+> +		v9fs_register_trans(&p9_usbg_trans);
+> +
+> +	return ret;
+> +}
+> +
+> +static void __exit usb9pfs_modexit(void)
+> +{
+> +	usb_function_unregister(&usb9pfsusb_func);
+> +	v9fs_unregister_trans(&p9_usbg_trans);
+> +}
+> +
+> +module_init(usb9pfs_modinit);
+> +module_exit(usb9pfs_modexit);
+> +
+> +MODULE_ALIAS_9P("usbg");
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("USB gadget 9pfs transport");
+> +MODULE_AUTHOR("Michael Grzeschik");
+> 
 
-So I don't mind if such drivers get loaded as long as doing this is the
-best we can do given the situation. What gets me up the palms, as they
-say in .de, is "just because" and "look, the others do it too."
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
