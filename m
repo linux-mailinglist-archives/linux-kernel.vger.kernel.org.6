@@ -1,159 +1,96 @@
-Return-Path: <linux-kernel+bounces-175174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 998108C1BB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:37:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8DB8C1BB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 987051C21354
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7846D282ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601F50255;
-	Fri, 10 May 2024 00:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3404F1E5;
+	Fri, 10 May 2024 00:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VO/sDB54"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aftEdi20"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2ED950275
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BB21D68F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715300694; cv=none; b=rWlMUQH7/tWCqVaQkTA/SZsulZzafmvt4V1fp/JHl6u2B882RjBMEHTae3QqNoznuZqYrkjIOvxjzNMNdnpRwRGDImNNwYyL5kbWHabSgAKB2MlhpPX0gfboVIXbjx5T82rCM7+3ncnNybaYnQia/zd5lZ7ca0Wonk36h81G8sk=
+	t=1715300727; cv=none; b=flLGWEh2x60OXFbv/m0rYxqZI+N7Fp5bxRWhO7Bi2Q9PGluGF9ZG6LHcq3fxrm2DpPPplpRzYp2VbjsZCD0aQV3QzC1bE+thwMTlUiQn1Jh15+zDbpQPx3Qa8JRGuWScgjl/e/Gz1HEjEwfmAErl163gyqrYhASmYHOPzq3nKts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715300694; c=relaxed/simple;
-	bh=cGpULC1B1HXkvRfCSn3TdeH+Xj5EwEpr4DGLnTg+pCQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZgWIgTqzoZJw0buXYC2h8tVjWpcZrdXAUjalbIn+N9du6r2l/ksF77N5PxEqBAzLtNraobQ3L7Rfs2PS/OPDgqo5pmNFlWlXn4geJzOLe8evSOLhIqZBkovI1QIyI1Mhf2z9Son/2HNWjUjjkF6bSACDGsI824uTredgzUIuHKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VO/sDB54; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-61be23bb01aso28388247b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715300692; x=1715905492; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ot0TEs4BvD2J9QyiZT5bC39KllHj7+HFnRVXvIw7CTU=;
-        b=VO/sDB54S3qSxJVTmyoabGla9DZoE2c3nPIwrgewoiuNBvaOau+sH0G8BuFGcpEpQO
-         T653MqpMHs7sFSBrgomGTU0DJsPyVccE4wG6ZKzLYCFHR8mVnplA2bBZbpNLlrAQl6F7
-         Uibqgs0s0vruoPqNx4FKbueKm7DGE9blJO0oXtLBjuBvtSsDmYVzvzYe4fQMF4oYJIGe
-         bNXjzJO6t06FyVPXNdoEdjZroYxXm7Cuh2gYIzFIKAeBMmL8ux8oE8FwIPV3CgD5UiV6
-         RTqqUDcV/fmgs7JIL7pahZd1vwa+GiMImqsPlNLazX/spy13kMf5TDA8Hc+gk9y3vWVm
-         XH0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715300692; x=1715905492;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ot0TEs4BvD2J9QyiZT5bC39KllHj7+HFnRVXvIw7CTU=;
-        b=EhuRnd1c6HGfVpPkRkg0S99IIZ3KYXr+DBC3RWBUxLwJfsCW2vM2z12dAzvsHoy7IK
-         aRXAT9RYbgjdGM4p/2cozZwHnFQ2Y9WWOQv0hfw10e2dv1Ia/iM3Dln/KhpAIlgOTXR3
-         /uaYI4Fvfv/1VH6VvMRDul9NeymoFopPeYs6rpTpCDLTQ1rkVpB5KTODVnzH+R2nixjQ
-         8FRl7ZpgZnKtPc+IWMmvOMjWK8XPr2Yl+bf2ycb/5RU4qUzs+HRP9+o3lLRRsxaIzBJP
-         ergFTqfWRBSVHkd641Qt60Tue+SrPD3l7aBGX0mlKr03zWF5lmpUiBMVMCV6cYpQK2AQ
-         SyQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGrkAtNFrfNTg//KtbSQgwDoaEpM8RA2G65SHucpajGRqzWJxM7QAxHLvBLwdnIuCKKtjmM3QeCNNtgENa1esxhSKGkXwHuGJZiFqF
-X-Gm-Message-State: AOJu0YxbAP9sFChNuboGrUnm5NYdIOpylw7wciFaohjXojmCd0vKfQtE
-	dzCfnmM6FhOF6F5J9VKLQD0EMEGfA6Rj0mE2J3O7MfQKI7RKPsuhn5bds1U8vt7QrOZgvT8PatV
-	+
-X-Google-Smtp-Source: AGHT+IGtVehGREnSCfDjF50uDOFlHxuUhMLfztYum1ee5p3PcJUXmBGA2TuIoR4t/QC1CWL4ydsyKZkmBx8=
-X-Received: from yabinc-desktop.mtv.corp.google.com ([2620:15c:211:202:1b7d:8132:c198:e24f])
- (user=yabinc job=sendgmr) by 2002:a05:690c:b10:b0:61c:89a4:dd5f with SMTP id
- 00721157ae682-622afcbec26mr3237517b3.0.1715300692087; Thu, 09 May 2024
- 17:24:52 -0700 (PDT)
-Date: Thu,  9 May 2024 17:24:24 -0700
-In-Reply-To: <20240510002424.1277314-1-yabinc@google.com>
+	s=arc-20240116; t=1715300727; c=relaxed/simple;
+	bh=nzhgzXBLVmxRg+MI59G3H3An2IVTrWtLtRJv538SxT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbPn9RxlkFwm7eVFf+ZeqoA+1Ltwsrc6mP1w4OVUreperWBPI2s4jFPUNry+5Of6CLKfqJTJLtaI/DnJlUc9GjHM0CFY8Vw5rw0C8d2CiDw3Ln9JSBVHl/8k/L4eRMAu3Zs0q9f3Q9CGMmRIROX6UUGHCf2h16ukqKlpvZEuF0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aftEdi20; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715300726; x=1746836726;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nzhgzXBLVmxRg+MI59G3H3An2IVTrWtLtRJv538SxT4=;
+  b=aftEdi20DR+XHd4W/SvAarFHS6hoTeFOpMNuco4cQbbkXJkHZw0URFtH
+   TZjTcN8VQdb7cn6R935cERaB/uqUUKXhYsoPOizS8kWdTd25lvrCX3nXm
+   XtNVWxI4ZK8CeqjfkgSum0PsD011SnIqjiS+w12wLClp/3BlOV6grmwsB
+   Z7GiCsDVHEvB3G5DusstkbncaiR8ZU7RCtcb/oFVy7MQZsjCPVK3/yYj3
+   XFG/j+c/FKjRxDYuXYqYzVS0nZDwvgo+PzQTzG/e+VRofiPy3CT0ikCmB
+   QyhL5DpAxtunnHXYk4KfA+ao8ZiUZP5GENFNStH6WvX1TC/q/pflJGWBZ
+   A==;
+X-CSE-ConnectionGUID: afsq/Wv3S0WKZ7NgsZMvrg==
+X-CSE-MsgGUID: POCDxGRdQRatXvPz4KDQLA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="22409601"
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="22409601"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 17:24:42 -0700
+X-CSE-ConnectionGUID: HYoMje3ASTmMq3J1efmzxA==
+X-CSE-MsgGUID: rXLoGBOgS6KbqEAn/FoqZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
+   d="scan'208";a="29492622"
+Received: from vuongchr-mobl.amr.corp.intel.com (HELO desk) ([10.209.114.189])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 17:24:42 -0700
+Date: Thu, 9 May 2024 17:24:34 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com
+Subject: Re: [PATCH] x86/entry_32: Move CLEAR_CPU_BUFFERS before CR3 switch
+Message-ID: <20240510002434.gevlrqdiuhtosafa@desk>
+References: <20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com>
+ <5b5e597d-7620-4a5a-9bfa-bae26f0b0fa3@intel.com>
+ <20240509221425.zcl6c45thb7wxyza@desk>
+ <e3a8075a-0846-4244-85da-1af45c83bbc4@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240510002424.1277314-1-yabinc@google.com>
-X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240510002424.1277314-4-yabinc@google.com>
-Subject: [PATCH v3 3/3] perf: core: Check sample_type in perf_sample_save_brstack
-From: Yabin Cui <yabinc@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, Yabin Cui <yabinc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3a8075a-0846-4244-85da-1af45c83bbc4@intel.com>
 
-Check sample_type in perf_sample_save_brstack() to prevent
-saving branch stack data when it isn't required.
+On Thu, May 09, 2024 at 05:04:36PM -0700, Dave Hansen wrote:
+> On 5/9/24 15:17, Pawan Gupta wrote:
+> > It probably can go right before the SWITCH_TO_USER_CR3. I didn't have
+> > 32-bit setup with dosemu to experiment with. I will attach a debug patch to
+> > the bugzilla and request the reporter to test it.
+> 
+> There's an enter_from_vm86.c in the kernel selftests.  That will at
+> least exercise this path.
 
-Suggested-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Yabin Cui <yabinc@google.com>
----
- arch/x86/events/amd/core.c | 3 +--
- arch/x86/events/core.c     | 3 +--
- arch/x86/events/intel/ds.c | 3 +--
- include/linux/perf_event.h | 3 +++
- 4 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 985ef3b47919..fb9bf3aa1b42 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -967,8 +967,7 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
- 		if (!x86_perf_event_set_period(event))
- 			continue;
- 
--		if (has_branch_stack(event))
--			perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
-+		perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
- 
- 		if (perf_event_overflow(event, &data, regs))
- 			x86_pmu_stop(event, 0);
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 5b0dd07b1ef1..ff5577315938 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1702,8 +1702,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
- 
- 		perf_sample_data_init(&data, 0, event->hw.last_period);
- 
--		if (has_branch_stack(event))
--			perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
-+		perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, NULL);
- 
- 		if (perf_event_overflow(event, &data, regs))
- 			x86_pmu_stop(event, 0);
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index c2b5585aa6d1..f25236ffa28f 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1754,8 +1754,7 @@ static void setup_pebs_fixed_sample_data(struct perf_event *event,
- 	if (x86_pmu.intel_cap.pebs_format >= 3)
- 		setup_pebs_time(event, data, pebs->tsc);
- 
--	if (has_branch_stack(event))
--		perf_sample_save_brstack(data, event, &cpuc->lbr_stack, NULL);
-+	perf_sample_save_brstack(data, event, &cpuc->lbr_stack, NULL);
- }
- 
- static void adaptive_pebs_save_regs(struct pt_regs *regs,
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 8617815456b0..8cff96782446 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1276,6 +1276,9 @@ static inline void perf_sample_save_brstack(struct perf_sample_data *data,
- {
- 	int size = sizeof(u64); /* nr */
- 
-+	if (!has_branch_stack(event))
-+		return;
-+
- 	if (branch_sample_hw_index(event))
- 		size += sizeof(u64);
- 	size += brs->nr * sizeof(struct perf_branch_entry);
--- 
-2.45.0.118.g7fe29c98d7-goog
-
+Yes, entry_from_vm86.c should be a good test case for this, thanks.
 
