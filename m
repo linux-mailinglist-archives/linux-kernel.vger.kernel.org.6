@@ -1,86 +1,133 @@
-Return-Path: <linux-kernel+bounces-175668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 476E18C2370
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:31:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988588C2373
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED76286630
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:31:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19160B2456E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C72D178CCA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E1E178CEE;
 	Fri, 10 May 2024 11:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ok1Si8i+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="esPKBCkP"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7122E177981;
-	Fri, 10 May 2024 11:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2F1171E7D
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340461; cv=none; b=QlJ3aMDZqRWVyY/gIEvIy6mgpL+G/tmug7MNwUCkWDD5LNkVS557Hl3kcBIZsuRfgrUD3UeEbsboH/wMeIkrLTSvIrCkac6RcGVzh906Y0gT+QAqWgzyGwIKVCmaKrLn7PiDwIgKzpryJfUCPB6mTMvVQ+oR6YvLPw6N3+u7Prc=
+	t=1715340462; cv=none; b=dHjS8CoY1kR3jOCdfmZEZyz2l0ux5RbOktDqEiGaGqAG6T3M2yEGjQC0IrB2VVIMyj4kSflLJTx6ELrSI+bjvYI6G/dFMF+4swYl0HIp94kmv4NcDBe4WMIxHYdL1A2p5LBvW5DBcOFR3t8OABMwmdJ6nQQ9O6/0ap96dvJpvqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340461; c=relaxed/simple;
-	bh=lHYyDyyde3hzvB6pFGFpqjjKEshxwGmtSfVnmsibBSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPlGvwm3dKYGCmfm4DjITceq7opU0WTE0R3uYLtltlbXhGFh/VMiCsGrHnd9ettPZwrCFTVdh57SruqudGtgEXkYj0P9w7tNLqW5ugW19t2D7zdqOLF9O5I5eaKlxs4/v3l86d5KMLU9GUEOl7ZD64+hDst8QKeZOkJ7GeKnwpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ok1Si8i+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A6EC32783;
-	Fri, 10 May 2024 11:27:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715340460;
-	bh=lHYyDyyde3hzvB6pFGFpqjjKEshxwGmtSfVnmsibBSQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ok1Si8i+1nGJ9d2xgtc4yzqZImVlEEWziui0cMR1/7jTRnyn1rR0wI39+RKLwYPH/
-	 PrviSN4rEUdtOK/W3THCLbOuslKelp6IvJIYLXEqdDOl+VdULF2VDOsFv9cJ49ga1r
-	 8SilqqUnQrIDDCtXBUAcDSfTv/4c7+LeCiBlRMkie9JifueFJPQ7sowtQJvwGOsD8E
-	 ibYU7x1LLEuNTzZTOZMxh781Uix5BRyGuYwf99lKgKsLJUOkWJSosY+x6JeXWymxfm
-	 wX3/LWmLskWjtLHQYx+RRPINK9U2RBH4rVH2A/XpxH1LrbXs7GvOIs522z1v67wZS2
-	 sbVqxQA1LOTZQ==
-Date: Fri, 10 May 2024 12:27:35 +0100
-From: Simon Horman <horms@kernel.org>
-To: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Manish Chopra <manishc@marvell.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: Re: [PATCH net-next v2 04/14] net: qede: use extack in
- qede_flow_parse_v6_common()
-Message-ID: <20240510112735.GG2347895@kernel.org>
-References: <20240508143404.95901-1-ast@fiberby.net>
- <20240508143404.95901-5-ast@fiberby.net>
+	s=arc-20240116; t=1715340462; c=relaxed/simple;
+	bh=zNXwSOWeBMueOtABnUo69wqjco2rwqNtJ/nGjlKDC3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nwHQ/C+1a3cDvSlBpB+hXInUMCM+6wWLfK16ctabwBUsLmAw+lMZO+i1kCrqLb5qM3iHSDLM88voQBQrm35Wo76coLl9u+zeS1G7sJ7a0F9L/x8F/B3ZEPo1EEbUDEUgq9R/UMxC73HF9bDx7LozAcGvi4sgMwni1tkW9glMB2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=esPKBCkP; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59b81d087aso474980966b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1715340458; x=1715945258; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zNXwSOWeBMueOtABnUo69wqjco2rwqNtJ/nGjlKDC3g=;
+        b=esPKBCkP7bBK7iPHa/ipNqAmhGzxdtQaZC9mLpj2zYIyTClXdxfgcBX8gRK5mRc1qt
+         xmTcu9T7Ip+xWL8I5FPoNVvnxv4bXzLfFKqqZgPG0N9L36a85vuTLAtmC5R40i3DOTk7
+         jEki5Les6qHJZlFdONe/8r7esYGgqHWrIGYIX2RSmQ22WbdEaSGIUDr2oB3kiahHowfd
+         /XsdHSb4z9s1iYf13qZK8AIPsys5NzMb/ZEPuq00sJdaeaZPbOZenJeQoK2cPw/ki+rR
+         79zGzHLpz0R0cSdOd3Eh3TOf6+YQ9droAkmB4BBubg1agX9gM7sIn/2drvoNSJQNcVw/
+         7P4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715340458; x=1715945258;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zNXwSOWeBMueOtABnUo69wqjco2rwqNtJ/nGjlKDC3g=;
+        b=H4dmbWsJu92DJ2I8VVdY2lsh9rv44xlsv55VR33YSmXsglUD/yZPuVYpwPAObT9H9I
+         ytIrTh8OZoqTuoc1A09c3kwtTtx09yLdvT6QbH/VvwWxnjWehXRipPA/tYN8o6waOXd/
+         1sfbHZOK/j7Y5GFURruU5Xxadglakxqn0P5iGj/kBXXFJKW8b2RxRvPyBLiVX2KxM6KZ
+         HbBrKR633xuWtOjYFoH2vncp9jwFfFHqNu0XzBlBt4uK8g9SLIXRL6H4KmH473ngCBMk
+         IMSZ/rFN5zh+oN+HGmQflobwNdlXzQiXoXPc0Cz6pRfaksLiogeOsJ7Vls7AZmDMBlm1
+         +qQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkJKXWv9rbYhmOMbvLhq9Yefw7Mzw27m2VQfATwTSORS8QNFyDctrE8IrkMKhJ+ns6/2qJJPdJuqlZuBiG54kwKSU19Dn9U3FuS4/C
+X-Gm-Message-State: AOJu0YxiRmCH9gowwtZNdDD8iP+YnZnX4tGygpBKIdMRwAxewQltDfw1
+	XFH/Xxju4B4hs2bo1PYla5asfLv9ZFdzGbNwPIiDF2l5Uef6YAXYyOoeetsVmjU=
+X-Google-Smtp-Source: AGHT+IGWH9NtKldOHxG5Jn85QZLrAtp/ZGMY4ac6yPg5kx3Hs4lPh9R3ZW28bnofErwGNFhMNfHAYA==
+X-Received: by 2002:a50:d583:0:b0:572:637b:c7e1 with SMTP id 4fb4d7f45d1cf-5734d5f48b1mr2421443a12.21.1715340458312;
+        Fri, 10 May 2024 04:27:38 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873c:a500:6aaf:b7a7:7c29:ae5c? (p200300e5873ca5006aafb7a77c29ae5c.dip0.t-ipconnect.de. [2003:e5:873c:a500:6aaf:b7a7:7c29:ae5c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea651asm1706341a12.11.2024.05.10.04.27.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 04:27:38 -0700 (PDT)
+Message-ID: <0aac68ac-cf40-4c3d-ac02-95b9a37aaa11@suse.com>
+Date: Fri, 10 May 2024 13:27:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC KERNEL PATCH v6 3/3] xen/privcmd: Add new syscall to get gsi
+ from irq
+To: "Chen, Jiqian" <Jiqian.Chen@amd.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?=
+ <roger.pau@citrix.com>,
+ "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "Huang, Ray" <Ray.Huang@amd.com>
+References: <20240419033616.607889-1-Jiqian.Chen@amd.com>
+ <20240419033616.607889-4-Jiqian.Chen@amd.com>
+ <79666084-fc2f-4637-8f0b-3846285601b8@suse.com>
+ <BL1PR12MB58493D17E23751A06FC931DDE7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
+ <c30ebad2-1ad3-4b58-afaf-e6dc32c091fc@suse.com>
+ <BL1PR12MB58491D2210091DF9607A354AE7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
+ <d0b5e7d5-3503-49be-9fa3-4b79c62059ca@suse.com>
+ <BL1PR12MB5849F1DE8B4A3538C79CE5D3E7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <BL1PR12MB5849F1DE8B4A3538C79CE5D3E7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240508143404.95901-5-ast@fiberby.net>
 
-On Wed, May 08, 2024 at 02:33:52PM +0000, Asbjørn Sloth Tønnesen wrote:
-> Convert qede_flow_parse_v6_common() to take extack,
-> and drop the edev argument.
-> 
-> Convert DP_NOTICE call to use NL_SET_ERR_MSG_MOD instead.
-> 
-> Pass extack in calls to qede_flow_parse_ports() and
-> qede_set_v6_tuple_to_profile().
-> 
-> In calls to qede_flow_parse_v6_common(), use NULL as extack
-> for now, until a subsequent patch makes extack available.
-> 
-> Only compile tested.
-> 
-> Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+On 10.05.24 12:32, Chen, Jiqian wrote:
+> On 2024/5/10 18:21, Jürgen Groß wrote:
+>> On 10.05.24 12:13, Chen, Jiqian wrote:
+>>> On 2024/5/10 17:53, Jürgen Groß wrote:
+>>>> On 10.05.24 11:06, Chen, Jiqian wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On 2024/5/10 14:46, Jürgen Groß wrote:
+>>>>>> On 19.04.24 05:36, Jiqian Chen wrote:
+>>>>>>> +
+>>>>>>> +    info->type = IRQT_PIRQ;
+>>>>> I am considering whether I need to use a new type(like IRQT_GSI) here to distinguish with IRQT_PIRQ, because function restore_pirqs will process all IRQT_PIRQ.
+>>>>
+>>>> restore_pirqs() already considers gsi == 0 to be not GSI related. Isn't this
+>>>> enough?
+>>> No, it is not enough.
+>>> xen_pvh_add_gsi_irq_map adds the mapping of gsi and irq, but the value of gsi is not 0,
+>>> once restore_pirqs is called, it will do PHYSDEVOP_map_pirq for that gsi, but in pvh dom0, we shouldn't do PHYSDEVOP_map_pirq.
+>>
+>> Okay, then add a new flag to info->u.pirq.flags for that purpose?
+> I feel like adding "new flag to info->u.pirq.flags" is not as good as adding " new type to info->type".
+> Because in restore_pirqs, it considers " info->type != IRQT_PIRQ", if adding " new flag to info->u.pirq.flags", we need to add a new condition in restore_pirqs.
+> And actually this mapping(gsi and irq of pvh) doesn't have pirq, so it is not suitable to add to u.pirq.flags.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Does this mean there is no other IRQT_PIRQ related activity relevant for those
+GSIs/IRQs? In that case I agree to add IRQT_GSI.
 
+
+Juergen
 
