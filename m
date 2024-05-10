@@ -1,313 +1,219 @@
-Return-Path: <linux-kernel+bounces-175289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09358C1DB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:26:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4E18C1DB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:32:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70B3283AB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:26:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD3B1C20A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8AF1527AB;
-	Fri, 10 May 2024 05:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17B015B131;
+	Fri, 10 May 2024 05:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mu1ZJlji"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmMf3YzQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E171635B2;
-	Fri, 10 May 2024 05:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715318782; cv=none; b=ZpYjIArkE1O/ng6YrLYbWGPtamI4lsIJIAuRA5RHyTM22cwbuez+8fyIa7RIXd846hZ6I7WgNQE6LaUsvWbZwfGzM6dJCGNMW0+fE6JdJpuIPAUz79t1md5ET5rx1M3uSLKK6eOBHfrmbbfNBwWoSTgu5JHTPrgjcbX2Zq7eWuA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715318782; c=relaxed/simple;
-	bh=s7GnuaM+DAGfO01oPdNcCFYZ9nnThKfN0BTirWMJ1j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYtoqnBhOACTlmwxf6xnVxT2ixop/7D2gtu8gWXpCo5pajY/QVJgo2B/I51AbvUtrgmBTljH2qBehYMWlHmtDK3Le/5wwYCrv1CXUvxaeChwmzHTIxVwA3Tontoyk8waAhL98kDJIxj7F5xn//XkeTcnu4KGTJhBtE1KthUyrPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mu1ZJlji; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F98515217A;
+	Fri, 10 May 2024 05:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715319115; cv=fail; b=T8cNkeTYaE1lnVMZxEtct31O0ZlUguu6zM+7yHJu+3J/6lZJq9jSk6qIPuJCPX68R4lWGtQqepQVpWV8J6YWpcuaIjQeVXxuxgZUWnKRkqTYBz+HoDXuzRQ8dnCSEKRlk7GsROyH7dHWWs9M0yuR4QU2B8im6MbuAxUcH9vw9uI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715319115; c=relaxed/simple;
+	bh=YSTkSYy2QaEkgerWvbJ9xxMB2UAejWtGgNLgRusLgTQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WwPmiHGX3+4hdEibKvAX2QT9g6PVBWRORi4NYMriOP8hilg0w7hCB/aU8A0rfENJKDejxCKnat+fjR1QBHP3WG1zii+ewWbqKPnU0uri7Z61xfA+Rb/I6AY8CTZLwQZRG3grm6GvOZCOOeODoDgA1Sz/qE5kzse0d66p7bz2yBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmMf3YzQ; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715318781; x=1746854781;
+  t=1715319115; x=1746855115;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s7GnuaM+DAGfO01oPdNcCFYZ9nnThKfN0BTirWMJ1j4=;
-  b=Mu1ZJljiScVPDsYoHFP840lmy+h6ekAg3LB7mPyZw33EpvRAdEVKTMj0
-   t1516NwSK2GDfvVNx/HXvNHamPZzdu6VLVAg/+GBKvpcLdM4iJD+0BU1Z
-   PiRk0iJKP1RQEjaw9t7lUnbTVRqVdXhxzHp273fK1zwIdLavwxsqADjpI
-   ULQjolVhk/2KPBZpMDkayzX6zUuG0SZxkBMFXtZO+QsV1PBJkP9vJX586
-   /yXdwd5XTUU95dZnopTOMYHujVmCQBFiH2CltbiBuRkMOG6GeKf4P7Mrg
-   fIM0+8fH3ZgDaa/aN4kdZe8k11EAC/MlnCdegYoEdWkh7NLy+n6fDBfc2
+   in-reply-to:mime-version;
+  bh=YSTkSYy2QaEkgerWvbJ9xxMB2UAejWtGgNLgRusLgTQ=;
+  b=gmMf3YzQd7qBEUZ0QWFViXjFNInndvy1l9s+IAMrdWQuv5TikDJvRZ0q
+   mhZJV5Tf2V50UkqITko02k4sBlZdSiTPMSgB/rgl8ySM3o0M1jEWfcZdD
+   1/hebRlaFlwVOOayfOhkdv/KYQO8yAZQdaIMhVY7kW4tzPGa0ye6lZyYw
+   mGG9of8Lc6O1EIOLKugSNQ+LN4GSLjpPatbdKwhrEFsWegMQKCVxc+WiE
+   HwV+R8pPJrnzJ5xleR1SFyGx7QYR0iHDx3vRElRzky0ei0T74463Uj+G0
+   il57qIHQT4R7cQmnUg1k5ZAKrcz2XoyEEqilfn3Xp3hwVAJ2pLDBBz9CM
    w==;
-X-CSE-ConnectionGUID: P4H7eUIvT5qU6/MOk4u57A==
-X-CSE-MsgGUID: CUN1EvIST1OQ63cv0hluUA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="21953105"
+X-CSE-ConnectionGUID: 3IVoE6ogSqaD0P02avj2ow==
+X-CSE-MsgGUID: AMn49gZmTzCshmc+A4Uckg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="21878098"
 X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="21953105"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 22:26:20 -0700
-X-CSE-ConnectionGUID: bPJN/TMWR7yicxs40X0qEg==
-X-CSE-MsgGUID: RSR06L2iTJu69BRESjHIVA==
+   d="scan'208";a="21878098"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 22:31:54 -0700
+X-CSE-ConnectionGUID: AbRs7/AdQeudG2x57+xCSw==
+X-CSE-MsgGUID: /eHhCgglQ+O5c7Ayna9xBA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="66942671"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 09 May 2024 22:26:18 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 8ED5F15C; Fri, 10 May 2024 08:26:16 +0300 (EEST)
-Date: Fri, 10 May 2024 08:26:16 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Esther Shimanovich <eshimanovich@chromium.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
-Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
-Message-ID: <20240510052616.GC4162345@black.fi.intel.com>
-References: <20240419044945.GR112498@black.fi.intel.com>
- <CA+Y6NJEpWpfPqHO6=Z1XFCXZDUq1+g6EFryB+Urq1=h0PhT+fg@mail.gmail.com>
- <7d68a112-0f48-46bf-9f6d-d99b88828761@amd.com>
- <20240423053312.GY112498@black.fi.intel.com>
- <7197b2ce-f815-48a1-a78e-9e139de796b7@amd.com>
- <20240424085608.GE112498@black.fi.intel.com>
- <CA+Y6NJFyi6e7ype6dTAjxsy5aC80NdVOt+Vg-a0O0y_JsfwSGg@mail.gmail.com>
- <Zi0VLrvUWH6P1_or@wunner.de>
- <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
- <ZjsKPSgV39SF0gdX@wunner.de>
+   d="scan'208";a="33926873"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 May 2024 22:31:53 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 9 May 2024 22:31:52 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 9 May 2024 22:31:52 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.41) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 9 May 2024 22:31:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QYTEzvHBIgwtpwvqgjRsmKuuCrmRQB1pZPGUxOt/EV7mplBI7sfbooJz2IzhEYVs//rH5eOx9t7jzlGAjmVjMq2blAlhGs6maa2uo4I39K7fAQNZcjcWS69AnBVJTn71+KEdBoVkJFas4UCMAVKm6i7jlYcbqWGja5HJnItxd9T7/wG0INxZKS6vETapobhw1LLP8MdNb5Orad5xBGmuYamaFPl9EFGcUT5N+pyZP6VVKDoLUN6Z79Uv77Mwvn6gq0XeOqGKyWP9cvkCjaQ7/2mVf0FCGoTUeG19c8qgMdqYLzUjHloqOP0HItVQEX42s74l/Z7AK34Ih0jrGRxQkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jvnoU6/oVE8BfQV2iAWlGFQ2mbLHv98gfLsWPKcBQx0=;
+ b=PTih1kEZI61aRjPQwIkOT85HGT44An8vls5HydldVC3tkM5TQCqB9SFWZpaqyxPEcbwAcpPSHAPKRMMXwftX8I+PmXMZ817LmGAX3m0FkSf8PcugDafgIQ5S5q6gYW8usnPpw7CBvm/RrgSszXH+Bjhh5ChueTJLSeJ8gbY0w3XdohujrMP/zul9vmH9qaDIy+epwJC0N/iM36mBrADFPBcnj7J401y1OjrkIbYP8Ey9iU3FbMavrb5qDNcc2/moKfhFcIhciJVIc46NAfr4RGj1cHmXw4oxfmQXLG1KOeLodEwI+JT7OuyO+dR/xT3KcjL5QBvNdEBxigpbEUVwNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by IA0PR11MB7933.namprd11.prod.outlook.com (2603:10b6:208:407::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 05:31:50 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%4]) with mapi id 15.20.7544.048; Fri, 10 May 2024
+ 05:31:50 +0000
+Date: Thu, 9 May 2024 22:31:39 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 06/26] cxl/port: Add Dynamic Capacity mode support to
+ endpoint decoders
+Message-ID: <663db13b464f8_25b78929486@iweiny-mobl.notmuch>
+References: <20240324-dcd-type2-upstream-v1-0-b7b00d623625@intel.com>
+ <20240324-dcd-type2-upstream-v1-6-b7b00d623625@intel.com>
+ <20240404093201.00004f33@Huawei.com>
+ <661065683552f_e9f9f2946@iweiny-mobl.notmuch>
+ <663903b35b66e_2e2d22945a@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <663903b35b66e_2e2d22945a@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+X-ClientProxiedBy: SJ0PR13CA0110.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c5::25) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZjsKPSgV39SF0gdX@wunner.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|IA0PR11MB7933:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2796a0a1-6f54-4e07-4013-08dc70b27e2a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UjFwvOiwVm57NwY0t3M+4o2RjywW901wbPnxjengmiDh8npgHvtKq955y9hs?=
+ =?us-ascii?Q?KPLfnCHmQm+x8G57kaoDV6Tjt5cFbeGaJUh7ntXBqkuYyI1wk1Ky/N7HLpY/?=
+ =?us-ascii?Q?c/lDEcm2VI39CCKKNBPRTeNPl+Kdk5/J5AxWVqKCqkHFYDEBo4YXrY1VULYV?=
+ =?us-ascii?Q?sPNA/MjUY80+zzFVizb/+6zLhGKPOmGKZhY+uHX78k3fppHsuNPefVL2ctum?=
+ =?us-ascii?Q?mB09tAEXtUR+9cOTICNL0kycvQR8hzzZlC1vlYwWSkqIyA7dhrv0f0LIpx99?=
+ =?us-ascii?Q?Io2gLsP9Q7QmEds9PGbTkyrXAMX5eJYKlpjbuObXi55Qv44tXES0fd5CIifN?=
+ =?us-ascii?Q?CUHn/fO/nMe5tSvr9omi1Zbv5duQ65RAYZ8FFSuz8LnQ0jFTJgDSJ53dyLhY?=
+ =?us-ascii?Q?6q4j0coMvL53S5XiU2oBv6PKg4eyNPAaO8F4WI5XF5Pwksb/2h+PvlLeo5+S?=
+ =?us-ascii?Q?qxnQyZfGW4ZaG3NqK1R4W/pPLEKtH3g7YBXhkXbolv9biHzCjDVpGM6Skh2e?=
+ =?us-ascii?Q?vibpqFSSPIG8c37bGJDjS6YNcRy48rvN2DFILBlEwMfODmK+h3VkYii4+oaR?=
+ =?us-ascii?Q?I+zX1P8tugJMtf3nHBAdqKmgNvevnSjIug68J8v8B2Nx4GRJSyVBXodtUkJn?=
+ =?us-ascii?Q?LyWK0PqascuUnl7FqbMVLgTmC/I3ejSG/t9ez3l3WCy8nacPrB0Izl5x9yFr?=
+ =?us-ascii?Q?JnrOtDI3PDuiyMpANPDvKIR/1QYc2/4A8qJiHXGCohWWUk22lE0XLLa3WbKg?=
+ =?us-ascii?Q?CWAb84ehbhym9ZHOCT5yUAvxvED+Bgqz6xGADup6S/lxQNtB/3XrUjW5jKZs?=
+ =?us-ascii?Q?firyOfHdllwZRkg9wQyeC9aSAVORrBwAOatHk0BFxub/lEvDSapnUfAjpUZm?=
+ =?us-ascii?Q?7kjpDPFAE8nDo8x/nlO7vMM2FIJMoDDCTV4ZEcC59ytciosJymHtvVNtLAqM?=
+ =?us-ascii?Q?03Wz/DEZrvt/riVB1GpwVCrBa56SVJL7y2+CzX7wutWqUUKWWMu4synIF3XF?=
+ =?us-ascii?Q?MINIm8GZM3zvQQQMACryKy64iX2D18YNWqkRPg6zuWapVYeuh76P5VbCDjfv?=
+ =?us-ascii?Q?AoriiuFaewRo4hSA1A90UFNAKDgCNZpvVU/skojmpX8Hag64MHxT1JSh4pz0?=
+ =?us-ascii?Q?1UGdpRdVQgJH2oN6nsEI8MRX4o0zJYv5rt7UFHKc3c8hC3lkK0fHlMq+HCV+?=
+ =?us-ascii?Q?vFR33m+oNhkE0rXG1bjND2eRyUbuzF3QCDez1JKs7FjNrSauST5tRQuuNJqJ?=
+ =?us-ascii?Q?enr23ZtRc+zVeVLxN/5X0vKdKYB17knzUg1ccr4hWA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?QW5AN3ycrhhzyOZzGy58iQmV+PmCYB6f5Cgwx+GTiusOcdk8lVNsaxuAFsGM?=
+ =?us-ascii?Q?uI0KRiFT3Hzq8AYmuqNqOcFd4jlaDwXohpXgfuxb8DWqMxleqQDYPgmfL8Pk?=
+ =?us-ascii?Q?5/Aw9LkIBFEmfuzsVs+3QAM5kWkaxIns8ELwVS4RWKEmoS9g00YUqAiWGJJ7?=
+ =?us-ascii?Q?6WygMST0+km+Hhg694tAdos14mXNfm97UhfnvVtWTYYQEcAwsYdkUCkqBQxD?=
+ =?us-ascii?Q?TnVuech7mi/PKi79m96CbCyNCf2sEPm6Dkxo79hXw0Xa3Z7q0MbvkWSshpji?=
+ =?us-ascii?Q?NHBWttRx1tdTpEbkQv1ElZBorXT8ly6TTny8CL3gxLJkqY5rMBEqV1izwBvE?=
+ =?us-ascii?Q?pL65cPoY/sXmo9CPcustLqxoTsvEmGkdUevPQ5BtmEAZSf3tqmHMK2HjqfPh?=
+ =?us-ascii?Q?xqW6bilRb8f+FGDGSf5NqGEe2yhl8CUcSD4xk4P7sgBtKUlypPROKatHG6XT?=
+ =?us-ascii?Q?s4m8Mw1yTf0G4kk9QdYbu6MclerE+nmut3flux87RMhjGSfpJ8+pBjpTHYGP?=
+ =?us-ascii?Q?Aj+Gj8vH53np7EQlzNkTQd+mKGfaxWcD/stXVncb8anXjEpo/QlXT3Wkux7C?=
+ =?us-ascii?Q?gitphtGll4FefDFs/jPogrngK0jQ80cpZg2+p6Kjqah3MUDsweWuZDO0WrIS?=
+ =?us-ascii?Q?O3yyr/bxTz0IMbBtLtNN6HrLxCmvsD3/E1F6S9fajTC3eOVCpI9JRmlO2iVG?=
+ =?us-ascii?Q?vi8emQVuB5mlA/BZ3TmxK5B+WK8O1PIyM8JxoSGpI212YEMkp9rE/YaoEetx?=
+ =?us-ascii?Q?EAEVgjH+fItFCflRiN15cA1SaixNKjmREeiuAqNEx1xY9VacQIpCVTgj5ujN?=
+ =?us-ascii?Q?nzxUhafGu1KPxRXiuJRI3tBGwkKt1M9lGnFqkLLzN9YbndYxsTfwBVe+dYIy?=
+ =?us-ascii?Q?NgFQL541Z9HeZZ0tuOFEHYY/9xQ1vZNk3qe2jvuscOMGyGFTlJ9fD8PEH2Fh?=
+ =?us-ascii?Q?AsVGImWfxZfZh7sKPn8xkapSeDGtjQ+PzliM++hN0ltXqFonkVronBdbqhww?=
+ =?us-ascii?Q?Q0ZtJ5g9iWubNCIiXWj0olasotNx+P5WyBro0ew07iBbIzwWbDGdT3PB3h7n?=
+ =?us-ascii?Q?LhDRrKlVj6imcU0MA3qwhe92Q75+ouomORT9nJmkzJjJvVxYszA0m2yC8TnN?=
+ =?us-ascii?Q?4X2qxikoKg8xBc8WXrCw6LFT17JuxNrJzyeskv+SRNas8h1/lA5iqirj+tAW?=
+ =?us-ascii?Q?7WswkonAudJBbispbV/n0M3x+DGhQeiOd5FyA07zpxfopVaxgTFnfoagFunB?=
+ =?us-ascii?Q?D3C8Ty45EjSXz5fhVqf9wQIQdvP9CTyrMn9yXwFfkTOoK73LeXTTJxSLaWvA?=
+ =?us-ascii?Q?uUC46uczdDL+nbhlM98HKT+raxX7pzblXksd9zlcEpSk8IwPAjALXsRyiNrW?=
+ =?us-ascii?Q?pBcz7qCJ2d2CbimqID/dudg6XMQ1wTVOrvcMgcappy+6sm/8+tzovMpdjdAX?=
+ =?us-ascii?Q?oShNl6d94prBRB2AdeaVYED0GxsXMjpH5sPz2xaKst3ny0VkrYur34K670BX?=
+ =?us-ascii?Q?CM0ktujq0JLGLtA6hLLnO9tCx0Pd1WwMuKYdcLuorHwv9WC5ZhFVP2TgAuVH?=
+ =?us-ascii?Q?4nWqiZcMF5EhNRxPCJETh/MDtrHsVNmyWp+aIYbunaLtx27NvqPrZaEwT6c3?=
+ =?us-ascii?Q?AitGsl2AQgQVUfeIBmhMLnn3wV8Le5QdsSEpiopoYdLX?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2796a0a1-6f54-4e07-4013-08dc70b27e2a
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 05:31:50.5245
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WTHM6OvNXqcx08BJDQhsSFXrDJYWao9X7wNjbYthZ6wXh5ASz9xu7Brdv8UJXOqCXyR9t2LlU6ZJOSKtgcIBbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7933
+X-OriginatorOrg: intel.com
 
-Hi,
-
-On Wed, May 08, 2024 at 07:14:37AM +0200, Lukas Wunner wrote:
-> On Wed, May 01, 2024 at 06:23:28PM -0400, Esther Shimanovich wrote:
-> > On Sat, Apr 27, 2024 at 3:17AM Lukas Wunner <lukas@wunner.de> wrote:
-> > That is correct, when the user-visible issue occurs, no driver is
-> > bound to the NHI and XHCI. The discrete JHL chip is not permitted to
-> > attach to the external-facing root port because of the security
-> > policy, so the NHI and XHCI are not seen by the computer.
+Dan Williams wrote:
+> Ira Weiny wrote:
+> [..]
+> > > > +	case CXL_DECODER_DC0 ... CXL_DECODER_DC7:
+> > > > +		rc = dc_mode_to_region_index(mode);
+> > > > +		if (rc < 0)
+> > > > +			return rc;
+> > > 
+> > > Can't fail, so you could not bother checking..  Seems very unlikely
+> > > that function will gain other error cases in the future.
+> > 
+> > Sure, done.
 > 
-> Could you rework your patch to only rectify the NHI's and XHCI's
-> device properties and leave the bridges untouched?
+> Can dc_mode_to_region_index() be dropped altogether? Is there any
+> scenario where dc_mode_to_region_index() is really handling an anonymous
+> @mode argument? I.e. just replace all dc_mode_to_region_index() with
+> "mode - CXL_DECODER_DC0"?
 
-As an alternative, I also spent some time to figure out whether there is
-a way to detect the integrated Thunderbolt PCIe Root Ports and turns out
-it is not "impossible" at least :) Basically it is a list of Ice Lake
-and Tiger Lake Thunderbolt PCIe Root Ports. Everything after this is
-using the "usb4-host-interface" device property.
+Once we open up DC partitions to support multiple regions, no.
 
-I went a head and did a patch that, instead of relabeling, sets the
-"untrusted" and "removable" flags based on this and some heuristics (to
-figure out the discrete controller) directly on the source. I did some
-testing over the hardware I have here and it sets the flags like this:
+How about we remove the check in dc_mode_to_region_index() but keep the
+function?  That makes it clear that we are converting from an enum to int
+index?
 
-  - Everything below integrated Thunderbolt/USB4 PCIe root ports are
-    marked as "untrusted" and "removable", this includes the Ice Lake
-    and Tiger Lake ones. Whereas the NHI and xHCI here are untouched.
-
-  - Everything below discrete Thunderbolt/USB4 host controller PCIe
-    downstream ports that are behind a PCIe Root Port with
-    "external_facing" set are marked as "untrusted" and "removable"
-    whereas endpoints are still "trusted" and "fixed".
-
-I'm sharing the code below. @Esther, you may use it as you like, parts
-of it or just ignore the whole thing completely.
-
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 1325fbae2f28..38bc80c931d6 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1612,6 +1612,127 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
- 		dev->is_thunderbolt = 1;
- }
- 
-+static bool pcie_switch_directly_under(struct pci_dev *bridge,
-+				       struct pci_dev *parent,
-+				       struct pci_dev *pdev)
-+{
-+	u64 serial, upstream_serial;
-+
-+	/*
-+	 * Check the type of the device to make sure it is part of a PCIe
-+	 * switch and if it is try to match the serial numbers too with
-+	 * the assumption that they all share the same serial number.
-+	 */
-+	switch (pci_pcie_type(pdev)) {
-+	case PCI_EXP_TYPE_UPSTREAM:
-+		if (parent == bridge)
-+			return pci_get_dsn(pdev) != 0;
-+		break;
-+
-+	case PCI_EXP_TYPE_DOWNSTREAM:
-+		if (pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
-+			upstream_serial = pci_get_dsn(parent);
-+			if (!upstream_serial)
-+				return false;
-+			serial = pci_get_dsn(pdev);
-+			if (!serial)
-+				return false;
-+			if (serial != upstream_serial)
-+				return false;
-+			parent = pci_upstream_bridge(parent);
-+			if (parent == bridge)
-+				return true;
-+		}
-+		break;
-+
-+	case PCI_EXP_TYPE_ENDPOINT:
-+		if (pci_pcie_type(parent) == PCI_EXP_TYPE_DOWNSTREAM) {
-+			serial = pci_get_dsn(parent);
-+			if (!serial)
-+				return false;
-+			parent = pci_upstream_bridge(parent);
-+			if (parent && pci_pcie_type(parent) == PCI_EXP_TYPE_UPSTREAM) {
-+				upstream_serial = pci_get_dsn(parent);
-+				if (!upstream_serial)
-+					return false;
-+				if (serial != upstream_serial)
-+					return false;
-+				parent = pci_upstream_bridge(parent);
-+				if (parent == bridge)
-+					return true;
-+			}
-+		}
-+		break;
-+	}
-+
-+	return false;
-+}
-+
-+static bool pcie_has_usb4_host_interface(struct pci_dev *pdev)
-+{
-+	struct fwnode_handle *fwnode;
-+
-+	/*
-+	 * For USB4 the tunneled PCIe root or downstream ports are marked with
-+	 * the "usb4-host-interface" property so we look for that first. This
-+	 * should cover the most cases.
-+	 */
-+	fwnode = fwnode_find_reference(dev_fwnode(&pdev->dev),
-+				       "usb4-host-interface", 0);
-+	if (!IS_ERR(fwnode)) {
-+		fwnode_handle_put(fwnode);
-+		return true;
-+	}
-+
-+	/*
-+	 * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
-+	 * before Alder Lake do not have the above device property so we
-+	 * use their PCI IDs instead. All these are tunneled. This list
-+	 * is not expected to grow.
-+	 */
-+	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
-+		switch (pdev->device) {
-+		/* Ice Lake Thunderbolt 3 PCIe Root Ports */
-+		case 0x8a1d:
-+		case 0x8a1f:
-+		case 0x8a21:
-+		case 0x8a23:
-+		/* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
-+		case 0x9a23:
-+		case 0x9a25:
-+		case 0x9a27:
-+		case 0x9a29:
-+		/* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
-+		case 0x9a2b:
-+		case 0x9a2d:
-+		case 0x9a2f:
-+		case 0x9a31:
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+/* root->external_facing is true, parent != NULL */
-+static bool pcie_is_tunneled(struct pci_dev *root, struct pci_dev *parent,
-+			     struct pci_dev *pdev)
-+{
-+	/* Anything directly behind a "usb4-host-interface" is tunneled */
-+	if (pcie_has_usb4_host_interface(parent))
-+		return true;
-+
-+	/*
-+	 * Check if this is a discrete Thunderbolt/USB4 controller that is
-+	 * directly behind a PCIe Root Port marked as "ExternalFacingPort".
-+	 * These are not behind a PCIe tunnel.
-+	 */
-+	if (pcie_switch_directly_under(root, parent, pdev))
-+		return false;
-+
-+	return true;
-+}
-+
- static void set_pcie_untrusted(struct pci_dev *dev)
- {
- 	struct pci_dev *parent;
-@@ -1621,8 +1742,32 @@ static void set_pcie_untrusted(struct pci_dev *dev)
- 	 * untrusted as well.
- 	 */
- 	parent = pci_upstream_bridge(dev);
--	if (parent && (parent->untrusted || parent->external_facing))
--		dev->untrusted = true;
-+	if (parent) {
-+		struct pci_dev *root;
-+
-+		/* If parent is untrusted so are we */
-+		if (parent->untrusted) {
-+			pci_dbg(dev, "marking as untrusted\n");
-+			dev->untrusted = true;
-+			return;
-+		}
-+
-+		root = pcie_find_root_port(dev);
-+		if (root && root->external_facing) {
-+			/*
-+			 * Only PCIe root ports can be marked as
-+			 * "ExternalFacingPort", However, in case of a
-+			 * discrete Thunderbolt/USB4 controller only its
-+			 * downstream facing ports are actually
-+			 * something that are exposed to the wild so we
-+			 * only mark devices behind those as untrusted.
-+			 */
-+			if (pcie_is_tunneled(root, parent, dev)) {
-+				pci_dbg(dev, "marking as untrusted\n");
-+				dev->untrusted = true;
-+			}
-+		}
-+	}
- }
- 
- static void pci_set_removable(struct pci_dev *dev)
-@@ -1639,10 +1784,15 @@ static void pci_set_removable(struct pci_dev *dev)
- 	 * the port is marked with external_facing, such devices are less
- 	 * accessible to user / may not be removed by end user, and thus not
- 	 * exposed as "removable" to userspace.
-+	 *
-+	 * These are the same devices marked as untrusted by the above
-+	 * function. The ports and endpoints part of the discrete
-+	 * Thunderbolt/USB4 controller are not marked as removable.
- 	 */
--	if (parent &&
--	    (parent->external_facing || dev_is_removable(&parent->dev)))
-+	if (dev->untrusted || (parent && dev_is_removable(&parent->dev))) {
-+		pci_dbg(dev, "marking as removable\n");
- 		dev_set_removable(&dev->dev, DEVICE_REMOVABLE);
-+	}
- }
- 
- /**
+Ira
 
