@@ -1,174 +1,164 @@
-Return-Path: <linux-kernel+bounces-175694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894CA8C23C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:41:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507488C23BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD02A1C23346
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A04E2831B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15E116F0C9;
-	Fri, 10 May 2024 11:41:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7A816E893;
+	Fri, 10 May 2024 11:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fpq2/Tqa"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B168112AAC0;
-	Fri, 10 May 2024 11:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6CD12AAC0;
+	Fri, 10 May 2024 11:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341267; cv=none; b=KBZWk+zfxKELB0qHR+YwdDfRRCLtLlen7jHONsddEtUOZz6RBpqfTwjUw5vKW1/ZFxcLDiLqP9FIUuUyR1l2+yLO2ywod/a8EY4s6ESIIo28C8JOTjt3odUzSsKvOScjPxTMSQnXdXVat9OT3qpxfEKN4xw6ttfMx9H4pAhghQM=
+	t=1715341250; cv=none; b=cg1xHhKAj5QiiSvZ8Cm4jZlk8uMyH0KQV516dzgCh9bk5drN1pScqZ2gniOd8/EX1McGyZ3NWq2FTsF6csQ8tQLwLjWkMUPNZ/uATGzXbxaNEFxTioyhdBx4e61I7kKeuHtVvGHf2lOAsRHFS08YEWaEgTH6nGK/harJXZ7RlSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341267; c=relaxed/simple;
-	bh=hlouBtpydRVYfVMmQQ0wu/ck0rpVStqkPJRM3qUCENs=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ace6pmEF6BCEz2XKdUJg5TmtrbF/vAleCPSNRrjLClFX8KhNjibyoBVQO20v3AO4ccsDuTDMSLbqmaJ58gwcjLDQgdtQ5NPFEsaVgHETRNrES++4AQfQCYiKL1FP1wp3HYvhwYiwteRMUQN1f6AzIQxwfVi6YME8V9cpJnfaIPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VbRlj2WyPz4f3m8q;
-	Fri, 10 May 2024 19:40:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id B63811A0568;
-	Fri, 10 May 2024 19:40:54 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgAXOQzEBz5mwBtJMg--.30386S3;
-	Fri, 10 May 2024 19:40:54 +0800 (CST)
-Subject: Re: [PATCH v3 03/26] ext4: correct the hole length returned by
- ext4_map_blocks()
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
- ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
-References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
- <20240127015825.1608160-4-yi.zhang@huaweicloud.com>
- <87zfszuib1.fsf@brahms.olymp> <20240509163953.GI3620298@mit.edu>
- <87h6f6vqzj.fsf@brahms.olymp>
- <b9b93ad2-2253-6850-da38-afc42370303e@huaweicloud.com>
- <87seyquhpi.fsf@brahms.olymp>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <ea7d4019-fec7-d30c-e62a-37e665ccd610@huaweicloud.com>
-Date: Fri, 10 May 2024 19:40:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715341250; c=relaxed/simple;
+	bh=RbjHDzPLh3E9GZ4X448sxcxJtPFQU9RPmN+GEiL/x1Q=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iMdyJmaxcc8IbjrrMdpxk5zmpVCA92m0jLX+n8CyTF7zY2UGWQGWBssM/wIxiKucYFdCiW4vxyyMRC8+HOfnOVIYrKfgaT+SwDmRLtEsrETJhs9WbVm0eCdXCc6WdbtHYZ9a2EENlR2mhrbIkiEw1F/jhVQuP9Dhfo16WCv1StM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fpq2/Tqa; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715341247;
+	bh=RbjHDzPLh3E9GZ4X448sxcxJtPFQU9RPmN+GEiL/x1Q=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=fpq2/TqaNL7f3UaZ+UQN/qSIUoh9uCAtxlI2Iqx2Z8dMa5r/1XjfKuZKyt2/EwbCX
+	 NWn8yQmhDGEAkdSsi/RCowaD80p+3RHQ/xJeZ4hTfbE19T2BzQ9uQ1tpCrzSwcirb8
+	 zc+37ScXWx4v0HCcXeLPuqzqF1/TkzDWg/XB9stQPgCejUC5t8Z7I+iHG/gkIKf+H2
+	 uIprfcL6j5ZFxElBSutbM2Yncn0EOrnhATsPqpDrFLcStLVjAhAj0N4HrvnFaUI663
+	 RC/uvES+J9wTiyqHqh/S6jDUGEHcs7YubbXRfX6EUtXVmdOCReH+iQJo6IbaI2B044
+	 TMCN5EghWTakw==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 109393782185;
+	Fri, 10 May 2024 11:40:43 +0000 (UTC)
+Message-ID: <17a9be15-5e4f-4aed-a2b1-b3aa2defbfc9@collabora.com>
+Date: Fri, 10 May 2024 16:41:08 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87seyquhpi.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ SeongJae Park <sj@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
+ linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ llvm@lists.linux.dev
+Subject: Re: [PATCH v2] selftests/mqueue: fix 5 warnings about signed/unsigned
+ mismatches
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+References: <20240508200028.272513-1-jhubbard@nvidia.com>
 Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240508200028.272513-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgAXOQzEBz5mwBtJMg--.30386S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFyUZry8uF13Cw4fZF4xJFb_yoW5tFW8pF
-	WfZFnrtr4kJ348CrZ2yw1rXF10vr45Gr15Xr4rJryfAas09rykWF42kFWY9F97Wr40gw1U
-	tF4jva9rWFyjvFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU13rcDUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/5/10 17:41, Luis Henriques wrote:
-> On Fri 10 May 2024 11:39:48 AM +08, Zhang Yi wrote;
+On 5/9/24 1:00 AM, John Hubbard wrote:
+> When building with clang, via:
 > 
->> On 2024/5/10 1:23, Luis Henriques wrote:
->>> On Thu 09 May 2024 12:39:53 PM -04, Theodore Ts'o wrote;
->>>
->>>> On Thu, May 09, 2024 at 04:16:34PM +0100, Luis Henriques wrote:
->>>>>
->>>>> It's looks like it's easy to trigger an infinite loop here using fstest
->>>>> generic/039.  If I understand it correctly (which doesn't happen as often
->>>>> as I'd like), this is due to an integer overflow in the 'if' condition,
->>>>> and should be fixed with the patch below.
->>>>
->>>> Thanks for the report.  However, I can't reproduce the failure, and
->>>> looking at generic/039, I don't see how it could be relevant to the
->>>> code path in question.  Generic/039 creates a test symlink with two
->>>> hard links in the same directory, syncs the file system, and then
->>>> removes one of the hard links, and then drops access to the block
->>>> device using dmflakey.  So I don't see how the extent code would be
->>>> involved at all.  Are you sure that you have the correct test listed?
->>>
->>> Yep, I just retested and it's definitely generic/039.  I'm using a simple
->>> test environment, with virtme-ng.
->>>
->>>> Looking at the code in question in fs/ext4/extents.c:
->>>>
->>>> again:
->>>> 	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, hole_start,
->>>> 				  hole_start + len - 1, &es);
->>>> 	if (!es.es_len)
->>>> 		goto insert_hole;
->>>>
->>>>   	 * There's a delalloc extent in the hole, handle it if the delalloc
->>>>   	 * extent is in front of, behind and straddle the queried range.
->>>>   	 */
->>>>  -	if (lblk >= es.es_lblk + es.es_len) {
->>>>  +	if (lblk >= ((__u64) es.es_lblk) + es.es_len) {
->>>>   		/*
->>>>   		 * The delalloc extent is in front of the queried range,
->>>>   		 * find again from the queried start block.
->>>> 		len -= lblk - hole_start;
->>>> 		hole_start = lblk;
->>>> 		goto again;
->>>>
->>>> lblk and es.es_lblk are both __u32.  So the infinite loop is
->>>> presumably because es.es_lblk + es.es_len has overflowed.  This should
->>>> never happen(tm), and in fact we have a test for this case which
->>>
->>> If I instrument the code, I can see that es.es_len is definitely set to
->>> EXT_MAX_BLOCKS, which will overflow.
->>>
->>
->> Thanks for the report. After looking at the code, I think the root
->> cause of this issue is the variable es was not initialized on replaying
->> fast commit. ext4_es_find_extent_range() will return directly when
->> EXT4_FC_REPLAY flag is set, and then the es.len becomes stall.
->>
->> I can always reproduce this issue on generic/039 with
->> MKFS_OPTIONS="-O fast_commit".
->>
->> This uninitialization problem originally existed in the old
->> ext4_ext_put_gap_in_cache(), but it didn't trigger any real problem
->> since we never check and use extent cache when replaying fast commit.
->> So I suppose the correct fix would be to unconditionally initialize
->> the es variable.
+>     make LLVM=1 -C tools/testing/selftest
 > 
-> Oh, you're absolutely right -- the extent_status 'es' struct isn't being
-> initialized in that case.  I totally failed to see that.  And yes, I also
-> failed to mention I had 'fast_commit' feature enabled, sorry!
+> ...clang warns about several cases of using a signed integer for the
+> priority argument to mq_receive(3), which expects an unsigned int.
 > 
-> Thanks a lot for figuring this out, Yi.  I'm looking at this code and
-> trying to understand if it would be safe to call __es_find_extent_range()
-> when EXT4_FC_REPLAY is in progress.  Probably not, and probably better to
-> simply do:
+> Fix this by declaring the type as unsigned int in all cases.
 > 
-> 	es->es_lblk = es->es_len = es->es_pblk = 0;
+> Also, both input and output priority are unsigned, per the man pages, so
+> let's change the type of both priorities throughout, even though clang
+> did not warn about the prio_out variable.
 > 
-> in that case.  I'll send out a patch later today.
+> Also, add an argument name to test->func(), in order to address another
+> warning from clang.
 > 
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+LGTM
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Yeah, I'm glad it could help.
+> ---
+>  tools/testing/selftests/mqueue/mq_perf_tests.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mqueue/mq_perf_tests.c b/tools/testing/selftests/mqueue/mq_perf_tests.c
+> index 5c16159d0bcd..9380c656581f 100644
+> --- a/tools/testing/selftests/mqueue/mq_perf_tests.c
+> +++ b/tools/testing/selftests/mqueue/mq_perf_tests.c
+> @@ -323,7 +323,8 @@ void *fake_cont_thread(void *arg)
+>  void *cont_thread(void *arg)
+>  {
+>  	char buff[MSG_SIZE];
+> -	int i, priority;
+> +	int i;
+> +	unsigned int priority;
+>  
+>  	for (i = 0; i < num_cpus_to_pin; i++)
+>  		if (cpu_threads[i] == pthread_self())
+> @@ -373,27 +374,27 @@ void *cont_thread(void *arg)
+>  
+>  struct test {
+>  	char *desc;
+> -	void (*func)(int *);
+> +	void (*func)(unsigned int *prio);
+>  };
+>  
+> -void const_prio(int *prio)
+> +void const_prio(unsigned int *prio)
+>  {
+>  	return;
+>  }
+>  
+> -void inc_prio(int *prio)
+> +void inc_prio(unsigned int *prio)
+>  {
+>  	if (++*prio == mq_prio_max)
+>  		*prio = 0;
+>  }
+>  
+> -void dec_prio(int *prio)
+> +void dec_prio(unsigned int *prio)
+>  {
+>  	if (--*prio < 0)
+>  		*prio = mq_prio_max - 1;
+>  }
+>  
+> -void random_prio(int *prio)
+> +void random_prio(unsigned int *prio)
+>  {
+>  	*prio = random() % mq_prio_max;
+>  }
+> @@ -425,7 +426,7 @@ struct test test2[] = {
+>  void *perf_test_thread(void *arg)
+>  {
+>  	char buff[MSG_SIZE];
+> -	int prio_out, prio_in;
+> +	unsigned int prio_out, prio_in;
+>  	int i;
+>  	clockid_t clock;
+>  	pthread_t *t;
+> 
+> base-commit: 45db3ab70092637967967bfd8e6144017638563c
+> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
 
-Thanks,
-Yi.
-
+-- 
+BR,
+Muhammad Usama Anjum
 
