@@ -1,186 +1,180 @@
-Return-Path: <linux-kernel+bounces-175542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D2A8C212C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768728C212F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDA991F226EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1391F22D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B5D1635C4;
-	Fri, 10 May 2024 09:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C401635CA;
+	Fri, 10 May 2024 09:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lXls/VCL"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4Tp99ij"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96C315B108;
-	Fri, 10 May 2024 09:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FB015B108;
+	Fri, 10 May 2024 09:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715334034; cv=none; b=Kk414OE++VZGJ9TMiN4Tj6F2PF1prBKzA1JmNPWQy0FcSshe3g8cSNZIJNUdEEE+NAuqnndPmGD2G+9zc1aNITzgq1p9wgi2dnQ6LNpuJg4S28ok/f5uuR1V3lWOK/8OMUb8NjuOJ13y7+tL98EH5GIdGEUg+OQYGlhlYm4NnRM=
+	t=1715334057; cv=none; b=nBS9iyhh8MwOqgytjlAJ3IIem2WnxDXoJQ3NUsl5Tg3lzj3B7MA3ZCWZAWvuFYi7m7uYj/e9wWRMZB8FlvRJvfkr1ABncgWmFvtUgk8nRmryKfi0ApCsFPBt1MH4KB58ufJZvyrXFW/pSMkg9GvJrWq1WppiPBqt18Pn6SbH5OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715334034; c=relaxed/simple;
-	bh=VdsdasOmPy4sPsIFhfaAnrSDTw/u9uq15u29olSiUdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UXm6Y9MFSafRlVN6tgzGr52cuLcFanD6gKnj7P9k5JYbWDX0Tl2zyzoUQgbGsQnailiLBG2vHwYp86pvEj+Z6TD7ofI/391DMLfGpKGSpJLRN8Fiv0obnFbtMrNtYliTwn7kR7D5tyCv9ELFMEZEZmX3y+VY3OWuyKRcy2o65OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lXls/VCL; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A9LYuv015356;
-	Fri, 10 May 2024 09:40:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=lP6Gw9j5kJ8uGDKLhQswgwChAG7hxrrVGV2JYtdxmP0=;
- b=lXls/VCLGGnP0NhzCz1maWjVNqsqrM3qgWzcIFYljN7N3vFRXCkSEzff73kETXY0OD15
- tt8MRzsTsJs/3A9+183Gyw7GQGmCkzOh6W6dXxFooyrSp4STmoHX1DTJzqhdAWfvY0gc
- TSsafghSRNH8ec37yT4dKgIVDgrsRGeEQ9MDBto5cIxuSWCHkT+RsMeMRHPKBWGiaVsU
- 2S27Db2INQZPGMFpv2EEuPSUaeXoLEJglJ10pfxZ9HKjTSKYMS1B9QWvCjV8tru9Oz0n
- i0EZox21mCQqUMRjBsVQUqMicJFjOlfBqQo9YaiJIyltp+1yipg9/JbiO10uXsajLZbb yQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y1gabr5ak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 09:40:30 +0000
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44A9eTT5014625;
-	Fri, 10 May 2024 09:40:29 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y1gabr5ag-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 09:40:29 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44A7i6VH009327;
-	Fri, 10 May 2024 09:40:29 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xyshv0e5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 09:40:29 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44A9eQsj48693862
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 09:40:28 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6322F5805D;
-	Fri, 10 May 2024 09:40:26 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E15D58057;
-	Fri, 10 May 2024 09:40:25 +0000 (GMT)
-Received: from [9.171.7.235] (unknown [9.171.7.235])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 10 May 2024 09:40:25 +0000 (GMT)
-Message-ID: <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
-Date: Fri, 10 May 2024 11:40:24 +0200
+	s=arc-20240116; t=1715334057; c=relaxed/simple;
+	bh=omwIVooKj2lhfiK2OyYV/ShnqtuKeUSCLFPStJaY/u4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xcnx9z2QYMZhn0l9C48q9+R6LRo4S+kh0vfOd8OC2mDfK2uyOGEHzekancE6rwTqrfGugq4WaVBXv030jjH4Sr1Ief4WlBfQD3AHXTGQIUmPpSzA975IvYbax40UZlYOTh6osLJb6iEkUyJXXsOu8NBkL55q2sVGTld06GUf8S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4Tp99ij; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6f47787a0c3so1658360b3a.0;
+        Fri, 10 May 2024 02:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715334055; x=1715938855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RkRaYasEXgqE/p0OdCATEgprTM8CbZFE90OPXfYhKMQ=;
+        b=D4Tp99ijdwPXk8U6YAzzWsie0Apx0Rlv1bPJ2wOHb20bpAoP8A7A1oqSpZvyJO8BVH
+         ApYswZu2pQ124+K48RFoS7MErIUdnCjqGzmI1NE3Z5pNNTmEanAMPjJVdQmCzweEzHFK
+         LjWaRjBiitsFNzKhuQFrNsGMxC8ykGAAi7OoVCk8UKUJG2To2Y8mYCUPqg06h2txJzVM
+         36mDGHhMZ5tRkxevHrZgYv1WV3j/NsT+B8T1GHjnbeuaO0DqcXHcDsaboJJfnHsYgUg9
+         W+HZcjQJ6x8XWRWmZcsnMv6VjF5+k+0s4kVF0iH8l8w4mYuGor08zjA8QCqph9n/GR98
+         ihFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715334055; x=1715938855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RkRaYasEXgqE/p0OdCATEgprTM8CbZFE90OPXfYhKMQ=;
+        b=FwXmdWY4bziP6HnbPFBlreJIzQmuYwrnXpcWAnFnQkLg9crJ8/ZJe9goZJYpHdGm7B
+         TaIqSfow8h3EFJOB/v2e0QlcJp15cP3o8K0oxu9bOjHjitAEiC7a2JI/Y0Jk5Ne/H1VU
+         9G8nSf5qvaz2vBLfvokhOF0EkzIQUSS0fRqXQWKhPKMsHic5/UVohVd57RqZIfNevM5l
+         eGR22FlvIeeWXQhOELJ7nopWJeBrGwAf2PB8LQyj3B+OoqMuLZiRzHW0FTjlPwNQJPv7
+         7LKRDbwYA5pspUsKVdWi6z5caPoEt+cZ+GQtmhjzWRoVpjE+u4ZqvE6z3EMsNkeNPUQX
+         PL0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUjDwoDhiKH4OL+cVs2W1b740C/CDeFmxZLcF8uqXL2IKSAEEPzqXwtXRN21Vp7zyCRSsjjvhsbn7vJakQ40HWWnonn4nKrO5msM9SAQvYvSk21626Q+asAkNZjDUY0Ivn+4hVd/z7Uqhyo1cQxoiskQGULouYHmE/38UpexsaldUVCcb2sB1xgHQ==
+X-Gm-Message-State: AOJu0Yw1zBAWMRzaODMjYB4J1oQ3xwVMRNS6zIF1v9/fyeNvoCZzXsB6
+	+j5SLU62F8eHMbnfCxlIQe0G3wIybgHP/x+E4/s4GY5/VFAW1yTa
+X-Google-Smtp-Source: AGHT+IH0qhnOyz8bzZsEARgaFLjiq9X1vf+A71YpS9o0PB1YNYRGjZdOMaaTV2N8Jxrn2cF+sK4F8w==
+X-Received: by 2002:a05:6a00:3ccd:b0:6f3:ebc4:4406 with SMTP id d2e1a72fcca58-6f4e026b878mr2506655b3a.7.1715334054910;
+        Fri, 10 May 2024 02:40:54 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade28asm2554518b3a.139.2024.05.10.02.40.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 02:40:54 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/2] PM / devfreq: exynos: Use Use devm_clk_get_enabled() helpers
+Date: Fri, 10 May 2024 15:10:24 +0530
+Message-ID: <20240510094034.12493-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: some questions about restrictions in SMC-R v2's implementation
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, jaka@linux.ibm.com,
-        kgraul@linux.ibm.com
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7n470_4bm7F81DT2l4dNXbQU2Cra1jiY
-X-Proofpoint-ORIG-GUID: L6oY6bi9De9H696zDVCLbvuXILwf6ANJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_06,2024-05-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- adultscore=0 mlxlogscore=999 suspectscore=0 phishscore=0 mlxscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405100069
+Content-Transfer-Encoding: 8bit
 
+The devm_clk_get_enabled() helpers:
+    - call devm_clk_get()
+    - call clk_prepare_enable() and register what is needed in order to
+     call clk_disable_unprepare() when needed, as a managed resource.
 
+This simplifies the code and avoids the calls to clk_disable_unprepare().
 
-On 07.05.24 07:54, Guangguan Wang wrote:
-> Hi, Wenjia and Jan,
-> 
-> When testing SMC-R v2, I found some scenarios where SMC-R v2 should be worked, but due to some restrictions in SMC-R v2's implementation,
-> fallback happened. I want to know why these restrictions exist and what would happen if these restrictions were removed.
-> 
-> The first is in the function smc_ib_determine_gid_rcu, where restricts the subnet matching between smcrv2->saddr and the RDMA related netdev.
-> codes here:
-> static int smc_ib_determine_gid_rcu(...)
-> {
->      ...
->          in_dev_for_each_ifa_rcu(ifa, in_dev) {
->              if (!inet_ifa_match(smcrv2->saddr, ifa))
->                  continue;
->              subnet_match = true;
->              break;
->          }
->          if (!subnet_match)
->              goto out;
->      ...
-> out:
->      return -ENODEV;
-> }
-> In my testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth0 in netnamespace2. For the sake of clarity
-> in the following text, we will refer to eth0 in netnamespace1 as eth1, and eth0 in netnamespace2 as eth2. The eth1's ip is 192.168.0.3/32 and the
-> eth2's ip is 192.168.0.4/24. The netmask of eth1 must be 32 due to some reasons. The eth1 is a RDMA related netdev, which means the adaptor of eth1
-> has RDMA function. The eth2 has been associated to the eth1's RDMA device using smc_pnet. When testing connection in netnamespace2(using eth2 for
-> SMC-R connection), we got fallback connection, rsn is 0x03010000, due to the above subnet matching restriction. But in this scenario, I think
-> SMC-R should work.
-> In my another testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth1 in netnamespace1. The eth0's ip is
-> 192.168.0.3/24 and the eth1's ip is 192.168.1.4/24. The eth0 is a RDMA related netdev, which means the adaptor of eth0 has RDMA function. The eth1 has
-> been associated to the eth0's RDMA device using smc_pnet. When testing SMC-R connection through eth1, we got fallback connection, rsn is 0x03010000,
-> due to the above subnet matching restriction. In my environment, eth0 and eth1 have the same network connectivity even though they have different
-> subnet. I think SMC-R should work in this scenario.
-> 
-> The other is in the function smc_connect_rdma_v2_prepare, where restricts the symmetric configuration of routing between client and server. codes here:
-> static int smc_connect_rdma_v2_prepare(...)
-> {
->      ...
->      if (fce->v2_direct) {
->          memcpy(ini->smcrv2.nexthop_mac, &aclc->r0.lcl.mac, ETH_ALEN);
->          ini->smcrv2.uses_gateway = false;
->      } else {
->          if (smc_ib_find_route(net, smc->clcsock->sk->sk_rcv_saddr,
->                smc_ib_gid_to_ipv4(aclc->r0.lcl.gid),
->                ini->smcrv2.nexthop_mac,
->                &ini->smcrv2.uses_gateway))
->              return SMC_CLC_DECL_NOROUTE;
->          if (!ini->smcrv2.uses_gateway) {
->              /* mismatch: peer claims indirect, but its direct */
->              return SMC_CLC_DECL_NOINDIRECT;
->          }
->      }
->      ...
-> }
-> In my testing environment, server's ip is 192.168.0.3/24, client's ip 192.168.0.4/24, regarding how many netdev in server or client. Server has special
-> route setting due to some other reasons, which results in indirect route from 192.168.0.3/24 to 192.168.0.4/24. Thus, when CLC handshake, client will
-> get fce->v2_direct==false, but client has no special routing setting and will find direct route from 192.168.0.4/24 to 192.168.0.3/24. Due to the above
-> symmetric configuration of routing restriction, we got fallback connection, rsn is 0x030f0000. But I think SMC-R should work in this scenario.
-> And more, why check the symmetric configuration of routing only when server is indirect route?
-> 
-> Waiting for your reply.
-> 
-> Thanks,
-> Guangguan Wang
-> 
-Hi Guangguan,
+While at it, use dev_err_probe consistently, and use its return value
+to return the error code.
 
-Thank you for the questions. We also asked ourselves the same questions 
-a while ago, and also did some research on it. Unfortunately, it was not 
-yet done and I had to delay it because of my vacation last month. Now 
-it's time to pick it up again ;) I'll come back to you as soon as I can 
-give a very certain answer.
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+v5 - No change
+V4 - wrap up the error messagee within 80 char
+v3 - No change
+v2 - No change
+---
+ drivers/devfreq/exynos-bus.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
-Thanks,
-Wenjia
+diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+index 00118580905a..7d06c476d8e9 100644
+--- a/drivers/devfreq/exynos-bus.c
++++ b/drivers/devfreq/exynos-bus.c
+@@ -160,7 +160,6 @@ static void exynos_bus_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ }
+ 
+@@ -171,7 +170,6 @@ static void exynos_bus_passive_exit(struct device *dev)
+ 	platform_device_unregister(bus->icc_pdev);
+ 
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ }
+ 
+ static int exynos_bus_parent_parse_of(struct device_node *np,
+@@ -247,23 +245,16 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 	int ret;
+ 
+ 	/* Get the clock to provide each bus with source clock */
+-	bus->clk = devm_clk_get(dev, "bus");
+-	if (IS_ERR(bus->clk)) {
+-		dev_err(dev, "failed to get bus clock\n");
+-		return PTR_ERR(bus->clk);
+-	}
+-
+-	ret = clk_prepare_enable(bus->clk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to get enable clock\n");
+-		return ret;
+-	}
++	bus->clk = devm_clk_get_enabled(dev, "bus");
++	if (IS_ERR(bus->clk))
++		return dev_err_probe(dev, PTR_ERR(bus->clk),
++				"failed to get bus clock\n");
+ 
+ 	/* Get the freq and voltage from OPP table to scale the bus freq */
+ 	ret = dev_pm_opp_of_add_table(dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to get OPP table\n");
+-		goto err_clk;
++		return ret;
+ 	}
+ 
+ 	rate = clk_get_rate(bus->clk);
+@@ -281,8 +272,6 @@ static int exynos_bus_parse_of(struct device_node *np,
+ 
+ err_opp:
+ 	dev_pm_opp_of_remove_table(dev);
+-err_clk:
+-	clk_disable_unprepare(bus->clk);
+ 
+ 	return ret;
+ }
+@@ -453,7 +442,6 @@ static int exynos_bus_probe(struct platform_device *pdev)
+ 
+ err:
+ 	dev_pm_opp_of_remove_table(dev);
+-	clk_disable_unprepare(bus->clk);
+ err_reg:
+ 	dev_pm_opp_put_regulators(bus->opp_token);
+ 
+-- 
+2.44.0
+
 
