@@ -1,186 +1,158 @@
-Return-Path: <linux-kernel+bounces-175514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E968C209D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C738C209E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34B41C21A6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21941C20C69
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AEF172BB4;
-	Fri, 10 May 2024 09:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E726F161933;
+	Fri, 10 May 2024 09:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="c2Nd7E7u"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XhhkvkLM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A857B171E4C;
-	Fri, 10 May 2024 09:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEC21607B2
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715332387; cv=none; b=k+XsD8vEUv33FEPUfIajKBIfCFarXAfeQlvUxRZ2hynrvvYd/1yfxjsY2dDizobvAZYc+Y0Oo6fuZUyhWQo7ixlgwosKoKlr31J+iBELSPWKxPufhyiMgwwRFy+lb50Wr/qh6oLHsVd1HXTn05FvYlKwgyZL1yD/uQ7DLbeX9uA=
+	t=1715332416; cv=none; b=Qmeqv4IEyyjI+3sFoNgmeOTyKFwP244GzswMAd2rME8hhWAUlJL8i0Y12P8SYWTQnQxbBPmUKRHR1kWkV023Zbi+RqSChXKu4ruplTMMUXTTyKvjeWddH5gHd3/jKAchpgLjNTSkyso3dNxVFxpODTJBtbPDeLws8k5S+c7Kho4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715332387; c=relaxed/simple;
-	bh=DqgdDwQx+sQAdIg4ZpduqD7G6PmhfwcD69dKKDM0ns8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WB3DxDAmaosZZW6w2iwIS7lvNy5HlcbGO8WzYm7HJLW1eHuedkRDNLCx48AQ/hfpj7EAo6xxXwdokdqXifjDElAPiFBlaqhIgYkzO703VdzqbjHVQkCaekZo5blChHl29n+a67cVtb+9cfMc8VuEw9RCwtvu1Bs/M+9mKBrbfYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=c2Nd7E7u; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id E482F100008;
-	Fri, 10 May 2024 12:13:02 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E482F100008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715332382;
-	bh=Fgx6gQIor5JitCoDjzvWGDmT9ExA7zZtNp1uC41L0go=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=c2Nd7E7uGvrXOgdY9eSJUhXW4bdjT1KQool6/k4iHkFKTlN9K47zlQsgmignDLsv8
-	 LvHpdLGop2FuWRoPziZQpIJ1UedD+ePJ3eDsdySB+YAnUxkUy7el75vZxovkCBjNwi
-	 I1fsAGT71YvmDZBL7ltJ0Nie7UvvTyuMykPZz0/6wjs8rdtjhazxfh3JAa4Qsy9JV4
-	 KxQAxbVW2vYa4jUvYPTqHUt4nWcdisoxEdUwZ/OvRp9rl0XGZeg5MAAULDSRG5xBYA
-	 2Ac/Q8656802wkS1JK+p59sds3QvC2YnyKuZutibXjr3jQcVbYXqj5SF4bYi7LpdqB
-	 hwy/ZFQP2kTPQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 10 May 2024 12:13:02 +0300 (MSK)
-Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 10 May 2024 12:13:02 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>
-CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
-	<ddrokosov@salutedevices.com>
-Subject: [PATCH v2 4/4] arm64: dts: amlogic: a1: setup CPU power management
-Date: Fri, 10 May 2024 12:12:26 +0300
-Message-ID: <20240510091251.20086-5-ddrokosov@salutedevices.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240510091251.20086-1-ddrokosov@salutedevices.com>
-References: <20240510091251.20086-1-ddrokosov@salutedevices.com>
+	s=arc-20240116; t=1715332416; c=relaxed/simple;
+	bh=TF+PTbkgSx0ZnPRn+1LyMRtzCYZzLtwMrn37b5euxao=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QDKqtsJsX4V8BAhGUqlw+Ik6q0OxSI3aosrHR71OB8Mgt9obsKKWnnHJOpsb5noufGKJOlrezSFNrIMMsBFiekYni2J0raCIY2kZDlXvTSn4/c5uS9fgCeTjRKdns0KsnRPHpcpWqyLBSID7nfuVcyUM/JnzfFsfqrbi0kUsadY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XhhkvkLM; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715332415; x=1746868415;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TF+PTbkgSx0ZnPRn+1LyMRtzCYZzLtwMrn37b5euxao=;
+  b=XhhkvkLM2QzrS6snlZoF+lY7ZW7xlc4lmW80d8+i/guPgSrTPOcmOvYT
+   mkvRp4XMXuL+xK9h3YFOJbcoBK9NQC7IiKMKlSEaGa/Ts98Lh2uBm8g+x
+   3u4A1tD7VT22M1maBswS5H2CLV21eDLI3qDO1If0dYVt8oan2hNQOhQb7
+   oYq5IqztdP3zMdZ5kroA/p/3V5oHVx2XMiqpYRXzRfIlcmKMfHiz+DEky
+   tzMrIDAPKCpLWUBr9WzEeCRCbmd3D1TqgQRoEP4WCLlFTGWCVhF7IId/T
+   KEPemlJNi1hXAtcfNkaJNNpCvAeqhmCQowoubRnIjvzY2a+m7lF1nFmrY
+   g==;
+X-CSE-ConnectionGUID: 6AqTP8RWTJ29EELvlo2tiw==
+X-CSE-MsgGUID: kX/rK7NTRxybQH3mdnEsFw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="21879095"
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="21879095"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 02:13:35 -0700
+X-CSE-ConnectionGUID: HlxxGN5LQIqbfopkgkxtpA==
+X-CSE-MsgGUID: rZ7SJb6RSguTrlxaCy7EDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="29555229"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.237.100]) ([10.124.237.100])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 02:13:30 -0700
+Message-ID: <b510a556-a8fe-4328-9917-e50ef074dfee@linux.intel.com>
+Date: Fri, 10 May 2024 17:13:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185158 [May 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/10 07:36:00 #25144647
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
+ Jacob Pan <jacob.jun.pan@linux.intel.com>,
+ Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
+ virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/9] iommufd: Add iommufd fault object
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
+ <20240430145710.68112-6-baolu.lu@linux.intel.com>
+ <20240508002242.GP4718@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240508002242.GP4718@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The Amlogic A1 SoC family utilizes static operating points and a
-PWM-controlled core voltage regulator, which is specific to the board.
-As the main CPU clock input, the SoC uses CLKID_CPU_CLK from the CPU
-clock controller, which can be inherited from the system PLL (syspll) or
-a fixed CPU clock.
+On 2024/5/8 8:22, Jason Gunthorpe wrote:
+> On Tue, Apr 30, 2024 at 10:57:06PM +0800, Lu Baolu wrote:
+>> +static ssize_t iommufd_fault_fops_read(struct file *filep, char __user *buf,
+>> +				       size_t count, loff_t *ppos)
+>> +{
+>> +	size_t fault_size = sizeof(struct iommu_hwpt_pgfault);
+>> +	struct iommufd_fault *fault = filep->private_data;
+>> +	struct iommu_hwpt_pgfault data;
+>> +	struct iommufd_device *idev;
+>> +	struct iopf_group *group;
+>> +	struct iopf_fault *iopf;
+>> +	size_t done = 0;
+>> +	int rc;
+>> +
+>> +	if (*ppos || count % fault_size)
+>> +		return -ESPIPE;
+>> +
+>> +	mutex_lock(&fault->mutex);
+>> +	while (!list_empty(&fault->deliver) && count > done) {
+>> +		group = list_first_entry(&fault->deliver,
+>> +					 struct iopf_group, node);
+>> +
+>> +		if (list_count_nodes(&group->faults) * fault_size > count - done)
+>> +			break;
+> 
+> Can this list_count be precomputed when we build the fault group?
 
-Currently, the stable operating points at all frequencies are set to
-800mV. This value is obtained from the vendor setup of several A1
-boards.
+Yes. Done.
 
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 44 +++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+> 
+>> +
+>> +		idev = group->attach_handle->idev;
+>> +		if (!idev)
+>> +			break;
+> 
+> This check should be done before adding the fault to the linked
+> list. See my other note about the race.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 785778f3a7da..fa13dd6ed03d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -33,6 +33,13 @@ cpu0: cpu@0 {
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
-+			clocks = <&clkc_cpu CLKID_CPU_CLK>;
-+			clock-names = "core_clk";
-+			operating-points-v2 = <&cpu_opp_table0>;
-+			voltage-tolerance = <0>;
-+			clock-latency = <50000>;
-+			capacity-dmips-mhz = <400>;
-+			dynamic-power-coefficient = <80>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -42,6 +49,13 @@ cpu1: cpu@1 {
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
-+			clocks = <&clkc_cpu CLKID_CPU_CLK>;
-+			clock-names = "core_clk";
-+			operating-points-v2 = <&cpu_opp_table0>;
-+			voltage-tolerance = <0>;
-+			clock-latency = <50000>;
-+			capacity-dmips-mhz = <400>;
-+			dynamic-power-coefficient = <80>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -52,6 +66,36 @@ l2: l2-cache0 {
- 		};
- 	};
- 
-+	cpu_opp_table0: cpu_opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <128000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <256000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <512000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <768000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <800000>;
-+		};
-+	};
-+
- 	efuse: efuse {
- 		compatible = "amlogic,meson-gxbb-efuse";
- 		clocks = <&clkc_periphs CLKID_OTP>;
--- 
-2.43.0
+Done.
+
+> 
+>> +
+>> +		rc = xa_alloc(&idev->faults, &group->cookie, group,
+>> +			      xa_limit_32b, GFP_KERNEL);
+>> +		if (rc)
+>> +			break;
+> 
+> This error handling is not quite right, if done == 0 then this should
+> return rc.
+> 
+> 
+>> +
+>> +		list_for_each_entry(iopf, &group->faults, list) {
+>> +			iommufd_compose_fault_message(&iopf->fault,
+>> +						      &data, idev,
+>> +						      group->cookie);
+>> +			rc = copy_to_user(buf + done, &data, fault_size);
+>> +			if (rc) {
+>> +				xa_erase(&idev->faults, group->cookie);
+>> +				break;
+> 
+> Same here
+> 
+> (same comment on the write side too)
+
+All fixed. Thank you!
+
+Best regards,
+baolu
 
 
