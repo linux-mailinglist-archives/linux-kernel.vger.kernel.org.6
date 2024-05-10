@@ -1,122 +1,110 @@
-Return-Path: <linux-kernel+bounces-175988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4EFE8C2858
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:59:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739728C2863
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E07EB247C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDF22872F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:00:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BEB172BDB;
-	Fri, 10 May 2024 15:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C18C172BD4;
+	Fri, 10 May 2024 16:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSofYpy8"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gSaXuqTF"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D3A172BCD
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04774F4EB;
+	Fri, 10 May 2024 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356758; cv=none; b=X2ID7DZgn1EhKEKqKKLKyNjSLnVYRb4TW/wLq1QJV4WM+LhJWcXgb2YeqMWYLogEzo24HF7J9nYRKwfcYbFeuY133q6mc4m5nwTGsExVh0nx5WyPHczj62GayVIovEdJc4TPhk1Pp45sEZ2O5LrBF44fS5kQ/juBxMlVEuKOawQ=
+	t=1715356800; cv=none; b=BOrOF1a5/MA2rU4JqH5khgBRf6r1DI0dlfq4Ifk895FJtRlMtjxTo1M36Widf+fZp/YFSyVuyumjWgFSjtWBS6ahxC9g75Di5fHYsusXUlCY8e3nLkqhYKnuwdTmIGlBqhzpkiagOFYETh9gdcsCtOFE0dcbOW1QOXGa7uBMeEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356758; c=relaxed/simple;
-	bh=J+92hXnaFjj8CDjvSEIof2zLpu6lXiMuInC1wXs3yNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nx7yKVG7KgLZGGafNPfJSJCap4jSAPwjm2UjZd6IKMc4TOpA0KJP79VQ43+mmP9oD90wJ5oJ2FA2tn96gm1iIFvmLVNEODhSRitDRiDP2Uc3X2DDixGC/QstNVMzUSXaMHPX0O5mN1Opy0lAln8KxYO6BolB+ABipYFCzqwwyps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSofYpy8; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51fea3031c3so3079602e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715356755; x=1715961555; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kaC1FX9IaWOSYR6DDBjH2nZIpL4z+ve32+mPw2UdL5w=;
-        b=PSofYpy8tvGE5zb3ymsZk9L69zp7ezzNQCuG7ObpKZfXzfTeldyQLCfGIuHwu9LhbK
-         7coOwZ/LG5Xfuf9PE8DQOo5gjG8+YBYLR/XKYk8E+B3MbDsxGyRNWo+tgseMVlockNgw
-         i2SjRnv/tU69R7Kv+s7OBUJhwQaaBjxYDM/07SR15Tp+6PevlTqsEb0RTNfNY7joTAdP
-         EVF62fbV2Xnq36R6V9P1bnwgU+D50J+/9RLpn/h/KGZQ+mik1wWRRl107Jm9q2ir/xcc
-         4R3jEnWP6ehvfh6JgXLdnzvIijP3DBmU/+uUJZ+H/HZV+QoNB6+dXe7d3JL+GVI1+P4Q
-         YsJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715356755; x=1715961555;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kaC1FX9IaWOSYR6DDBjH2nZIpL4z+ve32+mPw2UdL5w=;
-        b=i5GW2VW1xqmWCEDknT6tn1OrDOGN50pNK76RDMBrvy9/gVTd6I8wpDsHiBccMTt/9w
-         K1mSIhIzwOOkBKqddtwhYYz1qveuCGyasClv4JqedJYdeOahpxDztR84TkuA7sBTqTQg
-         4EyRnxNFoyabXqET4Dr1sT23IpvBhvJFX+4jMixf/TXElDLJZMqy9vh6bQe5o35laI2M
-         3pbKnB2BD5w9Ow+JDbKzmjRcdfgwfsZy/H5AXErlPCbikI30O+BgXMZhBW7RnahSuRbo
-         tJXEKrhgk7gq0YRN/qy7zwfqAzIBJI2Jq+rDExKgw1rX45GAVCsEGIWPUs7fqjub6wZM
-         WwvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGsDFREoNsrrngitvR20Asvsa1x8Pbxg6ruABtqih2heuyiqD7Op1r2VqFSJ4wej3dCkfvGvHB9U+Q93eJP+IjdnZf+cmt6IeQx+Zy
-X-Gm-Message-State: AOJu0Yy2LIgTR61EPAsXVsyEoxaYvG0QVoz8GP5d6Y0l4bSgLvAVhYDA
-	l5Cpbjo+KqCmeg/Q46WhxyfaUdJihdAL3bh2ZK0md2fJ8HB+SNT/Gj7KcrWkf+w=
-X-Google-Smtp-Source: AGHT+IEM5bdqaeGgx8w3nkjhWpAJfZyjTMZG+ycwOpy9UjbCyzEqZdbDt8dL5b4mlC40ps7Lrh/MMg==
-X-Received: by 2002:a05:6512:4003:b0:522:221:d19d with SMTP id 2adb3069b0e04-5220fd7bfccmr3137814e87.15.1715356755115;
-        Fri, 10 May 2024 08:59:15 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0125bsm199199366b.143.2024.05.10.08.59.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 08:59:14 -0700 (PDT)
-Date: Fri, 10 May 2024 18:59:10 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Miri Korenblit <miriam.rachel.korenblit@intel.com>
-Cc: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes.berg@intel.com>,
-	Gregory Greenman <gregory.greenman@intel.com>,
-	Ilan Peer <ilan.peer@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Avraham Stern <avraham.stern@intel.com>,
-	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] wifi: iwlwifi: mvm: fix uninitialized variables in debugfs
- code
-Message-ID: <466baaa2-4996-4193-b681-d847d181a961@moroto.mountain>
+	s=arc-20240116; t=1715356800; c=relaxed/simple;
+	bh=wbKDnKfEQHCAXUwX9RfyMwgfTbBBsErC9trEzdCJW5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qk6UWnN8B9PHjk7l3XMS/A7yffk060GL/015pQtovXbBcqn+YBbb5OiRVrfUUSlCXSfUR2mUhm2wh3VtHDACs+3P6vuuu2TduAplfXgobJe0CDS1p6HNYqpLUcjPJrNOQsTh32NOm4rmba2E24aNLs527w7vLL0289isKOwXPIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=gSaXuqTF; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=NCElh/tyDAszVw05ZrkDEqetMG00D6E7lhb4V2GSblY=; b=gSaXuqTFqMJJ10MxmWKnlqyahH
+	e1mtg+tX+08Yx0Z9JFi0WOx/NiqCo4TT1PJDVduXxGn6u+pePxT+nwNL9/d48J3K2ZU8arGzt5f+a
+	TGCW31WrhkduJNdKfUzkNTGu5jHMFlC1RDNdkTABWJou3KBqDQ7S8/r5rFZALDMwNkW9iHenJnro/
+	t0ITEhVmlir8R67TOPrT4nB0xUfpQClLM+Qhhv8k6EgNDAVm8j0CPllNk/LGXiLlgKO54VDTUZXL0
+	nsq4Ao1zCKfbCNERsZretL0QxEegZPfrfqK9xSeiYjKAKq6641j39vyjIU2WQGoP23XCRDAzIrTVK
+	G9LY5HAQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40528)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s5Ses-0007bb-2P;
+	Fri, 10 May 2024 16:59:42 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s5Ses-0003RF-DD; Fri, 10 May 2024 16:59:42 +0100
+Date: Fri, 10 May 2024 16:59:42 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v6 6/7] net: stmmac: add support for RZ/N1 GMAC
+Message-ID: <Zj5EbvYdOivxdrJc@shell.armlinux.org.uk>
+References: <20240510-rzn1-gmac1-v6-0-b63942be334c@bootlin.com>
+ <20240510-rzn1-gmac1-v6-6-b63942be334c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240510-rzn1-gmac1-v6-6-b63942be334c@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The sscanf() function doesn't return negatives, it returns the number
-of the number of input items successfully matched.  Fix the error
-checking to avoid some uninitialized variable bugs.
+On Fri, May 10, 2024 at 09:38:13AM +0200, Romain Gantois wrote:
+> From: Clément Léger <clement.leger@bootlin.com>
+> 
+> Add support for the Renesas RZ/N1 GMAC. This support can make use of a
+> custom RZ/N1 PCS which is fetched by parsing the pcs-handle device tree
+> property.
+> 
+> Signed-off-by: "Clément Léger" <clement.leger@bootlin.com>
+> Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
 
-Fixes: e5bf75dc46e1 ("wifi: iwlwifi: mvm: add a debugfs for (un)blocking EMLSR")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Looks fine to me.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
-index 17c97dfbc62a..88e78c798017 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/debugfs-vif.c
-@@ -762,11 +762,9 @@ static ssize_t iwl_dbgfs_esr_disable_reason_write(struct ieee80211_vif *vif,
- 	struct iwl_mvm *mvm = mvmvif->mvm;
- 	u32 reason;
- 	u8 block;
--	int ret;
- 
--	ret = sscanf(buf, "%u %hhu", &reason, &block);
--	if (ret < 0)
--		return ret;
-+	if (sscanf(buf, "%u %hhu", &reason, &block) != 2)
-+		return -EINVAL;
- 
- 	if (hweight16(reason) != 1 || !(reason & IWL_MVM_BLOCK_ESR_REASONS))
- 		return -EINVAL;
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
