@@ -1,115 +1,85 @@
-Return-Path: <linux-kernel+bounces-175193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6DC8C1C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:24:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF54D8C1C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:24:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D7B284AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:23:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ED8B1F230FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8196413B5B3;
-	Fri, 10 May 2024 01:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D81113BAF7;
+	Fri, 10 May 2024 01:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TleeSAL+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WznK5tlS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F6223C9
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 01:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EAB13BACC;
+	Fri, 10 May 2024 01:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715304233; cv=none; b=kKAILzwHZwFNpgHAfiZOpiAhsohjXhWyctOICyvajyCIoYrOJCim5fkm0EZPX7uq9lDH+KYwFDNBvrLxjPhVG6Rk8cixPe0zg99dfwtKH2fJQxati0UL9jkfpodT7Q0G+6N3NYuOEu04gjFXxYFt1NsxtkG+AQdarQjxp+9RZe4=
+	t=1715304236; cv=none; b=KQy9f1HugCmhxs4FlZzUv2Eu70JtdeQCaBQke4o2vkCXPSHhocqHTjo+i/rvzpwSYGLcQ7GbYbIGTEKtF+pwd4D2FK/OZYFwZut60oQYB0tJF89yItWilcMNZP+gUeL+6zH5xvsPx9I5UK2jSXGzvyzypsWOX/rOryAYXZRbXi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715304233; c=relaxed/simple;
-	bh=cdUJgKIsZHjvCIaWjuK+Kp0Wr54Cac0GouvSaRcwKNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=QZceaKAPmys0ha2Uih5tpr/jnpM7BlJOOZ3YIqPz5pP6wQ5lk2x/xtXpbZI0HZ5kXJxYK/usOM1nntzWW234JXDqm8eP+OFb01VexqWYNfvff4W1KBx81Rpp+4gioz3nh7Hetu5iFpUvmBK0Fm3M1wJ+XfOvXfn1+CdxN1ejrhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TleeSAL+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44A1AkjK005609;
-	Fri, 10 May 2024 01:23:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=gc+
-	DpAPE3hy1bbPVBRLZx3SKoA09Krm2CCzQKf5uzKk=; b=TleeSAL+f4a2/dbuUvR
-	0BxZnwDK0fqKiuGx4ddqX4NE+pTqJdpbpJ4ybkYPy4RgYJy4c9SSryyK3ifd7eOD
-	kyPzbWr8G5WxByMoDwSOl7eXSDqMNP9oHTRwwF6PeAYPCr3XoZkEfTpRwFUkBndu
-	yucVb/cV7SZljCFV/SUzMZGRReUUGdtLgpFygq6BG3Di90aZhNy7YYcyWU6lHKsm
-	/A98OHUDthfAhzac8gByeqoYKJf9xdBX3na4w2blK/NWwvkWMwJ3jwH7K0CUstri
-	0Go5rIz51iTMVoZR35opOJemZQcrnDsCm6vb1GgXgWO6913Qj4i3AiOVY0MGeUVr
-	o0w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w1g9b0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 01:23:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44A1Ni2V000473
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 01:23:44 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
- 18:23:44 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 9 May 2024 18:23:37 -0700
-Subject: [PATCH] macintosh/mac_hid: add MODULE_DESCRIPTION()
+	s=arc-20240116; t=1715304236; c=relaxed/simple;
+	bh=tIyORSm6DKfQad0bExBOsbDG3bWKnUdmlkmb3uP/VY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpOq2fGaGZadJobV0ukgyEhg7+qDc0Xxd1E3tdydAgcx47E/GClvejYeCp0jRI1FBa7xCtT4rCWSVn60EVSHF82whpY1nL8nfVWHis0kvg2XtgfZJUrG8tGk8XSXuLDaspX+/PLQ9dfxDk3NIP6K/asmckQzacegsFLOMkqggJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WznK5tlS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF57BC116B1;
+	Fri, 10 May 2024 01:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715304236;
+	bh=tIyORSm6DKfQad0bExBOsbDG3bWKnUdmlkmb3uP/VY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WznK5tlS6cb5FZPFvUTkVUxaKLtE9OHpwcxChR6TS1xr6gla47v2Fspn4KO+5bMWf
+	 6GC1OpBsnFOvoVGWxDT429Rjoh5zrG5OXloyP8cY+faxaCOILrCw/BPSbpDUI5t2n/
+	 y8LTRZiAi2CXSnslUU+CNPKcPDs9+Qt5tJGOI1vVbqZ7LVoFG45WeNVhavY7Z9v4Yv
+	 /Sfh+RxxkkjKqs8PnO8BcqL4bViFOS1jLEdFcD5b84+MEjw8LDue+z3nm0ssrbkX1f
+	 mk2bryTrOWHbSGklza+C9N+W9S9E+cacdVmZcP7ZBaImRxahllsC17zGvCoK7fOaNG
+	 Hx/6ELgMit/ng==
+Date: Fri, 10 May 2024 01:23:54 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	jaegeuk@kernel.org, chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, krisman@suse.de,
+	Gabriel Krisman Bertazi <krisman@collabora.com>
+Subject: Re: [PATCH v16 4/9] ext4: Reuse generic_ci_match for ci comparisons
+Message-ID: <20240510012354.GC1110919@google.com>
+References: <20240405121332.689228-1-eugen.hristev@collabora.com>
+ <20240405121332.689228-5-eugen.hristev@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240509-mac_hid-md-v1-1-4091f1e4e4e0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABh3PWYC/x3MTQrCQAxA4auUrA2M/aHUq4jINJM6ATtKYkuh9
- O5Gl9/ivR2MVdjgUu2gvIrJqzjOpwoox/JglOSGOtRt6MKAc6R7loRzwj5NgZp26LuGwIO38iT
- bf3a9ucdojKPGQvm3eEpZNu/twwrH8QXhREcCewAAAA==
-To: <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC: Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zwIG1ynGz6b3KvqAWsNbWkIF4Ow9m_ZE
-X-Proofpoint-GUID: zwIG1ynGz6b3KvqAWsNbWkIF4Ow9m_ZE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- mlxlogscore=877 mlxscore=0 impostorscore=0 clxscore=1011 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405100007
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240405121332.689228-5-eugen.hristev@collabora.com>
 
-Fix the make W=1 warning:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/macintosh/mac_hid.o
+On Fri, Apr 05, 2024 at 03:13:27PM +0300, Eugen Hristev wrote:
+> From: Gabriel Krisman Bertazi <krisman@collabora.com>
+> 
+> Instead of reimplementing ext4_match_ci, use the new libfs helper.
+> 
+> It also adds a comment explaining why fname->cf_name.name must be
+> checked prior to the encryption hash optimization, because that tripped
+> me before.
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+> Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
+> ---
+>  fs/ext4/namei.c | 91 +++++++++++++++----------------------------------
+>  1 file changed, 27 insertions(+), 64 deletions(-)
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/macintosh/mac_hid.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: Eric Biggers <ebiggers@google.com>
 
-diff --git a/drivers/macintosh/mac_hid.c b/drivers/macintosh/mac_hid.c
-index 1ae3539beff5..eb7a173da071 100644
---- a/drivers/macintosh/mac_hid.c
-+++ b/drivers/macintosh/mac_hid.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- 
-+MODULE_DESCRIPTION("Macintosh mouse button 2+3 emulation");
- MODULE_LICENSE("GPL");
- 
- static int mouse_emulate_buttons;
-
----
-base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-change-id: 20240509-mac_hid-md-7df0c349753c
-
+- Eric
 
