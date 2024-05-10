@@ -1,54 +1,69 @@
-Return-Path: <linux-kernel+bounces-175592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4398C2215
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:27:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74978C2221
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:30:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B94E1F2166F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A77281C34
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02BF168B16;
-	Fri, 10 May 2024 10:27:03 +0000 (UTC)
-Received: from mail115-24.sinamail.sina.com.cn (mail115-24.sinamail.sina.com.cn [218.30.115.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C3F168AEC;
+	Fri, 10 May 2024 10:30:27 +0000 (UTC)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9E716ABC3
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F90554677;
+	Fri, 10 May 2024 10:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715336823; cv=none; b=tJBlAiQS/1mU0W3h+nbtv7YvpasRkdnpsxQ8XcUVX0eJUE+AJTAMM4LavgIAXrM6VE0BALXZ3GaI27EYMrDh1Hw+4P7Lapa/tbXYauHXJpPO+l0ftfjBloN/l5pbThLg9V0rKBpwZ91l1425Fv/BYlRVLjPRLzvtqgdnexfg85A=
+	t=1715337027; cv=none; b=LIfM1u4qCrqanODVD+AcSj7V2M5nmJKEpEqqdu87t554QVhb2aUElPNF87gI62xTMDXrN/El3GZ4ZULTxXun9OHYEq7ovF4OES/cNnk64eK5ddteUoK6Je2oBKQ6KJyWxvkxu3/njsYNY7ElxUMiNuNMOys6t+laXxiYr4pCTjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715336823; c=relaxed/simple;
-	bh=SK1hbF8oGwwr9prxmgVVid73ld0NBEnOT0NNuwRaY54=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Wq3EpPxcK0MI6mUlwz0dvZulny/GM+6oUlP+Ui8hMUCAECyDB6ey+is3lerZA2jeAYcauNrnzzUD203fNQa+ZAq0cyOdyqJLgcDAXt16S5DwDNe/92TF+jYCuKONB8R8CS734fFcM/0Nh/6VVtEozZOguk1HcxlCeNh7sOG5BGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.9.62])
-	by sina.com (10.75.12.45) with ESMTP
-	id 663DF66D00000F1E; Fri, 10 May 2024 18:26:55 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 67980831457973
-X-SMAIL-UIID: 53FE2955DF384184B1D9B79BACEF9E5C-20240510-182655-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+4c493dcd5a68168a94b2@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_seq_start
-Date: Fri, 10 May 2024 18:26:43 +0800
-Message-Id: <20240510102643.2517-1-hdanton@sina.com>
-In-Reply-To: <00000000000091228c0617eaae32@google.com>
-References: 
+	s=arc-20240116; t=1715337027; c=relaxed/simple;
+	bh=xFhHz1KjXpz9Rv+VlQW1WOjFDZBJOu2NMH+tMzfpL+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KJTojW/J3gS02x9qGaG1fQ5iZI59cOjjgrDfnUGtUnbDP668sAdPyNmySQOJlE90jSEePLF03v1tg8+q3aVZfEUb2LdO+Msqld4KdJ2+gk+ogxML/I5FqR1d4R14IXObfevUgcVBk2/GdAiPytAxRN8AQfoHWq0OvcGv+toly3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51ffff16400so3074791e87.2;
+        Fri, 10 May 2024 03:30:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715337024; x=1715941824;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cpd+1uI5omhYD2wj/HwWULTJmMXVCOfVodGWbcrp/kg=;
+        b=ffY8t9h77KCvFn0aFPMxBFuTKRcGmVhz+S9BoRI2FQy6poISe/uqYfzr8IbGdKaeF1
+         jYeU/0/o/FTQ4IQEfKdIvDDgCH2qWat4VgHvmkYQspCOT4ns1O4pyfslWVTxJLSvOqcJ
+         WaJ4IdfN1uzrWCs21uLQZKAhCXPXlh9A34QMR75go1XpM+LZUbFvA6Mjx5CxSmy+wIJd
+         DSxAtNNbaBwPJD5aN/Jycr6Jijo6v9qvOUt4g0kkvoXIq9SAYDimw6H8fMByYF9BdxOv
+         czs20VcqINOVNmshqWbaxKMwG7qtfLYJ8ywMgWMSg7QdQ2R6nQuk6gg+2ix4mHpnhRBv
+         9suQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnKsUhiELTnOrWWiNrssDqMrntk6M5Zh2b2RbTIJVJf/iYWiCfxqDKbu7tauzsVjR9YWBJew8sEXs3SO8qvH0utaglNdAbudpfG1mzGgw6x07ApaSqAPBEkm+cyd1jY06muDub
+X-Gm-Message-State: AOJu0YwNo4WGqjnYkF6dlF3/lt6JQ2i99E0lvTGnfe29FOGQhwIGn41g
+	P900ztK/B4i+d5EG9ErnxScSXFvL76OALEMHiAXSk3Re1b9OkFeK
+X-Google-Smtp-Source: AGHT+IF6SR57niQ6ZbUxHCPC3Q5Me6vEJFxgwq2p7jJwy9dYqNyIRsUhZIkZH4fkpsOv97w7jk84lQ==
+X-Received: by 2002:a19:c207:0:b0:51a:f11c:81db with SMTP id 2adb3069b0e04-5220fe794b0mr1561407e87.30.1715337023305;
+        Fri, 10 May 2024 03:30:23 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17894eb1sm168791566b.77.2024.05.10.03.30.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 03:30:22 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: thepacketgeek@gmail.com,
+	Aijay Adams <aijay@meta.com>,
+	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] netconsole: Do not shutdown dynamic configuration if cmdline is invalid
+Date: Fri, 10 May 2024 03:30:05 -0700
+Message-ID: <20240510103005.3001545-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,62 +72,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 07 May 2024 22:36:18 -0700
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1367a504980000
+If a user provides an invalid netconsole configuration during boot time
+(e.g., specifying an invalid ethX interface), netconsole will be
+entirely disabled. Consequently, the user won't be able to create new
+entries in /sys/kernel/config/netconsole/ as that directory does not
+exist.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  dccb07f2914c
+Apart from misconfiguration, another issue arises when ethX is loaded as
+a module and the netconsole= line in the command line points to ethX,
+resulting in an obvious failure. This renders netconsole unusable, as
+/sys/kernel/config/netconsole/ will never appear. This is more annoying
+since users reconfigure (or just toggle) the configuratin later (see
+commit 5fbd6cdbe304b ("netconsole: Attach cmdline target to dynamic
+target"))
 
---- l/fs/overlayfs/dir.c
-+++ d/fs/overlayfs/dir.c
-@@ -654,10 +654,44 @@ out:
- 	return err;
- }
+Create /sys/kernel/config/netconsole/ even if the command line arguments
+are invalid, so, users can create dynamic entries in netconsole.
+
+Reported-by: Aijay Adams <aijay@meta.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ drivers/net/netconsole.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+index d7070dd4fe73..e69bc88c22a0 100644
+--- a/drivers/net/netconsole.c
++++ b/drivers/net/netconsole.c
+@@ -122,6 +122,11 @@ struct netconsole_target {
+ 	struct netpoll		np;
+ };
  
-+static int __ovl_create_object(struct dentry *dentry, int mode, dev_t rdev, const char *link)
++static inline bool dynamic_netconsole_enabled(void)
 +{
-+	int err;
-+	struct inode *inode;
-+	struct ovl_cattr attr = {
-+		.rdev = rdev,
-+		.link = link,
-+	};
-+
-+	err = ovl_copy_up(dentry->d_parent);
-+	if (err)
-+		return err;
-+
-+	/* Preallocate inode to be used by ovl_get_inode() */
-+	err = -ENOMEM;
-+	inode = ovl_new_inode(dentry->d_sb, mode, rdev);
-+	if (!inode)
-+		return err;
-+
-+	spin_lock(&inode->i_lock);
-+	inode->i_state |= I_CREATING;
-+	spin_unlock(&inode->i_lock);
-+
-+	inode_init_owner(&nop_mnt_idmap, inode, dentry->d_parent->d_inode, mode);
-+	attr.mode = inode->i_mode;
-+
-+	err = ovl_create_or_link(dentry, inode, &attr, false);
-+	/* Did we end up using the preallocated inode? */
-+	if (inode != d_inode(dentry))
-+		iput(inode);
-+
-+	return err;
++	return IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC);
 +}
 +
- static int ovl_create(struct mnt_idmap *idmap, struct inode *dir,
- 		      struct dentry *dentry, umode_t mode, bool excl)
- {
--	return ovl_create_object(dentry, (mode & 07777) | S_IFREG, 0, NULL);
-+	return __ovl_create_object(dentry, (mode & 07777) | S_IFREG, 0, NULL);
- }
+ #ifdef	CONFIG_NETCONSOLE_DYNAMIC
  
- static int ovl_mkdir(struct mnt_idmap *idmap, struct inode *dir,
---
+ static struct configfs_subsystem netconsole_subsys;
+@@ -1262,6 +1267,8 @@ static int __init init_netconsole(void)
+ 		while ((target_config = strsep(&input, ";"))) {
+ 			nt = alloc_param_target(target_config, count);
+ 			if (IS_ERR(nt)) {
++				if (dynamic_netconsole_enabled())
++					continue;
+ 				err = PTR_ERR(nt);
+ 				goto fail;
+ 			}
+-- 
+2.43.0
+
 
