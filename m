@@ -1,160 +1,160 @@
-Return-Path: <linux-kernel+bounces-176050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6118C2946
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 965AF8C2944
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB5328854D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:30:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DEE81F2362C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381571E878;
-	Fri, 10 May 2024 17:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924DA1C6B8;
+	Fri, 10 May 2024 17:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nu1ZwXKF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sx36sAne"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2331803E;
-	Fri, 10 May 2024 17:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CB9446A1;
+	Fri, 10 May 2024 17:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715362192; cv=none; b=b1oDGQyZAv5QahBwluUWI5tthWqFw0HwJXM1Icm2NTs/Hh5ycT5EirC8/N8KP4sKHVl6ke/LHOBGlclkoLNkuvapmQhvzHTDDEqKs1UsYd03ikePU84RXUC1er6tiMTCol+wLIb2i4UHj1TcpyIAokY6x3nKwm3hi3XWklu5hQY=
+	t=1715362169; cv=none; b=cGohw4gb0+zb6Ob66QZS4vOSFiKm0fwNhjJKnnB6bmt4UZHyeQlkBXnEUtZzW6EqQ6AjJDoyLPnT5OFbCCw82ApVF7WFkTapK+HMi8Mwj803P/uTyjfsfX1WqKchjO6OOfxNd1lQuRJwr3BQ6AqwunyNW3FKUVObRkW2RS5GbIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715362192; c=relaxed/simple;
-	bh=IM62IdPqbbrlf+47zTF5+ZxS3VRQFBoG3MfekHn4a/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GE9s0fSk6DbgCQvfBD6P+4i9nkh+cvQ9dExOikUCPBiT5P+ZMJXQ9t9VGY1wRFVotud5iHwjxpext6djoBX85T/HmzCV5PnIMa0E3UiUCnLY9ToCnCmrUeouaDj4Jd/v5LPr0MsaLcum1i/nm8NZMqXdOieDt4vuGyJKeVECZtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nu1ZwXKF; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715362191; x=1746898191;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=IM62IdPqbbrlf+47zTF5+ZxS3VRQFBoG3MfekHn4a/U=;
-  b=nu1ZwXKFFAJO3TKJTw931isF9e4QymDjViqY+YPU8kkYSbpGqkjJAvl0
-   Y4eSD/XhTU5o8mYaWlGn/UFSW1hVtA6yyQkG3kj6XpZAnqP7Jj4oIYjkF
-   4x0dc/8ae7thRs/lKwUyXWbg0RryVeoWRq2PwU5Uyqc+ODffL8Bar34i8
-   D03W69x7zAnpXM/0TS3eRqLwdpYMsojEOhr1rQZJxlsFXLP0uAjH+SLC4
-   XiXAQD7FrpH7EOvRLcBSKpgCIsQIylsy+Z8iACdSFR+vFoSiIBkWNN0JO
-   pKgV7FUH+F8iY+kJpTLdOulMmOh6ESuKkk1pROumTi4H59GgoCSOJo7KP
-   A==;
-X-CSE-ConnectionGUID: 80blKQsbS66pvmy0u/ApAw==
-X-CSE-MsgGUID: Mnm9o9LIQj2JWfh3MBuipQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="22027872"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="22027872"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:29:31 -0700
-X-CSE-ConnectionGUID: sDHCGTWoTJmE9w8BfTRgNQ==
-X-CSE-MsgGUID: eVUVpjMgSY+xnt7w2pOhVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="30066357"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:29:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5U3i-00000006C8e-0vd6;
-	Fri, 10 May 2024 20:29:26 +0300
-Date: Fri, 10 May 2024 20:29:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
- namespace root
-Message-ID: <Zj5ZdcQeaTo9ImT4@smile.fi.intel.com>
-References: <5787281.DvuYhMxLoT@kreacher>
- <4926735.31r3eYUQgx@kreacher>
- <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
- <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
- <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
+	s=arc-20240116; t=1715362169; c=relaxed/simple;
+	bh=9FerCyrlgXwGRxoi932MXaGZORA1hI35HAt1Vop6+YQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qoiDqSzGbWhqiLo4xLIJfoNex57MqrX2jWokMVzGcz8p5am6DI4dPGXpkq7xkj0I0NSxIavV9F1HQTec4Y62qYCIfLJDQ1lqwi+1gSXxjDCUjAOdJzbWlEQ89Qi5d65mol42J7FEw2BTiBA0g77bAW6BdIjZGUwaIZB7BUlXxPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sx36sAne; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3BDC113CC;
+	Fri, 10 May 2024 17:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715362169;
+	bh=9FerCyrlgXwGRxoi932MXaGZORA1hI35HAt1Vop6+YQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=sx36sAne/FEdqP1wxc3/9KU/1ADr2ABOKYQiWOPcLEPs7AGhMXqK2tolxinjZNh8g
+	 V+Aj73S9RmD2emupDMTeozc6bu7seT5B4P3CRwJI/G97mWUXJ3sCOtK2msyiOBJtoP
+	 tYqOQjIGhObhfVjIUud6IF4PX9G6lH47RcVp14dIPryQY957LfXOvTFuT3yhUxCd1B
+	 Ho7P8ZEKjojtQQjfewVaUxSgnKaQirDN9Yxi1fTcGUuA6vvL+f1k0PVSm+o3QzGdss
+	 yDht4MhsNnH6EhmNm0ZDiJLKFSmsEelXnsOJWLp5OfS61/YUTSsWJm0W+TvqfYmLx8
+	 35N0rxk3yjgkg==
+Date: Fri, 10 May 2024 10:29:28 -0700 (PDT)
+From: Mat Martineau <martineau@kernel.org>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    Alexander Duyck <alexander.duyck@gmail.com>, 
+    Ayush Sawal <ayush.sawal@chelsio.com>, Eric Dumazet <edumazet@google.com>, 
+    Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+    Jason Wang <jasowang@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+    Vincent Guittot <vincent.guittot@linaro.org>, 
+    Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+    Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+    Mel Gorman <mgorman@suse.de>, 
+    Daniel Bristot de Oliveira <bristot@redhat.com>, 
+    Valentin Schneider <vschneid@redhat.com>, 
+    John Fastabend <john.fastabend@gmail.com>, 
+    Jakub Sitnicki <jakub@cloudflare.com>, David Ahern <dsahern@kernel.org>, 
+    Matthieu Baerts <matttbe@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+    Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
+    Jiri Pirko <jiri@resnulli.us>, Boris Pismenny <borisp@nvidia.com>, 
+    bpf@vger.kernel.org, mptcp@lists.linux.dev
+Subject: Re: [PATCH net-next v3 11/13] net: replace page_frag with
+ page_frag_cache
+In-Reply-To: <b8877f3a-831d-f899-9678-b1665739dbe9@huawei.com>
+Message-ID: <9a3cea15-2001-2222-0d0d-5f61f90507c3@kernel.org>
+References: <20240508133408.54708-1-linyunsheng@huawei.com> <20240508133408.54708-12-linyunsheng@huawei.com> <334a8c67-87c8-a918-9517-0afbfae0d02b@kernel.org> <b8877f3a-831d-f899-9678-b1665739dbe9@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Fri, May 10, 2024 at 06:52:41PM +0200, Armin Wolf wrote:
-> Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
-> > On Fri, May 10, 2024 at 6:10 PM Armin Wolf <W_Armin@gmx.de> wrote:
-> > > Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
-> > > 
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > 
-> > > > It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
-> > > > IdeaPad Pro 5 due to a missing address space handler for the EC address
-> > > > space:
-> > > > 
-> > > >    ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [EmbeddedControl] (20230628/evregion-130)
-> > > > 
-> > > > This happens because the EC driver only registers the EC address space
-> > > > handler for operation regions defined in the EC device scope of the
-> > > > ACPI namespace while the operation region being accessed by the _DSM
-> > > > in question is located beyond that scope.
-> > > > 
-> > > > To address this, modify the ACPI EC driver to install the EC address
-> > > > space handler at the root of the ACPI namespace.
-> > > > 
-> > > > Note that this change is consistent with some examples in the ACPI
-> > > > specification in which EC operation regions located outside the EC
-> > > > device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
-> > > > so the current behavior of the EC driver is arguably questionable.
-> > > Hi,
-> > > 
-> > > the patch itself looks good to me, but i wonder what happens if multiple
-> > > ACPI EC devices are present. How would we handle such a situation?
-> > I'm wondering if this is a theoretical question or do you have any
-> > existing or planned systems in mind?
-> > 
-> > ec_read(), ec_write() and ec_transaction() use only the first EC that
-> > has been found anyway.
-> 
-> Its a theoretical question, i do not know of any systems which have more than
-> one ACPI EC device.
+On Fri, 10 May 2024, Yunsheng Lin wrote:
 
-The specification is clear about this case in the "ACPI Embedded Controller
-Interface Specification":
+> On 2024/5/10 0:22, Mat Martineau wrote:
+>> On Wed, 8 May 2024, Yunsheng Lin wrote:
+>>
+>>> Use the newly introduced prepare/probe/commit API to
+>>> replace page_frag with page_frag_cache for sk_page_frag().
+>>>
+>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>> ---
+>>> .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
+>>> .../chelsio/inline_crypto/chtls/chtls_io.c    | 100 ++++---------
+>>> .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
+>>> drivers/net/tun.c                             |  28 ++--
+>>> include/linux/sched.h                         |   4 +-
+>>> include/net/sock.h                            |  14 +-
+>>> kernel/exit.c                                 |   3 +-
+>>> kernel/fork.c                                 |   3 +-
+>>> net/core/skbuff.c                             |  32 ++--
+>>> net/core/skmsg.c                              |  22 +--
+>>> net/core/sock.c                               |  46 ++++--
+>>> net/ipv4/ip_output.c                          |  33 +++--
+>>> net/ipv4/tcp.c                                |  35 ++---
+>>> net/ipv4/tcp_output.c                         |  28 ++--
+>>> net/ipv6/ip6_output.c                         |  33 +++--
+>>> net/kcm/kcmsock.c                             |  30 ++--
+>>> net/mptcp/protocol.c                          |  70 +++++----
+>>> net/sched/em_meta.c                           |   2 +-
+>>> net/tls/tls_device.c                          | 139 ++++++++++--------
+>>> 19 files changed, 331 insertions(+), 297 deletions(-)
+>>>
+>>
+>> <snip>
+>>
+>>> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+>>> index bb8f96f2b86f..ab844011d442 100644
+>>> --- a/net/mptcp/protocol.c
+>>> +++ b/net/mptcp/protocol.c
+>>> @@ -960,17 +960,18 @@ static bool mptcp_skb_can_collapse_to(u64 write_seq,
+>>> }
+>>>
+>>> /* we can append data to the given data frag if:
+>>> - * - there is space available in the backing page_frag
+>>> - * - the data frag tail matches the current page_frag free offset
+>>> + * - there is space available for the current page
+>>> + * - the data frag tail matches the current page and offset
+>>>  * - the data frag end sequence number matches the current write seq
+>>>  */
+>>> static bool mptcp_frag_can_collapse_to(const struct mptcp_sock *msk,
+>>> -                       const struct page_frag *pfrag,
+>>> +                       const struct page *page,
+>>> +                       const unsigned int offset,
+>>> +                       const unsigned int size,
+>>
+>> Hi Yunsheng -
+>>
+>> Why add the 'size' parameter here? It's checked to be a nonzero value, 
+>> but it can only be 0 if page is also NULL. In this case "page == 
+>> df->page" will be false, so the function will return false even without 
+>> checking 'size'.
+>
+> Is it possible that the pfrag->page is also NULL, which may cause
+> mptcp_frag_can_collapse_to() to return true?
 
- "The ACPI standard supports multiple embedded controllers in a system,
-  each with its own resources. Each embedded controller has a flat
-  byte-addressable I/O space, currently defined as 256 bytes."
+Not sure. But I do know that df->page will never be NULL, so "page == 
+df->page" will always be false when page == NULL.
 
-However, I haven't checked deeper, so it might be a leftover in the documentation.
+>
+> I just found out that the 'size' is not set to zero when return
+> NULL for the implementation of probe API for the current version.
+> Perhaps it makes more sense to expect the API caller to make sure
+> the the returned 'page' not being NULL before using the 'offset',
+> 'size' and 'va', like below:
+>
+> df && page && page == df->page
+>
 
-The OperationRegion() has no reference to the EC (or in general, device) which
-we need to speak to. The only possibility to declare OpRegion() for the second+
-EC is to use vendor specific RegionSpace, AFAIU. So, even if ACPI specification
-supports 2+ ECs, it doesn't support OpRegion():s for them under the same
-RegionSpace.
+Given that df->page is never NULL, I don't think the extra "&& page" is 
+needed.
 
-That said, the commit message might be extended to summarize this, but at
-the same time I see no way how this series can break anything even in 2+ ECs
-environments.
-
-> This patch would prevent any ACPI ECs other than the first one from probing,
-> since they would fail to register their address space handler.
-> I am just curious if/how we want to handle such situations.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+- Mat
 
