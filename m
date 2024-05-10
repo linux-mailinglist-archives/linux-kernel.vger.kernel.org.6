@@ -1,79 +1,108 @@
-Return-Path: <linux-kernel+bounces-176299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351328C2D95
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABFE8C2D99
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66FBFB20BD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:29:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D21CCB225B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5869917799F;
-	Fri, 10 May 2024 23:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C6F17557E;
+	Fri, 10 May 2024 23:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U0L6mQVa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EbCzuplo"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0935C171E6A;
-	Fri, 10 May 2024 23:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D90413CF92
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 23:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715383482; cv=none; b=liBJ7Tgu57ZQ1fA2BLadA16JimReDXfrn6TJkfJfoI+F4uzqyOofJCXDIgB8heUfQAS0HCOjPiGwgqvB16fpgmbax0hDTt3XyGIOS+ur3zJysqHq0RA5HV6CPlMxMc3Emg4pybCTaUH+RDZjFmwByK0G1cnFf/WQevUBY5/io7w=
+	t=1715383768; cv=none; b=n3Irzc6PR2YjZqpvQl5o1tav5yIWvuVS6vZS4juDGqPe2aC1vlqffG7MLpg+koI+RB+CWYyKIVau6+3FOBdVEVhsahMeDy/RDRby2ErfbVrZej332IptGYkloYnZoo2MRFcNh9dETGRaQSZ/pQeQG+7jZyfrCSXtTx6BprAuUcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715383482; c=relaxed/simple;
-	bh=CFfTjMpZwa0nTJjNm3L4qTZeh/Pp/1mtOQRR2uaqwLY=;
+	s=arc-20240116; t=1715383768; c=relaxed/simple;
+	bh=E7rGfOrSF7E1TwZm/9Gxf/skroZH98+3oQO8OhUUcys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLGNPtw41gcHOh1O9i5PXGPULnVhLKgrzjlvMj6I3Ovx8WhpMH7pRBSVtumTHIo2VHJzflYCch0+ex8OLyvCSbjO5TsuHveZbKWxth6tnBVW0KjZj14FYAp0CYcF8QCpqY5BL30FSa0sd5sy6MHFUR15SDWo/L00IbKz2CmXHQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U0L6mQVa; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715383480; x=1746919480;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CFfTjMpZwa0nTJjNm3L4qTZeh/Pp/1mtOQRR2uaqwLY=;
-  b=U0L6mQVaCCOKzmQCMd8xVvGsZeuzUFmwWX7V40rK9FhwSq6UYnlHH4by
-   Wumk08dJw1ToVFYNwk/mXxvdrWSn6njdddj2ykjN2IGz40+9LRN2aZr8Q
-   CUW9/wb4LSUxqfB+lcPMl5xtCpkUzjrjoA4PhLwHnmF5pmr4at/TmNKOE
-   gm32gusainoBE+mmSAB6RlssVnbTZ5GIksnyWU9TWOsvFojj9drVWkbch
-   f2l7tnNKf0eGHkeKcbV6beAVc5J/1Y+POPpZGr+YluQgchxZJiDds1BqC
-   m+p5s9Npm0Efa88wFFTtue1J2Vm5Sd0yY6jYx0qvXZ2Q2blsfMyDNkL/e
-   A==;
-X-CSE-ConnectionGUID: CFGsqlkyTNC3chxwB5iUsQ==
-X-CSE-MsgGUID: rYAT6ljcRairXkd9ip7OQA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="21989390"
-X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
-   d="scan'208";a="21989390"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 16:24:40 -0700
-X-CSE-ConnectionGUID: L3apfB/vTXaRnwBwnTOBXQ==
-X-CSE-MsgGUID: gakXD4PAS+a2Mv8trbS/MA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
-   d="scan'208";a="34633389"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 10 May 2024 16:24:37 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s5ZbO-0006fr-0T;
-	Fri, 10 May 2024 23:24:34 +0000
-Date: Sat, 11 May 2024 07:24:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>,
-	linux-kernel@vger.kernel.org, jic23@kernel.org,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	robh@kernel.org, nuno.sa@analog.com
-Cc: oe-kbuild-all@lists.linux.dev,
-	Ramona Gradinariu <ramona.bolboaca13@gmail.com>
-Subject: Re: [PATCH v2 8/8] drivers: iio: imu: Add support for adis1657x
- family
-Message-ID: <202405110735.khNaHnAJ-lkp@intel.com>
-References: <20240508131310.880479-9-ramona.bolboaca13@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CWosyrerocjCN/1NtSKGuRIj1ev8qzzCGBfjXBu9MbaCE4BnWzBemMOu+WOJfaasb4NhC3Nkbj1gRWpPue3OzXyVgeUNULxASoDd8mkPWBWV3h+GAeDKERiHUdoOwgXTM5Cbj4K52DBH72Y7o0FxZwB3vyjnaR7u9YdIUZbOXdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EbCzuplo; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5e42b4bbfa4so1503741a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:29:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715383766; x=1715988566; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Vz2Ea5vDvTd7NZaHdWli7Zi0tzSRPfvayQLC9Zmwn4=;
+        b=EbCzuplog0nF/scl4+UlUuXFz8FMPe7kOvGXwd7NSGzg9JQy9PCPmqu15fmq4TQ51J
+         Xfi1B54r6TUcp1gjUEwQYO1UCshtOlmN7Rcll5DC7zbh/hzZ94I4SffWvQgfpgOLuHfx
+         W2sKNymOy8QiAw1r+o0CmhToS69kQ05XN4c8Q4BWdt1aJrWtoQ25tgyc4w2qWV13AXCv
+         ScO3SH1NR63S7CIW85S0F9MD7GN/pdhPAF+x8A5k7VFIwQ72/z1DlmxJGeUSbG0KwJUG
+         x3xHZWp944i5nwvaoTkSb1CG9M7INu9RHrCSgfAZ2ADw1SwsmB2hfJ43pfbOKBRf6TlZ
+         bYLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715383766; x=1715988566;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Vz2Ea5vDvTd7NZaHdWli7Zi0tzSRPfvayQLC9Zmwn4=;
+        b=IkcPSgNbxSVVaGyHEC9Awm2RlpB3wxmvSS9t4b9wrADXU300/RVB6kMwh46q9Cngq7
+         v13wufzMYDkZmvPUjGC1R6hMe18yCb4Af8eeHSzgY74BljWB+uR+T3f6Li1Mm2MoZY1P
+         f3uHWML6Iuq1MYFaO+SdmbSOwAtIqjMnlQftT5MnQgtyjuVH6C6/mZ7UzrTZ1z0FOlnf
+         vs8Cx57U53L4djsWxHY1oRYktvG16uQFKlHtWVD7kKIbd4O2+v5lpWHz6rxaxZYGTQjh
+         v/29DGXj4Le6HONQnwV1v+0vDq5WYHMXOjj68raTWjG9QRS0EpFLH/iuYnOzF3edFF9K
+         tcpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU6RpZVzXmOp+zuoF54lDZ2lK2ikfhv6Stz3TJwxPLi53Lwyb+i58mPDGQCsPVnRPsqO61zei3ihUA8rVMv4FiVg+g04quXPXzkpBQ
+X-Gm-Message-State: AOJu0YwdDSpsczit4zzrh76RWYGci8G9OHLgCNMf7gQKAddE7mMp6qju
+	chyDyYeyjCWYE1s/yak/kUBVzeNIHUqVQ4z5rN+lKV7ZlSMP//z1TyE7RqQaYs8=
+X-Google-Smtp-Source: AGHT+IFtRGEgJNgaXpQi4rnaLmSdVV1xvKctjw8cDKjjnX0+o8uhHRNsHVhKbF+1oYccjQdTEuSLLg==
+X-Received: by 2002:a05:6a20:96d5:b0:1af:5d8b:87f3 with SMTP id adf61e73a8af0-1afde0d5537mr4236824637.23.1715383765853;
+        Fri, 10 May 2024 16:29:25 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:629e:3f2:f321:6c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67158c3b4sm3755016a91.45.2024.05.10.16.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 16:29:25 -0700 (PDT)
+Date: Fri, 10 May 2024 16:29:19 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 17/29] prctl: arch-agnostic prctl for indirect branch
+ tracking
+Message-ID: <Zj6tzxWFj4H+250p@ghost>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-18-debug@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,122 +111,146 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240508131310.880479-9-ramona.bolboaca13@gmail.com>
+In-Reply-To: <20240403234054.2020347-18-debug@rivosinc.com>
 
-Hi Ramona,
+On Wed, Apr 03, 2024 at 04:35:05PM -0700, Deepak Gupta wrote:
+> Three architectures (x86, aarch64, riscv) have support for indirect branch
+> tracking feature in a very similar fashion. On a very high level, indirect
+> branch tracking is a CPU feature where CPU tracks branches which uses
+> memory operand to perform control transfer in program. As part of this
+> tracking on indirect branches, CPU goes in a state where it expects a
+> landing pad instr on target and if not found then CPU raises some fault
+> (architecture dependent)
+> 
+> x86 landing pad instr - `ENDBRANCH`
+> aarch64 landing pad instr - `BTI`
+> riscv landing instr - `lpad`
+> 
+> Given that three major arches have support for indirect branch tracking,
+> This patch makes `prctl` for indirect branch tracking arch agnostic.
+> 
+> To allow userspace to enable this feature for itself, following prtcls are
+> defined:
+>  - PR_GET_INDIR_BR_LP_STATUS: Gets current configured status for indirect
+>    branch tracking.
+>  - PR_SET_INDIR_BR_LP_STATUS: Sets a configuration for indirect branch
+>    tracking.
+>    Following status options are allowed
+>        - PR_INDIR_BR_LP_ENABLE: Enables indirect branch tracking on user
+>          thread.
+>        - PR_INDIR_BR_LP_DISABLE; Disables indirect branch tracking on user
+>          thread.
+>  - PR_LOCK_INDIR_BR_LP_STATUS: Locks configured status for indirect branch
+>    tracking for user thread.
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  include/uapi/linux/prctl.h | 27 +++++++++++++++++++++++++++
+>  kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
+>  2 files changed, 57 insertions(+)
+> 
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 3c66ed8f46d8..b7a8212a068e 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -328,4 +328,31 @@ struct prctl_mm_map {
+>   */
+>  #define PR_LOCK_SHADOW_STACK_STATUS      73
+>  
+> +/*
+> + * Get the current indirect branch tracking configuration for the current
+> + * thread, this will be the value configured via PR_SET_INDIR_BR_LP_STATUS.
+> + */
+> +#define PR_GET_INDIR_BR_LP_STATUS      74
+> +
+> +/*
+> + * Set the indirect branch tracking configuration. PR_INDIR_BR_LP_ENABLE will
+> + * enable cpu feature for user thread, to track all indirect branches and ensure
+> + * they land on arch defined landing pad instruction.
+> + * x86 - If enabled, an indirect branch must land on `ENDBRANCH` instruction.
+> + * arch64 - If enabled, an indirect branch must land on `BTI` instruction.
+> + * riscv - If enabled, an indirect branch must land on `lpad` instruction.
+> + * PR_INDIR_BR_LP_DISABLE will disable feature for user thread and indirect
+> + * branches will no more be tracked by cpu to land on arch defined landing pad
+> + * instruction.
+> + */
+> +#define PR_SET_INDIR_BR_LP_STATUS      75
+> +# define PR_INDIR_BR_LP_ENABLE		   (1UL << 0)
+> +
+> +/*
+> + * Prevent further changes to the specified indirect branch tracking
+> + * configuration.  All bits may be locked via this call, including
+> + * undefined bits.
+> + */
+> +#define PR_LOCK_INDIR_BR_LP_STATUS      76
+> +
+>  #endif /* _LINUX_PRCTL_H */
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 242e9f147791..c770060c3f06 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2330,6 +2330,21 @@ int __weak arch_lock_shadow_stack_status(struct task_struct *t, unsigned long st
+>  	return -EINVAL;
+>  }
+>  
+> +int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+> +{
+> +	return -EINVAL;
+> +}
+> +
+> +int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+> +{
+> +	return -EINVAL;
+> +}
+> +
 
-kernel test robot noticed the following build errors:
+These weak references each cause a warning:
 
-[auto build test ERROR on jic23-iio/togreg]
-[cannot apply to linus/master v6.9-rc7 next-20240510]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+kernel/sys.c:2333:12: warning: no previous prototype for 'arch_get_indir_br_lp_status' [-Wmissing-prototypes]
+ 2333 | int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/sys.c:2338:12: warning: no previous prototype for 'arch_set_indir_br_lp_status' [-Wmissing-prototypes]
+ 2338 | int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+kernel/sys.c:2343:12: warning: no previous prototype for 'arch_lock_indir_br_lp_status' [-Wmissing-prototypes]
+ 2343 | int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Gradinariu/dt-bindings-iio-imu-Add-ADIS16501-compatibles/20240508-211559
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240508131310.880479-9-ramona.bolboaca13%40gmail.com
-patch subject: [PATCH v2 8/8] drivers: iio: imu: Add support for adis1657x family
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240511/202405110735.khNaHnAJ-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240511/202405110735.khNaHnAJ-lkp@intel.com/reproduce)
+Can the definitions be added to include/linux/mm.h alongside the
+*_shadow_stack_status() definitions?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405110735.khNaHnAJ-lkp@intel.com/
+- Charlie
 
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/iio/imu/adis16475.c:16:
-   include/linux/iio/imu/adis.h:530:60: warning: 'struct iio_dev_attr' declared inside parameter list will not be visible outside of this definition or declaration
-     530 |                                               const struct iio_dev_attr **buffer_attrs);
-         |                                                            ^~~~~~~~~~~~
-   drivers/iio/imu/adis16475.c: In function 'adis16475_probe':
->> drivers/iio/imu/adis16475.c:1959:69: error: passing argument 5 of 'devm_adis_setup_buffer_and_trigger_with_attrs' from incompatible pointer type [-Werror=incompatible-pointer-types]
-    1959 |                                                                     adis16475_fifo_attributes);
-         |                                                                     ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                                                     |
-         |                                                                     const struct attribute **
-   include/linux/iio/imu/adis.h:530:75: note: expected 'const struct iio_dev_attr **' but argument is of type 'const struct attribute **'
-     530 |                                               const struct iio_dev_attr **buffer_attrs);
-         |                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/devm_adis_setup_buffer_and_trigger_with_attrs +1959 drivers/iio/imu/adis16475.c
-
-  1912	
-  1913	
-  1914	static int adis16475_probe(struct spi_device *spi)
-  1915	{
-  1916		struct iio_dev *indio_dev;
-  1917		struct adis16475 *st;
-  1918		int ret;
-  1919	
-  1920		indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-  1921		if (!indio_dev)
-  1922			return -ENOMEM;
-  1923	
-  1924		st = iio_priv(indio_dev);
-  1925	
-  1926		st->info = spi_get_device_match_data(spi);
-  1927		if (!st->info)
-  1928			return -EINVAL;
-  1929	
-  1930		ret = adis_init(&st->adis, indio_dev, spi, &st->info->adis_data);
-  1931		if (ret)
-  1932			return ret;
-  1933	
-  1934		indio_dev->name = st->info->name;
-  1935		indio_dev->channels = st->info->channels;
-  1936		indio_dev->num_channels = st->info->num_channels;
-  1937		if (st->info->flags & ADIS16475_HAS_FIFO)
-  1938			indio_dev->info = &adis16575_info;
-  1939		else
-  1940			indio_dev->info = &adis16475_info;
-  1941		indio_dev->modes = INDIO_DIRECT_MODE;
-  1942	
-  1943		ret = __adis_initial_startup(&st->adis);
-  1944		if (ret)
-  1945			return ret;
-  1946	
-  1947		ret = adis16475_config_irq_pin(st);
-  1948		if (ret)
-  1949			return ret;
-  1950	
-  1951		ret = adis16475_config_sync_mode(st);
-  1952		if (ret)
-  1953			return ret;
-  1954	
-  1955		if (st->info->flags & ADIS16475_HAS_FIFO) {
-  1956			ret = devm_adis_setup_buffer_and_trigger_with_attrs(&st->adis, indio_dev,
-  1957									    adis16475_trigger_handler_with_fifo,
-  1958									    &adis16475_buffer_ops,
-> 1959									    adis16475_fifo_attributes);
-  1960			if (ret)
-  1961				return ret;
-  1962			/* Update overflow behavior to always overwrite the oldest sample. */
-  1963			ret = adis_update_bits(&st->adis, ADIS16475_REG_FIFO_CTRL,
-  1964					       ADIS16575_OVERFLOW_MASK, (u16)ADIS16575_OVERWRITE_OLDEST);
-  1965		} else {
-  1966			ret = devm_adis_setup_buffer_and_trigger(&st->adis, indio_dev,
-  1967								 adis16475_trigger_handler);
-  1968		}
-  1969		if (ret)
-  1970			return ret;
-  1971	
-  1972		ret = devm_iio_device_register(&spi->dev, indio_dev);
-  1973		if (ret)
-  1974			return ret;
-  1975	
-  1976		adis16475_debugfs_init(indio_dev);
-  1977	
-  1978		return 0;
-  1979	}
-  1980	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  #define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LOCAL_THROTTLE)
+>  
+>  #ifdef CONFIG_ANON_VMA_NAME
+> @@ -2787,6 +2802,21 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>  			return -EINVAL;
+>  		error = arch_lock_shadow_stack_status(me, arg2);
+>  		break;
+> +	case PR_GET_INDIR_BR_LP_STATUS:
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +		error = arch_get_indir_br_lp_status(me, (unsigned long __user *) arg2);
+> +		break;
+> +	case PR_SET_INDIR_BR_LP_STATUS:
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +		error = arch_set_indir_br_lp_status(me, (unsigned long __user *) arg2);
+> +		break;
+> +	case PR_LOCK_INDIR_BR_LP_STATUS:
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +		error = arch_lock_indir_br_lp_status(me, (unsigned long __user *) arg2);
+> +		break;
+>  	default:
+>  		error = -EINVAL;
+>  		break;
+> -- 
+> 2.43.2
+> 
 
