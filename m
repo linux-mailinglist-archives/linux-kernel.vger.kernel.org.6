@@ -1,121 +1,171 @@
-Return-Path: <linux-kernel+bounces-175417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF5C8C1F52
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F373C8C1F56
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA011F227D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E471F22562
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9682415F411;
-	Fri, 10 May 2024 07:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4AD15F335;
+	Fri, 10 May 2024 07:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Q5jLkSW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WiDYPmDe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Xo1NTgKJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD3215ECFA;
-	Fri, 10 May 2024 07:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C129914A084;
+	Fri, 10 May 2024 07:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715327670; cv=none; b=IU24BXgOQjc5PAsX0kTeN1Ka9SpDrLNTVtfjOGZI0X6Ak/6iir/ZKJSDkIFMYjCRO29hi/7b5D6k+WrzgLKdTfxY4nN+MfjwYCORtMBpzO1aOSvJs86/jD3z3i5LmpzpbBxV7zv3uVTM2Tur2UCu9qaVs+9r8BPRCrZeXECtofE=
+	t=1715327732; cv=none; b=kgRMp7dKDCZW36dO7yhqu2XKKRtZ60M1ejK08PGxB3cCEj5NChzsqntZt15SMDptihxMxYvD67oKNrc6S6paA7NFSGCBRYCBJUw/7hdTdtxwxW8mscs6+vouT6ltQX+4574kpj3nHuGLsYeZReHhnuds5KxLUqQIoBswCLilA/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715327670; c=relaxed/simple;
-	bh=vEC3kcI1ew7rGVRSQhXH7orLT4WGgL0RwJq9L82V8n0=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=sqaX5p9g6+kue3MoNOhy7tEAFi7113r2K9dc6rv1P1yQOUoqz0lMW0LhzMygRTjC/SB6r3uWqEbBF+IWmUmFxFS3EwsrlsZ31fct8SnoCcQxQayTCyh9F2FXKgrfw6FEkDsnBhYVz4R8uGzvW83iW2EdxFWQwB2jd5mKBW3l2NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Q5jLkSW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WiDYPmDe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 10 May 2024 07:54:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715327667;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=GoS44p5Zu/Cx1SabxNiVFz3l/boo5lVN7/b7TKg1gRA=;
-	b=4Q5jLkSW4TUhyRv22qaIL2KglvxHAegv6yo2xerd4l69NA9HMwPSqTlKYlSNOvE0gCGBCW
-	IkNaLM4yLc4LhTJdsHm72ZCRVusn0C85xq97nxterCdexyoRTzOxLNwBWxAVToy3hvKbf3
-	NMrv7PIGJSL3PGPUq2ZYD15E4BAKlc7SYB33Jninj02iRjoB7owMhx8BJAtVwqXLZqHsno
-	VFwLgKoIXTZFcSxYerk7N3c+skyxnA/ibWQtH4BfIBKM0DLcKCxcUYtPwro9l/CIsg9udM
-	qzlLtNO0uDIbJXtALLIIVh+cjK3Urv7KEvnpj2N8Pp7YmxHxceWePCfdnjHGig==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715327667;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=GoS44p5Zu/Cx1SabxNiVFz3l/boo5lVN7/b7TKg1gRA=;
-	b=WiDYPmDeMlrhcT3qx+ivYuhxFcgMs6jOxn/isrSCKzJ4K+465znVYlkh5acYMtk/JBxuGn
-	+zxioApegAkodODg==
-From: "tip-bot2 for Ingo Molnar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] perf/x86/cstate: Remove unused 'struct perf_cstate_msr'
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
- Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, x86@kernel.org
+	s=arc-20240116; t=1715327732; c=relaxed/simple;
+	bh=NfCq0znA9xiQQKOgqCjjhCeBv5JL4GapTvi5dTTgNg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7PTau1rzR0qN8tLOs8njbtaJAnSgVs+nLPRbyO2DrMJtDyAhVu/umNd+uOGfrIsCnn+c6VtsrKFp5oP+COS1QX/WHMkseaSF3OLHBDpYk5zhXBJf21v1kW48knJ+UQ+XtgZ0SzuAQYsaIuS0YzpHSkEDJEf/rIFvAEaqnDhl/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Xo1NTgKJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0EE9C113CC;
+	Fri, 10 May 2024 07:55:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715327732;
+	bh=NfCq0znA9xiQQKOgqCjjhCeBv5JL4GapTvi5dTTgNg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xo1NTgKJVcIRWizY4Moj56cCaQqKaTr4IAt9qxFmN4ftE2ovyUckVKIsaj6OQWTdN
+	 p86jCzWoCSRCCiTfMnXkXGX3NXMw08h66lE5PowpDhAXWq2u3Y+Z7pr5/8a4Fpw19p
+	 ndykkCosAuEu5zcVjtsTvIIljbS1e25t5ZhP5xMI=
+Date: Fri, 10 May 2024 08:55:29 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>,
+	Paul Kocialkowski <contact@paulk.fr>,
+	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: Re: [PATCH v2 5/5] misc: add ge-addon-connector driver
+Message-ID: <2024051039-decree-shrimp-45c6@gregkh>
+References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
+ <20240510-hotplug-drm-bridge-v2-5-ec32f2c66d56@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171532766734.10875.1641155549159573518.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510-hotplug-drm-bridge-v2-5-ec32f2c66d56@bootlin.com>
 
-The following commit has been merged into the perf/core branch of tip:
+On Fri, May 10, 2024 at 09:10:41AM +0200, Luca Ceresoli wrote:
+> Add a driver to support the runtime hot-pluggable add-on connector on the
+> GE SUNH device. This connector allows connecting and disconnecting an
+> add-on to/from the main device to augment its features. Connection and
+> disconnection can happen at runtime at any moment without notice.
+> 
+> Different add-on models can be connected, and each has an EEPROM with a
+> model identifier at a fixed address.
+> 
+> The add-on hardware is added and removed using device tree overlay loading
+> and unloading.
+> 
+> Co-developed-by: Herve Codina <herve.codina@bootlin.com>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> 
+> ---
+> 
+> This commit is new in v2.
+> ---
+>  MAINTAINERS                      |   1 +
+>  drivers/misc/Kconfig             |  15 ++
+>  drivers/misc/Makefile            |   1 +
+>  drivers/misc/ge-sunh-connector.c | 464 +++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 481 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 672c26372c92..0bdb4fc496b8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9905,6 +9905,7 @@ F:	drivers/iio/pressure/mprls0025pa*
+>  HOTPLUG CONNECTOR FOR GE SUNH ADDONS
+>  M:	Luca Ceresoli <luca.ceresoli@bootlin.com>
+>  S:	Maintained
+> +F:	drivers/misc/ge-sunh-connector.c
+>  F:	Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.yaml
+>  
+>  HP BIOSCFG DRIVER
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 4fb291f0bf7c..99ef2eccbbaa 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -574,6 +574,21 @@ config NSM
+>  	  To compile this driver as a module, choose M here.
+>  	  The module will be called nsm.
+>  
+> +config GE_SUNH_CONNECTOR
+> +	tristate "GE SUNH hotplug add-on connector"
+> +	depends on OF
+> +	select OF_OVERLAY
+> +	select FW_LOADER
+> +	select NVMEM
+> +	select DRM_HOTPLUG_BRIDGE
 
-Commit-ID:     9d351132ed706ae24325809afa821cabf6d72568
-Gitweb:        https://git.kernel.org/tip/9d351132ed706ae24325809afa821cabf6d72568
-Author:        Ingo Molnar <mingo@kernel.org>
-AuthorDate:    Wed, 08 May 2024 09:47:46 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 08 May 2024 09:53:23 +02:00
+Can these be depends instead of select?  'select' causes dependencies
+that are hard, if not almost impossible, to detect at times why
+something is being enabled.
 
-perf/x86/cstate: Remove unused 'struct perf_cstate_msr'
+> +	help
+> +	  Driver for the runtime hot-pluggable add-on connector on the GE SUNH
+> +	  device. This connector allows connecting and disconnecting an add-on
+> +	  to/from the main device to augment its features. Connection and
+> +	  disconnection can be done at runtime at any moment without
+> +	  notice. Different add-on models can be connected, and each has an EEPROM
+> +	  with a model identifier at a fixed address.
 
-Use of this structure was removed in:
+Module name?
 
-  8f2a28c5859b ("perf/x86/cstate: Use new probe function")
 
-Remove the now stale type as well.
+> +static void sunh_conn_reset(struct sunh_conn *conn, bool keep_reset)
+> +{
+> +	dev_dbg(conn->dev, "reset\n");
 
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/events/intel/cstate.c | 6 ------
- 1 file changed, 6 deletions(-)
+ftrace is your friend.
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 54eb142..e64eaa8 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -143,12 +143,6 @@ struct cstate_model {
- #define SLM_PKG_C6_USE_C7_MSR	(1UL << 0)
- #define KNL_CORE_C6_MSR		(1UL << 1)
- 
--struct perf_cstate_msr {
--	u64	msr;
--	struct	perf_pmu_events_attr *attr;
--};
--
--
- /* cstate_core PMU */
- static struct pmu cstate_core_pmu;
- static bool has_cstate_core;
+> +static int sunh_conn_handle_event(struct sunh_conn *conn, bool plugged)
+> +{
+> +	int err;
+> +
+> +	if (plugged == conn->plugged)
+> +		return 0;
+> +
+> +	dev_info(conn->dev, "%s\n", plugged ? "connected" : "disconnected");
+
+Please remove debugging code from stuff you want to see merged.
+
+Same for all dev_info() calls here, when drivers work properly, they are
+quiet.
+
+thanks,
+
+greg k-h
 
