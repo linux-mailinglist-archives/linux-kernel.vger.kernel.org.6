@@ -1,203 +1,179 @@
-Return-Path: <linux-kernel+bounces-175635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2A38C22F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:16:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82B678C2308
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E5EF1C216B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA8F2B2112B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8444116D4D6;
-	Fri, 10 May 2024 11:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE62171E5D;
+	Fri, 10 May 2024 11:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K/uWJNfD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CWn22jro"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A06C168AFC;
-	Fri, 10 May 2024 11:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715339770; cv=none; b=F435gCvNJRkR1LK5ob1njNOPOFGQcFfyUUCbi3dA5RXntOv8mB/6KXi893OY93JnID5153IsGS2syuEd9SOzVX48KZ0jClyNuW90HC+HCY/clRgv+i1ojhNZ27AqGLYgRCEsfrRl0ocMD053L5/fwMK78qyboGA3+2QSH8vEueI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715339770; c=relaxed/simple;
-	bh=sGgUoq64ukXJEkWA8KSCNU0OnOILxYfhvciCisZjFS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uWYmXwVQiUbk/OJD219j4lpjLIfpExEg2vKEaOUTO9793A66uv5Ec/jZcKaXe5mvbIzAi7TQTIg106jOO0vxiBsA5RIZ3ADAmpAXOnUpw9MHmzuwib/YoVKXyofn9434a282d6xMFKgN9NGW/TKKovXaRbOImEzzQqiQxYE7UvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K/uWJNfD; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715339769; x=1746875769;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sGgUoq64ukXJEkWA8KSCNU0OnOILxYfhvciCisZjFS8=;
-  b=K/uWJNfDu3MAPKL72lcOFiJ4H15cQotN0CGt7BwjjDe6eCfGLEHJJHmB
-   cFkNbnkTXFGC3QX45ZWaxTELP3GLoYw/gCS6y09Nf0zaiP08LrqSTghWZ
-   /YEFUmwSPer2i4qvNB7czK9gXg9pNf6xBRVjAwxxm27ul5JHNmSlPuTPL
-   Fb109wybVKqLD9yeQcmopZi/dm4bPfeh7ng0QMQx46w0ngNBqO/iEGYr4
-   BZFbZ1iqRYorWjjAL9t/afKTVrRr7aVUoXvAUaQLQ8m+SzVIb8tVnYQ4G
-   9Ql1UrZvFTO7oXrkQb9KvHTY2bHegOodGm2yM+EaJ3RMyWtCWcCWGD7pT
-   w==;
-X-CSE-ConnectionGUID: B5pFXlTKR+2Fh3xT6DC3fQ==
-X-CSE-MsgGUID: odSxpJOVSXuuRUQhbBTryw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="21912054"
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="21912054"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 04:16:08 -0700
-X-CSE-ConnectionGUID: jb+w7XGGQ02HwCUQGaZaEA==
-X-CSE-MsgGUID: iH5OkXXvTq6ev/CCD+YCLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="30137472"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 10 May 2024 04:16:03 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s5OEL-000635-08;
-	Fri, 10 May 2024 11:16:01 +0000
-Date: Fri, 10 May 2024 19:15:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yabin Cui <yabinc@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Yabin Cui <yabinc@google.com>
-Subject: Re: [PATCH v3 3/3] perf: core: Check sample_type in
- perf_sample_save_brstack
-Message-ID: <202405101833.EmbmRFbl-lkp@intel.com>
-References: <20240510002424.1277314-4-yabinc@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3F9171658;
+	Fri, 10 May 2024 11:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715339957; cv=fail; b=sPfL+uQfRwRPFm3/f2m4tiPpjPjX2z6ZyvIZBgmUMs7UAwgHDBHq0Rs9zaMnDhNzBdOne7gzbYGhSlnuH+dt50TMq3iw5kkLnYoA8U9kwxXMsHdfFLMnaNTJeZ4pteOW6Q3v3paUeH45bQo8y8KmlpotwVIKnkN+N1nElF/7S08=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715339957; c=relaxed/simple;
+	bh=RLUM8YE9opYWpcSf+B/VFyv4Mx0PnhQTG0O3dm8xrJQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kk4UsbVw+cApG2N/viqym/ufVbBzR7ifFR/mILFS/yVEpXkbajobJHo96L0kh3JSyQkU7DJkDkkzagL5R5hfZGXVB25TO7UmoGjheE8JdTwl9vqjguDWG33Jk3S11r9pkq22yf35JzKPNFUyXQmN7nay0SK3ldhjLpRDTGYScXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CWn22jro; arc=fail smtp.client-ip=40.107.244.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WX2CwOHe3FRMMVXj5GbO0tOzBnGMSn8sjZXmtWG4jc8azBIQZtPxWqyapA7NF/9M5z8nRKQy/1psAYEnJXzYtqI9Uql5vG98mUeKUzcddI1gX2VgU0gB36Z7Ewo/ZuL+crWqdRT8EDQgbswwUF7jsbLpmnWqK0N10mf7UvNdnW7z8KG3sZmEt31G5pvz96/eCcI2xw0hx4kHRKZMaeU4Fn998viFmh8B3Fv/1nbaMqUxSQoHWYgx2bXNT+VuTqVoKtLqYOjFB7rGzlJG7m75+afkPg3DvH7Azb/XwdpNrbF4qbqusVdDyZuYny/SF6mbW5a1/k4kuEtPqhBlTekqXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OsdUcbaiKYNMLlCgy5MuynV8kfG/Bx/F25dvEDDdW2Y=;
+ b=C7Iq60NRACt/gc37dNgoDy7jy8ZzMT3F1BQqTeQTneuzCEP3g6a+6XGw1KqaMTsqCjSM2amwGm990qYbdWYzjpJD+257CoPhfhjlnK6Ietps+xVRJP0IZYSjF6chQw+EA8hc6t5oYwSDqZ7DVCOKJYXSbIHysLk+k4jkeaVIXE4BEJ7woL6I97GIjBESdlQOVSwc+XWS3YRLIlPpSc6hckmLxPliDXl7eqHLb9JP8LiIBkpwIpoFWoYWhXOXZtNpSvXIp5UWjN5KrOTiCCoPAeQRrade+c7iFpo+6vbHzIMHdYQ75imzD3kxa7I0DVECnXrtAh21OMJAvX/lvxG1wQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OsdUcbaiKYNMLlCgy5MuynV8kfG/Bx/F25dvEDDdW2Y=;
+ b=CWn22jroQQj0Seyta2EM6tMISG66BG2diMYuBfOdSHvZuiPwN55iTtqAKqsPuuIQZAa6thO3p1dPj8VJ+u8P0e+0wp/ss+ml2AvrE/ovrYhoonayOLLC+MHIZydf6JcixDXPcLweellEMqd1JOd+I3Dk1TudsjCQy4qoMNQVuBo=
+Received: from BYAPR08CA0011.namprd08.prod.outlook.com (2603:10b6:a03:100::24)
+ by MN0PR12MB5764.namprd12.prod.outlook.com (2603:10b6:208:377::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 11:19:11 +0000
+Received: from SJ1PEPF00001CDE.namprd05.prod.outlook.com
+ (2603:10b6:a03:100:cafe::e) by BYAPR08CA0011.outlook.office365.com
+ (2603:10b6:a03:100::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48 via Frontend
+ Transport; Fri, 10 May 2024 11:19:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF00001CDE.mail.protection.outlook.com (10.167.242.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Fri, 10 May 2024 11:19:10 +0000
+Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 10 May
+ 2024 06:19:06 -0500
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Peter Anvin <hpa@zytor.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Muralidhara M K" <muralidhara.mk@amd.com>, Yazen Ghannam
+	<yazen.ghannam@amd.com>, "Avadhut Naik" <Avadhut.Naik@amd.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Shyam Sundar
+ S K" <Shyam-sundar.S-k@amd.com>
+Subject: [PATCH] x86/amd_nb: Add new PCI IDs to the MISC IDs list for Family 1Ah
+Date: Fri, 10 May 2024 16:48:28 +0530
+Message-ID: <20240510111829.969501-1-Shyam-sundar.S-k@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510002424.1277314-4-yabinc@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CDE:EE_|MN0PR12MB5764:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11b45efc-c03e-4c75-bfe0-08dc70e30411
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|82310400017|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?U1fQmzs3UEgvWiRwN7vEuE6Hs7HXOtOn4y2xwiqOi/MnDx5506wyJ1jXtIaW?=
+ =?us-ascii?Q?2gPFoFNykoUTBZ7OO0dQhdRhjGfPyOxHSt2dktZYV9v0KU5ajGudLk1FKsSf?=
+ =?us-ascii?Q?lbsKQ6KURRXU0GkEt1zyw8tLY8bZe/i0/N6505eTD5fHcxiTurp97xE6wL2U?=
+ =?us-ascii?Q?J6/SysecETuR16tEEnOX6FHYbRa9hksX2/9JtUUVSYyEvKg1vElnhbb5/I3P?=
+ =?us-ascii?Q?U3IDgGNDoGrq5RIRm/CF0KuRoVEMaKkegDAmvHIhOniQMTcsQJCn6dZTiiiQ?=
+ =?us-ascii?Q?rsMAlNLymje9U90vq6S4io7Ok61jtvyCBtWb0n90aOrMuone3l8DYm0KCzr9?=
+ =?us-ascii?Q?vovU5p4j8F/sya+LzTJdfIWC1Eez6k+cfFsxQ67l1SkzrbYtKe43mrHpN+KC?=
+ =?us-ascii?Q?CP4QL7+UJwdsUag32BGg+hyqjc2Vyzc3WtsLlJ8OM9GIpacAWYGA+7SGnvTa?=
+ =?us-ascii?Q?6TVtRNKarJ8g3fEOoPpZ4FZRbMxJmFjy+Pr898wgL0P3bKJNlvl+a4JuYHcC?=
+ =?us-ascii?Q?Uf9Mbi8IUFX2YDImx/A2eD5pgIalyEYbvA9LNhEyi6IgCJ6X5BoaRURvz9xb?=
+ =?us-ascii?Q?DazB/5QM6q+1n55onoB7ESA3Rc1uphSJR3WLRQxbVUsF07JJUthXfPkeN8mY?=
+ =?us-ascii?Q?bJ3C+lcrf9teyMglb1oYjOs9VdJ79xNLT/Bbl7UKAbV7EVzRb7UPR2oLSixv?=
+ =?us-ascii?Q?HrxVvtuj+YRERx9B1SH0Eo3MEmxwvikEyCVjUvLE1UHPJCJcFvCgOHLPD4eh?=
+ =?us-ascii?Q?aE48AgLofqQdNlFZGPcbk613pIv6kzPTsA4VTAFTipZvu/nFKR7KYAShjwCC?=
+ =?us-ascii?Q?GU0rNB/2ejQQuhK16tODkX41wXZ7OUB4+qx8gAmIdL0GCa55l8B+burH8FgM?=
+ =?us-ascii?Q?7TC2H3q++EiFduvysgU5D0ieByDOIwrOjJ/Wfcn96fZXpRMaEkCiWjGwu+dP?=
+ =?us-ascii?Q?Dw1DPhX8aQqSRjtxrcoqM6S+XfEKxcT6bygqZ6FKTrK2b388HW4AOTFoaFMw?=
+ =?us-ascii?Q?uZ3VWZKla9rMm+FIkLKczbk0FqPcFE5QnsFtnSGr4EQ84qgrpsAM/Y5ozuVH?=
+ =?us-ascii?Q?1e689UZgj0QFpy8oPKxcP2vKdsvX2Mszt4Fu4U/bIDweiGJAo0Q7TBPLCB66?=
+ =?us-ascii?Q?xrl1M/XHgNmTSnNoqm8OePM6pmm07lne8ZeNUgzebxxtGY/JrgNOBkjGBoCo?=
+ =?us-ascii?Q?cVt8AaId9louvz1qPORHQ3K8Fa8kptzX6kr5RFrXuIYlxG8FWrQV5WMkijvv?=
+ =?us-ascii?Q?xsbnyq9OOGLdrunuo6R8qQdGntY0VrA8tzd/GiqynpngSKyRFkFjV/klOMJ7?=
+ =?us-ascii?Q?TTA2t8b37utoFFtFAl12j7u7vWvP7lU0ZAXFf2Xee+MW16NBBpu5PTNVuXFm?=
+ =?us-ascii?Q?yIZIYjyrmH75UrejsY987wSC6XLp?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400017)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 11:19:10.6677
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11b45efc-c03e-4c75-bfe0-08dc70e30411
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CDE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5764
 
-Hi Yabin,
+Add the new PCI Device IDs to the MISC IDs list to support new generation
+of AMD 1Ah family 70h Models of processors.
 
-kernel test robot noticed the following build errors:
+(As the amd_nb functions are used by PMC and PMF drivers, without these IDs
+being present in the MISC IDs the PMF/PMC driver probe fail to happen.)
 
-[auto build test ERROR on perf-tools-next/perf-tools-next]
-[also build test ERROR on tip/perf/core linus/master v6.9-rc7 next-20240510]
-[cannot apply to acme/perf/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+---
+ arch/x86/kernel/amd_nb.c | 1 +
+ include/linux/pci_ids.h  | 1 +
+ 2 files changed, 2 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yabin-Cui/perf-core-Save-raw-sample-data-conditionally-based-on-sample-type/20240510-083817
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-tools-next
-patch link:    https://lore.kernel.org/r/20240510002424.1277314-4-yabinc%40google.com
-patch subject: [PATCH v3 3/3] perf: core: Check sample_type in perf_sample_save_brstack
-config: x86_64-buildonly-randconfig-001-20240510 (https://download.01.org/0day-ci/archive/20240510/202405101833.EmbmRFbl-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240510/202405101833.EmbmRFbl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405101833.EmbmRFbl-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:93,
-                    from kernel/time/itimer.c:10:
-   include/linux/perf_event.h: In function 'perf_sample_save_brstack':
->> include/linux/perf_event.h:1279:14: error: implicit declaration of function 'has_branch_stack' [-Werror=implicit-function-declaration]
-    1279 |         if (!has_branch_stack(event))
-         |              ^~~~~~~~~~~~~~~~
-   include/linux/perf_event.h: At top level:
->> include/linux/perf_event.h:1671:20: error: conflicting types for 'has_branch_stack'; have 'bool(struct perf_event *)' {aka '_Bool(struct perf_event *)'}
-    1671 | static inline bool has_branch_stack(struct perf_event *event)
-         |                    ^~~~~~~~~~~~~~~~
-   include/linux/perf_event.h:1279:14: note: previous implicit declaration of 'has_branch_stack' with type 'int()'
-    1279 |         if (!has_branch_stack(event))
-         |              ^~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   In file included from include/linux/trace_events.h:10,
-                    from include/trace/syscall.h:7,
-                    from include/linux/syscalls.h:93,
-                    from kernel/time/hrtimer.c:30:
-   include/linux/perf_event.h: In function 'perf_sample_save_brstack':
->> include/linux/perf_event.h:1279:14: error: implicit declaration of function 'has_branch_stack' [-Werror=implicit-function-declaration]
-    1279 |         if (!has_branch_stack(event))
-         |              ^~~~~~~~~~~~~~~~
-   include/linux/perf_event.h: At top level:
->> include/linux/perf_event.h:1671:20: error: conflicting types for 'has_branch_stack'; have 'bool(struct perf_event *)' {aka '_Bool(struct perf_event *)'}
-    1671 | static inline bool has_branch_stack(struct perf_event *event)
-         |                    ^~~~~~~~~~~~~~~~
-   include/linux/perf_event.h:1279:14: note: previous implicit declaration of 'has_branch_stack' with type 'int()'
-    1279 |         if (!has_branch_stack(event))
-         |              ^~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:121:35: warning: initialized field overwritten [-Woverride-init]
-     121 |         [CLOCK_REALTIME]        = HRTIMER_BASE_REALTIME,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:121:35: note: (near initialization for 'hrtimer_clock_to_base_table[0]')
-   kernel/time/hrtimer.c:122:35: warning: initialized field overwritten [-Woverride-init]
-     122 |         [CLOCK_MONOTONIC]       = HRTIMER_BASE_MONOTONIC,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:122:35: note: (near initialization for 'hrtimer_clock_to_base_table[1]')
-   kernel/time/hrtimer.c:123:35: warning: initialized field overwritten [-Woverride-init]
-     123 |         [CLOCK_BOOTTIME]        = HRTIMER_BASE_BOOTTIME,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:123:35: note: (near initialization for 'hrtimer_clock_to_base_table[7]')
-   kernel/time/hrtimer.c:124:35: warning: initialized field overwritten [-Woverride-init]
-     124 |         [CLOCK_TAI]             = HRTIMER_BASE_TAI,
-         |                                   ^~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:124:35: note: (near initialization for 'hrtimer_clock_to_base_table[11]')
-   cc1: some warnings being treated as errors
-
-
-vim +/has_branch_stack +1279 include/linux/perf_event.h
-
-  1271	
-  1272	static inline void perf_sample_save_brstack(struct perf_sample_data *data,
-  1273						    struct perf_event *event,
-  1274						    struct perf_branch_stack *brs,
-  1275						    u64 *brs_cntr)
-  1276	{
-  1277		int size = sizeof(u64); /* nr */
-  1278	
-> 1279		if (!has_branch_stack(event))
-  1280			return;
-  1281	
-  1282		if (branch_sample_hw_index(event))
-  1283			size += sizeof(u64);
-  1284		size += brs->nr * sizeof(struct perf_branch_entry);
-  1285	
-  1286		/*
-  1287		 * The extension space for counters is appended after the
-  1288		 * struct perf_branch_stack. It is used to store the occurrences
-  1289		 * of events of each branch.
-  1290		 */
-  1291		if (brs_cntr)
-  1292			size += brs->nr * sizeof(u64);
-  1293	
-  1294		data->br_stack = brs;
-  1295		data->br_stack_cntr = brs_cntr;
-  1296		data->dyn_size += size;
-  1297		data->sample_flags |= PERF_SAMPLE_BRANCH_STACK;
-  1298	}
-  1299	
-
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index 5bf5f9fc5753..3cf156f70859 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -95,6 +95,7 @@ static const struct pci_device_id amd_nb_misc_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_M78H_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI200_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI300_DF_F3) },
+ 	{}
+diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+index a0c75e467df3..c547d1d4feb1 100644
+--- a/include/linux/pci_ids.h
++++ b/include/linux/pci_ids.h
+@@ -580,6 +580,7 @@
+ #define PCI_DEVICE_ID_AMD_19H_M78H_DF_F3 0x12fb
+ #define PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3 0x12c3
+ #define PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3 0x16fb
++#define PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3 0x12bb
+ #define PCI_DEVICE_ID_AMD_MI200_DF_F3	0x14d3
+ #define PCI_DEVICE_ID_AMD_MI300_DF_F3	0x152b
+ #define PCI_DEVICE_ID_AMD_VANGOGH_USB	0x163a
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
