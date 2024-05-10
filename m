@@ -1,242 +1,151 @@
-Return-Path: <linux-kernel+bounces-175229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4900D8C1CC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:07:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6298C1CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC9F1C213E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:07:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3C41B21C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A5314885B;
-	Fri, 10 May 2024 03:06:58 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC50148857;
+	Fri, 10 May 2024 03:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2+A3yFI"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A934714882B;
-	Fri, 10 May 2024 03:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729BD14882B;
+	Fri, 10 May 2024 03:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715310417; cv=none; b=D37B++FTzF1ixfrF0ytYj2JoZ4QYRXf0PbWY9DfiVRYIAw2CUHN/IhUdMIOlUYb/5c8QjMXMI1GAACoG5bTCzpOJpkBCxRUPmEDDdt4iDRUQusNV3cZzeVgPJo9189PhYkqB1NSIRT7of8XDBzc+knh9qR4e5yQ/uvSviL8DfTs=
+	t=1715310436; cv=none; b=aQ2x18ccNVyo/N09ZktGPxEbHlAtY9nV7L20KZE/2LLeqP455cK7nr34VetZrZhWBsMP5Pnx3CAaU5SmL/brfDGLj4Ol0AyZ/c1JfmZY0+4ZIHAlfVnkIbXjUu289Rf0t+i6P3viqtWVguNEzieEGPiX852KLhIgq3LLfZ27b+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715310417; c=relaxed/simple;
-	bh=dIqiVjHurELLJ7PCOwbTi79bOof0c/G+LGiyT31FLJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f06yNH8zCGiziOxmVzFqR52Eefs8qeTxM333yGg9otyTfpAq8ilRd63RJvmOacBur6o8BkWutOuOOtC0gM5cyXE6msWukhZ1KjP8wfpHZsJu9QYV6V/6lqw2NVuXUMtC0/jr17mKa3F9mz0y8bwv/Z0XXP6UoGcmUPZeEWD66nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VbDKJ0K7czCrWj;
-	Fri, 10 May 2024 11:05:40 +0800 (CST)
-Received: from dggpemm500018.china.huawei.com (unknown [7.185.36.111])
-	by mail.maildlp.com (Postfix) with ESMTPS id E558C18007A;
-	Fri, 10 May 2024 11:06:51 +0800 (CST)
-Received: from [10.174.178.96] (10.174.178.96) by
- dggpemm500018.china.huawei.com (7.185.36.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 10 May 2024 11:06:51 +0800
-Message-ID: <be312b75-eede-44f5-b7f3-b50f50c6fb56@huawei.com>
-Date: Fri, 10 May 2024 11:06:50 +0800
+	s=arc-20240116; t=1715310436; c=relaxed/simple;
+	bh=Na5tJlHqz8QEgBdxLiHuZ0FJpnvP58ur8r7XWRE/Hhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l79XiEQMigiYbUWj5JxgQZI/G1x1NDjBWQ85k+RfvnL+zi++fLASKs0VJaQIu1szYVVl/+/bk+i+MVVbozIzcK9C3Nv8byEABigk5Cyq1YIrrqb/b+v49OvvcB1HoS5CZr9sbYI8DrFUtkTNft7xTmKqFrBcqp5TmeiyfHP9o/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2+A3yFI; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ab48c14334so414930a91.3;
+        Thu, 09 May 2024 20:07:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715310435; x=1715915235; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pFFaiOKvmV+vo0PVVMiVz0GTsIpZpZQBHjNqBGv0W2Q=;
+        b=D2+A3yFI3zJRwSEphmJh+486G9tGZBara1PJpuM3o7VX23mdqgRc3qdRDJ3lAss1DY
+         98IBW/mhgpNcxiT76zVwpTTinrvFLcBo2E+61GZRfxTI9fqfoSVO/zliZQUywcmoBgPi
+         M0SzFE1fFz+hUhWnFWmZXgexBv/fLTpc7RYbDEas31vig7bJnBup8OK6SrjqqUajODtO
+         /OnQn+AMjhWPVAyZDTJuHcdTyn0HqfkD6ILWBs2RnrDotxmvATseNwgXJ/K74baZ2SE6
+         Cin+c+LQo+ftQ79eiGQUHeNdJCgSez00/xVve/JsX7LSDYYgpD+yETrGJbhobBnN5Px0
+         SrLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715310435; x=1715915235;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pFFaiOKvmV+vo0PVVMiVz0GTsIpZpZQBHjNqBGv0W2Q=;
+        b=de7ZMRvLGrCXxuGZTuMn2iqDmCL+IJJ0QErqprRmxdPTTW+Z7jt8yh1Ksig8GGkd98
+         POZodwVao4MqDGRrevoAx/3w22f47A1SCKu7uJqDj7wHVKeZxdhzY8MJkN/HyZfmXh2+
+         2tcbAfXaCVchV/OgGW+R/wg+jVe7b2gW+3aWISb2x4OMKiCV5K+mqrWLMsoAhBAwwVQf
+         BwYqWVyNZMYPTDHKIyKe9oe2udzGUGCnKbHt0GU8wYHteICGGTBMdo5N0k609aY0MubI
+         uzkpePz0BVParXNlCvUVp6ENLcBJP1gHYEd6/xDP1JLfkCjXrTRTkKqK7EQGq7Oos/du
+         1WTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk0DCT88iHBAJmsKDHbSb604KJ2A4f3wBLWNUk2jViurEovIYyWGdHgl08IB7qj5r1aBEigdvywq/NG3YTh2KZ0A9YDCopcX6o+HL7Cb9xTWh0YkIl3WikmylRPzPYRul/03GDn+d1ig==
+X-Gm-Message-State: AOJu0Yw4fC4v7hSJsxQcWzAIc6BNgpkryQR2ENbL52yg7IT5gHOnJ1Id
+	1XkbUJQe/p8NLOfetISEtYxjLRM7vjTWbHxqg7DObIO66gLo1W4K
+X-Google-Smtp-Source: AGHT+IEm+YoP63MbMDQYKGhh1+7KLCRrn2E64x8AMMX/NDxeEs/aba9hKiTeO5WwH3JBVZnnXwjvrQ==
+X-Received: by 2002:a17:902:da8f:b0:1eb:2e59:d6a with SMTP id d9443c01a7336-1ef44049772mr16873055ad.3.1715310434774;
+        Thu, 09 May 2024 20:07:14 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30b0csm21558645ad.176.2024.05.09.20.07.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 20:07:14 -0700 (PDT)
+Date: Fri, 10 May 2024 11:07:11 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Coly Li <colyli@suse.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Matthew Mirvish <matthew@mm12.xyz>
+Subject: Re: linux-next: manual merge of the refactor-heap tree with the
+ block tree
+Message-ID: <Zj2PX6Fy3BEnQc50@visitorckw-System-Product-Name>
+References: <20240509152745.08af752f@canb.auug.org.au>
+ <te64v6zwwor6jkco6uiu2zz7ern6ijhyu5okfvdz3bmj3w5qfp@mx4zdniwymqj>
+ <Zj1RzZdtfL7UQax1@visitorckw-System-Product-Name>
+ <buehluxvo234sj7onzl6wwjmuslmnkh7g6vnpru23kpti6qmpp@7nqak2ser7mw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq/cppc: changing highest_perf to nominal_perf in
- cppc_cpufreq_cpu_init()
-To: Ionela Voinescu <ionela.voinescu@arm.com>, Viresh Kumar
-	<viresh.kumar@linaro.org>
-CC: Beata Michalska <beata.michalska@arm.com>, Vanshidhar Konda
-	<vanshikonda@os.amperecomputing.com>, <rafael@kernel.org>,
-	<al.stone@linaro.org>, <ashwin.chaugule@linaro.org>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<liwei391@huawei.com>, <liaoyu15@huawei.com>
-References: <20240428092852.1588188-1-liwei728@huawei.com>
- <20240429104945.esdukn6ayudgyumc@vireshk-i7> <ZjoBrF4bAK5ukm7H@arm.com>
-From: "liwei (JK)" <liwei728@huawei.com>
-In-Reply-To: <ZjoBrF4bAK5ukm7H@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500018.china.huawei.com (7.185.36.111)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <buehluxvo234sj7onzl6wwjmuslmnkh7g6vnpru23kpti6qmpp@7nqak2ser7mw>
 
-Hello,
-
-Thanks for for your reply.
-
-Maybe my description has caused you some misunderstandings, please allow 
-me to supplement the description
-
-在 2024/5/7 18:25, Ionela Voinescu 写道:
-> Hi,
+On Thu, May 09, 2024 at 07:16:31PM -0400, Kent Overstreet wrote:
+> On Fri, May 10, 2024 at 06:44:29AM +0800, Kuan-Wei Chiu wrote:
+> > On Thu, May 09, 2024 at 03:58:57PM -0400, Kent Overstreet wrote:
+> > > On Thu, May 09, 2024 at 03:27:45PM +1000, Stephen Rothwell wrote:
+> > > > Hi all,
+> > > > 
+> > > > Today's linux-next merge of the refactor-heap tree got conflicts in:
+> > > > 
+> > > >   drivers/md/bcache/bset.c
+> > > >   drivers/md/bcache/bset.h
+> > > >   drivers/md/bcache/btree.c
+> > > >   drivers/md/bcache/writeback.c
+> > > > 
+> > > > between commit:
+> > > > 
+> > > >   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
+> > > > 
+> > > > from the block tree and commit:
+> > > > 
+> > > >   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
+> > > > 
+> > > > from the refactor-heap tree.
+> > > > 
+> > > > Ok, these conflicts are too extensive, so I am dropping the refactor-heap
+> > > > tree for today.  I suggest you all get together and sort something out.
+> > > 
+> > > Coli and Kuan, you guys will need to get this sorted out quick if we
+> > > want refactor-heap to make the merge window
+> > 
+> > Hi Coli and Kent,
+> > 
+> > If I understand correctly, the reported bug is because we attempted to
+> > point (heap)->data to a dynamically allocated memory , but at that time
+> > (heap)->data was not a regular pointer but a fixed size array with a
+> > length of MAX_BSETS.
+> > 
+> > In my refactor heap patch series, I introduced a preallocated array and
+> > decided in min_heap_init() whether the data pointer should point to an
+> > incoming pointer or to the preallocated array. Therefore, I am
+> > wondering if my patch might have unintentionally fixed this bug?
+> > 
+> > I am unsure how to reproduce the reported issue. Could you assist me in
+> > verifying whether my assumption is correct?
 > 
-> Thanks for adding me to this.
-> 
-> On Monday 29 Apr 2024 at 16:19:45 (+0530), Viresh Kumar wrote:
->> CC'ing few folks who are working with the driver.
->>
->> On 28-04-24, 17:28, liwei wrote:
->>> When turning on turbo, if frequency configuration takes effect slowly,
->>> the updated policy->cur may be equal to the frequency configured in
->>> governor->limits(), performance governor will not adjust the frequency,
->>> configured frequency will remain at turbo-freq.
->>>
->>> Simplified call stack looks as follows:
->>> cpufreq_register_driver(&cppc_cpufreq_driver)
->>> 	...
->>> 	cppc_cpufreq_cpu_init()
->>> 		cppc_get_perf_caps()
->>> 		policy->max = cppc_perf_to_khz(caps, caps->nominal_perf)
->>> 			cppc_set_perf(highest_perf) // set highest_perf
->>> 			policy->cur = cpufreq_driver->get() // if cur == policy->max
->>> 	cpufreq_init_policy()
->>> 		...
->>> 		cpufreq_start_governor() // governor: performance
->>> 			new_freq = cpufreq_driver->get() // if new_freq == policy->max
->>> 			if (policy->cur != new_freq)
->>> 			cpufreq_out_of_sync(policy, new_freq)
->>> 				...
->>> 				policy->cur = new_freq
-> I believe the problem is here   ^^^^^^^^^^^^^^^^^^^^^^.
-> 
-> cpufreq_verify_current_freq() should not update policy->cur unless a
-> request to change frequency has actually reached the driver. I believe
-> policy->cur should always reflect the request, not the actual current
-> frequency of the CPU.
-> 
-> Given that new_freq is the current (hardware) frequency of the CPU,
-> obtained via .get(), it can be the nominal frequency, as it is in your
-> case, or any frequency, if there is any firmware/hardware capping in
-> place.
-> 
-> This causes the issue in your scenario, in which __cpufreq_driver_target()
-> filters the request from the governor as it finds it equal to policy->cur,
-> and it believes it's already set by hardware.
-> 
-> This causes another issue in which scaling_cur_freq, which for some
-> systems returns policy->cur, ends up returning the hardware frequency of
-> the CPUs, and not the last frequency request, as it should:
-> 
-> "scaling_cur_freq
-> Current frequency of all of the CPUs belonging to this policy (in kHz).
-> 
-> In the majority of cases, this is the frequency of the last P-state
-> requested by the scaling driver from the hardware using the scaling
-> interface provided by it, which may or may not reflect the frequency
-> the CPU is actually running at (due to hardware design and other
-> limitations)." [1]
-> 
-> Therefore policy->cur gets polluted with the hardware frequency of the
-> CPU sampled at that one time, and this affects governor decisions, as
-> in your case, and scaling_cur_freq feedback as well. This bad value will
-> not change until there's another .target() or cpufreq_out_of_sync()
-> call, which will never happen for fixed frequency governors like the
-> performance governor.
-> 
-> Thanks,
-> Ionela.
-> 
+> This is a merge conflict, not a runtime. Can you rebase onto Coli's
+> tree? We'll have to retest.
 
-In the above function calling process, the frequency is obtained twice. 
-The first time is in cpufreq_online(), and the second time is in 
-cpufreq_verify_current_freq().
+Oh, sorry for the misunderstanding I caused. When I mentioned "bug" [1]
+earlier, I was referring to the bug addressed in
+3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter"),
+not a merge conflict.
 
-When the frequency configuration takes effect slowly, the kernel cannot 
-sense when the frequency configuration takes effect. It may take effect 
-before the frequency is read twice, between the frequencies read twice, 
-or after the frequency is read twice.
+Here are the results after the rebase:
+https://github.com/visitorckw/linux.git refactor-heap
 
-|------------------|--------------------|---------------------|
-set highest_freq  get()               get()                target()
+[1]: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2039368
 
-If it takes effect before two read operations, there will be no problem.
-
-If it takes effect between two read operations, policy->cur will be 
-updated in cpufreq_verify_current_freq(), the execution path is as follows:
-new_freq = cpufreq_driver->get() //  new_freq = turbo_freq
-	if (policy->cur != new_freq)
-		cpufreq_out_of_sync(policy, new_freq)
-			...
-			policy->cur = new_freq // cur = turbo_freq
-..
-__cpufreq_driver_target(policy->max)
-	cppc_set_perf(target) // policy->cur!=target
-
-Reconfigure frequency to policy->max.
-
-If policy->cur is not set to turbo_freq after two read operations, 
-policy->cur will not be updated in cpufreq_verify_current_freq(), the 
-execution path is as follows:
-new_freq = cpufreq_driver->get() //  new_freq == policy->cur
-	if (policy->cur != new_freq)
-..
-__cpufreq_driver_target(policy->max)
-	ret // policy->cur==target
-
-Configured frequency will remain at turbo-freq.
-
-When reading scaling_cur_freq, the frequency value that may be read is 
-policy->cur. If arch does not implement arch_freq_get_on_cpu(), and the 
-registered cpufreq_driver does not define setpolicy()/get(), the 
-frequency will not be obtained through the get() and will directly feed 
-back policy->cur. If the above problem occurs, no exception will be 
-detected when reading scaling_cur_freq. But reading cpuinfo_cur_freq 
-will reacquire the frequency through the get() interface and feedback 
-the newly acquired frequency value.
-
-Thanks
-liwei
-
-> 
-> [1] https://docs.kernel.org/admin-guide/pm/cpufreq.html
-> 
->>> 			...
->>> 			policy->governor->limits()
->>> 				__cpufreq_driver_target(policy->max)
->>> 					if (policy->cur==target)
->>> 					// generate error, keep set highest_perf
->>> 						ret
->>> 					cppc_set_perf(target)
->>>
->>> Fix this by changing highest_perf to nominal_perf in cppc_cpufreq_cpu_init().
->>>
->>> Fixes: 5477fb3bd1e8 ("ACPI / CPPC: Add a CPUFreq driver for use with CPPC")
->>> Signed-off-by: liwei <liwei728@huawei.com>
->>> ---
->>>   drivers/cpufreq/cppc_cpufreq.c | 8 ++++----
->>>   1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->>> index 64420d9cfd1e..db04a82b8a97 100644
->>> --- a/drivers/cpufreq/cppc_cpufreq.c
->>> +++ b/drivers/cpufreq/cppc_cpufreq.c
->>> @@ -669,14 +669,14 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
->>>   	if (caps->highest_perf > caps->nominal_perf)
->>>   		boost_supported = true;
->>>   
->>> -	/* Set policy->cur to max now. The governors will adjust later. */
->>> -	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
->>> -	cpu_data->perf_ctrls.desired_perf =  caps->highest_perf;
->>> +	/* Set policy->cur to norm now. */
->>> +	policy->cur = cppc_perf_to_khz(caps, caps->nominal_perf);
->>> +	cpu_data->perf_ctrls.desired_perf =  caps->nominal_perf;
->>>   
->>>   	ret = cppc_set_perf(cpu, &cpu_data->perf_ctrls);
->>>   	if (ret) {
->>>   		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
->>> -			 caps->highest_perf, cpu, ret);
->>> +			 caps->nominal_perf, cpu, ret);
->>>   		goto out;
->>>   	}
->>>   
->>> -- 
->>> 2.25.1
->>
->> -- 
->> viresh
+Regards,
+Kuan-Wei
 
