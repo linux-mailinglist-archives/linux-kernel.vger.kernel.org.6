@@ -1,165 +1,126 @@
-Return-Path: <linux-kernel+bounces-175961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6BD8C27F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:36:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306F08C27F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85FC2286D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:36:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6101286E3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:37:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B104171657;
-	Fri, 10 May 2024 15:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D422171E7C;
+	Fri, 10 May 2024 15:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="It/JJGnK"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LAtPk/Ly"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC52612D219;
-	Fri, 10 May 2024 15:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEAD17166A;
+	Fri, 10 May 2024 15:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355400; cv=none; b=ezcR4iF4Xdb6CgjhmImfOHcQpsLt08cCLqQkd9y/jSNEhq4PCqAZNlLebXKOLHnvs+W0QmehnovQUfBye8TRqPqLfsXuzJ/9AjPJk+S3JI13/p3MeMMd3BWN+devhZ+N/Jhb8U/jPw4+v3qvVbBke5AlPCVpByaBL4M9of3jkWY=
+	t=1715355403; cv=none; b=AGYOezCVb5qP2IHdsl+/JEvrDvQO8FQlnLURaptRk62zi3m6ay5ps3b9rn6ZeDwTzOHWdsaPcZ5xH43UbZmPRDQvLd8xfk72U9rWP26rTwe0iR8AJZLAlva6u3wtaQiYrjLlGi3WHP4oMSFXstbcRJ3yE1wKqX88KhBWKGYFbVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355400; c=relaxed/simple;
-	bh=QMfpkQludxXhsugxZyOrTb2FWc/qFIHL73MvV9noS3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vn7wlpc82yDFb0aKRtrzUPeqr+/av+TKh0FQtTRx6D7rZhyVZKNh/xhNvQw2ORTkzLkqgARphxoihktZtQ8LM1SRPD7yjt6NWlhqyhg16ZIjvR82z4ar81PCBGKZEB7iihEN67N9ctAUoFKRVKcMfqOK9GQM4MJejA2PBikwgzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=It/JJGnK; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.55.0.156] (unknown [149.11.192.251])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id A48743F771;
-	Fri, 10 May 2024 15:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715355390;
-	bh=u+GdyKh268Fb5UNHxMTYeYVWSxNUeJD1XDf2/qYIsHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=It/JJGnKiNcCB8/dhxUAG6BEooni4KMs2jbNd50Py2pgLNg5u0rpR/wVt6ahI/9AX
-	 a1d5RJCEE2U+nzbxK6LDfZA/xoLOP2Ref8heo2Fw0Tkyj+atIsnoT2NiusLMIT3Rlt
-	 9Nz7JjmnloFAhcEaP2WkCGcZ7zh5HZdxFdiKx4+Xm8NjbUlC9C8yyDYYMrbDCP65xZ
-	 8A/3ltjfBo/0kqTeDb9zkdZAMzNTk3NgmFPDsVbwfMiWatgZAdA7qCTb/ttLfB5FGo
-	 Hn5ywXiJcTOfoVvkJfsNPEmuE9MXFXHTBoY2ddFWtM8tacN5c5RJxrzYYtzAOzXPcV
-	 odfQZurmqijWg==
-Message-ID: <2a9553a9-47b9-4eb9-ae55-a77bdd14e8c4@canonical.com>
-Date: Fri, 10 May 2024 08:36:28 -0700
+	s=arc-20240116; t=1715355403; c=relaxed/simple;
+	bh=ydiicGiKxdyumvATfb+liZuLZxRPWy6h/PLVbPk+dlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZK8aES6/axYudfwbMl1i8si7NHC4ayVe0jbqxWLmP4hdfzhPwI+wpybpeoykcYZ3plVK1n0f0TMk3Bn+Rz43QdrH+dV93YGAdRk34nSc1oWQ4HWcPcEVqWEmWvIKE/i8pdzGDoGU0DKxfm0jXnPLTZndtQ5fr6ap5d68ySVsiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LAtPk/Ly; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715355402; x=1746891402;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ydiicGiKxdyumvATfb+liZuLZxRPWy6h/PLVbPk+dlc=;
+  b=LAtPk/LyQZShLvbcoLxYrNOsrNjH14VK6dUwr6/bCp0SH7eQtDi6tid0
+   PmRp7vudnW+4ogEcg9SfPEktQlSlYrbqTGnJSCpza3Z90kqYONmfmMuJx
+   hK0qN0gf6gayHBdq2s2QrKRbvV1d3H+ZtwU8AG1BeLOPnOH2Yy4I9hm0u
+   hl+B2SUcZNEUJMKA29rFHxx+Uv3gn7EUL7AYqJg1hdUmKEKSCZqf2ip0E
+   ThOiwBuE4pbq67K8+kLEe6kuAGcwKRkrrWRuv/PPZhR7ZlxTZs5p5OdzU
+   SPOr8+XsRwavQUoJ2Jeto6g6ESYioh5NvC3dgScpdHmdKHAgfA+6ryHWH
+   w==;
+X-CSE-ConnectionGUID: 5djRvdnUQ4mv5k0mh1kurw==
+X-CSE-MsgGUID: 0QfRFT9+Rvmnl2BD0qL2dQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="22493693"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="22493693"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:36:42 -0700
+X-CSE-ConnectionGUID: PnTLVcqWTgKz+1FNNtnZtA==
+X-CSE-MsgGUID: y3pQmouDRhS5nTk+mWLFug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="30032098"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:36:39 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5SIW-000000069FG-1ESn;
+	Fri, 10 May 2024 18:36:36 +0300
+Date: Fri, 10 May 2024 18:36:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <Zj4_BBsUYuAeiOpr@smile.fi.intel.com>
+References: <71dad56e-0e2f-48ba-90bc-75096112a1ba@moroto.mountain>
+ <Zj46vpwTbfde4YX2@smile.fi.intel.com>
+ <4ade89f8-cbd3-4dbf-81fb-0e9a4269dc0f@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: use kvfree_sensitive to free data->data
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, William Hua
- <william.hua@canonical.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
- stable@vger.kernel.org
-References: <20240201142450.30510-1-pchelkin@ispras.ru>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240201142450.30510-1-pchelkin@ispras.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ade89f8-cbd3-4dbf-81fb-0e9a4269dc0f@moroto.mountain>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2/1/24 06:24, Fedor Pchelkin wrote:
-> Inside unpack_profile() data->data is allocated using kvmemdup() so it
-> should be freed with the corresponding kvfree_sensitive().
-> 
-> Also add missing data->data release for rhashtable insertion failure path
-> in unpack_profile().
-> 
-> Found by Linux Verification Center (linuxtesting.org).
-> 
-> Fixes: e025be0f26d5 ("apparmor: support querying extended trusted helper extra data")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+On Fri, May 10, 2024 at 06:27:30PM +0300, Dan Carpenter wrote:
+> On Fri, May 10, 2024 at 06:18:22PM +0300, Andy Shevchenko wrote:
+> > On Fri, May 10, 2024 at 06:10:37PM +0300, Dan Carpenter wrote:
+> > > Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+..
 
-I have pulled this into my tree
-
-> ---
->   security/apparmor/policy.c        | 2 +-
->   security/apparmor/policy_unpack.c | 1 +
->   2 files changed, 2 insertions(+), 1 deletion(-)
+> > >  	ret = ipu_bridge_connect_sensors(bridge);
+> > > -	if (ret || bridge->n_sensors == 0)
+> > > +	if (ret || bridge->n_sensors == 0) {
+> > > +		ret = ret ?: -EINVAL;
+> > >  		goto err_unregister_ipu;
+> > > +	}
+> > 
+> > I would split:
+> > 
+> > 	ret = ipu_bridge_connect_sensors(bridge);
+> > 	if (ret)
+> > 		goto err_unregister_ipu;
+> > 
+> > 	if (bridge->n_sensors == 0) {
+> > 		ret = -EINVAL;
+> > 		goto err_unregister_ipu;
+> > 	}
 > 
-> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-> index 957654d253dd..14df15e35695 100644
-> --- a/security/apparmor/policy.c
-> +++ b/security/apparmor/policy.c
-> @@ -225,7 +225,7 @@ static void aa_free_data(void *ptr, void *arg)
->   {
->   	struct aa_data *data = ptr;
->   
-> -	kfree_sensitive(data->data);
-> +	kvfree_sensitive(data->data, data->size);
->   	kfree_sensitive(data->key);
->   	kfree_sensitive(data);
->   }
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index 5e578ef0ddff..75452acd0e35 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -1071,6 +1071,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
->   
->   			if (rhashtable_insert_fast(profile->data, &data->head,
->   						   profile->data->p)) {
-> +				kvfree_sensitive(data->data, data->size);
->   				kfree_sensitive(data->key);
->   				kfree_sensitive(data);
->   				info = "failed to insert data to table";
+> It's always hard to know which way to go on these...  I wrote it that
+> way in my first draft.  It's my prefered way as well but not everyone
+> agrees.  I'll resend.
+
+Is the generated assembly the same?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
