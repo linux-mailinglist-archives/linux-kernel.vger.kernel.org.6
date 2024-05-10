@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-176124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388538C2A28
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEA28C2A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C90C1B24E37
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:01:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72174B251BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B513F446A2;
-	Fri, 10 May 2024 19:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC2D45034;
+	Fri, 10 May 2024 19:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mjSDBavr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="TF7n/g/x"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEF01D530;
-	Fri, 10 May 2024 19:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25DF45C1C;
+	Fri, 10 May 2024 19:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715367702; cv=none; b=hxxCKBxGUscMwWeQpqKoBErS742wT7l582u0um0ARWQd+/vGn7+f0dja7FX7VeXpMbJh/0ohLg31ObC4E6gWndvNsft0d4slXJ46uIvvaClz+Y5+C6YjMI92DV60d42vIoVcyXP9CQwSuFi1gGN9W6SzIitJG+kZYH+0UtFD9bI=
+	t=1715367715; cv=none; b=eAGnCry9XMRC5YV97wu0glWuqwce/zz7NK/VKQD+m9VPav0KdK3r9F2pq0e04k/RQEGDjMYcw5ieWqYaFBymbjM4df+sz0+qZ/P+aO5P7xl0vePD5V5XoS+ucg75kGb2ycgQjNBMT+mYcXNoyFZV+Yo/UPvMJJChg7fHHU31qyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715367702; c=relaxed/simple;
-	bh=XeeS+V2EqO/KopPFay6n7ImHw9WGyCeLggw8KzbASF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rLsE3Hlo6k/tQFPToXLOqAr+Gf4TOCGMIqlbZQzJFARqTYQ6G/0lhjTobHa4JnWnFOdqpdxMNwikYdQMMaKqqlT631bV6IV8Zp2GgiB+rXOpxANUIT5LdQsAFhrvGPUbjzI21PKBHxsxJxAPIWN/eDm2BffYGITm5wjDEmeWc0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mjSDBavr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44AE9J3K003598;
-	Fri, 10 May 2024 19:01:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=dluej5QdfgvNr84cn+9rIFxXbFP9hKdWdTu2yovfVGI=; b=mj
-	SDBavrHR23sEVboBySmujbxOj6skbEcbH0Ffw65fJy7tMPSyoQeus1BkA2NZLnzh
-	8MAKTq7bnq+ZCDPo48jiPhvv4j40Wn+BadHGcWs1ybKHqrBt76akbb7bpYVWez9u
-	CBmBLQCbq2uj+xM0Eaog555S/tcVrRkyt7ZsV6YxTiw0I6jF+8B1HoKgS0ikgTD8
-	pT3oXasU0UrOX0/iOvFBcNXEOaTkT/aC5lcFnN9hyru5HFjUrxd+whjLk/eKPCGl
-	rkpqfuIfjBPfPMce5u9LbfNaGB2DZE+SdQdcKkUd+5a+9CdnzpwEd5NSbe/E8bkQ
-	VEu0xl+4eN4nXDh0T1Rw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w12c70-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 19:01:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44AJ1OuA019306
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 19:01:24 GMT
-Received: from [10.110.100.57] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 10 May
- 2024 12:01:23 -0700
-Message-ID: <efaf1b74-824c-4039-9f6b-47c68c4e2a1d@quicinc.com>
-Date: Fri, 10 May 2024 12:01:22 -0700
+	s=arc-20240116; t=1715367715; c=relaxed/simple;
+	bh=OQ3cjp1YaVKAGDCN+Mm0n4QgaEEqNCP+eQ2CEyY2KCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EbeGDQ6/GO1WNWJi6JUpmJiS11OWXXBxPNO44XV0YrhxYdobMTG2+XLAU0BE6Xa37wbFeDXeWkBs5UM7GozWkEUYBrXS3TRDHXvk9ARj1jetLHrRX7yDq3nVN4MJ+LRyiHVwZL8dn/VWZGfMl6Hb1QpCa6iEyQs/2GMk0kPrCE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=TF7n/g/x; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1715367694; x=1715972494; i=wahrenst@gmx.net;
+	bh=r0K6LUzeSfFM3cfAryelCHAy7vdffcHD56EhNe6U6Fc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TF7n/g/xGCdXYQrjRdgg1eTRWR39nlDmazQkPk1hdgRMWid7k2VfJClTmTKFSpFI
+	 yXQk8do7L3xXOB9jfHZgSh3rNfmiBb2QUIXz07D4EgIDOwu9tOh18lPd/A2MuxWsJ
+	 YMaQOJIEIcmHCT40Se32E5DvR0NiHUGx+iDLoOm30OkFBMKSzn2D6U5skg6jzNwm8
+	 M3OOi/XxysQQn1/rKv7P8OrBxeaj7ia54nJk4lmxqWGkekShLgWojmX4jniVWToNG
+	 fSThpJfP6Q0k74GmU1/ojU1LqQHVS4cAdFJMqdKI07lEO0FqdOnCNFw3yNmMGxMbO
+	 3vNcghzvrCLniwezwQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N9MpS-1si3Ks12CC-016NY0; Fri, 10
+ May 2024 21:01:34 +0200
+Message-ID: <01a7a263-9de3-468c-b438-c16f2c73872c@gmx.net>
+Date: Fri, 10 May 2024 21:01:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,47 +57,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix apparmor_socket_post_create() kernel-doc
+Subject: Re: [PATCH v2 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
+ controller
+To: Andrea della Porta <andrea.porta@suse.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ulf Hansson
+ <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+References: <cover.1715332922.git.andrea.porta@suse.com>
+ <1f0c4fa62d6849753e2138cce5498693cfc3a230.1715332922.git.andrea.porta@suse.com>
 Content-Language: en-US
-To: John Johansen <john.johansen@canonical.com>,
-        Paul Moore
-	<paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
-	<serge@hallyn.com>
-CC: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240505-apparmor_socket_post_create-kdoc-v1-1-1fd88e546e92@quicinc.com>
- <00107f4f-9a14-43b0-8204-45978a487e33@canonical.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <00107f4f-9a14-43b0-8204-45978a487e33@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jNnYhDSs0YE9nY42R83t8jtrlZV5OFn_
-X-Proofpoint-ORIG-GUID: jNnYhDSs0YE9nY42R83t8jtrlZV5OFn_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_14,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 mlxlogscore=778 adultscore=0 suspectscore=0
- impostorscore=0 phishscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405100136
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <1f0c4fa62d6849753e2138cce5498693cfc3a230.1715332922.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VVVD62vh/QTwMPK7v84RK80zkzw/ZcaJNUYdmqwHzZHVl9s9ji7
+ A6OlGA+19sAZuEiEd4SpvmYckNwKP03ZuCStO5U2fmMXGMNG0QhIHa8ODlRHVqKW42CKh52
+ hgShO3qEqgNRUDdwrGsp19eQkjDX/dKou0BSoh/OYICHvGSTZHtwFRSFWy9uDwHoXctzhZS
+ Tf4QXtNR0A0J1q9eBZuHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JsqNtMBpAPQ=;WrE82vYxBS55rqDrrooFi6unvXR
+ EVZjm4eXXeBxDQYx9R/kFrTZkdcVoWDx3LwaJ8+dgJh1PA/nMCAYyTrNwGzu2SayDpTebyC/o
+ E4dZJwpzxA39NQ30/Kbty8XfqRPx/MbHe9NA9oS7GE/nMoGwkgaywx+I0Wk3LlU5/q/A10Nw6
+ Vc9MF9JIH7Ex4HKSUu+5yO5jh/aQHG8qfHZk/W4jd5YGmQZEfCbrx7ThibyboCJxQQqUVB+if
+ 4pN2vL2Z6ikCm5LfzIiAxWHz96zJny9wt9D13Q6jML2XjcnnUd6MTqZxTij00A1XGsYmS08LZ
+ A0wkiHUXb5Q1GMHKktqP44jiaHRwdsTRb65/IUlcCdNLVwK53r/OidANRNmPAZBEDEvbR2wP3
+ r2kHKPDsESbBlLZrOG+DmYRgZCPsBS9u5iBc25v2d7uAIAPn/P0CiBZQrG1OYHYkwuI4cK08E
+ sOt+4ZKREHJQeK+rU8up2x27RinAkzGGPOvpH/ZqEnCIRAZYHwYp/fvt6X1aWr2//wjRcfoBg
+ 66VsDiiuNj4/u2SlxGagz63VnWdowCJ/0qKIlEtCfdDhbSwGd3nHVAaE0/jIr9r4TzArXgjhi
+ d5MdH0T1epNqZmXBpmgsHBMPt0EgOgisuACFwDY1xUHwwT81HTrb8uuj6qWcEVNwxdACFPGr2
+ 2AH+Ll09Rq1fx4GcuVMAotUw3q5XoFivxljYUZmTzpF+FbJUPZteiu1FSXg0Zx/BRd5UjdUIS
+ ve5VJ5h4tmJ0Gg8QTctizR0n/gDczdj/inbtheAsIORhtjY9sTVIPgOQHDJT+yzjLMbUm/jnV
+ GKkOFK4DbZLk9a0y8qOHrkBN8IZM6I7OzutXowqQDOKfA=
 
-On 5/10/2024 8:58 AM, John Johansen wrote:
-> On 5/5/24 15:39, Jeff Johnson wrote:
->> make C=1 reports:
->>
->> security/apparmor/lsm.c:1138: warning: Function parameter or struct member 'protocol' not described in 'apparmor_socket_post_create'
->>
->> Fix this by correcting the misspelling of 'protocol'.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> Hey Jeff, thanks for the patch, unfortunately Christian Göttsche version of the patch came in before yours so that is the one I committed
+Hi Andrea,
 
-np, glad others are helping to clean up :)
+please drop E. Anholt from the recipients. AFAIK she is not interested
+in kernel development anymore.
+
+Am 10.05.24 um 16:35 schrieb Andrea della Porta:
+> The BCM2712 has an SDHCI capable host interface similar to the one found
+> in other STB chipsets. Add the relevant compatible string and relative
+> example.
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>   .../bindings/mmc/brcm,sdhci-brcmstb.yaml      | 23 +++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.ya=
+ml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> index cbd3d6c6c77f..404b75fa7adb 100644
+> --- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
+> @@ -13,6 +13,10 @@ maintainers:
+>   properties:
+>     compatible:
+>       oneOf:
+> +      - items:
+> +          - enum:
+> +              - brcm,bcm2712-sdhci
+> +          - const: brcm,sdhci-brcmstb
+>         - items:
+>             - enum:
+>                 - brcm,bcm7216-sdhci
+> @@ -114,3 +118,22 @@ examples:
+>         clocks =3D <&scmi_clk 245>;
+>         clock-names =3D "sw_sdio";
+>       };
+> +
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    soc {
+> +      #address-cells =3D <2>;
+> +      #size-cells =3D <2>;
+Would be nice to have a short explanation in the commit message why this
+is necessary.
+> +
+> +      mmc@1000fff000 {
+> +        compatible =3D "brcm,bcm2712-sdhci",
+> +                     "brcm,sdhci-brcmstb";
+> +        reg =3D <0x10 0x00fff000  0x0 0x260>,
+> +              <0x10 0x00fff400  0x0 0x200>;
+> +        reg-names =3D "host", "cfg";
+> +        mmc-ddr-3_3v;
+> +        interrupts =3D <GIC_SPI 0x111 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks =3D <&clk_emmc2>;
+> +        clock-names =3D "sw_sdio";
+> +      };
+> +    };
+
 
