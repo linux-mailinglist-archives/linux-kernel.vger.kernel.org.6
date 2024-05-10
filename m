@@ -1,103 +1,97 @@
-Return-Path: <linux-kernel+bounces-175620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572E08C22B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:05:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F028C22CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB6841F226B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:05:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50041C20A80
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DC216D9A1;
-	Fri, 10 May 2024 11:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7542D16D4F5;
+	Fri, 10 May 2024 11:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="OUZSqGm1"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rdkrKKj5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D31E150992;
-	Fri, 10 May 2024 11:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66F1168AFC;
+	Fri, 10 May 2024 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715339114; cv=none; b=jYutWZKMr1o9U5W72EO97rCArGWGW88eKNPwDpgcA8FJrgswlPQ/mI+OBT0WHN1hLUGmvvrvdcM6pMqTmEDX9aBtILU5R3EbU/GPlqJC4D6EXzEdfmFU1TcXdjwxe+EFyPPRfmS/1AtOCcT4Xkb2EsqpjJ61aFsRWBYEfZxSdzI=
+	t=1715339291; cv=none; b=ElDDcE5OPVipbjLK0V4wWLjF4+7SAUbx7MJJtqpCXemqaitQEEts+QUl58vHTIo9/uwpisUJCEb95q5ENpK8wUEdtdalgKXE3St8ZkVkCzQnIhrORmEGUMDRP0aWHa81BTpvaDv0sbaHYo/HqtcI8mhEo/lnOfMXl7FNU92Y6cM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715339114; c=relaxed/simple;
-	bh=tydwP5A3OPrgNyBAKfKX/KIV43KM+TOnhyDYU5r2RY8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NWtJU/0nyB9MJGmOQOIE3Edyi+xEttY0FvH12e3kwzRlRD9AVjwvRxk99JQzDEUB+BCCa6mpgRRdA5MNTJngm6HEVHKX6gK7WuUVGoI9qqgKzwboQlIlP0Q8BwLti8KIN3bXIl58UXvM1hwPSAzaisfLAuDqKrprqZ3mWAM+ezw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=OUZSqGm1; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 2CF7B1FE20;
-	Fri, 10 May 2024 13:05:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1715339102;
-	bh=n+vro3UQ/j2LdI39fnWzlmxREsNKNpHEcj7IkmRy0HE=; h=From:To:Subject;
-	b=OUZSqGm1rDswBuxd9yZuLD302EQO6bkAO6NinsrDgIB+xrBCHmi+N/xq6FtbCJmU0
-	 VHMIySZQKQ0LjWRrsqL1rO20m/cu6cVRFzTYZJ2rCQUP/c+J7F43ZR4CGxpMKQNs5f
-	 PJThnA2ywtyi7HCnjUpGXAt4FcvlQt2588X5jIGrus+8L+Q8iDP+D+u3IEixT3ti3p
-	 YZ3+TqiZQGlzo/uOfKJsxRjbxdDTeRi+2mlmrKIzL9GaxJOJW0Mvf9hRKMgaXj9zYN
-	 t4qCAjedETI2sfpVAewmxl4eeu10TOEhxlpumTGacNxu4qVbbWO0t+YNxQ5o69qYV9
-	 vpPoP6bWVkR/A==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Kalle Valo <kvalo@kernel.org>
-Cc: Rafael Beims <rafael.beims@toradex.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tsung-hsien.hsieh@nxp.com,
-	David Lin <yu-hao.lin@nxp.com>,
-	stable@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v1] wifi: mwifiex: Fix interface type change
-Date: Fri, 10 May 2024 13:04:58 +0200
-Message-Id: <20240510110458.15475-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715339291; c=relaxed/simple;
+	bh=nTYzwj9OJhLpPWNwd1rM8BE28Cl7Xim0OJwuJpc4oL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GV2f/Xtpj5F+58fmWQDSpQ3tiI3B/qyd7fuhd98XjyJQmW0G/Q65SW+rTeWgHmDcKR/vqaet/sKBXb5xKx+MaCifhknAivqoBzRSb+LY+SHZInb7Nf3RQU7iEAqZ6x6yan0pvtnydzpznMZy1IDmrqBvFl9Oi4+fTZdwSj52FMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rdkrKKj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 586C1C113CC;
+	Fri, 10 May 2024 11:08:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715339291;
+	bh=nTYzwj9OJhLpPWNwd1rM8BE28Cl7Xim0OJwuJpc4oL4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rdkrKKj5V1plyHEh5n0v/T/6PQHCh7jpc7PQReZcJDFOnRV/0PG5dhIthtVkIPp4x
+	 xCQrbViosHrnZWSkjItw2qHT/30DtGRKhrJGjvCGdcx4UnfxHLJS3QsnaH6jwCozEh
+	 GiBrkMq/hL2IZ1HfM53/vo8zOBeFmVxI/eAqzVqwVQ7c53STCz2yLG92VAMNR5DFtA
+	 laoka9EWxJ4pLRmsUkf6cYtW76bGiSYF0IEvhwxYPqrAmYlW7WXZSooJglp0zQjUGd
+	 7Y+epPS6XrhKJNkN8T6bKeLVIdEUgduurJ5Jw40QyhBcHhWi9xdPK9JEfaw7vh3rz9
+	 WSsEDfouYLHeQ==
+Date: Fri, 10 May 2024 13:08:06 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa@kernel.org>
+Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Sai Pavan Boddu <sai.pavan.boddu@amd.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Andi Shyti <andi.shyti@kernel.org>
+Subject: [GIT PULL] i2c-host-fixes for v6.9-rc8
+Message-ID: <pb7vi7igdvqo6jlyjrd2lhfgbrz2kx5nmmw36vcdy64ndwbs3r@e675jdrgq3lj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Rafael Beims <rafael.beims@toradex.com>
+Hi Wolfram,
 
-When changing the interface type we also need to update the bss_num, the
-driver private data is searched based on a unique (bss_type, bss_num)
-tuple, therefore every time bss_type changes, bss_num must also change.
+after a few weeks, we received to patches marked as fixes from
+Christophe and Sai Pavan.
 
-This fixes for example an issue in which, after the mode changed, a
-wireless scan on the changed interface would not finish, leading to
-repeated -EBUSY messages to userspace when other scan requests were
-sent.
+Thanks,
+Andi
 
-Fixes: c606008b7062 ("mwifiex: Properly initialize private structure on interface type changes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Rafael Beims <rafael.beims@toradex.com>
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- drivers/net/wireless/marvell/mwifiex/cfg80211.c | 2 ++
- 1 file changed, 2 insertions(+)
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-index b909a7665e9c..155eb0fab12a 100644
---- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-+++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
-@@ -926,6 +926,8 @@ mwifiex_init_new_priv_params(struct mwifiex_private *priv,
- 		return -EOPNOTSUPP;
- 	}
- 
-+	priv->bss_num = mwifiex_get_unused_bss_num(adapter, priv->bss_type);
-+
- 	spin_lock_irqsave(&adapter->main_proc_lock, flags);
- 	adapter->main_locked = false;
- 	spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
--- 
-2.39.2
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.8-rc8
+
+for you to fetch changes up to 55750148e5595bb85605e8fbb40b2759c2c4c2d7:
+
+  i2c: synquacer: Fix an error handling path in synquacer_i2c_probe() (2024-05-06 10:58:04 +0200)
+
+----------------------------------------------------------------
+This tag includes two fixes. The first one, in the Cadence driver
+seen in Qemu, prevents unintentional FIFO clearing at the
+beginning of a transaction. The second fix, in the SynQuacer,
+ensures proper error handling during clock get, prepare, and
+enable operations by using the devm_clk_get_enabled() helper.
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
+
+Sai Pavan Boddu (1):
+      i2c: cadence: Avoid fifo clear after start
+
+ drivers/i2c/busses/i2c-cadence.c   |  1 +
+ drivers/i2c/busses/i2c-synquacer.c | 20 +++++++-------------
+ 2 files changed, 8 insertions(+), 13 deletions(-)
 
