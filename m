@@ -1,61 +1,73 @@
-Return-Path: <linux-kernel+bounces-176112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DC28C2A0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:43:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB8058C29F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02461B24123
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F161F23A45
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039AB4436C;
-	Fri, 10 May 2024 18:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382D43FB87;
+	Fri, 10 May 2024 18:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="CJy1hrkt"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z4M+5nsV"
+Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FC345012;
-	Fri, 10 May 2024 18:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71B71BDC8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 18:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715366594; cv=none; b=qiiUeuWJktCzFUsrlXi8b6jAeCSenRUsASbuLkWa0CEbPLaA9yO6++zyUs1tnJRXW2uqFq1m/SHWaqTTX1e8rRcIHCQcbNDbrKsiK+dLuD6BSSEp0jZSG+1XCWYl4rai7LEeWfGeKvJhxnMOxKbGNSq6u0KpwvsqkmPM/GYPWEM=
+	t=1715366004; cv=none; b=UoIwt93syQaNIuV4NDnC/YOM8IT2O3l9dtj8tg1/zBAdjo7e9oC8Re8lOrDQaAA5GRJRFMUPyUvS+gqvEt2jZy2YXpvOVEHUgUdlQ/t0LaB11DazfkfGgVzS82Tel9fhAWgmAT20Q6HSJP6BqUAf1zHoQdmPkfTyvHVadF6YSV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715366594; c=relaxed/simple;
-	bh=HgF/3Xa5VSNjvU/9axvTODFvHXS3OxmrPA3wQpo+6SY=;
+	s=arc-20240116; t=1715366004; c=relaxed/simple;
+	bh=5V6NaaZJsb3ycOSB/8E9nepCSSYaU/wkp8KeojjJGqE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwS1hvQQsW3nlUhKYcyfKfPKOH9UYfUwwLsPC4cJ/La/5HnxYYAJyZf5qHTERL9taKz6TvopgYC2iikMD9rTmJHgr+fNui2jjN6ZmiQXGdQTk0s9Z07+k6we7PKw09Q3Ift4ZenX4ejN8tHON1ioO+eGv5u5uLDC7fEGE6Wzbt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=CJy1hrkt; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 8AD098286B62;
-	Fri, 10 May 2024 13:33:16 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 6_lArAH4eB26; Fri, 10 May 2024 13:33:15 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id BE7B9828545C;
-	Fri, 10 May 2024 13:33:15 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com BE7B9828545C
+	 In-Reply-To:Content-Type; b=c9Mv0AxqZ0xYtMGzRktLM6WsAz0zqYcyijkx4jbiAGNnpwC9ECztaGoflcluIHb3+cDuC0WsRhGQDRaDzAPjrgRiwbo2zUWiltn8gHua15NtZS8uiXEPEGSSOfeh9qNCideRoeTVh3ZTmZvF9YJeuTBOm2+FcCHotmkppqrdMc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z4M+5nsV; arc=none smtp.client-ip=209.85.221.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-34da84cb755so1714775f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1715365995; bh=/XIFIR9y/2aocYtN3V2XjaxnPUosdNnwRa6IYBoAXzA=;
-	h=Message-ID:Date:MIME-Version:To:From;
-	b=CJy1hrktEB9x2OiZs64ig8A6vj/hAO/TrVpn4xyLbZrYt1jiF5E6+9uKZ8lcnwXhs
-	 UTYcm1KtnLbVMzjSISe55+IxF/BbadMrJ3848lhIIXnj9P2J3ZR3iypriRFHaJsL0I
-	 MYgsa2Nqe9lxgudeG0G8f12VdNsjaUYb2e4/U6/w=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DW4fhZglJ2dW; Fri, 10 May 2024 13:33:15 -0500 (CDT)
-Received: from [10.11.0.2] (5.edge.rptsys.com [23.155.224.38])
-	by mail.rptsys.com (Postfix) with ESMTPSA id CCE2E82853A8;
-	Fri, 10 May 2024 13:33:14 -0500 (CDT)
-Message-ID: <202e8af6-8073-4d87-a38f-746644bb338d@raptorengineering.com>
-Date: Fri, 10 May 2024 13:33:13 -0500
+        d=linaro.org; s=google; t=1715366001; x=1715970801; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D6cf5OkTy8/ggWCcTx4t2j3ZHoM3l7oNZ1OwIDi3O6A=;
+        b=z4M+5nsV5hwX2MV34LO35CfbkZsVBzsz3rtzaoBk8rOXJsQuOwVU5f5i+3HN8B66kb
+         zY/ZK8iMd73HTFoLH33h9T3VqZjmYRyKt9tF1qetyA2DObj4ZjXBLkmK6Si6rT/iRcuq
+         jKDVIWoL9b1XSgcO2kRkS0aR0/95epIJ+lPNvWMH8o2Euk4P03F93qIm3cKfzLfAMKPR
+         GmUAHNPvNRh5fusf+aKUYcOamr9X76cHm+geaAsS5YvI3gZU5sfH95UzEWfR/0zpHNwv
+         qgB6/qOlqwnpCi0Fn+4pzWX2zi0xT3tJD2Ib0Uf55GzIz3SUlpjNU2ZHCCoMJHBEEQUG
+         bLQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715366001; x=1715970801;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D6cf5OkTy8/ggWCcTx4t2j3ZHoM3l7oNZ1OwIDi3O6A=;
+        b=MXnlhZQujEy4jLBMaAMHQhQDpmmdezWzMz+pljeJG7QTJrsmu9sznUAilxZY0ZC5cz
+         36lUwudk2LtZ0FnWTppysGgfoqktB0S2Dj1uwVCBz+MqaoTWn6w0qZcsGgu/ThJJylnH
+         uYRYw0IiDZd8/fL5Fm9aQmHNrdQF8nCLAWVrfLqExSPS/ip4XkL4oPMqxeWek48w6x3e
+         KQGh4yhML63gjiz5clJLl/wyUdd65BbjH7L2xosl8RDfO2hGKxZA3PWm6yMoOt5mVX+v
+         /NjqKpZeBHdSrGZmTrru7n9+WrtmCew3oLkrkqFWMOObjqxjonuR/XFPTZkjh3fBbskS
+         UJYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyvUmWV1QLsU5sAv8QI7qGzHkp4QDME5vU++TWtbSnShRV3DQBMZ72X+3nJIDuXLhc1eT+7bo7c56cAtWdCOSic3f27+ddquW+yWQD
+X-Gm-Message-State: AOJu0YzVpdG1Lydvzxzk3wuW4jj1d3z0OocE4zKl4jjKzparhBtpniB2
+	R2E300ia1WvQSV6TDvMgk94OedDjUkkntLT1gL2qpVnIH17szpnSlGiH3UbSgPw=
+X-Google-Smtp-Source: AGHT+IElm2yB4cFYhA7Skzvf7EK7GSKMnjRoxe9T7mRmzwxlYpR9kULlphxmoxxXVATBTGiQuX7M1Q==
+X-Received: by 2002:a5d:554f:0:b0:34d:7a12:454b with SMTP id ffacd0b85a97d-3504a737a2amr2218343f8f.39.1715366001247;
+        Fri, 10 May 2024 11:33:21 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacef2sm5237210f8f.85.2024.05.10.11.33.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 11:33:20 -0700 (PDT)
+Message-ID: <badf2bae-450a-4902-bdd7-651cf3f27725@linaro.org>
+Date: Fri, 10 May 2024 19:33:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,60 +75,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 0/6] powerpc: pSeries: vfio: iommu: Re-enable
- support for SPAPR TCE VFIO
-To: Jason Gunthorpe <jgg@ziepe.ca>, Shivaprasad G Bhat <sbhat@linux.ibm.com>
-Cc: kvm@vger.kernel.org, aik@ozlabs.ru, linux-kernel@vger.kernel.org,
- oohall@gmail.com, ruscur@russell.cc, brking@linux.vnet.ibm.com,
- robh@kernel.org, svaidy@linux.ibm.com, aneesh.kumar@kernel.org,
- joel@jms.id.au, naveen.n.rao@linux.ibm.com, msuchanek@suse.de,
- jroedel@suse.de, gbatra@linux.vnet.ibm.com, npiggin@gmail.com,
- alex.williamson@redhat.com, mahesh@linux.ibm.com,
- tpearson@raptorengineering.com, Alexey Kardashevskiy <aik@amd.com>,
- vaibhav@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
-References: <171450753489.10851.3056035705169121613.stgit@linux.ibm.com>
- <20240501140942.GA1723318@ziepe.ca>
- <703f15b0-d895-4518-9886-0827a6c4e769@amd.com>
- <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
- <20240506174357.GF901876@ziepe.ca>
+Subject: Re: [PATCH v3 0/8] Move camss version related defs in to resources
+To: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, andersson@kernel.org, konrad.dybcio@linaro.org,
+ mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+ hverkuil-cisco@xs4all.nl, quic_hariramp@quicinc.com
+References: <20240411124543.199-1-quic_grosikop@quicinc.com>
 Content-Language: en-US
-From: Shawn Anastasio <sanastasio@raptorengineering.com>
-In-Reply-To: <20240506174357.GF901876@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240411124543.199-1-quic_grosikop@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/6/24 12:43 PM, Jason Gunthorpe wrote:
-> On Sat, May 04, 2024 at 12:33:53AM +0530, Shivaprasad G Bhat wrote:
->> We have legacy workloads using VFIO in userspace/kvm guests running
->> on downstream distro kernels. We want these workloads to be able to
->> continue running on our arch.
-> 
-> It has been broken since 2018, I don't find this reasoning entirely
-> reasonable :\
->
+On 11/04/2024 13:45, Gjorgji Rosikopulos wrote:
 
-Raptor is currently working on an automated test runner setup to
-exercise the VFIO subsystem on PowerNV and (to a lesser extent) pSeries,
-so breakages like this going forward will hopefully be caught much more
-quickly.
+> Changes in V3:
+> - Incorporate missing changes in resources reported and fixed by
+>    Bryan O'Donoghue <bryan.odonoghue@linaro.org> taken from the branch:
+>    https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/sc8280xp-6.9-rc1-camss-resource-change-verification?ref_type=heads
+> - Added missing signed-off to the changes submitted by me.
+Took a little while to verify this series on the four reference 
+platforms on a reasonable base of -next or -stable.
 
->> I firmly believe the refactoring in this patch series is a step in
->> that direction.
-> 
-> But fine, as long as we are going to fix it. PPC really needs this to
-> be resolved to keep working.
->
+Here's the reference branch:
 
-Agreed. Modernizing/de-cluttering PPC's IOMMU code in general is another
-task that we're working towards. As mentioned previously on the list,
-we're working towards a more standard IOMMU driver for PPC that can be
-used with dma_iommu, which I think will be a good step towards cleaning
-this up. Initially PowerNV is going to be our target, but to the extent
-that it is possible and useful, pSeries support could be brought in
-later.
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/linux-stable-24-05-10--x13s-mmsol-integration-in-test-imx577-fix-rb3-gen1-debug?ref_type=heads
 
-> Jason
+@Hans I'd be grateful if you can pull Gjorgji's series in at your 
+earliest convenience.
 
-Thanks,
-Shawn
+---
+bod
 
