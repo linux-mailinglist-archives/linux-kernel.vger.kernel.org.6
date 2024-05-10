@@ -1,178 +1,195 @@
-Return-Path: <linux-kernel+bounces-175575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07118C21B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:10:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8068C21BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A931F23D89
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:10:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E609D1F23DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BBD16D4C6;
-	Fri, 10 May 2024 10:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FCB16D324;
+	Fri, 10 May 2024 10:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VTMzpcLz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="aLBC1eT2"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929D3160877;
-	Fri, 10 May 2024 10:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D32168AE2
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335754; cv=none; b=ebxJinoNaFh6Kgff8oEVdp/qhg+wNoUxa84X3qIFSC82reTlWYUk9VgtR5h1uqjTMb65hz6UkBpLN60jMNrc+TGcVbjJpJfEd9NMB+oxi1E+ByU45IGlv8C4K3fDc7CtBpl2V+JxeJY2w19ek6r/zO4anibBVQ7idlRpKwTvULk=
+	t=1715335766; cv=none; b=AvXORrHYDNxPzehnIjBx3MCW3744jOEk1J7RYqtwCe1FKLmFa3Syn1n+UAX+oJZwxp0ihSe1DNkQ/VJ3C/bCyvVPp3L21fYwybGDy6hYY8/9fNtf6+vZ4Gx3sT7/wd/4yisNZQ8722MOYTBeg2zeUUKw5tjB4+Gh08wIAAALJ5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335754; c=relaxed/simple;
-	bh=AUpf3wieelOW4Oybfw7FBJbRDJexa7/gEyn5W+WWBrE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A7eOYW/Y2zYyp8gsEO4SPT2/LNlCYlFF6BoCCcX4fqxhgiHTpkzO0m2U+cEEkojFSWhul+6OVloyzOautWeDCkw0sv37g6RXbjRmxTikMpfV2NGm8epZCDbCXIv+qCD2HOt32FvJqv5j/CyAUG3ANEbJ5LR/iPgU8U3A/WlFd94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VTMzpcLz; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715335752; x=1746871752;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=AUpf3wieelOW4Oybfw7FBJbRDJexa7/gEyn5W+WWBrE=;
-  b=VTMzpcLzbpLlxxYuTWlTe3i4DfCTpqJ4xvAYk+az369lA450D+4+HIxM
-   O3U2yyhVRLIUzCLIPYdTKPbFOAMYQ8M1qbbX0EC0jP/rFeYt0DfolD8Bg
-   SI5sdQv61Vr/o5PQsfXaacM01Vh1d4CM/ZFsZe+rZtnCbfvqpeO5XpLE5
-   j+pWzYfBnMWs9A9xU8/ab7g6JRPsu36jx4pyvXZbeglehuzkIXgDARuzO
-   ATQFMI6LGEnWTRPr05g/dGBX5gPXnc5lGidSLOTuPaX43KfefNj6vz9Fj
-   tFYH0ow7cBgTxzV/gUJtaP7Bvj2iEBTJjLfv+i7PD4OEtMWBk9aEjCv9R
-   Q==;
-X-CSE-ConnectionGUID: hKXuJ10rRoiO4oJjsyXlDQ==
-X-CSE-MsgGUID: do01SDn2SmGMBwPFYym54A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="14259547"
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="14259547"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 03:09:12 -0700
-X-CSE-ConnectionGUID: fR+NzAfiSZibUFAxHTQi6g==
-X-CSE-MsgGUID: CcL5EJ/iRV2+oDSx5Mhp+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="34087516"
-Received: from ettammin-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.180])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 03:09:07 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jonathan Corbet
- <corbet@lwn.net>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada
- <masahiroy@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH] docs: document python version used for compilation
-In-Reply-To: <20240510102036.3ea40b37@sal.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
- <878r0ijdh5.fsf@intel.com> <20240510102036.3ea40b37@sal.lan>
-Date: Fri, 10 May 2024 13:09:04 +0300
-Message-ID: <87o79ehtbz.fsf@intel.com>
+	s=arc-20240116; t=1715335766; c=relaxed/simple;
+	bh=zDhfa47N/P77GAGDKEYJOkBZbcpC4MiLu1UflRoPcVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uWfxlt/dHpuw1y85dvVbBsdYEXzUG31+0fezKAdPZqDiFQ1v1Maseifj6+2hEVKLOudpdGIjFWyNeAcT48Ec8sYOdLW0WnYv2lBd5ovIoNxx847xhXCoeLJ6JFY/TR8ea/MCsrqNmbfBtNsekoy2RiHjvsSY28YelDp5FCfPb1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=aLBC1eT2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715335762;
+	bh=zDhfa47N/P77GAGDKEYJOkBZbcpC4MiLu1UflRoPcVY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aLBC1eT2R2dCqcM7+JHgnygWVN3zXRbup1PZw4+H4WZFP2gLlgg52G7fr5GTPYBbx
+	 V40TPp85Db6ALfgjx7CC+OUUtfJZLGErdoZ1GSTV9ZHDfRxK39VehOxAH/me6URBiG
+	 YznTW9cH7Zoggwav0qrtBhLfuN/Ud+XwY4Te/tEZO2wUNj57S+iMtdjsoZ+YkhQ5xN
+	 SWRByM1ofUgHo6dT5UI4zjzfa7/WN6gg4JKzreWu37FcxUPt0iUnrQCcmzXZUhs9+/
+	 Es3N6PakVVcePdDYKeN2zm2fWGthULnr8h8X7ttYz5tOVia5EnMGNbXZuRu88UQw+M
+	 Ljtm9G0NnqYDQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C8E9E3782185;
+	Fri, 10 May 2024 10:09:21 +0000 (UTC)
+Message-ID: <f72b241f-11ab-4165-af51-14413d4e9f7a@collabora.com>
+Date: Fri, 10 May 2024 12:09:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] Fix get efuse issue for MT8188 DPTX
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ matthias.bgg@gmail.com, jitao.shi@mediatek.com, mac.shen@mediatek.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240510061716.31103-1-liankun.yang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240510061716.31103-1-liankun.yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 10 May 2024, Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
-> Em Fri, 10 May 2024 11:08:38 +0300
-> Jani Nikula <jani.nikula@intel.com> escreveu:
->
->> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrot=
-e:
->> > The drm/msm driver had adopted using Python3 script to generate regist=
-er
->> > header files instead of shipping pre-generated header files. Document
->> > the minimal Python version supported by the script.
->> >
->> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> > ---
->> >  Documentation/process/changes.rst | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->> > diff --git a/Documentation/process/changes.rst b/Documentation/process=
-/changes.rst
->> > index 5685d7bfe4d0..8d225a9f65a2 100644
->> > --- a/Documentation/process/changes.rst
->> > +++ b/Documentation/process/changes.rst
->> > @@ -63,6 +63,7 @@ cpio                   any              cpio --versi=
-on
->> >  GNU tar                1.28             tar --version
->> >  gtags (optional)       6.6.5            gtags --version
->> >  mkimage (optional)     2017.01          mkimage --version
->> > +Python (optional)      3.5.x            python3 --version=20=20
->>=20
->> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the point in
->> using anything older than the oldest supported version of Python,
->> i.e. 3.8 at this time?
->
-> What's the point of breaking compilation with on older distros?
-> The idea of minimal versions here is to specify the absolute minimum
-> version that it is required for the build to happen. If 3.5 is
-> the minimal one, then be it.
+Il 10/05/24 08:16, Liankun Yang ha scritto:
+> Fix get efuse issue for MT8188 DPTX.
+> 
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
 
-AFAICT 3.5 was an arbitrary rather than a deliberate choice. We should
-at least be aware *why* we'd be sticking to old versions.
+I may agree with this commit, but:
+1. The commit title is incorrect - I don't see "drm/mediatek:" - please look at
+    the history to find out the right titles for your commits; and
+2. The commit description isn't describing anything, you're just repeating the
+    title: please add a description. What was wrong? What did you fix precisely?
+3. There's no Fixes tag. Please add the relevant one.
 
-Minimum versions here also means sticking to features available in said
-versions, for Python just as well as for GCC or any other tool. That's
-not zero cost.
+Regards,
+Angelo
 
-I guess there are two angles here too. The absolute minimum version
-currently required, and the, uh, maximum the minimum version can be
-safely bumped to. Say, you want to use a feature not available in the
-current minimum, how far up can you bump the version to?
+> ---
+>   drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
+>   1 file changed, 84 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+> index 2136a596efa1..32b36b63a4e1 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -145,6 +145,89 @@ struct mtk_dp_data {
+>   	u16 audio_m_div2_bit;
+>   };
+>   
+> +static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
+> +	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+> +		.idx = 0,
+> +		.shift = 10,
+> +		.mask = 0x1f,
+> +		.min_val = 1,
+> +		.max_val = 0x1e,
+> +		.default_val = 0xf,
+> +	},
+> +	[MTK_DP_CAL_CLKTX_IMPSE] = {
+> +		.idx = 0,
+> +		.shift = 15,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
+> +		.idx = 1,
+> +		.shift = 0,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
+> +		.idx = 1,
+> +		.shift = 8,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
+> +		.idx = 1,
+> +		.shift = 16,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
+> +		.idx = 1,
+> +		.shift = 24,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
+> +		.idx = 1,
+> +		.shift = 4,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
+> +		.idx = 1,
+> +		.shift = 12,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
+> +		.idx = 1,
+> +		.shift = 20,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
+> +		.idx = 1,
+> +		.shift = 28,
+> +		.mask = 0xf,
+> +		.min_val = 1,
+> +		.max_val = 0xe,
+> +		.default_val = 0x8,
+> +	},
+> +};
+> +
+>   static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
+>   	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+>   		.idx = 3,
+> @@ -2758,7 +2841,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
+>   static const struct mtk_dp_data mt8188_dp_data = {
+>   	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
+>   	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
+> -	.efuse_fmt = mt8195_dp_efuse_fmt,
+> +	.efuse_fmt = mt8188_dp_efuse_fmt,
+>   	.audio_supported = true,
+>   	.audio_pkt_in_hblank_area = true,
+>   	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
 
-Could we define and document the criteria (e.g. based on distros as you
-suggest below) so we don't have to repeat the discussion?
-
-
-BR,
-Jani.
-
->
-> -
->
-> Now, a criteria is needed to raise the minimal version. IMO, the
-> minimal version shall be at least the minimal one present on most
-> used LTS distros that are not EOL.
->
-> I would look for at least 4 such distros:
->
-> - Debian
->
->   Looking at https://wiki.debian.org/LTS, Debian 10 EOL will be on
->   June, 2024.
->
->   Looking at:
->
-> 	https://distrowatch.com/table.php?distribution=3Ddebian
->
->   Debian 10 uses python 3.7.3.
->
-> - Looking at Distrowatch for openSUSE Leap 15.5, it uses Python
->   3.6.15 and has an EOL schedule for Dec, 2024.
->
-> - RHEL 8.9 uses a bigger version than those two - 3.11.5 - again
->   looking at Distrowatch to check it.
->
-> - SLES 15 SP4 and above uses Python 3.11, according with:
->   https://www.suse.com/c/python-3-11-stack-for-suse-linux-enterprise-15/
->
-> From the above, IMO kernel shall support building with Python 3.6=20
-> at least until the end of this year.
->
-> Regards,
-> Mauro
-
---=20
-Jani Nikula, Intel
 
