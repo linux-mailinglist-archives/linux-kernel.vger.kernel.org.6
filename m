@@ -1,81 +1,59 @@
-Return-Path: <linux-kernel+bounces-175962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306F08C27F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:37:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20FE8C27FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6101286E3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:37:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2560B1F211E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D422171E7C;
-	Fri, 10 May 2024 15:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6DF171663;
+	Fri, 10 May 2024 15:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LAtPk/Ly"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4m+dHD8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEAD17166A;
-	Fri, 10 May 2024 15:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349A712AAD5;
+	Fri, 10 May 2024 15:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355403; cv=none; b=AGYOezCVb5qP2IHdsl+/JEvrDvQO8FQlnLURaptRk62zi3m6ay5ps3b9rn6ZeDwTzOHWdsaPcZ5xH43UbZmPRDQvLd8xfk72U9rWP26rTwe0iR8AJZLAlva6u3wtaQiYrjLlGi3WHP4oMSFXstbcRJ3yE1wKqX88KhBWKGYFbVE=
+	t=1715355532; cv=none; b=d2LHLFulcYY5syXnpEh5omOwXpu1EsdRNHtXE1ho9PzMwjYNmsODRIT4Vz76VAD8X4AXBitfUSfd7qbo/ihT45RtoM5ifTqg0f2WJY4e5ay7i9W28aXHBEOBRMC6ZpM2ZMNo4f+fWFsrCnXumWE9WN7f6qIfilqBgB5U4c0DPGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355403; c=relaxed/simple;
-	bh=ydiicGiKxdyumvATfb+liZuLZxRPWy6h/PLVbPk+dlc=;
+	s=arc-20240116; t=1715355532; c=relaxed/simple;
+	bh=5i/Kwz7QCD09ox7fq0+nK+iuNVgav4u7fr/M1k9fkGQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZK8aES6/axYudfwbMl1i8si7NHC4ayVe0jbqxWLmP4hdfzhPwI+wpybpeoykcYZ3plVK1n0f0TMk3Bn+Rz43QdrH+dV93YGAdRk34nSc1oWQ4HWcPcEVqWEmWvIKE/i8pdzGDoGU0DKxfm0jXnPLTZndtQ5fr6ap5d68ySVsiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LAtPk/Ly; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715355402; x=1746891402;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ydiicGiKxdyumvATfb+liZuLZxRPWy6h/PLVbPk+dlc=;
-  b=LAtPk/LyQZShLvbcoLxYrNOsrNjH14VK6dUwr6/bCp0SH7eQtDi6tid0
-   PmRp7vudnW+4ogEcg9SfPEktQlSlYrbqTGnJSCpza3Z90kqYONmfmMuJx
-   hK0qN0gf6gayHBdq2s2QrKRbvV1d3H+ZtwU8AG1BeLOPnOH2Yy4I9hm0u
-   hl+B2SUcZNEUJMKA29rFHxx+Uv3gn7EUL7AYqJg1hdUmKEKSCZqf2ip0E
-   ThOiwBuE4pbq67K8+kLEe6kuAGcwKRkrrWRuv/PPZhR7ZlxTZs5p5OdzU
-   SPOr8+XsRwavQUoJ2Jeto6g6ESYioh5NvC3dgScpdHmdKHAgfA+6ryHWH
-   w==;
-X-CSE-ConnectionGUID: 5djRvdnUQ4mv5k0mh1kurw==
-X-CSE-MsgGUID: 0QfRFT9+Rvmnl2BD0qL2dQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="22493693"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="22493693"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:36:42 -0700
-X-CSE-ConnectionGUID: PnTLVcqWTgKz+1FNNtnZtA==
-X-CSE-MsgGUID: y3pQmouDRhS5nTk+mWLFug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="30032098"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:36:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5SIW-000000069FG-1ESn;
-	Fri, 10 May 2024 18:36:36 +0300
-Date: Fri, 10 May 2024 18:36:36 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bingbu Cao <bingbu.cao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] media: ipu-bridge: fix error code in ipu_bridge_init()
-Message-ID: <Zj4_BBsUYuAeiOpr@smile.fi.intel.com>
-References: <71dad56e-0e2f-48ba-90bc-75096112a1ba@moroto.mountain>
- <Zj46vpwTbfde4YX2@smile.fi.intel.com>
- <4ade89f8-cbd3-4dbf-81fb-0e9a4269dc0f@moroto.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GxGmZD23AV1JyLA79iMoTbxcCeA24xMYACTY7j3hb0HgqV+ViLhkjlX95AB0AllBnuedaLrGE5i4kdO+O4EsExNE08b1CgHaQcnsWATp/VAmhatkw3nr+QGstLd5WJ44LaTX9gGEhbjKmztv17JkVrw8dbRnQoGLZENcC5EONms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4m+dHD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81117C113CC;
+	Fri, 10 May 2024 15:38:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715355531;
+	bh=5i/Kwz7QCD09ox7fq0+nK+iuNVgav4u7fr/M1k9fkGQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s4m+dHD8MracwXhQxc+HGvMM7x1N6E+yIVYj0BVRNfpR4cYP8M2xhklBBxbbTOam+
+	 o1s1UzSaLNLahxTkZo3hGkAw/9i5mz4OE1qRquZm1qsFeIcdIAswRHAF/oKVTy1U/s
+	 7xOhUSBjoOsn1zmsLJXq1/sK6yj29qTMzs71rBixyPYwB02YqA0aOsHREhwwjpuThP
+	 DnSAxMb59p3CCP5XT8z2GtK8xQotVUCqE4Zx+53dizwzQzrjqX5L3NI9vDjz5haYNn
+	 36Atqs8xCY1wAoZBYSgLWCJ7ZppgmbycjLkcmfBrk5t5H16ktF5b1yUaFa8nO/Nj3J
+	 0j2p6WNko87ZA==
+Date: Fri, 10 May 2024 10:38:49 -0500
+From: Rob Herring <robh@kernel.org>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: conor@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, frank.li@nxp.com,
+	conor+dt@kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+	imx@lists.linux.dev
+Subject: Re: [PATCH v4 2/3] dt-bindings: phy: Add i.MX8Q HSIO SerDes PHY
+ binding
+Message-ID: <20240510153849.GA308062-robh@kernel.org>
+References: <1715234181-672-1-git-send-email-hongxing.zhu@nxp.com>
+ <1715234181-672-3-git-send-email-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,43 +62,197 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ade89f8-cbd3-4dbf-81fb-0e9a4269dc0f@moroto.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1715234181-672-3-git-send-email-hongxing.zhu@nxp.com>
 
-On Fri, May 10, 2024 at 06:27:30PM +0300, Dan Carpenter wrote:
-> On Fri, May 10, 2024 at 06:18:22PM +0300, Andy Shevchenko wrote:
-> > On Fri, May 10, 2024 at 06:10:37PM +0300, Dan Carpenter wrote:
-> > > Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
-
-..
-
-> > >  	ret = ipu_bridge_connect_sensors(bridge);
-> > > -	if (ret || bridge->n_sensors == 0)
-> > > +	if (ret || bridge->n_sensors == 0) {
-> > > +		ret = ret ?: -EINVAL;
-> > >  		goto err_unregister_ipu;
-> > > +	}
-> > 
-> > I would split:
-> > 
-> > 	ret = ipu_bridge_connect_sensors(bridge);
-> > 	if (ret)
-> > 		goto err_unregister_ipu;
-> > 
-> > 	if (bridge->n_sensors == 0) {
-> > 		ret = -EINVAL;
-> > 		goto err_unregister_ipu;
-> > 	}
+On Thu, May 09, 2024 at 01:56:20PM +0800, Richard Zhu wrote:
+> Add i.MX8QM and i.MX8QXP HSIO SerDes PHY binding.
+> Introduce one HSIO configuration 'fsl,hsio-cfg', which need be set at
+> initialization according to board design.
 > 
-> It's always hard to know which way to go on these...  I wrote it that
-> way in my first draft.  It's my prefered way as well but not everyone
-> agrees.  I'll resend.
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  .../bindings/phy/fsl,imx8qm-hsio.yaml         | 142 ++++++++++++++++++
+>  1 file changed, 142 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/fsl,imx8qm-hsio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/fsl,imx8qm-hsio.yaml b/Documentation/devicetree/bindings/phy/fsl,imx8qm-hsio.yaml
+> new file mode 100644
+> index 000000000000..e8648cd9fea6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/fsl,imx8qm-hsio.yaml
+> @@ -0,0 +1,142 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/fsl,imx8qm-hsio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale i.MX8QM SoC series HSIO SERDES PHY
+> +
+> +maintainers:
+> +  - Richard Zhu <hongxing.zhu@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx8qm-hsio
+> +      - fsl,imx8qxp-hsio
+> +  reg:
+> +    minItems: 4
+> +    maxItems: 4
 
-Is the generated assembly the same?
+Need to define what is each entry:
 
--- 
-With Best Regards,
-Andy Shevchenko
+items:
+  - description: ...
+  - description: ...
+  - description: ...
+  - description: ...
 
 
+> +
+> +  "#phy-cells":
+> +    const: 3
+> +    description:
+> +      The first defines lane index.
+> +      The second defines the type of the PHY refer to the include phy.h.
+> +      The third defines the controller index, indicated which controller
+> +      is bound to the lane.
+> +
+> +  reg-names:
+> +    items:
+> +      - const: reg
+> +      - const: phy
+> +      - const: ctrl
+> +      - const: misc
+> +
+> +  clocks:
+> +    minItems: 5
+> +    maxItems: 14
+> +
+> +  clock-names:
+> +    minItems: 5
+> +    maxItems: 14
+> +
+> +  fsl,hsio-cfg:
+> +    description: Refer macro HSIO_CFG* include/dt-bindings/phy/phy-imx8-pcie.h.
+
+I can't, it's not in this patch. But it should be.
+
+Please say something about what this is for, not just refer to header.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+       maximum: 3
+
+> +
+> +  fsl,refclk-pad-mode:
+> +    description:
+> +      Specifies the mode of the refclk pad used. INPUT(PHY refclock is
+> +      provided externally via the refclk pad) or OUTPUT(PHY refclock is
+> +      derived from SoC internal source and provided on the refclk pad).
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum: [ "input", "output" ]
+
+default?
+
+Really, this could just be a boolean for the non-default mode.
+
+> +
+> +  power-domains:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - "#phy-cells"
+> +  - clocks
+> +  - clock-names
+> +  - fsl,hsio-cfg
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8qxp-hsio
+> +    then:
+> +      properties:
+> +        clock-names:
+> +          items:
+> +            - const: pclk0
+> +            - const: apb_pclk0
+> +            - const: phy0_crr
+> +            - const: ctl0_crr
+> +            - const: misc_crr
+> +        power-domains:
+> +          minItems: 1
+
+Should be maxItems? min is already 1.
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8qm-hsio
+> +    then:
+> +      properties:
+> +        clock-names:
+> +          items:
+> +            - const: pclk0
+> +            - const: pclk1
+> +            - const: apb_pclk0
+> +            - const: apb_pclk1
+> +            - const: pclk2
+> +            - const: epcs_tx
+> +            - const: epcs_rx
+> +            - const: apb_pclk2
+> +            - const: phy0_crr
+> +            - const: phy1_crr
+> +            - const: ctl0_crr
+> +            - const: ctl1_crr
+> +            - const: ctl2_crr
+> +            - const: misc_crr
+> +        power-domains:
+> +          minItems: 2
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/imx8-clock.h>
+> +    #include <dt-bindings/clock/imx8-lpcg.h>
+> +    #include <dt-bindings/firmware/imx/rsrc.h>
+> +    #include <dt-bindings/phy/phy-imx8-pcie.h>
+> +
+> +    hsio_phy@5f1a0000 {
+
+phy@...
+
+> +        compatible = "fsl,imx8qxp-hsio";
+> +        reg = <0x5f1a0000 0x10000>,
+> +              <0x5f120000 0x10000>,
+> +              <0x5f140000 0x10000>,
+> +              <0x5f160000 0x10000>;
+> +        reg-names = "reg", "phy", "ctrl", "misc";
+> +        clocks = <&phyx1_lpcg IMX_LPCG_CLK_0>,
+> +                 <&phyx1_lpcg IMX_LPCG_CLK_4>,
+> +                 <&phyx1_crr1_lpcg IMX_LPCG_CLK_4>,
+> +                 <&pcieb_crr3_lpcg IMX_LPCG_CLK_4>,
+> +                 <&misc_crr5_lpcg IMX_LPCG_CLK_4>;
+> +        clock-names = "pclk0", "apb_pclk0", "phy0_crr", "ctl0_crr", "misc_crr";
+> +        power-domains = <&pd IMX_SC_R_SERDES_1>;
+> +        #phy-cells = <3>;
+> +        fsl,hsio-cfg = <IMX8Q_HSIO_CFG_PCIEB>;
+> +        fsl,refclk-pad-mode = "input";
+> +    };
+> +...
+> -- 
+> 2.37.1
+> 
 
